@@ -76,6 +76,19 @@ namespace Jroc.SymbolTables
             binding.HasWrite = true;
         }
 
+        private static void MarkGlobalThisValueObserved(Scope scope)
+        {
+            while (scope.Parent != null)
+            {
+                scope = scope.Parent;
+            }
+
+            if (scope.Kind == ScopeKind.Global)
+            {
+                scope.UsesGlobalThisValue = true;
+            }
+        }
+
         private static bool IsIdentifierNamed(Node? node, string name)
             => node is Identifier identifier && string.Equals(identifier.Name, name, StringComparison.Ordinal);
 
@@ -1649,11 +1662,16 @@ namespace Jroc.SymbolTables
                     {
                         MarkNearestArgumentsOwnerScopeAsNeedingArguments(currentScope);
                     }
+
+                    if (string.Equals(id.Name, "globalThis", StringComparison.Ordinal))
+                    {
+                        MarkGlobalThisValueObserved(currentScope);
+                    }
                     break;
                 case ThisExpression:
                     if (currentScope.Kind == ScopeKind.Global)
                     {
-                        currentScope.UsesGlobalThisValue = true;
+                        MarkGlobalThisValueObserved(currentScope);
                     }
                     break;
                 case CallExpression callExpr:

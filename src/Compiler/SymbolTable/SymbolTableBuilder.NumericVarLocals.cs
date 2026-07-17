@@ -7,7 +7,7 @@ public partial class SymbolTableBuilder
 {
     private void InferDefinitelyInitializedNumericVarLocals(Scope root)
     {
-        if (root.Kind == ScopeKind.Function)
+        if (root.Kind is ScopeKind.Function or ScopeKind.Global)
         {
             var proposedClrTypes = root.Bindings.Values
                 .Where(binding => binding.IsStableType && binding.ClrType != null)
@@ -41,7 +41,12 @@ public partial class SymbolTableBuilder
             binding.CanUseUnboxedLocal = false;
         }
 
-        if (scope.Kind != ScopeKind.Function || !TryGetCallableBody(scope, out var body))
+        // A module-global var may be represented as an unboxed local only when the
+        // module never observes globalThis. Otherwise global-object property writes
+        // could make the local representation stale.
+        if ((scope.Kind != ScopeKind.Function && scope.Kind != ScopeKind.Global)
+            || scope.UsesGlobalThisValue
+            || !TryGetScopeStatements(scope, out var body))
         {
             return;
         }
@@ -55,6 +60,8 @@ public partial class SymbolTableBuilder
                 if (binding.Kind != BindingKind.Var
                     || binding.IsCaptured
                     || scope.Parameters.Contains(binding.Name)
+                    || (scope.Kind == ScopeKind.Global
+                        && binding.DeclarationNode is VariableDeclarator { Init: null })
                     || binding.CanUseUnboxedLocal)
                 {
                     continue;
@@ -115,16 +122,26 @@ public partial class SymbolTableBuilder
         }
     }
 
-    private static bool TryGetCallableBody(Scope scope, out BlockStatement body)
+    private static bool TryGetScopeStatements(Scope scope, out NodeList<Statement> body)
     {
-        body = scope.AstNode switch
+        switch (scope.AstNode)
         {
-            FunctionDeclaration declaration => declaration.Body,
-            FunctionExpression expression => expression.Body,
-            ArrowFunctionExpression { Body: BlockStatement block } => block,
-            _ => null!
-        };
-        return body != null;
+            case Program program:
+                body = program.Body;
+                return true;
+            case FunctionDeclaration declaration:
+                body = declaration.Body.Body;
+                return true;
+            case FunctionExpression expression:
+                body = expression.Body.Body;
+                return true;
+            case ArrowFunctionExpression { Body: BlockStatement block }:
+                body = block.Body;
+                return true;
+            default:
+                body = default;
+                return false;
+        }
     }
 
     private sealed class NumericVarDefiniteAssignmentAnalyzer
@@ -147,15 +164,15 @@ public partial class SymbolTableBuilder
             _proposedClrTypes = proposedClrTypes;
         }
 
-        public bool TryAnalyze(BlockStatement body)
+        public bool TryAnalyze(NodeList<Statement> body)
         {
-            if (ContainsAbruptLoopControl(body))
+            if (body.Any(ContainsAbruptLoopControl))
             {
                 return false;
             }
 
             var definitelyAssigned = false;
-            return AnalyzeStatementList(body.Body, _functionScope, ref definitelyAssigned)
+            return AnalyzeStatementList(body, _functionScope, ref definitelyAssigned)
                 && _sawNumericWrite;
         }
 
