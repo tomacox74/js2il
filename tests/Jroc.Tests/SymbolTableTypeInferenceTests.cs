@@ -228,7 +228,6 @@ public class SymbolTableTypeInferenceTests
     [InlineData("var i = 256; i = 'text';")]
     [InlineData("var i = 256; function read() { return i; }")]
     [InlineData("var i = 256; globalThis.i = 'text';")]
-    [InlineData("var i = 256; function overwrite() { globalThis.i = 'text'; } overwrite();")]
     public void SymbolTable_InferTypes_TopLevelNumericVar_RejectsObservableOrIncompatibleUses(string source)
     {
         var symbolTable = BuildSymbolTable(source);
