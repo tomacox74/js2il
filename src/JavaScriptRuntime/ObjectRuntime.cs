@@ -34,16 +34,11 @@ namespace JavaScriptRuntime
         internal static bool IsOrdinaryObject(object target)
             => target is JsObject;
 
-        internal static bool IsExoticObject(object target)
-            => target is JsObject and IExoticJsObject;
-
         internal static bool TryGetOwnValue(object target, string key, out object? value)
         {
             if (target is JsObject jsObject)
             {
-                return jsObject is IExoticJsObject
-                    ? jsObject.TryGetOwnPropertyValue(key, out value)
-                    : jsObject.TryGetBoxedValue(key, out value);
+                return jsObject.TryGetOwnPropertyValue(key, out value);
             }
 
             value = null;
@@ -54,9 +49,7 @@ namespace JavaScriptRuntime
         {
             if (target is JsObject jsObject)
             {
-                return jsObject is IExoticJsObject
-                    ? jsObject.GetOwnPropertyDescriptor(key, out _) == PropertyDescriptorLookup.Found
-                    : jsObject.ContainsKey(key);
+                return jsObject.HasOwnPropertyValue(key);
             }
 
             return false;
@@ -66,29 +59,7 @@ namespace JavaScriptRuntime
         {
             if (target is JsObject jsObject)
             {
-                if (jsObject is IExoticJsObject)
-                {
-                    return jsObject.SetOwnPropertyValue(key, value);
-                }
-
-                jsObject.SetBoxedValue(key, value);
-                return true;
-            }
-
-            return false;
-        }
-
-        internal static bool TryDeleteOwnValue(object target, string key)
-        {
-            if (target is JsObject jsObject)
-            {
-                if (jsObject is IExoticJsObject)
-                {
-                    return jsObject.DeleteOwnProperty(key);
-                }
-
-                jsObject.Remove(key);
-                return true;
+                return jsObject.SetOwnPropertyValue(key, value);
             }
 
             return false;
@@ -98,9 +69,7 @@ namespace JavaScriptRuntime
         {
             if (target is JsObject jsObject)
             {
-                return jsObject is IExoticJsObject
-                    ? jsObject.GetOwnPropertyKeys()
-                    : jsObject.GetOwnPropertyNames();
+                return jsObject.GetOwnPropertyKeys();
             }
 
             return System.Array.Empty<string>();
@@ -361,7 +330,7 @@ namespace JavaScriptRuntime
                 Set = setter is null || setter is JsNull ? existingSetter : setter
             };
 
-            if (target is JsObject jsObject && jsObject is IExoticJsObject)
+            if (target is JsObject jsObject)
             {
                 if (!jsObject.DefineOwnProperty(key, descriptor))
                 {
@@ -523,24 +492,13 @@ namespace JavaScriptRuntime
                 return Function.DeleteOwnProperty(del, key);
             }
 
-            if (IsOrdinaryObject(receiver))
+            if (receiver is JsObject jsObject)
             {
-                if (receiver is JsObject exoticObject && exoticObject is IExoticJsObject)
+                if (!jsObject.DeleteOwnProperty(key))
                 {
-                    if (!exoticObject.DeleteOwnProperty(key))
-                    {
-                        throw new JavaScriptRuntime.TypeError($"Cannot delete property '{key}' of object");
-                    }
-
-                    return true;
+                    throw new JavaScriptRuntime.TypeError($"Cannot delete property '{key}' of object");
                 }
 
-                if (!PropertyDescriptorStore.HasIntrinsicProperties(receiver))
-                {
-                    TryDeleteOwnValue(receiver, key);
-                }
-
-                PropertyDescriptorStore.Delete(receiver, key);
                 return true;
             }
 
@@ -585,14 +543,6 @@ namespace JavaScriptRuntime
                 return true;
             }
 
-            if (receiver is JavaScriptRuntime.Array array
-                && TryParseCanonicalIndexString(key, out var arrayIndex))
-            {
-                array.DeleteOwnIndex(arrayIndex);
-                PropertyDescriptorStore.Delete(receiver, key);
-                return true;
-            }
-
             // Arrays/typed arrays/strings and other CLR-backed objects: best-effort deletion.
             // We currently only materialize configurable own properties in PropertyDescriptorStore
             // for these receivers, so removing the descriptor is enough for surfaced built-ins like
@@ -626,9 +576,9 @@ namespace JavaScriptRuntime
                 return false;
             }
 
-            if (receiver is JsObject exoticObject && exoticObject is IExoticJsObject)
+            if (receiver is JsObject jsObject)
             {
-                return exoticObject.DeleteOwnProperty(key);
+                return jsObject.DeleteOwnProperty(key);
             }
 
             return DeleteProperty(receiver, key);
@@ -698,6 +648,8 @@ namespace JavaScriptRuntime
         internal static bool TryParseCanonicalArrayIndexUInt(string s, out uint parsed)
             => CanonicalArrayIndex.TryParse(s, out parsed);
 
+        // Array branches in the numeric overloads below are intentional: they
+        // preserve dense element access without allocating or parsing string keys.
         public static object GetItem(object obj, object index)
         {
             if (obj is null || obj is JsNull)
