@@ -68,8 +68,10 @@ public class KrackenBenchmarks
     private JSContext? _yantraJsContext;
     private JSValue? _yantraJsRunTest;
 
-    private void SetupJroc(string dataScriptContent, string testScriptContent)
+    [GlobalSetup(Target = nameof(SetupJroc))]
+    public void SetupJroc()
     {
+        LoadScriptContents(out var dataScriptContent, out var testScriptContent);
         var scriptBuilder = new System.Text.StringBuilder();
         scriptBuilder.Append(dataScriptContent);
         scriptBuilder.AppendLine();
@@ -94,8 +96,10 @@ public class KrackenBenchmarks
         _jrocExports = JsEngine.LoadModule(loadedAssembly.Assembly, artifact.ModuleIds[0]);        
     }
 
-    private void SetupOkojo(string dataScriptContent, string testScriptContent)
+    [GlobalSetup(Target = nameof(SetupOkojo))]
+    public void SetupOkojo()
     {
+        LoadScriptContents(out var dataScriptContent, out var testScriptContent);
         var runtime = Okojo.Runtime.JsRuntime.CreateBuilder().Build();
         this._okojoRealm = runtime.MainRealm;
         _okojoRealm.Execute(dataScriptContent);
@@ -106,8 +110,10 @@ public class KrackenBenchmarks
         this._okojoRunTest = _okojoRealm.Global["runBenchmark"];
     }
 
-    private void SetupJint(string dataScriptContent, string testScriptContent)
+    [GlobalSetup(Target = nameof(SetupJint))]
+    public void SetupJint()
     {
+        LoadScriptContents(out var dataScriptContent, out var testScriptContent);   
         _jintEngine = new Engine();
         _jintEngine.Execute(dataScriptContent, $"{ScriptName}-data.js");
         _jintEngine.Execute(WorkloadRegistrationScript, "kracken-workload-registration.js");
@@ -115,8 +121,10 @@ public class KrackenBenchmarks
         _jintEngine.Execute(BenchmarkRunnerScript, "kracken-benchmark-runner.js");
     }
 
-    private void SetupYantraJs(string dataScriptContent, string testScriptContent)
+    [GlobalSetup(Target = nameof(SetupYantraJs))]
+    public void SetupYantraJs()
     {
+        LoadScriptContents(out var dataScriptContent, out var testScriptContent);
         var context = new JSContext();
         context.Eval(dataScriptContent, $"{ScriptName}-data.js");
         context.Eval(WorkloadRegistrationScript, "kracken-workload-registration.js");
@@ -143,21 +151,15 @@ public class KrackenBenchmarks
         return scriptNames;
     }
 
-    [GlobalSetup]
-    public void Setup()
+    private void LoadScriptContents(out string dataScriptContent, out string testScriptContent)
     {
         var scriptsDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Scenarios", "kracken-1.1");
         var testScriptPath = Path.Combine(scriptsDir, ScriptName);
         var dataScriptPath = Path.Combine(
             scriptsDir,
             Path.GetFileNameWithoutExtension(ScriptName) + "-data.js");
-        var testScriptContent = File.ReadAllText(testScriptPath);
-        var dataScriptContent = File.ReadAllText(dataScriptPath);
-
-        SetupJroc(dataScriptContent, testScriptContent);
-        SetupOkojo(dataScriptContent, testScriptContent);
-        SetupJint(dataScriptContent, testScriptContent);
-        SetupYantraJs(dataScriptContent, testScriptContent);
+        testScriptContent = File.ReadAllText(testScriptPath);
+        dataScriptContent = File.ReadAllText(dataScriptPath);
     }
 
     [Benchmark(Description = "jroc-execute")]
