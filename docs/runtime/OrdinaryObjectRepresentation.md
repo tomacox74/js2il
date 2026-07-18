@@ -17,7 +17,8 @@ instances; callers must not depend on a CLR dynamic-object implementation.
 The virtual internal-operation hooks on `JsObject` cover:
 
 - own descriptor lookup
-- own value lookup and presence
+- own property-value resolution, including data/accessor descriptors and lazy methods
+- specialized backing-value lookup and presence
 - property definition and assignment
 - deletion
 - complete own-key enumeration
@@ -25,6 +26,13 @@ The virtual internal-operation hooks on `JsObject` cover:
 Ordinary objects implement these operations with shape/slot and descriptor
 storage. Generic runtime code dispatches through this shared contract instead of
 maintaining a parallel representation switch.
+
+`Object.GetProperty` delegates `JsObject` own reads to `TryGetBoxedValue`.
+`JsObject` keeps descriptor lookup, accessor invocation, delete tombstones, and
+lazy class-method materialization inside that contract, while preserving the
+original receiver for inherited accessors. Exotic subclasses participate
+through the same virtual/internal operations. Proxy traps, primitive behavior,
+and prototype traversal remain the responsibility of the outer object runtime.
 
 `Array : JsObject` is the first exotic subclass. It inherits identity, ordinary
 named and symbol properties, prototype state, and descriptor integration, while

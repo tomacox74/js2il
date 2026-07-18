@@ -3669,7 +3669,7 @@ namespace JavaScriptRuntime
             return false;
         }
 
-        private static object? InvokeCallable(object? callable, object thisArg, object?[] args)
+        internal static object? InvokeCallable(object? callable, object thisArg, object?[] args)
         {
             if (callable is null || callable is JsNull)
             {
@@ -4170,6 +4170,11 @@ namespace JavaScriptRuntime
             {
                 value = JavaScriptRuntime.Array.Prototype;
                 return true;
+            }
+
+            if (target is JsObject jsObject)
+            {
+                return jsObject.TryGetBoxedValue(propName, receiverForAccessors, out value);
             }
 
             // Perf (#1418): single-probe lookup answering deleted/descriptor/none at once.
@@ -5536,61 +5541,16 @@ namespace JavaScriptRuntime
             // Null/undefined -> undefined (modeled as null)
             if (obj is null) return null;
 
-            // Perf: plain JsObject fast path. While an ordinary object has only
-            // mirrored default data descriptors (no accessors, deletes, or
-            // attribute-bearing descriptors), its property dictionary is fully
-            // authoritative for own reads — answer directly from the shape/slot
-            // storage without probing the descriptor store (ConditionalWeakTable).
-            // Own misses fall through so prototype-chain and special-name
-            // semantics are preserved.
-            if (obj is JsObject plainJsObject
-                && plainJsObject is not IExoticJsObject
-                && !plainJsObject.HasNonDataDescriptors)
-            {
-                if (plainJsObject.TryGetBoxedValue(name, out var plainValue))
-                {
-                    return plainValue;
-                }
-            }
-            // Descriptor-aware fast dispatch for ordinary JsObject receivers. Own
-            // properties on these receivers are authoritatively descriptor-backed
-            // (literal/assignment writes mirror a data descriptor), so a single
-            // descriptor probe resolves the overwhelmingly common case without
-            // walking the full dispatch ladder below. Misses fall through so
-            // rarely-taken paths (lazy class methods, __proto__, inheritance)
-            // keep their existing semantics. Function.Prototype is excluded to
-            // preserve the restricted 'caller'/'arguments' check.
-            else if (ObjectRuntime.IsOrdinaryObject(obj)
-                && !ReferenceEquals(obj, JavaScriptRuntime.Function.Prototype))
-            {
-                var lookup = PropertyDescriptorStore.GetOwnLookup(obj, name, out var fastDesc);
-                if (lookup == PropertyDescriptorLookup.Found)
-                {
-                    if (fastDesc.Kind == JsPropertyDescriptorKind.Data)
-                    {
-                        return fastDesc.Value;
-                    }
-
-                    return fastDesc.Get is null || fastDesc.Get is JsNull
-                        ? null
-                        : InvokeCallable(fastDesc.Get, obj, System.Array.Empty<object>());
-                }
-
-                if (lookup == PropertyDescriptorLookup.None
-                    && ObjectRuntime.TryGetOwnValue(obj, name, out var fastOrdinaryValue))
-                {
-                    // Backing-only entries (no shadowing descriptor) mirror the
-                    // existing TryGetFastDictionaryOwnValue behavior.
-                    return fastOrdinaryValue;
-                }
-
-                // Own miss (or delete tombstone): fall through to the full ladder.
-            }
-
             if (ReferenceEquals(obj, JavaScriptRuntime.Function.Prototype)
                 && (string.Equals(name, "caller", StringComparison.Ordinal) || string.Equals(name, "arguments", StringComparison.Ordinal)))
             {
                 throw new TypeError($"Cannot access restricted function property '{name}'");
+            }
+
+            if (obj is JsObject jsObject
+                && jsObject.TryGetBoxedValue(name, obj, out var jsObjectValue))
+            {
+                return jsObjectValue;
             }
 
             // Proxy get trap
@@ -5619,12 +5579,14 @@ namespace JavaScriptRuntime
                 }
             }
 
-            if (TryGetFastDictionaryOwnValue(obj, name, out var fastOwnValue))
+            if (obj is not JsObject
+                && TryGetFastDictionaryOwnValue(obj, name, out var fastOwnValue))
             {
                 return fastOwnValue;
             }
 
-            if (TryGetOwnPropertyValue(obj, name, out var ownValue))
+            if (obj is not JsObject
+                && TryGetOwnPropertyValue(obj, name, out var ownValue))
             {
                 return ownValue;
             }

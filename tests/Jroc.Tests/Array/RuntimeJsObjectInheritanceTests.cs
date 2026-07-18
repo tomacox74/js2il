@@ -72,9 +72,12 @@ public sealed class RuntimeJsObjectInheritanceTests
             Assert.IsAssignableFrom<JsObject>(array);
             Assert.Equal(3d, ObjectRuntime.GetProperty(target, "custom"));
             Assert.Equal(4d, ObjectRuntime.GetItem(target, "2"));
+            Assert.Equal(3d, ObjectRuntime.GetProperty(target, "length"));
             Assert.Equal(3d, array.length);
 
             var ordinaryStorage = (IDictionary<string, object?>)array;
+            Assert.False(((JsObject)array).TryGetBoxedValue("length", out _));
+            Assert.False(((JsObject)array).TryGetBoxedValue("0", out _));
             Assert.Equal(3d, ordinaryStorage["custom"]);
             Assert.DoesNotContain("0", ((JsObject)array).GetOwnPropertyNames());
             Assert.DoesNotContain("2", ((JsObject)array).GetOwnPropertyNames());
