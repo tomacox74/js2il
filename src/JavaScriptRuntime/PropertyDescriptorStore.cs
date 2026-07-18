@@ -122,11 +122,6 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
 
     private sealed class PropertyDescriptorOverride
     {
-        public static readonly PropertyDescriptorOverride Deleted = new()
-        {
-            Kind = PropertyDescriptorOverrideKind.Delete
-        };
-
         public required PropertyDescriptorOverrideKind Kind { get; init; }
         public JsPropertyDescriptor Descriptor { get; init; }
     }
@@ -681,7 +676,10 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
             }
 
             var overrides = new Dictionary<string, PropertyDescriptorOverride>(current.Overrides, StringComparer.Ordinal);
-            overrides[key] = PropertyDescriptorOverride.Deleted;
+            overrides[key] = new PropertyDescriptorOverride
+            {
+                Kind = PropertyDescriptorOverrideKind.Delete
+            };
 
             slot.Publish(new OverrideSnapshot(overrides, keyOrder));
 
