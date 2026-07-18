@@ -205,6 +205,16 @@ public class JsObject : DynamicObject, IDictionary<string, object?>
     internal virtual bool TryGetOwnPropertyValue(string key, out object? value)
         => TryGetStoredBoxedValue(key, out value);
 
+    /// <summary>
+    /// Reads an own value whose property invariants make descriptor state irrelevant.
+    /// Returning false defers to normal descriptor-aware resolution.
+    /// </summary>
+    internal virtual bool TryGetInvariantOwnPropertyValue(string key, out object? value)
+    {
+        value = null;
+        return false;
+    }
+
     /// <summary>Tests specialized backing storage for an own property without reading its value.</summary>
     internal virtual bool HasOwnPropertyValue(string key)
         => ContainsKey(key);
@@ -337,14 +347,23 @@ public class JsObject : DynamicObject, IDictionary<string, object?>
         object receiverForAccessors,
         out object? value)
     {
-        if (this is not IExoticJsObject
+        var isExotic = this is IExoticJsObject;
+        if (isExotic && TryGetInvariantOwnPropertyValue(key, out value))
+        {
+            return true;
+        }
+
+        if (!isExotic
             && !HasNonDataDescriptors
             && TryGetStoredBoxedValue(key, out value))
         {
             return true;
         }
 
-        var lookup = PropertyDescriptorStore.GetOwnLookup(this, key, out var descriptor);
+        // Value reads need only stored overrides. Calling the semantic descriptor
+        // hook here would force exotic objects to materialize synthetic descriptors
+        // for values that already live in specialized backing storage.
+        var lookup = PropertyDescriptorStore.GetOwnLookupCore(this, key, out var descriptor);
         if (lookup == PropertyDescriptorLookup.Deleted)
         {
             value = null;
@@ -368,6 +387,11 @@ public class JsObject : DynamicObject, IDictionary<string, object?>
             return true;
         }
 
+        if (TryGetOwnPropertyValue(key, out value))
+        {
+            return true;
+        }
+
         if (RuntimeServices.TryEnsureLazyClassMethodDataProperty(
             this,
             key,
@@ -377,7 +401,8 @@ public class JsObject : DynamicObject, IDictionary<string, object?>
             return true;
         }
 
-        return TryGetOwnPropertyValue(key, out value);
+        value = null;
+        return false;
     }
 
     private bool TryGetStoredBoxedValue(string key, out object? value)
