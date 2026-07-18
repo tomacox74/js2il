@@ -82,7 +82,7 @@ jobs:
               benchmark_args=(--phased --filter "*JrocPhasedBenchmarks*" --scenario "$SCENARIO_NAME")
               ;;
             kracken)
-              benchmark_args=(--kracken --scenario "$SCENARIO_NAME")
+              benchmark_args=(--kracken --filter "*RunJrocTest*" --scenario "$SCENARIO_NAME")
               ;;
             *)
               echo "Unsupported benchmark suite: $BENCHMARK_SUITE" >&2
@@ -120,10 +120,10 @@ jobs:
 
           case "$BENCHMARK_SUITE" in
             phased)
-              benchmark_args=(--phased --filter "*JrocPhasedBenchmarks*" --scenario "$SCENARIO_NAME")
+              benchmark_args=(--phased --filter "*Jroc_ExecuteOnly*" --scenario "$SCENARIO_NAME")
               ;;
             kracken)
-              benchmark_args=(--kracken --scenario "$SCENARIO_NAME")
+              benchmark_args=(--kracken --filter "*RunJrocTest*" --scenario "$SCENARIO_NAME")
               ;;
             *)
               echo "Unsupported benchmark suite: $BENCHMARK_SUITE" >&2
