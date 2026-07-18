@@ -12,7 +12,7 @@ internal enum JsPropertyDescriptorKind
     Accessor
 }
 
-internal sealed class JsPropertyDescriptor
+internal struct JsPropertyDescriptor
 {
     public JsPropertyDescriptorKind Kind { get; set; }
 
@@ -123,7 +123,7 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
     private sealed class PropertyDescriptorOverride
     {
         public required PropertyDescriptorOverrideKind Kind { get; init; }
-        public JsPropertyDescriptor? Descriptor { get; init; }
+        public JsPropertyDescriptor Descriptor { get; init; }
     }
 
     private sealed class IntrinsicPropertyDescriptorStore : IPropertyDescriptorStore
@@ -136,16 +136,12 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
 
             if (_slots.TryGetValue(target, out var slot))
             {
-                // Perf (#1415/#1417): lock-free snapshot read; return the stored
-                // descriptor without cloning. Stored descriptors are never mutated in
-                // place (writes go through DefineOrUpdate, which clones the incoming
-                // descriptor and publishes a new snapshot), so callers that only read
-                // the descriptor can safely share the instance. Callers that mutate
-                // the result must clone it first.
-                return slot.Read().Descriptors.TryGetValue(key, out descriptor!);
+                // Value-type descriptors are returned as copies, so readers cannot
+                // mutate a published snapshot in place.
+                return slot.Read().Descriptors.TryGetValue(key, out descriptor);
             }
 
-            descriptor = null!;
+            descriptor = default;
             return false;
         }
 
@@ -160,7 +156,6 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
         public void DefineOrUpdate(object target, string key, JsPropertyDescriptor descriptor)
         {
             ValidateTargetAndKey(target, key);
-            ArgumentNullException.ThrowIfNull(descriptor);
 
             DefineOrUpdateCore(target, key, descriptor);
 
@@ -319,20 +314,7 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
     }
 
     internal static JsPropertyDescriptor CloneDescriptor(JsPropertyDescriptor descriptor)
-    {
-        ArgumentNullException.ThrowIfNull(descriptor);
-
-        return new JsPropertyDescriptor
-        {
-            Kind = descriptor.Kind,
-            Enumerable = descriptor.Enumerable,
-            Configurable = descriptor.Configurable,
-            Value = descriptor.Value,
-            Writable = descriptor.Writable,
-            Get = descriptor.Get,
-            Set = descriptor.Set
-        };
-    }
+        => descriptor;
 
     public static bool TryGetOwn(object target, string key, out JsPropertyDescriptor descriptor)
         => GetOwnLookup(target, key, out descriptor) == PropertyDescriptorLookup.Found;
@@ -340,8 +322,7 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
     /// <summary>
     /// Unified single-probe own lookup (perf #1418). Combines the tombstone check
     /// (<see cref="IsDeleted"/>) and descriptor fetch (<see cref="TryGetOwn(object, string, out JsPropertyDescriptor)"/>)
-    /// into one descriptor-store probe. Like <c>TryGetOwn</c>, the returned descriptor
-    /// is shared and must be cloned by callers that mutate it.
+    /// into one descriptor-store probe. Value-type descriptors are returned as copies.
     /// </summary>
     internal static PropertyDescriptorLookup GetOwnLookup(object target, string key, out JsPropertyDescriptor descriptor)
     {
@@ -373,11 +354,11 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
             {
                 if (entry.Kind == PropertyDescriptorOverrideKind.Delete)
                 {
-                    descriptor = null!;
+                    descriptor = default;
                     return PropertyDescriptorLookup.Deleted;
                 }
 
-                descriptor = entry.Descriptor!;
+                descriptor = entry.Descriptor;
                 return PropertyDescriptorLookup.Found;
             }
         }
@@ -474,12 +455,11 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
         {
             if (entry.Kind == PropertyDescriptorOverrideKind.Delete)
             {
-                descriptor = null!;
+                descriptor = default;
                 return false;
             }
 
-            // Perf (#1415): no clone on the read path; see IntrinsicPropertyDescriptorStore.TryGetOwn.
-            descriptor = entry.Descriptor!;
+            descriptor = entry.Descriptor;
             return true;
         }
 
@@ -521,7 +501,6 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
     void IPropertyDescriptorStore.DefineOrUpdate(object target, string key, JsPropertyDescriptor descriptor)
     {
         ValidateTargetAndKey(target, key);
-        ArgumentNullException.ThrowIfNull(descriptor);
 
         DefineOrUpdateOverride(target, key, descriptor);
 

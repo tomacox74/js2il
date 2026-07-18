@@ -6,7 +6,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-_Nothing yet._
+- perf/runtime: store `JsPropertyDescriptor` as a value type so descriptor snapshots and synthesized descriptors no longer allocate a separate descriptor object. Descriptor reads return independent copies while snapshot publication, accessor identity, and runtime-local overrides preserve existing semantics.
 
 ## v0.11.30 - 2026-07-18
 

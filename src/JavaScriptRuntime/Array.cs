@@ -1072,7 +1072,7 @@ namespace JavaScriptRuntime
                 return PropertyDescriptorLookup.Found;
             }
 
-            descriptor = null!;
+            descriptor = default;
             return PropertyDescriptorLookup.None;
         }
 
@@ -1134,8 +1134,6 @@ namespace JavaScriptRuntime
 
         internal override bool DefineOwnProperty(string key, JsPropertyDescriptor descriptor)
         {
-            ArgumentNullException.ThrowIfNull(descriptor);
-
             if (string.Equals(key, "length", StringComparison.Ordinal))
             {
                 return DefineLengthProperty(descriptor);
@@ -1352,7 +1350,7 @@ namespace JavaScriptRuntime
         {
             var lookup = PropertyDescriptorStore.GetOwnLookupCore(this, key, out var storedDescriptor);
             var hasCurrent = lookup == PropertyDescriptorLookup.Found;
-            JsPropertyDescriptor? current = hasCurrent ? storedDescriptor : null;
+            var current = storedDescriptor;
 
             if (!hasCurrent && index <= int.MaxValue && HasDenseIndex((int)index))
             {
@@ -1365,7 +1363,7 @@ namespace JavaScriptRuntime
                 return false;
             }
 
-            if (current != null && !IsCompatibleDescriptor(current, descriptor))
+            if (hasCurrent && !IsCompatibleDescriptor(current, descriptor))
             {
                 return false;
             }

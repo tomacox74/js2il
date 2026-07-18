@@ -27,6 +27,10 @@ Ordinary objects implement these operations with shape/slot and descriptor
 storage. Generic runtime code dispatches through this shared contract instead of
 maintaining a parallel representation switch.
 
+Descriptor snapshots store `JsPropertyDescriptor` values inline. Reads return
+independent value copies, while writes publish new immutable snapshots; accessor
+getter and setter references retain their JavaScript identity across copies.
+
 `Object.GetProperty` delegates `JsObject` own reads to `TryGetBoxedValue`.
 `JsObject` checks stored descriptor overrides, accessors, and delete tombstones
 inside that contract, while preserving the original receiver for inherited

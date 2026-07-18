@@ -741,11 +741,11 @@ public static class Function
 
             if (IsMetadataPropertyName(propName) && PropertyDescriptorStore.IsDeleted(target, propName))
             {
-                descriptor = null!;
+                descriptor = default;
                 return false;
             }
 
-            if (PropertyDescriptorStore.TryGetOwn(target, propName, out descriptor!))
+            if (PropertyDescriptorStore.TryGetOwn(target, propName, out descriptor))
             {
                 return true;
             }
@@ -778,7 +778,7 @@ public static class Function
                 return true;
             }
 
-            descriptor = null!;
+            descriptor = default;
             return false;
         }
 
