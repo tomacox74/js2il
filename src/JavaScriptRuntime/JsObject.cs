@@ -203,7 +203,7 @@ public class JsObject : DynamicObject, IDictionary<string, object?>
     /// keys and are never converted to display strings by this contract.
     /// </summary>
     internal virtual bool TryGetOwnPropertyValue(string key, out object? value)
-        => TryGetBoxedValue(key, out value);
+        => TryGetStoredBoxedValue(key, out value);
 
     /// <summary>Tests specialized backing storage for an own property without reading its value.</summary>
     internal virtual bool HasOwnPropertyValue(string key)
@@ -323,16 +323,71 @@ public class JsObject : DynamicObject, IDictionary<string, object?>
     // -------------------------------------------------------------------------
 
     /// <summary>
-    /// Tries to get the value for <paramref name="key"/> as a boxed CLR object.
-    /// Returns <c>true</c> and sets <paramref name="value"/> when found.
+    /// Tries to read this object's shape/slot storage as a boxed CLR object.
     /// </summary>
     public bool TryGetBoxedValue(string key, out object? value)
+        => TryGetStoredBoxedValue(key, out value);
+
+    /// <summary>
+    /// Resolves an own JavaScript property while keeping descriptor and exotic-object
+    /// semantics internal and preserving the original receiver for inherited accessors.
+    /// </summary>
+    internal virtual bool TryGetBoxedValue(
+        string key,
+        object receiverForAccessors,
+        out object? value)
     {
-        if (TryGetJsValue(key, out var jv))
+        if (this is not IExoticJsObject
+            && !HasNonDataDescriptors
+            && TryGetStoredBoxedValue(key, out value))
         {
-            value = jv.ToObject();
             return true;
         }
+
+        var lookup = PropertyDescriptorStore.GetOwnLookup(this, key, out var descriptor);
+        if (lookup == PropertyDescriptorLookup.Deleted)
+        {
+            value = null;
+            return false;
+        }
+
+        if (lookup == PropertyDescriptorLookup.Found)
+        {
+            if (descriptor.Kind == JsPropertyDescriptorKind.Accessor)
+            {
+                value = descriptor.Get is null || descriptor.Get is JsNull
+                    ? null
+                    : Object.InvokeCallable(
+                        descriptor.Get,
+                        receiverForAccessors,
+                        System.Array.Empty<object>());
+                return true;
+            }
+
+            value = descriptor.Value;
+            return true;
+        }
+
+        if (RuntimeServices.TryEnsureLazyClassMethodDataProperty(
+            this,
+            key,
+            out var lazyClassMethodDescriptor))
+        {
+            value = lazyClassMethodDescriptor.Value;
+            return true;
+        }
+
+        return TryGetOwnPropertyValue(key, out value);
+    }
+
+    private bool TryGetStoredBoxedValue(string key, out object? value)
+    {
+        if (TryGetJsValue(key, out var jsValue))
+        {
+            value = jsValue.ToObject();
+            return true;
+        }
+
         value = null;
         return false;
     }

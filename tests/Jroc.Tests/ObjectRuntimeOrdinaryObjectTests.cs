@@ -13,8 +13,19 @@ public sealed class ObjectRuntimeOrdinaryObjectTests
 
         public bool RejectDeletions { get; set; }
 
+        public int PropertyReadCount { get; private set; }
+
         public void Seed(string key, object? value)
             => _values[key] = value;
+
+        internal override bool TryGetBoxedValue(
+            string key,
+            object receiverForAccessors,
+            out object? value)
+        {
+            PropertyReadCount++;
+            return base.TryGetBoxedValue(key, receiverForAccessors, out value);
+        }
 
         internal override bool TryGetOwnPropertyValue(string key, out object? value)
             => _values.TryGetValue(key, out value);
@@ -77,9 +88,20 @@ public sealed class ObjectRuntimeOrdinaryObjectTests
             Assert.Equal(3d, ObjectRuntime.GetProperty(target, "inherited"));
             Assert.True(JavaScriptRuntime.Object.hasOwn(target, "first"));
             Assert.True(Operators.In("inherited", target));
+
             Assert.Equal(
                 new object?[] { "1", "second", "first" },
                 Assert.IsType<JavaScriptRuntime.Array>(JavaScriptRuntime.Object.getOwnPropertyNames(target)).ToArray());
+
+            PropertyDescriptorStore.DefineOrUpdate(target, "descriptorOnly", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Value = 4d,
+                Writable = true,
+                Enumerable = true,
+                Configurable = true
+            });
+            Assert.Equal(4d, ObjectRuntime.GetProperty(target, "descriptorOnly"));
 
             Assert.True(ObjectRuntime.DeleteProperty(target, "second"));
             Assert.False(JavaScriptRuntime.Object.hasOwn(target, "second"));
@@ -102,6 +124,34 @@ public sealed class ObjectRuntimeOrdinaryObjectTests
                 ObjectRuntime.DeleteProperty(deleteRejectingTarget, "retained"));
             Assert.False(ObjectRuntime.DeletePropertyNonStrict(deleteRejectingTarget, "retained"));
             Assert.True(JavaScriptRuntime.Object.hasOwn(deleteRejectingTarget, "retained"));
+        }
+        finally
+        {
+            GlobalThis.ServiceProvider = null;
+        }
+    }
+
+    [Fact]
+    public void PropertyReadContract_PreservesInheritedAccessorReceiver()
+    {
+        var runtime = RuntimeServices.BuildServiceProvider();
+        try
+        {
+            GlobalThis.ServiceProvider = runtime;
+            var target = new JsObject();
+            var prototype = new JsObject();
+
+            ObjectRuntime.SetProperty(target, "marker", "target");
+            Func<object[], object?[]?, object?> getter = static (_, _) =>
+                ObjectRuntime.GetProperty(RuntimeServices.GetCurrentThis()!, "marker");
+            ObjectRuntime.DefineObjectLiteralAccessorProperty(
+                prototype,
+                "computed",
+                getter,
+                null);
+            JavaScriptRuntime.Object.setPrototypeOf(target, prototype);
+
+            Assert.Equal("target", ObjectRuntime.GetProperty(target, "computed"));
         }
         finally
         {
@@ -214,6 +264,7 @@ public sealed class ObjectRuntimeOrdinaryObjectTests
 
             Assert.Equal(2d, ObjectRuntime.GetProperty(target, "second"));
             Assert.Equal(3d, ObjectRuntime.GetProperty(target, "inherited"));
+            Assert.True(target.PropertyReadCount >= 2);
             Assert.True(JavaScriptRuntime.Object.hasOwn(target, "first"));
             Assert.True(Operators.In("inherited", target));
             Assert.Equal(
