@@ -68,7 +68,7 @@ public class KrackenBenchmarks
     private JSContext? _yantraJsContext;
     private JSValue? _yantraJsRunTest;
 
-    [GlobalSetup(Target = nameof(SetupJroc))]
+    [GlobalSetup(Target = nameof(RunJrocTest))]
     public void SetupJroc()
     {
         LoadScriptContents(out var dataScriptContent, out var testScriptContent);
@@ -96,7 +96,7 @@ public class KrackenBenchmarks
         _jrocExports = JsEngine.LoadModule(loadedAssembly.Assembly, artifact.ModuleIds[0]);        
     }
 
-    [GlobalSetup(Target = nameof(SetupOkojo))]
+    [GlobalSetup(Target = nameof(RunOkojoTest))]
     public void SetupOkojo()
     {
         LoadScriptContents(out var dataScriptContent, out var testScriptContent);
@@ -110,7 +110,7 @@ public class KrackenBenchmarks
         this._okojoRunTest = _okojoRealm.Global["runBenchmark"];
     }
 
-    [GlobalSetup(Target = nameof(SetupJint))]
+    [GlobalSetup(Target = nameof(RunJintTest))]
     public void SetupJint()
     {
         LoadScriptContents(out var dataScriptContent, out var testScriptContent);   
@@ -121,7 +121,7 @@ public class KrackenBenchmarks
         _jintEngine.Execute(BenchmarkRunnerScript, "kracken-benchmark-runner.js");
     }
 
-    [GlobalSetup(Target = nameof(SetupYantraJs))]
+    [GlobalSetup(Target = nameof(RunYantraJsTest))]
     public void SetupYantraJs()
     {
         LoadScriptContents(out var dataScriptContent, out var testScriptContent);
