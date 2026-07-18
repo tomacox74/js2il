@@ -10,6 +10,12 @@ public class PropertyDescriptorStoreTests
         => Assert.True(typeof(JsPropertyDescriptor).IsValueType);
 
     [Fact]
+    public void Descriptor_UsesCompactFieldLayout()
+        => Assert.Equal(
+            IntPtr.Size == 8 ? 32 : 20,
+            System.Runtime.CompilerServices.Unsafe.SizeOf<JsPropertyDescriptor>());
+
+    [Fact]
     public void RuntimeStore_FallsBackToIntrinsicDescriptor_AndKeepsOverrideIsolated()
     {
         var target = new JsObject();

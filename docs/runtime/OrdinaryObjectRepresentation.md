@@ -29,7 +29,8 @@ maintaining a parallel representation switch.
 
 Descriptor snapshots store `JsPropertyDescriptor` values inline. Reads return
 independent value copies, while writes publish new immutable snapshots; accessor
-getter and setter references retain their JavaScript identity across copies.
+getter and setter references retain their JavaScript identity across copies. Its
+boolean fields precede reference fields so the value occupies 32 bytes on 64-bit runtimes.
 
 `Object.GetProperty` delegates `JsObject` own reads to `TryGetBoxedValue`.
 `JsObject` checks stored descriptor overrides, accessors, and delete tombstones

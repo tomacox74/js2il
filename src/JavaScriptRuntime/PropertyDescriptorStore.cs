@@ -21,8 +21,8 @@ internal struct JsPropertyDescriptor
     public bool Configurable { get; set; }
 
     // Data descriptor
-    public object? Value { get; set; }
     public bool Writable { get; set; }
+    public object? Value { get; set; }
 
     // Accessor descriptor
     public object? Get { get; set; }
