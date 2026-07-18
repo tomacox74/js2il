@@ -7,6 +7,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 ## Unreleased
 
 - runtime: centralize `JsObject` own-property reads behind the virtual `TryGetBoxedValue` contract. Descriptor/accessor handling, delete tombstones, lazy class methods, and exotic subclass dispatch now stay within `JsObject`, while `Object.GetProperty` retains proxy, primitive, and prototype traversal. This behavior-preserving refactor prepares per-instance read optimizations without intentionally changing performance. (#1522)
+- ci/benchmarks: make the branch-comparison workflow select the Kraken benchmark class explicitly so non-interactive Kraken comparisons produce result artifacts.
 
 ## v0.11.29 - 2026-07-17
 
