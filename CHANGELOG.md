@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.11.30 - 2026-07-18
+
 - perf/runtime: separate exotic-object value reads from descriptor introspection. Array `length`, dense indices, and named values now use backing storage without synthesizing `JsPropertyDescriptor` instances, while stored accessors, data overrides, tombstones, and descriptor APIs retain their existing semantics. A same-runner `ai-astar` comparison reduced mean execution time from 11.663 s to 8.119 s (30.4%) and allocation from 3326.39 MB to 1172.04 MB (64.8%). (#1523)
 - runtime: centralize `JsObject` own-property reads behind the virtual `TryGetBoxedValue` contract. Descriptor/accessor handling, delete tombstones, lazy class methods, and exotic subclass dispatch now stay within `JsObject`, while `Object.GetProperty` retains proxy, primitive, and prototype traversal. This behavior-preserving refactor prepares per-instance read optimizations without intentionally changing performance. (#1522)
 
