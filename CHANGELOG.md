@@ -6,7 +6,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-- perf/runtime: store `JsPropertyDescriptor` as a value type so descriptor snapshots and synthesized descriptors no longer allocate a separate descriptor object. Descriptor reads return independent copies while snapshot publication, accessor identity, and runtime-local overrides preserve existing semantics. Repeated hosted comparisons found no repeatable execution-time regression: `ai-astar` ranged from 3.1% slower to 5.2% faster while consistently allocating 4,361,400 fewer bytes/op (-0.35%), and `array-stress` ran 1.1-3.3% faster while allocating about 5.8 KB more/op (+0.35%).
+- perf/runtime: store `JsPropertyDescriptor` as a value type so descriptor snapshots and synthesized descriptors no longer allocate a separate descriptor object. Descriptor reads return independent copies while snapshot publication, accessor identity, and runtime-local overrides preserve existing semantics. Field ordering keeps the descriptor at 32 bytes on 64-bit runtimes. Repeated hosted comparisons found no repeatable execution-time regression: `ai-astar` consistently allocated 4,361,400 fewer bytes/op (-0.35%), `array-stress` allocated about 5.8 KB more/op (+0.35%), and `audio-beat-detection` allocated 1,008,000 fewer bytes/op (-0.007%). Compact-layout reruns produced the same allocation results as the original 40-byte struct layout.
 
 ## v0.11.30 - 2026-07-18
 
