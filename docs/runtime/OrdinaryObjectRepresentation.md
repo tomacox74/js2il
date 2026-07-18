@@ -28,11 +28,14 @@ storage. Generic runtime code dispatches through this shared contract instead of
 maintaining a parallel representation switch.
 
 `Object.GetProperty` delegates `JsObject` own reads to `TryGetBoxedValue`.
-`JsObject` keeps descriptor lookup, accessor invocation, delete tombstones, and
-lazy class-method materialization inside that contract, while preserving the
-original receiver for inherited accessors. Exotic subclasses participate
-through the same virtual/internal operations. Proxy traps, primitive behavior,
-and prototype traversal remain the responsibility of the outer object runtime.
+`JsObject` checks stored descriptor overrides, accessors, and delete tombstones
+inside that contract, while preserving the original receiver for inherited
+accessors. When no stored descriptor affects the read, it asks the object's
+backing-value hook directly instead of materializing a descriptor. Full
+descriptor synthesis remains confined to descriptor APIs. Exotic subclasses
+participate through the same virtual/internal operations. Proxy traps,
+primitive behavior, and prototype traversal remain the responsibility of the
+outer object runtime.
 
 `Array : JsObject` is the first exotic subclass. It inherits identity, ordinary
 named and symbol properties, prototype state, and descriptor integration, while
@@ -43,6 +46,11 @@ overriding only behavior that is exotic under ECMA-262:
 - `length` uses `ArraySetLength` semantics
 - indexed definitions and deletions enforce descriptor and integrity invariants
 - own keys merge indices, other strings, and symbols in specification order
+
+Ordinary reads of default `length`, dense indices, and named Array properties
+use their backing storage directly. Stored accessor/data overrides and
+tombstones remain authoritative, while APIs such as
+`Object.getOwnPropertyDescriptor` continue through Array's descriptor hook.
 
 Array literals and compiler-proven numeric index operations still target direct
 array intrinsics. The shared object contract does not replace the specialized

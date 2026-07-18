@@ -1099,6 +1099,18 @@ namespace JavaScriptRuntime
             return base.TryGetOwnPropertyValue(key, out value);
         }
 
+        internal override bool TryGetInvariantOwnPropertyValue(string key, out object? value)
+        {
+            if (string.Equals(key, "length", StringComparison.Ordinal))
+            {
+                value = length;
+                return true;
+            }
+
+            value = null;
+            return false;
+        }
+
         internal override bool HasOwnPropertyValue(string key)
         {
             var lookup = PropertyDescriptorStore.GetOwnLookupCore(this, key, out _);

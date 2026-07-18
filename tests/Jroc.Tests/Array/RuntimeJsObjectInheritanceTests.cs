@@ -4,6 +4,27 @@ namespace Jroc.Tests.Array;
 
 public sealed class RuntimeJsObjectInheritanceTests
 {
+    private sealed class DescriptorCountingArray : JavaScriptRuntime.Array
+    {
+        public DescriptorCountingArray(object?[] values)
+            : base(values)
+        {
+        }
+
+        public int DescriptorLookupCount { get; private set; }
+
+        public void ResetDescriptorLookupCount()
+            => DescriptorLookupCount = 0;
+
+        internal override PropertyDescriptorLookup GetOwnPropertyDescriptor(
+            string key,
+            out JsPropertyDescriptor descriptor)
+        {
+            DescriptorLookupCount++;
+            return base.GetOwnPropertyDescriptor(key, out descriptor);
+        }
+    }
+
     [Fact]
     public void ArrayPrototypeAndUnscopables_UseJsObjectRepresentation()
     {
@@ -107,6 +128,88 @@ public sealed class RuntimeJsObjectInheritanceTests
             Assert.Null(ObjectRuntime.GetProperty(target, "custom"));
             Assert.Equal(9d, array.length);
             Assert.Equal(5d, array[4]);
+        }
+        finally
+        {
+            GlobalThis.ServiceProvider = null;
+        }
+    }
+
+    [Fact]
+    public void ValueReads_BypassSyntheticArrayDescriptors()
+    {
+        var runtime = RuntimeServices.BuildServiceProvider();
+        try
+        {
+            GlobalThis.ServiceProvider = runtime;
+            var array = new DescriptorCountingArray(new object?[] { 1d, 2d });
+            array.ResetDescriptorLookupCount();
+
+            Assert.Equal(2d, ObjectRuntime.GetProperty(array, "length"));
+            Assert.Equal(1d, ObjectRuntime.GetProperty(array, "0"));
+            Assert.Equal(0, array.DescriptorLookupCount);
+
+            Func<object[], object?[]?, object?> getter = static (_, _) => "accessor";
+            Assert.True(array.DefineOwnProperty("0", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Accessor,
+                Get = getter,
+                Enumerable = true,
+                Configurable = true
+            }));
+            var descriptorLookupCount = array.DescriptorLookupCount;
+            Assert.Equal("accessor", ObjectRuntime.GetProperty(array, "0"));
+            Assert.Equal(descriptorLookupCount, array.DescriptorLookupCount);
+
+            Assert.True(array.DefineOwnProperty("length", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Value = 2d,
+                Writable = false,
+                Enumerable = false,
+                Configurable = false
+            }));
+            descriptorLookupCount = array.DescriptorLookupCount;
+            Assert.Equal(2d, ObjectRuntime.GetProperty(array, "length"));
+            Assert.Equal(descriptorLookupCount, array.DescriptorLookupCount);
+
+            Assert.True(array.DeleteOwnProperty("0"));
+            descriptorLookupCount = array.DescriptorLookupCount;
+            Assert.Null(ObjectRuntime.GetProperty(array, "0"));
+            Assert.Equal(descriptorLookupCount, array.DescriptorLookupCount);
+
+            Assert.IsType<JsObject>(
+                JavaScriptRuntime.Object.getOwnPropertyDescriptor(array, "length"));
+            Assert.Equal(descriptorLookupCount + 1, array.DescriptorLookupCount);
+        }
+        finally
+        {
+            GlobalThis.ServiceProvider = null;
+        }
+    }
+
+    [Fact]
+    public void LengthValueReads_AllocateOnlyTheBoxedResult()
+    {
+        var runtime = RuntimeServices.BuildServiceProvider();
+        try
+        {
+            GlobalThis.ServiceProvider = runtime;
+            var array = new JavaScriptRuntime.Array(new object?[] { 1d, 2d, 3d });
+
+            _ = ObjectRuntime.GetProperty(array, "length");
+            const int iterations = 10_000;
+            object? value = null;
+            var before = GC.GetAllocatedBytesForCurrentThread();
+            for (int i = 0; i < iterations; i++)
+            {
+                value = ObjectRuntime.GetProperty(array, "length");
+            }
+
+            var allocated = GC.GetAllocatedBytesForCurrentThread() - before;
+
+            Assert.Equal(3d, value);
+            Assert.InRange(allocated, 0, iterations * 32L);
         }
         finally
         {
