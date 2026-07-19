@@ -22,26 +22,32 @@ internal sealed class JsShape
 
     private readonly FrozenDictionary<string, int> _slots;
 
-    private readonly string[] _propertyNames;
+    private readonly JsShape? _parent;
+
+    private readonly string? _addedPropertyName;
+
+    private readonly int _propertyCount;
+
+    private string[]? _propertyNamesInSlotOrder;
 
     private Dictionary<string, WeakReference<JsShape>>? _transitions;
 
     public JsShape()
     {
         _slots = new Dictionary<string, int>().ToFrozenDictionary();
-        _propertyNames = System.Array.Empty<string>();
+        _propertyNamesInSlotOrder = System.Array.Empty<string>();
     }
 
-    internal ReadOnlySpan<string> PropertyNamesInSlotOrder => _propertyNames;
+    internal ReadOnlySpan<string> PropertyNamesInSlotOrder => GetOrCreatePropertyNamesInSlotOrder();
 
-    internal int PropertyCount => _propertyNames.Length;
+    internal int PropertyCount => _propertyCount;
 
     internal string GetPropertyNameAtSlot(int slot)
-        => _propertyNames[slot];
+        => GetOrCreatePropertyNamesInSlotOrder()[slot];
 
     internal IEnumerable<string> EnumeratePropertyNamesSnapshot()
     {
-        var propertyNames = _propertyNames;
+        var propertyNames = GetOrCreatePropertyNamesInSlotOrder();
         for (int i = 0; i < propertyNames.Length; i++)
         {
             yield return propertyNames[i];
@@ -58,13 +64,12 @@ internal sealed class JsShape
             ? string.Intern(newPropertyName)
             : newPropertyName;
 
-        var parentPropertyNames = parent._propertyNames;
-        _propertyNames = new string[parentPropertyNames.Length + 1];
-        System.Array.Copy(parentPropertyNames, _propertyNames, parentPropertyNames.Length);
-        _propertyNames[parentPropertyNames.Length] = storedPropertyName;
+        _parent = parent;
+        _addedPropertyName = storedPropertyName;
+        _propertyCount = parent._propertyCount + 1;
 
         var newSlots = parent._slots.ToDictionary();
-        newSlots[storedPropertyName] = parentPropertyNames.Length;
+        newSlots[storedPropertyName] = parent._propertyCount;
         _slots = newSlots.ToFrozenDictionary();
     }
 
@@ -72,20 +77,54 @@ internal sealed class JsShape
     {
         // Rebuild slots in the parent's slot order so surviving properties keep their
         // relative order and stay aligned with the compacted value array.
-        var parentPropertyNames = parent._propertyNames;
-        _propertyNames = new string[parentPropertyNames.Length - 1];
+        var parentPropertyNames = parent.GetOrCreatePropertyNamesInSlotOrder();
+        _propertyCount = parent._propertyCount - 1;
+        var propertyNames = new string[_propertyCount];
+        _propertyNamesInSlotOrder = propertyNames;
         var newSlots = new Dictionary<string, int>();
         var nextSlot = 0;
         foreach (var name in parentPropertyNames)
         {
             if (!string.Equals(name, deadPropertyName, StringComparison.Ordinal))
             {
-                _propertyNames[nextSlot] = name;
+                propertyNames[nextSlot] = name;
                 newSlots[name] = nextSlot;
                 nextSlot++;
             }
         }
         _slots = newSlots.ToFrozenDictionary();
+    }
+
+    private string[] GetOrCreatePropertyNamesInSlotOrder()
+    {
+        var propertyNames = System.Threading.Volatile.Read(ref _propertyNamesInSlotOrder);
+        if (propertyNames != null)
+        {
+            return propertyNames;
+        }
+
+        propertyNames = new string[_propertyCount];
+        var shape = this;
+        var slot = _propertyCount - 1;
+        while (slot >= 0)
+        {
+            var cachedAncestorNames = System.Threading.Volatile.Read(ref shape._propertyNamesInSlotOrder);
+            if (cachedAncestorNames != null)
+            {
+                System.Array.Copy(cachedAncestorNames, propertyNames, cachedAncestorNames.Length);
+                break;
+            }
+
+            propertyNames[slot] = shape._addedPropertyName!;
+            shape = shape._parent!;
+            slot--;
+        }
+
+        var published = System.Threading.Interlocked.CompareExchange(
+            ref _propertyNamesInSlotOrder,
+            propertyNames,
+            null);
+        return published ?? propertyNames;
     }
 
     public JsShape TransitionTo(string newPropertyName)
