@@ -10,7 +10,6 @@ public sealed class JsShapeTransitionTests
         { 0, false },
         { 1, false },
         { 2, false },
-        { 4, false },
         { JsShape.DictionaryPromotionThreshold, false },
         { JsShape.DictionaryPromotionThreshold + 1, true },
         { 16, true }
@@ -100,20 +99,21 @@ public sealed class JsShapeTransitionTests
     public void TransitionAway_CompactsSlotsAndDemotesAtThreshold()
     {
         var shape = CreateUncachedShape(JsShape.DictionaryPromotionThreshold + 2);
+        var lastPropertyName = $"p{JsShape.DictionaryPromotionThreshold + 1}";
 
-        shape = shape.TransitionAway("p4");
+        shape = shape.TransitionAway("p1");
 
         Assert.True(shape.UsesDictionaryLookup);
-        Assert.Equal(
-            new[] { "p0", "p1", "p2", "p3", "p5", "p6", "p7", "p8", "p9" },
-            shape.PropertyNamesInSlotOrder.ToArray());
-        Assert.Equal(4, shape.GetSlot("p5"));
+        Assert.Equal("p2", shape.GetPropertyNameAtSlot(1));
+        Assert.Equal(1, shape.GetSlot("p2"));
 
-        shape = shape.TransitionAway("p9");
+        shape = shape.TransitionAway(lastPropertyName);
 
         Assert.False(shape.UsesDictionaryLookup);
         Assert.Equal(JsShape.DictionaryPromotionThreshold, shape.PropertyCount);
-        Assert.Equal(7, shape.GetSlot("p8"));
+        Assert.Equal(
+            JsShape.DictionaryPromotionThreshold - 1,
+            shape.GetSlot($"p{JsShape.DictionaryPromotionThreshold}"));
     }
 
     [Fact]

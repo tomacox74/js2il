@@ -6,7 +6,7 @@ namespace JavaScriptRuntime;
 
 internal sealed class JsShape
 {
-    internal const int DictionaryPromotionThreshold = 8;
+    internal const int DictionaryPromotionThreshold = 4;
 
     private enum PropertyNameStorage
     {
