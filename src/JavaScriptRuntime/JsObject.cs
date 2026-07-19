@@ -20,27 +20,31 @@ internal sealed class JsShape
         get => _empty.Value!;
     }
 
-    private FrozenDictionary<string, int> _slots;
+    private readonly FrozenDictionary<string, int> _slots;
+
+    private readonly string[] _propertyNames;
 
     private Dictionary<string, WeakReference<JsShape>>? _transitions;
 
     public JsShape()
     {
         _slots = new Dictionary<string, int>().ToFrozenDictionary();
+        _propertyNames = System.Array.Empty<string>();
     }
 
-    public IEnumerable<string> PropertyNames
+    internal ReadOnlySpan<string> PropertyNamesInSlotOrder => _propertyNames;
+
+    internal int PropertyCount => _propertyNames.Length;
+
+    internal string GetPropertyNameAtSlot(int slot)
+        => _propertyNames[slot];
+
+    internal IEnumerable<string> EnumeratePropertyNamesSnapshot()
     {
-        get
+        var propertyNames = _propertyNames;
+        for (int i = 0; i < propertyNames.Length; i++)
         {
-            // FrozenDictionary does not guarantee enumeration order; property names
-            // must be reported in slot order to preserve JS insertion-order semantics.
-            var names = new string[_slots.Count];
-            foreach (var kvp in _slots)
-            {
-                names[kvp.Value] = kvp.Key;
-            }
-            return names;
+            yield return propertyNames[i];
         }
     }
 
@@ -50,8 +54,17 @@ internal sealed class JsShape
 
     private JsShape(string newPropertyName, JsShape parent, PropertyNameStorage propertyNameStorage)
     {
+        var storedPropertyName = propertyNameStorage == PropertyNameStorage.Interned
+            ? string.Intern(newPropertyName)
+            : newPropertyName;
+
+        var parentPropertyNames = parent._propertyNames;
+        _propertyNames = new string[parentPropertyNames.Length + 1];
+        System.Array.Copy(parentPropertyNames, _propertyNames, parentPropertyNames.Length);
+        _propertyNames[parentPropertyNames.Length] = storedPropertyName;
+
         var newSlots = parent._slots.ToDictionary();
-        newSlots[propertyNameStorage == PropertyNameStorage.Interned ? string.Intern(newPropertyName) : newPropertyName] = newSlots.Count;
+        newSlots[storedPropertyName] = parentPropertyNames.Length;
         _slots = newSlots.ToFrozenDictionary();
     }
 
@@ -59,12 +72,17 @@ internal sealed class JsShape
     {
         // Rebuild slots in the parent's slot order so surviving properties keep their
         // relative order and stay aligned with the compacted value array.
+        var parentPropertyNames = parent._propertyNames;
+        _propertyNames = new string[parentPropertyNames.Length - 1];
         var newSlots = new Dictionary<string, int>();
-        foreach (var name in parent.PropertyNames)
+        var nextSlot = 0;
+        foreach (var name in parentPropertyNames)
         {
             if (!string.Equals(name, deadPropertyName, StringComparison.Ordinal))
             {
-                newSlots[name] = newSlots.Count;
+                _propertyNames[nextSlot] = name;
+                newSlots[name] = nextSlot;
+                nextSlot++;
             }
         }
         _slots = newSlots.ToFrozenDictionary();
@@ -425,15 +443,17 @@ public class JsObject : DynamicObject, IDictionary<string, object?>
 
     /// <summary>Returns enumerable sequence of own property names.</summary>
     public IEnumerable<string> GetOwnPropertyNames()
-        => _shape.PropertyNames;
+        => _shape.EnumeratePropertyNamesSnapshot();
 
     /// <summary>Returns own property key-value pairs (values boxed as object).</summary>
     public IEnumerable<KeyValuePair<string, object?>> GetOwnProperties()
     {
-        for (int i = 0; i < _shape.PropertyNames.Count(); i++)
+        var shape = _shape;
+        var properties = _properties;
+        for (int i = 0; i < shape.PropertyCount; i++)
         {
-            var key = _shape.PropertyNames.ElementAt(i);
-            var value = _properties[i];
+            var key = shape.GetPropertyNameAtSlot(i);
+            var value = properties[i];
             yield return new KeyValuePair<string, object?>(key, value.ToObject());
         }
     }
@@ -449,9 +469,32 @@ public class JsObject : DynamicObject, IDictionary<string, object?>
         set => SetValue(key, JsValue.FromObject(value));
     }
 
-    public ICollection<string> Keys => _shape.PropertyNames.ToList();
+    public ICollection<string> Keys
+    {
+        get
+        {
+            var propertyNames = _shape.PropertyNamesInSlotOrder;
+            var keys = new List<string>(propertyNames.Length);
+            foreach (var name in propertyNames)
+            {
+                keys.Add(name);
+            }
+            return keys;
+        }
+    }
 
-    public ICollection<object?> Values => _properties!.Select(v => v.ToObject()).ToList();
+    public ICollection<object?> Values
+    {
+        get
+        {
+            var values = new List<object?>(_properties.Length);
+            foreach (var value in _properties)
+            {
+                values.Add(value.ToObject());
+            }
+            return values;
+        }
+    }
 
     public int Count => _properties!.Length;
 
@@ -479,7 +522,16 @@ public class JsObject : DynamicObject, IDictionary<string, object?>
             return false;
 
         _shape = _shape.TransitionAway(key);
-        _properties = _properties.Where((v, i) => i != slot).ToArray();
+        var newProperties = new JsValue[_properties.Length - 1];
+        if (slot > 0)
+        {
+            System.Array.Copy(_properties, 0, newProperties, 0, slot);
+        }
+        if (slot < newProperties.Length)
+        {
+            System.Array.Copy(_properties, slot + 1, newProperties, slot, newProperties.Length - slot);
+        }
+        _properties = newProperties;
 
         return true;
     }
@@ -538,10 +590,13 @@ public class JsObject : DynamicObject, IDictionary<string, object?>
 
     public IEnumerator<KeyValuePair<string, object?>> GetEnumerator()
     {
-        foreach (var key in _shape.PropertyNames)
+        var shape = _shape;
+        var properties = _properties;
+        for (int i = 0; i < shape.PropertyCount; i++)
         {
-            if (TryGetJsValue(key, out var jv))
-                yield return new KeyValuePair<string, object?>(key, jv.ToObject());
+            yield return new KeyValuePair<string, object?>(
+                shape.GetPropertyNameAtSlot(i),
+                properties[i].ToObject());
         }
     }
 

@@ -6,6 +6,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- perf/runtime: store ordered property names directly on immutable `JsShape` instances so repeated internal enumeration, `GetOwnProperties`, deletion, and public key/value snapshots avoid rebuilding transient property-name arrays. (#1534)
 - perf/runtime: lazily allocate `JsShape` transition dictionaries so leaf shapes and uncached transitions avoid an empty dictionary allocation while cached property sequences still reuse live child shapes. (#1531)
 
 ## v0.11.31 - 2026-07-19
