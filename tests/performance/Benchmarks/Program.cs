@@ -30,6 +30,11 @@ else
         var summary = BenchmarkRunner.Run<ArrayInternalOperationsBenchmarks>(args: programArgs.Skip(1).ToArray());
         SetExitCodeFromSummaries([summary]);
     }
+    else if (programArgs.Length > 0 && programArgs[0] == "--shape-storage")
+    {
+        var summary = BenchmarkRunner.Run<JsShapeStorageBenchmarks>(args: programArgs.Skip(1).ToArray());
+        SetExitCodeFromSummaries([summary]);
+    }
     else
     {
         BenchmarkSwitcher switcher;
@@ -88,6 +93,7 @@ Console.WriteLine("Results are saved in BenchmarkDotNet.Artifacts/");
 Console.WriteLine("\nFor more options:");
 Console.WriteLine("  dotnet run -c Release          # Run cross-runtime comparison");
 Console.WriteLine("  dotnet run -c Release --dispatch # Run late-bound dispatch microbenchmarks");
+Console.WriteLine("  dotnet run -c Release -- --shape-storage # Run JsShape storage microbenchmarks");
 Console.WriteLine("  dotnet run -c Release --object-operations # Run ordinary-object operation microbenchmarks");
 Console.WriteLine("  dotnet run -c Release --array-operations # Run dense-array operation microbenchmarks");
 Console.WriteLine("  dotnet run -c Release --phased # Run jroc phased + Jint prepared + Okojo execute comparison");

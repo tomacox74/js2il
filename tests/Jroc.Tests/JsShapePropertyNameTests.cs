@@ -23,7 +23,7 @@ public sealed class JsShapePropertyNameTests
             _sink = total;
         });
 
-        Assert.InRange(allocated, 0, 4 * 1024);
+        Assert.InRange(allocated, 0, 1024);
     }
 
     [Fact]
