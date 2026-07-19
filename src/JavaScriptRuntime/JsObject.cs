@@ -430,10 +430,12 @@ public class JsObject : DynamicObject, IDictionary<string, object?>
     /// <summary>Returns own property key-value pairs (values boxed as object).</summary>
     public IEnumerable<KeyValuePair<string, object?>> GetOwnProperties()
     {
-        for (int i = 0; i < _shape.PropertyNames.Count(); i++)
+        var propertyNames = _shape.PropertyNames;
+        var properties = _properties;
+        var slot = 0;
+        foreach (var key in propertyNames)
         {
-            var key = _shape.PropertyNames.ElementAt(i);
-            var value = _properties[i];
+            var value = properties[slot++];
             yield return new KeyValuePair<string, object?>(key, value.ToObject());
         }
     }
@@ -451,7 +453,18 @@ public class JsObject : DynamicObject, IDictionary<string, object?>
 
     public ICollection<string> Keys => _shape.PropertyNames.ToList();
 
-    public ICollection<object?> Values => _properties!.Select(v => v.ToObject()).ToList();
+    public ICollection<object?> Values
+    {
+        get
+        {
+            var values = new List<object?>(_properties.Length);
+            foreach (var value in _properties)
+            {
+                values.Add(value.ToObject());
+            }
+            return values;
+        }
+    }
 
     public int Count => _properties!.Length;
 
@@ -479,7 +492,16 @@ public class JsObject : DynamicObject, IDictionary<string, object?>
             return false;
 
         _shape = _shape.TransitionAway(key);
-        _properties = _properties.Where((v, i) => i != slot).ToArray();
+        var newProperties = new JsValue[_properties.Length - 1];
+        if (slot > 0)
+        {
+            System.Array.Copy(_properties, 0, newProperties, 0, slot);
+        }
+        if (slot < newProperties.Length)
+        {
+            System.Array.Copy(_properties, slot + 1, newProperties, slot, newProperties.Length - slot);
+        }
+        _properties = newProperties;
 
         return true;
     }
@@ -538,10 +560,14 @@ public class JsObject : DynamicObject, IDictionary<string, object?>
 
     public IEnumerator<KeyValuePair<string, object?>> GetEnumerator()
     {
-        foreach (var key in _shape.PropertyNames)
+        var propertyNames = _shape.PropertyNames;
+        var properties = _properties;
+        var slot = 0;
+        foreach (var key in propertyNames)
         {
-            if (TryGetJsValue(key, out var jv))
-                yield return new KeyValuePair<string, object?>(key, jv.ToObject());
+            yield return new KeyValuePair<string, object?>(
+                key,
+                properties[slot++].ToObject());
         }
     }
 
