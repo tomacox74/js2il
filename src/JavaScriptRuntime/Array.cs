@@ -183,10 +183,7 @@ namespace JavaScriptRuntime
                 return;
             }
 
-            if (minCount > _items.Capacity)
-            {
-                _items.Capacity = minCount;
-            }
+            _items.EnsureCapacity(minCount);
 
             while (_items.Count < minCount)
             {

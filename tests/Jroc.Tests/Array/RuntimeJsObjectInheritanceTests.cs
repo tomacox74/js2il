@@ -216,4 +216,64 @@ public sealed class RuntimeJsObjectInheritanceTests
             GlobalThis.ServiceProvider = null;
         }
     }
+
+    [Fact]
+    public void SequentialIndexWrites_DoNotAllocateBackingArrayPerElement()
+    {
+        JavaScriptRuntime.Array.ResetPrototypeForTests();
+
+        try
+        {
+            var value = new object();
+            var warmup = new JavaScriptRuntime.Array();
+            Assert.True(warmup.TrySetIndexValue(0, value, throwOnError: true));
+
+            const int elementCount = 1024;
+            var array = new JavaScriptRuntime.Array();
+            var before = GC.GetAllocatedBytesForCurrentThread();
+
+            for (var index = 0; index < elementCount; index++)
+            {
+                if (!array.TrySetIndexValue(index, value, throwOnError: true))
+                {
+                    throw new InvalidOperationException($"Failed to set index {index}.");
+                }
+            }
+
+            var allocated = GC.GetAllocatedBytesForCurrentThread() - before;
+
+            Assert.Equal((double)elementCount, array.length);
+            Assert.Same(value, array[0]);
+            Assert.Same(value, array[elementCount - 1]);
+            Assert.InRange(allocated, 0, 512 * 1024);
+        }
+        finally
+        {
+            JavaScriptRuntime.Array.ResetPrototypeForTests();
+        }
+    }
+
+    [Fact]
+    public void DenseGrowth_PreservesHolesSparseJumpsAndLengthTruncation()
+    {
+        var array = JavaScriptRuntime.Array.Construct(new object[] { 8d });
+        var first = new object();
+        var last = new object();
+
+        Assert.True(array.TrySetIndexValue(0, first, throwOnError: true));
+        Assert.True(array.TrySetIndexValue(12, last, throwOnError: true));
+
+        Assert.Equal(13d, array.length);
+        Assert.Same(first, array[0]);
+        Assert.False(JavaScriptRuntime.Object.hasOwn(array, "1"));
+        Assert.False(JavaScriptRuntime.Object.hasOwn(array, "8"));
+        Assert.Same(last, array[12]);
+
+        array.length = 2;
+
+        Assert.Equal(2d, array.length);
+        Assert.Same(first, array[0]);
+        Assert.False(JavaScriptRuntime.Object.hasOwn(array, "1"));
+        Assert.False(JavaScriptRuntime.Object.hasOwn(array, "12"));
+    }
 }
