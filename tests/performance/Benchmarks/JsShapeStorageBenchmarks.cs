@@ -1,3 +1,4 @@
+#if SOURCE_JROC_PROJECTS
 using System.Collections.Frozen;
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Columns;
@@ -153,3 +154,4 @@ public class JsShapeStorageBenchmarks
         return slots;
     }
 }
+#endif

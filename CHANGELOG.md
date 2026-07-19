@@ -6,6 +6,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- perf/runtime: replace per-shape `FrozenDictionary` slot storage with canonical ordered property-name arrays, using allocation-free linear lookup through four properties and promoting to an ordinal dictionary above that hosted-measured crossover. Ordered-name enumeration no longer allocates or reconstructs slot order, uncached leaves do not retain intermediate shapes, and deletion compacts/demotes the representation. Hosted shape microbenchmarks reduced construction allocation from 536 B to 112 B at one property, 2,264 B to 376 B at four, and 27,304 B to 8,912 B at sixteen; enumeration fell from 32-152 B to 0 B. (#1533, #1534)
 - perf/runtime: capture ordered shape names once per `GetOwnProperties` and dictionary enumeration, avoiding repeated per-property reconstruction while preserving mutation-safe snapshots. Public value snapshots and property deletion also avoid LINQ iterator allocations. (#1534)
 - perf/runtime: lazily allocate `JsShape` transition dictionaries so leaf shapes and uncached transitions avoid an empty dictionary allocation while cached property sequences still reuse live child shapes. (#1531)
 
