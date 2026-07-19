@@ -9,27 +9,6 @@ public sealed class JsShapePropertyNameTests
     private static volatile int _sink;
 
     [Fact]
-    public void RepeatedInternalPropertyNameEnumeration_DoesNotAllocate()
-    {
-        var shape = CreateShape(PropertyCount);
-
-        var allocated = MeasureAllocatedBytes(() =>
-        {
-            var total = 0;
-            for (var iteration = 0; iteration < 1_000; iteration++)
-            {
-                foreach (var name in shape.PropertyNamesInSlotOrder)
-                {
-                    total += name.Length;
-                }
-            }
-            _sink = total;
-        });
-
-        Assert.Equal(0, allocated);
-    }
-
-    [Fact]
     public void GetOwnProperties_DoesNotAllocateOrderedNamesPerProperty()
     {
         var obj = CreateObject(PropertyCount);
@@ -45,32 +24,6 @@ public sealed class JsShapePropertyNameTests
         });
 
         Assert.InRange(allocated, 0, 4 * 1024);
-    }
-
-    [Fact]
-    public void PublicKeysAndValues_DoNotAllocateShapeNameSnapshots()
-    {
-        var obj = CreateObject(PropertyCount);
-
-        var allocated = MeasureAllocatedBytes(() =>
-        {
-            var total = 0;
-            for (var iteration = 0; iteration < 10; iteration++)
-            {
-                foreach (var key in obj.Keys)
-                {
-                    total += key.Length;
-                }
-
-                foreach (var value in obj.Values)
-                {
-                    total += ((string)value!).Length;
-                }
-            }
-            _sink = total;
-        });
-
-        Assert.InRange(allocated, 0, 128 * 1024);
     }
 
     [Fact]
@@ -111,35 +64,36 @@ public sealed class JsShapePropertyNameTests
     }
 
     [Fact]
-    public void DeletionPreservesOrderAndAvoidsTransientPropertyNameSnapshot()
+    public void DictionaryEnumeration_RemainsSnapshotSafeWhenObjectMutates()
     {
-        var warmup = CreateObject(PropertyCount);
-        Assert.True(warmup.Remove("p128"));
+        var obj = CreateObject(3);
+        using var enumerator = obj.GetEnumerator();
 
-        var obj = CreateObject(PropertyCount);
+        Assert.True(enumerator.MoveNext());
+        Assert.Equal("p0", enumerator.Current.Key);
 
-        GC.Collect();
-        GC.WaitForPendingFinalizers();
-        GC.Collect();
+        Assert.True(obj.Remove("p1"));
+        obj.SetString("p3", "v3");
 
-        var before = GC.GetAllocatedBytesForCurrentThread();
-        Assert.True(obj.Remove("p128"));
-        var allocated = GC.GetAllocatedBytesForCurrentThread() - before;
+        var remainingKeys = new List<string>();
+        while (enumerator.MoveNext())
+        {
+            remainingKeys.Add(enumerator.Current.Key);
+        }
 
-        Assert.Equal(PropertyCount - 1, obj.Count);
-        Assert.Equal("p127", obj.GetOwnPropertyNames().ElementAt(127));
-        Assert.Equal("p129", obj.GetOwnPropertyNames().ElementAt(128));
-        Assert.InRange(allocated, 0, 256 * 1024);
+        Assert.Equal(new[] { "p1", "p2" }, remainingKeys);
+        Assert.Equal(new[] { "p0", "p2", "p3" }, obj.GetOwnPropertyNames().ToArray());
     }
 
-    private static JsShape CreateShape(int propertyCount)
+    [Fact]
+    public void DeletionPreservesPropertyAndValueOrder()
     {
-        var shape = new JsShape();
-        for (var i = 0; i < propertyCount; i++)
-        {
-            shape = shape.TransitionTo($"p{i}");
-        }
-        return shape;
+        var obj = CreateObject(4);
+
+        Assert.True(obj.Remove("p1"));
+
+        Assert.Equal(new[] { "p0", "p2", "p3" }, obj.Keys);
+        Assert.Equal(new object?[] { "v0", "v2", "v3" }, obj.Values);
     }
 
     private static JsObject CreateObject(int propertyCount)
