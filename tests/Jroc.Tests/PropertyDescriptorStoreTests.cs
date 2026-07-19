@@ -6,6 +6,16 @@ namespace Jroc.Tests;
 public class PropertyDescriptorStoreTests
 {
     [Fact]
+    public void Descriptor_IsValueType()
+        => Assert.True(typeof(JsPropertyDescriptor).IsValueType);
+
+    [Fact]
+    public void Descriptor_UsesCompactFieldLayout()
+        => Assert.Equal(
+            IntPtr.Size == 8 ? 32 : 20,
+            System.Runtime.CompilerServices.Unsafe.SizeOf<JsPropertyDescriptor>());
+
+    [Fact]
     public void RuntimeStore_FallsBackToIntrinsicDescriptor_AndKeepsOverrideIsolated()
     {
         var target = new JsObject();
@@ -171,7 +181,7 @@ public class PropertyDescriptorStoreTests
     }
 
     [Fact]
-    public void RuntimeStore_WritesCloneIncomingDescriptors()
+    public void RuntimeStore_WritesCopyIncomingDescriptors()
     {
         var target = new JsObject();
         using (PropertyDescriptorStore.BeginIntrinsicInitialization())
@@ -184,7 +194,7 @@ public class PropertyDescriptorStoreTests
         {
             GlobalThis.ServiceProvider = runtime;
 
-            // Writes clone the incoming descriptor, so later caller-side mutation
+            // Writes copy the incoming descriptor, so later caller-side mutation
             // of the written descriptor must not leak into the store.
             var written = DataDescriptor("updated");
             PropertyDescriptorStore.DefineOrUpdate(target, "value", written);
@@ -192,6 +202,43 @@ public class PropertyDescriptorStoreTests
 
             Assert.True(PropertyDescriptorStore.TryGetOwn(target, "value", out var reread));
             Assert.Equal("updated", reread.Value);
+        }
+        finally
+        {
+            GlobalThis.ServiceProvider = null;
+        }
+    }
+
+    [Fact]
+    public void RuntimeStore_ReadsReturnIndependentDescriptorValues()
+    {
+        var target = new JsObject();
+        Func<object[], object?[]?, object?> getter = static (_, _) => "value";
+        Action<object?> setter = static _ => { };
+        var runtime = RuntimeServices.BuildServiceProvider();
+
+        try
+        {
+            GlobalThis.ServiceProvider = runtime;
+            PropertyDescriptorStore.DefineOrUpdate(target, "value", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Accessor,
+                Get = getter,
+                Set = setter,
+                Enumerable = true,
+                Configurable = true
+            });
+
+            Assert.True(PropertyDescriptorStore.TryGetOwn(target, "value", out var firstRead));
+            Assert.Same(getter, firstRead.Get);
+            Assert.Same(setter, firstRead.Set);
+            firstRead.Get = null;
+            firstRead.Enumerable = false;
+
+            Assert.True(PropertyDescriptorStore.TryGetOwn(target, "value", out var secondRead));
+            Assert.Same(getter, secondRead.Get);
+            Assert.Same(setter, secondRead.Set);
+            Assert.True(secondRead.Enumerable);
         }
         finally
         {

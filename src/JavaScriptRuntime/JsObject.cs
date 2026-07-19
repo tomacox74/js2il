@@ -182,7 +182,7 @@ public class JsObject : DynamicObject, IDictionary<string, object?>
 
         if (!TryGetOwnPropertyValue(key, out var value))
         {
-            descriptor = null!;
+            descriptor = default;
             return PropertyDescriptorLookup.None;
         }
 
@@ -225,8 +225,6 @@ public class JsObject : DynamicObject, IDictionary<string, object?>
     /// </summary>
     internal virtual bool DefineOwnProperty(string key, JsPropertyDescriptor descriptor)
     {
-        ArgumentNullException.ThrowIfNull(descriptor);
-
         if (!PropertyDescriptorStore.HasIntrinsicProperties(this))
         {
             if (!SetOwnPropertyValue(

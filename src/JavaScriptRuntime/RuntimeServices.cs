@@ -476,7 +476,7 @@ public class RuntimeServices
         string propName,
         out JsPropertyDescriptor descriptor)
     {
-        if (PropertyDescriptorStore.TryGetOwn(classConstructorValue, propName, out descriptor!))
+        if (PropertyDescriptorStore.TryGetOwn(classConstructorValue, propName, out descriptor))
         {
             return true;
         }
@@ -539,10 +539,10 @@ public class RuntimeServices
                 Value = classConstructorValue
             });
 
-            return PropertyDescriptorStore.TryGetOwn(classConstructorValue, propName, out descriptor!);
+            return PropertyDescriptorStore.TryGetOwn(classConstructorValue, propName, out descriptor);
         }
 
-        descriptor = null!;
+        descriptor = default;
         return false;
     }
 
@@ -562,7 +562,7 @@ public class RuntimeServices
         string propName,
         out JsPropertyDescriptor descriptor)
     {
-        descriptor = null!;
+        descriptor = default;
         if (PropertyDescriptorStore.IsDeleted(target, propName)
             || !TryResolveLazyClassMethodTarget(target, out var ownerType, out var ownerValue, out var isStatic)
             || !_lazyClassMetadata.TryGetValue(ownerType, out var slot))
@@ -596,7 +596,7 @@ public class RuntimeServices
             metadata.IsAsync,
             metadata.Scopes);
 
-        return PropertyDescriptorStore.TryGetOwn(target, propName, out descriptor!);
+        return PropertyDescriptorStore.TryGetOwn(target, propName, out descriptor);
     }
 
     internal static IEnumerable<string> GetLazyClassMethodOwnKeys(object target)

@@ -3713,7 +3713,7 @@ namespace JavaScriptRuntime
                             }
                         }
 
-                        descriptor = null!;
+                        descriptor = default;
                         return false;
                     }
 
@@ -3749,7 +3749,7 @@ namespace JavaScriptRuntime
 
             if (PropertyDescriptorStore.IsDeleted(target, propName))
             {
-                descriptor = null!;
+                descriptor = default;
                 return false;
             }
 
@@ -3761,14 +3761,14 @@ namespace JavaScriptRuntime
 
             if (GlobalThis.IsArrayConstructorValue(target)
                 && string.Equals(propName, "prototype", StringComparison.Ordinal)
-                && PropertyDescriptorStore.TryGetOwn(target, propName, out descriptor!))
+                && PropertyDescriptorStore.TryGetOwn(target, propName, out descriptor))
             {
                 descriptor = PropertyDescriptorStore.CloneDescriptor(descriptor);
                 descriptor.Value = JavaScriptRuntime.Array.Prototype;
                 return true;
             }
 
-            if (PropertyDescriptorStore.TryGetOwn(target, propName, out descriptor!))
+            if (PropertyDescriptorStore.TryGetOwn(target, propName, out descriptor))
             {
                 return true;
             }
@@ -3788,23 +3788,23 @@ namespace JavaScriptRuntime
                 return true;
             }
 
-            if (target is Delegate del && Function.TryEnsureOwnMetadataPropertyDescriptor(del, propName, out descriptor!))
+            if (target is Delegate del && Function.TryEnsureOwnMetadataPropertyDescriptor(del, propName, out descriptor))
             {
                 return true;
             }
 
             if (target is ClassConstructorValue classConstructorValue
-                && RuntimeServices.TryEnsureClassConstructorMetadataPropertyDescriptor(classConstructorValue, propName, out descriptor!))
+                && RuntimeServices.TryEnsureClassConstructorMetadataPropertyDescriptor(classConstructorValue, propName, out descriptor))
             {
                 return true;
             }
 
-            if (RuntimeServices.TryEnsureLazyClassMethodDataProperty(target, propName, out descriptor!))
+            if (RuntimeServices.TryEnsureLazyClassMethodDataProperty(target, propName, out descriptor))
             {
                 return true;
             }
 
-            if (TryEnsureStaticClassMethodDataProperty(target, propName, out descriptor!))
+            if (TryEnsureStaticClassMethodDataProperty(target, propName, out descriptor))
             {
                 return true;
             }
@@ -3959,7 +3959,7 @@ namespace JavaScriptRuntime
             }
 
             // No implicit descriptor support for arrays/typed arrays/strings here.
-            descriptor = null!;
+            descriptor = default;
             return false;
         }
 
@@ -4020,13 +4020,13 @@ namespace JavaScriptRuntime
         {
             if (PropertyDescriptorStore.IsDeleted(target, propName))
             {
-                descriptor = null!;
+                descriptor = default;
                 return false;
             }
 
             if (!TryGetStaticClassMethodOverloads(target, propName, out var staticClassType, out var methods))
             {
-                descriptor = null!;
+                descriptor = default;
                 return false;
             }
 
