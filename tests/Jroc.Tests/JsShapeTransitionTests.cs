@@ -9,7 +9,6 @@ public sealed class JsShapeTransitionTests
     {
         { 0, false },
         { 1, false },
-        { 2, false },
         { JsShape.DictionaryPromotionThreshold, false },
         { JsShape.DictionaryPromotionThreshold + 1, true },
         { 16, true }
