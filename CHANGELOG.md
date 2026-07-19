@@ -6,7 +6,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-_Nothing yet._
+- perf/runtime: lazily allocate `JsShape` transition dictionaries so leaf shapes and uncached transitions avoid an empty dictionary allocation while cached property sequences still reuse live child shapes. (#1531)
 
 ## v0.11.31 - 2026-07-19
 
