@@ -22,7 +22,7 @@ internal sealed class JsShape
 
     private FrozenDictionary<string, int> _slots;
 
-    private Dictionary<string, WeakReference<JsShape>>? _transitions = new Dictionary<string, WeakReference<JsShape>>();
+    private Dictionary<string, WeakReference<JsShape>>? _transitions;
 
     public JsShape()
     {
@@ -43,6 +43,10 @@ internal sealed class JsShape
             return names;
         }
     }
+
+    internal bool HasTransitionCache => _transitions != null;
+
+    internal int TransitionCacheCount => _transitions?.Count ?? 0;
 
     private JsShape(string newPropertyName, JsShape parent, PropertyNameStorage propertyNameStorage)
     {
@@ -73,7 +77,8 @@ internal sealed class JsShape
             return existingShape;
         }
         var newShape = new JsShape(newPropertyName, this, PropertyNameStorage.Interned);
-        _transitions![newPropertyName] = new WeakReference<JsShape>(newShape);
+        var transitions = _transitions ??= new Dictionary<string, WeakReference<JsShape>>();
+        transitions[newPropertyName] = new WeakReference<JsShape>(newShape);
         return newShape;
     }
 
