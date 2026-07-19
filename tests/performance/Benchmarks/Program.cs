@@ -44,13 +44,13 @@ else
         else if (programArgs.Length > 0 && programArgs[0] == "--all")
         {
             // Run all benchmarks
-            switcher = BenchmarkSwitcher.FromTypes([typeof(JavaScriptRuntimeBenchmarks), typeof(JrocPhasedBenchmarks), typeof(KrackenBenchmarks)]);
+            switcher = BenchmarkSwitcher.FromTypes([typeof(JavaScriptRuntimeBenchmarks), typeof(JrocPhasedBenchmarks), typeof(KrackenExecutionBenchmarks)]);
             benchmarkArgs = programArgs.Skip(1).ToArray();
         }
         else if (programArgs.Length > 0 && programArgs[0] == "--kracken")
         {
             // Run the Kraken benchmarks
-            switcher = BenchmarkSwitcher.FromTypes([typeof(KrackenBenchmarks)]);
+            switcher = BenchmarkSwitcher.FromTypes([typeof(KrackenExecutionBenchmarks)]);
             benchmarkArgs = programArgs.Skip(1).ToArray();
         }
         else
@@ -63,12 +63,12 @@ else
         if (!string.IsNullOrWhiteSpace(scenarioFilter))
         {
             JrocPhasedBenchmarks.ScenarioFilter = scenarioFilter;
-            KrackenBenchmarks.ScenarioFilter = scenarioFilter;
+            KrackenExecutionBenchmarks.ScenarioFilter = scenarioFilter;
         }
         else
         {
             JrocPhasedBenchmarks.ScenarioFilter = null;
-            KrackenBenchmarks.ScenarioFilter = null;
+            KrackenExecutionBenchmarks.ScenarioFilter = null;
         }
 
         var summaries = switcher.Run(benchmarkArgs);

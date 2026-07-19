@@ -16,7 +16,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## v0.11.29 - 2026-07-17
 
-- ci/benchmarks: run the BenchmarkDotNet suite on three parallel hosted runners, independently executing `KrackenBenchmarks`, `JrocPhasedBenchmarks`, and `JavaScriptRuntimeBenchmarks`.
+- ci/benchmarks: run the BenchmarkDotNet suite on three parallel hosted runners, independently executing `KrackenExecutionBenchmarks`, `JrocPhasedBenchmarks`, and `JavaScriptRuntimeBenchmarks`.
 
 ## v0.11.28 - 2026-07-17
 
