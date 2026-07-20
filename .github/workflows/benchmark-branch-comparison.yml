@@ -20,6 +20,7 @@ on:
         options:
           - phased
           - kracken
+          - shape-storage
 
 env:
   DOTNET_NOLOGO: true
@@ -60,6 +61,7 @@ jobs:
           dotnet-version: "10.0.x"
 
       - name: Run master benchmark
+        if: inputs.benchmark_suite != 'shape-storage'
         shell: bash
         env:
           SCENARIO_NAME: ${{ inputs.scenario_name }}
@@ -83,6 +85,9 @@ jobs:
               ;;
             kracken)
               benchmark_args=(--kracken --filter "*RunJrocTest*" --scenario "$SCENARIO_NAME")
+              ;;
+            shape-storage)
+              benchmark_args=(--shape-storage --filter "$SCENARIO_NAME")
               ;;
             *)
               echo "Unsupported benchmark suite: $BENCHMARK_SUITE" >&2
@@ -125,6 +130,9 @@ jobs:
             kracken)
               benchmark_args=(--kracken --filter "*RunJrocTest*" --scenario "$SCENARIO_NAME")
               ;;
+            shape-storage)
+              benchmark_args=(--shape-storage --filter "$SCENARIO_NAME")
+              ;;
             *)
               echo "Unsupported benchmark suite: $BENCHMARK_SUITE" >&2
               exit 2
@@ -156,7 +164,11 @@ jobs:
             echo
             echo "- Benchmark suite: \`$BENCHMARK_SUITE\`"
             echo "- Scenario: \`$SCENARIO_NAME\`"
-            echo "- Baseline: \`master\`"
+            if [ "$BENCHMARK_SUITE" = "shape-storage" ]; then
+              echo "- Baseline: internal FrozenDictionary reference implementation"
+            else
+              echo "- Baseline: \`master\`"
+            fi
             echo "- Candidate: \`$PRIVATE_BRANCH\`"
             echo
             echo "Raw BenchmarkDotNet reports and console output are in the \`master\` and \`private\` directories."
