@@ -19,3 +19,7 @@ for (let i = 0; i < sized.length; i++) {
     sized[i] = i * 2;
 }
 console.log(sized.join(","), Object.keys(sized).length);
+
+const inserted = [];
+inserted.splice(0, 0, 9);
+console.log(inserted.join(","), inserted.length);

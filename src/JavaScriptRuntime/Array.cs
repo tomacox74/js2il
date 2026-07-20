@@ -297,6 +297,11 @@ namespace JavaScriptRuntime
 
         private void RemoveDenseRange(int index, int count)
         {
+            if (count == 0)
+            {
+                return;
+            }
+
             if (_numberItems is not null)
             {
                 _numberItems.RemoveRange(index, count);
