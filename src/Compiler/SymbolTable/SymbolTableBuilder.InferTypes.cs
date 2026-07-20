@@ -31,6 +31,22 @@ public partial class SymbolTableBuilder
     {
         foreach (var functionScope in EnumerateScopes(root).Where(s => s.Kind == ScopeKind.Function))
         {
+            if (TryGetSimpleParameterNames(functionScope.AstNode, out var parameterNames))
+            {
+                foreach (var (index, inferredType) in functionScope.StableParameterClrTypes)
+                {
+                    if (index >= 0
+                        && index < parameterNames.Count
+                        && functionScope.Bindings.TryGetValue(parameterNames[index], out var binding)
+                        && binding.IsStableType
+                        && binding.ClrType == inferredType)
+                    {
+                        binding.ClrType = null;
+                        binding.IsStableType = false;
+                    }
+                }
+            }
+
             functionScope.StableParameterClrTypes.Clear();
         }
 

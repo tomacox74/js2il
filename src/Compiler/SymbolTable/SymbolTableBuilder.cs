@@ -3,6 +3,7 @@ using System.Reflection;
 using System.Linq;
 using Jroc.Services;
 using Jroc.Utilities;
+using Microsoft.Extensions.Logging;
 
 namespace Jroc.SymbolTables
 {
@@ -20,15 +21,45 @@ namespace Jroc.SymbolTables
         private readonly HashSet<Node> _visitedClasses = new();
         private readonly JavaScriptParser _parser = new();
         private readonly JavaScriptRuntime.IRuntimeIntrinsicCatalog _runtimeIntrinsicCatalog;
+        private readonly ILogger<SymbolTableBuilder> _diagnosticLogger;
+        private readonly bool _verbose;
 
         public SymbolTableBuilder()
-            : this(new JavaScriptRuntime.RuntimeIntrinsicCatalog())
+            : this(
+                new JavaScriptRuntime.RuntimeIntrinsicCatalog(),
+                Microsoft.Extensions.Logging.Abstractions.NullLogger<SymbolTableBuilder>.Instance,
+                verbose: false)
         {
         }
 
         public SymbolTableBuilder(JavaScriptRuntime.IRuntimeIntrinsicCatalog runtimeIntrinsicCatalog)
+            : this(
+                runtimeIntrinsicCatalog,
+                Microsoft.Extensions.Logging.Abstractions.NullLogger<SymbolTableBuilder>.Instance,
+                verbose: false)
+        {
+        }
+
+        public SymbolTableBuilder(
+            JavaScriptRuntime.IRuntimeIntrinsicCatalog runtimeIntrinsicCatalog,
+            ILogger<SymbolTableBuilder>? diagnosticLogger,
+            CompilerOptions options)
+            : this(
+                runtimeIntrinsicCatalog,
+                diagnosticLogger,
+                options?.Verbose ?? false)
+        {
+        }
+
+        private SymbolTableBuilder(
+            JavaScriptRuntime.IRuntimeIntrinsicCatalog runtimeIntrinsicCatalog,
+            ILogger<SymbolTableBuilder>? diagnosticLogger,
+            bool verbose)
         {
             _runtimeIntrinsicCatalog = runtimeIntrinsicCatalog ?? throw new ArgumentNullException(nameof(runtimeIntrinsicCatalog));
+            _diagnosticLogger = diagnosticLogger
+                ?? Microsoft.Extensions.Logging.Abstractions.NullLogger<SymbolTableBuilder>.Instance;
+            _verbose = verbose;
         }
 
         private static string BuildClassRegistryNamespace(Scope globalScope, Scope currentScope, Node classNode, bool forceUniqueSuffix)
@@ -224,37 +255,7 @@ namespace Jroc.SymbolTables
             MarkCapturedVariables(globalScope);
             AnalyzeRuntimeTemporalDeadZoneChecks(globalScope);
 
-            // Inference pass ordering matters:
-            // - We infer globals/locals first to seed obvious primitives.
-            // - Then infer stable class instance field CLR types (e.g., this.wordArray = new Int32Array(n)).
-            // - Then re-run variable inference so locals can use inferred field types in expressions
-            //   like: let wordValue = this.wordArray[wordOffset];
-            InferVariableClrTypes(globalScope);
-            InferClassInstanceFieldClrTypes(globalScope);
-            InferVariableClrTypes(globalScope);
-            InferCallableParameterClrTypes(globalScope);
-            InferVariableClrTypes(globalScope);
-            InferCallableReturnClrTypes(globalScope);
-
-            // Finally, re-run variable inference so locals can benefit from stable callable return types
-            // (e.g., factor = this.bitArray.searchBitFalse(...) stays numeric).
-            InferVariableClrTypes(globalScope);
-
-            // One additional callable+variable refinement pass allows return element-type metadata
-            // (e.g., stable array<string> returns) to propagate after late variable discoveries.
-            InferCallableReturnClrTypes(globalScope);
-            InferVariableClrTypes(globalScope);
-
-            // Re-run parameter inference after return-aware variable inference so direct callsites
-            // can use only proven-stable argument bindings, not initializer guesses.
-            InferCallableParameterClrTypes(globalScope);
-            InferVariableClrTypes(globalScope);
-            InferDefinitelyInitializedNumericVarLocals(globalScope);
-            InferCallableReturnClrTypes(globalScope);
-
-            // Object literal shape eligibility analysis (issue #1429). Runs last so member
-            // type inference can rely on final variable/parameter/return type conclusions.
-            AnalyzeObjectLiteralShapes(globalScope);
+            InferTypesToFixedPoint(globalScope);
 
             module.SymbolTable = new SymbolTable(globalScope);
         }

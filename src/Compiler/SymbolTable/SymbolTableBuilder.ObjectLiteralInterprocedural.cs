@@ -45,6 +45,7 @@ public partial class SymbolTableBuilder
         // Eligible parameter slots keyed by (callee scope, parameter index) and by parameter binding.
         private readonly Dictionary<(Scope, int), Slot> _slots = new();
         private readonly Dictionary<BindingInfo, Slot> _slotByBinding = new(ReferenceEqualityComparer.Instance);
+        private readonly Dictionary<(Scope, int), DestructuredSlot> _destructuredSlots = new();
 
         // Every statically-resolved call/new to a closed-world callable.
         private readonly List<CallSite> _callSites = new();
@@ -100,6 +101,22 @@ public partial class SymbolTableBuilder
             public string? SignatureKey { get; set; }
             public bool Generic { get; set; }
         }
+
+        private sealed class DestructuredSlot
+        {
+            public DestructuredSlot(Scope callee, int index, IReadOnlyList<DestructuredMember> members)
+            {
+                Callee = callee;
+                Index = index;
+                Members = members;
+            }
+
+            public Scope Callee { get; }
+            public int Index { get; }
+            public IReadOnlyList<DestructuredMember> Members { get; }
+        }
+
+        private readonly record struct DestructuredMember(string PropertyName, BindingInfo Binding);
 
         private readonly record struct MemberWrite(string Member, Type? WrittenType);
 
@@ -267,35 +284,88 @@ public partial class SymbolTableBuilder
         {
             foreach (var scope in _closedWorldScopes)
             {
-                if (!TryGetSimpleParameterNames(scope.AstNode, out var parameterNames) || parameterNames.Count == 0)
+                var parameters = GetCallableParameters(scope.AstNode);
+                for (var i = 0; i < parameters.Count; i++)
                 {
-                    continue;
-                }
-
-                for (var i = 0; i < parameterNames.Count; i++)
-                {
-                    if (!scope.Bindings.TryGetValue(parameterNames[i], out var binding))
+                    if (parameters[i] is Identifier identifier)
                     {
+                        TryAddSimpleSlot(scope, i, identifier.Name);
                         continue;
                     }
 
-                    if (binding.HasWrite || binding.IsCaptured)
+                    if (parameters[i] is ObjectPattern objectPattern
+                        && TryCreateDestructuredSlot(scope, i, objectPattern, out var destructuredSlot))
                     {
-                        continue;
+                        _destructuredSlots[(scope, i)] = destructuredSlot;
                     }
-
-                    // A parameter that already carries a stable primitive type receives primitive
-                    // arguments, never a literal shape.
-                    if (binding.IsStableType && binding.ClrType != null)
-                    {
-                        continue;
-                    }
-
-                    var slot = new Slot(scope, i, binding);
-                    _slots[(scope, i)] = slot;
-                    _slotByBinding[binding] = slot;
                 }
             }
+        }
+
+        private void TryAddSimpleSlot(Scope scope, int index, string parameterName)
+        {
+            if (!scope.Bindings.TryGetValue(parameterName, out var binding)
+                || binding.HasWrite
+                || binding.IsCaptured)
+            {
+                return;
+            }
+
+            // A parameter that already carries a stable primitive type receives primitive
+            // arguments, never a literal shape.
+            if (binding.IsStableType && binding.ClrType != null)
+            {
+                return;
+            }
+
+            var slot = new Slot(scope, index, binding);
+            _slots[(scope, index)] = slot;
+            _slotByBinding[binding] = slot;
+        }
+
+        private static NodeList<Node> GetCallableParameters(Node callableNode)
+            => callableNode switch
+            {
+                FunctionDeclaration functionDeclaration => functionDeclaration.Params,
+                FunctionExpression functionExpression => functionExpression.Params,
+                ArrowFunctionExpression arrowFunction => arrowFunction.Params,
+                _ => default
+            };
+
+        private static bool TryCreateDestructuredSlot(
+            Scope scope,
+            int index,
+            ObjectPattern pattern,
+            out DestructuredSlot slot)
+        {
+            slot = null!;
+            var members = new List<DestructuredMember>(pattern.Properties.Count);
+            foreach (var propertyNode in pattern.Properties)
+            {
+                if (propertyNode is not Property
+                    {
+                        Kind: PropertyKind.Init,
+                        Computed: false,
+                        Key: Identifier key,
+                        Value: Identifier target
+                    }
+                    || !scope.Bindings.TryGetValue(target.Name, out var binding)
+                    || binding.HasWrite
+                    || binding.IsCaptured)
+                {
+                    return false;
+                }
+
+                members.Add(new DestructuredMember(key.Name, binding));
+            }
+
+            if (members.Count == 0)
+            {
+                return false;
+            }
+
+            slot = new DestructuredSlot(scope, index, members);
+            return true;
         }
 
         private void CollectCallSites()
@@ -329,8 +399,7 @@ public partial class SymbolTableBuilder
             }
 
             var callScope = _scopeMap.TryGetValue(callNode, out var s) ? s : _root;
-            TryGetSimpleParameterNames(calleeScope.AstNode, out var parameterNames);
-            var callSite = new CallSite(calleeScope, callScope, arguments, parameterNames.Count);
+            var callSite = new CallSite(calleeScope, callScope, arguments, GetCallableParameters(calleeScope.AstNode).Count);
             _callSites.Add(callSite);
 
             if (!_callSitesByCallee.TryGetValue(calleeScope, out var list))
@@ -397,7 +466,8 @@ public partial class SymbolTableBuilder
                 return false;
             }
 
-            if (!_slots.ContainsKey((calleeScope, index)))
+            if (!_slots.ContainsKey((calleeScope, index))
+                && !_destructuredSlots.ContainsKey((calleeScope, index)))
             {
                 return false;
             }
@@ -435,7 +505,7 @@ public partial class SymbolTableBuilder
 
         public void Analyze()
         {
-            if (_slots.Count == 0)
+            if (_slots.Count == 0 && _destructuredSlots.Count == 0)
             {
                 return;
             }
@@ -457,6 +527,8 @@ public partial class SymbolTableBuilder
                 ComputeEarlyBinding();
             }
             while (ValidateMemberObligations());
+
+            InferDestructuredBindingTypes();
         }
 
         private void ResetTransientState()
@@ -687,11 +759,96 @@ public partial class SymbolTableBuilder
                     continue;
                 }
 
-                if (!_slots.TryGetValue((obligation.Callee, obligation.Index), out var slot) || !slot.SafeUse)
+                var key = (obligation.Callee, obligation.Index);
+                if (_destructuredSlots.ContainsKey(key))
+                {
+                    continue;
+                }
+
+                if (!_slots.TryGetValue(key, out var slot) || !slot.SafeUse)
                 {
                     obligation.Shape.Disqualify("object passed to a call whose parameter use is unsafe");
                 }
             }
+        }
+
+        private void InferDestructuredBindingTypes()
+        {
+            foreach (var slot in _destructuredSlots.Values)
+            {
+                if (!_callSitesByCallee.TryGetValue(slot.Callee, out var sites) || sites.Count == 0)
+                {
+                    continue;
+                }
+
+                foreach (var member in slot.Members)
+                {
+                    Type? inferredType = null;
+                    var hasStableEvidence = true;
+                    foreach (var site in sites)
+                    {
+                        if (!TryResolveDestructuredMemberType(site, slot.Index, member.PropertyName, out var memberType))
+                        {
+                            hasStableEvidence = false;
+                            break;
+                        }
+
+                        if (inferredType == null)
+                        {
+                            inferredType = memberType;
+                        }
+                        else if (inferredType != memberType)
+                        {
+                            hasStableEvidence = false;
+                            break;
+                        }
+                    }
+
+                    if (hasStableEvidence && inferredType != null)
+                    {
+                        if (!member.Binding.IsStableType)
+                        {
+                            member.Binding.ClrType = inferredType;
+                            member.Binding.IsStableType = true;
+                        }
+                    }
+                }
+            }
+        }
+
+        private bool TryResolveDestructuredMemberType(
+            CallSite site,
+            int index,
+            string propertyName,
+            out Type? memberType)
+        {
+            memberType = null;
+            if (index >= site.Arguments.Count)
+            {
+                return false;
+            }
+
+            for (var i = 0; i <= index; i++)
+            {
+                if (site.Arguments[i] is SpreadElement)
+                {
+                    return false;
+                }
+            }
+
+            if (site.Arguments[index] is not Identifier argument
+                || TryResolveBinding(site.CallScope, argument.Name) is not { } binding
+                || !_candidates.TryGetValue(binding, out var shape)
+                || !shape.IsEligible
+                || !shape.TryGetMember(propertyName, out var shapeMember)
+                || shapeMember.ClrType == null
+                || !IsSupportedStableParameterType(shapeMember.ClrType))
+            {
+                return false;
+            }
+
+            memberType = shapeMember.ClrType;
+            return true;
         }
 
         private void BuildRepresentatives()

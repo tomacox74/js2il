@@ -285,6 +285,60 @@ public class SymbolTableTypeInferenceTests
     }
 
     [Fact]
+    public void SymbolTable_InferTypes_FixedPoint_PropagatesArbitrarilyLongReturnChain()
+    {
+        const int chainLength = 20;
+        var declarations = string.Join(
+            Environment.NewLine,
+            Enumerable.Range(0, chainLength)
+                .Select(index => $"function f{index}() {{ return f{index + 1}(); }}"));
+        var symbolTable = BuildSymbolTable($@"
+            {declarations}
+            function f{chainLength}() {{ return 1; }}
+            const result = f0();
+        ");
+
+        var firstFunction = FindFirstScope(
+            symbolTable.Root,
+            candidate => candidate.Kind == ScopeKind.Function
+                         && string.Equals(candidate.Name, "f0", StringComparison.Ordinal));
+        Assert.NotNull(firstFunction);
+        Assert.Equal(typeof(double), firstFunction!.StableReturnClrType);
+
+        var result = symbolTable.GetBindingInfo("result");
+        Assert.NotNull(result);
+        Assert.True(result!.IsStableType);
+        Assert.Equal(typeof(double), result.ClrType);
+    }
+
+    [Fact]
+    public void SymbolTable_InferTypes_FixedPoint_PreservesParameterArrayElementType()
+    {
+        var symbolTable = BuildSymbolTable(@"
+            function fill(values) {
+                values[0] = 'x';
+                return values;
+            }
+
+            const items = [];
+            const result = fill(items);
+        ");
+
+        var fill = FindFirstScope(
+            symbolTable.Root,
+            candidate => candidate.Kind == ScopeKind.Function
+                         && string.Equals(candidate.Name, "fill", StringComparison.Ordinal));
+        Assert.NotNull(fill);
+        Assert.Equal(typeof(JavaScriptRuntime.Array), fill!.StableReturnClrType);
+        Assert.Equal(typeof(string), fill.StableReturnArrayElementClrType);
+
+        var result = symbolTable.GetBindingInfo("result");
+        Assert.NotNull(result);
+        Assert.Equal(typeof(JavaScriptRuntime.Array), result!.ClrType);
+        Assert.Equal(typeof(string), result.StableElementClrType);
+    }
+
+    [Fact]
     public void SymbolTable_InferTypes_NumericVarLocal_RejectsShadowedNonnumericSource()
     {
         var symbolTable = BuildSymbolTable(@"

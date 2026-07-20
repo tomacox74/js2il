@@ -24,6 +24,14 @@ public partial class SymbolTableBuilder
     /// </summary>
     private void AnalyzeObjectLiteralShapes(Scope root)
     {
+        foreach (var scope in EnumerateScopes(root))
+        {
+            foreach (var binding in scope.Bindings.Values)
+            {
+                binding.ObjectLiteralShape = null;
+            }
+        }
+
         var candidates = CollectObjectLiteralShapeCandidates(root);
         if (candidates.Count == 0)
         {

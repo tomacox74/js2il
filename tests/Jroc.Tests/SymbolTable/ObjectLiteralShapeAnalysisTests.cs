@@ -337,6 +337,69 @@ public class ObjectLiteralShapeAnalysisTests
         return functionScope.Bindings[parameterName].ObjectLiteralShape;
     }
 
+    private BindingInfo GetParameterBinding(SymbolTable symbolTable, string functionName, string parameterName)
+    {
+        var functionScopes = EnumerateScopes(symbolTable.Root)
+            .Where(s => s.Kind == ScopeKind.Function && s.Bindings.ContainsKey(parameterName))
+            .ToArray();
+        var functionScope = functionScopes.FirstOrDefault(
+                s => string.Equals(s.Name, functionName, StringComparison.Ordinal))
+            ?? Assert.Single(functionScopes);
+        return functionScope.Bindings[parameterName];
+    }
+
+    [Fact]
+    public void Interprocedural_ObjectDestructuring_KeepsLiteralEligibleAndInfersMemberTypes()
+    {
+        var symbolTable = BuildSymbolTable(
+            @"let config = {
+                  sieveSize: 1000000,
+                  timeLimitSeconds: 5,
+                  verbose: false,
+                  runtime: ''
+              };
+              config.runtime = process.argv[0];
+              config.verbose = process.argv.includes('verbose');
+              const main = ({ sieveSize, timeLimitSeconds, verbose, runtime }) => {
+                  consume(sieveSize, timeLimitSeconds);
+                  console.log(sieveSize, timeLimitSeconds, verbose, runtime);
+              };
+              function consume(size, seconds) { console.log(size + seconds); }
+              main(config);");
+
+        var shape = symbolTable.GetBindingInfo("config")!.ObjectLiteralShape;
+        Assert.NotNull(shape);
+        Assert.True(shape!.IsEligible, shape.DisqualifyReason);
+
+        var sieveSize = GetParameterBinding(symbolTable, "main", "sieveSize");
+        var timeLimitSeconds = GetParameterBinding(symbolTable, "main", "timeLimitSeconds");
+        Assert.True(sieveSize.IsStableType);
+        Assert.Equal(typeof(double), sieveSize.ClrType);
+        Assert.True(timeLimitSeconds.IsStableType);
+        Assert.Equal(typeof(double), timeLimitSeconds.ClrType);
+
+        Assert.False(GetParameterBinding(symbolTable, "main", "verbose").IsStableType);
+        Assert.False(GetParameterBinding(symbolTable, "main", "runtime").IsStableType);
+
+        Assert.Equal(typeof(double), GetParameterBinding(symbolTable, "consume", "size").ClrType);
+        Assert.Equal(typeof(double), GetParameterBinding(symbolTable, "consume", "seconds").ClrType);
+    }
+
+    [Fact]
+    public void Interprocedural_ObjectDestructuring_ConflictingCallSiteKeepsBindingGeneric()
+    {
+        var symbolTable = BuildSymbolTable(
+            @"const numeric = { value: 1 };
+              const textual = { value: 'one' };
+              function read({ value }) { console.log(value); }
+              read(numeric);
+              read(textual);");
+
+        Assert.True(symbolTable.GetBindingInfo("numeric")!.ObjectLiteralShape!.IsEligible);
+        Assert.True(symbolTable.GetBindingInfo("textual")!.ObjectLiteralShape!.IsEligible);
+        Assert.False(GetParameterBinding(symbolTable, "read", "value").IsStableType);
+    }
+
     [Fact]
     public void Interprocedural_DirectPropagation_TypesParameter()
     {
