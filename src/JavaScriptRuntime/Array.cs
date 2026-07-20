@@ -232,16 +232,13 @@ namespace JavaScriptRuntime
         }
 
         private object? GetDenseValue(int index)
-            => _numberItems is not null ? _numberItems[index] : _items![index];
+        {
+            EnsureObjectStorage();
+            return _items![index];
+        }
 
         private void SetDenseValue(int index, object? value)
         {
-            if (_numberItems is not null && value is double number)
-            {
-                _numberItems[index] = number;
-                return;
-            }
-
             EnsureObjectStorage();
             _items![index] = value;
         }
@@ -259,12 +256,6 @@ namespace JavaScriptRuntime
 
         private void AddDenseValue(object? value)
         {
-            if (_items is null && value is double number)
-            {
-                GetOrCreateNumberStorage().Add(number);
-                return;
-            }
-
             EnsureObjectStorage(DenseCount + 1);
             _items!.Add(value);
         }
@@ -285,12 +276,6 @@ namespace JavaScriptRuntime
 
         private void InsertDenseValue(int index, object? value)
         {
-            if (_items is null && value is double number)
-            {
-                GetOrCreateNumberStorage().Insert(index, number);
-                return;
-            }
-
             EnsureObjectStorage(DenseCount + 1);
             _items!.Insert(index, value);
         }
@@ -1780,12 +1765,6 @@ namespace JavaScriptRuntime
 
         private void SetDenseIndex(int index, object? value)
         {
-            if (value is double number)
-            {
-                SetDenseIndexNumber(index, number);
-                return;
-            }
-
             if (index == int.MaxValue)
             {
                 throw new ArgumentOutOfRangeException(nameof(index));

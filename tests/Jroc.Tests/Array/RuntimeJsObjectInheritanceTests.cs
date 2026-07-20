@@ -343,6 +343,30 @@ public sealed class RuntimeJsObjectInheritanceTests
     }
 
     [Fact]
+    public void GenericNumericReads_TransitionOnceAndReuseBoxedValues()
+    {
+        var array = new JavaScriptRuntime.Array(2);
+        array.AddNumber(1d);
+        array.AddNumber(2d);
+
+        var first = array[0];
+        object? last = null;
+        var before = GC.GetAllocatedBytesForCurrentThread();
+        for (var i = 0; i < 10_000; i++)
+        {
+            last = array[0];
+        }
+        var allocated = GC.GetAllocatedBytesForCurrentThread() - before;
+
+        Assert.Same(first, last);
+        Assert.Equal(0, allocated);
+
+        object boxed = 3d;
+        Assert.True(array.TrySetIndexValue(1, boxed, throwOnError: true));
+        Assert.Same(boxed, array[1]);
+    }
+
+    [Fact]
     public void NumericLengthConstruction_DoesNotMaterializeHoles()
     {
         _ = JavaScriptRuntime.Array.Construct(new object[] { 1d });
