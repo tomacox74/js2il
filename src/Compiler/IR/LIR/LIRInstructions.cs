@@ -486,6 +486,7 @@ public record LIRNewUserClass(
     int MinArgCount,
     int MaxArgCount,
     bool IsDerivedConstructor,
+    IReadOnlyList<Type?> ParameterClrTypes,
     IReadOnlyList<TempVariable> Arguments,
     TempVariable Result) : LIRInstruction;
 

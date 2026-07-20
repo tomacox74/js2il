@@ -86,7 +86,7 @@ internal sealed partial class LIRToILCompiler
                         {
                             ilEncoder.OpCode(ILOpCode.Dup);
                             ilEncoder.LoadConstantI4(i);
-                            EmitLoadTemp(newUserClass.Arguments[i], ilEncoder, allocation, methodDescriptor);
+                            EmitLoadTempAsObject(newUserClass.Arguments[i], ilEncoder, allocation, methodDescriptor);
                             ilEncoder.OpCode(ILOpCode.Stelem_ref);
                         }
 
@@ -112,7 +112,15 @@ internal sealed partial class LIRToILCompiler
                     int argsToPass = Math.Min(argc, newUserClass.MaxArgCount);
                     for (int i = 0; i < argsToPass; i++)
                     {
-                        EmitLoadTemp(newUserClass.Arguments[i], ilEncoder, allocation, methodDescriptor);
+                        var parameterClrType = i < newUserClass.ParameterClrTypes.Count
+                            ? newUserClass.ParameterClrTypes[i]
+                            : null;
+                        EmitLoadTempAsParameterType(
+                            newUserClass.Arguments[i],
+                            parameterClrType,
+                            ilEncoder,
+                            allocation,
+                            methodDescriptor);
                     }
 
                     int paddingNeeded = newUserClass.MaxArgCount - argsToPass;

@@ -416,6 +416,20 @@ public sealed partial class HIRToLIRLowerer
             ClassExpression classExpression => classExpression.SuperClass != null,
             _ => false
         };
+        var constructorScope = classScope.Children.FirstOrDefault(scope =>
+            scope.Kind == ScopeKind.Function
+            && string.Equals(scope.Name, "constructor", StringComparison.Ordinal));
+        var parameterClrTypes = new Type?[jsParamCount];
+        if (constructorScope != null)
+        {
+            foreach (var (index, clrType) in constructorScope.StableParameterClrTypes)
+            {
+                if (index >= 0 && index < parameterClrTypes.Length)
+                {
+                    parameterClrTypes[index] = clrType;
+                }
+            }
+        }
 
         resultTempVar = CreateTempVariable();
         _methodBodyIR.Instructions.Add(new LIRNewUserClass(
@@ -427,6 +441,7 @@ public sealed partial class HIRToLIRLowerer
             MinArgCount: minArgs,
             MaxArgCount: maxArgs,
             IsDerivedConstructor: isDerivedConstructor,
+            ParameterClrTypes: parameterClrTypes,
             Arguments: argTemps,
             Result: resultTempVar));
         DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
