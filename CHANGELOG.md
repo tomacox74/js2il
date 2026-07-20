@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.11.33 - 2026-07-20
+
 - perf/compiler: infer stable primitive class-constructor parameters from closed-world direct `new ClassName(...)` call sites. Parameter inference can now retain safe leading identifier parameters when a callable has later defaulted parameters, allowing numeric evidence to propagate through `main` and `runSieveBatch` into the `PrimeSieve` constructor.
 - compiler: replace the manually repeated type-inference sequence with convergence-driven fixed-point iteration across variables, definite initialization, class fields, callable parameters/returns, and object-literal shapes. Long dependency chains now infer to completion without a pass-count limit, while repeated-state detection prevents non-converging cycles.
 - perf/compiler: keep eligible object literals specialized when passed to closed-world callables with simple object-destructuring parameters, and infer stable primitive CLR types for extracted bindings when every call site agrees on the corresponding member type.
