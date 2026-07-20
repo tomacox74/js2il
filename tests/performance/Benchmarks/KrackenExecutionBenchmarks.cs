@@ -17,9 +17,10 @@ namespace Benchmarks;
 [Orderer(SummaryOrderPolicy.FastestToSlowest)]
 [HideColumns("Error", "Gen0", "Gen1", "Gen2")]
 [JsonExporterAttribute.FullCompressed]
-public class KrackenBenchmarks
+public class KrackenExecutionBenchmarks
 {
     public static string? ScenarioFilter { get; set; }
+    private const string BenchmarkScriptNamePrefix = "kracken-";
 
     private static readonly string[] ScenarioScriptNames =
     [
@@ -114,10 +115,11 @@ public class KrackenBenchmarks
     public void SetupJint()
     {
         LoadScriptContents(out var dataScriptContent, out var testScriptContent);   
+        var sourceScriptName = GetSourceScriptName(ScriptName);
         _jintEngine = new Engine();
-        _jintEngine.Execute(dataScriptContent, $"{ScriptName}-data.js");
+        _jintEngine.Execute(dataScriptContent, $"{sourceScriptName}-data.js");
         _jintEngine.Execute(WorkloadRegistrationScript, "kracken-workload-registration.js");
-        _jintEngine.Execute(testScriptContent, ScriptName);
+        _jintEngine.Execute(testScriptContent, sourceScriptName);
         _jintEngine.Execute(BenchmarkRunnerScript, "kracken-benchmark-runner.js");
     }
 
@@ -125,10 +127,11 @@ public class KrackenBenchmarks
     public void SetupYantraJs()
     {
         LoadScriptContents(out var dataScriptContent, out var testScriptContent);
+        var sourceScriptName = GetSourceScriptName(ScriptName);
         var context = new JSContext();
-        context.Eval(dataScriptContent, $"{ScriptName}-data.js");
+        context.Eval(dataScriptContent, $"{sourceScriptName}-data.js");
         context.Eval(WorkloadRegistrationScript, "kracken-workload-registration.js");
-        context.Eval(testScriptContent, ScriptName);
+        context.Eval(testScriptContent, sourceScriptName);
         _yantraJsRunTest = context.Eval(BenchmarkRunnerScript + "\nrunBenchmark;", "kracken-benchmark-runner.js");
         _yantraJsContext = context;
     }
@@ -140,6 +143,7 @@ public class KrackenBenchmarks
     {
         var scriptNames = ScenarioScriptNames
             .Where(MatchesScenarioFilter)
+            .Select(GetBenchmarkScriptName)
             .ToArray();
 
         if (scriptNames.Length == 0)
@@ -154,10 +158,11 @@ public class KrackenBenchmarks
     private void LoadScriptContents(out string dataScriptContent, out string testScriptContent)
     {
         var scriptsDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Scenarios", "kracken-1.1");
-        var testScriptPath = Path.Combine(scriptsDir, ScriptName);
+        var sourceScriptName = GetSourceScriptName(ScriptName);
+        var testScriptPath = Path.Combine(scriptsDir, sourceScriptName);
         var dataScriptPath = Path.Combine(
             scriptsDir,
-            Path.GetFileNameWithoutExtension(ScriptName) + "-data.js");
+            Path.GetFileNameWithoutExtension(sourceScriptName) + "-data.js");
         testScriptContent = File.ReadAllText(testScriptPath);
         dataScriptContent = File.ReadAllText(dataScriptPath);
     }
@@ -212,7 +217,25 @@ public class KrackenBenchmarks
         }
 
         var scenarioName = Path.GetFileNameWithoutExtension(scriptName);
+        var benchmarkScriptName = GetBenchmarkScriptName(scriptName);
+        var benchmarkScenarioName = Path.GetFileNameWithoutExtension(benchmarkScriptName);
         return string.Equals(scenarioName, ScenarioFilter, StringComparison.Ordinal)
-            || string.Equals(scriptName, ScenarioFilter, StringComparison.Ordinal);
+            || string.Equals(scriptName, ScenarioFilter, StringComparison.Ordinal)
+            || string.Equals(benchmarkScenarioName, ScenarioFilter, StringComparison.Ordinal)
+            || string.Equals(benchmarkScriptName, ScenarioFilter, StringComparison.Ordinal);
+    }
+
+    private static string GetBenchmarkScriptName(string sourceScriptName)
+    {
+        return sourceScriptName.StartsWith(BenchmarkScriptNamePrefix, StringComparison.Ordinal)
+            ? sourceScriptName
+            : BenchmarkScriptNamePrefix + sourceScriptName;
+    }
+
+    private static string GetSourceScriptName(string benchmarkScriptName)
+    {
+        return benchmarkScriptName.StartsWith(BenchmarkScriptNamePrefix, StringComparison.Ordinal)
+            ? benchmarkScriptName[BenchmarkScriptNamePrefix.Length..]
+            : benchmarkScriptName;
     }
 }
