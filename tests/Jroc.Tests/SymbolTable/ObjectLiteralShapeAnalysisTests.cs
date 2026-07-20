@@ -361,8 +361,10 @@ public class ObjectLiteralShapeAnalysisTests
               config.runtime = process.argv[0];
               config.verbose = process.argv.includes('verbose');
               const main = ({ sieveSize, timeLimitSeconds, verbose, runtime }) => {
+                  consume(sieveSize, timeLimitSeconds);
                   console.log(sieveSize, timeLimitSeconds, verbose, runtime);
               };
+              function consume(size, seconds) { console.log(size + seconds); }
               main(config);");
 
         var shape = symbolTable.GetBindingInfo("config")!.ObjectLiteralShape;
@@ -378,6 +380,9 @@ public class ObjectLiteralShapeAnalysisTests
 
         Assert.False(GetParameterBinding(symbolTable, "main", "verbose").IsStableType);
         Assert.False(GetParameterBinding(symbolTable, "main", "runtime").IsStableType);
+
+        Assert.Equal(typeof(double), GetParameterBinding(symbolTable, "consume", "size").ClrType);
+        Assert.Equal(typeof(double), GetParameterBinding(symbolTable, "consume", "seconds").ClrType);
     }
 
     [Fact]

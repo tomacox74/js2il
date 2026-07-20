@@ -132,6 +132,14 @@ representative shape is known:
 The parameter ABI stays `object`; only the stable shape token is propagated so
 lowering can early-bind member access on the parameter.
 
+Object-literal analysis participates in the compiler's global type-inference
+fixed point. Variable, definite-initialization, class-field, callable-parameter,
+callable-return, and object-shape inference repeat until their persisted facts
+stop changing. This lets a destructured member type feed downstream callables
+through arbitrarily long dependency chains without relying on a hard-coded
+number of pass repetitions. Repeated states are detected as a compiler error
+rather than allowing a non-converging inference cycle.
+
 For a simple object-destructuring parameter such as
 `function run({ size, seconds })`, the incoming ABI also remains `object`.
 When every direct call passes an eligible object-literal binding and its
