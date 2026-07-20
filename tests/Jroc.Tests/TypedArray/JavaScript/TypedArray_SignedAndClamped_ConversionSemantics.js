@@ -11,3 +11,20 @@ console.log(uint8.join("|"));
 
 const clamped = new Uint8ClampedArray([-20, -0.5, 0.49, 0.5, 1.5, 2.5, 254.6, 255.4, 300, NaN]);
 console.log(clamped.join("|"));
+
+let coercions = 0;
+const dynamicValue = {
+  valueOf() {
+    coercions++;
+    return 7;
+  }
+};
+const empty = new Uint8Array(0);
+empty[0] = dynamicValue;
+console.log(coercions);
+
+try {
+  empty[0] = Symbol("value");
+} catch (error) {
+  console.log(error.name);
+}

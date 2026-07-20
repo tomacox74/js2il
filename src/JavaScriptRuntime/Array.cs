@@ -21,7 +21,10 @@ namespace JavaScriptRuntime
         internal static readonly JsObject ImmutablePrototype = CreatePrototype();
         private static readonly object Hole = new();
         private const int MaxDenseGap = 1024;
-        private readonly List<object?> _items;
+        private const int MaxInitialDenseCapacity = 65536;
+        private List<object?>? _items;
+        private List<double>? _numberItems;
+        private readonly int _capacityHint;
         private int _logicalLength;
         private int _holeCount;
         private double _virtualLength;
@@ -173,23 +176,153 @@ namespace JavaScriptRuntime
         public bool hasOwnProperty(object? prop)
             => JavaScriptRuntime.Object.hasOwn(this, prop);
 
-        private int DenseCount => _items.Count;
+        private int DenseCount => _numberItems?.Count ?? _items?.Count ?? 0;
         private int LogicalCount => _logicalLength > DenseCount ? _logicalLength : DenseCount;
 
         private void EnsureDenseStorage(int minCount)
         {
-            if (_items.Count >= minCount)
+            if (DenseCount >= minCount)
             {
                 return;
             }
 
-            _items.EnsureCapacity(minCount);
+            EnsureObjectStorage(minCount);
+            _items!.EnsureCapacity(minCount);
 
             while (_items.Count < minCount)
             {
                 _items.Add(Hole);
                 _holeCount++;
             }
+        }
+
+        private void EnsureObjectStorage(int minCapacity = 0)
+        {
+            if (_items is not null)
+            {
+                if (minCapacity > 0)
+                {
+                    _items.EnsureCapacity(minCapacity);
+                }
+                return;
+            }
+
+            var numberItems = _numberItems;
+            var capacity = global::System.Math.Max(
+                global::System.Math.Max(_capacityHint, minCapacity),
+                numberItems?.Count ?? 0);
+            _items = new List<object?>(capacity);
+            if (numberItems is not null)
+            {
+                foreach (var number in numberItems)
+                {
+                    _items.Add(number);
+                }
+                _numberItems = null;
+            }
+        }
+
+        private List<double> GetOrCreateNumberStorage()
+        {
+            if (_numberItems is null)
+            {
+                _numberItems = new List<double>(_capacityHint);
+            }
+            return _numberItems;
+        }
+
+        private object? GetDenseValue(int index)
+            => _numberItems is not null ? _numberItems[index] : _items![index];
+
+        private void SetDenseValue(int index, object? value)
+        {
+            if (_numberItems is not null && value is double number)
+            {
+                _numberItems[index] = number;
+                return;
+            }
+
+            EnsureObjectStorage();
+            _items![index] = value;
+        }
+
+        private void SetDenseNumber(int index, double value)
+        {
+            if (_items is not null)
+            {
+                _items[index] = value;
+                return;
+            }
+
+            GetOrCreateNumberStorage()[index] = value;
+        }
+
+        private void AddDenseValue(object? value)
+        {
+            if (_items is null && value is double number)
+            {
+                GetOrCreateNumberStorage().Add(number);
+                return;
+            }
+
+            EnsureObjectStorage(DenseCount + 1);
+            _items!.Add(value);
+        }
+
+        public void AddNumber(double value)
+        {
+            EnsureDenseStorage(_logicalLength);
+            if (_items is null)
+            {
+                GetOrCreateNumberStorage().Add(value);
+            }
+            else
+            {
+                _items.Add(value);
+            }
+            SynchronizeDenseLengthAfterGrowth();
+        }
+
+        private void InsertDenseValue(int index, object? value)
+        {
+            if (_items is null && value is double number)
+            {
+                GetOrCreateNumberStorage().Insert(index, number);
+                return;
+            }
+
+            EnsureObjectStorage(DenseCount + 1);
+            _items!.Insert(index, value);
+        }
+
+        private void RemoveDenseRange(int index, int count)
+        {
+            if (_numberItems is not null)
+            {
+                _numberItems.RemoveRange(index, count);
+            }
+            else
+            {
+                _items!.RemoveRange(index, count);
+            }
+        }
+
+        private void ReverseDense()
+        {
+            if (_numberItems is not null)
+            {
+                _numberItems.Reverse();
+            }
+            else
+            {
+                _items?.Reverse();
+            }
+        }
+
+        private void SynchronizeDenseLengthAfterGrowth()
+        {
+            _logicalLength = DenseCount;
+            _virtualLength = global::System.Math.Max(_virtualLength, _logicalLength);
         }
 
         private static object PrototypeJoin(object[] scopes, object?[]? args)
@@ -901,22 +1034,32 @@ namespace JavaScriptRuntime
 
         public Array()
         {
-            _items = new List<object?>();
+            _capacityHint = 0;
             _logicalLength = 0;
             _virtualLength = 0;
             InitializeIntrinsicSurface();
         }
         public Array(int capacity)
         {
-            _items = new List<object?>(capacity);
+            if (capacity < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(capacity));
+            }
+
+            _capacityHint = global::System.Math.Min(capacity, MaxInitialDenseCapacity);
             _logicalLength = 0;
             _virtualLength = 0;
             InitializeIntrinsicSurface();
         }
         public Array(System.Collections.IEnumerable collection)
         {
-            _items = collection.Cast<object?>().ToList();
-            _logicalLength = _items.Count;
+            ArgumentNullException.ThrowIfNull(collection);
+            _capacityHint = collection is ICollection sized ? sized.Count : 0;
+            foreach (var item in collection)
+            {
+                AddDenseValue(item);
+            }
+            _logicalLength = DenseCount;
             _virtualLength = _logicalLength;
             InitializeIntrinsicSurface();
         }
@@ -1351,7 +1494,7 @@ namespace JavaScriptRuntime
 
             if (!hasCurrent && index <= int.MaxValue && HasDenseIndex((int)index))
             {
-                current = CreateElementDescriptor(_items[(int)index]);
+                current = CreateElementDescriptor(GetDenseValue((int)index));
                 hasCurrent = true;
             }
 
@@ -1413,7 +1556,13 @@ namespace JavaScriptRuntime
             var hasDenseIndex = HasDenseIndex(index);
             if (!HasNonDataDescriptors && hasDenseIndex)
             {
-                _items[index] = value;
+                SetDenseValue(index, value);
+                return true;
+            }
+
+            if (CanAppendDenseIndexFast(index))
+            {
+                SetDenseIndex(index, value);
                 return true;
             }
 
@@ -1430,7 +1579,7 @@ namespace JavaScriptRuntime
 
             if (HasDenseIndex(index))
             {
-                _items[index] = value;
+                SetDenseValue(index, value);
                 return true;
             }
 
@@ -1453,6 +1602,79 @@ namespace JavaScriptRuntime
             if (CanStoreDenseIndex((uint)index))
             {
                 SetDenseIndex(index, value);
+                return true;
+            }
+
+            var defined = DefineIndexProperty(key, (uint)index, CreateElementDescriptor(value));
+            if (!defined && throwOnError)
+            {
+                throw new TypeError($"Cannot add property '{key}' to array");
+            }
+
+            return defined;
+        }
+
+        internal bool TrySetIndexNumber(int index, double value, bool throwOnError)
+        {
+            if (index < 0)
+            {
+                if (throwOnError)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(index));
+                }
+
+                return false;
+            }
+
+            var hasDenseIndex = HasDenseIndex(index);
+            if (!HasNonDataDescriptors && hasDenseIndex)
+            {
+                SetDenseNumber(index, value);
+                return true;
+            }
+
+            if (CanAppendDenseIndexFast(index))
+            {
+                SetDenseIndexNumber(index, value);
+                return true;
+            }
+
+            if ((HasNonDataDescriptors || !hasDenseIndex)
+                && PropertyDescriptorStore.HasAny(this))
+            {
+                var descriptorKey = index.ToString(CultureInfo.InvariantCulture);
+                if (PropertyDescriptorStore.GetOwnLookupCore(this, descriptorKey, out _) != PropertyDescriptorLookup.None)
+                {
+                    Object.SetProperty(this, descriptorKey, value, throwOnError);
+                    return true;
+                }
+            }
+
+            if (HasDenseIndex(index))
+            {
+                SetDenseNumber(index, value);
+                return true;
+            }
+
+            var key = index.ToString(CultureInfo.InvariantCulture);
+            if (Object.TrySetPropertyViaPrototypeOrThrow(this, key, value, throwOnError))
+            {
+                return true;
+            }
+
+            if (!Object.IsExtensibleInternal(this) || index >= length && !IsLengthWritable)
+            {
+                if (throwOnError)
+                {
+                    throw new TypeError($"Cannot add property '{key}' to array");
+                }
+
+                return false;
+            }
+
+            if (CanStoreDenseIndex((uint)index))
+            {
+                SetDenseIndexNumber(index, value);
                 return true;
             }
 
@@ -1553,12 +1775,19 @@ namespace JavaScriptRuntime
 
         private void SetDenseIndex(int index, object? value)
         {
+            if (value is double number)
+            {
+                SetDenseIndexNumber(index, number);
+                return;
+            }
+
             if (index == int.MaxValue)
             {
                 throw new ArgumentOutOfRangeException(nameof(index));
             }
 
-            if (index < _items.Count)
+            EnsureObjectStorage(index + 1);
+            if (index < _items!.Count)
             {
                 if (ReferenceEquals(_items[index], Hole))
                 {
@@ -1584,9 +1813,57 @@ namespace JavaScriptRuntime
             }
         }
 
+        private void SetDenseIndexNumber(int index, double value)
+        {
+            if (index == int.MaxValue)
+            {
+                throw new ArgumentOutOfRangeException(nameof(index));
+            }
+
+            if (_items is null && index <= DenseCount)
+            {
+                var numbers = GetOrCreateNumberStorage();
+                if (index < numbers.Count)
+                {
+                    numbers[index] = value;
+                }
+                else
+                {
+                    numbers.Add(value);
+                }
+            }
+            else
+            {
+                EnsureObjectStorage(index + 1);
+                if (index < _items!.Count)
+                {
+                    if (ReferenceEquals(_items[index], Hole))
+                    {
+                        _holeCount--;
+                    }
+                    _items[index] = value;
+                }
+                else
+                {
+                    EnsureDenseStorage(index + 1);
+                    _items[index] = value;
+                }
+            }
+
+            if (index >= _logicalLength)
+            {
+                _logicalLength = index + 1;
+            }
+
+            if (index + 1 > _virtualLength)
+            {
+                _virtualLength = index + 1;
+            }
+        }
+
         private bool CanStoreDenseIndex(uint index)
             => index < int.MaxValue
-                && index <= (uint)_items.Count + MaxDenseGap;
+                && index <= (uint)DenseCount + MaxDenseGap;
 
         private void SetLengthStorage(double newLength)
         {
@@ -1597,17 +1874,20 @@ namespace JavaScriptRuntime
             }
 
             var newLengthInt = (int)newLength;
-            if (newLengthInt < _items.Count)
+            if (newLengthInt < DenseCount)
             {
-                for (var i = newLengthInt; i < _items.Count; i++)
+                if (_items is not null)
                 {
-                    if (ReferenceEquals(_items[i], Hole))
+                    for (var i = newLengthInt; i < _items.Count; i++)
                     {
-                        _holeCount--;
+                        if (ReferenceEquals(_items[i], Hole))
+                        {
+                            _holeCount--;
+                        }
                     }
                 }
 
-                _items.RemoveRange(newLengthInt, _items.Count - newLengthInt);
+                RemoveDenseRange(newLengthInt, DenseCount - newLengthInt);
             }
 
             _logicalLength = newLengthInt;
@@ -1627,7 +1907,9 @@ namespace JavaScriptRuntime
                 && !descriptor.Configurable;
 
         private bool HasDenseIndex(int index)
-            => index >= 0 && index < _items.Count && !ReferenceEquals(_items[index], Hole);
+            => index >= 0
+                && index < DenseCount
+                && (_numberItems is not null || !ReferenceEquals(_items![index], Hole));
 
         internal bool HasOwnIndex(int index)
         {
@@ -1657,10 +1939,10 @@ namespace JavaScriptRuntime
 
         internal IEnumerable<int> GetOwnElementIndices()
         {
-            var upperBound = global::System.Math.Min(Count, _items.Count);
+            var upperBound = global::System.Math.Min(Count, DenseCount);
             for (int i = 0; i < upperBound; i++)
             {
-                if (!ReferenceEquals(_items[i], Hole))
+                if (_numberItems is not null || !ReferenceEquals(_items![i], Hole))
                 {
                     yield return i;
                 }
@@ -1674,16 +1956,26 @@ namespace JavaScriptRuntime
                 return false;
             }
 
-            _items[index] = Hole;
+            EnsureObjectStorage();
+            _items![index] = Hole;
             _holeCount++;
             return true;
         }
 
         private bool CanUseDenseMutationFastPath()
             => (_holeCount & int.MaxValue) == 0
-                && _logicalLength == _items.Count
-                && _virtualLength == _items.Count
+                && _logicalLength == DenseCount
+                && _virtualLength == DenseCount
                 && !HasNonDataDescriptors;
+
+        private bool CanAppendDenseIndexFast(int index)
+            => index == DenseCount
+                && _holeCount >= 0
+                && !HasNonDataDescriptors
+                && !PropertyDescriptorStore.HasAny(this)
+                && Object.IsExtensibleInternal(this)
+                && (index < length || IsLengthWritable)
+                && DefaultPrototypeChainAllowsDenseWrites();
 
         internal void DisableDenseGrowthFastPath()
             => _holeCount |= int.MinValue;
@@ -1695,6 +1987,11 @@ namespace JavaScriptRuntime
                 return false;
             }
 
+            return DefaultPrototypeChainAllowsDenseWrites();
+        }
+
+        private static bool DefaultPrototypeChainAllowsDenseWrites()
+        {
             var mutationVersion = Volatile.Read(ref _prototypeMutationVersion);
             if (_observedPrototypeMutationVersion != mutationVersion)
             {
@@ -1752,8 +2049,8 @@ namespace JavaScriptRuntime
 
         private void SynchronizeDenseLength()
         {
-            _logicalLength = _items.Count;
-            _virtualLength = _items.Count;
+            _logicalLength = DenseCount;
+            _virtualLength = DenseCount;
         }
 
         public object? this[int index]
@@ -1767,7 +2064,7 @@ namespace JavaScriptRuntime
 
                 if (!HasNonDataDescriptors && HasDenseIndex(index))
                 {
-                    return _items[index];
+                    return GetDenseValue(index);
                 }
 
                 if (HasNonDataDescriptors && PropertyDescriptorStore.HasAny(this))
@@ -1782,7 +2079,7 @@ namespace JavaScriptRuntime
 
                 if (HasDenseIndex(index))
                 {
-                    return _items[index];
+                    return GetDenseValue(index);
                 }
 
                 return Object.GetProperty(this, index.ToString(CultureInfo.InvariantCulture));
@@ -1799,9 +2096,8 @@ namespace JavaScriptRuntime
         public void Add(object? item)
         {
             EnsureDenseStorage(_logicalLength);
-            _items.Add(item);
-            _logicalLength = _items.Count;
-            _virtualLength = global::System.Math.Max(_virtualLength, _logicalLength);
+            AddDenseValue(item);
+            SynchronizeDenseLengthAfterGrowth();
         }
 
         public void AddRange(IEnumerable<object?> collection)
@@ -1809,10 +2105,9 @@ namespace JavaScriptRuntime
             EnsureDenseStorage(_logicalLength);
             foreach (var item in collection)
             {
-                _items.Add(item);
+                AddDenseValue(item);
             }
-            _logicalLength = _items.Count;
-            _virtualLength = global::System.Math.Max(_virtualLength, _logicalLength);
+            SynchronizeDenseLengthAfterGrowth();
         }
 
         public void Insert(int index, object? item)
@@ -1825,7 +2120,7 @@ namespace JavaScriptRuntime
 
             if (CanUseDenseGrowthFastPath())
             {
-                _items.Insert(index, item);
+                InsertDenseValue(index, item);
                 SynchronizeDenseLength();
                 return;
             }
@@ -1863,7 +2158,10 @@ namespace JavaScriptRuntime
 
             if (CanUseDenseGrowthFastPath())
             {
-                _items.InsertRange(index, items);
+                for (var i = 0; i < items.Count; i++)
+                {
+                    InsertDenseValue(index + i, items[i]);
+                }
                 SynchronizeDenseLength();
                 return;
             }
@@ -1899,7 +2197,7 @@ namespace JavaScriptRuntime
 
             if (CanUseDenseMutationFastPath())
             {
-                _items.RemoveAt(index);
+                RemoveDenseRange(index, 1);
                 SynchronizeDenseLength();
                 return;
             }
@@ -1937,7 +2235,7 @@ namespace JavaScriptRuntime
             var newLength = currentLength - count;
             if (CanUseDenseMutationFastPath())
             {
-                _items.RemoveRange(index, count);
+                RemoveDenseRange(index, count);
                 SynchronizeDenseLength();
                 return;
             }
@@ -1967,7 +2265,7 @@ namespace JavaScriptRuntime
         {
             if (CanUseDenseMutationFastPath())
             {
-                _items.Reverse();
+                ReverseDense();
                 return;
             }
 
@@ -2118,6 +2416,74 @@ namespace JavaScriptRuntime
             }
         }
 
+        public double GetItemAsNumber(double index)
+        {
+            var isDenseIndex = !double.IsNaN(index)
+                && !double.IsInfinity(index)
+                && index % 1.0 == 0.0
+                && index >= 0
+                && index <= int.MaxValue;
+            if (!isDenseIndex)
+            {
+                return TypeUtilities.ToNumber(
+                    JavaScriptRuntime.ObjectRuntime.GetProperty(this, DotNet2JSConversions.ToString(index)));
+            }
+
+            var intIndex = (int)index;
+            if (intIndex >= Count)
+            {
+                return TypeUtilities.ToNumber(
+                    JavaScriptRuntime.ObjectRuntime.GetProperty(
+                        this,
+                        intIndex.ToString(CultureInfo.InvariantCulture)));
+            }
+
+            var hasDenseIndex = HasDenseIndex(intIndex);
+            if (hasDenseIndex && !HasNonDataDescriptors && _numberItems is not null)
+            {
+                return _numberItems[intIndex];
+            }
+
+            if (HasNonDataDescriptors && PropertyDescriptorStore.HasAny(this))
+            {
+                var key = intIndex.ToString(CultureInfo.InvariantCulture);
+                if (PropertyDescriptorStore.GetOwnLookupCore(this, key, out _)
+                    != PropertyDescriptorLookup.None)
+                {
+                    return TypeUtilities.ToNumber(Object.GetProperty(this, key));
+                }
+            }
+
+            if (hasDenseIndex)
+            {
+                return _numberItems is not null
+                    ? _numberItems[intIndex]
+                    : TypeUtilities.ToNumber(_items![intIndex]);
+            }
+
+            return TypeUtilities.ToNumber(
+                Object.GetProperty(this, intIndex.ToString(CultureInfo.InvariantCulture)));
+        }
+
+        public void SetItemNumber(double index, double value)
+        {
+            var isDenseIndex = !double.IsNaN(index)
+                && !double.IsInfinity(index)
+                && index % 1.0 == 0.0
+                && index >= 0
+                && index <= int.MaxValue;
+            if (!isDenseIndex)
+            {
+                JavaScriptRuntime.ObjectRuntime.SetProperty(
+                    this,
+                    DotNet2JSConversions.ToString(index),
+                    value);
+                return;
+            }
+
+            TrySetIndexNumber((int)index, value, throwOnError: true);
+        }
+
         /// <summary>
         /// Implements the JavaScript Array constructor semantics:
         ///  - new Array() => []
@@ -2157,8 +2523,9 @@ namespace JavaScriptRuntime
                     }
 
                     var len = (int)d;
-                    var result = new Array();
+                    var result = new Array(len);
                     result._logicalLength = len;
+                    result._virtualLength = len;
                     return result;
                 }
 
@@ -3434,20 +3801,28 @@ namespace JavaScriptRuntime
                 var removedDense = new Array(deleteCount);
                 for (var i = 0; i < deleteCount; i++)
                 {
-                    removedDense._items.Add(_items[start + i]);
+                    if (_numberItems is not null)
+                    {
+                        removedDense.AddNumber(_numberItems[start + i]);
+                    }
+                    else
+                    {
+                        removedDense.AddDenseValue(_items![start + i]);
+                    }
                 }
                 removedDense.SynchronizeDenseLength();
 
-                _items.RemoveRange(start, deleteCount);
+                RemoveDenseRange(start, deleteCount);
                 if (insertCount == 1)
                 {
-                    _items.Insert(start, args[2]);
+                    InsertDenseValue(start, args[2]);
                 }
                 else if (insertCount > 1)
                 {
-                    var insertedItems = new object?[insertCount];
-                    System.Array.Copy(args, 2, insertedItems, 0, insertCount);
-                    _items.InsertRange(start, insertedItems);
+                    for (var i = 0; i < insertCount; i++)
+                    {
+                        InsertDenseValue(start + i, args[i + 2]);
+                    }
                 }
 
                 SynchronizeDenseLength();
@@ -3624,7 +3999,7 @@ namespace JavaScriptRuntime
             var newLength = length;
             if (newLength < int.MaxValue && CanUseDenseGrowthFastPath())
             {
-                _items.Add(item);
+                AddDenseValue(item);
                 SynchronizeDenseLength();
                 return length;
             }
@@ -3652,7 +4027,10 @@ namespace JavaScriptRuntime
                 && newLength <= int.MaxValue - items.Length
                 && CanUseDenseGrowthFastPath())
             {
-                _items.AddRange(items);
+                foreach (var item in items)
+                {
+                    AddDenseValue(item);
+                }
                 SynchronizeDenseLength();
                 return length;
             }
@@ -3679,14 +4057,14 @@ namespace JavaScriptRuntime
         {
             if (CanUseDenseMutationFastPath())
             {
-                if (_items.Count == 0)
+                if (DenseCount == 0)
                 {
                     return null;
                 }
 
-                var lastIndex = _items.Count - 1;
-                var denseValue = _items[lastIndex];
-                _items.RemoveAt(lastIndex);
+                var lastIndex = DenseCount - 1;
+                var denseValue = GetDenseValue(lastIndex);
+                RemoveDenseRange(lastIndex, 1);
                 SynchronizeDenseLength();
                 return denseValue;
             }
@@ -3744,13 +4122,13 @@ namespace JavaScriptRuntime
         {
             if (CanUseDenseMutationFastPath())
             {
-                if (_items.Count == 0)
+                if (DenseCount == 0)
                 {
                     return null;
                 }
 
-                var denseValue = _items[0];
-                _items.RemoveAt(0);
+                var denseValue = GetDenseValue(0);
+                RemoveDenseRange(0, 1);
                 SynchronizeDenseLength();
                 return denseValue;
             }

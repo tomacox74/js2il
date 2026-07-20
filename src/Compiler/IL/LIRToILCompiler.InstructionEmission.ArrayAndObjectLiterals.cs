@@ -51,22 +51,37 @@ internal sealed partial class LIRToILCompiler
                     }
 
                     // Emit: ldc.i4 capacity, newobj JavaScriptRuntime.Array::.ctor(int)
-                    ilEncoder.LoadConstantI4(newJsArray.Elements.Count);
+                    ilEncoder.LoadConstantI4(newJsArray.CapacityHint ?? newJsArray.Elements.Count);
                     var arrayCtor = _memberRefRegistry.GetOrAddConstructor(
                         typeof(JavaScriptRuntime.Array),
                         parameterTypes: new[] { typeof(int) });
                     ilEncoder.OpCode(ILOpCode.Newobj);
                     ilEncoder.Token(arrayCtor);
 
-                    // For each element: dup, load element value (boxed), callvirt Add
+                    // Keep numeric literals unboxed all the way into packed Array storage.
                     var addMethod = _memberRefRegistry.GetOrAddMethod(
                         typeof(JavaScriptRuntime.Array),
                         nameof(JavaScriptRuntime.Array.Add),
                         parameterTypes: new[] { typeof(object) });
+                    var addNumberMethod = _memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.Array),
+                        nameof(JavaScriptRuntime.Array.AddNumber),
+                        parameterTypes: new[] { typeof(double) });
                     for (int i = 0; i < newJsArray.Elements.Count; i++)
                     {
+                        var element = newJsArray.Elements[i];
+                        var elementStorage = GetTempStorage(element);
                         ilEncoder.OpCode(ILOpCode.Dup);
-                        EmitLoadTempAsObject(newJsArray.Elements[i], ilEncoder, allocation, methodDescriptor);
+                        if (elementStorage.Kind == ValueStorageKind.UnboxedValue
+                            && elementStorage.ClrType == typeof(double))
+                        {
+                            EmitLoadTemp(element, ilEncoder, allocation, methodDescriptor);
+                            ilEncoder.OpCode(ILOpCode.Callvirt);
+                            ilEncoder.Token(addNumberMethod);
+                            continue;
+                        }
+
+                        EmitLoadTempAsObject(element, ilEncoder, allocation, methodDescriptor);
                         ilEncoder.OpCode(ILOpCode.Callvirt);
                         ilEncoder.Token(addMethod);
                     }

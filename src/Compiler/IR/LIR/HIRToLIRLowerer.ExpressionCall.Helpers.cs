@@ -86,7 +86,7 @@ public sealed partial class HIRToLIRLowerer
             {
                 return false;
             }
-            prefixTemps.Add(EnsureObject(argTemp));
+            prefixTemps.Add(argTemp);
         }
 
         var jsArgsListTemp = CreateTempVariable();
@@ -113,7 +113,6 @@ public sealed partial class HIRToLIRLowerer
                 return false;
             }
 
-            argTempVar = EnsureObject(argTempVar);
             _methodBodyIR.Instructions.Add(new LIRArrayAdd(jsArgsListTemp, argTempVar));
         }
 

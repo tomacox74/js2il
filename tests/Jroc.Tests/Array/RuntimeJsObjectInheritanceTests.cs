@@ -254,6 +254,118 @@ public sealed class RuntimeJsObjectInheritanceTests
     }
 
     [Fact]
+    public void DenseNumericWritesAndReads_AvoidPerElementBoxing()
+    {
+        JavaScriptRuntime.Array.ResetPrototypeForTests();
+
+        try
+        {
+            var warmup = new JavaScriptRuntime.Array(1);
+            Assert.True(warmup.TrySetIndexNumber(0, 1d, throwOnError: true));
+            Assert.Equal(1d, ObjectRuntime.GetItemAsNumber(warmup, 0d));
+
+            const int elementCount = 4096;
+            var array = new JavaScriptRuntime.Array(elementCount);
+            var beforeWrites = GC.GetAllocatedBytesForCurrentThread();
+            for (var index = 0; index < elementCount; index++)
+            {
+                if (!array.TrySetIndexNumber(index, index, throwOnError: true))
+                {
+                    throw new InvalidOperationException($"Failed to set index {index}.");
+                }
+            }
+            var writeAllocations = GC.GetAllocatedBytesForCurrentThread() - beforeWrites;
+
+            var beforeReads = GC.GetAllocatedBytesForCurrentThread();
+            var sum = 0d;
+            for (var index = 0; index < elementCount; index++)
+            {
+                sum += ObjectRuntime.GetItemAsNumber(array, index);
+            }
+            var readAllocations = GC.GetAllocatedBytesForCurrentThread() - beforeReads;
+
+            Assert.Equal((elementCount - 1d) * elementCount / 2d, sum);
+            Assert.InRange(writeAllocations, 0, 128 * 1024);
+            Assert.Equal(0, readAllocations);
+        }
+        finally
+        {
+            JavaScriptRuntime.Array.ResetPrototypeForTests();
+        }
+    }
+
+    [Fact]
+    public void NumericIndexObjectWrites_AvoidIndexBoxingAndKeyStrings()
+    {
+        JavaScriptRuntime.Array.ResetPrototypeForTests();
+
+        try
+        {
+            var value = new object();
+            var warmup = JavaScriptRuntime.Array.Construct(new object[] { 1d });
+            ObjectRuntime.SetItem(warmup, 0d, value, throwOnError: true);
+
+            const int elementCount = 4096;
+            var array = JavaScriptRuntime.Array.Construct(new object[] { (double)elementCount });
+            var before = GC.GetAllocatedBytesForCurrentThread();
+            for (var index = 0; index < elementCount; index++)
+            {
+                ObjectRuntime.SetItem(array, (double)index, value, throwOnError: true);
+            }
+            var allocated = GC.GetAllocatedBytesForCurrentThread() - before;
+
+            Assert.Equal((double)elementCount, array.length);
+            Assert.Same(value, array[0]);
+            Assert.Same(value, array[elementCount - 1]);
+            Assert.InRange(allocated, 0, 128 * 1024);
+        }
+        finally
+        {
+            JavaScriptRuntime.Array.ResetPrototypeForTests();
+        }
+    }
+
+    [Fact]
+    public void NumericStorage_TransitionsForMixedValuesAndHoles()
+    {
+        var array = new JavaScriptRuntime.Array(4);
+        array.AddNumber(1d);
+        array.AddNumber(2d);
+        Assert.True(array.TrySetIndexValue(1, "mixed", throwOnError: true));
+        Assert.True(array.TrySetIndexNumber(2, 3d, throwOnError: true));
+
+        Assert.True(array.DeleteOwnProperty("0"));
+
+        Assert.False(JavaScriptRuntime.Object.hasOwn(array, "0"));
+        Assert.Equal("mixed", array[1]);
+        Assert.Equal(3d, ObjectRuntime.GetItemAsNumber(array, 2d));
+        Assert.Equal(3d, array.length);
+    }
+
+    [Fact]
+    public void NumericLengthConstruction_DoesNotMaterializeHoles()
+    {
+        _ = JavaScriptRuntime.Array.Construct(new object[] { 1d });
+
+        var before = GC.GetAllocatedBytesForCurrentThread();
+        var array = JavaScriptRuntime.Array.Construct(new object[] { 10_000_000d });
+        var allocated = GC.GetAllocatedBytesForCurrentThread() - before;
+
+        Assert.Equal(10_000_000d, array.length);
+        Assert.False(JavaScriptRuntime.Object.hasOwn(array, "0"));
+        Assert.False(JavaScriptRuntime.Object.hasOwn(array, "9999999"));
+        Assert.InRange(allocated, 0, 16 * 1024);
+
+        var beforeFirstWrite = GC.GetAllocatedBytesForCurrentThread();
+        Assert.True(array.TrySetIndexNumber(0, 1d, throwOnError: true));
+        var firstWriteAllocations = GC.GetAllocatedBytesForCurrentThread() - beforeFirstWrite;
+
+        Assert.True(JavaScriptRuntime.Object.hasOwn(array, "0"));
+        Assert.False(JavaScriptRuntime.Object.hasOwn(array, "1"));
+        Assert.InRange(firstWriteAllocations, 0, 1024 * 1024);
+    }
+
+    [Fact]
     public void DenseGrowth_PreservesHolesSparseJumpsAndLengthTruncation()
     {
         var array = JavaScriptRuntime.Array.Construct(new object[] { 8d });

@@ -144,5 +144,11 @@ namespace Jroc.Tests.Array
 
         [Fact]
         public Task Array_Exotic_Sloppy_Assignment() { var testName = nameof(Array_Exotic_Sloppy_Assignment); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Array_DenseFastPath_Guards() { var testName = nameof(Array_DenseFastPath_Guards); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Array_NumericStorage_Basic() { var testName = nameof(Array_NumericStorage_Basic); return GenerateTest(testName); }
     }
 }

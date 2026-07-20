@@ -581,22 +581,37 @@ internal sealed partial class LIRToILCompiler
             case LIRNewJsArray newJsArray:
                 {
                     // Emit inline JavaScriptRuntime.Array construction using dup pattern
-                    ilEncoder.LoadConstantI4(newJsArray.Elements.Count);
+                    ilEncoder.LoadConstantI4(newJsArray.CapacityHint ?? newJsArray.Elements.Count);
                     var arrayCtor = _memberRefRegistry.GetOrAddConstructor(
                         typeof(JavaScriptRuntime.Array),
                         parameterTypes: new[] { typeof(int) });
                     ilEncoder.OpCode(ILOpCode.Newobj);
                     ilEncoder.Token(arrayCtor);
 
-                    // For each element: dup, load element value, callvirt Add
+                    // Keep numeric literals unboxed all the way into packed Array storage.
                     var addMethod = _memberRefRegistry.GetOrAddMethod(
                         typeof(JavaScriptRuntime.Array),
                         nameof(JavaScriptRuntime.Array.Add),
                         parameterTypes: new[] { typeof(object) });
+                    var addNumberMethod = _memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.Array),
+                        nameof(JavaScriptRuntime.Array.AddNumber),
+                        parameterTypes: new[] { typeof(double) });
                     for (int i = 0; i < newJsArray.Elements.Count; i++)
                     {
+                        var element = newJsArray.Elements[i];
+                        var elementStorage = GetTempStorage(element);
                         ilEncoder.OpCode(ILOpCode.Dup);
-                        EmitLoadTemp(newJsArray.Elements[i], ilEncoder, allocation, methodDescriptor);
+                        if (elementStorage.Kind == ValueStorageKind.UnboxedValue
+                            && elementStorage.ClrType == typeof(double))
+                        {
+                            EmitLoadTemp(element, ilEncoder, allocation, methodDescriptor);
+                            ilEncoder.OpCode(ILOpCode.Callvirt);
+                            ilEncoder.Token(addNumberMethod);
+                            continue;
+                        }
+
+                        EmitLoadTempAsObject(element, ilEncoder, allocation, methodDescriptor);
                         ilEncoder.OpCode(ILOpCode.Callvirt);
                         ilEncoder.Token(addMethod);
                     }
@@ -887,24 +902,17 @@ internal sealed partial class LIRToILCompiler
 
                     EmitLoadTemp(getArray.Index, ilEncoder, allocation, methodDescriptor);
 
+                    var resultStorage = GetTempStorage(getArray.Result);
+                    var resultIsNumber = resultStorage.Kind == ValueStorageKind.UnboxedValue
+                        && resultStorage.ClrType == typeof(double);
                     var arrayGetter = _memberRefRegistry.GetOrAddMethod(
                         typeof(JavaScriptRuntime.Array),
-                        "get_Item",
+                        resultIsNumber
+                            ? nameof(JavaScriptRuntime.Array.GetItemAsNumber)
+                            : "get_Item",
                         parameterTypes: new[] { typeof(double) });
                     ilEncoder.OpCode(ILOpCode.Callvirt);
                     ilEncoder.Token(arrayGetter);
-
-                    // If the temp storage expects an unboxed double, coerce the object result to a number.
-                    var resultStorage = GetTempStorage(getArray.Result);
-                    if (resultStorage.Kind == ValueStorageKind.UnboxedValue && resultStorage.ClrType == typeof(double))
-                    {
-                        var toNumberMref = _memberRefRegistry.GetOrAddMethod(
-                            typeof(JavaScriptRuntime.TypeUtilities),
-                            nameof(JavaScriptRuntime.TypeUtilities.ToNumber),
-                            parameterTypes: new[] { typeof(object) });
-                        ilEncoder.OpCode(ILOpCode.Call);
-                        ilEncoder.Token(toNumberMref);
-                    }
 
                     if (resultStorage.Kind == ValueStorageKind.Reference && resultStorage.ClrType == typeof(string))
                     {
@@ -1735,6 +1743,19 @@ internal sealed partial class LIRToILCompiler
                             typeof(JavaScriptRuntime.ObjectRuntime),
                             nameof(JavaScriptRuntime.ObjectRuntime.SetItem),
                             parameterTypes: new[] { typeof(object), typeof(double), typeof(double) });
+                        ilEncoder.OpCode(ILOpCode.Call);
+                        ilEncoder.Token(setItemMethod);
+                    }
+                    else if (indexStorage.Kind == ValueStorageKind.UnboxedValue
+                        && indexStorage.ClrType == typeof(double))
+                    {
+                        EmitLoadTempAsObject(setItem.Object, ilEncoder, allocation, methodDescriptor);
+                        EmitLoadTemp(setItem.Index, ilEncoder, allocation, methodDescriptor);
+                        EmitLoadTempAsObject(setItem.Value, ilEncoder, allocation, methodDescriptor);
+                        var setItemMethod = _memberRefRegistry.GetOrAddMethod(
+                            typeof(JavaScriptRuntime.ObjectRuntime),
+                            nameof(JavaScriptRuntime.ObjectRuntime.SetItem),
+                            parameterTypes: new[] { typeof(object), typeof(double), typeof(object) });
                         ilEncoder.OpCode(ILOpCode.Call);
                         ilEncoder.Token(setItemMethod);
                     }

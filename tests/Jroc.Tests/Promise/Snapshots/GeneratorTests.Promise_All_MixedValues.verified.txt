@@ -25,7 +25,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x217d
+				// Method begins at RVA 0x2175
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -49,7 +49,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2100
+			// Method begins at RVA 0x20f8
 			// Header size: 12
 			// Code size: 104 (0x68)
 			.maxstack 8
@@ -110,7 +110,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2174
+			// Method begins at RVA 0x216c
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -136,7 +136,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 163 (0xa3)
+		// Code size: 154 (0x9a)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Promise_All_MixedValues/Scope,
@@ -144,9 +144,8 @@
 			[2] string,
 			[3] float64,
 			[4] object,
-			[5] object,
-			[6] class [JavaScriptRuntime]JavaScriptRuntime.Array,
-			[7] object
+			[5] class [JavaScriptRuntime]JavaScriptRuntime.Array,
+			[6] object
 		)
 
 		IL_0000: newobj instance void Modules.Promise_All_MixedValues/Scope::.ctor()
@@ -161,52 +160,49 @@
 		IL_001b: stloc.2
 		IL_001c: ldc.r8 42
 		IL_0025: stloc.3
-		IL_0026: ldloc.3
-		IL_0027: box [System.Runtime]System.Double
-		IL_002c: stloc.s 5
-		IL_002e: ldc.i4.3
-		IL_002f: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_0034: dup
-		IL_0035: ldloc.1
-		IL_0036: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-		IL_003b: dup
-		IL_003c: ldloc.2
-		IL_003d: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-		IL_0042: dup
+		IL_0026: ldc.i4.3
+		IL_0027: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_002c: dup
+		IL_002d: ldloc.1
+		IL_002e: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+		IL_0033: dup
+		IL_0034: ldloc.2
+		IL_0035: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+		IL_003a: dup
+		IL_003b: ldloc.3
+		IL_003c: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::AddNumber(float64)
+		IL_0041: stloc.s 5
 		IL_0043: ldloc.s 5
-		IL_0045: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-		IL_004a: stloc.s 6
-		IL_004c: ldloc.s 6
-		IL_004e: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::all(object)
+		IL_0045: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::all(object)
+		IL_004a: stloc.s 4
+		IL_004c: ldloc.s 4
+		IL_004e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
 		IL_0053: stloc.s 4
-		IL_0055: ldloc.s 4
-		IL_0057: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_005c: stloc.s 4
-		IL_005e: ldnull
-		IL_005f: ldftn object Modules.Promise_All_MixedValues/ArrowFunction_L7C36::__js_call__(object, object)
-		IL_0065: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-		IL_006a: ldc.i4.1
-		IL_006b: newarr [System.Runtime]System.Object
-		IL_0070: dup
-		IL_0071: ldc.i4.0
-		IL_0072: ldloc.0
-		IL_0073: stelem.ref
-		IL_0074: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_0079: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_007e: ldc.i4.1
-		IL_007f: conv.r8
-		IL_0080: ldstr ""
-		IL_0085: ldc.i4.0
-		IL_0086: ldc.i4.0
-		IL_0087: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-		IL_008c: call object [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype(object)
-		IL_0091: stloc.s 7
-		IL_0093: ldloc.s 4
-		IL_0095: ldstr "then"
-		IL_009a: ldloc.s 7
-		IL_009c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_00a1: pop
-		IL_00a2: ret
+		IL_0055: ldnull
+		IL_0056: ldftn object Modules.Promise_All_MixedValues/ArrowFunction_L7C36::__js_call__(object, object)
+		IL_005c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_0061: ldc.i4.1
+		IL_0062: newarr [System.Runtime]System.Object
+		IL_0067: dup
+		IL_0068: ldc.i4.0
+		IL_0069: ldloc.0
+		IL_006a: stelem.ref
+		IL_006b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_0070: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_0075: ldc.i4.1
+		IL_0076: conv.r8
+		IL_0077: ldstr ""
+		IL_007c: ldc.i4.0
+		IL_007d: ldc.i4.0
+		IL_007e: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
+		IL_0083: call object [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype(object)
+		IL_0088: stloc.s 6
+		IL_008a: ldloc.s 4
+		IL_008c: ldstr "then"
+		IL_0091: ldloc.s 6
+		IL_0093: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0098: pop
+		IL_0099: ret
 	} // end of method Promise_All_MixedValues::__js_module_init__
 
 } // end of class Modules.Promise_All_MixedValues
@@ -218,7 +214,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2186
+		// Method begins at RVA 0x217e
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
