@@ -21,7 +21,7 @@ namespace JavaScriptRuntime
         internal static readonly JsObject ImmutablePrototype = CreatePrototype();
         private static readonly object Hole = new();
         private const int MaxDenseGap = 1024;
-        private const int MinNumericStorageCapacity = 8;
+        private const int MinNumericStorageCapacity = 32;
         private const int MaxInitialDenseCapacity = 65536;
         private List<object?>? _items;
         private List<double>? _numberItems;
