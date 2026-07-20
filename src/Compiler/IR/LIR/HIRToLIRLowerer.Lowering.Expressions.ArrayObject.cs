@@ -20,7 +20,11 @@ public sealed partial class HIRToLIRLowerer
 
         if (hasArrayHoles && !hasSpreadElements)
         {
-            _methodBodyIR.Instructions.Add(new LIRNewJsArray(new List<TempVariable>(), resultTempVar));
+            _methodBodyIR.Instructions.Add(
+                new LIRNewJsArray(
+                    new List<TempVariable>(),
+                    resultTempVar,
+                    CapacityHint: arrayExpr.Elements.Length));
             DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(JavaScriptRuntime.Array)));
 
             var lengthKeyTemp = CreateTempVariable();
@@ -34,8 +38,8 @@ public sealed partial class HIRToLIRLowerer
             var lengthSetResult = CreateTempVariable();
             _methodBodyIR.Instructions.Add(new LIRSetItem(
                 resultTempVar,
-                EnsureObject(lengthKeyTemp),
-                EnsureObject(lengthValueTemp),
+                lengthKeyTemp,
+                lengthValueTemp,
                 lengthSetResult,
                 ThrowOnError: true));
             DefineTempStorage(lengthSetResult, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
@@ -60,8 +64,8 @@ public sealed partial class HIRToLIRLowerer
                 var setResult = CreateTempVariable();
                 _methodBodyIR.Instructions.Add(new LIRSetItem(
                     resultTempVar,
-                    EnsureObject(indexTemp),
-                    EnsureObject(elementTemp),
+                    indexTemp,
+                    elementTemp,
                     setResult,
                     ThrowOnError: true));
                 DefineTempStorage(setResult, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
@@ -80,8 +84,7 @@ public sealed partial class HIRToLIRLowerer
                 {
                     return false;
                 }
-                // Ensure each element is boxed as object for the array
-                elementTemps.Add(EnsureObject(elementTemp));
+                elementTemps.Add(elementTemp);
             }
 
             // Emit the LIRNewJsArray instruction
@@ -108,7 +111,7 @@ public sealed partial class HIRToLIRLowerer
             {
                 return false;
             }
-            prefixElementTemps.Add(EnsureObject(elementTemp));
+            prefixElementTemps.Add(elementTemp);
         }
 
         _methodBodyIR.Instructions.Add(new LIRNewJsArray(prefixElementTemps, resultTempVar));
@@ -134,8 +137,7 @@ public sealed partial class HIRToLIRLowerer
                 return false;
             }
 
-            var boxedRemaining = EnsureObject(remainingTemp);
-            _methodBodyIR.Instructions.Add(new LIRArrayAdd(resultTempVar, boxedRemaining));
+            _methodBodyIR.Instructions.Add(new LIRArrayAdd(resultTempVar, remainingTemp));
         }
 
         return true;

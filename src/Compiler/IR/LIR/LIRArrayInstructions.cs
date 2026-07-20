@@ -13,9 +13,12 @@ public record LIRBuildArray(IReadOnlyList<TempVariable> Elements, TempVariable R
 /// <summary>
 /// Creates and initializes a JavaScriptRuntime.Array with the given elements.
 /// All element temps must be computed before this instruction executes.
-/// IL emitter: newobj Array(capacity), [dup, ldtemp, callvirt Add]*, leaving array on stack.
+/// IL emitter uses AddNumber for unboxed doubles and Add for generic values.
 /// </summary>
-public record LIRNewJsArray(IReadOnlyList<TempVariable> Elements, TempVariable Result) : LIRInstruction;
+public record LIRNewJsArray(
+    IReadOnlyList<TempVariable> Elements,
+    TempVariable Result,
+    int? CapacityHint = null) : LIRInstruction;
 
 /// <summary>
 /// Pushes all elements from the source array to the target array (calls JavaScriptRuntime.Array.PushRange).
@@ -24,7 +27,7 @@ public record LIRNewJsArray(IReadOnlyList<TempVariable> Elements, TempVariable R
 public record LIRArrayPushRange(TempVariable TargetArray, TempVariable SourceArray) : LIRInstruction;
 
 /// <summary>
-/// Adds a single element to the target array (calls List&lt;object&gt;.Add).
+/// Adds a single element to the target array using its typed or generic append helper.
 /// Used for individual elements in array literals when spread elements are present.
 /// </summary>
 public record LIRArrayAdd(TempVariable TargetArray, TempVariable Element) : LIRInstruction;
@@ -60,7 +63,7 @@ public record LIRGetItem(TempVariable Object, TempVariable Index, TempVariable R
 /// <summary>
 /// Gets an item from an object by index and converts the result to an unboxed number.
 /// Calls JavaScriptRuntime.ObjectRuntime.GetItemAsNumber for a direct double result, avoiding boxing.
-/// Fast path for Int32Array receivers; fallback to ToNumber(GetItem(...)) for all others.
+/// Fast path for Array and typed-array receivers; fallback to ToNumber(GetItem(...)) for all others.
 /// Contract: Result is an unboxed double.
 /// </summary>
 public record LIRGetItemAsNumber(TempVariable Object, TempVariable Index, TempVariable Result) : LIRInstruction;
@@ -92,7 +95,7 @@ public record LIRSetJsArrayLength(
 /// <summary>
 /// Gets an element from a proven JavaScriptRuntime.Array by numeric index.
 /// Contract: Receiver is a proven Array; Index is an unboxed double.
-/// Result is an object (or may be coerced to a number by the IL emitter when the temp expects an unboxed double).
+/// Result is an object, or an unboxed double through Array.GetItemAsNumber when consumed numerically.
 /// </summary>
 public record LIRGetJsArrayElement(TempVariable Receiver, TempVariable Index, TempVariable Result) : LIRInstruction;
 

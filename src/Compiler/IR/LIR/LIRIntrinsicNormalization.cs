@@ -594,16 +594,27 @@ internal static class LIRIntrinsicNormalization
 
         for (int i = 0; i < methodBody.Instructions.Count; i++)
         {
-            if (methodBody.Instructions[i] is not LIRGetItem getItem)
+            var instruction = methodBody.Instructions[i];
+            TempVariable getResult;
+            if (instruction is LIRGetItem genericGetItem)
+            {
+                getResult = genericGetItem.Result;
+            }
+            else if (instruction is LIRGetJsArrayElement arrayElementGet)
+            {
+                getResult = arrayElementGet.Result;
+            }
+            else
             {
                 continue;
             }
 
-            var resultIdx = getItem.Result.Index;
-            if (resultIdx < 0)
+            if (getResult.Index < 0)
             {
                 continue;
             }
+
+            var resultIdx = getResult.Index;
 
             // Check that result storage is object (not already an unboxed double from normalization).
             var resultStorage = methodBody.TempStorages[resultIdx];
@@ -627,13 +638,20 @@ internal static class LIRIntrinsicNormalization
             var conv = (LIRConvertToNumber)methodBody.Instructions[convIdx];
 
             // Verify the result temp is not used by any other instruction (besides the GetItem def and the ConvertToNumber).
-            if (IsTempUsedOutside(methodBody, getItem.Result, new HashSet<int> { i, convIdx }))
+            if (IsTempUsedOutside(methodBody, getResult, new HashSet<int> { i, convIdx }))
             {
                 continue;
             }
 
-            // Fuse: replace GetItem with GetItemAsNumber targeting the numResult directly.
-            methodBody.Instructions[i] = new LIRGetItemAsNumber(getItem.Object, getItem.Index, conv.Result);
+            // Preserve proven Array specialization so IL can call Array.GetItemAsNumber directly.
+            methodBody.Instructions[i] = instruction switch
+            {
+                LIRGetJsArrayElement getArrayElement
+                    => new LIRGetJsArrayElement(getArrayElement.Receiver, getArrayElement.Index, conv.Result),
+                LIRGetItem getItem
+                    => new LIRGetItemAsNumber(getItem.Object, getItem.Index, conv.Result),
+                _ => instruction
+            };
             indicesToRemove.Add(convIdx);
 
             // Update result storage to unboxed double.

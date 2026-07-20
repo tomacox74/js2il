@@ -951,11 +951,16 @@ namespace JavaScriptRuntime
 
         /// <summary>
         /// Gets an item from an object and converts the result to a number (double).
-        /// Provides a fast path for typed-array receivers that avoids boxing the element value.
+        /// Provides fast paths for Array and typed-array receivers that avoid boxing the element value.
         /// For all other receivers, falls back to TypeUtilities.ToNumber(GetItem(obj, index)).
         /// </summary>
         public static double GetItemAsNumber(object obj, double index)
         {
+            if (obj is Array array)
+            {
+                return array.GetItemAsNumber(index);
+            }
+
             if (obj is TypedArrayBase typedArray)
             {
                 return typedArray[index];
@@ -966,11 +971,16 @@ namespace JavaScriptRuntime
 
         /// <summary>
         /// Gets an item from an object and converts the result to a number (double).
-        /// Provides a fast path for typed-array receivers that avoids boxing the element value.
+        /// Provides fast paths for Array and typed-array receivers that avoid boxing the element value.
         /// For all other receivers, falls back to TypeUtilities.ToNumber(GetItem(obj, index)).
         /// </summary>
         public static double GetItemAsNumber(object obj, object index)
         {
+            if (obj is Array array && index is double arrayIndex)
+            {
+                return array.GetItemAsNumber(arrayIndex);
+            }
+
             if (obj is TypedArrayBase typedArray && index is double d)
             {
                 return typedArray[d];
@@ -1068,6 +1078,107 @@ namespace JavaScriptRuntime
 
             // Generic object: treat as property assignment (ToPropertyKey -> string)
             return SetProperty(obj, propName, value, throwOnError);
+        }
+
+        /// <summary>
+        /// Fast-path overload for numeric indices and object values.
+        /// Avoids boxing the index while preserving the generic value and assignment result.
+        /// </summary>
+        public static object? SetItem(object? obj, double index, object? value)
+            => SetItem(obj, index, value, throwOnError: true);
+
+        public static object? SetItem(object? obj, double index, object? value, bool throwOnError)
+        {
+            if (obj is null)
+            {
+                throw new JavaScriptRuntime.TypeError("Cannot set properties of null or undefined");
+            }
+
+            if (obj is JsNull)
+            {
+                throw new JavaScriptRuntime.TypeError("Cannot set properties of null");
+            }
+
+            var isCanonicalArrayIndex = !double.IsNaN(index)
+                && !double.IsInfinity(index)
+                && index % 1.0 == 0.0
+                && index >= 0
+                && index <= int.MaxValue;
+            var intIndex = isCanonicalArrayIndex ? (int)index : 0;
+
+            if (obj is JavaScriptRuntime.Proxy)
+            {
+                return SetProperty(
+                    obj,
+                    DotNet2JSConversions.ToString(index),
+                    value,
+                    throwOnError);
+            }
+
+            if (obj is string)
+            {
+                return value;
+            }
+
+            if (obj is Array array)
+            {
+                if (!isCanonicalArrayIndex)
+                {
+                    return SetProperty(
+                        array,
+                        DotNet2JSConversions.ToString(index),
+                        value,
+                        throwOnError);
+                }
+
+                array.TrySetIndexValue(intIndex, value, throwOnError);
+                return value;
+            }
+
+            if (IsOrdinaryObject(obj))
+            {
+                return SetProperty(
+                    obj,
+                    DotNet2JSConversions.ToString(index),
+                    value,
+                    throwOnError);
+            }
+
+            if (obj is TypedArrayBase typedArray)
+            {
+                if (!isCanonicalArrayIndex)
+                {
+                    return SetProperty(
+                        typedArray,
+                        DotNet2JSConversions.ToString(index),
+                        value,
+                        throwOnError);
+                }
+
+                typedArray[(double)intIndex] = TypeUtilities.ToNumber(value);
+                return value;
+            }
+
+            if (obj is JavaScriptRuntime.Node.Buffer buffer)
+            {
+                if (!isCanonicalArrayIndex)
+                {
+                    return SetProperty(
+                        buffer,
+                        DotNet2JSConversions.ToString(index),
+                        value,
+                        throwOnError);
+                }
+
+                buffer[(double)intIndex] = value;
+                return value;
+            }
+
+            return SetProperty(
+                obj,
+                DotNet2JSConversions.ToString(index),
+                value,
+                throwOnError);
         }
 
         /// <summary>
@@ -1238,6 +1349,12 @@ namespace JavaScriptRuntime
 
         public static object SetItem(object? obj, double index, double value, bool throwOnError)
         {
+            SetItemNumber(obj, index, value, throwOnError);
+            return value;
+        }
+
+        public static void SetItemNumber(object? obj, double index, double value, bool throwOnError)
+        {
             if (obj is null)
             {
                 throw new JavaScriptRuntime.TypeError("Cannot set properties of null or undefined");
@@ -1258,7 +1375,7 @@ namespace JavaScriptRuntime
             // Strings are immutable in JS; silently ignore and return value.
             if (obj is string)
             {
-                return value;
+                return;
             }
 
             // JS Array index assignment
@@ -1267,11 +1384,12 @@ namespace JavaScriptRuntime
                 if (!isCanonicalArrayIndex)
                 {
                     var nonCanonicalIndexKey = DotNet2JSConversions.ToString(index);
-                    return SetProperty(array, nonCanonicalIndexKey, value, throwOnError) ?? value;
+                    SetProperty(array, nonCanonicalIndexKey, value, throwOnError);
+                    return;
                 }
 
-                array.TrySetIndexValue(intIndex, value, throwOnError);
-                return value;
+                array.TrySetIndexNumber(intIndex, value, throwOnError);
+                return;
             }
 
             // Typed arrays: only use element write path if index is finite, integer, and in-bounds.
@@ -1285,7 +1403,7 @@ namespace JavaScriptRuntime
                         typedArray.SetFromDouble(intIndex, value);
                     }
                 }
-                return value;
+                return;
             }
 
             // Buffer: only use element write path if index is finite, integer, and in-bounds.
@@ -1308,11 +1426,11 @@ namespace JavaScriptRuntime
                     // Negative or too large: no-op
                 }
                 // NaN/Infinity/fractional: no-op (do not treat as element 0 or property)
-                return value;
+                return;
             }
 
             // Fallback: treat numeric index as a property key string.
-            return SetProperty(obj, DotNet2JSConversions.ToString(index), value, throwOnError) ?? value;
+            SetProperty(obj, DotNet2JSConversions.ToString(index), value, throwOnError);
         }
 
         /// <summary>
