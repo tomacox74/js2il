@@ -25,23 +25,11 @@ namespace JavaScriptRuntime
         private const int MaxInitialDenseCapacity = 65536;
         private const int CapacityHintMarker = 1 << 30;
         private const int CapacityHintMask = CapacityHintMarker - 1;
-        // One tagged storage reference and a transient packed hint keep Array instances at their original size.
-        private object? _denseStorage;
+        private List<object?>? _items;
+        private List<double>? _numberItems;
         private int _logicalLength;
         private int _holeCount;
         private double _virtualLength;
-
-        private List<object?>? _items
-        {
-            get => _denseStorage as List<object?>;
-            set => _denseStorage = value;
-        }
-
-        private List<double>? _numberItems
-        {
-            get => _denseStorage as List<double>;
-            set => _denseStorage = value;
-        }
 
         private int CapacityHint
             => (_holeCount & CapacityHintMarker) != 0
@@ -250,6 +238,7 @@ namespace JavaScriptRuntime
                 {
                     _items.Add(number);
                 }
+                _numberItems = null;
             }
         }
 
