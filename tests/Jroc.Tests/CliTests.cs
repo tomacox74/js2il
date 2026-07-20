@@ -241,6 +241,31 @@ namespace Jroc.Tests
         }
 
         [Fact]
+        public void Convert_Verbose_ReportsTypeInferencePassesAndBindingTypes()
+        {
+            var tempRoot = Path.Combine(Path.GetTempPath(), "jroc_cli_test_" + Guid.NewGuid().ToString("n"));
+            Directory.CreateDirectory(tempRoot);
+            var jsFile = Path.Combine(tempRoot, "inference.js");
+            File.WriteAllText(jsFile, "const numeric = 1;\nconst text = 'hello';\n");
+            var outDir = Path.Combine(tempRoot, "out");
+
+            try
+            {
+                var (code, stdout, stderr) = RunOutOfProc(jsFile, "-o", outDir, "-v");
+
+                Assert.Equal(0, code);
+                Assert.True(string.IsNullOrWhiteSpace(stderr), $"Unexpected stderr: {stderr}");
+                Assert.Contains("Type inference pass 1", stdout, StringComparison.Ordinal);
+                Assert.Contains("numeric => System.Double", stdout, StringComparison.Ordinal);
+                Assert.Contains("text => System.String", stdout, StringComparison.Ordinal);
+            }
+            finally
+            {
+                try { Directory.Delete(tempRoot, recursive: true); } catch { /* ignore */ }
+            }
+        }
+
+        [Fact]
         public void Convert_NonStrictJs_Succeeds()
         {
             var tempRoot = Path.Combine(Path.GetTempPath(), "jroc_cli_test_" + Guid.NewGuid().ToString("n"));

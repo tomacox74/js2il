@@ -3,6 +3,7 @@ using System.Reflection;
 using System.Linq;
 using Jroc.Services;
 using Jroc.Utilities;
+using Microsoft.Extensions.Logging;
 
 namespace Jroc.SymbolTables
 {
@@ -20,15 +21,45 @@ namespace Jroc.SymbolTables
         private readonly HashSet<Node> _visitedClasses = new();
         private readonly JavaScriptParser _parser = new();
         private readonly JavaScriptRuntime.IRuntimeIntrinsicCatalog _runtimeIntrinsicCatalog;
+        private readonly ILogger<SymbolTableBuilder> _diagnosticLogger;
+        private readonly bool _verbose;
 
         public SymbolTableBuilder()
-            : this(new JavaScriptRuntime.RuntimeIntrinsicCatalog())
+            : this(
+                new JavaScriptRuntime.RuntimeIntrinsicCatalog(),
+                Microsoft.Extensions.Logging.Abstractions.NullLogger<SymbolTableBuilder>.Instance,
+                verbose: false)
         {
         }
 
         public SymbolTableBuilder(JavaScriptRuntime.IRuntimeIntrinsicCatalog runtimeIntrinsicCatalog)
+            : this(
+                runtimeIntrinsicCatalog,
+                Microsoft.Extensions.Logging.Abstractions.NullLogger<SymbolTableBuilder>.Instance,
+                verbose: false)
+        {
+        }
+
+        public SymbolTableBuilder(
+            JavaScriptRuntime.IRuntimeIntrinsicCatalog runtimeIntrinsicCatalog,
+            ILogger<SymbolTableBuilder>? diagnosticLogger,
+            CompilerOptions options)
+            : this(
+                runtimeIntrinsicCatalog,
+                diagnosticLogger,
+                options?.Verbose ?? false)
+        {
+        }
+
+        private SymbolTableBuilder(
+            JavaScriptRuntime.IRuntimeIntrinsicCatalog runtimeIntrinsicCatalog,
+            ILogger<SymbolTableBuilder>? diagnosticLogger,
+            bool verbose)
         {
             _runtimeIntrinsicCatalog = runtimeIntrinsicCatalog ?? throw new ArgumentNullException(nameof(runtimeIntrinsicCatalog));
+            _diagnosticLogger = diagnosticLogger
+                ?? Microsoft.Extensions.Logging.Abstractions.NullLogger<SymbolTableBuilder>.Instance;
+            _verbose = verbose;
         }
 
         private static string BuildClassRegistryNamespace(Scope globalScope, Scope currentScope, Node classNode, bool forceUniqueSuffix)

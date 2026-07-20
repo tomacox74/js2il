@@ -1,4 +1,5 @@
 using System.Text;
+using Microsoft.Extensions.Logging;
 
 namespace Jroc.SymbolTables;
 
@@ -9,9 +10,12 @@ public partial class SymbolTableBuilder
         var visitedStates = new HashSet<string>(StringComparer.Ordinal);
         var before = CaptureInferenceState(root);
         visitedStates.Add(before);
+        var passNumber = 0;
 
         while (true)
         {
+            passNumber++;
+
             // Parameter facts are recomputed first so variable inference can restore derived
             // metadata such as stable Array element types before return inference consumes it.
             InferCallableParameterClrTypes(root);
@@ -23,6 +27,8 @@ public partial class SymbolTableBuilder
             InferClassInstanceFieldClrTypes(root);
             InferCallableReturnClrTypes(root);
             AnalyzeObjectLiteralShapes(root);
+
+            LogInferredTypes(root, passNumber);
 
             var after = CaptureInferenceState(root);
             if (string.Equals(before, after, StringComparison.Ordinal))
@@ -37,6 +43,45 @@ public partial class SymbolTableBuilder
 
             before = after;
         }
+    }
+
+    private void LogInferredTypes(Scope root, int passNumber)
+    {
+        if (!_verbose)
+        {
+            return;
+        }
+
+        _diagnosticLogger.LogInformation("Type inference pass {PassNumber}", passNumber);
+        foreach (var scope in EnumerateScopes(root))
+        {
+            foreach (var binding in scope.Bindings.Values.OrderBy(binding => binding.Name, StringComparer.Ordinal))
+            {
+                _diagnosticLogger.LogInformation(
+                    "Type inference pass {PassNumber}: {ScopeKind} scope {ScopeName}, {BindingKind} {BindingName} => {InferredType}",
+                    passNumber,
+                    scope.Kind,
+                    scope.Name,
+                    binding.Kind,
+                    binding.Name,
+                    FormatInferredType(binding));
+            }
+        }
+    }
+
+    private static string FormatInferredType(BindingInfo binding)
+    {
+        var clrType = binding.ClrType?.FullName ?? "<unknown>";
+        if (binding.ObjectLiteralShape is not { IsEligible: true } shape)
+        {
+            return clrType;
+        }
+
+        var members = string.Join(
+            ", ",
+            shape.Members.Select(member =>
+                $"{member.Name}: {(member.IsFunction ? "function" : member.ClrType?.FullName ?? "System.Object")}"));
+        return $"{clrType} [object literal: {{ {members} }}]";
     }
 
     private static string CaptureInferenceState(Scope root)
