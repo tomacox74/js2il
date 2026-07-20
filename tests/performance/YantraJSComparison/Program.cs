@@ -31,7 +31,7 @@ class Program
 
             // Provide console mock
             var consoleObj = new JSObject();
-            consoleObj[KeyStrings.log] = new JSFunction((in Arguments a) =>
+            consoleObj[KeyString.log] = new JSFunction((in Arguments a) =>
             {
                 var parts = new List<string>();
                 for (int i = 0; i < a.Length; i++)
@@ -42,40 +42,40 @@ class Program
                 Console.WriteLine(string.Join(" ", parts));
                 return JSUndefined.Value;
             });
-            context[KeyStrings.console] = consoleObj;
+            context[KeyString.console] = consoleObj;
 
             // Provide process.argv mock
             var processObj = new JSObject();
             var argvArray = new JSArray();
-            argvArray[0] = new JSString("yantrajs");
-            argvArray[1] = new JSString("verbose");
-            processObj["argv"] = argvArray;
-            context["process"] = processObj;
+            argvArray[(uint)0] = new JSString("yantrajs");
+            argvArray[(uint)1] = new JSString("verbose");
+            processObj[new JSString("argv")] = argvArray;
+            context[new JSString("process")] = processObj;
 
             // Provide performance.now() mock
             var perfStart = Stopwatch.GetTimestamp();
             var performanceObj = new JSObject();
-            performanceObj["now"] = new JSFunction((in Arguments a) =>
+            performanceObj[KeyString.now] = new JSFunction((in Arguments a) =>
             {
                 var elapsed = Stopwatch.GetTimestamp() - perfStart;
                 return new JSNumber((double)elapsed / Stopwatch.Frequency * 1000.0);
             });
-            context["performance"] = performanceObj;
+            context[new JSString("performance")] = performanceObj;
 
             // Provide require() mock for perf_hooks
-            context[KeyStrings.require] = new JSFunction((in Arguments a) =>
+            context[KeyString.require] = new JSFunction((in Arguments a) =>
             {
                 var moduleName = a.Length > 0 ? a.Get1()?.ToString() : null;
                 if (moduleName == "perf_hooks")
                 {
                     var perfHooksObj = new JSObject();
                     var perfObj = new JSObject();
-                    perfObj["now"] = new JSFunction((in Arguments innerArgs) =>
+                    perfObj[KeyString.now] = new JSFunction((in Arguments innerArgs) =>
                     {
                         var elapsed = Stopwatch.GetTimestamp() - perfStart;
                         return new JSNumber((double)elapsed / Stopwatch.Frequency * 1000.0);
                     });
-                    perfHooksObj["performance"] = perfObj;
+                    perfHooksObj[new JSString("performance")] = perfObj;
                     return perfHooksObj;
                 }
                 throw new Exception($"Module '{moduleName}' not found");
@@ -97,4 +97,3 @@ class Program
         }
     }
 }
-
