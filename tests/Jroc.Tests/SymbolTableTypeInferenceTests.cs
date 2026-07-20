@@ -1013,6 +1013,111 @@ public class SymbolTableTypeInferenceTests
     }
 
     [Fact]
+    public void SymbolTable_InferTypes_StableParameters_ClassConstructor_DirectNewCallsInferStableParameter()
+    {
+        var source = @"
+                class PrimeSieve {
+                    constructor(sieveSize) {
+                        this.sieveSize = sieveSize;
+                    }
+                }
+
+                new PrimeSieve(1000);
+                new PrimeSieve(1000000);
+            ";
+
+        var symbolTable = BuildSymbolTable(source);
+        var classScope = FindClassScope(symbolTable.Root, "PrimeSieve");
+        Assert.NotNull(classScope);
+
+        var constructorScope = FindFirstScope(classScope!, s =>
+            s.Kind == ScopeKind.Function
+            && s.Parent == classScope
+            && string.Equals(s.Name, "constructor", StringComparison.Ordinal));
+
+        Assert.NotNull(constructorScope);
+        AssertStableParameterTypes(constructorScope!, ("sieveSize", typeof(double)));
+    }
+
+    [Fact]
+    public void SymbolTable_InferTypes_StableParameters_ClassConstructor_ConflictingNewCallsKeepObjectParameter()
+    {
+        var source = @"
+                class PrimeSieve {
+                    constructor(sieveSize) {
+                        this.sieveSize = sieveSize;
+                    }
+                }
+
+                new PrimeSieve(1000);
+                new PrimeSieve('1000');
+            ";
+
+        var symbolTable = BuildSymbolTable(source);
+        var classScope = FindClassScope(symbolTable.Root, "PrimeSieve");
+        Assert.NotNull(classScope);
+
+        var constructorScope = FindFirstScope(classScope!, s =>
+            s.Kind == ScopeKind.Function
+            && s.Parent == classScope
+            && string.Equals(s.Name, "constructor", StringComparison.Ordinal));
+
+        Assert.NotNull(constructorScope);
+        Assert.Empty(constructorScope!.StableParameterClrTypes);
+        AssertObjectParameter(constructorScope, "sieveSize");
+    }
+
+    [Fact]
+    public void SymbolTable_InferTypes_StableParameters_ClassConstructor_ComputedConstructorAccessKeepsObjectParameter()
+    {
+        var source = @"
+                class C {
+                    constructor(value) {
+                        this.value = value;
+                    }
+                }
+
+                const instance = new C(1);
+                new instance['constructor']('text');
+            ";
+
+        var symbolTable = BuildSymbolTable(source);
+        var classScope = FindClassScope(symbolTable.Root, "C");
+        Assert.NotNull(classScope);
+
+        var constructorScope = FindFirstScope(classScope!, s =>
+            s.Kind == ScopeKind.Function
+            && s.Parent == classScope
+            && string.Equals(s.Name, "constructor", StringComparison.Ordinal));
+
+        Assert.NotNull(constructorScope);
+        Assert.Empty(constructorScope!.StableParameterClrTypes);
+        AssertObjectParameter(constructorScope, "value");
+    }
+
+    [Fact]
+    public void SymbolTable_InferTypes_StableParameters_DefaultedTrailingParameterDoesNotBlockEarlierParameter()
+    {
+        var source = @"
+                const runSieveBatch = (sieveSize, timeLimitSeconds = 5) => sieveSize;
+
+                runSieveBatch(1000, 5);
+                runSieveBatch(1000000);
+            ";
+
+        var symbolTable = BuildSymbolTable(source);
+        var functionScope = FindFirstScope(symbolTable.Root, s =>
+            s.Kind == ScopeKind.Function
+            && s.Parent?.Kind == ScopeKind.Global
+            && s.Parameters.Contains("sieveSize"));
+
+        Assert.NotNull(functionScope);
+        Assert.Single(functionScope!.StableParameterClrTypes);
+        AssertStableParameterType(functionScope, 0, "sieveSize", typeof(double));
+        AssertObjectParameter(functionScope, "timeLimitSeconds");
+    }
+
+    [Fact]
     public void SymbolTable_InferTypes_Dromaeo3dCube_TranslateAndMMultiInferPartialArrayParameters()
     {
         const string resourceName = "Jroc.Tests.Integration.JavaScript.Compile_Resources_Dromaeo_3d_Cube.js";
@@ -1338,6 +1443,29 @@ public class SymbolTableTypeInferenceTests
         Assert.NotNull(index);
         Assert.True(index!.IsStableType);
         Assert.Equal(typeof(double), index.ClrType);
+    }
+
+    [Fact]
+    public void SymbolTable_InferTypes_PrimeJavaScript_PrimeSieveConstructorInfersNumericParameter()
+    {
+        const string resourceName = "Jroc.Tests.Integration.JavaScript.Compile_Performance_PrimeJavaScript.js";
+        using var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName);
+        Assert.NotNull(stream);
+
+        using var reader = new StreamReader(stream!);
+        var source = reader.ReadToEnd();
+        var symbolTable = BuildSymbolTable(source);
+
+        var classScope = FindClassScope(symbolTable.Root, "PrimeSieve");
+        Assert.NotNull(classScope);
+
+        var constructorScope = FindFirstScope(classScope!, s =>
+            s.Kind == ScopeKind.Function
+            && s.Parent == classScope
+            && string.Equals(s.Name, "constructor", StringComparison.Ordinal));
+
+        Assert.NotNull(constructorScope);
+        AssertStableParameterTypes(constructorScope!, ("sieveSize", typeof(double)));
     }
 
     [Fact]

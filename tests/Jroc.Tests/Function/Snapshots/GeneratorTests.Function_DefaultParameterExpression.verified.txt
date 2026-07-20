@@ -22,7 +22,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x216d
+					// Method begins at RVA 0x2168
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -40,7 +40,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2164
+				// Method begins at RVA 0x215f
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -58,7 +58,7 @@
 		.method public hidebysig static 
 			object __js_call__ (
 				object newTarget,
-				object a,
+				float64 a,
 				object b,
 				object c
 			) cil managed 
@@ -68,7 +68,7 @@
 			)
 			// Method begins at RVA 0x2100
 			// Header size: 12
-			// Code size: 79 (0x4f)
+			// Code size: 74 (0x4a)
 			.maxstack 8
 			.locals init (
 				[0] object,
@@ -76,38 +76,37 @@
 			)
 
 			IL_0000: ldarg.2
-			IL_0001: brtrue IL_001d
+			IL_0001: brtrue IL_0018
 
 			IL_0006: ldarg.1
-			IL_0007: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_000c: ldc.r8 2
-			IL_0015: mul
-			IL_0016: box [System.Runtime]System.Double
-			IL_001b: starg.s b
+			IL_0007: ldc.r8 2
+			IL_0010: mul
+			IL_0011: box [System.Runtime]System.Double
+			IL_0016: starg.s b
 
-			IL_001d: ldarg.3
-			IL_001e: brtrue IL_002e
+			IL_0018: ldarg.3
+			IL_0019: brtrue IL_0029
 
-			IL_0023: ldarg.1
-			IL_0024: ldarg.2
-			IL_0025: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_002a: stloc.0
-			IL_002b: ldloc.0
-			IL_002c: starg.s c
+			IL_001e: ldarg.1
+			IL_001f: ldarg.2
+			IL_0020: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(float64, object)
+			IL_0025: stloc.0
+			IL_0026: ldloc.0
+			IL_0027: starg.s c
 
-			IL_002e: ldstr "console"
-			IL_0033: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_0038: stloc.1
-			IL_0039: ldloc.1
-			IL_003a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_003f: stloc.1
-			IL_0040: ldloc.1
-			IL_0041: ldstr "log"
-			IL_0046: ldarg.3
-			IL_0047: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-			IL_004c: pop
-			IL_004d: ldnull
-			IL_004e: ret
+			IL_0029: ldstr "console"
+			IL_002e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_0033: stloc.1
+			IL_0034: ldloc.1
+			IL_0035: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_003a: stloc.1
+			IL_003b: ldloc.1
+			IL_003c: ldstr "log"
+			IL_0041: ldarg.3
+			IL_0042: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_0047: pop
+			IL_0048: ldnull
+			IL_0049: ret
 		} // end of method calculate::__js_call__
 
 	} // end of class calculate
@@ -126,7 +125,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x215b
+			// Method begins at RVA 0x2156
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -164,8 +163,8 @@
 		IL_0000: newobj instance void Modules.Function_DefaultParameterExpression/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldnull
-		IL_0007: ldftn object Modules.Function_DefaultParameterExpression/calculate::__js_call__(object, object, object, object)
-		IL_000d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes3::.ctor(object, native int)
+		IL_0007: ldftn object Modules.Function_DefaultParameterExpression/calculate::__js_call__(object, float64, object, object)
+		IL_000d: newobj instance void class [System.Runtime]System.Func`5<object, float64, object, object, object>::.ctor(object, native int)
 		IL_0012: ldc.i4.1
 		IL_0013: conv.r8
 		IL_0014: ldstr "calculate"
@@ -219,7 +218,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2176
+		// Method begins at RVA 0x2171
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

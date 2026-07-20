@@ -160,9 +160,8 @@ public partial class SymbolTableBuilder
             }
 
             if (node is MemberExpression member
-                && !member.Computed
-                && member.Property is Identifier methodId
-                && candidatesByMethodName.TryGetValue(methodId.Name, out var methodCandidates)
+                && TryGetStaticMemberName(member, out var methodName)
+                && candidatesByMethodName.TryGetValue(methodName, out var methodCandidates)
                 && !(parent is CallExpression memberCall
                      && ReferenceEquals(memberCall.Callee, member)
                      && TryResolveParameterInferenceCallTarget(memberCall, currentScope, candidatesByScope, out var resolvedMethod)
@@ -211,15 +210,42 @@ public partial class SymbolTableBuilder
         return changed;
     }
 
+    private static bool TryGetStaticMemberName(MemberExpression member, out string name)
+    {
+        if (!member.Computed && member.Property is Identifier identifier)
+        {
+            name = identifier.Name;
+            return true;
+        }
+
+        if (member.Computed && member.Property is Literal { Value: string literalName })
+        {
+            name = literalName;
+            return true;
+        }
+
+        name = string.Empty;
+        return false;
+    }
+
     private sealed class ParameterInferenceCandidate
     {
-        public ParameterInferenceCandidate(Scope scope, IReadOnlyList<string> parameterNames)
+        public ParameterInferenceCandidate(
+            Scope scope,
+            IReadOnlyList<string> parameterNames,
+            IReadOnlyList<bool> hasDefaultValue)
         {
             Scope = scope;
             ParameterNames = parameterNames;
             InferredTypes = new Type?[parameterNames.Count];
             HasEvidence = new bool[parameterNames.Count];
             IsParameterUnsafe = new bool[parameterNames.Count];
+            for (var i = 0; i < hasDefaultValue.Count; i++)
+            {
+                // Typed parameters cannot currently represent the incoming undefined value
+                // that triggers a JavaScript default initializer.
+                IsParameterUnsafe[i] = hasDefaultValue[i];
+            }
         }
 
         public Scope Scope { get; }
@@ -231,16 +257,16 @@ public partial class SymbolTableBuilder
 
         public void RecordCall(in NodeList<Expression> arguments, Scope callScope, SymbolTableBuilder builder)
         {
-            if (arguments.Count < ParameterNames.Count)
-            {
-                IsCallableUnsafe = true;
-                return;
-            }
-
             for (var i = 0; i < ParameterNames.Count; i++)
             {
                 if (IsParameterUnsafe[i])
                 {
+                    continue;
+                }
+
+                if (i >= arguments.Count)
+                {
+                    MarkParameterUnsafe(i);
                     continue;
                 }
 
@@ -430,7 +456,7 @@ public partial class SymbolTableBuilder
             return false;
         }
 
-        if (!TryGetSimpleParameterNames(scope.AstNode, out var parameterNames))
+        if (!TryGetSimpleParameterNames(scope.AstNode, out var parameterNames, out var hasDefaultValue))
         {
             return false;
         }
@@ -456,13 +482,20 @@ public partial class SymbolTableBuilder
             }
         }
 
-        candidate = new ParameterInferenceCandidate(scope, parameterNames);
+        candidate = new ParameterInferenceCandidate(scope, parameterNames, hasDefaultValue);
         return true;
     }
 
     private static bool TryGetSimpleParameterNames(Node callableNode, out IReadOnlyList<string> parameterNames)
+        => TryGetSimpleParameterNames(callableNode, out parameterNames, out _);
+
+    private static bool TryGetSimpleParameterNames(
+        Node callableNode,
+        out IReadOnlyList<string> parameterNames,
+        out IReadOnlyList<bool> hasDefaultValue)
     {
         parameterNames = Array.Empty<string>();
+        hasDefaultValue = Array.Empty<bool>();
 
         NodeList<Node> parameters = callableNode switch
         {
@@ -474,11 +507,20 @@ public partial class SymbolTableBuilder
         };
 
         var names = new List<string>(parameters.Count);
+        var defaults = new List<bool>(parameters.Count);
         foreach (var parameter in parameters)
         {
             if (parameter is Identifier id)
             {
                 names.Add(id.Name);
+                defaults.Add(false);
+                continue;
+            }
+
+            if (parameter is AssignmentPattern { Left: Identifier defaultId })
+            {
+                names.Add(defaultId.Name);
+                defaults.Add(true);
                 continue;
             }
 
@@ -486,6 +528,7 @@ public partial class SymbolTableBuilder
         }
 
         parameterNames = names;
+        hasDefaultValue = defaults;
         return true;
     }
 
@@ -533,8 +576,17 @@ public partial class SymbolTableBuilder
             return false;
         }
 
+        var root = FindRootScope(callScope) ?? callScope;
         var binding = TryResolveBinding(callScope, calleeId.Name);
-        var targetScope = TryGetCallableScopeForBinding(FindRootScope(callScope) ?? callScope, binding);
+        var classScope = binding?.DeclarationNode switch
+        {
+            ClassDeclaration classDeclaration => FindScopeByAstNode(root, classDeclaration),
+            _ => null
+        };
+        var targetScope = classScope?.Children.FirstOrDefault(scope =>
+            scope.Kind == ScopeKind.Function
+            && string.Equals(scope.Name, "constructor", StringComparison.Ordinal))
+            ?? TryGetCallableScopeForBinding(root, binding);
         return targetScope != null && candidatesByScope.TryGetValue(targetScope, out candidate!);
     }
 

@@ -361,9 +361,17 @@ internal sealed partial class LIRToILCompiler
                         EmitLoadTemp(scopesTemp, ilEncoder, allocation, methodDescriptor);
                     }
 
-                    foreach (var arg in newUserClass.Arguments)
+                    for (var argumentIndex = 0; argumentIndex < newUserClass.Arguments.Count; argumentIndex++)
                     {
-                        EmitLoadTemp(arg, ilEncoder, allocation, methodDescriptor);
+                        var parameterClrType = argumentIndex < newUserClass.ParameterClrTypes.Count
+                            ? newUserClass.ParameterClrTypes[argumentIndex]
+                            : null;
+                        EmitLoadTempAsParameterType(
+                            newUserClass.Arguments[argumentIndex],
+                            parameterClrType,
+                            ilEncoder,
+                            allocation,
+                            methodDescriptor);
                     }
 
                     int paddingNeeded = newUserClass.MaxArgCount - argc;

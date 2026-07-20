@@ -559,7 +559,7 @@ public sealed partial class HIRToLIRLowerer
                 {
                     resultTempVar = CreateTempVariable();
                     _methodBodyIR.Instructions.Add(new LIRLoadParameter(referencedParameterIndex, resultTempVar));
-                    DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                    DefineTempStorage(resultTempVar, GetPreferredBindingReadStorage(binding));
                     _tempBindingOrigin[resultTempVar] = binding;
                     return true;
                 }
