@@ -874,6 +874,19 @@ public sealed partial class HIRToLIRLowerer
         var lirInstructions = _methodBodyIR.Instructions;
 
         var binding = symbol.BindingInfo;
+        var isDestructuredParameter = binding.DeclaringScope.DestructuredParameters.Contains(binding.Name);
+        if (isDestructuredParameter && binding.IsStableType && binding.ClrType == typeof(double))
+        {
+            value = EnsureNumber(value);
+        }
+        else if (isDestructuredParameter && binding.IsStableType && binding.ClrType == typeof(bool))
+        {
+            value = EnsureBoolean(value);
+        }
+        else if (isDestructuredParameter && binding.IsStableType && binding.ClrType == typeof(string))
+        {
+            value = EnsureString(value);
+        }
 
         // Captured variable - store to leaf scope field
         if (_environmentLayout != null)

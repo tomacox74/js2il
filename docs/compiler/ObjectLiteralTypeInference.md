@@ -66,8 +66,11 @@ disqualifies):
 - object passed to a call, **unless** every receiving callable is closed-world
   (only ever referenced as a direct call/`new` target) and every use of the
   corresponding parameter is itself safe — phase 6 (#1434) then propagates the
-  shape into the parameter instead of disqualifying. Spread arguments, missing
-  arguments, escaping/aliased callables, conflicting shapes at a shared
+  shape into the parameter instead of disqualifying. A closed-world simple
+  object-destructuring parameter may also consume the shape without making the
+  object escape; destructured bindings receive stable primitive types when all
+  call sites agree on the corresponding literal member type. Spread arguments,
+  missing arguments, escaping/aliased callables, conflicting shapes at a shared
   parameter, and any unsafe parameter use still fall back to the generic path.
 - object used in a spread, enumerated by `for-in`/`for-of`, or used with `in`
 - computed / non-identifier member access, access to an undeclared member,
@@ -129,6 +132,15 @@ representative shape is known:
 The parameter ABI stays `object`; only the stable shape token is propagated so
 lowering can early-bind member access on the parameter.
 
+For a simple object-destructuring parameter such as
+`function run({ size, seconds })`, the incoming ABI also remains `object`.
+When every direct call passes an eligible object-literal binding and its
+`size`/`seconds` members have the same stable primitive types, the extracted
+bindings use those types directly. The literal remains eligible because the
+destructuring operation reads its mirrored ordinary-object properties without
+letting the object escape. Computed, nested, defaulted, or rest patterns remain
+conservative fallbacks.
+
 ## Early-bound access (phase 4)
 
 Reads/writes lower to `LIRGetInferredMember`/`LIRSetInferredMember` only when:
@@ -184,5 +196,6 @@ constructor-shape work (#1426). Direct measured run of the compiled scenario:
 - `tests/Jroc.Tests/Object/JavaScript/ObjectLiteral_Inference_DescriptorAndMutation_Parity.js` — `getOwnPropertyDescriptor`, `defineProperty`, `delete`, `freeze`, `seal`, `in`
 - `tests/Jroc.Tests/Object/JavaScript/ObjectLiteral_Inference_ClosureAndAliasing_Parity.js` — aliasing/escape disqualification, closure capture (early-bound)
 - `tests/Jroc.Tests/Object/JavaScript/ObjectLiteral_InterproceduralInference_Parity.js` — phase 6 interprocedural propagation: direct/multi-hop/mutual-recursion propagation, reordered same-shape join, safe parameter member write/read, incompatible/spread-shift fallback
+- `tests/Jroc.Tests/Object/JavaScript/ObjectLiteral_DestructuredParameterInference_Parity.js` — config-style literal propagation into a simple object-destructuring parameter with unboxed numeric bindings
 - `tests/Jroc.Tests/SymbolTable/ObjectLiteralShapeAnalysisTests.cs` — phase 6 slot analysis: propagation, canonicalization (order-insensitive signature), safe/conflicting parameter writes, method-call and spread-shift fallback
 - `tests/Jroc.Tests/ObjectLiteralTypeGenerationGroundworkTests.cs` — generated type metadata contract, reordered same-shape literals sharing one generated type

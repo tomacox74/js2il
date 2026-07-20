@@ -1,0 +1,494 @@
+﻿// IL code: ObjectLiteral_DestructuredParameterInference_Parity
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class private auto ansi beforefieldinit Modules.ObjectLiteral_DestructuredParameterInference_Parity
+	extends [System.Runtime]System.Object
+{
+	// Nested Types
+	.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L11C14
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested public auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			.custom instance void [System.Runtime]System.Diagnostics.DebuggerDisplayAttribute::.ctor(string) = (
+				01 00 66 53 63 6f 70 65 20 73 69 65 76 65 53 69
+				7a 65 3d 7b 73 69 65 76 65 53 69 7a 65 7d 2c 20
+				74 69 6d 65 4c 69 6d 69 74 53 65 63 6f 6e 64 73
+				3d 7b 74 69 6d 65 4c 69 6d 69 74 53 65 63 6f 6e
+				64 73 7d 2c 20 76 65 72 62 6f 73 65 3d 7b 76 65
+				72 62 6f 73 65 7d 2c 20 72 75 6e 74 69 6d 65 3d
+				7b 72 75 6e 74 69 6d 65 7d 00 00
+			)
+			// Fields
+			.field public float64 sieveSize
+			.field public float64 timeLimitSeconds
+			.field public object verbose
+			.field public object 'runtime'
+
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x22b4
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				object newTarget,
+				object $p0
+			) cil managed 
+		{
+			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
+				01 00 00 00 00 00 00 00
+			)
+			// Method begins at RVA 0x216c
+			// Header size: 12
+			// Code size: 307 (0x133)
+			.maxstack 8
+			.locals init (
+				[0] float64,
+				[1] float64,
+				[2] object,
+				[3] object,
+				[4] object,
+				[5] float64,
+				[6] object
+			)
+
+			IL_0000: ldarg.1
+			IL_0001: brfalse IL_0011
+
+			IL_0006: ldarg.1
+			IL_0007: isinst [JavaScriptRuntime]JavaScriptRuntime.JsNull
+			IL_000c: brfalse IL_0021
+
+			IL_0011: ldarg.1
+			IL_0012: ldstr ""
+			IL_0017: ldstr "sieveSize"
+			IL_001c: call void [JavaScriptRuntime]JavaScriptRuntime.Object::ThrowDestructuringNullOrUndefined(object, string, string)
+
+			IL_0021: ldarg.1
+			IL_0022: ldstr "sieveSize"
+			IL_0027: call float64 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItemAsNumber(object, object)
+			IL_002c: stloc.0
+			IL_002d: ldarg.1
+			IL_002e: ldstr "timeLimitSeconds"
+			IL_0033: call float64 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItemAsNumber(object, object)
+			IL_0038: stloc.1
+			IL_0039: ldarg.1
+			IL_003a: ldstr "verbose"
+			IL_003f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0044: stloc.2
+			IL_0045: ldarg.1
+			IL_0046: ldstr "runtime"
+			IL_004b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0050: stloc.3
+			IL_0051: ldstr "console"
+			IL_0056: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_005b: stloc.s 4
+			IL_005d: ldloc.s 4
+			IL_005f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0064: stloc.s 4
+			IL_0066: ldloc.0
+			IL_0067: stloc.s 5
+			IL_0069: ldloc.s 5
+			IL_006b: ldloc.1
+			IL_006c: add
+			IL_006d: stloc.s 5
+			IL_006f: ldloc.s 5
+			IL_0071: box [System.Runtime]System.Double
+			IL_0076: stloc.s 6
+			IL_0078: ldloc.s 4
+			IL_007a: ldstr "log"
+			IL_007f: ldloc.s 6
+			IL_0081: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_0086: pop
+			IL_0087: ldstr "console"
+			IL_008c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_0091: stloc.s 4
+			IL_0093: ldloc.s 4
+			IL_0095: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_009a: stloc.s 4
+			IL_009c: ldloc.s 4
+			IL_009e: ldstr "log"
+			IL_00a3: ldloc.0
+			IL_00a4: box [System.Runtime]System.Double
+			IL_00a9: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
+			IL_00ae: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_00b3: pop
+			IL_00b4: ldstr "console"
+			IL_00b9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_00be: stloc.s 4
+			IL_00c0: ldloc.s 4
+			IL_00c2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_00c7: stloc.s 4
+			IL_00c9: ldloc.s 4
+			IL_00cb: ldstr "log"
+			IL_00d0: ldloc.1
+			IL_00d1: box [System.Runtime]System.Double
+			IL_00d6: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
+			IL_00db: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_00e0: pop
+			IL_00e1: ldstr "console"
+			IL_00e6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_00eb: stloc.s 4
+			IL_00ed: ldloc.s 4
+			IL_00ef: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_00f4: stloc.s 4
+			IL_00f6: ldloc.s 4
+			IL_00f8: ldstr "log"
+			IL_00fd: ldloc.2
+			IL_00fe: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
+			IL_0103: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_0108: pop
+			IL_0109: ldstr "console"
+			IL_010e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_0113: stloc.s 4
+			IL_0115: ldloc.s 4
+			IL_0117: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_011c: stloc.s 4
+			IL_011e: ldloc.s 4
+			IL_0120: ldstr "log"
+			IL_0125: ldloc.3
+			IL_0126: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
+			IL_012b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_0130: pop
+			IL_0131: ldnull
+			IL_0132: ret
+		} // end of method ArrowFunction_L11C14::__js_call__
+
+	} // end of class ArrowFunction_L11C14
+
+	.class nested public auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x22ab
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method Scope::.ctor
+
+	} // end of class Scope
+
+	.class nested public auto ansi beforefieldinit ObjectLiterals
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested public auto ansi beforefieldinit L1C14_config
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsObject
+		{
+			// Fields
+			.field private float64 _sieveSize
+			.field private float64 _timeLimitSeconds
+			.field private object _verbose
+			.field private object _runtime
+
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x22bd
+				// Header size: 1
+				// Code size: 7 (0x7)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::.ctor()
+				IL_0006: ret
+			} // end of method L1C14_config::.ctor
+
+			.method public hidebysig 
+				instance float64 get_sieveSize () cil managed 
+			{
+				// Method begins at RVA 0x22c5
+				// Header size: 1
+				// Code size: 7 (0x7)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: ldfld float64 Modules.ObjectLiteral_DestructuredParameterInference_Parity/ObjectLiterals/L1C14_config::_sieveSize
+				IL_0006: ret
+			} // end of method L1C14_config::get_sieveSize
+
+			.method public hidebysig 
+				instance void set_sieveSize (
+					float64 ''
+				) cil managed 
+			{
+				// Method begins at RVA 0x22cd
+				// Header size: 1
+				// Code size: 20 (0x14)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: ldarg.1
+				IL_0002: stfld float64 Modules.ObjectLiteral_DestructuredParameterInference_Parity/ObjectLiterals/L1C14_config::_sieveSize
+				IL_0007: ldarg.0
+				IL_0008: ldstr "sieveSize"
+				IL_000d: ldarg.1
+				IL_000e: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
+				IL_0013: ret
+			} // end of method L1C14_config::set_sieveSize
+
+			.method public hidebysig 
+				instance float64 get_timeLimitSeconds () cil managed 
+			{
+				// Method begins at RVA 0x22e2
+				// Header size: 1
+				// Code size: 7 (0x7)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: ldfld float64 Modules.ObjectLiteral_DestructuredParameterInference_Parity/ObjectLiterals/L1C14_config::_timeLimitSeconds
+				IL_0006: ret
+			} // end of method L1C14_config::get_timeLimitSeconds
+
+			.method public hidebysig 
+				instance void set_timeLimitSeconds (
+					float64 ''
+				) cil managed 
+			{
+				// Method begins at RVA 0x22ea
+				// Header size: 1
+				// Code size: 20 (0x14)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: ldarg.1
+				IL_0002: stfld float64 Modules.ObjectLiteral_DestructuredParameterInference_Parity/ObjectLiterals/L1C14_config::_timeLimitSeconds
+				IL_0007: ldarg.0
+				IL_0008: ldstr "timeLimitSeconds"
+				IL_000d: ldarg.1
+				IL_000e: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
+				IL_0013: ret
+			} // end of method L1C14_config::set_timeLimitSeconds
+
+			.method public hidebysig 
+				instance object get_verbose () cil managed 
+			{
+				// Method begins at RVA 0x22ff
+				// Header size: 1
+				// Code size: 7 (0x7)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: ldfld object Modules.ObjectLiteral_DestructuredParameterInference_Parity/ObjectLiterals/L1C14_config::_verbose
+				IL_0006: ret
+			} // end of method L1C14_config::get_verbose
+
+			.method public hidebysig 
+				instance void set_verbose (
+					object ''
+				) cil managed 
+			{
+				// Method begins at RVA 0x2307
+				// Header size: 1
+				// Code size: 20 (0x14)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: ldarg.1
+				IL_0002: stfld object Modules.ObjectLiteral_DestructuredParameterInference_Parity/ObjectLiterals/L1C14_config::_verbose
+				IL_0007: ldarg.0
+				IL_0008: ldstr "verbose"
+				IL_000d: ldarg.1
+				IL_000e: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+				IL_0013: ret
+			} // end of method L1C14_config::set_verbose
+
+			.method public hidebysig 
+				instance object get_runtime () cil managed 
+			{
+				// Method begins at RVA 0x231c
+				// Header size: 1
+				// Code size: 7 (0x7)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: ldfld object Modules.ObjectLiteral_DestructuredParameterInference_Parity/ObjectLiterals/L1C14_config::_runtime
+				IL_0006: ret
+			} // end of method L1C14_config::get_runtime
+
+			.method public hidebysig 
+				instance void set_runtime (
+					object ''
+				) cil managed 
+			{
+				// Method begins at RVA 0x2324
+				// Header size: 1
+				// Code size: 20 (0x14)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: ldarg.1
+				IL_0002: stfld object Modules.ObjectLiteral_DestructuredParameterInference_Parity/ObjectLiterals/L1C14_config::_runtime
+				IL_0007: ldarg.0
+				IL_0008: ldstr "runtime"
+				IL_000d: ldarg.1
+				IL_000e: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+				IL_0013: ret
+			} // end of method L1C14_config::set_runtime
+
+		} // end of class L1C14_config
+
+
+	} // end of class ObjectLiterals
+
+
+	// Methods
+	.method public hidebysig static 
+		void __js_module_init__ (
+			object exports,
+			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			object module,
+			string __filename,
+			string __dirname
+		) cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 12
+		// Code size: 270 (0x10e)
+		.maxstack 8
+		.locals init (
+			[0] class Modules.ObjectLiteral_DestructuredParameterInference_Parity/Scope,
+			[1] class Modules.ObjectLiteral_DestructuredParameterInference_Parity/ObjectLiterals/L1C14_config,
+			[2] object,
+			[3] class Modules.ObjectLiteral_DestructuredParameterInference_Parity/ObjectLiterals/L1C14_config,
+			[4] object
+		)
+
+		IL_0000: newobj instance void Modules.ObjectLiteral_DestructuredParameterInference_Parity/Scope::.ctor()
+		IL_0005: stloc.0
+		IL_0006: newobj instance void Modules.ObjectLiteral_DestructuredParameterInference_Parity/ObjectLiterals/L1C14_config::.ctor()
+		IL_000b: stloc.3
+		IL_000c: ldloc.3
+		IL_000d: ldc.r8 1000000
+		IL_0016: callvirt instance void Modules.ObjectLiteral_DestructuredParameterInference_Parity/ObjectLiterals/L1C14_config::set_sieveSize(float64)
+		IL_001b: ldloc.3
+		IL_001c: ldc.r8 5
+		IL_0025: callvirt instance void Modules.ObjectLiteral_DestructuredParameterInference_Parity/ObjectLiterals/L1C14_config::set_timeLimitSeconds(float64)
+		IL_002a: ldloc.3
+		IL_002b: ldc.i4.0
+		IL_002c: box [System.Runtime]System.Boolean
+		IL_0031: callvirt instance void Modules.ObjectLiteral_DestructuredParameterInference_Parity/ObjectLiterals/L1C14_config::set_verbose(object)
+		IL_0036: ldloc.3
+		IL_0037: ldstr ""
+		IL_003c: callvirt instance void Modules.ObjectLiteral_DestructuredParameterInference_Parity/ObjectLiterals/L1C14_config::set_runtime(object)
+		IL_0041: ldloc.3
+		IL_0042: stloc.1
+		IL_0043: ldstr "process"
+		IL_0048: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_004d: stloc.s 4
+		IL_004f: ldloc.s 4
+		IL_0051: ldstr "argv"
+		IL_0056: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_005b: stloc.s 4
+		IL_005d: ldloc.s 4
+		IL_005f: ldc.r8 0.0
+		IL_0068: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+		IL_006d: stloc.s 4
+		IL_006f: ldloc.1
+		IL_0070: castclass Modules.ObjectLiteral_DestructuredParameterInference_Parity/ObjectLiterals/L1C14_config
+		IL_0075: ldloc.s 4
+		IL_0077: callvirt instance void Modules.ObjectLiteral_DestructuredParameterInference_Parity/ObjectLiterals/L1C14_config::set_runtime(object)
+		IL_007c: ldstr "process"
+		IL_0081: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0086: stloc.s 4
+		IL_0088: ldloc.s 4
+		IL_008a: ldstr "argv"
+		IL_008f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0094: stloc.s 4
+		IL_0096: ldloc.s 4
+		IL_0098: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_009d: stloc.s 4
+		IL_009f: ldloc.s 4
+		IL_00a1: ldstr "includes"
+		IL_00a6: ldstr "verbose"
+		IL_00ab: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00b0: stloc.s 4
+		IL_00b2: ldloc.1
+		IL_00b3: castclass Modules.ObjectLiteral_DestructuredParameterInference_Parity/ObjectLiterals/L1C14_config
+		IL_00b8: ldloc.s 4
+		IL_00ba: callvirt instance void Modules.ObjectLiteral_DestructuredParameterInference_Parity/ObjectLiterals/L1C14_config::set_verbose(object)
+		IL_00bf: ldnull
+		IL_00c0: ldftn object Modules.ObjectLiteral_DestructuredParameterInference_Parity/ArrowFunction_L11C14::__js_call__(object, object)
+		IL_00c6: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_00cb: ldc.i4.1
+		IL_00cc: newarr [System.Runtime]System.Object
+		IL_00d1: dup
+		IL_00d2: ldc.i4.0
+		IL_00d3: ldloc.0
+		IL_00d4: stelem.ref
+		IL_00d5: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_00da: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_00df: ldc.i4.1
+		IL_00e0: conv.r8
+		IL_00e1: ldstr ""
+		IL_00e6: ldc.i4.0
+		IL_00e7: ldc.i4.0
+		IL_00e8: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
+		IL_00ed: call object [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype(object)
+		IL_00f2: stloc.s 4
+		IL_00f4: ldloc.s 4
+		IL_00f6: ldstr "main"
+		IL_00fb: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetFunctionInferredName(object, object)
+		IL_0100: stloc.s 4
+		IL_0102: ldloc.s 4
+		IL_0104: stloc.2
+		IL_0105: ldnull
+		IL_0106: ldloc.1
+		IL_0107: call object Modules.ObjectLiteral_DestructuredParameterInference_Parity/ArrowFunction_L11C14::__js_call__(object, object)
+		IL_010c: pop
+		IL_010d: ret
+	} // end of method ObjectLiteral_DestructuredParameterInference_Parity::__js_module_init__
+
+} // end of class Modules.ObjectLiteral_DestructuredParameterInference_Parity
+
+.class private auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x2339
+		// Header size: 1
+		// Code size: 23 (0x17)
+		.maxstack 8
+		.entrypoint
+
+		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
+		IL_0005: ldnull
+		IL_0006: ldftn void Modules.ObjectLiteral_DestructuredParameterInference_Parity::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
+		IL_0016: ret
+	} // end of method Program::Main
+
+} // end of class Program
+

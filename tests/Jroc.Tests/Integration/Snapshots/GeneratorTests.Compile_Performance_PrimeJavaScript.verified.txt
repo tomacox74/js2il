@@ -33,7 +33,7 @@
 					.method public hidebysig specialname rtspecialname 
 						instance void .ctor () cil managed 
 					{
-						// Method begins at RVA 0x3318
+						// Method begins at RVA 0x3324
 						// Header size: 1
 						// Code size: 8 (0x8)
 						.maxstack 8
@@ -51,7 +51,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x330f
+					// Method begins at RVA 0x331b
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -73,7 +73,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x3306
+				// Method begins at RVA 0x3312
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -101,7 +101,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 07 00 00 02
 			)
-			// Method begins at RVA 0x2488
+			// Method begins at RVA 0x2478
 			// Header size: 12
 			// Code size: 310 (0x136)
 			.maxstack 8
@@ -256,8 +256,8 @@
 				7b 72 75 6e 74 69 6d 65 7d 00 00
 			)
 			// Fields
-			.field public object sieveSize
-			.field public object timeLimitSeconds
+			.field public float64 sieveSize
+			.field public float64 timeLimitSeconds
 			.field public object verbose
 			.field public object 'runtime'
 
@@ -265,7 +265,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x3321
+				// Method begins at RVA 0x332d
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -292,13 +292,13 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 07 00 00 02
 			)
-			// Method begins at RVA 0x25cc
+			// Method begins at RVA 0x25bc
 			// Header size: 12
-			// Code size: 572 (0x23c)
+			// Code size: 600 (0x258)
 			.maxstack 8
 			.locals init (
-				[0] object,
-				[1] object,
+				[0] float64,
+				[1] float64,
 				[2] object,
 				[3] object,
 				[4] object,
@@ -310,10 +310,12 @@
 				[10] class Modules.Compile_Performance_PrimeJavaScript/PrimeSieve,
 				[11] object,
 				[12] bool,
-				[13] float64,
-				[14] float64,
-				[15] string,
-				[16] string
+				[13] object,
+				[14] object,
+				[15] float64,
+				[16] float64,
+				[17] string,
+				[18] string
 			)
 
 			IL_0000: ldarg.2
@@ -330,11 +332,11 @@
 
 			IL_0021: ldarg.2
 			IL_0022: ldstr "sieveSize"
-			IL_0027: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0027: call float64 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItemAsNumber(object, object)
 			IL_002c: stloc.0
 			IL_002d: ldarg.2
 			IL_002e: ldstr "timeLimitSeconds"
-			IL_0033: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0033: call float64 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItemAsNumber(object, object)
 			IL_0038: stloc.1
 			IL_0039: ldarg.2
 			IL_003a: ldstr "verbose"
@@ -357,170 +359,178 @@
 			IL_0065: dup
 			IL_0066: ldc.i4.0
 			IL_0067: ldloc.0
-			IL_0068: stelem.ref
-			IL_0069: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
-			IL_006e: ldloc.0
-			IL_006f: newobj instance void Modules.Compile_Performance_PrimeJavaScript/PrimeSieve::.ctor(object[], object)
-			IL_0074: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
-			IL_0079: stloc.s 10
-			IL_007b: ldloc.s 10
-			IL_007d: ldtoken Modules.Compile_Performance_PrimeJavaScript/PrimeSieve
-			IL_0082: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-			IL_0087: ldstr "prototype"
-			IL_008c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetProperty(object, string)
-			IL_0091: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
-			IL_0096: ldloc.s 10
-			IL_0098: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_009d: stloc.s 11
-			IL_009f: ldloc.s 11
-			IL_00a1: isinst Modules.Compile_Performance_PrimeJavaScript/PrimeSieve
-			IL_00a6: dup
-			IL_00a7: brfalse IL_00b8
+			IL_0068: box [System.Runtime]System.Double
+			IL_006d: stelem.ref
+			IL_006e: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
+			IL_0073: ldloc.0
+			IL_0074: box [System.Runtime]System.Double
+			IL_0079: newobj instance void Modules.Compile_Performance_PrimeJavaScript/PrimeSieve::.ctor(object[], object)
+			IL_007e: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
+			IL_0083: stloc.s 10
+			IL_0085: ldloc.s 10
+			IL_0087: ldtoken Modules.Compile_Performance_PrimeJavaScript/PrimeSieve
+			IL_008c: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+			IL_0091: ldstr "prototype"
+			IL_0096: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetProperty(object, string)
+			IL_009b: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
+			IL_00a0: ldloc.s 10
+			IL_00a2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_00a7: stloc.s 11
+			IL_00a9: ldloc.s 11
+			IL_00ab: isinst Modules.Compile_Performance_PrimeJavaScript/PrimeSieve
+			IL_00b0: dup
+			IL_00b1: brfalse IL_00c2
 
-			IL_00ac: callvirt instance class Modules.Compile_Performance_PrimeJavaScript/PrimeSieve Modules.Compile_Performance_PrimeJavaScript/PrimeSieve::runSieve()
-			IL_00b1: stloc.s 11
-			IL_00b3: br IL_00c7
+			IL_00b6: callvirt instance class Modules.Compile_Performance_PrimeJavaScript/PrimeSieve Modules.Compile_Performance_PrimeJavaScript/PrimeSieve::runSieve()
+			IL_00bb: stloc.s 11
+			IL_00bd: br IL_00d1
 
-			IL_00b8: pop
-			IL_00b9: ldloc.s 11
-			IL_00bb: ldstr "runSieve"
-			IL_00c0: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
-			IL_00c5: stloc.s 11
+			IL_00c2: pop
+			IL_00c3: ldloc.s 11
+			IL_00c5: ldstr "runSieve"
+			IL_00ca: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+			IL_00cf: stloc.s 11
 
-			IL_00c7: ldloc.s 11
-			IL_00c9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_00ce: stloc.s 11
-			IL_00d0: ldloc.s 11
-			IL_00d2: isinst Modules.Compile_Performance_PrimeJavaScript/PrimeSieve
-			IL_00d7: dup
-			IL_00d8: brfalse IL_00ef
+			IL_00d1: ldloc.s 11
+			IL_00d3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_00d8: stloc.s 11
+			IL_00da: ldloc.s 11
+			IL_00dc: isinst Modules.Compile_Performance_PrimeJavaScript/PrimeSieve
+			IL_00e1: dup
+			IL_00e2: brfalse IL_00f9
 
-			IL_00dd: ldloc.2
-			IL_00de: callvirt instance bool Modules.Compile_Performance_PrimeJavaScript/PrimeSieve::validatePrimeCount(object)
-			IL_00e3: box [System.Runtime]System.Boolean
-			IL_00e8: stloc.s 11
-			IL_00ea: br IL_00ff
+			IL_00e7: ldloc.2
+			IL_00e8: callvirt instance bool Modules.Compile_Performance_PrimeJavaScript/PrimeSieve::validatePrimeCount(object)
+			IL_00ed: box [System.Runtime]System.Boolean
+			IL_00f2: stloc.s 11
+			IL_00f4: br IL_0109
 
-			IL_00ef: pop
-			IL_00f0: ldloc.s 11
-			IL_00f2: ldstr "validatePrimeCount"
-			IL_00f7: ldloc.2
-			IL_00f8: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-			IL_00fd: stloc.s 11
+			IL_00f9: pop
+			IL_00fa: ldloc.s 11
+			IL_00fc: ldstr "validatePrimeCount"
+			IL_0101: ldloc.2
+			IL_0102: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_0107: stloc.s 11
 
-			IL_00ff: ldloc.s 11
-			IL_0101: stloc.s 4
-			IL_0103: ldloc.s 4
-			IL_0105: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
-			IL_010a: ldc.i4.0
-			IL_010b: ceq
-			IL_010d: stloc.s 12
-			IL_010f: ldloc.s 12
-			IL_0111: brfalse IL_011d
+			IL_0109: ldloc.s 11
+			IL_010b: stloc.s 4
+			IL_010d: ldloc.s 4
+			IL_010f: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
+			IL_0114: ldc.i4.0
+			IL_0115: ceq
+			IL_0117: stloc.s 12
+			IL_0119: ldloc.s 12
+			IL_011b: brfalse IL_0127
 
-			IL_0116: ldc.i4.0
-			IL_0117: box [System.Runtime]System.Boolean
-			IL_011c: ret
+			IL_0120: ldc.i4.0
+			IL_0121: box [System.Runtime]System.Boolean
+			IL_0126: ret
 
-			IL_011d: ldarg.0
-			IL_011e: ldfld object Modules.Compile_Performance_PrimeJavaScript/Scope::performance
-			IL_0123: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0128: stloc.s 11
-			IL_012a: ldloc.s 11
-			IL_012c: ldstr "now"
-			IL_0131: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
-			IL_0136: stloc.s 11
-			IL_0138: ldloc.s 11
-			IL_013a: stloc.s 5
-			IL_013c: ldarg.0
-			IL_013d: castclass Modules.Compile_Performance_PrimeJavaScript/Scope
-			IL_0142: ldnull
-			IL_0143: ldloc.0
-			IL_0144: ldloc.1
-			IL_0145: call object Modules.Compile_Performance_PrimeJavaScript/ArrowFunction_L210C23::__js_call__(class Modules.Compile_Performance_PrimeJavaScript/Scope, object, object, object)
-			IL_014a: stloc.s 11
-			IL_014c: ldloc.s 11
-			IL_014e: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_0153: stloc.s 13
-			IL_0155: ldloc.s 13
-			IL_0157: stloc.s 6
-			IL_0159: ldarg.0
-			IL_015a: ldfld object Modules.Compile_Performance_PrimeJavaScript/Scope::performance
-			IL_015f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0164: stloc.s 11
-			IL_0166: ldloc.s 11
-			IL_0168: ldstr "now"
-			IL_016d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
-			IL_0172: stloc.s 11
-			IL_0174: ldloc.s 11
-			IL_0176: stloc.s 7
-			IL_0178: ldloc.s 7
-			IL_017a: stloc.s 11
-			IL_017c: ldloc.s 11
-			IL_017e: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_0183: stloc.s 13
-			IL_0185: ldloc.s 5
-			IL_0187: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_018c: stloc.s 14
-			IL_018e: ldloc.s 13
-			IL_0190: ldloc.s 14
-			IL_0192: sub
-			IL_0193: stloc.s 14
-			IL_0195: ldloc.s 14
-			IL_0197: ldarg.0
-			IL_0198: ldfld float64 Modules.Compile_Performance_PrimeJavaScript/Scope::NOW_UNITS_PER_SECOND
-			IL_019d: div
-			IL_019e: stloc.s 14
-			IL_01a0: ldloc.s 14
-			IL_01a2: stloc.s 8
-			IL_01a4: ldstr "console"
-			IL_01a9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_01ae: stloc.s 11
-			IL_01b0: ldloc.s 11
-			IL_01b2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_01b7: stloc.s 11
-			IL_01b9: ldloc.3
-			IL_01ba: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-			IL_01bf: stloc.s 15
-			IL_01c1: ldstr "\nrogiervandam-"
-			IL_01c6: ldloc.s 15
-			IL_01c8: call string [System.Runtime]System.String::Concat(string, string)
-			IL_01cd: stloc.s 15
-			IL_01cf: ldloc.s 15
-			IL_01d1: ldstr ";"
-			IL_01d6: call string [System.Runtime]System.String::Concat(string, string)
-			IL_01db: stloc.s 15
-			IL_01dd: ldloc.s 6
-			IL_01df: box [System.Runtime]System.Double
-			IL_01e4: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-			IL_01e9: stloc.s 16
-			IL_01eb: ldloc.s 15
-			IL_01ed: ldloc.s 16
-			IL_01ef: call string [System.Runtime]System.String::Concat(string, string)
-			IL_01f4: stloc.s 16
-			IL_01f6: ldloc.s 16
-			IL_01f8: ldstr ";"
-			IL_01fd: call string [System.Runtime]System.String::Concat(string, string)
-			IL_0202: stloc.s 16
-			IL_0204: ldloc.s 8
-			IL_0206: box [System.Runtime]System.Double
-			IL_020b: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-			IL_0210: stloc.s 15
-			IL_0212: ldloc.s 16
-			IL_0214: ldloc.s 15
-			IL_0216: call string [System.Runtime]System.String::Concat(string, string)
-			IL_021b: stloc.s 15
-			IL_021d: ldloc.s 15
-			IL_021f: ldstr ";1;algorithm=base,faithful=yes,bits=1"
-			IL_0224: call string [System.Runtime]System.String::Concat(string, string)
-			IL_0229: stloc.s 15
-			IL_022b: ldloc.s 11
-			IL_022d: ldstr "log"
-			IL_0232: ldloc.s 15
-			IL_0234: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-			IL_0239: pop
-			IL_023a: ldnull
-			IL_023b: ret
+			IL_0127: ldarg.0
+			IL_0128: ldfld object Modules.Compile_Performance_PrimeJavaScript/Scope::performance
+			IL_012d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0132: stloc.s 11
+			IL_0134: ldloc.s 11
+			IL_0136: ldstr "now"
+			IL_013b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+			IL_0140: stloc.s 11
+			IL_0142: ldloc.s 11
+			IL_0144: stloc.s 5
+			IL_0146: ldloc.0
+			IL_0147: box [System.Runtime]System.Double
+			IL_014c: stloc.s 13
+			IL_014e: ldloc.1
+			IL_014f: box [System.Runtime]System.Double
+			IL_0154: stloc.s 14
+			IL_0156: ldarg.0
+			IL_0157: castclass Modules.Compile_Performance_PrimeJavaScript/Scope
+			IL_015c: ldnull
+			IL_015d: ldloc.s 13
+			IL_015f: ldloc.s 14
+			IL_0161: call object Modules.Compile_Performance_PrimeJavaScript/ArrowFunction_L210C23::__js_call__(class Modules.Compile_Performance_PrimeJavaScript/Scope, object, object, object)
+			IL_0166: stloc.s 11
+			IL_0168: ldloc.s 11
+			IL_016a: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_016f: stloc.s 15
+			IL_0171: ldloc.s 15
+			IL_0173: stloc.s 6
+			IL_0175: ldarg.0
+			IL_0176: ldfld object Modules.Compile_Performance_PrimeJavaScript/Scope::performance
+			IL_017b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0180: stloc.s 11
+			IL_0182: ldloc.s 11
+			IL_0184: ldstr "now"
+			IL_0189: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+			IL_018e: stloc.s 11
+			IL_0190: ldloc.s 11
+			IL_0192: stloc.s 7
+			IL_0194: ldloc.s 7
+			IL_0196: stloc.s 11
+			IL_0198: ldloc.s 11
+			IL_019a: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_019f: stloc.s 15
+			IL_01a1: ldloc.s 5
+			IL_01a3: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_01a8: stloc.s 16
+			IL_01aa: ldloc.s 15
+			IL_01ac: ldloc.s 16
+			IL_01ae: sub
+			IL_01af: stloc.s 16
+			IL_01b1: ldloc.s 16
+			IL_01b3: ldarg.0
+			IL_01b4: ldfld float64 Modules.Compile_Performance_PrimeJavaScript/Scope::NOW_UNITS_PER_SECOND
+			IL_01b9: div
+			IL_01ba: stloc.s 16
+			IL_01bc: ldloc.s 16
+			IL_01be: stloc.s 8
+			IL_01c0: ldstr "console"
+			IL_01c5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_01ca: stloc.s 11
+			IL_01cc: ldloc.s 11
+			IL_01ce: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_01d3: stloc.s 11
+			IL_01d5: ldloc.3
+			IL_01d6: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+			IL_01db: stloc.s 17
+			IL_01dd: ldstr "\nrogiervandam-"
+			IL_01e2: ldloc.s 17
+			IL_01e4: call string [System.Runtime]System.String::Concat(string, string)
+			IL_01e9: stloc.s 17
+			IL_01eb: ldloc.s 17
+			IL_01ed: ldstr ";"
+			IL_01f2: call string [System.Runtime]System.String::Concat(string, string)
+			IL_01f7: stloc.s 17
+			IL_01f9: ldloc.s 6
+			IL_01fb: box [System.Runtime]System.Double
+			IL_0200: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+			IL_0205: stloc.s 18
+			IL_0207: ldloc.s 17
+			IL_0209: ldloc.s 18
+			IL_020b: call string [System.Runtime]System.String::Concat(string, string)
+			IL_0210: stloc.s 18
+			IL_0212: ldloc.s 18
+			IL_0214: ldstr ";"
+			IL_0219: call string [System.Runtime]System.String::Concat(string, string)
+			IL_021e: stloc.s 18
+			IL_0220: ldloc.s 8
+			IL_0222: box [System.Runtime]System.Double
+			IL_0227: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+			IL_022c: stloc.s 17
+			IL_022e: ldloc.s 18
+			IL_0230: ldloc.s 17
+			IL_0232: call string [System.Runtime]System.String::Concat(string, string)
+			IL_0237: stloc.s 17
+			IL_0239: ldloc.s 17
+			IL_023b: ldstr ";1;algorithm=base,faithful=yes,bits=1"
+			IL_0240: call string [System.Runtime]System.String::Concat(string, string)
+			IL_0245: stloc.s 17
+			IL_0247: ldloc.s 11
+			IL_0249: ldstr "log"
+			IL_024e: ldloc.s 17
+			IL_0250: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_0255: pop
+			IL_0256: ldnull
+			IL_0257: ret
 		} // end of method ArrowFunction_L229C14::__js_call__
 
 	} // end of class ArrowFunction_L229C14
@@ -536,7 +546,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x31f8
+				// Method begins at RVA 0x3204
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -556,7 +566,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x3201
+				// Method begins at RVA 0x320d
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -576,7 +586,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x320a
+				// Method begins at RVA 0x3216
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -604,7 +614,7 @@
 					.method public hidebysig specialname rtspecialname 
 						instance void .ctor () cil managed 
 					{
-						// Method begins at RVA 0x3225
+						// Method begins at RVA 0x3231
 						// Header size: 1
 						// Code size: 8 (0x8)
 						.maxstack 8
@@ -628,7 +638,7 @@
 						.method public hidebysig specialname rtspecialname 
 							instance void .ctor () cil managed 
 						{
-							// Method begins at RVA 0x3237
+							// Method begins at RVA 0x3243
 							// Header size: 1
 							// Code size: 8 (0x8)
 							.maxstack 8
@@ -646,7 +656,7 @@
 					.method public hidebysig specialname rtspecialname 
 						instance void .ctor () cil managed 
 					{
-						// Method begins at RVA 0x322e
+						// Method begins at RVA 0x323a
 						// Header size: 1
 						// Code size: 8 (0x8)
 						.maxstack 8
@@ -664,7 +674,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x321c
+					// Method begins at RVA 0x3228
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -692,7 +702,7 @@
 						.method public hidebysig specialname rtspecialname 
 							instance void .ctor () cil managed 
 						{
-							// Method begins at RVA 0x3252
+							// Method begins at RVA 0x325e
 							// Header size: 1
 							// Code size: 8 (0x8)
 							.maxstack 8
@@ -710,7 +720,7 @@
 					.method public hidebysig specialname rtspecialname 
 						instance void .ctor () cil managed 
 					{
-						// Method begins at RVA 0x3249
+						// Method begins at RVA 0x3255
 						// Header size: 1
 						// Code size: 8 (0x8)
 						.maxstack 8
@@ -728,7 +738,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x3240
+					// Method begins at RVA 0x324c
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -752,7 +762,7 @@
 					.method public hidebysig specialname rtspecialname 
 						instance void .ctor () cil managed 
 					{
-						// Method begins at RVA 0x3264
+						// Method begins at RVA 0x3270
 						// Header size: 1
 						// Code size: 8 (0x8)
 						.maxstack 8
@@ -770,7 +780,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x325b
+					// Method begins at RVA 0x3267
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -788,7 +798,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x3213
+				// Method begins at RVA 0x321f
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -808,7 +818,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x326d
+				// Method begins at RVA 0x3279
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -832,7 +842,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x327f
+					// Method begins at RVA 0x328b
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -850,7 +860,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x3276
+				// Method begins at RVA 0x3282
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -878,7 +888,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 02 00 00 00 00 00
 			)
-			// Method begins at RVA 0x287c
+			// Method begins at RVA 0x2888
 			// Header size: 12
 			// Code size: 68 (0x44)
 			.maxstack 8
@@ -927,7 +937,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2b50
+			// Method begins at RVA 0x2b5c
 			// Header size: 12
 			// Code size: 87 (0x57)
 			.maxstack 8
@@ -997,7 +1007,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2914
+			// Method begins at RVA 0x2920
 			// Header size: 12
 			// Code size: 560 (0x230)
 			.maxstack 8
@@ -1300,7 +1310,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2bb4
+			// Method begins at RVA 0x2bc0
 			// Header size: 12
 			// Code size: 79 (0x4f)
 			.maxstack 8
@@ -1364,7 +1374,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x28cc
+			// Method begins at RVA 0x28d8
 			// Header size: 12
 			// Code size: 57 (0x39)
 			.maxstack 8
@@ -1412,7 +1422,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x3288
+				// Method begins at RVA 0x3294
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -1432,7 +1442,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x3291
+				// Method begins at RVA 0x329d
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -1456,7 +1466,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x32a3
+					// Method begins at RVA 0x32af
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -1474,7 +1484,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x329a
+				// Method begins at RVA 0x32a6
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -1494,7 +1504,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x32ac
+				// Method begins at RVA 0x32b8
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -1522,7 +1532,7 @@
 					.method public hidebysig specialname rtspecialname 
 						instance void .ctor () cil managed 
 					{
-						// Method begins at RVA 0x32c7
+						// Method begins at RVA 0x32d3
 						// Header size: 1
 						// Code size: 8 (0x8)
 						.maxstack 8
@@ -1540,7 +1550,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x32be
+					// Method begins at RVA 0x32ca
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -1558,7 +1568,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x32b5
+				// Method begins at RVA 0x32c1
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -1582,7 +1592,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x32d9
+					// Method begins at RVA 0x32e5
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -1606,7 +1616,7 @@
 					.method public hidebysig specialname rtspecialname 
 						instance void .ctor () cil managed 
 					{
-						// Method begins at RVA 0x32eb
+						// Method begins at RVA 0x32f7
 						// Header size: 1
 						// Code size: 8 (0x8)
 						.maxstack 8
@@ -1624,7 +1634,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x32e2
+					// Method begins at RVA 0x32ee
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -1642,7 +1652,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x32d0
+				// Method begins at RVA 0x32dc
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -1666,7 +1676,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x32fd
+					// Method begins at RVA 0x3309
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -1684,7 +1694,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x32f4
+				// Method begins at RVA 0x3300
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -1714,7 +1724,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 02 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2814
+			// Method begins at RVA 0x2820
 			// Header size: 12
 			// Code size: 90 (0x5a)
 			.maxstack 8
@@ -1771,7 +1781,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2c10
+			// Method begins at RVA 0x2c1c
 			// Header size: 12
 			// Code size: 318 (0x13e)
 			.maxstack 8
@@ -1918,7 +1928,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x302c
+			// Method begins at RVA 0x3038
 			// Header size: 12
 			// Code size: 150 (0x96)
 			.maxstack 8
@@ -2001,7 +2011,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x30d0
+			// Method begins at RVA 0x30dc
 			// Header size: 12
 			// Code size: 275 (0x113)
 			.maxstack 8
@@ -2128,7 +2138,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2d5c
+			// Method begins at RVA 0x2d68
 			// Header size: 12
 			// Code size: 706 (0x2c2)
 			.maxstack 8
@@ -2398,7 +2408,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x31ef
+			// Method begins at RVA 0x31fb
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -2410,6 +2420,170 @@
 		} // end of method Scope::.ctor
 
 	} // end of class Scope
+
+	.class nested public auto ansi beforefieldinit ObjectLiterals
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested public auto ansi beforefieldinit L23C14_config
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsObject
+		{
+			// Fields
+			.field private float64 _sieveSize
+			.field private float64 _timeLimitSeconds
+			.field private object _verbose
+			.field private object _runtime
+
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x3336
+				// Header size: 1
+				// Code size: 7 (0x7)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::.ctor()
+				IL_0006: ret
+			} // end of method L23C14_config::.ctor
+
+			.method public hidebysig 
+				instance float64 get_sieveSize () cil managed 
+			{
+				// Method begins at RVA 0x333e
+				// Header size: 1
+				// Code size: 7 (0x7)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: ldfld float64 Modules.Compile_Performance_PrimeJavaScript/ObjectLiterals/L23C14_config::_sieveSize
+				IL_0006: ret
+			} // end of method L23C14_config::get_sieveSize
+
+			.method public hidebysig 
+				instance void set_sieveSize (
+					float64 ''
+				) cil managed 
+			{
+				// Method begins at RVA 0x3346
+				// Header size: 1
+				// Code size: 20 (0x14)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: ldarg.1
+				IL_0002: stfld float64 Modules.Compile_Performance_PrimeJavaScript/ObjectLiterals/L23C14_config::_sieveSize
+				IL_0007: ldarg.0
+				IL_0008: ldstr "sieveSize"
+				IL_000d: ldarg.1
+				IL_000e: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
+				IL_0013: ret
+			} // end of method L23C14_config::set_sieveSize
+
+			.method public hidebysig 
+				instance float64 get_timeLimitSeconds () cil managed 
+			{
+				// Method begins at RVA 0x335b
+				// Header size: 1
+				// Code size: 7 (0x7)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: ldfld float64 Modules.Compile_Performance_PrimeJavaScript/ObjectLiterals/L23C14_config::_timeLimitSeconds
+				IL_0006: ret
+			} // end of method L23C14_config::get_timeLimitSeconds
+
+			.method public hidebysig 
+				instance void set_timeLimitSeconds (
+					float64 ''
+				) cil managed 
+			{
+				// Method begins at RVA 0x3363
+				// Header size: 1
+				// Code size: 20 (0x14)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: ldarg.1
+				IL_0002: stfld float64 Modules.Compile_Performance_PrimeJavaScript/ObjectLiterals/L23C14_config::_timeLimitSeconds
+				IL_0007: ldarg.0
+				IL_0008: ldstr "timeLimitSeconds"
+				IL_000d: ldarg.1
+				IL_000e: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
+				IL_0013: ret
+			} // end of method L23C14_config::set_timeLimitSeconds
+
+			.method public hidebysig 
+				instance object get_verbose () cil managed 
+			{
+				// Method begins at RVA 0x3378
+				// Header size: 1
+				// Code size: 7 (0x7)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: ldfld object Modules.Compile_Performance_PrimeJavaScript/ObjectLiterals/L23C14_config::_verbose
+				IL_0006: ret
+			} // end of method L23C14_config::get_verbose
+
+			.method public hidebysig 
+				instance void set_verbose (
+					object ''
+				) cil managed 
+			{
+				// Method begins at RVA 0x3380
+				// Header size: 1
+				// Code size: 20 (0x14)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: ldarg.1
+				IL_0002: stfld object Modules.Compile_Performance_PrimeJavaScript/ObjectLiterals/L23C14_config::_verbose
+				IL_0007: ldarg.0
+				IL_0008: ldstr "verbose"
+				IL_000d: ldarg.1
+				IL_000e: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+				IL_0013: ret
+			} // end of method L23C14_config::set_verbose
+
+			.method public hidebysig 
+				instance object get_runtime () cil managed 
+			{
+				// Method begins at RVA 0x3395
+				// Header size: 1
+				// Code size: 7 (0x7)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: ldfld object Modules.Compile_Performance_PrimeJavaScript/ObjectLiterals/L23C14_config::_runtime
+				IL_0006: ret
+			} // end of method L23C14_config::get_runtime
+
+			.method public hidebysig 
+				instance void set_runtime (
+					object ''
+				) cil managed 
+			{
+				// Method begins at RVA 0x339d
+				// Header size: 1
+				// Code size: 20 (0x14)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: ldarg.1
+				IL_0002: stfld object Modules.Compile_Performance_PrimeJavaScript/ObjectLiterals/L23C14_config::_runtime
+				IL_0007: ldarg.0
+				IL_0008: ldstr "runtime"
+				IL_000d: ldarg.1
+				IL_000e: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+				IL_0013: ret
+			} // end of method L23C14_config::set_runtime
+
+		} // end of class L23C14_config
+
+
+	} // end of class ObjectLiterals
 
 
 	// Methods
@@ -2424,17 +2598,18 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 1065 (0x429)
+		// Code size: 1050 (0x41a)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Compile_Performance_PrimeJavaScript/Scope,
-			[1] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
+			[1] class Modules.Compile_Performance_PrimeJavaScript/ObjectLiterals/L23C14_config,
 			[2] object,
 			[3] object,
-			[4] object,
-			[5] class [JavaScriptRuntime]JavaScriptRuntime.RegExp,
-			[6] class [System.Runtime]System.Type,
-			[7] object[]
+			[4] class Modules.Compile_Performance_PrimeJavaScript/ObjectLiterals/L23C14_config,
+			[5] object,
+			[6] class [JavaScriptRuntime]JavaScriptRuntime.RegExp,
+			[7] class [System.Runtime]System.Type,
+			[8] object[]
 		)
 
 		IL_0000: newobj instance void Modules.Compile_Performance_PrimeJavaScript/Scope::.ctor()
@@ -2446,407 +2621,400 @@
 		IL_0016: ldloc.0
 		IL_0017: ldc.r8 32
 		IL_0020: stfld float64 Modules.Compile_Performance_PrimeJavaScript/Scope::WORD_SIZE
-		IL_0025: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_002a: dup
-		IL_002b: ldstr "sieveSize"
-		IL_0030: ldc.r8 1000000
-		IL_0039: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
-		IL_003e: dup
-		IL_003f: ldstr "timeLimitSeconds"
-		IL_0044: ldc.r8 5
-		IL_004d: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
-		IL_0052: dup
-		IL_0053: ldstr "verbose"
-		IL_0058: ldc.i4.0
-		IL_0059: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-		IL_005e: dup
-		IL_005f: ldstr "runtime"
-		IL_0064: ldstr ""
-		IL_0069: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_006e: stloc.1
-		IL_006f: ldarg.1
-		IL_0070: ldstr "perf_hooks"
-		IL_0075: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
-		IL_007a: stloc.s 4
-		IL_007c: ldloc.s 4
-		IL_007e: brfalse IL_008f
+		IL_0025: newobj instance void Modules.Compile_Performance_PrimeJavaScript/ObjectLiterals/L23C14_config::.ctor()
+		IL_002a: stloc.s 4
+		IL_002c: ldloc.s 4
+		IL_002e: ldc.r8 1000000
+		IL_0037: callvirt instance void Modules.Compile_Performance_PrimeJavaScript/ObjectLiterals/L23C14_config::set_sieveSize(float64)
+		IL_003c: ldloc.s 4
+		IL_003e: ldc.r8 5
+		IL_0047: callvirt instance void Modules.Compile_Performance_PrimeJavaScript/ObjectLiterals/L23C14_config::set_timeLimitSeconds(float64)
+		IL_004c: ldloc.s 4
+		IL_004e: ldc.i4.0
+		IL_004f: box [System.Runtime]System.Boolean
+		IL_0054: callvirt instance void Modules.Compile_Performance_PrimeJavaScript/ObjectLiterals/L23C14_config::set_verbose(object)
+		IL_0059: ldloc.s 4
+		IL_005b: ldstr ""
+		IL_0060: callvirt instance void Modules.Compile_Performance_PrimeJavaScript/ObjectLiterals/L23C14_config::set_runtime(object)
+		IL_0065: ldloc.s 4
+		IL_0067: stloc.1
+		IL_0068: ldarg.1
+		IL_0069: ldstr "perf_hooks"
+		IL_006e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
+		IL_0073: stloc.s 5
+		IL_0075: ldloc.s 5
+		IL_0077: brfalse IL_0088
 
-		IL_0083: ldloc.s 4
-		IL_0085: isinst [JavaScriptRuntime]JavaScriptRuntime.JsNull
-		IL_008a: brfalse IL_00a0
+		IL_007c: ldloc.s 5
+		IL_007e: isinst [JavaScriptRuntime]JavaScriptRuntime.JsNull
+		IL_0083: brfalse IL_0099
 
-		IL_008f: ldloc.s 4
-		IL_0091: ldstr ""
-		IL_0096: ldstr "performance"
-		IL_009b: call void [JavaScriptRuntime]JavaScriptRuntime.Object::ThrowDestructuringNullOrUndefined(object, string, string)
+		IL_0088: ldloc.s 5
+		IL_008a: ldstr ""
+		IL_008f: ldstr "performance"
+		IL_0094: call void [JavaScriptRuntime]JavaScriptRuntime.Object::ThrowDestructuringNullOrUndefined(object, string, string)
 
-		IL_00a0: ldloc.s 4
-		IL_00a2: ldstr "performance"
-		IL_00a7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_00ac: stloc.s 4
-		IL_00ae: ldloc.0
-		IL_00af: ldloc.s 4
-		IL_00b1: stfld object Modules.Compile_Performance_PrimeJavaScript/Scope::performance
-		IL_00b6: ldstr "process"
-		IL_00bb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_00c0: stloc.s 4
-		IL_00c2: ldloc.s 4
-		IL_00c4: ldstr "argv"
-		IL_00c9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_00ce: stloc.s 4
-		IL_00d0: ldloc.s 4
-		IL_00d2: ldc.r8 0.0
-		IL_00db: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-		IL_00e0: stloc.s 4
-		IL_00e2: ldloc.s 4
-		IL_00e4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00e9: stloc.s 4
-		IL_00eb: ldstr "[\\\\/]"
-		IL_00f0: ldstr ""
-		IL_00f5: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.RegExp::.ctor(object, object)
-		IL_00fa: stloc.s 5
-		IL_00fc: ldloc.s 4
-		IL_00fe: ldstr "split"
-		IL_0103: ldloc.s 5
-		IL_0105: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_010a: stloc.s 4
-		IL_010c: ldloc.s 4
-		IL_010e: stloc.2
+		IL_0099: ldloc.s 5
+		IL_009b: ldstr "performance"
+		IL_00a0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00a5: stloc.s 5
+		IL_00a7: ldloc.0
+		IL_00a8: ldloc.s 5
+		IL_00aa: stfld object Modules.Compile_Performance_PrimeJavaScript/Scope::performance
+		IL_00af: ldstr "process"
+		IL_00b4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_00b9: stloc.s 5
+		IL_00bb: ldloc.s 5
+		IL_00bd: ldstr "argv"
+		IL_00c2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00c7: stloc.s 5
+		IL_00c9: ldloc.s 5
+		IL_00cb: ldc.r8 0.0
+		IL_00d4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+		IL_00d9: stloc.s 5
+		IL_00db: ldloc.s 5
+		IL_00dd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00e2: stloc.s 5
+		IL_00e4: ldstr "[\\\\/]"
+		IL_00e9: ldstr ""
+		IL_00ee: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.RegExp::.ctor(object, object)
+		IL_00f3: stloc.s 6
+		IL_00f5: ldloc.s 5
+		IL_00f7: ldstr "split"
+		IL_00fc: ldloc.s 6
+		IL_00fe: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0103: stloc.s 5
+		IL_0105: ldloc.s 5
+		IL_0107: stloc.2
+		IL_0108: ldloc.1
+		IL_0109: castclass Modules.Compile_Performance_PrimeJavaScript/ObjectLiterals/L23C14_config
+		IL_010e: ldloc.2
 		IL_010f: ldloc.2
-		IL_0110: ldloc.2
-		IL_0111: ldstr "length"
-		IL_0116: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_011b: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_0120: ldc.r8 1
-		IL_0129: sub
-		IL_012a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-		IL_012f: stloc.s 4
-		IL_0131: ldloc.1
-		IL_0132: ldstr "runtime"
-		IL_0137: ldloc.s 4
-		IL_0139: ldc.i4.1
-		IL_013a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
-		IL_013f: pop
-		IL_0140: ldstr "process"
-		IL_0145: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_014a: stloc.s 4
-		IL_014c: ldloc.s 4
-		IL_014e: ldstr "argv"
-		IL_0153: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0158: stloc.s 4
-		IL_015a: ldloc.s 4
-		IL_015c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0161: stloc.s 4
-		IL_0163: ldloc.s 4
-		IL_0165: ldstr "includes"
-		IL_016a: ldstr "verbose"
-		IL_016f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_0174: stloc.s 4
-		IL_0176: ldloc.1
-		IL_0177: ldstr "verbose"
-		IL_017c: ldloc.s 4
-		IL_017e: ldc.i4.1
-		IL_017f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
-		IL_0184: pop
-		IL_0185: ldtoken Modules.Compile_Performance_PrimeJavaScript/BitArray
-		IL_018a: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_018f: ldtoken Modules.Compile_Performance_PrimeJavaScript/BitArray
-		IL_0194: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_0199: stloc.s 6
-		IL_019b: ldc.i4.1
-		IL_019c: newarr [System.Runtime]System.Object
-		IL_01a1: dup
-		IL_01a2: ldc.i4.0
-		IL_01a3: ldloc.0
-		IL_01a4: stelem.ref
-		IL_01a5: stloc.s 7
-		IL_01a7: ldc.i4.s 10
-		IL_01a9: newarr [System.Runtime]System.Object
-		IL_01ae: dup
-		IL_01af: ldc.i4.0
-		IL_01b0: ldloc.s 6
-		IL_01b2: stelem.ref
-		IL_01b3: dup
-		IL_01b4: ldc.i4.1
-		IL_01b5: ldstr "setBitTrue"
-		IL_01ba: stelem.ref
-		IL_01bb: dup
-		IL_01bc: ldc.i4.2
-		IL_01bd: ldstr "setBitTrue"
-		IL_01c2: stelem.ref
-		IL_01c3: dup
-		IL_01c4: ldc.i4.3
-		IL_01c5: ldc.r8 1
-		IL_01ce: box [System.Runtime]System.Double
-		IL_01d3: stelem.ref
-		IL_01d4: dup
-		IL_01d5: ldc.i4.4
-		IL_01d6: ldstr "setBitTrue"
-		IL_01db: stelem.ref
-		IL_01dc: dup
-		IL_01dd: ldc.i4.5
-		IL_01de: ldc.i4.0
-		IL_01df: box [System.Runtime]System.Boolean
-		IL_01e4: stelem.ref
-		IL_01e5: dup
-		IL_01e6: ldc.i4.6
-		IL_01e7: ldc.i4.0
-		IL_01e8: box [System.Runtime]System.Boolean
-		IL_01ed: stelem.ref
-		IL_01ee: dup
-		IL_01ef: ldc.i4.7
-		IL_01f0: ldc.i4.0
-		IL_01f1: box [System.Runtime]System.Boolean
+		IL_0110: ldstr "length"
+		IL_0115: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_011a: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_011f: ldc.r8 1
+		IL_0128: sub
+		IL_0129: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+		IL_012e: callvirt instance void Modules.Compile_Performance_PrimeJavaScript/ObjectLiterals/L23C14_config::set_runtime(object)
+		IL_0133: ldstr "process"
+		IL_0138: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_013d: stloc.s 5
+		IL_013f: ldloc.s 5
+		IL_0141: ldstr "argv"
+		IL_0146: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_014b: stloc.s 5
+		IL_014d: ldloc.s 5
+		IL_014f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0154: stloc.s 5
+		IL_0156: ldloc.s 5
+		IL_0158: ldstr "includes"
+		IL_015d: ldstr "verbose"
+		IL_0162: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0167: stloc.s 5
+		IL_0169: ldloc.1
+		IL_016a: castclass Modules.Compile_Performance_PrimeJavaScript/ObjectLiterals/L23C14_config
+		IL_016f: ldloc.s 5
+		IL_0171: callvirt instance void Modules.Compile_Performance_PrimeJavaScript/ObjectLiterals/L23C14_config::set_verbose(object)
+		IL_0176: ldtoken Modules.Compile_Performance_PrimeJavaScript/BitArray
+		IL_017b: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_0180: ldtoken Modules.Compile_Performance_PrimeJavaScript/BitArray
+		IL_0185: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_018a: stloc.s 7
+		IL_018c: ldc.i4.1
+		IL_018d: newarr [System.Runtime]System.Object
+		IL_0192: dup
+		IL_0193: ldc.i4.0
+		IL_0194: ldloc.0
+		IL_0195: stelem.ref
+		IL_0196: stloc.s 8
+		IL_0198: ldc.i4.s 10
+		IL_019a: newarr [System.Runtime]System.Object
+		IL_019f: dup
+		IL_01a0: ldc.i4.0
+		IL_01a1: ldloc.s 7
+		IL_01a3: stelem.ref
+		IL_01a4: dup
+		IL_01a5: ldc.i4.1
+		IL_01a6: ldstr "setBitTrue"
+		IL_01ab: stelem.ref
+		IL_01ac: dup
+		IL_01ad: ldc.i4.2
+		IL_01ae: ldstr "setBitTrue"
+		IL_01b3: stelem.ref
+		IL_01b4: dup
+		IL_01b5: ldc.i4.3
+		IL_01b6: ldc.r8 1
+		IL_01bf: box [System.Runtime]System.Double
+		IL_01c4: stelem.ref
+		IL_01c5: dup
+		IL_01c6: ldc.i4.4
+		IL_01c7: ldstr "setBitTrue"
+		IL_01cc: stelem.ref
+		IL_01cd: dup
+		IL_01ce: ldc.i4.5
+		IL_01cf: ldc.i4.0
+		IL_01d0: box [System.Runtime]System.Boolean
+		IL_01d5: stelem.ref
+		IL_01d6: dup
+		IL_01d7: ldc.i4.6
+		IL_01d8: ldc.i4.0
+		IL_01d9: box [System.Runtime]System.Boolean
+		IL_01de: stelem.ref
+		IL_01df: dup
+		IL_01e0: ldc.i4.7
+		IL_01e1: ldc.i4.0
+		IL_01e2: box [System.Runtime]System.Boolean
+		IL_01e7: stelem.ref
+		IL_01e8: dup
+		IL_01e9: ldc.i4.8
+		IL_01ea: ldc.i4.0
+		IL_01eb: box [System.Runtime]System.Boolean
+		IL_01f0: stelem.ref
+		IL_01f1: dup
+		IL_01f2: ldc.i4.s 9
+		IL_01f4: ldloc.s 8
 		IL_01f6: stelem.ref
-		IL_01f7: dup
-		IL_01f8: ldc.i4.8
-		IL_01f9: ldc.i4.0
-		IL_01fa: box [System.Runtime]System.Boolean
-		IL_01ff: stelem.ref
-		IL_0200: dup
-		IL_0201: ldc.i4.s 9
-		IL_0203: ldloc.s 7
-		IL_0205: stelem.ref
-		IL_0206: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RegisterLazyClassMethodDataProperty(object[])
-		IL_020b: pop
-		IL_020c: ldc.i4.s 10
-		IL_020e: newarr [System.Runtime]System.Object
-		IL_0213: dup
-		IL_0214: ldc.i4.0
-		IL_0215: ldloc.s 6
-		IL_0217: stelem.ref
-		IL_0218: dup
-		IL_0219: ldc.i4.1
-		IL_021a: ldstr "setBitsTrue"
-		IL_021f: stelem.ref
-		IL_0220: dup
-		IL_0221: ldc.i4.2
-		IL_0222: ldstr "setBitsTrue"
-		IL_0227: stelem.ref
-		IL_0228: dup
-		IL_0229: ldc.i4.3
-		IL_022a: ldc.r8 3
-		IL_0233: box [System.Runtime]System.Double
-		IL_0238: stelem.ref
-		IL_0239: dup
-		IL_023a: ldc.i4.4
-		IL_023b: ldstr "setBitsTrue"
-		IL_0240: stelem.ref
-		IL_0241: dup
-		IL_0242: ldc.i4.5
-		IL_0243: ldc.i4.0
-		IL_0244: box [System.Runtime]System.Boolean
-		IL_0249: stelem.ref
-		IL_024a: dup
-		IL_024b: ldc.i4.6
-		IL_024c: ldc.i4.0
-		IL_024d: box [System.Runtime]System.Boolean
-		IL_0252: stelem.ref
-		IL_0253: dup
-		IL_0254: ldc.i4.7
-		IL_0255: ldc.i4.0
-		IL_0256: box [System.Runtime]System.Boolean
+		IL_01f7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RegisterLazyClassMethodDataProperty(object[])
+		IL_01fc: pop
+		IL_01fd: ldc.i4.s 10
+		IL_01ff: newarr [System.Runtime]System.Object
+		IL_0204: dup
+		IL_0205: ldc.i4.0
+		IL_0206: ldloc.s 7
+		IL_0208: stelem.ref
+		IL_0209: dup
+		IL_020a: ldc.i4.1
+		IL_020b: ldstr "setBitsTrue"
+		IL_0210: stelem.ref
+		IL_0211: dup
+		IL_0212: ldc.i4.2
+		IL_0213: ldstr "setBitsTrue"
+		IL_0218: stelem.ref
+		IL_0219: dup
+		IL_021a: ldc.i4.3
+		IL_021b: ldc.r8 3
+		IL_0224: box [System.Runtime]System.Double
+		IL_0229: stelem.ref
+		IL_022a: dup
+		IL_022b: ldc.i4.4
+		IL_022c: ldstr "setBitsTrue"
+		IL_0231: stelem.ref
+		IL_0232: dup
+		IL_0233: ldc.i4.5
+		IL_0234: ldc.i4.0
+		IL_0235: box [System.Runtime]System.Boolean
+		IL_023a: stelem.ref
+		IL_023b: dup
+		IL_023c: ldc.i4.6
+		IL_023d: ldc.i4.0
+		IL_023e: box [System.Runtime]System.Boolean
+		IL_0243: stelem.ref
+		IL_0244: dup
+		IL_0245: ldc.i4.7
+		IL_0246: ldc.i4.0
+		IL_0247: box [System.Runtime]System.Boolean
+		IL_024c: stelem.ref
+		IL_024d: dup
+		IL_024e: ldc.i4.8
+		IL_024f: ldc.i4.0
+		IL_0250: box [System.Runtime]System.Boolean
+		IL_0255: stelem.ref
+		IL_0256: dup
+		IL_0257: ldc.i4.s 9
+		IL_0259: ldloc.s 8
 		IL_025b: stelem.ref
-		IL_025c: dup
-		IL_025d: ldc.i4.8
-		IL_025e: ldc.i4.0
-		IL_025f: box [System.Runtime]System.Boolean
-		IL_0264: stelem.ref
-		IL_0265: dup
-		IL_0266: ldc.i4.s 9
-		IL_0268: ldloc.s 7
-		IL_026a: stelem.ref
-		IL_026b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RegisterLazyClassMethodDataProperty(object[])
-		IL_0270: pop
-		IL_0271: ldc.i4.s 10
-		IL_0273: newarr [System.Runtime]System.Object
-		IL_0278: dup
-		IL_0279: ldc.i4.0
-		IL_027a: ldloc.s 6
-		IL_027c: stelem.ref
-		IL_027d: dup
-		IL_027e: ldc.i4.1
-		IL_027f: ldstr "testBitTrue"
-		IL_0284: stelem.ref
-		IL_0285: dup
-		IL_0286: ldc.i4.2
-		IL_0287: ldstr "testBitTrue"
-		IL_028c: stelem.ref
-		IL_028d: dup
-		IL_028e: ldc.i4.3
-		IL_028f: ldc.r8 1
-		IL_0298: box [System.Runtime]System.Double
-		IL_029d: stelem.ref
-		IL_029e: dup
-		IL_029f: ldc.i4.4
-		IL_02a0: ldstr "testBitTrue"
-		IL_02a5: stelem.ref
-		IL_02a6: dup
-		IL_02a7: ldc.i4.5
-		IL_02a8: ldc.i4.0
-		IL_02a9: box [System.Runtime]System.Boolean
-		IL_02ae: stelem.ref
-		IL_02af: dup
-		IL_02b0: ldc.i4.6
-		IL_02b1: ldc.i4.0
-		IL_02b2: box [System.Runtime]System.Boolean
-		IL_02b7: stelem.ref
-		IL_02b8: dup
-		IL_02b9: ldc.i4.7
-		IL_02ba: ldc.i4.0
-		IL_02bb: box [System.Runtime]System.Boolean
+		IL_025c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RegisterLazyClassMethodDataProperty(object[])
+		IL_0261: pop
+		IL_0262: ldc.i4.s 10
+		IL_0264: newarr [System.Runtime]System.Object
+		IL_0269: dup
+		IL_026a: ldc.i4.0
+		IL_026b: ldloc.s 7
+		IL_026d: stelem.ref
+		IL_026e: dup
+		IL_026f: ldc.i4.1
+		IL_0270: ldstr "testBitTrue"
+		IL_0275: stelem.ref
+		IL_0276: dup
+		IL_0277: ldc.i4.2
+		IL_0278: ldstr "testBitTrue"
+		IL_027d: stelem.ref
+		IL_027e: dup
+		IL_027f: ldc.i4.3
+		IL_0280: ldc.r8 1
+		IL_0289: box [System.Runtime]System.Double
+		IL_028e: stelem.ref
+		IL_028f: dup
+		IL_0290: ldc.i4.4
+		IL_0291: ldstr "testBitTrue"
+		IL_0296: stelem.ref
+		IL_0297: dup
+		IL_0298: ldc.i4.5
+		IL_0299: ldc.i4.0
+		IL_029a: box [System.Runtime]System.Boolean
+		IL_029f: stelem.ref
+		IL_02a0: dup
+		IL_02a1: ldc.i4.6
+		IL_02a2: ldc.i4.0
+		IL_02a3: box [System.Runtime]System.Boolean
+		IL_02a8: stelem.ref
+		IL_02a9: dup
+		IL_02aa: ldc.i4.7
+		IL_02ab: ldc.i4.0
+		IL_02ac: box [System.Runtime]System.Boolean
+		IL_02b1: stelem.ref
+		IL_02b2: dup
+		IL_02b3: ldc.i4.8
+		IL_02b4: ldc.i4.0
+		IL_02b5: box [System.Runtime]System.Boolean
+		IL_02ba: stelem.ref
+		IL_02bb: dup
+		IL_02bc: ldc.i4.s 9
+		IL_02be: ldloc.s 8
 		IL_02c0: stelem.ref
-		IL_02c1: dup
-		IL_02c2: ldc.i4.8
-		IL_02c3: ldc.i4.0
-		IL_02c4: box [System.Runtime]System.Boolean
-		IL_02c9: stelem.ref
-		IL_02ca: dup
-		IL_02cb: ldc.i4.s 9
-		IL_02cd: ldloc.s 7
-		IL_02cf: stelem.ref
-		IL_02d0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RegisterLazyClassMethodDataProperty(object[])
-		IL_02d5: pop
-		IL_02d6: ldc.i4.s 10
-		IL_02d8: newarr [System.Runtime]System.Object
-		IL_02dd: dup
-		IL_02de: ldc.i4.0
-		IL_02df: ldloc.s 6
-		IL_02e1: stelem.ref
-		IL_02e2: dup
-		IL_02e3: ldc.i4.1
-		IL_02e4: ldstr "searchBitFalse"
-		IL_02e9: stelem.ref
-		IL_02ea: dup
-		IL_02eb: ldc.i4.2
-		IL_02ec: ldstr "searchBitFalse"
-		IL_02f1: stelem.ref
-		IL_02f2: dup
-		IL_02f3: ldc.i4.3
-		IL_02f4: ldc.r8 1
-		IL_02fd: box [System.Runtime]System.Double
-		IL_0302: stelem.ref
-		IL_0303: dup
-		IL_0304: ldc.i4.4
-		IL_0305: ldstr "searchBitFalse"
-		IL_030a: stelem.ref
-		IL_030b: dup
-		IL_030c: ldc.i4.5
-		IL_030d: ldc.i4.0
-		IL_030e: box [System.Runtime]System.Boolean
-		IL_0313: stelem.ref
-		IL_0314: dup
-		IL_0315: ldc.i4.6
-		IL_0316: ldc.i4.0
-		IL_0317: box [System.Runtime]System.Boolean
-		IL_031c: stelem.ref
-		IL_031d: dup
-		IL_031e: ldc.i4.7
-		IL_031f: ldc.i4.0
-		IL_0320: box [System.Runtime]System.Boolean
+		IL_02c1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RegisterLazyClassMethodDataProperty(object[])
+		IL_02c6: pop
+		IL_02c7: ldc.i4.s 10
+		IL_02c9: newarr [System.Runtime]System.Object
+		IL_02ce: dup
+		IL_02cf: ldc.i4.0
+		IL_02d0: ldloc.s 7
+		IL_02d2: stelem.ref
+		IL_02d3: dup
+		IL_02d4: ldc.i4.1
+		IL_02d5: ldstr "searchBitFalse"
+		IL_02da: stelem.ref
+		IL_02db: dup
+		IL_02dc: ldc.i4.2
+		IL_02dd: ldstr "searchBitFalse"
+		IL_02e2: stelem.ref
+		IL_02e3: dup
+		IL_02e4: ldc.i4.3
+		IL_02e5: ldc.r8 1
+		IL_02ee: box [System.Runtime]System.Double
+		IL_02f3: stelem.ref
+		IL_02f4: dup
+		IL_02f5: ldc.i4.4
+		IL_02f6: ldstr "searchBitFalse"
+		IL_02fb: stelem.ref
+		IL_02fc: dup
+		IL_02fd: ldc.i4.5
+		IL_02fe: ldc.i4.0
+		IL_02ff: box [System.Runtime]System.Boolean
+		IL_0304: stelem.ref
+		IL_0305: dup
+		IL_0306: ldc.i4.6
+		IL_0307: ldc.i4.0
+		IL_0308: box [System.Runtime]System.Boolean
+		IL_030d: stelem.ref
+		IL_030e: dup
+		IL_030f: ldc.i4.7
+		IL_0310: ldc.i4.0
+		IL_0311: box [System.Runtime]System.Boolean
+		IL_0316: stelem.ref
+		IL_0317: dup
+		IL_0318: ldc.i4.8
+		IL_0319: ldc.i4.0
+		IL_031a: box [System.Runtime]System.Boolean
+		IL_031f: stelem.ref
+		IL_0320: dup
+		IL_0321: ldc.i4.s 9
+		IL_0323: ldloc.s 8
 		IL_0325: stelem.ref
-		IL_0326: dup
-		IL_0327: ldc.i4.8
-		IL_0328: ldc.i4.0
-		IL_0329: box [System.Runtime]System.Boolean
-		IL_032e: stelem.ref
-		IL_032f: dup
-		IL_0330: ldc.i4.s 9
-		IL_0332: ldloc.s 7
-		IL_0334: stelem.ref
-		IL_0335: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RegisterLazyClassMethodDataProperty(object[])
-		IL_033a: pop
-		IL_033b: ldc.i4.1
-		IL_033c: newarr [System.Runtime]System.Object
-		IL_0341: dup
-		IL_0342: ldc.i4.0
-		IL_0343: ldloc.0
-		IL_0344: stelem.ref
-		IL_0345: stloc.s 7
-		IL_0347: ldloc.s 6
-		IL_0349: ldloc.s 7
-		IL_034b: ldc.r8 1
-		IL_0354: box [System.Runtime]System.Double
-		IL_0359: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateClassConstructorValue(object, object, object)
-		IL_035e: stloc.s 4
-		IL_0360: ldloc.0
-		IL_0361: ldloc.s 4
-		IL_0363: stfld object Modules.Compile_Performance_PrimeJavaScript/Scope::BitArray
-		IL_0368: nop
-		IL_0369: ldc.i4.1
-		IL_036a: newarr [System.Runtime]System.Object
-		IL_036f: dup
-		IL_0370: ldc.i4.0
-		IL_0371: ldloc.0
-		IL_0372: stelem.ref
-		IL_0373: ldc.i4.0
-		IL_0374: ldelem.ref
-		IL_0375: castclass Modules.Compile_Performance_PrimeJavaScript/Scope
-		IL_037a: ldftn object Modules.Compile_Performance_PrimeJavaScript/ArrowFunction_L210C23::__js_call__(class Modules.Compile_Performance_PrimeJavaScript/Scope, object, object, object)
-		IL_0380: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::.ctor(object, native int)
-		IL_0385: ldc.i4.1
-		IL_0386: newarr [System.Runtime]System.Object
-		IL_038b: dup
-		IL_038c: ldc.i4.0
-		IL_038d: ldloc.0
-		IL_038e: stelem.ref
-		IL_038f: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_0394: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_0399: ldc.i4.1
-		IL_039a: conv.r8
-		IL_039b: ldstr ""
-		IL_03a0: ldc.i4.0
-		IL_03a1: ldc.i4.0
-		IL_03a2: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-		IL_03a7: call object [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype(object)
-		IL_03ac: stloc.s 4
-		IL_03ae: ldloc.s 4
-		IL_03b0: ldstr "runSieveBatch"
-		IL_03b5: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetFunctionInferredName(object, object)
-		IL_03ba: stloc.s 4
-		IL_03bc: ldloc.0
-		IL_03bd: ldloc.s 4
-		IL_03bf: stfld object Modules.Compile_Performance_PrimeJavaScript/Scope::runSieveBatch
-		IL_03c4: ldc.i4.1
-		IL_03c5: newarr [System.Runtime]System.Object
-		IL_03ca: dup
-		IL_03cb: ldc.i4.0
-		IL_03cc: ldloc.0
-		IL_03cd: stelem.ref
-		IL_03ce: ldc.i4.0
-		IL_03cf: ldelem.ref
-		IL_03d0: castclass Modules.Compile_Performance_PrimeJavaScript/Scope
-		IL_03d5: ldftn object Modules.Compile_Performance_PrimeJavaScript/ArrowFunction_L229C14::__js_call__(class Modules.Compile_Performance_PrimeJavaScript/Scope, object, object)
-		IL_03db: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-		IL_03e0: ldc.i4.1
-		IL_03e1: newarr [System.Runtime]System.Object
-		IL_03e6: dup
-		IL_03e7: ldc.i4.0
-		IL_03e8: ldloc.0
-		IL_03e9: stelem.ref
-		IL_03ea: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_03ef: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_03f4: ldc.i4.1
-		IL_03f5: conv.r8
-		IL_03f6: ldstr ""
-		IL_03fb: ldc.i4.0
-		IL_03fc: ldc.i4.0
-		IL_03fd: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-		IL_0402: call object [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype(object)
-		IL_0407: stloc.s 4
-		IL_0409: ldloc.s 4
-		IL_040b: ldstr "main"
-		IL_0410: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetFunctionInferredName(object, object)
-		IL_0415: stloc.s 4
-		IL_0417: ldloc.s 4
-		IL_0419: stloc.3
-		IL_041a: ldloc.0
-		IL_041b: castclass Modules.Compile_Performance_PrimeJavaScript/Scope
-		IL_0420: ldnull
-		IL_0421: ldloc.1
-		IL_0422: call object Modules.Compile_Performance_PrimeJavaScript/ArrowFunction_L229C14::__js_call__(class Modules.Compile_Performance_PrimeJavaScript/Scope, object, object)
-		IL_0427: pop
-		IL_0428: ret
+		IL_0326: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RegisterLazyClassMethodDataProperty(object[])
+		IL_032b: pop
+		IL_032c: ldc.i4.1
+		IL_032d: newarr [System.Runtime]System.Object
+		IL_0332: dup
+		IL_0333: ldc.i4.0
+		IL_0334: ldloc.0
+		IL_0335: stelem.ref
+		IL_0336: stloc.s 8
+		IL_0338: ldloc.s 7
+		IL_033a: ldloc.s 8
+		IL_033c: ldc.r8 1
+		IL_0345: box [System.Runtime]System.Double
+		IL_034a: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateClassConstructorValue(object, object, object)
+		IL_034f: stloc.s 5
+		IL_0351: ldloc.0
+		IL_0352: ldloc.s 5
+		IL_0354: stfld object Modules.Compile_Performance_PrimeJavaScript/Scope::BitArray
+		IL_0359: nop
+		IL_035a: ldc.i4.1
+		IL_035b: newarr [System.Runtime]System.Object
+		IL_0360: dup
+		IL_0361: ldc.i4.0
+		IL_0362: ldloc.0
+		IL_0363: stelem.ref
+		IL_0364: ldc.i4.0
+		IL_0365: ldelem.ref
+		IL_0366: castclass Modules.Compile_Performance_PrimeJavaScript/Scope
+		IL_036b: ldftn object Modules.Compile_Performance_PrimeJavaScript/ArrowFunction_L210C23::__js_call__(class Modules.Compile_Performance_PrimeJavaScript/Scope, object, object, object)
+		IL_0371: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::.ctor(object, native int)
+		IL_0376: ldc.i4.1
+		IL_0377: newarr [System.Runtime]System.Object
+		IL_037c: dup
+		IL_037d: ldc.i4.0
+		IL_037e: ldloc.0
+		IL_037f: stelem.ref
+		IL_0380: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_0385: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_038a: ldc.i4.1
+		IL_038b: conv.r8
+		IL_038c: ldstr ""
+		IL_0391: ldc.i4.0
+		IL_0392: ldc.i4.0
+		IL_0393: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
+		IL_0398: call object [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype(object)
+		IL_039d: stloc.s 5
+		IL_039f: ldloc.s 5
+		IL_03a1: ldstr "runSieveBatch"
+		IL_03a6: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetFunctionInferredName(object, object)
+		IL_03ab: stloc.s 5
+		IL_03ad: ldloc.0
+		IL_03ae: ldloc.s 5
+		IL_03b0: stfld object Modules.Compile_Performance_PrimeJavaScript/Scope::runSieveBatch
+		IL_03b5: ldc.i4.1
+		IL_03b6: newarr [System.Runtime]System.Object
+		IL_03bb: dup
+		IL_03bc: ldc.i4.0
+		IL_03bd: ldloc.0
+		IL_03be: stelem.ref
+		IL_03bf: ldc.i4.0
+		IL_03c0: ldelem.ref
+		IL_03c1: castclass Modules.Compile_Performance_PrimeJavaScript/Scope
+		IL_03c6: ldftn object Modules.Compile_Performance_PrimeJavaScript/ArrowFunction_L229C14::__js_call__(class Modules.Compile_Performance_PrimeJavaScript/Scope, object, object)
+		IL_03cc: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_03d1: ldc.i4.1
+		IL_03d2: newarr [System.Runtime]System.Object
+		IL_03d7: dup
+		IL_03d8: ldc.i4.0
+		IL_03d9: ldloc.0
+		IL_03da: stelem.ref
+		IL_03db: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_03e0: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_03e5: ldc.i4.1
+		IL_03e6: conv.r8
+		IL_03e7: ldstr ""
+		IL_03ec: ldc.i4.0
+		IL_03ed: ldc.i4.0
+		IL_03ee: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
+		IL_03f3: call object [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype(object)
+		IL_03f8: stloc.s 5
+		IL_03fa: ldloc.s 5
+		IL_03fc: ldstr "main"
+		IL_0401: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetFunctionInferredName(object, object)
+		IL_0406: stloc.s 5
+		IL_0408: ldloc.s 5
+		IL_040a: stloc.3
+		IL_040b: ldloc.0
+		IL_040c: castclass Modules.Compile_Performance_PrimeJavaScript/Scope
+		IL_0411: ldnull
+		IL_0412: ldloc.1
+		IL_0413: call object Modules.Compile_Performance_PrimeJavaScript/ArrowFunction_L229C14::__js_call__(class Modules.Compile_Performance_PrimeJavaScript/Scope, object, object)
+		IL_0418: pop
+		IL_0419: ret
 	} // end of method Compile_Performance_PrimeJavaScript::__js_module_init__
 
 } // end of class Modules.Compile_Performance_PrimeJavaScript
@@ -2858,7 +3026,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x332a
+		// Method begins at RVA 0x33b2
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
