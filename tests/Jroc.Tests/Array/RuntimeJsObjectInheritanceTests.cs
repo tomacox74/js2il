@@ -328,7 +328,7 @@ public sealed class RuntimeJsObjectInheritanceTests
     [Fact]
     public void NumericStorage_TransitionsForMixedValuesAndHoles()
     {
-        var array = new JavaScriptRuntime.Array(4);
+        var array = new JavaScriptRuntime.Array(8);
         array.AddNumber(1d);
         array.AddNumber(2d);
         Assert.True(array.TrySetIndexValue(1, "mixed", throwOnError: true));
@@ -345,7 +345,7 @@ public sealed class RuntimeJsObjectInheritanceTests
     [Fact]
     public void GenericNumericReads_TransitionOnceAndReuseBoxedValues()
     {
-        var array = new JavaScriptRuntime.Array(2);
+        var array = new JavaScriptRuntime.Array(8);
         array.AddNumber(1d);
         array.AddNumber(2d);
 

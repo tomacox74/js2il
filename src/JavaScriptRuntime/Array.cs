@@ -21,6 +21,7 @@ namespace JavaScriptRuntime
         internal static readonly JsObject ImmutablePrototype = CreatePrototype();
         private static readonly object Hole = new();
         private const int MaxDenseGap = 1024;
+        private const int MinNumericStorageCapacity = 8;
         private const int MaxInitialDenseCapacity = 65536;
         private List<object?>? _items;
         private List<double>? _numberItems;
@@ -231,6 +232,10 @@ namespace JavaScriptRuntime
             return _numberItems;
         }
 
+        private bool CanStoreNumbersUnboxed
+            => _numberItems is not null
+                || (_items is null && _capacityHint >= MinNumericStorageCapacity);
+
         private object? GetDenseValue(int index)
         {
             EnsureObjectStorage();
@@ -245,9 +250,10 @@ namespace JavaScriptRuntime
 
         private void SetDenseNumber(int index, double value)
         {
-            if (_items is not null)
+            if (!CanStoreNumbersUnboxed)
             {
-                _items[index] = value;
+                EnsureObjectStorage();
+                _items![index] = value;
                 return;
             }
 
@@ -263,13 +269,14 @@ namespace JavaScriptRuntime
         public void AddNumber(double value)
         {
             EnsureDenseStorage(_logicalLength);
-            if (_items is null)
+            if (CanStoreNumbersUnboxed)
             {
                 GetOrCreateNumberStorage().Add(value);
             }
             else
             {
-                _items.Add(value);
+                EnsureObjectStorage(DenseCount + 1);
+                _items!.Add(value);
             }
             SynchronizeDenseLengthAfterGrowth();
         }
@@ -1804,7 +1811,7 @@ namespace JavaScriptRuntime
                 throw new ArgumentOutOfRangeException(nameof(index));
             }
 
-            if (_items is null && index <= DenseCount)
+            if (CanStoreNumbersUnboxed && index <= DenseCount)
             {
                 var numbers = GetOrCreateNumberStorage();
                 if (index < numbers.Count)
