@@ -23,12 +23,42 @@ namespace JavaScriptRuntime
         private const int MaxDenseGap = 1024;
         private const int MinNumericStorageCapacity = 32;
         private const int MaxInitialDenseCapacity = 65536;
-        private List<object?>? _items;
-        private List<double>? _numberItems;
-        private readonly int _capacityHint;
+        private const int CapacityHintMarker = 1 << 30;
+        private const int CapacityHintMask = CapacityHintMarker - 1;
+        // One tagged storage reference and a transient packed hint keep Array instances at their original size.
+        private object? _denseStorage;
         private int _logicalLength;
         private int _holeCount;
         private double _virtualLength;
+
+        private List<object?>? _items
+        {
+            get => _denseStorage as List<object?>;
+            set => _denseStorage = value;
+        }
+
+        private List<double>? _numberItems
+        {
+            get => _denseStorage as List<double>;
+            set => _denseStorage = value;
+        }
+
+        private int CapacityHint
+            => (_holeCount & CapacityHintMarker) != 0
+                ? _holeCount & CapacityHintMask
+                : 0;
+
+        private void SetCapacityHint(int capacity)
+        {
+            var boundedCapacity = global::System.Math.Min(capacity, MaxInitialDenseCapacity);
+            if (boundedCapacity > 0)
+            {
+                _holeCount |= CapacityHintMarker | boundedCapacity;
+            }
+        }
+
+        private void ClearCapacityHint()
+            => _holeCount &= int.MinValue;
 
         internal static JsObject Prototype
         {
@@ -210,16 +240,16 @@ namespace JavaScriptRuntime
 
             var numberItems = _numberItems;
             var capacity = global::System.Math.Max(
-                global::System.Math.Max(_capacityHint, minCapacity),
+                global::System.Math.Max(CapacityHint, minCapacity),
                 numberItems?.Count ?? 0);
             _items = new List<object?>(capacity);
+            ClearCapacityHint();
             if (numberItems is not null)
             {
                 foreach (var number in numberItems)
                 {
                     _items.Add(number);
                 }
-                _numberItems = null;
             }
         }
 
@@ -227,14 +257,16 @@ namespace JavaScriptRuntime
         {
             if (_numberItems is null)
             {
-                _numberItems = new List<double>(_capacityHint);
+                var capacity = CapacityHint;
+                _numberItems = new List<double>(capacity);
+                ClearCapacityHint();
             }
             return _numberItems;
         }
 
         private bool CanStoreNumbersUnboxed
             => _numberItems is not null
-                || (_items is null && _capacityHint >= MinNumericStorageCapacity);
+                || (_items is null && CapacityHint >= MinNumericStorageCapacity);
 
         private object? GetDenseValue(int index)
         {
@@ -1031,7 +1063,6 @@ namespace JavaScriptRuntime
 
         public Array()
         {
-            _capacityHint = 0;
             _logicalLength = 0;
             _virtualLength = 0;
             InitializeIntrinsicSurface();
@@ -1043,7 +1074,7 @@ namespace JavaScriptRuntime
                 throw new ArgumentOutOfRangeException(nameof(capacity));
             }
 
-            _capacityHint = global::System.Math.Min(capacity, MaxInitialDenseCapacity);
+            SetCapacityHint(capacity);
             _logicalLength = 0;
             _virtualLength = 0;
             InitializeIntrinsicSurface();
@@ -1051,7 +1082,7 @@ namespace JavaScriptRuntime
         public Array(System.Collections.IEnumerable collection)
         {
             ArgumentNullException.ThrowIfNull(collection);
-            _capacityHint = collection is ICollection sized ? sized.Count : 0;
+            SetCapacityHint(collection is ICollection sized ? sized.Count : 0);
             foreach (var item in collection)
             {
                 AddDenseValue(item);
