@@ -1037,6 +1037,8 @@ public class SymbolTableTypeInferenceTests
 
         Assert.NotNull(constructorScope);
         AssertStableParameterTypes(constructorScope!, ("sieveSize", typeof(double)));
+        Assert.True(classScope.StableInstanceFieldClrTypes.TryGetValue("sieveSize", out var fieldType));
+        Assert.Equal(typeof(double), fieldType);
     }
 
     [Fact]
@@ -1065,6 +1067,7 @@ public class SymbolTableTypeInferenceTests
         Assert.NotNull(constructorScope);
         Assert.Empty(constructorScope!.StableParameterClrTypes);
         AssertObjectParameter(constructorScope, "sieveSize");
+        Assert.False(classScope.StableInstanceFieldClrTypes.ContainsKey("sieveSize"));
     }
 
     [Fact]
@@ -1466,6 +1469,8 @@ public class SymbolTableTypeInferenceTests
 
         Assert.NotNull(constructorScope);
         AssertStableParameterTypes(constructorScope!, ("sieveSize", typeof(double)));
+        Assert.True(classScope.StableInstanceFieldClrTypes.TryGetValue("sieveSize", out var fieldType));
+        Assert.Equal(typeof(double), fieldType);
     }
 
     [Fact]
