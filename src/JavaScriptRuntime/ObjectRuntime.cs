@@ -446,6 +446,9 @@ namespace JavaScriptRuntime
         }
 
         public static object RequireObjectCoercible(object? value)
+            => RequireObjectCoercible<object?>(value)!;
+
+        public static T RequireObjectCoercible<T>(T value)
         {
             if (value is null || value is JsNull)
             {

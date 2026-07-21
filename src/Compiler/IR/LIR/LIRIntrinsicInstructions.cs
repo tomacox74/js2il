@@ -33,7 +33,12 @@ public record LIRCallIntrinsicGlobalFunction(string FunctionName, IReadOnlyList<
 /// <param name="MethodName">The method name to call (e.g., "isArray", "abs", "parse").</param>
 /// <param name="Arguments">The argument temps (already boxed as object).</param>
 /// <param name="Result">The temp variable to store the call result.</param>
-public record LIRCallIntrinsicStatic(string IntrinsicName, string MethodName, IReadOnlyList<TempVariable> Arguments, TempVariable Result) : LIRInstruction;
+public record LIRCallIntrinsicStatic(
+    string IntrinsicName,
+    string MethodName,
+    IReadOnlyList<TempVariable> Arguments,
+    TempVariable Result,
+    ValueStorage? GenericTypeArgument = null) : LIRInstruction;
 
 /// <summary>
 /// Calls an intrinsic static method using a pre-built <c>object[]</c> argument array.

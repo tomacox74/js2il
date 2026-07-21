@@ -5,6 +5,8 @@ namespace Jroc.Tests;
 
 public sealed class ObjectRuntimeOrdinaryObjectTests
 {
+    private sealed class CoercibleReference;
+
     private sealed class ExoticObjectForTest : JsObject, IExoticJsObject
     {
         private readonly Dictionary<string, object?> _values = new(StringComparer.Ordinal);
@@ -66,6 +68,23 @@ public sealed class ObjectRuntimeOrdinaryObjectTests
                 }
             }
         }
+    }
+
+    [Fact]
+    public void RequireObjectCoercible_PreservesTypedReference()
+    {
+        var value = new CoercibleReference();
+
+        CoercibleReference result = ObjectRuntime.RequireObjectCoercible(value);
+
+        Assert.Same(value, result);
+    }
+
+    [Fact]
+    public void RequireObjectCoercible_RejectsNullAndJsNull()
+    {
+        Assert.Throws<TypeError>(() => ObjectRuntime.RequireObjectCoercible<object?>(null));
+        Assert.Throws<TypeError>(() => ObjectRuntime.RequireObjectCoercible<object>(JsNull.Null));
     }
 
     [Fact]
