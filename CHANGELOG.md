@@ -6,7 +6,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-_Nothing yet._
+- perf/compiler: infer class instance field CLR types from stable constructor and method parameter bindings, allowing assignments such as `this.sieveSize = sieveSize` to retain unboxed `double` storage.
 
 ## v0.11.33 - 2026-07-20
 

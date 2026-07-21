@@ -2134,6 +2134,7 @@ public partial class SymbolTableBuilder
         var proposedClr = new Dictionary<string, Type>(StringComparer.Ordinal);
         var proposedUserClass = new Dictionary<string, string>(StringComparer.Ordinal);
         var conflicted = new HashSet<string>(StringComparer.Ordinal);
+        var nodeScopes = BuildNodeScopeMap(classScope);
 
         void MarkConflict(string name)
         {
@@ -2266,10 +2267,15 @@ public partial class SymbolTableBuilder
                 : null;
         }
 
-        Type? InferClassFieldExpressionClrType(Node expr)
+        Type? InferClassFieldExpressionClrType(Node expr, Scope currentScope)
         {
             switch (expr)
             {
+                case Identifier id:
+                {
+                    var binding = TryResolveBinding(currentScope, id.Name);
+                    return binding?.IsStableType == true ? binding.ClrType : null;
+                }
                 case NumericLiteral:
                     return typeof(double);
                 case StringLiteral:
@@ -2298,8 +2304,8 @@ public partial class SymbolTableBuilder
                 }
                 case NonLogicalBinaryExpression binExpr:
                 {
-                    var leftType = InferClassFieldExpressionClrType(binExpr.Left);
-                    var rightType = InferClassFieldExpressionClrType(binExpr.Right);
+                    var leftType = InferClassFieldExpressionClrType(binExpr.Left, currentScope);
+                    var rightType = InferClassFieldExpressionClrType(binExpr.Right, currentScope);
 
                     switch (binExpr.Operator)
                     {
@@ -2385,9 +2391,13 @@ public partial class SymbolTableBuilder
             }
         }
 
-        void Walk(Node? node)
+        void Walk(Node? node, Scope currentScope)
         {
             if (node == null) return;
+            if (nodeScopes.TryGetValue(node, out var nodeScope))
+            {
+                currentScope = nodeScope;
+            }
 
             // Assignment: this.x = <expr>
             if (node is AssignmentExpression assign
@@ -2412,7 +2422,7 @@ public partial class SymbolTableBuilder
                     else
                     {
                         var intrinsicClr = TryInferNewExpressionIntrinsicClrType(assign.Right);
-                        ProposeClr(propName, intrinsicClr ?? InferClassFieldExpressionClrType(assign.Right));
+                        ProposeClr(propName, intrinsicClr ?? InferClassFieldExpressionClrType(assign.Right, currentScope));
                     }
                 }
             }
@@ -2438,7 +2448,7 @@ public partial class SymbolTableBuilder
 
             foreach (var child in node.ChildNodes)
             {
-                Walk(child);
+                Walk(child, currentScope);
             }
         }
 
@@ -2447,13 +2457,14 @@ public partial class SymbolTableBuilder
         {
             if (method.Value is FunctionExpression fe)
             {
-                Walk(fe.Body);
+                var methodScope = FindScopeByAstNode(classScope, fe) ?? classScope;
+                Walk(fe.Body, methodScope);
             }
             else if (method.Value is not null)
             {
                 // Normal class methods (including getters/setters) are typically FunctionExpression,
                 // but walk any other representation to avoid missing assignments.
-                Walk(method.Value);
+                Walk(method.Value, classScope);
             }
         }
 
