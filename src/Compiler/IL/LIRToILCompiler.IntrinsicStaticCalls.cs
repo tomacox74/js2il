@@ -105,6 +105,18 @@ internal sealed partial class LIRToILCompiler
         MethodDescriptor methodDescriptor)
     {
         var intrinsicType = GetIntrinsicRuntimeType(instruction.IntrinsicName);
+        if (instruction.GenericTypeArgument is { } genericTypeArgument)
+        {
+            EmitGenericIntrinsicStaticCall(
+                instruction,
+                intrinsicType,
+                genericTypeArgument,
+                ilEncoder,
+                allocation,
+                methodDescriptor,
+                leaveResultOnStack: false);
+            return;
+        }
 
         // Resolve the static method using the same heuristics as the legacy pipeline:
         // 1. Exact arity match first
@@ -236,6 +248,18 @@ internal sealed partial class LIRToILCompiler
         MethodDescriptor methodDescriptor)
     {
         var intrinsicType = GetIntrinsicRuntimeType(instruction.IntrinsicName);
+        if (instruction.GenericTypeArgument is { } genericTypeArgument)
+        {
+            EmitGenericIntrinsicStaticCall(
+                instruction,
+                intrinsicType,
+                genericTypeArgument,
+                ilEncoder,
+                allocation,
+                methodDescriptor,
+                leaveResultOnStack: true);
+            return;
+        }
 
         // Resolve the static method (same logic as EmitIntrinsicStaticCall)
         var allMethods = intrinsicType.GetMethods(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
@@ -282,6 +306,55 @@ internal sealed partial class LIRToILCompiler
         var methodRef = _memberRefRegistry.GetOrAddMethod(intrinsicType, chosen.Name, paramTypes);
         ilEncoder.OpCode(ILOpCode.Call);
         ilEncoder.Token(methodRef);
+    }
+
+    private void EmitGenericIntrinsicStaticCall(
+        LIRCallIntrinsicStatic instruction,
+        Type intrinsicType,
+        ValueStorage genericTypeArgument,
+        InstructionEncoder ilEncoder,
+        TempLocalAllocation allocation,
+        MethodDescriptor methodDescriptor,
+        bool leaveResultOnStack)
+    {
+        if (instruction.Arguments.Count != 1)
+        {
+            throw new InvalidOperationException(
+                $"Generic intrinsic call {intrinsicType.FullName}.{instruction.MethodName} must have exactly one argument.");
+        }
+
+        var typeHandle = genericTypeArgument.TypeHandle;
+        var isValueType = false;
+        if (typeHandle.IsNil)
+        {
+            var clrType = genericTypeArgument.ClrType ?? typeof(object);
+            typeHandle = _memberRefRegistry.GetOrAddTypeHandle(clrType);
+            isValueType = clrType.IsValueType;
+        }
+
+        EmitLoadTemp(instruction.Arguments[0], ilEncoder, allocation, methodDescriptor);
+
+        var methodSpec = _memberRefRegistry.GetOrAddGenericUnaryMethod(
+            intrinsicType,
+            instruction.MethodName,
+            typeHandle,
+            isValueType);
+        ilEncoder.OpCode(ILOpCode.Call);
+        ilEncoder.Token(methodSpec);
+
+        if (leaveResultOnStack)
+        {
+            return;
+        }
+
+        if (IsMaterialized(instruction.Result, allocation))
+        {
+            EmitStoreTemp(instruction.Result, ilEncoder, allocation);
+        }
+        else
+        {
+            ilEncoder.OpCode(ILOpCode.Pop);
+        }
     }
 
     private System.Reflection.MethodInfo? ResolveIntrinsicStaticMethod(

@@ -39,8 +39,9 @@ internal static class LIRMemberCallNormalization
         // Track temps with proven user-class receiver type handles.
         // Seed from strongly-typed user-class field loads, then propagate through CopyTemp.
         var knownUserClassReceiverTypeHandles = new Dictionary<int, EntityHandle>();
-        foreach (var instruction in methodBody.Instructions)
+        for (int i = 0; i < methodBody.Instructions.Count; i++)
         {
+            var instruction = methodBody.Instructions[i];
             switch (instruction)
             {
                 case LIRNewUserClass newUserClass:
@@ -66,16 +67,51 @@ internal static class LIRMemberCallNormalization
                             out var fieldTypeHandle))
                     {
                         knownUserClassReceiverTypeHandles[loadInstanceField.Result.Index] = fieldTypeHandle;
+                        SetTempStorage(
+                            methodBody,
+                            loadInstanceField.Result,
+                            new ValueStorage(ValueStorageKind.Reference, typeof(object), fieldTypeHandle));
                     }
                     break;
 
                 case LIRCopyTemp copyTemp:
                     if (copyTemp.Destination.Index >= 0
-                        && knownUserClassReceiverTypeHandles.TryGetValue(copyTemp.Source.Index, out var srcHandle))
+                        && knownUserClassReceiverTypeHandles.TryGetValue(copyTemp.Source.Index, out var srcHandle)
+                        && GetTempStorage(methodBody, copyTemp.Source).TypeHandle == srcHandle)
                     {
                         knownUserClassReceiverTypeHandles[copyTemp.Destination.Index] = srcHandle;
+                        SetTempStorage(
+                            methodBody,
+                            copyTemp.Destination,
+                            new ValueStorage(ValueStorageKind.Reference, typeof(object), srcHandle));
                     }
                     break;
+
+                case LIRCallIntrinsicStatic
+                {
+                    IntrinsicName: nameof(JavaScriptRuntime.ObjectRuntime),
+                    MethodName: nameof(JavaScriptRuntime.ObjectRuntime.RequireObjectCoercible),
+                    Arguments.Count: 1
+                } requireObjectCoercible
+                    when requireObjectCoercible.Result.Index >= 0
+                         && knownUserClassReceiverTypeHandles.TryGetValue(
+                             requireObjectCoercible.Arguments[0].Index,
+                             out var coercedTypeHandle)
+                         && GetTempStorage(methodBody, requireObjectCoercible.Arguments[0]).TypeHandle
+                             == coercedTypeHandle:
+                {
+                    var typedStorage = new ValueStorage(
+                        ValueStorageKind.Reference,
+                        typeof(object),
+                        coercedTypeHandle);
+                    methodBody.Instructions[i] = requireObjectCoercible with
+                    {
+                        GenericTypeArgument = typedStorage
+                    };
+                    SetTempStorage(methodBody, requireObjectCoercible.Result, typedStorage);
+                    knownUserClassReceiverTypeHandles[requireObjectCoercible.Result.Index] = coercedTypeHandle;
+                    break;
+                }
             }
         }
 

@@ -165,6 +165,51 @@ namespace Jroc.Utilities.Ecma335
         }
 
         /// <summary>
+        /// Gets or creates a MethodSpecificationHandle for a static generic method shaped as
+        /// <c>T Method&lt;T&gt;(T value)</c>.
+        /// </summary>
+        public MethodSpecificationHandle GetOrAddGenericUnaryMethod(
+            Type declaringType,
+            string methodName,
+            EntityHandle typeArgument,
+            bool isValueType)
+        {
+            var key = $"{declaringType.FullName}::{methodName}<{typeArgument.Kind}:{MetadataTokens.GetToken(typeArgument)}>()";
+            if (_methodSpecCache.TryGetValue(key, out var cached))
+                return cached;
+
+            var declaringTypeHandle = GetOrAddDeclaringTypeHandle(declaringType);
+            var methodNameHandle = _metadataBuilder.GetOrAddString(methodName);
+
+            var sigBuilder = new BlobBuilder();
+            new BlobEncoder(sigBuilder)
+                .MethodSignature(isInstanceMethod: false, genericParameterCount: 1)
+                .Parameters(
+                    1,
+                    returnTypeEncoder => returnTypeEncoder.Type().GenericMethodTypeParameter(0),
+                    parametersEncoder => parametersEncoder
+                        .AddParameter()
+                        .Type()
+                        .GenericMethodTypeParameter(0));
+            var methodRef = _metadataBuilder.AddMemberReference(
+                declaringTypeHandle,
+                methodNameHandle,
+                _metadataBuilder.GetOrAddBlob(sigBuilder));
+
+            var specBuilder = new BlobBuilder();
+            new BlobEncoder(specBuilder)
+                .MethodSpecificationSignature(1)
+                .AddArgument()
+                .Type(typeArgument, isValueType);
+            var methodSpec = _metadataBuilder.AddMethodSpecification(
+                methodRef,
+                _metadataBuilder.GetOrAddBlob(specBuilder));
+
+            _methodSpecCache[key] = methodSpec;
+            return methodSpec;
+        }
+
+        /// <summary>
         /// Gets or creates a constructor member reference handle.
         /// Uses reflection to discover the constructor signature automatically.
         /// Supports constructed generic types (e.g., Func&lt;object, object&gt;) by automatically creating TypeSpecifications.

@@ -6,6 +6,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- perf/compiler: preserve proven generated-class receiver types through `RequireObjectCoercible<T>`, eliminating redundant boxing, casts, and guarded dynamic-call fallbacks for typed class fields.
 - perf/compiler: infer class instance field CLR types from stable constructor and method parameter bindings, allowing assignments such as `this.sieveSize = sieveSize` to retain unboxed `double` storage.
 
 ## v0.11.33 - 2026-07-20
