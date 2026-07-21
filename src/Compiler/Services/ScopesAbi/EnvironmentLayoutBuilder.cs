@@ -109,9 +109,9 @@ public class EnvironmentLayoutBuilder
             : scope.Parent;
         while (current != null)
         {
-            // Only include ancestor scopes that can contribute bindings to the environment chain.
-            // Empty block scopes are elided since they have no runtime-observable bindings and
-            // the IR pipeline does not materialize instances for them.
+            // Only include ancestor scopes that can contribute runtime-stored bindings to the
+            // environment chain. Uncaptured block bindings lower to IL locals, so their blocks
+            // do not have runtime instances.
             // Most class scopes don't have runtime scope instances — they're compiled as CLR types.
             // Named class expressions are the exception because their internal class-name binding
             // is stored in the class lexical environment.
@@ -120,7 +120,7 @@ public class EnvironmentLayoutBuilder
                 current = current.Parent;
                 continue;
             }
-            if (current.Kind != ScopeKind.Block || current.Bindings.Count > 0)
+            if (current.Kind != ScopeKind.Block || current.RequiresRuntimeBlockScopeInstance)
             {
                 ancestorScopes.Add(current);
             }

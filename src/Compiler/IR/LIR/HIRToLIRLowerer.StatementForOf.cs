@@ -66,7 +66,7 @@ public sealed partial class HIRToLIRLowerer
                 if (declaringScope != null
                     && declaringScope.Kind == ScopeKind.Block
                     && loopHeadLexicalBindings.All(b => b.DeclaringScope == declaringScope)
-                    && (perIterationBindings.Count > 0 || declaringScope.HasDescendantCallableReferencingParentScopeVariables))
+                    && declaringScope.RequiresRuntimeBlockScopeInstance)
                 {
                     useTempPerIterationScope = true;
                     loopScopeName = ScopeNaming.GetRegistryScopeName(declaringScope);
@@ -440,7 +440,7 @@ public sealed partial class HIRToLIRLowerer
                 if (declaringScope != null
                     && declaringScope.Kind == ScopeKind.Block
                     && loopHeadLexicalBindings.All(b => b.DeclaringScope == declaringScope)
-                    && (perIterationBindings.Count > 0 || declaringScope.HasDescendantCallableReferencingParentScopeVariables))
+                    && declaringScope.RequiresRuntimeBlockScopeInstance)
                 {
                     useTempPerIterationScope = true;
                     loopScopeName = ScopeNaming.GetRegistryScopeName(declaringScope);
