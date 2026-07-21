@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2117
+				// Method begins at RVA 0x20f2
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2120
+				// Method begins at RVA 0x20fb
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -59,7 +59,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2103
+			// Method begins at RVA 0x20de
 			// Header size: 1
 			// Code size: 7 (0x7)
 			.maxstack 8
@@ -75,7 +75,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x210b
+			// Method begins at RVA 0x20e6
 			// Header size: 1
 			// Code size: 2 (0x2)
 			.maxstack 8
@@ -93,7 +93,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x210e
+			// Method begins at RVA 0x20e9
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -119,16 +119,15 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 167 (0xa7)
+		// Code size: 130 (0x82)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Classes_ClassMethod_ReturnsThis_IsSelf_Log/Scope,
-			[1] object,
+			[1] class Modules.Classes_ClassMethod_ReturnsThis_IsSelf_Log/Self,
 			[2] class Modules.Classes_ClassMethod_ReturnsThis_IsSelf_Log/Self,
 			[3] object,
-			[4] object,
-			[5] bool,
-			[6] object
+			[4] bool,
+			[5] object
 		)
 
 		IL_0000: newobj instance void Modules.Classes_ClassMethod_ReturnsThis_IsSelf_Log/Scope::.ctor()
@@ -156,41 +155,27 @@
 		IL_0046: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
 		IL_004b: stloc.3
 		IL_004c: ldloc.1
-		IL_004d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0052: stloc.s 4
-		IL_0054: ldloc.s 4
-		IL_0056: isinst Modules.Classes_ClassMethod_ReturnsThis_IsSelf_Log/Self
-		IL_005b: dup
-		IL_005c: brfalse IL_006d
-
-		IL_0061: callvirt instance class Modules.Classes_ClassMethod_ReturnsThis_IsSelf_Log/Self Modules.Classes_ClassMethod_ReturnsThis_IsSelf_Log/Self::isSelf()
-		IL_0066: stloc.s 4
-		IL_0068: br IL_007c
-
-		IL_006d: pop
-		IL_006e: ldloc.s 4
-		IL_0070: ldstr "isSelf"
-		IL_0075: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
-		IL_007a: stloc.s 4
-
-		IL_007c: ldloc.s 4
-		IL_007e: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
-		IL_0083: ldc.i4.0
-		IL_0084: ceq
-		IL_0086: stloc.s 5
-		IL_0088: ldloc.s 5
-		IL_008a: ldc.i4.0
-		IL_008b: ceq
-		IL_008d: stloc.s 5
-		IL_008f: ldloc.s 5
-		IL_0091: box [System.Runtime]System.Boolean
-		IL_0096: stloc.s 6
-		IL_0098: ldloc.3
-		IL_0099: ldstr "log"
-		IL_009e: ldloc.s 6
-		IL_00a0: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_00a5: pop
-		IL_00a6: ret
+		IL_004d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Classes_ClassMethod_ReturnsThis_IsSelf_Log/Self>(!!0)
+		IL_0052: stloc.2
+		IL_0053: ldloc.2
+		IL_0054: callvirt instance class Modules.Classes_ClassMethod_ReturnsThis_IsSelf_Log/Self Modules.Classes_ClassMethod_ReturnsThis_IsSelf_Log/Self::isSelf()
+		IL_0059: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
+		IL_005e: ldc.i4.0
+		IL_005f: ceq
+		IL_0061: stloc.s 4
+		IL_0063: ldloc.s 4
+		IL_0065: ldc.i4.0
+		IL_0066: ceq
+		IL_0068: stloc.s 4
+		IL_006a: ldloc.s 4
+		IL_006c: box [System.Runtime]System.Boolean
+		IL_0071: stloc.s 5
+		IL_0073: ldloc.3
+		IL_0074: ldstr "log"
+		IL_0079: ldloc.s 5
+		IL_007b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0080: pop
+		IL_0081: ret
 	} // end of method Classes_ClassMethod_ReturnsThis_IsSelf_Log::__js_module_init__
 
 } // end of class Modules.Classes_ClassMethod_ReturnsThis_IsSelf_Log
@@ -202,7 +187,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2129
+		// Method begins at RVA 0x2104
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

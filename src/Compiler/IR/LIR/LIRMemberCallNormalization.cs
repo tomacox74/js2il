@@ -39,6 +39,7 @@ internal static class LIRMemberCallNormalization
         // Track temps with proven user-class receiver type handles.
         // Seed from strongly-typed user-class field loads, then propagate through CopyTemp.
         var knownUserClassReceiverTypeHandles = new Dictionary<int, EntityHandle>();
+        var variableSlotDefinitionCounts = CountVariableSlotDefinitions(methodBody);
         for (int i = 0; i < methodBody.Instructions.Count; i++)
         {
             var instruction = methodBody.Instructions[i];
@@ -50,6 +51,7 @@ internal static class LIRMemberCallNormalization
                     // result temp may be overwritten to an arbitrary value.
                     if (newUserClass.Result.Index >= 0
                         && classRegistry.TryGet(newUserClass.RegistryClassName, out var constructedTypeHandle)
+                        && !newUserClass.IsDerivedConstructor
                         && !classRegistry.TryGetPrivateField(newUserClass.RegistryClassName, "__jroc_ctorReturn", out _))
                     {
                         knownUserClassReceiverTypeHandles[newUserClass.Result.Index] = constructedTypeHandle;
@@ -76,14 +78,26 @@ internal static class LIRMemberCallNormalization
 
                 case LIRCopyTemp copyTemp:
                     if (copyTemp.Destination.Index >= 0
-                        && knownUserClassReceiverTypeHandles.TryGetValue(copyTemp.Source.Index, out var srcHandle)
-                        && GetTempStorage(methodBody, copyTemp.Source).TypeHandle == srcHandle)
+                        && knownUserClassReceiverTypeHandles.TryGetValue(copyTemp.Source.Index, out var srcHandle))
                     {
-                        knownUserClassReceiverTypeHandles[copyTemp.Destination.Index] = srcHandle;
-                        SetTempStorage(
-                            methodBody,
-                            copyTemp.Destination,
-                            new ValueStorage(ValueStorageKind.Reference, typeof(object), srcHandle));
+                        var typedStorage = new ValueStorage(
+                            ValueStorageKind.Reference,
+                            typeof(object),
+                            srcHandle);
+                        var destinationSlot = GetTempVariableSlot(methodBody, copyTemp.Destination);
+                        var sourceStorageCarriesType = GetTempStorage(methodBody, copyTemp.Source).TypeHandle == srcHandle;
+                        var destinationIsSingleDefinitionSlot = destinationSlot >= 0
+                            && variableSlotDefinitionCounts.GetValueOrDefault(destinationSlot) == 1;
+                        if ((destinationSlot < 0 && sourceStorageCarriesType)
+                            || destinationIsSingleDefinitionSlot)
+                        {
+                            knownUserClassReceiverTypeHandles[copyTemp.Destination.Index] = srcHandle;
+                            SetTempStorage(methodBody, copyTemp.Destination, typedStorage);
+                            if (destinationSlot >= 0)
+                            {
+                                methodBody.VariableStorages[destinationSlot] = typedStorage;
+                            }
+                        }
                     }
                     break;
 
@@ -237,6 +251,26 @@ internal static class LIRMemberCallNormalization
         }
         methodBody.Instructions.Clear();
         methodBody.Instructions.AddRange(newInstructions);
+    }
+
+    private static Dictionary<int, int> CountVariableSlotDefinitions(MethodBodyIR methodBody)
+    {
+        var definitionCounts = new Dictionary<int, int>();
+        foreach (var instruction in methodBody.Instructions)
+        {
+            if (!TempLocalAllocator.TryGetDefinedTemp(instruction, out var defined))
+            {
+                continue;
+            }
+
+            var slot = GetTempVariableSlot(methodBody, defined);
+            if (slot >= 0)
+            {
+                definitionCounts[slot] = definitionCounts.GetValueOrDefault(slot) + 1;
+            }
+        }
+
+        return definitionCounts;
     }
 
     private static bool TryGetMemberCallSite(
