@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.11.35 - 2026-07-21
+
 - perf/compiler: elide block lexical-environment allocations when every binding is stored in an IL local, while retaining runtime scope instances for captured bindings and block-level functions.
 
 ## v0.11.34 - 2026-07-21
