@@ -7,6 +7,7 @@ using JavaScriptRuntime.DependencyInjection;
 
 namespace Jroc.Tests.Integration
 {
+    [Collection("CurrentDirectory")]
     public class ExecutionTests : ExecutionTestsBase
     {
         public ExecutionTests() : base("Integration") { }
