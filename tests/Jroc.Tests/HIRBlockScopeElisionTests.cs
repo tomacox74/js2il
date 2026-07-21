@@ -30,15 +30,31 @@ public class HIRBlockScopeElisionTests
     }
 
     [Fact]
-    public void TryParseMethod_BlockWithLexicalBinding_RequestsScopeInstance()
+    public void TryParseMethod_BlockWithUncapturedLexicalBindings_DoesNotRequestScopeInstance()
     {
         var (method, _) = ParseFunctionExpression("""
             var findGraphNode = function(obj) {
                 for (var i = 0; i < this.length; i++) {
-                    let current = this[i];
-                    if (current.pos == obj.pos) { return current; }
+                    const step = i * 2;
+                    const start = step + 1;
+                    if (start == obj.pos) { return step; }
                 }
                 return false;
+            };
+            """);
+
+        Assert.All(EnumerateBlocks(method.Body), block => Assert.Null(block.ScopeName));
+    }
+
+    [Fact]
+    public void TryParseMethod_BlockWithCapturedLexicalBinding_RequestsScopeInstance()
+    {
+        var (method, _) = ParseFunctionExpression("""
+            var makeReader = function() {
+                {
+                    let current = 42;
+                    return () => current;
+                }
             };
             """);
 

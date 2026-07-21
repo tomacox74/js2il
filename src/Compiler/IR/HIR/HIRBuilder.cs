@@ -1260,10 +1260,9 @@ class HIRMethodBuilder
 
     private static string? GetMaterializedBlockScopeName(Scope? scope)
     {
-        // Only blocks with lexical bindings have a runtime-observable environment.
-        // Empty block scopes remain in the symbol tree for structural analysis but
-        // must not cause a per-execution scope instance allocation.
-        return scope is { Kind: ScopeKind.Block } && scope.Bindings.Count > 0
+        // Uncaptured block bindings lower to IL locals, so only blocks with runtime
+        // field storage need a lexical-environment instance.
+        return scope?.RequiresRuntimeBlockScopeInstance == true
             ? ScopeNaming.GetRegistryScopeName(scope)
             : null;
     }

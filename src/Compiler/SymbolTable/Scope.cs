@@ -175,6 +175,15 @@ public class Scope
     public bool IsVarHoistingScope { get; set; }
 
     /// <summary>
+    /// True when this block scope has bindings that require runtime field storage.
+    /// Uncaptured lexical bindings use IL locals and do not require a scope instance.
+    /// </summary>
+    public bool RequiresRuntimeBlockScopeInstance
+        => Kind == ScopeKind.Block
+           && Bindings.Values.Any(binding =>
+               binding.IsCaptured || binding.Kind == BindingKind.Function);
+
+    /// <summary>
     /// True when source code in this module referenced the ECMAScript globalThis binding.
     /// Used to gate global-var mirroring onto the global object so we only emit the extra
     /// global-object write when user code actually observes the global object.
