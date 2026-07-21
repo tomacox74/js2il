@@ -6,9 +6,12 @@ import { fileURLToPath } from "node:url";
 const scriptDirectory = path.dirname(fileURLToPath(import.meta.url));
 const benchmarkDirectory = path.resolve(scriptDirectory, "..");
 const repoRoot = path.resolve(benchmarkDirectory, "..", "..", "..");
-const inputFile = path.join(benchmarkDirectory, "snippets", "string-width.mjs");
-const outputDirectory = path.join(benchmarkDirectory, ".jroc", "string-width");
-const outputAssembly = path.join(outputDirectory, "string-width.dll");
+const inputFile = process.env.JROC_BENCHMARK_INPUT
+  ? path.resolve(benchmarkDirectory, process.env.JROC_BENCHMARK_INPUT)
+  : path.join(benchmarkDirectory, "snippets", "string-width.mjs");
+const benchmarkName = path.basename(inputFile, path.extname(inputFile));
+const outputDirectory = path.join(benchmarkDirectory, ".jroc", benchmarkName);
+const outputAssembly = path.join(outputDirectory, `${benchmarkName}.dll`);
 
 function run(command, args, options = {}) {
   const result = spawnSync(command, args, {
