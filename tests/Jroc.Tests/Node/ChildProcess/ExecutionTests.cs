@@ -2,6 +2,7 @@ using System.Threading.Tasks;
 
 namespace Jroc.Tests.Node.ChildProcess
 {
+    [Collection("CurrentDirectory")]
     public class ExecutionTests : ExecutionTestsBase
     {
         public ExecutionTests() : base("Node/ChildProcess") { }
