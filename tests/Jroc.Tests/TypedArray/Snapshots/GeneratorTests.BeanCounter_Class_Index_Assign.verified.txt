@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x222f
+				// Method begins at RVA 0x21f3
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2238
+				// Method begins at RVA 0x21fc
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -58,7 +58,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2241
+				// Method begins at RVA 0x2205
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -82,7 +82,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x21e8
+			// Method begins at RVA 0x21ac
 			// Header size: 12
 			// Code size: 32 (0x20)
 			.maxstack 8
@@ -109,7 +109,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2214
+			// Method begins at RVA 0x21d8
 			// Header size: 1
 			// Code size: 17 (0x11)
 			.maxstack 8
@@ -134,7 +134,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2226
+			// Method begins at RVA 0x21ea
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -160,12 +160,12 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 394 (0x18a)
+		// Code size: 336 (0x150)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.BeanCounter_Class_Index_Assign/Scope,
 			[1] object,
-			[2] object,
+			[2] class Modules.BeanCounter_Class_Index_Assign/BeanCounter,
 			[3] class [System.Runtime]System.Type,
 			[4] object[],
 			[5] object,
@@ -266,47 +266,31 @@
 		IL_00e5: ldloc.s 6
 		IL_00e7: stloc.2
 		IL_00e8: ldloc.2
-		IL_00e9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00ee: stloc.s 5
-		IL_00f0: ldloc.s 5
-		IL_00f2: isinst Modules.BeanCounter_Class_Index_Assign/BeanCounter
-		IL_00f7: dup
-		IL_00f8: brfalse IL_0124
-
-		IL_00fd: ldc.r8 1
-		IL_0106: box [System.Runtime]System.Double
-		IL_010b: ldc.r8 42
-		IL_0114: box [System.Runtime]System.Double
-		IL_0119: callvirt instance object Modules.BeanCounter_Class_Index_Assign/BeanCounter::setBeanCount(object, object)
-		IL_011e: pop
-		IL_011f: br IL_014e
-
-		IL_0124: pop
-		IL_0125: ldloc.s 5
-		IL_0127: ldstr "setBeanCount"
-		IL_012c: ldc.r8 1
-		IL_0135: box [System.Runtime]System.Double
-		IL_013a: ldc.r8 42
-		IL_0143: box [System.Runtime]System.Double
-		IL_0148: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-		IL_014d: pop
-
-		IL_014e: ldstr "console"
-		IL_0153: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0158: stloc.s 5
-		IL_015a: ldloc.s 5
-		IL_015c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0161: stloc.s 5
-		IL_0163: ldloc.s 5
-		IL_0165: ldstr "log"
-		IL_016a: ldloc.2
-		IL_016b: ldstr "beanCounts"
-		IL_0170: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0175: ldc.r8 1
-		IL_017e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-		IL_0183: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_0188: pop
-		IL_0189: ret
+		IL_00e9: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.BeanCounter_Class_Index_Assign/BeanCounter>(!!0)
+		IL_00ee: stloc.s 6
+		IL_00f0: ldloc.s 6
+		IL_00f2: ldc.r8 1
+		IL_00fb: box [System.Runtime]System.Double
+		IL_0100: ldc.r8 42
+		IL_0109: box [System.Runtime]System.Double
+		IL_010e: callvirt instance object Modules.BeanCounter_Class_Index_Assign/BeanCounter::setBeanCount(object, object)
+		IL_0113: pop
+		IL_0114: ldstr "console"
+		IL_0119: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_011e: stloc.s 5
+		IL_0120: ldloc.s 5
+		IL_0122: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0127: stloc.s 5
+		IL_0129: ldloc.s 5
+		IL_012b: ldstr "log"
+		IL_0130: ldloc.2
+		IL_0131: ldstr "beanCounts"
+		IL_0136: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_013b: ldc.r8 1
+		IL_0144: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+		IL_0149: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_014e: pop
+		IL_014f: ret
 	} // end of method BeanCounter_Class_Index_Assign::__js_module_init__
 
 } // end of class Modules.BeanCounter_Class_Index_Assign
@@ -318,7 +302,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x224a
+		// Method begins at RVA 0x220e
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
