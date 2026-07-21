@@ -8,7 +8,7 @@ const benchmarkDirectory = path.resolve(scriptDirectory, "..");
 
 function parseArgs(argv) {
   const parsed = {
-    bench: "string-width",
+    bench: "runtime-baseline",
     runtimes: [],
     output: "results.json",
   };
@@ -39,7 +39,7 @@ function parseArgs(argv) {
     throw new Error(`Unknown argument: ${positional[3]}`);
   }
 
-  if (positional[0] && parsed.bench === "string-width") {
+  if (positional[0] && parsed.bench === "runtime-baseline") {
     parsed.bench = positional[0];
   }
   if (positional[1] && parsed.runtimes.length === 0) {
@@ -127,19 +127,22 @@ function runNpmScript(scriptName, runtimeLabel) {
 }
 
 function resolveScriptName(benchName, runtimeLabel) {
-  if (runtimeLabel === "node") {
-    return `bench:${benchName}`;
-  }
-  if (runtimeLabel === "jroc") {
-    return `bench:${benchName}:jroc`;
+  if (["node", "jroc", "clearscript", "jint", "yantrajs", "okojo"].includes(runtimeLabel)) {
+    return runtimeLabel === "node"
+      ? `bench:${benchName}`
+      : `bench:${benchName}:${runtimeLabel}`;
   }
 
-  throw new Error(`Unsupported runtime '${runtimeLabel}'. Supported runtimes: node, jroc.`);
+  throw new Error(`Unsupported runtime '${runtimeLabel}'. Supported runtimes: node, jroc, clearscript, jint, yantrajs, okojo.`);
 }
 
 function main() {
   const args = parseArgs(process.argv.slice(2));
-  const runtimes = args.runtimes.length > 0 ? args.runtimes : ["node", "jroc"];
+  const runtimes = args.runtimes.length > 0
+    ? args.runtimes
+    : args.bench === "runtime-baseline"
+      ? ["node", "jroc", "clearscript", "jint", "yantrajs", "okojo"]
+      : ["node", "jroc"];
   const outputPath = path.resolve(benchmarkDirectory, args.output);
   const runAt = new Date().toISOString();
 

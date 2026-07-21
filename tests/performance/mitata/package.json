@@ -6,11 +6,24 @@
     "mitata": "1.0.20",
     "string-width": "7.1.0"
   },
+  "devDependencies": {
+    "esbuild": "0.25.9"
+  },
   "scripts": {
     "bench": "npm run bench:string-width",
     "bench:jroc": "npm run bench:string-width:jroc",
     "bench:release": "node scripts/run-release-suite.mjs",
     "bench:string-width": "node snippets/string-width.mjs",
-    "bench:string-width:jroc": "node scripts/run-jroc-string-width.mjs"
+    "bench:string-width:jroc": "node scripts/run-jroc-string-width.mjs",
+    "bench:runtime-baseline": "node snippets/runtime-baseline.mjs",
+    "bench:runtime-baseline:jroc": "node scripts/run-jroc-managed-benchmark.mjs runtime-baseline",
+    "bench:string-width:clearscript": "node scripts/build-managed-benchmark.mjs string-width && dotnet run --project hosts/MitataRuntimeHost.csproj -- clearscript .managed/string-width.js",
+    "bench:string-width:jint": "node scripts/build-managed-benchmark.mjs string-width && dotnet run --project hosts/MitataRuntimeHost.csproj -- jint .managed/string-width.js",
+    "bench:string-width:yantrajs": "node scripts/build-managed-benchmark.mjs string-width && dotnet run --project hosts/MitataRuntimeHost.csproj -- yantrajs .managed/string-width.mjs",
+    "bench:string-width:okojo": "node scripts/build-managed-benchmark.mjs string-width && dotnet run --project hosts/MitataRuntimeHost.csproj -- okojo .managed/string-width.js"
+    ,"bench:runtime-baseline:clearscript": "node scripts/build-managed-benchmark.mjs runtime-baseline && dotnet run --project hosts/MitataRuntimeHost.csproj -- clearscript .managed/runtime-baseline.js"
+    ,"bench:runtime-baseline:jint": "node scripts/build-managed-benchmark.mjs runtime-baseline && dotnet run --project hosts/MitataRuntimeHost.csproj -- jint .managed/runtime-baseline.js"
+    ,"bench:runtime-baseline:yantrajs": "node scripts/build-managed-benchmark.mjs runtime-baseline && dotnet run --project hosts/MitataRuntimeHost.csproj -- yantrajs .managed/runtime-baseline.js"
+    ,"bench:runtime-baseline:okojo": "node scripts/build-managed-benchmark.mjs runtime-baseline && dotnet run --project hosts/MitataRuntimeHost.csproj -- okojo .managed/runtime-baseline.js"
   }
 }

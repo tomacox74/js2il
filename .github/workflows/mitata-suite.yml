@@ -7,7 +7,7 @@ on:
       benchmark:
         description: 'Mitata benchmark suffix (for example string-width)'
         required: false
-        default: 'string-width'
+        default: 'runtime-baseline'
       jroc_package_version:
         description: 'Published jroc package version to benchmark (for example 0.9.31)'
         required: false
@@ -156,7 +156,7 @@ jobs:
       - name: Run mitata benchmark suite
         shell: bash
         env:
-          BENCHMARK_NAME: ${{ github.event.inputs.benchmark || 'string-width' }}
+          BENCHMARK_NAME: ${{ github.event.inputs.benchmark || 'runtime-baseline' }}
         run: |
           set -euo pipefail
           cd tests/performance/mitata
