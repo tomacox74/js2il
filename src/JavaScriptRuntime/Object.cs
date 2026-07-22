@@ -1043,12 +1043,6 @@ namespace JavaScriptRuntime
                 return JavaScriptRuntime.Function.GetPrototypeObject(del);
             }
 
-            // Class constructor values are functions — their prototype is Function.prototype.
-            if (obj is ClassConstructorValue)
-            {
-                return JavaScriptRuntime.Function.Prototype;
-            }
-
             if (!PrototypeChain.TryGetPrototype(obj, out var prototype))
             {
                 return null;

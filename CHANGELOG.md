@@ -6,7 +6,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-_Nothing yet._
+- runtime: add standards-compatible `Uint8Array.fromHex` and `Uint8Array.prototype.toHex`, including strict input validation, lowercase hexadecimal output, non-constructible built-in metadata, property descriptors, and typed receiver validation. Ports ten test262 cases for hexadecimal Uint8Array conversion.
 
 ## v0.11.35 - 2026-07-21
 

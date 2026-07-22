@@ -849,6 +849,22 @@ public sealed partial class HIRToLIRLowerer
                         CreateAnonymousVariableSlot("$anon_class_type_with_inferred_name", new ValueStorage(ValueStorageKind.Reference, typeof(object))));
                 }
 
+                if (!TryLowerClassConstructorValue(
+                        initializedUserClassType.RegistryClassName,
+                        initializedUserClassType.ClassScope,
+                        out resultTempVar))
+                {
+                    resultTempVar = CreateTempVariable();
+                    _methodBodyIR.Instructions.Add(new LIRGetUserClassType(initializedUserClassType.RegistryClassName, resultTempVar));
+                    DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(Type)));
+                }
+
+                if (!TryLinkClassConstructorToSuperClass(initializedUserClassType, ref resultTempVar))
+                {
+                    resultTempVar = default;
+                    return false;
+                }
+
                 foreach (var initStatement in initializedUserClassType.InitializationStatements)
                 {
                     if (!TryLowerStatement(initStatement))
@@ -858,30 +874,21 @@ public sealed partial class HIRToLIRLowerer
                     }
                 }
 
-                if (TryLowerClassConstructorValue(initializedUserClassType.RegistryClassName, initializedUserClassType.ClassScope, out resultTempVar))
+                if (!string.IsNullOrWhiteSpace(_pendingAnonymousClassExpressionInferredName)
+                    && initializedUserClassType.InitializationStatements.Count > 0)
                 {
-                    if (!string.IsNullOrWhiteSpace(_pendingAnonymousClassExpressionInferredName)
-                        && initializedUserClassType.InitializationStatements.Count > 0)
-                    {
-                        var inferredNameTemp = CreateTempVariable();
-                        _methodBodyIR.Instructions.Add(new LIRConstString(_pendingAnonymousClassExpressionInferredName, inferredNameTemp));
-                        DefineTempStorage(inferredNameTemp, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+                    var inferredNameTemp = CreateTempVariable();
+                    _methodBodyIR.Instructions.Add(new LIRConstString(_pendingAnonymousClassExpressionInferredName, inferredNameTemp));
+                    DefineTempStorage(inferredNameTemp, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
 
-                        var namedClassConstructorTemp = CreateTempVariable();
-                        _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
-                            MethodName: nameof(JavaScriptRuntime.RuntimeServices.SetClassConstructorInferredName),
-                            Arguments: new[] { EnsureObject(resultTempVar), EnsureObject(inferredNameTemp) },
-                            Result: namedClassConstructorTemp));
-                        DefineTempStorage(namedClassConstructorTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
-                        resultTempVar = namedClassConstructorTemp;
-                    }
-                    return true;
+                    var namedClassConstructorTemp = CreateTempVariable();
+                    _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
+                        MethodName: nameof(JavaScriptRuntime.RuntimeServices.SetClassConstructorInferredName),
+                        Arguments: new[] { EnsureObject(resultTempVar), EnsureObject(inferredNameTemp) },
+                        Result: namedClassConstructorTemp));
+                    DefineTempStorage(namedClassConstructorTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                    resultTempVar = namedClassConstructorTemp;
                 }
-                // Fall through: TryLowerClassConstructorValue failed (e.g., caller has no parent scopes).
-                // Emit a simple type token so the runtime can still resolve the class.
-                resultTempVar = CreateTempVariable();
-                _methodBodyIR.Instructions.Add(new LIRGetUserClassType(initializedUserClassType.RegistryClassName, resultTempVar));
-                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(Type)));
                 return true;
             case Jroc.HIR.HIRUserClassTypeExpression userClassType:
                 resultTempVar = CreateTempVariable();
@@ -968,6 +975,11 @@ public sealed partial class HIRToLIRLowerer
             }
 
             if (!TryLowerClassConstructorValue(initializedUserClassType.RegistryClassName, initializedUserClassType.ClassScope, out var classConstructorValue))
+            {
+                return false;
+            }
+
+            if (!TryLinkClassConstructorToSuperClass(initializedUserClassType, ref classConstructorValue))
             {
                 return false;
             }
@@ -1059,6 +1071,31 @@ public sealed partial class HIRToLIRLowerer
             Arguments: new[] { EnsureObject(typeTemp), EnsureObject(scopesTemp), EnsureObject(paramCountTemp) },
             Result: resultTempVar));
         DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+
+        return true;
+    }
+
+    private bool TryLinkClassConstructorToSuperClass(
+        HIRInitializedUserClassTypeExpression classExpression,
+        ref TempVariable classConstructorTemp)
+    {
+        if (classExpression.SuperClass == null)
+        {
+            return true;
+        }
+
+        if (!TryLowerExpression(classExpression.SuperClass, out var superClassTemp))
+        {
+            return false;
+        }
+
+        var linkedConstructorTemp = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
+            MethodName: nameof(JavaScriptRuntime.RuntimeServices.SetClassConstructorPrototype),
+            Arguments: new[] { EnsureObject(classConstructorTemp), EnsureObject(superClassTemp) },
+            Result: linkedConstructorTemp));
+        DefineTempStorage(linkedConstructorTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        classConstructorTemp = linkedConstructorTemp;
         return true;
     }
 

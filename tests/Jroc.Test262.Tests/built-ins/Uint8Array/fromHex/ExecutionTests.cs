@@ -17,4 +17,31 @@ public class ExecutionTests : ExecutionTestsBase
     public Task odd_length_input()
         => ExecutionTest("odd-length-input");
 
+    [Fact(DisplayName = "descriptor")]
+    public Task descriptor()
+        => ExecutionTest("descriptor");
+
+    [Fact(DisplayName = "ignores-receiver")]
+    public Task ignores_receiver()
+        => ExecutionTest("ignores-receiver");
+
+    [Fact(DisplayName = "illegal-characters")]
+    public Task illegal_characters()
+        => ExecutionTest("illegal-characters");
+
+    [Fact(DisplayName = "length")]
+    public Task length()
+        => ExecutionTest("length");
+
+    [Fact(DisplayName = "name")]
+    public Task name()
+        => ExecutionTest("name");
+
+    [Fact(DisplayName = "nonconstructor")]
+    public Task nonconstructor()
+        => ExecutionTest("nonconstructor");
+
+    [Fact(DisplayName = "results")]
+    public Task results()
+        => ExecutionTest("results");
 }

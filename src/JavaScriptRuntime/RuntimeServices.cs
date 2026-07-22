@@ -248,6 +248,23 @@ public class RuntimeServices
         return _classConstructorValues.GetOrAdd(cacheKey, _ => new ClassConstructorValue(type, scopes, length));
     }
 
+    public static object SetClassConstructorPrototype(object constructorValue, object? baseConstructorValue)
+    {
+        var prototype = ValidateClassHeritage(baseConstructorValue);
+        if (constructorValue is ClassConstructorValue classConstructor)
+        {
+            var derivedConstructor = new ClassConstructorValue(
+                classConstructor.Type,
+                classConstructor.Scopes,
+                classConstructor.FormalParameterCount);
+            PrototypeChain.SetPrototype(derivedConstructor, prototype);
+            return derivedConstructor;
+        }
+
+        PrototypeChain.SetPrototype(constructorValue, prototype);
+        return constructorValue;
+    }
+
     public static object? ValidateClassHeritage(object? heritage)
     {
         if (heritage is null || heritage is JsNull)
