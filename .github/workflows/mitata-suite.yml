@@ -169,6 +169,10 @@ jobs:
           if [ -n "${RUNTIMES}" ]; then
             IFS=',' read -r -a runtimes <<< "${RUNTIMES}"
             for runtime in "${runtimes[@]}"; do
+              if [ "${BENCHMARK_NAME}" = "string-width" ] && [ "${runtime}" = "yantrajs" ]; then
+                echo "Skipping yantrajs for string-width because this benchmark currently crashes."
+                continue
+              fi
               args+=(--runtime "${runtime}")
             done
           fi
