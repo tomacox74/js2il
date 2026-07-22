@@ -701,7 +701,7 @@ namespace JavaScriptRuntime
             return Substring(input, start, null);
         }
 
-        public static string Concat(string input, object?[]? args)
+        private static string Concat(string input, object?[]? args)
         {
             var builder = new StringBuilder(input);
             if (args != null)

@@ -2624,6 +2624,16 @@ namespace JavaScriptRuntime
                     return stringResult;
                 }
 
+                if (JavaScriptRuntime.String.TryGetPrototypeProperty(receiver, methodName, out var prototypeMember))
+                {
+                    if (prototypeMember is Delegate memberDelegate)
+                    {
+                        return InvokeMemberDelegate(receiver, memberDelegate, callArgs);
+                    }
+
+                    throw new TypeError($"{methodName} is not a function");
+                }
+
                 return CallStringMemberViaReflection(input, methodName, callArgs);
             }
 
@@ -3063,12 +3073,6 @@ namespace JavaScriptRuntime
 
         private static bool TryCallStringMemberFastPath(string input, string methodName, object[] callArgs, out object? result)
         {
-            if (string.Equals(methodName, "concat", StringComparison.Ordinal))
-            {
-                result = JavaScriptRuntime.String.Concat(input, callArgs);
-                return true;
-            }
-
             var argCount = callArgs.Length;
             var a0 = argCount > 0 ? callArgs[0] : null;
             var a1 = argCount > 1 ? callArgs[1] : null;
@@ -3159,16 +3163,6 @@ namespace JavaScriptRuntime
         {
             switch (methodName)
             {
-                case "concat":
-                    result = argCount switch
-                    {
-                        <= 0 => JavaScriptRuntime.String.Concat(input, null),
-                        1 => JavaScriptRuntime.String.Concat(input, new object?[] { a0 }),
-                        2 => JavaScriptRuntime.String.Concat(input, new object?[] { a0, a1 }),
-                        _ => JavaScriptRuntime.String.Concat(input, new object?[] { a0, a1, a2 })
-                    };
-                    return true;
-
                 case "charAt":
                     result = argCount <= 0
                         ? JavaScriptRuntime.String.CharAt(input)
