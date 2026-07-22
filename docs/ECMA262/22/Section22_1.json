@@ -84,7 +84,7 @@
     {
       "clause": "22.1.3.5",
       "title": "String.prototype.concat ( ... args )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-string.prototype.concat"
     },
     {
@@ -467,9 +467,24 @@
       {
         "clause": "22.1.3.5",
         "feature": "String.prototype.concat",
-        "status": "Not Yet Supported",
+        "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-string.prototype.concat",
-        "notes": "No dedicated concat method is wired; string concatenation is handled via operators/ToString coercion only."
+        "test262Suites": [
+          "built_ins.String.prototype.concat"
+        ],
+        "test262Paths": [
+          "test/built-ins/String/prototype/concat/name.js",
+          "test/built-ins/String/prototype/concat/not-a-constructor.js",
+          "test/built-ins/String/prototype/concat/this-value-not-obj-coercible.js",
+          "test/built-ins/String/prototype/concat/S15.5.4.6_A1_T1.js",
+          "test/built-ins/String/prototype/concat/S15.5.4.6_A1_T2.js",
+          "test/built-ins/String/prototype/concat/S15.5.4.6_A1_T4.js",
+          "test/built-ins/String/prototype/concat/S15.5.4.6_A1_T5.js",
+          "test/built-ins/String/prototype/concat/S15.5.4.6_A1_T6.js",
+          "test/built-ins/String/prototype/concat/S15.5.4.6_A1_T7.js",
+          "test/built-ins/String/prototype/concat/S15.5.4.6_A1_T8.js"
+        ],
+        "notes": "Implemented with a generic receiver and left-to-right argument string coercion. Ten upstream test262 cases cover built-in metadata, receiver validation, no-argument behavior, and common primitive coercions."
       },
       {
         "clause": "22.1.3.6",

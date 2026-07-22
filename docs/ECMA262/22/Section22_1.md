@@ -4,7 +4,7 @@
 
 [Back to Section22](Section22.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-07-12T04:40:20Z
+> Last generated (UTC): 2026-07-22T23:36:32Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -26,7 +26,7 @@
 | 22.1.3.2 | String.prototype.charAt ( pos ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.charat) |
 | 22.1.3.3 | String.prototype.charCodeAt ( pos ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.charcodeat) |
 | 22.1.3.4 | String.prototype.codePointAt ( pos ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.codepointat) |
-| 22.1.3.5 | String.prototype.concat ( ... args ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.concat) |
+| 22.1.3.5 | String.prototype.concat ( ... args ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.concat) |
 | 22.1.3.6 | String.prototype.constructor | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.constructor) |
 | 22.1.3.7 | String.prototype.endsWith ( searchString [ , endPosition ] ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.endswith) |
 | 22.1.3.8 | String.prototype.includes ( searchString [ , position ] ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.includes) |
@@ -139,7 +139,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| String.prototype.concat | Not Yet Supported |  |  | No dedicated concat method is wired; string concatenation is handled via operators/ToString coercion only. |
+| String.prototype.concat | Supported with Limitations |  | suite `built_ins.String.prototype.concat`<br>`test/built-ins/String/prototype/concat/name.js`<br>`test/built-ins/String/prototype/concat/not-a-constructor.js`<br>`test/built-ins/String/prototype/concat/this-value-not-obj-coercible.js`<br>`test/built-ins/String/prototype/concat/S15.5.4.6_A1_T1.js`<br>`test/built-ins/String/prototype/concat/S15.5.4.6_A1_T2.js`<br>`test/built-ins/String/prototype/concat/S15.5.4.6_A1_T4.js`<br>`test/built-ins/String/prototype/concat/S15.5.4.6_A1_T5.js`<br>`test/built-ins/String/prototype/concat/S15.5.4.6_A1_T6.js`<br>`test/built-ins/String/prototype/concat/S15.5.4.6_A1_T7.js`<br>`test/built-ins/String/prototype/concat/S15.5.4.6_A1_T8.js` | Implemented with a generic receiver and left-to-right argument string coercion. Ten upstream test262 cases cover built-in metadata, receiver validation, no-argument behavior, and common primitive coercions. |
 
 ### 22.1.3.6 ([tc39.es](https://tc39.es/ecma262/#sec-string.prototype.constructor))
 
