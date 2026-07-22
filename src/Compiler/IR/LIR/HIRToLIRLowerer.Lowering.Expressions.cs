@@ -849,20 +849,27 @@ public sealed partial class HIRToLIRLowerer
                         CreateAnonymousVariableSlot("$anon_class_type_with_inferred_name", new ValueStorage(ValueStorageKind.Reference, typeof(object))));
                 }
 
-                if (!TryLowerClassConstructorValue(
-                        initializedUserClassType.RegistryClassName,
-                        initializedUserClassType.ClassScope,
-                        out resultTempVar))
+                // Derived classes must evaluate and link their constructor before static
+                // initialization. For ordinary classes, preserve the established ordering:
+                // computed class keys can suspend, so construct the final class value after
+                // their initialization has completed.
+                if (initializedUserClassType.SuperClass != null)
                 {
-                    resultTempVar = CreateTempVariable();
-                    _methodBodyIR.Instructions.Add(new LIRGetUserClassType(initializedUserClassType.RegistryClassName, resultTempVar));
-                    DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(Type)));
-                }
+                    if (!TryLowerClassConstructorValue(
+                            initializedUserClassType.RegistryClassName,
+                            initializedUserClassType.ClassScope,
+                            out resultTempVar))
+                    {
+                        resultTempVar = CreateTempVariable();
+                        _methodBodyIR.Instructions.Add(new LIRGetUserClassType(initializedUserClassType.RegistryClassName, resultTempVar));
+                        DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(Type)));
+                    }
 
-                if (!TryLinkClassConstructorToSuperClass(initializedUserClassType, ref resultTempVar))
-                {
-                    resultTempVar = default;
-                    return false;
+                    if (!TryLinkClassConstructorToSuperClass(initializedUserClassType, ref resultTempVar))
+                    {
+                        resultTempVar = default;
+                        return false;
+                    }
                 }
 
                 foreach (var initStatement in initializedUserClassType.InitializationStatements)
@@ -872,6 +879,17 @@ public sealed partial class HIRToLIRLowerer
                         resultTempVar = default;
                         return false;
                     }
+                }
+
+                if (initializedUserClassType.SuperClass == null
+                    && !TryLowerClassConstructorValue(
+                        initializedUserClassType.RegistryClassName,
+                        initializedUserClassType.ClassScope,
+                        out resultTempVar))
+                {
+                    resultTempVar = CreateTempVariable();
+                    _methodBodyIR.Instructions.Add(new LIRGetUserClassType(initializedUserClassType.RegistryClassName, resultTempVar));
+                    DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(Type)));
                 }
 
                 if (!string.IsNullOrWhiteSpace(_pendingAnonymousClassExpressionInferredName)

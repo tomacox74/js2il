@@ -2290,13 +2290,22 @@ class HIRMethodBuilder
                     HIRExpression? cdSuperClass = null;
                     if (classDecl.SuperClass != null)
                     {
-                        var heritageBuilder = new HIRMethodBuilder(classScope);
-                        if (!heritageBuilder.TryParseExpressionForPrologue(
-                                UnwrapClassHeritageExpression(classDecl.SuperClass)!,
-                                out cdSuperClass)
-                            || cdSuperClass == null)
+                        var heritageExpression = UnwrapClassHeritageExpression(classDecl.SuperClass)!;
+                        if (heritageExpression is ArrowFunctionExpression)
                         {
-                            return false;
+                            staticInitStatements.Insert(0, new HIRExpressionStatement(
+                                new HIRThrowTypeErrorExpression("Class extends value is not a constructor or null")));
+                        }
+                        else
+                        {
+                            var heritageBuilder = new HIRMethodBuilder(classScope);
+                            if (!heritageBuilder.TryParseExpressionForPrologue(
+                                    heritageExpression,
+                                    out cdSuperClass)
+                                || cdSuperClass == null)
+                            {
+                                return false;
+                            }
                         }
                     }
 
@@ -3842,13 +3851,22 @@ class HIRMethodBuilder
                     HIRExpression? classExprSuperClass = null;
                     if (classExpr.SuperClass != null)
                     {
-                        var heritageBuilder = new HIRMethodBuilder(classExprScope);
-                        if (!heritageBuilder.TryParseExpressionForPrologue(
-                                UnwrapClassHeritageExpression(classExpr.SuperClass)!,
-                                out classExprSuperClass)
-                            || classExprSuperClass == null)
+                        var heritageExpression = UnwrapClassHeritageExpression(classExpr.SuperClass)!;
+                        if (heritageExpression is ArrowFunctionExpression)
                         {
-                            return false;
+                            staticInitStatements.Insert(0, new HIRExpressionStatement(
+                                new HIRThrowTypeErrorExpression("Class extends value is not a constructor or null")));
+                        }
+                        else
+                        {
+                            var heritageBuilder = new HIRMethodBuilder(classExprScope);
+                            if (!heritageBuilder.TryParseExpressionForPrologue(
+                                    heritageExpression,
+                                    out classExprSuperClass)
+                                || classExprSuperClass == null)
+                            {
+                                return false;
+                            }
                         }
                     }
 
