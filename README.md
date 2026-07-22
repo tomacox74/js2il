@@ -155,8 +155,9 @@ What it does:
 - Validates you're on a clean, up-to-date `master`
 - Creates `release/<version>` branch
 - Runs the existing `scripts/bumpVersion.js` to update `CHANGELOG.md` + project versions
-- Runs `npm run release:validate` so the release candidate is validated as a coordinated package set before the release commit is created
-- Commits, pushes, and opens a PR
+- Commits and pushes the release candidate
+- Dispatches `.github/workflows/release-validation.yml` against that exact commit; it must pass before the PR is opened
+- Opens a PR after remote release validation succeeds
 - With `--merge`: waits for CI checks (if configured), merges the PR, then creates the GitHub release/tag using the `CHANGELOG.md` section
 
 Requirements: `git`, `gh` (authenticated), `node`/`npm`.
@@ -194,38 +195,38 @@ What the script does:
 - Resets the `## Unreleased` section to placeholder
 - Updates `samples/Directory.Build.props` plus the `<Version>` in `src/Cli/Jroc.csproj`, `src/Jroc.Core/Jroc.Core.csproj`, `src/Jroc.SDK/Jroc.SDK.csproj`, and `src/JavaScriptRuntime/JavaScriptRuntime.csproj`
 
-#### 3. Validate the Release Package Set
+#### 3. Commit and Push the Release Candidate
 
-Before committing, validate the coordinated package set:
+Commit the version bump and push the release branch:
 
 ```powershell
-npm run release:validate
+git add CHANGELOG.md samples/Directory.Build.props src/Cli/Jroc.csproj src/Jroc.Core/Jroc.Core.csproj src/Jroc.SDK/Jroc.SDK.csproj src/JavaScriptRuntime/JavaScriptRuntime.csproj
+git commit -m "chore(release): cut v0.x.y"
+git push -u origin release/0.x.y
 ```
 
-This command currently does two things:
+#### 4. Validate the Release Package Set
+
+Dispatch `.github/workflows/release-validation.yml` on the pushed release branch. It runs `npm run release:validate`, which:
 
 - runs the PR canary suite against a freshly packed local `jroc` tool
 - runs the focused `JrocSdkPackageTests` suite, which packs `Jroc.Runtime`, `Jroc.Core`, and `Jroc.SDK` into a local feed and verifies the SDK consumption path
+
+```powershell
+gh workflow run release-validation.yml --ref release/0.x.y
+```
+
+Wait for the dispatched workflow to succeed before creating the PR.
 
 After the GitHub release is published, the `windows-smoke` and `linux-smoke` workflows install the tagged `jroc` tool from NuGet and build/run the `Domino`, `Picocolors`, `Basic`, and `Typed` samples against the matching `Jroc.SDK` / `Jroc.Runtime` version.
 
 For the full restore/build/post-publish validation matrix used to close issues `#850` and `#439`, see [docs/sdk/PackagingValidation.md](docs/sdk/PackagingValidation.md).
 
-#### 4. Commit Version Bump
-
-Commit the changes on the release branch:
-
-```powershell
-git add CHANGELOG.md samples/Directory.Build.props src/Cli/Jroc.csproj src/Jroc.Core/Jroc.Core.csproj src/Jroc.SDK/Jroc.SDK.csproj src/JavaScriptRuntime/JavaScriptRuntime.csproj
-git commit -m "chore(release): cut v0.x.y"
-```
-
 #### 5. Push and Create PR
 
-Push the release branch and create a pull request:
+Create a pull request after remote validation succeeds:
 
 ```powershell
-git push -u origin release/0.x.y
 gh pr create --title "chore(release): Release v0.x.y" --base master --head release/0.x.y
 ```
 

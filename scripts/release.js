@@ -9,9 +9,9 @@
  *  2) Compute next version (patch/minor/major)
  *  3) Create release/<version> branch
  *  4) Run version bump (CHANGELOG + csproj versions)
- *  5) Run coordinated release-package validation
- *  6) Commit
- *  7) Push + open PR
+ *  5) Commit + push the version bump
+ *  6) Run coordinated release-package validation in GitHub Actions
+ *  7) Open PR after validation succeeds
  *  8) Optionally wait for checks, merge PR, and create GitHub release/tag
  *
  * Usage:
@@ -119,6 +119,7 @@ const CORE_CSPROJ_PATH = path.join(ROOT, 'src', 'Jroc.Core', 'Jroc.Core.csproj')
 const SDK_CSPROJ_PATH = path.join(ROOT, 'src', 'Jroc.SDK', 'Jroc.SDK.csproj');
 const RUNTIME_CSPROJ_PATH = path.join(ROOT, 'src', 'JavaScriptRuntime', 'JavaScriptRuntime.csproj');
 const SAMPLES_PROPS_PATH = path.join(ROOT, 'samples', 'Directory.Build.props');
+const RELEASE_VALIDATION_WORKFLOW = 'release-validation.yml';
 
 function sleep(ms) {
   // Synchronous sleep without additional deps.
@@ -410,6 +411,65 @@ function waitForRequiredCheck(prNumber, repo, checkName, { timeoutMs = 10 * 60 *
   throw new Error(`Timed out waiting for required status check "${checkName}" to complete.`);
 }
 
+function waitForReleaseValidation(repo, releaseBranch, headSha, args, { timeoutMs = 30 * 60 * 1000, pollMs = 5000 } = {}) {
+  run(`gh workflow run ${RELEASE_VALIDATION_WORKFLOW} --repo ${repo} --ref ${releaseBranch}`, args);
+  if (args.dryRun) {
+    return;
+  }
+
+  const deadline = Date.now() + timeoutMs;
+  while (Date.now() < deadline) {
+    const raw = run(
+      `gh run list --repo ${repo} --workflow ${RELEASE_VALIDATION_WORKFLOW} --branch ${releaseBranch} --event workflow_dispatch --limit 20 --json databaseId,headSha,status,conclusion,url`,
+      { ...args, allowFailure: true }
+    );
+
+    let runs;
+    try {
+      runs = JSON.parse(raw);
+    } catch {
+      sleep(pollMs);
+      continue;
+    }
+
+    if (!Array.isArray(runs)) {
+      sleep(pollMs);
+      continue;
+    }
+
+    let validationRun;
+    for (const candidate of runs) {
+      if (candidate && candidate.headSha === headSha) {
+        validationRun = candidate;
+        break;
+      }
+    }
+
+    if (!validationRun) {
+      sleep(pollMs);
+      continue;
+    }
+
+    const status = String(validationRun.status || '').toUpperCase();
+    const conclusion = String(validationRun.conclusion || '').toUpperCase();
+    if (status !== 'COMPLETED' || !conclusion) {
+      sleep(pollMs);
+      continue;
+    }
+
+    if (conclusion === 'SUCCESS') {
+      writeStdout(`\nRelease validation passed: ${validationRun.url}\n`);
+      return;
+    }
+
+    throw new Error(
+      `Release validation failed (conclusion: ${conclusion}). ${validationRun.url || `Run ID: ${validationRun.databaseId}`}`
+    );
+  }
+
+  throw new Error(`Timed out waiting for release validation workflow on ${releaseBranch}.`);
+}
+
 function main() {
   const effectiveArgv = getEffectiveArgv(process.argv);
   const args = parseArgs(effectiveArgv);
@@ -478,17 +538,12 @@ function main() {
   if (args.skipEmpty) bumpArgs.push('--skip-empty');
   run(`node scripts/bumpVersion.js ${bumpArgs.join(' ')}`, args);
 
-  // Validate the coordinated package set before the release commit is created.
-  run('npm run release:validate', args);
-
-  // Commit
+  // Commit and push before remote validation so the workflow tests the exact release candidate.
   run(
     `git add "${path.relative(ROOT, CHANGELOG_PATH)}" "${path.relative(ROOT, SAMPLES_PROPS_PATH)}" "${path.relative(ROOT, CSPROJ_PATH)}" "${path.relative(ROOT, CORE_CSPROJ_PATH)}" "${path.relative(ROOT, SDK_CSPROJ_PATH)}" "${path.relative(ROOT, RUNTIME_CSPROJ_PATH)}"`,
     args
   );
   run(`git commit -m "chore(release): cut v${nextVersion}"`, args);
-
-  // Push + PR
   run(`git push -u origin ${releaseBranch}`, args);
 
   const repo = args.repo || inferRepoFromGitRemote();
@@ -496,6 +551,10 @@ function main() {
     throw new Error('Could not infer GitHub repo from origin remote. Provide --repo owner/name');
   }
 
+  const releaseHeadSha = run('git rev-parse HEAD', args);
+  waitForReleaseValidation(repo, releaseBranch, releaseHeadSha, args);
+
+  // Create the PR only after the remote validation passes.
   const prTitle = `chore(release): Release v${nextVersion}`;
   const prBody = `Patch release v${nextVersion}.\n\n- Version bump + changelog updates.`;
   const prBodyPath = path.join(ROOT, 'pr-body.md');
