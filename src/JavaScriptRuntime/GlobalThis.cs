@@ -793,6 +793,7 @@ namespace JavaScriptRuntime
             ConfigureTypedArrayConstructorValue(_bigUint64ArrayConstructorValue);
             ConfigureTypedArrayInstancePrototype(_uint8ArrayConstructorValue, JavaScriptRuntime.Uint8Array.Prototype);
             ConfigureTypedArrayInstancePrototype(_uint8ClampedArrayConstructorValue, JavaScriptRuntime.Uint8ClampedArray.Prototype);
+            JavaScriptRuntime.Uint8Array.ConfigureIntrinsicSurface(_uint8ArrayConstructorValue);
             ConfigureConstructorPrototypeSurface(_arrayBufferConstructorValue, _arrayBufferPrototypeValue);
 
             JavaScriptRuntime.String.ConfigureIntrinsicSurface(_stringFunctionValue);

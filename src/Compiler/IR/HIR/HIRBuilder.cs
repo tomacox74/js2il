@@ -2287,12 +2287,38 @@ class HIRMethodBuilder
                     // binding is still in TDZ, so only expose the binding once the spec-visible initialization
                     // phase that can reference the class name begins.
                     var cdClassName = (classDecl.Id as Identifier)?.Name;
+                    HIRExpression? cdSuperClass = null;
+                    if (classDecl.SuperClass != null)
+                    {
+                        var heritageExpression = UnwrapClassHeritageExpression(classDecl.SuperClass)!;
+                        if (heritageExpression is ArrowFunctionExpression)
+                        {
+                            staticInitStatements.Insert(0, new HIRExpressionStatement(
+                                new HIRThrowTypeErrorExpression("Class extends value is not a constructor or null")));
+                        }
+                        else
+                        {
+                            var heritageBuilder = new HIRMethodBuilder(classScope);
+                            if (!heritageBuilder.TryParseExpressionForPrologue(
+                                    heritageExpression,
+                                    out cdSuperClass)
+                                || cdSuperClass == null)
+                            {
+                                return false;
+                            }
+                        }
+                    }
+
                     if (cdClassName != null
                         && _currentScope?.Bindings.TryGetValue(cdClassName, out var cdClassBinding) == true
-                        && !CanOmitEagerClassMetadata(classDecl))
+                        && (!CanOmitEagerClassMetadata(classDecl) || classDecl.SuperClass != null))
                     {
                         var cdRegistryClassName = GetRegistryClassName(classScope);
-                        var classConstructorValueExpr = new HIRInitializedUserClassTypeExpression(cdRegistryClassName, classScope, []);
+                        var classConstructorValueExpr = new HIRInitializedUserClassTypeExpression(
+                            cdRegistryClassName,
+                            classScope,
+                            [],
+                            cdSuperClass);
                         var bindingInsertionIndex = classNameBindingInsertIndex >= 0
                             ? classNameBindingInsertIndex
                             : staticInitStatements.Count;
@@ -3822,23 +3848,25 @@ class HIRMethodBuilder
                         return false;
                     }
 
-                    if (UnwrapExpression(classExpr.SuperClass) is Expression heritageExpression
-                        && heritageExpression is not Identifier)
+                    HIRExpression? classExprSuperClass = null;
+                    if (classExpr.SuperClass != null)
                     {
+                        var heritageExpression = UnwrapClassHeritageExpression(classExpr.SuperClass)!;
                         if (heritageExpression is ArrowFunctionExpression)
                         {
-                            staticInitStatements.Insert(0, new HIRExpressionStatement(new HIRThrowTypeErrorExpression("Class extends value is not a constructor or null")));
+                            staticInitStatements.Insert(0, new HIRExpressionStatement(
+                                new HIRThrowTypeErrorExpression("Class extends value is not a constructor or null")));
                         }
                         else
                         {
                             var heritageBuilder = new HIRMethodBuilder(classExprScope);
-                            if (!heritageBuilder.TryParseExpressionForPrologue(heritageExpression, out var hirHeritageExpression)
-                                || hirHeritageExpression == null)
+                            if (!heritageBuilder.TryParseExpressionForPrologue(
+                                    heritageExpression,
+                                    out classExprSuperClass)
+                                || classExprSuperClass == null)
                             {
                                 return false;
                             }
-
-                            staticInitStatements.Insert(0, new HIRExpressionStatement(new HIRClassHeritageValidationExpression(hirHeritageExpression)));
                         }
                     }
 
@@ -3846,7 +3874,11 @@ class HIRMethodBuilder
                         && classExprScope.Bindings.TryGetValue(className.Name, out var classNameBinding)
                         && classNameBinding.IsCaptured)
                     {
-                        var classConstructorValueExpr = new HIRInitializedUserClassTypeExpression(registryClassName, classExprScope, []);
+                        var classConstructorValueExpr = new HIRInitializedUserClassTypeExpression(
+                            registryClassName,
+                            classExprScope,
+                            [],
+                            classExprSuperClass);
                         var classSymbol = new Symbol(classNameBinding);
                         var bindingInsertionIndex = classNameBindingInsertIndex >= 0
                             ? classNameBindingInsertIndex
@@ -3854,7 +3886,11 @@ class HIRMethodBuilder
                         staticInitStatements.Insert(bindingInsertionIndex, new HIRVariableDeclaration(classSymbol, classConstructorValueExpr));
                     }
 
-                    hirExpr = new HIRInitializedUserClassTypeExpression(registryClassName, classExprScope, staticInitStatements);
+                    hirExpr = new HIRInitializedUserClassTypeExpression(
+                        registryClassName,
+                        classExprScope,
+                        staticInitStatements,
+                        classExprSuperClass);
                     return true;
                 }
 

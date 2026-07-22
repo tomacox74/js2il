@@ -4,7 +4,7 @@
 
 [Back to Section23](Section23.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-04-20T16:42:41Z
+> Last generated (UTC): 2026-07-22T17:20:18Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -16,13 +16,13 @@
 |---:|---|---|---|
 | 23.3.1 | Additional Properties of the Uint8Array Constructor | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-additional-properties-of-the-uint8array-constructor) |
 | 23.3.1.1 | Uint8Array.fromBase64 ( string [ , options ] ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-uint8array.frombase64) |
-| 23.3.1.2 | Uint8Array.fromHex ( string ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-uint8array.fromhex) |
-| 23.3.2 | Additional Properties of the Uint8Array Prototype Object | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-additional-properties-of-the-uint8array-prototype-object) |
+| 23.3.1.2 | Uint8Array.fromHex ( string ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-uint8array.fromhex) |
+| 23.3.2 | Additional Properties of the Uint8Array Prototype Object | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-additional-properties-of-the-uint8array-prototype-object) |
 | 23.3.2.1 | Uint8Array.prototype.setFromBase64 ( string [ , options ] ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-uint8array.prototype.setfrombase64) |
 | 23.3.2.2 | Uint8Array.prototype.setFromHex ( string ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-uint8array.prototype.setfromhex) |
 | 23.3.2.3 | Uint8Array.prototype.toBase64 ( [ options ] ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-uint8array.prototype.tobase64) |
-| 23.3.2.4 | Uint8Array.prototype.toHex ( ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-uint8array.prototype.tohex) |
-| 23.3.3 | Abstract Operations for Uint8Array Objects | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-abstract-operations-for-uint8array-objects) |
+| 23.3.2.4 | Uint8Array.prototype.toHex ( ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-uint8array.prototype.tohex) |
+| 23.3.3 | Abstract Operations for Uint8Array Objects | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-abstract-operations-for-uint8array-objects) |
 | 23.3.3.1 | ValidateUint8Array ( ta ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-validateuint8array) |
 | 23.3.3.2 | GetUint8ArrayBytes ( ta ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-getuint8arraybytes) |
 | 23.3.3.3 | SetUint8ArrayBytes ( into , bytes ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-setuint8arraybytes) |
@@ -30,7 +30,7 @@
 | 23.3.3.5 | DecodeFinalBase64Chunk ( chunk , throwOnExtraBits ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-decodefinalbase64chunk) |
 | 23.3.3.6 | DecodeFullLengthBase64Chunk ( chunk ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-decodefulllengthbase64chunk) |
 | 23.3.3.7 | FromBase64 ( string , alphabet , lastChunkHandling [ , maxLength ] ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-frombase64) |
-| 23.3.3.8 | FromHex ( string [ , maxLength ] ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-fromhex) |
+| 23.3.3.8 | FromHex ( string [ , maxLength ] ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-fromhex) |
 
 ## Support
 
@@ -40,5 +40,5 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Uint8Array base64/hex extensions | Incomplete |  |  | Uint8Array.fromBase64 now supports the default base64 decoding/result semantics needed by test262 results coverage. Options handling, fromHex, and the prototype setFrom*/to* helpers remain unsupported. |
+| Uint8Array base64/hex extensions | Incomplete |  |  | Uint8Array.fromBase64 supports default base64 decoding/result semantics. Uint8Array.fromHex and Uint8Array.prototype.toHex support strict hexadecimal conversion with the specified descriptors, metadata, and receiver behavior. Base64 options, setFromBase64, setFromHex, and toBase64 remain unsupported. |
 

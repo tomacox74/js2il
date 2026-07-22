@@ -137,6 +137,22 @@ namespace JavaScriptRuntime
             return new Uint8Array(new ArrayBuffer(bytes, cloneBuffer: false), 0, bytes.Length);
         }
 
+        internal static void ConfigureIntrinsicSurface(object constructorValue)
+        {
+            using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
+
+            DefineBuiltinFunction(
+                constructorValue,
+                "fromHex",
+                (Func<object[], object?[]?, object?>)ConstructorFromHex,
+                1);
+            DefineBuiltinFunction(
+                Prototype,
+                "toHex",
+                (Func<object[], object?[]?, object?>)PrototypeToHex,
+                0);
+        }
+
         public static Uint8Array of(object[]? args)
             => new Uint8Array(args ?? global::System.Array.Empty<object?>());
 
@@ -162,6 +178,21 @@ namespace JavaScriptRuntime
         public Uint8Array subarray(object? start, object? end)
             => (Uint8Array)SubarrayCore(start, end);
 
+        public string toHex()
+        {
+            var hex = new char[checked(LengthElements * 2)];
+            const string digits = "0123456789abcdef";
+
+            for (var i = 0; i < LengthElements; i++)
+            {
+                var value = BufferObject.RawBytes[ByteOffsetBytes + i];
+                hex[i * 2] = digits[value >> 4];
+                hex[(i * 2) + 1] = digits[value & 0x0F];
+            }
+
+            return new string(hex);
+        }
+
         protected override double ReadElementValue(int index)
             => BufferObject.RawBytes[ByteOffsetBytes + index];
 
@@ -177,6 +208,47 @@ namespace JavaScriptRuntime
 
             return new JsObject();
         }
+
+        private static object? ConstructorFromHex(object[] _, object?[]? args)
+            => fromHex(GetArgument(args, 0));
+
+        private static object? PrototypeToHex(object[] _, object?[]? __)
+        {
+            if (RuntimeServices.GetCurrentThis() is not Uint8Array array)
+            {
+                throw new TypeError("Uint8Array.prototype.toHex called on incompatible receiver");
+            }
+
+            return array.toHex();
+        }
+
+        private static void DefineBuiltinFunction(
+            object target,
+            string name,
+            Func<object[], object?[]?, object?> function,
+            double length)
+        {
+            Function.InitializeFunctionInstance(function, length, name);
+            PropertyDescriptorStore.DefineOrUpdate(function, "prototype", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = false,
+                Writable = false,
+                Value = null
+            });
+            PropertyDescriptorStore.DefineOrUpdate(target, name, new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = function
+            });
+        }
+
+        private static object? GetArgument(object?[]? args, int index)
+            => args != null && args.Length > index ? args[index] : null;
 
         private void InitializeIntrinsicSurface()
             => PrototypeChain.SetPrototype(this, Prototype);

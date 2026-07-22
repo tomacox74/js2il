@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x216c
+				// Method begins at RVA 0x2183
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2175
+				// Method begins at RVA 0x218c
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -59,7 +59,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2149
+			// Method begins at RVA 0x2160
 			// Header size: 1
 			// Code size: 25 (0x19)
 			.maxstack 8
@@ -84,7 +84,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2163
+			// Method begins at RVA 0x217a
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -110,7 +110,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 237 (0xed)
+		// Code size: 260 (0x104)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Classes_IntrinsicInheritance_ExtendsArray_SuperNoArgs/Scope,
@@ -118,7 +118,8 @@
 			[2] object,
 			[3] object[],
 			[4] class [System.Runtime]System.Type,
-			[5] object
+			[5] object,
+			[6] object
 		)
 
 		IL_0000: newobj instance void Modules.Classes_IntrinsicInheritance_ExtendsArray_SuperNoArgs/Scope::.ctor()
@@ -142,54 +143,61 @@
 		IL_0034: box [System.Runtime]System.Double
 		IL_0039: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateClassConstructorValue(object, object, object)
 		IL_003e: stloc.s 5
-		IL_0040: ldloc.s 5
-		IL_0042: stloc.1
-		IL_0043: ldc.i4.0
-		IL_0044: newarr [System.Runtime]System.Object
-		IL_0049: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
-		IL_004e: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushDerivedConstructorThisBinding()
-		IL_0053: newobj instance void Modules.Classes_IntrinsicInheritance_ExtendsArray_SuperNoArgs/Z::.ctor()
-		IL_0058: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
-		IL_005d: stloc.s 5
-		IL_005f: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_0064: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
-		IL_0069: stloc.s 5
-		IL_006b: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopDerivedConstructorThisBinding()
-		IL_0070: ldloc.s 5
-		IL_0072: ldtoken Modules.Classes_IntrinsicInheritance_ExtendsArray_SuperNoArgs/Z
-		IL_0077: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_007c: ldstr "prototype"
-		IL_0081: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetProperty(object, string)
-		IL_0086: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
-		IL_008b: ldloc.s 5
-		IL_008d: stloc.2
-		IL_008e: ldstr "console"
-		IL_0093: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0098: stloc.s 5
-		IL_009a: ldloc.s 5
-		IL_009c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00a1: stloc.s 5
-		IL_00a3: ldloc.s 5
-		IL_00a5: ldstr "log"
-		IL_00aa: ldloc.2
-		IL_00ab: ldstr "length"
-		IL_00b0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_00b5: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_00ba: pop
-		IL_00bb: ldstr "console"
-		IL_00c0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_00c5: stloc.s 5
-		IL_00c7: ldloc.s 5
-		IL_00c9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00ce: stloc.s 5
-		IL_00d0: ldloc.s 5
-		IL_00d2: ldstr "log"
-		IL_00d7: ldloc.2
-		IL_00d8: ldc.r8 0.0
-		IL_00e1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-		IL_00e6: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_00eb: pop
-		IL_00ec: ret
+		IL_0040: ldstr "Array"
+		IL_0045: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_004a: stloc.s 6
+		IL_004c: ldloc.s 5
+		IL_004e: ldloc.s 6
+		IL_0050: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetClassConstructorPrototype(object, object)
+		IL_0055: stloc.s 6
+		IL_0057: ldloc.s 6
+		IL_0059: stloc.1
+		IL_005a: ldc.i4.0
+		IL_005b: newarr [System.Runtime]System.Object
+		IL_0060: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
+		IL_0065: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushDerivedConstructorThisBinding()
+		IL_006a: newobj instance void Modules.Classes_IntrinsicInheritance_ExtendsArray_SuperNoArgs/Z::.ctor()
+		IL_006f: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
+		IL_0074: stloc.s 6
+		IL_0076: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_007b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
+		IL_0080: stloc.s 6
+		IL_0082: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopDerivedConstructorThisBinding()
+		IL_0087: ldloc.s 6
+		IL_0089: ldtoken Modules.Classes_IntrinsicInheritance_ExtendsArray_SuperNoArgs/Z
+		IL_008e: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_0093: ldstr "prototype"
+		IL_0098: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetProperty(object, string)
+		IL_009d: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
+		IL_00a2: ldloc.s 6
+		IL_00a4: stloc.2
+		IL_00a5: ldstr "console"
+		IL_00aa: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_00af: stloc.s 6
+		IL_00b1: ldloc.s 6
+		IL_00b3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00b8: stloc.s 6
+		IL_00ba: ldloc.s 6
+		IL_00bc: ldstr "log"
+		IL_00c1: ldloc.2
+		IL_00c2: ldstr "length"
+		IL_00c7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00cc: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00d1: pop
+		IL_00d2: ldstr "console"
+		IL_00d7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_00dc: stloc.s 6
+		IL_00de: ldloc.s 6
+		IL_00e0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00e5: stloc.s 6
+		IL_00e7: ldloc.s 6
+		IL_00e9: ldstr "log"
+		IL_00ee: ldloc.2
+		IL_00ef: ldc.r8 0.0
+		IL_00f8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+		IL_00fd: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0102: pop
+		IL_0103: ret
 	} // end of method Classes_IntrinsicInheritance_ExtendsArray_SuperNoArgs::__js_module_init__
 
 } // end of class Modules.Classes_IntrinsicInheritance_ExtendsArray_SuperNoArgs
@@ -201,7 +209,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x217e
+		// Method begins at RVA 0x2195
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
