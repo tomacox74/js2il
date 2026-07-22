@@ -8,6 +8,10 @@ on:
         description: 'Mitata benchmark suffix (for example string-width)'
         required: false
         default: 'runtime-baseline'
+      runtimes:
+        description: 'Comma-separated runtimes to benchmark'
+        required: false
+        default: 'node,jroc,clearscript,jint,yantrajs,okojo'
       jroc_package_version:
         description: 'Published jroc package version to benchmark (for example 0.9.31)'
         required: false
@@ -157,10 +161,18 @@ jobs:
         shell: bash
         env:
           BENCHMARK_NAME: ${{ github.event.inputs.benchmark || 'runtime-baseline' }}
+          RUNTIMES: ${{ github.event.inputs.runtimes || '' }}
         run: |
           set -euo pipefail
           cd tests/performance/mitata
-          node scripts/run-release-suite.mjs --bench "${BENCHMARK_NAME}" --output results.json
+          args=(--bench "${BENCHMARK_NAME}" --output results.json)
+          if [ -n "${RUNTIMES}" ]; then
+            IFS=',' read -r -a runtimes <<< "${RUNTIMES}"
+            for runtime in "${runtimes[@]}"; do
+              args+=(--runtime "${runtime}")
+            done
+          fi
+          node scripts/run-release-suite.mjs "${args[@]}"
           if [ ! -f "results.json" ]; then
             echo "Mitata runner produced no results.json output; failing workflow."
             exit 1

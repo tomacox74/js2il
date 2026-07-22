@@ -13,14 +13,14 @@ The package split is considered release-ready only when the following package fl
 
 ### Coordinated release gate
 
-`npm run release:validate` is the required local gate before a release commit is created.
+`.github/workflows/release-validation.yml` is the required remote gate after the release candidate is committed and pushed. `scripts\release.js` dispatches it against the exact release-branch commit and only opens the PR after it succeeds.
 
-It currently runs:
+The workflow runs `npm run release:validate`, which:
 
 - `npm run diff:test:canary:packed`
 - `dotnet test .\tests\Jroc.Tests\Jroc.Tests.csproj -c Release --filter "FullyQualifiedName~JrocSdkPackageTests" --nologo`
 
-`scripts\release.js` invokes this command before it creates the release commit, so coordinated package regressions fail before the tag is cut.
+This ensures coordinated package regressions fail in the same Linux GitHub Actions environment used for release validation, before the tag is cut.
 
 ### `Jroc.Core` restore/consumption coverage
 

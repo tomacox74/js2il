@@ -156,7 +156,7 @@ node scripts/runPhasedBenchmarkScenario.js dromaeo-object-regexp
 
 **Preferred (Automated):**
 
-Use the release automation script (handles branch → bump → commit → PR, and optionally merge + GitHub release/tag):
+Use the release automation script (handles branch → bump → commit/push → remote validation → PR, and optionally merge + GitHub release/tag):
 
 ```powershell
 # Patch / minor / major
@@ -195,24 +195,21 @@ Follow these steps IN ORDER:
    ```
    This updates CHANGELOG.md, samples/Directory.Build.props, src/Cli/Jroc.csproj, src/Jroc.Core/Jroc.Core.csproj, src/Jroc.SDK/Jroc.SDK.csproj, and src/JavaScriptRuntime/JavaScriptRuntime.csproj
 
-3. **Validate the coordinated release package set** (on the release branch):
-   ```powershell
-   npm run release:validate
-   ```
-
-4. **Commit version bump** (on the release branch):
+3. **Commit and push the release candidate**:
    ```powershell
    git add CHANGELOG.md samples/Directory.Build.props src/Cli/Jroc.csproj src/Jroc.Core/Jroc.Core.csproj src/Jroc.SDK/Jroc.SDK.csproj src/JavaScriptRuntime/JavaScriptRuntime.csproj
    git commit -m "chore(release): cut v0.x.y"
+   git push -u origin release/0.x.y
    ```
 
-5. **Push release branch and create PR**:
+4. **Validate the coordinated release package set** by dispatching `.github/workflows/release-validation.yml` against the pushed release branch. It runs `npm run release:validate` in GitHub Actions.
+
+5. **Create PR**:
    ```powershell
-   git push -u origin release/0.x.y
    gh pr create --title "chore(release): Release v0.x.y" --body-file <release-notes.md> --base master --head release/0.x.y
    ```
 
-5. **After PR is merged**, create the release (this creates the tag and triggers GitHub Actions):
+6. **After PR is merged**, create the release (this creates the tag and triggers GitHub Actions):
    create a release-notes.md file with the release notes copied from changelog.md for the new version.
 
    ```powershell
