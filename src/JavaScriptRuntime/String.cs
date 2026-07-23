@@ -85,8 +85,8 @@ namespace JavaScriptRuntime
             DefinePrototypeMethod(prototype, "toWellFormed", (Func<object[], object?[]?, object?>)PrototypeToWellFormed, 0);
             DefinePrototypeMethod(prototype, "trim", (Func<object[], object?[]?, object?>)PrototypeTrim, 0);
             DefinePrototypeMethod(prototype, "trimEnd", (Func<object[], object?[]?, object?>)PrototypeTrimEnd, 0);
-            DefinePrototypeMethod(prototype, "trimLeft", (Func<object[], object?[]?, object?>)PrototypeTrimStart, 0);
-            DefinePrototypeMethod(prototype, "trimRight", (Func<object[], object?[]?, object?>)PrototypeTrimEnd, 0);
+            DefinePrototypeMethod(prototype, "trimLeft", (Func<object[], object?[]?, object?>)((scopes, args) => PrototypeTrimStart(scopes, args)), 0);
+            DefinePrototypeMethod(prototype, "trimRight", (Func<object[], object?[]?, object?>)((scopes, args) => PrototypeTrimEnd(scopes, args)), 0);
             DefinePrototypeMethod(prototype, "trimStart", (Func<object[], object?[]?, object?>)PrototypeTrimStart, 0);
             DefinePrototypeMethod(prototype, "valueOf", (Func<object[], object?[]?, object?>)PrototypeValueOf, 0);
             DefinePrototypeMethod(prototype, IteratorSymbolPropertyKey, (Func<object[], object?[]?, object?>)PrototypeIterator, 0, "[Symbol.iterator]");
@@ -1092,9 +1092,7 @@ namespace JavaScriptRuntime
         {
             input ??= string.Empty;
 
-            double d;
-            try { d = TypeUtilities.ToNumber(count); }
-            catch { d = double.NaN; }
+            double d = TypeUtilities.ToNumber(count);
 
             if (double.IsNaN(d)) d = 0;
             if (double.IsInfinity(d) || d < 0)
