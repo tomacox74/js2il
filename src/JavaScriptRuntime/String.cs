@@ -388,6 +388,16 @@ namespace JavaScriptRuntime
             };
         }
 
+        private static string ToSearchString(object? value)
+        {
+            if (value is Symbol)
+            {
+                throw new TypeError("Cannot convert a Symbol value to a string");
+            }
+
+            return DotNet2JSConversions.ToString(value);
+        }
+
         internal static object Construct(object?[]? args, object? newTarget)
         {
             var value = args != null && args.Length > 0
@@ -1440,7 +1450,7 @@ namespace JavaScriptRuntime
                 throw new TypeError("First argument to String.prototype.startsWith must not be a RegExp");
             }
 
-            var search = DotNet2JSConversions.ToString(searchString);
+            var search = ToSearchString(searchString);
             var relativePosition = ToIntegerOrInfinity(position, 0d);
             var pos = relativePosition <= 0d
                 ? 0
@@ -1531,7 +1541,7 @@ namespace JavaScriptRuntime
                 throw new TypeError("First argument to String.prototype.endsWith must not be a RegExp");
             }
 
-            var search = DotNet2JSConversions.ToString(searchString);
+            var search = ToSearchString(searchString);
             var relativeLength = ToIntegerOrInfinity(length, input.Length);
             var len = relativeLength <= 0d
                 ? 0
