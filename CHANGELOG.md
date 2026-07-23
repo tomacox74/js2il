@@ -6,6 +6,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- runtime: add standards-compatible `RegExp.escape` for primitive strings, including leading alphanumeric, syntax, solidus, control, whitespace, and surrogate escaping. Ports ten upstream test262 cases.
 - runtime: add standards-compatible Map/Set iterator prototypes and `Symbol.toStringTag` metadata for Map, Set, WeakMap, and WeakSet. Ports ten upstream test262 cases covering descriptors and `Object.prototype.toString` behavior.
 - runtime: add `String.prototype.normalize` with NFC defaulting, all four ECMA-262 normalization forms, form coercion, Symbol rejection, and invalid-form `RangeError`s. Ports ten upstream test262 cases.
 - runtime: add `String.prototype.concat` with generic receiver coercion and ordered argument conversion. Ports ten upstream test262 cases for built-in metadata, invalid receivers, and primitive arguments.

@@ -113,6 +113,128 @@ namespace JavaScriptRuntime
             return new RegExp(pattern, flags);
         }
 
+        public static string Escape(object? input)
+        {
+            if (input is not string value)
+            {
+                throw new TypeError("RegExp.escape requires a string");
+            }
+
+            var result = new StringBuilder(value.Length);
+            for (var index = 0; index < value.Length;)
+            {
+                var start = index;
+                var codePoint = (int)value[index];
+                var length = 1;
+
+                if (char.IsHighSurrogate(value[index])
+                    && index + 1 < value.Length
+                    && char.IsLowSurrogate(value[index + 1]))
+                {
+                    codePoint = char.ConvertToUtf32(value, index);
+                    length = 2;
+                }
+
+                if (result.Length == 0 && IsAsciiLetterOrDigit(codePoint))
+                {
+                    AppendHexEscape(result, codePoint);
+                }
+                else
+                {
+                    AppendEscapedCodePoint(result, value, start, length, codePoint);
+                }
+
+                index += length;
+            }
+
+            return result.ToString();
+        }
+
+        private static void AppendEscapedCodePoint(StringBuilder result, string input, int start, int length, int codePoint)
+        {
+            switch (codePoint)
+            {
+                case '\t':
+                    result.Append(@"\t");
+                    return;
+                case '\n':
+                    result.Append(@"\n");
+                    return;
+                case '\v':
+                    result.Append(@"\v");
+                    return;
+                case '\f':
+                    result.Append(@"\f");
+                    return;
+                case '\r':
+                    result.Append(@"\r");
+                    return;
+            }
+
+            if (IsSyntaxCharacter(codePoint))
+            {
+                result.Append('\\').Append((char)codePoint);
+                return;
+            }
+
+            if (IsOtherPunctuator(codePoint) || IsWhiteSpaceOrLineTerminator(codePoint) || IsLoneSurrogate(codePoint))
+            {
+                if (codePoint <= byte.MaxValue)
+                {
+                    AppendHexEscape(result, codePoint);
+                    return;
+                }
+
+                for (var index = 0; index < length; index++)
+                {
+                    AppendUnicodeEscape(result, input[start + index]);
+                }
+
+                return;
+            }
+
+            result.Append(input, start, length);
+        }
+
+        private static bool IsAsciiLetterOrDigit(int codePoint)
+        {
+            return codePoint is >= '0' and <= '9'
+                or >= 'A' and <= 'Z'
+                or >= 'a' and <= 'z';
+        }
+
+        private static bool IsSyntaxCharacter(int codePoint)
+        {
+            return codePoint is '^' or '$' or '\\' or '.' or '*' or '+' or '?' or '(' or ')' or '[' or ']' or '{' or '}' or '|' or '/';
+        }
+
+        private static bool IsOtherPunctuator(int codePoint)
+        {
+            return codePoint is ',' or '-' or '=' or '<' or '>' or '#' or '&' or '!' or '%' or ':' or ';' or '@' or '~' or '\'' or '`' or '"';
+        }
+
+        private static bool IsWhiteSpaceOrLineTerminator(int codePoint)
+        {
+            return codePoint is '\u0009' or '\u000A' or '\u000B' or '\u000C' or '\u000D' or '\u0020' or '\u00A0' or '\u1680'
+                or >= '\u2000' and <= '\u200A'
+                or '\u2028' or '\u2029' or '\u202F' or '\u205F' or '\u3000' or '\uFEFF';
+        }
+
+        private static bool IsLoneSurrogate(int codePoint)
+        {
+            return codePoint is >= '\uD800' and <= '\uDFFF';
+        }
+
+        private static void AppendHexEscape(StringBuilder result, int codePoint)
+        {
+            result.Append(@"\x").Append(codePoint.ToString("x2", CultureInfo.InvariantCulture));
+        }
+
+        private static void AppendUnicodeEscape(StringBuilder result, int codeUnit)
+        {
+            result.Append(@"\u").Append(codeUnit.ToString("x4", CultureInfo.InvariantCulture));
+        }
+
         internal Regex Regex => _regex;
         internal bool Global => _global;
         internal bool Sticky => _sticky;
