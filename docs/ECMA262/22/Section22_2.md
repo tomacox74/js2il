@@ -4,7 +4,7 @@
 
 [Back to Section22](Section22.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-07-12T04:40:20Z
+> Last generated (UTC): 2026-07-23T01:50:49Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -63,9 +63,9 @@
 | 22.2.3.4 | Static Semantics: ParsePattern ( patternText , u , v ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-parsepattern) |
 | 22.2.4 | The RegExp Constructor | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-regexp-constructor) |
 | 22.2.4.1 | RegExp ( pattern , flags ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-regexp-pattern-flags) |
-| 22.2.5 | Properties of the RegExp Constructor | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-regexp-constructor) |
-| 22.2.5.1 | RegExp.escape ( S ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-regexp.escape) |
-| 22.2.5.1.1 | EncodeForRegExpEscape ( cp ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-encodeforregexpescape) |
+| 22.2.5 | Properties of the RegExp Constructor | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-regexp-constructor) |
+| 22.2.5.1 | RegExp.escape ( S ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-regexp.escape) |
+| 22.2.5.1.1 | EncodeForRegExpEscape ( cp ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-encodeforregexpescape) |
 | 22.2.5.2 | RegExp.prototype | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-regexp.prototype) |
 | 22.2.5.3 | get RegExp [ %Symbol.species% ] | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-get-regexp-%symbol.species%) |
 | 22.2.6 | Properties of the RegExp Prototype Object | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-regexp-prototype-object) |
@@ -123,6 +123,12 @@ Feature-level support tracking with repo test references and optional test262 ev
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
 | RegExp ( pattern , flags ) | Supported with Limitations | [`IntrinsicCallables_RegExp_Callable_CreatesRegex.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Callable_CreatesRegex.js)<br>[`IntrinsicCallables_RegExp_Flags_Getter.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Flags_Getter.js)<br>[`IntrinsicCallables_RegExp_ModernFlags_Basic.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_ModernFlags_Basic.js)<br>[`IntrinsicCallables_RegExp_Sticky_Getters.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Sticky_Getters.js)<br>[`IntrinsicCallables_RegExp_ToString_Basic.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_ToString_Basic.js) |  | Lowered by the compiler as an intrinsic constructor-like call to JavaScriptRuntime.RegExp (and regex literals /.../flags are lowered as new RegExp(pattern, flags)). The g, i, m, s, u, d, and y flags are parsed and reflected today; v is explicitly rejected with a SyntaxError diagnostic. Unicode behavior is still a limited subset backed by .NET Regex plus common-case rewrites for code-point escapes and dot handling, not full ECMAScript parity. |
+
+### 22.2.5.1 ([tc39.es](https://tc39.es/ecma262/#sec-regexp.escape))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| RegExp.escape(S) | Supported | `tests/Jroc.Test262.Tests/built-ins/RegExp/escape/ExecutionTests.cs` | `test/built-ins/RegExp/escape/escaped-control-characters.js`<br>`test/built-ins/RegExp/escape/escaped-lineterminator.js`<br>`test/built-ins/RegExp/escape/escaped-solidus-character-mixed.js`<br>`test/built-ins/RegExp/escape/escaped-surrogates.js`<br>`test/built-ins/RegExp/escape/escaped-syntax-characters-mixed.js`<br>`test/built-ins/RegExp/escape/escaped-utf16encodecodepoint.js`<br>`test/built-ins/RegExp/escape/escaped-whitespace.js`<br>`test/built-ins/RegExp/escape/initial-char-escape.js`<br>`test/built-ins/RegExp/escape/non-string-inputs.js`<br>`test/built-ins/RegExp/escape/prop-desc.js` | RegExp.escape is a non-constructible static function with the specified configurable, non-enumerable, writable descriptor. It requires a primitive string and escapes leading ASCII letters/digits, syntax characters and solidus, controls, whitespace/line terminators, and lone surrogates while preserving other Unicode code points. |
 
 ### 22.2.6.2 ([tc39.es](https://tc39.es/ecma262/#sec-regexp.prototype.exec))
 

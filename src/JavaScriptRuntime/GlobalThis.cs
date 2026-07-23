@@ -234,6 +234,8 @@ namespace JavaScriptRuntime
             var flags = (args != null && args.Length > 1) ? args[1] : null;
             return JavaScriptRuntime.RegExp.Call(pattern, flags);
         };
+        private static readonly Func<object[], object?[], object?> _regExpEscapeValue = static (_, args) =>
+            JavaScriptRuntime.RegExp.Escape(args != null && args.Length > 0 ? args[0] : null);
 
         private static readonly Func<object[], object?[], object?> _jsonStringifyValue = static (_, args) =>
         {
@@ -553,6 +555,7 @@ namespace JavaScriptRuntime
             DefineIntrinsicDataProperty(_jsonValue, "stringify", _jsonStringifyValue);
             DefineIntrinsicDataProperty(_numberPrototypeValue, global::JavaScriptRuntime.Symbol.toStringTag.DebugId, "Number");
             ConfigureConstructorPrototypeSurface(_regExpConstructorValue, JavaScriptRuntime.RegExp.Prototype);
+            DefineBuiltinFunctionProperty(_regExpConstructorValue, "escape", _regExpEscapeValue, 1d);
             ConfigureBuiltinFunctionObject(_numberFunctionValue);
             PropertyDescriptorStore.DefineOrUpdate(_numberFunctionValue, "prototype", new JsPropertyDescriptor
             {

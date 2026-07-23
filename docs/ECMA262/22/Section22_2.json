@@ -306,19 +306,19 @@
     {
       "clause": "22.2.5",
       "title": "Properties of the RegExp Constructor",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-properties-of-the-regexp-constructor"
     },
     {
       "clause": "22.2.5.1",
       "title": "RegExp.escape ( S )",
-      "status": "Not Yet Supported",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-regexp.escape"
     },
     {
       "clause": "22.2.5.1.1",
       "title": "EncodeForRegExpEscape ( cp )",
-      "status": "Not Yet Supported",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-encodeforregexpescape"
     },
     {
@@ -602,6 +602,28 @@
           "tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_ToString_Basic.js"
         ],
         "notes": "Lowered by the compiler as an intrinsic constructor-like call to JavaScriptRuntime.RegExp (and regex literals /.../flags are lowered as new RegExp(pattern, flags)). The g, i, m, s, u, d, and y flags are parsed and reflected today; v is explicitly rejected with a SyntaxError diagnostic. Unicode behavior is still a limited subset backed by .NET Regex plus common-case rewrites for code-point escapes and dot handling, not full ECMAScript parity."
+      },
+      {
+        "clause": "22.2.5.1",
+        "feature": "RegExp.escape(S)",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-regexp.escape",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/RegExp/escape/ExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/built-ins/RegExp/escape/escaped-control-characters.js",
+          "test/built-ins/RegExp/escape/escaped-lineterminator.js",
+          "test/built-ins/RegExp/escape/escaped-solidus-character-mixed.js",
+          "test/built-ins/RegExp/escape/escaped-surrogates.js",
+          "test/built-ins/RegExp/escape/escaped-syntax-characters-mixed.js",
+          "test/built-ins/RegExp/escape/escaped-utf16encodecodepoint.js",
+          "test/built-ins/RegExp/escape/escaped-whitespace.js",
+          "test/built-ins/RegExp/escape/initial-char-escape.js",
+          "test/built-ins/RegExp/escape/non-string-inputs.js",
+          "test/built-ins/RegExp/escape/prop-desc.js"
+        ],
+        "notes": "RegExp.escape is a non-constructible static function with the specified configurable, non-enumerable, writable descriptor. It requires a primitive string and escapes leading ASCII letters/digits, syntax characters and solidus, controls, whitespace/line terminators, and lone surrogates while preserving other Unicode code points."
       },
       {
         "clause": "22.2.6.2",
