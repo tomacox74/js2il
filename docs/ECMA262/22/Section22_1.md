@@ -4,7 +4,7 @@
 
 [Back to Section22](Section22.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-07-23T03:03:14Z
+> Last generated (UTC): 2026-07-23T03:56:46Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -51,8 +51,8 @@
 | 22.1.3.23 | String.prototype.split ( separator , limit ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.split) |
 | 22.1.3.24 | String.prototype.startsWith ( searchString [ , position ] ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.startswith) |
 | 22.1.3.25 | String.prototype.substring ( start , end ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.substring) |
-| 22.1.3.26 | String.prototype.toLocaleLowerCase ( [ reserved1 [ , reserved2 ] ] ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.tolocalelowercase) |
-| 22.1.3.27 | String.prototype.toLocaleUpperCase ( [ reserved1 [ , reserved2 ] ] ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.tolocaleuppercase) |
+| 22.1.3.26 | String.prototype.toLocaleLowerCase ( [ reserved1 [ , reserved2 ] ] ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.tolocalelowercase) |
+| 22.1.3.27 | String.prototype.toLocaleUpperCase ( [ reserved1 [ , reserved2 ] ] ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.tolocaleuppercase) |
 | 22.1.3.28 | String.prototype.toLowerCase ( ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.tolowercase) |
 | 22.1.3.29 | String.prototype.toString ( ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.tostring) |
 | 22.1.3.30 | String.prototype.toUpperCase ( ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.touppercase) |
@@ -289,13 +289,13 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| String.prototype.toLocaleLowerCase | Not Yet Supported |  |  | Locale-aware casing helpers are not wired; only invariant toLowerCase/toUpperCase are available. |
+| String.prototype.toLocaleLowerCase | Supported with Limitations |  | suite `built_ins.String.prototype.toLocaleLowerCase`<br>`test/built-ins/String/prototype/toLocaleLowerCase/name.js`<br>`test/built-ins/String/prototype/toLocaleLowerCase/not-a-constructor.js`<br>`test/built-ins/String/prototype/toLocaleLowerCase/this-value-not-obj-coercible.js`<br>`test/built-ins/String/prototype/toLocaleLowerCase/S15.5.4.17_A10.js`<br>`test/built-ins/String/prototype/toLocaleLowerCase/S15.5.4.17_A11.js`<br>`test/built-ins/String/prototype/toLocaleLowerCase/S15.5.4.17_A1_T1.js`<br>`test/built-ins/String/prototype/toLocaleLowerCase/S15.5.4.17_A1_T2.js`<br>`test/built-ins/String/prototype/toLocaleLowerCase/S15.5.4.17_A6.js`<br>`test/built-ins/String/prototype/toLocaleLowerCase/S15.5.4.17_A1_T4.js`<br>`test/built-ins/String/prototype/toLocaleLowerCase/S15.5.4.17_A1_T5.js`<br>`test/built-ins/String/prototype/toLocaleLowerCase/S15.5.4.17_A1_T6.js`<br>`test/built-ins/String/prototype/toLocaleLowerCase/S15.5.4.17_A1_T7.js`<br>`test/built-ins/String/prototype/toLocaleLowerCase/S15.5.4.17_A1_T8.js`<br>`test/built-ins/String/prototype/toLocaleLowerCase/S15.5.4.17_A1_T9.js`<br>`test/built-ins/String/prototype/toLocaleLowerCase/S15.5.4.17_A1_T10.js`<br>`test/built-ins/String/prototype/toLocaleLowerCase/S15.5.4.17_A1_T11.js`<br>`test/built-ins/String/prototype/toLocaleLowerCase/S15.5.4.17_A1_T12.js`<br>`test/built-ins/String/prototype/toLocaleLowerCase/S15.5.4.17_A1_T13.js`<br>`test/built-ins/String/prototype/toLocaleLowerCase/S15.5.4.17_A1_T14.js`<br>`test/built-ins/String/prototype/toLocaleLowerCase/S15.5.4.17_A2_T1.js` | Implemented in JavaScriptRuntime.String.ToLocaleLowerCase with the host current culture and standard String receiver validation. Twenty upstream test262 cases cover built-in metadata, non-constructibility, nullish receivers, and legacy Unicode casing behavior. Locale-list argument validation and ECMAScript's locale-specific Unicode casing requirements remain limited. |
 
 ### 22.1.3.27 ([tc39.es](https://tc39.es/ecma262/#sec-string.prototype.tolocaleuppercase))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| String.prototype.toLocaleUpperCase | Not Yet Supported |  |  | Locale-aware casing helpers are not wired; only invariant toLowerCase/toUpperCase are available. |
+| String.prototype.toLocaleUpperCase | Supported with Limitations |  | suite `built_ins.String.prototype.toLocaleUpperCase`<br>`test/built-ins/String/prototype/toLocaleUpperCase/name.js`<br>`test/built-ins/String/prototype/toLocaleUpperCase/not-a-constructor.js`<br>`test/built-ins/String/prototype/toLocaleUpperCase/this-value-not-obj-coercible.js`<br>`test/built-ins/String/prototype/toLocaleUpperCase/S15.5.4.19_A10.js`<br>`test/built-ins/String/prototype/toLocaleUpperCase/S15.5.4.19_A11.js`<br>`test/built-ins/String/prototype/toLocaleUpperCase/S15.5.4.19_A1_T1.js`<br>`test/built-ins/String/prototype/toLocaleUpperCase/S15.5.4.19_A1_T2.js`<br>`test/built-ins/String/prototype/toLocaleUpperCase/S15.5.4.19_A6.js`<br>`test/built-ins/String/prototype/toLocaleUpperCase/S15.5.4.19_A1_T4.js`<br>`test/built-ins/String/prototype/toLocaleUpperCase/S15.5.4.19_A1_T5.js`<br>`test/built-ins/String/prototype/toLocaleUpperCase/S15.5.4.19_A1_T6.js`<br>`test/built-ins/String/prototype/toLocaleUpperCase/S15.5.4.19_A1_T7.js`<br>`test/built-ins/String/prototype/toLocaleUpperCase/S15.5.4.19_A1_T8.js`<br>`test/built-ins/String/prototype/toLocaleUpperCase/S15.5.4.19_A1_T9.js`<br>`test/built-ins/String/prototype/toLocaleUpperCase/S15.5.4.19_A1_T10.js`<br>`test/built-ins/String/prototype/toLocaleUpperCase/S15.5.4.19_A1_T11.js`<br>`test/built-ins/String/prototype/toLocaleUpperCase/S15.5.4.19_A1_T12.js`<br>`test/built-ins/String/prototype/toLocaleUpperCase/S15.5.4.19_A1_T13.js`<br>`test/built-ins/String/prototype/toLocaleUpperCase/S15.5.4.19_A1_T14.js`<br>`test/built-ins/String/prototype/toLocaleUpperCase/S15.5.4.19_A2_T1.js` | Implemented in JavaScriptRuntime.String.ToLocaleUpperCase with the host current culture and standard String receiver validation. Twenty upstream test262 cases cover built-in metadata, non-constructibility, nullish receivers, and legacy Unicode casing behavior. Locale-list argument validation and ECMAScript's locale-specific Unicode casing requirements remain limited. |
 
 ### 22.1.3.28 ([tc39.es](https://tc39.es/ecma262/#sec-string.prototype.tolowercase))
 

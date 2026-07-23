@@ -78,6 +78,8 @@ namespace JavaScriptRuntime
             DefinePrototypeMethod(prototype, "startsWith", (Func<object[], object?[]?, object?>)PrototypeStartsWith, 1);
             DefinePrototypeMethod(prototype, "substring", (Func<object[], object?[]?, object?>)PrototypeSubstring, 2);
             DefinePrototypeMethod(prototype, "toLowerCase", (Func<object[], object?[]?, object?>)PrototypeToLowerCase, 0);
+            DefinePrototypeMethod(prototype, "toLocaleLowerCase", (Func<object[], object?[]?, object?>)PrototypeToLocaleLowerCase, 0);
+            DefinePrototypeMethod(prototype, "toLocaleUpperCase", (Func<object[], object?[]?, object?>)PrototypeToLocaleUpperCase, 0);
             DefinePrototypeMethod(prototype, "toString", (Func<object[], object?[]?, object?>)PrototypeToString, 0);
             DefinePrototypeMethod(prototype, "toUpperCase", (Func<object[], object?[]?, object?>)PrototypeToUpperCase, 0);
             DefinePrototypeMethod(prototype, "toWellFormed", (Func<object[], object?[]?, object?>)PrototypeToWellFormed, 0);
@@ -645,6 +647,12 @@ namespace JavaScriptRuntime
 
         private static object? PrototypeToLowerCase(object[] scopes, object?[]? args)
             => ToLowerCase(ThisStringValue(RuntimeServices.GetCurrentThis()));
+
+        private static object? PrototypeToLocaleLowerCase(object[] scopes, object?[]? args)
+            => ToLocaleLowerCase(ThisStringValue(RuntimeServices.GetCurrentThis()));
+
+        private static object? PrototypeToLocaleUpperCase(object[] scopes, object?[]? args)
+            => ToLocaleUpperCase(ThisStringValue(RuntimeServices.GetCurrentThis()));
 
         private static object? PrototypeToString(object[] scopes, object?[]? args)
             => ThisStringValue(RuntimeServices.GetCurrentThis());
@@ -1261,6 +1269,18 @@ namespace JavaScriptRuntime
         {
             input ??= string.Empty;
             return input.ToUpperInvariant();
+        }
+
+        public static string ToLocaleLowerCase(string input)
+        {
+            input ??= string.Empty;
+            return input.ToLower(global::System.Globalization.CultureInfo.CurrentCulture);
+        }
+
+        public static string ToLocaleUpperCase(string input)
+        {
+            input ??= string.Empty;
+            return input.ToUpper(global::System.Globalization.CultureInfo.CurrentCulture);
         }
 
         /// <summary>
