@@ -1442,15 +1442,30 @@ namespace JavaScriptRuntime
         /// <summary>
         /// Implements String.prototype.startsWith(searchString[, position]).
         /// </summary>
+        public static bool StartsWith(string input, string searchString)
+        {
+            return StartsWithCore(input, searchString, null);
+        }
+
+        public static bool StartsWith(string input, string searchString, object? position)
+        {
+            return StartsWithCore(input, searchString, position);
+        }
+
         public static bool StartsWith(string input, object? searchString, object? position = null)
         {
-            input ??= string.Empty;
             if (RegExp.IsRegExp(searchString))
             {
                 throw new TypeError("First argument to String.prototype.startsWith must not be a RegExp");
             }
 
-            var search = ToSearchString(searchString);
+            return StartsWithCore(input, ToSearchString(searchString), position);
+        }
+
+        private static bool StartsWithCore(string input, string search, object? position)
+        {
+            input ??= string.Empty;
+            search ??= string.Empty;
             var relativePosition = ToIntegerOrInfinity(position, 0d);
             var pos = relativePosition <= 0d
                 ? 0
@@ -1533,15 +1548,30 @@ namespace JavaScriptRuntime
         /// If length is provided, the string is treated as if it were truncated to that length.
         /// Uses ordinal comparison.
         /// </summary>
+        public static bool EndsWith(string input, string searchString)
+        {
+            return EndsWithCore(input, searchString, null);
+        }
+
+        public static bool EndsWith(string input, string searchString, object? length)
+        {
+            return EndsWithCore(input, searchString, length);
+        }
+
         public static bool EndsWith(string input, object? searchString, object? length = null)
         {
-            input ??= string.Empty;
             if (RegExp.IsRegExp(searchString))
             {
                 throw new TypeError("First argument to String.prototype.endsWith must not be a RegExp");
             }
 
-            var search = ToSearchString(searchString);
+            return EndsWithCore(input, ToSearchString(searchString), length);
+        }
+
+        private static bool EndsWithCore(string input, string search, object? length)
+        {
+            input ??= string.Empty;
+            search ??= string.Empty;
             var relativeLength = ToIntegerOrInfinity(length, input.Length);
             var len = relativeLength <= 0d
                 ? 0
