@@ -192,7 +192,7 @@
     {
       "clause": "22.1.3.19.1",
       "title": "GetSubstitution ( matched , str , position , captures , namedCaptures , replacementTemplate )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-getsubstitution"
     },
     {
@@ -856,29 +856,35 @@
       },
       {
         "clause": "22.1.3.19",
-        "feature": "String.prototype.replace (regex literal, string replacement)",
+        "feature": "String.prototype.replace",
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-string.prototype.replace",
         "testScripts": [
-          "tests/Jroc.Tests/String/JavaScript/String_Replace_Regex_Global.js"
+          "tests/Jroc.Tests/String/JavaScript/String_Replace_Regex_Global.js",
+          "tests/Jroc.Test262.Tests/built-ins/String/prototype/replace/ExecutionTests.cs"
         ],
-        "notes": "Supported when the receiver is String(x), the pattern is a regular expression literal, and the replacement is a string. Global (g) and ignoreCase (i) flags are honored. Function replacement, non-regex patterns, and other flags are not yet implemented. Implemented via host intrinsic JavaScriptRuntime.String.Replace and dynamic resolution in IL generator."
+        "notes": "Implemented for string and RegExp search values, callable and string replacements, object @@replace dispatch, generic receivers, replacement-value coercion, and indexed capture substitutions. Named-capture replacement templates remain unsupported."
       },
       {
         "clause": "22.1.3.19.1",
         "feature": "GetSubstitution",
-        "status": "Not Yet Supported",
+        "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-getsubstitution",
-        "notes": "Replacement template processing is limited; full GetSubstitution semantics (named captures, $<name>, etc.) are not present."
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/String/prototype/replace/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/String/prototype/replaceAll/ExecutionTests.cs"
+        ],
+        "notes": "Implements $$, $&, $`, $', and indexed $n/$nn substitutions, including leading-zero, out-of-range, and unmatched-capture behavior. Named-capture $<name> substitutions remain unsupported."
       },
       {
         "clause": "22.1.3.20",
         "feature": "String.prototype.replaceAll",
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-string.prototype.replaceall",
-        "notes": "Implemented in JavaScriptRuntime.String.ReplaceAll for literal-string search values, callback replacements, and global RegExp inputs. It enforces the non-global RegExp TypeError but still uses jroc's simplified replacement-template semantics.",
+        "notes": "Implemented for literal-string search values, callable and string replacements, global RegExp inputs, object @@replace dispatch, and replacement templates other than named-capture $<name> substitutions.",
         "testScripts": [
-          "tests/Jroc.Tests/String/JavaScript/String_NewApis_Basic.js"
+          "tests/Jroc.Tests/String/JavaScript/String_NewApis_Basic.js",
+          "tests/Jroc.Test262.Tests/built-ins/String/prototype/replaceAll/ExecutionTests.cs"
         ]
       },
       {

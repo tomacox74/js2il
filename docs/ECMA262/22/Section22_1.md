@@ -4,7 +4,7 @@
 
 [Back to Section22](Section22.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-07-23T17:17:55Z
+> Last generated (UTC): 2026-07-23T17:53:40Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -44,7 +44,7 @@
 | 22.1.3.17.3 | ToZeroPaddedDecimalString ( n , minLength ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-tozeropaddeddecimalstring) |
 | 22.1.3.18 | String.prototype.repeat ( count ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.repeat) |
 | 22.1.3.19 | String.prototype.replace ( searchValue , replaceValue ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.replace) |
-| 22.1.3.19.1 | GetSubstitution ( matched , str , position , captures , namedCaptures , replacementTemplate ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-getsubstitution) |
+| 22.1.3.19.1 | GetSubstitution ( matched , str , position , captures , namedCaptures , replacementTemplate ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-getsubstitution) |
 | 22.1.3.20 | String.prototype.replaceAll ( searchValue , replaceValue ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.replaceall) |
 | 22.1.3.21 | String.prototype.search ( regexp ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.search) |
 | 22.1.3.22 | String.prototype.slice ( start , end ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.slice) |
@@ -241,19 +241,19 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| String.prototype.replace (regex literal, string replacement) | Supported with Limitations | [`String_Replace_Regex_Global.js`](../../../tests/Jroc.Tests/String/JavaScript/String_Replace_Regex_Global.js) |  | Supported when the receiver is String(x), the pattern is a regular expression literal, and the replacement is a string. Global (g) and ignoreCase (i) flags are honored. Function replacement, non-regex patterns, and other flags are not yet implemented. Implemented via host intrinsic JavaScriptRuntime.String.Replace and dynamic resolution in IL generator. |
+| String.prototype.replace | Supported with Limitations | [`String_Replace_Regex_Global.js`](../../../tests/Jroc.Tests/String/JavaScript/String_Replace_Regex_Global.js)<br>`tests/Jroc.Test262.Tests/built-ins/String/prototype/replace/ExecutionTests.cs` |  | Implemented for string and RegExp search values, callable and string replacements, object @@replace dispatch, generic receivers, replacement-value coercion, and indexed capture substitutions. Named-capture replacement templates remain unsupported. |
 
 ### 22.1.3.19.1 ([tc39.es](https://tc39.es/ecma262/#sec-getsubstitution))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| GetSubstitution | Not Yet Supported |  |  | Replacement template processing is limited; full GetSubstitution semantics (named captures, $<name>, etc.) are not present. |
+| GetSubstitution | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/String/prototype/replace/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/String/prototype/replaceAll/ExecutionTests.cs` |  | Implements $$, $&, $`, $', and indexed $n/$nn substitutions, including leading-zero, out-of-range, and unmatched-capture behavior. Named-capture $<name> substitutions remain unsupported. |
 
 ### 22.1.3.20 ([tc39.es](https://tc39.es/ecma262/#sec-string.prototype.replaceall))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| String.prototype.replaceAll | Supported with Limitations | [`String_NewApis_Basic.js`](../../../tests/Jroc.Tests/String/JavaScript/String_NewApis_Basic.js) |  | Implemented in JavaScriptRuntime.String.ReplaceAll for literal-string search values, callback replacements, and global RegExp inputs. It enforces the non-global RegExp TypeError but still uses jroc's simplified replacement-template semantics. |
+| String.prototype.replaceAll | Supported with Limitations | [`String_NewApis_Basic.js`](../../../tests/Jroc.Tests/String/JavaScript/String_NewApis_Basic.js)<br>`tests/Jroc.Test262.Tests/built-ins/String/prototype/replaceAll/ExecutionTests.cs` |  | Implemented for literal-string search values, callable and string replacements, global RegExp inputs, object @@replace dispatch, and replacement templates other than named-capture $<name> substitutions. |
 
 ### 22.1.3.21 ([tc39.es](https://tc39.es/ecma262/#sec-string.prototype.search))
 

@@ -14,11 +14,6 @@ namespace JavaScriptRuntime
     {
         internal const string StringDataPropertyName = "[[StringData]]";
         private const int MaxRepeatResultLength = 50_000_000;
-        private static readonly string MatchSymbolPropertyKey = Symbol.match.DebugId;
-        private static readonly string MatchAllSymbolPropertyKey = Symbol.matchAll.DebugId;
-        private static readonly string ReplaceSymbolPropertyKey = Symbol.replace.DebugId;
-        private static readonly string SearchSymbolPropertyKey = Symbol.search.DebugId;
-        private static readonly string SplitSymbolPropertyKey = Symbol.split.DebugId;
         private static readonly string IteratorSymbolPropertyKey = Symbol.iterator.DebugId;
         private static readonly string ToStringTagSymbolPropertyKey = Symbol.toStringTag.DebugId;
         private static readonly string[] Latin1CharStrings = CreateLatin1CharStrings();
@@ -1138,7 +1133,7 @@ namespace JavaScriptRuntime
         {
             input ??= string.Empty;
 
-            if (TryInvokeWellKnownSymbol(regexp, Symbol.match, MatchSymbolPropertyKey, input, out var symbolResult))
+            if (TryInvokeWellKnownSymbol(regexp, Symbol.match, input, out var symbolResult))
             {
                 return symbolResult!;
             }
@@ -1161,7 +1156,7 @@ namespace JavaScriptRuntime
         {
             input ??= string.Empty;
 
-            if (TryInvokeWellKnownSymbol(regexp, Symbol.search, SearchSymbolPropertyKey, input, out var symbolResult))
+            if (TryInvokeWellKnownSymbol(regexp, Symbol.search, input, out var symbolResult))
             {
                 return symbolResult!;
             }
@@ -1175,7 +1170,7 @@ namespace JavaScriptRuntime
         {
             input ??= string.Empty;
 
-            if (TryInvokeWellKnownSymbol(regexp, Symbol.matchAll, MatchAllSymbolPropertyKey, input, out var symbolResult))
+            if (TryInvokeWellKnownSymbol(regexp, Symbol.matchAll, input, out var symbolResult))
             {
                 return symbolResult!;
             }
@@ -1553,7 +1548,10 @@ namespace JavaScriptRuntime
         {
             input ??= string.Empty;
 
-            if (TryInvokeWellKnownSymbol(patternOrString, Symbol.replace, ReplaceSymbolPropertyKey, input, replacement, out var symbolResult))
+            if (patternOrString is not null
+                && patternOrString is not JsNull
+                && !TypeUtilities.IsPrimitive(patternOrString)
+                && TryInvokeWellKnownSymbol(patternOrString, Symbol.replace, input, replacement, out var symbolResult))
             {
                 return symbolResult!;
             }
@@ -1563,29 +1561,95 @@ namespace JavaScriptRuntime
                 return ReplaceWithRegExp(input, regExp, replacement);
             }
 
-            var pattern = DotNet2JSConversions.ToString(patternOrString) ?? string.Empty;
+            var pattern = ToSearchString(patternOrString);
+            var replacementCallback = replacement as Delegate;
+            var replacementText = replacementCallback is null
+                ? ToSearchString(replacement)
+                : null;
             if (pattern.Length == 0)
             {
-                var startReplacement = replacement is Delegate emptyPatternCallback
-                    ? InvokeStringReplaceCallback(emptyPatternCallback, string.Empty, 0d, input)
-                    : DotNet2JSConversions.ToString(replacement) ?? string.Empty;
+                var startReplacement = replacementCallback is not null
+                    ? InvokeStringReplaceCallback(replacementCallback, string.Empty, 0d, input)
+                    : GetSubstitution(replacementText!, string.Empty, input, 0, null);
                 return startReplacement + input;
             }
 
             var idx = input.IndexOf(pattern, StringComparison.Ordinal);
             if (idx < 0) return input;
 
-            var repl = replacement is Delegate callback
-                ? InvokeStringReplaceCallback(callback, pattern, (double)idx, input)
-                : DotNet2JSConversions.ToString(replacement) ?? string.Empty;
+            var repl = replacementCallback is not null
+                ? InvokeStringReplaceCallback(replacementCallback, pattern, (double)idx, input)
+                : GetSubstitution(replacementText!, pattern, input, idx, null);
 
             return input.Substring(0, idx) + repl + input.Substring(idx + pattern.Length);
+        }
+
+        private static string GetSubstitution(string replacement, string matched, string input, int position, Match? match)
+        {
+            if (replacement.IndexOf('$') < 0)
+            {
+                return replacement;
+            }
+
+            var result = new StringBuilder(replacement.Length);
+            for (var i = 0; i < replacement.Length; i++)
+            {
+                if (replacement[i] != '$' || i + 1 >= replacement.Length)
+                {
+                    result.Append(replacement[i]);
+                    continue;
+                }
+
+                var token = replacement[++i];
+                switch (token)
+                {
+                    case '$': result.Append('$'); break;
+                    case '&': result.Append(matched); break;
+                    case '`': result.Append(input, 0, position); break;
+                    case '\'': result.Append(input, position + matched.Length, input.Length - position - matched.Length); break;
+                    default:
+                        if (char.IsDigit(token) && match is not null)
+                        {
+                            var captureCount = match.Groups.Count - 1;
+                            var digitCount = i + 1 < replacement.Length && char.IsDigit(replacement[i + 1]) ? 2 : 1;
+                            var capture = token - '0';
+                            if (digitCount == 2)
+                            {
+                                capture = capture * 10 + replacement[i + 1] - '0';
+                                if (capture > captureCount)
+                                {
+                                    capture = token - '0';
+                                    digitCount = 1;
+                                }
+                            }
+
+                            if (capture is >= 1 && capture <= captureCount)
+                            {
+                                i += digitCount - 1;
+                                result.Append(match.Groups[capture].Success ? match.Groups[capture].Value : string.Empty);
+                                break;
+                            }
+
+                            result.Append('$').Append(token);
+                            if (digitCount == 2)
+                            {
+                                result.Append(replacement[++i]);
+                            }
+                            break;
+                        }
+
+                        result.Append('$').Append(token);
+                        break;
+                }
+            }
+
+            return result.ToString();
         }
 
         private static string InvokeStringReplaceCallback(Delegate callback, string matched, double position, string input)
         {
             var callbackResult = Closure.InvokeFunctionCallWithArgs3(callback, System.Array.Empty<object>(), matched, position, input);
-            return DotNet2JSConversions.ToString(callbackResult) ?? string.Empty;
+            return ToSearchString(callbackResult);
         }
 
         private static string InvokeRegExpReplaceCallback(Delegate callback, Match match, string input)
@@ -1603,7 +1667,7 @@ namespace JavaScriptRuntime
             args[match.Groups.Count + 1] = input;
 
             var callbackResult = Closure.InvokeFunctionCallWithArgs(callback, System.Array.Empty<object>(), args);
-            return DotNet2JSConversions.ToString(callbackResult) ?? string.Empty;
+            return ToSearchString(callbackResult);
         }
 
         /// <summary>
@@ -1805,49 +1869,50 @@ namespace JavaScriptRuntime
         {
             input ??= string.Empty;
 
-            if (searchValue is RegExp regExp)
+            if (searchValue is RegExp { global: false })
             {
-                if (!regExp.global)
-                {
-                    throw new TypeError("String.prototype.replaceAll called with a non-global RegExp argument");
-                }
-
-                return ReplaceWithRegExp(input, regExp, replaceValue);
+                throw new TypeError("String.prototype.replaceAll called with a non-global RegExp argument");
             }
 
-            if (TryInvokeWellKnownSymbol(searchValue, Symbol.replace, ReplaceSymbolPropertyKey, input, replaceValue, out var symbolResult))
+            if (TryInvokeWellKnownSymbol(searchValue, Symbol.replace, input, replaceValue, out var symbolResult))
             {
                 return symbolResult!;
             }
 
-            var pattern = DotNet2JSConversions.ToString(searchValue);
+            var pattern = ToSearchString(searchValue);
             if (replaceValue is Func<object[], object, object> callback1)
             {
                 if (pattern.Length == 0)
                 {
-                    return ReplaceEmptyPattern(input, match => DotNet2JSConversions.ToString(callback1(System.Array.Empty<object>(), match)) ?? string.Empty);
+                    return ReplaceEmptyPattern(input, _ => ToSearchString(callback1(System.Array.Empty<object>(), string.Empty)));
                 }
 
-                return ReplaceLiteralWithCallback(input, pattern, global: true, (match, _) => DotNet2JSConversions.ToString(callback1(System.Array.Empty<object>(), match)) ?? string.Empty);
+                return ReplaceLiteralWithCallback(input, pattern, global: true, (match, _) => ToSearchString(callback1(System.Array.Empty<object>(), match)));
             }
 
             if (replaceValue is Func<object[], object> callback0)
             {
                 if (pattern.Length == 0)
                 {
-                    return ReplaceEmptyPattern(input, _ => DotNet2JSConversions.ToString(callback0(System.Array.Empty<object>())) ?? string.Empty);
+                    return ReplaceEmptyPattern(input, _ => ToSearchString(callback0(System.Array.Empty<object>())));
                 }
 
-                return ReplaceLiteralWithCallback(input, pattern, global: true, (_, _) => DotNet2JSConversions.ToString(callback0(System.Array.Empty<object>())) ?? string.Empty);
+                return ReplaceLiteralWithCallback(input, pattern, global: true, (_, _) => ToSearchString(callback0(System.Array.Empty<object>())));
             }
 
-            var replacementText = DotNet2JSConversions.ToString(replaceValue) ?? string.Empty;
+            var replacementText = ToSearchString(replaceValue);
             if (pattern.Length == 0)
             {
-                return ReplaceEmptyPattern(input, _ => replacementText);
+                return ReplaceEmptyPattern(input, index => GetSubstitution(replacementText, string.Empty, input, index, null));
             }
 
-            return input.Replace(pattern, replacementText, StringComparison.Ordinal);
+            if (replacementText.IndexOf('$') < 0)
+            {
+                return input.Replace(pattern, replacementText, StringComparison.Ordinal);
+            }
+
+            return ReplaceLiteralWithCallback(input, pattern, global: true,
+                (match, index) => GetSubstitution(replacementText, match, input, index, null));
         }
 
         private static string Pad(string input, object? maxLength, object? fillString, bool padStart)
@@ -2038,7 +2103,7 @@ namespace JavaScriptRuntime
                 return one;
             }
 
-            if (TryInvokeWellKnownSymbol(separatorOrPattern, Symbol.split, SplitSymbolPropertyKey, input, limit, out var splitResult))
+            if (TryInvokeWellKnownSymbol(separatorOrPattern, Symbol.split, input, limit, out var splitResult))
             {
                 return splitResult!;
             }
@@ -2163,13 +2228,21 @@ namespace JavaScriptRuntime
                     return regExp.Regex.Replace(input, evaluator, 1, 0);
                 }
 
-                var replacementText = DotNet2JSConversions.ToString(replacement) ?? string.Empty;
-                if (regExp.Global)
+                var replacementText = ToSearchString(replacement);
+                if (replacementText.IndexOf('$') < 0)
                 {
-                    return regExp.Regex.Replace(input, replacementText);
+                    return regExp.Global
+                        ? regExp.Regex.Replace(input, replacementText)
+                        : regExp.Regex.Replace(input, replacementText, 1);
                 }
 
-                return regExp.Regex.Replace(input, replacementText, 1);
+                var substitutionEvaluator = new MatchEvaluator(m => GetSubstitution(replacementText, m.Value, input, m.Index, m));
+                if (regExp.Global)
+                {
+                    return regExp.Regex.Replace(input, substitutionEvaluator);
+                }
+
+                return regExp.Regex.Replace(input, substitutionEvaluator, 1, 0);
             }
             finally
             {
@@ -2195,15 +2268,32 @@ namespace JavaScriptRuntime
                 return true;
             }
 
-            var replacementText = DotNet2JSConversions.ToString(replacement) ?? string.Empty;
-            if (replacementText.IndexOf('$') >= 0)
+            var replacementText = ToSearchString(replacement);
+            if (replacementText.IndexOf('$') < 0)
             {
-                return false;
+                if (regExp.Global)
+                {
+                    result = input.Replace(literalPattern, replacementText, StringComparison.Ordinal);
+                    return true;
+                }
+
+                var firstLiteralMatchIndex = input.IndexOf(literalPattern, StringComparison.Ordinal);
+                if (firstLiteralMatchIndex < 0)
+                {
+                    result = input;
+                    return true;
+                }
+
+                result = input.Substring(0, firstLiteralMatchIndex)
+                    + replacementText
+                    + input.Substring(firstLiteralMatchIndex + literalPattern.Length);
+                return true;
             }
 
             if (regExp.Global)
             {
-                result = input.Replace(literalPattern, replacementText, StringComparison.Ordinal);
+                result = ReplaceLiteralWithCallback(input, literalPattern, true,
+                    (match, index) => GetSubstitution(replacementText, match, input, index, null));
                 return true;
             }
 
@@ -2215,7 +2305,7 @@ namespace JavaScriptRuntime
             }
 
             result = input.Substring(0, firstMatchIndex)
-                + replacementText
+                + GetSubstitution(replacementText, literalPattern, input, firstMatchIndex, null)
                 + input.Substring(firstMatchIndex + literalPattern.Length);
             return true;
         }
@@ -2447,14 +2537,14 @@ namespace JavaScriptRuntime
             }
         }
 
-        private static string ReplaceEmptyPattern(string input, Func<string, string> replacementFactory)
+        private static string ReplaceEmptyPattern(string input, Func<int, string> replacementFactory)
         {
             var builder = new StringBuilder();
-            builder.Append(replacementFactory(string.Empty));
+            builder.Append(replacementFactory(0));
             for (int i = 0; i < input.Length; i++)
             {
                 builder.Append(input[i]);
-                builder.Append(replacementFactory(string.Empty));
+                builder.Append(replacementFactory(i + 1));
             }
 
             return builder.ToString();
@@ -2512,7 +2602,7 @@ namespace JavaScriptRuntime
             }
         }
 
-        private static bool TryInvokeWellKnownSymbol(object? target, Symbol symbol, string symbolPropertyKey, string input, out object? result)
+        private static bool TryInvokeWellKnownSymbol(object? target, Symbol symbol, string input, out object? result)
         {
             result = null;
             if (target is JavaScriptRuntime.RegExp regexp
@@ -2521,7 +2611,7 @@ namespace JavaScriptRuntime
                 return true;
             }
 
-            if (!TryGetWellKnownSymbolCallable(target, symbol, symbolPropertyKey, out var callable))
+            if (!TryGetWellKnownSymbolCallable(target, symbol, out var callable))
             {
                 return false;
             }
@@ -2538,7 +2628,7 @@ namespace JavaScriptRuntime
             }
         }
 
-        private static bool TryInvokeWellKnownSymbol(object? target, Symbol symbol, string symbolPropertyKey, string input, object? arg1, out object? result)
+        private static bool TryInvokeWellKnownSymbol(object? target, Symbol symbol, string input, object? arg1, out object? result)
         {
             result = null;
             if (target is JavaScriptRuntime.RegExp regexp
@@ -2547,7 +2637,7 @@ namespace JavaScriptRuntime
                 return true;
             }
 
-            if (!TryGetWellKnownSymbolCallable(target, symbol, symbolPropertyKey, out var callable))
+            if (!TryGetWellKnownSymbolCallable(target, symbol, out var callable))
             {
                 return false;
             }
@@ -2564,7 +2654,7 @@ namespace JavaScriptRuntime
             }
         }
 
-        private static bool TryGetWellKnownSymbolCallable(object? target, Symbol symbol, string symbolPropertyKey, out Delegate callable)
+        private static bool TryGetWellKnownSymbolCallable(object? target, Symbol symbol, out Delegate callable)
         {
             callable = null!;
             if (target is null || target is JsNull)
@@ -2572,9 +2662,7 @@ namespace JavaScriptRuntime
                 return false;
             }
 
-            // Bypass generic ToPropertyKey(symbol) conversion in this hot path while preserving
-            // the same property/prototype lookup semantics as ObjectRuntime.GetItem(target, symbol).
-            var symbolMethod = JavaScriptRuntime.Object.GetProperty(target, symbolPropertyKey);
+            var symbolMethod = ObjectRuntime.GetItem(target, symbol);
             if (symbolMethod is null || symbolMethod is JsNull)
             {
                 return false;

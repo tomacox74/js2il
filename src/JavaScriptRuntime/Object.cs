@@ -3292,12 +3292,8 @@ namespace JavaScriptRuntime
                     return true;
 
                 case "replace":
-                    if (argCount >= 2)
-                    {
-                        result = JavaScriptRuntime.String.Replace(input, a0!, a1!);
-                        return true;
-                    }
-                    break;
+                    result = JavaScriptRuntime.String.Replace(input, a0, a1);
+                    return true;
 
                 case "match":
                     if (argCount <= 0)
