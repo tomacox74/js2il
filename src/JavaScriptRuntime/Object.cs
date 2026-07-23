@@ -922,6 +922,7 @@ namespace JavaScriptRuntime
             DefineBuiltinDataProperty(objectConstructorValue, "getOwnPropertySymbols", _objectGetOwnPropertySymbolsValue);
             DefineBuiltinDataProperty(objectConstructorValue, "getPrototypeOf", _objectGetPrototypeOfValue);
             DefineBuiltinDataProperty(objectConstructorValue, "groupBy", _objectGroupByValue);
+            InitializeBuiltinStaticFunction(_objectGroupByValue, "groupBy", 2);
             DefineBuiltinDataProperty(objectConstructorValue, "hasOwn", _objectHasOwnValue);
             DefineBuiltinDataProperty(objectConstructorValue, "is", _objectIsValue);
             DefineBuiltinDataProperty(objectConstructorValue, "isExtensible", _objectIsExtensibleValue);
@@ -1874,10 +1875,12 @@ namespace JavaScriptRuntime
                 throw new TypeError("Object.groupBy callback must be a function");
             }
 
-            var result = CreateOrdinaryObject();
+            var result = new JsObject(cacheShapeTransitions: false);
+            PrototypeChain.SetPrototype(result, JsNull.Null);
             var dict = (IDictionary<string, object?>)result;
             var iterator = GetIterator(items);
             var index = 0;
+            var completedNormally = false;
             try
             {
                 while (true)
@@ -1885,6 +1888,7 @@ namespace JavaScriptRuntime
                     var step = IteratorNext(iterator);
                     if (IteratorResultDone(step))
                     {
+                        completedNormally = true;
                         break;
                     }
 
@@ -1904,7 +1908,10 @@ namespace JavaScriptRuntime
             }
             finally
             {
-                IteratorClose(iterator);
+                if (!completedNormally)
+                {
+                    IteratorCloseForThrowCompletion(iterator);
+                }
             }
 
             return result;

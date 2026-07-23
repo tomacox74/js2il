@@ -4,7 +4,7 @@
 
 [Back to Section20](Section20.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-06-26T08:27:13Z
+> Last generated (UTC): 2026-07-23T02:06:52Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -159,7 +159,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Object.groupBy | Supported with Limitations | [`Object_GroupBy_Basic.js`](../../../tests/Jroc.Tests/Object/JavaScript/Object_GroupBy_Basic.js) |  | Implemented for common iterable + callback usage, grouping values into array buckets on a plain object. Full callback/iterator abrupt completion corner cases are partial. |
+| Object.groupBy | Supported with Limitations | [`Object_GroupBy_Basic.js`](../../../tests/Jroc.Tests/Object/JavaScript/Object_GroupBy_Basic.js)<br>`tests/Jroc.Test262.Tests/built-ins/Object/groupBy/ExecutionTests.cs` | `test/built-ins/Object/groupBy/callback-arg.js`<br>`test/built-ins/Object/groupBy/emptyList.js`<br>`test/built-ins/Object/groupBy/invalid-callback.js`<br>`test/built-ins/Object/groupBy/invalid-property-key.js`<br>`test/built-ins/Object/groupBy/iterator-next-throws.js`<br>`test/built-ins/Object/groupBy/null-prototype.js`<br>`test/built-ins/Object/groupBy/toPropertyKey.js` | Groups callback results into array buckets on a null-prototype object and closes iterators after abrupt completion. Covered test262 cases include callback arguments, callback validation, property-key coercion and errors, iterator errors, empty inputs, null-prototype results, and built-in metadata. Broader exotic iterable and coercion coverage remains limited. |
 
 ### 20.1.2.14 ([tc39.es](https://tc39.es/ecma262/#sec-object.hasown))
 

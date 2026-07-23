@@ -143,6 +143,10 @@ namespace JavaScriptRuntime
 
         private static readonly Delegate _mapConstructorValue =
             CreateCollectionConstructorValue("Map", static iterable => new JavaScriptRuntime.Map(iterable));
+        private static readonly Func<object[], object?[]?, object?> _mapGroupByValue = static (_, args) =>
+            JavaScriptRuntime.Map.groupBy(
+                args != null && args.Length > 0 ? args[0] : null,
+                args != null && args.Length > 1 ? args[1] : null);
 
         private static readonly Delegate _setConstructorValue =
             CreateCollectionConstructorValue("Set", static iterable => new JavaScriptRuntime.Set(iterable));
@@ -445,6 +449,7 @@ namespace JavaScriptRuntime
             ConfigureCollectionConstructorMetadata(_setConstructorValue, "Set");
             ConfigureCollectionConstructorMetadata(_weakMapConstructorValue, "WeakMap");
             ConfigureCollectionConstructorMetadata(_weakSetConstructorValue, "WeakSet");
+            DefineBuiltinFunctionProperty(_mapConstructorValue, "groupBy", _mapGroupByValue, 2d);
             ConfigureConstructorPrototypeSurface(_promiseConstructorValue, JavaScriptRuntime.Promise.Prototype);
             PropertyDescriptorStore.DefineOrUpdate(_promiseConstructorValue, "length", new JsPropertyDescriptor
             {
