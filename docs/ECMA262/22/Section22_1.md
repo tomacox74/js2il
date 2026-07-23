@@ -4,7 +4,7 @@
 
 [Back to Section22](Section22.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-07-23T00:23:14Z
+> Last generated (UTC): 2026-07-23T03:03:14Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -39,8 +39,8 @@
 | 22.1.3.15 | String.prototype.normalize ( [ form ] ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.normalize) |
 | 22.1.3.16 | String.prototype.padEnd ( maxLength [ , fillString ] ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.padend) |
 | 22.1.3.17 | String.prototype.padStart ( maxLength [ , fillString ] ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.padstart) |
-| 22.1.3.17.1 | StringPaddingBuiltinsImpl ( O , maxLength , fillString , placement ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-stringpaddingbuiltinsimpl) |
-| 22.1.3.17.2 | StringPad ( S , maxLength , fillString , placement ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-stringpad) |
+| 22.1.3.17.1 | StringPaddingBuiltinsImpl ( O , maxLength , fillString , placement ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-stringpaddingbuiltinsimpl) |
+| 22.1.3.17.2 | StringPad ( S , maxLength , fillString , placement ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-stringpad) |
 | 22.1.3.17.3 | ToZeroPaddedDecimalString ( n , minLength ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-tozeropaddeddecimalstring) |
 | 22.1.3.18 | String.prototype.repeat ( count ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.repeat) |
 | 22.1.3.19 | String.prototype.replace ( searchValue , replaceValue ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.replace) |
@@ -205,25 +205,25 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| String.prototype.padEnd | Supported with Limitations | [`String_NewApis_Basic.js`](../../../tests/Jroc.Tests/String/JavaScript/String_NewApis_Basic.js) |  | Implemented in JavaScriptRuntime.String.PadEnd using a shared padding helper. Behavior covers common string/fill-string cases but does not yet model every abstract-operation edge case from the spec text. |
+| String.prototype.padEnd | Supported with Limitations | [`String_NewApis_Basic.js`](../../../tests/Jroc.Tests/String/JavaScript/String_NewApis_Basic.js) | suite `built_ins.String.prototype.padEnd`<br>`test/built-ins/String/prototype/padEnd/exception-fill-string-symbol.js`<br>`test/built-ins/String/prototype/padEnd/exception-not-object-coercible.js`<br>`test/built-ins/String/prototype/padEnd/exception-symbol.js`<br>`test/built-ins/String/prototype/padEnd/fill-string-empty.js`<br>`test/built-ins/String/prototype/padEnd/fill-string-non-strings.js`<br>`test/built-ins/String/prototype/padEnd/fill-string-omitted.js`<br>`test/built-ins/String/prototype/padEnd/function-length.js`<br>`test/built-ins/String/prototype/padEnd/function-name.js`<br>`test/built-ins/String/prototype/padEnd/function-property-descriptor.js`<br>`test/built-ins/String/prototype/padEnd/normal-operation.js` | Implemented by the shared JavaScriptRuntime.String padding helper, including UTF-16 code-unit truncation, default and empty fillers, primitive filler coercion, Symbol rejection, receiver validation, and built-in metadata. Boxed String wrapper and other exotic-object edge cases remain limited. |
 
 ### 22.1.3.17 ([tc39.es](https://tc39.es/ecma262/#sec-string.prototype.padstart))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| String.prototype.padStart | Supported with Limitations | [`String_NewApis_Basic.js`](../../../tests/Jroc.Tests/String/JavaScript/String_NewApis_Basic.js) |  | Implemented in JavaScriptRuntime.String.PadStart using a shared padding helper. Behavior covers common string/fill-string cases but does not yet model every abstract-operation edge case from the spec text. |
+| String.prototype.padStart | Supported with Limitations | [`String_NewApis_Basic.js`](../../../tests/Jroc.Tests/String/JavaScript/String_NewApis_Basic.js) | suite `built_ins.String.prototype.padStart`<br>`test/built-ins/String/prototype/padStart/exception-fill-string-symbol.js`<br>`test/built-ins/String/prototype/padStart/exception-not-object-coercible.js`<br>`test/built-ins/String/prototype/padStart/exception-symbol.js`<br>`test/built-ins/String/prototype/padStart/fill-string-empty.js`<br>`test/built-ins/String/prototype/padStart/fill-string-non-strings.js`<br>`test/built-ins/String/prototype/padStart/fill-string-omitted.js`<br>`test/built-ins/String/prototype/padStart/function-length.js`<br>`test/built-ins/String/prototype/padStart/function-name.js`<br>`test/built-ins/String/prototype/padStart/function-property-descriptor.js`<br>`test/built-ins/String/prototype/padStart/normal-operation.js` | Implemented by the shared JavaScriptRuntime.String padding helper, including UTF-16 code-unit truncation, default and empty fillers, primitive filler coercion, Symbol rejection, receiver validation, and built-in metadata. Boxed String wrapper and other exotic-object edge cases remain limited. |
 
 ### 22.1.3.17.1 ([tc39.es](https://tc39.es/ecma262/#sec-stringpaddingbuiltinsimpl))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| StringPaddingBuiltinsImpl | Not Yet Supported |  |  | Helper algorithm for padStart/padEnd is not present. |
+| StringPaddingBuiltinsImpl | Supported with Limitations |  |  | Implemented by the shared JavaScriptRuntime.String.Pad helper for String.prototype.padStart and String.prototype.padEnd. It does not expose the abstract operation independently. |
 
 ### 22.1.3.17.2 ([tc39.es](https://tc39.es/ecma262/#sec-stringpad))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| StringPad | Not Yet Supported |  |  | No shared padding implementation exists in the runtime. |
+| StringPad | Supported with Limitations |  |  | Implemented by JavaScriptRuntime.String.BuildPadding with repeated filler truncation measured in UTF-16 code units. It is used internally by the shared padding helper. |
 
 ### 22.1.3.17.3 ([tc39.es](https://tc39.es/ecma262/#sec-tozeropaddeddecimalstring))
 

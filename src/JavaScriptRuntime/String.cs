@@ -1789,7 +1789,12 @@ namespace JavaScriptRuntime
                 return input;
             }
 
-            var filler = fillString == null ? " " : DotNet2JSConversions.ToString(fillString);
+            var filler = fillString switch
+            {
+                null => " ",
+                Symbol => throw new TypeError("Cannot convert a Symbol value to a string"),
+                _ => DotNet2JSConversions.ToString(fillString)
+            };
             if (filler.Length == 0)
             {
                 return input;
