@@ -3246,21 +3246,11 @@ namespace JavaScriptRuntime
                     return true;
 
                 case "startsWith":
-                    result = argCount switch
-                    {
-                        <= 0 => JavaScriptRuntime.String.StartsWith(input, string.Empty),
-                        1 => JavaScriptRuntime.String.StartsWith(input, DotNet2JSConversions.ToString(a0)),
-                        _ => JavaScriptRuntime.String.StartsWith(input, DotNet2JSConversions.ToString(a0), a1)
-                    };
+                    result = JavaScriptRuntime.String.StartsWith(input, a0, a1);
                     return true;
 
                 case "endsWith":
-                    result = argCount switch
-                    {
-                        <= 0 => JavaScriptRuntime.String.EndsWith(input, string.Empty),
-                        1 => JavaScriptRuntime.String.EndsWith(input, DotNet2JSConversions.ToString(a0)),
-                        _ => JavaScriptRuntime.String.EndsWith(input, DotNet2JSConversions.ToString(a0), a1)
-                    };
+                    result = JavaScriptRuntime.String.EndsWith(input, a0, a1);
                     return true;
 
                 case "includes":

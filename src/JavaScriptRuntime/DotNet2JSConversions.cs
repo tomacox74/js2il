@@ -30,6 +30,10 @@ namespace JavaScriptRuntime
             {
                 return boolValue ? "true" : "false";
             }
+            if (value is JavaScriptRuntime.Symbol)
+            {
+                throw new TypeError("Cannot convert a Symbol value to a string");
+            }
 
             if (value is Array jsArray)
             {
