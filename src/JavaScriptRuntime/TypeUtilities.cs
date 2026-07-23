@@ -77,14 +77,7 @@ namespace JavaScriptRuntime
                 return coercedNumber;
             }
 
-            try
-            {
-                return Convert.ToDouble(value, System.Globalization.CultureInfo.InvariantCulture);
-            }
-            catch
-            {
-                return double.NaN;
-            }
+            throw new TypeError("Cannot convert object to primitive value");
         }
         // Minimal typeof implementation for our runtime object shapes
         public static string Typeof(object? value)
