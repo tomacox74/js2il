@@ -3237,12 +3237,7 @@ namespace JavaScriptRuntime
                     return true;
 
                 case "lastIndexOf":
-                    result = argCount switch
-                    {
-                        <= 0 => JavaScriptRuntime.String.LastIndexOf(input, string.Empty),
-                        1 => JavaScriptRuntime.String.LastIndexOf(input, DotNet2JSConversions.ToString(a0)),
-                        _ => JavaScriptRuntime.String.LastIndexOf(input, DotNet2JSConversions.ToString(a0), a1)
-                    };
+                    result = JavaScriptRuntime.String.LastIndexOfDynamic(input, a0, a1);
                     return true;
 
                 case "startsWith":
@@ -3254,12 +3249,7 @@ namespace JavaScriptRuntime
                     return true;
 
                 case "includes":
-                    result = argCount switch
-                    {
-                        <= 0 => JavaScriptRuntime.String.Includes(input, string.Empty),
-                        1 => JavaScriptRuntime.String.Includes(input, DotNet2JSConversions.ToString(a0)),
-                        _ => JavaScriptRuntime.String.Includes(input, DotNet2JSConversions.ToString(a0), a1)
-                    };
+                    result = JavaScriptRuntime.String.IncludesDynamic(input, a0, a1);
                     return true;
 
                 case "trim":

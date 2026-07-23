@@ -563,8 +563,7 @@ namespace JavaScriptRuntime
         private static object? PrototypeIncludes(object[] scopes, object?[]? args)
         {
             var input = ThisStringValue(RuntimeServices.GetCurrentThis());
-            var searchString = DotNet2JSConversions.ToString(GetArg(args, 0));
-            return Includes(input, searchString, GetArg(args, 1));
+            return IncludesDynamic(input, GetArg(args, 0), GetArg(args, 1));
         }
 
         private static object? PrototypeIndexOf(object[] scopes, object?[]? args)
@@ -585,10 +584,7 @@ namespace JavaScriptRuntime
         private static object? PrototypeLastIndexOf(object[] scopes, object?[]? args)
         {
             var input = ThisStringValue(RuntimeServices.GetCurrentThis());
-            var searchString = DotNet2JSConversions.ToString(GetArg(args, 0));
-            return args == null || args.Length < 2
-                ? LastIndexOf(input, searchString)
-                : LastIndexOf(input, searchString, args[1]);
+            return LastIndexOfDynamic(input, GetArg(args, 0), GetArg(args, 1));
         }
 
         private static object? PrototypeLocaleCompare(object[] scopes, object?[]? args)
@@ -937,29 +933,26 @@ namespace JavaScriptRuntime
         /// </summary>
         public static double LastIndexOf(string input, string searchString)
         {
-            return LastIndexOf(input, searchString, null);
+            return LastIndexOfCore(input, searchString ?? "undefined", null);
         }
 
         public static double LastIndexOf(string input, string searchString, object? position)
+        {
+            return LastIndexOfCore(input, searchString ?? "undefined", position);
+        }
+
+        public static double LastIndexOfDynamic(string input, object? searchString, object? position)
+        {
+            return LastIndexOfCore(input, ToSearchString(searchString), position);
+        }
+
+        private static double LastIndexOfCore(string input, string searchString, object? position)
         {
             input ??= string.Empty;
             searchString ??= string.Empty;
 
             int len = input.Length;
-            int startIndex = len;
-            if (position is not null)
-            {
-                double d;
-                try { d = TypeUtilities.ToNumber(position); }
-                catch { d = double.NaN; }
-                if (double.IsNaN(d)) d = double.PositiveInfinity;
-                if (double.IsNegativeInfinity(d)) d = 0;
-                if (double.IsPositiveInfinity(d)) d = len;
-                d = global::System.Math.Truncate(d);
-                startIndex = (int)d;
-                if (startIndex < 0) startIndex = 0;
-                if (startIndex > len) startIndex = len;
-            }
+            int startIndex = ToLastIndexPosition(position, len);
 
             if (searchString.Length == 0)
             {
@@ -982,8 +975,31 @@ namespace JavaScriptRuntime
                 startIndex = maxStart;
             }
 
-            int idx = input.LastIndexOf(searchString, startIndex, StringComparison.Ordinal);
+            int searchLength = startIndex + searchString.Length;
+            int idx = input.AsSpan(0, searchLength)
+                .LastIndexOf(searchString.AsSpan(), StringComparison.Ordinal);
             return (double)idx;
+        }
+
+        private static int ToLastIndexPosition(object? value, int length)
+        {
+            if (value is null)
+            {
+                return length;
+            }
+
+            var position = TypeUtilities.ToNumber(value);
+            if (double.IsNaN(position) || double.IsPositiveInfinity(position))
+            {
+                return length;
+            }
+
+            if (double.IsNegativeInfinity(position) || position <= 0d)
+            {
+                return 0;
+            }
+
+            return position >= length ? length : (int)global::System.Math.Truncate(position);
         }
 
         /// <summary>
@@ -1584,45 +1600,38 @@ namespace JavaScriptRuntime
             return input.AsSpan(0, len).EndsWith(search.AsSpan(), StringComparison.Ordinal);
         }
 
-        /// <summary>
-        /// Implements a subset of String.prototype.includes(searchString[, position]).
-        /// Uses ordinal comparison.
-        /// </summary>
         public static bool Includes(string input, string searchString)
         {
-            return Includes(input, searchString, null);
+            return IncludesCore(input, searchString, null);
         }
 
         public static bool Includes(string input, string searchString, object? position)
         {
+            return IncludesCore(input, searchString, position);
+        }
+
+        public static bool IncludesDynamic(string input, object? searchString, object? position)
+        {
+            if (RegExp.IsRegExp(searchString))
+            {
+                throw new TypeError("First argument to String.prototype.includes must not be a RegExp");
+            }
+
+            return IncludesCore(input, ToSearchString(searchString), position);
+        }
+
+        private static bool IncludesCore(string input, string searchString, object? position)
+        {
             input ??= string.Empty;
             searchString ??= string.Empty;
-            int pos = 0;
-            if (position != null)
-            {
-                try
-                {
-                    double d;
-                    if (position is double dd) d = dd;
-                    else if (position is float ff) d = ff;
-                    else if (position is int ii) d = ii;
-                    else if (position is long ll) d = ll;
-                    else if (position is string s && double.TryParse(s, out var parsed)) d = parsed;
-                    else if (position is IConvertible conv) d = conv.ToDouble(System.Globalization.CultureInfo.InvariantCulture);
-                    else d = 0d;
+            var relativePosition = ToIntegerOrInfinity(position, 0d);
+            var pos = relativePosition <= 0d
+                ? 0
+                : relativePosition >= input.Length
+                    ? input.Length
+                    : (int)relativePosition;
 
-                    if (double.IsNaN(d)) d = 0d;
-                    if (double.IsNegativeInfinity(d)) d = 0d;
-                    if (double.IsPositiveInfinity(d)) d = input.Length;
-                    d = d >= 0 ? global::System.Math.Floor(d) : global::System.Math.Ceiling(d);
-                    if (d < 0) d = 0;
-                    if (d > input.Length) d = input.Length;
-                    pos = (int)d;
-                }
-                catch { pos = 0; }
-            }
             if (searchString.Length == 0) return true;
-            if (pos < 0 || pos > input.Length) return false;
             return input.IndexOf(searchString, pos, StringComparison.Ordinal) >= 0;
         }
 
