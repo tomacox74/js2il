@@ -4,7 +4,7 @@
 
 [Back to Section23](Section23.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-07-16T19:51:29Z
+> Last generated (UTC): 2026-07-23T03:26:52Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -148,6 +148,24 @@ Feature-level support tracking with repo test references and optional test262 ev
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
 | Array.prototype.find / findIndex | Supported with Limitations | [`predicate-called-for-each-array-property.js`](../../../tests/Jroc.Test262.Tests/built-ins/Array/prototype/find/JavaScript/predicate-called-for-each-array-property.js)<br>[`return-found-value-predicate-result-is-true.js`](../../../tests/Jroc.Test262.Tests/built-ins/Array/prototype/find/JavaScript/return-found-value-predicate-result-is-true.js)<br>[`predicate-called-for-each-array-property.js`](../../../tests/Jroc.Test262.Tests/built-ins/Array/prototype/findIndex/JavaScript/predicate-called-for-each-array-property.js)<br>[`return-index-predicate-result-is-true.js`](../../../tests/Jroc.Test262.Tests/built-ins/Array/prototype/findIndex/JavaScript/return-index-predicate-result-is-true.js) | `test/built-ins/Array/prototype/find/predicate-called-for-each-array-property.js`<br>`test/built-ins/Array/prototype/find/return-found-value-predicate-result-is-true.js`<br>`test/built-ins/Array/prototype/findIndex/predicate-called-for-each-array-property.js`<br>`test/built-ins/Array/prototype/findIndex/return-index-predicate-result-is-true.js` | Supports predicate-based search for ordinary arrays. Current checked-in test262 coverage exercises sparse-array hole visitation plus the returned element/index result path; exotic receivers and newer findLast-style variants remain limited. |
+
+### 23.1.3.11 ([tc39.es](https://tc39.es/ecma262/#sec-array.prototype.findlast))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Array.prototype.findLast | Supported with Limitations |  | suite `built_ins.Array.prototype.findLast`<br>`test/built-ins/Array/prototype/findLast/call-with-boolean.js`<br>`test/built-ins/Array/prototype/findLast/length.js`<br>`test/built-ins/Array/prototype/findLast/maximum-index.js`<br>`test/built-ins/Array/prototype/findLast/name.js`<br>`test/built-ins/Array/prototype/findLast/not-a-constructor.js`<br>`test/built-ins/Array/prototype/findLast/predicate-call-this-non-strict.js`<br>`test/built-ins/Array/prototype/findLast/predicate-is-not-callable-throws.js`<br>`test/built-ins/Array/prototype/findLast/prop-desc.js`<br>`test/built-ins/Array/prototype/findLast/return-abrupt-from-predicate-call.js`<br>`test/built-ins/Array/prototype/findLast/return-abrupt-from-this.js` | Exposed as a non-constructible Array.prototype method with standard metadata. The shared reverse predicate path covers generic array-like receivers, primitive receiver boxing, safe-integer lengths, callback thisArg, hole visitation, and abrupt completion. Proxy and resizable-buffer edge cases remain limited. |
+
+### 23.1.3.12 ([tc39.es](https://tc39.es/ecma262/#sec-array.prototype.findlastindex))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Array.prototype.findLastIndex | Supported with Limitations |  | suite `built_ins.Array.prototype.findLastIndex`<br>`test/built-ins/Array/prototype/findLastIndex/call-with-boolean.js`<br>`test/built-ins/Array/prototype/findLastIndex/length.js`<br>`test/built-ins/Array/prototype/findLastIndex/maximum-index.js`<br>`test/built-ins/Array/prototype/findLastIndex/name.js`<br>`test/built-ins/Array/prototype/findLastIndex/not-a-constructor.js`<br>`test/built-ins/Array/prototype/findLastIndex/predicate-call-this-non-strict.js`<br>`test/built-ins/Array/prototype/findLastIndex/predicate-is-not-callable-throws.js`<br>`test/built-ins/Array/prototype/findLastIndex/prop-desc.js`<br>`test/built-ins/Array/prototype/findLastIndex/return-abrupt-from-predicate-call.js`<br>`test/built-ins/Array/prototype/findLastIndex/return-abrupt-from-this.js` | Exposed as a non-constructible Array.prototype method with standard metadata. The shared reverse predicate path covers generic array-like receivers, primitive receiver boxing, safe-integer lengths, callback thisArg, hole visitation, and abrupt completion. Proxy and resizable-buffer edge cases remain limited. |
+
+### 23.1.3.12.1 ([tc39.es](https://tc39.es/ecma262/#sec-findviapredicate))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| FindViaPredicate for findLast and findLastIndex | Supported with Limitations |  |  | Implemented by the shared JavaScriptRuntime.Array reverse predicate helper. It is not exposed as an independently callable runtime operation. |
 
 ### 23.1.3.14 ([tc39.es](https://tc39.es/ecma262/#sec-array.prototype.flatmap))
 

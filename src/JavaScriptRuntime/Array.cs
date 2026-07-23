@@ -111,6 +111,8 @@ namespace JavaScriptRuntime
             DefinePrototypeMethod(prototype, "some", (Func<object[], object?[]?, object?>)PrototypeSome, 1);
             DefinePrototypeMethod(prototype, "filter", (Func<object[], object?[]?, object?>)PrototypeFilter, 1);
             DefinePrototypeMethod(prototype, "map", (Func<object[], object?[]?, object?>)PrototypeMap, 1);
+            DefinePrototypeMethod(prototype, "findLast", (Func<object[], object?[]?, object?>)PrototypeFindLast, 1);
+            DefinePrototypeMethod(prototype, "findLastIndex", (Func<object[], object?[]?, object?>)PrototypeFindLastIndex, 1);
             DefinePrototypeMethod(prototype, "flat", (Func<object[], object?[]?, object?>)PrototypeFlat, 0);
             DefinePrototypeMethod(prototype, "at", (Func<object[], object?[]?, object?>)PrototypeAt, 1);
             DefinePrototypeMethod(prototype, "entries", prototypeEntries, 0);
@@ -760,6 +762,37 @@ namespace JavaScriptRuntime
             return false;
         }
 
+        private static object? PrototypeFindLast(object[] scopes, object?[]? args)
+            => FindFromLast(RequireArrayLikeReceiver("findLast"), args, returnIndex: false);
+
+        private static object? PrototypeFindLastIndex(object[] scopes, object?[]? args)
+            => FindFromLast(RequireArrayLikeReceiver("findLastIndex"), args, returnIndex: true);
+
+        private static object? FindFromLast(object receiver, object?[]? args, bool returnIndex)
+        {
+            var iterationReceiver = GetArrayMethodIterationReceiver(receiver);
+            var callbackReceiver = GetArrayMethodCallbackReceiver(receiver);
+            var length = ToArrayLikeLengthAsDouble(iterationReceiver);
+            var callback = RequireCallback(args, returnIndex ? "findLastIndex" : "findLast");
+            var thisArg = args != null && args.Length > 1 ? args[1] : null;
+
+            for (var index = length - 1d; index >= 0d; index--)
+            {
+                var value = JavaScriptRuntime.ObjectRuntime.GetItem(iterationReceiver, index);
+                var result = JavaScriptRuntime.Function.Call(
+                    callback,
+                    thisArg,
+                    new object?[] { value, index, callbackReceiver });
+
+                if (JavaScriptRuntime.Operators.IsTruthy(result))
+                {
+                    return returnIndex ? index : value;
+                }
+            }
+
+            return returnIndex ? -1d : null;
+        }
+
         private static object? PrototypeMap(object[] scopes, object?[]? args)
         {
             var receiver = RequireArrayLikeReceiver("map");
@@ -902,7 +935,12 @@ namespace JavaScriptRuntime
                 return JavaScriptRuntime.String.Construct(new object?[] { str }, null);
             }
 
-            if (receiver is double or float or int or long or short or byte or System.Numerics.BigInteger)
+            if (receiver is System.Numerics.BigInteger)
+            {
+                return JavaScriptRuntime.Object.Construct(receiver);
+            }
+
+            if (receiver is double or float or int or long or short or byte)
             {
                 return JavaScriptRuntime.Number.Construct(new object?[] { receiver }, null);
             }
@@ -950,6 +988,24 @@ namespace JavaScriptRuntime
             d = global::System.Math.Truncate(d);
             if (d > int.MaxValue) d = int.MaxValue;
             return (int)d;
+        }
+
+        private static double ToArrayLikeLengthAsDouble(object receiver)
+        {
+            var lengthValue = JavaScriptRuntime.ObjectRuntime.GetProperty(receiver, "length");
+            var length = TypeUtilities.ToNumber(lengthValue);
+
+            if (double.IsNaN(length) || length <= 0d)
+            {
+                return 0d;
+            }
+
+            if (double.IsPositiveInfinity(length))
+            {
+                return 9007199254740991d;
+            }
+
+            return global::System.Math.Min(global::System.Math.Truncate(length), 9007199254740991d);
         }
 
         private static object? PrototypeEntries(object[] scopes, object?[]? args)
@@ -3301,20 +3357,7 @@ namespace JavaScriptRuntime
         /// Returns the last element matching the predicate, or undefined.
         /// </summary>
         public object? findLast(object[] args)
-        {
-            var cb = (args != null && args.Length > 0) ? args[0] : null;
-            ArrayCallbackInvoker? invoke = null;
-            for (int i = this.Count - 1; i >= 0; i--)
-            {
-                invoke ??= CreateArrayCallbackInvoker(cb, 3, "findLast");
-                var result = invoke(this[i], (double)i, this, null);
-                if (Operators.IsTruthy(result))
-                {
-                    return this[i];
-                }
-            }
-            return null;
-        }
+            => FindFromLast(this, args, returnIndex: false);
 
         /// <summary>
         /// JavaScript Array.findLastIndex(callback[, thisArg])
@@ -3322,18 +3365,8 @@ namespace JavaScriptRuntime
         /// </summary>
         public double findLastIndex(object[] args)
         {
-            var cb = (args != null && args.Length > 0) ? args[0] : null;
-            ArrayCallbackInvoker? invoke = null;
-            for (int i = this.Count - 1; i >= 0; i--)
-            {
-                invoke ??= CreateArrayCallbackInvoker(cb, 3, "findLastIndex");
-                var result = invoke(this[i], (double)i, this, null);
-                if (Operators.IsTruthy(result))
-                {
-                    return (double)i;
-                }
-            }
-            return -1d;
+            var result = FindFromLast(this, args, returnIndex: true);
+            return result is double index ? index : -1d;
         }
 
         /// <summary>

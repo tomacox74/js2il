@@ -6,6 +6,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- runtime: complete covered `Array.prototype.findLast` and `findLastIndex` behavior for generic receivers, callback invocation, built-in metadata, and safe-integer lengths. Ports twenty upstream test262 cases.
 - runtime: complete covered `String.prototype.padStart` and `String.prototype.padEnd` behavior, including Symbol fill-string rejection. Ports twenty upstream test262 cases for padding behavior and built-in metadata.
 - runtime: add standards-compatible `Map.groupBy` and complete covered `Object.groupBy` behavior for null-prototype results, iterator closing, property-key coercion, and built-in metadata. Ports twenty upstream test262 cases.
 - runtime: add standards-compatible `RegExp.escape` for primitive strings, including leading alphanumeric, syntax, solidus, control, whitespace, and surrogate escaping. Ports ten upstream test262 cases.
