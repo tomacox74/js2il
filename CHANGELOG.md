@@ -6,6 +6,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- runtime: complete covered `String.prototype.substring` behavior and constructed String wrapper `length` semantics, including abrupt receiver and argument coercion. Ports fifty upstream test262 cases across `substring` and `slice`.
 - runtime: complete covered String indexing behavior for `String.prototype.indexOf`, `charAt`, `charCodeAt`, and `at`, including search-string coercion, Symbol rejection, and invalid object numeric coercion. Ports fifty upstream test262 cases.
 - runtime: complete covered `String.prototype.includes` and `String.prototype.lastIndexOf` behavior for dynamic search-string conversion, RegExp and Symbol handling, position coercion, zero-argument `undefined` coercion, and bounded ordinal searches. Ports forty upstream test262 cases.
 - runtime: complete covered `String.prototype.startsWith` and `String.prototype.endsWith` behavior for RegExp rejection, `Symbol.match` lookup, Symbol rejection, `ToIntegerOrInfinity` position coercion, and zero-argument `undefined` coercion. Ports forty upstream test262 cases.

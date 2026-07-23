@@ -143,4 +143,20 @@ public class ExecutionTests : DiskExecutionTestsBase
     public Task S15_5_4_13_A2_T3()
         => ExecutionTestFromFile("S15.5.4.13_A2_T3");
 
+    [Fact(DisplayName = "S15.5.4.13_A2_T4")]
+    public Task S15_5_4_13_A2_T4()
+        => ExecutionTestFromFile("S15.5.4.13_A2_T4");
+
+    [Fact(DisplayName = "S15.5.4.13_A2_T5")]
+    public Task S15_5_4_13_A2_T5()
+        => ExecutionTestFromFile("S15.5.4.13_A2_T5");
+
+    [Fact(DisplayName = "S15.5.4.13_A2_T6")]
+    public Task S15_5_4_13_A2_T6()
+        => ExecutionTestFromFile("S15.5.4.13_A2_T6");
+
+    [Fact(DisplayName = "S15.5.4.13_A2_T7")]
+    public Task S15_5_4_13_A2_T7()
+        => ExecutionTestFromFile("S15.5.4.13_A2_T7");
+
 }
