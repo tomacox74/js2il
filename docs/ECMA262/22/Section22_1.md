@@ -4,7 +4,7 @@
 
 [Back to Section22](Section22.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-07-23T16:51:43Z
+> Last generated (UTC): 2026-07-23T16:55:12Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -235,7 +235,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| String.prototype.repeat | Supported with Limitations | [`String_Repeat_Basic.js`](../../../tests/Jroc.Tests/String/JavaScript/String_Repeat_Basic.js)<br>`tests/Jroc.Test262.Tests/built-ins/String/prototype/repeat/ExecutionTests.cs` | suite `built_ins.String.prototype.repeat` | Implemented in JavaScriptRuntime.String.Repeat with RangeError for negative / non-finite counts, abrupt count coercion propagation, and a guard against extremely large outputs. Sixteen upstream test262 cases cover metadata, receiver validation, coercion, and normal behavior. |
+| String.prototype.repeat | Supported | [`String_Repeat_Basic.js`](../../../tests/Jroc.Tests/String/JavaScript/String_Repeat_Basic.js)<br>`tests/Jroc.Test262.Tests/built-ins/String/prototype/repeat/ExecutionTests.cs` | suite `built_ins.String.prototype.repeat` | Implemented in JavaScriptRuntime.String.Repeat with RangeError for negative / non-finite counts, abrupt count coercion propagation, and a guard against extremely large outputs. Sixteen upstream test262 cases cover metadata, receiver validation, coercion, and normal behavior. |
 
 ### 22.1.3.19 ([tc39.es](https://tc39.es/ecma262/#sec-string.prototype.replace))
 
