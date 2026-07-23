@@ -4,7 +4,7 @@
 
 [Back to Section22](Section22.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-07-23T16:56:14Z
+> Last generated (UTC): 2026-07-23T17:17:55Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -58,7 +58,7 @@
 | 22.1.3.30 | String.prototype.toUpperCase ( ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.touppercase) |
 | 22.1.3.31 | String.prototype.toWellFormed ( ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.towellformed) |
 | 22.1.3.32 | String.prototype.trim ( ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.trim) |
-| 22.1.3.32.1 | TrimString ( string , where ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-trimstring) |
+| 22.1.3.32.1 | TrimString ( string , where ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-trimstring) |
 | 22.1.3.33 | String.prototype.trimEnd ( ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.trimend) |
 | 22.1.3.34 | String.prototype.trimStart ( ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.trimstart) |
 | 22.1.3.35 | String.prototype.valueOf ( ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.valueof) |
@@ -331,13 +331,13 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| TrimString | Not Yet Supported |  |  | Shared TrimString abstract operation is not tracked separately; runtime uses custom TrimEcma helpers. |
+| TrimString | Supported | `tests/Jroc.Test262.Tests/built-ins/String/prototype/trim/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/String/prototype/trimEnd/ExecutionTests.cs` | suite `built_ins.String.prototype.trim`<br>suite `built_ins.String.prototype.trimEnd` | Implemented by the shared JavaScriptRuntime.String trimming helpers. Fifty upstream test262 cases cover ECMAScript whitespace, generic receiver conversion, primitive-conversion precedence, abrupt completion, and Symbol rejection. |
 
 ### 22.1.3.33 ([tc39.es](https://tc39.es/ecma262/#sec-string.prototype.trimend))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| String.prototype.trimEnd | Supported with Limitations | [`String_MemberCall_FastPath_CommonMethods.js`](../../../tests/Jroc.Tests/String/JavaScript/String_MemberCall_FastPath_CommonMethods.js)<br>`tests/Jroc.Test262.Tests/built-ins/String/prototype/trimEnd/ExecutionTests.cs` | suite `built_ins.String.prototype.trimEnd` | Implemented in JavaScriptRuntime.String.TrimEnd (and TrimRight alias) via TrimEndEcma (explicit ECMAScript whitespace set). Eleven upstream test262 cases cover metadata, property descriptors, receiver validation, and abrupt primitive coercion. |
+| String.prototype.trimEnd | Supported | [`String_MemberCall_FastPath_CommonMethods.js`](../../../tests/Jroc.Tests/String/JavaScript/String_MemberCall_FastPath_CommonMethods.js)<br>`tests/Jroc.Test262.Tests/built-ins/String/prototype/trimEnd/ExecutionTests.cs` | suite `built_ins.String.prototype.trimEnd` | Implemented in JavaScriptRuntime.String.TrimEnd (and TrimRight alias) via TrimEndEcma (explicit ECMAScript whitespace set). All twenty-three upstream test262 cases cover metadata, property descriptors, receiver validation, whitespace, Symbol rejection, and abrupt primitive coercion. |
 
 ### 22.1.3.34 ([tc39.es](https://tc39.es/ecma262/#sec-string.prototype.trimstart))
 

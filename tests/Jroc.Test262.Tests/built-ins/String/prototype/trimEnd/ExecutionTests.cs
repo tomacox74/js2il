@@ -17,4 +17,16 @@ public class ExecutionTests : DiskExecutionTestsBase
     [Fact(DisplayName = "this-value-object-cannot-convert-to-primitive-err")] public Task this_value_object_cannot_convert_to_primitive_err() => ExecutionTestFromFile("this-value-object-cannot-convert-to-primitive-err");
     [Fact(DisplayName = "this-value-object-toprimitive-call-err")] public Task this_value_object_toprimitive_call_err() => ExecutionTestFromFile("this-value-object-toprimitive-call-err");
     [Fact(DisplayName = "this-value-object-toprimitive-meth-err")] public Task this_value_object_toprimitive_meth_err() => ExecutionTestFromFile("this-value-object-toprimitive-meth-err");
+    [Fact(DisplayName = "this-value-object-toprimitive-meth-priority")] public Task this_value_object_toprimitive_meth_priority() => ExecutionTestFromFile("this-value-object-toprimitive-meth-priority");
+    [Fact(DisplayName = "this-value-object-toprimitive-returns-object-err")] public Task this_value_object_toprimitive_returns_object_err() => ExecutionTestFromFile("this-value-object-toprimitive-returns-object-err");
+    [Fact(DisplayName = "this-value-object-tostring-call-err")] public Task this_value_object_tostring_call_err() => ExecutionTestFromFile("this-value-object-tostring-call-err");
+    [Fact(DisplayName = "this-value-object-tostring-meth-err")] public Task this_value_object_tostring_meth_err() => ExecutionTestFromFile("this-value-object-tostring-meth-err");
+    [Fact(DisplayName = "this-value-object-tostring-meth-priority")] public Task this_value_object_tostring_meth_priority() => ExecutionTestFromFile("this-value-object-tostring-meth-priority");
+    [Fact(DisplayName = "this-value-object-tostring-returns-object-err")] public Task this_value_object_tostring_returns_object_err() => ExecutionTestFromFile("this-value-object-tostring-returns-object-err");
+    [Fact(DisplayName = "this-value-object-valueof-call-err")] public Task this_value_object_valueof_call_err() => ExecutionTestFromFile("this-value-object-valueof-call-err");
+    [Fact(DisplayName = "this-value-object-valueof-meth-err")] public Task this_value_object_valueof_meth_err() => ExecutionTestFromFile("this-value-object-valueof-meth-err");
+    [Fact(DisplayName = "this-value-object-valueof-meth-priority")] public Task this_value_object_valueof_meth_priority() => ExecutionTestFromFile("this-value-object-valueof-meth-priority");
+    [Fact(DisplayName = "this-value-object-valueof-returns-object-err")] public Task this_value_object_valueof_returns_object_err() => ExecutionTestFromFile("this-value-object-valueof-returns-object-err");
+    [Fact(DisplayName = "this-value-symbol-typeerror")] public Task this_value_symbol_typeerror() => ExecutionTestFromFile("this-value-symbol-typeerror");
+    [Fact(DisplayName = "this-value-whitespace")] public Task this_value_whitespace() => ExecutionTestFromFile("this-value-whitespace");
 }

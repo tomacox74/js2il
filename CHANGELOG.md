@@ -6,6 +6,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- runtime: implement the documented `TrimString` abstract operation through shared ECMAScript trimming helpers, complete `String.prototype.trimEnd` coverage, and correct Number-to-String decimal formatting at the `1e-6` threshold. Ports fifty upstream test262 cases.
 - runtime: complete covered `String.prototype.repeat`, `trimStart`, and `trimEnd` behavior, including abrupt count coercion and distinct trim-alias metadata. Ports fifty upstream test262 cases.
 - runtime: complete covered `String.prototype.substring` behavior and constructed String wrapper `length` semantics, including abrupt receiver and argument coercion. Ports fifty upstream test262 cases across `substring` and `slice`.
 - runtime: complete covered String indexing behavior for `String.prototype.indexOf`, `charAt`, `charCodeAt`, and `at`, including search-string coercion, Symbol rejection, and invalid object numeric coercion. Ports fifty upstream test262 cases.
