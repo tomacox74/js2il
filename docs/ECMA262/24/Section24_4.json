@@ -66,7 +66,7 @@
     {
       "clause": "24.4.3.5",
       "title": "WeakSet.prototype [ %Symbol.toStringTag% ]",
-      "status": "Not Yet Supported",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-weakset.prototype-%symbol.tostringtag%"
     },
     {
@@ -136,9 +136,15 @@
       {
         "clause": "24.4.3.5",
         "feature": "WeakSet.prototype[@@toStringTag]",
-        "status": "Not Yet Supported",
+        "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-weakset.prototype-%symbol.tostringtag%",
-        "notes": "WeakSet instances do not currently expose a symbol-keyed toStringTag property."
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/WeakSet/prototype/Symbol.toStringTag/ExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/built-ins/WeakSet/prototype/Symbol.toStringTag.js"
+        ],
+        "notes": "WeakSet.prototype exposes the configurable, non-enumerable, non-writable \"WeakSet\" @@toStringTag data property."
       }
     ]
   }

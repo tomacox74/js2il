@@ -120,6 +120,14 @@ namespace JavaScriptRuntime
             DefinePrototypeMethod(prototype, "add", PrototypeAdd);
             DefinePrototypeMethod(prototype, "delete", PrototypeDelete);
             DefinePrototypeMethod(prototype, "has", PrototypeHas);
+            PropertyDescriptorStore.DefineOrUpdate(prototype, Symbol.toStringTag.DebugId, new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = false,
+                Value = "WeakSet"
+            });
             return prototype;
         }
 

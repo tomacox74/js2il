@@ -192,7 +192,7 @@
     {
       "clause": "24.2.4.19",
       "title": "Set.prototype [ %Symbol.toStringTag% ]",
-      "status": "Supported with Limitations",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-set.prototype-%symbol.tostringtag%"
     },
     {
@@ -228,7 +228,7 @@
     {
       "clause": "24.2.6.2.2",
       "title": "%SetIteratorPrototype% [ %Symbol.toStringTag% ]",
-      "status": "Not Yet Supported",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-%setiteratorprototype%-%symbol.tostringtag%"
     }
   ],
@@ -335,22 +335,40 @@
         "notes": "The ES2025 Set algebra methods are implemented for Set inputs and generic iterables, but JROC currently normalizes non-Set operands through new Set(iterable) instead of the full ES2025 set-like protocol (GetSetRecord/size/has/keys)."
       },
       {
+        "clause": "24.2.4.19",
+        "feature": "Set.prototype[@@toStringTag]",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-set.prototype-%symbol.tostringtag%",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/Set/prototype/Symbol.toStringTag/ExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/built-ins/Set/prototype/Symbol.toStringTag.js",
+          "test/built-ins/Set/prototype/Symbol.toStringTag/property-descriptor.js"
+        ],
+        "notes": "Set.prototype exposes the configurable, non-enumerable, non-writable \"Set\" @@toStringTag data property."
+      },
+      {
         "clause": "24.2.6.1",
         "feature": "Set iteration in for-of and other runtime iterator consumers",
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-createsetiterator",
-        "notes": "Set instances now expose Symbol.iterator and the keys/values/entries methods return native iterator objects. Iterator prototype metadata such as %SetIteratorPrototype%[@@toStringTag] remains incomplete."
+        "notes": "Set instances expose Symbol.iterator and the keys/values/entries methods return native iterator objects with a dedicated %SetIteratorPrototype%."
       },
       {
         "clause": "24.2.6.2.2",
         "feature": "%SetIteratorPrototype%[@@toStringTag]",
-        "status": "Not Yet Supported",
+        "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-%setiteratorprototype%-%symbol.tostringtag%",
         "testScripts": [
-          "tests/Jroc.Tests/Set/JavaScript/Set_Entries_Keys_Values.js",
-          "tests/Jroc.Tests/Set/JavaScript/Set_Symbol_Iterator.js"
+          "tests/Jroc.Test262.Tests/built-ins/SetIteratorPrototype/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Object/prototype/toString/ExecutionTests.cs"
         ],
-        "notes": "Set iterators currently implement the runtime next()/return() protocol used by values(), keys(), entries(), and @@iterator, but JROC does not yet install the spec %SetIteratorPrototype% Symbol.toStringTag metadata."
+        "test262Paths": [
+          "test/built-ins/SetIteratorPrototype/Symbol.toStringTag.js",
+          "test/built-ins/Object/prototype/toString/symbol-tag-set-builtin.js"
+        ],
+        "notes": "Set iterator instances inherit from a dedicated %SetIteratorPrototype% with the configurable, non-enumerable, non-writable \"Set Iterator\" @@toStringTag data property."
       }
     ]
   }

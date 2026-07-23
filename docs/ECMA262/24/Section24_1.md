@@ -4,7 +4,7 @@
 
 [Back to Section24](Section24.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-06-27T19:37:14Z
+> Last generated (UTC): 2026-07-23T01:33:25Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -36,13 +36,13 @@
 | 24.1.3.12 | get Map.prototype.size | Supported | [tc39.es](https://tc39.es/ecma262/#sec-get-map.prototype.size) |
 | 24.1.3.13 | Map.prototype.values ( ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-map.prototype.values) |
 | 24.1.3.14 | Map.prototype [ %Symbol.iterator% ] ( ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-map.prototype-%symbol.iterator%) |
-| 24.1.3.15 | Map.prototype [ %Symbol.toStringTag% ] | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-map.prototype-%symbol.tostringtag%) |
+| 24.1.3.15 | Map.prototype [ %Symbol.toStringTag% ] | Supported | [tc39.es](https://tc39.es/ecma262/#sec-map.prototype-%symbol.tostringtag%) |
 | 24.1.4 | Properties of Map Instances | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-map-instances) |
 | 24.1.5 | Map Iterator Objects | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-map-iterator-objects) |
 | 24.1.5.1 | CreateMapIterator ( map , kind ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-createmapiterator) |
 | 24.1.5.2 | The %MapIteratorPrototype% Object | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-%mapiteratorprototype%-object) |
 | 24.1.5.2.1 | %MapIteratorPrototype%.next ( ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-%mapiteratorprototype%.next) |
-| 24.1.5.2.2 | %MapIteratorPrototype% [ %Symbol.toStringTag% ] | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-%mapiteratorprototype%-%symbol.tostringtag%) |
+| 24.1.5.2.2 | %MapIteratorPrototype% [ %Symbol.toStringTag% ] | Supported | [tc39.es](https://tc39.es/ecma262/#sec-%mapiteratorprototype%-%symbol.tostringtag%) |
 
 ## Support
 
@@ -59,7 +59,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Map constructor value and Map.prototype surface | Supported with Limitations | [`Map_Constructor_Prototype_Surface.js`](../../../tests/Jroc.Tests/Map/JavaScript/Map_Constructor_Prototype_Surface.js) | `test/built-ins/Map/prototype-of-map.js` | JROC exposes globalThis.Map as a constructor value with test262-covered name/length/constructibility/global descriptor metadata, wires Map.prototype and Map.prototype.constructor, stamps new Map instances with that prototype, and supports reflective checks such as Object.getPrototypeOf(map) === Map.prototype and map instanceof Map. Iterable construction, forEach, and @@iterator are implemented; full MapIteratorPrototype metadata remains incomplete. |
+| Map constructor value and Map.prototype surface | Supported with Limitations | [`Map_Constructor_Prototype_Surface.js`](../../../tests/Jroc.Tests/Map/JavaScript/Map_Constructor_Prototype_Surface.js) | `test/built-ins/Map/prototype-of-map.js` | JROC exposes globalThis.Map as a constructor value with test262-covered name/length/constructibility/global descriptor metadata, wires Map.prototype and Map.prototype.constructor, stamps new Map instances with that prototype, and supports reflective checks such as Object.getPrototypeOf(map) === Map.prototype and map instanceof Map. Iterable construction, forEach, and @@iterator are implemented. |
 
 ### 24.1.2.3 ([tc39.es](https://tc39.es/ecma262/#sec-get-map-%symbol.species%))
 
@@ -77,7 +77,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Map.prototype.keys / values / entries | Supported with Limitations | [`Map_Keys_Values_Entries.js`](../../../tests/Jroc.Tests/Map/JavaScript/Map_Keys_Values_Entries.js)<br>[`Map_Symbol_Iterator.js`](../../../tests/Jroc.Tests/Map/JavaScript/Map_Symbol_Iterator.js) |  | The methods are exposed on the public Map.prototype surface and return native iterator objects with .next(). Iterator prototype metadata remains incomplete. |
+| Map.prototype.keys / values / entries | Supported with Limitations | [`Map_Keys_Values_Entries.js`](../../../tests/Jroc.Tests/Map/JavaScript/Map_Keys_Values_Entries.js)<br>[`Map_Symbol_Iterator.js`](../../../tests/Jroc.Tests/Map/JavaScript/Map_Symbol_Iterator.js) |  | The methods are exposed on the public Map.prototype surface and return native iterator objects with .next(). |
 
 ### 24.1.3.5 ([tc39.es](https://tc39.es/ecma262/#sec-map.prototype.foreach))
 
@@ -97,15 +97,21 @@ Feature-level support tracking with repo test references and optional test262 ev
 |---|---|---|---|---|
 | Map.prototype[@@iterator] | Supported | [`Map_Symbol_Iterator.js`](../../../tests/Jroc.Tests/Map/JavaScript/Map_Symbol_Iterator.js) |  | Map instances now expose a Symbol.iterator method that returns the same entry iterator shape as entries(). |
 
+### 24.1.3.15 ([tc39.es](https://tc39.es/ecma262/#sec-map.prototype-%symbol.tostringtag%))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Map.prototype[@@toStringTag] | Supported | `tests/Jroc.Test262.Tests/built-ins/Map/prototype/Symbol.toStringTag/ExecutionTests.cs` | `test/built-ins/Map/prototype/Symbol.toStringTag.js` | Map.prototype exposes the configurable, non-enumerable, non-writable "Map" @@toStringTag data property. |
+
 ### 24.1.5.1 ([tc39.es](https://tc39.es/ecma262/#sec-createmapiterator))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Map iteration in for-of and other runtime iterator consumers | Supported with Limitations |  |  | Map instances now expose Symbol.iterator and the keys/values/entries methods return native iterator objects. Iterator prototype metadata such as %MapIteratorPrototype%[@@toStringTag] remains incomplete. |
+| Map iteration in for-of and other runtime iterator consumers | Supported with Limitations |  |  | Map instances expose Symbol.iterator and the keys/values/entries methods return native iterator objects with a dedicated %MapIteratorPrototype%. |
 
 ### 24.1.5.2.2 ([tc39.es](https://tc39.es/ecma262/#sec-%mapiteratorprototype%-%symbol.tostringtag%))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| %MapIteratorPrototype%[@@toStringTag] | Not Yet Supported | [`Map_Keys_Values_Entries.js`](../../../tests/Jroc.Tests/Map/JavaScript/Map_Keys_Values_Entries.js)<br>[`Map_Symbol_Iterator.js`](../../../tests/Jroc.Tests/Map/JavaScript/Map_Symbol_Iterator.js) |  | Map iterators currently implement the runtime next()/return() protocol used by entries(), keys(), values(), and @@iterator, but JROC does not yet install the spec %MapIteratorPrototype% Symbol.toStringTag metadata. |
+| %MapIteratorPrototype%[@@toStringTag] | Supported | `tests/Jroc.Test262.Tests/built-ins/MapIteratorPrototype/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Object/prototype/toString/ExecutionTests.cs` | `test/built-ins/MapIteratorPrototype/Symbol.toStringTag.js`<br>`test/built-ins/Object/prototype/toString/symbol-tag-map-builtin.js` | Map iterator instances inherit from a dedicated %MapIteratorPrototype% with the configurable, non-enumerable, non-writable "Map Iterator" @@toStringTag data property. |
 

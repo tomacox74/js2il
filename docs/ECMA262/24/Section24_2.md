@@ -4,7 +4,7 @@
 
 [Back to Section24](Section24.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-06-27T19:37:14Z
+> Last generated (UTC): 2026-07-23T01:33:25Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -44,13 +44,13 @@
 | 24.2.4.16 | Set.prototype.union ( other ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-set.prototype.union) |
 | 24.2.4.17 | Set.prototype.values ( ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-set.prototype.values) |
 | 24.2.4.18 | Set.prototype [ %Symbol.iterator% ] ( ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-set.prototype-%symbol.iterator%) |
-| 24.2.4.19 | Set.prototype [ %Symbol.toStringTag% ] | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-set.prototype-%symbol.tostringtag%) |
+| 24.2.4.19 | Set.prototype [ %Symbol.toStringTag% ] | Supported | [tc39.es](https://tc39.es/ecma262/#sec-set.prototype-%symbol.tostringtag%) |
 | 24.2.5 | Properties of Set Instances | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-set-instances) |
 | 24.2.6 | Set Iterator Objects | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-set-iterator-objects) |
 | 24.2.6.1 | CreateSetIterator ( set , kind ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-createsetiterator) |
 | 24.2.6.2 | The %SetIteratorPrototype% Object | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-%setiteratorprototype%-object) |
 | 24.2.6.2.1 | %SetIteratorPrototype%.next ( ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-%setiteratorprototype%.next) |
-| 24.2.6.2.2 | %SetIteratorPrototype% [ %Symbol.toStringTag% ] | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-%setiteratorprototype%-%symbol.tostringtag%) |
+| 24.2.6.2.2 | %SetIteratorPrototype% [ %Symbol.toStringTag% ] | Supported | [tc39.es](https://tc39.es/ecma262/#sec-%setiteratorprototype%-%symbol.tostringtag%) |
 
 ## Support
 
@@ -93,15 +93,21 @@ Feature-level support tracking with repo test references and optional test262 ev
 |---|---|---|---|---|
 | New Set methods (difference, intersection, isDisjointFrom, isSubsetOf, isSupersetOf, symmetricDifference, union) | Supported with Limitations | [`Set_Algebra_Methods.js`](../../../tests/Jroc.Tests/Set/JavaScript/Set_Algebra_Methods.js) |  | The ES2025 Set algebra methods are implemented for Set inputs and generic iterables, but JROC currently normalizes non-Set operands through new Set(iterable) instead of the full ES2025 set-like protocol (GetSetRecord/size/has/keys). |
 
+### 24.2.4.19 ([tc39.es](https://tc39.es/ecma262/#sec-set.prototype-%symbol.tostringtag%))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Set.prototype[@@toStringTag] | Supported | `tests/Jroc.Test262.Tests/built-ins/Set/prototype/Symbol.toStringTag/ExecutionTests.cs` | `test/built-ins/Set/prototype/Symbol.toStringTag.js`<br>`test/built-ins/Set/prototype/Symbol.toStringTag/property-descriptor.js` | Set.prototype exposes the configurable, non-enumerable, non-writable "Set" @@toStringTag data property. |
+
 ### 24.2.6.1 ([tc39.es](https://tc39.es/ecma262/#sec-createsetiterator))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Set iteration in for-of and other runtime iterator consumers | Supported with Limitations |  |  | Set instances now expose Symbol.iterator and the keys/values/entries methods return native iterator objects. Iterator prototype metadata such as %SetIteratorPrototype%[@@toStringTag] remains incomplete. |
+| Set iteration in for-of and other runtime iterator consumers | Supported with Limitations |  |  | Set instances expose Symbol.iterator and the keys/values/entries methods return native iterator objects with a dedicated %SetIteratorPrototype%. |
 
 ### 24.2.6.2.2 ([tc39.es](https://tc39.es/ecma262/#sec-%setiteratorprototype%-%symbol.tostringtag%))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| %SetIteratorPrototype%[@@toStringTag] | Not Yet Supported | [`Set_Entries_Keys_Values.js`](../../../tests/Jroc.Tests/Set/JavaScript/Set_Entries_Keys_Values.js)<br>[`Set_Symbol_Iterator.js`](../../../tests/Jroc.Tests/Set/JavaScript/Set_Symbol_Iterator.js) |  | Set iterators currently implement the runtime next()/return() protocol used by values(), keys(), entries(), and @@iterator, but JROC does not yet install the spec %SetIteratorPrototype% Symbol.toStringTag metadata. |
+| %SetIteratorPrototype%[@@toStringTag] | Supported | `tests/Jroc.Test262.Tests/built-ins/SetIteratorPrototype/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Object/prototype/toString/ExecutionTests.cs` | `test/built-ins/SetIteratorPrototype/Symbol.toStringTag.js`<br>`test/built-ins/Object/prototype/toString/symbol-tag-set-builtin.js` | Set iterator instances inherit from a dedicated %SetIteratorPrototype% with the configurable, non-enumerable, non-writable "Set Iterator" @@toStringTag data property. |
 
