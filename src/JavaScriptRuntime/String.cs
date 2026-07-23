@@ -379,12 +379,16 @@ namespace JavaScriptRuntime
                 string s => s,
                 char[] chars => new string(chars),
                 StringBuilder builder => builder.ToString(),
+                _ when value is not null && value.GetType().IsValueType => DotNet2JSConversions.ToString(value),
                 _ when value is not null
                     && PropertyDescriptorStore.TryGetOwn(value, StringDataPropertyName, out var descriptor)
                     && descriptor.Kind == JsPropertyDescriptorKind.Data
                     => DotNet2JSConversions.ToString(descriptor.Value),
                 Symbol => throw new TypeError("Cannot convert a Symbol value to a string"),
-                _ => DotNet2JSConversions.ToString(value)
+                Type type when type == typeof(Math) => "[object Math]",
+                _ when value is not null && TypeUtilities.TryCoerceObjectToPrimitive(value, "string", out var primitive)
+                    => ThisStringValue(primitive),
+                _ => throw new TypeError("Cannot convert object to primitive value")
             };
         }
 
@@ -442,6 +446,14 @@ namespace JavaScriptRuntime
                 Configurable = false,
                 Writable = true,
                 Value = value
+            });
+            PropertyDescriptorStore.DefineOrUpdate(wrapper, "length", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = false,
+                Writable = false,
+                Value = (double)value.Length
             });
 
             return wrapper;
@@ -802,15 +814,7 @@ namespace JavaScriptRuntime
                     return defaultValue;
                 }
 
-                double d;
-                try
-                {
-                    d = JavaScriptRuntime.TypeUtilities.ToNumber(value);
-                }
-                catch
-                {
-                    d = double.NaN;
-                }
+                double d = JavaScriptRuntime.TypeUtilities.ToNumber(value);
 
                 if (double.IsNaN(d)) d = 0d;
                 if (double.IsNegativeInfinity(d)) d = 0d;

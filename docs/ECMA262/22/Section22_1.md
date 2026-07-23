@@ -4,7 +4,7 @@
 
 [Back to Section22](Section22.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-07-23T05:14:19Z
+> Last generated (UTC): 2026-07-23T05:43:33Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -265,7 +265,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| String.prototype.slice | Supported with Limitations | [`String_MemberCall_FastPath_CommonMethods.js`](../../../tests/Jroc.Tests/String/JavaScript/String_MemberCall_FastPath_CommonMethods.js)<br>[`S15.5.4.13_A2_T1.js`](../../../tests/Jroc.Test262.Tests/built-ins/String/prototype/slice/JavaScript/S15.5.4.13_A2_T1.js)<br>[`S15.5.4.13_A2_T2.js`](../../../tests/Jroc.Test262.Tests/built-ins/String/prototype/slice/JavaScript/S15.5.4.13_A2_T2.js)<br>[`S15.5.4.13_A2_T3.js`](../../../tests/Jroc.Test262.Tests/built-ins/String/prototype/slice/JavaScript/S15.5.4.13_A2_T3.js) | `test/built-ins/String/prototype/slice/S15.5.4.13_A1_T1.js`<br>`test/built-ins/String/prototype/slice/S15.5.4.13_A1_T2.js`<br>`test/built-ins/String/prototype/slice/S15.5.4.13_A1_T5.js`<br>`test/built-ins/String/prototype/slice/S15.5.4.13_A1_T6.js`<br>`test/built-ins/String/prototype/slice/S15.5.4.13_A1_T7.js`<br>`test/built-ins/String/prototype/slice/S15.5.4.13_A1_T8.js`<br>`test/built-ins/String/prototype/slice/S15.5.4.13_A1_T9.js`<br>`test/built-ins/String/prototype/slice/S15.5.4.13_A1_T10.js`<br>`test/built-ins/String/prototype/slice/S15.5.4.13_A1_T15.js`<br>`test/built-ins/String/prototype/slice/S15.5.4.13_A10.js`<br>`test/built-ins/String/prototype/slice/S15.5.4.13_A11.js`<br>`test/built-ins/String/prototype/slice/S15.5.4.13_A2_T1.js`<br>`test/built-ins/String/prototype/slice/S15.5.4.13_A2_T2.js`<br>`test/built-ins/String/prototype/slice/S15.5.4.13_A2_T3.js` | Implemented in JavaScriptRuntime.String.Slice with ToIntegerOrInfinity-style coercion, negative index handling, and abrupt-completion propagation from object start/end coercions. Current bounded test262 coverage exercises boxed receivers, function-object receivers, metadata attributes, empty-string cases, and representative negative/omitted bound cases. |
+| String.prototype.slice | Supported with Limitations | [`String_MemberCall_FastPath_CommonMethods.js`](../../../tests/Jroc.Tests/String/JavaScript/String_MemberCall_FastPath_CommonMethods.js)<br>`tests/Jroc.Test262.Tests/built-ins/String/prototype/slice/ExecutionTests.cs` | `test/built-ins/String/prototype/slice/S15.5.4.13_A1_T1.js`<br>`test/built-ins/String/prototype/slice/S15.5.4.13_A1_T2.js`<br>`test/built-ins/String/prototype/slice/S15.5.4.13_A1_T5.js`<br>`test/built-ins/String/prototype/slice/S15.5.4.13_A1_T6.js`<br>`test/built-ins/String/prototype/slice/S15.5.4.13_A1_T7.js`<br>`test/built-ins/String/prototype/slice/S15.5.4.13_A1_T8.js`<br>`test/built-ins/String/prototype/slice/S15.5.4.13_A1_T9.js`<br>`test/built-ins/String/prototype/slice/S15.5.4.13_A1_T10.js`<br>`test/built-ins/String/prototype/slice/S15.5.4.13_A1_T15.js`<br>`test/built-ins/String/prototype/slice/S15.5.4.13_A10.js`<br>`test/built-ins/String/prototype/slice/S15.5.4.13_A11.js`<br>`test/built-ins/String/prototype/slice/S15.5.4.13_A2_T1.js`<br>`test/built-ins/String/prototype/slice/S15.5.4.13_A2_T2.js`<br>`test/built-ins/String/prototype/slice/S15.5.4.13_A2_T3.js`<br>`test/built-ins/String/prototype/slice/S15.5.4.13_A2_T4.js`<br>`test/built-ins/String/prototype/slice/S15.5.4.13_A2_T5.js`<br>`test/built-ins/String/prototype/slice/S15.5.4.13_A2_T6.js`<br>`test/built-ins/String/prototype/slice/S15.5.4.13_A2_T7.js` | Implemented in JavaScriptRuntime.String.Slice with ToIntegerOrInfinity-style coercion, negative index handling, and abrupt-completion propagation from object start/end coercions. Current bounded test262 coverage exercises boxed receivers, function-object receivers, metadata attributes, empty-string cases, and representative negative/omitted bound cases. |
 
 ### 22.1.3.23 ([tc39.es](https://tc39.es/ecma262/#sec-string.prototype.split))
 
@@ -283,7 +283,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| String.prototype.substring | Supported | [`String_Substring.js`](../../../tests/Jroc.Tests/String/JavaScript/String_Substring.js) |  | Implemented in JavaScriptRuntime.String.Substring. Coerces arguments via ToNumber, clamps to [0, length], truncates toward zero, and swaps start/end when start > end. |
+| String.prototype.substring | Supported with Limitations | [`String_Substring.js`](../../../tests/Jroc.Tests/String/JavaScript/String_Substring.js)<br>`tests/Jroc.Test262.Tests/built-ins/String/prototype/substring/ExecutionTests.cs` | suite `built_ins.String.prototype.substring` | Implemented in JavaScriptRuntime.String.Substring. Forty-six upstream test262 cases cover metadata, receiver conversion, boxed String length, abrupt ToPrimitive and argument coercion, clamping, truncation, and argument swapping. Broader exotic receiver behavior remains limited. |
 
 ### 22.1.3.26 ([tc39.es](https://tc39.es/ecma262/#sec-string.prototype.tolocalelowercase))
 
