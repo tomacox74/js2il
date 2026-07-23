@@ -539,9 +539,35 @@
         "specUrl": "https://tc39.es/ecma262/#sec-string.prototype.includes",
         "testScripts": [
           "tests/Jroc.Tests/String/JavaScript/String_MemberCall_FastPath_CommonMethods.js",
-          "tests/Jroc.Tests/Node/FS/JavaScript/FSPromises_Realpath.js"
+          "tests/Jroc.Tests/Node/FS/JavaScript/FSPromises_Realpath.js",
+          "tests/Jroc.Test262.Tests/built-ins/String/prototype/includes/ExecutionTests.cs"
         ],
-        "notes": "Routed via JavaScriptRuntime.Object string member-call fast paths to JavaScriptRuntime.String.Includes. Known differences vs spec: does not reject RegExp searchString, and when called with zero arguments the fast path uses an empty string instead of ToString(undefined)."
+        "test262Suites": [
+          "built_ins.String.prototype.includes"
+        ],
+        "test262Paths": [
+          "test/built-ins/String/prototype/includes/coerced-values-of-position.js",
+          "test/built-ins/String/prototype/includes/length.js",
+          "test/built-ins/String/prototype/includes/name.js",
+          "test/built-ins/String/prototype/includes/not-a-constructor.js",
+          "test/built-ins/String/prototype/includes/return-abrupt-from-position-as-symbol.js",
+          "test/built-ins/String/prototype/includes/return-abrupt-from-position.js",
+          "test/built-ins/String/prototype/includes/return-abrupt-from-searchstring-as-symbol.js",
+          "test/built-ins/String/prototype/includes/return-abrupt-from-searchstring-regexp-test.js",
+          "test/built-ins/String/prototype/includes/return-abrupt-from-searchstring.js",
+          "test/built-ins/String/prototype/includes/return-abrupt-from-this-as-symbol.js",
+          "test/built-ins/String/prototype/includes/return-abrupt-from-this.js",
+          "test/built-ins/String/prototype/includes/return-false-with-out-of-bounds-position.js",
+          "test/built-ins/String/prototype/includes/return-true-if-searchstring-is-empty.js",
+          "test/built-ins/String/prototype/includes/searchstring-found-with-position.js",
+          "test/built-ins/String/prototype/includes/searchstring-found-without-position.js",
+          "test/built-ins/String/prototype/includes/searchstring-is-regexp-throws.js",
+          "test/built-ins/String/prototype/includes/searchstring-not-found-with-position.js",
+          "test/built-ins/String/prototype/includes/searchstring-not-found-without-position.js",
+          "test/built-ins/String/prototype/includes/this-is-null-throws.js",
+          "test/built-ins/String/prototype/includes/this-is-undefined-throws.js"
+        ],
+        "notes": "Implemented in JavaScriptRuntime.String.Includes and shared by String.prototype and optimized direct-string calls. The covered test262 cases exercise metadata, receiver validation, RegExp and Symbol rejection, Symbol.match lookup abrupt completion, string/position coercion, bounds, and empty searches. Boxed String wrapper and other exotic-object behavior remain limited."
       },
       {
         "clause": "22.1.3.9",
@@ -587,9 +613,35 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-string.prototype.lastindexof",
         "testScripts": [
-          "tests/Jroc.Tests/String/JavaScript/String_LastIndexOf_Basic.js"
+          "tests/Jroc.Tests/String/JavaScript/String_LastIndexOf_Basic.js",
+          "tests/Jroc.Test262.Tests/built-ins/String/prototype/lastIndexOf/ExecutionTests.cs"
         ],
-        "notes": "Implemented in JavaScriptRuntime.String.LastIndexOf with ordinal search. Argument defaulting follows the fast-path behavior rather than full ToString/ToIntegerOrInfinity edge cases."
+        "test262Suites": [
+          "built_ins.String.prototype.lastIndexOf"
+        ],
+        "test262Paths": [
+          "test/built-ins/String/prototype/lastIndexOf/name.js",
+          "test/built-ins/String/prototype/lastIndexOf/not-a-constructor.js",
+          "test/built-ins/String/prototype/lastIndexOf/not-a-substring.js",
+          "test/built-ins/String/prototype/lastIndexOf/S15.5.4.8_A1_T1.js",
+          "test/built-ins/String/prototype/lastIndexOf/S15.5.4.8_A1_T10.js",
+          "test/built-ins/String/prototype/lastIndexOf/S15.5.4.8_A1_T12.js",
+          "test/built-ins/String/prototype/lastIndexOf/S15.5.4.8_A1_T2.js",
+          "test/built-ins/String/prototype/lastIndexOf/S15.5.4.8_A1_T4.js",
+          "test/built-ins/String/prototype/lastIndexOf/S15.5.4.8_A1_T5.js",
+          "test/built-ins/String/prototype/lastIndexOf/S15.5.4.8_A1_T6.js",
+          "test/built-ins/String/prototype/lastIndexOf/S15.5.4.8_A1_T7.js",
+          "test/built-ins/String/prototype/lastIndexOf/S15.5.4.8_A1_T8.js",
+          "test/built-ins/String/prototype/lastIndexOf/S15.5.4.8_A1_T9.js",
+          "test/built-ins/String/prototype/lastIndexOf/S15.5.4.8_A10.js",
+          "test/built-ins/String/prototype/lastIndexOf/S15.5.4.8_A11.js",
+          "test/built-ins/String/prototype/lastIndexOf/S15.5.4.8_A4_T1.js",
+          "test/built-ins/String/prototype/lastIndexOf/S15.5.4.8_A4_T2.js",
+          "test/built-ins/String/prototype/lastIndexOf/S15.5.4.8_A4_T3.js",
+          "test/built-ins/String/prototype/lastIndexOf/S15.5.4.8_A4_T4.js",
+          "test/built-ins/String/prototype/lastIndexOf/this-value-not-obj-coercible.js"
+        ],
+        "notes": "Implemented in JavaScriptRuntime.String.LastIndexOf with ordinal search and shared by String.prototype and optimized direct-string calls. The covered test262 cases exercise metadata, receiver validation, search-string and position coercion, zero-argument undefined coercion, bounds, and empty searches. Boxed String wrapper and other exotic-object behavior remain limited."
       },
       {
         "clause": "22.1.3.12",
