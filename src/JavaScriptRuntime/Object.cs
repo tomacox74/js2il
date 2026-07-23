@@ -2624,16 +2624,6 @@ namespace JavaScriptRuntime
                     return stringResult;
                 }
 
-                if (JavaScriptRuntime.String.TryGetPrototypeProperty(receiver, methodName, out var prototypeMember))
-                {
-                    if (prototypeMember is Delegate memberDelegate)
-                    {
-                        return InvokeMemberDelegate(receiver, memberDelegate, callArgs);
-                    }
-
-                    throw new TypeError($"{methodName} is not a function");
-                }
-
                 return CallStringMemberViaReflection(input, methodName, callArgs);
             }
 
@@ -3100,13 +3090,23 @@ namespace JavaScriptRuntime
 
             int jsArgCount = callArgs.Length;
             var exact = candidates
-                .Where(m => m.GetParameters().Length == 1 + jsArgCount)
+                .Where(m =>
+                {
+                    var parameters = m.GetParameters();
+                    return !IsParamArray(parameters[^1]) && parameters.Length == 1 + jsArgCount;
+                })
                 .ToList();
 
             var viable = exact.Count > 0
                 ? exact
                 : candidates
-                    .Where(m => m.GetParameters().Length >= 1 + jsArgCount)
+                    .Where(m =>
+                    {
+                        var parameters = m.GetParameters();
+                        return IsParamArray(parameters[^1])
+                            ? jsArgCount >= parameters.Length - 2
+                            : parameters.Length >= 1 + jsArgCount;
+                    })
                     .OrderBy(m => m.GetParameters().Length)
                     .ToList();
             var chosen = viable
@@ -3121,8 +3121,10 @@ namespace JavaScriptRuntime
             var ps = chosen.GetParameters();
             var invokeArgs = new object?[ps.Length];
             invokeArgs[0] = input;
+            var hasParamArray = IsParamArray(ps[^1]);
+            var fixedArgumentCount = hasParamArray ? ps.Length - 2 : jsArgCount;
 
-            for (int i = 0; i < jsArgCount && (i + 1) < ps.Length; i++)
+            for (int i = 0; i < fixedArgumentCount; i++)
             {
                 var target = ps[i + 1].ParameterType;
                 var src = callArgs[i];
@@ -3140,7 +3142,12 @@ namespace JavaScriptRuntime
                 }
             }
 
-            for (int pi = 1 + jsArgCount; pi < ps.Length; pi++)
+            if (hasParamArray)
+            {
+                invokeArgs[^1] = callArgs.Skip(fixedArgumentCount).Cast<object?>().ToArray();
+            }
+
+            for (int pi = 1 + fixedArgumentCount; pi < ps.Length - (hasParamArray ? 1 : 0); pi++)
             {
                 invokeArgs[pi] = ps[pi].ParameterType == typeof(bool) ? (object)false : null;
             }
@@ -3155,6 +3162,9 @@ namespace JavaScriptRuntime
                 throw; // unreachable
             }
         }
+
+        private static bool IsParamArray(ParameterInfo parameter)
+            => parameter.GetCustomAttribute<ParamArrayAttribute>() != null;
 
         // Keep this switch intentionally limited to hot-path members.
         // Any method not listed here is still handled by CallStringMemberViaReflection,

@@ -539,7 +539,7 @@ namespace JavaScriptRuntime
             => CodePointAt(ThisStringValue(RuntimeServices.GetCurrentThis()), GetArg(args, 0));
 
         private static object? PrototypeConcat(object[] scopes, object?[]? args)
-            => Concat(ThisStringValue(RuntimeServices.GetCurrentThis()), args);
+            => Concat(ThisStringValue(RuntimeServices.GetCurrentThis()), args ?? System.Array.Empty<object?>());
 
         private static object? PrototypeEndsWith(object[] scopes, object?[]? args)
         {
@@ -701,20 +701,17 @@ namespace JavaScriptRuntime
             return Substring(input, start, null);
         }
 
-        private static string Concat(string input, object?[]? args)
+        public static string Concat(string input, params object?[] args)
         {
             var builder = new StringBuilder(input);
-            if (args != null)
+            foreach (var argument in args)
             {
-                foreach (var argument in args)
+                if (argument is Symbol)
                 {
-                    if (argument is Symbol)
-                    {
-                        throw new TypeError("Cannot convert a Symbol value to a string");
-                    }
-
-                    builder.Append(DotNet2JSConversions.ToString(argument));
+                    throw new TypeError("Cannot convert a Symbol value to a string");
                 }
+
+                builder.Append(DotNet2JSConversions.ToString(argument));
             }
 
             return builder.ToString();
