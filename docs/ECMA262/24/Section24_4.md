@@ -4,7 +4,7 @@
 
 [Back to Section24](Section24.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-05-27T12:25:29Z
+> Last generated (UTC): 2026-07-23T01:33:26Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -23,7 +23,7 @@
 | 24.4.3.2 | WeakSet.prototype.constructor | Supported | [tc39.es](https://tc39.es/ecma262/#sec-weakset.prototype.constructor) |
 | 24.4.3.3 | WeakSet.prototype.delete ( value ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-weakset.prototype.delete) |
 | 24.4.3.4 | WeakSet.prototype.has ( value ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-weakset.prototype.has) |
-| 24.4.3.5 | WeakSet.prototype [ %Symbol.toStringTag% ] | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-weakset.prototype-%symbol.tostringtag%) |
+| 24.4.3.5 | WeakSet.prototype [ %Symbol.toStringTag% ] | Supported | [tc39.es](https://tc39.es/ecma262/#sec-weakset.prototype-%symbol.tostringtag%) |
 | 24.4.4 | Properties of WeakSet Instances | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-weakset-instances) |
 
 ## Support
@@ -53,5 +53,5 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| WeakSet.prototype[@@toStringTag] | Not Yet Supported |  |  | WeakSet instances do not currently expose a symbol-keyed toStringTag property. |
+| WeakSet.prototype[@@toStringTag] | Supported | `tests/Jroc.Test262.Tests/built-ins/WeakSet/prototype/Symbol.toStringTag/ExecutionTests.cs` | `test/built-ins/WeakSet/prototype/Symbol.toStringTag.js` | WeakSet.prototype exposes the configurable, non-enumerable, non-writable "WeakSet" @@toStringTag data property. |
 

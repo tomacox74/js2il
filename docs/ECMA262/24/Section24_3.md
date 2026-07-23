@@ -4,7 +4,7 @@
 
 [Back to Section24](Section24.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-05-27T12:25:28Z
+> Last generated (UTC): 2026-07-23T01:33:25Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -26,7 +26,7 @@
 | 24.3.3.5 | WeakMap.prototype.getOrInsertComputed ( key , callback ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-weakmap.prototype.getorinsertcomputed) |
 | 24.3.3.6 | WeakMap.prototype.has ( key ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-weakmap.prototype.has) |
 | 24.3.3.7 | WeakMap.prototype.set ( key , value ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-weakmap.prototype.set) |
-| 24.3.3.8 | WeakMap.prototype [ %Symbol.toStringTag% ] | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-weakmap.prototype-%symbol.tostringtag%) |
+| 24.3.3.8 | WeakMap.prototype [ %Symbol.toStringTag% ] | Supported | [tc39.es](https://tc39.es/ecma262/#sec-weakmap.prototype-%symbol.tostringtag%) |
 | 24.3.4 | Properties of WeakMap Instances | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-weakmap-instances) |
 
 ## Support
@@ -62,5 +62,5 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| WeakMap.prototype[@@toStringTag] | Not Yet Supported |  |  | WeakMap instances do not currently expose a symbol-keyed toStringTag property. |
+| WeakMap.prototype[@@toStringTag] | Supported | `tests/Jroc.Test262.Tests/built-ins/WeakMap/prototype/Symbol.toStringTag/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Object/prototype/toString/ExecutionTests.cs` | `test/built-ins/WeakMap/prototype/Symbol.toStringTag.js`<br>`test/built-ins/Object/prototype/toString/symbol-tag-weakmap-builtin.js` | WeakMap.prototype exposes the configurable, non-enumerable, non-writable "WeakMap" @@toStringTag data property. |
 

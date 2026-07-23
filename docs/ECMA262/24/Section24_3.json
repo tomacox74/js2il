@@ -84,7 +84,7 @@
     {
       "clause": "24.3.3.8",
       "title": "WeakMap.prototype [ %Symbol.toStringTag% ]",
-      "status": "Not Yet Supported",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-weakmap.prototype-%symbol.tostringtag%"
     },
     {
@@ -162,9 +162,17 @@
       {
         "clause": "24.3.3.8",
         "feature": "WeakMap.prototype[@@toStringTag]",
-        "status": "Not Yet Supported",
+        "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-weakmap.prototype-%symbol.tostringtag%",
-        "notes": "WeakMap instances do not currently expose a symbol-keyed toStringTag property."
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/WeakMap/prototype/Symbol.toStringTag/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Object/prototype/toString/ExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/built-ins/WeakMap/prototype/Symbol.toStringTag.js",
+          "test/built-ins/Object/prototype/toString/symbol-tag-weakmap-builtin.js"
+        ],
+        "notes": "WeakMap.prototype exposes the configurable, non-enumerable, non-writable \"WeakMap\" @@toStringTag data property."
       }
     ]
   }

@@ -8,6 +8,7 @@ namespace JavaScriptRuntime
     public sealed class Map : IEnumerable<object[]>
     {
         private static readonly Func<object[], object?[]?, object?> _prototypeEntriesValue = PrototypeEntries;
+        internal static readonly JsObject IteratorPrototype = CreateIteratorPrototype();
         internal static readonly JsObject Prototype = CreatePrototype();
         private static readonly object NullKeySentinel = new object();
         private readonly List<object[]> _entries = new List<object[]>(); // [key, value] pairs
@@ -51,6 +52,23 @@ namespace JavaScriptRuntime
                 Value = "Map"
             });
             return exp;
+        }
+
+        private static JsObject CreateIteratorPrototype()
+        {
+            using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
+
+            var prototype = new JsObject();
+            PrototypeChain.SetPrototype(prototype, Iterator.Prototype);
+            PropertyDescriptorStore.DefineOrUpdate(prototype, Symbol.toStringTag.DebugId, new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = false,
+                Value = "Map Iterator"
+            });
+            return prototype;
         }
 
         private static void DefinePrototypeMethod(JsObject prototype, string name, Func<object[], object?[]?, object?> method)
@@ -374,6 +392,7 @@ namespace JavaScriptRuntime
             {
                 _map = map;
                 _kind = kind;
+                PrototypeChain.SetPrototype(this, IteratorPrototype);
             }
 
             public bool HasReturn => true;

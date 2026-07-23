@@ -144,7 +144,7 @@
     {
       "clause": "24.1.3.15",
       "title": "Map.prototype [ %Symbol.toStringTag% ]",
-      "status": "Supported with Limitations",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-map.prototype-%symbol.tostringtag%"
     },
     {
@@ -180,7 +180,7 @@
     {
       "clause": "24.1.5.2.2",
       "title": "%MapIteratorPrototype% [ %Symbol.toStringTag% ]",
-      "status": "Not Yet Supported",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-%mapiteratorprototype%-%symbol.tostringtag%"
     }
   ],
@@ -220,7 +220,7 @@
         "test262Paths": [
           "test/built-ins/Map/prototype-of-map.js"
         ],
-        "notes": "JROC exposes globalThis.Map as a constructor value with test262-covered name/length/constructibility/global descriptor metadata, wires Map.prototype and Map.prototype.constructor, stamps new Map instances with that prototype, and supports reflective checks such as Object.getPrototypeOf(map) === Map.prototype and map instanceof Map. Iterable construction, forEach, and @@iterator are implemented; full MapIteratorPrototype metadata remains incomplete."
+        "notes": "JROC exposes globalThis.Map as a constructor value with test262-covered name/length/constructibility/global descriptor metadata, wires Map.prototype and Map.prototype.constructor, stamps new Map instances with that prototype, and supports reflective checks such as Object.getPrototypeOf(map) === Map.prototype and map instanceof Map. Iterable construction, forEach, and @@iterator are implemented."
       },
       {
         "clause": "24.1.2.3",
@@ -285,7 +285,7 @@
           "tests/Jroc.Tests/Map/JavaScript/Map_Keys_Values_Entries.js",
           "tests/Jroc.Tests/Map/JavaScript/Map_Symbol_Iterator.js"
         ],
-        "notes": "The methods are exposed on the public Map.prototype surface and return native iterator objects with .next(). Iterator prototype metadata remains incomplete."
+        "notes": "The methods are exposed on the public Map.prototype surface and return native iterator objects with .next()."
       },
       {
         "clause": "24.1.3.5",
@@ -315,22 +315,39 @@
         "notes": "Map instances now expose a Symbol.iterator method that returns the same entry iterator shape as entries()."
       },
       {
+        "clause": "24.1.3.15",
+        "feature": "Map.prototype[@@toStringTag]",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-map.prototype-%symbol.tostringtag%",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/Map/prototype/Symbol.toStringTag/ExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/built-ins/Map/prototype/Symbol.toStringTag.js"
+        ],
+        "notes": "Map.prototype exposes the configurable, non-enumerable, non-writable \"Map\" @@toStringTag data property."
+      },
+      {
         "clause": "24.1.5.1",
         "feature": "Map iteration in for-of and other runtime iterator consumers",
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-createmapiterator",
-        "notes": "Map instances now expose Symbol.iterator and the keys/values/entries methods return native iterator objects. Iterator prototype metadata such as %MapIteratorPrototype%[@@toStringTag] remains incomplete."
+        "notes": "Map instances expose Symbol.iterator and the keys/values/entries methods return native iterator objects with a dedicated %MapIteratorPrototype%."
       },
       {
         "clause": "24.1.5.2.2",
         "feature": "%MapIteratorPrototype%[@@toStringTag]",
-        "status": "Not Yet Supported",
+        "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-%mapiteratorprototype%-%symbol.tostringtag%",
         "testScripts": [
-          "tests/Jroc.Tests/Map/JavaScript/Map_Keys_Values_Entries.js",
-          "tests/Jroc.Tests/Map/JavaScript/Map_Symbol_Iterator.js"
+          "tests/Jroc.Test262.Tests/built-ins/MapIteratorPrototype/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Object/prototype/toString/ExecutionTests.cs"
         ],
-        "notes": "Map iterators currently implement the runtime next()/return() protocol used by entries(), keys(), values(), and @@iterator, but JROC does not yet install the spec %MapIteratorPrototype% Symbol.toStringTag metadata."
+        "test262Paths": [
+          "test/built-ins/MapIteratorPrototype/Symbol.toStringTag.js",
+          "test/built-ins/Object/prototype/toString/symbol-tag-map-builtin.js"
+        ],
+        "notes": "Map iterator instances inherit from a dedicated %MapIteratorPrototype% with the configurable, non-enumerable, non-writable \"Map Iterator\" @@toStringTag data property."
       }
     ]
   }
