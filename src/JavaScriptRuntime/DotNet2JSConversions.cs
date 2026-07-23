@@ -30,6 +30,7 @@ namespace JavaScriptRuntime
             {
                 return boolValue ? "true" : "false";
             }
+
             if (value is Array jsArray)
             {
                 if (TypeUtilities.TryCoerceObjectToPrimitive(jsArray, "string", out var arrayPrimitive))
