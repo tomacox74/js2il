@@ -4,7 +4,7 @@
 
 [Back to Section24](Section24.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-07-23T01:33:25Z
+> Last generated (UTC): 2026-07-23T02:06:52Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -18,7 +18,7 @@
 | 24.1.1.1 | Map ( [ iterable ] ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-map-iterable) |
 | 24.1.1.2 | AddEntriesFromIterable ( target , iterable , adder ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-add-entries-from-iterable) |
 | 24.1.2 | Properties of the Map Constructor | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-map-constructor) |
-| 24.1.2.1 | Map.groupBy ( items , callback ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-map.groupby) |
+| 24.1.2.1 | Map.groupBy ( items , callback ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-map.groupby) |
 | 24.1.2.2 | Map.prototype | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-map.prototype) |
 | 24.1.2.3 | get Map [ %Symbol.species% ] | Supported | [tc39.es](https://tc39.es/ecma262/#sec-get-map-%symbol.species%) |
 | 24.1.3 | Properties of the Map Prototype Object | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-map-prototype-object) |
@@ -54,6 +54,12 @@ Feature-level support tracking with repo test references and optional test262 ev
 |---|---|---|---|---|
 | new Map() | Supported | [`Map_Constructor_Empty.js`](../../../tests/Jroc.Tests/Map/JavaScript/Map_Constructor_Empty.js) | `test/built-ins/Map/undefined-newtarget.js` | Zero-argument construction lowers to JavaScriptRuntime.Map() and produces an insertion-ordered keyed collection. |
 | new Map(iterable) | Supported | [`Map_Constructor_Iterable.js`](../../../tests/Jroc.Tests/Map/JavaScript/Map_Constructor_Iterable.js) |  | JavaScriptRuntime.Map accepts a single iterable argument, consumes it via the runtime iterator protocol, observes constructor adder lookup/call-order semantics, treats an own/inherited undefined @@iterator as a TypeError, and inserts each [key, value] pair in order for the covered test262 constructor cases. |
+
+### 24.1.2.1 ([tc39.es](https://tc39.es/ecma262/#sec-map.groupby))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Map.groupBy | Supported | `tests/Jroc.Test262.Tests/built-ins/Map/groupBy/ExecutionTests.cs` | `test/built-ins/Map/groupBy/callback-arg.js`<br>`test/built-ins/Map/groupBy/callback-throws.js`<br>`test/built-ins/Map/groupBy/emptyList.js`<br>`test/built-ins/Map/groupBy/evenOdd.js`<br>`test/built-ins/Map/groupBy/groupLength.js`<br>`test/built-ins/Map/groupBy/invalid-callback.js`<br>`test/built-ins/Map/groupBy/invalid-iterable.js`<br>`test/built-ins/Map/groupBy/iterator-next-throws.js`<br>`test/built-ins/Map/groupBy/length.js`<br>`test/built-ins/Map/groupBy/map-instance.js`<br>`test/built-ins/Map/groupBy/name.js`<br>`test/built-ins/Map/groupBy/negativeZero.js`<br>`test/built-ins/Map/groupBy/toPropertyKey.js` | Map.groupBy is exposed as a non-constructible static built-in with standard name and length metadata. It groups iterable values into insertion-ordered Map buckets, passes each callback (value, index), preserves object keys without property-key coercion, normalizes negative zero, and closes iterators after abrupt completion. |
 
 ### 24.1.2.2 ([tc39.es](https://tc39.es/ecma262/#sec-map.prototype))
 

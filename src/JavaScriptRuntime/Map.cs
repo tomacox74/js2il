@@ -179,6 +179,60 @@ namespace JavaScriptRuntime
             AddEntriesFromIterable(iterable);
         }
 
+        public static Map groupBy(object? items, object? callback)
+        {
+            if (callback is not Delegate)
+            {
+                throw new TypeError("Map.groupBy callback must be a function");
+            }
+
+            var map = new Map();
+            var iterator = ObjectRuntime.GetIterator(items);
+            var completedNormally = false;
+            var index = 0;
+
+            try
+            {
+                while (true)
+                {
+                    var step = JavaScriptRuntime.Object.IteratorNext(iterator);
+                    if (JavaScriptRuntime.Object.IteratorResultDone(step))
+                    {
+                        completedNormally = true;
+                        return map;
+                    }
+
+                    var value = JavaScriptRuntime.Object.IteratorResultValue(step);
+                    var key = JavaScriptRuntime.Object.InvokeCallable(
+                        callback,
+                        null!,
+                        new object?[] { value, (double)index });
+                    if (key is double number && number == 0d)
+                    {
+                        key = 0d;
+                    }
+
+                    if (!map.has(key))
+                    {
+                        map.set(key, new JavaScriptRuntime.Array(new[] { value }));
+                    }
+                    else
+                    {
+                        ((JavaScriptRuntime.Array)map.get(key)!).Add(value);
+                    }
+
+                    index++;
+                }
+            }
+            finally
+            {
+                if (!completedNormally)
+                {
+                    JavaScriptRuntime.Object.IteratorCloseForThrowCompletion(iterator);
+                }
+            }
+        }
+
         private void AddEntriesFromIterable(object iterable)
         {
             var adder = GetCallableAdder("set");
@@ -274,16 +328,17 @@ namespace JavaScriptRuntime
         public object set(object? key, object? value)
         {
             var k = NormalizeKey(key);
+            var storedKey = key is null ? null : k;
             if (_keyIndex.TryGetValue(k, out var idx))
             {
                 // Update existing key
-                _entries[idx] = new object[] { key!, value! };
+                _entries[idx] = new object[] { storedKey!, value! };
             }
             else
             {
                 // Add new key
                 _keyIndex[k] = _entries.Count;
-                _entries.Add(new object[] { key!, value! });
+                _entries.Add(new object[] { storedKey!, value! });
             }
             return this;
         }
@@ -371,7 +426,27 @@ namespace JavaScriptRuntime
 
         private static object NormalizeKey(object? key)
         {
-            return key ?? NullKeySentinel;
+            if (key is null)
+            {
+                return NullKeySentinel;
+            }
+
+            return key switch
+            {
+                byte value => (double)value,
+                sbyte value => (double)value,
+                short value => (double)value,
+                ushort value => (double)value,
+                int value => (double)value,
+                uint value => (double)value,
+                long value => (double)value,
+                ulong value => (double)value,
+                double value when value == 0d => 0d,
+                float value when value == 0f => 0d,
+                float value => (double)value,
+                decimal value => (double)value,
+                _ => key
+            };
         }
 
         private enum MapIteratorKind

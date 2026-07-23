@@ -511,9 +511,19 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-object.groupby",
         "testScripts": [
-          "tests/Jroc.Tests/Object/JavaScript/Object_GroupBy_Basic.js"
+          "tests/Jroc.Tests/Object/JavaScript/Object_GroupBy_Basic.js",
+          "tests/Jroc.Test262.Tests/built-ins/Object/groupBy/ExecutionTests.cs"
         ],
-        "notes": "Implemented for common iterable + callback usage, grouping values into array buckets on a plain object. Full callback/iterator abrupt completion corner cases are partial."
+        "test262Paths": [
+          "test/built-ins/Object/groupBy/callback-arg.js",
+          "test/built-ins/Object/groupBy/emptyList.js",
+          "test/built-ins/Object/groupBy/invalid-callback.js",
+          "test/built-ins/Object/groupBy/invalid-property-key.js",
+          "test/built-ins/Object/groupBy/iterator-next-throws.js",
+          "test/built-ins/Object/groupBy/null-prototype.js",
+          "test/built-ins/Object/groupBy/toPropertyKey.js"
+        ],
+        "notes": "Groups callback results into array buckets on a null-prototype object and closes iterators after abrupt completion. Covered test262 cases include callback arguments, callback validation, property-key coercion and errors, iterator errors, empty inputs, null-prototype results, and built-in metadata. Broader exotic iterable and coercion coverage remains limited."
       },
       {
         "clause": "20.1.2.14",

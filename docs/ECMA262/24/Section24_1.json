@@ -36,7 +36,7 @@
     {
       "clause": "24.1.2.1",
       "title": "Map.groupBy ( items , callback )",
-      "status": "Not Yet Supported",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-map.groupby"
     },
     {
@@ -186,6 +186,31 @@
   ],
   "support": {
     "entries": [
+      {
+        "clause": "24.1.2.1",
+        "feature": "Map.groupBy",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-map.groupby",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/Map/groupBy/ExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/built-ins/Map/groupBy/callback-arg.js",
+          "test/built-ins/Map/groupBy/callback-throws.js",
+          "test/built-ins/Map/groupBy/emptyList.js",
+          "test/built-ins/Map/groupBy/evenOdd.js",
+          "test/built-ins/Map/groupBy/groupLength.js",
+          "test/built-ins/Map/groupBy/invalid-callback.js",
+          "test/built-ins/Map/groupBy/invalid-iterable.js",
+          "test/built-ins/Map/groupBy/iterator-next-throws.js",
+          "test/built-ins/Map/groupBy/length.js",
+          "test/built-ins/Map/groupBy/map-instance.js",
+          "test/built-ins/Map/groupBy/name.js",
+          "test/built-ins/Map/groupBy/negativeZero.js",
+          "test/built-ins/Map/groupBy/toPropertyKey.js"
+        ],
+        "notes": "Map.groupBy is exposed as a non-constructible static built-in with standard name and length metadata. It groups iterable values into insertion-ordered Map buckets, passes each callback (value, index), preserves object keys without property-key coercion, normalizes negative zero, and closes iterators after abrupt completion."
+      },
       {
         "clause": "24.1.1.1",
         "feature": "new Map()",
