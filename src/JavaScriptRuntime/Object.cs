@@ -3228,12 +3228,7 @@ namespace JavaScriptRuntime
                     return true;
 
                 case "indexOf":
-                    result = argCount switch
-                    {
-                        <= 0 => JavaScriptRuntime.String.IndexOf(input, "undefined"),
-                        1 => JavaScriptRuntime.String.IndexOf(input, DotNet2JSConversions.ToString(a0)),
-                        _ => JavaScriptRuntime.String.IndexOf(input, DotNet2JSConversions.ToString(a0), a1)
-                    };
+                    result = JavaScriptRuntime.String.IndexOfDynamic(input, a0, a1);
                     return true;
 
                 case "lastIndexOf":

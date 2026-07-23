@@ -431,7 +431,17 @@
         "notes": "Implemented in JavaScriptRuntime.String.At with negative-index support and exposed both through string fast paths and String.prototype. Out-of-range results surface as jroc's undefined/null representation rather than a boxed wrapper value.",
         "testScripts": [
           "tests/Jroc.Tests/String/JavaScript/String_NewApis_Basic.js",
-          "tests/Jroc.Tests/String/JavaScript/String_Prototype_Iterator_Surface.js"
+          "tests/Jroc.Tests/String/JavaScript/String_Prototype_Iterator_Surface.js",
+          "tests/Jroc.Test262.Tests/built-ins/String/prototype/at/ExecutionTests.cs"
+        ],
+        "test262Suites": [
+          "built_ins.String.prototype.at"
+        ],
+        "test262Paths": [
+          "test/built-ins/String/prototype/at/length.js",
+          "test/built-ins/String/prototype/at/name.js",
+          "test/built-ins/String/prototype/at/returns-item.js",
+          "test/built-ins/String/prototype/at/returns-item-relative-index.js"
         ]
       },
       {
@@ -440,9 +450,25 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-string.prototype.charat",
         "testScripts": [
-          "tests/Jroc.Tests/String/JavaScript/String_CharAt_Basic.js"
+          "tests/Jroc.Tests/String/JavaScript/String_CharAt_Basic.js",
+          "tests/Jroc.Test262.Tests/built-ins/String/prototype/charAt/ExecutionTests.cs"
         ],
-        "notes": "Implemented via JavaScriptRuntime.String.CharAt and exposed on the shared String.prototype surface while retaining direct string fast paths. jroc still skips boxed String wrapper semantics and full exotic-property observability."
+        "test262Suites": [
+          "built_ins.String.prototype.charAt"
+        ],
+        "test262Paths": [
+          "test/built-ins/String/prototype/charAt/name.js",
+          "test/built-ins/String/prototype/charAt/not-a-constructor.js",
+          "test/built-ins/String/prototype/charAt/pos-coerce-err.js",
+          "test/built-ins/String/prototype/charAt/S15.5.4.4_A10.js",
+          "test/built-ins/String/prototype/charAt/S15.5.4.4_A6.js",
+          "test/built-ins/String/prototype/charAt/S15.5.4.4_A7.js",
+          "test/built-ins/String/prototype/charAt/S15.5.4.4_A8.js",
+          "test/built-ins/String/prototype/charAt/S15.5.4.4_A9.js",
+          "test/built-ins/String/prototype/charAt/S9.4_A2.js",
+          "test/built-ins/String/prototype/charAt/this-value-not-obj-coercible.js"
+        ],
+        "notes": "Implemented via JavaScriptRuntime.String.CharAt and exposed on the shared String.prototype surface while retaining direct string fast paths. Covered test262 cases exercise metadata, receiver validation, and abrupt position coercion. The upstream eval-dependent fixture remains unsupported, and boxed String wrapper semantics and full exotic-property observability remain limited."
       },
       {
         "clause": "22.1.3.3",
@@ -450,9 +476,24 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-string.prototype.charcodeat",
         "testScripts": [
-          "tests/Jroc.Tests/String/JavaScript/String_CharCodeAt_Basic.js"
+          "tests/Jroc.Tests/String/JavaScript/String_CharCodeAt_Basic.js",
+          "tests/Jroc.Test262.Tests/built-ins/String/prototype/charCodeAt/ExecutionTests.cs"
         ],
-        "notes": "Implemented in JavaScriptRuntime.String.CharCodeAt and exposed on the shared String.prototype surface. Returns a boxed number and preserves jroc's current undefined/null modeling rather than full boxed-wrapper semantics."
+        "test262Suites": [
+          "built_ins.String.prototype.charCodeAt"
+        ],
+        "test262Paths": [
+          "test/built-ins/String/prototype/charCodeAt/name.js",
+          "test/built-ins/String/prototype/charCodeAt/not-a-constructor.js",
+          "test/built-ins/String/prototype/charCodeAt/pos-coerce-err.js",
+          "test/built-ins/String/prototype/charCodeAt/S15.5.4.5_A10.js",
+          "test/built-ins/String/prototype/charCodeAt/S15.5.4.5_A6.js",
+          "test/built-ins/String/prototype/charCodeAt/S15.5.4.5_A7.js",
+          "test/built-ins/String/prototype/charCodeAt/S15.5.4.5_A8.js",
+          "test/built-ins/String/prototype/charCodeAt/S15.5.4.5_A9.js",
+          "test/built-ins/String/prototype/charCodeAt/this-value-not-obj-coercible.js"
+        ],
+        "notes": "Implemented in JavaScriptRuntime.String.CharCodeAt and exposed on the shared String.prototype surface. Covered test262 cases exercise metadata, receiver validation, and abrupt position coercion. The upstream eval-dependent fixture remains unsupported, and boxed String wrapper semantics remain limited."
       },
       {
         "clause": "22.1.3.4",
@@ -578,9 +619,13 @@
           "tests/Jroc.Tests/String/JavaScript/String_MemberCall_FastPath_CommonMethods.js",
           "tests/Jroc.Tests/Function/JavaScript/Function_Prototype_ToString_Basic.js",
           "tests/Jroc.Test262.Tests/built-ins/String/prototype/indexOf/JavaScript/position-tointeger.js",
-          "tests/Jroc.Test262.Tests/built-ins/String/prototype/indexOf/JavaScript/S15.5.4.7_A3_T1.js"
+          "tests/Jroc.Test262.Tests/built-ins/String/prototype/indexOf/JavaScript/S15.5.4.7_A3_T1.js",
+          "tests/Jroc.Test262.Tests/built-ins/String/prototype/indexOf/ExecutionTests.cs"
         ],
-        "notes": "Implemented in JavaScriptRuntime.String.IndexOf and routed via JavaScriptRuntime.Object string member-call fast paths. Current bounded test262 coverage exercises boxed receivers, zero-argument ToString(undefined) behavior, function-object metadata, and representative position-coercion cases including array object-to-primitive coercion.",
+        "test262Suites": [
+          "built_ins.String.prototype.indexOf"
+        ],
+        "notes": "Implemented in JavaScriptRuntime.String.IndexOf and routed via JavaScriptRuntime.Object string member-call fast paths. Covered test262 cases exercise receiver validation, metadata, full search-string and position coercion including BigInt and Symbol rejection, and legacy positional behavior. The pre-existing upstream eval-dependent fixture remains unsupported, and boxed String wrapper behavior remains limited.",
         "test262Paths": [
           "test/built-ins/String/prototype/indexOf/S15.5.4.7_A1_T1.js",
           "test/built-ins/String/prototype/indexOf/S15.5.4.7_A1_T4.js",
@@ -594,7 +639,34 @@
           "test/built-ins/String/prototype/indexOf/S15.5.4.7_A2_T3.js",
           "test/built-ins/String/prototype/indexOf/S15.5.4.7_A2_T4.js",
           "test/built-ins/String/prototype/indexOf/position-tointeger.js",
-          "test/built-ins/String/prototype/indexOf/S15.5.4.7_A3_T1.js"
+          "test/built-ins/String/prototype/indexOf/S15.5.4.7_A3_T1.js",
+          "test/built-ins/String/prototype/indexOf/not-a-constructor.js",
+          "test/built-ins/String/prototype/indexOf/position-tointeger-bigint.js",
+          "test/built-ins/String/prototype/indexOf/position-tointeger-errors.js",
+          "test/built-ins/String/prototype/indexOf/position-tointeger-toprimitive.js",
+          "test/built-ins/String/prototype/indexOf/position-tointeger-wrapped-values.js",
+          "test/built-ins/String/prototype/indexOf/S15.5.4.7_A3_T3.js",
+          "test/built-ins/String/prototype/indexOf/S15.5.4.7_A4_T1.js",
+          "test/built-ins/String/prototype/indexOf/S15.5.4.7_A4_T2.js",
+          "test/built-ins/String/prototype/indexOf/S15.5.4.7_A4_T3.js",
+          "test/built-ins/String/prototype/indexOf/S15.5.4.7_A4_T4.js",
+          "test/built-ins/String/prototype/indexOf/S15.5.4.7_A4_T5.js",
+          "test/built-ins/String/prototype/indexOf/S15.5.4.7_A5_T1.js",
+          "test/built-ins/String/prototype/indexOf/S15.5.4.7_A5_T2.js",
+          "test/built-ins/String/prototype/indexOf/S15.5.4.7_A5_T3.js",
+          "test/built-ins/String/prototype/indexOf/S15.5.4.7_A5_T4.js",
+          "test/built-ins/String/prototype/indexOf/S15.5.4.7_A5_T5.js",
+          "test/built-ins/String/prototype/indexOf/S15.5.4.7_A5_T6.js",
+          "test/built-ins/String/prototype/indexOf/S15.5.4.7_A6.js",
+          "test/built-ins/String/prototype/indexOf/S15.5.4.7_A7.js",
+          "test/built-ins/String/prototype/indexOf/S15.5.4.7_A8.js",
+          "test/built-ins/String/prototype/indexOf/S15.5.4.7_A9.js",
+          "test/built-ins/String/prototype/indexOf/searchstring-tostring-bigint.js",
+          "test/built-ins/String/prototype/indexOf/searchstring-tostring-errors.js",
+          "test/built-ins/String/prototype/indexOf/searchstring-tostring-toprimitive.js",
+          "test/built-ins/String/prototype/indexOf/searchstring-tostring-wrapped-values.js",
+          "test/built-ins/String/prototype/indexOf/searchstring-tostring.js",
+          "test/built-ins/String/prototype/indexOf/this-value-not-obj-coercible.js"
         ]
       },
       {

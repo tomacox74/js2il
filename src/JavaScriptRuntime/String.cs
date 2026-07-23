@@ -395,7 +395,25 @@ namespace JavaScriptRuntime
                 throw new TypeError("Cannot convert a Symbol value to a string");
             }
 
-            return DotNet2JSConversions.ToString(value);
+            if (value is not null
+                && PropertyDescriptorStore.TryGetOwn(value, Object.PrimitiveValuePropertyName, out var descriptor)
+                && descriptor.Kind == JsPropertyDescriptorKind.Data
+                && descriptor.Value is Symbol)
+            {
+                throw new TypeError("Cannot convert a Symbol value to a string");
+            }
+
+            if (value is null or JsNull or string || value.GetType().IsValueType)
+            {
+                return DotNet2JSConversions.ToString(value);
+            }
+
+            if (!TypeUtilities.TryCoerceObjectToPrimitive(value, "string", out var primitive))
+            {
+                throw new TypeError("Cannot convert object to primitive value");
+            }
+
+            return ToSearchString(primitive);
         }
 
         internal static object Construct(object?[]? args, object? newTarget)
@@ -449,6 +467,26 @@ namespace JavaScriptRuntime
             }
 
             return global::System.Math.Truncate(number);
+        }
+
+        private static double ToNumberForStringIndex(object? value)
+        {
+            if (value is null)
+            {
+                return double.NaN;
+            }
+
+            if (value is string or JsNull || value.GetType().IsValueType)
+            {
+                return TypeUtilities.ToNumber(value);
+            }
+
+            if (!TypeUtilities.TryCoerceObjectToPrimitive(value, "number", out var primitive))
+            {
+                throw new TypeError("Cannot convert object to primitive value");
+            }
+
+            return TypeUtilities.ToNumber(primitive);
         }
 
         private static int ToLength(object? value, int defaultValue = 0)
@@ -569,10 +607,7 @@ namespace JavaScriptRuntime
         private static object? PrototypeIndexOf(object[] scopes, object?[]? args)
         {
             var input = ThisStringValue(RuntimeServices.GetCurrentThis());
-            var searchString = DotNet2JSConversions.ToString(GetArg(args, 0));
-            return args == null || args.Length < 2
-                ? IndexOf(input, searchString)
-                : IndexOf(input, searchString, args[1]);
+            return IndexOfDynamic(input, GetArg(args, 0), GetArg(args, 1));
         }
 
         private static object? PrototypeIsWellFormed(object[] scopes, object?[]? args)
@@ -904,13 +939,23 @@ namespace JavaScriptRuntime
         /// </summary>
         public static double IndexOf(string input, string searchString)
         {
-            return IndexOf(input, searchString, null);
+            return IndexOfCore(input, searchString, null);
         }
 
         public static double IndexOf(string input, string searchString, object? position)
         {
+            return IndexOfCore(input, searchString, position);
+        }
+
+        public static double IndexOfDynamic(string input, object? searchString, object? position)
+        {
+            return IndexOfCore(input, ToSearchString(searchString), position);
+        }
+
+        private static double IndexOfCore(string input, string searchString, object? position)
+        {
             input ??= string.Empty;
-            searchString = DotNet2JSConversions.ToString(searchString);
+            searchString ??= string.Empty;
 
             int startIndex = 0;
             if (position is not null)
@@ -1179,7 +1224,7 @@ namespace JavaScriptRuntime
         {
             input ??= string.Empty;
 
-            var idx = index == null ? 0d : JavaScriptRuntime.TypeUtilities.ToNumber(index);
+            var idx = index == null ? 0d : ToNumberForStringIndex(index);
 
             if (double.IsNaN(idx))
             {
@@ -1230,7 +1275,7 @@ namespace JavaScriptRuntime
         public static double CharCodeAt(string input, object? index)
         {
             // JS default index is 0 when omitted/undefined/null.
-            var idx = index == null ? 0d : JavaScriptRuntime.TypeUtilities.ToNumber(index);
+            var idx = index == null ? 0d : ToNumberForStringIndex(index);
             return CharCodeAt(input, idx);
         }
 

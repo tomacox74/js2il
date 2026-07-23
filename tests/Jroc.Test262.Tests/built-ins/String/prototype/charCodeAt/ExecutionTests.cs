@@ -62,4 +62,13 @@ public class ExecutionTests : DiskExecutionTestsBase
     public Task S15_5_4_5_A4()
         => ExecutionTestFromFile("S15.5.4.5_A4");
 
+    [Fact(DisplayName = "name")] public Task name() => ExecutionTestFromFile("name");
+    [Fact(DisplayName = "not-a-constructor")] public Task not_a_constructor() => ExecutionTestFromFile("not-a-constructor");
+    [Fact(DisplayName = "pos-coerce-err")] public Task pos_coerce_err() => ExecutionTestFromFile("pos-coerce-err");
+    [Fact(DisplayName = "S15.5.4.5_A10")] public Task S15_5_4_5_A10() => ExecutionTestFromFile("S15.5.4.5_A10");
+    [Fact(DisplayName = "S15.5.4.5_A6")] public Task S15_5_4_5_A6() => ExecutionTestFromFile("S15.5.4.5_A6");
+    [Fact(DisplayName = "S15.5.4.5_A7")] public Task S15_5_4_5_A7() => ExecutionTestFromFile("S15.5.4.5_A7");
+    [Fact(DisplayName = "S15.5.4.5_A8")] public Task S15_5_4_5_A8() => ExecutionTestFromFile("S15.5.4.5_A8");
+    [Fact(DisplayName = "S15.5.4.5_A9")] public Task S15_5_4_5_A9() => ExecutionTestFromFile("S15.5.4.5_A9");
+    [Fact(DisplayName = "this-value-not-obj-coercible")] public Task this_value_not_obj_coercible() => ExecutionTestFromFile("this-value-not-obj-coercible");
 }
