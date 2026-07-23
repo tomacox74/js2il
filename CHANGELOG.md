@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.11.36 - 2026-07-23
+
 - runtime: implement covered `GetSubstitution` replacement-template semantics for `String.prototype.replace` and `replaceAll`, including special replacement tokens, indexed captures, protocol dispatch, and coercion ordering. Ports fifty upstream test262 cases; named-capture `$<name>` substitutions remain unsupported.
 - runtime: implement the documented `TrimString` abstract operation through shared ECMAScript trimming helpers, complete `String.prototype.trimEnd` coverage, and correct Number-to-String decimal formatting at the `1e-6` threshold. Ports fifty upstream test262 cases.
 - runtime: complete covered `String.prototype.repeat`, `trimStart`, and `trimEnd` behavior, including abrupt count coercion and distinct trim-alias metadata. Ports fifty upstream test262 cases.
