@@ -4,7 +4,7 @@
 
 [Back to Section22](Section22.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-07-22T23:36:32Z
+> Last generated (UTC): 2026-07-23T00:23:14Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -36,7 +36,7 @@
 | 22.1.3.12 | String.prototype.localeCompare ( that [ , reserved1 [ , reserved2 ] ] ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.localecompare) |
 | 22.1.3.13 | String.prototype.match ( regexp ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.match) |
 | 22.1.3.14 | String.prototype.matchAll ( regexp ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.matchall) |
-| 22.1.3.15 | String.prototype.normalize ( [ form ] ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.normalize) |
+| 22.1.3.15 | String.prototype.normalize ( [ form ] ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.normalize) |
 | 22.1.3.16 | String.prototype.padEnd ( maxLength [ , fillString ] ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.padend) |
 | 22.1.3.17 | String.prototype.padStart ( maxLength [ , fillString ] ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.padstart) |
 | 22.1.3.17.1 | StringPaddingBuiltinsImpl ( O , maxLength , fillString , placement ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-stringpaddingbuiltinsimpl) |
@@ -199,7 +199,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| String.prototype.normalize | Not Yet Supported |  |  | Unicode normalization forms are not exposed; there is no runtime hook for normalize. |
+| String.prototype.normalize | Supported with Limitations |  | suite `built_ins.String.prototype.normalize`<br>`test/built-ins/String/prototype/normalize/form-is-not-valid-throws.js`<br>`test/built-ins/String/prototype/normalize/length.js`<br>`test/built-ins/String/prototype/normalize/name.js`<br>`test/built-ins/String/prototype/normalize/normalize.js`<br>`test/built-ins/String/prototype/normalize/not-a-constructor.js`<br>`test/built-ins/String/prototype/normalize/return-abrupt-from-form-as-symbol.js`<br>`test/built-ins/String/prototype/normalize/return-abrupt-from-form.js`<br>`test/built-ins/String/prototype/normalize/return-normalized-string-from-coerced-form.js`<br>`test/built-ins/String/prototype/normalize/return-normalized-string-using-default-parameter.js`<br>`test/built-ins/String/prototype/normalize/return-normalized-string.js` | Implemented through .NET Unicode normalization forms with ECMA-262 NFC defaulting, form coercion, invalid-form RangeError behavior, and Symbol rejection. The exact Unicode data version follows the hosted .NET runtime. |
 
 ### 22.1.3.16 ([tc39.es](https://tc39.es/ecma262/#sec-string.prototype.padend))
 

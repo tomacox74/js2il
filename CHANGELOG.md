@@ -6,6 +6,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- runtime: add `String.prototype.normalize` with NFC defaulting, all four ECMA-262 normalization forms, form coercion, Symbol rejection, and invalid-form `RangeError`s. Ports ten upstream test262 cases.
 - runtime: add `String.prototype.concat` with generic receiver coercion and ordered argument conversion. Ports ten upstream test262 cases for built-in metadata, invalid receivers, and primitive arguments.
 - runtime: add standards-compatible `Uint8Array.fromHex` and `Uint8Array.prototype.toHex`, including strict input validation, lowercase hexadecimal output, non-constructible built-in metadata, property descriptors, and typed receiver validation. Ports ten test262 cases for hexadecimal Uint8Array conversion.
 

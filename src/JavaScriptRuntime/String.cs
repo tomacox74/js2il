@@ -66,6 +66,7 @@ namespace JavaScriptRuntime
             DefinePrototypeMethod(prototype, "localeCompare", (Func<object[], object?[]?, object?>)PrototypeLocaleCompare, 1);
             DefinePrototypeMethod(prototype, "match", (Func<object[], object?[]?, object?>)PrototypeMatch, 1);
             DefinePrototypeMethod(prototype, "matchAll", (Func<object[], object?[]?, object?>)PrototypeMatchAll, 1);
+            DefinePrototypeMethod(prototype, "normalize", (Func<object[], object?[]?, object?>)PrototypeNormalize, 0);
             DefinePrototypeMethod(prototype, "padEnd", (Func<object[], object?[]?, object?>)PrototypePadEnd, 1);
             DefinePrototypeMethod(prototype, "padStart", (Func<object[], object?[]?, object?>)PrototypePadStart, 1);
             DefinePrototypeMethod(prototype, "repeat", (Func<object[], object?[]?, object?>)PrototypeRepeat, 1);
@@ -592,6 +593,9 @@ namespace JavaScriptRuntime
         private static object? PrototypeMatchAll(object[] scopes, object?[]? args)
             => MatchAll(ThisStringValue(RuntimeServices.GetCurrentThis()), GetArg(args, 0));
 
+        private static object? PrototypeNormalize(object[] scopes, object?[]? args)
+            => Normalize(ThisStringValue(RuntimeServices.GetCurrentThis()), GetArg(args, 0));
+
         private static object? PrototypePadEnd(object[] scopes, object?[]? args)
             => PadEnd(ThisStringValue(RuntimeServices.GetCurrentThis()), GetArg(args, 0), GetArg(args, 1));
 
@@ -699,6 +703,27 @@ namespace JavaScriptRuntime
         public static string Substring(string input, object? start)
         {
             return Substring(input, start, null);
+        }
+
+        public static string Normalize(string input, object? form)
+        {
+            var normalizedForm = form switch
+            {
+                null => "NFC",
+                Symbol => throw new TypeError("Cannot convert a Symbol value to a string"),
+                _ => DotNet2JSConversions.ToString(form)
+            };
+
+            var normalizationForm = normalizedForm switch
+            {
+                "NFC" => NormalizationForm.FormC,
+                "NFD" => NormalizationForm.FormD,
+                "NFKC" => NormalizationForm.FormKC,
+                "NFKD" => NormalizationForm.FormKD,
+                _ => throw new RangeError("Invalid normalization form")
+            };
+
+            return input.Normalize(normalizationForm);
         }
 
         public static string Concat(string input, params object?[] args)
