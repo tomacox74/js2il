@@ -4,7 +4,7 @@
 
 [Back to Section22](Section22.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-07-23T16:55:12Z
+> Last generated (UTC): 2026-07-23T16:56:14Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -343,7 +343,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| String.prototype.trimStart | Supported with Limitations | [`String_MemberCall_FastPath_CommonMethods.js`](../../../tests/Jroc.Tests/String/JavaScript/String_MemberCall_FastPath_CommonMethods.js)<br>`tests/Jroc.Test262.Tests/built-ins/String/prototype/trimStart/ExecutionTests.cs` | suite `built_ins.String.prototype.trimStart` | Implemented in JavaScriptRuntime.String.TrimStart (and TrimLeft alias) via TrimStartEcma (explicit ECMAScript whitespace set). Twenty-three upstream test262 cases cover metadata, property descriptors, receiver validation, and abrupt primitive coercion. |
+| String.prototype.trimStart | Supported | [`String_MemberCall_FastPath_CommonMethods.js`](../../../tests/Jroc.Tests/String/JavaScript/String_MemberCall_FastPath_CommonMethods.js)<br>`tests/Jroc.Test262.Tests/built-ins/String/prototype/trimStart/ExecutionTests.cs` | suite `built_ins.String.prototype.trimStart` | Implemented in JavaScriptRuntime.String.TrimStart (and TrimLeft alias) via TrimStartEcma (explicit ECMAScript whitespace set). Twenty-three upstream test262 cases cover metadata, property descriptors, receiver validation, and abrupt primitive coercion. |
 
 ### 22.1.3.35 ([tc39.es](https://tc39.es/ecma262/#sec-string.prototype.valueof))
 
