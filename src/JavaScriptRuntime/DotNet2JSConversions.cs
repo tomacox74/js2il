@@ -149,7 +149,45 @@ namespace JavaScriptRuntime
                 return nearest.ToString("0", System.Globalization.CultureInfo.InvariantCulture);
             }
 
-            return NormalizeExponent(value.ToString("R", System.Globalization.CultureInfo.InvariantCulture));
+            var representation = value.ToString("R", System.Globalization.CultureInfo.InvariantCulture);
+            return abs >= 1e-6 && abs < 1e21
+                ? ExpandExponent(representation)
+                : NormalizeExponent(representation);
+        }
+
+        private static string ExpandExponent(string value)
+        {
+            var exponentIndex = value.IndexOfAny(['E', 'e']);
+            if (exponentIndex < 0)
+            {
+                return value;
+            }
+
+            var exponent = int.Parse(value[(exponentIndex + 1)..], System.Globalization.CultureInfo.InvariantCulture);
+            var mantissa = value[..exponentIndex];
+            var negative = mantissa.StartsWith('-');
+            if (negative)
+            {
+                mantissa = mantissa[1..];
+            }
+
+            var decimalIndex = mantissa.IndexOf('.');
+            var digits = mantissa.Replace(".", string.Empty, StringComparison.Ordinal);
+            var decimalPosition = (decimalIndex < 0 ? digits.Length : decimalIndex) + exponent;
+            string expanded;
+            if (decimalPosition <= 0)
+            {
+                expanded = $"0.{new string('0', -decimalPosition)}{digits}";
+            }
+            else if (decimalPosition >= digits.Length)
+            {
+                expanded = $"{digits}{new string('0', decimalPosition - digits.Length)}";
+            }
+            else
+            {
+                expanded = $"{digits[..decimalPosition]}.{digits[decimalPosition..]}";
+            }
+            return negative ? $"-{expanded}" : expanded;
         }
 
         private static string NormalizeExponent(string value)
