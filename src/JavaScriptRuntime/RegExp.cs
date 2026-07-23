@@ -104,7 +104,7 @@ namespace JavaScriptRuntime
             if (flags == null && pattern is not null and not JsNull)
             {
                 var constructor = JavaScriptRuntime.ObjectRuntime.GetItem(pattern, "constructor");
-                if (IsSameRegExpConstructor(constructor) && (IsRegExpLike(pattern) || constructor != null))
+                if (IsSameRegExpConstructor(constructor) && (IsRegExp(pattern) || constructor != null))
                 {
                     return pattern;
                 }
@@ -418,25 +418,20 @@ namespace JavaScriptRuntime
 
         internal bool CanUseEnumerateMatchesFastPath => !_sticky && !_unicode;
 
-        private static bool IsRegExpLike(object? value)
+        public static bool IsRegExp(object? value)
         {
-            if (value is RegExp)
-            {
-                return true;
-            }
-
-            if (value is null or JsNull)
+            if (value is null or JsNull or string or Symbol || value.GetType().IsValueType)
             {
                 return false;
             }
 
             var match = JavaScriptRuntime.ObjectRuntime.GetItem(value, Symbol.match);
-            if (match is null)
+            if (match is not null)
             {
-                return value is RegExp;
+                return TypeUtilities.ToBoolean(match);
             }
 
-            return TypeUtilities.ToBoolean(match);
+            return value is RegExp;
         }
 
         private static bool IsSameRegExpConstructor(object? value)

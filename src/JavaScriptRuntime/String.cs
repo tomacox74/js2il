@@ -388,6 +388,16 @@ namespace JavaScriptRuntime
             };
         }
 
+        private static string ToSearchString(object? value)
+        {
+            if (value is Symbol)
+            {
+                throw new TypeError("Cannot convert a Symbol value to a string");
+            }
+
+            return DotNet2JSConversions.ToString(value);
+        }
+
         internal static object Construct(object?[]? args, object? newTarget)
         {
             var value = args != null && args.Length > 0
@@ -547,8 +557,7 @@ namespace JavaScriptRuntime
         private static object? PrototypeEndsWith(object[] scopes, object?[]? args)
         {
             var input = ThisStringValue(RuntimeServices.GetCurrentThis());
-            var searchString = DotNet2JSConversions.ToString(GetArg(args, 0));
-            return EndsWith(input, searchString, GetArg(args, 1));
+            return EndsWith(input, GetArg(args, 0), GetArg(args, 1));
         }
 
         private static object? PrototypeIncludes(object[] scopes, object?[]? args)
@@ -633,8 +642,7 @@ namespace JavaScriptRuntime
         private static object? PrototypeStartsWith(object[] scopes, object?[]? args)
         {
             var input = ThisStringValue(RuntimeServices.GetCurrentThis());
-            var searchString = DotNet2JSConversions.ToString(GetArg(args, 0));
-            return StartsWith(input, searchString, GetArg(args, 1));
+            return StartsWith(input, GetArg(args, 0), GetArg(args, 1));
         }
 
         private static object? PrototypeSubstring(object[] scopes, object?[]? args)
@@ -1432,55 +1440,45 @@ namespace JavaScriptRuntime
         }
 
         /// <summary>
-        /// Implements a subset of String.prototype.startsWith(searchString[, position]).
-        /// Uses ordinal comparison and basic ToIntegerOrInfinity coercion for position.
+        /// Implements String.prototype.startsWith(searchString[, position]).
         /// </summary>
         public static bool StartsWith(string input, string searchString)
         {
-            return StartsWith(input, searchString, null);
+            return StartsWithCore(input, searchString, null);
         }
 
-        /// <summary>
-        /// Implements a subset of String.prototype.startsWith with optional position argument.
-        /// </summary>
         public static bool StartsWith(string input, string searchString, object? position)
         {
-            input ??= string.Empty;
-            searchString ??= string.Empty;
+            return StartsWithCore(input, searchString, position);
+        }
 
-            int pos = 0;
-            if (position != null)
+        public static bool StartsWith(string input, object? searchString, object? position = null)
+        {
+            if (RegExp.IsRegExp(searchString))
             {
-                try
-                {
-                    double d;
-                    if (position is double dd) d = dd;
-                    else if (position is float ff) d = ff;
-                    else if (position is int ii) d = ii;
-                    else if (position is long ll) d = ll;
-                    else if (position is string s && double.TryParse(s, out var parsed)) d = parsed;
-                    else if (position is IConvertible conv) d = conv.ToDouble(System.Globalization.CultureInfo.InvariantCulture);
-                    else d = 0d;
-
-                    if (double.IsNaN(d)) d = 0d;
-                    if (double.IsPositiveInfinity(d)) d = input.Length;
-                    if (double.IsNegativeInfinity(d)) d = 0d;
-                    // Truncate toward zero
-                    d = d >= 0 ? global::System.Math.Floor(d) : global::System.Math.Ceiling(d);
-                    if (d < 0) d = 0;
-                    if (d > input.Length) d = input.Length;
-                    pos = (int)d;
-                }
-                catch { pos = 0; }
+                throw new TypeError("First argument to String.prototype.startsWith must not be a RegExp");
             }
 
-            if (searchString.Length == 0)
+            return StartsWithCore(input, ToSearchString(searchString), position);
+        }
+
+        private static bool StartsWithCore(string input, string search, object? position)
+        {
+            input ??= string.Empty;
+            search ??= string.Empty;
+            var relativePosition = ToIntegerOrInfinity(position, 0d);
+            var pos = relativePosition <= 0d
+                ? 0
+                : relativePosition >= input.Length
+                    ? input.Length
+                    : (int)relativePosition;
+
+            if (search.Length == 0)
             {
                 return true; // empty string starts at any position (pos is clamped to length)
             }
-            if (pos < 0 || pos > input.Length) return false;
-            if (pos + searchString.Length > input.Length) return false;
-            return input.AsSpan(pos).StartsWith(searchString.AsSpan(), StringComparison.Ordinal);
+            if (pos + search.Length > input.Length) return false;
+            return input.AsSpan(pos).StartsWith(search.AsSpan(), StringComparison.Ordinal);
         }
 
         /// <summary>
@@ -1546,48 +1544,44 @@ namespace JavaScriptRuntime
         }
 
         /// <summary>
-        /// Implements a subset of String.prototype.endsWith(searchString[, length]).
+        /// Implements String.prototype.endsWith(searchString[, length]).
         /// If length is provided, the string is treated as if it were truncated to that length.
         /// Uses ordinal comparison.
         /// </summary>
         public static bool EndsWith(string input, string searchString)
         {
-            return EndsWith(input, searchString, null);
+            return EndsWithCore(input, searchString, null);
         }
 
         public static bool EndsWith(string input, string searchString, object? length)
         {
-            input ??= string.Empty;
-            searchString ??= string.Empty;
+            return EndsWithCore(input, searchString, length);
+        }
 
-            int len = input.Length;
-            if (length != null)
+        public static bool EndsWith(string input, object? searchString, object? length = null)
+        {
+            if (RegExp.IsRegExp(searchString))
             {
-                try
-                {
-                    double d;
-                    if (length is double dd) d = dd;
-                    else if (length is float ff) d = ff;
-                    else if (length is int ii) d = ii;
-                    else if (length is long ll) d = ll;
-                    else if (length is string s && double.TryParse(s, out var parsed)) d = parsed;
-                    else if (length is IConvertible conv) d = conv.ToDouble(System.Globalization.CultureInfo.InvariantCulture);
-                    else d = input.Length;
-
-                    if (double.IsNaN(d)) d = input.Length;
-                    if (double.IsNegativeInfinity(d)) d = 0d;
-                    if (double.IsPositiveInfinity(d)) d = input.Length;
-                    d = d >= 0 ? global::System.Math.Floor(d) : global::System.Math.Ceiling(d);
-                    if (d < 0) d = 0;
-                    if (d > input.Length) d = input.Length;
-                    len = (int)d;
-                }
-                catch { len = input.Length; }
+                throw new TypeError("First argument to String.prototype.endsWith must not be a RegExp");
             }
 
-            if (searchString.Length == 0) return true;
-            if (len < searchString.Length) return false;
-            return input.AsSpan(0, len).EndsWith(searchString.AsSpan(), StringComparison.Ordinal);
+            return EndsWithCore(input, ToSearchString(searchString), length);
+        }
+
+        private static bool EndsWithCore(string input, string search, object? length)
+        {
+            input ??= string.Empty;
+            search ??= string.Empty;
+            var relativeLength = ToIntegerOrInfinity(length, input.Length);
+            var len = relativeLength <= 0d
+                ? 0
+                : relativeLength >= input.Length
+                    ? input.Length
+                    : (int)relativeLength;
+
+            if (search.Length == 0) return true;
+            if (len < search.Length) return false;
+            return input.AsSpan(0, len).EndsWith(search.AsSpan(), StringComparison.Ordinal);
         }
 
         /// <summary>
