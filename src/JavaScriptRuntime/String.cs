@@ -57,6 +57,7 @@ namespace JavaScriptRuntime
             DefinePrototypeMethod(prototype, "charAt", (Func<object[], object?[]?, object?>)PrototypeCharAt, 1);
             DefinePrototypeMethod(prototype, "charCodeAt", (Func<object[], object?[]?, object?>)PrototypeCharCodeAt, 1);
             DefinePrototypeMethod(prototype, "codePointAt", (Func<object[], object?[]?, object?>)PrototypeCodePointAt, 1);
+            DefinePrototypeMethod(prototype, "concat", (Func<object[], object?[]?, object?>)PrototypeConcat, 1);
             DefinePrototypeMethod(prototype, "endsWith", (Func<object[], object?[]?, object?>)PrototypeEndsWith, 1);
             DefinePrototypeMethod(prototype, "includes", (Func<object[], object?[]?, object?>)PrototypeIncludes, 1);
             DefinePrototypeMethod(prototype, "indexOf", (Func<object[], object?[]?, object?>)PrototypeIndexOf, 1);
@@ -537,6 +538,9 @@ namespace JavaScriptRuntime
         private static object? PrototypeCodePointAt(object[] scopes, object?[]? args)
             => CodePointAt(ThisStringValue(RuntimeServices.GetCurrentThis()), GetArg(args, 0));
 
+        private static object? PrototypeConcat(object[] scopes, object?[]? args)
+            => Concat(ThisStringValue(RuntimeServices.GetCurrentThis()), args ?? System.Array.Empty<object?>());
+
         private static object? PrototypeEndsWith(object[] scopes, object?[]? args)
         {
             var input = ThisStringValue(RuntimeServices.GetCurrentThis());
@@ -695,6 +699,22 @@ namespace JavaScriptRuntime
         public static string Substring(string input, object? start)
         {
             return Substring(input, start, null);
+        }
+
+        public static string Concat(string input, params object?[] args)
+        {
+            var builder = new StringBuilder(input);
+            foreach (var argument in args)
+            {
+                if (argument is Symbol)
+                {
+                    throw new TypeError("Cannot convert a Symbol value to a string");
+                }
+
+                builder.Append(DotNet2JSConversions.ToString(argument));
+            }
+
+            return builder.ToString();
         }
 
         public static string Substring(string input, object? start, object? end)
