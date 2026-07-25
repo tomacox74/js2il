@@ -49,4 +49,8 @@ public class ExecutionTests : ExecutionTestsBase
     [Fact(DisplayName = "spread-mult-iter")]
     public Task spread_mult_iter()
         => ExecutionTest("spread-mult-iter");
+
+    [Fact(DisplayName = "tco-member-args")]
+    public Task tco_member_args()
+        => ExecutionTest("tco-member-args");
 }

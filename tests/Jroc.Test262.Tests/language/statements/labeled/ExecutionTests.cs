@@ -49,4 +49,7 @@ public class ExecutionTests : FileSystemExecutionTestsBase
     public Task decl_const()
         => CompilationFailureTest("decl-const", "Failed to parse JavaScript");
 
+    [Fact(DisplayName = "tco")]
+    public Task tco()
+        => ExecutionTest("tco");
 }

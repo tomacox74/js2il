@@ -65,4 +65,11 @@ public class ExecutionTests : FileSystemExecutionTestsBase
     public Task labeled_continue()
         => CompilationFailureTest("labeled-continue", "Failed to parse JavaScript");
 
+    [Fact(DisplayName = "tco-stmt-list")]
+    public Task tco_stmt_list()
+        => ExecutionTest("tco-stmt-list");
+
+    [Fact(DisplayName = "tco-stmt")]
+    public Task tco_stmt()
+        => ExecutionTest("tco-stmt");
 }

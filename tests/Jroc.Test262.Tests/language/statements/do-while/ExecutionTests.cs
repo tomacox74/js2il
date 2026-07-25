@@ -99,4 +99,7 @@ public class ExecutionTests : FileSystemExecutionTestsBase
     public Task decl_let()
         => CompilationFailureTest("decl-let", "Failed to parse JavaScript");
 
+    [Fact(DisplayName = "tco-body")]
+    public Task tco_body()
+        => ExecutionTest("tco-body");
 }
