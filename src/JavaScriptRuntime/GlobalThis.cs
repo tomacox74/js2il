@@ -138,7 +138,9 @@ namespace JavaScriptRuntime
         private static readonly Func<object?, double> _parseFloatValue = parseFloat;
         private static readonly Func<object?, bool> _isFiniteValue = isFinite;
         private static readonly Func<object?, bool> _isNaNValue = isNaN;
+        private static readonly Func<object?, string> _decodeURIValue = decodeURI;
         private static readonly Func<object?, string> _encodeURIValue = encodeURI;
+        private static readonly UTF8Encoding _strictUtf8 = new(false, true);
         private static readonly Func<object?, bool> _numberIsFiniteValue = JavaScriptRuntime.Number.isFinite;
         private static readonly Func<object?, bool> _numberIsIntegerValue = JavaScriptRuntime.Number.isInteger;
         private static readonly Func<object?, bool> _numberIsNaNValue = JavaScriptRuntime.Number.isNaN;
@@ -621,11 +623,13 @@ namespace JavaScriptRuntime
             ConfigureBuiltinFunctionObject(_parseFloatValue);
             ConfigureBuiltinFunctionObject(_isFiniteValue);
             ConfigureBuiltinFunctionObject(_isNaNValue);
+            ConfigureBuiltinFunctionObject(_decodeURIValue);
             ConfigureBuiltinFunctionObject(_encodeURIValue);
             DefineUndefinedPrototypeProperty(_parseIntValue);
             DefineUndefinedPrototypeProperty(_parseFloatValue);
             DefineUndefinedPrototypeProperty(_isFiniteValue);
             DefineUndefinedPrototypeProperty(_isNaNValue);
+            DefineUndefinedPrototypeProperty(_decodeURIValue);
             DefineUndefinedPrototypeProperty(_encodeURIValue);
 
             // Provide Error.prototype for patterns like `Error.prototype` and error-subclassing libraries.
@@ -1214,6 +1218,9 @@ namespace JavaScriptRuntime
             dict.TryAdd(nameof(GlobalThis.isNaN), _isNaNValue);
             DefineNonEnumerableDataProperty(nameof(GlobalThis.isNaN), dict[nameof(GlobalThis.isNaN)]);
 
+            dict.TryAdd(nameof(GlobalThis.decodeURI), _decodeURIValue);
+            DefineNonEnumerableDataProperty(nameof(GlobalThis.decodeURI), dict[nameof(GlobalThis.decodeURI)]);
+
             dict.TryAdd(nameof(GlobalThis.encodeURI), _encodeURIValue);
             DefineNonEnumerableDataProperty(nameof(GlobalThis.encodeURI), dict[nameof(GlobalThis.encodeURI)]);
 
@@ -1645,6 +1652,116 @@ namespace JavaScriptRuntime
         }
 
         /// <summary>
+        /// Decodes a URI using the percent-decoding algorithm specified for the global
+        /// <c>decodeURI</c> function.
+        /// </summary>
+        public static string decodeURI(object? encodedURI)
+        {
+            var input = DotNet2JSConversions.ToString(encodedURI);
+            var result = new StringBuilder(input.Length);
+            var index = 0;
+            Span<byte> bytes = stackalloc byte[4];
+
+            while (index < input.Length)
+            {
+                if (input[index] != '%')
+                {
+                    result.Append(input[index++]);
+                    continue;
+                }
+
+                var escapeStart = index;
+                var firstByte = ParseUriHexOctet(input, ref index);
+                if (firstByte <= 0x7F)
+                {
+                    var decodedCharacter = (char)firstByte;
+                    if (IsUriReserved(decodedCharacter))
+                    {
+                        result.Append(input, escapeStart, index - escapeStart);
+                    }
+                    else
+                    {
+                        result.Append(decodedCharacter);
+                    }
+
+                    continue;
+                }
+
+                bytes[0] = firstByte;
+                var sequenceLength = GetUtf8SequenceLength(firstByte);
+                for (var byteIndex = 1; byteIndex < sequenceLength; byteIndex++)
+                {
+                    bytes[byteIndex] = ParseUriHexOctet(input, ref index);
+                }
+
+                try
+                {
+                    result.Append(_strictUtf8.GetString(bytes[..sequenceLength]));
+                }
+                catch (DecoderFallbackException)
+                {
+                    throw new URIError("URI malformed");
+                }
+            }
+
+            return result.ToString();
+        }
+
+        private static byte ParseUriHexOctet(string input, ref int index)
+        {
+            if (index + 2 >= input.Length
+                || input[index] != '%'
+                || !TryParseHexDigit(input[index + 1], out var high)
+                || !TryParseHexDigit(input[index + 2], out var low))
+            {
+                throw new URIError("URI malformed");
+            }
+
+            index += 3;
+            return (byte)((high << 4) | low);
+        }
+
+        private static bool TryParseHexDigit(char value, out int digit)
+        {
+            if (value is >= '0' and <= '9')
+            {
+                digit = value - '0';
+                return true;
+            }
+
+            if (value is >= 'A' and <= 'F')
+            {
+                digit = value - 'A' + 10;
+                return true;
+            }
+
+            if (value is >= 'a' and <= 'f')
+            {
+                digit = value - 'a' + 10;
+                return true;
+            }
+
+            digit = 0;
+            return false;
+        }
+
+        private static int GetUtf8SequenceLength(byte firstByte)
+        {
+            return firstByte switch
+            {
+                >= 0xC2 and <= 0xDF => 2,
+                >= 0xE0 and <= 0xEF => 3,
+                >= 0xF0 and <= 0xF4 => 4,
+                _ => throw new URIError("URI malformed")
+            };
+        }
+
+        private static bool IsUriReserved(char value)
+        {
+            return value is ';' or '/' or '?' or ':' or '@' or '&' or '=' or '+' or '$' or ',' or '#';
+        }
+
+        /// <summary>
         /// Encodes a URI using the percent-encoding algorithm specified for the global
         /// <c>encodeURI</c> function.
         /// </summary>
@@ -1905,6 +2022,7 @@ namespace JavaScriptRuntime
                 || functionValue.Method == _parseIntValue.Method
                 || functionValue.Method == _isFiniteValue.Method
                 || functionValue.Method == _isNaNValue.Method
+                || functionValue.Method == _decodeURIValue.Method
                 || functionValue.Method == _encodeURIValue.Method
                 || functionValue.Method == _numberIsIntegerValue.Method
                 || JavaScriptRuntime.Function.HasUndefinedPrototype(functionValue);
