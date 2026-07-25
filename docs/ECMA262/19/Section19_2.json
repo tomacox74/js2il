@@ -78,7 +78,7 @@
     {
       "clause": "19.2.6.3",
       "title": "encodeURI ( uri )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-encodeuri-uri"
     },
     {
@@ -220,6 +220,37 @@
           "test/built-ins/parseInt/not-a-constructor.js"
         ],
         "notes": "Implemented by JavaScriptRuntime.GlobalThis.parseInt following ECMA-262 §19.2.5. Supports: leading/trailing whitespace, sign handling, radix coercion via ToInt32 (§7.1.6), hex prefix detection (0x/0X), digit scanning with stop-at-first-invalid, case-insensitive alphabetic digits (A-Z), ToString coercion including primitive values, Array join, and custom toString methods, and large numbers using double arithmetic. Checked-in coverage now also includes additional whitespace/radix edge cases plus non-constructibility."
+      },
+      {
+        "clause": "19.2.6.3",
+        "feature": "encodeURI(uri)",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-encodeuri-uri",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/encodeURI/JavaScript/S15.1.3.3_A1.1_T1.js",
+          "tests/Jroc.Test262.Tests/built-ins/encodeURI/JavaScript/S15.1.3.3_A1.1_T2.js",
+          "tests/Jroc.Test262.Tests/built-ins/encodeURI/JavaScript/S15.1.3.3_A1.2_T1.js",
+          "tests/Jroc.Test262.Tests/built-ins/encodeURI/JavaScript/S15.1.3.3_A1.2_T2.js",
+          "tests/Jroc.Test262.Tests/built-ins/encodeURI/JavaScript/S15.1.3.3_A1.3_T1.js",
+          "tests/Jroc.Test262.Tests/built-ins/encodeURI/JavaScript/S15.1.3.3_A2.1_T1.js",
+          "tests/Jroc.Test262.Tests/built-ins/encodeURI/JavaScript/S15.1.3.3_A2.2_T1.js",
+          "tests/Jroc.Test262.Tests/built-ins/encodeURI/JavaScript/S15.1.3.3_A2.3_T1.js",
+          "tests/Jroc.Test262.Tests/built-ins/encodeURI/JavaScript/S15.1.3.3_A2.4_T1.js",
+          "tests/Jroc.Test262.Tests/built-ins/encodeURI/JavaScript/S15.1.3.3_A2.4_T2.js"
+        ],
+        "test262Paths": [
+          "test/built-ins/encodeURI/S15.1.3.3_A1.1_T1.js",
+          "test/built-ins/encodeURI/S15.1.3.3_A1.1_T2.js",
+          "test/built-ins/encodeURI/S15.1.3.3_A1.2_T1.js",
+          "test/built-ins/encodeURI/S15.1.3.3_A1.2_T2.js",
+          "test/built-ins/encodeURI/S15.1.3.3_A1.3_T1.js",
+          "test/built-ins/encodeURI/S15.1.3.3_A2.1_T1.js",
+          "test/built-ins/encodeURI/S15.1.3.3_A2.2_T1.js",
+          "test/built-ins/encodeURI/S15.1.3.3_A2.3_T1.js",
+          "test/built-ins/encodeURI/S15.1.3.3_A2.4_T1.js",
+          "test/built-ins/encodeURI/S15.1.3.3_A2.4_T2.js"
+        ],
+        "notes": "Implements the covered ECMAScript UTF-8 percent-encoding behavior, preserves encodeURI reserved and unescaped characters, and throws URIError for malformed UTF-16 surrogate sequences. Broader coercion and metadata coverage remains to be added."
       }
     ]
   }

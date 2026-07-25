@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 using JavaScriptRuntime.DependencyInjection;
 
 namespace JavaScriptRuntime
@@ -137,6 +138,7 @@ namespace JavaScriptRuntime
         private static readonly Func<object?, double> _parseFloatValue = parseFloat;
         private static readonly Func<object?, bool> _isFiniteValue = isFinite;
         private static readonly Func<object?, bool> _isNaNValue = isNaN;
+        private static readonly Func<object?, string> _encodeURIValue = encodeURI;
         private static readonly Func<object?, bool> _numberIsFiniteValue = JavaScriptRuntime.Number.isFinite;
         private static readonly Func<object?, bool> _numberIsIntegerValue = JavaScriptRuntime.Number.isInteger;
         private static readonly Func<object?, bool> _numberIsNaNValue = JavaScriptRuntime.Number.isNaN;
@@ -619,10 +621,12 @@ namespace JavaScriptRuntime
             ConfigureBuiltinFunctionObject(_parseFloatValue);
             ConfigureBuiltinFunctionObject(_isFiniteValue);
             ConfigureBuiltinFunctionObject(_isNaNValue);
+            ConfigureBuiltinFunctionObject(_encodeURIValue);
             DefineUndefinedPrototypeProperty(_parseIntValue);
             DefineUndefinedPrototypeProperty(_parseFloatValue);
             DefineUndefinedPrototypeProperty(_isFiniteValue);
             DefineUndefinedPrototypeProperty(_isNaNValue);
+            DefineUndefinedPrototypeProperty(_encodeURIValue);
 
             // Provide Error.prototype for patterns like `Error.prototype` and error-subclassing libraries.
             ConfigureErrorIntrinsicSurface(_errorConstructorValue, _errorPrototypeValue, "Error", parentPrototype: _objectPrototypeValue);
@@ -1210,6 +1214,9 @@ namespace JavaScriptRuntime
             dict.TryAdd(nameof(GlobalThis.isNaN), _isNaNValue);
             DefineNonEnumerableDataProperty(nameof(GlobalThis.isNaN), dict[nameof(GlobalThis.isNaN)]);
 
+            dict.TryAdd(nameof(GlobalThis.encodeURI), _encodeURIValue);
+            DefineNonEnumerableDataProperty(nameof(GlobalThis.encodeURI), dict[nameof(GlobalThis.encodeURI)]);
+
             ApplyHostGlobalBindings(dict);
         }
 
@@ -1637,6 +1644,67 @@ namespace JavaScriptRuntime
             return double.IsNaN(TypeUtilities.ToNumber(number));
         }
 
+        /// <summary>
+        /// Encodes a URI using the percent-encoding algorithm specified for the global
+        /// <c>encodeURI</c> function.
+        /// </summary>
+        public static string encodeURI(object? uri)
+        {
+            var input = DotNet2JSConversions.ToString(uri);
+            var result = new StringBuilder(input.Length);
+
+            for (var index = 0; index < input.Length; index++)
+            {
+                var codeUnit = input[index];
+                if (char.IsHighSurrogate(codeUnit))
+                {
+                    if (index + 1 >= input.Length || !char.IsLowSurrogate(input[index + 1]))
+                    {
+                        throw new URIError("URI malformed");
+                    }
+
+                    AppendUriEncodedCodePoint(result, char.ConvertToUtf32(codeUnit, input[++index]));
+                    continue;
+                }
+
+                if (char.IsLowSurrogate(codeUnit))
+                {
+                    throw new URIError("URI malformed");
+                }
+
+                if (IsEncodeUriUnescaped(codeUnit))
+                {
+                    result.Append(codeUnit);
+                }
+                else
+                {
+                    AppendUriEncodedCodePoint(result, codeUnit);
+                }
+            }
+
+            return result.ToString();
+        }
+
+        private static bool IsEncodeUriUnescaped(char value)
+        {
+            return value is >= 'A' and <= 'Z'
+                or >= 'a' and <= 'z'
+                or >= '0' and <= '9'
+                or '-' or '_' or '.' or '!' or '~' or '*' or '\'' or '(' or ')'
+                or ';' or '/' or '?' or ':' or '@' or '&' or '=' or '+' or '$' or ',' or '#';
+        }
+
+        private static void AppendUriEncodedCodePoint(StringBuilder result, int codePoint)
+        {
+            Span<byte> utf8 = stackalloc byte[4];
+            var count = new System.Text.Rune(codePoint).EncodeToUtf8(utf8);
+            for (var index = 0; index < count; index++)
+            {
+                result.Append('%');
+                result.Append(utf8[index].ToString("X2", System.Globalization.CultureInfo.InvariantCulture));
+            }
+        }
+
         private static Timers GetTimers()
         {
             return _serviceProvider.Value!.Resolve<Timers>();
@@ -1837,6 +1905,7 @@ namespace JavaScriptRuntime
                 || functionValue.Method == _parseIntValue.Method
                 || functionValue.Method == _isFiniteValue.Method
                 || functionValue.Method == _isNaNValue.Method
+                || functionValue.Method == _encodeURIValue.Method
                 || functionValue.Method == _numberIsIntegerValue.Method
                 || JavaScriptRuntime.Function.HasUndefinedPrototype(functionValue);
         }
