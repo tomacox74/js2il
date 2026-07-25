@@ -16,7 +16,7 @@ public static class PrototypeChain
         public object? Prototype;
     }
 
-    private static readonly ConditionalWeakTable<object, PrototypeSlot> _slots = new();
+    private static readonly ConditionalWeakTable<object, PrototypeSlot> _fallbackSlots = new();
 
     // Volatile ensures other threads observe the enabled flag without additional locking.
     private static volatile bool _enabled;
@@ -38,7 +38,12 @@ public static class PrototypeChain
 
         if (obj == null) throw new ArgumentNullException(nameof(obj));
 
-        if (_slots.TryGetValue(obj, out var slot))
+        if (obj is JsObject jsObject)
+        {
+            return jsObject.TryGetInlinePrototype(out prototype);
+        }
+
+        if (_fallbackSlots.TryGetValue(obj, out var slot))
         {
             prototype = slot.Prototype;
             return true;
@@ -52,9 +57,19 @@ public static class PrototypeChain
     {
         if (obj == null) throw new ArgumentNullException(nameof(obj));
 
-        return _enabled && _slots.TryGetValue(obj, out var slot)
-            ? slot.Prototype
-            : null;
+        if (!_enabled)
+        {
+            return null;
+        }
+
+        if (obj is JsObject jsObject)
+        {
+            return jsObject.TryGetInlinePrototype(out var prototype)
+                ? prototype
+                : null;
+        }
+
+        return _fallbackSlots.TryGetValue(obj, out var slot) ? slot.Prototype : null;
     }
 
     public static void SetPrototype(object obj, object? prototype)
@@ -77,7 +92,13 @@ public static class PrototypeChain
         // If someone calls SetPrototype directly, treat it as explicit opt-in.
         Enable();
 
-        var slot = _slots.GetOrCreateValue(obj);
+        if (obj is JsObject jsObject)
+        {
+            jsObject.SetInlinePrototype(prototype);
+            return;
+        }
+
+        var slot = _fallbackSlots.GetOrCreateValue(obj);
         slot.Prototype = prototype;
     }
 }
