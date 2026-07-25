@@ -177,6 +177,13 @@ Notes:
 - This benchmark is intentionally narrow: it measures representative CLR receiver dispatch, not full JavaScript prototype semantics.
 - It is useful for feasibility/performance investigations, not for validating JS compatibility.
 
+#### Prototype Storage
+Measures the time and managed allocation required to construct an Array or ordinary `JsObject` with an initialized prototype:
+
+```powershell
+dotnet run -c Release -- --prototype-storage
+```
+
 #### All Benchmarks
 Runs cross-runtime comparison, late-bound dispatch microbenchmarks, and phased benchmarks:
 

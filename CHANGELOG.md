@@ -6,7 +6,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-_Nothing yet._
+- perf/runtime: store initialized prototype state directly in `JsObject` while retaining weak-table fallback storage for delegates, CLR types, and other targets. Prototype-bearing ordinary objects now allocate 48 B instead of 94 B, and Arrays allocate 80 B instead of 126 B. Hosted `array-stress`, `constructed-object`, and `dromaeo-object-array-modern` runs reduced allocation by 18.92%, 0.38%, and 21.13% respectively; a four-pair `plain-object` rerun reduced median allocation by 0.38% and median execution time by 1.81%, confirming no repeatable execution regression.
 
 ## v0.11.36 - 2026-07-23
 

@@ -188,6 +188,8 @@ public class JsObject : DynamicObject, IDictionary<string, object?>
 
     private JsShape _shape = JsShape.Empty;
 
+    private object? _prototype;
+
     private readonly bool _cacheShapeTransitions;
 
     // Perf (#1418 follow-up): sticky flag set when this object gains descriptor
@@ -196,7 +198,7 @@ public class JsObject : DynamicObject, IDictionary<string, object?>
     // While the flag is clear, every own descriptor is a mirrored default data
     // descriptor whose value matches the dictionary, so hot read paths can go
     // straight to the dictionary and skip the descriptor store probe entirely.
-    private volatile bool _hasNonDataDescriptors;
+    private bool _hasNonDataDescriptors;
 
     /// <summary>
     /// True when own reads can no longer be answered from the property dictionary
@@ -206,6 +208,11 @@ public class JsObject : DynamicObject, IDictionary<string, object?>
     internal bool HasNonDataDescriptors => _hasNonDataDescriptors;
 
     internal void MarkNonDataDescriptors() => _hasNonDataDescriptors = true;
+
+    internal bool TryGetInlinePrototype(out object? prototype)
+        => (prototype = _prototype) is not null;
+
+    internal void SetInlinePrototype(object? prototype) => _prototype = prototype;
 
     /// <summary>Creates an ordinary object using the shared shape-transition cache.</summary>
     public JsObject()

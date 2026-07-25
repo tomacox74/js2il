@@ -30,6 +30,11 @@ else
         var summary = BenchmarkRunner.Run<ArrayInternalOperationsBenchmarks>(args: programArgs.Skip(1).ToArray());
         SetExitCodeFromSummaries([summary]);
     }
+    else if (programArgs.Length > 0 && programArgs[0] == "--prototype-storage")
+    {
+        var summary = BenchmarkRunner.Run<PrototypeStorageBenchmarks>(args: programArgs.Skip(1).ToArray());
+        SetExitCodeFromSummaries([summary]);
+    }
 #if SOURCE_JROC_PROJECTS
     else if (programArgs.Length > 0 && programArgs[0] == "--shape-storage")
     {
@@ -100,6 +105,7 @@ Console.WriteLine("  dotnet run -c Release -- --shape-storage # Run JsShape stor
 #endif
 Console.WriteLine("  dotnet run -c Release --object-operations # Run ordinary-object operation microbenchmarks");
 Console.WriteLine("  dotnet run -c Release --array-operations # Run dense-array operation microbenchmarks");
+Console.WriteLine("  dotnet run -c Release --prototype-storage # Run prototype storage allocation microbenchmarks");
 Console.WriteLine("  dotnet run -c Release --phased # Run jroc phased + Jint prepared + Okojo execute comparison");
 Console.WriteLine("  dotnet run -c Release -- --kracken --scenario audio-fft # Run one Kraken scenario");
 Console.WriteLine("  dotnet run -c Release --all    # Run all benchmarks");
