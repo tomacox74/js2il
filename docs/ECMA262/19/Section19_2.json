@@ -60,13 +60,13 @@
     {
       "clause": "19.2.6",
       "title": "URI Handling Functions",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-uri-handling-functions"
     },
     {
       "clause": "19.2.6.1",
       "title": "decodeURI ( encodedURI )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-decodeuri-encodeduri"
     },
     {
@@ -96,13 +96,13 @@
     {
       "clause": "19.2.6.6",
       "title": "Decode ( string , preserveEscapeSet )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-decode"
     },
     {
       "clause": "19.2.6.7",
       "title": "ParseHexOctet ( string , position )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-parsehexoctet"
     }
   ],
@@ -220,6 +220,37 @@
           "test/built-ins/parseInt/not-a-constructor.js"
         ],
         "notes": "Implemented by JavaScriptRuntime.GlobalThis.parseInt following ECMA-262 §19.2.5. Supports: leading/trailing whitespace, sign handling, radix coercion via ToInt32 (§7.1.6), hex prefix detection (0x/0X), digit scanning with stop-at-first-invalid, case-insensitive alphabetic digits (A-Z), ToString coercion including primitive values, Array join, and custom toString methods, and large numbers using double arithmetic. Checked-in coverage now also includes additional whitespace/radix edge cases plus non-constructibility."
+      },
+      {
+        "clause": "19.2.6.1",
+        "feature": "decodeURI(encodedURI)",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-decodeuri-encodeduri",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/decodeURI/JavaScript/S15.1.3.1_A1.1_T1.js",
+          "tests/Jroc.Test262.Tests/built-ins/decodeURI/JavaScript/S15.1.3.1_A1.2_T1.js",
+          "tests/Jroc.Test262.Tests/built-ins/decodeURI/JavaScript/S15.1.3.1_A1.2_T2.js",
+          "tests/Jroc.Test262.Tests/built-ins/decodeURI/JavaScript/S15.1.3.1_A1.3_T1.js",
+          "tests/Jroc.Test262.Tests/built-ins/decodeURI/JavaScript/S15.1.3.1_A1.4_T1.js",
+          "tests/Jroc.Test262.Tests/built-ins/decodeURI/JavaScript/S15.1.3.1_A1.5_T1.js",
+          "tests/Jroc.Test262.Tests/built-ins/decodeURI/JavaScript/S15.1.3.1_A1.6_T1.js",
+          "tests/Jroc.Test262.Tests/built-ins/decodeURI/JavaScript/S15.1.3.1_A2.2_T1.js",
+          "tests/Jroc.Test262.Tests/built-ins/decodeURI/JavaScript/S15.1.3.1_A2.3_T1.js",
+          "tests/Jroc.Test262.Tests/built-ins/decodeURI/JavaScript/S15.1.3.1_A3_T1.js"
+        ],
+        "test262Paths": [
+          "test/built-ins/decodeURI/S15.1.3.1_A1.1_T1.js",
+          "test/built-ins/decodeURI/S15.1.3.1_A1.2_T1.js",
+          "test/built-ins/decodeURI/S15.1.3.1_A1.2_T2.js",
+          "test/built-ins/decodeURI/S15.1.3.1_A1.3_T1.js",
+          "test/built-ins/decodeURI/S15.1.3.1_A1.4_T1.js",
+          "test/built-ins/decodeURI/S15.1.3.1_A1.5_T1.js",
+          "test/built-ins/decodeURI/S15.1.3.1_A1.6_T1.js",
+          "test/built-ins/decodeURI/S15.1.3.1_A2.2_T1.js",
+          "test/built-ins/decodeURI/S15.1.3.1_A2.3_T1.js",
+          "test/built-ins/decodeURI/S15.1.3.1_A3_T1.js"
+        ],
+        "notes": "Implements strict UTF-8 percent decoding, malformed-escape URIError behavior, and decodeURI reserved-character escape preservation. decodeURIComponent and encodeURIComponent remain unsupported, and broader coercion and metadata coverage remains to be added."
       },
       {
         "clause": "19.2.6.3",

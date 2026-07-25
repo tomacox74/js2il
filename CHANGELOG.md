@@ -6,6 +6,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- runtime: implement global `decodeURI`, including strict UTF-8 percent decoding, malformed-escape `URIError`s, and reserved-character escape preservation. Ports ten upstream test262 cases.
 - runtime: implement global `encodeURI`, including covered UTF-8 percent encoding, reserved-character preservation, and malformed-surrogate `URIError`s. Ports ten upstream test262 cases.
 - tests/test262: port fifty non-eval numeric-literal conformance cases, covering decimal integer, decimal-point, and exponent forms.
 - tests/test262: port fifty non-eval ECMA-262 conformance cases across tail-position call semantics, fixed-length SharedArrayBuffer construction and prototype behavior, and Atomics validation/error paths. Proper tail-call optimization and multi-agent shared-memory semantics remain unsupported.

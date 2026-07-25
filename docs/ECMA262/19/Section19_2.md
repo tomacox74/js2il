@@ -4,7 +4,7 @@
 
 [Back to Section19](Section19.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-07-25T22:31:27Z
+> Last generated (UTC): 2026-07-25T23:13:02Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -22,14 +22,14 @@
 | 19.2.3 | isNaN ( number ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-isnan-number) |
 | 19.2.4 | parseFloat ( string ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-parsefloat-string) |
 | 19.2.5 | parseInt ( string , radix ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-parseint-string-radix) |
-| 19.2.6 | URI Handling Functions | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-uri-handling-functions) |
-| 19.2.6.1 | decodeURI ( encodedURI ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-decodeuri-encodeduri) |
+| 19.2.6 | URI Handling Functions | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-uri-handling-functions) |
+| 19.2.6.1 | decodeURI ( encodedURI ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-decodeuri-encodeduri) |
 | 19.2.6.2 | decodeURIComponent ( encodedURIComponent ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-decodeuricomponent-encodeduricomponent) |
 | 19.2.6.3 | encodeURI ( uri ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-encodeuri-uri) |
 | 19.2.6.4 | encodeURIComponent ( uriComponent ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-encodeuricomponent-uricomponent) |
 | 19.2.6.5 | Encode ( string , extraUnescaped ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-encode) |
-| 19.2.6.6 | Decode ( string , preserveEscapeSet ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-decode) |
-| 19.2.6.7 | ParseHexOctet ( string , position ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-parsehexoctet) |
+| 19.2.6.6 | Decode ( string , preserveEscapeSet ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-decode) |
+| 19.2.6.7 | ParseHexOctet ( string , position ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-parsehexoctet) |
 
 ## Support
 
@@ -58,6 +58,12 @@ Feature-level support tracking with repo test references and optional test262 ev
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
 | parseInt(string, radix) | Supported | [`IntrinsicCallables_ParseInt_Basic.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_ParseInt_Basic.js)<br>[`IntrinsicCallables_ParseInt_Spec.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_ParseInt_Spec.js)<br>[`IntrinsicCallables_GlobalFunctions_AsValues_Basic.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_GlobalFunctions_AsValues_Basic.js)<br>[`S15.1.2.2_A2_T2.js`](../../../tests/Jroc.Test262.Tests/built-ins/parseInt/JavaScript/S15.1.2.2_A2_T2.js)<br>[`15.1.2.2-2-1.js`](../../../tests/Jroc.Test262.Tests/built-ins/parseInt/JavaScript/15.1.2.2-2-1.js)<br>[`S15.1.2.2_A5.1_T1.js`](../../../tests/Jroc.Test262.Tests/built-ins/parseInt/JavaScript/S15.1.2.2_A5.1_T1.js)<br>[`S15.1.2.2_A6.1_T1.js`](../../../tests/Jroc.Test262.Tests/built-ins/parseInt/JavaScript/S15.1.2.2_A6.1_T1.js)<br>[`S15.1.2.2_A7.2_T1.js`](../../../tests/Jroc.Test262.Tests/built-ins/parseInt/JavaScript/S15.1.2.2_A7.2_T1.js)<br>[`S15.1.2.2_A8.js`](../../../tests/Jroc.Test262.Tests/built-ins/parseInt/JavaScript/S15.1.2.2_A8.js)<br>[`not-a-constructor.js`](../../../tests/Jroc.Test262.Tests/built-ins/parseInt/JavaScript/not-a-constructor.js) | `test/built-ins/parseInt/S15.1.2.2_A2_T2.js`<br>`test/built-ins/parseInt/15.1.2.2-2-1.js`<br>`test/built-ins/parseInt/S15.1.2.2_A5.1_T1.js`<br>`test/built-ins/parseInt/S15.1.2.2_A6.1_T1.js`<br>`test/built-ins/parseInt/S15.1.2.2_A7.2_T1.js`<br>`test/built-ins/parseInt/S15.1.2.2_A8.js`<br>`test/built-ins/parseInt/not-a-constructor.js` | Implemented by JavaScriptRuntime.GlobalThis.parseInt following ECMA-262 §19.2.5. Supports: leading/trailing whitespace, sign handling, radix coercion via ToInt32 (§7.1.6), hex prefix detection (0x/0X), digit scanning with stop-at-first-invalid, case-insensitive alphabetic digits (A-Z), ToString coercion including primitive values, Array join, and custom toString methods, and large numbers using double arithmetic. Checked-in coverage now also includes additional whitespace/radix edge cases plus non-constructibility. |
+
+### 19.2.6.1 ([tc39.es](https://tc39.es/ecma262/#sec-decodeuri-encodeduri))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| decodeURI(encodedURI) | Supported with Limitations | [`S15.1.3.1_A1.1_T1.js`](../../../tests/Jroc.Test262.Tests/built-ins/decodeURI/JavaScript/S15.1.3.1_A1.1_T1.js)<br>[`S15.1.3.1_A1.2_T1.js`](../../../tests/Jroc.Test262.Tests/built-ins/decodeURI/JavaScript/S15.1.3.1_A1.2_T1.js)<br>[`S15.1.3.1_A1.2_T2.js`](../../../tests/Jroc.Test262.Tests/built-ins/decodeURI/JavaScript/S15.1.3.1_A1.2_T2.js)<br>[`S15.1.3.1_A1.3_T1.js`](../../../tests/Jroc.Test262.Tests/built-ins/decodeURI/JavaScript/S15.1.3.1_A1.3_T1.js)<br>[`S15.1.3.1_A1.4_T1.js`](../../../tests/Jroc.Test262.Tests/built-ins/decodeURI/JavaScript/S15.1.3.1_A1.4_T1.js)<br>[`S15.1.3.1_A1.5_T1.js`](../../../tests/Jroc.Test262.Tests/built-ins/decodeURI/JavaScript/S15.1.3.1_A1.5_T1.js)<br>[`S15.1.3.1_A1.6_T1.js`](../../../tests/Jroc.Test262.Tests/built-ins/decodeURI/JavaScript/S15.1.3.1_A1.6_T1.js)<br>[`S15.1.3.1_A2.2_T1.js`](../../../tests/Jroc.Test262.Tests/built-ins/decodeURI/JavaScript/S15.1.3.1_A2.2_T1.js)<br>[`S15.1.3.1_A2.3_T1.js`](../../../tests/Jroc.Test262.Tests/built-ins/decodeURI/JavaScript/S15.1.3.1_A2.3_T1.js)<br>[`S15.1.3.1_A3_T1.js`](../../../tests/Jroc.Test262.Tests/built-ins/decodeURI/JavaScript/S15.1.3.1_A3_T1.js) | `test/built-ins/decodeURI/S15.1.3.1_A1.1_T1.js`<br>`test/built-ins/decodeURI/S15.1.3.1_A1.2_T1.js`<br>`test/built-ins/decodeURI/S15.1.3.1_A1.2_T2.js`<br>`test/built-ins/decodeURI/S15.1.3.1_A1.3_T1.js`<br>`test/built-ins/decodeURI/S15.1.3.1_A1.4_T1.js`<br>`test/built-ins/decodeURI/S15.1.3.1_A1.5_T1.js`<br>`test/built-ins/decodeURI/S15.1.3.1_A1.6_T1.js`<br>`test/built-ins/decodeURI/S15.1.3.1_A2.2_T1.js`<br>`test/built-ins/decodeURI/S15.1.3.1_A2.3_T1.js`<br>`test/built-ins/decodeURI/S15.1.3.1_A3_T1.js` | Implements strict UTF-8 percent decoding, malformed-escape URIError behavior, and decodeURI reserved-character escape preservation. decodeURIComponent and encodeURIComponent remain unsupported, and broader coercion and metadata coverage remains to be added. |
 
 ### 19.2.6.3 ([tc39.es](https://tc39.es/ecma262/#sec-encodeuri-uri))
 
