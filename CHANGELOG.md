@@ -6,6 +6,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- tests/test262: port fifty non-eval numeric-literal conformance cases, covering decimal integer, decimal-point, and exponent forms.
 - tests/test262: port fifty non-eval ECMA-262 conformance cases across tail-position call semantics, fixed-length SharedArrayBuffer construction and prototype behavior, and Atomics validation/error paths. Proper tail-call optimization and multi-agent shared-memory semantics remain unsupported.
 - perf/runtime: store initialized prototype state directly in `JsObject` while retaining weak-table fallback storage for delegates, CLR types, and other targets. Prototype-bearing ordinary objects now allocate 48 B instead of 94 B, and Arrays allocate 80 B instead of 126 B. Hosted `array-stress`, `constructed-object`, and `dromaeo-object-array-modern` runs reduced allocation by 18.92%, 0.38%, and 21.13% respectively; a four-pair `plain-object` rerun reduced median allocation by 0.38% and median execution time by 1.81%, confirming no repeatable execution regression.
 

@@ -4,7 +4,7 @@
 
 [Back to Section12](Section12.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-03-07T01:50:59Z
+> Last generated (UTC): 2026-07-25T21:53:07Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -16,10 +16,10 @@
 |---:|---|---|---|
 | 12.9.1 | Null Literals | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-null-literals) |
 | 12.9.2 | Boolean Literals | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-boolean-literals) |
-| 12.9.3 | Numeric Literals | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-literals-numeric-literals) |
-| 12.9.3.1 | Static Semantics: Early Errors | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-numeric-literals-early-errors) |
-| 12.9.3.2 | Static Semantics: MV | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-static-semantics-mv) |
-| 12.9.3.3 | Static Semantics: NumericValue | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-numericvalue) |
+| 12.9.3 | Numeric Literals | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-literals-numeric-literals) |
+| 12.9.3.1 | Static Semantics: Early Errors | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-numeric-literals-early-errors) |
+| 12.9.3.2 | Static Semantics: MV | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-static-semantics-mv) |
+| 12.9.3.3 | Static Semantics: NumericValue | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-numericvalue) |
 | 12.9.4 | String Literals | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-literals-string-literals) |
 | 12.9.4.1 | Static Semantics: Early Errors | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-string-literals-early-errors) |
 | 12.9.4.2 | Static Semantics: SV | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-static-semantics-sv) |
@@ -30,4 +30,14 @@
 | 12.9.6 | Template Literal Lexical Components | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-template-literal-lexical-components) |
 | 12.9.6.1 | Static Semantics: TV | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-static-semantics-tv) |
 | 12.9.6.2 | Static Semantics: TRV | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-static-semantics-trv) |
+
+## Support
+
+Feature-level support tracking with repo test references and optional test262 evidence.
+
+### 12.9.3 ([tc39.es](https://tc39.es/ecma262/#sec-literals-numeric-literals))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Numeric literal parsing and numeric values | Supported with Limitations | `tests/Jroc.Test262.Tests/language/literals/numeric/ExecutionTests.cs` |  | Fifty upstream test262 numeric-literal cases cover decimal integer, decimal-point, and exponent forms and their resulting numeric values. This evidence does not yet comprehensively cover every modern numeric-literal extension. |
 
