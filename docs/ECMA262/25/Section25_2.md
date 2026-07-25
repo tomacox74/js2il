@@ -4,17 +4,17 @@
 
 [Back to Section25](Section25.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-07-25T20:32:47Z
+> Last generated (UTC): 2026-07-25T20:41:17Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
-| 25.2 | SharedArrayBuffer Objects | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-sharedarraybuffer-objects) |
+| 25.2 | SharedArrayBuffer Objects | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-sharedarraybuffer-objects) |
 
 ## Subclauses
 
 | Clause | Title | Status | Spec |
 |---:|---|---|---|
-| 25.2.1 | Fixed-length and Growable SharedArrayBuffer Objects | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-fixed-length-and-growable-sharedarraybuffer-objects) |
+| 25.2.1 | Fixed-length and Growable SharedArrayBuffer Objects | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-fixed-length-and-growable-sharedarraybuffer-objects) |
 | 25.2.2 | Abstract Operations for SharedArrayBuffer Objects | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-abstract-operations-for-sharedarraybuffer-objects) |
 | 25.2.2.1 | AllocateSharedArrayBuffer ( constructor , byteLength [ , maxByteLength ] ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-allocatesharedarraybuffer) |
 | 25.2.2.2 | IsSharedArrayBuffer ( obj ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-issharedarraybuffer) |
