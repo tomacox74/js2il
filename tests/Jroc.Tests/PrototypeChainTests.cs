@@ -6,17 +6,15 @@ namespace Jroc.Tests;
 public sealed class PrototypeChainTests
 {
     [Fact]
-    public void JsObjectInlineStorage_DistinguishesUninitializedAndExplicitNullPrototype()
+    public void JsObjectInlineStorage_TreatsNullAsNoPrototype()
     {
         PrototypeChain.Enable();
         var target = new JsObject();
 
-        Assert.False(PrototypeChain.TryGetPrototype(target, out _));
-
         PrototypeChain.InitializePrototype(target, null);
 
-        Assert.True(PrototypeChain.TryGetPrototype(target, out var prototype));
-        Assert.Null(prototype);
+        Assert.False(PrototypeChain.TryGetPrototype(target, out _));
+        Assert.Null(PrototypeChain.GetPrototypeOrNull(target));
     }
 
     [Fact]

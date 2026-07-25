@@ -188,11 +188,9 @@ public class JsObject : DynamicObject, IDictionary<string, object?>
 
     private JsShape _shape = JsShape.Empty;
 
-    private object? _prototype;
+    private volatile object? _prototype;
 
     private readonly bool _cacheShapeTransitions;
-
-    private volatile bool _hasInitializedPrototype;
 
     // Perf (#1418 follow-up): sticky flag set when this object gains descriptor
     // state that the plain dictionary cannot answer (accessors, delete tombstones,
@@ -212,22 +210,9 @@ public class JsObject : DynamicObject, IDictionary<string, object?>
     internal void MarkNonDataDescriptors() => _hasNonDataDescriptors = true;
 
     internal bool TryGetInlinePrototype(out object? prototype)
-    {
-        if (!_hasInitializedPrototype)
-        {
-            prototype = null;
-            return false;
-        }
+        => (prototype = _prototype) is not null;
 
-        prototype = _prototype;
-        return true;
-    }
-
-    internal void SetInlinePrototype(object? prototype)
-    {
-        _prototype = prototype;
-        _hasInitializedPrototype = true;
-    }
+    internal void SetInlinePrototype(object? prototype) => _prototype = prototype;
 
     /// <summary>Creates an ordinary object using the shared shape-transition cache.</summary>
     public JsObject()
