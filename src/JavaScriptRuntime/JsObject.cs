@@ -188,7 +188,7 @@ public class JsObject : DynamicObject, IDictionary<string, object?>
 
     private JsShape _shape = JsShape.Empty;
 
-    private volatile object? _prototype;
+    private object? _prototype;
 
     private readonly bool _cacheShapeTransitions;
 
@@ -198,7 +198,7 @@ public class JsObject : DynamicObject, IDictionary<string, object?>
     // While the flag is clear, every own descriptor is a mirrored default data
     // descriptor whose value matches the dictionary, so hot read paths can go
     // straight to the dictionary and skip the descriptor store probe entirely.
-    private volatile bool _hasNonDataDescriptors;
+    private bool _hasNonDataDescriptors;
 
     /// <summary>
     /// True when own reads can no longer be answered from the property dictionary
