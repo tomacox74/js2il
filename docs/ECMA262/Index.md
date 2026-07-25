@@ -19,12 +19,12 @@ Notes:
 - `Partially Supported` is deprecated legacy wording and is treated as `Supported with Limitations`.
 - Prototype-chain design/strategy: see [PrototypeChainSupport.md](../compiler/PrototypeChainSupport.md).
 
-> Last generated (UTC): 2026-07-07T21:13:28Z
+> Last generated (UTC): 2026-07-25T20:59:24Z
 
 ## Summary
 - Total top-level sections indexed: **29**
 - Top-level sections with tracked status: **28**
-- Status breakdown: Supported with Limitations: **12**, Incomplete: **9**, Not Yet Supported: **1**, N/A (informational): **6**, Untracked: **1**
+- Status breakdown: Supported with Limitations: **13**, Incomplete: **8**, Not Yet Supported: **1**, N/A (informational): **6**, Untracked: **1**
 - Untracked top-level sections: **1**
 
 ## Sections
@@ -55,7 +55,7 @@ Notes:
 | 22 | Text Processing | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-text-processing) | [Section22.md](22/Section22.md) |
 | 23 | Indexed Collections | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-indexed-collections) | [Section23.md](23/Section23.md) |
 | 24 | Keyed Collections | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-keyed-collections) | [Section24.md](24/Section24.md) |
-| 25 | Structured Data | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-structured-data) | [Section25.md](25/Section25.md) |
+| 25 | Structured Data | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-structured-data) | [Section25.md](25/Section25.md) |
 | 26 | Managing Memory | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-managing-memory) | [Section26.md](26/Section26.md) |
 | 27 | Control Abstraction Objects | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-control-abstraction-objects) | [Section27.md](27/Section27.md) |
 | 28 | Reflection | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-reflection) | [Section28.md](28/Section28.md) |

@@ -2,9 +2,9 @@ using Jroc.Tests;
 
 namespace Jroc.Test262.Tests.language.statements.@return;
 
-public sealed class PortedExecutionTests : ExecutionTestsBase
+public sealed class ExecutionTests : ExecutionTestsBase
 {
-    public PortedExecutionTests() : base("language.statements.return") { }
+    public ExecutionTests() : base("language.statements.return") { }
 
     [Fact(DisplayName = "tco")]
     public Task tco()

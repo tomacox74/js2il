@@ -2,9 +2,9 @@ using Jroc.Tests;
 
 namespace Jroc.Test262.Tests.built_ins.SharedArrayBuffer;
 
-public sealed class PortedExecutionTests : ExecutionTestsBase
+public sealed class ExecutionTests : ExecutionTestsBase
 {
-    public PortedExecutionTests() : base("built_ins.SharedArrayBuffer") { }
+    public ExecutionTests() : base("built_ins.SharedArrayBuffer") { }
 
     [Fact(DisplayName = "allocation-limit")]
     public Task allocation_limit()

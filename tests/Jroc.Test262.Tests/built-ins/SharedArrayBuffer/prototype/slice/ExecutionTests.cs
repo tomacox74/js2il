@@ -2,9 +2,9 @@ using Jroc.Tests;
 
 namespace Jroc.Test262.Tests.built_ins.SharedArrayBuffer.prototype.slice;
 
-public sealed class PortedExecutionTests : ExecutionTestsBase
+public sealed class ExecutionTests : ExecutionTestsBase
 {
-    public PortedExecutionTests() : base("built_ins.SharedArrayBuffer.prototype.slice") { }
+    public ExecutionTests() : base("built_ins.SharedArrayBuffer.prototype.slice") { }
 
     [Fact(DisplayName = "context-is-not-arraybuffer-object")]
     public Task context_is_not_arraybuffer_object()

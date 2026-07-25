@@ -79,4 +79,7 @@ public class ExecutionTests : FileSystemExecutionTestsBase
     public Task S12_6_2_A15()
         => CompilationFailureTest("S12.6.2_A15", "Failed to parse JavaScript");
 
+    [Fact(DisplayName = "tco-body")]
+    public Task tco_body()
+        => ExecutionTest("tco-body");
 }

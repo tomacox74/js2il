@@ -2,9 +2,9 @@ using Jroc.Tests;
 
 namespace Jroc.Test262.Tests.language.expressions;
 
-public sealed class PortedExecutionTests : ExecutionTestsBase
+public sealed class ExecutionTests : ExecutionTestsBase
 {
-    public PortedExecutionTests() : base("language.expressions") { }
+    public ExecutionTests() : base("language.expressions") { }
 
     [Fact(DisplayName = "tco-pos")]
     public Task tco_pos()

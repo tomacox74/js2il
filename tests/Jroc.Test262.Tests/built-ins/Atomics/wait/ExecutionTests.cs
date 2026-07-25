@@ -2,9 +2,9 @@ using Jroc.Tests;
 
 namespace Jroc.Test262.Tests.built_ins.Atomics.wait;
 
-public sealed class PortedExecutionTests : ExecutionTestsBase
+public sealed class ExecutionTests : ExecutionTestsBase
 {
-    public PortedExecutionTests() : base("built_ins.Atomics.wait") { }
+    public ExecutionTests() : base("built_ins.Atomics.wait") { }
 
     [Fact(DisplayName = "bad-range")]
     public Task bad_range()

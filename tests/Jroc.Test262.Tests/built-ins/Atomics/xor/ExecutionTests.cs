@@ -2,9 +2,9 @@ using Jroc.Tests;
 
 namespace Jroc.Test262.Tests.built_ins.Atomics.xor;
 
-public sealed class PortedExecutionTests : ExecutionTestsBase
+public sealed class ExecutionTests : ExecutionTestsBase
 {
-    public PortedExecutionTests() : base("built_ins.Atomics.xor") { }
+    public ExecutionTests() : base("built_ins.Atomics.xor") { }
 
     [Fact(DisplayName = "non-views")]
     public Task non_views()

@@ -119,4 +119,11 @@ public class ExecutionTests : FileSystemExecutionTestsBase
     public Task if_stmt_else_let()
         => CompilationFailureTest("if-stmt-else-let", "Failed to parse JavaScript");
 
+    [Fact(DisplayName = "tco-else-body")]
+    public Task tco_else_body()
+        => ExecutionTest("tco-else-body");
+
+    [Fact(DisplayName = "tco-if-body")]
+    public Task tco_if_body()
+        => ExecutionTest("tco-if-body");
 }
