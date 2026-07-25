@@ -147,6 +147,7 @@ public sealed class RuntimeIntrinsicCatalog : IRuntimeIntrinsicCatalog
         AddBuiltInGlobalFunction(globals, nameof(GlobalThis.parseFloat), () => (Func<object?, double>)GlobalThis.parseFloat, builtInGlobalAttributes);
         AddBuiltInGlobalFunction(globals, nameof(GlobalThis.isFinite), () => (Func<object?, bool>)GlobalThis.isFinite, builtInGlobalAttributes);
         AddBuiltInGlobalFunction(globals, nameof(GlobalThis.isNaN), () => (Func<object?, bool>)GlobalThis.isNaN, builtInGlobalAttributes);
+        AddBuiltInGlobalFunction(globals, nameof(GlobalThis.encodeURI), () => (Func<object?, string>)GlobalThis.encodeURI, builtInGlobalAttributes);
 
         return globals;
     }
