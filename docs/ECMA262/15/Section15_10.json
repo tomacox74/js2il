@@ -36,7 +36,45 @@
         "feature": "proper tail calls (PTC) / tail-call optimization",
         "status": "Not Yet Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-preparefortailcall",
-        "notes": "No tail-position analysis and no tail-call emission; calls compile to regular call/callvirt so recursion grows the .NET stack."
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/language/expressions/JavaScript/tco-pos.js",
+          "tests/Jroc.Test262.Tests/language/expressions/call/JavaScript/tco-member-args.js",
+          "tests/Jroc.Test262.Tests/language/statements/block/JavaScript/tco-stmt.js",
+          "tests/Jroc.Test262.Tests/language/statements/block/JavaScript/tco-stmt-list.js",
+          "tests/Jroc.Test262.Tests/language/statements/do-while/JavaScript/tco-body.js",
+          "tests/Jroc.Test262.Tests/language/statements/for/JavaScript/tco-const-body.js",
+          "tests/Jroc.Test262.Tests/language/statements/for/JavaScript/tco-let-body.js",
+          "tests/Jroc.Test262.Tests/language/statements/for/JavaScript/tco-lhs-body.js",
+          "tests/Jroc.Test262.Tests/language/statements/for/JavaScript/tco-var-body.js",
+          "tests/Jroc.Test262.Tests/language/statements/if/JavaScript/tco-else-body.js",
+          "tests/Jroc.Test262.Tests/language/statements/if/JavaScript/tco-if-body.js",
+          "tests/Jroc.Test262.Tests/language/statements/labeled/JavaScript/tco.js",
+          "tests/Jroc.Test262.Tests/language/statements/return/JavaScript/tco.js",
+          "tests/Jroc.Test262.Tests/language/statements/switch/JavaScript/tco-case-body-dflt.js",
+          "tests/Jroc.Test262.Tests/language/statements/switch/JavaScript/tco-case-body.js",
+          "tests/Jroc.Test262.Tests/language/statements/switch/JavaScript/tco-dftl-body.js",
+          "tests/Jroc.Test262.Tests/language/statements/while/JavaScript/tco-body.js"
+        ],
+        "test262Paths": [
+          "test/language/expressions/tco-pos.js",
+          "test/language/expressions/call/tco-member-args.js",
+          "test/language/statements/block/tco-stmt.js",
+          "test/language/statements/block/tco-stmt-list.js",
+          "test/language/statements/do-while/tco-body.js",
+          "test/language/statements/for/tco-const-body.js",
+          "test/language/statements/for/tco-let-body.js",
+          "test/language/statements/for/tco-lhs-body.js",
+          "test/language/statements/for/tco-var-body.js",
+          "test/language/statements/if/tco-else-body.js",
+          "test/language/statements/if/tco-if-body.js",
+          "test/language/statements/labeled/tco.js",
+          "test/language/statements/return/tco.js",
+          "test/language/statements/switch/tco-case-body-dflt.js",
+          "test/language/statements/switch/tco-case-body.js",
+          "test/language/statements/switch/tco-dftl-body.js",
+          "test/language/statements/while/tco-body.js"
+        ],
+        "notes": "The ported tests cover tail-position call semantics across expressions and statements. JROC still emits regular call/callvirt instructions rather than PrepareForTailCall, so recursive tail calls grow the .NET stack."
       }
     ]
   }

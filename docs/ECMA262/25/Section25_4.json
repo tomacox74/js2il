@@ -233,7 +233,51 @@
         "feature": "Atomics object and shared-memory atomic operations",
         "status": "Not Yet Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-atomics-object",
-        "notes": "JROC does not currently expose SharedArrayBuffer or the Atomics global. Shared-memory semantics are intentionally documented as not yet supported; Set.prototype entries that previously appeared in this file belonged to Section24_2 and have been removed."
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/Atomics/JavaScript/Symbol.toStringTag.js",
+          "tests/Jroc.Test262.Tests/built-ins/Atomics/add/JavaScript/non-views.js",
+          "tests/Jroc.Test262.Tests/built-ins/Atomics/and/JavaScript/non-views.js",
+          "tests/Jroc.Test262.Tests/built-ins/Atomics/compareExchange/JavaScript/non-views.js",
+          "tests/Jroc.Test262.Tests/built-ins/Atomics/exchange/JavaScript/non-views.js",
+          "tests/Jroc.Test262.Tests/built-ins/Atomics/load/JavaScript/non-views.js",
+          "tests/Jroc.Test262.Tests/built-ins/Atomics/notify/JavaScript/non-views.js",
+          "tests/Jroc.Test262.Tests/built-ins/Atomics/or/JavaScript/non-views.js",
+          "tests/Jroc.Test262.Tests/built-ins/Atomics/pause/JavaScript/non-integral-iterationnumber-throws.js",
+          "tests/Jroc.Test262.Tests/built-ins/Atomics/store/JavaScript/non-views.js",
+          "tests/Jroc.Test262.Tests/built-ins/Atomics/sub/JavaScript/non-views.js",
+          "tests/Jroc.Test262.Tests/built-ins/Atomics/wait/JavaScript/bad-range.js",
+          "tests/Jroc.Test262.Tests/built-ins/Atomics/wait/JavaScript/negative-index-throws.js",
+          "tests/Jroc.Test262.Tests/built-ins/Atomics/wait/JavaScript/non-shared-bufferdata-throws.js",
+          "tests/Jroc.Test262.Tests/built-ins/Atomics/wait/JavaScript/not-a-typedarray-throws.js",
+          "tests/Jroc.Test262.Tests/built-ins/Atomics/wait/JavaScript/not-an-object-throws.js",
+          "tests/Jroc.Test262.Tests/built-ins/Atomics/wait/JavaScript/out-of-range-index-throws.js",
+          "tests/Jroc.Test262.Tests/built-ins/Atomics/wait/JavaScript/symbol-for-index-throws.js",
+          "tests/Jroc.Test262.Tests/built-ins/Atomics/wait/JavaScript/symbol-for-timeout-throws.js",
+          "tests/Jroc.Test262.Tests/built-ins/Atomics/xor/JavaScript/non-views.js"
+        ],
+        "test262Paths": [
+          "test/built-ins/Atomics/Symbol.toStringTag.js",
+          "test/built-ins/Atomics/add/non-views.js",
+          "test/built-ins/Atomics/and/non-views.js",
+          "test/built-ins/Atomics/compareExchange/non-views.js",
+          "test/built-ins/Atomics/exchange/non-views.js",
+          "test/built-ins/Atomics/load/non-views.js",
+          "test/built-ins/Atomics/notify/non-views.js",
+          "test/built-ins/Atomics/or/non-views.js",
+          "test/built-ins/Atomics/pause/non-integral-iterationnumber-throws.js",
+          "test/built-ins/Atomics/store/non-views.js",
+          "test/built-ins/Atomics/sub/non-views.js",
+          "test/built-ins/Atomics/wait/bad-range.js",
+          "test/built-ins/Atomics/wait/negative-index-throws.js",
+          "test/built-ins/Atomics/wait/non-shared-bufferdata-throws.js",
+          "test/built-ins/Atomics/wait/not-a-typedarray-throws.js",
+          "test/built-ins/Atomics/wait/not-an-object-throws.js",
+          "test/built-ins/Atomics/wait/out-of-range-index-throws.js",
+          "test/built-ins/Atomics/wait/symbol-for-index-throws.js",
+          "test/built-ins/Atomics/wait/symbol-for-timeout-throws.js",
+          "test/built-ins/Atomics/xor/non-views.js"
+        ],
+        "notes": "Ported coverage verifies Atomics branding plus validation and abrupt-completion behavior for non-typed-array receivers, invalid wait indices and coercions, and pause iteration counts. Atomic operations, wait/notify coordination, and multi-agent shared-memory semantics remain unsupported."
       }
     ]
   }
