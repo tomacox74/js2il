@@ -177,6 +177,18 @@ Notes:
 - This benchmark is intentionally narrow: it measures representative CLR receiver dispatch, not full JavaScript prototype semantics.
 - It is useful for feasibility/performance investigations, not for validating JS compatibility.
 
+#### Object Operation Boundaries
+
+Compares internal ordinary-object reads and writes through JROC runtime operations with
+hosted C# `dynamic` access through `JsDynamicValueProxy`:
+
+```powershell
+dotnet run -c Release -- --object-operations
+```
+
+The hosted cases include runtime-thread marshalling and DLR boundary dispatch. Core
+JavaScript objects do not participate in DLR dispatch.
+
 #### Prototype Storage
 Measures the time and managed allocation required to construct an Array or ordinary `JsObject` with an initialized prototype:
 

@@ -1,3 +1,4 @@
+using System.Dynamic;
 using JavaScriptRuntime;
 
 namespace Jroc.Tests;
@@ -20,19 +21,26 @@ public class GlobalThisTests
     }
 
     [Fact]
-    public void GlobalObject_PreservesDynamicHostPropertyAccess()
+    public void JsObject_DoesNotParticipateInDlrDispatch()
+    {
+        Assert.False(typeof(DynamicObject).IsAssignableFrom(typeof(JsObject)));
+        Assert.False(typeof(IDynamicMetaObjectProvider).IsAssignableFrom(typeof(JsObject)));
+    }
+
+    [Fact]
+    public void GlobalObject_PreservesExplicitRuntimePropertyAccess()
     {
         var serviceProvider = RuntimeServices.BuildServiceProvider();
 
         try
         {
             GlobalThis.ServiceProvider = serviceProvider;
-            dynamic globalObject = GlobalThis.globalThis;
+            var globalObject = Assert.IsType<GlobalThis>(GlobalThis.globalThis);
 
-            globalObject.hostValue = 42d;
+            ObjectRuntime.SetItem(globalObject, "hostValue", 42d);
 
-            Assert.Equal(42d, globalObject.hostValue);
-            Assert.Equal(42d, ((GlobalThis)globalObject)["hostValue"]);
+            Assert.Equal(42d, ObjectRuntime.GetItem(globalObject, "hostValue"));
+            Assert.Equal(42d, globalObject["hostValue"]);
         }
         finally
         {

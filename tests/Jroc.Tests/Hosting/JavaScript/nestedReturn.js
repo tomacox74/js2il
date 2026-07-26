@@ -1,11 +1,30 @@
 "use strict";
 
-exports.getWindow = function () {
-  return {
-    document: {
+class Window {
+  constructor() {
+    this.document = {
       title: "Hello"
-    }
-  };
+    };
+  }
+
+  get title() {
+    return this.document.title;
+  }
+
+  setTitle(title) {
+    this.document.title = title;
+    return this.document.title;
+  }
+
+  fail() {
+    throw new Error("nested boom");
+  }
+}
+
+const windowValue = new Window();
+
+exports.getWindow = function () {
+  return windowValue;
 };
 
 exports.getTitleViaHost = function () {
@@ -15,4 +34,8 @@ exports.getTitleViaHost = function () {
 
 exports.getTitle = function (win) {
   return win.document.title;
+};
+
+exports.getHostValue = function (win) {
+  return win.hostValue;
 };

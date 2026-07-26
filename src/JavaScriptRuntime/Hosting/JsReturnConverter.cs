@@ -73,6 +73,13 @@ internal static class JsReturnConverter
             return returnType.IsValueType ? Activator.CreateInstance(returnType) : null;
         }
 
+        if (returnType == typeof(object))
+        {
+            // An object-typed host contract erases whether the value is a JS reference.
+            // Keep runtime objects behind the dynamic hosting boundary instead of leaking them.
+            return JsDynamicValueProxy.Wrap(runtime, value);
+        }
+
         if (returnType.IsInstanceOfType(value))
         {
             return value;
