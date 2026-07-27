@@ -265,6 +265,49 @@ public sealed class ObjectRuntimeOrdinaryObjectTests
     }
 
     [Fact]
+    public void NumericGetItem_PreservesNonCanonicalArrayProperties()
+    {
+        var target = new JavaScriptRuntime.Array(new object?[] { "zero" });
+        ObjectRuntime.SetProperty(target, "1.5", "fractional");
+        ObjectRuntime.SetProperty(target, "NaN", "not-a-number");
+        ObjectRuntime.SetProperty(target, "-1", "negative");
+
+        Assert.Equal("fractional", ObjectRuntime.GetItem(target, 1.5d));
+        Assert.Equal("not-a-number", ObjectRuntime.GetItem(target, double.NaN));
+        Assert.Equal("negative", ObjectRuntime.GetItem(target, -1d));
+    }
+
+    [Fact]
+    public void IteratorProtocolInvocation_PreservesWithBindingContext()
+    {
+        var withObject = new JsObject();
+        ObjectRuntime.SetProperty(withObject, "marker", "bound");
+
+        var iterator = new JsObject();
+        ObjectRuntime.SetProperty(
+            iterator,
+            "next",
+            (Func<object[], object?[]?, object?>)((_, _) => IteratorResult.Create(null, done: true)));
+
+        object? observed = null;
+        Func<object[], object?[]?, object?> iteratorMethod = (_, _) =>
+        {
+            observed = RuntimeServices.ResolveWithBindingOrDefault("marker", "fallback");
+            return iterator;
+        };
+        JavaScriptRuntime.Function.BindWithObject(iteratorMethod, withObject);
+
+        var iterable = new JsObject();
+        ObjectRuntime.DefineObjectLiteralDataProperty(
+            iterable,
+            Symbol.iterator,
+            iteratorMethod);
+
+        _ = ObjectRuntime.GetIterator(iterable);
+        Assert.Equal("bound", observed);
+    }
+
+    [Fact]
     public void ExoticSubclass_UsesInternalOperationsAcrossGenericObjectSemantics()
     {
         var runtime = RuntimeServices.BuildServiceProvider();

@@ -443,6 +443,12 @@ namespace JavaScriptRuntime
         /// is not present, and throws for non-configurable own properties.
         /// </summary>
         public static bool DeleteProperty(object? receiver, object? propName)
+            => DeletePropertyCore(receiver, propName, throwOnError: true);
+
+        public static bool DeletePropertyNonStrict(object? receiver, object? propName)
+            => DeletePropertyCore(receiver, propName, throwOnError: false);
+
+        private static bool DeletePropertyCore(object? receiver, object? propName, bool throwOnError)
         {
             if (receiver is null || receiver is JsNull)
             {
@@ -464,7 +470,17 @@ namespace JavaScriptRuntime
             if (PropertyDescriptorStore.TryGetOwn(receiver, key, out var ownDescriptor)
                 && !ownDescriptor.Configurable)
             {
-                throw new JavaScriptRuntime.TypeError($"Cannot delete property '{key}' of object");
+                if (throwOnError)
+                {
+                    throw new JavaScriptRuntime.TypeError($"Cannot delete property '{key}' of object");
+                }
+
+                return false;
+            }
+
+            if (!throwOnError && receiver is JsObject nonStrictObject)
+            {
+                return nonStrictObject.DeleteOwnProperty(key);
             }
 
             RuntimeServices.MarkLazyClassMethodPropertyDeleted(receiver, key);
@@ -533,39 +549,6 @@ namespace JavaScriptRuntime
             return true;
         }
 
-        public static bool DeletePropertyNonStrict(object? receiver, object? propName)
-        {
-            if (receiver is null || receiver is JsNull)
-            {
-                throw new JavaScriptRuntime.TypeError("Cannot convert undefined or null to object");
-            }
-
-            var key = ToPropertyKeyString(propName);
-
-            if (receiver is JavaScriptRuntime.Proxy proxy)
-            {
-                if (proxy.TryInvokeTrap("deleteProperty", "deleteProperty", new object?[] { proxy.GetTarget("deleteProperty"), key }, out var trapResult))
-                {
-                    return TypeUtilities.ToBoolean(trapResult);
-                }
-
-                receiver = proxy.GetTarget("deleteProperty");
-            }
-
-            if (PropertyDescriptorStore.TryGetOwn(receiver, key, out var ownDescriptor)
-                && !ownDescriptor.Configurable)
-            {
-                return false;
-            }
-
-            if (receiver is JsObject jsObject)
-            {
-                return jsObject.DeleteOwnProperty(key);
-            }
-
-            return DeleteProperty(receiver, key);
-        }
-
         /// <summary>
         /// Implements the JavaScript <c>delete obj[index]</c> runtime semantics (minimal).
         /// </summary>
@@ -629,6 +612,24 @@ namespace JavaScriptRuntime
 
         internal static bool TryParseCanonicalArrayIndexUInt(string s, out uint parsed)
             => CanonicalArrayIndex.TryParse(s, out parsed);
+
+        [System.Runtime.CompilerServices.MethodImpl(
+            System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+        private static bool TryGetCanonicalInt32Index(double index, out int intIndex)
+        {
+            if (!double.IsNaN(index)
+                && !double.IsInfinity(index)
+                && index % 1.0 == 0.0
+                && index >= 0
+                && index <= int.MaxValue)
+            {
+                intIndex = (int)index;
+                return true;
+            }
+
+            intIndex = 0;
+            return false;
+        }
 
         // Array branches in the numeric overloads below are intentional: they
         // preserve dense element access without allocating or parsing string keys.
@@ -749,13 +750,10 @@ namespace JavaScriptRuntime
                 return GetProperty(obj, propName)!;
             }
 
-            // Coerce index to int (JS ToInt32-ish truncation)
-            int intIndex = (int)index;
-
             // String: return character at index as a 1-length string
             if (obj is string str)
             {
-                if (double.IsNaN(index) || double.IsInfinity(index) || index < 0 || index > int.MaxValue || index % 1.0 != 0.0)
+                if (!TryGetCanonicalInt32Index(index, out var intIndex))
                 {
                     return GetProperty(obj, ToPropertyKeyString(index))!;
                 }
@@ -769,11 +767,7 @@ namespace JavaScriptRuntime
 
             if (obj is Array array)
             {
-                if (!double.IsNaN(index)
-                    && !double.IsInfinity(index)
-                    && index % 1.0 == 0.0
-                    && index >= 0
-                    && index <= int.MaxValue)
+                if (TryGetCanonicalInt32Index(index, out var intIndex))
                 {
                     if (PropertyDescriptorStore.HasAny(array))
                     {
@@ -799,6 +793,7 @@ namespace JavaScriptRuntime
                     return array[intIndex]!;
                 }
 
+                intIndex = (int)index;
                 var propName = ToPropertyKeyString(index);
                 if (PropertyDescriptorStore.GetOwnLookupCore(array, propName, out _) != PropertyDescriptorLookup.None)
                 {
@@ -822,14 +817,14 @@ namespace JavaScriptRuntime
             }
             else if (obj is JavaScriptRuntime.Node.Buffer buffer)
             {
-                if (double.IsNaN(index) || double.IsInfinity(index) || index % 1.0 != 0.0)
+                if (!TryGetCanonicalInt32Index(index, out _))
                 {
-                    var propName = ToPropertyKeyString(index);
-                    return GetProperty(buffer, propName)!;
-                }
+                    if (!double.IsInteger(index))
+                    {
+                        var propName = ToPropertyKeyString(index);
+                        return GetProperty(buffer, propName)!;
+                    }
 
-                if (index < 0 || index > int.MaxValue)
-                {
                     return null!;
                 }
 
@@ -1081,12 +1076,7 @@ namespace JavaScriptRuntime
                 throw new JavaScriptRuntime.TypeError("Cannot set properties of null");
             }
 
-            var isCanonicalArrayIndex = !double.IsNaN(index)
-                && !double.IsInfinity(index)
-                && index % 1.0 == 0.0
-                && index >= 0
-                && index <= int.MaxValue;
-            var intIndex = isCanonicalArrayIndex ? (int)index : 0;
+            var isCanonicalArrayIndex = TryGetCanonicalInt32Index(index, out var intIndex);
 
             if (obj is JavaScriptRuntime.Proxy)
             {
@@ -1347,12 +1337,7 @@ namespace JavaScriptRuntime
                 throw new JavaScriptRuntime.TypeError("Cannot set properties of null");
             }
 
-            var isCanonicalArrayIndex = !double.IsNaN(index)
-                && !double.IsInfinity(index)
-                && index % 1.0 == 0.0
-                && index >= 0
-                && index <= int.MaxValue;
-            var intIndex = isCanonicalArrayIndex ? (int)index : 0;
+            var isCanonicalArrayIndex = TryGetCanonicalInt32Index(index, out var intIndex);
 
             // Strings are immutable in JS; silently ignore and return value.
             if (obj is string)
@@ -1391,23 +1376,13 @@ namespace JavaScriptRuntime
             // Buffer: only use element write path if index is finite, integer, and in-bounds.
             if (obj is JavaScriptRuntime.Node.Buffer buffer)
             {
-                // Check if index is a valid integer index
-                if (!double.IsNaN(index) && !double.IsInfinity(index) && (index % 1.0 == 0.0))
+                if (isCanonicalArrayIndex)
                 {
-                    // Validate index is within int32 range before casting
-                    if (index >= 0 && index <= int.MaxValue)
+                    if (intIndex < (int)buffer.length)
                     {
-                        int bufferIndex = (int)index;
-                        // Only write if in bounds [0, length)
-                        if (bufferIndex < (int)buffer.length)
-                        {
-                            buffer[(double)bufferIndex] = value;
-                        }
-                        // Out-of-bounds: no-op (buffers don't expand)
+                        buffer[(double)intIndex] = value;
                     }
-                    // Negative or too large: no-op
                 }
-                // NaN/Infinity/fractional: no-op (do not treat as element 0 or property)
                 return;
             }
 
