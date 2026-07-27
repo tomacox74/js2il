@@ -4,7 +4,7 @@
 
 [Back to Section24](Section24.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-07-23T02:06:52Z
+> Last generated (UTC): 2026-07-27T04:46:16Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -28,8 +28,8 @@
 | 24.1.3.4 | Map.prototype.entries ( ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-map.prototype.entries) |
 | 24.1.3.5 | Map.prototype.forEach ( callback [ , thisArg ] ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-map.prototype.foreach) |
 | 24.1.3.6 | Map.prototype.get ( key ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-map.prototype.get) |
-| 24.1.3.7 | Map.prototype.getOrInsert ( key , value ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-map.prototype.getorinsert) |
-| 24.1.3.8 | Map.prototype.getOrInsertComputed ( key , callback ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-map.prototype.getorinsertcomputed) |
+| 24.1.3.7 | Map.prototype.getOrInsert ( key , value ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-map.prototype.getorinsert) |
+| 24.1.3.8 | Map.prototype.getOrInsertComputed ( key , callback ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-map.prototype.getorinsertcomputed) |
 | 24.1.3.9 | Map.prototype.has ( key ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-map.prototype.has) |
 | 24.1.3.10 | Map.prototype.keys ( ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-map.prototype.keys) |
 | 24.1.3.11 | Map.prototype.set ( key , value ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-map.prototype.set) |
@@ -95,7 +95,13 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Map.prototype.getOrInsert / getOrInsertComputed | Not Yet Supported |  |  | The newer getOrInsert APIs are still not implemented on JavaScriptRuntime.Map. |
+| Map.prototype.getOrInsert | Supported | `tests/Jroc.Test262.Tests/built-ins/Map/prototype/getOrInsert/ExecutionTests.cs` | `test/built-ins/Map/prototype/getOrInsert/append-new-values.js`<br>`test/built-ins/Map/prototype/getOrInsert/append-new-values-normalizes-zero-key.js`<br>`test/built-ins/Map/prototype/getOrInsert/append-value-if-key-is-not-present-different-key-types.js`<br>`test/built-ins/Map/prototype/getOrInsert/returns-value-if-key-is-not-present-different-key-types.js`<br>`test/built-ins/Map/prototype/getOrInsert/returns-value-if-key-is-present-different-key-types.js`<br>`test/built-ins/Map/prototype/getOrInsert/returns-value-normalized-zero-key.js` | Returns an existing Map value or appends and returns the supplied value. SameValueZero key lookup, insertion order, key types, and negative-zero canonicalization are covered. |
+
+### 24.1.3.8 ([tc39.es](https://tc39.es/ecma262/#sec-map.prototype.getorinsertcomputed))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Map.prototype.getOrInsertComputed | Supported | `tests/Jroc.Test262.Tests/built-ins/Map/prototype/getOrInsertComputed/ExecutionTests.cs` | `test/built-ins/Map/prototype/getOrInsertComputed/canonical-key-passed-to-callback.js`<br>`test/built-ins/Map/prototype/getOrInsertComputed/different-types-function-callbackfn-does-not-throw.js`<br>`test/built-ins/Map/prototype/getOrInsertComputed/does-not-evaluate-callbackfn-if-key-present.js`<br>`test/built-ins/Map/prototype/getOrInsertComputed/overwrites-mutation-from-callbackfn.js` | Returns existing values without invoking the callback; otherwise calls a validated callback with the canonical key and stores its result, overwriting same-key callback mutations as required. |
 
 ### 24.1.3.14 ([tc39.es](https://tc39.es/ecma262/#sec-map.prototype-%symbol.iterator%))
 

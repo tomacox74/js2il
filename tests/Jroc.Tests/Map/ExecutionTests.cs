@@ -50,5 +50,8 @@ namespace Jroc.Tests.Map
 
         [Fact]
         public Task Map_Symbol_Iterator() { var testName = nameof(Map_Symbol_Iterator); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Map_GetOrInsertComputed_CallableEdgeCases() { var testName = nameof(Map_GetOrInsertComputed_CallableEdgeCases); return ExecutionTest(testName); }
     }
 }

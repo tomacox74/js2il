@@ -28,7 +28,7 @@ namespace JavaScriptRuntime
                 return proxy.IsCallableTarget;
             }
 
-            return value is Delegate;
+            return value is Delegate or ClassConstructorValue;
         }
 
         public Proxy(object? target, object? handler)
