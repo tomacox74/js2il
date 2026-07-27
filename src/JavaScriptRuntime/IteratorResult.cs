@@ -10,7 +10,7 @@ public interface IIteratorResult
 /// Strongly-typed iterator result object of the form: { value: any, done: boolean }.
 ///
 /// NOTE: Field names are intentionally lower-case to match JS property lookups
-/// in this runtime's reflection-based `Object.GetProperty`.
+/// in this runtime's reflection-based `ObjectRuntime.GetProperty`.
 /// </summary>
 public class IteratorResultObject<T> : IIteratorResult
 {

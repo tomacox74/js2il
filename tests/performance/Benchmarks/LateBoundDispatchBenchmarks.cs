@@ -38,8 +38,8 @@ public class LateBoundDispatchBenchmarks
     public void Setup()
     {
         // Prime reflection and DLR rule caches so the benchmark focuses on steady-state dispatch.
-        _ = JavaScriptRuntime.Object.CallMember0(_receiverAsObject, _noArgsMethodName);
-        _ = JavaScriptRuntime.Object.CallMember1(_receiverAsObject, _oneArgMethodName, 1.0);
+        _ = JavaScriptRuntime.ObjectRuntime.CallMember0(_receiverAsObject, _noArgsMethodName);
+        _ = JavaScriptRuntime.ObjectRuntime.CallMember1(_receiverAsObject, _oneArgMethodName, 1.0);
         _ = _dynamicReceiver.NoArgs();
         _ = _dynamicReceiver.OneArg(1.0);
         _ = RuntimeNamedCallSite0Dispatcher.Invoke(_receiverAsObject, _noArgsMethodName);
@@ -50,7 +50,7 @@ public class LateBoundDispatchBenchmarks
     public int DirectClrCall0() => _receiver.NoArgs();
 
     [Benchmark(Description = "CallMember0 CLR receiver")]
-    public int CallMember0_ClrReceiver() => (int)JavaScriptRuntime.Object.CallMember0(_receiverAsObject, _noArgsMethodName)!;
+    public int CallMember0_ClrReceiver() => (int)JavaScriptRuntime.ObjectRuntime.CallMember0(_receiverAsObject, _noArgsMethodName)!;
 
     [Benchmark(Description = "DLR dynamic CLR receiver (0 args)")]
     public int DynamicClrCall0() => _dynamicReceiver.NoArgs();
@@ -62,7 +62,7 @@ public class LateBoundDispatchBenchmarks
     public double DirectClrCall1() => _receiver.OneArg(1.0);
 
     [Benchmark(Description = "CallMember1 CLR receiver")]
-    public double CallMember1_ClrReceiver() => (double)JavaScriptRuntime.Object.CallMember1(_receiverAsObject, _oneArgMethodName, 1.0)!;
+    public double CallMember1_ClrReceiver() => (double)JavaScriptRuntime.ObjectRuntime.CallMember1(_receiverAsObject, _oneArgMethodName, 1.0)!;
 
     [Benchmark(Description = "DLR dynamic CLR receiver (1 arg)")]
     public double DynamicClrCall1() => _dynamicReceiver.OneArg(1.0);

@@ -311,13 +311,13 @@
 			IL_009c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
 			IL_00a1: stloc.s 4
 			IL_00a3: ldloc.s 4
-			IL_00a5: call class [JavaScriptRuntime]JavaScriptRuntime.IJavaScriptIterator [JavaScriptRuntime]JavaScriptRuntime.Object::GetIterator(object)
+			IL_00a5: call class [JavaScriptRuntime]JavaScriptRuntime.IJavaScriptIterator [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetIterator(object)
 			IL_00aa: stloc.s 5
 			IL_00ac: ldloc.s 5
 			IL_00ae: brtrue IL_01ac
 
 			IL_00b3: ldloc.s 4
-			IL_00b5: call object [JavaScriptRuntime]JavaScriptRuntime.Object::NormalizeForOfIterable(object)
+			IL_00b5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::NormalizeForOfIterable(object)
 			IL_00ba: stloc.s 4
 			IL_00bc: ldloc.0
 			IL_00bd: ldc.r8 1
@@ -329,7 +329,7 @@
 			IL_00d4: ldc.r8 0.0
 			IL_00dd: stfld float64 [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_yieldStarIndex
 			IL_00e2: ldloc.s 4
-			IL_00e4: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
+			IL_00e4: call float64 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetLength(object)
 			IL_00e9: stloc.s 6
 			IL_00eb: ldloc.0
 			IL_00ec: ldloc.s 6
@@ -450,7 +450,7 @@
 			IL_020a: ldloc.s 4
 			IL_020c: ldstr "return"
 			IL_0211: ldloc.s 9
-			IL_0213: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+			IL_0213: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember(object, string, object[])
 			IL_0218: stloc.s 4
 			IL_021a: br IL_026a
 
@@ -472,7 +472,7 @@
 			IL_023d: ldloc.s 4
 			IL_023f: ldstr "throw"
 			IL_0244: ldloc.s 9
-			IL_0246: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+			IL_0246: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember(object, string, object[])
 			IL_024b: stloc.s 4
 			IL_024d: br IL_026a
 
@@ -482,12 +482,12 @@
 			IL_0255: ldfld object [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_resumeValue
 			IL_025a: stloc.s 11
 			IL_025c: ldloc.s 4
-			IL_025e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorNextForYieldStar(object)
+			IL_025e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorNextForYieldStar(object)
 			IL_0263: stloc.s 4
 			IL_0265: br IL_026a
 
 			IL_026a: ldloc.s 4
-			IL_026c: call bool [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorResultDone(object)
+			IL_026c: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorResultDone(object)
 			IL_0271: stloc.3
 			IL_0272: ldloc.3
 			IL_0273: brtrue IL_0287
@@ -501,7 +501,7 @@
 			IL_0282: br IL_01c5
 
 			IL_0287: ldloc.s 4
-			IL_0289: call object [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorResultValue(object)
+			IL_0289: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorResultValue(object)
 			IL_028e: stloc.s 4
 			IL_0290: ldloc.0
 			IL_0291: ldc.r8 0.0
@@ -540,7 +540,7 @@
 			IL_02f5: ldloc.s 4
 			IL_02f7: ldstr "log"
 			IL_02fc: ldloc.s 12
-			IL_02fe: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_02fe: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
 			IL_0303: pop
 			IL_0304: ldloc.0
 			IL_0305: ldc.i4.3
@@ -693,7 +693,7 @@
 		IL_007e: stloc.s 5
 		IL_0080: ldloc.s 5
 		IL_0082: ldstr "next"
-		IL_0087: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+		IL_0087: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
 		IL_008c: stloc.s 5
 		IL_008e: ldloc.s 5
 		IL_0090: stloc.3
@@ -708,7 +708,7 @@
 		IL_00ad: ldloc.3
 		IL_00ae: ldstr "value"
 		IL_00b3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_00b8: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00b8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
 		IL_00bd: pop
 		IL_00be: ldstr "console"
 		IL_00c3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
@@ -721,7 +721,7 @@
 		IL_00da: ldloc.3
 		IL_00db: ldstr "done"
 		IL_00e0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_00e5: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00e5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
 		IL_00ea: pop
 		IL_00eb: ldloc.2
 		IL_00ec: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
@@ -730,7 +730,7 @@
 		IL_00f5: ldstr "return"
 		IL_00fa: ldc.r8 123
 		IL_0103: box [System.Runtime]System.Double
-		IL_0108: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0108: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
 		IL_010d: stloc.s 5
 		IL_010f: ldloc.s 5
 		IL_0111: stloc.s 4
@@ -745,7 +745,7 @@
 		IL_012f: ldloc.s 4
 		IL_0131: ldstr "value"
 		IL_0136: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_013b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_013b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
 		IL_0140: pop
 		IL_0141: ldstr "console"
 		IL_0146: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
@@ -758,7 +758,7 @@
 		IL_015d: ldloc.s 4
 		IL_015f: ldstr "done"
 		IL_0164: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0169: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0169: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
 		IL_016e: pop
 		IL_016f: ret
 	} // end of method Generator_YieldStar_ReturnForwards::__js_module_init__

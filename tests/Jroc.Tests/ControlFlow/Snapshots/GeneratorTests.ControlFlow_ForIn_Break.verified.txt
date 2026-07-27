@@ -133,20 +133,20 @@
 		IL_0043: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
 		IL_0048: stloc.1
 		IL_0049: ldloc.1
-		IL_004a: call class [JavaScriptRuntime]JavaScriptRuntime.IJavaScriptIterator [JavaScriptRuntime]JavaScriptRuntime.Object::EnumerateObjectProperties(object)
+		IL_004a: call class [JavaScriptRuntime]JavaScriptRuntime.IJavaScriptIterator [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::EnumerateObjectProperties(object)
 		IL_004f: stloc.2
 		// loop start (head: IL_0050)
 			IL_0050: ldloc.2
-			IL_0051: call object [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorNext(object)
+			IL_0051: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorNext(object)
 			IL_0056: stloc.s 4
 			IL_0058: ldloc.s 4
-			IL_005a: call bool [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorResultDone(object)
+			IL_005a: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorResultDone(object)
 			IL_005f: stloc.s 5
 			IL_0061: ldloc.s 5
 			IL_0063: brtrue IL_00b9
 
 			IL_0068: ldloc.s 4
-			IL_006a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorResultValue(object)
+			IL_006a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorResultValue(object)
 			IL_006f: stloc.s 4
 			IL_0071: ldloc.s 4
 			IL_0073: stloc.3
@@ -159,7 +159,7 @@
 			IL_0089: ldloc.s 4
 			IL_008b: ldstr "log"
 			IL_0090: ldloc.3
-			IL_0091: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_0091: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
 			IL_0096: pop
 			IL_0097: ldloc.3
 			IL_0098: stloc.s 4

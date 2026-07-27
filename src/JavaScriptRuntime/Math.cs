@@ -291,13 +291,13 @@ namespace JavaScriptRuntime
             {
                 while (true)
                 {
-                    var step = Object.IteratorNext(iterator);
-                    if (Object.IteratorResultDone(step))
+                    var step = ObjectRuntime.IteratorNext(iterator);
+                    if (ObjectRuntime.IteratorResultDone(step))
                     {
                         break;
                     }
 
-                    var value = Object.IteratorResultValue(step);
+                    var value = ObjectRuntime.IteratorResultValue(step);
                     var number = ToNumber(value);
                     if (double.IsNaN(number))
                     {
@@ -313,7 +313,7 @@ namespace JavaScriptRuntime
             {
                 if (!completedNormally)
                 {
-                    Object.IteratorClose(iterator);
+                    ObjectRuntime.IteratorClose(iterator);
                 }
             }
 

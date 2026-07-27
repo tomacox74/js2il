@@ -21,7 +21,7 @@ public static class Test262HostRuntimeIntrinsics
             .AddGlobalValue("verifyNotConfigurable", (Action<object?, object?>)((target, name) => VerifyAttribute(target, name, "configurable", false)))
             .AddGlobalValue("assertRelativeDateMs", (Action<object?, object?>)AssertRelativeDateMs)
             .AddGlobalValue("getWellKnownIntrinsicObject", (Func<object?, object?>)GetWellKnownIntrinsicObject)
-            .AddGlobalValue("isConstructor", (Func<object?, bool>)JavaScriptRuntime.Object.IsConstructibleValue)
+            .AddGlobalValue("isConstructor", (Func<object?, bool>)JavaScriptRuntime.ObjectRuntime.IsConstructibleValue)
             .AddGlobalValue("asyncTest", (Action<object?>)AsyncTest)
             .Build();
 

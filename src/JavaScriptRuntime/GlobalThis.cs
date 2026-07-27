@@ -235,7 +235,7 @@ namespace JavaScriptRuntime
         // Object constructor/function value. This enables patterns like `Object.prototype` and
         // allows libraries to pass `Object` around as a value.
         private static readonly Func<object[], object?, object> _objectConstructorValue = static (_, value) =>
-            JavaScriptRuntime.Object.Construct(value);
+            ObjectRuntime.Construct(value);
         private static readonly Func<object[], object?[], object?> _regExpConstructorValue = static (_, args) =>
         {
             var pattern = (args != null && args.Length > 0) ? args[0] : null;
@@ -515,9 +515,9 @@ namespace JavaScriptRuntime
             JavaScriptRuntime.Iterator.ConfigureIntrinsicSurface(_iteratorConstructorValue);
             JavaScriptRuntime.AsyncIterator.ConfigureIntrinsicSurface(_asyncIteratorConstructorValue);
 
-            // Centralized Object constructor/prototype wiring lives on JavaScriptRuntime.Object.
+            // Centralized Object constructor/prototype wiring lives on ObjectRuntime.
             ConfigureBuiltinFunctionObject(_objectConstructorValue);
-            JavaScriptRuntime.Object.ConfigureIntrinsicSurface(_objectConstructorValue, _objectPrototypeValue);
+            ObjectRuntime.ConfigureIntrinsicSurface(_objectConstructorValue, _objectPrototypeValue);
             PrototypeChain.SetPrototype(JavaScriptRuntime.Array.ImmutablePrototype, _objectPrototypeValue);
             PrototypeChain.SetPrototype(_jsonValue, _objectPrototypeValue);
             PrototypeChain.SetPrototype(_atomicsValue, _objectPrototypeValue);
@@ -533,7 +533,7 @@ namespace JavaScriptRuntime
                 Writable = true,
                 Value = 0d
             });
-            PropertyDescriptorStore.DefineOrUpdate(_bigIntPrototypeValue, JavaScriptRuntime.Object.PrimitiveValuePropertyName, new JsPropertyDescriptor
+            PropertyDescriptorStore.DefineOrUpdate(_bigIntPrototypeValue, ObjectRuntime.PrimitiveValuePropertyName, new JsPropertyDescriptor
             {
                 Kind = JsPropertyDescriptorKind.Data,
                 Enumerable = false,
@@ -1990,7 +1990,7 @@ namespace JavaScriptRuntime
             }
 
             if (thisValue != null
-                && PropertyDescriptorStore.TryGetOwn(thisValue, JavaScriptRuntime.Object.PrimitiveValuePropertyName, out var descriptor)
+                && PropertyDescriptorStore.TryGetOwn(thisValue, ObjectRuntime.PrimitiveValuePropertyName, out var descriptor)
                 && descriptor.Value is JavaScriptRuntime.Symbol boxedSymbol)
             {
                 symbol = boxedSymbol;

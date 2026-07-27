@@ -35,13 +35,13 @@ namespace JavaScriptRuntime
             {
                 while (true)
                 {
-                    var step = JavaScriptRuntime.Object.IteratorNext(iterator);
-                    if (JavaScriptRuntime.Object.IteratorResultDone(step))
+                    var step = JavaScriptRuntime.ObjectRuntime.IteratorNext(iterator);
+                    if (JavaScriptRuntime.ObjectRuntime.IteratorResultDone(step))
                     {
                         break;
                     }
 
-                    var (key, value) = ExtractEntry(JavaScriptRuntime.Object.IteratorResultValue(step));
+                    var (key, value) = ExtractEntry(JavaScriptRuntime.ObjectRuntime.IteratorResultValue(step));
                     CallAdder(adder, key, value);
                 }
 
@@ -51,7 +51,7 @@ namespace JavaScriptRuntime
             {
                 if (!completedNormally)
                 {
-                    JavaScriptRuntime.Object.IteratorClose(iterator);
+                    JavaScriptRuntime.ObjectRuntime.IteratorClose(iterator);
                 }
             }
         }

@@ -224,15 +224,15 @@ namespace JavaScriptRuntime
             {
                 while (true)
                 {
-                    var step = JavaScriptRuntime.Object.IteratorNext(iterator);
-                    if (JavaScriptRuntime.Object.IteratorResultDone(step))
+                    var step = JavaScriptRuntime.ObjectRuntime.IteratorNext(iterator);
+                    if (JavaScriptRuntime.ObjectRuntime.IteratorResultDone(step))
                     {
                         completedNormally = true;
                         return map;
                     }
 
-                    var value = JavaScriptRuntime.Object.IteratorResultValue(step);
-                    var key = JavaScriptRuntime.Object.InvokeCallable(
+                    var value = JavaScriptRuntime.ObjectRuntime.IteratorResultValue(step);
+                    var key = ObjectRuntime.InvokeCallable(
                         callback,
                         null!,
                         new object?[] { value, (double)index });
@@ -257,7 +257,7 @@ namespace JavaScriptRuntime
             {
                 if (!completedNormally)
                 {
-                    JavaScriptRuntime.Object.IteratorCloseForThrowCompletion(iterator);
+                    JavaScriptRuntime.ObjectRuntime.IteratorCloseForThrowCompletion(iterator);
                 }
             }
         }
@@ -271,13 +271,13 @@ namespace JavaScriptRuntime
             {
                 while (true)
                 {
-                    var step = JavaScriptRuntime.Object.IteratorNext(iterator);
-                    if (JavaScriptRuntime.Object.IteratorResultDone(step))
+                    var step = JavaScriptRuntime.ObjectRuntime.IteratorNext(iterator);
+                    if (JavaScriptRuntime.ObjectRuntime.IteratorResultDone(step))
                     {
                         break;
                     }
 
-                    var (key, value) = ExtractEntry(JavaScriptRuntime.Object.IteratorResultValue(step));
+                    var (key, value) = ExtractEntry(JavaScriptRuntime.ObjectRuntime.IteratorResultValue(step));
                     CallAdder(adder, key, value);
                 }
 
@@ -287,7 +287,7 @@ namespace JavaScriptRuntime
             {
                 if (!completedNormally)
                 {
-                    JavaScriptRuntime.Object.IteratorClose(iterator);
+                    JavaScriptRuntime.ObjectRuntime.IteratorClose(iterator);
                 }
             }
         }

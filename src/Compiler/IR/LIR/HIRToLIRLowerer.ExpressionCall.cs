@@ -698,8 +698,8 @@ public sealed partial class HIRToLIRLowerer
             }
 
             _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
-                nameof(JavaScriptRuntime.Object),
-                nameof(JavaScriptRuntime.Object.CallComputedMember),
+                nameof(JavaScriptRuntime.ObjectRuntime),
+                nameof(JavaScriptRuntime.ObjectRuntime.CallComputedMember),
                 new[]
                 {
                     EnsureObject(computedReceiverTemp),
@@ -1125,7 +1125,7 @@ public sealed partial class HIRToLIRLowerer
         }
 
         // Case 2a.0: Stable string local/member receiver for substring(...) calls.
-        // This avoids late-bound Object.CallMember* dispatch in hot loops (e.g., dromaeo generateTestStrings).
+        // This avoids late-bound ObjectRuntime.CallMember* dispatch in hot loops (e.g., dromaeo generateTestStrings).
         if (!hasSpreadArgs
             && callExpr.Arguments.Length <= 2
             && string.Equals(calleePropAccess.PropertyName, "substring", StringComparison.Ordinal)
@@ -1272,7 +1272,7 @@ public sealed partial class HIRToLIRLowerer
 
             // Case 2a.3: Direct calls to known instance methods on the current user-defined class.
             // Example: `this.setBitTrue(x)` inside a class method can be emitted as a direct callvirt
-            // rather than runtime dispatch through Object.CallMember.
+            // rather than runtime dispatch through ObjectRuntime.CallMember.
             if (_classRegistry != null
                 && calleePropAccess.Object is HIRThisExpression
                 && TryGetEnclosingClassRegistryName(out var currentClass)

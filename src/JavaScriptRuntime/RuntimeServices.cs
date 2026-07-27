@@ -198,7 +198,7 @@ public class RuntimeServices
         }
         else if (constructor is JavaScriptRuntime.Proxy)
         {
-            constructed = JavaScriptRuntime.Object.ConstructValue(constructor, args);
+            constructed = ObjectRuntime.ConstructValue(constructor, args);
         }
         else
         {
@@ -272,12 +272,12 @@ public class RuntimeServices
             return heritage;
         }
 
-        if (!JavaScriptRuntime.Object.IsConstructibleValue(heritage))
+        if (!ObjectRuntime.IsConstructibleValue(heritage))
         {
             throw new TypeError("Class extends value is not a constructor or null");
         }
 
-        var prototype = JavaScriptRuntime.Object.GetProperty(heritage, "prototype");
+        var prototype = JavaScriptRuntime.ObjectRuntime.GetProperty(heritage, "prototype");
         if (prototype is not null && prototype is not JsNull && !TypeUtilities.IsConstructorReturnOverride(prototype))
         {
             throw new TypeError("Class extends value does not have valid prototype property");
@@ -303,7 +303,7 @@ public class RuntimeServices
             ?? (ownerValue is ClassConstructorValue classConstructorValue
                 ? classConstructorValue.Scopes
                 : EmptyScopes);
-        var propertyKey = JavaScriptRuntime.Object.ToPropertyKeyString(keyValue);
+        var propertyKey = ObjectRuntime.ToPropertyKeyString(keyValue);
         var clrMethodName = clrMethodNameValue as string
             ?? throw new TypeError("Class method definition requires a CLR method name");
         var metadata = new LazyClassMethodDataProperty(
@@ -359,7 +359,7 @@ public class RuntimeServices
                 : EmptyScopes);
         var clrMethodName = clrMethodNameValue as string
             ?? throw new TypeError("Class method definition requires a CLR method name");
-        var key = JavaScriptRuntime.Object.ToPropertyKeyString(keyValue);
+        var key = ObjectRuntime.ToPropertyKeyString(keyValue);
         var functionName = functionNameValue as string ?? key;
         var length = lengthValue is double d ? d : 0d;
         var isStatic = TypeUtilities.ToBoolean(isStaticValue);
@@ -426,7 +426,7 @@ public class RuntimeServices
                 : EmptyScopes);
         var clrMethodName = clrMethodNameValue as string
             ?? throw new TypeError("Class accessor definition requires a CLR method name");
-        var key = JavaScriptRuntime.Object.ToPropertyKeyString(keyValue);
+        var key = ObjectRuntime.ToPropertyKeyString(keyValue);
         var functionName = functionNameValue as string ?? key;
         var length = lengthValue is double d ? d : 0d;
         var isStatic = TypeUtilities.ToBoolean(isStaticValue);
@@ -514,7 +514,7 @@ public class RuntimeServices
 
         if (string.Equals(propName, "prototype", StringComparison.Ordinal))
         {
-            var protoObj = JavaScriptRuntime.Object.CreateOrdinaryObject();
+            var protoObj = ObjectRuntime.CreateOrdinaryObject();
 
             if (PropertyDescriptorStore.TryGetOwn(classConstructorValue.Type, "prototype", out var typePrototypeDescriptor)
                 && typePrototypeDescriptor.Kind == JsPropertyDescriptorKind.Data
@@ -995,9 +995,9 @@ public class RuntimeServices
             && withObject is not null)
         {
             var name = nameValue as string ?? DotNet2JSConversions.ToString(nameValue);
-            if (JavaScriptRuntime.Object.HasPropertyIn(name, withObject))
+            if (JavaScriptRuntime.ObjectRuntime.HasPropertyIn(name, withObject))
             {
-                return JavaScriptRuntime.Object.GetProperty(withObject, name);
+                return JavaScriptRuntime.ObjectRuntime.GetProperty(withObject, name);
             }
         }
 
@@ -1152,7 +1152,7 @@ public class RuntimeServices
     /// </summary>
     public static JsObject CreateObjectLiteral()
     {
-        return JavaScriptRuntime.Object.CreateOrdinaryObject();
+        return ObjectRuntime.CreateOrdinaryObject();
     }
 
     /// <summary>
@@ -1198,7 +1198,7 @@ public class RuntimeServices
 
         // Add .raw property with raw strings
         var rawJsArray = new Array(raw);
-        Object.SetProperty(templateObject, "raw", rawJsArray);
+        ObjectRuntime.SetProperty(templateObject, "raw", rawJsArray);
 
         // Template objects should be frozen (immutable)
         // For now we just return the object - freezing can be added later if needed

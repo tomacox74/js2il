@@ -133,7 +133,7 @@
 		IL_0029: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
 		IL_002e: stloc.1
 		IL_002f: ldloc.1
-		IL_0030: call class [JavaScriptRuntime]JavaScriptRuntime.IJavaScriptIterator [JavaScriptRuntime]JavaScriptRuntime.Object::GetIterator(object)
+		IL_0030: call class [JavaScriptRuntime]JavaScriptRuntime.IJavaScriptIterator [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetIterator(object)
 		IL_0035: stloc.2
 		IL_0036: ldc.i4.0
 		IL_0037: stloc.3
@@ -143,16 +143,16 @@
 		{
 			// loop start (head: IL_003b)
 				IL_003b: ldloc.2
-				IL_003c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorNext(object)
+				IL_003c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorNext(object)
 				IL_0041: stloc.s 6
 				IL_0043: ldloc.s 6
-				IL_0045: call bool [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorResultDone(object)
+				IL_0045: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorResultDone(object)
 				IL_004a: stloc.s 7
 				IL_004c: ldloc.s 7
 				IL_004e: brtrue IL_00b5
 
 				IL_0053: ldloc.s 6
-				IL_0055: call object [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorResultValue(object)
+				IL_0055: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorResultValue(object)
 				IL_005a: stloc.s 6
 				IL_005c: ldloc.s 6
 				IL_005e: stloc.s 5
@@ -176,13 +176,13 @@
 				IL_0093: ldloc.s 6
 				IL_0095: ldstr "log"
 				IL_009a: ldloc.s 5
-				IL_009c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+				IL_009c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
 				IL_00a1: pop
 
 				IL_00a2: br IL_003b
 			// end loop
 			IL_00a7: ldloc.2
-			IL_00a8: call void [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorClose(object)
+			IL_00a8: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorClose(object)
 			IL_00ad: ldc.i4.1
 			IL_00ae: stloc.s 4
 			IL_00b0: leave IL_00d0
@@ -200,7 +200,7 @@
 			IL_00c4: brtrue IL_00cf
 
 			IL_00c9: ldloc.2
-			IL_00ca: call void [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorCloseForThrowCompletion(object)
+			IL_00ca: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorCloseForThrowCompletion(object)
 
 			IL_00cf: endfinally
 		} // end handler

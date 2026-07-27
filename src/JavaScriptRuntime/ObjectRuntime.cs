@@ -8,26 +8,8 @@ namespace JavaScriptRuntime
     /// Low-level object runtime surface.
     /// Runtime helpers live here while JavaScript Object built-ins stay on <see cref="Object"/>.
     /// </summary>
-    public static class ObjectRuntime
+    public static partial class ObjectRuntime
     {
-        public static object? CallMember(object receiver, string methodName, object[]? args)
-            => Object.CallMember(receiver, methodName, args);
-
-        public static IJavaScriptIterator GetIterator(object? iterable)
-            => Object.GetIterator(iterable);
-
-        public static object? GetProperty(object obj, string name)
-            => Object.GetProperty(obj, name);
-
-        public static object? SetProperty(object obj, string name, object? value)
-            => Object.SetProperty(obj, name, value);
-
-        public static object? SetProperty(object obj, string name, object? value, bool throwOnError)
-            => Object.SetProperty(obj, name, value, throwOnError);
-
-        public static string ToPropertyKeyString(object? key)
-            => Object.ToPropertyKeyString(key);
-
         /// <summary>
         /// Identifies runtime-owned ordinary objects.
         /// </summary>
@@ -82,7 +64,7 @@ namespace JavaScriptRuntime
                 throw new ReferenceError($"{name} is not defined");
             }
 
-            return Object.GetProperty(GlobalThis.globalThis, name);
+            return GetProperty(GlobalThis.globalThis, name);
         }
 
         public static object? SetGlobalBindingValue(string name, object? value, bool strict)
@@ -92,7 +74,7 @@ namespace JavaScriptRuntime
                 throw new ReferenceError($"{name} is not defined");
             }
 
-            return Object.SetProperty(GlobalThis.globalThis, name, value, throwOnError: strict);
+            return SetProperty(GlobalThis.globalThis, name, value, throwOnError: strict);
         }
 
         public static void EnsureGlobalVarBinding(string name)
@@ -108,7 +90,7 @@ namespace JavaScriptRuntime
             descriptor["writable"] = true;
             descriptor["enumerable"] = true;
             descriptor["configurable"] = false;
-            Object.defineProperty(global, name, descriptor);
+            defineProperty(global, name, descriptor);
         }
 
         public static bool DeleteGlobalBinding(string name)
@@ -128,7 +110,7 @@ namespace JavaScriptRuntime
                 return "undefined";
             }
 
-            return TypeUtilities.Typeof(Object.GetProperty(GlobalThis.globalThis, name));
+            return TypeUtilities.Typeof(GetProperty(GlobalThis.globalThis, name));
         }
 
         public static object DefineObjectLiteralDataProperty(object target, object? prop, object? value)
@@ -136,7 +118,7 @@ namespace JavaScriptRuntime
             ConfigureFunctionNameFromPropertyKey(prop, value);
             return DefineDataPropertyCore(
                 target,
-                Object.ToPropertyKeyString(prop),
+                ToPropertyKeyString(prop),
                 value,
                 static (jsObject, key, objectValue) => jsObject.SetObject(key, objectValue),
                 enumerable: true);
@@ -195,7 +177,7 @@ namespace JavaScriptRuntime
             ConfigureFunctionNameFromPropertyKey(prop, value);
             return DefineDataPropertyCore(
                 target,
-                Object.ToPropertyKeyString(prop),
+                ToPropertyKeyString(prop),
                 value,
                 static (jsObject, key, objectValue) => jsObject.SetObject(key, objectValue),
                 enumerable: false);
@@ -267,7 +249,7 @@ namespace JavaScriptRuntime
         public static object DefineClassFieldDataProperty(object target, object? prop, object? value)
         {
             ConfigureFunctionNameFromPropertyKey(prop, value);
-            var key = Object.ToPropertyKeyString(prop);
+            var key = ToPropertyKeyString(prop);
             if ((target is Type && string.Equals(key, "prototype", StringComparison.Ordinal))
                 || (PropertyDescriptorStore.TryGetOwn(target, key, out var existingDescriptor)
                 && existingDescriptor.Kind == JsPropertyDescriptorKind.Data
@@ -310,8 +292,8 @@ namespace JavaScriptRuntime
                 throw new TypeError("Setter must be a function");
             }
 
-            var key = Object.ToPropertyKeyString(prop);
-            Object.InvalidateRegExpWellKnownSymbolFastPath(target, key);
+            var key = ToPropertyKeyString(prop);
+            InvalidateRegExpWellKnownSymbolFastPath(target, key);
 
             object? existingGetter = null;
             object? existingSetter = null;
@@ -361,11 +343,11 @@ namespace JavaScriptRuntime
                 throw new TypeError("Cannot convert undefined or null to object");
             }
 
-            Object.InvalidateRegExpWellKnownSymbolFastPath(target, key);
+            InvalidateRegExpWellKnownSymbolFastPath(target, key);
 
             if (target is JavaScriptRuntime.Proxy)
             {
-                return Object.defineProperty(target, key, CreateDataPropertyDescriptor(value, enumerable));
+                return defineProperty(target, key, CreateDataPropertyDescriptor(value, enumerable));
             }
 
             var descriptor = new JsPropertyDescriptor
@@ -431,14 +413,11 @@ namespace JavaScriptRuntime
             return PropertyDescriptorStore.TryGetOwn(global, name, out _);
         }
 
-        public static bool HasPropertyIn(object? key, object? obj)
-            => Object.HasPropertyIn(key, obj);
-
         public static object? ApplyResolvedWithVarInitializer(bool withHasBinding, object withObject, string name, object? assignedValue, object? fallbackBindingValue)
         {
             if (withHasBinding)
             {
-                Object.SetProperty(withObject, name, assignedValue, throwOnError: true);
+                SetProperty(withObject, name, assignedValue, throwOnError: true);
                 return fallbackBindingValue;
             }
 
@@ -470,7 +449,7 @@ namespace JavaScriptRuntime
                 throw new JavaScriptRuntime.TypeError("Cannot convert undefined or null to object");
             }
 
-            var key = JavaScriptRuntime.Object.ToPropertyKeyString(propName);
+            var key = ToPropertyKeyString(propName);
 
             if (receiver is JavaScriptRuntime.Proxy proxy)
             {
@@ -561,7 +540,7 @@ namespace JavaScriptRuntime
                 throw new JavaScriptRuntime.TypeError("Cannot convert undefined or null to object");
             }
 
-            var key = JavaScriptRuntime.Object.ToPropertyKeyString(propName);
+            var key = ToPropertyKeyString(propName);
 
             if (receiver is JavaScriptRuntime.Proxy proxy)
             {
@@ -672,7 +651,7 @@ namespace JavaScriptRuntime
                 return GetItem(obj, (double)int32Index);
             }
 
-            var propName = Object.ToPropertyKeyString(index);
+            var propName = ToPropertyKeyString(index);
 
             if (ReferenceEquals(obj, JavaScriptRuntime.Function.Prototype)
                 && (string.Equals(propName, "caller", StringComparison.Ordinal) || string.Equals(propName, "arguments", StringComparison.Ordinal)))
@@ -766,7 +745,7 @@ namespace JavaScriptRuntime
             // Proxy get trap: numeric index coerces to property key
             if (obj is JavaScriptRuntime.Proxy)
             {
-                var propName = Object.ToPropertyKeyString(index);
+                var propName = ToPropertyKeyString(index);
                 return GetProperty(obj, propName)!;
             }
 
@@ -778,7 +757,7 @@ namespace JavaScriptRuntime
             {
                 if (double.IsNaN(index) || double.IsInfinity(index) || index < 0 || index > int.MaxValue || index % 1.0 != 0.0)
                 {
-                    return GetProperty(obj, Object.ToPropertyKeyString(index))!;
+                    return GetProperty(obj, ToPropertyKeyString(index))!;
                 }
 
                 if (intIndex < 0 || intIndex >= str.Length)
@@ -820,7 +799,7 @@ namespace JavaScriptRuntime
                     return array[intIndex]!;
                 }
 
-                var propName = Object.ToPropertyKeyString(index);
+                var propName = ToPropertyKeyString(index);
                 if (PropertyDescriptorStore.GetOwnLookupCore(array, propName, out _) != PropertyDescriptorLookup.None)
                 {
                     return GetProperty(array, propName)!;
@@ -834,7 +813,7 @@ namespace JavaScriptRuntime
             // Ordinary object: numeric index coerces to a property-name string per JS ToPropertyKey.
             else if (IsOrdinaryObject(obj))
             {
-                var propName = Object.ToPropertyKeyString(index);
+                var propName = ToPropertyKeyString(index);
                 return GetProperty(obj, propName)!;
             }
             else if (obj is TypedArrayBase typedArray)
@@ -845,7 +824,7 @@ namespace JavaScriptRuntime
             {
                 if (double.IsNaN(index) || double.IsInfinity(index) || index % 1.0 != 0.0)
                 {
-                    var propName = Object.ToPropertyKeyString(index);
+                    var propName = ToPropertyKeyString(index);
                     return GetProperty(buffer, propName)!;
                 }
 
@@ -861,7 +840,7 @@ namespace JavaScriptRuntime
             {
                 // Generic object index access: treat index as a property key (JS ToPropertyKey -> string)
                 // and fall back to dynamic property lookup (public fields/properties and host objects).
-                var propName = Object.ToPropertyKeyString(index);
+                var propName = ToPropertyKeyString(index);
                 return GetProperty(obj, propName)!;
             }
         }
@@ -1022,7 +1001,7 @@ namespace JavaScriptRuntime
                 throw new JavaScriptRuntime.TypeError("Cannot set properties of null");
             }
 
-            var propName = Object.ToPropertyKeyString(index);
+            var propName = ToPropertyKeyString(index);
             bool isIndex = TryGetCanonicalArrayIndex(index, propName, out int intIndex);
 
             // Proxy set trap
@@ -1449,7 +1428,7 @@ namespace JavaScriptRuntime
         {
             if (receiver == null) throw new ArgumentNullException(nameof(receiver));
 
-            var indexKey = Object.ToPropertyKeyString(index);
+            var indexKey = ToPropertyKeyString(index);
             if (!TryGetCanonicalArrayIndex(index, indexKey, out var i))
             {
                 if (receiver is Array jsArrayLike)

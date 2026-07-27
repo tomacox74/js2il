@@ -684,11 +684,11 @@ internal sealed partial class LIRToILCompiler
                     $"Early-bound object-literal member read '{getInferredMember.MemberName}' must be materialized.");
             case LIRGetLength getLength:
                 {
-                    // Emit inline: call JavaScriptRuntime.Object.GetLength(object)
+                    // Emit inline: call JavaScriptRuntime.ObjectRuntime.GetLength(object)
                     EmitLoadTempAsObject(getLength.Object, ilEncoder, allocation, methodDescriptor);
                     var getLengthMethod = _memberRefRegistry.GetOrAddMethod(
-                        typeof(JavaScriptRuntime.Object),
-                        nameof(JavaScriptRuntime.Object.GetLength),
+                        typeof(JavaScriptRuntime.ObjectRuntime),
+                        nameof(JavaScriptRuntime.ObjectRuntime.GetLength),
                         parameterTypes: new[] { typeof(object) });
                     ilEncoder.OpCode(ILOpCode.Call);
                     ilEncoder.Token(getLengthMethod);
@@ -1201,8 +1201,8 @@ internal sealed partial class LIRToILCompiler
                     EmitLoadTemp(callMember.ArgumentsArray, ilEncoder, allocation, methodDescriptor);
 
                     var callMemberRef = _memberRefRegistry.GetOrAddMethod(
-                        typeof(JavaScriptRuntime.Object),
-                        nameof(JavaScriptRuntime.Object.CallMember),
+                        typeof(JavaScriptRuntime.ObjectRuntime),
+                        nameof(JavaScriptRuntime.ObjectRuntime.CallMember),
                         new[] { typeof(object), typeof(string), typeof(object[]) });
                     ilEncoder.OpCode(ILOpCode.Call);
                     ilEncoder.Token(callMemberRef);
@@ -1215,8 +1215,8 @@ internal sealed partial class LIRToILCompiler
                     ilEncoder.Ldstr(_metadataBuilder, callMember0.MethodName);
 
                     var callMemberRef = _memberRefRegistry.GetOrAddMethod(
-                        typeof(JavaScriptRuntime.Object),
-                        nameof(JavaScriptRuntime.Object.CallMember0),
+                        typeof(JavaScriptRuntime.ObjectRuntime),
+                        nameof(JavaScriptRuntime.ObjectRuntime.CallMember0),
                         new[] { typeof(object), typeof(string) });
                     ilEncoder.OpCode(ILOpCode.Call);
                     ilEncoder.Token(callMemberRef);
@@ -1230,8 +1230,8 @@ internal sealed partial class LIRToILCompiler
                     EmitLoadTempAsObject(callMember1.A0, ilEncoder, allocation, methodDescriptor);
 
                     var callMemberRef = _memberRefRegistry.GetOrAddMethod(
-                        typeof(JavaScriptRuntime.Object),
-                        nameof(JavaScriptRuntime.Object.CallMember1),
+                        typeof(JavaScriptRuntime.ObjectRuntime),
+                        nameof(JavaScriptRuntime.ObjectRuntime.CallMember1),
                         new[] { typeof(object), typeof(string), typeof(object) });
                     ilEncoder.OpCode(ILOpCode.Call);
                     ilEncoder.Token(callMemberRef);
@@ -1246,8 +1246,8 @@ internal sealed partial class LIRToILCompiler
                     EmitLoadTempAsObject(callMember2.A1, ilEncoder, allocation, methodDescriptor);
 
                     var callMemberRef = _memberRefRegistry.GetOrAddMethod(
-                        typeof(JavaScriptRuntime.Object),
-                        nameof(JavaScriptRuntime.Object.CallMember2),
+                        typeof(JavaScriptRuntime.ObjectRuntime),
+                        nameof(JavaScriptRuntime.ObjectRuntime.CallMember2),
                         new[] { typeof(object), typeof(string), typeof(object), typeof(object) });
                     ilEncoder.OpCode(ILOpCode.Call);
                     ilEncoder.Token(callMemberRef);
@@ -1263,8 +1263,8 @@ internal sealed partial class LIRToILCompiler
                     EmitLoadTempAsObject(callMember3.A2, ilEncoder, allocation, methodDescriptor);
 
                     var callMemberRef = _memberRefRegistry.GetOrAddMethod(
-                        typeof(JavaScriptRuntime.Object),
-                        nameof(JavaScriptRuntime.Object.CallMember3),
+                        typeof(JavaScriptRuntime.ObjectRuntime),
+                        nameof(JavaScriptRuntime.ObjectRuntime.CallMember3),
                         new[] { typeof(object), typeof(string), typeof(object), typeof(object), typeof(object) });
                     ilEncoder.OpCode(ILOpCode.Call);
                     ilEncoder.Token(callMemberRef);
@@ -1865,8 +1865,8 @@ internal sealed partial class LIRToILCompiler
                     EmitLoadTemp(constructValue.ArgumentsArray, ilEncoder, allocation, methodDescriptor);
 
                     var mref = _memberRefRegistry.GetOrAddMethod(
-                        typeof(JavaScriptRuntime.Object),
-                        nameof(JavaScriptRuntime.Object.ConstructValue),
+                        typeof(JavaScriptRuntime.ObjectRuntime),
+                        nameof(JavaScriptRuntime.ObjectRuntime.ConstructValue),
                         new[] { typeof(object), typeof(object[]) });
                     ilEncoder.OpCode(ILOpCode.Call);
                     ilEncoder.Token(mref);

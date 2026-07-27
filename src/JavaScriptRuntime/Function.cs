@@ -233,9 +233,9 @@ public static class Function
                     .Concat(args ?? System.Array.Empty<object?>())
                     .Select(arg => arg!)
                     .ToArray();
-                return JavaScriptRuntime.Object.ConstructValue(target, callArgs);
+                return ObjectRuntime.ConstructValue(target, callArgs);
             });
-            bound["prototype"] = JavaScriptRuntime.Object.GetProperty(target.Type, "prototype");
+            bound["prototype"] = JavaScriptRuntime.ObjectRuntime.GetProperty(target.Type, "prototype");
             PrototypeChain.SetPrototype(bound, Prototype);
             return bound;
         }
@@ -524,7 +524,7 @@ public static class Function
 
             var functionName = propertyKey is Symbol sym
                 ? sym.Description is null ? string.Empty : $"[{sym.Description}]"
-                : Object.ToPropertyKeyString(propertyKey);
+                : ObjectRuntime.ToPropertyKeyString(propertyKey);
             DefineMetadataProperty(del, "name", functionName);
             return functionValue;
         }
@@ -590,12 +590,12 @@ public static class Function
                 return JavaScriptRuntime.String.Construct(callArgs, newTarget);
             }
 
-            if (!JavaScriptRuntime.Object.IsConstructibleValue(constructor))
+            if (!ObjectRuntime.IsConstructibleValue(constructor))
             {
                 throw new TypeError("Value is not a constructor");
             }
 
-            var instance = JavaScriptRuntime.Object.CreateOrdinaryObject();
+            var instance = ObjectRuntime.CreateOrdinaryObject();
 
             // Override the ordinary Object.prototype default only when ctor.prototype is an object.
             // Null and primitive prototype values use Object.prototype per GetPrototypeFromConstructor.

@@ -17,11 +17,11 @@ public sealed partial class HIRToLIRLowerer
         if (forOfStmt.IsAwait)
         {
             // Desugar for await..of using async iterator protocol (ECMA-262 14.7.5.6):
-            // iterator = Object.GetAsyncIterator(rhs)
+            // iterator = ObjectRuntime.GetAsyncIterator(rhs)
             // completed = false; closed = false
             // try {
             //   while (true) {
-            //     result = await Object.AsyncIteratorNext(iterator)
+            //     result = await ObjectRuntime.AsyncIteratorNext(iterator)
             //     if (ToBoolean(result.done)) break
             //     value = result.value
             //     target = value
@@ -30,7 +30,7 @@ public sealed partial class HIRToLIRLowerer
             //   completed = true
             // } finally {
             //   // AsyncIteratorClose on abrupt completion (await return())
-            //   if (!completed && !closed) await Object.AsyncIteratorClose(iterator)
+            //   if (!completed && !closed) await ObjectRuntime.AsyncIteratorClose(iterator)
             // }
 
             if (!_isAsync || _methodBodyIR.AsyncInfo == null || _methodBodyIR.LeafScopeId.IsNil)
@@ -89,9 +89,9 @@ public sealed partial class HIRToLIRLowerer
 
                 var rhsBoxed = EnsureObject(rhsTemp);
 
-                // iterator = Object.GetAsyncIterator(rhs)
+                // iterator = ObjectRuntime.GetAsyncIterator(rhs)
                 var iterTemp = CreateTempVariable();
-                lirInstructions.Add(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.Object), nameof(JavaScriptRuntime.Object.GetAsyncIterator), new[] { rhsBoxed }, iterTemp));
+                lirInstructions.Add(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.ObjectRuntime), nameof(JavaScriptRuntime.ObjectRuntime.GetAsyncIterator), new[] { rhsBoxed }, iterTemp));
                 DefineTempStorage(iterTemp, new ValueStorage(ValueStorageKind.Reference, typeof(JavaScriptRuntime.IJavaScriptAsyncIterator)));
                 SetTempVariableSlot(iterTemp, CreateAnonymousVariableSlot("$forAwaitOf_iter", new ValueStorage(ValueStorageKind.Reference, typeof(JavaScriptRuntime.IJavaScriptAsyncIterator))));
 
@@ -165,9 +165,9 @@ public sealed partial class HIRToLIRLowerer
                     // Loop start
                     lirInstructions.Add(new LIRLabel(loopStartLabel));
 
-                    // awaitedNext = await Object.AsyncIteratorNext(iterator)
+                    // awaitedNext = await ObjectRuntime.AsyncIteratorNext(iterator)
                     var nextCallTemp = CreateTempVariable();
-                    lirInstructions.Add(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.Object), nameof(JavaScriptRuntime.Object.AsyncIteratorNext), new[] { EnsureObject(iterTemp) }, nextCallTemp));
+                    lirInstructions.Add(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.ObjectRuntime), nameof(JavaScriptRuntime.ObjectRuntime.AsyncIteratorNext), new[] { EnsureObject(iterTemp) }, nextCallTemp));
                     DefineTempStorage(nextCallTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
 
                     // Emit await of nextCallTemp
@@ -203,15 +203,15 @@ public sealed partial class HIRToLIRLowerer
                         rejectStateId,
                         rejectPendingExceptionField));
 
-                    // done = Object.IteratorResultDone(result)
+                    // done = ObjectRuntime.IteratorResultDone(result)
                     var doneBool = CreateTempVariable();
-                    lirInstructions.Add(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.Object), nameof(JavaScriptRuntime.Object.IteratorResultDone), new[] { EnsureObject(iterResult) }, doneBool));
+                    lirInstructions.Add(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.ObjectRuntime), nameof(JavaScriptRuntime.ObjectRuntime.IteratorResultDone), new[] { EnsureObject(iterResult) }, doneBool));
                     DefineTempStorage(doneBool, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
                     lirInstructions.Add(new LIRBranchIfTrue(doneBool, normalCompleteLabel));
 
-                    // value = Object.IteratorResultValue(result)
+                    // value = ObjectRuntime.IteratorResultValue(result)
                     var itemTemp = CreateTempVariable();
-                    lirInstructions.Add(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.Object), nameof(JavaScriptRuntime.Object.IteratorResultValue), new[] { EnsureObject(iterResult) }, itemTemp));
+                    lirInstructions.Add(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.ObjectRuntime), nameof(JavaScriptRuntime.ObjectRuntime.IteratorResultValue), new[] { EnsureObject(iterResult) }, itemTemp));
                     DefineTempStorage(itemTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
 
                     var writeMode = (forOfStmt.IsDeclaration && (forOfStmt.DeclarationKind is BindingKind.Let or BindingKind.Const))
@@ -288,10 +288,10 @@ public sealed partial class HIRToLIRLowerer
                     _methodBodyIR.Instructions.Add(new LIRBranchIfTrue(completedTemp, finallySkipClose));
                     _methodBodyIR.Instructions.Add(new LIRBranchIfTrue(closedTemp, finallySkipClose));
 
-                    // Await Object.AsyncIteratorClose(iterator)
+                    // Await ObjectRuntime.AsyncIteratorClose(iterator)
                     _methodBodyIR.Instructions.Add(new LIRCopyTemp(trueTemp, closedTemp));
                     var closeCallTemp = CreateTempVariable();
-                    _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.Object), nameof(JavaScriptRuntime.Object.AsyncIteratorClose), new[] { EnsureObject(iterTemp) }, closeCallTemp));
+                    _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.ObjectRuntime), nameof(JavaScriptRuntime.ObjectRuntime.AsyncIteratorClose), new[] { EnsureObject(iterTemp) }, closeCallTemp));
                     DefineTempStorage(closeCallTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
 
                     var finallyAwaitId = asyncInfo.AllocateAwaitId();
@@ -408,7 +408,7 @@ public sealed partial class HIRToLIRLowerer
         else
         {
             // Desugar for..of using iterator protocol (ECMA-262 14.7.5.5-.7):
-            // iterator = Object.GetIterator(rhs)
+            // iterator = ObjectRuntime.GetIterator(rhs)
             // try {
             //   while (true) {
             //     result = iterator.next()
@@ -419,7 +419,7 @@ public sealed partial class HIRToLIRLowerer
             //   }
             // } finally {
             //   // IteratorClose on abrupt completion
-            //   if (!completed && !closedExplicitly) Object.IteratorClose(iterator)
+            //   if (!completed && !closedExplicitly) ObjectRuntime.IteratorClose(iterator)
             // }
 
             // Spec: CreatePerIterationEnvironment for for..of with lexical declarations.
@@ -476,7 +476,7 @@ public sealed partial class HIRToLIRLowerer
                     var rhsBoxed = EnsureObject(rhsTemp);
 
                     var iterTemp = CreateTempVariable();
-                    lirInstructions.Add(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.Object), nameof(JavaScriptRuntime.Object.GetIterator), new[] { rhsBoxed }, iterTemp));
+                    lirInstructions.Add(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.ObjectRuntime), nameof(JavaScriptRuntime.ObjectRuntime.GetIterator), new[] { rhsBoxed }, iterTemp));
                     DefineTempStorage(iterTemp, new ValueStorage(ValueStorageKind.Reference, typeof(JavaScriptRuntime.IJavaScriptIterator)));
                     SetTempVariableSlot(iterTemp, CreateAnonymousVariableSlot("$forOf_iter", new ValueStorage(ValueStorageKind.Reference, typeof(JavaScriptRuntime.IJavaScriptIterator))));
 
@@ -543,16 +543,16 @@ public sealed partial class HIRToLIRLowerer
                         lirInstructions.Add(new LIRLabel(loopStartLabel));
 
                     var iterResult = CreateTempVariable();
-                    lirInstructions.Add(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.Object), nameof(JavaScriptRuntime.Object.IteratorNext), new[] { EnsureObject(iterTemp) }, iterResult));
+                    lirInstructions.Add(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.ObjectRuntime), nameof(JavaScriptRuntime.ObjectRuntime.IteratorNext), new[] { EnsureObject(iterTemp) }, iterResult));
                     DefineTempStorage(iterResult, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
 
                     var doneBool = CreateTempVariable();
-                    lirInstructions.Add(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.Object), nameof(JavaScriptRuntime.Object.IteratorResultDone), new[] { EnsureObject(iterResult) }, doneBool));
+                    lirInstructions.Add(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.ObjectRuntime), nameof(JavaScriptRuntime.ObjectRuntime.IteratorResultDone), new[] { EnsureObject(iterResult) }, doneBool));
                     DefineTempStorage(doneBool, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
                     lirInstructions.Add(new LIRBranchIfTrue(doneBool, normalCompleteLabel));
 
                     var itemTemp = CreateTempVariable();
-                    lirInstructions.Add(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.Object), nameof(JavaScriptRuntime.Object.IteratorResultValue), new[] { EnsureObject(iterResult) }, itemTemp));
+                    lirInstructions.Add(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.ObjectRuntime), nameof(JavaScriptRuntime.ObjectRuntime.IteratorResultValue), new[] { EnsureObject(iterResult) }, itemTemp));
                     DefineTempStorage(itemTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
 
                     var writeMode = (forOfStmt.IsDeclaration && (forOfStmt.DeclarationKind is BindingKind.Let or BindingKind.Const))
@@ -578,8 +578,8 @@ public sealed partial class HIRToLIRLowerer
 
                     lirInstructions.Add(new LIRLabel(breakCleanupLabel));
                     lirInstructions.Add(new LIRCallIntrinsicStaticVoid(
-                        nameof(JavaScriptRuntime.Object),
-                        nameof(JavaScriptRuntime.Object.IteratorClose),
+                        nameof(JavaScriptRuntime.ObjectRuntime),
+                        nameof(JavaScriptRuntime.ObjectRuntime.IteratorClose),
                         new[] { EnsureObject(iterTemp) }));
                     lirInstructions.Add(new LIRCopyTemp(trueTemp, closedTemp));
                     lirInstructions.Add(new LIRBranch(afterTryLabel));
@@ -622,15 +622,15 @@ public sealed partial class HIRToLIRLowerer
                         int normalCloseLabel = CreateLabel();
                         lirInstructions.Add(new LIRBranchIfFalse(hasPendingException, normalCloseLabel));
                         lirInstructions.Add(new LIRCallIntrinsicStaticVoid(
-                            nameof(JavaScriptRuntime.Object),
-                            nameof(JavaScriptRuntime.Object.IteratorCloseForThrowCompletion),
+                            nameof(JavaScriptRuntime.ObjectRuntime),
+                            nameof(JavaScriptRuntime.ObjectRuntime.IteratorCloseForThrowCompletion),
                             new[] { EnsureObject(iterTemp) }));
                         lirInstructions.Add(new LIRBranch(finallySkipClose));
 
                         lirInstructions.Add(new LIRLabel(normalCloseLabel));
                         lirInstructions.Add(new LIRCallIntrinsicStaticVoid(
-                            nameof(JavaScriptRuntime.Object),
-                            nameof(JavaScriptRuntime.Object.IteratorClose),
+                            nameof(JavaScriptRuntime.ObjectRuntime),
+                            nameof(JavaScriptRuntime.ObjectRuntime.IteratorClose),
                             new[] { EnsureObject(iterTemp) }));
                         lirInstructions.Add(new LIRLabel(finallySkipClose));
                         lirInstructions.Add(new LIRBranch(finallyExitLabel));
@@ -702,7 +702,7 @@ public sealed partial class HIRToLIRLowerer
                 var rhsBoxed = EnsureObject(rhsTemp);
 
                 var iterTemp = CreateTempVariable();
-                lirInstructions.Add(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.Object), nameof(JavaScriptRuntime.Object.GetIterator), new[] { rhsBoxed }, iterTemp));
+                lirInstructions.Add(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.ObjectRuntime), nameof(JavaScriptRuntime.ObjectRuntime.GetIterator), new[] { rhsBoxed }, iterTemp));
                 DefineTempStorage(iterTemp, new ValueStorage(ValueStorageKind.Reference, typeof(JavaScriptRuntime.IJavaScriptIterator)));
                 SetTempVariableSlot(iterTemp, CreateAnonymousVariableSlot("$forOf_iter", new ValueStorage(ValueStorageKind.Reference, typeof(JavaScriptRuntime.IJavaScriptIterator))));
 
@@ -741,16 +741,16 @@ public sealed partial class HIRToLIRLowerer
                     lirInstructions.Add(new LIRLabel(loopStartLabel));
 
                     var iterResult = CreateTempVariable();
-                    lirInstructions.Add(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.Object), nameof(JavaScriptRuntime.Object.IteratorNext), new[] { EnsureObject(iterTemp) }, iterResult));
+                    lirInstructions.Add(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.ObjectRuntime), nameof(JavaScriptRuntime.ObjectRuntime.IteratorNext), new[] { EnsureObject(iterTemp) }, iterResult));
                     DefineTempStorage(iterResult, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
 
                     var doneBool = CreateTempVariable();
-                    lirInstructions.Add(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.Object), nameof(JavaScriptRuntime.Object.IteratorResultDone), new[] { EnsureObject(iterResult) }, doneBool));
+                    lirInstructions.Add(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.ObjectRuntime), nameof(JavaScriptRuntime.ObjectRuntime.IteratorResultDone), new[] { EnsureObject(iterResult) }, doneBool));
                     DefineTempStorage(doneBool, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
                     lirInstructions.Add(new LIRBranchIfTrue(doneBool, normalCompleteLabel));
 
                     var itemTemp = CreateTempVariable();
-                    lirInstructions.Add(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.Object), nameof(JavaScriptRuntime.Object.IteratorResultValue), new[] { EnsureObject(iterResult) }, itemTemp));
+                    lirInstructions.Add(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.ObjectRuntime), nameof(JavaScriptRuntime.ObjectRuntime.IteratorResultValue), new[] { EnsureObject(iterResult) }, itemTemp));
                     DefineTempStorage(itemTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
 
                     var writeMode = (forOfStmt.IsDeclaration && (forOfStmt.DeclarationKind is BindingKind.Let or BindingKind.Const))
@@ -772,8 +772,8 @@ public sealed partial class HIRToLIRLowerer
 
                     lirInstructions.Add(new LIRLabel(breakCleanupLabel));
                     lirInstructions.Add(new LIRCallIntrinsicStaticVoid(
-                        nameof(JavaScriptRuntime.Object),
-                        nameof(JavaScriptRuntime.Object.IteratorClose),
+                        nameof(JavaScriptRuntime.ObjectRuntime),
+                        nameof(JavaScriptRuntime.ObjectRuntime.IteratorClose),
                         new[] { EnsureObject(iterTemp) }));
                     lirInstructions.Add(new LIRCopyTemp(trueTemp, closedTemp));
                     lirInstructions.Add(new LIRBranch(afterTryLabel));
@@ -796,15 +796,15 @@ public sealed partial class HIRToLIRLowerer
                     int normalCloseLabel = CreateLabel();
                     lirInstructions.Add(new LIRBranchIfFalse(hasPendingException, normalCloseLabel));
                     lirInstructions.Add(new LIRCallIntrinsicStaticVoid(
-                        nameof(JavaScriptRuntime.Object),
-                        nameof(JavaScriptRuntime.Object.IteratorCloseForThrowCompletion),
+                        nameof(JavaScriptRuntime.ObjectRuntime),
+                        nameof(JavaScriptRuntime.ObjectRuntime.IteratorCloseForThrowCompletion),
                         new[] { EnsureObject(iterTemp) }));
                     lirInstructions.Add(new LIRBranch(finallySkipClose));
 
                     lirInstructions.Add(new LIRLabel(normalCloseLabel));
                     lirInstructions.Add(new LIRCallIntrinsicStaticVoid(
-                        nameof(JavaScriptRuntime.Object),
-                        nameof(JavaScriptRuntime.Object.IteratorClose),
+                        nameof(JavaScriptRuntime.ObjectRuntime),
+                        nameof(JavaScriptRuntime.ObjectRuntime.IteratorClose),
                         new[] { EnsureObject(iterTemp) }));
                     lirInstructions.Add(new LIRLabel(finallySkipClose));
                     lirInstructions.Add(new LIRBranch(finallyExitLabel));
@@ -833,9 +833,9 @@ public sealed partial class HIRToLIRLowerer
 
                 var rhsBoxed = EnsureObject(rhsTemp);
 
-                // iterator = Object.GetIterator(rhs)
+                // iterator = ObjectRuntime.GetIterator(rhs)
                 var iterTemp = CreateTempVariable();
-                lirInstructions.Add(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.Object), nameof(JavaScriptRuntime.Object.GetIterator), new[] { rhsBoxed }, iterTemp));
+                lirInstructions.Add(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.ObjectRuntime), nameof(JavaScriptRuntime.ObjectRuntime.GetIterator), new[] { rhsBoxed }, iterTemp));
                 DefineTempStorage(iterTemp, new ValueStorage(ValueStorageKind.Reference, typeof(JavaScriptRuntime.IJavaScriptIterator)));
                 // NOTE: temp-local allocation is linear and does not account for loop back-edges.
                 // Pin loop-carry temps to stable variable slots so values remain correct across iterations.
@@ -887,20 +887,20 @@ public sealed partial class HIRToLIRLowerer
                     // Loop start
                     lirInstructions.Add(new LIRLabel(loopStartLabel));
 
-                    // result = Object.IteratorNext(iterator)
+                    // result = ObjectRuntime.IteratorNext(iterator)
                     var iterResult = CreateTempVariable();
-                    lirInstructions.Add(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.Object), nameof(JavaScriptRuntime.Object.IteratorNext), new[] { EnsureObject(iterTemp) }, iterResult));
+                    lirInstructions.Add(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.ObjectRuntime), nameof(JavaScriptRuntime.ObjectRuntime.IteratorNext), new[] { EnsureObject(iterTemp) }, iterResult));
                     DefineTempStorage(iterResult, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
 
-                    // done = Object.IteratorResultDone(result)
+                    // done = ObjectRuntime.IteratorResultDone(result)
                     var doneBool = CreateTempVariable();
-                    lirInstructions.Add(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.Object), nameof(JavaScriptRuntime.Object.IteratorResultDone), new[] { EnsureObject(iterResult) }, doneBool));
+                    lirInstructions.Add(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.ObjectRuntime), nameof(JavaScriptRuntime.ObjectRuntime.IteratorResultDone), new[] { EnsureObject(iterResult) }, doneBool));
                     DefineTempStorage(doneBool, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
                     lirInstructions.Add(new LIRBranchIfTrue(doneBool, normalCompleteLabel));
 
-                    // value = Object.IteratorResultValue(result)
+                    // value = ObjectRuntime.IteratorResultValue(result)
                     var itemTemp = CreateTempVariable();
-                    lirInstructions.Add(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.Object), nameof(JavaScriptRuntime.Object.IteratorResultValue), new[] { EnsureObject(iterResult) }, itemTemp));
+                    lirInstructions.Add(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.ObjectRuntime), nameof(JavaScriptRuntime.ObjectRuntime.IteratorResultValue), new[] { EnsureObject(iterResult) }, itemTemp));
                     DefineTempStorage(itemTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
 
                     var writeMode = (forOfStmt.IsDeclaration && (forOfStmt.DeclarationKind is BindingKind.Let or BindingKind.Const))
@@ -929,7 +929,7 @@ public sealed partial class HIRToLIRLowerer
 
                     // Break target: close iterator then leave loop.
                     lirInstructions.Add(new LIRLabel(breakCleanupLabel));
-                    lirInstructions.Add(new LIRCallIntrinsicStaticVoid("Object", "IteratorClose", new[] { EnsureObject(iterTemp) }));
+                    lirInstructions.Add(new LIRCallIntrinsicStaticVoid("ObjectRuntime", "IteratorClose", new[] { EnsureObject(iterTemp) }));
                     lirInstructions.Add(new LIRCopyTemp(trueTemp, closedTemp));
                     lirInstructions.Add(new LIRLeave(loopEndLabel));
 
@@ -945,7 +945,7 @@ public sealed partial class HIRToLIRLowerer
                     int finallySkipClose = CreateLabel();
                     lirInstructions.Add(new LIRBranchIfTrue(completedTemp, finallySkipClose));
                     lirInstructions.Add(new LIRBranchIfTrue(closedTemp, finallySkipClose));
-                    lirInstructions.Add(new LIRCallIntrinsicStaticVoid("Object", "IteratorCloseForThrowCompletion", new[] { EnsureObject(iterTemp) }));
+                    lirInstructions.Add(new LIRCallIntrinsicStaticVoid("ObjectRuntime", "IteratorCloseForThrowCompletion", new[] { EnsureObject(iterTemp) }));
                     lirInstructions.Add(new LIRLabel(finallySkipClose));
                     lirInstructions.Add(new LIREndFinally());
                     lirInstructions.Add(new LIRLabel(finallyEnd));

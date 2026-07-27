@@ -22,7 +22,7 @@ public sealed class JrocInMemoryAssemblyLoaderTests
         Assert.NotNull(loadContext);
         Assert.True(loadContext!.IsCollectible);
 
-        var runtimeAssemblyName = typeof(JavaScriptRuntime.Object).Assembly.GetName().Name;
+        var runtimeAssemblyName = typeof(JavaScriptRuntime.ObjectRuntime).Assembly.GetName().Name;
         Assert.DoesNotContain(
             loadContext.Assemblies,
             assembly => !ReferenceEquals(assembly, loadedAssembly.Assembly)

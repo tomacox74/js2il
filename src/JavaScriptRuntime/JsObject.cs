@@ -444,7 +444,7 @@ public class JsObject : IDictionary<string, object?>
             {
                 value = descriptor.Get is null || descriptor.Get is JsNull
                     ? null
-                    : Object.InvokeCallable(
+                    : ObjectRuntime.InvokeCallable(
                         descriptor.Get,
                         receiverForAccessors,
                         System.Array.Empty<object>());

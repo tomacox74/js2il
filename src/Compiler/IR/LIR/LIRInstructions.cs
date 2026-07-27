@@ -163,31 +163,31 @@ public record LIRCallImport(TempVariable ModuleSpecifier, TempVariable CurrentMo
 /// Calls a member method on a receiver via runtime dispatch.
 /// This is used for method calls where the receiver type is not known at compile time,
 /// e.g., `x.join(',')` when `x` is boxed as object.
-/// Emits: call JavaScriptRuntime.Object.CallMember(object receiver, string methodName, object[]? args)
+/// Emits: call JavaScriptRuntime.ObjectRuntime.CallMember(object receiver, string methodName, object[]? args)
 /// </summary>
 public record LIRCallMember(TempVariable Receiver, string MethodName, TempVariable ArgumentsArray, TempVariable Result) : LIRInstruction;
 
 /// <summary>
 /// Calls a member method with 0 arguments (arity-specific optimization).
-/// Emits: call JavaScriptRuntime.Object.CallMember0(object receiver, string methodName)
+/// Emits: call JavaScriptRuntime.ObjectRuntime.CallMember0(object receiver, string methodName)
 /// </summary>
 public record LIRCallMember0(TempVariable Receiver, string MethodName, TempVariable Result) : LIRInstruction;
 
 /// <summary>
 /// Calls a member method with 1 argument (arity-specific optimization).
-/// Emits: call JavaScriptRuntime.Object.CallMember1(object receiver, string methodName, object a0)
+/// Emits: call JavaScriptRuntime.ObjectRuntime.CallMember1(object receiver, string methodName, object a0)
 /// </summary>
 public record LIRCallMember1(TempVariable Receiver, string MethodName, TempVariable A0, TempVariable Result) : LIRInstruction;
 
 /// <summary>
 /// Calls a member method with 2 arguments (arity-specific optimization).
-/// Emits: call JavaScriptRuntime.Object.CallMember2(object receiver, string methodName, object a0, object a1)
+/// Emits: call JavaScriptRuntime.ObjectRuntime.CallMember2(object receiver, string methodName, object a0, object a1)
 /// </summary>
 public record LIRCallMember2(TempVariable Receiver, string MethodName, TempVariable A0, TempVariable A1, TempVariable Result) : LIRInstruction;
 
 /// <summary>
 /// Calls a member method with 3 arguments (arity-specific optimization).
-/// Emits: call JavaScriptRuntime.Object.CallMember3(object receiver, string methodName, object a0, object a1, object a2)
+/// Emits: call JavaScriptRuntime.ObjectRuntime.CallMember3(object receiver, string methodName, object a0, object a1, object a2)
 /// </summary>
 public record LIRCallMember3(TempVariable Receiver, string MethodName, TempVariable A0, TempVariable A1, TempVariable A2, TempVariable Result) : LIRInstruction;
 
@@ -215,7 +215,7 @@ public record LIRCallTypedMember(
 ///
 /// Semantics:
 /// - If receiver <c>isinst</c> <paramref name="ReceiverTypeHandle"/>, callvirt <paramref name="MethodHandle"/>.
-/// - Otherwise, fall back to <see cref="JavaScriptRuntime.Object.CallMember(object, string, object[])"/>.
+/// - Otherwise, fall back to <see cref="JavaScriptRuntime.ObjectRuntime.CallMember(object, string, object[])"/>.
 ///
 /// Arguments are JS arguments (boxed as object). Extra args are ignored; missing args are padded with null.
 /// </summary>
@@ -233,7 +233,7 @@ public record LIRCallTypedMemberWithFallback(
 
 /// <summary>
 /// Constructs an object from a constructor value where the constructor is not statically known.
-/// Emits: call JavaScriptRuntime.Object.ConstructValue(object constructor, object[]? args)
+/// Emits: call JavaScriptRuntime.ObjectRuntime.ConstructValue(object constructor, object[]? args)
 /// </summary>
 public record LIRConstructValue(TempVariable ConstructorValue, TempVariable ArgumentsArray, TempVariable Result) : LIRInstruction;
 

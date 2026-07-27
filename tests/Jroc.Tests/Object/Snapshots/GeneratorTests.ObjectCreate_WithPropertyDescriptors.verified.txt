@@ -151,7 +151,7 @@
 		IL_00b1: ldloc.2
 		IL_00b2: ldstr "x"
 		IL_00b7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_00bc: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00bc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
 		IL_00c1: pop
 		IL_00c2: ldstr "console"
 		IL_00c7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
@@ -164,26 +164,26 @@
 		IL_00de: ldloc.2
 		IL_00df: ldstr "y"
 		IL_00e4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_00e9: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00e9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
 		IL_00ee: pop
 		IL_00ef: ldc.i4.0
 		IL_00f0: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
 		IL_00f5: stloc.3
 		IL_00f6: ldloc.2
-		IL_00f7: call class [JavaScriptRuntime]JavaScriptRuntime.IJavaScriptIterator [JavaScriptRuntime]JavaScriptRuntime.Object::EnumerateObjectProperties(object)
+		IL_00f7: call class [JavaScriptRuntime]JavaScriptRuntime.IJavaScriptIterator [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::EnumerateObjectProperties(object)
 		IL_00fc: stloc.s 4
 		// loop start (head: IL_00fe)
 			IL_00fe: ldloc.s 4
-			IL_0100: call object [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorNext(object)
+			IL_0100: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorNext(object)
 			IL_0105: stloc.s 7
 			IL_0107: ldloc.s 7
-			IL_0109: call bool [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorResultDone(object)
+			IL_0109: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorResultDone(object)
 			IL_010e: stloc.s 8
 			IL_0110: ldloc.s 8
 			IL_0112: brtrue IL_0132
 
 			IL_0117: ldloc.s 7
-			IL_0119: call object [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorResultValue(object)
+			IL_0119: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorResultValue(object)
 			IL_011e: stloc.s 7
 			IL_0120: ldloc.s 7
 			IL_0122: stloc.s 5
@@ -212,7 +212,7 @@
 		IL_015d: ldloc.s 7
 		IL_015f: ldstr "log"
 		IL_0164: ldloc.s 9
-		IL_0166: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0166: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
 		IL_016b: pop
 		IL_016c: ldstr "console"
 		IL_0171: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
@@ -239,7 +239,7 @@
 		IL_01b4: ldloc.s 7
 		IL_01b6: ldstr "log"
 		IL_01bb: ldloc.s 11
-		IL_01bd: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_01bd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
 		IL_01c2: pop
 		IL_01c3: ret
 	} // end of method ObjectCreate_WithPropertyDescriptors::__js_module_init__

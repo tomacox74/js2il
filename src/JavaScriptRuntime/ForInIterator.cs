@@ -200,18 +200,18 @@ public sealed class ForInIterator : IJavaScriptIterator<string>
     {
         if (target is JavaScriptRuntime.Proxy)
         {
-            return JavaScriptRuntime.Object.GetOwnEnumerableKeysInOrder(target);
+            return ObjectRuntime.GetOwnEnumerableKeysInOrder(target);
         }
 
         // Ordinary objects: union descriptor keys and backing keys.
         if (ObjectRuntime.IsOrdinaryObject(target))
         {
-            return JavaScriptRuntime.Object.GetOwnEnumerableKeysInOrder(target);
+            return ObjectRuntime.GetOwnEnumerableKeysInOrder(target);
         }
 
         if (target is IDictionary<string, object?>)
         {
-            return JavaScriptRuntime.Object.GetOwnEnumerableKeysInOrder(target);
+            return ObjectRuntime.GetOwnEnumerableKeysInOrder(target);
         }
 
         // Typed array: enumerate indices
@@ -239,7 +239,7 @@ public sealed class ForInIterator : IJavaScriptIterator<string>
         // IDictionary: enumerate keys (stringified)
         if (target is IDictionary dictObj)
         {
-            return JavaScriptRuntime.Object.GetOwnEnumerableKeysInOrder(target);
+            return ObjectRuntime.GetOwnEnumerableKeysInOrder(target);
         }
 
         return new List<string>();
@@ -249,17 +249,17 @@ public sealed class ForInIterator : IJavaScriptIterator<string>
     {
         if (target is JavaScriptRuntime.Proxy)
         {
-            return JavaScriptRuntime.Object.GetOwnPropertyKeysInOrder(target);
+            return ObjectRuntime.GetOwnPropertyKeysInOrder(target);
         }
 
         if (ObjectRuntime.IsOrdinaryObject(target))
         {
-            return JavaScriptRuntime.Object.GetOwnPropertyKeysInOrder(target);
+            return ObjectRuntime.GetOwnPropertyKeysInOrder(target);
         }
 
         if (target is IDictionary<string, object?> || target is IDictionary)
         {
-            return JavaScriptRuntime.Object.GetOwnPropertyKeysInOrder(target);
+            return ObjectRuntime.GetOwnPropertyKeysInOrder(target);
         }
 
         if (target is JavaScriptRuntime.TypedArrayBase typedArray)
@@ -314,14 +314,14 @@ public sealed class ForInIterator : IJavaScriptIterator<string>
     {
         if (target is JavaScriptRuntime.Proxy)
         {
-            if (!JavaScriptRuntime.Object.hasOwn(target, key))
+            if (!ObjectRuntime.hasOwn(target, key))
             {
                 return false;
             }
 
-            var descriptor = JavaScriptRuntime.Object.getOwnPropertyDescriptor(target, key);
+            var descriptor = ObjectRuntime.getOwnPropertyDescriptor(target, key);
             return descriptor is not null
-                && TypeUtilities.ToBoolean(JavaScriptRuntime.Object.GetProperty(descriptor, "enumerable"));
+                && TypeUtilities.ToBoolean(JavaScriptRuntime.ObjectRuntime.GetProperty(descriptor, "enumerable"));
         }
 
         // Ordinary objects: key is present in backing storage or the descriptor store,

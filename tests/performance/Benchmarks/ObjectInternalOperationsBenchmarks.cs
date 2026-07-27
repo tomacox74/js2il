@@ -27,8 +27,8 @@ public class ObjectInternalOperationsBenchmarks : IDisposable
     [GlobalSetup]
     public void Setup()
     {
-        JavaScriptRuntime.Object.SetProperty(_readTarget, "value", 42d);
-        JavaScriptRuntime.Object.SetProperty(_writeTarget, "value", 0d);
+        JavaScriptRuntime.ObjectRuntime.SetProperty(_readTarget, "value", 42d);
+        JavaScriptRuntime.ObjectRuntime.SetProperty(_writeTarget, "value", 0d);
 
         var request = new JrocInMemoryCompileRequest(
             Path.Combine(Path.GetTempPath(), "jroc-hosted-object-operations.js"))
@@ -45,11 +45,11 @@ public class ObjectInternalOperationsBenchmarks : IDisposable
 
     [Benchmark(Description = "Ordinary JsObject read")]
     public object? Read()
-        => JavaScriptRuntime.Object.GetProperty(_readTarget, "value");
+        => JavaScriptRuntime.ObjectRuntime.GetProperty(_readTarget, "value");
 
     [Benchmark(Description = "Ordinary JsObject write")]
     public object? Write()
-        => JavaScriptRuntime.Object.SetProperty(_writeTarget, "value", 42d);
+        => JavaScriptRuntime.ObjectRuntime.SetProperty(_writeTarget, "value", 42d);
 
     [Benchmark(Description = "Hosted dynamic proxy read")]
     public object? HostedRead()

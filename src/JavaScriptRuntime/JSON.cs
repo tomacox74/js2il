@@ -26,7 +26,7 @@ namespace JavaScriptRuntime
                     return parsed;
                 }
 
-                var root = Object.CreateOrdinaryObject();
+                var root = ObjectRuntime.CreateOrdinaryObject();
                 root.SetBoxedValue(string.Empty, parsed);
                 return InternalizeJsonProperty(root, string.Empty, reviverFunction);
             }
@@ -66,7 +66,7 @@ namespace JavaScriptRuntime
                      && value is not long
                      && value is not decimal)
             {
-                foreach (var key in Object.GetOwnEnumerableKeysInOrder(value))
+                foreach (var key in ObjectRuntime.GetOwnEnumerableKeysInOrder(value))
                 {
                     var revived = InternalizeJsonProperty(value, key, reviver);
                     if (revived is null)
@@ -102,7 +102,7 @@ namespace JavaScriptRuntime
             var propertyList = CreatePropertyList(replacer);
             var replacerFunction = replacer as Delegate;
             var gap = CreateGap(space);
-            var holder = Object.CreateOrdinaryObject();
+            var holder = ObjectRuntime.CreateOrdinaryObject();
             ObjectRuntime.SetItem(holder, string.Empty, value);
             return SerializeProperty(holder, string.Empty, propertyList, replacerFunction, new HashSet<object>(ReferenceEqualityComparer.Instance), gap, string.Empty);
         }
@@ -449,7 +449,7 @@ namespace JavaScriptRuntime
         {
             PushToStackOrThrowIfCircular(stack, value);
 
-            var keys = propertyList ?? Object.GetOwnEnumerableKeysInOrder(value);
+            var keys = propertyList ?? ObjectRuntime.GetOwnEnumerableKeysInOrder(value);
             var parts = new List<string>();
             var stepBack = indent;
             indent += gap;
@@ -457,7 +457,7 @@ namespace JavaScriptRuntime
             {
                 foreach (var key in keys)
                 {
-                    if (!Object.hasOwn(value, key))
+                    if (!ObjectRuntime.hasOwn(value, key))
                     {
                         continue;
                     }
@@ -519,7 +519,7 @@ namespace JavaScriptRuntime
             switch (el.ValueKind)
             {
                 case JsonValueKind.Object:
-                    var obj = Object.CreateOrdinaryObject();
+                    var obj = ObjectRuntime.CreateOrdinaryObject();
                     foreach (var prop in el.EnumerateObject())
                     {
                         obj.SetBoxedValue(prop.Name, FromElement(prop.Value));

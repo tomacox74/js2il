@@ -59,7 +59,7 @@ public sealed partial class HIRToLIRLowerer
 
             // Delegate via the ECMAScript iterator protocol.
             var iteratorTemp = CreateTempVariable();
-            _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.Object), nameof(JavaScriptRuntime.Object.GetIterator), new[] { yieldedStarArg }, iteratorTemp));
+            _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.ObjectRuntime), nameof(JavaScriptRuntime.ObjectRuntime.GetIterator), new[] { yieldedStarArg }, iteratorTemp));
             DefineTempStorage(iteratorTemp, new ValueStorage(ValueStorageKind.Reference, typeof(JavaScriptRuntime.IJavaScriptIterator)));
 
             int iteratorSetupLabel = CreateLabel();
@@ -73,7 +73,7 @@ public sealed partial class HIRToLIRLowerer
             // Indexable delegation path (arrays/strings/typed arrays via NormalizeForOfIterable)
             // ---------------------------
             var indexIterTemp = CreateTempVariable();
-            _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.Object), nameof(JavaScriptRuntime.Object.NormalizeForOfIterable), new[] { yieldedStarArg }, indexIterTemp));
+            _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.ObjectRuntime), nameof(JavaScriptRuntime.ObjectRuntime.NormalizeForOfIterable), new[] { yieldedStarArg }, indexIterTemp));
             DefineTempStorage(indexIterTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
 
             // Persist delegation state on GeneratorScope so it survives suspension.
@@ -286,14 +286,14 @@ public sealed partial class HIRToLIRLowerer
                 _methodBodyIR.Instructions.Add(new LIRBuildArray(new[] { EnsureObject(nextArg) }, argsArr));
                 DefineTempStorage(argsArr, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
 
-                _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.Object), nameof(JavaScriptRuntime.Object.IteratorNextForYieldStar), new[] { EnsureObject(iterObj) }, iterResult));
+                _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.ObjectRuntime), nameof(JavaScriptRuntime.ObjectRuntime.IteratorNextForYieldStar), new[] { EnsureObject(iterObj) }, iterResult));
                 _methodBodyIR.Instructions.Add(new LIRBranch(iterAfterCall));
             }
 
             _methodBodyIR.Instructions.Add(new LIRLabel(iterAfterCall));
 
             var doneBool = CreateTempVariable();
-            _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.Object), nameof(JavaScriptRuntime.Object.IteratorResultDone), new[] { EnsureObject(iterResult) }, doneBool));
+            _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.ObjectRuntime), nameof(JavaScriptRuntime.ObjectRuntime.IteratorResultDone), new[] { EnsureObject(iterResult) }, doneBool));
             DefineTempStorage(doneBool, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
             _methodBodyIR.Instructions.Add(new LIRBranchIfTrue(doneBool, iterDone));
 
@@ -310,7 +310,7 @@ public sealed partial class HIRToLIRLowerer
             _methodBodyIR.Instructions.Add(new LIRLabel(iterDone));
 
             var finalVal = CreateTempVariable();
-            _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.Object), nameof(JavaScriptRuntime.Object.IteratorResultValue), new[] { EnsureObject(iterResult) }, finalVal));
+            _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.ObjectRuntime), nameof(JavaScriptRuntime.ObjectRuntime.IteratorResultValue), new[] { EnsureObject(iterResult) }, finalVal));
             DefineTempStorage(finalVal, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
 
             // Clear delegation state.

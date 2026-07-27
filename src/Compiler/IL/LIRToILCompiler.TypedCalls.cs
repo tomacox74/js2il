@@ -201,7 +201,7 @@ internal sealed partial class LIRToILCompiler
             
             string methodName = argCount == 0 ? "CallMember0" : $"CallMember{argCount}";
             var callMemberRef = _memberRefRegistry.GetOrAddMethod(
-                typeof(JavaScriptRuntime.Object),
+                typeof(JavaScriptRuntime.ObjectRuntime),
                 methodName,
                 paramTypes);
             ilEncoder.OpCode(ILOpCode.Call);
@@ -213,8 +213,8 @@ internal sealed partial class LIRToILCompiler
             EmitObjectArrayFromTemps(instruction.Arguments, ilEncoder, allocation, methodDescriptor);
 
             var callMemberRef = _memberRefRegistry.GetOrAddMethod(
-                typeof(JavaScriptRuntime.Object),
-                nameof(JavaScriptRuntime.Object.CallMember),
+                typeof(JavaScriptRuntime.ObjectRuntime),
+                nameof(JavaScriptRuntime.ObjectRuntime.CallMember),
                 new[] { typeof(object), typeof(string), typeof(object[]) });
             ilEncoder.OpCode(ILOpCode.Call);
             ilEncoder.Token(callMemberRef);

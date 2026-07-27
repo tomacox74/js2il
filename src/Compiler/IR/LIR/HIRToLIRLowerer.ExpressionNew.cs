@@ -15,7 +15,7 @@ public sealed partial class HIRToLIRLowerer
         resultTempVar = default;
 
         // Prefer the existing fast-paths for statically known constructors.
-        // If those don't apply, fall back to dynamic construction via JavaScriptRuntime.Object.ConstructValue.
+        // If those don't apply, fall back to dynamic construction via JavaScriptRuntime.ObjectRuntime.ConstructValue.
         var calleeVar = newExpr.Callee as HIRVariableExpression;
 
         if (newExpr.Callee is HIRInitializedUserClassTypeExpression initializedClassExpr)

@@ -73,11 +73,11 @@ internal static class LIRTypeNormalization
 
         for (int i = 0; i < methodBody.Instructions.Count - 1; i++)
         {
-            // Peephole: Object.NormalizeForOfIterable(x) where x is already a known iterable.
+            // Peephole: ObjectRuntime.NormalizeForOfIterable(x) where x is already a known iterable.
             // Today we only prove this for JavaScriptRuntime.Array.
             // Rewrite to a direct copy to avoid an unnecessary runtime call.
             if (methodBody.Instructions[i] is LIRCallIntrinsicStatic normalizeForOf &&
-                string.Equals(normalizeForOf.IntrinsicName, "Object", StringComparison.Ordinal) &&
+                string.Equals(normalizeForOf.IntrinsicName, "ObjectRuntime", StringComparison.Ordinal) &&
                 string.Equals(normalizeForOf.MethodName, "NormalizeForOfIterable", StringComparison.Ordinal) &&
                 normalizeForOf.Arguments.Count == 1)
             {

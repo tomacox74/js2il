@@ -158,7 +158,7 @@ namespace JavaScriptRuntime.Node
 
         private static IEnumerable<string> EnumerateEnumerableOptionKeys(object options)
         {
-            var keys = global::JavaScriptRuntime.Object.GetEnumerableKeys(options);
+            var keys = global::JavaScriptRuntime.ObjectRuntime.GetEnumerableKeys(options);
             for (var i = 0; i < keys.Count; i++)
             {
                 var key = keys[i];

@@ -968,7 +968,7 @@ namespace JavaScriptRuntime.Node
 
             try
             {
-                if (JavaScriptRuntime.Object.GetEnumerableKeys(options) is JavaScriptRuntime.Array keys)
+                if (JavaScriptRuntime.ObjectRuntime.GetEnumerableKeys(options) is JavaScriptRuntime.Array keys)
                 {
                     for (int i = 0; i < (int)keys.length; i++)
                     {
@@ -1025,7 +1025,7 @@ namespace JavaScriptRuntime.Node
                 return result;
             }
 
-            if (JavaScriptRuntime.Object.GetEnumerableKeys(env) is JavaScriptRuntime.Array keys)
+            if (JavaScriptRuntime.ObjectRuntime.GetEnumerableKeys(env) is JavaScriptRuntime.Array keys)
             {
                 for (int i = 0; i < (int)keys.length; i++)
                 {
@@ -2229,7 +2229,7 @@ namespace JavaScriptRuntime.Node
                     throw new Error("child_process IPC only supports JSON-serializable values in the current runtime. Buffer (byte[]) and other binary payloads are not yet supported.");
             }
 
-            if (JavaScriptRuntime.Object.GetEnumerableKeys(value) is JavaScriptRuntime.Array keys && keys.length > 0)
+            if (JavaScriptRuntime.ObjectRuntime.GetEnumerableKeys(value) is JavaScriptRuntime.Array keys && keys.length > 0)
             {
                 var objectResult = new Dictionary<string, object?>(StringComparer.Ordinal);
                 for (int i = 0; i < (int)keys.length; i++)

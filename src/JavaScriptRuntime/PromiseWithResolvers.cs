@@ -10,7 +10,7 @@ public sealed class PromiseWithResolvers
     }
 
     // Note: These member names are intentionally lowercase to match JS property access
-    // via Object.GetItem/GetProperty (which is case-sensitive for host properties).
+    // via ObjectRuntime.GetItem/GetProperty (which is case-sensitive for host properties).
     public Promise promise { get; }
 
     public object resolve { get; }

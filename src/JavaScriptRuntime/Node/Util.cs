@@ -116,23 +116,23 @@ namespace JavaScriptRuntime.Node
             }
 
             // Set up prototype chain: constructor.prototype.__proto__ = superConstructor.prototype
-            var ctorProto = Object.GetProperty(constructor, "prototype");
+            var ctorProto = ObjectRuntime.GetProperty(constructor, "prototype");
             if (ctorProto == null || ctorProto is JsNull)
             {
                 ctorProto = new JsObject();
-                Object.SetProperty(constructor, "prototype", ctorProto);
+                ObjectRuntime.SetProperty(constructor, "prototype", ctorProto);
             }
 
-            var superProto = Object.GetProperty(superConstructor, "prototype");
+            var superProto = ObjectRuntime.GetProperty(superConstructor, "prototype");
             
             // Set the __proto__ of constructor.prototype to superConstructor.prototype
-            Object.SetProperty(ctorProto, "__proto__", superProto);
+            ObjectRuntime.SetProperty(ctorProto, "__proto__", superProto);
 
             // Also set constructor property on the child prototype
-            Object.SetProperty(ctorProto, "constructor", constructor);
+            ObjectRuntime.SetProperty(ctorProto, "constructor", constructor);
 
             // Set super_ property (Node.js convention)
-            Object.SetProperty(constructor, "super_", superConstructor);
+            ObjectRuntime.SetProperty(constructor, "super_", superConstructor);
 
             return null;
         }
@@ -147,7 +147,7 @@ namespace JavaScriptRuntime.Node
 
             if (options != null && options is not JsNull)
             {
-                var depthProp = Object.GetProperty(options, "depth");
+                var depthProp = ObjectRuntime.GetProperty(options, "depth");
                 if (depthProp is double d)
                 {
                     depth = (int)d;
@@ -157,13 +157,13 @@ namespace JavaScriptRuntime.Node
                     depth = i;
                 }
 
-                var showHiddenProp = Object.GetProperty(options, "showHidden");
+                var showHiddenProp = ObjectRuntime.GetProperty(options, "showHidden");
                 if (showHiddenProp is bool sh)
                 {
                     showHidden = sh;
                 }
 
-                var colorsProp = Object.GetProperty(options, "colors");
+                var colorsProp = ObjectRuntime.GetProperty(options, "colors");
                 if (colorsProp is bool c)
                 {
                     colors = c;

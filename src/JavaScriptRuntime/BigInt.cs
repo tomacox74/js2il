@@ -145,7 +145,7 @@ public static class BigInt
         }
 
         if (value is not null
-            && PropertyDescriptorStore.TryGetOwn(value, JavaScriptRuntime.Object.PrimitiveValuePropertyName, out var descriptor)
+            && PropertyDescriptorStore.TryGetOwn(value, ObjectRuntime.PrimitiveValuePropertyName, out var descriptor)
             && descriptor.Kind == JsPropertyDescriptorKind.Data
             && descriptor.Value is BigInteger wrapped)
         {

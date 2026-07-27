@@ -140,26 +140,26 @@
 		IL_00c9: ldloc.1
 		IL_00ca: ldstr "a"
 		IL_00cf: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_00d4: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00d4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
 		IL_00d9: pop
 		IL_00da: ldc.i4.0
 		IL_00db: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
 		IL_00e0: stloc.2
 		IL_00e1: ldloc.1
-		IL_00e2: call class [JavaScriptRuntime]JavaScriptRuntime.IJavaScriptIterator [JavaScriptRuntime]JavaScriptRuntime.Object::EnumerateObjectProperties(object)
+		IL_00e2: call class [JavaScriptRuntime]JavaScriptRuntime.IJavaScriptIterator [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::EnumerateObjectProperties(object)
 		IL_00e7: stloc.3
 		// loop start (head: IL_00e8)
 			IL_00e8: ldloc.3
-			IL_00e9: call object [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorNext(object)
+			IL_00e9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorNext(object)
 			IL_00ee: stloc.s 6
 			IL_00f0: ldloc.s 6
-			IL_00f2: call bool [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorResultDone(object)
+			IL_00f2: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorResultDone(object)
 			IL_00f7: stloc.s 7
 			IL_00f9: ldloc.s 7
 			IL_00fb: brtrue IL_011b
 
 			IL_0100: ldloc.s 6
-			IL_0102: call object [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorResultValue(object)
+			IL_0102: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorResultValue(object)
 			IL_0107: stloc.s 6
 			IL_0109: ldloc.s 6
 			IL_010b: stloc.s 4
@@ -188,7 +188,7 @@
 		IL_0146: ldloc.s 6
 		IL_0148: ldstr "log"
 		IL_014d: ldloc.s 8
-		IL_014f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_014f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
 		IL_0154: pop
 		IL_0155: ldstr "console"
 		IL_015a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
@@ -215,7 +215,7 @@
 		IL_019d: ldloc.s 6
 		IL_019f: ldstr "log"
 		IL_01a4: ldloc.s 10
-		IL_01a6: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_01a6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
 		IL_01ab: pop
 		IL_01ac: ret
 	} // end of method Object_DefineProperties_Basic::__js_module_init__

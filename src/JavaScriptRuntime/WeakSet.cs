@@ -37,13 +37,13 @@ namespace JavaScriptRuntime
             {
                 while (true)
                 {
-                    var step = JavaScriptRuntime.Object.IteratorNext(iterator);
-                    if (JavaScriptRuntime.Object.IteratorResultDone(step))
+                    var step = JavaScriptRuntime.ObjectRuntime.IteratorNext(iterator);
+                    if (JavaScriptRuntime.ObjectRuntime.IteratorResultDone(step))
                     {
                         break;
                     }
 
-                    CallAdder(adder, JavaScriptRuntime.Object.IteratorResultValue(step));
+                    CallAdder(adder, JavaScriptRuntime.ObjectRuntime.IteratorResultValue(step));
                 }
 
                 completedNormally = true;
@@ -52,7 +52,7 @@ namespace JavaScriptRuntime
             {
                 if (!completedNormally)
                 {
-                    JavaScriptRuntime.Object.IteratorClose(iterator);
+                    JavaScriptRuntime.ObjectRuntime.IteratorClose(iterator);
                 }
             }
         }

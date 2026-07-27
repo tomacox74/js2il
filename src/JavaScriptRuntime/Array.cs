@@ -195,7 +195,7 @@ namespace JavaScriptRuntime
         }
 
         public bool hasOwnProperty(object? prop)
-            => JavaScriptRuntime.Object.hasOwn(this, prop);
+            => ObjectRuntime.hasOwn(this, prop);
 
         private int DenseCount => _numberItems?.Count ?? _items?.Count ?? 0;
         private int LogicalCount => _logicalLength > DenseCount ? _logicalLength : DenseCount;
@@ -937,7 +937,7 @@ namespace JavaScriptRuntime
 
             if (receiver is System.Numerics.BigInteger)
             {
-                return JavaScriptRuntime.Object.Construct(receiver);
+                return ObjectRuntime.Construct(receiver);
             }
 
             if (receiver is double or float or int or long or short or byte)
@@ -1156,16 +1156,16 @@ namespace JavaScriptRuntime
         }
 
         public override void SetNumber(string key, double value)
-            => Object.SetProperty(this, key, value);
+            => ObjectRuntime.SetProperty(this, key, value);
 
         public override void SetBoolean(string key, bool value)
-            => Object.SetProperty(this, key, value);
+            => ObjectRuntime.SetProperty(this, key, value);
 
         public override void SetString(string key, string? value)
-            => Object.SetProperty(this, key, value);
+            => ObjectRuntime.SetProperty(this, key, value);
 
         public override void SetValue(string key, object? value)
-            => Object.SetProperty(this, key, value);
+            => ObjectRuntime.SetProperty(this, key, value);
 
         public override void Add(string key, object? value)
         {
@@ -1234,7 +1234,7 @@ namespace JavaScriptRuntime
                 return false;
             }
 
-            value = Object.GetProperty(this, key);
+            value = ObjectRuntime.GetProperty(this, key);
             return true;
         }
 
@@ -1242,7 +1242,7 @@ namespace JavaScriptRuntime
             => GetOwnPropertyDescriptor(key, out _) == PropertyDescriptorLookup.Found;
 
         private void SetDictionaryValue(string key, object? value)
-            => Object.SetProperty(this, key, value);
+            => ObjectRuntime.SetProperty(this, key, value);
 
         internal override PropertyDescriptorLookup GetOwnPropertyDescriptor(
             string key,
@@ -1444,7 +1444,7 @@ namespace JavaScriptRuntime
 
             foreach (var key in descriptorKeys.Concat(backingKeys))
             {
-                if (!Object.IsEncodedSymbolKey(key)
+                if (!ObjectRuntime.IsEncodedSymbolKey(key)
                     && !ObjectRuntime.TryParseCanonicalArrayIndexUInt(key, out _)
                     && seen.Add(key))
                 {
@@ -1454,7 +1454,7 @@ namespace JavaScriptRuntime
 
             foreach (var key in descriptorKeys.Concat(backingKeys))
             {
-                if (Object.IsEncodedSymbolKey(key) && seen.Add(key))
+                if (ObjectRuntime.IsEncodedSymbolKey(key) && seen.Add(key))
                 {
                     yield return key;
                 }
@@ -1571,7 +1571,7 @@ namespace JavaScriptRuntime
                 hasCurrent = true;
             }
 
-            if (!hasCurrent && !Object.IsExtensibleInternal(this))
+            if (!hasCurrent && !ObjectRuntime.IsExtensibleInternal(this))
             {
                 return false;
             }
@@ -1645,7 +1645,7 @@ namespace JavaScriptRuntime
                 var descriptorKey = index.ToString(CultureInfo.InvariantCulture);
                 if (PropertyDescriptorStore.GetOwnLookupCore(this, descriptorKey, out _) != PropertyDescriptorLookup.None)
                 {
-                    Object.SetProperty(this, descriptorKey, value, throwOnError);
+                    ObjectRuntime.SetProperty(this, descriptorKey, value, throwOnError);
                     return true;
                 }
             }
@@ -1657,12 +1657,12 @@ namespace JavaScriptRuntime
             }
 
             var key = index.ToString(CultureInfo.InvariantCulture);
-            if (Object.TrySetPropertyViaPrototypeOrThrow(this, key, value, throwOnError))
+            if (ObjectRuntime.TrySetPropertyViaPrototypeOrThrow(this, key, value, throwOnError))
             {
                 return true;
             }
 
-            if (!Object.IsExtensibleInternal(this) || index >= length && !IsLengthWritable)
+            if (!ObjectRuntime.IsExtensibleInternal(this) || index >= length && !IsLengthWritable)
             {
                 if (throwOnError)
                 {
@@ -1718,7 +1718,7 @@ namespace JavaScriptRuntime
                 var descriptorKey = index.ToString(CultureInfo.InvariantCulture);
                 if (PropertyDescriptorStore.GetOwnLookupCore(this, descriptorKey, out _) != PropertyDescriptorLookup.None)
                 {
-                    Object.SetProperty(this, descriptorKey, value, throwOnError);
+                    ObjectRuntime.SetProperty(this, descriptorKey, value, throwOnError);
                     return true;
                 }
             }
@@ -1730,12 +1730,12 @@ namespace JavaScriptRuntime
             }
 
             var key = index.ToString(CultureInfo.InvariantCulture);
-            if (Object.TrySetPropertyViaPrototypeOrThrow(this, key, value, throwOnError))
+            if (ObjectRuntime.TrySetPropertyViaPrototypeOrThrow(this, key, value, throwOnError))
             {
                 return true;
             }
 
-            if (!Object.IsExtensibleInternal(this) || index >= length && !IsLengthWritable)
+            if (!ObjectRuntime.IsExtensibleInternal(this) || index >= length && !IsLengthWritable)
             {
                 if (throwOnError)
                 {
@@ -2040,7 +2040,7 @@ namespace JavaScriptRuntime
                 && _holeCount >= 0
                 && !HasNonDataDescriptors
                 && !PropertyDescriptorStore.HasAny(this)
-                && Object.IsExtensibleInternal(this)
+                && ObjectRuntime.IsExtensibleInternal(this)
                 && (index < length || IsLengthWritable)
                 && DefaultPrototypeChainAllowsDenseWrites();
 
@@ -2140,7 +2140,7 @@ namespace JavaScriptRuntime
                     var lookup = PropertyDescriptorStore.GetOwnLookupCore(this, key, out _);
                     if (lookup != PropertyDescriptorLookup.None)
                     {
-                        return Object.GetProperty(this, key);
+                        return ObjectRuntime.GetProperty(this, key);
                     }
                 }
 
@@ -2149,7 +2149,7 @@ namespace JavaScriptRuntime
                     return GetDenseValue(index);
                 }
 
-                return Object.GetProperty(this, index.ToString(CultureInfo.InvariantCulture));
+                return ObjectRuntime.GetProperty(this, index.ToString(CultureInfo.InvariantCulture));
             }
             set
             {
@@ -2195,7 +2195,7 @@ namespace JavaScriptRuntime
             for (var source = currentLength - 1; source >= index; source--)
             {
                 var target = source + 1;
-                if (Object.HasPropertyIn((double)source, this))
+                if (ObjectRuntime.HasPropertyIn((double)source, this))
                 {
                     TrySetIndexValue(target, ObjectRuntime.GetItem(this, (double)source), throwOnError: true);
                 }
@@ -2236,7 +2236,7 @@ namespace JavaScriptRuntime
             for (var source = currentLength - 1; source >= index; source--)
             {
                 var target = source + items.Count;
-                if (Object.HasPropertyIn((double)source, this))
+                if (ObjectRuntime.HasPropertyIn((double)source, this))
                 {
                     TrySetIndexValue(target, ObjectRuntime.GetItem(this, (double)source), throwOnError: true);
                 }
@@ -2272,7 +2272,7 @@ namespace JavaScriptRuntime
             for (var target = index; target < currentLength - 1; target++)
             {
                 var source = target + 1;
-                if (Object.HasPropertyIn((double)source, this))
+                if (ObjectRuntime.HasPropertyIn((double)source, this))
                 {
                     TrySetIndexValue(target, ObjectRuntime.GetItem(this, (double)source), throwOnError: true);
                 }
@@ -2310,7 +2310,7 @@ namespace JavaScriptRuntime
             for (var target = index; target < newLength; target++)
             {
                 var source = target + count;
-                if (Object.HasPropertyIn((double)source, this))
+                if (ObjectRuntime.HasPropertyIn((double)source, this))
                 {
                     TrySetIndexValue(target, ObjectRuntime.GetItem(this, (double)source), throwOnError: true);
                 }
@@ -2341,8 +2341,8 @@ namespace JavaScriptRuntime
             for (var lower = 0; lower < middle; lower++)
             {
                 var upper = len - lower - 1;
-                var lowerExists = Object.HasPropertyIn((double)lower, this);
-                var upperExists = Object.HasPropertyIn((double)upper, this);
+                var lowerExists = ObjectRuntime.HasPropertyIn((double)lower, this);
+                var upperExists = ObjectRuntime.HasPropertyIn((double)upper, this);
                 var lowerValue = lowerExists ? ObjectRuntime.GetItem(this, (double)lower) : null;
                 var upperValue = upperExists ? ObjectRuntime.GetItem(this, (double)upper) : null;
 
@@ -2369,7 +2369,7 @@ namespace JavaScriptRuntime
             var presentValues = new List<object?>();
             for (var i = 0; i < Count; i++)
             {
-                if (Object.HasPropertyIn((double)i, this))
+                if (ObjectRuntime.HasPropertyIn((double)i, this))
                 {
                     presentValues.Add(ObjectRuntime.GetItem(this, (double)i));
                 }
@@ -2517,7 +2517,7 @@ namespace JavaScriptRuntime
                 if (PropertyDescriptorStore.GetOwnLookupCore(this, key, out _)
                     != PropertyDescriptorLookup.None)
                 {
-                    return TypeUtilities.ToNumber(Object.GetProperty(this, key));
+                    return TypeUtilities.ToNumber(ObjectRuntime.GetProperty(this, key));
                 }
             }
 
@@ -2529,7 +2529,7 @@ namespace JavaScriptRuntime
             }
 
             return TypeUtilities.ToNumber(
-                Object.GetProperty(this, intIndex.ToString(CultureInfo.InvariantCulture)));
+                ObjectRuntime.GetProperty(this, intIndex.ToString(CultureInfo.InvariantCulture)));
         }
 
         public void SetItemNumber(double index, double value)
@@ -3879,7 +3879,7 @@ namespace JavaScriptRuntime
             for (int i = 0; i < deleteCount; i++)
             {
                 var source = start + i;
-                if (Object.HasPropertyIn((double)source, this))
+                if (ObjectRuntime.HasPropertyIn((double)source, this))
                 {
                     removed.TrySetIndexValue(i, ObjectRuntime.GetItem(this, (double)source), throwOnError: true);
                 }
@@ -3891,7 +3891,7 @@ namespace JavaScriptRuntime
                 {
                     var source = target + deleteCount;
                     var destination = target + insertCount;
-                    if (Object.HasPropertyIn((double)source, this))
+                    if (ObjectRuntime.HasPropertyIn((double)source, this))
                     {
                         TrySetIndexValue(destination, ObjectRuntime.GetItem(this, (double)source), throwOnError: true);
                     }
@@ -3911,7 +3911,7 @@ namespace JavaScriptRuntime
                 for (var source = len - 1; source >= start + deleteCount; source--)
                 {
                     var destination = source - deleteCount + insertCount;
-                    if (Object.HasPropertyIn((double)source, this))
+                    if (ObjectRuntime.HasPropertyIn((double)source, this))
                     {
                         TrySetIndexValue(destination, ObjectRuntime.GetItem(this, (double)source), throwOnError: true);
                     }
@@ -4084,7 +4084,7 @@ namespace JavaScriptRuntime
                 foreach (var item in items)
                 {
                     var key = newLength.ToString(CultureInfo.InvariantCulture);
-                    Object.SetProperty(this, key, item, throwOnError: true);
+                    ObjectRuntime.SetProperty(this, key, item, throwOnError: true);
                     newLength++;
                 }
             }
@@ -4122,7 +4122,7 @@ namespace JavaScriptRuntime
 
             var newLength = currentLength - 1d;
             var key = newLength.ToString(CultureInfo.InvariantCulture);
-            var value = Object.GetProperty(this, key);
+            var value = ObjectRuntime.GetProperty(this, key);
             if (!DeleteOwnProperty(key))
             {
                 throw new TypeError($"Cannot delete property '{key}' of array");
