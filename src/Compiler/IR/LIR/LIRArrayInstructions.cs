@@ -33,7 +33,7 @@ public record LIRArrayPushRange(TempVariable TargetArray, TempVariable SourceArr
 public record LIRArrayAdd(TempVariable TargetArray, TempVariable Element) : LIRInstruction;
 
 /// <summary>
-/// Gets the length property of an object (calls JavaScriptRuntime.Object.GetLength).
+/// Gets the length property of an object (calls JavaScriptRuntime.ObjectRuntime.GetLength).
 /// </summary>
 public record LIRGetLength(TempVariable Object, TempVariable Result) : LIRInstruction;
 

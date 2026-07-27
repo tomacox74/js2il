@@ -37,15 +37,15 @@ namespace JavaScriptRuntime
                 throw new TypeError("Console options must specify a writable stdout stream.");
             }
 
-            _output = CreateStreamOutput(Object.GetProperty(options, "stdout"), "stdout");
+            _output = CreateStreamOutput(ObjectRuntime.GetProperty(options, "stdout"), "stdout");
 
-            var stderr = Object.GetProperty(options, "stderr");
+            var stderr = ObjectRuntime.GetProperty(options, "stderr");
             _errorOutput = stderr == null || stderr is JsNull
                 ? _output
                 : CreateStreamOutput(stderr, "stderr");
 
-            var inspectOptions = Object.GetProperty(options, "inspectOptions");
-            _useColors = Object.GetProperty(inspectOptions ?? JsNull.Null, "colors") is bool colors && colors;
+            var inspectOptions = ObjectRuntime.GetProperty(options, "inspectOptions");
+            _useColors = ObjectRuntime.GetProperty(inspectOptions ?? JsNull.Null, "colors") is bool colors && colors;
         }
 
         /// <summary>
@@ -85,7 +85,7 @@ namespace JavaScriptRuntime
                 {
                     widths[columnIndex + 1] = System.Math.Max(
                         widths[columnIndex + 1],
-                        FormatTableValue(Object.GetProperty(row, columns[columnIndex])).Length);
+                        FormatTableValue(ObjectRuntime.GetProperty(row, columns[columnIndex])).Length);
                 }
             }
 
@@ -97,7 +97,7 @@ namespace JavaScriptRuntime
                 var row = rows[rowIndex] ?? JsNull.Null;
                 for (var columnIndex = 0; columnIndex < columns.Count; columnIndex++)
                 {
-                    values[columnIndex] = FormatTableValue(Object.GetProperty(row, columns[columnIndex]));
+                    values[columnIndex] = FormatTableValue(ObjectRuntime.GetProperty(row, columns[columnIndex]));
                 }
 
                 table.Append('\n');
@@ -580,7 +580,7 @@ namespace JavaScriptRuntime
                     continue;
                 }
 
-                foreach (var key in Object.GetEnumerableKeys(row))
+                foreach (var key in ObjectRuntime.GetEnumerableKeys(row))
                 {
                     var name = DotNet2JSConversions.ToString(key);
                     if (seen.Add(name))

@@ -138,7 +138,7 @@ namespace Jroc.Tests.String
         [Fact]
         public Task String_StartsWith_NestedParam()
         {
-            // Nested function calls startsWith on a string parameter (slow path via Object.CallMember)
+            // Nested function calls startsWith on a string parameter (slow path via ObjectRuntime.CallMember)
             return ExecutionTest(nameof(String_StartsWith_NestedParam));
         }
 

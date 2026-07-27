@@ -130,20 +130,20 @@
 		IL_0070: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
 		IL_0075: stloc.2
 		IL_0076: ldloc.1
-		IL_0077: call class [JavaScriptRuntime]JavaScriptRuntime.IJavaScriptIterator [JavaScriptRuntime]JavaScriptRuntime.Object::EnumerateObjectProperties(object)
+		IL_0077: call class [JavaScriptRuntime]JavaScriptRuntime.IJavaScriptIterator [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::EnumerateObjectProperties(object)
 		IL_007c: stloc.3
 		// loop start (head: IL_007d)
 			IL_007d: ldloc.3
-			IL_007e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorNext(object)
+			IL_007e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorNext(object)
 			IL_0083: stloc.s 5
 			IL_0085: ldloc.s 5
-			IL_0087: call bool [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorResultDone(object)
+			IL_0087: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorResultDone(object)
 			IL_008c: stloc.s 6
 			IL_008e: ldloc.s 6
 			IL_0090: brtrue IL_00b0
 
 			IL_0095: ldloc.s 5
-			IL_0097: call object [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorResultValue(object)
+			IL_0097: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorResultValue(object)
 			IL_009c: stloc.s 5
 			IL_009e: ldloc.s 5
 			IL_00a0: stloc.s 4
@@ -172,7 +172,7 @@
 		IL_00db: ldloc.s 5
 		IL_00dd: ldstr "log"
 		IL_00e2: ldloc.s 7
-		IL_00e4: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00e4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
 		IL_00e9: pop
 		IL_00ea: ret
 	} // end of method ObjectDefineProperty_Enumerable_ForIn::__js_module_init__

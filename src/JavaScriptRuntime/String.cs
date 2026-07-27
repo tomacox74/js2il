@@ -395,7 +395,7 @@ namespace JavaScriptRuntime
             }
 
             if (value is not null
-                && PropertyDescriptorStore.TryGetOwn(value, Object.PrimitiveValuePropertyName, out var descriptor)
+                && PropertyDescriptorStore.TryGetOwn(value, ObjectRuntime.PrimitiveValuePropertyName, out var descriptor)
                 && descriptor.Kind == JsPropertyDescriptorKind.Data
                 && descriptor.Value is Symbol)
             {
@@ -421,7 +421,7 @@ namespace JavaScriptRuntime
                 ? DotNet2JSConversions.ToString(args[0])
                 : string.Empty;
 
-            var wrapper = Object.CreateOrdinaryObject();
+            var wrapper = ObjectRuntime.CreateOrdinaryObject();
             object? prototype = Prototype;
 
             if (newTarget is not null and not JsNull)
@@ -1311,7 +1311,7 @@ namespace JavaScriptRuntime
             }
 
             return JavaScriptRuntime.TypeUtilities.ToNumber(
-                JavaScriptRuntime.Object.CallMember1(receiver!, "charCodeAt", index));
+                JavaScriptRuntime.ObjectRuntime.CallMember1(receiver!, "charCodeAt", index));
         }
 
         public static double CharCodeAtAsNumber(object? receiver, object? index)
@@ -1322,7 +1322,7 @@ namespace JavaScriptRuntime
             }
 
             return JavaScriptRuntime.TypeUtilities.ToNumber(
-                JavaScriptRuntime.Object.CallMember1(receiver!, "charCodeAt", index));
+                JavaScriptRuntime.ObjectRuntime.CallMember1(receiver!, "charCodeAt", index));
         }
 
         public static string ToLowerCase(string input)
@@ -1427,7 +1427,7 @@ namespace JavaScriptRuntime
                 throw new TypeError("String.raw requires a template.raw property");
             }
 
-            int literalCount = ToLength(JavaScriptRuntime.Object.GetLength(raw));
+            int literalCount = ToLength(JavaScriptRuntime.ObjectRuntime.GetLength(raw));
             if (literalCount == 0)
             {
                 return string.Empty;

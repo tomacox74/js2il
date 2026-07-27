@@ -583,7 +583,7 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
             return false;
         }
 
-        var rawPrototype = Object.GetProperty(classConstructorValue.Type, "prototype");
+        var rawPrototype = ObjectRuntime.GetProperty(classConstructorValue.Type, "prototype");
         if (rawPrototype is not object
             || ReferenceEquals(rawPrototype, target))
         {

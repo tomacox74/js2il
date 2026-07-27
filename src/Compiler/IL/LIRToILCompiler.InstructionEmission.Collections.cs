@@ -24,11 +24,11 @@ internal sealed partial class LIRToILCompiler
                         break;
                     }
 
-                    // Emit: call JavaScriptRuntime.Object.GetLength(object)
+                    // Emit: call JavaScriptRuntime.ObjectRuntime.GetLength(object)
                     EmitLoadTempAsObject(getLength.Object, ilEncoder, allocation, methodDescriptor);
                     var getLengthMethod = _memberRefRegistry.GetOrAddMethod(
-                        typeof(JavaScriptRuntime.Object),
-                        nameof(JavaScriptRuntime.Object.GetLength),
+                        typeof(JavaScriptRuntime.ObjectRuntime),
+                        nameof(JavaScriptRuntime.ObjectRuntime.GetLength),
                         parameterTypes: new[] { typeof(object) });
                     ilEncoder.OpCode(ILOpCode.Call);
                     ilEncoder.Token(getLengthMethod);

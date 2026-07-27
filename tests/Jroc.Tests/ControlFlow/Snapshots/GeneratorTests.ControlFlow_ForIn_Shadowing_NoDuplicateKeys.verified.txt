@@ -335,7 +335,7 @@
 		IL_00bc: ldtoken Modules.ControlFlow_ForIn_Shadowing_NoDuplicateKeys/Derived
 		IL_00c1: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
 		IL_00c6: ldstr "prototype"
-		IL_00cb: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetProperty(object, string)
+		IL_00cb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
 		IL_00d0: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
 		IL_00d5: ldloc.s 9
 		IL_00d7: stloc.3
@@ -343,20 +343,20 @@
 		IL_00d9: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
 		IL_00de: stloc.s 4
 		IL_00e0: ldloc.3
-		IL_00e1: call class [JavaScriptRuntime]JavaScriptRuntime.IJavaScriptIterator [JavaScriptRuntime]JavaScriptRuntime.Object::EnumerateObjectProperties(object)
+		IL_00e1: call class [JavaScriptRuntime]JavaScriptRuntime.IJavaScriptIterator [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::EnumerateObjectProperties(object)
 		IL_00e6: stloc.s 5
 		// loop start (head: IL_00e8)
 			IL_00e8: ldloc.s 5
-			IL_00ea: call object [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorNext(object)
+			IL_00ea: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorNext(object)
 			IL_00ef: stloc.s 9
 			IL_00f1: ldloc.s 9
-			IL_00f3: call bool [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorResultDone(object)
+			IL_00f3: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorResultDone(object)
 			IL_00f8: stloc.s 10
 			IL_00fa: ldloc.s 10
 			IL_00fc: brtrue IL_011d
 
 			IL_0101: ldloc.s 9
-			IL_0103: call object [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorResultValue(object)
+			IL_0103: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorResultValue(object)
 			IL_0108: stloc.s 9
 			IL_010a: ldloc.s 9
 			IL_010c: stloc.s 6
@@ -388,7 +388,7 @@
 		IL_0151: ldloc.s 9
 		IL_0153: ldstr "log"
 		IL_0158: ldloc.s 11
-		IL_015a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_015a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
 		IL_015f: pop
 		IL_0160: ret
 	} // end of method ControlFlow_ForIn_Shadowing_NoDuplicateKeys::__js_module_init__

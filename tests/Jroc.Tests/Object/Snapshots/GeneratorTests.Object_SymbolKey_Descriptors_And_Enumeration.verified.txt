@@ -165,20 +165,20 @@
 		IL_00e7: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
 		IL_00ec: stloc.s 8
 		IL_00ee: ldloc.3
-		IL_00ef: call class [JavaScriptRuntime]JavaScriptRuntime.IJavaScriptIterator [JavaScriptRuntime]JavaScriptRuntime.Object::EnumerateObjectProperties(object)
+		IL_00ef: call class [JavaScriptRuntime]JavaScriptRuntime.IJavaScriptIterator [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::EnumerateObjectProperties(object)
 		IL_00f4: stloc.s 9
 		// loop start (head: IL_00f6)
 			IL_00f6: ldloc.s 9
-			IL_00f8: call object [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorNext(object)
+			IL_00f8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorNext(object)
 			IL_00fd: stloc.s 11
 			IL_00ff: ldloc.s 11
-			IL_0101: call bool [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorResultDone(object)
+			IL_0101: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorResultDone(object)
 			IL_0106: stloc.s 12
 			IL_0108: ldloc.s 12
 			IL_010a: brtrue IL_012b
 
 			IL_010f: ldloc.s 11
-			IL_0111: call object [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorResultValue(object)
+			IL_0111: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorResultValue(object)
 			IL_0116: stloc.s 11
 			IL_0118: ldloc.s 11
 			IL_011a: stloc.s 10
@@ -210,7 +210,7 @@
 		IL_016e: ldloc.s 11
 		IL_0170: ldstr "log"
 		IL_0175: ldloc.s 14
-		IL_0177: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0177: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
 		IL_017c: pop
 		IL_017d: ldstr "console"
 		IL_0182: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
@@ -233,7 +233,7 @@
 		IL_01b8: ldloc.s 11
 		IL_01ba: ldstr "log"
 		IL_01bf: ldloc.s 14
-		IL_01c1: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_01c1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
 		IL_01c6: pop
 		IL_01c7: ldstr "console"
 		IL_01cc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
@@ -256,7 +256,7 @@
 		IL_0202: ldloc.s 11
 		IL_0204: ldstr "log"
 		IL_0209: ldloc.s 14
-		IL_020b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_020b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
 		IL_0210: pop
 		IL_0211: ldstr "console"
 		IL_0216: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
@@ -281,7 +281,7 @@
 		IL_025a: ldloc.s 11
 		IL_025c: ldstr "log"
 		IL_0261: ldloc.s 14
-		IL_0263: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0263: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
 		IL_0268: pop
 		IL_0269: ldstr "console"
 		IL_026e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
@@ -306,7 +306,7 @@
 		IL_02aa: ldloc.s 11
 		IL_02ac: ldstr "log"
 		IL_02b1: ldloc.s 14
-		IL_02b3: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_02b3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
 		IL_02b8: pop
 		IL_02b9: ldstr "console"
 		IL_02be: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
@@ -353,7 +353,7 @@
 		IL_034c: ldloc.s 11
 		IL_034e: ldstr "log"
 		IL_0353: ldloc.s 15
-		IL_0355: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0355: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
 		IL_035a: pop
 		IL_035b: ldstr "console"
 		IL_0360: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
@@ -366,7 +366,7 @@
 		IL_0377: ldloc.s 7
 		IL_0379: ldstr "length"
 		IL_037e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0383: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0383: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
 		IL_0388: pop
 		IL_0389: ldstr "console"
 		IL_038e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
@@ -379,7 +379,7 @@
 		IL_03a5: ldloc.s 8
 		IL_03a7: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::get_length()
 		IL_03ac: box [System.Runtime]System.Double
-		IL_03b1: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_03b1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
 		IL_03b6: pop
 		IL_03b7: ret
 	} // end of method Object_SymbolKey_Descriptors_And_Enumeration::__js_module_init__

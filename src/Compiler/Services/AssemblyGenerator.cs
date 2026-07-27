@@ -675,7 +675,7 @@ namespace Jroc.Services
 
             // Copy JavaScriptRuntime.dll to output directory
             // when it differs from the source.
-            var jsRuntimeDll = typeof(JavaScriptRuntime.Object).Assembly.Location!;
+            var jsRuntimeDll = typeof(JavaScriptRuntime.ObjectRuntime).Assembly.Location!;
             var jsRuntimeAssemblyFileName = Path.GetFileName(jsRuntimeDll);
             var jsRuntimeDllDest = Path.Combine(outputPath, jsRuntimeAssemblyFileName);
             if (File.Exists(jsRuntimeDll))

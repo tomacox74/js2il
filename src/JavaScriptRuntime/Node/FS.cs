@@ -31,7 +31,7 @@ namespace JavaScriptRuntime.Node
             return constants;
         }
 
-        // Dynamic-friendly overloads first so Object.CallInstanceMethod prefers them
+        // Dynamic-friendly overloads first so ObjectRuntime.CallInstanceMethod prefers them
         public object readdirSync(object[] args)
         {
             var dir = (args != null && args.Length > 0) ? args[0] : null;

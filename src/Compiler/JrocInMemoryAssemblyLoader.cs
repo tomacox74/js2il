@@ -11,7 +11,7 @@ public static class JrocInMemoryAssemblyLoader
         ArgumentNullException.ThrowIfNull(artifact);
         ArgumentNullException.ThrowIfNull(artifact.PeBytes);
 
-        var runtimeAssembly = typeof(JavaScriptRuntime.Object).Assembly;
+        var runtimeAssembly = typeof(JavaScriptRuntime.ObjectRuntime).Assembly;
         var loadContext = new SharedRuntimeAssemblyLoadContext(artifact.AssemblyName, runtimeAssembly);
 
         try

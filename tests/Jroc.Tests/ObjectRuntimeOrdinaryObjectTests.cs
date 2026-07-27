@@ -230,7 +230,7 @@ public sealed class ObjectRuntimeOrdinaryObjectTests
             Assert.False(Operators.In("hidden", target));
             Assert.Empty(Assert.IsType<JavaScriptRuntime.Array>(
                 JavaScriptRuntime.Object.getOwnPropertyNames(target)));
-            Assert.True(JavaScriptRuntime.Object.CreateForInIterator(target).Next().done);
+            Assert.True(JavaScriptRuntime.ObjectRuntime.CreateForInIterator(target).Next().done);
         }
         finally
         {
@@ -304,7 +304,7 @@ public sealed class ObjectRuntimeOrdinaryObjectTests
             Assert.Equal("accessor", ObjectRuntime.GetProperty(target, "computed"));
 
             ObjectRuntime.DefineObjectLiteralDataProperty(target, "helper", 5d);
-            JavaScriptRuntime.Object.SetPropertyNumber(target, "typed", 6d);
+            JavaScriptRuntime.ObjectRuntime.SetPropertyNumber(target, "typed", 6d);
             Assert.Equal(5d, ObjectRuntime.GetProperty(target, "helper"));
             Assert.Equal(6d, ObjectRuntime.GetProperty(target, "typed"));
 

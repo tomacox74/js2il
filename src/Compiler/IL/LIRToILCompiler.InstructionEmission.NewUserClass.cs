@@ -221,8 +221,8 @@ internal sealed partial class LIRToILCompiler
 
                         ilEncoder.LoadString(_metadataBuilder.GetOrAddUserString("prototype"));
                         var getProperty = _memberRefRegistry.GetOrAddMethod(
-                            typeof(JavaScriptRuntime.Object),
-                            nameof(JavaScriptRuntime.Object.GetProperty),
+                            typeof(JavaScriptRuntime.ObjectRuntime),
+                            nameof(JavaScriptRuntime.ObjectRuntime.GetProperty),
                             parameterTypes: new[] { typeof(object), typeof(string) });
                         ilEncoder.OpCode(ILOpCode.Call);
                         ilEncoder.Token(getProperty);

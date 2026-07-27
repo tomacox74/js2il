@@ -161,7 +161,7 @@ public sealed class Promise
             return Promise.resolve(value);
         }
 
-        if (!Object.IsConstructibleValue(constructor))
+        if (!ObjectRuntime.IsConstructibleValue(constructor))
         {
             throw new TypeError("Promise.resolve requires a constructor receiver");
         }
@@ -183,7 +183,7 @@ public sealed class Promise
         Function.InitializeFunctionInstance(executor, 2d, string.Empty, requiresInvocationContext: false);
         Function.MarkUndefinedPrototype(executor);
 
-        var promise = Object.ConstructValue(constructor, new object[] { executor });
+        var promise = ObjectRuntime.ConstructValue(constructor, new object[] { executor });
         if (capabilityResolve is not Delegate resolveFunction || capabilityReject is not Delegate)
         {
             throw new TypeError("Promise constructor did not supply resolving functions");
@@ -195,7 +195,7 @@ public sealed class Promise
 
     internal static object? TryForConstructor(object? constructor, object? callback, object?[]? args)
     {
-        if (constructor is null || constructor is JsNull || !Object.IsConstructibleValue(constructor))
+        if (constructor is null || constructor is JsNull || !ObjectRuntime.IsConstructibleValue(constructor))
         {
             throw new TypeError("Promise.try requires a constructor receiver");
         }
@@ -217,7 +217,7 @@ public sealed class Promise
         Function.InitializeFunctionInstance(executor, 2d, string.Empty, requiresInvocationContext: false);
         Function.MarkUndefinedPrototype(executor);
 
-        var promise = Object.ConstructValue(constructor, new object[] { executor });
+        var promise = ObjectRuntime.ConstructValue(constructor, new object[] { executor });
         if (capabilityResolve is not Delegate resolveFunction || capabilityReject is not Delegate rejectFunction)
         {
             throw new TypeError("Promise constructor did not supply resolving functions");

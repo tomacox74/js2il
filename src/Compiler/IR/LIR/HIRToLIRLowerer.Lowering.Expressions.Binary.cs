@@ -952,8 +952,8 @@ public sealed partial class HIRToLIRLowerer
         var targetNameTemp = EmitConstString(targetVariableName ?? string.Empty);
 
         _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStaticVoid(
-            IntrinsicName: "Object",
-            MethodName: nameof(JavaScriptRuntime.Object.ThrowDestructuringNullOrUndefined),
+            IntrinsicName: "ObjectRuntime",
+            MethodName: nameof(JavaScriptRuntime.ObjectRuntime.ThrowDestructuringNullOrUndefined),
             Arguments: new[] { EnsureObject(sourceObject), EnsureObject(sourceNameTemp), EnsureObject(targetNameTemp) }));
     }
 

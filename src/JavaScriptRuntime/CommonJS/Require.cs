@@ -427,7 +427,7 @@ namespace JavaScriptRuntime.CommonJS
             {
                 var util = RequireNodeModule("util", "util")
                     ?? throw new TypeError("Failed to resolve the Node 'util' module.");
-                var types = JavaScriptRuntime.Object.GetProperty(util, "types")
+                var types = JavaScriptRuntime.ObjectRuntime.GetProperty(util, "types")
                     ?? throw new TypeError("The Node 'util' module does not expose 'types'.");
                 _instances[key] = types;
                 return types;

@@ -1134,7 +1134,7 @@ namespace JavaScriptRuntime
                         && index < array.Length;
                 }
 
-                return JavaScriptRuntime.Object.hasOwn(target, name);
+                return ObjectRuntime.hasOwn(target, name);
             }
 
             if (HasOwn(obj, propName))

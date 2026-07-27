@@ -308,8 +308,8 @@ public sealed partial class HIRToLIRLowerer
                     var boxedSource = EnsureObject(spreadTemp);
                     var spreadResult = CreateTempVariable();
                     _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
-                        IntrinsicName: "Object",
-                        MethodName: "SpreadIntoObjectLiteral",
+                        IntrinsicName: "ObjectRuntime",
+                        MethodName: nameof(JavaScriptRuntime.ObjectRuntime.SpreadIntoObjectLiteral),
                         Arguments: new List<TempVariable> { boxedTarget, boxedSource },
                         Result: spreadResult));
                     DefineTempStorage(spreadResult, new ValueStorage(ValueStorageKind.Reference, typeof(object)));

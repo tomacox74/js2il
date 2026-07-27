@@ -65,7 +65,7 @@ public static class Iterator
             return iteratorLike;
         }
 
-        var wrapped = Object.GetIterator(value);
+        var wrapped = ObjectRuntime.GetIterator(value);
         InitializeIteratorSurface(wrapped);
         return wrapped;
     }
@@ -701,7 +701,7 @@ public static class Iterator
     {
         public static bool TryCreate(object target, string name, out CallableMember member)
         {
-            var propertyValue = Object.GetProperty(target, name);
+            var propertyValue = ObjectRuntime.GetProperty(target, name);
             if (propertyValue is Delegate del)
             {
                 member = new CallableMember(del, null);

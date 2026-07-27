@@ -15,7 +15,7 @@ public sealed partial class HIRToLIRLowerer
         var lirInstructions = _methodBodyIR.Instructions;
 
         // Desugar for..in:
-        // keys = Object.GetEnumerableKeys(rhs)
+        // keys = ObjectRuntime.GetEnumerableKeys(rhs)
         // len = keys.length
         // idx = 0
         // loop_start:
@@ -70,7 +70,7 @@ public sealed partial class HIRToLIRLowerer
             // Spec-aligned: for..in uses a For-In Iterator object that re-checks key existence
             // per step (e.g., deletion during enumeration). We model this via a native iterator.
             var iterTemp = CreateTempVariable();
-            lirInstructions.Add(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.Object), nameof(JavaScriptRuntime.Object.EnumerateObjectProperties), new[] { rhsBoxed }, iterTemp));
+            lirInstructions.Add(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.ObjectRuntime), nameof(JavaScriptRuntime.ObjectRuntime.EnumerateObjectProperties), new[] { rhsBoxed }, iterTemp));
             DefineTempStorage(iterTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
             // Pin loop-carry temps to stable variable slots (see note in for..of lowering).
             SetTempVariableSlot(iterTemp, CreateAnonymousVariableSlot("$forIn_iter", new ValueStorage(ValueStorageKind.Reference, typeof(object))));
@@ -83,18 +83,18 @@ public sealed partial class HIRToLIRLowerer
 
             // result = IteratorNext(iterator)
             var iterResult = CreateTempVariable();
-            lirInstructions.Add(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.Object), nameof(JavaScriptRuntime.Object.IteratorNext), new[] { EnsureObject(iterTemp) }, iterResult));
+            lirInstructions.Add(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.ObjectRuntime), nameof(JavaScriptRuntime.ObjectRuntime.IteratorNext), new[] { EnsureObject(iterTemp) }, iterResult));
             DefineTempStorage(iterResult, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
 
             // done = IteratorResultDone(result)
             var doneBool = CreateTempVariable();
-            lirInstructions.Add(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.Object), nameof(JavaScriptRuntime.Object.IteratorResultDone), new[] { EnsureObject(iterResult) }, doneBool));
+            lirInstructions.Add(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.ObjectRuntime), nameof(JavaScriptRuntime.ObjectRuntime.IteratorResultDone), new[] { EnsureObject(iterResult) }, doneBool));
             DefineTempStorage(doneBool, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
             lirInstructions.Add(new LIRBranchIfTrue(doneBool, loopEndLabel));
 
             // key = IteratorResultValue(result)
             var keyTemp = CreateTempVariable();
-            lirInstructions.Add(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.Object), nameof(JavaScriptRuntime.Object.IteratorResultValue), new[] { EnsureObject(iterResult) }, keyTemp));
+            lirInstructions.Add(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.ObjectRuntime), nameof(JavaScriptRuntime.ObjectRuntime.IteratorResultValue), new[] { EnsureObject(iterResult) }, keyTemp));
             DefineTempStorage(keyTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
 
             var writeMode = (forInStmt.IsDeclaration && (forInStmt.DeclarationKind is BindingKind.Let or BindingKind.Const))

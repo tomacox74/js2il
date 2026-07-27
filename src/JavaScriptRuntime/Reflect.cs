@@ -7,22 +7,22 @@ namespace JavaScriptRuntime
     {
         public static object? construct(object? target, object? argumentsList, object? newTarget = null)
         {
-            if (!Object.IsConstructibleValue(target))
+            if (!ObjectRuntime.IsConstructibleValue(target))
             {
                 throw new TypeError("Reflect.construct target is not a constructor");
             }
 
             newTarget ??= target;
-            if (!Object.IsConstructibleValue(newTarget))
+            if (!ObjectRuntime.IsConstructibleValue(newTarget))
             {
                 throw new TypeError("Reflect.construct newTarget is not a constructor");
             }
 
-            return Object.ConstructValue(target!, NormalizeArgumentsList(argumentsList), newTarget);
+            return ObjectRuntime.ConstructValue(target!, NormalizeArgumentsList(argumentsList), newTarget);
         }
 
         public static bool defineProperty(object target, object? propertyKey, object? attributes)
-            => Object.TryDefineProperty(target, propertyKey, attributes);
+            => ObjectRuntime.TryDefineProperty(target, propertyKey, attributes);
 
         public static object ownKeys(object target)
         {
@@ -32,8 +32,8 @@ namespace JavaScriptRuntime
             }
 
             return new Array(
-                Object.GetOwnPropertyKeysInOrder(target, includeEncodedSymbolKeys: true)
-                    .Select(Object.ToExternalPropertyKey));
+                ObjectRuntime.GetOwnPropertyKeysInOrder(target, includeEncodedSymbolKeys: true)
+                    .Select(ObjectRuntime.ToExternalPropertyKey));
         }
 
         private static object[] NormalizeArgumentsList(object? argumentsList)

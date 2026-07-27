@@ -46,21 +46,21 @@ namespace Jroc.Services
         public void InvokeGetLengthFromObject()
         {
             // we assume the object is already on the stack
-            var mref = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.Object), nameof(JavaScriptRuntime.Object.GetLength));
+            var mref = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.ObjectRuntime), nameof(JavaScriptRuntime.ObjectRuntime.GetLength));
             _il.Call(mref);
         }
 
         public void InvokeNormalizeForOfIterable()
         {
             // we assume the object is already on the stack
-            var mref = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.Object), nameof(JavaScriptRuntime.Object.NormalizeForOfIterable));
+            var mref = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.ObjectRuntime), nameof(JavaScriptRuntime.ObjectRuntime.NormalizeForOfIterable));
             _il.Call(mref);
         }
 
         public void InvokeGetEnumerableKeysFromObject()
         {
             // we assume the object is already on the stack
-            var mref = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.Object), nameof(JavaScriptRuntime.Object.GetEnumerableKeys));
+            var mref = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.ObjectRuntime), nameof(JavaScriptRuntime.ObjectRuntime.GetEnumerableKeys));
             _il.Call(mref);
         }
 

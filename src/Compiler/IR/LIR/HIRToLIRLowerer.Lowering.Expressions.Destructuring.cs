@@ -175,8 +175,8 @@ public sealed partial class HIRToLIRLowerer
 
                         var restObj = CreateTempVariable();
                         _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
-                            IntrinsicName: "Object",
-                            MethodName: nameof(JavaScriptRuntime.Object.Rest),
+                            IntrinsicName: "ObjectRuntime",
+                            MethodName: nameof(JavaScriptRuntime.ObjectRuntime.Rest),
                             Arguments: new[] { EnsureObject(sourceValue), excludedArray },
                             Result: restObj));
                         DefineTempStorage(restObj, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
@@ -315,8 +315,8 @@ public sealed partial class HIRToLIRLowerer
 
         var iterator = CreateTempVariable();
         _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
-            nameof(JavaScriptRuntime.Object),
-            nameof(JavaScriptRuntime.Object.GetIterator),
+            nameof(JavaScriptRuntime.ObjectRuntime),
+            nameof(JavaScriptRuntime.ObjectRuntime.GetIterator),
             new[] { EnsureObject(sourceValue) },
             iterator));
         DefineTempStorage(iterator, new ValueStorage(ValueStorageKind.Reference, typeof(JavaScriptRuntime.IJavaScriptIterator)));
@@ -405,8 +405,8 @@ public sealed partial class HIRToLIRLowerer
             _methodBodyIR.Instructions.Add(new LIRBranchIfTrue(iteratorDone, skipNormalClose));
             _methodBodyIR.Instructions.Add(new LIRCopyTemp(trueTemp, completed));
             _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStaticVoid(
-                nameof(JavaScriptRuntime.Object),
-                nameof(JavaScriptRuntime.Object.IteratorClose),
+                nameof(JavaScriptRuntime.ObjectRuntime),
+                nameof(JavaScriptRuntime.ObjectRuntime.IteratorClose),
                 new[] { EnsureObject(iterator) }));
             _methodBodyIR.Instructions.Add(new LIRLabel(skipNormalClose));
         }
@@ -420,8 +420,8 @@ public sealed partial class HIRToLIRLowerer
         _methodBodyIR.Instructions.Add(new LIRBranchIfTrue(completed, skipClose));
         _methodBodyIR.Instructions.Add(new LIRBranchIfTrue(iteratorDone, skipClose));
         _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStaticVoid(
-            nameof(JavaScriptRuntime.Object),
-            nameof(JavaScriptRuntime.Object.IteratorCloseForThrowCompletion),
+            nameof(JavaScriptRuntime.ObjectRuntime),
+            nameof(JavaScriptRuntime.ObjectRuntime.IteratorCloseForThrowCompletion),
             new[] { EnsureObject(iterator) }));
         _methodBodyIR.Instructions.Add(new LIRLabel(skipClose));
         _methodBodyIR.Instructions.Add(new LIREndFinally());
@@ -514,8 +514,8 @@ public sealed partial class HIRToLIRLowerer
                 _methodBodyIR.Instructions.Add(new LIRCopyTemp(trueTemp, completed));
                 _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, nameof(JavaScriptRuntime.GeneratorScope._destructuringCompleted), completed));
                 _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStaticVoid(
-                    nameof(JavaScriptRuntime.Object),
-                    nameof(JavaScriptRuntime.Object.IteratorClose),
+                    nameof(JavaScriptRuntime.ObjectRuntime),
+                    nameof(JavaScriptRuntime.ObjectRuntime.IteratorClose),
                     new[] { EnsureObject(iterator) }));
                 _methodBodyIR.Instructions.Add(new LIRLabel(skipNormalClose));
             }
@@ -550,15 +550,15 @@ public sealed partial class HIRToLIRLowerer
             var normalClose = CreateLabel();
             _methodBodyIR.Instructions.Add(new LIRBranchIfFalse(hasPendingException, normalClose));
             _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStaticVoid(
-                nameof(JavaScriptRuntime.Object),
-                nameof(JavaScriptRuntime.Object.IteratorCloseForThrowCompletion),
+                nameof(JavaScriptRuntime.ObjectRuntime),
+                nameof(JavaScriptRuntime.ObjectRuntime.IteratorCloseForThrowCompletion),
                 new[] { EnsureObject(persistedIterator) }));
             _methodBodyIR.Instructions.Add(new LIRBranch(skipClose));
 
             _methodBodyIR.Instructions.Add(new LIRLabel(normalClose));
             _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStaticVoid(
-                nameof(JavaScriptRuntime.Object),
-                nameof(JavaScriptRuntime.Object.IteratorClose),
+                nameof(JavaScriptRuntime.ObjectRuntime),
+                nameof(JavaScriptRuntime.ObjectRuntime.IteratorClose),
                 new[] { EnsureObject(persistedIterator) }));
             _methodBodyIR.Instructions.Add(new LIRLabel(skipClose));
             _methodBodyIR.Instructions.Add(new LIRBranch(finallyExit));
@@ -595,8 +595,8 @@ public sealed partial class HIRToLIRLowerer
 
         var step = CreateTempVariable();
         _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
-            nameof(JavaScriptRuntime.Object),
-            nameof(JavaScriptRuntime.Object.IteratorDestructuringStep),
+            nameof(JavaScriptRuntime.ObjectRuntime),
+            nameof(JavaScriptRuntime.ObjectRuntime.IteratorDestructuringStep),
             new[] { EnsureObject(iterator) },
             step));
         DefineTempStorage(step, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
@@ -606,8 +606,8 @@ public sealed partial class HIRToLIRLowerer
         {
             var iterValue = CreateTempVariable();
             _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
-                nameof(JavaScriptRuntime.Object),
-                nameof(JavaScriptRuntime.Object.IteratorDestructuringStepValue),
+                nameof(JavaScriptRuntime.ObjectRuntime),
+                nameof(JavaScriptRuntime.ObjectRuntime.IteratorDestructuringStepValue),
                 new[] { EnsureObject(step) },
                 iterValue));
             DefineTempStorage(iterValue, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
@@ -661,7 +661,7 @@ public sealed partial class HIRToLIRLowerer
         _methodBodyIR.Instructions.Add(new LIRNewJsArray(System.Array.Empty<TempVariable>(), restArray));
         DefineTempStorage(restArray, new ValueStorage(ValueStorageKind.Reference, typeof(JavaScriptRuntime.Array)));
 
-        // len = Object.GetLength(source)
+        // len = ObjectRuntime.GetLength(source)
         var lenTemp = CreateTempVariable();
         _methodBodyIR.Instructions.Add(new LIRGetLength(sourceObject, lenTemp));
         DefineTempStorage(lenTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));

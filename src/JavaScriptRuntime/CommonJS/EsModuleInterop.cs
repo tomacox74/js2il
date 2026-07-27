@@ -29,7 +29,7 @@ namespace JavaScriptRuntime.CommonJS
             DefineNamespaceGetter(namespaceObject, "default", () => exports);
             DefineNamespaceGetter(namespaceObject, "module.exports", () => exports);
 
-            foreach (var key in JavaScriptRuntime.Object.GetEnumerableKeys(exports!))
+            foreach (var key in JavaScriptRuntime.ObjectRuntime.GetEnumerableKeys(exports!))
             {
                 var keyName = DotNet2JSConversions.ToString(key);
                 if (string.IsNullOrWhiteSpace(keyName) || IsReservedNamespaceKey(keyName))
@@ -51,7 +51,7 @@ namespace JavaScriptRuntime.CommonJS
                 return false;
             }
 
-            return JavaScriptRuntime.Object.hasOwn(exports, EsModuleProperty)
+            return ObjectRuntime.hasOwn(exports, EsModuleProperty)
                 && JavaScriptRuntime.ObjectRuntime.GetProperty(exports, EsModuleProperty) is bool isEsModule
                 && isEsModule;
         }
@@ -74,7 +74,7 @@ namespace JavaScriptRuntime.CommonJS
         private static bool TryGetCachedNamespace(object exports, out object? namespaceObject)
         {
             namespaceObject = null;
-            if (JavaScriptRuntime.Object.hasOwn(exports, NamespaceCacheProperty))
+            if (ObjectRuntime.hasOwn(exports, NamespaceCacheProperty))
             {
                 namespaceObject = JavaScriptRuntime.ObjectRuntime.GetProperty(exports, NamespaceCacheProperty);
                 if (namespaceObject is not null && namespaceObject is not JsNull)
@@ -88,14 +88,14 @@ namespace JavaScriptRuntime.CommonJS
 
         private static object CacheNamespace(object exports, object namespaceObject)
         {
-            if (JavaScriptRuntime.Object.hasOwn(exports, NamespaceCacheProperty))
+            if (ObjectRuntime.hasOwn(exports, NamespaceCacheProperty))
             {
                 return JavaScriptRuntime.ObjectRuntime.GetProperty(exports, NamespaceCacheProperty) ?? namespaceObject;
             }
 
-            if (JavaScriptRuntime.Object.isExtensible(exports))
+            if (ObjectRuntime.isExtensible(exports))
             {
-                JavaScriptRuntime.Object.defineProperty(
+                ObjectRuntime.defineProperty(
                     exports,
                     NamespaceCacheProperty,
                     CreateDataDescriptor(namespaceObject, enumerable: false, configurable: false, writable: false));

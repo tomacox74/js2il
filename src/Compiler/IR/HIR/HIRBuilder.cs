@@ -3475,7 +3475,7 @@ class HIRMethodBuilder
                 {
                     // Dynamic/new-on-value fallback: allow `new <expr>(...)` where the constructor
                     // is computed (e.g., `new impl.Window(...)`). Lowering will emit a call to
-                    // JavaScriptRuntime.Object.ConstructValue.
+                    // JavaScriptRuntime.ObjectRuntime.ConstructValue.
                     if (!TryParseExpression(newExpr.Callee, out var dynamicCallee) || dynamicCallee == null)
                     {
                         return false;

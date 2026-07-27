@@ -64,7 +64,7 @@ internal static class ClrMetadataConsistencyValidator
 
     private static void ValidateLoadableByClrOrThrow(byte[] peBytes)
     {
-        var runtimeAssembly = typeof(JavaScriptRuntime.Object).Assembly;
+        var runtimeAssembly = typeof(JavaScriptRuntime.ObjectRuntime).Assembly;
         var runtimeAssemblyPath = runtimeAssembly.Location;
         var runtimeAssemblyName = runtimeAssembly.GetName().Name;
         var alc = new AssemblyLoadContext("Jroc_MetadataValidation", isCollectible: true);

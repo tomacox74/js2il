@@ -1001,7 +1001,7 @@ namespace JavaScriptRuntime
                 return false;
             }
 
-            var lengthValue = JavaScriptRuntime.Object.GetProperty(source, "length");
+            var lengthValue = JavaScriptRuntime.ObjectRuntime.GetProperty(source, "length");
             if (lengthValue is null || lengthValue is JsNull)
             {
                 return false;
