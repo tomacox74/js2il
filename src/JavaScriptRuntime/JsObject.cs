@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using System.Dynamic;
 
 namespace JavaScriptRuntime;
 
@@ -182,7 +181,7 @@ internal interface IExoticJsObject
 /// for object literal property initialization to avoid the <c>box</c> instruction.
 /// </para>
 /// </summary>
-public class JsObject : DynamicObject, IDictionary<string, object?>
+public class JsObject : IDictionary<string, object?>
 {
     private JsValue[] _properties = System.Array.Empty<JsValue>();
 
@@ -649,21 +648,6 @@ public class JsObject : DynamicObject, IDictionary<string, object?>
     }
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-
-    public override bool TryGetMember(GetMemberBinder binder, out object? result)
-        => TryGetValue(binder.Name, out result);
-
-    public override bool TrySetMember(SetMemberBinder binder, object? value)
-    {
-        this[binder.Name] = value;
-        return true;
-    }
-
-    public override bool TryDeleteMember(DeleteMemberBinder binder)
-        => Remove(binder.Name);
-
-    public override IEnumerable<string> GetDynamicMemberNames()
-        => GetOwnPropertyNames();
 
     // -------------------------------------------------------------------------
     // Helpers

@@ -20,6 +20,13 @@ public class ModuleLoadTests
         double Add(double x, double y);
     }
 
+    public interface IObjectReturnExports : IDisposable
+    {
+        object GetWindow();
+        string GetTitle(object win);
+        double GetHostValue(object win);
+    }
+
     private sealed class CompiledModuleAssembly : IDisposable
     {
         private readonly string _outputDir;
@@ -240,8 +247,54 @@ public class ModuleLoadTests
 
         dynamic win = exports.getWindow();
         Assert.Equal("Hello", (string)win.document.title);
+        Assert.Equal("Hello", (string)win.title);
         Assert.Equal("Hello", (string)exports.getTitle(win));
         Assert.Equal("Hello", (string)exports.getTitleViaHost());
+
+        win.hostValue = 17;
+        Assert.Equal(17.0, (double)exports.getHostValue(win));
+
+        Assert.Equal("Updated", (string)win.setTitle("Updated"));
+        Assert.Equal("Updated", (string)win.document.title);
+        Assert.Equal("Updated", (string)win.title);
+    }
+
+    [Fact]
+    public void JsEngine_LoadModule_Typed_ObjectReturn_UsesDynamicBoundaryProxy()
+    {
+        using var module = CompileAndLoadModuleAssemblyFromResource("nestedReturn", "nestedReturn.js");
+        using var exports = Jroc.Runtime.JsEngine.LoadModule<IObjectReturnExports>(module.Assembly, "nestedReturn");
+
+        var returnedValue = exports.GetWindow();
+        Assert.IsNotType<JsObject>(returnedValue);
+
+        dynamic win = returnedValue;
+        Assert.Equal("Hello", (string)win.title);
+
+        win.hostValue = 23;
+        Assert.Equal(23.0, exports.GetHostValue(win));
+        Assert.Equal("Hello", exports.GetTitle(win));
+    }
+
+    [Fact]
+    public async Task JsEngine_LoadModule_Dynamic_ReturnedObject_MarshalsAndTranslatesCalls()
+    {
+        using var module = CompileAndLoadModuleAssemblyFromResource("nestedReturn", "nestedReturn.js");
+
+        using var exportsObj = Jroc.Runtime.JsEngine.LoadModule(module.Assembly, "nestedReturn");
+        dynamic exports = exportsObj;
+        dynamic win = exports.getWindow();
+
+        var title = await Task.Run(() => (string)win.title);
+        Assert.Equal("Hello", title);
+
+        var ex = Assert.Throws<JsInvocationException>(() => win.fail());
+        Assert.Equal("nestedReturn", ex.ModuleId);
+        Assert.Equal("fail", ex.MemberName);
+
+        var jsError = Assert.IsType<JsErrorException>(ex.InnerException);
+        Assert.Equal("Error", jsError.JsName);
+        Assert.Contains("nested boom", jsError.JsMessage ?? jsError.Message, StringComparison.Ordinal);
     }
 
     [Fact]
