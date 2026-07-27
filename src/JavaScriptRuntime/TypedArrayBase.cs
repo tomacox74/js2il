@@ -253,6 +253,41 @@ namespace JavaScriptRuntime
             return -1.0;
         }
 
+        public object? findLast(object?[]? args)
+        {
+            var callback = GetRequiredCallback(args, "findLast");
+            var thisArg = GetThisArg(args);
+
+            for (int i = _length - 1; i >= 0; i--)
+            {
+                var value = ReadElementValue(i);
+                var result = InvokeCallback(callback, thisArg, $"{TypedArrayName}.prototype.findLast", 3, value, (double)i, this, null);
+                if (Operators.IsTruthy(result))
+                {
+                    return value;
+                }
+            }
+
+            return null;
+        }
+
+        public double findLastIndex(object?[]? args)
+        {
+            var callback = GetRequiredCallback(args, "findLastIndex");
+            var thisArg = GetThisArg(args);
+
+            for (int i = _length - 1; i >= 0; i--)
+            {
+                var result = InvokeCallback(callback, thisArg, $"{TypedArrayName}.prototype.findLastIndex", 3, ReadElementValue(i), (double)i, this, null);
+                if (Operators.IsTruthy(result))
+                {
+                    return i;
+                }
+            }
+
+            return -1.0;
+        }
+
         public object? forEach(object[]? args)
         {
             var callback = GetRequiredCallback(args, "forEach");
@@ -864,7 +899,7 @@ namespace JavaScriptRuntime
             return string.Join(actualSeparator, parts);
         }
 
-        private object? GetRequiredCallback(object[]? args, string methodName)
+        private object? GetRequiredCallback(object?[]? args, string methodName)
         {
             var callback = args != null && args.Length > 0 ? args[0] : null;
             if (callback is not Delegate)
@@ -875,7 +910,7 @@ namespace JavaScriptRuntime
             return callback;
         }
 
-        private static object? GetThisArg(object[]? args)
+        private static object? GetThisArg(object?[]? args)
             => args != null && args.Length > 1 ? args[1] : null;
 
         private static object? InvokeCallback(object? callback, object? thisArg, string callbackKind, int argCount, object? a0, object? a1, object? a2, object? a3)

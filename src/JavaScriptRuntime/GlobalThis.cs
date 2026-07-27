@@ -317,6 +317,8 @@ namespace JavaScriptRuntime
         private static readonly Func<object[], object?[], object?> _typedArrayConstructorValue = static (_, __) =>
             throw new TypeError("%TypedArray% is not directly constructible in jroc.");
         private static readonly object _typedArrayPrototypeValue = new JsObject();
+        private static readonly Func<object[], object?[]?, object?> _typedArrayFindLastValue = TypedArrayPrototypeFindLast;
+        private static readonly Func<object[], object?[]?, object?> _typedArrayFindLastIndexValue = TypedArrayPrototypeFindLastIndex;
 
         // Typed array constructor values - supported and unsupported
         private static readonly Func<object[], object?[], object?> _float64ArrayConstructorValue = 
@@ -796,6 +798,8 @@ namespace JavaScriptRuntime
                 Writable = false,
                 Value = _typedArrayPrototypeValue
             });
+            DefineBuiltinFunctionProperty(_typedArrayPrototypeValue, "findLast", _typedArrayFindLastValue, 1d);
+            DefineBuiltinFunctionProperty(_typedArrayPrototypeValue, "findLastIndex", _typedArrayFindLastIndexValue, 1d);
             ConfigureTypedArrayConstructorValue(_float64ArrayConstructorValue);
             ConfigureTypedArrayConstructorValue(_float32ArrayConstructorValue);
             ConfigureTypedArrayConstructorValue(_int32ArrayConstructorValue);
@@ -864,6 +868,27 @@ namespace JavaScriptRuntime
                 Value = constructorValue
             });
         }
+
+        private static object? TypedArrayPrototypeFindLast(object[] _, object?[]? args)
+        {
+            if (RuntimeServices.GetCurrentThis() is not TypedArrayBase typedArray)
+            {
+                throw new TypeError("TypedArray.prototype.findLast called on incompatible receiver");
+            }
+
+            return typedArray.findLast(args);
+        }
+
+        private static object? TypedArrayPrototypeFindLastIndex(object[] _, object?[]? args)
+        {
+            if (RuntimeServices.GetCurrentThis() is not TypedArrayBase typedArray)
+            {
+                throw new TypeError("TypedArray.prototype.findLastIndex called on incompatible receiver");
+            }
+
+            return typedArray.findLastIndex(args);
+        }
+
         internal static ServiceContainer? ServiceProvider
         {
             get => _serviceProvider.Value;
