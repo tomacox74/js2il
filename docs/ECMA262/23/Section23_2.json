@@ -132,13 +132,13 @@
     {
       "clause": "23.2.3.13",
       "title": "%TypedArray%.prototype.findLast ( predicate [ , thisArg ] )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-%typedarray%.prototype.findlast"
     },
     {
       "clause": "23.2.3.14",
       "title": "%TypedArray%.prototype.findLastIndex ( predicate [ , thisArg ] )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-%typedarray%.prototype.findlastindex"
     },
     {
@@ -578,7 +578,49 @@
         "testScripts": [
           "tests/Jroc.Tests/TypedArray/JavaScript/Float64Array_Callback_Methods.js"
         ],
-        "notes": "The supported TypedArray families now share every(), some(), find(), findIndex(), forEach(), map(), filter(), and reduce() with callback invocation and same-type result creation where applicable. reduceRight(), flatMap(), and newer callback-based methods remain unsupported."
+        "notes": "The supported TypedArray families now share every(), some(), find(), findIndex(), forEach(), map(), filter(), and reduce() with callback invocation and same-type result creation where applicable. reduceRight() and remaining callback-based methods are still unsupported."
+      },
+      {
+        "clause": "23.2.3.13",
+        "feature": "%TypedArray%.prototype.findLast",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-%typedarray%.prototype.findlast",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/TypedArray/prototype/findLast/JavaScript/invoked-as-method.js",
+          "tests/Jroc.Test262.Tests/built-ins/TypedArray/prototype/findLast/JavaScript/length.js",
+          "tests/Jroc.Test262.Tests/built-ins/TypedArray/prototype/findLast/JavaScript/name.js",
+          "tests/Jroc.Test262.Tests/built-ins/TypedArray/prototype/findLast/JavaScript/not-a-constructor.js",
+          "tests/Jroc.Test262.Tests/built-ins/TypedArray/prototype/findLast/JavaScript/prop-desc.js"
+        ],
+        "test262Paths": [
+          "test/built-ins/TypedArray/prototype/findLast/invoked-as-method.js",
+          "test/built-ins/TypedArray/prototype/findLast/length.js",
+          "test/built-ins/TypedArray/prototype/findLast/name.js",
+          "test/built-ins/TypedArray/prototype/findLast/not-a-constructor.js",
+          "test/built-ins/TypedArray/prototype/findLast/prop-desc.js"
+        ],
+        "notes": "The supported TypedArray families expose a non-constructible findLast() built-in with standard name, length, and property descriptors, typed receiver validation, callable predicate checks, thisArg forwarding, and reverse-index callback traversal. Detached or resizable ArrayBuffer behavior and unsupported TypedArray families remain outside the covered subset."
+      },
+      {
+        "clause": "23.2.3.14",
+        "feature": "%TypedArray%.prototype.findLastIndex",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-%typedarray%.prototype.findlastindex",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/TypedArray/prototype/findLastIndex/JavaScript/invoked-as-method.js",
+          "tests/Jroc.Test262.Tests/built-ins/TypedArray/prototype/findLastIndex/JavaScript/length.js",
+          "tests/Jroc.Test262.Tests/built-ins/TypedArray/prototype/findLastIndex/JavaScript/name.js",
+          "tests/Jroc.Test262.Tests/built-ins/TypedArray/prototype/findLastIndex/JavaScript/not-a-constructor.js",
+          "tests/Jroc.Test262.Tests/built-ins/TypedArray/prototype/findLastIndex/JavaScript/prop-desc.js"
+        ],
+        "test262Paths": [
+          "test/built-ins/TypedArray/prototype/findLastIndex/invoked-as-method.js",
+          "test/built-ins/TypedArray/prototype/findLastIndex/length.js",
+          "test/built-ins/TypedArray/prototype/findLastIndex/name.js",
+          "test/built-ins/TypedArray/prototype/findLastIndex/not-a-constructor.js",
+          "test/built-ins/TypedArray/prototype/findLastIndex/prop-desc.js"
+        ],
+        "notes": "The supported TypedArray families expose a non-constructible findLastIndex() built-in with standard name, length, and property descriptors, typed receiver validation, callable predicate checks, thisArg forwarding, and reverse-index callback traversal. Detached or resizable ArrayBuffer behavior and unsupported TypedArray families remain outside the covered subset."
       },
       {
         "clause": "23.2.3",

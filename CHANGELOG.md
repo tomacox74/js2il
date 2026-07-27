@@ -6,7 +6,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-_Nothing yet._
+- runtime: add `%TypedArray%.prototype.findLast` and `findLastIndex` for supported typed-array families, including reverse callback traversal, typed receiver validation, and standard built-in metadata. Ports ten upstream test262 cases.
 
 ## v0.11.37 - 2026-07-27
 
