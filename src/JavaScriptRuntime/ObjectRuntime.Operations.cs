@@ -1582,27 +1582,15 @@ namespace JavaScriptRuntime
             }
 
             var result = CreateOrdinaryObject();
-            if (getOwnPropertyNames(obj) is JavaScriptRuntime.Array names)
+            foreach (var key in GetOrderedOwnKeys(obj, includeEncodedSymbolKeys: true))
             {
-                foreach (var key in names)
+                var propertyKey = TryDecodeEncodedSymbolKey(key, out var symbol)
+                    ? (object)symbol
+                    : key;
+                var descriptor = getOwnPropertyDescriptor(obj, propertyKey);
+                if (descriptor is not null)
                 {
-                    var descriptor = getOwnPropertyDescriptor(obj, key);
-                    if (descriptor is not null)
-                    {
-                        ObjectRuntime.SetItem(result, key!, descriptor);
-                    }
-                }
-            }
-
-            if (getOwnPropertySymbols(obj) is JavaScriptRuntime.Array symbols)
-            {
-                foreach (var sym in symbols)
-                {
-                    var descriptor = getOwnPropertyDescriptor(obj, sym);
-                    if (descriptor is not null)
-                    {
-                        ObjectRuntime.SetItem(result, sym!, descriptor);
-                    }
+                    ObjectRuntime.SetItem(result, propertyKey, descriptor);
                 }
             }
 
@@ -1707,51 +1695,12 @@ namespace JavaScriptRuntime
         }
 
         public static object seal(object obj)
-        {
-            if (obj is null || obj is JsNull)
-            {
-                throw new TypeError("Cannot convert undefined or null to object");
-            }
-
-            if (IsPrimitiveObjectOperationTarget(obj))
-            {
-                return obj;
-            }
-
-            EnsureIntegrityDescriptorsForExistingOwnProperties(obj);
-            foreach (var key in GetOwnKeysForIntegrity(obj))
-            {
-                if (!PropertyDescriptorStore.TryGetOwn(obj, key, out var desc))
-                {
-                    continue;
-                }
-
-                desc = PropertyDescriptorStore.CloneDescriptor(desc);
-                desc.Configurable = false;
-                if (obj is JsObject jsObject)
-                {
-                    if (!jsObject.DefineOwnProperty(key, desc))
-                    {
-                        throw new TypeError($"Cannot define property: {key}");
-                    }
-                }
-                else
-                {
-                    PropertyDescriptorStore.DefineOrUpdate(obj, key, desc);
-                }
-            }
-
-            var state = GetIntegrityState(obj);
-            state.Extensible = false;
-            state.Sealed = true;
-            if (obj is Array array)
-            {
-                array.DisableDenseGrowthFastPath();
-            }
-            return obj;
-        }
+            => SetIntegrityLevel(obj, frozen: false);
 
         public static object freeze(object obj)
+            => SetIntegrityLevel(obj, frozen: true);
+
+        private static object SetIntegrityLevel(object obj, bool frozen)
         {
             if (obj is null || obj is JsNull)
             {
@@ -1773,10 +1722,11 @@ namespace JavaScriptRuntime
 
                 desc = PropertyDescriptorStore.CloneDescriptor(desc);
                 desc.Configurable = false;
-                if (desc.Kind == JsPropertyDescriptorKind.Data)
+                if (frozen && desc.Kind == JsPropertyDescriptorKind.Data)
                 {
                     desc.Writable = false;
                 }
+
                 if (obj is JsObject jsObject)
                 {
                     if (!jsObject.DefineOwnProperty(key, desc))
@@ -1793,7 +1743,10 @@ namespace JavaScriptRuntime
             var state = GetIntegrityState(obj);
             state.Extensible = false;
             state.Sealed = true;
-            state.Frozen = true;
+            if (frozen)
+            {
+                state.Frozen = true;
+            }
             if (obj is Array array)
             {
                 array.DisableDenseGrowthFastPath();
@@ -1802,6 +1755,12 @@ namespace JavaScriptRuntime
         }
 
         public static bool isSealed(object obj)
+            => TestIntegrityLevel(obj, frozen: false);
+
+        public static bool isFrozen(object obj)
+            => TestIntegrityLevel(obj, frozen: true);
+
+        private static bool TestIntegrityLevel(object obj, bool frozen)
         {
             if (obj is null || obj is JsNull)
             {
@@ -1820,40 +1779,9 @@ namespace JavaScriptRuntime
 
             foreach (var key in GetOwnKeysForIntegrity(obj))
             {
-                if (!PropertyDescriptorStore.TryGetOwn(obj, key, out var desc) || desc.Configurable)
-                {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
-        public static bool isFrozen(object obj)
-        {
-            if (obj is null || obj is JsNull)
-            {
-                throw new TypeError("Cannot convert undefined or null to object");
-            }
-
-            if (IsPrimitiveObjectOperationTarget(obj))
-            {
-                return true;
-            }
-
-            if (!isSealed(obj))
-            {
-                return false;
-            }
-
-            foreach (var key in GetOwnKeysForIntegrity(obj))
-            {
-                if (!PropertyDescriptorStore.TryGetOwn(obj, key, out var desc))
-                {
-                    return false;
-                }
-
-                if (desc.Kind == JsPropertyDescriptorKind.Data && desc.Writable)
+                if (!PropertyDescriptorStore.TryGetOwn(obj, key, out var desc)
+                    || desc.Configurable
+                    || frozen && desc.Kind == JsPropertyDescriptorKind.Data && desc.Writable)
                 {
                     return false;
                 }
@@ -2818,6 +2746,21 @@ namespace JavaScriptRuntime
             try
             {
                 return Closure.InvokeWithArgs0(member, System.Array.Empty<object>());
+            }
+            finally
+            {
+                RuntimeServices.SetCurrentThis(previousThis);
+            }
+        }
+
+        private static object InvokeMemberDelegate0PreservingContext(object receiver, Delegate member)
+        {
+            var previousThis = RuntimeServices.SetCurrentThis(receiver);
+            try
+            {
+                return Function.HasBoundWithObject(member)
+                    ? Closure.InvokeWithArgs(member, System.Array.Empty<object>(), System.Array.Empty<object>())
+                    : Closure.InvokeWithArgs0(member, System.Array.Empty<object>());
             }
             finally
             {
@@ -4525,24 +4468,16 @@ namespace JavaScriptRuntime
 
             if (iteratorMethod is Delegate del)
             {
-                var previousThis = RuntimeServices.SetCurrentThis(iterable);
-                try
+                var iteratorObj = InvokeMemberDelegate0PreservingContext(iterable, del);
+                if (iteratorObj is null)
                 {
-                    var iteratorObj = Closure.InvokeWithArgs(del, System.Array.Empty<object>(), System.Array.Empty<object>());
-                    if (iteratorObj is null)
-                    {
-                        throw new JavaScriptRuntime.TypeError("Iterator method returned null or undefined");
-                    }
-                    if (iteratorObj is IJavaScriptIterator native)
-                    {
-                        return native;
-                    }
-                    return new DynamicIterator(iteratorObj);
+                    throw new JavaScriptRuntime.TypeError("Iterator method returned null or undefined");
                 }
-                finally
+                if (iteratorObj is IJavaScriptIterator native)
                 {
-                    RuntimeServices.SetCurrentThis(previousThis);
+                    return native;
                 }
+                return new DynamicIterator(iteratorObj);
             }
 
             if (iteratorMethod != null || hasIteratorProperty)
@@ -4617,32 +4552,24 @@ namespace JavaScriptRuntime
 
             if (asyncIteratorMethod is Delegate asyncDel)
             {
-                var previousThis = RuntimeServices.SetCurrentThis(iterable);
-                try
+                var iteratorObj = InvokeMemberDelegate0PreservingContext(iterable, asyncDel);
+                if (iteratorObj is null)
                 {
-                    var iteratorObj = Closure.InvokeWithArgs(asyncDel, System.Array.Empty<object>(), System.Array.Empty<object>());
-                    if (iteratorObj is null)
-                    {
-                        throw new JavaScriptRuntime.TypeError("Async iterator method returned null or undefined");
-                    }
-
-                    if (iteratorObj is IJavaScriptAsyncIterator native)
-                    {
-                        return native;
-                    }
-
-                    // If the async iterator method returns a sync iterator, it is still valid: we will await its next() result.
-                    if (iteratorObj is IJavaScriptIterator sync)
-                    {
-                        return new AsyncFromSyncIterator(sync);
-                    }
-
-                    return new AsyncDynamicIterator(iteratorObj);
+                    throw new JavaScriptRuntime.TypeError("Async iterator method returned null or undefined");
                 }
-                finally
+
+                if (iteratorObj is IJavaScriptAsyncIterator native)
                 {
-                    RuntimeServices.SetCurrentThis(previousThis);
+                    return native;
                 }
+
+                // If the async iterator method returns a sync iterator, it is still valid: we will await its next() result.
+                if (iteratorObj is IJavaScriptIterator sync)
+                {
+                    return new AsyncFromSyncIterator(sync);
+                }
+
+                return new AsyncDynamicIterator(iteratorObj);
             }
 
             if (asyncIteratorMethod != null)
@@ -4819,17 +4746,8 @@ namespace JavaScriptRuntime
                     throw new JavaScriptRuntime.TypeError("Iterator.return is not a function");
                 }
 
-                var previousThis = RuntimeServices.SetCurrentThis(iterator);
-                try
-                {
-                    var result = Closure.InvokeWithArgs(del, System.Array.Empty<object>(), System.Array.Empty<object>());
-                    ValidateIteratorCloseResult(result);
-                    return;
-                }
-                finally
-                {
-                    RuntimeServices.SetCurrentThis(previousThis);
-                }
+                ValidateIteratorCloseResult(InvokeMemberDelegate0PreservingContext(iterator, del));
+                return;
             }
 
             // Host object: look for a delegate-valued property.
@@ -4843,16 +4761,7 @@ namespace JavaScriptRuntime
                 throw new JavaScriptRuntime.TypeError("Iterator.return is not a function");
             }
 
-            var prev = RuntimeServices.SetCurrentThis(iterator);
-            try
-            {
-                var result = Closure.InvokeWithArgs(memberDel, System.Array.Empty<object>(), System.Array.Empty<object>());
-                ValidateIteratorCloseResult(result);
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentThis(prev);
-            }
+            ValidateIteratorCloseResult(InvokeMemberDelegate0PreservingContext(iterator, memberDel));
         }
 
         private static void ValidateIteratorCloseResult(object? result)
@@ -5031,21 +4940,13 @@ namespace JavaScriptRuntime
 
             public object NextRaw()
             {
-                var previousThis = RuntimeServices.SetCurrentThis(_iterator);
-                try
+                var result = InvokeMemberDelegate0PreservingContext(_iterator, _next);
+                if (result is null || result is JsNull || !IsObjectLikeForPrototype(result))
                 {
-                    var result = Closure.InvokeWithArgs(_next, System.Array.Empty<object>(), System.Array.Empty<object>());
-                    if (result is null || result is JsNull || !IsObjectLikeForPrototype(result))
-                    {
-                        throw new JavaScriptRuntime.TypeError("Iterator.next result must be an object");
-                    }
+                    throw new JavaScriptRuntime.TypeError("Iterator.next result must be an object");
+                }
 
-                    return result;
-                }
-                finally
-                {
-                    RuntimeServices.SetCurrentThis(previousThis);
-                }
+                return result;
             }
 
             public void Return()
@@ -5061,16 +4962,7 @@ namespace JavaScriptRuntime
                     throw new JavaScriptRuntime.TypeError("Iterator.return is not a function");
                 }
 
-                var previousThis = RuntimeServices.SetCurrentThis(_iterator);
-                try
-                {
-                    var result = Closure.InvokeWithArgs(del, System.Array.Empty<object>(), System.Array.Empty<object>());
-                    ValidateIteratorCloseResult(result);
-                }
-                finally
-                {
-                    RuntimeServices.SetCurrentThis(previousThis);
-                }
+                ValidateIteratorCloseResult(InvokeMemberDelegate0PreservingContext(_iterator, del));
             }
         }
 
@@ -5124,17 +5016,7 @@ namespace JavaScriptRuntime
             public bool HasReturn => _return != null;
 
             public object? Next()
-            {
-                var previousThis = RuntimeServices.SetCurrentThis(_iterator);
-                try
-                {
-                    return Closure.InvokeWithArgs(_next, System.Array.Empty<object>(), System.Array.Empty<object>());
-                }
-                finally
-                {
-                    RuntimeServices.SetCurrentThis(previousThis);
-                }
-            }
+                => InvokeMemberDelegate0PreservingContext(_iterator, _next);
 
             public object? Return()
             {
@@ -5148,15 +5030,7 @@ namespace JavaScriptRuntime
                     throw new JavaScriptRuntime.TypeError("Iterator.return is not a function");
                 }
 
-                var previousThis = RuntimeServices.SetCurrentThis(_iterator);
-                try
-                {
-                    return Closure.InvokeWithArgs(del, System.Array.Empty<object>(), System.Array.Empty<object>());
-                }
-                finally
-                {
-                    RuntimeServices.SetCurrentThis(previousThis);
-                }
+                return InvokeMemberDelegate0PreservingContext(_iterator, del);
             }
         }
 
