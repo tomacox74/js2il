@@ -21,6 +21,11 @@ public class ObjectInternalOperationsBenchmarks : IDisposable
 {
     private readonly JavaScriptRuntime.JsObject _readTarget = new();
     private readonly JavaScriptRuntime.JsObject _writeTarget = new();
+    private readonly JavaScriptRuntime.JsObject _deleteTarget = new();
+    private readonly JavaScriptRuntime.JsObject _descriptorTarget = new();
+    private readonly JavaScriptRuntime.JsObject _frozenTarget = new();
+    private readonly JavaScriptRuntime.Array _indexedTarget = new(new object?[] { 42d });
+    private readonly JavaScriptRuntime.JsObject _iterableTarget = new();
     private JrocInMemoryModule? _hostedModule;
     private dynamic _hostedTarget = null!;
 
@@ -29,6 +34,22 @@ public class ObjectInternalOperationsBenchmarks : IDisposable
     {
         JavaScriptRuntime.ObjectRuntime.SetProperty(_readTarget, "value", 42d);
         JavaScriptRuntime.ObjectRuntime.SetProperty(_writeTarget, "value", 0d);
+        for (var i = 0; i < 16; i++)
+        {
+            JavaScriptRuntime.ObjectRuntime.SetProperty(_descriptorTarget, $"value{i}", (double)i);
+            JavaScriptRuntime.ObjectRuntime.SetProperty(_frozenTarget, $"value{i}", (double)i);
+        }
+        JavaScriptRuntime.ObjectRuntime.freeze(_frozenTarget);
+
+        var iterator = new JavaScriptRuntime.JsObject();
+        JavaScriptRuntime.ObjectRuntime.SetProperty(
+            iterator,
+            "next",
+            (Func<object[], object?[]?, object?>)((_, _) => JavaScriptRuntime.IteratorResult.Create(null, done: true)));
+        JavaScriptRuntime.ObjectRuntime.DefineObjectLiteralDataProperty(
+            _iterableTarget,
+            JavaScriptRuntime.Symbol.iterator,
+            (Func<object[], object?[]?, object?>)((_, _) => iterator));
 
         var request = new JrocInMemoryCompileRequest(
             Path.Combine(Path.GetTempPath(), "jroc-hosted-object-operations.js"))
@@ -58,4 +79,24 @@ public class ObjectInternalOperationsBenchmarks : IDisposable
     [Benchmark(Description = "Hosted dynamic proxy write")]
     public void HostedWrite()
         => _hostedTarget.value = 42d;
+
+    [Benchmark(Description = "Delete missing property (non-strict)")]
+    public bool DeleteMissingNonStrict()
+        => JavaScriptRuntime.ObjectRuntime.DeletePropertyNonStrict(_deleteTarget, "missing");
+
+    [Benchmark(Description = "Get own property descriptors")]
+    public object GetOwnPropertyDescriptors()
+        => JavaScriptRuntime.ObjectRuntime.getOwnPropertyDescriptors(_descriptorTarget);
+
+    [Benchmark(Description = "Test frozen object")]
+    public bool IsFrozen()
+        => JavaScriptRuntime.ObjectRuntime.isFrozen(_frozenTarget);
+
+    [Benchmark(Description = "Numeric indexed read")]
+    public object GetNumericIndex()
+        => JavaScriptRuntime.ObjectRuntime.GetItem(_indexedTarget, 0d);
+
+    [Benchmark(Description = "Resolve custom iterator")]
+    public object GetIterator()
+        => JavaScriptRuntime.ObjectRuntime.GetIterator(_iterableTarget);
 }
