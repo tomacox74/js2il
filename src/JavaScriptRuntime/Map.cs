@@ -28,6 +28,8 @@ namespace JavaScriptRuntime
             DefinePrototypeMethod(exp, "values", PrototypeValues);
             DefinePrototypeMethod(exp, "entries", _prototypeEntriesValue);
             DefinePrototypeMethod(exp, "forEach", PrototypeForEach);
+            DefinePrototypeMethod(exp, "getOrInsert", PrototypeGetOrInsert, 2);
+            DefinePrototypeMethod(exp, "getOrInsertComputed", PrototypeGetOrInsertComputed, 2);
             PropertyDescriptorStore.DefineOrUpdate(exp, Symbol.iterator.DebugId, new JsPropertyDescriptor
             {
                 Kind = JsPropertyDescriptorKind.Data,
@@ -81,6 +83,17 @@ namespace JavaScriptRuntime
                 Writable = true,
                 Value = method
             });
+        }
+
+        private static void DefinePrototypeMethod(
+            JsObject prototype,
+            string name,
+            Func<object[], object?[]?, object?> method,
+            double length)
+        {
+            Function.InitializeFunctionInstance(method, length, name);
+            Function.MarkUndefinedPrototype(method);
+            DefinePrototypeMethod(prototype, name, method);
         }
 
         private static Map GetMapReceiver(string methodName)
@@ -151,6 +164,22 @@ namespace JavaScriptRuntime
             var thisArg = args != null && args.Length > 1 ? args[1] : null;
             map.forEach(callback, thisArg);
             return null;
+        }
+
+        private static object? PrototypeGetOrInsert(object[] scopes, object?[]? args)
+        {
+            var map = GetMapReceiver("getOrInsert");
+            var key = args != null && args.Length > 0 ? args[0] : null;
+            var value = args != null && args.Length > 1 ? args[1] : null;
+            return map.getOrInsert(key, value);
+        }
+
+        private static object? PrototypeGetOrInsertComputed(object[] scopes, object?[]? args)
+        {
+            var map = GetMapReceiver("getOrInsertComputed");
+            var key = args != null && args.Length > 0 ? args[0] : null;
+            var callback = args != null && args.Length > 1 ? args[1] : null;
+            return map.getOrInsertComputed(key, callback);
         }
 
         private static object? PrototypeSizeGetter(object[] scopes, object?[]? args)
@@ -353,6 +382,40 @@ namespace JavaScriptRuntime
             return null; // JavaScript undefined, represented as null in .NET
         }
 
+        public object? getOrInsert(object? key, object? value)
+        {
+            var normalizedKey = NormalizeKey(key);
+            if (_keyIndex.TryGetValue(normalizedKey, out var index))
+            {
+                return _entries[index][1];
+            }
+
+            set(key, value);
+            return value;
+        }
+
+        public object? getOrInsertComputed(object? key, object? callback)
+        {
+            if (!Proxy.IsCallableValue(callback))
+            {
+                throw new TypeError("Map.prototype.getOrInsertComputed callback must be a function");
+            }
+
+            var canonicalKey = CanonicalizeKeyedCollectionKey(key);
+            var normalizedKey = NormalizeKey(canonicalKey);
+            if (_keyIndex.TryGetValue(normalizedKey, out var index))
+            {
+                return _entries[index][1];
+            }
+
+            var value = Closure.InvokeFunctionCallWithArgs1(
+                callback!,
+                System.Array.Empty<object>(),
+                canonicalKey);
+            set(canonicalKey, value);
+            return value;
+        }
+
         public bool has(object? key)
         {
             return _keyIndex.ContainsKey(NormalizeKey(key));
@@ -424,13 +487,8 @@ namespace JavaScriptRuntime
         // JavaScript Map.prototype.entries()
         public IJavaScriptIterator entries() => new MapIterator(this, MapIteratorKind.Entries);
 
-        private static object NormalizeKey(object? key)
+        private static object? CanonicalizeKeyedCollectionKey(object? key)
         {
-            if (key is null)
-            {
-                return NullKeySentinel;
-            }
-
             return key switch
             {
                 byte value => (double)value,
@@ -447,6 +505,11 @@ namespace JavaScriptRuntime
                 decimal value => (double)value,
                 _ => key
             };
+        }
+
+        private static object NormalizeKey(object? key)
+        {
+            return CanonicalizeKeyedCollectionKey(key) ?? NullKeySentinel;
         }
 
         private enum MapIteratorKind

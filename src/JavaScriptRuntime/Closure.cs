@@ -729,6 +729,20 @@ namespace JavaScriptRuntime
                         return trapResult!;
                     }
 
+                    if (proxyTarget is Delegate proxyTargetDelegate)
+                    {
+                        var previousThis = RuntimeServices.SetCurrentThis(
+                            Function.GetEffectiveThisArg(proxyTargetDelegate, RuntimeServices.GetCurrentThis()));
+                        try
+                        {
+                            return InvokeWithArgsCore(proxyTarget, scopes, newTarget, args);
+                        }
+                        finally
+                        {
+                            RuntimeServices.SetCurrentThis(previousThis);
+                        }
+                    }
+
                     return InvokeWithArgsCore(proxyTarget, scopes, newTarget, args);
                 }
 

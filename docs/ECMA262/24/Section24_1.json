@@ -96,13 +96,13 @@
     {
       "clause": "24.1.3.7",
       "title": "Map.prototype.getOrInsert ( key , value )",
-      "status": "Not Yet Supported",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-map.prototype.getorinsert"
     },
     {
       "clause": "24.1.3.8",
       "title": "Map.prototype.getOrInsertComputed ( key , callback )",
-      "status": "Not Yet Supported",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-map.prototype.getorinsertcomputed"
     },
     {
@@ -324,10 +324,37 @@
       },
       {
         "clause": "24.1.3.7",
-        "feature": "Map.prototype.getOrInsert / getOrInsertComputed",
-        "status": "Not Yet Supported",
+        "feature": "Map.prototype.getOrInsert",
+        "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-map.prototype.getorinsert",
-        "notes": "The newer getOrInsert APIs are still not implemented on JavaScriptRuntime.Map."
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/Map/prototype/getOrInsert/ExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/built-ins/Map/prototype/getOrInsert/append-new-values.js",
+          "test/built-ins/Map/prototype/getOrInsert/append-new-values-normalizes-zero-key.js",
+          "test/built-ins/Map/prototype/getOrInsert/append-value-if-key-is-not-present-different-key-types.js",
+          "test/built-ins/Map/prototype/getOrInsert/returns-value-if-key-is-not-present-different-key-types.js",
+          "test/built-ins/Map/prototype/getOrInsert/returns-value-if-key-is-present-different-key-types.js",
+          "test/built-ins/Map/prototype/getOrInsert/returns-value-normalized-zero-key.js"
+        ],
+        "notes": "Returns an existing Map value or appends and returns the supplied value. SameValueZero key lookup, insertion order, key types, and negative-zero canonicalization are covered."
+      },
+      {
+        "clause": "24.1.3.8",
+        "feature": "Map.prototype.getOrInsertComputed",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-map.prototype.getorinsertcomputed",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/Map/prototype/getOrInsertComputed/ExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/built-ins/Map/prototype/getOrInsertComputed/canonical-key-passed-to-callback.js",
+          "test/built-ins/Map/prototype/getOrInsertComputed/different-types-function-callbackfn-does-not-throw.js",
+          "test/built-ins/Map/prototype/getOrInsertComputed/does-not-evaluate-callbackfn-if-key-present.js",
+          "test/built-ins/Map/prototype/getOrInsertComputed/overwrites-mutation-from-callbackfn.js"
+        ],
+        "notes": "Returns existing values without invoking the callback; otherwise calls a validated callback with the canonical key and stores its result, overwriting same-key callback mutations as required."
       },
       {
         "clause": "24.1.3.14",
