@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.11.37 - 2026-07-27
+
 - runtime: implement `Map.prototype.getOrInsert` and `Map.prototype.getOrInsertComputed`, including SameValueZero lookup, negative-zero canonicalization, callback validation and ordering, mutation overwrite semantics, and built-in metadata. Ports ten upstream test262 cases.
 - runtime/hosting: remove DLR participation from `JsObject`; C# `dynamic` access remains available through hosting proxies, including object-typed contract returns.
 - runtime: implement global `decodeURI`, including strict UTF-8 percent decoding, malformed-escape `URIError`s, and reserved-character escape preservation. Ports ten upstream test262 cases.
