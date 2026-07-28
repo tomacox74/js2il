@@ -79,7 +79,7 @@ _Nothing yet._
 
 ## v0.11.29 - 2026-07-17
 
-- ci/benchmarks: run the BenchmarkDotNet suite on three parallel hosted runners, independently executing `KrackenExecutionBenchmarks`, `JrocPhasedBenchmarks`, and `JavaScriptRuntimeBenchmarks`.
+- ci/benchmarks: run the BenchmarkDotNet suite on three parallel hosted runners, independently executing `KrackenExecutionBenchmarks`, `DromaeoExecutionBenchmarks`, and `JavaScriptRuntimeBenchmarks`.
 
 ## v0.11.28 - 2026-07-17
 

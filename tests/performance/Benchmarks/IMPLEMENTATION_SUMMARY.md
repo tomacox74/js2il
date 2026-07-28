@@ -25,7 +25,7 @@ tests/performance/Benchmarks/
 │   └── PROVENANCE.md
 ├── ValidationTest.cs       # Runtime adapter validation
 ├── JavaScriptRuntimeBenchmarks.cs  # Cross-runtime benchmarks
-├── JrocPhasedBenchmarks.cs        # Phased compile/execute benchmarks
+├── DromaeoExecutionBenchmarks.cs  # Dromaeo execution benchmarks
 ├── Program.cs              # Entry point with CLI
 ├── Benchmarks.csproj       # Project configuration
 ├── README.md               # Comprehensive documentation
@@ -58,7 +58,7 @@ All scenarios include "use strict" directive for jroc compatibility.
   - Benchmarks: ClearScript, Jint, jroc (compile+execute)
   - Parameterized across the full checked-in root scenario catalog
   
-- **JrocPhasedBenchmarks**: Separate compile/execute phases
+- **DromaeoExecutionBenchmarks**: Prepared Dromaeo execution phases
   - Benchmarks: jroc compile, jroc execute (pre-compiled)
   - Enables analysis of AOT compilation overhead
 
@@ -66,7 +66,7 @@ All scenarios include "use strict" directive for jroc compatibility.
 
 ```bash
 dotnet run -c Release               # Cross-runtime comparison (default)
-dotnet run -c Release --phased      # jroc phased benchmarks
+dotnet run -c Release --dromaeo     # Dromaeo execution benchmarks
 dotnet run -c Release --all         # All benchmarks
 dotnet run -c Release --validate    # Runtime adapter validation
 ```
@@ -243,7 +243,7 @@ tests/performance/Benchmarks/.gitignore
 tests/performance/Benchmarks/Benchmarks.csproj
 tests/performance/Benchmarks/Compliance/PROVENANCE.md
 tests/performance/Benchmarks/JavaScriptRuntimeBenchmarks.cs
-tests/performance/Benchmarks/JrocPhasedBenchmarks.cs
+tests/performance/Benchmarks/DromaeoExecutionBenchmarks.cs
 tests/performance/Benchmarks/Program.cs
 tests/performance/Benchmarks/README.md
 tests/performance/Benchmarks/Runtimes/IJavaScriptRuntime.cs

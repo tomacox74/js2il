@@ -137,13 +137,13 @@ jroc input.js output                           # Installed tool
 - These phased benchmarks use the open-source BenchmarkDotNet project.
 - Documentation: https://benchmarkdotnet.org/
 - Source code: https://github.com/dotnet/BenchmarkDotNet
-- Scenario files are under `tests\performance\Benchmarks\Scenarios\` (for example `dromaeo-object-regexp.js`).
+- Dromaeo scenario files are under `tests\performance\Benchmarks\Scenarios\dromaeo\` (for example `dromaeo-object-regexp.js`).
 - Run a phased benchmark for one scenario using the helper script:
 ```powershell
 node scripts/runPhasedBenchmarkScenario.js dromaeo-object-regexp
 ```
 - Replace `dromaeo-object-regexp` with the scenario filename (with or without `.js`).
-- The script runs: `dotnet run -c Release -- --phased --filter "*<scenario>*"` from `tests\performance\Benchmarks`.
+- The script runs: `dotnet run -c Release -- --dromaeo --filter "*<scenario>*"` from `tests\performance\Benchmarks`.
 - Benchmark summaries are written to `tests\performance\Benchmarks\BenchmarkDotNet.Artifacts\results\`.
 
 ### Debugging

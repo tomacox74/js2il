@@ -9,7 +9,7 @@ function parseArgs(argv) {
   const args = {
     branch: null,
     scenario: null,
-    benchmarkSuite: "phased",
+    benchmarkSuite: "dromaeo",
     repo: null,
     ref: "master",
     watch: false,
@@ -72,7 +72,7 @@ and console output as an artifact.
 Options:
   --branch, -b <branch>       Private branch/ref to compare with master.
   --scenario, -s <scenario>  Exact scenario name for the selected suite.
-  --benchmark, --suite <name> Benchmark suite: phased (default) or kracken.
+  --benchmark, --suite <name> Benchmark suite: dromaeo (default) or kracken.
   --repo <owner/name>         Explicit repository override (defaults to origin).
   --ref <branch>              Branch/ref containing the workflow file (default: master).
   --watch                     Wait for the dispatched run to finish.
@@ -148,8 +148,8 @@ function main() {
 
   if (!args.branch) throw new Error("A private branch/ref is required.");
   if (!args.scenario) throw new Error("A benchmark scenario name is required.");
-  if (!["phased", "kracken"].includes(args.benchmarkSuite)) {
-    throw new Error("--benchmark must be either 'phased' or 'kracken'.");
+  if (!["dromaeo", "kracken"].includes(args.benchmarkSuite)) {
+    throw new Error("--benchmark must be either 'dromaeo' or 'kracken'.");
   }
   if (!args.ref) throw new Error("--ref requires a value.");
 

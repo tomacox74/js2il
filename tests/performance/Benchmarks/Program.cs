@@ -52,16 +52,16 @@ else
         BenchmarkSwitcher switcher;
         var benchmarkArgs = programArgs;
 
-        if (programArgs.Length > 0 && programArgs[0] == "--phased")
+        if (programArgs.Length > 0 && programArgs[0] == "--dromaeo")
         {
-            // Run phased benchmarks (jroc compile/execute, Jint prepared execution, Okojo execution)
-            switcher = BenchmarkSwitcher.FromTypes([typeof(JrocPhasedBenchmarks)]);
+            // Run Dromaeo execution benchmarks with each runtime prepared outside the measurement.
+            switcher = BenchmarkSwitcher.FromTypes([typeof(DromaeoExecutionBenchmarks)]);
             benchmarkArgs = programArgs.Skip(1).ToArray();
         }
         else if (programArgs.Length > 0 && programArgs[0] == "--all")
         {
             // Run all benchmarks
-            switcher = BenchmarkSwitcher.FromTypes([typeof(JavaScriptRuntimeBenchmarks), typeof(JrocPhasedBenchmarks), typeof(KrackenExecutionBenchmarks)]);
+            switcher = BenchmarkSwitcher.FromTypes([typeof(JavaScriptRuntimeBenchmarks), typeof(DromaeoExecutionBenchmarks), typeof(KrackenExecutionBenchmarks)]);
             benchmarkArgs = programArgs.Skip(1).ToArray();
         }
         else if (programArgs.Length > 0 && programArgs[0] == "--kracken")
@@ -79,13 +79,11 @@ else
         var scenarioFilter = TakeOption(ref benchmarkArgs, "--scenario");
         if (!string.IsNullOrWhiteSpace(scenarioFilter))
         {
-            JrocPhasedBenchmarks.ScenarioFilter = scenarioFilter;
-            KrackenExecutionBenchmarks.ScenarioFilter = scenarioFilter;
+            ExecutionBenchmarksBase.ScenarioFilter = scenarioFilter;
         }
         else
         {
-            JrocPhasedBenchmarks.ScenarioFilter = null;
-            KrackenExecutionBenchmarks.ScenarioFilter = null;
+            ExecutionBenchmarksBase.ScenarioFilter = null;
         }
 
         var summaries = switcher.Run(benchmarkArgs);
@@ -112,7 +110,7 @@ Console.WriteLine("  dotnet run -c Release --object-operations # Run ordinary-ob
 Console.WriteLine("  dotnet run -c Release --descriptor-storage # Run inline descriptor storage microbenchmarks");
 Console.WriteLine("  dotnet run -c Release --array-operations # Run dense-array operation microbenchmarks");
 Console.WriteLine("  dotnet run -c Release --prototype-storage # Run prototype storage allocation microbenchmarks");
-Console.WriteLine("  dotnet run -c Release --phased # Run jroc phased + Jint prepared + Okojo execute comparison");
+Console.WriteLine("  dotnet run -c Release -- --dromaeo # Run Dromaeo execution benchmarks");
 Console.WriteLine("  dotnet run -c Release -- --kracken --scenario audio-fft # Run one Kraken scenario");
 Console.WriteLine("  dotnet run -c Release --all    # Run all benchmarks");
 Console.WriteLine("  dotnet run -c Debug -- --dispatch --debug-benchmarks # Allow debugging benchmark code");

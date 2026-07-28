@@ -15,10 +15,10 @@ on:
       benchmark_suite:
         description: "Benchmark suite to run"
         required: true
-        default: phased
+        default: dromaeo
         type: choice
         options:
-          - phased
+          - dromaeo
           - kracken
           - shape-storage
 
@@ -80,8 +80,8 @@ jobs:
           rm -rf BenchmarkDotNet.Artifacts
 
           case "$BENCHMARK_SUITE" in
-            phased)
-              benchmark_args=(--phased --filter "*JrocPhasedBenchmarks*" --scenario "$SCENARIO_NAME")
+            dromaeo)
+              benchmark_args=(--dromaeo --filter "*DromaeoExecutionBenchmarks*" --scenario "$SCENARIO_NAME")
               ;;
             kracken)
               benchmark_args=(--kracken --filter "*RunJrocTest*" --scenario "$SCENARIO_NAME")
@@ -124,8 +124,8 @@ jobs:
           rm -rf BenchmarkDotNet.Artifacts
 
           case "$BENCHMARK_SUITE" in
-            phased)
-              benchmark_args=(--phased --filter "*Jroc_ExecuteOnly*" --scenario "$SCENARIO_NAME")
+            dromaeo)
+              benchmark_args=(--dromaeo --filter "*Jroc_ExecuteOnly*" --scenario "$SCENARIO_NAME")
               ;;
             kracken)
               benchmark_args=(--kracken --filter "*RunJrocTest*" --scenario "$SCENARIO_NAME")
