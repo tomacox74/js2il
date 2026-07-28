@@ -17,12 +17,23 @@ namespace JavaScriptRuntime
                 throw new TypeError("Atomics.wait requires a SharedArrayBuffer-backed Int32Array");
             }
 
-            var elementIndex = TypeUtilities.ToInt32(index);
-            if (elementIndex < 0 || elementIndex >= (int)int32Array.length)
+            var elementIndexNumber = TypeUtilities.ToNumber(index);
+            if (double.IsInfinity(elementIndexNumber))
             {
                 throw new RangeError("Invalid atomic index");
             }
 
+            var elementIndexInteger = double.IsNaN(elementIndexNumber)
+                ? 0d
+                : global::System.Math.Truncate(elementIndexNumber);
+            if (elementIndexInteger < 0
+                || elementIndexInteger > int.MaxValue
+                || elementIndexInteger >= int32Array.length)
+            {
+                throw new RangeError("Invalid atomic index");
+            }
+
+            var elementIndex = (int)elementIndexInteger;
             var expectedValue = TypeUtilities.ToInt32(value);
             var actualValue = TypeUtilities.ToInt32(int32Array[(double)elementIndex]);
             if (actualValue != expectedValue)

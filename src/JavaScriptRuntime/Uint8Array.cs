@@ -148,9 +148,19 @@ namespace JavaScriptRuntime
                 1);
             DefineBuiltinFunction(
                 Prototype,
+                "setFromBase64",
+                (Func<object[], object?[]?, object?>)PrototypeSetFromBase64,
+                1);
+            DefineBuiltinFunction(
+                Prototype,
                 "setFromHex",
                 (Func<object[], object?[]?, object?>)PrototypeSetFromHex,
                 1);
+            DefineBuiltinFunction(
+                Prototype,
+                "toBase64",
+                (Func<object[], object?[]?, object?>)PrototypeToBase64,
+                0);
             DefineBuiltinFunction(
                 Prototype,
                 "toHex",
@@ -182,6 +192,35 @@ namespace JavaScriptRuntime
 
         public Uint8Array subarray(object? start, object? end)
             => (Uint8Array)SubarrayCore(start, end);
+
+        public JsObject setFromBase64(object? source)
+        {
+            if (source is not string text)
+            {
+                throw new TypeError("Uint8Array.prototype.setFromBase64 requires a string input");
+            }
+
+            byte[] decoded;
+            try
+            {
+                decoded = System.Convert.FromBase64String(text);
+            }
+            catch (FormatException ex)
+            {
+                throw new SyntaxError("Invalid base64 input", ex);
+            }
+
+            var written = global::System.Math.Min(LengthElements, decoded.Length);
+            if (written > 0)
+            {
+                Buffer.BlockCopy(decoded, 0, BufferObject.RawBytes, ByteOffsetBytes, written);
+            }
+
+            var result = new JsObject();
+            result.SetNumber("read", text.Length);
+            result.SetNumber("written", written);
+            return result;
+        }
 
         public JsObject setFromHex(object? source)
         {
@@ -217,6 +256,12 @@ namespace JavaScriptRuntime
             return result;
         }
 
+        public string toBase64()
+            => ToBase64Core(null);
+
+        public string toBase64(object? options)
+            => ToBase64Core(options);
+
         public string toHex()
         {
             var hex = new char[checked(LengthElements * 2)];
@@ -251,6 +296,16 @@ namespace JavaScriptRuntime
         private static object? ConstructorFromHex(object[] _, object?[]? args)
             => fromHex(GetArgument(args, 0));
 
+        private static object? PrototypeSetFromBase64(object[] _, object?[]? args)
+        {
+            if (RuntimeServices.GetCurrentThis() is not Uint8Array array)
+            {
+                throw new TypeError("Uint8Array.prototype.setFromBase64 called on incompatible receiver");
+            }
+
+            return array.setFromBase64(GetArgument(args, 0));
+        }
+
         private static object? PrototypeSetFromHex(object[] _, object?[]? args)
         {
             if (RuntimeServices.GetCurrentThis() is not Uint8Array array)
@@ -261,6 +316,16 @@ namespace JavaScriptRuntime
             return array.setFromHex(GetArgument(args, 0));
         }
 
+        private static object? PrototypeToBase64(object[] _, object?[]? args)
+        {
+            if (RuntimeServices.GetCurrentThis() is not Uint8Array array)
+            {
+                throw new TypeError("Uint8Array.prototype.toBase64 called on incompatible receiver");
+            }
+
+            return array.ToBase64Core(GetArgument(args, 0));
+        }
+
         private static object? PrototypeToHex(object[] _, object?[]? __)
         {
             if (RuntimeServices.GetCurrentThis() is not Uint8Array array)
@@ -269,6 +334,46 @@ namespace JavaScriptRuntime
             }
 
             return array.toHex();
+        }
+
+        private string ToBase64Core(object? options)
+        {
+            var alphabet = "base64";
+            var omitPadding = false;
+
+            if (options is not null)
+            {
+                if (options is JsNull || TypeUtilities.IsPrimitive(options))
+                {
+                    throw new TypeError("Uint8Array.prototype.toBase64 options must be an object");
+                }
+
+                var alphabetValue = ObjectRuntime.GetProperty(options, "alphabet");
+                if (alphabetValue is not null)
+                {
+                    if (alphabetValue is not string requestedAlphabet
+                        || requestedAlphabet is not ("base64" or "base64url"))
+                    {
+                        throw new TypeError("Uint8Array.prototype.toBase64 alphabet must be 'base64' or 'base64url'");
+                    }
+
+                    alphabet = requestedAlphabet;
+                }
+
+                var omitPaddingValue = ObjectRuntime.GetProperty(options, "omitPadding");
+                if (omitPaddingValue is not null)
+                {
+                    omitPadding = Operators.IsTruthy(omitPaddingValue);
+                }
+            }
+
+            var encoded = System.Convert.ToBase64String(CopyRawBytes());
+            if (alphabet == "base64url")
+            {
+                encoded = encoded.Replace('+', '-').Replace('/', '_');
+            }
+
+            return omitPadding ? encoded.TrimEnd('=') : encoded;
         }
 
         private static void DefineBuiltinFunction(
