@@ -8,6 +8,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 - runtime: add `%TypedArray%.prototype.findLast` and `findLastIndex` for supported typed-array families, including reverse callback traversal, typed receiver validation, and standard built-in metadata. Ports ten upstream test262 cases.
 - runtime: add `Uint8Array.prototype.setFromHex`, including bounded writes, subarray offsets, read/written result records, partial writes before invalid input, strict validation, and standard built-in metadata. Ports ten upstream test262 cases.
+- runtime: add bit-preserving `%TypedArray%.prototype.copyWithin`, implement `Uint16Array` and `Uint32Array`, and preserve dynamic TypedArray constructor argument lists and iterable sources. Ports twenty-five upstream test262 cases.
 
 ## v0.11.37 - 2026-07-27
 

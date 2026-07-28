@@ -4,7 +4,7 @@
 
 [Back to Section23](Section23.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-07-27T23:18:28Z
+> Last generated (UTC): 2026-07-28T03:13:29Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -27,7 +27,7 @@
 | 23.2.3.3 | get %TypedArray%.prototype.byteLength | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-get-%typedarray%.prototype.bytelength) |
 | 23.2.3.4 | get %TypedArray%.prototype.byteOffset | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-get-%typedarray%.prototype.byteoffset) |
 | 23.2.3.5 | %TypedArray%.prototype.constructor | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-%typedarray%.prototype.constructor) |
-| 23.2.3.6 | %TypedArray%.prototype.copyWithin ( target , start [ , end ] ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-%typedarray%.prototype.copywithin) |
+| 23.2.3.6 | %TypedArray%.prototype.copyWithin ( target , start [ , end ] ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-%typedarray%.prototype.copywithin) |
 | 23.2.3.7 | %TypedArray%.prototype.entries ( ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-%typedarray%.prototype.entries) |
 | 23.2.3.8 | %TypedArray%.prototype.every ( callback [ , thisArg ] ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-%typedarray%.prototype.every) |
 | 23.2.3.9 | %TypedArray%.prototype.fill ( value [ , start [ , end ] ] ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-%typedarray%.prototype.fill) |
@@ -78,8 +78,8 @@
 | 23.2.5.1.4 | InitializeTypedArrayFromList ( O , values ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-initializetypedarrayfromlist) |
 | 23.2.5.1.5 | InitializeTypedArrayFromArrayLike ( O , arrayLike ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-initializetypedarrayfromarraylike) |
 | 23.2.5.1.6 | AllocateTypedArrayBuffer ( O , length ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-allocatetypedarraybuffer) |
-| 23.2.6 | Properties of the TypedArray Constructors | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-typedarray-constructors) |
-| 23.2.6.1 | TypedArray .BYTES_PER_ELEMENT | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-typedarray.bytes_per_element) |
+| 23.2.6 | Properties of the TypedArray Constructors | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-typedarray-constructors) |
+| 23.2.6.1 | TypedArray .BYTES_PER_ELEMENT | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-typedarray.bytes_per_element) |
 | 23.2.6.2 | TypedArray .prototype | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-typedarray.prototype) |
 | 23.2.7 | Properties of the TypedArray Prototype Objects | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-typedarray-prototype-objects) |
 | 23.2.7.1 | TypedArray .prototype.BYTES_PER_ELEMENT | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-typedarray.prototype.bytes_per_element) |
@@ -106,7 +106,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| %TypedArray% constructor prototype metadata | Supported with Limitations | [`IntrinsicCallables_TypedArray_ConstructorMetadataSurface.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_TypedArray_ConstructorMetadataSurface.js) | `test/built-ins/TypedArray/prototype.js` | Supported typed-array constructor values now share a %TypedArray% intrinsic constructor object with a non-writable, non-enumerable, non-configurable prototype property. Placeholder constructor values exist for unsupported typed-array families so shared metadata helpers can execute, but per-constructor prototype objects and the rest of the constructor metadata surface remain incomplete. |
+| %TypedArray% constructor prototype metadata | Supported with Limitations | [`IntrinsicCallables_TypedArray_ConstructorMetadataSurface.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_TypedArray_ConstructorMetadataSurface.js) | `test/built-ins/TypedArray/prototype.js` | Supported typed-array constructor values share a %TypedArray% intrinsic constructor object with a non-writable, non-enumerable, non-configurable prototype property. Per-constructor prototype objects and the remaining constructor metadata surface are incomplete. |
 
 ### 23.2.3 ([tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-%typedarrayprototype%-object))
 
@@ -120,6 +120,12 @@ Feature-level support tracking with repo test references and optional test262 ev
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
 | Shared %TypedArray%.prototype.at/includes/indexOf/lastIndexOf | Supported with Limitations | [`Uint8Array_Construct_ArrayLike_Buffer_Search.js`](../../../tests/Jroc.Tests/TypedArray/JavaScript/Uint8Array_Construct_ArrayLike_Buffer_Search.js)<br>[`Float64Array_Construct_ArrayBuffer_Search.js`](../../../tests/Jroc.Tests/TypedArray/JavaScript/Float64Array_Construct_ArrayBuffer_Search.js)<br>[`Int32Array_Fill_Reverse_Join_LastIndexOf.js`](../../../tests/Jroc.Tests/TypedArray/JavaScript/Int32Array_Fill_Reverse_Join_LastIndexOf.js) |  | The supported TypedArray families share at(), includes(), indexOf(), and lastIndexOf() implementations with numeric coercion and NaN handling for includes(). at() still returns numeric defaults rather than fully spec-accurate undefined behavior for every out-of-range case. |
+
+### 23.2.3.6 ([tc39.es](https://tc39.es/ecma262/#sec-%typedarray%.prototype.copywithin))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| %TypedArray%.prototype.copyWithin | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/TypedArray/prototype/copyWithin/ExecutionTests.cs` | `test/built-ins/TypedArray/prototype/copyWithin/bit-precision.js`<br>`test/built-ins/TypedArray/prototype/copyWithin/byteoffset.js`<br>`test/built-ins/TypedArray/prototype/copyWithin/coerced-values-end.js`<br>`test/built-ins/TypedArray/prototype/copyWithin/coerced-values-start.js`<br>`test/built-ins/TypedArray/prototype/copyWithin/coerced-values-target.js`<br>`test/built-ins/TypedArray/prototype/copyWithin/get-length-ignores-length-prop.js`<br>`test/built-ins/TypedArray/prototype/copyWithin/invoked-as-func.js`<br>`test/built-ins/TypedArray/prototype/copyWithin/invoked-as-method.js`<br>`test/built-ins/TypedArray/prototype/copyWithin/length.js`<br>`test/built-ins/TypedArray/prototype/copyWithin/name.js`<br>`test/built-ins/TypedArray/prototype/copyWithin/negative-end.js`<br>`test/built-ins/TypedArray/prototype/copyWithin/negative-out-of-bounds-end.js`<br>`test/built-ins/TypedArray/prototype/copyWithin/negative-out-of-bounds-start.js`<br>`test/built-ins/TypedArray/prototype/copyWithin/negative-out-of-bounds-target.js`<br>`test/built-ins/TypedArray/prototype/copyWithin/negative-start.js`<br>`test/built-ins/TypedArray/prototype/copyWithin/negative-target.js`<br>`test/built-ins/TypedArray/prototype/copyWithin/non-negative-out-of-bounds-end.js`<br>`test/built-ins/TypedArray/prototype/copyWithin/non-negative-out-of-bounds-target-and-start.js`<br>`test/built-ins/TypedArray/prototype/copyWithin/non-negative-target-and-start.js`<br>`test/built-ins/TypedArray/prototype/copyWithin/non-negative-target-start-and-end.js`<br>`test/built-ins/TypedArray/prototype/copyWithin/not-a-constructor.js`<br>`test/built-ins/TypedArray/prototype/copyWithin/prop-desc.js`<br>`test/built-ins/TypedArray/prototype/copyWithin/return-abrupt-from-target.js`<br>`test/built-ins/TypedArray/prototype/copyWithin/return-this.js`<br>`test/built-ins/TypedArray/prototype/copyWithin/undefined-end.js` | Implements overlap-safe, bit-preserving in-place copies across the supported non-BigInt TypedArray families, including byte-offset views, argument coercion, bounds normalization, receiver validation, return identity, and standard built-in metadata. Detached and resizable ArrayBuffer behavior remains unsupported. |
 
 ### 23.2.3.13 ([tc39.es](https://tc39.es/ecma262/#sec-%typedarray%.prototype.findlast))
 
@@ -158,6 +164,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 | Float64Array constructors | Supported with Limitations | [`Float64Array_Construct_ArrayBuffer_Search.js`](../../../tests/Jroc.Tests/TypedArray/JavaScript/Float64Array_Construct_ArrayBuffer_Search.js)<br>[`Int32Array_Construct_ArrayBuffer_Alignment_RangeError.js`](../../../tests/Jroc.Tests/TypedArray/JavaScript/Int32Array_Construct_ArrayBuffer_Alignment_RangeError.js) |  | Float64Array supports length, array-like, and ArrayBuffer-backed construction plus static Float64Array.from/of helpers with IEEE-754 storage and shared TypedArray view metadata. BigInt-typed families and full constructor metadata/prototype parity remain incomplete. |
 | Int32Array constructors and preserved compiler fast paths | Supported with Limitations | [`Int32Array_Construct_Length.js`](../../../tests/Jroc.Tests/TypedArray/JavaScript/Int32Array_Construct_Length.js)<br>[`Int32Array_FromArray_CopyAndCoerce.js`](../../../tests/Jroc.Tests/TypedArray/JavaScript/Int32Array_FromArray_CopyAndCoerce.js)<br>[`Int32Array_Construct_ArrayBuffer_ViewProperties.js`](../../../tests/Jroc.Tests/TypedArray/JavaScript/Int32Array_Construct_ArrayBuffer_ViewProperties.js)<br>[`Int32Array_Construct_ArrayBuffer_Alignment_RangeError.js`](../../../tests/Jroc.Tests/TypedArray/JavaScript/Int32Array_Construct_ArrayBuffer_Alignment_RangeError.js) |  | Int32Array supports length, array-like/typed-array copy, ArrayBuffer view construction, and static Int32Array.from/of helpers while keeping existing compiler-specialized member/index access entry points intact. Detached-buffer semantics, species construction, and constructor metadata/prototype parity remain incomplete. |
 | Uint8Array constructors | Supported with Limitations | [`Uint8Array_Construct_ArrayLike_Buffer_Search.js`](../../../tests/Jroc.Tests/TypedArray/JavaScript/Uint8Array_Construct_ArrayLike_Buffer_Search.js) |  | Uint8Array supports length, array-like, and ArrayBuffer-backed construction plus static Uint8Array.from/of helpers with Uint8 coercion and shared TypedArray view metadata. Uint8ClampedArray and full constructor metadata/prototype parity remain out of scope. |
+| Uint16Array and Uint32Array constructors | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/TypedArray/prototype/copyWithin/ExecutionTests.cs` |  | Uint16Array and Uint32Array now support length, iterable, array-like, typed-array, and ArrayBuffer view construction with unsigned element coercion. Dynamic constructors for all supported TypedArray families preserve zero through three constructor arguments and expose BYTES_PER_ELEMENT. BigInt families, detached buffers, species construction, and complete prototype metadata remain unsupported. |
 
 ### 23.2.8 ([tc39.es](https://tc39.es/ecma262/#sec-properties-of-typedarray-instances))
 

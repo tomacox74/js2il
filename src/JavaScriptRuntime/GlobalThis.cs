@@ -319,32 +319,33 @@ namespace JavaScriptRuntime
         private static readonly object _typedArrayPrototypeValue = new JsObject();
         private static readonly Func<object[], object?[]?, object?> _typedArrayFindLastValue = TypedArrayPrototypeFindLast;
         private static readonly Func<object[], object?[]?, object?> _typedArrayFindLastIndexValue = TypedArrayPrototypeFindLastIndex;
+        private static readonly Func<object[], object?[]?, object?> _typedArrayCopyWithinValue = TypedArrayPrototypeCopyWithin;
 
         // Typed array constructor values - supported and unsupported
-        private static readonly Func<object[], object?[], object?> _float64ArrayConstructorValue = 
-            static (_, args) => new Float64Array(args ?? global::System.Array.Empty<object?>());
-        private static readonly Func<object[], object?[], object?> _float32ArrayConstructorValue = 
-            static (_, args) => new Float32Array(args ?? global::System.Array.Empty<object?>());
-        private static readonly Func<object[], object?[], object?> _int32ArrayConstructorValue = 
-            static (_, args) => new Int32Array(args ?? global::System.Array.Empty<object?>());
+        private static readonly Func<object[], object?[], object?> _float64ArrayConstructorValue =
+            static (_, args) => ConstructTypedArray(args, static () => new Float64Array(), static a => new Float64Array(a), static (a, b) => new Float64Array(a, b), static (a, b, c) => new Float64Array(a, b, c));
+        private static readonly Func<object[], object?[], object?> _float32ArrayConstructorValue =
+            static (_, args) => ConstructTypedArray(args, static () => new Float32Array(), static a => new Float32Array(a), static (a, b) => new Float32Array(a, b), static (a, b, c) => new Float32Array(a, b, c));
+        private static readonly Func<object[], object?[], object?> _int32ArrayConstructorValue =
+            static (_, args) => ConstructTypedArray(args, static () => new Int32Array(), static a => new Int32Array(a), static (a, b) => new Int32Array(a, b), static (a, b, c) => new Int32Array(a, b, c));
         private static readonly Func<object[], object?[], object?> _arrayBufferConstructorValue =
             static (_, args) => args != null && args.Length > 1
                 ? new ArrayBuffer(args[0], args[1])
                 : new ArrayBuffer(args != null && args.Length > 0 ? args[0] : null);
         private static readonly Func<object[], object?[], object?> _sharedArrayBufferConstructorValue =
             static (_, args) => new SharedArrayBuffer(args != null && args.Length > 0 ? args[0] : null);
-        private static readonly Func<object[], object?[], object?> _int16ArrayConstructorValue = 
-            static (_, args) => new Int16Array(args ?? global::System.Array.Empty<object?>());
-        private static readonly Func<object[], object?[], object?> _int8ArrayConstructorValue = 
-            static (_, args) => new Int8Array(args ?? global::System.Array.Empty<object?>());
-        private static readonly Func<object[], object?[], object?> _uint32ArrayConstructorValue = 
-            static (_, __) => throw new NotSupportedException("The Uint32Array constructor is not yet supported in jroc.");
-        private static readonly Func<object[], object?[], object?> _uint16ArrayConstructorValue = 
-            static (_, __) => throw new NotSupportedException("The Uint16Array constructor is not yet supported in jroc.");
-        private static readonly Func<object[], object?[], object?> _uint8ArrayConstructorValue = 
-            static (_, args) => new Uint8Array(args ?? global::System.Array.Empty<object?>());
-        private static readonly Func<object[], object?[], object?> _uint8ClampedArrayConstructorValue = 
-            static (_, args) => new Uint8ClampedArray(args ?? global::System.Array.Empty<object?>());
+        private static readonly Func<object[], object?[], object?> _int16ArrayConstructorValue =
+            static (_, args) => ConstructTypedArray(args, static () => new Int16Array(), static a => new Int16Array(a), static (a, b) => new Int16Array(a, b), static (a, b, c) => new Int16Array(a, b, c));
+        private static readonly Func<object[], object?[], object?> _int8ArrayConstructorValue =
+            static (_, args) => ConstructTypedArray(args, static () => new Int8Array(), static a => new Int8Array(a), static (a, b) => new Int8Array(a, b), static (a, b, c) => new Int8Array(a, b, c));
+        private static readonly Func<object[], object?[], object?> _uint32ArrayConstructorValue =
+            static (_, args) => ConstructTypedArray(args, static () => new Uint32Array(), static a => new Uint32Array(a), static (a, b) => new Uint32Array(a, b), static (a, b, c) => new Uint32Array(a, b, c));
+        private static readonly Func<object[], object?[], object?> _uint16ArrayConstructorValue =
+            static (_, args) => ConstructTypedArray(args, static () => new Uint16Array(), static a => new Uint16Array(a), static (a, b) => new Uint16Array(a, b), static (a, b, c) => new Uint16Array(a, b, c));
+        private static readonly Func<object[], object?[], object?> _uint8ArrayConstructorValue =
+            static (_, args) => ConstructTypedArray(args, static () => new Uint8Array(), static a => new Uint8Array(a), static (a, b) => new Uint8Array(a, b), static (a, b, c) => new Uint8Array(a, b, c));
+        private static readonly Func<object[], object?[], object?> _uint8ClampedArrayConstructorValue =
+            static (_, args) => ConstructTypedArray(args, static () => new Uint8ClampedArray(), static a => new Uint8ClampedArray(a), static (a, b) => new Uint8ClampedArray(a, b), static (a, b, c) => new Uint8ClampedArray(a, b, c));
         private static readonly Func<object[], object?[], object?> _bigInt64ArrayConstructorValue = 
             static (_, __) => throw new NotSupportedException("The BigInt64Array constructor is not yet supported in jroc.");
         private static readonly Func<object[], object?[], object?> _bigUint64ArrayConstructorValue = 
@@ -798,19 +799,20 @@ namespace JavaScriptRuntime
                 Writable = false,
                 Value = _typedArrayPrototypeValue
             });
+            DefineBuiltinFunctionProperty(_typedArrayPrototypeValue, "copyWithin", _typedArrayCopyWithinValue, 2d);
             DefineBuiltinFunctionProperty(_typedArrayPrototypeValue, "findLast", _typedArrayFindLastValue, 1d);
             DefineBuiltinFunctionProperty(_typedArrayPrototypeValue, "findLastIndex", _typedArrayFindLastIndexValue, 1d);
-            ConfigureTypedArrayConstructorValue(_float64ArrayConstructorValue);
-            ConfigureTypedArrayConstructorValue(_float32ArrayConstructorValue);
-            ConfigureTypedArrayConstructorValue(_int32ArrayConstructorValue);
-            ConfigureTypedArrayConstructorValue(_int16ArrayConstructorValue);
-            ConfigureTypedArrayConstructorValue(_int8ArrayConstructorValue);
-            ConfigureTypedArrayConstructorValue(_uint32ArrayConstructorValue);
-            ConfigureTypedArrayConstructorValue(_uint16ArrayConstructorValue);
-            ConfigureTypedArrayConstructorValue(_uint8ArrayConstructorValue);
-            ConfigureTypedArrayConstructorValue(_uint8ClampedArrayConstructorValue);
-            ConfigureTypedArrayConstructorValue(_bigInt64ArrayConstructorValue);
-            ConfigureTypedArrayConstructorValue(_bigUint64ArrayConstructorValue);
+            ConfigureTypedArrayConstructorValue(_float64ArrayConstructorValue, 8d);
+            ConfigureTypedArrayConstructorValue(_float32ArrayConstructorValue, 4d);
+            ConfigureTypedArrayConstructorValue(_int32ArrayConstructorValue, 4d);
+            ConfigureTypedArrayConstructorValue(_int16ArrayConstructorValue, 2d);
+            ConfigureTypedArrayConstructorValue(_int8ArrayConstructorValue, 1d);
+            ConfigureTypedArrayConstructorValue(_uint32ArrayConstructorValue, 4d);
+            ConfigureTypedArrayConstructorValue(_uint16ArrayConstructorValue, 2d);
+            ConfigureTypedArrayConstructorValue(_uint8ArrayConstructorValue, 1d);
+            ConfigureTypedArrayConstructorValue(_uint8ClampedArrayConstructorValue, 1d);
+            ConfigureTypedArrayConstructorValue(_bigInt64ArrayConstructorValue, 8d);
+            ConfigureTypedArrayConstructorValue(_bigUint64ArrayConstructorValue, 8d);
             ConfigureTypedArrayInstancePrototype(_uint8ArrayConstructorValue, JavaScriptRuntime.Uint8Array.Prototype);
             ConfigureTypedArrayInstancePrototype(_uint8ClampedArrayConstructorValue, JavaScriptRuntime.Uint8ClampedArray.Prototype);
             JavaScriptRuntime.Uint8Array.ConfigureIntrinsicSurface(_uint8ArrayConstructorValue);
@@ -842,10 +844,11 @@ namespace JavaScriptRuntime
             return $"{name}: {message}";
         }
 
-        private static void ConfigureTypedArrayConstructorValue(object constructorValue)
+        private static void ConfigureTypedArrayConstructorValue(object constructorValue, double bytesPerElement)
         {
             ConfigureBuiltinFunctionObject(constructorValue);
             PrototypeChain.SetPrototype(constructorValue, _typedArrayConstructorValue);
+            DefineIntrinsicConstantDataProperty(constructorValue, "BYTES_PER_ELEMENT", bytesPerElement);
         }
 
         private static void ConfigureTypedArrayInstancePrototype(object constructorValue, object prototypeValue)
@@ -888,6 +891,30 @@ namespace JavaScriptRuntime
 
             return typedArray.findLastIndex(args);
         }
+
+        private static object? TypedArrayPrototypeCopyWithin(object[] _, object?[]? args)
+        {
+            if (RuntimeServices.GetCurrentThis() is not TypedArrayBase typedArray)
+            {
+                throw new TypeError("TypedArray.prototype.copyWithin called on incompatible receiver");
+            }
+
+            return typedArray.copyWithin(args);
+        }
+
+        private static object ConstructTypedArray(
+            object?[]? args,
+            Func<object> constructEmpty,
+            Func<object?, object> constructOne,
+            Func<object?, object?, object> constructTwo,
+            Func<object?, object?, object?, object> constructThree)
+            => args?.Length switch
+            {
+                null or 0 => constructEmpty(),
+                1 => constructOne(args[0]),
+                2 => constructTwo(args[0], args[1]),
+                _ => constructThree(args[0], args[1], args[2])
+            };
 
         internal static ServiceContainer? ServiceProvider
         {
