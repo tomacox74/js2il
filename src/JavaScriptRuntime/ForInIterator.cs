@@ -49,7 +49,7 @@ public sealed class ForInIterator : IJavaScriptIterator<string>
 
         // Only CLR objects (non-ordinary, non-array-like) use a type chain.
         _useTypeChain = !_usePrototypeChain
-            && !ObjectRuntime.IsOrdinaryObject(root)
+            && root is not JsObject
             && root is not JavaScriptRuntime.Proxy
             && root is not JavaScriptRuntime.TypedArrayBase
             && root is not string
@@ -204,7 +204,7 @@ public sealed class ForInIterator : IJavaScriptIterator<string>
         }
 
         // Ordinary objects: union descriptor keys and backing keys.
-        if (ObjectRuntime.IsOrdinaryObject(target))
+        if (target is JsObject)
         {
             return ObjectRuntime.GetOwnEnumerableKeysInOrder(target);
         }
@@ -252,7 +252,7 @@ public sealed class ForInIterator : IJavaScriptIterator<string>
             return ObjectRuntime.GetOwnPropertyKeysInOrder(target);
         }
 
-        if (ObjectRuntime.IsOrdinaryObject(target))
+        if (target is JsObject)
         {
             return ObjectRuntime.GetOwnPropertyKeysInOrder(target);
         }
@@ -326,7 +326,7 @@ public sealed class ForInIterator : IJavaScriptIterator<string>
 
         // Ordinary objects: key is present in backing storage or the descriptor store,
         // and enumerable according to descriptor semantics.
-        if (ObjectRuntime.IsOrdinaryObject(target))
+        if (target is JsObject)
         {
             bool presentInDescriptor = PropertyDescriptorStore.TryGetOwn(target, key, out _);
             bool presentInBacking = !PropertyDescriptorStore.IsDeleted(target, key)

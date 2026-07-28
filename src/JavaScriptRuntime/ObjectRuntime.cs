@@ -10,12 +10,6 @@ namespace JavaScriptRuntime
     /// </summary>
     public static partial class ObjectRuntime
     {
-        /// <summary>
-        /// Identifies runtime-owned ordinary objects.
-        /// </summary>
-        internal static bool IsOrdinaryObject(object target)
-            => target is JsObject;
-
         internal static bool TryGetOwnValue(object target, string key, out object? value)
         {
             if (target is JsObject jsObject)
@@ -380,12 +374,8 @@ namespace JavaScriptRuntime
                 return target;
             }
 
-            if (IsOrdinaryObject(target)
+            if (target is IDictionary<string, object?> dict
                 && !PropertyDescriptorStore.HasIntrinsicProperties(target))
-            {
-                TrySetOwnValue(target, key, value);
-            }
-            else if (target is IDictionary<string, object?> dict && !PropertyDescriptorStore.HasIntrinsicProperties(target))
             {
                 dict[key] = value;
             }
@@ -714,7 +704,7 @@ namespace JavaScriptRuntime
                 return array[intIndex]!;
             }
             // Ordinary object: numeric index coerces to a property-name string per JS ToPropertyKey.
-            else if (IsOrdinaryObject(obj))
+            else if (obj is JsObject)
             {
                 return GetProperty(obj, propName)!;
             }
@@ -814,7 +804,7 @@ namespace JavaScriptRuntime
                 return array[intIndex]!;
             }
             // Ordinary object: numeric index coerces to a property-name string per JS ToPropertyKey.
-            else if (IsOrdinaryObject(obj))
+            else if (obj is JsObject)
             {
                 var propName = ToPropertyKeyString(index);
                 return GetProperty(obj, propName)!;
@@ -906,7 +896,7 @@ namespace JavaScriptRuntime
                 return array[intIndex]!;
             }
             // Ordinary object: key is already a string property.
-            else if (IsOrdinaryObject(obj))
+            else if (obj is JsObject)
             {
                 return GetProperty(obj, key)!;
             }
@@ -1032,7 +1022,7 @@ namespace JavaScriptRuntime
                 return value;
             }
 
-            if (IsOrdinaryObject(obj))
+            if (obj is JsObject)
             {
                 return SetProperty(obj, propName, value, throwOnError);
             }
@@ -1115,7 +1105,7 @@ namespace JavaScriptRuntime
                 return value;
             }
 
-            if (IsOrdinaryObject(obj))
+            if (obj is JsObject)
             {
                 return SetProperty(
                     obj,
@@ -1208,7 +1198,7 @@ namespace JavaScriptRuntime
                 return value;
             }
 
-            if (IsOrdinaryObject(obj))
+            if (obj is JsObject)
             {
                 return SetProperty(obj, key, value, throwOnError);
             }
@@ -1287,7 +1277,7 @@ namespace JavaScriptRuntime
                 return value;
             }
 
-            if (IsOrdinaryObject(obj))
+            if (obj is JsObject)
             {
                 return SetProperty(obj, key, value, throwOnError);
             }

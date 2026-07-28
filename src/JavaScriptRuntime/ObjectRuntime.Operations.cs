@@ -585,7 +585,7 @@ namespace JavaScriptRuntime
                 AddKey(keys, seen, key);
             }
 
-            if (ObjectRuntime.IsOrdinaryObject(obj))
+            if (obj is JsObject)
             {
                 foreach (var key in ObjectRuntime.GetOwnKeys(obj))
                 {
@@ -631,7 +631,7 @@ namespace JavaScriptRuntime
                 }
             }
 
-            if (!ObjectRuntime.IsOrdinaryObject(obj)
+            if (obj is not JsObject
                 && obj is not IDictionary<string, object?>
                 && obj is not System.Collections.IDictionary
                 && obj is not JavaScriptRuntime.TypedArrayBase
@@ -1494,14 +1494,6 @@ namespace JavaScriptRuntime
                     return false;
                 }
             }
-            else if (!PropertyDescriptorStore.HasIntrinsicProperties(obj)
-                && ObjectRuntime.IsOrdinaryObject(obj))
-            {
-                ObjectRuntime.TrySetOwnValue(
-                    obj,
-                    key,
-                    appliedDescriptor.Kind == JsPropertyDescriptorKind.Accessor ? null : appliedDescriptor.Value);
-            }
             else if (obj is IDictionary<string, object?> dict && !PropertyDescriptorStore.HasIntrinsicProperties(obj))
             {
                 if (appliedDescriptor.Kind == JsPropertyDescriptorKind.Accessor)
@@ -1920,7 +1912,7 @@ namespace JavaScriptRuntime
                 return descriptor.Enumerable;
             }
 
-            if (ObjectRuntime.IsOrdinaryObject(target))
+            if (target is JsObject)
             {
                 return ObjectRuntime.HasOwnValue(target, key);
             }
@@ -2280,7 +2272,7 @@ namespace JavaScriptRuntime
                 return true;
             }
 
-            if (ObjectRuntime.IsOrdinaryObject(constructor))
+            if (constructor is JsObject)
             {
                 return ObjectRuntime.TryGetOwnValue(constructor, "Construct", out var constructValue)
                     && constructValue is Delegate;
@@ -2434,7 +2426,7 @@ namespace JavaScriptRuntime
                 return JavaScriptRuntime.Function.Construct(del, callArgs, newTarget);
             }
 
-            if (ObjectRuntime.IsOrdinaryObject(constructor)
+            if (constructor is JsObject
                 && ObjectRuntime.TryGetOwnValue(constructor, "Construct", out var constructValue)
                 && constructValue is Delegate constructDel)
             {
@@ -2468,7 +2460,7 @@ namespace JavaScriptRuntime
             }
 
             if (Environment.GetEnvironmentVariable("JROC_DOMINO_DIAG") == "1"
-                && ObjectRuntime.IsOrdinaryObject(constructor))
+                && constructor is JsObject)
             {
                 var allKeys = ObjectRuntime.GetOwnKeys(constructor).ToList();
                 var keys = string.Join(", ", allKeys.OrderBy(k => k, StringComparer.Ordinal).Take(12));
@@ -2689,7 +2681,7 @@ namespace JavaScriptRuntime
         {
             value = null;
 
-            if (ObjectRuntime.IsOrdinaryObject(receiver))
+            if (receiver is JsObject)
             {
                 if (!ObjectRuntime.TryGetOwnValue(receiver, memberName, out var ordinaryValue))
                 {
@@ -3369,7 +3361,7 @@ namespace JavaScriptRuntime
                 return true;
             }
 
-            if (ObjectRuntime.IsOrdinaryObject(target))
+            if (target is JsObject)
             {
                 return ObjectRuntime.HasOwnValue(target, name);
             }
@@ -3750,7 +3742,7 @@ namespace JavaScriptRuntime
             }
 
             // Default descriptors for existing ordinary-object backing values.
-            if (ObjectRuntime.IsOrdinaryObject(target)
+            if (target is JsObject
                 && ObjectRuntime.TryGetOwnValue(target, propName, out var ordinaryValue))
             {
                 descriptor = new JsPropertyDescriptor
@@ -4165,7 +4157,7 @@ namespace JavaScriptRuntime
                 return true;
             }
 
-            if (ObjectRuntime.IsOrdinaryObject(target))
+            if (target is JsObject)
             {
                 return ObjectRuntime.TryGetOwnValue(target, propName, out value);
             }
@@ -4426,7 +4418,7 @@ namespace JavaScriptRuntime
                     return false;
                 }
 
-                if (ObjectRuntime.IsOrdinaryObject(proto))
+                if (proto is JsObject)
                 {
                     if (ObjectRuntime.HasOwnValue(proto, propName))
                     {
@@ -4740,7 +4732,7 @@ namespace JavaScriptRuntime
             }
 
             // Ordinary object: common for user-defined iterators in this runtime.
-            if (ObjectRuntime.IsOrdinaryObject(iterator))
+            if (iterator is JsObject)
             {
                 if (!ObjectRuntime.TryGetOwnValue(iterator, "return", out var ret) || ret is null)
                 {
@@ -5066,7 +5058,7 @@ namespace JavaScriptRuntime
 
         private static void SetSpreadTargetProperty(object target, string key, object? value)
         {
-            if (ObjectRuntime.IsOrdinaryObject(target))
+            if (target is JsObject)
             {
                 SetProperty(target, key, value);
                 return;
@@ -5095,7 +5087,7 @@ namespace JavaScriptRuntime
             }
 
             // Ordinary object: enumerate all own enumerable properties (backing store + descriptors).
-            if (ObjectRuntime.IsOrdinaryObject(source))
+            if (source is JsObject)
             {
                 var srcSeen = new HashSet<string>(StringComparer.Ordinal);
                 EnumerateOwnEnumerableProperties(source, srcSeen, (key, value) =>
@@ -5320,7 +5312,7 @@ namespace JavaScriptRuntime
                 throw new JavaScriptRuntime.TypeError("Right-hand side of 'for...in' should be an object");
             }
 
-            if (ObjectRuntime.IsOrdinaryObject(obj))
+            if (obj is JsObject)
             {
                 return new JavaScriptRuntime.Array(GetOwnEnumerableKeysInOrder(obj).Cast<object?>());
             }
@@ -5818,7 +5810,7 @@ namespace JavaScriptRuntime
                 {
                     PropertyDescriptorStore.DefineOrUpdate(obj, name, desc);
                     if (!PropertyDescriptorStore.HasIntrinsicProperties(obj)
-                        && ObjectRuntime.IsOrdinaryObject(obj))
+                        && obj is JsObject)
                     {
                         ObjectRuntime.TrySetOwnValue(obj, name, value);
                     }
