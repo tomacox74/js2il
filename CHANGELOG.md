@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.11.38 - 2026-07-28
+
 - perf/runtime: inline `JsObject` property descriptors with shape-indexed compact metadata, leaving default data properties allocation-free while preserving lazy accessors, Array exotic overrides, shared-intrinsic realm overlays, and weak-table fallback storage for non-`JsObject` targets.
 - runtime: add `%TypedArray%.prototype.findLast` and `findLastIndex` for supported typed-array families, including reverse callback traversal, typed receiver validation, and standard built-in metadata. Ports ten upstream test262 cases.
 - runtime: add `Uint8Array.prototype.setFromHex`, including bounded writes, subarray offsets, read/written result records, partial writes before invalid input, strict validation, and standard built-in metadata. Ports ten upstream test262 cases.
