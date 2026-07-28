@@ -904,8 +904,10 @@ namespace JavaScriptRuntime
                 return true;
             }
 
-            if (a is double da && b is double db)
+            if (IsEcmaNumber(a) && IsEcmaNumber(b))
             {
+                var da = ToNumber(a);
+                var db = ToNumber(b);
                 if (double.IsNaN(da) && double.IsNaN(db))
                 {
                     return true;
