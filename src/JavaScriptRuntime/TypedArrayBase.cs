@@ -159,6 +159,26 @@ namespace JavaScriptRuntime
             return this;
         }
 
+        public TypedArrayBase copyWithin(object?[]? args)
+        {
+            var target = CoerceRelativeIndex(GetArgument(args, 0), 0, _length);
+            var start = CoerceRelativeIndex(GetArgument(args, 1), 0, _length);
+            var end = args != null && args.Length > 2
+                ? CoerceRelativeIndex(args[2], _length, _length)
+                : _length;
+            var count = global::System.Math.Min(end - start, _length - target);
+            if (count <= 0)
+            {
+                return this;
+            }
+
+            var sourceByteOffset = checked(_byteOffset + (start * BytesPerElement));
+            var targetByteOffset = checked(_byteOffset + (target * BytesPerElement));
+            var byteCount = checked(count * BytesPerElement);
+            Buffer.BlockCopy(_buffer.RawBytes, sourceByteOffset, _buffer.RawBytes, targetByteOffset, byteCount);
+            return this;
+        }
+
         public TypedArrayBase fill(object[]? args)
         {
             var fillValue = args != null && args.Length > 0
@@ -609,7 +629,7 @@ namespace JavaScriptRuntime
 
         protected static int CoerceRelativeIndex(object? value, int defaultValue, int length)
         {
-            if (value is null || value is JsNull)
+            if (value is null)
             {
                 return defaultValue;
             }
@@ -913,6 +933,9 @@ namespace JavaScriptRuntime
         private static object? GetThisArg(object?[]? args)
             => args != null && args.Length > 1 ? args[1] : null;
 
+        private static object? GetArgument(object?[]? args, int index)
+            => args != null && args.Length > index ? args[index] : null;
+
         private static object? InvokeCallback(object? callback, object? thisArg, string callbackKind, int argCount, object? a0, object? a1, object? a2, object? a3)
         {
             if (callback is not Delegate del)
@@ -990,16 +1013,34 @@ namespace JavaScriptRuntime
                         }
                     }
 
-                case IEnumerable enumerable when source is not string && !TryGetArrayLikeLength(source, out _):
-                    {
-                        var values = new List<object?>();
-                        foreach (var item in enumerable)
-                        {
-                            values.Add(item);
-                        }
+            }
 
+            if (source is not null && source is not JsNull
+                && ObjectRuntime.GetItem(source, Symbol.iterator) is not null)
+            {
+                var iterator = ObjectRuntime.GetIterator(source);
+                var values = new List<object?>();
+                while (true)
+                {
+                    var next = iterator.Next();
+                    if (next.done)
+                    {
                         return values;
                     }
+
+                    values.Add(next.value);
+                }
+            }
+
+            if (source is IEnumerable enumerable && source is not string && !TryGetArrayLikeLength(source, out _))
+            {
+                var values = new List<object?>();
+                foreach (var item in enumerable)
+                {
+                    values.Add(item);
+                }
+
+                return values;
             }
 
             if (TryGetArrayLikeLength(source, out var length))

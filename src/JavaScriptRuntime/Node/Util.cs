@@ -437,9 +437,9 @@ namespace JavaScriptRuntime.Node
             dict["isUint8Array"] = new Func<object?, bool>(v => v is Uint8Array || v is JavaScriptRuntime.Node.Buffer);
             dict["isUint8ClampedArray"] = new Func<object?, bool>(v => v is Uint8ClampedArray);
             dict["isInt16Array"] = new Func<object?, bool>(v => v is Int16Array);
-            dict["isUint16Array"] = new Func<object?, bool>(_ => false);
+            dict["isUint16Array"] = new Func<object?, bool>(v => v is JavaScriptRuntime.Uint16Array);
             dict["isInt32Array"] = new Func<object?, bool>(v => v is Int32Array);
-            dict["isUint32Array"] = new Func<object?, bool>(_ => false);
+            dict["isUint32Array"] = new Func<object?, bool>(v => v is JavaScriptRuntime.Uint32Array);
             dict["isFloat32Array"] = new Func<object?, bool>(_ => false);
             dict["isFloat64Array"] = new Func<object?, bool>(v => v is Float64Array);
             dict["isBigInt64Array"] = new Func<object?, bool>(_ => false);

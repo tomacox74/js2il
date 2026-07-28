@@ -90,7 +90,7 @@
     {
       "clause": "23.2.3.6",
       "title": "%TypedArray%.prototype.copyWithin ( target , start [ , end ] )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-%typedarray%.prototype.copywithin"
     },
     {
@@ -396,13 +396,13 @@
     {
       "clause": "23.2.6",
       "title": "Properties of the TypedArray Constructors",
-      "status": "Not Yet Supported",
+      "status": "Incomplete",
       "specUrl": "https://tc39.es/ecma262/#sec-properties-of-the-typedarray-constructors"
     },
     {
       "clause": "23.2.6.1",
       "title": "TypedArray .BYTES_PER_ELEMENT",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-typedarray.bytes_per_element"
     },
     {
@@ -479,7 +479,7 @@
         "test262Paths": [
           "test/built-ins/TypedArray/prototype.js"
         ],
-        "notes": "Supported typed-array constructor values now share a %TypedArray% intrinsic constructor object with a non-writable, non-enumerable, non-configurable prototype property. Placeholder constructor values exist for unsupported typed-array families so shared metadata helpers can execute, but per-constructor prototype objects and the rest of the constructor metadata surface remain incomplete."
+        "notes": "Supported typed-array constructor values share a %TypedArray% intrinsic constructor object with a non-writable, non-enumerable, non-configurable prototype property. Per-constructor prototype objects and the remaining constructor metadata surface are incomplete."
       },
       {
         "clause": "23.2.5.1",
@@ -569,6 +569,53 @@
           "tests/Jroc.Tests/TypedArray/JavaScript/Float64Array_Construct_ArrayBuffer_Search.js"
         ],
         "notes": "slice() returns same-type copies backed by fresh ArrayBuffers, while subarray() returns same-type views over the original buffer. Species construction and broader constructor selection rules are not yet implemented."
+      },
+      {
+        "clause": "23.2.3.6",
+        "feature": "%TypedArray%.prototype.copyWithin",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-%typedarray%.prototype.copywithin",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/TypedArray/prototype/copyWithin/ExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/built-ins/TypedArray/prototype/copyWithin/bit-precision.js",
+          "test/built-ins/TypedArray/prototype/copyWithin/byteoffset.js",
+          "test/built-ins/TypedArray/prototype/copyWithin/coerced-values-end.js",
+          "test/built-ins/TypedArray/prototype/copyWithin/coerced-values-start.js",
+          "test/built-ins/TypedArray/prototype/copyWithin/coerced-values-target.js",
+          "test/built-ins/TypedArray/prototype/copyWithin/get-length-ignores-length-prop.js",
+          "test/built-ins/TypedArray/prototype/copyWithin/invoked-as-func.js",
+          "test/built-ins/TypedArray/prototype/copyWithin/invoked-as-method.js",
+          "test/built-ins/TypedArray/prototype/copyWithin/length.js",
+          "test/built-ins/TypedArray/prototype/copyWithin/name.js",
+          "test/built-ins/TypedArray/prototype/copyWithin/negative-end.js",
+          "test/built-ins/TypedArray/prototype/copyWithin/negative-out-of-bounds-end.js",
+          "test/built-ins/TypedArray/prototype/copyWithin/negative-out-of-bounds-start.js",
+          "test/built-ins/TypedArray/prototype/copyWithin/negative-out-of-bounds-target.js",
+          "test/built-ins/TypedArray/prototype/copyWithin/negative-start.js",
+          "test/built-ins/TypedArray/prototype/copyWithin/negative-target.js",
+          "test/built-ins/TypedArray/prototype/copyWithin/non-negative-out-of-bounds-end.js",
+          "test/built-ins/TypedArray/prototype/copyWithin/non-negative-out-of-bounds-target-and-start.js",
+          "test/built-ins/TypedArray/prototype/copyWithin/non-negative-target-and-start.js",
+          "test/built-ins/TypedArray/prototype/copyWithin/non-negative-target-start-and-end.js",
+          "test/built-ins/TypedArray/prototype/copyWithin/not-a-constructor.js",
+          "test/built-ins/TypedArray/prototype/copyWithin/prop-desc.js",
+          "test/built-ins/TypedArray/prototype/copyWithin/return-abrupt-from-target.js",
+          "test/built-ins/TypedArray/prototype/copyWithin/return-this.js",
+          "test/built-ins/TypedArray/prototype/copyWithin/undefined-end.js"
+        ],
+        "notes": "Implements overlap-safe, bit-preserving in-place copies across the supported non-BigInt TypedArray families, including byte-offset views, argument coercion, bounds normalization, receiver validation, return identity, and standard built-in metadata. Detached and resizable ArrayBuffer behavior remains unsupported."
+      },
+      {
+        "clause": "23.2.5.1",
+        "feature": "Uint16Array and Uint32Array constructors",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-typedarray",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/TypedArray/prototype/copyWithin/ExecutionTests.cs"
+        ],
+        "notes": "Uint16Array and Uint32Array now support length, iterable, array-like, typed-array, and ArrayBuffer view construction with unsigned element coercion. Dynamic constructors for all supported TypedArray families preserve zero through three constructor arguments and expose BYTES_PER_ELEMENT. BigInt families, detached buffers, species construction, and complete prototype metadata remain unsupported."
       },
       {
         "clause": "23.2.3",
