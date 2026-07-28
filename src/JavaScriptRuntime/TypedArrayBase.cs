@@ -448,6 +448,20 @@ namespace JavaScriptRuntime
             return reversed;
         }
 
+        public TypedArrayBase sort(object?[]? args)
+        {
+            var sortedValues = GetSortedValues(args);
+            for (int i = 0; i < sortedValues.Count; i++)
+            {
+                WriteElementValue(i, sortedValues[i]);
+            }
+
+            return this;
+        }
+
+        public TypedArrayBase toSorted(object?[]? args)
+            => CreateSameTypeFromValues(GetSortedValues(args));
+
         protected void InitializeEmpty()
         {
             _buffer = new ArrayBuffer();
@@ -605,6 +619,121 @@ namespace JavaScriptRuntime
 
             return result;
         }
+
+        private List<double> GetSortedValues(object?[]? args)
+        {
+            var compareFunction = args != null && args.Length > 0 ? args[0] : null;
+            if (compareFunction is not null && compareFunction is not Delegate)
+            {
+                throw new TypeError($"{TypedArrayName}.prototype.sort requires a callback function");
+            }
+
+            var values = new List<SortableTypedArrayValue>(_length);
+            for (int i = 0; i < _length; i++)
+            {
+                values.Add(new SortableTypedArrayValue(ReadElementValue(i)));
+            }
+
+            StableSortValues(values, compareFunction as Delegate);
+
+            var sorted = new List<double>(_length);
+            foreach (var value in values)
+            {
+                sorted.Add(value.Value);
+            }
+
+            return sorted;
+        }
+
+        private void StableSortValues(List<SortableTypedArrayValue> values, Delegate? compareFunction)
+        {
+            var buffer = new SortableTypedArrayValue[values.Count];
+            for (var width = 1; width < values.Count; width *= 2)
+            {
+                for (var start = 0; start < values.Count; start += width * 2)
+                {
+                    var middle = global::System.Math.Min(start + width, values.Count);
+                    var end = global::System.Math.Min(start + (width * 2), values.Count);
+                    var left = start;
+                    var right = middle;
+                    var write = start;
+
+                    while (left < middle && right < end)
+                    {
+                        if (CompareValues(values[left].Value, values[right].Value, compareFunction) <= 0)
+                        {
+                            buffer[write++] = values[left++];
+                        }
+                        else
+                        {
+                            buffer[write++] = values[right++];
+                        }
+                    }
+
+                    while (left < middle)
+                    {
+                        buffer[write++] = values[left++];
+                    }
+
+                    while (right < end)
+                    {
+                        buffer[write++] = values[right++];
+                    }
+
+                    for (var index = start; index < end; index++)
+                    {
+                        values[index] = buffer[index];
+                    }
+                }
+
+                if (width > values.Count / 2)
+                {
+                    break;
+                }
+            }
+        }
+
+        private int CompareValues(double left, double right, Delegate? compareFunction)
+            => compareFunction is not null
+                ? CompareUsingCallback(compareFunction, left, right)
+                : CompareDefaultValues(left, right);
+
+        private int CompareUsingCallback(object callback, double left, double right)
+        {
+            var result = TypeUtilities.ToNumber(
+                InvokeCallback(callback, null, $"{TypedArrayName}.prototype.sort", 2, left, right, null, null));
+
+            if (double.IsNaN(result) || result == 0)
+            {
+                return 0;
+            }
+
+            return result < 0 ? -1 : 1;
+        }
+
+        private static int CompareDefaultValues(double left, double right)
+        {
+            if (double.IsNaN(left))
+            {
+                return double.IsNaN(right) ? 0 : 1;
+            }
+
+            if (double.IsNaN(right))
+            {
+                return -1;
+            }
+
+            if (left == 0 && right == 0)
+            {
+                var leftIsNegative = BitConverter.DoubleToInt64Bits(left) < 0;
+                var rightIsNegative = BitConverter.DoubleToInt64Bits(right) < 0;
+                return leftIsNegative == rightIsNegative ? 0 : leftIsNegative ? -1 : 1;
+            }
+
+            return left < right ? -1 : left > right ? 1 : 0;
+        }
+
+        private readonly record struct SortableTypedArrayValue(double Value);
 
         protected static T FromSource<T>(string typedArrayName, object? source, object? mapper, object? thisArg, Func<object?[], T> factory)
             where T : TypedArrayBase

@@ -4,7 +4,7 @@
 
 [Back to Section23](Section23.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-07-28T04:15:00Z
+> Last generated (UTC): 2026-07-28T21:30:44Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -52,11 +52,11 @@
 | 23.2.3.26.2 | SetTypedArrayFromTypedArray ( target , targetOffset , source ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-settypedarrayfromtypedarray) |
 | 23.2.3.27 | %TypedArray%.prototype.slice ( start , end ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-%typedarray%.prototype.slice) |
 | 23.2.3.28 | %TypedArray%.prototype.some ( callback [ , thisArg ] ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-%typedarray%.prototype.some) |
-| 23.2.3.29 | %TypedArray%.prototype.sort ( comparator ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-%typedarray%.prototype.sort) |
+| 23.2.3.29 | %TypedArray%.prototype.sort ( comparator ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-%typedarray%.prototype.sort) |
 | 23.2.3.30 | %TypedArray%.prototype.subarray ( start , end ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-%typedarray%.prototype.subarray) |
 | 23.2.3.31 | %TypedArray%.prototype.toLocaleString ( [ reserved1 [ , reserved2 ] ] ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-%typedarray%.prototype.tolocalestring) |
 | 23.2.3.32 | %TypedArray%.prototype.toReversed ( ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-%typedarray%.prototype.toreversed) |
-| 23.2.3.33 | %TypedArray%.prototype.toSorted ( comparator ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-%typedarray%.prototype.tosorted) |
+| 23.2.3.33 | %TypedArray%.prototype.toSorted ( comparator ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-%typedarray%.prototype.tosorted) |
 | 23.2.3.34 | %TypedArray%.prototype.toString ( ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-%typedarray%.prototype.tostring) |
 | 23.2.3.35 | %TypedArray%.prototype.values ( ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-%typedarray%.prototype.values) |
 | 23.2.3.36 | %TypedArray%.prototype.with ( index , value ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-%typedarray%.prototype.with) |
@@ -69,7 +69,7 @@
 | 23.2.4.4 | ValidateTypedArray ( O , order ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-validatetypedarray) |
 | 23.2.4.5 | TypedArrayElementSize ( O ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-typedarrayelementsize) |
 | 23.2.4.6 | TypedArrayElementType ( O ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-typedarrayelementtype) |
-| 23.2.4.7 | CompareTypedArrayElements ( x , y , comparator ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-comparetypedarrayelements) |
+| 23.2.4.7 | CompareTypedArrayElements ( x , y , comparator ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-comparetypedarrayelements) |
 | 23.2.5 | The TypedArray Constructors | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-typedarray-constructors) |
 | 23.2.5.1 | TypedArray ( ... args ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-typedarray) |
 | 23.2.5.1.1 | AllocateTypedArray ( constructorName , newTarget , defaultProto [ , length ] ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-allocatetypedarray) |
@@ -157,11 +157,23 @@ Feature-level support tracking with repo test references and optional test262 ev
 |---|---|---|---|---|
 | Shared %TypedArray%.prototype.slice/subarray | Supported with Limitations | [`Int32Array_Slice_Basic.js`](../../../tests/Jroc.Tests/TypedArray/JavaScript/Int32Array_Slice_Basic.js)<br>[`Int32Array_Slice_RelativeIndices.js`](../../../tests/Jroc.Tests/TypedArray/JavaScript/Int32Array_Slice_RelativeIndices.js)<br>[`Int32Array_Subarray_ViewSemantics.js`](../../../tests/Jroc.Tests/TypedArray/JavaScript/Int32Array_Subarray_ViewSemantics.js)<br>[`Float64Array_Construct_ArrayBuffer_Search.js`](../../../tests/Jroc.Tests/TypedArray/JavaScript/Float64Array_Construct_ArrayBuffer_Search.js) |  | slice() returns same-type copies backed by fresh ArrayBuffers, while subarray() returns same-type views over the original buffer. Species construction and broader constructor selection rules are not yet implemented. |
 
+### 23.2.3.29 ([tc39.es](https://tc39.es/ecma262/#sec-%typedarray%.prototype.sort))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| %TypedArray%.prototype.sort | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/TypedArray/prototype/sort/ExecutionTests.cs` | `test/built-ins/TypedArray/prototype/sort/arraylength-internal.js`<br>`test/built-ins/TypedArray/prototype/sort/comparefn-call-throws.js`<br>`test/built-ins/TypedArray/prototype/sort/comparefn-calls.js`<br>`test/built-ins/TypedArray/prototype/sort/comparefn-is-undefined.js`<br>`test/built-ins/TypedArray/prototype/sort/invoked-as-func.js`<br>`test/built-ins/TypedArray/prototype/sort/invoked-as-method.js`<br>`test/built-ins/TypedArray/prototype/sort/length.js`<br>`test/built-ins/TypedArray/prototype/sort/name.js`<br>`test/built-ins/TypedArray/prototype/sort/not-a-constructor.js`<br>`test/built-ins/TypedArray/prototype/sort/prop-desc.js`<br>`test/built-ins/TypedArray/prototype/sort/return-same-instance.js`<br>`test/built-ins/TypedArray/prototype/sort/sortcompare-with-no-tostring.js`<br>`test/built-ins/TypedArray/prototype/sort/sorted-values-nan.js`<br>`test/built-ins/TypedArray/prototype/sort/sorted-values.js`<br>`test/built-ins/TypedArray/prototype/sort/stability.js`<br>`test/built-ins/TypedArray/prototype/sort/this-is-not-object.js`<br>`test/built-ins/TypedArray/prototype/sort/this-is-not-typedarray-instance.js` | Supported numeric TypedArray families sort in place with stable numeric ordering, including NaN and signed-zero handling, callable comparator coercion and abrupt-completion propagation, receiver validation, and standard built-in metadata. BigInt TypedArray families plus detached and resizable ArrayBuffer behavior remain unsupported. |
+
 ### 23.2.3.32 ([tc39.es](https://tc39.es/ecma262/#sec-%typedarray%.prototype.toreversed))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
 | %TypedArray%.prototype.toReversed | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/TypedArray/prototype/toReversed/ExecutionTests.cs` | `test/built-ins/TypedArray/prototype/toReversed/immutable.js`<br>`test/built-ins/TypedArray/prototype/toReversed/length.js`<br>`test/built-ins/TypedArray/prototype/toReversed/name.js`<br>`test/built-ins/TypedArray/prototype/toReversed/property-descriptor.js`<br>`test/built-ins/TypedArray/prototype/toReversed/reverses.js` | Creates an immutable same-type reversed copy across the supported non-BigInt TypedArray families and exposes standard built-in metadata. Detached/resizable ArrayBuffers and BigInt TypedArray families remain unsupported. |
+
+### 23.2.3.33 ([tc39.es](https://tc39.es/ecma262/#sec-%typedarray%.prototype.tosorted))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| %TypedArray%.prototype.toSorted | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/TypedArray/prototype/toSorted/ExecutionTests.cs` | `test/built-ins/TypedArray/prototype/toSorted/comparefn-controls-sort.js`<br>`test/built-ins/TypedArray/prototype/toSorted/comparefn-default.js`<br>`test/built-ins/TypedArray/prototype/toSorted/comparefn-not-a-function.js`<br>`test/built-ins/TypedArray/prototype/toSorted/comparefn-stop-after-error.js`<br>`test/built-ins/TypedArray/prototype/toSorted/immutable.js`<br>`test/built-ins/TypedArray/prototype/toSorted/length.js`<br>`test/built-ins/TypedArray/prototype/toSorted/name.js`<br>`test/built-ins/TypedArray/prototype/toSorted/not-a-constructor.js` | Supported numeric TypedArray families create immutable same-type sorted copies with stable numeric ordering, comparator validation, and abrupt-completion propagation. BigInt TypedArray families plus detached and resizable ArrayBuffer behavior remain unsupported. |
 
 ### 23.2.3.35 ([tc39.es](https://tc39.es/ecma262/#sec-%typedarray%.prototype.values))
 
