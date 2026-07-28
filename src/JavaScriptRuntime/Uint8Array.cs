@@ -148,6 +148,11 @@ namespace JavaScriptRuntime
                 1);
             DefineBuiltinFunction(
                 Prototype,
+                "setFromHex",
+                (Func<object[], object?[]?, object?>)PrototypeSetFromHex,
+                1);
+            DefineBuiltinFunction(
+                Prototype,
                 "toHex",
                 (Func<object[], object?[]?, object?>)PrototypeToHex,
                 0);
@@ -177,6 +182,40 @@ namespace JavaScriptRuntime
 
         public Uint8Array subarray(object? start, object? end)
             => (Uint8Array)SubarrayCore(start, end);
+
+        public JsObject setFromHex(object? source)
+        {
+            if (source is not string text)
+            {
+                throw new TypeError("Uint8Array.prototype.setFromHex requires a string input");
+            }
+
+            if ((text.Length & 1) != 0)
+            {
+                throw new SyntaxError("Invalid hexadecimal input");
+            }
+
+            var written = 0;
+            var maxBytes = global::System.Math.Min(LengthElements, text.Length / 2);
+            while (written < maxBytes)
+            {
+                var sourceIndex = written * 2;
+                var high = GetHexDigitValue(text[sourceIndex]);
+                var low = GetHexDigitValue(text[sourceIndex + 1]);
+                if (high < 0 || low < 0)
+                {
+                    throw new SyntaxError("Invalid hexadecimal input");
+                }
+
+                BufferObject.RawBytes[ByteOffsetBytes + written] = (byte)((high << 4) | low);
+                written++;
+            }
+
+            var result = new JsObject();
+            result.SetNumber("read", written * 2);
+            result.SetNumber("written", written);
+            return result;
+        }
 
         public string toHex()
         {
@@ -211,6 +250,16 @@ namespace JavaScriptRuntime
 
         private static object? ConstructorFromHex(object[] _, object?[]? args)
             => fromHex(GetArgument(args, 0));
+
+        private static object? PrototypeSetFromHex(object[] _, object?[]? args)
+        {
+            if (RuntimeServices.GetCurrentThis() is not Uint8Array array)
+            {
+                throw new TypeError("Uint8Array.prototype.setFromHex called on incompatible receiver");
+            }
+
+            return array.setFromHex(GetArgument(args, 0));
+        }
 
         private static object? PrototypeToHex(object[] _, object?[]? __)
         {
