@@ -359,18 +359,16 @@ namespace JavaScriptRuntime
                 Configurable = true
             };
 
-            if (target is JsObject exoticObject && exoticObject is IExoticJsObject)
-            {
-                if (!exoticObject.DefineOwnProperty(key, descriptor))
-                {
-                    throw new TypeError($"Cannot define property: {key}");
-                }
-                return target;
-            }
-
             if (target is JsObject jsObject)
             {
-                if (!PropertyDescriptorStore.HasIntrinsicProperties(target) && enumerable)
+                if (jsObject is IExoticJsObject)
+                {
+                    if (!jsObject.DefineOwnProperty(key, descriptor))
+                    {
+                        throw new TypeError($"Cannot define property: {key}");
+                    }
+                }
+                else if (!PropertyDescriptorStore.HasIntrinsicProperties(target) && enumerable)
                 {
                     setJsObjectValue(jsObject, key, value);
                 }
