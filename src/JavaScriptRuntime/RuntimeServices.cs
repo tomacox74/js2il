@@ -580,7 +580,8 @@ public class RuntimeServices
         out JsPropertyDescriptor descriptor)
     {
         descriptor = default;
-        if (PropertyDescriptorStore.IsDeleted(target, propName)
+        if ((target is JsObject jsObject && jsObject.IsInlineLazyClassMethodDeleted(propName))
+            || PropertyDescriptorStore.IsDeleted(target, propName)
             || !TryResolveLazyClassMethodTarget(target, out var ownerType, out var ownerValue, out var isStatic)
             || !_lazyClassMetadata.TryGetValue(ownerType, out var slot))
         {
@@ -628,6 +629,8 @@ public class RuntimeServices
         {
             return slot.Methods
                 .Where(method => method.IsStatic == isStatic
+                    && (target is not JsObject jsObject
+                        || !jsObject.IsInlineLazyClassMethodDeleted(method.PropertyKey))
                     && !PropertyDescriptorStore.IsDeleted(target, method.PropertyKey)
                     && !PropertyDescriptorStore.TryGetOwn(target, method.PropertyKey, out _))
                 .Select(method => method.PropertyKey)
@@ -653,6 +656,12 @@ public class RuntimeServices
             }
         }
 
+        if (target is JsObject jsObject && !jsObject.HasSharedIntrinsicBaseline)
+        {
+            jsObject.MarkInlineLazyClassMethodDeleted(propName);
+            return;
+        }
+
         PropertyDescriptorStore.Delete(target, propName);
     }
 
@@ -676,7 +685,11 @@ public class RuntimeServices
                 return true;
         }
 
-        if (PropertyDescriptorStore.TryGetOwn(target, "constructor", out var constructorDescriptor)
+        var constructorLookup = target is JsObject
+            ? PropertyDescriptorStore.GetOwnLookupCore(target, "constructor", out var constructorDescriptor)
+                == PropertyDescriptorLookup.Found
+            : PropertyDescriptorStore.TryGetOwn(target, "constructor", out constructorDescriptor);
+        if (constructorLookup
             && constructorDescriptor.Kind == JsPropertyDescriptorKind.Data)
         {
             switch (constructorDescriptor.Value)

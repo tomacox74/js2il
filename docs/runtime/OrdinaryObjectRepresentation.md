@@ -27,10 +27,30 @@ Ordinary objects implement these operations with shape/slot and descriptor
 storage. Generic runtime code dispatches through this shared contract instead of
 maintaining a parallel representation switch.
 
-Descriptor snapshots store `JsPropertyDescriptor` values inline. Reads return
-independent value copies, while writes publish new immutable snapshots; accessor
-getter and setter references retain their JavaScript identity across copies. Its
-boolean fields precede reference fields so the value occupies 32 bytes on 64-bit runtimes.
+Each `JsObject` has one nullable descriptor-state reference in addition to its
+shape and `JsValue[]`. A missing state means every shape slot is an implicit
+writable, enumerable, configurable data property. This common representation
+does not allocate descriptor dictionaries or duplicate values: descriptor reads
+are synthesized from the shape slot and its canonical `JsValue`.
+
+The first non-default data property or accessor lazily allocates compact
+shape-indexed flags. Getter/setter payloads are allocated only after the first
+accessor. Shape growth, deletion compaction, and clearing keep values, flags, and
+accessors at identical slot indices. The extra nullable reference increases an
+empty 64-bit `JsObject` allocation from 48 to 56 bytes; objects containing only
+default properties pay no additional descriptor-state allocation.
+
+Shared intrinsic `JsObject` templates initialize their baseline descriptors in
+this inline representation. Once initialization ends, per-runtime
+`ConditionalWeakTable` snapshots remain authoritative for realm-local
+overrides, additions, and deletion tombstones, leaving the shared baseline
+immutable and lock-free to read. Non-`JsObject` targets such as delegates, CLR
+types, exceptions, and host dictionaries continue to use weak-table descriptor
+storage.
+
+`JsPropertyDescriptor` reads return independent value copies. Accessor getter
+and setter references retain their JavaScript identity across copies, and
+ordinary data values always come from `JsValue[]`.
 
 `Object.GetProperty` delegates `JsObject` own reads to `TryGetBoxedValue`.
 `JsObject` checks stored descriptor overrides, accessors, and delete tombstones
@@ -56,6 +76,9 @@ Ordinary reads of default `length`, dense indices, and named Array properties
 use their backing storage directly. Stored accessor/data overrides and
 tombstones remain authoritative, while APIs such as
 `Object.getOwnPropertyDescriptor` continue through Array's descriptor hook.
+Named properties use ordinary shape-aligned descriptor state. Canonical indices
+and `length` never acquire shape slots; their non-default descriptors use the
+same lazily allocated object-owned state through a sparse exotic override map.
 
 Array literals and compiler-proven numeric index operations still target direct
 array intrinsics. The shared object contract does not replace the specialized

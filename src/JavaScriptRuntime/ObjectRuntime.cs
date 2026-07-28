@@ -10,12 +10,6 @@ namespace JavaScriptRuntime
     /// </summary>
     public static partial class ObjectRuntime
     {
-        /// <summary>
-        /// Identifies runtime-owned ordinary objects.
-        /// </summary>
-        internal static bool IsOrdinaryObject(object target)
-            => target is JsObject;
-
         internal static bool TryGetOwnValue(object target, string key, out object? value)
         {
             if (target is JsObject jsObject)
@@ -359,25 +353,29 @@ namespace JavaScriptRuntime
                 Configurable = true
             };
 
-            if (target is JsObject exoticObject && exoticObject is IExoticJsObject)
+            if (target is JsObject jsObject)
             {
-                if (!exoticObject.DefineOwnProperty(key, descriptor))
+                if (jsObject is IExoticJsObject)
+                {
+                    if (!jsObject.DefineOwnProperty(key, descriptor))
+                    {
+                        throw new TypeError($"Cannot define property: {key}");
+                    }
+                }
+                else if (!PropertyDescriptorStore.HasIntrinsicProperties(target) && enumerable)
+                {
+                    setJsObjectValue(jsObject, key, value);
+                }
+                else if (!jsObject.DefineOwnProperty(key, descriptor))
                 {
                     throw new TypeError($"Cannot define property: {key}");
                 }
+
                 return target;
             }
 
-            if (target is JsObject jsObject && !PropertyDescriptorStore.HasIntrinsicProperties(target))
-            {
-                setJsObjectValue(jsObject, key, value);
-            }
-            else if (IsOrdinaryObject(target)
+            if (target is IDictionary<string, object?> dict
                 && !PropertyDescriptorStore.HasIntrinsicProperties(target))
-            {
-                TrySetOwnValue(target, key, value);
-            }
-            else if (target is IDictionary<string, object?> dict && !PropertyDescriptorStore.HasIntrinsicProperties(target))
             {
                 dict[key] = value;
             }
@@ -706,7 +704,7 @@ namespace JavaScriptRuntime
                 return array[intIndex]!;
             }
             // Ordinary object: numeric index coerces to a property-name string per JS ToPropertyKey.
-            else if (IsOrdinaryObject(obj))
+            else if (obj is JsObject)
             {
                 return GetProperty(obj, propName)!;
             }
@@ -806,7 +804,7 @@ namespace JavaScriptRuntime
                 return array[intIndex]!;
             }
             // Ordinary object: numeric index coerces to a property-name string per JS ToPropertyKey.
-            else if (IsOrdinaryObject(obj))
+            else if (obj is JsObject)
             {
                 var propName = ToPropertyKeyString(index);
                 return GetProperty(obj, propName)!;
@@ -898,7 +896,7 @@ namespace JavaScriptRuntime
                 return array[intIndex]!;
             }
             // Ordinary object: key is already a string property.
-            else if (IsOrdinaryObject(obj))
+            else if (obj is JsObject)
             {
                 return GetProperty(obj, key)!;
             }
@@ -1024,7 +1022,7 @@ namespace JavaScriptRuntime
                 return value;
             }
 
-            if (IsOrdinaryObject(obj))
+            if (obj is JsObject)
             {
                 return SetProperty(obj, propName, value, throwOnError);
             }
@@ -1107,7 +1105,7 @@ namespace JavaScriptRuntime
                 return value;
             }
 
-            if (IsOrdinaryObject(obj))
+            if (obj is JsObject)
             {
                 return SetProperty(
                     obj,
@@ -1200,7 +1198,7 @@ namespace JavaScriptRuntime
                 return value;
             }
 
-            if (IsOrdinaryObject(obj))
+            if (obj is JsObject)
             {
                 return SetProperty(obj, key, value, throwOnError);
             }
@@ -1279,7 +1277,7 @@ namespace JavaScriptRuntime
                 return value;
             }
 
-            if (IsOrdinaryObject(obj))
+            if (obj is JsObject)
             {
                 return SetProperty(obj, key, value, throwOnError);
             }

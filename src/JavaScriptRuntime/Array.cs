@@ -1326,6 +1326,21 @@ namespace JavaScriptRuntime
 
         internal override bool HasOwnPropertyValue(string key)
         {
+            if (!HasNonDataDescriptors)
+            {
+                if (string.Equals(key, "length", StringComparison.Ordinal))
+                {
+                    return true;
+                }
+
+                if (ObjectRuntime.TryParseCanonicalIndexString(key, out var defaultIndex))
+                {
+                    return HasOwnIndex(defaultIndex);
+                }
+
+                return base.HasOwnPropertyValue(key);
+            }
+
             var lookup = PropertyDescriptorStore.GetOwnLookupCore(this, key, out _);
             if (lookup != PropertyDescriptorLookup.None)
             {
@@ -1344,6 +1359,10 @@ namespace JavaScriptRuntime
 
             return base.HasOwnPropertyValue(key);
         }
+
+        internal override bool UsesInlineExoticDescriptorStorage(string key)
+            => string.Equals(key, "length", StringComparison.Ordinal)
+                || ObjectRuntime.TryParseCanonicalArrayIndexUInt(key, out _);
 
         internal override bool DefineOwnProperty(string key, JsPropertyDescriptor descriptor)
         {
@@ -1588,12 +1607,15 @@ namespace JavaScriptRuntime
             }
 
             if (index <= int.MaxValue
-                && lookup == PropertyDescriptorLookup.None
                 && descriptor.Kind == JsPropertyDescriptorKind.Data
                 && IsDefaultElementDescriptor(descriptor)
                 && CanStoreDenseIndex(index))
             {
                 SetDenseIndex((int)index, descriptor.Value);
+                if (lookup == PropertyDescriptorLookup.Found)
+                {
+                    PropertyDescriptorStore.Delete(this, key);
+                }
             }
             else
             {
@@ -1812,8 +1834,16 @@ namespace JavaScriptRuntime
         {
             var storedDescriptor = PropertyDescriptorStore.CloneDescriptor(descriptor);
             storedDescriptor.Value = length;
-            if (!IsDefaultLengthDescriptor(storedDescriptor)
-                || PropertyDescriptorStore.GetOwnLookupCore(this, "length", out _) == PropertyDescriptorLookup.Found)
+            var hasStoredDescriptor = PropertyDescriptorStore.GetOwnLookupCore(this, "length", out _)
+                == PropertyDescriptorLookup.Found;
+            if (IsDefaultLengthDescriptor(storedDescriptor))
+            {
+                if (hasStoredDescriptor)
+                {
+                    PropertyDescriptorStore.Delete(this, "length");
+                }
+            }
+            else
             {
                 PropertyDescriptorStore.DefineOrUpdate(this, "length", storedDescriptor);
             }

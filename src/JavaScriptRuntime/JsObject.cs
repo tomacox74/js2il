@@ -3,160 +3,6 @@ using System.Collections;
 
 namespace JavaScriptRuntime;
 
-internal sealed class JsShape
-{
-    internal const int DictionaryPromotionThreshold = 2;
-
-    private enum PropertyNameStorage
-    {
-        Interned,
-        Direct
-    }
-
-    private static readonly ThreadLocal<JsShape> _empty = new (() => new JsShape());
-
-    public static JsShape Empty
-    {
-        get => _empty.Value!;
-    }
-
-    private readonly string[] _propertyNames;
-
-    private readonly Dictionary<string, int>? _slotLookup;
-
-    private Dictionary<string, WeakReference<JsShape>>? _transitions;
-
-    public JsShape()
-    {
-        _propertyNames = System.Array.Empty<string>();
-    }
-
-    internal ReadOnlySpan<string> PropertyNamesInSlotOrder => _propertyNames;
-
-    internal int PropertyCount => _propertyNames.Length;
-
-    internal bool UsesDictionaryLookup => _slotLookup != null;
-
-    internal string GetPropertyNameAtSlot(int slot)
-        => _propertyNames[slot];
-
-    internal IEnumerable<string> EnumeratePropertyNamesSnapshot()
-    {
-        var propertyNames = _propertyNames;
-        for (var slot = 0; slot < propertyNames.Length; slot++)
-        {
-            yield return propertyNames[slot];
-        }
-    }
-
-    internal bool HasTransitionCache => _transitions != null;
-
-    internal int TransitionCacheCount => _transitions?.Count ?? 0;
-
-    private JsShape(string newPropertyName, JsShape parent, PropertyNameStorage propertyNameStorage)
-    {
-        var storedPropertyName = propertyNameStorage == PropertyNameStorage.Interned
-            ? string.Intern(newPropertyName)
-            : newPropertyName;
-
-        var parentPropertyNames = parent._propertyNames;
-        _propertyNames = new string[parentPropertyNames.Length + 1];
-        System.Array.Copy(parentPropertyNames, _propertyNames, parentPropertyNames.Length);
-        _propertyNames[parentPropertyNames.Length] = storedPropertyName;
-
-        if (_propertyNames.Length > DictionaryPromotionThreshold)
-        {
-            _slotLookup = parent._slotLookup != null
-                ? new Dictionary<string, int>(parent._slotLookup, StringComparer.Ordinal)
-                : CreateSlotLookup(parentPropertyNames);
-            _slotLookup[storedPropertyName] = parentPropertyNames.Length;
-        }
-    }
-
-    private JsShape(string deadPropertyName, JsShape parent, bool delete)
-    {
-        var deadSlot = parent.GetSlot(deadPropertyName);
-        if (deadSlot < 0)
-        {
-            throw new InvalidOperationException($"Cannot remove missing shape property '{deadPropertyName}'.");
-        }
-
-        var parentPropertyNames = parent._propertyNames;
-        _propertyNames = new string[parentPropertyNames.Length - 1];
-        if (deadSlot > 0)
-        {
-            System.Array.Copy(parentPropertyNames, 0, _propertyNames, 0, deadSlot);
-        }
-        if (deadSlot < _propertyNames.Length)
-        {
-            System.Array.Copy(
-                parentPropertyNames,
-                deadSlot + 1,
-                _propertyNames,
-                deadSlot,
-                _propertyNames.Length - deadSlot);
-        }
-
-        if (_propertyNames.Length > DictionaryPromotionThreshold)
-        {
-            _slotLookup = CreateSlotLookup(_propertyNames);
-        }
-    }
-
-    private static Dictionary<string, int> CreateSlotLookup(ReadOnlySpan<string> propertyNames)
-    {
-        var slots = new Dictionary<string, int>(propertyNames.Length, StringComparer.Ordinal);
-        for (var slot = 0; slot < propertyNames.Length; slot++)
-        {
-            slots[propertyNames[slot]] = slot;
-        }
-        return slots;
-    }
-
-    public JsShape TransitionTo(string newPropertyName)
-    {
-        if (_transitions != null && _transitions.TryGetValue(newPropertyName, out var weakRef) && weakRef.TryGetTarget(out var existingShape))
-        {
-            return existingShape;
-        }
-        var newShape = new JsShape(newPropertyName, this, PropertyNameStorage.Interned);
-        var transitions = _transitions ??= new Dictionary<string, WeakReference<JsShape>>();
-        transitions[newPropertyName] = new WeakReference<JsShape>(newShape);
-        return newShape;
-    }
-
-    /// <summary>
-    /// Adds a property name without publishing it to the shared shape-transition cache.
-    /// This is for objects populated from untrusted input where neither global string
-    /// interning nor long-lived transition-cache keys are appropriate.
-    /// </summary>
-    public JsShape TransitionToUncached(string newPropertyName)
-        => new JsShape(newPropertyName, this, PropertyNameStorage.Direct);
-
-    public JsShape TransitionAway(string deadPropertyName)
-    {
-        return new JsShape(deadPropertyName, this, true);
-    }
-
-    public int GetSlot(string propertyName)
-    {
-        if (_slotLookup != null)
-        {
-            return _slotLookup.TryGetValue(propertyName, out var slot) ? slot : -1;
-        }
-
-        var propertyNames = _propertyNames;
-        for (var slot = 0; slot < propertyNames.Length; slot++)
-        {
-            if (string.Equals(propertyNames[slot], propertyName, StringComparison.Ordinal))
-            {
-                return slot;
-            }
-        }
-        return -1;
-    }
-}
-
 /// <summary>
 /// Marks a <see cref="JsObject"/> subclass that overrides ECMAScript internal
 /// object operations for specialized storage.
@@ -181,60 +27,15 @@ internal interface IExoticJsObject
 /// for object literal property initialization to avoid the <c>box</c> instruction.
 /// </para>
 /// </summary>
-public class JsObject : IDictionary<string, object?>
+public partial class JsObject : IDictionary<string, object?>
 {
-    private JsValue[] _properties = System.Array.Empty<JsValue>();
-
-    private JsShape _shape = JsShape.Empty;
-
-    private object? _prototype;
-
-    private readonly bool _cacheShapeTransitions;
-
-    // Perf (#1418 follow-up): sticky flag set when this object gains descriptor
-    // state that the plain dictionary cannot answer (accessors, delete tombstones,
-    // non-default attributes from defineProperty/seal/freeze, intrinsic descriptors).
-    // While the flag is clear, every own descriptor is a mirrored default data
-    // descriptor whose value matches the dictionary, so hot read paths can go
-    // straight to the dictionary and skip the descriptor store probe entirely.
-    private bool _hasNonDataDescriptors;
-
-    /// <summary>
-    /// True when own reads can no longer be answered from the property dictionary
-    /// alone (the object has accessors, deleted tombstones, or attribute-bearing
-    /// descriptors). Sticky: once set it is never cleared.
-    /// </summary>
-    internal bool HasNonDataDescriptors => _hasNonDataDescriptors;
-
-    internal void MarkNonDataDescriptors() => _hasNonDataDescriptors = true;
-
-    internal bool TryGetInlinePrototype(out object? prototype)
-        => (prototype = _prototype) is not null;
-
-    internal void SetInlinePrototype(object? prototype) => _prototype = prototype;
-
-    /// <summary>Creates an ordinary object using the shared shape-transition cache.</summary>
-    public JsObject()
-    {
-        _cacheShapeTransitions = true;
-    }
-
-    /// <summary>
-    /// Creates an ordinary object whose property names are appended without using shared
-    /// shape transitions. Intended for records populated from untrusted property keys.
-    /// </summary>
-    internal JsObject(bool cacheShapeTransitions)
-    {
-        _cacheShapeTransitions = cacheShapeTransitions;
-    }
-
     // -------------------------------------------------------------------------
     // ECMAScript internal object-operation hooks
     // -------------------------------------------------------------------------
 
     /// <summary>
-    /// Looks up an own descriptor without cloning it. The returned descriptor is
-    /// shared descriptor-store state and must be cloned before mutation.
+    /// Looks up an own descriptor. Descriptors are value types, so callers receive
+    /// an independent copy synthesized from inline storage or a runtime overlay.
     /// </summary>
     /// <remarks>
     /// Exotic subclasses must preserve descriptor-store tombstones and overrides
@@ -295,16 +96,6 @@ public class JsObject : IDictionary<string, object?>
     /// </summary>
     internal virtual bool DefineOwnProperty(string key, JsPropertyDescriptor descriptor)
     {
-        if (!PropertyDescriptorStore.HasIntrinsicProperties(this))
-        {
-            if (!SetOwnPropertyValue(
-                key,
-                descriptor.Kind == JsPropertyDescriptorKind.Accessor ? null : descriptor.Value))
-            {
-                return false;
-            }
-        }
-
         PropertyDescriptorStore.DefineOrUpdate(this, key, descriptor);
         return true;
     }
@@ -319,11 +110,6 @@ public class JsObject : IDictionary<string, object?>
     /// <summary>Deletes an own property from backing and descriptor storage.</summary>
     internal virtual bool DeleteOwnProperty(string key)
     {
-        if (!PropertyDescriptorStore.HasIntrinsicProperties(this))
-        {
-            RemoveBoxedValue(key);
-        }
-
         PropertyDescriptorStore.Delete(this, key);
         return true;
     }
@@ -366,31 +152,19 @@ public class JsObject : IDictionary<string, object?>
 
     /// <summary>Stores a numeric property without boxing the double value.</summary>
     public virtual void SetNumber(string key, double value)
-    {
-        SetValue(key, JsValue.FromNumber(value));
-        DefineDataDescriptor(key, value);
-    }
+        => SetValue(key, JsValue.FromNumber(value));
 
     /// <summary>Stores a boolean property without boxing the bool value.</summary>
     public virtual void SetBoolean(string key, bool value)
-    {
-        SetValue(key, JsValue.FromBoolean(value));
-        DefineDataDescriptor(key, value);
-    }
+        => SetValue(key, JsValue.FromBoolean(value));
 
     /// <summary>Stores a string property.</summary>
     public virtual void SetString(string key, string? value)
-    {
-        SetValue(key, JsValue.FromString(value));
-        DefineDataDescriptor(key, value);
-    }
+        => SetValue(key, JsValue.FromString(value));
 
     /// <summary>Stores an arbitrary object value.</summary>
     public virtual void SetValue(string key, object? value)
-    {
-        SetValue(key, JsValue.FromObject(value));
-        DefineDataDescriptor(key, value);
-    }
+        => SetValue(key, JsValue.FromObject(value));
 
     /// <summary>Stores an arbitrary object value (alias used by newer IL emit paths).</summary>
     public void SetObject(string key, object? value)
@@ -421,16 +195,15 @@ public class JsObject : IDictionary<string, object?>
             return true;
         }
 
-        if (!isExotic
-            && !HasNonDataDescriptors
-            && TryGetStoredBoxedValue(key, out value))
+        if (!HasNonDataDescriptors
+            && TryGetOwnPropertyValue(key, out value))
         {
             return true;
         }
 
-        // Value reads need only stored overrides. Calling the semantic descriptor
-        // hook here would force exotic objects to materialize synthetic descriptors
-        // for values that already live in specialized backing storage.
+        // Value reads need only inline metadata and stored overlays. Calling the
+        // semantic descriptor hook here would force exotic objects to materialize
+        // synthetic descriptors for specialized backing storage.
         var lookup = PropertyDescriptorStore.GetOwnLookupCore(this, key, out var descriptor);
         if (lookup == PropertyDescriptorLookup.Deleted)
         {
@@ -564,23 +337,12 @@ public class JsObject : IDictionary<string, object?>
 
     internal bool RemoveBoxedValue(string key)
     {
-        var slot = _shape.GetSlot(key);
-        if (slot == -1)
-            return false;
-
-        _shape = _shape.TransitionAway(key);
-        var newProperties = new JsValue[_properties.Length - 1];
-        if (slot > 0)
+        if (HasSharedIntrinsicBaseline)
         {
-            System.Array.Copy(_properties, 0, newProperties, 0, slot);
+            return PropertyDescriptorStore.Delete(this, key);
         }
-        if (slot < newProperties.Length)
-        {
-            System.Array.Copy(_properties, slot + 1, newProperties, slot, newProperties.Length - slot);
-        }
-        _properties = newProperties;
 
-        return true;
+        return DeleteInlineOwnDescriptor(key);
     }
 
     public virtual bool TryGetValue(string key, out object? value)
@@ -601,8 +363,16 @@ public class JsObject : IDictionary<string, object?>
 
     public virtual void Clear()
     {
+        if (HasSharedIntrinsicBaseline)
+        {
+            PropertyDescriptorStore.Clear(this);
+            return;
+        }
+
         _properties = System.Array.Empty<JsValue>();
         _shape = JsShape.Empty;
+        ResetInlineDescriptorState();
+        AssertInlineInvariants();
     }
 
     public virtual bool Contains(KeyValuePair<string, object?> item)
@@ -648,55 +418,4 @@ public class JsObject : IDictionary<string, object?>
     }
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-
-    // -------------------------------------------------------------------------
-    // Helpers
-    // -------------------------------------------------------------------------
-    private void SetValue(string key, JsValue value)
-    {
-        var slot = _shape.GetSlot(key);
-        if (slot == -1)
-        {
-            _shape = _cacheShapeTransitions
-                ? _shape.TransitionTo(key)
-                : _shape.TransitionToUncached(key);
-            slot = _shape.GetSlot(key);
-
-            var newProperties = new JsValue[_properties!.Length + 1];
-            System.Array.Copy(_properties, newProperties, _properties.Length);
-            _properties = newProperties;
-        }
-
-        _properties[slot] = value;
-    }
-
-    private JsValue GetValue(string key)
-    {
-        var slot = _shape.GetSlot(key);
-        if (slot == -1)
-            throw new KeyNotFoundException($"Key '{key}' not found.");
-        return _properties[slot];
-    }
-
-    private bool TryGetJsValue(string key, out JsValue value)
-    {
-        var slot = _shape.GetSlot(key);
-        if (slot == -1)
-        {
-            value = JsValue.Undefined;
-            return false;
-        }
-        value = _properties[slot];
-        return true;
-    }
-
-    private void DefineDataDescriptor(string key, object? value)
-        => PropertyDescriptorStore.DefineOrUpdate(this, key, new JsPropertyDescriptor
-        {
-            Kind = JsPropertyDescriptorKind.Data,
-            Value = value,
-            Writable = true,
-            Enumerable = true,
-            Configurable = true
-        });
 }

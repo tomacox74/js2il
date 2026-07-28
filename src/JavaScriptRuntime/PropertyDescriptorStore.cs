@@ -203,6 +203,9 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
         public bool IsEnumerableOrDefaultTrue(object target, string key)
             => !TryGetOwn(target, key, out var desc) || desc.Enumerable;
 
+        internal bool HasSlot(object target)
+            => _slots.TryGetValue(target, out _);
+
         private void DefineOrUpdateCore(object target, string key, JsPropertyDescriptor descriptor)
         {
             // Intrinsic descriptors are defined during engine setup without a
@@ -263,6 +266,7 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
 
     private static readonly IntrinsicPropertyDescriptorStore _intrinsicStore = new();
     private static readonly ThreadLocal<IPropertyDescriptorStore?> _currentRuntimeStore = new(() => null);
+    private static readonly ThreadLocal<PropertyDescriptorStore?> _defaultRuntimeStore = new(() => null);
     private static readonly ThreadLocal<int> _intrinsicInitializationDepth = new(() => 0);
 
     private readonly ConditionalWeakTable<object, OverrideSlot> _overrideSlots = new();
@@ -299,9 +303,10 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
 
     internal static void SetCurrentRuntimeStore(IPropertyDescriptorStore? store)
     {
-        var previous = _currentRuntimeStore.Value;
+        var previous = _currentRuntimeStore.Value ?? _defaultRuntimeStore.Value;
         _currentRuntimeStore.Value = store;
-        if (HasCanonicalIndexOverrides(previous) || HasCanonicalIndexOverrides(store))
+        var current = store ?? _defaultRuntimeStore.Value;
+        if (HasCanonicalIndexOverrides(previous) || HasCanonicalIndexOverrides(current))
         {
             Array.NotifyPrototypeMutation();
         }
@@ -312,6 +317,9 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
         _intrinsicInitializationDepth.Value++;
         return new IntrinsicInitializationScope();
     }
+
+    internal static bool IsIntrinsicInitialization
+        => _intrinsicInitializationDepth.Value > 0;
 
     internal static JsPropertyDescriptor CloneDescriptor(JsPropertyDescriptor descriptor)
         => descriptor;
@@ -347,7 +355,7 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
     {
         ValidateTargetAndKey(target, key);
 
-        if (CurrentStore is PropertyDescriptorStore runtimeStore)
+        if (GetLookupStore(target) is PropertyDescriptorStore runtimeStore)
         {
             if (runtimeStore._overrideSlots.TryGetValue(target, out var slot)
                 && slot.Read().Overrides.TryGetValue(key, out var entry))
@@ -363,26 +371,77 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
             }
         }
 
+        if (target is JsObject jsObject)
+        {
+            if (jsObject.GetInlineOwnDescriptor(key, out descriptor)
+                || jsObject.GetInlineExoticOwnDescriptor(key, out descriptor))
+            {
+                return PropertyDescriptorLookup.Found;
+            }
+
+            descriptor = default;
+            return PropertyDescriptorLookup.None;
+        }
+
         return _intrinsicStore.TryGetOwn(target, key, out descriptor)
             ? PropertyDescriptorLookup.Found
             : PropertyDescriptorLookup.None;
     }
 
     public static bool HasAny(object target)
-        => CurrentStore.HasAny(target);
+    {
+        ArgumentNullException.ThrowIfNull(target);
+
+        if (target is JsObject jsObject)
+        {
+            if (GetLookupStore(target) is PropertyDescriptorStore runtimeStore
+                && jsObject.HasSharedIntrinsicBaseline)
+            {
+                return ((IPropertyDescriptorStore)runtimeStore).HasAny(target);
+            }
+
+            return jsObject.HasInlineDescriptors;
+        }
+
+        return CurrentStore.HasAny(target);
+    }
 
     internal static bool HasIntrinsicProperties(object target)
-        => _intrinsicStore.HasAny(target);
+        => target is JsObject jsObject
+            ? jsObject.HasSharedIntrinsicBaseline
+            : _intrinsicStore.HasAny(target);
 
     internal static bool IsDeleted(object target, string key)
     {
         ValidateTargetAndKey(target, key);
-        return CurrentStore is PropertyDescriptorStore runtimeStore
+        return GetLookupStore(target) is PropertyDescriptorStore runtimeStore
             && runtimeStore.HasDeletedOverride(target, key);
     }
 
     public static void DefineOrUpdate(object target, string key, JsPropertyDescriptor descriptor)
     {
+        ValidateTargetAndKey(target, key);
+
+        if (target is JsObject jsObject)
+        {
+            if (IsIntrinsicInitialization)
+            {
+                DefineInlineWithMirroring(jsObject, key, descriptor, isIntrinsicBaseline: true);
+            }
+            else if (jsObject.HasSharedIntrinsicBaseline)
+            {
+                ((IPropertyDescriptorStore)SharedIntrinsicRuntimeStore)
+                    .DefineOrUpdate(target, key, descriptor);
+            }
+            else
+            {
+                DefineInlineWithMirroring(jsObject, key, descriptor, isIntrinsicBaseline: false);
+            }
+
+            NotifyCanonicalIndexMutation(GetLookupStore(target), key);
+            return;
+        }
+
         var store = CurrentStore;
         store.DefineOrUpdate(target, key, descriptor);
         NotifyCanonicalIndexMutation(store, key);
@@ -392,10 +451,6 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
     {
         ArgumentNullException.ThrowIfNull(source);
         ArgumentNullException.ThrowIfNull(target);
-
-        // Descriptor copies do not sync the target's property dictionary, so a
-        // JsObject target can no longer rely on the plain-object read fast path.
-        MarkJsObjectNonDataDescriptors(target);
 
         foreach (var key in GetOwnKeys(source))
         {
@@ -407,10 +462,48 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
     }
 
     public static IEnumerable<string> GetOwnKeys(object target)
-        => CurrentStore.GetOwnKeys(target);
+    {
+        ArgumentNullException.ThrowIfNull(target);
+
+        if (target is JsObject jsObject)
+        {
+            if (GetLookupStore(target) is PropertyDescriptorStore runtimeStore
+                && jsObject.HasSharedIntrinsicBaseline)
+            {
+                return runtimeStore.GetOwnKeysForRuntimeStore(target);
+            }
+
+            return GetInlineKeys(jsObject);
+        }
+
+        return CurrentStore.GetOwnKeys(target);
+    }
 
     public static bool Delete(object target, string key)
     {
+        ValidateTargetAndKey(target, key);
+
+        if (target is JsObject jsObject)
+        {
+            bool inlineDeleted;
+            if (IsIntrinsicInitialization)
+            {
+                inlineDeleted = DeleteInlineWithMirroring(jsObject, key);
+            }
+            else if (jsObject.HasSharedIntrinsicBaseline)
+            {
+                inlineDeleted = ((IPropertyDescriptorStore)SharedIntrinsicRuntimeStore)
+                    .Delete(target, key);
+            }
+            else
+            {
+                inlineDeleted = DeleteInlineWithMirroring(jsObject, key);
+            }
+
+            NotifyCanonicalIndexMutation(GetLookupStore(target), key);
+            return inlineDeleted;
+        }
+
         var store = CurrentStore;
         var deleted = store.Delete(target, key);
         NotifyCanonicalIndexMutation(store, key);
@@ -419,9 +512,178 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
 
     internal static void Clear(object target)
     {
-        CurrentStore.Clear(target);
+        ArgumentNullException.ThrowIfNull(target);
+        if (target is JsObject jsObject)
+        {
+            if (jsObject.HasSharedIntrinsicBaseline)
+            {
+                ((IPropertyDescriptorStore)SharedIntrinsicRuntimeStore).Clear(target);
+            }
+            else
+            {
+                jsObject.Clear();
+            }
+        }
+        else
+        {
+            CurrentStore.Clear(target);
+        }
+
         Array.NotifyPrototypeMutation();
     }
+
+    internal static bool HasExternalDescriptorStateForTests(object target)
+    {
+        ArgumentNullException.ThrowIfNull(target);
+        if (_intrinsicStore.HasSlot(target))
+        {
+            return true;
+        }
+
+        if (_currentRuntimeStore.Value is PropertyDescriptorStore runtimeStore
+            && runtimeStore._overrideSlots.TryGetValue(target, out _))
+        {
+            return true;
+        }
+
+        return _defaultRuntimeStore.Value is { } defaultRuntimeStore
+            && defaultRuntimeStore._overrideSlots.TryGetValue(target, out _);
+    }
+
+    private static void DefineInlineWithMirroring(
+        JsObject target,
+        string key,
+        JsPropertyDescriptor descriptor,
+        bool isIntrinsicBaseline)
+    {
+        DefineInlineWithoutMirroring(target, key, descriptor, isIntrinsicBaseline);
+
+        if (TryGetMirroredRawClassPrototype(target, TryGetOwnForMirroring, out var mirroredTarget))
+        {
+            DefineWithoutMirroring(mirroredTarget, key, descriptor, isIntrinsicBaseline);
+        }
+    }
+
+    private static void DefineWithoutMirroring(
+        object target,
+        string key,
+        JsPropertyDescriptor descriptor,
+        bool isIntrinsicBaseline)
+    {
+        if (target is JsObject jsObject)
+        {
+            if (isIntrinsicBaseline)
+            {
+                DefineInlineWithoutMirroring(jsObject, key, descriptor, isIntrinsicBaseline: true);
+            }
+            else if (jsObject.HasSharedIntrinsicBaseline)
+            {
+                ((IPropertyDescriptorStore)SharedIntrinsicRuntimeStore)
+                    .DefineOrUpdate(target, key, descriptor);
+            }
+            else
+            {
+                DefineInlineWithoutMirroring(jsObject, key, descriptor, isIntrinsicBaseline: false);
+            }
+
+            return;
+        }
+
+        CurrentStore.DefineOrUpdate(target, key, descriptor);
+    }
+
+    private static void DefineInlineWithoutMirroring(
+        JsObject target,
+        string key,
+        JsPropertyDescriptor descriptor,
+        bool isIntrinsicBaseline)
+    {
+        if (target.UsesInlineExoticDescriptorStorage(key))
+        {
+            target.DefineInlineExoticOwnDescriptor(key, descriptor);
+        }
+        else
+        {
+            target.DefineInlineOwnDescriptor(key, descriptor);
+        }
+
+        if (isIntrinsicBaseline)
+        {
+            target.MarkSharedIntrinsicBaseline();
+        }
+    }
+
+    private static bool DeleteInlineWithMirroring(JsObject target, string key)
+    {
+        var deleted = DeleteInlineWithoutMirroring(target, key);
+        if (deleted
+            && TryGetMirroredRawClassPrototype(target, TryGetOwnForMirroring, out var mirroredTarget))
+        {
+            if (mirroredTarget is JsObject mirroredJsObject
+                && !mirroredJsObject.HasSharedIntrinsicBaseline)
+            {
+                _ = DeleteInlineWithoutMirroring(mirroredJsObject, key);
+            }
+            else
+            {
+                _ = mirroredTarget is JsObject { HasSharedIntrinsicBaseline: true }
+                    ? ((IPropertyDescriptorStore)SharedIntrinsicRuntimeStore)
+                        .Delete(mirroredTarget, key)
+                    : CurrentStore.Delete(mirroredTarget, key);
+            }
+        }
+
+        return deleted;
+    }
+
+    private static bool DeleteInlineWithoutMirroring(JsObject target, string key)
+        => target.UsesInlineExoticDescriptorStorage(key)
+            ? target.DeleteInlineExoticOwnDescriptor(key)
+            : target.DeleteInlineOwnDescriptor(key);
+
+    private static bool TryGetOwnForMirroring(
+        object target,
+        string key,
+        out JsPropertyDescriptor descriptor)
+        => GetOwnLookupCore(target, key, out descriptor) == PropertyDescriptorLookup.Found;
+
+    private static IEnumerable<string> GetInlineKeys(JsObject target)
+        => target.HasInlineExoticDescriptors
+            ? target.GetInlineOwnDescriptorKeys()
+                .Concat(target.GetInlineExoticDescriptorKeys())
+                .ToArray()
+            : target.GetInlineOwnDescriptorKeys();
+
+    private static bool TryGetIntrinsicBaseline(
+        object target,
+        string key,
+        out JsPropertyDescriptor descriptor)
+    {
+        if (target is JsObject jsObject)
+        {
+            if (jsObject.HasSharedIntrinsicBaseline
+                && (jsObject.GetInlineOwnDescriptor(key, out descriptor)
+                    || jsObject.GetInlineExoticOwnDescriptor(key, out descriptor)))
+            {
+                return true;
+            }
+
+            descriptor = default;
+            return false;
+        }
+
+        return _intrinsicStore.TryGetOwn(target, key, out descriptor);
+    }
+
+    private static bool HasIntrinsicBaseline(object target)
+        => target is JsObject jsObject
+            ? jsObject.HasSharedIntrinsicBaseline && jsObject.HasInlineDescriptors
+            : _intrinsicStore.HasAny(target);
+
+    private static IEnumerable<string> GetIntrinsicBaselineKeys(object target)
+        => target is JsObject jsObject && jsObject.HasSharedIntrinsicBaseline
+            ? GetInlineKeys(jsObject)
+            : _intrinsicStore.GetOwnKeys(target);
 
     private static bool HasCanonicalIndexOverrides(IPropertyDescriptorStore? store)
         => store is PropertyDescriptorStore runtimeStore
@@ -463,7 +725,7 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
             return true;
         }
 
-        return _intrinsicStore.TryGetOwn(target, key, out descriptor);
+        return TryGetIntrinsicBaseline(target, key, out descriptor);
     }
 
     bool IPropertyDescriptorStore.HasAny(object target)
@@ -474,11 +736,11 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
         {
             // No overrides for this target: intrinsic descriptors decide the answer
             // without materializing the ordered key list.
-            return _intrinsicStore.HasAny(target);
+            return HasIntrinsicBaseline(target);
         }
 
         var snapshot = slot.Read();
-        foreach (var key in _intrinsicStore.GetOwnKeys(target))
+        foreach (var key in GetIntrinsicBaselineKeys(target))
         {
             if (!IsIntrinsicKeySuppressedByOverride(snapshot, key))
             {
@@ -546,6 +808,18 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
         => _intrinsicInitializationDepth.Value > 0
             ? _intrinsicStore
             : _currentRuntimeStore.Value ?? _intrinsicStore;
+
+    private static PropertyDescriptorStore SharedIntrinsicRuntimeStore
+        => _currentRuntimeStore.Value as PropertyDescriptorStore
+            ?? (_defaultRuntimeStore.Value ??= new PropertyDescriptorStore());
+
+    private static IPropertyDescriptorStore GetLookupStore(object target)
+        => !IsIntrinsicInitialization
+            && target is JsObject { HasSharedIntrinsicBaseline: true }
+                ? (IPropertyDescriptorStore?)_currentRuntimeStore.Value
+                    ?? (IPropertyDescriptorStore?)_defaultRuntimeStore.Value
+                    ?? _intrinsicStore
+                : CurrentStore;
 
     private sealed class IntrinsicInitializationScope : IDisposable
     {
@@ -622,7 +896,7 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
             Function.ClearDeletedMetadataProperty(del, key);
         }
 
-        var hasIntrinsic = _intrinsicStore.TryGetOwn(target, key, out _);
+        var hasIntrinsic = TryGetIntrinsicBaseline(target, key, out _);
         var slot = _overrideSlots.GetOrCreateValue(target);
 
         lock (slot.WriteLock)
@@ -660,7 +934,7 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
         // Delete tombstones are only visible through the descriptor store.
         MarkJsObjectNonDataDescriptors(target);
 
-        var hasIntrinsic = _intrinsicStore.TryGetOwn(target, key, out _);
+        var hasIntrinsic = TryGetIntrinsicBaseline(target, key, out _);
         var slot = _overrideSlots.GetOrCreateValue(target);
 
         lock (slot.WriteLock)
@@ -695,7 +969,7 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
             ? slot.Read()
             : OverrideSnapshot.Empty;
 
-        foreach (var key in _intrinsicStore.GetOwnKeys(target))
+        foreach (var key in GetIntrinsicBaselineKeys(target))
         {
             if (!IsIntrinsicKeySuppressedByOverride(snapshot, key) && seen.Add(key))
             {

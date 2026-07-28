@@ -28,7 +28,7 @@ public class JsShapeStorageBenchmarks
     private const string MissingPropertyName = "missing";
     private const string AppendedPropertyName = "appended";
 
-    [Params(1, 2, 4, 8, 16)]
+    [Params(0, 1, 2, 4, 8, 16)]
     public int PropertyCount { get; set; }
 
     [GlobalSetup]
@@ -37,7 +37,9 @@ public class JsShapeStorageBenchmarks
         _propertyNames = Enumerable.Range(0, PropertyCount)
             .Select(index => $"p{index}")
             .ToArray();
-        _lastPropertyName = _propertyNames[^1];
+        _lastPropertyName = _propertyNames.Length == 0
+            ? MissingPropertyName
+            : _propertyNames[^1];
         _shape = CreateShape(_propertyNames);
         _dictionaryLookup = CreateDictionaryLookup(_propertyNames);
         _frozenLookup = CreateFrozenLookup(_propertyNames);
