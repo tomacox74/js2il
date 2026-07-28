@@ -3343,6 +3343,12 @@ namespace JavaScriptRuntime
                 return TryGetOwnPropertyDescriptor(target, name, out _);
             }
 
+            if (target is JsObject defaultDataObject
+                && !defaultDataObject.HasNonDataDescriptors)
+            {
+                return defaultDataObject.HasOwnPropertyValue(name);
+            }
+
             if (PropertyDescriptorStore.IsDeleted(target, name))
             {
                 return false;
@@ -5746,6 +5752,23 @@ namespace JavaScriptRuntime
                 }
 
                 throw new TypeError($"Cannot add property '{name}', object is not extensible");
+            }
+
+            if (hasOwn
+                && obj is JsObject defaultDataObject
+                && !defaultDataObject.HasNonDataDescriptors)
+            {
+                if (defaultDataObject.SetOwnPropertyValue(name, value))
+                {
+                    return value;
+                }
+
+                if (!throwOnError)
+                {
+                    return value;
+                }
+
+                throw new TypeError($"Cannot assign to property '{name}' of object");
             }
 
             // Descriptor-defined own property handling (accessors + writable enforcement)

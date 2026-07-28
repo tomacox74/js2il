@@ -136,6 +136,93 @@ public sealed class RuntimeJsObjectInheritanceTests
     }
 
     [Fact]
+    public void Array_NamedPropertiesAreInlineWhileIndicesAndLengthUseExoticState()
+    {
+        var runtime = RuntimeServices.BuildServiceProvider();
+        try
+        {
+            GlobalThis.ServiceProvider = runtime;
+            var array = new JavaScriptRuntime.Array(new object?[] { 1d, 2d });
+
+            ObjectRuntime.SetProperty(array, "named", 3d);
+            Assert.False(array.HasInlineDescriptorState);
+            Assert.Contains("named", array.GetOwnPropertyNames());
+
+            Assert.True(array.DefineOwnProperty("named", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Value = 4d,
+                Writable = false,
+                Enumerable = false,
+                Configurable = true
+            }));
+            Assert.True(array.GetInlineOwnDescriptor("named", out var namedDescriptor));
+            Assert.False(namedDescriptor.Writable);
+            Assert.False(namedDescriptor.Enumerable);
+            Assert.False(array.GetInlineExoticOwnDescriptor("named", out _));
+
+            Assert.True(array.DefineOwnProperty("0", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Accessor,
+                Get = (Func<object[], object?[]?, object?>)(static (_, _) => "index"),
+                Enumerable = true,
+                Configurable = true
+            }));
+            Assert.True(array.DefineOwnProperty("length", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Value = 2d,
+                Writable = false,
+                Enumerable = false,
+                Configurable = false
+            }));
+
+            Assert.True(array.HasInlineDescriptorState);
+            Assert.False(PropertyDescriptorStore.HasExternalDescriptorStateForTests(array));
+            Assert.True(array.GetInlineExoticOwnDescriptor("0", out var indexDescriptor));
+            Assert.Equal(JsPropertyDescriptorKind.Accessor, indexDescriptor.Kind);
+            Assert.True(array.GetInlineExoticOwnDescriptor("length", out var lengthDescriptor));
+            Assert.False(lengthDescriptor.Writable);
+            Assert.Equal("index", ObjectRuntime.GetProperty(array, "0"));
+            Assert.Equal(2d, ObjectRuntime.GetProperty(array, "length"));
+            Assert.DoesNotContain("0", array.GetOwnPropertyNames());
+            Assert.DoesNotContain("length", array.GetOwnPropertyNames());
+        }
+        finally
+        {
+            GlobalThis.ServiceProvider = null;
+        }
+    }
+
+    [Fact]
+    public void Array_DefaultIndexRedefinition_ReturnsToDenseStorage()
+    {
+        var array = new JavaScriptRuntime.Array(new object?[] { 1d });
+        Assert.True(array.DefineOwnProperty("0", new JsPropertyDescriptor
+        {
+            Kind = JsPropertyDescriptorKind.Data,
+            Value = 2d,
+            Writable = false,
+            Enumerable = true,
+            Configurable = true
+        }));
+        Assert.True(array.GetInlineExoticOwnDescriptor("0", out _));
+
+        Assert.True(array.DefineOwnProperty("0", new JsPropertyDescriptor
+        {
+            Kind = JsPropertyDescriptorKind.Data,
+            Value = 3d,
+            Writable = true,
+            Enumerable = true,
+            Configurable = true
+        }));
+
+        Assert.False(array.GetInlineExoticOwnDescriptor("0", out _));
+        Assert.Equal(3d, array[0]);
+        Assert.DoesNotContain("0", array.GetOwnPropertyNames());
+    }
+
+    [Fact]
     public void ValueReads_BypassSyntheticArrayDescriptors()
     {
         var runtime = RuntimeServices.BuildServiceProvider();

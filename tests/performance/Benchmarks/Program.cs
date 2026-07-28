@@ -25,6 +25,11 @@ else
         var summary = BenchmarkRunner.Run<ObjectInternalOperationsBenchmarks>(args: programArgs.Skip(1).ToArray());
         SetExitCodeFromSummaries([summary]);
     }
+    else if (programArgs.Length > 0 && programArgs[0] == "--descriptor-storage")
+    {
+        var summary = BenchmarkRunner.Run<JsObjectDescriptorStorageBenchmarks>(args: programArgs.Skip(1).ToArray());
+        SetExitCodeFromSummaries([summary]);
+    }
     else if (programArgs.Length > 0 && programArgs[0] == "--array-operations")
     {
         var summary = BenchmarkRunner.Run<ArrayInternalOperationsBenchmarks>(args: programArgs.Skip(1).ToArray());
@@ -104,6 +109,7 @@ Console.WriteLine("  dotnet run -c Release --dispatch # Run late-bound dispatch 
 Console.WriteLine("  dotnet run -c Release -- --shape-storage # Run JsShape storage microbenchmarks");
 #endif
 Console.WriteLine("  dotnet run -c Release --object-operations # Run ordinary-object operation microbenchmarks");
+Console.WriteLine("  dotnet run -c Release --descriptor-storage # Run inline descriptor storage microbenchmarks");
 Console.WriteLine("  dotnet run -c Release --array-operations # Run dense-array operation microbenchmarks");
 Console.WriteLine("  dotnet run -c Release --prototype-storage # Run prototype storage allocation microbenchmarks");
 Console.WriteLine("  dotnet run -c Release --phased # Run jroc phased + Jint prepared + Okojo execute comparison");

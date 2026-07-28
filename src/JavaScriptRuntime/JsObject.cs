@@ -1,5 +1,7 @@
 using System;
 using System.Collections;
+using System.Diagnostics;
+using System.Linq;
 
 namespace JavaScriptRuntime;
 
@@ -183,30 +185,256 @@ internal interface IExoticJsObject
 /// </summary>
 public class JsObject : IDictionary<string, object?>
 {
+    [Flags]
+    private enum JsSlotDescriptorFlags : byte
+    {
+        None = 0,
+        HasMetadata = 1,
+        IsAccessor = 2,
+        Writable = 4,
+        Enumerable = 8,
+        Configurable = 16
+    }
+
+    private struct JsAccessorPair
+    {
+        public object? Get;
+        public object? Set;
+    }
+
+    private sealed class JsObjectDescriptorState
+    {
+        public required byte[] Flags;
+        public JsAccessorPair[]? Accessors;
+        public Dictionary<string, JsPropertyDescriptor>? ExoticOverrides;
+        public HashSet<string>? DeletedLazyClassMethods;
+        public bool HasSharedIntrinsicBaseline;
+    }
+
     private JsValue[] _properties = System.Array.Empty<JsValue>();
 
     private JsShape _shape = JsShape.Empty;
+
+    private JsObjectDescriptorState? _descriptorState;
 
     private object? _prototype;
 
     private readonly bool _cacheShapeTransitions;
 
-    // Perf (#1418 follow-up): sticky flag set when this object gains descriptor
-    // state that the plain dictionary cannot answer (accessors, delete tombstones,
-    // non-default attributes from defineProperty/seal/freeze, intrinsic descriptors).
-    // While the flag is clear, every own descriptor is a mirrored default data
-    // descriptor whose value matches the dictionary, so hot read paths can go
-    // straight to the dictionary and skip the descriptor store probe entirely.
+    // Sticky between ordinary mutations, but reset by Clear. While false, every
+    // shape slot is an implicit writable/enumerable/configurable data descriptor.
     private bool _hasNonDataDescriptors;
 
     /// <summary>
     /// True when own reads can no longer be answered from the property dictionary
     /// alone (the object has accessors, deleted tombstones, or attribute-bearing
-    /// descriptors). Sticky: once set it is never cleared.
+    /// descriptors). It remains sticky until the object is cleared.
     /// </summary>
     internal bool HasNonDataDescriptors => _hasNonDataDescriptors;
 
     internal void MarkNonDataDescriptors() => _hasNonDataDescriptors = true;
+
+    internal bool HasInlineDescriptorState => _descriptorState is not null;
+
+    internal bool HasSharedIntrinsicBaseline
+        => _descriptorState?.HasSharedIntrinsicBaseline == true;
+
+    internal bool HasInlineDescriptors
+        => _shape.PropertyCount != 0
+            || _descriptorState?.ExoticOverrides?.Count > 0;
+
+    internal bool HasInlineExoticDescriptors
+        => _descriptorState?.ExoticOverrides?.Count > 0;
+
+    internal virtual bool UsesInlineExoticDescriptorStorage(string key)
+        => false;
+
+    internal void MarkSharedIntrinsicBaseline()
+    {
+        var state = EnsureDescriptorState();
+        state.HasSharedIntrinsicBaseline = true;
+        MarkNonDataDescriptors();
+        AssertInlineInvariants();
+    }
+
+    internal bool GetInlineOwnDescriptor(string key, out JsPropertyDescriptor descriptor)
+    {
+        var slot = _shape.GetSlot(key);
+        if (slot < 0)
+        {
+            descriptor = default;
+            return false;
+        }
+
+        var flags = _descriptorState is null
+            ? JsSlotDescriptorFlags.None
+            : (JsSlotDescriptorFlags)_descriptorState.Flags[slot];
+        if (flags == JsSlotDescriptorFlags.None)
+        {
+            descriptor = CreateDefaultDataDescriptor(_properties[slot]);
+            return true;
+        }
+
+        if ((flags & JsSlotDescriptorFlags.IsAccessor) != 0)
+        {
+            Debug.Assert(_descriptorState?.Accessors is not null);
+            var accessor = _descriptorState!.Accessors![slot];
+            descriptor = new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Accessor,
+                Get = accessor.Get,
+                Set = accessor.Set,
+                Enumerable = (flags & JsSlotDescriptorFlags.Enumerable) != 0,
+                Configurable = (flags & JsSlotDescriptorFlags.Configurable) != 0
+            };
+            return true;
+        }
+
+        descriptor = new JsPropertyDescriptor
+        {
+            Kind = JsPropertyDescriptorKind.Data,
+            Value = _properties[slot].ToObject(),
+            Writable = (flags & JsSlotDescriptorFlags.Writable) != 0,
+            Enumerable = (flags & JsSlotDescriptorFlags.Enumerable) != 0,
+            Configurable = (flags & JsSlotDescriptorFlags.Configurable) != 0
+        };
+        return true;
+    }
+
+    internal void DefineInlineOwnDescriptor(string key, JsPropertyDescriptor descriptor)
+    {
+        var slot = EnsurePropertySlot(key);
+        if (descriptor.Kind == JsPropertyDescriptorKind.Data)
+        {
+            _properties[slot] = JsValue.FromObject(descriptor.Value);
+            if (IsDefaultDataDescriptor(descriptor))
+            {
+                ClearSlotMetadata(slot);
+                AssertInlineInvariants();
+                return;
+            }
+
+            var state = EnsureDescriptorState();
+            state.Flags[slot] = (byte)(
+                JsSlotDescriptorFlags.HasMetadata
+                | (descriptor.Writable ? JsSlotDescriptorFlags.Writable : 0)
+                | (descriptor.Enumerable ? JsSlotDescriptorFlags.Enumerable : 0)
+                | (descriptor.Configurable ? JsSlotDescriptorFlags.Configurable : 0));
+            if (state.Accessors is not null)
+            {
+                state.Accessors[slot] = default;
+            }
+        }
+        else
+        {
+            _properties[slot] = JsValue.Undefined;
+            var state = EnsureDescriptorState();
+            state.Accessors ??= new JsAccessorPair[_shape.PropertyCount];
+            state.Flags[slot] = (byte)(
+                JsSlotDescriptorFlags.HasMetadata
+                | JsSlotDescriptorFlags.IsAccessor
+                | (descriptor.Enumerable ? JsSlotDescriptorFlags.Enumerable : 0)
+                | (descriptor.Configurable ? JsSlotDescriptorFlags.Configurable : 0));
+            state.Accessors[slot] = new JsAccessorPair
+            {
+                Get = descriptor.Get,
+                Set = descriptor.Set
+            };
+        }
+
+        MarkNonDataDescriptors();
+        AssertInlineInvariants();
+    }
+
+    internal bool DeleteInlineOwnDescriptor(string key)
+    {
+        var slot = _shape.GetSlot(key);
+        if (slot < 0)
+        {
+            return false;
+        }
+
+        var newProperties = new JsValue[_properties.Length - 1];
+        CopyAroundRemovedSlot(_properties, newProperties, slot);
+
+        if (_descriptorState is { } state)
+        {
+            var newFlags = new byte[state.Flags.Length - 1];
+            CopyAroundRemovedSlot(state.Flags, newFlags, slot);
+            state.Flags = newFlags;
+
+            if (state.Accessors is not null)
+            {
+                var newAccessors = new JsAccessorPair[state.Accessors.Length - 1];
+                CopyAroundRemovedSlot(state.Accessors, newAccessors, slot);
+                state.Accessors = newAccessors;
+            }
+        }
+
+        _shape = _shape.TransitionAway(key);
+        _properties = newProperties;
+        AssertInlineInvariants();
+        return true;
+    }
+
+    internal IEnumerable<string> GetInlineOwnDescriptorKeys()
+        => _shape.EnumeratePropertyNamesSnapshot();
+
+    internal IEnumerable<string> GetInlineExoticDescriptorKeys()
+        => _descriptorState?.ExoticOverrides?.Keys.ToArray()
+            ?? System.Array.Empty<string>();
+
+    internal bool GetInlineExoticOwnDescriptor(
+        string key,
+        out JsPropertyDescriptor descriptor)
+    {
+        if (_descriptorState?.ExoticOverrides is { } overrides
+            && overrides.TryGetValue(key, out descriptor))
+        {
+            return true;
+        }
+
+        descriptor = default;
+        return false;
+    }
+
+    internal void DefineInlineExoticOwnDescriptor(
+        string key,
+        JsPropertyDescriptor descriptor)
+    {
+        var state = EnsureDescriptorState();
+        state.ExoticOverrides ??= new Dictionary<string, JsPropertyDescriptor>(StringComparer.Ordinal);
+        state.ExoticOverrides[key] = descriptor;
+        MarkNonDataDescriptors();
+        AssertInlineInvariants();
+    }
+
+    internal bool DeleteInlineExoticOwnDescriptor(string key)
+    {
+        var deleted = _descriptorState?.ExoticOverrides?.Remove(key) == true;
+        AssertInlineInvariants();
+        return deleted;
+    }
+
+    internal bool IsInlineLazyClassMethodDeleted(string key)
+        => _descriptorState?.DeletedLazyClassMethods?.Contains(key) == true;
+
+    internal void MarkInlineLazyClassMethodDeleted(string key)
+    {
+        var state = EnsureDescriptorState();
+        state.DeletedLazyClassMethods ??= new HashSet<string>(StringComparer.Ordinal);
+        state.DeletedLazyClassMethods.Add(key);
+        MarkNonDataDescriptors();
+        AssertInlineInvariants();
+    }
+
+    internal void ResetInlineDescriptorState()
+    {
+        Debug.Assert(!HasSharedIntrinsicBaseline);
+        _descriptorState = null;
+        _hasNonDataDescriptors = false;
+        AssertInlineInvariants();
+    }
 
     internal bool TryGetInlinePrototype(out object? prototype)
         => (prototype = _prototype) is not null;
@@ -233,8 +461,8 @@ public class JsObject : IDictionary<string, object?>
     // -------------------------------------------------------------------------
 
     /// <summary>
-    /// Looks up an own descriptor without cloning it. The returned descriptor is
-    /// shared descriptor-store state and must be cloned before mutation.
+    /// Looks up an own descriptor. Descriptors are value types, so callers receive
+    /// an independent copy synthesized from inline storage or a runtime overlay.
     /// </summary>
     /// <remarks>
     /// Exotic subclasses must preserve descriptor-store tombstones and overrides
@@ -295,16 +523,6 @@ public class JsObject : IDictionary<string, object?>
     /// </summary>
     internal virtual bool DefineOwnProperty(string key, JsPropertyDescriptor descriptor)
     {
-        if (!PropertyDescriptorStore.HasIntrinsicProperties(this))
-        {
-            if (!SetOwnPropertyValue(
-                key,
-                descriptor.Kind == JsPropertyDescriptorKind.Accessor ? null : descriptor.Value))
-            {
-                return false;
-            }
-        }
-
         PropertyDescriptorStore.DefineOrUpdate(this, key, descriptor);
         return true;
     }
@@ -319,11 +537,6 @@ public class JsObject : IDictionary<string, object?>
     /// <summary>Deletes an own property from backing and descriptor storage.</summary>
     internal virtual bool DeleteOwnProperty(string key)
     {
-        if (!PropertyDescriptorStore.HasIntrinsicProperties(this))
-        {
-            RemoveBoxedValue(key);
-        }
-
         PropertyDescriptorStore.Delete(this, key);
         return true;
     }
@@ -366,31 +579,19 @@ public class JsObject : IDictionary<string, object?>
 
     /// <summary>Stores a numeric property without boxing the double value.</summary>
     public virtual void SetNumber(string key, double value)
-    {
-        SetValue(key, JsValue.FromNumber(value));
-        DefineDataDescriptor(key, value);
-    }
+        => SetValue(key, JsValue.FromNumber(value));
 
     /// <summary>Stores a boolean property without boxing the bool value.</summary>
     public virtual void SetBoolean(string key, bool value)
-    {
-        SetValue(key, JsValue.FromBoolean(value));
-        DefineDataDescriptor(key, value);
-    }
+        => SetValue(key, JsValue.FromBoolean(value));
 
     /// <summary>Stores a string property.</summary>
     public virtual void SetString(string key, string? value)
-    {
-        SetValue(key, JsValue.FromString(value));
-        DefineDataDescriptor(key, value);
-    }
+        => SetValue(key, JsValue.FromString(value));
 
     /// <summary>Stores an arbitrary object value.</summary>
     public virtual void SetValue(string key, object? value)
-    {
-        SetValue(key, JsValue.FromObject(value));
-        DefineDataDescriptor(key, value);
-    }
+        => SetValue(key, JsValue.FromObject(value));
 
     /// <summary>Stores an arbitrary object value (alias used by newer IL emit paths).</summary>
     public void SetObject(string key, object? value)
@@ -421,16 +622,15 @@ public class JsObject : IDictionary<string, object?>
             return true;
         }
 
-        if (!isExotic
-            && !HasNonDataDescriptors
-            && TryGetStoredBoxedValue(key, out value))
+        if (!HasNonDataDescriptors
+            && TryGetOwnPropertyValue(key, out value))
         {
             return true;
         }
 
-        // Value reads need only stored overrides. Calling the semantic descriptor
-        // hook here would force exotic objects to materialize synthetic descriptors
-        // for values that already live in specialized backing storage.
+        // Value reads need only inline metadata and stored overlays. Calling the
+        // semantic descriptor hook here would force exotic objects to materialize
+        // synthetic descriptors for specialized backing storage.
         var lookup = PropertyDescriptorStore.GetOwnLookupCore(this, key, out var descriptor);
         if (lookup == PropertyDescriptorLookup.Deleted)
         {
@@ -564,23 +764,12 @@ public class JsObject : IDictionary<string, object?>
 
     internal bool RemoveBoxedValue(string key)
     {
-        var slot = _shape.GetSlot(key);
-        if (slot == -1)
-            return false;
-
-        _shape = _shape.TransitionAway(key);
-        var newProperties = new JsValue[_properties.Length - 1];
-        if (slot > 0)
+        if (HasSharedIntrinsicBaseline)
         {
-            System.Array.Copy(_properties, 0, newProperties, 0, slot);
+            return PropertyDescriptorStore.Delete(this, key);
         }
-        if (slot < newProperties.Length)
-        {
-            System.Array.Copy(_properties, slot + 1, newProperties, slot, newProperties.Length - slot);
-        }
-        _properties = newProperties;
 
-        return true;
+        return DeleteInlineOwnDescriptor(key);
     }
 
     public virtual bool TryGetValue(string key, out object? value)
@@ -601,8 +790,16 @@ public class JsObject : IDictionary<string, object?>
 
     public virtual void Clear()
     {
+        if (HasSharedIntrinsicBaseline)
+        {
+            PropertyDescriptorStore.Clear(this);
+            return;
+        }
+
         _properties = System.Array.Empty<JsValue>();
         _shape = JsShape.Empty;
+        ResetInlineDescriptorState();
+        AssertInlineInvariants();
     }
 
     public virtual bool Contains(KeyValuePair<string, object?> item)
@@ -654,20 +851,19 @@ public class JsObject : IDictionary<string, object?>
     // -------------------------------------------------------------------------
     private void SetValue(string key, JsValue value)
     {
-        var slot = _shape.GetSlot(key);
-        if (slot == -1)
+        if (HasSharedIntrinsicBaseline && !PropertyDescriptorStore.IsIntrinsicInitialization)
         {
-            _shape = _cacheShapeTransitions
-                ? _shape.TransitionTo(key)
-                : _shape.TransitionToUncached(key);
-            slot = _shape.GetSlot(key);
-
-            var newProperties = new JsValue[_properties!.Length + 1];
-            System.Array.Copy(_properties, newProperties, _properties.Length);
-            _properties = newProperties;
+            PropertyDescriptorStore.DefineOrUpdate(
+                this,
+                key,
+                CreateDefaultDataDescriptor(value));
+            return;
         }
 
+        var slot = EnsurePropertySlot(key);
         _properties[slot] = value;
+        ClearSlotMetadata(slot);
+        AssertInlineInvariants();
     }
 
     private JsValue GetValue(string key)
@@ -690,13 +886,114 @@ public class JsObject : IDictionary<string, object?>
         return true;
     }
 
-    private void DefineDataDescriptor(string key, object? value)
-        => PropertyDescriptorStore.DefineOrUpdate(this, key, new JsPropertyDescriptor
+    private int EnsurePropertySlot(string key)
+    {
+        var slot = _shape.GetSlot(key);
+        if (slot >= 0)
+        {
+            return slot;
+        }
+
+        _shape = _cacheShapeTransitions
+            ? _shape.TransitionTo(key)
+            : _shape.TransitionToUncached(key);
+        slot = _shape.GetSlot(key);
+
+        var newProperties = new JsValue[_properties.Length + 1];
+        System.Array.Copy(_properties, newProperties, _properties.Length);
+        _properties = newProperties;
+
+        if (_descriptorState is { } state)
+        {
+            System.Array.Resize(ref state.Flags, _shape.PropertyCount);
+            if (state.Accessors is not null)
+            {
+                System.Array.Resize(ref state.Accessors, _shape.PropertyCount);
+            }
+        }
+
+        AssertInlineInvariants();
+        return slot;
+    }
+
+    private JsObjectDescriptorState EnsureDescriptorState()
+        => _descriptorState ??= new JsObjectDescriptorState
+        {
+            Flags = new byte[_shape.PropertyCount]
+        };
+
+    private void ClearSlotMetadata(int slot)
+    {
+        if (_descriptorState is not { } state)
+        {
+            return;
+        }
+
+        state.Flags[slot] = 0;
+        if (state.Accessors is not null)
+        {
+            state.Accessors[slot] = default;
+        }
+    }
+
+    private static bool IsDefaultDataDescriptor(JsPropertyDescriptor descriptor)
+        => descriptor.Kind == JsPropertyDescriptorKind.Data
+            && descriptor.Writable
+            && descriptor.Enumerable
+            && descriptor.Configurable;
+
+    private static JsPropertyDescriptor CreateDefaultDataDescriptor(JsValue value)
+        => new()
         {
             Kind = JsPropertyDescriptorKind.Data,
-            Value = value,
+            Value = value.ToObject(),
             Writable = true,
             Enumerable = true,
             Configurable = true
-        });
+        };
+
+    private static void CopyAroundRemovedSlot<T>(T[] source, T[] destination, int slot)
+    {
+        if (slot > 0)
+        {
+            System.Array.Copy(source, 0, destination, 0, slot);
+        }
+
+        if (slot < destination.Length)
+        {
+            System.Array.Copy(source, slot + 1, destination, slot, destination.Length - slot);
+        }
+    }
+
+    [Conditional("DEBUG")]
+    private void AssertInlineInvariants()
+    {
+        Debug.Assert(_properties.Length == _shape.PropertyCount);
+        if (_descriptorState is not { } state)
+        {
+            return;
+        }
+
+        Debug.Assert(state.Flags.Length == _shape.PropertyCount);
+        Debug.Assert(state.Accessors is null || state.Accessors.Length == _shape.PropertyCount);
+        for (var slot = 0; slot < state.Flags.Length; slot++)
+        {
+            var flags = (JsSlotDescriptorFlags)state.Flags[slot];
+            Debug.Assert(
+                flags == JsSlotDescriptorFlags.None
+                || (flags & JsSlotDescriptorFlags.HasMetadata) != 0);
+            Debug.Assert(
+                (flags & JsSlotDescriptorFlags.IsAccessor) == 0
+                || state.Accessors is not null);
+        }
+
+        if (state.ExoticOverrides is not null)
+        {
+            foreach (var key in state.ExoticOverrides.Keys)
+            {
+                Debug.Assert(UsesInlineExoticDescriptorStorage(key));
+                Debug.Assert(_shape.GetSlot(key) < 0);
+            }
+        }
+    }
 }

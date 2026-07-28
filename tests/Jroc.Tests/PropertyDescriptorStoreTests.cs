@@ -16,6 +16,265 @@ public class PropertyDescriptorStoreTests
             System.Runtime.CompilerServices.Unsafe.SizeOf<JsPropertyDescriptor>());
 
     [Fact]
+    public void OrdinaryDefaultDataProperties_UseOnlyShapeAndValueStorage()
+    {
+        var target = new JsObject();
+
+        target.SetNumber("number", 42d);
+        target.SetBoolean("boolean", true);
+        target.SetString("string", "value");
+        target.SetObject("object", new object());
+        ObjectRuntime.DefineObjectLiteralDataProperty(target, "literal", 7d);
+        ObjectRuntime.SetProperty(target, "assignment", 8d);
+
+        Assert.False(target.HasInlineDescriptorState);
+        Assert.False(target.HasNonDataDescriptors);
+        Assert.False(PropertyDescriptorStore.HasExternalDescriptorStateForTests(target));
+
+        Assert.True(PropertyDescriptorStore.TryGetOwn(target, "number", out var descriptor));
+        Assert.Equal(42d, descriptor.Value);
+        Assert.True(descriptor.Writable);
+        Assert.True(descriptor.Enumerable);
+        Assert.True(descriptor.Configurable);
+    }
+
+    [Fact]
+    public void OrdinaryCustomDataAndAccessorDescriptors_UseLazyInlineState()
+    {
+        var target = new JsObject();
+        Func<object[], object?[]?, object?> getter = static (_, _) => "accessor";
+        Action<object?> setter = static _ => { };
+
+        target.DefineOwnProperty(
+            "restricted",
+            DataDescriptor(1d, enumerable: false, writable: false, configurable: true));
+        target.DefineOwnProperty("accessor", new JsPropertyDescriptor
+        {
+            Kind = JsPropertyDescriptorKind.Accessor,
+            Get = getter,
+            Set = setter,
+            Enumerable = true,
+            Configurable = true
+        });
+
+        Assert.True(target.HasInlineDescriptorState);
+        Assert.True(target.HasNonDataDescriptors);
+        Assert.False(PropertyDescriptorStore.HasExternalDescriptorStateForTests(target));
+
+        Assert.True(PropertyDescriptorStore.TryGetOwn(target, "restricted", out var data));
+        Assert.Equal(1d, data.Value);
+        Assert.False(data.Writable);
+        Assert.False(data.Enumerable);
+
+        Assert.True(PropertyDescriptorStore.TryGetOwn(target, "accessor", out var accessor));
+        Assert.Same(getter, accessor.Get);
+        Assert.Same(setter, accessor.Set);
+        Assert.Equal("accessor", ObjectRuntime.GetProperty(target, "accessor"));
+    }
+
+    [Fact]
+    public void OrdinaryDescriptorTransitions_KeepOneCanonicalValueSlot()
+    {
+        var target = new JsObject();
+        target.DefineOwnProperty(
+            "value",
+            DataDescriptor("data", writable: false, configurable: true));
+
+        Func<object[], object?[]?, object?> getter = static (_, _) => "getter";
+        target.DefineOwnProperty("value", new JsPropertyDescriptor
+        {
+            Kind = JsPropertyDescriptorKind.Accessor,
+            Get = getter,
+            Enumerable = true,
+            Configurable = true
+        });
+        Assert.Equal("getter", ObjectRuntime.GetProperty(target, "value"));
+
+        target.DefineOwnProperty("value", DataDescriptor("restored"));
+
+        Assert.Equal("restored", ObjectRuntime.GetProperty(target, "value"));
+        Assert.True(target.TryGetBoxedValue("value", out var storedValue));
+        Assert.Equal("restored", storedValue);
+        Assert.True(PropertyDescriptorStore.TryGetOwn(target, "value", out var descriptor));
+        Assert.Equal(JsPropertyDescriptorKind.Data, descriptor.Kind);
+        Assert.True(descriptor.Writable);
+        Assert.True(descriptor.Enumerable);
+        Assert.True(descriptor.Configurable);
+        Assert.False(PropertyDescriptorStore.HasExternalDescriptorStateForTests(target));
+    }
+
+    [Theory]
+    [InlineData("first")]
+    [InlineData("middle")]
+    [InlineData("last")]
+    public void OrdinaryDescriptorDeletion_CompactsShapeValuesAndMetadata(string deletedKey)
+    {
+        var target = new JsObject();
+        target.DefineOwnProperty(
+            "first",
+            DataDescriptor("first-value", enumerable: false, configurable: true));
+        target.SetString("middle", "middle-value");
+        target.DefineOwnProperty("last", new JsPropertyDescriptor
+        {
+            Kind = JsPropertyDescriptorKind.Accessor,
+            Get = (Func<object[], object?[]?, object?>)(static (_, _) => "last-value"),
+            Enumerable = true,
+            Configurable = true
+        });
+
+        Assert.True(ObjectRuntime.DeleteProperty(target, deletedKey));
+        Assert.False(PropertyDescriptorStore.TryGetOwn(target, deletedKey, out _));
+
+        if (deletedKey != "first")
+        {
+            Assert.True(PropertyDescriptorStore.TryGetOwn(target, "first", out var first));
+            Assert.Equal("first-value", first.Value);
+            Assert.False(first.Enumerable);
+        }
+
+        if (deletedKey != "middle")
+        {
+            Assert.Equal("middle-value", ObjectRuntime.GetProperty(target, "middle"));
+        }
+
+        if (deletedKey != "last")
+        {
+            Assert.Equal("last-value", ObjectRuntime.GetProperty(target, "last"));
+        }
+    }
+
+    [Fact]
+    public void OrdinaryDescriptorState_GrowsAndClearsWithShapeStorage()
+    {
+        var target = new JsObject();
+        target.DefineOwnProperty(
+            "custom",
+            DataDescriptor(1d, enumerable: false, configurable: true));
+        target.SetNumber("defaultA", 2d);
+        target.SetNumber("defaultB", 3d);
+        target.DefineOwnProperty("accessor", new JsPropertyDescriptor
+        {
+            Kind = JsPropertyDescriptorKind.Accessor,
+            Get = (Func<object[], object?[]?, object?>)(static (_, _) => 4d),
+            Enumerable = true,
+            Configurable = true
+        });
+
+        Assert.Equal(4, target.Count);
+        Assert.Equal(3d, ObjectRuntime.GetProperty(target, "defaultB"));
+        Assert.Equal(4d, ObjectRuntime.GetProperty(target, "accessor"));
+
+        target.Clear();
+
+        Assert.Empty(target);
+        Assert.Empty(target.GetOwnPropertyNames());
+        Assert.False(target.HasInlineDescriptorState);
+        Assert.False(target.HasNonDataDescriptors);
+        Assert.False(PropertyDescriptorStore.HasAny(target));
+
+        target.DefineOwnProperty(
+            "custom",
+            DataDescriptor(5d, enumerable: false, configurable: true));
+        PropertyDescriptorStore.Clear(target);
+
+        Assert.Empty(target);
+        Assert.False(target.HasInlineDescriptorState);
+        Assert.False(PropertyDescriptorStore.HasAny(target));
+    }
+
+    [Fact]
+    public void SharedShape_DoesNotShareDescriptorAttributes()
+    {
+        var first = new JsObject();
+        var second = new JsObject();
+        first.SetNumber("value", 1d);
+        second.SetNumber("value", 2d);
+
+        second.DefineOwnProperty(
+            "value",
+            DataDescriptor(2d, writable: false, configurable: true));
+
+        Assert.True(PropertyDescriptorStore.TryGetOwn(first, "value", out var firstDescriptor));
+        Assert.True(PropertyDescriptorStore.TryGetOwn(second, "value", out var secondDescriptor));
+        Assert.True(firstDescriptor.Writable);
+        Assert.False(secondDescriptor.Writable);
+        Assert.False(first.HasInlineDescriptorState);
+        Assert.True(second.HasInlineDescriptorState);
+    }
+
+    [Fact]
+    public void OrdinaryDeleteAndReAdd_AppendsShapeKeyOrder()
+    {
+        var target = new JsObject();
+        target.SetNumber("first", 1d);
+        target.SetNumber("second", 2d);
+        target.SetNumber("third", 3d);
+
+        Assert.True(ObjectRuntime.DeleteProperty(target, "second"));
+        target.SetNumber("second", 4d);
+
+        Assert.Equal(
+            new[] { "first", "third", "second" },
+            target.GetOwnPropertyKeys());
+    }
+
+    [Fact]
+    public void JsObjectIntrinsicBaseline_IsInlineWhileRuntimeOverrideUsesOverlay()
+    {
+        var target = new JsObject();
+        using (PropertyDescriptorStore.BeginIntrinsicInitialization())
+        {
+            PropertyDescriptorStore.DefineOrUpdate(
+                target,
+                "baseline",
+                DataDescriptor("base", enumerable: false));
+        }
+
+        Assert.True(target.HasSharedIntrinsicBaseline);
+        Assert.True(target.HasInlineDescriptorState);
+        Assert.False(PropertyDescriptorStore.HasExternalDescriptorStateForTests(target));
+
+        var runtime = RuntimeServices.BuildServiceProvider();
+        try
+        {
+            GlobalThis.ServiceProvider = runtime;
+            PropertyDescriptorStore.DefineOrUpdate(target, "baseline", DataDescriptor("override"));
+
+            Assert.True(PropertyDescriptorStore.HasExternalDescriptorStateForTests(target));
+            Assert.True(PropertyDescriptorStore.TryGetOwn(target, "baseline", out var overridden));
+            Assert.Equal("override", overridden.Value);
+        }
+        finally
+        {
+            GlobalThis.ServiceProvider = null;
+        }
+
+        Assert.True(PropertyDescriptorStore.TryGetOwn(target, "baseline", out var baseline));
+        Assert.Equal("base", baseline.Value);
+        Assert.False(baseline.Enumerable);
+    }
+
+    [Fact]
+    public void NonJsObjectTargets_KeepConditionalWeakTableFallback()
+    {
+        var target = new Dictionary<string, object?>();
+        var runtime = RuntimeServices.BuildServiceProvider();
+        try
+        {
+            GlobalThis.ServiceProvider = runtime;
+            PropertyDescriptorStore.DefineOrUpdate(target, "value", DataDescriptor(42d));
+
+            Assert.True(PropertyDescriptorStore.HasExternalDescriptorStateForTests(target));
+            Assert.True(PropertyDescriptorStore.TryGetOwn(target, "value", out var descriptor));
+            Assert.Equal(42d, descriptor.Value);
+        }
+        finally
+        {
+            GlobalThis.ServiceProvider = null;
+        }
+    }
+
+    [Fact]
     public void RuntimeStore_FallsBackToIntrinsicDescriptor_AndKeepsOverrideIsolated()
     {
         var target = new JsObject();
@@ -289,13 +548,17 @@ public class PropertyDescriptorStoreTests
         Assert.Empty(exceptions);
     }
 
-    private static JsPropertyDescriptor DataDescriptor(object? value, bool enumerable = true)
+    private static JsPropertyDescriptor DataDescriptor(
+        object? value,
+        bool enumerable = true,
+        bool writable = true,
+        bool configurable = true)
         => new()
         {
             Kind = JsPropertyDescriptorKind.Data,
             Value = value,
-            Writable = true,
+            Writable = writable,
             Enumerable = enumerable,
-            Configurable = true
+            Configurable = configurable
         };
 }

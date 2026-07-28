@@ -368,11 +368,21 @@ namespace JavaScriptRuntime
                 return target;
             }
 
-            if (target is JsObject jsObject && !PropertyDescriptorStore.HasIntrinsicProperties(target))
+            if (target is JsObject jsObject)
             {
-                setJsObjectValue(jsObject, key, value);
+                if (!PropertyDescriptorStore.HasIntrinsicProperties(target) && enumerable)
+                {
+                    setJsObjectValue(jsObject, key, value);
+                }
+                else if (!jsObject.DefineOwnProperty(key, descriptor))
+                {
+                    throw new TypeError($"Cannot define property: {key}");
+                }
+
+                return target;
             }
-            else if (IsOrdinaryObject(target)
+
+            if (IsOrdinaryObject(target)
                 && !PropertyDescriptorStore.HasIntrinsicProperties(target))
             {
                 TrySetOwnValue(target, key, value);
