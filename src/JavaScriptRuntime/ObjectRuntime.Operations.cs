@@ -4157,11 +4157,6 @@ namespace JavaScriptRuntime
                 return true;
             }
 
-            if (target is JsObject)
-            {
-                return ObjectRuntime.TryGetOwnValue(target, propName, out value);
-            }
-
             if (target is IDictionary<string, object?> dictGeneric)
             {
                 return dictGeneric.TryGetValue(propName, out value);
