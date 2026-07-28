@@ -320,6 +320,8 @@ namespace JavaScriptRuntime
         private static readonly Func<object[], object?[]?, object?> _typedArrayFindLastValue = TypedArrayPrototypeFindLast;
         private static readonly Func<object[], object?[]?, object?> _typedArrayFindLastIndexValue = TypedArrayPrototypeFindLastIndex;
         private static readonly Func<object[], object?[]?, object?> _typedArrayCopyWithinValue = TypedArrayPrototypeCopyWithin;
+        private static readonly Func<object[], object?[]?, object?> _typedArrayReduceRightValue = TypedArrayPrototypeReduceRight;
+        private static readonly Func<object[], object?[]?, object?> _typedArrayToReversedValue = TypedArrayPrototypeToReversed;
 
         // Typed array constructor values - supported and unsupported
         private static readonly Func<object[], object?[], object?> _float64ArrayConstructorValue =
@@ -802,6 +804,8 @@ namespace JavaScriptRuntime
             DefineBuiltinFunctionProperty(_typedArrayPrototypeValue, "copyWithin", _typedArrayCopyWithinValue, 2d);
             DefineBuiltinFunctionProperty(_typedArrayPrototypeValue, "findLast", _typedArrayFindLastValue, 1d);
             DefineBuiltinFunctionProperty(_typedArrayPrototypeValue, "findLastIndex", _typedArrayFindLastIndexValue, 1d);
+            DefineBuiltinFunctionProperty(_typedArrayPrototypeValue, "reduceRight", _typedArrayReduceRightValue, 1d);
+            DefineBuiltinFunctionProperty(_typedArrayPrototypeValue, "toReversed", _typedArrayToReversedValue, 0d);
             ConfigureTypedArrayConstructorValue(_float64ArrayConstructorValue, 8d);
             ConfigureTypedArrayConstructorValue(_float32ArrayConstructorValue, 4d);
             ConfigureTypedArrayConstructorValue(_int32ArrayConstructorValue, 4d);
@@ -900,6 +904,26 @@ namespace JavaScriptRuntime
             }
 
             return typedArray.copyWithin(args);
+        }
+
+        private static object? TypedArrayPrototypeReduceRight(object[] _, object?[]? args)
+        {
+            if (RuntimeServices.GetCurrentThis() is not TypedArrayBase typedArray)
+            {
+                throw new TypeError("TypedArray.prototype.reduceRight called on incompatible receiver");
+            }
+
+            return typedArray.reduceRight(args);
+        }
+
+        private static object? TypedArrayPrototypeToReversed(object[] _, object?[]? __)
+        {
+            if (RuntimeServices.GetCurrentThis() is not TypedArrayBase typedArray)
+            {
+                throw new TypeError("TypedArray.prototype.toReversed called on incompatible receiver");
+            }
+
+            return typedArray.toReversed();
         }
 
         private static object ConstructTypedArray(

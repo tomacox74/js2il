@@ -24,6 +24,16 @@ namespace JavaScriptRuntime
         public static bool defineProperty(object target, object? propertyKey, object? attributes)
             => ObjectRuntime.TryDefineProperty(target, propertyKey, attributes);
 
+        public static bool set(object target, object? propertyKey, object? value)
+        {
+            if (!Proxy.IsObjectLikeValue(target))
+            {
+                throw new TypeError("Reflect.set target must be an object");
+            }
+
+            return ObjectRuntime.ReflectSet(target, propertyKey, value);
+        }
+
         public static object ownKeys(object target)
         {
             if (!Proxy.IsObjectLikeValue(target))

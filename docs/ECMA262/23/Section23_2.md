@@ -4,7 +4,7 @@
 
 [Back to Section23](Section23.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-07-28T03:13:29Z
+> Last generated (UTC): 2026-07-28T04:15:00Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -45,7 +45,7 @@
 | 23.2.3.21 | get %TypedArray%.prototype.length | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-get-%typedarray%.prototype.length) |
 | 23.2.3.22 | %TypedArray%.prototype.map ( callback [ , thisArg ] ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-%typedarray%.prototype.map) |
 | 23.2.3.23 | %TypedArray%.prototype.reduce ( callback [ , initialValue ] ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-%typedarray%.prototype.reduce) |
-| 23.2.3.24 | %TypedArray%.prototype.reduceRight ( callback [ , initialValue ] ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-%typedarray%.prototype.reduceright) |
+| 23.2.3.24 | %TypedArray%.prototype.reduceRight ( callback [ , initialValue ] ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-%typedarray%.prototype.reduceright) |
 | 23.2.3.25 | %TypedArray%.prototype.reverse ( ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-%typedarray%.prototype.reverse) |
 | 23.2.3.26 | %TypedArray%.prototype.set ( source [ , offset ] ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-%typedarray%.prototype.set) |
 | 23.2.3.26.1 | SetTypedArrayFromArrayLike ( target , targetOffset , source ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-settypedarrayfromarraylike) |
@@ -55,7 +55,7 @@
 | 23.2.3.29 | %TypedArray%.prototype.sort ( comparator ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-%typedarray%.prototype.sort) |
 | 23.2.3.30 | %TypedArray%.prototype.subarray ( start , end ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-%typedarray%.prototype.subarray) |
 | 23.2.3.31 | %TypedArray%.prototype.toLocaleString ( [ reserved1 [ , reserved2 ] ] ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-%typedarray%.prototype.tolocalestring) |
-| 23.2.3.32 | %TypedArray%.prototype.toReversed ( ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-%typedarray%.prototype.toreversed) |
+| 23.2.3.32 | %TypedArray%.prototype.toReversed ( ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-%typedarray%.prototype.toreversed) |
 | 23.2.3.33 | %TypedArray%.prototype.toSorted ( comparator ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-%typedarray%.prototype.tosorted) |
 | 23.2.3.34 | %TypedArray%.prototype.toString ( ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-%typedarray%.prototype.tostring) |
 | 23.2.3.35 | %TypedArray%.prototype.values ( ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-%typedarray%.prototype.values) |
@@ -112,7 +112,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Shared %TypedArray% callback and transform methods | Supported with Limitations | [`Float64Array_Callback_Methods.js`](../../../tests/Jroc.Tests/TypedArray/JavaScript/Float64Array_Callback_Methods.js) |  | The supported TypedArray families now share every(), some(), find(), findIndex(), forEach(), map(), filter(), and reduce() with callback invocation and same-type result creation where applicable. reduceRight() and remaining callback-based methods are still unsupported. |
+| Shared %TypedArray% callback and transform methods | Supported with Limitations | [`Float64Array_Callback_Methods.js`](../../../tests/Jroc.Tests/TypedArray/JavaScript/Float64Array_Callback_Methods.js) |  | The supported TypedArray families now share every(), some(), find(), findIndex(), forEach(), map(), filter(), reduce(), and reduceRight() with callback invocation and same-type result creation where applicable. Detached and resizable ArrayBuffer behavior and remaining callback-based methods are still unsupported. |
 | Shared %TypedArray% fill/reverse/join/toString helpers | Supported with Limitations | [`Int32Array_Fill_Reverse_Join_LastIndexOf.js`](../../../tests/Jroc.Tests/TypedArray/JavaScript/Int32Array_Fill_Reverse_Join_LastIndexOf.js) |  | fill(), reverse(), join(), toString(), and toLocaleString() are shared across the supported families and return same-type results/views where applicable. Locale-aware formatting, species interactions, and the remaining prototype metadata surface are still limited. |
 
 ### 23.2.3.1 ([tc39.es](https://tc39.es/ecma262/#sec-%typedarray%.prototype.at))
@@ -139,6 +139,12 @@ Feature-level support tracking with repo test references and optional test262 ev
 |---|---|---|---|---|
 | %TypedArray%.prototype.findLastIndex | Supported with Limitations | [`invoked-as-method.js`](../../../tests/Jroc.Test262.Tests/built-ins/TypedArray/prototype/findLastIndex/JavaScript/invoked-as-method.js)<br>[`length.js`](../../../tests/Jroc.Test262.Tests/built-ins/TypedArray/prototype/findLastIndex/JavaScript/length.js)<br>[`name.js`](../../../tests/Jroc.Test262.Tests/built-ins/TypedArray/prototype/findLastIndex/JavaScript/name.js)<br>[`not-a-constructor.js`](../../../tests/Jroc.Test262.Tests/built-ins/TypedArray/prototype/findLastIndex/JavaScript/not-a-constructor.js)<br>[`prop-desc.js`](../../../tests/Jroc.Test262.Tests/built-ins/TypedArray/prototype/findLastIndex/JavaScript/prop-desc.js) | `test/built-ins/TypedArray/prototype/findLastIndex/invoked-as-method.js`<br>`test/built-ins/TypedArray/prototype/findLastIndex/length.js`<br>`test/built-ins/TypedArray/prototype/findLastIndex/name.js`<br>`test/built-ins/TypedArray/prototype/findLastIndex/not-a-constructor.js`<br>`test/built-ins/TypedArray/prototype/findLastIndex/prop-desc.js` | The supported TypedArray families expose a non-constructible findLastIndex() built-in with standard name, length, and property descriptors, typed receiver validation, callable predicate checks, thisArg forwarding, and reverse-index callback traversal. Detached or resizable ArrayBuffer behavior and unsupported TypedArray families remain outside the covered subset. |
 
+### 23.2.3.24 ([tc39.es](https://tc39.es/ecma262/#sec-%typedarray%.prototype.reduceright))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| %TypedArray%.prototype.reduceRight | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/TypedArray/prototype/reduceRight/ExecutionTests.cs` | `test/built-ins/TypedArray/prototype/reduceRight/callbackfn-arguments-custom-accumulator.js`<br>`test/built-ins/TypedArray/prototype/reduceRight/callbackfn-arguments-default-accumulator.js`<br>`test/built-ins/TypedArray/prototype/reduceRight/callbackfn-no-iteration-over-non-integer-properties.js`<br>`test/built-ins/TypedArray/prototype/reduceRight/callbackfn-not-called-on-empty.js`<br>`test/built-ins/TypedArray/prototype/reduceRight/callbackfn-return-does-not-change-instance.js`<br>`test/built-ins/TypedArray/prototype/reduceRight/callbackfn-returns-abrupt.js`<br>`test/built-ins/TypedArray/prototype/reduceRight/callbackfn-set-value-during-iteration.js`<br>`test/built-ins/TypedArray/prototype/reduceRight/callbackfn-this.js`<br>`test/built-ins/TypedArray/prototype/reduceRight/empty-instance-return-initialvalue.js`<br>`test/built-ins/TypedArray/prototype/reduceRight/get-length-uses-internal-arraylength.js`<br>`test/built-ins/TypedArray/prototype/reduceRight/invoked-as-func.js`<br>`test/built-ins/TypedArray/prototype/reduceRight/invoked-as-method.js`<br>`test/built-ins/TypedArray/prototype/reduceRight/length.js`<br>`test/built-ins/TypedArray/prototype/reduceRight/name.js`<br>`test/built-ins/TypedArray/prototype/reduceRight/not-a-constructor.js`<br>`test/built-ins/TypedArray/prototype/reduceRight/prop-desc.js`<br>`test/built-ins/TypedArray/prototype/reduceRight/result-is-last-callbackfn-return.js`<br>`test/built-ins/TypedArray/prototype/reduceRight/result-of-any-type.js`<br>`test/built-ins/TypedArray/prototype/reduceRight/return-first-value-without-callbackfn.js`<br>`test/built-ins/TypedArray/prototype/reduceRight/values-are-not-cached.js` | Supports right-to-left callback traversal, default and explicit accumulators, callback argument and this binding semantics, abrupt completion propagation, mutation visibility, internal-length behavior, receiver validation, and standard built-in metadata. Detached and resizable ArrayBuffer behavior remains unsupported. |
+
 ### 23.2.3.26 ([tc39.es](https://tc39.es/ecma262/#sec-%typedarray%.prototype.set))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
@@ -150,6 +156,12 @@ Feature-level support tracking with repo test references and optional test262 ev
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
 | Shared %TypedArray%.prototype.slice/subarray | Supported with Limitations | [`Int32Array_Slice_Basic.js`](../../../tests/Jroc.Tests/TypedArray/JavaScript/Int32Array_Slice_Basic.js)<br>[`Int32Array_Slice_RelativeIndices.js`](../../../tests/Jroc.Tests/TypedArray/JavaScript/Int32Array_Slice_RelativeIndices.js)<br>[`Int32Array_Subarray_ViewSemantics.js`](../../../tests/Jroc.Tests/TypedArray/JavaScript/Int32Array_Subarray_ViewSemantics.js)<br>[`Float64Array_Construct_ArrayBuffer_Search.js`](../../../tests/Jroc.Tests/TypedArray/JavaScript/Float64Array_Construct_ArrayBuffer_Search.js) |  | slice() returns same-type copies backed by fresh ArrayBuffers, while subarray() returns same-type views over the original buffer. Species construction and broader constructor selection rules are not yet implemented. |
+
+### 23.2.3.32 ([tc39.es](https://tc39.es/ecma262/#sec-%typedarray%.prototype.toreversed))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| %TypedArray%.prototype.toReversed | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/TypedArray/prototype/toReversed/ExecutionTests.cs` | `test/built-ins/TypedArray/prototype/toReversed/immutable.js`<br>`test/built-ins/TypedArray/prototype/toReversed/length.js`<br>`test/built-ins/TypedArray/prototype/toReversed/name.js`<br>`test/built-ins/TypedArray/prototype/toReversed/property-descriptor.js`<br>`test/built-ins/TypedArray/prototype/toReversed/reverses.js` | Creates an immutable same-type reversed copy across the supported non-BigInt TypedArray families and exposes standard built-in metadata. Detached/resizable ArrayBuffers and BigInt TypedArray families remain unsupported. |
 
 ### 23.2.3.35 ([tc39.es](https://tc39.es/ecma262/#sec-%typedarray%.prototype.values))
 

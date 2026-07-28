@@ -43,6 +43,17 @@ namespace JavaScriptRuntime
             WriteElementValue(index, value);
         }
 
+        internal bool TrySetElementValue(int index, object? value)
+        {
+            if ((uint)index >= (uint)_length)
+            {
+                return false;
+            }
+
+            WriteElementValue(index, TypeUtilities.ToNumber(value));
+            return true;
+        }
+
         internal byte[] CopyRawBytes()
         {
             var byteLength = checked(_length * BytesPerElement);
@@ -385,6 +396,56 @@ namespace JavaScriptRuntime
             }
 
             return accumulator;
+        }
+
+        public object? reduceRight(object?[]? args)
+        {
+            var callback = GetRequiredCallback(args, "reduceRight");
+            var hasInitialValue = args != null && args.Length > 1;
+
+            if (_length == 0 && !hasInitialValue)
+            {
+                throw new TypeError("Reduce of empty typed array with no initial value");
+            }
+
+            object? accumulator;
+            int startIndex;
+            if (hasInitialValue)
+            {
+                accumulator = args![1];
+                startIndex = _length - 1;
+            }
+            else
+            {
+                accumulator = ReadElementValue(_length - 1);
+                startIndex = _length - 2;
+            }
+
+            for (int i = startIndex; i >= 0; i--)
+            {
+                accumulator = InvokeCallback(
+                    callback,
+                    null,
+                    $"{TypedArrayName}.prototype.reduceRight",
+                    4,
+                    accumulator,
+                    ReadElementValue(i),
+                    (double)i,
+                    this);
+            }
+
+            return accumulator;
+        }
+
+        public TypedArrayBase toReversed()
+        {
+            var reversed = CreateSameTypeWithLength(_length);
+            for (int i = 0; i < _length; i++)
+            {
+                reversed.WriteElementValue(i, ReadElementValue(_length - i - 1));
+            }
+
+            return reversed;
         }
 
         protected void InitializeEmpty()
@@ -943,7 +1004,8 @@ namespace JavaScriptRuntime
                 throw new TypeError($"{callbackKind} callback is not a function");
             }
 
-            var previousThis = RuntimeServices.SetCurrentThis(thisArg);
+            var effectiveThisArg = Function.GetEffectiveThisArg(del, thisArg);
+            var previousThis = RuntimeServices.SetCurrentThis(effectiveThisArg);
             try
             {
                 return argCount switch

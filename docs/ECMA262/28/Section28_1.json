@@ -82,7 +82,7 @@
     {
       "clause": "28.1.12",
       "title": "Reflect.set ( target , propertyKey , V [ , receiver ] )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-reflect.set"
     },
     {
@@ -116,6 +116,19 @@
           "tests/Jroc.Test262.Tests/built-ins/Reflect/defineProperty/ExecutionTests.cs"
         ],
         "notes": "Reflect.defineProperty delegates to Object.defineProperty and returns true for successful descriptor definition. Current test262 coverage includes descriptor definition, symbol-keyed properties, length, and name."
+      },
+      {
+        "clause": "28.1.12",
+        "feature": "Reflect.set",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-reflect.set",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/TypedArray/prototype/reduceRight/JavaScript/callbackfn-set-value-during-iteration.js"
+        ],
+        "test262Paths": [
+          "test/built-ins/TypedArray/prototype/reduceRight/callbackfn-set-value-during-iteration.js"
+        ],
+        "notes": "Supports three-argument assignment with Boolean success results across ordinary objects, arrays, TypedArrays, inherited descriptors, and proxy set traps. Explicit receiver semantics remain unsupported."
       },
       {
         "clause": "28.1.14",

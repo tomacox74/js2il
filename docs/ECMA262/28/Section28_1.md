@@ -4,7 +4,7 @@
 
 [Back to Section28](Section28.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-07-16T23:24:47Z
+> Last generated (UTC): 2026-07-28T04:34:04Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -25,7 +25,7 @@
 | 28.1.9 | Reflect.isExtensible ( target ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-reflect.isextensible) |
 | 28.1.10 | Reflect.ownKeys ( target ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-reflect.ownkeys) |
 | 28.1.11 | Reflect.preventExtensions ( target ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-reflect.preventextensions) |
-| 28.1.12 | Reflect.set ( target , propertyKey , V [ , receiver ] ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-reflect.set) |
+| 28.1.12 | Reflect.set ( target , propertyKey , V [ , receiver ] ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-reflect.set) |
 | 28.1.13 | Reflect.setPrototypeOf ( target , proto ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-reflect.setprototypeof) |
 | 28.1.14 | Reflect [ %Symbol.toStringTag% ] | Supported | [tc39.es](https://tc39.es/ecma262/#sec-reflect-%symbol.tostringtag%) |
 
@@ -45,9 +45,14 @@ Feature-level support tracking with repo test references and optional test262 ev
 |---|---|---|---|---|
 | Reflect.defineProperty | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/Reflect/defineProperty/ExecutionTests.cs` |  | Reflect.defineProperty delegates to Object.defineProperty and returns true for successful descriptor definition. Current test262 coverage includes descriptor definition, symbol-keyed properties, length, and name. |
 
+### 28.1.12 ([tc39.es](https://tc39.es/ecma262/#sec-reflect.set))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Reflect.set | Supported with Limitations | [`callbackfn-set-value-during-iteration.js`](../../../tests/Jroc.Test262.Tests/built-ins/TypedArray/prototype/reduceRight/JavaScript/callbackfn-set-value-during-iteration.js) | `test/built-ins/TypedArray/prototype/reduceRight/callbackfn-set-value-during-iteration.js` | Supports three-argument assignment with Boolean success results across ordinary objects, arrays, TypedArrays, inherited descriptors, and proxy set traps. Explicit receiver semantics remain unsupported. |
+
 ### 28.1.14 ([tc39.es](https://tc39.es/ecma262/#sec-reflect-%symbol.tostringtag%))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
 | Reflect[@@toStringTag] descriptor | Supported | `tests/Jroc.Test262.Tests/built-ins/Reflect/ExecutionTests.cs` | `test/built-ins/Reflect/Symbol.toStringTag.js` | Checked-in coverage now includes Reflect @@toStringTag value and descriptor attributes (`value: "Reflect"`, `writable: false`, `enumerable: false`, `configurable: true`). |
-
