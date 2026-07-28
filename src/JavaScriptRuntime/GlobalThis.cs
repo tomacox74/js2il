@@ -317,6 +317,8 @@ namespace JavaScriptRuntime
         private static readonly Func<object[], object?[], object?> _typedArrayConstructorValue = static (_, __) =>
             throw new TypeError("%TypedArray% is not directly constructible in jroc.");
         private static readonly object _typedArrayPrototypeValue = new JsObject();
+        private static readonly Func<object[], object?[]?, object?> _typedArraySortValue = TypedArrayPrototypeSort;
+        private static readonly Func<object[], object?[]?, object?> _typedArrayToSortedValue = TypedArrayPrototypeToSorted;
         private static readonly Func<object[], object?[]?, object?> _typedArrayFindLastValue = TypedArrayPrototypeFindLast;
         private static readonly Func<object[], object?[]?, object?> _typedArrayFindLastIndexValue = TypedArrayPrototypeFindLastIndex;
         private static readonly Func<object[], object?[]?, object?> _typedArrayCopyWithinValue = TypedArrayPrototypeCopyWithin;
@@ -801,6 +803,8 @@ namespace JavaScriptRuntime
                 Writable = false,
                 Value = _typedArrayPrototypeValue
             });
+            DefineBuiltinFunctionProperty(_typedArrayPrototypeValue, "sort", _typedArraySortValue, 1d);
+            DefineBuiltinFunctionProperty(_typedArrayPrototypeValue, "toSorted", _typedArrayToSortedValue, 1d);
             DefineBuiltinFunctionProperty(_typedArrayPrototypeValue, "copyWithin", _typedArrayCopyWithinValue, 2d);
             DefineBuiltinFunctionProperty(_typedArrayPrototypeValue, "findLast", _typedArrayFindLastValue, 1d);
             DefineBuiltinFunctionProperty(_typedArrayPrototypeValue, "findLastIndex", _typedArrayFindLastIndexValue, 1d);
@@ -884,6 +888,26 @@ namespace JavaScriptRuntime
             }
 
             return typedArray.findLast(args);
+        }
+
+        private static object? TypedArrayPrototypeSort(object[] _, object?[]? args)
+        {
+            if (RuntimeServices.GetCurrentThis() is not TypedArrayBase typedArray)
+            {
+                throw new TypeError("TypedArray.prototype.sort called on incompatible receiver");
+            }
+
+            return typedArray.sort(args);
+        }
+
+        private static object? TypedArrayPrototypeToSorted(object[] _, object?[]? args)
+        {
+            if (RuntimeServices.GetCurrentThis() is not TypedArrayBase typedArray)
+            {
+                throw new TypeError("TypedArray.prototype.toSorted called on incompatible receiver");
+            }
+
+            return typedArray.toSorted(args);
         }
 
         private static object? TypedArrayPrototypeFindLastIndex(object[] _, object?[]? args)
