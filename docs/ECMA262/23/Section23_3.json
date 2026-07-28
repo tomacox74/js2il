@@ -36,7 +36,7 @@
     {
       "clause": "23.3.2.1",
       "title": "Uint8Array.prototype.setFromBase64 ( string [ , options ] )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-uint8array.prototype.setfrombase64"
     },
     {
@@ -48,7 +48,7 @@
     {
       "clause": "23.3.2.3",
       "title": "Uint8Array.prototype.toBase64 ( [ options ] )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-uint8array.prototype.tobase64"
     },
     {
@@ -119,7 +119,7 @@
         "feature": "Uint8Array base64/hex extensions",
         "status": "Incomplete",
         "specUrl": "https://tc39.es/ecma262/#sec-uint8array",
-        "notes": "Uint8Array.fromBase64 supports default base64 decoding/result semantics. Uint8Array.fromHex, Uint8Array.prototype.setFromHex, and Uint8Array.prototype.toHex support hexadecimal conversion with the specified descriptors, metadata, and receiver behavior. Base64 options, setFromBase64, and toBase64 remain unsupported."
+        "notes": "Uint8Array.fromBase64 and Uint8Array.prototype.setFromBase64 support default base64 decoding/result semantics. Uint8Array.prototype.toBase64 supports base64/base64url alphabets and optional padding. Uint8Array.fromHex, Uint8Array.prototype.setFromHex, and Uint8Array.prototype.toHex support hexadecimal conversion with the specified descriptors, metadata, and receiver behavior. Advanced decoding options and detached-buffer behavior remain unsupported."
       },
       {
         "clause": "23.3.2.2",
@@ -151,6 +151,48 @@
           "test/built-ins/Uint8Array/prototype/setFromHex/writes-up-to-error.js"
         ],
         "notes": "Supports strict string input, bounded writes into Uint8Array views, read/written result records, odd-length and invalid-character SyntaxErrors, writes completed byte pairs before later invalid input, and standard non-constructible built-in metadata. Detached-buffer behavior remains unsupported."
+      },
+      {
+        "clause": "23.3.2.1",
+        "feature": "Uint8Array.prototype.setFromBase64",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-uint8array.prototype.setfrombase64",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/Uint8Array/prototype/setFromBase64/JavaScript/descriptor.js",
+          "tests/Jroc.Test262.Tests/built-ins/Uint8Array/prototype/setFromBase64/JavaScript/results.js"
+        ],
+        "test262Paths": [
+          "test/built-ins/Uint8Array/prototype/setFromBase64/descriptor.js",
+          "test/built-ins/Uint8Array/prototype/setFromBase64/results.js"
+        ],
+        "notes": "Supports default-alphabet RFC 4648 vectors, Uint8Array view writes, read/written result records, receiver and string validation, and the standard property descriptor. Alphabet and last-chunk options, precise bounded-input consumption, partial writes before malformed input, and detached buffers remain unsupported."
+      },
+      {
+        "clause": "23.3.2.3",
+        "feature": "Uint8Array.prototype.toBase64",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-uint8array.prototype.tobase64",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/Uint8Array/prototype/toBase64/JavaScript/alphabet.js",
+          "tests/Jroc.Test262.Tests/built-ins/Uint8Array/prototype/toBase64/JavaScript/descriptor.js",
+          "tests/Jroc.Test262.Tests/built-ins/Uint8Array/prototype/toBase64/JavaScript/length.js",
+          "tests/Jroc.Test262.Tests/built-ins/Uint8Array/prototype/toBase64/JavaScript/name.js",
+          "tests/Jroc.Test262.Tests/built-ins/Uint8Array/prototype/toBase64/JavaScript/nonconstructor.js",
+          "tests/Jroc.Test262.Tests/built-ins/Uint8Array/prototype/toBase64/JavaScript/omit-padding.js",
+          "tests/Jroc.Test262.Tests/built-ins/Uint8Array/prototype/toBase64/JavaScript/option-coercion.js",
+          "tests/Jroc.Test262.Tests/built-ins/Uint8Array/prototype/toBase64/JavaScript/results.js"
+        ],
+        "test262Paths": [
+          "test/built-ins/Uint8Array/prototype/toBase64/alphabet.js",
+          "test/built-ins/Uint8Array/prototype/toBase64/descriptor.js",
+          "test/built-ins/Uint8Array/prototype/toBase64/length.js",
+          "test/built-ins/Uint8Array/prototype/toBase64/name.js",
+          "test/built-ins/Uint8Array/prototype/toBase64/nonconstructor.js",
+          "test/built-ins/Uint8Array/prototype/toBase64/omit-padding.js",
+          "test/built-ins/Uint8Array/prototype/toBase64/option-coercion.js",
+          "test/built-ins/Uint8Array/prototype/toBase64/results.js"
+        ],
+        "notes": "Supports RFC 4648 vectors, base64 and base64url alphabets, optional padding omission, option getter ordering and coercion, receiver validation, and standard non-constructible built-in metadata. Detached-buffer behavior remains unsupported."
       }
     ]
   }
