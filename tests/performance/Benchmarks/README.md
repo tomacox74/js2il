@@ -45,7 +45,7 @@ Benchmarks/
 
 ### Core Scenarios
 
-Benchmark runners discover the full root-level `Scenarios\*.js` catalog at runtime (currently 19 scenarios in the checked-in Jint-derived slice). The list below highlights a few representative scenarios.
+The cross-runtime runner discovers the root-level `Scenarios\*.js` catalog, while the Dromaeo execution runner discovers `Scenarios\dromaeo\*.js`. The list below highlights a few representative scenarios.
 
 1. **minimal.js** - Simple arithmetic (`1 + 1 === 2`)
    - Purpose: Baseline minimal execution overhead
@@ -94,17 +94,17 @@ Compares the hosted .NET runtimes across all scenarios:
 dotnet run -c Release
 ```
 
-#### Phased Comparison (jroc + Jint prepared + Okojo execute)
-Benchmarks jroc compile and execute phases separately, alongside Jint prepare/prepared execution and Okojo execute-only counters:
+#### Dromaeo Execution Comparison
+Benchmarks prepared Jroc, Jint, and Okojo execution for each Dromaeo scenario:
 
 ```powershell
-dotnet run -c Release -- --phased
+dotnet run -c Release -- --dromaeo
 ```
 
 Use `--scenario` to run only one scenario (accepts scenario key, script name, or `<script>.js`):
 
 ```powershell
-dotnet run -c Release -- --phased --scenario dromaeo-3d-cube
+dotnet run -c Release -- --dromaeo --scenario dromaeo-3d-cube
 ```
 
 If any benchmark case fails, the run now exits non-zero and prints the failing benchmark cases instead of silently treating them as successful timings.
@@ -120,7 +120,7 @@ dotnet run -c Release -- --kracken --scenario audio-fft
 #### Branch comparison workflow
 
 Run the manual `Benchmark branch comparison` workflow to compare a scenario from
-the `phased` (default) or `kracken` benchmark suite on `master` and a private
+the `dromaeo` (default) or `kracken` benchmark suite on `master` and a private
 branch on the same GitHub-hosted runner. It runs `master` first, prints both
 BenchmarkDotNet reports in the workflow log, and uploads raw reports plus console output as the
 `benchmark-branch-comparison-results` artifact.
@@ -197,7 +197,7 @@ dotnet run -c Release -- --prototype-storage
 ```
 
 #### All Benchmarks
-Runs cross-runtime comparison, late-bound dispatch microbenchmarks, and phased benchmarks:
+Runs cross-runtime comparison, late-bound dispatch microbenchmarks, and Dromaeo execution benchmarks:
 
 ```powershell
 dotnet run -c Release -- --all
@@ -214,8 +214,8 @@ dotnet run -c Release -- --filter *Jint*
 # Run the late-bound dispatch benchmark class only
 dotnet run -c Release -- --dispatch --filter *LateBoundDispatch*
 
-# Run only one phased scenario
-dotnet run -c Release -- --phased --scenario dromaeo-3d-cube
+# Run only one Dromaeo scenario
+dotnet run -c Release -- --dromaeo --scenario dromaeo-3d-cube
 
 # Export results to JSON
 dotnet run -c Release -- --exporters json

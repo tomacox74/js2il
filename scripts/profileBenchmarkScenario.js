@@ -30,6 +30,7 @@ const path = require("node:path");
 
 const repoRoot = path.resolve(__dirname, "..");
 const scenariosDir = path.join(repoRoot, "tests", "performance", "Benchmarks", "Scenarios");
+const dromaeoDir = path.join(scenariosDir, "dromaeo");
 const krackenDir = path.join(scenariosDir, "kracken-1.1");
 const workRoot = path.join(os.tmpdir(), "jroc-profile");
 const perfViewExe = path.join(workRoot, "PerfView.exe");
@@ -61,6 +62,11 @@ function listScenarios() {
       if (file.endsWith(".js")) names.add(file.replace(/\.js$/i, ""));
     }
   }
+  if (fs.existsSync(dromaeoDir)) {
+    for (const file of fs.readdirSync(dromaeoDir)) {
+      if (file.endsWith(".js")) names.add(file.replace(/\.js$/i, ""));
+    }
+  }
   if (fs.existsSync(krackenDir)) {
     for (const file of fs.readdirSync(krackenDir)) {
       if (file.endsWith(".js") && !file.endsWith("-data.js")) names.add(file.replace(/\.js$/i, ""));
@@ -81,7 +87,7 @@ function normalizeScenarioName(input) {
  *   optional <name>-data.js. Their runTest(workload, iterations) registration
  *   is captured and invoked by an exported generic benchmark runner. Mode
  *   "calltest": load once, time repeated runBenchmark() calls.
- * - Plain scenarios (Scenarios/<name>.js) run their workload at module load.
+ * - Dromaeo and plain scenarios run their workload at module load.
  *   Mode "reload": compile once, time each LoadModule.
  */
 function resolveScenario(name) {
@@ -104,6 +110,11 @@ var runTest = function(workload, iterations) {
   return "done";
 }`);
     return { source: parts.join("\n"), mode: "calltest" };
+  }
+
+  const dromaeoScript = path.join(dromaeoDir, `${name}.js`);
+  if (fs.existsSync(dromaeoScript)) {
+    return { source: fs.readFileSync(dromaeoScript, "utf8"), mode: "reload" };
   }
 
   const plainScript = path.join(scenariosDir, `${name}.js`);

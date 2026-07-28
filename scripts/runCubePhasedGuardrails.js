@@ -47,7 +47,7 @@ function printUsage() {
   console.log("  node scripts/runCubePhasedGuardrails.js --dry");
   console.log("  node scripts/runCubePhasedGuardrails.js --dry --scenario dromaeo-3d-cube");
   console.log("  node scripts/runCubePhasedGuardrails.js --dry --il-smells");
-  console.log("  node scripts/runCubePhasedGuardrails.js --no-run --results-file tests/performance/Benchmarks/BenchmarkDotNet.Artifacts/results/Benchmarks.JrocPhasedBenchmarks-report-full-compressed.json");
+  console.log("  node scripts/runCubePhasedGuardrails.js --no-run --results-file tests/performance/Benchmarks/BenchmarkDotNet.Artifacts/results/Benchmarks.DromaeoExecutionBenchmarks-report-full-compressed.json");
 }
 
 function parseArgs(argv) {
@@ -398,7 +398,7 @@ function main() {
         "Benchmarks",
         "BenchmarkDotNet.Artifacts",
         "results",
-        "Benchmarks.JrocPhasedBenchmarks-report-full-compressed.json"
+        "Benchmarks.DromaeoExecutionBenchmarks-report-full-compressed.json"
       );
 
   let rows = [];
@@ -412,9 +412,9 @@ function main() {
         "--project",
         path.join(repoRoot, "tests", "performance", "Benchmarks", "Benchmarks.csproj"),
         "--",
-        "--phased",
+        "--dromaeo",
         "--filter",
-        "*JrocPhasedBenchmarks*",
+        "*DromaeoExecutionBenchmarks*",
         "--scenario",
         scenario,
       ];

@@ -12,7 +12,10 @@ public static class ValidationTest
         // Test runtime adapters with minimal.js
         var script = "\"use strict\";\nvar x = 1 + 1 === 2;";
         var scriptsDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Scenarios");
-        var scenarios = BenchmarkScenarioCatalog.LoadScenarios(scriptsDir);
+        var dromaeoScriptsDir = Path.Combine(scriptsDir, "dromaeo");
+        var scenarios = BenchmarkScenarioCatalog.LoadScenarios(scriptsDir)
+            .Concat(BenchmarkScenarioCatalog.LoadScenarios(dromaeoScriptsDir))
+            .ToArray();
         var requiredScenarios = new[]
         {
             "minimal",
@@ -23,7 +26,7 @@ public static class ValidationTest
 
         Console.WriteLine("Testing runtime adapters...\n");
 
-        Console.WriteLine($"Discovered {scenarios.Count} BenchmarkDotNet scenarios.");
+        Console.WriteLine($"Discovered {scenarios.Length} BenchmarkDotNet scenarios.");
         foreach (var requiredScenario in requiredScenarios)
         {
             if (!scenarios.Any(scenario => string.Equals(scenario.Key, requiredScenario, StringComparison.Ordinal)))

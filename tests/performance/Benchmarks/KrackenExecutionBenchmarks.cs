@@ -1,5 +1,4 @@
 using BenchmarkDotNet.Attributes;
-using BenchmarkDotNet.Order;
 using Jroc;
 using Jroc.Runtime;
 using Jint;
@@ -11,23 +10,14 @@ namespace Benchmarks;
 /// The Kraken performance benchmarks consist of a test script and a data script.
 /// Compile time, script load time, and data load time are excluded from the measurements.
 /// </summary>
-[MemoryDiagnoser]
-[Config(typeof(FullParamsConfig))]
-[RankColumn]
-[Orderer(SummaryOrderPolicy.FastestToSlowest)]
-[HideColumns("Error", "Gen0", "Gen1", "Gen2")]
-[JsonExporterAttribute.FullCompressed]
-public class KrackenExecutionBenchmarks
+public class KrackenExecutionBenchmarks : ExecutionBenchmarksBase
 {
-    public static string? ScenarioFilter { get; set; }
     private const string BenchmarkScriptNamePrefix = "kracken-";
 
-    private static readonly string[] ScenarioScriptNames =
-    [
-        "ai-astar.js",
-        "audio-beat-detection.js",
-        "audio-fft.js"
-    ];
+    private static string KrackenScriptsDirectory => Path.Combine(
+        AppDomain.CurrentDomain.BaseDirectory,
+        "Scenarios",
+        "kracken-1.1");
 
     private const string WorkloadRegistrationScript = """
         var __jrocKrackenWorkload = null;
@@ -136,15 +126,17 @@ public class KrackenExecutionBenchmarks
         _yantraJsContext = context;
     }
 
-    [ParamsSource(nameof(ScriptNames))]
-    public string ScriptName { get; set; } = "";
-
-    public IEnumerable<string> ScriptNames()
+    public override IEnumerable<string> ScriptNames()
     {
-        var scriptNames = ScenarioScriptNames
-            .Where(MatchesScenarioFilter)
-            .Select(GetBenchmarkScriptName)
-            .ToArray();
+        var scriptNames = Directory.Exists(KrackenScriptsDirectory)
+            ? Directory.EnumerateFiles(KrackenScriptsDirectory, "*.js", SearchOption.TopDirectoryOnly)
+                .OrderBy(path => path, StringComparer.Ordinal)
+                .Where(path => !path.EndsWith("-data.js", StringComparison.Ordinal))
+                .Select(path => Path.GetFileName(path)!)
+                .Where(MatchesKrackenScenarioFilter)
+                .Select(GetBenchmarkScriptName)
+                .ToArray()
+            : [];
 
         if (scriptNames.Length == 0)
         {
@@ -157,11 +149,10 @@ public class KrackenExecutionBenchmarks
 
     private void LoadScriptContents(out string dataScriptContent, out string testScriptContent)
     {
-        var scriptsDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Scenarios", "kracken-1.1");
         var sourceScriptName = GetSourceScriptName(ScriptName);
-        var testScriptPath = Path.Combine(scriptsDir, sourceScriptName);
+        var testScriptPath = Path.Combine(KrackenScriptsDirectory, sourceScriptName);
         var dataScriptPath = Path.Combine(
-            scriptsDir,
+            KrackenScriptsDirectory,
             Path.GetFileNameWithoutExtension(sourceScriptName) + "-data.js");
         testScriptContent = File.ReadAllText(testScriptPath);
         dataScriptContent = File.ReadAllText(dataScriptPath);
@@ -209,20 +200,16 @@ public class KrackenExecutionBenchmarks
         }
     }
 
-    private static bool MatchesScenarioFilter(string scriptName)
+    private static bool MatchesKrackenScenarioFilter(string scriptName)
     {
-        if (string.IsNullOrWhiteSpace(ScenarioFilter))
-        {
-            return true;
-        }
-
         var scenarioName = Path.GetFileNameWithoutExtension(scriptName);
         var benchmarkScriptName = GetBenchmarkScriptName(scriptName);
         var benchmarkScenarioName = Path.GetFileNameWithoutExtension(benchmarkScriptName);
-        return string.Equals(scenarioName, ScenarioFilter, StringComparison.Ordinal)
-            || string.Equals(scriptName, ScenarioFilter, StringComparison.Ordinal)
-            || string.Equals(benchmarkScenarioName, ScenarioFilter, StringComparison.Ordinal)
-            || string.Equals(benchmarkScriptName, ScenarioFilter, StringComparison.Ordinal);
+        return MatchesScenarioFilter(
+            scenarioName,
+            scriptName,
+            benchmarkScenarioName,
+            benchmarkScriptName);
     }
 
     private static string GetBenchmarkScriptName(string sourceScriptName)

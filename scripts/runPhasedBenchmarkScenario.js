@@ -42,7 +42,7 @@ function main() {
   }
 
   const filter = `*${scenarioName}*`;
-  const dotnetArgs = ["run", "-c", "Release", "--", "--phased", "--filter", filter];
+  const dotnetArgs = ["run", "-c", "Release", "--", "--dromaeo", "--filter", filter];
 
   console.log(`Running phased benchmark for scenario: ${scenarioName}`);
   console.log(`Command: dotnet ${dotnetArgs.join(" ")}`);
