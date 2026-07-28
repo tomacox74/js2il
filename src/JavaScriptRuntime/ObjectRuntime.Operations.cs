@@ -5566,6 +5566,132 @@ namespace JavaScriptRuntime
         public static object? SetProperty(object obj, string name, object? value)
             => SetProperty(obj, name, value, throwOnError: true);
 
+        internal static bool ReflectSet(object target, object? propertyKey, object? value)
+        {
+            var key = ToPropertyKeyString(propertyKey);
+            if (target is Proxy proxy)
+            {
+                if (proxy.TryInvokeTrap(
+                    "set",
+                    "set",
+                    new object?[] { proxy.GetTarget("set"), ToExternalPropertyKey(key), value, target },
+                    out var trapResult))
+                {
+                    return Operators.IsTruthy(trapResult);
+                }
+
+                return ReflectSet(proxy.GetTarget("set"), propertyKey, value);
+            }
+
+            if (target is TypedArrayBase typedArray
+                && TryGetCanonicalNumericIndex(key, out var numericIndex))
+            {
+                if (!double.IsNaN(numericIndex)
+                    && !double.IsInfinity(numericIndex)
+                    && numericIndex >= 0
+                    && !(numericIndex == 0d && double.IsNegative(numericIndex))
+                    && global::System.Math.Truncate(numericIndex) == numericIndex
+                    && numericIndex <= int.MaxValue)
+                {
+                    _ = typedArray.TrySetElementValue((int)numericIndex, value);
+                }
+
+                return true;
+            }
+
+            if (TryGetOwnPropertyDescriptor(target, key, out var ownDescriptor))
+            {
+                if (ownDescriptor.Kind == JsPropertyDescriptorKind.Accessor)
+                {
+                    if (ownDescriptor.Set is null || ownDescriptor.Set is JsNull)
+                    {
+                        return false;
+                    }
+
+                    SetProperty(target, key, value, throwOnError: false);
+                    return true;
+                }
+
+                if (!ownDescriptor.Writable)
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                for (var prototype = PrototypeChain.GetPrototypeOrNull(target);
+                     prototype is not null;
+                     prototype = PrototypeChain.GetPrototypeOrNull(prototype))
+                {
+                    if (!TryGetOwnPropertyDescriptor(prototype, key, out var inheritedDescriptor))
+                    {
+                        continue;
+                    }
+
+                    if (inheritedDescriptor.Kind == JsPropertyDescriptorKind.Accessor)
+                    {
+                        if (inheritedDescriptor.Set is null || inheritedDescriptor.Set is JsNull)
+                        {
+                            return false;
+                        }
+
+                        SetProperty(target, key, value, throwOnError: false);
+                        return true;
+                    }
+
+                    if (!inheritedDescriptor.Writable)
+                    {
+                        return false;
+                    }
+
+                    break;
+                }
+
+                if (!isExtensible(target))
+                {
+                    return false;
+                }
+            }
+
+            if (target is Array array
+                && TryParseCanonicalIndexString(key, out var arrayIndex))
+            {
+                return array.TrySetIndexValue(arrayIndex, value, throwOnError: false);
+            }
+
+            SetItem(target, propertyKey!, value, throwOnError: false);
+            return true;
+        }
+
+        private static bool TryGetCanonicalNumericIndex(string key, out double numericIndex)
+        {
+            if (string.Equals(key, "-0", StringComparison.Ordinal))
+            {
+                numericIndex = -0d;
+                return true;
+            }
+
+            if (!double.TryParse(
+                    key,
+                    global::System.Globalization.NumberStyles.Float,
+                    global::System.Globalization.CultureInfo.InvariantCulture,
+                    out numericIndex))
+            {
+                if (string.Equals(key, "NaN", StringComparison.Ordinal))
+                {
+                    numericIndex = double.NaN;
+                    return true;
+                }
+
+                return false;
+            }
+
+            return string.Equals(
+                DotNet2JSConversions.ToString(numericIndex),
+                key,
+                StringComparison.Ordinal);
+        }
+
         public static object? SetProperty(object obj, string name, object? value, bool throwOnError)
         {
             if (obj == null) throw new ArgumentNullException(nameof(obj));

@@ -10,6 +10,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 - runtime: add `Uint8Array.prototype.setFromHex`, including bounded writes, subarray offsets, read/written result records, partial writes before invalid input, strict validation, and standard built-in metadata. Ports ten upstream test262 cases.
 - runtime: add bit-preserving `%TypedArray%.prototype.copyWithin`, implement `Uint16Array` and `Uint32Array`, and preserve dynamic TypedArray constructor argument lists and iterable sources. Ports twenty-five upstream test262 cases.
 - runtime: add `Uint8Array.prototype.toBase64` with base64/base64url alphabets and optional padding, plus default `setFromBase64` decoding with result records and metadata. Ports ten upstream test262 cases.
+- runtime: add `%TypedArray%.prototype.reduceRight` and `toReversed`, including callback binding and mutation visibility, immutable same-type copies, and built-in metadata; add limited `Reflect.set`. Ports twenty-five upstream test262 cases.
 
 ## v0.11.37 - 2026-07-27
 
