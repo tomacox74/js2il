@@ -328,6 +328,8 @@ namespace JavaScriptRuntime
         private static readonly Func<object[], object?[]?, object?> _typedArrayToSortedValue = TypedArrayPrototypeToSorted;
         private static readonly Func<object[], object?[]?, object?> _typedArrayWithValue = TypedArrayPrototypeWith;
         private static readonly Func<object[], object?[]?, object?> _typedArrayLengthGetterValue = TypedArrayPrototypeLength;
+        private static readonly Func<object[], object?[]?, object?> _typedArrayToStringValue = TypedArrayPrototypeToString;
+        private static readonly Func<object[], object?[]?, object?> _typedArrayToLocaleStringValue = TypedArrayPrototypeToLocaleString;
         private static readonly Func<object[], object?[]?, object?> _typedArrayFindLastValue = TypedArrayPrototypeFindLast;
         private static readonly Func<object[], object?[]?, object?> _typedArrayFindLastIndexValue = TypedArrayPrototypeFindLastIndex;
         private static readonly Func<object[], object?[]?, object?> _typedArrayCopyWithinValue = TypedArrayPrototypeCopyWithin;
@@ -832,6 +834,8 @@ namespace JavaScriptRuntime
             DefineBuiltinFunctionProperty(_typedArrayPrototypeValue, "sort", _typedArraySortValue, 1d);
             DefineBuiltinFunctionProperty(_typedArrayPrototypeValue, "toSorted", _typedArrayToSortedValue, 1d);
             DefineBuiltinFunctionProperty(_typedArrayPrototypeValue, "with", _typedArrayWithValue, 2d);
+            DefineBuiltinFunctionProperty(_typedArrayPrototypeValue, "toString", _typedArrayToStringValue, 0d);
+            DefineBuiltinFunctionProperty(_typedArrayPrototypeValue, "toLocaleString", _typedArrayToLocaleStringValue, 0d);
             DefineBuiltinFunctionProperty(_typedArrayPrototypeValue, "copyWithin", _typedArrayCopyWithinValue, 2d);
             DefineBuiltinFunctionProperty(_typedArrayPrototypeValue, "findLast", _typedArrayFindLastValue, 1d);
             DefineBuiltinFunctionProperty(_typedArrayPrototypeValue, "findLastIndex", _typedArrayFindLastIndexValue, 1d);
@@ -962,6 +966,26 @@ namespace JavaScriptRuntime
             }
 
             return typedArray.length;
+        }
+
+        private static object? TypedArrayPrototypeToString(object[] _, object?[]? args)
+        {
+            if (RuntimeServices.GetCurrentThis() is not TypedArrayBase typedArray)
+            {
+                throw new TypeError("TypedArray.prototype.toString called on incompatible receiver");
+            }
+
+            return typedArray.toString();
+        }
+
+        private static object? TypedArrayPrototypeToLocaleString(object[] _, object?[]? __)
+        {
+            if (RuntimeServices.GetCurrentThis() is not TypedArrayBase typedArray)
+            {
+                throw new TypeError("TypedArray.prototype.toLocaleString called on incompatible receiver");
+            }
+
+            return typedArray.toLocaleString();
         }
 
         private static object? TypedArrayPrototypeFindLastIndex(object[] _, object?[]? args)
