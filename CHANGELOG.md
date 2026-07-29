@@ -6,7 +6,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-_Nothing yet._
+- perf/compiler: extend unboxed numeric local specialization to uninitialized `let` declarations. Previously only `var` bindings were rescued by the definite-initialization pass, so uninitialized `let` fell back to boxed `object` locals and round-tripped every arithmetic and comparison through `ToNumber`/box. Modern `let`-based code such as the `dromaeo-3d-cube-modern` hot pixel loop now compiles to native `float64` locals. Temporal dead zone, conditional initialization, type-transition, captured-binding, and block-shadowing semantics are unchanged.
 
 ## v0.11.39 - 2026-07-29
 
