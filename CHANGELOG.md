@@ -6,6 +6,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- perf/benchmarks: port the Kraken 1.1 `audio-dft` scenario from the upstream `mozilla-it/krakenbenchmark.mozilla.org` repository. The Discrete Fourier Transform workload joins `ai-astar`, `audio-beat-detection`, and `audio-fft` in the local Kraken suite and is picked up automatically by scenario discovery; run it with `dotnet run -c Release -- --kracken --scenario audio-dft`.
 - perf/compiler: extend unboxed numeric local specialization to uninitialized `let` declarations. Previously only `var` bindings were rescued by the definite-initialization pass, so uninitialized `let` fell back to boxed `object` locals and round-tripped every arithmetic and comparison through `ToNumber`/box. Modern `let`-based code such as the `dromaeo-3d-cube-modern` hot pixel loop now compiles to native `float64` locals. Temporal dead zone, conditional initialization, type-transition, captured-binding, and block-shadowing semantics are unchanged.
 
 ## v0.11.39 - 2026-07-29
