@@ -336,6 +336,7 @@ namespace JavaScriptRuntime
         {
             var callback = GetRequiredCallback(args, "map");
             var thisArg = GetThisArg(args);
+            ObserveSpeciesConstructor();
             var mapped = CreateSameTypeWithLength(_length);
 
             for (int i = 0; i < _length; i++)
@@ -461,6 +462,33 @@ namespace JavaScriptRuntime
 
         public TypedArrayBase toSorted(object?[]? args)
             => CreateSameTypeFromValues(GetSortedValues(args));
+
+        public TypedArrayBase with(object?[]? args)
+        {
+            var index = GetArgument(args, 0);
+            var value = GetArgument(args, 1);
+            var relativeIndex = ToIntegerOrInfinity(index);
+            var actualIndex = relativeIndex < 0
+                ? _length + relativeIndex
+                : relativeIndex;
+
+            // Coerce the replacement before validating the index. Its side effects
+            // are observable before the copy is made and before a RangeError.
+            var numericValue = TypeUtilities.ToNumber(value);
+            if (actualIndex < 0 || actualIndex >= _length)
+            {
+                throw new RangeError($"Invalid {TypedArrayName} index");
+            }
+
+            var result = CreateSameTypeWithLength(_length);
+            for (var i = 0; i < _length; i++)
+            {
+                result.WriteElementValue(i, ReadElementValue(i));
+            }
+
+            result.WriteElementValue((int)actualIndex, numericValue);
+            return result;
+        }
 
         protected void InitializeEmpty()
         {
@@ -618,6 +646,17 @@ namespace JavaScriptRuntime
             }
 
             return result;
+        }
+
+        private void ObserveSpeciesConstructor()
+        {
+            var constructor = ObjectRuntime.GetItem(this, "constructor");
+            if (constructor is null || constructor is JsNull)
+            {
+                return;
+            }
+
+            _ = ObjectRuntime.GetItem(constructor, Symbol.species);
         }
 
         private List<double> GetSortedValues(object?[]? args)
@@ -849,6 +888,22 @@ namespace JavaScriptRuntime
             return (int)truncated;
         }
 
+        private static double ToIntegerOrInfinity(object? value)
+        {
+            var number = TypeUtilities.ToNumber(value);
+            if (double.IsNaN(number) || number == 0)
+            {
+                return 0;
+            }
+
+            if (double.IsInfinity(number))
+            {
+                return number;
+            }
+
+            return global::System.Math.Truncate(number);
+        }
+
         protected static int CoerceNonNegativeIndex(object? value, int defaultValue, string errorMessage)
         {
             if (value is null || value is JsNull)
@@ -887,6 +942,7 @@ namespace JavaScriptRuntime
 
         private void InitializeIntrinsicSurface()
         {
+            PrototypeChain.SetPrototype(this, GlobalThis.GetTypedArrayInstancePrototype(this));
             PropertyDescriptorStore.DefineOrUpdate(this, Symbol.iterator.DebugId, new JsPropertyDescriptor
             {
                 Kind = JsPropertyDescriptorKind.Data,

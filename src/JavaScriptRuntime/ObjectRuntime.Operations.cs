@@ -1463,12 +1463,21 @@ namespace JavaScriptRuntime
                 validatedArrayLength = JavaScriptRuntime.Array.ValidateLengthValue(requested.Value);
             }
 
-            if (!IsExtensibleInternal(obj) && !HasOwnProperty(obj, key))
+            var typedArrayLengthProperty = obj is TypedArrayBase
+                && string.Equals(key, "length", StringComparison.Ordinal);
+            var hasOwnProperty = typedArrayLengthProperty
+                ? PropertyDescriptorStore.TryGetOwn(obj, key, out _)
+                : HasOwnProperty(obj, key);
+            if (!IsExtensibleInternal(obj) && !hasOwnProperty)
             {
                 return false;
             }
 
-            var hasExistingDescriptor = TryGetOwnPropertyDescriptor(obj, key, out var existingDescriptor);
+            // TypedArray length is exposed by the CLR host as a convenience property,
+            // but ECMAScript permits an own property to shadow the prototype getter.
+            var hasExistingDescriptor = typedArrayLengthProperty
+                ? PropertyDescriptorStore.TryGetOwn(obj, key, out var existingDescriptor)
+                : TryGetOwnPropertyDescriptor(obj, key, out existingDescriptor);
             JsPropertyDescriptor appliedDescriptor;
             if (hasExistingDescriptor)
             {
@@ -5420,6 +5429,13 @@ namespace JavaScriptRuntime
                 }
 
                 return GetProperty(proxy.GetTarget("get"), name);
+            }
+
+            if (obj is TypedArrayBase typedArrayWithOwnLength
+                && string.Equals(name, "length", StringComparison.Ordinal)
+                && TryGetOwnPropertyValue(typedArrayWithOwnLength, name, out var ownTypedArrayLength))
+            {
+                return ownTypedArrayLength;
             }
 
             if (string.Equals(name, "length", StringComparison.Ordinal))

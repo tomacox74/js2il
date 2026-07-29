@@ -4,7 +4,7 @@
 
 [Back to Section23](Section23.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-07-28T21:30:44Z
+> Last generated (UTC): 2026-07-29T00:11:29Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -20,13 +20,13 @@
 | 23.2.2.1 | %TypedArray%.from ( source [ , mapper [ , thisArg ] ] ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-%typedarray%.from) |
 | 23.2.2.2 | %TypedArray%.of ( ... items ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-%typedarray%.of) |
 | 23.2.2.3 | %TypedArray%.prototype | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-%typedarray%.prototype) |
-| 23.2.2.4 | get %TypedArray% [ %Symbol.species% ] | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-get-%typedarray%-%symbol.species%) |
+| 23.2.2.4 | get %TypedArray% [ %Symbol.species% ] | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-get-%typedarray%-%symbol.species%) |
 | 23.2.3 | Properties of the %TypedArray% Prototype Object | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-%typedarrayprototype%-object) |
 | 23.2.3.1 | %TypedArray%.prototype.at ( index ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-%typedarray%.prototype.at) |
 | 23.2.3.2 | get %TypedArray%.prototype.buffer | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-get-%typedarray%.prototype.buffer) |
 | 23.2.3.3 | get %TypedArray%.prototype.byteLength | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-get-%typedarray%.prototype.bytelength) |
 | 23.2.3.4 | get %TypedArray%.prototype.byteOffset | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-get-%typedarray%.prototype.byteoffset) |
-| 23.2.3.5 | %TypedArray%.prototype.constructor | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-%typedarray%.prototype.constructor) |
+| 23.2.3.5 | %TypedArray%.prototype.constructor | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-%typedarray%.prototype.constructor) |
 | 23.2.3.6 | %TypedArray%.prototype.copyWithin ( target , start [ , end ] ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-%typedarray%.prototype.copywithin) |
 | 23.2.3.7 | %TypedArray%.prototype.entries ( ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-%typedarray%.prototype.entries) |
 | 23.2.3.8 | %TypedArray%.prototype.every ( callback [ , thisArg ] ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-%typedarray%.prototype.every) |
@@ -59,7 +59,7 @@
 | 23.2.3.33 | %TypedArray%.prototype.toSorted ( comparator ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-%typedarray%.prototype.tosorted) |
 | 23.2.3.34 | %TypedArray%.prototype.toString ( ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-%typedarray%.prototype.tostring) |
 | 23.2.3.35 | %TypedArray%.prototype.values ( ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-%typedarray%.prototype.values) |
-| 23.2.3.36 | %TypedArray%.prototype.with ( index , value ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-%typedarray%.prototype.with) |
+| 23.2.3.36 | %TypedArray%.prototype.with ( index , value ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-%typedarray%.prototype.with) |
 | 23.2.3.37 | %TypedArray%.prototype [ %Symbol.iterator% ] ( ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-%typedarray%.prototype-%symbol.iterator%) |
 | 23.2.3.38 | get %TypedArray%.prototype [ %Symbol.toStringTag% ] | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-get-%typedarray%.prototype-%symbol.tostringtag%) |
 | 23.2.4 | Abstract Operations for TypedArray Objects | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-abstract-operations-for-typedarray-objects) |
@@ -108,6 +108,12 @@ Feature-level support tracking with repo test references and optional test262 ev
 |---|---|---|---|---|
 | %TypedArray% constructor prototype metadata | Supported with Limitations | [`IntrinsicCallables_TypedArray_ConstructorMetadataSurface.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_TypedArray_ConstructorMetadataSurface.js) | `test/built-ins/TypedArray/prototype.js` | Supported typed-array constructor values share a %TypedArray% intrinsic constructor object with a non-writable, non-enumerable, non-configurable prototype property. Per-constructor prototype objects and the remaining constructor metadata surface are incomplete. |
 
+### 23.2.2.4 ([tc39.es](https://tc39.es/ecma262/#sec-get-%typedarray%-%symbol.species%))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| get %TypedArray% [ %Symbol.species% ] | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/TypedArray/Symbol.species/ExecutionTests.cs` | `test/built-ins/TypedArray/Symbol.species/length.js`<br>`test/built-ins/TypedArray/Symbol.species/name.js`<br>`test/built-ins/TypedArray/Symbol.species/prop-desc.js`<br>`test/built-ins/TypedArray/Symbol.species/result.js` | The shared intrinsic exposes the configurable, getter-only @@species accessor with standard name and length metadata, returning its receiver. Full species-constructor allocation remains unsupported. |
+
 ### 23.2.3 ([tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-%typedarrayprototype%-object))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
@@ -120,6 +126,12 @@ Feature-level support tracking with repo test references and optional test262 ev
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
 | Shared %TypedArray%.prototype.at/includes/indexOf/lastIndexOf | Supported with Limitations | [`Uint8Array_Construct_ArrayLike_Buffer_Search.js`](../../../tests/Jroc.Tests/TypedArray/JavaScript/Uint8Array_Construct_ArrayLike_Buffer_Search.js)<br>[`Float64Array_Construct_ArrayBuffer_Search.js`](../../../tests/Jroc.Tests/TypedArray/JavaScript/Float64Array_Construct_ArrayBuffer_Search.js)<br>[`Int32Array_Fill_Reverse_Join_LastIndexOf.js`](../../../tests/Jroc.Tests/TypedArray/JavaScript/Int32Array_Fill_Reverse_Join_LastIndexOf.js) |  | The supported TypedArray families share at(), includes(), indexOf(), and lastIndexOf() implementations with numeric coercion and NaN handling for includes(). at() still returns numeric defaults rather than fully spec-accurate undefined behavior for every out-of-range case. |
+
+### 23.2.3.5 ([tc39.es](https://tc39.es/ecma262/#sec-%typedarray%.prototype.constructor))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| %TypedArray%.prototype.constructor | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/TypedArray/prototype/ExecutionTests.cs` | `test/built-ins/TypedArray/prototype/constructor.js` | The shared TypedArray prototype exposes the writable, configurable, non-enumerable constructor property. Concrete supported TypedArray prototypes retain their corresponding concrete constructors. |
 
 ### 23.2.3.6 ([tc39.es](https://tc39.es/ecma262/#sec-%typedarray%.prototype.copywithin))
 
@@ -138,6 +150,12 @@ Feature-level support tracking with repo test references and optional test262 ev
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
 | %TypedArray%.prototype.findLastIndex | Supported with Limitations | [`invoked-as-method.js`](../../../tests/Jroc.Test262.Tests/built-ins/TypedArray/prototype/findLastIndex/JavaScript/invoked-as-method.js)<br>[`length.js`](../../../tests/Jroc.Test262.Tests/built-ins/TypedArray/prototype/findLastIndex/JavaScript/length.js)<br>[`name.js`](../../../tests/Jroc.Test262.Tests/built-ins/TypedArray/prototype/findLastIndex/JavaScript/name.js)<br>[`not-a-constructor.js`](../../../tests/Jroc.Test262.Tests/built-ins/TypedArray/prototype/findLastIndex/JavaScript/not-a-constructor.js)<br>[`prop-desc.js`](../../../tests/Jroc.Test262.Tests/built-ins/TypedArray/prototype/findLastIndex/JavaScript/prop-desc.js) | `test/built-ins/TypedArray/prototype/findLastIndex/invoked-as-method.js`<br>`test/built-ins/TypedArray/prototype/findLastIndex/length.js`<br>`test/built-ins/TypedArray/prototype/findLastIndex/name.js`<br>`test/built-ins/TypedArray/prototype/findLastIndex/not-a-constructor.js`<br>`test/built-ins/TypedArray/prototype/findLastIndex/prop-desc.js` | The supported TypedArray families expose a non-constructible findLastIndex() built-in with standard name, length, and property descriptors, typed receiver validation, callable predicate checks, thisArg forwarding, and reverse-index callback traversal. Detached or resizable ArrayBuffer behavior and unsupported TypedArray families remain outside the covered subset. |
+
+### 23.2.3.22 ([tc39.es](https://tc39.es/ecma262/#sec-%typedarray%.prototype.map))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| %TypedArray%.prototype.map default species observation | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/TypedArray/prototype/map/ExecutionTests.cs` | `test/built-ins/TypedArray/prototype/map/speciesctor-get-ctor.js`<br>`test/built-ins/TypedArray/prototype/map/speciesctor-get-ctor-inherited.js`<br>`test/built-ins/TypedArray/prototype/map/speciesctor-get-species.js`<br>`test/built-ins/TypedArray/prototype/map/speciesctor-get-species-use-default-ctor.js` | map() observes constructor and @@species getters once and retains the intrinsic same-type result when constructor or species is undefined or null. Custom species construction remains unsupported. |
 
 ### 23.2.3.24 ([tc39.es](https://tc39.es/ecma262/#sec-%typedarray%.prototype.reduceright))
 
@@ -167,7 +185,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| %TypedArray%.prototype.toReversed | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/TypedArray/prototype/toReversed/ExecutionTests.cs` | `test/built-ins/TypedArray/prototype/toReversed/immutable.js`<br>`test/built-ins/TypedArray/prototype/toReversed/length.js`<br>`test/built-ins/TypedArray/prototype/toReversed/name.js`<br>`test/built-ins/TypedArray/prototype/toReversed/property-descriptor.js`<br>`test/built-ins/TypedArray/prototype/toReversed/reverses.js` | Creates an immutable same-type reversed copy across the supported non-BigInt TypedArray families and exposes standard built-in metadata. Detached/resizable ArrayBuffers and BigInt TypedArray families remain unsupported. |
+| %TypedArray%.prototype.toReversed | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/TypedArray/prototype/toReversed/ExecutionTests.cs` | `test/built-ins/TypedArray/prototype/toReversed/immutable.js`<br>`test/built-ins/TypedArray/prototype/toReversed/ignores-species.js`<br>`test/built-ins/TypedArray/prototype/toReversed/length.js`<br>`test/built-ins/TypedArray/prototype/toReversed/name.js`<br>`test/built-ins/TypedArray/prototype/toReversed/property-descriptor.js`<br>`test/built-ins/TypedArray/prototype/toReversed/reverses.js` | Creates an immutable same-type reversed copy across the supported non-BigInt TypedArray families, ignores overridden constructor/species values, and exposes standard built-in metadata. Detached/resizable ArrayBuffers and BigInt TypedArray families remain unsupported. |
 
 ### 23.2.3.33 ([tc39.es](https://tc39.es/ecma262/#sec-%typedarray%.prototype.tosorted))
 
@@ -180,6 +198,12 @@ Feature-level support tracking with repo test references and optional test262 ev
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
 | TypedArray iterator, symbol-iterator, and toStringTag basics | Supported with Limitations | [`Uint8Array_Values_Iterator.js`](../../../tests/Jroc.Tests/TypedArray/JavaScript/Uint8Array_Values_Iterator.js)<br>[`Uint8Array_Iterator_Metadata.js`](../../../tests/Jroc.Tests/TypedArray/JavaScript/Uint8Array_Iterator_Metadata.js)<br>[`Uint8Array.js`](../../../tests/Jroc.Test262.Tests/built-ins/ArrayIteratorPrototype/next/JavaScript/Uint8Array.js)<br>[`Int8Array.js`](../../../tests/Jroc.Test262.Tests/built-ins/ArrayIteratorPrototype/next/JavaScript/Int8Array.js)<br>[`Int16Array.js`](../../../tests/Jroc.Test262.Tests/built-ins/ArrayIteratorPrototype/next/JavaScript/Int16Array.js)<br>[`Int32Array.js`](../../../tests/Jroc.Test262.Tests/built-ins/ArrayIteratorPrototype/next/JavaScript/Int32Array.js)<br>[`Float32Array.js`](../../../tests/Jroc.Test262.Tests/built-ins/ArrayIteratorPrototype/next/JavaScript/Float32Array.js)<br>[`Float64Array.js`](../../../tests/Jroc.Test262.Tests/built-ins/ArrayIteratorPrototype/next/JavaScript/Float64Array.js) | `test/built-ins/ArrayIteratorPrototype/next/Uint8Array.js`<br>`test/built-ins/ArrayIteratorPrototype/next/Int8Array.js`<br>`test/built-ins/ArrayIteratorPrototype/next/Int16Array.js`<br>`test/built-ins/ArrayIteratorPrototype/next/Int32Array.js`<br>`test/built-ins/ArrayIteratorPrototype/next/Float32Array.js`<br>`test/built-ins/ArrayIteratorPrototype/next/Float64Array.js` | values(), keys(), and entries() return callable iterator objects, supported TypedArrays expose [Symbol.iterator]() and [Symbol.toStringTag] reads, and they participate in for-of via the runtime iterator path, including Int8Array, Uint8Array, Int16Array, Int32Array, Float32Array, and Float64Array coverage. Current checked-in test262 coverage now includes standalone next() sequences for those supported families. This is implemented via shared instance surface wiring rather than full prototype-object fidelity. |
+
+### 23.2.3.36 ([tc39.es](https://tc39.es/ecma262/#sec-%typedarray%.prototype.with))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| %TypedArray%.prototype.with | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/TypedArray/prototype/with/ExecutionTests.cs` | `test/built-ins/TypedArray/prototype/with/early-type-coercion.js`<br>`test/built-ins/TypedArray/prototype/with/ignores-species.js`<br>`test/built-ins/TypedArray/prototype/with/immutable.js`<br>`test/built-ins/TypedArray/prototype/with/index-bigger-or-eq-than-length.js`<br>`test/built-ins/TypedArray/prototype/with/index-casted-to-number.js`<br>`test/built-ins/TypedArray/prototype/with/index-negative.js`<br>`test/built-ins/TypedArray/prototype/with/index-smaller-than-minus-length.js`<br>`test/built-ins/TypedArray/prototype/with/index-throw-completion.js`<br>`test/built-ins/TypedArray/prototype/with/length-property-ignored.js`<br>`test/built-ins/TypedArray/prototype/with/length.js`<br>`test/built-ins/TypedArray/prototype/with/name.js`<br>`test/built-ins/TypedArray/prototype/with/negative-fractional-index-truncated-to-zero.js`<br>`test/built-ins/TypedArray/prototype/with/not-a-constructor.js`<br>`test/built-ins/TypedArray/prototype/with/order-of-evaluation.js`<br>`test/built-ins/TypedArray/prototype/with/value-throw-completion.js` | Supported non-BigInt TypedArray families return immutable same-type copies, apply ToIntegerOrInfinity index coercion with negative indexing, coerce replacement values before range validation, ignore overridden length and species values, and expose standard built-in metadata. Detached/resizable ArrayBuffers and BigInt TypedArray families remain unsupported. |
 
 ### 23.2.5.1 ([tc39.es](https://tc39.es/ecma262/#sec-typedarray))
 

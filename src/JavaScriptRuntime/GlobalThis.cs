@@ -317,8 +317,19 @@ namespace JavaScriptRuntime
         private static readonly Func<object[], object?[], object?> _typedArrayConstructorValue = static (_, __) =>
             throw new TypeError("%TypedArray% is not directly constructible in jroc.");
         private static readonly object _typedArrayPrototypeValue = new JsObject();
+        private static readonly object _float64ArrayPrototypeValue = new JsObject();
+        private static readonly object _float32ArrayPrototypeValue = new JsObject();
+        private static readonly object _int32ArrayPrototypeValue = new JsObject();
+        private static readonly object _int16ArrayPrototypeValue = new JsObject();
+        private static readonly object _int8ArrayPrototypeValue = new JsObject();
+        private static readonly object _uint32ArrayPrototypeValue = new JsObject();
+        private static readonly object _uint16ArrayPrototypeValue = new JsObject();
         private static readonly Func<object[], object?[]?, object?> _typedArraySortValue = TypedArrayPrototypeSort;
         private static readonly Func<object[], object?[]?, object?> _typedArrayToSortedValue = TypedArrayPrototypeToSorted;
+        private static readonly Func<object[], object?[]?, object?> _typedArrayWithValue = TypedArrayPrototypeWith;
+        private static readonly Func<object[], object?[]?, object?> _typedArrayLengthGetterValue = TypedArrayPrototypeLength;
+        private static readonly Func<object[], object?[]?, object?> _typedArrayToStringValue = TypedArrayPrototypeToString;
+        private static readonly Func<object[], object?[]?, object?> _typedArrayToLocaleStringValue = TypedArrayPrototypeToLocaleString;
         private static readonly Func<object[], object?[]?, object?> _typedArrayFindLastValue = TypedArrayPrototypeFindLast;
         private static readonly Func<object[], object?[]?, object?> _typedArrayFindLastIndexValue = TypedArrayPrototypeFindLastIndex;
         private static readonly Func<object[], object?[]?, object?> _typedArrayCopyWithinValue = TypedArrayPrototypeCopyWithin;
@@ -803,8 +814,28 @@ namespace JavaScriptRuntime
                 Writable = false,
                 Value = _typedArrayPrototypeValue
             });
+            DefineSpeciesAccessorProperty(_typedArrayConstructorValue);
+            PropertyDescriptorStore.DefineOrUpdate(_typedArrayPrototypeValue, "constructor", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = _typedArrayConstructorValue
+            });
+            JavaScriptRuntime.Function.InitializeFunctionInstance(_typedArrayLengthGetterValue, 0d, "get length");
+            PropertyDescriptorStore.DefineOrUpdate(_typedArrayPrototypeValue, "length", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Accessor,
+                Enumerable = false,
+                Configurable = true,
+                Get = _typedArrayLengthGetterValue
+            });
             DefineBuiltinFunctionProperty(_typedArrayPrototypeValue, "sort", _typedArraySortValue, 1d);
             DefineBuiltinFunctionProperty(_typedArrayPrototypeValue, "toSorted", _typedArrayToSortedValue, 1d);
+            DefineBuiltinFunctionProperty(_typedArrayPrototypeValue, "with", _typedArrayWithValue, 2d);
+            DefineBuiltinFunctionProperty(_typedArrayPrototypeValue, "toString", _typedArrayToStringValue, 0d);
+            DefineBuiltinFunctionProperty(_typedArrayPrototypeValue, "toLocaleString", _typedArrayToLocaleStringValue, 0d);
             DefineBuiltinFunctionProperty(_typedArrayPrototypeValue, "copyWithin", _typedArrayCopyWithinValue, 2d);
             DefineBuiltinFunctionProperty(_typedArrayPrototypeValue, "findLast", _typedArrayFindLastValue, 1d);
             DefineBuiltinFunctionProperty(_typedArrayPrototypeValue, "findLastIndex", _typedArrayFindLastIndexValue, 1d);
@@ -823,6 +854,13 @@ namespace JavaScriptRuntime
             ConfigureTypedArrayConstructorValue(_bigUint64ArrayConstructorValue, 8d);
             ConfigureTypedArrayInstancePrototype(_uint8ArrayConstructorValue, JavaScriptRuntime.Uint8Array.Prototype);
             ConfigureTypedArrayInstancePrototype(_uint8ClampedArrayConstructorValue, JavaScriptRuntime.Uint8ClampedArray.Prototype);
+            ConfigureTypedArrayInstancePrototype(_float64ArrayConstructorValue, _float64ArrayPrototypeValue);
+            ConfigureTypedArrayInstancePrototype(_float32ArrayConstructorValue, _float32ArrayPrototypeValue);
+            ConfigureTypedArrayInstancePrototype(_int32ArrayConstructorValue, _int32ArrayPrototypeValue);
+            ConfigureTypedArrayInstancePrototype(_int16ArrayConstructorValue, _int16ArrayPrototypeValue);
+            ConfigureTypedArrayInstancePrototype(_int8ArrayConstructorValue, _int8ArrayPrototypeValue);
+            ConfigureTypedArrayInstancePrototype(_uint32ArrayConstructorValue, _uint32ArrayPrototypeValue);
+            ConfigureTypedArrayInstancePrototype(_uint16ArrayConstructorValue, _uint16ArrayPrototypeValue);
             JavaScriptRuntime.Uint8Array.ConfigureIntrinsicSurface(_uint8ArrayConstructorValue);
             ConfigureConstructorPrototypeSurface(_arrayBufferConstructorValue, _arrayBufferPrototypeValue);
 
@@ -908,6 +946,46 @@ namespace JavaScriptRuntime
             }
 
             return typedArray.toSorted(args);
+        }
+
+        private static object? TypedArrayPrototypeWith(object[] _, object?[]? args)
+        {
+            if (RuntimeServices.GetCurrentThis() is not TypedArrayBase typedArray)
+            {
+                throw new TypeError("TypedArray.prototype.with called on incompatible receiver");
+            }
+
+            return typedArray.with(args);
+        }
+
+        private static object? TypedArrayPrototypeLength(object[] _, object?[]? __)
+        {
+            if (RuntimeServices.GetCurrentThis() is not TypedArrayBase typedArray)
+            {
+                throw new TypeError("TypedArray.prototype.length called on incompatible receiver");
+            }
+
+            return typedArray.length;
+        }
+
+        private static object? TypedArrayPrototypeToString(object[] _, object?[]? args)
+        {
+            if (RuntimeServices.GetCurrentThis() is not TypedArrayBase typedArray)
+            {
+                throw new TypeError("TypedArray.prototype.toString called on incompatible receiver");
+            }
+
+            return typedArray.toString();
+        }
+
+        private static object? TypedArrayPrototypeToLocaleString(object[] _, object?[]? __)
+        {
+            if (RuntimeServices.GetCurrentThis() is not TypedArrayBase typedArray)
+            {
+                throw new TypeError("TypedArray.prototype.toLocaleString called on incompatible receiver");
+            }
+
+            return typedArray.toLocaleString();
         }
 
         private static object? TypedArrayPrototypeFindLastIndex(object[] _, object?[]? args)
@@ -2102,6 +2180,21 @@ namespace JavaScriptRuntime
         }
 
         internal static object ObjectPrototypeValue => _objectPrototypeValue;
+
+        internal static object GetTypedArrayInstancePrototype(TypedArrayBase typedArray)
+            => typedArray switch
+            {
+                JavaScriptRuntime.Float64Array => _float64ArrayPrototypeValue,
+                JavaScriptRuntime.Float32Array => _float32ArrayPrototypeValue,
+                JavaScriptRuntime.Int32Array => _int32ArrayPrototypeValue,
+                JavaScriptRuntime.Int16Array => _int16ArrayPrototypeValue,
+                JavaScriptRuntime.Int8Array => _int8ArrayPrototypeValue,
+                JavaScriptRuntime.Uint32Array => _uint32ArrayPrototypeValue,
+                JavaScriptRuntime.Uint16Array => _uint16ArrayPrototypeValue,
+                JavaScriptRuntime.Uint8Array => JavaScriptRuntime.Uint8Array.Prototype,
+                JavaScriptRuntime.Uint8ClampedArray => JavaScriptRuntime.Uint8ClampedArray.Prototype,
+                _ => _typedArrayPrototypeValue
+            };
         internal static object NumberPrototypeValue => _numberPrototypeValue;
         internal static object BooleanPrototypeValue => _booleanPrototypeValue;
         internal static object BigIntPrototypeValue => _bigIntPrototypeValue;
