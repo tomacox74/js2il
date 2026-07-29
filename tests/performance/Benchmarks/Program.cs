@@ -58,10 +58,16 @@ else
             switcher = BenchmarkSwitcher.FromTypes([typeof(DromaeoExecutionBenchmarks)]);
             benchmarkArgs = programArgs.Skip(1).ToArray();
         }
+        else if (programArgs.Length > 0 && programArgs[0] == "--core-execution")
+        {
+            // Run execution-only benchmarks for the core cross-runtime scenarios.
+            switcher = BenchmarkSwitcher.FromTypes([typeof(CoreExecutionBenchmarks)]);
+            benchmarkArgs = programArgs.Skip(1).ToArray();
+        }
         else if (programArgs.Length > 0 && programArgs[0] == "--all")
         {
             // Run all benchmarks
-            switcher = BenchmarkSwitcher.FromTypes([typeof(JavaScriptRuntimeBenchmarks), typeof(DromaeoExecutionBenchmarks), typeof(KrackenExecutionBenchmarks)]);
+            switcher = BenchmarkSwitcher.FromTypes([typeof(JavaScriptRuntimeBenchmarks), typeof(CoreExecutionBenchmarks), typeof(DromaeoExecutionBenchmarks), typeof(KrackenExecutionBenchmarks)]);
             benchmarkArgs = programArgs.Skip(1).ToArray();
         }
         else if (programArgs.Length > 0 && programArgs[0] == "--kracken")
@@ -111,6 +117,7 @@ Console.WriteLine("  dotnet run -c Release --descriptor-storage # Run inline des
 Console.WriteLine("  dotnet run -c Release --array-operations # Run dense-array operation microbenchmarks");
 Console.WriteLine("  dotnet run -c Release --prototype-storage # Run prototype storage allocation microbenchmarks");
 Console.WriteLine("  dotnet run -c Release -- --dromaeo # Run Dromaeo execution benchmarks");
+Console.WriteLine("  dotnet run -c Release -- --core-execution # Run execution-only core scenario benchmarks");
 Console.WriteLine("  dotnet run -c Release -- --kracken --scenario audio-fft # Run one Kraken scenario");
 Console.WriteLine("  dotnet run -c Release --all    # Run all benchmarks");
 Console.WriteLine("  dotnet run -c Debug -- --dispatch --debug-benchmarks # Allow debugging benchmark code");

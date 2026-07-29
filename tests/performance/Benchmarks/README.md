@@ -109,6 +109,14 @@ dotnet run -c Release -- --dromaeo --scenario dromaeo-3d-cube
 
 If any benchmark case fails, the run now exits non-zero and prints the failing benchmark cases instead of silently treating them as successful timings.
 
+#### Core Scenario Execution Comparison
+Benchmarks prepared Jroc, Jint, and Okojo execution for the core scenarios in `Scenarios/` (the same scenarios `JavaScriptRuntimeBenchmarks` measures end-to-end). This keeps an execute-only view (`jroc-execute`, `jint-execute`, `okojo-execute`) of those scenarios alongside the compile+execute totals:
+
+```powershell
+dotnet run -c Release -- --core-execution
+dotnet run -c Release -- --core-execution --scenario arith
+```
+
 #### Kraken Comparison
 Runs the selected Kraken 1.1 workload with its test and data scripts loaded during setup, then measures only its registered `runTest()` callback for jroc, Jint, Okojo, and YantraJS. The local suite includes `ai-astar`, `audio-beat-detection`, and `audio-fft`:
 

@@ -6,7 +6,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-_Nothing yet._
+- perf/benchmarks: restore execution-only (`jroc-execute`, `jint-execute`, `okojo-execute`) coverage for the core `Scenarios/` workloads via a new `CoreExecutionBenchmarks` suite (`--core-execution`) and CI matrix job. This series was dropped in v0.11.39 when `JrocPhasedBenchmarks` was renamed to `DromaeoExecutionBenchmarks`, which left the core scenarios with compile+execute totals only. The shared phased-execution harness now lives in `ScenarioExecutionBenchmarksBase`.
 
 ## v0.11.39 - 2026-07-29
 
