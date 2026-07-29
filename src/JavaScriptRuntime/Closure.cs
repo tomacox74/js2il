@@ -831,6 +831,21 @@ namespace JavaScriptRuntime
             }
         }
 
+        public static object InvokeFunctionCallWithArgs1(JsFuncNoScopes1 target, object[] scopes, object? a0)
+        {
+            var previousThis = RuntimeServices.SetCurrentThis(Function.GetEffectiveThisArg(target, null));
+            try
+            {
+                return !Function.RequiresInvocationContext(target)
+                    ? target(null, a0)!
+                    : InvokeWithArgs1(target, scopes, a0);
+            }
+            finally
+            {
+                RuntimeServices.SetCurrentThis(previousThis);
+            }
+        }
+
         public static object InvokeFunctionCallWithArgs2(object target, object[] scopes, object? a0, object? a1)
         {
             var previousThis = RuntimeServices.SetCurrentThis(ResolveFunctionCallThis(target));

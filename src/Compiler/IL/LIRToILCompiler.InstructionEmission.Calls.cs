@@ -487,10 +487,14 @@ internal sealed partial class LIRToILCompiler
                     EmitLoadTemp(callValue1.ScopesArray, ilEncoder, allocation, methodDescriptor);
                     EmitLoadTempAsObject(callValue1.A0, ilEncoder, allocation, methodDescriptor);
 
+                    var functionValueType = GetTempStorage(callValue1.FunctionValue).ClrType;
+                    var targetParameterType = functionValueType == typeof(JavaScriptRuntime.JsFuncNoScopes1)
+                        ? typeof(JavaScriptRuntime.JsFuncNoScopes1)
+                        : typeof(object);
                     var invokeRef = _memberRefRegistry.GetOrAddMethod(
                         typeof(JavaScriptRuntime.Closure),
                         nameof(JavaScriptRuntime.Closure.InvokeFunctionCallWithArgs1),
-                        new[] { typeof(object), typeof(object[]), typeof(object) });
+                        new[] { targetParameterType, typeof(object[]), typeof(object) });
                     ilEncoder.OpCode(ILOpCode.Call);
                     ilEncoder.Token(invokeRef);
 
