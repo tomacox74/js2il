@@ -6,6 +6,9 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- runtime: implement `Reflect.apply`, `deleteProperty`, `get`, `getOwnPropertyDescriptor`, `getPrototypeOf`, `has`, `isExtensible`, `preventExtensions`, and `setPrototypeOf`, completing the `Reflect` namespace. Includes `CreateListFromArrayLike` argument handling for `Reflect.apply`, receiver-aware `OrdinaryGet` so accessors run with the supplied receiver as `this`, and `OrdinarySetPrototypeOf` failure reported as a Boolean including non-extensible targets and cyclic prototype chains. Ports ten upstream test262 cases.
+- runtime: `Object.setPrototypeOf` now throws a `TypeError` when the target is non-extensible and the prototype would actually change, instead of silently mutating it.
+- runtime: fix intrinsic static method dispatch so JavaScript calls that omit trailing optional arguments no longer throw `TargetParameterCountException`. Missing arguments now honor declared CLR defaults and overload selection prefers a signature that can receive every supplied argument.
 - perf/compiler: extend unboxed numeric local specialization to uninitialized `let` declarations. Previously only `var` bindings were rescued by the definite-initialization pass, so uninitialized `let` fell back to boxed `object` locals and round-tripped every arithmetic and comparison through `ToNumber`/box. Modern `let`-based code such as the `dromaeo-3d-cube-modern` hot pixel loop now compiles to native `float64` locals. Temporal dead zone, conditional initialization, type-transition, captured-binding, and block-shadowing semantics are unchanged.
 
 ## v0.11.39 - 2026-07-29

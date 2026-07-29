@@ -2,7 +2,7 @@
   "$schema": "../SectionDoc.schema.json",
   "clause": "28.1",
   "title": "The Reflect Object",
-  "status": "Incomplete",
+  "status": "Supported with Limitations",
   "specUrl": "https://tc39.es/ecma262/#sec-reflect-object",
   "parent": {
     "clause": "28"
@@ -12,7 +12,7 @@
     {
       "clause": "28.1.1",
       "title": "Reflect.apply ( target , thisArgument , argumentsList )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-reflect.apply"
     },
     {
@@ -30,37 +30,37 @@
     {
       "clause": "28.1.4",
       "title": "Reflect.deleteProperty ( target , propertyKey )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-reflect.deleteproperty"
     },
     {
       "clause": "28.1.5",
       "title": "Reflect.get ( target , propertyKey [ , receiver ] )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-reflect.get"
     },
     {
       "clause": "28.1.6",
       "title": "Reflect.getOwnPropertyDescriptor ( target , propertyKey )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-reflect.getownpropertydescriptor"
     },
     {
       "clause": "28.1.7",
       "title": "Reflect.getPrototypeOf ( target )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-reflect.getprototypeof"
     },
     {
       "clause": "28.1.8",
       "title": "Reflect.has ( target , propertyKey )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-reflect.has"
     },
     {
       "clause": "28.1.9",
       "title": "Reflect.isExtensible ( target )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-reflect.isextensible"
     },
     {
@@ -76,7 +76,7 @@
     {
       "clause": "28.1.11",
       "title": "Reflect.preventExtensions ( target )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-reflect.preventextensions"
     },
     {
@@ -88,7 +88,7 @@
     {
       "clause": "28.1.13",
       "title": "Reflect.setPrototypeOf ( target , proto )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-reflect.setprototypeof"
     },
     {
@@ -100,6 +100,19 @@
   ],
   "support": {
     "entries": [
+      {
+        "clause": "28.1.1",
+        "feature": "Reflect.apply",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-reflect.apply",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/Reflect/apply/ExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/built-ins/Reflect/apply/call-target.js"
+        ],
+        "notes": "Calls the target with the supplied this value and an argument list built with CreateListFromArrayLike, so array-like sources and holes are read by index and surface as undefined. Non-callable targets throw a TypeError. Argument-list coercion edge cases and abrupt completions from exotic array-likes are not yet covered."
+      },
       {
         "clause": "28.1.2",
         "feature": "Reflect.construct",
@@ -118,6 +131,98 @@
         "notes": "Reflect.defineProperty delegates to Object.defineProperty and returns true for successful descriptor definition. Current test262 coverage includes descriptor definition, symbol-keyed properties, length, and name."
       },
       {
+        "clause": "28.1.4",
+        "feature": "Reflect.deleteProperty",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-reflect.deleteproperty",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/Reflect/deleteProperty/ExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/built-ins/Reflect/deleteProperty/delete-properties.js"
+        ],
+        "notes": "Performs the target [[Delete]] and reports the Boolean result rather than throwing for non-configurable properties, which is the observable difference from a strict-mode delete. Proxy deleteProperty traps are honored. Abrupt completions from property-key coercion are not yet covered."
+      },
+      {
+        "clause": "28.1.5",
+        "feature": "Reflect.get",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-reflect.get",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/Reflect/get/ExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/built-ins/Reflect/get/return-value.js",
+          "test/built-ins/Reflect/get/return-value-from-receiver.js"
+        ],
+        "notes": "Implements OrdinaryGet including prototype-chain lookup and the optional receiver argument, so accessor getters are invoked with the receiver as their this value. Getters that are undefined return undefined. Abrupt completions from property-key coercion are not yet covered."
+      },
+      {
+        "clause": "28.1.6",
+        "feature": "Reflect.getOwnPropertyDescriptor",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-reflect.getownpropertydescriptor",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/Reflect/getOwnPropertyDescriptor/ExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/built-ins/Reflect/getOwnPropertyDescriptor/return-from-data-descriptor.js"
+        ],
+        "notes": "Returns a FromPropertyDescriptor result for own properties with the spec property order (value, writable, enumerable, configurable) and undefined for missing own properties. Accessor-descriptor and symbol-key shapes are not yet covered by checked-in tests."
+      },
+      {
+        "clause": "28.1.7",
+        "feature": "Reflect.getPrototypeOf",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-reflect.getprototypeof",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/Reflect/getPrototypeOf/ExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/built-ins/Reflect/getPrototypeOf/return-prototype.js"
+        ],
+        "notes": "Returns the target [[Prototype]] and throws a TypeError for non-object targets. Proxy getPrototypeOf traps are honored. Null-prototype and abrupt-completion cases are not yet covered by checked-in tests."
+      },
+      {
+        "clause": "28.1.8",
+        "feature": "Reflect.has",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-reflect.has",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/Reflect/has/ExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/built-ins/Reflect/has/return-boolean.js"
+        ],
+        "notes": "Performs the target [[HasProperty]] across own and inherited properties, matching the in operator, and throws a TypeError for non-object targets. Abrupt completions from property-key coercion are not yet covered."
+      },
+      {
+        "clause": "28.1.9",
+        "feature": "Reflect.isExtensible",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-reflect.isextensible",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/Reflect/isExtensible/ExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/built-ins/Reflect/isExtensible/return-boolean.js"
+        ],
+        "notes": "Reports the target [[IsExtensible]] state and throws a TypeError for non-object targets, unlike Object.isExtensible which coerces primitives to false. Proxy isExtensible trap invariants are not yet covered by checked-in tests."
+      },
+      {
+        "clause": "28.1.11",
+        "feature": "Reflect.preventExtensions",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-reflect.preventextensions",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/Reflect/preventExtensions/ExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/built-ins/Reflect/preventExtensions/prevent-extensions.js"
+        ],
+        "notes": "Marks the target non-extensible and returns a Boolean. Subsequent property definition and prototype mutation on the target throw a TypeError through Object.defineProperty and Object.setPrototypeOf. Proxy preventExtensions trap results are not yet covered by checked-in tests."
+      },
+      {
         "clause": "28.1.12",
         "feature": "Reflect.set",
         "status": "Supported with Limitations",
@@ -129,6 +234,19 @@
           "test/built-ins/TypedArray/prototype/reduceRight/callbackfn-set-value-during-iteration.js"
         ],
         "notes": "Supports three-argument assignment with Boolean success results across ordinary objects, arrays, TypedArrays, inherited descriptors, and proxy set traps. Explicit receiver semantics remain unsupported."
+      },
+      {
+        "clause": "28.1.13",
+        "feature": "Reflect.setPrototypeOf",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-reflect.setprototypeof",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/Reflect/setPrototypeOf/ExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/built-ins/Reflect/setPrototypeOf/return-true-if-new-prototype-is-set.js"
+        ],
+        "notes": "Implements OrdinarySetPrototypeOf and reports failure with a Boolean instead of throwing, which is the observable difference from Object.setPrototypeOf. Returns true when the prototype is unchanged, and false for a non-extensible target or a cyclic prototype chain. Non-object, non-null proto values throw a TypeError."
       },
       {
         "clause": "28.1.14",
