@@ -818,6 +818,21 @@ namespace JavaScriptRuntime
             }
         }
 
+        public static object InvokeFunctionCallWithArgs0(JsFuncNoScopes0 target, object[] scopes)
+        {
+            var previousThis = RuntimeServices.SetCurrentThis(Function.GetEffectiveThisArg(target, null));
+            try
+            {
+                return !Function.RequiresInvocationContext(target)
+                    ? target(null)!
+                    : InvokeWithArgs0(target, scopes);
+            }
+            finally
+            {
+                RuntimeServices.SetCurrentThis(previousThis);
+            }
+        }
+
         public static object InvokeFunctionCallWithArgs1(object target, object[] scopes, object? a0)
         {
             var previousThis = RuntimeServices.SetCurrentThis(ResolveFunctionCallThis(target));
@@ -859,12 +874,42 @@ namespace JavaScriptRuntime
             }
         }
 
+        public static object InvokeFunctionCallWithArgs2(JsFuncNoScopes2 target, object[] scopes, object? a0, object? a1)
+        {
+            var previousThis = RuntimeServices.SetCurrentThis(Function.GetEffectiveThisArg(target, null));
+            try
+            {
+                return !Function.RequiresInvocationContext(target)
+                    ? target(null, a0, a1)!
+                    : InvokeWithArgs2(target, scopes, a0, a1);
+            }
+            finally
+            {
+                RuntimeServices.SetCurrentThis(previousThis);
+            }
+        }
+
         public static object InvokeFunctionCallWithArgs3(object target, object[] scopes, object? a0, object? a1, object? a2)
         {
             var previousThis = RuntimeServices.SetCurrentThis(ResolveFunctionCallThis(target));
             try
             {
                 return InvokeWithArgs3(target, scopes, a0, a1, a2);
+            }
+            finally
+            {
+                RuntimeServices.SetCurrentThis(previousThis);
+            }
+        }
+
+        public static object InvokeFunctionCallWithArgs3(JsFuncNoScopes3 target, object[] scopes, object? a0, object? a1, object? a2)
+        {
+            var previousThis = RuntimeServices.SetCurrentThis(Function.GetEffectiveThisArg(target, null));
+            try
+            {
+                return !Function.RequiresInvocationContext(target)
+                    ? target(null, a0, a1, a2)!
+                    : InvokeWithArgs3(target, scopes, a0, a1, a2);
             }
             finally
             {

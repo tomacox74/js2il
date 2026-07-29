@@ -67,6 +67,11 @@ internal sealed partial class LIRToILCompiler
             || ContainsMetaProperty(callableId.AstNode);
     }
 
+    private Type GetFunctionCallTargetParameterType(TempVariable functionValue, Type specializedType)
+        => GetTempStorage(functionValue).ClrType == specializedType
+            ? specializedType
+            : typeof(object);
+
     private static bool ContainsMetaProperty(Node? node)
     {
         if (node is null)
@@ -462,10 +467,13 @@ internal sealed partial class LIRToILCompiler
                     EmitLoadTemp(callValue0.FunctionValue, ilEncoder, allocation, methodDescriptor);
                     EmitLoadTemp(callValue0.ScopesArray, ilEncoder, allocation, methodDescriptor);
 
+                    var targetParameterType = GetFunctionCallTargetParameterType(
+                        callValue0.FunctionValue,
+                        typeof(JavaScriptRuntime.JsFuncNoScopes0));
                     var invokeRef = _memberRefRegistry.GetOrAddMethod(
                         typeof(JavaScriptRuntime.Closure),
                         nameof(JavaScriptRuntime.Closure.InvokeFunctionCallWithArgs0),
-                        new[] { typeof(object), typeof(object[]) });
+                        new[] { targetParameterType, typeof(object[]) });
                     ilEncoder.OpCode(ILOpCode.Call);
                     ilEncoder.Token(invokeRef);
 
@@ -487,10 +495,9 @@ internal sealed partial class LIRToILCompiler
                     EmitLoadTemp(callValue1.ScopesArray, ilEncoder, allocation, methodDescriptor);
                     EmitLoadTempAsObject(callValue1.A0, ilEncoder, allocation, methodDescriptor);
 
-                    var functionValueType = GetTempStorage(callValue1.FunctionValue).ClrType;
-                    var targetParameterType = functionValueType == typeof(JavaScriptRuntime.JsFuncNoScopes1)
-                        ? typeof(JavaScriptRuntime.JsFuncNoScopes1)
-                        : typeof(object);
+                    var targetParameterType = GetFunctionCallTargetParameterType(
+                        callValue1.FunctionValue,
+                        typeof(JavaScriptRuntime.JsFuncNoScopes1));
                     var invokeRef = _memberRefRegistry.GetOrAddMethod(
                         typeof(JavaScriptRuntime.Closure),
                         nameof(JavaScriptRuntime.Closure.InvokeFunctionCallWithArgs1),
@@ -517,10 +524,13 @@ internal sealed partial class LIRToILCompiler
                     EmitLoadTempAsObject(callValue2.A0, ilEncoder, allocation, methodDescriptor);
                     EmitLoadTempAsObject(callValue2.A1, ilEncoder, allocation, methodDescriptor);
 
+                    var targetParameterType = GetFunctionCallTargetParameterType(
+                        callValue2.FunctionValue,
+                        typeof(JavaScriptRuntime.JsFuncNoScopes2));
                     var invokeRef = _memberRefRegistry.GetOrAddMethod(
                         typeof(JavaScriptRuntime.Closure),
                         nameof(JavaScriptRuntime.Closure.InvokeFunctionCallWithArgs2),
-                        new[] { typeof(object), typeof(object[]), typeof(object), typeof(object) });
+                        new[] { targetParameterType, typeof(object[]), typeof(object), typeof(object) });
                     ilEncoder.OpCode(ILOpCode.Call);
                     ilEncoder.Token(invokeRef);
 
@@ -544,10 +554,13 @@ internal sealed partial class LIRToILCompiler
                     EmitLoadTempAsObject(callValue3.A1, ilEncoder, allocation, methodDescriptor);
                     EmitLoadTempAsObject(callValue3.A2, ilEncoder, allocation, methodDescriptor);
 
+                    var targetParameterType = GetFunctionCallTargetParameterType(
+                        callValue3.FunctionValue,
+                        typeof(JavaScriptRuntime.JsFuncNoScopes3));
                     var invokeRef = _memberRefRegistry.GetOrAddMethod(
                         typeof(JavaScriptRuntime.Closure),
                         nameof(JavaScriptRuntime.Closure.InvokeFunctionCallWithArgs3),
-                        new[] { typeof(object), typeof(object[]), typeof(object), typeof(object), typeof(object) });
+                        new[] { targetParameterType, typeof(object[]), typeof(object), typeof(object), typeof(object) });
                     ilEncoder.OpCode(ILOpCode.Call);
                     ilEncoder.Token(invokeRef);
 
