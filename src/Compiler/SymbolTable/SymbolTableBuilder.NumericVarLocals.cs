@@ -57,7 +57,7 @@ public partial class SymbolTableBuilder
             changed = false;
             foreach (var binding in scope.Bindings.Values)
             {
-                if (binding.Kind != BindingKind.Var
+                if (!IsUnboxedLocalCandidateKind(binding.Kind)
                     || binding.IsCaptured
                     || scope.Parameters.Contains(binding.Name)
                     || (scope.Kind == ScopeKind.Global
@@ -99,7 +99,7 @@ public partial class SymbolTableBuilder
         // local or callable-return fact.
         foreach (var binding in scope.Bindings.Values)
         {
-            if (binding.Kind != BindingKind.Var
+            if (!IsUnboxedLocalCandidateKind(binding.Kind)
                 || binding.CanUseUnboxedLocal
                 || binding.DeclarationNode is not VariableDeclarator { Init: Expression initializer })
             {
@@ -121,6 +121,27 @@ public partial class SymbolTableBuilder
             binding.IsStableType = false;
         }
     }
+
+    /// <summary>
+    /// Declaration kinds eligible for an unboxed numeric local.
+    /// <para>
+    /// <c>var</c> qualifies because the analyzer proves the binding is written with a number
+    /// before every reachable read, so its hoisted <c>undefined</c> state is never observable.
+    /// </para>
+    /// <para>
+    /// <c>let</c> qualifies for the same reason and is strictly safer: the analyzer only accepts
+    /// a binding when definite assignment dominates every read, which is exactly the condition
+    /// under which the temporal dead zone can never be entered. Uninitialized <c>let</c> otherwise
+    /// falls back to a boxed <see cref="object"/> local because
+    /// <c>InferVariableClrTypes</c> refuses value types for declarators without an initializer.
+    /// </para>
+    /// <para>
+    /// <c>const</c> is excluded: it always has an initializer, so ordinary initializer-based
+    /// inference already types it and this pass would add nothing.
+    /// </para>
+    /// </summary>
+    private static bool IsUnboxedLocalCandidateKind(BindingKind kind)
+        => kind is BindingKind.Var or BindingKind.Let;
 
     private static bool TryGetScopeStatements(Scope scope, out NodeList<Statement> body)
     {

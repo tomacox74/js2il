@@ -86,8 +86,8 @@ public class BindingInfo
     public bool HasWrite { get; set; }
 
     /// <summary>
-    /// True when a non-captured <c>var</c> binding is proven numeric and definitely
-    /// initialized before every reachable read in its callable.
+    /// True when a non-captured <c>var</c> or <c>let</c> binding is proven numeric and
+    /// definitely initialized before every reachable read in its callable.
     /// </summary>
     public bool CanUseUnboxedLocal { get; set; }
 
