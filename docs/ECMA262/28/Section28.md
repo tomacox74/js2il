@@ -4,7 +4,7 @@ Covers reflection capabilities, including Proxy/Reflect and meta-level operation
 
 [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-06-24T17:01:02Z
+> Last generated (UTC): 2026-07-29T21:23:37Z
 
 _This section is split into subsection documents for readability._
 
@@ -18,6 +18,6 @@ _This section is split into subsection documents for readability._
 
 | Subsection | Title | Status | Spec | Document |
 |---:|---|---|---|---|
-| 28.1 | The Reflect Object | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-reflect-object) | [Section28_1.md](Section28_1.md) |
+| 28.1 | The Reflect Object | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-reflect-object) | [Section28_1.md](Section28_1.md) |
 | 28.2 | Proxy Objects | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-proxy-objects) | [Section28_2.md](Section28_2.md) |
 | 28.3 | Module Namespace Objects | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-module-namespace-objects) | [Section28_3.md](Section28_3.md) |
