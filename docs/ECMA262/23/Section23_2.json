@@ -48,7 +48,7 @@
     {
       "clause": "23.2.2.4",
       "title": "get %TypedArray% [ %Symbol.species% ]",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-get-%typedarray%-%symbol.species%"
     },
     {
@@ -84,7 +84,7 @@
     {
       "clause": "23.2.3.5",
       "title": "%TypedArray%.prototype.constructor",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-%typedarray%.prototype.constructor"
     },
     {
@@ -282,7 +282,7 @@
     {
       "clause": "23.2.3.36",
       "title": "%TypedArray%.prototype.with ( index , value )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-%typedarray%.prototype.with"
     },
     {
@@ -669,12 +669,13 @@
         ],
         "test262Paths": [
           "test/built-ins/TypedArray/prototype/toReversed/immutable.js",
+          "test/built-ins/TypedArray/prototype/toReversed/ignores-species.js",
           "test/built-ins/TypedArray/prototype/toReversed/length.js",
           "test/built-ins/TypedArray/prototype/toReversed/name.js",
           "test/built-ins/TypedArray/prototype/toReversed/property-descriptor.js",
           "test/built-ins/TypedArray/prototype/toReversed/reverses.js"
         ],
-        "notes": "Creates an immutable same-type reversed copy across the supported non-BigInt TypedArray families and exposes standard built-in metadata. Detached/resizable ArrayBuffers and BigInt TypedArray families remain unsupported."
+        "notes": "Creates an immutable same-type reversed copy across the supported non-BigInt TypedArray families, ignores overridden constructor/species values, and exposes standard built-in metadata. Detached/resizable ArrayBuffers and BigInt TypedArray families remain unsupported."
       },
       {
         "clause": "23.2.3.29",
@@ -801,6 +802,78 @@
           "test/built-ins/ArrayIteratorPrototype/next/Float32Array.js",
           "test/built-ins/ArrayIteratorPrototype/next/Float64Array.js"
         ]
+      },
+      {
+        "clause": "23.2.2.4",
+        "feature": "get %TypedArray% [ %Symbol.species% ]",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-get-%typedarray%-%symbol.species%",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/TypedArray/Symbol.species/ExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/built-ins/TypedArray/Symbol.species/length.js",
+          "test/built-ins/TypedArray/Symbol.species/name.js",
+          "test/built-ins/TypedArray/Symbol.species/prop-desc.js",
+          "test/built-ins/TypedArray/Symbol.species/result.js"
+        ],
+        "notes": "The shared intrinsic exposes the configurable, getter-only @@species accessor with standard name and length metadata, returning its receiver. Full species-constructor allocation remains unsupported."
+      },
+      {
+        "clause": "23.2.3.5",
+        "feature": "%TypedArray%.prototype.constructor",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-%typedarray%.prototype.constructor",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/TypedArray/prototype/ExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/built-ins/TypedArray/prototype/constructor.js"
+        ],
+        "notes": "The shared TypedArray prototype exposes the writable, configurable, non-enumerable constructor property. Concrete supported TypedArray prototypes retain their corresponding concrete constructors."
+      },
+      {
+        "clause": "23.2.3.22",
+        "feature": "%TypedArray%.prototype.map default species observation",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-%typedarray%.prototype.map",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/TypedArray/prototype/map/ExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/built-ins/TypedArray/prototype/map/speciesctor-get-ctor.js",
+          "test/built-ins/TypedArray/prototype/map/speciesctor-get-ctor-inherited.js",
+          "test/built-ins/TypedArray/prototype/map/speciesctor-get-species.js",
+          "test/built-ins/TypedArray/prototype/map/speciesctor-get-species-use-default-ctor.js"
+        ],
+        "notes": "map() observes constructor and @@species getters once and retains the intrinsic same-type result when constructor or species is undefined or null. Custom species construction remains unsupported."
+      },
+      {
+        "clause": "23.2.3.36",
+        "feature": "%TypedArray%.prototype.with",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-%typedarray%.prototype.with",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/TypedArray/prototype/with/ExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/built-ins/TypedArray/prototype/with/early-type-coercion.js",
+          "test/built-ins/TypedArray/prototype/with/ignores-species.js",
+          "test/built-ins/TypedArray/prototype/with/immutable.js",
+          "test/built-ins/TypedArray/prototype/with/index-bigger-or-eq-than-length.js",
+          "test/built-ins/TypedArray/prototype/with/index-casted-to-number.js",
+          "test/built-ins/TypedArray/prototype/with/index-negative.js",
+          "test/built-ins/TypedArray/prototype/with/index-smaller-than-minus-length.js",
+          "test/built-ins/TypedArray/prototype/with/index-throw-completion.js",
+          "test/built-ins/TypedArray/prototype/with/length-property-ignored.js",
+          "test/built-ins/TypedArray/prototype/with/length.js",
+          "test/built-ins/TypedArray/prototype/with/name.js",
+          "test/built-ins/TypedArray/prototype/with/negative-fractional-index-truncated-to-zero.js",
+          "test/built-ins/TypedArray/prototype/with/not-a-constructor.js",
+          "test/built-ins/TypedArray/prototype/with/order-of-evaluation.js",
+          "test/built-ins/TypedArray/prototype/with/value-throw-completion.js"
+        ],
+        "notes": "Supported non-BigInt TypedArray families return immutable same-type copies, apply ToIntegerOrInfinity index coercion with negative indexing, coerce replacement values before range validation, ignore overridden length and species values, and expose standard built-in metadata. Detached/resizable ArrayBuffers and BigInt TypedArray families remain unsupported."
       },
       {
         "clause": "23.2.2.1",

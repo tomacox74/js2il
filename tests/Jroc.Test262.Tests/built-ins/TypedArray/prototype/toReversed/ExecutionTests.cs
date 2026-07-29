@@ -9,6 +9,9 @@ public class ExecutionTests : DiskExecutionTestsBase
     [Fact(DisplayName = "immutable")]
     public Task immutable() => ExecutionTestFromFile("immutable");
 
+    [Fact(DisplayName = "ignores-species")]
+    public Task ignores_species() => ExecutionTestFromFile("ignores-species");
+
     [Fact(DisplayName = "length")]
     public Task length() => ExecutionTestFromFile("length");
 

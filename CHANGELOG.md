@@ -6,6 +6,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- runtime: add `%TypedArray%.prototype.with` for supported non-BigInt TypedArray families, with immutable same-type copying, index and replacement coercion ordering, negative indexing, standard metadata, concrete prototype wiring, and covered default-species observation. Ports twenty-five upstream test262 cases.
 - runtime: add stable numeric `%TypedArray%.prototype.sort` and immutable `%TypedArray%.prototype.toSorted` for supported TypedArray families, including comparator coercion, abrupt-completion propagation, NaN and signed-zero ordering, receiver validation, and standard built-in metadata. Ports twenty-five upstream test262 cases.
 
 ## v0.11.38 - 2026-07-28
