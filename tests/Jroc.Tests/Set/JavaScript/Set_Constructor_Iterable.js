@@ -50,8 +50,12 @@ console.log(closedOnNormalCompletion);
 console.log(noCloseSet.size);
 
 var closedDuringNormalization = false;
-var unionIterable = {
-    [Symbol.iterator]() {
+var unionSetLike = {
+    size: 2,
+    has(value) {
+        return value === 5 || value === 6;
+    },
+    keys() {
         var index = 0;
         var values = [5, 6];
 
@@ -71,7 +75,7 @@ var unionIterable = {
     }
 };
 
-var unionResult = noCloseSet.union(unionIterable);
+var unionResult = noCloseSet.union(unionSetLike);
 console.log(closedDuringNormalization);
 console.log(unionResult.has(4));
 console.log(unionResult.has(6));

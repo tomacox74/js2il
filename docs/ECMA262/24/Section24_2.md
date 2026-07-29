@@ -4,7 +4,7 @@
 
 [Back to Section24](Section24.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-07-23T01:33:25Z
+> Last generated (UTC): 2026-07-29T22:25:01Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -14,12 +14,12 @@
 
 | Clause | Title | Status | Spec |
 |---:|---|---|---|
-| 24.2.1 | Abstract Operations For Set Objects | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-abstract-operations-for-set-objects) |
-| 24.2.1.1 | Set Records | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-set-records) |
-| 24.2.1.2 | GetSetRecord ( obj ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-getsetrecord) |
-| 24.2.1.3 | SetDataHas ( setData , value ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-setdatahas) |
-| 24.2.1.4 | SetDataIndex ( setData , value ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-setdataindex) |
-| 24.2.1.5 | SetDataSize ( setData ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-setdatasize) |
+| 24.2.1 | Abstract Operations For Set Objects | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-abstract-operations-for-set-objects) |
+| 24.2.1.1 | Set Records | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-set-records) |
+| 24.2.1.2 | GetSetRecord ( obj ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-getsetrecord) |
+| 24.2.1.3 | SetDataHas ( setData , value ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-setdatahas) |
+| 24.2.1.4 | SetDataIndex ( setData , value ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-setdataindex) |
+| 24.2.1.5 | SetDataSize ( setData ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-setdatasize) |
 | 24.2.2 | The Set Constructor | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-set-constructor) |
 | 24.2.2.1 | Set ( [ iterable ] ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-set-iterable) |
 | 24.2.3 | Properties of the Set Constructor | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-set-constructor) |
@@ -56,6 +56,18 @@
 
 Feature-level support tracking with repo test references and optional test262 evidence.
 
+### 24.2.1.2 ([tc39.es](https://tc39.es/ecma262/#sec-getsetrecord))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| GetSetRecord ( obj ) | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/Set/prototype/union/ExecutionTests.cs` | `test/built-ins/Set/prototype/union/array-throws.js`<br>`test/built-ins/Set/prototype/union/size-is-a-number.js`<br>`test/built-ins/Set/prototype/union/has-is-callable.js`<br>`test/built-ins/Set/prototype/union/keys-is-callable.js` | Non-objects are rejected, size is read once and coerced with ToNumber so a NaN result (including an absent size) throws a TypeError and a BigInt or Symbol size throws from the coercion itself, a negative size throws a RangeError, and has and keys are each read once and must be callable. Abrupt completions from a size valueOf hook propagate and the hook is observed exactly once. |
+
+### 24.2.1.3 ([tc39.es](https://tc39.es/ecma262/#sec-setdatahas))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| SetDataHas / SetDataIndex / SetDataSize | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/Set/prototype/intersection/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Set/prototype/isSupersetOf/ExecutionTests.cs` | `test/built-ins/Set/prototype/intersection/allows-set-like-object.js`<br>`test/built-ins/Set/prototype/isSupersetOf/allows-set-like-object.js` | Membership, index lookup, and size are served by the backing insertion-ordered list and hash set, which canonicalizes -0 to +0 and treats NaN as a single value. Deletions compact the list instead of leaving EMPTY slots, so element counts observed by a callback that mutates the receiver mid-traversal can differ from the spec. |
+
 ### 24.2.2.1 ([tc39.es](https://tc39.es/ecma262/#sec-set-iterable))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
@@ -91,7 +103,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| New Set methods (difference, intersection, isDisjointFrom, isSubsetOf, isSupersetOf, symmetricDifference, union) | Supported with Limitations | [`Set_Algebra_Methods.js`](../../../tests/Jroc.Tests/Set/JavaScript/Set_Algebra_Methods.js) |  | The ES2025 Set algebra methods are implemented for Set inputs and generic iterables, but JROC currently normalizes non-Set operands through new Set(iterable) instead of the full ES2025 set-like protocol (GetSetRecord/size/has/keys). |
+| New Set methods (difference, intersection, isDisjointFrom, isSubsetOf, isSupersetOf, symmetricDifference, union) | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/Set/prototype/union/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Set/prototype/intersection/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Set/prototype/difference/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Set/prototype/symmetricDifference/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Set/prototype/isSubsetOf/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Set/prototype/isSupersetOf/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Set/prototype/isDisjointFrom/ExecutionTests.cs`<br>[`Set_Algebra_Methods.js`](../../../tests/Jroc.Tests/Set/JavaScript/Set_Algebra_Methods.js) | `test/built-ins/Set/prototype/union/allows-set-like-object.js`<br>`test/built-ins/Set/prototype/union/allows-set-like-class.js`<br>`test/built-ins/Set/prototype/union/array-throws.js`<br>`test/built-ins/Set/prototype/intersection/allows-set-like-object.js`<br>`test/built-ins/Set/prototype/difference/allows-set-like-object.js`<br>`test/built-ins/Set/prototype/symmetricDifference/allows-set-like-object.js`<br>`test/built-ins/Set/prototype/isSubsetOf/allows-set-like-object.js`<br>`test/built-ins/Set/prototype/isSupersetOf/allows-set-like-object.js`<br>`test/built-ins/Set/prototype/isDisjointFrom/allows-set-like-object.js` | The ES2025 Set algebra methods now take the set-like protocol path: the argument is validated with GetSetRecord and each method chooses between calling the argument's has method and draining its keys iterator based on the relative sizes, so has and keys are only observed where the spec requires it. Arrays and other plain iterables are rejected with a TypeError because they are not set-like. Results are built by copying the receiver's set data directly rather than through Set.prototype.add. Set data is stored as a dense list, so the spec's EMPTY-slot bookkeeping for elements deleted by a user callback during traversal is not modelled and Symbol.species subclassing is not honored. |
 
 ### 24.2.4.19 ([tc39.es](https://tc39.es/ecma262/#sec-set.prototype-%symbol.tostringtag%))
 
