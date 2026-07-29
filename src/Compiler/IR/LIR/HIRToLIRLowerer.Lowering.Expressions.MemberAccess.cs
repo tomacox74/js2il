@@ -224,8 +224,7 @@ public sealed partial class HIRToLIRLowerer
 
                 return clrType == typeof(JavaScriptRuntime.Array)
                     || typeof(JavaScriptRuntime.TypedArrayBase).IsAssignableFrom(clrType)
-                    || typeof(JavaScriptRuntime.Node.Buffer).IsAssignableFrom(clrType)
-                    || typeof(Delegate).IsAssignableFrom(clrType);
+                    || typeof(JavaScriptRuntime.Node.Buffer).IsAssignableFrom(clrType);
             }
 
             Type? stableReceiverType = null;
