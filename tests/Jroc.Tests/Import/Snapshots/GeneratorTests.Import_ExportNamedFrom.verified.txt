@@ -3398,8 +3398,7 @@
 		.locals init (
 			[0] class Modules.Import_ExportNamedFrom_LibA/Scope,
 			[1] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1,
-			[2] object,
-			[3] class [JavaScriptRuntime]JavaScriptRuntime.JsObject
+			[2] class [JavaScriptRuntime]JavaScriptRuntime.JsObject
 		)
 
 		IL_0000: newobj instance void Modules.Import_ExportNamedFrom_LibA/Scope::.ctor()
@@ -3417,8 +3416,8 @@
 		IL_0021: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0, float64, string, bool, bool)
 		IL_0026: stloc.1
 		IL_0027: ldloc.1
-		IL_0028: call object [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype(object)
-		IL_002d: stloc.2
+		IL_0028: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0)
+		IL_002d: stloc.1
 		IL_002e: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
 		IL_0033: dup
 		IL_0034: ldstr "value"
@@ -3426,12 +3425,12 @@
 		IL_0042: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
 		IL_0047: dup
 		IL_0048: ldstr "doubled"
-		IL_004d: ldloc.2
+		IL_004d: ldloc.1
 		IL_004e: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_0053: stloc.3
+		IL_0053: stloc.2
 		IL_0054: ldarg.2
 		IL_0055: ldstr "exports"
-		IL_005a: ldloc.3
+		IL_005a: ldloc.2
 		IL_005b: ldc.i4.1
 		IL_005c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
 		IL_0061: pop

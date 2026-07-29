@@ -468,7 +468,8 @@ public static class Function
             slot.RequiresInvocationContext = requiresInvocationContext;
         }
 
-        public static object MarkUndefinedPrototype(object functionValue)
+        public static T MarkUndefinedPrototype<T>(T functionValue)
+            where T : class
         {
             if (functionValue is Delegate del)
             {
@@ -477,6 +478,9 @@ public static class Function
 
             return functionValue;
         }
+
+        public static object MarkUndefinedPrototype(object functionValue)
+            => MarkUndefinedPrototype<object>(functionValue);
 
         internal static void MarkUndefinedPrototype(Delegate functionValue)
         {

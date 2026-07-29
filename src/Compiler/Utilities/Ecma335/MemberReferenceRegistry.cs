@@ -210,6 +210,47 @@ namespace Jroc.Utilities.Ecma335
         }
 
         /// <summary>
+        /// Gets or creates a MethodSpecificationHandle for a static generic method shaped as
+        /// <c>T Method&lt;T&gt;(T value)</c>, including constructed generic type arguments.
+        /// </summary>
+        public MethodSpecificationHandle GetOrAddGenericUnaryMethod(
+            Type declaringType,
+            string methodName,
+            Type typeArgument)
+        {
+            var key = $"{declaringType.FullName}::{methodName}<{typeArgument.FullName}>({typeArgument.FullName})";
+            if (_methodSpecCache.TryGetValue(key, out var cached))
+                return cached;
+
+            var signatureBuilder = new BlobBuilder();
+            new BlobEncoder(signatureBuilder)
+                .MethodSignature(isInstanceMethod: false, genericParameterCount: 1)
+                .Parameters(
+                    1,
+                    returnType => returnType.Type().GenericMethodTypeParameter(0),
+                    parameters => parameters
+                        .AddParameter()
+                        .Type()
+                        .GenericMethodTypeParameter(0));
+            var methodRef = _metadataBuilder.AddMemberReference(
+                GetOrAddDeclaringTypeHandle(declaringType),
+                _metadataBuilder.GetOrAddString(methodName),
+                _metadataBuilder.GetOrAddBlob(signatureBuilder));
+
+            var specificationBuilder = new BlobBuilder();
+            var argument = new BlobEncoder(specificationBuilder)
+                .MethodSpecificationSignature(1)
+                .AddArgument();
+            EncodeSignatureType(argument, typeArgument);
+
+            var methodSpec = _metadataBuilder.AddMethodSpecification(
+                methodRef,
+                _metadataBuilder.GetOrAddBlob(specificationBuilder));
+            _methodSpecCache[key] = methodSpec;
+            return methodSpec;
+        }
+
+        /// <summary>
         /// Gets or creates a closed reference to
         /// <c>T InitializeFunctionInstance&lt;T&gt;(T, double, string, bool, bool)</c>.
         /// </summary>

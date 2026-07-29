@@ -108,11 +108,10 @@ internal sealed partial class LIRToILCompiler
         if (callableId.Kind == CallableKind.Arrow)
         {
             ilEncoder.OpCode(ILOpCode.Call);
-            ilEncoder.Token(_memberRefRegistry.GetOrAddMethod(
+            ilEncoder.Token(_memberRefRegistry.GetOrAddGenericUnaryMethod(
                 typeof(JavaScriptRuntime.Function),
                 nameof(JavaScriptRuntime.Function.MarkUndefinedPrototype),
-                new[] { typeof(object) }));
-            EmitCastToMaterializedCallableDelegate(callableId, ilEncoder);
+                delegateType));
         }
     }
 
