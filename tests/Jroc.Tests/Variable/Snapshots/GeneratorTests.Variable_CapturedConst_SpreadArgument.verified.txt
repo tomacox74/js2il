@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x215b
+				// Method begins at RVA 0x2163
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -44,7 +44,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 04 00 00 02
 			)
-			// Method begins at RVA 0x211c
+			// Method begins at RVA 0x2124
 			// Header size: 12
 			// Code size: 42 (0x2a)
 			.maxstack 8
@@ -92,7 +92,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2152
+			// Method begins at RVA 0x215a
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -118,13 +118,14 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 190 (0xbe)
+		// Code size: 197 (0xc5)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Variable_CapturedConst_SpreadArgument/Scope,
 			[1] object,
-			[2] object,
-			[3] object
+			[2] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0,
+			[3] object,
+			[4] object
 		)
 
 		IL_0000: newobj instance void Modules.Variable_CapturedConst_SpreadArgument/Scope::.ctor()
@@ -161,37 +162,38 @@
 		IL_0064: stelem.ref
 		IL_0065: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
 		IL_006a: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_006f: ldc.i4.0
-		IL_0070: conv.r8
-		IL_0071: ldstr ""
-		IL_0076: ldc.i4.0
-		IL_0077: ldc.i4.0
-		IL_0078: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-		IL_007d: call object [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype(object)
-		IL_0082: stloc.2
-		IL_0083: ldloc.2
-		IL_0084: ldstr "readMax"
-		IL_0089: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetFunctionInferredName(object, object)
-		IL_008e: stloc.2
-		IL_008f: ldloc.2
-		IL_0090: stloc.1
-		IL_0091: ldstr "console"
-		IL_0096: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_009b: stloc.2
-		IL_009c: ldloc.2
-		IL_009d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00a2: stloc.2
-		IL_00a3: ldloc.0
-		IL_00a4: castclass Modules.Variable_CapturedConst_SpreadArgument/Scope
-		IL_00a9: ldnull
-		IL_00aa: call object Modules.Variable_CapturedConst_SpreadArgument/ArrowFunction_L2C17::__js_call__(class Modules.Variable_CapturedConst_SpreadArgument/Scope, object)
-		IL_00af: stloc.3
-		IL_00b0: ldloc.2
-		IL_00b1: ldstr "log"
+		IL_006f: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
+		IL_0074: ldc.i4.0
+		IL_0075: conv.r8
+		IL_0076: ldstr ""
+		IL_007b: ldc.i4.0
+		IL_007c: ldc.i4.0
+		IL_007d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
+		IL_0082: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0)
+		IL_0087: stloc.2
+		IL_0088: ldloc.2
+		IL_0089: ldstr "readMax"
+		IL_008e: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetFunctionInferredName(object, object)
+		IL_0093: stloc.3
+		IL_0094: ldloc.3
+		IL_0095: stloc.1
+		IL_0096: ldstr "console"
+		IL_009b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_00a0: stloc.3
+		IL_00a1: ldloc.3
+		IL_00a2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00a7: stloc.3
+		IL_00a8: ldloc.0
+		IL_00a9: castclass Modules.Variable_CapturedConst_SpreadArgument/Scope
+		IL_00ae: ldnull
+		IL_00af: call object Modules.Variable_CapturedConst_SpreadArgument/ArrowFunction_L2C17::__js_call__(class Modules.Variable_CapturedConst_SpreadArgument/Scope, object)
+		IL_00b4: stloc.s 4
 		IL_00b6: ldloc.3
-		IL_00b7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00bc: pop
-		IL_00bd: ret
+		IL_00b7: ldstr "log"
+		IL_00bc: ldloc.s 4
+		IL_00be: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_00c3: pop
+		IL_00c4: ret
 	} // end of method Variable_CapturedConst_SpreadArgument::__js_module_init__
 
 } // end of class Modules.Variable_CapturedConst_SpreadArgument
@@ -203,7 +205,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2164
+		// Method begins at RVA 0x216c
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

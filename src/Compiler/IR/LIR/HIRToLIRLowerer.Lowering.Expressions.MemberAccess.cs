@@ -224,8 +224,7 @@ public sealed partial class HIRToLIRLowerer
 
                 return clrType == typeof(JavaScriptRuntime.Array)
                     || typeof(JavaScriptRuntime.TypedArrayBase).IsAssignableFrom(clrType)
-                    || typeof(JavaScriptRuntime.Node.Buffer).IsAssignableFrom(clrType)
-                    || typeof(Delegate).IsAssignableFrom(clrType);
+                    || typeof(JavaScriptRuntime.Node.Buffer).IsAssignableFrom(clrType);
             }
 
             Type? stableReceiverType = null;
@@ -786,15 +785,16 @@ public sealed partial class HIRToLIRLowerer
     /// Matches a property access/assignment receiver against an eligible object-literal
     /// binding (phase 4, #1432). Returns true when the receiver is the binding the shape
     /// was inferred for, the generated CLR type exists, and the member is declared.
-    /// Restricted to const/let bindings so the receiver is provably initialized (a `var`
-    /// binding could be observed as undefined before initialization, which must keep the
-    /// generic path's TypeError semantics).
+    /// Restricted to const/let bindings by default so the receiver is provably initialized.
+    /// Call lowering may opt into <c>var</c> after emitting RequireObjectCoercible before
+    /// the generated getter, preserving pre-initialization TypeError semantics.
     /// </summary>
     private static bool TryGetInferredObjectLiteralMember(
         HIRExpression objectExpr,
         string propertyName,
         out ObjectLiteralShapeInfo shape,
-        out ObjectLiteralMemberInfo member)
+        out ObjectLiteralMemberInfo member,
+        bool allowVarBinding = false)
     {
         shape = null!;
         member = null!;
@@ -810,7 +810,9 @@ public sealed partial class HIRToLIRLowerer
         // were inferred to a literal shape via interprocedural analysis (issue #1434) are also
         // safe: they are assigned their argument on entry, before any member access.
         var isParameter = binding.DeclaringScope.Parameters.Contains(binding.Name);
-        if (binding.Kind is not (BindingKind.Const or BindingKind.Let) && !isParameter)
+        if (binding.Kind is not (BindingKind.Const or BindingKind.Let)
+            && !(allowVarBinding && binding.Kind == BindingKind.Var)
+            && !isParameter)
         {
             return false;
         }

@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2112
+				// Method begins at RVA 0x2116
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -41,7 +41,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x20d8
+			// Method begins at RVA 0x20dc
 			// Header size: 12
 			// Code size: 37 (0x25)
 			.maxstack 8
@@ -73,7 +73,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2109
+			// Method begins at RVA 0x210d
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -99,12 +99,13 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 122 (0x7a)
+		// Code size: 127 (0x7f)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.SetImmediate_ExecutesCallback/Scope,
 			[1] object,
-			[2] object
+			[2] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0,
+			[3] object
 		)
 
 		IL_0000: newobj instance void Modules.SetImmediate_ExecutesCallback/Scope::.ctor()
@@ -121,37 +122,38 @@
 		IL_001c: stelem.ref
 		IL_001d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
 		IL_0022: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_0027: ldc.i4.0
-		IL_0028: conv.r8
-		IL_0029: ldstr ""
-		IL_002e: ldc.i4.0
-		IL_002f: ldc.i4.0
-		IL_0030: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-		IL_0035: call object [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype(object)
-		IL_003a: stloc.2
-		IL_003b: ldloc.2
-		IL_003c: ldstr "logHello"
-		IL_0041: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetFunctionInferredName(object, object)
-		IL_0046: stloc.2
-		IL_0047: ldloc.2
-		IL_0048: stloc.1
-		IL_0049: ldloc.1
-		IL_004a: ldc.i4.0
-		IL_004b: newarr [System.Runtime]System.Object
-		IL_0050: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::setImmediate(object, object[])
-		IL_0055: pop
-		IL_0056: ldstr "console"
-		IL_005b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0060: stloc.2
-		IL_0061: ldloc.2
-		IL_0062: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0067: stloc.2
-		IL_0068: ldloc.2
-		IL_0069: ldstr "log"
-		IL_006e: ldstr "setImmediate scheduled."
-		IL_0073: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0078: pop
-		IL_0079: ret
+		IL_0027: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
+		IL_002c: ldc.i4.0
+		IL_002d: conv.r8
+		IL_002e: ldstr ""
+		IL_0033: ldc.i4.0
+		IL_0034: ldc.i4.0
+		IL_0035: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
+		IL_003a: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0)
+		IL_003f: stloc.2
+		IL_0040: ldloc.2
+		IL_0041: ldstr "logHello"
+		IL_0046: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetFunctionInferredName(object, object)
+		IL_004b: stloc.3
+		IL_004c: ldloc.3
+		IL_004d: stloc.1
+		IL_004e: ldloc.1
+		IL_004f: ldc.i4.0
+		IL_0050: newarr [System.Runtime]System.Object
+		IL_0055: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::setImmediate(object, object[])
+		IL_005a: pop
+		IL_005b: ldstr "console"
+		IL_0060: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0065: stloc.3
+		IL_0066: ldloc.3
+		IL_0067: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_006c: stloc.3
+		IL_006d: ldloc.3
+		IL_006e: ldstr "log"
+		IL_0073: ldstr "setImmediate scheduled."
+		IL_0078: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_007d: pop
+		IL_007e: ret
 	} // end of method SetImmediate_ExecutesCallback::__js_module_init__
 
 } // end of class Modules.SetImmediate_ExecutesCallback
@@ -163,7 +165,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x211b
+		// Method begins at RVA 0x211f
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

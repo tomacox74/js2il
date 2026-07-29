@@ -22,7 +22,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x21c8
+					// Method begins at RVA 0x21f5
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -46,7 +46,7 @@
 				.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 					01 00 00 00 00 00 00 00
 				)
-				// Method begins at RVA 0x2120
+				// Method begins at RVA 0x2134
 				// Header size: 12
 				// Code size: 18 (0x12)
 				.maxstack 8
@@ -83,7 +83,7 @@
 					.method public hidebysig specialname rtspecialname 
 						instance void .ctor () cil managed 
 					{
-						// Method begins at RVA 0x21da
+						// Method begins at RVA 0x2207
 						// Header size: 1
 						// Code size: 8 (0x8)
 						.maxstack 8
@@ -104,7 +104,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x21d1
+					// Method begins at RVA 0x21fe
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -128,14 +128,15 @@
 				.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 					01 00 02 00 00 00 00 00
 				)
-				// Method begins at RVA 0x2140
+				// Method begins at RVA 0x2154
 				// Header size: 12
-				// Code size: 106 (0x6a)
+				// Code size: 131 (0x83)
 				.maxstack 8
 				.locals init (
 					[0] object,
 					[1] object,
-					[2] object
+					[2] object,
+					[3] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1
 				)
 
 				IL_0000: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentCallee()
@@ -147,40 +148,57 @@
 				IL_0016: stloc.1
 				// loop start (head: IL_0017)
 					IL_0017: ldc.i4.1
-					IL_0018: brfalse IL_0068
+					IL_0018: brfalse IL_0081
 
 					IL_001d: ldarg.0
 					IL_001e: ldc.i4.1
 					IL_001f: ldelem.ref
 					IL_0020: castclass Modules.ControlFlow_LabeledStatement_CapturesParentVar/outer/Scope
-					IL_0025: ldfld object Modules.ControlFlow_LabeledStatement_CapturesParentVar/outer/Scope::NodeTraversal
+					IL_0025: ldfld class Modules.ControlFlow_LabeledStatement_CapturesParentVar/ObjectLiterals/L4C23_NodeTraversal Modules.ControlFlow_LabeledStatement_CapturesParentVar/outer/Scope::NodeTraversal
 					IL_002a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
 					IL_002f: stloc.2
 					IL_0030: ldloc.2
-					IL_0031: ldstr "nextSkippingChildren"
-					IL_0036: ldloc.1
-					IL_0037: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-					IL_003c: stloc.2
-					IL_003d: ldloc.2
-					IL_003e: stloc.1
-					IL_003f: ldstr "console"
-					IL_0044: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-					IL_0049: stloc.2
-					IL_004a: ldloc.2
-					IL_004b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-					IL_0050: stloc.2
-					IL_0051: ldloc.2
-					IL_0052: ldstr "log"
-					IL_0057: ldloc.1
-					IL_0058: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-					IL_005d: pop
-					IL_005e: br IL_0068
+					IL_0031: castclass Modules.ControlFlow_LabeledStatement_CapturesParentVar/ObjectLiterals/L4C23_NodeTraversal
+					IL_0036: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1 Modules.ControlFlow_LabeledStatement_CapturesParentVar/ObjectLiterals/L4C23_NodeTraversal::get_nextSkippingChildren()
+					IL_003b: stloc.3
+					IL_003c: ldloc.3
+					IL_003d: ldc.i4.2
+					IL_003e: newarr [System.Runtime]System.Object
+					IL_0043: dup
+					IL_0044: ldc.i4.0
+					IL_0045: ldarg.0
+					IL_0046: ldc.i4.0
+					IL_0047: ldelem.ref
+					IL_0048: stelem.ref
+					IL_0049: dup
+					IL_004a: ldc.i4.1
+					IL_004b: ldarg.0
+					IL_004c: ldc.i4.1
+					IL_004d: ldelem.ref
+					IL_004e: stelem.ref
+					IL_004f: ldloc.1
+					IL_0050: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1, object[], object)
+					IL_0055: stloc.2
+					IL_0056: ldloc.2
+					IL_0057: stloc.1
+					IL_0058: ldstr "console"
+					IL_005d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+					IL_0062: stloc.2
+					IL_0063: ldloc.2
+					IL_0064: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+					IL_0069: stloc.2
+					IL_006a: ldloc.2
+					IL_006b: ldstr "log"
+					IL_0070: ldloc.1
+					IL_0071: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+					IL_0076: pop
+					IL_0077: br IL_0081
 
-					IL_0063: br IL_0017
+					IL_007c: br IL_0017
 				// end loop
 
-				IL_0068: ldnull
-				IL_0069: ret
+				IL_0081: ldnull
+				IL_0082: ret
 			} // end of method nextNode::__js_call__
 
 		} // end of class nextNode
@@ -194,13 +212,13 @@
 				65 72 73 61 6c 7d 00 00
 			)
 			// Fields
-			.field public object NodeTraversal
+			.field public class Modules.ControlFlow_LabeledStatement_CapturesParentVar/ObjectLiterals/L4C23_NodeTraversal NodeTraversal
 
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21bf
+				// Method begins at RVA 0x21ec
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -226,14 +244,15 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 06 00 00 02
 			)
-			// Method begins at RVA 0x20b4
+			// Method begins at RVA 0x20bc
 			// Header size: 12
-			// Code size: 95 (0x5f)
+			// Code size: 105 (0x69)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.ControlFlow_LabeledStatement_CapturesParentVar/outer/Scope,
-				[1] object,
-				[2] class Modules.ControlFlow_LabeledStatement_CapturesParentVar/ObjectLiterals/L4C23_NodeTraversal
+				[1] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1,
+				[2] class Modules.ControlFlow_LabeledStatement_CapturesParentVar/ObjectLiterals/L4C23_NodeTraversal,
+				[3] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
 			)
 
 			IL_0000: newobj instance void Modules.ControlFlow_LabeledStatement_CapturesParentVar/outer/Scope::.ctor()
@@ -241,42 +260,44 @@
 			IL_0006: ldnull
 			IL_0007: ldftn object Modules.ControlFlow_LabeledStatement_CapturesParentVar/outer/FunctionExpression_NodeTraversal::__js_call__(object, object)
 			IL_000d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-			IL_0012: ldc.i4.1
-			IL_0013: conv.r8
-			IL_0014: ldstr ""
-			IL_0019: ldc.i4.0
-			IL_001a: ldc.i4.1
-			IL_001b: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-			IL_0020: stloc.1
-			IL_0021: newobj instance void Modules.ControlFlow_LabeledStatement_CapturesParentVar/ObjectLiterals/L4C23_NodeTraversal::.ctor()
-			IL_0026: stloc.2
-			IL_0027: ldloc.2
-			IL_0028: ldloc.1
-			IL_0029: callvirt instance void Modules.ControlFlow_LabeledStatement_CapturesParentVar/ObjectLiterals/L4C23_NodeTraversal::set_nextSkippingChildren(object)
-			IL_002e: ldloc.0
-			IL_002f: ldloc.2
-			IL_0030: stfld object Modules.ControlFlow_LabeledStatement_CapturesParentVar/outer/Scope::NodeTraversal
-			IL_0035: ldc.i4.2
-			IL_0036: newarr [System.Runtime]System.Object
-			IL_003b: dup
-			IL_003c: ldc.i4.0
-			IL_003d: ldarg.0
-			IL_003e: stelem.ref
-			IL_003f: dup
-			IL_0040: ldc.i4.1
-			IL_0041: ldloc.0
-			IL_0042: stelem.ref
-			IL_0043: ldftn object Modules.ControlFlow_LabeledStatement_CapturesParentVar/outer/nextNode::__js_call__(object[], object)
-			IL_0049: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-			IL_004e: ldc.i4.0
-			IL_004f: conv.r8
-			IL_0050: ldstr "nextNode"
-			IL_0055: ldc.i4.1
-			IL_0056: ldc.i4.1
-			IL_0057: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-			IL_005c: stloc.1
-			IL_005d: ldloc.1
-			IL_005e: ret
+			IL_0012: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1
+			IL_0017: ldc.i4.1
+			IL_0018: conv.r8
+			IL_0019: ldstr ""
+			IL_001e: ldc.i4.0
+			IL_001f: ldc.i4.1
+			IL_0020: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0, float64, string, bool, bool)
+			IL_0025: stloc.1
+			IL_0026: newobj instance void Modules.ControlFlow_LabeledStatement_CapturesParentVar/ObjectLiterals/L4C23_NodeTraversal::.ctor()
+			IL_002b: stloc.2
+			IL_002c: ldloc.2
+			IL_002d: ldloc.1
+			IL_002e: callvirt instance void Modules.ControlFlow_LabeledStatement_CapturesParentVar/ObjectLiterals/L4C23_NodeTraversal::set_nextSkippingChildren(class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1)
+			IL_0033: ldloc.0
+			IL_0034: ldloc.2
+			IL_0035: stfld class Modules.ControlFlow_LabeledStatement_CapturesParentVar/ObjectLiterals/L4C23_NodeTraversal Modules.ControlFlow_LabeledStatement_CapturesParentVar/outer/Scope::NodeTraversal
+			IL_003a: ldc.i4.2
+			IL_003b: newarr [System.Runtime]System.Object
+			IL_0040: dup
+			IL_0041: ldc.i4.0
+			IL_0042: ldarg.0
+			IL_0043: stelem.ref
+			IL_0044: dup
+			IL_0045: ldc.i4.1
+			IL_0046: ldloc.0
+			IL_0047: stelem.ref
+			IL_0048: ldftn object Modules.ControlFlow_LabeledStatement_CapturesParentVar/outer/nextNode::__js_call__(object[], object)
+			IL_004e: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+			IL_0053: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
+			IL_0058: ldc.i4.0
+			IL_0059: conv.r8
+			IL_005a: ldstr "nextNode"
+			IL_005f: ldc.i4.1
+			IL_0060: ldc.i4.1
+			IL_0061: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
+			IL_0066: stloc.3
+			IL_0067: ldloc.3
+			IL_0068: ret
 		} // end of method outer::__js_call__
 
 	} // end of class outer
@@ -295,7 +316,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x21b6
+			// Method begins at RVA 0x21e3
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -316,13 +337,13 @@
 			extends [JavaScriptRuntime]JavaScriptRuntime.JsObject
 		{
 			// Fields
-			.field private object _nextSkippingChildren
+			.field private class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1 _nextSkippingChildren
 
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21e3
+				// Method begins at RVA 0x2210
 				// Header size: 1
 				// Code size: 7 (0x7)
 				.maxstack 8
@@ -333,31 +354,31 @@
 			} // end of method L4C23_NodeTraversal::.ctor
 
 			.method public hidebysig 
-				instance object get_nextSkippingChildren () cil managed 
+				instance class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1 get_nextSkippingChildren () cil managed 
 			{
-				// Method begins at RVA 0x21eb
+				// Method begins at RVA 0x2218
 				// Header size: 1
 				// Code size: 7 (0x7)
 				.maxstack 8
 
 				IL_0000: ldarg.0
-				IL_0001: ldfld object Modules.ControlFlow_LabeledStatement_CapturesParentVar/ObjectLiterals/L4C23_NodeTraversal::_nextSkippingChildren
+				IL_0001: ldfld class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1 Modules.ControlFlow_LabeledStatement_CapturesParentVar/ObjectLiterals/L4C23_NodeTraversal::_nextSkippingChildren
 				IL_0006: ret
 			} // end of method L4C23_NodeTraversal::get_nextSkippingChildren
 
 			.method public hidebysig 
 				instance void set_nextSkippingChildren (
-					object ''
+					class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1 ''
 				) cil managed 
 			{
-				// Method begins at RVA 0x21f3
+				// Method begins at RVA 0x2220
 				// Header size: 1
 				// Code size: 20 (0x14)
 				.maxstack 8
 
 				IL_0000: ldarg.0
 				IL_0001: ldarg.1
-				IL_0002: stfld object Modules.ControlFlow_LabeledStatement_CapturesParentVar/ObjectLiterals/L4C23_NodeTraversal::_nextSkippingChildren
+				IL_0002: stfld class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1 Modules.ControlFlow_LabeledStatement_CapturesParentVar/ObjectLiterals/L4C23_NodeTraversal::_nextSkippingChildren
 				IL_0007: ldarg.0
 				IL_0008: ldstr "nextSkippingChildren"
 				IL_000d: ldarg.1
@@ -383,13 +404,14 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 86 (0x56)
+		// Code size: 93 (0x5d)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ControlFlow_LabeledStatement_CapturesParentVar/Scope,
-			[1] object,
-			[2] object,
-			[3] object[]
+			[1] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0,
+			[2] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0,
+			[3] object,
+			[4] object[]
 		)
 
 		IL_0000: newobj instance void Modules.ControlFlow_LabeledStatement_CapturesParentVar/Scope::.ctor()
@@ -405,30 +427,31 @@
 		IL_0012: castclass Modules.ControlFlow_LabeledStatement_CapturesParentVar/Scope
 		IL_0017: ldftn object Modules.ControlFlow_LabeledStatement_CapturesParentVar/outer::__js_call__(class Modules.ControlFlow_LabeledStatement_CapturesParentVar/Scope, object)
 		IL_001d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_0022: ldc.i4.0
-		IL_0023: conv.r8
-		IL_0024: ldstr "outer"
-		IL_0029: ldc.i4.0
-		IL_002a: ldc.i4.1
-		IL_002b: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-		IL_0030: stloc.2
-		IL_0031: ldloc.2
-		IL_0032: stloc.1
-		IL_0033: nop
-		IL_0034: nop
-		IL_0035: ldloc.1
-		IL_0036: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_003b: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
-		IL_0040: stloc.2
-		IL_0041: ldc.i4.0
-		IL_0042: newarr [System.Runtime]System.Object
-		IL_0047: stloc.3
-		IL_0048: ldloc.2
-		IL_0049: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0022: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
+		IL_0027: ldc.i4.0
+		IL_0028: conv.r8
+		IL_0029: ldstr "outer"
+		IL_002e: ldc.i4.0
+		IL_002f: ldc.i4.1
+		IL_0030: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
+		IL_0035: stloc.2
+		IL_0036: ldloc.2
+		IL_0037: stloc.1
+		IL_0038: nop
+		IL_0039: nop
+		IL_003a: ldloc.1
+		IL_003b: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0040: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0, object[])
+		IL_0045: stloc.3
+		IL_0046: ldc.i4.0
+		IL_0047: newarr [System.Runtime]System.Object
+		IL_004c: stloc.s 4
 		IL_004e: ldloc.3
-		IL_004f: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs(object, object[], object[])
-		IL_0054: pop
-		IL_0055: ret
+		IL_004f: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0054: ldloc.s 4
+		IL_0056: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs(object, object[], object[])
+		IL_005b: pop
+		IL_005c: ret
 	} // end of method ControlFlow_LabeledStatement_CapturesParentVar::__js_module_init__
 
 } // end of class Modules.ControlFlow_LabeledStatement_CapturesParentVar
@@ -440,7 +463,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2208
+		// Method begins at RVA 0x2235
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

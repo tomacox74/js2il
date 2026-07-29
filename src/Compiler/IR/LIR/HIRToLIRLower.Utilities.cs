@@ -6,13 +6,19 @@ public sealed partial class HIRToLIRLowerer
 {
     private TempVariable EmitMarkUndefinedPrototype(TempVariable functionValueTemp)
     {
+        var functionStorage = GetTempStorage(functionValueTemp);
+        var argumentTemp = functionStorage.Kind == ValueStorageKind.Reference
+            ? functionValueTemp
+            : EnsureObject(functionValueTemp);
+        var markedStorage = GetTempStorage(argumentTemp);
         var markedTemp = CreateTempVariable();
         _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
             IntrinsicName: nameof(JavaScriptRuntime.Function),
             MethodName: nameof(JavaScriptRuntime.Function.MarkUndefinedPrototype),
-            Arguments: new List<TempVariable> { EnsureObject(functionValueTemp) },
-            Result: markedTemp));
-        DefineTempStorage(markedTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            Arguments: new List<TempVariable> { argumentTemp },
+            Result: markedTemp,
+            GenericTypeArgument: markedStorage));
+        DefineTempStorage(markedTemp, markedStorage);
         return markedTemp;
     }
 

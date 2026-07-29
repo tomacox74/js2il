@@ -24,7 +24,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2117
+				// Method begins at RVA 0x211e
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -51,7 +51,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 04 00 00 02
 			)
-			// Method begins at RVA 0x20ff
+			// Method begins at RVA 0x2106
 			// Header size: 1
 			// Code size: 14 (0xe)
 			.maxstack 8
@@ -79,7 +79,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x210e
+			// Method begins at RVA 0x2115
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -105,13 +105,14 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 163 (0xa3)
+		// Code size: 170 (0xaa)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ArrowFunction_CapturesOuterVariable/Scope,
 			[1] object,
-			[2] object,
-			[3] object
+			[2] class [System.Runtime]System.Func`3<object, float64, object>,
+			[3] object,
+			[4] object
 		)
 
 		IL_0000: newobj instance void Modules.ArrowFunction_CapturesOuterVariable/Scope::.ctor()
@@ -139,39 +140,40 @@
 		IL_003b: stelem.ref
 		IL_003c: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
 		IL_0041: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_0046: ldc.i4.1
-		IL_0047: conv.r8
-		IL_0048: ldstr ""
-		IL_004d: ldc.i4.0
-		IL_004e: ldc.i4.0
-		IL_004f: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-		IL_0054: call object [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype(object)
-		IL_0059: stloc.2
-		IL_005a: ldloc.2
-		IL_005b: ldstr "mul"
-		IL_0060: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetFunctionInferredName(object, object)
-		IL_0065: stloc.2
-		IL_0066: ldloc.2
-		IL_0067: stloc.1
-		IL_0068: ldstr "console"
-		IL_006d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0072: stloc.2
-		IL_0073: ldloc.2
-		IL_0074: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0079: stloc.2
-		IL_007a: ldloc.0
-		IL_007b: castclass Modules.ArrowFunction_CapturesOuterVariable/Scope
-		IL_0080: ldnull
-		IL_0081: ldc.r8 3
-		IL_008a: call object Modules.ArrowFunction_CapturesOuterVariable/ArrowFunction_L4C13::__js_call__(class Modules.ArrowFunction_CapturesOuterVariable/Scope, object, float64)
-		IL_008f: stloc.3
-		IL_0090: ldloc.2
-		IL_0091: ldstr "log"
-		IL_0096: ldstr "product is "
-		IL_009b: ldloc.3
-		IL_009c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_00a1: pop
-		IL_00a2: ret
+		IL_0046: castclass class [System.Runtime]System.Func`3<object, float64, object>
+		IL_004b: ldc.i4.1
+		IL_004c: conv.r8
+		IL_004d: ldstr ""
+		IL_0052: ldc.i4.0
+		IL_0053: ldc.i4.0
+		IL_0054: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [System.Runtime]System.Func`3<object, float64, object>>(!!0, float64, string, bool, bool)
+		IL_0059: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [System.Runtime]System.Func`3<object, float64, object>>(!!0)
+		IL_005e: stloc.2
+		IL_005f: ldloc.2
+		IL_0060: ldstr "mul"
+		IL_0065: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetFunctionInferredName(object, object)
+		IL_006a: stloc.3
+		IL_006b: ldloc.3
+		IL_006c: stloc.1
+		IL_006d: ldstr "console"
+		IL_0072: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0077: stloc.3
+		IL_0078: ldloc.3
+		IL_0079: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_007e: stloc.3
+		IL_007f: ldloc.0
+		IL_0080: castclass Modules.ArrowFunction_CapturesOuterVariable/Scope
+		IL_0085: ldnull
+		IL_0086: ldc.r8 3
+		IL_008f: call object Modules.ArrowFunction_CapturesOuterVariable/ArrowFunction_L4C13::__js_call__(class Modules.ArrowFunction_CapturesOuterVariable/Scope, object, float64)
+		IL_0094: stloc.s 4
+		IL_0096: ldloc.3
+		IL_0097: ldstr "log"
+		IL_009c: ldstr "product is "
+		IL_00a1: ldloc.s 4
+		IL_00a3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_00a8: pop
+		IL_00a9: ret
 	} // end of method ArrowFunction_CapturesOuterVariable::__js_module_init__
 
 } // end of class Modules.ArrowFunction_CapturesOuterVariable
@@ -183,7 +185,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2120
+		// Method begins at RVA 0x2127
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -323,22 +323,34 @@ internal sealed partial class LIRToILCompiler
                 $"Generic intrinsic call {intrinsicType.FullName}.{instruction.MethodName} must have exactly one argument.");
         }
 
-        var typeHandle = genericTypeArgument.TypeHandle;
-        var isValueType = false;
-        if (typeHandle.IsNil)
-        {
-            var clrType = genericTypeArgument.ClrType ?? typeof(object);
-            typeHandle = _memberRefRegistry.GetOrAddTypeHandle(clrType);
-            isValueType = clrType.IsValueType;
-        }
-
         EmitLoadTemp(instruction.Arguments[0], ilEncoder, allocation, methodDescriptor);
 
-        var methodSpec = _memberRefRegistry.GetOrAddGenericUnaryMethod(
-            intrinsicType,
-            instruction.MethodName,
-            typeHandle,
-            isValueType);
+        MethodSpecificationHandle methodSpec;
+        if (genericTypeArgument.TypeHandle.Kind == HandleKind.TypeSpecification
+            && genericTypeArgument.ClrType is { } constructedType)
+        {
+            methodSpec = _memberRefRegistry.GetOrAddGenericUnaryMethod(
+                intrinsicType,
+                instruction.MethodName,
+                constructedType);
+        }
+        else
+        {
+            var typeHandle = genericTypeArgument.TypeHandle;
+            var isValueType = false;
+            if (typeHandle.IsNil)
+            {
+                var clrType = genericTypeArgument.ClrType ?? typeof(object);
+                typeHandle = _memberRefRegistry.GetOrAddTypeHandle(clrType);
+                isValueType = clrType.IsValueType;
+            }
+
+            methodSpec = _memberRefRegistry.GetOrAddGenericUnaryMethod(
+                intrinsicType,
+                instruction.MethodName,
+                typeHandle,
+                isValueType);
+        }
         ilEncoder.OpCode(ILOpCode.Call);
         ilEncoder.Token(methodSpec);
 

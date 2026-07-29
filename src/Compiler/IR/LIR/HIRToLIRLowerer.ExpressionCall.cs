@@ -768,6 +768,80 @@ public sealed partial class HIRToLIRLowerer
             return true;
         }
 
+        // Eligible object-literal function member call. Resolve the member through the
+        // generated getter, then invoke the returned closure using the existing function-value
+        // call instructions. Shape analysis only permits this when the member is never replaced
+        // and its body does not observe method-call `this`.
+        if (calleePropAccess.Object is HIRVariableExpression { Name.BindingInfo.IsCaptured: true }
+            && TryGetInferredObjectLiteralMember(
+                calleePropAccess.Object,
+                calleePropAccess.PropertyName,
+                out var inferredShape,
+                out var inferredMember,
+                allowVarBinding: true)
+            && inferredMember.IsFunction)
+        {
+            if (!TryLowerExpression(calleePropAccess.Object, out var inferredReceiver))
+            {
+                return false;
+            }
+
+            // A var binding may still be undefined before its initializer. Preserve the generic
+            // member-call TypeError before casting to the generated object-literal type.
+            inferredReceiver = RequireObjectCoercible(inferredReceiver);
+
+            var functionValue = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRGetInferredMember(
+                inferredShape,
+                inferredMember.Name,
+                EnsureObject(inferredReceiver),
+                functionValue));
+            DefineTempStorage(functionValue, GetInferredMemberStorage(inferredMember));
+
+            var scopesTemp = CreateTempVariable();
+            if (!TryBuildCurrentScopesArray(scopesTemp))
+            {
+                return false;
+            }
+            DefineTempStorage(scopesTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
+
+            if (!hasSpreadArgs && callExpr.Arguments.Length <= 3)
+            {
+                var argTemps = new List<TempVariable>(callExpr.Arguments.Length);
+                foreach (var arg in callExpr.Arguments)
+                {
+                    if (!TryLowerExpression(arg, out var argTemp))
+                    {
+                        return false;
+                    }
+                    argTemps.Add(EnsureObject(argTemp));
+                }
+
+                LIRInstruction callInstruction = callExpr.Arguments.Length switch
+                {
+                    0 => new LIRCallFunctionValue0(functionValue, scopesTemp, resultTempVar),
+                    1 => new LIRCallFunctionValue1(functionValue, scopesTemp, argTemps[0], resultTempVar),
+                    2 => new LIRCallFunctionValue2(functionValue, scopesTemp, argTemps[0], argTemps[1], resultTempVar),
+                    3 => new LIRCallFunctionValue3(functionValue, scopesTemp, argTemps[0], argTemps[1], argTemps[2], resultTempVar),
+                    _ => throw new InvalidOperationException("Unexpected arity")
+                };
+                _methodBodyIR.Instructions.Add(callInstruction);
+            }
+            else
+            {
+                if (!TryLowerCallArgumentsToArgsArray(callExpr.Arguments, out var argsArrayTemp))
+                {
+                    return false;
+                }
+
+                _methodBodyIR.Instructions.Add(
+                    new LIRCallFunctionValue(functionValue, scopesTemp, argsArrayTemp, resultTempVar));
+            }
+
+            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            return true;
+        }
+
         // Case 2b: Intrinsic static method call (e.g., Array.isArray, Math.abs, JSON.parse)
         // Check if the object is a global variable that maps to an intrinsic type
         if (calleePropAccess.Object is HIRVariableExpression calleeGlobalVar &&

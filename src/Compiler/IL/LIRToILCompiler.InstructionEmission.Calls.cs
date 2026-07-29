@@ -67,6 +67,11 @@ internal sealed partial class LIRToILCompiler
             || ContainsMetaProperty(callableId.AstNode);
     }
 
+    private Type GetFunctionCallTargetParameterType(TempVariable functionValue, Type specializedType)
+        => GetTempStorage(functionValue).ClrType == specializedType
+            ? specializedType
+            : typeof(object);
+
     private static bool ContainsMetaProperty(Node? node)
     {
         if (node is null)
@@ -88,24 +93,30 @@ internal sealed partial class LIRToILCompiler
 
     private void EmitInitializeFunctionInstance(CallableId callableId, bool isAsync, InstructionEncoder ilEncoder)
     {
+        var reader = _serviceProvider.GetService<ICallableDeclarationReader>();
+        var signature = reader?.GetSignature(callableId);
+        var delegateType = CallableDelegateTypeResolver.GetMaterializedDelegateType(callableId, signature);
+
+        ilEncoder.OpCode(ILOpCode.Castclass);
+        ilEncoder.Token(_memberRefRegistry.GetOrAddTypeHandle(delegateType));
         ilEncoder.LoadConstantI4(GetExpectedFunctionLength(callableId));
         ilEncoder.OpCode(ILOpCode.Conv_r8);
         ilEncoder.Ldstr(_metadataBuilder, GetFunctionName(callableId));
         ilEncoder.LoadConstantI4(RequiresInvocationContext(callableId) ? 1 : 0);
         ilEncoder.LoadConstantI4(callableId.HasRestrictedFunctionProperties ? 1 : 0);
         ilEncoder.OpCode(ILOpCode.Call);
-        ilEncoder.Token(_memberRefRegistry.GetOrAddMethod(
+        ilEncoder.Token(_memberRefRegistry.GetOrAddGenericFunctionInitializer(
             isAsync ? typeof(JavaScriptRuntime.AsyncFunction) : typeof(JavaScriptRuntime.Function),
             nameof(JavaScriptRuntime.Function.InitializeFunctionInstance),
-            new[] { typeof(object), typeof(double), typeof(string), typeof(bool), typeof(bool) }));
+            delegateType));
 
         if (callableId.Kind == CallableKind.Arrow)
         {
             ilEncoder.OpCode(ILOpCode.Call);
-            ilEncoder.Token(_memberRefRegistry.GetOrAddMethod(
+            ilEncoder.Token(_memberRefRegistry.GetOrAddGenericUnaryMethod(
                 typeof(JavaScriptRuntime.Function),
                 nameof(JavaScriptRuntime.Function.MarkUndefinedPrototype),
-                new[] { typeof(object) }));
+                delegateType));
         }
     }
 
@@ -122,6 +133,15 @@ internal sealed partial class LIRToILCompiler
             new[] { typeof(object) });
         ilEncoder.OpCode(ILOpCode.Call);
         ilEncoder.Token(initRef);
+        EmitCastToMaterializedCallableDelegate(callableId, ilEncoder);
+    }
+
+    private void EmitCastToMaterializedCallableDelegate(CallableId callableId, InstructionEncoder ilEncoder)
+    {
+        var signature = _serviceProvider.GetService<ICallableDeclarationReader>()?.GetSignature(callableId);
+        var delegateType = CallableDelegateTypeResolver.GetMaterializedDelegateType(callableId, signature);
+        ilEncoder.OpCode(ILOpCode.Castclass);
+        ilEncoder.Token(_memberRefRegistry.GetOrAddTypeHandle(delegateType));
     }
 
     private bool? TryCompileInstructionToIL_Calls(
@@ -447,10 +467,13 @@ internal sealed partial class LIRToILCompiler
                     EmitLoadTemp(callValue0.FunctionValue, ilEncoder, allocation, methodDescriptor);
                     EmitLoadTemp(callValue0.ScopesArray, ilEncoder, allocation, methodDescriptor);
 
+                    var targetParameterType = GetFunctionCallTargetParameterType(
+                        callValue0.FunctionValue,
+                        typeof(JavaScriptRuntime.JsFuncNoScopes0));
                     var invokeRef = _memberRefRegistry.GetOrAddMethod(
                         typeof(JavaScriptRuntime.Closure),
                         nameof(JavaScriptRuntime.Closure.InvokeFunctionCallWithArgs0),
-                        new[] { typeof(object), typeof(object[]) });
+                        new[] { targetParameterType, typeof(object[]) });
                     ilEncoder.OpCode(ILOpCode.Call);
                     ilEncoder.Token(invokeRef);
 
@@ -472,10 +495,13 @@ internal sealed partial class LIRToILCompiler
                     EmitLoadTemp(callValue1.ScopesArray, ilEncoder, allocation, methodDescriptor);
                     EmitLoadTempAsObject(callValue1.A0, ilEncoder, allocation, methodDescriptor);
 
+                    var targetParameterType = GetFunctionCallTargetParameterType(
+                        callValue1.FunctionValue,
+                        typeof(JavaScriptRuntime.JsFuncNoScopes1));
                     var invokeRef = _memberRefRegistry.GetOrAddMethod(
                         typeof(JavaScriptRuntime.Closure),
                         nameof(JavaScriptRuntime.Closure.InvokeFunctionCallWithArgs1),
-                        new[] { typeof(object), typeof(object[]), typeof(object) });
+                        new[] { targetParameterType, typeof(object[]), typeof(object) });
                     ilEncoder.OpCode(ILOpCode.Call);
                     ilEncoder.Token(invokeRef);
 
@@ -498,10 +524,13 @@ internal sealed partial class LIRToILCompiler
                     EmitLoadTempAsObject(callValue2.A0, ilEncoder, allocation, methodDescriptor);
                     EmitLoadTempAsObject(callValue2.A1, ilEncoder, allocation, methodDescriptor);
 
+                    var targetParameterType = GetFunctionCallTargetParameterType(
+                        callValue2.FunctionValue,
+                        typeof(JavaScriptRuntime.JsFuncNoScopes2));
                     var invokeRef = _memberRefRegistry.GetOrAddMethod(
                         typeof(JavaScriptRuntime.Closure),
                         nameof(JavaScriptRuntime.Closure.InvokeFunctionCallWithArgs2),
-                        new[] { typeof(object), typeof(object[]), typeof(object), typeof(object) });
+                        new[] { targetParameterType, typeof(object[]), typeof(object), typeof(object) });
                     ilEncoder.OpCode(ILOpCode.Call);
                     ilEncoder.Token(invokeRef);
 
@@ -525,10 +554,13 @@ internal sealed partial class LIRToILCompiler
                     EmitLoadTempAsObject(callValue3.A1, ilEncoder, allocation, methodDescriptor);
                     EmitLoadTempAsObject(callValue3.A2, ilEncoder, allocation, methodDescriptor);
 
+                    var targetParameterType = GetFunctionCallTargetParameterType(
+                        callValue3.FunctionValue,
+                        typeof(JavaScriptRuntime.JsFuncNoScopes3));
                     var invokeRef = _memberRefRegistry.GetOrAddMethod(
                         typeof(JavaScriptRuntime.Closure),
                         nameof(JavaScriptRuntime.Closure.InvokeFunctionCallWithArgs3),
-                        new[] { typeof(object), typeof(object[]), typeof(object), typeof(object), typeof(object) });
+                        new[] { targetParameterType, typeof(object[]), typeof(object), typeof(object), typeof(object) });
                     ilEncoder.OpCode(ILOpCode.Call);
                     ilEncoder.Token(invokeRef);
 
@@ -1288,6 +1320,7 @@ internal sealed partial class LIRToILCompiler
                             new[] { typeof(object) });
                         ilEncoder.OpCode(ILOpCode.Call);
                         ilEncoder.Token(initAsyncGeneratorFunctionRef);
+                        EmitCastToMaterializedCallableDelegate(callableId, ilEncoder);
                     }
 
                     EmitStoreTemp(createFunc.Result, ilEncoder, allocation);

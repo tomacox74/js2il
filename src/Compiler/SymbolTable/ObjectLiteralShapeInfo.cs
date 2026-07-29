@@ -25,8 +25,9 @@ public sealed class ObjectLiteralMemberInfo
     public Node ValueNode { get; }
 
     /// <summary>
-    /// Conservative stable CLR type for the member value
-    /// (typeof(double), typeof(bool) or typeof(string)); null means boxed object.
+    /// Conservative stable CLR type for the member value. In addition to primitive
+    /// types, stable function members retain their materialized delegate type.
+    /// Null means boxed object.
     /// A member only keeps an unboxed type when every observed write agrees.
     /// </summary>
     public Type? ClrType { get; internal set; }
@@ -103,7 +104,7 @@ public sealed class ObjectLiteralShapeInfo
             builder.Append(member.Name).Append('\u0000');
             if (member.IsFunction)
             {
-                builder.Append("fn");
+                builder.Append("fn:").Append(member.ClrType?.FullName ?? "object");
             }
             else
             {

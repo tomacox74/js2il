@@ -26,7 +26,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x216c
+					// Method begins at RVA 0x2170
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -49,7 +49,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2163
+				// Method begins at RVA 0x2167
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -75,7 +75,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2104
+			// Method begins at RVA 0x2108
 			// Header size: 12
 			// Code size: 74 (0x4a)
 			.maxstack 8
@@ -127,7 +127,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x215a
+			// Method begins at RVA 0x215e
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -153,12 +153,13 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 167 (0xa7)
+		// Code size: 172 (0xac)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ArrowFunction_DefaultParameterExpression/Scope,
 			[1] object,
-			[2] object
+			[2] class [System.Runtime]System.Func`5<object, float64, object, object, object>,
+			[3] object
 		)
 
 		IL_0000: newobj instance void Modules.ArrowFunction_DefaultParameterExpression/Scope::.ctor()
@@ -175,42 +176,43 @@
 		IL_001c: stelem.ref
 		IL_001d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
 		IL_0022: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_0027: ldc.i4.1
-		IL_0028: conv.r8
-		IL_0029: ldstr ""
-		IL_002e: ldc.i4.0
-		IL_002f: ldc.i4.0
-		IL_0030: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-		IL_0035: call object [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype(object)
-		IL_003a: stloc.2
-		IL_003b: ldloc.2
-		IL_003c: ldstr "calculate"
-		IL_0041: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetFunctionInferredName(object, object)
-		IL_0046: stloc.2
-		IL_0047: ldloc.2
-		IL_0048: stloc.1
-		IL_0049: ldnull
-		IL_004a: ldc.r8 5
-		IL_0053: ldnull
-		IL_0054: ldnull
-		IL_0055: call object Modules.ArrowFunction_DefaultParameterExpression/ArrowFunction_L4C19::__js_call__(object, float64, object, object)
-		IL_005a: pop
-		IL_005b: ldnull
-		IL_005c: ldc.r8 5
-		IL_0065: ldc.r8 8
-		IL_006e: box [System.Runtime]System.Double
-		IL_0073: ldnull
-		IL_0074: call object Modules.ArrowFunction_DefaultParameterExpression/ArrowFunction_L4C19::__js_call__(object, float64, object, object)
-		IL_0079: pop
-		IL_007a: ldnull
-		IL_007b: ldc.r8 5
-		IL_0084: ldc.r8 8
-		IL_008d: box [System.Runtime]System.Double
-		IL_0092: ldc.r8 20
-		IL_009b: box [System.Runtime]System.Double
-		IL_00a0: call object Modules.ArrowFunction_DefaultParameterExpression/ArrowFunction_L4C19::__js_call__(object, float64, object, object)
-		IL_00a5: pop
-		IL_00a6: ret
+		IL_0027: castclass class [System.Runtime]System.Func`5<object, float64, object, object, object>
+		IL_002c: ldc.i4.1
+		IL_002d: conv.r8
+		IL_002e: ldstr ""
+		IL_0033: ldc.i4.0
+		IL_0034: ldc.i4.0
+		IL_0035: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [System.Runtime]System.Func`5<object, float64, object, object, object>>(!!0, float64, string, bool, bool)
+		IL_003a: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [System.Runtime]System.Func`5<object, float64, object, object, object>>(!!0)
+		IL_003f: stloc.2
+		IL_0040: ldloc.2
+		IL_0041: ldstr "calculate"
+		IL_0046: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetFunctionInferredName(object, object)
+		IL_004b: stloc.3
+		IL_004c: ldloc.3
+		IL_004d: stloc.1
+		IL_004e: ldnull
+		IL_004f: ldc.r8 5
+		IL_0058: ldnull
+		IL_0059: ldnull
+		IL_005a: call object Modules.ArrowFunction_DefaultParameterExpression/ArrowFunction_L4C19::__js_call__(object, float64, object, object)
+		IL_005f: pop
+		IL_0060: ldnull
+		IL_0061: ldc.r8 5
+		IL_006a: ldc.r8 8
+		IL_0073: box [System.Runtime]System.Double
+		IL_0078: ldnull
+		IL_0079: call object Modules.ArrowFunction_DefaultParameterExpression/ArrowFunction_L4C19::__js_call__(object, float64, object, object)
+		IL_007e: pop
+		IL_007f: ldnull
+		IL_0080: ldc.r8 5
+		IL_0089: ldc.r8 8
+		IL_0092: box [System.Runtime]System.Double
+		IL_0097: ldc.r8 20
+		IL_00a0: box [System.Runtime]System.Double
+		IL_00a5: call object Modules.ArrowFunction_DefaultParameterExpression/ArrowFunction_L4C19::__js_call__(object, float64, object, object)
+		IL_00aa: pop
+		IL_00ab: ret
 	} // end of method ArrowFunction_DefaultParameterExpression::__js_module_init__
 
 } // end of class Modules.ArrowFunction_DefaultParameterExpression
@@ -222,7 +224,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2175
+		// Method begins at RVA 0x2179
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

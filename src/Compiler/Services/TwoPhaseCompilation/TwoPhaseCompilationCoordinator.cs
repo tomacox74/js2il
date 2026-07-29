@@ -1674,6 +1674,8 @@ public sealed class TwoPhaseCompilationCoordinator
             }
         }
 
+        InferObjectLiteralFunctionMemberTypes(symbolTable.Root);
+
         if (_diagnosticsEnabled)
         {
             var stats = discovery.GetStats();
@@ -1693,6 +1695,35 @@ public sealed class TwoPhaseCompilationCoordinator
                     callable.DisplayName,
                     callable.JsParamCount);
             }
+        }
+    }
+
+    private void InferObjectLiteralFunctionMemberTypes(Scope scope)
+    {
+        foreach (var binding in scope.Bindings.Values)
+        {
+            if (binding.ObjectLiteralShape is not { IsEligible: true } shape)
+            {
+                continue;
+            }
+
+            foreach (var member in shape.Members)
+            {
+                if (!member.IsFunction
+                    || !_registry.TryGetCallableIdForAstNode(member.ValueNode, out var callableId))
+                {
+                    continue;
+                }
+
+                member.ClrType = CallableDelegateTypeResolver.GetMaterializedDelegateType(
+                    callableId,
+                    _registry.GetSignature(callableId));
+            }
+        }
+
+        foreach (var child in scope.Children)
+        {
+            InferObjectLiteralFunctionMemberTypes(child);
         }
     }
     

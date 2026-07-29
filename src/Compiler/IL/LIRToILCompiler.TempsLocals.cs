@@ -1643,6 +1643,7 @@ internal sealed partial class LIRToILCompiler
                             new[] { typeof(object) });
                         ilEncoder.OpCode(ILOpCode.Call);
                         ilEncoder.Token(initAsyncGeneratorFunctionRef);
+                        EmitCastToMaterializedCallableDelegate(callableId, ilEncoder);
                     }
 
                     // Result stays on stack

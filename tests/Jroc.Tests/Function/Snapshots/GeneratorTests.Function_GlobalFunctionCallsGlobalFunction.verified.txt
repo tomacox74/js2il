@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2194
+				// Method begins at RVA 0x21a0
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -44,7 +44,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 05 00 00 02
 			)
-			// Method begins at RVA 0x20f4
+			// Method begins at RVA 0x2100
 			// Header size: 12
 			// Code size: 73 (0x49)
 			.maxstack 8
@@ -92,7 +92,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x219d
+				// Method begins at RVA 0x21a9
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -115,7 +115,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x214c
+			// Method begins at RVA 0x2158
 			// Header size: 12
 			// Code size: 51 (0x33)
 			.maxstack 8
@@ -160,7 +160,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x218b
+			// Method begins at RVA 0x2197
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -186,12 +186,13 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 151 (0x97)
+		// Code size: 161 (0xa1)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Function_GlobalFunctionCallsGlobalFunction/Scope,
-			[1] object,
-			[2] object
+			[1] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0,
+			[2] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0,
+			[3] object
 		)
 
 		IL_0000: newobj instance void Modules.Function_GlobalFunctionCallsGlobalFunction/Scope::.ctor()
@@ -207,50 +208,52 @@
 		IL_0012: castclass Modules.Function_GlobalFunctionCallsGlobalFunction/Scope
 		IL_0017: ldftn object Modules.Function_GlobalFunctionCallsGlobalFunction/helloWorldProxy::__js_call__(class Modules.Function_GlobalFunctionCallsGlobalFunction/Scope, object)
 		IL_001d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_0022: ldc.i4.0
-		IL_0023: conv.r8
-		IL_0024: ldstr "helloWorldProxy"
-		IL_0029: ldc.i4.0
-		IL_002a: ldc.i4.1
-		IL_002b: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-		IL_0030: stloc.2
-		IL_0031: ldloc.2
-		IL_0032: stloc.1
-		IL_0033: ldnull
-		IL_0034: ldftn object Modules.Function_GlobalFunctionCallsGlobalFunction/helloWorld::__js_call__(object)
-		IL_003a: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_003f: ldc.i4.0
-		IL_0040: conv.r8
-		IL_0041: ldstr "helloWorld"
-		IL_0046: ldc.i4.0
-		IL_0047: ldc.i4.1
-		IL_0048: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-		IL_004d: stloc.2
-		IL_004e: ldloc.0
-		IL_004f: ldloc.2
-		IL_0050: stfld object Modules.Function_GlobalFunctionCallsGlobalFunction/Scope::helloWorld
-		IL_0055: nop
-		IL_0056: ldloc.1
-		IL_0057: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_005c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
-		IL_0061: pop
-		IL_0062: nop
-		IL_0063: nop
-		IL_0064: nop
-		IL_0065: ldstr "console"
-		IL_006a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_006f: stloc.2
-		IL_0070: ldloc.2
-		IL_0071: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0076: stloc.2
-		IL_0077: ldloc.2
-		IL_0078: ldstr "log"
-		IL_007d: ldstr "finally is now"
-		IL_0082: ldc.r8 3
-		IL_008b: box [System.Runtime]System.Double
-		IL_0090: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_0095: pop
-		IL_0096: ret
+		IL_0022: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
+		IL_0027: ldc.i4.0
+		IL_0028: conv.r8
+		IL_0029: ldstr "helloWorldProxy"
+		IL_002e: ldc.i4.0
+		IL_002f: ldc.i4.1
+		IL_0030: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
+		IL_0035: stloc.2
+		IL_0036: ldloc.2
+		IL_0037: stloc.1
+		IL_0038: ldnull
+		IL_0039: ldftn object Modules.Function_GlobalFunctionCallsGlobalFunction/helloWorld::__js_call__(object)
+		IL_003f: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_0044: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
+		IL_0049: ldc.i4.0
+		IL_004a: conv.r8
+		IL_004b: ldstr "helloWorld"
+		IL_0050: ldc.i4.0
+		IL_0051: ldc.i4.1
+		IL_0052: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
+		IL_0057: stloc.2
+		IL_0058: ldloc.0
+		IL_0059: ldloc.2
+		IL_005a: stfld object Modules.Function_GlobalFunctionCallsGlobalFunction/Scope::helloWorld
+		IL_005f: nop
+		IL_0060: ldloc.1
+		IL_0061: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0066: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0, object[])
+		IL_006b: pop
+		IL_006c: nop
+		IL_006d: nop
+		IL_006e: nop
+		IL_006f: ldstr "console"
+		IL_0074: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0079: stloc.3
+		IL_007a: ldloc.3
+		IL_007b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0080: stloc.3
+		IL_0081: ldloc.3
+		IL_0082: ldstr "log"
+		IL_0087: ldstr "finally is now"
+		IL_008c: ldc.r8 3
+		IL_0095: box [System.Runtime]System.Double
+		IL_009a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_009f: pop
+		IL_00a0: ret
 	} // end of method Function_GlobalFunctionCallsGlobalFunction::__js_module_init__
 
 } // end of class Modules.Function_GlobalFunctionCallsGlobalFunction
@@ -262,7 +265,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21a6
+		// Method begins at RVA 0x21b2
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

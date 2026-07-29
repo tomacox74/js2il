@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2115
+				// Method begins at RVA 0x211d
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -42,7 +42,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x20e8
+			// Method begins at RVA 0x20f0
 			// Header size: 12
 			// Code size: 24 (0x18)
 			.maxstack 8
@@ -69,7 +69,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x210c
+			// Method begins at RVA 0x2114
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -95,14 +95,15 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 139 (0x8b)
+		// Code size: 148 (0x94)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Function_ObjectLiteralMethod_ThisBinding/Scope,
 			[1] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
-			[2] object,
+			[2] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1,
 			[3] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
-			[4] object
+			[4] object,
+			[5] object
 		)
 
 		IL_0000: newobj instance void Modules.Function_ObjectLiteralMethod_ThisBinding/Scope::.ctor()
@@ -111,46 +112,47 @@
 		IL_0007: ldnull
 		IL_0008: ldftn object Modules.Function_ObjectLiteralMethod_ThisBinding/FunctionExpression_obj::__js_call__(object, object)
 		IL_000e: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-		IL_0013: ldc.i4.1
-		IL_0014: conv.r8
-		IL_0015: ldstr ""
-		IL_001a: ldc.i4.0
-		IL_001b: ldc.i4.1
-		IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-		IL_0021: stloc.2
-		IL_0022: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_0027: dup
-		IL_0028: ldstr "prefix"
-		IL_002d: ldstr "Result: "
-		IL_0032: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_0037: dup
-		IL_0038: ldstr "format"
-		IL_003d: ldloc.2
-		IL_003e: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_0043: stloc.3
-		IL_0044: ldloc.3
-		IL_0045: stloc.1
-		IL_0046: ldstr "console"
-		IL_004b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0050: stloc.2
-		IL_0051: ldloc.2
-		IL_0052: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0057: stloc.2
-		IL_0058: ldloc.1
+		IL_0013: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1
+		IL_0018: ldc.i4.1
+		IL_0019: conv.r8
+		IL_001a: ldstr ""
+		IL_001f: ldc.i4.0
+		IL_0020: ldc.i4.1
+		IL_0021: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0, float64, string, bool, bool)
+		IL_0026: stloc.2
+		IL_0027: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_002c: dup
+		IL_002d: ldstr "prefix"
+		IL_0032: ldstr "Result: "
+		IL_0037: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_003c: dup
+		IL_003d: ldstr "format"
+		IL_0042: ldloc.2
+		IL_0043: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_0048: stloc.3
+		IL_0049: ldloc.3
+		IL_004a: stloc.1
+		IL_004b: ldstr "console"
+		IL_0050: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0055: stloc.s 4
+		IL_0057: ldloc.s 4
 		IL_0059: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
 		IL_005e: stloc.s 4
-		IL_0060: ldloc.s 4
-		IL_0062: ldstr "format"
-		IL_0067: ldc.r8 42
-		IL_0070: box [System.Runtime]System.Double
-		IL_0075: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_007a: stloc.s 4
-		IL_007c: ldloc.2
-		IL_007d: ldstr "log"
-		IL_0082: ldloc.s 4
-		IL_0084: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0089: pop
-		IL_008a: ret
+		IL_0060: ldloc.1
+		IL_0061: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0066: stloc.s 5
+		IL_0068: ldloc.s 5
+		IL_006a: ldstr "format"
+		IL_006f: ldc.r8 42
+		IL_0078: box [System.Runtime]System.Double
+		IL_007d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0082: stloc.s 5
+		IL_0084: ldloc.s 4
+		IL_0086: ldstr "log"
+		IL_008b: ldloc.s 5
+		IL_008d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0092: pop
+		IL_0093: ret
 	} // end of method Function_ObjectLiteralMethod_ThisBinding::__js_module_init__
 
 } // end of class Modules.Function_ObjectLiteralMethod_ThisBinding
@@ -162,7 +164,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x211e
+		// Method begins at RVA 0x2126
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

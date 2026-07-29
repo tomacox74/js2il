@@ -22,7 +22,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x228a
+					// Method begins at RVA 0x2292
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -45,7 +45,7 @@
 				.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 					01 00 00 00 00 00 00 00
 				)
-				// Method begins at RVA 0x222c
+				// Method begins at RVA 0x2234
 				// Header size: 12
 				// Code size: 37 (0x25)
 				.maxstack 8
@@ -85,7 +85,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2281
+					// Method begins at RVA 0x2289
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -105,7 +105,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2293
+					// Method begins at RVA 0x229b
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -126,7 +126,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2278
+				// Method begins at RVA 0x2280
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -150,17 +150,18 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2110
+			// Method begins at RVA 0x2114
 			// Header size: 12
-			// Code size: 269 (0x10d)
+			// Code size: 276 (0x114)
 			.maxstack 8
 			.locals init (
 				[0] bool,
 				[1] object,
-				[2] object,
+				[2] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0,
 				[3] object,
 				[4] object,
-				[5] object
+				[5] object,
+				[6] object
 			)
 
 			IL_0000: ldarg.1
@@ -169,7 +170,7 @@
 			IL_000f: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
 			IL_0014: stloc.0
 			IL_0015: ldloc.0
-			IL_0016: brfalse IL_0089
+			IL_0016: brfalse IL_008e
 
 			IL_001b: ldstr "console"
 			IL_0020: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
@@ -189,72 +190,73 @@
 			IL_004b: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
 			IL_0050: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
 			IL_0055: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-			IL_005a: ldc.i4.0
-			IL_005b: conv.r8
-			IL_005c: ldstr ""
-			IL_0061: ldc.i4.0
-			IL_0062: ldc.i4.0
-			IL_0063: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-			IL_0068: call object [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype(object)
-			IL_006d: stloc.1
-			IL_006e: ldloc.1
-			IL_006f: ldc.r8 0.0
-			IL_0078: box [System.Runtime]System.Double
-			IL_007d: ldc.i4.0
-			IL_007e: newarr [System.Runtime]System.Object
-			IL_0083: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::setTimeout(object, object, object[])
-			IL_0088: pop
+			IL_005a: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
+			IL_005f: ldc.i4.0
+			IL_0060: conv.r8
+			IL_0061: ldstr ""
+			IL_0066: ldc.i4.0
+			IL_0067: ldc.i4.0
+			IL_0068: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
+			IL_006d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0)
+			IL_0072: stloc.2
+			IL_0073: ldloc.2
+			IL_0074: ldc.r8 0.0
+			IL_007d: box [System.Runtime]System.Double
+			IL_0082: ldc.i4.0
+			IL_0083: newarr [System.Runtime]System.Object
+			IL_0088: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::setTimeout(object, object, object[])
+			IL_008d: pop
 
-			IL_0089: ldarg.1
-			IL_008a: ldc.r8 1023
-			IL_0093: box [System.Runtime]System.Double
-			IL_0098: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-			IL_009d: stloc.0
-			IL_009e: ldloc.0
-			IL_009f: box [System.Runtime]System.Boolean
-			IL_00a4: stloc.2
-			IL_00a5: ldloc.2
-			IL_00a6: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-			IL_00ab: stloc.0
-			IL_00ac: ldloc.0
-			IL_00ad: brtrue IL_00d6
+			IL_008e: ldarg.1
+			IL_008f: ldc.r8 1023
+			IL_0098: box [System.Runtime]System.Double
+			IL_009d: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+			IL_00a2: stloc.0
+			IL_00a3: ldloc.0
+			IL_00a4: box [System.Runtime]System.Boolean
+			IL_00a9: stloc.3
+			IL_00aa: ldloc.3
+			IL_00ab: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+			IL_00b0: stloc.0
+			IL_00b1: ldloc.0
+			IL_00b2: brtrue IL_00dd
 
-			IL_00b2: ldarg.1
-			IL_00b3: ldc.r8 2047
-			IL_00bc: box [System.Runtime]System.Double
-			IL_00c1: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-			IL_00c6: stloc.0
-			IL_00c7: ldloc.0
-			IL_00c8: box [System.Runtime]System.Boolean
-			IL_00cd: stloc.3
-			IL_00ce: ldloc.3
-			IL_00cf: stloc.s 5
-			IL_00d1: br IL_00d9
+			IL_00b7: ldarg.1
+			IL_00b8: ldc.r8 2047
+			IL_00c1: box [System.Runtime]System.Double
+			IL_00c6: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+			IL_00cb: stloc.0
+			IL_00cc: ldloc.0
+			IL_00cd: box [System.Runtime]System.Boolean
+			IL_00d2: stloc.s 4
+			IL_00d4: ldloc.s 4
+			IL_00d6: stloc.s 6
+			IL_00d8: br IL_00e0
 
-			IL_00d6: ldloc.2
-			IL_00d7: stloc.s 5
+			IL_00dd: ldloc.3
+			IL_00de: stloc.s 6
 
-			IL_00d9: ldloc.s 5
-			IL_00db: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-			IL_00e0: stloc.0
-			IL_00e1: ldloc.0
-			IL_00e2: brfalse IL_010b
+			IL_00e0: ldloc.s 6
+			IL_00e2: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+			IL_00e7: stloc.0
+			IL_00e8: ldloc.0
+			IL_00e9: brfalse IL_0112
 
-			IL_00e7: ldstr "console"
-			IL_00ec: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_00f1: stloc.1
-			IL_00f2: ldloc.1
-			IL_00f3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_00ee: ldstr "console"
+			IL_00f3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
 			IL_00f8: stloc.1
 			IL_00f9: ldloc.1
-			IL_00fa: ldstr "log"
-			IL_00ff: ldstr "executed promise number:"
-			IL_0104: ldarg.1
-			IL_0105: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-			IL_010a: pop
+			IL_00fa: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_00ff: stloc.1
+			IL_0100: ldloc.1
+			IL_0101: ldstr "log"
+			IL_0106: ldstr "executed promise number:"
+			IL_010b: ldarg.1
+			IL_010c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+			IL_0111: pop
 
-			IL_010b: ldnull
-			IL_010c: ret
+			IL_0112: ldnull
+			IL_0113: ret
 		} // end of method ArrowFunction_L7C29::__js_call__
 
 	} // end of class ArrowFunction_L7C29
@@ -266,7 +268,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x225d
+			// Method begins at RVA 0x2265
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -290,7 +292,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x226f
+				// Method begins at RVA 0x2277
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -308,7 +310,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2266
+			// Method begins at RVA 0x226e
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -334,7 +336,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 179 (0xb3)
+		// Code size: 184 (0xb8)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Promise_Scheduling_StarvationTest/Scope,
@@ -342,7 +344,7 @@
 			[2] object,
 			[3] float64,
 			[4] object,
-			[5] object
+			[5] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1
 		)
 
 		IL_0000: newobj instance void Modules.Promise_Scheduling_StarvationTest/Scope::.ctor()
@@ -367,7 +369,7 @@
 			IL_0036: ldloc.3
 			IL_0037: ldc.r8 2048
 			IL_0040: clt
-			IL_0042: brfalse IL_00b2
+			IL_0042: brfalse IL_00b7
 
 			IL_0047: ldloc.1
 			IL_0048: box [System.Runtime]System.Double
@@ -389,27 +391,28 @@
 			IL_0073: stelem.ref
 			IL_0074: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
 			IL_0079: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-			IL_007e: ldc.i4.1
-			IL_007f: conv.r8
-			IL_0080: ldstr ""
-			IL_0085: ldc.i4.0
-			IL_0086: ldc.i4.0
-			IL_0087: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-			IL_008c: call object [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype(object)
-			IL_0091: stloc.s 5
-			IL_0093: ldloc.2
-			IL_0094: ldstr "then"
-			IL_0099: ldloc.s 5
-			IL_009b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_00a0: pop
-			IL_00a1: ldloc.1
-			IL_00a2: ldc.r8 1
-			IL_00ab: add
-			IL_00ac: stloc.1
-			IL_00ad: br IL_0034
+			IL_007e: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1
+			IL_0083: ldc.i4.1
+			IL_0084: conv.r8
+			IL_0085: ldstr ""
+			IL_008a: ldc.i4.0
+			IL_008b: ldc.i4.0
+			IL_008c: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0, float64, string, bool, bool)
+			IL_0091: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0)
+			IL_0096: stloc.s 5
+			IL_0098: ldloc.2
+			IL_0099: ldstr "then"
+			IL_009e: ldloc.s 5
+			IL_00a0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_00a5: pop
+			IL_00a6: ldloc.1
+			IL_00a7: ldc.r8 1
+			IL_00b0: add
+			IL_00b1: stloc.1
+			IL_00b2: br IL_0034
 		// end loop
 
-		IL_00b2: ret
+		IL_00b7: ret
 	} // end of method Promise_Scheduling_StarvationTest::__js_module_init__
 
 } // end of class Modules.Promise_Scheduling_StarvationTest
@@ -421,7 +424,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x229c
+		// Method begins at RVA 0x22a4
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -398,7 +398,8 @@ public static class Function
             return boundDelegate;
         }
 
-        public static object InitializeFunctionInstance(object functionValue)
+        public static T InitializeFunctionInstance<T>(T functionValue)
+            where T : class
         {
             ArgumentNullException.ThrowIfNull(functionValue);
 
@@ -410,15 +411,27 @@ public static class Function
             return functionValue;
         }
 
-        public static object InitializeFunctionInstance(object functionValue, double length, string? name)
+        public static object InitializeFunctionInstance(object functionValue)
+            => InitializeFunctionInstance<object>(functionValue);
+
+        public static T InitializeFunctionInstance<T>(T functionValue, double length, string? name)
+            where T : class
         {
             return InitializeFunctionInstance(functionValue, length, name, requiresInvocationContext: true);
         }
 
-        public static object InitializeFunctionInstance(object functionValue, double length, string? name, bool requiresInvocationContext)
+        public static object InitializeFunctionInstance(object functionValue, double length, string? name)
+            => InitializeFunctionInstance<object>(functionValue, length, name);
+
+        public static T InitializeFunctionInstance<T>(T functionValue, double length, string? name, bool requiresInvocationContext)
+            where T : class
             => InitializeFunctionInstance(functionValue, length, name, requiresInvocationContext, hasRestrictedProperties: false);
 
-        public static object InitializeFunctionInstance(object functionValue, double length, string? name, bool requiresInvocationContext, bool hasRestrictedProperties)
+        public static object InitializeFunctionInstance(object functionValue, double length, string? name, bool requiresInvocationContext)
+            => InitializeFunctionInstance<object>(functionValue, length, name, requiresInvocationContext);
+
+        public static T InitializeFunctionInstance<T>(T functionValue, double length, string? name, bool requiresInvocationContext, bool hasRestrictedProperties)
+            where T : class
         {
             InitializeFunctionInstance(functionValue);
             if (hasRestrictedProperties)
@@ -436,6 +449,9 @@ public static class Function
             return functionValue;
         }
 
+        public static object InitializeFunctionInstance(object functionValue, double length, string? name, bool requiresInvocationContext, bool hasRestrictedProperties)
+            => InitializeFunctionInstance<object>(functionValue, length, name, requiresInvocationContext, hasRestrictedProperties);
+
         internal static bool RequiresInvocationContext(Delegate functionValue)
             => _invocationMetadata.TryGetValue(functionValue, out var slot)
                 ? slot.RequiresInvocationContext
@@ -452,7 +468,8 @@ public static class Function
             slot.RequiresInvocationContext = requiresInvocationContext;
         }
 
-        public static object MarkUndefinedPrototype(object functionValue)
+        public static T MarkUndefinedPrototype<T>(T functionValue)
+            where T : class
         {
             if (functionValue is Delegate del)
             {
@@ -461,6 +478,9 @@ public static class Function
 
             return functionValue;
         }
+
+        public static object MarkUndefinedPrototype(object functionValue)
+            => MarkUndefinedPrototype<object>(functionValue);
 
         internal static void MarkUndefinedPrototype(Delegate functionValue)
         {

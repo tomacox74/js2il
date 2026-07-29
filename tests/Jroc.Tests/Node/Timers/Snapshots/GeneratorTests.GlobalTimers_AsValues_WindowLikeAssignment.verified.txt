@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2212
+				// Method begins at RVA 0x220f
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -41,7 +41,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2206
+			// Method begins at RVA 0x2203
 			// Header size: 1
 			// Code size: 2 (0x2)
 			.maxstack 8
@@ -59,7 +59,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2209
+			// Method begins at RVA 0x2206
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -85,14 +85,14 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 426 (0x1aa)
+		// Code size: 423 (0x1a7)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.GlobalTimers_AsValues_WindowLikeAssignment/Scope,
 			[1] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
 			[2] object,
 			[3] object,
-			[4] object
+			[4] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
 		)
 
 		IL_0000: newobj instance void Modules.GlobalTimers_AsValues_WindowLikeAssignment/Scope::.ctor()
@@ -198,42 +198,43 @@
 		IL_0130: ldnull
 		IL_0131: ldftn object Modules.GlobalTimers_AsValues_WindowLikeAssignment/FunctionExpression_id::__js_call__(object)
 		IL_0137: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_013c: ldc.i4.0
-		IL_013d: conv.r8
-		IL_013e: ldstr ""
-		IL_0143: ldc.i4.0
-		IL_0144: ldc.i4.1
-		IL_0145: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-		IL_014a: stloc.s 4
-		IL_014c: ldloc.3
-		IL_014d: ldstr "setTimeout"
-		IL_0152: ldloc.s 4
-		IL_0154: ldc.r8 100000
-		IL_015d: box [System.Runtime]System.Double
-		IL_0162: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_0167: stloc.s 4
-		IL_0169: ldloc.s 4
-		IL_016b: stloc.2
-		IL_016c: ldloc.1
-		IL_016d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0172: stloc.s 4
-		IL_0174: ldloc.s 4
-		IL_0176: ldstr "clearTimeout"
-		IL_017b: ldloc.2
-		IL_017c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0181: pop
-		IL_0182: ldstr "console"
-		IL_0187: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_018c: stloc.s 4
-		IL_018e: ldloc.s 4
-		IL_0190: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0195: stloc.s 4
-		IL_0197: ldloc.s 4
-		IL_0199: ldstr "log"
-		IL_019e: ldstr "ok"
-		IL_01a3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_01a8: pop
-		IL_01a9: ret
+		IL_013c: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
+		IL_0141: ldc.i4.0
+		IL_0142: conv.r8
+		IL_0143: ldstr ""
+		IL_0148: ldc.i4.0
+		IL_0149: ldc.i4.1
+		IL_014a: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
+		IL_014f: stloc.s 4
+		IL_0151: ldloc.3
+		IL_0152: ldstr "setTimeout"
+		IL_0157: ldloc.s 4
+		IL_0159: ldc.r8 100000
+		IL_0162: box [System.Runtime]System.Double
+		IL_0167: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_016c: stloc.3
+		IL_016d: ldloc.3
+		IL_016e: stloc.2
+		IL_016f: ldloc.1
+		IL_0170: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0175: stloc.3
+		IL_0176: ldloc.3
+		IL_0177: ldstr "clearTimeout"
+		IL_017c: ldloc.2
+		IL_017d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0182: pop
+		IL_0183: ldstr "console"
+		IL_0188: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_018d: stloc.3
+		IL_018e: ldloc.3
+		IL_018f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0194: stloc.3
+		IL_0195: ldloc.3
+		IL_0196: ldstr "log"
+		IL_019b: ldstr "ok"
+		IL_01a0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_01a5: pop
+		IL_01a6: ret
 	} // end of method GlobalTimers_AsValues_WindowLikeAssignment::__js_module_init__
 
 } // end of class Modules.GlobalTimers_AsValues_WindowLikeAssignment
@@ -245,7 +246,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x221b
+		// Method begins at RVA 0x2218
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

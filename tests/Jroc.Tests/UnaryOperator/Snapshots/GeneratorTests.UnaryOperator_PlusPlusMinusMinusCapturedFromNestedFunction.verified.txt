@@ -22,7 +22,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2292
+					// Method begins at RVA 0x229e
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -46,7 +46,7 @@
 				.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 					01 00 02 00 00 00 00 00
 				)
-				// Method begins at RVA 0x2128
+				// Method begins at RVA 0x2134
 				// Header size: 12
 				// Code size: 332 (0x14c)
 				.maxstack 8
@@ -192,7 +192,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2289
+				// Method begins at RVA 0x2295
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -218,14 +218,15 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 05 00 00 02
 			)
-			// Method begins at RVA 0x20a0
+			// Method begins at RVA 0x20a4
 			// Header size: 12
-			// Code size: 124 (0x7c)
+			// Code size: 129 (0x81)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.UnaryOperator_PlusPlusMinusMinusCapturedFromNestedFunction/outer/Scope,
-				[1] object,
-				[2] object
+				[1] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0,
+				[2] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0,
+				[3] object
 			)
 
 			IL_0000: newobj instance void Modules.UnaryOperator_PlusPlusMinusMinusCapturedFromNestedFunction/outer/Scope::.ctor()
@@ -242,43 +243,44 @@
 			IL_0013: stelem.ref
 			IL_0014: ldftn object Modules.UnaryOperator_PlusPlusMinusMinusCapturedFromNestedFunction/outer/inner::__js_call__(object[], object)
 			IL_001a: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-			IL_001f: ldc.i4.0
-			IL_0020: conv.r8
-			IL_0021: ldstr "inner"
-			IL_0026: ldc.i4.0
-			IL_0027: ldc.i4.1
-			IL_0028: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-			IL_002d: stloc.2
-			IL_002e: ldloc.2
-			IL_002f: stloc.1
-			IL_0030: ldloc.0
-			IL_0031: ldc.r8 3
-			IL_003a: box [System.Runtime]System.Double
-			IL_003f: stfld object Modules.UnaryOperator_PlusPlusMinusMinusCapturedFromNestedFunction/outer/Scope::x
-			IL_0044: nop
-			IL_0045: ldloc.1
-			IL_0046: ldc.i4.1
-			IL_0047: newarr [System.Runtime]System.Object
-			IL_004c: dup
-			IL_004d: ldc.i4.0
-			IL_004e: ldarg.0
-			IL_004f: stelem.ref
-			IL_0050: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
-			IL_0055: pop
-			IL_0056: ldstr "console"
-			IL_005b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_0060: stloc.2
-			IL_0061: ldloc.2
-			IL_0062: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0067: stloc.2
-			IL_0068: ldloc.2
-			IL_0069: ldstr "log"
-			IL_006e: ldloc.0
-			IL_006f: ldfld object Modules.UnaryOperator_PlusPlusMinusMinusCapturedFromNestedFunction/outer/Scope::x
-			IL_0074: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_0079: pop
-			IL_007a: ldnull
-			IL_007b: ret
+			IL_001f: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
+			IL_0024: ldc.i4.0
+			IL_0025: conv.r8
+			IL_0026: ldstr "inner"
+			IL_002b: ldc.i4.0
+			IL_002c: ldc.i4.1
+			IL_002d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
+			IL_0032: stloc.2
+			IL_0033: ldloc.2
+			IL_0034: stloc.1
+			IL_0035: ldloc.0
+			IL_0036: ldc.r8 3
+			IL_003f: box [System.Runtime]System.Double
+			IL_0044: stfld object Modules.UnaryOperator_PlusPlusMinusMinusCapturedFromNestedFunction/outer/Scope::x
+			IL_0049: nop
+			IL_004a: ldloc.1
+			IL_004b: ldc.i4.1
+			IL_004c: newarr [System.Runtime]System.Object
+			IL_0051: dup
+			IL_0052: ldc.i4.0
+			IL_0053: ldarg.0
+			IL_0054: stelem.ref
+			IL_0055: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0, object[])
+			IL_005a: pop
+			IL_005b: ldstr "console"
+			IL_0060: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_0065: stloc.3
+			IL_0066: ldloc.3
+			IL_0067: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_006c: stloc.3
+			IL_006d: ldloc.3
+			IL_006e: ldstr "log"
+			IL_0073: ldloc.0
+			IL_0074: ldfld object Modules.UnaryOperator_PlusPlusMinusMinusCapturedFromNestedFunction/outer/Scope::x
+			IL_0079: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_007e: pop
+			IL_007f: ldnull
+			IL_0080: ret
 		} // end of method outer::__js_call__
 
 	} // end of class outer
@@ -297,7 +299,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2280
+			// Method begins at RVA 0x228c
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -323,12 +325,12 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 66 (0x42)
+		// Code size: 71 (0x47)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.UnaryOperator_PlusPlusMinusMinusCapturedFromNestedFunction/Scope,
-			[1] object,
-			[2] object
+			[1] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0,
+			[2] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
 		)
 
 		IL_0000: newobj instance void Modules.UnaryOperator_PlusPlusMinusMinusCapturedFromNestedFunction/Scope::.ctor()
@@ -344,22 +346,23 @@
 		IL_0012: castclass Modules.UnaryOperator_PlusPlusMinusMinusCapturedFromNestedFunction/Scope
 		IL_0017: ldftn object Modules.UnaryOperator_PlusPlusMinusMinusCapturedFromNestedFunction/outer::__js_call__(class Modules.UnaryOperator_PlusPlusMinusMinusCapturedFromNestedFunction/Scope, object)
 		IL_001d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_0022: ldc.i4.0
-		IL_0023: conv.r8
-		IL_0024: ldstr "outer"
-		IL_0029: ldc.i4.0
-		IL_002a: ldc.i4.1
-		IL_002b: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-		IL_0030: stloc.2
-		IL_0031: ldloc.2
-		IL_0032: stloc.1
-		IL_0033: nop
-		IL_0034: nop
-		IL_0035: ldloc.1
-		IL_0036: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_003b: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
-		IL_0040: pop
-		IL_0041: ret
+		IL_0022: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
+		IL_0027: ldc.i4.0
+		IL_0028: conv.r8
+		IL_0029: ldstr "outer"
+		IL_002e: ldc.i4.0
+		IL_002f: ldc.i4.1
+		IL_0030: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
+		IL_0035: stloc.2
+		IL_0036: ldloc.2
+		IL_0037: stloc.1
+		IL_0038: nop
+		IL_0039: nop
+		IL_003a: ldloc.1
+		IL_003b: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0040: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0, object[])
+		IL_0045: pop
+		IL_0046: ret
 	} // end of method UnaryOperator_PlusPlusMinusMinusCapturedFromNestedFunction::__js_module_init__
 
 } // end of class Modules.UnaryOperator_PlusPlusMinusMinusCapturedFromNestedFunction
@@ -371,7 +374,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x229b
+		// Method begins at RVA 0x22a7
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

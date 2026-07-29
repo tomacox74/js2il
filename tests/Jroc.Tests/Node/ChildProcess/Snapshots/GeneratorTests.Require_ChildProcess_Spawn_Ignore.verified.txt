@@ -25,7 +25,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x22e3
+				// Method begins at RVA 0x22eb
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -49,7 +49,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x22a8
+			// Method begins at RVA 0x22b0
 			// Header size: 12
 			// Code size: 38 (0x26)
 			.maxstack 8
@@ -82,7 +82,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x22da
+			// Method begins at RVA 0x22e2
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -108,7 +108,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 588 (0x24c)
+		// Code size: 593 (0x251)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Require_ChildProcess_Spawn_Ignore/Scope,
@@ -120,7 +120,8 @@
 			[6] bool,
 			[7] class [JavaScriptRuntime]JavaScriptRuntime.Array,
 			[8] object,
-			[9] object
+			[9] object,
+			[10] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1
 		)
 
 		IL_0000: newobj instance void Modules.Require_ChildProcess_Spawn_Ignore/Scope::.ctor()
@@ -295,21 +296,22 @@
 		IL_0217: stelem.ref
 		IL_0218: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
 		IL_021d: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_0222: ldc.i4.1
-		IL_0223: conv.r8
-		IL_0224: ldstr ""
-		IL_0229: ldc.i4.0
-		IL_022a: ldc.i4.0
-		IL_022b: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-		IL_0230: call object [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype(object)
-		IL_0235: stloc.s 8
-		IL_0237: ldloc.s 5
-		IL_0239: ldstr "on"
-		IL_023e: ldstr "close"
-		IL_0243: ldloc.s 8
-		IL_0245: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_024a: pop
-		IL_024b: ret
+		IL_0222: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1
+		IL_0227: ldc.i4.1
+		IL_0228: conv.r8
+		IL_0229: ldstr ""
+		IL_022e: ldc.i4.0
+		IL_022f: ldc.i4.0
+		IL_0230: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0, float64, string, bool, bool)
+		IL_0235: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0)
+		IL_023a: stloc.s 10
+		IL_023c: ldloc.s 5
+		IL_023e: ldstr "on"
+		IL_0243: ldstr "close"
+		IL_0248: ldloc.s 10
+		IL_024a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_024f: pop
+		IL_0250: ret
 	} // end of method Require_ChildProcess_Spawn_Ignore::__js_module_init__
 
 } // end of class Modules.Require_ChildProcess_Spawn_Ignore
@@ -321,7 +323,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x22ec
+		// Method begins at RVA 0x22f4
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
