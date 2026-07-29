@@ -4524,6 +4524,27 @@ namespace JavaScriptRuntime
         }
 
         /// <summary>
+        /// ECMA-262 GetIteratorFromMethod: invokes <paramref name="method"/> with
+        /// <paramref name="obj"/> as the receiver and treats the returned object as the iterator
+        /// itself, without consulting <c>Symbol.iterator</c> on it.
+        /// </summary>
+        public static IJavaScriptIterator GetIteratorFromMethod(object obj, object method)
+        {
+            var iterator = JavaScriptRuntime.Function.Apply(method, obj, System.Array.Empty<object?>());
+            if (iterator is IJavaScriptIterator nativeIterator)
+            {
+                return nativeIterator;
+            }
+
+            if (!Proxy.IsObjectLikeValue(iterator))
+            {
+                throw new JavaScriptRuntime.TypeError("Iterator method did not return an object");
+            }
+
+            return new DynamicIterator(iterator!);
+        }
+
+        /// <summary>
         /// Gets an async iterator for for await..of using the async iterator protocol.
         ///
         /// If [Symbol.asyncIterator] is not present, it falls back to [Symbol.iterator]

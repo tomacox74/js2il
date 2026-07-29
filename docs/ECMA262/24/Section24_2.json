@@ -12,37 +12,37 @@
     {
       "clause": "24.2.1",
       "title": "Abstract Operations For Set Objects",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-abstract-operations-for-set-objects"
     },
     {
       "clause": "24.2.1.1",
       "title": "Set Records",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-set-records"
     },
     {
       "clause": "24.2.1.2",
       "title": "GetSetRecord ( obj )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-getsetrecord"
     },
     {
       "clause": "24.2.1.3",
       "title": "SetDataHas ( setData , value )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-setdatahas"
     },
     {
       "clause": "24.2.1.4",
       "title": "SetDataIndex ( setData , value )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-setdataindex"
     },
     {
       "clause": "24.2.1.5",
       "title": "SetDataSize ( setData )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-setdatasize"
     },
     {
@@ -235,6 +235,37 @@
   "support": {
     "entries": [
       {
+        "clause": "24.2.1.2",
+        "feature": "GetSetRecord ( obj )",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-getsetrecord",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/Set/prototype/union/ExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/built-ins/Set/prototype/union/array-throws.js",
+          "test/built-ins/Set/prototype/union/size-is-a-number.js",
+          "test/built-ins/Set/prototype/union/has-is-callable.js",
+          "test/built-ins/Set/prototype/union/keys-is-callable.js"
+        ],
+        "notes": "Non-objects are rejected, size is read once and coerced with ToNumber so a NaN result (including an absent size) throws a TypeError and a BigInt or Symbol size throws from the coercion itself, a negative size throws a RangeError, and has and keys are each read once and must be callable. Abrupt completions from a size valueOf hook propagate and the hook is observed exactly once."
+      },
+      {
+        "clause": "24.2.1.3",
+        "feature": "SetDataHas / SetDataIndex / SetDataSize",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-setdatahas",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/Set/prototype/intersection/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Set/prototype/isSupersetOf/ExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/built-ins/Set/prototype/intersection/allows-set-like-object.js",
+          "test/built-ins/Set/prototype/isSupersetOf/allows-set-like-object.js"
+        ],
+        "notes": "Membership, index lookup, and size are served by the backing insertion-ordered list and hash set, which canonicalizes -0 to +0 and treats NaN as a single value. Deletions compact the list instead of leaving EMPTY slots, so element counts observed by a callback that mutates the receiver mid-traversal can differ from the spec."
+      },
+      {
         "clause": "24.2.2.1",
         "feature": "new Set()",
         "status": "Supported",
@@ -330,9 +361,27 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-set.prototype.difference",
         "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/Set/prototype/union/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Set/prototype/intersection/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Set/prototype/difference/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Set/prototype/symmetricDifference/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Set/prototype/isSubsetOf/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Set/prototype/isSupersetOf/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Set/prototype/isDisjointFrom/ExecutionTests.cs",
           "tests/Jroc.Tests/Set/JavaScript/Set_Algebra_Methods.js"
         ],
-        "notes": "The ES2025 Set algebra methods are implemented for Set inputs and generic iterables, but JROC currently normalizes non-Set operands through new Set(iterable) instead of the full ES2025 set-like protocol (GetSetRecord/size/has/keys)."
+        "notes": "The ES2025 Set algebra methods now take the set-like protocol path: the argument is validated with GetSetRecord and each method chooses between calling the argument's has method and draining its keys iterator based on the relative sizes, so has and keys are only observed where the spec requires it. Arrays and other plain iterables are rejected with a TypeError because they are not set-like. Results are built by copying the receiver's set data directly rather than through Set.prototype.add. Set data is stored as a dense list, so the spec's EMPTY-slot bookkeeping for elements deleted by a user callback during traversal is not modelled and Symbol.species subclassing is not honored.",
+        "test262Paths": [
+          "test/built-ins/Set/prototype/union/allows-set-like-object.js",
+          "test/built-ins/Set/prototype/union/allows-set-like-class.js",
+          "test/built-ins/Set/prototype/union/array-throws.js",
+          "test/built-ins/Set/prototype/intersection/allows-set-like-object.js",
+          "test/built-ins/Set/prototype/difference/allows-set-like-object.js",
+          "test/built-ins/Set/prototype/symmetricDifference/allows-set-like-object.js",
+          "test/built-ins/Set/prototype/isSubsetOf/allows-set-like-object.js",
+          "test/built-ins/Set/prototype/isSupersetOf/allows-set-like-object.js",
+          "test/built-ins/Set/prototype/isDisjointFrom/allows-set-like-object.js"
+        ]
       },
       {
         "clause": "24.2.4.19",
