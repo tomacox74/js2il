@@ -32,6 +32,13 @@ public sealed partial class HIRToLIRLowerer
     private readonly JavaScriptRuntime.IRuntimeIntrinsicCatalog _runtimeIntrinsicCatalog;
     private bool _superConstructorCalled;
 
+    private ValueStorage GetMaterializedCallableStorage(TwoPhase.CallableId callableId)
+    {
+        var signature = _callableRegistry?.GetSignature(callableId);
+        var delegateType = TwoPhase.CallableDelegateTypeResolver.GetMaterializedDelegateType(callableId, signature);
+        return new ValueStorage(ValueStorageKind.Reference, delegateType);
+    }
+
     // Source-level variables map to the current SSA value (TempVariable) at the current program point.
     // Keyed by BindingInfo reference to correctly handle shadowed variables with the same name.
     private readonly Dictionary<BindingInfo, TempVariable> _variableMap = new Dictionary<BindingInfo, TempVariable>();

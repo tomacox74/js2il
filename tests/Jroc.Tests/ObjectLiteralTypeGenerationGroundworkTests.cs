@@ -156,6 +156,45 @@ public sealed class ObjectLiteralTypeGenerationGroundworkTests
     }
 
     [Fact]
+    public void GeneratedAssembly_CapturedObjectLiteralBindingUsesGeneratedScopeFieldType()
+    {
+        var entryPath = Path.Combine(
+            Path.GetTempPath(),
+            "Jroc.Tests",
+            "ObjectLiteralTypedScopeField",
+            Guid.NewGuid().ToString("N"),
+            "entry.js");
+
+        var artifact = JrocInMemoryCompiler.Compile(new JrocInMemoryCompileRequest(entryPath)
+        {
+            SourceText = """
+                var astar = {
+                    search: function (grid, start, end) {
+                        return astar.heuristic();
+                    },
+                    heuristic: function () {
+                        return 1;
+                    }
+                };
+                console.log(astar.search(null, null, null));
+                """
+        });
+
+        using var loadedAssembly = JrocInMemoryAssemblyLoader.Load(artifact);
+        var moduleType = loadedAssembly.Assembly.GetType("Modules.entry", throwOnError: true)!;
+        var scopeType = moduleType.GetNestedType("Scope", BindingFlags.Public | BindingFlags.NonPublic)!;
+        var objectLiteralContainer = moduleType.GetNestedType("ObjectLiterals", BindingFlags.Public | BindingFlags.NonPublic)!;
+        var astarType = Assert.Single(objectLiteralContainer.GetNestedTypes(BindingFlags.Public | BindingFlags.NonPublic));
+        var astarField = scopeType.GetField("astar", BindingFlags.Public | BindingFlags.Instance)!;
+        var searchField = astarType.GetField("_search", BindingFlags.NonPublic | BindingFlags.Instance)!;
+        var searchGetter = astarType.GetMethod("get_search", BindingFlags.Public | BindingFlags.Instance)!;
+
+        Assert.Equal(astarType, astarField.FieldType);
+        Assert.Equal(typeof(JavaScriptRuntime.JsFuncNoScopes3), searchField.FieldType);
+        Assert.Equal(typeof(JavaScriptRuntime.JsFuncNoScopes3), searchGetter.ReturnType);
+    }
+
+    [Fact]
     public void JsObjectSubclass_PreservesDictionaryDescriptorEnumerationAndJsonBehavior()
     {
         var obj = new SpecializedJsObjectForTest

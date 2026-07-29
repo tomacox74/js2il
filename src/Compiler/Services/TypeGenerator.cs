@@ -88,6 +88,11 @@ namespace Jroc.Services
             TypeDefinitionHandle moduleTypeHandle,
             NestedTypeRelationshipRegistry nestedTypeRegistry)
         {            
+            // Plan object-literal TypeDef handles before emitting scope fields. Metadata signatures
+            // may reference forward TypeDefs, which preserves existing TypeDef ordering while allowing
+            // captured object-literal bindings to retain their generated type.
+            PlanObjectLiteralTypeHandles(symbolTable.Root);
+
             // Phase 1: Create all scope types (depth-first) for every scope discovered by the SymbolTable.
             // SymbolTable already contains scopes for function declarations, function expressions, arrow functions,
             // class methods, block scopes, etc. We rely on that being exhaustive and treat all of them uniformly.
@@ -97,9 +102,7 @@ namespace Jroc.Services
             // (see JsMethodCompiler.EstablishModuleNesting and NestedTypeRelationshipRegistry).
             CreateAllTypes(symbolTable.Root, symbolTable.Root.Name);
 
-            // Phase 1b: declare generated object-literal CLR types for eligible shapes.
-            // Construction/member-access codegen is implemented in later phases; this step only
-            // creates deterministic TypeDefs and registers field metadata for future consumers.
+            // Phase 1b: emit the object-literal TypeDefs at their planned handles.
             CreateObjectLiteralTypes(symbolTable.Root, moduleTypeHandle, nestedTypeRegistry);
 
             // Phase 2: Populate the variable registry (fields + metadata for every binding).
@@ -174,6 +177,18 @@ namespace Jroc.Services
             }
 
             return typeof(object);
+        }
+
+        private static TypeDefinitionHandle GetDeclaredScopeFieldTypeHandle(BindingInfo binding)
+        {
+            if (!binding.RequiresRuntimeTemporalDeadZoneChecks
+                && binding.ObjectLiteralShape is { IsEligible: true } shape
+                && !shape.GeneratedClrTypeHandle.IsNil)
+            {
+                return shape.GeneratedClrTypeHandle;
+            }
+
+            return default;
         }
 
         private static string GetClrTypeNameForScope(Scope scope)
@@ -283,6 +298,7 @@ namespace Jroc.Services
                 }
 
                 var declaredFieldClrType = GetDeclaredScopeFieldClrType(scope, binding);
+                var declaredFieldTypeHandle = GetDeclaredScopeFieldTypeHandle(binding);
 
                 // Create field signature.
                 var fieldSignature = new BlobBuilder();
@@ -290,7 +306,11 @@ namespace Jroc.Services
                     .Field()
                     .Type();
 
-                if (declaredFieldClrType == typeof(double))
+                if (!declaredFieldTypeHandle.IsNil)
+                {
+                    fieldTypeEncoder.Type(declaredFieldTypeHandle, isValueType: false);
+                }
+                else if (declaredFieldClrType == typeof(double))
                 {
                     fieldTypeEncoder.Double();
                 }
@@ -396,36 +416,11 @@ namespace Jroc.Services
             TypeDefinitionHandle moduleTypeHandle,
             NestedTypeRelationshipRegistry nestedTypeRegistry)
         {
-            // A single shape object can be referenced by more than one binding (an object-literal
-            // binding plus any callable parameters that were inferred to its shape, issue #1434),
-            // so deduplicate by reference before generating types.
-            var distinctShapes = EnumerateEligibleObjectLiteralShapes(root)
-                .Distinct(ReferenceEqualityComparer.Instance)
-                .Cast<ObjectLiteralShapeInfo>()
-                .ToList();
-
-            if (distinctShapes.Count == 0)
+            var groups = GetObjectLiteralShapeGroups(root);
+            if (groups.Count == 0)
             {
                 return;
             }
-
-            // Structurally identical shapes (same member names + member CLR types + function-ness)
-            // share one generated CLR type so distinct same-shape literals can join at a parameter
-            // (issue #1434 phase 6 canonicalization). Groups and their members are ordered
-            // deterministically so metadata tokens stay stable.
-            var groups = distinctShapes
-                .GroupBy(static s => s.GetStructuralSignatureKey(), StringComparer.Ordinal)
-                .Select(g => g
-                    .OrderBy(static s => s.Literal.Location.Start.Line)
-                    .ThenBy(static s => s.Literal.Location.Start.Column)
-                    .ThenBy(static s => s.Binding.Name, StringComparer.Ordinal)
-                    .ThenBy(static s => GetRegistryScopeName(s.Binding.DeclaringScope), StringComparer.Ordinal)
-                    .ToList())
-                .OrderBy(static g => g[0].Literal.Location.Start.Line)
-                .ThenBy(static g => g[0].Literal.Location.Start.Column)
-                .ThenBy(static g => g[0].Binding.Name, StringComparer.Ordinal)
-                .ThenBy(static g => GetRegistryScopeName(g[0].Binding.DeclaringScope), StringComparer.Ordinal)
-                .ToList();
 
             // Mirror the scope-type layout: object-literal types live under a per-module
             // "ObjectLiterals" container nested in the module type, as a sibling of "Scope".
@@ -443,6 +438,64 @@ namespace Jroc.Services
             {
                 CreateObjectLiteralType(group, containerHandle, nestedTypeRegistry);
             }
+        }
+
+        private void PlanObjectLiteralTypeHandles(Scope root)
+        {
+            var groups = GetObjectLiteralShapeGroups(root);
+            if (groups.Count == 0)
+            {
+                return;
+            }
+
+            var firstObjectLiteralTypeRow = _metadataBuilder.GetRowCount(TableIndex.TypeDef)
+                + CountScopeTypeDefinitions(root)
+                + 2; // one-based row after the ObjectLiterals container
+
+            for (var groupIndex = 0; groupIndex < groups.Count; groupIndex++)
+            {
+                var plannedHandle = MetadataTokens.TypeDefinitionHandle(firstObjectLiteralTypeRow + groupIndex);
+                foreach (var shape in groups[groupIndex])
+                {
+                    shape.GeneratedClrTypeHandle = plannedHandle;
+                }
+            }
+        }
+
+        private static List<List<ObjectLiteralShapeInfo>> GetObjectLiteralShapeGroups(Scope root)
+        {
+            // A single shape object can be referenced by more than one binding, so deduplicate by
+            // reference. Structurally identical shapes share one generated CLR type.
+            return EnumerateEligibleObjectLiteralShapes(root)
+                .Distinct(ReferenceEqualityComparer.Instance)
+                .Cast<ObjectLiteralShapeInfo>()
+                .GroupBy(static shape => shape.GetStructuralSignatureKey(), StringComparer.Ordinal)
+                .Select(group => group
+                    .OrderBy(static shape => shape.Literal.Location.Start.Line)
+                    .ThenBy(static shape => shape.Literal.Location.Start.Column)
+                    .ThenBy(static shape => shape.Binding.Name, StringComparer.Ordinal)
+                    .ThenBy(static shape => GetRegistryScopeName(shape.Binding.DeclaringScope), StringComparer.Ordinal)
+                    .ToList())
+                .OrderBy(static group => group[0].Literal.Location.Start.Line)
+                .ThenBy(static group => group[0].Literal.Location.Start.Column)
+                .ThenBy(static group => group[0].Binding.Name, StringComparer.Ordinal)
+                .ThenBy(static group => GetRegistryScopeName(group[0].Binding.DeclaringScope), StringComparer.Ordinal)
+                .ToList();
+        }
+
+        private static int CountScopeTypeDefinitions(Scope root)
+        {
+            var count = 1;
+            var seenChildNames = new HashSet<string>(StringComparer.Ordinal);
+            foreach (var child in root.Children)
+            {
+                if (seenChildNames.Add(child.Name))
+                {
+                    count += CountScopeTypeDefinitions(child);
+                }
+            }
+
+            return count;
         }
 
         private void CreateObjectLiteralType(
@@ -479,6 +532,11 @@ namespace Jroc.Services
                 baseType,
                 firstFieldOverride: null,
                 firstMethodOverride: ctorHandle);
+            if (typeHandle != shape.GeneratedClrTypeHandle)
+            {
+                throw new InvalidOperationException(
+                    $"Object literal TypeDef token mismatch for '{typeName}'. Expected 0x{MetadataTokens.GetToken(shape.GeneratedClrTypeHandle):X8}, got 0x{MetadataTokens.GetToken(typeHandle):X8}.");
+            }
             nestedTypeRegistry.Add(typeHandle, containerHandle);
 
             _deferredCtorPlan.Add(new DeferredConstructorPlan(
@@ -705,8 +763,8 @@ namespace Jroc.Services
             else if (clrType != typeof(object))
             {
                 typeEncoder.Type(
-                    _bclReferences.TypeReferenceRegistry.GetOrAdd(clrType),
-                    isValueType: false);
+                    _memberReferenceRegistry.GetOrAddTypeHandle(clrType),
+                    isValueType: clrType.IsValueType);
             }
             else
             {
@@ -736,8 +794,8 @@ namespace Jroc.Services
             else if (fieldClrType != typeof(object))
             {
                 fieldTypeEncoder.Type(
-                    _bclReferences.TypeReferenceRegistry.GetOrAdd(fieldClrType),
-                    isValueType: false);
+                    _memberReferenceRegistry.GetOrAddTypeHandle(fieldClrType),
+                    isValueType: fieldClrType.IsValueType);
             }
             else
             {

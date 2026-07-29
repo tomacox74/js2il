@@ -88,16 +88,22 @@ internal sealed partial class LIRToILCompiler
 
     private void EmitInitializeFunctionInstance(CallableId callableId, bool isAsync, InstructionEncoder ilEncoder)
     {
+        var reader = _serviceProvider.GetService<ICallableDeclarationReader>();
+        var signature = reader?.GetSignature(callableId);
+        var delegateType = CallableDelegateTypeResolver.GetMaterializedDelegateType(callableId, signature);
+
+        ilEncoder.OpCode(ILOpCode.Castclass);
+        ilEncoder.Token(_memberRefRegistry.GetOrAddTypeHandle(delegateType));
         ilEncoder.LoadConstantI4(GetExpectedFunctionLength(callableId));
         ilEncoder.OpCode(ILOpCode.Conv_r8);
         ilEncoder.Ldstr(_metadataBuilder, GetFunctionName(callableId));
         ilEncoder.LoadConstantI4(RequiresInvocationContext(callableId) ? 1 : 0);
         ilEncoder.LoadConstantI4(callableId.HasRestrictedFunctionProperties ? 1 : 0);
         ilEncoder.OpCode(ILOpCode.Call);
-        ilEncoder.Token(_memberRefRegistry.GetOrAddMethod(
+        ilEncoder.Token(_memberRefRegistry.GetOrAddGenericFunctionInitializer(
             isAsync ? typeof(JavaScriptRuntime.AsyncFunction) : typeof(JavaScriptRuntime.Function),
             nameof(JavaScriptRuntime.Function.InitializeFunctionInstance),
-            new[] { typeof(object), typeof(double), typeof(string), typeof(bool), typeof(bool) }));
+            delegateType));
 
         if (callableId.Kind == CallableKind.Arrow)
         {
@@ -106,6 +112,7 @@ internal sealed partial class LIRToILCompiler
                 typeof(JavaScriptRuntime.Function),
                 nameof(JavaScriptRuntime.Function.MarkUndefinedPrototype),
                 new[] { typeof(object) }));
+            EmitCastToMaterializedCallableDelegate(callableId, ilEncoder);
         }
     }
 
@@ -122,6 +129,15 @@ internal sealed partial class LIRToILCompiler
             new[] { typeof(object) });
         ilEncoder.OpCode(ILOpCode.Call);
         ilEncoder.Token(initRef);
+        EmitCastToMaterializedCallableDelegate(callableId, ilEncoder);
+    }
+
+    private void EmitCastToMaterializedCallableDelegate(CallableId callableId, InstructionEncoder ilEncoder)
+    {
+        var signature = _serviceProvider.GetService<ICallableDeclarationReader>()?.GetSignature(callableId);
+        var delegateType = CallableDelegateTypeResolver.GetMaterializedDelegateType(callableId, signature);
+        ilEncoder.OpCode(ILOpCode.Castclass);
+        ilEncoder.Token(_memberRefRegistry.GetOrAddTypeHandle(delegateType));
     }
 
     private bool? TryCompileInstructionToIL_Calls(
@@ -1288,6 +1304,7 @@ internal sealed partial class LIRToILCompiler
                             new[] { typeof(object) });
                         ilEncoder.OpCode(ILOpCode.Call);
                         ilEncoder.Token(initAsyncGeneratorFunctionRef);
+                        EmitCastToMaterializedCallableDelegate(callableId, ilEncoder);
                     }
 
                     EmitStoreTemp(createFunc.Result, ilEncoder, allocation);

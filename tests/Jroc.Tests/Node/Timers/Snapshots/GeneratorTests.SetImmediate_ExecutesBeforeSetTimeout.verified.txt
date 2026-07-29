@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2186
+				// Method begins at RVA 0x219a
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -41,7 +41,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2118
+			// Method begins at RVA 0x212c
 			// Header size: 12
 			// Code size: 37 (0x25)
 			.maxstack 8
@@ -77,7 +77,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x218f
+				// Method begins at RVA 0x21a3
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -100,7 +100,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x214c
+			// Method begins at RVA 0x2160
 			// Header size: 12
 			// Code size: 37 (0x25)
 			.maxstack 8
@@ -132,7 +132,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x217d
+			// Method begins at RVA 0x2191
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -158,11 +158,12 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 187 (0xbb)
+		// Code size: 207 (0xcf)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.SetImmediate_ExecutesBeforeSetTimeout/Scope,
-			[1] object
+			[1] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0,
+			[2] object
 		)
 
 		IL_0000: newobj instance void Modules.SetImmediate_ExecutesBeforeSetTimeout/Scope::.ctor()
@@ -179,57 +180,61 @@
 		IL_001c: stelem.ref
 		IL_001d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
 		IL_0022: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_0027: ldc.i4.0
-		IL_0028: conv.r8
-		IL_0029: ldstr ""
-		IL_002e: ldc.i4.0
-		IL_002f: ldc.i4.0
-		IL_0030: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-		IL_0035: call object [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype(object)
-		IL_003a: stloc.1
-		IL_003b: ldloc.1
-		IL_003c: ldc.r8 0.0
-		IL_0045: box [System.Runtime]System.Double
-		IL_004a: ldc.i4.0
-		IL_004b: newarr [System.Runtime]System.Object
-		IL_0050: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::setTimeout(object, object, object[])
-		IL_0055: pop
-		IL_0056: ldnull
-		IL_0057: ldftn object Modules.SetImmediate_ExecutesBeforeSetTimeout/ArrowFunction_L4C14::__js_call__(object)
-		IL_005d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_0062: ldc.i4.1
-		IL_0063: newarr [System.Runtime]System.Object
-		IL_0068: dup
-		IL_0069: ldc.i4.0
-		IL_006a: ldloc.0
-		IL_006b: stelem.ref
-		IL_006c: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_0071: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_0076: ldc.i4.0
-		IL_0077: conv.r8
-		IL_0078: ldstr ""
-		IL_007d: ldc.i4.0
-		IL_007e: ldc.i4.0
-		IL_007f: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-		IL_0084: call object [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype(object)
-		IL_0089: stloc.1
-		IL_008a: ldloc.1
-		IL_008b: ldc.i4.0
-		IL_008c: newarr [System.Runtime]System.Object
-		IL_0091: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::setImmediate(object, object[])
-		IL_0096: pop
-		IL_0097: ldstr "console"
-		IL_009c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_00a1: stloc.1
-		IL_00a2: ldloc.1
-		IL_00a3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00a8: stloc.1
-		IL_00a9: ldloc.1
-		IL_00aa: ldstr "log"
-		IL_00af: ldstr "scheduled immediate and timeout."
-		IL_00b4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00b9: pop
-		IL_00ba: ret
+		IL_0027: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
+		IL_002c: ldc.i4.0
+		IL_002d: conv.r8
+		IL_002e: ldstr ""
+		IL_0033: ldc.i4.0
+		IL_0034: ldc.i4.0
+		IL_0035: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
+		IL_003a: call object [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype(object)
+		IL_003f: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
+		IL_0044: stloc.1
+		IL_0045: ldloc.1
+		IL_0046: ldc.r8 0.0
+		IL_004f: box [System.Runtime]System.Double
+		IL_0054: ldc.i4.0
+		IL_0055: newarr [System.Runtime]System.Object
+		IL_005a: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::setTimeout(object, object, object[])
+		IL_005f: pop
+		IL_0060: ldnull
+		IL_0061: ldftn object Modules.SetImmediate_ExecutesBeforeSetTimeout/ArrowFunction_L4C14::__js_call__(object)
+		IL_0067: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_006c: ldc.i4.1
+		IL_006d: newarr [System.Runtime]System.Object
+		IL_0072: dup
+		IL_0073: ldc.i4.0
+		IL_0074: ldloc.0
+		IL_0075: stelem.ref
+		IL_0076: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_007b: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_0080: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
+		IL_0085: ldc.i4.0
+		IL_0086: conv.r8
+		IL_0087: ldstr ""
+		IL_008c: ldc.i4.0
+		IL_008d: ldc.i4.0
+		IL_008e: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
+		IL_0093: call object [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype(object)
+		IL_0098: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
+		IL_009d: stloc.1
+		IL_009e: ldloc.1
+		IL_009f: ldc.i4.0
+		IL_00a0: newarr [System.Runtime]System.Object
+		IL_00a5: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::setImmediate(object, object[])
+		IL_00aa: pop
+		IL_00ab: ldstr "console"
+		IL_00b0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_00b5: stloc.2
+		IL_00b6: ldloc.2
+		IL_00b7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00bc: stloc.2
+		IL_00bd: ldloc.2
+		IL_00be: ldstr "log"
+		IL_00c3: ldstr "scheduled immediate and timeout."
+		IL_00c8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_00cd: pop
+		IL_00ce: ret
 	} // end of method SetImmediate_ExecutesBeforeSetTimeout::__js_module_init__
 
 } // end of class Modules.SetImmediate_ExecutesBeforeSetTimeout
@@ -241,7 +246,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2198
+		// Method begins at RVA 0x21ac
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

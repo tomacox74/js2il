@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x210a
+				// Method begins at RVA 0x2116
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -41,7 +41,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x20c8
+			// Method begins at RVA 0x20d4
 			// Header size: 12
 			// Code size: 45 (0x2d)
 			.maxstack 8
@@ -81,7 +81,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2101
+			// Method begins at RVA 0x210d
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -107,15 +107,16 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 106 (0x6a)
+		// Code size: 117 (0x75)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Function_ReturnsStaticValueAndLogs/Scope,
-			[1] object,
+			[1] class [JavaScriptRuntime]JavaScriptRuntime.JsDoubleFuncNoScopes0,
 			[2] float64,
-			[3] object,
-			[4] float64,
-			[5] object
+			[3] class [JavaScriptRuntime]JavaScriptRuntime.JsDoubleFuncNoScopes0,
+			[4] object,
+			[5] float64,
+			[6] object
 		)
 
 		IL_0000: newobj instance void Modules.Function_ReturnsStaticValueAndLogs/Scope::.ctor()
@@ -123,42 +124,43 @@
 		IL_0006: ldnull
 		IL_0007: ldftn float64 Modules.Function_ReturnsStaticValueAndLogs/returnsFive::__js_call__(object)
 		IL_000d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsDoubleFuncNoScopes0::.ctor(object, native int)
-		IL_0012: ldc.i4.0
-		IL_0013: conv.r8
-		IL_0014: ldstr "returnsFive"
-		IL_0019: ldc.i4.0
-		IL_001a: ldc.i4.1
-		IL_001b: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-		IL_0020: stloc.3
-		IL_0021: ldloc.3
-		IL_0022: stloc.1
-		IL_0023: nop
-		IL_0024: nop
-		IL_0025: ldloc.1
-		IL_0026: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_002b: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
-		IL_0030: stloc.3
-		IL_0031: ldloc.3
-		IL_0032: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_0037: stloc.s 4
-		IL_0039: ldloc.s 4
-		IL_003b: stloc.2
-		IL_003c: ldstr "console"
-		IL_0041: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0046: stloc.3
-		IL_0047: ldloc.3
-		IL_0048: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_004d: stloc.3
-		IL_004e: ldloc.2
-		IL_004f: box [System.Runtime]System.Double
-		IL_0054: stloc.s 5
-		IL_0056: ldloc.3
-		IL_0057: ldstr "log"
-		IL_005c: ldstr "Output:"
-		IL_0061: ldloc.s 5
-		IL_0063: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_0068: pop
-		IL_0069: ret
+		IL_0012: castclass [JavaScriptRuntime]JavaScriptRuntime.JsDoubleFuncNoScopes0
+		IL_0017: ldc.i4.0
+		IL_0018: conv.r8
+		IL_0019: ldstr "returnsFive"
+		IL_001e: ldc.i4.0
+		IL_001f: ldc.i4.1
+		IL_0020: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsDoubleFuncNoScopes0>(!!0, float64, string, bool, bool)
+		IL_0025: stloc.3
+		IL_0026: ldloc.3
+		IL_0027: stloc.1
+		IL_0028: nop
+		IL_0029: nop
+		IL_002a: ldloc.1
+		IL_002b: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0030: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
+		IL_0035: stloc.s 4
+		IL_0037: ldloc.s 4
+		IL_0039: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_003e: stloc.s 5
+		IL_0040: ldloc.s 5
+		IL_0042: stloc.2
+		IL_0043: ldstr "console"
+		IL_0048: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_004d: stloc.s 4
+		IL_004f: ldloc.s 4
+		IL_0051: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0056: stloc.s 4
+		IL_0058: ldloc.2
+		IL_0059: box [System.Runtime]System.Double
+		IL_005e: stloc.s 6
+		IL_0060: ldloc.s 4
+		IL_0062: ldstr "log"
+		IL_0067: ldstr "Output:"
+		IL_006c: ldloc.s 6
+		IL_006e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_0073: pop
+		IL_0074: ret
 	} // end of method Function_ReturnsStaticValueAndLogs::__js_module_init__
 
 } // end of class Modules.Function_ReturnsStaticValueAndLogs
@@ -170,7 +172,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2113
+		// Method begins at RVA 0x211f
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

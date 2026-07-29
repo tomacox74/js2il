@@ -801,7 +801,7 @@ public sealed partial class HIRToLIRLowerer
                             resultTempVar,
                             IsAsyncGeneratorFunction: isAsyncGeneratorFunction,
                             IsAsync: isAsync));
-                        DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                        DefineTempStorage(resultTempVar, GetMaterializedCallableStorage(callableId));
 
                         // Cache the function value so repeated reads of the identifier within the same
                         // method return the same object identity (required for `.prototype` mutations).
@@ -1144,7 +1144,7 @@ public sealed partial class HIRToLIRLowerer
             Result: resultTempVar,
             IsAsyncGeneratorFunction: funcScope.IsAsync && funcScope.IsGenerator,
             IsAsync: funcScope.IsAsync));
-        DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        DefineTempStorage(resultTempVar, GetMaterializedCallableStorage(funcExpr.CallableId));
 
         if (funcExpr.IsNonConstructible)
         {
@@ -1183,7 +1183,7 @@ public sealed partial class HIRToLIRLowerer
             IsAsync: arrowScope.IsAsync,
             RequiresLexicalSuperConstructorContext: arrowExpr.RequiresLexicalSuperConstructorContext,
             Result: resultTempVar));
-        DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        DefineTempStorage(resultTempVar, GetMaterializedCallableStorage(arrowExpr.CallableId));
 
         resultTempVar = EmitBindWithObjectIfNeeded(resultTempVar);
         return true;

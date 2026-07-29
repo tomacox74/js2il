@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2194
+				// Method begins at RVA 0x2198
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -48,7 +48,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 04 00 00 02
 			)
-			// Method begins at RVA 0x2154
+			// Method begins at RVA 0x2158
 			// Header size: 12
 			// Code size: 43 (0x2b)
 			.maxstack 8
@@ -93,7 +93,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x218b
+			// Method begins at RVA 0x218f
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -119,16 +119,17 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 246 (0xf6)
+		// Code size: 251 (0xfb)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Proxy_SetTrap_InterceptsWrites/Scope,
 			[1] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
 			[2] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
 			[3] class [JavaScriptRuntime]JavaScriptRuntime.Proxy,
-			[4] object,
+			[4] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes4,
 			[5] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
-			[6] class [JavaScriptRuntime]JavaScriptRuntime.Proxy
+			[6] class [JavaScriptRuntime]JavaScriptRuntime.Proxy,
+			[7] object
 		)
 
 		IL_0000: newobj instance void Modules.Proxy_SetTrap_InterceptsWrites/Scope::.ctor()
@@ -155,61 +156,62 @@
 		IL_0039: castclass Modules.Proxy_SetTrap_InterceptsWrites/Scope
 		IL_003e: ldftn object Modules.Proxy_SetTrap_InterceptsWrites/FunctionExpression_handler::__js_call__(class Modules.Proxy_SetTrap_InterceptsWrites/Scope, object, object, object, object, object)
 		IL_0044: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes4::.ctor(object, native int)
-		IL_0049: ldc.i4.4
-		IL_004a: conv.r8
-		IL_004b: ldstr ""
-		IL_0050: ldc.i4.0
-		IL_0051: ldc.i4.1
-		IL_0052: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-		IL_0057: stloc.s 4
-		IL_0059: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_005e: dup
-		IL_005f: ldstr "set"
-		IL_0064: ldloc.s 4
-		IL_0066: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_006b: stloc.s 5
-		IL_006d: ldloc.s 5
-		IL_006f: stloc.2
-		IL_0070: ldloc.1
-		IL_0071: ldloc.2
-		IL_0072: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Proxy::.ctor(object, object)
-		IL_0077: stloc.s 6
-		IL_0079: ldloc.s 6
-		IL_007b: stloc.3
-		IL_007c: ldloc.3
-		IL_007d: ldstr "a"
-		IL_0082: ldc.r8 5
-		IL_008b: ldc.i4.1
-		IL_008c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, float64, bool)
-		IL_0091: pop
-		IL_0092: ldstr "console"
-		IL_0097: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_009c: stloc.s 4
-		IL_009e: ldloc.s 4
-		IL_00a0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00a5: stloc.s 4
-		IL_00a7: ldloc.s 4
-		IL_00a9: ldstr "log"
-		IL_00ae: ldloc.0
-		IL_00af: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Proxy_SetTrap_InterceptsWrites/Scope::seen
-		IL_00b4: ldc.r8 0.0
-		IL_00bd: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
-		IL_00c2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00c7: pop
-		IL_00c8: ldstr "console"
-		IL_00cd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_00d2: stloc.s 4
-		IL_00d4: ldloc.s 4
-		IL_00d6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00db: stloc.s 4
-		IL_00dd: ldloc.s 4
-		IL_00df: ldstr "log"
-		IL_00e4: ldloc.1
-		IL_00e5: ldstr "a"
-		IL_00ea: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_00ef: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00f4: pop
-		IL_00f5: ret
+		IL_0049: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes4
+		IL_004e: ldc.i4.4
+		IL_004f: conv.r8
+		IL_0050: ldstr ""
+		IL_0055: ldc.i4.0
+		IL_0056: ldc.i4.1
+		IL_0057: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes4>(!!0, float64, string, bool, bool)
+		IL_005c: stloc.s 4
+		IL_005e: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0063: dup
+		IL_0064: ldstr "set"
+		IL_0069: ldloc.s 4
+		IL_006b: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_0070: stloc.s 5
+		IL_0072: ldloc.s 5
+		IL_0074: stloc.2
+		IL_0075: ldloc.1
+		IL_0076: ldloc.2
+		IL_0077: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Proxy::.ctor(object, object)
+		IL_007c: stloc.s 6
+		IL_007e: ldloc.s 6
+		IL_0080: stloc.3
+		IL_0081: ldloc.3
+		IL_0082: ldstr "a"
+		IL_0087: ldc.r8 5
+		IL_0090: ldc.i4.1
+		IL_0091: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, float64, bool)
+		IL_0096: pop
+		IL_0097: ldstr "console"
+		IL_009c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_00a1: stloc.s 7
+		IL_00a3: ldloc.s 7
+		IL_00a5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00aa: stloc.s 7
+		IL_00ac: ldloc.s 7
+		IL_00ae: ldstr "log"
+		IL_00b3: ldloc.0
+		IL_00b4: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Proxy_SetTrap_InterceptsWrites/Scope::seen
+		IL_00b9: ldc.r8 0.0
+		IL_00c2: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
+		IL_00c7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_00cc: pop
+		IL_00cd: ldstr "console"
+		IL_00d2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_00d7: stloc.s 7
+		IL_00d9: ldloc.s 7
+		IL_00db: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00e0: stloc.s 7
+		IL_00e2: ldloc.s 7
+		IL_00e4: ldstr "log"
+		IL_00e9: ldloc.1
+		IL_00ea: ldstr "a"
+		IL_00ef: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00f4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_00f9: pop
+		IL_00fa: ret
 	} // end of method Proxy_SetTrap_InterceptsWrites::__js_module_init__
 
 } // end of class Modules.Proxy_SetTrap_InterceptsWrites
@@ -221,7 +223,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x219d
+		// Method begins at RVA 0x21a1
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

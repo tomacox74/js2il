@@ -119,25 +119,25 @@ public record LIRCallFunctionValue(TempVariable FunctionValue, TempVariable Scop
 
 /// <summary>
 /// Calls a function value with 0 arguments (arity-specific optimization).
-/// Emits: call JavaScriptRuntime.Closure.InvokeWithArgs0(object target, object[] scopes)
+/// Emits: call JavaScriptRuntime.Closure.InvokeFunctionCallWithArgs0(object target, object[] scopes)
 /// </summary>
 public record LIRCallFunctionValue0(TempVariable FunctionValue, TempVariable ScopesArray, TempVariable Result) : LIRInstruction;
 
 /// <summary>
 /// Calls a function value with 1 argument (arity-specific optimization).
-/// Emits: call JavaScriptRuntime.Closure.InvokeWithArgs1(object target, object[] scopes, object a0)
+/// Emits: call JavaScriptRuntime.Closure.InvokeFunctionCallWithArgs1(object target, object[] scopes, object a0)
 /// </summary>
 public record LIRCallFunctionValue1(TempVariable FunctionValue, TempVariable ScopesArray, TempVariable A0, TempVariable Result) : LIRInstruction;
 
 /// <summary>
 /// Calls a function value with 2 arguments (arity-specific optimization).
-/// Emits: call JavaScriptRuntime.Closure.InvokeWithArgs2(object target, object[] scopes, object a0, object a1)
+/// Emits: call JavaScriptRuntime.Closure.InvokeFunctionCallWithArgs2(object target, object[] scopes, object a0, object a1)
 /// </summary>
 public record LIRCallFunctionValue2(TempVariable FunctionValue, TempVariable ScopesArray, TempVariable A0, TempVariable A1, TempVariable Result) : LIRInstruction;
 
 /// <summary>
 /// Calls a function value with 3 arguments (arity-specific optimization).
-/// Emits: call JavaScriptRuntime.Closure.InvokeWithArgs3(object target, object[] scopes, object a0, object a1, object a2)
+/// Emits: call JavaScriptRuntime.Closure.InvokeFunctionCallWithArgs3(object target, object[] scopes, object a0, object a1, object a2)
 /// </summary>
 public record LIRCallFunctionValue3(TempVariable FunctionValue, TempVariable ScopesArray, TempVariable A0, TempVariable A1, TempVariable A2, TempVariable Result) : LIRInstruction;
 

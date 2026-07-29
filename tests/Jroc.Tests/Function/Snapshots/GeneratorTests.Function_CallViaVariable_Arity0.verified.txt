@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x20c1
+				// Method begins at RVA 0x20ca
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -41,7 +41,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x20b1
+			// Method begins at RVA 0x20ba
 			// Header size: 1
 			// Code size: 6 (0x6)
 			.maxstack 8
@@ -67,7 +67,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20b8
+			// Method begins at RVA 0x20c1
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -93,14 +93,15 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 85 (0x55)
+		// Code size: 94 (0x5e)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Function_CallViaVariable_Arity0/Scope,
-			[1] object,
-			[2] object,
-			[3] object,
-			[4] object
+			[1] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0,
+			[2] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0,
+			[3] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0,
+			[4] object,
+			[5] object
 		)
 
 		IL_0000: newobj instance void Modules.Function_CallViaVariable_Arity0/Scope::.ctor()
@@ -108,35 +109,36 @@
 		IL_0006: ldnull
 		IL_0007: ldftn object Modules.Function_CallViaVariable_Arity0/getMessage::__js_call__(object)
 		IL_000d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_0012: ldc.i4.0
-		IL_0013: conv.r8
-		IL_0014: ldstr "getMessage"
-		IL_0019: ldc.i4.0
-		IL_001a: ldc.i4.1
-		IL_001b: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-		IL_0020: stloc.3
-		IL_0021: ldloc.3
-		IL_0022: stloc.1
-		IL_0023: nop
-		IL_0024: nop
-		IL_0025: ldloc.1
-		IL_0026: stloc.2
-		IL_0027: ldstr "console"
-		IL_002c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0031: stloc.3
-		IL_0032: ldloc.3
-		IL_0033: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0038: stloc.3
-		IL_0039: ldloc.2
-		IL_003a: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_003f: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
-		IL_0044: stloc.s 4
-		IL_0046: ldloc.3
-		IL_0047: ldstr "log"
-		IL_004c: ldloc.s 4
-		IL_004e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0053: pop
-		IL_0054: ret
+		IL_0012: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
+		IL_0017: ldc.i4.0
+		IL_0018: conv.r8
+		IL_0019: ldstr "getMessage"
+		IL_001e: ldc.i4.0
+		IL_001f: ldc.i4.1
+		IL_0020: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
+		IL_0025: stloc.3
+		IL_0026: ldloc.3
+		IL_0027: stloc.1
+		IL_0028: nop
+		IL_0029: nop
+		IL_002a: ldloc.1
+		IL_002b: stloc.2
+		IL_002c: ldstr "console"
+		IL_0031: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0036: stloc.s 4
+		IL_0038: ldloc.s 4
+		IL_003a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_003f: stloc.s 4
+		IL_0041: ldloc.2
+		IL_0042: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0047: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
+		IL_004c: stloc.s 5
+		IL_004e: ldloc.s 4
+		IL_0050: ldstr "log"
+		IL_0055: ldloc.s 5
+		IL_0057: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_005c: pop
+		IL_005d: ret
 	} // end of method Function_CallViaVariable_Arity0::__js_module_init__
 
 } // end of class Modules.Function_CallViaVariable_Arity0
@@ -148,7 +150,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20ca
+		// Method begins at RVA 0x20d3
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
