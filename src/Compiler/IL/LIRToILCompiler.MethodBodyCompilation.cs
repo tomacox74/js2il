@@ -29,7 +29,15 @@ internal sealed partial class LIRToILCompiler
         _localVariablesSignature = default;
         _ilLength = 0;
         _locals = null;
-        var emitPdb = _serviceProvider.GetService<CompilerOptions>()?.EmitPdb == true;
+        var compilerOptions = _serviceProvider.GetService<CompilerOptions>();
+        var emitPdb = compilerOptions?.EmitPdb == true;
+        var schedulerMode = compilerOptions?.LIRStackSchedulerMode
+            ?? LIRStackSchedulerMode.Identity;
+        var stackSchedule = schedulerMode == LIRStackSchedulerMode.Disabled
+            ? null
+            : LIRStackScheduler.Build(
+                MethodBody,
+                new LIRStackSchedulerOptions(schedulerMode));
 
         // All temps start as "needs materialization". Stackify will mark which ones can stay on stack.
         var shouldMaterialize = new bool[MethodBody.Temps.Count];
@@ -102,8 +110,54 @@ internal sealed partial class LIRToILCompiler
         // because we need the scope instance to be in local 0 first (either newly created or
         // loaded from arg.0[0] on resume). The state switch is emitted inline with that instruction.
 
-        for (int i = 0; i < MethodBody.Instructions.Count; i++)
+        var scheduledOperations = stackSchedule?.Operations;
+        var scheduledOperationIndex = 0;
+        var scheduledOperationOffset = 0;
+        var legacyInstructionIndex = 0;
+
+        bool HasNextEmissionInstruction()
+            => scheduledOperations is null
+                ? legacyInstructionIndex < MethodBody.Instructions.Count
+                : scheduledOperationIndex < scheduledOperations.Count;
+
+        int GetCurrentEmissionInstructionIndex()
+            => scheduledOperations is null
+                ? legacyInstructionIndex
+                : scheduledOperations[scheduledOperationIndex]
+                    .GetLirInstructionIndex(scheduledOperationOffset);
+
+        void AdvanceOneEmissionInstruction()
         {
+            if (scheduledOperations is null)
+            {
+                legacyInstructionIndex++;
+                return;
+            }
+
+            scheduledOperationOffset++;
+            if (scheduledOperationOffset
+                >= scheduledOperations[scheduledOperationIndex].InstructionCount)
+            {
+                scheduledOperationIndex++;
+                scheduledOperationOffset = 0;
+            }
+        }
+
+        void AdvanceCurrentEmissionOperation(int legacyInstructionCount)
+        {
+            if (scheduledOperations is null)
+            {
+                legacyInstructionIndex += legacyInstructionCount;
+                return;
+            }
+
+            scheduledOperationIndex++;
+            scheduledOperationOffset = 0;
+        }
+
+        while (HasNextEmissionInstruction())
+        {
+            var i = GetCurrentEmissionInstructionIndex();
             var instruction = MethodBody.Instructions[i];
 
             // Peephole optimization: fuse `new C(...); this.<field> = <temp>` into a single sequence
@@ -216,8 +270,8 @@ internal sealed partial class LIRToILCompiler
                     ilEncoder.OpCode(ILOpCode.Stfld);
                     ilEncoder.Token(fieldHandle);
 
-                    // Skip the following LIRStoreUserClassInstanceField (we just emitted it).
-                    i++;
+                    // Consume the following LIRStoreUserClassInstanceField (we just emitted it).
+                    AdvanceCurrentEmissionOperation(legacyInstructionCount: 2);
                     continue;
                 }
             }
@@ -260,8 +314,8 @@ internal sealed partial class LIRToILCompiler
                     ilEncoder.OpCode(ILOpCode.Stfld);
                     ilEncoder.Token(fieldHandle);
 
-                    // Skip the following LIRStoreUserClassInstanceField (we just emitted it).
-                    i++;
+                    // Consume the following LIRStoreUserClassInstanceField (we just emitted it).
+                    AdvanceCurrentEmissionOperation(legacyInstructionCount: 2);
                     continue;
                 }
             }
@@ -271,6 +325,7 @@ internal sealed partial class LIRToILCompiler
             {
                 case LIRLabel lirLabel:
                     ilEncoder.MarkLabel(labelMap[lirLabel.LabelId]);
+                    AdvanceOneEmissionInstruction();
                     continue;
 
                 case LIRSequencePoint sp:
@@ -288,28 +343,34 @@ internal sealed partial class LIRToILCompiler
                     // Marker emits no IL. Associate the next real IL instruction with this span.
                     // IL offset is the current method IL byte length.
                     _sequencePoints.Add(new MethodSequencePoint(methodBlob.Count, sp.Span));
+                    AdvanceOneEmissionInstruction();
                     continue;
 
                 case LIRBranch branch:
                     ilEncoder.Branch(ILOpCode.Br, labelMap[branch.TargetLabel]);
+                    AdvanceOneEmissionInstruction();
                     continue;
 
                 case LIRLeave leave:
                     ilEncoder.Branch(ILOpCode.Leave, labelMap[leave.TargetLabel]);
+                    AdvanceOneEmissionInstruction();
                     continue;
 
                 case LIRBranchIfFalse branchFalse:
                     EmitBranchCondition(branchFalse.Condition, ilEncoder, allocation, tempDefinitions, methodDescriptor);
                     ilEncoder.Branch(ILOpCode.Brfalse, labelMap[branchFalse.TargetLabel]);
+                    AdvanceOneEmissionInstruction();
                     continue;
 
                 case LIRBranchIfTrue branchTrue:
                     EmitBranchCondition(branchTrue.Condition, ilEncoder, allocation, tempDefinitions, methodDescriptor);
                     ilEncoder.Branch(ILOpCode.Brtrue, labelMap[branchTrue.TargetLabel]);
+                    AdvanceOneEmissionInstruction();
                     continue;
 
                 case LIREndFinally:
                     ilEncoder.OpCode(ILOpCode.Endfinally);
+                    AdvanceOneEmissionInstruction();
                     continue;
             }
 
@@ -319,6 +380,8 @@ internal sealed partial class LIRToILCompiler
                 IRPipelineMetrics.RecordFailureIfUnset($"IL compile failed: unsupported LIR instruction {instruction.GetType().Name}");
                 return false;
             }
+
+            AdvanceOneEmissionInstruction();
         }
 
         // Ensure the method body always ends with a return.

@@ -12,6 +12,13 @@ public class CompilerOptions
     public bool EmitPdb { get; set; } = false;
 
     /// <summary>
+    /// Controls cumulative LIR stack-scheduler coverage. Identity mode is the
+    /// no-optimization foundation and must preserve legacy IL byte-for-byte.
+    /// </summary>
+    internal Jroc.IL.LIRStackSchedulerMode LIRStackSchedulerMode { get; set; } =
+        Jroc.IL.LIRStackSchedulerMode.Identity;
+
+    /// <summary>
     /// When true, JROC emits strongly-typed .NET contracts for CommonJS <c>module.exports</c>
     /// into the compiled assembly for hosting via <see cref="Jroc.Runtime.JsEngine"/>.
     /// </summary>

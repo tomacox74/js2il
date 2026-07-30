@@ -6,7 +6,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-_Nothing yet._
+- compiler: add the identity-mode foundation for the incremental LIR stack scheduler. The IL backend now emits through an explicit source-order schedule with temp residency, instruction disposition, atomic operation, metrics, and cumulative coverage models, while preserving legacy Stackify/local allocation decisions and byte-identical method bodies, local signatures, maxstack, exception regions, and Portable PDB mappings. Existing user-class and intrinsic constructor/field-store peepholes are represented as atomic schedule operations with their prior eligibility checks and ordinary-emission fallback unchanged.
 
 ## v0.11.40 - 2026-07-30
 
