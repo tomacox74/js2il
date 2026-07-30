@@ -1085,6 +1085,13 @@ namespace JavaScriptRuntime
                 throw new TypeError("Object prototype may only be an Object or null");
             }
 
+            // OrdinarySetPrototypeOf returns false for a non-extensible target whose prototype
+            // would actually change, and Object.setPrototypeOf turns that failure into a TypeError.
+            if (!IsExtensibleInternal(obj) && !SamePrototypeValue(GetCurrentPrototypeValue(obj), prototype))
+            {
+                throw new TypeError("#<Object> is not extensible");
+            }
+
             InvalidateRegExpWellKnownSymbolFastPathForPrototypeChange(obj);
             PrototypeChain.SetPrototype(obj, prototype);
             return obj;
@@ -4517,6 +4524,27 @@ namespace JavaScriptRuntime
         }
 
         /// <summary>
+        /// ECMA-262 GetIteratorFromMethod: invokes <paramref name="method"/> with
+        /// <paramref name="obj"/> as the receiver and treats the returned object as the iterator
+        /// itself, without consulting <c>Symbol.iterator</c> on it.
+        /// </summary>
+        public static IJavaScriptIterator GetIteratorFromMethod(object obj, object method)
+        {
+            var iterator = JavaScriptRuntime.Function.Apply(method, obj, System.Array.Empty<object?>());
+            if (iterator is IJavaScriptIterator nativeIterator)
+            {
+                return nativeIterator;
+            }
+
+            if (!Proxy.IsObjectLikeValue(iterator))
+            {
+                throw new JavaScriptRuntime.TypeError("Iterator method did not return an object");
+            }
+
+            return new DynamicIterator(iterator!);
+        }
+
+        /// <summary>
         /// Gets an async iterator for for await..of using the async iterator protocol.
         ///
         /// If [Symbol.asyncIterator] is not present, it falls back to [Symbol.iterator]
@@ -5672,6 +5700,141 @@ namespace JavaScriptRuntime
             return true;
         }
 
+        /// <summary>
+        /// ECMA-262 OrdinaryGet(O, P, Receiver) as used by <c>Reflect.get</c>.
+        /// Walks the prototype chain and invokes accessor getters with <paramref name="receiver"/>
+        /// as the <c>this</c> value rather than the object the accessor was found on.
+        /// </summary>
+        internal static object? ReflectGet(object target, object? propertyKey, object? receiver)
+        {
+            var key = ToPropertyKeyString(propertyKey);
+
+            if (target is Proxy proxy)
+            {
+                if (proxy.TryInvokeTrap(
+                    "get",
+                    "get",
+                    new object?[] { proxy.GetTarget("get"), ToExternalPropertyKey(key), receiver },
+                    out var trapResult))
+                {
+                    return trapResult;
+                }
+
+                return ReflectGet(proxy.GetTarget("get"), propertyKey, receiver);
+            }
+
+            for (object? current = target; current is not null and not JsNull; current = PrototypeChain.GetPrototypeOrNull(current))
+            {
+                if (current is Proxy)
+                {
+                    return ReflectGet(current, propertyKey, receiver);
+                }
+
+                if (!TryGetOwnPropertyDescriptor(current, key, out var descriptor))
+                {
+                    continue;
+                }
+
+                if (descriptor.Kind != JsPropertyDescriptorKind.Accessor)
+                {
+                    return descriptor.Value;
+                }
+
+                if (descriptor.Get is null || descriptor.Get is JsNull)
+                {
+                    return null;
+                }
+
+                return JavaScriptRuntime.Function.Call(descriptor.Get, receiver, global::System.Array.Empty<object?>());
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// ECMA-262 OrdinarySetPrototypeOf(O, V) as used by <c>Reflect.setPrototypeOf</c>.
+        /// Reports failure with a Boolean instead of throwing, which is the observable
+        /// difference between <c>Reflect.setPrototypeOf</c> and <c>Object.setPrototypeOf</c>.
+        /// </summary>
+        internal static bool ReflectSetPrototypeOf(object target, object? prototype)
+        {
+            if (target is Proxy || !IsObjectLikeForPrototype(target))
+            {
+                setPrototypeOf(target, prototype);
+                return true;
+            }
+
+            if (SamePrototypeValue(GetCurrentPrototypeValue(target), prototype))
+            {
+                return true;
+            }
+
+            if (!IsExtensibleInternal(target))
+            {
+                return false;
+            }
+
+            if (WouldCreatePrototypeCycle(target, prototype))
+            {
+                return false;
+            }
+
+            InvalidateRegExpWellKnownSymbolFastPathForPrototypeChange(target);
+            PrototypeChain.SetPrototype(target, prototype);
+            return true;
+        }
+
+        private static object? GetCurrentPrototypeValue(object target)
+        {
+            PrototypeChain.Enable();
+            if (target is Delegate del)
+            {
+                return JavaScriptRuntime.Function.GetPrototypeObject(del);
+            }
+
+            return PrototypeChain.TryGetPrototype(target, out var prototype) ? prototype : null;
+        }
+
+        /// <summary>
+        /// Compares two [[Prototype]] values, treating CLR <c>null</c> and <see cref="JsNull"/>
+        /// as the same "null prototype" value.
+        /// </summary>
+        private static bool SamePrototypeValue(object? left, object? right)
+        {
+            var leftIsNull = left is null || left is JsNull;
+            var rightIsNull = right is null || right is JsNull;
+            if (leftIsNull || rightIsNull)
+            {
+                return leftIsNull && rightIsNull;
+            }
+
+            return ReferenceEquals(left, right);
+        }
+
+        /// <summary>
+        /// Returns true when setting <paramref name="prototype"/> on <paramref name="target"/> would
+        /// make the prototype chain cyclic.
+        /// </summary>
+        private static bool WouldCreatePrototypeCycle(object target, object? prototype)
+        {
+            for (var current = prototype; current is not null and not JsNull; current = PrototypeChain.GetPrototypeOrNull(current))
+            {
+                if (ReferenceEquals(current, target))
+                {
+                    return true;
+                }
+
+                // A proxy's prototype is observable through a trap, so stop walking rather
+                // than triggering user code from a cycle check.
+                if (current is Proxy)
+                {
+                    break;
+                }
+            }
+
+            return false;
+        }
+
         private static bool TryGetCanonicalNumericIndex(string key, out double numericIndex)
         {
             if (string.Equals(key, "-0", StringComparison.Ordinal))
@@ -6289,14 +6452,34 @@ namespace JavaScriptRuntime
 
             var srcArgs = args ?? System.Array.Empty<object>();
 
-            MethodInfo? chosen = methods.FirstOrDefault(mi => mi.GetParameters().Length == srcArgs.Length);
+            // JavaScript callers may pass fewer or more arguments than the CLR signature declares.
+            // Prefer an exact arity match, then the smallest overload that can receive every
+            // supplied argument, and only then the smallest overload overall.
+            MethodInfo? chosen = methods.FirstOrDefault(mi => mi.GetParameters().Length == srcArgs.Length)
+                ?? methods
+                    .Where(mi => mi.GetParameters().Length > srcArgs.Length)
+                    .OrderBy(mi => mi.GetParameters().Length)
+                    .FirstOrDefault()
+                ?? methods.OrderBy(mi => mi.GetParameters().Length).First();
 
-            if (chosen == null)
+            var parameters = chosen.GetParameters();
+            var invokeArgs = new object?[parameters.Length];
+            for (var i = 0; i < parameters.Length; i++)
             {
-                chosen = methods.OrderBy(mi => mi.GetParameters().Length).First();
-            }
+                if (i < srcArgs.Length)
+                {
+                    invokeArgs[i] = srcArgs[i];
+                    continue;
+                }
 
-            var invokeArgs = srcArgs.Cast<object?>().ToArray();
+                // Omitted JavaScript arguments are `undefined`; honor a declared CLR default when
+                // one exists so optional parameters keep their intended value.
+                invokeArgs[i] = parameters[i].HasDefaultValue
+                    ? parameters[i].DefaultValue
+                    : parameters[i].ParameterType.IsValueType
+                        ? Activator.CreateInstance(parameters[i].ParameterType)
+                        : null;
+            }
 
             try
             {

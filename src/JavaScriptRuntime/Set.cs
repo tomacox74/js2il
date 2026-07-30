@@ -273,14 +273,148 @@ namespace JavaScriptRuntime
             }
         }
 
-        private static Set NormalizeOtherSet(object? other, string methodName)
+        /// <summary>
+        /// ECMA-262 Set Record, the result of GetSetRecord. Captures the set-like object together
+        /// with its already-coerced size and its <c>has</c> / <c>keys</c> methods so that the set
+        /// operations observe each of them exactly once, in spec order.
+        /// </summary>
+        private readonly struct SetRecord
         {
-            if (other is null || other is JsNull)
+            internal SetRecord(object setObject, double size, object has, object keys)
             {
-                throw new TypeError($"Set.prototype.{methodName} called with null or undefined other");
+                SetObject = setObject;
+                Size = size;
+                Has = has;
+                Keys = keys;
             }
 
-            return other as Set ?? new Set(other);
+            internal object SetObject { get; }
+
+            internal double Size { get; }
+
+            internal object Has { get; }
+
+            internal object Keys { get; }
+        }
+
+        /// <summary>
+        /// ECMA-262 GetSetRecord. Set-like objects only need a numeric <c>size</c> plus callable
+        /// <c>has</c> and <c>keys</c> properties, so plain objects and classes qualify while
+        /// arrays and other iterables deliberately do not.
+        /// </summary>
+        private static SetRecord GetSetRecord(object? other, string methodName)
+        {
+            if (!Proxy.IsObjectLikeValue(other))
+            {
+                throw new TypeError($"Set.prototype.{methodName} called with a non-object argument");
+            }
+
+            var rawSize = ObjectRuntime.GetItem(other!, "size");
+            var numSize = TypeUtilities.ToNumber(rawSize);
+            if (double.IsNaN(numSize))
+            {
+                throw new TypeError($"Set.prototype.{methodName} argument has a non-numeric size");
+            }
+
+            var intSize = ToIntegerOrInfinity(numSize);
+            if (intSize < 0)
+            {
+                throw new RangeError($"Set.prototype.{methodName} argument has a negative size");
+            }
+
+            var has = ObjectRuntime.GetItem(other!, "has");
+            if (!IsCallableValue(has))
+            {
+                throw new TypeError($"Set.prototype.{methodName} argument has a non-callable has method");
+            }
+
+            var keys = ObjectRuntime.GetItem(other!, "keys");
+            if (!IsCallableValue(keys))
+            {
+                throw new TypeError($"Set.prototype.{methodName} argument has a non-callable keys method");
+            }
+
+            return new SetRecord(other!, intSize, has!, keys!);
+        }
+
+        /// <summary>
+        /// Copies the receiver's set data directly, matching the spec's "copy of O.[[SetData]]"
+        /// step. Going through the constructor instead would observably call <c>Set.prototype.add</c>.
+        /// </summary>
+        private static Set CopyOf(Set source)
+        {
+            var copy = new Set();
+            copy._items.AddRange(source._items);
+            foreach (var value in source._items)
+            {
+                copy._set.Add(value);
+            }
+
+            return copy;
+        }
+
+        private static bool IsCallableValue(object? value)
+            => value is Delegate || (value is Proxy proxy && proxy.IsCallableTarget);
+
+        /// <summary>ECMA-262 ToIntegerOrInfinity, applied to an already-coerced number.</summary>
+        private static double ToIntegerOrInfinity(double number)
+        {
+            if (double.IsNaN(number))
+            {
+                return 0;
+            }
+
+            if (double.IsInfinity(number))
+            {
+                return number;
+            }
+
+            return global::System.Math.Truncate(number);
+        }
+
+        /// <summary>ECMA-262 CanonicalizeKeyedCollectionKey: normalizes -0 to +0.</summary>
+        private static object? CanonicalizeKey(object? value)
+            => value is double d && d == 0 ? 0d : value;
+
+        private static bool SetRecordHas(in SetRecord record, object? value)
+            => TypeUtilities.ToBoolean(Function.Apply(record.Has, record.SetObject, new object?[] { value }));
+
+        private static IJavaScriptIterator SetRecordKeys(in SetRecord record)
+            => ObjectRuntime.GetIteratorFromMethod(record.SetObject, record.Keys);
+
+        /// <summary>
+        /// Walks the keys iterator of a set-like object, canonicalizing each value. When
+        /// <paramref name="visit"/> returns false the iterator is closed early, matching the
+        /// IteratorClose steps the short-circuiting set predicates perform.
+        /// </summary>
+        private static void ForEachOtherKey(in SetRecord record, Func<object?, bool> visit)
+        {
+            var iterator = SetRecordKeys(record);
+            var closeIterator = true;
+            try
+            {
+                while (true)
+                {
+                    var step = ObjectRuntime.IteratorNext(iterator);
+                    if (ObjectRuntime.IteratorResultDone(step))
+                    {
+                        closeIterator = false;
+                        break;
+                    }
+
+                    if (!visit(CanonicalizeKey(ObjectRuntime.IteratorResultValue(step))))
+                    {
+                        break;
+                    }
+                }
+            }
+            finally
+            {
+                if (closeIterator)
+                {
+                    ObjectRuntime.IteratorClose(iterator);
+                }
+            }
         }
 
         // JavaScript Set.prototype.size property
@@ -366,14 +500,26 @@ namespace JavaScriptRuntime
 
         public Set difference(object? other)
         {
-            var otherSet = NormalizeOtherSet(other, nameof(difference));
-            var result = new Set();
-            foreach (var value in _items)
+            var otherRec = GetSetRecord(other, nameof(difference));
+            var result = CopyOf(this);
+            if (_items.Count <= otherRec.Size)
             {
-                if (!otherSet._set.Contains(value))
+                for (var index = 0; index < _items.Count; index++)
                 {
-                    result.add(value);
+                    var value = _items[index];
+                    if (SetRecordHas(otherRec, value))
+                    {
+                        result.delete(value);
+                    }
                 }
+            }
+            else
+            {
+                ForEachOtherKey(otherRec, value =>
+                {
+                    result.delete(value);
+                    return true;
+                });
             }
 
             return result;
@@ -381,14 +527,30 @@ namespace JavaScriptRuntime
 
         public Set intersection(object? other)
         {
-            var otherSet = NormalizeOtherSet(other, nameof(intersection));
+            var otherRec = GetSetRecord(other, nameof(intersection));
             var result = new Set();
-            foreach (var value in _items)
+            if (_items.Count <= otherRec.Size)
             {
-                if (otherSet._set.Contains(value))
+                for (var index = 0; index < _items.Count; index++)
                 {
-                    result.add(value);
+                    var value = _items[index];
+                    if (SetRecordHas(otherRec, value))
+                    {
+                        result.add(value);
+                    }
                 }
+            }
+            else
+            {
+                ForEachOtherKey(otherRec, value =>
+                {
+                    if (_set.Contains(value!))
+                    {
+                        result.add(value);
+                    }
+
+                    return true;
+                });
             }
 
             return result;
@@ -396,24 +558,46 @@ namespace JavaScriptRuntime
 
         public bool isDisjointFrom(object? other)
         {
-            var otherSet = NormalizeOtherSet(other, nameof(isDisjointFrom));
-            foreach (var value in _items)
+            var otherRec = GetSetRecord(other, nameof(isDisjointFrom));
+            var disjoint = true;
+            if (_items.Count <= otherRec.Size)
             {
-                if (otherSet._set.Contains(value))
+                for (var index = 0; index < _items.Count; index++)
                 {
-                    return false;
+                    if (SetRecordHas(otherRec, _items[index]))
+                    {
+                        return false;
+                    }
                 }
             }
+            else
+            {
+                ForEachOtherKey(otherRec, value =>
+                {
+                    if (!_set.Contains(value!))
+                    {
+                        return true;
+                    }
 
-            return true;
+                    disjoint = false;
+                    return false;
+                });
+            }
+
+            return disjoint;
         }
 
         public bool isSubsetOf(object? other)
         {
-            var otherSet = NormalizeOtherSet(other, nameof(isSubsetOf));
-            foreach (var value in _items)
+            var otherRec = GetSetRecord(other, nameof(isSubsetOf));
+            if (_items.Count > otherRec.Size)
             {
-                if (!otherSet._set.Contains(value))
+                return false;
+            }
+
+            for (var index = 0; index < _items.Count; index++)
+            {
+                if (!SetRecordHas(otherRec, _items[index]))
                 {
                     return false;
                 }
@@ -424,25 +608,34 @@ namespace JavaScriptRuntime
 
         public bool isSupersetOf(object? other)
         {
-            var otherSet = NormalizeOtherSet(other, nameof(isSupersetOf));
-            foreach (var value in otherSet._items)
+            var otherRec = GetSetRecord(other, nameof(isSupersetOf));
+            if (_items.Count < otherRec.Size)
             {
-                if (!_set.Contains(value))
-                {
-                    return false;
-                }
+                return false;
             }
 
-            return true;
+            var superset = true;
+            ForEachOtherKey(otherRec, value =>
+            {
+                if (_set.Contains(value!))
+                {
+                    return true;
+                }
+
+                superset = false;
+                return false;
+            });
+
+            return superset;
         }
 
         public Set symmetricDifference(object? other)
         {
-            var otherSet = NormalizeOtherSet(other, nameof(symmetricDifference));
-            var result = new Set(this);
-            foreach (var value in otherSet._items)
+            var otherRec = GetSetRecord(other, nameof(symmetricDifference));
+            var result = CopyOf(this);
+            ForEachOtherKey(otherRec, value =>
             {
-                if (result._set.Contains(value))
+                if (_set.Contains(value!))
                 {
                     result.delete(value);
                 }
@@ -450,19 +643,22 @@ namespace JavaScriptRuntime
                 {
                     result.add(value);
                 }
-            }
+
+                return true;
+            });
 
             return result;
         }
 
         public Set union(object? other)
         {
-            var otherSet = NormalizeOtherSet(other, nameof(union));
-            var result = new Set(this);
-            foreach (var value in otherSet._items)
+            var otherRec = GetSetRecord(other, nameof(union));
+            var result = CopyOf(this);
+            ForEachOtherKey(otherRec, value =>
             {
                 result.add(value);
-            }
+                return true;
+            });
 
             return result;
         }
