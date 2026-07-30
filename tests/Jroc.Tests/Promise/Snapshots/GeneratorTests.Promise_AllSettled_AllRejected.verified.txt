@@ -173,14 +173,14 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 143 (0x8f)
+		// Code size: 141 (0x8d)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Promise_AllSettled_AllRejected/Scope,
 			[1] object,
 			[2] object,
-			[3] object,
-			[4] class [JavaScriptRuntime]JavaScriptRuntime.Array,
+			[3] class [JavaScriptRuntime]JavaScriptRuntime.Array,
+			[4] object,
 			[5] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1
 		)
 
@@ -189,55 +189,51 @@
 		IL_0006: nop
 		IL_0007: ldstr "Error 1"
 		IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::reject(object)
-		IL_0011: stloc.3
-		IL_0012: ldloc.3
-		IL_0013: stloc.1
-		IL_0014: ldstr "Error 2"
-		IL_0019: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::reject(object)
-		IL_001e: stloc.3
-		IL_001f: ldloc.3
-		IL_0020: stloc.2
-		IL_0021: ldc.i4.2
-		IL_0022: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_0027: dup
-		IL_0028: ldloc.1
-		IL_0029: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-		IL_002e: dup
-		IL_002f: ldloc.2
-		IL_0030: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-		IL_0035: stloc.s 4
-		IL_0037: ldloc.s 4
-		IL_0039: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::allSettled(object)
-		IL_003e: stloc.3
-		IL_003f: ldloc.3
-		IL_0040: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0045: stloc.3
-		IL_0046: ldnull
-		IL_0047: ldftn object Modules.Promise_AllSettled_AllRejected/ArrowFunction_L6C35::__js_call__(object, object)
-		IL_004d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-		IL_0052: ldc.i4.1
-		IL_0053: newarr [System.Runtime]System.Object
-		IL_0058: dup
-		IL_0059: ldc.i4.0
-		IL_005a: ldloc.0
-		IL_005b: stelem.ref
-		IL_005c: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_0061: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_0066: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1
-		IL_006b: ldc.i4.1
-		IL_006c: conv.r8
-		IL_006d: ldstr ""
-		IL_0072: ldc.i4.0
-		IL_0073: ldc.i4.0
-		IL_0074: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0, float64, string, bool, bool)
-		IL_0079: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0)
-		IL_007e: stloc.s 5
-		IL_0080: ldloc.3
-		IL_0081: ldstr "then"
-		IL_0086: ldloc.s 5
-		IL_0088: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_008d: pop
-		IL_008e: ret
+		IL_0011: stloc.1
+		IL_0012: ldstr "Error 2"
+		IL_0017: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::reject(object)
+		IL_001c: stloc.2
+		IL_001d: ldc.i4.2
+		IL_001e: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_0023: dup
+		IL_0024: ldloc.1
+		IL_0025: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+		IL_002a: dup
+		IL_002b: ldloc.2
+		IL_002c: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+		IL_0031: stloc.3
+		IL_0032: ldloc.3
+		IL_0033: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::allSettled(object)
+		IL_0038: stloc.s 4
+		IL_003a: ldloc.s 4
+		IL_003c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0041: stloc.s 4
+		IL_0043: ldnull
+		IL_0044: ldftn object Modules.Promise_AllSettled_AllRejected/ArrowFunction_L6C35::__js_call__(object, object)
+		IL_004a: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_004f: ldc.i4.1
+		IL_0050: newarr [System.Runtime]System.Object
+		IL_0055: dup
+		IL_0056: ldc.i4.0
+		IL_0057: ldloc.0
+		IL_0058: stelem.ref
+		IL_0059: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_005e: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_0063: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1
+		IL_0068: ldc.i4.1
+		IL_0069: conv.r8
+		IL_006a: ldstr ""
+		IL_006f: ldc.i4.0
+		IL_0070: ldc.i4.0
+		IL_0071: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0, float64, string, bool, bool)
+		IL_0076: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0)
+		IL_007b: stloc.s 5
+		IL_007d: ldloc.s 4
+		IL_007f: ldstr "then"
+		IL_0084: ldloc.s 5
+		IL_0086: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_008b: pop
+		IL_008c: ret
 	} // end of method Promise_AllSettled_AllRejected::__js_module_init__
 
 } // end of class Modules.Promise_AllSettled_AllRejected

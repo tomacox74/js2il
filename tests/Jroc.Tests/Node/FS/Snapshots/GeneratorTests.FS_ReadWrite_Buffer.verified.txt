@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2248
+			// Method begins at RVA 0x2230
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,7 +40,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 492 (0x1ec)
+		// Code size: 468 (0x1d4)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.FS_ReadWrite_Buffer/Scope,
@@ -51,10 +51,9 @@
 			[5] object,
 			[6] object,
 			[7] object,
-			[8] class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer,
-			[9] bool,
-			[10] object,
-			[11] object
+			[8] bool,
+			[9] object,
+			[10] object
 		)
 
 		IL_0000: newobj instance void Modules.FS_ReadWrite_Buffer/Scope::.ctor()
@@ -63,156 +62,144 @@
 		IL_0007: ldarg.1
 		IL_0008: ldstr "fs"
 		IL_000d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
-		IL_0012: stloc.s 7
-		IL_0014: ldloc.s 7
-		IL_0016: stloc.1
-		IL_0017: ldarg.1
-		IL_0018: ldstr "path"
-		IL_001d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
-		IL_0022: stloc.s 7
-		IL_0024: ldloc.s 7
-		IL_0026: stloc.2
-		IL_0027: ldloc.2
-		IL_0028: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_002d: stloc.s 7
-		IL_002f: ldloc.s 7
-		IL_0031: ldstr "join"
-		IL_0036: ldarg.s __dirname
-		IL_0038: ldstr "tmp-buffer.bin"
-		IL_003d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_0042: stloc.s 7
-		IL_0044: ldloc.s 7
-		IL_0046: stloc.3
-		IL_0047: ldc.i4.3
-		IL_0048: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_004d: dup
-		IL_004e: ldc.r8 97
-		IL_0057: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::AddNumber(float64)
-		IL_005c: dup
-		IL_005d: ldc.r8 98
-		IL_0066: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::AddNumber(float64)
-		IL_006b: dup
-		IL_006c: ldc.r8 99
-		IL_0075: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::AddNumber(float64)
-		IL_007a: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer::from(object)
-		IL_007f: stloc.s 8
-		IL_0081: ldloc.s 8
-		IL_0083: stloc.s 4
-		IL_0085: ldloc.1
-		IL_0086: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_008b: stloc.s 7
-		IL_008d: ldloc.s 7
-		IL_008f: ldstr "writeFileSync"
-		IL_0094: ldloc.3
-		IL_0095: ldloc.s 4
-		IL_0097: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_009c: pop
-		IL_009d: ldloc.1
-		IL_009e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00a3: stloc.s 7
-		IL_00a5: ldloc.s 7
-		IL_00a7: ldstr "readFileSync"
-		IL_00ac: ldloc.3
-		IL_00ad: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00b2: stloc.s 7
-		IL_00b4: ldloc.s 7
-		IL_00b6: stloc.s 5
-		IL_00b8: ldstr "console"
-		IL_00bd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_00c2: stloc.s 7
-		IL_00c4: ldloc.s 7
-		IL_00c6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00cb: stloc.s 7
-		IL_00cd: ldloc.s 5
-		IL_00cf: call bool [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer::isBuffer(object)
-		IL_00d4: stloc.s 9
-		IL_00d6: ldloc.s 9
-		IL_00d8: box [System.Runtime]System.Boolean
-		IL_00dd: stloc.s 10
-		IL_00df: ldloc.s 7
-		IL_00e1: ldstr "log"
-		IL_00e6: ldloc.s 10
-		IL_00e8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00ed: pop
-		IL_00ee: ldstr "console"
-		IL_00f3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_00f8: stloc.s 7
-		IL_00fa: ldloc.s 7
-		IL_00fc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0101: stloc.s 7
-		IL_0103: ldloc.s 7
-		IL_0105: ldstr "log"
-		IL_010a: ldloc.s 5
-		IL_010c: ldstr "length"
-		IL_0111: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0116: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_011b: pop
-		IL_011c: ldstr "console"
-		IL_0121: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0126: stloc.s 7
-		IL_0128: ldloc.s 7
-		IL_012a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_012f: stloc.s 7
-		IL_0131: ldloc.s 5
-		IL_0133: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0138: stloc.s 11
-		IL_013a: ldloc.s 11
-		IL_013c: ldstr "toString"
-		IL_0141: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-		IL_0146: stloc.s 11
-		IL_0148: ldloc.s 7
-		IL_014a: ldstr "log"
-		IL_014f: ldloc.s 11
-		IL_0151: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0156: pop
-		IL_0157: ldloc.1
-		IL_0158: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_015d: stloc.s 11
-		IL_015f: ldloc.s 11
-		IL_0161: ldstr "readFileSync"
-		IL_0166: ldloc.3
-		IL_0167: ldstr "utf8"
-		IL_016c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_0171: stloc.s 11
-		IL_0173: ldloc.s 11
-		IL_0175: stloc.s 6
-		IL_0177: ldstr "console"
-		IL_017c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0181: stloc.s 11
-		IL_0183: ldloc.s 11
-		IL_0185: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_018a: stloc.s 11
-		IL_018c: ldloc.s 11
-		IL_018e: ldstr "log"
-		IL_0193: ldloc.s 6
-		IL_0195: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
-		IL_019a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_019f: pop
-		IL_01a0: ldstr "console"
-		IL_01a5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_01aa: stloc.s 11
-		IL_01ac: ldloc.s 11
-		IL_01ae: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_01b3: stloc.s 11
-		IL_01b5: ldloc.s 11
-		IL_01b7: ldstr "log"
-		IL_01bc: ldloc.s 6
-		IL_01be: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_01c3: pop
-		IL_01c4: ldloc.1
-		IL_01c5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_01ca: stloc.s 11
-		IL_01cc: ldloc.s 11
-		IL_01ce: ldstr "rmSync"
-		IL_01d3: ldloc.3
-		IL_01d4: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_01d9: dup
-		IL_01da: ldstr "force"
-		IL_01df: ldc.i4.1
-		IL_01e0: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-		IL_01e5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_01ea: pop
-		IL_01eb: ret
+		IL_0012: stloc.1
+		IL_0013: ldarg.1
+		IL_0014: ldstr "path"
+		IL_0019: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
+		IL_001e: stloc.2
+		IL_001f: ldloc.2
+		IL_0020: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0025: stloc.s 7
+		IL_0027: ldloc.s 7
+		IL_0029: ldstr "join"
+		IL_002e: ldarg.s __dirname
+		IL_0030: ldstr "tmp-buffer.bin"
+		IL_0035: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_003a: stloc.3
+		IL_003b: ldc.i4.3
+		IL_003c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_0041: dup
+		IL_0042: ldc.r8 97
+		IL_004b: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::AddNumber(float64)
+		IL_0050: dup
+		IL_0051: ldc.r8 98
+		IL_005a: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::AddNumber(float64)
+		IL_005f: dup
+		IL_0060: ldc.r8 99
+		IL_0069: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::AddNumber(float64)
+		IL_006e: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer::from(object)
+		IL_0073: stloc.s 4
+		IL_0075: ldloc.1
+		IL_0076: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_007b: stloc.s 7
+		IL_007d: ldloc.s 7
+		IL_007f: ldstr "writeFileSync"
+		IL_0084: ldloc.3
+		IL_0085: ldloc.s 4
+		IL_0087: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_008c: pop
+		IL_008d: ldloc.1
+		IL_008e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0093: stloc.s 7
+		IL_0095: ldloc.s 7
+		IL_0097: ldstr "readFileSync"
+		IL_009c: ldloc.3
+		IL_009d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_00a2: stloc.s 5
+		IL_00a4: ldstr "console"
+		IL_00a9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_00ae: stloc.s 7
+		IL_00b0: ldloc.s 7
+		IL_00b2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00b7: stloc.s 7
+		IL_00b9: ldloc.s 5
+		IL_00bb: call bool [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer::isBuffer(object)
+		IL_00c0: stloc.s 8
+		IL_00c2: ldloc.s 8
+		IL_00c4: box [System.Runtime]System.Boolean
+		IL_00c9: stloc.s 9
+		IL_00cb: ldloc.s 7
+		IL_00cd: ldstr "log"
+		IL_00d2: ldloc.s 9
+		IL_00d4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_00d9: pop
+		IL_00da: ldstr "console"
+		IL_00df: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_00e4: stloc.s 7
+		IL_00e6: ldloc.s 7
+		IL_00e8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00ed: stloc.s 7
+		IL_00ef: ldloc.s 7
+		IL_00f1: ldstr "log"
+		IL_00f6: ldloc.s 5
+		IL_00f8: ldstr "length"
+		IL_00fd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0102: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0107: pop
+		IL_0108: ldstr "console"
+		IL_010d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0112: stloc.s 7
+		IL_0114: ldloc.s 7
+		IL_0116: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_011b: stloc.s 7
+		IL_011d: ldloc.s 5
+		IL_011f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0124: stloc.s 10
+		IL_0126: ldloc.s 10
+		IL_0128: ldstr "toString"
+		IL_012d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+		IL_0132: stloc.s 10
+		IL_0134: ldloc.s 7
+		IL_0136: ldstr "log"
+		IL_013b: ldloc.s 10
+		IL_013d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0142: pop
+		IL_0143: ldloc.1
+		IL_0144: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0149: stloc.s 10
+		IL_014b: ldloc.s 10
+		IL_014d: ldstr "readFileSync"
+		IL_0152: ldloc.3
+		IL_0153: ldstr "utf8"
+		IL_0158: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_015d: stloc.s 6
+		IL_015f: ldstr "console"
+		IL_0164: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0169: stloc.s 10
+		IL_016b: ldloc.s 10
+		IL_016d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0172: stloc.s 10
+		IL_0174: ldloc.s 10
+		IL_0176: ldstr "log"
+		IL_017b: ldloc.s 6
+		IL_017d: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
+		IL_0182: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0187: pop
+		IL_0188: ldstr "console"
+		IL_018d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0192: stloc.s 10
+		IL_0194: ldloc.s 10
+		IL_0196: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_019b: stloc.s 10
+		IL_019d: ldloc.s 10
+		IL_019f: ldstr "log"
+		IL_01a4: ldloc.s 6
+		IL_01a6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_01ab: pop
+		IL_01ac: ldloc.1
+		IL_01ad: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_01b2: stloc.s 10
+		IL_01b4: ldloc.s 10
+		IL_01b6: ldstr "rmSync"
+		IL_01bb: ldloc.3
+		IL_01bc: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_01c1: dup
+		IL_01c2: ldstr "force"
+		IL_01c7: ldc.i4.1
+		IL_01c8: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+		IL_01cd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_01d2: pop
+		IL_01d3: ret
 	} // end of method FS_ReadWrite_Buffer::__js_module_init__
 
 } // end of class Modules.FS_ReadWrite_Buffer
@@ -224,7 +211,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2251
+		// Method begins at RVA 0x2239
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -81,7 +81,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x20cb
+			// Method begins at RVA 0x20c9
 			// Header size: 1
 			// Code size: 7 (0x7)
 			.maxstack 8
@@ -169,13 +169,13 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 111 (0x6f)
+		// Code size: 109 (0x6d)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Classes_ForLoopMin/Scope,
 			[1] class Modules.Classes_ForLoopMin/C,
-			[2] class Modules.Classes_ForLoopMin/C,
-			[3] object,
+			[2] object,
+			[3] class Modules.Classes_ForLoopMin/C,
 			[4] float64
 		)
 
@@ -188,34 +188,32 @@
 		IL_000e: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
 		IL_0013: newobj instance void Modules.Classes_ForLoopMin/C::.ctor()
 		IL_0018: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
-		IL_001d: stloc.2
-		IL_001e: ldloc.2
+		IL_001d: stloc.1
+		IL_001e: ldloc.1
 		IL_001f: ldtoken Modules.Classes_ForLoopMin/C
 		IL_0024: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
 		IL_0029: ldstr "prototype"
 		IL_002e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
 		IL_0033: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
-		IL_0038: ldloc.2
-		IL_0039: stloc.1
-		IL_003a: ldstr "console"
-		IL_003f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0044: stloc.3
-		IL_0045: ldloc.3
-		IL_0046: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_004b: stloc.3
-		IL_004c: ldloc.1
-		IL_004d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Classes_ForLoopMin/C>(!!0)
-		IL_0052: stloc.2
-		IL_0053: ldloc.2
-		IL_0054: callvirt instance float64 Modules.Classes_ForLoopMin/C::run()
-		IL_0059: stloc.s 4
-		IL_005b: ldloc.3
-		IL_005c: ldstr "log"
-		IL_0061: ldloc.s 4
-		IL_0063: box [System.Runtime]System.Double
-		IL_0068: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_006d: pop
-		IL_006e: ret
+		IL_0038: ldstr "console"
+		IL_003d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0042: stloc.2
+		IL_0043: ldloc.2
+		IL_0044: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0049: stloc.2
+		IL_004a: ldloc.1
+		IL_004b: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Classes_ForLoopMin/C>(!!0)
+		IL_0050: stloc.3
+		IL_0051: ldloc.3
+		IL_0052: callvirt instance float64 Modules.Classes_ForLoopMin/C::run()
+		IL_0057: stloc.s 4
+		IL_0059: ldloc.2
+		IL_005a: ldstr "log"
+		IL_005f: ldloc.s 4
+		IL_0061: box [System.Runtime]System.Double
+		IL_0066: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_006b: pop
+		IL_006c: ret
 	} // end of method Classes_ForLoopMin::__js_module_init__
 
 } // end of class Modules.Classes_ForLoopMin

@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x217b
+				// Method begins at RVA 0x2173
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -42,7 +42,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2100
+			// Method begins at RVA 0x20f8
 			// Header size: 12
 			// Code size: 102 (0x66)
 			.maxstack 8
@@ -98,7 +98,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2172
+			// Method begins at RVA 0x216a
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -124,17 +124,16 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 163 (0xa3)
+		// Code size: 155 (0x9b)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.String_TaggedTemplate_NoSubstitutions/Scope,
 			[1] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1,
 			[2] object,
-			[3] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1,
+			[3] object[],
 			[4] object[],
-			[5] object[],
-			[6] class [JavaScriptRuntime]JavaScriptRuntime.Array,
-			[7] object
+			[5] class [JavaScriptRuntime]JavaScriptRuntime.Array,
+			[6] object
 		)
 
 		IL_0000: newobj instance void Modules.String_TaggedTemplate_NoSubstitutions/Scope::.ctor()
@@ -149,58 +148,54 @@
 		IL_001e: ldc.i4.0
 		IL_001f: ldc.i4.1
 		IL_0020: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0, float64, string, bool, bool)
-		IL_0025: stloc.3
-		IL_0026: ldloc.3
-		IL_0027: stloc.1
-		IL_0028: nop
-		IL_0029: nop
-		IL_002a: ldc.i4.1
-		IL_002b: newarr [System.Runtime]System.Object
-		IL_0030: dup
-		IL_0031: ldc.i4.0
-		IL_0032: ldstr "hello world"
-		IL_0037: stelem.ref
-		IL_0038: stloc.s 4
-		IL_003a: ldc.i4.1
-		IL_003b: newarr [System.Runtime]System.Object
-		IL_0040: dup
-		IL_0041: ldc.i4.0
-		IL_0042: ldstr "hello world"
-		IL_0047: stelem.ref
-		IL_0048: stloc.s 5
-		IL_004a: ldstr "String_TaggedTemplate_NoSubstitutions:TaggedTemplate_L9C16"
-		IL_004f: ldloc.s 4
-		IL_0051: ldloc.s 5
-		IL_0053: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateTemplateObject(object, object, object)
-		IL_0058: stloc.s 6
-		IL_005a: ldc.i4.1
-		IL_005b: newarr [System.Runtime]System.Object
-		IL_0060: dup
-		IL_0061: ldc.i4.0
-		IL_0062: ldloc.s 6
-		IL_0064: stelem.ref
-		IL_0065: stloc.s 5
-		IL_0067: ldloc.1
-		IL_0068: ldc.i4.0
-		IL_0069: newarr [System.Runtime]System.Object
-		IL_006e: ldloc.s 5
-		IL_0070: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs(object, object[], object[])
-		IL_0075: stloc.s 7
-		IL_0077: ldloc.s 7
-		IL_0079: stloc.2
-		IL_007a: ldstr "console"
-		IL_007f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0084: stloc.s 7
-		IL_0086: ldloc.s 7
-		IL_0088: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_008d: stloc.s 7
-		IL_008f: ldloc.s 7
-		IL_0091: ldstr "log"
-		IL_0096: ldstr "result:"
-		IL_009b: ldloc.2
-		IL_009c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_00a1: pop
-		IL_00a2: ret
+		IL_0025: stloc.1
+		IL_0026: nop
+		IL_0027: nop
+		IL_0028: ldc.i4.1
+		IL_0029: newarr [System.Runtime]System.Object
+		IL_002e: dup
+		IL_002f: ldc.i4.0
+		IL_0030: ldstr "hello world"
+		IL_0035: stelem.ref
+		IL_0036: stloc.3
+		IL_0037: ldc.i4.1
+		IL_0038: newarr [System.Runtime]System.Object
+		IL_003d: dup
+		IL_003e: ldc.i4.0
+		IL_003f: ldstr "hello world"
+		IL_0044: stelem.ref
+		IL_0045: stloc.s 4
+		IL_0047: ldstr "String_TaggedTemplate_NoSubstitutions:TaggedTemplate_L9C16"
+		IL_004c: ldloc.3
+		IL_004d: ldloc.s 4
+		IL_004f: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateTemplateObject(object, object, object)
+		IL_0054: stloc.s 5
+		IL_0056: ldc.i4.1
+		IL_0057: newarr [System.Runtime]System.Object
+		IL_005c: dup
+		IL_005d: ldc.i4.0
+		IL_005e: ldloc.s 5
+		IL_0060: stelem.ref
+		IL_0061: stloc.s 4
+		IL_0063: ldloc.1
+		IL_0064: ldc.i4.0
+		IL_0065: newarr [System.Runtime]System.Object
+		IL_006a: ldloc.s 4
+		IL_006c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs(object, object[], object[])
+		IL_0071: stloc.2
+		IL_0072: ldstr "console"
+		IL_0077: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_007c: stloc.s 6
+		IL_007e: ldloc.s 6
+		IL_0080: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0085: stloc.s 6
+		IL_0087: ldloc.s 6
+		IL_0089: ldstr "log"
+		IL_008e: ldstr "result:"
+		IL_0093: ldloc.2
+		IL_0094: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_0099: pop
+		IL_009a: ret
 	} // end of method String_TaggedTemplate_NoSubstitutions::__js_module_init__
 
 } // end of class Modules.String_TaggedTemplate_NoSubstitutions
@@ -212,7 +207,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2184
+		// Method begins at RVA 0x217c
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
