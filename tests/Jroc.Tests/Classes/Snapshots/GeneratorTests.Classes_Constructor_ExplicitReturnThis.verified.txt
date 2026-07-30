@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2166
+				// Method begins at RVA 0x215f
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x216f
+				// Method begins at RVA 0x2168
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -63,7 +63,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2128
+			// Method begins at RVA 0x2121
 			// Header size: 1
 			// Code size: 29 (0x1d)
 			.maxstack 8
@@ -92,7 +92,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2178
+				// Method begins at RVA 0x2171
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -112,7 +112,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2181
+				// Method begins at RVA 0x217a
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -136,7 +136,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2146
+			// Method begins at RVA 0x213f
 			// Header size: 1
 			// Code size: 22 (0x16)
 			.maxstack 8
@@ -158,7 +158,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x215d
+			// Method begins at RVA 0x2156
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -184,7 +184,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 204 (0xcc)
+		// Code size: 197 (0xc5)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Classes_Constructor_ExplicitReturnThis/Scope,
@@ -224,44 +224,42 @@
 		IL_004a: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
 		IL_004f: newobj instance void Modules.Classes_Constructor_ExplicitReturnThis/WithExplicitReturn::.ctor()
 		IL_0054: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
-		IL_0059: stloc.s 5
-		IL_005b: ldloc.s 5
-		IL_005d: ldtoken Modules.Classes_Constructor_ExplicitReturnThis/WithExplicitReturn
-		IL_0062: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_0067: ldstr "prototype"
-		IL_006c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
-		IL_0071: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
-		IL_0076: ldloc.s 5
-		IL_0078: castclass Modules.Classes_Constructor_ExplicitReturnThis/WithExplicitReturn
-		IL_007d: ldfld object Modules.Classes_Constructor_ExplicitReturnThis/WithExplicitReturn::__jroc_ctorReturn
-		IL_0082: dup
-		IL_0083: brfalse IL_009a
+		IL_0059: stloc.2
+		IL_005a: ldloc.2
+		IL_005b: ldtoken Modules.Classes_Constructor_ExplicitReturnThis/WithExplicitReturn
+		IL_0060: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_0065: ldstr "prototype"
+		IL_006a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
+		IL_006f: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
+		IL_0074: ldloc.2
+		IL_0075: castclass Modules.Classes_Constructor_ExplicitReturnThis/WithExplicitReturn
+		IL_007a: ldfld object Modules.Classes_Constructor_ExplicitReturnThis/WithExplicitReturn::__jroc_ctorReturn
+		IL_007f: dup
+		IL_0080: brfalse IL_0096
 
-		IL_0088: dup
-		IL_0089: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::IsConstructorReturnOverride(object)
-		IL_008e: brfalse IL_009a
+		IL_0085: dup
+		IL_0086: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::IsConstructorReturnOverride(object)
+		IL_008b: brfalse IL_0096
 
-		IL_0093: stloc.s 5
-		IL_0095: br IL_009b
+		IL_0090: stloc.2
+		IL_0091: br IL_0097
 
-		IL_009a: pop
+		IL_0096: pop
 
-		IL_009b: ldloc.s 5
-		IL_009d: stloc.2
-		IL_009e: ldstr "console"
-		IL_00a3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_00a8: stloc.s 5
-		IL_00aa: ldloc.s 5
-		IL_00ac: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00b1: stloc.s 5
-		IL_00b3: ldloc.s 5
-		IL_00b5: ldstr "log"
-		IL_00ba: ldloc.2
-		IL_00bb: ldstr "value"
-		IL_00c0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_00c5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00ca: pop
-		IL_00cb: ret
+		IL_0097: ldstr "console"
+		IL_009c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_00a1: stloc.s 5
+		IL_00a3: ldloc.s 5
+		IL_00a5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00aa: stloc.s 5
+		IL_00ac: ldloc.s 5
+		IL_00ae: ldstr "log"
+		IL_00b3: ldloc.2
+		IL_00b4: ldstr "value"
+		IL_00b9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00be: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_00c3: pop
+		IL_00c4: ret
 	} // end of method Classes_Constructor_ExplicitReturnThis::__js_module_init__
 
 } // end of class Modules.Classes_Constructor_ExplicitReturnThis
@@ -273,7 +271,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x218a
+		// Method begins at RVA 0x2183
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

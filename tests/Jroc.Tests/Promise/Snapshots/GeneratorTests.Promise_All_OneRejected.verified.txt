@@ -25,7 +25,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21df
+				// Method begins at RVA 0x21d3
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -49,7 +49,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2170
+			// Method begins at RVA 0x2164
 			// Header size: 12
 			// Code size: 37 (0x25)
 			.maxstack 8
@@ -92,7 +92,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21e8
+				// Method begins at RVA 0x21dc
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -116,7 +116,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x21a4
+			// Method begins at RVA 0x2198
 			// Header size: 12
 			// Code size: 38 (0x26)
 			.maxstack 8
@@ -149,7 +149,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x21d6
+			// Method begins at RVA 0x21ca
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -175,15 +175,15 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 274 (0x112)
+		// Code size: 262 (0x106)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Promise_All_OneRejected/Scope,
 			[1] object,
 			[2] object,
 			[3] object,
-			[4] object,
-			[5] class [JavaScriptRuntime]JavaScriptRuntime.Array,
+			[4] class [JavaScriptRuntime]JavaScriptRuntime.Array,
+			[5] object,
 			[6] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1
 		)
 
@@ -193,92 +193,86 @@
 		IL_0007: ldc.r8 1
 		IL_0010: box [System.Runtime]System.Double
 		IL_0015: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::resolve(object)
-		IL_001a: stloc.s 4
-		IL_001c: ldloc.s 4
-		IL_001e: stloc.1
-		IL_001f: ldstr "Error in p2"
-		IL_0024: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::reject(object)
-		IL_0029: stloc.s 4
-		IL_002b: ldloc.s 4
-		IL_002d: stloc.2
-		IL_002e: ldc.r8 3
-		IL_0037: box [System.Runtime]System.Double
-		IL_003c: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::resolve(object)
-		IL_0041: stloc.s 4
-		IL_0043: ldloc.s 4
-		IL_0045: stloc.3
-		IL_0046: ldc.i4.3
-		IL_0047: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_004c: dup
-		IL_004d: ldloc.1
-		IL_004e: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-		IL_0053: dup
-		IL_0054: ldloc.2
-		IL_0055: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-		IL_005a: dup
-		IL_005b: ldloc.3
-		IL_005c: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-		IL_0061: stloc.s 5
-		IL_0063: ldloc.s 5
-		IL_0065: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::all(object)
-		IL_006a: stloc.s 4
-		IL_006c: ldloc.s 4
-		IL_006e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0073: stloc.s 4
-		IL_0075: ldnull
-		IL_0076: ldftn object Modules.Promise_All_OneRejected/ArrowFunction_L8C11::__js_call__(object, object)
-		IL_007c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-		IL_0081: ldc.i4.1
-		IL_0082: newarr [System.Runtime]System.Object
-		IL_0087: dup
-		IL_0088: ldc.i4.0
-		IL_0089: ldloc.0
-		IL_008a: stelem.ref
-		IL_008b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_0090: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_0095: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1
-		IL_009a: ldc.i4.1
-		IL_009b: conv.r8
-		IL_009c: ldstr ""
-		IL_00a1: ldc.i4.0
-		IL_00a2: ldc.i4.0
-		IL_00a3: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0, float64, string, bool, bool)
-		IL_00a8: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0)
-		IL_00ad: stloc.s 6
-		IL_00af: ldloc.s 4
-		IL_00b1: ldstr "then"
-		IL_00b6: ldloc.s 6
-		IL_00b8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00bd: stloc.s 4
-		IL_00bf: ldloc.s 4
-		IL_00c1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00c6: stloc.s 4
-		IL_00c8: ldnull
-		IL_00c9: ldftn object Modules.Promise_All_OneRejected/ArrowFunction_L11C12::__js_call__(object, object)
-		IL_00cf: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-		IL_00d4: ldc.i4.1
-		IL_00d5: newarr [System.Runtime]System.Object
-		IL_00da: dup
-		IL_00db: ldc.i4.0
-		IL_00dc: ldloc.0
-		IL_00dd: stelem.ref
-		IL_00de: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_00e3: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_00e8: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1
-		IL_00ed: ldc.i4.1
-		IL_00ee: conv.r8
-		IL_00ef: ldstr ""
-		IL_00f4: ldc.i4.0
-		IL_00f5: ldc.i4.0
-		IL_00f6: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0, float64, string, bool, bool)
-		IL_00fb: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0)
-		IL_0100: stloc.s 6
-		IL_0102: ldloc.s 4
-		IL_0104: ldstr "catch"
-		IL_0109: ldloc.s 6
-		IL_010b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0110: pop
-		IL_0111: ret
+		IL_001a: stloc.1
+		IL_001b: ldstr "Error in p2"
+		IL_0020: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::reject(object)
+		IL_0025: stloc.2
+		IL_0026: ldc.r8 3
+		IL_002f: box [System.Runtime]System.Double
+		IL_0034: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::resolve(object)
+		IL_0039: stloc.3
+		IL_003a: ldc.i4.3
+		IL_003b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_0040: dup
+		IL_0041: ldloc.1
+		IL_0042: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+		IL_0047: dup
+		IL_0048: ldloc.2
+		IL_0049: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+		IL_004e: dup
+		IL_004f: ldloc.3
+		IL_0050: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+		IL_0055: stloc.s 4
+		IL_0057: ldloc.s 4
+		IL_0059: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::all(object)
+		IL_005e: stloc.s 5
+		IL_0060: ldloc.s 5
+		IL_0062: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0067: stloc.s 5
+		IL_0069: ldnull
+		IL_006a: ldftn object Modules.Promise_All_OneRejected/ArrowFunction_L8C11::__js_call__(object, object)
+		IL_0070: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_0075: ldc.i4.1
+		IL_0076: newarr [System.Runtime]System.Object
+		IL_007b: dup
+		IL_007c: ldc.i4.0
+		IL_007d: ldloc.0
+		IL_007e: stelem.ref
+		IL_007f: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_0084: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_0089: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1
+		IL_008e: ldc.i4.1
+		IL_008f: conv.r8
+		IL_0090: ldstr ""
+		IL_0095: ldc.i4.0
+		IL_0096: ldc.i4.0
+		IL_0097: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0, float64, string, bool, bool)
+		IL_009c: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0)
+		IL_00a1: stloc.s 6
+		IL_00a3: ldloc.s 5
+		IL_00a5: ldstr "then"
+		IL_00aa: ldloc.s 6
+		IL_00ac: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_00b1: stloc.s 5
+		IL_00b3: ldloc.s 5
+		IL_00b5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00ba: stloc.s 5
+		IL_00bc: ldnull
+		IL_00bd: ldftn object Modules.Promise_All_OneRejected/ArrowFunction_L11C12::__js_call__(object, object)
+		IL_00c3: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_00c8: ldc.i4.1
+		IL_00c9: newarr [System.Runtime]System.Object
+		IL_00ce: dup
+		IL_00cf: ldc.i4.0
+		IL_00d0: ldloc.0
+		IL_00d1: stelem.ref
+		IL_00d2: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_00d7: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_00dc: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1
+		IL_00e1: ldc.i4.1
+		IL_00e2: conv.r8
+		IL_00e3: ldstr ""
+		IL_00e8: ldc.i4.0
+		IL_00e9: ldc.i4.0
+		IL_00ea: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0, float64, string, bool, bool)
+		IL_00ef: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0)
+		IL_00f4: stloc.s 6
+		IL_00f6: ldloc.s 5
+		IL_00f8: ldstr "catch"
+		IL_00fd: ldloc.s 6
+		IL_00ff: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0104: pop
+		IL_0105: ret
 	} // end of method Promise_All_OneRejected::__js_module_init__
 
 } // end of class Modules.Promise_All_OneRejected
@@ -290,7 +284,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21f1
+		// Method begins at RVA 0x21e5
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

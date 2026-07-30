@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21fb
+				// Method begins at RVA 0x21f3
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -42,7 +42,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x20f4
+			// Method begins at RVA 0x20ec
 			// Header size: 12
 			// Code size: 242 (0xf2)
 			.maxstack 8
@@ -135,7 +135,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x21f2
+			// Method begins at RVA 0x21ea
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -161,15 +161,14 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 150 (0x96)
+		// Code size: 144 (0x90)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.String_TaggedTemplate_RawStrings/Scope,
 			[1] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1,
-			[2] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1,
+			[2] object[],
 			[3] object[],
-			[4] object[],
-			[5] class [JavaScriptRuntime]JavaScriptRuntime.Array
+			[4] class [JavaScriptRuntime]JavaScriptRuntime.Array
 		)
 
 		IL_0000: newobj instance void Modules.String_TaggedTemplate_RawStrings/Scope::.ctor()
@@ -184,57 +183,55 @@
 		IL_001e: ldc.i4.1
 		IL_001f: ldc.i4.1
 		IL_0020: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0, float64, string, bool, bool)
-		IL_0025: stloc.2
-		IL_0026: ldloc.2
-		IL_0027: stloc.1
-		IL_0028: nop
-		IL_0029: nop
-		IL_002a: ldc.i4.2
-		IL_002b: newarr [System.Runtime]System.Object
-		IL_0030: dup
-		IL_0031: ldc.i4.0
-		IL_0032: ldstr "line1\nline2"
-		IL_0037: stelem.ref
-		IL_0038: dup
-		IL_0039: ldc.i4.1
-		IL_003a: ldstr "test\ttab"
-		IL_003f: stelem.ref
-		IL_0040: stloc.3
-		IL_0041: ldc.i4.2
-		IL_0042: newarr [System.Runtime]System.Object
-		IL_0047: dup
-		IL_0048: ldc.i4.0
-		IL_0049: ldstr "line1\\nline2"
-		IL_004e: stelem.ref
-		IL_004f: dup
-		IL_0050: ldc.i4.1
-		IL_0051: ldstr "test\\ttab"
-		IL_0056: stelem.ref
-		IL_0057: stloc.s 4
-		IL_0059: ldstr "String_TaggedTemplate_RawStrings:TaggedTemplate_L10C1"
-		IL_005e: ldloc.3
-		IL_005f: ldloc.s 4
-		IL_0061: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateTemplateObject(object, object, object)
-		IL_0066: stloc.s 5
-		IL_0068: ldc.i4.2
-		IL_0069: newarr [System.Runtime]System.Object
-		IL_006e: dup
-		IL_006f: ldc.i4.0
-		IL_0070: ldloc.s 5
-		IL_0072: stelem.ref
-		IL_0073: dup
-		IL_0074: ldc.i4.1
-		IL_0075: ldc.r8 42
-		IL_007e: box [System.Runtime]System.Double
-		IL_0083: stelem.ref
-		IL_0084: stloc.s 4
-		IL_0086: ldloc.1
-		IL_0087: ldc.i4.0
-		IL_0088: newarr [System.Runtime]System.Object
-		IL_008d: ldloc.s 4
-		IL_008f: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs(object, object[], object[])
-		IL_0094: pop
-		IL_0095: ret
+		IL_0025: stloc.1
+		IL_0026: nop
+		IL_0027: nop
+		IL_0028: ldc.i4.2
+		IL_0029: newarr [System.Runtime]System.Object
+		IL_002e: dup
+		IL_002f: ldc.i4.0
+		IL_0030: ldstr "line1\nline2"
+		IL_0035: stelem.ref
+		IL_0036: dup
+		IL_0037: ldc.i4.1
+		IL_0038: ldstr "test\ttab"
+		IL_003d: stelem.ref
+		IL_003e: stloc.2
+		IL_003f: ldc.i4.2
+		IL_0040: newarr [System.Runtime]System.Object
+		IL_0045: dup
+		IL_0046: ldc.i4.0
+		IL_0047: ldstr "line1\\nline2"
+		IL_004c: stelem.ref
+		IL_004d: dup
+		IL_004e: ldc.i4.1
+		IL_004f: ldstr "test\\ttab"
+		IL_0054: stelem.ref
+		IL_0055: stloc.3
+		IL_0056: ldstr "String_TaggedTemplate_RawStrings:TaggedTemplate_L10C1"
+		IL_005b: ldloc.2
+		IL_005c: ldloc.3
+		IL_005d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateTemplateObject(object, object, object)
+		IL_0062: stloc.s 4
+		IL_0064: ldc.i4.2
+		IL_0065: newarr [System.Runtime]System.Object
+		IL_006a: dup
+		IL_006b: ldc.i4.0
+		IL_006c: ldloc.s 4
+		IL_006e: stelem.ref
+		IL_006f: dup
+		IL_0070: ldc.i4.1
+		IL_0071: ldc.r8 42
+		IL_007a: box [System.Runtime]System.Double
+		IL_007f: stelem.ref
+		IL_0080: stloc.3
+		IL_0081: ldloc.1
+		IL_0082: ldc.i4.0
+		IL_0083: newarr [System.Runtime]System.Object
+		IL_0088: ldloc.3
+		IL_0089: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs(object, object[], object[])
+		IL_008e: pop
+		IL_008f: ret
 	} // end of method String_TaggedTemplate_RawStrings::__js_module_init__
 
 } // end of class Modules.String_TaggedTemplate_RawStrings
@@ -246,7 +243,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2204
+		// Method begins at RVA 0x21fc
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

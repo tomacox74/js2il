@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x218f
+				// Method begins at RVA 0x2183
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -42,9 +42,9 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2148
+			// Method begins at RVA 0x2140
 			// Header size: 12
-			// Code size: 50 (0x32)
+			// Code size: 46 (0x2e)
 			.maxstack 8
 			.locals init (
 				[0] float64,
@@ -60,29 +60,25 @@
 			IL_000c: conv.i4
 			IL_000d: shr.un
 			IL_000e: conv.r.un
-			IL_000f: stloc.2
-			IL_0010: ldloc.2
-			IL_0011: stloc.0
-			IL_0012: ldarg.1
-			IL_0013: conv.i4
-			IL_0014: ldc.r8 31
-			IL_001d: conv.i4
-			IL_001e: and
-			IL_001f: conv.r8
+			IL_000f: stloc.0
+			IL_0010: ldarg.1
+			IL_0011: conv.i4
+			IL_0012: ldc.r8 31
+			IL_001b: conv.i4
+			IL_001c: and
+			IL_001d: conv.r8
+			IL_001e: stloc.1
+			IL_001f: ldloc.0
 			IL_0020: stloc.2
 			IL_0021: ldloc.2
-			IL_0022: stloc.1
-			IL_0023: ldloc.0
+			IL_0022: ldloc.1
+			IL_0023: add
 			IL_0024: stloc.2
 			IL_0025: ldloc.2
-			IL_0026: ldloc.1
-			IL_0027: add
-			IL_0028: stloc.2
-			IL_0029: ldloc.2
-			IL_002a: box [System.Runtime]System.Double
-			IL_002f: stloc.3
-			IL_0030: ldloc.3
-			IL_0031: ret
+			IL_0026: box [System.Runtime]System.Double
+			IL_002b: stloc.3
+			IL_002c: ldloc.3
+			IL_002d: ret
 		} // end of method bitwiseParamTwice::__js_call__
 
 	} // end of class bitwiseParamTwice
@@ -102,7 +98,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2186
+			// Method begins at RVA 0x217a
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -128,15 +124,14 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 234 (0xea)
+		// Code size: 226 (0xe2)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.BinaryOperator_NumericRefinement_ParameterReuseCSE/Scope,
 			[1] class [System.Runtime]System.Func`3<object, float64, object>,
-			[2] class [System.Runtime]System.Func`3<object, float64, object>,
-			[3] object,
-			[4] object[],
-			[5] object
+			[2] object,
+			[3] object[],
+			[4] object
 		)
 
 		IL_0000: newobj instance void Modules.BinaryOperator_NumericRefinement_ParameterReuseCSE/Scope::.ctor()
@@ -151,69 +146,67 @@
 		IL_001e: ldc.i4.0
 		IL_001f: ldc.i4.1
 		IL_0020: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [System.Runtime]System.Func`3<object, float64, object>>(!!0, float64, string, bool, bool)
-		IL_0025: stloc.2
-		IL_0026: ldloc.2
-		IL_0027: stloc.1
-		IL_0028: nop
-		IL_0029: nop
-		IL_002a: ldstr "console"
-		IL_002f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0034: stloc.3
-		IL_0035: ldloc.3
-		IL_0036: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_003b: stloc.3
-		IL_003c: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0041: stloc.s 4
-		IL_0043: ldloc.1
-		IL_0044: ldloc.s 4
-		IL_0046: ldc.r8 100
-		IL_004f: box [System.Runtime]System.Double
-		IL_0054: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
-		IL_0059: stloc.s 5
-		IL_005b: ldloc.3
-		IL_005c: ldstr "log"
-		IL_0061: ldloc.s 5
-		IL_0063: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0068: pop
-		IL_0069: ldstr "console"
-		IL_006e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0073: stloc.s 5
-		IL_0075: ldloc.s 5
-		IL_0077: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_007c: stloc.s 5
-		IL_007e: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0083: stloc.s 4
-		IL_0085: ldloc.1
-		IL_0086: ldloc.s 4
-		IL_0088: ldc.r8 0.0
-		IL_0091: box [System.Runtime]System.Double
-		IL_0096: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
-		IL_009b: stloc.3
-		IL_009c: ldloc.s 5
-		IL_009e: ldstr "log"
-		IL_00a3: ldloc.3
-		IL_00a4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00a9: pop
-		IL_00aa: ldstr "console"
-		IL_00af: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_00b4: stloc.3
-		IL_00b5: ldloc.3
-		IL_00b6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0025: stloc.1
+		IL_0026: nop
+		IL_0027: nop
+		IL_0028: ldstr "console"
+		IL_002d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0032: stloc.2
+		IL_0033: ldloc.2
+		IL_0034: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0039: stloc.2
+		IL_003a: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_003f: stloc.3
+		IL_0040: ldloc.1
+		IL_0041: ldloc.3
+		IL_0042: ldc.r8 100
+		IL_004b: box [System.Runtime]System.Double
+		IL_0050: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
+		IL_0055: stloc.s 4
+		IL_0057: ldloc.2
+		IL_0058: ldstr "log"
+		IL_005d: ldloc.s 4
+		IL_005f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0064: pop
+		IL_0065: ldstr "console"
+		IL_006a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_006f: stloc.s 4
+		IL_0071: ldloc.s 4
+		IL_0073: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0078: stloc.s 4
+		IL_007a: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_007f: stloc.3
+		IL_0080: ldloc.1
+		IL_0081: ldloc.3
+		IL_0082: ldc.r8 0.0
+		IL_008b: box [System.Runtime]System.Double
+		IL_0090: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
+		IL_0095: stloc.2
+		IL_0096: ldloc.s 4
+		IL_0098: ldstr "log"
+		IL_009d: ldloc.2
+		IL_009e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_00a3: pop
+		IL_00a4: ldstr "console"
+		IL_00a9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_00ae: stloc.2
+		IL_00af: ldloc.2
+		IL_00b0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00b5: stloc.2
+		IL_00b6: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
 		IL_00bb: stloc.3
-		IL_00bc: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_00c1: stloc.s 4
-		IL_00c3: ldloc.1
-		IL_00c4: ldloc.s 4
-		IL_00c6: ldc.r8 255
-		IL_00cf: box [System.Runtime]System.Double
-		IL_00d4: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
-		IL_00d9: stloc.s 5
-		IL_00db: ldloc.3
-		IL_00dc: ldstr "log"
-		IL_00e1: ldloc.s 5
-		IL_00e3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00e8: pop
-		IL_00e9: ret
+		IL_00bc: ldloc.1
+		IL_00bd: ldloc.3
+		IL_00be: ldc.r8 255
+		IL_00c7: box [System.Runtime]System.Double
+		IL_00cc: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
+		IL_00d1: stloc.s 4
+		IL_00d3: ldloc.2
+		IL_00d4: ldstr "log"
+		IL_00d9: ldloc.s 4
+		IL_00db: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_00e0: pop
+		IL_00e1: ret
 	} // end of method BinaryOperator_NumericRefinement_ParameterReuseCSE::__js_module_init__
 
 } // end of class Modules.BinaryOperator_NumericRefinement_ParameterReuseCSE
@@ -225,7 +218,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2198
+		// Method begins at RVA 0x218c
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -1034,6 +1034,11 @@ internal sealed class JsMethodCompiler
         // when the source is a known primitive. This avoids repeated helper calls in tight loops.
         LIRCoercionCSE.Optimize(lirMethod!);
 
+        // Coalesce producer temps that are immediately copied into a binding's stable variable slot
+        // so the producer stores directly into that slot. Runs last so it sees the final instruction
+        // sequence produced by the normalization and CSE passes above.
+        LIRVariableSlotCoalescing.Optimize(lirMethod!);
+
         methodBody = lirMethod!;
         return true;
     }
