@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.11.40 - 2026-07-30
+
 - runtime: implement the ES2025 set-like protocol (`GetSetRecord`) for `Set.prototype.union`, `intersection`, `difference`, `symmetricDifference`, `isSubsetOf`, `isSupersetOf`, and `isDisjointFrom`. The argument's `size` is coerced once and must not be `NaN` or negative, `has` and `keys` must be callable, and each method now picks between calling `has` and draining the `keys` iterator based on the relative sizes so neither is observed where the spec forbids it. Plain objects and classes exposing `size`/`has`/`keys` are accepted, arrays and other bare iterables are correctly rejected with a `TypeError`, and results are copied from the receiver's set data instead of going through `Set.prototype.add`. Ports twelve upstream test262 cases.
 - runtime: implement `Reflect.apply`, `deleteProperty`, `get`, `getOwnPropertyDescriptor`, `getPrototypeOf`, `has`, `isExtensible`, `preventExtensions`, and `setPrototypeOf`, completing the `Reflect` namespace. Includes `CreateListFromArrayLike` argument handling for `Reflect.apply`, receiver-aware `OrdinaryGet` so accessors run with the supplied receiver as `this`, and `OrdinarySetPrototypeOf` failure reported as a Boolean including non-extensible targets and cyclic prototype chains. Ports ten upstream test262 cases.
 - runtime: `Object.setPrototypeOf` now throws a `TypeError` when the target is non-extensible and the prototype would actually change, instead of silently mutating it.
