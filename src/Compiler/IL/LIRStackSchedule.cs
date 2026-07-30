@@ -53,7 +53,8 @@ internal readonly record struct ScheduledOperation(
 internal readonly record struct ScheduledRegion(
     int StartLirIndex,
     int EndLirIndexExclusive,
-    IReadOnlyList<ScheduledOperation> Operations,
+    int StartOperationIndex,
+    int OperationCount,
     int MaxStackDepth);
 
 internal readonly record struct LIRStackScheduleMetrics(
@@ -68,11 +69,11 @@ internal readonly record struct LIRStackScheduleMetrics(
 /// </summary>
 internal sealed record LIRStackSchedule(
     LIRStackSchedulerMode Mode,
-    IReadOnlyList<ScheduledOperation> Operations,
-    IReadOnlyList<ScheduledRegion> Regions,
-    IReadOnlyList<TempResidency> TempResidencies,
-    IReadOnlyList<bool> OwnedTemps,
-    IReadOnlyList<int> EffectiveLastUses,
+    ScheduledOperation[] Operations,
+    ScheduledRegion[] Regions,
+    TempResidency[] TempResidencies,
+    bool[] OwnedTemps,
+    int[] EffectiveLastUses,
     int MaxStackDepth,
     LIRStackScheduleMetrics Metrics);
 

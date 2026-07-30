@@ -56,27 +56,33 @@ internal static class LIRStackScheduler
             return Array.Empty<ScheduledOperation>();
         }
 
-        var operations = new List<ScheduledOperation>(methodBody.Instructions.Count);
+        var operations = new ScheduledOperation[methodBody.Instructions.Count];
+        var operationCount = 0;
         for (var index = 0; index < methodBody.Instructions.Count;)
         {
             if (IsConstructorFieldStoreFusionCandidate(methodBody.Instructions, index))
             {
-                operations.Add(new ScheduledOperation(
+                operations[operationCount++] = new ScheduledOperation(
                     index,
                     InstructionCount: 2,
-                    InstructionDisposition.FusedIntoEmissionUnit));
+                    InstructionDisposition.FusedIntoEmissionUnit);
                 index += 2;
                 continue;
             }
 
-            operations.Add(new ScheduledOperation(
+            operations[operationCount++] = new ScheduledOperation(
                 index,
                 InstructionCount: 1,
-                InstructionDisposition.EmitNormally));
+                InstructionDisposition.EmitNormally);
             index++;
         }
 
-        return operations.ToArray();
+        if (operationCount != operations.Length)
+        {
+            Array.Resize(ref operations, operationCount);
+        }
+
+        return operations;
     }
 
     private static bool IsConstructorFieldStoreFusionCandidate(

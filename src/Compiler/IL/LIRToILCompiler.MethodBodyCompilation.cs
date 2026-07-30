@@ -118,13 +118,26 @@ internal sealed partial class LIRToILCompiler
         bool HasNextEmissionInstruction()
             => scheduledOperations is null
                 ? legacyInstructionIndex < MethodBody.Instructions.Count
-                : scheduledOperationIndex < scheduledOperations.Count;
+                : scheduledOperationIndex < scheduledOperations.Length;
 
         int GetCurrentEmissionInstructionIndex()
             => scheduledOperations is null
                 ? legacyInstructionIndex
                 : scheduledOperations[scheduledOperationIndex]
                     .GetLirInstructionIndex(scheduledOperationOffset);
+
+        bool CurrentEmissionOperationAllowsFusion(int instructionCount)
+        {
+            if (scheduledOperations is null)
+            {
+                return true;
+            }
+
+            var operation = scheduledOperations[scheduledOperationIndex];
+            return scheduledOperationOffset == 0
+                && operation.InstructionCount == instructionCount
+                && operation.Disposition == InstructionDisposition.FusedIntoEmissionUnit;
+        }
 
         void AdvanceOneEmissionInstruction()
         {
@@ -151,6 +164,18 @@ internal sealed partial class LIRToILCompiler
                 return;
             }
 
+            var operation = scheduledOperations[scheduledOperationIndex];
+            if (scheduledOperationOffset != 0
+                || operation.InstructionCount != legacyInstructionCount
+                || operation.Disposition != InstructionDisposition.FusedIntoEmissionUnit)
+            {
+                throw new InvalidOperationException(
+                    $"Emitter attempted to consume a {legacyInstructionCount}-instruction fusion "
+                    + $"from scheduled operation {scheduledOperationIndex} "
+                    + $"(offset={scheduledOperationOffset}, count={operation.InstructionCount}, "
+                    + $"disposition={operation.Disposition}).");
+            }
+
             scheduledOperationIndex++;
             scheduledOperationOffset = 0;
         }
@@ -166,7 +191,8 @@ internal sealed partial class LIRToILCompiler
             // then immediately `castclass`-ing it back to the declared user-class type for `stfld`.
             //
             // Only apply when we can preserve JS semantics without requiring PL5.4a ctor return override handling.
-            if (instruction is LIRNewUserClass newUserClass
+            if (CurrentEmissionOperationAllowsFusion(instructionCount: 2)
+                && instruction is LIRNewUserClass newUserClass
                 && !newUserClass.IsDerivedConstructor
                 && i + 1 < MethodBody.Instructions.Count
                 && MethodBody.Instructions[i + 1] is LIRStoreUserClassInstanceField storeInstanceField
@@ -280,7 +306,8 @@ internal sealed partial class LIRToILCompiler
             // `ldarg.0; newobj <Intrinsic>(..); stfld <field>`.
             // This avoids materializing the freshly-constructed intrinsic instance into an `object` local and
             // then immediately `castclass`-ing it back to the declared intrinsic type for `stfld`.
-            if (instruction is LIRNewIntrinsicObject newIntrinsic
+            if (CurrentEmissionOperationAllowsFusion(instructionCount: 2)
+                && instruction is LIRNewIntrinsicObject newIntrinsic
                 && i + 1 < MethodBody.Instructions.Count
                 && MethodBody.Instructions[i + 1] is LIRStoreUserClassInstanceField storeIntrinsicField
                 && storeIntrinsicField.Value.Equals(newIntrinsic.Result))

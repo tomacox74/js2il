@@ -199,7 +199,7 @@ public sealed class LIRStackSchedulerTests
 
         var schedule = LIRStackScheduler.Identity(body);
 
-        Assert.Equal(2, schedule.Operations.Count);
+        Assert.Equal(2, schedule.Operations.Length);
         Assert.All(
             schedule.Operations,
             operation => Assert.Equal(InstructionDisposition.EmitNormally, operation.Disposition));
