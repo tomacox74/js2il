@@ -4,6 +4,12 @@ This document explains how **Stackify** works in JROC.
 
 **Goal:** teach you *why* Stackify exists, *what problem it solves*, and *how the algorithm decides* whether a temporary value (a “temp”) can stay on the .NET IL **evaluation stack** instead of being stored into an IL local variable.
 
+> **Migration note:** JROC now has an identity-mode IL-backend scheduling
+> foundation. Stackify remains the active legacy residency/rematerialization
+> analysis in this stage; no optimization behavior has moved yet. See
+> [LIR Stack Scheduler](LIRStackScheduler.md) for the new emission-plan model,
+> current invariants, and the incremental migration path.
+
 ---
 ## Table of Contents
 
@@ -526,4 +532,3 @@ Even if Stackify’s analysis says “stackable”, emission still needs to be c
 - Verify that stackified temps are marked non-materialized via `MarkStackifiableTemps` in `LIRToILCompiler`.
 - Confirm that non-materialized temps don’t get IL locals allocated (`TempLocalAllocator.Allocate`).
 - If you see unexpected `pop` emissions, it often means a temp got marked non-materialized but the surrounding instruction sequence didn’t actually consume the value as expected.
-
