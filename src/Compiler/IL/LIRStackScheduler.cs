@@ -27,6 +27,8 @@ internal static class LIRStackScheduler
                 BuildLiteralAndArgumentsUnvalidated(methodBody),
             LIRStackSchedulerMode.CallResults =>
                 BuildCallResultsUnvalidated(methodBody),
+            LIRStackSchedulerMode.GeneralRegions =>
+                BuildGeneralRegionsUnvalidated(methodBody),
             LIRStackSchedulerMode.Disabled => throw new InvalidOperationException(
                 "Disabled scheduler mode bypasses schedule construction."),
             _ => throw new NotSupportedException(
@@ -648,6 +650,9 @@ internal static class LIRStackScheduler
         var ownedTemps = conversions.OwnedTemps.ToArray();
         var movesByInsertionLirIndex = new Dictionary<int, List<int>>();
         var selectedDefinitions = new HashSet<int>();
+        var analysisBudget = Math.Max(
+            methodBody.Instructions.Count * 8,
+            32);
 
         for (var rootIndex = 0;
              rootIndex < methodBody.Instructions.Count;
@@ -702,7 +707,8 @@ internal static class LIRStackScheduler
                         definitionCount,
                         useCount,
                         regionByLirIndex,
-                        selectedDefinitions))
+                        selectedDefinitions,
+                        ref analysisBudget))
                 {
                     isSafe = false;
                     break;
@@ -718,6 +724,16 @@ internal static class LIRStackScheduler
                     rootIndex,
                     selectedDefinitions,
                     out var insertionLirIndex))
+            {
+                continue;
+            }
+
+            if (!PreservesSelectedEffectOrder(
+                    methodBody,
+                    BuildSelectedEmissionOrder(
+                        methodBody,
+                        root,
+                        selectedDefinitions)))
             {
                 continue;
             }
@@ -823,6 +839,9 @@ internal static class LIRStackScheduler
             literals.Operations);
         var residencies = literals.TempResidencies.ToArray();
         var ownedTemps = literals.OwnedTemps.ToArray();
+        var analysisBudget = Math.Max(
+            methodBody.Instructions.Count * 8,
+            32);
         for (var tempIndex = 0; tempIndex < tempCount; tempIndex++)
         {
             if (definitionCount[tempIndex] != 1
@@ -912,7 +931,8 @@ internal static class LIRStackScheduler
                         definitionCount,
                         useCount,
                         regionByLirIndex,
-                        selectedCallDefinitions))
+                        selectedCallDefinitions,
+                        ref analysisBudget))
                 {
                     safe = false;
                     break;
@@ -925,6 +945,16 @@ internal static class LIRStackScheduler
                     rootIndex,
                     selectedCallDefinitions,
                     out var insertionLirIndex))
+            {
+                continue;
+            }
+
+            if (!PreservesSelectedEffectOrder(
+                    methodBody,
+                    BuildSelectedEmissionOrder(
+                        methodBody,
+                        root,
+                        selectedCallDefinitions)))
             {
                 continue;
             }
@@ -976,6 +1006,402 @@ internal static class LIRStackScheduler
         };
     }
 
+    private static LIRStackSchedule BuildGeneralRegionsUnvalidated(
+        MethodBodyIR methodBody)
+    {
+        var calls = BuildCallResultsUnvalidated(methodBody);
+        if (methodBody.IsAsync || methodBody.IsGenerator)
+        {
+            return calls with
+            {
+                Mode = LIRStackSchedulerMode.GeneralRegions,
+                Metrics = calls.Metrics with
+                {
+                    ResidualLocalCandidateCount =
+                        CountResidualLocalCandidates(calls)
+                }
+            };
+        }
+
+        var tempCount = methodBody.Temps.Count;
+        var definitionIndex = new int[tempCount];
+        var definitionCount = new int[tempCount];
+        var useIndex = new int[tempCount];
+        var useCount = new int[tempCount];
+        Array.Fill(definitionIndex, -1);
+        Array.Fill(useIndex, -1);
+        for (var instructionIndex = 0;
+             instructionIndex < methodBody.Instructions.Count;
+             instructionIndex++)
+        {
+            var instruction = methodBody.Instructions[instructionIndex];
+            if (LIRInstructionInfo.TryGetDefinedTemp(
+                    instruction,
+                    out var defined)
+                && (uint)defined.Index < (uint)tempCount)
+            {
+                definitionCount[defined.Index]++;
+                definitionIndex[defined.Index] = instructionIndex;
+            }
+
+            var visitor = new NumericUseVisitor(
+                useCount,
+                useIndex,
+                instructionIndex);
+            LIRInstructionInfo.VisitUsedTemps(instruction, ref visitor);
+        }
+
+        var regionByLirIndex = BuildRegionIndexMap(
+            methodBody.Instructions.Count,
+            calls.Regions,
+            calls.Operations);
+        var residencies = calls.TempResidencies.ToArray();
+        var ownedTemps = calls.OwnedTemps.ToArray();
+        var movesByInsertionLirIndex = new Dictionary<int, List<int>>();
+        var candidateRegions = new HashSet<int>();
+        var acceptedRegions = new HashSet<int>();
+        var rejectedDependencyCount = 0;
+        var rejectedEffectOrderCount = 0;
+        var analysisBudget = Math.Max(
+            methodBody.Instructions.Count * 8,
+            32);
+
+        for (var rootIndex = methodBody.Instructions.Count - 1;
+             rootIndex >= 0;
+             rootIndex--)
+        {
+            var root = methodBody.Instructions[rootIndex];
+            var rootRegion = regionByLirIndex[rootIndex];
+            if (!IsGeneralSchedulingRoot(root) || rootRegion < 0)
+            {
+                continue;
+            }
+
+            if (LIRInstructionInfo.TryGetDefinedTemp(root, out var existingRoot)
+                && residencies[existingRoot.Index]
+                    == TempResidency.ScheduledInline)
+            {
+                continue;
+            }
+
+            candidateRegions.Add(rootRegion);
+            var selectedDefinitions = new HashSet<int>();
+            var emittedDefinitionOrder = new List<int>();
+            var safe = true;
+            foreach (var operand in CollectUsedTemps(root))
+            {
+                if (!TrySelectGeneralProducerTree(
+                        methodBody,
+                        operand,
+                        rootIndex,
+                        rootRegion,
+                        definitionIndex,
+                        definitionCount,
+                        useCount,
+                        regionByLirIndex,
+                        selectedDefinitions,
+                        emittedDefinitionOrder,
+                        ref analysisBudget))
+                {
+                    safe = false;
+                    break;
+                }
+            }
+
+            if (!safe
+                || selectedDefinitions.Count == 0
+                || !TryGetConstructionInsertionIndex(
+                    rootIndex,
+                    selectedDefinitions,
+                    out var insertionLirIndex))
+            {
+                rejectedDependencyCount++;
+                continue;
+            }
+
+            if (!PreservesSelectedEffectOrder(
+                    methodBody,
+                    emittedDefinitionOrder))
+            {
+                rejectedEffectOrderCount++;
+                continue;
+            }
+
+            foreach (var definitionLirIndex in selectedDefinitions)
+            {
+                if (!LIRInstructionInfo.TryGetDefinedTemp(
+                        methodBody.Instructions[definitionLirIndex],
+                        out var producerResult))
+                {
+                    continue;
+                }
+
+                residencies[producerResult.Index] =
+                    TempResidency.ScheduledInline;
+                ownedTemps[producerResult.Index] = true;
+            }
+
+            if (LIRInstructionInfo.TryGetDefinedTemp(
+                    root,
+                    out var rootResult)
+                && IsSupportedConstruction(root)
+                && definitionCount[rootResult.Index] == 1
+                && useCount[rootResult.Index] == 1
+                && (rootResult.Index >= methodBody.TempVariableSlots.Count
+                    || methodBody.TempVariableSlots[rootResult.Index] < 0)
+                && IsSupportedConstructionConsumer(
+                    methodBody,
+                    rootResult,
+                    useIndex[rootResult.Index],
+                    rootRegion,
+                    regionByLirIndex))
+            {
+                residencies[rootResult.Index] = TempResidency.StackResident;
+                ownedTemps[rootResult.Index] = true;
+            }
+
+            if (!movesByInsertionLirIndex.TryGetValue(
+                    insertionLirIndex,
+                    out var movedRoots))
+            {
+                movedRoots = new List<int>();
+                movesByInsertionLirIndex[insertionLirIndex] = movedRoots;
+            }
+            movedRoots.Add(rootIndex);
+            acceptedRegions.Add(rootRegion);
+        }
+
+        var operations = ReorderConstructionOperations(
+            calls.Operations,
+            movesByInsertionLirIndex);
+        PruneInvalidTypedNumericResidencies(
+            methodBody,
+            residencies,
+            ownedTemps);
+        var acceptedCount = ownedTemps.Count(owned => owned);
+        var result = calls with
+        {
+            Mode = LIRStackSchedulerMode.GeneralRegions,
+            Operations = operations,
+            Regions = BuildSchedulingRegions(methodBody, operations),
+            TempResidencies = residencies,
+            OwnedTemps = ownedTemps,
+            EffectiveLastUses = ComputeScheduledLastUses(
+                methodBody,
+                operations),
+            Metrics = calls.Metrics with
+            {
+                StackResidentTempCount = residencies.Count(
+                    residency => residency == TempResidency.StackResident),
+                EliminatedSpillCount = acceptedCount,
+                CandidateRegionCount = candidateRegions.Count,
+                AcceptedRegionCount = acceptedRegions.Count,
+                RejectedRegionCount =
+                    candidateRegions.Count - acceptedRegions.Count,
+                RejectedDependencyCount = rejectedDependencyCount,
+                RejectedEffectOrderCount = rejectedEffectOrderCount
+            }
+        };
+        return result with
+        {
+            Metrics = result.Metrics with
+            {
+                ResidualLocalCandidateCount =
+                    CountResidualLocalCandidates(result)
+            }
+        };
+    }
+
+    private static bool IsGeneralSchedulingRoot(LIRInstruction instruction)
+        => IsSupportedConstruction(instruction)
+            || IsSupportedArgumentBundle(instruction);
+
+    private static bool TrySelectGeneralProducerTree(
+        MethodBodyIR methodBody,
+        TempVariable temp,
+        int rootIndex,
+        int rootRegion,
+        int[] definitionIndex,
+        int[] definitionCount,
+        int[] useCount,
+        int[] regionByLirIndex,
+        HashSet<int> selectedDefinitions,
+        List<int> emittedDefinitionOrder,
+        ref int analysisBudget)
+    {
+        var pending = new Stack<(TempVariable Temp, bool Expanded)>();
+        pending.Push((temp, false));
+        while (pending.Count > 0)
+        {
+            if (--analysisBudget < 0)
+            {
+                return false;
+            }
+
+            var (current, expanded) = pending.Pop();
+            if ((uint)current.Index >= (uint)definitionIndex.Length)
+            {
+                return false;
+            }
+
+            var producerIndex = definitionIndex[current.Index];
+            if (producerIndex < 0)
+            {
+                continue;
+            }
+
+            if (expanded)
+            {
+                emittedDefinitionOrder.Add(producerIndex);
+                continue;
+            }
+
+            var producer = methodBody.Instructions[producerIndex];
+            if (!IsGeneralInlineProducer(producer))
+            {
+                if (regionByLirIndex[producerIndex] == rootRegion)
+                {
+                    return false;
+                }
+                continue;
+            }
+
+            if (producerIndex >= rootIndex
+                || definitionCount[current.Index] != 1
+                || useCount[current.Index] != 1
+                || regionByLirIndex[producerIndex] != rootRegion
+                || current.Index < methodBody.TempVariableSlots.Count
+                    && methodBody.TempVariableSlots[current.Index] >= 0)
+            {
+                return false;
+            }
+
+            if (!selectedDefinitions.Add(producerIndex))
+            {
+                continue;
+            }
+
+            pending.Push((current, true));
+            var operands = CollectUsedTemps(producer);
+            for (var index = operands.Count - 1; index >= 0; index--)
+            {
+                pending.Push((operands[index], false));
+            }
+        }
+
+        return true;
+    }
+
+    private static bool IsGeneralInlineProducer(LIRInstruction instruction)
+        => IsSupportedScheduledInlineProducer(instruction)
+            || IsSupportedCallResultDefinition(instruction);
+
+    private static bool PreservesSelectedEffectOrder(
+        MethodBodyIR methodBody,
+        List<int> emittedDefinitionOrder)
+    {
+        var previousEffectfulLirIndex = -1;
+        foreach (var lirIndex in emittedDefinitionOrder)
+        {
+            var instruction = methodBody.Instructions[lirIndex];
+            if (LIRInstructionInfo.GetEffectsForScheduling(instruction)
+                    == LIRInstructionEffects.None)
+            {
+                continue;
+            }
+
+            if (lirIndex < previousEffectfulLirIndex)
+            {
+                return false;
+            }
+
+            previousEffectfulLirIndex = lirIndex;
+        }
+
+        return true;
+    }
+
+    private static List<int> BuildSelectedEmissionOrder(
+        MethodBodyIR methodBody,
+        LIRInstruction root,
+        HashSet<int> selectedDefinitions)
+    {
+        var order = new List<int>(selectedDefinitions.Count);
+        var emitted = new HashSet<int>();
+        var selectedDefinitionByTemp = new Dictionary<int, int>(
+            selectedDefinitions.Count);
+        foreach (var definitionIndex in selectedDefinitions)
+        {
+            if (LIRInstructionInfo.TryGetDefinedTemp(
+                    methodBody.Instructions[definitionIndex],
+                    out var defined))
+            {
+                selectedDefinitionByTemp[defined.Index] = definitionIndex;
+            }
+        }
+
+        var stack = new Stack<(LIRInstruction Instruction, bool Expanded)>();
+        stack.Push((root, false));
+        while (stack.Count > 0)
+        {
+            var (instruction, expanded) = stack.Pop();
+            if (expanded)
+            {
+                if (LIRInstructionInfo.TryGetDefinedTemp(
+                        instruction,
+                        out var defined))
+                {
+                    var definitionIndex =
+                        selectedDefinitionByTemp.GetValueOrDefault(
+                            defined.Index,
+                            -1);
+                    if (definitionIndex >= 0
+                        && emitted.Add(definitionIndex))
+                    {
+                        order.Add(definitionIndex);
+                    }
+                }
+                continue;
+            }
+
+            stack.Push((instruction, true));
+            var uses = CollectUsedTemps(instruction);
+            for (var index = uses.Count - 1; index >= 0; index--)
+            {
+                var definitionIndex =
+                    selectedDefinitionByTemp.GetValueOrDefault(
+                        uses[index].Index,
+                        -1);
+                if (definitionIndex >= 0)
+                {
+                    stack.Push((
+                        methodBody.Instructions[definitionIndex],
+                        false));
+                }
+            }
+        }
+
+        return order;
+    }
+
+    private static int CountResidualLocalCandidates(
+        LIRStackSchedule schedule)
+    {
+        var count = 0;
+        for (var tempIndex = 0;
+             tempIndex < schedule.TempResidencies.Length;
+             tempIndex++)
+        {
+            if (schedule.TempResidencies[tempIndex]
+                == TempResidency.MaterializedLocal)
+            {
+                count++;
+            }
+        }
+
+        return count;
+    }
+
     private static bool TrySelectCallArgumentProducerTree(
         MethodBodyIR methodBody,
         TempVariable temp,
@@ -985,60 +1411,70 @@ internal static class LIRStackScheduler
         int[] definitionCount,
         int[] useCount,
         int[] regionByLirIndex,
-        HashSet<int> selectedDefinitions)
+        HashSet<int> selectedDefinitions,
+        ref int analysisBudget)
     {
-        if ((uint)temp.Index >= (uint)definitionIndex.Length)
+        var pending = new Stack<TempVariable>();
+        pending.Push(temp);
+        while (pending.Count > 0)
         {
-            return false;
-        }
-
-        var producerIndex = definitionIndex[temp.Index];
-        if (producerIndex < 0)
-        {
-            return true;
-        }
-
-        var producer = methodBody.Instructions[producerIndex];
-        var isCall = IsSupportedCallResultDefinition(producer);
-        var isInlineProducer = IsSupportedScheduledInlineProducer(producer);
-        if (!isCall && !isInlineProducer)
-        {
-            return regionByLirIndex[producerIndex] != rootRegion;
-        }
-
-        if (producerIndex >= rootIndex
-            || definitionCount[temp.Index] != 1
-            || regionByLirIndex[producerIndex] != rootRegion)
-        {
-            return false;
-        }
-
-        if (useCount[temp.Index] != 1
-            || temp.Index < methodBody.TempVariableSlots.Count
-                && methodBody.TempVariableSlots[temp.Index] >= 0)
-        {
-            return !isCall;
-        }
-
-        if (!selectedDefinitions.Add(producerIndex))
-        {
-            return true;
-        }
-
-        foreach (var operand in CollectUsedTemps(producer))
-        {
-            if (!TrySelectCallArgumentProducerTree(
-                    methodBody,
-                    operand,
-                    rootIndex,
-                    rootRegion,
-                    definitionIndex,
-                    definitionCount,
-                    useCount,
-                    regionByLirIndex,
-                    selectedDefinitions))
+            if (--analysisBudget < 0)
             {
                 return false;
+            }
+
+            var current = pending.Pop();
+            if ((uint)current.Index >= (uint)definitionIndex.Length)
+            {
+                return false;
+            }
+
+            var producerIndex = definitionIndex[current.Index];
+            if (producerIndex < 0)
+            {
+                continue;
+            }
+
+            var producer = methodBody.Instructions[producerIndex];
+            var isCall = IsSupportedCallResultDefinition(producer);
+            var isInlineProducer =
+                IsSupportedScheduledInlineProducer(producer);
+            if (!isCall && !isInlineProducer)
+            {
+                if (regionByLirIndex[producerIndex] == rootRegion)
+                {
+                    return false;
+                }
+                continue;
+            }
+
+            if (producerIndex >= rootIndex
+                || definitionCount[current.Index] != 1
+                || regionByLirIndex[producerIndex] != rootRegion)
+            {
+                return false;
+            }
+
+            if (useCount[current.Index] != 1
+                || current.Index < methodBody.TempVariableSlots.Count
+                    && methodBody.TempVariableSlots[current.Index] >= 0)
+            {
+                if (isCall)
+                {
+                    return false;
+                }
+                continue;
+            }
+
+            if (!selectedDefinitions.Add(producerIndex))
+            {
+                continue;
+            }
+
+            var operands = CollectUsedTemps(producer);
+            for (var index = operands.Count - 1; index >= 0; index--)
+            {
+                pending.Push(operands[index]);
             }
         }
 
@@ -1181,54 +1617,59 @@ internal static class LIRStackScheduler
         int[] definitionCount,
         int[] useCount,
         int[] regionByLirIndex,
-        HashSet<int> selectedDefinitions)
+        HashSet<int> selectedDefinitions,
+        ref int analysisBudget)
     {
-        if ((uint)temp.Index >= (uint)definitionIndex.Length)
+        var pending = new Stack<TempVariable>();
+        pending.Push(temp);
+        while (pending.Count > 0)
         {
-            return false;
-        }
-
-        var producerIndex = definitionIndex[temp.Index];
-        if (producerIndex < 0)
-        {
-            return true;
-        }
-
-        var producer = methodBody.Instructions[producerIndex];
-        if (!IsSupportedScheduledInlineProducer(producer))
-        {
-            return regionByLirIndex[producerIndex] != constructionRegion;
-        }
-
-        if (producerIndex >= constructionIndex
-            || definitionCount[temp.Index] != 1
-            || useCount[temp.Index] != 1
-            || regionByLirIndex[producerIndex] != constructionRegion
-            || temp.Index < methodBody.TempVariableSlots.Count
-                && methodBody.TempVariableSlots[temp.Index] >= 0)
-        {
-            return false;
-        }
-
-        if (!selectedDefinitions.Add(producerIndex))
-        {
-            return true;
-        }
-
-        foreach (var operand in CollectUsedTemps(producer))
-        {
-            if (!TrySelectConstructionProducerTree(
-                    methodBody,
-                    operand,
-                    constructionIndex,
-                    constructionRegion,
-                    definitionIndex,
-                    definitionCount,
-                    useCount,
-                    regionByLirIndex,
-                    selectedDefinitions))
+            if (--analysisBudget < 0)
             {
                 return false;
+            }
+
+            var current = pending.Pop();
+            if ((uint)current.Index >= (uint)definitionIndex.Length)
+            {
+                return false;
+            }
+
+            var producerIndex = definitionIndex[current.Index];
+            if (producerIndex < 0)
+            {
+                continue;
+            }
+
+            var producer = methodBody.Instructions[producerIndex];
+            if (!IsSupportedScheduledInlineProducer(producer))
+            {
+                if (regionByLirIndex[producerIndex] == constructionRegion)
+                {
+                    return false;
+                }
+                continue;
+            }
+
+            if (producerIndex >= constructionIndex
+                || definitionCount[current.Index] != 1
+                || useCount[current.Index] != 1
+                || regionByLirIndex[producerIndex] != constructionRegion
+                || current.Index < methodBody.TempVariableSlots.Count
+                    && methodBody.TempVariableSlots[current.Index] >= 0)
+            {
+                return false;
+            }
+
+            if (!selectedDefinitions.Add(producerIndex))
+            {
+                continue;
+            }
+
+            var operands = CollectUsedTemps(producer);
+            for (var index = operands.Count - 1; index >= 0; index--)
+            {
+                pending.Push(operands[index]);
             }
         }
 

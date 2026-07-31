@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x213e
+			// Method begins at RVA 0x2132
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -34,7 +34,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2147
+			// Method begins at RVA 0x213b
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -60,90 +60,84 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 226 (0xe2)
+		// Code size: 214 (0xd6)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Int32Array_FromArray_CopyAndCoerce/Scope,
 			[1] class [JavaScriptRuntime]JavaScriptRuntime.Int32Array,
 			[2] float64,
-			[3] float64,
+			[3] object,
 			[4] object,
-			[5] object
+			[5] float64
 		)
 
 		IL_0000: newobj instance void Modules.Int32Array_FromArray_CopyAndCoerce/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: nop
-		IL_0007: ldc.r8 2.2
-		IL_0010: neg
-		IL_0011: stloc.3
-		IL_0012: ldc.i4.4
-		IL_0013: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_0018: dup
-		IL_0019: ldc.r8 1.7
-		IL_0022: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::AddNumber(float64)
-		IL_0027: dup
-		IL_0028: ldloc.3
-		IL_0029: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::AddNumber(float64)
-		IL_002e: dup
-		IL_002f: ldc.r8 0.0
-		IL_0038: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::AddNumber(float64)
-		IL_003d: dup
-		IL_003e: ldc.r8 0.0
-		IL_0047: neg
-		IL_0048: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::AddNumber(float64)
-		IL_004d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Int32Array::.ctor(object)
-		IL_0052: stloc.1
-		IL_0053: ldstr "console"
-		IL_0058: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_005d: stloc.s 4
-		IL_005f: ldloc.s 4
-		IL_0061: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0066: stloc.s 4
-		IL_0068: ldloc.1
-		IL_0069: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Int32Array::get_length()
-		IL_006e: box [System.Runtime]System.Double
-		IL_0073: stloc.s 5
-		IL_0075: ldloc.s 4
-		IL_0077: ldstr "log"
-		IL_007c: ldloc.s 5
-		IL_007e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0083: pop
-		IL_0084: ldc.r8 0.0
-		IL_008d: stloc.2
-		// loop start (head: IL_008e)
-			IL_008e: ldloc.2
-			IL_008f: stloc.3
-			IL_0090: ldloc.3
-			IL_0091: ldloc.1
-			IL_0092: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Int32Array::get_length()
-			IL_0097: clt
-			IL_0099: brfalse IL_00e1
+		IL_0007: ldc.i4.4
+		IL_0008: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_000d: dup
+		IL_000e: ldc.r8 1.7
+		IL_0017: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::AddNumber(float64)
+		IL_001c: dup
+		IL_001d: ldc.r8 2.2
+		IL_0026: neg
+		IL_0027: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::AddNumber(float64)
+		IL_002c: dup
+		IL_002d: ldc.r8 0.0
+		IL_0036: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::AddNumber(float64)
+		IL_003b: dup
+		IL_003c: ldc.r8 0.0
+		IL_0045: neg
+		IL_0046: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::AddNumber(float64)
+		IL_004b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Int32Array::.ctor(object)
+		IL_0050: stloc.1
+		IL_0051: ldstr "console"
+		IL_0056: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_005b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0060: stloc.3
+		IL_0061: ldloc.1
+		IL_0062: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Int32Array::get_length()
+		IL_0067: box [System.Runtime]System.Double
+		IL_006c: stloc.s 4
+		IL_006e: ldloc.3
+		IL_006f: ldstr "log"
+		IL_0074: ldloc.s 4
+		IL_0076: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_007b: pop
+		IL_007c: ldc.r8 0.0
+		IL_0085: stloc.2
+		// loop start (head: IL_0086)
+			IL_0086: ldloc.2
+			IL_0087: stloc.s 5
+			IL_0089: ldloc.s 5
+			IL_008b: ldloc.1
+			IL_008c: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Int32Array::get_length()
+			IL_0091: clt
+			IL_0093: brfalse IL_00d5
 
-			IL_009e: ldstr "console"
-			IL_00a3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_00a8: stloc.s 4
-			IL_00aa: ldloc.s 4
-			IL_00ac: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_00b1: stloc.s 4
-			IL_00b3: ldloc.1
-			IL_00b4: ldloc.2
-			IL_00b5: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Int32Array::get_Item(float64)
-			IL_00ba: box [System.Runtime]System.Double
-			IL_00bf: stloc.s 5
-			IL_00c1: ldloc.s 4
-			IL_00c3: ldstr "log"
-			IL_00c8: ldloc.s 5
-			IL_00ca: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_00cf: pop
-			IL_00d0: ldloc.2
-			IL_00d1: ldc.r8 1
-			IL_00da: add
-			IL_00db: stloc.2
-			IL_00dc: br IL_008e
+			IL_0098: ldstr "console"
+			IL_009d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_00a2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_00a7: stloc.3
+			IL_00a8: ldloc.1
+			IL_00a9: ldloc.2
+			IL_00aa: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Int32Array::get_Item(float64)
+			IL_00af: box [System.Runtime]System.Double
+			IL_00b4: stloc.s 4
+			IL_00b6: ldloc.3
+			IL_00b7: ldstr "log"
+			IL_00bc: ldloc.s 4
+			IL_00be: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_00c3: pop
+			IL_00c4: ldloc.2
+			IL_00c5: ldc.r8 1
+			IL_00ce: add
+			IL_00cf: stloc.2
+			IL_00d0: br IL_0086
 		// end loop
 
-		IL_00e1: ret
+		IL_00d5: ret
 	} // end of method Int32Array_FromArray_CopyAndCoerce::__js_module_init__
 
 } // end of class Modules.Int32Array_FromArray_CopyAndCoerce
@@ -155,7 +149,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2150
+		// Method begins at RVA 0x2144
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

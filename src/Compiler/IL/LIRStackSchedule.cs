@@ -15,7 +15,8 @@ internal enum LIRStackSchedulerMode
     TypedComparisons = 3,
     ConversionsAndStableLoads = 4,
     LiteralAndArguments = 5,
-    CallResults = 6
+    CallResults = 6,
+    GeneralRegions = 7
 }
 
 internal enum TempResidency
@@ -69,7 +70,13 @@ internal readonly record struct LIRStackScheduleMetrics(
     int ScheduledRegionCount,
     int StackResidentTempCount,
     int EliminatedSpillCount,
-    int ValidationFallbackCount);
+    int ValidationFallbackCount,
+    int CandidateRegionCount = 0,
+    int AcceptedRegionCount = 0,
+    int RejectedRegionCount = 0,
+    int RejectedDependencyCount = 0,
+    int RejectedEffectOrderCount = 0,
+    int ResidualLocalCandidateCount = 0);
 
 /// <summary>
 /// Immutable scheduler output consumed by local allocation and IL emission.

@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21f9
+				// Method begins at RVA 0x21fd
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -47,34 +47,37 @@
 			)
 			// Method begins at RVA 0x216c
 			// Header size: 12
-			// Code size: 50 (0x32)
+			// Code size: 52 (0x34)
 			.maxstack 8
 			.locals init (
-				[0] object
+				[0] object,
+				[1] object[]
 			)
 
 			IL_0000: ldarg.0
 			IL_0001: ldfld object Modules.CommonJS_Require_Captures_Shadowed_Global_URL/Scope::URL
 			IL_0006: stloc.0
-			IL_0007: ldloc.0
-			IL_0008: ldc.i4.1
-			IL_0009: newarr [System.Runtime]System.Object
-			IL_000e: dup
-			IL_000f: ldc.i4.0
-			IL_0010: ldstr "base"
-			IL_0015: stelem.ref
-			IL_0016: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::ConstructValue(object, object[])
-			IL_001b: stloc.0
-			IL_001c: ldloc.0
-			IL_001d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0022: stloc.0
-			IL_0023: ldloc.0
-			IL_0024: ldstr "resolve"
-			IL_0029: ldarg.2
-			IL_002a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_002f: stloc.0
-			IL_0030: ldloc.0
-			IL_0031: ret
+			IL_0007: ldc.i4.1
+			IL_0008: newarr [System.Runtime]System.Object
+			IL_000d: dup
+			IL_000e: ldc.i4.0
+			IL_000f: ldstr "base"
+			IL_0014: stelem.ref
+			IL_0015: stloc.1
+			IL_0016: ldloc.0
+			IL_0017: ldloc.1
+			IL_0018: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::ConstructValue(object, object[])
+			IL_001d: stloc.0
+			IL_001e: ldloc.0
+			IL_001f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0024: stloc.0
+			IL_0025: ldloc.0
+			IL_0026: ldstr "resolve"
+			IL_002b: ldarg.2
+			IL_002c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_0031: stloc.0
+			IL_0032: ldloc.0
+			IL_0033: ret
 		} // end of method FunctionExpression_descriptor::__js_call__
 
 	} // end of class FunctionExpression_descriptor
@@ -93,7 +96,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x21f0
+			// Method begins at RVA 0x21f4
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -120,7 +123,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2202
+				// Method begins at RVA 0x2206
 				// Header size: 1
 				// Code size: 7 (0x7)
 				.maxstack 8
@@ -133,7 +136,7 @@
 			.method public hidebysig 
 				instance class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1 get_value () cil managed 
 			{
-				// Method begins at RVA 0x220a
+				// Method begins at RVA 0x220e
 				// Header size: 1
 				// Code size: 7 (0x7)
 				.maxstack 8
@@ -148,7 +151,7 @@
 					class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1 ''
 				) cil managed 
 			{
-				// Method begins at RVA 0x2212
+				// Method begins at RVA 0x2216
 				// Header size: 1
 				// Code size: 20 (0x14)
 				.maxstack 8
@@ -181,7 +184,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 147 (0x93)
+		// Code size: 145 (0x91)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.CommonJS_Require_Captures_Shadowed_Global_URL/Scope,
@@ -227,24 +230,22 @@
 		IL_0052: callvirt instance void Modules.CommonJS_Require_Captures_Shadowed_Global_URL/ObjectLiterals/L5C18_descriptor::set_value(class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1)
 		IL_0057: ldstr "console"
 		IL_005c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0061: stloc.2
-		IL_0062: ldloc.2
-		IL_0063: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0068: stloc.2
-		IL_0069: ldloc.1
-		IL_006a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_006f: stloc.s 4
-		IL_0071: ldloc.s 4
-		IL_0073: ldstr "value"
-		IL_0078: ldstr "child"
-		IL_007d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0082: stloc.s 4
-		IL_0084: ldloc.2
-		IL_0085: ldstr "log"
-		IL_008a: ldloc.s 4
-		IL_008c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0091: pop
-		IL_0092: ret
+		IL_0061: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0066: stloc.2
+		IL_0067: ldloc.1
+		IL_0068: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_006d: stloc.s 4
+		IL_006f: ldloc.s 4
+		IL_0071: ldstr "value"
+		IL_0076: ldstr "child"
+		IL_007b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0080: stloc.s 4
+		IL_0082: ldloc.2
+		IL_0083: ldstr "log"
+		IL_0088: ldloc.s 4
+		IL_008a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_008f: pop
+		IL_0090: ret
 	} // end of method CommonJS_Require_Captures_Shadowed_Global_URL::__js_module_init__
 
 } // end of class Modules.CommonJS_Require_Captures_Shadowed_Global_URL
@@ -264,7 +265,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2230
+				// Method begins at RVA 0x2234
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -288,7 +289,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x21aa
+			// Method begins at RVA 0x21ac
 			// Header size: 1
 			// Code size: 20 (0x14)
 			.maxstack 8
@@ -316,7 +317,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2239
+				// Method begins at RVA 0x223d
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -340,7 +341,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x21c0
+			// Method begins at RVA 0x21c4
 			// Header size: 12
 			// Code size: 36 (0x24)
 			.maxstack 8
@@ -378,7 +379,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2227
+			// Method begins at RVA 0x222b
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -464,7 +465,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2242
+		// Method begins at RVA 0x2246
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

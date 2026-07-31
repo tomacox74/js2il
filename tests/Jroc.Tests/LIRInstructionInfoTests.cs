@@ -180,6 +180,38 @@ public sealed class LIRInstructionInfoTests
     }
 
     [Fact]
+    public void HardBoundaryMatrix_RemainsOpaqueToGeneralScheduling()
+    {
+        var value = new TempVariable(0);
+        var result = new TempVariable(1);
+        LIRInstruction[] boundaries =
+        [
+            new LIRLabel(1),
+            new LIRBranch(1),
+            new LIRBranchIfFalse(value, 1),
+            new LIRBranchIfTrue(value, 1),
+            new LIRLeave(1),
+            new LIREndFinally(),
+            new LIRReturn(value),
+            new LIRReturnUndefinedImmediate(),
+            new LIRThrow(value),
+            new LIRSequencePoint(SourceSpan.Hidden("boundary.js")),
+            new LIRAwait(value, 0, 1, 1, result),
+            new LIRYield(value, 1, 1, result),
+            new LIRCreateLeafScopeInstance(new ScopeId("block")),
+            new LIRCreateScopeInstance(new ScopeId("block"), result),
+            new LIRUnwrapCatchException(value, result),
+            new UnknownInstruction()
+        ];
+
+        Assert.All(
+            boundaries,
+            instruction => Assert.True(
+                LIRInstructionInfo.IsSchedulingBoundary(instruction),
+                instruction.GetType().Name));
+    }
+
+    [Fact]
     public void SequencePoint_IsAlwaysSchedulingBoundary()
     {
         var metadata = LIRInstructionInfo.GetMetadata(

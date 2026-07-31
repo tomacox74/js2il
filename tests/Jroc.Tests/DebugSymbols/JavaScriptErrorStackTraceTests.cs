@@ -148,6 +148,31 @@ public class JavaScriptErrorStackTraceTests
             StringComparison.OrdinalIgnoreCase);
     }
 
+    [Fact]
+    public void ThrownError_FromGeneralScheduledNestedValue_HasOriginalSourceLine()
+    {
+        var baseName = "general_scheduler_stacktrace_" + Guid.NewGuid().ToString("N");
+        var jsFileName = baseName + ".js";
+        var js = "\"use strict\";\n"
+                 + "function nested(value) {\n"
+                 + "  return { x: [Math.floor(value)], y: 1 };\n"
+                 + "}\n"
+                 + "try { nested(Symbol(\"x\")); } catch (e) { console.log(e.stack); }\n";
+
+        var output = CompileAndRunWithEmitPdb(
+            "JavaScriptGeneralScheduledNestedStackTrace",
+            jsFileName,
+            new Dictionary<string, string>
+            {
+                [jsFileName] = js
+            });
+
+        Assert.Contains(
+            $"{jsFileName}:line 3",
+            output,
+            StringComparison.OrdinalIgnoreCase);
+    }
+
     private static string CompileAndRunWithEmitPdb(
         string scenarioName,
         string entryFileName,

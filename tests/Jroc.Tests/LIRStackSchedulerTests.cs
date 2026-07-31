@@ -848,6 +848,224 @@ public sealed class LIRStackSchedulerTests
             schedule.TempResidencies[second.Index]);
     }
 
+    [Fact]
+    public void Build_GeneralRegionsMode_SchedulesNestedConstructionAndCalls()
+    {
+        var body = new MethodBodyIR();
+        var a = AddTemp(body);
+        var two = AddTemp(body);
+        var doubled = AddTemp(body);
+        var b = AddTemp(body);
+        var three = AddTemp(body);
+        var added = AddTemp(body);
+        var array = AddTemp(body);
+        var aForFloor = AddTemp(body);
+        var floor = AddTemp(body);
+        var bForSqrt = AddTemp(body);
+        var sqrt = AddTemp(body);
+        var sum = AddTemp(body);
+        var result = AddTemp(body);
+        body.Instructions.Add(new LIRLoadParameter(1, a));
+        body.Instructions.Add(new LIRConstNumber(2, two));
+        body.Instructions.Add(new LIRMulNumber(a, two, doubled));
+        body.Instructions.Add(new LIRLoadParameter(2, b));
+        body.Instructions.Add(new LIRConstNumber(3, three));
+        body.Instructions.Add(new LIRAddNumber(b, three, added));
+        body.Instructions.Add(new LIRNewJsArray(
+            new[] { doubled, added },
+            array));
+        body.Instructions.Add(new LIRLoadParameter(1, aForFloor));
+        body.Instructions.Add(new LIRCallIntrinsicStatic(
+            "Math",
+            "floor",
+            new[] { aForFloor },
+            floor));
+        body.Instructions.Add(new LIRLoadParameter(2, bForSqrt));
+        body.Instructions.Add(new LIRCallIntrinsicStatic(
+            "Math",
+            "sqrt",
+            new[] { bForSqrt },
+            sqrt));
+        body.Instructions.Add(new LIRAddNumber(floor, sqrt, sum));
+        body.Instructions.Add(new LIRNewJsObject(
+            new[]
+            {
+                new ObjectProperty("x", array),
+                new ObjectProperty("y", sum)
+            },
+            result));
+        body.Instructions.Add(new LIRReturn(result));
+
+        var first = LIRStackScheduler.Build(
+            body,
+            new LIRStackSchedulerOptions(
+                LIRStackSchedulerMode.GeneralRegions));
+        var second = LIRStackScheduler.Build(
+            body,
+            new LIRStackSchedulerOptions(
+                LIRStackSchedulerMode.GeneralRegions));
+
+        Assert.Equal(
+            first.Operations,
+            second.Operations);
+        Assert.True(
+            System.Array.FindIndex(
+                first.Operations,
+                operation => operation.StartLirIndex == 12)
+            < System.Array.FindIndex(
+                first.Operations,
+                operation => operation.StartLirIndex == 0));
+        Assert.Equal(
+            TempResidency.ScheduledInline,
+            first.TempResidencies[array.Index]);
+        Assert.Equal(
+            TempResidency.ScheduledInline,
+            first.TempResidencies[floor.Index]);
+        Assert.Equal(
+            TempResidency.ScheduledInline,
+            first.TempResidencies[sqrt.Index]);
+        Assert.Equal(
+            TempResidency.StackResident,
+            first.TempResidencies[result.Index]);
+        Assert.Equal(1, first.Metrics.CandidateRegionCount);
+        Assert.Equal(1, first.Metrics.AcceptedRegionCount);
+        Assert.Equal(0, first.Metrics.RejectedRegionCount);
+        Assert.True(first.Metrics.EliminatedSpillCount >= 5);
+        Assert.Equal(0, first.Metrics.ValidationFallbackCount);
+    }
+
+    [Fact]
+    public void Build_GeneralRegionsMode_RejectsEffectOrderReversal()
+    {
+        var body = new MethodBodyIR();
+        var firstReceiver = AddTemp(body);
+        var first = AddTemp(body);
+        var secondReceiver = AddTemp(body);
+        var second = AddTemp(body);
+        var result = AddTemp(body);
+        body.Instructions.Add(new LIRLoadParameter(1, firstReceiver));
+        body.Instructions.Add(new LIRCallIntrinsicStatic(
+            "Math",
+            "floor",
+            new[] { firstReceiver },
+            first));
+        body.Instructions.Add(new LIRLoadParameter(1, secondReceiver));
+        body.Instructions.Add(new LIRCallIntrinsicStatic(
+            "Math",
+            "sqrt",
+            new[] { secondReceiver },
+            second));
+        body.Instructions.Add(new LIRNewJsArray(
+            new[] { second, first },
+            result));
+        body.Instructions.Add(new LIRReturn(result));
+
+        var schedule = LIRStackScheduler.Build(
+            body,
+            new LIRStackSchedulerOptions(
+                LIRStackSchedulerMode.GeneralRegions));
+
+        Assert.Equal(
+            TempResidency.MaterializedLocal,
+            schedule.TempResidencies[result.Index]);
+        Assert.Equal(1, schedule.Metrics.CandidateRegionCount);
+        Assert.Equal(1, schedule.Metrics.AcceptedRegionCount);
+        Assert.Equal(0, schedule.Metrics.RejectedRegionCount);
+        Assert.Equal(1, schedule.Metrics.RejectedEffectOrderCount);
+    }
+
+    [Fact]
+    public void Build_GeneralRegionsMode_PreservesAtomicFusionOperations()
+    {
+        var body = new MethodBodyIR();
+        var result = AddTemp(body);
+        body.Instructions.Add(new LIRNewIntrinsicObject(
+            "Int32Array",
+            System.Array.Empty<TempVariable>(),
+            result));
+        body.Instructions.Add(new LIRStoreUserClassInstanceField(
+            "Example",
+            "buffer",
+            IsPrivateField: false,
+            result));
+        body.Instructions.Add(new LIRReturnUndefinedImmediate());
+
+        var schedule = LIRStackScheduler.Build(
+            body,
+            new LIRStackSchedulerOptions(
+                LIRStackSchedulerMode.GeneralRegions));
+
+        Assert.Contains(
+            schedule.Operations,
+            operation => operation is
+            {
+                StartLirIndex: 0,
+                InstructionCount: 2,
+                Disposition: InstructionDisposition.FusedIntoEmissionUnit
+            });
+    }
+
+    [Fact]
+    public void Build_GeneralRegionsMode_MaterializesConstructionForImplicitReceiverStore()
+    {
+        var body = new MethodBodyIR();
+        var value = AddTemp(body);
+        var array = AddTemp(body);
+        body.Instructions.Add(new LIRConstNumber(1, value));
+        body.Instructions.Add(new LIRNewJsArray(
+            new[] { value },
+            array));
+        body.Instructions.Add(new LIRStoreUserClassInstanceField(
+            "Example",
+            "items",
+            IsPrivateField: false,
+            array));
+        body.Instructions.Add(new LIRReturnUndefinedImmediate());
+
+        var schedule = LIRStackScheduler.Build(
+            body,
+            new LIRStackSchedulerOptions(
+                LIRStackSchedulerMode.GeneralRegions));
+
+        Assert.Equal(
+            TempResidency.MaterializedLocal,
+            schedule.TempResidencies[array.Index]);
+        Assert.False(schedule.OwnedTemps[array.Index]);
+    }
+
+    [Fact]
+    public void Build_GeneralRegionsMode_DeepRejectedTreesFailClosedIteratively()
+    {
+        const int depth = 2_000;
+        var body = new MethodBodyIR();
+        var current = AddTemp(body);
+        body.Instructions.Add(new LIRCallRuntimeServicesStatic(
+            "Effect",
+            System.Array.Empty<TempVariable>(),
+            current));
+        for (var index = 0; index < depth; index++)
+        {
+            var next = AddTemp(body);
+            body.Instructions.Add(new LIRNewJsArray(
+                new[] { current },
+                next));
+            current = next;
+        }
+        body.Instructions.Add(new LIRReturn(current));
+
+        var schedule = LIRStackScheduler.Build(
+            body,
+            new LIRStackSchedulerOptions(
+                LIRStackSchedulerMode.GeneralRegions));
+
+        Assert.Equal(LIRStackSchedulerMode.GeneralRegions, schedule.Mode);
+        Assert.Equal(0, schedule.Metrics.ValidationFallbackCount);
+        Assert.True(schedule.Metrics.RejectedDependencyCount > 0);
+        Assert.Equal(
+            TempResidency.MaterializedLocal,
+            schedule.TempResidencies[current.Index]);
+    }
+
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
@@ -1131,6 +1349,62 @@ public sealed class LIRStackSchedulerTests
             "JavaScriptRuntime.Math::sqrt",
             "stelem.ref",
             "JavaScriptRuntime.Math::max",
+            "ret");
+    }
+
+    [Fact]
+    public void Compiler_GeneralRegionsMode_EliminatesNestedResidualSpills()
+    {
+        const string source = """
+            "use strict";
+            function mixed(a, b, c, d) {
+              return Math.max((a + 1) * (b - 2), (c + 3) / (d + 4));
+            }
+            function nestedValue(a, b) {
+              return { x: [a * 2, b + 3], y: Math.floor(a) + Math.sqrt(b) };
+            }
+            console.log(mixed(2, 4, 6, 5), nestedValue(2, 4));
+            """;
+
+        var artifact = Compile(
+            source,
+            LIRStackSchedulerMode.GeneralRegions,
+            emitPdb: false);
+        var path = Path.Combine(
+            Path.GetTempPath(),
+            "Jroc.Tests",
+            "GeneralRegionScheduler",
+            "general-regions.dll");
+        Directory.CreateDirectory(Path.GetDirectoryName(path)!);
+        File.WriteAllBytes(path, artifact.PeBytes);
+        var il = AssemblyToText.ConvertToText(path);
+
+        AssertMethodHasNoIntermediateSpills(
+            il,
+            "mixed",
+            "newarr",
+            "mul",
+            "stelem.ref",
+            "div",
+            "stelem.ref",
+            "JavaScriptRuntime.Math::max",
+            "ret");
+        AssertMethodHasNoIntermediateSpills(
+            il,
+            "nestedValue",
+            "CreateObjectLiteral",
+            "ldstr \"x\"",
+            "JavaScriptRuntime.Array::.ctor",
+            "mul",
+            "JavaScriptRuntime.Array::AddNumber",
+            "add",
+            "JavaScriptRuntime.Array::AddNumber",
+            "SetObject",
+            "ldstr \"y\"",
+            "JavaScriptRuntime.Math::floor",
+            "JavaScriptRuntime.Math::sqrt",
+            "add",
+            "SetNumber",
             "ret");
     }
 

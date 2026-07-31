@@ -22,7 +22,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2826
+					// Method begins at RVA 0x2814
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -42,7 +42,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x282f
+					// Method begins at RVA 0x281d
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -60,7 +60,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x281d
+				// Method begins at RVA 0x280b
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -85,9 +85,9 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x255c
+			// Method begins at RVA 0x254c
 			// Header size: 12
-			// Code size: 300 (0x12c)
+			// Code size: 284 (0x11c)
 			.maxstack 8
 			.locals init (
 				[0] class [System.Runtime]System.Exception,
@@ -107,113 +107,251 @@
 				IL_000c: pop
 				IL_000d: ldstr "console"
 				IL_0012: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-				IL_0017: stloc.s 4
-				IL_0019: ldloc.s 4
-				IL_001b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_0020: stloc.s 4
-				IL_0022: ldarg.1
-				IL_0023: ldstr " threw:"
-				IL_0028: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-				IL_002d: stloc.s 5
-				IL_002f: ldloc.s 4
-				IL_0031: ldstr "log"
-				IL_0036: ldloc.s 5
-				IL_0038: ldc.i4.0
-				IL_0039: box [System.Runtime]System.Boolean
-				IL_003e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-				IL_0043: pop
-				IL_0044: leave IL_0128
+				IL_0017: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_001c: stloc.s 4
+				IL_001e: ldarg.1
+				IL_001f: ldstr " threw:"
+				IL_0024: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+				IL_0029: stloc.s 5
+				IL_002b: ldloc.s 4
+				IL_002d: ldstr "log"
+				IL_0032: ldloc.s 5
+				IL_0034: ldc.i4.0
+				IL_0035: box [System.Runtime]System.Boolean
+				IL_003a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+				IL_003f: pop
+				IL_0040: leave IL_0118
 			} // end .try
 			catch [System.Runtime]System.Exception
 			{
-				IL_0049: stloc.0
-				IL_004a: ldloc.0
-				IL_004b: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-				IL_0050: dup
-				IL_0051: brtrue IL_0066
+				IL_0045: stloc.0
+				IL_0046: ldloc.0
+				IL_0047: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+				IL_004c: dup
+				IL_004d: brtrue IL_0062
 
-				IL_0056: pop
-				IL_0057: ldloc.0
-				IL_0058: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
-				IL_005d: dup
-				IL_005e: brtrue IL_0071
+				IL_0052: pop
+				IL_0053: ldloc.0
+				IL_0054: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+				IL_0059: dup
+				IL_005a: brtrue IL_006d
 
-				IL_0063: pop
-				IL_0064: rethrow
+				IL_005f: pop
+				IL_0060: rethrow
 
-				IL_0066: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-				IL_006b: stloc.1
-				IL_006c: br IL_0072
+				IL_0062: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+				IL_0067: stloc.1
+				IL_0068: br IL_006e
 
-				IL_0071: stloc.1
+				IL_006d: stloc.1
 
-				IL_0072: ldloc.1
-				IL_0073: stloc.2
-				IL_0074: ldstr "console"
-				IL_0079: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-				IL_007e: stloc.s 4
-				IL_0080: ldloc.s 4
-				IL_0082: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_0087: stloc.s 4
-				IL_0089: ldarg.1
-				IL_008a: ldstr " threw:"
-				IL_008f: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-				IL_0094: stloc.s 5
-				IL_0096: ldloc.s 4
-				IL_0098: ldstr "log"
-				IL_009d: ldloc.s 5
-				IL_009f: ldc.i4.1
-				IL_00a0: box [System.Runtime]System.Boolean
-				IL_00a5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-				IL_00aa: pop
-				IL_00ab: ldstr "console"
-				IL_00b0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-				IL_00b5: stloc.s 4
-				IL_00b7: ldloc.s 4
-				IL_00b9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_00be: stloc.s 4
-				IL_00c0: ldarg.1
-				IL_00c1: ldstr " name:"
-				IL_00c6: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-				IL_00cb: stloc.s 5
-				IL_00cd: ldloc.s 4
-				IL_00cf: ldstr "log"
-				IL_00d4: ldloc.s 5
-				IL_00d6: ldloc.2
-				IL_00d7: ldstr "name"
-				IL_00dc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-				IL_00e1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-				IL_00e6: pop
-				IL_00e7: ldstr "console"
-				IL_00ec: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-				IL_00f1: stloc.s 4
-				IL_00f3: ldloc.s 4
-				IL_00f5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_00fa: stloc.s 4
-				IL_00fc: ldarg.1
-				IL_00fd: ldstr " message:"
-				IL_0102: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-				IL_0107: stloc.s 5
-				IL_0109: ldloc.s 4
-				IL_010b: ldstr "log"
-				IL_0110: ldloc.s 5
-				IL_0112: ldloc.2
-				IL_0113: ldstr "message"
-				IL_0118: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-				IL_011d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-				IL_0122: pop
-				IL_0123: leave IL_0128
+				IL_006e: ldloc.1
+				IL_006f: stloc.2
+				IL_0070: ldstr "console"
+				IL_0075: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+				IL_007a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_007f: stloc.s 4
+				IL_0081: ldarg.1
+				IL_0082: ldstr " threw:"
+				IL_0087: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+				IL_008c: stloc.s 5
+				IL_008e: ldloc.s 4
+				IL_0090: ldstr "log"
+				IL_0095: ldloc.s 5
+				IL_0097: ldc.i4.1
+				IL_0098: box [System.Runtime]System.Boolean
+				IL_009d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+				IL_00a2: pop
+				IL_00a3: ldstr "console"
+				IL_00a8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+				IL_00ad: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_00b2: stloc.s 4
+				IL_00b4: ldarg.1
+				IL_00b5: ldstr " name:"
+				IL_00ba: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+				IL_00bf: stloc.s 5
+				IL_00c1: ldloc.s 4
+				IL_00c3: ldstr "log"
+				IL_00c8: ldloc.s 5
+				IL_00ca: ldloc.2
+				IL_00cb: ldstr "name"
+				IL_00d0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+				IL_00d5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+				IL_00da: pop
+				IL_00db: ldstr "console"
+				IL_00e0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+				IL_00e5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_00ea: stloc.s 4
+				IL_00ec: ldarg.1
+				IL_00ed: ldstr " message:"
+				IL_00f2: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+				IL_00f7: stloc.s 5
+				IL_00f9: ldloc.s 4
+				IL_00fb: ldstr "log"
+				IL_0100: ldloc.s 5
+				IL_0102: ldloc.2
+				IL_0103: ldstr "message"
+				IL_0108: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+				IL_010d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+				IL_0112: pop
+				IL_0113: leave IL_0118
 			} // end handler
 
-			IL_0128: ldnull
-			IL_0129: stloc.3
-			IL_012a: ldloc.3
-			IL_012b: ret
+			IL_0118: ldnull
+			IL_0119: stloc.3
+			IL_011a: ldloc.3
+			IL_011b: ret
 		} // end of method logError::__js_call__
 
 	} // end of class logError
 
 	.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L25C37
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested public auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2826
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				class Modules.Require_Zlib_ErrorPaths/Scope scope,
+				object newTarget
+			) cil managed 
+		{
+			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
+				01 00 01 00 00 00 01 00 54 08 1c 53 69 6e 67 6c
+				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
+				74 61 54 6f 6b 65 6e 09 00 00 02
+			)
+			// Method begins at RVA 0x2684
+			// Header size: 12
+			// Code size: 58 (0x3a)
+			.maxstack 8
+			.locals init (
+				[0] object,
+				[1] class [JavaScriptRuntime]JavaScriptRuntime.JsObject
+			)
+
+			IL_0000: ldarg.0
+			IL_0001: ldfld object Modules.Require_Zlib_ErrorPaths/Scope::zlib
+			IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_000b: stloc.0
+			IL_000c: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+			IL_0011: dup
+			IL_0012: ldstr "chunkSize"
+			IL_0017: ldc.r8 1024
+			IL_0020: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
+			IL_0025: stloc.1
+			IL_0026: ldloc.0
+			IL_0027: ldstr "gzipSync"
+			IL_002c: ldstr "abc"
+			IL_0031: ldloc.1
+			IL_0032: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+			IL_0037: stloc.0
+			IL_0038: ldloc.0
+			IL_0039: ret
+		} // end of method ArrowFunction_L25C37::__js_call__
+
+	} // end of class ArrowFunction_L25C37
+
+	.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L26C39
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested public auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x282f
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				class Modules.Require_Zlib_ErrorPaths/Scope scope,
+				object newTarget
+			) cil managed 
+		{
+			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
+				01 00 01 00 00 00 01 00 54 08 1c 53 69 6e 67 6c
+				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
+				74 61 54 6f 6b 65 6e 09 00 00 02
+			)
+			// Method begins at RVA 0x26cc
+			// Header size: 12
+			// Code size: 83 (0x53)
+			.maxstack 8
+			.locals init (
+				[0] object,
+				[1] object,
+				[2] class [JavaScriptRuntime]JavaScriptRuntime.JsObject
+			)
+
+			IL_0000: ldarg.0
+			IL_0001: ldfld object Modules.Require_Zlib_ErrorPaths/Scope::zlib
+			IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_000b: stloc.0
+			IL_000c: ldarg.0
+			IL_000d: ldfld object Modules.Require_Zlib_ErrorPaths/Scope::zlib
+			IL_0012: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0017: stloc.1
+			IL_0018: ldloc.1
+			IL_0019: ldstr "gzipSync"
+			IL_001e: ldstr "abc"
+			IL_0023: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_0028: stloc.1
+			IL_0029: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+			IL_002e: dup
+			IL_002f: ldstr "flush"
+			IL_0034: ldc.r8 2
+			IL_003d: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
+			IL_0042: stloc.2
+			IL_0043: ldloc.0
+			IL_0044: ldstr "gunzipSync"
+			IL_0049: ldloc.1
+			IL_004a: ldloc.2
+			IL_004b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+			IL_0050: stloc.1
+			IL_0051: ldloc.1
+			IL_0052: ret
+		} // end of method ArrowFunction_L26C39::__js_call__
+
+	} // end of class ArrowFunction_L26C39
+
+	.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L27C28
 		extends [System.Runtime]System.Object
 	{
 		// Nested Types
@@ -250,35 +388,38 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 09 00 00 02
 			)
-			// Method begins at RVA 0x26a4
+			// Method begins at RVA 0x272c
 			// Header size: 12
-			// Code size: 56 (0x38)
+			// Code size: 58 (0x3a)
 			.maxstack 8
 			.locals init (
-				[0] object
+				[0] object,
+				[1] class [JavaScriptRuntime]JavaScriptRuntime.JsObject
 			)
 
 			IL_0000: ldarg.0
 			IL_0001: ldfld object Modules.Require_Zlib_ErrorPaths/Scope::zlib
 			IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
 			IL_000b: stloc.0
-			IL_000c: ldloc.0
-			IL_000d: ldstr "gzipSync"
-			IL_0012: ldstr "abc"
-			IL_0017: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-			IL_001c: dup
-			IL_001d: ldstr "chunkSize"
-			IL_0022: ldc.r8 1024
-			IL_002b: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
-			IL_0030: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-			IL_0035: stloc.0
-			IL_0036: ldloc.0
-			IL_0037: ret
-		} // end of method ArrowFunction_L25C37::__js_call__
+			IL_000c: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+			IL_0011: dup
+			IL_0012: ldstr "level"
+			IL_0017: ldc.r8 10
+			IL_0020: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
+			IL_0025: stloc.1
+			IL_0026: ldloc.0
+			IL_0027: ldstr "gzipSync"
+			IL_002c: ldstr "abc"
+			IL_0031: ldloc.1
+			IL_0032: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+			IL_0037: stloc.0
+			IL_0038: ldloc.0
+			IL_0039: ret
+		} // end of method ArrowFunction_L27C28::__js_call__
 
-	} // end of class ArrowFunction_L25C37
+	} // end of class ArrowFunction_L27C28
 
-	.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L26C39
+	.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L28C28
 		extends [System.Runtime]System.Object
 	{
 		// Nested Types
@@ -315,45 +456,38 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 09 00 00 02
 			)
-			// Method begins at RVA 0x26e8
+			// Method begins at RVA 0x2774
 			// Header size: 12
-			// Code size: 81 (0x51)
+			// Code size: 58 (0x3a)
 			.maxstack 8
 			.locals init (
 				[0] object,
-				[1] object
+				[1] class [JavaScriptRuntime]JavaScriptRuntime.JsObject
 			)
 
 			IL_0000: ldarg.0
 			IL_0001: ldfld object Modules.Require_Zlib_ErrorPaths/Scope::zlib
 			IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
 			IL_000b: stloc.0
-			IL_000c: ldarg.0
-			IL_000d: ldfld object Modules.Require_Zlib_ErrorPaths/Scope::zlib
-			IL_0012: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0017: stloc.1
-			IL_0018: ldloc.1
-			IL_0019: ldstr "gzipSync"
-			IL_001e: ldstr "abc"
-			IL_0023: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_0028: stloc.1
-			IL_0029: ldloc.0
-			IL_002a: ldstr "gunzipSync"
-			IL_002f: ldloc.1
-			IL_0030: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-			IL_0035: dup
-			IL_0036: ldstr "flush"
-			IL_003b: ldc.r8 2
-			IL_0044: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
-			IL_0049: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-			IL_004e: stloc.1
-			IL_004f: ldloc.1
-			IL_0050: ret
-		} // end of method ArrowFunction_L26C39::__js_call__
+			IL_000c: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+			IL_0011: dup
+			IL_0012: ldstr "level"
+			IL_0017: ldc.r8 (00 00 00 00 00 00 F8 FF)
+			IL_0020: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
+			IL_0025: stloc.1
+			IL_0026: ldloc.0
+			IL_0027: ldstr "gzipSync"
+			IL_002c: ldstr "abc"
+			IL_0031: ldloc.1
+			IL_0032: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+			IL_0037: stloc.0
+			IL_0038: ldloc.0
+			IL_0039: ret
+		} // end of method ArrowFunction_L28C28::__js_call__
 
-	} // end of class ArrowFunction_L26C39
+	} // end of class ArrowFunction_L28C28
 
-	.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L27C28
+	.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L29C33
 		extends [System.Runtime]System.Object
 	{
 		// Nested Types
@@ -390,160 +524,33 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 09 00 00 02
 			)
-			// Method begins at RVA 0x2748
+			// Method begins at RVA 0x27bc
 			// Header size: 12
-			// Code size: 56 (0x38)
+			// Code size: 58 (0x3a)
 			.maxstack 8
 			.locals init (
-				[0] object
+				[0] object,
+				[1] class [JavaScriptRuntime]JavaScriptRuntime.JsObject
 			)
 
 			IL_0000: ldarg.0
 			IL_0001: ldfld object Modules.Require_Zlib_ErrorPaths/Scope::zlib
 			IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
 			IL_000b: stloc.0
-			IL_000c: ldloc.0
-			IL_000d: ldstr "gzipSync"
-			IL_0012: ldstr "abc"
-			IL_0017: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-			IL_001c: dup
-			IL_001d: ldstr "level"
-			IL_0022: ldc.r8 10
-			IL_002b: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
-			IL_0030: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-			IL_0035: stloc.0
-			IL_0036: ldloc.0
-			IL_0037: ret
-		} // end of method ArrowFunction_L27C28::__js_call__
-
-	} // end of class ArrowFunction_L27C28
-
-	.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L28C28
-		extends [System.Runtime]System.Object
-	{
-		// Nested Types
-		.class nested public auto ansi beforefieldinit Scope
-			extends [System.Runtime]System.Object
-		{
-			// Methods
-			.method public hidebysig specialname rtspecialname 
-				instance void .ctor () cil managed 
-			{
-				// Method begins at RVA 0x2853
-				// Header size: 1
-				// Code size: 8 (0x8)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-				IL_0006: nop
-				IL_0007: ret
-			} // end of method Scope::.ctor
-
-		} // end of class Scope
-
-
-		// Methods
-		.method public hidebysig static 
-			object __js_call__ (
-				class Modules.Require_Zlib_ErrorPaths/Scope scope,
-				object newTarget
-			) cil managed 
-		{
-			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
-				01 00 01 00 00 00 01 00 54 08 1c 53 69 6e 67 6c
-				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
-				74 61 54 6f 6b 65 6e 09 00 00 02
-			)
-			// Method begins at RVA 0x278c
-			// Header size: 12
-			// Code size: 56 (0x38)
-			.maxstack 8
-			.locals init (
-				[0] object
-			)
-
-			IL_0000: ldarg.0
-			IL_0001: ldfld object Modules.Require_Zlib_ErrorPaths/Scope::zlib
-			IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_000b: stloc.0
-			IL_000c: ldloc.0
-			IL_000d: ldstr "gzipSync"
-			IL_0012: ldstr "abc"
-			IL_0017: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-			IL_001c: dup
-			IL_001d: ldstr "level"
-			IL_0022: ldc.r8 (00 00 00 00 00 00 F8 FF)
-			IL_002b: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
-			IL_0030: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-			IL_0035: stloc.0
-			IL_0036: ldloc.0
-			IL_0037: ret
-		} // end of method ArrowFunction_L28C28::__js_call__
-
-	} // end of class ArrowFunction_L28C28
-
-	.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L29C33
-		extends [System.Runtime]System.Object
-	{
-		// Nested Types
-		.class nested public auto ansi beforefieldinit Scope
-			extends [System.Runtime]System.Object
-		{
-			// Methods
-			.method public hidebysig specialname rtspecialname 
-				instance void .ctor () cil managed 
-			{
-				// Method begins at RVA 0x285c
-				// Header size: 1
-				// Code size: 8 (0x8)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-				IL_0006: nop
-				IL_0007: ret
-			} // end of method Scope::.ctor
-
-		} // end of class Scope
-
-
-		// Methods
-		.method public hidebysig static 
-			object __js_call__ (
-				class Modules.Require_Zlib_ErrorPaths/Scope scope,
-				object newTarget
-			) cil managed 
-		{
-			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
-				01 00 01 00 00 00 01 00 54 08 1c 53 69 6e 67 6c
-				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
-				74 61 54 6f 6b 65 6e 09 00 00 02
-			)
-			// Method begins at RVA 0x27d0
-			// Header size: 12
-			// Code size: 56 (0x38)
-			.maxstack 8
-			.locals init (
-				[0] object
-			)
-
-			IL_0000: ldarg.0
-			IL_0001: ldfld object Modules.Require_Zlib_ErrorPaths/Scope::zlib
-			IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_000b: stloc.0
-			IL_000c: ldloc.0
-			IL_000d: ldstr "gzipSync"
-			IL_0012: ldstr "abc"
-			IL_0017: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-			IL_001c: dup
-			IL_001d: ldstr "level"
-			IL_0022: ldc.r8 (00 00 00 00 00 00 F0 7F)
-			IL_002b: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
-			IL_0030: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-			IL_0035: stloc.0
-			IL_0036: ldloc.0
-			IL_0037: ret
+			IL_000c: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+			IL_0011: dup
+			IL_0012: ldstr "level"
+			IL_0017: ldc.r8 (00 00 00 00 00 00 F0 7F)
+			IL_0020: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
+			IL_0025: stloc.1
+			IL_0026: ldloc.0
+			IL_0027: ldstr "gzipSync"
+			IL_002c: ldstr "abc"
+			IL_0031: ldloc.1
+			IL_0032: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+			IL_0037: stloc.0
+			IL_0038: ldloc.0
+			IL_0039: ret
 		} // end of method ArrowFunction_L29C33::__js_call__
 
 	} // end of class ArrowFunction_L29C33
@@ -564,7 +571,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2865
+				// Method begins at RVA 0x2853
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -584,7 +591,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x286e
+				// Method begins at RVA 0x285c
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -606,7 +613,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2814
+			// Method begins at RVA 0x2802
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -632,7 +639,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 1250 (0x4e2)
+		// Code size: 1234 (0x4d2)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Require_Zlib_ErrorPaths/Scope,
@@ -644,13 +651,14 @@
 			[6] object,
 			[7] object,
 			[8] object,
-			[9] object[],
-			[10] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0,
-			[11] class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer,
-			[12] bool,
-			[13] object,
+			[9] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
+			[10] object[],
+			[11] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0,
+			[12] class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer,
+			[13] bool,
 			[14] object,
-			[15] object
+			[15] object,
+			[16] object
 		)
 
 		IL_0000: newobj instance void Modules.Require_Zlib_ErrorPaths/Scope::.ctor()
@@ -677,27 +685,27 @@
 		IL_003c: nop
 		IL_003d: ldstr "console"
 		IL_0042: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0047: stloc.s 6
-		IL_0049: ldloc.s 6
-		IL_004b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0050: stloc.s 6
-		IL_0052: ldloc.0
-		IL_0053: ldfld object Modules.Require_Zlib_ErrorPaths/Scope::zlib
-		IL_0058: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_005d: stloc.s 7
-		IL_005f: ldloc.0
-		IL_0060: ldfld object Modules.Require_Zlib_ErrorPaths/Scope::zlib
-		IL_0065: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_006a: stloc.s 8
-		IL_006c: ldloc.s 8
-		IL_006e: ldstr "gzipSync"
-		IL_0073: ldstr "abc"
-		IL_0078: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_007d: dup
-		IL_007e: ldstr "level"
-		IL_0083: ldc.r8 1
-		IL_008c: neg
-		IL_008d: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
+		IL_0047: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_004c: stloc.s 6
+		IL_004e: ldloc.0
+		IL_004f: ldfld object Modules.Require_Zlib_ErrorPaths/Scope::zlib
+		IL_0054: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0059: stloc.s 7
+		IL_005b: ldloc.0
+		IL_005c: ldfld object Modules.Require_Zlib_ErrorPaths/Scope::zlib
+		IL_0061: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0066: stloc.s 8
+		IL_0068: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_006d: dup
+		IL_006e: ldstr "level"
+		IL_0073: ldc.r8 1
+		IL_007c: neg
+		IL_007d: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
+		IL_0082: stloc.s 9
+		IL_0084: ldloc.s 8
+		IL_0086: ldstr "gzipSync"
+		IL_008b: ldstr "abc"
+		IL_0090: ldloc.s 9
 		IL_0092: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
 		IL_0097: stloc.s 8
 		IL_0099: ldloc.s 7
@@ -721,26 +729,26 @@
 		IL_00d8: pop
 		IL_00d9: ldstr "console"
 		IL_00de: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_00e3: stloc.s 8
-		IL_00e5: ldloc.s 8
-		IL_00e7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00ec: stloc.s 8
-		IL_00ee: ldloc.0
-		IL_00ef: ldfld object Modules.Require_Zlib_ErrorPaths/Scope::zlib
-		IL_00f4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00f9: stloc.s 6
-		IL_00fb: ldloc.0
-		IL_00fc: ldfld object Modules.Require_Zlib_ErrorPaths/Scope::zlib
-		IL_0101: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0106: stloc.s 7
-		IL_0108: ldloc.s 7
-		IL_010a: ldstr "gzipSync"
-		IL_010f: ldstr "abc"
-		IL_0114: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_0119: dup
-		IL_011a: ldstr "level"
-		IL_011f: ldc.r8 1.5
-		IL_0128: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
+		IL_00e3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00e8: stloc.s 8
+		IL_00ea: ldloc.0
+		IL_00eb: ldfld object Modules.Require_Zlib_ErrorPaths/Scope::zlib
+		IL_00f0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00f5: stloc.s 6
+		IL_00f7: ldloc.0
+		IL_00f8: ldfld object Modules.Require_Zlib_ErrorPaths/Scope::zlib
+		IL_00fd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0102: stloc.s 7
+		IL_0104: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0109: dup
+		IL_010a: ldstr "level"
+		IL_010f: ldc.r8 1.5
+		IL_0118: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
+		IL_011d: stloc.s 9
+		IL_011f: ldloc.s 7
+		IL_0121: ldstr "gzipSync"
+		IL_0126: ldstr "abc"
+		IL_012b: ldloc.s 9
 		IL_012d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
 		IL_0132: stloc.s 7
 		IL_0134: ldloc.s 6
@@ -763,7 +771,7 @@
 		IL_016e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
 		IL_0173: pop
 		IL_0174: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0179: stloc.s 9
+		IL_0179: stloc.s 10
 		IL_017b: ldc.i4.1
 		IL_017c: newarr [System.Runtime]System.Object
 		IL_0181: dup
@@ -791,15 +799,15 @@
 		IL_01b8: ldc.i4.0
 		IL_01b9: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
 		IL_01be: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0)
-		IL_01c3: stloc.s 10
+		IL_01c3: stloc.s 11
 		IL_01c5: ldloc.1
-		IL_01c6: ldloc.s 9
+		IL_01c6: ldloc.s 10
 		IL_01c8: ldstr "gzip unsupported option"
-		IL_01cd: ldloc.s 10
+		IL_01cd: ldloc.s 11
 		IL_01cf: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
 		IL_01d4: pop
 		IL_01d5: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_01da: stloc.s 9
+		IL_01da: stloc.s 10
 		IL_01dc: ldc.i4.1
 		IL_01dd: newarr [System.Runtime]System.Object
 		IL_01e2: dup
@@ -827,15 +835,15 @@
 		IL_0219: ldc.i4.0
 		IL_021a: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
 		IL_021f: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0)
-		IL_0224: stloc.s 10
+		IL_0224: stloc.s 11
 		IL_0226: ldloc.1
-		IL_0227: ldloc.s 9
+		IL_0227: ldloc.s 10
 		IL_0229: ldstr "gunzip unsupported option"
-		IL_022e: ldloc.s 10
+		IL_022e: ldloc.s 11
 		IL_0230: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
 		IL_0235: pop
 		IL_0236: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_023b: stloc.s 9
+		IL_023b: stloc.s 10
 		IL_023d: ldc.i4.1
 		IL_023e: newarr [System.Runtime]System.Object
 		IL_0243: dup
@@ -863,15 +871,15 @@
 		IL_027a: ldc.i4.0
 		IL_027b: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
 		IL_0280: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0)
-		IL_0285: stloc.s 10
+		IL_0285: stloc.s 11
 		IL_0287: ldloc.1
-		IL_0288: ldloc.s 9
+		IL_0288: ldloc.s 10
 		IL_028a: ldstr "gzip bad level"
-		IL_028f: ldloc.s 10
+		IL_028f: ldloc.s 11
 		IL_0291: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
 		IL_0296: pop
 		IL_0297: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_029c: stloc.s 9
+		IL_029c: stloc.s 10
 		IL_029e: ldc.i4.1
 		IL_029f: newarr [System.Runtime]System.Object
 		IL_02a4: dup
@@ -899,15 +907,15 @@
 		IL_02db: ldc.i4.0
 		IL_02dc: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
 		IL_02e1: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0)
-		IL_02e6: stloc.s 10
+		IL_02e6: stloc.s 11
 		IL_02e8: ldloc.1
-		IL_02e9: ldloc.s 9
+		IL_02e9: ldloc.s 10
 		IL_02eb: ldstr "gzip NaN level"
-		IL_02f0: ldloc.s 10
+		IL_02f0: ldloc.s 11
 		IL_02f2: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
 		IL_02f7: pop
 		IL_02f8: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_02fd: stloc.s 9
+		IL_02fd: stloc.s 10
 		IL_02ff: ldc.i4.1
 		IL_0300: newarr [System.Runtime]System.Object
 		IL_0305: dup
@@ -935,11 +943,11 @@
 		IL_033c: ldc.i4.0
 		IL_033d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
 		IL_0342: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0)
-		IL_0347: stloc.s 10
+		IL_0347: stloc.s 11
 		IL_0349: ldloc.1
-		IL_034a: ldloc.s 9
+		IL_034a: ldloc.s 10
 		IL_034c: ldstr "gzip Infinity level"
-		IL_0351: ldloc.s 10
+		IL_0351: ldloc.s 11
 		IL_0353: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
 		IL_0358: pop
 		.try
@@ -951,130 +959,122 @@
 			IL_0365: stloc.s 7
 			IL_0367: ldstr "not gzip"
 			IL_036c: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer::from(object)
-			IL_0371: stloc.s 11
+			IL_0371: stloc.s 12
 			IL_0373: ldloc.s 7
 			IL_0375: ldstr "gunzipSync"
-			IL_037a: ldloc.s 11
+			IL_037a: ldloc.s 12
 			IL_037c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
 			IL_0381: pop
 			IL_0382: ldstr "console"
 			IL_0387: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_038c: stloc.s 7
-			IL_038e: ldloc.s 7
-			IL_0390: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0395: stloc.s 7
-			IL_0397: ldloc.s 7
-			IL_0399: ldstr "log"
-			IL_039e: ldstr "gunzip invalid data threw:"
-			IL_03a3: ldc.i4.0
-			IL_03a4: box [System.Runtime]System.Boolean
-			IL_03a9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-			IL_03ae: pop
-			IL_03af: leave IL_04de
+			IL_038c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0391: stloc.s 7
+			IL_0393: ldloc.s 7
+			IL_0395: ldstr "log"
+			IL_039a: ldstr "gunzip invalid data threw:"
+			IL_039f: ldc.i4.0
+			IL_03a0: box [System.Runtime]System.Boolean
+			IL_03a5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+			IL_03aa: pop
+			IL_03ab: leave IL_04ce
 		} // end .try
 		catch [System.Runtime]System.Exception
 		{
-			IL_03b4: stloc.2
-			IL_03b5: ldloc.2
-			IL_03b6: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-			IL_03bb: dup
-			IL_03bc: brtrue IL_03d1
+			IL_03b0: stloc.2
+			IL_03b1: ldloc.2
+			IL_03b2: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+			IL_03b7: dup
+			IL_03b8: brtrue IL_03cd
 
-			IL_03c1: pop
-			IL_03c2: ldloc.2
-			IL_03c3: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
-			IL_03c8: dup
-			IL_03c9: brtrue IL_03dc
+			IL_03bd: pop
+			IL_03be: ldloc.2
+			IL_03bf: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+			IL_03c4: dup
+			IL_03c5: brtrue IL_03d8
 
-			IL_03ce: pop
-			IL_03cf: rethrow
+			IL_03ca: pop
+			IL_03cb: rethrow
 
-			IL_03d1: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-			IL_03d6: stloc.3
-			IL_03d7: br IL_03dd
+			IL_03cd: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+			IL_03d2: stloc.3
+			IL_03d3: br IL_03d9
 
-			IL_03dc: stloc.3
+			IL_03d8: stloc.3
 
-			IL_03dd: ldloc.3
-			IL_03de: stloc.s 4
-			IL_03e0: ldstr "console"
-			IL_03e5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_03ea: stloc.s 7
-			IL_03ec: ldloc.s 7
-			IL_03ee: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_03f3: stloc.s 7
-			IL_03f5: ldloc.s 7
-			IL_03f7: ldstr "log"
-			IL_03fc: ldstr "gunzip invalid data threw:"
-			IL_0401: ldc.i4.1
-			IL_0402: box [System.Runtime]System.Boolean
-			IL_0407: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-			IL_040c: pop
-			IL_040d: ldstr "console"
-			IL_0412: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_0417: stloc.s 7
-			IL_0419: ldloc.s 7
-			IL_041b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0420: stloc.s 7
-			IL_0422: ldloc.s 7
-			IL_0424: ldstr "log"
-			IL_0429: ldstr "gunzip invalid data name:"
-			IL_042e: ldloc.s 4
-			IL_0430: ldstr "name"
-			IL_0435: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_043a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-			IL_043f: pop
-			IL_0440: ldstr "console"
-			IL_0445: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_044a: stloc.s 7
-			IL_044c: ldloc.s 7
-			IL_044e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0453: stloc.s 7
-			IL_0455: ldloc.s 4
-			IL_0457: ldstr "message"
-			IL_045c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0461: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
-			IL_0466: ldstr "string"
-			IL_046b: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-			IL_0470: stloc.s 12
-			IL_0472: ldloc.s 12
-			IL_0474: box [System.Runtime]System.Boolean
-			IL_0479: stloc.s 13
-			IL_047b: ldloc.s 13
-			IL_047d: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-			IL_0482: stloc.s 12
-			IL_0484: ldloc.s 12
-			IL_0486: brfalse IL_04c1
+			IL_03d9: ldloc.3
+			IL_03da: stloc.s 4
+			IL_03dc: ldstr "console"
+			IL_03e1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_03e6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_03eb: stloc.s 7
+			IL_03ed: ldloc.s 7
+			IL_03ef: ldstr "log"
+			IL_03f4: ldstr "gunzip invalid data threw:"
+			IL_03f9: ldc.i4.1
+			IL_03fa: box [System.Runtime]System.Boolean
+			IL_03ff: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+			IL_0404: pop
+			IL_0405: ldstr "console"
+			IL_040a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_040f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0414: stloc.s 7
+			IL_0416: ldloc.s 7
+			IL_0418: ldstr "log"
+			IL_041d: ldstr "gunzip invalid data name:"
+			IL_0422: ldloc.s 4
+			IL_0424: ldstr "name"
+			IL_0429: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_042e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+			IL_0433: pop
+			IL_0434: ldstr "console"
+			IL_0439: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_043e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0443: stloc.s 7
+			IL_0445: ldloc.s 4
+			IL_0447: ldstr "message"
+			IL_044c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0451: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
+			IL_0456: ldstr "string"
+			IL_045b: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+			IL_0460: stloc.s 13
+			IL_0462: ldloc.s 13
+			IL_0464: box [System.Runtime]System.Boolean
+			IL_0469: stloc.s 14
+			IL_046b: ldloc.s 14
+			IL_046d: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+			IL_0472: stloc.s 13
+			IL_0474: ldloc.s 13
+			IL_0476: brfalse IL_04b1
 
-			IL_048b: ldloc.s 4
-			IL_048d: ldstr "message"
-			IL_0492: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0497: ldstr "length"
-			IL_049c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_04a1: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_04a6: ldc.r8 0.0
-			IL_04af: cgt
-			IL_04b1: stloc.s 12
-			IL_04b3: ldloc.s 12
-			IL_04b5: box [System.Runtime]System.Boolean
-			IL_04ba: stloc.s 15
-			IL_04bc: br IL_04c5
+			IL_047b: ldloc.s 4
+			IL_047d: ldstr "message"
+			IL_0482: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0487: ldstr "length"
+			IL_048c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0491: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0496: ldc.r8 0.0
+			IL_049f: cgt
+			IL_04a1: stloc.s 13
+			IL_04a3: ldloc.s 13
+			IL_04a5: box [System.Runtime]System.Boolean
+			IL_04aa: stloc.s 16
+			IL_04ac: br IL_04b5
 
-			IL_04c1: ldloc.s 13
-			IL_04c3: stloc.s 15
+			IL_04b1: ldloc.s 14
+			IL_04b3: stloc.s 16
 
-			IL_04c5: ldloc.s 7
-			IL_04c7: ldstr "log"
-			IL_04cc: ldstr "gunzip invalid data message length > 0:"
-			IL_04d1: ldloc.s 15
-			IL_04d3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-			IL_04d8: pop
-			IL_04d9: leave IL_04de
+			IL_04b5: ldloc.s 7
+			IL_04b7: ldstr "log"
+			IL_04bc: ldstr "gunzip invalid data message length > 0:"
+			IL_04c1: ldloc.s 16
+			IL_04c3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+			IL_04c8: pop
+			IL_04c9: leave IL_04ce
 		} // end handler
 
-		IL_04de: ldnull
-		IL_04df: stloc.s 5
-		IL_04e1: ret
+		IL_04ce: ldnull
+		IL_04cf: stloc.s 5
+		IL_04d1: ret
 	} // end of method Require_Zlib_ErrorPaths::__js_module_init__
 
 } // end of class Modules.Require_Zlib_ErrorPaths
@@ -1086,7 +1086,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2877
+		// Method begins at RVA 0x2865
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
