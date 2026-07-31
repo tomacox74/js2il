@@ -425,6 +425,62 @@ public sealed class LIRStackSchedulerTests
             schedule.TempResidencies[final.Index]);
     }
 
+    [Fact]
+    public void Build_TypedComparisonsMode_ClaimsNumericTreeAndBranchComparison()
+    {
+        var body = new MethodBodyIR();
+        var a = AddTemp(body);
+        var two = AddTemp(body);
+        var product = AddTemp(body);
+        var b = AddTemp(body);
+        var one = AddTemp(body);
+        var sum = AddTemp(body);
+        var comparison = AddTemp(body);
+        body.Instructions.Add(new LIRLoadParameter(1, a));
+        body.Instructions.Add(new LIRConstNumber(2, two));
+        body.Instructions.Add(new LIRMulNumber(a, two, product));
+        body.Instructions.Add(new LIRLoadParameter(2, b));
+        body.Instructions.Add(new LIRConstNumber(1, one));
+        body.Instructions.Add(new LIRAddNumber(b, one, sum));
+        body.Instructions.Add(new LIRCompareNumberLessThan(product, sum, comparison));
+        body.Instructions.Add(new LIRBranchIfFalse(comparison, 1));
+        body.Instructions.Add(new LIRLabel(1));
+
+        var schedule = LIRStackScheduler.Build(
+            body,
+            new LIRStackSchedulerOptions(LIRStackSchedulerMode.TypedComparisons));
+
+        Assert.Equal(TempResidency.StackResident, schedule.TempResidencies[product.Index]);
+        Assert.Equal(TempResidency.StackResident, schedule.TempResidencies[sum.Index]);
+        Assert.Equal(TempResidency.StackResident, schedule.TempResidencies[comparison.Index]);
+        Assert.Equal(3, schedule.Metrics.StackResidentTempCount);
+        Assert.Equal(2, schedule.MaxStackDepth);
+        Assert.Equal(1, schedule.CarriedStackDepthBeforeInstructions[7]);
+    }
+
+    [Fact]
+    public void Build_TypedComparisonsMode_DoesNotClaimCallOperands()
+    {
+        var body = new MethodBodyIR();
+        var left = AddTemp(body);
+        var right = AddTemp(body);
+        var comparison = AddTemp(body);
+        body.Instructions.Add(new LIRCallRuntimeServicesStatic(
+            "Left", System.Array.Empty<TempVariable>(), left));
+        body.Instructions.Add(new LIRCallRuntimeServicesStatic(
+            "Right", System.Array.Empty<TempVariable>(), right));
+        body.Instructions.Add(new LIRCompareNumberLessThan(left, right, comparison));
+        body.Instructions.Add(new LIRReturn(comparison));
+
+        var schedule = LIRStackScheduler.Build(
+            body,
+            new LIRStackSchedulerOptions(LIRStackSchedulerMode.TypedComparisons));
+
+        Assert.Equal(TempResidency.MaterializedLocal, schedule.TempResidencies[left.Index]);
+        Assert.Equal(TempResidency.MaterializedLocal, schedule.TempResidencies[right.Index]);
+        Assert.Equal(TempResidency.StackResident, schedule.TempResidencies[comparison.Index]);
+    }
+
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
@@ -465,7 +521,7 @@ public sealed class LIRStackSchedulerTests
     }
 
     [Fact]
-    public void Compiler_TypedNumericMode_EliminatesIntermediateSpills()
+    public void Compiler_TypedComparisonsMode_EliminatesIntermediateSpills()
     {
         const string source = """
             "use strict";
@@ -475,13 +531,16 @@ public sealed class LIRStackSchedulerTests
             function subChain(a, b, c) { return a - b - c; }
             function divMod(a, b, c) { return a / b % c; }
             function expAdd(a, b, c) { return a ** b + c; }
+            function less(a, b) { return a < b; }
+            function branch(a, b) { if (a * 2 < b + 1) return a; return b; }
             console.log(mulAdd(4), addChain(1, 2, 3, 4), tree(2, 3, 4, 5),
-              subChain(10, 3, 2), divMod(20, 3, 2), expAdd(2, 3, 1));
+              subChain(10, 3, 2), divMod(20, 3, 2), expAdd(2, 3, 1),
+              less(1, 2), branch(2, 10));
             """;
 
         var artifact = Compile(
             source,
-            LIRStackSchedulerMode.TypedNumeric,
+            LIRStackSchedulerMode.TypedComparisons,
             emitPdb: false);
         var path = Path.Combine(
             Path.GetTempPath(),
@@ -527,6 +586,24 @@ public sealed class LIRStackSchedulerTests
             "expAdd",
             "System.Math::Pow",
             "add");
+        AssertMethodHasNoIntermediateSpills(
+            il,
+            "less",
+            "ldarg.1",
+            "ldarg.2",
+            "clt",
+            "box");
+        AssertMethodHasNoIntermediateSpills(
+            il,
+            "branch",
+            "ldarg.1",
+            "ldc.r8 2",
+            "mul",
+            "ldarg.2",
+            "ldc.r8 1",
+            "add",
+            "clt",
+            "brfalse");
     }
 
     private static TempVariable AddTemp(MethodBodyIR body)

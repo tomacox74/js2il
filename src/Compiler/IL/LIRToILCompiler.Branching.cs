@@ -26,6 +26,13 @@ internal sealed partial class LIRToILCompiler
         Dictionary<int, LIRInstruction> tempDefinitions,
         MethodDescriptor methodDescriptor)
     {
+        if (IsSchedulerStackResident(condition))
+        {
+            // The comparison already produced the branch condition at its
+            // source position. brtrue/brfalse consumes it directly.
+            return;
+        }
+
         // Check if the condition is a non-materialized comparison that we should inline
         if (!IsMaterialized(condition, allocation) &&
             condition.Index >= 0 &&

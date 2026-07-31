@@ -5,11 +5,12 @@
 The scheduler is being introduced incrementally under the umbrella tracked by
 [GitHub issue #1617](https://github.com/tomacox74/js2il/issues/1617).
 
-The implementation currently provides **typed numeric binary scheduling** on
+The implementation currently provides **typed numeric and comparison scheduling** on
 top of the validated identity foundation:
 
 - LIR instructions are emitted in their original order.
-- Single-use typed numeric binary results can remain stack-resident.
+- Single-use typed numeric binary, unary, and comparison results can remain
+  stack-resident.
 - Existing `Stackify`, branch fusion, rematerialization, and local allocation
   behavior remains authoritative.
 - Existing constructor/field-store peepholes remain intact.
@@ -101,7 +102,8 @@ Current integration is in:
 |---|---|
 | `Disabled` | Bypass schedule construction and use the legacy raw LIR index path. |
 | `Identity` | Emit through an explicit source-order schedule with no scheduler-owned residency. |
-| `TypedNumeric` | Identity plus typed numeric binary stack residency. This is the default. |
+| `TypedNumeric` | Identity plus typed numeric binary stack residency. |
+| `TypedComparisons` | TypedNumeric plus typed unary/comparison and direct branch/return consumption. This is the default. |
 
 Later modes must include all behavior from preceding modes so adjacent levels
 remain useful for A/B diagnosis.
@@ -165,6 +167,42 @@ scope-field stores that push a receiver before their value, and unsupported
 operand orders remain materialized or legacy-owned. `LIRConvertToObject` is
 stack-resident only for the proven simple synchronous-return shape; other
 boxing consumers retain legacy behavior.
+
+## Typed unary and comparison coverage
+
+`TypedComparisons` extends cumulative coverage to:
+
+```text
+LIRNegateNumber
+LIRBitwiseNotNumber
+LIRCompareNumberLessThan
+LIRCompareNumberGreaterThan
+LIRCompareNumberLessThanOrEqual
+LIRCompareNumberGreaterThanOrEqual
+LIRCompareNumberEqual
+LIRCompareNumberNotEqual
+LIRCompareBooleanEqual
+LIRCompareBooleanNotEqual
+```
+
+Covered results can feed another typed unary/comparison/numeric operation, safe
+boxing-to-return, `LIRReturn`, or an immediately following
+`LIRBranchIfTrue`/`LIRBranchIfFalse`.
+
+For a branch consumer, the comparison executes once at its original definition
+site and leaves the Boolean on the evaluation stack. `EmitBranchCondition`
+recognizes scheduler ownership and emits no duplicate inline comparison;
+`brtrue`/`brfalse` consumes the carried value directly.
+
+Because scheduler ownership is established before
+`BranchConditionOptimizer`, a covered comparison belongs to the scheduler and
+cannot also belong to legacy branch fusion. Unsupported comparison shapes
+remain eligible for the legacy branch optimizer.
+
+Numeric intermediates feeding a comparison are promoted only when the complete
+operand prefix passes the persistent-stack validator. Calls remain
+materialized, execute left-to-right exactly once, and are not moved.
+TDZ-checked reads remain may-throw and source-ordered.
 
 The option is internal and testable. It is not currently a user-facing CLI
 switch.
@@ -521,6 +559,10 @@ Identity mode must preserve all of the following:
   without rematerialization;
 - unsupported or invalid numeric candidates are pruned before strict schedule
   validation.
+- covered branch comparisons are scheduler-owned and excluded from legacy
+  branch fusion;
+- branch target stacks remain empty after the conditional branch consumes the
+  carried Boolean.
 
 The identity scheduler does not inspect `CompilerOptions.EmitPdb`; enabling
 symbols must not change schedule selection or operation order.
@@ -567,6 +609,8 @@ contract.
 - rejection of not-yet-implemented coverage.
 - typed numeric chains/trees, metrics, call-result exclusions, and
   sequence-point rejection;
+- typed unary/comparison chains, scheduler-owned branch consumption, call
+  order, TDZ, NaN/infinity/equality, and signed-zero negation;
 - exact generated IL proving no intermediate numeric `stloc`/`ldloc` pairs;
 - execution coverage for all six operators, NaN, signed zero,
   non-commutative order, calls, and postfix snapshots;
@@ -599,10 +643,11 @@ Focused regression coverage also includes:
 
 ## Current non-goals
 
-Typed numeric scheduling does not:
+Typed comparison scheduling does not:
 
 - reorder LIR instructions;
-- schedule calls, allocations, dynamic operators, comparisons, or unary ops;
+- schedule calls, allocations, dynamic operators, coercive equality, logical
+  not, or `LIRIsInstanceOf`;
 - carry values across sequence points, control flow, EH, `yield`, or `await`;
 - alter rematerialization;
 - replace the local allocator;
@@ -616,13 +661,12 @@ instruction-family PRs smaller and reviewable.
 The ordered work is tracked under
 [issue #1617](https://github.com/tomacox74/js2il/issues/1617):
 
-1. Typed unary/comparison/branch expressions.
-2. Conversions, stable loads, and explicit rematerialization.
-3. Literal and argument construction.
-4. Same-region single-use call results.
-5. General legal scheduling inside straight-line regions.
-6. Stackify scheduling retirement.
-7. Final obsolete-code audit and deletion.
+1. Conversions, stable loads, and explicit rematerialization.
+2. Literal and argument construction.
+3. Same-region single-use call results.
+4. General legal scheduling inside straight-line regions.
+5. Stackify scheduling retirement.
+6. Final obsolete-code audit and deletion.
 
 At each optimizing stage:
 

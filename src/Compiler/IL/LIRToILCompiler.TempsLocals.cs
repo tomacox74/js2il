@@ -2131,6 +2131,50 @@ internal sealed partial class LIRToILCompiler
                 EmitConvertToStringCore(convertToString.Source, ilEncoder, allocation, methodDescriptor);
                 return true;
 
+            case LIRNegateNumber negateNumber:
+                EmitLoadTemp(negateNumber.Value, ilEncoder, allocation, methodDescriptor);
+                ilEncoder.OpCode(ILOpCode.Neg);
+                return true;
+
+            case LIRBitwiseNotNumber bitwiseNot:
+                EmitLoadTempAsNumber(
+                    bitwiseNot.Value,
+                    ilEncoder,
+                    allocation,
+                    methodDescriptor);
+                ilEncoder.OpCode(ILOpCode.Conv_i4);
+                ilEncoder.OpCode(ILOpCode.Not);
+                ilEncoder.OpCode(ILOpCode.Conv_r8);
+                return true;
+
+            case LIRCompareNumberLessThan:
+            case LIRCompareNumberGreaterThan:
+            case LIRCompareNumberLessThanOrEqual:
+            case LIRCompareNumberGreaterThanOrEqual:
+            case LIRCompareNumberEqual:
+            case LIRCompareNumberNotEqual:
+                BranchConditionOptimizer.EmitInlineComparison(
+                    instruction,
+                    ilEncoder,
+                    (temp, encoder) => EmitLoadTempAsNumber(
+                        temp,
+                        encoder,
+                        allocation,
+                        methodDescriptor));
+                return true;
+
+            case LIRCompareBooleanEqual:
+            case LIRCompareBooleanNotEqual:
+                BranchConditionOptimizer.EmitInlineComparison(
+                    instruction,
+                    ilEncoder,
+                    (temp, encoder) => EmitLoadTemp(
+                        temp,
+                        encoder,
+                        allocation,
+                        methodDescriptor));
+                return true;
+
             case LIRConcatStrings concatStrings:
                 EmitLoadTemp(concatStrings.Left, ilEncoder, allocation, methodDescriptor);
                 EmitLoadTemp(concatStrings.Right, ilEncoder, allocation, methodDescriptor);
