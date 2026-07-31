@@ -12,7 +12,8 @@ internal enum LIRStackSchedulerMode
     Disabled = 0,
     Identity = 1,
     TypedNumeric = 2,
-    TypedComparisons = 3
+    TypedComparisons = 3,
+    ConversionsAndStableLoads = 4
 }
 
 internal enum TempResidency

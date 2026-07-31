@@ -41,7 +41,12 @@ internal sealed partial class LIRToILCompiler
                 {
                     if (!IsMaterialized(getStringLength.Result, allocation))
                     {
-                        // Will be emitted inline via EmitLoadTemp when the temp is used.
+                        EmitSchedulerOwnedStackValueIfNeeded(
+                            getStringLength,
+                            getStringLength.Result,
+                            ilEncoder,
+                            allocation,
+                            methodDescriptor);
                         break;
                     }
 
@@ -75,7 +80,12 @@ internal sealed partial class LIRToILCompiler
                 {
                     if (!IsMaterialized(getJsArrayLength.Result, allocation))
                     {
-                        // Will be emitted inline via EmitLoadTemp when the temp is used.
+                        EmitSchedulerOwnedStackValueIfNeeded(
+                            getJsArrayLength,
+                            getJsArrayLength.Result,
+                            ilEncoder,
+                            allocation,
+                            methodDescriptor);
                         break;
                     }
 
@@ -108,7 +118,12 @@ internal sealed partial class LIRToILCompiler
                 {
                     if (!IsMaterialized(getInt32ArrayLength.Result, allocation))
                     {
-                        // Will be emitted inline via EmitLoadTemp when the temp is used.
+                        EmitSchedulerOwnedStackValueIfNeeded(
+                            getInt32ArrayLength,
+                            getInt32ArrayLength.Result,
+                            ilEncoder,
+                            allocation,
+                            methodDescriptor);
                         break;
                     }
 
@@ -297,7 +312,12 @@ internal sealed partial class LIRToILCompiler
                 {
                     if (!IsMaterialized(getArray.Result, allocation))
                     {
-                        // Will be emitted inline via EmitLoadTemp when the temp is used.
+                        EmitSchedulerOwnedStackValueIfNeeded(
+                            getArray,
+                            getArray.Result,
+                            ilEncoder,
+                            allocation,
+                            methodDescriptor);
                         break;
                     }
 
@@ -343,7 +363,12 @@ internal sealed partial class LIRToILCompiler
                 {
                     if (!IsMaterialized(getI32.Result, allocation))
                     {
-                        // Will be emitted inline via EmitLoadTemp when the temp is used.
+                        EmitSchedulerOwnedStackValueIfNeeded(
+                            getI32,
+                            getI32.Result,
+                            ilEncoder,
+                            allocation,
+                            methodDescriptor);
                         break;
                     }
 

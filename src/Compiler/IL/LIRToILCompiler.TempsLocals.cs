@@ -2175,6 +2175,97 @@ internal sealed partial class LIRToILCompiler
                         methodDescriptor));
                 return true;
 
+            case LIRGetStringLength getStringLength:
+                EmitStableReceiver(
+                    getStringLength.Receiver,
+                    typeof(string),
+                    ilEncoder,
+                    allocation,
+                    methodDescriptor);
+                ilEncoder.OpCode(ILOpCode.Callvirt);
+                ilEncoder.Token(_memberRefRegistry.GetOrAddMethod(
+                    typeof(string),
+                    "get_Length",
+                    parameterTypes: Type.EmptyTypes));
+                ilEncoder.OpCode(ILOpCode.Conv_r8);
+                return true;
+
+            case LIRGetJsArrayLength getJsArrayLength:
+                EmitStableReceiver(
+                    getJsArrayLength.Receiver,
+                    typeof(JavaScriptRuntime.Array),
+                    ilEncoder,
+                    allocation,
+                    methodDescriptor);
+                ilEncoder.OpCode(ILOpCode.Callvirt);
+                ilEncoder.Token(_memberRefRegistry.GetOrAddMethod(
+                    typeof(JavaScriptRuntime.Array),
+                    "get_length",
+                    parameterTypes: Type.EmptyTypes));
+                return true;
+
+            case LIRGetInt32ArrayLength getInt32ArrayLength:
+                EmitStableReceiver(
+                    getInt32ArrayLength.Receiver,
+                    typeof(JavaScriptRuntime.Int32Array),
+                    ilEncoder,
+                    allocation,
+                    methodDescriptor);
+                ilEncoder.OpCode(ILOpCode.Callvirt);
+                ilEncoder.Token(_memberRefRegistry.GetOrAddMethod(
+                    typeof(JavaScriptRuntime.Int32Array),
+                    "get_length",
+                    parameterTypes: Type.EmptyTypes));
+                return true;
+
+            case LIRGetJsArrayElement getArray:
+                EmitStableReceiver(
+                    getArray.Receiver,
+                    typeof(JavaScriptRuntime.Array),
+                    ilEncoder,
+                    allocation,
+                    methodDescriptor);
+                EmitLoadTemp(
+                    getArray.Index,
+                    ilEncoder,
+                    allocation,
+                    methodDescriptor);
+                var resultStorage = GetTempStorage(getArray.Result);
+                ilEncoder.OpCode(ILOpCode.Callvirt);
+                ilEncoder.Token(_memberRefRegistry.GetOrAddMethod(
+                    typeof(JavaScriptRuntime.Array),
+                    resultStorage.Kind == ValueStorageKind.UnboxedValue
+                        && resultStorage.ClrType == typeof(double)
+                            ? nameof(JavaScriptRuntime.Array.GetItemAsNumber)
+                            : "get_Item",
+                    parameterTypes: new[] { typeof(double) }));
+                if (resultStorage.Kind == ValueStorageKind.Reference
+                    && resultStorage.ClrType == typeof(string))
+                {
+                    ilEncoder.OpCode(ILOpCode.Castclass);
+                    ilEncoder.Token(_bclReferences.StringType);
+                }
+                return true;
+
+            case LIRGetInt32ArrayElement getInt32:
+                EmitStableReceiver(
+                    getInt32.Receiver,
+                    typeof(JavaScriptRuntime.Int32Array),
+                    ilEncoder,
+                    allocation,
+                    methodDescriptor);
+                EmitLoadTempAsDouble(
+                    getInt32.Index,
+                    ilEncoder,
+                    allocation,
+                    methodDescriptor);
+                ilEncoder.OpCode(ILOpCode.Callvirt);
+                ilEncoder.Token(_memberRefRegistry.GetOrAddMethod(
+                    typeof(JavaScriptRuntime.Int32Array),
+                    "get_Item",
+                    parameterTypes: new[] { typeof(double) }));
+                return true;
+
             case LIRConcatStrings concatStrings:
                 EmitLoadTemp(concatStrings.Left, ilEncoder, allocation, methodDescriptor);
                 EmitLoadTemp(concatStrings.Right, ilEncoder, allocation, methodDescriptor);
@@ -2217,6 +2308,26 @@ internal sealed partial class LIRToILCompiler
                 return true;
             default:
                 return false;
+        }
+
+        void EmitStableReceiver(
+            TempVariable receiver,
+            Type expectedType,
+            InstructionEncoder encoder,
+            TempLocalAllocation tempAllocation,
+            MethodDescriptor descriptor)
+        {
+            var storage = GetTempStorage(receiver);
+            if (storage.Kind == ValueStorageKind.Reference
+                && storage.ClrType == expectedType)
+            {
+                EmitLoadTemp(receiver, encoder, tempAllocation, descriptor);
+                return;
+            }
+
+            EmitLoadTempAsObject(receiver, encoder, tempAllocation, descriptor);
+            encoder.OpCode(ILOpCode.Castclass);
+            encoder.Token(_typeReferenceRegistry.GetOrAdd(expectedType));
         }
     }
 

@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2405
+				// Method begins at RVA 0x2409
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -36,7 +36,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x23fc
+			// Method begins at RVA 0x2400
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -62,7 +62,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 928 (0x3a0)
+		// Code size: 932 (0x3a4)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Object_SymbolKey_Descriptors_And_Enumeration/Scope,
@@ -80,7 +80,8 @@
 			[12] bool,
 			[13] object,
 			[14] object,
-			[15] object
+			[15] object,
+			[16] object
 		)
 
 		IL_0000: newobj instance void Modules.Object_SymbolKey_Descriptors_And_Enumeration/Scope::.ctor()
@@ -362,14 +363,16 @@
 		IL_037d: ldloc.s 11
 		IL_037f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
 		IL_0384: stloc.s 11
-		IL_0386: ldloc.s 11
-		IL_0388: ldstr "log"
-		IL_038d: ldloc.s 8
-		IL_038f: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::get_length()
-		IL_0394: box [System.Runtime]System.Double
-		IL_0399: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_039e: pop
-		IL_039f: ret
+		IL_0386: ldloc.s 8
+		IL_0388: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::get_length()
+		IL_038d: box [System.Runtime]System.Double
+		IL_0392: stloc.s 16
+		IL_0394: ldloc.s 11
+		IL_0396: ldstr "log"
+		IL_039b: ldloc.s 16
+		IL_039d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_03a2: pop
+		IL_03a3: ret
 	} // end of method Object_SymbolKey_Descriptors_And_Enumeration::__js_module_init__
 
 } // end of class Modules.Object_SymbolKey_Descriptors_And_Enumeration
@@ -381,7 +384,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x240e
+		// Method begins at RVA 0x2412
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

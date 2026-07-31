@@ -76,6 +76,9 @@ namespace Jroc.Tests.Function
         public Task Function_ClosureMutatesOuterVariable() { var testName = nameof(Function_ClosureMutatesOuterVariable); return GenerateTest(testName); }
 
         [Fact]
+        public Task Function_SchedulerConversionsStableLoads() { var testName = nameof(Function_SchedulerConversionsStableLoads); return GenerateTest(testName); }
+
+        [Fact]
         public Task Function_ArrowFunctionExpression_ConciseBody_ForEachCapturesOuter() { var testName = nameof(Function_ArrowFunctionExpression_ConciseBody_ForEachCapturesOuter); return GenerateTest(testName); }
 
         [Fact]

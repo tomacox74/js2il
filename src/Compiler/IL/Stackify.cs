@@ -121,7 +121,11 @@ internal static class Stackify
             // Exception: certain side-effectful instructions (currently: LIRCallTypedMember)
             // can be stackified when the single use is *immediately* after the definition,
             // and the IL emitter defers execution to that use site (so it is not re-emitted).
-            if (!CanEmitInline(instr, methodBody, defInstruction) && instr is not LIRCallTypedMember)
+            if (!LIRRematerializationPolicy.CanRematerializeForStackify(
+                    instr,
+                    methodBody,
+                    defInstruction)
+                && instr is not LIRCallTypedMember)
             {
                 continue;
             }
@@ -364,7 +368,10 @@ internal static class Stackify
     /// inlineable, because they lower to pure IL ops (add/mul/etc) and stackification only
     /// applies when a temp has a single use.
     /// </summary>
-    private static bool CanEmitInline(LIRInstruction instruction, MethodBodyIR methodBody, LIRInstruction?[] defInstruction)
+    internal static bool EvaluateLegacyRematerialization(
+        LIRInstruction instruction,
+        MethodBodyIR methodBody,
+        LIRInstruction?[] defInstruction)
     {
         switch (instruction)
         {
@@ -445,7 +452,10 @@ internal static class Stackify
                 }
                 if (numSourceIdx >= 0 && numSourceIdx < defInstruction.Length && defInstruction[numSourceIdx] != null)
                 {
-                    return CanEmitInline(defInstruction[numSourceIdx]!, methodBody, defInstruction);
+                    return EvaluateLegacyRematerialization(
+                        defInstruction[numSourceIdx]!,
+                        methodBody,
+                        defInstruction);
                 }
                 return false;
 
@@ -497,7 +507,10 @@ internal static class Stackify
                 {
                     if (elemIdx < 0 || elemIdx >= defInstruction.Length || defInstruction[elemIdx] == null)
                         return false;
-                    if (!CanEmitInline(defInstruction[elemIdx]!, methodBody, defInstruction))
+                    if (!EvaluateLegacyRematerialization(
+                            defInstruction[elemIdx]!,
+                            methodBody,
+                            defInstruction))
                         return false;
                 }
                 return true;
@@ -509,7 +522,10 @@ internal static class Stackify
                 {
                     if (elemIdx < 0 || elemIdx >= defInstruction.Length || defInstruction[elemIdx] == null)
                         return false;
-                    if (!CanEmitInline(defInstruction[elemIdx]!, methodBody, defInstruction))
+                    if (!EvaluateLegacyRematerialization(
+                            defInstruction[elemIdx]!,
+                            methodBody,
+                            defInstruction))
                         return false;
                 }
                 return true;
@@ -521,7 +537,10 @@ internal static class Stackify
                 {
                     if (valueIdx < 0 || valueIdx >= defInstruction.Length || defInstruction[valueIdx] == null)
                         return false;
-                    if (!CanEmitInline(defInstruction[valueIdx]!, methodBody, defInstruction))
+                    if (!EvaluateLegacyRematerialization(
+                            defInstruction[valueIdx]!,
+                            methodBody,
+                            defInstruction))
                         return false;
                 }
                 return true;
@@ -682,7 +701,10 @@ internal static class Stackify
                 // Now check if the source's defining instruction can be inlined
                 if (sourceIdx >= 0 && sourceIdx < defInstruction.Length && defInstruction[sourceIdx] != null)
                 {
-                    return CanEmitInline(defInstruction[sourceIdx]!, methodBody, defInstruction);
+                    return EvaluateLegacyRematerialization(
+                        defInstruction[sourceIdx]!,
+                        methodBody,
+                        defInstruction);
                 }
                 return false;
 
@@ -714,7 +736,10 @@ internal static class Stackify
             // If we have a defining instruction for the operand, it must itself be inlineable.
             if (idx < defInstruction.Length && defInstruction[idx] != null)
             {
-                return CanEmitInline(defInstruction[idx]!, methodBody, defInstruction);
+                return EvaluateLegacyRematerialization(
+                    defInstruction[idx]!,
+                    methodBody,
+                    defInstruction);
             }
 
             // No def instruction and not variable-backed: conservatively disallow.

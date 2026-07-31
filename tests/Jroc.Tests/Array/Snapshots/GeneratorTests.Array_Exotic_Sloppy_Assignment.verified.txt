@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2355
+				// Method begins at RVA 0x2366
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -44,22 +44,27 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 04 00 00 02
 			)
-			// Method begins at RVA 0x231c
-			// Header size: 1
-			// Code size: 47 (0x2f)
+			// Method begins at RVA 0x2320
+			// Header size: 12
+			// Code size: 49 (0x31)
 			.maxstack 8
+			.locals init (
+				[0] float64
+			)
 
 			IL_0000: ldarg.0
-			IL_0001: ldarg.0
-			IL_0002: ldfld object Modules.Array_Exotic_Sloppy_Assignment/Scope::coercions
-			IL_0007: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_000c: ldc.r8 1
-			IL_0015: add
-			IL_0016: box [System.Runtime]System.Double
-			IL_001b: stfld object Modules.Array_Exotic_Sloppy_Assignment/Scope::coercions
-			IL_0020: ldc.r8 0.0
-			IL_0029: box [System.Runtime]System.Double
-			IL_002e: ret
+			IL_0001: ldfld object Modules.Array_Exotic_Sloppy_Assignment/Scope::coercions
+			IL_0006: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_000b: ldc.r8 1
+			IL_0014: add
+			IL_0015: stloc.0
+			IL_0016: ldarg.0
+			IL_0017: ldloc.0
+			IL_0018: box [System.Runtime]System.Double
+			IL_001d: stfld object Modules.Array_Exotic_Sloppy_Assignment/Scope::coercions
+			IL_0022: ldc.r8 0.0
+			IL_002b: box [System.Runtime]System.Double
+			IL_0030: ret
 		} // end of method FunctionExpression_rhs::__js_call__
 
 	} // end of class FunctionExpression_rhs
@@ -78,7 +83,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x234c
+			// Method begins at RVA 0x235d
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -104,7 +109,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 704 (0x2c0)
+		// Code size: 708 (0x2c4)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Array_Exotic_Sloppy_Assignment/Scope,
@@ -314,15 +319,17 @@
 		IL_029c: ldloc.0
 		IL_029d: ldfld object Modules.Array_Exotic_Sloppy_Assignment/Scope::coercions
 		IL_02a2: stloc.s 12
-		IL_02a4: ldloc.s 6
-		IL_02a6: ldstr "log"
-		IL_02ab: ldloc.s 12
-		IL_02ad: ldloc.s 5
-		IL_02af: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::get_length()
-		IL_02b4: box [System.Runtime]System.Double
-		IL_02b9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_02be: pop
-		IL_02bf: ret
+		IL_02a4: ldloc.s 5
+		IL_02a6: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::get_length()
+		IL_02ab: box [System.Runtime]System.Double
+		IL_02b0: stloc.s 7
+		IL_02b2: ldloc.s 6
+		IL_02b4: ldstr "log"
+		IL_02b9: ldloc.s 12
+		IL_02bb: ldloc.s 7
+		IL_02bd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_02c2: pop
+		IL_02c3: ret
 	} // end of method Array_Exotic_Sloppy_Assignment::__js_module_init__
 
 } // end of class Modules.Array_Exotic_Sloppy_Assignment
@@ -334,7 +341,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x235e
+		// Method begins at RVA 0x236f
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
