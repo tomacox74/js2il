@@ -24,8 +24,8 @@ namespace Jroc.IL;
 ///     <c>EnsureNumber()</c> before being fed to these instructions.
 ///   </description></item>
 /// </list>
-/// Registered in the pipeline via <c>#if DEBUG</c> guards in
-/// <see cref="HIRToLIRLowerer.TryLower"/>.
+/// Registered in the pipeline via <c>#if DEBUG</c> guards after lowering and
+/// again at the final normalized-LIR boundary immediately before scheduling.
 /// </remarks>
 internal static class LIRBodyValidator
 {
@@ -59,7 +59,8 @@ internal static class LIRBodyValidator
         var definedTemps = new HashSet<int>(capacity: methodBody.Instructions.Count);
         foreach (var instr in methodBody.Instructions)
         {
-            if (TryGetDefinedTempExtended(instr, out var defined) && defined.Index >= 0)
+            if (LIRInstructionInfo.TryGetDefinedTemp(instr, out var defined)
+                && defined.Index >= 0)
             {
                 definedTemps.Add(defined.Index);
             }
@@ -210,27 +211,4 @@ internal static class LIRBodyValidator
         return new ValueStorage(ValueStorageKind.Unknown);
     }
 
-    /// <summary>
-    /// Like <see cref="TempLocalAllocator.TryGetDefinedTemp"/> but also covers instruction types
-    /// that define result temps without being listed in the allocator's switch
-    /// (e.g., <see cref="LIRStoreException"/> and <see cref="LIRUnwrapCatchException"/>
-    /// which populate their result from the CLR evaluation stack rather than via a prior LIR operand).
-    /// </summary>
-    private static bool TryGetDefinedTempExtended(LIRInstruction instruction, out TempVariable defined)
-    {
-        // Handle instructions that define a temp but are not in TempLocalAllocator.TryGetDefinedTemp.
-        if (instruction is LIRStoreException storeEx)
-        {
-            defined = storeEx.Result;
-            return true;
-        }
-
-        if (instruction is LIRUnwrapCatchException unwrap)
-        {
-            defined = unwrap.Result;
-            return true;
-        }
-
-        return TempLocalAllocator.TryGetDefinedTemp(instruction, out defined);
-    }
 }

@@ -6,6 +6,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- compiler: add exhaustive scheduler-facing metadata for every concrete LIR instruction, including ordered def/use access, semantic stack signatures, conservative mutable-state/call/throw/allocation effects, catch-entry stack input, await/yield resume-result definitions, hidden-control-flow classification, and fail-closed unknown handling. Identity scheduling now discovers straight-line candidate regions split by control flow, EH, sequence points, suspension, scope replacement, internal control flow, and unsupported instructions without changing emission order, Stackify, allocation, method IL, or PDB output. Final LIR validation now also runs after all normalization passes at the actual pre-scheduler boundary.
 - compiler: add the identity-mode foundation for the incremental LIR stack scheduler. The IL backend now emits through an explicit source-order schedule with temp residency, instruction disposition, atomic operation, metrics, and cumulative coverage models, while preserving legacy Stackify/local allocation decisions and byte-identical method bodies, local signatures, maxstack, exception regions, and Portable PDB mappings. Existing user-class and intrinsic constructor/field-store peepholes are represented as atomic schedule operations with their prior eligibility checks and ordinary-emission fallback unchanged.
 
 ## v0.11.40 - 2026-07-30

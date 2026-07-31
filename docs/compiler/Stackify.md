@@ -8,7 +8,8 @@ This document explains how **Stackify** works in JROC.
 > foundation. Stackify remains the active legacy residency/rematerialization
 > analysis in this stage; no optimization behavior has moved yet. See
 > [LIR Stack Scheduler](LIRStackScheduler.md) for the new emission-plan model,
-> current invariants, and the incremental migration path.
+> canonical LIR metadata, conservative region boundaries, current invariants,
+> and the incremental migration path.
 
 ---
 ## Table of Contents

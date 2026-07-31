@@ -33,6 +33,12 @@ internal sealed partial class LIRToILCompiler
         var emitPdb = compilerOptions?.EmitPdb == true;
         var schedulerMode = compilerOptions?.LIRStackSchedulerMode
             ?? LIRStackSchedulerMode.Identity;
+
+#if DEBUG
+        // Validate the actual scheduler input after all LIR normalization passes.
+        LIRBodyValidator.Validate(MethodBody);
+#endif
+
         var stackSchedule = schedulerMode == LIRStackSchedulerMode.Disabled
             ? null
             : LIRStackScheduler.Build(
