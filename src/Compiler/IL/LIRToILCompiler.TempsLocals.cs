@@ -2640,49 +2640,25 @@ internal sealed partial class LIRToILCompiler
     /// Marks stackifiable temps as non-materialized in the peephole mask.
     /// This prevents TempLocalAllocator from allocating IL local slots for temps that can stay on the stack.
     /// </summary>
-    private void MarkStackifiableTemps(StackifyResult stackifyResult, bool[]? shouldMaterializeTemp)
+    private void MarkStackifiableTemps(
+        StackifyResult stackifyResult,
+        TempMaterializationPlan materializationPlan)
     {
-        if (shouldMaterializeTemp == null || stackifyResult.CanStackify.Length == 0)
+        if (stackifyResult.CanStackify.Length == 0)
         {
             return;
         }
 
-        for (int i = 0; i < Math.Min(stackifyResult.CanStackify.Length, shouldMaterializeTemp.Length); i++)
+        for (int i = 0;
+             i < Math.Min(stackifyResult.CanStackify.Length, materializationPlan.Count);
+             i++)
         {
             if (stackifyResult.CanStackify[i])
             {
-                // Temps mapped to a stable variable slot must be materialized so the underlying
-                // IL local is actually written. Otherwise, later reads of that variable slot can
-                // observe uninitialized locals (initlocals may be false) or stale values across
-                // control-flow joins/back-edges.
-                if (i >= 0 && i < MethodBody.TempVariableSlots.Count && MethodBody.TempVariableSlots[i] >= 0)
-                {
-                    continue;
-                }
-
-                // LIRCopyTemp is used as a snapshot/materialization barrier (e.g., postfix updates).
-                // Its destination must never be left unmaterialized, otherwise the emitter will try
-                // to re-emit the defining instruction at the load site (unsupported/incorrect).
-                var defInstr = TryFindDefInstruction(new TempVariable(i));
-                // Some temps have no defining instruction in the LIR stream.
-                // For example, generator `yield` result temps are populated by the state machine
-                // on resume (not by a normal SSA def). These must remain materialized so the
-                // emitter has a place to store the resumed value.
-                if (defInstr is null)
-                {
-                    continue;
-                }
-                if (defInstr is LIRYield)
-                {
-                    continue;
-                }
-                if (defInstr is LIRCopyTemp)
-                {
-                    continue;
-                }
-
-                // This temp can stay on the stack - mark it as not needing materialization
-                shouldMaterializeTemp[i] = false;
+                materializationPlan.TryClaim(
+                    i,
+                    TempResidency.Rematerialized,
+                    TempValueOwner.LegacyStackify);
             }
         }
     }

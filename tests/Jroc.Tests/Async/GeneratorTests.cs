@@ -14,6 +14,9 @@ namespace Jroc.Tests.Async
         public Task Async_SimpleAwait() { var testName = nameof(Async_SimpleAwait); return GenerateTest(testName); }
 
         [Fact]
+        public Task Async_SchedulerLocalAcrossAwait() { var testName = nameof(Async_SchedulerLocalAcrossAwait); return GenerateTest(testName); }
+
+        [Fact]
         public Task Async_PendingPromiseAwait() { var testName = nameof(Async_PendingPromiseAwait); return GenerateTest(testName); }
 
         [Fact]
