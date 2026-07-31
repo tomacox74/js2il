@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x243a
+			// Method begins at RVA 0x2432
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,7 +40,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 990 (0x3de)
+		// Code size: 982 (0x3d6)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Process_Platform_Versions_And_Env_Basics/Scope,
@@ -57,10 +57,9 @@
 			[11] object,
 			[12] object,
 			[13] object,
-			[14] float64,
+			[14] object,
 			[15] object,
-			[16] object,
-			[17] object
+			[16] object
 		)
 
 		IL_0000: newobj instance void Modules.Process_Platform_Versions_And_Env_Basics/Scope::.ctor()
@@ -233,7 +232,7 @@
 		IL_0201: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
 		IL_0206: stloc.s 5
 		IL_0208: ldloc.s 5
-		IL_020a: brfalse IL_026f
+		IL_020a: brfalse IL_026b
 
 		IL_020f: ldstr "process"
 		IL_0214: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
@@ -252,136 +251,132 @@
 		IL_0243: stloc.s 4
 		IL_0245: ldloc.s 4
 		IL_0247: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_024c: stloc.s 14
-		IL_024e: ldloc.s 14
-		IL_0250: ldc.r8 0.0
-		IL_0259: cgt
-		IL_025b: stloc.s 5
-		IL_025d: ldloc.s 5
-		IL_025f: box [System.Runtime]System.Boolean
-		IL_0264: stloc.s 6
-		IL_0266: ldloc.s 6
-		IL_0268: stloc.s 12
-		IL_026a: br IL_026f
+		IL_024c: ldc.r8 0.0
+		IL_0255: cgt
+		IL_0257: stloc.s 5
+		IL_0259: ldloc.s 5
+		IL_025b: box [System.Runtime]System.Boolean
+		IL_0260: stloc.s 6
+		IL_0262: ldloc.s 6
+		IL_0264: stloc.s 12
+		IL_0266: br IL_026b
 
-		IL_026f: ldloc.s 12
-		IL_0271: stloc.2
-		IL_0272: ldstr "process"
-		IL_0277: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_027c: stloc.s 4
-		IL_027e: ldloc.s 4
-		IL_0280: ldstr "env"
-		IL_0285: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_028a: stloc.s 4
-		IL_028c: ldloc.s 4
-		IL_028e: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
-		IL_0293: ldstr "object"
-		IL_0298: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_029d: stloc.s 5
-		IL_029f: ldloc.s 5
-		IL_02a1: box [System.Runtime]System.Boolean
-		IL_02a6: stloc.s 6
-		IL_02a8: ldloc.s 6
-		IL_02aa: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-		IL_02af: stloc.s 5
-		IL_02b1: ldloc.s 5
-		IL_02b3: brfalse IL_02f3
+		IL_026b: ldloc.s 12
+		IL_026d: stloc.2
+		IL_026e: ldstr "process"
+		IL_0273: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0278: stloc.s 4
+		IL_027a: ldloc.s 4
+		IL_027c: ldstr "env"
+		IL_0281: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0286: stloc.s 4
+		IL_0288: ldloc.s 4
+		IL_028a: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
+		IL_028f: ldstr "object"
+		IL_0294: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_0299: stloc.s 5
+		IL_029b: ldloc.s 5
+		IL_029d: box [System.Runtime]System.Boolean
+		IL_02a2: stloc.s 6
+		IL_02a4: ldloc.s 6
+		IL_02a6: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+		IL_02ab: stloc.s 5
+		IL_02ad: ldloc.s 5
+		IL_02af: brfalse IL_02ef
 
-		IL_02b8: ldstr "process"
-		IL_02bd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_02c2: stloc.s 4
-		IL_02c4: ldloc.s 4
-		IL_02c6: ldstr "env"
-		IL_02cb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_02d0: stloc.s 4
-		IL_02d2: ldloc.s 4
-		IL_02d4: ldc.i4.0
-		IL_02d5: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
-		IL_02da: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictNotEqual(object, object)
-		IL_02df: stloc.s 5
-		IL_02e1: ldloc.s 5
-		IL_02e3: box [System.Runtime]System.Boolean
-		IL_02e8: stloc.s 7
-		IL_02ea: ldloc.s 7
-		IL_02ec: stloc.s 16
-		IL_02ee: br IL_02f7
+		IL_02b4: ldstr "process"
+		IL_02b9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_02be: stloc.s 4
+		IL_02c0: ldloc.s 4
+		IL_02c2: ldstr "env"
+		IL_02c7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_02cc: stloc.s 4
+		IL_02ce: ldloc.s 4
+		IL_02d0: ldc.i4.0
+		IL_02d1: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
+		IL_02d6: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictNotEqual(object, object)
+		IL_02db: stloc.s 5
+		IL_02dd: ldloc.s 5
+		IL_02df: box [System.Runtime]System.Boolean
+		IL_02e4: stloc.s 7
+		IL_02e6: ldloc.s 7
+		IL_02e8: stloc.s 15
+		IL_02ea: br IL_02f3
 
-		IL_02f3: ldloc.s 6
-		IL_02f5: stloc.s 16
+		IL_02ef: ldloc.s 6
+		IL_02f1: stloc.s 15
 
-		IL_02f7: ldloc.s 16
-		IL_02f9: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-		IL_02fe: stloc.s 5
-		IL_0300: ldloc.s 5
-		IL_0302: brfalse IL_0362
+		IL_02f3: ldloc.s 15
+		IL_02f5: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+		IL_02fa: stloc.s 5
+		IL_02fc: ldloc.s 5
+		IL_02fe: brfalse IL_035a
 
-		IL_0307: ldstr "process"
-		IL_030c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0311: stloc.s 4
-		IL_0313: ldloc.s 4
-		IL_0315: ldstr "env"
-		IL_031a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_031f: stloc.s 4
-		IL_0321: ldloc.s 4
-		IL_0323: call object [JavaScriptRuntime]JavaScriptRuntime.Object::keys(object)
-		IL_0328: stloc.s 4
-		IL_032a: ldloc.s 4
-		IL_032c: ldstr "length"
-		IL_0331: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0336: stloc.s 4
-		IL_0338: ldloc.s 4
-		IL_033a: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_033f: stloc.s 14
-		IL_0341: ldloc.s 14
-		IL_0343: ldc.r8 0.0
-		IL_034c: cgt
-		IL_034e: stloc.s 5
-		IL_0350: ldloc.s 5
-		IL_0352: box [System.Runtime]System.Boolean
-		IL_0357: stloc.s 6
-		IL_0359: ldloc.s 6
-		IL_035b: stloc.s 16
-		IL_035d: br IL_0362
+		IL_0303: ldstr "process"
+		IL_0308: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_030d: stloc.s 4
+		IL_030f: ldloc.s 4
+		IL_0311: ldstr "env"
+		IL_0316: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_031b: stloc.s 4
+		IL_031d: ldloc.s 4
+		IL_031f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::keys(object)
+		IL_0324: stloc.s 4
+		IL_0326: ldloc.s 4
+		IL_0328: ldstr "length"
+		IL_032d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0332: stloc.s 4
+		IL_0334: ldloc.s 4
+		IL_0336: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_033b: ldc.r8 0.0
+		IL_0344: cgt
+		IL_0346: stloc.s 5
+		IL_0348: ldloc.s 5
+		IL_034a: box [System.Runtime]System.Boolean
+		IL_034f: stloc.s 6
+		IL_0351: ldloc.s 6
+		IL_0353: stloc.s 15
+		IL_0355: br IL_035a
 
-		IL_0362: ldloc.s 16
-		IL_0364: stloc.3
-		IL_0365: ldstr "console"
-		IL_036a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_036f: stloc.s 4
-		IL_0371: ldloc.s 4
-		IL_0373: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0378: stloc.s 4
-		IL_037a: ldloc.s 4
-		IL_037c: ldstr "log"
-		IL_0381: ldstr "known platform"
-		IL_0386: ldloc.1
-		IL_0387: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_038c: pop
-		IL_038d: ldstr "console"
-		IL_0392: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0397: stloc.s 4
-		IL_0399: ldloc.s 4
-		IL_039b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_03a0: stloc.s 4
-		IL_03a2: ldloc.s 4
-		IL_03a4: ldstr "log"
-		IL_03a9: ldstr "has versions.node"
-		IL_03ae: ldloc.2
-		IL_03af: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_03b4: pop
-		IL_03b5: ldstr "console"
-		IL_03ba: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_03bf: stloc.s 4
-		IL_03c1: ldloc.s 4
-		IL_03c3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_03c8: stloc.s 4
-		IL_03ca: ldloc.s 4
-		IL_03cc: ldstr "log"
-		IL_03d1: ldstr "has env"
-		IL_03d6: ldloc.3
-		IL_03d7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_03dc: pop
-		IL_03dd: ret
+		IL_035a: ldloc.s 15
+		IL_035c: stloc.3
+		IL_035d: ldstr "console"
+		IL_0362: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0367: stloc.s 4
+		IL_0369: ldloc.s 4
+		IL_036b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0370: stloc.s 4
+		IL_0372: ldloc.s 4
+		IL_0374: ldstr "log"
+		IL_0379: ldstr "known platform"
+		IL_037e: ldloc.1
+		IL_037f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_0384: pop
+		IL_0385: ldstr "console"
+		IL_038a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_038f: stloc.s 4
+		IL_0391: ldloc.s 4
+		IL_0393: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0398: stloc.s 4
+		IL_039a: ldloc.s 4
+		IL_039c: ldstr "log"
+		IL_03a1: ldstr "has versions.node"
+		IL_03a6: ldloc.2
+		IL_03a7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_03ac: pop
+		IL_03ad: ldstr "console"
+		IL_03b2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_03b7: stloc.s 4
+		IL_03b9: ldloc.s 4
+		IL_03bb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_03c0: stloc.s 4
+		IL_03c2: ldloc.s 4
+		IL_03c4: ldstr "log"
+		IL_03c9: ldstr "has env"
+		IL_03ce: ldloc.3
+		IL_03cf: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_03d4: pop
+		IL_03d5: ret
 	} // end of method Process_Platform_Versions_And_Env_Basics::__js_module_init__
 
 } // end of class Modules.Process_Platform_Versions_And_Env_Basics
@@ -393,7 +388,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2443
+		// Method begins at RVA 0x243b
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -22,7 +22,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2772
+					// Method begins at RVA 0x2778
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -48,49 +48,55 @@
 				)
 				// Method begins at RVA 0x2680
 				// Header size: 12
-				// Code size: 118 (0x76)
+				// Code size: 122 (0x7a)
 				.maxstack 8
 				.locals init (
-					[0] object
+					[0] float64,
+					[1] object,
+					[2] bool
 				)
 
 				IL_0000: ldarg.0
 				IL_0001: ldc.i4.1
 				IL_0002: ldelem.ref
 				IL_0003: castclass Modules.Iterator_Helper_Next_Return/FunctionExpression_iterable/Scope
-				IL_0008: ldarg.0
-				IL_0009: ldc.i4.1
-				IL_000a: ldelem.ref
-				IL_000b: castclass Modules.Iterator_Helper_Next_Return/FunctionExpression_iterable/Scope
-				IL_0010: ldfld object Modules.Iterator_Helper_Next_Return/FunctionExpression_iterable/Scope::'value'
-				IL_0015: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-				IL_001a: ldc.r8 1
-				IL_0023: add
-				IL_0024: box [System.Runtime]System.Double
-				IL_0029: stfld object Modules.Iterator_Helper_Next_Return/FunctionExpression_iterable/Scope::'value'
-				IL_002e: ldarg.0
-				IL_002f: ldc.i4.1
-				IL_0030: ldelem.ref
-				IL_0031: castclass Modules.Iterator_Helper_Next_Return/FunctionExpression_iterable/Scope
-				IL_0036: ldfld object Modules.Iterator_Helper_Next_Return/FunctionExpression_iterable/Scope::'value'
-				IL_003b: stloc.0
-				IL_003c: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-				IL_0041: dup
-				IL_0042: ldstr "value"
-				IL_0047: ldloc.0
-				IL_0048: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-				IL_004d: dup
-				IL_004e: ldstr "done"
-				IL_0053: ldarg.0
-				IL_0054: ldc.i4.1
-				IL_0055: ldelem.ref
-				IL_0056: castclass Modules.Iterator_Helper_Next_Return/FunctionExpression_iterable/Scope
-				IL_005b: ldfld object Modules.Iterator_Helper_Next_Return/FunctionExpression_iterable/Scope::'value'
-				IL_0060: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-				IL_0065: ldc.r8 3
-				IL_006e: cgt
-				IL_0070: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-				IL_0075: ret
+				IL_0008: ldfld object Modules.Iterator_Helper_Next_Return/FunctionExpression_iterable/Scope::'value'
+				IL_000d: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+				IL_0012: ldc.r8 1
+				IL_001b: add
+				IL_001c: stloc.0
+				IL_001d: ldarg.0
+				IL_001e: ldc.i4.1
+				IL_001f: ldelem.ref
+				IL_0020: castclass Modules.Iterator_Helper_Next_Return/FunctionExpression_iterable/Scope
+				IL_0025: ldloc.0
+				IL_0026: box [System.Runtime]System.Double
+				IL_002b: stfld object Modules.Iterator_Helper_Next_Return/FunctionExpression_iterable/Scope::'value'
+				IL_0030: ldarg.0
+				IL_0031: ldc.i4.1
+				IL_0032: ldelem.ref
+				IL_0033: castclass Modules.Iterator_Helper_Next_Return/FunctionExpression_iterable/Scope
+				IL_0038: ldfld object Modules.Iterator_Helper_Next_Return/FunctionExpression_iterable/Scope::'value'
+				IL_003d: stloc.1
+				IL_003e: ldarg.0
+				IL_003f: ldc.i4.1
+				IL_0040: ldelem.ref
+				IL_0041: castclass Modules.Iterator_Helper_Next_Return/FunctionExpression_iterable/Scope
+				IL_0046: ldfld object Modules.Iterator_Helper_Next_Return/FunctionExpression_iterable/Scope::'value'
+				IL_004b: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+				IL_0050: ldc.r8 3
+				IL_0059: cgt
+				IL_005b: stloc.2
+				IL_005c: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+				IL_0061: dup
+				IL_0062: ldstr "value"
+				IL_0067: ldloc.1
+				IL_0068: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+				IL_006d: dup
+				IL_006e: ldstr "done"
+				IL_0073: ldloc.2
+				IL_0074: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+				IL_0079: ret
 			} // end of method FunctionExpression_iterable::__js_call__
 
 		} // end of class FunctionExpression_iterable
@@ -106,7 +112,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x277b
+					// Method begins at RVA 0x2781
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -130,35 +136,40 @@
 				.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 					01 00 02 00 00 00 00 00
 				)
-				// Method begins at RVA 0x2704
+				// Method begins at RVA 0x2708
 				// Header size: 12
-				// Code size: 80 (0x50)
+				// Code size: 82 (0x52)
 				.maxstack 8
+				.locals init (
+					[0] float64
+				)
 
 				IL_0000: ldarg.0
 				IL_0001: ldc.i4.0
 				IL_0002: ldelem.ref
 				IL_0003: castclass Modules.Iterator_Helper_Next_Return/Scope
-				IL_0008: ldarg.0
-				IL_0009: ldc.i4.0
-				IL_000a: ldelem.ref
-				IL_000b: castclass Modules.Iterator_Helper_Next_Return/Scope
-				IL_0010: ldfld object Modules.Iterator_Helper_Next_Return/Scope::closed
-				IL_0015: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-				IL_001a: ldc.r8 1
-				IL_0023: add
-				IL_0024: box [System.Runtime]System.Double
-				IL_0029: stfld object Modules.Iterator_Helper_Next_Return/Scope::closed
-				IL_002e: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-				IL_0033: dup
-				IL_0034: ldstr "value"
-				IL_0039: ldstr "closed"
-				IL_003e: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-				IL_0043: dup
-				IL_0044: ldstr "done"
-				IL_0049: ldc.i4.1
-				IL_004a: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-				IL_004f: ret
+				IL_0008: ldfld object Modules.Iterator_Helper_Next_Return/Scope::closed
+				IL_000d: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+				IL_0012: ldc.r8 1
+				IL_001b: add
+				IL_001c: stloc.0
+				IL_001d: ldarg.0
+				IL_001e: ldc.i4.0
+				IL_001f: ldelem.ref
+				IL_0020: castclass Modules.Iterator_Helper_Next_Return/Scope
+				IL_0025: ldloc.0
+				IL_0026: box [System.Runtime]System.Double
+				IL_002b: stfld object Modules.Iterator_Helper_Next_Return/Scope::closed
+				IL_0030: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+				IL_0035: dup
+				IL_0036: ldstr "value"
+				IL_003b: ldstr "closed"
+				IL_0040: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+				IL_0045: dup
+				IL_0046: ldstr "done"
+				IL_004b: ldc.i4.1
+				IL_004c: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+				IL_0051: ret
 			} // end of method FunctionExpression_iterable_L12C18::__js_call__
 
 		} // end of class FunctionExpression_iterable_L12C18
@@ -177,7 +188,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2769
+				// Method begins at RVA 0x276f
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -300,7 +311,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2784
+				// Method begins at RVA 0x278a
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -353,7 +364,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2760
+			// Method begins at RVA 0x2766
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -831,7 +842,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x278d
+		// Method begins at RVA 0x2793
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

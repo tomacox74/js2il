@@ -22,7 +22,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2363
+					// Method begins at RVA 0x2369
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -42,7 +42,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x236c
+					// Method begins at RVA 0x2372
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -60,7 +60,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x235a
+				// Method begins at RVA 0x2360
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -88,88 +88,91 @@
 			)
 			// Method begins at RVA 0x226c
 			// Header size: 12
-			// Code size: 206 (0xce)
+			// Code size: 212 (0xd4)
 			.maxstack 8
 			.locals init (
-				[0] object,
-				[1] bool,
-				[2] object[],
-				[3] string
+				[0] float64,
+				[1] object,
+				[2] bool,
+				[3] object[],
+				[4] string
 			)
 
 			IL_0000: ldarg.0
-			IL_0001: ldarg.0
-			IL_0002: ldfld object Modules.Require_Timers_RefreshableTimeout/Scope::count
-			IL_0007: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_000c: ldc.r8 1
-			IL_0015: add
-			IL_0016: box [System.Runtime]System.Double
-			IL_001b: stfld object Modules.Require_Timers_RefreshableTimeout/Scope::count
-			IL_0020: ldarg.0
-			IL_0021: ldfld object Modules.Require_Timers_RefreshableTimeout/Scope::count
-			IL_0026: stloc.0
-			IL_0027: ldloc.0
-			IL_0028: ldc.r8 1
-			IL_0031: box [System.Runtime]System.Double
-			IL_0036: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-			IL_003b: stloc.1
-			IL_003c: ldloc.1
-			IL_003d: brfalse IL_006b
+			IL_0001: ldfld object Modules.Require_Timers_RefreshableTimeout/Scope::count
+			IL_0006: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_000b: ldc.r8 1
+			IL_0014: add
+			IL_0015: stloc.0
+			IL_0016: ldarg.0
+			IL_0017: ldloc.0
+			IL_0018: box [System.Runtime]System.Double
+			IL_001d: stfld object Modules.Require_Timers_RefreshableTimeout/Scope::count
+			IL_0022: ldarg.0
+			IL_0023: ldfld object Modules.Require_Timers_RefreshableTimeout/Scope::count
+			IL_0028: stloc.1
+			IL_0029: ldloc.1
+			IL_002a: ldc.r8 1
+			IL_0033: box [System.Runtime]System.Double
+			IL_0038: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+			IL_003d: stloc.2
+			IL_003e: ldloc.2
+			IL_003f: brfalse IL_006d
 
-			IL_0042: ldarg.0
-			IL_0043: ldfld object Modules.Require_Timers_RefreshableTimeout/Scope::timeout
-			IL_0048: ldstr "Cannot access 'timeout' before initialization"
-			IL_004d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
-			IL_0052: stloc.0
-			IL_0053: ldloc.0
-			IL_0054: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0059: stloc.0
-			IL_005a: ldloc.0
-			IL_005b: ldstr "refresh"
-			IL_0060: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-			IL_0065: pop
-			IL_0066: br IL_00cc
+			IL_0044: ldarg.0
+			IL_0045: ldfld object Modules.Require_Timers_RefreshableTimeout/Scope::timeout
+			IL_004a: ldstr "Cannot access 'timeout' before initialization"
+			IL_004f: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_0054: stloc.1
+			IL_0055: ldloc.1
+			IL_0056: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_005b: stloc.1
+			IL_005c: ldloc.1
+			IL_005d: ldstr "refresh"
+			IL_0062: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+			IL_0067: pop
+			IL_0068: br IL_00d2
 
-			IL_006b: ldc.i4.1
-			IL_006c: newarr [System.Runtime]System.Object
-			IL_0071: dup
-			IL_0072: ldc.i4.0
-			IL_0073: ldarg.0
-			IL_0074: stelem.ref
-			IL_0075: stloc.2
-			IL_0076: ldarg.0
-			IL_0077: ldfld object Modules.Require_Timers_RefreshableTimeout/Scope::timeout
-			IL_007c: ldstr "Cannot access 'timeout' before initialization"
-			IL_0081: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
-			IL_0086: stloc.0
-			IL_0087: ldarg.0
-			IL_0088: ldfld object Modules.Require_Timers_RefreshableTimeout/Scope::clearTimeout
-			IL_008d: ldloc.2
-			IL_008e: ldloc.0
-			IL_008f: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
-			IL_0094: pop
-			IL_0095: ldstr "console"
-			IL_009a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_009f: stloc.0
-			IL_00a0: ldloc.0
-			IL_00a1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_00a6: stloc.0
-			IL_00a7: ldarg.0
-			IL_00a8: ldfld object Modules.Require_Timers_RefreshableTimeout/Scope::count
-			IL_00ad: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-			IL_00b2: stloc.3
-			IL_00b3: ldstr "flushes: "
-			IL_00b8: ldloc.3
-			IL_00b9: call string [System.Runtime]System.String::Concat(string, string)
-			IL_00be: stloc.3
-			IL_00bf: ldloc.0
-			IL_00c0: ldstr "log"
-			IL_00c5: ldloc.3
-			IL_00c6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_00cb: pop
+			IL_006d: ldc.i4.1
+			IL_006e: newarr [System.Runtime]System.Object
+			IL_0073: dup
+			IL_0074: ldc.i4.0
+			IL_0075: ldarg.0
+			IL_0076: stelem.ref
+			IL_0077: stloc.3
+			IL_0078: ldarg.0
+			IL_0079: ldfld object Modules.Require_Timers_RefreshableTimeout/Scope::timeout
+			IL_007e: ldstr "Cannot access 'timeout' before initialization"
+			IL_0083: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_0088: stloc.1
+			IL_0089: ldarg.0
+			IL_008a: ldfld object Modules.Require_Timers_RefreshableTimeout/Scope::clearTimeout
+			IL_008f: ldloc.3
+			IL_0090: ldloc.1
+			IL_0091: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
+			IL_0096: pop
+			IL_0097: ldstr "console"
+			IL_009c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_00a1: stloc.1
+			IL_00a2: ldloc.1
+			IL_00a3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_00a8: stloc.1
+			IL_00a9: ldarg.0
+			IL_00aa: ldfld object Modules.Require_Timers_RefreshableTimeout/Scope::count
+			IL_00af: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+			IL_00b4: stloc.s 4
+			IL_00b6: ldstr "flushes: "
+			IL_00bb: ldloc.s 4
+			IL_00bd: call string [System.Runtime]System.String::Concat(string, string)
+			IL_00c2: stloc.s 4
+			IL_00c4: ldloc.1
+			IL_00c5: ldstr "log"
+			IL_00ca: ldloc.s 4
+			IL_00cc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_00d1: pop
 
-			IL_00cc: ldnull
-			IL_00cd: ret
+			IL_00d2: ldnull
+			IL_00d3: ret
 		} // end of method ArrowFunction_L12C28::__js_call__
 
 	} // end of class ArrowFunction_L12C28
@@ -193,7 +196,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2346
+			// Method begins at RVA 0x234c
 			// Header size: 1
 			// Code size: 19 (0x13)
 			.maxstack 8
@@ -420,7 +423,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2375
+		// Method begins at RVA 0x237b
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

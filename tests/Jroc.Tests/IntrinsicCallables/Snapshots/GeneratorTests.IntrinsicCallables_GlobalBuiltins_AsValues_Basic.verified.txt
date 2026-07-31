@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x223c
+			// Method begins at RVA 0x2240
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,7 +40,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 480 (0x1e0)
+		// Code size: 484 (0x1e4)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.IntrinsicCallables_GlobalBuiltins_AsValues_Basic/Scope,
@@ -52,7 +52,8 @@
 			[6] object,
 			[7] bool,
 			[8] object,
-			[9] string
+			[9] string,
+			[10] object
 		)
 
 		IL_0000: newobj instance void Modules.IntrinsicCallables_GlobalBuiltins_AsValues_Basic/Scope::.ctor()
@@ -193,14 +194,16 @@
 		IL_01ba: ldloc.s 4
 		IL_01bc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
 		IL_01c1: stloc.s 4
-		IL_01c3: ldloc.s 4
-		IL_01c5: ldstr "log"
-		IL_01ca: ldstr "4.5"
-		IL_01cf: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_01d4: box [System.Runtime]System.Double
-		IL_01d9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_01de: pop
-		IL_01df: ret
+		IL_01c3: ldstr "4.5"
+		IL_01c8: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_01cd: box [System.Runtime]System.Double
+		IL_01d2: stloc.s 10
+		IL_01d4: ldloc.s 4
+		IL_01d6: ldstr "log"
+		IL_01db: ldloc.s 10
+		IL_01dd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_01e2: pop
+		IL_01e3: ret
 	} // end of method IntrinsicCallables_GlobalBuiltins_AsValues_Basic::__js_module_init__
 
 } // end of class Modules.IntrinsicCallables_GlobalBuiltins_AsValues_Basic
@@ -212,7 +215,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2245
+		// Method begins at RVA 0x2249
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x226a
+			// Method begins at RVA 0x226e
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,7 +40,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 526 (0x20e)
+		// Code size: 530 (0x212)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.SharedArrayBuffer_Int32Array_AtomicsWait/Scope,
@@ -51,7 +51,8 @@
 			[5] bool,
 			[6] object,
 			[7] object,
-			[8] object[]
+			[8] object,
+			[9] object[]
 		)
 
 		IL_0000: newobj instance void Modules.SharedArrayBuffer_Int32Array_AtomicsWait/Scope::.ctor()
@@ -130,102 +131,104 @@
 		IL_00e9: ldloc.3
 		IL_00ea: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
 		IL_00ef: stloc.3
-		IL_00f0: ldloc.3
-		IL_00f1: ldstr "log"
-		IL_00f6: ldloc.2
-		IL_00f7: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Int32Array::get_length()
-		IL_00fc: box [System.Runtime]System.Double
-		IL_0101: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0106: pop
-		IL_0107: ldstr "console"
-		IL_010c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0111: stloc.3
-		IL_0112: ldloc.3
-		IL_0113: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0118: stloc.3
-		IL_0119: ldstr "Atomics"
-		IL_011e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0123: stloc.s 7
-		IL_0125: ldloc.s 7
-		IL_0127: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_012c: stloc.s 7
-		IL_012e: ldc.i4.4
-		IL_012f: newarr [System.Runtime]System.Object
-		IL_0134: dup
-		IL_0135: ldc.i4.0
-		IL_0136: ldloc.2
-		IL_0137: stelem.ref
+		IL_00f0: ldloc.2
+		IL_00f1: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Int32Array::get_length()
+		IL_00f6: box [System.Runtime]System.Double
+		IL_00fb: stloc.s 7
+		IL_00fd: ldloc.3
+		IL_00fe: ldstr "log"
+		IL_0103: ldloc.s 7
+		IL_0105: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_010a: pop
+		IL_010b: ldstr "console"
+		IL_0110: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0115: stloc.3
+		IL_0116: ldloc.3
+		IL_0117: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_011c: stloc.3
+		IL_011d: ldstr "Atomics"
+		IL_0122: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0127: stloc.s 8
+		IL_0129: ldloc.s 8
+		IL_012b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0130: stloc.s 8
+		IL_0132: ldc.i4.4
+		IL_0133: newarr [System.Runtime]System.Object
 		IL_0138: dup
-		IL_0139: ldc.i4.1
-		IL_013a: ldc.r8 0.0
-		IL_0143: box [System.Runtime]System.Double
-		IL_0148: stelem.ref
-		IL_0149: dup
-		IL_014a: ldc.i4.2
-		IL_014b: ldc.r8 1
-		IL_0154: box [System.Runtime]System.Double
-		IL_0159: stelem.ref
-		IL_015a: dup
-		IL_015b: ldc.i4.3
-		IL_015c: ldc.r8 0.0
-		IL_0165: box [System.Runtime]System.Double
-		IL_016a: stelem.ref
-		IL_016b: stloc.s 8
-		IL_016d: ldloc.s 7
-		IL_016f: ldstr "wait"
-		IL_0174: ldloc.s 8
-		IL_0176: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember(object, string, object[])
-		IL_017b: stloc.s 7
-		IL_017d: ldloc.3
-		IL_017e: ldstr "log"
-		IL_0183: ldloc.s 7
-		IL_0185: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_018a: pop
-		IL_018b: ldstr "console"
-		IL_0190: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0195: stloc.s 7
-		IL_0197: ldloc.s 7
-		IL_0199: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_019e: stloc.s 7
-		IL_01a0: ldstr "Atomics"
-		IL_01a5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_01aa: stloc.3
-		IL_01ab: ldloc.3
-		IL_01ac: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_01b1: stloc.3
-		IL_01b2: ldc.i4.4
-		IL_01b3: newarr [System.Runtime]System.Object
-		IL_01b8: dup
-		IL_01b9: ldc.i4.0
-		IL_01ba: ldloc.2
-		IL_01bb: stelem.ref
+		IL_0139: ldc.i4.0
+		IL_013a: ldloc.2
+		IL_013b: stelem.ref
+		IL_013c: dup
+		IL_013d: ldc.i4.1
+		IL_013e: ldc.r8 0.0
+		IL_0147: box [System.Runtime]System.Double
+		IL_014c: stelem.ref
+		IL_014d: dup
+		IL_014e: ldc.i4.2
+		IL_014f: ldc.r8 1
+		IL_0158: box [System.Runtime]System.Double
+		IL_015d: stelem.ref
+		IL_015e: dup
+		IL_015f: ldc.i4.3
+		IL_0160: ldc.r8 0.0
+		IL_0169: box [System.Runtime]System.Double
+		IL_016e: stelem.ref
+		IL_016f: stloc.s 9
+		IL_0171: ldloc.s 8
+		IL_0173: ldstr "wait"
+		IL_0178: ldloc.s 9
+		IL_017a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember(object, string, object[])
+		IL_017f: stloc.s 8
+		IL_0181: ldloc.3
+		IL_0182: ldstr "log"
+		IL_0187: ldloc.s 8
+		IL_0189: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_018e: pop
+		IL_018f: ldstr "console"
+		IL_0194: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0199: stloc.s 8
+		IL_019b: ldloc.s 8
+		IL_019d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_01a2: stloc.s 8
+		IL_01a4: ldstr "Atomics"
+		IL_01a9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_01ae: stloc.3
+		IL_01af: ldloc.3
+		IL_01b0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_01b5: stloc.3
+		IL_01b6: ldc.i4.4
+		IL_01b7: newarr [System.Runtime]System.Object
 		IL_01bc: dup
-		IL_01bd: ldc.i4.1
-		IL_01be: ldc.r8 0.0
-		IL_01c7: box [System.Runtime]System.Double
-		IL_01cc: stelem.ref
-		IL_01cd: dup
-		IL_01ce: ldc.i4.2
-		IL_01cf: ldc.r8 0.0
-		IL_01d8: box [System.Runtime]System.Double
-		IL_01dd: stelem.ref
-		IL_01de: dup
-		IL_01df: ldc.i4.3
-		IL_01e0: ldc.r8 1
-		IL_01e9: box [System.Runtime]System.Double
-		IL_01ee: stelem.ref
-		IL_01ef: stloc.s 8
-		IL_01f1: ldloc.3
-		IL_01f2: ldstr "wait"
-		IL_01f7: ldloc.s 8
-		IL_01f9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember(object, string, object[])
-		IL_01fe: stloc.3
-		IL_01ff: ldloc.s 7
-		IL_0201: ldstr "log"
-		IL_0206: ldloc.3
-		IL_0207: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_020c: pop
-		IL_020d: ret
+		IL_01bd: ldc.i4.0
+		IL_01be: ldloc.2
+		IL_01bf: stelem.ref
+		IL_01c0: dup
+		IL_01c1: ldc.i4.1
+		IL_01c2: ldc.r8 0.0
+		IL_01cb: box [System.Runtime]System.Double
+		IL_01d0: stelem.ref
+		IL_01d1: dup
+		IL_01d2: ldc.i4.2
+		IL_01d3: ldc.r8 0.0
+		IL_01dc: box [System.Runtime]System.Double
+		IL_01e1: stelem.ref
+		IL_01e2: dup
+		IL_01e3: ldc.i4.3
+		IL_01e4: ldc.r8 1
+		IL_01ed: box [System.Runtime]System.Double
+		IL_01f2: stelem.ref
+		IL_01f3: stloc.s 9
+		IL_01f5: ldloc.3
+		IL_01f6: ldstr "wait"
+		IL_01fb: ldloc.s 9
+		IL_01fd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember(object, string, object[])
+		IL_0202: stloc.3
+		IL_0203: ldloc.s 8
+		IL_0205: ldstr "log"
+		IL_020a: ldloc.3
+		IL_020b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0210: pop
+		IL_0211: ret
 	} // end of method SharedArrayBuffer_Int32Array_AtomicsWait::__js_module_init__
 
 } // end of class Modules.SharedArrayBuffer_Int32Array_AtomicsWait
@@ -237,7 +240,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2273
+		// Method begins at RVA 0x2277
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
