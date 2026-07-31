@@ -20,6 +20,9 @@ namespace Jroc.Tests.BinaryOperator
         public Task BinaryOperator_TypedNumericScheduler_DuplicateOperandSlotReuse() { var testName = nameof(BinaryOperator_TypedNumericScheduler_DuplicateOperandSlotReuse); return GenerateTest(testName); }
 
         [Fact]
+        public Task BinaryOperator_TypedComparisonScheduler() { var testName = nameof(BinaryOperator_TypedComparisonScheduler); return GenerateTest(testName); }
+
+        [Fact]
         public Task BinaryOperator_AddDynamicThenToNumber_StringPreserved() { var testName = nameof(BinaryOperator_AddDynamicThenToNumber_StringPreserved); return GenerateTest(testName); }
 
         [Fact]

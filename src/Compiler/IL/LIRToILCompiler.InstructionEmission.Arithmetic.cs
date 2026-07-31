@@ -231,6 +231,12 @@ internal sealed partial class LIRToILCompiler
             case LIRNegateNumber:
                 if (!IsMaterialized(((LIRNegateNumber)instruction).Result, allocation))
                 {
+                    EmitSchedulerOwnedStackValueIfNeeded(
+                        instruction,
+                        ((LIRNegateNumber)instruction).Result,
+                        ilEncoder,
+                        allocation,
+                        methodDescriptor);
                     break;
                 }
 
@@ -241,6 +247,12 @@ internal sealed partial class LIRToILCompiler
             case LIRBitwiseNotNumber:
                 if (!IsMaterialized(((LIRBitwiseNotNumber)instruction).Result, allocation))
                 {
+                    EmitSchedulerOwnedStackValueIfNeeded(
+                        instruction,
+                        ((LIRBitwiseNotNumber)instruction).Result,
+                        ilEncoder,
+                        allocation,
+                        methodDescriptor);
                     break;
                 }
 
@@ -282,6 +294,8 @@ internal sealed partial class LIRToILCompiler
             case LIRCompareNumberLessThan cmpLt:
                 if (!IsMaterialized(cmpLt.Result, allocation))
                 {
+                    EmitSchedulerOwnedStackValueIfNeeded(
+                        cmpLt, cmpLt.Result, ilEncoder, allocation, methodDescriptor);
                     break;
                 }
                 EmitLoadTempAsNumber(cmpLt.Left, ilEncoder, allocation, methodDescriptor);
@@ -292,6 +306,8 @@ internal sealed partial class LIRToILCompiler
             case LIRCompareNumberGreaterThan cmpGt:
                 if (!IsMaterialized(cmpGt.Result, allocation))
                 {
+                    EmitSchedulerOwnedStackValueIfNeeded(
+                        cmpGt, cmpGt.Result, ilEncoder, allocation, methodDescriptor);
                     break;
                 }
                 EmitLoadTempAsNumber(cmpGt.Left, ilEncoder, allocation, methodDescriptor);
@@ -302,6 +318,8 @@ internal sealed partial class LIRToILCompiler
             case LIRCompareNumberLessThanOrEqual cmpLe:
                 if (!IsMaterialized(cmpLe.Result, allocation))
                 {
+                    EmitSchedulerOwnedStackValueIfNeeded(
+                        cmpLe, cmpLe.Result, ilEncoder, allocation, methodDescriptor);
                     break;
                 }
                 EmitLoadTempAsNumber(cmpLe.Left, ilEncoder, allocation, methodDescriptor);
@@ -314,6 +332,8 @@ internal sealed partial class LIRToILCompiler
             case LIRCompareNumberGreaterThanOrEqual cmpGe:
                 if (!IsMaterialized(cmpGe.Result, allocation))
                 {
+                    EmitSchedulerOwnedStackValueIfNeeded(
+                        cmpGe, cmpGe.Result, ilEncoder, allocation, methodDescriptor);
                     break;
                 }
                 EmitLoadTempAsNumber(cmpGe.Left, ilEncoder, allocation, methodDescriptor);
@@ -326,6 +346,8 @@ internal sealed partial class LIRToILCompiler
             case LIRCompareNumberEqual cmpEq:
                 if (!IsMaterialized(cmpEq.Result, allocation))
                 {
+                    EmitSchedulerOwnedStackValueIfNeeded(
+                        cmpEq, cmpEq.Result, ilEncoder, allocation, methodDescriptor);
                     break;
                 }
                 EmitLoadTempAsNumber(cmpEq.Left, ilEncoder, allocation, methodDescriptor);
@@ -336,6 +358,8 @@ internal sealed partial class LIRToILCompiler
             case LIRCompareNumberNotEqual cmpNe:
                 if (!IsMaterialized(cmpNe.Result, allocation))
                 {
+                    EmitSchedulerOwnedStackValueIfNeeded(
+                        cmpNe, cmpNe.Result, ilEncoder, allocation, methodDescriptor);
                     break;
                 }
                 EmitLoadTempAsNumber(cmpNe.Left, ilEncoder, allocation, methodDescriptor);
@@ -348,6 +372,8 @@ internal sealed partial class LIRToILCompiler
             case LIRCompareBooleanEqual cmpBoolEq:
                 if (!IsMaterialized(cmpBoolEq.Result, allocation))
                 {
+                    EmitSchedulerOwnedStackValueIfNeeded(
+                        cmpBoolEq, cmpBoolEq.Result, ilEncoder, allocation, methodDescriptor);
                     break;
                 }
                 EmitLoadTemp(cmpBoolEq.Left, ilEncoder, allocation, methodDescriptor);
@@ -358,6 +384,8 @@ internal sealed partial class LIRToILCompiler
             case LIRCompareBooleanNotEqual cmpBoolNe:
                 if (!IsMaterialized(cmpBoolNe.Result, allocation))
                 {
+                    EmitSchedulerOwnedStackValueIfNeeded(
+                        cmpBoolNe, cmpBoolNe.Result, ilEncoder, allocation, methodDescriptor);
                     break;
                 }
                 EmitLoadTemp(cmpBoolNe.Left, ilEncoder, allocation, methodDescriptor);
@@ -529,5 +557,29 @@ internal sealed partial class LIRToILCompiler
         }
 
         return true;
+    }
+
+    private void EmitSchedulerOwnedStackValueIfNeeded(
+        LIRInstruction instruction,
+        TempVariable result,
+        InstructionEncoder ilEncoder,
+        TempLocalAllocation allocation,
+        MethodDescriptor methodDescriptor)
+    {
+        if (!IsSchedulerStackResident(result))
+        {
+            return;
+        }
+
+        if (!TryEmitStackValueInstruction(
+                instruction,
+                ilEncoder,
+                allocation,
+                methodDescriptor))
+        {
+            throw new InvalidOperationException(
+                $"Scheduler-owned instruction {instruction.GetType().Name} "
+                + "cannot emit a stack value.");
+        }
     }
 }
