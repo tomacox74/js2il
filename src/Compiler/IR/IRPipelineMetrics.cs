@@ -18,6 +18,8 @@ public static class IRPipelineMetrics
     private static readonly ThreadLocal<int> _classMethodSuccesses = new(() => 0);
     private static readonly ThreadLocal<int> _constructorAttempts = new(() => 0);
     private static readonly ThreadLocal<int> _constructorSuccesses = new(() => 0);
+    private static readonly ThreadLocal<int> _schedulerValidationFallbacks =
+        new(() => 0);
 
     private static readonly ThreadLocal<string?> _lastFailure = new(() => null);
 
@@ -48,6 +50,7 @@ public static class IRPipelineMetrics
         _classMethodSuccesses.Value = 0;
         _constructorAttempts.Value = 0;
         _constructorSuccesses.Value = 0;
+        _schedulerValidationFallbacks.Value = 0;
 
         _lastFailure.Value = null;
     }
@@ -105,6 +108,13 @@ public static class IRPipelineMetrics
         if (success) _constructorSuccesses.Value++;
     }
 
+    public static void RecordSchedulerValidationFallback(string message)
+    {
+        if (!Enabled) return;
+        _schedulerValidationFallbacks.Value++;
+        _lastFailure.Value ??= $"LIR scheduler validation fallback: {message}";
+    }
+
     /// <summary>
     /// Gets a snapshot of current metrics for the current thread.
     /// </summary>
@@ -118,7 +128,8 @@ public static class IRPipelineMetrics
         ClassMethodAttempts: _classMethodAttempts.Value,
         ClassMethodSuccesses: _classMethodSuccesses.Value,
         ConstructorAttempts: _constructorAttempts.Value,
-        ConstructorSuccesses: _constructorSuccesses.Value
+        ConstructorSuccesses: _constructorSuccesses.Value,
+        SchedulerValidationFallbacks: _schedulerValidationFallbacks.Value
     );
 }
 
@@ -132,7 +143,8 @@ public readonly record struct IRPipelineStats(
     int ClassMethodAttempts,
     int ClassMethodSuccesses,
     int ConstructorAttempts,
-    int ConstructorSuccesses)
+    int ConstructorSuccesses,
+    int SchedulerValidationFallbacks)
 {
     public int TotalAttempts => MainMethodAttempts + FunctionAttempts + ArrowFunctionAttempts + ClassMethodAttempts + ConstructorAttempts;
     public int TotalSuccesses => MainMethodSuccesses + FunctionSuccesses + ArrowFunctionSuccesses + ClassMethodSuccesses + ConstructorSuccesses;
@@ -150,5 +162,6 @@ public readonly record struct IRPipelineStats(
         -------------------
         TOTAL:            {TotalSuccesses,4} / {TotalAttempts,4} ({SuccessRate:F1}%)
         Legacy Fallbacks: {TotalFallbacks,4}
+        Scheduler Validation Fallbacks: {SchedulerValidationFallbacks,4}
         """;
 }

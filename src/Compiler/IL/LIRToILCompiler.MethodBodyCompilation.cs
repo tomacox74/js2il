@@ -43,7 +43,10 @@ internal sealed partial class LIRToILCompiler
             ? null
             : LIRStackScheduler.Build(
                 MethodBody,
-                new LIRStackSchedulerOptions(schedulerMode));
+                new LIRStackSchedulerOptions(
+                    schedulerMode,
+                    compilerOptions?.LIRStackScheduleValidationBehavior
+                        ?? LIRStackScheduleValidationBehavior.Throw));
 
         // All temps start as "needs materialization". Stackify will mark which ones can stay on stack.
         var shouldMaterialize = new bool[MethodBody.Temps.Count];
@@ -618,7 +621,7 @@ internal sealed partial class LIRToILCompiler
         // Baseline maxstack matches MethodBodyStreamEncoder's safe default.
         // The estimator below raises this for known deep patterns (inline literals,
         // fixed-arity member calls, inlined parent-scope field loads, etc.).
-        int maxStack = 8;
+        int maxStack = Math.Max(8, stackSchedule?.MaxStackDepth ?? 0);
 
         // Build a quick map from temp -> defining instruction so we can estimate inlined temp emission.
         var defByTemp = new Dictionary<int, LIRInstruction>();
@@ -742,8 +745,11 @@ internal sealed partial class LIRToILCompiler
             return peak;
         }
 
-        foreach (var instr in MethodBody.Instructions)
+        for (var instructionIndex = 0;
+             instructionIndex < MethodBody.Instructions.Count;
+             instructionIndex++)
         {
+            var instr = MethodBody.Instructions[instructionIndex];
             int estimated = instr switch
             {
                 // Direct user-defined function call:
@@ -838,6 +844,15 @@ internal sealed partial class LIRToILCompiler
 
                 _ => 0
             };
+
+            // The legacy estimator measures the instruction's peak as though
+            // it starts with an empty stack. A validated optimized schedule may
+            // carry values into the instruction, so add that persistent depth.
+            if (stackSchedule is not null)
+            {
+                estimated += stackSchedule
+                    .CarriedStackDepthBeforeInstructions[instructionIndex];
+            }
 
             // Also account for deep stack usage inside the instruction that defines a temp
             // (e.g. nested object/array literals), regardless of whether the temp is materialized.

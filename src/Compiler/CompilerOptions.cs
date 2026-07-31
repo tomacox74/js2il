@@ -19,6 +19,18 @@ public class CompilerOptions
         Jroc.IL.LIRStackSchedulerMode.Identity;
 
     /// <summary>
+    /// Controls whether invalid optimized schedules fail fast or fall back to
+    /// the validated identity plan.
+    /// </summary>
+    internal Jroc.IL.LIRStackScheduleValidationBehavior
+        LIRStackScheduleValidationBehavior { get; set; } =
+#if DEBUG
+            Jroc.IL.LIRStackScheduleValidationBehavior.Throw;
+#else
+            Jroc.IL.LIRStackScheduleValidationBehavior.FallbackToIdentity;
+#endif
+
+    /// <summary>
     /// When true, JROC emits strongly-typed .NET contracts for CommonJS <c>module.exports</c>
     /// into the compiled assembly for hosting via <see cref="Jroc.Runtime.JsEngine"/>.
     /// </summary>

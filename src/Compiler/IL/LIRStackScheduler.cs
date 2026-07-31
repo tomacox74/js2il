@@ -14,20 +14,29 @@ internal static class LIRStackScheduler
     {
         ArgumentNullException.ThrowIfNull(methodBody);
 
-        return options.Mode switch
+        var schedule = options.Mode switch
         {
-            LIRStackSchedulerMode.Identity => Identity(methodBody),
+            LIRStackSchedulerMode.Identity => BuildIdentityUnvalidated(methodBody),
             LIRStackSchedulerMode.Disabled => throw new InvalidOperationException(
                 "Disabled scheduler mode bypasses schedule construction."),
             _ => throw new NotSupportedException(
                 $"LIR stack scheduler mode '{options.Mode}' is not implemented yet.")
         };
+
+        return ValidateOrFallback(methodBody, schedule, options);
     }
 
     internal static LIRStackSchedule Identity(MethodBodyIR methodBody)
     {
         ArgumentNullException.ThrowIfNull(methodBody);
+        return LIRStackScheduleValidator.ValidateAndAnnotate(
+            methodBody,
+            BuildIdentityUnvalidated(methodBody));
+    }
 
+    private static LIRStackSchedule BuildIdentityUnvalidated(
+        MethodBodyIR methodBody)
+    {
         var operations = BuildIdentityOperations(methodBody);
         var regions = BuildSchedulingRegions(methodBody, operations);
         var tempResidencies = new TempResidency[methodBody.Temps.Count];
@@ -43,11 +52,47 @@ internal static class LIRStackScheduler
             tempResidencies,
             ownedTemps,
             effectiveLastUses,
+            new int[methodBody.Instructions.Count],
             MaxStackDepth: 0,
             new LIRStackScheduleMetrics(
                 ScheduledRegionCount: regions.Length,
                 StackResidentTempCount: 0,
-                EliminatedSpillCount: 0));
+                EliminatedSpillCount: 0,
+                ValidationFallbackCount: 0),
+            ValidationFailureReason: null);
+    }
+
+    internal static LIRStackSchedule ValidateOrFallback(
+        MethodBodyIR methodBody,
+        LIRStackSchedule schedule,
+        LIRStackSchedulerOptions options)
+    {
+        try
+        {
+            return LIRStackScheduleValidator.ValidateAndAnnotate(
+                methodBody,
+                schedule);
+        }
+        catch (LIRStackScheduleValidationException exception)
+            when (options.ValidationBehavior
+                    == LIRStackScheduleValidationBehavior.FallbackToIdentity
+                && schedule.Mode != LIRStackSchedulerMode.Identity)
+        {
+            IRPipelineMetrics.RecordSchedulerValidationFallback(
+                exception.Message);
+            var identity = LIRStackScheduleValidator.ValidateAndAnnotate(
+                methodBody,
+                BuildIdentityUnvalidated(methodBody));
+            return identity with
+            {
+                Metrics = identity.Metrics with
+                {
+                    ValidationFallbackCount =
+                        identity.Metrics.ValidationFallbackCount + 1
+                },
+                ValidationFailureReason = exception.Message
+            };
+        }
     }
 
     private static ScheduledOperation[] BuildIdentityOperations(MethodBodyIR methodBody)
