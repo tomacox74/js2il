@@ -5,13 +5,18 @@
 The scheduler is being introduced incrementally under the umbrella tracked by
 [GitHub issue #1617](https://github.com/tomacox74/js2il/issues/1617).
 
-The implementation currently provides an **identity schedule only**:
+The implementation currently provides an **identity schedule with conservative
+region discovery**:
 
 - LIR instructions are emitted in their original order.
 - No temp is made stack-resident by the scheduler.
 - Existing `Stackify`, branch fusion, rematerialization, and local allocation
   behavior remains authoritative.
 - Existing constructor/field-store peepholes remain intact.
+- Every concrete LIR instruction type is inventoried by canonical
+  scheduler-facing metadata.
+- Straight-line candidate regions are identified between conservative
+  boundaries, but their instructions are not reordered.
 - Generated method bodies and Portable PDB mappings are unchanged.
 
 The identity stage exists to establish a reviewable and testable emission-plan
@@ -85,6 +90,7 @@ Current integration is in:
 
 - `src/Compiler/IL/LIRStackSchedule.cs`
 - `src/Compiler/IL/LIRStackScheduler.cs`
+- `src/Compiler/IL/LIRInstructionInfo.cs`
 - `src/Compiler/IL/LIRToILCompiler.MethodBodyCompilation.cs`
 - `src/Compiler/CompilerOptions.cs`
 
@@ -154,13 +160,66 @@ The order of operations is the emission order. Identity scheduling uses
 source-order operations. Future scheduling may reorder whole operations within
 validated regions without mutating `MethodBodyIR.Instructions`.
 
+### Canonical instruction metadata
+
+`LIRInstructionInfo` is the scheduler-facing source for:
+
+- ordered temp definitions and uses;
+- implicit catch/await/yield definition semantics;
+- semantic stack signatures;
+- default instruction disposition;
+- conservative effect flags;
+- internal-control-flow and scheduling-boundary classification.
+
+`KnownInstructionTypes` explicitly inventories every concrete
+`LIRInstruction` subtype. A reflection-based test compares that inventory with
+the compiler assembly, so adding a new LIR instruction fails until it is
+classified. A runtime instruction absent from the inventory fails closed as an
+`UnsupportedBarrier`.
+
+Effects distinguish:
+
+- mutable slot, scope, and heap reads/writes;
+- calls, allocations, and may-throw behavior;
+- explicit control flow;
+- suspension;
+- scope replacement;
+- hidden IL control flow;
+- unsupported barriers.
+
+Typed numeric constants/operators are explicitly pure. Calls and dynamic
+operations receive conservative read/write/may-throw effects.
+TDZ-checked scope loads are marked `MayThrow`.
+
+Catch handler entry is represented by
+`LIRImplicitStackInput.CatchException`: the CLR supplies one exception object,
+and `LIRStoreException` consumes it into a materialized result. `LIRAwait` and
+`LIRYield` use `ResumeResult` definitions and remain opaque suspension
+boundaries. `LIRUnwrapCatchException` is an opaque internal-control-flow
+boundary because its emitter expands into branches.
+
+The allocator keeps its legacy def/use switches in this stage to guarantee no
+IL change. Scheduler and final-LIR validation use canonical metadata; allocator
+liveness migration is isolated to its dedicated later stage.
+
 ### Regions and metrics
 
-`ScheduledRegion` reserves the boundary for future straight-line scheduling.
-Identity mode creates no optimized regions and reports:
+`ScheduledRegion` identifies a source-order window in the flat operation array.
+Regions contain only instructions that may participate in future scheduling.
+They are split around:
+
+- labels, branches, `leave`, return, throw, and `endfinally`;
+- sequence points;
+- EH catch entry and hidden-control-flow instructions;
+- `yield`, `await`, and state-machine operations;
+- scope replacement;
+- unknown/unsupported instructions.
+
+Identity mode still performs no optimization. It reports the number of
+discovered regions while leaving the optimization metrics at zero:
 
 ```text
-ScheduledRegionCount = 0
+ScheduledRegionCount = <discovered straight-line region count>
 StackResidentTempCount = 0
 EliminatedSpillCount = 0
 MaxStackDepth = 0
@@ -173,15 +232,15 @@ The existing IL maxstack calculation remains authoritative in identity mode.
 The schedule records the last LIR index that uses each temp. Identity mode
 matches raw source order and does not feed this data into allocation yet.
 
-The implementation supplements the legacy temp visitor for:
+Canonical metadata supplements the legacy temp visitor for:
 
 - `LIRThrow.Value`
 - `LIRUnwrapCatchException.Exception`
 
 Those operands are consumed by the emitter but are missing from the legacy
-allocator visitor. Recording them makes the schedule metadata accurate without
-changing allocation or generated IL in this stage. A later stage will replace
-duplicated manual instruction inventories with canonical exhaustive metadata.
+allocator visitor. Recording them makes scheduler metadata accurate without
+changing allocation or generated IL. The allocator deliberately stays on its
+legacy visitor until schedule-effective liveness is integrated.
 
 ## Identity operation construction
 
@@ -259,6 +318,12 @@ Identity mode must preserve all of the following:
 - exception regions;
 - sequence-point mappings and source local indexes;
 - constructor/field-store fusion and fallback behavior.
+- every concrete compiler LIR subtype is present in the canonical inventory;
+- unclassified runtime instructions become unsupported boundaries;
+- candidate regions never include explicit control, sequence-point, scope,
+  suspension, EH-entry, hidden-CFG, or unsupported boundaries;
+- catch entry consumes exactly one implicit exception stack input;
+- await/yield results are identified as resume-time definitions.
 
 The identity scheduler does not inspect `CompilerOptions.EmitPdb`; enabling
 symbols must not change schedule selection or operation order.
@@ -298,7 +363,7 @@ Focused regression coverage also includes:
 Identity scheduling does not:
 
 - reorder instructions;
-- create scheduling regions;
+- optimize or reorder discovered scheduling regions;
 - keep a temp on the stack;
 - remove a spill;
 - alter rematerialization;
@@ -315,18 +380,17 @@ instruction-family PRs smaller and reviewable.
 The ordered work is tracked under
 [issue #1617](https://github.com/tomacox74/js2il/issues/1617):
 
-1. Canonical LIR metadata and safe scheduling-region partitioning.
-2. Independent schedule validation and schedule-aware maxstack.
-3. Effective liveness/local allocation integration.
-4. Portable PDB preservation gate.
-5. Typed numeric binary expression trees.
-6. Typed unary/comparison/branch expressions.
-7. Conversions, stable loads, and explicit rematerialization.
-8. Literal and argument construction.
-9. Same-region single-use call results.
-10. General legal scheduling inside straight-line regions.
-11. Stackify scheduling retirement.
-12. Final obsolete-code audit and deletion.
+1. Independent schedule validation and schedule-aware maxstack.
+2. Effective liveness/local allocation integration.
+3. Portable PDB preservation gate.
+4. Typed numeric binary expression trees.
+5. Typed unary/comparison/branch expressions.
+6. Conversions, stable loads, and explicit rematerialization.
+7. Literal and argument construction.
+8. Same-region single-use call results.
+9. General legal scheduling inside straight-line regions.
+10. Stackify scheduling retirement.
+11. Final obsolete-code audit and deletion.
 
 At each optimizing stage:
 
@@ -344,6 +408,10 @@ When changing the identity scheduler foundation:
 - Do not make scheduler behavior depend on PDB emission.
 - Preserve ordinary fallback for atomic fusion candidates.
 - Keep effective last uses accurate for every newly-observed operand.
+- Add every new concrete LIR subtype to canonical metadata and classify it
+  conservatively before enabling scheduling.
+- Keep hidden-control-flow, catch-entry, suspension, scope-replacement, and
+  sequence-point instructions outside candidate regions.
 - Add direct schedule assertions, not only execution tests.
 - Compare local signature contents, not only metadata row numbers.
 - Check decoded Portable PDB mappings, not raw PDB container bytes.

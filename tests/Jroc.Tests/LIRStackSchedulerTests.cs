@@ -1,3 +1,4 @@
+using Jroc.DebugSymbols;
 using Jroc.IL;
 using Jroc.IR;
 using Jroc.Services.TwoPhaseCompilation;
@@ -53,6 +54,12 @@ public sealed class LIRStackSchedulerTests
             schedule.TempResidencies);
         Assert.All(schedule.OwnedTemps, Assert.False);
         Assert.Equal(new[] { 2, 2, 3 }, schedule.EffectiveLastUses);
+        var region = Assert.Single(schedule.Regions);
+        Assert.Equal(0, region.StartLirIndex);
+        Assert.Equal(3, region.EndLirIndexExclusive);
+        Assert.Equal(0, region.StartOperationIndex);
+        Assert.Equal(3, region.OperationCount);
+        Assert.Equal(1, schedule.Metrics.ScheduledRegionCount);
     }
 
     [Fact]
@@ -74,6 +81,75 @@ public sealed class LIRStackSchedulerTests
         Assert.Equal(
             Enumerable.Range(0, body.Instructions.Count),
             schedule.Operations.Select(operation => operation.StartLirIndex));
+        Assert.Collection(
+            schedule.Regions,
+            region =>
+            {
+                Assert.Equal(0, region.StartLirIndex);
+                Assert.Equal(1, region.EndLirIndexExclusive);
+            },
+            region =>
+            {
+                Assert.Equal(2, region.StartLirIndex);
+                Assert.Equal(3, region.EndLirIndexExclusive);
+            });
+    }
+
+    [Fact]
+    public void Identity_SequencePointAndScopeCreation_SplitRegions()
+    {
+        var body = new MethodBodyIR();
+        var first = AddTemp(body);
+        var second = AddTemp(body);
+
+        body.Instructions.Add(new LIRConstNumber(1, first));
+        body.Instructions.Add(new LIRSequencePoint(SourceSpan.Hidden("source.js")));
+        body.Instructions.Add(new LIRConstNumber(2, second));
+        body.Instructions.Add(new LIRCreateLeafScopeInstance(new ScopeId("block")));
+        body.Instructions.Add(new LIRCopyTemp(second, first));
+
+        var schedule = LIRStackScheduler.Identity(body);
+
+        Assert.Collection(
+            schedule.Regions,
+            region =>
+            {
+                Assert.Equal(0, region.StartLirIndex);
+                Assert.Equal(1, region.EndLirIndexExclusive);
+            },
+            region =>
+            {
+                Assert.Equal(2, region.StartLirIndex);
+                Assert.Equal(3, region.EndLirIndexExclusive);
+            },
+            region =>
+            {
+                Assert.Equal(4, region.StartLirIndex);
+                Assert.Equal(5, region.EndLirIndexExclusive);
+            });
+    }
+
+    [Fact]
+    public void Identity_InternalControlFlowAndUnknownInstructions_AreOpaqueBoundaries()
+    {
+        var body = new MethodBodyIR();
+        var exception = AddTemp(body);
+        var result = AddTemp(body);
+        var value = AddTemp(body);
+
+        body.Instructions.Add(new LIRConstUndefined(exception));
+        body.Instructions.Add(new LIRUnwrapCatchException(exception, result));
+        body.Instructions.Add(new LIRConstNumber(1, value));
+        body.Instructions.Add(new UnknownInstruction());
+        body.Instructions.Add(new LIRCopyTemp(value, result));
+
+        var schedule = LIRStackScheduler.Identity(body);
+
+        Assert.Collection(
+            schedule.Regions,
+            region => Assert.Equal((0, 1), (region.StartLirIndex, region.EndLirIndexExclusive)),
+            region => Assert.Equal((2, 3), (region.StartLirIndex, region.EndLirIndexExclusive)),
+            region => Assert.Equal((4, 5), (region.StartLirIndex, region.EndLirIndexExclusive)));
     }
 
     [Fact]
@@ -237,6 +313,13 @@ public sealed class LIRStackSchedulerTests
             function numeric(a, b) { return a * 2 + b; }
             function control(a) { if (a) return 1; return 2; }
             function call(a) { return Math.floor(a); }
+            function eh(a) {
+              try { return a + 1; }
+              catch (e) { return 0; }
+              finally { Math.floor(a); }
+            }
+            function* gen(a) { yield a + 1; return a + 2; }
+            async function af(a) { return (await a) + 1; }
             class Bar { constructor(value) { this.value = value; } }
             class Foo {
               constructor() {
@@ -290,6 +373,8 @@ public sealed class LIRStackSchedulerTests
             ?? throw new InvalidOperationException(
                 $"Compilation failed. Errors: {logger.Errors}\nWarnings: {logger.Warnings}");
     }
+
+    private sealed record UnknownInstruction : LIRInstruction;
 
     private static void AssertEquivalentMethodBodies(byte[] expectedPe, byte[] actualPe)
     {

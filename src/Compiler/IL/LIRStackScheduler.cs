@@ -29,6 +29,7 @@ internal static class LIRStackScheduler
         ArgumentNullException.ThrowIfNull(methodBody);
 
         var operations = BuildIdentityOperations(methodBody);
+        var regions = BuildSchedulingRegions(methodBody, operations);
         var tempResidencies = new TempResidency[methodBody.Temps.Count];
         Array.Fill(tempResidencies, TempResidency.MaterializedLocal);
 
@@ -38,13 +39,13 @@ internal static class LIRStackScheduler
         return new LIRStackSchedule(
             LIRStackSchedulerMode.Identity,
             operations,
-            Array.Empty<ScheduledRegion>(),
+            regions,
             tempResidencies,
             ownedTemps,
             effectiveLastUses,
             MaxStackDepth: 0,
             new LIRStackScheduleMetrics(
-                ScheduledRegionCount: 0,
+                ScheduledRegionCount: regions.Length,
                 StackResidentTempCount: 0,
                 EliminatedSpillCount: 0));
     }
@@ -116,31 +117,79 @@ internal static class LIRStackScheduler
              instructionIndex++)
         {
             var visitor = new LastUseVisitor(lastUses, instructionIndex);
-            VisitIdentityUsedTemps(methodBody.Instructions[instructionIndex], ref visitor);
+             LIRInstructionInfo.VisitUsedTemps(
+                 methodBody.Instructions[instructionIndex],
+                 ref visitor);
         }
 
         return lastUses;
     }
 
-    private static void VisitIdentityUsedTemps<TVisitor>(
-        LIRInstruction instruction,
-        ref TVisitor visitor)
-        where TVisitor : struct, ITempUseVisitor
+    private static ScheduledRegion[] BuildSchedulingRegions(
+        MethodBodyIR methodBody,
+        ScheduledOperation[] operations)
     {
-        // These exception operands are not yet present in the allocator's
-        // legacy visitor. Keep identity schedule metadata correct without
-        // changing legacy allocation/output in this no-IL-change stage.
-        switch (instruction)
+        if (operations.Length == 0)
         {
-            case LIRThrow throwInstruction:
-                visitor.Visit(throwInstruction.Value);
+            return Array.Empty<ScheduledRegion>();
+        }
+
+        var regions = new ScheduledRegion[(operations.Length / 2) + 1];
+        var regionCount = 0;
+        var regionStartOperation = -1;
+
+        for (var operationIndex = 0; operationIndex < operations.Length; operationIndex++)
+        {
+            var operation = operations[operationIndex];
+            var isBoundary = false;
+            for (var offset = 0; offset < operation.InstructionCount; offset++)
+            {
+                var instruction = methodBody.Instructions[
+                    operation.GetLirInstructionIndex(offset)];
+                if (LIRInstructionInfo.IsSchedulingBoundary(instruction))
+                {
+                    isBoundary = true;
+                    break;
+                }
+            }
+
+            if (isBoundary)
+            {
+                AppendRegionBeforeBoundary(operationIndex);
+                continue;
+            }
+
+            if (regionStartOperation < 0)
+            {
+                regionStartOperation = operationIndex;
+            }
+        }
+
+        AppendRegionBeforeBoundary(operations.Length);
+
+        if (regionCount != regions.Length)
+        {
+            Array.Resize(ref regions, regionCount);
+        }
+
+        return regions;
+
+        void AppendRegionBeforeBoundary(int endOperationIndexExclusive)
+        {
+            if (regionStartOperation < 0)
+            {
                 return;
-            case LIRUnwrapCatchException unwrapCatch:
-                visitor.Visit(unwrapCatch.Exception);
-                return;
-            default:
-                TempLocalAllocator.VisitUsedTemps(instruction, ref visitor);
-                return;
+            }
+
+            var firstOperation = operations[regionStartOperation];
+            var lastOperation = operations[endOperationIndexExclusive - 1];
+            regions[regionCount++] = new ScheduledRegion(
+                firstOperation.StartLirIndex,
+                lastOperation.EndLirIndexExclusive,
+                regionStartOperation,
+                endOperationIndexExclusive - regionStartOperation,
+                MaxStackDepth: 0);
+            regionStartOperation = -1;
         }
     }
 
