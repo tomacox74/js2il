@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21b7
+				// Method begins at RVA 0x21bb
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -44,12 +44,12 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 04 00 00 02
 			)
-			// Method begins at RVA 0x2168
+			// Method begins at RVA 0x216c
 			// Header size: 12
 			// Code size: 58 (0x3a)
 			.maxstack 8
 			.locals init (
-				[0] object
+				[0] class [JavaScriptRuntime]JavaScriptRuntime.JsObject
 			)
 
 			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
@@ -61,10 +61,10 @@
 			IL_001a: ldstr "y"
 			IL_001f: ldc.r8 20
 			IL_0028: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
-			IL_002d: ldstr "x"
-			IL_0032: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0037: stloc.0
-			IL_0038: ldloc.0
+			IL_002d: stloc.0
+			IL_002e: ldloc.0
+			IL_002f: ldstr "x"
+			IL_0034: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
 			IL_0039: ret
 		} // end of method getX::__js_call__
 
@@ -84,7 +84,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x21ae
+			// Method begins at RVA 0x21b2
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -110,13 +110,14 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 268 (0x10c)
+		// Code size: 270 (0x10e)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ObjectLiteral_InlinePropertyInit/Scope,
 			[1] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0,
 			[2] object,
-			[3] object
+			[3] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
+			[4] object
 		)
 
 		IL_0000: newobj instance void Modules.ObjectLiteral_InlinePropertyInit/Scope::.ctor()
@@ -154,18 +155,18 @@
 		IL_0061: ldstr "b"
 		IL_0066: ldc.r8 2
 		IL_006f: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
-		IL_0074: ldstr "a"
-		IL_0079: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_007e: stloc.3
-		IL_007f: ldloc.2
-		IL_0080: ldstr "log"
-		IL_0085: ldloc.3
+		IL_0074: stloc.3
+		IL_0075: ldloc.2
+		IL_0076: ldstr "log"
+		IL_007b: ldloc.3
+		IL_007c: ldstr "a"
+		IL_0081: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
 		IL_0086: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
 		IL_008b: pop
 		IL_008c: ldstr "console"
 		IL_0091: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
 		IL_0096: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_009b: stloc.3
+		IL_009b: stloc.2
 		IL_009c: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
 		IL_00a1: dup
 		IL_00a2: ldstr "a"
@@ -175,12 +176,12 @@
 		IL_00b6: ldstr "b"
 		IL_00bb: ldc.r8 2
 		IL_00c4: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
-		IL_00c9: ldstr "b"
-		IL_00ce: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_00d3: stloc.2
-		IL_00d4: ldloc.3
-		IL_00d5: ldstr "log"
-		IL_00da: ldloc.2
+		IL_00c9: stloc.3
+		IL_00ca: ldloc.2
+		IL_00cb: ldstr "log"
+		IL_00d0: ldloc.3
+		IL_00d1: ldstr "b"
+		IL_00d6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
 		IL_00db: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
 		IL_00e0: pop
 		IL_00e1: nop
@@ -191,13 +192,13 @@
 		IL_00f2: ldloc.1
 		IL_00f3: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
 		IL_00f8: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0, object[])
-		IL_00fd: stloc.3
-		IL_00fe: ldloc.2
-		IL_00ff: ldstr "log"
-		IL_0104: ldloc.3
-		IL_0105: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_010a: pop
-		IL_010b: ret
+		IL_00fd: stloc.s 4
+		IL_00ff: ldloc.2
+		IL_0100: ldstr "log"
+		IL_0105: ldloc.s 4
+		IL_0107: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_010c: pop
+		IL_010d: ret
 	} // end of method ObjectLiteral_InlinePropertyInit::__js_module_init__
 
 } // end of class Modules.ObjectLiteral_InlinePropertyInit
@@ -209,7 +210,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21c0
+		// Method begins at RVA 0x21c4
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

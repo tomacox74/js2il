@@ -29,7 +29,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2386
+				// Method begins at RVA 0x238e
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -58,7 +58,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 04 00 00 02
 			)
-			// Method begins at RVA 0x2180
+			// Method begins at RVA 0x2188
 			// Header size: 12
 			// Code size: 486 (0x1e6)
 			.maxstack 8
@@ -254,7 +254,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2372
+			// Method begins at RVA 0x237a
 			// Header size: 1
 			// Code size: 19 (0x13)
 			.maxstack 8
@@ -283,7 +283,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 292 (0x124)
+		// Code size: 300 (0x12c)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Require_ChildProcess_ExecFile_NonZero/Scope,
@@ -294,7 +294,8 @@
 			[5] object,
 			[6] object,
 			[7] object,
-			[8] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes3
+			[8] class [JavaScriptRuntime]JavaScriptRuntime.Array,
+			[9] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes3
 		)
 
 		IL_0000: newobj instance void Modules.Require_ChildProcess_ExecFile_NonZero/Scope::.ctor()
@@ -328,7 +329,7 @@
 		IL_0051: ldloc.3
 		IL_0052: stloc.s 4
 		IL_0054: ldloc.2
-		IL_0055: brfalse IL_0093
+		IL_0055: brfalse IL_0097
 
 		IL_005a: ldc.i4.4
 		IL_005b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
@@ -344,63 +345,67 @@
 		IL_0081: dup
 		IL_0082: ldstr "exit /b 7"
 		IL_0087: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-		IL_008c: stloc.s 5
-		IL_008e: br IL_00b1
+		IL_008c: stloc.s 8
+		IL_008e: ldloc.s 8
+		IL_0090: stloc.s 5
+		IL_0092: br IL_00b9
 
-		IL_0093: ldc.i4.2
-		IL_0094: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_0099: dup
-		IL_009a: ldstr "-c"
-		IL_009f: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-		IL_00a4: dup
-		IL_00a5: ldstr "exit 7"
-		IL_00aa: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-		IL_00af: stloc.s 5
+		IL_0097: ldc.i4.2
+		IL_0098: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_009d: dup
+		IL_009e: ldstr "-c"
+		IL_00a3: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+		IL_00a8: dup
+		IL_00a9: ldstr "exit 7"
+		IL_00ae: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+		IL_00b3: stloc.s 8
+		IL_00b5: ldloc.s 8
+		IL_00b7: stloc.s 5
 
-		IL_00b1: ldloc.s 5
-		IL_00b3: stloc.s 6
-		IL_00b5: ldloc.1
-		IL_00b6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00bb: stloc.s 7
-		IL_00bd: ldc.i4.1
-		IL_00be: newarr [System.Runtime]System.Object
-		IL_00c3: dup
-		IL_00c4: ldc.i4.0
-		IL_00c5: ldloc.0
-		IL_00c6: stelem.ref
-		IL_00c7: ldc.i4.0
-		IL_00c8: ldelem.ref
-		IL_00c9: castclass Modules.Require_ChildProcess_ExecFile_NonZero/Scope
-		IL_00ce: ldftn object Modules.Require_ChildProcess_ExecFile_NonZero/ArrowFunction_L11C49::__js_call__(class Modules.Require_ChildProcess_ExecFile_NonZero/Scope, object, object, object, object)
-		IL_00d4: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes3::.ctor(object, native int)
-		IL_00d9: ldc.i4.1
-		IL_00da: newarr [System.Runtime]System.Object
-		IL_00df: dup
-		IL_00e0: ldc.i4.0
-		IL_00e1: ldloc.0
-		IL_00e2: stelem.ref
-		IL_00e3: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_00e8: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_00ed: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes3
-		IL_00f2: ldc.i4.3
-		IL_00f3: conv.r8
-		IL_00f4: ldstr ""
-		IL_00f9: ldc.i4.0
-		IL_00fa: ldc.i4.0
-		IL_00fb: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes3>(!!0, float64, string, bool, bool)
-		IL_0100: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes3>(!!0)
-		IL_0105: stloc.s 8
-		IL_0107: ldloc.s 7
-		IL_0109: ldstr "execFile"
-		IL_010e: ldloc.s 4
-		IL_0110: ldloc.s 6
-		IL_0112: ldloc.s 8
-		IL_0114: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember3(object, string, object, object, object)
-		IL_0119: stloc.s 7
-		IL_011b: ldloc.0
-		IL_011c: ldloc.s 7
-		IL_011e: stfld object Modules.Require_ChildProcess_ExecFile_NonZero/Scope::child
-		IL_0123: ret
+		IL_00b9: ldloc.s 5
+		IL_00bb: stloc.s 6
+		IL_00bd: ldloc.1
+		IL_00be: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00c3: stloc.s 7
+		IL_00c5: ldc.i4.1
+		IL_00c6: newarr [System.Runtime]System.Object
+		IL_00cb: dup
+		IL_00cc: ldc.i4.0
+		IL_00cd: ldloc.0
+		IL_00ce: stelem.ref
+		IL_00cf: ldc.i4.0
+		IL_00d0: ldelem.ref
+		IL_00d1: castclass Modules.Require_ChildProcess_ExecFile_NonZero/Scope
+		IL_00d6: ldftn object Modules.Require_ChildProcess_ExecFile_NonZero/ArrowFunction_L11C49::__js_call__(class Modules.Require_ChildProcess_ExecFile_NonZero/Scope, object, object, object, object)
+		IL_00dc: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes3::.ctor(object, native int)
+		IL_00e1: ldc.i4.1
+		IL_00e2: newarr [System.Runtime]System.Object
+		IL_00e7: dup
+		IL_00e8: ldc.i4.0
+		IL_00e9: ldloc.0
+		IL_00ea: stelem.ref
+		IL_00eb: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_00f0: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_00f5: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes3
+		IL_00fa: ldc.i4.3
+		IL_00fb: conv.r8
+		IL_00fc: ldstr ""
+		IL_0101: ldc.i4.0
+		IL_0102: ldc.i4.0
+		IL_0103: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes3>(!!0, float64, string, bool, bool)
+		IL_0108: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes3>(!!0)
+		IL_010d: stloc.s 9
+		IL_010f: ldloc.s 7
+		IL_0111: ldstr "execFile"
+		IL_0116: ldloc.s 4
+		IL_0118: ldloc.s 6
+		IL_011a: ldloc.s 9
+		IL_011c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember3(object, string, object, object, object)
+		IL_0121: stloc.s 7
+		IL_0123: ldloc.0
+		IL_0124: ldloc.s 7
+		IL_0126: stfld object Modules.Require_ChildProcess_ExecFile_NonZero/Scope::child
+		IL_012b: ret
 	} // end of method Require_ChildProcess_ExecFile_NonZero::__js_module_init__
 
 } // end of class Modules.Require_ChildProcess_ExecFile_NonZero
@@ -412,7 +417,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x238f
+		// Method begins at RVA 0x2397
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

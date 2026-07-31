@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x23d0
+			// Method begins at RVA 0x23d4
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,7 +40,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 884 (0x374)
+		// Code size: 888 (0x378)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Require_Util_Format_Basic/Scope,
@@ -50,9 +50,10 @@
 			[4] object,
 			[5] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
 			[6] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
-			[7] class [JavaScriptRuntime]JavaScriptRuntime.Uint8Array,
-			[8] class [JavaScriptRuntime]JavaScriptRuntime.ArrayBuffer,
-			[9] class [JavaScriptRuntime]JavaScriptRuntime.DataView
+			[7] class [JavaScriptRuntime]JavaScriptRuntime.Array,
+			[8] class [JavaScriptRuntime]JavaScriptRuntime.Uint8Array,
+			[9] class [JavaScriptRuntime]JavaScriptRuntime.ArrayBuffer,
+			[10] class [JavaScriptRuntime]JavaScriptRuntime.DataView
 		)
 
 		IL_0000: newobj instance void Modules.Require_Util_Format_Basic/Scope::.ctor()
@@ -260,49 +261,51 @@
 		IL_02c7: dup
 		IL_02c8: ldc.r8 3
 		IL_02d1: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::AddNumber(float64)
-		IL_02d6: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Uint8Array::.ctor(object)
-		IL_02db: stloc.s 7
-		IL_02dd: ldloc.s 4
-		IL_02df: ldstr "format"
-		IL_02e4: ldstr "%o"
-		IL_02e9: ldloc.s 7
-		IL_02eb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_02f0: stloc.s 4
-		IL_02f2: ldloc.3
-		IL_02f3: ldstr "log"
-		IL_02f8: ldloc.s 4
-		IL_02fa: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_02ff: pop
-		IL_0300: ldstr "console"
-		IL_0305: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_030a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_030f: stloc.s 4
-		IL_0311: ldloc.1
-		IL_0312: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0317: stloc.3
-		IL_0318: ldc.r8 6
-		IL_0321: box [System.Runtime]System.Double
-		IL_0326: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ArrayBuffer::.ctor(object)
-		IL_032b: stloc.s 8
-		IL_032d: ldloc.s 8
-		IL_032f: ldc.r8 1
-		IL_0338: box [System.Runtime]System.Double
-		IL_033d: ldc.r8 4
-		IL_0346: box [System.Runtime]System.Double
-		IL_034b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.DataView::.ctor(object, object, object)
-		IL_0350: stloc.s 9
-		IL_0352: ldloc.3
-		IL_0353: ldstr "format"
-		IL_0358: ldstr "%O"
-		IL_035d: ldloc.s 9
-		IL_035f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_0364: stloc.3
-		IL_0365: ldloc.s 4
-		IL_0367: ldstr "log"
-		IL_036c: ldloc.3
-		IL_036d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0372: pop
-		IL_0373: ret
+		IL_02d6: stloc.s 7
+		IL_02d8: ldloc.s 7
+		IL_02da: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Uint8Array::.ctor(object)
+		IL_02df: stloc.s 8
+		IL_02e1: ldloc.s 4
+		IL_02e3: ldstr "format"
+		IL_02e8: ldstr "%o"
+		IL_02ed: ldloc.s 8
+		IL_02ef: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_02f4: stloc.s 4
+		IL_02f6: ldloc.3
+		IL_02f7: ldstr "log"
+		IL_02fc: ldloc.s 4
+		IL_02fe: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0303: pop
+		IL_0304: ldstr "console"
+		IL_0309: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_030e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0313: stloc.s 4
+		IL_0315: ldloc.1
+		IL_0316: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_031b: stloc.3
+		IL_031c: ldc.r8 6
+		IL_0325: box [System.Runtime]System.Double
+		IL_032a: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ArrayBuffer::.ctor(object)
+		IL_032f: stloc.s 9
+		IL_0331: ldloc.s 9
+		IL_0333: ldc.r8 1
+		IL_033c: box [System.Runtime]System.Double
+		IL_0341: ldc.r8 4
+		IL_034a: box [System.Runtime]System.Double
+		IL_034f: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.DataView::.ctor(object, object, object)
+		IL_0354: stloc.s 10
+		IL_0356: ldloc.3
+		IL_0357: ldstr "format"
+		IL_035c: ldstr "%O"
+		IL_0361: ldloc.s 10
+		IL_0363: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_0368: stloc.3
+		IL_0369: ldloc.s 4
+		IL_036b: ldstr "log"
+		IL_0370: ldloc.3
+		IL_0371: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0376: pop
+		IL_0377: ret
 	} // end of method Require_Util_Format_Basic::__js_module_init__
 
 } // end of class Modules.Require_Util_Format_Basic
@@ -314,7 +317,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x23d9
+		// Method begins at RVA 0x23dd
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

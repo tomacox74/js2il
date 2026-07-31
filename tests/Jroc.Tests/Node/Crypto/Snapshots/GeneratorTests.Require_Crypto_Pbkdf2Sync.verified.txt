@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x239d
+			// Method begins at RVA 0x23a1
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,7 +40,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 833 (0x341)
+		// Code size: 837 (0x345)
 		.maxstack 9
 		.locals init (
 			[0] class Modules.Require_Crypto_Pbkdf2Sync/Scope,
@@ -49,7 +49,8 @@
 			[3] object,
 			[4] object[],
 			[5] class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer,
-			[6] class [JavaScriptRuntime]JavaScriptRuntime.Uint8Array
+			[6] class [JavaScriptRuntime]JavaScriptRuntime.Array,
+			[7] class [JavaScriptRuntime]JavaScriptRuntime.Uint8Array
 		)
 
 		IL_0000: newobj instance void Modules.Require_Crypto_Pbkdf2Sync/Scope::.ctor()
@@ -240,101 +241,103 @@
 		IL_022c: dup
 		IL_022d: ldc.r8 5
 		IL_0236: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::AddNumber(float64)
-		IL_023b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Uint8Array::.ctor(object)
-		IL_0240: stloc.s 6
-		IL_0242: ldc.i4.5
-		IL_0243: newarr [System.Runtime]System.Object
-		IL_0248: dup
-		IL_0249: ldc.i4.0
-		IL_024a: ldloc.s 5
-		IL_024c: stelem.ref
-		IL_024d: dup
-		IL_024e: ldc.i4.1
-		IL_024f: ldloc.s 6
-		IL_0251: stelem.ref
-		IL_0252: dup
-		IL_0253: ldc.i4.2
-		IL_0254: ldc.r8 3
-		IL_025d: box [System.Runtime]System.Double
-		IL_0262: stelem.ref
-		IL_0263: dup
-		IL_0264: ldc.i4.3
-		IL_0265: ldc.r8 16
-		IL_026e: box [System.Runtime]System.Double
-		IL_0273: stelem.ref
-		IL_0274: dup
-		IL_0275: ldc.i4.4
-		IL_0276: ldstr "sha512"
-		IL_027b: stelem.ref
-		IL_027c: stloc.s 4
-		IL_027e: ldloc.2
-		IL_027f: ldstr "pbkdf2Sync"
-		IL_0284: ldloc.s 4
-		IL_0286: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember(object, string, object[])
-		IL_028b: stloc.2
-		IL_028c: ldloc.2
-		IL_028d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0292: stloc.2
-		IL_0293: ldloc.2
-		IL_0294: ldstr "toString"
-		IL_0299: ldstr "hex"
-		IL_029e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_02a3: stloc.2
-		IL_02a4: ldloc.3
-		IL_02a5: ldstr "log"
-		IL_02aa: ldstr "pbkdf2 sha512 hex:"
-		IL_02af: ldloc.2
-		IL_02b0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_02b5: pop
-		IL_02b6: ldstr "console"
-		IL_02bb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_02c0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_02c5: stloc.2
-		IL_02c6: ldloc.1
-		IL_02c7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_02cc: stloc.3
-		IL_02cd: ldc.i4.5
-		IL_02ce: newarr [System.Runtime]System.Object
-		IL_02d3: dup
-		IL_02d4: ldc.i4.0
-		IL_02d5: ldstr "password"
-		IL_02da: stelem.ref
-		IL_02db: dup
-		IL_02dc: ldc.i4.1
-		IL_02dd: ldstr "salt"
-		IL_02e2: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer::from(object)
-		IL_02e7: stelem.ref
-		IL_02e8: dup
-		IL_02e9: ldc.i4.2
-		IL_02ea: ldc.r8 1
-		IL_02f3: box [System.Runtime]System.Double
-		IL_02f8: stelem.ref
-		IL_02f9: dup
-		IL_02fa: ldc.i4.3
-		IL_02fb: ldc.r8 0.0
-		IL_0304: box [System.Runtime]System.Double
-		IL_0309: stelem.ref
-		IL_030a: dup
-		IL_030b: ldc.i4.4
-		IL_030c: ldstr "sha256"
-		IL_0311: stelem.ref
-		IL_0312: stloc.s 4
-		IL_0314: ldloc.3
-		IL_0315: ldstr "pbkdf2Sync"
-		IL_031a: ldloc.s 4
-		IL_031c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember(object, string, object[])
-		IL_0321: stloc.3
-		IL_0322: ldloc.3
-		IL_0323: ldstr "length"
-		IL_0328: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_032d: stloc.3
-		IL_032e: ldloc.2
-		IL_032f: ldstr "log"
-		IL_0334: ldstr "pbkdf2 empty length:"
-		IL_0339: ldloc.3
-		IL_033a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_033f: pop
-		IL_0340: ret
+		IL_023b: stloc.s 6
+		IL_023d: ldloc.s 6
+		IL_023f: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Uint8Array::.ctor(object)
+		IL_0244: stloc.s 7
+		IL_0246: ldc.i4.5
+		IL_0247: newarr [System.Runtime]System.Object
+		IL_024c: dup
+		IL_024d: ldc.i4.0
+		IL_024e: ldloc.s 5
+		IL_0250: stelem.ref
+		IL_0251: dup
+		IL_0252: ldc.i4.1
+		IL_0253: ldloc.s 7
+		IL_0255: stelem.ref
+		IL_0256: dup
+		IL_0257: ldc.i4.2
+		IL_0258: ldc.r8 3
+		IL_0261: box [System.Runtime]System.Double
+		IL_0266: stelem.ref
+		IL_0267: dup
+		IL_0268: ldc.i4.3
+		IL_0269: ldc.r8 16
+		IL_0272: box [System.Runtime]System.Double
+		IL_0277: stelem.ref
+		IL_0278: dup
+		IL_0279: ldc.i4.4
+		IL_027a: ldstr "sha512"
+		IL_027f: stelem.ref
+		IL_0280: stloc.s 4
+		IL_0282: ldloc.2
+		IL_0283: ldstr "pbkdf2Sync"
+		IL_0288: ldloc.s 4
+		IL_028a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember(object, string, object[])
+		IL_028f: stloc.2
+		IL_0290: ldloc.2
+		IL_0291: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0296: stloc.2
+		IL_0297: ldloc.2
+		IL_0298: ldstr "toString"
+		IL_029d: ldstr "hex"
+		IL_02a2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_02a7: stloc.2
+		IL_02a8: ldloc.3
+		IL_02a9: ldstr "log"
+		IL_02ae: ldstr "pbkdf2 sha512 hex:"
+		IL_02b3: ldloc.2
+		IL_02b4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_02b9: pop
+		IL_02ba: ldstr "console"
+		IL_02bf: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_02c4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_02c9: stloc.2
+		IL_02ca: ldloc.1
+		IL_02cb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_02d0: stloc.3
+		IL_02d1: ldc.i4.5
+		IL_02d2: newarr [System.Runtime]System.Object
+		IL_02d7: dup
+		IL_02d8: ldc.i4.0
+		IL_02d9: ldstr "password"
+		IL_02de: stelem.ref
+		IL_02df: dup
+		IL_02e0: ldc.i4.1
+		IL_02e1: ldstr "salt"
+		IL_02e6: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer::from(object)
+		IL_02eb: stelem.ref
+		IL_02ec: dup
+		IL_02ed: ldc.i4.2
+		IL_02ee: ldc.r8 1
+		IL_02f7: box [System.Runtime]System.Double
+		IL_02fc: stelem.ref
+		IL_02fd: dup
+		IL_02fe: ldc.i4.3
+		IL_02ff: ldc.r8 0.0
+		IL_0308: box [System.Runtime]System.Double
+		IL_030d: stelem.ref
+		IL_030e: dup
+		IL_030f: ldc.i4.4
+		IL_0310: ldstr "sha256"
+		IL_0315: stelem.ref
+		IL_0316: stloc.s 4
+		IL_0318: ldloc.3
+		IL_0319: ldstr "pbkdf2Sync"
+		IL_031e: ldloc.s 4
+		IL_0320: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember(object, string, object[])
+		IL_0325: stloc.3
+		IL_0326: ldloc.3
+		IL_0327: ldstr "length"
+		IL_032c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0331: stloc.3
+		IL_0332: ldloc.2
+		IL_0333: ldstr "log"
+		IL_0338: ldstr "pbkdf2 empty length:"
+		IL_033d: ldloc.3
+		IL_033e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_0343: pop
+		IL_0344: ret
 	} // end of method Require_Crypto_Pbkdf2Sync::__js_module_init__
 
 } // end of class Modules.Require_Crypto_Pbkdf2Sync
@@ -346,7 +349,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x23a6
+		// Method begins at RVA 0x23aa
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

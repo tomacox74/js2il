@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x226f
+			// Method begins at RVA 0x2273
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,7 +40,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 531 (0x213)
+		// Code size: 535 (0x217)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Require_Path_Normalize_And_Sep/Scope,
@@ -54,7 +54,8 @@
 			[8] bool,
 			[9] object,
 			[10] object,
-			[11] string
+			[11] class [JavaScriptRuntime]JavaScriptRuntime.Array,
+			[12] string
 		)
 
 		IL_0000: newobj instance void Modules.Require_Path_Normalize_And_Sep/Scope::.ctor()
@@ -191,49 +192,51 @@
 		IL_018c: dup
 		IL_018d: ldstr "y"
 		IL_0192: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-		IL_0197: ldc.i4.1
-		IL_0198: newarr [System.Runtime]System.Object
-		IL_019d: dup
-		IL_019e: ldc.i4.0
-		IL_019f: ldloc.2
-		IL_01a0: stelem.ref
-		IL_01a1: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
-		IL_01a6: stloc.s 11
-		IL_01a8: ldloc.s 10
-		IL_01aa: ldloc.s 11
-		IL_01ac: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_01b1: stloc.s 6
-		IL_01b3: ldloc.s 7
-		IL_01b5: ldloc.s 6
-		IL_01b7: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_01bc: stloc.s 8
-		IL_01be: ldloc.s 8
-		IL_01c0: box [System.Runtime]System.Boolean
-		IL_01c5: stloc.s 9
-		IL_01c7: ldloc.s 5
-		IL_01c9: ldstr "log"
-		IL_01ce: ldloc.s 9
-		IL_01d0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_01d5: pop
-		IL_01d6: ldstr "console"
-		IL_01db: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_01e0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_01e5: stloc.s 5
-		IL_01e7: ldloc.1
-		IL_01e8: ldstr "sep"
-		IL_01ed: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_01f2: ldloc.2
-		IL_01f3: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_01f8: stloc.s 8
-		IL_01fa: ldloc.s 8
-		IL_01fc: box [System.Runtime]System.Boolean
-		IL_0201: stloc.s 9
-		IL_0203: ldloc.s 5
-		IL_0205: ldstr "log"
-		IL_020a: ldloc.s 9
-		IL_020c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0211: pop
-		IL_0212: ret
+		IL_0197: stloc.s 11
+		IL_0199: ldloc.s 11
+		IL_019b: ldc.i4.1
+		IL_019c: newarr [System.Runtime]System.Object
+		IL_01a1: dup
+		IL_01a2: ldc.i4.0
+		IL_01a3: ldloc.2
+		IL_01a4: stelem.ref
+		IL_01a5: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
+		IL_01aa: stloc.s 12
+		IL_01ac: ldloc.s 10
+		IL_01ae: ldloc.s 12
+		IL_01b0: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_01b5: stloc.s 6
+		IL_01b7: ldloc.s 7
+		IL_01b9: ldloc.s 6
+		IL_01bb: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_01c0: stloc.s 8
+		IL_01c2: ldloc.s 8
+		IL_01c4: box [System.Runtime]System.Boolean
+		IL_01c9: stloc.s 9
+		IL_01cb: ldloc.s 5
+		IL_01cd: ldstr "log"
+		IL_01d2: ldloc.s 9
+		IL_01d4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_01d9: pop
+		IL_01da: ldstr "console"
+		IL_01df: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_01e4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_01e9: stloc.s 5
+		IL_01eb: ldloc.1
+		IL_01ec: ldstr "sep"
+		IL_01f1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_01f6: ldloc.2
+		IL_01f7: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_01fc: stloc.s 8
+		IL_01fe: ldloc.s 8
+		IL_0200: box [System.Runtime]System.Boolean
+		IL_0205: stloc.s 9
+		IL_0207: ldloc.s 5
+		IL_0209: ldstr "log"
+		IL_020e: ldloc.s 9
+		IL_0210: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0215: pop
+		IL_0216: ret
 	} // end of method Require_Path_Normalize_And_Sep::__js_module_init__
 
 } // end of class Modules.Require_Path_Normalize_And_Sep
@@ -245,7 +248,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2278
+		// Method begins at RVA 0x227c
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
