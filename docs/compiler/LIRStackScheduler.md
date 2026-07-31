@@ -111,7 +111,8 @@ Current integration is in:
 | `TypedNumeric` | Identity plus typed numeric binary stack residency. |
 | `TypedComparisons` | TypedNumeric plus typed unary/comparison and direct branch/return consumption. |
 | `ConversionsAndStableLoads` | TypedComparisons plus numeric/object conversions, string concat, and approved typed string/array length and element loads. |
-| `LiteralAndArguments` | ConversionsAndStableLoads plus ordered literal and intrinsic argument-bundle construction. This is the default. |
+| `LiteralAndArguments` | ConversionsAndStableLoads plus ordered literal and intrinsic argument-bundle construction. |
+| `CallResults` | LiteralAndArguments plus source-position single-use intrinsic, typed-member, and direct user-class call-result residency. This is the default. |
 
 Later modes must include all behavior from preceding modes so adjacent levels
 remain useful for A/B diagnosis.
@@ -252,6 +253,49 @@ cross-sequence-point/control/EH/suspension shapes fail closed to the preceding
 mode. `LIRBuildScopesArray` remains legacy-owned because callable creation
 consumes its scope payload through specialized ABI emission rather than the
 ordinary construction stack shape.
+
+## Single-use call-result coverage
+
+`CallResults` keeps supported call results on the CLR stack without moving or
+re-executing the call. Initial coverage includes:
+
+```text
+LIRCallIntrinsicStatic
+LIRCallTypedMember
+LIRCallUserClassInstanceMethod
+```
+
+Candidates require one definition and one use, no variable backing, a
+stack-compatible arithmetic/comparison/conversion/return or direct-call
+consumer, and the same scheduling region. Typed-member results additionally
+require immediate use. Calls execute at their source operation; their emitter
+leaves the raw CLR result on the stack, and the later `EmitLoadTemp` is a
+validated no-op.
+
+This emits the following without call-result locals:
+
+```js
+Math.floor(a) + Math.sqrt(a)
+Math.abs(Math.floor(a))
+Math.floor(a) < Math.ceil(b)
+```
+
+Non-spread `Math.max`, `Math.min`, and `Math.hypot` require an `object[]`.
+Carrying argument calls below `newarr` would be invalid, so a contiguous
+single-use call/conversion suffix uses scheduler-inline ownership instead. The
+params-array operation moves before that suffix and emits each call once in
+argument order before invoking the outer Math method.
+
+Calls remain full effect-order barriers. Multi-use results, fallback calls,
+spread args arrays, unsupported receiver/ABI shapes, non-contiguous producer
+trees, variable-backed temps, sequence-point/control/EH crossings, and every
+async/generator callable fail closed to materialized locals. Exceptions unwind
+the carried evaluation stack normally and retain the call's source line.
+
+The legacy Stackify exception for immediate `LIRCallTypedMember` results is
+removed. Eligible calls are now scheduler-owned and emitted once at their
+definition; Stackify never treats a call as rematerializable or defers it to a
+load site.
 
 ## Typed unary and comparison coverage
 
@@ -661,6 +705,11 @@ Identity mode must preserve all of the following:
   left-to-right order while eliminating positional spills;
 - effectful, spread/iterator, and non-contiguous construction shapes retain
   legacy ownership and source order.
+- supported call results execute once at their source operation and can remain
+  carried only through validated same-region consumers;
+- calls never become rematerialized, fallback calls remain materialized, and
+  params-array call arguments preserve source order through explicit
+  scheduler-inline ownership.
 
 The identity scheduler does not inspect `CompilerOptions.EmitPdb`; enabling
 symbols must not change schedule selection or operation order.
@@ -738,6 +787,7 @@ Focused regression coverage also includes:
   equivalence, source-local identity, final `LocalScope` length, async/generator
   source lines, and compilation with/without PDBs;
 - source-mapped stack traces after scheduler-covered arithmetic;
+- decoded PDB and source-mapped stack traces after scheduler-covered calls;
 - `ILVerificationTests`, including deep arithmetic and arbitrary-value
   try/catch/finally.
 
@@ -746,8 +796,8 @@ Focused regression coverage also includes:
 The current cumulative scheduling mode does not:
 
 - reorder unsupported LIR instructions or mutate `MethodBodyIR`;
-- schedule call results, general calls, dynamic operators, coercive equality,
-  logical not, or `LIRIsInstanceOf`;
+- schedule general/fallback/dynamic call results, coercive equality, logical
+  not, or `LIRIsInstanceOf`;
 - schedule spread/iterator construction or computed/effectful property shapes;
 - carry values across sequence points, control flow, EH, `yield`, or `await`;
 - replace the local allocator;
@@ -761,10 +811,9 @@ instruction-family PRs smaller and reviewable.
 The ordered work is tracked under
 [issue #1617](https://github.com/tomacox74/js2il/issues/1617):
 
-1. Same-region single-use call results.
-2. General legal scheduling inside straight-line regions.
-3. Stackify scheduling retirement.
-4. Final obsolete-code audit and deletion.
+1. General legal scheduling inside straight-line regions.
+2. Stackify scheduling retirement.
+3. Final obsolete-code audit and deletion.
 
 At each optimizing stage:
 

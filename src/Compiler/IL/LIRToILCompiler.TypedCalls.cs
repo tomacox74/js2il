@@ -15,7 +15,17 @@ internal sealed partial class LIRToILCompiler
         TempLocalAllocation allocation,
         MethodDescriptor methodDescriptor)
     {
+        if (IsSchedulerScheduledInline(instruction.Result))
+        {
+            return;
+        }
+
         EmitCallTypedMemberNoFallbackCore(instruction, ilEncoder, allocation, methodDescriptor);
+
+        if (IsSchedulerStackResident(instruction.Result))
+        {
+            return;
+        }
 
         if (IsMaterialized(instruction.Result, allocation))
         {

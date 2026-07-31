@@ -77,6 +77,43 @@ public class StackifyTests
     }
 
     [Fact]
+    public void Analyze_ImmediateTypedCallResult_IsSchedulerOwnedNotStackifiable()
+    {
+        var methodBody = new MethodBodyIR();
+        var receiver = new TempVariable(0);
+        var first = new TempVariable(1);
+        var second = new TempVariable(2);
+        methodBody.Temps.Add(receiver);
+        methodBody.Temps.Add(first);
+        methodBody.Temps.Add(second);
+        methodBody.Instructions.Add(new LIRLoadParameter(1, receiver));
+        methodBody.Instructions.Add(new LIRCallTypedMember(
+            receiver,
+            default,
+            default,
+            HasScopesParameter: false,
+            typeof(object),
+            MaxParamCount: 0,
+            System.Array.Empty<Type?>(),
+            System.Array.Empty<TempVariable>(),
+            first));
+        methodBody.Instructions.Add(new LIRCallTypedMember(
+            first,
+            default,
+            default,
+            HasScopesParameter: false,
+            typeof(object),
+            MaxParamCount: 0,
+            System.Array.Empty<Type?>(),
+            System.Array.Empty<TempVariable>(),
+            second));
+
+        var result = Stackify.Analyze(methodBody);
+
+        Assert.False(result.IsStackable(first));
+    }
+
+    [Fact]
     public void Analyze_TempWithControlFlowBetweenDefAndUse_NotStackable()
     {
         // Arrange

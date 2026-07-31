@@ -633,6 +633,221 @@ public sealed class LIRStackSchedulerTests
             schedule.TempResidencies[array.Index]);
     }
 
+    [Fact]
+    public void Build_CallResultsMode_CarriesIntrinsicCallsInSourceOrder()
+    {
+        var body = new MethodBodyIR();
+        var value = AddTemp(body);
+        var floor = AddTemp(body);
+        var sqrt = AddTemp(body);
+        var result = AddTemp(body);
+        body.Instructions.Add(new LIRLoadParameter(1, value));
+        body.Instructions.Add(new LIRCallIntrinsicStatic(
+            "Math",
+            "floor",
+            new[] { value },
+            floor));
+        body.Instructions.Add(new LIRCallIntrinsicStatic(
+            "Math",
+            "sqrt",
+            new[] { value },
+            sqrt));
+        body.Instructions.Add(new LIRAddNumber(floor, sqrt, result));
+        body.Instructions.Add(new LIRReturn(result));
+
+        var schedule = LIRStackScheduler.Build(
+            body,
+            new LIRStackSchedulerOptions(
+                LIRStackSchedulerMode.CallResults));
+
+        Assert.Equal(
+            TempResidency.StackResident,
+            schedule.TempResidencies[floor.Index]);
+        Assert.Equal(
+            TempResidency.StackResident,
+            schedule.TempResidencies[sqrt.Index]);
+        Assert.Equal(2, schedule.CarriedStackDepthBeforeInstructions[3]);
+        Assert.Equal(2, schedule.MaxStackDepth);
+    }
+
+    [Fact]
+    public void Build_CallResultsMode_InlinesCallsIntoParamsArrayInOrder()
+    {
+        var body = new MethodBodyIR();
+        var value = AddTemp(body);
+        var floor = AddTemp(body);
+        var sqrt = AddTemp(body);
+        var maximum = AddTemp(body);
+        body.Instructions.Add(new LIRLoadParameter(1, value));
+        body.Instructions.Add(new LIRCallIntrinsicStatic(
+            "Math",
+            "floor",
+            new[] { value },
+            floor));
+        body.Instructions.Add(new LIRCallIntrinsicStatic(
+            "Math",
+            "sqrt",
+            new[] { value },
+            sqrt));
+        body.Instructions.Add(new LIRCallIntrinsicStatic(
+            "Math",
+            "max",
+            new[] { floor, sqrt },
+            maximum));
+        body.Instructions.Add(new LIRReturn(maximum));
+
+        var schedule = LIRStackScheduler.Build(
+            body,
+            new LIRStackSchedulerOptions(
+                LIRStackSchedulerMode.CallResults));
+
+        Assert.Equal(
+            new[] { 0, 3, 1, 2, 4 },
+            schedule.Operations.Select(operation => operation.StartLirIndex));
+        Assert.Equal(
+            TempResidency.ScheduledInline,
+            schedule.TempResidencies[floor.Index]);
+        Assert.Equal(
+            TempResidency.ScheduledInline,
+            schedule.TempResidencies[sqrt.Index]);
+        Assert.Equal(
+            TempResidency.StackResident,
+            schedule.TempResidencies[maximum.Index]);
+        Assert.Equal(1, schedule.MaxStackDepth);
+    }
+
+    [Fact]
+    public void Build_CallResultsMode_DoesNotClaimMultiUseCall()
+    {
+        var body = new MethodBodyIR();
+        var value = AddTemp(body);
+        var call = AddTemp(body);
+        var result = AddTemp(body);
+        body.Instructions.Add(new LIRLoadParameter(1, value));
+        body.Instructions.Add(new LIRCallIntrinsicStatic(
+            "Math",
+            "floor",
+            new[] { value },
+            call));
+        body.Instructions.Add(new LIRAddNumber(call, call, result));
+        body.Instructions.Add(new LIRReturn(result));
+
+        var schedule = LIRStackScheduler.Build(
+            body,
+            new LIRStackSchedulerOptions(
+                LIRStackSchedulerMode.CallResults));
+
+        Assert.Equal(
+            TempResidency.MaterializedLocal,
+            schedule.TempResidencies[call.Index]);
+        Assert.False(schedule.OwnedTemps[call.Index]);
+    }
+
+    [Fact]
+    public void Build_CallResultsMode_DoesNotCarryAcrossSequencePoint()
+    {
+        var body = new MethodBodyIR();
+        var value = AddTemp(body);
+        var call = AddTemp(body);
+        var one = AddTemp(body);
+        var result = AddTemp(body);
+        body.Instructions.Add(new LIRLoadParameter(1, value));
+        body.Instructions.Add(new LIRCallIntrinsicStatic(
+            "Math",
+            "floor",
+            new[] { value },
+            call));
+        body.Instructions.Add(new LIRSequencePoint(
+            SourceSpan.Hidden("calls.js")));
+        body.Instructions.Add(new LIRConstNumber(1, one));
+        body.Instructions.Add(new LIRAddNumber(call, one, result));
+        body.Instructions.Add(new LIRReturn(result));
+
+        var schedule = LIRStackScheduler.Build(
+            body,
+            new LIRStackSchedulerOptions(
+                LIRStackSchedulerMode.CallResults));
+
+        Assert.Equal(
+            TempResidency.MaterializedLocal,
+            schedule.TempResidencies[call.Index]);
+    }
+
+    [Theory]
+    [InlineData(true, false)]
+    [InlineData(false, true)]
+    public void Build_CallResultsMode_DoesNotClaimAsyncOrGeneratorCalls(
+        bool isAsync,
+        bool isGenerator)
+    {
+        var body = new MethodBodyIR
+        {
+            IsAsync = isAsync,
+            IsGenerator = isGenerator
+        };
+        var value = AddTemp(body);
+        var call = AddTemp(body);
+        body.Instructions.Add(new LIRLoadParameter(1, value));
+        body.Instructions.Add(new LIRCallIntrinsicStatic(
+            "Math",
+            "floor",
+            new[] { value },
+            call));
+        body.Instructions.Add(new LIRReturn(call));
+
+        var schedule = LIRStackScheduler.Build(
+            body,
+            new LIRStackSchedulerOptions(
+                LIRStackSchedulerMode.CallResults));
+
+        Assert.Equal(
+            TempResidency.MaterializedLocal,
+            schedule.TempResidencies[call.Index]);
+    }
+
+    [Fact]
+    public void Build_CallResultsMode_ClaimsImmediateTypedFluentCalls()
+    {
+        var body = new MethodBodyIR();
+        var receiver = AddTemp(body);
+        var first = AddTemp(body);
+        var second = AddTemp(body);
+        body.Instructions.Add(new LIRLoadParameter(1, receiver));
+        body.Instructions.Add(new LIRCallTypedMember(
+            receiver,
+            default,
+            default,
+            HasScopesParameter: false,
+            typeof(object),
+            MaxParamCount: 0,
+            System.Array.Empty<Type?>(),
+            System.Array.Empty<TempVariable>(),
+            first));
+        body.Instructions.Add(new LIRCallTypedMember(
+            first,
+            default,
+            default,
+            HasScopesParameter: false,
+            typeof(object),
+            MaxParamCount: 0,
+            System.Array.Empty<Type?>(),
+            System.Array.Empty<TempVariable>(),
+            second));
+        body.Instructions.Add(new LIRReturn(second));
+
+        var schedule = LIRStackScheduler.Build(
+            body,
+            new LIRStackSchedulerOptions(
+                LIRStackSchedulerMode.CallResults));
+
+        Assert.Equal(
+            TempResidency.StackResident,
+            schedule.TempResidencies[first.Index]);
+        Assert.Equal(
+            TempResidency.StackResident,
+            schedule.TempResidencies[second.Index]);
+    }
+
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
@@ -859,6 +1074,63 @@ public sealed class LIRStackSchedulerTests
             "JavaScriptRuntime.Array::.ctor",
             "add",
             "JavaScriptRuntime.Array::AddNumber",
+            "ret");
+    }
+
+    [Fact]
+    public void Compiler_CallResultsMode_EliminatesSingleUseCallSpills()
+    {
+        const string source = """
+            "use strict";
+            function math(a) { return Math.floor(a) + Math.sqrt(a); }
+            function nestedCall(a) { return Math.abs(Math.floor(a)); }
+            function compareCall(a, b) { return Math.floor(a) < Math.ceil(b); }
+            function argumentCall(a) { return Math.max(Math.floor(a), Math.sqrt(a)); }
+            console.log(math(9), nestedCall(-2.7), compareCall(1.2, 1.1), argumentCall(9));
+            """;
+
+        var artifact = Compile(
+            source,
+            LIRStackSchedulerMode.CallResults,
+            emitPdb: false);
+        var path = Path.Combine(
+            Path.GetTempPath(),
+            "Jroc.Tests",
+            "CallResultScheduler",
+            "call-results.dll");
+        Directory.CreateDirectory(Path.GetDirectoryName(path)!);
+        File.WriteAllBytes(path, artifact.PeBytes);
+        var il = AssemblyToText.ConvertToText(path);
+
+        AssertMethodHasNoIntermediateSpills(
+            il,
+            "math",
+            "JavaScriptRuntime.Math::floor",
+            "JavaScriptRuntime.Math::sqrt",
+            "add",
+            "ret");
+        AssertMethodHasNoIntermediateSpills(
+            il,
+            "nestedCall",
+            "JavaScriptRuntime.Math::floor",
+            "JavaScriptRuntime.Math::abs",
+            "ret");
+        AssertMethodHasNoIntermediateSpills(
+            il,
+            "compareCall",
+            "JavaScriptRuntime.Math::floor",
+            "JavaScriptRuntime.Math::ceil",
+            "clt",
+            "ret");
+        AssertMethodHasNoIntermediateSpills(
+            il,
+            "argumentCall",
+            "newarr",
+            "JavaScriptRuntime.Math::floor",
+            "stelem.ref",
+            "JavaScriptRuntime.Math::sqrt",
+            "stelem.ref",
+            "JavaScriptRuntime.Math::max",
             "ret");
     }
 

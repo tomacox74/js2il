@@ -82,6 +82,9 @@ namespace Jroc.Tests.Function
         public Task Function_SchedulerLiteralArguments() { var testName = nameof(Function_SchedulerLiteralArguments); return GenerateTest(testName); }
 
         [Fact]
+        public Task Function_SchedulerCallResults() { var testName = nameof(Function_SchedulerCallResults); return GenerateTest(testName); }
+
+        [Fact]
         public Task Function_ArrowFunctionExpression_ConciseBody_ForEachCapturesOuter() { var testName = nameof(Function_ArrowFunctionExpression_ConciseBody_ForEachCapturesOuter); return GenerateTest(testName); }
 
         [Fact]
