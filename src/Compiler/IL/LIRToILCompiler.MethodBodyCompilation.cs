@@ -725,6 +725,19 @@ internal sealed partial class LIRToILCompiler
                     LIRBitwiseNotNumber value => EstimateTempConstructionPeak(value.Value),
                     LIRConvertToNumber value => EstimateTempConstructionPeak(value.Source),
                     LIRConvertToObject value => EstimateTempConstructionPeak(value.Source),
+                    LIRCallIntrinsicStatic value => EstimateCallPeak(
+                        baseDepth: 0,
+                        value.Arguments,
+                        value.Arguments.Count),
+                    LIRCallTypedMember value => EstimateCallPeak(
+                        baseDepth: value.HasScopesParameter ? 3 : 1,
+                        value.Arguments,
+                        value.MaxParamCount,
+                        value.Receiver),
+                    LIRCallUserClassInstanceMethod value => EstimateCallPeak(
+                        baseDepth: value.HasScopesParameter ? 3 : 1,
+                        value.Arguments,
+                        value.MaxParamCount),
 
                     // Parent-scope load emits: scopesArray + index + ldelem_ref + cast + ldfld
                     // which peaks at 2 stack items during index load.
@@ -754,6 +767,38 @@ internal sealed partial class LIRToILCompiler
                 => Math.Max(
                     EstimateTempConstructionPeak(left),
                     1 + EstimateTempConstructionPeak(right));
+
+            int EstimateCallPeak(
+                int baseDepth,
+                IReadOnlyList<TempVariable> arguments,
+                int finalArgumentCount,
+                TempVariable? receiver = null)
+            {
+                var callPeak = receiver.HasValue
+                    ? EstimateTempConstructionPeak(receiver.Value)
+                    : 0;
+                callPeak = Math.Max(
+                    callPeak,
+                    baseDepth + finalArgumentCount);
+                var paramsArrayElementPeak = 0;
+                for (var index = 0; index < arguments.Count; index++)
+                {
+                    var argumentPeak =
+                        EstimateTempConstructionPeak(arguments[index]);
+                    callPeak = Math.Max(
+                        callPeak,
+                        baseDepth + index + argumentPeak);
+                    paramsArrayElementPeak = Math.Max(
+                        paramsArrayElementPeak,
+                        argumentPeak);
+                }
+
+                // Intrinsic params-array calls hold array + dup + index while
+                // constructing each argument value.
+                return Math.Max(
+                    callPeak,
+                    3 + paramsArrayElementPeak);
+            }
         }
 
         int EstimateTempLoadPeak(TempVariable temp)
@@ -892,6 +937,11 @@ internal sealed partial class LIRToILCompiler
             if (TempLocalAllocator.TryGetDefinedTemp(instr, out var definedTemp) && definedTemp.Index >= 0)
             {
                 var constructionPeak = EstimateTempConstructionPeak(definedTemp);
+                if (stackSchedule is not null)
+                {
+                    constructionPeak += stackSchedule
+                        .CarriedStackDepthBeforeInstructions[instructionIndex];
+                }
                 if (constructionPeak > estimated)
                 {
                     estimated = constructionPeak;

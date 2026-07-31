@@ -688,6 +688,11 @@ internal sealed partial class LIRToILCompiler
 
             case LIRCallUserClassInstanceMethod callUserClass:
                 {
+                    if (IsSchedulerScheduledInline(callUserClass.Result))
+                    {
+                        break;
+                    }
+
                     if (callUserClass.MethodHandle.IsNil)
                     {
                         throw new InvalidOperationException($"Cannot emit direct instance call for '{callUserClass.RegistryClassName}.{callUserClass.MethodName}' - missing method token");
@@ -747,6 +752,11 @@ internal sealed partial class LIRToILCompiler
 
                     ilEncoder.OpCode(ILOpCode.Callvirt);
                     ilEncoder.Token(callUserClass.MethodHandle);
+
+                    if (IsSchedulerStackResident(callUserClass.Result))
+                    {
+                        break;
+                    }
 
                     if (IsMaterialized(callUserClass.Result, allocation))
                     {
@@ -1085,13 +1095,6 @@ internal sealed partial class LIRToILCompiler
 
             case LIRCallTypedMember callTyped:
                 {
-                    // If Stackify marked this result as stackable, defer emission to the single use site.
-                    // This avoids spilling the call result into an object local and then re-casting it.
-                    if (!IsMaterialized(callTyped.Result, allocation) && stackifyResult.IsStackable(callTyped.Result))
-                    {
-                        break;
-                    }
-
                     EmitCallTypedMemberNoFallback(callTyped, ilEncoder, allocation, methodDescriptor);
                     break;
                 }

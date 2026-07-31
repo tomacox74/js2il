@@ -495,8 +495,12 @@ internal static class LIRStackScheduleValidator
                 || definitionCounts[tempIndex] != 1
                 || useCounts[tempIndex] != 1
                 || definitionByTemp[tempIndex] is not { } definition
-                || !LIRStackScheduler.IsSupportedScheduledInlineProducer(
-                    definition))
+                || !(LIRStackScheduler.IsSupportedScheduledInlineProducer(
+                        definition)
+                    || schedule.Mode == LIRStackSchedulerMode.CallResults
+                        && LIRStackScheduler
+                            .IsSupportedScheduledInlineCallProducer(
+                                definition)))
             {
                 Throw(
                     $"Scheduled-inline temp {tempIndex} must be scheduler-owned "

@@ -123,6 +123,31 @@ public class JavaScriptErrorStackTraceTests
             StringComparison.OrdinalIgnoreCase);
     }
 
+    [Fact]
+    public void ThrownError_FromScheduledCall_HasOriginalSourceLine()
+    {
+        var baseName = "scheduled_call_stacktrace_" + Guid.NewGuid().ToString("N");
+        var jsFileName = baseName + ".js";
+        var js = "\"use strict\";\n"
+                 + "function calculate(value) {\n"
+                 + "  return Math.floor(value) + 1;\n"
+                 + "}\n"
+                 + "try { calculate(Symbol(\"x\")); } catch (e) { console.log(e.stack); }\n";
+
+        var output = CompileAndRunWithEmitPdb(
+            "JavaScriptScheduledCallStackTrace",
+            jsFileName,
+            new Dictionary<string, string>
+            {
+                [jsFileName] = js
+            });
+
+        Assert.Contains(
+            $"{jsFileName}:line 3",
+            output,
+            StringComparison.OrdinalIgnoreCase);
+    }
+
     private static string CompileAndRunWithEmitPdb(
         string scenarioName,
         string entryFileName,

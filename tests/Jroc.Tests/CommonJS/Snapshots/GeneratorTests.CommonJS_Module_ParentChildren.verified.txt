@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x24bd
+				// Method begins at RVA 0x24b9
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -36,7 +36,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x24b4
+			// Method begins at RVA 0x24b0
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -62,15 +62,15 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 582 (0x246)
+		// Code size: 578 (0x242)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.CommonJS_Module_ParentChildren/Scope,
 			[1] object,
 			[2] object,
 			[3] object,
-			[4] bool,
-			[5] object
+			[4] object,
+			[5] bool
 		)
 
 		IL_0000: newobj instance void Modules.CommonJS_Module_ParentChildren/Scope::.ctor()
@@ -123,126 +123,124 @@
 		IL_0093: ldstr "children"
 		IL_0098: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
 		IL_009d: call bool [JavaScriptRuntime]JavaScriptRuntime.Array::isArray(object)
-		IL_00a2: stloc.s 4
-		IL_00a4: ldloc.s 4
-		IL_00a6: box [System.Runtime]System.Boolean
-		IL_00ab: stloc.s 5
-		IL_00ad: ldloc.3
-		IL_00ae: ldstr "log"
-		IL_00b3: ldstr "main module.children is array:"
-		IL_00b8: ldloc.s 5
-		IL_00ba: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_00bf: pop
-		IL_00c0: ldstr "console"
-		IL_00c5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_00ca: stloc.3
-		IL_00cb: ldloc.3
-		IL_00cc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00d1: stloc.3
-		IL_00d2: ldloc.3
-		IL_00d3: ldstr "log"
-		IL_00d8: ldstr "main module.children length:"
-		IL_00dd: ldarg.2
-		IL_00de: ldstr "children"
-		IL_00e3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_00e8: ldstr "length"
-		IL_00ed: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_00f2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_00f7: pop
-		IL_00f8: ldarg.2
-		IL_00f9: ldstr "children"
-		IL_00fe: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0103: ldstr "length"
-		IL_0108: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_010d: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_0112: ldc.r8 2
-		IL_011b: clt
-		IL_011d: ldc.i4.0
-		IL_011e: ceq
-		IL_0120: brfalse IL_01e9
+		IL_00a2: box [System.Runtime]System.Boolean
+		IL_00a7: stloc.s 4
+		IL_00a9: ldloc.3
+		IL_00aa: ldstr "log"
+		IL_00af: ldstr "main module.children is array:"
+		IL_00b4: ldloc.s 4
+		IL_00b6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_00bb: pop
+		IL_00bc: ldstr "console"
+		IL_00c1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_00c6: stloc.3
+		IL_00c7: ldloc.3
+		IL_00c8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00cd: stloc.3
+		IL_00ce: ldloc.3
+		IL_00cf: ldstr "log"
+		IL_00d4: ldstr "main module.children length:"
+		IL_00d9: ldarg.2
+		IL_00da: ldstr "children"
+		IL_00df: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00e4: ldstr "length"
+		IL_00e9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00ee: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_00f3: pop
+		IL_00f4: ldarg.2
+		IL_00f5: ldstr "children"
+		IL_00fa: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00ff: ldstr "length"
+		IL_0104: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0109: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_010e: ldc.r8 2
+		IL_0117: clt
+		IL_0119: ldc.i4.0
+		IL_011a: ceq
+		IL_011c: brfalse IL_01e5
 
-		IL_0125: ldstr "console"
-		IL_012a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_012f: stloc.3
-		IL_0130: ldloc.3
-		IL_0131: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0136: stloc.3
-		IL_0137: ldarg.2
-		IL_0138: ldstr "children"
-		IL_013d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0142: ldc.r8 0.0
-		IL_014b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-		IL_0150: ldstr "id"
-		IL_0155: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_015a: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
-		IL_015f: ldstr "string"
-		IL_0164: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_0169: stloc.s 4
-		IL_016b: ldloc.s 4
-		IL_016d: box [System.Runtime]System.Boolean
-		IL_0172: stloc.s 5
-		IL_0174: ldloc.3
-		IL_0175: ldstr "log"
-		IL_017a: ldstr "child 0 has id:"
-		IL_017f: ldloc.s 5
-		IL_0181: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_0186: pop
-		IL_0187: ldstr "console"
-		IL_018c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0191: stloc.3
-		IL_0192: ldloc.3
-		IL_0193: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0198: stloc.3
-		IL_0199: ldarg.2
-		IL_019a: ldstr "children"
-		IL_019f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_01a4: ldc.r8 1
-		IL_01ad: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-		IL_01b2: ldstr "id"
-		IL_01b7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_01bc: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
-		IL_01c1: ldstr "string"
-		IL_01c6: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_01cb: stloc.s 4
-		IL_01cd: ldloc.s 4
-		IL_01cf: box [System.Runtime]System.Boolean
-		IL_01d4: stloc.s 5
-		IL_01d6: ldloc.3
-		IL_01d7: ldstr "log"
-		IL_01dc: ldstr "child 1 has id:"
-		IL_01e1: ldloc.s 5
-		IL_01e3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_01e8: pop
+		IL_0121: ldstr "console"
+		IL_0126: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_012b: stloc.3
+		IL_012c: ldloc.3
+		IL_012d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0132: stloc.3
+		IL_0133: ldarg.2
+		IL_0134: ldstr "children"
+		IL_0139: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_013e: ldc.r8 0.0
+		IL_0147: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+		IL_014c: ldstr "id"
+		IL_0151: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0156: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
+		IL_015b: ldstr "string"
+		IL_0160: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_0165: stloc.s 5
+		IL_0167: ldloc.s 5
+		IL_0169: box [System.Runtime]System.Boolean
+		IL_016e: stloc.s 4
+		IL_0170: ldloc.3
+		IL_0171: ldstr "log"
+		IL_0176: ldstr "child 0 has id:"
+		IL_017b: ldloc.s 4
+		IL_017d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_0182: pop
+		IL_0183: ldstr "console"
+		IL_0188: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_018d: stloc.3
+		IL_018e: ldloc.3
+		IL_018f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0194: stloc.3
+		IL_0195: ldarg.2
+		IL_0196: ldstr "children"
+		IL_019b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_01a0: ldc.r8 1
+		IL_01a9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+		IL_01ae: ldstr "id"
+		IL_01b3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_01b8: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
+		IL_01bd: ldstr "string"
+		IL_01c2: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_01c7: stloc.s 5
+		IL_01c9: ldloc.s 5
+		IL_01cb: box [System.Runtime]System.Boolean
+		IL_01d0: stloc.s 4
+		IL_01d2: ldloc.3
+		IL_01d3: ldstr "log"
+		IL_01d8: ldstr "child 1 has id:"
+		IL_01dd: ldloc.s 4
+		IL_01df: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_01e4: pop
 
-		IL_01e9: ldstr "console"
-		IL_01ee: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_01f3: stloc.3
-		IL_01f4: ldloc.3
-		IL_01f5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_01fa: stloc.3
-		IL_01fb: ldloc.3
-		IL_01fc: ldstr "log"
-		IL_0201: ldstr "child1 export:"
-		IL_0206: ldloc.1
-		IL_0207: ldstr "name"
-		IL_020c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0211: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_0216: pop
-		IL_0217: ldstr "console"
-		IL_021c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0221: stloc.3
-		IL_0222: ldloc.3
-		IL_0223: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0228: stloc.3
-		IL_0229: ldloc.3
-		IL_022a: ldstr "log"
-		IL_022f: ldstr "child2 export:"
-		IL_0234: ldloc.2
-		IL_0235: ldstr "name"
-		IL_023a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_023f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_0244: pop
-		IL_0245: ret
+		IL_01e5: ldstr "console"
+		IL_01ea: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_01ef: stloc.3
+		IL_01f0: ldloc.3
+		IL_01f1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_01f6: stloc.3
+		IL_01f7: ldloc.3
+		IL_01f8: ldstr "log"
+		IL_01fd: ldstr "child1 export:"
+		IL_0202: ldloc.1
+		IL_0203: ldstr "name"
+		IL_0208: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_020d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_0212: pop
+		IL_0213: ldstr "console"
+		IL_0218: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_021d: stloc.3
+		IL_021e: ldloc.3
+		IL_021f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0224: stloc.3
+		IL_0225: ldloc.3
+		IL_0226: ldstr "log"
+		IL_022b: ldstr "child2 export:"
+		IL_0230: ldloc.2
+		IL_0231: ldstr "name"
+		IL_0236: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_023b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_0240: pop
+		IL_0241: ret
 	} // end of method CommonJS_Module_ParentChildren::__js_module_init__
 
 } // end of class Modules.CommonJS_Module_ParentChildren
@@ -262,7 +260,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x24cf
+				// Method begins at RVA 0x24cb
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -280,7 +278,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x24c6
+			// Method begins at RVA 0x24c2
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -304,7 +302,7 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x22a4
+		// Method begins at RVA 0x22a0
 		// Header size: 12
 		// Code size: 252 (0xfc)
 		.maxstack 8
@@ -417,7 +415,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x24e1
+				// Method begins at RVA 0x24dd
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -435,7 +433,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x24d8
+			// Method begins at RVA 0x24d4
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -459,7 +457,7 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x23ac
+		// Method begins at RVA 0x23a8
 		// Header size: 12
 		// Code size: 252 (0xfc)
 		.maxstack 8
@@ -564,7 +562,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x24ea
+		// Method begins at RVA 0x24e6
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

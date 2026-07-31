@@ -25,6 +25,8 @@ internal static class LIRStackScheduler
                 BuildConversionsAndStableLoadsUnvalidated(methodBody),
             LIRStackSchedulerMode.LiteralAndArguments =>
                 BuildLiteralAndArgumentsUnvalidated(methodBody),
+            LIRStackSchedulerMode.CallResults =>
+                BuildCallResultsUnvalidated(methodBody),
             LIRStackSchedulerMode.Disabled => throw new InvalidOperationException(
                 "Disabled scheduler mode bypasses schedule construction."),
             _ => throw new NotSupportedException(
@@ -777,6 +779,357 @@ internal static class LIRStackScheduler
         => instruction is LIRBuildArray
             or LIRNewJsArray
             or LIRNewJsObject;
+
+    private static LIRStackSchedule BuildCallResultsUnvalidated(
+        MethodBodyIR methodBody)
+    {
+        var literals = BuildLiteralAndArgumentsUnvalidated(methodBody);
+        if (methodBody.IsAsync || methodBody.IsGenerator)
+        {
+            return literals with { Mode = LIRStackSchedulerMode.CallResults };
+        }
+
+        var tempCount = methodBody.Temps.Count;
+        var definitionIndex = new int[tempCount];
+        var definitionCount = new int[tempCount];
+        var useIndex = new int[tempCount];
+        var useCount = new int[tempCount];
+        Array.Fill(definitionIndex, -1);
+        Array.Fill(useIndex, -1);
+        for (var instructionIndex = 0;
+             instructionIndex < methodBody.Instructions.Count;
+             instructionIndex++)
+        {
+            var instruction = methodBody.Instructions[instructionIndex];
+            if (LIRInstructionInfo.TryGetDefinedTemp(
+                    instruction,
+                    out var defined)
+                && (uint)defined.Index < (uint)tempCount)
+            {
+                definitionCount[defined.Index]++;
+                definitionIndex[defined.Index] = instructionIndex;
+            }
+
+            var visitor = new NumericUseVisitor(
+                useCount,
+                useIndex,
+                instructionIndex);
+            LIRInstructionInfo.VisitUsedTemps(instruction, ref visitor);
+        }
+
+        var regionByLirIndex = BuildRegionIndexMap(
+            methodBody.Instructions.Count,
+            literals.Regions,
+            literals.Operations);
+        var residencies = literals.TempResidencies.ToArray();
+        var ownedTemps = literals.OwnedTemps.ToArray();
+        for (var tempIndex = 0; tempIndex < tempCount; tempIndex++)
+        {
+            if (definitionCount[tempIndex] != 1
+                || useCount[tempIndex] != 1
+                || definitionIndex[tempIndex] < 0
+                || useIndex[tempIndex] <= definitionIndex[tempIndex]
+                || tempIndex < methodBody.TempVariableSlots.Count
+                    && methodBody.TempVariableSlots[tempIndex] >= 0)
+            {
+                continue;
+            }
+
+            var definition =
+                methodBody.Instructions[definitionIndex[tempIndex]];
+            if (!IsSupportedCallResultDefinition(definition))
+            {
+                continue;
+            }
+
+            var consumer = methodBody.Instructions[useIndex[tempIndex]];
+            if (IsKnownParamsArrayIntrinsicCall(consumer)
+                || !IsSupportedCallResultConsumer(
+                    methodBody,
+                    new TempVariable(tempIndex),
+                    consumer,
+                    useCount,
+                    useIndex))
+            {
+                continue;
+            }
+
+            var definitionRegion =
+                regionByLirIndex[definitionIndex[tempIndex]];
+            var useRegion = regionByLirIndex[useIndex[tempIndex]];
+            if (definitionRegion < 0
+                || useRegion != definitionRegion
+                    && !(useRegion < 0
+                        && useIndex[tempIndex]
+                            == literals.Regions[definitionRegion]
+                                .EndLirIndexExclusive
+                        && consumer is LIRReturn))
+            {
+                continue;
+            }
+
+            if (definition is LIRCallTypedMember
+                && useIndex[tempIndex] != definitionIndex[tempIndex] + 1)
+            {
+                continue;
+            }
+
+            if (!HasOnlySupportedCallInterveningInstructions(
+                    methodBody,
+                    definitionIndex[tempIndex],
+                    useIndex[tempIndex]))
+            {
+                continue;
+            }
+
+            residencies[tempIndex] = TempResidency.StackResident;
+            ownedTemps[tempIndex] = true;
+        }
+
+        var movesByInsertionLirIndex = new Dictionary<int, List<int>>();
+        for (var rootIndex = 0;
+             rootIndex < methodBody.Instructions.Count;
+             rootIndex++)
+        {
+            if (methodBody.Instructions[rootIndex]
+                    is not LIRCallIntrinsicStatic root
+                || !IsKnownParamsArrayIntrinsicCall(root)
+                || regionByLirIndex[rootIndex] < 0)
+            {
+                continue;
+            }
+
+            var selectedCallDefinitions = new HashSet<int>();
+            var safe = true;
+            foreach (var argument in root.Arguments)
+            {
+                if (!TrySelectCallArgumentProducerTree(
+                        methodBody,
+                        argument,
+                        rootIndex,
+                        regionByLirIndex[rootIndex],
+                        definitionIndex,
+                        definitionCount,
+                        useCount,
+                        regionByLirIndex,
+                        selectedCallDefinitions))
+                {
+                    safe = false;
+                    break;
+                }
+            }
+
+            if (!safe
+                || selectedCallDefinitions.Count == 0
+                || !TryGetConstructionInsertionIndex(
+                    rootIndex,
+                    selectedCallDefinitions,
+                    out var insertionLirIndex))
+            {
+                continue;
+            }
+
+            foreach (var definitionLirIndex in selectedCallDefinitions)
+            {
+                LIRInstructionInfo.TryGetDefinedTemp(
+                    methodBody.Instructions[definitionLirIndex],
+                    out var producerResult);
+                residencies[producerResult.Index] =
+                    TempResidency.ScheduledInline;
+                ownedTemps[producerResult.Index] = true;
+            }
+
+            if (!movesByInsertionLirIndex.TryGetValue(
+                    insertionLirIndex,
+                    out var movedRoots))
+            {
+                movedRoots = new List<int>();
+                movesByInsertionLirIndex[insertionLirIndex] = movedRoots;
+            }
+            movedRoots.Add(rootIndex);
+        }
+
+        var operations = ReorderConstructionOperations(
+            literals.Operations,
+            movesByInsertionLirIndex);
+        PruneInvalidTypedNumericResidencies(
+            methodBody,
+            residencies,
+            ownedTemps);
+        var acceptedCount = ownedTemps.Count(owned => owned);
+        return literals with
+        {
+            Mode = LIRStackSchedulerMode.CallResults,
+            Operations = operations,
+            Regions = BuildSchedulingRegions(methodBody, operations),
+            TempResidencies = residencies,
+            OwnedTemps = ownedTemps,
+            EffectiveLastUses = ComputeScheduledLastUses(
+                methodBody,
+                operations),
+            Metrics = literals.Metrics with
+            {
+                StackResidentTempCount = residencies.Count(
+                    residency => residency == TempResidency.StackResident),
+                EliminatedSpillCount = acceptedCount
+            }
+        };
+    }
+
+    private static bool TrySelectCallArgumentProducerTree(
+        MethodBodyIR methodBody,
+        TempVariable temp,
+        int rootIndex,
+        int rootRegion,
+        int[] definitionIndex,
+        int[] definitionCount,
+        int[] useCount,
+        int[] regionByLirIndex,
+        HashSet<int> selectedDefinitions)
+    {
+        if ((uint)temp.Index >= (uint)definitionIndex.Length)
+        {
+            return false;
+        }
+
+        var producerIndex = definitionIndex[temp.Index];
+        if (producerIndex < 0)
+        {
+            return true;
+        }
+
+        var producer = methodBody.Instructions[producerIndex];
+        var isCall = IsSupportedCallResultDefinition(producer);
+        var isInlineProducer = IsSupportedScheduledInlineProducer(producer);
+        if (!isCall && !isInlineProducer)
+        {
+            return regionByLirIndex[producerIndex] != rootRegion;
+        }
+
+        if (producerIndex >= rootIndex
+            || definitionCount[temp.Index] != 1
+            || regionByLirIndex[producerIndex] != rootRegion)
+        {
+            return false;
+        }
+
+        if (useCount[temp.Index] != 1
+            || temp.Index < methodBody.TempVariableSlots.Count
+                && methodBody.TempVariableSlots[temp.Index] >= 0)
+        {
+            return !isCall;
+        }
+
+        if (!selectedDefinitions.Add(producerIndex))
+        {
+            return true;
+        }
+
+        foreach (var operand in CollectUsedTemps(producer))
+        {
+            if (!TrySelectCallArgumentProducerTree(
+                    methodBody,
+                    operand,
+                    rootIndex,
+                    rootRegion,
+                    definitionIndex,
+                    definitionCount,
+                    useCount,
+                    regionByLirIndex,
+                    selectedDefinitions))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static bool IsSupportedCallResultDefinition(
+        LIRInstruction instruction)
+    {
+        if (instruction is LIRCallIntrinsicStatic
+            {
+                GenericTypeArgument: null
+            })
+        {
+            return true;
+        }
+
+        return instruction is LIRCallTypedMember typed
+                && typed.ReturnClrType != typeof(void)
+            || instruction is LIRCallUserClassInstanceMethod
+            {
+                HasScopesParameter: false,
+                RequiresPrivateBrandCheck: false
+            };
+    }
+
+    internal static bool IsSupportedScheduledInlineCallProducer(
+        LIRInstruction instruction)
+        => IsSupportedCallResultDefinition(instruction);
+
+    private static bool IsSupportedCallResultConsumer(
+        MethodBodyIR methodBody,
+        TempVariable result,
+        LIRInstruction consumer,
+        int[] useCount,
+        int[] useIndex)
+        => IsTypedNumericBinary(consumer)
+            || IsTypedUnaryOrComparison(consumer)
+            || IsConversionConcatOrStableLoad(consumer)
+            || IsSafeBoxingReturnConsumer(
+                methodBody,
+                consumer,
+                useCount,
+                useIndex)
+            || consumer is LIRReturn
+            || consumer is LIRCallIntrinsicStatic intrinsic
+                && IsSupportedDirectIntrinsicConsumer(intrinsic, result)
+            || consumer is LIRCallTypedMember typed
+                && typed.Receiver.Equals(result);
+
+    private static bool IsSupportedDirectIntrinsicConsumer(
+        LIRCallIntrinsicStatic instruction,
+        TempVariable result)
+        => string.Equals(
+                instruction.IntrinsicName,
+                "Math",
+                StringComparison.Ordinal)
+            && !IsKnownParamsArrayIntrinsicCall(instruction)
+            && instruction.Arguments.Count > 0
+            && instruction.Arguments[0].Equals(result);
+
+    private static bool IsKnownParamsArrayIntrinsicCall(
+        LIRInstruction instruction)
+        => instruction is LIRCallIntrinsicStatic
+            {
+                IntrinsicName: "Math",
+                MethodName: "max" or "min" or "hypot",
+                GenericTypeArgument: null
+            };
+
+    private static bool HasOnlySupportedCallInterveningInstructions(
+        MethodBodyIR methodBody,
+        int definitionIndex,
+        int useIndex)
+    {
+        for (var index = definitionIndex + 1; index < useIndex; index++)
+        {
+            var instruction = methodBody.Instructions[index];
+            if (IsSupportedCallResultDefinition(instruction)
+                || IsSupportedScheduledInlineProducer(instruction)
+                || instruction is LIRLoadUserClassInstanceField
+                    or LIRLoadUserClassStaticField)
+            {
+                continue;
+            }
+
+            return false;
+        }
+
+        return true;
+    }
 
     private static bool IsSupportedArgumentBundle(LIRInstruction instruction)
         => instruction is LIRCallIntrinsicStatic

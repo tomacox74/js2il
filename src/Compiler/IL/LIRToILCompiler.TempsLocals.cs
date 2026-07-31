@@ -2374,6 +2374,15 @@ internal sealed partial class LIRToILCompiler
             && _tempMaterializationPlan.GetResidency(temp.Index)
                 == TempResidency.StackResident;
 
+    private bool IsSchedulerScheduledInline(TempVariable temp)
+        => temp.Index >= 0
+            && _tempMaterializationPlan is not null
+            && temp.Index < _tempMaterializationPlan.Count
+            && _tempMaterializationPlan.GetOwner(temp.Index)
+                == TempValueOwner.Scheduler
+            && _tempMaterializationPlan.GetResidency(temp.Index)
+                == TempResidency.ScheduledInline;
+
     private bool IsTempUsedByAnyInstructionOperand(TempVariable temp, LIRInstruction ignoredInstruction)
     {
         foreach (var instruction in MethodBody.Instructions)

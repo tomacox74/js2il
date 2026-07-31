@@ -97,7 +97,24 @@ internal sealed partial class LIRToILCompiler
                 EmitInstanceMethodCall(callInstance, ilEncoder, allocation, methodDescriptor);
                 break;
             case LIRCallIntrinsicStatic callIntrinsicStatic:
-                EmitIntrinsicStaticCall(callIntrinsicStatic, ilEncoder, allocation, methodDescriptor);
+                if (IsSchedulerScheduledInline(callIntrinsicStatic.Result))
+                {
+                    break;
+                }
+                if (IsSchedulerStackResident(callIntrinsicStatic.Result))
+                {
+                    EmitIntrinsicStaticCallInline(
+                        callIntrinsicStatic,
+                        ilEncoder,
+                        allocation,
+                        methodDescriptor);
+                    break;
+                }
+                EmitIntrinsicStaticCall(
+                    callIntrinsicStatic,
+                    ilEncoder,
+                    allocation,
+                    methodDescriptor);
                 break;
             case LIRCallIntrinsicStaticWithArgsArray callIntrinsicStaticArray:
                 EmitIntrinsicStaticCallWithArgsArray(callIntrinsicStaticArray, ilEncoder, allocation, methodDescriptor);
