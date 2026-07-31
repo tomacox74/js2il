@@ -6,10 +6,11 @@ The scheduler is being introduced incrementally under the umbrella tracked by
 [GitHub issue #1617](https://github.com/tomacox74/js2il/issues/1617).
 
 The implementation currently provides **typed numeric, comparison, conversion,
-concat, and stable typed-load scheduling** on top of the validated identity
-foundation:
+stable typed-load, literal, and argument-bundle scheduling** on top of the
+validated identity foundation:
 
-- LIR instructions are emitted in their original order.
+- Supported literal and argument construction can use validated non-identity
+  operation order inside one source interval.
 - Single-use typed numeric binary, unary, comparison, conversion, concat, and
   approved typed length/element results can remain stack-resident.
 - `LIRRematerializationPolicy` separately owns the decision to reproduce cheap,
@@ -20,8 +21,8 @@ foundation:
 - Every concrete LIR instruction type is inventoried by canonical
   scheduler-facing metadata.
 - Straight-line candidate regions are identified between conservative
-  boundaries, but their instructions are not reordered.
-- Generated method bodies and Portable PDB mappings are unchanged.
+  boundaries; unsupported shapes retain source order.
+- Portable PDB source meaning and local identity remain stable.
 
 All unsupported shapes retain identity/legacy behavior.
 
@@ -109,7 +110,8 @@ Current integration is in:
 | `Identity` | Emit through an explicit source-order schedule with no scheduler-owned residency. |
 | `TypedNumeric` | Identity plus typed numeric binary stack residency. |
 | `TypedComparisons` | TypedNumeric plus typed unary/comparison and direct branch/return consumption. |
-| `ConversionsAndStableLoads` | TypedComparisons plus numeric/object conversions, string concat, and approved typed string/array length and element loads. This is the default. |
+| `ConversionsAndStableLoads` | TypedComparisons plus numeric/object conversions, string concat, and approved typed string/array length and element loads. |
+| `LiteralAndArguments` | ConversionsAndStableLoads plus ordered literal and intrinsic argument-bundle construction. This is the default. |
 
 Later modes must include all behavior from preceding modes so adjacent levels
 remain useful for A/B diagnosis.
@@ -212,6 +214,45 @@ Rematerialized = suppress the definition and safely reproduce at a use
 Materialized   = store in and reload from a local or variable slot
 ```
 
+## Literal and argument construction coverage
+
+`LiteralAndArguments` is the first mode that emits a legal non-identity
+operation order. It covers:
+
+```text
+LIRBuildArray
+LIRNewJsArray
+LIRNewJsObject
+params-array LIRCallIntrinsicStatic argument bundles
+```
+
+For one-definition/one-use producer trees, the construction or call operation
+moves before its contiguous pure/stable producer suffix. The construction
+emitter then evaluates those producers exactly once in JavaScript
+element/property/argument order. Their explicit `ScheduledInline` residency
+means “owned by the scheduler and emitted inside the construction unit”; it is
+neither stack carrying nor rematerialization.
+
+This removes positional asymmetry such as the first argument spill in:
+
+```js
+Math.max(a * 2, b + 3)
+[a * 2, b + 3]
+({ x: a * 2, y: b + 3 })
+```
+
+Candidate discovery and operation reconstruction are linear in method size.
+The validator computes effective effect positions for scheduled-inline
+definitions, requires a supported definition with exactly one use, preserves
+region/source ownership, and independently simulates the carried stack.
+
+Effectful calls/getters, mutable or TDZ-checked loads, non-contiguous producer
+ranges, spread/iterator lowering, variable-backed or multi-use temps, and
+cross-sequence-point/control/EH/suspension shapes fail closed to the preceding
+mode. `LIRBuildScopesArray` remains legacy-owned because callable creation
+consumes its scope payload through specialized ABI emission rather than the
+ordinary construction stack shape.
+
 ## Typed unary and comparison coverage
 
 `TypedComparisons` extends cumulative coverage to:
@@ -261,6 +302,7 @@ switch.
 |---|---|
 | `MaterializedLocal` | Store/load the value through a variable or allocator temp slot. |
 | `StackResident` | Emit once and carry the value on the CLR evaluation stack. |
+| `ScheduledInline` | Suppress the source definition and emit it once inside a scheduler-owned construction unit. |
 | `Rematerialized` | Suppress the original definition and safely reproduce it at a use. |
 
 Identity mode reports `MaterializedLocal` for every temp and marks every
@@ -613,6 +655,12 @@ Identity mode must preserve all of the following:
   accepted as stable scheduler loads;
 - rematerialization decisions are explicit and independent from scheduler
   residency and instruction order.
+- scheduled-inline construction trees are contiguous, single-use, and
+  validated against an explicit supported-producer allowlist;
+- literal allocation and element/property evaluation preserve JavaScript
+  left-to-right order while eliminating positional spills;
+- effectful, spread/iterator, and non-contiguous construction shapes retain
+  legacy ownership and source order.
 
 The identity scheduler does not inspect `CompilerOptions.EmitPdb`; enabling
 symbols must not change schedule selection or operation order.
@@ -662,6 +710,8 @@ contract.
 - typed unary/comparison chains, scheduler-owned branch consumption, call
   order, TDZ, NaN/infinity/equality, and signed-zero negation;
 - exact generated IL proving no intermediate numeric `stloc`/`ldloc` pairs;
+- non-identity literal/argument operation order, scheduled-inline ownership,
+  exact no-spill IL, and effectful-element rejection;
 - execution coverage for all six operators, NaN, signed zero,
   non-commutative order, calls, and postfix snapshots;
 
@@ -695,9 +745,10 @@ Focused regression coverage also includes:
 
 The current cumulative scheduling mode does not:
 
-- reorder LIR instructions;
-- schedule calls, allocations, dynamic operators, coercive equality, logical
-  not, or `LIRIsInstanceOf`;
+- reorder unsupported LIR instructions or mutate `MethodBodyIR`;
+- schedule call results, general calls, dynamic operators, coercive equality,
+  logical not, or `LIRIsInstanceOf`;
+- schedule spread/iterator construction or computed/effectful property shapes;
 - carry values across sequence points, control flow, EH, `yield`, or `await`;
 - replace the local allocator;
 - schedule multi-use values as stack-resident.
@@ -710,11 +761,10 @@ instruction-family PRs smaller and reviewable.
 The ordered work is tracked under
 [issue #1617](https://github.com/tomacox74/js2il/issues/1617):
 
-1. Literal and argument construction.
-2. Same-region single-use call results.
-3. General legal scheduling inside straight-line regions.
-4. Stackify scheduling retirement.
-5. Final obsolete-code audit and deletion.
+1. Same-region single-use call results.
+2. General legal scheduling inside straight-line regions.
+3. Stackify scheduling retirement.
+4. Final obsolete-code audit and deletion.
 
 At each optimizing stage:
 

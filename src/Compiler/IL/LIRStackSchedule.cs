@@ -13,13 +13,15 @@ internal enum LIRStackSchedulerMode
     Identity = 1,
     TypedNumeric = 2,
     TypedComparisons = 3,
-    ConversionsAndStableLoads = 4
+    ConversionsAndStableLoads = 4,
+    LiteralAndArguments = 5
 }
 
 internal enum TempResidency
 {
     MaterializedLocal,
     StackResident,
+    ScheduledInline,
     Rematerialized
 }
 

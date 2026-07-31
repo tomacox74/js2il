@@ -20,23 +20,20 @@ internal sealed partial class LIRToILCompiler
                 {
                     if (!IsMaterialized(buildArray.Result, allocation))
                     {
-                        // Will be emitted inline via EmitLoadTemp when the temp is used
+                        EmitSchedulerOwnedStackValueIfNeeded(
+                            buildArray,
+                            buildArray.Result,
+                            ilEncoder,
+                            allocation,
+                            methodDescriptor);
                         return true;
                     }
 
-                    // Emit: newarr Object
-                    ilEncoder.LoadConstantI4(buildArray.Elements.Count);
-                    ilEncoder.OpCode(ILOpCode.Newarr);
-                    ilEncoder.Token(_bclReferences.ObjectType);
-
-                    // For each element: dup, ldc.i4 index, load element value (boxed), stelem.ref
-                    for (int i = 0; i < buildArray.Elements.Count; i++)
-                    {
-                        ilEncoder.OpCode(ILOpCode.Dup);
-                        ilEncoder.LoadConstantI4(i);
-                        EmitLoadTempAsObject(buildArray.Elements[i], ilEncoder, allocation, methodDescriptor);
-                        ilEncoder.OpCode(ILOpCode.Stelem_ref);
-                    }
+                    EmitBuildArrayValue(
+                        buildArray,
+                        ilEncoder,
+                        allocation,
+                        methodDescriptor);
 
                     EmitStoreTemp(buildArray.Result, ilEncoder, allocation);
                     return true;
@@ -46,45 +43,20 @@ internal sealed partial class LIRToILCompiler
                 {
                     if (!IsMaterialized(newJsArray.Result, allocation))
                     {
-                        // Will be emitted inline via EmitLoadTemp when the temp is used
+                        EmitSchedulerOwnedStackValueIfNeeded(
+                            newJsArray,
+                            newJsArray.Result,
+                            ilEncoder,
+                            allocation,
+                            methodDescriptor);
                         return true;
                     }
 
-                    // Emit: ldc.i4 capacity, newobj JavaScriptRuntime.Array::.ctor(int)
-                    ilEncoder.LoadConstantI4(newJsArray.CapacityHint ?? newJsArray.Elements.Count);
-                    var arrayCtor = _memberRefRegistry.GetOrAddConstructor(
-                        typeof(JavaScriptRuntime.Array),
-                        parameterTypes: new[] { typeof(int) });
-                    ilEncoder.OpCode(ILOpCode.Newobj);
-                    ilEncoder.Token(arrayCtor);
-
-                    // Keep numeric literals unboxed all the way into packed Array storage.
-                    var addMethod = _memberRefRegistry.GetOrAddMethod(
-                        typeof(JavaScriptRuntime.Array),
-                        nameof(JavaScriptRuntime.Array.Add),
-                        parameterTypes: new[] { typeof(object) });
-                    var addNumberMethod = _memberRefRegistry.GetOrAddMethod(
-                        typeof(JavaScriptRuntime.Array),
-                        nameof(JavaScriptRuntime.Array.AddNumber),
-                        parameterTypes: new[] { typeof(double) });
-                    for (int i = 0; i < newJsArray.Elements.Count; i++)
-                    {
-                        var element = newJsArray.Elements[i];
-                        var elementStorage = GetTempStorage(element);
-                        ilEncoder.OpCode(ILOpCode.Dup);
-                        if (elementStorage.Kind == ValueStorageKind.UnboxedValue
-                            && elementStorage.ClrType == typeof(double))
-                        {
-                            EmitLoadTemp(element, ilEncoder, allocation, methodDescriptor);
-                            ilEncoder.OpCode(ILOpCode.Callvirt);
-                            ilEncoder.Token(addNumberMethod);
-                            continue;
-                        }
-
-                        EmitLoadTempAsObject(element, ilEncoder, allocation, methodDescriptor);
-                        ilEncoder.OpCode(ILOpCode.Callvirt);
-                        ilEncoder.Token(addMethod);
-                    }
+                    EmitNewJsArrayValue(
+                        newJsArray,
+                        ilEncoder,
+                        allocation,
+                        methodDescriptor);
 
                     EmitStoreTemp(newJsArray.Result, ilEncoder, allocation);
                     return true;
@@ -94,55 +66,20 @@ internal sealed partial class LIRToILCompiler
                 {
                     if (!IsMaterialized(newJsObject.Result, allocation))
                     {
-                        // Will be emitted inline via EmitLoadTemp when the temp is used
+                        EmitSchedulerOwnedStackValueIfNeeded(
+                            newJsObject,
+                            newJsObject.Result,
+                            ilEncoder,
+                            allocation,
+                            methodDescriptor);
                         return true;
                     }
 
-                    // Emit: call RuntimeServices.CreateObjectLiteral() -> object
-                    var createObjectLiteral = _memberRefRegistry.GetOrAddMethod(
-                        typeof(JavaScriptRuntime.RuntimeServices),
-                        nameof(JavaScriptRuntime.RuntimeServices.CreateObjectLiteral),
-                        parameterTypes: Type.EmptyTypes);
-                    ilEncoder.OpCode(ILOpCode.Call);
-                    ilEncoder.Token(createObjectLiteral);
-
-                    // For each property emit a typed JsObject setter when possible to avoid boxing.
-                    var setNumberMethod = _memberRefRegistry.GetOrAddMethod(
-                        typeof(JavaScriptRuntime.JsObject),
-                        nameof(JavaScriptRuntime.JsObject.SetNumber),
-                        parameterTypes: new[] { typeof(string), typeof(double) });
-                    var setBooleanMethod = _memberRefRegistry.GetOrAddMethod(
-                        typeof(JavaScriptRuntime.JsObject),
-                        nameof(JavaScriptRuntime.JsObject.SetBoolean),
-                        parameterTypes: new[] { typeof(string), typeof(bool) });
-                    var setObjectMethod = _memberRefRegistry.GetOrAddMethod(
-                        typeof(JavaScriptRuntime.JsObject),
-                        nameof(JavaScriptRuntime.JsObject.SetObject),
-                        parameterTypes: new[] { typeof(string), typeof(object) });
-                    foreach (var prop in newJsObject.Properties)
-                    {
-                        var valueStorage = GetTempStorage(prop.Value);
-                        ilEncoder.OpCode(ILOpCode.Dup);
-                        ilEncoder.Ldstr(_metadataBuilder, prop.Key);
-                        if (valueStorage.Kind == ValueStorageKind.UnboxedValue && valueStorage.ClrType == typeof(double))
-                        {
-                            EmitLoadTemp(prop.Value, ilEncoder, allocation, methodDescriptor);
-                            ilEncoder.OpCode(ILOpCode.Callvirt);
-                            ilEncoder.Token(setNumberMethod);
-                        }
-                        else if (valueStorage.Kind == ValueStorageKind.UnboxedValue && valueStorage.ClrType == typeof(bool))
-                        {
-                            EmitLoadTemp(prop.Value, ilEncoder, allocation, methodDescriptor);
-                            ilEncoder.OpCode(ILOpCode.Callvirt);
-                            ilEncoder.Token(setBooleanMethod);
-                        }
-                        else
-                        {
-                            EmitLoadTempAsObject(prop.Value, ilEncoder, allocation, methodDescriptor);
-                            ilEncoder.OpCode(ILOpCode.Callvirt);
-                            ilEncoder.Token(setObjectMethod);
-                        }
-                    }
+                    EmitNewJsObjectValue(
+                        newJsObject,
+                        ilEncoder,
+                        allocation,
+                        methodDescriptor);
 
                     EmitStoreTemp(newJsObject.Result, ilEncoder, allocation);
                     return true;
@@ -213,6 +150,139 @@ internal sealed partial class LIRToILCompiler
         }
     }
 
+    private void EmitBuildArrayValue(
+                LIRBuildArray buildArray,
+                InstructionEncoder ilEncoder,
+                TempLocalAllocation allocation,
+                MethodDescriptor methodDescriptor)
+    {
+        ilEncoder.LoadConstantI4(buildArray.Elements.Count);
+        ilEncoder.OpCode(ILOpCode.Newarr);
+        ilEncoder.Token(_bclReferences.ObjectType);
+        for (var index = 0; index < buildArray.Elements.Count; index++)
+        {
+            ilEncoder.OpCode(ILOpCode.Dup);
+            ilEncoder.LoadConstantI4(index);
+            EmitLoadTempAsObject(
+                buildArray.Elements[index],
+                ilEncoder,
+                allocation,
+                methodDescriptor);
+            ilEncoder.OpCode(ILOpCode.Stelem_ref);
+        }
+    }
+
+    private void EmitNewJsArrayValue(
+            LIRNewJsArray newJsArray,
+            InstructionEncoder ilEncoder,
+            TempLocalAllocation allocation,
+            MethodDescriptor methodDescriptor)
+    {
+        ilEncoder.LoadConstantI4(
+            newJsArray.CapacityHint ?? newJsArray.Elements.Count);
+        ilEncoder.OpCode(ILOpCode.Newobj);
+        ilEncoder.Token(_memberRefRegistry.GetOrAddConstructor(
+            typeof(JavaScriptRuntime.Array),
+            parameterTypes: new[] { typeof(int) }));
+
+        var addMethod = _memberRefRegistry.GetOrAddMethod(
+            typeof(JavaScriptRuntime.Array),
+            nameof(JavaScriptRuntime.Array.Add),
+            parameterTypes: new[] { typeof(object) });
+        var addNumberMethod = _memberRefRegistry.GetOrAddMethod(
+            typeof(JavaScriptRuntime.Array),
+            nameof(JavaScriptRuntime.Array.AddNumber),
+            parameterTypes: new[] { typeof(double) });
+        foreach (var element in newJsArray.Elements)
+        {
+            var elementStorage = GetTempStorage(element);
+            ilEncoder.OpCode(ILOpCode.Dup);
+            if (elementStorage.Kind == ValueStorageKind.UnboxedValue
+                && elementStorage.ClrType == typeof(double))
+            {
+                EmitLoadTemp(
+                    element,
+                    ilEncoder,
+                    allocation,
+                    methodDescriptor);
+                ilEncoder.OpCode(ILOpCode.Callvirt);
+                ilEncoder.Token(addNumberMethod);
+                continue;
+            }
+
+            EmitLoadTempAsObject(
+                element,
+                ilEncoder,
+                allocation,
+                methodDescriptor);
+            ilEncoder.OpCode(ILOpCode.Callvirt);
+            ilEncoder.Token(addMethod);
+        }
+    }
+
+    private void EmitNewJsObjectValue(
+            LIRNewJsObject newJsObject,
+            InstructionEncoder ilEncoder,
+            TempLocalAllocation allocation,
+            MethodDescriptor methodDescriptor)
+    {
+        ilEncoder.OpCode(ILOpCode.Call);
+        ilEncoder.Token(_memberRefRegistry.GetOrAddMethod(
+            typeof(JavaScriptRuntime.RuntimeServices),
+            nameof(JavaScriptRuntime.RuntimeServices.CreateObjectLiteral),
+            parameterTypes: Type.EmptyTypes));
+
+        var setNumberMethod = _memberRefRegistry.GetOrAddMethod(
+            typeof(JavaScriptRuntime.JsObject),
+            nameof(JavaScriptRuntime.JsObject.SetNumber),
+            parameterTypes: new[] { typeof(string), typeof(double) });
+        var setBooleanMethod = _memberRefRegistry.GetOrAddMethod(
+            typeof(JavaScriptRuntime.JsObject),
+            nameof(JavaScriptRuntime.JsObject.SetBoolean),
+            parameterTypes: new[] { typeof(string), typeof(bool) });
+        var setObjectMethod = _memberRefRegistry.GetOrAddMethod(
+            typeof(JavaScriptRuntime.JsObject),
+            nameof(JavaScriptRuntime.JsObject.SetObject),
+            parameterTypes: new[] { typeof(string), typeof(object) });
+        foreach (var property in newJsObject.Properties)
+        {
+            var valueStorage = GetTempStorage(property.Value);
+            ilEncoder.OpCode(ILOpCode.Dup);
+            ilEncoder.Ldstr(_metadataBuilder, property.Key);
+            if (valueStorage.Kind == ValueStorageKind.UnboxedValue
+                && valueStorage.ClrType == typeof(double))
+            {
+                EmitLoadTemp(
+                    property.Value,
+                    ilEncoder,
+                    allocation,
+                    methodDescriptor);
+                ilEncoder.OpCode(ILOpCode.Callvirt);
+                ilEncoder.Token(setNumberMethod);
+            }
+            else if (valueStorage.Kind == ValueStorageKind.UnboxedValue
+                && valueStorage.ClrType == typeof(bool))
+            {
+                EmitLoadTemp(
+                    property.Value,
+                    ilEncoder,
+                    allocation,
+                    methodDescriptor);
+                ilEncoder.OpCode(ILOpCode.Callvirt);
+                ilEncoder.Token(setBooleanMethod);
+            }
+            else
+            {
+                EmitLoadTempAsObject(
+                    property.Value,
+                    ilEncoder,
+                    allocation,
+                    methodDescriptor);
+                ilEncoder.OpCode(ILOpCode.Callvirt);
+                ilEncoder.Token(setObjectMethod);
+            }
+        }
+    }
     private Jroc.Services.VariableBindings.ObjectLiteralTypeMetadata GetObjectLiteralTypeMetadata(Jroc.SymbolTables.ObjectLiteralShapeInfo shape)
     {
         if (!_variableRegistry.TryGetObjectLiteralType(shape, out var metadata))

@@ -697,6 +697,34 @@ internal sealed partial class LIRToILCompiler
                     // Inline length get: receiver
                     LIRGetLength getLength => EstimateTempConstructionPeak(getLength.Object),
                     LIRGetStringLength getStringLength => EstimateTempConstructionPeak(getStringLength.Receiver),
+                    LIRGetJsArrayLength getJsArrayLength => EstimateTempConstructionPeak(getJsArrayLength.Receiver),
+                    LIRGetInt32ArrayLength getInt32ArrayLength => EstimateTempConstructionPeak(getInt32ArrayLength.Receiver),
+                    LIRGetJsArrayElement getJsArrayElement => Math.Max(
+                        EstimateTempConstructionPeak(getJsArrayElement.Receiver),
+                        1 + EstimateTempConstructionPeak(getJsArrayElement.Index)),
+                    LIRGetInt32ArrayElement getInt32ArrayElement => Math.Max(
+                        EstimateTempConstructionPeak(getInt32ArrayElement.Receiver),
+                        1 + EstimateTempConstructionPeak(getInt32ArrayElement.Index)),
+
+                    LIRAddNumber value => EstimateBinaryPeak(value.Left, value.Right),
+                    LIRSubNumber value => EstimateBinaryPeak(value.Left, value.Right),
+                    LIRMulNumber value => EstimateBinaryPeak(value.Left, value.Right),
+                    LIRDivNumber value => EstimateBinaryPeak(value.Left, value.Right),
+                    LIRModNumber value => EstimateBinaryPeak(value.Left, value.Right),
+                    LIRExpNumber value => EstimateBinaryPeak(value.Left, value.Right),
+                    LIRConcatStrings value => EstimateBinaryPeak(value.Left, value.Right),
+                    LIRCompareNumberLessThan value => EstimateBinaryPeak(value.Left, value.Right),
+                    LIRCompareNumberGreaterThan value => EstimateBinaryPeak(value.Left, value.Right),
+                    LIRCompareNumberLessThanOrEqual value => EstimateBinaryPeak(value.Left, value.Right),
+                    LIRCompareNumberGreaterThanOrEqual value => EstimateBinaryPeak(value.Left, value.Right),
+                    LIRCompareNumberEqual value => EstimateBinaryPeak(value.Left, value.Right),
+                    LIRCompareNumberNotEqual value => EstimateBinaryPeak(value.Left, value.Right),
+                    LIRCompareBooleanEqual value => EstimateBinaryPeak(value.Left, value.Right),
+                    LIRCompareBooleanNotEqual value => EstimateBinaryPeak(value.Left, value.Right),
+                    LIRNegateNumber value => EstimateTempConstructionPeak(value.Value),
+                    LIRBitwiseNotNumber value => EstimateTempConstructionPeak(value.Value),
+                    LIRConvertToNumber value => EstimateTempConstructionPeak(value.Source),
+                    LIRConvertToObject value => EstimateTempConstructionPeak(value.Source),
 
                     // Parent-scope load emits: scopesArray + index + ldelem_ref + cast + ldfld
                     // which peaks at 2 stack items during index load.
@@ -721,6 +749,11 @@ internal sealed partial class LIRToILCompiler
 
             tempConstructionPeakCache[temp.Index] = peak;
             return peak;
+
+            int EstimateBinaryPeak(TempVariable left, TempVariable right)
+                => Math.Max(
+                    EstimateTempConstructionPeak(left),
+                    1 + EstimateTempConstructionPeak(right));
         }
 
         int EstimateTempLoadPeak(TempVariable temp)

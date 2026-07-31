@@ -150,7 +150,8 @@ internal sealed class TempMaterializationPlan
         if (residency == TempResidency.MaterializedLocal)
         {
             throw new ArgumentException(
-                "Non-materialized claims require stack or rematerialized residency.",
+                "Non-materialized claims require stack, scheduled-inline, or "
+                + "rematerialized residency.",
                 nameof(residency));
         }
 

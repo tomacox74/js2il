@@ -34,7 +34,10 @@ internal static class LIRStackScheduleValidator
             methodBody,
             scheduledLirIndexes);
 
-        ValidateEffectOrder(methodBody, scheduledPositionByLirIndex);
+        ValidateEffectOrder(
+            methodBody,
+            schedule,
+            scheduledPositionByLirIndex);
         ValidateRegions(methodBody, schedule);
         ValidateIntraRegionDataOrder(
             methodBody,
@@ -195,8 +198,84 @@ internal static class LIRStackScheduleValidator
 
     private static void ValidateEffectOrder(
         MethodBodyIR methodBody,
+        LIRStackSchedule schedule,
         int[] scheduledPositionByLirIndex)
     {
+        var effectivePositionByLirIndex =
+            (int[])scheduledPositionByLirIndex.Clone();
+        var definitionByTemp = new int[methodBody.Temps.Count];
+        var useByTemp = new int[methodBody.Temps.Count];
+        Array.Fill(definitionByTemp, -1);
+        Array.Fill(useByTemp, -1);
+        for (var lirIndex = 0;
+             lirIndex < methodBody.Instructions.Count;
+             lirIndex++)
+        {
+            if (LIRInstructionInfo.TryGetDefinedTemp(
+                    methodBody.Instructions[lirIndex],
+                    out var defined)
+                && (uint)defined.Index < (uint)definitionByTemp.Length)
+            {
+                definitionByTemp[defined.Index] = lirIndex;
+            }
+
+            var visitor = new LastUseIndexVisitor(useByTemp, lirIndex);
+            LIRInstructionInfo.VisitUsedTemps(
+                methodBody.Instructions[lirIndex],
+                ref visitor);
+        }
+
+        var resolvedPositionByTemp = new int[methodBody.Temps.Count];
+        Array.Fill(resolvedPositionByTemp, -1);
+        var resolving = new bool[methodBody.Temps.Count];
+        for (var tempIndex = 0;
+             tempIndex < methodBody.Temps.Count;
+             tempIndex++)
+        {
+            if (schedule.TempResidencies[tempIndex]
+                    != TempResidency.ScheduledInline
+                || definitionByTemp[tempIndex] < 0
+                || useByTemp[tempIndex] < 0)
+            {
+                continue;
+            }
+
+            effectivePositionByLirIndex[definitionByTemp[tempIndex]] =
+                ResolveEffectivePosition(tempIndex);
+        }
+
+        int ResolveEffectivePosition(int tempIndex)
+        {
+            if (resolvedPositionByTemp[tempIndex] >= 0)
+            {
+                return resolvedPositionByTemp[tempIndex];
+            }
+
+            if (resolving[tempIndex])
+            {
+                Throw(
+                    $"Scheduled-inline dependency cycle includes temp {tempIndex}.");
+            }
+
+            resolving[tempIndex] = true;
+            var useIndex = useByTemp[tempIndex];
+            var position = scheduledPositionByLirIndex[useIndex];
+            if (LIRInstructionInfo.TryGetDefinedTemp(
+                    methodBody.Instructions[useIndex],
+                    out var consumerResult)
+                && (uint)consumerResult.Index
+                    < (uint)schedule.TempResidencies.Length
+                && schedule.TempResidencies[consumerResult.Index]
+                    == TempResidency.ScheduledInline)
+            {
+                position = ResolveEffectivePosition(consumerResult.Index);
+            }
+
+            resolving[tempIndex] = false;
+            resolvedPositionByTemp[tempIndex] = position;
+            return position;
+        }
+
         var previousScheduledPosition = -1;
         var previousLirIndex = -1;
 
@@ -212,7 +291,7 @@ internal static class LIRStackScheduleValidator
                 continue;
             }
 
-            var scheduledPosition = scheduledPositionByLirIndex[lirIndex];
+            var scheduledPosition = effectivePositionByLirIndex[lirIndex];
             if (scheduledPosition < previousScheduledPosition)
             {
                 Throw(
@@ -352,6 +431,7 @@ internal static class LIRStackScheduleValidator
         MethodBodyIR methodBody,
         LIRStackSchedule schedule)
     {
+        var hasScheduledInlineTemps = false;
         for (var tempIndex = 0;
              tempIndex < methodBody.Temps.Count;
              tempIndex++)
@@ -370,6 +450,85 @@ internal static class LIRStackScheduleValidator
                 Throw(
                     $"Temp {tempIndex} is scheduler-owned but still marked as a "
                     + "materialized local.");
+            }
+
+            hasScheduledInlineTemps |= schedule.TempResidencies[tempIndex]
+                == TempResidency.ScheduledInline;
+        }
+
+        if (!hasScheduledInlineTemps)
+        {
+            return;
+        }
+
+        var definitionCounts = new int[methodBody.Temps.Count];
+        var useCounts = new int[methodBody.Temps.Count];
+        var definitionByTemp = new LIRInstruction?[methodBody.Temps.Count];
+        var useInstructionByTemp =
+            new LIRInstruction?[methodBody.Temps.Count];
+        CountDefinitionsAndUses(methodBody, definitionCounts, useCounts);
+        foreach (var instruction in methodBody.Instructions)
+        {
+            if (LIRInstructionInfo.TryGetDefinedTemp(
+                    instruction,
+                    out var defined)
+                && (uint)defined.Index < (uint)definitionByTemp.Length)
+            {
+                definitionByTemp[defined.Index] ??= instruction;
+            }
+
+            var visitor = new SingleUseInstructionVisitor(
+                useInstructionByTemp,
+                instruction);
+            LIRInstructionInfo.VisitUsedTemps(instruction, ref visitor);
+        }
+
+        for (var tempIndex = 0; tempIndex < methodBody.Temps.Count; tempIndex++)
+        {
+            if (schedule.TempResidencies[tempIndex]
+                    != TempResidency.ScheduledInline)
+            {
+                continue;
+            }
+
+            if (!schedule.OwnedTemps[tempIndex]
+                || definitionCounts[tempIndex] != 1
+                || useCounts[tempIndex] != 1
+                || definitionByTemp[tempIndex] is not { } definition
+                || !LIRStackScheduler.IsSupportedScheduledInlineProducer(
+                    definition))
+            {
+                Throw(
+                    $"Scheduled-inline temp {tempIndex} must be scheduler-owned "
+                    + "with exactly one supported definition and one use.");
+            }
+
+            var consumer = useInstructionByTemp[tempIndex];
+            while (consumer is not null
+                && !LIRStackScheduler.IsSupportedScheduledInlineRoot(
+                    consumer))
+            {
+                if (!LIRInstructionInfo.TryGetDefinedTemp(
+                        consumer,
+                        out var consumerResult)
+                    || (uint)consumerResult.Index
+                        >= (uint)schedule.TempResidencies.Length
+                    || schedule.TempResidencies[consumerResult.Index]
+                        != TempResidency.ScheduledInline)
+                {
+                    Throw(
+                        $"Scheduled-inline temp {tempIndex} does not terminate "
+                        + "in a supported construction root.");
+                }
+
+                consumer = useInstructionByTemp[consumerResult.Index];
+            }
+
+            if (consumer is null)
+            {
+                Throw(
+                    $"Scheduled-inline temp {tempIndex} has no supported "
+                    + "construction consumer.");
             }
         }
     }
@@ -443,7 +602,9 @@ internal static class LIRStackScheduleValidator
                 instructionRegion,
                 uniqueDefinitionByTemp,
                 hasMultipleDefinitions,
-                scheduledPositionByLirIndex);
+                scheduledPositionByLirIndex,
+                schedule.TempResidencies,
+                schedule.OwnedTemps);
             LIRInstructionInfo.VisitUsedTemps(
                 methodBody.Instructions[useLirIndex],
                 ref visitor);
@@ -780,6 +941,48 @@ internal static class LIRStackScheduleValidator
         }
     }
 
+    private readonly struct LastUseIndexVisitor : ITempUseVisitor
+    {
+        private readonly int[] _useByTemp;
+        private readonly int _lirIndex;
+
+        internal LastUseIndexVisitor(int[] useByTemp, int lirIndex)
+        {
+            _useByTemp = useByTemp;
+            _lirIndex = lirIndex;
+        }
+
+        public void Visit(TempVariable temp)
+        {
+            if ((uint)temp.Index < (uint)_useByTemp.Length)
+            {
+                _useByTemp[temp.Index] = _lirIndex;
+            }
+        }
+    }
+
+    private readonly struct SingleUseInstructionVisitor : ITempUseVisitor
+    {
+        private readonly LIRInstruction?[] _useInstructionByTemp;
+        private readonly LIRInstruction _instruction;
+
+        internal SingleUseInstructionVisitor(
+            LIRInstruction?[] useInstructionByTemp,
+            LIRInstruction instruction)
+        {
+            _useInstructionByTemp = useInstructionByTemp;
+            _instruction = instruction;
+        }
+
+        public void Visit(TempVariable temp)
+        {
+            if ((uint)temp.Index < (uint)_useInstructionByTemp.Length)
+            {
+                _useInstructionByTemp[temp.Index] = _instruction;
+            }
+        }
+    }
+
     private struct CollectUseVisitor : ITempUseVisitor
     {
         private readonly List<TempVariable> _uses;
@@ -803,6 +1006,8 @@ internal static class LIRStackScheduleValidator
         private readonly int[] _uniqueDefinitionByTemp;
         private readonly bool[] _hasMultipleDefinitions;
         private readonly int[] _scheduledPositionByLirIndex;
+        private readonly TempResidency[] _tempResidencies;
+        private readonly bool[] _ownedTemps;
 
         internal DataOrderVisitor(
             int useLirIndex,
@@ -810,7 +1015,9 @@ internal static class LIRStackScheduleValidator
             int[] instructionRegion,
             int[] uniqueDefinitionByTemp,
             bool[] hasMultipleDefinitions,
-            int[] scheduledPositionByLirIndex)
+            int[] scheduledPositionByLirIndex,
+            TempResidency[] tempResidencies,
+            bool[] ownedTemps)
         {
             _useLirIndex = useLirIndex;
             _useRegion = useRegion;
@@ -818,12 +1025,21 @@ internal static class LIRStackScheduleValidator
             _uniqueDefinitionByTemp = uniqueDefinitionByTemp;
             _hasMultipleDefinitions = hasMultipleDefinitions;
             _scheduledPositionByLirIndex = scheduledPositionByLirIndex;
+            _tempResidencies = tempResidencies;
+            _ownedTemps = ownedTemps;
         }
 
         public void Visit(TempVariable temp)
         {
             if ((uint)temp.Index >= (uint)_uniqueDefinitionByTemp.Length
                 || _hasMultipleDefinitions[temp.Index])
+            {
+                return;
+            }
+
+            if (_ownedTemps[temp.Index]
+                && _tempResidencies[temp.Index]
+                    == TempResidency.ScheduledInline)
             {
                 return;
             }
