@@ -481,6 +481,57 @@ public sealed class LIRStackSchedulerTests
         Assert.Equal(TempResidency.StackResident, schedule.TempResidencies[comparison.Index]);
     }
 
+    [Fact]
+    public void Build_ConversionsMode_ClaimsLengthAndNumericConversion()
+    {
+        var body = new MethodBodyIR();
+        var receiver = AddTemp(body);
+        var length = AddTemp(body);
+        var converted = AddTemp(body);
+        var one = AddTemp(body);
+        var result = AddTemp(body);
+        body.Instructions.Add(new LIRLoadParameter(1, receiver));
+        body.Instructions.Add(new LIRGetStringLength(receiver, length));
+        body.Instructions.Add(new LIRConvertToNumber(length, converted));
+        body.Instructions.Add(new LIRConstNumber(1, one));
+        body.Instructions.Add(new LIRAddNumber(converted, one, result));
+        body.Instructions.Add(new LIRReturn(result));
+
+        var schedule = LIRStackScheduler.Build(
+            body,
+            new LIRStackSchedulerOptions(
+                LIRStackSchedulerMode.ConversionsAndStableLoads));
+
+        Assert.Equal(TempResidency.StackResident, schedule.TempResidencies[length.Index]);
+        Assert.Equal(TempResidency.StackResident, schedule.TempResidencies[converted.Index]);
+        Assert.Equal(TempResidency.StackResident, schedule.TempResidencies[result.Index]);
+        Assert.Equal(3, schedule.Metrics.StackResidentTempCount);
+    }
+
+    [Fact]
+    public void Build_ConversionsMode_DoesNotClaimGenericGetter()
+    {
+        var body = new MethodBodyIR();
+        var receiver = AddTemp(body);
+        var index = AddTemp(body);
+        var value = AddTemp(body);
+        var one = AddTemp(body);
+        var result = AddTemp(body);
+        body.Instructions.Add(new LIRLoadParameter(1, receiver));
+        body.Instructions.Add(new LIRConstString("x", index));
+        body.Instructions.Add(new LIRGetItem(receiver, index, value));
+        body.Instructions.Add(new LIRConstNumber(1, one));
+        body.Instructions.Add(new LIRAddDynamic(value, one, result));
+        body.Instructions.Add(new LIRReturn(result));
+
+        var schedule = LIRStackScheduler.Build(
+            body,
+            new LIRStackSchedulerOptions(
+                LIRStackSchedulerMode.ConversionsAndStableLoads));
+
+        Assert.Equal(TempResidency.MaterializedLocal, schedule.TempResidencies[value.Index]);
+    }
+
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
@@ -521,7 +572,7 @@ public sealed class LIRStackSchedulerTests
     }
 
     [Fact]
-    public void Compiler_TypedComparisonsMode_EliminatesIntermediateSpills()
+    public void Compiler_ConversionsMode_EliminatesIntermediateSpills()
     {
         const string source = """
             "use strict";
@@ -533,14 +584,19 @@ public sealed class LIRStackSchedulerTests
             function expAdd(a, b, c) { return a ** b + c; }
             function less(a, b) { return a < b; }
             function branch(a, b) { if (a * 2 < b + 1) return a; return b; }
+            function concat() { return "value=" + "6"; }
+            function stringLength(a) { return a.length + 1; }
+            function arrayLength(a) { return a.length + 1; }
+            function arrayElement(a) { return a[0]; }
             console.log(mulAdd(4), addChain(1, 2, 3, 4), tree(2, 3, 4, 5),
               subChain(10, 3, 2), divMod(20, 3, 2), expAdd(2, 3, 1),
-              less(1, 2), branch(2, 10));
+              less(1, 2), branch(2, 10), concat(), stringLength("abc"),
+              arrayLength([1, 2, 3]), arrayElement([4]));
             """;
 
         var artifact = Compile(
             source,
-            LIRStackSchedulerMode.TypedComparisons,
+            LIRStackSchedulerMode.ConversionsAndStableLoads,
             emitPdb: false);
         var path = Path.Combine(
             Path.GetTempPath(),
@@ -604,6 +660,31 @@ public sealed class LIRStackSchedulerTests
             "add",
             "clt",
             "brfalse");
+        AssertMethodHasNoIntermediateSpills(
+            il,
+            "concat",
+            "ldstr \"value=\"",
+            "ldstr \"6\"",
+            "String::Concat",
+            "ret");
+        AssertMethodHasNoIntermediateSpills(
+            il,
+            "stringLength",
+            "String::get_Length",
+            "conv.r8",
+            "add",
+            "ret");
+        AssertMethodHasNoIntermediateSpills(
+            il,
+            "arrayLength",
+            "JavaScriptRuntime.Array::get_length",
+            "add",
+            "ret");
+        AssertMethodHasNoIntermediateSpills(
+            il,
+            "arrayElement",
+            "JavaScriptRuntime.Array::get_Item",
+            "ret");
     }
 
     private static TempVariable AddTemp(MethodBodyIR body)

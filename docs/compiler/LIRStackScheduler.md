@@ -5,14 +5,17 @@
 The scheduler is being introduced incrementally under the umbrella tracked by
 [GitHub issue #1617](https://github.com/tomacox74/js2il/issues/1617).
 
-The implementation currently provides **typed numeric and comparison scheduling** on
-top of the validated identity foundation:
+The implementation currently provides **typed numeric, comparison, conversion,
+concat, and stable typed-load scheduling** on top of the validated identity
+foundation:
 
 - LIR instructions are emitted in their original order.
-- Single-use typed numeric binary, unary, and comparison results can remain
-  stack-resident.
-- Existing `Stackify`, branch fusion, rematerialization, and local allocation
-  behavior remains authoritative.
+- Single-use typed numeric binary, unary, comparison, conversion, concat, and
+  approved typed length/element results can remain stack-resident.
+- `LIRRematerializationPolicy` separately owns the decision to reproduce cheap,
+  stable definitions at their uses.
+- Existing `Stackify`, branch fusion, and local allocation behavior remains
+  authoritative for unsupported shapes.
 - Existing constructor/field-store peepholes remain intact.
 - Every concrete LIR instruction type is inventoried by canonical
   scheduler-facing metadata.
@@ -57,9 +60,10 @@ The scheduler will eventually represent a different operation:
 3. preserve the required stack shape until its consumer;
 4. consume the value without `stloc`, `ldloc`, or re-execution.
 
-Stack scheduling and rematerialization are separate optimizations. During the
-migration they coexist; after scheduling coverage is complete, the useful
-rematerialization behavior will remain under an explicit policy.
+Stack scheduling and rematerialization are separate optimizations.
+`LIRRematerializationPolicy` is the common entry point for the allocator and
+legacy Stackify decisions. It answers only whether a definition can be
+reproduced safely; it does not select stack residency or instruction order.
 
 ## Pipeline placement
 
@@ -90,6 +94,7 @@ Current integration is in:
 
 - `src/Compiler/IL/LIRStackSchedule.cs`
 - `src/Compiler/IL/LIRStackScheduler.cs`
+- `src/Compiler/IL/LIRRematerializationPolicy.cs`
 - `src/Compiler/IL/LIRInstructionInfo.cs`
 - `src/Compiler/IL/LIRToILCompiler.MethodBodyCompilation.cs`
 - `src/Compiler/CompilerOptions.cs`
@@ -103,7 +108,8 @@ Current integration is in:
 | `Disabled` | Bypass schedule construction and use the legacy raw LIR index path. |
 | `Identity` | Emit through an explicit source-order schedule with no scheduler-owned residency. |
 | `TypedNumeric` | Identity plus typed numeric binary stack residency. |
-| `TypedComparisons` | TypedNumeric plus typed unary/comparison and direct branch/return consumption. This is the default. |
+| `TypedComparisons` | TypedNumeric plus typed unary/comparison and direct branch/return consumption. |
+| `ConversionsAndStableLoads` | TypedComparisons plus numeric/object conversions, string concat, and approved typed string/array length and element loads. This is the default. |
 
 Later modes must include all behavior from preceding modes so adjacent levels
 remain useful for A/B diagnosis.
@@ -167,6 +173,44 @@ scope-field stores that push a receiver before their value, and unsupported
 operand orders remain materialized or legacy-owned. `LIRConvertToObject` is
 stack-resident only for the proven simple synchronous-return shape; other
 boxing consumers retain legacy behavior.
+
+## Conversion, concat, and stable typed-load coverage
+
+`ConversionsAndStableLoads` extends cumulative coverage to:
+
+```text
+LIRConvertToNumber
+LIRConvertToObject
+LIRConcatStrings
+LIRGetStringLength
+LIRGetJsArrayLength
+LIRGetInt32ArrayLength
+LIRGetJsArrayElement
+LIRGetInt32ArrayElement
+```
+
+Candidates still require one definition, one use, no backing variable slot,
+and a supported same-region consumer or synchronous terminal return. The
+forward stack simulation rejects any operand order the source-order emitter
+cannot consume. Definitions execute once at their original position; a
+scheduler-owned conversion or typed load is never reproduced at its use.
+
+Only statically proven string, `Array`, and `Int32Array` operations are covered.
+Generic property/index reads remain materialized because getters, proxies, and
+coercion may be observable. Calls, allocations, mutable slot loads, TDZ-checked
+scope loads, async/generator returns, and values crossing scheduling boundaries
+remain outside this mode.
+
+Cheap constants, parameter/`this` loads, and other legacy-approved stable loads
+may instead be `Rematerialized`. Multi-use values are never claimed as
+stack-resident by this stage; for example, a two-use numeric constant can be
+reproduced at both uses. `TempMaterializationPlan` records this distinction:
+
+```text
+StackResident  = emit once at the definition and carry on the CLR stack
+Rematerialized = suppress the definition and safely reproduce at a use
+Materialized   = store in and reload from a local or variable slot
+```
 
 ## Typed unary and comparison coverage
 
@@ -563,6 +607,12 @@ Identity mode must preserve all of the following:
   branch fusion;
 - branch target stacks remain empty after the conditional branch consumes the
   carried Boolean.
+- conversion, concat, and approved typed length/element definitions execute
+  exactly once at their source position;
+- observable generic getters, mutable loads, and TDZ-checked loads are never
+  accepted as stable scheduler loads;
+- rematerialization decisions are explicit and independent from scheduler
+  residency and instruction order.
 
 The identity scheduler does not inspect `CompilerOptions.EmitPdb`; enabling
 symbols must not change schedule selection or operation order.
@@ -643,15 +693,14 @@ Focused regression coverage also includes:
 
 ## Current non-goals
 
-Typed comparison scheduling does not:
+The current cumulative scheduling mode does not:
 
 - reorder LIR instructions;
 - schedule calls, allocations, dynamic operators, coercive equality, logical
   not, or `LIRIsInstanceOf`;
 - carry values across sequence points, control flow, EH, `yield`, or `await`;
-- alter rematerialization;
 - replace the local allocator;
-- eliminate the boxed object return local.
+- schedule multi-use values as stack-resident.
 
 These limitations are deliberate. A no-change foundation makes later
 instruction-family PRs smaller and reviewable.
@@ -661,12 +710,11 @@ instruction-family PRs smaller and reviewable.
 The ordered work is tracked under
 [issue #1617](https://github.com/tomacox74/js2il/issues/1617):
 
-1. Conversions, stable loads, and explicit rematerialization.
-2. Literal and argument construction.
-3. Same-region single-use call results.
-4. General legal scheduling inside straight-line regions.
-5. Stackify scheduling retirement.
-6. Final obsolete-code audit and deletion.
+1. Literal and argument construction.
+2. Same-region single-use call results.
+3. General legal scheduling inside straight-line regions.
+4. Stackify scheduling retirement.
+5. Final obsolete-code audit and deletion.
 
 At each optimizing stage:
 

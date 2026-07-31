@@ -38,7 +38,12 @@ internal sealed partial class LIRToILCompiler
             case LIRConcatStrings concatStrings:
                 if (!IsMaterialized(concatStrings.Result, allocation))
                 {
-                    // Stackify will re-emit concat inline at the single use site.
+                    EmitSchedulerOwnedStackValueIfNeeded(
+                        concatStrings,
+                        concatStrings.Result,
+                        ilEncoder,
+                        allocation,
+                        methodDescriptor);
                     break;
                 }
                 TryEmitStackValueInstruction(concatStrings, ilEncoder, allocation, methodDescriptor);
@@ -178,6 +183,12 @@ internal sealed partial class LIRToILCompiler
             case LIRConvertToNumber convertToNumber:
                 if (!IsMaterialized(convertToNumber.Result, allocation))
                 {
+                    EmitSchedulerOwnedStackValueIfNeeded(
+                        convertToNumber,
+                        convertToNumber.Result,
+                        ilEncoder,
+                        allocation,
+                        methodDescriptor);
                     break;
                 }
 
