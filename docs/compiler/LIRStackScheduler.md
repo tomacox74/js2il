@@ -226,13 +226,10 @@ and `LIRStoreException` consumes it into a materialized result. `LIRAwait` and
 boundaries. `LIRUnwrapCatchException` is an opaque internal-control-flow
 boundary because its emitter expands into branches.
 
-The allocator keeps its legacy def/use switches in this stage to guarantee no
-IL change. Scheduler and final-LIR validation use canonical metadata; allocator
-liveness migration is isolated to its dedicated later stage.
-
 ### Regions and metrics
 
 `ScheduledRegion` identifies a source-order window in the flat operation array.
+Each region records the active `LIRSequencePoint` ordinal and `SourceSpan`.
 Regions contain only instructions that may participate in future scheduling.
 They are split around:
 
@@ -242,6 +239,11 @@ They are split around:
 - `yield`, `await`, and state-machine operations;
 - scope replacement;
 - unknown/unsupported instructions.
+
+The validator reconstructs the original sequence-point interval for every LIR
+instruction and rejects any operation whose region claims a different ordinal
+or source span. Sequence points remain hard scheduler fences; crossing one is
+not enabled by proving an instruction pure.
 
 Identity mode still performs no optimization. It reports the number of
 discovered regions while leaving optimization metrics at zero. Validation may
@@ -450,9 +452,41 @@ Identity mode must preserve all of the following:
 - identity allocation remains byte-identical while optimized modes use
   canonical schedule-effective liveness;
 - async/generator spill and restore use the final allocated slot mapping.
+- every region owns one explicit sequence-point ordinal/source span and cannot
+  contain an instruction from another source interval;
+- final PDB metadata uses actual post-schedule offsets, signature, IL length,
+  and stable source-local indexes.
 
 The identity scheduler does not inspect `CompilerOptions.EmitPdb`; enabling
 symbols must not change schedule selection or operation order.
+
+## Portable PDB contract
+
+Schedule optimization may change IL offsets and remove temp locals, but it must
+preserve source meaning:
+
+- the same source documents and hashes;
+- the same ordered non-hidden source spans;
+- valid, nondecreasing sequence-point offsets in the final method body;
+- breakpoints before the statement's observable work;
+- source-mapped exception file/line;
+- rewritten-module mappings to original `.mjs` sources;
+- hidden sequence points where the lowering emits them;
+- stable source-local names and indexes;
+- no compiler temp exposed as a PDB local;
+- `LocalScope` length based on final emitted IL.
+
+`LIRToILCompiler` records `MethodSequencePoint` values from the actual emitted
+IL offset. After emission, `DebugSymbolRegistry` receives the final local
+signature, IL byte length, and source-local metadata; `PortablePdbEmitter` then
+encodes those final values.
+
+PDB and non-PDB compilations may differ by debug-only `nop` instructions and
+the assembly's `DebuggableAttribute`. Scheduler mode, region ownership,
+residency, liveness, and operation order must not depend on `EmitPdb`.
+
+Decoded semantic PDB content—not raw PDB container bytes—is the compatibility
+contract.
 
 ## Tests
 
@@ -486,6 +520,10 @@ Focused regression coverage also includes:
 - async/generator local persistence across `await` and `yield`;
 - user/intrinsic constructor-field fusion generator snapshots;
 - Portable PDB sequence-point and locals tests;
+- `SchedulerPdbPreservationTests` for disabled/identity decoded-symbol
+  equivalence, source-local identity, final `LocalScope` length, async/generator
+  source lines, and compilation with/without PDBs;
+- source-mapped stack traces after scheduler-covered arithmetic;
 - `ILVerificationTests`, including deep arithmetic and arbitrary-value
   try/catch/finally.
 
@@ -509,15 +547,14 @@ instruction-family PRs smaller and reviewable.
 The ordered work is tracked under
 [issue #1617](https://github.com/tomacox74/js2il/issues/1617):
 
-1. Portable PDB preservation gate.
-2. Typed numeric binary expression trees.
-3. Typed unary/comparison/branch expressions.
-4. Conversions, stable loads, and explicit rematerialization.
-5. Literal and argument construction.
-6. Same-region single-use call results.
-7. General legal scheduling inside straight-line regions.
-8. Stackify scheduling retirement.
-9. Final obsolete-code audit and deletion.
+1. Typed numeric binary expression trees.
+2. Typed unary/comparison/branch expressions.
+3. Conversions, stable loads, and explicit rematerialization.
+4. Literal and argument construction.
+5. Same-region single-use call results.
+6. General legal scheduling inside straight-line regions.
+7. Stackify scheduling retirement.
+8. Final obsolete-code audit and deletion.
 
 At each optimizing stage:
 
@@ -533,6 +570,8 @@ When changing the identity scheduler foundation:
 
 - Keep `Disabled` and `Identity` method bodies equivalent.
 - Do not make scheduler behavior depend on PDB emission.
+- Keep each scheduled region inside one sequence-point ordinal/source span.
+- Compare decoded PDB semantics after every optimizing coverage expansion.
 - Preserve ordinary fallback for atomic fusion candidates.
 - Keep effective last uses accurate for every newly-observed operand.
 - Claim every temp through `TempMaterializationPlan`; do not add another

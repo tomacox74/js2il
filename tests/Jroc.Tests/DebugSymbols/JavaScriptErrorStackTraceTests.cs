@@ -97,6 +97,32 @@ public class JavaScriptErrorStackTraceTests
         Assert.DoesNotContain("rewritten.js", output, StringComparison.OrdinalIgnoreCase);
     }
 
+    [Fact]
+    public void ThrownError_AfterScheduledArithmetic_HasOriginalSourceLine()
+    {
+        var baseName = "scheduled_stacktrace_" + Guid.NewGuid().ToString("N");
+        var jsFileName = baseName + ".js";
+        var js = "\"use strict\";\n"
+                 + "function calculate(value) {\n"
+                 + "  const result = value * 2 + 1;\n"
+                 + "  throw new Error(String(result));\n"
+                 + "}\n"
+                 + "try { calculate(4); } catch (e) { console.log(e.stack); }\n";
+
+        var output = CompileAndRunWithEmitPdb(
+            "JavaScriptScheduledArithmeticStackTrace",
+            jsFileName,
+            new Dictionary<string, string>
+            {
+                [jsFileName] = js
+            });
+
+        Assert.Contains(
+            $"{jsFileName}:line 4",
+            output,
+            StringComparison.OrdinalIgnoreCase);
+    }
+
     private static string CompileAndRunWithEmitPdb(
         string scenarioName,
         string entryFileName,

@@ -1,3 +1,4 @@
+using Jroc.DebugSymbols;
 using Jroc.IR;
 
 namespace Jroc.IL;
@@ -55,6 +56,8 @@ internal readonly record struct ScheduledRegion(
     int EndLirIndexExclusive,
     int StartOperationIndex,
     int OperationCount,
+    int SequencePointIndex,
+    SourceSpan? SourceSpan,
     int MaxStackDepth);
 
 internal readonly record struct LIRStackScheduleMetrics(

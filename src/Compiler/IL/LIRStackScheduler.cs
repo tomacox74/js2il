@@ -182,15 +182,19 @@ internal static class LIRStackScheduler
         var regions = new ScheduledRegion[(operations.Length / 2) + 1];
         var regionCount = 0;
         var regionStartOperation = -1;
+        var currentSequencePointIndex = -1;
+        Jroc.DebugSymbols.SourceSpan? currentSourceSpan = null;
 
         for (var operationIndex = 0; operationIndex < operations.Length; operationIndex++)
         {
             var operation = operations[operationIndex];
             var isBoundary = false;
+            LIRSequencePoint? sequencePoint = null;
             for (var offset = 0; offset < operation.InstructionCount; offset++)
             {
                 var instruction = methodBody.Instructions[
                     operation.GetLirInstructionIndex(offset)];
+                sequencePoint ??= instruction as LIRSequencePoint;
                 if (LIRInstructionInfo.IsSchedulingBoundary(instruction))
                 {
                     isBoundary = true;
@@ -201,6 +205,11 @@ internal static class LIRStackScheduler
             if (isBoundary)
             {
                 AppendRegionBeforeBoundary(operationIndex);
+                if (sequencePoint is not null)
+                {
+                    currentSequencePointIndex++;
+                    currentSourceSpan = sequencePoint.Span;
+                }
                 continue;
             }
 
@@ -233,6 +242,8 @@ internal static class LIRStackScheduler
                 lastOperation.EndLirIndexExclusive,
                 regionStartOperation,
                 endOperationIndexExclusive - regionStartOperation,
+                currentSequencePointIndex,
+                currentSourceSpan,
                 MaxStackDepth: 0);
             regionStartOperation = -1;
         }

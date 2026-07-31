@@ -116,16 +116,26 @@ public sealed class LIRStackSchedulerTests
             {
                 Assert.Equal(0, region.StartLirIndex);
                 Assert.Equal(1, region.EndLirIndexExclusive);
+                Assert.Equal(-1, region.SequencePointIndex);
+                Assert.Null(region.SourceSpan);
             },
             region =>
             {
                 Assert.Equal(2, region.StartLirIndex);
                 Assert.Equal(3, region.EndLirIndexExclusive);
+                Assert.Equal(0, region.SequencePointIndex);
+                Assert.Equal(
+                    SourceSpan.Hidden("source.js"),
+                    region.SourceSpan);
             },
             region =>
             {
                 Assert.Equal(4, region.StartLirIndex);
                 Assert.Equal(5, region.EndLirIndexExclusive);
+                Assert.Equal(0, region.SequencePointIndex);
+                Assert.Equal(
+                    SourceSpan.Hidden("source.js"),
+                    region.SourceSpan);
             });
     }
 
