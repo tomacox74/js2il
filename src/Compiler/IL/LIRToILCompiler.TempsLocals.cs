@@ -1916,6 +1916,27 @@ internal sealed partial class LIRToILCompiler
             case LIRConstNull:
                 ilEncoder.LoadConstantI4((int)JavaScriptRuntime.JsNull.Null);
                 return true;
+            case LIRBuildArray buildArray:
+                EmitBuildArrayValue(
+                    buildArray,
+                    ilEncoder,
+                    allocation,
+                    methodDescriptor);
+                return true;
+            case LIRNewJsArray newJsArray:
+                EmitNewJsArrayValue(
+                    newJsArray,
+                    ilEncoder,
+                    allocation,
+                    methodDescriptor);
+                return true;
+            case LIRNewJsObject newJsObject:
+                EmitNewJsObjectValue(
+                    newJsObject,
+                    ilEncoder,
+                    allocation,
+                    methodDescriptor);
+                return true;
             case LIRLoadThis:
                 if (methodDescriptor.IsStatic)
                 {

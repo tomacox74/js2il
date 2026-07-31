@@ -331,6 +331,36 @@ public sealed class LIRStackScheduleValidatorTests
                     LIRStackScheduleValidationBehavior.Throw)));
     }
 
+    [Fact]
+    public void Validate_ScheduledInlineCallDefinition_Throws()
+    {
+        var body = new MethodBodyIR();
+        var callResult = AddTemp(body);
+        body.Instructions.Add(new LIRCallRuntimeServicesStatic(
+            "Effect",
+            System.Array.Empty<TempVariable>(),
+            callResult));
+        body.Instructions.Add(new LIRReturn(callResult));
+        var identity = LIRStackScheduler.Identity(body);
+        var residencies = identity.TempResidencies.ToArray();
+        var owned = identity.OwnedTemps.ToArray();
+        residencies[callResult.Index] = TempResidency.ScheduledInline;
+        owned[callResult.Index] = true;
+        var invalid = identity with
+        {
+            Mode = LIRStackSchedulerMode.LiteralAndArguments,
+            TempResidencies = residencies,
+            OwnedTemps = owned
+        };
+
+        var exception = Assert.Throws<LIRStackScheduleValidationException>(
+            () => LIRStackScheduleValidator.ValidateAndAnnotate(
+                body,
+                invalid));
+
+        Assert.Contains("supported definition", exception.Message);
+    }
+
     private static MethodBodyIR CreateNumericReturnBody()
     {
         var body = new MethodBodyIR();

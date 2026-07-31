@@ -23,6 +23,8 @@ internal static class LIRStackScheduler
                 BuildTypedComparisonsUnvalidated(methodBody),
             LIRStackSchedulerMode.ConversionsAndStableLoads =>
                 BuildConversionsAndStableLoadsUnvalidated(methodBody),
+            LIRStackSchedulerMode.LiteralAndArguments =>
+                BuildLiteralAndArgumentsUnvalidated(methodBody),
             LIRStackSchedulerMode.Disabled => throw new InvalidOperationException(
                 "Disabled scheduler mode bypasses schedule construction."),
             _ => throw new NotSupportedException(
@@ -603,6 +605,419 @@ internal static class LIRStackScheduler
             or LIRGetJsArrayElement
             or LIRGetInt32ArrayElement;
 
+    private static LIRStackSchedule BuildLiteralAndArgumentsUnvalidated(
+        MethodBodyIR methodBody)
+    {
+        var conversions = BuildConversionsAndStableLoadsUnvalidated(methodBody);
+        var tempCount = methodBody.Temps.Count;
+        var definitionIndex = new int[tempCount];
+        var definitionCount = new int[tempCount];
+        var useIndex = new int[tempCount];
+        var useCount = new int[tempCount];
+        Array.Fill(definitionIndex, -1);
+        Array.Fill(useIndex, -1);
+
+        for (var instructionIndex = 0;
+             instructionIndex < methodBody.Instructions.Count;
+             instructionIndex++)
+        {
+            var instruction = methodBody.Instructions[instructionIndex];
+            if (LIRInstructionInfo.TryGetDefinedTemp(
+                    instruction,
+                    out var defined)
+                && (uint)defined.Index < (uint)tempCount)
+            {
+                definitionCount[defined.Index]++;
+                definitionIndex[defined.Index] = instructionIndex;
+            }
+
+            var visitor = new NumericUseVisitor(
+                useCount,
+                useIndex,
+                instructionIndex);
+            LIRInstructionInfo.VisitUsedTemps(instruction, ref visitor);
+        }
+
+        var regionByLirIndex = BuildRegionIndexMap(
+            methodBody.Instructions.Count,
+            conversions.Regions,
+            conversions.Operations);
+        var residencies = conversions.TempResidencies.ToArray();
+        var ownedTemps = conversions.OwnedTemps.ToArray();
+        var movesByInsertionLirIndex = new Dictionary<int, List<int>>();
+        var selectedDefinitions = new HashSet<int>();
+
+        for (var rootIndex = 0;
+             rootIndex < methodBody.Instructions.Count;
+             rootIndex++)
+        {
+            var root = methodBody.Instructions[rootIndex];
+            var isConstruction = IsSupportedConstruction(root);
+            var isArgumentBundle = IsSupportedArgumentBundle(root);
+            if (!isConstruction && !isArgumentBundle)
+            {
+                continue;
+            }
+
+            if (regionByLirIndex[rootIndex] < 0)
+            {
+                continue;
+            }
+
+            selectedDefinitions.Clear();
+            var rootRegion = regionByLirIndex[rootIndex];
+            var operands = CollectUsedTemps(root);
+            TempVariable constructionResult = default;
+            if (isConstruction
+                && (!LIRInstructionInfo.TryGetDefinedTemp(
+                        root,
+                        out constructionResult)
+                    || definitionCount[constructionResult.Index] != 1
+                    || useCount[constructionResult.Index] != 1
+                    || constructionResult.Index
+                            < methodBody.TempVariableSlots.Count
+                        && methodBody.TempVariableSlots[
+                            constructionResult.Index] >= 0
+                    || !IsSupportedConstructionConsumer(
+                        methodBody,
+                        constructionResult,
+                        useIndex[constructionResult.Index],
+                        rootRegion,
+                        regionByLirIndex)))
+            {
+                continue;
+            }
+
+            var isSafe = true;
+            foreach (var operand in operands)
+            {
+                if (!TrySelectConstructionProducerTree(
+                        methodBody,
+                        operand,
+                        rootIndex,
+                        rootRegion,
+                        definitionIndex,
+                        definitionCount,
+                        useCount,
+                        regionByLirIndex,
+                        selectedDefinitions))
+                {
+                    isSafe = false;
+                    break;
+                }
+            }
+
+            if (!isSafe)
+            {
+                continue;
+            }
+
+            if (!TryGetConstructionInsertionIndex(
+                    rootIndex,
+                    selectedDefinitions,
+                    out var insertionLirIndex))
+            {
+                continue;
+            }
+
+            foreach (var definitionLirIndex in selectedDefinitions)
+            {
+                if (!LIRInstructionInfo.TryGetDefinedTemp(
+                        methodBody.Instructions[definitionLirIndex],
+                        out var producerResult))
+                {
+                    continue;
+                }
+
+                residencies[producerResult.Index] = TempResidency.ScheduledInline;
+                ownedTemps[producerResult.Index] = true;
+            }
+
+            if (isConstruction)
+            {
+                residencies[constructionResult.Index] =
+                    TempResidency.StackResident;
+                ownedTemps[constructionResult.Index] = true;
+            }
+
+            if (!movesByInsertionLirIndex.TryGetValue(
+                    insertionLirIndex,
+                    out var movedRoots))
+            {
+                movedRoots = new List<int>();
+                movesByInsertionLirIndex[insertionLirIndex] = movedRoots;
+            }
+            movedRoots.Add(rootIndex);
+        }
+
+        var operationArray = ReorderConstructionOperations(
+            conversions.Operations,
+            movesByInsertionLirIndex);
+        var acceptedCount = ownedTemps.Count(owned => owned);
+        return conversions with
+        {
+            Mode = LIRStackSchedulerMode.LiteralAndArguments,
+            Operations = operationArray,
+            Regions = BuildSchedulingRegions(methodBody, operationArray),
+            TempResidencies = residencies,
+            OwnedTemps = ownedTemps,
+            EffectiveLastUses = ComputeScheduledLastUses(
+                methodBody,
+                operationArray),
+            Metrics = conversions.Metrics with
+            {
+                StackResidentTempCount = residencies.Count(
+                    residency => residency == TempResidency.StackResident),
+                EliminatedSpillCount = acceptedCount
+            }
+        };
+    }
+
+    private static bool IsSupportedConstruction(LIRInstruction instruction)
+        => instruction is LIRBuildArray
+            or LIRNewJsArray
+            or LIRNewJsObject;
+
+    private static bool IsSupportedArgumentBundle(LIRInstruction instruction)
+        => instruction is LIRCallIntrinsicStatic
+            {
+                GenericTypeArgument: null
+            };
+
+    internal static bool IsSupportedScheduledInlineRoot(
+        LIRInstruction instruction)
+        => IsSupportedConstruction(instruction)
+            || IsSupportedArgumentBundle(instruction);
+
+    private static bool IsSupportedConstructionConsumer(
+        MethodBodyIR methodBody,
+        TempVariable result,
+        int consumerIndex,
+        int rootRegion,
+        int[] regionByLirIndex)
+    {
+        if ((uint)consumerIndex >= (uint)methodBody.Instructions.Count)
+        {
+            return false;
+        }
+
+        var consumer = methodBody.Instructions[consumerIndex];
+        if (consumer is LIRReturn)
+        {
+            return !methodBody.IsAsync && !methodBody.IsGenerator;
+        }
+
+        if (regionByLirIndex[consumerIndex] != rootRegion
+            || consumer is not (
+                LIRCallIntrinsicStaticWithArgsArray
+                or LIRCallIntrinsicStaticVoidWithArgsArray))
+        {
+            return false;
+        }
+
+        var uses = CollectUsedTemps(consumer);
+        return uses.Count > 0 && uses[0].Equals(result);
+    }
+
+    private static bool TrySelectConstructionProducerTree(
+        MethodBodyIR methodBody,
+        TempVariable temp,
+        int constructionIndex,
+        int constructionRegion,
+        int[] definitionIndex,
+        int[] definitionCount,
+        int[] useCount,
+        int[] regionByLirIndex,
+        HashSet<int> selectedDefinitions)
+    {
+        if ((uint)temp.Index >= (uint)definitionIndex.Length)
+        {
+            return false;
+        }
+
+        var producerIndex = definitionIndex[temp.Index];
+        if (producerIndex < 0)
+        {
+            return true;
+        }
+
+        var producer = methodBody.Instructions[producerIndex];
+        if (!IsSupportedScheduledInlineProducer(producer))
+        {
+            return regionByLirIndex[producerIndex] != constructionRegion;
+        }
+
+        if (producerIndex >= constructionIndex
+            || definitionCount[temp.Index] != 1
+            || useCount[temp.Index] != 1
+            || regionByLirIndex[producerIndex] != constructionRegion
+            || temp.Index < methodBody.TempVariableSlots.Count
+                && methodBody.TempVariableSlots[temp.Index] >= 0)
+        {
+            return false;
+        }
+
+        if (!selectedDefinitions.Add(producerIndex))
+        {
+            return true;
+        }
+
+        foreach (var operand in CollectUsedTemps(producer))
+        {
+            if (!TrySelectConstructionProducerTree(
+                    methodBody,
+                    operand,
+                    constructionIndex,
+                    constructionRegion,
+                    definitionIndex,
+                    definitionCount,
+                    useCount,
+                    regionByLirIndex,
+                    selectedDefinitions))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    internal static bool IsSupportedScheduledInlineProducer(
+        LIRInstruction instruction)
+        => instruction is LIRConstNumber
+            or LIRConstString
+            or LIRConstBoolean
+            or LIRConstUndefined
+            or LIRConstNull
+            or LIRLoadParameter
+            or LIRLoadThis
+            or LIRAddNumber
+            or LIRSubNumber
+            or LIRMulNumber
+            or LIRDivNumber
+            or LIRModNumber
+            or LIRExpNumber
+            or LIRNegateNumber
+            or LIRBitwiseNotNumber
+            or LIRCompareNumberLessThan
+            or LIRCompareNumberGreaterThan
+            or LIRCompareNumberLessThanOrEqual
+            or LIRCompareNumberGreaterThanOrEqual
+            or LIRCompareNumberEqual
+            or LIRCompareNumberNotEqual
+            or LIRCompareBooleanEqual
+            or LIRCompareBooleanNotEqual
+            or LIRConvertToNumber
+            or LIRConvertToObject
+            or LIRConcatStrings
+            or LIRGetStringLength
+            or LIRGetJsArrayLength
+            or LIRGetInt32ArrayLength
+            or LIRGetJsArrayElement
+            or LIRGetInt32ArrayElement
+            or LIRBuildArray
+            or LIRNewJsArray
+            or LIRNewJsObject;
+
+    private static List<TempVariable> CollectUsedTemps(
+        LIRInstruction instruction)
+    {
+        var uses = new List<TempVariable>();
+        var visitor = new NumericCollectUseVisitor(uses);
+        LIRInstructionInfo.VisitUsedTemps(instruction, ref visitor);
+        return uses;
+    }
+
+    private static bool TryGetConstructionInsertionIndex(
+        int constructionIndex,
+        HashSet<int> selectedDefinitions,
+        out int insertionLirIndex)
+    {
+        insertionLirIndex = constructionIndex;
+        while (insertionLirIndex > 0
+            && selectedDefinitions.Contains(insertionLirIndex - 1))
+        {
+            insertionLirIndex--;
+        }
+
+        return insertionLirIndex < constructionIndex
+            && selectedDefinitions.Count
+                == constructionIndex - insertionLirIndex;
+    }
+
+    private static ScheduledOperation[] ReorderConstructionOperations(
+        ScheduledOperation[] operations,
+        Dictionary<int, List<int>> movesByInsertionLirIndex)
+    {
+        if (movesByInsertionLirIndex.Count == 0)
+        {
+            return operations;
+        }
+
+        var movedRootIndexes = movesByInsertionLirIndex.Values
+            .SelectMany(static roots => roots)
+            .ToHashSet();
+        var operationByRootIndex = new Dictionary<int, ScheduledOperation>();
+        foreach (var operation in operations)
+        {
+            if (movedRootIndexes.Contains(operation.StartLirIndex))
+            {
+                operationByRootIndex[operation.StartLirIndex] = operation;
+            }
+        }
+
+        var reordered = new List<ScheduledOperation>(operations.Length);
+        foreach (var operation in operations)
+        {
+            if (movesByInsertionLirIndex.TryGetValue(
+                    operation.StartLirIndex,
+                    out var movedRoots))
+            {
+                foreach (var rootIndex in movedRoots)
+                {
+                    if (operationByRootIndex.TryGetValue(
+                            rootIndex,
+                            out var movedOperation))
+                    {
+                        reordered.Add(movedOperation);
+                    }
+                }
+            }
+
+            if (!movedRootIndexes.Contains(operation.StartLirIndex))
+            {
+                reordered.Add(operation);
+            }
+        }
+
+        return reordered.ToArray();
+    }
+
+    private static int[] BuildRegionIndexMap(
+        int instructionCount,
+        ScheduledRegion[] regions,
+        ScheduledOperation[] operations)
+    {
+        var map = new int[instructionCount];
+        Array.Fill(map, -1);
+        for (var regionIndex = 0; regionIndex < regions.Length; regionIndex++)
+        {
+            var region = regions[regionIndex];
+            for (var offset = 0; offset < region.OperationCount; offset++)
+            {
+                var operation = operations[region.StartOperationIndex + offset];
+                for (var lirOffset = 0;
+                     lirOffset < operation.InstructionCount;
+                     lirOffset++)
+                {
+                    map[operation.GetLirInstructionIndex(lirOffset)] = regionIndex;
+                }
+            }
+        }
+
+        return map;
+    }
+
     private static bool IsSafeBoxingReturnConsumer(
         MethodBodyIR methodBody,
         LIRInstruction instruction,
@@ -872,6 +1287,30 @@ internal static class LIRStackScheduler
         return lastUses;
     }
 
+    private static int[] ComputeScheduledLastUses(
+        MethodBodyIR methodBody,
+        ScheduledOperation[] operations)
+    {
+        var lastUses = new int[methodBody.Temps.Count];
+        Array.Fill(lastUses, -1);
+        var scheduledPosition = 0;
+        foreach (var operation in operations)
+        {
+            for (var offset = 0; offset < operation.InstructionCount; offset++)
+            {
+                var visitor = new LastUseVisitor(
+                    lastUses,
+                    scheduledPosition++);
+                LIRInstructionInfo.VisitUsedTemps(
+                    methodBody.Instructions[
+                        operation.GetLirInstructionIndex(offset)],
+                    ref visitor);
+            }
+        }
+
+        return lastUses;
+    }
+
     private static ScheduledRegion[] BuildSchedulingRegions(
         MethodBodyIR methodBody,
         ScheduledOperation[] operations)
@@ -937,11 +1376,23 @@ internal static class LIRStackScheduler
                 return;
             }
 
-            var firstOperation = operations[regionStartOperation];
-            var lastOperation = operations[endOperationIndexExclusive - 1];
+            var startLirIndex = int.MaxValue;
+            var endLirIndexExclusive = -1;
+            for (var operationIndex = regionStartOperation;
+                 operationIndex < endOperationIndexExclusive;
+                 operationIndex++)
+            {
+                startLirIndex = Math.Min(
+                    startLirIndex,
+                    operations[operationIndex].StartLirIndex);
+                endLirIndexExclusive = Math.Max(
+                    endLirIndexExclusive,
+                    operations[operationIndex].EndLirIndexExclusive);
+            }
+
             regions[regionCount++] = new ScheduledRegion(
-                firstOperation.StartLirIndex,
-                lastOperation.EndLirIndexExclusive,
+                startLirIndex,
+                endLirIndexExclusive,
                 regionStartOperation,
                 endOperationIndexExclusive - regionStartOperation,
                 currentSequencePointIndex,

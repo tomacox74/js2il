@@ -16,7 +16,7 @@ public class CompilerOptions
     /// no-optimization foundation and must preserve legacy IL byte-for-byte.
     /// </summary>
     internal Jroc.IL.LIRStackSchedulerMode LIRStackSchedulerMode { get; set; } =
-        Jroc.IL.LIRStackSchedulerMode.ConversionsAndStableLoads;
+        Jroc.IL.LIRStackSchedulerMode.LiteralAndArguments;
 
     /// <summary>
     /// Controls whether invalid optimized schedules fail fast or fall back to

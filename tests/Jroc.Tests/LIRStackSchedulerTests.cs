@@ -560,6 +560,79 @@ public sealed class LIRStackSchedulerTests
             schedule.TempResidencies[unusedResult.Index]);
     }
 
+    [Fact]
+    public void Build_LiteralMode_MovesConstructionBeforePureProducerSuffix()
+    {
+        var body = new MethodBodyIR();
+        var a = AddTemp(body);
+        var two = AddTemp(body);
+        var left = AddTemp(body);
+        var b = AddTemp(body);
+        var three = AddTemp(body);
+        var right = AddTemp(body);
+        var array = AddTemp(body);
+        body.Instructions.Add(new LIRLoadParameter(1, a));
+        body.Instructions.Add(new LIRConstNumber(2, two));
+        body.Instructions.Add(new LIRMulNumber(a, two, left));
+        body.Instructions.Add(new LIRLoadParameter(2, b));
+        body.Instructions.Add(new LIRConstNumber(3, three));
+        body.Instructions.Add(new LIRAddNumber(b, three, right));
+        body.Instructions.Add(new LIRNewJsArray(
+            new[] { left, right },
+            array));
+        body.Instructions.Add(new LIRReturn(array));
+
+        var schedule = LIRStackScheduler.Build(
+            body,
+            new LIRStackSchedulerOptions(
+                LIRStackSchedulerMode.LiteralAndArguments));
+
+        Assert.Equal(6, schedule.Operations[0].StartLirIndex);
+        Assert.Equal(
+            TempResidency.ScheduledInline,
+            schedule.TempResidencies[left.Index]);
+        Assert.Equal(
+            TempResidency.ScheduledInline,
+            schedule.TempResidencies[right.Index]);
+        Assert.Equal(
+            TempResidency.StackResident,
+            schedule.TempResidencies[array.Index]);
+        Assert.Equal(1, schedule.MaxStackDepth);
+        Assert.Equal(1, schedule.CarriedStackDepthBeforeInstructions[7]);
+    }
+
+    [Fact]
+    public void Build_LiteralMode_DoesNotMoveConstructionAcrossEffectfulElement()
+    {
+        var body = new MethodBodyIR();
+        var effectful = AddTemp(body);
+        var one = AddTemp(body);
+        var value = AddTemp(body);
+        var array = AddTemp(body);
+        body.Instructions.Add(new LIRCallRuntimeServicesStatic(
+            "Effect",
+            System.Array.Empty<TempVariable>(),
+            effectful));
+        body.Instructions.Add(new LIRConstNumber(1, one));
+        body.Instructions.Add(new LIRAddNumber(effectful, one, value));
+        body.Instructions.Add(new LIRNewJsArray(
+            new[] { value },
+            array));
+        body.Instructions.Add(new LIRReturn(array));
+
+        var schedule = LIRStackScheduler.Build(
+            body,
+            new LIRStackSchedulerOptions(
+                LIRStackSchedulerMode.LiteralAndArguments));
+
+        Assert.Equal(
+            Enumerable.Range(0, body.Instructions.Count),
+            schedule.Operations.Select(operation => operation.StartLirIndex));
+        Assert.Equal(
+            TempResidency.MaterializedLocal,
+            schedule.TempResidencies[array.Index]);
+    }
+
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
@@ -715,6 +788,80 @@ public sealed class LIRStackSchedulerTests
             "ret");
     }
 
+    [Fact]
+    public void Compiler_LiteralMode_EliminatesPositionalSpills()
+    {
+        const string source = """
+            "use strict";
+            function args(a, b) { return Math.max(a * 2, b + 3); }
+            function arrayValue(a, b) { return [a * 2, b + 3]; }
+            function objectValue(a, b) { return { x: a * 2, y: b + 3 }; }
+            function deepArray(a, b, c, d, e, f, g, h, i) {
+              return [a + (b + (c + (d + (e + (f + (g + (h + i)))))))];
+            }
+            console.log(args(2, 4), arrayValue(2, 4), objectValue(2, 4),
+              deepArray(1, 2, 3, 4, 5, 6, 7, 8, 9));
+            """;
+
+        var artifact = Compile(
+            source,
+            LIRStackSchedulerMode.LiteralAndArguments,
+            emitPdb: false);
+        var path = Path.Combine(
+            Path.GetTempPath(),
+            "Jroc.Tests",
+            "LiteralScheduler",
+            "literal-scheduler.dll");
+        Directory.CreateDirectory(Path.GetDirectoryName(path)!);
+        File.WriteAllBytes(path, artifact.PeBytes);
+        var il = AssemblyToText.ConvertToText(path);
+
+        AssertMethodHasOrderedFragmentsAndLocalCount(
+            il,
+            "args",
+            1,
+            "newarr",
+            "ldarg.1",
+            "mul",
+            "stelem.ref",
+            "ldarg.2",
+            "add",
+            "stelem.ref",
+            "JavaScriptRuntime.Math::max");
+        AssertMethodHasNoIntermediateSpills(
+            il,
+            "arrayValue",
+            "JavaScriptRuntime.Array::.ctor",
+            "ldarg.1",
+            "mul",
+            "JavaScriptRuntime.Array::AddNumber",
+            "ldarg.2",
+            "add",
+            "JavaScriptRuntime.Array::AddNumber",
+            "ret");
+        AssertMethodHasNoIntermediateSpills(
+            il,
+            "objectValue",
+            "CreateObjectLiteral",
+            "ldstr \"x\"",
+            "ldarg.2",
+            "mul",
+            "SetNumber",
+            "ldstr \"y\"",
+            "ldarg.3",
+            "add",
+            "SetNumber",
+            "ret");
+        AssertMethodHasNoIntermediateSpills(
+            il,
+            "deepArray",
+            ".maxstack 11",
+            "JavaScriptRuntime.Array::.ctor",
+            "add",
+            "JavaScriptRuntime.Array::AddNumber",
+            "ret");
+    }
+
     private static TempVariable AddTemp(MethodBodyIR body)
     {
         var temp = new TempVariable(body.Temps.Count);
@@ -804,6 +951,17 @@ public sealed class LIRStackSchedulerTests
         string il,
         string className,
         params string[] orderedFragments)
+        => AssertMethodHasOrderedFragmentsAndLocalCount(
+            il,
+            className,
+            0,
+            orderedFragments);
+
+    private static void AssertMethodHasOrderedFragmentsAndLocalCount(
+        string il,
+        string className,
+        int expectedStoreCount,
+        params string[] orderedFragments)
     {
         var classStart = il.IndexOf(
             $"beforefieldinit {className}",
@@ -829,8 +987,8 @@ public sealed class LIRStackSchedulerTests
             searchIndex = fragmentIndex + fragment.Length;
         }
 
-        Assert.Equal(0, CountOccurrences(method, "stloc"));
-        Assert.Equal(0, CountOccurrences(method, "ldloc"));
+        Assert.Equal(expectedStoreCount, CountOccurrences(method, "stloc"));
+        Assert.Equal(expectedStoreCount, CountOccurrences(method, "ldloc"));
     }
 
     private static int CountOccurrences(string value, string fragment)

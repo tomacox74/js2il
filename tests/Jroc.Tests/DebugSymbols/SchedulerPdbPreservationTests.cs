@@ -115,6 +115,40 @@ public sealed class SchedulerPdbPreservationTests
         Assert.NotEmpty(withoutPdb.PeBytes);
     }
 
+    [Fact]
+    public void LiteralScheduling_PreservesDecodedSourceSpansAndSourceLocals()
+    {
+        const string source = """
+            "use strict";
+            function make(a, b) {
+              const label = "values";
+              return [a * 2, b + 3, label];
+            }
+            make(2, 4);
+            """;
+
+        var previous = ReadSymbols(Compile(
+            source,
+            LIRStackSchedulerMode.ConversionsAndStableLoads,
+            emitPdb: true));
+        var scheduled = ReadSymbols(Compile(
+            source,
+            LIRStackSchedulerMode.LiteralAndArguments,
+            emitPdb: true));
+
+        Assert.Equal(previous.Documents, scheduled.Documents);
+        Assert.Equal(
+            previous.Methods.SelectMany(method => method.Points)
+                .Select(point => point.SemanticIdentity),
+            scheduled.Methods.SelectMany(method => method.Points)
+                .Select(point => point.SemanticIdentity));
+        Assert.Equal(
+            previous.LocalScopes.SelectMany(scope => scope.Locals)
+                .Select(local => (local.Name, local.Attributes)),
+            scheduled.LocalScopes.SelectMany(scope => scope.Locals)
+                .Select(local => (local.Name, local.Attributes)));
+    }
+
     private static JrocCompiledAssemblyArtifact Compile(
         string source,
         LIRStackSchedulerMode mode,
