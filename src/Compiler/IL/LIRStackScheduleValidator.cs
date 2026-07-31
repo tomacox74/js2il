@@ -232,6 +232,24 @@ internal static class LIRStackScheduleValidator
     {
         var operationRegionOwners = new int[schedule.Operations.Length];
         Array.Fill(operationRegionOwners, -1);
+        var sequencePointIndexByLir = new int[methodBody.Instructions.Count];
+        var sourceSpanByLir =
+            new Jroc.DebugSymbols.SourceSpan?[methodBody.Instructions.Count];
+        var activeSequencePointIndex = -1;
+        Jroc.DebugSymbols.SourceSpan? activeSourceSpan = null;
+        for (var lirIndex = 0;
+             lirIndex < methodBody.Instructions.Count;
+             lirIndex++)
+        {
+            if (methodBody.Instructions[lirIndex] is LIRSequencePoint sequencePoint)
+            {
+                activeSequencePointIndex++;
+                activeSourceSpan = sequencePoint.Span;
+            }
+
+            sequencePointIndexByLir[lirIndex] = activeSequencePointIndex;
+            sourceSpanByLir[lirIndex] = activeSourceSpan;
+        }
 
         for (var regionIndex = 0;
              regionIndex < schedule.Regions.Length;
@@ -285,6 +303,19 @@ internal static class LIRStackScheduleValidator
                             $"Scheduled region {regionIndex} crosses boundary LIR "
                             + $"instruction #{lirIndex} "
                             + $"({methodBody.Instructions[lirIndex].GetType().Name}).");
+                    }
+
+                    if (sequencePointIndexByLir[lirIndex]
+                            != region.SequencePointIndex
+                        || sourceSpanByLir[lirIndex] != region.SourceSpan)
+                    {
+                        Throw(
+                            $"Scheduled region {regionIndex} moves LIR instruction "
+                            + $"#{lirIndex} outside source interval "
+                            + $"{region.SequencePointIndex} ({region.SourceSpan}); "
+                            + $"instruction belongs to interval "
+                            + $"{sequencePointIndexByLir[lirIndex]} "
+                            + $"({sourceSpanByLir[lirIndex]}).");
                     }
                 }
 

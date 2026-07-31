@@ -147,6 +147,33 @@ public sealed class LIRStackScheduleValidatorTests
     }
 
     [Fact]
+    public void Validate_RegionWithWrongSourceInterval_IsRejected()
+    {
+        var body = new MethodBodyIR();
+        var first = AddTemp(body);
+        var second = AddTemp(body);
+        body.Instructions.Add(new LIRConstNumber(1, first));
+        body.Instructions.Add(new LIRSequencePoint(
+            Jroc.DebugSymbols.SourceSpan.Hidden("source.js")));
+        body.Instructions.Add(new LIRConstNumber(2, second));
+        body.Instructions.Add(new LIRReturn(second));
+        var identity = LIRStackScheduler.Identity(body);
+        var regions = identity.Regions.ToArray();
+        regions[1] = regions[1] with
+        {
+            SequencePointIndex = -1,
+            SourceSpan = null
+        };
+        var invalid = identity with { Regions = regions };
+
+        var exception = Assert.Throws<LIRStackScheduleValidationException>(() =>
+            LIRStackScheduleValidator.ValidateAndAnnotate(body, invalid));
+
+        Assert.Contains("outside source interval", exception.Message);
+        Assert.Contains("instruction belongs to interval 0", exception.Message);
+    }
+
+    [Fact]
     public void Validate_CatchEntry_ConsumesImplicitException()
     {
         var body = new MethodBodyIR();
