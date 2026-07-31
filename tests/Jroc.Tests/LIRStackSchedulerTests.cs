@@ -532,6 +532,34 @@ public sealed class LIRStackSchedulerTests
         Assert.Equal(TempResidency.MaterializedLocal, schedule.TempResidencies[value.Index]);
     }
 
+    [Fact]
+    public void Build_ConversionsMode_DoesNotCarryValueIntoElidedConsumer()
+    {
+        var body = new MethodBodyIR();
+        var source = AddTemp(body);
+        var converted = AddTemp(body);
+        var one = AddTemp(body);
+        var unusedResult = AddTemp(body);
+        body.Instructions.Add(new LIRLoadParameter(1, source));
+        body.Instructions.Add(new LIRConvertToNumber(source, converted));
+        body.Instructions.Add(new LIRConstNumber(1, one));
+        body.Instructions.Add(new LIRSubNumber(converted, one, unusedResult));
+        body.Instructions.Add(new LIRReturnUndefinedImmediate());
+
+        var schedule = LIRStackScheduler.Build(
+            body,
+            new LIRStackSchedulerOptions(
+                LIRStackSchedulerMode.ConversionsAndStableLoads));
+
+        Assert.Equal(
+            TempResidency.MaterializedLocal,
+            schedule.TempResidencies[converted.Index]);
+        Assert.False(schedule.OwnedTemps[converted.Index]);
+        Assert.Equal(
+            TempResidency.MaterializedLocal,
+            schedule.TempResidencies[unusedResult.Index]);
+    }
+
     [Theory]
     [InlineData(false)]
     [InlineData(true)]

@@ -397,8 +397,12 @@ internal static class LIRStackScheduler
                         consumer);
             var supportedSameRegionConsumer =
                 useRegion == definitionRegion
-                && (IsTypedUnaryOrComparison(consumer)
-                    || IsTypedNumericBinary(consumer)
+                && ((IsTypedUnaryOrComparison(consumer)
+                        || IsTypedNumericBinary(consumer))
+                    && IsDefinedValueRequired(
+                        methodBody,
+                        consumer,
+                        useCount)
                     || IsSafeBoxingReturnConsumer(
                         methodBody,
                         consumer,
@@ -541,9 +545,13 @@ internal static class LIRStackScheduler
                 && IsSupportedTypedNumericTerminal(methodBody, consumer);
             var sameRegionConsumer =
                 useRegion == definitionRegion
-                && (IsTypedNumericBinary(consumer)
-                    || IsTypedUnaryOrComparison(consumer)
-                    || IsConversionConcatOrStableLoad(consumer)
+                && ((IsTypedNumericBinary(consumer)
+                        || IsTypedUnaryOrComparison(consumer)
+                        || IsConversionConcatOrStableLoad(consumer))
+                    && IsDefinedValueRequired(
+                        methodBody,
+                        consumer,
+                        useCount)
                     || IsSafeBoxingReturnConsumer(
                         methodBody,
                         consumer,
@@ -639,9 +647,31 @@ internal static class LIRStackScheduler
                 && !methodBody.IsGenerator;
         }
 
-        return IsTypedNumericBinary(instruction)
+        return (IsTypedNumericBinary(instruction)
+                && IsDefinedValueRequired(
+                    methodBody,
+                    instruction,
+                    useCount))
             || IsSupportedTypedNumericTerminal(methodBody, instruction)
             || instruction is LIRStoreParameter;
+    }
+
+    private static bool IsDefinedValueRequired(
+        MethodBodyIR methodBody,
+        LIRInstruction instruction,
+        int[] useCount)
+    {
+        if (!LIRInstructionInfo.TryGetDefinedTemp(
+                instruction,
+                out var defined)
+            || (uint)defined.Index >= (uint)useCount.Length)
+        {
+            return true;
+        }
+
+        return useCount[defined.Index] > 0
+            || defined.Index < methodBody.TempVariableSlots.Count
+                && methodBody.TempVariableSlots[defined.Index] >= 0;
     }
 
     private static void ClaimSafeBoxingTerminals(
