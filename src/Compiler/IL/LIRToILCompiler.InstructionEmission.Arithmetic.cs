@@ -22,7 +22,14 @@ internal sealed partial class LIRToILCompiler
             case LIRAddNumber addNumber:
                 if (!IsMaterialized(addNumber.Result, allocation))
                 {
-                    // Stackify will re-emit this pure numeric operation inline at the single use site.
+                    if (IsSchedulerStackResident(addNumber.Result))
+                    {
+                        TryEmitStackValueInstruction(
+                            addNumber,
+                            ilEncoder,
+                            allocation,
+                            methodDescriptor);
+                    }
                     break;
                 }
                 TryEmitStackValueInstruction(addNumber, ilEncoder, allocation, methodDescriptor);
@@ -68,7 +75,14 @@ internal sealed partial class LIRToILCompiler
             case LIRSubNumber subNumber:
                 if (!IsMaterialized(subNumber.Result, allocation))
                 {
-                    // Stackify will re-emit this pure numeric operation inline at the single use site.
+                    if (IsSchedulerStackResident(subNumber.Result))
+                    {
+                        TryEmitStackValueInstruction(
+                            subNumber,
+                            ilEncoder,
+                            allocation,
+                            methodDescriptor);
+                    }
                     break;
                 }
                 TryEmitStackValueInstruction(subNumber, ilEncoder, allocation, methodDescriptor);
@@ -77,7 +91,14 @@ internal sealed partial class LIRToILCompiler
             case LIRMulNumber mulNumber:
                 if (!IsMaterialized(mulNumber.Result, allocation))
                 {
-                    // Stackify will re-emit this pure numeric operation inline at the single use site.
+                    if (IsSchedulerStackResident(mulNumber.Result))
+                    {
+                        TryEmitStackValueInstruction(
+                            mulNumber,
+                            ilEncoder,
+                            allocation,
+                            methodDescriptor);
+                    }
                     break;
                 }
                 TryEmitStackValueInstruction(mulNumber, ilEncoder, allocation, methodDescriptor);
@@ -139,6 +160,14 @@ internal sealed partial class LIRToILCompiler
 
                 if (!IsMaterialized(convertToObject.Result, allocation))
                 {
+                    if (IsSchedulerStackResident(convertToObject.Result))
+                    {
+                        TryEmitStackValueInstruction(
+                            convertToObject,
+                            ilEncoder,
+                            allocation,
+                            methodDescriptor);
+                    }
                     break;
                 }
 
@@ -343,7 +372,14 @@ internal sealed partial class LIRToILCompiler
             case LIRDivNumber divNumber:
                 if (!IsMaterialized(divNumber.Result, allocation))
                 {
-                    // Stackify will re-emit this pure numeric operation inline at the single use site.
+                    if (IsSchedulerStackResident(divNumber.Result))
+                    {
+                        TryEmitStackValueInstruction(
+                            divNumber,
+                            ilEncoder,
+                            allocation,
+                            methodDescriptor);
+                    }
                     break;
                 }
                 TryEmitStackValueInstruction(divNumber, ilEncoder, allocation, methodDescriptor);
@@ -354,7 +390,14 @@ internal sealed partial class LIRToILCompiler
             case LIRModNumber modNumber:
                 if (!IsMaterialized(modNumber.Result, allocation))
                 {
-                    // Stackify will re-emit this pure numeric operation inline at the single use site.
+                    if (IsSchedulerStackResident(modNumber.Result))
+                    {
+                        TryEmitStackValueInstruction(
+                            modNumber,
+                            ilEncoder,
+                            allocation,
+                            methodDescriptor);
+                    }
                     break;
                 }
                 TryEmitStackValueInstruction(modNumber, ilEncoder, allocation, methodDescriptor);
@@ -365,7 +408,14 @@ internal sealed partial class LIRToILCompiler
             case LIRExpNumber expNumber:
                 if (!IsMaterialized(expNumber.Result, allocation))
                 {
-                    // Stackify will re-emit this pure numeric operation inline at the single use site.
+                    if (IsSchedulerStackResident(expNumber.Result))
+                    {
+                        TryEmitStackValueInstruction(
+                            expNumber,
+                            ilEncoder,
+                            allocation,
+                            methodDescriptor);
+                    }
                     break;
                 }
                 TryEmitStackValueInstruction(expNumber, ilEncoder, allocation, methodDescriptor);

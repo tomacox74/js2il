@@ -144,6 +144,8 @@ internal static class TempLocalAllocator
 
         var slotStorages = new List<ValueStorage>();
         var freeByKey = new Dictionary<StorageKey, Stack<int>>();
+        var releasedAtInstruction = new int[tempCount];
+        Array.Fill(releasedAtInstruction, -1);
 
         if (schedule is null)
         {
@@ -186,6 +188,7 @@ internal static class TempLocalAllocator
                 tempToSlot,
                 tempCount,
                 instructionPosition,
+                releasedAtInstruction,
                 freeByKey);
             if (schedule is null)
             {
@@ -363,6 +366,7 @@ internal static class TempLocalAllocator
         private readonly int[] _tempToSlot;
         private readonly int _tempCount;
         private readonly int _instructionIndex;
+        private readonly int[] _releasedAtInstruction;
         private readonly Dictionary<StorageKey, Stack<int>> _freeByKey;
 
         public ReleaseDeadTempsVisitor(
@@ -371,6 +375,7 @@ internal static class TempLocalAllocator
             int[] tempToSlot,
             int tempCount,
             int instructionIndex,
+            int[] releasedAtInstruction,
             Dictionary<StorageKey, Stack<int>> freeByKey)
         {
             _methodBody = methodBody;
@@ -378,6 +383,7 @@ internal static class TempLocalAllocator
             _tempToSlot = tempToSlot;
             _tempCount = tempCount;
             _instructionIndex = instructionIndex;
+            _releasedAtInstruction = releasedAtInstruction;
             _freeByKey = freeByKey;
         }
 
@@ -385,10 +391,13 @@ internal static class TempLocalAllocator
         {
             if (temp.Index < 0
                 || temp.Index >= _tempCount
-                || _lastUse[temp.Index] != _instructionIndex)
+                || _lastUse[temp.Index] != _instructionIndex
+                || _releasedAtInstruction[temp.Index] == _instructionIndex)
             {
                 return;
             }
+
+            _releasedAtInstruction[temp.Index] = _instructionIndex;
 
             var usedSlot = _tempToSlot[temp.Index];
             if (usedSlot < 0)

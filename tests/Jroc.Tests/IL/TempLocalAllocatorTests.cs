@@ -73,6 +73,41 @@ public sealed class TempLocalAllocatorTests
     }
 
     [Fact]
+    public void Allocate_TempUsedTwiceAtLastUse_ReleasesSlotOnlyOnce()
+    {
+        var body = new MethodBodyIR();
+        var repeated = AddTemp(
+            body,
+            new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+        var doubled = AddTemp(
+            body,
+            new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+        var firstLater = AddTemp(
+            body,
+            new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+        var secondLater = AddTemp(
+            body,
+            new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+        var final = AddTemp(
+            body,
+            new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+        body.Instructions.Add(Call("Repeated", repeated));
+        body.Instructions.Add(new LIRAddNumber(repeated, repeated, doubled));
+        body.Instructions.Add(Call("FirstLater", firstLater));
+        body.Instructions.Add(Call("SecondLater", secondLater));
+        body.Instructions.Add(new LIRAddNumber(firstLater, secondLater, final));
+        body.Instructions.Add(new LIRReturn(final));
+        var schedule = LIRStackScheduler.Identity(body);
+        var plan = CreatePlan(body, schedule);
+
+        var allocation = TempLocalAllocator.Allocate(body, plan, schedule);
+
+        Assert.NotEqual(
+            allocation.TempToSlot[firstLater.Index],
+            allocation.TempToSlot[secondLater.Index]);
+    }
+
+    [Fact]
     public void Allocate_NonOverlappingIncompatibleTemps_DoNotReuseSlot()
     {
         var body = new MethodBodyIR();

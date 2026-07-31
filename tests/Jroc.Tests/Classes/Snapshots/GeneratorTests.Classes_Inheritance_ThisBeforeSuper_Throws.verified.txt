@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x227d
+				// Method begins at RVA 0x2281
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2286
+				// Method begins at RVA 0x228a
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -90,7 +90,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x228f
+				// Method begins at RVA 0x2293
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -114,7 +114,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x22a1
+					// Method begins at RVA 0x22a5
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -134,7 +134,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x22aa
+					// Method begins at RVA 0x22ae
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -152,7 +152,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2298
+				// Method begins at RVA 0x229c
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -175,7 +175,7 @@
 			)
 			// Method begins at RVA 0x2130
 			// Header size: 12
-			// Code size: 296 (0x128)
+			// Code size: 297 (0x129)
 			.maxstack 8
 			.locals init (
 				[0] class [System.Runtime]System.Exception,
@@ -189,108 +189,110 @@
 			{
 				IL_0000: nop
 				IL_0001: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor()
-				IL_0006: isinst [System.Runtime]System.Exception
-				IL_000b: dup
-				IL_000c: brtrue IL_001d
+				IL_0006: stloc.s 4
+				IL_0008: ldloc.s 4
+				IL_000a: isinst [System.Runtime]System.Exception
+				IL_000f: dup
+				IL_0010: brtrue IL_001e
 
-				IL_0011: pop
-				IL_0012: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor()
-				IL_0017: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::.ctor(object)
-				IL_001c: throw
-
+				IL_0015: pop
+				IL_0016: ldloc.s 4
+				IL_0018: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::.ctor(object)
 				IL_001d: throw
 
-				IL_001e: ldnull
-				IL_001f: ldstr "y"
-				IL_0024: ldc.r8 1
-				IL_002d: ldc.i4.1
-				IL_002e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, float64, bool)
-				IL_0033: pop
-				IL_0034: ldstr "console"
-				IL_0039: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-				IL_003e: stloc.s 4
-				IL_0040: ldloc.s 4
-				IL_0042: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_0047: stloc.s 4
-				IL_0049: ldloc.s 4
-				IL_004b: ldstr "log"
-				IL_0050: ldstr "no-throw"
-				IL_0055: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-				IL_005a: pop
-				IL_005b: leave IL_00bd
+				IL_001e: throw
+
+				IL_001f: ldnull
+				IL_0020: ldstr "y"
+				IL_0025: ldc.r8 1
+				IL_002e: ldc.i4.1
+				IL_002f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, float64, bool)
+				IL_0034: pop
+				IL_0035: ldstr "console"
+				IL_003a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+				IL_003f: stloc.s 4
+				IL_0041: ldloc.s 4
+				IL_0043: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_0048: stloc.s 4
+				IL_004a: ldloc.s 4
+				IL_004c: ldstr "log"
+				IL_0051: ldstr "no-throw"
+				IL_0056: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+				IL_005b: pop
+				IL_005c: leave IL_00be
 			} // end .try
 			catch [System.Runtime]System.Exception
 			{
-				IL_0060: stloc.0
-				IL_0061: ldloc.0
-				IL_0062: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-				IL_0067: dup
-				IL_0068: brtrue IL_007d
+				IL_0061: stloc.0
+				IL_0062: ldloc.0
+				IL_0063: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+				IL_0068: dup
+				IL_0069: brtrue IL_007e
 
-				IL_006d: pop
-				IL_006e: ldloc.0
-				IL_006f: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
-				IL_0074: dup
-				IL_0075: brtrue IL_0088
+				IL_006e: pop
+				IL_006f: ldloc.0
+				IL_0070: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+				IL_0075: dup
+				IL_0076: brtrue IL_0089
 
-				IL_007a: pop
-				IL_007b: rethrow
+				IL_007b: pop
+				IL_007c: rethrow
 
-				IL_007d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-				IL_0082: stloc.1
-				IL_0083: br IL_0089
+				IL_007e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+				IL_0083: stloc.1
+				IL_0084: br IL_008a
 
-				IL_0088: stloc.1
+				IL_0089: stloc.1
 
-				IL_0089: ldloc.1
-				IL_008a: stloc.2
-				IL_008b: ldstr "console"
-				IL_0090: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-				IL_0095: stloc.s 4
-				IL_0097: ldloc.s 4
-				IL_0099: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_009e: stloc.s 4
-				IL_00a0: ldloc.s 4
-				IL_00a2: ldstr "log"
-				IL_00a7: ldloc.2
-				IL_00a8: ldstr "name"
-				IL_00ad: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-				IL_00b2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-				IL_00b7: pop
-				IL_00b8: leave IL_00bd
+				IL_008a: ldloc.1
+				IL_008b: stloc.2
+				IL_008c: ldstr "console"
+				IL_0091: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+				IL_0096: stloc.s 4
+				IL_0098: ldloc.s 4
+				IL_009a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_009f: stloc.s 4
+				IL_00a1: ldloc.s 4
+				IL_00a3: ldstr "log"
+				IL_00a8: ldloc.2
+				IL_00a9: ldstr "name"
+				IL_00ae: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+				IL_00b3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+				IL_00b8: pop
+				IL_00b9: leave IL_00be
 			} // end handler
 
-			IL_00bd: ldc.i4.1
-			IL_00be: newarr [System.Runtime]System.Object
-			IL_00c3: dup
-			IL_00c4: ldc.i4.0
-			IL_00c5: ldc.r8 5
-			IL_00ce: box [System.Runtime]System.Double
-			IL_00d3: stelem.ref
-			IL_00d4: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
-			IL_00d9: ldarg.0
-			IL_00da: ldc.r8 5
-			IL_00e3: box [System.Runtime]System.Double
-			IL_00e8: call instance void Modules.Classes_Inheritance_ThisBeforeSuper_Throws/B::.ctor(object)
-			IL_00ed: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
-			IL_00f2: ldarg.0
-			IL_00f3: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeDerivedConstructorThisBinding(object)
-			IL_00f8: ldstr "console"
-			IL_00fd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_0102: stloc.s 4
-			IL_0104: ldloc.s 4
-			IL_0106: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_010b: stloc.s 4
-			IL_010d: ldloc.s 4
-			IL_010f: ldstr "log"
-			IL_0114: ldarg.0
-			IL_0115: ldstr "x"
-			IL_011a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_011f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_0124: pop
-			IL_0125: ldnull
-			IL_0126: stloc.3
-			IL_0127: ret
+			IL_00be: ldc.i4.1
+			IL_00bf: newarr [System.Runtime]System.Object
+			IL_00c4: dup
+			IL_00c5: ldc.i4.0
+			IL_00c6: ldc.r8 5
+			IL_00cf: box [System.Runtime]System.Double
+			IL_00d4: stelem.ref
+			IL_00d5: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
+			IL_00da: ldarg.0
+			IL_00db: ldc.r8 5
+			IL_00e4: box [System.Runtime]System.Double
+			IL_00e9: call instance void Modules.Classes_Inheritance_ThisBeforeSuper_Throws/B::.ctor(object)
+			IL_00ee: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
+			IL_00f3: ldarg.0
+			IL_00f4: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeDerivedConstructorThisBinding(object)
+			IL_00f9: ldstr "console"
+			IL_00fe: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_0103: stloc.s 4
+			IL_0105: ldloc.s 4
+			IL_0107: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_010c: stloc.s 4
+			IL_010e: ldloc.s 4
+			IL_0110: ldstr "log"
+			IL_0115: ldarg.0
+			IL_0116: ldstr "x"
+			IL_011b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0120: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_0125: pop
+			IL_0126: ldnull
+			IL_0127: stloc.3
+			IL_0128: ret
 		} // end of method D::.ctor
 
 	} // end of class D
@@ -302,7 +304,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2274
+			// Method begins at RVA 0x2278
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -410,7 +412,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x22b3
+		// Method begins at RVA 0x22b7
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

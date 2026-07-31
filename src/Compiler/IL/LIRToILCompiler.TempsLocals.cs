@@ -187,6 +187,13 @@ internal sealed partial class LIRToILCompiler
 
     private void EmitLoadTemp(TempVariable temp, InstructionEncoder ilEncoder, TempLocalAllocation allocation, MethodDescriptor methodDescriptor)
     {
+        if (IsSchedulerStackResident(temp))
+        {
+            // The validated schedule guarantees the value is already in the
+            // correct evaluation-stack position for this consumer.
+            return;
+        }
+
         // Check if materialized - if so, load from local
         if (IsMaterialized(temp, allocation))
         {
@@ -2181,6 +2188,15 @@ internal sealed partial class LIRToILCompiler
 
         return allocation.IsMaterialized(temp);
     }
+
+    private bool IsSchedulerStackResident(TempVariable temp)
+        => temp.Index >= 0
+            && _tempMaterializationPlan is not null
+            && temp.Index < _tempMaterializationPlan.Count
+            && _tempMaterializationPlan.GetOwner(temp.Index)
+                == TempValueOwner.Scheduler
+            && _tempMaterializationPlan.GetResidency(temp.Index)
+                == TempResidency.StackResident;
 
     private bool IsTempUsedByAnyInstructionOperand(TempVariable temp, LIRInstruction ignoredInstruction)
     {

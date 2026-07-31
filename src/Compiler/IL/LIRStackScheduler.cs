@@ -17,6 +17,8 @@ internal static class LIRStackScheduler
         var schedule = options.Mode switch
         {
             LIRStackSchedulerMode.Identity => BuildIdentityUnvalidated(methodBody),
+            LIRStackSchedulerMode.TypedNumeric =>
+                BuildTypedNumericUnvalidated(methodBody),
             LIRStackSchedulerMode.Disabled => throw new InvalidOperationException(
                 "Disabled scheduler mode bypasses schedule construction."),
             _ => throw new NotSupportedException(
@@ -60,6 +62,345 @@ internal static class LIRStackScheduler
                 EliminatedSpillCount: 0,
                 ValidationFallbackCount: 0),
             ValidationFailureReason: null);
+    }
+
+    private static LIRStackSchedule BuildTypedNumericUnvalidated(
+        MethodBodyIR methodBody)
+    {
+        var identity = BuildIdentityUnvalidated(methodBody);
+        var definitionIndex = new int[methodBody.Temps.Count];
+        var definitionCount = new int[methodBody.Temps.Count];
+        var useIndex = new int[methodBody.Temps.Count];
+        var useCount = new int[methodBody.Temps.Count];
+        Array.Fill(definitionIndex, -1);
+        Array.Fill(useIndex, -1);
+
+        for (var instructionIndex = 0;
+             instructionIndex < methodBody.Instructions.Count;
+             instructionIndex++)
+        {
+            var instruction = methodBody.Instructions[instructionIndex];
+            if (LIRInstructionInfo.TryGetDefinedTemp(
+                    instruction,
+                    out var defined)
+                && (uint)defined.Index < (uint)definitionCount.Length)
+            {
+                definitionCount[defined.Index]++;
+                definitionIndex[defined.Index] = instructionIndex;
+            }
+
+            var visitor = new NumericUseVisitor(
+                useCount,
+                useIndex,
+                instructionIndex);
+            LIRInstructionInfo.VisitUsedTemps(instruction, ref visitor);
+        }
+
+        var regionByLirIndex = new int[methodBody.Instructions.Count];
+        Array.Fill(regionByLirIndex, -1);
+        for (var regionIndex = 0;
+             regionIndex < identity.Regions.Length;
+             regionIndex++)
+        {
+            var region = identity.Regions[regionIndex];
+            for (var lirIndex = region.StartLirIndex;
+                 lirIndex < region.EndLirIndexExclusive;
+                 lirIndex++)
+            {
+                regionByLirIndex[lirIndex] = regionIndex;
+            }
+        }
+
+        var residencies = identity.TempResidencies.ToArray();
+        var ownedTemps = identity.OwnedTemps.ToArray();
+        var acceptedCount = 0;
+        for (var tempIndex = 0; tempIndex < methodBody.Temps.Count; tempIndex++)
+        {
+            if (definitionCount[tempIndex] != 1
+                || useCount[tempIndex] != 1
+                || definitionIndex[tempIndex] < 0
+                || useIndex[tempIndex] <= definitionIndex[tempIndex]
+                || tempIndex < methodBody.TempVariableSlots.Count
+                    && methodBody.TempVariableSlots[tempIndex] >= 0)
+            {
+                continue;
+            }
+
+            var definition = methodBody.Instructions[definitionIndex[tempIndex]];
+            if (!IsTypedNumericBinary(definition)
+                || !IsSupportedTypedNumericConsumer(
+                    methodBody,
+                    useIndex[tempIndex],
+                    useCount,
+                    useIndex))
+            {
+                continue;
+            }
+
+            var definitionRegion = regionByLirIndex[definitionIndex[tempIndex]];
+            if (definitionRegion < 0)
+            {
+                continue;
+            }
+
+            var useRegion = regionByLirIndex[useIndex[tempIndex]];
+            var region = identity.Regions[definitionRegion];
+            var useIsTerminalBoundary =
+                useRegion < 0
+                && useIndex[tempIndex] == region.EndLirIndexExclusive
+                && IsSupportedTypedNumericTerminal(
+                    methodBody,
+                    methodBody.Instructions[useIndex[tempIndex]]);
+            if (useRegion != definitionRegion && !useIsTerminalBoundary)
+            {
+                continue;
+            }
+
+            if (!HasOnlySupportedInterveningInstructions(
+                methodBody,
+                definitionIndex[tempIndex],
+                useIndex[tempIndex]))
+            {
+                continue;
+            }
+
+            residencies[tempIndex] = TempResidency.StackResident;
+            ownedTemps[tempIndex] = true;
+            acceptedCount++;
+        }
+
+        ClaimSafeBoxingTerminals(
+            methodBody,
+            definitionCount,
+            useCount,
+            useIndex,
+            regionByLirIndex,
+            residencies,
+            ownedTemps);
+
+        PruneInvalidTypedNumericResidencies(
+            methodBody,
+            residencies,
+            ownedTemps);
+        acceptedCount = ownedTemps.Count(owned => owned);
+
+        return identity with
+        {
+            Mode = LIRStackSchedulerMode.TypedNumeric,
+            TempResidencies = residencies,
+            OwnedTemps = ownedTemps,
+            Metrics = identity.Metrics with
+            {
+                StackResidentTempCount = acceptedCount,
+                EliminatedSpillCount = acceptedCount
+            }
+        };
+    }
+
+    private static void PruneInvalidTypedNumericResidencies(
+        MethodBodyIR methodBody,
+        TempResidency[] residencies,
+        bool[] ownedTemps)
+    {
+        var stack = new List<int>();
+        var uses = new List<TempVariable>();
+        for (var instructionIndex = 0;
+             instructionIndex < methodBody.Instructions.Count;
+             instructionIndex++)
+        {
+            var instruction = methodBody.Instructions[instructionIndex];
+            uses.Clear();
+            var visitor = new NumericCollectUseVisitor(uses);
+            LIRInstructionInfo.VisitUsedTemps(instruction, ref visitor);
+
+            // Remove candidates whose operand position cannot consume an
+            // already-carried stack value before ordinary loaded operands.
+            var encounteredNonResident = false;
+            for (var index = 0; index < uses.Count; index++)
+            {
+                var use = uses[index];
+                var isResident = residencies[use.Index]
+                    == TempResidency.StackResident;
+                if (isResident && encounteredNonResident)
+                {
+                    RemoveResidency(use.Index);
+                    stack.Remove(use.Index);
+                    continue;
+                }
+
+                if (!isResident)
+                {
+                    encounteredNonResident = true;
+                }
+            }
+
+            var residentPrefixCount = 0;
+            while (residentPrefixCount < uses.Count
+                && residencies[uses[residentPrefixCount].Index]
+                    == TempResidency.StackResident)
+            {
+                residentPrefixCount++;
+            }
+
+            if (residentPrefixCount > stack.Count)
+            {
+                for (var index = 0; index < residentPrefixCount; index++)
+                {
+                    RemoveResidency(uses[index].Index);
+                    stack.Remove(uses[index].Index);
+                }
+                residentPrefixCount = 0;
+            }
+
+            for (var index = 0; index < residentPrefixCount; index++)
+            {
+                var expected = uses[index].Index;
+                var actual =
+                    stack[stack.Count - residentPrefixCount + index];
+                if (expected != actual)
+                {
+                    RemoveResidency(expected);
+                    stack.Remove(expected);
+                }
+            }
+
+            residentPrefixCount = 0;
+            while (residentPrefixCount < uses.Count
+                && residencies[uses[residentPrefixCount].Index]
+                    == TempResidency.StackResident)
+            {
+                residentPrefixCount++;
+            }
+            if (residentPrefixCount > 0)
+            {
+                stack.RemoveRange(
+                    stack.Count - residentPrefixCount,
+                    residentPrefixCount);
+            }
+
+            if (LIRInstructionInfo.TryGetDefinedTemp(
+                    instruction,
+                    out var defined)
+                && residencies[defined.Index]
+                    == TempResidency.StackResident)
+            {
+                stack.Add(defined.Index);
+            }
+
+            if (LIRInstructionInfo.IsSchedulingBoundary(instruction)
+                && stack.Count > 0)
+            {
+                foreach (var tempIndex in stack)
+                {
+                    RemoveResidency(tempIndex);
+                }
+                stack.Clear();
+            }
+        }
+
+        void RemoveResidency(int tempIndex)
+        {
+            residencies[tempIndex] = TempResidency.MaterializedLocal;
+            ownedTemps[tempIndex] = false;
+        }
+    }
+
+
+    private static bool IsTypedNumericBinary(LIRInstruction instruction)
+        => instruction is LIRAddNumber
+            or LIRSubNumber
+            or LIRMulNumber
+            or LIRDivNumber
+            or LIRModNumber
+            or LIRExpNumber;
+
+    private static bool IsSupportedTypedNumericConsumer(
+        MethodBodyIR methodBody,
+        int consumerIndex,
+        int[] useCount,
+        int[] useIndex)
+    {
+        var instruction = methodBody.Instructions[consumerIndex];
+        if (instruction is LIRConvertToObject convert)
+        {
+            var resultIndex = convert.Result.Index;
+            return (uint)resultIndex < (uint)useCount.Length
+                && useCount[resultIndex] == 1
+                && methodBody.Instructions[useIndex[resultIndex]] is LIRReturn
+                && !methodBody.IsAsync
+                && !methodBody.IsGenerator;
+        }
+
+        return IsTypedNumericBinary(instruction)
+            || IsSupportedTypedNumericTerminal(methodBody, instruction)
+            || instruction is LIRStoreParameter;
+    }
+
+    private static void ClaimSafeBoxingTerminals(
+        MethodBodyIR methodBody,
+        int[] definitionCount,
+        int[] useCount,
+        int[] useIndex,
+        int[] regionByLirIndex,
+        TempResidency[] residencies,
+        bool[] ownedTemps)
+    {
+        for (var instructionIndex = 0;
+             instructionIndex < methodBody.Instructions.Count;
+             instructionIndex++)
+        {
+            if (methodBody.Instructions[instructionIndex]
+                    is not LIRConvertToObject convert
+                || residencies[convert.Source.Index]
+                    != TempResidency.StackResident
+                || definitionCount[convert.Result.Index] != 1
+                || useCount[convert.Result.Index] != 1
+                || methodBody.Instructions[useIndex[convert.Result.Index]]
+                    is not LIRReturn
+                || methodBody.IsAsync
+                || methodBody.IsGenerator
+                || regionByLirIndex[instructionIndex] < 0)
+            {
+                continue;
+            }
+
+            residencies[convert.Result.Index] = TempResidency.StackResident;
+            ownedTemps[convert.Result.Index] = true;
+        }
+    }
+
+    private static bool IsSupportedTypedNumericTerminal(
+        MethodBodyIR methodBody,
+        LIRInstruction instruction)
+        => instruction is LIRReturn
+            && !methodBody.IsAsync
+            && !methodBody.IsGenerator;
+
+    private static bool HasOnlySupportedInterveningInstructions(
+        MethodBodyIR methodBody,
+        int definitionIndex,
+        int useIndex)
+    {
+        for (var index = definitionIndex + 1; index < useIndex; index++)
+        {
+            if (methodBody.Instructions[index] is not (
+                    LIRConstNumber
+                    or LIRLoadParameter
+                    or LIRLoadThis
+                    or LIRLoadUserClassInstanceField
+                    or LIRLoadUserClassStaticField
+                    or LIRAddNumber
+                    or LIRSubNumber
+                    or LIRMulNumber
+                    or LIRDivNumber
+                    or LIRModNumber
+                    or LIRExpNumber))
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     internal static LIRStackSchedule ValidateOrFallback(
@@ -266,6 +607,49 @@ internal static class LIRStackScheduler
             {
                 _lastUses[temp.Index] = _instructionIndex;
             }
+        }
+    }
+
+    private struct NumericUseVisitor : ITempUseVisitor
+    {
+        private readonly int[] _useCount;
+        private readonly int[] _useIndex;
+        private readonly int _instructionIndex;
+
+        internal NumericUseVisitor(
+            int[] useCount,
+            int[] useIndex,
+            int instructionIndex)
+        {
+            _useCount = useCount;
+            _useIndex = useIndex;
+            _instructionIndex = instructionIndex;
+        }
+
+        public void Visit(TempVariable temp)
+        {
+            if ((uint)temp.Index >= (uint)_useCount.Length)
+            {
+                return;
+            }
+
+            _useCount[temp.Index]++;
+            _useIndex[temp.Index] = _instructionIndex;
+        }
+    }
+
+    private struct NumericCollectUseVisitor : ITempUseVisitor
+    {
+        private readonly List<TempVariable> _uses;
+
+        internal NumericCollectUseVisitor(List<TempVariable> uses)
+        {
+            _uses = uses;
+        }
+
+        public void Visit(TempVariable temp)
+        {
+            _uses.Add(temp);
         }
     }
 }

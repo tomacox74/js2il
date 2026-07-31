@@ -545,13 +545,14 @@
 
 			IL_043a: ldloc.0
 			IL_043b: ldfld object [JavaScriptRuntime]JavaScriptRuntime.AsyncGeneratorScope::_genPendingException
-			IL_0440: isinst [System.Runtime]System.Exception
-			IL_0445: dup
-			IL_0446: brtrue IL_0458
+			IL_0440: stloc.s 4
+			IL_0442: ldloc.s 4
+			IL_0444: isinst [System.Runtime]System.Exception
+			IL_0449: dup
+			IL_044a: brtrue IL_0458
 
-			IL_044b: pop
-			IL_044c: ldloc.0
-			IL_044d: ldfld object [JavaScriptRuntime]JavaScriptRuntime.AsyncGeneratorScope::_genPendingException
+			IL_044f: pop
+			IL_0450: ldloc.s 4
 			IL_0452: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::.ctor(object)
 			IL_0457: throw
 

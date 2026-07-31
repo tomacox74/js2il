@@ -45,6 +45,7 @@ public sealed class ILVerificationTests
     [InlineData("ControlFlow_While_Break_AtThree")]
     [InlineData("TryCatchFinally_ThrowValue")]
     [InlineData("Function_SchedulerDeepStack")]
+    [InlineData("Generator_YieldStar_ArrayBasic")]
     [InlineData("TryFinally_Return")]
     [InlineData("Function_ClosureMutatesOuterVariable")]
     [InlineData("Function_Closure_MultiLevel_ReadWriteAcrossScopes")]
@@ -91,6 +92,8 @@ public sealed class ILVerificationTests
             category = "TryCatch";
         else if (testName.StartsWith("Function_"))
             category = "Function";
+        else if (testName.StartsWith("Generator_"))
+            category = "Generator";
         else if (testName.StartsWith("Async_"))
             category = "Async";
         else if (testName.StartsWith("Classes_"))

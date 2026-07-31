@@ -5,11 +5,11 @@
 The scheduler is being introduced incrementally under the umbrella tracked by
 [GitHub issue #1617](https://github.com/tomacox74/js2il/issues/1617).
 
-The implementation currently provides an **identity schedule with conservative
-region discovery**:
+The implementation currently provides **typed numeric binary scheduling** on
+top of the validated identity foundation:
 
 - LIR instructions are emitted in their original order.
-- No temp is made stack-resident by the scheduler.
+- Single-use typed numeric binary results can remain stack-resident.
 - Existing `Stackify`, branch fusion, rematerialization, and local allocation
   behavior remains authoritative.
 - Existing constructor/field-store peepholes remain intact.
@@ -19,8 +19,7 @@ region discovery**:
   boundaries, but their instructions are not reordered.
 - Generated method bodies and Portable PDB mappings are unchanged.
 
-The identity stage exists to establish a reviewable and testable emission-plan
-boundary before later stages make real scheduling decisions.
+All unsupported shapes retain identity/legacy behavior.
 
 ## Why a scheduler is needed
 
@@ -101,11 +100,71 @@ Current integration is in:
 | Mode | Current behavior |
 |---|---|
 | `Disabled` | Bypass schedule construction and use the legacy raw LIR index path. |
-| `Identity` | Emit through an explicit source-order schedule. This is the default. |
-| `TypedNumeric` | Reserved for the first optimizing stage; currently rejected with `NotSupportedException`. |
+| `Identity` | Emit through an explicit source-order schedule with no scheduler-owned residency. |
+| `TypedNumeric` | Identity plus typed numeric binary stack residency. This is the default. |
 
 Later modes must include all behavior from preceding modes so adjacent levels
 remain useful for A/B diagnosis.
+
+## Typed numeric binary coverage
+
+`TypedNumeric` owns single-definition/single-use results from:
+
+```text
+LIRAddNumber
+LIRSubNumber
+LIRMulNumber
+LIRDivNumber
+LIRModNumber
+LIRExpNumber
+```
+
+Supported consumers include another typed numeric binary operation and safe
+terminal plumbing such as `LIRConvertToObject`, `LIRCopyTemp`, numeric stores,
+and `LIRReturn`.
+
+The scheduler initially preserves LIR order. It:
+
+1. builds canonical def/use counts;
+2. requires definition and use in the same scheduling region, or a supported
+   terminal immediately after that region;
+3. rejects variable-slot-backed results;
+4. restricts intervening instructions to numeric producers/loads supported by
+   this stage;
+5. marks candidates stack-resident;
+6. performs one forward stack simulation that prunes operand orders the
+   emitter cannot consume safely.
+
+The emitter executes a scheduler-owned numeric operation at its original
+definition site and leaves its result on the CLR stack. When a later consumer
+loads that temp, `EmitLoadTemp` emits nothing because validation proved the
+value is already at the correct stack position.
+
+Legacy Stackify cannot claim an instruction that consumes a scheduler-owned
+temp, preventing rematerialization from duplicating or delaying the scheduled
+numeric tree.
+
+This is scheduling, not algebraic optimization. The exact expression tree,
+operand positions, IEEE-754 grouping, signed-zero/NaN/infinity behavior,
+division/remainder, and `Math.Pow` call order are preserved. There is no
+reassociation, commutative swapping, or constant folding.
+
+Examples now emitted without numeric intermediate spills:
+
+```js
+factor * 2 + 1
+a + b + c + d
+a * b + c * d
+a - b - c
+a / b % c
+a ** b + c
+```
+
+Calls, dynamic operators, values crossing sequence points/branches,
+scope-field stores that push a receiver before their value, and unsupported
+operand orders remain materialized or legacy-owned. `LIRConvertToObject` is
+stack-resident only for the proven simple synchronous-return shape; other
+boxing consumers retain legacy behavior.
 
 The option is internal and testable. It is not currently a user-facing CLI
 switch.
@@ -456,6 +515,12 @@ Identity mode must preserve all of the following:
   contain an instruction from another source interval;
 - final PDB metadata uses actual post-schedule offsets, signature, IL length,
   and stable source-local indexes.
+- every accepted typed numeric region records scheduler ownership and
+  eliminated-spill metrics;
+- numeric definitions execute once at their source position and are consumed
+  without rematerialization;
+- unsupported or invalid numeric candidates are pruned before strict schedule
+  validation.
 
 The identity scheduler does not inspect `CompilerOptions.EmitPdb`; enabling
 symbols must not change schedule selection or operation order.
@@ -500,6 +565,11 @@ contract.
 - derived constructors remaining ordinary operations;
 - disabled-mode bypass;
 - rejection of not-yet-implemented coverage.
+- typed numeric chains/trees, metrics, call-result exclusions, and
+  sequence-point rejection;
+- exact generated IL proving no intermediate numeric `stloc`/`ldloc` pairs;
+- execution coverage for all six operators, NaN, signed zero,
+  non-commutative order, calls, and postfix snapshots;
 
 Its integration fixture compiles with scheduler `Disabled` and `Identity`, with
 and without PDBs, and compares:
@@ -527,17 +597,16 @@ Focused regression coverage also includes:
 - `ILVerificationTests`, including deep arithmetic and arbitrary-value
   try/catch/finally.
 
-## What this stage does not do
+## Current non-goals
 
-Identity scheduling does not:
+Typed numeric scheduling does not:
 
-- reorder instructions;
-- optimize or reorder discovered scheduling regions;
-- keep a temp on the stack;
-- remove a spill;
+- reorder LIR instructions;
+- schedule calls, allocations, dynamic operators, comparisons, or unary ops;
+- carry values across sequence points, control flow, EH, `yield`, or `await`;
 - alter rematerialization;
 - replace the local allocator;
-- schedule across labels, branches, sequence points, EH, `yield`, or `await`.
+- eliminate the boxed object return local.
 
 These limitations are deliberate. A no-change foundation makes later
 instruction-family PRs smaller and reviewable.
@@ -547,14 +616,13 @@ instruction-family PRs smaller and reviewable.
 The ordered work is tracked under
 [issue #1617](https://github.com/tomacox74/js2il/issues/1617):
 
-1. Typed numeric binary expression trees.
-2. Typed unary/comparison/branch expressions.
-3. Conversions, stable loads, and explicit rematerialization.
-4. Literal and argument construction.
-5. Same-region single-use call results.
-6. General legal scheduling inside straight-line regions.
-7. Stackify scheduling retirement.
-8. Final obsolete-code audit and deletion.
+1. Typed unary/comparison/branch expressions.
+2. Conversions, stable loads, and explicit rematerialization.
+3. Literal and argument construction.
+4. Same-region single-use call results.
+5. General legal scheduling inside straight-line regions.
+6. Stackify scheduling retirement.
+7. Final obsolete-code audit and deletion.
 
 At each optimizing stage:
 
@@ -566,7 +634,7 @@ At each optimizing stage:
 
 ## Contributor checklist
 
-When changing the identity scheduler foundation:
+When changing the scheduler foundation:
 
 - Keep `Disabled` and `Identity` method bodies equivalent.
 - Do not make scheduler behavior depend on PDB emission.
@@ -594,3 +662,7 @@ When changing the identity scheduler foundation:
 - Run focused Stackify, allocator, fusion, and PDB regressions.
 - Do not enable a reserved coverage mode without its own issue's validation and
   exit criteria.
+- Keep numeric operator selection separate from algebraic reassociation or
+  constant folding.
+- Prove every positive fixture was scheduler-accepted and did not silently
+  fall back to identity.
