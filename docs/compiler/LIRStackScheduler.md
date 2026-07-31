@@ -216,16 +216,85 @@ They are split around:
 - unknown/unsupported instructions.
 
 Identity mode still performs no optimization. It reports the number of
-discovered regions while leaving the optimization metrics at zero:
+discovered regions while leaving optimization metrics at zero. Validation may
+report a nonzero stack maximum for implicit catch entry:
 
 ```text
 ScheduledRegionCount = <discovered straight-line region count>
 StackResidentTempCount = 0
 EliminatedSpillCount = 0
-MaxStackDepth = 0
+ValidationFallbackCount = 0
+MaxStackDepth = 0 normally, 1 when catch entry supplies an exception object
 ```
 
-The existing IL maxstack calculation remains authoritative in identity mode.
+## Schedule validation
+
+`LIRStackScheduleValidator` independently validates a schedule before it reaches
+IL emission. It checks:
+
+- every raw LIR index is owned exactly once;
+- multi-instruction operations have explicit fused ownership;
+- effectful instructions preserve source order;
+- region operation windows are valid, non-overlapping, and contain no boundary;
+- every non-boundary operation belongs to one region;
+- temp residency and scheduler ownership agree;
+- stack-resident temps have exactly one definition and one use;
+- stack-resident operands are available in valid LIFO order;
+- stack values do not cross sequence points, control flow, EH, suspension,
+  scope replacement, or internal-control-flow boundaries;
+- catch entry supplies one implicit exception consumed by
+  `LIRStoreException`;
+- await/yield resume results remain materialized;
+- declared schedule/region stack maxima are not smaller than validated depth.
+
+The validator annotates:
+
+- `CarriedStackDepthBeforeInstructions`;
+- each region's maximum carried depth;
+- the method schedule's maximum carried depth.
+
+Identity mode carries no scheduler-owned temps, so its carried depth is zero
+except for the implicit catch exception. Generated IL remains unchanged.
+
+### Strict validation and fallback
+
+`LIRStackScheduleValidationBehavior` controls failure handling:
+
+| Behavior | Result |
+|---|---|
+| `Throw` | Raise an actionable `LIRStackScheduleValidationException`. This is the Debug/test default. |
+| `FallbackToIdentity` | Reject an invalid optimized plan, validate a fresh identity schedule, record the rejection reason/counter, and emit only the identity plan. This is the Release default. |
+
+Identity validation itself never silently falls back. Tests can require strict
+mode so semantic coverage cannot pass by accidentally exercising the legacy
+identity plan.
+
+`IRPipelineMetrics` records scheduler validation fallbacks when metrics are
+enabled.
+
+## Schedule-aware maxstack
+
+The existing emitter estimator still measures instruction-internal peak stack
+usage from an empty starting stack. The validated schedule contributes the
+persistent depth carried into each LIR instruction:
+
+```text
+required peak =
+  validated carried depth before instruction
+  + existing instruction-internal peak estimate
+```
+
+The emitted method maxstack is at least both:
+
+- the legacy baseline/estimator;
+- the validated schedule maximum.
+
+This deliberately overestimates rather than underestimates when a later
+scheduler avoids loading an operand already on the stack. Underestimation can
+produce `InvalidProgramException`; conservative overestimation is valid.
+
+Identity mode's carried depths are zero, so method-body maxstack remains
+byte-identical to scheduler-disabled output.
 
 ### Effective last uses
 
@@ -324,6 +393,11 @@ Identity mode must preserve all of the following:
   suspension, EH-entry, hidden-CFG, or unsupported boundaries;
 - catch entry consumes exactly one implicit exception stack input;
 - await/yield results are identified as resume-time definitions.
+- every schedule passes independent ownership, effect-order, region, LIFO,
+  boundary, and maxstack validation before emission;
+- invalid optimized plans either fail strictly or fall back to a newly
+  validated identity plan;
+- carried stack depth is included in emitted maxstack accounting.
 
 The identity scheduler does not inspect `CompilerOptions.EmitPdb`; enabling
 symbols must not change schedule selection or operation order.
@@ -353,10 +427,14 @@ and without PDBs, and compares:
 
 Focused regression coverage also includes:
 
+- `LIRStackScheduleValidatorTests` for positive, rejection, catch-entry,
+  deep-stack, strict, and fallback behavior;
 - `StackifyTests`;
 - `TempLocalAllocatorTests`;
 - user/intrinsic constructor-field fusion generator snapshots;
-- Portable PDB sequence-point and locals tests.
+- Portable PDB sequence-point and locals tests;
+- `ILVerificationTests`, including deep arithmetic and arbitrary-value
+  try/catch/finally.
 
 ## What this stage does not do
 
@@ -367,9 +445,7 @@ Identity scheduling does not:
 - keep a temp on the stack;
 - remove a spill;
 - alter rematerialization;
-- change maxstack calculation;
 - replace the local allocator;
-- classify all LIR effects or stack signatures;
 - schedule across labels, branches, sequence points, EH, `yield`, or `await`.
 
 These limitations are deliberate. A no-change foundation makes later
@@ -380,17 +456,16 @@ instruction-family PRs smaller and reviewable.
 The ordered work is tracked under
 [issue #1617](https://github.com/tomacox74/js2il/issues/1617):
 
-1. Independent schedule validation and schedule-aware maxstack.
-2. Effective liveness/local allocation integration.
-3. Portable PDB preservation gate.
-4. Typed numeric binary expression trees.
-5. Typed unary/comparison/branch expressions.
-6. Conversions, stable loads, and explicit rematerialization.
-7. Literal and argument construction.
-8. Same-region single-use call results.
-9. General legal scheduling inside straight-line regions.
-10. Stackify scheduling retirement.
-11. Final obsolete-code audit and deletion.
+1. Effective liveness/local allocation integration.
+2. Portable PDB preservation gate.
+3. Typed numeric binary expression trees.
+4. Typed unary/comparison/branch expressions.
+5. Conversions, stable loads, and explicit rematerialization.
+6. Literal and argument construction.
+7. Same-region single-use call results.
+8. General legal scheduling inside straight-line regions.
+9. Stackify scheduling retirement.
+10. Final obsolete-code audit and deletion.
 
 At each optimizing stage:
 
@@ -412,6 +487,11 @@ When changing the identity scheduler foundation:
   conservatively before enabling scheduling.
 - Keep hidden-control-flow, catch-entry, suspension, scope-replacement, and
   sequence-point instructions outside candidate regions.
+- Keep positive scheduler fixtures in strict mode so fallback cannot hide a
+  missing optimization.
+- Add validator rejection coverage for every new residency or operation shape.
+- Include persistent carried depth in maxstack before enabling a new
+  stack-resident instruction family.
 - Add direct schedule assertions, not only execution tests.
 - Compare local signature contents, not only metadata row numbers.
 - Check decoded Portable PDB mappings, not raw PDB container bytes.

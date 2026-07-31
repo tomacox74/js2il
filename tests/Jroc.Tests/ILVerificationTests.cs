@@ -1,6 +1,7 @@
 using Jroc.Services;
 using Microsoft.Extensions.DependencyInjection;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Text;
 using Xunit;
 using Xunit.Abstractions;
@@ -42,8 +43,8 @@ public sealed class ILVerificationTests
     [InlineData("ControlFlow_Conditional_Ternary")]
     [InlineData("ControlFlow_Conditional_Ternary_ShortCircuit")]
     [InlineData("ControlFlow_While_Break_AtThree")]
-    // TryCatchFinally_ThrowValue currently fails verification - known issue with exception handling
-    // [InlineData("TryCatchFinally_ThrowValue")]
+    [InlineData("TryCatchFinally_ThrowValue")]
+    [InlineData("Function_SchedulerDeepStack")]
     [InlineData("TryFinally_Return")]
     [InlineData("Function_ClosureMutatesOuterVariable")]
     [InlineData("Function_Closure_MultiLevel_ReadWriteAcrossScopes")]
@@ -179,53 +180,14 @@ public sealed class ILVerificationTests
 
     private static string GetRuntimeAssembliesPath()
     {
-        // Find the path to .NET runtime assemblies
-        // This is typically in the shared framework directory
-        var dotnetRoot = Environment.GetEnvironmentVariable("DOTNET_ROOT");
-        if (string.IsNullOrEmpty(dotnetRoot))
+        var runtimePath = RuntimeEnvironment.GetRuntimeDirectory();
+        if (!Directory.Exists(runtimePath))
         {
-            // Common default locations
-            if (OperatingSystem.IsWindows())
-            {
-                dotnetRoot = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "dotnet");
-            }
-            else
-            {
-                dotnetRoot = "/usr/share/dotnet";
-            }
+            throw new InvalidOperationException(
+                $"Could not find the current .NET runtime directory: {runtimePath}");
         }
 
-        // Look for the Microsoft.NETCore.App shared framework
-        var sharedPath = Path.Combine(dotnetRoot, "shared", "Microsoft.NETCore.App");
-        
-        if (!Directory.Exists(sharedPath))
-        {
-            throw new InvalidOperationException($"Could not find .NET shared framework at: {sharedPath}");
-        }
-
-        // Find the highest version available (preferably 10.x)
-        var versions = Directory.GetDirectories(sharedPath)
-            .Select(Path.GetFileName)
-            .Where(v => v != null && v.StartsWith("10."))
-            .OrderByDescending(v => v)
-            .ToList();
-
-        if (versions.Count == 0)
-        {
-            // Fallback to any version
-            versions = Directory.GetDirectories(sharedPath)
-                .Select(Path.GetFileName)
-                .Where(v => v != null)
-                .OrderByDescending(v => v)
-                .ToList();
-        }
-
-        if (versions.Count == 0)
-        {
-            throw new InvalidOperationException($"Could not find any .NET runtime version in: {sharedPath}");
-        }
-
-        return Path.Combine(sharedPath, versions[0]!);
+        return runtimePath;
     }
 
     private static string GetRepositoryRoot()

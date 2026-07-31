@@ -334,6 +334,15 @@ internal static class LIRInstructionInfo
             || _schedulingBoundaryTypeSet.Contains(instructionType);
     }
 
+    internal static LIRInstructionEffects GetEffectsForScheduling(
+        LIRInstruction instruction)
+    {
+        ArgumentNullException.ThrowIfNull(instruction);
+        return IsKnownInstructionType(instruction.GetType())
+            ? GetEffects(instruction)
+            : LIRInstructionEffects.UnsupportedBarrier;
+    }
+
     internal static bool TryGetDefinedTemp(
         LIRInstruction instruction,
         out TempVariable defined)

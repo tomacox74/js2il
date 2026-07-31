@@ -60,7 +60,8 @@ internal readonly record struct ScheduledRegion(
 internal readonly record struct LIRStackScheduleMetrics(
     int ScheduledRegionCount,
     int StackResidentTempCount,
-    int EliminatedSpillCount);
+    int EliminatedSpillCount,
+    int ValidationFallbackCount);
 
 /// <summary>
 /// Immutable scheduler output consumed by local allocation and IL emission.
@@ -74,7 +75,18 @@ internal sealed record LIRStackSchedule(
     TempResidency[] TempResidencies,
     bool[] OwnedTemps,
     int[] EffectiveLastUses,
+    int[] CarriedStackDepthBeforeInstructions,
     int MaxStackDepth,
-    LIRStackScheduleMetrics Metrics);
+    LIRStackScheduleMetrics Metrics,
+    string? ValidationFailureReason);
 
-internal readonly record struct LIRStackSchedulerOptions(LIRStackSchedulerMode Mode);
+internal enum LIRStackScheduleValidationBehavior
+{
+    Throw,
+    FallbackToIdentity
+}
+
+internal readonly record struct LIRStackSchedulerOptions(
+    LIRStackSchedulerMode Mode,
+    LIRStackScheduleValidationBehavior ValidationBehavior =
+        LIRStackScheduleValidationBehavior.Throw);
