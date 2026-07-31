@@ -32,7 +32,7 @@ internal static class BranchConditionOptimizer
     /// </summary>
     public static void MarkBranchOnlyComparisonTemps(
         MethodBodyIR methodBody,
-        bool[]? shouldMaterializeTemp,
+        TempMaterializationPlan materializationPlan,
         Dictionary<int, LIRInstruction> tempDefinitions)
     {
         int tempCount = methodBody.Temps.Count;
@@ -56,12 +56,6 @@ internal static class BranchConditionOptimizer
             TempLocalAllocator.VisitUsedTemps(instruction, ref visitor);
         }
 
-        // Mark branch-only condition temps that are only used once by a branch as non-materialized.
-        if (shouldMaterializeTemp == null)
-        {
-            return; // Will be created fresh, no way to mark
-        }
-
         for (int i = 0; i < tempCount; i++)
         {
             if (useCount[i] == 1
@@ -69,8 +63,10 @@ internal static class BranchConditionOptimizer
                 && tempDefinitions.TryGetValue(i, out var definingInstruction)
                 && IsComparisonInstruction(definingInstruction))
             {
-                // Mark this temp as not needing materialization (false = not used outside)
-                shouldMaterializeTemp[i] = false;
+                materializationPlan.TryClaim(
+                    i,
+                    TempResidency.Rematerialized,
+                    TempValueOwner.BranchConditionFusion);
             }
         }
     }

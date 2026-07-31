@@ -36,7 +36,9 @@ internal static class Stackify
     /// Analyzes the method body to determine which temps can stay on the stack.
     /// Returns a result indicating which temps are stackable.
     /// </summary>
-    public static StackifyResult Analyze(MethodBodyIR methodBody)
+    public static StackifyResult Analyze(
+        MethodBodyIR methodBody,
+        TempMaterializationPlan? materializationPlan = null)
     {
         int tempCount = methodBody.Temps.Count;
         if (tempCount == 0)
@@ -76,6 +78,13 @@ internal static class Stackify
         // Second pass: check if temps meet stackify criteria
         for (int tempIdx = 0; tempIdx < tempCount; tempIdx++)
         {
+            if (materializationPlan is not null
+                && materializationPlan.GetOwner(tempIdx)
+                    != TempValueOwner.MaterializedLocal)
+            {
+                continue;
+            }
+
             var def = defIndex[tempIdx];
             var uses = useIndices[tempIdx];
             var instr = defInstruction[tempIdx];

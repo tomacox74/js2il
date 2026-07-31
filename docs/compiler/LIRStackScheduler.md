@@ -124,8 +124,36 @@ switch.
 
 Identity mode reports `MaterializedLocal` for every temp and marks every
 `OwnedTemps` entry `false`. The `false` ownership is important: it delegates
-the actual decision to the existing Stackify/allocator pipeline. Identity mode
-does not force all values into locals.
+the initial decision to `TempMaterializationPlan`. Identity mode does not force
+all values into locals.
+
+### Exclusive materialization ownership
+
+`TempMaterializationPlan` is the single mutable owner map used between schedule
+validation and local allocation. Every temp has one `TempValueOwner`:
+
+| Owner | Responsibility |
+|---|---|
+| `MaterializedLocal` | Default unclaimed local candidate. |
+| `Scheduler` | Stack-resident or explicitly rematerialized by the new scheduler. |
+| `BranchConditionFusion` | Comparison emitted directly into its branch. |
+| `LegacyStackify` | Legacy Stackify rematerialization/deferral. |
+| `Rematerialization` | Allocator's cheap stable inline/rematerialization path. |
+| `VariableSlot` | Source/anonymous variable slot is authoritative. |
+| `SnapshotBarrier` | `LIRCopyTemp` snapshot must materialize. |
+| `ResumeResult` | Await/yield result populated on resume must materialize. |
+| `CatchResult` | Catch-entry exception temp must materialize. |
+| `ConstructorResultOverride` | Constructor post-processing requires a stable local. |
+
+Claims are exclusive. Scheduler ownership is established first. Mandatory
+materialization then rejects conflicts with scheduler ownership. Branch fusion
+and Stackify use `TryClaim`, so neither can also claim a scheduler-owned or
+already-owned temp. The allocator may claim rematerialization only while the
+temp still has the default owner.
+
+Multi-definition temps preserve legacy identity behavior: snapshot/resume
+ownership is based on the legacy selected definition rather than every
+assignment to the temp. This matters for generator state-machine result temps.
 
 ### Instruction disposition
 
@@ -298,8 +326,14 @@ byte-identical to scheduler-disabled output.
 
 ### Effective last uses
 
-The schedule records the last LIR index that uses each temp. Identity mode
-matches raw source order and does not feed this data into allocation yet.
+The schedule records the last scheduled position that uses each temp. The
+allocator now walks the validated schedule order rather than assuming raw LIR
+order.
+
+Identity mode deliberately recomputes last uses in scheduled order through the
+legacy def/use visitor. This preserves byte-identical local allocation during
+the migration. Optimized modes consume canonical
+`LIRStackSchedule.EffectiveLastUses`, including reordered uses.
 
 Canonical metadata supplements the legacy temp visitor for:
 
@@ -307,9 +341,22 @@ Canonical metadata supplements the legacy temp visitor for:
 - `LIRUnwrapCatchException.Exception`
 
 Those operands are consumed by the emitter but are missing from the legacy
-allocator visitor. Recording them makes scheduler metadata accurate without
-changing allocation or generated IL. The allocator deliberately stays on its
-legacy visitor until schedule-effective liveness is integrated.
+allocator visitor. They participate in optimized schedule liveness; identity
+mode retains legacy compatibility until an optimizing mode is enabled.
+
+`TempLocalAllocator` remains a compatible-storage linear-scan allocator. It:
+
+- frees slots at schedule-effective last use;
+- reuses compatible slots for non-overlapping scheduled ranges;
+- prevents reuse for ranges that overlap only after scheduling;
+- gives scheduler-owned stack temps no local;
+- records cheap stable rematerialization through the ownership plan;
+- leaves variable slots outside temp-slot allocation.
+
+Async functions persist final allocated variable and temp slots through
+`AsyncScope._locals`. Spill and restore enumerate `allocation.SlotStorages`, so
+they automatically use the final schedule-aware mapping. Values crossing
+`await`/`yield` and resume-result temps remain materialized.
 
 ## Identity operation construction
 
@@ -398,6 +445,11 @@ Identity mode must preserve all of the following:
 - invalid optimized plans either fail strictly or fall back to a newly
   validated identity plan;
 - carried stack depth is included in emitted maxstack accounting.
+- every non-materialized temp has one explicit owner;
+- scheduler, branch fusion, Stackify, and rematerialization cannot overlap;
+- identity allocation remains byte-identical while optimized modes use
+  canonical schedule-effective liveness;
+- async/generator spill and restore use the final allocated slot mapping.
 
 The identity scheduler does not inspect `CompilerOptions.EmitPdb`; enabling
 symbols must not change schedule selection or operation order.
@@ -431,6 +483,7 @@ Focused regression coverage also includes:
   deep-stack, strict, and fallback behavior;
 - `StackifyTests`;
 - `TempLocalAllocatorTests`;
+- async/generator local persistence across `await` and `yield`;
 - user/intrinsic constructor-field fusion generator snapshots;
 - Portable PDB sequence-point and locals tests;
 - `ILVerificationTests`, including deep arithmetic and arbitrary-value
@@ -456,16 +509,15 @@ instruction-family PRs smaller and reviewable.
 The ordered work is tracked under
 [issue #1617](https://github.com/tomacox74/js2il/issues/1617):
 
-1. Effective liveness/local allocation integration.
-2. Portable PDB preservation gate.
-3. Typed numeric binary expression trees.
-4. Typed unary/comparison/branch expressions.
-5. Conversions, stable loads, and explicit rematerialization.
-6. Literal and argument construction.
-7. Same-region single-use call results.
-8. General legal scheduling inside straight-line regions.
-9. Stackify scheduling retirement.
-10. Final obsolete-code audit and deletion.
+1. Portable PDB preservation gate.
+2. Typed numeric binary expression trees.
+3. Typed unary/comparison/branch expressions.
+4. Conversions, stable loads, and explicit rematerialization.
+5. Literal and argument construction.
+6. Same-region single-use call results.
+7. General legal scheduling inside straight-line regions.
+8. Stackify scheduling retirement.
+9. Final obsolete-code audit and deletion.
 
 At each optimizing stage:
 
@@ -483,6 +535,11 @@ When changing the identity scheduler foundation:
 - Do not make scheduler behavior depend on PDB emission.
 - Preserve ordinary fallback for atomic fusion candidates.
 - Keep effective last uses accurate for every newly-observed operand.
+- Claim every temp through `TempMaterializationPlan`; do not add another
+  independent materialization mask.
+- Add ownership-overlap tests whenever a new optimizer claims a temp.
+- Preserve async/generator cross-suspension materialization and verify final
+  spill/restore slot mappings.
 - Add every new concrete LIR subtype to canonical metadata and classify it
   conservatively before enabling scheduling.
 - Keep hidden-control-flow, catch-entry, suspension, scope-replacement, and

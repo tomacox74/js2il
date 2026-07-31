@@ -43,6 +43,27 @@ internal static class TempLocalAllocator
     private readonly record struct StorageKey(ValueStorageKind Kind, Type? ClrType, EntityHandle TypeHandle, string? ScopeName);
 
     public static TempLocalAllocation Allocate(MethodBodyIR methodBody, bool[]? shouldMaterializeTemp = null)
+        => AllocateCore(
+            methodBody,
+            shouldMaterializeTemp,
+            materializationPlan: null,
+            schedule: null);
+
+    internal static TempLocalAllocation Allocate(
+        MethodBodyIR methodBody,
+        TempMaterializationPlan materializationPlan,
+        LIRStackSchedule? schedule)
+        => AllocateCore(
+            methodBody,
+            materializationPlan.CreateMaterializationMask(),
+            materializationPlan,
+            schedule);
+
+    private static TempLocalAllocation AllocateCore(
+        MethodBodyIR methodBody,
+        bool[]? shouldMaterializeTemp,
+        TempMaterializationPlan? materializationPlan,
+        LIRStackSchedule? schedule)
     {
         int tempCount = methodBody.Temps.Count;
         if (tempCount == 0)
@@ -50,14 +71,65 @@ internal static class TempLocalAllocator
             return new TempLocalAllocation(Array.Empty<int>(), Array.Empty<ValueStorage>());
         }
 
-        var lastUse = new int[tempCount];
-        Array.Fill(lastUse, -1);
-
-        // First pass: determine last use for each temp.
-        for (int i = 0; i < methodBody.Instructions.Count; i++)
+        int[] lastUse;
+        var useCanonicalScheduledLiveness =
+            schedule is not null
+            && schedule.Mode != LIRStackSchedulerMode.Identity;
+        if (useCanonicalScheduledLiveness)
         {
-            var visitor = new LastUseVisitor(lastUse, tempCount, shouldMaterializeTemp, i);
-            VisitUsedTemps(methodBody.Instructions[i], ref visitor);
+            lastUse = schedule!.EffectiveLastUses.ToArray();
+            for (var tempIndex = 0; tempIndex < tempCount; tempIndex++)
+            {
+                if (shouldMaterializeTemp is not null
+                    && !shouldMaterializeTemp[tempIndex])
+                {
+                    lastUse[tempIndex] = -1;
+                }
+            }
+        }
+        else
+        {
+            lastUse = new int[tempCount];
+            Array.Fill(lastUse, -1);
+
+            // Identity mode deliberately preserves legacy def/use semantics,
+            // but walks the validated scheduled order. Optimized modes consume
+            // the canonical effective-last-use data above.
+            if (schedule is null)
+            {
+                for (int i = 0; i < methodBody.Instructions.Count; i++)
+                {
+                    RecordLegacyUses(methodBody.Instructions[i], i);
+                }
+            }
+            else
+            {
+                var scheduledPosition = 0;
+                foreach (var operation in schedule.Operations)
+                {
+                    for (var offset = 0;
+                         offset < operation.InstructionCount;
+                         offset++)
+                    {
+                        RecordLegacyUses(
+                            methodBody.Instructions[
+                                operation.GetLirInstructionIndex(offset)],
+                            scheduledPosition++);
+                    }
+                }
+            }
+
+            void RecordLegacyUses(
+                LIRInstruction instruction,
+                int instructionPosition)
+            {
+                var visitor = new LastUseVisitor(
+                    lastUse,
+                    tempCount,
+                    shouldMaterializeTemp,
+                    instructionPosition);
+                VisitUsedTemps(instruction, ref visitor);
+            }
         }
 
         // Second pass: linear-scan allocation with reuse after last use.
@@ -66,36 +138,102 @@ internal static class TempLocalAllocator
 
         // Def-instruction lookup built once so CanEmitInline doesn't rescan the
         // instruction list per query (O(N^2) on large method bodies, issue #1415).
-        var defInstructions = BuildDefInstructionMap(methodBody);
+        var defInstructions = BuildDefInstructionMap(
+            methodBody,
+            useCanonicalMetadata: useCanonicalScheduledLiveness);
 
         var slotStorages = new List<ValueStorage>();
         var freeByKey = new Dictionary<StorageKey, Stack<int>>();
 
-        for (int i = 0; i < methodBody.Instructions.Count; i++)
+        if (schedule is null)
         {
-            var instruction = methodBody.Instructions[i];
+            for (var instructionIndex = 0;
+                 instructionIndex < methodBody.Instructions.Count;
+                 instructionIndex++)
+            {
+                ProcessInstruction(
+                    methodBody.Instructions[instructionIndex],
+                    instructionIndex);
+            }
+        }
+        else
+        {
+            var scheduledPosition = 0;
+            foreach (var operation in schedule.Operations)
+            {
+                for (var offset = 0;
+                     offset < operation.InstructionCount;
+                     offset++)
+                {
+                    ProcessInstruction(
+                        methodBody.Instructions[
+                            operation.GetLirInstructionIndex(offset)],
+                        scheduledPosition++);
+                }
+            }
+        }
 
+        return new TempLocalAllocation(tempToSlot, slotStorages);
+
+        void ProcessInstruction(
+            LIRInstruction instruction,
+            int instructionPosition)
+        {
             // Free dead operands before allocating the result so we can reuse within the same instruction.
             var releaseVisitor = new ReleaseDeadTempsVisitor(
                 methodBody,
                 lastUse,
                 tempToSlot,
                 tempCount,
-                i,
+                instructionPosition,
                 freeByKey);
-            VisitUsedTemps(instruction, ref releaseVisitor);
+            if (schedule is null)
+            {
+                VisitUsedTemps(instruction, ref releaseVisitor);
+            }
+            else
+            {
+                LIRInstructionInfo.VisitUsedTemps(instruction, ref releaseVisitor);
+            }
 
             // Allocate a slot for result if it will be used later.
             // Skip allocation for constant temps that can be emitted inline.
             // Skip allocation for temps that are already mapped to a variable slot.
-            if (TryGetDefinedTemp(instruction, out var defined) &&
+            var hasDefinition = useCanonicalScheduledLiveness
+                ? LIRInstructionInfo.TryGetDefinedTemp(
+                    instruction,
+                    out var defined)
+                : TryGetDefinedTemp(instruction, out defined);
+            if (hasDefinition &&
                 defined.Index >= 0 &&
                 defined.Index < tempCount &&
                 lastUse[defined.Index] >= 0 &&
-                (shouldMaterializeTemp is null || shouldMaterializeTemp[defined.Index]) &&
-                !CanEmitInline(instruction, methodBody, defInstructions) &&
                 !(defined.Index < methodBody.TempVariableSlots.Count && methodBody.TempVariableSlots[defined.Index] >= 0))
             {
+                if (materializationPlan is not null
+                    && materializationPlan.GetOwner(defined.Index)
+                        == TempValueOwner.MaterializedLocal
+                    && CanEmitInline(instruction, methodBody, defInstructions))
+                {
+                    materializationPlan.Claim(
+                        defined.Index,
+                        TempResidency.Rematerialized,
+                        TempValueOwner.Rematerialization);
+                    return;
+                }
+
+                if (shouldMaterializeTemp is not null
+                    && !shouldMaterializeTemp[defined.Index])
+                {
+                    return;
+                }
+
+                if (materializationPlan is null
+                    && CanEmitInline(instruction, methodBody, defInstructions))
+                {
+                    return;
+                }
+
                 var storage = GetTempStorage(methodBody, defined);
                 var key = new StorageKey(storage.Kind, storage.ClrType, storage.TypeHandle, storage.ScopeName);
 
@@ -113,8 +251,6 @@ internal static class TempLocalAllocator
                 tempToSlot[defined.Index] = slot;
             }
         }
-
-        return new TempLocalAllocation(tempToSlot, slotStorages);
     }
     /// <summary>
     /// Returns true if the instruction defines a constant that can be emitted inline
@@ -157,12 +293,17 @@ internal static class TempLocalAllocator
     /// Builds a temp-index → defining-instruction map in a single pass.
     /// Keeps the first definition per temp to match the previous first-match scan semantics.
     /// </summary>
-    private static Dictionary<int, LIRInstruction> BuildDefInstructionMap(MethodBodyIR methodBody)
+    private static Dictionary<int, LIRInstruction> BuildDefInstructionMap(
+        MethodBodyIR methodBody,
+        bool useCanonicalMetadata)
     {
         var map = new Dictionary<int, LIRInstruction>(methodBody.Instructions.Count);
         foreach (var inst in methodBody.Instructions)
         {
-            if (TryGetDefinedTemp(inst, out var def))
+            var hasDefinition = useCanonicalMetadata
+                ? LIRInstructionInfo.TryGetDefinedTemp(inst, out var def)
+                : TryGetDefinedTemp(inst, out def);
+            if (hasDefinition)
             {
                 map.TryAdd(def.Index, inst);
             }

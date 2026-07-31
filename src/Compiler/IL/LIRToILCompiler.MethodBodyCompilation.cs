@@ -48,38 +48,37 @@ internal sealed partial class LIRToILCompiler
                     compilerOptions?.LIRStackScheduleValidationBehavior
                         ?? LIRStackScheduleValidationBehavior.Throw));
 
-        // All temps start as "needs materialization". Stackify will mark which ones can stay on stack.
-        var shouldMaterialize = new bool[MethodBody.Temps.Count];
-        Array.Fill(shouldMaterialize, true);
+        var classRegistryForCtorReturn =
+            _serviceProvider.GetService<Jroc.Services.ClassRegistry>();
+        var materializationPlan = TempMaterializationPlan.Create(
+            MethodBody,
+            stackSchedule,
+            newUserClass =>
+                classRegistryForCtorReturn is not null
+                && classRegistryForCtorReturn.TryGetPrivateField(
+                    newUserClass.RegistryClassName,
+                    "__jroc_ctorReturn",
+                    out _));
 
         // Build map of temp ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ defining instruction for branch condition inlining
         var tempDefinitions = BranchConditionOptimizer.BuildTempDefinitionMap(MethodBody);
 
         // Mark comparison temps only used by branches as non-materialized
-        BranchConditionOptimizer.MarkBranchOnlyComparisonTemps(MethodBody, shouldMaterialize, tempDefinitions);
+        BranchConditionOptimizer.MarkBranchOnlyComparisonTemps(
+            MethodBody,
+            materializationPlan,
+            tempDefinitions);
 
         // Stackify analysis: identify temps that can stay on the stack
-        var stackifyResult = Stackify.Analyze(MethodBody);
-        MarkStackifiableTemps(stackifyResult, shouldMaterialize);
+        var stackifyResult = Stackify.Analyze(MethodBody, materializationPlan);
+        MarkStackifiableTemps(stackifyResult, materializationPlan);
+        materializationPlan.ValidateAgainstSchedule(MethodBody, stackSchedule);
 
-        // Constructor return override (PL5.4a) requires post-construction logic that overwrites
-        // the result temp. If a class constructor can return a value, force materialization for
-        // `new C()` results so we have a stable local slot.
-        var classRegistryForCtorReturn = _serviceProvider.GetService<Jroc.Services.ClassRegistry>();
-        if (classRegistryForCtorReturn != null)
-        {
-            foreach (var instr in MethodBody.Instructions.OfType<LIRNewUserClass>())
-            {
-                if (instr.Result.Index >= 0
-                    && instr.Result.Index < shouldMaterialize.Length
-                    && classRegistryForCtorReturn.TryGetPrivateField(instr.RegistryClassName, "__jroc_ctorReturn", out _))
-                {
-                    shouldMaterialize[instr.Result.Index] = true;
-                }
-            }
-        }
-
-        var allocation = TempLocalAllocator.Allocate(MethodBody, shouldMaterialize);
+        var allocation = TempLocalAllocator.Allocate(
+            MethodBody,
+            materializationPlan,
+            stackSchedule);
+        materializationPlan.ValidateAgainstSchedule(MethodBody, stackSchedule);
 
         // Pre-create IL labels for all LIR labels
         var labelMap = new Dictionary<int, LabelHandle>();
