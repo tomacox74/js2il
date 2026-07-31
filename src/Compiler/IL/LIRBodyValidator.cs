@@ -56,7 +56,7 @@ internal static class LIRBodyValidator
         }
 
         // Build the set of temps that are defined by at least one instruction.
-        var definedTemps = new HashSet<int>(capacity: methodBody.Instructions.Count);
+        var definedTemps = new HashSet<int>(capacity: methodBody.Temps.Count);
         foreach (var instr in methodBody.Instructions)
         {
             if (LIRInstructionInfo.TryGetDefinedTemp(instr, out var defined)

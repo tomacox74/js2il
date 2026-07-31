@@ -134,7 +134,7 @@ internal static class LIRStackScheduler
             return Array.Empty<ScheduledRegion>();
         }
 
-        var regions = new ScheduledRegion[operations.Length];
+        var regions = new ScheduledRegion[(operations.Length / 2) + 1];
         var regionCount = 0;
         var regionStartOperation = -1;
 
@@ -146,7 +146,7 @@ internal static class LIRStackScheduler
             {
                 var instruction = methodBody.Instructions[
                     operation.GetLirInstructionIndex(offset)];
-                if (LIRInstructionInfo.GetMetadata(instruction).IsSchedulingBoundary)
+                if (LIRInstructionInfo.IsSchedulingBoundary(instruction))
                 {
                     isBoundary = true;
                     break;

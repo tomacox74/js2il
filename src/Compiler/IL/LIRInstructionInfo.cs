@@ -1,3 +1,5 @@
+using System.Collections.Concurrent;
+using System.Collections.ObjectModel;
 using Jroc.IR;
 
 namespace Jroc.IL;
@@ -236,7 +238,47 @@ internal static class LIRInstructionInfo
     private static readonly HashSet<Type> _knownInstructionTypeSet =
         new(_knownInstructionTypes);
 
-    internal static IReadOnlyList<Type> KnownInstructionTypes => _knownInstructionTypes;
+    private static readonly ReadOnlyCollection<Type> _readOnlyKnownInstructionTypes =
+        Array.AsReadOnly(_knownInstructionTypes);
+
+    private static readonly HashSet<Type> _schedulingBoundaryTypeSet =
+    [
+        typeof(LIRLabel),
+        typeof(LIRBranch),
+        typeof(LIRBranchIfFalse),
+        typeof(LIRBranchIfTrue),
+        typeof(LIRLeave),
+        typeof(LIREndFinally),
+        typeof(LIRReturn),
+        typeof(LIRReturnUndefinedImmediate),
+        typeof(LIRTailCallFunctionReturn),
+        typeof(LIRThrow),
+        typeof(LIRThrowNewTypeError),
+        typeof(LIRSequencePoint),
+        typeof(LIRStoreException),
+        typeof(LIRUnwrapCatchException),
+        typeof(LIRAwait),
+        typeof(LIRYield),
+        typeof(LIRGeneratorStateSwitch),
+        typeof(LIRAsyncInitialize),
+        typeof(LIRAsyncCallMoveNext),
+        typeof(LIRAsyncReturnPromise),
+        typeof(LIRAsyncLoadState),
+        typeof(LIRAsyncStoreState),
+        typeof(LIRAsyncResolve),
+        typeof(LIRAsyncReject),
+        typeof(LIRAsyncStateSwitch),
+        typeof(LIRAsyncStoreAwaitedResult),
+        typeof(LIRAsyncLoadAwaitedResult),
+        typeof(LIRCreateLeafScopeInstance),
+        typeof(LIRCreateScopeInstance)
+    ];
+
+    private static readonly ConcurrentDictionary<Type, LIRInstructionEffects>
+        _staticEffectsByType = new();
+
+    internal static IReadOnlyList<Type> KnownInstructionTypes =>
+        _readOnlyKnownInstructionTypes;
 
     internal static bool IsKnownInstructionType(Type type)
         => _knownInstructionTypeSet.Contains(type);
@@ -261,23 +303,18 @@ internal static class LIRInstructionInfo
         var implicitInput = instruction is LIRStoreException
             ? LIRImplicitStackInput.CatchException
             : LIRImplicitStackInput.None;
+        var hasDefinition = TryGetDefinedTemp(instruction, out _);
         var definitionKind = instruction switch
         {
             LIRStoreException => LIRDefinitionKind.CatchException,
             LIRAwait or LIRYield => LIRDefinitionKind.ResumeResult,
-            _ when TryGetDefinedTemp(instruction, out _) =>
-                LIRDefinitionKind.InstructionResult,
+            _ when hasDefinition => LIRDefinitionKind.InstructionResult,
             _ => LIRDefinitionKind.None
         };
-        var stackSignature = GetStackSignature(instruction, implicitInput);
-        var isBoundary = implicitInput != LIRImplicitStackInput.None
-            || instruction is LIRSequencePoint
-            || (effects & (
-                LIRInstructionEffects.ControlFlow
-                | LIRInstructionEffects.Suspension
-                | LIRInstructionEffects.ScopeReplacement
-                | LIRInstructionEffects.EmitsInternalControlFlow
-                | LIRInstructionEffects.UnsupportedBarrier)) != 0;
+        var stackSignature = GetStackSignature(
+            instruction,
+            implicitInput,
+            hasDefinition);
 
         return new LIRInstructionMetadata(
             effects,
@@ -285,7 +322,16 @@ internal static class LIRInstructionInfo
             implicitInput,
             definitionKind,
             stackSignature,
-            isBoundary);
+            IsSchedulingBoundary(instruction));
+    }
+
+    internal static bool IsSchedulingBoundary(LIRInstruction instruction)
+    {
+        ArgumentNullException.ThrowIfNull(instruction);
+
+        var instructionType = instruction.GetType();
+        return !_knownInstructionTypeSet.Contains(instructionType)
+            || _schedulingBoundaryTypeSet.Contains(instructionType);
     }
 
     internal static bool TryGetDefinedTemp(
@@ -333,7 +379,8 @@ internal static class LIRInstructionInfo
 
     private static LIRStackSignature GetStackSignature(
         LIRInstruction instruction,
-        LIRImplicitStackInput implicitInput)
+        LIRImplicitStackInput implicitInput,
+        bool hasDefinition)
     {
         var visitor = new TempCountVisitor();
         VisitUsedTemps(instruction, ref visitor);
@@ -341,11 +388,45 @@ internal static class LIRInstructionInfo
             + (implicitInput == LIRImplicitStackInput.CatchException ? 1 : 0);
         var pushes = instruction is LIRStoreException or LIRAwait or LIRYield
             ? 0
-            : TryGetDefinedTemp(instruction, out _) ? 1 : 0;
+            : hasDefinition ? 1 : 0;
         return new LIRStackSignature(pops, pushes);
     }
 
     private static LIRInstructionEffects GetEffects(LIRInstruction instruction)
+    {
+        // Runtime TDZ requirements are binding-instance data, so these three
+        // instruction families cannot use the otherwise type-stable cache.
+        if (instruction is LIRLoadLeafScopeField loadLeaf)
+        {
+            return LIRInstructionEffects.ReadsScope
+                | (loadLeaf.Binding.RequiresRuntimeTemporalDeadZoneChecks
+                    ? LIRInstructionEffects.MayThrow
+                    : LIRInstructionEffects.None);
+        }
+
+        if (instruction is LIRLoadParentScopeField loadParent)
+        {
+            return LIRInstructionEffects.ReadsScope
+                | (loadParent.Binding.RequiresRuntimeTemporalDeadZoneChecks
+                    ? LIRInstructionEffects.MayThrow
+                    : LIRInstructionEffects.None);
+        }
+
+        if (instruction is LIRLoadScopeField loadScope)
+        {
+            return LIRInstructionEffects.ReadsScope
+                | (loadScope.Binding.RequiresRuntimeTemporalDeadZoneChecks
+                    ? LIRInstructionEffects.MayThrow
+                    : LIRInstructionEffects.None);
+        }
+
+        return _staticEffectsByType.GetOrAdd(
+            instruction.GetType(),
+            static (_, value) => GetStaticEffects(value),
+            instruction);
+    }
+
+    private static LIRInstructionEffects GetStaticEffects(LIRInstruction instruction)
         => instruction switch
         {
             // Native constants and typed operators are pure and non-throwing.
@@ -390,21 +471,10 @@ internal static class LIRInstructionInfo
             LIRStoreParameter
                 => LIRInstructionEffects.WritesMutableSlot,
 
-            LIRLoadLeafScopeField loadLeaf =>
-                LIRInstructionEffects.ReadsScope
-                | (loadLeaf.Binding.RequiresRuntimeTemporalDeadZoneChecks
-                    ? LIRInstructionEffects.MayThrow
-                    : LIRInstructionEffects.None),
-            LIRLoadParentScopeField loadParent =>
-                LIRInstructionEffects.ReadsScope
-                | (loadParent.Binding.RequiresRuntimeTemporalDeadZoneChecks
-                    ? LIRInstructionEffects.MayThrow
-                    : LIRInstructionEffects.None),
-            LIRLoadScopeField loadScope =>
-                LIRInstructionEffects.ReadsScope
-                | (loadScope.Binding.RequiresRuntimeTemporalDeadZoneChecks
-                    ? LIRInstructionEffects.MayThrow
-                    : LIRInstructionEffects.None),
+            LIRLoadLeafScopeField
+                or LIRLoadParentScopeField
+                or LIRLoadScopeField
+                => LIRInstructionEffects.ReadsScope,
             LIRLoadScopeFieldByName => LIRInstructionEffects.ReadsScope,
 
             LIRStoreLeafScopeField
