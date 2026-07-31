@@ -380,13 +380,14 @@
 
 			IL_02b7: ldloc.0
 			IL_02b8: ldfld object [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_genPendingException
-			IL_02bd: isinst [System.Runtime]System.Exception
-			IL_02c2: dup
-			IL_02c3: brtrue IL_02d5
+			IL_02bd: stloc.s 4
+			IL_02bf: ldloc.s 4
+			IL_02c1: isinst [System.Runtime]System.Exception
+			IL_02c6: dup
+			IL_02c7: brtrue IL_02d5
 
-			IL_02c8: pop
-			IL_02c9: ldloc.0
-			IL_02ca: ldfld object [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_genPendingException
+			IL_02cc: pop
+			IL_02cd: ldloc.s 4
 			IL_02cf: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::.ctor(object)
 			IL_02d4: throw
 
@@ -815,13 +816,14 @@
 
 			IL_02de: ldloc.0
 			IL_02df: ldfld object [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_genPendingException
-			IL_02e4: isinst [System.Runtime]System.Exception
-			IL_02e9: dup
-			IL_02ea: brtrue IL_02fc
+			IL_02e4: stloc.s 4
+			IL_02e6: ldloc.s 4
+			IL_02e8: isinst [System.Runtime]System.Exception
+			IL_02ed: dup
+			IL_02ee: brtrue IL_02fc
 
-			IL_02ef: pop
-			IL_02f0: ldloc.0
-			IL_02f1: ldfld object [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_genPendingException
+			IL_02f3: pop
+			IL_02f4: ldloc.s 4
 			IL_02f6: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::.ctor(object)
 			IL_02fb: throw
 

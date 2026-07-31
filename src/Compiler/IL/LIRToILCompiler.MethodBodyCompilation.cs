@@ -59,6 +59,7 @@ internal sealed partial class LIRToILCompiler
                     newUserClass.RegistryClassName,
                     "__jroc_ctorReturn",
                     out _));
+        _tempMaterializationPlan = materializationPlan;
 
         // Build map of temp ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ defining instruction for branch condition inlining
         var tempDefinitions = BranchConditionOptimizer.BuildTempDefinitionMap(MethodBody);

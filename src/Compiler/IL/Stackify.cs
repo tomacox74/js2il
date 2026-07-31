@@ -95,6 +95,12 @@ internal static class Stackify
                 continue;
             }
 
+            if (materializationPlan is not null
+                && UsesSchedulerOwnedTemp(instr, materializationPlan))
+            {
+                continue;
+            }
+
             // Typed numeric binary ops (LIR*Number) are safe to stackify only when the use is
             // immediately after the definition.
             //
@@ -134,6 +140,38 @@ internal static class Stackify
         }
 
         return new StackifyResult(canStackify);
+    }
+
+    private static bool UsesSchedulerOwnedTemp(
+        LIRInstruction instruction,
+        TempMaterializationPlan materializationPlan)
+    {
+        var visitor = new SchedulerOwnedUseVisitor(materializationPlan);
+        LIRInstructionInfo.VisitUsedTemps(instruction, ref visitor);
+        return visitor.Found;
+    }
+
+    private struct SchedulerOwnedUseVisitor : ITempUseVisitor
+    {
+        private readonly TempMaterializationPlan _materializationPlan;
+
+        internal SchedulerOwnedUseVisitor(
+            TempMaterializationPlan materializationPlan)
+        {
+            _materializationPlan = materializationPlan;
+        }
+
+        internal bool Found { get; private set; }
+
+        public void Visit(TempVariable temp)
+        {
+            if (temp.Index >= 0
+                && temp.Index < _materializationPlan.Count
+                && _materializationPlan.IsClaimedByScheduler(temp.Index))
+            {
+                Found = true;
+            }
+        }
     }
 
     /// <summary>

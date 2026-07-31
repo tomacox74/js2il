@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
 using System.Reflection.PortableExecutable;
+using Jroc.Tests.Utilities;
 
 namespace Jroc.Tests;
 
@@ -303,14 +304,125 @@ public sealed class LIRStackSchedulerTests
     }
 
     [Fact]
-    public void Build_UnimplementedCoverageMode_FailsExplicitly()
+    public void Build_TypedNumericMode_ClaimsLeftAssociativeChain()
     {
-        var exception = Assert.Throws<NotSupportedException>(() =>
-            LIRStackScheduler.Build(
-                new MethodBodyIR(),
-                new LIRStackSchedulerOptions(LIRStackSchedulerMode.TypedNumeric)));
+        var body = new MethodBodyIR();
+        var factor = AddTemp(body);
+        var two = AddTemp(body);
+        var product = AddTemp(body);
+        var one = AddTemp(body);
+        var result = AddTemp(body);
+        body.Instructions.Add(new LIRLoadParameter(1, factor));
+        body.Instructions.Add(new LIRConstNumber(2, two));
+        body.Instructions.Add(new LIRMulNumber(factor, two, product));
+        body.Instructions.Add(new LIRConstNumber(1, one));
+        body.Instructions.Add(new LIRAddNumber(product, one, result));
+        body.Instructions.Add(new LIRReturn(result));
 
-        Assert.Contains(nameof(LIRStackSchedulerMode.TypedNumeric), exception.Message);
+        var schedule = LIRStackScheduler.Build(
+            body,
+            new LIRStackSchedulerOptions(LIRStackSchedulerMode.TypedNumeric));
+
+        Assert.Equal(TempResidency.StackResident, schedule.TempResidencies[product.Index]);
+        Assert.Equal(TempResidency.StackResident, schedule.TempResidencies[result.Index]);
+        Assert.True(schedule.OwnedTemps[product.Index]);
+        Assert.True(schedule.OwnedTemps[result.Index]);
+        Assert.Equal(2, schedule.Metrics.StackResidentTempCount);
+        Assert.Equal(2, schedule.Metrics.EliminatedSpillCount);
+        Assert.Equal(1, schedule.MaxStackDepth);
+        Assert.Equal(1, schedule.CarriedStackDepthBeforeInstructions[3]);
+        Assert.Equal(1, schedule.CarriedStackDepthBeforeInstructions[4]);
+        Assert.Equal(1, schedule.CarriedStackDepthBeforeInstructions[5]);
+    }
+
+    [Fact]
+    public void Build_TypedNumericMode_ClaimsIndependentProductsInOperandOrder()
+    {
+        var body = new MethodBodyIR();
+        var a = AddTemp(body);
+        var b = AddTemp(body);
+        var left = AddTemp(body);
+        var c = AddTemp(body);
+        var d = AddTemp(body);
+        var right = AddTemp(body);
+        var result = AddTemp(body);
+        body.Instructions.Add(new LIRLoadParameter(1, a));
+        body.Instructions.Add(new LIRLoadParameter(2, b));
+        body.Instructions.Add(new LIRMulNumber(a, b, left));
+        body.Instructions.Add(new LIRLoadParameter(3, c));
+        body.Instructions.Add(new LIRLoadParameter(4, d));
+        body.Instructions.Add(new LIRMulNumber(c, d, right));
+        body.Instructions.Add(new LIRAddNumber(left, right, result));
+        body.Instructions.Add(new LIRReturn(result));
+
+        var schedule = LIRStackScheduler.Build(
+            body,
+            new LIRStackSchedulerOptions(LIRStackSchedulerMode.TypedNumeric));
+
+        Assert.Equal(TempResidency.StackResident, schedule.TempResidencies[left.Index]);
+        Assert.Equal(TempResidency.StackResident, schedule.TempResidencies[right.Index]);
+        Assert.Equal(TempResidency.StackResident, schedule.TempResidencies[result.Index]);
+        Assert.Equal(3, schedule.Metrics.StackResidentTempCount);
+        Assert.Equal(2, schedule.MaxStackDepth);
+        Assert.Equal(2, schedule.CarriedStackDepthBeforeInstructions[6]);
+    }
+
+    [Fact]
+    public void Build_TypedNumericMode_DoesNotClaimCallResultsOrCrossCall()
+    {
+        var body = new MethodBodyIR();
+        var left = AddTemp(body);
+        var right = AddTemp(body);
+        var result = AddTemp(body);
+        body.Instructions.Add(new LIRCallRuntimeServicesStatic(
+            "Left",
+            System.Array.Empty<TempVariable>(),
+            left));
+        body.Instructions.Add(new LIRCallRuntimeServicesStatic(
+            "Right",
+            System.Array.Empty<TempVariable>(),
+            right));
+        body.Instructions.Add(new LIRAddNumber(left, right, result));
+        body.Instructions.Add(new LIRReturn(result));
+
+        var schedule = LIRStackScheduler.Build(
+            body,
+            new LIRStackSchedulerOptions(LIRStackSchedulerMode.TypedNumeric));
+
+        Assert.Equal(TempResidency.MaterializedLocal, schedule.TempResidencies[left.Index]);
+        Assert.Equal(TempResidency.MaterializedLocal, schedule.TempResidencies[right.Index]);
+        Assert.Equal(TempResidency.StackResident, schedule.TempResidencies[result.Index]);
+        Assert.Equal(1, schedule.Metrics.StackResidentTempCount);
+    }
+
+    [Fact]
+    public void Build_TypedNumericMode_DoesNotClaimValueAcrossSequencePoint()
+    {
+        var body = new MethodBodyIR();
+        var left = AddTemp(body);
+        var right = AddTemp(body);
+        var result = AddTemp(body);
+        var one = AddTemp(body);
+        var final = AddTemp(body);
+        body.Instructions.Add(new LIRLoadParameter(1, left));
+        body.Instructions.Add(new LIRLoadParameter(2, right));
+        body.Instructions.Add(new LIRMulNumber(left, right, result));
+        body.Instructions.Add(new LIRSequencePoint(
+            SourceSpan.Hidden("scheduler.js")));
+        body.Instructions.Add(new LIRConstNumber(1, one));
+        body.Instructions.Add(new LIRAddNumber(result, one, final));
+        body.Instructions.Add(new LIRReturn(final));
+
+        var schedule = LIRStackScheduler.Build(
+            body,
+            new LIRStackSchedulerOptions(LIRStackSchedulerMode.TypedNumeric));
+
+        Assert.Equal(
+            TempResidency.MaterializedLocal,
+            schedule.TempResidencies[result.Index]);
+        Assert.Equal(
+            TempResidency.StackResident,
+            schedule.TempResidencies[final.Index]);
     }
 
     [Theory]
@@ -350,6 +462,71 @@ public sealed class LIRStackSchedulerTests
 
         AssertEquivalentMethodBodies(disabled.PeBytes, identity.PeBytes);
         AssertEquivalentPortablePdb(disabled.PdbBytes, identity.PdbBytes);
+    }
+
+    [Fact]
+    public void Compiler_TypedNumericMode_EliminatesIntermediateSpills()
+    {
+        const string source = """
+            "use strict";
+            function mulAdd(factor) { return factor * 2 + 1; }
+            function addChain(a, b, c, d) { return a + b + c + d; }
+            function tree(a, b, c, d) { return a * b + c * d; }
+            function subChain(a, b, c) { return a - b - c; }
+            function divMod(a, b, c) { return a / b % c; }
+            function expAdd(a, b, c) { return a ** b + c; }
+            console.log(mulAdd(4), addChain(1, 2, 3, 4), tree(2, 3, 4, 5),
+              subChain(10, 3, 2), divMod(20, 3, 2), expAdd(2, 3, 1));
+            """;
+
+        var artifact = Compile(
+            source,
+            LIRStackSchedulerMode.TypedNumeric,
+            emitPdb: false);
+        var path = Path.Combine(
+            Path.GetTempPath(),
+            "Jroc.Tests",
+            "TypedNumericScheduler",
+            "typed-numeric.dll");
+        Directory.CreateDirectory(Path.GetDirectoryName(path)!);
+        File.WriteAllBytes(path, artifact.PeBytes);
+        var il = AssemblyToText.ConvertToText(path);
+
+        AssertMethodHasNoIntermediateSpills(
+            il,
+            "mulAdd",
+            "ldarg.1",
+            "ldc.r8 2",
+            "mul",
+            "ldc.r8 1",
+            "add");
+        AssertMethodHasNoIntermediateSpills(
+            il,
+            "addChain",
+            "ldarg.1",
+            "ldarg.2",
+            "add",
+            "ldarg.3",
+            "add",
+            "ldarg.s d",
+            "add");
+        AssertMethodHasNoIntermediateSpills(
+            il,
+            "tree",
+            "ldarg.1",
+            "ldarg.2",
+            "mul",
+            "ldarg.3",
+            "ldarg.s d",
+            "mul",
+            "add");
+        AssertMethodHasNoIntermediateSpills(il, "subChain", "sub");
+        AssertMethodHasNoIntermediateSpills(il, "divMod", "div", "rem");
+        AssertMethodHasNoIntermediateSpills(
+            il,
+            "expAdd",
+            "System.Math::Pow",
+            "add");
     }
 
     private static TempVariable AddTemp(MethodBodyIR body)
@@ -435,6 +612,54 @@ public sealed class LIRStackSchedulerTests
                 expectedBody.ExceptionRegions.ToArray(),
                 actualBody.ExceptionRegions.ToArray());
         }
+    }
+
+    private static void AssertMethodHasNoIntermediateSpills(
+        string il,
+        string className,
+        params string[] orderedFragments)
+    {
+        var classStart = il.IndexOf(
+            $"beforefieldinit {className}",
+            StringComparison.Ordinal);
+        Assert.True(classStart >= 0, $"Could not find generated class '{className}'.");
+        var classEnd = il.IndexOf(
+            $"end of class {className}",
+            classStart,
+            StringComparison.Ordinal);
+        Assert.True(classEnd > classStart);
+        var method = il[classStart..classEnd];
+
+        var searchIndex = 0;
+        foreach (var fragment in orderedFragments)
+        {
+            var fragmentIndex = method.IndexOf(
+                fragment,
+                searchIndex,
+                StringComparison.Ordinal);
+            Assert.True(
+                fragmentIndex >= 0,
+                $"Could not find '{fragment}' in order for '{className}'.");
+            searchIndex = fragmentIndex + fragment.Length;
+        }
+
+        Assert.Equal(0, CountOccurrences(method, "stloc"));
+        Assert.Equal(0, CountOccurrences(method, "ldloc"));
+    }
+
+    private static int CountOccurrences(string value, string fragment)
+    {
+        var count = 0;
+        var index = 0;
+        while ((index = value.IndexOf(
+                   fragment,
+                   index,
+                   StringComparison.Ordinal)) >= 0)
+        {
+            count++;
+            index += fragment.Length;
+        }
+        return count;
     }
 
     private static void AssertEquivalentLocalSignature(

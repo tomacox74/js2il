@@ -18,6 +18,7 @@ internal sealed partial class LIRToILCompiler
     private StandaloneSignatureHandle _localVariablesSignature;
     private int _ilLength;
     private DebugSymbolRegistry.MethodLocal[]? _locals;
+    private TempMaterializationPlan? _tempMaterializationPlan;
 
     #region Public API
 
