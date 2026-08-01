@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x213b
+				// Method begins at RVA 0x214f
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -42,7 +42,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x210c
+			// Method begins at RVA 0x2120
 			// Header size: 12
 			// Code size: 26 (0x1a)
 			.maxstack 8
@@ -78,7 +78,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2132
+			// Method begins at RVA 0x2146
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -104,73 +104,85 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 173 (0xad)
+		// Code size: 194 (0xc2)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.CommonJS_Module_Exports_Function/Scope,
 			[1] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1,
 			[2] object,
-			[3] object,
-			[4] object[],
-			[5] object
+			[3] object[],
+			[4] object,
+			[5] object,
+			[6] string
 		)
 
 		IL_0000: newobj instance void Modules.CommonJS_Module_Exports_Function/Scope::.ctor()
 		IL_0005: stloc.0
-		IL_0006: ldnull
-		IL_0007: ldftn object Modules.CommonJS_Module_Exports_Function/greet::__js_call__(object, object)
-		IL_000d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-		IL_0012: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1
-		IL_0017: ldc.i4.1
-		IL_0018: conv.r8
-		IL_0019: ldstr "greet"
-		IL_001e: ldc.i4.0
-		IL_001f: ldc.i4.1
-		IL_0020: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0, float64, string, bool, bool)
-		IL_0025: stloc.1
-		IL_0026: nop
-		IL_0027: nop
-		IL_0028: ldarg.2
-		IL_0029: ldstr "exports"
-		IL_002e: ldloc.1
-		IL_002f: ldc.i4.1
-		IL_0030: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
-		IL_0035: pop
-		IL_0036: ldstr "console"
-		IL_003b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0040: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0045: stloc.3
-		IL_0046: ldloc.3
-		IL_0047: ldstr "log"
-		IL_004c: ldstr "typeof module.exports:"
-		IL_0051: ldarg.2
-		IL_0052: ldstr "exports"
-		IL_0057: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_005c: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
-		IL_0061: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_0066: pop
-		IL_0067: ldarg.2
-		IL_0068: ldstr "exports"
-		IL_006d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0072: stloc.2
-		IL_0073: ldstr "console"
-		IL_0078: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_007d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0082: stloc.3
-		IL_0083: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0088: stloc.s 4
-		IL_008a: ldloc.2
-		IL_008b: ldloc.s 4
-		IL_008d: ldstr "World"
-		IL_0092: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
-		IL_0097: stloc.s 5
-		IL_0099: ldloc.3
-		IL_009a: ldstr "log"
-		IL_009f: ldstr "result:"
-		IL_00a4: ldloc.s 5
-		IL_00a6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_00ab: pop
-		IL_00ac: ret
+		IL_0006: ldc.i4.1
+		IL_0007: newarr [System.Runtime]System.Object
+		IL_000c: dup
+		IL_000d: ldc.i4.0
+		IL_000e: ldloc.0
+		IL_000f: stelem.ref
+		IL_0010: stloc.3
+		IL_0011: ldnull
+		IL_0012: ldftn object Modules.CommonJS_Module_Exports_Function/greet::__js_call__(object, object)
+		IL_0018: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_001d: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1
+		IL_0022: ldc.i4.1
+		IL_0023: conv.r8
+		IL_0024: ldstr "greet"
+		IL_0029: ldc.i4.0
+		IL_002a: ldc.i4.1
+		IL_002b: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0, float64, string, bool, bool)
+		IL_0030: stloc.1
+		IL_0031: nop
+		IL_0032: nop
+		IL_0033: ldarg.2
+		IL_0034: ldstr "exports"
+		IL_0039: ldloc.1
+		IL_003a: ldc.i4.1
+		IL_003b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
+		IL_0040: pop
+		IL_0041: ldstr "console"
+		IL_0046: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_004b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0050: stloc.s 4
+		IL_0052: ldarg.2
+		IL_0053: ldstr "exports"
+		IL_0058: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_005d: stloc.s 5
+		IL_005f: ldloc.s 5
+		IL_0061: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
+		IL_0066: stloc.s 6
+		IL_0068: ldloc.s 4
+		IL_006a: ldstr "log"
+		IL_006f: ldstr "typeof module.exports:"
+		IL_0074: ldloc.s 6
+		IL_0076: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_007b: pop
+		IL_007c: ldarg.2
+		IL_007d: ldstr "exports"
+		IL_0082: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0087: stloc.2
+		IL_0088: ldstr "console"
+		IL_008d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0092: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0097: stloc.s 4
+		IL_0099: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_009e: stloc.3
+		IL_009f: ldloc.2
+		IL_00a0: ldloc.3
+		IL_00a1: ldstr "World"
+		IL_00a6: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
+		IL_00ab: stloc.s 5
+		IL_00ad: ldloc.s 4
+		IL_00af: ldstr "log"
+		IL_00b4: ldstr "result:"
+		IL_00b9: ldloc.s 5
+		IL_00bb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_00c0: pop
+		IL_00c1: ret
 	} // end of method CommonJS_Module_Exports_Function::__js_module_init__
 
 } // end of class Modules.CommonJS_Module_Exports_Function
@@ -182,7 +194,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2144
+		// Method begins at RVA 0x2158
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

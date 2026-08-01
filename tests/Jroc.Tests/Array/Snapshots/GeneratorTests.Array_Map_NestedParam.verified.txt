@@ -22,7 +22,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2211
+					// Method begins at RVA 0x2230
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -47,9 +47,9 @@
 				.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 					01 00 02 00 00 00 00 00
 				)
-				// Method begins at RVA 0x21c4
+				// Method begins at RVA 0x21d4
 				// Header size: 12
-				// Code size: 34 (0x22)
+				// Code size: 36 (0x24)
 				.maxstack 8
 				.locals init (
 					[0] object
@@ -60,15 +60,17 @@
 				IL_0002: ldelem.ref
 				IL_0003: castclass Modules.Array_Map_NestedParam/outer/Scope
 				IL_0008: ldfld object Modules.Array_Map_NestedParam/outer/Scope::arr
-				IL_000d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_0012: stloc.0
-				IL_0013: ldloc.0
-				IL_0014: ldstr "map"
-				IL_0019: ldarg.2
-				IL_001a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-				IL_001f: stloc.0
-				IL_0020: ldloc.0
-				IL_0021: ret
+				IL_000d: stloc.0
+				IL_000e: ldloc.0
+				IL_000f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_0014: stloc.0
+				IL_0015: ldloc.0
+				IL_0016: ldstr "map"
+				IL_001b: ldarg.2
+				IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+				IL_0021: stloc.0
+				IL_0022: ldloc.0
+				IL_0023: ret
 			} // end of method inner::__js_call__
 
 		} // end of class inner
@@ -90,7 +92,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x221a
+					// Method begins at RVA 0x2239
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -114,15 +116,20 @@
 				.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 					01 00 00 00 00 00 00 00
 				)
-				// Method begins at RVA 0x21f2
-				// Header size: 1
-				// Code size: 12 (0xc)
+				// Method begins at RVA 0x2204
+				// Header size: 12
+				// Code size: 14 (0xe)
 				.maxstack 8
+				.locals init (
+					[0] object
+				)
 
 				IL_0000: ldarg.1
 				IL_0001: ldstr "length"
 				IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-				IL_000b: ret
+				IL_000b: stloc.0
+				IL_000c: ldloc.0
+				IL_000d: ret
 			} // end of method ArrowFunction_L9C16::__js_call__
 
 		} // end of class ArrowFunction_L9C16
@@ -143,7 +150,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2208
+				// Method begins at RVA 0x2227
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -170,14 +177,15 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 06 00 00 02
 			)
-			// Method begins at RVA 0x2128
+			// Method begins at RVA 0x2134
 			// Header size: 12
-			// Code size: 142 (0x8e)
+			// Code size: 148 (0x94)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.Array_Map_NestedParam/outer/Scope,
 				[1] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1,
-				[2] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1
+				[2] object[],
+				[3] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1
 			)
 
 			IL_0000: newobj instance void Modules.Array_Map_NestedParam/outer/Scope::.ctor()
@@ -195,55 +203,61 @@
 			IL_0018: ldc.i4.1
 			IL_0019: ldloc.0
 			IL_001a: stelem.ref
-			IL_001b: ldftn object Modules.Array_Map_NestedParam/outer/inner::__js_call__(object[], object, object)
-			IL_0021: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-			IL_0026: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1
-			IL_002b: ldc.i4.1
-			IL_002c: conv.r8
-			IL_002d: ldstr "inner"
-			IL_0032: ldc.i4.0
-			IL_0033: ldc.i4.1
-			IL_0034: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0, float64, string, bool, bool)
-			IL_0039: stloc.1
-			IL_003a: nop
-			IL_003b: ldnull
-			IL_003c: ldftn object Modules.Array_Map_NestedParam/outer/ArrowFunction_L9C16::__js_call__(object, object)
-			IL_0042: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-			IL_0047: ldc.i4.1
-			IL_0048: newarr [System.Runtime]System.Object
-			IL_004d: dup
-			IL_004e: ldc.i4.0
-			IL_004f: ldarg.0
-			IL_0050: stelem.ref
-			IL_0051: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-			IL_0056: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-			IL_005b: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1
-			IL_0060: ldc.i4.1
-			IL_0061: conv.r8
-			IL_0062: ldstr ""
-			IL_0067: ldc.i4.0
-			IL_0068: ldc.i4.0
-			IL_0069: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0, float64, string, bool, bool)
-			IL_006e: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0)
-			IL_0073: stloc.2
-			IL_0074: ldc.i4.2
-			IL_0075: newarr [System.Runtime]System.Object
-			IL_007a: dup
-			IL_007b: ldc.i4.0
-			IL_007c: ldarg.0
-			IL_007d: stelem.ref
+			IL_001b: stloc.2
+			IL_001c: ldloc.2
+			IL_001d: ldftn object Modules.Array_Map_NestedParam/outer/inner::__js_call__(object[], object, object)
+			IL_0023: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+			IL_0028: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1
+			IL_002d: ldc.i4.1
+			IL_002e: conv.r8
+			IL_002f: ldstr "inner"
+			IL_0034: ldc.i4.0
+			IL_0035: ldc.i4.1
+			IL_0036: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0, float64, string, bool, bool)
+			IL_003b: stloc.1
+			IL_003c: nop
+			IL_003d: ldc.i4.1
+			IL_003e: newarr [System.Runtime]System.Object
+			IL_0043: dup
+			IL_0044: ldc.i4.0
+			IL_0045: ldarg.0
+			IL_0046: stelem.ref
+			IL_0047: stloc.2
+			IL_0048: ldnull
+			IL_0049: ldftn object Modules.Array_Map_NestedParam/outer/ArrowFunction_L9C16::__js_call__(object, object)
+			IL_004f: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+			IL_0054: ldloc.2
+			IL_0055: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+			IL_005a: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+			IL_005f: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1
+			IL_0064: ldc.i4.1
+			IL_0065: conv.r8
+			IL_0066: ldstr ""
+			IL_006b: ldc.i4.0
+			IL_006c: ldc.i4.0
+			IL_006d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0, float64, string, bool, bool)
+			IL_0072: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0)
+			IL_0077: stloc.3
+			IL_0078: ldc.i4.2
+			IL_0079: newarr [System.Runtime]System.Object
 			IL_007e: dup
-			IL_007f: ldc.i4.1
-			IL_0080: ldloc.0
+			IL_007f: ldc.i4.0
+			IL_0080: ldarg.0
 			IL_0081: stelem.ref
-			IL_0082: ldnull
-			IL_0083: ldloc.2
-			IL_0084: tail.
-			IL_0086: call object Modules.Array_Map_NestedParam/outer/inner::__js_call__(object[], object, object)
-			IL_008b: ret
+			IL_0082: dup
+			IL_0083: ldc.i4.1
+			IL_0084: ldloc.0
+			IL_0085: stelem.ref
+			IL_0086: stloc.2
+			IL_0087: ldloc.2
+			IL_0088: ldnull
+			IL_0089: ldloc.3
+			IL_008a: tail.
+			IL_008c: call object Modules.Array_Map_NestedParam/outer/inner::__js_call__(object[], object, object)
+			IL_0091: ret
 
-			IL_008c: ldnull
-			IL_008d: ret
+			IL_0092: ldnull
+			IL_0093: ret
 		} // end of method outer::__js_call__
 
 	} // end of class outer
@@ -262,7 +276,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x21ff
+			// Method begins at RVA 0x221e
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -286,7 +300,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x222c
+				// Method begins at RVA 0x224b
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -304,7 +318,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2223
+			// Method begins at RVA 0x2242
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -330,7 +344,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 203 (0xcb)
+		// Code size: 215 (0xd7)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Array_Map_NestedParam/Scope,
@@ -340,7 +354,9 @@
 			[4] object[],
 			[5] class [JavaScriptRuntime]JavaScriptRuntime.Array,
 			[6] float64,
-			[7] object
+			[7] float64,
+			[8] object,
+			[9] object
 		)
 
 		IL_0000: newobj instance void Modules.Array_Map_NestedParam/Scope::.ctor()
@@ -351,71 +367,77 @@
 		IL_000d: ldc.i4.0
 		IL_000e: ldloc.0
 		IL_000f: stelem.ref
-		IL_0010: ldc.i4.0
-		IL_0011: ldelem.ref
-		IL_0012: castclass Modules.Array_Map_NestedParam/Scope
-		IL_0017: ldftn object Modules.Array_Map_NestedParam/outer::__js_call__(class Modules.Array_Map_NestedParam/Scope, object, object)
-		IL_001d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-		IL_0022: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1
-		IL_0027: ldc.i4.1
-		IL_0028: conv.r8
-		IL_0029: ldstr "outer"
-		IL_002e: ldc.i4.0
-		IL_002f: ldc.i4.1
-		IL_0030: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0, float64, string, bool, bool)
-		IL_0035: stloc.1
-		IL_0036: nop
-		IL_0037: nop
-		IL_0038: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_003d: stloc.s 4
-		IL_003f: ldc.i4.3
-		IL_0040: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_0045: dup
-		IL_0046: ldstr "a"
-		IL_004b: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-		IL_0050: dup
-		IL_0051: ldstr "bb"
-		IL_0056: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-		IL_005b: dup
-		IL_005c: ldstr "ccc"
-		IL_0061: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-		IL_0066: stloc.s 5
-		IL_0068: ldloc.1
-		IL_0069: ldloc.s 4
-		IL_006b: ldloc.s 5
-		IL_006d: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1, object[], object)
-		IL_0072: stloc.2
-		IL_0073: ldc.r8 0.0
-		IL_007c: stloc.3
-		// loop start (head: IL_007d)
-			IL_007d: ldloc.3
-			IL_007e: stloc.s 6
-			IL_0080: ldloc.s 6
-			IL_0082: ldloc.2
-			IL_0083: ldstr "length"
-			IL_0088: call float64 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItemAsNumber(object, object)
-			IL_008d: clt
-			IL_008f: brfalse IL_00ca
+		IL_0010: stloc.s 4
+		IL_0012: ldloc.s 4
+		IL_0014: ldc.i4.0
+		IL_0015: ldelem.ref
+		IL_0016: castclass Modules.Array_Map_NestedParam/Scope
+		IL_001b: ldftn object Modules.Array_Map_NestedParam/outer::__js_call__(class Modules.Array_Map_NestedParam/Scope, object, object)
+		IL_0021: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_0026: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1
+		IL_002b: ldc.i4.1
+		IL_002c: conv.r8
+		IL_002d: ldstr "outer"
+		IL_0032: ldc.i4.0
+		IL_0033: ldc.i4.1
+		IL_0034: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0, float64, string, bool, bool)
+		IL_0039: stloc.1
+		IL_003a: nop
+		IL_003b: nop
+		IL_003c: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0041: stloc.s 4
+		IL_0043: ldc.i4.3
+		IL_0044: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_0049: dup
+		IL_004a: ldstr "a"
+		IL_004f: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+		IL_0054: dup
+		IL_0055: ldstr "bb"
+		IL_005a: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+		IL_005f: dup
+		IL_0060: ldstr "ccc"
+		IL_0065: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+		IL_006a: stloc.s 5
+		IL_006c: ldloc.1
+		IL_006d: ldloc.s 4
+		IL_006f: ldloc.s 5
+		IL_0071: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1, object[], object)
+		IL_0076: stloc.2
+		IL_0077: ldc.r8 0.0
+		IL_0080: stloc.3
+		// loop start (head: IL_0081)
+			IL_0081: ldloc.3
+			IL_0082: stloc.s 6
+			IL_0084: ldloc.2
+			IL_0085: ldstr "length"
+			IL_008a: call float64 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItemAsNumber(object, object)
+			IL_008f: stloc.s 7
+			IL_0091: ldloc.s 6
+			IL_0093: ldloc.s 7
+			IL_0095: clt
+			IL_0097: brfalse IL_00d6
 
-			IL_0094: ldstr "console"
-			IL_0099: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_009e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_00a3: stloc.s 7
-			IL_00a5: ldloc.s 7
-			IL_00a7: ldstr "log"
-			IL_00ac: ldloc.2
-			IL_00ad: ldloc.3
-			IL_00ae: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-			IL_00b3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_00b8: pop
-			IL_00b9: ldloc.3
-			IL_00ba: ldc.r8 1
-			IL_00c3: add
-			IL_00c4: stloc.3
-			IL_00c5: br IL_007d
+			IL_009c: ldstr "console"
+			IL_00a1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_00a6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_00ab: stloc.s 8
+			IL_00ad: ldloc.2
+			IL_00ae: ldloc.3
+			IL_00af: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+			IL_00b4: stloc.s 9
+			IL_00b6: ldloc.s 8
+			IL_00b8: ldstr "log"
+			IL_00bd: ldloc.s 9
+			IL_00bf: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_00c4: pop
+			IL_00c5: ldloc.3
+			IL_00c6: ldc.r8 1
+			IL_00cf: add
+			IL_00d0: stloc.3
+			IL_00d1: br IL_0081
 		// end loop
 
-		IL_00ca: ret
+		IL_00d6: ret
 	} // end of method Array_Map_NestedParam::__js_module_init__
 
 } // end of class Modules.Array_Map_NestedParam
@@ -427,7 +449,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2235
+		// Method begins at RVA 0x2254
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

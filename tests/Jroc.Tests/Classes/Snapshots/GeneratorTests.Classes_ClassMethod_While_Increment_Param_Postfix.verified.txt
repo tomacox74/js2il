@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2122
+				// Method begins at RVA 0x2126
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -42,7 +42,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2134
+					// Method begins at RVA 0x2138
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -60,7 +60,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x212b
+				// Method begins at RVA 0x212f
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -101,10 +101,11 @@
 			)
 			// Method begins at RVA 0x20dc
 			// Header size: 12
-			// Code size: 49 (0x31)
+			// Code size: 53 (0x35)
 			.maxstack 8
 			.locals init (
-				[0] float64
+				[0] float64,
+				[1] object
 			)
 
 			// loop start
@@ -114,18 +115,22 @@
 				IL_0007: ldloc.0
 				IL_0008: ldc.r8 3
 				IL_0011: clt
-				IL_0013: brfalse IL_002f
+				IL_0013: brfalse IL_0033
 
 				IL_0018: ldloc.0
 				IL_0019: ldc.r8 1
 				IL_0022: add
-				IL_0023: box [System.Runtime]System.Double
-				IL_0028: starg.s n
-				IL_002a: br IL_0000
+				IL_0023: stloc.0
+				IL_0024: ldloc.0
+				IL_0025: box [System.Runtime]System.Double
+				IL_002a: stloc.1
+				IL_002b: ldloc.1
+				IL_002c: starg.s n
+				IL_002e: br IL_0000
 			// end loop
 
-			IL_002f: ldnull
-			IL_0030: ret
+			IL_0033: ldnull
+			IL_0034: ret
 		} // end of method Counter::run
 
 	} // end of class Counter
@@ -137,7 +142,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2119
+			// Method begins at RVA 0x211d
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -217,7 +222,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x213d
+		// Method begins at RVA 0x2141
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

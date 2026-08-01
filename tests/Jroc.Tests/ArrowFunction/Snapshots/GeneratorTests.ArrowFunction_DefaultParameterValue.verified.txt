@@ -26,7 +26,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x231d
+					// Method begins at RVA 0x232b
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -47,7 +47,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2314
+				// Method begins at RVA 0x2322
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -71,7 +71,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x21f4
+			// Method begins at RVA 0x2200
 			// Header size: 12
 			// Code size: 56 (0x38)
 			.maxstack 8
@@ -124,7 +124,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x232f
+					// Method begins at RVA 0x233d
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -146,7 +146,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2326
+				// Method begins at RVA 0x2334
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -171,7 +171,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2238
+			// Method begins at RVA 0x2244
 			// Header size: 12
 			// Code size: 61 (0x3d)
 			.maxstack 8
@@ -225,7 +225,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2341
+					// Method begins at RVA 0x234f
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -248,7 +248,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2338
+				// Method begins at RVA 0x2346
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -274,13 +274,14 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2284
+			// Method begins at RVA 0x2290
 			// Header size: 12
-			// Code size: 123 (0x7b)
+			// Code size: 125 (0x7d)
 			.maxstack 8
 			.locals init (
 				[0] object,
-				[1] float64
+				[1] float64,
+				[2] object
 			)
 
 			IL_0000: ldarg.1
@@ -317,14 +318,16 @@
 			IL_0060: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
 			IL_0065: mul
 			IL_0066: stloc.1
-			IL_0067: ldloc.0
-			IL_0068: ldstr "log"
-			IL_006d: ldloc.1
-			IL_006e: box [System.Runtime]System.Double
-			IL_0073: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_0078: pop
-			IL_0079: ldnull
-			IL_007a: ret
+			IL_0067: ldloc.1
+			IL_0068: box [System.Runtime]System.Double
+			IL_006d: stloc.2
+			IL_006e: ldloc.0
+			IL_006f: ldstr "log"
+			IL_0074: ldloc.2
+			IL_0075: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_007a: pop
+			IL_007b: ldnull
+			IL_007c: ret
 		} // end of method ArrowFunction_L12C15::__js_call__
 
 	} // end of class ArrowFunction_L12C15
@@ -336,7 +339,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x230b
+			// Method begins at RVA 0x2319
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -362,143 +365,150 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 406 (0x196)
+		// Code size: 418 (0x1a2)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ArrowFunction_DefaultParameterValue/Scope,
 			[1] object,
 			[2] object,
 			[3] object,
-			[4] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1,
-			[5] class [System.Runtime]System.Func`4<object, float64, object, object>,
-			[6] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes3
+			[4] object[],
+			[5] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1,
+			[6] class [System.Runtime]System.Func`4<object, float64, object, object>,
+			[7] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes3
 		)
 
 		IL_0000: newobj instance void Modules.ArrowFunction_DefaultParameterValue/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: nop
-		IL_0007: ldnull
-		IL_0008: ldftn object Modules.ArrowFunction_DefaultParameterValue/ArrowFunction_L4C15::__js_call__(object, object)
-		IL_000e: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-		IL_0013: ldc.i4.1
-		IL_0014: newarr [System.Runtime]System.Object
-		IL_0019: dup
-		IL_001a: ldc.i4.0
-		IL_001b: ldloc.0
-		IL_001c: stelem.ref
-		IL_001d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_0022: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_0027: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1
-		IL_002c: ldc.i4.0
-		IL_002d: conv.r8
-		IL_002e: ldstr ""
-		IL_0033: ldc.i4.0
-		IL_0034: ldc.i4.0
-		IL_0035: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0, float64, string, bool, bool)
-		IL_003a: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0)
-		IL_003f: stloc.s 4
-		IL_0041: ldloc.s 4
-		IL_0043: ldstr "greet"
-		IL_0048: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetFunctionInferredName(object, object)
-		IL_004d: stloc.1
-		IL_004e: ldnull
-		IL_004f: ldftn object Modules.ArrowFunction_DefaultParameterValue/ArrowFunction_L8C13::__js_call__(object, float64, object)
-		IL_0055: newobj instance void class [System.Runtime]System.Func`4<object, float64, object, object>::.ctor(object, native int)
-		IL_005a: ldc.i4.1
-		IL_005b: newarr [System.Runtime]System.Object
-		IL_0060: dup
-		IL_0061: ldc.i4.0
-		IL_0062: ldloc.0
-		IL_0063: stelem.ref
-		IL_0064: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_0069: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_006e: castclass class [System.Runtime]System.Func`4<object, float64, object, object>
-		IL_0073: ldc.i4.1
-		IL_0074: conv.r8
-		IL_0075: ldstr ""
-		IL_007a: ldc.i4.0
-		IL_007b: ldc.i4.0
-		IL_007c: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [System.Runtime]System.Func`4<object, float64, object, object>>(!!0, float64, string, bool, bool)
-		IL_0081: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [System.Runtime]System.Func`4<object, float64, object, object>>(!!0)
-		IL_0086: stloc.s 5
-		IL_0088: ldloc.s 5
-		IL_008a: ldstr "add"
-		IL_008f: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetFunctionInferredName(object, object)
-		IL_0094: stloc.2
-		IL_0095: ldnull
-		IL_0096: ldftn object Modules.ArrowFunction_DefaultParameterValue/ArrowFunction_L12C15::__js_call__(object, object, object, object)
-		IL_009c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes3::.ctor(object, native int)
-		IL_00a1: ldc.i4.1
-		IL_00a2: newarr [System.Runtime]System.Object
-		IL_00a7: dup
-		IL_00a8: ldc.i4.0
-		IL_00a9: ldloc.0
-		IL_00aa: stelem.ref
-		IL_00ab: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_00b0: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_00b5: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes3
-		IL_00ba: ldc.i4.0
-		IL_00bb: conv.r8
-		IL_00bc: ldstr ""
-		IL_00c1: ldc.i4.0
-		IL_00c2: ldc.i4.0
-		IL_00c3: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes3>(!!0, float64, string, bool, bool)
-		IL_00c8: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes3>(!!0)
-		IL_00cd: stloc.s 6
-		IL_00cf: ldloc.s 6
-		IL_00d1: ldstr "multi"
-		IL_00d6: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetFunctionInferredName(object, object)
-		IL_00db: stloc.3
-		IL_00dc: ldnull
-		IL_00dd: ldnull
-		IL_00de: call object Modules.ArrowFunction_DefaultParameterValue/ArrowFunction_L4C15::__js_call__(object, object)
-		IL_00e3: pop
-		IL_00e4: ldnull
-		IL_00e5: ldstr "Alice"
+		IL_0007: ldc.i4.1
+		IL_0008: newarr [System.Runtime]System.Object
+		IL_000d: dup
+		IL_000e: ldc.i4.0
+		IL_000f: ldloc.0
+		IL_0010: stelem.ref
+		IL_0011: stloc.s 4
+		IL_0013: ldnull
+		IL_0014: ldftn object Modules.ArrowFunction_DefaultParameterValue/ArrowFunction_L4C15::__js_call__(object, object)
+		IL_001a: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_001f: ldloc.s 4
+		IL_0021: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_0026: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_002b: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1
+		IL_0030: ldc.i4.0
+		IL_0031: conv.r8
+		IL_0032: ldstr ""
+		IL_0037: ldc.i4.0
+		IL_0038: ldc.i4.0
+		IL_0039: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0, float64, string, bool, bool)
+		IL_003e: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0)
+		IL_0043: stloc.s 5
+		IL_0045: ldloc.s 5
+		IL_0047: ldstr "greet"
+		IL_004c: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetFunctionInferredName(object, object)
+		IL_0051: stloc.1
+		IL_0052: ldc.i4.1
+		IL_0053: newarr [System.Runtime]System.Object
+		IL_0058: dup
+		IL_0059: ldc.i4.0
+		IL_005a: ldloc.0
+		IL_005b: stelem.ref
+		IL_005c: stloc.s 4
+		IL_005e: ldnull
+		IL_005f: ldftn object Modules.ArrowFunction_DefaultParameterValue/ArrowFunction_L8C13::__js_call__(object, float64, object)
+		IL_0065: newobj instance void class [System.Runtime]System.Func`4<object, float64, object, object>::.ctor(object, native int)
+		IL_006a: ldloc.s 4
+		IL_006c: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_0071: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_0076: castclass class [System.Runtime]System.Func`4<object, float64, object, object>
+		IL_007b: ldc.i4.1
+		IL_007c: conv.r8
+		IL_007d: ldstr ""
+		IL_0082: ldc.i4.0
+		IL_0083: ldc.i4.0
+		IL_0084: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [System.Runtime]System.Func`4<object, float64, object, object>>(!!0, float64, string, bool, bool)
+		IL_0089: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [System.Runtime]System.Func`4<object, float64, object, object>>(!!0)
+		IL_008e: stloc.s 6
+		IL_0090: ldloc.s 6
+		IL_0092: ldstr "add"
+		IL_0097: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetFunctionInferredName(object, object)
+		IL_009c: stloc.2
+		IL_009d: ldc.i4.1
+		IL_009e: newarr [System.Runtime]System.Object
+		IL_00a3: dup
+		IL_00a4: ldc.i4.0
+		IL_00a5: ldloc.0
+		IL_00a6: stelem.ref
+		IL_00a7: stloc.s 4
+		IL_00a9: ldnull
+		IL_00aa: ldftn object Modules.ArrowFunction_DefaultParameterValue/ArrowFunction_L12C15::__js_call__(object, object, object, object)
+		IL_00b0: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes3::.ctor(object, native int)
+		IL_00b5: ldloc.s 4
+		IL_00b7: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_00bc: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_00c1: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes3
+		IL_00c6: ldc.i4.0
+		IL_00c7: conv.r8
+		IL_00c8: ldstr ""
+		IL_00cd: ldc.i4.0
+		IL_00ce: ldc.i4.0
+		IL_00cf: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes3>(!!0, float64, string, bool, bool)
+		IL_00d4: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes3>(!!0)
+		IL_00d9: stloc.s 7
+		IL_00db: ldloc.s 7
+		IL_00dd: ldstr "multi"
+		IL_00e2: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetFunctionInferredName(object, object)
+		IL_00e7: stloc.3
+		IL_00e8: ldnull
+		IL_00e9: ldnull
 		IL_00ea: call object Modules.ArrowFunction_DefaultParameterValue/ArrowFunction_L4C15::__js_call__(object, object)
 		IL_00ef: pop
 		IL_00f0: ldnull
-		IL_00f1: ldc.r8 5
-		IL_00fa: ldnull
-		IL_00fb: call object Modules.ArrowFunction_DefaultParameterValue/ArrowFunction_L8C13::__js_call__(object, float64, object)
-		IL_0100: pop
-		IL_0101: ldnull
-		IL_0102: ldc.r8 5
-		IL_010b: ldc.r8 15
-		IL_0114: box [System.Runtime]System.Double
-		IL_0119: call object Modules.ArrowFunction_DefaultParameterValue/ArrowFunction_L8C13::__js_call__(object, float64, object)
-		IL_011e: pop
-		IL_011f: ldnull
-		IL_0120: ldnull
-		IL_0121: ldnull
-		IL_0122: ldnull
-		IL_0123: call object Modules.ArrowFunction_DefaultParameterValue/ArrowFunction_L12C15::__js_call__(object, object, object, object)
-		IL_0128: pop
-		IL_0129: ldnull
-		IL_012a: ldc.r8 2
-		IL_0133: box [System.Runtime]System.Double
-		IL_0138: ldnull
-		IL_0139: ldnull
-		IL_013a: call object Modules.ArrowFunction_DefaultParameterValue/ArrowFunction_L12C15::__js_call__(object, object, object, object)
-		IL_013f: pop
-		IL_0140: ldnull
-		IL_0141: ldc.r8 2
-		IL_014a: box [System.Runtime]System.Double
-		IL_014f: ldc.r8 4
-		IL_0158: box [System.Runtime]System.Double
-		IL_015d: ldnull
-		IL_015e: call object Modules.ArrowFunction_DefaultParameterValue/ArrowFunction_L12C15::__js_call__(object, object, object, object)
-		IL_0163: pop
-		IL_0164: ldnull
-		IL_0165: ldc.r8 2
-		IL_016e: box [System.Runtime]System.Double
-		IL_0173: ldc.r8 4
-		IL_017c: box [System.Runtime]System.Double
-		IL_0181: ldc.r8 3
-		IL_018a: box [System.Runtime]System.Double
-		IL_018f: call object Modules.ArrowFunction_DefaultParameterValue/ArrowFunction_L12C15::__js_call__(object, object, object, object)
-		IL_0194: pop
-		IL_0195: ret
+		IL_00f1: ldstr "Alice"
+		IL_00f6: call object Modules.ArrowFunction_DefaultParameterValue/ArrowFunction_L4C15::__js_call__(object, object)
+		IL_00fb: pop
+		IL_00fc: ldnull
+		IL_00fd: ldc.r8 5
+		IL_0106: ldnull
+		IL_0107: call object Modules.ArrowFunction_DefaultParameterValue/ArrowFunction_L8C13::__js_call__(object, float64, object)
+		IL_010c: pop
+		IL_010d: ldnull
+		IL_010e: ldc.r8 5
+		IL_0117: ldc.r8 15
+		IL_0120: box [System.Runtime]System.Double
+		IL_0125: call object Modules.ArrowFunction_DefaultParameterValue/ArrowFunction_L8C13::__js_call__(object, float64, object)
+		IL_012a: pop
+		IL_012b: ldnull
+		IL_012c: ldnull
+		IL_012d: ldnull
+		IL_012e: ldnull
+		IL_012f: call object Modules.ArrowFunction_DefaultParameterValue/ArrowFunction_L12C15::__js_call__(object, object, object, object)
+		IL_0134: pop
+		IL_0135: ldnull
+		IL_0136: ldc.r8 2
+		IL_013f: box [System.Runtime]System.Double
+		IL_0144: ldnull
+		IL_0145: ldnull
+		IL_0146: call object Modules.ArrowFunction_DefaultParameterValue/ArrowFunction_L12C15::__js_call__(object, object, object, object)
+		IL_014b: pop
+		IL_014c: ldnull
+		IL_014d: ldc.r8 2
+		IL_0156: box [System.Runtime]System.Double
+		IL_015b: ldc.r8 4
+		IL_0164: box [System.Runtime]System.Double
+		IL_0169: ldnull
+		IL_016a: call object Modules.ArrowFunction_DefaultParameterValue/ArrowFunction_L12C15::__js_call__(object, object, object, object)
+		IL_016f: pop
+		IL_0170: ldnull
+		IL_0171: ldc.r8 2
+		IL_017a: box [System.Runtime]System.Double
+		IL_017f: ldc.r8 4
+		IL_0188: box [System.Runtime]System.Double
+		IL_018d: ldc.r8 3
+		IL_0196: box [System.Runtime]System.Double
+		IL_019b: call object Modules.ArrowFunction_DefaultParameterValue/ArrowFunction_L12C15::__js_call__(object, object, object, object)
+		IL_01a0: pop
+		IL_01a1: ret
 	} // end of method ArrowFunction_DefaultParameterValue::__js_module_init__
 
 } // end of class Modules.ArrowFunction_DefaultParameterValue
@@ -510,7 +520,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x234a
+		// Method begins at RVA 0x2358
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

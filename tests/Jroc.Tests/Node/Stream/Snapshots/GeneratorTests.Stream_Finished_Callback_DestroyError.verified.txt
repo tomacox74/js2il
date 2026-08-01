@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21a4
+				// Method begins at RVA 0x21ba
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -45,15 +45,16 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 04 00 00 02
 			)
-			// Method begins at RVA 0x2108
+			// Method begins at RVA 0x2114
 			// Header size: 12
-			// Code size: 135 (0x87)
+			// Code size: 145 (0x91)
 			.maxstack 8
 			.locals init (
 				[0] object,
 				[1] object,
 				[2] bool,
-				[3] object
+				[3] object,
+				[4] object
 			)
 
 			IL_0000: ldstr "console"
@@ -64,44 +65,50 @@
 			IL_0011: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
 			IL_0016: stloc.2
 			IL_0017: ldloc.2
-			IL_0018: brfalse IL_002e
+			IL_0018: brfalse IL_0030
 
 			IL_001d: ldarg.2
 			IL_001e: ldstr "message"
 			IL_0023: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0028: stloc.0
-			IL_0029: br IL_0034
+			IL_0028: stloc.3
+			IL_0029: ldloc.3
+			IL_002a: stloc.0
+			IL_002b: br IL_0036
 
-			IL_002e: ldstr "null"
-			IL_0033: stloc.0
+			IL_0030: ldstr "null"
+			IL_0035: stloc.0
 
-			IL_0034: ldstr "callback:"
-			IL_0039: ldloc.0
-			IL_003a: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_003f: stloc.3
-			IL_0040: ldloc.1
-			IL_0041: ldstr "log"
-			IL_0046: ldloc.3
-			IL_0047: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_004c: pop
-			IL_004d: ldstr "console"
-			IL_0052: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_0057: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_005c: stloc.1
-			IL_005d: ldstr "destroyed:"
-			IL_0062: ldarg.0
-			IL_0063: ldfld object Modules.Stream_Finished_Callback_DestroyError/Scope::readable
-			IL_0068: ldstr "destroyed"
-			IL_006d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0072: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_0077: stloc.3
-			IL_0078: ldloc.1
-			IL_0079: ldstr "log"
-			IL_007e: ldloc.3
-			IL_007f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_0084: pop
-			IL_0085: ldnull
-			IL_0086: ret
+			IL_0036: ldstr "callback:"
+			IL_003b: ldloc.0
+			IL_003c: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0041: stloc.s 4
+			IL_0043: ldloc.1
+			IL_0044: ldstr "log"
+			IL_0049: ldloc.s 4
+			IL_004b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_0050: pop
+			IL_0051: ldstr "console"
+			IL_0056: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_005b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0060: stloc.1
+			IL_0061: ldarg.0
+			IL_0062: ldfld object Modules.Stream_Finished_Callback_DestroyError/Scope::readable
+			IL_0067: stloc.3
+			IL_0068: ldloc.3
+			IL_0069: ldstr "destroyed"
+			IL_006e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0073: stloc.3
+			IL_0074: ldstr "destroyed:"
+			IL_0079: ldloc.3
+			IL_007a: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_007f: stloc.s 4
+			IL_0081: ldloc.1
+			IL_0082: ldstr "log"
+			IL_0087: ldloc.s 4
+			IL_0089: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_008e: pop
+			IL_008f: ldnull
+			IL_0090: ret
 		} // end of method FunctionExpression_L7C26::__js_call__
 
 	} // end of class FunctionExpression_L7C26
@@ -120,7 +127,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x219b
+			// Method begins at RVA 0x21b1
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -146,14 +153,15 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 169 (0xa9)
+		// Code size: 183 (0xb7)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Stream_Finished_Callback_DestroyError/Scope,
 			[1] object,
 			[2] object,
-			[3] object,
-			[4] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1
+			[3] object[],
+			[4] object,
+			[5] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1
 		)
 
 		IL_0000: newobj instance void Modules.Stream_Finished_Callback_DestroyError/Scope::.ctor()
@@ -166,58 +174,66 @@
 		IL_0013: ldloc.1
 		IL_0014: ldstr "Readable"
 		IL_0019: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_001e: ldc.i4.0
-		IL_001f: newarr [System.Runtime]System.Object
-		IL_0024: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::ConstructValue(object, object[])
-		IL_0029: stloc.2
-		IL_002a: ldloc.0
-		IL_002b: ldloc.2
-		IL_002c: stfld object Modules.Stream_Finished_Callback_DestroyError/Scope::readable
-		IL_0031: ldloc.1
-		IL_0032: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0037: stloc.2
-		IL_0038: ldloc.0
-		IL_0039: ldfld object Modules.Stream_Finished_Callback_DestroyError/Scope::readable
-		IL_003e: stloc.3
-		IL_003f: ldc.i4.1
-		IL_0040: newarr [System.Runtime]System.Object
-		IL_0045: dup
-		IL_0046: ldc.i4.0
-		IL_0047: ldloc.0
-		IL_0048: stelem.ref
-		IL_0049: ldc.i4.0
-		IL_004a: ldelem.ref
-		IL_004b: castclass Modules.Stream_Finished_Callback_DestroyError/Scope
-		IL_0050: ldftn object Modules.Stream_Finished_Callback_DestroyError/FunctionExpression_L7C26::__js_call__(class Modules.Stream_Finished_Callback_DestroyError/Scope, object, object)
-		IL_0056: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-		IL_005b: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1
-		IL_0060: ldc.i4.1
-		IL_0061: conv.r8
-		IL_0062: ldstr ""
-		IL_0067: ldc.i4.0
-		IL_0068: ldc.i4.1
-		IL_0069: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0, float64, string, bool, bool)
-		IL_006e: stloc.s 4
-		IL_0070: ldloc.2
-		IL_0071: ldstr "finished"
-		IL_0076: ldloc.3
-		IL_0077: ldloc.s 4
-		IL_0079: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_007e: pop
-		IL_007f: ldloc.0
-		IL_0080: ldfld object Modules.Stream_Finished_Callback_DestroyError/Scope::readable
-		IL_0085: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_008a: stloc.3
-		IL_008b: ldstr "read boom"
-		IL_0090: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-		IL_0095: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Error::.ctor(string)
-		IL_009a: stloc.2
-		IL_009b: ldloc.3
-		IL_009c: ldstr "destroy"
-		IL_00a1: ldloc.2
-		IL_00a2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00a7: pop
-		IL_00a8: ret
+		IL_001e: stloc.2
+		IL_001f: ldc.i4.0
+		IL_0020: newarr [System.Runtime]System.Object
+		IL_0025: stloc.3
+		IL_0026: ldloc.2
+		IL_0027: ldloc.3
+		IL_0028: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::ConstructValue(object, object[])
+		IL_002d: stloc.2
+		IL_002e: ldloc.0
+		IL_002f: ldloc.2
+		IL_0030: stfld object Modules.Stream_Finished_Callback_DestroyError/Scope::readable
+		IL_0035: ldloc.1
+		IL_0036: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_003b: stloc.2
+		IL_003c: ldloc.0
+		IL_003d: ldfld object Modules.Stream_Finished_Callback_DestroyError/Scope::readable
+		IL_0042: stloc.s 4
+		IL_0044: ldc.i4.1
+		IL_0045: newarr [System.Runtime]System.Object
+		IL_004a: dup
+		IL_004b: ldc.i4.0
+		IL_004c: ldloc.0
+		IL_004d: stelem.ref
+		IL_004e: stloc.3
+		IL_004f: ldloc.3
+		IL_0050: ldc.i4.0
+		IL_0051: ldelem.ref
+		IL_0052: castclass Modules.Stream_Finished_Callback_DestroyError/Scope
+		IL_0057: ldftn object Modules.Stream_Finished_Callback_DestroyError/FunctionExpression_L7C26::__js_call__(class Modules.Stream_Finished_Callback_DestroyError/Scope, object, object)
+		IL_005d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_0062: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1
+		IL_0067: ldc.i4.1
+		IL_0068: conv.r8
+		IL_0069: ldstr ""
+		IL_006e: ldc.i4.0
+		IL_006f: ldc.i4.1
+		IL_0070: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0, float64, string, bool, bool)
+		IL_0075: stloc.s 5
+		IL_0077: ldloc.2
+		IL_0078: ldstr "finished"
+		IL_007d: ldloc.s 4
+		IL_007f: ldloc.s 5
+		IL_0081: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_0086: pop
+		IL_0087: ldloc.0
+		IL_0088: ldfld object Modules.Stream_Finished_Callback_DestroyError/Scope::readable
+		IL_008d: stloc.s 4
+		IL_008f: ldloc.s 4
+		IL_0091: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0096: stloc.s 4
+		IL_0098: ldstr "read boom"
+		IL_009d: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+		IL_00a2: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Error::.ctor(string)
+		IL_00a7: stloc.2
+		IL_00a8: ldloc.s 4
+		IL_00aa: ldstr "destroy"
+		IL_00af: ldloc.2
+		IL_00b0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_00b5: pop
+		IL_00b6: ret
 	} // end of method Stream_Finished_Callback_DestroyError::__js_module_init__
 
 } // end of class Modules.Stream_Finished_Callback_DestroyError
@@ -229,7 +245,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21ad
+		// Method begins at RVA 0x21c3
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

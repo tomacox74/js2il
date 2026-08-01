@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2091
+			// Method begins at RVA 0x2093
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,12 +40,13 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 53 (0x35)
+		// Code size: 55 (0x37)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Map_Constructor_Empty/Scope,
 			[1] class [JavaScriptRuntime]JavaScriptRuntime.Map,
-			[2] object
+			[2] object,
+			[3] object
 		)
 
 		IL_0000: newobj instance void Modules.Map_Constructor_Empty/Scope::.ctor()
@@ -57,14 +58,16 @@
 		IL_0012: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
 		IL_0017: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
 		IL_001c: stloc.2
-		IL_001d: ldloc.2
-		IL_001e: ldstr "log"
-		IL_0023: ldloc.1
-		IL_0024: ldstr "size"
-		IL_0029: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_002e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0033: pop
-		IL_0034: ret
+		IL_001d: ldloc.1
+		IL_001e: ldstr "size"
+		IL_0023: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0028: stloc.3
+		IL_0029: ldloc.2
+		IL_002a: ldstr "log"
+		IL_002f: ldloc.3
+		IL_0030: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0035: pop
+		IL_0036: ret
 	} // end of method Map_Constructor_Empty::__js_module_init__
 
 } // end of class Modules.Map_Constructor_Empty
@@ -76,7 +79,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x209a
+		// Method begins at RVA 0x209c
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

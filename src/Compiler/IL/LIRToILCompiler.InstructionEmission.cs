@@ -15,8 +15,7 @@ internal sealed partial class LIRToILCompiler
         InstructionEncoder ilEncoder,
         TempLocalAllocation allocation,
         MethodDescriptor methodDescriptor,
-        Dictionary<int, LabelHandle> labelMap,
-        StackifyResult stackifyResult)
+        Dictionary<int, LabelHandle> labelMap)
     {
         var tempsAndExceptionsResult = TryCompileInstructionToIL_TempsAndExceptions(
             instruction,
@@ -77,8 +76,7 @@ internal sealed partial class LIRToILCompiler
             instruction,
             ilEncoder,
             allocation,
-            methodDescriptor,
-            stackifyResult);
+            methodDescriptor);
 
         if (callsResult.HasValue)
         {

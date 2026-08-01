@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x218f
+			// Method begins at RVA 0x2197
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -42,7 +42,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x21aa
+					// Method begins at RVA 0x21b2
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -62,7 +62,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x21b3
+					// Method begins at RVA 0x21bb
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -80,7 +80,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21a1
+				// Method begins at RVA 0x21a9
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -98,7 +98,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2198
+			// Method begins at RVA 0x21a0
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -124,15 +124,16 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 307 (0x133)
+		// Code size: 315 (0x13b)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ControlFlow_If_Truthiness/Scope,
 			[1] class [JavaScriptRuntime]JavaScriptRuntime.Array,
 			[2] float64,
 			[3] float64,
-			[4] bool,
-			[5] object
+			[4] float64,
+			[5] object,
+			[6] bool
 		)
 
 		IL_0000: newobj instance void Modules.ControlFlow_If_Truthiness/Scope::.ctor()
@@ -186,49 +187,53 @@
 		// loop start (head: IL_00b1)
 			IL_00b1: ldloc.2
 			IL_00b2: stloc.3
-			IL_00b3: ldloc.3
-			IL_00b4: ldloc.1
-			IL_00b5: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::get_length()
-			IL_00ba: clt
-			IL_00bc: brfalse IL_0132
+			IL_00b3: ldloc.1
+			IL_00b4: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::get_length()
+			IL_00b9: stloc.s 4
+			IL_00bb: ldloc.3
+			IL_00bc: ldloc.s 4
+			IL_00be: clt
+			IL_00c0: brfalse IL_013a
 
-			IL_00c1: ldloc.1
-			IL_00c2: ldloc.2
-			IL_00c3: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
-			IL_00c8: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-			IL_00cd: stloc.s 4
-			IL_00cf: ldloc.s 4
-			IL_00d1: brfalse IL_00fe
+			IL_00c5: ldloc.1
+			IL_00c6: ldloc.2
+			IL_00c7: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
+			IL_00cc: stloc.s 5
+			IL_00ce: ldloc.s 5
+			IL_00d0: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+			IL_00d5: stloc.s 6
+			IL_00d7: ldloc.s 6
+			IL_00d9: brfalse IL_0106
 
-			IL_00d6: ldstr "console"
-			IL_00db: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_00e0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_00e5: stloc.s 5
-			IL_00e7: ldloc.s 5
-			IL_00e9: ldstr "log"
-			IL_00ee: ldstr "T"
-			IL_00f3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_00f8: pop
-			IL_00f9: br IL_0121
+			IL_00de: ldstr "console"
+			IL_00e3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_00e8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_00ed: stloc.s 5
+			IL_00ef: ldloc.s 5
+			IL_00f1: ldstr "log"
+			IL_00f6: ldstr "T"
+			IL_00fb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_0100: pop
+			IL_0101: br IL_0129
 
-			IL_00fe: ldstr "console"
-			IL_0103: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_0108: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_010d: stloc.s 5
-			IL_010f: ldloc.s 5
-			IL_0111: ldstr "log"
-			IL_0116: ldstr "F"
-			IL_011b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_0120: pop
+			IL_0106: ldstr "console"
+			IL_010b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_0110: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0115: stloc.s 5
+			IL_0117: ldloc.s 5
+			IL_0119: ldstr "log"
+			IL_011e: ldstr "F"
+			IL_0123: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_0128: pop
 
-			IL_0121: ldloc.2
-			IL_0122: ldc.r8 1
-			IL_012b: add
-			IL_012c: stloc.2
-			IL_012d: br IL_00b1
+			IL_0129: ldloc.2
+			IL_012a: ldc.r8 1
+			IL_0133: add
+			IL_0134: stloc.2
+			IL_0135: br IL_00b1
 		// end loop
 
-		IL_0132: ret
+		IL_013a: ret
 	} // end of method ControlFlow_If_Truthiness::__js_module_init__
 
 } // end of class Modules.ControlFlow_If_Truthiness
@@ -240,7 +245,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21bc
+		// Method begins at RVA 0x21c4
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

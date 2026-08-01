@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2245
+				// Method begins at RVA 0x2276
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -45,18 +45,23 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 04 00 00 02
 			)
-			// Method begins at RVA 0x222c
-			// Header size: 1
-			// Code size: 15 (0xf)
+			// Method begins at RVA 0x2250
+			// Header size: 12
+			// Code size: 17 (0x11)
 			.maxstack 8
+			.locals init (
+				[0] class [JavaScriptRuntime]JavaScriptRuntime.Array
+			)
 
 			IL_0000: ldarg.0
 			IL_0001: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Stream_Pipe_Basic/Scope::writtenData
-			IL_0006: ldarg.2
-			IL_0007: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object)
-			IL_000c: pop
-			IL_000d: ldnull
-			IL_000e: ret
+			IL_0006: stloc.0
+			IL_0007: ldloc.0
+			IL_0008: ldarg.2
+			IL_0009: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object)
+			IL_000e: pop
+			IL_000f: ldnull
+			IL_0010: ret
 		} // end of method FunctionExpression_L13C18::__js_call__
 
 	} // end of class FunctionExpression_L13C18
@@ -76,7 +81,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x223c
+			// Method begins at RVA 0x226d
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -100,7 +105,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2257
+				// Method begins at RVA 0x2288
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -118,7 +123,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x224e
+			// Method begins at RVA 0x227f
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -144,7 +149,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 464 (0x1d0)
+		// Code size: 500 (0x1f4)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Stream_Pipe_Basic/Scope,
@@ -154,11 +159,15 @@
 			[4] object,
 			[5] object,
 			[6] float64,
-			[7] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1,
-			[8] object,
-			[9] object,
-			[10] float64,
-			[11] object
+			[7] object[],
+			[8] class [JavaScriptRuntime]JavaScriptRuntime.Array,
+			[9] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1,
+			[10] object,
+			[11] object,
+			[12] float64,
+			[13] float64,
+			[14] object,
+			[15] object
 		)
 
 		IL_0000: newobj instance void Modules.Stream_Pipe_Basic/Scope::.ctor()
@@ -176,142 +185,160 @@
 		IL_0020: ldstr "Writable"
 		IL_0025: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
 		IL_002a: stloc.3
-		IL_002b: ldloc.2
-		IL_002c: ldc.i4.0
-		IL_002d: newarr [System.Runtime]System.Object
-		IL_0032: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::ConstructValue(object, object[])
-		IL_0037: stloc.s 4
-		IL_0039: ldloc.3
-		IL_003a: ldc.i4.0
-		IL_003b: newarr [System.Runtime]System.Object
-		IL_0040: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::ConstructValue(object, object[])
-		IL_0045: stloc.s 5
-		IL_0047: ldloc.0
-		IL_0048: ldc.i4.0
-		IL_0049: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_004e: stfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Stream_Pipe_Basic/Scope::writtenData
-		IL_0053: ldc.i4.1
-		IL_0054: newarr [System.Runtime]System.Object
-		IL_0059: dup
-		IL_005a: ldc.i4.0
-		IL_005b: ldloc.0
-		IL_005c: stelem.ref
-		IL_005d: ldc.i4.0
-		IL_005e: ldelem.ref
-		IL_005f: castclass Modules.Stream_Pipe_Basic/Scope
-		IL_0064: ldftn object Modules.Stream_Pipe_Basic/FunctionExpression_L13C18::__js_call__(class Modules.Stream_Pipe_Basic/Scope, object, object)
-		IL_006a: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-		IL_006f: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1
-		IL_0074: ldc.i4.1
-		IL_0075: conv.r8
-		IL_0076: ldstr ""
-		IL_007b: ldc.i4.0
-		IL_007c: ldc.i4.1
-		IL_007d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0, float64, string, bool, bool)
-		IL_0082: stloc.s 7
-		IL_0084: ldloc.s 5
-		IL_0086: ldstr "_write"
-		IL_008b: ldloc.s 7
-		IL_008d: ldc.i4.1
-		IL_008e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
-		IL_0093: pop
-		IL_0094: ldloc.s 4
-		IL_0096: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_009b: stloc.s 8
-		IL_009d: ldloc.s 8
-		IL_009f: ldstr "pipe"
-		IL_00a4: ldloc.s 5
-		IL_00a6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00ab: pop
-		IL_00ac: ldloc.s 4
-		IL_00ae: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00b3: stloc.s 8
-		IL_00b5: ldloc.s 8
-		IL_00b7: ldstr "push"
-		IL_00bc: ldstr "data1"
-		IL_00c1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00c6: pop
-		IL_00c7: ldloc.s 4
-		IL_00c9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00ce: stloc.s 8
-		IL_00d0: ldloc.s 8
-		IL_00d2: ldstr "push"
-		IL_00d7: ldstr "data2"
-		IL_00dc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00e1: pop
-		IL_00e2: ldloc.s 4
-		IL_00e4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00e9: stloc.s 8
-		IL_00eb: ldloc.s 8
-		IL_00ed: ldstr "push"
-		IL_00f2: ldstr "data3"
-		IL_00f7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00fc: pop
-		IL_00fd: ldloc.s 4
-		IL_00ff: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0104: stloc.s 8
-		IL_0106: ldloc.s 8
-		IL_0108: ldstr "push"
-		IL_010d: ldc.i4.0
-		IL_010e: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
-		IL_0113: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0118: pop
-		IL_0119: ldstr "console"
-		IL_011e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0123: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0128: stloc.s 8
-		IL_012a: ldloc.0
-		IL_012b: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Stream_Pipe_Basic/Scope::writtenData
-		IL_0130: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::get_length()
-		IL_0135: box [System.Runtime]System.Double
-		IL_013a: stloc.s 9
-		IL_013c: ldloc.s 8
-		IL_013e: ldstr "log"
-		IL_0143: ldstr "Written data count:"
-		IL_0148: ldloc.s 9
-		IL_014a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_014f: pop
-		IL_0150: ldc.r8 0.0
-		IL_0159: stloc.s 6
-		// loop start (head: IL_015b)
-			IL_015b: ldloc.s 6
-			IL_015d: stloc.s 10
-			IL_015f: ldloc.s 10
-			IL_0161: ldloc.0
-			IL_0162: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Stream_Pipe_Basic/Scope::writtenData
-			IL_0167: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::get_length()
-			IL_016c: clt
-			IL_016e: brfalse IL_01cf
+		IL_002b: ldc.i4.0
+		IL_002c: newarr [System.Runtime]System.Object
+		IL_0031: stloc.s 7
+		IL_0033: ldloc.2
+		IL_0034: ldloc.s 7
+		IL_0036: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::ConstructValue(object, object[])
+		IL_003b: stloc.s 4
+		IL_003d: ldc.i4.0
+		IL_003e: newarr [System.Runtime]System.Object
+		IL_0043: stloc.s 7
+		IL_0045: ldloc.3
+		IL_0046: ldloc.s 7
+		IL_0048: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::ConstructValue(object, object[])
+		IL_004d: stloc.s 5
+		IL_004f: ldc.i4.0
+		IL_0050: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_0055: stloc.s 8
+		IL_0057: ldloc.0
+		IL_0058: ldloc.s 8
+		IL_005a: stfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Stream_Pipe_Basic/Scope::writtenData
+		IL_005f: ldc.i4.1
+		IL_0060: newarr [System.Runtime]System.Object
+		IL_0065: dup
+		IL_0066: ldc.i4.0
+		IL_0067: ldloc.0
+		IL_0068: stelem.ref
+		IL_0069: stloc.s 7
+		IL_006b: ldloc.s 7
+		IL_006d: ldc.i4.0
+		IL_006e: ldelem.ref
+		IL_006f: castclass Modules.Stream_Pipe_Basic/Scope
+		IL_0074: ldftn object Modules.Stream_Pipe_Basic/FunctionExpression_L13C18::__js_call__(class Modules.Stream_Pipe_Basic/Scope, object, object)
+		IL_007a: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_007f: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1
+		IL_0084: ldc.i4.1
+		IL_0085: conv.r8
+		IL_0086: ldstr ""
+		IL_008b: ldc.i4.0
+		IL_008c: ldc.i4.1
+		IL_008d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0, float64, string, bool, bool)
+		IL_0092: stloc.s 9
+		IL_0094: ldloc.s 5
+		IL_0096: ldstr "_write"
+		IL_009b: ldloc.s 9
+		IL_009d: ldc.i4.1
+		IL_009e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
+		IL_00a3: pop
+		IL_00a4: ldloc.s 4
+		IL_00a6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00ab: stloc.s 10
+		IL_00ad: ldloc.s 10
+		IL_00af: ldstr "pipe"
+		IL_00b4: ldloc.s 5
+		IL_00b6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_00bb: pop
+		IL_00bc: ldloc.s 4
+		IL_00be: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00c3: stloc.s 10
+		IL_00c5: ldloc.s 10
+		IL_00c7: ldstr "push"
+		IL_00cc: ldstr "data1"
+		IL_00d1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_00d6: pop
+		IL_00d7: ldloc.s 4
+		IL_00d9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00de: stloc.s 10
+		IL_00e0: ldloc.s 10
+		IL_00e2: ldstr "push"
+		IL_00e7: ldstr "data2"
+		IL_00ec: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_00f1: pop
+		IL_00f2: ldloc.s 4
+		IL_00f4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00f9: stloc.s 10
+		IL_00fb: ldloc.s 10
+		IL_00fd: ldstr "push"
+		IL_0102: ldstr "data3"
+		IL_0107: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_010c: pop
+		IL_010d: ldloc.s 4
+		IL_010f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0114: stloc.s 10
+		IL_0116: ldloc.s 10
+		IL_0118: ldstr "push"
+		IL_011d: ldc.i4.0
+		IL_011e: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
+		IL_0123: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0128: pop
+		IL_0129: ldstr "console"
+		IL_012e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0133: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0138: stloc.s 10
+		IL_013a: ldloc.0
+		IL_013b: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Stream_Pipe_Basic/Scope::writtenData
+		IL_0140: stloc.s 8
+		IL_0142: ldloc.s 8
+		IL_0144: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::get_length()
+		IL_0149: box [System.Runtime]System.Double
+		IL_014e: stloc.s 11
+		IL_0150: ldloc.s 10
+		IL_0152: ldstr "log"
+		IL_0157: ldstr "Written data count:"
+		IL_015c: ldloc.s 11
+		IL_015e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_0163: pop
+		IL_0164: ldc.r8 0.0
+		IL_016d: stloc.s 6
+		// loop start (head: IL_016f)
+			IL_016f: ldloc.s 6
+			IL_0171: stloc.s 12
+			IL_0173: ldloc.0
+			IL_0174: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Stream_Pipe_Basic/Scope::writtenData
+			IL_0179: stloc.s 8
+			IL_017b: ldloc.s 8
+			IL_017d: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::get_length()
+			IL_0182: stloc.s 13
+			IL_0184: ldloc.s 12
+			IL_0186: ldloc.s 13
+			IL_0188: clt
+			IL_018a: brfalse IL_01f3
 
-			IL_0173: ldstr "console"
-			IL_0178: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_017d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0182: stloc.s 8
-			IL_0184: ldstr "Chunk "
-			IL_0189: ldloc.s 6
-			IL_018b: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
-			IL_0190: stloc.s 11
-			IL_0192: ldloc.s 11
-			IL_0194: ldstr ":"
-			IL_0199: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_019e: stloc.s 11
-			IL_01a0: ldloc.s 8
-			IL_01a2: ldstr "log"
-			IL_01a7: ldloc.s 11
-			IL_01a9: ldloc.0
-			IL_01aa: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Stream_Pipe_Basic/Scope::writtenData
-			IL_01af: ldloc.s 6
-			IL_01b1: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
-			IL_01b6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-			IL_01bb: pop
-			IL_01bc: ldloc.s 6
-			IL_01be: ldc.r8 1
-			IL_01c7: add
-			IL_01c8: stloc.s 6
-			IL_01ca: br IL_015b
+			IL_018f: ldstr "console"
+			IL_0194: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_0199: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_019e: stloc.s 10
+			IL_01a0: ldstr "Chunk "
+			IL_01a5: ldloc.s 6
+			IL_01a7: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
+			IL_01ac: stloc.s 14
+			IL_01ae: ldloc.s 14
+			IL_01b0: ldstr ":"
+			IL_01b5: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_01ba: stloc.s 14
+			IL_01bc: ldloc.0
+			IL_01bd: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Stream_Pipe_Basic/Scope::writtenData
+			IL_01c2: stloc.s 8
+			IL_01c4: ldloc.s 8
+			IL_01c6: ldloc.s 6
+			IL_01c8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
+			IL_01cd: stloc.s 15
+			IL_01cf: ldloc.s 10
+			IL_01d1: ldstr "log"
+			IL_01d6: ldloc.s 14
+			IL_01d8: ldloc.s 15
+			IL_01da: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+			IL_01df: pop
+			IL_01e0: ldloc.s 6
+			IL_01e2: ldc.r8 1
+			IL_01eb: add
+			IL_01ec: stloc.s 6
+			IL_01ee: br IL_016f
 		// end loop
 
-		IL_01cf: ret
+		IL_01f3: ret
 	} // end of method Stream_Pipe_Basic::__js_module_init__
 
 } // end of class Modules.Stream_Pipe_Basic
@@ -323,7 +350,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2260
+		// Method begins at RVA 0x2291
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2224
+				// Method begins at RVA 0x2238
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -42,7 +42,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 02 00 00 00 00 00
 			)
-			// Method begins at RVA 0x212c
+			// Method begins at RVA 0x2140
 			// Header size: 12
 			// Code size: 227 (0xe3)
 			.maxstack 8
@@ -161,7 +161,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x221b
+			// Method begins at RVA 0x222f
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -187,7 +187,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 208 (0xd0)
+		// Code size: 228 (0xe4)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Generator_Prototype_Constructor/Scope,
@@ -195,10 +195,13 @@
 			[2] object,
 			[3] object,
 			[4] object,
-			[5] object,
+			[5] object[],
 			[6] object,
-			[7] bool,
-			[8] object
+			[7] string,
+			[8] object,
+			[9] object,
+			[10] bool,
+			[11] object
 		)
 
 		IL_0000: newobj instance void Modules.Generator_Prototype_Constructor/Scope::.ctor()
@@ -209,65 +212,75 @@
 		IL_000d: ldc.i4.0
 		IL_000e: ldloc.0
 		IL_000f: stelem.ref
-		IL_0010: ldftn object Modules.Generator_Prototype_Constructor/g::__js_call__(object[], object)
-		IL_0016: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_001b: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
-		IL_0020: ldc.i4.0
-		IL_0021: conv.r8
-		IL_0022: ldstr "g"
-		IL_0027: ldc.i4.0
-		IL_0028: ldc.i4.1
-		IL_0029: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
-		IL_002e: call object [JavaScriptRuntime]JavaScriptRuntime.GeneratorObject::InitializeGeneratorFunctionSurface(object)
-		IL_0033: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
-		IL_0038: stloc.1
-		IL_0039: nop
-		IL_003a: nop
-		IL_003b: ldloc.1
-		IL_003c: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0041: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0, object[])
-		IL_0046: stloc.2
-		IL_0047: ldloc.1
-		IL_0048: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_004d: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0, object[])
-		IL_0052: stloc.3
-		IL_0053: ldloc.2
-		IL_0054: ldstr "constructor"
-		IL_0059: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_005e: stloc.s 4
-		IL_0060: ldstr "console"
-		IL_0065: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_006a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_006f: stloc.s 5
-		IL_0071: ldloc.s 5
-		IL_0073: ldstr "log"
-		IL_0078: ldloc.s 4
-		IL_007a: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
-		IL_007f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0084: pop
-		IL_0085: ldstr "console"
-		IL_008a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_008f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0094: stloc.s 5
-		IL_0096: ldloc.2
-		IL_0097: ldstr "constructor"
-		IL_009c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_00a1: stloc.s 6
-		IL_00a3: ldloc.s 6
-		IL_00a5: ldloc.3
-		IL_00a6: ldstr "constructor"
-		IL_00ab: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_00b0: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_00b5: stloc.s 7
-		IL_00b7: ldloc.s 7
-		IL_00b9: box [System.Runtime]System.Boolean
-		IL_00be: stloc.s 8
-		IL_00c0: ldloc.s 5
-		IL_00c2: ldstr "log"
-		IL_00c7: ldloc.s 8
-		IL_00c9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00ce: pop
-		IL_00cf: ret
+		IL_0010: stloc.s 5
+		IL_0012: ldloc.s 5
+		IL_0014: ldftn object Modules.Generator_Prototype_Constructor/g::__js_call__(object[], object)
+		IL_001a: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_001f: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
+		IL_0024: ldc.i4.0
+		IL_0025: conv.r8
+		IL_0026: ldstr "g"
+		IL_002b: ldc.i4.0
+		IL_002c: ldc.i4.1
+		IL_002d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
+		IL_0032: call object [JavaScriptRuntime]JavaScriptRuntime.GeneratorObject::InitializeGeneratorFunctionSurface(object)
+		IL_0037: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
+		IL_003c: stloc.1
+		IL_003d: nop
+		IL_003e: nop
+		IL_003f: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0044: stloc.s 5
+		IL_0046: ldloc.1
+		IL_0047: ldloc.s 5
+		IL_0049: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0, object[])
+		IL_004e: stloc.2
+		IL_004f: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0054: stloc.s 5
+		IL_0056: ldloc.1
+		IL_0057: ldloc.s 5
+		IL_0059: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0, object[])
+		IL_005e: stloc.3
+		IL_005f: ldloc.2
+		IL_0060: ldstr "constructor"
+		IL_0065: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_006a: stloc.s 4
+		IL_006c: ldstr "console"
+		IL_0071: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0076: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_007b: stloc.s 6
+		IL_007d: ldloc.s 4
+		IL_007f: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
+		IL_0084: stloc.s 7
+		IL_0086: ldloc.s 6
+		IL_0088: ldstr "log"
+		IL_008d: ldloc.s 7
+		IL_008f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0094: pop
+		IL_0095: ldstr "console"
+		IL_009a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_009f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00a4: stloc.s 6
+		IL_00a6: ldloc.2
+		IL_00a7: ldstr "constructor"
+		IL_00ac: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00b1: stloc.s 8
+		IL_00b3: ldloc.3
+		IL_00b4: ldstr "constructor"
+		IL_00b9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00be: stloc.s 9
+		IL_00c0: ldloc.s 8
+		IL_00c2: ldloc.s 9
+		IL_00c4: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_00c9: stloc.s 10
+		IL_00cb: ldloc.s 10
+		IL_00cd: box [System.Runtime]System.Boolean
+		IL_00d2: stloc.s 11
+		IL_00d4: ldloc.s 6
+		IL_00d6: ldstr "log"
+		IL_00db: ldloc.s 11
+		IL_00dd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_00e2: pop
+		IL_00e3: ret
 	} // end of method Generator_Prototype_Constructor::__js_module_init__
 
 } // end of class Modules.Generator_Prototype_Constructor
@@ -279,7 +292,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x222d
+		// Method begins at RVA 0x2241
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

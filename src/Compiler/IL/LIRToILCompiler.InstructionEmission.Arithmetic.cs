@@ -70,7 +70,14 @@ internal sealed partial class LIRToILCompiler
             case LIRAddAndToNumber addAndToNumber:
                 if (!IsMaterialized(addAndToNumber.Result, allocation))
                 {
-                    // Stackify will re-emit this fused Add+ToNumber inline at the single use site.
+                    if (IsSchedulerStackResident(addAndToNumber.Result))
+                    {
+                        TryEmitStackValueInstruction(
+                            addAndToNumber,
+                            ilEncoder,
+                            allocation,
+                            methodDescriptor);
+                    }
                     break;
                 }
 

@@ -25,7 +25,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x22de
+				// Method begins at RVA 0x22e2
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -49,28 +49,31 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2174
+			// Method begins at RVA 0x2178
 			// Header size: 12
-			// Code size: 46 (0x2e)
+			// Code size: 48 (0x30)
 			.maxstack 8
 			.locals init (
-				[0] object
+				[0] object,
+				[1] object
 			)
 
 			IL_0000: ldstr "console"
 			IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
 			IL_000a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
 			IL_000f: stloc.0
-			IL_0010: ldloc.0
-			IL_0011: ldstr "log"
-			IL_0016: ldstr "Value:"
-			IL_001b: ldarg.1
-			IL_001c: ldstr "value"
-			IL_0021: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0026: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-			IL_002b: pop
-			IL_002c: ldnull
-			IL_002d: ret
+			IL_0010: ldarg.1
+			IL_0011: ldstr "value"
+			IL_0016: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_001b: stloc.1
+			IL_001c: ldloc.0
+			IL_001d: ldstr "log"
+			IL_0022: ldstr "Value:"
+			IL_0027: ldloc.1
+			IL_0028: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+			IL_002d: pop
+			IL_002e: ldnull
+			IL_002f: ret
 		} // end of method ArrowFunction_L9C24::__js_call__
 
 	} // end of class ArrowFunction_L9C24
@@ -86,7 +89,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x22cc
+				// Method begins at RVA 0x22d0
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -116,7 +119,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x22d5
+				// Method begins at RVA 0x22d9
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -137,7 +140,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x21ae
+			// Method begins at RVA 0x21b4
 			// Header size: 1
 			// Code size: 7 (0x7)
 			.maxstack 8
@@ -156,7 +159,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 02 00 00 00 00 00
 			)
-			// Method begins at RVA 0x21b8
+			// Method begins at RVA 0x21bc
 			// Header size: 12
 			// Code size: 255 (0xff)
 			.maxstack 8
@@ -278,7 +281,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x22c3
+			// Method begins at RVA 0x22c7
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -304,7 +307,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 279 (0x117)
+		// Code size: 283 (0x11b)
 		.maxstack 13
 		.locals init (
 			[0] class Modules.Async_StaticMethod_SimpleAwait/Scope,
@@ -395,42 +398,46 @@
 		IL_00aa: stloc.s 4
 		IL_00ac: ldloc.s 4
 		IL_00ae: stloc.1
-		IL_00af: ldloc.1
-		IL_00b0: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetCurrentThis(object)
-		IL_00b5: stloc.s 4
-		IL_00b7: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_00bc: ldnull
-		IL_00bd: call object Modules.Async_StaticMethod_SimpleAwait/Fetcher::getData(object[], object)
-		IL_00c2: stloc.s 5
-		IL_00c4: ldloc.s 5
-		IL_00c6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00cb: stloc.s 5
-		IL_00cd: ldnull
-		IL_00ce: ldftn object Modules.Async_StaticMethod_SimpleAwait/ArrowFunction_L9C24::__js_call__(object, object)
-		IL_00d4: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-		IL_00d9: ldc.i4.1
-		IL_00da: newarr [System.Runtime]System.Object
-		IL_00df: dup
-		IL_00e0: ldc.i4.0
-		IL_00e1: ldloc.0
-		IL_00e2: stelem.ref
-		IL_00e3: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_00e8: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_00ed: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1
-		IL_00f2: ldc.i4.1
-		IL_00f3: conv.r8
-		IL_00f4: ldstr ""
-		IL_00f9: ldc.i4.0
-		IL_00fa: ldc.i4.0
-		IL_00fb: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0, float64, string, bool, bool)
-		IL_0100: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0)
-		IL_0105: stloc.s 6
-		IL_0107: ldloc.s 5
-		IL_0109: ldstr "then"
-		IL_010e: ldloc.s 6
-		IL_0110: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0115: pop
-		IL_0116: ret
+		IL_00af: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_00b4: stloc.3
+		IL_00b5: ldloc.1
+		IL_00b6: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetCurrentThis(object)
+		IL_00bb: stloc.s 4
+		IL_00bd: ldloc.3
+		IL_00be: ldnull
+		IL_00bf: call object Modules.Async_StaticMethod_SimpleAwait/Fetcher::getData(object[], object)
+		IL_00c4: stloc.s 5
+		IL_00c6: ldloc.s 5
+		IL_00c8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00cd: stloc.s 5
+		IL_00cf: ldc.i4.1
+		IL_00d0: newarr [System.Runtime]System.Object
+		IL_00d5: dup
+		IL_00d6: ldc.i4.0
+		IL_00d7: ldloc.0
+		IL_00d8: stelem.ref
+		IL_00d9: stloc.3
+		IL_00da: ldnull
+		IL_00db: ldftn object Modules.Async_StaticMethod_SimpleAwait/ArrowFunction_L9C24::__js_call__(object, object)
+		IL_00e1: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_00e6: ldloc.3
+		IL_00e7: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_00ec: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_00f1: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1
+		IL_00f6: ldc.i4.1
+		IL_00f7: conv.r8
+		IL_00f8: ldstr ""
+		IL_00fd: ldc.i4.0
+		IL_00fe: ldc.i4.0
+		IL_00ff: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0, float64, string, bool, bool)
+		IL_0104: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0)
+		IL_0109: stloc.s 6
+		IL_010b: ldloc.s 5
+		IL_010d: ldstr "then"
+		IL_0112: ldloc.s 6
+		IL_0114: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0119: pop
+		IL_011a: ret
 	} // end of method Async_StaticMethod_SimpleAwait::__js_module_init__
 
 } // end of class Modules.Async_StaticMethod_SimpleAwait
@@ -442,7 +449,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x22e7
+		// Method begins at RVA 0x22eb
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
