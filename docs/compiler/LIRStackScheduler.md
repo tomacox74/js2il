@@ -15,7 +15,7 @@ validated identity foundation:
   approved typed length/element results can remain stack-resident.
 - `LIRRematerializationPolicy` separately owns the decision to reproduce cheap,
   stable definitions at their uses.
-- Existing `Stackify`, branch fusion, and local allocation behavior remains
+- Branch fusion, explicit rematerialization, and local allocation remain
   authoritative for unsupported shapes.
 - Existing constructor/field-store peepholes remain intact.
 - Every concrete LIR instruction type is inventoried by canonical
@@ -48,8 +48,8 @@ produce value
 consume value
 ```
 
-The existing [`Stackify`](Stackify.md) pass eliminates some locals by
-suppressing a definition and re-emitting it at the use site. That is
+[`LIRRematerializationPolicy`](LIRRematerialization.md) eliminates some locals
+by suppressing a definition and re-emitting it at the use site. That is
 rematerialization: it is appropriate for constants and other cheap, stable
 loads, but it cannot safely generalize to calls, allocations, observable
 property reads, or other instructions that must execute exactly once.
@@ -62,8 +62,8 @@ The scheduler will eventually represent a different operation:
 4. consume the value without `stloc`, `ldloc`, or re-execution.
 
 Stack scheduling and rematerialization are separate optimizations.
-`LIRRematerializationPolicy` is the common entry point for the allocator and
-legacy Stackify decisions. It answers only whether a definition can be
+`LIRRematerializationPolicy` is the common entry point for allocator
+rematerialization decisions. It answers only whether a definition can be
 reproduced safely; it does not select stack residency or instruction order.
 
 ## Pipeline placement
@@ -85,7 +85,7 @@ CLR evaluation-stack order, local materialization, and emission details:
 ```text
 normalized MethodBodyIR
   -> LIRStackScheduler
-  -> legacy branch/Stackify materialization decisions
+  -> branch fusion and rematerialization ownership decisions
   -> TempLocalAllocator
   -> LIRToILCompiler
   -> method body + Portable PDB metadata
@@ -152,9 +152,9 @@ definition site and leaves its result on the CLR stack. When a later consumer
 loads that temp, `EmitLoadTemp` emits nothing because validation proved the
 value is already at the correct stack position.
 
-Legacy Stackify cannot claim an instruction that consumes a scheduler-owned
-temp, preventing rematerialization from duplicating or delaying the scheduled
-numeric tree.
+`TempMaterializationPlan` prevents rematerialization from claiming
+scheduler-owned temps, preventing it from duplicating or delaying the
+scheduled numeric tree.
 
 This is scheduling, not algebraic optimization. The exact expression tree,
 operand positions, IEEE-754 grouping, signed-zero/NaN/infinity behavior,
@@ -293,10 +293,9 @@ trees, variable-backed temps, sequence-point/control/EH crossings, and every
 async/generator callable fail closed to materialized locals. Exceptions unwind
 the carried evaluation stack normally and retain the call's source line.
 
-The legacy Stackify exception for immediate `LIRCallTypedMember` results is
-removed. Eligible calls are now scheduler-owned and emitted once at their
-definition; Stackify never treats a call as rematerializable or defers it to a
-load site.
+Eligible calls are scheduler-owned and emitted once at their definition.
+`LIRRematerializationPolicy` rejects calls, so a call result is never deferred
+to a load site.
 
 ## General straight-line region scheduling
 
@@ -409,7 +408,6 @@ validation and local allocation. Every temp has one `TempValueOwner`:
 | `MaterializedLocal` | Default unclaimed local candidate. |
 | `Scheduler` | Stack-resident or explicitly rematerialized by the new scheduler. |
 | `BranchConditionFusion` | Comparison emitted directly into its branch. |
-| `LegacyStackify` | Legacy Stackify rematerialization/deferral. |
 | `Rematerialization` | Allocator's cheap stable inline/rematerialization path. |
 | `VariableSlot` | Source/anonymous variable slot is authoritative. |
 | `SnapshotBarrier` | `LIRCopyTemp` snapshot must materialize. |
@@ -419,9 +417,9 @@ validation and local allocation. Every temp has one `TempValueOwner`:
 
 Claims are exclusive. Scheduler ownership is established first. Mandatory
 materialization then rejects conflicts with scheduler ownership. Branch fusion
-and Stackify use `TryClaim`, so neither can also claim a scheduler-owned or
-already-owned temp. The allocator may claim rematerialization only while the
-temp still has the default owner.
+uses `TryClaim`, so it cannot also claim a scheduler-owned or already-owned
+temp. The allocator may claim rematerialization only while the temp still has
+the default owner.
 
 Multi-definition temps preserve legacy identity behavior: snapshot/resume
 ownership is based on the legacy selected definition rather than every
@@ -699,7 +697,7 @@ Identity mode must preserve all of the following:
 
 - original LIR instruction order;
 - each instruction's existing execute/elide/discard behavior;
-- existing Stackify and branch-fusion ownership;
+- existing branch-fusion and rematerialization ownership;
 - `TempLocalAllocator` decisions and compatible-slot reuse;
 - variable-slot and constructor-result forced materialization;
 - generated IL bytes for every method body;
@@ -720,7 +718,7 @@ Identity mode must preserve all of the following:
   validated identity plan;
 - carried stack depth is included in emitted maxstack accounting.
 - every non-materialized temp has one explicit owner;
-- scheduler, branch fusion, Stackify, and rematerialization cannot overlap;
+- scheduler, branch fusion, and rematerialization cannot overlap;
 - identity allocation remains byte-identical while optimized modes use
   canonical schedule-effective liveness;
 - async/generator spill and restore use the final allocated slot mapping.
@@ -823,7 +821,7 @@ Focused regression coverage also includes:
 
 - `LIRStackScheduleValidatorTests` for positive, rejection, catch-entry,
   deep-stack, strict, and fallback behavior;
-- `StackifyTests`;
+- `LIRRematerializationPolicyTests`;
 - `TempLocalAllocatorTests`;
 - async/generator local persistence across `await` and `yield`;
 - user/intrinsic constructor-field fusion generator snapshots;
@@ -859,8 +857,7 @@ validated schedule and legacy materialization behavior.
 The ordered work is tracked under
 [issue #1617](https://github.com/tomacox74/js2il/issues/1617):
 
-1. Stackify scheduling retirement.
-2. Final obsolete-code audit and deletion.
+1. Final obsolete-code audit and deletion.
 
 At each optimizing stage:
 
@@ -882,6 +879,11 @@ When changing the scheduler foundation:
 - Keep effective last uses accurate for every newly-observed operand.
 - Claim every temp through `TempMaterializationPlan`; do not add another
   independent materialization mask.
+- Keep rematerialization ownership explicit. A missing local allocation must
+  never be interpreted as scheduler residency, re-emission, elision, or an
+  execute-and-pop decision.
+- Classify effects, stack type/effect, hard boundaries, supported residency,
+  and instruction disposition before enabling a new LIR form.
 - Add ownership-overlap tests whenever a new optimizer claims a temp.
 - Preserve async/generator cross-suspension materialization and verify final
   spill/restore slot mappings.
@@ -897,7 +899,7 @@ When changing the scheduler foundation:
 - Add direct schedule assertions, not only execution tests.
 - Compare local signature contents, not only metadata row numbers.
 - Check decoded Portable PDB mappings, not raw PDB container bytes.
-- Run focused Stackify, allocator, fusion, and PDB regressions.
+- Run focused rematerialization, allocator, fusion, and PDB regressions.
 - Do not enable a reserved coverage mode without its own issue's validation and
   exit criteria.
 - Keep numeric operator selection separate from algebraic reassociation or

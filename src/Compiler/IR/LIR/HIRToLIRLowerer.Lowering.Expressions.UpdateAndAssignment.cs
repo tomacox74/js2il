@@ -93,7 +93,7 @@ public sealed partial class HIRToLIRLowerer
             var currentNumber = EnsureNumber(currentValue);
 
             // For postfix, we must capture the old (ToNumber-coerced) value before the store happens.
-            // Use LIRCopyTemp so Stackify will materialize the captured value.
+            // Use LIRCopyTemp so the captured value is materialized as a snapshot.
             TempVariable? originalSnapshotForPostfix = null;
             if (needsPostfixValue)
             {

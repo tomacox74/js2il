@@ -70,9 +70,6 @@ internal sealed partial class LIRToILCompiler
             materializationPlan,
             tempDefinitions);
 
-        // Stackify analysis: identify temps that can stay on the stack
-        var stackifyResult = Stackify.Analyze(MethodBody, materializationPlan);
-        MarkStackifiableTemps(stackifyResult, materializationPlan);
         materializationPlan.ValidateAgainstSchedule(MethodBody, stackSchedule);
 
         var allocation = TempLocalAllocator.Allocate(
@@ -410,7 +407,7 @@ internal sealed partial class LIRToILCompiler
                     continue;
             }
 
-            if (!TryCompileInstructionToIL(instruction, ilEncoder, allocation, methodDescriptor, labelMap, stackifyResult))
+            if (!TryCompileInstructionToIL(instruction, ilEncoder, allocation, methodDescriptor, labelMap))
             {
                 // Failed to compile instruction
                 IRPipelineMetrics.RecordFailureIfUnset($"IL compile failed: unsupported LIR instruction {instruction.GetType().Name}");
