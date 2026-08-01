@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.12.0 - 2026-08-01
+
 - compiler: retire the legacy Stackify scheduling/adjacency pass. The validated
   LIR scheduler is now the only stack-residency owner, while
   `LIRRematerializationPolicy` explicitly governs safe re-emission and
