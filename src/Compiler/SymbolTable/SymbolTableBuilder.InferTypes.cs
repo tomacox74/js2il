@@ -64,10 +64,11 @@ public partial class SymbolTableBuilder
 
     private bool InferCallableParameterClrTypesOnce(Scope root)
     {
+        var nodeScopes = BuildNodeScopeMap(root);
         var candidatesByScope = new Dictionary<Scope, ParameterInferenceCandidate>();
         foreach (var scope in EnumerateScopes(root).Where(s => s.Kind == ScopeKind.Function))
         {
-            if (TryCreateParameterInferenceCandidate(scope, out var candidate))
+            if (TryCreateParameterInferenceCandidate(scope, nodeScopes, out var candidate))
             {
                 candidatesByScope[scope] = candidate;
             }
@@ -94,7 +95,6 @@ public partial class SymbolTableBuilder
             .GroupBy(c => c.Scope.Name, StringComparer.Ordinal)
             .ToDictionary(g => g.Key, g => g.ToArray(), StringComparer.Ordinal);
 
-        var nodeScopes = BuildNodeScopeMap(root);
         var walker = new Jroc.Utilities.AstWalker();
 
         walker.Visit(root.AstNode, node =>
@@ -233,10 +233,12 @@ public partial class SymbolTableBuilder
         public ParameterInferenceCandidate(
             Scope scope,
             IReadOnlyList<string> parameterNames,
-            IReadOnlyList<bool> hasDefaultValue)
+            IReadOnlyList<bool> hasDefaultValue,
+            IReadOnlyList<bool> requiresNumericType)
         {
             Scope = scope;
             ParameterNames = parameterNames;
+            RequiresNumericType = requiresNumericType;
             InferredTypes = new Type?[parameterNames.Count];
             HasEvidence = new bool[parameterNames.Count];
             IsParameterUnsafe = new bool[parameterNames.Count];
@@ -250,6 +252,7 @@ public partial class SymbolTableBuilder
 
         public Scope Scope { get; }
         public IReadOnlyList<string> ParameterNames { get; }
+        public IReadOnlyList<bool> RequiresNumericType { get; }
         public Type?[] InferredTypes { get; }
         public bool[] HasEvidence { get; }
         public bool[] IsParameterUnsafe { get; }
@@ -289,6 +292,12 @@ public partial class SymbolTableBuilder
                     continue;
                 }
 
+                if (RequiresNumericType[i] && argType != typeof(double))
+                {
+                    MarkParameterUnsafe(i);
+                    continue;
+                }
+
                 if (!HasEvidence[i])
                 {
                     HasEvidence[i] = true;
@@ -322,15 +331,96 @@ public partial class SymbolTableBuilder
             NewExpression newExpression => InferStableNewArgumentClrType(newExpression, callScope),
             CallExpression callExpression => InferStableCallArgumentClrType(callExpression, callScope),
             NonUpdateUnaryExpression unaryExpression => InferStableUnaryArgumentClrType(unaryExpression, callScope),
+            NonLogicalBinaryExpression binaryExpression => InferStableBinaryArgumentClrType(binaryExpression, callScope),
             _ => null
         };
 
         return IsSupportedStableParameterType(inferredType) ? inferredType : null;
     }
 
+    private Type? InferStableBinaryArgumentClrType(
+        NonLogicalBinaryExpression binaryExpression,
+        Scope callScope)
+    {
+        if (binaryExpression.Operator is Operator.Equality
+            or Operator.Inequality
+            or Operator.StrictEquality
+            or Operator.StrictInequality
+            or Operator.LessThan
+            or Operator.LessThanOrEqual
+            or Operator.GreaterThan
+            or Operator.GreaterThanOrEqual
+            or Operator.In
+            or Operator.InstanceOf)
+        {
+            return typeof(bool);
+        }
+
+        if (binaryExpression.Operator is not (
+                Operator.Addition
+                or Operator.Subtraction
+                or Operator.Multiplication
+                or Operator.Division
+                or Operator.Remainder
+                or Operator.Exponentiation
+                or Operator.BitwiseAnd
+                or Operator.BitwiseOr
+                or Operator.BitwiseXor
+                or Operator.LeftShift
+                or Operator.RightShift
+                or Operator.UnsignedRightShift))
+        {
+            return null;
+        }
+
+        if (callScope.MayUseBoundWithObject || ContainsWithStatement(callScope.AstNode))
+        {
+            return null;
+        }
+
+        var leftType = InferStableParameterArgumentClrType(binaryExpression.Left, callScope);
+        var rightType = InferStableParameterArgumentClrType(binaryExpression.Right, callScope);
+
+        // Requiring two proven Number operands keeps '+' away from string concatenation
+        // and all numeric operators away from BigInt.
+        return leftType == typeof(double) && rightType == typeof(double)
+            ? typeof(double)
+            : null;
+    }
+
+    private static bool ContainsWithStatement(Node node)
+    {
+        var containsWith = false;
+        var walker = new Jroc.Utilities.AstWalker();
+        walker.Visit(node, candidate =>
+        {
+            if (candidate is WithStatement)
+            {
+                containsWith = true;
+            }
+        });
+        return containsWith;
+    }
+
     private Type? InferStableIdentifierArgumentClrType(Scope callScope, string name)
     {
+        if (callScope.MayUseBoundWithObject || ContainsWithStatement(callScope.AstNode))
+        {
+            return null;
+        }
+
         var binding = TryResolveBinding(callScope, name);
+        if (binding?.IsCompileTimeConstant == true)
+        {
+            return binding.CompileTimeConstantType switch
+            {
+                Jroc.Services.JavascriptType.Number => typeof(double),
+                Jroc.Services.JavascriptType.String => typeof(string),
+                Jroc.Services.JavascriptType.Boolean => typeof(bool),
+                _ => null
+            };
+        }
+
         return binding?.IsStableType == true && IsSupportedStableParameterType(binding.ClrType)
             ? binding.ClrType
             : null;
@@ -353,6 +443,11 @@ public partial class SymbolTableBuilder
 
     private static Type? InferStableNewArgumentClrType(NewExpression newExpression, Scope callScope)
     {
+        if (callScope.MayUseBoundWithObject || ContainsWithStatement(callScope.AstNode))
+        {
+            return null;
+        }
+
         if (newExpression.Callee is Identifier ctorId && string.Equals(ctorId.Name, "Array", StringComparison.Ordinal))
         {
             return IsIdentifierShadowed(callScope, "Array") ? null : typeof(JavaScriptRuntime.Array);
@@ -363,6 +458,11 @@ public partial class SymbolTableBuilder
 
     private Type? InferStableCallArgumentClrType(CallExpression callExpression, Scope callScope)
     {
+        if (callScope.MayUseBoundWithObject || ContainsWithStatement(callScope.AstNode))
+        {
+            return null;
+        }
+
         if (callExpression.Callee is Identifier calleeId)
         {
             var binding = TryResolveBinding(callScope, calleeId.Name);
@@ -440,7 +540,10 @@ public partial class SymbolTableBuilder
         }
     }
 
-    private bool TryCreateParameterInferenceCandidate(Scope scope, out ParameterInferenceCandidate candidate)
+    private bool TryCreateParameterInferenceCandidate(
+        Scope scope,
+        IReadOnlyDictionary<Node, Scope> nodeScopes,
+        out ParameterInferenceCandidate candidate)
     {
         candidate = null!;
 
@@ -472,18 +575,110 @@ public partial class SymbolTableBuilder
             return false;
         }
 
-        foreach (var parameterName in parameterNames)
+        var requiresNumericType = new bool[parameterNames.Count];
+        for (var parameterIndex = 0; parameterIndex < parameterNames.Count; parameterIndex++)
         {
+            var parameterName = parameterNames[parameterIndex];
             if (!scope.Bindings.TryGetValue(parameterName, out var binding)
-                || binding.HasWrite
                 || binding.IsCaptured)
             {
                 return false;
             }
+
+            var (hasNumericUpdate, hasOtherWrite) = AnalyzeParameterWrites(scope, binding, nodeScopes);
+            if (hasOtherWrite || (binding.HasWrite && !hasNumericUpdate))
+            {
+                return false;
+            }
+
+            requiresNumericType[parameterIndex] = hasNumericUpdate;
         }
 
-        candidate = new ParameterInferenceCandidate(scope, parameterNames, hasDefaultValue);
+        candidate = new ParameterInferenceCandidate(
+            scope,
+            parameterNames,
+            hasDefaultValue,
+            requiresNumericType);
         return true;
+    }
+
+    private (bool HasNumericUpdate, bool HasOtherWrite) AnalyzeParameterWrites(
+        Scope scope,
+        BindingInfo binding,
+        IReadOnlyDictionary<Node, Scope> nodeScopes)
+    {
+        var sawNumericUpdate = false;
+        var sawOtherWrite = false;
+        var walker = new Jroc.Utilities.AstWalker();
+
+        walker.Visit(scope.AstNode, node =>
+        {
+            nodeScopes.TryGetValue(node, out var currentScope);
+            currentScope ??= scope;
+
+            switch (node)
+            {
+                case UpdateExpression { Argument: Identifier id }
+                    when ReferenceEquals(TryResolveBinding(currentScope, id.Name), binding):
+                    sawNumericUpdate = true;
+                    break;
+                case AssignmentExpression assignment
+                    when IsBindingWriteTarget(assignment.Left, currentScope, binding):
+                    sawOtherWrite = true;
+                    break;
+                case VariableDeclarator { Init: not null } declarator
+                    when IsBindingWriteTarget(declarator.Id, currentScope, binding):
+                    sawOtherWrite = true;
+                    break;
+                case FunctionDeclaration { Id: Identifier id }
+                    when ReferenceEquals(TryResolveBinding(currentScope, id.Name), binding):
+                    sawOtherWrite = true;
+                    break;
+                case ForOfStatement forOf
+                    when IsLoopBindingWriteTarget(forOf.Left, currentScope, binding):
+                    sawOtherWrite = true;
+                    break;
+                case ForInStatement forIn
+                    when IsLoopBindingWriteTarget(forIn.Left, currentScope, binding):
+                    sawOtherWrite = true;
+                    break;
+            }
+        });
+
+        return (sawNumericUpdate, sawOtherWrite);
+    }
+
+    private bool IsLoopBindingWriteTarget(Node target, Scope scope, BindingInfo binding)
+    {
+        if (target is not VariableDeclaration declaration)
+        {
+            return IsBindingWriteTarget(target, scope, binding);
+        }
+
+        return declaration.Kind == VariableDeclarationKind.Var
+            && declaration.Declarations.Any(declarator =>
+                IsBindingWriteTarget(declarator.Id, scope, binding));
+    }
+
+    private bool IsBindingWriteTarget(Node target, Scope scope, BindingInfo binding)
+    {
+        return target switch
+        {
+            Identifier id => ReferenceEquals(TryResolveBinding(scope, id.Name), binding),
+            AssignmentPattern assignment => IsBindingWriteTarget(assignment.Left, scope, binding),
+            RestElement rest => IsBindingWriteTarget(rest.Argument, scope, binding),
+            ArrayPattern array => array.Elements
+                .Where(element => element != null)
+                .Any(element => IsBindingWriteTarget(element!, scope, binding)),
+            ObjectPattern obj => obj.Properties.Any(property =>
+                property switch
+                {
+                    Property item => IsBindingWriteTarget(item.Value, scope, binding),
+                    RestElement rest => IsBindingWriteTarget(rest.Argument, scope, binding),
+                    _ => false
+                }),
+            _ => false
+        };
     }
 
     private static bool TryGetSimpleParameterNames(Node callableNode, out IReadOnlyList<string> parameterNames)

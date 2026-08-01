@@ -1,3 +1,4 @@
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace Jroc.Tests.Variable
@@ -12,6 +13,33 @@ namespace Jroc.Tests.Variable
         [Fact] public Task Variable_CapturedConst_NumberFieldType() { var testName = nameof(Variable_CapturedConst_NumberFieldType); return GenerateTest(testName); }
         [Fact] public Task Variable_CapturedConst_BoolStringFieldType() { var testName = nameof(Variable_CapturedConst_BoolStringFieldType); return GenerateTest(testName); }
         [Fact] public Task Variable_CapturedConst_SpreadArgument() { var testName = nameof(Variable_CapturedConst_SpreadArgument); return GenerateTest(testName); }
+        [Fact]
+        public Task Variable_ConstPrimitivePropagation()
+        {
+            var testName = nameof(Variable_ConstPrimitivePropagation);
+            return GenerateTest(testName, verifyAssembly: assembly =>
+            {
+                var moduleType = assembly.GetType($"Modules.{testName}", throwOnError: true)!;
+                var scopeType = moduleType.GetNestedType("Scope", BindingFlags.Public | BindingFlags.NonPublic)!;
+
+                foreach (var constantName in new[] { "NUMBER", "TEXT", "FLAG", "NULL_VALUE" })
+                {
+                    Assert.Null(scopeType.GetField(constantName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance));
+                }
+
+                Assert.NotNull(scopeType.GetField("LATE", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance));
+                foreach (var constantName in new[] { "WRITTEN", "WRITTEN_PATTERN", "WRITTEN_LOOP" })
+                {
+                    Assert.NotNull(scopeType.GetField(constantName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance));
+                }
+
+                var switchScopeType = Assert.Single(
+                    scopeType.GetNestedTypes(BindingFlags.Public | BindingFlags.NonPublic),
+                    type => type.Name.StartsWith("Switch_", StringComparison.Ordinal));
+                Assert.NotNull(switchScopeType.GetField("SKIPPED", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance));
+            });
+        }
+        [Fact] public Task Variable_ConstPrimitivePropagation_With() { var testName = nameof(Variable_ConstPrimitivePropagation_With); return GenerateTest(testName); }
         [Fact] public Task Variable_LetBlockScope() { var testName = nameof(Variable_LetBlockScope); return GenerateTest(testName); }
         [Fact] public Task Variable_LetFunctionNestedShadowing() { var testName = nameof(Variable_LetFunctionNestedShadowing); return GenerateTest(testName); }
         [Fact] public Task Variable_LetNestedShadowingChain() { var testName = nameof(Variable_LetNestedShadowingChain); return GenerateTest(testName); }

@@ -22,7 +22,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x21ee
+					// Method begins at RVA 0x21c2
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -46,14 +46,12 @@
 				.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 					01 00 02 00 00 00 00 00
 				)
-				// Method begins at RVA 0x2148
+				// Method begins at RVA 0x2134
 				// Header size: 12
-				// Code size: 136 (0x88)
+				// Code size: 112 (0x70)
 				.maxstack 8
 				.locals init (
-					[0] string,
-					[1] object,
-					[2] object
+					[0] string
 				)
 
 				IL_0000: ldstr "inner"
@@ -61,45 +59,29 @@
 				IL_0006: ldstr "console"
 				IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
 				IL_0010: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_0015: stloc.1
-				IL_0016: ldarg.0
-				IL_0017: ldc.i4.0
-				IL_0018: ldelem.ref
-				IL_0019: castclass Modules.ArrowFunction_NestedFunctionAccessesMultipleScopes/Scope
-				IL_001e: ldfld string Modules.ArrowFunction_NestedFunctionAccessesMultipleScopes/Scope::globalVar
-				IL_0023: stloc.2
-				IL_0024: ldloc.1
-				IL_0025: ldstr "log"
-				IL_002a: ldstr "Global:"
-				IL_002f: ldloc.2
-				IL_0030: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-				IL_0035: pop
-				IL_0036: ldstr "console"
-				IL_003b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-				IL_0040: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_0045: stloc.2
-				IL_0046: ldarg.0
-				IL_0047: ldc.i4.1
-				IL_0048: ldelem.ref
-				IL_0049: castclass Modules.ArrowFunction_NestedFunctionAccessesMultipleScopes/ArrowFunction_L5C22/Scope
-				IL_004e: ldfld string Modules.ArrowFunction_NestedFunctionAccessesMultipleScopes/ArrowFunction_L5C22/Scope::outerVar
-				IL_0053: stloc.1
-				IL_0054: ldloc.2
-				IL_0055: ldstr "log"
-				IL_005a: ldstr "Outer:"
-				IL_005f: ldloc.1
-				IL_0060: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-				IL_0065: pop
-				IL_0066: ldstr "console"
-				IL_006b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-				IL_0070: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_0075: ldstr "log"
-				IL_007a: ldstr "Inner:"
-				IL_007f: ldloc.0
-				IL_0080: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-				IL_0085: pop
-				IL_0086: ldnull
-				IL_0087: ret
+				IL_0015: ldstr "log"
+				IL_001a: ldstr "Global:"
+				IL_001f: ldstr "global"
+				IL_0024: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+				IL_0029: pop
+				IL_002a: ldstr "console"
+				IL_002f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+				IL_0034: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_0039: ldstr "log"
+				IL_003e: ldstr "Outer:"
+				IL_0043: ldstr "outer"
+				IL_0048: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+				IL_004d: pop
+				IL_004e: ldstr "console"
+				IL_0053: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+				IL_0058: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_005d: ldstr "log"
+				IL_0062: ldstr "Inner:"
+				IL_0067: ldloc.0
+				IL_0068: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+				IL_006d: pop
+				IL_006e: ldnull
+				IL_006f: ret
 			} // end of method ArrowFunction_L8C28::__js_call__
 
 		} // end of class ArrowFunction_L8C28
@@ -107,18 +89,11 @@
 		.class nested public auto ansi beforefieldinit Scope
 			extends [System.Runtime]System.Object
 		{
-			.custom instance void [System.Runtime]System.Diagnostics.DebuggerDisplayAttribute::.ctor(string) = (
-				01 00 19 53 63 6f 70 65 20 6f 75 74 65 72 56 61
-				72 3d 7b 6f 75 74 65 72 56 61 72 7d 00 00
-			)
-			// Fields
-			.field public string outerVar
-
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21e5
+				// Method begins at RVA 0x21b9
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -144,9 +119,9 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 05 00 00 02
 			)
-			// Method begins at RVA 0x20c8
+			// Method begins at RVA 0x20bc
 			// Header size: 12
-			// Code size: 115 (0x73)
+			// Code size: 105 (0x69)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.ArrowFunction_NestedFunctionAccessesMultipleScopes/ArrowFunction_L5C22/Scope,
@@ -157,54 +132,52 @@
 
 			IL_0000: newobj instance void Modules.ArrowFunction_NestedFunctionAccessesMultipleScopes/ArrowFunction_L5C22/Scope::.ctor()
 			IL_0005: stloc.0
-			IL_0006: ldloc.0
-			IL_0007: ldstr "outer"
-			IL_000c: stfld string Modules.ArrowFunction_NestedFunctionAccessesMultipleScopes/ArrowFunction_L5C22/Scope::outerVar
-			IL_0011: ldnull
-			IL_0012: ldftn object Modules.ArrowFunction_NestedFunctionAccessesMultipleScopes/ArrowFunction_L5C22/ArrowFunction_L8C28::__js_call__(object[], object)
-			IL_0018: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc0::.ctor(object, native int)
-			IL_001d: ldc.i4.2
-			IL_001e: newarr [System.Runtime]System.Object
-			IL_0023: dup
-			IL_0024: ldc.i4.0
-			IL_0025: ldarg.0
-			IL_0026: stelem.ref
-			IL_0027: dup
-			IL_0028: ldc.i4.1
-			IL_0029: ldloc.0
-			IL_002a: stelem.ref
-			IL_002b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-			IL_0030: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-			IL_0035: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFunc0
-			IL_003a: ldc.i4.0
-			IL_003b: conv.r8
-			IL_003c: ldstr ""
-			IL_0041: ldc.i4.0
-			IL_0042: ldc.i4.0
-			IL_0043: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFunc0>(!!0, float64, string, bool, bool)
-			IL_0048: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFunc0>(!!0)
-			IL_004d: stloc.2
-			IL_004e: ldloc.2
-			IL_004f: ldstr "nestedFunction"
-			IL_0054: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetFunctionInferredName(object, object)
-			IL_0059: stloc.1
-			IL_005a: ldc.i4.2
-			IL_005b: newarr [System.Runtime]System.Object
-			IL_0060: dup
-			IL_0061: ldc.i4.0
-			IL_0062: ldarg.0
-			IL_0063: stelem.ref
-			IL_0064: dup
-			IL_0065: ldc.i4.1
-			IL_0066: ldloc.0
-			IL_0067: stelem.ref
-			IL_0068: stloc.3
-			IL_0069: ldloc.3
-			IL_006a: ldnull
-			IL_006b: call object Modules.ArrowFunction_NestedFunctionAccessesMultipleScopes/ArrowFunction_L5C22/ArrowFunction_L8C28::__js_call__(object[], object)
-			IL_0070: pop
-			IL_0071: ldnull
-			IL_0072: ret
+			IL_0006: nop
+			IL_0007: ldnull
+			IL_0008: ldftn object Modules.ArrowFunction_NestedFunctionAccessesMultipleScopes/ArrowFunction_L5C22/ArrowFunction_L8C28::__js_call__(object[], object)
+			IL_000e: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc0::.ctor(object, native int)
+			IL_0013: ldc.i4.2
+			IL_0014: newarr [System.Runtime]System.Object
+			IL_0019: dup
+			IL_001a: ldc.i4.0
+			IL_001b: ldarg.0
+			IL_001c: stelem.ref
+			IL_001d: dup
+			IL_001e: ldc.i4.1
+			IL_001f: ldloc.0
+			IL_0020: stelem.ref
+			IL_0021: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+			IL_0026: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+			IL_002b: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFunc0
+			IL_0030: ldc.i4.0
+			IL_0031: conv.r8
+			IL_0032: ldstr ""
+			IL_0037: ldc.i4.0
+			IL_0038: ldc.i4.0
+			IL_0039: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFunc0>(!!0, float64, string, bool, bool)
+			IL_003e: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFunc0>(!!0)
+			IL_0043: stloc.2
+			IL_0044: ldloc.2
+			IL_0045: ldstr "nestedFunction"
+			IL_004a: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetFunctionInferredName(object, object)
+			IL_004f: stloc.1
+			IL_0050: ldc.i4.2
+			IL_0051: newarr [System.Runtime]System.Object
+			IL_0056: dup
+			IL_0057: ldc.i4.0
+			IL_0058: ldarg.0
+			IL_0059: stelem.ref
+			IL_005a: dup
+			IL_005b: ldc.i4.1
+			IL_005c: ldloc.0
+			IL_005d: stelem.ref
+			IL_005e: stloc.3
+			IL_005f: ldloc.3
+			IL_0060: ldnull
+			IL_0061: call object Modules.ArrowFunction_NestedFunctionAccessesMultipleScopes/ArrowFunction_L5C22/ArrowFunction_L8C28::__js_call__(object[], object)
+			IL_0066: pop
+			IL_0067: ldnull
+			IL_0068: ret
 		} // end of method ArrowFunction_L5C22::__js_call__
 
 	} // end of class ArrowFunction_L5C22
@@ -212,18 +185,11 @@
 	.class nested public auto ansi beforefieldinit Scope
 		extends [System.Runtime]System.Object
 	{
-		.custom instance void [System.Runtime]System.Diagnostics.DebuggerDisplayAttribute::.ctor(string) = (
-			01 00 1b 53 63 6f 70 65 20 67 6c 6f 62 61 6c 56
-			61 72 3d 7b 67 6c 6f 62 61 6c 56 61 72 7d 00 00
-		)
-		// Fields
-		.field public string globalVar
-
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x21dc
+			// Method begins at RVA 0x21b0
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -249,7 +215,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 106 (0x6a)
+		// Code size: 96 (0x60)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ArrowFunction_NestedFunctionAccessesMultipleScopes/Scope,
@@ -260,40 +226,38 @@
 		IL_0000: newobj instance void Modules.ArrowFunction_NestedFunctionAccessesMultipleScopes/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: nop
-		IL_0007: ldloc.0
-		IL_0008: ldstr "global"
-		IL_000d: stfld string Modules.ArrowFunction_NestedFunctionAccessesMultipleScopes/Scope::globalVar
-		IL_0012: ldloc.0
-		IL_0013: castclass Modules.ArrowFunction_NestedFunctionAccessesMultipleScopes/Scope
-		IL_0018: ldftn object Modules.ArrowFunction_NestedFunctionAccessesMultipleScopes/ArrowFunction_L5C22::__js_call__(class Modules.ArrowFunction_NestedFunctionAccessesMultipleScopes/Scope, object)
-		IL_001e: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_0023: ldc.i4.1
-		IL_0024: newarr [System.Runtime]System.Object
-		IL_0029: dup
-		IL_002a: ldc.i4.0
-		IL_002b: ldloc.0
-		IL_002c: stelem.ref
-		IL_002d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_0032: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_0037: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
-		IL_003c: ldc.i4.0
-		IL_003d: conv.r8
-		IL_003e: ldstr ""
-		IL_0043: ldc.i4.0
-		IL_0044: ldc.i4.0
-		IL_0045: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
-		IL_004a: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0)
-		IL_004f: stloc.2
-		IL_0050: ldloc.2
-		IL_0051: ldstr "testFunction"
-		IL_0056: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetFunctionInferredName(object, object)
-		IL_005b: stloc.1
-		IL_005c: ldloc.0
-		IL_005d: castclass Modules.ArrowFunction_NestedFunctionAccessesMultipleScopes/Scope
-		IL_0062: ldnull
-		IL_0063: call object Modules.ArrowFunction_NestedFunctionAccessesMultipleScopes/ArrowFunction_L5C22::__js_call__(class Modules.ArrowFunction_NestedFunctionAccessesMultipleScopes/Scope, object)
-		IL_0068: pop
-		IL_0069: ret
+		IL_0007: nop
+		IL_0008: ldloc.0
+		IL_0009: castclass Modules.ArrowFunction_NestedFunctionAccessesMultipleScopes/Scope
+		IL_000e: ldftn object Modules.ArrowFunction_NestedFunctionAccessesMultipleScopes/ArrowFunction_L5C22::__js_call__(class Modules.ArrowFunction_NestedFunctionAccessesMultipleScopes/Scope, object)
+		IL_0014: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_0019: ldc.i4.1
+		IL_001a: newarr [System.Runtime]System.Object
+		IL_001f: dup
+		IL_0020: ldc.i4.0
+		IL_0021: ldloc.0
+		IL_0022: stelem.ref
+		IL_0023: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_0028: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_002d: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
+		IL_0032: ldc.i4.0
+		IL_0033: conv.r8
+		IL_0034: ldstr ""
+		IL_0039: ldc.i4.0
+		IL_003a: ldc.i4.0
+		IL_003b: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
+		IL_0040: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0)
+		IL_0045: stloc.2
+		IL_0046: ldloc.2
+		IL_0047: ldstr "testFunction"
+		IL_004c: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetFunctionInferredName(object, object)
+		IL_0051: stloc.1
+		IL_0052: ldloc.0
+		IL_0053: castclass Modules.ArrowFunction_NestedFunctionAccessesMultipleScopes/Scope
+		IL_0058: ldnull
+		IL_0059: call object Modules.ArrowFunction_NestedFunctionAccessesMultipleScopes/ArrowFunction_L5C22::__js_call__(class Modules.ArrowFunction_NestedFunctionAccessesMultipleScopes/Scope, object)
+		IL_005e: pop
+		IL_005f: ret
 	} // end of method ArrowFunction_NestedFunctionAccessesMultipleScopes::__js_module_init__
 
 } // end of class Modules.ArrowFunction_NestedFunctionAccessesMultipleScopes
@@ -305,7 +269,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21f7
+		// Method begins at RVA 0x21cb
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -22,7 +22,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2198
+					// Method begins at RVA 0x2170
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -42,7 +42,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x21a1
+					// Method begins at RVA 0x2179
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -68,7 +68,7 @@
 				.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 					01 00 02 00 00 00 00 00
 				)
-				// Method begins at RVA 0x212c
+				// Method begins at RVA 0x2120
 				// Header size: 12
 				// Code size: 16 (0x10)
 				.maxstack 8
@@ -92,33 +92,20 @@
 				.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 					01 00 00 00 00 00 00 00
 				)
-				// Method begins at RVA 0x2148
-				// Header size: 12
-				// Code size: 50 (0x32)
+				// Method begins at RVA 0x213c
+				// Header size: 1
+				// Code size: 33 (0x21)
 				.maxstack 8
-				.locals init (
-					[0] object,
-					[1] object
-				)
 
 				IL_0000: ldstr "console"
 				IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
 				IL_000a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_000f: stloc.0
-				IL_0010: ldarg.0
-				IL_0011: ldfld object[] Modules.Classes_ClassMethod_AccessArrowFunctionVariable_Log/ArrowFunction_L3C27/MyClass::_scopes
-				IL_0016: ldc.i4.1
-				IL_0017: ldelem.ref
-				IL_0018: castclass Modules.Classes_ClassMethod_AccessArrowFunctionVariable_Log/ArrowFunction_L3C27/Scope
-				IL_001d: ldfld string Modules.Classes_ClassMethod_AccessArrowFunctionVariable_Log/ArrowFunction_L3C27/Scope::FUNCTION_VALUE
-				IL_0022: stloc.1
-				IL_0023: ldloc.0
-				IL_0024: ldstr "log"
-				IL_0029: ldloc.1
-				IL_002a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-				IL_002f: pop
-				IL_0030: ldnull
-				IL_0031: ret
+				IL_000f: ldstr "log"
+				IL_0014: ldstr "Hello from function"
+				IL_0019: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+				IL_001e: pop
+				IL_001f: ldnull
+				IL_0020: ret
 			} // end of method MyClass::logValue
 
 		} // end of class MyClass
@@ -126,19 +113,11 @@
 		.class nested public auto ansi beforefieldinit Scope
 			extends [System.Runtime]System.Object
 		{
-			.custom instance void [System.Runtime]System.Diagnostics.DebuggerDisplayAttribute::.ctor(string) = (
-				01 00 25 53 63 6f 70 65 20 46 55 4e 43 54 49 4f
-				4e 5f 56 41 4c 55 45 3d 7b 46 55 4e 43 54 49 4f
-				4e 5f 56 41 4c 55 45 7d 00 00
-			)
-			// Fields
-			.field public string FUNCTION_VALUE
-
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x218f
+				// Method begins at RVA 0x2167
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -166,7 +145,7 @@
 			)
 			// Method begins at RVA 0x20bc
 			// Header size: 12
-			// Code size: 98 (0x62)
+			// Code size: 88 (0x58)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.Classes_ClassMethod_AccessArrowFunctionVariable_Log/ArrowFunction_L3C27/Scope,
@@ -177,42 +156,40 @@
 
 			IL_0000: newobj instance void Modules.Classes_ClassMethod_AccessArrowFunctionVariable_Log/ArrowFunction_L3C27/Scope::.ctor()
 			IL_0005: stloc.0
-			IL_0006: ldloc.0
-			IL_0007: ldstr "Hello from function"
-			IL_000c: stfld string Modules.Classes_ClassMethod_AccessArrowFunctionVariable_Log/ArrowFunction_L3C27/Scope::FUNCTION_VALUE
-			IL_0011: nop
-			IL_0012: ldc.i4.2
-			IL_0013: newarr [System.Runtime]System.Object
-			IL_0018: dup
-			IL_0019: ldc.i4.0
-			IL_001a: ldarg.0
-			IL_001b: stelem.ref
-			IL_001c: dup
-			IL_001d: ldc.i4.1
-			IL_001e: ldloc.0
-			IL_001f: stelem.ref
-			IL_0020: stloc.2
-			IL_0021: ldloc.2
-			IL_0022: ldc.i4.0
-			IL_0023: newarr [System.Runtime]System.Object
-			IL_0028: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
-			IL_002d: newobj instance void Modules.Classes_ClassMethod_AccessArrowFunctionVariable_Log/ArrowFunction_L3C27/MyClass::.ctor(object[])
-			IL_0032: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
-			IL_0037: stloc.1
-			IL_0038: ldloc.1
-			IL_0039: ldtoken Modules.Classes_ClassMethod_AccessArrowFunctionVariable_Log/ArrowFunction_L3C27/MyClass
-			IL_003e: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-			IL_0043: ldstr "prototype"
-			IL_0048: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
-			IL_004d: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
-			IL_0052: ldloc.1
-			IL_0053: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Classes_ClassMethod_AccessArrowFunctionVariable_Log/ArrowFunction_L3C27/MyClass>(!!0)
-			IL_0058: stloc.3
-			IL_0059: ldloc.3
-			IL_005a: callvirt instance object Modules.Classes_ClassMethod_AccessArrowFunctionVariable_Log/ArrowFunction_L3C27/MyClass::logValue()
-			IL_005f: pop
-			IL_0060: ldnull
-			IL_0061: ret
+			IL_0006: nop
+			IL_0007: nop
+			IL_0008: ldc.i4.2
+			IL_0009: newarr [System.Runtime]System.Object
+			IL_000e: dup
+			IL_000f: ldc.i4.0
+			IL_0010: ldarg.0
+			IL_0011: stelem.ref
+			IL_0012: dup
+			IL_0013: ldc.i4.1
+			IL_0014: ldloc.0
+			IL_0015: stelem.ref
+			IL_0016: stloc.2
+			IL_0017: ldloc.2
+			IL_0018: ldc.i4.0
+			IL_0019: newarr [System.Runtime]System.Object
+			IL_001e: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
+			IL_0023: newobj instance void Modules.Classes_ClassMethod_AccessArrowFunctionVariable_Log/ArrowFunction_L3C27/MyClass::.ctor(object[])
+			IL_0028: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
+			IL_002d: stloc.1
+			IL_002e: ldloc.1
+			IL_002f: ldtoken Modules.Classes_ClassMethod_AccessArrowFunctionVariable_Log/ArrowFunction_L3C27/MyClass
+			IL_0034: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+			IL_0039: ldstr "prototype"
+			IL_003e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
+			IL_0043: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
+			IL_0048: ldloc.1
+			IL_0049: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Classes_ClassMethod_AccessArrowFunctionVariable_Log/ArrowFunction_L3C27/MyClass>(!!0)
+			IL_004e: stloc.3
+			IL_004f: ldloc.3
+			IL_0050: callvirt instance object Modules.Classes_ClassMethod_AccessArrowFunctionVariable_Log/ArrowFunction_L3C27/MyClass::logValue()
+			IL_0055: pop
+			IL_0056: ldnull
+			IL_0057: ret
 		} // end of method ArrowFunction_L3C27::__js_call__
 
 	} // end of class ArrowFunction_L3C27
@@ -224,7 +201,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2186
+			// Method begins at RVA 0x215e
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -303,7 +280,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21aa
+		// Method begins at RVA 0x2182
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

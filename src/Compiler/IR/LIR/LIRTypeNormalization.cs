@@ -692,8 +692,43 @@ internal static class LIRTypeNormalization
             ? new ValueStorage(ValueStorageKind.UnboxedValue, parameterClrType)
             : new ValueStorage(ValueStorageKind.Reference, parameterClrType);
 
-        return ValueStorageFacts.CanFlowTo(sourceStorage, targetStorage)
-            && IsStableAlreadyEvaluatedTemp(methodBody, convertToObject.Source, convertInstructionIndex, callInstructionIndex);
+        var isStable = IsStableAlreadyEvaluatedTemp(
+                methodBody,
+                convertToObject.Source,
+                convertInstructionIndex,
+                callInstructionIndex);
+        if (!isStable)
+        {
+            return false;
+        }
+
+        if (ValueStorageFacts.CanFlowTo(sourceStorage, targetStorage))
+        {
+            return true;
+        }
+
+        return convertToObject.Source.Index >= 0
+            && convertToObject.Source.Index < methodBody.TempStorages.Count
+            && ValueStorageFacts.CanFlowTo(
+                methodBody.TempStorages[convertToObject.Source.Index],
+                targetStorage);
+    }
+
+    private static bool IsStableNumericProducer(MethodBodyIR methodBody, TempVariable temp)
+    {
+        foreach (var instruction in methodBody.Instructions)
+        {
+            if (TempLocalAllocator.TryGetDefinedTemp(instruction, out var defined)
+                && defined.Index == temp.Index)
+            {
+                return instruction is
+                    LIRAddNumber or LIRSubNumber or LIRMulNumber or LIRDivNumber or LIRModNumber or LIRExpNumber
+                    or LIRBitwiseAnd or LIRBitwiseOr or LIRBitwiseXor
+                    or LIRLeftShift or LIRRightShift or LIRUnsignedRightShift;
+            }
+        }
+
+        return false;
     }
 
     private static bool IsStableAlreadyEvaluatedTemp(
@@ -707,6 +742,11 @@ internal static class LIRTypeNormalization
         {
             return methodBody.SingleAssignmentSlots.Contains(variableSlot)
                 || !IsVariableSlotWrittenBetween(methodBody, variableSlot, snapshotInstructionIndex, useInstructionIndex);
+        }
+
+        if (IsStableNumericProducer(methodBody, temp))
+        {
+            return true;
         }
 
         return TryFindInstructionDefiningTemp(methodBody, temp, out var definitionIndex)

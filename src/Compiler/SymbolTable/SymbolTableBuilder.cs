@@ -105,6 +105,7 @@ namespace Jroc.SymbolTables
             }
 
             binding.HasWrite = true;
+            binding.HasNonInitializationWrite = true;
         }
 
         private static bool IsIdentifierNamed(Node? node, string name)
@@ -254,6 +255,7 @@ namespace Jroc.SymbolTables
             AnalyzeFreeVariables(globalScope);
             MarkCapturedVariables(globalScope);
             AnalyzeRuntimeTemporalDeadZoneChecks(globalScope);
+            AnalyzeCompileTimeConstants(globalScope);
 
             InferTypesToFixedPoint(globalScope);
 

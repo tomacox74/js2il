@@ -282,6 +282,9 @@ namespace Jroc.Tests.Function
         [Fact]
         public Task Function_ParameterTypeInference_DirectRotateArrayArgument() { var testName = nameof(Function_ParameterTypeInference_DirectRotateArrayArgument); return ExecutionTest(testName); }
 
+        [Fact]
+        public Task Function_ParameterTypeInference_BinaryArguments() { var testName = nameof(Function_ParameterTypeInference_BinaryArguments); return ExecutionTest(testName); }
+
         // ABI optimization tests: non-capturing functions should NOT have scopes parameter
         [Fact]
         public Task Function_NoCapture_NoScopesParameter() { var testName = nameof(Function_NoCapture_NoScopesParameter); return ExecutionTest(testName); }

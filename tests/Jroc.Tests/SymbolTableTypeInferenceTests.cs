@@ -1449,6 +1449,32 @@ public class SymbolTableTypeInferenceTests
     }
 
     [Fact]
+    public void SymbolTable_InferTypes_PrimeJavaScript_SearchBitFalse_InfersNumericParameter()
+    {
+        const string resourceName = "Jroc.Tests.Integration.JavaScript.Compile_Performance_PrimeJavaScript.js";
+        using var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName);
+        Assert.NotNull(stream);
+
+        using var reader = new StreamReader(stream!);
+        var source = reader.ReadToEnd();
+        var symbolTable = BuildSymbolTable(source);
+
+        var classScope = FindClassScope(symbolTable.Root, "BitArray");
+        Assert.NotNull(classScope);
+
+        foreach (var methodName in new[] { "searchBitFalse", "testBitTrue" })
+        {
+            var methodScope = FindFirstScope(classScope!, scope =>
+                scope.Kind == ScopeKind.Function
+                && scope.Parent?.Kind == ScopeKind.Class
+                && string.Equals(scope.Name, methodName, StringComparison.Ordinal));
+
+            Assert.NotNull(methodScope);
+            AssertStableParameterTypes(methodScope!, ("index", typeof(double)));
+        }
+    }
+
+    [Fact]
     public void SymbolTable_InferTypes_PrimeJavaScript_PrimeSieveConstructorInfersNumericParameter()
     {
         const string resourceName = "Jroc.Tests.Integration.JavaScript.Compile_Performance_PrimeJavaScript.js";
@@ -1471,6 +1497,30 @@ public class SymbolTableTypeInferenceTests
         AssertStableParameterTypes(constructorScope!, ("sieveSize", typeof(double)));
         Assert.True(classScope.StableInstanceFieldClrTypes.TryGetValue("sieveSize", out var fieldType));
         Assert.Equal(typeof(double), fieldType);
+    }
+
+    [Fact]
+    public void SymbolTable_InferTypes_UpdateParameterWrittenInsideWith_RemainsObject()
+    {
+        var symbolTable = BuildSymbolTable(
+            """
+            function updateInsideWith(value) {
+                value++;
+                with ({}) {
+                    value = "text";
+                }
+                return value;
+            }
+
+            updateInsideWith(1);
+            """);
+
+        var functionScope = FindFirstScope(symbolTable.Root, scope =>
+            scope.Kind == ScopeKind.Function
+            && string.Equals(scope.Name, "updateInsideWith", StringComparison.Ordinal));
+
+        Assert.NotNull(functionScope);
+        AssertObjectParameter(functionScope!, "value");
     }
 
     [Fact]

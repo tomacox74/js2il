@@ -129,6 +129,11 @@ public class AstWalker
                 Visit(tryStmt.Finalizer, visitor);
                 break;
 
+            case WithStatement withStmt:
+                Visit(withStmt.Object, visitor);
+                Visit(withStmt.Body, visitor);
+                break;
+
             case CatchClause catchClause:
                 Visit(catchClause.Param, visitor);
                 Visit(catchClause.Body, visitor);
@@ -364,6 +369,11 @@ public class AstWalker
                 VisitWithContext(tryStmt.Block, enterNode, exitNode);
                 VisitWithContext(tryStmt.Handler, enterNode, exitNode);
                 VisitWithContext(tryStmt.Finalizer, enterNode, exitNode);
+                break;
+
+            case WithStatement withStmt:
+                VisitWithContext(withStmt.Object, enterNode, exitNode);
+                VisitWithContext(withStmt.Body, enterNode, exitNode);
                 break;
 
             case CatchClause catchClause:

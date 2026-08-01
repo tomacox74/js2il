@@ -501,15 +501,25 @@ internal static class LIRMemberCallNormalization
             ? new ValueStorage(ValueStorageKind.UnboxedValue, parameterClrType)
             : new ValueStorage(ValueStorageKind.Reference, parameterClrType);
 
-        if (!ValueStorageFacts.CanFlowTo(sourceStorage, targetStorage))
+        if (!IsStableAlreadyEvaluatedTemp(
+                methodBody,
+                convertToObject.Source,
+                convertInstructionIndex,
+                callInstructionIndex))
         {
             return false;
         }
 
-        // Keep this rewrite to stable, already-evaluated values. The old LIRBuildArray
-        // materialized arguments before dispatch; forwarding an effectful source could
-        // otherwise move evaluation into the direct/fallback call branches.
-        return IsStableAlreadyEvaluatedTemp(methodBody, convertToObject.Source, convertInstructionIndex, callInstructionIndex);
+        if (ValueStorageFacts.CanFlowTo(sourceStorage, targetStorage))
+        {
+            return true;
+        }
+
+        return convertToObject.Source.Index >= 0
+            && convertToObject.Source.Index < methodBody.TempStorages.Count
+            && ValueStorageFacts.CanFlowTo(
+                methodBody.TempStorages[convertToObject.Source.Index],
+                targetStorage);
     }
 
     private static bool IsStableAlreadyEvaluatedTemp(
@@ -525,6 +535,11 @@ internal static class LIRMemberCallNormalization
                 || !IsVariableSlotWrittenBetween(methodBody, variableSlot, snapshotInstructionIndex, useInstructionIndex);
         }
 
+        if (IsStableNumericProducer(methodBody, temp))
+        {
+            return true;
+        }
+
         return TryFindDefInstruction(methodBody, temp) switch
         {
             LIRConstNumber or LIRConstString or LIRConstBoolean or LIRConstUndefined or LIRConstNull => true,
@@ -532,6 +547,23 @@ internal static class LIRMemberCallNormalization
             LIRCopyTemp copyTemp => IsStableAlreadyEvaluatedTemp(methodBody, copyTemp.Source, snapshotInstructionIndex, useInstructionIndex),
             _ => false
         };
+    }
+
+    private static bool IsStableNumericProducer(MethodBodyIR methodBody, TempVariable temp)
+    {
+        foreach (var instruction in methodBody.Instructions)
+        {
+            if (TempLocalAllocator.TryGetDefinedTemp(instruction, out var defined)
+                && defined.Index == temp.Index)
+            {
+                return instruction is
+                    LIRAddNumber or LIRSubNumber or LIRMulNumber or LIRDivNumber or LIRModNumber or LIRExpNumber
+                    or LIRBitwiseAnd or LIRBitwiseOr or LIRBitwiseXor
+                    or LIRLeftShift or LIRRightShift or LIRUnsignedRightShift;
+            }
+        }
+
+        return false;
     }
 
     private static bool IsVariableSlotWrittenBetween(MethodBodyIR methodBody, int variableSlot, int startInstructionIndex, int endInstructionIndex)

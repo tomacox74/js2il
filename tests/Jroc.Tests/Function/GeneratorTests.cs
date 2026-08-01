@@ -300,6 +300,35 @@ namespace Jroc.Tests.Function
             });
         }
 
+        [Fact]
+        public Task Function_ParameterTypeInference_BinaryArguments()
+        {
+            var testName = nameof(Function_ParameterTypeInference_BinaryArguments);
+            return GenerateTest(testName, verifyAssembly: assembly =>
+            {
+                var moduleType = assembly.GetType($"Modules.{testName}", throwOnError: true)!;
+                var receiverType = moduleType.GetNestedType("BinaryReceiver", BindingFlags.Public | BindingFlags.NonPublic)!;
+
+                foreach (var methodName in new[] { "add", "multiply", "shift", "increment" })
+                {
+                    var method = receiverType.GetMethod(methodName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)!;
+                    Assert.Equal(typeof(double), Assert.Single(method.GetParameters()).ParameterType);
+                }
+
+                var dynamicMethod = receiverType.GetMethod("dynamicAdd", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)!;
+                Assert.Equal(typeof(object), Assert.Single(dynamicMethod.GetParameters()).ParameterType);
+
+                var bigintMethod = receiverType.GetMethod("bigint", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)!;
+                Assert.Equal(typeof(object), Assert.Single(bigintMethod.GetParameters()).ParameterType);
+
+                foreach (var methodName in new[] { "incrementBoolean", "destructure", "iterate", "iterateVar", "iterateVarIn", "redeclare", "functionRedeclare" })
+                {
+                    var method = receiverType.GetMethod(methodName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)!;
+                    Assert.Equal(typeof(object), Assert.Single(method.GetParameters()).ParameterType);
+                }
+            });
+        }
+
         // ABI optimization tests: non-capturing functions should NOT have scopes parameter
         [Fact]
         public Task Function_NoCapture_NoScopesParameter() { var testName = nameof(Function_NoCapture_NoScopesParameter); return GenerateTest(testName); }
