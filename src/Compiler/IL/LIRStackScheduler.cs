@@ -1325,6 +1325,8 @@ internal static class LIRStackScheduler
             LIRCallFunction call => call.ScopesArray.Equals(result),
             LIRTailCallFunctionReturn call =>
                 call.ScopesArray.Equals(result),
+            LIRCallFunctionWithArgsArray call =>
+                call.ScopesArray.Equals(result),
             LIRCallFunctionValue call =>
                 call.ScopesArray.Equals(result),
             LIRCallFunctionValue0 call =>
@@ -1335,6 +1337,8 @@ internal static class LIRStackScheduler
                 call.ScopesArray.Equals(result),
             LIRCallFunctionValue3 call =>
                 call.ScopesArray.Equals(result),
+            LIRCreateBoundArrowFunction create =>
+                create.ScopesArray.Equals(result),
             LIRCreateBoundFunctionExpression create =>
                 create.ScopesArray.Equals(result),
             _ => false
@@ -1354,6 +1358,7 @@ internal static class LIRStackScheduler
             or LIRCallMember
             or LIRConstructValue
             or LIRCallFunctionBaseConstructor
+            or LIRCreateBoundArrowFunction
             or LIRCreateBoundFunctionExpression;
 
     private static bool TrySelectGeneralProducerTree(
