@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2119
+				// Method begins at RVA 0x211f
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2122
+				// Method begins at RVA 0x2128
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -64,7 +64,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 02 00 00 00 00 00
 			)
-			// Method begins at RVA 0x20b8
+			// Method begins at RVA 0x20bc
 			// Header size: 12
 			// Code size: 16 (0x10)
 			.maxstack 8
@@ -88,30 +88,33 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x20d4
+			// Method begins at RVA 0x20d8
 			// Header size: 12
-			// Code size: 48 (0x30)
+			// Code size: 50 (0x32)
 			.maxstack 8
 			.locals init (
-				[0] object
+				[0] object,
+				[1] object
 			)
 
 			IL_0000: ldstr "console"
 			IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
 			IL_000a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
 			IL_000f: stloc.0
-			IL_0010: ldloc.0
-			IL_0011: ldstr "log"
-			IL_0016: ldarg.0
-			IL_0017: ldfld object[] Modules.Classes_ClassMethod_AccessGlobalVariable_Log/MyClass::_scopes
-			IL_001c: ldc.i4.0
-			IL_001d: ldelem.ref
-			IL_001e: castclass Modules.Classes_ClassMethod_AccessGlobalVariable_Log/Scope
-			IL_0023: ldfld string Modules.Classes_ClassMethod_AccessGlobalVariable_Log/Scope::GLOBAL_VALUE
-			IL_0028: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_002d: pop
-			IL_002e: ldnull
-			IL_002f: ret
+			IL_0010: ldarg.0
+			IL_0011: ldfld object[] Modules.Classes_ClassMethod_AccessGlobalVariable_Log/MyClass::_scopes
+			IL_0016: ldc.i4.0
+			IL_0017: ldelem.ref
+			IL_0018: castclass Modules.Classes_ClassMethod_AccessGlobalVariable_Log/Scope
+			IL_001d: ldfld string Modules.Classes_ClassMethod_AccessGlobalVariable_Log/Scope::GLOBAL_VALUE
+			IL_0022: stloc.1
+			IL_0023: ldloc.0
+			IL_0024: ldstr "log"
+			IL_0029: ldloc.1
+			IL_002a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_002f: pop
+			IL_0030: ldnull
+			IL_0031: ret
 		} // end of method MyClass::logGlobal
 
 	} // end of class MyClass
@@ -131,7 +134,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2110
+			// Method begins at RVA 0x2116
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -157,12 +160,13 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 92 (0x5c)
+		// Code size: 94 (0x5e)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Classes_ClassMethod_AccessGlobalVariable_Log/Scope,
 			[1] class Modules.Classes_ClassMethod_AccessGlobalVariable_Log/MyClass,
-			[2] class Modules.Classes_ClassMethod_AccessGlobalVariable_Log/MyClass
+			[2] object[],
+			[3] class Modules.Classes_ClassMethod_AccessGlobalVariable_Log/MyClass
 		)
 
 		IL_0000: newobj instance void Modules.Classes_ClassMethod_AccessGlobalVariable_Log/Scope::.ctor()
@@ -178,25 +182,27 @@
 		IL_001a: ldc.i4.0
 		IL_001b: ldloc.0
 		IL_001c: stelem.ref
-		IL_001d: ldc.i4.0
-		IL_001e: newarr [System.Runtime]System.Object
-		IL_0023: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
-		IL_0028: newobj instance void Modules.Classes_ClassMethod_AccessGlobalVariable_Log/MyClass::.ctor(object[])
-		IL_002d: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
-		IL_0032: stloc.1
-		IL_0033: ldloc.1
-		IL_0034: ldtoken Modules.Classes_ClassMethod_AccessGlobalVariable_Log/MyClass
-		IL_0039: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_003e: ldstr "prototype"
-		IL_0043: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
-		IL_0048: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
-		IL_004d: ldloc.1
-		IL_004e: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Classes_ClassMethod_AccessGlobalVariable_Log/MyClass>(!!0)
-		IL_0053: stloc.2
-		IL_0054: ldloc.2
-		IL_0055: callvirt instance object Modules.Classes_ClassMethod_AccessGlobalVariable_Log/MyClass::logGlobal()
-		IL_005a: pop
-		IL_005b: ret
+		IL_001d: stloc.2
+		IL_001e: ldloc.2
+		IL_001f: ldc.i4.0
+		IL_0020: newarr [System.Runtime]System.Object
+		IL_0025: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
+		IL_002a: newobj instance void Modules.Classes_ClassMethod_AccessGlobalVariable_Log/MyClass::.ctor(object[])
+		IL_002f: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
+		IL_0034: stloc.1
+		IL_0035: ldloc.1
+		IL_0036: ldtoken Modules.Classes_ClassMethod_AccessGlobalVariable_Log/MyClass
+		IL_003b: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_0040: ldstr "prototype"
+		IL_0045: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
+		IL_004a: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
+		IL_004f: ldloc.1
+		IL_0050: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Classes_ClassMethod_AccessGlobalVariable_Log/MyClass>(!!0)
+		IL_0055: stloc.3
+		IL_0056: ldloc.3
+		IL_0057: callvirt instance object Modules.Classes_ClassMethod_AccessGlobalVariable_Log/MyClass::logGlobal()
+		IL_005c: pop
+		IL_005d: ret
 	} // end of method Classes_ClassMethod_AccessGlobalVariable_Log::__js_module_init__
 
 } // end of class Modules.Classes_ClassMethod_AccessGlobalVariable_Log
@@ -208,7 +214,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x212b
+		// Method begins at RVA 0x2131
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20fd
+			// Method begins at RVA 0x2105
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x210f
+				// Method begins at RVA 0x2117
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -56,7 +56,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2106
+			// Method begins at RVA 0x210e
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -82,7 +82,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 161 (0xa1)
+		// Code size: 169 (0xa9)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Array_Spread_Copy/Scope,
@@ -91,7 +91,9 @@
 			[3] float64,
 			[4] class [JavaScriptRuntime]JavaScriptRuntime.Array,
 			[5] float64,
-			[6] object
+			[6] float64,
+			[7] object,
+			[8] object
 		)
 
 		IL_0000: newobj instance void Modules.Array_Spread_Copy/Scope::.ctor()
@@ -122,31 +124,35 @@
 		// loop start (head: IL_0058)
 			IL_0058: ldloc.3
 			IL_0059: stloc.s 5
-			IL_005b: ldloc.s 5
-			IL_005d: ldloc.2
-			IL_005e: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::get_length()
-			IL_0063: clt
-			IL_0065: brfalse IL_00a0
+			IL_005b: ldloc.2
+			IL_005c: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::get_length()
+			IL_0061: stloc.s 6
+			IL_0063: ldloc.s 5
+			IL_0065: ldloc.s 6
+			IL_0067: clt
+			IL_0069: brfalse IL_00a8
 
-			IL_006a: ldstr "console"
-			IL_006f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_0074: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0079: stloc.s 6
-			IL_007b: ldloc.s 6
-			IL_007d: ldstr "log"
-			IL_0082: ldloc.2
-			IL_0083: ldloc.3
-			IL_0084: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
-			IL_0089: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_008e: pop
-			IL_008f: ldloc.3
-			IL_0090: ldc.r8 1
-			IL_0099: add
-			IL_009a: stloc.3
-			IL_009b: br IL_0058
+			IL_006e: ldstr "console"
+			IL_0073: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_0078: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_007d: stloc.s 7
+			IL_007f: ldloc.2
+			IL_0080: ldloc.3
+			IL_0081: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
+			IL_0086: stloc.s 8
+			IL_0088: ldloc.s 7
+			IL_008a: ldstr "log"
+			IL_008f: ldloc.s 8
+			IL_0091: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_0096: pop
+			IL_0097: ldloc.3
+			IL_0098: ldc.r8 1
+			IL_00a1: add
+			IL_00a2: stloc.3
+			IL_00a3: br IL_0058
 		// end loop
 
-		IL_00a0: ret
+		IL_00a8: ret
 	} // end of method Array_Spread_Copy::__js_module_init__
 
 } // end of class Modules.Array_Spread_Copy
@@ -158,7 +164,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2118
+		// Method begins at RVA 0x2120
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

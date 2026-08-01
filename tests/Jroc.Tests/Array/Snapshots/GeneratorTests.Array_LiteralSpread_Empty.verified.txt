@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20e8
+			// Method begins at RVA 0x20ec
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,7 +40,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 140 (0x8c)
+		// Code size: 144 (0x90)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Array_LiteralSpread_Empty/Scope,
@@ -48,7 +48,8 @@
 			[2] class [JavaScriptRuntime]JavaScriptRuntime.Array,
 			[3] class [JavaScriptRuntime]JavaScriptRuntime.Array,
 			[4] object,
-			[5] object
+			[5] object,
+			[6] class [JavaScriptRuntime]JavaScriptRuntime.Array
 		)
 
 		IL_0000: newobj instance void Modules.Array_LiteralSpread_Empty/Scope::.ctor()
@@ -85,20 +86,22 @@
 		IL_005c: ldc.i4.0
 		IL_005d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
 		IL_0062: stloc.3
-		IL_0063: ldloc.3
-		IL_0064: ldc.i4.0
-		IL_0065: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_006a: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::PushRange(object)
-		IL_006f: ldloc.3
-		IL_0070: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::get_length()
-		IL_0075: box [System.Runtime]System.Double
-		IL_007a: stloc.s 5
-		IL_007c: ldloc.s 4
-		IL_007e: ldstr "log"
-		IL_0083: ldloc.s 5
-		IL_0085: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_008a: pop
-		IL_008b: ret
+		IL_0063: ldc.i4.0
+		IL_0064: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_0069: stloc.s 6
+		IL_006b: ldloc.3
+		IL_006c: ldloc.s 6
+		IL_006e: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::PushRange(object)
+		IL_0073: ldloc.3
+		IL_0074: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::get_length()
+		IL_0079: box [System.Runtime]System.Double
+		IL_007e: stloc.s 5
+		IL_0080: ldloc.s 4
+		IL_0082: ldstr "log"
+		IL_0087: ldloc.s 5
+		IL_0089: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_008e: pop
+		IL_008f: ret
 	} // end of method Array_LiteralSpread_Empty::__js_module_init__
 
 } // end of class Modules.Array_LiteralSpread_Empty
@@ -110,7 +113,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20f1
+		// Method begins at RVA 0x20f5
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

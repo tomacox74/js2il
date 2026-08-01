@@ -27,7 +27,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2659
+				// Method begins at RVA 0x269b
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -52,7 +52,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2544
+			// Method begins at RVA 0x2580
 			// Header size: 12
 			// Code size: 56 (0x38)
 			.maxstack 8
@@ -100,7 +100,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x266b
+					// Method begins at RVA 0x26ad
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -118,7 +118,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2662
+				// Method begins at RVA 0x26a4
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -143,13 +143,14 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2588
+			// Method begins at RVA 0x25c4
 			// Header size: 12
-			// Code size: 68 (0x44)
+			// Code size: 70 (0x46)
 			.maxstack 8
 			.locals init (
 				[0] bool,
-				[1] object
+				[1] object,
+				[2] object
 			)
 
 			IL_0000: ldarg.2
@@ -157,23 +158,25 @@
 			IL_0006: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
 			IL_000b: stloc.0
 			IL_000c: ldloc.0
-			IL_000d: brfalse IL_0042
+			IL_000d: brfalse IL_0044
 
 			IL_0012: ldstr "console"
 			IL_0017: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
 			IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
 			IL_0021: stloc.1
-			IL_0022: ldloc.1
-			IL_0023: ldstr "log"
-			IL_0028: ldstr "this tag:"
-			IL_002d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-			IL_0032: ldstr "tag"
-			IL_0037: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_003c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-			IL_0041: pop
+			IL_0022: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+			IL_0027: ldstr "tag"
+			IL_002c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0031: stloc.2
+			IL_0032: ldloc.1
+			IL_0033: ldstr "log"
+			IL_0038: ldstr "this tag:"
+			IL_003d: ldloc.2
+			IL_003e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+			IL_0043: pop
 
-			IL_0042: ldnull
-			IL_0043: ret
+			IL_0044: ldnull
+			IL_0045: ret
 		} // end of method FunctionExpression_L19C28::__js_call__
 
 	} // end of class FunctionExpression_L19C28
@@ -198,7 +201,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x267d
+					// Method begins at RVA 0x26bf
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -220,7 +223,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2674
+				// Method begins at RVA 0x26b6
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -248,9 +251,9 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 06 00 00 02
 			)
-			// Method begins at RVA 0x25d8
+			// Method begins at RVA 0x2618
 			// Header size: 12
-			// Code size: 108 (0x6c)
+			// Code size: 110 (0x6e)
 			.maxstack 8
 			.locals init (
 				[0] object,
@@ -281,21 +284,23 @@
 			IL_003c: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
 			IL_0041: stloc.2
 			IL_0042: ldloc.2
-			IL_0043: brfalse IL_006a
+			IL_0043: brfalse IL_006c
 
 			IL_0048: ldarg.0
 			IL_0049: ldfld object Modules.Require_Url_SearchParams_Mutate/Scope::mutating
-			IL_004e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0053: stloc.0
-			IL_0054: ldloc.0
-			IL_0055: ldstr "append"
-			IL_005a: ldstr "b"
-			IL_005f: ldstr "2"
-			IL_0064: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-			IL_0069: pop
+			IL_004e: stloc.0
+			IL_004f: ldloc.0
+			IL_0050: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0055: stloc.0
+			IL_0056: ldloc.0
+			IL_0057: ldstr "append"
+			IL_005c: ldstr "b"
+			IL_0061: ldstr "2"
+			IL_0066: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+			IL_006b: pop
 
-			IL_006a: ldnull
-			IL_006b: ret
+			IL_006c: ldnull
+			IL_006d: ret
 		} // end of method ArrowFunction_L33C18::__js_call__
 
 	} // end of class ArrowFunction_L33C18
@@ -314,7 +319,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2650
+			// Method begins at RVA 0x2692
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -340,7 +345,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 1253 (0x4e5)
+		// Code size: 1313 (0x521)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Require_Url_SearchParams_Mutate/Scope,
@@ -384,357 +389,387 @@
 		IL_004b: ldloc.2
 		IL_004c: ldstr "searchParams"
 		IL_0051: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0056: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_005b: stloc.s 8
-		IL_005d: ldloc.s 8
-		IL_005f: ldstr "get"
-		IL_0064: ldstr "q"
-		IL_0069: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_006e: stloc.s 8
-		IL_0070: ldloc.s 6
-		IL_0072: ldstr "log"
-		IL_0077: ldstr "initial q:"
-		IL_007c: ldloc.s 8
-		IL_007e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_0083: pop
-		IL_0084: ldstr "console"
-		IL_0089: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_008e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0093: stloc.s 8
-		IL_0095: ldloc.2
-		IL_0096: ldstr "searchParams"
-		IL_009b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_00a0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00a5: stloc.s 6
-		IL_00a7: ldloc.s 6
-		IL_00a9: ldstr "getAll"
-		IL_00ae: ldstr "q"
-		IL_00b3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00b8: stloc.s 6
-		IL_00ba: ldloc.s 6
-		IL_00bc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00c1: stloc.s 6
-		IL_00c3: ldloc.s 6
-		IL_00c5: ldstr "join"
-		IL_00ca: ldstr "|"
-		IL_00cf: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00d4: stloc.s 6
-		IL_00d6: ldloc.s 8
-		IL_00d8: ldstr "log"
-		IL_00dd: ldstr "all q:"
-		IL_00e2: ldloc.s 6
-		IL_00e4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_00e9: pop
-		IL_00ea: ldstr "console"
-		IL_00ef: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_00f4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00f9: stloc.s 6
-		IL_00fb: ldloc.2
-		IL_00fc: ldstr "searchParams"
-		IL_0101: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0106: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_010b: stloc.s 8
-		IL_010d: ldloc.s 8
-		IL_010f: ldstr "has"
-		IL_0114: ldstr "mode"
-		IL_0119: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_011e: stloc.s 8
-		IL_0120: ldloc.s 6
-		IL_0122: ldstr "log"
-		IL_0127: ldstr "has mode:"
-		IL_012c: ldloc.s 8
-		IL_012e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_0133: pop
-		IL_0134: ldloc.2
-		IL_0135: ldstr "searchParams"
-		IL_013a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_013f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0144: stloc.s 8
-		IL_0146: ldloc.s 8
-		IL_0148: ldstr "append"
-		IL_014d: ldstr "mode"
-		IL_0152: ldstr "fast"
-		IL_0157: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_015c: pop
-		IL_015d: ldloc.2
-		IL_015e: ldstr "searchParams"
-		IL_0163: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0168: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_016d: stloc.s 8
-		IL_016f: ldloc.s 8
-		IL_0171: ldstr "set"
-		IL_0176: ldstr "q"
-		IL_017b: ldstr "done now"
-		IL_0180: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_0185: pop
-		IL_0186: ldloc.2
-		IL_0187: ldstr "searchParams"
-		IL_018c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0191: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0196: stloc.s 8
-		IL_0198: ldloc.s 8
-		IL_019a: ldstr "append"
-		IL_019f: ldstr "empty"
-		IL_01a4: ldstr ""
-		IL_01a9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_01ae: pop
-		IL_01af: ldloc.2
-		IL_01b0: ldstr "searchParams"
-		IL_01b5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_01ba: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_01bf: stloc.s 8
-		IL_01c1: ldnull
-		IL_01c2: ldftn object Modules.Require_Url_SearchParams_Mutate/ArrowFunction_L14C29::__js_call__(object, object, object)
-		IL_01c8: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::.ctor(object, native int)
-		IL_01cd: ldc.i4.1
-		IL_01ce: newarr [System.Runtime]System.Object
-		IL_01d3: dup
-		IL_01d4: ldc.i4.0
-		IL_01d5: ldloc.0
-		IL_01d6: stelem.ref
-		IL_01d7: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_01dc: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_01e1: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2
-		IL_01e6: ldc.i4.2
-		IL_01e7: conv.r8
-		IL_01e8: ldstr ""
-		IL_01ed: ldc.i4.0
-		IL_01ee: ldc.i4.0
-		IL_01ef: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2>(!!0, float64, string, bool, bool)
-		IL_01f4: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2>(!!0)
-		IL_01f9: stloc.s 9
-		IL_01fb: ldloc.s 8
-		IL_01fd: ldstr "forEach"
-		IL_0202: ldloc.s 9
-		IL_0204: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0209: pop
-		IL_020a: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_020f: dup
-		IL_0210: ldstr "tag"
-		IL_0215: ldstr "ctx"
-		IL_021a: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_021f: stloc.3
-		IL_0220: ldloc.2
-		IL_0221: ldstr "searchParams"
-		IL_0226: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_022b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0230: stloc.s 8
-		IL_0232: ldnull
-		IL_0233: ldftn object Modules.Require_Url_SearchParams_Mutate/FunctionExpression_L19C28::__js_call__(object, object, object)
-		IL_0239: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::.ctor(object, native int)
-		IL_023e: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2
-		IL_0243: ldc.i4.2
-		IL_0244: conv.r8
-		IL_0245: ldstr ""
-		IL_024a: ldc.i4.0
-		IL_024b: ldc.i4.1
-		IL_024c: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2>(!!0, float64, string, bool, bool)
-		IL_0251: stloc.s 9
-		IL_0253: ldloc.s 8
-		IL_0255: ldstr "forEach"
-		IL_025a: ldloc.s 9
-		IL_025c: ldloc.3
-		IL_025d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_0262: pop
-		IL_0263: ldstr "console"
-		IL_0268: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_026d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0272: stloc.s 8
-		IL_0274: ldloc.s 8
-		IL_0276: ldstr "log"
-		IL_027b: ldstr "search:"
-		IL_0280: ldloc.2
-		IL_0281: ldstr "search"
-		IL_0286: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_028b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_0290: pop
-		IL_0291: ldstr "console"
-		IL_0296: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_029b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_02a0: stloc.s 8
-		IL_02a2: ldloc.s 8
-		IL_02a4: ldstr "log"
-		IL_02a9: ldstr "href:"
-		IL_02ae: ldloc.2
-		IL_02af: ldstr "href"
-		IL_02b4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_02b9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_02be: pop
-		IL_02bf: ldloc.1
-		IL_02c0: ldstr "URLSearchParams"
-		IL_02c5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_02ca: stloc.s 8
-		IL_02cc: ldc.i4.1
-		IL_02cd: newarr [System.Runtime]System.Object
-		IL_02d2: dup
-		IL_02d3: ldc.i4.0
-		IL_02d4: ldstr "alpha=1&beta=two+words"
-		IL_02d9: stelem.ref
-		IL_02da: stloc.s 7
-		IL_02dc: ldloc.s 8
-		IL_02de: ldloc.s 7
-		IL_02e0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::ConstructValue(object, object[])
-		IL_02e5: stloc.s 4
-		IL_02e7: ldstr "console"
-		IL_02ec: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_02f1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_02f6: stloc.s 8
-		IL_02f8: ldloc.s 4
-		IL_02fa: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_02ff: stloc.s 6
-		IL_0301: ldloc.s 6
-		IL_0303: ldstr "toString"
-		IL_0308: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-		IL_030d: stloc.s 6
-		IL_030f: ldloc.s 8
-		IL_0311: ldstr "log"
-		IL_0316: ldstr "copy:"
-		IL_031b: ldloc.s 6
-		IL_031d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_0322: pop
-		IL_0323: ldstr "console"
-		IL_0328: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_032d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0332: stloc.s 6
-		IL_0334: ldloc.s 4
-		IL_0336: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_033b: stloc.s 8
-		IL_033d: ldloc.s 8
-		IL_033f: ldstr "get"
-		IL_0344: ldstr "beta"
-		IL_0349: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_034e: stloc.s 8
-		IL_0350: ldloc.s 6
-		IL_0352: ldstr "log"
-		IL_0357: ldstr "copy beta:"
-		IL_035c: ldloc.s 8
-		IL_035e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_0363: pop
-		IL_0364: ldloc.1
-		IL_0365: ldstr "URLSearchParams"
-		IL_036a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_036f: stloc.s 8
-		IL_0371: ldc.i4.1
-		IL_0372: newarr [System.Runtime]System.Object
-		IL_0377: dup
-		IL_0378: ldc.i4.0
-		IL_0379: ldstr "a=1"
-		IL_037e: stelem.ref
-		IL_037f: stloc.s 7
-		IL_0381: ldloc.s 8
-		IL_0383: ldloc.s 7
-		IL_0385: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::ConstructValue(object, object[])
-		IL_038a: stloc.s 8
-		IL_038c: ldloc.0
-		IL_038d: ldloc.s 8
-		IL_038f: stfld object Modules.Require_Url_SearchParams_Mutate/Scope::mutating
-		IL_0394: ldloc.0
-		IL_0395: ldfld object Modules.Require_Url_SearchParams_Mutate/Scope::mutating
-		IL_039a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_039f: stloc.s 8
-		IL_03a1: ldc.i4.1
-		IL_03a2: newarr [System.Runtime]System.Object
-		IL_03a7: dup
-		IL_03a8: ldc.i4.0
-		IL_03a9: ldloc.0
-		IL_03aa: stelem.ref
-		IL_03ab: ldc.i4.0
-		IL_03ac: ldelem.ref
-		IL_03ad: castclass Modules.Require_Url_SearchParams_Mutate/Scope
-		IL_03b2: ldftn object Modules.Require_Url_SearchParams_Mutate/ArrowFunction_L33C18::__js_call__(class Modules.Require_Url_SearchParams_Mutate/Scope, object, object, object)
-		IL_03b8: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::.ctor(object, native int)
-		IL_03bd: ldc.i4.1
-		IL_03be: newarr [System.Runtime]System.Object
-		IL_03c3: dup
-		IL_03c4: ldc.i4.0
-		IL_03c5: ldloc.0
-		IL_03c6: stelem.ref
-		IL_03c7: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_03cc: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_03d1: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2
-		IL_03d6: ldc.i4.2
-		IL_03d7: conv.r8
-		IL_03d8: ldstr ""
-		IL_03dd: ldc.i4.0
-		IL_03de: ldc.i4.0
-		IL_03df: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2>(!!0, float64, string, bool, bool)
-		IL_03e4: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2>(!!0)
-		IL_03e9: stloc.s 9
-		IL_03eb: ldloc.s 8
-		IL_03ed: ldstr "forEach"
-		IL_03f2: ldloc.s 9
-		IL_03f4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_03f9: pop
-		IL_03fa: ldstr "console"
-		IL_03ff: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0404: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0409: stloc.s 8
-		IL_040b: ldloc.0
-		IL_040c: ldfld object Modules.Require_Url_SearchParams_Mutate/Scope::mutating
-		IL_0411: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0416: stloc.s 6
-		IL_0418: ldloc.s 6
-		IL_041a: ldstr "toString"
-		IL_041f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-		IL_0424: stloc.s 6
-		IL_0426: ldloc.s 8
-		IL_0428: ldstr "log"
-		IL_042d: ldstr "mutating final:"
-		IL_0432: ldloc.s 6
-		IL_0434: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_0439: pop
-		IL_043a: ldloc.1
-		IL_043b: ldstr "URLSearchParams"
-		IL_0440: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0445: stloc.s 6
-		IL_0447: ldc.i4.1
-		IL_0448: newarr [System.Runtime]System.Object
-		IL_044d: dup
-		IL_044e: ldc.i4.0
-		IL_044f: ldstr "bad=%&plus=a+b%"
-		IL_0454: stelem.ref
-		IL_0455: stloc.s 7
-		IL_0457: ldloc.s 6
-		IL_0459: ldloc.s 7
-		IL_045b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::ConstructValue(object, object[])
-		IL_0460: stloc.s 5
-		IL_0462: ldstr "console"
-		IL_0467: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_046c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0471: stloc.s 6
-		IL_0473: ldloc.s 5
-		IL_0475: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_047a: stloc.s 8
-		IL_047c: ldloc.s 8
-		IL_047e: ldstr "get"
-		IL_0483: ldstr "bad"
-		IL_0488: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_048d: stloc.s 8
-		IL_048f: ldloc.s 6
-		IL_0491: ldstr "log"
-		IL_0496: ldstr "malformed bad:"
-		IL_049b: ldloc.s 8
-		IL_049d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_04a2: pop
-		IL_04a3: ldstr "console"
-		IL_04a8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_04ad: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_04b2: stloc.s 8
-		IL_04b4: ldloc.s 5
-		IL_04b6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_04bb: stloc.s 6
-		IL_04bd: ldloc.s 6
-		IL_04bf: ldstr "get"
-		IL_04c4: ldstr "plus"
-		IL_04c9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_04ce: stloc.s 6
-		IL_04d0: ldloc.s 8
-		IL_04d2: ldstr "log"
-		IL_04d7: ldstr "malformed plus:"
-		IL_04dc: ldloc.s 6
-		IL_04de: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_04e3: pop
-		IL_04e4: ret
+		IL_0056: stloc.s 8
+		IL_0058: ldloc.s 8
+		IL_005a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_005f: stloc.s 8
+		IL_0061: ldloc.s 8
+		IL_0063: ldstr "get"
+		IL_0068: ldstr "q"
+		IL_006d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0072: stloc.s 8
+		IL_0074: ldloc.s 6
+		IL_0076: ldstr "log"
+		IL_007b: ldstr "initial q:"
+		IL_0080: ldloc.s 8
+		IL_0082: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_0087: pop
+		IL_0088: ldstr "console"
+		IL_008d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0092: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0097: stloc.s 8
+		IL_0099: ldloc.2
+		IL_009a: ldstr "searchParams"
+		IL_009f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00a4: stloc.s 6
+		IL_00a6: ldloc.s 6
+		IL_00a8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00ad: stloc.s 6
+		IL_00af: ldloc.s 6
+		IL_00b1: ldstr "getAll"
+		IL_00b6: ldstr "q"
+		IL_00bb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_00c0: stloc.s 6
+		IL_00c2: ldloc.s 6
+		IL_00c4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00c9: stloc.s 6
+		IL_00cb: ldloc.s 6
+		IL_00cd: ldstr "join"
+		IL_00d2: ldstr "|"
+		IL_00d7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_00dc: stloc.s 6
+		IL_00de: ldloc.s 8
+		IL_00e0: ldstr "log"
+		IL_00e5: ldstr "all q:"
+		IL_00ea: ldloc.s 6
+		IL_00ec: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_00f1: pop
+		IL_00f2: ldstr "console"
+		IL_00f7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_00fc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0101: stloc.s 6
+		IL_0103: ldloc.2
+		IL_0104: ldstr "searchParams"
+		IL_0109: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_010e: stloc.s 8
+		IL_0110: ldloc.s 8
+		IL_0112: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0117: stloc.s 8
+		IL_0119: ldloc.s 8
+		IL_011b: ldstr "has"
+		IL_0120: ldstr "mode"
+		IL_0125: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_012a: stloc.s 8
+		IL_012c: ldloc.s 6
+		IL_012e: ldstr "log"
+		IL_0133: ldstr "has mode:"
+		IL_0138: ldloc.s 8
+		IL_013a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_013f: pop
+		IL_0140: ldloc.2
+		IL_0141: ldstr "searchParams"
+		IL_0146: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_014b: stloc.s 8
+		IL_014d: ldloc.s 8
+		IL_014f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0154: stloc.s 8
+		IL_0156: ldloc.s 8
+		IL_0158: ldstr "append"
+		IL_015d: ldstr "mode"
+		IL_0162: ldstr "fast"
+		IL_0167: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_016c: pop
+		IL_016d: ldloc.2
+		IL_016e: ldstr "searchParams"
+		IL_0173: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0178: stloc.s 8
+		IL_017a: ldloc.s 8
+		IL_017c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0181: stloc.s 8
+		IL_0183: ldloc.s 8
+		IL_0185: ldstr "set"
+		IL_018a: ldstr "q"
+		IL_018f: ldstr "done now"
+		IL_0194: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_0199: pop
+		IL_019a: ldloc.2
+		IL_019b: ldstr "searchParams"
+		IL_01a0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_01a5: stloc.s 8
+		IL_01a7: ldloc.s 8
+		IL_01a9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_01ae: stloc.s 8
+		IL_01b0: ldloc.s 8
+		IL_01b2: ldstr "append"
+		IL_01b7: ldstr "empty"
+		IL_01bc: ldstr ""
+		IL_01c1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_01c6: pop
+		IL_01c7: ldloc.2
+		IL_01c8: ldstr "searchParams"
+		IL_01cd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_01d2: stloc.s 8
+		IL_01d4: ldloc.s 8
+		IL_01d6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_01db: stloc.s 8
+		IL_01dd: ldc.i4.1
+		IL_01de: newarr [System.Runtime]System.Object
+		IL_01e3: dup
+		IL_01e4: ldc.i4.0
+		IL_01e5: ldloc.0
+		IL_01e6: stelem.ref
+		IL_01e7: stloc.s 7
+		IL_01e9: ldnull
+		IL_01ea: ldftn object Modules.Require_Url_SearchParams_Mutate/ArrowFunction_L14C29::__js_call__(object, object, object)
+		IL_01f0: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::.ctor(object, native int)
+		IL_01f5: ldloc.s 7
+		IL_01f7: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_01fc: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_0201: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2
+		IL_0206: ldc.i4.2
+		IL_0207: conv.r8
+		IL_0208: ldstr ""
+		IL_020d: ldc.i4.0
+		IL_020e: ldc.i4.0
+		IL_020f: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2>(!!0, float64, string, bool, bool)
+		IL_0214: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2>(!!0)
+		IL_0219: stloc.s 9
+		IL_021b: ldloc.s 8
+		IL_021d: ldstr "forEach"
+		IL_0222: ldloc.s 9
+		IL_0224: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0229: pop
+		IL_022a: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_022f: dup
+		IL_0230: ldstr "tag"
+		IL_0235: ldstr "ctx"
+		IL_023a: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_023f: stloc.3
+		IL_0240: ldloc.2
+		IL_0241: ldstr "searchParams"
+		IL_0246: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_024b: stloc.s 8
+		IL_024d: ldloc.s 8
+		IL_024f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0254: stloc.s 8
+		IL_0256: ldc.i4.1
+		IL_0257: newarr [System.Runtime]System.Object
+		IL_025c: dup
+		IL_025d: ldc.i4.0
+		IL_025e: ldloc.0
+		IL_025f: stelem.ref
+		IL_0260: stloc.s 7
+		IL_0262: ldnull
+		IL_0263: ldftn object Modules.Require_Url_SearchParams_Mutate/FunctionExpression_L19C28::__js_call__(object, object, object)
+		IL_0269: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::.ctor(object, native int)
+		IL_026e: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2
+		IL_0273: ldc.i4.2
+		IL_0274: conv.r8
+		IL_0275: ldstr ""
+		IL_027a: ldc.i4.0
+		IL_027b: ldc.i4.1
+		IL_027c: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2>(!!0, float64, string, bool, bool)
+		IL_0281: stloc.s 9
+		IL_0283: ldloc.s 8
+		IL_0285: ldstr "forEach"
+		IL_028a: ldloc.s 9
+		IL_028c: ldloc.3
+		IL_028d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_0292: pop
+		IL_0293: ldstr "console"
+		IL_0298: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_029d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_02a2: stloc.s 8
+		IL_02a4: ldloc.2
+		IL_02a5: ldstr "search"
+		IL_02aa: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_02af: stloc.s 6
+		IL_02b1: ldloc.s 8
+		IL_02b3: ldstr "log"
+		IL_02b8: ldstr "search:"
+		IL_02bd: ldloc.s 6
+		IL_02bf: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_02c4: pop
+		IL_02c5: ldstr "console"
+		IL_02ca: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_02cf: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_02d4: stloc.s 6
+		IL_02d6: ldloc.2
+		IL_02d7: ldstr "href"
+		IL_02dc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_02e1: stloc.s 8
+		IL_02e3: ldloc.s 6
+		IL_02e5: ldstr "log"
+		IL_02ea: ldstr "href:"
+		IL_02ef: ldloc.s 8
+		IL_02f1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_02f6: pop
+		IL_02f7: ldloc.1
+		IL_02f8: ldstr "URLSearchParams"
+		IL_02fd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0302: stloc.s 8
+		IL_0304: ldc.i4.1
+		IL_0305: newarr [System.Runtime]System.Object
+		IL_030a: dup
+		IL_030b: ldc.i4.0
+		IL_030c: ldstr "alpha=1&beta=two+words"
+		IL_0311: stelem.ref
+		IL_0312: stloc.s 7
+		IL_0314: ldloc.s 8
+		IL_0316: ldloc.s 7
+		IL_0318: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::ConstructValue(object, object[])
+		IL_031d: stloc.s 4
+		IL_031f: ldstr "console"
+		IL_0324: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0329: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_032e: stloc.s 8
+		IL_0330: ldloc.s 4
+		IL_0332: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0337: stloc.s 6
+		IL_0339: ldloc.s 6
+		IL_033b: ldstr "toString"
+		IL_0340: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+		IL_0345: stloc.s 6
+		IL_0347: ldloc.s 8
+		IL_0349: ldstr "log"
+		IL_034e: ldstr "copy:"
+		IL_0353: ldloc.s 6
+		IL_0355: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_035a: pop
+		IL_035b: ldstr "console"
+		IL_0360: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0365: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_036a: stloc.s 6
+		IL_036c: ldloc.s 4
+		IL_036e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0373: stloc.s 8
+		IL_0375: ldloc.s 8
+		IL_0377: ldstr "get"
+		IL_037c: ldstr "beta"
+		IL_0381: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0386: stloc.s 8
+		IL_0388: ldloc.s 6
+		IL_038a: ldstr "log"
+		IL_038f: ldstr "copy beta:"
+		IL_0394: ldloc.s 8
+		IL_0396: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_039b: pop
+		IL_039c: ldloc.1
+		IL_039d: ldstr "URLSearchParams"
+		IL_03a2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_03a7: stloc.s 8
+		IL_03a9: ldc.i4.1
+		IL_03aa: newarr [System.Runtime]System.Object
+		IL_03af: dup
+		IL_03b0: ldc.i4.0
+		IL_03b1: ldstr "a=1"
+		IL_03b6: stelem.ref
+		IL_03b7: stloc.s 7
+		IL_03b9: ldloc.s 8
+		IL_03bb: ldloc.s 7
+		IL_03bd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::ConstructValue(object, object[])
+		IL_03c2: stloc.s 8
+		IL_03c4: ldloc.0
+		IL_03c5: ldloc.s 8
+		IL_03c7: stfld object Modules.Require_Url_SearchParams_Mutate/Scope::mutating
+		IL_03cc: ldloc.0
+		IL_03cd: ldfld object Modules.Require_Url_SearchParams_Mutate/Scope::mutating
+		IL_03d2: stloc.s 8
+		IL_03d4: ldloc.s 8
+		IL_03d6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_03db: stloc.s 8
+		IL_03dd: ldc.i4.1
+		IL_03de: newarr [System.Runtime]System.Object
+		IL_03e3: dup
+		IL_03e4: ldc.i4.0
+		IL_03e5: ldloc.0
+		IL_03e6: stelem.ref
+		IL_03e7: stloc.s 7
+		IL_03e9: ldloc.s 7
+		IL_03eb: ldc.i4.0
+		IL_03ec: ldelem.ref
+		IL_03ed: castclass Modules.Require_Url_SearchParams_Mutate/Scope
+		IL_03f2: ldftn object Modules.Require_Url_SearchParams_Mutate/ArrowFunction_L33C18::__js_call__(class Modules.Require_Url_SearchParams_Mutate/Scope, object, object, object)
+		IL_03f8: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::.ctor(object, native int)
+		IL_03fd: ldloc.s 7
+		IL_03ff: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_0404: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_0409: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2
+		IL_040e: ldc.i4.2
+		IL_040f: conv.r8
+		IL_0410: ldstr ""
+		IL_0415: ldc.i4.0
+		IL_0416: ldc.i4.0
+		IL_0417: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2>(!!0, float64, string, bool, bool)
+		IL_041c: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2>(!!0)
+		IL_0421: stloc.s 9
+		IL_0423: ldloc.s 8
+		IL_0425: ldstr "forEach"
+		IL_042a: ldloc.s 9
+		IL_042c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0431: pop
+		IL_0432: ldstr "console"
+		IL_0437: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_043c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0441: stloc.s 8
+		IL_0443: ldloc.0
+		IL_0444: ldfld object Modules.Require_Url_SearchParams_Mutate/Scope::mutating
+		IL_0449: stloc.s 6
+		IL_044b: ldloc.s 6
+		IL_044d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0452: stloc.s 6
+		IL_0454: ldloc.s 6
+		IL_0456: ldstr "toString"
+		IL_045b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+		IL_0460: stloc.s 6
+		IL_0462: ldloc.s 8
+		IL_0464: ldstr "log"
+		IL_0469: ldstr "mutating final:"
+		IL_046e: ldloc.s 6
+		IL_0470: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_0475: pop
+		IL_0476: ldloc.1
+		IL_0477: ldstr "URLSearchParams"
+		IL_047c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0481: stloc.s 6
+		IL_0483: ldc.i4.1
+		IL_0484: newarr [System.Runtime]System.Object
+		IL_0489: dup
+		IL_048a: ldc.i4.0
+		IL_048b: ldstr "bad=%&plus=a+b%"
+		IL_0490: stelem.ref
+		IL_0491: stloc.s 7
+		IL_0493: ldloc.s 6
+		IL_0495: ldloc.s 7
+		IL_0497: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::ConstructValue(object, object[])
+		IL_049c: stloc.s 5
+		IL_049e: ldstr "console"
+		IL_04a3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_04a8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_04ad: stloc.s 6
+		IL_04af: ldloc.s 5
+		IL_04b1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_04b6: stloc.s 8
+		IL_04b8: ldloc.s 8
+		IL_04ba: ldstr "get"
+		IL_04bf: ldstr "bad"
+		IL_04c4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_04c9: stloc.s 8
+		IL_04cb: ldloc.s 6
+		IL_04cd: ldstr "log"
+		IL_04d2: ldstr "malformed bad:"
+		IL_04d7: ldloc.s 8
+		IL_04d9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_04de: pop
+		IL_04df: ldstr "console"
+		IL_04e4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_04e9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_04ee: stloc.s 8
+		IL_04f0: ldloc.s 5
+		IL_04f2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_04f7: stloc.s 6
+		IL_04f9: ldloc.s 6
+		IL_04fb: ldstr "get"
+		IL_0500: ldstr "plus"
+		IL_0505: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_050a: stloc.s 6
+		IL_050c: ldloc.s 8
+		IL_050e: ldstr "log"
+		IL_0513: ldstr "malformed plus:"
+		IL_0518: ldloc.s 6
+		IL_051a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_051f: pop
+		IL_0520: ret
 	} // end of method Require_Url_SearchParams_Mutate::__js_module_init__
 
 } // end of class Modules.Require_Url_SearchParams_Mutate
@@ -746,7 +781,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2686
+		// Method begins at RVA 0x26c8
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

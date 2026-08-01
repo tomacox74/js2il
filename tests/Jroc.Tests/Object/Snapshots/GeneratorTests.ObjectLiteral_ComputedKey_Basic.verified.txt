@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2109
+			// Method begins at RVA 0x2111
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,7 +40,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 173 (0xad)
+		// Code size: 181 (0xb5)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ObjectLiteral_ComputedKey_Basic/Scope,
@@ -48,7 +48,8 @@
 			[2] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
 			[3] object,
 			[4] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
-			[5] object
+			[5] object,
+			[6] object
 		)
 
 		IL_0000: newobj instance void Modules.ObjectLiteral_ComputedKey_Basic/Scope::.ctor()
@@ -67,39 +68,43 @@
 		IL_0027: ldc.r8 1
 		IL_0030: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineObjectLiteralDataProperty(object, string, float64)
 		IL_0035: pop
-		IL_0036: ldloc.3
-		IL_0037: ldstr "log"
-		IL_003c: ldloc.s 4
-		IL_003e: ldstr "x"
-		IL_0043: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0048: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_004d: pop
-		IL_004e: ldstr "a"
-		IL_0053: ldc.r8 1
-		IL_005c: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
-		IL_0061: stloc.s 5
-		IL_0063: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_0068: stloc.s 4
-		IL_006a: ldloc.s 4
-		IL_006c: ldloc.s 5
-		IL_006e: ldc.r8 2
-		IL_0077: box [System.Runtime]System.Double
-		IL_007c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineObjectLiteralDataProperty(object, object, object)
-		IL_0081: pop
-		IL_0082: ldloc.s 4
-		IL_0084: stloc.2
-		IL_0085: ldstr "console"
-		IL_008a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_008f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0094: stloc.3
-		IL_0095: ldloc.3
-		IL_0096: ldstr "log"
-		IL_009b: ldloc.2
-		IL_009c: ldstr "a1"
-		IL_00a1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_00a6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00ab: pop
-		IL_00ac: ret
+		IL_0036: ldloc.s 4
+		IL_0038: ldstr "x"
+		IL_003d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0042: stloc.s 5
+		IL_0044: ldloc.3
+		IL_0045: ldstr "log"
+		IL_004a: ldloc.s 5
+		IL_004c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0051: pop
+		IL_0052: ldstr "a"
+		IL_0057: ldc.r8 1
+		IL_0060: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
+		IL_0065: stloc.s 6
+		IL_0067: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_006c: stloc.s 4
+		IL_006e: ldloc.s 4
+		IL_0070: ldloc.s 6
+		IL_0072: ldc.r8 2
+		IL_007b: box [System.Runtime]System.Double
+		IL_0080: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineObjectLiteralDataProperty(object, object, object)
+		IL_0085: pop
+		IL_0086: ldloc.s 4
+		IL_0088: stloc.2
+		IL_0089: ldstr "console"
+		IL_008e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0093: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0098: stloc.s 5
+		IL_009a: ldloc.2
+		IL_009b: ldstr "a1"
+		IL_00a0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00a5: stloc.3
+		IL_00a6: ldloc.s 5
+		IL_00a8: ldstr "log"
+		IL_00ad: ldloc.3
+		IL_00ae: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_00b3: pop
+		IL_00b4: ret
 	} // end of method ObjectLiteral_ComputedKey_Basic::__js_module_init__
 
 } // end of class Modules.ObjectLiteral_ComputedKey_Basic
@@ -111,7 +116,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2112
+		// Method begins at RVA 0x211a
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

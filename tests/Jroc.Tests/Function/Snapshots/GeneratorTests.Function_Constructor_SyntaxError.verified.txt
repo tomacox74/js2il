@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2181
+				// Method begins at RVA 0x2185
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x218a
+				// Method begins at RVA 0x218e
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -56,7 +56,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2178
+			// Method begins at RVA 0x217c
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -82,7 +82,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 267 (0x10b)
+		// Code size: 271 (0x10f)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Function_Constructor_SyntaxError/Scope,
@@ -92,7 +92,8 @@
 			[4] string,
 			[5] object,
 			[6] object,
-			[7] bool
+			[7] bool,
+			[8] object
 		)
 
 		IL_0000: newobj instance void Modules.Function_Constructor_SyntaxError/Scope::.ctor()
@@ -126,7 +127,7 @@
 			IL_0048: ldstr "no-error"
 			IL_004d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
 			IL_0052: pop
-			IL_0053: leave IL_0107
+			IL_0053: leave IL_010b
 		} // end .try
 		catch [System.Runtime]System.Exception
 		{
@@ -182,18 +183,20 @@
 			IL_00e1: ldc.r8 0.0
 			IL_00ea: cgt
 			IL_00ec: stloc.s 7
-			IL_00ee: ldloc.s 6
-			IL_00f0: ldstr "log"
-			IL_00f5: ldloc.s 7
-			IL_00f7: box [System.Runtime]System.Boolean
-			IL_00fc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_0101: pop
-			IL_0102: leave IL_0107
+			IL_00ee: ldloc.s 7
+			IL_00f0: box [System.Runtime]System.Boolean
+			IL_00f5: stloc.s 8
+			IL_00f7: ldloc.s 6
+			IL_00f9: ldstr "log"
+			IL_00fe: ldloc.s 8
+			IL_0100: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_0105: pop
+			IL_0106: leave IL_010b
 		} // end handler
 
-		IL_0107: ldnull
-		IL_0108: stloc.s 5
-		IL_010a: ret
+		IL_010b: ldnull
+		IL_010c: stloc.s 5
+		IL_010e: ret
 	} // end of method Function_Constructor_SyntaxError::__js_module_init__
 
 } // end of class Modules.Function_Constructor_SyntaxError
@@ -205,7 +208,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2193
+		// Method begins at RVA 0x2197
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

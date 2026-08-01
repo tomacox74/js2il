@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x215e
+				// Method begins at RVA 0x2174
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -44,12 +44,13 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2120
+			// Method begins at RVA 0x2134
 			// Header size: 12
-			// Code size: 41 (0x29)
+			// Code size: 43 (0x2b)
 			.maxstack 8
 			.locals init (
-				[0] bool
+				[0] bool,
+				[1] object
 			)
 
 			IL_0000: ldarg.2
@@ -66,7 +67,9 @@
 			IL_0021: ldarg.1
 			IL_0022: ldarg.2
 			IL_0023: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, object)
-			IL_0028: ret
+			IL_0028: stloc.1
+			IL_0029: ldloc.1
+			IL_002a: ret
 		} // end of method FunctionExpression_handler::__js_call__
 
 	} // end of class FunctionExpression_handler
@@ -78,7 +81,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2155
+			// Method begins at RVA 0x216b
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -104,15 +107,17 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 196 (0xc4)
+		// Code size: 216 (0xd8)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Proxy_GetTrap_OverridesProperty/Scope,
 			[1] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
 			[2] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
 			[3] class [JavaScriptRuntime]JavaScriptRuntime.Proxy,
-			[4] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes3,
-			[5] object
+			[4] object[],
+			[5] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes3,
+			[6] object,
+			[7] object
 		)
 
 		IL_0000: newobj instance void Modules.Proxy_GetTrap_OverridesProperty/Scope::.ctor()
@@ -128,50 +133,61 @@
 		IL_0026: ldc.r8 2
 		IL_002f: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
 		IL_0034: stloc.1
-		IL_0035: ldnull
-		IL_0036: ldftn object Modules.Proxy_GetTrap_OverridesProperty/FunctionExpression_handler::__js_call__(object, object, object, object)
-		IL_003c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes3::.ctor(object, native int)
-		IL_0041: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes3
-		IL_0046: ldc.i4.3
-		IL_0047: conv.r8
-		IL_0048: ldstr ""
-		IL_004d: ldc.i4.0
-		IL_004e: ldc.i4.1
-		IL_004f: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes3>(!!0, float64, string, bool, bool)
-		IL_0054: stloc.s 4
-		IL_0056: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_005b: dup
-		IL_005c: ldstr "get"
-		IL_0061: ldloc.s 4
-		IL_0063: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_0068: stloc.2
-		IL_0069: ldloc.1
-		IL_006a: ldloc.2
-		IL_006b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Proxy::.ctor(object, object)
-		IL_0070: stloc.3
-		IL_0071: ldstr "console"
-		IL_0076: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_007b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0080: stloc.s 5
-		IL_0082: ldloc.s 5
-		IL_0084: ldstr "log"
-		IL_0089: ldloc.3
-		IL_008a: ldstr "a"
-		IL_008f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0094: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0099: pop
-		IL_009a: ldstr "console"
-		IL_009f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_00a4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00a9: stloc.s 5
-		IL_00ab: ldloc.s 5
-		IL_00ad: ldstr "log"
-		IL_00b2: ldloc.3
-		IL_00b3: ldstr "b"
-		IL_00b8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_00bd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00c2: pop
-		IL_00c3: ret
+		IL_0035: ldc.i4.1
+		IL_0036: newarr [System.Runtime]System.Object
+		IL_003b: dup
+		IL_003c: ldc.i4.0
+		IL_003d: ldloc.0
+		IL_003e: stelem.ref
+		IL_003f: stloc.s 4
+		IL_0041: ldnull
+		IL_0042: ldftn object Modules.Proxy_GetTrap_OverridesProperty/FunctionExpression_handler::__js_call__(object, object, object, object)
+		IL_0048: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes3::.ctor(object, native int)
+		IL_004d: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes3
+		IL_0052: ldc.i4.3
+		IL_0053: conv.r8
+		IL_0054: ldstr ""
+		IL_0059: ldc.i4.0
+		IL_005a: ldc.i4.1
+		IL_005b: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes3>(!!0, float64, string, bool, bool)
+		IL_0060: stloc.s 5
+		IL_0062: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0067: dup
+		IL_0068: ldstr "get"
+		IL_006d: ldloc.s 5
+		IL_006f: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_0074: stloc.2
+		IL_0075: ldloc.1
+		IL_0076: ldloc.2
+		IL_0077: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Proxy::.ctor(object, object)
+		IL_007c: stloc.3
+		IL_007d: ldstr "console"
+		IL_0082: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0087: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_008c: stloc.s 6
+		IL_008e: ldloc.3
+		IL_008f: ldstr "a"
+		IL_0094: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0099: stloc.s 7
+		IL_009b: ldloc.s 6
+		IL_009d: ldstr "log"
+		IL_00a2: ldloc.s 7
+		IL_00a4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_00a9: pop
+		IL_00aa: ldstr "console"
+		IL_00af: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_00b4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00b9: stloc.s 7
+		IL_00bb: ldloc.3
+		IL_00bc: ldstr "b"
+		IL_00c1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00c6: stloc.s 6
+		IL_00c8: ldloc.s 7
+		IL_00ca: ldstr "log"
+		IL_00cf: ldloc.s 6
+		IL_00d1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_00d6: pop
+		IL_00d7: ret
 	} // end of method Proxy_GetTrap_OverridesProperty::__js_module_init__
 
 } // end of class Modules.Proxy_GetTrap_OverridesProperty
@@ -183,7 +199,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2167
+		// Method begins at RVA 0x217d
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

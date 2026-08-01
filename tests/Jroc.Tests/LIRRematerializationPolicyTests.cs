@@ -50,7 +50,7 @@ public sealed class LIRRematerializationPolicyTests
     }
 
     [Fact]
-    public void StackifyPolicy_TdzCheckedLoad_IsNotRematerializable()
+    public void Policy_TdzCheckedLoad_IsNotRematerializable()
     {
         var parser = new JavaScriptParser();
         var program = parser.ParseJavaScript("let value;", "tdz.js");
@@ -67,14 +67,14 @@ public sealed class LIRRematerializationPolicyTests
             new TempVariable(0));
 
         Assert.False(
-            LIRRematerializationPolicy.CanRematerializeForStackify(
+            LIRRematerializationPolicy.CanRematerializeForAllocation(
                 load,
                 new MethodBodyIR(),
-                new LIRInstruction?[] { load }));
+                new Dictionary<int, LIRInstruction> { [0] = load }));
     }
 
     [Fact]
-    public void StackifyPolicy_Call_IsNotRematerializable()
+    public void Policy_Call_IsNotRematerializable()
     {
         var call = new LIRCallRuntimeServicesStatic(
             "Call",
@@ -82,10 +82,24 @@ public sealed class LIRRematerializationPolicyTests
             new TempVariable(0));
 
         Assert.False(
-            LIRRematerializationPolicy.CanRematerializeForStackify(
+            LIRRematerializationPolicy.CanRematerializeForAllocation(
                 call,
                 new MethodBodyIR(),
-                new LIRInstruction?[] { call }));
+                new Dictionary<int, LIRInstruction> { [0] = call }));
+    }
+
+    [Fact]
+    public void Policy_Allocation_IsNotRematerializable()
+    {
+        var array = new LIRNewJsArray(
+            System.Array.Empty<TempVariable>(),
+            new TempVariable(0));
+
+        Assert.False(
+            LIRRematerializationPolicy.CanRematerializeForAllocation(
+                array,
+                new MethodBodyIR(),
+                new Dictionary<int, LIRInstruction> { [0] = array }));
     }
 
     [Fact]

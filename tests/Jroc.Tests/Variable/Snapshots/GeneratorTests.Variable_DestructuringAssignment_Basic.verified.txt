@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2139
+			// Method begins at RVA 0x2141
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,15 +40,16 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 221 (0xdd)
+		// Code size: 229 (0xe5)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Variable_DestructuringAssignment_Basic/Scope,
 			[1] float64,
 			[2] float64,
 			[3] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
-			[4] object,
-			[5] object
+			[4] float64,
+			[5] object,
+			[6] object
 		)
 
 		IL_0000: newobj instance void Modules.Variable_DestructuringAssignment_Basic/Scope::.ctor()
@@ -83,38 +84,42 @@
 		IL_006a: ldloc.3
 		IL_006b: ldstr "x"
 		IL_0070: call float64 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItemAsNumber(object, object)
-		IL_0075: stloc.1
-		IL_0076: ldloc.3
-		IL_0077: ldstr "y"
-		IL_007c: call float64 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItemAsNumber(object, object)
-		IL_0081: stloc.2
-		IL_0082: ldstr "console"
-		IL_0087: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_008c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0091: stloc.s 4
-		IL_0093: ldloc.1
-		IL_0094: box [System.Runtime]System.Double
+		IL_0075: stloc.s 4
+		IL_0077: ldloc.s 4
+		IL_0079: stloc.1
+		IL_007a: ldloc.3
+		IL_007b: ldstr "y"
+		IL_0080: call float64 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItemAsNumber(object, object)
+		IL_0085: stloc.s 4
+		IL_0087: ldloc.s 4
+		IL_0089: stloc.2
+		IL_008a: ldstr "console"
+		IL_008f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0094: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
 		IL_0099: stloc.s 5
-		IL_009b: ldloc.s 4
-		IL_009d: ldstr "log"
-		IL_00a2: ldstr "x="
-		IL_00a7: ldloc.s 5
-		IL_00a9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_00ae: pop
-		IL_00af: ldstr "console"
-		IL_00b4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_00b9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00be: stloc.s 4
-		IL_00c0: ldloc.2
-		IL_00c1: box [System.Runtime]System.Double
+		IL_009b: ldloc.1
+		IL_009c: box [System.Runtime]System.Double
+		IL_00a1: stloc.s 6
+		IL_00a3: ldloc.s 5
+		IL_00a5: ldstr "log"
+		IL_00aa: ldstr "x="
+		IL_00af: ldloc.s 6
+		IL_00b1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_00b6: pop
+		IL_00b7: ldstr "console"
+		IL_00bc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_00c1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
 		IL_00c6: stloc.s 5
-		IL_00c8: ldloc.s 4
-		IL_00ca: ldstr "log"
-		IL_00cf: ldstr "y="
-		IL_00d4: ldloc.s 5
-		IL_00d6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_00db: pop
-		IL_00dc: ret
+		IL_00c8: ldloc.2
+		IL_00c9: box [System.Runtime]System.Double
+		IL_00ce: stloc.s 6
+		IL_00d0: ldloc.s 5
+		IL_00d2: ldstr "log"
+		IL_00d7: ldstr "y="
+		IL_00dc: ldloc.s 6
+		IL_00de: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_00e3: pop
+		IL_00e4: ret
 	} // end of method Variable_DestructuringAssignment_Basic::__js_module_init__
 
 } // end of class Modules.Variable_DestructuringAssignment_Basic
@@ -126,7 +131,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2142
+		// Method begins at RVA 0x214a
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

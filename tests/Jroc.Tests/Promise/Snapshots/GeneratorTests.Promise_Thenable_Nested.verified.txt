@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21c4
+				// Method begins at RVA 0x21dc
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -43,7 +43,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x213c
+			// Method begins at RVA 0x2150
 			// Header size: 12
 			// Code size: 30 (0x1e)
 			.maxstack 8
@@ -76,7 +76,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21cd
+				// Method begins at RVA 0x21e5
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -104,12 +104,13 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 06 00 00 02
 			)
-			// Method begins at RVA 0x2168
+			// Method begins at RVA 0x217c
 			// Header size: 12
-			// Code size: 27 (0x1b)
+			// Code size: 29 (0x1d)
 			.maxstack 8
 			.locals init (
-				[0] object[]
+				[0] object[],
+				[1] object
 			)
 
 			IL_0000: ldc.i4.1
@@ -119,14 +120,16 @@
 			IL_0008: ldarg.0
 			IL_0009: stelem.ref
 			IL_000a: stloc.0
-			IL_000b: ldarg.2
-			IL_000c: ldloc.0
-			IL_000d: ldarg.0
-			IL_000e: ldfld object Modules.Promise_Thenable_Nested/Scope::innerThenable
-			IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
-			IL_0018: pop
-			IL_0019: ldnull
-			IL_001a: ret
+			IL_000b: ldarg.0
+			IL_000c: ldfld object Modules.Promise_Thenable_Nested/Scope::innerThenable
+			IL_0011: stloc.1
+			IL_0012: ldarg.2
+			IL_0013: ldloc.0
+			IL_0014: ldloc.1
+			IL_0015: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
+			IL_001a: pop
+			IL_001b: ldnull
+			IL_001c: ret
 		} // end of method outerThen::__js_call__
 
 	} // end of class outerThen
@@ -149,7 +152,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21d6
+				// Method begins at RVA 0x21ee
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -173,7 +176,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2190
+			// Method begins at RVA 0x21a8
 			// Header size: 12
 			// Code size: 31 (0x1f)
 			.maxstack 8
@@ -216,7 +219,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x21bb
+			// Method begins at RVA 0x21d3
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -242,98 +245,110 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 221 (0xdd)
+		// Code size: 241 (0xf1)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Promise_Thenable_Nested/Scope,
 			[1] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2,
 			[2] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2,
 			[3] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
-			[4] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
-			[5] object,
-			[6] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1
+			[4] object[],
+			[5] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
+			[6] object,
+			[7] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1
 		)
 
 		IL_0000: newobj instance void Modules.Promise_Thenable_Nested/Scope::.ctor()
 		IL_0005: stloc.0
-		IL_0006: ldnull
-		IL_0007: ldftn object Modules.Promise_Thenable_Nested/innerThen::__js_call__(object, object, object)
-		IL_000d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::.ctor(object, native int)
-		IL_0012: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2
-		IL_0017: ldc.i4.2
-		IL_0018: conv.r8
-		IL_0019: ldstr "innerThen"
-		IL_001e: ldc.i4.0
-		IL_001f: ldc.i4.1
-		IL_0020: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2>(!!0, float64, string, bool, bool)
-		IL_0025: stloc.1
-		IL_0026: ldc.i4.1
-		IL_0027: newarr [System.Runtime]System.Object
-		IL_002c: dup
-		IL_002d: ldc.i4.0
-		IL_002e: ldloc.0
-		IL_002f: stelem.ref
-		IL_0030: ldc.i4.0
-		IL_0031: ldelem.ref
-		IL_0032: castclass Modules.Promise_Thenable_Nested/Scope
-		IL_0037: ldftn object Modules.Promise_Thenable_Nested/outerThen::__js_call__(class Modules.Promise_Thenable_Nested/Scope, object, object, object)
-		IL_003d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::.ctor(object, native int)
-		IL_0042: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2
-		IL_0047: ldc.i4.2
-		IL_0048: conv.r8
-		IL_0049: ldstr "outerThen"
-		IL_004e: ldc.i4.0
-		IL_004f: ldc.i4.1
-		IL_0050: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2>(!!0, float64, string, bool, bool)
-		IL_0055: stloc.2
-		IL_0056: nop
-		IL_0057: nop
-		IL_0058: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_005d: dup
-		IL_005e: ldstr "then"
-		IL_0063: ldloc.1
-		IL_0064: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_0069: stloc.s 4
-		IL_006b: ldloc.0
-		IL_006c: ldloc.s 4
-		IL_006e: stfld object Modules.Promise_Thenable_Nested/Scope::innerThenable
-		IL_0073: nop
-		IL_0074: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_0079: dup
-		IL_007a: ldstr "then"
-		IL_007f: ldloc.2
-		IL_0080: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_0085: stloc.3
-		IL_0086: ldloc.3
-		IL_0087: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::resolve(object)
-		IL_008c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0091: stloc.s 5
-		IL_0093: ldnull
-		IL_0094: ldftn object Modules.Promise_Thenable_Nested/ArrowFunction_L15C32::__js_call__(object, object)
-		IL_009a: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-		IL_009f: ldc.i4.1
-		IL_00a0: newarr [System.Runtime]System.Object
-		IL_00a5: dup
-		IL_00a6: ldc.i4.0
-		IL_00a7: ldloc.0
-		IL_00a8: stelem.ref
-		IL_00a9: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_00ae: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_00b3: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1
-		IL_00b8: ldc.i4.1
-		IL_00b9: conv.r8
-		IL_00ba: ldstr ""
-		IL_00bf: ldc.i4.0
-		IL_00c0: ldc.i4.0
-		IL_00c1: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0, float64, string, bool, bool)
-		IL_00c6: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0)
-		IL_00cb: stloc.s 6
-		IL_00cd: ldloc.s 5
-		IL_00cf: ldstr "then"
-		IL_00d4: ldloc.s 6
-		IL_00d6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00db: pop
-		IL_00dc: ret
+		IL_0006: ldc.i4.1
+		IL_0007: newarr [System.Runtime]System.Object
+		IL_000c: dup
+		IL_000d: ldc.i4.0
+		IL_000e: ldloc.0
+		IL_000f: stelem.ref
+		IL_0010: stloc.s 4
+		IL_0012: ldnull
+		IL_0013: ldftn object Modules.Promise_Thenable_Nested/innerThen::__js_call__(object, object, object)
+		IL_0019: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::.ctor(object, native int)
+		IL_001e: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2
+		IL_0023: ldc.i4.2
+		IL_0024: conv.r8
+		IL_0025: ldstr "innerThen"
+		IL_002a: ldc.i4.0
+		IL_002b: ldc.i4.1
+		IL_002c: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2>(!!0, float64, string, bool, bool)
+		IL_0031: stloc.1
+		IL_0032: ldc.i4.1
+		IL_0033: newarr [System.Runtime]System.Object
+		IL_0038: dup
+		IL_0039: ldc.i4.0
+		IL_003a: ldloc.0
+		IL_003b: stelem.ref
+		IL_003c: stloc.s 4
+		IL_003e: ldloc.s 4
+		IL_0040: ldc.i4.0
+		IL_0041: ldelem.ref
+		IL_0042: castclass Modules.Promise_Thenable_Nested/Scope
+		IL_0047: ldftn object Modules.Promise_Thenable_Nested/outerThen::__js_call__(class Modules.Promise_Thenable_Nested/Scope, object, object, object)
+		IL_004d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::.ctor(object, native int)
+		IL_0052: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2
+		IL_0057: ldc.i4.2
+		IL_0058: conv.r8
+		IL_0059: ldstr "outerThen"
+		IL_005e: ldc.i4.0
+		IL_005f: ldc.i4.1
+		IL_0060: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2>(!!0, float64, string, bool, bool)
+		IL_0065: stloc.2
+		IL_0066: nop
+		IL_0067: nop
+		IL_0068: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_006d: dup
+		IL_006e: ldstr "then"
+		IL_0073: ldloc.1
+		IL_0074: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_0079: stloc.s 5
+		IL_007b: ldloc.0
+		IL_007c: ldloc.s 5
+		IL_007e: stfld object Modules.Promise_Thenable_Nested/Scope::innerThenable
+		IL_0083: nop
+		IL_0084: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0089: dup
+		IL_008a: ldstr "then"
+		IL_008f: ldloc.2
+		IL_0090: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_0095: stloc.3
+		IL_0096: ldloc.3
+		IL_0097: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::resolve(object)
+		IL_009c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00a1: stloc.s 6
+		IL_00a3: ldc.i4.1
+		IL_00a4: newarr [System.Runtime]System.Object
+		IL_00a9: dup
+		IL_00aa: ldc.i4.0
+		IL_00ab: ldloc.0
+		IL_00ac: stelem.ref
+		IL_00ad: stloc.s 4
+		IL_00af: ldnull
+		IL_00b0: ldftn object Modules.Promise_Thenable_Nested/ArrowFunction_L15C32::__js_call__(object, object)
+		IL_00b6: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_00bb: ldloc.s 4
+		IL_00bd: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_00c2: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_00c7: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1
+		IL_00cc: ldc.i4.1
+		IL_00cd: conv.r8
+		IL_00ce: ldstr ""
+		IL_00d3: ldc.i4.0
+		IL_00d4: ldc.i4.0
+		IL_00d5: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0, float64, string, bool, bool)
+		IL_00da: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0)
+		IL_00df: stloc.s 7
+		IL_00e1: ldloc.s 6
+		IL_00e3: ldstr "then"
+		IL_00e8: ldloc.s 7
+		IL_00ea: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_00ef: pop
+		IL_00f0: ret
 	} // end of method Promise_Thenable_Nested::__js_module_init__
 
 } // end of class Modules.Promise_Thenable_Nested
@@ -345,7 +360,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21df
+		// Method begins at RVA 0x21f7
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

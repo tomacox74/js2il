@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2116
+			// Method begins at RVA 0x2126
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,14 +40,15 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 186 (0xba)
+		// Code size: 202 (0xca)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.IntrinsicCallables_Error_Callable_CreatesInstances/Scope,
 			[1] object,
 			[2] object,
 			[3] object,
-			[4] object
+			[4] object,
+			[5] object
 		)
 
 		IL_0000: newobj instance void Modules.IntrinsicCallables_Error_Callable_CreatesInstances/Scope::.ctor()
@@ -64,46 +65,54 @@
 		IL_0027: ldloc.1
 		IL_0028: ldstr "name"
 		IL_002d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0032: ldstr ":"
-		IL_0037: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_003c: stloc.s 4
-		IL_003e: ldloc.s 4
-		IL_0040: ldloc.1
-		IL_0041: ldstr "message"
-		IL_0046: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_004b: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_0050: stloc.s 4
-		IL_0052: ldloc.3
-		IL_0053: ldstr "log"
-		IL_0058: ldloc.s 4
-		IL_005a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_005f: pop
-		IL_0060: ldstr "oops"
-		IL_0065: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-		IL_006a: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-		IL_006f: stloc.2
-		IL_0070: ldstr "console"
-		IL_0075: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_007a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_007f: stloc.3
-		IL_0080: ldloc.2
-		IL_0081: ldstr "name"
-		IL_0086: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_008b: ldstr ":"
-		IL_0090: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_0095: stloc.s 4
-		IL_0097: ldloc.s 4
-		IL_0099: ldloc.2
-		IL_009a: ldstr "message"
-		IL_009f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_00a4: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_00a9: stloc.s 4
-		IL_00ab: ldloc.3
-		IL_00ac: ldstr "log"
-		IL_00b1: ldloc.s 4
-		IL_00b3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00b8: pop
-		IL_00b9: ret
+		IL_0032: stloc.s 4
+		IL_0034: ldloc.s 4
+		IL_0036: ldstr ":"
+		IL_003b: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_0040: stloc.s 5
+		IL_0042: ldloc.1
+		IL_0043: ldstr "message"
+		IL_0048: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_004d: stloc.s 4
+		IL_004f: ldloc.s 5
+		IL_0051: ldloc.s 4
+		IL_0053: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_0058: stloc.s 5
+		IL_005a: ldloc.3
+		IL_005b: ldstr "log"
+		IL_0060: ldloc.s 5
+		IL_0062: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0067: pop
+		IL_0068: ldstr "oops"
+		IL_006d: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+		IL_0072: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
+		IL_0077: stloc.2
+		IL_0078: ldstr "console"
+		IL_007d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0082: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0087: stloc.3
+		IL_0088: ldloc.2
+		IL_0089: ldstr "name"
+		IL_008e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0093: stloc.s 4
+		IL_0095: ldloc.s 4
+		IL_0097: ldstr ":"
+		IL_009c: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_00a1: stloc.s 5
+		IL_00a3: ldloc.2
+		IL_00a4: ldstr "message"
+		IL_00a9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00ae: stloc.s 4
+		IL_00b0: ldloc.s 5
+		IL_00b2: ldloc.s 4
+		IL_00b4: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_00b9: stloc.s 5
+		IL_00bb: ldloc.3
+		IL_00bc: ldstr "log"
+		IL_00c1: ldloc.s 5
+		IL_00c3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_00c8: pop
+		IL_00c9: ret
 	} // end of method IntrinsicCallables_Error_Callable_CreatesInstances::__js_module_init__
 
 } // end of class Modules.IntrinsicCallables_Error_Callable_CreatesInstances
@@ -115,7 +124,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x211f
+		// Method begins at RVA 0x212f
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

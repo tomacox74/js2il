@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2344
+			// Method begins at RVA 0x2348
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,7 +40,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 744 (0x2e8)
+		// Code size: 748 (0x2ec)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Array_Splice_Basic/Scope,
@@ -49,7 +49,8 @@
 			[3] class [JavaScriptRuntime]JavaScriptRuntime.Array,
 			[4] object,
 			[5] string,
-			[6] object
+			[6] float64,
+			[7] object
 		)
 
 		IL_0000: newobj instance void Modules.Array_Splice_Basic/Scope::.ctor()
@@ -234,54 +235,56 @@
 		IL_024b: pop
 		IL_024c: ldc.r8 3
 		IL_0255: neg
-		IL_0256: box [System.Runtime]System.Double
-		IL_025b: stloc.s 6
-		IL_025d: ldloc.1
-		IL_025e: ldloc.s 6
-		IL_0260: ldc.r8 10
-		IL_0269: box [System.Runtime]System.Double
-		IL_026e: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Array [JavaScriptRuntime]JavaScriptRuntime.Array::splice(object, object)
-		IL_0273: stloc.3
-		IL_0274: ldloc.3
-		IL_0275: stloc.2
-		IL_0276: ldstr "console"
-		IL_027b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0280: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0285: stloc.s 4
-		IL_0287: ldloc.2
-		IL_0288: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
-		IL_028d: ldc.i4.1
-		IL_028e: newarr [System.Runtime]System.Object
-		IL_0293: dup
-		IL_0294: ldc.i4.0
-		IL_0295: ldstr ","
-		IL_029a: stelem.ref
-		IL_029b: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
-		IL_02a0: stloc.s 5
-		IL_02a2: ldloc.s 4
-		IL_02a4: ldstr "log"
-		IL_02a9: ldloc.s 5
-		IL_02ab: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_02b0: pop
-		IL_02b1: ldstr "console"
-		IL_02b6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_02bb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_02c0: stloc.s 4
-		IL_02c2: ldloc.1
-		IL_02c3: ldc.i4.1
-		IL_02c4: newarr [System.Runtime]System.Object
-		IL_02c9: dup
-		IL_02ca: ldc.i4.0
-		IL_02cb: ldstr ","
-		IL_02d0: stelem.ref
-		IL_02d1: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
-		IL_02d6: stloc.s 5
-		IL_02d8: ldloc.s 4
-		IL_02da: ldstr "log"
-		IL_02df: ldloc.s 5
-		IL_02e1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_02e6: pop
-		IL_02e7: ret
+		IL_0256: stloc.s 6
+		IL_0258: ldloc.s 6
+		IL_025a: box [System.Runtime]System.Double
+		IL_025f: stloc.s 7
+		IL_0261: ldloc.1
+		IL_0262: ldloc.s 7
+		IL_0264: ldc.r8 10
+		IL_026d: box [System.Runtime]System.Double
+		IL_0272: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Array [JavaScriptRuntime]JavaScriptRuntime.Array::splice(object, object)
+		IL_0277: stloc.3
+		IL_0278: ldloc.3
+		IL_0279: stloc.2
+		IL_027a: ldstr "console"
+		IL_027f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0284: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0289: stloc.s 4
+		IL_028b: ldloc.2
+		IL_028c: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
+		IL_0291: ldc.i4.1
+		IL_0292: newarr [System.Runtime]System.Object
+		IL_0297: dup
+		IL_0298: ldc.i4.0
+		IL_0299: ldstr ","
+		IL_029e: stelem.ref
+		IL_029f: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
+		IL_02a4: stloc.s 5
+		IL_02a6: ldloc.s 4
+		IL_02a8: ldstr "log"
+		IL_02ad: ldloc.s 5
+		IL_02af: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_02b4: pop
+		IL_02b5: ldstr "console"
+		IL_02ba: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_02bf: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_02c4: stloc.s 4
+		IL_02c6: ldloc.1
+		IL_02c7: ldc.i4.1
+		IL_02c8: newarr [System.Runtime]System.Object
+		IL_02cd: dup
+		IL_02ce: ldc.i4.0
+		IL_02cf: ldstr ","
+		IL_02d4: stelem.ref
+		IL_02d5: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
+		IL_02da: stloc.s 5
+		IL_02dc: ldloc.s 4
+		IL_02de: ldstr "log"
+		IL_02e3: ldloc.s 5
+		IL_02e5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_02ea: pop
+		IL_02eb: ret
 	} // end of method Array_Splice_Basic::__js_module_init__
 
 } // end of class Modules.Array_Splice_Basic
@@ -293,7 +296,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x234d
+		// Method begins at RVA 0x2351
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

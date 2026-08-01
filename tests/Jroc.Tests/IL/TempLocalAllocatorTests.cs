@@ -180,7 +180,7 @@ public sealed class TempLocalAllocatorTests
     }
 
     [Fact]
-    public void MaterializationPlan_RejectsOverlappingSchedulerClaim()
+    public void MaterializationPlan_RejectsOverlappingRematerializationClaim()
     {
         var body = new MethodBodyIR();
         var value = AddTemp(body, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
@@ -196,14 +196,14 @@ public sealed class TempLocalAllocatorTests
             plan.Claim(
                 value.Index,
                 TempResidency.Rematerialized,
-                TempValueOwner.LegacyStackify));
+                TempValueOwner.Rematerialization));
 
         Assert.Contains(nameof(TempValueOwner.Scheduler), exception.Message);
-        Assert.Contains(nameof(TempValueOwner.LegacyStackify), exception.Message);
+        Assert.Contains(nameof(TempValueOwner.Rematerialization), exception.Message);
     }
 
     [Fact]
-    public void Stackify_ExcludesSchedulerOwnedTemp()
+    public void Rematerialization_DoesNotClaimSchedulerOwnedTemp()
     {
         var body = new MethodBodyIR();
         var value = AddTemp(body, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
@@ -215,9 +215,8 @@ public sealed class TempLocalAllocatorTests
             TempResidency.StackResident);
         var plan = CreatePlan(body, schedule);
 
-        var result = Stackify.Analyze(body, plan);
+        _ = TempLocalAllocator.Allocate(body, plan, schedule);
 
-        Assert.False(result.IsStackable(value));
         Assert.Equal(TempValueOwner.Scheduler, plan.GetOwner(value.Index));
     }
 

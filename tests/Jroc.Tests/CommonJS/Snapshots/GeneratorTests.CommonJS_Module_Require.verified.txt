@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x217d
+			// Method begins at RVA 0x2191
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,14 +40,16 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 289 (0x121)
+		// Code size: 309 (0x135)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.CommonJS_Module_Require/Scope,
 			[1] object,
 			[2] object,
 			[3] object,
-			[4] object
+			[4] object,
+			[5] object,
+			[6] string
 		)
 
 		IL_0000: newobj instance void Modules.CommonJS_Module_Require/Scope::.ctor()
@@ -57,80 +59,90 @@
 		IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
 		IL_0011: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
 		IL_0016: stloc.s 4
-		IL_0018: ldloc.s 4
-		IL_001a: ldstr "log"
-		IL_001f: ldstr "module.require type:"
-		IL_0024: ldarg.2
-		IL_0025: ldstr "require"
-		IL_002a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_002f: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
-		IL_0034: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_0039: pop
-		IL_003a: ldarg.1
-		IL_003b: ldstr "path"
-		IL_0040: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
-		IL_0045: stloc.1
-		IL_0046: ldstr "console"
-		IL_004b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0050: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0055: stloc.s 4
-		IL_0057: ldloc.s 4
-		IL_0059: ldstr "log"
-		IL_005e: ldstr "path module type:"
-		IL_0063: ldloc.1
-		IL_0064: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
-		IL_0069: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_006e: pop
-		IL_006f: ldstr "console"
-		IL_0074: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0079: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_007e: stloc.s 4
-		IL_0080: ldloc.s 4
-		IL_0082: ldstr "log"
-		IL_0087: ldstr "path.join type:"
+		IL_0018: ldarg.2
+		IL_0019: ldstr "require"
+		IL_001e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0023: stloc.s 5
+		IL_0025: ldloc.s 5
+		IL_0027: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
+		IL_002c: stloc.s 6
+		IL_002e: ldloc.s 4
+		IL_0030: ldstr "log"
+		IL_0035: ldstr "module.require type:"
+		IL_003a: ldloc.s 6
+		IL_003c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_0041: pop
+		IL_0042: ldarg.1
+		IL_0043: ldstr "path"
+		IL_0048: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
+		IL_004d: stloc.1
+		IL_004e: ldstr "console"
+		IL_0053: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0058: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_005d: stloc.s 4
+		IL_005f: ldloc.1
+		IL_0060: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
+		IL_0065: stloc.s 6
+		IL_0067: ldloc.s 4
+		IL_0069: ldstr "log"
+		IL_006e: ldstr "path module type:"
+		IL_0073: ldloc.s 6
+		IL_0075: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_007a: pop
+		IL_007b: ldstr "console"
+		IL_0080: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0085: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_008a: stloc.s 4
 		IL_008c: ldloc.1
 		IL_008d: ldstr "join"
 		IL_0092: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0097: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
-		IL_009c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_00a1: pop
-		IL_00a2: ldloc.1
-		IL_00a3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00a8: stloc.s 4
-		IL_00aa: ldloc.s 4
-		IL_00ac: ldstr "join"
-		IL_00b1: ldstr "a"
-		IL_00b6: ldstr "b"
-		IL_00bb: ldstr "c"
-		IL_00c0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember3(object, string, object, object, object)
-		IL_00c5: stloc.2
-		IL_00c6: ldloc.2
-		IL_00c7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00cc: stloc.s 4
-		IL_00ce: ldloc.s 4
-		IL_00d0: ldstr "split"
-		IL_00d5: ldstr "\\"
-		IL_00da: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00df: stloc.s 4
-		IL_00e1: ldloc.s 4
-		IL_00e3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00e8: stloc.s 4
-		IL_00ea: ldloc.s 4
-		IL_00ec: ldstr "join"
-		IL_00f1: ldstr "/"
-		IL_00f6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00fb: stloc.3
-		IL_00fc: ldstr "console"
-		IL_0101: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0106: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_010b: stloc.s 4
-		IL_010d: ldloc.s 4
-		IL_010f: ldstr "log"
-		IL_0114: ldstr "path.join result:"
-		IL_0119: ldloc.3
-		IL_011a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_011f: pop
-		IL_0120: ret
+		IL_0097: stloc.s 5
+		IL_0099: ldloc.s 5
+		IL_009b: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
+		IL_00a0: stloc.s 6
+		IL_00a2: ldloc.s 4
+		IL_00a4: ldstr "log"
+		IL_00a9: ldstr "path.join type:"
+		IL_00ae: ldloc.s 6
+		IL_00b0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_00b5: pop
+		IL_00b6: ldloc.1
+		IL_00b7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00bc: stloc.s 4
+		IL_00be: ldloc.s 4
+		IL_00c0: ldstr "join"
+		IL_00c5: ldstr "a"
+		IL_00ca: ldstr "b"
+		IL_00cf: ldstr "c"
+		IL_00d4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember3(object, string, object, object, object)
+		IL_00d9: stloc.2
+		IL_00da: ldloc.2
+		IL_00db: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00e0: stloc.s 4
+		IL_00e2: ldloc.s 4
+		IL_00e4: ldstr "split"
+		IL_00e9: ldstr "\\"
+		IL_00ee: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_00f3: stloc.s 4
+		IL_00f5: ldloc.s 4
+		IL_00f7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00fc: stloc.s 4
+		IL_00fe: ldloc.s 4
+		IL_0100: ldstr "join"
+		IL_0105: ldstr "/"
+		IL_010a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_010f: stloc.3
+		IL_0110: ldstr "console"
+		IL_0115: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_011a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_011f: stloc.s 4
+		IL_0121: ldloc.s 4
+		IL_0123: ldstr "log"
+		IL_0128: ldstr "path.join result:"
+		IL_012d: ldloc.3
+		IL_012e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_0133: pop
+		IL_0134: ret
 	} // end of method CommonJS_Module_Require::__js_module_init__
 
 } // end of class Modules.CommonJS_Module_Require
@@ -142,7 +154,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2186
+		// Method begins at RVA 0x219a
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

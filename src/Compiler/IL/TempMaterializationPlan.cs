@@ -7,7 +7,6 @@ internal enum TempValueOwner
     MaterializedLocal,
     Scheduler,
     BranchConditionFusion,
-    LegacyStackify,
     Rematerialization,
     VariableSlot,
     SnapshotBarrier,
@@ -19,7 +18,7 @@ internal enum TempValueOwner
 /// <summary>
 /// Single source of truth for which compiler component owns each temp's
 /// residency decision. Claims are exclusive and forced materialization is
-/// established before legacy optimization owners run.
+/// established before optional optimization owners run.
 /// </summary>
 internal sealed class TempMaterializationPlan
 {

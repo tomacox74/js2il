@@ -9,20 +9,15 @@ namespace Jroc.IL;
 /// </summary>
 internal static class LIRRematerializationPolicy
 {
-    internal static bool CanRematerializeForStackify(
-        LIRInstruction instruction,
-        MethodBodyIR methodBody,
-        LIRInstruction?[] definitions)
-        => Stackify.EvaluateLegacyRematerialization(
-            instruction,
-            methodBody,
-            definitions);
-
     internal static bool CanRematerializeForAllocation(
         LIRInstruction instruction,
         MethodBodyIR methodBody,
         IReadOnlyDictionary<int, LIRInstruction> definitions)
     {
+        ArgumentNullException.ThrowIfNull(instruction);
+        ArgumentNullException.ThrowIfNull(methodBody);
+        ArgumentNullException.ThrowIfNull(definitions);
+
         if (instruction is LIRConstNumber
             or LIRConstString
             or LIRConstBoolean

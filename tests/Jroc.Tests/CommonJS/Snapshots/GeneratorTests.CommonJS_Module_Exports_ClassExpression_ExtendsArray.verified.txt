@@ -127,7 +127,7 @@
 			)
 			// Method begins at RVA 0x2168
 			// Header size: 12
-			// Code size: 174 (0xae)
+			// Code size: 173 (0xad)
 			.maxstack 10
 			.locals init (
 				[0] object,
@@ -143,76 +143,80 @@
 			IL_0001: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
 			IL_0006: stloc.2
 			IL_0007: ldloc.2
-			IL_0008: brfalse IL_001f
+			IL_0008: brfalse IL_0021
 
 			IL_000d: ldarg.1
 			IL_000e: ldstr "length"
 			IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0018: stloc.s 4
-			IL_001a: br IL_0022
+			IL_0018: stloc.3
+			IL_0019: ldloc.3
+			IL_001a: stloc.s 5
+			IL_001c: br IL_0024
 
-			IL_001f: ldarg.1
-			IL_0020: stloc.s 4
+			IL_0021: ldarg.1
+			IL_0022: stloc.s 5
 
-			IL_0022: ldloc.s 4
-			IL_0024: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-			IL_0029: stloc.2
-			IL_002a: ldloc.2
-			IL_002b: brtrue IL_0045
+			IL_0024: ldloc.s 5
+			IL_0026: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+			IL_002b: stloc.2
+			IL_002c: ldloc.2
+			IL_002d: brtrue IL_0047
 
-			IL_0030: ldc.r8 0.0
-			IL_0039: box [System.Runtime]System.Double
-			IL_003e: stloc.s 4
-			IL_0040: br IL_0045
+			IL_0032: ldc.r8 0.0
+			IL_003b: box [System.Runtime]System.Double
+			IL_0040: stloc.s 5
+			IL_0042: br IL_0047
 
-			IL_0045: ldarg.0
-			IL_0046: call instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor()
-			IL_004b: ldarg.0
-			IL_004c: ldc.i4.1
-			IL_004d: newarr [System.Runtime]System.Object
-			IL_0052: dup
-			IL_0053: ldc.i4.0
-			IL_0054: ldloc.s 4
-			IL_0056: stelem.ref
-			IL_0057: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::ConstructInto(object[])
-			IL_005c: ldarg.0
-			IL_005d: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeDerivedConstructorThisBinding(object)
-			IL_0062: ldarg.1
-			IL_0063: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-			IL_0068: stloc.2
-			IL_0069: ldloc.2
-			IL_006a: brfalse IL_00ad
+			IL_0047: ldarg.0
+			IL_0048: call instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor()
+			IL_004d: ldarg.0
+			IL_004e: ldc.i4.1
+			IL_004f: newarr [System.Runtime]System.Object
+			IL_0054: dup
+			IL_0055: ldc.i4.0
+			IL_0056: ldloc.s 5
+			IL_0058: stelem.ref
+			IL_0059: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::ConstructInto(object[])
+			IL_005e: ldarg.0
+			IL_005f: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeDerivedConstructorThisBinding(object)
+			IL_0064: ldarg.1
+			IL_0065: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+			IL_006a: stloc.2
+			IL_006b: ldloc.2
+			IL_006c: brfalse IL_00ac
 
-			IL_006f: ldarg.1
-			IL_0070: call class [JavaScriptRuntime]JavaScriptRuntime.IJavaScriptIterator [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::EnumerateObjectProperties(object)
-			IL_0075: stloc.0
-			// loop start (head: IL_0076)
-				IL_0076: ldloc.0
-				IL_0077: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorNext(object)
-				IL_007c: stloc.s 6
-				IL_007e: ldloc.s 6
+			IL_0071: ldarg.1
+			IL_0072: call class [JavaScriptRuntime]JavaScriptRuntime.IJavaScriptIterator [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::EnumerateObjectProperties(object)
+			IL_0077: stloc.0
+			// loop start (head: IL_0078)
+				IL_0078: ldloc.0
+				IL_0079: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorNext(object)
+				IL_007e: stloc.3
+				IL_007f: ldloc.3
 				IL_0080: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorResultDone(object)
 				IL_0085: stloc.2
 				IL_0086: ldloc.2
-				IL_0087: brtrue IL_00ad
+				IL_0087: brtrue IL_00ac
 
-				IL_008c: ldloc.s 6
-				IL_008e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorResultValue(object)
-				IL_0093: stloc.s 6
-				IL_0095: ldloc.s 6
-				IL_0097: stloc.1
-				IL_0098: ldarg.0
-				IL_0099: ldloc.1
-				IL_009a: ldarg.1
-				IL_009b: ldloc.1
-				IL_009c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, object)
-				IL_00a1: ldc.i4.1
-				IL_00a2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, object, object, bool)
-				IL_00a7: pop
-				IL_00a8: br IL_0076
+				IL_008c: ldloc.3
+				IL_008d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorResultValue(object)
+				IL_0092: stloc.3
+				IL_0093: ldloc.3
+				IL_0094: stloc.1
+				IL_0095: ldarg.1
+				IL_0096: ldloc.1
+				IL_0097: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, object)
+				IL_009c: stloc.3
+				IL_009d: ldarg.0
+				IL_009e: ldloc.1
+				IL_009f: ldloc.3
+				IL_00a0: ldc.i4.1
+				IL_00a1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, object, object, bool)
+				IL_00a6: pop
+				IL_00a7: br IL_0078
 			// end loop
 
-			IL_00ad: ret
+			IL_00ac: ret
 		} // end of method NodeList::.ctor
 
 		.method public hidebysig 

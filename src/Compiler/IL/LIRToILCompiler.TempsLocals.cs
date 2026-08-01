@@ -2837,32 +2837,5 @@ internal sealed partial class LIRToILCompiler
         }
     }
 
-    /// <summary>
-    /// Marks stackifiable temps as non-materialized in the peephole mask.
-    /// This prevents TempLocalAllocator from allocating IL local slots for temps that can stay on the stack.
-    /// </summary>
-    private void MarkStackifiableTemps(
-        StackifyResult stackifyResult,
-        TempMaterializationPlan materializationPlan)
-    {
-        if (stackifyResult.CanStackify.Length == 0)
-        {
-            return;
-        }
-
-        for (int i = 0;
-             i < Math.Min(stackifyResult.CanStackify.Length, materializationPlan.Count);
-             i++)
-        {
-            if (stackifyResult.CanStackify[i])
-            {
-                materializationPlan.TryClaim(
-                    i,
-                    TempResidency.Rematerialized,
-                    TempValueOwner.LegacyStackify);
-            }
-        }
-    }
-
     #endregion
 }

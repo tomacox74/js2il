@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x219c
+			// Method begins at RVA 0x21a2
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,12 +40,13 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 320 (0x140)
+		// Code size: 326 (0x146)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.CompoundAssignment_PropertyNullishAssignment/Scope,
 			[1] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
-			[2] object
+			[2] object,
+			[3] object
 		)
 
 		IL_0000: newobj instance void Modules.CompoundAssignment_PropertyNullishAssignment/Scope::.ctor()
@@ -126,36 +127,42 @@
 		IL_00cf: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
 		IL_00d4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
 		IL_00d9: stloc.2
-		IL_00da: ldloc.2
-		IL_00db: ldstr "log"
-		IL_00e0: ldloc.1
-		IL_00e1: ldstr "throw"
-		IL_00e6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_00eb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00f0: pop
-		IL_00f1: ldstr "console"
-		IL_00f6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_00fb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0100: stloc.2
-		IL_0101: ldloc.2
-		IL_0102: ldstr "log"
-		IL_0107: ldloc.1
-		IL_0108: ldstr "filter"
-		IL_010d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0112: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0117: pop
-		IL_0118: ldstr "console"
-		IL_011d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0122: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0127: stloc.2
-		IL_0128: ldloc.2
-		IL_0129: ldstr "log"
-		IL_012e: ldloc.1
-		IL_012f: ldstr "format"
-		IL_0134: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0139: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_013e: pop
-		IL_013f: ret
+		IL_00da: ldloc.1
+		IL_00db: ldstr "throw"
+		IL_00e0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00e5: stloc.3
+		IL_00e6: ldloc.2
+		IL_00e7: ldstr "log"
+		IL_00ec: ldloc.3
+		IL_00ed: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_00f2: pop
+		IL_00f3: ldstr "console"
+		IL_00f8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_00fd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0102: stloc.3
+		IL_0103: ldloc.1
+		IL_0104: ldstr "filter"
+		IL_0109: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_010e: stloc.2
+		IL_010f: ldloc.3
+		IL_0110: ldstr "log"
+		IL_0115: ldloc.2
+		IL_0116: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_011b: pop
+		IL_011c: ldstr "console"
+		IL_0121: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0126: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_012b: stloc.2
+		IL_012c: ldloc.1
+		IL_012d: ldstr "format"
+		IL_0132: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0137: stloc.3
+		IL_0138: ldloc.2
+		IL_0139: ldstr "log"
+		IL_013e: ldloc.3
+		IL_013f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0144: pop
+		IL_0145: ret
 	} // end of method CompoundAssignment_PropertyNullishAssignment::__js_module_init__
 
 } // end of class Modules.CompoundAssignment_PropertyNullishAssignment
@@ -167,7 +174,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21a5
+		// Method begins at RVA 0x21ab
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

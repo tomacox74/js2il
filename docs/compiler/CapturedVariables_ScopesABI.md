@@ -669,7 +669,7 @@ This is not an IL concern; it is metadata used by call sites and by LIR→IL whe
   - Leaf scope: `ldloc.X` → `ldfld`
   - Parent scope: `ldarg.X` → `ldc.i4 index` → `ldelem.ref` → `castclass` → `ldfld`
   - Class method parent scope: `ldarg.0` → `ldfld _scopes` → `ldc.i4 index` → `ldelem.ref` → `castclass` → `ldfld`
-- Scope field loads are stackable and support inline emission in Stackify
+- Scope field loads materialize unless explicitly accepted by the validated scheduler
 - Added `LIRBuildArray` instruction to optimize console.log array creation using dup pattern (newarr → [dup, ldc.i4, ldarg/ldloc, stelem.ref]*)
 - Wired `ScopeMetadataRegistry` through full compilation pipeline for field handle lookups
 
@@ -781,7 +781,7 @@ This replaces the role of the legacy `FunctionRegistry` (which is string-keyed a
   - For empty layouts: loads `RuntimeServices.EmptyScopes` (shared 1-element array with null; ABI compatibility). Callers must treat scopes arrays as immutable.
   - For non-empty layouts: creates array of proper size, populates each slot from its source
   - Added `EmitLoadScopeInstance` helper for loading from leaf local, scopes argument, or this._scopes
-- Updated `Stackify` and `TempLocalAllocator` to handle the new `LIRBuildScopesArray` instruction
+- Updated the temp-local allocator to handle the new `LIRBuildScopesArray` instruction
 - Removed `LIRCreateScopesArray` (migration completed); `LIRBuildScopesArray` is the single scopes-array instruction.
 
 **Current Limitations**:

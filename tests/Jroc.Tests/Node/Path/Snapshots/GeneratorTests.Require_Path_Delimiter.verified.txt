@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20e5
+			// Method begins at RVA 0x20ef
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,17 +40,18 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 137 (0x89)
+		// Code size: 147 (0x93)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Require_Path_Delimiter/Scope,
 			[1] object,
 			[2] object,
-			[3] bool,
-			[4] object,
+			[3] object,
+			[4] bool,
 			[5] object,
 			[6] object,
-			[7] object
+			[7] object,
+			[8] object
 		)
 
 		IL_0000: newobj instance void Modules.Require_Path_Delimiter/Scope::.ctor()
@@ -67,40 +68,44 @@
 		IL_0023: ldloc.1
 		IL_0024: ldstr "delimiter"
 		IL_0029: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_002e: ldstr ":"
-		IL_0033: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_0038: stloc.3
-		IL_0039: ldloc.3
-		IL_003a: box [System.Runtime]System.Boolean
-		IL_003f: stloc.s 4
-		IL_0041: ldloc.s 4
-		IL_0043: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-		IL_0048: stloc.3
-		IL_0049: ldloc.3
-		IL_004a: brtrue IL_0076
+		IL_002e: stloc.3
+		IL_002f: ldloc.3
+		IL_0030: ldstr ":"
+		IL_0035: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_003a: stloc.s 4
+		IL_003c: ldloc.s 4
+		IL_003e: box [System.Runtime]System.Boolean
+		IL_0043: stloc.s 5
+		IL_0045: ldloc.s 5
+		IL_0047: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+		IL_004c: stloc.s 4
+		IL_004e: ldloc.s 4
+		IL_0050: brtrue IL_0080
 
-		IL_004f: ldloc.1
-		IL_0050: ldstr "delimiter"
-		IL_0055: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_005a: ldstr ";"
-		IL_005f: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_0064: stloc.3
-		IL_0065: ldloc.3
-		IL_0066: box [System.Runtime]System.Boolean
-		IL_006b: stloc.s 5
-		IL_006d: ldloc.s 5
-		IL_006f: stloc.s 7
-		IL_0071: br IL_007a
+		IL_0055: ldloc.1
+		IL_0056: ldstr "delimiter"
+		IL_005b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0060: stloc.3
+		IL_0061: ldloc.3
+		IL_0062: ldstr ";"
+		IL_0067: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_006c: stloc.s 4
+		IL_006e: ldloc.s 4
+		IL_0070: box [System.Runtime]System.Boolean
+		IL_0075: stloc.s 6
+		IL_0077: ldloc.s 6
+		IL_0079: stloc.s 8
+		IL_007b: br IL_0084
 
-		IL_0076: ldloc.s 4
-		IL_0078: stloc.s 7
+		IL_0080: ldloc.s 5
+		IL_0082: stloc.s 8
 
-		IL_007a: ldloc.2
-		IL_007b: ldstr "log"
-		IL_0080: ldloc.s 7
-		IL_0082: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0087: pop
-		IL_0088: ret
+		IL_0084: ldloc.2
+		IL_0085: ldstr "log"
+		IL_008a: ldloc.s 8
+		IL_008c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0091: pop
+		IL_0092: ret
 	} // end of method Require_Path_Delimiter::__js_module_init__
 
 } // end of class Modules.Require_Path_Delimiter
@@ -112,7 +117,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20ee
+		// Method begins at RVA 0x20f8
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
