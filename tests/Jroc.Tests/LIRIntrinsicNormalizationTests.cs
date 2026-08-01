@@ -176,6 +176,55 @@ public sealed class LIRIntrinsicNormalizationTests
     }
 
     [Fact]
+    public void Normalize_RemovesUnusedScopeProducers()
+    {
+        var body = new MethodBodyIR();
+        var loadedScopes = AddTemp(
+            body,
+            new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
+        var builtScopes = AddTemp(
+            body,
+            new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
+        body.Instructions.Add(new LIRLoadScopesArgument(loadedScopes));
+        body.Instructions.Add(new LIRBuildScopesArray(
+            System.Array.Empty<ScopeSlotSource>(),
+            builtScopes));
+        body.Instructions.Add(new LIRReturnUndefinedImmediate());
+
+        LIRIntrinsicNormalization.Normalize(body, classRegistry: null);
+
+        Assert.Single(body.Instructions);
+        Assert.IsType<LIRReturnUndefinedImmediate>(body.Instructions[0]);
+    }
+
+    [Fact]
+    public void Normalize_PreservesUsedScopeProducer()
+    {
+        var body = new MethodBodyIR();
+        var scopes = AddTemp(
+            body,
+            new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
+        var callee = AddTemp(
+            body,
+            new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        var result = AddTemp(
+            body,
+            new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        body.Instructions.Add(new LIRBuildScopesArray(
+            System.Array.Empty<ScopeSlotSource>(),
+            scopes));
+        body.Instructions.Add(new LIRCallFunctionValue0(
+            callee,
+            scopes,
+            result));
+
+        LIRIntrinsicNormalization.Normalize(body, classRegistry: null);
+
+        Assert.IsType<LIRBuildScopesArray>(body.Instructions[0]);
+        Assert.IsType<LIRCallFunctionValue0>(body.Instructions[1]);
+    }
+
+    [Fact]
     public void Normalize_Rewrites_CallIntrinsic_ToCallInstanceMethod_WhenArgsFromSmallBuildArray()
     {
         var body = new MethodBodyIR();

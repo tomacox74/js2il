@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x20dd
+				// Method begins at RVA 0x20c4
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -42,26 +42,21 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x20a4
-			// Header size: 12
-			// Code size: 36 (0x24)
+			// Method begins at RVA 0x2098
+			// Header size: 1
+			// Code size: 34 (0x22)
 			.maxstack 8
-			.locals init (
-				[0] object
-			)
 
 			IL_0000: ldstr "console"
 			IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
 			IL_000a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_000f: stloc.0
-			IL_0010: ldloc.0
-			IL_0011: ldstr "log"
-			IL_0016: ldstr "Message:"
-			IL_001b: ldarg.1
-			IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-			IL_0021: pop
-			IL_0022: ldnull
-			IL_0023: ret
+			IL_000f: ldstr "log"
+			IL_0014: ldstr "Message:"
+			IL_0019: ldarg.1
+			IL_001a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+			IL_001f: pop
+			IL_0020: ldnull
+			IL_0021: ret
 		} // end of method printMessage::__js_call__
 
 	} // end of class printMessage
@@ -81,7 +76,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20d4
+			// Method begins at RVA 0x20bb
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -107,7 +102,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 71 (0x47)
+		// Code size: 60 (0x3c)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Function_GlobalFunctionWithParameter/Scope,
@@ -117,34 +112,27 @@
 
 		IL_0000: newobj instance void Modules.Function_GlobalFunctionWithParameter/Scope::.ctor()
 		IL_0005: stloc.0
-		IL_0006: ldc.i4.1
-		IL_0007: newarr [System.Runtime]System.Object
-		IL_000c: dup
-		IL_000d: ldc.i4.0
-		IL_000e: ldloc.0
-		IL_000f: stelem.ref
-		IL_0010: stloc.2
-		IL_0011: ldnull
-		IL_0012: ldftn object Modules.Function_GlobalFunctionWithParameter/printMessage::__js_call__(object, string)
-		IL_0018: newobj instance void class [System.Runtime]System.Func`3<object, string, object>::.ctor(object, native int)
-		IL_001d: castclass class [System.Runtime]System.Func`3<object, string, object>
-		IL_0022: ldc.i4.1
-		IL_0023: conv.r8
-		IL_0024: ldstr "printMessage"
-		IL_0029: ldc.i4.0
-		IL_002a: ldc.i4.1
-		IL_002b: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [System.Runtime]System.Func`3<object, string, object>>(!!0, float64, string, bool, bool)
-		IL_0030: stloc.1
-		IL_0031: nop
-		IL_0032: nop
-		IL_0033: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0038: stloc.2
-		IL_0039: ldloc.1
-		IL_003a: ldloc.2
-		IL_003b: ldstr "Hello, Jroc!"
-		IL_0040: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
-		IL_0045: pop
-		IL_0046: ret
+		IL_0006: ldnull
+		IL_0007: ldftn object Modules.Function_GlobalFunctionWithParameter/printMessage::__js_call__(object, string)
+		IL_000d: newobj instance void class [System.Runtime]System.Func`3<object, string, object>::.ctor(object, native int)
+		IL_0012: castclass class [System.Runtime]System.Func`3<object, string, object>
+		IL_0017: ldc.i4.1
+		IL_0018: conv.r8
+		IL_0019: ldstr "printMessage"
+		IL_001e: ldc.i4.0
+		IL_001f: ldc.i4.1
+		IL_0020: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [System.Runtime]System.Func`3<object, string, object>>(!!0, float64, string, bool, bool)
+		IL_0025: stloc.1
+		IL_0026: nop
+		IL_0027: nop
+		IL_0028: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_002d: stloc.2
+		IL_002e: ldloc.1
+		IL_002f: ldloc.2
+		IL_0030: ldstr "Hello, Jroc!"
+		IL_0035: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
+		IL_003a: pop
+		IL_003b: ret
 	} // end of method Function_GlobalFunctionWithParameter::__js_module_init__
 
 } // end of class Modules.Function_GlobalFunctionWithParameter
@@ -156,7 +144,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20e6
+		// Method begins at RVA 0x20cd
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

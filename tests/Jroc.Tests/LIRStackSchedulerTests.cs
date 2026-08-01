@@ -561,6 +561,149 @@ public sealed class LIRStackSchedulerTests
     }
 
     [Fact]
+    public void Build_ConversionsMode_CarriesScopeReadIntoReceiverConsumer()
+    {
+        var body = new MethodBodyIR();
+        var receiver = AddTemp(body);
+        var result = AddTemp(body);
+        body.Instructions.Add(new LIRLoadScopeFieldByName(
+            "GlobalScope",
+            "console",
+            receiver));
+        body.Instructions.Add(new LIRCallMember0(
+            receiver,
+            "log",
+            result));
+        body.Instructions.Add(new LIRReturn(result));
+
+        var schedule = LIRStackScheduler.Build(
+            body,
+            new LIRStackSchedulerOptions(
+                LIRStackSchedulerMode.ConversionsAndStableLoads));
+
+        Assert.Equal(
+            TempResidency.StackResident,
+            schedule.TempResidencies[receiver.Index]);
+        Assert.True(schedule.OwnedTemps[receiver.Index]);
+    }
+
+    [Fact]
+    public void Build_ConversionsMode_CarriesScopeReadIntoObjectCoercion()
+    {
+        var body = new MethodBodyIR();
+        var receiver = AddTemp(body);
+        var result = AddTemp(body);
+        body.Instructions.Add(new LIRLoadScopeFieldByName(
+            "GlobalScope",
+            "performance",
+            receiver));
+        body.Instructions.Add(new LIRCallIntrinsicStatic(
+            "ObjectRuntime",
+            "RequireObjectCoercible",
+            new[] { receiver },
+            result));
+        body.Instructions.Add(new LIRReturn(result));
+
+        var schedule = LIRStackScheduler.Build(
+            body,
+            new LIRStackSchedulerOptions(
+                LIRStackSchedulerMode.ConversionsAndStableLoads));
+
+        Assert.Equal(
+            TempResidency.StackResident,
+            schedule.TempResidencies[receiver.Index]);
+        Assert.True(schedule.OwnedTemps[receiver.Index]);
+    }
+
+    [Fact]
+    public void Build_ConversionsMode_DoesNotCarryScopeReadIntoOtherIntrinsic()
+    {
+        var body = new MethodBodyIR();
+        var receiver = AddTemp(body);
+        var result = AddTemp(body);
+        body.Instructions.Add(new LIRLoadScopeFieldByName(
+            "GlobalScope",
+            "performance",
+            receiver));
+        body.Instructions.Add(new LIRCallIntrinsicStatic(
+            "ObjectRuntime",
+            "Other",
+            new[] { receiver },
+            result));
+        body.Instructions.Add(new LIRReturn(result));
+
+        var schedule = LIRStackScheduler.Build(
+            body,
+            new LIRStackSchedulerOptions(
+                LIRStackSchedulerMode.ConversionsAndStableLoads));
+
+        Assert.Equal(
+            TempResidency.MaterializedLocal,
+            schedule.TempResidencies[receiver.Index]);
+        Assert.False(schedule.OwnedTemps[receiver.Index]);
+    }
+
+    [Fact]
+    public void Build_ConversionsMode_DoesNotCarryScopeReadAsLaterOperand()
+    {
+        var body = new MethodBodyIR();
+        var receiver = AddTemp(body);
+        var argument = AddTemp(body);
+        var result = AddTemp(body);
+        body.Instructions.Add(new LIRLoadParameter(1, receiver));
+        body.Instructions.Add(new LIRLoadScopeFieldByName(
+            "GlobalScope",
+            "value",
+            argument));
+        body.Instructions.Add(new LIRCallMember1(
+            receiver,
+            "use",
+            argument,
+            result));
+        body.Instructions.Add(new LIRReturn(result));
+
+        var schedule = LIRStackScheduler.Build(
+            body,
+            new LIRStackSchedulerOptions(
+                LIRStackSchedulerMode.ConversionsAndStableLoads));
+
+        Assert.Equal(
+            TempResidency.MaterializedLocal,
+            schedule.TempResidencies[argument.Index]);
+        Assert.False(schedule.OwnedTemps[argument.Index]);
+    }
+
+    [Fact]
+    public void Build_CallResultsMode_CarriesCallResultIntoReceiverConsumer()
+    {
+        var body = new MethodBodyIR();
+        var value = AddTemp(body);
+        var receiver = AddTemp(body);
+        var result = AddTemp(body);
+        body.Instructions.Add(new LIRLoadParameter(1, value));
+        body.Instructions.Add(new LIRCallIntrinsicStatic(
+            "ObjectRuntime",
+            "RequireObjectCoercible",
+            new[] { value },
+            receiver));
+        body.Instructions.Add(new LIRCallMember0(
+            receiver,
+            "toString",
+            result));
+        body.Instructions.Add(new LIRReturn(result));
+
+        var schedule = LIRStackScheduler.Build(
+            body,
+            new LIRStackSchedulerOptions(
+                LIRStackSchedulerMode.CallResults));
+
+        Assert.Equal(
+            TempResidency.StackResident,
+            schedule.TempResidencies[receiver.Index]);
+        Assert.True(schedule.OwnedTemps[receiver.Index]);
+    }
+
+    [Fact]
     public void Build_LiteralMode_MovesConstructionBeforePureProducerSuffix()
     {
         var body = new MethodBodyIR();
@@ -1034,6 +1177,98 @@ public sealed class LIRStackSchedulerTests
     }
 
     [Fact]
+    public void Build_GeneralRegionsMode_InlinesAdjacentCallArgumentsArray()
+    {
+        var body = new MethodBodyIR();
+        var receiver = AddTemp(body);
+        var argument = AddTemp(body);
+        var arguments = AddTemp(body);
+        var result = AddTemp(body);
+        body.Instructions.Add(new LIRLoadParameter(1, receiver));
+        body.Instructions.Add(new LIRLoadParameter(2, argument));
+        body.Instructions.Add(new LIRBuildArray(
+            new[] { argument },
+            arguments));
+        body.Instructions.Add(new LIRCallMember(
+            receiver,
+            "invoke",
+            arguments,
+            result));
+        body.Instructions.Add(new LIRReturn(result));
+
+        var schedule = LIRStackScheduler.Build(
+            body,
+            new LIRStackSchedulerOptions(
+                LIRStackSchedulerMode.GeneralRegions));
+
+        Assert.Equal(
+            TempResidency.ScheduledInline,
+            schedule.TempResidencies[arguments.Index]);
+        Assert.True(schedule.OwnedTemps[arguments.Index]);
+    }
+
+    [Fact]
+    public void Build_GeneralRegionsMode_DoesNotMoveArgumentsAcrossInstruction()
+    {
+        var body = new MethodBodyIR();
+        var receiver = AddTemp(body);
+        var argument = AddTemp(body);
+        var arguments = AddTemp(body);
+        var intervening = AddTemp(body);
+        var result = AddTemp(body);
+        body.Instructions.Add(new LIRLoadParameter(1, receiver));
+        body.Instructions.Add(new LIRLoadParameter(2, argument));
+        body.Instructions.Add(new LIRBuildArray(
+            new[] { argument },
+            arguments));
+        body.Instructions.Add(new LIRConstNumber(1, intervening));
+        body.Instructions.Add(new LIRCallMember(
+            receiver,
+            "invoke",
+            arguments,
+            result));
+        body.Instructions.Add(new LIRReturn(result));
+
+        var schedule = LIRStackScheduler.Build(
+            body,
+            new LIRStackSchedulerOptions(
+                LIRStackSchedulerMode.GeneralRegions));
+
+        Assert.Equal(
+            TempResidency.MaterializedLocal,
+            schedule.TempResidencies[arguments.Index]);
+        Assert.False(schedule.OwnedTemps[arguments.Index]);
+    }
+
+    [Fact]
+    public void Build_GeneralRegionsMode_InlinesSingleUseScopesArray()
+    {
+        var body = new MethodBodyIR();
+        var callee = AddTemp(body);
+        var scopes = AddTemp(body);
+        var result = AddTemp(body);
+        body.Instructions.Add(new LIRLoadParameter(1, callee));
+        body.Instructions.Add(new LIRBuildScopesArray(
+            System.Array.Empty<ScopeSlotSource>(),
+            scopes));
+        body.Instructions.Add(new LIRCallFunctionValue0(
+            callee,
+            scopes,
+            result));
+        body.Instructions.Add(new LIRReturn(result));
+
+        var schedule = LIRStackScheduler.Build(
+            body,
+            new LIRStackSchedulerOptions(
+                LIRStackSchedulerMode.GeneralRegions));
+
+        Assert.Equal(
+            TempResidency.ScheduledInline,
+            schedule.TempResidencies[scopes.Index]);
+        Assert.True(schedule.OwnedTemps[scopes.Index]);
+    }
+
+    [Fact]
     public void Build_GeneralRegionsMode_DeepRejectedTreesFailClosedIteratively()
     {
         const int depth = 2_000;
@@ -1350,6 +1585,60 @@ public sealed class LIRStackSchedulerTests
             "stelem.ref",
             "JavaScriptRuntime.Math::max",
             "ret");
+    }
+
+    [Fact]
+    public void Compiler_ImmutableBinaryLeftSkipsSnapshotButMutableLeftPreservesIt()
+    {
+        const string source = """
+            "use strict";
+            function immutable(value, other) {
+              const left = value;
+              return left - other;
+            }
+            function mutable(value) {
+              let left = value;
+              return left - (left = 1);
+            }
+            console.log(immutable(5, 2), mutable(5));
+            """;
+
+        var artifact = Compile(
+            source,
+            LIRStackSchedulerMode.GeneralRegions,
+            emitPdb: false);
+        var path = Path.Combine(
+            Path.GetTempPath(),
+            "Jroc.Tests",
+            "ImmutableBinaryLeft",
+            "immutable-binary-left.dll");
+        Directory.CreateDirectory(Path.GetDirectoryName(path)!);
+        File.WriteAllBytes(path, artifact.PeBytes);
+        var il = AssemblyToText.ConvertToText(path);
+
+        AssertMethodHasOrderedFragmentsAndLocalCount(
+            il,
+            "immutable",
+            1,
+            "ldarg.1",
+            "stloc",
+            "ldloc",
+            "ldarg.2",
+            "sub",
+            "ret");
+
+        var mutableStart = il.IndexOf(
+            "beforefieldinit mutable",
+            StringComparison.Ordinal);
+        Assert.True(mutableStart >= 0);
+        var mutableEnd = il.IndexOf(
+            "end of class mutable",
+            mutableStart,
+            StringComparison.Ordinal);
+        Assert.True(mutableEnd > mutableStart);
+        var mutableMethod = il[mutableStart..mutableEnd];
+        Assert.True(CountOccurrences(mutableMethod, "stloc") > 1);
+        Assert.True(CountOccurrences(mutableMethod, "ldloc") > 1);
     }
 
     [Fact]

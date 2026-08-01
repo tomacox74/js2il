@@ -22,7 +22,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x230d
+					// Method begins at RVA 0x22f9
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -40,7 +40,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2304
+				// Method begins at RVA 0x22f0
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -68,7 +68,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 04 00 00 02
 			)
-			// Method begins at RVA 0x22b8
+			// Method begins at RVA 0x22a4
 			// Header size: 12
 			// Code size: 55 (0x37)
 			.maxstack 8
@@ -120,7 +120,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x22fb
+			// Method begins at RVA 0x22e7
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -146,7 +146,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 603 (0x25b)
+		// Code size: 584 (0x248)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Proxy_DeletePropertyTrap_And_Fallback/Scope,
@@ -155,13 +155,12 @@
 			[3] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
 			[4] class [JavaScriptRuntime]JavaScriptRuntime.Proxy,
 			[5] class [JavaScriptRuntime]JavaScriptRuntime.Array,
-			[6] object[],
-			[7] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2,
-			[8] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
-			[9] object,
-			[10] bool,
-			[11] object,
-			[12] string
+			[6] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2,
+			[7] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
+			[8] object,
+			[9] bool,
+			[10] object,
+			[11] string
 		)
 
 		IL_0000: newobj instance void Modules.Proxy_DeletePropertyTrap_And_Fallback/Scope::.ctor()
@@ -187,167 +186,156 @@
 		IL_0051: ldloc.0
 		IL_0052: ldloc.s 5
 		IL_0054: stfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Proxy_DeletePropertyTrap_And_Fallback/Scope::seen
-		IL_0059: ldc.i4.1
-		IL_005a: newarr [System.Runtime]System.Object
-		IL_005f: dup
-		IL_0060: ldc.i4.0
-		IL_0061: ldloc.0
-		IL_0062: stelem.ref
-		IL_0063: stloc.s 6
-		IL_0065: ldloc.s 6
-		IL_0067: ldc.i4.0
-		IL_0068: ldelem.ref
-		IL_0069: castclass Modules.Proxy_DeletePropertyTrap_And_Fallback/Scope
-		IL_006e: ldftn object Modules.Proxy_DeletePropertyTrap_And_Fallback/FunctionExpression_trappedProxy::__js_call__(class Modules.Proxy_DeletePropertyTrap_And_Fallback/Scope, object, object, object)
-		IL_0074: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::.ctor(object, native int)
-		IL_0079: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2
-		IL_007e: ldc.i4.2
-		IL_007f: conv.r8
-		IL_0080: ldstr ""
-		IL_0085: ldc.i4.0
-		IL_0086: ldc.i4.1
-		IL_0087: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2>(!!0, float64, string, bool, bool)
-		IL_008c: stloc.s 7
-		IL_008e: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_0093: dup
-		IL_0094: ldstr "deleteProperty"
-		IL_0099: ldloc.s 7
-		IL_009b: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_00a0: stloc.s 8
-		IL_00a2: ldloc.1
-		IL_00a3: ldloc.s 8
-		IL_00a5: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Proxy::.ctor(object, object)
-		IL_00aa: stloc.2
-		IL_00ab: ldstr "console"
-		IL_00b0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_00b5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00ba: stloc.s 9
-		IL_00bc: ldloc.2
-		IL_00bd: ldstr "removeMe"
-		IL_00c2: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DeleteProperty(object, object)
-		IL_00c7: stloc.s 10
-		IL_00c9: ldloc.s 10
-		IL_00cb: box [System.Runtime]System.Boolean
-		IL_00d0: stloc.s 11
-		IL_00d2: ldloc.s 9
-		IL_00d4: ldstr "log"
-		IL_00d9: ldloc.s 11
-		IL_00db: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00e0: pop
-		IL_00e1: ldstr "console"
-		IL_00e6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_00eb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00f0: stloc.s 9
-		IL_00f2: ldstr "removeMe"
-		IL_00f7: ldloc.1
-		IL_00f8: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::In(object, object)
-		IL_00fd: stloc.s 10
-		IL_00ff: ldloc.s 10
-		IL_0101: box [System.Runtime]System.Boolean
-		IL_0106: stloc.s 11
-		IL_0108: ldloc.s 9
-		IL_010a: ldstr "log"
-		IL_010f: ldloc.s 11
-		IL_0111: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0116: pop
-		IL_0117: ldstr "console"
-		IL_011c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0121: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0126: stloc.s 9
-		IL_0128: ldloc.2
-		IL_0129: ldstr "blocked"
-		IL_012e: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DeleteProperty(object, object)
-		IL_0133: stloc.s 10
-		IL_0135: ldloc.s 10
-		IL_0137: box [System.Runtime]System.Boolean
-		IL_013c: stloc.s 11
-		IL_013e: ldloc.s 9
-		IL_0140: ldstr "log"
-		IL_0145: ldloc.s 11
-		IL_0147: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_014c: pop
-		IL_014d: ldstr "console"
-		IL_0152: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0157: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_015c: stloc.s 9
-		IL_015e: ldstr "blocked"
-		IL_0163: ldloc.1
-		IL_0164: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::In(object, object)
-		IL_0169: stloc.s 10
-		IL_016b: ldloc.s 10
-		IL_016d: box [System.Runtime]System.Boolean
-		IL_0172: stloc.s 11
-		IL_0174: ldloc.s 9
-		IL_0176: ldstr "log"
-		IL_017b: ldloc.s 11
-		IL_017d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0182: pop
-		IL_0183: ldstr "console"
-		IL_0188: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_018d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0192: stloc.s 9
-		IL_0194: ldloc.0
-		IL_0195: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Proxy_DeletePropertyTrap_And_Fallback/Scope::seen
-		IL_019a: stloc.s 5
-		IL_019c: ldloc.s 5
-		IL_019e: ldc.i4.1
-		IL_019f: newarr [System.Runtime]System.Object
-		IL_01a4: dup
-		IL_01a5: ldc.i4.0
-		IL_01a6: ldstr ","
-		IL_01ab: stelem.ref
-		IL_01ac: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
-		IL_01b1: stloc.s 12
-		IL_01b3: ldloc.s 9
-		IL_01b5: ldstr "log"
-		IL_01ba: ldloc.s 12
-		IL_01bc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_01c1: pop
-		IL_01c2: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_01c7: dup
-		IL_01c8: ldstr "fallback"
-		IL_01cd: ldc.r8 1
-		IL_01d6: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
-		IL_01db: stloc.3
-		IL_01dc: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_01e1: stloc.s 8
-		IL_01e3: ldloc.3
-		IL_01e4: ldloc.s 8
-		IL_01e6: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Proxy::.ctor(object, object)
-		IL_01eb: stloc.s 4
-		IL_01ed: ldstr "console"
-		IL_01f2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_01f7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_01fc: stloc.s 9
-		IL_01fe: ldloc.s 4
-		IL_0200: ldstr "fallback"
-		IL_0205: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DeleteProperty(object, object)
-		IL_020a: stloc.s 10
-		IL_020c: ldloc.s 10
-		IL_020e: box [System.Runtime]System.Boolean
-		IL_0213: stloc.s 11
-		IL_0215: ldloc.s 9
-		IL_0217: ldstr "log"
-		IL_021c: ldloc.s 11
-		IL_021e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0223: pop
-		IL_0224: ldstr "console"
-		IL_0229: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_022e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0233: stloc.s 9
-		IL_0235: ldstr "fallback"
-		IL_023a: ldloc.3
-		IL_023b: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::In(object, object)
-		IL_0240: stloc.s 10
-		IL_0242: ldloc.s 10
-		IL_0244: box [System.Runtime]System.Boolean
-		IL_0249: stloc.s 11
-		IL_024b: ldloc.s 9
-		IL_024d: ldstr "log"
-		IL_0252: ldloc.s 11
-		IL_0254: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0259: pop
-		IL_025a: ret
+		IL_0059: ldloc.0
+		IL_005a: castclass Modules.Proxy_DeletePropertyTrap_And_Fallback/Scope
+		IL_005f: ldftn object Modules.Proxy_DeletePropertyTrap_And_Fallback/FunctionExpression_trappedProxy::__js_call__(class Modules.Proxy_DeletePropertyTrap_And_Fallback/Scope, object, object, object)
+		IL_0065: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::.ctor(object, native int)
+		IL_006a: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2
+		IL_006f: ldc.i4.2
+		IL_0070: conv.r8
+		IL_0071: ldstr ""
+		IL_0076: ldc.i4.0
+		IL_0077: ldc.i4.1
+		IL_0078: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2>(!!0, float64, string, bool, bool)
+		IL_007d: stloc.s 6
+		IL_007f: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0084: dup
+		IL_0085: ldstr "deleteProperty"
+		IL_008a: ldloc.s 6
+		IL_008c: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_0091: stloc.s 7
+		IL_0093: ldloc.1
+		IL_0094: ldloc.s 7
+		IL_0096: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Proxy::.ctor(object, object)
+		IL_009b: stloc.2
+		IL_009c: ldstr "console"
+		IL_00a1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_00a6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00ab: stloc.s 8
+		IL_00ad: ldloc.2
+		IL_00ae: ldstr "removeMe"
+		IL_00b3: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DeleteProperty(object, object)
+		IL_00b8: stloc.s 9
+		IL_00ba: ldloc.s 9
+		IL_00bc: box [System.Runtime]System.Boolean
+		IL_00c1: stloc.s 10
+		IL_00c3: ldloc.s 8
+		IL_00c5: ldstr "log"
+		IL_00ca: ldloc.s 10
+		IL_00cc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_00d1: pop
+		IL_00d2: ldstr "console"
+		IL_00d7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_00dc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00e1: stloc.s 8
+		IL_00e3: ldstr "removeMe"
+		IL_00e8: ldloc.1
+		IL_00e9: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::In(object, object)
+		IL_00ee: stloc.s 9
+		IL_00f0: ldloc.s 9
+		IL_00f2: box [System.Runtime]System.Boolean
+		IL_00f7: stloc.s 10
+		IL_00f9: ldloc.s 8
+		IL_00fb: ldstr "log"
+		IL_0100: ldloc.s 10
+		IL_0102: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0107: pop
+		IL_0108: ldstr "console"
+		IL_010d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0112: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0117: stloc.s 8
+		IL_0119: ldloc.2
+		IL_011a: ldstr "blocked"
+		IL_011f: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DeleteProperty(object, object)
+		IL_0124: stloc.s 9
+		IL_0126: ldloc.s 9
+		IL_0128: box [System.Runtime]System.Boolean
+		IL_012d: stloc.s 10
+		IL_012f: ldloc.s 8
+		IL_0131: ldstr "log"
+		IL_0136: ldloc.s 10
+		IL_0138: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_013d: pop
+		IL_013e: ldstr "console"
+		IL_0143: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0148: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_014d: stloc.s 8
+		IL_014f: ldstr "blocked"
+		IL_0154: ldloc.1
+		IL_0155: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::In(object, object)
+		IL_015a: stloc.s 9
+		IL_015c: ldloc.s 9
+		IL_015e: box [System.Runtime]System.Boolean
+		IL_0163: stloc.s 10
+		IL_0165: ldloc.s 8
+		IL_0167: ldstr "log"
+		IL_016c: ldloc.s 10
+		IL_016e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0173: pop
+		IL_0174: ldstr "console"
+		IL_0179: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_017e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0183: stloc.s 8
+		IL_0185: ldloc.0
+		IL_0186: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Proxy_DeletePropertyTrap_And_Fallback/Scope::seen
+		IL_018b: ldc.i4.1
+		IL_018c: newarr [System.Runtime]System.Object
+		IL_0191: dup
+		IL_0192: ldc.i4.0
+		IL_0193: ldstr ","
+		IL_0198: stelem.ref
+		IL_0199: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
+		IL_019e: stloc.s 11
+		IL_01a0: ldloc.s 8
+		IL_01a2: ldstr "log"
+		IL_01a7: ldloc.s 11
+		IL_01a9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_01ae: pop
+		IL_01af: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_01b4: dup
+		IL_01b5: ldstr "fallback"
+		IL_01ba: ldc.r8 1
+		IL_01c3: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
+		IL_01c8: stloc.3
+		IL_01c9: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_01ce: stloc.s 7
+		IL_01d0: ldloc.3
+		IL_01d1: ldloc.s 7
+		IL_01d3: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Proxy::.ctor(object, object)
+		IL_01d8: stloc.s 4
+		IL_01da: ldstr "console"
+		IL_01df: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_01e4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_01e9: stloc.s 8
+		IL_01eb: ldloc.s 4
+		IL_01ed: ldstr "fallback"
+		IL_01f2: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DeleteProperty(object, object)
+		IL_01f7: stloc.s 9
+		IL_01f9: ldloc.s 9
+		IL_01fb: box [System.Runtime]System.Boolean
+		IL_0200: stloc.s 10
+		IL_0202: ldloc.s 8
+		IL_0204: ldstr "log"
+		IL_0209: ldloc.s 10
+		IL_020b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0210: pop
+		IL_0211: ldstr "console"
+		IL_0216: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_021b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0220: stloc.s 8
+		IL_0222: ldstr "fallback"
+		IL_0227: ldloc.3
+		IL_0228: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::In(object, object)
+		IL_022d: stloc.s 9
+		IL_022f: ldloc.s 9
+		IL_0231: box [System.Runtime]System.Boolean
+		IL_0236: stloc.s 10
+		IL_0238: ldloc.s 8
+		IL_023a: ldstr "log"
+		IL_023f: ldloc.s 10
+		IL_0241: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0246: pop
+		IL_0247: ret
 	} // end of method Proxy_DeletePropertyTrap_And_Fallback::__js_module_init__
 
 } // end of class Modules.Proxy_DeletePropertyTrap_And_Fallback
@@ -359,7 +347,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2316
+		// Method begins at RVA 0x2302
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

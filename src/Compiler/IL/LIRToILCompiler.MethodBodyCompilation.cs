@@ -835,15 +835,47 @@ internal sealed partial class LIRToILCompiler
 
                 // Direct user-defined function call with args array (e.g. spread calls):
                 //   delegate + scopes + argsArray (argsArray may be inlined)
-                LIRCallFunctionWithArgsArray callWithArgsArray => 2 + EstimateTempLoadPeak(callWithArgsArray.ArgumentsArray),
+                LIRCallFunctionWithArgsArray callWithArgsArray => new[]
+                {
+                    1 + EstimateTempLoadPeak(callWithArgsArray.ScopesArray),
+                    2 + EstimateTempLoadPeak(callWithArgsArray.ArgumentsArray),
+                    3
+                }.Max(),
 
                 // Function value call via runtime dispatch: target + scopesArray + argsArray (argsArray may be inlined)
-                LIRCallFunctionValue callValue => 2 + EstimateTempLoadPeak(callValue.ArgumentsArray),
+                LIRCallFunctionValue callValue => new[]
+                {
+                    EstimateTempLoadPeak(callValue.FunctionValue),
+                    1 + EstimateTempLoadPeak(callValue.ScopesArray),
+                    2 + EstimateTempLoadPeak(callValue.ArgumentsArray),
+                    3
+                }.Max(),
+
+                LIRCallIntrinsic callIntrinsic => new[]
+                {
+                    EstimateTempLoadPeak(callIntrinsic.IntrinsicObject),
+                    1 + EstimateTempLoadPeak(callIntrinsic.ArgumentsArray),
+                    2
+                }.Max(),
 
                 // Member call via runtime dispatch: receiver + methodName + argsArray (argsArray may be inlined)
                 LIRCallMember callMember => Math.Max(
                     EstimateTempLoadPeak(callMember.Receiver),
                     2 + EstimateTempLoadPeak(callMember.ArgumentsArray)),
+
+                LIRConstructValue constructValue => new[]
+                {
+                    EstimateTempLoadPeak(constructValue.ConstructorValue),
+                    1 + EstimateTempLoadPeak(constructValue.ArgumentsArray),
+                    2
+                }.Max(),
+
+                LIRCallFunctionBaseConstructor callBase => new[]
+                {
+                    1 + EstimateTempLoadPeak(callBase.ConstructorValue),
+                    2 + EstimateTempLoadPeak(callBase.ArgumentsArray),
+                    3
+                }.Max(),
 
                 // Fixed-arity member helpers load receiver + methodName + args directly.
                 // Account for inline peaks while earlier operands remain on the stack.

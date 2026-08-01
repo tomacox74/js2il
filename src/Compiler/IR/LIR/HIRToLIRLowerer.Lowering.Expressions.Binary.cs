@@ -137,7 +137,10 @@ public sealed partial class HIRToLIRLowerer
         // Non-logical operators: evaluate RHS eagerly.
         // Preserve the evaluated LHS before the RHS runs. Without this, a slot-mapped temp like
         // `x` in `x !== (x = 1)` can observe the later assignment and break left-to-right semantics.
-        if (GetTempVariableSlot(leftTempVar) >= 0)
+        var leftIsImmutableLocal =
+            binaryExpr.Left is HIRVariableExpression leftVariable
+            && leftVariable.Name.BindingInfo.Kind == BindingKind.Const;
+        if (GetTempVariableSlot(leftTempVar) >= 0 && !leftIsImmutableLocal)
         {
             var preservedLeftTemp = CreateTempVariable();
             _methodBodyIR.Instructions.Add(new LIRCopyTemp(leftTempVar, preservedLeftTemp));

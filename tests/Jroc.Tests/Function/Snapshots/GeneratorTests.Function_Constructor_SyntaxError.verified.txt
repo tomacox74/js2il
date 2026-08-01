@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2185
+				// Method begins at RVA 0x2179
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x218e
+				// Method begins at RVA 0x2182
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -56,7 +56,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x217c
+			// Method begins at RVA 0x2170
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -82,7 +82,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 271 (0x10f)
+		// Code size: 259 (0x103)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Function_Constructor_SyntaxError/Scope,
@@ -121,82 +121,76 @@
 			IL_0030: ldstr "console"
 			IL_0035: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
 			IL_003a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_003f: stloc.s 6
-			IL_0041: ldloc.s 6
-			IL_0043: ldstr "log"
-			IL_0048: ldstr "no-error"
-			IL_004d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_0052: pop
-			IL_0053: leave IL_010b
+			IL_003f: ldstr "log"
+			IL_0044: ldstr "no-error"
+			IL_0049: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_004e: pop
+			IL_004f: leave IL_00ff
 		} // end .try
 		catch [System.Runtime]System.Exception
 		{
-			IL_0058: stloc.1
-			IL_0059: ldloc.1
-			IL_005a: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-			IL_005f: dup
-			IL_0060: brtrue IL_0075
+			IL_0054: stloc.1
+			IL_0055: ldloc.1
+			IL_0056: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+			IL_005b: dup
+			IL_005c: brtrue IL_0071
 
-			IL_0065: pop
-			IL_0066: ldloc.1
-			IL_0067: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
-			IL_006c: dup
-			IL_006d: brtrue IL_0080
+			IL_0061: pop
+			IL_0062: ldloc.1
+			IL_0063: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+			IL_0068: dup
+			IL_0069: brtrue IL_007c
 
-			IL_0072: pop
-			IL_0073: rethrow
+			IL_006e: pop
+			IL_006f: rethrow
 
-			IL_0075: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-			IL_007a: stloc.2
-			IL_007b: br IL_0081
+			IL_0071: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+			IL_0076: stloc.2
+			IL_0077: br IL_007d
 
-			IL_0080: stloc.2
+			IL_007c: stloc.2
 
-			IL_0081: ldloc.2
-			IL_0082: stloc.3
-			IL_0083: ldloc.3
-			IL_0084: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-			IL_0089: stloc.s 4
-			IL_008b: ldstr "console"
-			IL_0090: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_0095: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_009a: stloc.s 6
-			IL_009c: ldloc.s 4
-			IL_009e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_00a3: castclass [System.Runtime]System.String
-			IL_00a8: ldstr "SyntaxError"
-			IL_00ad: call bool [JavaScriptRuntime]JavaScriptRuntime.String::Includes(string, string)
-			IL_00b2: stloc.s 7
-			IL_00b4: ldloc.s 6
-			IL_00b6: ldstr "log"
-			IL_00bb: ldloc.s 7
-			IL_00bd: box [System.Runtime]System.Boolean
-			IL_00c2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_00c7: pop
-			IL_00c8: ldstr "console"
-			IL_00cd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_00d2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_00d7: stloc.s 6
-			IL_00d9: ldloc.s 4
-			IL_00db: callvirt instance int32 [System.Runtime]System.String::get_Length()
-			IL_00e0: conv.r8
-			IL_00e1: ldc.r8 0.0
-			IL_00ea: cgt
-			IL_00ec: stloc.s 7
-			IL_00ee: ldloc.s 7
-			IL_00f0: box [System.Runtime]System.Boolean
-			IL_00f5: stloc.s 8
-			IL_00f7: ldloc.s 6
-			IL_00f9: ldstr "log"
-			IL_00fe: ldloc.s 8
-			IL_0100: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_0105: pop
-			IL_0106: leave IL_010b
+			IL_007d: ldloc.2
+			IL_007e: stloc.3
+			IL_007f: ldloc.3
+			IL_0080: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+			IL_0085: stloc.s 4
+			IL_0087: ldstr "console"
+			IL_008c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_0091: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0096: ldloc.s 4
+			IL_0098: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_009d: castclass [System.Runtime]System.String
+			IL_00a2: ldstr "SyntaxError"
+			IL_00a7: call bool [JavaScriptRuntime]JavaScriptRuntime.String::Includes(string, string)
+			IL_00ac: stloc.s 7
+			IL_00ae: ldstr "log"
+			IL_00b3: ldloc.s 7
+			IL_00b5: box [System.Runtime]System.Boolean
+			IL_00ba: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_00bf: pop
+			IL_00c0: ldstr "console"
+			IL_00c5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_00ca: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_00cf: ldloc.s 4
+			IL_00d1: callvirt instance int32 [System.Runtime]System.String::get_Length()
+			IL_00d6: conv.r8
+			IL_00d7: ldc.r8 0.0
+			IL_00e0: cgt
+			IL_00e2: stloc.s 7
+			IL_00e4: ldloc.s 7
+			IL_00e6: box [System.Runtime]System.Boolean
+			IL_00eb: stloc.s 8
+			IL_00ed: ldstr "log"
+			IL_00f2: ldloc.s 8
+			IL_00f4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_00f9: pop
+			IL_00fa: leave IL_00ff
 		} // end handler
 
-		IL_010b: ldnull
-		IL_010c: stloc.s 5
-		IL_010e: ret
+		IL_00ff: ldnull
+		IL_0100: stloc.s 5
+		IL_0102: ret
 	} // end of method Function_Constructor_SyntaxError::__js_module_init__
 
 } // end of class Modules.Function_Constructor_SyntaxError
@@ -208,7 +202,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2197
+		// Method begins at RVA 0x218b
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

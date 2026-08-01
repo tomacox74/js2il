@@ -22,6 +22,12 @@ internal sealed partial class LIRToILCompiler
                 {
                     if (!IsMaterialized(loadScopeFieldTemp.Result, allocation))
                     {
+                        EmitSchedulerOwnedStackValueIfNeeded(
+                            loadScopeFieldTemp,
+                            loadScopeFieldTemp.Result,
+                            ilEncoder,
+                            allocation,
+                            methodDescriptor);
                         break;
                     }
 
@@ -92,6 +98,12 @@ internal sealed partial class LIRToILCompiler
                 {
                     if (!IsMaterialized(loadLeafField.Result, allocation))
                     {
+                        EmitSchedulerOwnedStackValueIfNeeded(
+                            loadLeafField,
+                            loadLeafField.Result,
+                            ilEncoder,
+                            allocation,
+                            methodDescriptor);
                         break;
                     }
 
@@ -115,6 +127,12 @@ internal sealed partial class LIRToILCompiler
                 {
                     if (!IsMaterialized(loadScopeField.Result, allocation))
                     {
+                        EmitSchedulerOwnedStackValueIfNeeded(
+                            loadScopeField,
+                            loadScopeField.Result,
+                            ilEncoder,
+                            allocation,
+                            methodDescriptor);
                         break;
                     }
 

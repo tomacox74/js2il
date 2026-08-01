@@ -197,6 +197,21 @@ internal sealed partial class LIRToILCompiler
             throw new InvalidOperationException("SingleScope callable signature is missing its scope type identity.");
         }
 
+        if (IsSchedulerScheduledInline(scopesArray)
+            && TryFindDefInstruction(scopesArray)
+                is LIRBuildScopesArray { Slots.Count: 1 } buildScopes)
+        {
+            EmitLoadScopeInstance(
+                ilEncoder,
+                buildScopes.Slots[0],
+                methodDescriptor,
+                allocation);
+            ilEncoder.OpCode(ILOpCode.Castclass);
+            ilEncoder.Token(_scopeMetadataRegistry.GetScopeTypeHandle(
+                signature.SingleScopeScopeName));
+            return;
+        }
+
         EmitLoadTemp(scopesArray, ilEncoder, allocation, methodDescriptor);
         ilEncoder.LoadConstantI4(0);
         ilEncoder.OpCode(ILOpCode.Ldelem_ref);
