@@ -1588,6 +1588,60 @@ public sealed class LIRStackSchedulerTests
     }
 
     [Fact]
+    public void Compiler_ImmutableBinaryLeftSkipsSnapshotButMutableLeftPreservesIt()
+    {
+        const string source = """
+            "use strict";
+            function immutable(value, other) {
+              const left = value;
+              return left - other;
+            }
+            function mutable(value) {
+              let left = value;
+              return left - (left = 1);
+            }
+            console.log(immutable(5, 2), mutable(5));
+            """;
+
+        var artifact = Compile(
+            source,
+            LIRStackSchedulerMode.GeneralRegions,
+            emitPdb: false);
+        var path = Path.Combine(
+            Path.GetTempPath(),
+            "Jroc.Tests",
+            "ImmutableBinaryLeft",
+            "immutable-binary-left.dll");
+        Directory.CreateDirectory(Path.GetDirectoryName(path)!);
+        File.WriteAllBytes(path, artifact.PeBytes);
+        var il = AssemblyToText.ConvertToText(path);
+
+        AssertMethodHasOrderedFragmentsAndLocalCount(
+            il,
+            "immutable",
+            1,
+            "ldarg.1",
+            "stloc",
+            "ldloc",
+            "ldarg.2",
+            "sub",
+            "ret");
+
+        var mutableStart = il.IndexOf(
+            "beforefieldinit mutable",
+            StringComparison.Ordinal);
+        Assert.True(mutableStart >= 0);
+        var mutableEnd = il.IndexOf(
+            "end of class mutable",
+            mutableStart,
+            StringComparison.Ordinal);
+        Assert.True(mutableEnd > mutableStart);
+        var mutableMethod = il[mutableStart..mutableEnd];
+        Assert.True(CountOccurrences(mutableMethod, "stloc") > 1);
+        Assert.True(CountOccurrences(mutableMethod, "ldloc") > 1);
+    }
+
+    [Fact]
     public void Compiler_GeneralRegionsMode_EliminatesNestedResidualSpills()
     {
         const string source = """
