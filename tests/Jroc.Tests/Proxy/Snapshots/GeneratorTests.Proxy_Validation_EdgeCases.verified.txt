@@ -22,7 +22,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2a24
+					// Method begins at RVA 0x2af6
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -42,7 +42,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2a2d
+					// Method begins at RVA 0x2aff
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -60,7 +60,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2a1b
+				// Method begins at RVA 0x2aed
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -88,9 +88,9 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 18 00 00 02
 			)
-			// Method begins at RVA 0x26e4
+			// Method begins at RVA 0x2790
 			// Header size: 12
-			// Code size: 197 (0xc5)
+			// Code size: 205 (0xcd)
 			.maxstack 8
 			.locals init (
 				[0] object,
@@ -98,92 +98,98 @@
 				[2] object,
 				[3] object,
 				[4] object,
-				[5] object,
-				[6] object
+				[5] object[],
+				[6] object,
+				[7] object,
+				[8] object
 			)
 
 			.try
 			{
 				IL_0000: nop
-				IL_0001: ldarg.3
-				IL_0002: ldc.i4.1
-				IL_0003: newarr [System.Runtime]System.Object
-				IL_0008: dup
-				IL_0009: ldc.i4.0
-				IL_000a: ldarg.0
-				IL_000b: stelem.ref
-				IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
-				IL_0011: stloc.0
-				IL_0012: ldstr "console"
-				IL_0017: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-				IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_0021: stloc.s 5
-				IL_0023: ldarg.2
-				IL_0024: ldstr ":ok:"
-				IL_0029: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-				IL_002e: stloc.s 6
-				IL_0030: ldloc.s 6
-				IL_0032: ldloc.0
-				IL_0033: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-				IL_0038: stloc.s 6
-				IL_003a: ldloc.s 5
-				IL_003c: ldstr "log"
-				IL_0041: ldloc.s 6
-				IL_0043: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-				IL_0048: pop
-				IL_0049: leave IL_00bf
+				IL_0001: ldc.i4.1
+				IL_0002: newarr [System.Runtime]System.Object
+				IL_0007: dup
+				IL_0008: ldc.i4.0
+				IL_0009: ldarg.0
+				IL_000a: stelem.ref
+				IL_000b: stloc.s 5
+				IL_000d: ldarg.3
+				IL_000e: ldloc.s 5
+				IL_0010: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
+				IL_0015: stloc.0
+				IL_0016: ldstr "console"
+				IL_001b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+				IL_0020: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_0025: stloc.s 6
+				IL_0027: ldarg.2
+				IL_0028: ldstr ":ok:"
+				IL_002d: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+				IL_0032: stloc.s 7
+				IL_0034: ldloc.s 7
+				IL_0036: ldloc.0
+				IL_0037: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+				IL_003c: stloc.s 7
+				IL_003e: ldloc.s 6
+				IL_0040: ldstr "log"
+				IL_0045: ldloc.s 7
+				IL_0047: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+				IL_004c: pop
+				IL_004d: leave IL_00c7
 			} // end .try
 			catch [System.Runtime]System.Exception
 			{
-				IL_004e: stloc.1
-				IL_004f: ldloc.1
-				IL_0050: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-				IL_0055: dup
-				IL_0056: brtrue IL_006b
+				IL_0052: stloc.1
+				IL_0053: ldloc.1
+				IL_0054: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+				IL_0059: dup
+				IL_005a: brtrue IL_006f
 
-				IL_005b: pop
-				IL_005c: ldloc.1
-				IL_005d: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
-				IL_0062: dup
-				IL_0063: brtrue IL_0076
+				IL_005f: pop
+				IL_0060: ldloc.1
+				IL_0061: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+				IL_0066: dup
+				IL_0067: brtrue IL_007a
 
-				IL_0068: pop
-				IL_0069: rethrow
+				IL_006c: pop
+				IL_006d: rethrow
 
-				IL_006b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-				IL_0070: stloc.2
-				IL_0071: br IL_0077
+				IL_006f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+				IL_0074: stloc.2
+				IL_0075: br IL_007b
 
-				IL_0076: stloc.2
+				IL_007a: stloc.2
 
-				IL_0077: ldloc.2
-				IL_0078: stloc.3
-				IL_0079: ldstr "console"
-				IL_007e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-				IL_0083: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_0088: stloc.s 5
-				IL_008a: ldarg.2
-				IL_008b: ldstr ":"
-				IL_0090: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-				IL_0095: stloc.s 6
-				IL_0097: ldloc.s 6
-				IL_0099: ldloc.3
-				IL_009a: ldstr "name"
-				IL_009f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-				IL_00a4: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-				IL_00a9: stloc.s 6
-				IL_00ab: ldloc.s 5
-				IL_00ad: ldstr "log"
-				IL_00b2: ldloc.s 6
-				IL_00b4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-				IL_00b9: pop
-				IL_00ba: leave IL_00bf
+				IL_007b: ldloc.2
+				IL_007c: stloc.3
+				IL_007d: ldstr "console"
+				IL_0082: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+				IL_0087: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_008c: stloc.s 6
+				IL_008e: ldarg.2
+				IL_008f: ldstr ":"
+				IL_0094: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+				IL_0099: stloc.s 7
+				IL_009b: ldloc.3
+				IL_009c: ldstr "name"
+				IL_00a1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+				IL_00a6: stloc.s 8
+				IL_00a8: ldloc.s 7
+				IL_00aa: ldloc.s 8
+				IL_00ac: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+				IL_00b1: stloc.s 7
+				IL_00b3: ldloc.s 6
+				IL_00b5: ldstr "log"
+				IL_00ba: ldloc.s 7
+				IL_00bc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+				IL_00c1: pop
+				IL_00c2: leave IL_00c7
 			} // end handler
 
-			IL_00bf: ldnull
-			IL_00c0: stloc.s 4
-			IL_00c2: ldloc.s 4
-			IL_00c4: ret
+			IL_00c7: ldnull
+			IL_00c8: stloc.s 4
+			IL_00ca: ldloc.s 4
+			IL_00cc: ret
 		} // end of method log::__js_call__
 
 	} // end of class log
@@ -199,7 +205,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2a36
+				// Method begins at RVA 0x2b08
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -222,21 +228,24 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x27c8
+			// Method begins at RVA 0x287c
 			// Header size: 12
-			// Code size: 27 (0x1b)
+			// Code size: 29 (0x1d)
 			.maxstack 8
 			.locals init (
-				[0] class [JavaScriptRuntime]JavaScriptRuntime.Proxy
+				[0] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
+				[1] class [JavaScriptRuntime]JavaScriptRuntime.Proxy
 			)
 
-			IL_0000: ldc.r8 1
-			IL_0009: box [System.Runtime]System.Double
-			IL_000e: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-			IL_0013: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Proxy::.ctor(object, object)
-			IL_0018: stloc.0
-			IL_0019: ldloc.0
-			IL_001a: ret
+			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+			IL_0005: stloc.0
+			IL_0006: ldc.r8 1
+			IL_000f: box [System.Runtime]System.Double
+			IL_0014: ldloc.0
+			IL_0015: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Proxy::.ctor(object, object)
+			IL_001a: stloc.1
+			IL_001b: ldloc.1
+			IL_001c: ret
 		} // end of method FunctionExpression_L12C20::__js_call__
 
 	} // end of class FunctionExpression_L12C20
@@ -252,7 +261,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2a3f
+				// Method begins at RVA 0x2b11
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -275,7 +284,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x27f0
+			// Method begins at RVA 0x28a8
 			// Header size: 12
 			// Code size: 29 (0x1d)
 			.maxstack 8
@@ -308,7 +317,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2a48
+				// Method begins at RVA 0x2b1a
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -331,7 +340,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2819
+			// Method begins at RVA 0x28d1
 			// Header size: 1
 			// Code size: 25 (0x19)
 			.maxstack 8
@@ -356,7 +365,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2a51
+				// Method begins at RVA 0x2b23
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -379,7 +388,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2833
+			// Method begins at RVA 0x28eb
 			// Header size: 1
 			// Code size: 25 (0x19)
 			.maxstack 8
@@ -404,7 +413,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2a5a
+				// Method begins at RVA 0x2b2c
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -427,7 +436,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x284d
+			// Method begins at RVA 0x2905
 			// Header size: 1
 			// Code size: 6 (0x6)
 			.maxstack 8
@@ -449,7 +458,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2a63
+				// Method begins at RVA 0x2b35
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -475,26 +484,31 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 18 00 00 02
 			)
-			// Method begins at RVA 0x2854
+			// Method begins at RVA 0x290c
 			// Header size: 12
-			// Code size: 24 (0x18)
+			// Code size: 28 (0x1c)
 			.maxstack 8
 			.locals init (
-				[0] object
+				[0] object,
+				[1] object[]
 			)
 
 			IL_0000: ldarg.0
 			IL_0001: ldfld object Modules.Proxy_Validation_EdgeCases/Scope::applyProxy
-			IL_0006: ldc.i4.1
-			IL_0007: newarr [System.Runtime]System.Object
-			IL_000c: dup
-			IL_000d: ldc.i4.0
-			IL_000e: ldarg.0
-			IL_000f: stelem.ref
-			IL_0010: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
-			IL_0015: stloc.0
-			IL_0016: ldloc.0
-			IL_0017: ret
+			IL_0006: stloc.0
+			IL_0007: ldc.i4.1
+			IL_0008: newarr [System.Runtime]System.Object
+			IL_000d: dup
+			IL_000e: ldc.i4.0
+			IL_000f: ldarg.0
+			IL_0010: stelem.ref
+			IL_0011: stloc.1
+			IL_0012: ldloc.0
+			IL_0013: ldloc.1
+			IL_0014: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
+			IL_0019: stloc.0
+			IL_001a: ldloc.0
+			IL_001b: ret
 		} // end of method FunctionExpression_L34C25::__js_call__
 
 	} // end of class FunctionExpression_L34C25
@@ -510,7 +524,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2a6c
+				// Method begins at RVA 0x2b3e
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -536,7 +550,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 18 00 00 02
 			)
-			// Method begins at RVA 0x2878
+			// Method begins at RVA 0x2934
 			// Header size: 1
 			// Code size: 18 (0x12)
 			.maxstack 8
@@ -562,7 +576,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2a75
+				// Method begins at RVA 0x2b47
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -588,22 +602,27 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 18 00 00 02
 			)
-			// Method begins at RVA 0x288c
+			// Method begins at RVA 0x2948
 			// Header size: 12
-			// Code size: 20 (0x14)
+			// Code size: 24 (0x18)
 			.maxstack 8
 			.locals init (
-				[0] object
+				[0] object,
+				[1] object[]
 			)
 
 			IL_0000: ldarg.0
 			IL_0001: ldfld object Modules.Proxy_Validation_EdgeCases/Scope::constructProxy
-			IL_0006: ldc.i4.0
-			IL_0007: newarr [System.Runtime]System.Object
-			IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::ConstructValue(object, object[])
-			IL_0011: stloc.0
-			IL_0012: ldloc.0
-			IL_0013: ret
+			IL_0006: stloc.0
+			IL_0007: ldc.i4.0
+			IL_0008: newarr [System.Runtime]System.Object
+			IL_000d: stloc.1
+			IL_000e: ldloc.0
+			IL_000f: ldloc.1
+			IL_0010: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::ConstructValue(object, object[])
+			IL_0015: stloc.0
+			IL_0016: ldloc.0
+			IL_0017: ret
 		} // end of method FunctionExpression_L44C34::__js_call__
 
 	} // end of class FunctionExpression_L44C34
@@ -626,7 +645,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2a7e
+				// Method begins at RVA 0x2b50
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -649,7 +668,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x28ac
+			// Method begins at RVA 0x296c
 			// Header size: 12
 			// Code size: 10 (0xa)
 			.maxstack 8
@@ -679,7 +698,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2a87
+				// Method begins at RVA 0x2b59
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -702,7 +721,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x28c2
+			// Method begins at RVA 0x2982
 			// Header size: 1
 			// Code size: 10 (0xa)
 			.maxstack 8
@@ -724,7 +743,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2a90
+				// Method begins at RVA 0x2b62
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -750,22 +769,27 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 18 00 00 02
 			)
-			// Method begins at RVA 0x28d0
+			// Method begins at RVA 0x2990
 			// Header size: 12
-			// Code size: 20 (0x14)
+			// Code size: 24 (0x18)
 			.maxstack 8
 			.locals init (
-				[0] object
+				[0] object,
+				[1] object[]
 			)
 
 			IL_0000: ldarg.0
 			IL_0001: ldfld object Modules.Proxy_Validation_EdgeCases/Scope::badConstructResultProxy
-			IL_0006: ldc.i4.0
-			IL_0007: newarr [System.Runtime]System.Object
-			IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::ConstructValue(object, object[])
-			IL_0011: stloc.0
-			IL_0012: ldloc.0
-			IL_0013: ret
+			IL_0006: stloc.0
+			IL_0007: ldc.i4.0
+			IL_0008: newarr [System.Runtime]System.Object
+			IL_000d: stloc.1
+			IL_000e: ldloc.0
+			IL_000f: ldloc.1
+			IL_0010: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::ConstructValue(object, object[])
+			IL_0015: stloc.0
+			IL_0016: ldloc.0
+			IL_0017: ret
 		} // end of method FunctionExpression_L54C34::__js_call__
 
 	} // end of class FunctionExpression_L54C34
@@ -781,7 +805,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2a99
+				// Method begins at RVA 0x2b6b
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -804,7 +828,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x28f0
+			// Method begins at RVA 0x29b4
 			// Header size: 1
 			// Code size: 7 (0x7)
 			.maxstack 8
@@ -827,7 +851,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2aa2
+				// Method begins at RVA 0x2b74
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -850,7 +874,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x28f8
+			// Method begins at RVA 0x29bc
 			// Header size: 1
 			// Code size: 10 (0xa)
 			.maxstack 8
@@ -872,7 +896,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2aab
+				// Method begins at RVA 0x2b7d
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -898,15 +922,20 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 18 00 00 02
 			)
-			// Method begins at RVA 0x2903
-			// Header size: 1
-			// Code size: 12 (0xc)
+			// Method begins at RVA 0x29c8
+			// Header size: 12
+			// Code size: 14 (0xe)
 			.maxstack 8
+			.locals init (
+				[0] object
+			)
 
 			IL_0000: ldarg.0
 			IL_0001: ldfld object Modules.Proxy_Validation_EdgeCases/Scope::badGetPrototypeProxy
-			IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.Object::getPrototypeOf(object)
-			IL_000b: ret
+			IL_0006: stloc.0
+			IL_0007: ldloc.0
+			IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Object::getPrototypeOf(object)
+			IL_000d: ret
 		} // end of method FunctionExpression_L72C32::__js_call__
 
 	} // end of class FunctionExpression_L72C32
@@ -922,7 +951,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2ab4
+				// Method begins at RVA 0x2b86
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -948,7 +977,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 18 00 00 02
 			)
-			// Method begins at RVA 0x2910
+			// Method begins at RVA 0x29e2
 			// Header size: 1
 			// Code size: 58 (0x3a)
 			.maxstack 8
@@ -982,7 +1011,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2abd
+				// Method begins at RVA 0x2b8f
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -1008,7 +1037,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 18 00 00 02
 			)
-			// Method begins at RVA 0x294b
+			// Method begins at RVA 0x2a1d
 			// Header size: 1
 			// Code size: 63 (0x3f)
 			.maxstack 8
@@ -1043,7 +1072,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2ac6
+				// Method begins at RVA 0x2b98
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -1066,7 +1095,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x298b
+			// Method begins at RVA 0x2a5d
 			// Header size: 1
 			// Code size: 6 (0x6)
 			.maxstack 8
@@ -1088,7 +1117,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2acf
+				// Method begins at RVA 0x2ba1
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -1114,9 +1143,9 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 18 00 00 02
 			)
-			// Method begins at RVA 0x2994
+			// Method begins at RVA 0x2a64
 			// Header size: 12
-			// Code size: 38 (0x26)
+			// Code size: 40 (0x28)
 			.maxstack 8
 			.locals init (
 				[0] object
@@ -1124,18 +1153,20 @@
 
 			IL_0000: ldarg.0
 			IL_0001: ldfld object Modules.Proxy_Validation_EdgeCases/Scope::badOwnKeysProxy
-			IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.Object::keys(object)
-			IL_000b: stloc.0
-			IL_000c: ldloc.0
-			IL_000d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0012: stloc.0
-			IL_0013: ldloc.0
-			IL_0014: ldstr "join"
-			IL_0019: ldstr ","
-			IL_001e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_0023: stloc.0
-			IL_0024: ldloc.0
-			IL_0025: ret
+			IL_0006: stloc.0
+			IL_0007: ldloc.0
+			IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Object::keys(object)
+			IL_000d: stloc.0
+			IL_000e: ldloc.0
+			IL_000f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0014: stloc.0
+			IL_0015: ldloc.0
+			IL_0016: ldstr "join"
+			IL_001b: ldstr ","
+			IL_0020: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_0025: stloc.0
+			IL_0026: ldloc.0
+			IL_0027: ret
 		} // end of method FunctionExpression_L98C25::__js_call__
 
 	} // end of class FunctionExpression_L98C25
@@ -1151,7 +1182,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2ad8
+				// Method begins at RVA 0x2baa
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -1174,7 +1205,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x29c6
+			// Method begins at RVA 0x2a98
 			// Header size: 1
 			// Code size: 22 (0x16)
 			.maxstack 8
@@ -1200,7 +1231,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2ae1
+				// Method begins at RVA 0x2bb3
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -1226,9 +1257,9 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 18 00 00 02
 			)
-			// Method begins at RVA 0x29e0
+			// Method begins at RVA 0x2ab0
 			// Header size: 12
-			// Code size: 38 (0x26)
+			// Code size: 40 (0x28)
 			.maxstack 8
 			.locals init (
 				[0] object
@@ -1236,18 +1267,20 @@
 
 			IL_0000: ldarg.0
 			IL_0001: ldfld object Modules.Proxy_Validation_EdgeCases/Scope::badOwnKeysEntryProxy
-			IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.Object::keys(object)
-			IL_000b: stloc.0
-			IL_000c: ldloc.0
-			IL_000d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0012: stloc.0
-			IL_0013: ldloc.0
-			IL_0014: ldstr "join"
-			IL_0019: ldstr ","
-			IL_001e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_0023: stloc.0
-			IL_0024: ldloc.0
-			IL_0025: ret
+			IL_0006: stloc.0
+			IL_0007: ldloc.0
+			IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Object::keys(object)
+			IL_000d: stloc.0
+			IL_000e: ldloc.0
+			IL_000f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0014: stloc.0
+			IL_0015: ldloc.0
+			IL_0016: ldstr "join"
+			IL_001b: ldstr ","
+			IL_0020: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_0025: stloc.0
+			IL_0026: ldloc.0
+			IL_0027: ret
 		} // end of method FunctionExpression_L108C21::__js_call__
 
 	} // end of class FunctionExpression_L108C21
@@ -1286,7 +1319,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2a12
+			// Method begins at RVA 0x2ae4
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -1312,7 +1345,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 1670 (0x686)
+		// Code size: 1842 (0x732)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Proxy_Validation_EdgeCases/Scope,
@@ -1321,15 +1354,16 @@
 			[3] class [JavaScriptRuntime]JavaScriptRuntime.Proxy,
 			[4] class [JavaScriptRuntime]JavaScriptRuntime.Proxy,
 			[5] object[],
-			[6] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0,
-			[7] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
+			[6] object[],
+			[7] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0,
 			[8] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
-			[9] class [JavaScriptRuntime]JavaScriptRuntime.Proxy,
-			[10] class [JavaScriptRuntime]JavaScriptRuntime.JsDoubleFuncNoScopes0,
-			[11] object,
+			[9] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
+			[10] class [JavaScriptRuntime]JavaScriptRuntime.Proxy,
+			[11] class [JavaScriptRuntime]JavaScriptRuntime.JsDoubleFuncNoScopes0,
 			[12] object,
-			[13] bool,
-			[14] object
+			[13] object,
+			[14] bool,
+			[15] object
 		)
 
 		IL_0000: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::Enable()
@@ -1341,574 +1375,671 @@
 		IL_0012: ldc.i4.0
 		IL_0013: ldloc.0
 		IL_0014: stelem.ref
-		IL_0015: ldc.i4.0
-		IL_0016: ldelem.ref
-		IL_0017: castclass Modules.Proxy_Validation_EdgeCases/Scope
-		IL_001c: ldftn object Modules.Proxy_Validation_EdgeCases/log::__js_call__(class Modules.Proxy_Validation_EdgeCases/Scope, object, string, object)
-		IL_0022: newobj instance void class [System.Runtime]System.Func`4<object, string, object, object>::.ctor(object, native int)
-		IL_0027: castclass class [System.Runtime]System.Func`4<object, string, object, object>
-		IL_002c: ldc.i4.2
-		IL_002d: conv.r8
-		IL_002e: ldstr "log"
-		IL_0033: ldc.i4.0
-		IL_0034: ldc.i4.1
-		IL_0035: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [System.Runtime]System.Func`4<object, string, object, object>>(!!0, float64, string, bool, bool)
-		IL_003a: stloc.1
-		IL_003b: nop
-		IL_003c: nop
-		IL_003d: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0042: stloc.s 5
-		IL_0044: ldnull
-		IL_0045: ldftn object Modules.Proxy_Validation_EdgeCases/FunctionExpression_L12C20::__js_call__(object)
-		IL_004b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_0050: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
-		IL_0055: ldc.i4.0
-		IL_0056: conv.r8
-		IL_0057: ldstr ""
-		IL_005c: ldc.i4.0
-		IL_005d: ldc.i4.1
-		IL_005e: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
-		IL_0063: stloc.s 6
-		IL_0065: ldloc.1
-		IL_0066: ldloc.s 5
-		IL_0068: ldstr "proxy-target"
-		IL_006d: ldloc.s 6
-		IL_006f: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
-		IL_0074: pop
-		IL_0075: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_007a: stloc.s 5
-		IL_007c: ldnull
-		IL_007d: ldftn object Modules.Proxy_Validation_EdgeCases/FunctionExpression_L16C21::__js_call__(object)
-		IL_0083: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_0088: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
-		IL_008d: ldc.i4.0
-		IL_008e: conv.r8
-		IL_008f: ldstr ""
-		IL_0094: ldc.i4.0
-		IL_0095: ldc.i4.1
-		IL_0096: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
-		IL_009b: stloc.s 6
-		IL_009d: ldloc.1
-		IL_009e: ldloc.s 5
-		IL_00a0: ldstr "proxy-handler"
-		IL_00a5: ldloc.s 6
-		IL_00a7: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
-		IL_00ac: pop
-		IL_00ad: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_00b2: stloc.s 5
-		IL_00b4: ldnull
-		IL_00b5: ldftn object Modules.Proxy_Validation_EdgeCases/FunctionExpression_L20C24::__js_call__(object)
-		IL_00bb: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_00c0: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
-		IL_00c5: ldc.i4.0
-		IL_00c6: conv.r8
-		IL_00c7: ldstr ""
-		IL_00cc: ldc.i4.0
-		IL_00cd: ldc.i4.1
-		IL_00ce: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
-		IL_00d3: stloc.s 6
-		IL_00d5: ldloc.1
-		IL_00d6: ldloc.s 5
-		IL_00d8: ldstr "revocable-target"
-		IL_00dd: ldloc.s 6
-		IL_00df: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
-		IL_00e4: pop
-		IL_00e5: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_00ea: stloc.s 5
-		IL_00ec: ldnull
-		IL_00ed: ldftn object Modules.Proxy_Validation_EdgeCases/FunctionExpression_L24C25::__js_call__(object)
-		IL_00f3: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_00f8: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
-		IL_00fd: ldc.i4.0
-		IL_00fe: conv.r8
-		IL_00ff: ldstr ""
-		IL_0104: ldc.i4.0
-		IL_0105: ldc.i4.1
-		IL_0106: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
-		IL_010b: stloc.s 6
-		IL_010d: ldloc.1
-		IL_010e: ldloc.s 5
-		IL_0110: ldstr "revocable-handler"
-		IL_0115: ldloc.s 6
-		IL_0117: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
-		IL_011c: pop
-		IL_011d: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_0122: stloc.s 7
-		IL_0124: ldnull
-		IL_0125: ldftn object Modules.Proxy_Validation_EdgeCases/FunctionExpression_applyProxy::__js_call__(object)
-		IL_012b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_0130: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
-		IL_0135: ldc.i4.0
-		IL_0136: conv.r8
-		IL_0137: ldstr ""
-		IL_013c: ldc.i4.0
-		IL_013d: ldc.i4.1
-		IL_013e: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
-		IL_0143: stloc.s 6
-		IL_0145: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_014a: dup
-		IL_014b: ldstr "apply"
-		IL_0150: ldloc.s 6
-		IL_0152: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_0157: stloc.s 8
-		IL_0159: ldloc.s 7
-		IL_015b: ldloc.s 8
-		IL_015d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Proxy::.ctor(object, object)
-		IL_0162: stloc.s 9
-		IL_0164: ldloc.0
-		IL_0165: ldloc.s 9
-		IL_0167: stfld object Modules.Proxy_Validation_EdgeCases/Scope::applyProxy
-		IL_016c: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0171: stloc.s 5
-		IL_0173: ldc.i4.1
-		IL_0174: newarr [System.Runtime]System.Object
-		IL_0179: dup
-		IL_017a: ldc.i4.0
-		IL_017b: ldloc.0
-		IL_017c: stelem.ref
-		IL_017d: ldc.i4.0
-		IL_017e: ldelem.ref
-		IL_017f: castclass Modules.Proxy_Validation_EdgeCases/Scope
-		IL_0184: ldftn object Modules.Proxy_Validation_EdgeCases/FunctionExpression_L34C25::__js_call__(class Modules.Proxy_Validation_EdgeCases/Scope, object)
-		IL_018a: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_018f: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
-		IL_0194: ldc.i4.0
-		IL_0195: conv.r8
-		IL_0196: ldstr ""
-		IL_019b: ldc.i4.0
-		IL_019c: ldc.i4.1
-		IL_019d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
-		IL_01a2: stloc.s 6
-		IL_01a4: ldloc.1
-		IL_01a5: ldloc.s 5
-		IL_01a7: ldstr "apply-noncallable"
-		IL_01ac: ldloc.s 6
-		IL_01ae: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
-		IL_01b3: pop
-		IL_01b4: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_01b9: stloc.s 8
-		IL_01bb: ldc.i4.1
-		IL_01bc: newarr [System.Runtime]System.Object
-		IL_01c1: dup
-		IL_01c2: ldc.i4.0
-		IL_01c3: ldloc.0
-		IL_01c4: stelem.ref
-		IL_01c5: ldc.i4.0
-		IL_01c6: ldelem.ref
-		IL_01c7: castclass Modules.Proxy_Validation_EdgeCases/Scope
-		IL_01cc: ldftn object Modules.Proxy_Validation_EdgeCases/FunctionExpression_constructProxy::__js_call__(class Modules.Proxy_Validation_EdgeCases/Scope, object)
-		IL_01d2: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_01d7: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
-		IL_01dc: ldc.i4.0
-		IL_01dd: conv.r8
-		IL_01de: ldstr ""
-		IL_01e3: ldc.i4.0
-		IL_01e4: ldc.i4.1
-		IL_01e5: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
-		IL_01ea: stloc.s 6
-		IL_01ec: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_01f1: dup
-		IL_01f2: ldstr "construct"
-		IL_01f7: ldloc.s 6
-		IL_01f9: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_01fe: stloc.s 7
-		IL_0200: ldloc.s 8
-		IL_0202: ldloc.s 7
-		IL_0204: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Proxy::.ctor(object, object)
-		IL_0209: stloc.s 9
-		IL_020b: ldloc.0
-		IL_020c: ldloc.s 9
-		IL_020e: stfld object Modules.Proxy_Validation_EdgeCases/Scope::constructProxy
-		IL_0213: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0218: stloc.s 5
-		IL_021a: ldc.i4.1
-		IL_021b: newarr [System.Runtime]System.Object
-		IL_0220: dup
-		IL_0221: ldc.i4.0
-		IL_0222: ldloc.0
-		IL_0223: stelem.ref
+		IL_0015: stloc.s 5
+		IL_0017: ldloc.s 5
+		IL_0019: ldc.i4.0
+		IL_001a: ldelem.ref
+		IL_001b: castclass Modules.Proxy_Validation_EdgeCases/Scope
+		IL_0020: ldftn object Modules.Proxy_Validation_EdgeCases/log::__js_call__(class Modules.Proxy_Validation_EdgeCases/Scope, object, string, object)
+		IL_0026: newobj instance void class [System.Runtime]System.Func`4<object, string, object, object>::.ctor(object, native int)
+		IL_002b: castclass class [System.Runtime]System.Func`4<object, string, object, object>
+		IL_0030: ldc.i4.2
+		IL_0031: conv.r8
+		IL_0032: ldstr "log"
+		IL_0037: ldc.i4.0
+		IL_0038: ldc.i4.1
+		IL_0039: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [System.Runtime]System.Func`4<object, string, object, object>>(!!0, float64, string, bool, bool)
+		IL_003e: stloc.1
+		IL_003f: nop
+		IL_0040: nop
+		IL_0041: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0046: stloc.s 5
+		IL_0048: ldc.i4.1
+		IL_0049: newarr [System.Runtime]System.Object
+		IL_004e: dup
+		IL_004f: ldc.i4.0
+		IL_0050: ldloc.0
+		IL_0051: stelem.ref
+		IL_0052: stloc.s 6
+		IL_0054: ldnull
+		IL_0055: ldftn object Modules.Proxy_Validation_EdgeCases/FunctionExpression_L12C20::__js_call__(object)
+		IL_005b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_0060: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
+		IL_0065: ldc.i4.0
+		IL_0066: conv.r8
+		IL_0067: ldstr ""
+		IL_006c: ldc.i4.0
+		IL_006d: ldc.i4.1
+		IL_006e: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
+		IL_0073: stloc.s 7
+		IL_0075: ldloc.1
+		IL_0076: ldloc.s 5
+		IL_0078: ldstr "proxy-target"
+		IL_007d: ldloc.s 7
+		IL_007f: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
+		IL_0084: pop
+		IL_0085: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_008a: stloc.s 5
+		IL_008c: ldc.i4.1
+		IL_008d: newarr [System.Runtime]System.Object
+		IL_0092: dup
+		IL_0093: ldc.i4.0
+		IL_0094: ldloc.0
+		IL_0095: stelem.ref
+		IL_0096: stloc.s 6
+		IL_0098: ldnull
+		IL_0099: ldftn object Modules.Proxy_Validation_EdgeCases/FunctionExpression_L16C21::__js_call__(object)
+		IL_009f: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_00a4: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
+		IL_00a9: ldc.i4.0
+		IL_00aa: conv.r8
+		IL_00ab: ldstr ""
+		IL_00b0: ldc.i4.0
+		IL_00b1: ldc.i4.1
+		IL_00b2: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
+		IL_00b7: stloc.s 7
+		IL_00b9: ldloc.1
+		IL_00ba: ldloc.s 5
+		IL_00bc: ldstr "proxy-handler"
+		IL_00c1: ldloc.s 7
+		IL_00c3: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
+		IL_00c8: pop
+		IL_00c9: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_00ce: stloc.s 5
+		IL_00d0: ldc.i4.1
+		IL_00d1: newarr [System.Runtime]System.Object
+		IL_00d6: dup
+		IL_00d7: ldc.i4.0
+		IL_00d8: ldloc.0
+		IL_00d9: stelem.ref
+		IL_00da: stloc.s 6
+		IL_00dc: ldnull
+		IL_00dd: ldftn object Modules.Proxy_Validation_EdgeCases/FunctionExpression_L20C24::__js_call__(object)
+		IL_00e3: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_00e8: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
+		IL_00ed: ldc.i4.0
+		IL_00ee: conv.r8
+		IL_00ef: ldstr ""
+		IL_00f4: ldc.i4.0
+		IL_00f5: ldc.i4.1
+		IL_00f6: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
+		IL_00fb: stloc.s 7
+		IL_00fd: ldloc.1
+		IL_00fe: ldloc.s 5
+		IL_0100: ldstr "revocable-target"
+		IL_0105: ldloc.s 7
+		IL_0107: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
+		IL_010c: pop
+		IL_010d: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0112: stloc.s 5
+		IL_0114: ldc.i4.1
+		IL_0115: newarr [System.Runtime]System.Object
+		IL_011a: dup
+		IL_011b: ldc.i4.0
+		IL_011c: ldloc.0
+		IL_011d: stelem.ref
+		IL_011e: stloc.s 6
+		IL_0120: ldnull
+		IL_0121: ldftn object Modules.Proxy_Validation_EdgeCases/FunctionExpression_L24C25::__js_call__(object)
+		IL_0127: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_012c: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
+		IL_0131: ldc.i4.0
+		IL_0132: conv.r8
+		IL_0133: ldstr ""
+		IL_0138: ldc.i4.0
+		IL_0139: ldc.i4.1
+		IL_013a: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
+		IL_013f: stloc.s 7
+		IL_0141: ldloc.1
+		IL_0142: ldloc.s 5
+		IL_0144: ldstr "revocable-handler"
+		IL_0149: ldloc.s 7
+		IL_014b: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
+		IL_0150: pop
+		IL_0151: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0156: stloc.s 8
+		IL_0158: ldc.i4.1
+		IL_0159: newarr [System.Runtime]System.Object
+		IL_015e: dup
+		IL_015f: ldc.i4.0
+		IL_0160: ldloc.0
+		IL_0161: stelem.ref
+		IL_0162: stloc.s 5
+		IL_0164: ldnull
+		IL_0165: ldftn object Modules.Proxy_Validation_EdgeCases/FunctionExpression_applyProxy::__js_call__(object)
+		IL_016b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_0170: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
+		IL_0175: ldc.i4.0
+		IL_0176: conv.r8
+		IL_0177: ldstr ""
+		IL_017c: ldc.i4.0
+		IL_017d: ldc.i4.1
+		IL_017e: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
+		IL_0183: stloc.s 7
+		IL_0185: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_018a: dup
+		IL_018b: ldstr "apply"
+		IL_0190: ldloc.s 7
+		IL_0192: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_0197: stloc.s 9
+		IL_0199: ldloc.s 8
+		IL_019b: ldloc.s 9
+		IL_019d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Proxy::.ctor(object, object)
+		IL_01a2: stloc.s 10
+		IL_01a4: ldloc.0
+		IL_01a5: ldloc.s 10
+		IL_01a7: stfld object Modules.Proxy_Validation_EdgeCases/Scope::applyProxy
+		IL_01ac: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_01b1: stloc.s 5
+		IL_01b3: ldc.i4.1
+		IL_01b4: newarr [System.Runtime]System.Object
+		IL_01b9: dup
+		IL_01ba: ldc.i4.0
+		IL_01bb: ldloc.0
+		IL_01bc: stelem.ref
+		IL_01bd: stloc.s 6
+		IL_01bf: ldloc.s 6
+		IL_01c1: ldc.i4.0
+		IL_01c2: ldelem.ref
+		IL_01c3: castclass Modules.Proxy_Validation_EdgeCases/Scope
+		IL_01c8: ldftn object Modules.Proxy_Validation_EdgeCases/FunctionExpression_L34C25::__js_call__(class Modules.Proxy_Validation_EdgeCases/Scope, object)
+		IL_01ce: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_01d3: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
+		IL_01d8: ldc.i4.0
+		IL_01d9: conv.r8
+		IL_01da: ldstr ""
+		IL_01df: ldc.i4.0
+		IL_01e0: ldc.i4.1
+		IL_01e1: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
+		IL_01e6: stloc.s 7
+		IL_01e8: ldloc.1
+		IL_01e9: ldloc.s 5
+		IL_01eb: ldstr "apply-noncallable"
+		IL_01f0: ldloc.s 7
+		IL_01f2: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
+		IL_01f7: pop
+		IL_01f8: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_01fd: stloc.s 9
+		IL_01ff: ldc.i4.1
+		IL_0200: newarr [System.Runtime]System.Object
+		IL_0205: dup
+		IL_0206: ldc.i4.0
+		IL_0207: ldloc.0
+		IL_0208: stelem.ref
+		IL_0209: stloc.s 5
+		IL_020b: ldloc.s 5
+		IL_020d: ldc.i4.0
+		IL_020e: ldelem.ref
+		IL_020f: castclass Modules.Proxy_Validation_EdgeCases/Scope
+		IL_0214: ldftn object Modules.Proxy_Validation_EdgeCases/FunctionExpression_constructProxy::__js_call__(class Modules.Proxy_Validation_EdgeCases/Scope, object)
+		IL_021a: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_021f: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
 		IL_0224: ldc.i4.0
-		IL_0225: ldelem.ref
-		IL_0226: castclass Modules.Proxy_Validation_EdgeCases/Scope
-		IL_022b: ldftn object Modules.Proxy_Validation_EdgeCases/FunctionExpression_L44C34::__js_call__(class Modules.Proxy_Validation_EdgeCases/Scope, object)
-		IL_0231: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_0236: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
-		IL_023b: ldc.i4.0
-		IL_023c: conv.r8
-		IL_023d: ldstr ""
-		IL_0242: ldc.i4.0
-		IL_0243: ldc.i4.1
-		IL_0244: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
-		IL_0249: stloc.s 6
-		IL_024b: ldloc.1
-		IL_024c: ldloc.s 5
-		IL_024e: ldstr "construct-nonconstructible"
-		IL_0253: ldloc.s 6
-		IL_0255: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
-		IL_025a: pop
-		IL_025b: ldnull
-		IL_025c: ldftn object Modules.Proxy_Validation_EdgeCases/Base::__js_call__(object)
-		IL_0262: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_0267: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
-		IL_026c: ldc.i4.0
-		IL_026d: conv.r8
-		IL_026e: ldstr "Base"
-		IL_0273: ldc.i4.1
-		IL_0274: ldc.i4.1
-		IL_0275: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
-		IL_027a: stloc.s 6
-		IL_027c: ldnull
-		IL_027d: ldftn float64 Modules.Proxy_Validation_EdgeCases/FunctionExpression_badConstructResultProxy::__js_call__(object)
-		IL_0283: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsDoubleFuncNoScopes0::.ctor(object, native int)
-		IL_0288: castclass [JavaScriptRuntime]JavaScriptRuntime.JsDoubleFuncNoScopes0
-		IL_028d: ldc.i4.0
-		IL_028e: conv.r8
-		IL_028f: ldstr ""
-		IL_0294: ldc.i4.0
-		IL_0295: ldc.i4.1
-		IL_0296: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsDoubleFuncNoScopes0>(!!0, float64, string, bool, bool)
-		IL_029b: stloc.s 10
-		IL_029d: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_02a2: dup
-		IL_02a3: ldstr "construct"
-		IL_02a8: ldloc.s 10
-		IL_02aa: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_02af: stloc.s 7
-		IL_02b1: ldloc.s 6
-		IL_02b3: ldloc.s 7
-		IL_02b5: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Proxy::.ctor(object, object)
-		IL_02ba: stloc.s 9
-		IL_02bc: ldloc.0
-		IL_02bd: ldloc.s 9
-		IL_02bf: stfld object Modules.Proxy_Validation_EdgeCases/Scope::badConstructResultProxy
-		IL_02c4: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_02c9: stloc.s 5
+		IL_0225: conv.r8
+		IL_0226: ldstr ""
+		IL_022b: ldc.i4.0
+		IL_022c: ldc.i4.1
+		IL_022d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
+		IL_0232: stloc.s 7
+		IL_0234: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0239: dup
+		IL_023a: ldstr "construct"
+		IL_023f: ldloc.s 7
+		IL_0241: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_0246: stloc.s 8
+		IL_0248: ldloc.s 9
+		IL_024a: ldloc.s 8
+		IL_024c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Proxy::.ctor(object, object)
+		IL_0251: stloc.s 10
+		IL_0253: ldloc.0
+		IL_0254: ldloc.s 10
+		IL_0256: stfld object Modules.Proxy_Validation_EdgeCases/Scope::constructProxy
+		IL_025b: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0260: stloc.s 5
+		IL_0262: ldc.i4.1
+		IL_0263: newarr [System.Runtime]System.Object
+		IL_0268: dup
+		IL_0269: ldc.i4.0
+		IL_026a: ldloc.0
+		IL_026b: stelem.ref
+		IL_026c: stloc.s 6
+		IL_026e: ldloc.s 6
+		IL_0270: ldc.i4.0
+		IL_0271: ldelem.ref
+		IL_0272: castclass Modules.Proxy_Validation_EdgeCases/Scope
+		IL_0277: ldftn object Modules.Proxy_Validation_EdgeCases/FunctionExpression_L44C34::__js_call__(class Modules.Proxy_Validation_EdgeCases/Scope, object)
+		IL_027d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_0282: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
+		IL_0287: ldc.i4.0
+		IL_0288: conv.r8
+		IL_0289: ldstr ""
+		IL_028e: ldc.i4.0
+		IL_028f: ldc.i4.1
+		IL_0290: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
+		IL_0295: stloc.s 7
+		IL_0297: ldloc.1
+		IL_0298: ldloc.s 5
+		IL_029a: ldstr "construct-nonconstructible"
+		IL_029f: ldloc.s 7
+		IL_02a1: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
+		IL_02a6: pop
+		IL_02a7: ldc.i4.1
+		IL_02a8: newarr [System.Runtime]System.Object
+		IL_02ad: dup
+		IL_02ae: ldc.i4.0
+		IL_02af: ldloc.0
+		IL_02b0: stelem.ref
+		IL_02b1: stloc.s 5
+		IL_02b3: ldnull
+		IL_02b4: ldftn object Modules.Proxy_Validation_EdgeCases/Base::__js_call__(object)
+		IL_02ba: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_02bf: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
+		IL_02c4: ldc.i4.0
+		IL_02c5: conv.r8
+		IL_02c6: ldstr "Base"
 		IL_02cb: ldc.i4.1
-		IL_02cc: newarr [System.Runtime]System.Object
-		IL_02d1: dup
-		IL_02d2: ldc.i4.0
-		IL_02d3: ldloc.0
-		IL_02d4: stelem.ref
-		IL_02d5: ldc.i4.0
-		IL_02d6: ldelem.ref
-		IL_02d7: castclass Modules.Proxy_Validation_EdgeCases/Scope
-		IL_02dc: ldftn object Modules.Proxy_Validation_EdgeCases/FunctionExpression_L54C34::__js_call__(class Modules.Proxy_Validation_EdgeCases/Scope, object)
-		IL_02e2: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_02e7: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
-		IL_02ec: ldc.i4.0
-		IL_02ed: conv.r8
-		IL_02ee: ldstr ""
-		IL_02f3: ldc.i4.0
-		IL_02f4: ldc.i4.1
-		IL_02f5: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
-		IL_02fa: stloc.s 6
-		IL_02fc: ldloc.1
-		IL_02fd: ldloc.s 5
-		IL_02ff: ldstr "construct-primitive-result"
-		IL_0304: ldloc.s 6
-		IL_0306: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
-		IL_030b: pop
-		IL_030c: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_0311: stloc.s 7
-		IL_0313: ldnull
-		IL_0314: ldftn object Modules.Proxy_Validation_EdgeCases/FunctionExpression_nullPrototypeProxy::__js_call__(object)
-		IL_031a: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_031f: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
-		IL_0324: ldc.i4.0
-		IL_0325: conv.r8
-		IL_0326: ldstr ""
-		IL_032b: ldc.i4.0
-		IL_032c: ldc.i4.1
-		IL_032d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
-		IL_0332: stloc.s 6
-		IL_0334: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_0339: dup
-		IL_033a: ldstr "getPrototypeOf"
-		IL_033f: ldloc.s 6
-		IL_0341: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_0346: stloc.s 8
-		IL_0348: ldloc.s 7
-		IL_034a: ldloc.s 8
-		IL_034c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Proxy::.ctor(object, object)
-		IL_0351: stloc.2
-		IL_0352: ldstr "console"
-		IL_0357: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_035c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0361: stloc.s 11
-		IL_0363: ldloc.2
-		IL_0364: call object [JavaScriptRuntime]JavaScriptRuntime.Object::getPrototypeOf(object)
-		IL_0369: stloc.s 12
-		IL_036b: ldloc.s 12
-		IL_036d: ldc.i4.0
-		IL_036e: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
-		IL_0373: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_0378: stloc.s 13
-		IL_037a: ldloc.s 13
-		IL_037c: box [System.Runtime]System.Boolean
-		IL_0381: stloc.s 14
-		IL_0383: ldloc.s 11
-		IL_0385: ldstr "log"
-		IL_038a: ldloc.s 14
-		IL_038c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0391: pop
-		IL_0392: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_0397: stloc.s 8
-		IL_0399: ldnull
-		IL_039a: ldftn float64 Modules.Proxy_Validation_EdgeCases/FunctionExpression_badGetPrototypeProxy::__js_call__(object)
-		IL_03a0: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsDoubleFuncNoScopes0::.ctor(object, native int)
-		IL_03a5: castclass [JavaScriptRuntime]JavaScriptRuntime.JsDoubleFuncNoScopes0
-		IL_03aa: ldc.i4.0
-		IL_03ab: conv.r8
-		IL_03ac: ldstr ""
-		IL_03b1: ldc.i4.0
-		IL_03b2: ldc.i4.1
-		IL_03b3: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsDoubleFuncNoScopes0>(!!0, float64, string, bool, bool)
-		IL_03b8: stloc.s 10
-		IL_03ba: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_03bf: dup
-		IL_03c0: ldstr "getPrototypeOf"
-		IL_03c5: ldloc.s 10
-		IL_03c7: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_03cc: stloc.s 7
-		IL_03ce: ldloc.s 8
-		IL_03d0: ldloc.s 7
-		IL_03d2: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Proxy::.ctor(object, object)
-		IL_03d7: stloc.s 9
-		IL_03d9: ldloc.0
-		IL_03da: ldloc.s 9
-		IL_03dc: stfld object Modules.Proxy_Validation_EdgeCases/Scope::badGetPrototypeProxy
-		IL_03e1: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_03e6: stloc.s 5
-		IL_03e8: ldc.i4.1
-		IL_03e9: newarr [System.Runtime]System.Object
-		IL_03ee: dup
-		IL_03ef: ldc.i4.0
-		IL_03f0: ldloc.0
-		IL_03f1: stelem.ref
-		IL_03f2: ldc.i4.0
-		IL_03f3: ldelem.ref
-		IL_03f4: castclass Modules.Proxy_Validation_EdgeCases/Scope
-		IL_03f9: ldftn object Modules.Proxy_Validation_EdgeCases/FunctionExpression_L72C32::__js_call__(class Modules.Proxy_Validation_EdgeCases/Scope, object)
-		IL_03ff: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_0404: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
-		IL_0409: ldc.i4.0
-		IL_040a: conv.r8
-		IL_040b: ldstr ""
-		IL_0410: ldc.i4.0
-		IL_0411: ldc.i4.1
-		IL_0412: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
-		IL_0417: stloc.s 6
-		IL_0419: ldloc.1
-		IL_041a: ldloc.s 5
-		IL_041c: ldstr "getPrototypeOf-primitive"
-		IL_0421: ldloc.s 6
-		IL_0423: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
-		IL_0428: pop
-		IL_0429: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_042e: stloc.s 7
-		IL_0430: ldc.i4.1
-		IL_0431: newarr [System.Runtime]System.Object
-		IL_0436: dup
-		IL_0437: ldc.i4.0
-		IL_0438: ldloc.0
-		IL_0439: stelem.ref
-		IL_043a: ldc.i4.0
-		IL_043b: ldelem.ref
-		IL_043c: castclass Modules.Proxy_Validation_EdgeCases/Scope
-		IL_0441: ldftn object Modules.Proxy_Validation_EdgeCases/FunctionExpression_arrayLikeOwnKeysProxy::__js_call__(class Modules.Proxy_Validation_EdgeCases/Scope, object)
-		IL_0447: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_044c: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
-		IL_0451: ldc.i4.0
-		IL_0452: conv.r8
-		IL_0453: ldstr ""
-		IL_0458: ldc.i4.0
-		IL_0459: ldc.i4.1
-		IL_045a: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
-		IL_045f: stloc.s 6
-		IL_0461: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_0466: dup
-		IL_0467: ldstr "ownKeys"
-		IL_046c: ldloc.s 6
-		IL_046e: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_0473: stloc.s 8
-		IL_0475: ldloc.s 7
-		IL_0477: ldloc.s 8
-		IL_0479: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Proxy::.ctor(object, object)
-		IL_047e: stloc.3
-		IL_047f: ldstr "console"
-		IL_0484: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0489: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_048e: stloc.s 11
-		IL_0490: ldloc.3
-		IL_0491: call object [JavaScriptRuntime]JavaScriptRuntime.Object::keys(object)
-		IL_0496: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_049b: stloc.s 12
-		IL_049d: ldloc.s 12
-		IL_049f: ldstr "join"
-		IL_04a4: ldstr ","
-		IL_04a9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_04ae: stloc.s 12
-		IL_04b0: ldloc.s 11
-		IL_04b2: ldstr "log"
-		IL_04b7: ldloc.s 12
-		IL_04b9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_04be: pop
-		IL_04bf: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_04c4: stloc.s 8
-		IL_04c6: ldc.i4.1
-		IL_04c7: newarr [System.Runtime]System.Object
-		IL_04cc: dup
-		IL_04cd: ldc.i4.0
-		IL_04ce: ldloc.0
-		IL_04cf: stelem.ref
-		IL_04d0: ldc.i4.0
-		IL_04d1: ldelem.ref
-		IL_04d2: castclass Modules.Proxy_Validation_EdgeCases/Scope
-		IL_04d7: ldftn object Modules.Proxy_Validation_EdgeCases/FunctionExpression_symbolOwnKeysProxy::__js_call__(class Modules.Proxy_Validation_EdgeCases/Scope, object)
-		IL_04dd: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_04e2: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
-		IL_04e7: ldc.i4.0
-		IL_04e8: conv.r8
-		IL_04e9: ldstr ""
-		IL_04ee: ldc.i4.0
-		IL_04ef: ldc.i4.1
-		IL_04f0: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
-		IL_04f5: stloc.s 6
-		IL_04f7: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_04fc: dup
-		IL_04fd: ldstr "ownKeys"
-		IL_0502: ldloc.s 6
-		IL_0504: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_0509: stloc.s 7
-		IL_050b: ldloc.s 8
-		IL_050d: ldloc.s 7
-		IL_050f: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Proxy::.ctor(object, object)
-		IL_0514: stloc.s 4
-		IL_0516: ldstr "console"
-		IL_051b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0520: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0525: stloc.s 12
-		IL_0527: ldloc.s 4
-		IL_0529: call object [JavaScriptRuntime]JavaScriptRuntime.Object::keys(object)
-		IL_052e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0533: stloc.s 11
-		IL_0535: ldloc.s 11
-		IL_0537: ldstr "join"
-		IL_053c: ldstr ","
+		IL_02cc: ldc.i4.1
+		IL_02cd: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
+		IL_02d2: stloc.s 7
+		IL_02d4: ldc.i4.1
+		IL_02d5: newarr [System.Runtime]System.Object
+		IL_02da: dup
+		IL_02db: ldc.i4.0
+		IL_02dc: ldloc.0
+		IL_02dd: stelem.ref
+		IL_02de: stloc.s 5
+		IL_02e0: ldnull
+		IL_02e1: ldftn float64 Modules.Proxy_Validation_EdgeCases/FunctionExpression_badConstructResultProxy::__js_call__(object)
+		IL_02e7: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsDoubleFuncNoScopes0::.ctor(object, native int)
+		IL_02ec: castclass [JavaScriptRuntime]JavaScriptRuntime.JsDoubleFuncNoScopes0
+		IL_02f1: ldc.i4.0
+		IL_02f2: conv.r8
+		IL_02f3: ldstr ""
+		IL_02f8: ldc.i4.0
+		IL_02f9: ldc.i4.1
+		IL_02fa: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsDoubleFuncNoScopes0>(!!0, float64, string, bool, bool)
+		IL_02ff: stloc.s 11
+		IL_0301: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0306: dup
+		IL_0307: ldstr "construct"
+		IL_030c: ldloc.s 11
+		IL_030e: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_0313: stloc.s 8
+		IL_0315: ldloc.s 7
+		IL_0317: ldloc.s 8
+		IL_0319: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Proxy::.ctor(object, object)
+		IL_031e: stloc.s 10
+		IL_0320: ldloc.0
+		IL_0321: ldloc.s 10
+		IL_0323: stfld object Modules.Proxy_Validation_EdgeCases/Scope::badConstructResultProxy
+		IL_0328: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_032d: stloc.s 5
+		IL_032f: ldc.i4.1
+		IL_0330: newarr [System.Runtime]System.Object
+		IL_0335: dup
+		IL_0336: ldc.i4.0
+		IL_0337: ldloc.0
+		IL_0338: stelem.ref
+		IL_0339: stloc.s 6
+		IL_033b: ldloc.s 6
+		IL_033d: ldc.i4.0
+		IL_033e: ldelem.ref
+		IL_033f: castclass Modules.Proxy_Validation_EdgeCases/Scope
+		IL_0344: ldftn object Modules.Proxy_Validation_EdgeCases/FunctionExpression_L54C34::__js_call__(class Modules.Proxy_Validation_EdgeCases/Scope, object)
+		IL_034a: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_034f: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
+		IL_0354: ldc.i4.0
+		IL_0355: conv.r8
+		IL_0356: ldstr ""
+		IL_035b: ldc.i4.0
+		IL_035c: ldc.i4.1
+		IL_035d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
+		IL_0362: stloc.s 7
+		IL_0364: ldloc.1
+		IL_0365: ldloc.s 5
+		IL_0367: ldstr "construct-primitive-result"
+		IL_036c: ldloc.s 7
+		IL_036e: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
+		IL_0373: pop
+		IL_0374: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0379: stloc.s 8
+		IL_037b: ldc.i4.1
+		IL_037c: newarr [System.Runtime]System.Object
+		IL_0381: dup
+		IL_0382: ldc.i4.0
+		IL_0383: ldloc.0
+		IL_0384: stelem.ref
+		IL_0385: stloc.s 5
+		IL_0387: ldnull
+		IL_0388: ldftn object Modules.Proxy_Validation_EdgeCases/FunctionExpression_nullPrototypeProxy::__js_call__(object)
+		IL_038e: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_0393: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
+		IL_0398: ldc.i4.0
+		IL_0399: conv.r8
+		IL_039a: ldstr ""
+		IL_039f: ldc.i4.0
+		IL_03a0: ldc.i4.1
+		IL_03a1: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
+		IL_03a6: stloc.s 7
+		IL_03a8: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_03ad: dup
+		IL_03ae: ldstr "getPrototypeOf"
+		IL_03b3: ldloc.s 7
+		IL_03b5: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_03ba: stloc.s 9
+		IL_03bc: ldloc.s 8
+		IL_03be: ldloc.s 9
+		IL_03c0: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Proxy::.ctor(object, object)
+		IL_03c5: stloc.2
+		IL_03c6: ldstr "console"
+		IL_03cb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_03d0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_03d5: stloc.s 12
+		IL_03d7: ldloc.2
+		IL_03d8: call object [JavaScriptRuntime]JavaScriptRuntime.Object::getPrototypeOf(object)
+		IL_03dd: stloc.s 13
+		IL_03df: ldloc.s 13
+		IL_03e1: ldc.i4.0
+		IL_03e2: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
+		IL_03e7: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_03ec: stloc.s 14
+		IL_03ee: ldloc.s 14
+		IL_03f0: box [System.Runtime]System.Boolean
+		IL_03f5: stloc.s 15
+		IL_03f7: ldloc.s 12
+		IL_03f9: ldstr "log"
+		IL_03fe: ldloc.s 15
+		IL_0400: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0405: pop
+		IL_0406: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_040b: stloc.s 9
+		IL_040d: ldc.i4.1
+		IL_040e: newarr [System.Runtime]System.Object
+		IL_0413: dup
+		IL_0414: ldc.i4.0
+		IL_0415: ldloc.0
+		IL_0416: stelem.ref
+		IL_0417: stloc.s 5
+		IL_0419: ldnull
+		IL_041a: ldftn float64 Modules.Proxy_Validation_EdgeCases/FunctionExpression_badGetPrototypeProxy::__js_call__(object)
+		IL_0420: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsDoubleFuncNoScopes0::.ctor(object, native int)
+		IL_0425: castclass [JavaScriptRuntime]JavaScriptRuntime.JsDoubleFuncNoScopes0
+		IL_042a: ldc.i4.0
+		IL_042b: conv.r8
+		IL_042c: ldstr ""
+		IL_0431: ldc.i4.0
+		IL_0432: ldc.i4.1
+		IL_0433: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsDoubleFuncNoScopes0>(!!0, float64, string, bool, bool)
+		IL_0438: stloc.s 11
+		IL_043a: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_043f: dup
+		IL_0440: ldstr "getPrototypeOf"
+		IL_0445: ldloc.s 11
+		IL_0447: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_044c: stloc.s 8
+		IL_044e: ldloc.s 9
+		IL_0450: ldloc.s 8
+		IL_0452: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Proxy::.ctor(object, object)
+		IL_0457: stloc.s 10
+		IL_0459: ldloc.0
+		IL_045a: ldloc.s 10
+		IL_045c: stfld object Modules.Proxy_Validation_EdgeCases/Scope::badGetPrototypeProxy
+		IL_0461: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0466: stloc.s 5
+		IL_0468: ldc.i4.1
+		IL_0469: newarr [System.Runtime]System.Object
+		IL_046e: dup
+		IL_046f: ldc.i4.0
+		IL_0470: ldloc.0
+		IL_0471: stelem.ref
+		IL_0472: stloc.s 6
+		IL_0474: ldloc.s 6
+		IL_0476: ldc.i4.0
+		IL_0477: ldelem.ref
+		IL_0478: castclass Modules.Proxy_Validation_EdgeCases/Scope
+		IL_047d: ldftn object Modules.Proxy_Validation_EdgeCases/FunctionExpression_L72C32::__js_call__(class Modules.Proxy_Validation_EdgeCases/Scope, object)
+		IL_0483: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_0488: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
+		IL_048d: ldc.i4.0
+		IL_048e: conv.r8
+		IL_048f: ldstr ""
+		IL_0494: ldc.i4.0
+		IL_0495: ldc.i4.1
+		IL_0496: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
+		IL_049b: stloc.s 7
+		IL_049d: ldloc.1
+		IL_049e: ldloc.s 5
+		IL_04a0: ldstr "getPrototypeOf-primitive"
+		IL_04a5: ldloc.s 7
+		IL_04a7: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
+		IL_04ac: pop
+		IL_04ad: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_04b2: stloc.s 8
+		IL_04b4: ldc.i4.1
+		IL_04b5: newarr [System.Runtime]System.Object
+		IL_04ba: dup
+		IL_04bb: ldc.i4.0
+		IL_04bc: ldloc.0
+		IL_04bd: stelem.ref
+		IL_04be: stloc.s 5
+		IL_04c0: ldloc.s 5
+		IL_04c2: ldc.i4.0
+		IL_04c3: ldelem.ref
+		IL_04c4: castclass Modules.Proxy_Validation_EdgeCases/Scope
+		IL_04c9: ldftn object Modules.Proxy_Validation_EdgeCases/FunctionExpression_arrayLikeOwnKeysProxy::__js_call__(class Modules.Proxy_Validation_EdgeCases/Scope, object)
+		IL_04cf: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_04d4: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
+		IL_04d9: ldc.i4.0
+		IL_04da: conv.r8
+		IL_04db: ldstr ""
+		IL_04e0: ldc.i4.0
+		IL_04e1: ldc.i4.1
+		IL_04e2: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
+		IL_04e7: stloc.s 7
+		IL_04e9: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_04ee: dup
+		IL_04ef: ldstr "ownKeys"
+		IL_04f4: ldloc.s 7
+		IL_04f6: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_04fb: stloc.s 9
+		IL_04fd: ldloc.s 8
+		IL_04ff: ldloc.s 9
+		IL_0501: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Proxy::.ctor(object, object)
+		IL_0506: stloc.3
+		IL_0507: ldstr "console"
+		IL_050c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0511: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0516: stloc.s 12
+		IL_0518: ldloc.3
+		IL_0519: call object [JavaScriptRuntime]JavaScriptRuntime.Object::keys(object)
+		IL_051e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0523: stloc.s 13
+		IL_0525: ldloc.s 13
+		IL_0527: ldstr "join"
+		IL_052c: ldstr ","
+		IL_0531: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0536: stloc.s 13
+		IL_0538: ldloc.s 12
+		IL_053a: ldstr "log"
+		IL_053f: ldloc.s 13
 		IL_0541: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0546: stloc.s 11
-		IL_0548: ldloc.s 12
-		IL_054a: ldstr "log"
-		IL_054f: ldloc.s 11
-		IL_0551: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0556: pop
-		IL_0557: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_055c: stloc.s 7
-		IL_055e: ldnull
-		IL_055f: ldftn object Modules.Proxy_Validation_EdgeCases/FunctionExpression_badOwnKeysProxy::__js_call__(object)
-		IL_0565: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_056a: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
-		IL_056f: ldc.i4.0
-		IL_0570: conv.r8
-		IL_0571: ldstr ""
-		IL_0576: ldc.i4.0
-		IL_0577: ldc.i4.1
-		IL_0578: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
-		IL_057d: stloc.s 6
-		IL_057f: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_0584: dup
-		IL_0585: ldstr "ownKeys"
-		IL_058a: ldloc.s 6
-		IL_058c: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_0591: stloc.s 8
-		IL_0593: ldloc.s 7
-		IL_0595: ldloc.s 8
-		IL_0597: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Proxy::.ctor(object, object)
-		IL_059c: stloc.s 9
-		IL_059e: ldloc.0
-		IL_059f: ldloc.s 9
-		IL_05a1: stfld object Modules.Proxy_Validation_EdgeCases/Scope::badOwnKeysProxy
-		IL_05a6: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_05ab: stloc.s 5
-		IL_05ad: ldc.i4.1
-		IL_05ae: newarr [System.Runtime]System.Object
-		IL_05b3: dup
-		IL_05b4: ldc.i4.0
-		IL_05b5: ldloc.0
-		IL_05b6: stelem.ref
-		IL_05b7: ldc.i4.0
-		IL_05b8: ldelem.ref
-		IL_05b9: castclass Modules.Proxy_Validation_EdgeCases/Scope
-		IL_05be: ldftn object Modules.Proxy_Validation_EdgeCases/FunctionExpression_L98C25::__js_call__(class Modules.Proxy_Validation_EdgeCases/Scope, object)
-		IL_05c4: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_05c9: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
-		IL_05ce: ldc.i4.0
-		IL_05cf: conv.r8
-		IL_05d0: ldstr ""
-		IL_05d5: ldc.i4.0
-		IL_05d6: ldc.i4.1
-		IL_05d7: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
-		IL_05dc: stloc.s 6
-		IL_05de: ldloc.1
-		IL_05df: ldloc.s 5
-		IL_05e1: ldstr "ownKeys-primitive"
-		IL_05e6: ldloc.s 6
-		IL_05e8: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
-		IL_05ed: pop
-		IL_05ee: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_05f3: stloc.s 8
-		IL_05f5: ldnull
-		IL_05f6: ldftn class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Proxy_Validation_EdgeCases/FunctionExpression_badOwnKeysEntryProxy::__js_call__(object)
-		IL_05fc: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_0601: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
-		IL_0606: ldc.i4.0
-		IL_0607: conv.r8
-		IL_0608: ldstr ""
-		IL_060d: ldc.i4.0
-		IL_060e: ldc.i4.1
-		IL_060f: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
-		IL_0614: stloc.s 6
-		IL_0616: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_061b: dup
-		IL_061c: ldstr "ownKeys"
-		IL_0621: ldloc.s 6
-		IL_0623: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_0628: stloc.s 7
-		IL_062a: ldloc.s 8
-		IL_062c: ldloc.s 7
-		IL_062e: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Proxy::.ctor(object, object)
-		IL_0633: stloc.s 9
-		IL_0635: ldloc.0
-		IL_0636: ldloc.s 9
-		IL_0638: stfld object Modules.Proxy_Validation_EdgeCases/Scope::badOwnKeysEntryProxy
-		IL_063d: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0642: stloc.s 5
-		IL_0644: ldc.i4.1
-		IL_0645: newarr [System.Runtime]System.Object
-		IL_064a: dup
-		IL_064b: ldc.i4.0
-		IL_064c: ldloc.0
-		IL_064d: stelem.ref
-		IL_064e: ldc.i4.0
-		IL_064f: ldelem.ref
-		IL_0650: castclass Modules.Proxy_Validation_EdgeCases/Scope
-		IL_0655: ldftn object Modules.Proxy_Validation_EdgeCases/FunctionExpression_L108C21::__js_call__(class Modules.Proxy_Validation_EdgeCases/Scope, object)
-		IL_065b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_0660: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
-		IL_0665: ldc.i4.0
-		IL_0666: conv.r8
-		IL_0667: ldstr ""
-		IL_066c: ldc.i4.0
-		IL_066d: ldc.i4.1
-		IL_066e: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
-		IL_0673: stloc.s 6
-		IL_0675: ldloc.1
-		IL_0676: ldloc.s 5
-		IL_0678: ldstr "ownKeys-entry"
-		IL_067d: ldloc.s 6
-		IL_067f: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
-		IL_0684: pop
-		IL_0685: ret
+		IL_0546: pop
+		IL_0547: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_054c: stloc.s 9
+		IL_054e: ldc.i4.1
+		IL_054f: newarr [System.Runtime]System.Object
+		IL_0554: dup
+		IL_0555: ldc.i4.0
+		IL_0556: ldloc.0
+		IL_0557: stelem.ref
+		IL_0558: stloc.s 5
+		IL_055a: ldloc.s 5
+		IL_055c: ldc.i4.0
+		IL_055d: ldelem.ref
+		IL_055e: castclass Modules.Proxy_Validation_EdgeCases/Scope
+		IL_0563: ldftn object Modules.Proxy_Validation_EdgeCases/FunctionExpression_symbolOwnKeysProxy::__js_call__(class Modules.Proxy_Validation_EdgeCases/Scope, object)
+		IL_0569: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_056e: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
+		IL_0573: ldc.i4.0
+		IL_0574: conv.r8
+		IL_0575: ldstr ""
+		IL_057a: ldc.i4.0
+		IL_057b: ldc.i4.1
+		IL_057c: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
+		IL_0581: stloc.s 7
+		IL_0583: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0588: dup
+		IL_0589: ldstr "ownKeys"
+		IL_058e: ldloc.s 7
+		IL_0590: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_0595: stloc.s 8
+		IL_0597: ldloc.s 9
+		IL_0599: ldloc.s 8
+		IL_059b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Proxy::.ctor(object, object)
+		IL_05a0: stloc.s 4
+		IL_05a2: ldstr "console"
+		IL_05a7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_05ac: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_05b1: stloc.s 13
+		IL_05b3: ldloc.s 4
+		IL_05b5: call object [JavaScriptRuntime]JavaScriptRuntime.Object::keys(object)
+		IL_05ba: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_05bf: stloc.s 12
+		IL_05c1: ldloc.s 12
+		IL_05c3: ldstr "join"
+		IL_05c8: ldstr ","
+		IL_05cd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_05d2: stloc.s 12
+		IL_05d4: ldloc.s 13
+		IL_05d6: ldstr "log"
+		IL_05db: ldloc.s 12
+		IL_05dd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_05e2: pop
+		IL_05e3: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_05e8: stloc.s 8
+		IL_05ea: ldc.i4.1
+		IL_05eb: newarr [System.Runtime]System.Object
+		IL_05f0: dup
+		IL_05f1: ldc.i4.0
+		IL_05f2: ldloc.0
+		IL_05f3: stelem.ref
+		IL_05f4: stloc.s 5
+		IL_05f6: ldnull
+		IL_05f7: ldftn object Modules.Proxy_Validation_EdgeCases/FunctionExpression_badOwnKeysProxy::__js_call__(object)
+		IL_05fd: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_0602: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
+		IL_0607: ldc.i4.0
+		IL_0608: conv.r8
+		IL_0609: ldstr ""
+		IL_060e: ldc.i4.0
+		IL_060f: ldc.i4.1
+		IL_0610: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
+		IL_0615: stloc.s 7
+		IL_0617: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_061c: dup
+		IL_061d: ldstr "ownKeys"
+		IL_0622: ldloc.s 7
+		IL_0624: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_0629: stloc.s 9
+		IL_062b: ldloc.s 8
+		IL_062d: ldloc.s 9
+		IL_062f: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Proxy::.ctor(object, object)
+		IL_0634: stloc.s 10
+		IL_0636: ldloc.0
+		IL_0637: ldloc.s 10
+		IL_0639: stfld object Modules.Proxy_Validation_EdgeCases/Scope::badOwnKeysProxy
+		IL_063e: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0643: stloc.s 5
+		IL_0645: ldc.i4.1
+		IL_0646: newarr [System.Runtime]System.Object
+		IL_064b: dup
+		IL_064c: ldc.i4.0
+		IL_064d: ldloc.0
+		IL_064e: stelem.ref
+		IL_064f: stloc.s 6
+		IL_0651: ldloc.s 6
+		IL_0653: ldc.i4.0
+		IL_0654: ldelem.ref
+		IL_0655: castclass Modules.Proxy_Validation_EdgeCases/Scope
+		IL_065a: ldftn object Modules.Proxy_Validation_EdgeCases/FunctionExpression_L98C25::__js_call__(class Modules.Proxy_Validation_EdgeCases/Scope, object)
+		IL_0660: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_0665: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
+		IL_066a: ldc.i4.0
+		IL_066b: conv.r8
+		IL_066c: ldstr ""
+		IL_0671: ldc.i4.0
+		IL_0672: ldc.i4.1
+		IL_0673: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
+		IL_0678: stloc.s 7
+		IL_067a: ldloc.1
+		IL_067b: ldloc.s 5
+		IL_067d: ldstr "ownKeys-primitive"
+		IL_0682: ldloc.s 7
+		IL_0684: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
+		IL_0689: pop
+		IL_068a: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_068f: stloc.s 9
+		IL_0691: ldc.i4.1
+		IL_0692: newarr [System.Runtime]System.Object
+		IL_0697: dup
+		IL_0698: ldc.i4.0
+		IL_0699: ldloc.0
+		IL_069a: stelem.ref
+		IL_069b: stloc.s 5
+		IL_069d: ldnull
+		IL_069e: ldftn class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Proxy_Validation_EdgeCases/FunctionExpression_badOwnKeysEntryProxy::__js_call__(object)
+		IL_06a4: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_06a9: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
+		IL_06ae: ldc.i4.0
+		IL_06af: conv.r8
+		IL_06b0: ldstr ""
+		IL_06b5: ldc.i4.0
+		IL_06b6: ldc.i4.1
+		IL_06b7: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
+		IL_06bc: stloc.s 7
+		IL_06be: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_06c3: dup
+		IL_06c4: ldstr "ownKeys"
+		IL_06c9: ldloc.s 7
+		IL_06cb: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_06d0: stloc.s 8
+		IL_06d2: ldloc.s 9
+		IL_06d4: ldloc.s 8
+		IL_06d6: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Proxy::.ctor(object, object)
+		IL_06db: stloc.s 10
+		IL_06dd: ldloc.0
+		IL_06de: ldloc.s 10
+		IL_06e0: stfld object Modules.Proxy_Validation_EdgeCases/Scope::badOwnKeysEntryProxy
+		IL_06e5: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_06ea: stloc.s 5
+		IL_06ec: ldc.i4.1
+		IL_06ed: newarr [System.Runtime]System.Object
+		IL_06f2: dup
+		IL_06f3: ldc.i4.0
+		IL_06f4: ldloc.0
+		IL_06f5: stelem.ref
+		IL_06f6: stloc.s 6
+		IL_06f8: ldloc.s 6
+		IL_06fa: ldc.i4.0
+		IL_06fb: ldelem.ref
+		IL_06fc: castclass Modules.Proxy_Validation_EdgeCases/Scope
+		IL_0701: ldftn object Modules.Proxy_Validation_EdgeCases/FunctionExpression_L108C21::__js_call__(class Modules.Proxy_Validation_EdgeCases/Scope, object)
+		IL_0707: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_070c: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
+		IL_0711: ldc.i4.0
+		IL_0712: conv.r8
+		IL_0713: ldstr ""
+		IL_0718: ldc.i4.0
+		IL_0719: ldc.i4.1
+		IL_071a: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
+		IL_071f: stloc.s 7
+		IL_0721: ldloc.1
+		IL_0722: ldloc.s 5
+		IL_0724: ldstr "ownKeys-entry"
+		IL_0729: ldloc.s 7
+		IL_072b: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
+		IL_0730: pop
+		IL_0731: ret
 	} // end of method Proxy_Validation_EdgeCases::__js_module_init__
 
 } // end of class Modules.Proxy_Validation_EdgeCases
@@ -1920,7 +2051,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2aea
+		// Method begins at RVA 0x2bbc
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

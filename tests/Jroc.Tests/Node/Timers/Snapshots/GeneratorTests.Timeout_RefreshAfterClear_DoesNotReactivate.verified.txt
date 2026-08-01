@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2254
+				// Method begins at RVA 0x2252
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -44,7 +44,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 05 00 00 02
 			)
-			// Method begins at RVA 0x21f8
+			// Method begins at RVA 0x21f4
 			// Header size: 1
 			// Code size: 14 (0xe)
 			.maxstack 8
@@ -70,7 +70,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x225d
+				// Method begins at RVA 0x225b
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -96,13 +96,14 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 05 00 00 02
 			)
-			// Method begins at RVA 0x2208
+			// Method begins at RVA 0x2204
 			// Header size: 12
-			// Code size: 55 (0x37)
+			// Code size: 57 (0x39)
 			.maxstack 8
 			.locals init (
 				[0] object,
-				[1] string
+				[1] object,
+				[2] string
 			)
 
 			IL_0000: ldstr "console"
@@ -111,19 +112,21 @@
 			IL_000f: stloc.0
 			IL_0010: ldarg.0
 			IL_0011: ldfld object Modules.Timeout_RefreshAfterClear_DoesNotReactivate/Scope::fired
-			IL_0016: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-			IL_001b: stloc.1
-			IL_001c: ldstr "canceled timeout fired: "
-			IL_0021: ldloc.1
-			IL_0022: call string [System.Runtime]System.String::Concat(string, string)
-			IL_0027: stloc.1
-			IL_0028: ldloc.0
-			IL_0029: ldstr "log"
-			IL_002e: ldloc.1
-			IL_002f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_0034: pop
-			IL_0035: ldnull
-			IL_0036: ret
+			IL_0016: stloc.1
+			IL_0017: ldloc.1
+			IL_0018: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+			IL_001d: stloc.2
+			IL_001e: ldstr "canceled timeout fired: "
+			IL_0023: ldloc.2
+			IL_0024: call string [System.Runtime]System.String::Concat(string, string)
+			IL_0029: stloc.2
+			IL_002a: ldloc.0
+			IL_002b: ldstr "log"
+			IL_0030: ldloc.2
+			IL_0031: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_0036: pop
+			IL_0037: ldnull
+			IL_0038: ret
 		} // end of method ArrowFunction_L13C12::__js_call__
 
 	} // end of class ArrowFunction_L13C12
@@ -142,7 +145,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x224b
+			// Method begins at RVA 0x2249
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -168,7 +171,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 412 (0x19c)
+		// Code size: 408 (0x198)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Timeout_RefreshAfterClear_DoesNotReactivate/Scope,
@@ -177,10 +180,11 @@
 			[3] object,
 			[4] object,
 			[5] object[],
-			[6] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0,
-			[7] object,
-			[8] bool,
-			[9] string
+			[6] object[],
+			[7] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0,
+			[8] object,
+			[9] bool,
+			[10] string
 		)
 
 		IL_0000: newobj instance void Modules.Timeout_RefreshAfterClear_DoesNotReactivate/Scope::.ctor()
@@ -222,37 +226,36 @@
 		IL_006c: ldc.i4.0
 		IL_006d: ldloc.0
 		IL_006e: stelem.ref
-		IL_006f: ldc.i4.0
-		IL_0070: ldelem.ref
-		IL_0071: castclass Modules.Timeout_RefreshAfterClear_DoesNotReactivate/Scope
-		IL_0076: ldftn object Modules.Timeout_RefreshAfterClear_DoesNotReactivate/ArrowFunction_L6C28::__js_call__(class Modules.Timeout_RefreshAfterClear_DoesNotReactivate/Scope, object)
-		IL_007c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_0081: ldc.i4.1
-		IL_0082: newarr [System.Runtime]System.Object
-		IL_0087: dup
-		IL_0088: ldc.i4.0
-		IL_0089: ldloc.0
-		IL_008a: stelem.ref
-		IL_008b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_0090: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_0095: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
-		IL_009a: ldc.i4.0
-		IL_009b: conv.r8
-		IL_009c: ldstr ""
-		IL_00a1: ldc.i4.0
-		IL_00a2: ldc.i4.0
-		IL_00a3: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
-		IL_00a8: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0)
-		IL_00ad: stloc.s 6
-		IL_00af: ldloc.1
-		IL_00b0: ldloc.s 5
-		IL_00b2: ldloc.s 6
-		IL_00b4: ldc.r8 1
-		IL_00bd: box [System.Runtime]System.Double
-		IL_00c2: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
-		IL_00c7: stloc.3
-		IL_00c8: ldloc.2
-		IL_00c9: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_006f: stloc.s 6
+		IL_0071: ldloc.s 6
+		IL_0073: ldc.i4.0
+		IL_0074: ldelem.ref
+		IL_0075: castclass Modules.Timeout_RefreshAfterClear_DoesNotReactivate/Scope
+		IL_007a: ldftn object Modules.Timeout_RefreshAfterClear_DoesNotReactivate/ArrowFunction_L6C28::__js_call__(class Modules.Timeout_RefreshAfterClear_DoesNotReactivate/Scope, object)
+		IL_0080: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_0085: ldloc.s 6
+		IL_0087: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_008c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_0091: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
+		IL_0096: ldc.i4.0
+		IL_0097: conv.r8
+		IL_0098: ldstr ""
+		IL_009d: ldc.i4.0
+		IL_009e: ldc.i4.0
+		IL_009f: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
+		IL_00a4: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0)
+		IL_00a9: stloc.s 7
+		IL_00ab: ldloc.1
+		IL_00ac: ldloc.s 5
+		IL_00ae: ldloc.s 7
+		IL_00b0: ldc.r8 1
+		IL_00b9: box [System.Runtime]System.Double
+		IL_00be: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
+		IL_00c3: stloc.3
+		IL_00c4: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_00c9: stloc.s 5
+		IL_00cb: ldloc.2
+		IL_00cc: ldloc.s 5
 		IL_00ce: ldloc.3
 		IL_00cf: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
 		IL_00d4: pop
@@ -262,26 +265,26 @@
 		IL_00e4: stloc.s 4
 		IL_00e6: ldloc.3
 		IL_00e7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00ec: stloc.s 7
-		IL_00ee: ldloc.s 7
+		IL_00ec: stloc.s 8
+		IL_00ee: ldloc.s 8
 		IL_00f0: ldstr "refresh"
 		IL_00f5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-		IL_00fa: stloc.s 7
-		IL_00fc: ldloc.s 7
+		IL_00fa: stloc.s 8
+		IL_00fc: ldloc.s 8
 		IL_00fe: ldloc.3
 		IL_00ff: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_0104: stloc.s 8
-		IL_0106: ldloc.s 8
+		IL_0104: stloc.s 9
+		IL_0106: ldloc.s 9
 		IL_0108: box [System.Runtime]System.Boolean
 		IL_010d: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-		IL_0112: stloc.s 9
+		IL_0112: stloc.s 10
 		IL_0114: ldstr "same handle: "
-		IL_0119: ldloc.s 9
+		IL_0119: ldloc.s 10
 		IL_011b: call string [System.Runtime]System.String::Concat(string, string)
-		IL_0120: stloc.s 9
+		IL_0120: stloc.s 10
 		IL_0122: ldloc.s 4
 		IL_0124: ldstr "log"
-		IL_0129: ldloc.s 9
+		IL_0129: ldloc.s 10
 		IL_012b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
 		IL_0130: pop
 		IL_0131: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
@@ -292,36 +295,33 @@
 		IL_013f: ldc.i4.0
 		IL_0140: ldloc.0
 		IL_0141: stelem.ref
-		IL_0142: ldc.i4.0
-		IL_0143: ldelem.ref
-		IL_0144: castclass Modules.Timeout_RefreshAfterClear_DoesNotReactivate/Scope
-		IL_0149: ldftn object Modules.Timeout_RefreshAfterClear_DoesNotReactivate/ArrowFunction_L13C12::__js_call__(class Modules.Timeout_RefreshAfterClear_DoesNotReactivate/Scope, object)
-		IL_014f: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_0154: ldc.i4.1
-		IL_0155: newarr [System.Runtime]System.Object
-		IL_015a: dup
-		IL_015b: ldc.i4.0
-		IL_015c: ldloc.0
-		IL_015d: stelem.ref
-		IL_015e: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_0163: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_0168: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
-		IL_016d: ldc.i4.0
-		IL_016e: conv.r8
-		IL_016f: ldstr ""
-		IL_0174: ldc.i4.0
-		IL_0175: ldc.i4.0
-		IL_0176: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
-		IL_017b: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0)
-		IL_0180: stloc.s 6
-		IL_0182: ldloc.1
-		IL_0183: ldloc.s 5
-		IL_0185: ldloc.s 6
-		IL_0187: ldc.r8 2
-		IL_0190: box [System.Runtime]System.Double
-		IL_0195: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
-		IL_019a: pop
-		IL_019b: ret
+		IL_0142: stloc.s 6
+		IL_0144: ldloc.s 6
+		IL_0146: ldc.i4.0
+		IL_0147: ldelem.ref
+		IL_0148: castclass Modules.Timeout_RefreshAfterClear_DoesNotReactivate/Scope
+		IL_014d: ldftn object Modules.Timeout_RefreshAfterClear_DoesNotReactivate/ArrowFunction_L13C12::__js_call__(class Modules.Timeout_RefreshAfterClear_DoesNotReactivate/Scope, object)
+		IL_0153: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_0158: ldloc.s 6
+		IL_015a: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_015f: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_0164: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
+		IL_0169: ldc.i4.0
+		IL_016a: conv.r8
+		IL_016b: ldstr ""
+		IL_0170: ldc.i4.0
+		IL_0171: ldc.i4.0
+		IL_0172: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
+		IL_0177: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0)
+		IL_017c: stloc.s 7
+		IL_017e: ldloc.1
+		IL_017f: ldloc.s 5
+		IL_0181: ldloc.s 7
+		IL_0183: ldc.r8 2
+		IL_018c: box [System.Runtime]System.Double
+		IL_0191: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
+		IL_0196: pop
+		IL_0197: ret
 	} // end of method Timeout_RefreshAfterClear_DoesNotReactivate::__js_module_init__
 
 } // end of class Modules.Timeout_RefreshAfterClear_DoesNotReactivate
@@ -333,7 +333,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2266
+		// Method begins at RVA 0x2264
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

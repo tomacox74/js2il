@@ -28,7 +28,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x24cd
+					// Method begins at RVA 0x24e5
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -52,9 +52,9 @@
 				.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 					01 00 00 00 00 00 00 00
 				)
-				// Method begins at RVA 0x2430
+				// Method begins at RVA 0x2448
 				// Header size: 12
-				// Code size: 81 (0x51)
+				// Code size: 83 (0x53)
 				.maxstack 8
 				.locals init (
 					[0] object,
@@ -66,35 +66,37 @@
 				IL_0000: ldarg.1
 				IL_0001: ldstr "name"
 				IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-				IL_000b: ldstr ":"
-				IL_0010: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-				IL_0015: stloc.1
-				IL_0016: ldarg.1
-				IL_0017: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_001c: stloc.2
-				IL_001d: ldloc.2
-				IL_001e: ldstr "isDirectory"
-				IL_0023: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-				IL_0028: stloc.2
-				IL_0029: ldloc.2
-				IL_002a: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-				IL_002f: stloc.3
-				IL_0030: ldloc.3
-				IL_0031: brfalse IL_0041
+				IL_000b: stloc.1
+				IL_000c: ldloc.1
+				IL_000d: ldstr ":"
+				IL_0012: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+				IL_0017: stloc.2
+				IL_0018: ldarg.1
+				IL_0019: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_001e: stloc.1
+				IL_001f: ldloc.1
+				IL_0020: ldstr "isDirectory"
+				IL_0025: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+				IL_002a: stloc.1
+				IL_002b: ldloc.1
+				IL_002c: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+				IL_0031: stloc.3
+				IL_0032: ldloc.3
+				IL_0033: brfalse IL_0043
 
-				IL_0036: ldstr "dir"
-				IL_003b: stloc.0
-				IL_003c: br IL_0047
+				IL_0038: ldstr "dir"
+				IL_003d: stloc.0
+				IL_003e: br IL_0049
 
-				IL_0041: ldstr "file"
-				IL_0046: stloc.0
+				IL_0043: ldstr "file"
+				IL_0048: stloc.0
 
-				IL_0047: ldloc.1
-				IL_0048: ldloc.0
-				IL_0049: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-				IL_004e: stloc.1
-				IL_004f: ldloc.1
-				IL_0050: ret
+				IL_0049: ldloc.2
+				IL_004a: ldloc.0
+				IL_004b: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+				IL_0050: stloc.2
+				IL_0051: ldloc.2
+				IL_0052: ret
 			} // end of method ArrowFunction_L14C35::__js_call__
 
 		} // end of class ArrowFunction_L14C35
@@ -116,7 +118,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x24d6
+					// Method begins at RVA 0x24ee
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -140,7 +142,7 @@
 				.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 					01 00 00 00 00 00 00 00
 				)
-				// Method begins at RVA 0x2490
+				// Method begins at RVA 0x24a8
 				// Header size: 12
 				// Code size: 31 (0x1f)
 				.maxstack 8
@@ -177,7 +179,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x24c4
+				// Method begins at RVA 0x24dc
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -201,15 +203,16 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x22ec
+			// Method begins at RVA 0x22fc
 			// Header size: 12
-			// Code size: 171 (0xab)
+			// Code size: 179 (0xb3)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.FSPromises_Readdir_WithFileTypes/ArrowFunction_L13C11/Scope,
 				[1] object,
 				[2] object,
-				[3] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1
+				[3] object[],
+				[4] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1
 			)
 
 			IL_0000: newobj instance void Modules.FSPromises_Readdir_WithFileTypes/ArrowFunction_L13C11/Scope::.ctor()
@@ -217,58 +220,62 @@
 			IL_0006: ldarg.1
 			IL_0007: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
 			IL_000c: stloc.2
-			IL_000d: ldnull
-			IL_000e: ldftn object Modules.FSPromises_Readdir_WithFileTypes/ArrowFunction_L13C11/ArrowFunction_L14C35::__js_call__(object, object)
-			IL_0014: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-			IL_0019: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-			IL_001e: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-			IL_0023: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-			IL_0028: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1
-			IL_002d: ldc.i4.1
-			IL_002e: conv.r8
-			IL_002f: ldstr ""
-			IL_0034: ldc.i4.0
-			IL_0035: ldc.i4.0
-			IL_0036: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0, float64, string, bool, bool)
-			IL_003b: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0)
-			IL_0040: stloc.3
-			IL_0041: ldloc.2
-			IL_0042: ldstr "map"
-			IL_0047: ldloc.3
-			IL_0048: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_004d: stloc.1
-			IL_004e: ldloc.1
-			IL_004f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0054: stloc.2
-			IL_0055: ldloc.2
-			IL_0056: ldstr "sort"
-			IL_005b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-			IL_0060: pop
-			IL_0061: ldloc.1
-			IL_0062: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0067: stloc.2
-			IL_0068: ldnull
-			IL_0069: ldftn object Modules.FSPromises_Readdir_WithFileTypes/ArrowFunction_L13C11/ArrowFunction_L16C23::__js_call__(object, object)
-			IL_006f: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-			IL_0074: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-			IL_0079: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-			IL_007e: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-			IL_0083: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1
-			IL_0088: ldc.i4.1
-			IL_0089: conv.r8
-			IL_008a: ldstr ""
-			IL_008f: ldc.i4.0
-			IL_0090: ldc.i4.0
-			IL_0091: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0, float64, string, bool, bool)
-			IL_0096: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0)
-			IL_009b: stloc.3
-			IL_009c: ldloc.2
-			IL_009d: ldstr "forEach"
-			IL_00a2: ldloc.3
-			IL_00a3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_00a8: pop
-			IL_00a9: ldnull
-			IL_00aa: ret
+			IL_000d: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+			IL_0012: stloc.3
+			IL_0013: ldnull
+			IL_0014: ldftn object Modules.FSPromises_Readdir_WithFileTypes/ArrowFunction_L13C11/ArrowFunction_L14C35::__js_call__(object, object)
+			IL_001a: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+			IL_001f: ldloc.3
+			IL_0020: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+			IL_0025: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+			IL_002a: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1
+			IL_002f: ldc.i4.1
+			IL_0030: conv.r8
+			IL_0031: ldstr ""
+			IL_0036: ldc.i4.0
+			IL_0037: ldc.i4.0
+			IL_0038: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0, float64, string, bool, bool)
+			IL_003d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0)
+			IL_0042: stloc.s 4
+			IL_0044: ldloc.2
+			IL_0045: ldstr "map"
+			IL_004a: ldloc.s 4
+			IL_004c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_0051: stloc.1
+			IL_0052: ldloc.1
+			IL_0053: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0058: stloc.2
+			IL_0059: ldloc.2
+			IL_005a: ldstr "sort"
+			IL_005f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+			IL_0064: pop
+			IL_0065: ldloc.1
+			IL_0066: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_006b: stloc.2
+			IL_006c: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+			IL_0071: stloc.3
+			IL_0072: ldnull
+			IL_0073: ldftn object Modules.FSPromises_Readdir_WithFileTypes/ArrowFunction_L13C11/ArrowFunction_L16C23::__js_call__(object, object)
+			IL_0079: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+			IL_007e: ldloc.3
+			IL_007f: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+			IL_0084: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+			IL_0089: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1
+			IL_008e: ldc.i4.1
+			IL_008f: conv.r8
+			IL_0090: ldstr ""
+			IL_0095: ldc.i4.0
+			IL_0096: ldc.i4.0
+			IL_0097: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0, float64, string, bool, bool)
+			IL_009c: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0)
+			IL_00a1: stloc.s 4
+			IL_00a3: ldloc.2
+			IL_00a4: ldstr "forEach"
+			IL_00a9: ldloc.s 4
+			IL_00ab: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_00b0: pop
+			IL_00b1: ldnull
+			IL_00b2: ret
 		} // end of method ArrowFunction_L13C11::__js_call__
 
 	} // end of class ArrowFunction_L13C11
@@ -291,7 +298,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x24df
+				// Method begins at RVA 0x24f7
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -315,28 +322,31 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x23a4
+			// Method begins at RVA 0x23bc
 			// Header size: 12
-			// Code size: 46 (0x2e)
+			// Code size: 48 (0x30)
 			.maxstack 8
 			.locals init (
-				[0] object
+				[0] object,
+				[1] object
 			)
 
 			IL_0000: ldstr "console"
 			IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
 			IL_000a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
 			IL_000f: stloc.0
-			IL_0010: ldloc.0
-			IL_0011: ldstr "error"
-			IL_0016: ldstr "Error:"
-			IL_001b: ldarg.1
-			IL_001c: ldstr "message"
-			IL_0021: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0026: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-			IL_002b: pop
-			IL_002c: ldnull
-			IL_002d: ret
+			IL_0010: ldarg.1
+			IL_0011: ldstr "message"
+			IL_0016: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_001b: stloc.1
+			IL_001c: ldloc.0
+			IL_001d: ldstr "error"
+			IL_0022: ldstr "Error:"
+			IL_0027: ldloc.1
+			IL_0028: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+			IL_002d: pop
+			IL_002e: ldnull
+			IL_002f: ret
 		} // end of method ArrowFunction_L18C12::__js_call__
 
 	} // end of class ArrowFunction_L18C12
@@ -352,7 +362,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x24e8
+				// Method begins at RVA 0x2500
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -378,9 +388,9 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 08 00 00 02
 			)
-			// Method begins at RVA 0x23e0
+			// Method begins at RVA 0x23f8
 			// Header size: 12
-			// Code size: 65 (0x41)
+			// Code size: 67 (0x43)
 			.maxstack 8
 			.locals init (
 				[0] object,
@@ -390,29 +400,31 @@
 
 			IL_0000: ldarg.0
 			IL_0001: ldfld object Modules.FSPromises_Readdir_WithFileTypes/Scope::syncFs
-			IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_000b: stloc.0
-			IL_000c: ldarg.0
-			IL_000d: ldfld object Modules.FSPromises_Readdir_WithFileTypes/Scope::dir
-			IL_0012: stloc.1
-			IL_0013: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-			IL_0018: dup
-			IL_0019: ldstr "recursive"
-			IL_001e: ldc.i4.1
-			IL_001f: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-			IL_0024: dup
-			IL_0025: ldstr "force"
-			IL_002a: ldc.i4.1
-			IL_002b: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-			IL_0030: stloc.2
-			IL_0031: ldloc.0
-			IL_0032: ldstr "rmSync"
-			IL_0037: ldloc.1
-			IL_0038: ldloc.2
-			IL_0039: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-			IL_003e: pop
-			IL_003f: ldnull
-			IL_0040: ret
+			IL_0006: stloc.0
+			IL_0007: ldloc.0
+			IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_000d: stloc.0
+			IL_000e: ldarg.0
+			IL_000f: ldfld object Modules.FSPromises_Readdir_WithFileTypes/Scope::dir
+			IL_0014: stloc.1
+			IL_0015: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+			IL_001a: dup
+			IL_001b: ldstr "recursive"
+			IL_0020: ldc.i4.1
+			IL_0021: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+			IL_0026: dup
+			IL_0027: ldstr "force"
+			IL_002c: ldc.i4.1
+			IL_002d: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+			IL_0032: stloc.2
+			IL_0033: ldloc.0
+			IL_0034: ldstr "rmSync"
+			IL_0039: ldloc.1
+			IL_003a: ldloc.2
+			IL_003b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+			IL_0040: pop
+			IL_0041: ldnull
+			IL_0042: ret
 		} // end of method ArrowFunction_L21C14::__js_call__
 
 	} // end of class ArrowFunction_L21C14
@@ -433,7 +445,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x24bb
+			// Method begins at RVA 0x24d3
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -459,7 +471,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 656 (0x290)
+		// Code size: 672 (0x2a0)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.FSPromises_Readdir_WithFileTypes/Scope,
@@ -471,8 +483,9 @@
 			[6] object,
 			[7] object,
 			[8] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
-			[9] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1,
-			[10] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
+			[9] object[],
+			[10] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1,
+			[11] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
 		)
 
 		IL_0000: newobj instance void Modules.FSPromises_Readdir_WithFileTypes/Scope::.ctor()
@@ -524,178 +537,185 @@
 		IL_0088: stfld object Modules.FSPromises_Readdir_WithFileTypes/Scope::dir
 		IL_008d: ldloc.0
 		IL_008e: ldfld object Modules.FSPromises_Readdir_WithFileTypes/Scope::syncFs
-		IL_0093: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0098: stloc.s 5
-		IL_009a: ldloc.0
-		IL_009b: ldfld object Modules.FSPromises_Readdir_WithFileTypes/Scope::dir
-		IL_00a0: stloc.s 4
-		IL_00a2: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_00a7: dup
-		IL_00a8: ldstr "recursive"
-		IL_00ad: ldc.i4.1
-		IL_00ae: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-		IL_00b3: stloc.s 8
-		IL_00b5: ldloc.s 5
-		IL_00b7: ldstr "mkdirSync"
-		IL_00bc: ldloc.s 4
-		IL_00be: ldloc.s 8
-		IL_00c0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_00c5: pop
-		IL_00c6: ldloc.0
-		IL_00c7: ldfld object Modules.FSPromises_Readdir_WithFileTypes/Scope::syncFs
-		IL_00cc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00d1: stloc.s 4
-		IL_00d3: ldloc.2
+		IL_0093: stloc.s 5
+		IL_0095: ldloc.s 5
+		IL_0097: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_009c: stloc.s 5
+		IL_009e: ldloc.0
+		IL_009f: ldfld object Modules.FSPromises_Readdir_WithFileTypes/Scope::dir
+		IL_00a4: stloc.s 4
+		IL_00a6: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_00ab: dup
+		IL_00ac: ldstr "recursive"
+		IL_00b1: ldc.i4.1
+		IL_00b2: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+		IL_00b7: stloc.s 8
+		IL_00b9: ldloc.s 5
+		IL_00bb: ldstr "mkdirSync"
+		IL_00c0: ldloc.s 4
+		IL_00c2: ldloc.s 8
+		IL_00c4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_00c9: pop
+		IL_00ca: ldloc.0
+		IL_00cb: ldfld object Modules.FSPromises_Readdir_WithFileTypes/Scope::syncFs
+		IL_00d0: stloc.s 4
+		IL_00d2: ldloc.s 4
 		IL_00d4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00d9: stloc.s 5
-		IL_00db: ldloc.0
-		IL_00dc: ldfld object Modules.FSPromises_Readdir_WithFileTypes/Scope::dir
-		IL_00e1: stloc.s 6
-		IL_00e3: ldloc.s 5
-		IL_00e5: ldstr "join"
-		IL_00ea: ldloc.s 6
-		IL_00ec: ldstr "alpha.txt"
-		IL_00f1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_00f6: stloc.s 6
-		IL_00f8: ldloc.s 4
-		IL_00fa: ldstr "writeFileSync"
-		IL_00ff: ldloc.s 6
-		IL_0101: ldstr ""
-		IL_0106: ldstr "utf8"
-		IL_010b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember3(object, string, object, object, object)
-		IL_0110: pop
-		IL_0111: ldloc.0
-		IL_0112: ldfld object Modules.FSPromises_Readdir_WithFileTypes/Scope::syncFs
-		IL_0117: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_011c: stloc.s 6
-		IL_011e: ldloc.2
-		IL_011f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0124: stloc.s 4
-		IL_0126: ldloc.0
-		IL_0127: ldfld object Modules.FSPromises_Readdir_WithFileTypes/Scope::dir
-		IL_012c: stloc.s 5
-		IL_012e: ldloc.s 4
-		IL_0130: ldstr "join"
-		IL_0135: ldloc.s 5
-		IL_0137: ldstr "subdir"
-		IL_013c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_0141: stloc.s 5
-		IL_0143: ldloc.s 6
-		IL_0145: ldstr "mkdirSync"
-		IL_014a: ldloc.s 5
-		IL_014c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0151: pop
-		IL_0152: ldloc.1
-		IL_0153: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0158: stloc.s 5
-		IL_015a: ldloc.0
-		IL_015b: ldfld object Modules.FSPromises_Readdir_WithFileTypes/Scope::dir
-		IL_0160: stloc.s 6
-		IL_0162: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_0167: dup
-		IL_0168: ldstr "withFileTypes"
-		IL_016d: ldc.i4.1
-		IL_016e: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-		IL_0173: stloc.s 8
-		IL_0175: ldloc.s 5
-		IL_0177: ldstr "readdir"
-		IL_017c: ldloc.s 6
-		IL_017e: ldloc.s 8
-		IL_0180: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_0185: stloc.s 6
-		IL_0187: ldloc.s 6
-		IL_0189: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_018e: stloc.s 6
-		IL_0190: ldnull
-		IL_0191: ldftn object Modules.FSPromises_Readdir_WithFileTypes/ArrowFunction_L13C11::__js_call__(object, object)
-		IL_0197: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_00d9: stloc.s 4
+		IL_00db: ldloc.2
+		IL_00dc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00e1: stloc.s 5
+		IL_00e3: ldloc.0
+		IL_00e4: ldfld object Modules.FSPromises_Readdir_WithFileTypes/Scope::dir
+		IL_00e9: stloc.s 6
+		IL_00eb: ldloc.s 5
+		IL_00ed: ldstr "join"
+		IL_00f2: ldloc.s 6
+		IL_00f4: ldstr "alpha.txt"
+		IL_00f9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_00fe: stloc.s 6
+		IL_0100: ldloc.s 4
+		IL_0102: ldstr "writeFileSync"
+		IL_0107: ldloc.s 6
+		IL_0109: ldstr ""
+		IL_010e: ldstr "utf8"
+		IL_0113: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember3(object, string, object, object, object)
+		IL_0118: pop
+		IL_0119: ldloc.0
+		IL_011a: ldfld object Modules.FSPromises_Readdir_WithFileTypes/Scope::syncFs
+		IL_011f: stloc.s 6
+		IL_0121: ldloc.s 6
+		IL_0123: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0128: stloc.s 6
+		IL_012a: ldloc.2
+		IL_012b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0130: stloc.s 4
+		IL_0132: ldloc.0
+		IL_0133: ldfld object Modules.FSPromises_Readdir_WithFileTypes/Scope::dir
+		IL_0138: stloc.s 5
+		IL_013a: ldloc.s 4
+		IL_013c: ldstr "join"
+		IL_0141: ldloc.s 5
+		IL_0143: ldstr "subdir"
+		IL_0148: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_014d: stloc.s 5
+		IL_014f: ldloc.s 6
+		IL_0151: ldstr "mkdirSync"
+		IL_0156: ldloc.s 5
+		IL_0158: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_015d: pop
+		IL_015e: ldloc.1
+		IL_015f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0164: stloc.s 5
+		IL_0166: ldloc.0
+		IL_0167: ldfld object Modules.FSPromises_Readdir_WithFileTypes/Scope::dir
+		IL_016c: stloc.s 6
+		IL_016e: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0173: dup
+		IL_0174: ldstr "withFileTypes"
+		IL_0179: ldc.i4.1
+		IL_017a: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+		IL_017f: stloc.s 8
+		IL_0181: ldloc.s 5
+		IL_0183: ldstr "readdir"
+		IL_0188: ldloc.s 6
+		IL_018a: ldloc.s 8
+		IL_018c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_0191: stloc.s 6
+		IL_0193: ldloc.s 6
+		IL_0195: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_019a: stloc.s 6
 		IL_019c: ldc.i4.1
 		IL_019d: newarr [System.Runtime]System.Object
 		IL_01a2: dup
 		IL_01a3: ldc.i4.0
 		IL_01a4: ldloc.0
 		IL_01a5: stelem.ref
-		IL_01a6: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_01ab: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_01b0: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1
-		IL_01b5: ldc.i4.1
-		IL_01b6: conv.r8
-		IL_01b7: ldstr ""
-		IL_01bc: ldc.i4.0
-		IL_01bd: ldc.i4.0
-		IL_01be: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0, float64, string, bool, bool)
-		IL_01c3: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0)
-		IL_01c8: stloc.s 9
-		IL_01ca: ldloc.s 6
-		IL_01cc: ldstr "then"
-		IL_01d1: ldloc.s 9
-		IL_01d3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_01d8: stloc.s 6
+		IL_01a6: stloc.s 9
+		IL_01a8: ldnull
+		IL_01a9: ldftn object Modules.FSPromises_Readdir_WithFileTypes/ArrowFunction_L13C11::__js_call__(object, object)
+		IL_01af: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_01b4: ldloc.s 9
+		IL_01b6: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_01bb: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_01c0: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1
+		IL_01c5: ldc.i4.1
+		IL_01c6: conv.r8
+		IL_01c7: ldstr ""
+		IL_01cc: ldc.i4.0
+		IL_01cd: ldc.i4.0
+		IL_01ce: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0, float64, string, bool, bool)
+		IL_01d3: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0)
+		IL_01d8: stloc.s 10
 		IL_01da: ldloc.s 6
-		IL_01dc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_01e1: stloc.s 6
-		IL_01e3: ldnull
-		IL_01e4: ldftn object Modules.FSPromises_Readdir_WithFileTypes/ArrowFunction_L18C12::__js_call__(object, object)
-		IL_01ea: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-		IL_01ef: ldc.i4.1
-		IL_01f0: newarr [System.Runtime]System.Object
-		IL_01f5: dup
-		IL_01f6: ldc.i4.0
-		IL_01f7: ldloc.0
-		IL_01f8: stelem.ref
-		IL_01f9: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_01fe: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_0203: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1
-		IL_0208: ldc.i4.1
-		IL_0209: conv.r8
-		IL_020a: ldstr ""
-		IL_020f: ldc.i4.0
-		IL_0210: ldc.i4.0
-		IL_0211: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0, float64, string, bool, bool)
-		IL_0216: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0)
-		IL_021b: stloc.s 9
-		IL_021d: ldloc.s 6
-		IL_021f: ldstr "catch"
-		IL_0224: ldloc.s 9
-		IL_0226: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_022b: stloc.s 6
-		IL_022d: ldloc.s 6
-		IL_022f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0234: stloc.s 6
-		IL_0236: ldc.i4.1
-		IL_0237: newarr [System.Runtime]System.Object
-		IL_023c: dup
-		IL_023d: ldc.i4.0
-		IL_023e: ldloc.0
-		IL_023f: stelem.ref
-		IL_0240: ldc.i4.0
-		IL_0241: ldelem.ref
-		IL_0242: castclass Modules.FSPromises_Readdir_WithFileTypes/Scope
-		IL_0247: ldftn object Modules.FSPromises_Readdir_WithFileTypes/ArrowFunction_L21C14::__js_call__(class Modules.FSPromises_Readdir_WithFileTypes/Scope, object)
-		IL_024d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_0252: ldc.i4.1
-		IL_0253: newarr [System.Runtime]System.Object
-		IL_0258: dup
-		IL_0259: ldc.i4.0
-		IL_025a: ldloc.0
-		IL_025b: stelem.ref
-		IL_025c: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_0261: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_0266: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
-		IL_026b: ldc.i4.0
-		IL_026c: conv.r8
-		IL_026d: ldstr ""
-		IL_0272: ldc.i4.0
-		IL_0273: ldc.i4.0
-		IL_0274: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
-		IL_0279: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0)
-		IL_027e: stloc.s 10
-		IL_0280: ldloc.s 6
-		IL_0282: ldstr "finally"
-		IL_0287: ldloc.s 10
-		IL_0289: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_028e: pop
-		IL_028f: ret
+		IL_01dc: ldstr "then"
+		IL_01e1: ldloc.s 10
+		IL_01e3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_01e8: stloc.s 6
+		IL_01ea: ldloc.s 6
+		IL_01ec: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_01f1: stloc.s 6
+		IL_01f3: ldc.i4.1
+		IL_01f4: newarr [System.Runtime]System.Object
+		IL_01f9: dup
+		IL_01fa: ldc.i4.0
+		IL_01fb: ldloc.0
+		IL_01fc: stelem.ref
+		IL_01fd: stloc.s 9
+		IL_01ff: ldnull
+		IL_0200: ldftn object Modules.FSPromises_Readdir_WithFileTypes/ArrowFunction_L18C12::__js_call__(object, object)
+		IL_0206: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_020b: ldloc.s 9
+		IL_020d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_0212: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_0217: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1
+		IL_021c: ldc.i4.1
+		IL_021d: conv.r8
+		IL_021e: ldstr ""
+		IL_0223: ldc.i4.0
+		IL_0224: ldc.i4.0
+		IL_0225: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0, float64, string, bool, bool)
+		IL_022a: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0)
+		IL_022f: stloc.s 10
+		IL_0231: ldloc.s 6
+		IL_0233: ldstr "catch"
+		IL_0238: ldloc.s 10
+		IL_023a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_023f: stloc.s 6
+		IL_0241: ldloc.s 6
+		IL_0243: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0248: stloc.s 6
+		IL_024a: ldc.i4.1
+		IL_024b: newarr [System.Runtime]System.Object
+		IL_0250: dup
+		IL_0251: ldc.i4.0
+		IL_0252: ldloc.0
+		IL_0253: stelem.ref
+		IL_0254: stloc.s 9
+		IL_0256: ldloc.s 9
+		IL_0258: ldc.i4.0
+		IL_0259: ldelem.ref
+		IL_025a: castclass Modules.FSPromises_Readdir_WithFileTypes/Scope
+		IL_025f: ldftn object Modules.FSPromises_Readdir_WithFileTypes/ArrowFunction_L21C14::__js_call__(class Modules.FSPromises_Readdir_WithFileTypes/Scope, object)
+		IL_0265: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_026a: ldloc.s 9
+		IL_026c: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_0271: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_0276: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
+		IL_027b: ldc.i4.0
+		IL_027c: conv.r8
+		IL_027d: ldstr ""
+		IL_0282: ldc.i4.0
+		IL_0283: ldc.i4.0
+		IL_0284: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
+		IL_0289: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0)
+		IL_028e: stloc.s 11
+		IL_0290: ldloc.s 6
+		IL_0292: ldstr "finally"
+		IL_0297: ldloc.s 11
+		IL_0299: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_029e: pop
+		IL_029f: ret
 	} // end of method FSPromises_Readdir_WithFileTypes::__js_module_init__
 
 } // end of class Modules.FSPromises_Readdir_WithFileTypes
@@ -707,7 +727,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x24f1
+		// Method begins at RVA 0x2509
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

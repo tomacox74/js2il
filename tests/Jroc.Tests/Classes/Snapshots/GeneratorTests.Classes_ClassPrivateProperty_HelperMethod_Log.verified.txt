@@ -149,12 +149,13 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 81 (0x51)
+		// Code size: 83 (0x53)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Classes_ClassPrivateProperty_HelperMethod_Log/Scope,
 			[1] class Modules.Classes_ClassPrivateProperty_HelperMethod_Log/Greeter,
-			[2] class Modules.Classes_ClassPrivateProperty_HelperMethod_Log/Greeter
+			[2] object[],
+			[3] class Modules.Classes_ClassPrivateProperty_HelperMethod_Log/Greeter
 		)
 
 		IL_0000: newobj instance void Modules.Classes_ClassPrivateProperty_HelperMethod_Log/Scope::.ctor()
@@ -167,25 +168,27 @@
 		IL_000f: ldc.i4.0
 		IL_0010: ldloc.0
 		IL_0011: stelem.ref
-		IL_0012: ldc.i4.0
-		IL_0013: newarr [System.Runtime]System.Object
-		IL_0018: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
-		IL_001d: newobj instance void Modules.Classes_ClassPrivateProperty_HelperMethod_Log/Greeter::.ctor(object[])
-		IL_0022: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
-		IL_0027: stloc.1
-		IL_0028: ldloc.1
-		IL_0029: ldtoken Modules.Classes_ClassPrivateProperty_HelperMethod_Log/Greeter
-		IL_002e: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_0033: ldstr "prototype"
-		IL_0038: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
-		IL_003d: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
-		IL_0042: ldloc.1
-		IL_0043: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Classes_ClassPrivateProperty_HelperMethod_Log/Greeter>(!!0)
-		IL_0048: stloc.2
-		IL_0049: ldloc.2
-		IL_004a: callvirt instance object Modules.Classes_ClassPrivateProperty_HelperMethod_Log/Greeter::logSecret()
-		IL_004f: pop
-		IL_0050: ret
+		IL_0012: stloc.2
+		IL_0013: ldloc.2
+		IL_0014: ldc.i4.0
+		IL_0015: newarr [System.Runtime]System.Object
+		IL_001a: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
+		IL_001f: newobj instance void Modules.Classes_ClassPrivateProperty_HelperMethod_Log/Greeter::.ctor(object[])
+		IL_0024: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
+		IL_0029: stloc.1
+		IL_002a: ldloc.1
+		IL_002b: ldtoken Modules.Classes_ClassPrivateProperty_HelperMethod_Log/Greeter
+		IL_0030: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_0035: ldstr "prototype"
+		IL_003a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
+		IL_003f: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
+		IL_0044: ldloc.1
+		IL_0045: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Classes_ClassPrivateProperty_HelperMethod_Log/Greeter>(!!0)
+		IL_004a: stloc.3
+		IL_004b: ldloc.3
+		IL_004c: callvirt instance object Modules.Classes_ClassPrivateProperty_HelperMethod_Log/Greeter::logSecret()
+		IL_0051: pop
+		IL_0052: ret
 	} // end of method Classes_ClassPrivateProperty_HelperMethod_Log::__js_module_init__
 
 } // end of class Modules.Classes_ClassPrivateProperty_HelperMethod_Log

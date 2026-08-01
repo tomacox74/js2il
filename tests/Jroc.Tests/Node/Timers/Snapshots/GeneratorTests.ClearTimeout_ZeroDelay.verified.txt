@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x214c
+				// Method begins at RVA 0x2150
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -41,7 +41,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2114
+			// Method begins at RVA 0x2118
 			// Header size: 12
 			// Code size: 35 (0x23)
 			.maxstack 8
@@ -71,7 +71,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2143
+			// Method begins at RVA 0x2147
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -97,72 +97,75 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 181 (0xb5)
+		// Code size: 185 (0xb9)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ClearTimeout_ZeroDelay/Scope,
 			[1] object,
 			[2] object,
-			[3] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0,
-			[4] object
+			[3] object[],
+			[4] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0,
+			[5] object
 		)
 
 		IL_0000: newobj instance void Modules.ClearTimeout_ZeroDelay/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: nop
-		IL_0007: ldnull
-		IL_0008: ldftn object Modules.ClearTimeout_ZeroDelay/ArrowFunction_L3C18::__js_call__(object)
-		IL_000e: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_0013: ldc.i4.1
-		IL_0014: newarr [System.Runtime]System.Object
-		IL_0019: dup
-		IL_001a: ldc.i4.0
-		IL_001b: ldloc.0
-		IL_001c: stelem.ref
-		IL_001d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_0022: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_0027: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
-		IL_002c: ldc.i4.0
-		IL_002d: conv.r8
-		IL_002e: ldstr ""
-		IL_0033: ldc.i4.0
-		IL_0034: ldc.i4.0
-		IL_0035: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
-		IL_003a: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0)
-		IL_003f: stloc.3
-		IL_0040: ldloc.3
-		IL_0041: ldstr "logHello"
-		IL_0046: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetFunctionInferredName(object, object)
-		IL_004b: stloc.1
-		IL_004c: ldloc.1
-		IL_004d: ldc.r8 0.0
-		IL_0056: box [System.Runtime]System.Double
-		IL_005b: ldc.i4.0
-		IL_005c: newarr [System.Runtime]System.Object
-		IL_0061: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::setTimeout(object, object, object[])
-		IL_0066: stloc.2
-		IL_0067: ldstr "console"
-		IL_006c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0071: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0076: stloc.s 4
-		IL_0078: ldloc.s 4
-		IL_007a: ldstr "log"
-		IL_007f: ldstr "setTimeout with zero delay scheduled."
-		IL_0084: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0089: pop
-		IL_008a: ldloc.2
-		IL_008b: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::clearTimeout(object)
-		IL_0090: pop
-		IL_0091: ldstr "console"
-		IL_0096: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_009b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00a0: stloc.s 4
-		IL_00a2: ldloc.s 4
-		IL_00a4: ldstr "log"
-		IL_00a9: ldstr "Timeout cleared."
-		IL_00ae: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00b3: pop
-		IL_00b4: ret
+		IL_0007: ldc.i4.1
+		IL_0008: newarr [System.Runtime]System.Object
+		IL_000d: dup
+		IL_000e: ldc.i4.0
+		IL_000f: ldloc.0
+		IL_0010: stelem.ref
+		IL_0011: stloc.3
+		IL_0012: ldnull
+		IL_0013: ldftn object Modules.ClearTimeout_ZeroDelay/ArrowFunction_L3C18::__js_call__(object)
+		IL_0019: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_001e: ldloc.3
+		IL_001f: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_0024: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_0029: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
+		IL_002e: ldc.i4.0
+		IL_002f: conv.r8
+		IL_0030: ldstr ""
+		IL_0035: ldc.i4.0
+		IL_0036: ldc.i4.0
+		IL_0037: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
+		IL_003c: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0)
+		IL_0041: stloc.s 4
+		IL_0043: ldloc.s 4
+		IL_0045: ldstr "logHello"
+		IL_004a: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetFunctionInferredName(object, object)
+		IL_004f: stloc.1
+		IL_0050: ldloc.1
+		IL_0051: ldc.r8 0.0
+		IL_005a: box [System.Runtime]System.Double
+		IL_005f: ldc.i4.0
+		IL_0060: newarr [System.Runtime]System.Object
+		IL_0065: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::setTimeout(object, object, object[])
+		IL_006a: stloc.2
+		IL_006b: ldstr "console"
+		IL_0070: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0075: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_007a: stloc.s 5
+		IL_007c: ldloc.s 5
+		IL_007e: ldstr "log"
+		IL_0083: ldstr "setTimeout with zero delay scheduled."
+		IL_0088: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_008d: pop
+		IL_008e: ldloc.2
+		IL_008f: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::clearTimeout(object)
+		IL_0094: pop
+		IL_0095: ldstr "console"
+		IL_009a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_009f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00a4: stloc.s 5
+		IL_00a6: ldloc.s 5
+		IL_00a8: ldstr "log"
+		IL_00ad: ldstr "Timeout cleared."
+		IL_00b2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_00b7: pop
+		IL_00b8: ret
 	} // end of method ClearTimeout_ZeroDelay::__js_module_init__
 
 } // end of class Modules.ClearTimeout_ZeroDelay
@@ -174,7 +177,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2155
+		// Method begins at RVA 0x2159
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

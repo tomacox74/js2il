@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21c9
+				// Method begins at RVA 0x21cf
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21d2
+				// Method begins at RVA 0x21d8
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -58,7 +58,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21db
+				// Method begins at RVA 0x21e1
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -88,10 +88,11 @@
 			)
 			// Method begins at RVA 0x2138
 			// Header size: 12
-			// Code size: 41 (0x29)
+			// Code size: 45 (0x2d)
 			.maxstack 8
 			.locals init (
-				[0] float64
+				[0] float64,
+				[1] object
 			)
 
 			IL_0000: ldarg.0
@@ -104,13 +105,17 @@
 			IL_0017: ldarg.2
 			IL_0018: ldarg.2
 			IL_0019: sub
-			IL_001a: mul
-			IL_001b: stloc.0
-			IL_001c: ldarg.0
-			IL_001d: ldloc.0
-			IL_001e: box [System.Runtime]System.Double
-			IL_0023: stfld object Modules.BinaryOperator_TypedNumericScheduler_DuplicateOperandSlotReuse/K::y
-			IL_0028: ret
+			IL_001a: stloc.0
+			IL_001b: ldloc.0
+			IL_001c: mul
+			IL_001d: stloc.0
+			IL_001e: ldloc.0
+			IL_001f: box [System.Runtime]System.Double
+			IL_0024: stloc.1
+			IL_0025: ldarg.0
+			IL_0026: ldloc.1
+			IL_0027: stfld object Modules.BinaryOperator_TypedNumericScheduler_DuplicateOperandSlotReuse/K::y
+			IL_002c: ret
 		} // end of method K::.ctor
 
 		.method public hidebysig 
@@ -121,43 +126,45 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2170
+			// Method begins at RVA 0x2174
 			// Header size: 12
-			// Code size: 68 (0x44)
+			// Code size: 70 (0x46)
 			.maxstack 8
 			.locals init (
 				[0] float64,
 				[1] object
 			)
 
-			IL_0000: ldarg.0
-			IL_0001: ldfld float64 Modules.BinaryOperator_TypedNumericScheduler_DuplicateOperandSlotReuse/K::x
-			IL_0006: ldc.r8 3.014
-			IL_000f: neg
-			IL_0010: mul
-			IL_0011: stloc.0
-			IL_0012: ldloc.0
-			IL_0013: ldarg.0
-			IL_0014: ldfld object Modules.BinaryOperator_TypedNumericScheduler_DuplicateOperandSlotReuse/K::y
-			IL_0019: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(float64, object)
-			IL_001e: stloc.1
-			IL_001f: ldarg.1
-			IL_0020: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_0025: stloc.0
-			IL_0026: ldloc.0
-			IL_0027: ldc.r8 7.857
-			IL_0030: sub
-			IL_0031: ldloc.0
-			IL_0032: ldloc.0
-			IL_0033: add
-			IL_0034: add
-			IL_0035: stloc.0
-			IL_0036: ldloc.1
-			IL_0037: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_003c: ldloc.0
-			IL_003d: sub
-			IL_003e: box [System.Runtime]System.Double
-			IL_0043: ret
+			IL_0000: ldc.r8 3.014
+			IL_0009: neg
+			IL_000a: stloc.0
+			IL_000b: ldarg.0
+			IL_000c: ldfld float64 Modules.BinaryOperator_TypedNumericScheduler_DuplicateOperandSlotReuse/K::x
+			IL_0011: ldloc.0
+			IL_0012: mul
+			IL_0013: stloc.0
+			IL_0014: ldloc.0
+			IL_0015: ldarg.0
+			IL_0016: ldfld object Modules.BinaryOperator_TypedNumericScheduler_DuplicateOperandSlotReuse/K::y
+			IL_001b: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(float64, object)
+			IL_0020: stloc.1
+			IL_0021: ldarg.1
+			IL_0022: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0027: stloc.0
+			IL_0028: ldloc.0
+			IL_0029: ldc.r8 7.857
+			IL_0032: sub
+			IL_0033: ldloc.0
+			IL_0034: ldloc.0
+			IL_0035: add
+			IL_0036: add
+			IL_0037: stloc.0
+			IL_0038: ldloc.1
+			IL_0039: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_003e: ldloc.0
+			IL_003f: sub
+			IL_0040: box [System.Runtime]System.Double
+			IL_0045: ret
 		} // end of method K::calc
 
 	} // end of class K
@@ -169,7 +176,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x21c0
+			// Method begins at RVA 0x21c6
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -279,7 +286,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21e4
+		// Method begins at RVA 0x21ea
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

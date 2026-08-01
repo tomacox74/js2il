@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2127
+				// Method begins at RVA 0x214b
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -42,15 +42,20 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2111
-			// Header size: 1
-			// Code size: 12 (0xc)
+			// Method begins at RVA 0x2128
+			// Header size: 12
+			// Code size: 14 (0xe)
 			.maxstack 8
+			.locals init (
+				[0] object
+			)
 
 			IL_0000: ldarg.1
 			IL_0001: ldstr "length"
 			IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_000b: ret
+			IL_000b: stloc.0
+			IL_000c: ldloc.0
+			IL_000d: ret
 		} // end of method FunctionExpression_lengths::__js_call__
 
 	} // end of class FunctionExpression_lengths
@@ -66,7 +71,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2130
+				// Method begins at RVA 0x2154
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -84,7 +89,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x211e
+			// Method begins at RVA 0x2142
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -110,16 +115,19 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 181 (0xb5)
+		// Code size: 201 (0xc9)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Array_Map_Basic/Scope,
 			[1] class [JavaScriptRuntime]JavaScriptRuntime.Array,
 			[2] class [JavaScriptRuntime]JavaScriptRuntime.Array,
 			[3] float64,
-			[4] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1,
-			[5] float64,
-			[6] object
+			[4] object[],
+			[5] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1,
+			[6] float64,
+			[7] float64,
+			[8] object,
+			[9] object
 		)
 
 		IL_0000: newobj instance void Modules.Array_Map_Basic/Scope::.ctor()
@@ -137,56 +145,67 @@
 		IL_0024: ldstr "ccc"
 		IL_0029: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
 		IL_002e: stloc.1
-		IL_002f: ldnull
-		IL_0030: ldftn object Modules.Array_Map_Basic/FunctionExpression_lengths::__js_call__(object, object)
-		IL_0036: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-		IL_003b: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1
-		IL_0040: ldc.i4.1
-		IL_0041: conv.r8
-		IL_0042: ldstr ""
-		IL_0047: ldc.i4.0
-		IL_0048: ldc.i4.1
-		IL_0049: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0, float64, string, bool, bool)
-		IL_004e: stloc.s 4
-		IL_0050: ldloc.1
-		IL_0051: ldc.i4.1
-		IL_0052: newarr [System.Runtime]System.Object
-		IL_0057: dup
-		IL_0058: ldc.i4.0
-		IL_0059: ldloc.s 4
-		IL_005b: stelem.ref
-		IL_005c: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Array [JavaScriptRuntime]JavaScriptRuntime.Array::map(object[])
-		IL_0061: stloc.2
-		IL_0062: ldc.r8 0.0
-		IL_006b: stloc.3
-		// loop start (head: IL_006c)
-			IL_006c: ldloc.3
-			IL_006d: stloc.s 5
-			IL_006f: ldloc.s 5
-			IL_0071: ldloc.2
-			IL_0072: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::get_length()
-			IL_0077: clt
-			IL_0079: brfalse IL_00b4
+		IL_002f: ldc.i4.1
+		IL_0030: newarr [System.Runtime]System.Object
+		IL_0035: dup
+		IL_0036: ldc.i4.0
+		IL_0037: ldloc.0
+		IL_0038: stelem.ref
+		IL_0039: stloc.s 4
+		IL_003b: ldnull
+		IL_003c: ldftn object Modules.Array_Map_Basic/FunctionExpression_lengths::__js_call__(object, object)
+		IL_0042: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_0047: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1
+		IL_004c: ldc.i4.1
+		IL_004d: conv.r8
+		IL_004e: ldstr ""
+		IL_0053: ldc.i4.0
+		IL_0054: ldc.i4.1
+		IL_0055: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0, float64, string, bool, bool)
+		IL_005a: stloc.s 5
+		IL_005c: ldloc.1
+		IL_005d: ldc.i4.1
+		IL_005e: newarr [System.Runtime]System.Object
+		IL_0063: dup
+		IL_0064: ldc.i4.0
+		IL_0065: ldloc.s 5
+		IL_0067: stelem.ref
+		IL_0068: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Array [JavaScriptRuntime]JavaScriptRuntime.Array::map(object[])
+		IL_006d: stloc.2
+		IL_006e: ldc.r8 0.0
+		IL_0077: stloc.3
+		// loop start (head: IL_0078)
+			IL_0078: ldloc.3
+			IL_0079: stloc.s 6
+			IL_007b: ldloc.2
+			IL_007c: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::get_length()
+			IL_0081: stloc.s 7
+			IL_0083: ldloc.s 6
+			IL_0085: ldloc.s 7
+			IL_0087: clt
+			IL_0089: brfalse IL_00c8
 
-			IL_007e: ldstr "console"
-			IL_0083: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_0088: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_008d: stloc.s 6
-			IL_008f: ldloc.s 6
-			IL_0091: ldstr "log"
-			IL_0096: ldloc.2
-			IL_0097: ldloc.3
-			IL_0098: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
-			IL_009d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_00a2: pop
-			IL_00a3: ldloc.3
-			IL_00a4: ldc.r8 1
-			IL_00ad: add
-			IL_00ae: stloc.3
-			IL_00af: br IL_006c
+			IL_008e: ldstr "console"
+			IL_0093: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_0098: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_009d: stloc.s 8
+			IL_009f: ldloc.2
+			IL_00a0: ldloc.3
+			IL_00a1: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
+			IL_00a6: stloc.s 9
+			IL_00a8: ldloc.s 8
+			IL_00aa: ldstr "log"
+			IL_00af: ldloc.s 9
+			IL_00b1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_00b6: pop
+			IL_00b7: ldloc.3
+			IL_00b8: ldc.r8 1
+			IL_00c1: add
+			IL_00c2: stloc.3
+			IL_00c3: br IL_0078
 		// end loop
 
-		IL_00b4: ret
+		IL_00c8: ret
 	} // end of method Array_Map_Basic::__js_module_init__
 
 } // end of class Modules.Array_Map_Basic
@@ -198,7 +217,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2139
+		// Method begins at RVA 0x215d
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -25,7 +25,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2297
+				// Method begins at RVA 0x22b5
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -52,42 +52,50 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 05 00 00 02
 			)
-			// Method begins at RVA 0x21f0
+			// Method begins at RVA 0x2204
 			// Header size: 12
-			// Code size: 88 (0x58)
+			// Code size: 94 (0x5e)
 			.maxstack 8
 			.locals init (
-				[0] object
+				[0] object,
+				[1] object,
+				[2] class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate
 			)
 
 			IL_0000: ldstr "console"
 			IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
 			IL_000a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
 			IL_000f: stloc.0
-			IL_0010: ldloc.0
-			IL_0011: ldstr "log"
-			IL_0016: ldstr "File size:"
-			IL_001b: ldarg.2
-			IL_001c: ldstr "size"
-			IL_0021: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0026: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-			IL_002b: pop
-			IL_002c: ldarg.0
-			IL_002d: ldfld class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate Modules.FSPromises_Stat_FileSize/Scope::require
-			IL_0032: ldstr "fs"
-			IL_0037: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
-			IL_003c: stloc.0
-			IL_003d: ldloc.0
-			IL_003e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0043: stloc.0
-			IL_0044: ldloc.0
-			IL_0045: ldstr "rmSync"
-			IL_004a: ldarg.0
-			IL_004b: ldfld object Modules.FSPromises_Stat_FileSize/Scope::testFile
-			IL_0050: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_0055: pop
-			IL_0056: ldnull
-			IL_0057: ret
+			IL_0010: ldarg.2
+			IL_0011: ldstr "size"
+			IL_0016: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_001b: stloc.1
+			IL_001c: ldloc.0
+			IL_001d: ldstr "log"
+			IL_0022: ldstr "File size:"
+			IL_0027: ldloc.1
+			IL_0028: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+			IL_002d: pop
+			IL_002e: ldarg.0
+			IL_002f: ldfld class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate Modules.FSPromises_Stat_FileSize/Scope::require
+			IL_0034: stloc.2
+			IL_0035: ldloc.2
+			IL_0036: ldstr "fs"
+			IL_003b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
+			IL_0040: stloc.1
+			IL_0041: ldloc.1
+			IL_0042: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0047: stloc.1
+			IL_0048: ldarg.0
+			IL_0049: ldfld object Modules.FSPromises_Stat_FileSize/Scope::testFile
+			IL_004e: stloc.0
+			IL_004f: ldloc.1
+			IL_0050: ldstr "rmSync"
+			IL_0055: ldloc.0
+			IL_0056: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_005b: pop
+			IL_005c: ldnull
+			IL_005d: ret
 		} // end of method ArrowFunction_L9C24::__js_call__
 
 	} // end of class ArrowFunction_L9C24
@@ -110,7 +118,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x22a0
+				// Method begins at RVA 0x22be
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -134,28 +142,31 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2254
+			// Method begins at RVA 0x2270
 			// Header size: 12
-			// Code size: 46 (0x2e)
+			// Code size: 48 (0x30)
 			.maxstack 8
 			.locals init (
-				[0] object
+				[0] object,
+				[1] object
 			)
 
 			IL_0000: ldstr "console"
 			IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
 			IL_000a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
 			IL_000f: stloc.0
-			IL_0010: ldloc.0
-			IL_0011: ldstr "error"
-			IL_0016: ldstr "Error:"
-			IL_001b: ldarg.1
-			IL_001c: ldstr "message"
-			IL_0021: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0026: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-			IL_002b: pop
-			IL_002c: ldnull
-			IL_002d: ret
+			IL_0010: ldarg.1
+			IL_0011: ldstr "message"
+			IL_0016: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_001b: stloc.1
+			IL_001c: ldloc.0
+			IL_001d: ldstr "error"
+			IL_0022: ldstr "Error:"
+			IL_0027: ldloc.1
+			IL_0028: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+			IL_002d: pop
+			IL_002e: ldnull
+			IL_002f: ret
 		} // end of method ArrowFunction_L12C10::__js_call__
 
 	} // end of class ArrowFunction_L12C10
@@ -176,7 +187,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x228e
+			// Method begins at RVA 0x22ac
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -202,16 +213,18 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 403 (0x193)
+		// Code size: 423 (0x1a7)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.FSPromises_Stat_FileSize/Scope,
 			[1] object,
 			[2] object,
 			[3] string,
-			[4] object,
+			[4] class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate,
 			[5] object,
-			[6] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1
+			[6] object,
+			[7] object[],
+			[8] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1
 		)
 
 		IL_0000: newobj instance void Modules.FSPromises_Stat_FileSize/Scope::.ctor()
@@ -223,132 +236,141 @@
 		IL_0012: nop
 		IL_0013: ldloc.0
 		IL_0014: ldfld class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate Modules.FSPromises_Stat_FileSize/Scope::require
-		IL_0019: ldstr "fs/promises"
-		IL_001e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
-		IL_0023: stloc.1
-		IL_0024: ldloc.0
-		IL_0025: ldfld class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate Modules.FSPromises_Stat_FileSize/Scope::require
-		IL_002a: ldstr "path"
-		IL_002f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
-		IL_0034: stloc.2
-		IL_0035: ldloc.2
-		IL_0036: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_003b: stloc.s 4
-		IL_003d: ldloc.0
-		IL_003e: ldfld class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate Modules.FSPromises_Stat_FileSize/Scope::require
-		IL_0043: ldstr "os"
-		IL_0048: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
-		IL_004d: stloc.s 5
-		IL_004f: ldloc.s 5
-		IL_0051: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0056: stloc.s 5
-		IL_0058: ldloc.s 5
-		IL_005a: ldstr "tmpdir"
-		IL_005f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-		IL_0064: stloc.s 5
-		IL_0066: ldloc.s 4
-		IL_0068: ldstr "join"
-		IL_006d: ldloc.s 5
-		IL_006f: ldstr "test-stat.txt"
-		IL_0074: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_0079: stloc.s 5
-		IL_007b: ldloc.0
-		IL_007c: ldloc.s 5
-		IL_007e: stfld object Modules.FSPromises_Stat_FileSize/Scope::testFile
-		IL_0083: ldstr "Test content for stat"
-		IL_0088: stloc.3
-		IL_0089: ldloc.0
-		IL_008a: ldfld class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate Modules.FSPromises_Stat_FileSize/Scope::require
-		IL_008f: ldstr "fs"
-		IL_0094: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
-		IL_0099: stloc.s 5
-		IL_009b: ldloc.s 5
-		IL_009d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00a2: stloc.s 5
-		IL_00a4: ldloc.0
-		IL_00a5: ldfld object Modules.FSPromises_Stat_FileSize/Scope::testFile
-		IL_00aa: stloc.s 4
-		IL_00ac: ldloc.s 5
-		IL_00ae: ldstr "writeFileSync"
-		IL_00b3: ldloc.s 4
-		IL_00b5: ldloc.3
-		IL_00b6: ldstr "utf8"
-		IL_00bb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember3(object, string, object, object, object)
-		IL_00c0: pop
-		IL_00c1: ldloc.1
-		IL_00c2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00c7: stloc.s 4
-		IL_00c9: ldloc.s 4
-		IL_00cb: ldstr "stat"
-		IL_00d0: ldloc.0
-		IL_00d1: ldfld object Modules.FSPromises_Stat_FileSize/Scope::testFile
-		IL_00d6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00db: stloc.s 4
-		IL_00dd: ldloc.s 4
-		IL_00df: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00e4: stloc.s 4
-		IL_00e6: ldc.i4.1
-		IL_00e7: newarr [System.Runtime]System.Object
-		IL_00ec: dup
-		IL_00ed: ldc.i4.0
-		IL_00ee: ldloc.0
-		IL_00ef: stelem.ref
-		IL_00f0: ldc.i4.0
-		IL_00f1: ldelem.ref
-		IL_00f2: castclass Modules.FSPromises_Stat_FileSize/Scope
-		IL_00f7: ldftn object Modules.FSPromises_Stat_FileSize/ArrowFunction_L9C24::__js_call__(class Modules.FSPromises_Stat_FileSize/Scope, object, object)
-		IL_00fd: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-		IL_0102: ldc.i4.1
-		IL_0103: newarr [System.Runtime]System.Object
-		IL_0108: dup
-		IL_0109: ldc.i4.0
-		IL_010a: ldloc.0
-		IL_010b: stelem.ref
-		IL_010c: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_0111: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_0116: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1
-		IL_011b: ldc.i4.1
-		IL_011c: conv.r8
-		IL_011d: ldstr ""
-		IL_0122: ldc.i4.0
-		IL_0123: ldc.i4.0
-		IL_0124: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0, float64, string, bool, bool)
-		IL_0129: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0)
-		IL_012e: stloc.s 6
-		IL_0130: ldloc.s 4
-		IL_0132: ldstr "then"
-		IL_0137: ldloc.s 6
-		IL_0139: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_013e: stloc.s 4
-		IL_0140: ldloc.s 4
-		IL_0142: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0147: stloc.s 4
-		IL_0149: ldnull
-		IL_014a: ldftn object Modules.FSPromises_Stat_FileSize/ArrowFunction_L12C10::__js_call__(object, object)
-		IL_0150: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-		IL_0155: ldc.i4.1
-		IL_0156: newarr [System.Runtime]System.Object
-		IL_015b: dup
-		IL_015c: ldc.i4.0
-		IL_015d: ldloc.0
-		IL_015e: stelem.ref
-		IL_015f: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_0164: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_0169: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1
-		IL_016e: ldc.i4.1
-		IL_016f: conv.r8
-		IL_0170: ldstr ""
-		IL_0175: ldc.i4.0
-		IL_0176: ldc.i4.0
-		IL_0177: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0, float64, string, bool, bool)
-		IL_017c: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0)
-		IL_0181: stloc.s 6
-		IL_0183: ldloc.s 4
-		IL_0185: ldstr "catch"
-		IL_018a: ldloc.s 6
-		IL_018c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0191: pop
-		IL_0192: ret
+		IL_0019: stloc.s 4
+		IL_001b: ldloc.s 4
+		IL_001d: ldstr "fs/promises"
+		IL_0022: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
+		IL_0027: stloc.1
+		IL_0028: ldloc.0
+		IL_0029: ldfld class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate Modules.FSPromises_Stat_FileSize/Scope::require
+		IL_002e: stloc.s 4
+		IL_0030: ldloc.s 4
+		IL_0032: ldstr "path"
+		IL_0037: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
+		IL_003c: stloc.2
+		IL_003d: ldloc.2
+		IL_003e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0043: stloc.s 5
+		IL_0045: ldloc.0
+		IL_0046: ldfld class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate Modules.FSPromises_Stat_FileSize/Scope::require
+		IL_004b: stloc.s 4
+		IL_004d: ldloc.s 4
+		IL_004f: ldstr "os"
+		IL_0054: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
+		IL_0059: stloc.s 6
+		IL_005b: ldloc.s 6
+		IL_005d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0062: stloc.s 6
+		IL_0064: ldloc.s 6
+		IL_0066: ldstr "tmpdir"
+		IL_006b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+		IL_0070: stloc.s 6
+		IL_0072: ldloc.s 5
+		IL_0074: ldstr "join"
+		IL_0079: ldloc.s 6
+		IL_007b: ldstr "test-stat.txt"
+		IL_0080: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_0085: stloc.s 6
+		IL_0087: ldloc.0
+		IL_0088: ldloc.s 6
+		IL_008a: stfld object Modules.FSPromises_Stat_FileSize/Scope::testFile
+		IL_008f: ldstr "Test content for stat"
+		IL_0094: stloc.3
+		IL_0095: ldloc.0
+		IL_0096: ldfld class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate Modules.FSPromises_Stat_FileSize/Scope::require
+		IL_009b: stloc.s 4
+		IL_009d: ldloc.s 4
+		IL_009f: ldstr "fs"
+		IL_00a4: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
+		IL_00a9: stloc.s 6
+		IL_00ab: ldloc.s 6
+		IL_00ad: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00b2: stloc.s 6
+		IL_00b4: ldloc.0
+		IL_00b5: ldfld object Modules.FSPromises_Stat_FileSize/Scope::testFile
+		IL_00ba: stloc.s 5
+		IL_00bc: ldloc.s 6
+		IL_00be: ldstr "writeFileSync"
+		IL_00c3: ldloc.s 5
+		IL_00c5: ldloc.3
+		IL_00c6: ldstr "utf8"
+		IL_00cb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember3(object, string, object, object, object)
+		IL_00d0: pop
+		IL_00d1: ldloc.1
+		IL_00d2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00d7: stloc.s 5
+		IL_00d9: ldloc.0
+		IL_00da: ldfld object Modules.FSPromises_Stat_FileSize/Scope::testFile
+		IL_00df: stloc.s 6
+		IL_00e1: ldloc.s 5
+		IL_00e3: ldstr "stat"
+		IL_00e8: ldloc.s 6
+		IL_00ea: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_00ef: stloc.s 6
+		IL_00f1: ldloc.s 6
+		IL_00f3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00f8: stloc.s 6
+		IL_00fa: ldc.i4.1
+		IL_00fb: newarr [System.Runtime]System.Object
+		IL_0100: dup
+		IL_0101: ldc.i4.0
+		IL_0102: ldloc.0
+		IL_0103: stelem.ref
+		IL_0104: stloc.s 7
+		IL_0106: ldloc.s 7
+		IL_0108: ldc.i4.0
+		IL_0109: ldelem.ref
+		IL_010a: castclass Modules.FSPromises_Stat_FileSize/Scope
+		IL_010f: ldftn object Modules.FSPromises_Stat_FileSize/ArrowFunction_L9C24::__js_call__(class Modules.FSPromises_Stat_FileSize/Scope, object, object)
+		IL_0115: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_011a: ldloc.s 7
+		IL_011c: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_0121: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_0126: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1
+		IL_012b: ldc.i4.1
+		IL_012c: conv.r8
+		IL_012d: ldstr ""
+		IL_0132: ldc.i4.0
+		IL_0133: ldc.i4.0
+		IL_0134: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0, float64, string, bool, bool)
+		IL_0139: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0)
+		IL_013e: stloc.s 8
+		IL_0140: ldloc.s 6
+		IL_0142: ldstr "then"
+		IL_0147: ldloc.s 8
+		IL_0149: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_014e: stloc.s 6
+		IL_0150: ldloc.s 6
+		IL_0152: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0157: stloc.s 6
+		IL_0159: ldc.i4.1
+		IL_015a: newarr [System.Runtime]System.Object
+		IL_015f: dup
+		IL_0160: ldc.i4.0
+		IL_0161: ldloc.0
+		IL_0162: stelem.ref
+		IL_0163: stloc.s 7
+		IL_0165: ldnull
+		IL_0166: ldftn object Modules.FSPromises_Stat_FileSize/ArrowFunction_L12C10::__js_call__(object, object)
+		IL_016c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_0171: ldloc.s 7
+		IL_0173: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_0178: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_017d: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1
+		IL_0182: ldc.i4.1
+		IL_0183: conv.r8
+		IL_0184: ldstr ""
+		IL_0189: ldc.i4.0
+		IL_018a: ldc.i4.0
+		IL_018b: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0, float64, string, bool, bool)
+		IL_0190: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0)
+		IL_0195: stloc.s 8
+		IL_0197: ldloc.s 6
+		IL_0199: ldstr "catch"
+		IL_019e: ldloc.s 8
+		IL_01a0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_01a5: pop
+		IL_01a6: ret
 	} // end of method FSPromises_Stat_FileSize::__js_module_init__
 
 } // end of class Modules.FSPromises_Stat_FileSize
@@ -360,7 +382,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x22a9
+		// Method begins at RVA 0x22c7
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

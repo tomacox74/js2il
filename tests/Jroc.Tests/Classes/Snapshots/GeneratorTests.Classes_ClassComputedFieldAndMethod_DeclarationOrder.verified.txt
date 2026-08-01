@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x220d
+				// Method begins at RVA 0x2217
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2216
+				// Method begins at RVA 0x2220
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -64,7 +64,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 02 00 00 00 00 00
 			)
-			// Method begins at RVA 0x21a4
+			// Method begins at RVA 0x21ac
 			// Header size: 12
 			// Code size: 42 (0x2a)
 			.maxstack 8
@@ -94,22 +94,25 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x21dc
+			// Method begins at RVA 0x21e4
 			// Header size: 12
-			// Code size: 28 (0x1c)
+			// Code size: 30 (0x1e)
 			.maxstack 8
 			.locals init (
-				[0] object
+				[0] object,
+				[1] object
 			)
 
 			IL_0000: ldarg.0
 			IL_0001: ldstr "field"
 			IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_000b: ldc.r8 2
-			IL_0014: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
-			IL_0019: stloc.0
-			IL_001a: ldloc.0
-			IL_001b: ret
+			IL_000b: stloc.0
+			IL_000c: ldloc.0
+			IL_000d: ldc.r8 2
+			IL_0016: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
+			IL_001b: stloc.1
+			IL_001c: ldloc.1
+			IL_001d: ret
 		} // end of method Example::'method'
 
 	} // end of class Example
@@ -121,7 +124,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2204
+			// Method begins at RVA 0x220e
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -147,7 +150,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 328 (0x148)
+		// Code size: 336 (0x150)
 		.maxstack 13
 		.locals init (
 			[0] class Modules.Classes_ClassComputedFieldAndMethod_DeclarationOrder/Scope,
@@ -156,8 +159,8 @@
 			[3] class [System.Runtime]System.Type,
 			[4] object[],
 			[5] object,
-			[6] class Modules.Classes_ClassComputedFieldAndMethod_DeclarationOrder/Example,
-			[7] object
+			[6] object,
+			[7] class Modules.Classes_ClassComputedFieldAndMethod_DeclarationOrder/Example
 		)
 
 		IL_0000: newobj instance void Modules.Classes_ClassComputedFieldAndMethod_DeclarationOrder/Scope::.ctor()
@@ -245,45 +248,49 @@
 		IL_00ba: ldc.i4.0
 		IL_00bb: ldloc.0
 		IL_00bc: stelem.ref
-		IL_00bd: ldc.i4.0
-		IL_00be: newarr [System.Runtime]System.Object
-		IL_00c3: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
-		IL_00c8: newobj instance void Modules.Classes_ClassComputedFieldAndMethod_DeclarationOrder/Example::.ctor(object[])
-		IL_00cd: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
-		IL_00d2: stloc.2
-		IL_00d3: ldloc.2
-		IL_00d4: ldtoken Modules.Classes_ClassComputedFieldAndMethod_DeclarationOrder/Example
-		IL_00d9: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_00de: ldstr "prototype"
-		IL_00e3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
-		IL_00e8: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
-		IL_00ed: ldstr "console"
-		IL_00f2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_00f7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00fc: stloc.s 5
-		IL_00fe: ldloc.s 5
-		IL_0100: ldstr "log"
-		IL_0105: ldloc.2
-		IL_0106: ldstr "field"
-		IL_010b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0110: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0115: pop
-		IL_0116: ldstr "console"
-		IL_011b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0120: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0125: stloc.s 5
-		IL_0127: ldloc.2
-		IL_0128: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Classes_ClassComputedFieldAndMethod_DeclarationOrder/Example>(!!0)
+		IL_00bd: stloc.s 4
+		IL_00bf: ldloc.s 4
+		IL_00c1: ldc.i4.0
+		IL_00c2: newarr [System.Runtime]System.Object
+		IL_00c7: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
+		IL_00cc: newobj instance void Modules.Classes_ClassComputedFieldAndMethod_DeclarationOrder/Example::.ctor(object[])
+		IL_00d1: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
+		IL_00d6: stloc.2
+		IL_00d7: ldloc.2
+		IL_00d8: ldtoken Modules.Classes_ClassComputedFieldAndMethod_DeclarationOrder/Example
+		IL_00dd: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_00e2: ldstr "prototype"
+		IL_00e7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
+		IL_00ec: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
+		IL_00f1: ldstr "console"
+		IL_00f6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_00fb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0100: stloc.s 5
+		IL_0102: ldloc.2
+		IL_0103: ldstr "field"
+		IL_0108: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_010d: stloc.s 6
+		IL_010f: ldloc.s 5
+		IL_0111: ldstr "log"
+		IL_0116: ldloc.s 6
+		IL_0118: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_011d: pop
+		IL_011e: ldstr "console"
+		IL_0123: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0128: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
 		IL_012d: stloc.s 6
-		IL_012f: ldloc.s 6
-		IL_0131: callvirt instance object Modules.Classes_ClassComputedFieldAndMethod_DeclarationOrder/Example::'method'()
-		IL_0136: stloc.s 7
-		IL_0138: ldloc.s 5
-		IL_013a: ldstr "log"
-		IL_013f: ldloc.s 7
-		IL_0141: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0146: pop
-		IL_0147: ret
+		IL_012f: ldloc.2
+		IL_0130: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Classes_ClassComputedFieldAndMethod_DeclarationOrder/Example>(!!0)
+		IL_0135: stloc.s 7
+		IL_0137: ldloc.s 7
+		IL_0139: callvirt instance object Modules.Classes_ClassComputedFieldAndMethod_DeclarationOrder/Example::'method'()
+		IL_013e: stloc.s 5
+		IL_0140: ldloc.s 6
+		IL_0142: ldstr "log"
+		IL_0147: ldloc.s 5
+		IL_0149: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_014e: pop
+		IL_014f: ret
 	} // end of method Classes_ClassComputedFieldAndMethod_DeclarationOrder::__js_module_init__
 
 } // end of class Modules.Classes_ClassComputedFieldAndMethod_DeclarationOrder
@@ -295,7 +302,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x221f
+		// Method begins at RVA 0x2229
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
