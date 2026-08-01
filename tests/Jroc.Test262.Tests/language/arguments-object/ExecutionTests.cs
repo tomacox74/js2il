@@ -33,4 +33,44 @@ public class ExecutionTests : DiskExecutionTestsBase
     [Fact(DisplayName = "10.6-13-c-3-s")]
     public Task _10_6_13_c_3_s()
         => ExecutionTest("10.6-13-c-3-s");
+
+    [Fact(DisplayName = "10.5-7-b-2-s")]
+    public Task _10_5_7_b_2_s()
+        => ExecutionTest("10.5-7-b-2-s");
+
+    [Fact(DisplayName = "10.5-7-b-3-s")]
+    public Task _10_5_7_b_3_s()
+        => ExecutionTest("10.5-7-b-3-s");
+
+    [Fact(DisplayName = "10.5-7-b-4-s")]
+    public Task _10_5_7_b_4_s()
+        => ExecutionTest("10.5-7-b-4-s");
+
+    [Fact(DisplayName = "10.6-5-1")]
+    public Task _10_6_5_1()
+        => ExecutionTest("10.6-5-1");
+
+    [Fact(DisplayName = "10.6-6-1")]
+    public Task _10_6_6_1()
+        => ExecutionTest("10.6-6-1");
+
+    [Fact(DisplayName = "10.6-10-c-ii-1-s")]
+    public Task _10_6_10_c_ii_1_s()
+        => ExecutionTest("10.6-10-c-ii-1-s");
+
+    [Fact(DisplayName = "10.6-10-c-ii-1")]
+    public Task _10_6_10_c_ii_1()
+        => ExecutionTest("10.6-10-c-ii-1");
+
+    [Fact(DisplayName = "10.6-10-c-ii-2")]
+    public Task _10_6_10_c_ii_2()
+        => ExecutionTest("10.6-10-c-ii-2");
+
+    [Fact(DisplayName = "10.6-11-b-1")]
+    public Task _10_6_11_b_1()
+        => ExecutionTest("10.6-11-b-1");
+
+    [Fact(DisplayName = "10.6-13-a-1")]
+    public Task _10_6_13_a_1()
+        => ExecutionTest("10.6-13-a-1");
 }
