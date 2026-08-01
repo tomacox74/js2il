@@ -674,6 +674,243 @@ public sealed class LIRStackSchedulerTests
     }
 
     [Fact]
+    public void Build_ConversionsMode_CarriesStableArrayLoadIntoGenericGetItemReceiver()
+    {
+        var body = new MethodBodyIR();
+        var array = AddTemp(body);
+        var index = AddTemp(body);
+        var receiver = AddTemp(body);
+        var property = AddTemp(body);
+        var result = AddTemp(body);
+        body.Instructions.Add(new LIRLoadParameter(1, array));
+        body.Instructions.Add(new LIRLoadParameter(2, index));
+        body.Instructions.Add(new LIRGetJsArrayElement(array, index, receiver));
+        body.Instructions.Add(new LIRConstString("value", property));
+        body.Instructions.Add(new LIRGetItem(receiver, property, result));
+        body.Instructions.Add(new LIRReturn(result));
+
+        var schedule = LIRStackScheduler.Build(
+            body,
+            new LIRStackSchedulerOptions(
+                LIRStackSchedulerMode.ConversionsAndStableLoads));
+
+        Assert.Equal(
+            TempResidency.StackResident,
+            schedule.TempResidencies[receiver.Index]);
+        Assert.True(schedule.OwnedTemps[receiver.Index]);
+    }
+
+    [Fact]
+    public void Build_ConversionsMode_DoesNotCarryMultiUseStableArrayLoad()
+    {
+        var body = new MethodBodyIR();
+        var array = AddTemp(body);
+        var index = AddTemp(body);
+        var receiver = AddTemp(body);
+        var property = AddTemp(body);
+        var first = AddTemp(body);
+        var second = AddTemp(body);
+        body.Instructions.Add(new LIRLoadParameter(1, array));
+        body.Instructions.Add(new LIRLoadParameter(2, index));
+        body.Instructions.Add(new LIRGetJsArrayElement(array, index, receiver));
+        body.Instructions.Add(new LIRConstString("value", property));
+        body.Instructions.Add(new LIRGetItem(receiver, property, first));
+        body.Instructions.Add(new LIRGetItem(receiver, property, second));
+        body.Instructions.Add(new LIRReturn(second));
+
+        var schedule = LIRStackScheduler.Build(
+            body,
+            new LIRStackSchedulerOptions(
+                LIRStackSchedulerMode.ConversionsAndStableLoads));
+
+        Assert.Equal(
+            TempResidency.MaterializedLocal,
+            schedule.TempResidencies[receiver.Index]);
+        Assert.False(schedule.OwnedTemps[receiver.Index]);
+    }
+
+    [Fact]
+    public void Build_ConversionsMode_DoesNotCarryVariableSlotStableArrayLoad()
+    {
+        var body = new MethodBodyIR();
+        var array = AddTemp(body);
+        var index = AddTemp(body);
+        var receiver = AddTemp(body);
+        var property = AddTemp(body);
+        var result = AddTemp(body);
+        body.TempVariableSlots.AddRange(
+            Enumerable.Repeat(-1, body.Temps.Count));
+        body.TempVariableSlots[receiver.Index] = 0;
+        body.Instructions.Add(new LIRLoadParameter(1, array));
+        body.Instructions.Add(new LIRLoadParameter(2, index));
+        body.Instructions.Add(new LIRGetJsArrayElement(array, index, receiver));
+        body.Instructions.Add(new LIRConstString("value", property));
+        body.Instructions.Add(new LIRGetItem(receiver, property, result));
+        body.Instructions.Add(new LIRReturn(result));
+
+        var schedule = LIRStackScheduler.Build(
+            body,
+            new LIRStackSchedulerOptions(
+                LIRStackSchedulerMode.ConversionsAndStableLoads));
+
+        Assert.Equal(
+            TempResidency.MaterializedLocal,
+            schedule.TempResidencies[receiver.Index]);
+        Assert.False(schedule.OwnedTemps[receiver.Index]);
+    }
+
+    [Fact]
+    public void Build_ConversionsMode_DoesNotCarryStableArrayLoadAcrossScopeReplacement()
+    {
+        var body = new MethodBodyIR();
+        var array = AddTemp(body);
+        var index = AddTemp(body);
+        var receiver = AddTemp(body);
+        var property = AddTemp(body);
+        var result = AddTemp(body);
+        body.Instructions.Add(new LIRLoadParameter(1, array));
+        body.Instructions.Add(new LIRLoadParameter(2, index));
+        body.Instructions.Add(new LIRGetJsArrayElement(array, index, receiver));
+        body.Instructions.Add(
+            new LIRCreateLeafScopeInstance(new ScopeId("block")));
+        body.Instructions.Add(new LIRConstString("value", property));
+        body.Instructions.Add(new LIRGetItem(receiver, property, result));
+        body.Instructions.Add(new LIRReturn(result));
+
+        var schedule = LIRStackScheduler.Build(
+            body,
+            new LIRStackSchedulerOptions(
+                LIRStackSchedulerMode.ConversionsAndStableLoads));
+
+        Assert.Equal(
+            TempResidency.MaterializedLocal,
+            schedule.TempResidencies[receiver.Index]);
+        Assert.False(schedule.OwnedTemps[receiver.Index]);
+    }
+
+    [Fact]
+    public void Build_ConversionsMode_DoesNotCarryStableArrayLoadAcrossSequencePoint()
+    {
+        var body = new MethodBodyIR();
+        var array = AddTemp(body);
+        var index = AddTemp(body);
+        var receiver = AddTemp(body);
+        var property = AddTemp(body);
+        var result = AddTemp(body);
+        body.Instructions.Add(new LIRLoadParameter(1, array));
+        body.Instructions.Add(new LIRLoadParameter(2, index));
+        body.Instructions.Add(new LIRGetJsArrayElement(array, index, receiver));
+        body.Instructions.Add(new LIRSequencePoint(
+            SourceSpan.Hidden("stable-load.js")));
+        body.Instructions.Add(new LIRConstString("value", property));
+        body.Instructions.Add(new LIRGetItem(receiver, property, result));
+        body.Instructions.Add(new LIRReturn(result));
+
+        var schedule = LIRStackScheduler.Build(
+            body,
+            new LIRStackSchedulerOptions(
+                LIRStackSchedulerMode.ConversionsAndStableLoads));
+
+        Assert.Equal(
+            TempResidency.MaterializedLocal,
+            schedule.TempResidencies[receiver.Index]);
+        Assert.False(schedule.OwnedTemps[receiver.Index]);
+    }
+
+    [Fact]
+    public void Build_ConversionsMode_DoesNotCarryStableArrayLoadAcrossControlFlow()
+    {
+        var body = new MethodBodyIR();
+        var array = AddTemp(body);
+        var index = AddTemp(body);
+        var receiver = AddTemp(body);
+        var property = AddTemp(body);
+        var result = AddTemp(body);
+        body.Instructions.Add(new LIRLoadParameter(1, array));
+        body.Instructions.Add(new LIRLoadParameter(2, index));
+        body.Instructions.Add(new LIRGetJsArrayElement(array, index, receiver));
+        body.Instructions.Add(new LIRBranch(1));
+        body.Instructions.Add(new LIRLabel(1));
+        body.Instructions.Add(new LIRConstString("value", property));
+        body.Instructions.Add(new LIRGetItem(receiver, property, result));
+        body.Instructions.Add(new LIRReturn(result));
+
+        var schedule = LIRStackScheduler.Build(
+            body,
+            new LIRStackSchedulerOptions(
+                LIRStackSchedulerMode.ConversionsAndStableLoads));
+
+        Assert.Equal(
+            TempResidency.MaterializedLocal,
+            schedule.TempResidencies[receiver.Index]);
+        Assert.False(schedule.OwnedTemps[receiver.Index]);
+    }
+
+    [Fact]
+    public void Build_ConversionsMode_DoesNotCarryStableArrayLoadAcrossEhEntry()
+    {
+        var body = new MethodBodyIR();
+        var array = AddTemp(body);
+        var index = AddTemp(body);
+        var receiver = AddTemp(body);
+        var exception = AddTemp(body);
+        var property = AddTemp(body);
+        var result = AddTemp(body);
+        body.Instructions.Add(new LIRLoadParameter(1, array));
+        body.Instructions.Add(new LIRLoadParameter(2, index));
+        body.Instructions.Add(new LIRGetJsArrayElement(array, index, receiver));
+        body.Instructions.Add(new LIRLabel(10));
+        body.Instructions.Add(new LIRStoreException(exception));
+        body.Instructions.Add(new LIRConstString("value", property));
+        body.Instructions.Add(new LIRGetItem(receiver, property, result));
+        body.Instructions.Add(new LIRReturn(result));
+        body.ExceptionRegions.Add(new ExceptionRegionInfo(
+            Jroc.IR.ExceptionRegionKind.Catch,
+            TryStartLabelId: 1,
+            TryEndLabelId: 2,
+            HandlerStartLabelId: 10,
+            HandlerEndLabelId: 11,
+            CatchType: typeof(Exception)));
+
+        var schedule = LIRStackScheduler.Build(
+            body,
+            new LIRStackSchedulerOptions(
+                LIRStackSchedulerMode.ConversionsAndStableLoads));
+
+        Assert.Equal(
+            TempResidency.MaterializedLocal,
+            schedule.TempResidencies[receiver.Index]);
+        Assert.False(schedule.OwnedTemps[receiver.Index]);
+    }
+
+    [Fact]
+    public void Build_ConversionsMode_DoesNotCarryStableArrayLoadAsGetItemIndex()
+    {
+        var body = new MethodBodyIR();
+        var target = AddTemp(body);
+        var array = AddTemp(body);
+        var index = AddTemp(body);
+        var property = AddTemp(body);
+        var result = AddTemp(body);
+        body.Instructions.Add(new LIRLoadParameter(1, target));
+        body.Instructions.Add(new LIRLoadParameter(2, array));
+        body.Instructions.Add(new LIRLoadParameter(3, index));
+        body.Instructions.Add(new LIRGetJsArrayElement(array, index, property));
+        body.Instructions.Add(new LIRGetItem(target, property, result));
+        body.Instructions.Add(new LIRReturn(result));
+
+        var schedule = LIRStackScheduler.Build(
+            body,
+            new LIRStackSchedulerOptions(
+                LIRStackSchedulerMode.ConversionsAndStableLoads));
+
+        Assert.Equal(
+            TempResidency.MaterializedLocal,
+            schedule.TempResidencies[property.Index]);
+        Assert.False(schedule.OwnedTemps[property.Index]);
+    }
+
+    [Fact]
     public void Build_CallResultsMode_CarriesCallResultIntoReceiverConsumer()
     {
         var body = new MethodBodyIR();
