@@ -1,12 +1,17 @@
 name: Benchmark branch comparison
-run-name: ${{ inputs.benchmark_suite }} ${{ inputs.scenario_name }} - master vs ${{ inputs.private_branch }}
+run-name: ${{ inputs.benchmark_suite }} ${{ inputs.scenario_name }} - ${{ inputs.baseline_ref }} vs ${{ inputs.private_branch }}
 
 on:
   workflow_dispatch:
     inputs:
       private_branch:
-        description: "Private branch or ref to compare with master"
+        description: "Private branch or ref to compare with the baseline"
         required: true
+        type: string
+      baseline_ref:
+        description: "Baseline branch, tag, or ref to compare against"
+        required: true
+        default: master
         type: string
       scenario_name:
         description: "Scenario or filter name for the selected benchmark suite"
@@ -29,18 +34,18 @@ env:
 
 jobs:
   compare:
-    name: Compare master and private branch
+    name: Compare baseline and private branch
     runs-on: ubuntu-latest
     timeout-minutes: 90
     permissions:
       contents: read
 
     steps:
-      - name: Checkout master baseline
+      - name: Checkout baseline
         uses: actions/checkout@v5
         with:
-          ref: master
-          path: master
+          ref: ${{ inputs.baseline_ref }}
+          path: baseline
           fetch-depth: 1
 
       - name: Checkout private branch
@@ -60,7 +65,7 @@ jobs:
         with:
           dotnet-version: "10.0.x"
 
-      - name: Run master benchmark
+      - name: Run baseline benchmark
         if: inputs.benchmark_suite != 'shape-storage'
         shell: bash
         env:
@@ -69,8 +74,8 @@ jobs:
         run: |
           set -euo pipefail
 
-          output_dir="$GITHUB_WORKSPACE/benchmark-comparison-results/master"
-          benchmark_dir="$GITHUB_WORKSPACE/master/tests/performance/Benchmarks"
+          output_dir="$GITHUB_WORKSPACE/benchmark-comparison-results/baseline"
+          benchmark_dir="$GITHUB_WORKSPACE/baseline/tests/performance/Benchmarks"
           mkdir -p "$output_dir"
 
           cd "$benchmark_dir"
@@ -95,7 +100,7 @@ jobs:
               ;;
           esac
 
-          echo "=== master: $BENCHMARK_SUITE $SCENARIO_NAME ==="
+          echo "=== ${{ inputs.baseline_ref }}: $BENCHMARK_SUITE $SCENARIO_NAME ==="
           dotnet run --project Benchmarks.csproj -c Release --no-build -- \
             "${benchmark_args[@]}" --exporters json \
             | tee "$output_dir/console.txt"
@@ -167,11 +172,11 @@ jobs:
             if [ "$BENCHMARK_SUITE" = "shape-storage" ]; then
               echo "- Baseline: internal FrozenDictionary reference implementation"
             else
-              echo "- Baseline: \`master\`"
+              echo "- Baseline: \`${{ inputs.baseline_ref }}\`"
             fi
             echo "- Candidate: \`$PRIVATE_BRANCH\`"
             echo
-            echo "Raw BenchmarkDotNet reports and console output are in the \`master\` and \`private\` directories."
+            echo "Raw BenchmarkDotNet reports and console output are in the \`baseline\` and \`private\` directories."
           } | tee "$output_dir/README.md"
 
       - name: Upload benchmark comparison results

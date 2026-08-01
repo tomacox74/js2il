@@ -10,6 +10,7 @@ function parseArgs(argv) {
     branch: null,
     scenario: null,
     benchmarkSuite: "dromaeo",
+    baselineRef: "master",
     repo: null,
     ref: "master",
     watch: false,
@@ -31,6 +32,9 @@ function parseArgs(argv) {
       case "--benchmark":
       case "--suite":
         args.benchmarkSuite = argv[++i] ?? null;
+        break;
+      case "--baseline":
+        args.baselineRef = argv[++i] ?? null;
         break;
       case "--repo":
         args.repo = argv[++i] ?? null;
@@ -70,9 +74,10 @@ using the selected BenchmarkDotNet suite. The workflow uploads both raw result s
 and console output as an artifact.
 
 Options:
-  --branch, -b <branch>       Private branch/ref to compare with master.
+  --branch, -b <branch>       Private branch/ref to compare with the baseline.
   --scenario, -s <scenario>  Exact scenario name for the selected suite.
   --benchmark, --suite <name> Benchmark suite: dromaeo (default) or kracken.
+  --baseline <ref>           Baseline branch, tag, or ref (default: master).
   --repo <owner/name>         Explicit repository override (defaults to origin).
   --ref <branch>              Branch/ref containing the workflow file (default: master).
   --watch                     Wait for the dispatched run to finish.
@@ -82,7 +87,7 @@ Options:
 Examples:
   node scripts/dispatchBenchmarkBranchComparisonWorkflow.js perf/object-shapes dromaeo-3d-cube
   node scripts/dispatchBenchmarkBranchComparisonWorkflow.js --branch perf/object-shapes --scenario dromaeo-3d-cube --watch
-  node scripts/dispatchBenchmarkBranchComparisonWorkflow.js v0.11.21 ai-astar --benchmark kracken --watch
+  node scripts/dispatchBenchmarkBranchComparisonWorkflow.js feat/scheduler-general-regions ai-astar --benchmark kracken --baseline v0.11.40 --watch
 `);
 }
 
@@ -152,6 +157,7 @@ function main() {
     throw new Error("--benchmark must be either 'dromaeo' or 'kracken'.");
   }
   if (!args.ref) throw new Error("--ref requires a value.");
+  if (!args.baselineRef) throw new Error("--baseline requires a value.");
 
   const repo = args.repo ?? inferRepoFromGitRemote();
   const workflowArgs = [
@@ -166,6 +172,8 @@ function main() {
     `scenario_name=${args.scenario}`,
     "-f",
     `benchmark_suite=${args.benchmarkSuite}`,
+    "-f",
+    `baseline_ref=${args.baselineRef}`,
   ];
   if (repo) workflowArgs.push("--repo", repo);
 

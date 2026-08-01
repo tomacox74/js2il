@@ -22,7 +22,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x403b
+					// Method begins at RVA 0x4013
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -42,7 +42,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x4044
+					// Method begins at RVA 0x401c
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -60,7 +60,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x4032
+				// Method begins at RVA 0x400a
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -85,9 +85,9 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2944
+			// Method begins at RVA 0x2940
 			// Header size: 12
-			// Code size: 300 (0x12c)
+			// Code size: 284 (0x11c)
 			.maxstack 8
 			.locals init (
 				[0] class [System.Runtime]System.Exception,
@@ -107,108 +107,100 @@
 				IL_000c: pop
 				IL_000d: ldstr "console"
 				IL_0012: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-				IL_0017: stloc.s 4
-				IL_0019: ldloc.s 4
-				IL_001b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_0020: stloc.s 4
-				IL_0022: ldarg.1
-				IL_0023: ldstr " threw:"
-				IL_0028: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-				IL_002d: stloc.s 5
-				IL_002f: ldloc.s 4
-				IL_0031: ldstr "log"
-				IL_0036: ldloc.s 5
-				IL_0038: ldc.i4.0
-				IL_0039: box [System.Runtime]System.Boolean
-				IL_003e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-				IL_0043: pop
-				IL_0044: leave IL_0128
+				IL_0017: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_001c: stloc.s 4
+				IL_001e: ldarg.1
+				IL_001f: ldstr " threw:"
+				IL_0024: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+				IL_0029: stloc.s 5
+				IL_002b: ldloc.s 4
+				IL_002d: ldstr "log"
+				IL_0032: ldloc.s 5
+				IL_0034: ldc.i4.0
+				IL_0035: box [System.Runtime]System.Boolean
+				IL_003a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+				IL_003f: pop
+				IL_0040: leave IL_0118
 			} // end .try
 			catch [System.Runtime]System.Exception
 			{
-				IL_0049: stloc.0
-				IL_004a: ldloc.0
-				IL_004b: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-				IL_0050: dup
-				IL_0051: brtrue IL_0066
+				IL_0045: stloc.0
+				IL_0046: ldloc.0
+				IL_0047: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+				IL_004c: dup
+				IL_004d: brtrue IL_0062
 
-				IL_0056: pop
-				IL_0057: ldloc.0
-				IL_0058: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
-				IL_005d: dup
-				IL_005e: brtrue IL_0071
+				IL_0052: pop
+				IL_0053: ldloc.0
+				IL_0054: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+				IL_0059: dup
+				IL_005a: brtrue IL_006d
 
-				IL_0063: pop
-				IL_0064: rethrow
+				IL_005f: pop
+				IL_0060: rethrow
 
-				IL_0066: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-				IL_006b: stloc.1
-				IL_006c: br IL_0072
+				IL_0062: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+				IL_0067: stloc.1
+				IL_0068: br IL_006e
 
-				IL_0071: stloc.1
+				IL_006d: stloc.1
 
-				IL_0072: ldloc.1
-				IL_0073: stloc.2
-				IL_0074: ldstr "console"
-				IL_0079: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-				IL_007e: stloc.s 4
-				IL_0080: ldloc.s 4
-				IL_0082: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_0087: stloc.s 4
-				IL_0089: ldarg.1
-				IL_008a: ldstr " threw:"
-				IL_008f: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-				IL_0094: stloc.s 5
-				IL_0096: ldloc.s 4
-				IL_0098: ldstr "log"
-				IL_009d: ldloc.s 5
-				IL_009f: ldc.i4.1
-				IL_00a0: box [System.Runtime]System.Boolean
-				IL_00a5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-				IL_00aa: pop
-				IL_00ab: ldstr "console"
-				IL_00b0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-				IL_00b5: stloc.s 4
-				IL_00b7: ldloc.s 4
-				IL_00b9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_00be: stloc.s 4
-				IL_00c0: ldarg.1
-				IL_00c1: ldstr " name:"
-				IL_00c6: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-				IL_00cb: stloc.s 5
-				IL_00cd: ldloc.s 4
-				IL_00cf: ldstr "log"
-				IL_00d4: ldloc.s 5
-				IL_00d6: ldloc.2
-				IL_00d7: ldstr "name"
-				IL_00dc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-				IL_00e1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-				IL_00e6: pop
-				IL_00e7: ldstr "console"
-				IL_00ec: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-				IL_00f1: stloc.s 4
-				IL_00f3: ldloc.s 4
-				IL_00f5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_00fa: stloc.s 4
-				IL_00fc: ldarg.1
-				IL_00fd: ldstr " message:"
-				IL_0102: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-				IL_0107: stloc.s 5
-				IL_0109: ldloc.s 4
-				IL_010b: ldstr "log"
-				IL_0110: ldloc.s 5
-				IL_0112: ldloc.2
-				IL_0113: ldstr "message"
-				IL_0118: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-				IL_011d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-				IL_0122: pop
-				IL_0123: leave IL_0128
+				IL_006e: ldloc.1
+				IL_006f: stloc.2
+				IL_0070: ldstr "console"
+				IL_0075: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+				IL_007a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_007f: stloc.s 4
+				IL_0081: ldarg.1
+				IL_0082: ldstr " threw:"
+				IL_0087: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+				IL_008c: stloc.s 5
+				IL_008e: ldloc.s 4
+				IL_0090: ldstr "log"
+				IL_0095: ldloc.s 5
+				IL_0097: ldc.i4.1
+				IL_0098: box [System.Runtime]System.Boolean
+				IL_009d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+				IL_00a2: pop
+				IL_00a3: ldstr "console"
+				IL_00a8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+				IL_00ad: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_00b2: stloc.s 4
+				IL_00b4: ldarg.1
+				IL_00b5: ldstr " name:"
+				IL_00ba: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+				IL_00bf: stloc.s 5
+				IL_00c1: ldloc.s 4
+				IL_00c3: ldstr "log"
+				IL_00c8: ldloc.s 5
+				IL_00ca: ldloc.2
+				IL_00cb: ldstr "name"
+				IL_00d0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+				IL_00d5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+				IL_00da: pop
+				IL_00db: ldstr "console"
+				IL_00e0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+				IL_00e5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_00ea: stloc.s 4
+				IL_00ec: ldarg.1
+				IL_00ed: ldstr " message:"
+				IL_00f2: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+				IL_00f7: stloc.s 5
+				IL_00f9: ldloc.s 4
+				IL_00fb: ldstr "log"
+				IL_0100: ldloc.s 5
+				IL_0102: ldloc.2
+				IL_0103: ldstr "message"
+				IL_0108: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+				IL_010d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+				IL_0112: pop
+				IL_0113: leave IL_0118
 			} // end handler
 
-			IL_0128: ldnull
-			IL_0129: stloc.3
-			IL_012a: ldloc.3
-			IL_012b: ret
+			IL_0118: ldnull
+			IL_0119: stloc.3
+			IL_011a: ldloc.3
+			IL_011b: ret
 		} // end of method logError::__js_call__
 
 	} // end of class logError
@@ -224,7 +216,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x404d
+				// Method begins at RVA 0x4025
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -250,7 +242,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 24 00 00 02
 			)
-			// Method begins at RVA 0x2a8c
+			// Method begins at RVA 0x2a78
 			// Header size: 12
 			// Code size: 40 (0x28)
 			.maxstack 8
@@ -285,7 +277,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x4056
+				// Method begins at RVA 0x402e
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -311,7 +303,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 24 00 00 02
 			)
-			// Method begins at RVA 0x2ac0
+			// Method begins at RVA 0x2aac
 			// Header size: 12
 			// Code size: 31 (0x1f)
 			.maxstack 8
@@ -345,7 +337,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x405f
+				// Method begins at RVA 0x4037
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -371,7 +363,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 24 00 00 02
 			)
-			// Method begins at RVA 0x2aec
+			// Method begins at RVA 0x2ad8
 			// Header size: 12
 			// Code size: 45 (0x2d)
 			.maxstack 8
@@ -407,7 +399,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x4068
+				// Method begins at RVA 0x4040
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -433,7 +425,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 24 00 00 02
 			)
-			// Method begins at RVA 0x2b28
+			// Method begins at RVA 0x2b14
 			// Header size: 12
 			// Code size: 36 (0x24)
 			.maxstack 8
@@ -468,7 +460,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x4071
+				// Method begins at RVA 0x4049
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -494,7 +486,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 24 00 00 02
 			)
-			// Method begins at RVA 0x2b58
+			// Method begins at RVA 0x2b44
 			// Header size: 12
 			// Code size: 37 (0x25)
 			.maxstack 8
@@ -530,7 +522,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x407a
+				// Method begins at RVA 0x4052
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -556,7 +548,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 24 00 00 02
 			)
-			// Method begins at RVA 0x2b8c
+			// Method begins at RVA 0x2b78
 			// Header size: 12
 			// Code size: 45 (0x2d)
 			.maxstack 8
@@ -592,7 +584,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x4083
+				// Method begins at RVA 0x405b
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -618,44 +610,47 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 24 00 00 02
 			)
-			// Method begins at RVA 0x2bc8
+			// Method begins at RVA 0x2bb4
 			// Header size: 12
-			// Code size: 82 (0x52)
+			// Code size: 84 (0x54)
 			.maxstack 8
 			.locals init (
-				[0] object
+				[0] object,
+				[1] object[]
 			)
 
 			IL_0000: ldarg.0
 			IL_0001: ldfld object Modules.Require_Crypto_ErrorPaths/Scope::crypto
 			IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
 			IL_000b: stloc.0
-			IL_000c: ldloc.0
-			IL_000d: ldstr "pbkdf2Sync"
-			IL_0012: ldc.i4.4
-			IL_0013: newarr [System.Runtime]System.Object
-			IL_0018: dup
-			IL_0019: ldc.i4.0
-			IL_001a: ldstr "password"
-			IL_001f: stelem.ref
-			IL_0020: dup
-			IL_0021: ldc.i4.1
-			IL_0022: ldstr "salt"
-			IL_0027: stelem.ref
-			IL_0028: dup
-			IL_0029: ldc.i4.2
-			IL_002a: ldc.r8 1
-			IL_0033: box [System.Runtime]System.Double
-			IL_0038: stelem.ref
-			IL_0039: dup
-			IL_003a: ldc.i4.3
-			IL_003b: ldc.r8 16
-			IL_0044: box [System.Runtime]System.Double
-			IL_0049: stelem.ref
-			IL_004a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember(object, string, object[])
-			IL_004f: stloc.0
-			IL_0050: ldloc.0
-			IL_0051: ret
+			IL_000c: ldc.i4.4
+			IL_000d: newarr [System.Runtime]System.Object
+			IL_0012: dup
+			IL_0013: ldc.i4.0
+			IL_0014: ldstr "password"
+			IL_0019: stelem.ref
+			IL_001a: dup
+			IL_001b: ldc.i4.1
+			IL_001c: ldstr "salt"
+			IL_0021: stelem.ref
+			IL_0022: dup
+			IL_0023: ldc.i4.2
+			IL_0024: ldc.r8 1
+			IL_002d: box [System.Runtime]System.Double
+			IL_0032: stelem.ref
+			IL_0033: dup
+			IL_0034: ldc.i4.3
+			IL_0035: ldc.r8 16
+			IL_003e: box [System.Runtime]System.Double
+			IL_0043: stelem.ref
+			IL_0044: stloc.1
+			IL_0045: ldloc.0
+			IL_0046: ldstr "pbkdf2Sync"
+			IL_004b: ldloc.1
+			IL_004c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember(object, string, object[])
+			IL_0051: stloc.0
+			IL_0052: ldloc.0
+			IL_0053: ret
 		} // end of method ArrowFunction_L22C35::__js_call__
 
 	} // end of class ArrowFunction_L22C35
@@ -671,7 +666,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x408c
+				// Method begins at RVA 0x4064
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -697,48 +692,51 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 24 00 00 02
 			)
-			// Method begins at RVA 0x2c28
+			// Method begins at RVA 0x2c14
 			// Header size: 12
-			// Code size: 90 (0x5a)
+			// Code size: 92 (0x5c)
 			.maxstack 8
 			.locals init (
-				[0] object
+				[0] object,
+				[1] object[]
 			)
 
 			IL_0000: ldarg.0
 			IL_0001: ldfld object Modules.Require_Crypto_ErrorPaths/Scope::crypto
 			IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
 			IL_000b: stloc.0
-			IL_000c: ldloc.0
-			IL_000d: ldstr "pbkdf2Sync"
-			IL_0012: ldc.i4.5
-			IL_0013: newarr [System.Runtime]System.Object
-			IL_0018: dup
-			IL_0019: ldc.i4.0
-			IL_001a: ldstr "password"
-			IL_001f: stelem.ref
-			IL_0020: dup
-			IL_0021: ldc.i4.1
-			IL_0022: ldstr "salt"
-			IL_0027: stelem.ref
-			IL_0028: dup
-			IL_0029: ldc.i4.2
-			IL_002a: ldc.r8 1
-			IL_0033: box [System.Runtime]System.Double
-			IL_0038: stelem.ref
-			IL_0039: dup
-			IL_003a: ldc.i4.3
-			IL_003b: ldc.r8 16
-			IL_0044: box [System.Runtime]System.Double
-			IL_0049: stelem.ref
-			IL_004a: dup
-			IL_004b: ldc.i4.4
-			IL_004c: ldstr "sha3"
-			IL_0051: stelem.ref
-			IL_0052: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember(object, string, object[])
-			IL_0057: stloc.0
-			IL_0058: ldloc.0
-			IL_0059: ret
+			IL_000c: ldc.i4.5
+			IL_000d: newarr [System.Runtime]System.Object
+			IL_0012: dup
+			IL_0013: ldc.i4.0
+			IL_0014: ldstr "password"
+			IL_0019: stelem.ref
+			IL_001a: dup
+			IL_001b: ldc.i4.1
+			IL_001c: ldstr "salt"
+			IL_0021: stelem.ref
+			IL_0022: dup
+			IL_0023: ldc.i4.2
+			IL_0024: ldc.r8 1
+			IL_002d: box [System.Runtime]System.Double
+			IL_0032: stelem.ref
+			IL_0033: dup
+			IL_0034: ldc.i4.3
+			IL_0035: ldc.r8 16
+			IL_003e: box [System.Runtime]System.Double
+			IL_0043: stelem.ref
+			IL_0044: dup
+			IL_0045: ldc.i4.4
+			IL_0046: ldstr "sha3"
+			IL_004b: stelem.ref
+			IL_004c: stloc.1
+			IL_004d: ldloc.0
+			IL_004e: ldstr "pbkdf2Sync"
+			IL_0053: ldloc.1
+			IL_0054: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember(object, string, object[])
+			IL_0059: stloc.0
+			IL_005a: ldloc.0
+			IL_005b: ret
 		} // end of method ArrowFunction_L23C39::__js_call__
 
 	} // end of class ArrowFunction_L23C39
@@ -754,7 +752,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x4095
+				// Method begins at RVA 0x406d
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -780,49 +778,52 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 24 00 00 02
 			)
-			// Method begins at RVA 0x2c90
+			// Method begins at RVA 0x2c7c
 			// Header size: 12
-			// Code size: 99 (0x63)
+			// Code size: 101 (0x65)
 			.maxstack 8
 			.locals init (
-				[0] object
+				[0] object,
+				[1] object[]
 			)
 
 			IL_0000: ldarg.0
 			IL_0001: ldfld object Modules.Require_Crypto_ErrorPaths/Scope::crypto
 			IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
 			IL_000b: stloc.0
-			IL_000c: ldloc.0
-			IL_000d: ldstr "pbkdf2Sync"
-			IL_0012: ldc.i4.5
-			IL_0013: newarr [System.Runtime]System.Object
-			IL_0018: dup
-			IL_0019: ldc.i4.0
-			IL_001a: ldc.r8 123
-			IL_0023: box [System.Runtime]System.Double
-			IL_0028: stelem.ref
-			IL_0029: dup
-			IL_002a: ldc.i4.1
-			IL_002b: ldstr "salt"
-			IL_0030: stelem.ref
-			IL_0031: dup
-			IL_0032: ldc.i4.2
-			IL_0033: ldc.r8 1
-			IL_003c: box [System.Runtime]System.Double
-			IL_0041: stelem.ref
-			IL_0042: dup
-			IL_0043: ldc.i4.3
-			IL_0044: ldc.r8 16
-			IL_004d: box [System.Runtime]System.Double
-			IL_0052: stelem.ref
-			IL_0053: dup
-			IL_0054: ldc.i4.4
-			IL_0055: ldstr "sha256"
-			IL_005a: stelem.ref
-			IL_005b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember(object, string, object[])
-			IL_0060: stloc.0
-			IL_0061: ldloc.0
-			IL_0062: ret
+			IL_000c: ldc.i4.5
+			IL_000d: newarr [System.Runtime]System.Object
+			IL_0012: dup
+			IL_0013: ldc.i4.0
+			IL_0014: ldc.r8 123
+			IL_001d: box [System.Runtime]System.Double
+			IL_0022: stelem.ref
+			IL_0023: dup
+			IL_0024: ldc.i4.1
+			IL_0025: ldstr "salt"
+			IL_002a: stelem.ref
+			IL_002b: dup
+			IL_002c: ldc.i4.2
+			IL_002d: ldc.r8 1
+			IL_0036: box [System.Runtime]System.Double
+			IL_003b: stelem.ref
+			IL_003c: dup
+			IL_003d: ldc.i4.3
+			IL_003e: ldc.r8 16
+			IL_0047: box [System.Runtime]System.Double
+			IL_004c: stelem.ref
+			IL_004d: dup
+			IL_004e: ldc.i4.4
+			IL_004f: ldstr "sha256"
+			IL_0054: stelem.ref
+			IL_0055: stloc.1
+			IL_0056: ldloc.0
+			IL_0057: ldstr "pbkdf2Sync"
+			IL_005c: ldloc.1
+			IL_005d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember(object, string, object[])
+			IL_0062: stloc.0
+			IL_0063: ldloc.0
+			IL_0064: ret
 		} // end of method ArrowFunction_L24C36::__js_call__
 
 	} // end of class ArrowFunction_L24C36
@@ -838,7 +839,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x409e
+				// Method begins at RVA 0x4076
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -864,49 +865,52 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 24 00 00 02
 			)
-			// Method begins at RVA 0x2d00
+			// Method begins at RVA 0x2cf0
 			// Header size: 12
-			// Code size: 91 (0x5b)
+			// Code size: 93 (0x5d)
 			.maxstack 8
 			.locals init (
-				[0] object
+				[0] object,
+				[1] object[]
 			)
 
 			IL_0000: ldarg.0
 			IL_0001: ldfld object Modules.Require_Crypto_ErrorPaths/Scope::crypto
 			IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
 			IL_000b: stloc.0
-			IL_000c: ldloc.0
-			IL_000d: ldstr "pbkdf2Sync"
-			IL_0012: ldc.i4.5
-			IL_0013: newarr [System.Runtime]System.Object
-			IL_0018: dup
-			IL_0019: ldc.i4.0
-			IL_001a: ldstr "password"
-			IL_001f: stelem.ref
-			IL_0020: dup
-			IL_0021: ldc.i4.1
-			IL_0022: ldc.i4.0
-			IL_0023: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
-			IL_0028: stelem.ref
-			IL_0029: dup
-			IL_002a: ldc.i4.2
-			IL_002b: ldc.r8 1
-			IL_0034: box [System.Runtime]System.Double
-			IL_0039: stelem.ref
-			IL_003a: dup
-			IL_003b: ldc.i4.3
-			IL_003c: ldc.r8 16
-			IL_0045: box [System.Runtime]System.Double
-			IL_004a: stelem.ref
-			IL_004b: dup
-			IL_004c: ldc.i4.4
-			IL_004d: ldstr "sha256"
-			IL_0052: stelem.ref
-			IL_0053: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember(object, string, object[])
-			IL_0058: stloc.0
-			IL_0059: ldloc.0
-			IL_005a: ret
+			IL_000c: ldc.i4.5
+			IL_000d: newarr [System.Runtime]System.Object
+			IL_0012: dup
+			IL_0013: ldc.i4.0
+			IL_0014: ldstr "password"
+			IL_0019: stelem.ref
+			IL_001a: dup
+			IL_001b: ldc.i4.1
+			IL_001c: ldc.i4.0
+			IL_001d: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
+			IL_0022: stelem.ref
+			IL_0023: dup
+			IL_0024: ldc.i4.2
+			IL_0025: ldc.r8 1
+			IL_002e: box [System.Runtime]System.Double
+			IL_0033: stelem.ref
+			IL_0034: dup
+			IL_0035: ldc.i4.3
+			IL_0036: ldc.r8 16
+			IL_003f: box [System.Runtime]System.Double
+			IL_0044: stelem.ref
+			IL_0045: dup
+			IL_0046: ldc.i4.4
+			IL_0047: ldstr "sha256"
+			IL_004c: stelem.ref
+			IL_004d: stloc.1
+			IL_004e: ldloc.0
+			IL_004f: ldstr "pbkdf2Sync"
+			IL_0054: ldloc.1
+			IL_0055: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember(object, string, object[])
+			IL_005a: stloc.0
+			IL_005b: ldloc.0
+			IL_005c: ret
 		} // end of method ArrowFunction_L25C30::__js_call__
 
 	} // end of class ArrowFunction_L25C30
@@ -922,7 +926,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x40a7
+				// Method begins at RVA 0x407f
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -948,47 +952,50 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 24 00 00 02
 			)
-			// Method begins at RVA 0x2d68
+			// Method begins at RVA 0x2d5c
 			// Header size: 12
-			// Code size: 81 (0x51)
+			// Code size: 83 (0x53)
 			.maxstack 8
 			.locals init (
-				[0] object
+				[0] object,
+				[1] object[]
 			)
 
 			IL_0000: ldarg.0
 			IL_0001: ldfld object Modules.Require_Crypto_ErrorPaths/Scope::crypto
 			IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
 			IL_000b: stloc.0
-			IL_000c: ldloc.0
-			IL_000d: ldstr "pbkdf2Sync"
-			IL_0012: ldc.i4.5
-			IL_0013: newarr [System.Runtime]System.Object
-			IL_0018: dup
-			IL_0019: ldc.i4.0
-			IL_001a: ldstr "password"
-			IL_001f: stelem.ref
-			IL_0020: dup
-			IL_0021: ldc.i4.1
-			IL_0022: ldstr "salt"
-			IL_0027: stelem.ref
-			IL_0028: dup
-			IL_0029: ldc.i4.2
-			IL_002a: ldstr "1"
-			IL_002f: stelem.ref
-			IL_0030: dup
-			IL_0031: ldc.i4.3
-			IL_0032: ldc.r8 16
-			IL_003b: box [System.Runtime]System.Double
-			IL_0040: stelem.ref
-			IL_0041: dup
-			IL_0042: ldc.i4.4
-			IL_0043: ldstr "sha256"
-			IL_0048: stelem.ref
-			IL_0049: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember(object, string, object[])
-			IL_004e: stloc.0
-			IL_004f: ldloc.0
-			IL_0050: ret
+			IL_000c: ldc.i4.5
+			IL_000d: newarr [System.Runtime]System.Object
+			IL_0012: dup
+			IL_0013: ldc.i4.0
+			IL_0014: ldstr "password"
+			IL_0019: stelem.ref
+			IL_001a: dup
+			IL_001b: ldc.i4.1
+			IL_001c: ldstr "salt"
+			IL_0021: stelem.ref
+			IL_0022: dup
+			IL_0023: ldc.i4.2
+			IL_0024: ldstr "1"
+			IL_0029: stelem.ref
+			IL_002a: dup
+			IL_002b: ldc.i4.3
+			IL_002c: ldc.r8 16
+			IL_0035: box [System.Runtime]System.Double
+			IL_003a: stelem.ref
+			IL_003b: dup
+			IL_003c: ldc.i4.4
+			IL_003d: ldstr "sha256"
+			IL_0042: stelem.ref
+			IL_0043: stloc.1
+			IL_0044: ldloc.0
+			IL_0045: ldstr "pbkdf2Sync"
+			IL_004a: ldloc.1
+			IL_004b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember(object, string, object[])
+			IL_0050: stloc.0
+			IL_0051: ldloc.0
+			IL_0052: ret
 		} // end of method ArrowFunction_L26C36::__js_call__
 
 	} // end of class ArrowFunction_L26C36
@@ -1004,7 +1011,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x40b0
+				// Method begins at RVA 0x4088
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -1030,48 +1037,51 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 24 00 00 02
 			)
-			// Method begins at RVA 0x2dc8
+			// Method begins at RVA 0x2dbc
 			// Header size: 12
-			// Code size: 90 (0x5a)
+			// Code size: 92 (0x5c)
 			.maxstack 8
 			.locals init (
-				[0] object
+				[0] object,
+				[1] object[]
 			)
 
 			IL_0000: ldarg.0
 			IL_0001: ldfld object Modules.Require_Crypto_ErrorPaths/Scope::crypto
 			IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
 			IL_000b: stloc.0
-			IL_000c: ldloc.0
-			IL_000d: ldstr "pbkdf2Sync"
-			IL_0012: ldc.i4.5
-			IL_0013: newarr [System.Runtime]System.Object
-			IL_0018: dup
-			IL_0019: ldc.i4.0
-			IL_001a: ldstr "password"
-			IL_001f: stelem.ref
-			IL_0020: dup
-			IL_0021: ldc.i4.1
-			IL_0022: ldstr "salt"
-			IL_0027: stelem.ref
-			IL_0028: dup
-			IL_0029: ldc.i4.2
-			IL_002a: ldc.r8 1.5
-			IL_0033: box [System.Runtime]System.Double
-			IL_0038: stelem.ref
-			IL_0039: dup
-			IL_003a: ldc.i4.3
-			IL_003b: ldc.r8 16
-			IL_0044: box [System.Runtime]System.Double
-			IL_0049: stelem.ref
-			IL_004a: dup
-			IL_004b: ldc.i4.4
-			IL_004c: ldstr "sha256"
-			IL_0051: stelem.ref
-			IL_0052: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember(object, string, object[])
-			IL_0057: stloc.0
-			IL_0058: ldloc.0
-			IL_0059: ret
+			IL_000c: ldc.i4.5
+			IL_000d: newarr [System.Runtime]System.Object
+			IL_0012: dup
+			IL_0013: ldc.i4.0
+			IL_0014: ldstr "password"
+			IL_0019: stelem.ref
+			IL_001a: dup
+			IL_001b: ldc.i4.1
+			IL_001c: ldstr "salt"
+			IL_0021: stelem.ref
+			IL_0022: dup
+			IL_0023: ldc.i4.2
+			IL_0024: ldc.r8 1.5
+			IL_002d: box [System.Runtime]System.Double
+			IL_0032: stelem.ref
+			IL_0033: dup
+			IL_0034: ldc.i4.3
+			IL_0035: ldc.r8 16
+			IL_003e: box [System.Runtime]System.Double
+			IL_0043: stelem.ref
+			IL_0044: dup
+			IL_0045: ldc.i4.4
+			IL_0046: ldstr "sha256"
+			IL_004b: stelem.ref
+			IL_004c: stloc.1
+			IL_004d: ldloc.0
+			IL_004e: ldstr "pbkdf2Sync"
+			IL_0053: ldloc.1
+			IL_0054: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember(object, string, object[])
+			IL_0059: stloc.0
+			IL_005a: ldloc.0
+			IL_005b: ret
 		} // end of method ArrowFunction_L27C37::__js_call__
 
 	} // end of class ArrowFunction_L27C37
@@ -1087,7 +1097,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x40b9
+				// Method begins at RVA 0x4091
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -1113,48 +1123,51 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 24 00 00 02
 			)
-			// Method begins at RVA 0x2e30
+			// Method begins at RVA 0x2e24
 			// Header size: 12
-			// Code size: 90 (0x5a)
+			// Code size: 92 (0x5c)
 			.maxstack 8
 			.locals init (
-				[0] object
+				[0] object,
+				[1] object[]
 			)
 
 			IL_0000: ldarg.0
 			IL_0001: ldfld object Modules.Require_Crypto_ErrorPaths/Scope::crypto
 			IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
 			IL_000b: stloc.0
-			IL_000c: ldloc.0
-			IL_000d: ldstr "pbkdf2Sync"
-			IL_0012: ldc.i4.5
-			IL_0013: newarr [System.Runtime]System.Object
-			IL_0018: dup
-			IL_0019: ldc.i4.0
-			IL_001a: ldstr "password"
-			IL_001f: stelem.ref
-			IL_0020: dup
-			IL_0021: ldc.i4.1
-			IL_0022: ldstr "salt"
-			IL_0027: stelem.ref
-			IL_0028: dup
-			IL_0029: ldc.i4.2
-			IL_002a: ldc.r8 0.0
-			IL_0033: box [System.Runtime]System.Double
-			IL_0038: stelem.ref
-			IL_0039: dup
-			IL_003a: ldc.i4.3
-			IL_003b: ldc.r8 16
-			IL_0044: box [System.Runtime]System.Double
-			IL_0049: stelem.ref
-			IL_004a: dup
-			IL_004b: ldc.i4.4
-			IL_004c: ldstr "sha256"
-			IL_0051: stelem.ref
-			IL_0052: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember(object, string, object[])
-			IL_0057: stloc.0
-			IL_0058: ldloc.0
-			IL_0059: ret
+			IL_000c: ldc.i4.5
+			IL_000d: newarr [System.Runtime]System.Object
+			IL_0012: dup
+			IL_0013: ldc.i4.0
+			IL_0014: ldstr "password"
+			IL_0019: stelem.ref
+			IL_001a: dup
+			IL_001b: ldc.i4.1
+			IL_001c: ldstr "salt"
+			IL_0021: stelem.ref
+			IL_0022: dup
+			IL_0023: ldc.i4.2
+			IL_0024: ldc.r8 0.0
+			IL_002d: box [System.Runtime]System.Double
+			IL_0032: stelem.ref
+			IL_0033: dup
+			IL_0034: ldc.i4.3
+			IL_0035: ldc.r8 16
+			IL_003e: box [System.Runtime]System.Double
+			IL_0043: stelem.ref
+			IL_0044: dup
+			IL_0045: ldc.i4.4
+			IL_0046: ldstr "sha256"
+			IL_004b: stelem.ref
+			IL_004c: stloc.1
+			IL_004d: ldloc.0
+			IL_004e: ldstr "pbkdf2Sync"
+			IL_0053: ldloc.1
+			IL_0054: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember(object, string, object[])
+			IL_0059: stloc.0
+			IL_005a: ldloc.0
+			IL_005b: ret
 		} // end of method ArrowFunction_L28C36::__js_call__
 
 	} // end of class ArrowFunction_L28C36
@@ -1170,7 +1183,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x40c2
+				// Method begins at RVA 0x409a
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -1196,48 +1209,51 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 24 00 00 02
 			)
-			// Method begins at RVA 0x2e98
+			// Method begins at RVA 0x2e8c
 			// Header size: 12
-			// Code size: 90 (0x5a)
+			// Code size: 92 (0x5c)
 			.maxstack 8
 			.locals init (
-				[0] object
+				[0] object,
+				[1] object[]
 			)
 
 			IL_0000: ldarg.0
 			IL_0001: ldfld object Modules.Require_Crypto_ErrorPaths/Scope::crypto
 			IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
 			IL_000b: stloc.0
-			IL_000c: ldloc.0
-			IL_000d: ldstr "pbkdf2Sync"
-			IL_0012: ldc.i4.5
-			IL_0013: newarr [System.Runtime]System.Object
-			IL_0018: dup
-			IL_0019: ldc.i4.0
-			IL_001a: ldstr "password"
-			IL_001f: stelem.ref
-			IL_0020: dup
-			IL_0021: ldc.i4.1
-			IL_0022: ldstr "salt"
-			IL_0027: stelem.ref
-			IL_0028: dup
-			IL_0029: ldc.i4.2
-			IL_002a: ldc.r8 1
-			IL_0033: box [System.Runtime]System.Double
-			IL_0038: stelem.ref
-			IL_0039: dup
-			IL_003a: ldc.i4.3
-			IL_003b: ldc.r8 8.5
-			IL_0044: box [System.Runtime]System.Double
-			IL_0049: stelem.ref
-			IL_004a: dup
-			IL_004b: ldc.i4.4
-			IL_004c: ldstr "sha256"
-			IL_0051: stelem.ref
-			IL_0052: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember(object, string, object[])
-			IL_0057: stloc.0
-			IL_0058: ldloc.0
-			IL_0059: ret
+			IL_000c: ldc.i4.5
+			IL_000d: newarr [System.Runtime]System.Object
+			IL_0012: dup
+			IL_0013: ldc.i4.0
+			IL_0014: ldstr "password"
+			IL_0019: stelem.ref
+			IL_001a: dup
+			IL_001b: ldc.i4.1
+			IL_001c: ldstr "salt"
+			IL_0021: stelem.ref
+			IL_0022: dup
+			IL_0023: ldc.i4.2
+			IL_0024: ldc.r8 1
+			IL_002d: box [System.Runtime]System.Double
+			IL_0032: stelem.ref
+			IL_0033: dup
+			IL_0034: ldc.i4.3
+			IL_0035: ldc.r8 8.5
+			IL_003e: box [System.Runtime]System.Double
+			IL_0043: stelem.ref
+			IL_0044: dup
+			IL_0045: ldc.i4.4
+			IL_0046: ldstr "sha256"
+			IL_004b: stelem.ref
+			IL_004c: stloc.1
+			IL_004d: ldloc.0
+			IL_004e: ldstr "pbkdf2Sync"
+			IL_0053: ldloc.1
+			IL_0054: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember(object, string, object[])
+			IL_0059: stloc.0
+			IL_005a: ldloc.0
+			IL_005b: ret
 		} // end of method ArrowFunction_L29C33::__js_call__
 
 	} // end of class ArrowFunction_L29C33
@@ -1253,7 +1269,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x40cb
+				// Method begins at RVA 0x40a3
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -1279,48 +1295,48 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 24 00 00 02
 			)
-			// Method begins at RVA 0x2f00
+			// Method begins at RVA 0x2ef4
 			// Header size: 12
 			// Code size: 93 (0x5d)
 			.maxstack 8
 			.locals init (
 				[0] object,
-				[1] object
+				[1] object[]
 			)
 
 			IL_0000: ldarg.0
 			IL_0001: ldfld object Modules.Require_Crypto_ErrorPaths/Scope::crypto
 			IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
 			IL_000b: stloc.0
-			IL_000c: ldc.r8 1
-			IL_0015: neg
-			IL_0016: box [System.Runtime]System.Double
-			IL_001b: stloc.1
-			IL_001c: ldloc.0
-			IL_001d: ldstr "pbkdf2Sync"
-			IL_0022: ldc.i4.5
-			IL_0023: newarr [System.Runtime]System.Object
-			IL_0028: dup
-			IL_0029: ldc.i4.0
-			IL_002a: ldstr "password"
-			IL_002f: stelem.ref
-			IL_0030: dup
-			IL_0031: ldc.i4.1
-			IL_0032: ldstr "salt"
-			IL_0037: stelem.ref
-			IL_0038: dup
-			IL_0039: ldc.i4.2
-			IL_003a: ldc.r8 1
-			IL_0043: box [System.Runtime]System.Double
-			IL_0048: stelem.ref
-			IL_0049: dup
-			IL_004a: ldc.i4.3
-			IL_004b: ldloc.1
+			IL_000c: ldc.i4.5
+			IL_000d: newarr [System.Runtime]System.Object
+			IL_0012: dup
+			IL_0013: ldc.i4.0
+			IL_0014: ldstr "password"
+			IL_0019: stelem.ref
+			IL_001a: dup
+			IL_001b: ldc.i4.1
+			IL_001c: ldstr "salt"
+			IL_0021: stelem.ref
+			IL_0022: dup
+			IL_0023: ldc.i4.2
+			IL_0024: ldc.r8 1
+			IL_002d: box [System.Runtime]System.Double
+			IL_0032: stelem.ref
+			IL_0033: dup
+			IL_0034: ldc.i4.3
+			IL_0035: ldc.r8 1
+			IL_003e: neg
+			IL_003f: box [System.Runtime]System.Double
+			IL_0044: stelem.ref
+			IL_0045: dup
+			IL_0046: ldc.i4.4
+			IL_0047: ldstr "sha256"
 			IL_004c: stelem.ref
-			IL_004d: dup
-			IL_004e: ldc.i4.4
-			IL_004f: ldstr "sha256"
-			IL_0054: stelem.ref
+			IL_004d: stloc.1
+			IL_004e: ldloc.0
+			IL_004f: ldstr "pbkdf2Sync"
+			IL_0054: ldloc.1
 			IL_0055: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember(object, string, object[])
 			IL_005a: stloc.0
 			IL_005b: ldloc.0
@@ -1340,7 +1356,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x40d4
+				// Method begins at RVA 0x40ac
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -1366,7 +1382,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 24 00 00 02
 			)
-			// Method begins at RVA 0x2f6c
+			// Method begins at RVA 0x2f60
 			// Header size: 12
 			// Code size: 31 (0x1f)
 			.maxstack 8
@@ -1400,7 +1416,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x40dd
+				// Method begins at RVA 0x40b5
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -1426,7 +1442,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 24 00 00 02
 			)
-			// Method begins at RVA 0x2f98
+			// Method begins at RVA 0x2f8c
 			// Header size: 12
 			// Code size: 41 (0x29)
 			.maxstack 8
@@ -1462,7 +1478,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x40e6
+				// Method begins at RVA 0x40be
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -1488,7 +1504,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 24 00 00 02
 			)
-			// Method begins at RVA 0x2fd0
+			// Method begins at RVA 0x2fc4
 			// Header size: 12
 			// Code size: 31 (0x1f)
 			.maxstack 8
@@ -1522,7 +1538,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x40ef
+				// Method begins at RVA 0x40c7
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -1548,7 +1564,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 24 00 00 02
 			)
-			// Method begins at RVA 0x2ffc
+			// Method begins at RVA 0x2ff0
 			// Header size: 12
 			// Code size: 40 (0x28)
 			.maxstack 8
@@ -1596,7 +1612,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x4101
+					// Method begins at RVA 0x40d9
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -1616,7 +1632,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x410a
+					// Method begins at RVA 0x40e2
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -1640,7 +1656,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x40f8
+				// Method begins at RVA 0x40d0
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -1666,7 +1682,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 02 00 00 00 00 00
 			)
-			// Method begins at RVA 0x3030
+			// Method begins at RVA 0x3024
 			// Header size: 12
 			// Code size: 528 (0x210)
 			.maxstack 8
@@ -1913,7 +1929,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x411c
+					// Method begins at RVA 0x40f4
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -1937,7 +1953,7 @@
 				.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 					01 00 02 00 00 00 00 00
 				)
-				// Method begins at RVA 0x3b38
+				// Method begins at RVA 0x3b28
 				// Header size: 12
 				// Code size: 50 (0x32)
 				.maxstack 8
@@ -1979,7 +1995,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x4125
+					// Method begins at RVA 0x40fd
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -2003,15 +2019,13 @@
 				.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 					01 00 02 00 00 00 00 00
 				)
-				// Method begins at RVA 0x3b78
+				// Method begins at RVA 0x3b68
 				// Header size: 12
-				// Code size: 135 (0x87)
+				// Code size: 131 (0x83)
 				.maxstack 8
 				.locals init (
 					[0] object,
-					[1] class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer,
-					[2] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
-					[3] object[]
+					[1] object[]
 				)
 
 				IL_0000: ldarg.0
@@ -2021,54 +2035,50 @@
 				IL_0008: ldfld object Modules.Require_Crypto_ErrorPaths/runWebCryptoErrors/Scope::subtle
 				IL_000d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
 				IL_0012: stloc.0
-				IL_0013: ldstr "key"
-				IL_0018: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer::from(object)
-				IL_001d: stloc.1
-				IL_001e: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-				IL_0023: dup
-				IL_0024: ldstr "name"
-				IL_0029: ldstr "HMAC"
-				IL_002e: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-				IL_0033: dup
-				IL_0034: ldstr "hash"
-				IL_0039: ldstr "SHA-256"
-				IL_003e: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-				IL_0043: stloc.2
-				IL_0044: ldc.i4.5
-				IL_0045: newarr [System.Runtime]System.Object
-				IL_004a: dup
-				IL_004b: ldc.i4.0
-				IL_004c: ldstr "jwk"
-				IL_0051: stelem.ref
-				IL_0052: dup
-				IL_0053: ldc.i4.1
-				IL_0054: ldloc.1
+				IL_0013: ldc.i4.5
+				IL_0014: newarr [System.Runtime]System.Object
+				IL_0019: dup
+				IL_001a: ldc.i4.0
+				IL_001b: ldstr "jwk"
+				IL_0020: stelem.ref
+				IL_0021: dup
+				IL_0022: ldc.i4.1
+				IL_0023: ldstr "key"
+				IL_0028: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer::from(object)
+				IL_002d: stelem.ref
+				IL_002e: dup
+				IL_002f: ldc.i4.2
+				IL_0030: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+				IL_0035: dup
+				IL_0036: ldstr "name"
+				IL_003b: ldstr "HMAC"
+				IL_0040: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+				IL_0045: dup
+				IL_0046: ldstr "hash"
+				IL_004b: ldstr "SHA-256"
+				IL_0050: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
 				IL_0055: stelem.ref
 				IL_0056: dup
-				IL_0057: ldc.i4.2
-				IL_0058: ldloc.2
-				IL_0059: stelem.ref
-				IL_005a: dup
-				IL_005b: ldc.i4.3
-				IL_005c: ldc.i4.0
-				IL_005d: box [System.Runtime]System.Boolean
-				IL_0062: stelem.ref
-				IL_0063: dup
-				IL_0064: ldc.i4.4
-				IL_0065: ldc.i4.1
-				IL_0066: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-				IL_006b: dup
-				IL_006c: ldstr "sign"
-				IL_0071: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-				IL_0076: stelem.ref
-				IL_0077: stloc.3
-				IL_0078: ldloc.0
-				IL_0079: ldstr "importKey"
-				IL_007e: ldloc.3
-				IL_007f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember(object, string, object[])
-				IL_0084: stloc.0
-				IL_0085: ldloc.0
-				IL_0086: ret
+				IL_0057: ldc.i4.3
+				IL_0058: ldc.i4.0
+				IL_0059: box [System.Runtime]System.Boolean
+				IL_005e: stelem.ref
+				IL_005f: dup
+				IL_0060: ldc.i4.4
+				IL_0061: ldc.i4.1
+				IL_0062: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+				IL_0067: dup
+				IL_0068: ldstr "sign"
+				IL_006d: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+				IL_0072: stelem.ref
+				IL_0073: stloc.1
+				IL_0074: ldloc.0
+				IL_0075: ldstr "importKey"
+				IL_007a: ldloc.1
+				IL_007b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember(object, string, object[])
+				IL_0080: stloc.0
+				IL_0081: ldloc.0
+				IL_0082: ret
 			} // end of method ArrowFunction_L57C51::__js_call__
 
 		} // end of class ArrowFunction_L57C51
@@ -2084,7 +2094,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x412e
+					// Method begins at RVA 0x4106
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -2108,13 +2118,13 @@
 				.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 					01 00 02 00 00 00 00 00
 				)
-				// Method begins at RVA 0x3c0c
+				// Method begins at RVA 0x3bf8
 				// Header size: 12
 				// Code size: 126 (0x7e)
-				.maxstack 9
+				.maxstack 8
 				.locals init (
 					[0] object,
-					[1] class [JavaScriptRuntime]JavaScriptRuntime.JsObject
+					[1] object[]
 				)
 
 				IL_0000: ldarg.0
@@ -2124,45 +2134,45 @@
 				IL_0008: ldfld object Modules.Require_Crypto_ErrorPaths/runWebCryptoErrors/Scope::subtle
 				IL_000d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
 				IL_0012: stloc.0
-				IL_0013: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-				IL_0018: dup
-				IL_0019: ldstr "name"
-				IL_001e: ldstr "HMAC"
-				IL_0023: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-				IL_0028: dup
-				IL_0029: ldstr "hash"
-				IL_002e: ldstr "SHA-256"
-				IL_0033: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-				IL_0038: stloc.1
-				IL_0039: ldloc.0
-				IL_003a: ldstr "importKey"
-				IL_003f: ldc.i4.5
-				IL_0040: newarr [System.Runtime]System.Object
-				IL_0045: dup
-				IL_0046: ldc.i4.0
-				IL_0047: ldstr "raw"
-				IL_004c: stelem.ref
-				IL_004d: dup
-				IL_004e: ldc.i4.1
-				IL_004f: ldstr "key"
-				IL_0054: stelem.ref
-				IL_0055: dup
-				IL_0056: ldc.i4.2
-				IL_0057: ldloc.1
-				IL_0058: stelem.ref
-				IL_0059: dup
-				IL_005a: ldc.i4.3
-				IL_005b: ldc.i4.0
-				IL_005c: box [System.Runtime]System.Boolean
-				IL_0061: stelem.ref
+				IL_0013: ldc.i4.5
+				IL_0014: newarr [System.Runtime]System.Object
+				IL_0019: dup
+				IL_001a: ldc.i4.0
+				IL_001b: ldstr "raw"
+				IL_0020: stelem.ref
+				IL_0021: dup
+				IL_0022: ldc.i4.1
+				IL_0023: ldstr "key"
+				IL_0028: stelem.ref
+				IL_0029: dup
+				IL_002a: ldc.i4.2
+				IL_002b: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+				IL_0030: dup
+				IL_0031: ldstr "name"
+				IL_0036: ldstr "HMAC"
+				IL_003b: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+				IL_0040: dup
+				IL_0041: ldstr "hash"
+				IL_0046: ldstr "SHA-256"
+				IL_004b: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+				IL_0050: stelem.ref
+				IL_0051: dup
+				IL_0052: ldc.i4.3
+				IL_0053: ldc.i4.0
+				IL_0054: box [System.Runtime]System.Boolean
+				IL_0059: stelem.ref
+				IL_005a: dup
+				IL_005b: ldc.i4.4
+				IL_005c: ldc.i4.1
+				IL_005d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
 				IL_0062: dup
-				IL_0063: ldc.i4.4
-				IL_0064: ldc.i4.1
-				IL_0065: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-				IL_006a: dup
-				IL_006b: ldstr "sign"
-				IL_0070: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-				IL_0075: stelem.ref
+				IL_0063: ldstr "sign"
+				IL_0068: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+				IL_006d: stelem.ref
+				IL_006e: stloc.1
+				IL_006f: ldloc.0
+				IL_0070: ldstr "importKey"
+				IL_0075: ldloc.1
 				IL_0076: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember(object, string, object[])
 				IL_007b: stloc.0
 				IL_007c: ldloc.0
@@ -2182,7 +2192,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x4137
+					// Method begins at RVA 0x410f
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -2206,15 +2216,13 @@
 				.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 					01 00 02 00 00 00 00 00
 				)
-				// Method begins at RVA 0x3c98
+				// Method begins at RVA 0x3c84
 				// Header size: 12
-				// Code size: 124 (0x7c)
+				// Code size: 120 (0x78)
 				.maxstack 8
 				.locals init (
 					[0] object,
-					[1] class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer,
-					[2] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
-					[3] object[]
+					[1] object[]
 				)
 
 				IL_0000: ldarg.0
@@ -2224,51 +2232,47 @@
 				IL_0008: ldfld object Modules.Require_Crypto_ErrorPaths/runWebCryptoErrors/Scope::subtle
 				IL_000d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
 				IL_0012: stloc.0
-				IL_0013: ldstr "key"
-				IL_0018: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer::from(object)
-				IL_001d: stloc.1
-				IL_001e: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-				IL_0023: dup
-				IL_0024: ldstr "name"
-				IL_0029: ldstr "HMAC"
-				IL_002e: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-				IL_0033: dup
-				IL_0034: ldstr "hash"
-				IL_0039: ldstr "SHA-256"
-				IL_003e: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-				IL_0043: stloc.2
-				IL_0044: ldc.i4.5
-				IL_0045: newarr [System.Runtime]System.Object
-				IL_004a: dup
-				IL_004b: ldc.i4.0
-				IL_004c: ldstr "raw"
-				IL_0051: stelem.ref
-				IL_0052: dup
-				IL_0053: ldc.i4.1
-				IL_0054: ldloc.1
+				IL_0013: ldc.i4.5
+				IL_0014: newarr [System.Runtime]System.Object
+				IL_0019: dup
+				IL_001a: ldc.i4.0
+				IL_001b: ldstr "raw"
+				IL_0020: stelem.ref
+				IL_0021: dup
+				IL_0022: ldc.i4.1
+				IL_0023: ldstr "key"
+				IL_0028: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer::from(object)
+				IL_002d: stelem.ref
+				IL_002e: dup
+				IL_002f: ldc.i4.2
+				IL_0030: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+				IL_0035: dup
+				IL_0036: ldstr "name"
+				IL_003b: ldstr "HMAC"
+				IL_0040: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+				IL_0045: dup
+				IL_0046: ldstr "hash"
+				IL_004b: ldstr "SHA-256"
+				IL_0050: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
 				IL_0055: stelem.ref
 				IL_0056: dup
-				IL_0057: ldc.i4.2
-				IL_0058: ldloc.2
-				IL_0059: stelem.ref
-				IL_005a: dup
-				IL_005b: ldc.i4.3
-				IL_005c: ldc.i4.0
-				IL_005d: box [System.Runtime]System.Boolean
-				IL_0062: stelem.ref
-				IL_0063: dup
-				IL_0064: ldc.i4.4
-				IL_0065: ldc.i4.0
-				IL_0066: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-				IL_006b: stelem.ref
-				IL_006c: stloc.3
-				IL_006d: ldloc.0
-				IL_006e: ldstr "importKey"
-				IL_0073: ldloc.3
-				IL_0074: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember(object, string, object[])
-				IL_0079: stloc.0
-				IL_007a: ldloc.0
-				IL_007b: ret
+				IL_0057: ldc.i4.3
+				IL_0058: ldc.i4.0
+				IL_0059: box [System.Runtime]System.Boolean
+				IL_005e: stelem.ref
+				IL_005f: dup
+				IL_0060: ldc.i4.4
+				IL_0061: ldc.i4.0
+				IL_0062: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+				IL_0067: stelem.ref
+				IL_0068: stloc.1
+				IL_0069: ldloc.0
+				IL_006a: ldstr "importKey"
+				IL_006f: ldloc.1
+				IL_0070: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember(object, string, object[])
+				IL_0075: stloc.0
+				IL_0076: ldloc.0
+				IL_0077: ret
 			} // end of method ArrowFunction_L69C57::__js_call__
 
 		} // end of class ArrowFunction_L69C57
@@ -2284,7 +2288,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x4140
+					// Method begins at RVA 0x4118
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -2308,15 +2312,13 @@
 				.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 					01 00 02 00 00 00 00 00
 				)
-				// Method begins at RVA 0x3d20
+				// Method begins at RVA 0x3d08
 				// Header size: 12
-				// Code size: 135 (0x87)
+				// Code size: 131 (0x83)
 				.maxstack 8
 				.locals init (
 					[0] object,
-					[1] class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer,
-					[2] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
-					[3] object[]
+					[1] object[]
 				)
 
 				IL_0000: ldarg.0
@@ -2326,54 +2328,50 @@
 				IL_0008: ldfld object Modules.Require_Crypto_ErrorPaths/runWebCryptoErrors/Scope::subtle
 				IL_000d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
 				IL_0012: stloc.0
-				IL_0013: ldstr "key"
-				IL_0018: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer::from(object)
-				IL_001d: stloc.1
-				IL_001e: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-				IL_0023: dup
-				IL_0024: ldstr "name"
-				IL_0029: ldstr "HMAC"
-				IL_002e: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-				IL_0033: dup
-				IL_0034: ldstr "hash"
-				IL_0039: ldstr "SHA-256"
-				IL_003e: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-				IL_0043: stloc.2
-				IL_0044: ldc.i4.5
-				IL_0045: newarr [System.Runtime]System.Object
-				IL_004a: dup
-				IL_004b: ldc.i4.0
-				IL_004c: ldstr "raw"
-				IL_0051: stelem.ref
-				IL_0052: dup
-				IL_0053: ldc.i4.1
-				IL_0054: ldloc.1
+				IL_0013: ldc.i4.5
+				IL_0014: newarr [System.Runtime]System.Object
+				IL_0019: dup
+				IL_001a: ldc.i4.0
+				IL_001b: ldstr "raw"
+				IL_0020: stelem.ref
+				IL_0021: dup
+				IL_0022: ldc.i4.1
+				IL_0023: ldstr "key"
+				IL_0028: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer::from(object)
+				IL_002d: stelem.ref
+				IL_002e: dup
+				IL_002f: ldc.i4.2
+				IL_0030: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+				IL_0035: dup
+				IL_0036: ldstr "name"
+				IL_003b: ldstr "HMAC"
+				IL_0040: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+				IL_0045: dup
+				IL_0046: ldstr "hash"
+				IL_004b: ldstr "SHA-256"
+				IL_0050: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
 				IL_0055: stelem.ref
 				IL_0056: dup
-				IL_0057: ldc.i4.2
-				IL_0058: ldloc.2
-				IL_0059: stelem.ref
-				IL_005a: dup
-				IL_005b: ldc.i4.3
-				IL_005c: ldc.i4.0
-				IL_005d: box [System.Runtime]System.Boolean
-				IL_0062: stelem.ref
-				IL_0063: dup
-				IL_0064: ldc.i4.4
-				IL_0065: ldc.i4.1
-				IL_0066: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-				IL_006b: dup
-				IL_006c: ldstr "SIGN"
-				IL_0071: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-				IL_0076: stelem.ref
-				IL_0077: stloc.3
-				IL_0078: ldloc.0
-				IL_0079: ldstr "importKey"
-				IL_007e: ldloc.3
-				IL_007f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember(object, string, object[])
-				IL_0084: stloc.0
-				IL_0085: ldloc.0
-				IL_0086: ret
+				IL_0057: ldc.i4.3
+				IL_0058: ldc.i4.0
+				IL_0059: box [System.Runtime]System.Boolean
+				IL_005e: stelem.ref
+				IL_005f: dup
+				IL_0060: ldc.i4.4
+				IL_0061: ldc.i4.1
+				IL_0062: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+				IL_0067: dup
+				IL_0068: ldstr "SIGN"
+				IL_006d: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+				IL_0072: stelem.ref
+				IL_0073: stloc.1
+				IL_0074: ldloc.0
+				IL_0075: ldstr "importKey"
+				IL_007a: ldloc.1
+				IL_007b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember(object, string, object[])
+				IL_0080: stloc.0
+				IL_0081: ldloc.0
+				IL_0082: ret
 			} // end of method ArrowFunction_L75C63::__js_call__
 
 		} // end of class ArrowFunction_L75C63
@@ -2389,7 +2387,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x4149
+					// Method begins at RVA 0x4121
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -2413,15 +2411,13 @@
 				.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 					01 00 02 00 00 00 00 00
 				)
-				// Method begins at RVA 0x3db4
+				// Method begins at RVA 0x3d98
 				// Header size: 12
-				// Code size: 135 (0x87)
+				// Code size: 131 (0x83)
 				.maxstack 8
 				.locals init (
 					[0] object,
-					[1] class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer,
-					[2] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
-					[3] object[]
+					[1] object[]
 				)
 
 				IL_0000: ldarg.0
@@ -2431,54 +2427,50 @@
 				IL_0008: ldfld object Modules.Require_Crypto_ErrorPaths/runWebCryptoErrors/Scope::subtle
 				IL_000d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
 				IL_0012: stloc.0
-				IL_0013: ldstr "key"
-				IL_0018: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer::from(object)
-				IL_001d: stloc.1
-				IL_001e: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-				IL_0023: dup
-				IL_0024: ldstr "name"
-				IL_0029: ldstr "HMAC"
-				IL_002e: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-				IL_0033: dup
-				IL_0034: ldstr "hash"
-				IL_0039: ldstr "SHA-256"
-				IL_003e: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-				IL_0043: stloc.2
-				IL_0044: ldc.i4.5
-				IL_0045: newarr [System.Runtime]System.Object
-				IL_004a: dup
-				IL_004b: ldc.i4.0
-				IL_004c: ldstr "raw"
-				IL_0051: stelem.ref
-				IL_0052: dup
-				IL_0053: ldc.i4.1
-				IL_0054: ldloc.1
+				IL_0013: ldc.i4.5
+				IL_0014: newarr [System.Runtime]System.Object
+				IL_0019: dup
+				IL_001a: ldc.i4.0
+				IL_001b: ldstr "raw"
+				IL_0020: stelem.ref
+				IL_0021: dup
+				IL_0022: ldc.i4.1
+				IL_0023: ldstr "key"
+				IL_0028: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer::from(object)
+				IL_002d: stelem.ref
+				IL_002e: dup
+				IL_002f: ldc.i4.2
+				IL_0030: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+				IL_0035: dup
+				IL_0036: ldstr "name"
+				IL_003b: ldstr "HMAC"
+				IL_0040: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+				IL_0045: dup
+				IL_0046: ldstr "hash"
+				IL_004b: ldstr "SHA-256"
+				IL_0050: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
 				IL_0055: stelem.ref
 				IL_0056: dup
-				IL_0057: ldc.i4.2
-				IL_0058: ldloc.2
-				IL_0059: stelem.ref
-				IL_005a: dup
-				IL_005b: ldc.i4.3
-				IL_005c: ldc.i4.0
-				IL_005d: box [System.Runtime]System.Boolean
-				IL_0062: stelem.ref
-				IL_0063: dup
-				IL_0064: ldc.i4.4
-				IL_0065: ldc.i4.1
-				IL_0066: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-				IL_006b: dup
-				IL_006c: ldstr "encrypt"
-				IL_0071: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-				IL_0076: stelem.ref
-				IL_0077: stloc.3
-				IL_0078: ldloc.0
-				IL_0079: ldstr "importKey"
-				IL_007e: ldloc.3
-				IL_007f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember(object, string, object[])
-				IL_0084: stloc.0
-				IL_0085: ldloc.0
-				IL_0086: ret
+				IL_0057: ldc.i4.3
+				IL_0058: ldc.i4.0
+				IL_0059: box [System.Runtime]System.Boolean
+				IL_005e: stelem.ref
+				IL_005f: dup
+				IL_0060: ldc.i4.4
+				IL_0061: ldc.i4.1
+				IL_0062: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+				IL_0067: dup
+				IL_0068: ldstr "encrypt"
+				IL_006d: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+				IL_0072: stelem.ref
+				IL_0073: stloc.1
+				IL_0074: ldloc.0
+				IL_0075: ldstr "importKey"
+				IL_007a: ldloc.1
+				IL_007b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember(object, string, object[])
+				IL_0080: stloc.0
+				IL_0081: ldloc.0
+				IL_0082: ret
 			} // end of method ArrowFunction_L81C62::__js_call__
 
 		} // end of class ArrowFunction_L81C62
@@ -2494,7 +2486,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x4152
+					// Method begins at RVA 0x412a
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -2518,15 +2510,13 @@
 				.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 					01 00 02 00 00 00 00 00
 				)
-				// Method begins at RVA 0x3e48
+				// Method begins at RVA 0x3e28
 				// Header size: 12
-				// Code size: 144 (0x90)
+				// Code size: 140 (0x8c)
 				.maxstack 8
 				.locals init (
 					[0] object,
-					[1] class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer,
-					[2] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
-					[3] object[]
+					[1] object[]
 				)
 
 				IL_0000: ldarg.0
@@ -2536,55 +2526,51 @@
 				IL_0008: ldfld object Modules.Require_Crypto_ErrorPaths/runWebCryptoErrors/Scope::subtle
 				IL_000d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
 				IL_0012: stloc.0
-				IL_0013: ldc.r8 0.0
-				IL_001c: box [System.Runtime]System.Double
-				IL_0021: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer::alloc(object)
-				IL_0026: stloc.1
-				IL_0027: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-				IL_002c: dup
-				IL_002d: ldstr "name"
-				IL_0032: ldstr "HMAC"
-				IL_0037: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-				IL_003c: dup
-				IL_003d: ldstr "hash"
-				IL_0042: ldstr "SHA-256"
-				IL_0047: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-				IL_004c: stloc.2
-				IL_004d: ldc.i4.5
-				IL_004e: newarr [System.Runtime]System.Object
-				IL_0053: dup
-				IL_0054: ldc.i4.0
-				IL_0055: ldstr "raw"
-				IL_005a: stelem.ref
-				IL_005b: dup
-				IL_005c: ldc.i4.1
-				IL_005d: ldloc.1
+				IL_0013: ldc.i4.5
+				IL_0014: newarr [System.Runtime]System.Object
+				IL_0019: dup
+				IL_001a: ldc.i4.0
+				IL_001b: ldstr "raw"
+				IL_0020: stelem.ref
+				IL_0021: dup
+				IL_0022: ldc.i4.1
+				IL_0023: ldc.r8 0.0
+				IL_002c: box [System.Runtime]System.Double
+				IL_0031: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer::alloc(object)
+				IL_0036: stelem.ref
+				IL_0037: dup
+				IL_0038: ldc.i4.2
+				IL_0039: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+				IL_003e: dup
+				IL_003f: ldstr "name"
+				IL_0044: ldstr "HMAC"
+				IL_0049: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+				IL_004e: dup
+				IL_004f: ldstr "hash"
+				IL_0054: ldstr "SHA-256"
+				IL_0059: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
 				IL_005e: stelem.ref
 				IL_005f: dup
-				IL_0060: ldc.i4.2
-				IL_0061: ldloc.2
-				IL_0062: stelem.ref
-				IL_0063: dup
-				IL_0064: ldc.i4.3
-				IL_0065: ldc.i4.0
-				IL_0066: box [System.Runtime]System.Boolean
-				IL_006b: stelem.ref
-				IL_006c: dup
-				IL_006d: ldc.i4.4
-				IL_006e: ldc.i4.1
-				IL_006f: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-				IL_0074: dup
-				IL_0075: ldstr "sign"
-				IL_007a: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-				IL_007f: stelem.ref
-				IL_0080: stloc.3
-				IL_0081: ldloc.0
-				IL_0082: ldstr "importKey"
-				IL_0087: ldloc.3
-				IL_0088: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember(object, string, object[])
-				IL_008d: stloc.0
-				IL_008e: ldloc.0
-				IL_008f: ret
+				IL_0060: ldc.i4.3
+				IL_0061: ldc.i4.0
+				IL_0062: box [System.Runtime]System.Boolean
+				IL_0067: stelem.ref
+				IL_0068: dup
+				IL_0069: ldc.i4.4
+				IL_006a: ldc.i4.1
+				IL_006b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+				IL_0070: dup
+				IL_0071: ldstr "sign"
+				IL_0076: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+				IL_007b: stelem.ref
+				IL_007c: stloc.1
+				IL_007d: ldloc.0
+				IL_007e: ldstr "importKey"
+				IL_0083: ldloc.1
+				IL_0084: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember(object, string, object[])
+				IL_0089: stloc.0
+				IL_008a: ldloc.0
+				IL_008b: ret
 			} // end of method ArrowFunction_L87C53::__js_call__
 
 		} // end of class ArrowFunction_L87C53
@@ -2600,7 +2586,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x415b
+					// Method begins at RVA 0x4133
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -2624,15 +2610,13 @@
 				.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 					01 00 02 00 00 00 00 00
 				)
-				// Method begins at RVA 0x3ee4
+				// Method begins at RVA 0x3ec0
 				// Header size: 12
-				// Code size: 155 (0x9b)
+				// Code size: 151 (0x97)
 				.maxstack 8
 				.locals init (
 					[0] object,
-					[1] class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer,
-					[2] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
-					[3] object[]
+					[1] object[]
 				)
 
 				IL_0000: ldarg.0
@@ -2642,58 +2626,54 @@
 				IL_0008: ldfld object Modules.Require_Crypto_ErrorPaths/runWebCryptoErrors/Scope::subtle
 				IL_000d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
 				IL_0012: stloc.0
-				IL_0013: ldstr "key"
-				IL_0018: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer::from(object)
-				IL_001d: stloc.1
-				IL_001e: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-				IL_0023: dup
-				IL_0024: ldstr "name"
-				IL_0029: ldstr "HMAC"
-				IL_002e: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-				IL_0033: dup
-				IL_0034: ldstr "hash"
-				IL_0039: ldstr "SHA-256"
-				IL_003e: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-				IL_0043: dup
-				IL_0044: ldstr "length"
-				IL_0049: ldc.r8 128
-				IL_0052: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
-				IL_0057: stloc.2
-				IL_0058: ldc.i4.5
-				IL_0059: newarr [System.Runtime]System.Object
-				IL_005e: dup
-				IL_005f: ldc.i4.0
-				IL_0060: ldstr "raw"
-				IL_0065: stelem.ref
-				IL_0066: dup
-				IL_0067: ldc.i4.1
-				IL_0068: ldloc.1
+				IL_0013: ldc.i4.5
+				IL_0014: newarr [System.Runtime]System.Object
+				IL_0019: dup
+				IL_001a: ldc.i4.0
+				IL_001b: ldstr "raw"
+				IL_0020: stelem.ref
+				IL_0021: dup
+				IL_0022: ldc.i4.1
+				IL_0023: ldstr "key"
+				IL_0028: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer::from(object)
+				IL_002d: stelem.ref
+				IL_002e: dup
+				IL_002f: ldc.i4.2
+				IL_0030: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+				IL_0035: dup
+				IL_0036: ldstr "name"
+				IL_003b: ldstr "HMAC"
+				IL_0040: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+				IL_0045: dup
+				IL_0046: ldstr "hash"
+				IL_004b: ldstr "SHA-256"
+				IL_0050: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+				IL_0055: dup
+				IL_0056: ldstr "length"
+				IL_005b: ldc.r8 128
+				IL_0064: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
 				IL_0069: stelem.ref
 				IL_006a: dup
-				IL_006b: ldc.i4.2
-				IL_006c: ldloc.2
-				IL_006d: stelem.ref
-				IL_006e: dup
-				IL_006f: ldc.i4.3
-				IL_0070: ldc.i4.0
-				IL_0071: box [System.Runtime]System.Boolean
-				IL_0076: stelem.ref
-				IL_0077: dup
-				IL_0078: ldc.i4.4
-				IL_0079: ldc.i4.1
-				IL_007a: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-				IL_007f: dup
-				IL_0080: ldstr "sign"
-				IL_0085: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-				IL_008a: stelem.ref
-				IL_008b: stloc.3
-				IL_008c: ldloc.0
-				IL_008d: ldstr "importKey"
-				IL_0092: ldloc.3
-				IL_0093: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember(object, string, object[])
-				IL_0098: stloc.0
-				IL_0099: ldloc.0
-				IL_009a: ret
+				IL_006b: ldc.i4.3
+				IL_006c: ldc.i4.0
+				IL_006d: box [System.Runtime]System.Boolean
+				IL_0072: stelem.ref
+				IL_0073: dup
+				IL_0074: ldc.i4.4
+				IL_0075: ldc.i4.1
+				IL_0076: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+				IL_007b: dup
+				IL_007c: ldstr "sign"
+				IL_0081: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+				IL_0086: stelem.ref
+				IL_0087: stloc.1
+				IL_0088: ldloc.0
+				IL_0089: ldstr "importKey"
+				IL_008e: ldloc.1
+				IL_008f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember(object, string, object[])
+				IL_0094: stloc.0
+				IL_0095: ldloc.0
+				IL_0096: ret
 			} // end of method ArrowFunction_L93C60::__js_call__
 
 		} // end of class ArrowFunction_L93C60
@@ -2709,7 +2689,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x4164
+					// Method begins at RVA 0x413c
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -2733,7 +2713,7 @@
 				.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 					01 00 02 00 00 00 00 00
 				)
-				// Method begins at RVA 0x3f8c
+				// Method begins at RVA 0x3f64
 				// Header size: 12
 				// Code size: 65 (0x41)
 				.maxstack 8
@@ -2783,7 +2763,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x416d
+					// Method begins at RVA 0x4145
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -2807,7 +2787,7 @@
 				.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 					01 00 02 00 00 00 00 00
 				)
-				// Method begins at RVA 0x3fdc
+				// Method begins at RVA 0x3fb4
 				// Header size: 12
 				// Code size: 65 (0x41)
 				.maxstack 8
@@ -2885,7 +2865,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x4113
+				// Method begins at RVA 0x40eb
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -2909,7 +2889,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 02 00 00 00 00 00
 			)
-			// Method begins at RVA 0x324c
+			// Method begins at RVA 0x3240
 			// Header size: 12
 			// Code size: 2218 (0x8aa)
 			.maxstack 8
@@ -3988,7 +3968,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x4176
+				// Method begins at RVA 0x414e
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -4011,9 +3991,9 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x3b04
+			// Method begins at RVA 0x3af8
 			// Header size: 12
-			// Code size: 37 (0x25)
+			// Code size: 35 (0x23)
 			.maxstack 8
 			.locals init (
 				[0] object
@@ -4021,17 +4001,15 @@
 
 			IL_0000: ldstr "console"
 			IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_000a: stloc.0
-			IL_000b: ldloc.0
-			IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0011: stloc.0
-			IL_0012: ldloc.0
-			IL_0013: ldstr "log"
-			IL_0018: ldstr "error paths done"
-			IL_001d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_0022: pop
-			IL_0023: ldnull
-			IL_0024: ret
+			IL_000a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_000f: stloc.0
+			IL_0010: ldloc.0
+			IL_0011: ldstr "log"
+			IL_0016: ldstr "error paths done"
+			IL_001b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_0020: pop
+			IL_0021: ldnull
+			IL_0022: ret
 		} // end of method ArrowFunction_L111C27::__js_call__
 
 	} // end of class ArrowFunction_L111C27
@@ -4063,7 +4041,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x4029
+			// Method begins at RVA 0x4001
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -4089,7 +4067,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 2280 (0x8e8)
+		// Code size: 2276 (0x8e4)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Require_Crypto_ErrorPaths/Scope,
@@ -4794,145 +4772,143 @@
 		IL_074d: pop
 		IL_074e: ldstr "console"
 		IL_0753: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0758: stloc.s 4
-		IL_075a: ldloc.s 4
-		IL_075c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0761: stloc.s 4
-		IL_0763: ldloc.0
-		IL_0764: ldfld object Modules.Require_Crypto_ErrorPaths/Scope::hash
-		IL_0769: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_076e: stloc.s 7
-		IL_0770: ldloc.s 7
-		IL_0772: ldstr "digest"
-		IL_0777: ldstr "hex"
-		IL_077c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0781: stloc.s 7
-		IL_0783: ldloc.s 4
-		IL_0785: ldstr "log"
-		IL_078a: ldstr "digest first:"
-		IL_078f: ldloc.s 7
-		IL_0791: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_0796: pop
-		IL_0797: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_079c: stloc.s 5
-		IL_079e: ldc.i4.1
-		IL_079f: newarr [System.Runtime]System.Object
-		IL_07a4: dup
-		IL_07a5: ldc.i4.0
-		IL_07a6: ldloc.0
-		IL_07a7: stelem.ref
-		IL_07a8: ldc.i4.0
-		IL_07a9: ldelem.ref
-		IL_07aa: castclass Modules.Require_Crypto_ErrorPaths/Scope
-		IL_07af: ldftn object Modules.Require_Crypto_ErrorPaths/ArrowFunction_L37C26::__js_call__(class Modules.Require_Crypto_ErrorPaths/Scope, object)
-		IL_07b5: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_07ba: ldc.i4.1
-		IL_07bb: newarr [System.Runtime]System.Object
-		IL_07c0: dup
-		IL_07c1: ldc.i4.0
-		IL_07c2: ldloc.0
-		IL_07c3: stelem.ref
-		IL_07c4: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_07c9: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_07ce: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
-		IL_07d3: ldc.i4.0
-		IL_07d4: conv.r8
-		IL_07d5: ldstr ""
-		IL_07da: ldc.i4.0
-		IL_07db: ldc.i4.0
-		IL_07dc: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
-		IL_07e1: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0)
-		IL_07e6: stloc.s 6
-		IL_07e8: ldloc.1
-		IL_07e9: ldloc.s 5
-		IL_07eb: ldstr "digest twice"
-		IL_07f0: ldloc.s 6
-		IL_07f2: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
-		IL_07f7: pop
-		IL_07f8: ldloc.0
-		IL_07f9: ldfld object Modules.Require_Crypto_ErrorPaths/Scope::crypto
-		IL_07fe: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0803: stloc.s 7
-		IL_0805: ldloc.s 7
-		IL_0807: ldstr "createHmac"
-		IL_080c: ldstr "sha256"
-		IL_0811: ldstr "key"
-		IL_0816: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_081b: stloc.s 7
-		IL_081d: ldloc.0
-		IL_081e: ldloc.s 7
-		IL_0820: stfld object Modules.Require_Crypto_ErrorPaths/Scope::hmac
-		IL_0825: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_082a: stloc.s 5
-		IL_082c: ldc.i4.1
-		IL_082d: newarr [System.Runtime]System.Object
-		IL_0832: dup
-		IL_0833: ldc.i4.0
-		IL_0834: ldloc.0
-		IL_0835: stelem.ref
-		IL_0836: ldc.i4.0
-		IL_0837: ldelem.ref
-		IL_0838: castclass Modules.Require_Crypto_ErrorPaths/Scope
-		IL_083d: ldftn object Modules.Require_Crypto_ErrorPaths/ArrowFunction_L40C30::__js_call__(class Modules.Require_Crypto_ErrorPaths/Scope, object)
-		IL_0843: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_0848: ldc.i4.1
-		IL_0849: newarr [System.Runtime]System.Object
-		IL_084e: dup
-		IL_084f: ldc.i4.0
-		IL_0850: ldloc.0
-		IL_0851: stelem.ref
-		IL_0852: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_0857: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_085c: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
-		IL_0861: ldc.i4.0
-		IL_0862: conv.r8
-		IL_0863: ldstr ""
-		IL_0868: ldc.i4.0
-		IL_0869: ldc.i4.0
-		IL_086a: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
-		IL_086f: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0)
-		IL_0874: stloc.s 6
-		IL_0876: ldloc.1
-		IL_0877: ldloc.s 5
-		IL_0879: ldstr "hmac update type"
-		IL_087e: ldloc.s 6
-		IL_0880: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
-		IL_0885: pop
-		IL_0886: nop
-		IL_0887: nop
-		IL_0888: ldloc.2
-		IL_0889: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_088e: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0, object[])
-		IL_0893: stloc.s 7
-		IL_0895: ldloc.s 7
-		IL_0897: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_089c: stloc.s 7
-		IL_089e: ldnull
-		IL_089f: ldftn object Modules.Require_Crypto_ErrorPaths/ArrowFunction_L111C27::__js_call__(object)
-		IL_08a5: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_08aa: ldc.i4.1
-		IL_08ab: newarr [System.Runtime]System.Object
-		IL_08b0: dup
-		IL_08b1: ldc.i4.0
-		IL_08b2: ldloc.0
-		IL_08b3: stelem.ref
-		IL_08b4: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_08b9: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_08be: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
-		IL_08c3: ldc.i4.0
-		IL_08c4: conv.r8
-		IL_08c5: ldstr ""
-		IL_08ca: ldc.i4.0
-		IL_08cb: ldc.i4.0
-		IL_08cc: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
-		IL_08d1: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0)
-		IL_08d6: stloc.s 6
-		IL_08d8: ldloc.s 7
-		IL_08da: ldstr "then"
-		IL_08df: ldloc.s 6
-		IL_08e1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_08e6: pop
-		IL_08e7: ret
+		IL_0758: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_075d: stloc.s 4
+		IL_075f: ldloc.0
+		IL_0760: ldfld object Modules.Require_Crypto_ErrorPaths/Scope::hash
+		IL_0765: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_076a: stloc.s 7
+		IL_076c: ldloc.s 7
+		IL_076e: ldstr "digest"
+		IL_0773: ldstr "hex"
+		IL_0778: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_077d: stloc.s 7
+		IL_077f: ldloc.s 4
+		IL_0781: ldstr "log"
+		IL_0786: ldstr "digest first:"
+		IL_078b: ldloc.s 7
+		IL_078d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_0792: pop
+		IL_0793: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0798: stloc.s 5
+		IL_079a: ldc.i4.1
+		IL_079b: newarr [System.Runtime]System.Object
+		IL_07a0: dup
+		IL_07a1: ldc.i4.0
+		IL_07a2: ldloc.0
+		IL_07a3: stelem.ref
+		IL_07a4: ldc.i4.0
+		IL_07a5: ldelem.ref
+		IL_07a6: castclass Modules.Require_Crypto_ErrorPaths/Scope
+		IL_07ab: ldftn object Modules.Require_Crypto_ErrorPaths/ArrowFunction_L37C26::__js_call__(class Modules.Require_Crypto_ErrorPaths/Scope, object)
+		IL_07b1: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_07b6: ldc.i4.1
+		IL_07b7: newarr [System.Runtime]System.Object
+		IL_07bc: dup
+		IL_07bd: ldc.i4.0
+		IL_07be: ldloc.0
+		IL_07bf: stelem.ref
+		IL_07c0: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_07c5: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_07ca: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
+		IL_07cf: ldc.i4.0
+		IL_07d0: conv.r8
+		IL_07d1: ldstr ""
+		IL_07d6: ldc.i4.0
+		IL_07d7: ldc.i4.0
+		IL_07d8: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
+		IL_07dd: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0)
+		IL_07e2: stloc.s 6
+		IL_07e4: ldloc.1
+		IL_07e5: ldloc.s 5
+		IL_07e7: ldstr "digest twice"
+		IL_07ec: ldloc.s 6
+		IL_07ee: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
+		IL_07f3: pop
+		IL_07f4: ldloc.0
+		IL_07f5: ldfld object Modules.Require_Crypto_ErrorPaths/Scope::crypto
+		IL_07fa: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_07ff: stloc.s 7
+		IL_0801: ldloc.s 7
+		IL_0803: ldstr "createHmac"
+		IL_0808: ldstr "sha256"
+		IL_080d: ldstr "key"
+		IL_0812: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_0817: stloc.s 7
+		IL_0819: ldloc.0
+		IL_081a: ldloc.s 7
+		IL_081c: stfld object Modules.Require_Crypto_ErrorPaths/Scope::hmac
+		IL_0821: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0826: stloc.s 5
+		IL_0828: ldc.i4.1
+		IL_0829: newarr [System.Runtime]System.Object
+		IL_082e: dup
+		IL_082f: ldc.i4.0
+		IL_0830: ldloc.0
+		IL_0831: stelem.ref
+		IL_0832: ldc.i4.0
+		IL_0833: ldelem.ref
+		IL_0834: castclass Modules.Require_Crypto_ErrorPaths/Scope
+		IL_0839: ldftn object Modules.Require_Crypto_ErrorPaths/ArrowFunction_L40C30::__js_call__(class Modules.Require_Crypto_ErrorPaths/Scope, object)
+		IL_083f: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_0844: ldc.i4.1
+		IL_0845: newarr [System.Runtime]System.Object
+		IL_084a: dup
+		IL_084b: ldc.i4.0
+		IL_084c: ldloc.0
+		IL_084d: stelem.ref
+		IL_084e: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_0853: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_0858: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
+		IL_085d: ldc.i4.0
+		IL_085e: conv.r8
+		IL_085f: ldstr ""
+		IL_0864: ldc.i4.0
+		IL_0865: ldc.i4.0
+		IL_0866: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
+		IL_086b: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0)
+		IL_0870: stloc.s 6
+		IL_0872: ldloc.1
+		IL_0873: ldloc.s 5
+		IL_0875: ldstr "hmac update type"
+		IL_087a: ldloc.s 6
+		IL_087c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
+		IL_0881: pop
+		IL_0882: nop
+		IL_0883: nop
+		IL_0884: ldloc.2
+		IL_0885: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_088a: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0, object[])
+		IL_088f: stloc.s 7
+		IL_0891: ldloc.s 7
+		IL_0893: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0898: stloc.s 7
+		IL_089a: ldnull
+		IL_089b: ldftn object Modules.Require_Crypto_ErrorPaths/ArrowFunction_L111C27::__js_call__(object)
+		IL_08a1: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_08a6: ldc.i4.1
+		IL_08a7: newarr [System.Runtime]System.Object
+		IL_08ac: dup
+		IL_08ad: ldc.i4.0
+		IL_08ae: ldloc.0
+		IL_08af: stelem.ref
+		IL_08b0: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_08b5: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_08ba: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
+		IL_08bf: ldc.i4.0
+		IL_08c0: conv.r8
+		IL_08c1: ldstr ""
+		IL_08c6: ldc.i4.0
+		IL_08c7: ldc.i4.0
+		IL_08c8: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
+		IL_08cd: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0)
+		IL_08d2: stloc.s 6
+		IL_08d4: ldloc.s 7
+		IL_08d6: ldstr "then"
+		IL_08db: ldloc.s 6
+		IL_08dd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_08e2: pop
+		IL_08e3: ret
 	} // end of method Require_Crypto_ErrorPaths::__js_module_init__
 
 } // end of class Modules.Require_Crypto_ErrorPaths
@@ -4944,7 +4920,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x417f
+		// Method begins at RVA 0x4157
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

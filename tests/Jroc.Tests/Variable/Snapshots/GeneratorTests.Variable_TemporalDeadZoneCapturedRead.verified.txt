@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21ce
+				// Method begins at RVA 0x21c0
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -44,9 +44,9 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 04 00 00 02
 			)
-			// Method begins at RVA 0x217c
+			// Method begins at RVA 0x2170
 			// Header size: 12
-			// Code size: 50 (0x32)
+			// Code size: 48 (0x30)
 			.maxstack 8
 			.locals init (
 				[0] object,
@@ -55,22 +55,20 @@
 
 			IL_0000: ldstr "console"
 			IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_000a: stloc.0
-			IL_000b: ldloc.0
-			IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0011: stloc.0
-			IL_0012: ldarg.0
-			IL_0013: ldfld object Modules.Variable_TemporalDeadZoneCapturedRead/Scope::'value'
-			IL_0018: ldstr "Cannot access 'value' before initialization"
-			IL_001d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
-			IL_0022: stloc.1
-			IL_0023: ldloc.0
-			IL_0024: ldstr "log"
-			IL_0029: ldloc.1
-			IL_002a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_002f: pop
-			IL_0030: ldnull
-			IL_0031: ret
+			IL_000a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_000f: stloc.0
+			IL_0010: ldarg.0
+			IL_0011: ldfld object Modules.Variable_TemporalDeadZoneCapturedRead/Scope::'value'
+			IL_0016: ldstr "Cannot access 'value' before initialization"
+			IL_001b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_0020: stloc.1
+			IL_0021: ldloc.0
+			IL_0022: ldstr "log"
+			IL_0027: ldloc.1
+			IL_0028: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_002d: pop
+			IL_002e: ldnull
+			IL_002f: ret
 		} // end of method readValue::__js_call__
 
 	} // end of class readValue
@@ -91,7 +89,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21d7
+				// Method begins at RVA 0x21c9
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -111,7 +109,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21e0
+				// Method begins at RVA 0x21d2
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -133,7 +131,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x21ba
+			// Method begins at RVA 0x21ac
 			// Header size: 1
 			// Code size: 19 (0x13)
 			.maxstack 8
@@ -162,7 +160,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 270 (0x10e)
+		// Code size: 258 (0x102)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Variable_TemporalDeadZoneCapturedRead/Scope,
@@ -207,78 +205,72 @@
 			IL_0044: pop
 			IL_0045: ldstr "console"
 			IL_004a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_004f: stloc.s 6
-			IL_0051: ldloc.s 6
-			IL_0053: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0058: stloc.s 6
-			IL_005a: ldloc.s 6
-			IL_005c: ldstr "log"
-			IL_0061: ldstr "NO_TDZ"
-			IL_0066: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_006b: pop
-			IL_006c: leave IL_00c9
+			IL_004f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0054: stloc.s 6
+			IL_0056: ldloc.s 6
+			IL_0058: ldstr "log"
+			IL_005d: ldstr "NO_TDZ"
+			IL_0062: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_0067: pop
+			IL_0068: leave IL_00c1
 		} // end .try
 		catch [System.Runtime]System.Exception
 		{
-			IL_0071: stloc.2
-			IL_0072: ldloc.2
-			IL_0073: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-			IL_0078: dup
-			IL_0079: brtrue IL_008e
+			IL_006d: stloc.2
+			IL_006e: ldloc.2
+			IL_006f: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+			IL_0074: dup
+			IL_0075: brtrue IL_008a
 
-			IL_007e: pop
-			IL_007f: ldloc.2
-			IL_0080: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
-			IL_0085: dup
-			IL_0086: brtrue IL_0099
+			IL_007a: pop
+			IL_007b: ldloc.2
+			IL_007c: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+			IL_0081: dup
+			IL_0082: brtrue IL_0095
 
-			IL_008b: pop
-			IL_008c: rethrow
+			IL_0087: pop
+			IL_0088: rethrow
 
-			IL_008e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-			IL_0093: stloc.3
-			IL_0094: br IL_009a
+			IL_008a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+			IL_008f: stloc.3
+			IL_0090: br IL_0096
 
-			IL_0099: stloc.3
+			IL_0095: stloc.3
 
-			IL_009a: ldloc.3
-			IL_009b: stloc.s 4
-			IL_009d: ldstr "console"
-			IL_00a2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_00a7: stloc.s 6
-			IL_00a9: ldloc.s 6
-			IL_00ab: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_00b0: stloc.s 6
-			IL_00b2: ldloc.s 6
-			IL_00b4: ldstr "log"
-			IL_00b9: ldstr "TDZ_CAPTURED"
-			IL_00be: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_00c3: pop
-			IL_00c4: leave IL_00c9
+			IL_0096: ldloc.3
+			IL_0097: stloc.s 4
+			IL_0099: ldstr "console"
+			IL_009e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_00a3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_00a8: stloc.s 6
+			IL_00aa: ldloc.s 6
+			IL_00ac: ldstr "log"
+			IL_00b1: ldstr "TDZ_CAPTURED"
+			IL_00b6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_00bb: pop
+			IL_00bc: leave IL_00c1
 		} // end handler
 
-		IL_00c9: ldloc.0
-		IL_00ca: ldstr "ready"
-		IL_00cf: stfld object Modules.Variable_TemporalDeadZoneCapturedRead/Scope::'value'
-		IL_00d4: ldstr "console"
-		IL_00d9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_00de: stloc.s 6
-		IL_00e0: ldloc.s 6
-		IL_00e2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00e7: stloc.s 6
-		IL_00e9: ldloc.0
-		IL_00ea: ldfld object Modules.Variable_TemporalDeadZoneCapturedRead/Scope::'value'
-		IL_00ef: ldstr "Cannot access 'value' before initialization"
-		IL_00f4: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
-		IL_00f9: stloc.s 7
-		IL_00fb: ldloc.s 6
-		IL_00fd: ldstr "log"
-		IL_0102: ldloc.s 7
-		IL_0104: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0109: pop
-		IL_010a: ldnull
-		IL_010b: stloc.s 5
-		IL_010d: ret
+		IL_00c1: ldloc.0
+		IL_00c2: ldstr "ready"
+		IL_00c7: stfld object Modules.Variable_TemporalDeadZoneCapturedRead/Scope::'value'
+		IL_00cc: ldstr "console"
+		IL_00d1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_00d6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00db: stloc.s 6
+		IL_00dd: ldloc.0
+		IL_00de: ldfld object Modules.Variable_TemporalDeadZoneCapturedRead/Scope::'value'
+		IL_00e3: ldstr "Cannot access 'value' before initialization"
+		IL_00e8: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+		IL_00ed: stloc.s 7
+		IL_00ef: ldloc.s 6
+		IL_00f1: ldstr "log"
+		IL_00f6: ldloc.s 7
+		IL_00f8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_00fd: pop
+		IL_00fe: ldnull
+		IL_00ff: stloc.s 5
+		IL_0101: ret
 	} // end of method Variable_TemporalDeadZoneCapturedRead::__js_module_init__
 
 } // end of class Modules.Variable_TemporalDeadZoneCapturedRead
@@ -290,7 +282,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21e9
+		// Method begins at RVA 0x21db
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

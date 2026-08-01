@@ -112,7 +112,8 @@ Current integration is in:
 | `TypedComparisons` | TypedNumeric plus typed unary/comparison and direct branch/return consumption. |
 | `ConversionsAndStableLoads` | TypedComparisons plus numeric/object conversions, string concat, and approved typed string/array length and element loads. |
 | `LiteralAndArguments` | ConversionsAndStableLoads plus ordered literal and intrinsic argument-bundle construction. |
-| `CallResults` | LiteralAndArguments plus source-position single-use intrinsic, typed-member, and direct user-class call-result residency. This is the default. |
+| `CallResults` | LiteralAndArguments plus source-position single-use intrinsic, typed-member, and direct user-class call-result residency. |
+| `GeneralRegions` | CallResults plus deterministic consumer-rooted topological scheduling across complete eligible producer DAGs inside one region. This is the default. |
 
 Later modes must include all behavior from preceding modes so adjacent levels
 remain useful for A/B diagnosis.
@@ -297,6 +298,50 @@ removed. Eligible calls are now scheduler-owned and emitted once at their
 definition; Stackify never treats a call as rematerializable or defers it to a
 load site.
 
+## General straight-line region scheduling
+
+`GeneralRegions` generalizes the proven family-specific stages into a
+deterministic consumer-rooted topological scheduler. For each construction or
+intrinsic argument root inside one existing scheduling region it:
+
+1. walks ordered def-use edges to build the complete single-use producer DAG;
+2. requires every selected temp to have one definition, one use, no variable
+   slot, and the same region/source interval;
+3. accepts only the explicit pure/stable/call producer families proven by
+   earlier stages;
+4. preserves original effectful/may-throw order while evaluating operands in
+   their JavaScript position;
+5. requires the selected closure to be a contiguous producer suffix;
+6. emits the root before the suffix, marks the selected DAG
+   `ScheduledInline`, and rebuilds operation order and effective liveness in
+   linear time;
+7. submits the result to the independent ownership, effect, data-order, LIFO,
+   boundary, and maxstack validator.
+
+Stable original LIR index is the deterministic tie-break. The scheduler does
+not use commutativity, reassociation, operand swapping, constant folding, or
+speculative motion.
+
+This removes the residual locals from mixed nested construction such as:
+
+```js
+Math.max((a + 1) * (b - 2), (c + 3) / (d + 4))
+({ x: [a * 2, b + 3], y: Math.floor(a) + Math.sqrt(b) })
+```
+
+Calls, allocations, and may-throw producers are allowed only when their
+emission traversal preserves original observable order. Alias-sensitive,
+generic getter/setter, fallback, computed/spread/iterator, multi-use,
+variable-backed, non-contiguous, or unsupported shapes remain materialized.
+Labels, branches, return/throw/leave/endfinally, EH entry, sequence points,
+await/yield and resume operations, scope replacement, hidden internal CFG, and
+unknown instructions remain opaque hard boundaries.
+
+General-stage diagnostics record candidate, accepted, and wholly rejected
+regions; dependency and effect-order rejection counts; eliminated spills;
+validation fallbacks; and residual schedule-level materializations. Focused
+tests require deterministic repeated plans and zero validation fallback.
+
 ## Typed unary and comparison coverage
 
 `TypedComparisons` extends cumulative coverage to:
@@ -329,8 +374,8 @@ cannot also belong to legacy branch fusion. Unsupported comparison shapes
 remain eligible for the legacy branch optimizer.
 
 Numeric intermediates feeding a comparison are promoted only when the complete
-operand prefix passes the persistent-stack validator. Calls remain
-materialized, execute left-to-right exactly once, and are not moved.
+operand prefix passes the persistent-stack validator. Supported call results
+remain source-ordered and execute exactly once; unsupported calls materialize.
 TDZ-checked reads remain may-throw and source-ordered.
 
 The option is internal and testable. It is not currently a user-facing CLI
@@ -788,6 +833,9 @@ Focused regression coverage also includes:
   source lines, and compilation with/without PDBs;
 - source-mapped stack traces after scheduler-covered arithmetic;
 - decoded PDB and source-mapped stack traces after scheduler-covered calls;
+- deterministic general-region plans, acceptance/rejection metrics, hard
+  boundary matrix, nested exact no-spill IL, alias/effect negatives, decoded
+  PDB, and nested source-mapped exceptions;
 - `ILVerificationTests`, including deep arithmetic and arbitrary-value
   try/catch/finally.
 
@@ -803,17 +851,16 @@ The current cumulative scheduling mode does not:
 - replace the local allocator;
 - schedule multi-use values as stack-resident.
 
-These limitations are deliberate. A no-change foundation makes later
-instruction-family PRs smaller and reviewable.
+These limitations are deliberate. Unsupported regions retain the preceding
+validated schedule and legacy materialization behavior.
 
 ## Planned expansion
 
 The ordered work is tracked under
 [issue #1617](https://github.com/tomacox74/js2il/issues/1617):
 
-1. General legal scheduling inside straight-line regions.
-2. Stackify scheduling retirement.
-3. Final obsolete-code audit and deletion.
+1. Stackify scheduling retirement.
+2. Final obsolete-code audit and deletion.
 
 At each optimizing stage:
 

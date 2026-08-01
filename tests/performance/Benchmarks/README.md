@@ -120,8 +120,9 @@ dotnet run -c Release -- --kracken --scenario audio-fft
 #### Branch comparison workflow
 
 Run the manual `Benchmark branch comparison` workflow to compare a scenario from
-the `dromaeo` (default) or `kracken` benchmark suite on `master` and a private
-branch on the same GitHub-hosted runner. It runs `master` first, prints both
+the `dromaeo` (default) or `kracken` benchmark suite on a baseline ref (default:
+`master`) and a private branch on the same GitHub-hosted runner. It runs the
+baseline first, prints both
 BenchmarkDotNet reports in the workflow log, and uploads raw reports plus console output as the
 `benchmark-branch-comparison-results` artifact.
 
@@ -140,7 +141,7 @@ node scripts/dispatchBenchmarkBranchComparisonWorkflow.js perf/object-shapes dro
 To compare the Kraken `ai-astar` scenario:
 
 ```powershell
-node scripts/dispatchBenchmarkBranchComparisonWorkflow.js v0.11.21 ai-astar --benchmark kracken --watch
+node scripts/dispatchBenchmarkBranchComparisonWorkflow.js feat/scheduler-general-regions ai-astar --benchmark kracken --baseline v0.11.40 --watch
 ```
 
 #### Cube-focused guardrail workflow

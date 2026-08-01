@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x22f8
+			// Method begins at RVA 0x22f0
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,15 +40,16 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 374 (0x176)
+		// Code size: 366 (0x16e)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.CommonJS_Export_ClassWithConstructor/Scope,
 			[1] object,
 			[2] object,
 			[3] object,
-			[4] object,
-			[5] object
+			[4] object[],
+			[5] object,
+			[6] object
 		)
 
 		IL_0000: newobj instance void Modules.CommonJS_Export_ClassWithConstructor/Scope::.ctor()
@@ -58,123 +59,119 @@
 		IL_0008: ldstr "./CommonJS_Export_ClassWithConstructor_Lib"
 		IL_000d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
 		IL_0012: stloc.1
-		IL_0013: ldloc.1
-		IL_0014: ldc.i4.2
-		IL_0015: newarr [System.Runtime]System.Object
-		IL_001a: dup
-		IL_001b: ldc.i4.0
-		IL_001c: ldstr "Default"
-		IL_0021: stelem.ref
-		IL_0022: dup
-		IL_0023: ldc.i4.1
-		IL_0024: ldc.r8 25
-		IL_002d: box [System.Runtime]System.Double
-		IL_0032: stelem.ref
-		IL_0033: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::ConstructValue(object, object[])
-		IL_0038: stloc.2
-		IL_0039: ldstr "console"
-		IL_003e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0043: stloc.s 4
-		IL_0045: ldloc.s 4
+		IL_0013: ldc.i4.2
+		IL_0014: newarr [System.Runtime]System.Object
+		IL_0019: dup
+		IL_001a: ldc.i4.0
+		IL_001b: ldstr "Default"
+		IL_0020: stelem.ref
+		IL_0021: dup
+		IL_0022: ldc.i4.1
+		IL_0023: ldc.r8 25
+		IL_002c: box [System.Runtime]System.Double
+		IL_0031: stelem.ref
+		IL_0032: stloc.s 4
+		IL_0034: ldloc.1
+		IL_0035: ldloc.s 4
+		IL_0037: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::ConstructValue(object, object[])
+		IL_003c: stloc.2
+		IL_003d: ldstr "console"
+		IL_0042: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
 		IL_0047: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_004c: stloc.s 4
+		IL_004c: stloc.s 5
 		IL_004e: ldloc.2
 		IL_004f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0054: stloc.s 5
-		IL_0056: ldloc.s 5
+		IL_0054: stloc.s 6
+		IL_0056: ldloc.s 6
 		IL_0058: isinst Modules.CommonJS_Export_ClassWithConstructor_Lib/Person
 		IL_005d: dup
 		IL_005e: brfalse IL_006f
 
 		IL_0063: callvirt instance object Modules.CommonJS_Export_ClassWithConstructor_Lib/Person::greet()
-		IL_0068: stloc.s 5
+		IL_0068: stloc.s 6
 		IL_006a: br IL_007e
 
 		IL_006f: pop
-		IL_0070: ldloc.s 5
+		IL_0070: ldloc.s 6
 		IL_0072: ldstr "greet"
 		IL_0077: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-		IL_007c: stloc.s 5
+		IL_007c: stloc.s 6
 
-		IL_007e: ldloc.s 4
+		IL_007e: ldloc.s 5
 		IL_0080: ldstr "log"
 		IL_0085: ldstr "default greeting:"
-		IL_008a: ldloc.s 5
+		IL_008a: ldloc.s 6
 		IL_008c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
 		IL_0091: pop
-		IL_0092: ldloc.1
-		IL_0093: ldc.i4.2
-		IL_0094: newarr [System.Runtime]System.Object
-		IL_0099: dup
-		IL_009a: ldc.i4.0
-		IL_009b: ldstr "Alice"
-		IL_00a0: stelem.ref
-		IL_00a1: dup
-		IL_00a2: ldc.i4.1
-		IL_00a3: ldc.r8 30
-		IL_00ac: box [System.Runtime]System.Double
-		IL_00b1: stelem.ref
-		IL_00b2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::ConstructValue(object, object[])
-		IL_00b7: stloc.3
-		IL_00b8: ldstr "console"
-		IL_00bd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_00c2: stloc.s 5
-		IL_00c4: ldloc.s 5
+		IL_0092: ldc.i4.2
+		IL_0093: newarr [System.Runtime]System.Object
+		IL_0098: dup
+		IL_0099: ldc.i4.0
+		IL_009a: ldstr "Alice"
+		IL_009f: stelem.ref
+		IL_00a0: dup
+		IL_00a1: ldc.i4.1
+		IL_00a2: ldc.r8 30
+		IL_00ab: box [System.Runtime]System.Double
+		IL_00b0: stelem.ref
+		IL_00b1: stloc.s 4
+		IL_00b3: ldloc.1
+		IL_00b4: ldloc.s 4
+		IL_00b6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::ConstructValue(object, object[])
+		IL_00bb: stloc.3
+		IL_00bc: ldstr "console"
+		IL_00c1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
 		IL_00c6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00cb: stloc.s 5
+		IL_00cb: stloc.s 6
 		IL_00cd: ldloc.3
 		IL_00ce: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00d3: stloc.s 4
-		IL_00d5: ldloc.s 4
+		IL_00d3: stloc.s 5
+		IL_00d5: ldloc.s 5
 		IL_00d7: isinst Modules.CommonJS_Export_ClassWithConstructor_Lib/Person
 		IL_00dc: dup
 		IL_00dd: brfalse IL_00ee
 
 		IL_00e2: callvirt instance object Modules.CommonJS_Export_ClassWithConstructor_Lib/Person::greet()
-		IL_00e7: stloc.s 4
+		IL_00e7: stloc.s 5
 		IL_00e9: br IL_00fd
 
 		IL_00ee: pop
-		IL_00ef: ldloc.s 4
+		IL_00ef: ldloc.s 5
 		IL_00f1: ldstr "greet"
 		IL_00f6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-		IL_00fb: stloc.s 4
+		IL_00fb: stloc.s 5
 
-		IL_00fd: ldloc.s 5
+		IL_00fd: ldloc.s 6
 		IL_00ff: ldstr "log"
 		IL_0104: ldstr "alice greeting:"
-		IL_0109: ldloc.s 4
+		IL_0109: ldloc.s 5
 		IL_010b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
 		IL_0110: pop
 		IL_0111: ldstr "console"
 		IL_0116: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_011b: stloc.s 4
-		IL_011d: ldloc.s 4
-		IL_011f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0124: stloc.s 4
-		IL_0126: ldloc.s 4
-		IL_0128: ldstr "log"
-		IL_012d: ldstr "alice name:"
-		IL_0132: ldloc.3
-		IL_0133: ldstr "name"
-		IL_0138: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_013d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_0142: pop
-		IL_0143: ldstr "console"
-		IL_0148: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_014d: stloc.s 4
-		IL_014f: ldloc.s 4
-		IL_0151: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0156: stloc.s 4
-		IL_0158: ldloc.s 4
-		IL_015a: ldstr "log"
-		IL_015f: ldstr "alice age:"
-		IL_0164: ldloc.3
-		IL_0165: ldstr "age"
-		IL_016a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_016f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_0174: pop
-		IL_0175: ret
+		IL_011b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0120: stloc.s 5
+		IL_0122: ldloc.s 5
+		IL_0124: ldstr "log"
+		IL_0129: ldstr "alice name:"
+		IL_012e: ldloc.3
+		IL_012f: ldstr "name"
+		IL_0134: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0139: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_013e: pop
+		IL_013f: ldstr "console"
+		IL_0144: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0149: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_014e: stloc.s 5
+		IL_0150: ldloc.s 5
+		IL_0152: ldstr "log"
+		IL_0157: ldstr "alice age:"
+		IL_015c: ldloc.3
+		IL_015d: ldstr "age"
+		IL_0162: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0167: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_016c: pop
+		IL_016d: ret
 	} // end of method CommonJS_Export_ClassWithConstructor::__js_module_init__
 
 } // end of class Modules.CommonJS_Export_ClassWithConstructor
@@ -194,7 +191,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x230a
+				// Method begins at RVA 0x2302
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -214,7 +211,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2313
+				// Method begins at RVA 0x230b
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -234,7 +231,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x231c
+				// Method begins at RVA 0x2314
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -262,7 +259,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x229e
+			// Method begins at RVA 0x2296
 			// Header size: 1
 			// Code size: 21 (0x15)
 			.maxstack 8
@@ -284,7 +281,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x22b4
+			// Method begins at RVA 0x22ac
 			// Header size: 12
 			// Code size: 56 (0x38)
 			.maxstack 8
@@ -323,7 +320,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2301
+			// Method begins at RVA 0x22f9
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -347,7 +344,7 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x21d4
+		// Method begins at RVA 0x21cc
 		// Header size: 12
 		// Code size: 190 (0xbe)
 		.maxstack 13
@@ -456,7 +453,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2325
+		// Method begins at RVA 0x231d
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

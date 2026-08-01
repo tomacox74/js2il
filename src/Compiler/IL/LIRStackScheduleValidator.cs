@@ -497,7 +497,8 @@ internal static class LIRStackScheduleValidator
                 || definitionByTemp[tempIndex] is not { } definition
                 || !(LIRStackScheduler.IsSupportedScheduledInlineProducer(
                         definition)
-                    || schedule.Mode == LIRStackSchedulerMode.CallResults
+                    || schedule.Mode
+                            >= LIRStackSchedulerMode.CallResults
                         && LIRStackScheduler
                             .IsSupportedScheduledInlineCallProducer(
                                 definition)))

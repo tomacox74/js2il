@@ -81,6 +81,9 @@ namespace Jroc.Tests.Function
         public Task Function_SchedulerCallResults() { var testName = nameof(Function_SchedulerCallResults); return ExecutionTest(testName); }
 
         [Fact]
+        public Task Function_SchedulerGeneralRegions() { var testName = nameof(Function_SchedulerGeneralRegions); return ExecutionTest(testName); }
+
+        [Fact]
         public Task Function_Closure_OuterNeedsLeafScopeInstanceToCallInner() { var testName = nameof(Function_Closure_OuterNeedsLeafScopeInstanceToCallInner); return ExecutionTest(testName); }
 
         [Fact]
