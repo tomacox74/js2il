@@ -128,6 +128,7 @@ function isTopLevelCandidateName(name) {
   // Roots created by .NET tests
   if (name === 'Jroc.Tests') return true;
   if (name.startsWith('Jroc.Tests.')) return true; // e.g. Jroc.Tests.ILVerification
+  if (name === 'Jroc.Test262.Tests') return true;
   if (name === 'jroc-tests') return true;
 
   // Per-test roots created by CLI tests
@@ -150,8 +151,11 @@ function isTopLevelCandidateName(name) {
 }
 
 function isManagedRootName(name) {
-  // For these roots we clean their children (not just the root itself)
-  return name === 'Jroc.Tests' || name.startsWith('Jroc.Tests.') || name === 'jroc-tests';
+  // For these roots we clean individual artifacts instead of the root itself.
+  return name === 'Jroc.Tests'
+    || name.startsWith('Jroc.Tests.')
+    || name === 'Jroc.Test262.Tests'
+    || name === 'jroc-tests';
 }
 
 async function listTopLevelCandidates(tempRoot) {
@@ -164,10 +168,34 @@ async function listTopLevelCandidates(tempRoot) {
   return out;
 }
 
-async function listManagedRootChildren(rootPath) {
+async function listManagedRootArtifacts(rootPath) {
   try {
-    const entries = await fsp.readdir(rootPath, { withFileTypes: true });
-    return entries.map(e => ({ name: e.name, fullPath: path.join(rootPath, e.name), dirent: e }));
+    const roots = await fsp.readdir(rootPath, { withFileTypes: true });
+    const artifacts = [];
+
+    for (const root of roots) {
+      const rootItem = { name: root.name, fullPath: path.join(rootPath, root.name), dirent: root };
+      if (!root.isDirectory()) {
+        artifacts.push(rootItem);
+        continue;
+      }
+
+      const children = await fsp.readdir(rootItem.fullPath, { withFileTypes: true });
+      if (children.length === 0) {
+        artifacts.push(rootItem);
+        continue;
+      }
+
+      // Jroc.Tests stores artifacts as <category>.ExecutionTests/<run-id>.
+      // Check each artifact timestamp so a recent run does not retain older runs.
+      artifacts.push(...children.map(child => ({
+        name: child.name,
+        fullPath: path.join(rootItem.fullPath, child.name),
+        dirent: child,
+      })));
+    }
+
+    return artifacts;
   } catch {
     return [];
   }
@@ -201,11 +229,11 @@ async function main() {
 
   const top = await listTopLevelCandidates(tempRoot);
 
-  // Expand managed roots to their children for finer-grained cleanup
+  // Expand managed roots to individual artifacts for finer-grained cleanup.
   const expanded = [];
   for (const item of top) {
     if (isManagedRootName(item.name) && item.dirent.isDirectory()) {
-      expanded.push(...(await listManagedRootChildren(item.fullPath)));
+      expanded.push(...(await listManagedRootArtifacts(item.fullPath)));
       continue;
     }
     expanded.push(item);
