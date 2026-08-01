@@ -588,6 +588,62 @@ public sealed class LIRStackSchedulerTests
     }
 
     [Fact]
+    public void Build_ConversionsMode_CarriesScopeReadIntoObjectCoercion()
+    {
+        var body = new MethodBodyIR();
+        var receiver = AddTemp(body);
+        var result = AddTemp(body);
+        body.Instructions.Add(new LIRLoadScopeFieldByName(
+            "GlobalScope",
+            "performance",
+            receiver));
+        body.Instructions.Add(new LIRCallIntrinsicStatic(
+            "ObjectRuntime",
+            "RequireObjectCoercible",
+            new[] { receiver },
+            result));
+        body.Instructions.Add(new LIRReturn(result));
+
+        var schedule = LIRStackScheduler.Build(
+            body,
+            new LIRStackSchedulerOptions(
+                LIRStackSchedulerMode.ConversionsAndStableLoads));
+
+        Assert.Equal(
+            TempResidency.StackResident,
+            schedule.TempResidencies[receiver.Index]);
+        Assert.True(schedule.OwnedTemps[receiver.Index]);
+    }
+
+    [Fact]
+    public void Build_ConversionsMode_DoesNotCarryScopeReadIntoOtherIntrinsic()
+    {
+        var body = new MethodBodyIR();
+        var receiver = AddTemp(body);
+        var result = AddTemp(body);
+        body.Instructions.Add(new LIRLoadScopeFieldByName(
+            "GlobalScope",
+            "performance",
+            receiver));
+        body.Instructions.Add(new LIRCallIntrinsicStatic(
+            "ObjectRuntime",
+            "Other",
+            new[] { receiver },
+            result));
+        body.Instructions.Add(new LIRReturn(result));
+
+        var schedule = LIRStackScheduler.Build(
+            body,
+            new LIRStackSchedulerOptions(
+                LIRStackSchedulerMode.ConversionsAndStableLoads));
+
+        Assert.Equal(
+            TempResidency.MaterializedLocal,
+            schedule.TempResidencies[receiver.Index]);
+        Assert.False(schedule.OwnedTemps[receiver.Index]);
+    }
+
+    [Fact]
     public void Build_ConversionsMode_DoesNotCarryScopeReadAsLaterOperand()
     {
         var body = new MethodBodyIR();

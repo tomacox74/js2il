@@ -556,6 +556,9 @@ internal static class LIRStackScheduler
                         || IsConversionConcatOrStableLoad(consumer)
                         || IsSupportedDirectReceiverConsumer(
                             consumer,
+                            new TempVariable(tempIndex))
+                        || IsSupportedObjectCoercionConsumer(
+                            consumer,
                             new TempVariable(tempIndex)))
                     && IsDefinedValueRequired(
                         methodBody,
@@ -1706,6 +1709,18 @@ internal static class LIRStackScheduler
             && !IsKnownParamsArrayIntrinsicCall(instruction)
             && instruction.Arguments.Count > 0
             && instruction.Arguments[0].Equals(result);
+
+    private static bool IsSupportedObjectCoercionConsumer(
+        LIRInstruction instruction,
+        TempVariable result)
+        => instruction is LIRCallIntrinsicStatic
+            {
+                IntrinsicName: "ObjectRuntime",
+                MethodName: "RequireObjectCoercible",
+                GenericTypeArgument: null,
+                Arguments.Count: 1
+            } requireObjectCoercible
+            && requireObjectCoercible.Arguments[0].Equals(result);
 
     private static bool IsKnownParamsArrayIntrinsicCall(
         LIRInstruction instruction)
