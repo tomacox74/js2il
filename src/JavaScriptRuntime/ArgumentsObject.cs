@@ -38,6 +38,7 @@ public sealed class ArgumentsObject : IDictionary<string, object?>
         _hasCalleeProperty = calleeValue is not null || restrictCallee;
         UpdateLengthDescriptor();
         UpdateCalleeDescriptor();
+        PrototypeChain.InitializePrototype(this, GlobalThis.ObjectPrototypeValue);
     }
 
     public object? this[string key]
