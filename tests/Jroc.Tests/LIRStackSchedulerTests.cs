@@ -648,6 +648,77 @@ public sealed class LIRStackSchedulerTests
     }
 
     [Fact]
+    public void Build_CallResultsMode_DoesNotCarryReceiverAcrossConstruction()
+    {
+        var body = new MethodBodyIR();
+        var value = AddTemp(body);
+        var receiver = AddTemp(body);
+        var element = AddTemp(body);
+        var argument = AddTemp(body);
+        var result = AddTemp(body);
+        body.Instructions.Add(new LIRLoadParameter(1, value));
+        body.Instructions.Add(new LIRCallIntrinsicStatic(
+            "ObjectRuntime",
+            "RequireObjectCoercible",
+            new[] { value },
+            receiver));
+        body.Instructions.Add(new LIRConstNumber(1, element));
+        body.Instructions.Add(new LIRNewJsArray(
+            new[] { element },
+            argument));
+        body.Instructions.Add(new LIRCallMember1(
+            receiver,
+            "use",
+            argument,
+            result));
+        body.Instructions.Add(new LIRReturn(result));
+
+        var schedule = LIRStackScheduler.Build(
+            body,
+            new LIRStackSchedulerOptions(
+                LIRStackSchedulerMode.CallResults));
+
+        Assert.Equal(
+            TempResidency.MaterializedLocal,
+            schedule.TempResidencies[receiver.Index]);
+        Assert.False(schedule.OwnedTemps[receiver.Index]);
+    }
+
+    [Fact]
+    public void Build_ConversionsMode_DoesNotCarryScopeReceiverAcrossConstruction()
+    {
+        var body = new MethodBodyIR();
+        var receiver = AddTemp(body);
+        var element = AddTemp(body);
+        var argument = AddTemp(body);
+        var result = AddTemp(body);
+        body.Instructions.Add(new LIRLoadScopeFieldByName(
+            "GlobalScope",
+            "console",
+            receiver));
+        body.Instructions.Add(new LIRConstNumber(1, element));
+        body.Instructions.Add(new LIRNewJsArray(
+            new[] { element },
+            argument));
+        body.Instructions.Add(new LIRCallMember1(
+            receiver,
+            "use",
+            argument,
+            result));
+        body.Instructions.Add(new LIRReturn(result));
+
+        var schedule = LIRStackScheduler.Build(
+            body,
+            new LIRStackSchedulerOptions(
+                LIRStackSchedulerMode.ConversionsAndStableLoads));
+
+        Assert.Equal(
+            TempResidency.MaterializedLocal,
+            schedule.TempResidencies[receiver.Index]);
+        Assert.False(schedule.OwnedTemps[receiver.Index]);
+    }
+
+    [Fact]
     public void Build_LiteralMode_MovesConstructionBeforePureProducerSuffix()
     {
         var body = new MethodBodyIR();
