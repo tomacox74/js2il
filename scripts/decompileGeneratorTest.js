@@ -134,9 +134,17 @@ function main() {
     }
   );
 
-  if (testResult.status !== 0) {
-    // Try with build
-    console.log('Test failed or not found, retrying with build...');
+  const assemblyFileBaseName = getAssemblyFileBaseName(testName);
+  let assemblyPath =
+    testResult.status === 0
+      ? tryFindLatestGeneratedAssembly(category, assemblyFileBaseName)
+      : null;
+
+  // `dotnet test --no-build` can exit successfully without running tests when
+  // the test project has not been built yet. Only skip the build retry when
+  // the requested test actually produced an assembly.
+  if (!assemblyPath) {
+    console.log('Test did not produce an assembly, retrying with build...');
     const retryResult = childProcess.spawnSync(
       'dotnet',
       ['test', testProject, '--filter', `FullyQualifiedName=${fullTestName}`],
@@ -151,6 +159,11 @@ function main() {
       console.error(`Test ${fullTestName} failed or not found.`);
       process.exit(1);
     }
+
+    assemblyPath = tryFindLatestGeneratedAssembly(
+      category,
+      assemblyFileBaseName
+    );
   }
 
   // Step 2: Find the generated assembly
@@ -158,11 +171,6 @@ function main() {
   //   %TEMP%/Jroc.Tests/{Category}.GeneratorTests/{runId}/{assemblyName}.dll
   //   %TEMP%/Jroc.Tests/{Category}.ExecutionTests/{runId}/{assemblyName}.dll
   // where assemblyName is the basename of the JS entry file.
-  const assemblyFileBaseName = getAssemblyFileBaseName(testName);
-  const assemblyPath =
-    tryFindLatestGeneratedAssembly(category, assemblyFileBaseName) ??
-    null;
-
   if (!assemblyPath) {
     console.error(`Assembly not found for category '${category}' and test '${testName}'.`);
     console.error('Looked under:');
