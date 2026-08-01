@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2137
+				// Method begins at RVA 0x2121
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -46,9 +46,9 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 04 00 00 02
 			)
-			// Method begins at RVA 0x2104
+			// Method begins at RVA 0x20f0
 			// Header size: 12
-			// Code size: 30 (0x1e)
+			// Code size: 28 (0x1c)
 			.maxstack 8
 			.locals init (
 				[0] object
@@ -59,15 +59,13 @@
 			IL_0006: stloc.0
 			IL_0007: ldloc.0
 			IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_000d: stloc.0
-			IL_000e: ldloc.0
-			IL_000f: ldstr "join"
-			IL_0014: ldarg.2
-			IL_0015: ldarg.3
-			IL_0016: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-			IL_001b: stloc.0
-			IL_001c: ldloc.0
-			IL_001d: ret
+			IL_000d: ldstr "join"
+			IL_0012: ldarg.2
+			IL_0013: ldarg.3
+			IL_0014: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+			IL_0019: stloc.0
+			IL_001a: ldloc.0
+			IL_001b: ret
 		} // end of method joinWrapper::__js_call__
 
 	} // end of class joinWrapper
@@ -88,7 +86,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x212e
+			// Method begins at RVA 0x2118
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -114,75 +112,62 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 168 (0xa8)
+		// Code size: 145 (0x91)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Require_Path_Join_NestedFunction/Scope,
 			[1] class [System.Runtime]System.Func`4<object, string, string, object>,
 			[2] object,
-			[3] object[],
-			[4] object
+			[3] object,
+			[4] object[]
 		)
 
 		IL_0000: newobj instance void Modules.Require_Path_Join_NestedFunction/Scope::.ctor()
 		IL_0005: stloc.0
-		IL_0006: ldc.i4.1
-		IL_0007: newarr [System.Runtime]System.Object
-		IL_000c: dup
-		IL_000d: ldc.i4.0
-		IL_000e: ldloc.0
-		IL_000f: stelem.ref
-		IL_0010: stloc.3
-		IL_0011: ldloc.3
-		IL_0012: ldc.i4.0
-		IL_0013: ldelem.ref
-		IL_0014: castclass Modules.Require_Path_Join_NestedFunction/Scope
-		IL_0019: ldftn object Modules.Require_Path_Join_NestedFunction/joinWrapper::__js_call__(class Modules.Require_Path_Join_NestedFunction/Scope, object, string, string)
-		IL_001f: newobj instance void class [System.Runtime]System.Func`4<object, string, string, object>::.ctor(object, native int)
-		IL_0024: castclass class [System.Runtime]System.Func`4<object, string, string, object>
-		IL_0029: ldc.i4.2
-		IL_002a: conv.r8
-		IL_002b: ldstr "joinWrapper"
-		IL_0030: ldc.i4.0
-		IL_0031: ldc.i4.1
-		IL_0032: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [System.Runtime]System.Func`4<object, string, string, object>>(!!0, float64, string, bool, bool)
-		IL_0037: stloc.1
-		IL_0038: nop
-		IL_0039: ldarg.1
-		IL_003a: ldstr "path"
-		IL_003f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
-		IL_0044: stloc.s 4
-		IL_0046: ldloc.0
-		IL_0047: ldloc.s 4
-		IL_0049: stfld object Modules.Require_Path_Join_NestedFunction/Scope::path
-		IL_004e: nop
-		IL_004f: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0054: stloc.3
-		IL_0055: ldloc.1
-		IL_0056: ldloc.3
-		IL_0057: ldstr "a"
-		IL_005c: ldstr "b"
-		IL_0061: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
-		IL_0066: stloc.s 4
-		IL_0068: ldloc.s 4
-		IL_006a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_006f: stloc.s 4
-		IL_0071: ldloc.s 4
-		IL_0073: ldstr "replace"
-		IL_0078: ldstr "\\"
-		IL_007d: ldstr "/"
-		IL_0082: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_0087: stloc.2
-		IL_0088: ldstr "console"
-		IL_008d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0092: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0097: stloc.s 4
-		IL_0099: ldloc.s 4
-		IL_009b: ldstr "log"
-		IL_00a0: ldloc.2
-		IL_00a1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00a6: pop
-		IL_00a7: ret
+		IL_0006: ldloc.0
+		IL_0007: castclass Modules.Require_Path_Join_NestedFunction/Scope
+		IL_000c: ldftn object Modules.Require_Path_Join_NestedFunction/joinWrapper::__js_call__(class Modules.Require_Path_Join_NestedFunction/Scope, object, string, string)
+		IL_0012: newobj instance void class [System.Runtime]System.Func`4<object, string, string, object>::.ctor(object, native int)
+		IL_0017: castclass class [System.Runtime]System.Func`4<object, string, string, object>
+		IL_001c: ldc.i4.2
+		IL_001d: conv.r8
+		IL_001e: ldstr "joinWrapper"
+		IL_0023: ldc.i4.0
+		IL_0024: ldc.i4.1
+		IL_0025: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [System.Runtime]System.Func`4<object, string, string, object>>(!!0, float64, string, bool, bool)
+		IL_002a: stloc.1
+		IL_002b: nop
+		IL_002c: ldarg.1
+		IL_002d: ldstr "path"
+		IL_0032: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
+		IL_0037: stloc.3
+		IL_0038: ldloc.0
+		IL_0039: ldloc.3
+		IL_003a: stfld object Modules.Require_Path_Join_NestedFunction/Scope::path
+		IL_003f: nop
+		IL_0040: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0045: stloc.s 4
+		IL_0047: ldloc.1
+		IL_0048: ldloc.s 4
+		IL_004a: ldstr "a"
+		IL_004f: ldstr "b"
+		IL_0054: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
+		IL_0059: stloc.3
+		IL_005a: ldloc.3
+		IL_005b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0060: ldstr "replace"
+		IL_0065: ldstr "\\"
+		IL_006a: ldstr "/"
+		IL_006f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_0074: stloc.2
+		IL_0075: ldstr "console"
+		IL_007a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_007f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0084: ldstr "log"
+		IL_0089: ldloc.2
+		IL_008a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_008f: pop
+		IL_0090: ret
 	} // end of method Require_Path_Join_NestedFunction::__js_module_init__
 
 } // end of class Modules.Require_Path_Join_NestedFunction
@@ -194,7 +179,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2140
+		// Method begins at RVA 0x212a
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21fb
+				// Method begins at RVA 0x21eb
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -44,7 +44,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2170
+			// Method begins at RVA 0x2160
 			// Header size: 12
 			// Code size: 118 (0x76)
 			.maxstack 8
@@ -102,7 +102,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x21f2
+			// Method begins at RVA 0x21e2
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -128,7 +128,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 275 (0x113)
+		// Code size: 259 (0x103)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Require_Util_Inspect_Custom/Scope,
@@ -139,9 +139,8 @@
 			[5] object,
 			[6] bool,
 			[7] object,
-			[8] object[],
-			[9] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes3,
-			[10] class [JavaScriptRuntime]JavaScriptRuntime.JsObject
+			[8] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes3,
+			[9] class [JavaScriptRuntime]JavaScriptRuntime.JsObject
 		)
 
 		IL_0000: newobj instance void Modules.Require_Util_Inspect_Custom/Scope::.ctor()
@@ -184,55 +183,46 @@
 		IL_0077: ldc.r8 1
 		IL_0080: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
 		IL_0085: stloc.3
-		IL_0086: ldc.i4.1
-		IL_0087: newarr [System.Runtime]System.Object
-		IL_008c: dup
-		IL_008d: ldc.i4.0
-		IL_008e: ldloc.0
-		IL_008f: stelem.ref
-		IL_0090: stloc.s 8
-		IL_0092: ldnull
-		IL_0093: ldftn object Modules.Require_Util_Inspect_Custom/FunctionExpression_L9C14::__js_call__(object, object, object, object)
-		IL_0099: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes3::.ctor(object, native int)
-		IL_009e: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes3
-		IL_00a3: ldc.i4.3
-		IL_00a4: conv.r8
-		IL_00a5: ldstr ""
-		IL_00aa: ldc.i4.0
+		IL_0086: ldnull
+		IL_0087: ldftn object Modules.Require_Util_Inspect_Custom/FunctionExpression_L9C14::__js_call__(object, object, object, object)
+		IL_008d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes3::.ctor(object, native int)
+		IL_0092: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes3
+		IL_0097: ldc.i4.3
+		IL_0098: conv.r8
+		IL_0099: ldstr ""
+		IL_009e: ldc.i4.0
+		IL_009f: ldc.i4.1
+		IL_00a0: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes3>(!!0, float64, string, bool, bool)
+		IL_00a5: stloc.s 8
+		IL_00a7: ldloc.3
+		IL_00a8: ldloc.2
+		IL_00a9: ldloc.s 8
 		IL_00ab: ldc.i4.1
-		IL_00ac: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes3>(!!0, float64, string, bool, bool)
-		IL_00b1: stloc.s 9
-		IL_00b3: ldloc.3
-		IL_00b4: ldloc.2
-		IL_00b5: ldloc.s 9
-		IL_00b7: ldc.i4.1
-		IL_00b8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, object, object, bool)
-		IL_00bd: pop
-		IL_00be: ldstr "console"
-		IL_00c3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_00c8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00cd: stloc.s 4
-		IL_00cf: ldloc.1
-		IL_00d0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00d5: stloc.s 5
-		IL_00d7: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_00dc: dup
-		IL_00dd: ldstr "depth"
-		IL_00e2: ldc.r8 2
-		IL_00eb: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
-		IL_00f0: stloc.s 10
-		IL_00f2: ldloc.s 5
-		IL_00f4: ldstr "inspect"
-		IL_00f9: ldloc.3
-		IL_00fa: ldloc.s 10
-		IL_00fc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_0101: stloc.s 5
-		IL_0103: ldloc.s 4
-		IL_0105: ldstr "log"
-		IL_010a: ldloc.s 5
-		IL_010c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0111: pop
-		IL_0112: ret
+		IL_00ac: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, object, object, bool)
+		IL_00b1: pop
+		IL_00b2: ldstr "console"
+		IL_00b7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_00bc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00c1: stloc.s 4
+		IL_00c3: ldloc.1
+		IL_00c4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00c9: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_00ce: dup
+		IL_00cf: ldstr "depth"
+		IL_00d4: ldc.r8 2
+		IL_00dd: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
+		IL_00e2: stloc.s 9
+		IL_00e4: ldstr "inspect"
+		IL_00e9: ldloc.3
+		IL_00ea: ldloc.s 9
+		IL_00ec: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_00f1: stloc.s 5
+		IL_00f3: ldloc.s 4
+		IL_00f5: ldstr "log"
+		IL_00fa: ldloc.s 5
+		IL_00fc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0101: pop
+		IL_0102: ret
 	} // end of method Require_Util_Inspect_Custom::__js_module_init__
 
 } // end of class Modules.Require_Util_Inspect_Custom
@@ -244,7 +234,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2204
+		// Method begins at RVA 0x21f4
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
