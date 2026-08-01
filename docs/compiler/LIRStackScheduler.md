@@ -191,6 +191,10 @@ LIRGetJsArrayLength
 LIRGetInt32ArrayLength
 LIRGetJsArrayElement
 LIRGetInt32ArrayElement
+LIRLoadLeafScopeField
+LIRLoadParentScopeField
+LIRLoadScopeField
+LIRLoadScopeFieldByName
 ```
 
 Candidates still require one definition, one use, no backing variable slot,
@@ -201,8 +205,10 @@ scheduler-owned conversion or typed load is never reproduced at its use.
 
 Only statically proven string, `Array`, and `Int32Array` operations are covered.
 Generic property/index reads remain materialized because getters, proxies, and
-coercion may be observable. Calls, allocations, mutable slot loads, TDZ-checked
-scope loads, async/generator returns, and values crossing scheduling boundaries
+coercion may be observable. A single-use scope read may remain stack-resident
+only when its source-position value is the leading operand of a supported
+receiver operation; it is never reproduced at the consumer. Calls,
+allocations, async/generator returns, and values crossing scheduling boundaries
 remain outside this mode.
 
 Cheap constants, parameter/`this` loads, and other legacy-approved stable loads
@@ -248,12 +254,14 @@ The validator computes effective effect positions for scheduled-inline
 definitions, requires a supported definition with exactly one use, preserves
 region/source ownership, and independently simulates the carried stack.
 
-Effectful calls/getters, mutable or TDZ-checked loads, non-contiguous producer
-ranges, spread/iterator lowering, variable-backed or multi-use temps, and
-cross-sequence-point/control/EH/suspension shapes fail closed to the preceding
-mode. `LIRBuildScopesArray` remains legacy-owned because callable creation
-consumes its scope payload through specialized ABI emission rather than the
-ordinary construction stack shape.
+Effectful calls/getters, non-contiguous producer ranges, spread/iterator
+lowering, variable-backed or multi-use temps, and cross-sequence-point/control/
+EH/suspension shapes fail closed to the preceding mode. `GeneralRegions` can
+claim an adjacent, single-use `LIRBuildArray` or `LIRBuildScopesArray` as
+`ScheduledInline` when its call consumer loads that array in the corresponding
+CLR operand position. One-slot scope arrays consumed through the SingleScope
+ABI emit the scope instance directly instead of allocating and extracting an
+array.
 
 ## Single-use call-result coverage
 
@@ -753,6 +761,9 @@ Identity mode must preserve all of the following:
 - calls never become rematerialized, fallback calls remain materialized, and
   params-array call arguments preserve source order through explicit
   scheduler-inline ownership.
+- adjacent single-use call argument and scope arrays are constructed at their
+  CLR operand position; unused compiler-internal scope-array producers are
+  removed before scheduling.
 
 The identity scheduler does not inspect `CompilerOptions.EmitPdb`; enabling
 symbols must not change schedule selection or operation order.

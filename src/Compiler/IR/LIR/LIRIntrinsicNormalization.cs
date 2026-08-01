@@ -20,6 +20,7 @@ internal static class LIRIntrinsicNormalization
         // Normalize intrinsic call patterns that don't require ClassRegistry.
         NormalizeCommonJsRequireCalls(methodBody);
         NormalizeIntrinsicCallArityExpansion(methodBody);
+        RemoveUnusedScopeProducers(methodBody);
 
         if (classRegistry == null)
         {
@@ -555,6 +556,48 @@ internal static class LIRIntrinsicNormalization
             Type type when type == typeof(JavaScriptRuntime.Array) => new ValueStorage(ValueStorageKind.Reference, typeof(JavaScriptRuntime.Array)),
             _ => new ValueStorage(ValueStorageKind.Reference, typeof(object))
         };
+
+    private static void RemoveUnusedScopeProducers(MethodBodyIR methodBody)
+    {
+        while (true)
+        {
+            var usedTemps = new HashSet<int>();
+            foreach (var instruction in methodBody.Instructions)
+            {
+                var visitor = new UsedTempCollector(usedTemps);
+                LIRInstructionInfo.VisitUsedTemps(instruction, ref visitor);
+            }
+
+            var removed = methodBody.Instructions.RemoveAll(
+                instruction => instruction switch
+                {
+                    LIRBuildScopesArray buildScopes =>
+                        !usedTemps.Contains(buildScopes.Result.Index),
+                    LIRLoadScopesArgument loadScopes =>
+                        !usedTemps.Contains(loadScopes.Result.Index),
+                    _ => false
+                });
+            if (removed == 0)
+            {
+                return;
+            }
+        }
+    }
+
+    private readonly struct UsedTempCollector : ITempUseVisitor
+    {
+        private readonly HashSet<int> _usedTemps;
+
+        internal UsedTempCollector(HashSet<int> usedTemps)
+        {
+            _usedTemps = usedTemps;
+        }
+
+        public void Visit(TempVariable temp)
+        {
+            _usedTemps.Add(temp.Index);
+        }
+    }
 
     /// <summary>
     /// Peephole pass: fuses LIRGetItem(obj, index, result) immediately followed by

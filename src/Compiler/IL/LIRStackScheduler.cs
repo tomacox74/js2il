@@ -553,7 +553,10 @@ internal static class LIRStackScheduler
                 useRegion == definitionRegion
                 && ((IsTypedNumericBinary(consumer)
                         || IsTypedUnaryOrComparison(consumer)
-                        || IsConversionConcatOrStableLoad(consumer))
+                        || IsConversionConcatOrStableLoad(consumer)
+                        || IsSupportedDirectReceiverConsumer(
+                            consumer,
+                            new TempVariable(tempIndex)))
                     && IsDefinedValueRequired(
                         methodBody,
                         consumer,
@@ -607,7 +610,11 @@ internal static class LIRStackScheduler
             or LIRGetJsArrayLength
             or LIRGetInt32ArrayLength
             or LIRGetJsArrayElement
-            or LIRGetInt32ArrayElement;
+            or LIRGetInt32ArrayElement
+            or LIRLoadLeafScopeField
+            or LIRLoadParentScopeField
+            or LIRLoadScopeField
+            or LIRLoadScopeFieldByName;
 
     private static LIRStackSchedule BuildLiteralAndArgumentsUnvalidated(
         MethodBodyIR methodBody)
@@ -1174,6 +1181,15 @@ internal static class LIRStackScheduler
         var operations = ReorderConstructionOperations(
             calls.Operations,
             movesByInsertionLirIndex);
+        ClaimInlineCallArrays(
+            methodBody,
+            definitionIndex,
+            definitionCount,
+            useIndex,
+            useCount,
+            regionByLirIndex,
+            residencies,
+            ownedTemps);
         PruneInvalidTypedNumericResidencies(
             methodBody,
             residencies,
@@ -1215,6 +1231,127 @@ internal static class LIRStackScheduler
     private static bool IsGeneralSchedulingRoot(LIRInstruction instruction)
         => IsSupportedConstruction(instruction)
             || IsSupportedArgumentBundle(instruction);
+
+    private static void ClaimInlineCallArrays(
+        MethodBodyIR methodBody,
+        int[] definitionIndex,
+        int[] definitionCount,
+        int[] useIndex,
+        int[] useCount,
+        int[] regionByLirIndex,
+        TempResidency[] residencies,
+        bool[] ownedTemps)
+    {
+        for (var tempIndex = 0; tempIndex < methodBody.Temps.Count; tempIndex++)
+        {
+            if (ownedTemps[tempIndex]
+                || definitionCount[tempIndex] != 1
+                || useCount[tempIndex] != 1
+                || definitionIndex[tempIndex] < 0
+                || useIndex[tempIndex] <= definitionIndex[tempIndex]
+                || tempIndex < methodBody.TempVariableSlots.Count
+                    && methodBody.TempVariableSlots[tempIndex] >= 0)
+            {
+                continue;
+            }
+
+            var definitionLirIndex = definitionIndex[tempIndex];
+            var consumerLirIndex = useIndex[tempIndex];
+            var definitionRegion = regionByLirIndex[definitionLirIndex];
+            if (definitionRegion < 0
+                || regionByLirIndex[consumerLirIndex] != definitionRegion)
+            {
+                continue;
+            }
+
+            var result = new TempVariable(tempIndex);
+            var definition = methodBody.Instructions[definitionLirIndex];
+            var consumer = methodBody.Instructions[consumerLirIndex];
+            var isInlineArgumentArray =
+                definition is LIRBuildArray
+                && consumerLirIndex == definitionLirIndex + 1
+                && IsSupportedInlineArgumentArrayConsumer(
+                    consumer,
+                    result);
+            var isInlineScopesArray =
+                definition is LIRBuildScopesArray
+                && consumerLirIndex == definitionLirIndex + 1
+                && IsSupportedInlineScopesArrayConsumer(
+                    consumer,
+                    result);
+            if (!isInlineArgumentArray && !isInlineScopesArray)
+            {
+                continue;
+            }
+
+            residencies[tempIndex] = TempResidency.ScheduledInline;
+            ownedTemps[tempIndex] = true;
+        }
+    }
+
+    private static bool IsSupportedInlineArgumentArrayConsumer(
+        LIRInstruction instruction,
+        TempVariable result)
+        => instruction switch
+        {
+            LIRCallIntrinsic call =>
+                call.ArgumentsArray.Equals(result),
+            LIRCallFunctionWithArgsArray call =>
+                call.ArgumentsArray.Equals(result),
+            LIRCallFunctionValue call =>
+                call.ArgumentsArray.Equals(result),
+            LIRCallMember call =>
+                call.ArgumentsArray.Equals(result),
+            LIRConstructValue construct =>
+                construct.ArgumentsArray.Equals(result),
+            LIRCallFunctionBaseConstructor call =>
+                call.ArgumentsArray.Equals(result),
+            _ => false
+        };
+
+    private static bool IsSupportedInlineScopesArrayConsumer(
+        LIRInstruction instruction,
+        TempVariable result)
+        => instruction switch
+        {
+            LIRCallFunction call => call.ScopesArray.Equals(result),
+            LIRTailCallFunctionReturn call =>
+                call.ScopesArray.Equals(result),
+            LIRCallFunctionWithArgsArray call =>
+                call.ScopesArray.Equals(result),
+            LIRCallFunctionValue call =>
+                call.ScopesArray.Equals(result),
+            LIRCallFunctionValue0 call =>
+                call.ScopesArray.Equals(result),
+            LIRCallFunctionValue1 call =>
+                call.ScopesArray.Equals(result),
+            LIRCallFunctionValue2 call =>
+                call.ScopesArray.Equals(result),
+            LIRCallFunctionValue3 call =>
+                call.ScopesArray.Equals(result),
+            LIRCreateBoundArrowFunction create =>
+                create.ScopesArray.Equals(result),
+            LIRCreateBoundFunctionExpression create =>
+                create.ScopesArray.Equals(result),
+            _ => false
+        };
+
+    private static bool IsSupportedInlineCallArrayRoot(
+        LIRInstruction instruction)
+        => instruction is LIRCallIntrinsic
+            or LIRCallFunction
+            or LIRTailCallFunctionReturn
+            or LIRCallFunctionWithArgsArray
+            or LIRCallFunctionValue
+            or LIRCallFunctionValue0
+            or LIRCallFunctionValue1
+            or LIRCallFunctionValue2
+            or LIRCallFunctionValue3
+            or LIRCallMember
+            or LIRConstructValue
+            or LIRCallFunctionBaseConstructor
+            or LIRCreateBoundArrowFunction
+            or LIRCreateBoundFunctionExpression;
 
     private static bool TrySelectGeneralProducerTree(
         MethodBodyIR methodBody,
@@ -1523,7 +1660,41 @@ internal static class LIRStackScheduler
             || consumer is LIRCallIntrinsicStatic intrinsic
                 && IsSupportedDirectIntrinsicConsumer(intrinsic, result)
             || consumer is LIRCallTypedMember typed
-                && typed.Receiver.Equals(result);
+                && typed.Receiver.Equals(result)
+            || IsSupportedDirectReceiverConsumer(consumer, result);
+
+    private static bool IsSupportedDirectReceiverConsumer(
+        LIRInstruction instruction,
+        TempVariable result)
+        => instruction switch
+        {
+            LIRGetItem getItem => getItem.Object.Equals(result),
+            LIRGetItemAsNumber getItem =>
+                getItem.Object.Equals(result),
+            LIRGetItemAsNumberString getItem =>
+                getItem.Object.Equals(result),
+            LIRSetItem setItem => setItem.Object.Equals(result),
+            LIRCallIntrinsic call =>
+                call.IntrinsicObject.Equals(result),
+            LIRCallInstanceMethod call =>
+                call.Receiver.Equals(result),
+            LIRCallMember call => call.Receiver.Equals(result),
+            LIRCallMember0 call => call.Receiver.Equals(result),
+            LIRCallMember1 call => call.Receiver.Equals(result),
+            LIRCallMember2 call => call.Receiver.Equals(result),
+            LIRCallMember3 call => call.Receiver.Equals(result),
+            LIRCallFunctionValue call =>
+                call.FunctionValue.Equals(result),
+            LIRCallFunctionValue0 call =>
+                call.FunctionValue.Equals(result),
+            LIRCallFunctionValue1 call =>
+                call.FunctionValue.Equals(result),
+            LIRCallFunctionValue2 call =>
+                call.FunctionValue.Equals(result),
+            LIRCallFunctionValue3 call =>
+                call.FunctionValue.Equals(result),
+            _ => false
+        };
 
     private static bool IsSupportedDirectIntrinsicConsumer(
         LIRCallIntrinsicStatic instruction,
@@ -1576,7 +1747,8 @@ internal static class LIRStackScheduler
     internal static bool IsSupportedScheduledInlineRoot(
         LIRInstruction instruction)
         => IsSupportedConstruction(instruction)
-            || IsSupportedArgumentBundle(instruction);
+            || IsSupportedArgumentBundle(instruction)
+            || IsSupportedInlineCallArrayRoot(instruction);
 
     private static bool IsSupportedConstructionConsumer(
         MethodBodyIR methodBody,
@@ -1710,6 +1882,7 @@ internal static class LIRStackScheduler
             or LIRGetJsArrayElement
             or LIRGetInt32ArrayElement
             or LIRBuildArray
+            or LIRBuildScopesArray
             or LIRNewJsArray
             or LIRNewJsObject;
 

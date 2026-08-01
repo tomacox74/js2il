@@ -38,6 +38,12 @@ internal sealed partial class LIRToILCompiler
                 {
                     if (!IsMaterialized(loadParentField.Result, allocation))
                     {
+                        EmitSchedulerOwnedStackValueIfNeeded(
+                            loadParentField,
+                            loadParentField.Result,
+                            ilEncoder,
+                            allocation,
+                            methodDescriptor);
                         break;
                     }
 

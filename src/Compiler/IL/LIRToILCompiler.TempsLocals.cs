@@ -444,92 +444,23 @@ internal sealed partial class LIRToILCompiler
                 EmitOperatorsDynamicBinary(binaryDynamic.Operator, ilEncoder);
                 break;
             case LIRLoadLeafScopeField loadLeafField:
-                // Emit inline: ldloc.0 (scope instance), ldfld (field handle)
-                {
-                    var fieldHandle = ResolveFieldToken(
-                        loadLeafField.Field.ScopeName,
-                        loadLeafField.Field.FieldName,
-                        "inline LIRLoadLeafScopeField emission");
-                    ilEncoder.LoadLocal(0);
-                    ilEncoder.OpCode(ILOpCode.Ldfld);
-                    ilEncoder.Token(fieldHandle);
-                    EmitTemporalDeadZoneGuard(ilEncoder, loadLeafField.Binding);
-
-                    var fieldClrType = GetDeclaredScopeFieldClrType(loadLeafField.Field.ScopeName, loadLeafField.Field.FieldName);
-                    EmitBoxIfNeededForTypedScopeFieldLoad(fieldClrType, GetTempStorage(temp), ilEncoder);
-                }
+                EmitLoadLeafScopeFieldValue(loadLeafField, ilEncoder);
                 break;
             case LIRLoadScopeFieldByName loadScopeField:
-                // Emit inline: ldloc.0 (scope instance), ldfld (field handle)
-                {
-                    var fieldHandle = ResolveFieldToken(
-                        loadScopeField.ScopeName,
-                        loadScopeField.FieldName,
-                        "inline LIRLoadScopeFieldByName emission");
-                    ilEncoder.LoadLocal(0);
-                    ilEncoder.OpCode(ILOpCode.Ldfld);
-                    ilEncoder.Token(fieldHandle);
-
-                    var fieldClrType = GetDeclaredScopeFieldClrType(loadScopeField.ScopeName, loadScopeField.FieldName);
-                    EmitBoxIfNeededForTypedScopeFieldLoad(fieldClrType, GetTempStorage(temp), ilEncoder);
-                }
+                EmitLoadScopeFieldByNameValue(loadScopeField, ilEncoder);
                 break;
             case LIRLoadParentScopeField loadParentField:
-                // Emit inline: load scopes array, index, cast, ldfld
-                {
-                    var scopeTypeHandle = ResolveScopeTypeHandle(
-                        loadParentField.Scope.Name,
-                        "inline LIRLoadParentScopeField emission (castclass)");
-                    var fieldHandle = ResolveFieldToken(
-                        loadParentField.Field.ScopeName,
-                        loadParentField.Field.FieldName,
-                        "inline LIRLoadParentScopeField emission");
-                    if (UsesSingleScopeAbi(methodDescriptor))
-                    {
-                        if (loadParentField.ParentScopeIndex != 0)
-                        {
-                            throw new InvalidOperationException("SingleScope ABI only supports parent scope index 0.");
-                        }
-
-                        EmitLoadSingleScopePayload(ilEncoder, methodDescriptor);
-                    }
-                    else
-                    {
-                        EmitLoadScopesArray(ilEncoder, methodDescriptor);
-                        ilEncoder.LoadConstantI4(loadParentField.ParentScopeIndex);
-                        ilEncoder.OpCode(ILOpCode.Ldelem_ref);
-                        ilEncoder.OpCode(ILOpCode.Castclass);
-                        ilEncoder.Token(scopeTypeHandle);
-                    }
-                    ilEncoder.OpCode(ILOpCode.Ldfld);
-                    ilEncoder.Token(fieldHandle);
-                    EmitTemporalDeadZoneGuard(ilEncoder, loadParentField.Binding);
-
-                    var fieldClrType = GetDeclaredScopeFieldClrType(loadParentField.Field.ScopeName, loadParentField.Field.FieldName);
-                    EmitBoxIfNeededForTypedScopeFieldLoad(fieldClrType, GetTempStorage(temp), ilEncoder);
-                }
+                EmitLoadParentScopeFieldValue(
+                    loadParentField,
+                    ilEncoder,
+                    methodDescriptor);
                 break;
             case LIRLoadScopeField loadScopeFieldTemp:
-                // Emit inline: load scope temp, cast, ldfld
-                {
-                    var scopeTypeHandle = ResolveScopeTypeHandle(
-                        loadScopeFieldTemp.Scope.Name,
-                        "inline LIRLoadScopeField emission (castclass)");
-                    var fieldHandle = ResolveFieldToken(
-                        loadScopeFieldTemp.Field.ScopeName,
-                        loadScopeFieldTemp.Field.FieldName,
-                        "inline LIRLoadScopeField emission");
-
-                    EmitLoadTemp(loadScopeFieldTemp.ScopeInstance, ilEncoder, allocation, methodDescriptor);
-                    ilEncoder.OpCode(ILOpCode.Castclass);
-                    ilEncoder.Token(scopeTypeHandle);
-                    ilEncoder.OpCode(ILOpCode.Ldfld);
-                    ilEncoder.Token(fieldHandle);
-                    EmitTemporalDeadZoneGuard(ilEncoder, loadScopeFieldTemp.Binding);
-
-                    var fieldClrType = GetDeclaredScopeFieldClrType(loadScopeFieldTemp.Field.ScopeName, loadScopeFieldTemp.Field.FieldName);
-                    EmitBoxIfNeededForTypedScopeFieldLoad(fieldClrType, GetTempStorage(temp), ilEncoder);
-                }
+                EmitLoadScopeFieldValue(
+                    loadScopeFieldTemp,
+                    ilEncoder,
+                    allocation,
+                    methodDescriptor);
                 break;
             case LIRGetIntrinsicGlobal getIntrinsicGlobal:
                 // Emit inline: call GlobalThis.GetFunctionValue("name")
@@ -2011,6 +1942,25 @@ internal sealed partial class LIRToILCompiler
                     ilEncoder.Token(_memberRefRegistry.GetOrAddTypeHandle(parameterStorage.ClrType));
                 }
                 return true;
+            case LIRLoadLeafScopeField loadLeafField:
+                EmitLoadLeafScopeFieldValue(loadLeafField, ilEncoder);
+                return true;
+            case LIRLoadScopeFieldByName loadScopeField:
+                EmitLoadScopeFieldByNameValue(loadScopeField, ilEncoder);
+                return true;
+            case LIRLoadParentScopeField loadParentField:
+                EmitLoadParentScopeFieldValue(
+                    loadParentField,
+                    ilEncoder,
+                    methodDescriptor);
+                return true;
+            case LIRLoadScopeField loadScopeFieldTemp:
+                EmitLoadScopeFieldValue(
+                    loadScopeFieldTemp,
+                    ilEncoder,
+                    allocation,
+                    methodDescriptor);
+                return true;
             case LIRCallRuntimeServicesStatic callRuntimeServices:
                 if (TryEmitOperatorsAddAndToNumber(callRuntimeServices, ilEncoder, allocation, methodDescriptor))
                 {
@@ -2350,6 +2300,128 @@ internal sealed partial class LIRToILCompiler
             encoder.OpCode(ILOpCode.Castclass);
             encoder.Token(_typeReferenceRegistry.GetOrAdd(expectedType));
         }
+    }
+
+    private void EmitLoadLeafScopeFieldValue(
+        LIRLoadLeafScopeField instruction,
+        InstructionEncoder ilEncoder)
+    {
+        var fieldHandle = ResolveFieldToken(
+            instruction.Field.ScopeName,
+            instruction.Field.FieldName,
+            "LIRLoadLeafScopeField value emission");
+        ilEncoder.LoadLocal(0);
+        ilEncoder.OpCode(ILOpCode.Ldfld);
+        ilEncoder.Token(fieldHandle);
+        EmitTemporalDeadZoneGuard(ilEncoder, instruction.Binding);
+
+        var fieldClrType = GetDeclaredScopeFieldClrType(
+            instruction.Field.ScopeName,
+            instruction.Field.FieldName);
+        EmitBoxIfNeededForTypedScopeFieldLoad(
+            fieldClrType,
+            GetTempStorage(instruction.Result),
+            ilEncoder);
+    }
+
+    private void EmitLoadScopeFieldByNameValue(
+        LIRLoadScopeFieldByName instruction,
+        InstructionEncoder ilEncoder)
+    {
+        var fieldHandle = ResolveFieldToken(
+            instruction.ScopeName,
+            instruction.FieldName,
+            "LIRLoadScopeFieldByName value emission");
+        ilEncoder.LoadLocal(0);
+        ilEncoder.OpCode(ILOpCode.Ldfld);
+        ilEncoder.Token(fieldHandle);
+
+        var fieldClrType = GetDeclaredScopeFieldClrType(
+            instruction.ScopeName,
+            instruction.FieldName);
+        EmitBoxIfNeededForTypedScopeFieldLoad(
+            fieldClrType,
+            GetTempStorage(instruction.Result),
+            ilEncoder);
+    }
+
+    private void EmitLoadParentScopeFieldValue(
+        LIRLoadParentScopeField instruction,
+        InstructionEncoder ilEncoder,
+        MethodDescriptor methodDescriptor)
+    {
+        var scopeTypeHandle = ResolveScopeTypeHandle(
+            instruction.Scope.Name,
+            "LIRLoadParentScopeField value emission (castclass)");
+        var fieldHandle = ResolveFieldToken(
+            instruction.Field.ScopeName,
+            instruction.Field.FieldName,
+            "LIRLoadParentScopeField value emission");
+
+        if (UsesSingleScopeAbi(methodDescriptor))
+        {
+            if (instruction.ParentScopeIndex != 0)
+            {
+                throw new InvalidOperationException(
+                    "SingleScope ABI only supports parent scope index 0.");
+            }
+
+            EmitLoadSingleScopePayload(ilEncoder, methodDescriptor);
+        }
+        else
+        {
+            EmitLoadScopesArray(ilEncoder, methodDescriptor);
+            ilEncoder.LoadConstantI4(instruction.ParentScopeIndex);
+            ilEncoder.OpCode(ILOpCode.Ldelem_ref);
+            ilEncoder.OpCode(ILOpCode.Castclass);
+            ilEncoder.Token(scopeTypeHandle);
+        }
+
+        ilEncoder.OpCode(ILOpCode.Ldfld);
+        ilEncoder.Token(fieldHandle);
+        EmitTemporalDeadZoneGuard(ilEncoder, instruction.Binding);
+
+        var fieldClrType = GetDeclaredScopeFieldClrType(
+            instruction.Field.ScopeName,
+            instruction.Field.FieldName);
+        EmitBoxIfNeededForTypedScopeFieldLoad(
+            fieldClrType,
+            GetTempStorage(instruction.Result),
+            ilEncoder);
+    }
+
+    private void EmitLoadScopeFieldValue(
+        LIRLoadScopeField instruction,
+        InstructionEncoder ilEncoder,
+        TempLocalAllocation allocation,
+        MethodDescriptor methodDescriptor)
+    {
+        var scopeTypeHandle = ResolveScopeTypeHandle(
+            instruction.Scope.Name,
+            "LIRLoadScopeField value emission (castclass)");
+        var fieldHandle = ResolveFieldToken(
+            instruction.Field.ScopeName,
+            instruction.Field.FieldName,
+            "LIRLoadScopeField value emission");
+
+        EmitLoadTemp(
+            instruction.ScopeInstance,
+            ilEncoder,
+            allocation,
+            methodDescriptor);
+        ilEncoder.OpCode(ILOpCode.Castclass);
+        ilEncoder.Token(scopeTypeHandle);
+        ilEncoder.OpCode(ILOpCode.Ldfld);
+        ilEncoder.Token(fieldHandle);
+        EmitTemporalDeadZoneGuard(ilEncoder, instruction.Binding);
+
+        var fieldClrType = GetDeclaredScopeFieldClrType(
+            instruction.Field.ScopeName,
+            instruction.Field.FieldName);
+        EmitBoxIfNeededForTypedScopeFieldLoad(
+            fieldClrType,
+            GetTempStorage(instruction.Result),
+            ilEncoder);
     }
 
     private bool IsMaterialized(TempVariable temp, TempLocalAllocation allocation)
