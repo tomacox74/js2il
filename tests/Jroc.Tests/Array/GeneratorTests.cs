@@ -150,5 +150,8 @@ namespace Jroc.Tests.Array
 
         [Fact]
         public Task Array_NumericStorage_Basic() { var testName = nameof(Array_NumericStorage_Basic); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Array_StableLoadReceiver_EvaluationOrder() { var testName = nameof(Array_StableLoadReceiver_EvaluationOrder); return GenerateTest(testName); }
     }
 }
