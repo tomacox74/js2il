@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20a4
+			// Method begins at RVA 0x20a8
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,10 +40,11 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 72 (0x48)
+		// Code size: 76 (0x4c)
 		.maxstack 8
-		.locals (
-			[0] class Modules.BooleanLiteral/Scope
+		.locals init (
+			[0] class Modules.BooleanLiteral/Scope,
+			[1] object
 		)
 
 		IL_0000: newobj instance void Modules.BooleanLiteral/Scope::.ctor()
@@ -52,20 +53,24 @@
 		IL_0007: ldstr "console"
 		IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
 		IL_0011: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0016: ldstr "log"
-		IL_001b: ldc.i4.1
-		IL_001c: box [System.Runtime]System.Boolean
-		IL_0021: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0026: pop
-		IL_0027: ldstr "console"
-		IL_002c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0031: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0036: ldstr "log"
-		IL_003b: ldc.i4.0
-		IL_003c: box [System.Runtime]System.Boolean
-		IL_0041: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0046: pop
-		IL_0047: ret
+		IL_0016: stloc.1
+		IL_0017: ldloc.1
+		IL_0018: ldstr "log"
+		IL_001d: ldc.i4.1
+		IL_001e: box [System.Runtime]System.Boolean
+		IL_0023: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0028: pop
+		IL_0029: ldstr "console"
+		IL_002e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0033: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0038: stloc.1
+		IL_0039: ldloc.1
+		IL_003a: ldstr "log"
+		IL_003f: ldc.i4.0
+		IL_0040: box [System.Runtime]System.Boolean
+		IL_0045: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_004a: pop
+		IL_004b: ret
 	} // end of method BooleanLiteral::__js_module_init__
 
 } // end of class Modules.BooleanLiteral
@@ -77,7 +82,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20ad
+		// Method begins at RVA 0x20b1
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

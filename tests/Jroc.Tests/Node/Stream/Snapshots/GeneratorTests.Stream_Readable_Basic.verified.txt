@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2269
+				// Method begins at RVA 0x2284
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -45,37 +45,40 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 05 00 00 02
 			)
-			// Method begins at RVA 0x21ec
+			// Method begins at RVA 0x21f8
 			// Header size: 12
-			// Code size: 70 (0x46)
+			// Code size: 72 (0x48)
 			.maxstack 8
 			.locals init (
-				[0] float64,
-				[1] object
+				[0] object,
+				[1] float64,
+				[2] object
 			)
 
 			IL_0000: ldstr "console"
 			IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
 			IL_000a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_000f: ldstr "log"
-			IL_0014: ldstr "Data received:"
-			IL_0019: ldarg.2
-			IL_001a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-			IL_001f: pop
-			IL_0020: ldarg.0
-			IL_0021: ldfld object Modules.Stream_Readable_Basic/Scope::dataReceived
-			IL_0026: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_002b: ldc.r8 1
-			IL_0034: add
-			IL_0035: stloc.0
-			IL_0036: ldloc.0
-			IL_0037: box [System.Runtime]System.Double
-			IL_003c: stloc.1
-			IL_003d: ldarg.0
-			IL_003e: ldloc.1
-			IL_003f: stfld object Modules.Stream_Readable_Basic/Scope::dataReceived
-			IL_0044: ldnull
-			IL_0045: ret
+			IL_000f: stloc.0
+			IL_0010: ldloc.0
+			IL_0011: ldstr "log"
+			IL_0016: ldstr "Data received:"
+			IL_001b: ldarg.2
+			IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+			IL_0021: pop
+			IL_0022: ldarg.0
+			IL_0023: ldfld object Modules.Stream_Readable_Basic/Scope::dataReceived
+			IL_0028: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_002d: ldc.r8 1
+			IL_0036: add
+			IL_0037: stloc.1
+			IL_0038: ldloc.1
+			IL_0039: box [System.Runtime]System.Double
+			IL_003e: stloc.2
+			IL_003f: ldarg.0
+			IL_0040: ldloc.2
+			IL_0041: stfld object Modules.Stream_Readable_Basic/Scope::dataReceived
+			IL_0046: ldnull
+			IL_0047: ret
 		} // end of method FunctionExpression_L13C20::__js_call__
 
 	} // end of class FunctionExpression_L13C20
@@ -91,7 +94,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2272
+				// Method begins at RVA 0x228d
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -114,20 +117,25 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x223e
-			// Header size: 1
-			// Code size: 33 (0x21)
+			// Method begins at RVA 0x224c
+			// Header size: 12
+			// Code size: 35 (0x23)
 			.maxstack 8
+			.locals init (
+				[0] object
+			)
 
 			IL_0000: ldstr "console"
 			IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
 			IL_000a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_000f: ldstr "log"
-			IL_0014: ldstr "Stream ended"
-			IL_0019: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_001e: pop
-			IL_001f: ldnull
-			IL_0020: ret
+			IL_000f: stloc.0
+			IL_0010: ldloc.0
+			IL_0011: ldstr "log"
+			IL_0016: ldstr "Stream ended"
+			IL_001b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_0020: pop
+			IL_0021: ldnull
+			IL_0022: ret
 		} // end of method FunctionExpression_L18C19::__js_call__
 
 	} // end of class FunctionExpression_L18C19
@@ -147,7 +155,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2260
+			// Method begins at RVA 0x227b
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -173,7 +181,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 399 (0x18f)
+		// Code size: 411 (0x19b)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Stream_Readable_Basic/Scope,
@@ -262,51 +270,57 @@
 		IL_00eb: pop
 		IL_00ec: ldloc.3
 		IL_00ed: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00f2: ldstr "push"
-		IL_00f7: ldstr "chunk1"
-		IL_00fc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0101: pop
-		IL_0102: ldloc.3
-		IL_0103: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0108: ldstr "push"
-		IL_010d: ldstr "chunk2"
-		IL_0112: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0117: pop
-		IL_0118: ldloc.3
-		IL_0119: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_011e: ldstr "push"
-		IL_0123: ldc.i4.0
-		IL_0124: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
-		IL_0129: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_012e: pop
-		IL_012f: ldstr "console"
-		IL_0134: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0139: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_013e: stloc.s 5
-		IL_0140: ldloc.0
-		IL_0141: ldfld object Modules.Stream_Readable_Basic/Scope::dataReceived
-		IL_0146: stloc.s 4
-		IL_0148: ldloc.s 5
-		IL_014a: ldstr "log"
-		IL_014f: ldstr "Data events:"
-		IL_0154: ldloc.s 4
-		IL_0156: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_015b: pop
-		IL_015c: ldstr "console"
-		IL_0161: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0166: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_016b: stloc.s 4
-		IL_016d: ldloc.3
-		IL_016e: ldstr "readable"
-		IL_0173: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0178: stloc.s 5
-		IL_017a: ldloc.s 4
-		IL_017c: ldstr "log"
-		IL_0181: ldstr "Readable after end:"
-		IL_0186: ldloc.s 5
-		IL_0188: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_018d: pop
-		IL_018e: ret
+		IL_00f2: stloc.s 5
+		IL_00f4: ldloc.s 5
+		IL_00f6: ldstr "push"
+		IL_00fb: ldstr "chunk1"
+		IL_0100: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0105: pop
+		IL_0106: ldloc.3
+		IL_0107: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_010c: stloc.s 5
+		IL_010e: ldloc.s 5
+		IL_0110: ldstr "push"
+		IL_0115: ldstr "chunk2"
+		IL_011a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_011f: pop
+		IL_0120: ldloc.3
+		IL_0121: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0126: stloc.s 5
+		IL_0128: ldloc.s 5
+		IL_012a: ldstr "push"
+		IL_012f: ldc.i4.0
+		IL_0130: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
+		IL_0135: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_013a: pop
+		IL_013b: ldstr "console"
+		IL_0140: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0145: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_014a: stloc.s 5
+		IL_014c: ldloc.0
+		IL_014d: ldfld object Modules.Stream_Readable_Basic/Scope::dataReceived
+		IL_0152: stloc.s 4
+		IL_0154: ldloc.s 5
+		IL_0156: ldstr "log"
+		IL_015b: ldstr "Data events:"
+		IL_0160: ldloc.s 4
+		IL_0162: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_0167: pop
+		IL_0168: ldstr "console"
+		IL_016d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0172: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0177: stloc.s 4
+		IL_0179: ldloc.3
+		IL_017a: ldstr "readable"
+		IL_017f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0184: stloc.s 5
+		IL_0186: ldloc.s 4
+		IL_0188: ldstr "log"
+		IL_018d: ldstr "Readable after end:"
+		IL_0192: ldloc.s 5
+		IL_0194: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_0199: pop
+		IL_019a: ret
 	} // end of method Stream_Readable_Basic::__js_module_init__
 
 } // end of class Modules.Stream_Readable_Basic
@@ -318,7 +332,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x227b
+		// Method begins at RVA 0x2296
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

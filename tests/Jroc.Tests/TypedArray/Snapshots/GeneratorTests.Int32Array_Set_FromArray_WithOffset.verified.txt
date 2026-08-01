@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2128
+			// Method begins at RVA 0x2130
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -34,7 +34,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2131
+			// Method begins at RVA 0x2139
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -60,16 +60,17 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 204 (0xcc)
+		// Code size: 212 (0xd4)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Int32Array_Set_FromArray_WithOffset/Scope,
 			[1] class [JavaScriptRuntime]JavaScriptRuntime.Int32Array,
 			[2] class [JavaScriptRuntime]JavaScriptRuntime.Array,
 			[3] float64,
-			[4] float64,
+			[4] object,
 			[5] float64,
-			[6] object
+			[6] float64,
+			[7] object
 		)
 
 		IL_0000: newobj instance void Modules.Int32Array_Set_FromArray_WithOffset/Scope::.ctor()
@@ -94,45 +95,49 @@
 		IL_004f: stloc.2
 		IL_0050: ldloc.1
 		IL_0051: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0056: ldstr "set"
-		IL_005b: ldloc.2
-		IL_005c: ldc.r8 1
-		IL_0065: box [System.Runtime]System.Double
-		IL_006a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_006f: pop
-		IL_0070: ldc.r8 0.0
-		IL_0079: stloc.3
-		// loop start (head: IL_007a)
-			IL_007a: ldloc.3
-			IL_007b: stloc.s 4
-			IL_007d: ldloc.1
-			IL_007e: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Int32Array::get_length()
-			IL_0083: stloc.s 5
-			IL_0085: ldloc.s 4
-			IL_0087: ldloc.s 5
-			IL_0089: clt
-			IL_008b: brfalse IL_00cb
+		IL_0056: stloc.s 4
+		IL_0058: ldloc.s 4
+		IL_005a: ldstr "set"
+		IL_005f: ldloc.2
+		IL_0060: ldc.r8 1
+		IL_0069: box [System.Runtime]System.Double
+		IL_006e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_0073: pop
+		IL_0074: ldc.r8 0.0
+		IL_007d: stloc.3
+		// loop start (head: IL_007e)
+			IL_007e: ldloc.3
+			IL_007f: stloc.s 5
+			IL_0081: ldloc.1
+			IL_0082: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Int32Array::get_length()
+			IL_0087: stloc.s 6
+			IL_0089: ldloc.s 5
+			IL_008b: ldloc.s 6
+			IL_008d: clt
+			IL_008f: brfalse IL_00d3
 
-			IL_0090: ldstr "console"
-			IL_0095: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_009a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_009f: ldloc.1
-			IL_00a0: ldloc.3
-			IL_00a1: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Int32Array::get_Item(float64)
-			IL_00a6: box [System.Runtime]System.Double
-			IL_00ab: stloc.s 6
-			IL_00ad: ldstr "log"
-			IL_00b2: ldloc.s 6
-			IL_00b4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_00b9: pop
-			IL_00ba: ldloc.3
-			IL_00bb: ldc.r8 1
-			IL_00c4: add
-			IL_00c5: stloc.3
-			IL_00c6: br IL_007a
+			IL_0094: ldstr "console"
+			IL_0099: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_009e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_00a3: stloc.s 4
+			IL_00a5: ldloc.1
+			IL_00a6: ldloc.3
+			IL_00a7: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Int32Array::get_Item(float64)
+			IL_00ac: box [System.Runtime]System.Double
+			IL_00b1: stloc.s 7
+			IL_00b3: ldloc.s 4
+			IL_00b5: ldstr "log"
+			IL_00ba: ldloc.s 7
+			IL_00bc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_00c1: pop
+			IL_00c2: ldloc.3
+			IL_00c3: ldc.r8 1
+			IL_00cc: add
+			IL_00cd: stloc.3
+			IL_00ce: br IL_007e
 		// end loop
 
-		IL_00cb: ret
+		IL_00d3: ret
 	} // end of method Int32Array_Set_FromArray_WithOffset::__js_module_init__
 
 } // end of class Modules.Int32Array_Set_FromArray_WithOffset
@@ -144,7 +149,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x213a
+		// Method begins at RVA 0x2142
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

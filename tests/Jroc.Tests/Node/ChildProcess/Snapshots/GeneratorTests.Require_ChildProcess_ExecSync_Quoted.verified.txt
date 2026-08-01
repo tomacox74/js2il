@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20dc
+			// Method begins at RVA 0x20de
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,14 +40,14 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 128 (0x80)
+		// Code size: 130 (0x82)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Require_ChildProcess_ExecSync_Quoted/Scope,
 			[1] object,
 			[2] object,
-			[3] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
-			[4] object,
+			[3] object,
+			[4] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
 			[5] object,
 			[6] bool,
 			[7] object
@@ -62,37 +62,39 @@
 		IL_0012: stloc.1
 		IL_0013: ldloc.1
 		IL_0014: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0019: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_001e: dup
-		IL_001f: ldstr "encoding"
-		IL_0024: ldstr "utf8"
-		IL_0029: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_002e: stloc.3
-		IL_002f: ldstr "execSync"
-		IL_0034: ldstr "node -e \"process.stdout.write('quoted-ok')\""
-		IL_0039: ldloc.3
-		IL_003a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_003f: stloc.2
-		IL_0040: ldstr "console"
-		IL_0045: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_004a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_004f: stloc.s 4
-		IL_0051: ldloc.2
-		IL_0052: stloc.s 5
-		IL_0054: ldloc.s 5
-		IL_0056: ldstr "quoted-ok"
-		IL_005b: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_0060: stloc.s 6
-		IL_0062: ldloc.s 6
-		IL_0064: box [System.Runtime]System.Boolean
-		IL_0069: stloc.s 7
-		IL_006b: ldloc.s 4
-		IL_006d: ldstr "log"
-		IL_0072: ldstr "quoted output ok:"
-		IL_0077: ldloc.s 7
-		IL_0079: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_007e: pop
-		IL_007f: ret
+		IL_0019: stloc.3
+		IL_001a: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_001f: dup
+		IL_0020: ldstr "encoding"
+		IL_0025: ldstr "utf8"
+		IL_002a: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_002f: stloc.s 4
+		IL_0031: ldloc.3
+		IL_0032: ldstr "execSync"
+		IL_0037: ldstr "node -e \"process.stdout.write('quoted-ok')\""
+		IL_003c: ldloc.s 4
+		IL_003e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_0043: stloc.2
+		IL_0044: ldstr "console"
+		IL_0049: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_004e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0053: stloc.3
+		IL_0054: ldloc.2
+		IL_0055: stloc.s 5
+		IL_0057: ldloc.s 5
+		IL_0059: ldstr "quoted-ok"
+		IL_005e: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_0063: stloc.s 6
+		IL_0065: ldloc.s 6
+		IL_0067: box [System.Runtime]System.Boolean
+		IL_006c: stloc.s 7
+		IL_006e: ldloc.3
+		IL_006f: ldstr "log"
+		IL_0074: ldstr "quoted output ok:"
+		IL_0079: ldloc.s 7
+		IL_007b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_0080: pop
+		IL_0081: ret
 	} // end of method Require_ChildProcess_ExecSync_Quoted::__js_module_init__
 
 } // end of class Modules.Require_ChildProcess_ExecSync_Quoted
@@ -104,7 +106,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20e5
+		// Method begins at RVA 0x20e7
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

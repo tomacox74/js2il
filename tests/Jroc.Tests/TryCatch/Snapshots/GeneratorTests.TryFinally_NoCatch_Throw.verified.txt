@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2109
+				// Method begins at RVA 0x2111
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2112
+				// Method begins at RVA 0x211a
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -56,7 +56,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2100
+			// Method begins at RVA 0x2108
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -82,12 +82,13 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 147 (0x93)
+		// Code size: 153 (0x99)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.TryFinally_NoCatch_Throw/Scope,
 			[1] object,
-			[2] object
+			[2] object,
+			[3] object
 		)
 
 		IL_0000: newobj instance void Modules.TryFinally_NoCatch_Throw/Scope::.ctor()
@@ -99,50 +100,56 @@
 			IL_0008: ldstr "console"
 			IL_000d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
 			IL_0012: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0017: ldstr "log"
-			IL_001c: ldstr "in try"
-			IL_0021: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_0026: pop
-			IL_0027: ldstr "boom"
-			IL_002c: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-			IL_0031: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Error::.ctor(string)
-			IL_0036: stloc.1
-			IL_0037: ldloc.1
-			IL_0038: isinst [System.Runtime]System.Exception
-			IL_003d: dup
-			IL_003e: brtrue IL_004b
+			IL_0017: stloc.3
+			IL_0018: ldloc.3
+			IL_0019: ldstr "log"
+			IL_001e: ldstr "in try"
+			IL_0023: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_0028: pop
+			IL_0029: ldstr "boom"
+			IL_002e: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+			IL_0033: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Error::.ctor(string)
+			IL_0038: stloc.1
+			IL_0039: ldloc.1
+			IL_003a: isinst [System.Runtime]System.Exception
+			IL_003f: dup
+			IL_0040: brtrue IL_004d
 
-			IL_0043: pop
-			IL_0044: ldloc.1
-			IL_0045: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::.ctor(object)
-			IL_004a: throw
+			IL_0045: pop
+			IL_0046: ldloc.1
+			IL_0047: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::.ctor(object)
+			IL_004c: throw
 
-			IL_004b: throw
+			IL_004d: throw
 
-			IL_004c: leave IL_0071
+			IL_004e: leave IL_0075
 		} // end .try
 		finally
 		{
-			IL_0051: ldstr "console"
-			IL_0056: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_005b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0060: ldstr "log"
-			IL_0065: ldstr "in finally"
-			IL_006a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_006f: pop
-			IL_0070: endfinally
+			IL_0053: ldstr "console"
+			IL_0058: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_005d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0062: stloc.3
+			IL_0063: ldloc.3
+			IL_0064: ldstr "log"
+			IL_0069: ldstr "in finally"
+			IL_006e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_0073: pop
+			IL_0074: endfinally
 		} // end handler
 
-		IL_0071: ldstr "console"
-		IL_0076: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_007b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0080: ldstr "log"
-		IL_0085: ldstr "after finally"
-		IL_008a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_008f: pop
-		IL_0090: ldnull
-		IL_0091: stloc.2
-		IL_0092: ret
+		IL_0075: ldstr "console"
+		IL_007a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_007f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0084: stloc.3
+		IL_0085: ldloc.3
+		IL_0086: ldstr "log"
+		IL_008b: ldstr "after finally"
+		IL_0090: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0095: pop
+		IL_0096: ldnull
+		IL_0097: stloc.2
+		IL_0098: ret
 	} // end of method TryFinally_NoCatch_Throw::__js_module_init__
 
 } // end of class Modules.TryFinally_NoCatch_Throw
@@ -154,7 +161,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x211b
+		// Method begins at RVA 0x2123
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

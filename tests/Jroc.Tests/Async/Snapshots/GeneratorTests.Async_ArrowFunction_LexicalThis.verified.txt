@@ -25,7 +25,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2371
+				// Method begins at RVA 0x2381
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -49,21 +49,26 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2168
-			// Header size: 1
-			// Code size: 34 (0x22)
+			// Method begins at RVA 0x216c
+			// Header size: 12
+			// Code size: 36 (0x24)
 			.maxstack 8
+			.locals init (
+				[0] object
+			)
 
 			IL_0000: ldstr "console"
 			IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
 			IL_000a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_000f: ldstr "log"
-			IL_0014: ldstr "Final value:"
-			IL_0019: ldarg.1
-			IL_001a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-			IL_001f: pop
-			IL_0020: ldnull
-			IL_0021: ret
+			IL_000f: stloc.0
+			IL_0010: ldloc.0
+			IL_0011: ldstr "log"
+			IL_0016: ldstr "Final value:"
+			IL_001b: ldarg.1
+			IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+			IL_0021: pop
+			IL_0022: ldnull
+			IL_0023: ret
 		} // end of method ArrowFunction_L23C16::__js_call__
 
 	} // end of class ArrowFunction_L23C16
@@ -89,7 +94,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2368
+				// Method begins at RVA 0x2378
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -113,7 +118,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 02 00 00 00 00 00
 			)
-			// Method begins at RVA 0x218c
+			// Method begins at RVA 0x219c
 			// Header size: 12
 			// Code size: 345 (0x159)
 			.maxstack 8
@@ -265,7 +270,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x234d
+				// Method begins at RVA 0x235d
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -285,7 +290,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2356
+				// Method begins at RVA 0x2366
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -305,7 +310,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x235f
+				// Method begins at RVA 0x236f
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -331,7 +336,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x22f1
+			// Method begins at RVA 0x2301
 			// Header size: 1
 			// Code size: 14 (0xe)
 			.maxstack 8
@@ -350,7 +355,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2300
+			// Method begins at RVA 0x2310
 			// Header size: 12
 			// Code size: 56 (0x38)
 			.maxstack 8
@@ -389,7 +394,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2344
+			// Method begins at RVA 0x2354
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -415,7 +420,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 268 (0x10c)
+		// Code size: 272 (0x110)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Async_ArrowFunction_LexicalThis/Scope,
@@ -501,11 +506,13 @@
 		IL_00ec: ldstr "console"
 		IL_00f1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
 		IL_00f6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00fb: ldstr "log"
-		IL_0100: ldstr "After calling async getter"
-		IL_0105: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_010a: pop
-		IL_010b: ret
+		IL_00fb: stloc.s 5
+		IL_00fd: ldloc.s 5
+		IL_00ff: ldstr "log"
+		IL_0104: ldstr "After calling async getter"
+		IL_0109: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_010e: pop
+		IL_010f: ret
 	} // end of method Async_ArrowFunction_LexicalThis::__js_module_init__
 
 } // end of class Modules.Async_ArrowFunction_LexicalThis
@@ -517,7 +524,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x237a
+		// Method begins at RVA 0x238a
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

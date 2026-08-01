@@ -22,7 +22,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x21cb
+					// Method begins at RVA 0x21e9
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -45,20 +45,25 @@
 				.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 					01 00 00 00 00 00 00 00
 				)
-				// Method begins at RVA 0x2193
-				// Header size: 1
-				// Code size: 37 (0x25)
+				// Method begins at RVA 0x21a4
+				// Header size: 12
+				// Code size: 39 (0x27)
 				.maxstack 8
+				.locals init (
+					[0] object
+				)
 
 				IL_0000: ldstr "console"
 				IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
 				IL_000a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_000f: ldstr "log"
-				IL_0014: ldstr "Inside nested function"
-				IL_0019: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-				IL_001e: pop
-				IL_001f: ldstr "nested result"
-				IL_0024: ret
+				IL_000f: stloc.0
+				IL_0010: ldloc.0
+				IL_0011: ldstr "log"
+				IL_0016: ldstr "Inside nested function"
+				IL_001b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+				IL_0020: pop
+				IL_0021: ldstr "nested result"
+				IL_0026: ret
 			} // end of method innerFunction::__js_call__
 
 		} // end of class innerFunction
@@ -78,7 +83,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21c2
+				// Method begins at RVA 0x21e0
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -101,14 +106,15 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x20f0
+			// Method begins at RVA 0x20f8
 			// Header size: 12
-			// Code size: 151 (0x97)
+			// Code size: 157 (0x9d)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.Function_GlobalFunctionDeclaresAndCallsNestedFunction/outerFunction/Scope,
 				[1] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0,
-				[2] object
+				[2] object,
+				[3] object
 			)
 
 			IL_0000: newobj instance void Modules.Function_GlobalFunctionDeclaresAndCallsNestedFunction/outerFunction/Scope::.ctor()
@@ -127,32 +133,38 @@
 			IL_0026: ldstr "console"
 			IL_002b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
 			IL_0030: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0035: ldstr "log"
-			IL_003a: ldstr "Before nested function declaration"
-			IL_003f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_0044: pop
-			IL_0045: nop
-			IL_0046: ldstr "console"
-			IL_004b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_0050: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0055: ldstr "log"
-			IL_005a: ldstr "After nested function declaration"
-			IL_005f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_0064: pop
-			IL_0065: ldloc.1
-			IL_0066: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-			IL_006b: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0, object[])
-			IL_0070: stloc.2
-			IL_0071: ldstr "console"
-			IL_0076: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_007b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0080: ldstr "log"
-			IL_0085: ldstr "Nested function returned:"
-			IL_008a: ldloc.2
-			IL_008b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-			IL_0090: pop
-			IL_0091: ldstr "outer result"
-			IL_0096: ret
+			IL_0035: stloc.3
+			IL_0036: ldloc.3
+			IL_0037: ldstr "log"
+			IL_003c: ldstr "Before nested function declaration"
+			IL_0041: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_0046: pop
+			IL_0047: nop
+			IL_0048: ldstr "console"
+			IL_004d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_0052: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0057: stloc.3
+			IL_0058: ldloc.3
+			IL_0059: ldstr "log"
+			IL_005e: ldstr "After nested function declaration"
+			IL_0063: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_0068: pop
+			IL_0069: ldloc.1
+			IL_006a: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+			IL_006f: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0, object[])
+			IL_0074: stloc.2
+			IL_0075: ldstr "console"
+			IL_007a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_007f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0084: stloc.3
+			IL_0085: ldloc.3
+			IL_0086: ldstr "log"
+			IL_008b: ldstr "Nested function returned:"
+			IL_0090: ldloc.2
+			IL_0091: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+			IL_0096: pop
+			IL_0097: ldstr "outer result"
+			IL_009c: ret
 		} // end of method outerFunction::__js_call__
 
 	} // end of class outerFunction
@@ -172,7 +184,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x21b9
+			// Method begins at RVA 0x21d7
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -198,12 +210,13 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 147 (0x93)
+		// Code size: 153 (0x99)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Function_GlobalFunctionDeclaresAndCallsNestedFunction/Scope,
 			[1] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0,
-			[2] object
+			[2] object,
+			[3] object
 		)
 
 		IL_0000: newobj instance void Modules.Function_GlobalFunctionDeclaresAndCallsNestedFunction/Scope::.ctor()
@@ -224,30 +237,36 @@
 		IL_0028: ldstr "console"
 		IL_002d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
 		IL_0032: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0037: ldstr "log"
-		IL_003c: ldstr "Start"
-		IL_0041: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0046: pop
-		IL_0047: ldloc.1
-		IL_0048: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_004d: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0, object[])
-		IL_0052: stloc.2
-		IL_0053: ldstr "console"
-		IL_0058: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_005d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0062: ldstr "log"
-		IL_0067: ldstr "Main result:"
-		IL_006c: ldloc.2
-		IL_006d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_0072: pop
-		IL_0073: ldstr "console"
-		IL_0078: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_007d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0082: ldstr "log"
-		IL_0087: ldstr "End"
-		IL_008c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0091: pop
-		IL_0092: ret
+		IL_0037: stloc.3
+		IL_0038: ldloc.3
+		IL_0039: ldstr "log"
+		IL_003e: ldstr "Start"
+		IL_0043: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0048: pop
+		IL_0049: ldloc.1
+		IL_004a: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_004f: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0, object[])
+		IL_0054: stloc.2
+		IL_0055: ldstr "console"
+		IL_005a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_005f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0064: stloc.3
+		IL_0065: ldloc.3
+		IL_0066: ldstr "log"
+		IL_006b: ldstr "Main result:"
+		IL_0070: ldloc.2
+		IL_0071: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_0076: pop
+		IL_0077: ldstr "console"
+		IL_007c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0081: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0086: stloc.3
+		IL_0087: ldloc.3
+		IL_0088: ldstr "log"
+		IL_008d: ldstr "End"
+		IL_0092: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0097: pop
+		IL_0098: ret
 	} // end of method Function_GlobalFunctionDeclaresAndCallsNestedFunction::__js_module_init__
 
 } // end of class Modules.Function_GlobalFunctionDeclaresAndCallsNestedFunction
@@ -259,7 +278,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21d4
+		// Method begins at RVA 0x21f2
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

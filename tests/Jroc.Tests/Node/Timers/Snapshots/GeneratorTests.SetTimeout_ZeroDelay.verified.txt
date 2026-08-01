@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x210e
+				// Method begins at RVA 0x2120
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -41,20 +41,25 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x20e3
-			// Header size: 1
-			// Code size: 33 (0x21)
+			// Method begins at RVA 0x20e8
+			// Header size: 12
+			// Code size: 35 (0x23)
 			.maxstack 8
+			.locals init (
+				[0] object
+			)
 
 			IL_0000: ldstr "console"
 			IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
 			IL_000a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_000f: ldstr "log"
-			IL_0014: ldstr "Hello, World!"
-			IL_0019: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_001e: pop
-			IL_001f: ldnull
-			IL_0020: ret
+			IL_000f: stloc.0
+			IL_0010: ldloc.0
+			IL_0011: ldstr "log"
+			IL_0016: ldstr "Hello, World!"
+			IL_001b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_0020: pop
+			IL_0021: ldnull
+			IL_0022: ret
 		} // end of method ArrowFunction_L3C18::__js_call__
 
 	} // end of class ArrowFunction_L3C18
@@ -66,7 +71,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2105
+			// Method begins at RVA 0x2117
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -92,12 +97,13 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 135 (0x87)
+		// Code size: 137 (0x89)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.SetTimeout_ZeroDelay/Scope,
 			[1] object,
-			[2] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
+			[2] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0,
+			[3] object
 		)
 
 		IL_0000: newobj instance void Modules.SetTimeout_ZeroDelay/Scope::.ctor()
@@ -137,11 +143,13 @@
 		IL_0067: ldstr "console"
 		IL_006c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
 		IL_0071: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0076: ldstr "log"
-		IL_007b: ldstr "setTimeout with zero delay scheduled."
-		IL_0080: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0085: pop
-		IL_0086: ret
+		IL_0076: stloc.3
+		IL_0077: ldloc.3
+		IL_0078: ldstr "log"
+		IL_007d: ldstr "setTimeout with zero delay scheduled."
+		IL_0082: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0087: pop
+		IL_0088: ret
 	} // end of method SetTimeout_ZeroDelay::__js_module_init__
 
 } // end of class Modules.SetTimeout_ZeroDelay
@@ -153,7 +161,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2117
+		// Method begins at RVA 0x2129
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
