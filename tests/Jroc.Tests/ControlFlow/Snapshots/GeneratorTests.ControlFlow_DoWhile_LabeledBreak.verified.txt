@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x212d
+				// Method begins at RVA 0x2125
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -46,7 +46,7 @@
 					.method public hidebysig specialname rtspecialname 
 						instance void .ctor () cil managed 
 					{
-						// Method begins at RVA 0x2148
+						// Method begins at RVA 0x2140
 						// Header size: 1
 						// Code size: 8 (0x8)
 						.maxstack 8
@@ -64,7 +64,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x213f
+					// Method begins at RVA 0x2137
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -82,7 +82,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2136
+				// Method begins at RVA 0x212e
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -100,7 +100,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2124
+			// Method begins at RVA 0x211c
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -126,15 +126,14 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 200 (0xc8)
+		// Code size: 192 (0xc0)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ControlFlow_DoWhile_LabeledBreak/Scope,
 			[1] float64,
 			[2] float64,
 			[3] float64,
-			[4] object,
-			[5] object
+			[4] object
 		)
 
 		IL_0000: newobj instance void Modules.ControlFlow_DoWhile_LabeledBreak/Scope::.ctor()
@@ -156,56 +155,52 @@
 				IL_002a: ldloc.3
 				IL_002b: ldc.r8 1
 				IL_0034: clt
-				IL_0036: brfalse IL_008c
+				IL_0036: brfalse IL_0088
 
 				IL_003b: ldstr "console"
 				IL_0040: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
 				IL_0045: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_004a: stloc.s 4
-				IL_004c: ldloc.1
-				IL_004d: box [System.Runtime]System.Double
-				IL_0052: stloc.s 5
-				IL_0054: ldloc.s 4
-				IL_0056: ldstr "log"
-				IL_005b: ldloc.s 5
-				IL_005d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-				IL_0062: pop
-				IL_0063: ldloc.1
-				IL_0064: stloc.3
-				IL_0065: ldloc.3
-				IL_0066: ldc.r8 2
-				IL_006f: ceq
-				IL_0071: brfalse IL_007b
+				IL_004a: ldloc.1
+				IL_004b: box [System.Runtime]System.Double
+				IL_0050: stloc.s 4
+				IL_0052: ldstr "log"
+				IL_0057: ldloc.s 4
+				IL_0059: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+				IL_005e: pop
+				IL_005f: ldloc.1
+				IL_0060: stloc.3
+				IL_0061: ldloc.3
+				IL_0062: ldc.r8 2
+				IL_006b: ceq
+				IL_006d: brfalse IL_0077
 
-				IL_0076: br IL_00a4
+				IL_0072: br IL_00a0
 
-				IL_007b: ldloc.2
-				IL_007c: ldc.r8 1
-				IL_0085: add
-				IL_0086: stloc.2
-				IL_0087: br IL_0028
+				IL_0077: ldloc.2
+				IL_0078: ldc.r8 1
+				IL_0081: add
+				IL_0082: stloc.2
+				IL_0083: br IL_0028
 			// end loop
 
-			IL_008c: ldloc.1
-			IL_008d: stloc.3
-			IL_008e: ldloc.3
-			IL_008f: ldc.r8 5
-			IL_0098: clt
-			IL_009a: brfalse IL_00a4
+			IL_0088: ldloc.1
+			IL_0089: stloc.3
+			IL_008a: ldloc.3
+			IL_008b: ldc.r8 5
+			IL_0094: clt
+			IL_0096: brfalse IL_00a0
 
-			IL_009f: br IL_0011
+			IL_009b: br IL_0011
 		// end loop
 
-		IL_00a4: ldstr "console"
-		IL_00a9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_00ae: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00b3: stloc.s 4
-		IL_00b5: ldloc.s 4
-		IL_00b7: ldstr "log"
-		IL_00bc: ldstr "done"
-		IL_00c1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00c6: pop
-		IL_00c7: ret
+		IL_00a0: ldstr "console"
+		IL_00a5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_00aa: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00af: ldstr "log"
+		IL_00b4: ldstr "done"
+		IL_00b9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_00be: pop
+		IL_00bf: ret
 	} // end of method ControlFlow_DoWhile_LabeledBreak::__js_module_init__
 
 } // end of class Modules.ControlFlow_DoWhile_LabeledBreak
@@ -217,7 +212,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2151
+		// Method begins at RVA 0x2149
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

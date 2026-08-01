@@ -545,10 +545,6 @@ internal static class LIRStackScheduler
             var consumer = methodBody.Instructions[useIndex[tempIndex]];
             var useRegion = regionByLirIndex[useIndex[tempIndex]];
             var region = comparisons.Regions[definitionRegion];
-            var directReceiverConsumer =
-                IsSupportedDirectReceiverConsumer(
-                    consumer,
-                    new TempVariable(tempIndex));
             var boundaryReturn =
                 useRegion < 0
                 && useIndex[tempIndex] == region.EndLirIndexExclusive
@@ -558,9 +554,9 @@ internal static class LIRStackScheduler
                 && ((IsTypedNumericBinary(consumer)
                         || IsTypedUnaryOrComparison(consumer)
                         || IsConversionConcatOrStableLoad(consumer)
-                        || directReceiverConsumer
-                            && useIndex[tempIndex]
-                                == definitionIndex[tempIndex] + 1)
+                        || IsSupportedDirectReceiverConsumer(
+                            consumer,
+                            new TempVariable(tempIndex)))
                     && IsDefinedValueRequired(
                         methodBody,
                         consumer,
@@ -874,10 +870,6 @@ internal static class LIRStackScheduler
 
             var consumer = methodBody.Instructions[useIndex[tempIndex]];
             if (IsKnownParamsArrayIntrinsicCall(consumer)
-                || IsSupportedDirectReceiverConsumer(
-                        consumer,
-                        new TempVariable(tempIndex))
-                    && useIndex[tempIndex] != definitionIndex[tempIndex] + 1
                 || !IsSupportedCallResultConsumer(
                     methodBody,
                     new TempVariable(tempIndex),
