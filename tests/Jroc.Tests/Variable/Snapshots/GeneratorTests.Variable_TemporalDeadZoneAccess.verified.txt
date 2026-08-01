@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2149
+				// Method begins at RVA 0x2151
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2152
+				// Method begins at RVA 0x215a
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -56,7 +56,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2140
+			// Method begins at RVA 0x2148
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -82,7 +82,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 209 (0xd1)
+		// Code size: 217 (0xd9)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Variable_TemporalDeadZoneAccess/Scope,
@@ -131,50 +131,54 @@
 			IL_0059: ldstr "console"
 			IL_005e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
 			IL_0063: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0068: ldstr "log"
-			IL_006d: ldstr "NO_TDZ"
-			IL_0072: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_0077: pop
-			IL_0078: leave IL_00cd
+			IL_0068: stloc.s 6
+			IL_006a: ldloc.s 6
+			IL_006c: ldstr "log"
+			IL_0071: ldstr "NO_TDZ"
+			IL_0076: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_007b: pop
+			IL_007c: leave IL_00d5
 		} // end .try
 		catch [System.Runtime]System.Exception
 		{
-			IL_007d: stloc.2
-			IL_007e: ldloc.2
-			IL_007f: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-			IL_0084: dup
-			IL_0085: brtrue IL_009a
+			IL_0081: stloc.2
+			IL_0082: ldloc.2
+			IL_0083: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+			IL_0088: dup
+			IL_0089: brtrue IL_009e
 
-			IL_008a: pop
-			IL_008b: ldloc.2
-			IL_008c: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
-			IL_0091: dup
-			IL_0092: brtrue IL_00a5
+			IL_008e: pop
+			IL_008f: ldloc.2
+			IL_0090: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+			IL_0095: dup
+			IL_0096: brtrue IL_00a9
 
-			IL_0097: pop
-			IL_0098: rethrow
+			IL_009b: pop
+			IL_009c: rethrow
 
-			IL_009a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-			IL_009f: stloc.3
-			IL_00a0: br IL_00a6
+			IL_009e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+			IL_00a3: stloc.3
+			IL_00a4: br IL_00aa
 
-			IL_00a5: stloc.3
+			IL_00a9: stloc.3
 
-			IL_00a6: ldloc.3
-			IL_00a7: stloc.s 4
-			IL_00a9: ldstr "console"
-			IL_00ae: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_00b3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_00b8: ldstr "log"
-			IL_00bd: ldstr "TDZ_ERROR"
-			IL_00c2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_00c7: pop
-			IL_00c8: leave IL_00cd
+			IL_00aa: ldloc.3
+			IL_00ab: stloc.s 4
+			IL_00ad: ldstr "console"
+			IL_00b2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_00b7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_00bc: stloc.s 6
+			IL_00be: ldloc.s 6
+			IL_00c0: ldstr "log"
+			IL_00c5: ldstr "TDZ_ERROR"
+			IL_00ca: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_00cf: pop
+			IL_00d0: leave IL_00d5
 		} // end handler
 
-		IL_00cd: ldnull
-		IL_00ce: stloc.s 5
-		IL_00d0: ret
+		IL_00d5: ldnull
+		IL_00d6: stloc.s 5
+		IL_00d8: ret
 	} // end of method Variable_TemporalDeadZoneAccess::__js_module_init__
 
 } // end of class Modules.Variable_TemporalDeadZoneAccess
@@ -186,7 +190,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x215b
+		// Method begins at RVA 0x2163
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

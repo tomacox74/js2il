@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20fc
+			// Method begins at RVA 0x2100
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x210e
+				// Method begins at RVA 0x2112
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -66,7 +66,7 @@
 					.method public hidebysig specialname rtspecialname 
 						instance void .ctor () cil managed 
 					{
-						// Method begins at RVA 0x2129
+						// Method begins at RVA 0x212d
 						// Header size: 1
 						// Code size: 8 (0x8)
 						.maxstack 8
@@ -84,7 +84,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2120
+					// Method begins at RVA 0x2124
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -102,7 +102,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2117
+				// Method begins at RVA 0x211b
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -120,7 +120,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2105
+			// Method begins at RVA 0x2109
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -146,14 +146,15 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 160 (0xa0)
+		// Code size: 164 (0xa4)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ControlFlow_ForLoop_LabeledContinue/Scope,
 			[1] float64,
 			[2] float64,
 			[3] float64,
-			[4] object
+			[4] object,
+			[5] object
 		)
 
 		IL_0000: newobj instance void Modules.ControlFlow_ForLoop_LabeledContinue/Scope::.ctor()
@@ -167,7 +168,7 @@
 			IL_0013: ldloc.3
 			IL_0014: ldc.r8 3
 			IL_001d: clt
-			IL_001f: brfalse IL_009f
+			IL_001f: brfalse IL_00a3
 
 			IL_0024: ldc.r8 0.0
 			IL_002d: stloc.2
@@ -177,7 +178,7 @@
 				IL_0030: ldloc.3
 				IL_0031: ldc.r8 1
 				IL_003a: clt
-				IL_003c: brfalse IL_008e
+				IL_003c: brfalse IL_0092
 
 				IL_0041: ldloc.1
 				IL_0042: stloc.3
@@ -186,33 +187,35 @@
 				IL_004d: ceq
 				IL_004f: brfalse IL_0059
 
-				IL_0054: br IL_008e
+				IL_0054: br IL_0092
 
 				IL_0059: ldstr "console"
 				IL_005e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
 				IL_0063: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_0068: ldloc.1
-				IL_0069: box [System.Runtime]System.Double
-				IL_006e: stloc.s 4
-				IL_0070: ldstr "log"
-				IL_0075: ldloc.s 4
-				IL_0077: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-				IL_007c: pop
-				IL_007d: ldloc.2
-				IL_007e: ldc.r8 1
-				IL_0087: add
-				IL_0088: stloc.2
-				IL_0089: br IL_002e
+				IL_0068: stloc.s 4
+				IL_006a: ldloc.1
+				IL_006b: box [System.Runtime]System.Double
+				IL_0070: stloc.s 5
+				IL_0072: ldloc.s 4
+				IL_0074: ldstr "log"
+				IL_0079: ldloc.s 5
+				IL_007b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+				IL_0080: pop
+				IL_0081: ldloc.2
+				IL_0082: ldc.r8 1
+				IL_008b: add
+				IL_008c: stloc.2
+				IL_008d: br IL_002e
 			// end loop
 
-			IL_008e: ldloc.1
-			IL_008f: ldc.r8 1
-			IL_0098: add
-			IL_0099: stloc.1
-			IL_009a: br IL_0011
+			IL_0092: ldloc.1
+			IL_0093: ldc.r8 1
+			IL_009c: add
+			IL_009d: stloc.1
+			IL_009e: br IL_0011
 		// end loop
 
-		IL_009f: ret
+		IL_00a3: ret
 	} // end of method ControlFlow_ForLoop_LabeledContinue::__js_module_init__
 
 } // end of class Modules.ControlFlow_ForLoop_LabeledContinue
@@ -224,7 +227,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2132
+		// Method begins at RVA 0x2136
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -22,7 +22,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2194
+					// Method begins at RVA 0x21a0
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -40,7 +40,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x218b
+				// Method begins at RVA 0x2197
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -58,7 +58,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2182
+			// Method begins at RVA 0x218e
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -84,11 +84,12 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 294 (0x126)
+		// Code size: 306 (0x132)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ControlFlow_Switch_NestedBreak/Scope,
-			[1] bool
+			[1] bool,
+			[2] object
 		)
 
 		IL_0000: newobj instance void Modules.ControlFlow_Switch_NestedBreak/Scope::.ctor()
@@ -103,68 +104,80 @@
 		IL_0029: ldloc.1
 		IL_002a: brtrue IL_0034
 
-		IL_002f: br IL_00e7
+		IL_002f: br IL_00ef
 
 		IL_0034: ldstr "console"
 		IL_0039: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
 		IL_003e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0043: ldstr "log"
-		IL_0048: ldstr "outer"
-		IL_004d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0052: pop
-		IL_0053: ldc.r8 2
-		IL_005c: box [System.Runtime]System.Double
-		IL_0061: ldc.r8 2
-		IL_006a: box [System.Runtime]System.Double
-		IL_006f: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_0074: stloc.1
-		IL_0075: ldloc.1
-		IL_0076: brtrue IL_0080
+		IL_0043: stloc.2
+		IL_0044: ldloc.2
+		IL_0045: ldstr "log"
+		IL_004a: ldstr "outer"
+		IL_004f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0054: pop
+		IL_0055: ldc.r8 2
+		IL_005e: box [System.Runtime]System.Double
+		IL_0063: ldc.r8 2
+		IL_006c: box [System.Runtime]System.Double
+		IL_0071: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_0076: stloc.1
+		IL_0077: ldloc.1
+		IL_0078: brtrue IL_0082
 
-		IL_007b: br IL_00a4
+		IL_007d: br IL_00a8
 
-		IL_0080: ldstr "console"
-		IL_0085: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_008a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_008f: ldstr "log"
-		IL_0094: ldstr "inner"
-		IL_0099: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_009e: pop
-		IL_009f: br IL_00c3
+		IL_0082: ldstr "console"
+		IL_0087: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_008c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0091: stloc.2
+		IL_0092: ldloc.2
+		IL_0093: ldstr "log"
+		IL_0098: ldstr "inner"
+		IL_009d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_00a2: pop
+		IL_00a3: br IL_00c9
 
-		IL_00a4: ldstr "console"
-		IL_00a9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_00ae: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00b3: ldstr "log"
-		IL_00b8: ldstr "innerdefault"
-		IL_00bd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00c2: pop
+		IL_00a8: ldstr "console"
+		IL_00ad: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_00b2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00b7: stloc.2
+		IL_00b8: ldloc.2
+		IL_00b9: ldstr "log"
+		IL_00be: ldstr "innerdefault"
+		IL_00c3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_00c8: pop
 
-		IL_00c3: ldstr "console"
-		IL_00c8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_00cd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00d2: ldstr "log"
-		IL_00d7: ldstr "afterinner"
-		IL_00dc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00e1: pop
-		IL_00e2: br IL_0106
+		IL_00c9: ldstr "console"
+		IL_00ce: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_00d3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00d8: stloc.2
+		IL_00d9: ldloc.2
+		IL_00da: ldstr "log"
+		IL_00df: ldstr "afterinner"
+		IL_00e4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_00e9: pop
+		IL_00ea: br IL_0110
 
-		IL_00e7: ldstr "console"
-		IL_00ec: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_00f1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00f6: ldstr "log"
-		IL_00fb: ldstr "outerdefault"
-		IL_0100: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0105: pop
+		IL_00ef: ldstr "console"
+		IL_00f4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_00f9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00fe: stloc.2
+		IL_00ff: ldloc.2
+		IL_0100: ldstr "log"
+		IL_0105: ldstr "outerdefault"
+		IL_010a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_010f: pop
 
-		IL_0106: ldstr "console"
-		IL_010b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0110: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0115: ldstr "log"
-		IL_011a: ldstr "done"
-		IL_011f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0124: pop
-		IL_0125: ret
+		IL_0110: ldstr "console"
+		IL_0115: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_011a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_011f: stloc.2
+		IL_0120: ldloc.2
+		IL_0121: ldstr "log"
+		IL_0126: ldstr "done"
+		IL_012b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0130: pop
+		IL_0131: ret
 	} // end of method ControlFlow_Switch_NestedBreak::__js_module_init__
 
 } // end of class Modules.ControlFlow_Switch_NestedBreak
@@ -176,7 +189,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x219d
+		// Method begins at RVA 0x21a9
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

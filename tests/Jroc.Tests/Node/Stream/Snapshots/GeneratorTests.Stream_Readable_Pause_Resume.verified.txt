@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2329
+				// Method begins at RVA 0x2335
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -44,7 +44,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 07 00 00 02
 			)
-			// Method begins at RVA 0x2230
+			// Method begins at RVA 0x2238
 			// Header size: 12
 			// Code size: 21 (0x15)
 			.maxstack 8
@@ -76,7 +76,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2332
+				// Method begins at RVA 0x233e
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -102,7 +102,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 07 00 00 02
 			)
-			// Method begins at RVA 0x2254
+			// Method begins at RVA 0x225c
 			// Header size: 12
 			// Code size: 21 (0x15)
 			.maxstack 8
@@ -134,7 +134,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x233b
+				// Method begins at RVA 0x2347
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -158,7 +158,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2278
+			// Method begins at RVA 0x2280
 			// Header size: 12
 			// Code size: 43 (0x2b)
 			.maxstack 8
@@ -197,7 +197,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2344
+				// Method begins at RVA 0x2350
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -223,47 +223,52 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 07 00 00 02
 			)
-			// Method begins at RVA 0x22b0
+			// Method begins at RVA 0x22b8
 			// Header size: 12
-			// Code size: 100 (0x64)
+			// Code size: 104 (0x68)
 			.maxstack 8
 			.locals init (
 				[0] object,
-				[1] string
+				[1] class [JavaScriptRuntime]JavaScriptRuntime.Array,
+				[2] string
 			)
 
 			IL_0000: ldstr "console"
 			IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
 			IL_000a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_000f: ldstr "log"
-			IL_0014: ldstr "end"
-			IL_0019: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_001e: pop
-			IL_001f: ldstr "console"
-			IL_0024: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_0029: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_002e: stloc.0
-			IL_002f: ldarg.0
-			IL_0030: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Stream_Readable_Pause_Resume/Scope::events
-			IL_0035: ldc.i4.1
-			IL_0036: newarr [System.Runtime]System.Object
-			IL_003b: dup
-			IL_003c: ldc.i4.0
-			IL_003d: ldstr ","
-			IL_0042: stelem.ref
-			IL_0043: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
-			IL_0048: stloc.1
-			IL_0049: ldstr "events:"
-			IL_004e: ldloc.1
-			IL_004f: call string [System.Runtime]System.String::Concat(string, string)
-			IL_0054: stloc.1
-			IL_0055: ldloc.0
-			IL_0056: ldstr "log"
-			IL_005b: ldloc.1
-			IL_005c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_0061: pop
-			IL_0062: ldnull
-			IL_0063: ret
+			IL_000f: stloc.0
+			IL_0010: ldloc.0
+			IL_0011: ldstr "log"
+			IL_0016: ldstr "end"
+			IL_001b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_0020: pop
+			IL_0021: ldstr "console"
+			IL_0026: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_002b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0030: stloc.0
+			IL_0031: ldarg.0
+			IL_0032: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Stream_Readable_Pause_Resume/Scope::events
+			IL_0037: stloc.1
+			IL_0038: ldloc.1
+			IL_0039: ldc.i4.1
+			IL_003a: newarr [System.Runtime]System.Object
+			IL_003f: dup
+			IL_0040: ldc.i4.0
+			IL_0041: ldstr ","
+			IL_0046: stelem.ref
+			IL_0047: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
+			IL_004c: stloc.2
+			IL_004d: ldstr "events:"
+			IL_0052: ldloc.2
+			IL_0053: call string [System.Runtime]System.String::Concat(string, string)
+			IL_0058: stloc.2
+			IL_0059: ldloc.0
+			IL_005a: ldstr "log"
+			IL_005f: ldloc.2
+			IL_0060: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_0065: pop
+			IL_0066: ldnull
+			IL_0067: ret
 		} // end of method FunctionExpression_L20C19::__js_call__
 
 	} // end of class FunctionExpression_L20C19
@@ -282,7 +287,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2320
+			// Method begins at RVA 0x232c
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -308,7 +313,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 466 (0x1d2)
+		// Code size: 476 (0x1dc)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Stream_Readable_Pause_Resume/Scope,
@@ -432,42 +437,52 @@
 		IL_0147: pop
 		IL_0148: ldloc.2
 		IL_0149: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_014e: ldstr "push"
-		IL_0153: ldstr "a"
-		IL_0158: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_015d: pop
-		IL_015e: ldloc.2
-		IL_015f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0164: ldstr "push"
-		IL_0169: ldstr "b"
-		IL_016e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0173: pop
-		IL_0174: ldstr "console"
-		IL_0179: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_017e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0183: ldstr "log"
-		IL_0188: ldstr "paused"
-		IL_018d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0192: pop
-		IL_0193: ldloc.2
-		IL_0194: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0199: ldstr "resume"
-		IL_019e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-		IL_01a3: pop
-		IL_01a4: ldloc.2
-		IL_01a5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_01aa: ldstr "push"
-		IL_01af: ldstr "c"
-		IL_01b4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_01b9: pop
-		IL_01ba: ldloc.2
-		IL_01bb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_01c0: ldstr "push"
-		IL_01c5: ldc.i4.0
-		IL_01c6: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
-		IL_01cb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_01d0: pop
-		IL_01d1: ret
+		IL_014e: stloc.3
+		IL_014f: ldloc.3
+		IL_0150: ldstr "push"
+		IL_0155: ldstr "a"
+		IL_015a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_015f: pop
+		IL_0160: ldloc.2
+		IL_0161: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0166: stloc.3
+		IL_0167: ldloc.3
+		IL_0168: ldstr "push"
+		IL_016d: ldstr "b"
+		IL_0172: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0177: pop
+		IL_0178: ldstr "console"
+		IL_017d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0182: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0187: stloc.3
+		IL_0188: ldloc.3
+		IL_0189: ldstr "log"
+		IL_018e: ldstr "paused"
+		IL_0193: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0198: pop
+		IL_0199: ldloc.2
+		IL_019a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_019f: ldstr "resume"
+		IL_01a4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+		IL_01a9: pop
+		IL_01aa: ldloc.2
+		IL_01ab: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_01b0: stloc.3
+		IL_01b1: ldloc.3
+		IL_01b2: ldstr "push"
+		IL_01b7: ldstr "c"
+		IL_01bc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_01c1: pop
+		IL_01c2: ldloc.2
+		IL_01c3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_01c8: stloc.3
+		IL_01c9: ldloc.3
+		IL_01ca: ldstr "push"
+		IL_01cf: ldc.i4.0
+		IL_01d0: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
+		IL_01d5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_01da: pop
+		IL_01db: ret
 	} // end of method Stream_Readable_Pause_Resume::__js_module_init__
 
 } // end of class Modules.Stream_Readable_Pause_Resume
@@ -479,7 +494,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x234d
+		// Method begins at RVA 0x2359
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

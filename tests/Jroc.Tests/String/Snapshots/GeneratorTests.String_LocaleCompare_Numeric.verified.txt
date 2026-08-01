@@ -26,7 +26,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2151
+				// Method begins at RVA 0x215b
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -54,31 +54,33 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 04 00 00 02
 			)
-			// Method begins at RVA 0x2110
+			// Method begins at RVA 0x2118
 			// Header size: 12
-			// Code size: 44 (0x2c)
+			// Code size: 46 (0x2e)
 			.maxstack 8
 			.locals init (
-				[0] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
-				[1] object
+				[0] object,
+				[1] class [JavaScriptRuntime]JavaScriptRuntime.JsObject
 			)
 
 			IL_0000: ldarg.2
 			IL_0001: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0006: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-			IL_000b: dup
-			IL_000c: ldstr "numeric"
-			IL_0011: ldc.i4.1
-			IL_0012: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-			IL_0017: stloc.0
-			IL_0018: ldstr "localeCompare"
-			IL_001d: ldarg.3
-			IL_001e: ldstr "en"
-			IL_0023: ldloc.0
-			IL_0024: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember3(object, string, object, object, object)
-			IL_0029: stloc.1
-			IL_002a: ldloc.1
-			IL_002b: ret
+			IL_0006: stloc.0
+			IL_0007: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+			IL_000c: dup
+			IL_000d: ldstr "numeric"
+			IL_0012: ldc.i4.1
+			IL_0013: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+			IL_0018: stloc.1
+			IL_0019: ldloc.0
+			IL_001a: ldstr "localeCompare"
+			IL_001f: ldarg.3
+			IL_0020: ldstr "en"
+			IL_0025: ldloc.1
+			IL_0026: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember3(object, string, object, object, object)
+			IL_002b: stloc.0
+			IL_002c: ldloc.0
+			IL_002d: ret
 		} // end of method ArrowFunction_L4C13::__js_call__
 
 	} // end of class ArrowFunction_L4C13
@@ -90,7 +92,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2148
+			// Method begins at RVA 0x2152
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -116,14 +118,15 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 179 (0xb3)
+		// Code size: 185 (0xb9)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.String_LocaleCompare_Numeric/Scope,
 			[1] class [JavaScriptRuntime]JavaScriptRuntime.Array,
-			[2] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2,
-			[3] object,
-			[4] string
+			[2] object[],
+			[3] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2,
+			[4] object,
+			[5] string
 		)
 
 		IL_0000: newobj instance void Modules.String_LocaleCompare_Numeric/Scope::.ctor()
@@ -141,55 +144,59 @@
 		IL_0024: ldstr "1"
 		IL_0029: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
 		IL_002e: stloc.1
-		IL_002f: ldloc.0
-		IL_0030: castclass Modules.String_LocaleCompare_Numeric/Scope
-		IL_0035: ldftn object Modules.String_LocaleCompare_Numeric/ArrowFunction_L4C13::__js_call__(class Modules.String_LocaleCompare_Numeric/Scope, object, object, object)
-		IL_003b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::.ctor(object, native int)
-		IL_0040: ldc.i4.1
-		IL_0041: newarr [System.Runtime]System.Object
-		IL_0046: dup
-		IL_0047: ldc.i4.0
-		IL_0048: ldloc.0
-		IL_0049: stelem.ref
-		IL_004a: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_004f: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_0054: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2
-		IL_0059: ldc.i4.2
-		IL_005a: conv.r8
-		IL_005b: ldstr ""
-		IL_0060: ldc.i4.0
-		IL_0061: ldc.i4.0
-		IL_0062: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2>(!!0, float64, string, bool, bool)
-		IL_0067: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2>(!!0)
-		IL_006c: stloc.2
-		IL_006d: ldloc.1
-		IL_006e: ldc.i4.1
-		IL_006f: newarr [System.Runtime]System.Object
-		IL_0074: dup
-		IL_0075: ldc.i4.0
-		IL_0076: ldloc.2
-		IL_0077: stelem.ref
-		IL_0078: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Array [JavaScriptRuntime]JavaScriptRuntime.Array::sort(object[])
-		IL_007d: pop
-		IL_007e: ldstr "console"
-		IL_0083: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0088: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_008d: stloc.3
-		IL_008e: ldloc.1
-		IL_008f: ldc.i4.1
-		IL_0090: newarr [System.Runtime]System.Object
-		IL_0095: dup
-		IL_0096: ldc.i4.0
-		IL_0097: ldstr ","
-		IL_009c: stelem.ref
-		IL_009d: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
-		IL_00a2: stloc.s 4
-		IL_00a4: ldloc.3
-		IL_00a5: ldstr "log"
-		IL_00aa: ldloc.s 4
-		IL_00ac: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00b1: pop
-		IL_00b2: ret
+		IL_002f: ldc.i4.1
+		IL_0030: newarr [System.Runtime]System.Object
+		IL_0035: dup
+		IL_0036: ldc.i4.0
+		IL_0037: ldloc.0
+		IL_0038: stelem.ref
+		IL_0039: stloc.2
+		IL_003a: ldloc.2
+		IL_003b: ldc.i4.0
+		IL_003c: ldelem.ref
+		IL_003d: castclass Modules.String_LocaleCompare_Numeric/Scope
+		IL_0042: ldftn object Modules.String_LocaleCompare_Numeric/ArrowFunction_L4C13::__js_call__(class Modules.String_LocaleCompare_Numeric/Scope, object, object, object)
+		IL_0048: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::.ctor(object, native int)
+		IL_004d: ldloc.2
+		IL_004e: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_0053: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_0058: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2
+		IL_005d: ldc.i4.2
+		IL_005e: conv.r8
+		IL_005f: ldstr ""
+		IL_0064: ldc.i4.0
+		IL_0065: ldc.i4.0
+		IL_0066: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2>(!!0, float64, string, bool, bool)
+		IL_006b: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2>(!!0)
+		IL_0070: stloc.3
+		IL_0071: ldloc.1
+		IL_0072: ldc.i4.1
+		IL_0073: newarr [System.Runtime]System.Object
+		IL_0078: dup
+		IL_0079: ldc.i4.0
+		IL_007a: ldloc.3
+		IL_007b: stelem.ref
+		IL_007c: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Array [JavaScriptRuntime]JavaScriptRuntime.Array::sort(object[])
+		IL_0081: pop
+		IL_0082: ldstr "console"
+		IL_0087: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_008c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0091: stloc.s 4
+		IL_0093: ldloc.1
+		IL_0094: ldc.i4.1
+		IL_0095: newarr [System.Runtime]System.Object
+		IL_009a: dup
+		IL_009b: ldc.i4.0
+		IL_009c: ldstr ","
+		IL_00a1: stelem.ref
+		IL_00a2: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
+		IL_00a7: stloc.s 5
+		IL_00a9: ldloc.s 4
+		IL_00ab: ldstr "log"
+		IL_00b0: ldloc.s 5
+		IL_00b2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_00b7: pop
+		IL_00b8: ret
 	} // end of method String_LocaleCompare_Numeric::__js_module_init__
 
 } // end of class Modules.String_LocaleCompare_Numeric
@@ -201,7 +208,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x215a
+		// Method begins at RVA 0x2164
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

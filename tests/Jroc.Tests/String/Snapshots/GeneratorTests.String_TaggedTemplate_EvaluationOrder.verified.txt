@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2233
+				// Method begins at RVA 0x2237
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -42,12 +42,13 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x217c
+			// Method begins at RVA 0x2180
 			// Header size: 12
-			// Code size: 57 (0x39)
+			// Code size: 59 (0x3b)
 			.maxstack 8
 			.locals init (
-				[0] object
+				[0] object,
+				[1] object
 			)
 
 			IL_0000: ldc.r8 1
@@ -57,12 +58,14 @@
 			IL_0014: ldstr "console"
 			IL_0019: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
 			IL_001e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0023: ldstr "log"
-			IL_0028: ldstr "tag called"
-			IL_002d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_0032: pop
-			IL_0033: ldstr "result"
-			IL_0038: ret
+			IL_0023: stloc.1
+			IL_0024: ldloc.1
+			IL_0025: ldstr "log"
+			IL_002a: ldstr "tag called"
+			IL_002f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_0034: pop
+			IL_0035: ldstr "result"
+			IL_003a: ret
 		} // end of method tag::__js_call__
 
 	} // end of class tag
@@ -78,7 +81,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x223c
+				// Method begins at RVA 0x2240
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -104,7 +107,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 05 00 00 02
 			)
-			// Method begins at RVA 0x21c4
+			// Method begins at RVA 0x21c8
 			// Header size: 12
 			// Code size: 90 (0x5a)
 			.maxstack 8
@@ -171,7 +174,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x222a
+			// Method begins at RVA 0x222e
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -197,7 +200,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 287 (0x11f)
+		// Code size: 291 (0x123)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.String_TaggedTemplate_EvaluationOrder/Scope,
@@ -317,12 +320,14 @@
 		IL_00fe: ldstr "console"
 		IL_0103: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
 		IL_0108: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_010d: ldstr "log"
-		IL_0112: ldstr "final result:"
-		IL_0117: ldloc.3
-		IL_0118: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_011d: pop
-		IL_011e: ret
+		IL_010d: stloc.s 7
+		IL_010f: ldloc.s 7
+		IL_0111: ldstr "log"
+		IL_0116: ldstr "final result:"
+		IL_011b: ldloc.3
+		IL_011c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_0121: pop
+		IL_0122: ret
 	} // end of method String_TaggedTemplate_EvaluationOrder::__js_module_init__
 
 } // end of class Modules.String_TaggedTemplate_EvaluationOrder
@@ -334,7 +339,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2245
+		// Method begins at RVA 0x2249
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

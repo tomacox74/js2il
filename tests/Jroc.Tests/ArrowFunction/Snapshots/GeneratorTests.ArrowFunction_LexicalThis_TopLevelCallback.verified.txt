@@ -25,7 +25,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2265
+				// Method begins at RVA 0x2269
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -52,7 +52,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 04 00 00 02
 			)
-			// Method begins at RVA 0x21b4
+			// Method begins at RVA 0x21b8
 			// Header size: 12
 			// Code size: 156 (0x9c)
 			.maxstack 8
@@ -140,7 +140,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x225c
+			// Method begins at RVA 0x2260
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -166,15 +166,16 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 341 (0x155)
+		// Code size: 348 (0x15c)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ArrowFunction_LexicalThis_TopLevelCallback/Scope,
 			[1] object,
 			[2] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
 			[3] class [JavaScriptRuntime]JavaScriptRuntime.Array,
-			[4] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1,
-			[5] object
+			[4] object[],
+			[5] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1,
+			[6] object
 		)
 
 		IL_0000: newobj instance void Modules.ArrowFunction_LexicalThis_TopLevelCallback/Scope::.ctor()
@@ -235,56 +236,60 @@
 		IL_00c3: ldc.r8 1
 		IL_00cc: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::AddNumber(float64)
 		IL_00d1: stloc.3
-		IL_00d2: ldloc.0
-		IL_00d3: castclass Modules.ArrowFunction_LexicalThis_TopLevelCallback/Scope
-		IL_00d8: ldftn object Modules.ArrowFunction_LexicalThis_TopLevelCallback/ArrowFunction_L7C13::__js_call__(class Modules.ArrowFunction_LexicalThis_TopLevelCallback/Scope, object, object)
-		IL_00de: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-		IL_00e3: ldc.i4.1
-		IL_00e4: newarr [System.Runtime]System.Object
-		IL_00e9: dup
-		IL_00ea: ldc.i4.0
-		IL_00eb: ldloc.0
-		IL_00ec: stelem.ref
-		IL_00ed: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_00f2: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_00f7: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1
-		IL_00fc: ldc.i4.1
-		IL_00fd: conv.r8
-		IL_00fe: ldstr ""
-		IL_0103: ldc.i4.0
-		IL_0104: ldc.i4.0
-		IL_0105: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0, float64, string, bool, bool)
-		IL_010a: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0)
-		IL_010f: stloc.s 4
-		IL_0111: ldloc.0
-		IL_0112: ldfld object Modules.ArrowFunction_LexicalThis_TopLevelCallback/Scope::usurper
-		IL_0117: stloc.1
-		IL_0118: ldloc.3
-		IL_0119: ldc.i4.2
-		IL_011a: newarr [System.Runtime]System.Object
-		IL_011f: dup
-		IL_0120: ldc.i4.0
-		IL_0121: ldloc.s 4
-		IL_0123: stelem.ref
-		IL_0124: dup
-		IL_0125: ldc.i4.1
-		IL_0126: ldloc.1
-		IL_0127: stelem.ref
-		IL_0128: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::forEach(object[])
-		IL_012d: pop
-		IL_012e: ldstr "console"
-		IL_0133: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0138: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_013d: stloc.1
-		IL_013e: ldloc.0
-		IL_013f: ldfld object Modules.ArrowFunction_LexicalThis_TopLevelCallback/Scope::calls
-		IL_0144: stloc.s 5
-		IL_0146: ldloc.1
-		IL_0147: ldstr "log"
-		IL_014c: ldloc.s 5
-		IL_014e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0153: pop
-		IL_0154: ret
+		IL_00d2: ldc.i4.1
+		IL_00d3: newarr [System.Runtime]System.Object
+		IL_00d8: dup
+		IL_00d9: ldc.i4.0
+		IL_00da: ldloc.0
+		IL_00db: stelem.ref
+		IL_00dc: stloc.s 4
+		IL_00de: ldloc.s 4
+		IL_00e0: ldc.i4.0
+		IL_00e1: ldelem.ref
+		IL_00e2: castclass Modules.ArrowFunction_LexicalThis_TopLevelCallback/Scope
+		IL_00e7: ldftn object Modules.ArrowFunction_LexicalThis_TopLevelCallback/ArrowFunction_L7C13::__js_call__(class Modules.ArrowFunction_LexicalThis_TopLevelCallback/Scope, object, object)
+		IL_00ed: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_00f2: ldloc.s 4
+		IL_00f4: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_00f9: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_00fe: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1
+		IL_0103: ldc.i4.1
+		IL_0104: conv.r8
+		IL_0105: ldstr ""
+		IL_010a: ldc.i4.0
+		IL_010b: ldc.i4.0
+		IL_010c: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0, float64, string, bool, bool)
+		IL_0111: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0)
+		IL_0116: stloc.s 5
+		IL_0118: ldloc.0
+		IL_0119: ldfld object Modules.ArrowFunction_LexicalThis_TopLevelCallback/Scope::usurper
+		IL_011e: stloc.1
+		IL_011f: ldloc.3
+		IL_0120: ldc.i4.2
+		IL_0121: newarr [System.Runtime]System.Object
+		IL_0126: dup
+		IL_0127: ldc.i4.0
+		IL_0128: ldloc.s 5
+		IL_012a: stelem.ref
+		IL_012b: dup
+		IL_012c: ldc.i4.1
+		IL_012d: ldloc.1
+		IL_012e: stelem.ref
+		IL_012f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::forEach(object[])
+		IL_0134: pop
+		IL_0135: ldstr "console"
+		IL_013a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_013f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0144: stloc.1
+		IL_0145: ldloc.0
+		IL_0146: ldfld object Modules.ArrowFunction_LexicalThis_TopLevelCallback/Scope::calls
+		IL_014b: stloc.s 6
+		IL_014d: ldloc.1
+		IL_014e: ldstr "log"
+		IL_0153: ldloc.s 6
+		IL_0155: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_015a: pop
+		IL_015b: ret
 	} // end of method ArrowFunction_LexicalThis_TopLevelCallback::__js_module_init__
 
 } // end of class Modules.ArrowFunction_LexicalThis_TopLevelCallback
@@ -296,7 +301,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x226e
+		// Method begins at RVA 0x2272
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
