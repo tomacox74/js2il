@@ -31,7 +31,9 @@ public class FsPromisesModuleContractTests
         var accessMethods = GetMethods("access");
 
         Assert.Equal(2, accessMethods.Length);
-        Assert.All(accessMethods, method => Assert.Equal(typeof(Promise), method.ReturnType));
+        Assert.All(
+            accessMethods,
+            method => Assert.Equal(typeof(IJavaScriptPromise), method.ReturnType));
         Assert.Contains(accessMethods, method => method.GetParameters().Length == 1);
         Assert.Contains(accessMethods, method => method.GetParameters().Length == 2);
 
@@ -41,6 +43,23 @@ public class FsPromisesModuleContractTests
         Assert.All(
             globMethods,
             method => Assert.Equal(typeof(IJavaScriptAsyncIterator), method.ReturnType));
+
+        Assert.DoesNotContain(
+            typeof(IFsPromisesModule).GetMethods(),
+            method => method.ReturnType == typeof(Promise)
+                || method.GetParameters().Any(parameter => parameter.ParameterType == typeof(Promise)));
+        Assert.True(typeof(IJavaScriptPromise).IsAssignableFrom(typeof(Promise)));
+    }
+
+    [Fact]
+    public void RuntimePromise_ImplementsPromiseContract()
+    {
+        Func<object[], object?, object?, object?> executor = (_, _, _) => null;
+        IJavaScriptPromise promise = new Promise(executor);
+
+        Assert.IsAssignableFrom<IJavaScriptPromise>(promise.then());
+        Assert.IsAssignableFrom<IJavaScriptPromise>(promise.@catch(null));
+        Assert.IsAssignableFrom<IJavaScriptPromise>(promise.@finally(null));
     }
 
     [Fact]

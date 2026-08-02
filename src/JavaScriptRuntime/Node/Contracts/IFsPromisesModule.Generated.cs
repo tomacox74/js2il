@@ -29,61 +29,61 @@ public interface IFsPromisesModule
     /// Node.js signature: <c>fsPromises.access(path[, mode])</c>.
     /// </summary>
     [NodeModuleMember("access")]
-    global::JavaScriptRuntime.Promise access(object? path);
+    global::JavaScriptRuntime.IJavaScriptPromise access(object? path);
 
     /// <summary>
     /// Node.js signature: <c>fsPromises.access(path[, mode])</c>.
     /// </summary>
     [NodeModuleMember("access")]
-    global::JavaScriptRuntime.Promise access(object? path, object? mode);
+    global::JavaScriptRuntime.IJavaScriptPromise access(object? path, object? mode);
 
     /// <summary>
     /// Node.js signature: <c>fsPromises.appendFile(path, data[, options])</c>.
     /// </summary>
     [NodeModuleMember("appendFile")]
-    global::JavaScriptRuntime.Promise appendFile(object? path, object? data);
+    global::JavaScriptRuntime.IJavaScriptPromise appendFile(object? path, object? data);
 
     /// <summary>
     /// Node.js signature: <c>fsPromises.appendFile(path, data[, options])</c>.
     /// </summary>
     [NodeModuleMember("appendFile")]
-    global::JavaScriptRuntime.Promise appendFile(object? path, object? data, object? options);
+    global::JavaScriptRuntime.IJavaScriptPromise appendFile(object? path, object? data, object? options);
 
     /// <summary>
     /// Node.js signature: <c>fsPromises.chmod(path, mode)</c>.
     /// </summary>
     [NodeModuleMember("chmod")]
-    global::JavaScriptRuntime.Promise chmod(object? path, object? mode);
+    global::JavaScriptRuntime.IJavaScriptPromise chmod(object? path, object? mode);
 
     /// <summary>
     /// Node.js signature: <c>fsPromises.chown(path, uid, gid)</c>.
     /// </summary>
     [NodeModuleMember("chown")]
-    global::JavaScriptRuntime.Promise chown(object? path, double uid, double gid);
+    global::JavaScriptRuntime.IJavaScriptPromise chown(object? path, double uid, double gid);
 
     /// <summary>
     /// Node.js signature: <c>fsPromises.copyFile(src, dest[, mode])</c>.
     /// </summary>
     [NodeModuleMember("copyFile")]
-    global::JavaScriptRuntime.Promise copyFile(object? src, object? dest);
+    global::JavaScriptRuntime.IJavaScriptPromise copyFile(object? src, object? dest);
 
     /// <summary>
     /// Node.js signature: <c>fsPromises.copyFile(src, dest[, mode])</c>.
     /// </summary>
     [NodeModuleMember("copyFile")]
-    global::JavaScriptRuntime.Promise copyFile(object? src, object? dest, object? mode);
+    global::JavaScriptRuntime.IJavaScriptPromise copyFile(object? src, object? dest, object? mode);
 
     /// <summary>
     /// Node.js signature: <c>fsPromises.cp(src, dest[, options])</c>.
     /// </summary>
     [NodeModuleMember("cp")]
-    global::JavaScriptRuntime.Promise cp(object? src, object? dest);
+    global::JavaScriptRuntime.IJavaScriptPromise cp(object? src, object? dest);
 
     /// <summary>
     /// Node.js signature: <c>fsPromises.cp(src, dest[, options])</c>.
     /// </summary>
     [NodeModuleMember("cp")]
-    global::JavaScriptRuntime.Promise cp(object? src, object? dest, object? options);
+    global::JavaScriptRuntime.IJavaScriptPromise cp(object? src, object? dest, object? options);
 
     /// <summary>
     /// Node.js signature: <c>fsPromises.glob(pattern[, options])</c>.
@@ -102,235 +102,235 @@ public interface IFsPromisesModule
     /// </summary>
     [global::System.Obsolete("Deprecated by Node.js since v10.0.0.")]
     [NodeModuleMember("lchmod")]
-    global::JavaScriptRuntime.Promise lchmod(object? path, double mode);
+    global::JavaScriptRuntime.IJavaScriptPromise lchmod(object? path, double mode);
 
     /// <summary>
     /// Node.js signature: <c>fsPromises.lchown(path, uid, gid)</c>.
     /// </summary>
     [NodeModuleMember("lchown")]
-    global::JavaScriptRuntime.Promise lchown(object? path, double uid, double gid);
+    global::JavaScriptRuntime.IJavaScriptPromise lchown(object? path, double uid, double gid);
 
     /// <summary>
     /// Node.js signature: <c>fsPromises.lutimes(path, atime, mtime)</c>.
     /// </summary>
     [NodeModuleMember("lutimes")]
-    global::JavaScriptRuntime.Promise lutimes(object? path, object? atime, object? mtime);
+    global::JavaScriptRuntime.IJavaScriptPromise lutimes(object? path, object? atime, object? mtime);
 
     /// <summary>
     /// Node.js signature: <c>fsPromises.link(existingPath, newPath)</c>.
     /// </summary>
     [NodeModuleMember("link")]
-    global::JavaScriptRuntime.Promise link(object? existingPath, object? newPath);
+    global::JavaScriptRuntime.IJavaScriptPromise link(object? existingPath, object? newPath);
 
     /// <summary>
     /// Node.js signature: <c>fsPromises.lstat(path[, options])</c>.
     /// </summary>
     [NodeModuleMember("lstat")]
-    global::JavaScriptRuntime.Promise lstat(object? path);
+    global::JavaScriptRuntime.IJavaScriptPromise lstat(object? path);
 
     /// <summary>
     /// Node.js signature: <c>fsPromises.lstat(path[, options])</c>.
     /// </summary>
     [NodeModuleMember("lstat")]
-    global::JavaScriptRuntime.Promise lstat(object? path, object? options);
+    global::JavaScriptRuntime.IJavaScriptPromise lstat(object? path, object? options);
 
     /// <summary>
     /// Node.js signature: <c>fsPromises.mkdir(path[, options])</c>.
     /// </summary>
     [NodeModuleMember("mkdir")]
-    global::JavaScriptRuntime.Promise mkdir(object? path);
+    global::JavaScriptRuntime.IJavaScriptPromise mkdir(object? path);
 
     /// <summary>
     /// Node.js signature: <c>fsPromises.mkdir(path[, options])</c>.
     /// </summary>
     [NodeModuleMember("mkdir")]
-    global::JavaScriptRuntime.Promise mkdir(object? path, object? options);
+    global::JavaScriptRuntime.IJavaScriptPromise mkdir(object? path, object? options);
 
     /// <summary>
     /// Node.js signature: <c>fsPromises.mkdtemp(prefix[, options])</c>.
     /// </summary>
     [NodeModuleMember("mkdtemp")]
-    global::JavaScriptRuntime.Promise mkdtemp(object? prefix);
+    global::JavaScriptRuntime.IJavaScriptPromise mkdtemp(object? prefix);
 
     /// <summary>
     /// Node.js signature: <c>fsPromises.mkdtemp(prefix[, options])</c>.
     /// </summary>
     [NodeModuleMember("mkdtemp")]
-    global::JavaScriptRuntime.Promise mkdtemp(object? prefix, object? options);
+    global::JavaScriptRuntime.IJavaScriptPromise mkdtemp(object? prefix, object? options);
 
     /// <summary>
     /// Node.js signature: <c>fsPromises.mkdtempDisposable(prefix[, options])</c>.
     /// </summary>
     [NodeModuleMember("mkdtempDisposable")]
-    global::JavaScriptRuntime.Promise mkdtempDisposable(object? prefix);
+    global::JavaScriptRuntime.IJavaScriptPromise mkdtempDisposable(object? prefix);
 
     /// <summary>
     /// Node.js signature: <c>fsPromises.mkdtempDisposable(prefix[, options])</c>.
     /// </summary>
     [NodeModuleMember("mkdtempDisposable")]
-    global::JavaScriptRuntime.Promise mkdtempDisposable(object? prefix, object? options);
+    global::JavaScriptRuntime.IJavaScriptPromise mkdtempDisposable(object? prefix, object? options);
 
     /// <summary>
     /// Node.js signature: <c>fsPromises.open(path, flags[, mode])</c>.
     /// </summary>
     [NodeModuleMember("open")]
-    global::JavaScriptRuntime.Promise open(object? path, object? flags);
+    global::JavaScriptRuntime.IJavaScriptPromise open(object? path, object? flags);
 
     /// <summary>
     /// Node.js signature: <c>fsPromises.open(path, flags[, mode])</c>.
     /// </summary>
     [NodeModuleMember("open")]
-    global::JavaScriptRuntime.Promise open(object? path, object? flags, object? mode);
+    global::JavaScriptRuntime.IJavaScriptPromise open(object? path, object? flags, object? mode);
 
     /// <summary>
     /// Node.js signature: <c>fsPromises.opendir(path[, options])</c>.
     /// </summary>
     [NodeModuleMember("opendir")]
-    global::JavaScriptRuntime.Promise opendir(object? path);
+    global::JavaScriptRuntime.IJavaScriptPromise opendir(object? path);
 
     /// <summary>
     /// Node.js signature: <c>fsPromises.opendir(path[, options])</c>.
     /// </summary>
     [NodeModuleMember("opendir")]
-    global::JavaScriptRuntime.Promise opendir(object? path, object? options);
+    global::JavaScriptRuntime.IJavaScriptPromise opendir(object? path, object? options);
 
     /// <summary>
     /// Node.js signature: <c>fsPromises.readdir(path[, options])</c>.
     /// </summary>
     [NodeModuleMember("readdir")]
-    global::JavaScriptRuntime.Promise readdir(object? path);
+    global::JavaScriptRuntime.IJavaScriptPromise readdir(object? path);
 
     /// <summary>
     /// Node.js signature: <c>fsPromises.readdir(path[, options])</c>.
     /// </summary>
     [NodeModuleMember("readdir")]
-    global::JavaScriptRuntime.Promise readdir(object? path, object? options);
+    global::JavaScriptRuntime.IJavaScriptPromise readdir(object? path, object? options);
 
     /// <summary>
     /// Node.js signature: <c>fsPromises.readFile(path[, options])</c>.
     /// </summary>
     [NodeModuleMember("readFile")]
-    global::JavaScriptRuntime.Promise readFile(object? path);
+    global::JavaScriptRuntime.IJavaScriptPromise readFile(object? path);
 
     /// <summary>
     /// Node.js signature: <c>fsPromises.readFile(path[, options])</c>.
     /// </summary>
     [NodeModuleMember("readFile")]
-    global::JavaScriptRuntime.Promise readFile(object? path, object? options);
+    global::JavaScriptRuntime.IJavaScriptPromise readFile(object? path, object? options);
 
     /// <summary>
     /// Node.js signature: <c>fsPromises.readlink(path[, options])</c>.
     /// </summary>
     [NodeModuleMember("readlink")]
-    global::JavaScriptRuntime.Promise readlink(object? path);
+    global::JavaScriptRuntime.IJavaScriptPromise readlink(object? path);
 
     /// <summary>
     /// Node.js signature: <c>fsPromises.readlink(path[, options])</c>.
     /// </summary>
     [NodeModuleMember("readlink")]
-    global::JavaScriptRuntime.Promise readlink(object? path, object? options);
+    global::JavaScriptRuntime.IJavaScriptPromise readlink(object? path, object? options);
 
     /// <summary>
     /// Node.js signature: <c>fsPromises.realpath(path[, options])</c>.
     /// </summary>
     [NodeModuleMember("realpath")]
-    global::JavaScriptRuntime.Promise realpath(object? path);
+    global::JavaScriptRuntime.IJavaScriptPromise realpath(object? path);
 
     /// <summary>
     /// Node.js signature: <c>fsPromises.realpath(path[, options])</c>.
     /// </summary>
     [NodeModuleMember("realpath")]
-    global::JavaScriptRuntime.Promise realpath(object? path, object? options);
+    global::JavaScriptRuntime.IJavaScriptPromise realpath(object? path, object? options);
 
     /// <summary>
     /// Node.js signature: <c>fsPromises.rename(oldPath, newPath)</c>.
     /// </summary>
     [NodeModuleMember("rename")]
-    global::JavaScriptRuntime.Promise rename(object? oldPath, object? newPath);
+    global::JavaScriptRuntime.IJavaScriptPromise rename(object? oldPath, object? newPath);
 
     /// <summary>
     /// Node.js signature: <c>fsPromises.rmdir(path[, options])</c>.
     /// </summary>
     [NodeModuleMember("rmdir")]
-    global::JavaScriptRuntime.Promise rmdir(object? path);
+    global::JavaScriptRuntime.IJavaScriptPromise rmdir(object? path);
 
     /// <summary>
     /// Node.js signature: <c>fsPromises.rmdir(path[, options])</c>.
     /// </summary>
     [NodeModuleMember("rmdir")]
-    global::JavaScriptRuntime.Promise rmdir(object? path, object? options);
+    global::JavaScriptRuntime.IJavaScriptPromise rmdir(object? path, object? options);
 
     /// <summary>
     /// Node.js signature: <c>fsPromises.rm(path[, options])</c>.
     /// </summary>
     [NodeModuleMember("rm")]
-    global::JavaScriptRuntime.Promise rm(object? path);
+    global::JavaScriptRuntime.IJavaScriptPromise rm(object? path);
 
     /// <summary>
     /// Node.js signature: <c>fsPromises.rm(path[, options])</c>.
     /// </summary>
     [NodeModuleMember("rm")]
-    global::JavaScriptRuntime.Promise rm(object? path, object? options);
+    global::JavaScriptRuntime.IJavaScriptPromise rm(object? path, object? options);
 
     /// <summary>
     /// Node.js signature: <c>fsPromises.stat(path[, options])</c>.
     /// </summary>
     [NodeModuleMember("stat")]
-    global::JavaScriptRuntime.Promise stat(object? path);
+    global::JavaScriptRuntime.IJavaScriptPromise stat(object? path);
 
     /// <summary>
     /// Node.js signature: <c>fsPromises.stat(path[, options])</c>.
     /// </summary>
     [NodeModuleMember("stat")]
-    global::JavaScriptRuntime.Promise stat(object? path, object? options);
+    global::JavaScriptRuntime.IJavaScriptPromise stat(object? path, object? options);
 
     /// <summary>
     /// Node.js signature: <c>fsPromises.statfs(path[, options])</c>.
     /// </summary>
     [NodeModuleMember("statfs")]
-    global::JavaScriptRuntime.Promise statfs(object? path);
+    global::JavaScriptRuntime.IJavaScriptPromise statfs(object? path);
 
     /// <summary>
     /// Node.js signature: <c>fsPromises.statfs(path[, options])</c>.
     /// </summary>
     [NodeModuleMember("statfs")]
-    global::JavaScriptRuntime.Promise statfs(object? path, object? options);
+    global::JavaScriptRuntime.IJavaScriptPromise statfs(object? path, object? options);
 
     /// <summary>
     /// Node.js signature: <c>fsPromises.symlink(target, path[, type])</c>.
     /// </summary>
     [NodeModuleMember("symlink")]
-    global::JavaScriptRuntime.Promise symlink(object? target, object? path);
+    global::JavaScriptRuntime.IJavaScriptPromise symlink(object? target, object? path);
 
     /// <summary>
     /// Node.js signature: <c>fsPromises.symlink(target, path[, type])</c>.
     /// </summary>
     [NodeModuleMember("symlink")]
-    global::JavaScriptRuntime.Promise symlink(object? target, object? path, object? type);
+    global::JavaScriptRuntime.IJavaScriptPromise symlink(object? target, object? path, object? type);
 
     /// <summary>
     /// Node.js signature: <c>fsPromises.truncate(path[, len])</c>.
     /// </summary>
     [NodeModuleMember("truncate")]
-    global::JavaScriptRuntime.Promise truncate(object? path);
+    global::JavaScriptRuntime.IJavaScriptPromise truncate(object? path);
 
     /// <summary>
     /// Node.js signature: <c>fsPromises.truncate(path[, len])</c>.
     /// </summary>
     [NodeModuleMember("truncate")]
-    global::JavaScriptRuntime.Promise truncate(object? path, object? len);
+    global::JavaScriptRuntime.IJavaScriptPromise truncate(object? path, object? len);
 
     /// <summary>
     /// Node.js signature: <c>fsPromises.unlink(path)</c>.
     /// </summary>
     [NodeModuleMember("unlink")]
-    global::JavaScriptRuntime.Promise unlink(object? path);
+    global::JavaScriptRuntime.IJavaScriptPromise unlink(object? path);
 
     /// <summary>
     /// Node.js signature: <c>fsPromises.utimes(path, atime, mtime)</c>.
     /// </summary>
     [NodeModuleMember("utimes")]
-    global::JavaScriptRuntime.Promise utimes(object? path, object? atime, object? mtime);
+    global::JavaScriptRuntime.IJavaScriptPromise utimes(object? path, object? atime, object? mtime);
 
     /// <summary>
     /// Node.js signature: <c>fsPromises.watch(filename[, options])</c>.
@@ -348,12 +348,12 @@ public interface IFsPromisesModule
     /// Node.js signature: <c>fsPromises.writeFile(file, data[, options])</c>.
     /// </summary>
     [NodeModuleMember("writeFile")]
-    global::JavaScriptRuntime.Promise writeFile(object? file, object? data);
+    global::JavaScriptRuntime.IJavaScriptPromise writeFile(object? file, object? data);
 
     /// <summary>
     /// Node.js signature: <c>fsPromises.writeFile(file, data[, options])</c>.
     /// </summary>
     [NodeModuleMember("writeFile")]
-    global::JavaScriptRuntime.Promise writeFile(object? file, object? data, object? options);
+    global::JavaScriptRuntime.IJavaScriptPromise writeFile(object? file, object? data, object? options);
 
 }

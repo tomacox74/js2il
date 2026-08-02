@@ -315,13 +315,13 @@ public interface IFsModule
     /// Node.js signature: <c>fs.openAsBlob(path[, options])</c>.
     /// </summary>
     [NodeModuleMember("openAsBlob")]
-    global::JavaScriptRuntime.Promise openAsBlob(object? path);
+    global::JavaScriptRuntime.IJavaScriptPromise openAsBlob(object? path);
 
     /// <summary>
     /// Node.js signature: <c>fs.openAsBlob(path[, options])</c>.
     /// </summary>
     [NodeModuleMember("openAsBlob")]
-    global::JavaScriptRuntime.Promise openAsBlob(object? path, object? options);
+    global::JavaScriptRuntime.IJavaScriptPromise openAsBlob(object? path, object? options);
 
     /// <summary>
     /// Node.js signature: <c>fs.opendir(path[, options], callback)</c>.

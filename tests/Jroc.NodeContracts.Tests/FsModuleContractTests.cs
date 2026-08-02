@@ -108,7 +108,7 @@ public class FsModuleContractTests
     }
 
     [Fact]
-    public void IFsModule_UsesArrayContractInsteadOfRuntimeImplementation()
+    public void IFsModule_UsesRuntimeContractsInsteadOfImplementations()
     {
         Assert.Contains(
             typeof(IFsModule).GetMethods(),
@@ -119,6 +119,15 @@ public class FsModuleContractTests
                 || method.GetParameters().Any(
                     parameter => parameter.ParameterType == typeof(JavaScriptRuntime.Array)));
         Assert.True(typeof(IJavaScriptArray).IsAssignableFrom(typeof(JavaScriptRuntime.Array)));
+
+        Assert.Contains(
+            typeof(IFsModule).GetMethods(),
+            method => method.ReturnType == typeof(IJavaScriptPromise));
+        Assert.DoesNotContain(
+            typeof(IFsModule).GetMethods(),
+            method => method.ReturnType == typeof(Promise)
+                || method.GetParameters().Any(parameter => parameter.ParameterType == typeof(Promise)));
+        Assert.True(typeof(IJavaScriptPromise).IsAssignableFrom(typeof(Promise)));
     }
 
     [Fact]

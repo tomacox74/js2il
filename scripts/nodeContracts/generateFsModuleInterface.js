@@ -241,7 +241,7 @@ function mapType(type, isReturnType = false) {
     }
 
     if (normalized.startsWith('promise')) {
-        return 'global::JavaScriptRuntime.Promise';
+        return 'global::JavaScriptRuntime.IJavaScriptPromise';
     }
 
     if (normalized === 'iterator' || normalized === 'iterable') {

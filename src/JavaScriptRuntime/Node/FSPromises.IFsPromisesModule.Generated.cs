@@ -15,34 +15,34 @@ public sealed partial class FSPromises : FsContract
     object? FsContract.constants
         => throw CreateNotImplementedException("constants");
 
-    global::JavaScriptRuntime.Promise FsContract.access(object? path)
-        => (global::JavaScriptRuntime.Promise)InvokeContractMember("access", [path!])!;
+    global::JavaScriptRuntime.IJavaScriptPromise FsContract.access(object? path)
+        => (global::JavaScriptRuntime.IJavaScriptPromise)InvokeContractMember("access", [path!])!;
 
-    global::JavaScriptRuntime.Promise FsContract.access(object? path, object? mode)
-        => (global::JavaScriptRuntime.Promise)InvokeContractMember("access", [path!, mode!])!;
+    global::JavaScriptRuntime.IJavaScriptPromise FsContract.access(object? path, object? mode)
+        => (global::JavaScriptRuntime.IJavaScriptPromise)InvokeContractMember("access", [path!, mode!])!;
 
-    global::JavaScriptRuntime.Promise FsContract.appendFile(object? path, object? data)
-        => (global::JavaScriptRuntime.Promise)InvokeContractMember("appendFile", [path!, data!])!;
+    global::JavaScriptRuntime.IJavaScriptPromise FsContract.appendFile(object? path, object? data)
+        => (global::JavaScriptRuntime.IJavaScriptPromise)InvokeContractMember("appendFile", [path!, data!])!;
 
-    global::JavaScriptRuntime.Promise FsContract.appendFile(object? path, object? data, object? options)
-        => (global::JavaScriptRuntime.Promise)InvokeContractMember("appendFile", [path!, data!, options!])!;
+    global::JavaScriptRuntime.IJavaScriptPromise FsContract.appendFile(object? path, object? data, object? options)
+        => (global::JavaScriptRuntime.IJavaScriptPromise)InvokeContractMember("appendFile", [path!, data!, options!])!;
 
-    global::JavaScriptRuntime.Promise FsContract.chmod(object? path, object? mode)
+    global::JavaScriptRuntime.IJavaScriptPromise FsContract.chmod(object? path, object? mode)
         => throw CreateNotImplementedException("chmod");
 
-    global::JavaScriptRuntime.Promise FsContract.chown(object? path, double uid, double gid)
+    global::JavaScriptRuntime.IJavaScriptPromise FsContract.chown(object? path, double uid, double gid)
         => throw CreateNotImplementedException("chown");
 
-    global::JavaScriptRuntime.Promise FsContract.copyFile(object? src, object? dest)
-        => (global::JavaScriptRuntime.Promise)InvokeContractMember("copyFile", [src!, dest!])!;
+    global::JavaScriptRuntime.IJavaScriptPromise FsContract.copyFile(object? src, object? dest)
+        => (global::JavaScriptRuntime.IJavaScriptPromise)InvokeContractMember("copyFile", [src!, dest!])!;
 
-    global::JavaScriptRuntime.Promise FsContract.copyFile(object? src, object? dest, object? mode)
-        => (global::JavaScriptRuntime.Promise)InvokeContractMember("copyFile", [src!, dest!, mode!])!;
+    global::JavaScriptRuntime.IJavaScriptPromise FsContract.copyFile(object? src, object? dest, object? mode)
+        => (global::JavaScriptRuntime.IJavaScriptPromise)InvokeContractMember("copyFile", [src!, dest!, mode!])!;
 
-    global::JavaScriptRuntime.Promise FsContract.cp(object? src, object? dest)
+    global::JavaScriptRuntime.IJavaScriptPromise FsContract.cp(object? src, object? dest)
         => throw CreateNotImplementedException("cp");
 
-    global::JavaScriptRuntime.Promise FsContract.cp(object? src, object? dest, object? options)
+    global::JavaScriptRuntime.IJavaScriptPromise FsContract.cp(object? src, object? dest, object? options)
         => throw CreateNotImplementedException("cp");
 
     global::JavaScriptRuntime.IJavaScriptAsyncIterator FsContract.glob(object? pattern)
@@ -51,121 +51,121 @@ public sealed partial class FSPromises : FsContract
     global::JavaScriptRuntime.IJavaScriptAsyncIterator FsContract.glob(object? pattern, object? options)
         => throw CreateNotImplementedException("glob");
 
-    global::JavaScriptRuntime.Promise FsContract.lchmod(object? path, double mode)
+    global::JavaScriptRuntime.IJavaScriptPromise FsContract.lchmod(object? path, double mode)
         => throw CreateNotImplementedException("lchmod");
 
-    global::JavaScriptRuntime.Promise FsContract.lchown(object? path, double uid, double gid)
+    global::JavaScriptRuntime.IJavaScriptPromise FsContract.lchown(object? path, double uid, double gid)
         => throw CreateNotImplementedException("lchown");
 
-    global::JavaScriptRuntime.Promise FsContract.lutimes(object? path, object? atime, object? mtime)
+    global::JavaScriptRuntime.IJavaScriptPromise FsContract.lutimes(object? path, object? atime, object? mtime)
         => throw CreateNotImplementedException("lutimes");
 
-    global::JavaScriptRuntime.Promise FsContract.link(object? existingPath, object? newPath)
+    global::JavaScriptRuntime.IJavaScriptPromise FsContract.link(object? existingPath, object? newPath)
         => throw CreateNotImplementedException("link");
 
-    global::JavaScriptRuntime.Promise FsContract.lstat(object? path)
-        => (global::JavaScriptRuntime.Promise)InvokeContractMember("lstat", [path!])!;
+    global::JavaScriptRuntime.IJavaScriptPromise FsContract.lstat(object? path)
+        => (global::JavaScriptRuntime.IJavaScriptPromise)InvokeContractMember("lstat", [path!])!;
 
-    global::JavaScriptRuntime.Promise FsContract.lstat(object? path, object? options)
-        => (global::JavaScriptRuntime.Promise)InvokeContractMember("lstat", [path!, options!])!;
+    global::JavaScriptRuntime.IJavaScriptPromise FsContract.lstat(object? path, object? options)
+        => (global::JavaScriptRuntime.IJavaScriptPromise)InvokeContractMember("lstat", [path!, options!])!;
 
-    global::JavaScriptRuntime.Promise FsContract.mkdir(object? path)
-        => (global::JavaScriptRuntime.Promise)InvokeContractMember("mkdir", [path!])!;
+    global::JavaScriptRuntime.IJavaScriptPromise FsContract.mkdir(object? path)
+        => (global::JavaScriptRuntime.IJavaScriptPromise)InvokeContractMember("mkdir", [path!])!;
 
-    global::JavaScriptRuntime.Promise FsContract.mkdir(object? path, object? options)
-        => (global::JavaScriptRuntime.Promise)InvokeContractMember("mkdir", [path!, options!])!;
+    global::JavaScriptRuntime.IJavaScriptPromise FsContract.mkdir(object? path, object? options)
+        => (global::JavaScriptRuntime.IJavaScriptPromise)InvokeContractMember("mkdir", [path!, options!])!;
 
-    global::JavaScriptRuntime.Promise FsContract.mkdtemp(object? prefix)
+    global::JavaScriptRuntime.IJavaScriptPromise FsContract.mkdtemp(object? prefix)
         => throw CreateNotImplementedException("mkdtemp");
 
-    global::JavaScriptRuntime.Promise FsContract.mkdtemp(object? prefix, object? options)
+    global::JavaScriptRuntime.IJavaScriptPromise FsContract.mkdtemp(object? prefix, object? options)
         => throw CreateNotImplementedException("mkdtemp");
 
-    global::JavaScriptRuntime.Promise FsContract.mkdtempDisposable(object? prefix)
+    global::JavaScriptRuntime.IJavaScriptPromise FsContract.mkdtempDisposable(object? prefix)
         => throw CreateNotImplementedException("mkdtempDisposable");
 
-    global::JavaScriptRuntime.Promise FsContract.mkdtempDisposable(object? prefix, object? options)
+    global::JavaScriptRuntime.IJavaScriptPromise FsContract.mkdtempDisposable(object? prefix, object? options)
         => throw CreateNotImplementedException("mkdtempDisposable");
 
-    global::JavaScriptRuntime.Promise FsContract.open(object? path, object? flags)
-        => (global::JavaScriptRuntime.Promise)InvokeContractMember("open", [path!, flags!])!;
+    global::JavaScriptRuntime.IJavaScriptPromise FsContract.open(object? path, object? flags)
+        => (global::JavaScriptRuntime.IJavaScriptPromise)InvokeContractMember("open", [path!, flags!])!;
 
-    global::JavaScriptRuntime.Promise FsContract.open(object? path, object? flags, object? mode)
-        => (global::JavaScriptRuntime.Promise)InvokeContractMember("open", [path!, flags!, mode!])!;
+    global::JavaScriptRuntime.IJavaScriptPromise FsContract.open(object? path, object? flags, object? mode)
+        => (global::JavaScriptRuntime.IJavaScriptPromise)InvokeContractMember("open", [path!, flags!, mode!])!;
 
-    global::JavaScriptRuntime.Promise FsContract.opendir(object? path)
+    global::JavaScriptRuntime.IJavaScriptPromise FsContract.opendir(object? path)
         => throw CreateNotImplementedException("opendir");
 
-    global::JavaScriptRuntime.Promise FsContract.opendir(object? path, object? options)
+    global::JavaScriptRuntime.IJavaScriptPromise FsContract.opendir(object? path, object? options)
         => throw CreateNotImplementedException("opendir");
 
-    global::JavaScriptRuntime.Promise FsContract.readdir(object? path)
-        => (global::JavaScriptRuntime.Promise)InvokeContractMember("readdir", [path!])!;
+    global::JavaScriptRuntime.IJavaScriptPromise FsContract.readdir(object? path)
+        => (global::JavaScriptRuntime.IJavaScriptPromise)InvokeContractMember("readdir", [path!])!;
 
-    global::JavaScriptRuntime.Promise FsContract.readdir(object? path, object? options)
-        => (global::JavaScriptRuntime.Promise)InvokeContractMember("readdir", [path!, options!])!;
+    global::JavaScriptRuntime.IJavaScriptPromise FsContract.readdir(object? path, object? options)
+        => (global::JavaScriptRuntime.IJavaScriptPromise)InvokeContractMember("readdir", [path!, options!])!;
 
-    global::JavaScriptRuntime.Promise FsContract.readFile(object? path)
-        => (global::JavaScriptRuntime.Promise)InvokeContractMember("readFile", [path!])!;
+    global::JavaScriptRuntime.IJavaScriptPromise FsContract.readFile(object? path)
+        => (global::JavaScriptRuntime.IJavaScriptPromise)InvokeContractMember("readFile", [path!])!;
 
-    global::JavaScriptRuntime.Promise FsContract.readFile(object? path, object? options)
-        => (global::JavaScriptRuntime.Promise)InvokeContractMember("readFile", [path!, options!])!;
+    global::JavaScriptRuntime.IJavaScriptPromise FsContract.readFile(object? path, object? options)
+        => (global::JavaScriptRuntime.IJavaScriptPromise)InvokeContractMember("readFile", [path!, options!])!;
 
-    global::JavaScriptRuntime.Promise FsContract.readlink(object? path)
+    global::JavaScriptRuntime.IJavaScriptPromise FsContract.readlink(object? path)
         => throw CreateNotImplementedException("readlink");
 
-    global::JavaScriptRuntime.Promise FsContract.readlink(object? path, object? options)
+    global::JavaScriptRuntime.IJavaScriptPromise FsContract.readlink(object? path, object? options)
         => throw CreateNotImplementedException("readlink");
 
-    global::JavaScriptRuntime.Promise FsContract.realpath(object? path)
-        => (global::JavaScriptRuntime.Promise)InvokeContractMember("realpath", [path!])!;
+    global::JavaScriptRuntime.IJavaScriptPromise FsContract.realpath(object? path)
+        => (global::JavaScriptRuntime.IJavaScriptPromise)InvokeContractMember("realpath", [path!])!;
 
-    global::JavaScriptRuntime.Promise FsContract.realpath(object? path, object? options)
-        => (global::JavaScriptRuntime.Promise)InvokeContractMember("realpath", [path!, options!])!;
+    global::JavaScriptRuntime.IJavaScriptPromise FsContract.realpath(object? path, object? options)
+        => (global::JavaScriptRuntime.IJavaScriptPromise)InvokeContractMember("realpath", [path!, options!])!;
 
-    global::JavaScriptRuntime.Promise FsContract.rename(object? oldPath, object? newPath)
-        => (global::JavaScriptRuntime.Promise)InvokeContractMember("rename", [oldPath!, newPath!])!;
+    global::JavaScriptRuntime.IJavaScriptPromise FsContract.rename(object? oldPath, object? newPath)
+        => (global::JavaScriptRuntime.IJavaScriptPromise)InvokeContractMember("rename", [oldPath!, newPath!])!;
 
-    global::JavaScriptRuntime.Promise FsContract.rmdir(object? path)
+    global::JavaScriptRuntime.IJavaScriptPromise FsContract.rmdir(object? path)
         => throw CreateNotImplementedException("rmdir");
 
-    global::JavaScriptRuntime.Promise FsContract.rmdir(object? path, object? options)
+    global::JavaScriptRuntime.IJavaScriptPromise FsContract.rmdir(object? path, object? options)
         => throw CreateNotImplementedException("rmdir");
 
-    global::JavaScriptRuntime.Promise FsContract.rm(object? path)
+    global::JavaScriptRuntime.IJavaScriptPromise FsContract.rm(object? path)
         => throw CreateNotImplementedException("rm");
 
-    global::JavaScriptRuntime.Promise FsContract.rm(object? path, object? options)
+    global::JavaScriptRuntime.IJavaScriptPromise FsContract.rm(object? path, object? options)
         => throw CreateNotImplementedException("rm");
 
-    global::JavaScriptRuntime.Promise FsContract.stat(object? path)
-        => (global::JavaScriptRuntime.Promise)InvokeContractMember("stat", [path!])!;
+    global::JavaScriptRuntime.IJavaScriptPromise FsContract.stat(object? path)
+        => (global::JavaScriptRuntime.IJavaScriptPromise)InvokeContractMember("stat", [path!])!;
 
-    global::JavaScriptRuntime.Promise FsContract.stat(object? path, object? options)
-        => (global::JavaScriptRuntime.Promise)InvokeContractMember("stat", [path!, options!])!;
+    global::JavaScriptRuntime.IJavaScriptPromise FsContract.stat(object? path, object? options)
+        => (global::JavaScriptRuntime.IJavaScriptPromise)InvokeContractMember("stat", [path!, options!])!;
 
-    global::JavaScriptRuntime.Promise FsContract.statfs(object? path)
+    global::JavaScriptRuntime.IJavaScriptPromise FsContract.statfs(object? path)
         => throw CreateNotImplementedException("statfs");
 
-    global::JavaScriptRuntime.Promise FsContract.statfs(object? path, object? options)
+    global::JavaScriptRuntime.IJavaScriptPromise FsContract.statfs(object? path, object? options)
         => throw CreateNotImplementedException("statfs");
 
-    global::JavaScriptRuntime.Promise FsContract.symlink(object? target, object? path)
+    global::JavaScriptRuntime.IJavaScriptPromise FsContract.symlink(object? target, object? path)
         => throw CreateNotImplementedException("symlink");
 
-    global::JavaScriptRuntime.Promise FsContract.symlink(object? target, object? path, object? type)
+    global::JavaScriptRuntime.IJavaScriptPromise FsContract.symlink(object? target, object? path, object? type)
         => throw CreateNotImplementedException("symlink");
 
-    global::JavaScriptRuntime.Promise FsContract.truncate(object? path)
+    global::JavaScriptRuntime.IJavaScriptPromise FsContract.truncate(object? path)
         => throw CreateNotImplementedException("truncate");
 
-    global::JavaScriptRuntime.Promise FsContract.truncate(object? path, object? len)
+    global::JavaScriptRuntime.IJavaScriptPromise FsContract.truncate(object? path, object? len)
         => throw CreateNotImplementedException("truncate");
 
-    global::JavaScriptRuntime.Promise FsContract.unlink(object? path)
-        => (global::JavaScriptRuntime.Promise)InvokeContractMember("unlink", [path!])!;
+    global::JavaScriptRuntime.IJavaScriptPromise FsContract.unlink(object? path)
+        => (global::JavaScriptRuntime.IJavaScriptPromise)InvokeContractMember("unlink", [path!])!;
 
-    global::JavaScriptRuntime.Promise FsContract.utimes(object? path, object? atime, object? mtime)
+    global::JavaScriptRuntime.IJavaScriptPromise FsContract.utimes(object? path, object? atime, object? mtime)
         => throw CreateNotImplementedException("utimes");
 
     global::JavaScriptRuntime.IJavaScriptAsyncIterator FsContract.watch(object? filename)
@@ -174,11 +174,11 @@ public sealed partial class FSPromises : FsContract
     global::JavaScriptRuntime.IJavaScriptAsyncIterator FsContract.watch(object? filename, object? options)
         => throw CreateNotImplementedException("watch");
 
-    global::JavaScriptRuntime.Promise FsContract.writeFile(object? file, object? data)
-        => (global::JavaScriptRuntime.Promise)InvokeContractMember("writeFile", [file!, data!])!;
+    global::JavaScriptRuntime.IJavaScriptPromise FsContract.writeFile(object? file, object? data)
+        => (global::JavaScriptRuntime.IJavaScriptPromise)InvokeContractMember("writeFile", [file!, data!])!;
 
-    global::JavaScriptRuntime.Promise FsContract.writeFile(object? file, object? data, object? options)
-        => (global::JavaScriptRuntime.Promise)InvokeContractMember("writeFile", [file!, data!, options!])!;
+    global::JavaScriptRuntime.IJavaScriptPromise FsContract.writeFile(object? file, object? data, object? options)
+        => (global::JavaScriptRuntime.IJavaScriptPromise)InvokeContractMember("writeFile", [file!, data!, options!])!;
 
     private static bool IsImplementedContractMethod(string memberName)
         => memberName switch
