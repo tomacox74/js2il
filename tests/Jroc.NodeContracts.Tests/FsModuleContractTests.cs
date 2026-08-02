@@ -1,8 +1,9 @@
 using System.CodeDom.Compiler;
 using System.Reflection;
+using JavaScriptRuntime;
 using Jroc.Runtime.Node.Contracts;
 
-namespace Jroc.Tests.NodeContracts;
+namespace Jroc.NodeContracts.Tests;
 
 public class FsModuleContractTests
 {
@@ -103,6 +104,20 @@ public class FsModuleContractTests
 
         Assert.Equal(2, realpathNativeMethods.Length);
         Assert.All(realpathNativeMethods, method => Assert.Equal("realpathNative", method.Name));
+    }
+
+    [Fact]
+    public void IFsModule_UsesArrayContractInsteadOfRuntimeImplementation()
+    {
+        Assert.Contains(
+            typeof(IFsModule).GetMethods(),
+            method => method.ReturnType == typeof(IJavaScriptArray));
+        Assert.DoesNotContain(
+            typeof(IFsModule).GetMethods(),
+            method => method.ReturnType == typeof(JavaScriptRuntime.Array)
+                || method.GetParameters().Any(
+                    parameter => parameter.ParameterType == typeof(JavaScriptRuntime.Array)));
+        Assert.True(typeof(IJavaScriptArray).IsAssignableFrom(typeof(JavaScriptRuntime.Array)));
     }
 
     [Fact]

@@ -10,7 +10,7 @@ using System.Globalization;
 namespace JavaScriptRuntime
 {
     [IntrinsicObject("Array", IntrinsicCallKind.ArrayConstruct)]
-    public class Array : JsObject, IExoticJsObject, IEnumerable<object?>, IDictionary<string, object?>
+    public class Array : JsObject, IExoticJsObject, IJavaScriptArray, IDictionary<string, object?>
     {
         private static readonly ThreadLocal<JsObject?> _threadPrototypeOverrides = new(() => null);
         [ThreadStatic]

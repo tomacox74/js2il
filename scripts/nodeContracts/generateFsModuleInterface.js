@@ -227,7 +227,7 @@ function mapType(type, isReturnType = false) {
     }
 
     if (normalized.endsWith('[]') || normalized.startsWith('array<') || normalized === 'array') {
-        return 'global::JavaScriptRuntime.Array';
+        return 'global::JavaScriptRuntime.IJavaScriptArray';
     }
 
     return 'object?';

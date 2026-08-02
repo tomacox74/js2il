@@ -8,7 +8,9 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 - sdk/runtime: add a proof-of-concept generated `node:fs` host contract from
   the pinned official Node.js 24.18.1 API documentation, including canonical
-  module/member metadata and deterministic source generation.
+  module/member metadata and deterministic source generation. Add
+  `IJavaScriptArray` as the public array ABI implemented by the built-in
+  JavaScript `Array`.
 
 ## v0.12.1 - 2026-08-02
 

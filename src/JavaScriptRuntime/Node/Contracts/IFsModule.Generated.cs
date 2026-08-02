@@ -399,13 +399,13 @@ public interface IFsModule
     /// Node.js signature: <c>fs.readv(fd, buffers[, position], callback)</c>.
     /// </summary>
     [NodeModuleMember("readv")]
-    void readv(double fd, global::JavaScriptRuntime.Array buffers, global::System.Delegate callback);
+    void readv(double fd, global::JavaScriptRuntime.IJavaScriptArray buffers, global::System.Delegate callback);
 
     /// <summary>
     /// Node.js signature: <c>fs.readv(fd, buffers[, position], callback)</c>.
     /// </summary>
     [NodeModuleMember("readv")]
-    void readv(double fd, global::JavaScriptRuntime.Array buffers, object? position, global::System.Delegate callback);
+    void readv(double fd, global::JavaScriptRuntime.IJavaScriptArray buffers, object? position, global::System.Delegate callback);
 
     /// <summary>
     /// Node.js signature: <c>fs.realpath(path[, options], callback)</c>.
@@ -627,13 +627,13 @@ public interface IFsModule
     /// Node.js signature: <c>fs.writev(fd, buffers[, position], callback)</c>.
     /// </summary>
     [NodeModuleMember("writev")]
-    void writev(double fd, global::JavaScriptRuntime.Array buffers, global::System.Delegate callback);
+    void writev(double fd, global::JavaScriptRuntime.IJavaScriptArray buffers, global::System.Delegate callback);
 
     /// <summary>
     /// Node.js signature: <c>fs.writev(fd, buffers[, position], callback)</c>.
     /// </summary>
     [NodeModuleMember("writev")]
-    void writev(double fd, global::JavaScriptRuntime.Array buffers, object? position, global::System.Delegate callback);
+    void writev(double fd, global::JavaScriptRuntime.IJavaScriptArray buffers, object? position, global::System.Delegate callback);
 
     // Synchronous API
     /// <summary>
@@ -766,13 +766,13 @@ public interface IFsModule
     /// Node.js signature: <c>fs.globSync(pattern[, options])</c>.
     /// </summary>
     [NodeModuleMember("globSync")]
-    global::JavaScriptRuntime.Array globSync(object? pattern);
+    global::JavaScriptRuntime.IJavaScriptArray globSync(object? pattern);
 
     /// <summary>
     /// Node.js signature: <c>fs.globSync(pattern[, options])</c>.
     /// </summary>
     [NodeModuleMember("globSync")]
-    global::JavaScriptRuntime.Array globSync(object? pattern, object? options);
+    global::JavaScriptRuntime.IJavaScriptArray globSync(object? pattern, object? options);
 
     /// <summary>
     /// Node.js signature: <c>fs.lchmodSync(path, mode)</c>.
@@ -881,13 +881,13 @@ public interface IFsModule
     /// Node.js signature: <c>fs.readdirSync(path[, options])</c>.
     /// </summary>
     [NodeModuleMember("readdirSync")]
-    global::JavaScriptRuntime.Array readdirSync(object? path);
+    global::JavaScriptRuntime.IJavaScriptArray readdirSync(object? path);
 
     /// <summary>
     /// Node.js signature: <c>fs.readdirSync(path[, options])</c>.
     /// </summary>
     [NodeModuleMember("readdirSync")]
-    global::JavaScriptRuntime.Array readdirSync(object? path, object? options);
+    global::JavaScriptRuntime.IJavaScriptArray readdirSync(object? path, object? options);
 
     /// <summary>
     /// Node.js signature: <c>fs.readFileSync(path[, options])</c>.
@@ -941,13 +941,13 @@ public interface IFsModule
     /// Node.js signature: <c>fs.readvSync(fd, buffers[, position])</c>.
     /// </summary>
     [NodeModuleMember("readvSync")]
-    double readvSync(double fd, global::JavaScriptRuntime.Array buffers);
+    double readvSync(double fd, global::JavaScriptRuntime.IJavaScriptArray buffers);
 
     /// <summary>
     /// Node.js signature: <c>fs.readvSync(fd, buffers[, position])</c>.
     /// </summary>
     [NodeModuleMember("readvSync")]
-    double readvSync(double fd, global::JavaScriptRuntime.Array buffers, object? position);
+    double readvSync(double fd, global::JavaScriptRuntime.IJavaScriptArray buffers, object? position);
 
     /// <summary>
     /// Node.js signature: <c>fs.realpathSync(path[, options])</c>.
@@ -1127,12 +1127,12 @@ public interface IFsModule
     /// Node.js signature: <c>fs.writevSync(fd, buffers[, position])</c>.
     /// </summary>
     [NodeModuleMember("writevSync")]
-    double writevSync(double fd, global::JavaScriptRuntime.Array buffers);
+    double writevSync(double fd, global::JavaScriptRuntime.IJavaScriptArray buffers);
 
     /// <summary>
     /// Node.js signature: <c>fs.writevSync(fd, buffers[, position])</c>.
     /// </summary>
     [NodeModuleMember("writevSync")]
-    double writevSync(double fd, global::JavaScriptRuntime.Array buffers, object? position);
+    double writevSync(double fd, global::JavaScriptRuntime.IJavaScriptArray buffers, object? position);
 
 }
