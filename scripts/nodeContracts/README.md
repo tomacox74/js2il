@@ -19,4 +19,8 @@ npm run check:node-contract-fs
 npm run test:node-contract-fs
 ```
 
-Do not edit `IFsModule.Generated.cs` directly.
+The checked-in override file records which contract members the intrinsic
+module currently implements. The generated intrinsic adapter delegates those
+members and throws `NotImplementedException` for the remaining surface.
+
+Do not edit `IFsModule.Generated.cs` or `FS.IFsModule.Generated.cs` directly.

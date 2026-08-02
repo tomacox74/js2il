@@ -1,6 +1,7 @@
 using System.CodeDom.Compiler;
 using System.Reflection;
 using JavaScriptRuntime;
+using JavaScriptRuntime.Node;
 using Jroc.Runtime.Node.Contracts;
 
 namespace Jroc.NodeContracts.Tests;
@@ -118,6 +119,35 @@ public class FsModuleContractTests
                 || method.GetParameters().Any(
                     parameter => parameter.ParameterType == typeof(JavaScriptRuntime.Array)));
         Assert.True(typeof(IJavaScriptArray).IsAssignableFrom(typeof(JavaScriptRuntime.Array)));
+    }
+
+    [Fact]
+    public void IntrinsicFsModule_ImplementsAvailableContractMembers()
+    {
+        IFsModule module = new FS();
+
+        Assert.NotNull(module.constants);
+        Assert.True(module.existsSync(Environment.CurrentDirectory));
+        Assert.IsAssignableFrom<IJavaScriptArray>(
+            module.readdirSync(Environment.CurrentDirectory));
+    }
+
+    [Fact]
+    public void IntrinsicFsModule_ThrowsForUnavailableContractMembers()
+    {
+        IFsModule module = new FS();
+
+        var methodException = Assert.Throws<NotImplementedException>(
+            () => module.chmodSync("file.txt", 384d));
+
+        Assert.Equal(
+            "The intrinsic node:fs module does not implement 'fs.chmodSync'.",
+            methodException.Message);
+
+        var propertyException = Assert.Throws<TargetInvocationException>(
+            () => typeof(IFsModule).GetProperty("F_OK")!.GetValue(module));
+
+        Assert.IsType<NotImplementedException>(propertyException.InnerException);
     }
 
     [Fact]
