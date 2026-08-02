@@ -7,7 +7,7 @@ using JavaScriptRuntime.EngineCore;
 namespace JavaScriptRuntime.Node
 {
     [NodeModule("fs")]
-    public sealed class FS
+    public sealed partial class FS
     {
         private static readonly object _constants = CreateConstants();
 
