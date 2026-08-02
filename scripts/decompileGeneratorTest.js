@@ -92,6 +92,17 @@ function findProjectRoot(startDir) {
 
 const projectRoot = findProjectRoot(__dirname);
 
+function getGeneratorTestSnapshotPath(category, testName) {
+  return path.join(
+    projectRoot,
+    'tests',
+    'Jroc.Tests',
+    category,
+    'Snapshots',
+    `GeneratorTests.${testName}.verified.txt`
+  );
+}
+
 function openInIlSpy(assemblyPath) {
   // Launch GUI and let this script exit without waiting.
   const child = childProcess.spawn('ilspy', [assemblyPath], {
@@ -118,6 +129,13 @@ function main() {
 
   const category = args[0];
   const testName = args[1];
+  const snapshotPath = getGeneratorTestSnapshotPath(category, testName);
+  if (!fs.existsSync(snapshotPath)) {
+    console.error(`Generator test snapshot not found: ${snapshotPath}`);
+    console.error('Check the category and test name before running the helper.');
+    process.exit(1);
+  }
+
   const fullTestName = `Jroc.Tests.${category}.GeneratorTests.${testName}`;
   const testProject = path.join(projectRoot, 'tests', 'Jroc.Tests', 'Jroc.Tests.csproj');
 
