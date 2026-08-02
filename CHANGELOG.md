@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.12.1 - 2026-08-02
+
 - compiler: infer typed callable parameters from conservative binary-expression
   call arguments and numeric update-only parameters, removing boxing and numeric
   coercion from hot loops. Propagate safe captured primitive `const` bindings
