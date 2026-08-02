@@ -22,7 +22,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2151
+					// Method begins at RVA 0x213d
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -42,7 +42,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x215a
+					// Method begins at RVA 0x2146
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -68,14 +68,12 @@
 				.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 					01 00 02 00 00 00 00 00
 				)
-				// Method begins at RVA 0x20f8
+				// Method begins at RVA 0x20f0
 				// Header size: 12
-				// Code size: 59 (0x3b)
+				// Code size: 47 (0x2f)
 				.maxstack 8
 				.locals init (
-					[0] object[],
-					[1] object,
-					[2] object
+					[0] object[]
 				)
 
 				IL_0000: ldarg.0
@@ -88,19 +86,11 @@
 				IL_000f: ldstr "console"
 				IL_0014: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
 				IL_0019: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_001e: stloc.1
-				IL_001f: ldarg.1
-				IL_0020: ldc.i4.1
-				IL_0021: ldelem.ref
-				IL_0022: castclass Modules.Classes_ClassConstructor_AccessFunctionVariable_Log/testFunction/Scope
-				IL_0027: ldfld string Modules.Classes_ClassConstructor_AccessFunctionVariable_Log/testFunction/Scope::FUNCTION_VALUE
-				IL_002c: stloc.2
-				IL_002d: ldloc.1
-				IL_002e: ldstr "log"
-				IL_0033: ldloc.2
-				IL_0034: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-				IL_0039: pop
-				IL_003a: ret
+				IL_001e: ldstr "log"
+				IL_0023: ldstr "Hello from function"
+				IL_0028: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+				IL_002d: pop
+				IL_002e: ret
 			} // end of method MyClass::.ctor
 
 		} // end of class MyClass
@@ -108,19 +98,11 @@
 		.class nested public auto ansi beforefieldinit Scope
 			extends [System.Runtime]System.Object
 		{
-			.custom instance void [System.Runtime]System.Diagnostics.DebuggerDisplayAttribute::.ctor(string) = (
-				01 00 25 53 63 6f 70 65 20 46 55 4e 43 54 49 4f
-				4e 5f 56 41 4c 55 45 3d 7b 46 55 4e 43 54 49 4f
-				4e 5f 56 41 4c 55 45 7d 00 00
-			)
-			// Fields
-			.field public string FUNCTION_VALUE
-
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2148
+				// Method begins at RVA 0x2134
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -148,7 +130,7 @@
 			)
 			// Method begins at RVA 0x2098
 			// Header size: 12
-			// Code size: 84 (0x54)
+			// Code size: 73 (0x49)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.Classes_ClassConstructor_AccessFunctionVariable_Log/testFunction/Scope,
@@ -158,36 +140,33 @@
 
 			IL_0000: newobj instance void Modules.Classes_ClassConstructor_AccessFunctionVariable_Log/testFunction/Scope::.ctor()
 			IL_0005: stloc.0
-			IL_0006: ldloc.0
-			IL_0007: ldstr "Hello from function"
-			IL_000c: stfld string Modules.Classes_ClassConstructor_AccessFunctionVariable_Log/testFunction/Scope::FUNCTION_VALUE
-			IL_0011: nop
-			IL_0012: ldc.i4.2
-			IL_0013: newarr [System.Runtime]System.Object
-			IL_0018: dup
-			IL_0019: ldc.i4.0
-			IL_001a: ldarg.0
-			IL_001b: stelem.ref
-			IL_001c: dup
-			IL_001d: ldc.i4.1
-			IL_001e: ldloc.0
-			IL_001f: stelem.ref
-			IL_0020: stloc.2
-			IL_0021: ldloc.2
-			IL_0022: ldc.i4.0
-			IL_0023: newarr [System.Runtime]System.Object
-			IL_0028: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
-			IL_002d: newobj instance void Modules.Classes_ClassConstructor_AccessFunctionVariable_Log/testFunction/MyClass::.ctor(object[])
-			IL_0032: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
-			IL_0037: stloc.1
-			IL_0038: ldloc.1
-			IL_0039: ldtoken Modules.Classes_ClassConstructor_AccessFunctionVariable_Log/testFunction/MyClass
-			IL_003e: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-			IL_0043: ldstr "prototype"
-			IL_0048: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
-			IL_004d: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
-			IL_0052: ldnull
-			IL_0053: ret
+			IL_0006: nop
+			IL_0007: ldc.i4.2
+			IL_0008: newarr [System.Runtime]System.Object
+			IL_000d: dup
+			IL_000e: ldc.i4.0
+			IL_000f: ldarg.0
+			IL_0010: stelem.ref
+			IL_0011: dup
+			IL_0012: ldc.i4.1
+			IL_0013: ldloc.0
+			IL_0014: stelem.ref
+			IL_0015: stloc.2
+			IL_0016: ldloc.2
+			IL_0017: ldc.i4.0
+			IL_0018: newarr [System.Runtime]System.Object
+			IL_001d: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
+			IL_0022: newobj instance void Modules.Classes_ClassConstructor_AccessFunctionVariable_Log/testFunction/MyClass::.ctor(object[])
+			IL_0027: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
+			IL_002c: stloc.1
+			IL_002d: ldloc.1
+			IL_002e: ldtoken Modules.Classes_ClassConstructor_AccessFunctionVariable_Log/testFunction/MyClass
+			IL_0033: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+			IL_0038: ldstr "prototype"
+			IL_003d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
+			IL_0042: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
+			IL_0047: ldnull
+			IL_0048: ret
 		} // end of method testFunction::__js_call__
 
 	} // end of class testFunction
@@ -207,7 +186,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x213f
+			// Method begins at RVA 0x212b
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -272,7 +251,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2163
+		// Method begins at RVA 0x214f
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -1,4 +1,5 @@
 using Acornima.Ast;
+using Jroc.Services;
 
 namespace Jroc.SymbolTables;
 
@@ -86,6 +87,11 @@ public class BindingInfo
     public bool HasWrite { get; set; }
 
     /// <summary>
+    /// True when source code explicitly assigns to or updates this binding after declaration.
+    /// </summary>
+    public bool HasNonInitializationWrite { get; set; }
+
+    /// <summary>
     /// True when a non-captured <c>var</c> or <c>let</c> binding is proven numeric and
     /// definitely initialized before every reachable read in its callable.
     /// </summary>
@@ -107,6 +113,22 @@ public class BindingInfo
     /// observed before initialization.
     /// </summary>
     public bool RequiresRuntimeTemporalDeadZoneChecks { get; set; }
+
+    /// <summary>
+    /// True when this captured binding is a <c>const</c> initialized from a primitive
+    /// literal and all reads are known to occur after initialization.
+    /// </summary>
+    public bool IsCompileTimeConstant { get; set; }
+
+    /// <summary>
+    /// The JavaScript type of <see cref="CompileTimeConstantValue"/>.
+    /// </summary>
+    public JavascriptType CompileTimeConstantType { get; set; } = JavascriptType.Unknown;
+
+    /// <summary>
+    /// The primitive value substituted at eligible read sites.
+    /// </summary>
+    public object? CompileTimeConstantValue { get; set; }
 
     /// <summary>
     /// Shape analysis result when this binding is declared with an object literal initializer.

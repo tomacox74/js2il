@@ -6,7 +6,12 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-_Nothing yet._
+- compiler: infer typed callable parameters from conservative binary-expression
+  call arguments and numeric update-only parameters, removing boxing and numeric
+  coercion from hot loops. Propagate safe captured primitive `const` bindings
+  across callable boundaries, fold supported constant arithmetic, and eliminate
+  their unused scope fields while preserving TDZ, shadowing, and assignment
+  semantics.
 
 ## v0.12.0 - 2026-08-01
 

@@ -275,6 +275,11 @@ namespace Jroc.Services
                 bool isParameter = scope.Parameters.Contains(variableName);
                 bool isFunction = binding.Kind == BindingKind.Function;
                 bool isDestructuredParameter = scope.DestructuredParameters.Contains(variableName);
+
+                if (binding.IsCompileTimeConstant)
+                {
+                    continue;
+                }
                 
                 // Skip field creation for parameters that:
                 // - Are NOT captured (not referenced by child scopes)
@@ -1248,7 +1253,9 @@ namespace Jroc.Services
                 // Fields are created for: parameters (with some exceptions), functions, captured variables
                 // Fields are NOT created for: uncaptured non-parameter non-function variables
                 // (shadowed variables no longer need fields - each scope gets its own local slot)
-                bool fieldCreatedForThisBinding = isParameter || isFunction || bindingInfo.IsCaptured;
+                bool fieldCreatedForThisBinding =
+                    !bindingInfo.IsCompileTimeConstant
+                    && (isParameter || isFunction || bindingInfo.IsCaptured);
                 
                 // Parameters without fields: simple uncaptured params that aren't destructured or in arrow functions
                 if (isParameter && !bindingInfo.IsCaptured)

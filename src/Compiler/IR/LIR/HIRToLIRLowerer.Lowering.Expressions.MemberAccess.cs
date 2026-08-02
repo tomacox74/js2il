@@ -714,7 +714,7 @@ public sealed partial class HIRToLIRLowerer
                         {
                             result = CreateTempVariable();
                             _methodBodyIR.Instructions.Add(new LIRLoadParameter(storage.JsParameterIndex, result));
-                            DefineTempStorage(result, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                            DefineTempStorage(result, GetPreferredBindingReadStorage(binding));
                             _tempBindingOrigin[result] = binding;
                             return true;
                         }
@@ -762,7 +762,7 @@ public sealed partial class HIRToLIRLowerer
         {
             result = CreateTempVariable();
             _methodBodyIR.Instructions.Add(new LIRLoadParameter(paramIndex, result));
-            DefineTempStorage(result, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            DefineTempStorage(result, GetPreferredBindingReadStorage(binding));
             _tempBindingOrigin[result] = binding;
             return true;
         }

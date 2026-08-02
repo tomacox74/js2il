@@ -187,7 +187,9 @@ public class EnvironmentLayoutBuilder
             {
                 // Check if this binding is captured (referenced by this or child scopes)
                 // and we haven't already added it
-                if (binding.IsCaptured && !storage.ContainsKey(binding))
+                if (binding.IsCaptured
+                    && !binding.IsCompileTimeConstant
+                    && !storage.ContainsKey(binding))
                 {
                     // This is a parent scope field
                     var parentIndex = scopeChain.IndexOf(GetRegistryScopeName(current));
@@ -222,6 +224,11 @@ public class EnvironmentLayoutBuilder
         ScopeChainLayout scopeChain,
         CallableKind kind)
     {
+        if (binding.IsCompileTimeConstant)
+        {
+            return BindingStorage.ForLocal(-1);
+        }
+
         // Check if it's a parameter (and not destructured)
         if (scope.Parameters.Contains(name) && !scope.DestructuredParameters.Contains(name))
         {

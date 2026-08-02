@@ -12,6 +12,8 @@ namespace Jroc.Tests.Variable
         [Fact] public Task Variable_CapturedConst_NumberFieldType() { var testName = nameof(Variable_CapturedConst_NumberFieldType); return ExecutionTest(testName); }
         [Fact] public Task Variable_CapturedConst_BoolStringFieldType() { var testName = nameof(Variable_CapturedConst_BoolStringFieldType); return ExecutionTest(testName); }
         [Fact] public Task Variable_CapturedConst_SpreadArgument() { var testName = nameof(Variable_CapturedConst_SpreadArgument); return ExecutionTest(testName); }
+        [Fact] public Task Variable_ConstPrimitivePropagation() { var testName = nameof(Variable_ConstPrimitivePropagation); return ExecutionTest(testName); }
+        [Fact] public Task Variable_ConstPrimitivePropagation_With() { var testName = nameof(Variable_ConstPrimitivePropagation_With); return ExecutionTest(testName); }
         [Fact] public Task Variable_LetBlockScope() { var testName = nameof(Variable_LetBlockScope); return ExecutionTest(testName); }
         [Fact] public Task Variable_LetFunctionNestedShadowing() { var testName = nameof(Variable_LetFunctionNestedShadowing); return ExecutionTest(testName); }
         [Fact] public Task Variable_LetNestedShadowingChain() { var testName = nameof(Variable_LetNestedShadowingChain); return ExecutionTest(testName); }

@@ -197,6 +197,12 @@ public sealed partial class HIRToLIRLowerer
             && GetTempStorage(value).Kind == ValueStorageKind.UnboxedValue
             && GetTempStorage(value).ClrType == typeof(bool);
 
+        if (binding.IsCompileTimeConstant)
+        {
+            _variableMap[binding] = value;
+            return true;
+        }
+
         // Per-iteration environments: if this binding lives in an active materialized scope instance
         // (e.g., `for (let/const ...)` loop-head scope), store directly into that scope field.
         if (TryGetActiveScopeFieldStorage(binding, out var activeScopeTemp, out var activeScopeId, out var activeFieldId))

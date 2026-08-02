@@ -145,7 +145,7 @@ public sealed partial class HIRToLIRLowerer
     {
         if (string.IsNullOrEmpty(block.ScopeName))
         {
-            return block.Statements.All(TryLowerStatement);
+            return TryLowerBlockStatements(block);
         }
 
         var scopeName = block.ScopeName!;
@@ -158,7 +158,7 @@ public sealed partial class HIRToLIRLowerer
         _activeScopeTempsByScopeName[scopeName] = blockScopeTemp;
         try
         {
-            return block.Statements.All(TryLowerStatement);
+            return TryLowerBlockStatements(block);
         }
         finally
         {
@@ -171,6 +171,28 @@ public sealed partial class HIRToLIRLowerer
                 _activeScopeTempsByScopeName.Remove(scopeName);
             }
         }
+    }
+
+    private bool TryLowerBlockStatements(HIRBlock block)
+    {
+        for (var index = 0; index < block.Statements.Length; index++)
+        {
+            var statement = block.Statements[index];
+            if (statement is HIRSequencePointStatement
+                && index + 1 < block.Statements.Length
+                && block.Statements[index + 1] is HIRVariableDeclaration declaration
+                && declaration.Name.BindingInfo.IsCompileTimeConstant)
+            {
+                continue;
+            }
+
+            if (!TryLowerStatement(statement))
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     private bool TryLowerAsyncTryCatchWithAwait(HIRTryStatement tryStmt)

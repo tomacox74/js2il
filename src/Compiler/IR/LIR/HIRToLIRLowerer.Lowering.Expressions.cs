@@ -418,6 +418,12 @@ public sealed partial class HIRToLIRLowerer
                 var binding = varExpr.Name.BindingInfo;
                 EmitWithBindingProbe(binding.Name);
 
+                if (TryEmitCompileTimeConstant(binding, out resultTempVar))
+                {
+                    resultTempVar = EmitResolveWithBindingOrDefault(binding, resultTempVar);
+                    return true;
+                }
+
                 // Class declarations are compiled separately (as CLR types) and are not SSA-assigned.
                 // Always lower a class identifier to a runtime System.Type so it can cross module boundaries
                 // (e.g., `module.exports = { Counter }`).

@@ -181,7 +181,8 @@ public class Scope
     public bool RequiresRuntimeBlockScopeInstance
         => Kind == ScopeKind.Block
            && Bindings.Values.Any(binding =>
-               binding.IsCaptured || binding.Kind == BindingKind.Function);
+               (binding.IsCaptured && !binding.IsCompileTimeConstant)
+               || binding.Kind == BindingKind.Function);
 
     /// <summary>
     /// True when source code in this module referenced the ECMAScript globalThis binding.

@@ -89,6 +89,10 @@ public sealed partial class HIRToLIRLowerer
         if (isEnvironmentStored)
         {
             // Note: if we're in this branch and not using an active scope temp, updateStorage must be non-null.
+            var isTypedNumericParameter =
+                updateStorage?.Kind == BindingStorageKind.IlArgument
+                && updateBinding.IsStableType
+                && updateBinding.ClrType == typeof(double);
 
             var currentNumber = EnsureNumber(currentValue);
 
@@ -97,10 +101,16 @@ public sealed partial class HIRToLIRLowerer
             TempVariable? originalSnapshotForPostfix = null;
             if (needsPostfixValue)
             {
-                var snapshotValue = EnsureObject(currentNumber);
+                var snapshotValue = isTypedNumericParameter
+                    ? currentNumber
+                    : EnsureObject(currentNumber);
                 var snapshot = CreateTempVariable();
                 _methodBodyIR.Instructions.Add(new LIRCopyTemp(snapshotValue, snapshot));
-                DefineTempStorage(snapshot, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                DefineTempStorage(
+                    snapshot,
+                    isTypedNumericParameter
+                        ? GetTempStorage(snapshotValue)
+                        : new ValueStorage(ValueStorageKind.Reference, typeof(object)));
                 originalSnapshotForPostfix = snapshot;
             }
 
@@ -119,11 +129,13 @@ public sealed partial class HIRToLIRLowerer
             }
             DefineTempStorage(updatedNumber, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
 
-            var updatedBoxed = EnsureObject(updatedNumber);
+            var storedValue = isTypedNumericParameter
+                ? updatedNumber
+                : EnsureObject(updatedNumber);
 
             if (isActiveScopeStored)
             {
-                _methodBodyIR.Instructions.Add(new LIRStoreScopeField(activeScopeTemp, updateBinding, activeFieldId, activeScopeId, updatedBoxed));
+                _methodBodyIR.Instructions.Add(new LIRStoreScopeField(activeScopeTemp, updateBinding, activeFieldId, activeScopeId, storedValue));
             }
             else
             {
@@ -134,7 +146,7 @@ public sealed partial class HIRToLIRLowerer
                         {
                             return false;
                         }
-                        _methodBodyIR.Instructions.Add(new LIRStoreParameter(updateStorage.JsParameterIndex, updatedBoxed));
+                        _methodBodyIR.Instructions.Add(new LIRStoreParameter(updateStorage.JsParameterIndex, storedValue));
                         break;
 
                     case BindingStorageKind.LeafScopeField:
@@ -142,7 +154,7 @@ public sealed partial class HIRToLIRLowerer
                         {
                             return false;
                         }
-                        _methodBodyIR.Instructions.Add(new LIRStoreLeafScopeField(updateBinding, updateStorage.Field, updateStorage.DeclaringScope, updatedBoxed));
+                        _methodBodyIR.Instructions.Add(new LIRStoreLeafScopeField(updateBinding, updateStorage.Field, updateStorage.DeclaringScope, storedValue));
                         break;
 
                     case BindingStorageKind.ParentScopeField:
@@ -152,7 +164,7 @@ public sealed partial class HIRToLIRLowerer
                         }
                         {
                             var parentIndex = AdjustParentScopeFieldIndexForCurrentMethod(updateStorage.ParentScopeIndex);
-                            _methodBodyIR.Instructions.Add(new LIRStoreParentScopeField(updateBinding, updateStorage.Field, updateStorage.DeclaringScope, parentIndex, updatedBoxed));
+                            _methodBodyIR.Instructions.Add(new LIRStoreParentScopeField(updateBinding, updateStorage.Field, updateStorage.DeclaringScope, parentIndex, storedValue));
                         }
                         break;
 
@@ -163,16 +175,16 @@ public sealed partial class HIRToLIRLowerer
             }
 
             // Update SSA map for subsequent reads.
-            _variableMap[updateBinding] = updatedBoxed;
+            _variableMap[updateBinding] = storedValue;
             _numericRefinements.Remove(updateBinding);
 
             if (updateExpr.Prefix)
             {
-                resultTempVar = updatedBoxed;
+                resultTempVar = storedValue;
                 return true;
             }
 
-            resultTempVar = needsPostfixValue ? originalSnapshotForPostfix!.Value : updatedBoxed;
+            resultTempVar = needsPostfixValue ? originalSnapshotForPostfix!.Value : storedValue;
             return true;
         }
 

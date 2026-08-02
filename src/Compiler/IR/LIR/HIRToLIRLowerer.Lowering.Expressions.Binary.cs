@@ -14,6 +14,11 @@ public sealed partial class HIRToLIRLowerer
     {
         resultTempVar = CreateTempVariable();
 
+        if (TryFoldCompileTimeConstantExpression(binaryExpr, resultTempVar))
+        {
+            return true;
+        }
+
         if (binaryExpr.Operator == Acornima.Operator.Division
             && TryFoldStableMathPiOver180(binaryExpr, resultTempVar))
         {
