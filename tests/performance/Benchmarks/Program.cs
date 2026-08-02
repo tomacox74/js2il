@@ -111,7 +111,7 @@ Console.WriteLine("  dotnet run -c Release --descriptor-storage # Run inline des
 Console.WriteLine("  dotnet run -c Release --array-operations # Run dense-array operation microbenchmarks");
 Console.WriteLine("  dotnet run -c Release --prototype-storage # Run prototype storage allocation microbenchmarks");
 Console.WriteLine("  dotnet run -c Release -- --dromaeo # Run Dromaeo execution benchmarks");
-Console.WriteLine("  dotnet run -c Release -- --kracken --scenario audio-fft # Run one Kraken scenario");
+Console.WriteLine("  dotnet run -c Release -- --kracken --scenario audio-oscillator # Run one Kraken scenario");
 Console.WriteLine("  dotnet run -c Release --all    # Run all benchmarks");
 Console.WriteLine("  dotnet run -c Debug -- --dispatch --debug-benchmarks # Allow debugging benchmark code");
 Console.WriteLine("  dotnet run -c Release --validate # Run validation tests");
