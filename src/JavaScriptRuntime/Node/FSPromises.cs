@@ -7,7 +7,7 @@ using JavaScriptRuntime.EngineCore;
 namespace JavaScriptRuntime.Node
 {
     [NodeModule("fs/promises")]
-    public sealed class FSPromises
+    public sealed partial class FSPromises
     {
         private readonly IIOScheduler _ioScheduler;
 
