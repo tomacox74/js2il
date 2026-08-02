@@ -153,7 +153,7 @@ public class KrackenExecutionBenchmarks : ExecutionBenchmarksBase
         var testScriptPath = Path.Combine(KrackenScriptsDirectory, sourceScriptName);
         var dataScriptPath = Path.Combine(
             KrackenScriptsDirectory,
-            Path.GetFileNameWithoutExtension(sourceScriptName) + "-data.js");
+            GetDataScriptName(sourceScriptName));
         testScriptContent = File.ReadAllText(testScriptPath);
         dataScriptContent = File.ReadAllText(dataScriptPath);
     }
@@ -224,5 +224,14 @@ public class KrackenExecutionBenchmarks : ExecutionBenchmarksBase
         return benchmarkScriptName.StartsWith(BenchmarkScriptNamePrefix, StringComparison.Ordinal)
             ? benchmarkScriptName[BenchmarkScriptNamePrefix.Length..]
             : benchmarkScriptName;
+    }
+
+    private static string GetDataScriptName(string sourceScriptName)
+    {
+        return Path.GetFileNameWithoutExtension(sourceScriptName) switch
+        {
+            "audio-oscillator" => "audio-dft-data.js",
+            var scenarioName => scenarioName + "-data.js"
+        };
     }
 }
