@@ -9,7 +9,7 @@ namespace JavaScriptRuntime.Node
     /// that mirrors the host process Environment.ExitCode.
     /// </summary>
     [NodeModule("process")]
-    public sealed class Process : EventEmitter
+    public sealed partial class Process : EventEmitter
     {
         private const string TargetNodeVersion = "22.0.0";
         private static readonly Lazy<string> _platform = new(DetectPlatform);
@@ -18,6 +18,7 @@ namespace JavaScriptRuntime.Node
         private readonly Lazy<object> _env;
         private readonly Lazy<Writable> _stdout;
         private readonly Lazy<Writable> _stderr;
+        private bool _hasExitCode;
 
         public Process(IEnvironment environment, ConsoleOutputSinks consoleOutputSinks)
         {
@@ -43,13 +44,49 @@ namespace JavaScriptRuntime.Node
         }
 
         /// <summary>
-        /// Matches Node's writable process.exitCode (JavaScript number). Internally mirrors host Environment.ExitCode.
-        /// Getter returns the current exit code as a double; setter accepts a double and truncates to int.
+        /// Matches Node's writable process.exitCode. Internally mirrors host Environment.ExitCode
+        /// while preserving Node's initially-unset and nullish-reset behavior.
         /// </summary>
-        public double exitCode
+        public object? exitCode
         {
-            get => (double)_environment.ExitCode;
-            set => _environment.ExitCode = (int)value;
+            get => _hasExitCode ? (double)_environment.ExitCode : null;
+            set
+            {
+                if (value is null or JsNull)
+                {
+                    _environment.ExitCode = 0;
+                    _hasExitCode = false;
+                    return;
+                }
+
+                if (value is not double and not string)
+                {
+                    throw new TypeError("The \"code\" argument must be of type number or string.");
+                }
+
+                if (value is string text && text.Length == 0)
+                {
+                    throw new TypeError("The \"code\" argument must be a non-empty string.");
+                }
+
+                var number = TypeUtilities.ToNumber(value);
+                if (value is string && double.IsNaN(number))
+                {
+                    throw new TypeError("The \"code\" argument must be an integer string.");
+                }
+
+                const double maxSafeInteger = 9007199254740991d;
+                if (!double.IsFinite(number)
+                    || number != System.Math.Truncate(number)
+                    || number < -maxSafeInteger
+                    || number > maxSafeInteger)
+                {
+                    throw new RangeError("The \"code\" argument must be a safe integer.");
+                }
+
+                _environment.ExitCode = TypeUtilities.ToInt32(number);
+                _hasExitCode = true;
+            }
         }
 
         /// <summary>
@@ -295,23 +332,12 @@ namespace JavaScriptRuntime.Node
         }
 
         /// <summary>
-        /// Immediately terminates the current process with the provided code (coerced to int).
+        /// Immediately terminates the current process with the provided validated exit code.
         /// </summary>
         public void exit(object? code)
         {
-            int ec;
-            try
-            {
-                ec = (int)JavaScriptRuntime.TypeUtilities.ToNumber(code);
-            }
-            catch
-            {
-                ec = 0;
-            }
-
-            // Record explicitly provided exit code
-            _environment.ExitCode = ec;
-            _environment.Exit(ec);
+            exitCode = code;
+            _environment.Exit(_environment.ExitCode);
         }
 
         public bool send(object? message)

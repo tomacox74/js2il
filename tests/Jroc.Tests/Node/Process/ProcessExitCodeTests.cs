@@ -16,13 +16,22 @@ namespace Jroc.Tests.Node.Process
             {
                 GlobalThis.ServiceProvider = serviceProvider;
                 Environment.ExitCode = 0;
-                GlobalThis.process.exitCode = 7;
-                Assert.Equal(7, Environment.ExitCode);
-                Assert.Equal(7, GlobalThis.process.exitCode);
+                Assert.Null(GlobalThis.process.exitCode);
 
-                GlobalThis.process.exitCode = 0;
+                GlobalThis.process.exitCode = 7d;
+                Assert.Equal(7, Environment.ExitCode);
+                Assert.Equal(7d, GlobalThis.process.exitCode);
+
+                GlobalThis.process.exitCode = "8";
+                Assert.Equal(8, Environment.ExitCode);
+                Assert.Equal(8d, GlobalThis.process.exitCode);
+
+                GlobalThis.process.exitCode = null;
                 Assert.Equal(0, Environment.ExitCode);
-                Assert.Equal(0, GlobalThis.process.exitCode);
+                Assert.Null(GlobalThis.process.exitCode);
+
+                Assert.Throws<TypeError>(() => GlobalThis.process.exitCode = true);
+                Assert.Throws<RangeError>(() => GlobalThis.process.exitCode = 1.5d);
             }
             finally
             {
