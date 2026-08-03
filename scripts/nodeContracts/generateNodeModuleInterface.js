@@ -8,12 +8,24 @@ const repoRoot = path.resolve(__dirname, '..', '..');
 const args = process.argv.slice(2);
 const promisesMode = args.includes('--promises');
 const consoleMode = args.includes('--console');
+const pathMode = args.includes('--path');
 
-if (promisesMode && consoleMode) {
-    throw new Error('--promises and --console cannot be used together.');
+if ([promisesMode, consoleMode, pathMode].filter(Boolean).length > 1) {
+    throw new Error('--promises, --console, and --path cannot be used together.');
 }
 
-const contract = consoleMode
+const contract = pathMode
+    ? {
+        moduleSpecifier: 'path',
+        documentationPrefix: 'path.',
+        interfaceName: 'IPathModule',
+        intrinsicClassName: 'Path',
+        displayName: 'node:path',
+        outputStem: 'Path',
+        overrideStem: 'path',
+        lockStem: 'path'
+    }
+    : consoleMode
     ? {
         moduleSpecifier: 'console',
         documentationPrefix: 'console.',
@@ -63,8 +75,12 @@ const intrinsicImplementationOutputPath = path.join(
 
 const lock = JSON.parse(fs.readFileSync(lockPath, 'utf8'));
 const overrides = JSON.parse(fs.readFileSync(overridesPath, 'utf8'));
-const contractAlias = consoleMode ? 'ConsoleContract' : 'FsContract';
-const documentationModule = consoleMode ? 'console' : 'fs';
+const contractAlias = pathMode
+    ? 'PathContract'
+    : consoleMode
+        ? 'ConsoleContract'
+        : 'FsContract';
+const documentationModule = pathMode ? 'path' : consoleMode ? 'console' : 'fs';
 const generatorSource = fs.readFileSync(__filename, 'utf8').replaceAll('\r\n', '\n');
 const generatorSha256 = crypto
     .createHash('sha256')
@@ -428,6 +444,25 @@ function generateMethodsWithOptionalAndRestParameters(methods) {
     return generated;
 }
 
+function generateReadOnlyProperties(properties) {
+    return properties.map(property => {
+        const match = property.textRaw.match(/^`([^`]+)` Type: \{([^}]+)\}$/);
+        if (!match) {
+            throw new Error(
+                `Cannot parse official Node.js property signature '${property.textRaw}'.`);
+        }
+
+        const [, propertyName, propertyType] = match;
+        return [
+            '    /// <summary>',
+            `    /// Node.js property: <c>${xmlEscape(property.textRaw)}</c>.`,
+            '    /// </summary>',
+            `    [NodeModuleMember("${propertyName}")]`,
+            `    ${mapType(propertyType)} ${csharpMemberName(propertyName)} { get; }`
+        ].join('\n');
+    });
+}
+
 function generateInterface(documentation) {
     const module = documentation.modules?.find(candidate => candidate.name === lock.module);
     if (!module) {
@@ -437,7 +472,16 @@ function generateInterface(documentation) {
     let methodGroups;
     let standardProperties;
 
-    if (consoleMode) {
+    if (pathMode) {
+        assertCount(module.methods?.length ?? 0, lock.methodCount, 'method count');
+        assertCount(module.properties?.length ?? 0, lock.propertyCount, 'property count');
+
+        methodGroups = [{
+            heading: 'Path methods',
+            methods: generateMethodsWithOptionalAndRestParameters(module.methods)
+        }];
+        standardProperties = generateReadOnlyProperties(module.properties);
+    } else if (consoleMode) {
         const consoleClass = module.classes?.find(candidate => candidate.name === 'Console');
         if (!consoleClass) {
             throw new Error("Official console documentation is missing the 'Console' class.");
@@ -765,7 +809,13 @@ async function main() {
             .map(([outputPath]) => path.relative(repoRoot, outputPath));
 
         if (staleOutputs.length > 0) {
-            const modeArgument = consoleMode ? ' --console' : promisesMode ? ' --promises' : '';
+            const modeArgument = pathMode
+                ? ' --path'
+                : consoleMode
+                    ? ' --console'
+                    : promisesMode
+                        ? ' --promises'
+                        : '';
             const generationCommand =
                 `node scripts/nodeContracts/generateNodeModuleInterface.js${modeArgument}`;
             throw new Error(

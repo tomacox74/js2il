@@ -14,7 +14,7 @@ namespace Jroc.Runtime.Node.Contracts;
 /// Nested option, result, and handle contracts intentionally remain dynamic in this proof of concept.
 /// They will be strongly typed by the work tracked in GitHub issue #1660.
 /// </remarks>
-[global::System.CodeDom.Compiler.GeneratedCode("generateNodeModuleInterface.js", "sha256:36242b6712026bcf7599446c62e5a3f36ad51b66adce9c74cc3d3b5c57d705a6")]
+[global::System.CodeDom.Compiler.GeneratedCode("generateNodeModuleInterface.js", "sha256:8011c4d28d78f8384a8f689a373a71ddf682bb3c286f134ac0d6b1976122f0a8")]
 [NodeModuleInterface("fs/promises")]
 public interface IFsPromisesModule
 {

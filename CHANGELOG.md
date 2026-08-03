@@ -23,6 +23,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   official Node.js 24.18.1 documentation, including optional and rest
   parameter mappings, direct intrinsic delegation for available members, and
   explicit not-implemented fallbacks.
+- sdk/runtime: add a generated `node:path` host contract from the pinned
+  official Node.js 24.18.1 documentation, with direct intrinsic delegation
+  and an explicit fallback for the unavailable `matchesGlob` method. Align
+  intrinsic join, basename, dirname, normalize, parse, and format edge behavior
+  with Node.js.
 
 ## v0.12.1 - 2026-08-02
 
