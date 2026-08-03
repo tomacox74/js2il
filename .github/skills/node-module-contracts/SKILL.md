@@ -65,7 +65,8 @@ The current generator has explicit modes for:
 - `fs`;
 - `fs/promises`;
 - `console`;
-- `path`.
+- `path`;
+- `child_process`.
 
 Extend the shared generator for another module. Do not copy it into a
 module-specific generator.
@@ -124,6 +125,12 @@ the input must match the checked-in lock hash. `artifacts/` is gitignored.
 Do not change a hash or expected count merely to silence a failure. First
 inspect the upstream API change and decide how it affects the normalized
 contract.
+
+Top-level exports are not always stored directly on the documentation module.
+For example, `child_process` stores its seven exported functions in nested
+asynchronous and synchronous sections. Inspect the full JSON section tree and
+extract the documented public sections explicitly; do not assume
+`module.methods` is the complete surface.
 
 ## Phase 2A: Add a New Contract
 
@@ -376,6 +383,7 @@ npm run generate:node-contract-fs
 npm run generate:node-contract-fs-promises
 npm run generate:node-contract-console
 npm run generate:node-contract-path
+npm run generate:node-contract-child-process
 ```
 
 Include any newly added module command.

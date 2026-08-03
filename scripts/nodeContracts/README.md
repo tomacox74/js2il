@@ -43,6 +43,14 @@ npm run check:node-contract-path
 npm run test:node-contract-path
 ```
 
+For `node:child_process`:
+
+```sh
+npm run generate:node-contract-child-process
+npm run check:node-contract-child-process
+npm run test:node-contract-child-process
+```
+
 The checked-in override files record which contract members each intrinsic
 module currently implements and how each implementation is invoked. The
 generated intrinsic adapters use compile-time-bound calls for those members

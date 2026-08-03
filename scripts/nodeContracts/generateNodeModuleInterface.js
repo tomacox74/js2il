@@ -9,12 +9,39 @@ const args = process.argv.slice(2);
 const promisesMode = args.includes('--promises');
 const consoleMode = args.includes('--console');
 const pathMode = args.includes('--path');
+const childProcessMode = args.includes('--child-process');
 
-if ([promisesMode, consoleMode, pathMode].filter(Boolean).length > 1) {
-    throw new Error('--promises, --console, and --path cannot be used together.');
+for (let index = 0; index < args.length; index++) {
+    const argument = args[index];
+    if (argument === '--input') {
+        if (++index >= args.length) {
+            throw new Error('--input requires a file path.');
+        }
+        continue;
+    }
+
+    if (!['--check', '--promises', '--console', '--path', '--child-process'].includes(argument)) {
+        throw new Error(`Unknown argument '${argument}'.`);
+    }
 }
 
-const contract = pathMode
+if ([promisesMode, consoleMode, pathMode, childProcessMode].filter(Boolean).length > 1) {
+    throw new Error(
+        '--promises, --console, --path, and --child-process cannot be used together.');
+}
+
+const contract = childProcessMode
+    ? {
+        moduleSpecifier: 'child_process',
+        documentationPrefix: 'child_process.',
+        interfaceName: 'IChildProcessModule',
+        intrinsicClassName: 'ChildProcess',
+        displayName: 'node:child_process',
+        outputStem: 'ChildProcess',
+        overrideStem: 'childProcess',
+        lockStem: 'childProcess'
+    }
+    : pathMode
     ? {
         moduleSpecifier: 'path',
         documentationPrefix: 'path.',
@@ -75,12 +102,20 @@ const intrinsicImplementationOutputPath = path.join(
 
 const lock = JSON.parse(fs.readFileSync(lockPath, 'utf8'));
 const overrides = JSON.parse(fs.readFileSync(overridesPath, 'utf8'));
-const contractAlias = pathMode
+const contractAlias = childProcessMode
+    ? 'ChildProcessContract'
+    : pathMode
     ? 'PathContract'
     : consoleMode
         ? 'ConsoleContract'
         : 'FsContract';
-const documentationModule = pathMode ? 'path' : consoleMode ? 'console' : 'fs';
+const documentationModule = childProcessMode
+    ? 'child_process'
+    : pathMode
+        ? 'path'
+        : consoleMode
+            ? 'console'
+            : 'fs';
 const generatorSource = fs.readFileSync(__filename, 'utf8').replaceAll('\r\n', '\n');
 const generatorSha256 = crypto
     .createHash('sha256')
@@ -472,7 +507,38 @@ function generateInterface(documentation) {
     let methodGroups;
     let standardProperties;
 
-    if (pathMode) {
+    if (childProcessMode) {
+        const asynchronousApi = requireSection(module, 'asynchronous_process_creation');
+        const synchronousApi = requireSection(module, 'synchronous_process_creation');
+
+        assertCount(module.classes?.length ?? 0, lock.classCount, 'class count');
+        assertCount(
+            asynchronousApi.methods?.length ?? 0,
+            lock.asynchronousMethodCount,
+            'asynchronous method count');
+        assertCount(
+            synchronousApi.methods?.length ?? 0,
+            lock.synchronousMethodCount,
+            'synchronous method count');
+
+        methodGroups = [
+            {
+                heading: 'Asynchronous process creation',
+                methods: generateMethodOverloads(asynchronousApi.methods)
+            },
+            {
+                heading: 'Synchronous process creation',
+                methods: generateMethodOverloads(synchronousApi.methods)
+            }
+        ];
+        standardProperties = [[
+            '    /// <summary>',
+            '    /// Gets the exported ChildProcess constructor.',
+            '    /// </summary>',
+            '    [NodeModuleMember("ChildProcess")]',
+            '    object? ChildProcess { get; }'
+        ].join('\n')];
+    } else if (pathMode) {
         assertCount(module.methods?.length ?? 0, lock.methodCount, 'method count');
         assertCount(module.properties?.length ?? 0, lock.propertyCount, 'property count');
 
@@ -809,7 +875,9 @@ async function main() {
             .map(([outputPath]) => path.relative(repoRoot, outputPath));
 
         if (staleOutputs.length > 0) {
-            const modeArgument = pathMode
+            const modeArgument = childProcessMode
+                ? ' --child-process'
+                : pathMode
                 ? ' --path'
                 : consoleMode
                     ? ' --console'
