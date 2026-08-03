@@ -2693,6 +2693,17 @@ namespace JavaScriptRuntime
             return CallMember(receiver, methodName, callArgs);
         }
 
+        public static object? CallOwnPropertyMember(object receiver, string methodName, object[]? args)
+        {
+            var memberValue = GetProperty(receiver, methodName);
+            if (memberValue is not Delegate memberDelegate)
+            {
+                throw new TypeError($"{methodName} is not a function");
+            }
+
+            return InvokeMemberDelegate(receiver, memberDelegate, args ?? System.Array.Empty<object>());
+        }
+
         private static bool TryGetFastDictionaryOwnValue(object receiver, string memberName, out object? value)
         {
             value = null;

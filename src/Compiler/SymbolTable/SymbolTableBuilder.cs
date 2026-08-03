@@ -747,6 +747,11 @@ namespace Jroc.SymbolTables
 
         private Type? ResolveNodeModuleType(string key)
         {
+            if (JavaScriptRuntime.Node.NodeModuleRegistry.TryGetModuleContractType(key, out var contractType))
+            {
+                return contractType;
+            }
+
             return _runtimeIntrinsicCatalog.TryGetModuleBinding(key, out var descriptor) && descriptor != null
                 ? descriptor.ModuleType
                 : null;

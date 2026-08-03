@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x228d
+				// Method begins at RVA 0x2331
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -44,14 +44,14 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 05 00 00 02
 			)
-			// Method begins at RVA 0x21b8
+			// Method begins at RVA 0x2218
 			// Header size: 12
-			// Code size: 131 (0x83)
+			// Code size: 200 (0xc8)
 			.maxstack 8
 			.locals init (
 				[0] object,
 				[1] class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate,
-				[2] object,
+				[2] class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule,
 				[3] object
 			)
 
@@ -60,48 +60,79 @@
 			IL_0006: stloc.1
 			IL_0007: ldloc.1
 			IL_0008: ldstr "fs"
-			IL_000d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
+			IL_000d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireRuntime::RequireObject<class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule>(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object)
 			IL_0012: stloc.2
-			IL_0013: ldloc.2
-			IL_0014: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0019: stloc.2
-			IL_001a: ldarg.0
-			IL_001b: ldfld object Modules.FSPromises_WriteFile_Utf8/Scope::testFile
-			IL_0020: stloc.3
-			IL_0021: ldloc.2
-			IL_0022: ldstr "readFileSync"
-			IL_0027: ldloc.3
-			IL_0028: ldstr "utf8"
-			IL_002d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-			IL_0032: stloc.0
-			IL_0033: ldstr "console"
-			IL_0038: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_003d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0042: ldstr "log"
-			IL_0047: ldstr "Written content:"
-			IL_004c: ldloc.0
-			IL_004d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-			IL_0052: pop
-			IL_0053: ldarg.0
-			IL_0054: ldfld class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate Modules.FSPromises_WriteFile_Utf8/Scope::require
-			IL_0059: stloc.1
-			IL_005a: ldloc.1
-			IL_005b: ldstr "fs"
-			IL_0060: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
-			IL_0065: stloc.3
-			IL_0066: ldloc.3
-			IL_0067: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_006c: stloc.3
-			IL_006d: ldarg.0
-			IL_006e: ldfld object Modules.FSPromises_WriteFile_Utf8/Scope::testFile
-			IL_0073: stloc.2
-			IL_0074: ldloc.3
-			IL_0075: ldstr "rmSync"
-			IL_007a: ldloc.2
-			IL_007b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_0080: pop
-			IL_0081: ldnull
-			IL_0082: ret
+			IL_0013: ldarg.0
+			IL_0014: ldfld object Modules.FSPromises_WriteFile_Utf8/Scope::testFile
+			IL_0019: stloc.3
+			IL_001a: ldloc.2
+			IL_001b: ldstr "readFileSync"
+			IL_0020: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::HasOwnPropertyOverride(object, string)
+			IL_0025: brtrue IL_003c
+
+			IL_002a: ldloc.2
+			IL_002b: ldloc.3
+			IL_002c: ldstr "utf8"
+			IL_0031: callvirt instance object [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule::readFileSync(object, object)
+			IL_0036: stloc.0
+			IL_0037: br IL_005a
+
+			IL_003c: ldloc.2
+			IL_003d: ldstr "readFileSync"
+			IL_0042: ldc.i4.2
+			IL_0043: newarr [System.Runtime]System.Object
+			IL_0048: dup
+			IL_0049: ldc.i4.0
+			IL_004a: ldloc.3
+			IL_004b: stelem.ref
+			IL_004c: dup
+			IL_004d: ldc.i4.1
+			IL_004e: ldstr "utf8"
+			IL_0053: stelem.ref
+			IL_0054: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallOwnPropertyMember(object, string, object[])
+			IL_0059: stloc.0
+
+			IL_005a: ldstr "console"
+			IL_005f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_0064: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0069: ldstr "log"
+			IL_006e: ldstr "Written content:"
+			IL_0073: ldloc.0
+			IL_0074: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+			IL_0079: pop
+			IL_007a: ldarg.0
+			IL_007b: ldfld class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate Modules.FSPromises_WriteFile_Utf8/Scope::require
+			IL_0080: stloc.1
+			IL_0081: ldloc.1
+			IL_0082: ldstr "fs"
+			IL_0087: call !!0 [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireRuntime::RequireObject<class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule>(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object)
+			IL_008c: stloc.2
+			IL_008d: ldarg.0
+			IL_008e: ldfld object Modules.FSPromises_WriteFile_Utf8/Scope::testFile
+			IL_0093: stloc.3
+			IL_0094: ldloc.2
+			IL_0095: ldstr "rmSync"
+			IL_009a: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::HasOwnPropertyOverride(object, string)
+			IL_009f: brtrue IL_00b0
+
+			IL_00a4: ldloc.2
+			IL_00a5: ldloc.3
+			IL_00a6: callvirt instance void [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule::rmSync(object)
+			IL_00ab: br IL_00c6
+
+			IL_00b0: ldloc.2
+			IL_00b1: ldstr "rmSync"
+			IL_00b6: ldc.i4.1
+			IL_00b7: newarr [System.Runtime]System.Object
+			IL_00bc: dup
+			IL_00bd: ldc.i4.0
+			IL_00be: ldloc.3
+			IL_00bf: stelem.ref
+			IL_00c0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallOwnPropertyMember(object, string, object[])
+			IL_00c5: pop
+
+			IL_00c6: ldnull
+			IL_00c7: ret
 		} // end of method ArrowFunction_L7C63::__js_call__
 
 	} // end of class ArrowFunction_L7C63
@@ -124,7 +155,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2296
+				// Method begins at RVA 0x233a
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -148,7 +179,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2248
+			// Method begins at RVA 0x22ec
 			// Header size: 12
 			// Code size: 48 (0x30)
 			.maxstack 8
@@ -193,7 +224,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2284
+			// Method begins at RVA 0x2328
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -219,17 +250,16 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 346 (0x15a)
+		// Code size: 444 (0x1bc)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.FSPromises_WriteFile_Utf8/Scope,
-			[1] object,
-			[2] object,
+			[1] class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsPromisesModule,
+			[2] class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IPathModule,
 			[3] class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate,
 			[4] object,
-			[5] object,
-			[6] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0,
-			[7] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1
+			[5] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0,
+			[6] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1
 		)
 
 		IL_0000: newobj instance void Modules.FSPromises_WriteFile_Utf8/Scope::.ctor()
@@ -244,110 +274,158 @@
 		IL_0019: stloc.3
 		IL_001a: ldloc.3
 		IL_001b: ldstr "fs/promises"
-		IL_0020: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
+		IL_0020: call !!0 [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireRuntime::RequireObject<class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsPromisesModule>(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object)
 		IL_0025: stloc.1
 		IL_0026: ldloc.0
 		IL_0027: ldfld class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate Modules.FSPromises_WriteFile_Utf8/Scope::require
 		IL_002c: stloc.3
 		IL_002d: ldloc.3
 		IL_002e: ldstr "path"
-		IL_0033: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
+		IL_0033: call !!0 [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireRuntime::RequireObject<class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IPathModule>(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object)
 		IL_0038: stloc.2
-		IL_0039: ldloc.2
-		IL_003a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_003f: stloc.s 4
-		IL_0041: ldloc.0
-		IL_0042: ldfld class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate Modules.FSPromises_WriteFile_Utf8/Scope::require
-		IL_0047: stloc.3
-		IL_0048: ldloc.3
-		IL_0049: ldstr "os"
-		IL_004e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
-		IL_0053: stloc.s 5
-		IL_0055: ldloc.s 5
-		IL_0057: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_005c: ldstr "tmpdir"
-		IL_0061: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-		IL_0066: stloc.s 5
-		IL_0068: ldloc.s 4
-		IL_006a: ldstr "join"
-		IL_006f: ldloc.s 5
-		IL_0071: ldstr "test-writefile.txt"
-		IL_0076: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_007b: stloc.s 5
-		IL_007d: ldloc.0
-		IL_007e: ldloc.s 5
-		IL_0080: stfld object Modules.FSPromises_WriteFile_Utf8/Scope::testFile
-		IL_0085: ldloc.1
-		IL_0086: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_008b: stloc.s 5
-		IL_008d: ldloc.0
-		IL_008e: ldfld object Modules.FSPromises_WriteFile_Utf8/Scope::testFile
-		IL_0093: stloc.s 4
-		IL_0095: ldloc.s 5
-		IL_0097: ldstr "writeFile"
-		IL_009c: ldloc.s 4
-		IL_009e: ldstr "Written by fs/promises"
-		IL_00a3: ldstr "utf8"
-		IL_00a8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember3(object, string, object, object, object)
-		IL_00ad: stloc.s 4
-		IL_00af: ldloc.s 4
-		IL_00b1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00b6: stloc.s 4
+		IL_0039: ldloc.0
+		IL_003a: ldfld class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate Modules.FSPromises_WriteFile_Utf8/Scope::require
+		IL_003f: stloc.3
+		IL_0040: ldloc.3
+		IL_0041: ldstr "os"
+		IL_0046: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
+		IL_004b: stloc.s 4
+		IL_004d: ldloc.s 4
+		IL_004f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0054: ldstr "tmpdir"
+		IL_0059: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+		IL_005e: stloc.s 4
+		IL_0060: ldloc.2
+		IL_0061: ldstr "join"
+		IL_0066: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::HasOwnPropertyOverride(object, string)
+		IL_006b: brtrue IL_0090
+
+		IL_0070: ldloc.2
+		IL_0071: ldc.i4.2
+		IL_0072: newarr [System.Runtime]System.Object
+		IL_0077: dup
+		IL_0078: ldc.i4.0
+		IL_0079: ldloc.s 4
+		IL_007b: stelem.ref
+		IL_007c: dup
+		IL_007d: ldc.i4.1
+		IL_007e: ldstr "test-writefile.txt"
+		IL_0083: stelem.ref
+		IL_0084: callvirt instance string [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IPathModule::join(object[])
+		IL_0089: stloc.s 4
+		IL_008b: br IL_00b0
+
+		IL_0090: ldloc.2
+		IL_0091: ldstr "join"
+		IL_0096: ldc.i4.2
+		IL_0097: newarr [System.Runtime]System.Object
+		IL_009c: dup
+		IL_009d: ldc.i4.0
+		IL_009e: ldloc.s 4
+		IL_00a0: stelem.ref
+		IL_00a1: dup
+		IL_00a2: ldc.i4.1
+		IL_00a3: ldstr "test-writefile.txt"
+		IL_00a8: stelem.ref
+		IL_00a9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallOwnPropertyMember(object, string, object[])
+		IL_00ae: stloc.s 4
+
+		IL_00b0: ldloc.0
+		IL_00b1: ldloc.s 4
+		IL_00b3: stfld object Modules.FSPromises_WriteFile_Utf8/Scope::testFile
 		IL_00b8: ldloc.0
-		IL_00b9: castclass Modules.FSPromises_WriteFile_Utf8/Scope
-		IL_00be: ldftn object Modules.FSPromises_WriteFile_Utf8/ArrowFunction_L7C63::__js_call__(class Modules.FSPromises_WriteFile_Utf8/Scope, object)
-		IL_00c4: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_00c9: ldc.i4.1
-		IL_00ca: newarr [System.Runtime]System.Object
-		IL_00cf: dup
-		IL_00d0: ldc.i4.0
-		IL_00d1: ldloc.0
-		IL_00d2: stelem.ref
-		IL_00d3: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_00d8: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_00dd: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
-		IL_00e2: ldc.i4.0
-		IL_00e3: conv.r8
-		IL_00e4: ldstr ""
-		IL_00e9: ldc.i4.0
-		IL_00ea: ldc.i4.0
-		IL_00eb: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
-		IL_00f0: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0)
-		IL_00f5: stloc.s 6
+		IL_00b9: ldfld object Modules.FSPromises_WriteFile_Utf8/Scope::testFile
+		IL_00be: stloc.s 4
+		IL_00c0: ldloc.1
+		IL_00c1: ldstr "writeFile"
+		IL_00c6: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::HasOwnPropertyOverride(object, string)
+		IL_00cb: brtrue IL_00e9
+
+		IL_00d0: ldloc.1
+		IL_00d1: ldloc.s 4
+		IL_00d3: ldstr "Written by fs/promises"
+		IL_00d8: ldstr "utf8"
+		IL_00dd: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.IJavaScriptPromise [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsPromisesModule::writeFile(object, object, object)
+		IL_00e2: stloc.s 4
+		IL_00e4: br IL_0111
+
+		IL_00e9: ldloc.1
+		IL_00ea: ldstr "writeFile"
+		IL_00ef: ldc.i4.3
+		IL_00f0: newarr [System.Runtime]System.Object
+		IL_00f5: dup
+		IL_00f6: ldc.i4.0
 		IL_00f7: ldloc.s 4
-		IL_00f9: ldstr "then"
-		IL_00fe: ldloc.s 6
-		IL_0100: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0105: stloc.s 4
-		IL_0107: ldloc.s 4
-		IL_0109: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_010e: stloc.s 4
-		IL_0110: ldnull
-		IL_0111: ldftn object Modules.FSPromises_WriteFile_Utf8/ArrowFunction_L11C10::__js_call__(object, object)
-		IL_0117: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-		IL_011c: ldc.i4.1
-		IL_011d: newarr [System.Runtime]System.Object
-		IL_0122: dup
-		IL_0123: ldc.i4.0
-		IL_0124: ldloc.0
-		IL_0125: stelem.ref
-		IL_0126: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_012b: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_0130: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1
-		IL_0135: ldc.i4.1
-		IL_0136: conv.r8
-		IL_0137: ldstr ""
-		IL_013c: ldc.i4.0
-		IL_013d: ldc.i4.0
-		IL_013e: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0, float64, string, bool, bool)
-		IL_0143: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0)
-		IL_0148: stloc.s 7
-		IL_014a: ldloc.s 4
-		IL_014c: ldstr "catch"
-		IL_0151: ldloc.s 7
-		IL_0153: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0158: pop
-		IL_0159: ret
+		IL_00f9: stelem.ref
+		IL_00fa: dup
+		IL_00fb: ldc.i4.1
+		IL_00fc: ldstr "Written by fs/promises"
+		IL_0101: stelem.ref
+		IL_0102: dup
+		IL_0103: ldc.i4.2
+		IL_0104: ldstr "utf8"
+		IL_0109: stelem.ref
+		IL_010a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallOwnPropertyMember(object, string, object[])
+		IL_010f: stloc.s 4
+
+		IL_0111: ldloc.s 4
+		IL_0113: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0118: stloc.s 4
+		IL_011a: ldloc.0
+		IL_011b: castclass Modules.FSPromises_WriteFile_Utf8/Scope
+		IL_0120: ldftn object Modules.FSPromises_WriteFile_Utf8/ArrowFunction_L7C63::__js_call__(class Modules.FSPromises_WriteFile_Utf8/Scope, object)
+		IL_0126: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_012b: ldc.i4.1
+		IL_012c: newarr [System.Runtime]System.Object
+		IL_0131: dup
+		IL_0132: ldc.i4.0
+		IL_0133: ldloc.0
+		IL_0134: stelem.ref
+		IL_0135: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_013a: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_013f: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
+		IL_0144: ldc.i4.0
+		IL_0145: conv.r8
+		IL_0146: ldstr ""
+		IL_014b: ldc.i4.0
+		IL_014c: ldc.i4.0
+		IL_014d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
+		IL_0152: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0)
+		IL_0157: stloc.s 5
+		IL_0159: ldloc.s 4
+		IL_015b: ldstr "then"
+		IL_0160: ldloc.s 5
+		IL_0162: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0167: stloc.s 4
+		IL_0169: ldloc.s 4
+		IL_016b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0170: stloc.s 4
+		IL_0172: ldnull
+		IL_0173: ldftn object Modules.FSPromises_WriteFile_Utf8/ArrowFunction_L11C10::__js_call__(object, object)
+		IL_0179: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_017e: ldc.i4.1
+		IL_017f: newarr [System.Runtime]System.Object
+		IL_0184: dup
+		IL_0185: ldc.i4.0
+		IL_0186: ldloc.0
+		IL_0187: stelem.ref
+		IL_0188: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_018d: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_0192: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1
+		IL_0197: ldc.i4.1
+		IL_0198: conv.r8
+		IL_0199: ldstr ""
+		IL_019e: ldc.i4.0
+		IL_019f: ldc.i4.0
+		IL_01a0: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0, float64, string, bool, bool)
+		IL_01a5: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0)
+		IL_01aa: stloc.s 6
+		IL_01ac: ldloc.s 4
+		IL_01ae: ldstr "catch"
+		IL_01b3: ldloc.s 6
+		IL_01b5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_01ba: pop
+		IL_01bb: ret
 	} // end of method FSPromises_WriteFile_Utf8::__js_module_init__
 
 } // end of class Modules.FSPromises_WriteFile_Utf8
@@ -359,7 +437,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x229f
+		// Method begins at RVA 0x2343
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

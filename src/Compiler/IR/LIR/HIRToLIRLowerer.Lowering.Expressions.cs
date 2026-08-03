@@ -472,7 +472,7 @@ public sealed partial class HIRToLIRLowerer
 
                 ValueStorage GetPreferredBindingReadStorage(BindingInfo b)
                 {
-                    if (IsSafeInjectedCommonJsRequireParameter(b))
+                    if (IsSafeInjectedCommonJsRequireBinding(b))
                     {
                         return new ValueStorage(ValueStorageKind.Reference, typeof(global::JavaScriptRuntime.CommonJS.RequireDelegate));
                     }
@@ -511,21 +511,13 @@ public sealed partial class HIRToLIRLowerer
                         {
                             return new ValueStorage(ValueStorageKind.Reference, typeof(JavaScriptRuntime.Array));
                         }
+                        if (b.ClrType != null && !b.ClrType.IsValueType)
+                        {
+                            return new ValueStorage(ValueStorageKind.Reference, b.ClrType);
+                        }
                     }
 
                     return new ValueStorage(ValueStorageKind.Reference, typeof(object));
-                }
-
-                static bool IsSafeInjectedCommonJsRequireParameter(BindingInfo b)
-                {
-                    // CommonJS module wrapper parameter.
-                    // Only treat it as strongly-typed RequireDelegate when we can conservatively prove it is
-                    // the injected parameter binding and is never written to (not reassigned).
-                    return string.Equals(b.Name, "require", StringComparison.Ordinal)
-                        && b.DeclaringScope.Kind == ScopeKind.Global
-                        && b.DeclaringScope.Parameters.Contains("require")
-                        && ReferenceEquals(b.DeclarationNode, b.DeclaringScope.AstNode)
-                        && !b.HasWrite;
                 }
 
                 TempVariable EmitTemporalDeadZoneReferenceError(BindingInfo b)
@@ -644,7 +636,7 @@ public sealed partial class HIRToLIRLowerer
                                 {
                                     resultTempVar = CreateTempVariable();
                                     _methodBodyIR.Instructions.Add(new LIRLoadParameter(storage.JsParameterIndex, resultTempVar));
-                                    if (IsSafeInjectedCommonJsRequireParameter(binding))
+                                    if (IsSafeInjectedCommonJsRequireBinding(binding))
                                     {
                                         DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(global::JavaScriptRuntime.CommonJS.RequireDelegate)));
                                     }
@@ -696,7 +688,7 @@ public sealed partial class HIRToLIRLowerer
                 {
                     resultTempVar = CreateTempVariable();
                     _methodBodyIR.Instructions.Add(new LIRLoadParameter(paramIndex, resultTempVar));
-                    if (IsSafeInjectedCommonJsRequireParameter(binding))
+                    if (IsSafeInjectedCommonJsRequireBinding(binding))
                     {
                         DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(global::JavaScriptRuntime.CommonJS.RequireDelegate)));
                     }

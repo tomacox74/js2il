@@ -906,6 +906,8 @@ internal sealed partial class LIRToILCompiler
 
                 // Known CLR instance method calls: receiver + args (no padding)
                 LIRCallInstanceMethod callInstance => 1 + callInstance.Arguments.Count,
+                LIRCallNodeModuleContractMember callNodeContract =>
+                    Math.Max(5, 2 + callNodeContract.Arguments.Count),
 
                 // Intrinsic static calls with a pre-built args array (argsArray may be inlined)
                 LIRCallIntrinsicStaticWithArgsArray callStaticWithArgsArray => EstimateTempLoadPeak(callStaticWithArgsArray.ArgumentsArray),

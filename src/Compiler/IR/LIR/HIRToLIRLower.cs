@@ -17,6 +17,13 @@ public sealed partial class HIRToLIRLowerer
                || binding.CanUseUnboxedLocal
                || binding.DeclaringScope.DestructuredParameters.Contains(binding.Name));
 
+    private static bool IsSafeInjectedCommonJsRequireBinding(BindingInfo binding)
+        => string.Equals(binding.Name, "require", StringComparison.Ordinal)
+           && binding.DeclaringScope.Kind == ScopeKind.Global
+           && binding.DeclaringScope.Parameters.Contains("require")
+           && ReferenceEquals(binding.DeclarationNode, binding.DeclaringScope.AstNode)
+           && !binding.HasWrite;
+
     private readonly MethodBodyIR _methodBodyIR = new MethodBodyIR();
     private readonly Scope? _scope;
     private readonly EnvironmentLayout? _environmentLayout;

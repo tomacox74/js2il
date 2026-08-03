@@ -146,6 +146,50 @@ public sealed partial class HIRToLIRLowerer
         {
             var symbol = funcVarExpr.Name;
 
+            if (!hasSpreadArgs && IsSafeInjectedCommonJsRequireBinding(symbol.BindingInfo))
+            {
+                if (!TryLowerExpression(funcVarExpr, out var requireValue)
+                    || !TryEvaluateCallArguments(callExpr.Arguments, 1, out var requireArguments))
+                {
+                    return false;
+                }
+
+                TempVariable moduleId;
+                if (requireArguments.Count == 0)
+                {
+                    moduleId = CreateTempVariable();
+                    _methodBodyIR.Instructions.Add(new LIRConstUndefined(moduleId));
+                    DefineTempStorage(moduleId, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                }
+                else
+                {
+                    moduleId = requireArguments[0];
+                }
+
+                Type? contractType = null;
+                if (callExpr.Arguments.Length > 0
+                    && callExpr.Arguments[0] is HIRLiteralExpression
+                    {
+                        Kind: JavascriptType.String,
+                        Value: string moduleSpecifier
+                    })
+                {
+                    JavaScriptRuntime.Node.NodeModuleRegistry.TryGetModuleContractType(
+                        moduleSpecifier,
+                        out contractType);
+                }
+
+                _methodBodyIR.Instructions.Add(new LIRCallRequire(
+                    requireValue,
+                    moduleId,
+                    resultTempVar,
+                    contractType));
+                DefineTempStorage(
+                    resultTempVar,
+                    new ValueStorage(ValueStorageKind.Reference, contractType ?? typeof(object)));
+                return true;
+            }
+
             // PL8.1: Primitive conversion callables: String(x), Number(x), Boolean(x).
             // These are CallExpression forms (not NewExpression) and should lower to runtime conversions.
             // Semantics:
@@ -1198,6 +1242,56 @@ public sealed partial class HIRToLIRLowerer
             return false;
         }
 
+        var nodeContractType = TryGetNodeModuleContractType(GetTempStorage(receiverTempVar).ClrType);
+        if (nodeContractType == null
+            && calleePropAccess.Object is HIRVariableExpression contractReceiver
+            && contractReceiver.Name.BindingInfo.IsStableType)
+        {
+            nodeContractType = TryGetNodeModuleContractType(contractReceiver.Name.BindingInfo.ClrType);
+        }
+
+        if (!hasSpreadArgs
+            && nodeContractType != null
+            && LIRToILCompiler.ResolveTypedInstanceMethodOverload(
+                nodeContractType,
+                calleePropAccess.PropertyName,
+                callExpr.Arguments.Length) is { } contractMethod)
+        {
+            var contractArguments = new List<TempVariable>(callExpr.Arguments.Length);
+            foreach (var argument in callExpr.Arguments)
+            {
+                if (!TryLowerExpression(argument, out var argumentTemp))
+                {
+                    return false;
+                }
+
+                contractArguments.Add(EnsureObject(argumentTemp));
+            }
+
+            if (CanDirectlyCallNodeContractMethod(contractMethod, contractArguments))
+            {
+                _methodBodyIR.Instructions.Add(new LIRCallNodeModuleContractMember(
+                    receiverTempVar,
+                    nodeContractType,
+                    calleePropAccess.PropertyName,
+                    calleePropAccess.PropertyName,
+                    IsPropertyGet: false,
+                    contractArguments,
+                    resultTempVar));
+            }
+            else
+            {
+                EmitDynamicMemberCall(
+                    receiverTempVar,
+                    calleePropAccess.PropertyName,
+                    contractArguments,
+                    resultTempVar);
+            }
+
+            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            return true;
+        }
+
         // Case 2a.0: Stable string local/member receiver for substring(...) calls.
         // This avoids late-bound ObjectRuntime.CallMember* dispatch in hot loops (e.g., dromaeo generateTestStrings).
         if (!hasSpreadArgs
@@ -1538,6 +1632,117 @@ public sealed partial class HIRToLIRLowerer
 
         returnClrType = chosen.ReturnType;
         return true;
+    }
+
+    private static Type? TryGetNodeModuleContractType(Type? type)
+    {
+        if (type == null || !type.IsInterface)
+        {
+            return null;
+        }
+
+        return type.GetCustomAttributes(
+                typeof(Jroc.Runtime.Node.Contracts.NodeModuleInterfaceAttribute),
+                inherit: false)
+            .Length == 1
+            ? type
+            : null;
+    }
+
+    private bool CanDirectlyCallNodeContractMethod(
+        System.Reflection.MethodInfo method,
+        IReadOnlyList<TempVariable> arguments)
+    {
+        var parameters = method.GetParameters();
+        var hasParamsArray = parameters.Length > 0
+            && parameters[^1].GetCustomAttributes(typeof(ParamArrayAttribute), inherit: false).Length > 0;
+        var fixedParameterCount = hasParamsArray ? parameters.Length - 1 : parameters.Length;
+
+        for (var i = 0; i < fixedParameterCount; i++)
+        {
+            var parameterType = parameters[i].ParameterType;
+            if (parameterType == typeof(object))
+            {
+                continue;
+            }
+
+            var argumentType = GetTempStorage(arguments[i]).ClrType;
+            if (argumentType == null
+                || (argumentType != parameterType && !parameterType.IsAssignableFrom(argumentType)))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private void EmitDynamicMemberCall(
+        TempVariable receiver,
+        string methodName,
+        IReadOnlyList<TempVariable> arguments,
+        TempVariable result)
+    {
+        LIRInstruction instruction;
+        switch (arguments.Count)
+        {
+            case 0:
+                instruction = new LIRCallMember0(receiver, methodName, result);
+                break;
+            case 1:
+                instruction = new LIRCallMember1(receiver, methodName, arguments[0], result);
+                break;
+            case 2:
+                instruction = new LIRCallMember2(receiver, methodName, arguments[0], arguments[1], result);
+                break;
+            case 3:
+                instruction = new LIRCallMember3(receiver, methodName, arguments[0], arguments[1], arguments[2], result);
+                break;
+            default:
+                var argumentsArray = CreateTempVariable();
+                _methodBodyIR.Instructions.Add(new LIRBuildArray(arguments, argumentsArray));
+                DefineTempStorage(argumentsArray, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
+                instruction = new LIRCallMember(receiver, methodName, argumentsArray, result);
+                break;
+        }
+
+        _methodBodyIR.Instructions.Add(instruction);
+    }
+
+    private static bool TryResolveNodeModuleContractProperty(
+        Type contractType,
+        string propertyName,
+        out string getterName,
+        out Type propertyType)
+    {
+        foreach (var property in contractType.GetProperties(
+                     System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance))
+        {
+            var attribute = property.GetCustomAttributes(
+                    typeof(Jroc.Runtime.Node.Contracts.NodeModuleMemberAttribute),
+                    inherit: false)
+                .OfType<Jroc.Runtime.Node.Contracts.NodeModuleMemberAttribute>()
+                .SingleOrDefault();
+            var javaScriptName = attribute?.MemberName ?? property.Name;
+            if (!string.Equals(javaScriptName, propertyName, StringComparison.Ordinal))
+            {
+                continue;
+            }
+
+            var getter = property.GetMethod;
+            if (getter == null)
+            {
+                break;
+            }
+
+            getterName = getter.Name;
+            propertyType = property.PropertyType;
+            return true;
+        }
+
+        getterName = string.Empty;
+        propertyType = typeof(object);
+        return false;
     }
 
 }

@@ -1,0 +1,137 @@
+﻿// IL code: Require_NodePath_Join_Basic
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class private auto ansi beforefieldinit Modules.Require_NodePath_Join_Basic
+	extends [System.Runtime]System.Object
+{
+	// Nested Types
+	.class nested public auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x20fc
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method Scope::.ctor
+
+	} // end of class Scope
+
+
+	// Methods
+	.method public hidebysig static 
+		void __js_module_init__ (
+			object exports,
+			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			object module,
+			string __filename,
+			string __dirname
+		) cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 12
+		// Code size: 160 (0xa0)
+		.maxstack 8
+		.locals init (
+			[0] class Modules.Require_NodePath_Join_Basic/Scope,
+			[1] class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IPathModule,
+			[2] object,
+			[3] object
+		)
+
+		IL_0000: newobj instance void Modules.Require_NodePath_Join_Basic/Scope::.ctor()
+		IL_0005: stloc.0
+		IL_0006: nop
+		IL_0007: ldarg.1
+		IL_0008: ldstr "node:path"
+		IL_000d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireRuntime::RequireObject<class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IPathModule>(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object)
+		IL_0012: stloc.1
+		IL_0013: ldstr "console"
+		IL_0018: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_001d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0022: stloc.2
+		IL_0023: ldloc.1
+		IL_0024: ldstr "join"
+		IL_0029: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::HasOwnPropertyOverride(object, string)
+		IL_002e: brtrue IL_0055
+
+		IL_0033: ldloc.1
+		IL_0034: ldc.i4.2
+		IL_0035: newarr [System.Runtime]System.Object
+		IL_003a: dup
+		IL_003b: ldc.i4.0
+		IL_003c: ldstr "a"
+		IL_0041: stelem.ref
+		IL_0042: dup
+		IL_0043: ldc.i4.1
+		IL_0044: ldstr "b"
+		IL_0049: stelem.ref
+		IL_004a: callvirt instance string [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IPathModule::join(object[])
+		IL_004f: stloc.3
+		IL_0050: br IL_0077
+
+		IL_0055: ldloc.1
+		IL_0056: ldstr "join"
+		IL_005b: ldc.i4.2
+		IL_005c: newarr [System.Runtime]System.Object
+		IL_0061: dup
+		IL_0062: ldc.i4.0
+		IL_0063: ldstr "a"
+		IL_0068: stelem.ref
+		IL_0069: dup
+		IL_006a: ldc.i4.1
+		IL_006b: ldstr "b"
+		IL_0070: stelem.ref
+		IL_0071: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallOwnPropertyMember(object, string, object[])
+		IL_0076: stloc.3
+
+		IL_0077: ldloc.3
+		IL_0078: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_007d: ldstr "replace"
+		IL_0082: ldstr "\\"
+		IL_0087: ldstr "/"
+		IL_008c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_0091: stloc.3
+		IL_0092: ldloc.2
+		IL_0093: ldstr "log"
+		IL_0098: ldloc.3
+		IL_0099: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_009e: pop
+		IL_009f: ret
+	} // end of method Require_NodePath_Join_Basic::__js_module_init__
+
+} // end of class Modules.Require_NodePath_Join_Basic
+
+.class private auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x2105
+		// Header size: 1
+		// Code size: 23 (0x17)
+		.maxstack 8
+		.entrypoint
+
+		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
+		IL_0005: ldnull
+		IL_0006: ldftn void Modules.Require_NodePath_Join_Basic::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
+		IL_0016: ret
+	} // end of method Program::Main
+
+} // end of class Program
+

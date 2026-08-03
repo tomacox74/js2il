@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20bf
+			// Method begins at RVA 0x20fb
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,11 +40,11 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 99 (0x63)
+		// Code size: 159 (0x9f)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Require_Path_Relative_SamePath_EmptyString/Scope,
-			[1] object,
+			[1] class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IPathModule,
 			[2] object,
 			[3] object,
 			[4] object
@@ -55,33 +55,67 @@
 		IL_0006: nop
 		IL_0007: ldarg.1
 		IL_0008: ldstr "path"
-		IL_000d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
+		IL_000d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireRuntime::RequireObject<class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IPathModule>(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object)
 		IL_0012: stloc.1
 		IL_0013: ldloc.1
-		IL_0014: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0019: ldstr "resolve"
-		IL_001e: ldarg.s __dirname
-		IL_0020: ldstr "a"
-		IL_0025: ldstr "b"
-		IL_002a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember3(object, string, object, object, object)
-		IL_002f: stloc.2
-		IL_0030: ldstr "console"
-		IL_0035: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_003a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_003f: stloc.3
-		IL_0040: ldloc.1
-		IL_0041: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0046: ldstr "relative"
-		IL_004b: ldloc.2
-		IL_004c: ldloc.2
-		IL_004d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_0052: stloc.s 4
-		IL_0054: ldloc.3
-		IL_0055: ldstr "log"
-		IL_005a: ldloc.s 4
-		IL_005c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0061: pop
-		IL_0062: ret
+		IL_0014: ldstr "resolve"
+		IL_0019: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::HasOwnPropertyOverride(object, string)
+		IL_001e: brtrue IL_004a
+
+		IL_0023: ldloc.1
+		IL_0024: ldc.i4.3
+		IL_0025: newarr [System.Runtime]System.Object
+		IL_002a: dup
+		IL_002b: ldc.i4.0
+		IL_002c: ldarg.s __dirname
+		IL_002e: stelem.ref
+		IL_002f: dup
+		IL_0030: ldc.i4.1
+		IL_0031: ldstr "a"
+		IL_0036: stelem.ref
+		IL_0037: dup
+		IL_0038: ldc.i4.2
+		IL_0039: ldstr "b"
+		IL_003e: stelem.ref
+		IL_003f: callvirt instance string [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IPathModule::resolve(object[])
+		IL_0044: stloc.2
+		IL_0045: br IL_0071
+
+		IL_004a: ldloc.1
+		IL_004b: ldstr "resolve"
+		IL_0050: ldc.i4.3
+		IL_0051: newarr [System.Runtime]System.Object
+		IL_0056: dup
+		IL_0057: ldc.i4.0
+		IL_0058: ldarg.s __dirname
+		IL_005a: stelem.ref
+		IL_005b: dup
+		IL_005c: ldc.i4.1
+		IL_005d: ldstr "a"
+		IL_0062: stelem.ref
+		IL_0063: dup
+		IL_0064: ldc.i4.2
+		IL_0065: ldstr "b"
+		IL_006a: stelem.ref
+		IL_006b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallOwnPropertyMember(object, string, object[])
+		IL_0070: stloc.2
+
+		IL_0071: ldstr "console"
+		IL_0076: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_007b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0080: stloc.3
+		IL_0081: ldloc.1
+		IL_0082: ldstr "relative"
+		IL_0087: ldloc.2
+		IL_0088: ldloc.2
+		IL_0089: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_008e: stloc.s 4
+		IL_0090: ldloc.3
+		IL_0091: ldstr "log"
+		IL_0096: ldloc.s 4
+		IL_0098: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_009d: pop
+		IL_009e: ret
 	} // end of method Require_Path_Relative_SamePath_EmptyString::__js_module_init__
 
 } // end of class Modules.Require_Path_Relative_SamePath_EmptyString
@@ -93,7 +127,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20c8
+		// Method begins at RVA 0x2104
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -22,7 +22,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x23f6
+					// Method begins at RVA 0x266e
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -42,7 +42,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x23ff
+					// Method begins at RVA 0x2677
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -60,7 +60,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x23ed
+				// Method begins at RVA 0x2665
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -80,7 +80,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2408
+				// Method begins at RVA 0x2680
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -98,7 +98,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x23e4
+			// Method begins at RVA 0x265c
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -124,12 +124,12 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 852 (0x354)
+		// Code size: 1482 (0x5ca)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.FS_UnlinkSync_ReleaseCleanup/Scope,
-			[1] object,
-			[2] object,
+			[1] class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule,
+			[2] class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IPathModule,
 			[3] object,
 			[4] string,
 			[5] object,
@@ -142,8 +142,8 @@
 			[12] object,
 			[13] string,
 			[14] float64,
-			[15] object,
-			[16] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
+			[15] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
+			[16] object,
 			[17] object
 		)
 
@@ -152,11 +152,11 @@
 		IL_0006: nop
 		IL_0007: ldarg.1
 		IL_0008: ldstr "fs"
-		IL_000d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
+		IL_000d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireRuntime::RequireObject<class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule>(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object)
 		IL_0012: stloc.1
 		IL_0013: ldarg.1
 		IL_0014: ldstr "path"
-		IL_0019: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
+		IL_0019: call !!0 [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireRuntime::RequireObject<class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IPathModule>(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object)
 		IL_001e: stloc.2
 		IL_001f: ldarg.1
 		IL_0020: ldstr "os"
@@ -185,245 +185,543 @@
 		IL_007a: ldloc.s 13
 		IL_007c: call string [System.Runtime]System.String::Concat(string, string)
 		IL_0081: stloc.s 4
-		IL_0083: ldloc.2
+		IL_0083: ldloc.3
 		IL_0084: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0089: stloc.s 12
-		IL_008b: ldloc.3
-		IL_008c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0091: ldstr "tmpdir"
-		IL_0096: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-		IL_009b: stloc.s 15
-		IL_009d: ldloc.s 4
-		IL_009f: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-		IL_00a4: stloc.s 13
-		IL_00a6: ldstr "jroc-release-cleanup-"
-		IL_00ab: ldloc.s 13
-		IL_00ad: call string [System.Runtime]System.String::Concat(string, string)
-		IL_00b2: stloc.s 13
-		IL_00b4: ldloc.s 12
-		IL_00b6: ldstr "join"
-		IL_00bb: ldloc.s 15
-		IL_00bd: ldloc.s 13
-		IL_00bf: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_00c4: stloc.s 5
-		IL_00c6: ldloc.2
-		IL_00c7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00cc: ldstr "join"
-		IL_00d1: ldloc.s 5
-		IL_00d3: ldstr "pr-body.md"
-		IL_00d8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_00dd: stloc.s 6
-		IL_00df: ldloc.2
-		IL_00e0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00e5: ldstr "join"
-		IL_00ea: ldloc.s 5
-		IL_00ec: ldstr "release-notes.md"
-		IL_00f1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_00f6: stloc.s 7
-		IL_00f8: ldloc.1
-		IL_00f9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00fe: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_0103: dup
-		IL_0104: ldstr "recursive"
-		IL_0109: ldc.i4.1
-		IL_010a: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-		IL_010f: dup
-		IL_0110: ldstr "force"
-		IL_0115: ldc.i4.1
-		IL_0116: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-		IL_011b: stloc.s 16
-		IL_011d: ldstr "rmSync"
-		IL_0122: ldloc.s 5
-		IL_0124: ldloc.s 16
-		IL_0126: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_012b: pop
-		IL_012c: ldloc.1
-		IL_012d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0132: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0089: ldstr "tmpdir"
+		IL_008e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+		IL_0093: stloc.s 12
+		IL_0095: ldloc.s 4
+		IL_0097: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+		IL_009c: stloc.s 13
+		IL_009e: ldstr "jroc-release-cleanup-"
+		IL_00a3: ldloc.s 13
+		IL_00a5: call string [System.Runtime]System.String::Concat(string, string)
+		IL_00aa: stloc.s 13
+		IL_00ac: ldloc.2
+		IL_00ad: ldstr "join"
+		IL_00b2: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::HasOwnPropertyOverride(object, string)
+		IL_00b7: brtrue IL_00d9
+
+		IL_00bc: ldloc.2
+		IL_00bd: ldc.i4.2
+		IL_00be: newarr [System.Runtime]System.Object
+		IL_00c3: dup
+		IL_00c4: ldc.i4.0
+		IL_00c5: ldloc.s 12
+		IL_00c7: stelem.ref
+		IL_00c8: dup
+		IL_00c9: ldc.i4.1
+		IL_00ca: ldloc.s 13
+		IL_00cc: stelem.ref
+		IL_00cd: callvirt instance string [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IPathModule::join(object[])
+		IL_00d2: stloc.s 5
+		IL_00d4: br IL_00f6
+
+		IL_00d9: ldloc.2
+		IL_00da: ldstr "join"
+		IL_00df: ldc.i4.2
+		IL_00e0: newarr [System.Runtime]System.Object
+		IL_00e5: dup
+		IL_00e6: ldc.i4.0
+		IL_00e7: ldloc.s 12
+		IL_00e9: stelem.ref
+		IL_00ea: dup
+		IL_00eb: ldc.i4.1
+		IL_00ec: ldloc.s 13
+		IL_00ee: stelem.ref
+		IL_00ef: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallOwnPropertyMember(object, string, object[])
+		IL_00f4: stloc.s 5
+
+		IL_00f6: ldloc.2
+		IL_00f7: ldstr "join"
+		IL_00fc: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::HasOwnPropertyOverride(object, string)
+		IL_0101: brtrue IL_0126
+
+		IL_0106: ldloc.2
+		IL_0107: ldc.i4.2
+		IL_0108: newarr [System.Runtime]System.Object
+		IL_010d: dup
+		IL_010e: ldc.i4.0
+		IL_010f: ldloc.s 5
+		IL_0111: stelem.ref
+		IL_0112: dup
+		IL_0113: ldc.i4.1
+		IL_0114: ldstr "pr-body.md"
+		IL_0119: stelem.ref
+		IL_011a: callvirt instance string [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IPathModule::join(object[])
+		IL_011f: stloc.s 6
+		IL_0121: br IL_0146
+
+		IL_0126: ldloc.2
+		IL_0127: ldstr "join"
+		IL_012c: ldc.i4.2
+		IL_012d: newarr [System.Runtime]System.Object
+		IL_0132: dup
+		IL_0133: ldc.i4.0
+		IL_0134: ldloc.s 5
+		IL_0136: stelem.ref
 		IL_0137: dup
-		IL_0138: ldstr "recursive"
-		IL_013d: ldc.i4.1
-		IL_013e: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-		IL_0143: stloc.s 16
-		IL_0145: ldstr "mkdirSync"
-		IL_014a: ldloc.s 5
-		IL_014c: ldloc.s 16
-		IL_014e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_0153: pop
+		IL_0138: ldc.i4.1
+		IL_0139: ldstr "pr-body.md"
+		IL_013e: stelem.ref
+		IL_013f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallOwnPropertyMember(object, string, object[])
+		IL_0144: stloc.s 6
+
+		IL_0146: ldloc.2
+		IL_0147: ldstr "join"
+		IL_014c: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::HasOwnPropertyOverride(object, string)
+		IL_0151: brtrue IL_0176
+
+		IL_0156: ldloc.2
+		IL_0157: ldc.i4.2
+		IL_0158: newarr [System.Runtime]System.Object
+		IL_015d: dup
+		IL_015e: ldc.i4.0
+		IL_015f: ldloc.s 5
+		IL_0161: stelem.ref
+		IL_0162: dup
+		IL_0163: ldc.i4.1
+		IL_0164: ldstr "release-notes.md"
+		IL_0169: stelem.ref
+		IL_016a: callvirt instance string [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IPathModule::join(object[])
+		IL_016f: stloc.s 7
+		IL_0171: br IL_0196
+
+		IL_0176: ldloc.2
+		IL_0177: ldstr "join"
+		IL_017c: ldc.i4.2
+		IL_017d: newarr [System.Runtime]System.Object
+		IL_0182: dup
+		IL_0183: ldc.i4.0
+		IL_0184: ldloc.s 5
+		IL_0186: stelem.ref
+		IL_0187: dup
+		IL_0188: ldc.i4.1
+		IL_0189: ldstr "release-notes.md"
+		IL_018e: stelem.ref
+		IL_018f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallOwnPropertyMember(object, string, object[])
+		IL_0194: stloc.s 7
+
+		IL_0196: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_019b: dup
+		IL_019c: ldstr "recursive"
+		IL_01a1: ldc.i4.1
+		IL_01a2: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+		IL_01a7: dup
+		IL_01a8: ldstr "force"
+		IL_01ad: ldc.i4.1
+		IL_01ae: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+		IL_01b3: stloc.s 15
+		IL_01b5: ldloc.1
+		IL_01b6: ldstr "rmSync"
+		IL_01bb: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::HasOwnPropertyOverride(object, string)
+		IL_01c0: brtrue IL_01d4
+
+		IL_01c5: ldloc.1
+		IL_01c6: ldloc.s 5
+		IL_01c8: ldloc.s 15
+		IL_01ca: callvirt instance void [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule::rmSync(object, object)
+		IL_01cf: br IL_01f0
+
+		IL_01d4: ldloc.1
+		IL_01d5: ldstr "rmSync"
+		IL_01da: ldc.i4.2
+		IL_01db: newarr [System.Runtime]System.Object
+		IL_01e0: dup
+		IL_01e1: ldc.i4.0
+		IL_01e2: ldloc.s 5
+		IL_01e4: stelem.ref
+		IL_01e5: dup
+		IL_01e6: ldc.i4.1
+		IL_01e7: ldloc.s 15
+		IL_01e9: stelem.ref
+		IL_01ea: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallOwnPropertyMember(object, string, object[])
+		IL_01ef: pop
+
+		IL_01f0: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_01f5: dup
+		IL_01f6: ldstr "recursive"
+		IL_01fb: ldc.i4.1
+		IL_01fc: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+		IL_0201: stloc.s 15
+		IL_0203: ldloc.1
+		IL_0204: ldstr "mkdirSync"
+		IL_0209: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::HasOwnPropertyOverride(object, string)
+		IL_020e: brtrue IL_0223
+
+		IL_0213: ldloc.1
+		IL_0214: ldloc.s 5
+		IL_0216: ldloc.s 15
+		IL_0218: callvirt instance object [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule::mkdirSync(object, object)
+		IL_021d: pop
+		IL_021e: br IL_023f
+
+		IL_0223: ldloc.1
+		IL_0224: ldstr "mkdirSync"
+		IL_0229: ldc.i4.2
+		IL_022a: newarr [System.Runtime]System.Object
+		IL_022f: dup
+		IL_0230: ldc.i4.0
+		IL_0231: ldloc.s 5
+		IL_0233: stelem.ref
+		IL_0234: dup
+		IL_0235: ldc.i4.1
+		IL_0236: ldloc.s 15
+		IL_0238: stelem.ref
+		IL_0239: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallOwnPropertyMember(object, string, object[])
+		IL_023e: pop
 		.try
 		{
-			IL_0154: nop
-			IL_0155: ldloc.1
-			IL_0156: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_015b: ldstr "writeFileSync"
-			IL_0160: ldloc.s 6
-			IL_0162: ldstr "Patch release body"
-			IL_0167: ldstr "utf8"
-			IL_016c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember3(object, string, object, object, object)
-			IL_0171: pop
-			IL_0172: ldloc.1
-			IL_0173: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0178: ldstr "writeFileSync"
-			IL_017d: ldloc.s 7
-			IL_017f: ldstr "# Release notes"
-			IL_0184: ldstr "utf8"
-			IL_0189: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember3(object, string, object, object, object)
-			IL_018e: pop
-			IL_018f: ldstr "console"
-			IL_0194: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_0199: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_019e: stloc.s 15
-			IL_01a0: ldloc.1
-			IL_01a1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_01a6: ldstr "existsSync"
-			IL_01ab: ldloc.s 6
-			IL_01ad: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_01b2: stloc.s 12
-			IL_01b4: ldloc.1
-			IL_01b5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_01ba: ldstr "existsSync"
-			IL_01bf: ldloc.s 7
-			IL_01c1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_01c6: stloc.s 17
-			IL_01c8: ldloc.s 15
-			IL_01ca: ldstr "log"
-			IL_01cf: ldstr "Before:"
-			IL_01d4: ldloc.s 12
-			IL_01d6: ldloc.s 17
-			IL_01d8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember3(object, string, object, object, object)
-			IL_01dd: pop
-			IL_01de: ldloc.1
-			IL_01df: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_01e4: ldstr "unlinkSync"
-			IL_01e9: ldloc.s 6
-			IL_01eb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_01f0: pop
-			IL_01f1: ldloc.1
-			IL_01f2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_01f7: ldstr "unlinkSync"
-			IL_01fc: ldloc.s 7
-			IL_01fe: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_0203: pop
-			IL_0204: ldstr "console"
-			IL_0209: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_020e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0213: stloc.s 17
-			IL_0215: ldloc.1
-			IL_0216: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_021b: ldstr "existsSync"
-			IL_0220: ldloc.s 6
-			IL_0222: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_0227: stloc.s 12
-			IL_0229: ldloc.1
-			IL_022a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_022f: ldstr "existsSync"
-			IL_0234: ldloc.s 7
-			IL_0236: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_023b: stloc.s 15
-			IL_023d: ldloc.s 17
-			IL_023f: ldstr "log"
-			IL_0244: ldstr "After:"
-			IL_0249: ldloc.s 12
-			IL_024b: ldloc.s 15
-			IL_024d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember3(object, string, object, object, object)
-			IL_0252: pop
+			IL_023f: nop
+			IL_0240: ldloc.1
+			IL_0241: ldstr "writeFileSync"
+			IL_0246: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::HasOwnPropertyOverride(object, string)
+			IL_024b: brtrue IL_0267
+
+			IL_0250: ldloc.1
+			IL_0251: ldloc.s 6
+			IL_0253: ldstr "Patch release body"
+			IL_0258: ldstr "utf8"
+			IL_025d: callvirt instance void [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule::writeFileSync(object, object, object)
+			IL_0262: br IL_028e
+
+			IL_0267: ldloc.1
+			IL_0268: ldstr "writeFileSync"
+			IL_026d: ldc.i4.3
+			IL_026e: newarr [System.Runtime]System.Object
+			IL_0273: dup
+			IL_0274: ldc.i4.0
+			IL_0275: ldloc.s 6
+			IL_0277: stelem.ref
+			IL_0278: dup
+			IL_0279: ldc.i4.1
+			IL_027a: ldstr "Patch release body"
+			IL_027f: stelem.ref
+			IL_0280: dup
+			IL_0281: ldc.i4.2
+			IL_0282: ldstr "utf8"
+			IL_0287: stelem.ref
+			IL_0288: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallOwnPropertyMember(object, string, object[])
+			IL_028d: pop
+
+			IL_028e: ldloc.1
+			IL_028f: ldstr "writeFileSync"
+			IL_0294: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::HasOwnPropertyOverride(object, string)
+			IL_0299: brtrue IL_02b5
+
+			IL_029e: ldloc.1
+			IL_029f: ldloc.s 7
+			IL_02a1: ldstr "# Release notes"
+			IL_02a6: ldstr "utf8"
+			IL_02ab: callvirt instance void [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule::writeFileSync(object, object, object)
+			IL_02b0: br IL_02dc
+
+			IL_02b5: ldloc.1
+			IL_02b6: ldstr "writeFileSync"
+			IL_02bb: ldc.i4.3
+			IL_02bc: newarr [System.Runtime]System.Object
+			IL_02c1: dup
+			IL_02c2: ldc.i4.0
+			IL_02c3: ldloc.s 7
+			IL_02c5: stelem.ref
+			IL_02c6: dup
+			IL_02c7: ldc.i4.1
+			IL_02c8: ldstr "# Release notes"
+			IL_02cd: stelem.ref
+			IL_02ce: dup
+			IL_02cf: ldc.i4.2
+			IL_02d0: ldstr "utf8"
+			IL_02d5: stelem.ref
+			IL_02d6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallOwnPropertyMember(object, string, object[])
+			IL_02db: pop
+
+			IL_02dc: ldstr "console"
+			IL_02e1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_02e6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_02eb: stloc.s 12
+			IL_02ed: ldloc.1
+			IL_02ee: ldstr "existsSync"
+			IL_02f3: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::HasOwnPropertyOverride(object, string)
+			IL_02f8: brtrue IL_0311
+
+			IL_02fd: ldloc.1
+			IL_02fe: ldloc.s 6
+			IL_0300: callvirt instance bool [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule::existsSync(object)
+			IL_0305: box [System.Runtime]System.Boolean
+			IL_030a: stloc.s 16
+			IL_030c: br IL_0329
+
+			IL_0311: ldloc.1
+			IL_0312: ldstr "existsSync"
+			IL_0317: ldc.i4.1
+			IL_0318: newarr [System.Runtime]System.Object
+			IL_031d: dup
+			IL_031e: ldc.i4.0
+			IL_031f: ldloc.s 6
+			IL_0321: stelem.ref
+			IL_0322: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallOwnPropertyMember(object, string, object[])
+			IL_0327: stloc.s 16
+
+			IL_0329: ldloc.1
+			IL_032a: ldstr "existsSync"
+			IL_032f: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::HasOwnPropertyOverride(object, string)
+			IL_0334: brtrue IL_034d
+
+			IL_0339: ldloc.1
+			IL_033a: ldloc.s 7
+			IL_033c: callvirt instance bool [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule::existsSync(object)
+			IL_0341: box [System.Runtime]System.Boolean
+			IL_0346: stloc.s 17
+			IL_0348: br IL_0365
+
+			IL_034d: ldloc.1
+			IL_034e: ldstr "existsSync"
+			IL_0353: ldc.i4.1
+			IL_0354: newarr [System.Runtime]System.Object
+			IL_0359: dup
+			IL_035a: ldc.i4.0
+			IL_035b: ldloc.s 7
+			IL_035d: stelem.ref
+			IL_035e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallOwnPropertyMember(object, string, object[])
+			IL_0363: stloc.s 17
+
+			IL_0365: ldloc.s 12
+			IL_0367: ldstr "log"
+			IL_036c: ldstr "Before:"
+			IL_0371: ldloc.s 16
+			IL_0373: ldloc.s 17
+			IL_0375: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember3(object, string, object, object, object)
+			IL_037a: pop
+			IL_037b: ldloc.1
+			IL_037c: ldstr "unlinkSync"
+			IL_0381: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::HasOwnPropertyOverride(object, string)
+			IL_0386: brtrue IL_0398
+
+			IL_038b: ldloc.1
+			IL_038c: ldloc.s 6
+			IL_038e: callvirt instance void [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule::unlinkSync(object)
+			IL_0393: br IL_03af
+
+			IL_0398: ldloc.1
+			IL_0399: ldstr "unlinkSync"
+			IL_039e: ldc.i4.1
+			IL_039f: newarr [System.Runtime]System.Object
+			IL_03a4: dup
+			IL_03a5: ldc.i4.0
+			IL_03a6: ldloc.s 6
+			IL_03a8: stelem.ref
+			IL_03a9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallOwnPropertyMember(object, string, object[])
+			IL_03ae: pop
+
+			IL_03af: ldloc.1
+			IL_03b0: ldstr "unlinkSync"
+			IL_03b5: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::HasOwnPropertyOverride(object, string)
+			IL_03ba: brtrue IL_03cc
+
+			IL_03bf: ldloc.1
+			IL_03c0: ldloc.s 7
+			IL_03c2: callvirt instance void [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule::unlinkSync(object)
+			IL_03c7: br IL_03e3
+
+			IL_03cc: ldloc.1
+			IL_03cd: ldstr "unlinkSync"
+			IL_03d2: ldc.i4.1
+			IL_03d3: newarr [System.Runtime]System.Object
+			IL_03d8: dup
+			IL_03d9: ldc.i4.0
+			IL_03da: ldloc.s 7
+			IL_03dc: stelem.ref
+			IL_03dd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallOwnPropertyMember(object, string, object[])
+			IL_03e2: pop
+
+			IL_03e3: ldstr "console"
+			IL_03e8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_03ed: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_03f2: stloc.s 17
+			IL_03f4: ldloc.1
+			IL_03f5: ldstr "existsSync"
+			IL_03fa: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::HasOwnPropertyOverride(object, string)
+			IL_03ff: brtrue IL_0418
+
+			IL_0404: ldloc.1
+			IL_0405: ldloc.s 6
+			IL_0407: callvirt instance bool [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule::existsSync(object)
+			IL_040c: box [System.Runtime]System.Boolean
+			IL_0411: stloc.s 16
+			IL_0413: br IL_0430
+
+			IL_0418: ldloc.1
+			IL_0419: ldstr "existsSync"
+			IL_041e: ldc.i4.1
+			IL_041f: newarr [System.Runtime]System.Object
+			IL_0424: dup
+			IL_0425: ldc.i4.0
+			IL_0426: ldloc.s 6
+			IL_0428: stelem.ref
+			IL_0429: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallOwnPropertyMember(object, string, object[])
+			IL_042e: stloc.s 16
+
+			IL_0430: ldloc.1
+			IL_0431: ldstr "existsSync"
+			IL_0436: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::HasOwnPropertyOverride(object, string)
+			IL_043b: brtrue IL_0454
+
+			IL_0440: ldloc.1
+			IL_0441: ldloc.s 7
+			IL_0443: callvirt instance bool [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule::existsSync(object)
+			IL_0448: box [System.Runtime]System.Boolean
+			IL_044d: stloc.s 12
+			IL_044f: br IL_046c
+
+			IL_0454: ldloc.1
+			IL_0455: ldstr "existsSync"
+			IL_045a: ldc.i4.1
+			IL_045b: newarr [System.Runtime]System.Object
+			IL_0460: dup
+			IL_0461: ldc.i4.0
+			IL_0462: ldloc.s 7
+			IL_0464: stelem.ref
+			IL_0465: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallOwnPropertyMember(object, string, object[])
+			IL_046a: stloc.s 12
+
+			IL_046c: ldloc.s 17
+			IL_046e: ldstr "log"
+			IL_0473: ldstr "After:"
+			IL_0478: ldloc.s 16
+			IL_047a: ldloc.s 12
+			IL_047c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember3(object, string, object, object, object)
+			IL_0481: pop
 			.try
 			{
-				IL_0253: nop
-				IL_0254: ldloc.1
-				IL_0255: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_025a: ldstr "unlinkSync"
-				IL_025f: ldloc.s 6
-				IL_0261: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-				IL_0266: pop
-				IL_0267: leave IL_0316
+				IL_0482: nop
+				IL_0483: ldloc.1
+				IL_0484: ldstr "unlinkSync"
+				IL_0489: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::HasOwnPropertyOverride(object, string)
+				IL_048e: brtrue IL_04a0
+
+				IL_0493: ldloc.1
+				IL_0494: ldloc.s 6
+				IL_0496: callvirt instance void [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule::unlinkSync(object)
+				IL_049b: br IL_04b7
+
+				IL_04a0: ldloc.1
+				IL_04a1: ldstr "unlinkSync"
+				IL_04a6: ldc.i4.1
+				IL_04a7: newarr [System.Runtime]System.Object
+				IL_04ac: dup
+				IL_04ad: ldc.i4.0
+				IL_04ae: ldloc.s 6
+				IL_04b0: stelem.ref
+				IL_04b1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallOwnPropertyMember(object, string, object[])
+				IL_04b6: pop
+
+				IL_04b7: leave IL_0566
 			} // end .try
 			catch [System.Runtime]System.Exception
 			{
-				IL_026c: stloc.s 8
-				IL_026e: ldloc.s 8
-				IL_0270: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-				IL_0275: dup
-				IL_0276: brtrue IL_028c
+				IL_04bc: stloc.s 8
+				IL_04be: ldloc.s 8
+				IL_04c0: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+				IL_04c5: dup
+				IL_04c6: brtrue IL_04dc
 
-				IL_027b: pop
-				IL_027c: ldloc.s 8
-				IL_027e: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
-				IL_0283: dup
-				IL_0284: brtrue IL_0298
+				IL_04cb: pop
+				IL_04cc: ldloc.s 8
+				IL_04ce: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+				IL_04d3: dup
+				IL_04d4: brtrue IL_04e8
 
-				IL_0289: pop
-				IL_028a: rethrow
+				IL_04d9: pop
+				IL_04da: rethrow
 
-				IL_028c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-				IL_0291: stloc.s 9
-				IL_0293: br IL_029a
+				IL_04dc: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+				IL_04e1: stloc.s 9
+				IL_04e3: br IL_04ea
 
-				IL_0298: stloc.s 9
+				IL_04e8: stloc.s 9
 
-				IL_029a: ldloc.s 9
-				IL_029c: stloc.s 10
-				IL_029e: ldstr "console"
-				IL_02a3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-				IL_02a8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_02ad: stloc.s 15
-				IL_02af: ldloc.s 10
-				IL_02b1: ldstr "message"
-				IL_02b6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-				IL_02bb: stloc.s 12
-				IL_02bd: ldloc.s 12
-				IL_02bf: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_02c4: ldstr "includes"
-				IL_02c9: ldstr "ENOENT:"
-				IL_02ce: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-				IL_02d3: stloc.s 12
-				IL_02d5: ldloc.s 10
-				IL_02d7: ldstr "message"
-				IL_02dc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-				IL_02e1: stloc.s 17
-				IL_02e3: ldloc.s 17
-				IL_02e5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_02ea: ldstr "includes"
-				IL_02ef: ldstr "pr-body.md"
-				IL_02f4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-				IL_02f9: stloc.s 17
-				IL_02fb: ldloc.s 15
-				IL_02fd: ldstr "log"
-				IL_0302: ldstr "MissingError:"
-				IL_0307: ldloc.s 12
-				IL_0309: ldloc.s 17
-				IL_030b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember3(object, string, object, object, object)
-				IL_0310: pop
-				IL_0311: leave IL_0316
+				IL_04ea: ldloc.s 9
+				IL_04ec: stloc.s 10
+				IL_04ee: ldstr "console"
+				IL_04f3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+				IL_04f8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_04fd: stloc.s 12
+				IL_04ff: ldloc.s 10
+				IL_0501: ldstr "message"
+				IL_0506: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+				IL_050b: stloc.s 16
+				IL_050d: ldloc.s 16
+				IL_050f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_0514: ldstr "includes"
+				IL_0519: ldstr "ENOENT:"
+				IL_051e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+				IL_0523: stloc.s 16
+				IL_0525: ldloc.s 10
+				IL_0527: ldstr "message"
+				IL_052c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+				IL_0531: stloc.s 17
+				IL_0533: ldloc.s 17
+				IL_0535: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_053a: ldstr "includes"
+				IL_053f: ldstr "pr-body.md"
+				IL_0544: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+				IL_0549: stloc.s 17
+				IL_054b: ldloc.s 12
+				IL_054d: ldstr "log"
+				IL_0552: ldstr "MissingError:"
+				IL_0557: ldloc.s 16
+				IL_0559: ldloc.s 17
+				IL_055b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember3(object, string, object, object, object)
+				IL_0560: pop
+				IL_0561: leave IL_0566
 			} // end handler
 
-			IL_0316: leave IL_0350
+			IL_0566: leave IL_05c6
 		} // end .try
 		finally
 		{
-			IL_031b: ldloc.1
-			IL_031c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0321: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-			IL_0326: dup
-			IL_0327: ldstr "recursive"
-			IL_032c: ldc.i4.1
-			IL_032d: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-			IL_0332: dup
-			IL_0333: ldstr "force"
-			IL_0338: ldc.i4.1
-			IL_0339: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-			IL_033e: stloc.s 16
-			IL_0340: ldstr "rmSync"
-			IL_0345: ldloc.s 5
-			IL_0347: ldloc.s 16
-			IL_0349: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-			IL_034e: pop
-			IL_034f: endfinally
+			IL_056b: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+			IL_0570: dup
+			IL_0571: ldstr "recursive"
+			IL_0576: ldc.i4.1
+			IL_0577: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+			IL_057c: dup
+			IL_057d: ldstr "force"
+			IL_0582: ldc.i4.1
+			IL_0583: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+			IL_0588: stloc.s 15
+			IL_058a: ldloc.1
+			IL_058b: ldstr "rmSync"
+			IL_0590: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::HasOwnPropertyOverride(object, string)
+			IL_0595: brtrue IL_05a9
+
+			IL_059a: ldloc.1
+			IL_059b: ldloc.s 5
+			IL_059d: ldloc.s 15
+			IL_059f: callvirt instance void [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule::rmSync(object, object)
+			IL_05a4: br IL_05c5
+
+			IL_05a9: ldloc.1
+			IL_05aa: ldstr "rmSync"
+			IL_05af: ldc.i4.2
+			IL_05b0: newarr [System.Runtime]System.Object
+			IL_05b5: dup
+			IL_05b6: ldc.i4.0
+			IL_05b7: ldloc.s 5
+			IL_05b9: stelem.ref
+			IL_05ba: dup
+			IL_05bb: ldc.i4.1
+			IL_05bc: ldloc.s 15
+			IL_05be: stelem.ref
+			IL_05bf: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallOwnPropertyMember(object, string, object[])
+			IL_05c4: pop
+
+			IL_05c5: endfinally
 		} // end handler
 
-		IL_0350: ldnull
-		IL_0351: stloc.s 11
-		IL_0353: ret
+		IL_05c6: ldnull
+		IL_05c7: stloc.s 11
+		IL_05c9: ret
 	} // end of method FS_UnlinkSync_ReleaseCleanup::__js_module_init__
 
 } // end of class Modules.FS_UnlinkSync_ReleaseCleanup
@@ -435,7 +733,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2411
+		// Method begins at RVA 0x2689
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

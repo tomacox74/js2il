@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x211f
+				// Method begins at RVA 0x2157
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -48,22 +48,54 @@
 			)
 			// Method begins at RVA 0x20f0
 			// Header size: 12
-			// Code size: 26 (0x1a)
+			// Code size: 82 (0x52)
 			.maxstack 8
 			.locals init (
-				[0] object
+				[0] class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IPathModule,
+				[1] object
 			)
 
 			IL_0000: ldarg.0
 			IL_0001: ldfld object Modules.Require_Path_Join_NestedFunction/Scope::path
-			IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_000b: ldstr "join"
-			IL_0010: ldarg.2
-			IL_0011: ldarg.3
-			IL_0012: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-			IL_0017: stloc.0
-			IL_0018: ldloc.0
-			IL_0019: ret
+			IL_0006: castclass [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IPathModule
+			IL_000b: stloc.0
+			IL_000c: ldloc.0
+			IL_000d: ldstr "join"
+			IL_0012: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::HasOwnPropertyOverride(object, string)
+			IL_0017: brtrue IL_0036
+
+			IL_001c: ldloc.0
+			IL_001d: ldc.i4.2
+			IL_001e: newarr [System.Runtime]System.Object
+			IL_0023: dup
+			IL_0024: ldc.i4.0
+			IL_0025: ldarg.2
+			IL_0026: stelem.ref
+			IL_0027: dup
+			IL_0028: ldc.i4.1
+			IL_0029: ldarg.3
+			IL_002a: stelem.ref
+			IL_002b: callvirt instance string [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IPathModule::join(object[])
+			IL_0030: stloc.1
+			IL_0031: br IL_0050
+
+			IL_0036: ldloc.0
+			IL_0037: ldstr "join"
+			IL_003c: ldc.i4.2
+			IL_003d: newarr [System.Runtime]System.Object
+			IL_0042: dup
+			IL_0043: ldc.i4.0
+			IL_0044: ldarg.2
+			IL_0045: stelem.ref
+			IL_0046: dup
+			IL_0047: ldc.i4.1
+			IL_0048: ldarg.3
+			IL_0049: stelem.ref
+			IL_004a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallOwnPropertyMember(object, string, object[])
+			IL_004f: stloc.1
+
+			IL_0050: ldloc.1
+			IL_0051: ret
 		} // end of method joinWrapper::__js_call__
 
 	} // end of class joinWrapper
@@ -84,7 +116,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2116
+			// Method begins at RVA 0x214e
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -110,14 +142,15 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 145 (0x91)
+		// Code size: 147 (0x93)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Require_Path_Join_NestedFunction/Scope,
 			[1] class [System.Runtime]System.Func`4<object, string, string, object>,
 			[2] object,
-			[3] object,
-			[4] object[]
+			[3] class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IPathModule,
+			[4] object[],
+			[5] object
 		)
 
 		IL_0000: newobj instance void Modules.Require_Path_Join_NestedFunction/Scope::.ctor()
@@ -137,7 +170,7 @@
 		IL_002b: nop
 		IL_002c: ldarg.1
 		IL_002d: ldstr "path"
-		IL_0032: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
+		IL_0032: call !!0 [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireRuntime::RequireObject<class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IPathModule>(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object)
 		IL_0037: stloc.3
 		IL_0038: ldloc.0
 		IL_0039: ldloc.3
@@ -150,22 +183,22 @@
 		IL_004a: ldstr "a"
 		IL_004f: ldstr "b"
 		IL_0054: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
-		IL_0059: stloc.3
-		IL_005a: ldloc.3
-		IL_005b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0060: ldstr "replace"
-		IL_0065: ldstr "\\"
-		IL_006a: ldstr "/"
-		IL_006f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_0074: stloc.2
-		IL_0075: ldstr "console"
-		IL_007a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_007f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0084: ldstr "log"
-		IL_0089: ldloc.2
-		IL_008a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_008f: pop
-		IL_0090: ret
+		IL_0059: stloc.s 5
+		IL_005b: ldloc.s 5
+		IL_005d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0062: ldstr "replace"
+		IL_0067: ldstr "\\"
+		IL_006c: ldstr "/"
+		IL_0071: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_0076: stloc.2
+		IL_0077: ldstr "console"
+		IL_007c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0081: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0086: ldstr "log"
+		IL_008b: ldloc.2
+		IL_008c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0091: pop
+		IL_0092: ret
 	} // end of method Require_Path_Join_NestedFunction::__js_module_init__
 
 } // end of class Modules.Require_Path_Join_NestedFunction
@@ -177,7 +210,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2128
+		// Method begins at RVA 0x2160
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

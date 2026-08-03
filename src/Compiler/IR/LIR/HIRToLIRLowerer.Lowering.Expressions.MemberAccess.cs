@@ -188,6 +188,33 @@ public sealed partial class HIRToLIRLowerer
             return false;
         }
 
+        var nodeContractType = TryGetNodeModuleContractType(GetTempStorage(objectTemp).ClrType);
+        if (nodeContractType == null
+            && propAccessExpr.Object is HIRVariableExpression contractReceiver
+            && contractReceiver.Name.BindingInfo.IsStableType)
+        {
+            nodeContractType = TryGetNodeModuleContractType(contractReceiver.Name.BindingInfo.ClrType);
+        }
+
+        if (nodeContractType != null
+            && TryResolveNodeModuleContractProperty(
+                nodeContractType,
+                propAccessExpr.PropertyName,
+                out var getterName,
+                out _))
+        {
+            _methodBodyIR.Instructions.Add(new LIRCallNodeModuleContractMember(
+                objectTemp,
+                nodeContractType,
+                getterName,
+                propAccessExpr.PropertyName,
+                IsPropertyGet: true,
+                Array.Empty<TempVariable>(),
+                resultTempVar));
+            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            return true;
+        }
+
         // Length is only safe to intrinsic-lower when the receiver's length semantics are fixed
         // and always numeric. Arguments objects and plain objects expose length as normal
         // configurable properties, so they must use generic property access to preserve cases

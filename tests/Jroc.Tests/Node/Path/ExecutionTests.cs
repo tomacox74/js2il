@@ -12,6 +12,14 @@ namespace Jroc.Tests.Node.Path
             => ExecutionTest(nameof(Require_Path_Join_Basic));
 
         [Fact]
+        public Task Require_NodePath_Join_Basic()
+            => ExecutionTest(nameof(Require_NodePath_Join_Basic));
+
+        [Fact]
+        public Task Require_Path_MemberOverrides()
+            => ExecutionTest(nameof(Require_Path_MemberOverrides));
+
+        [Fact]
         public Task Require_Path_Join_NestedFunction()
             => ExecutionTest(nameof(Require_Path_Join_NestedFunction));
 

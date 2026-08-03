@@ -148,9 +148,14 @@ public record LIRCallFunctionValue3(TempVariable FunctionValue, TempVariable Sco
 /// which does not take the standard jroc <c>scopes</c> array. For performance, this call is emitted as a direct
 /// delegate invocation instead of going through <see cref="JavaScriptRuntime.Closure.InvokeWithArgs"/>.
 ///
-/// Emits: castclass RequireDelegate; callvirt RequireDelegate::Invoke
+/// Emits either RequireDelegate::Invoke for dynamic requires or
+/// RequireRuntime::RequireObject&lt;T&gt; for a literal Node module with a generated contract.
 /// </summary>
-public record LIRCallRequire(TempVariable RequireValue, TempVariable ModuleId, TempVariable Result) : LIRInstruction;
+public record LIRCallRequire(
+    TempVariable RequireValue,
+    TempVariable ModuleId,
+    TempVariable Result,
+    Type? ContractType = null) : LIRInstruction;
 
 /// <summary>
 /// Calls the runtime dynamic import function to load a module and return a Promise.
@@ -190,6 +195,19 @@ public record LIRCallMember2(TempVariable Receiver, string MethodName, TempVaria
 /// Emits: call JavaScriptRuntime.ObjectRuntime.CallMember3(object receiver, string methodName, object a0, object a1, object a2)
 /// </summary>
 public record LIRCallMember3(TempVariable Receiver, string MethodName, TempVariable A0, TempVariable A1, TempVariable A2, TempVariable Result) : LIRInstruction;
+
+/// <summary>
+/// Calls a generated Node module contract member directly unless JavaScript has
+/// installed an own-property override, in which case normal runtime dispatch is used.
+/// </summary>
+public record LIRCallNodeModuleContractMember(
+    TempVariable Receiver,
+    Type ContractType,
+    string ClrMethodName,
+    string JavaScriptMemberName,
+    bool IsPropertyGet,
+    IReadOnlyList<TempVariable> Arguments,
+    TempVariable Result) : LIRInstruction;
 
 /// <summary>
 /// Calls a uniquely-resolved user-defined class instance method on a receiver value.

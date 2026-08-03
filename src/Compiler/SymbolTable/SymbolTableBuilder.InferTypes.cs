@@ -2908,6 +2908,19 @@ public partial class SymbolTableBuilder
             }
             case CallExpression ce:
             {
+                if (ce.Callee is Identifier { Name: "require" }
+                    && scope != null
+                    && TryResolveBinding(scope, "require") is { } requireBinding
+                    && requireBinding.DeclaringScope.Kind == ScopeKind.Global
+                    && requireBinding.DeclaringScope.Parameters.Contains("require")
+                    && ReferenceEquals(requireBinding.DeclarationNode, requireBinding.DeclaringScope.AstNode)
+                    && !requireBinding.HasWrite
+                    && ce.Arguments.Count == 1
+                    && ce.Arguments[0] is Literal { Value: string moduleSpecifier })
+                {
+                    return ResolveNodeModuleType(NormalizeModuleName(moduleSpecifier));
+                }
+
                 // Direct call to a known function declaration/expression binding.
                 // If the callee has a stable inferred return type, propagate it to this expression.
                 if (ce.Callee is Identifier calleeId && scope != null)

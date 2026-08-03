@@ -28,6 +28,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   and an explicit fallback for the unavailable `matchesGlob` method. Align
   intrinsic join, basename, dirname, normalize, parse, and format edge behavior
   with Node.js.
+- compiler/runtime: strongly type literal CommonJS requires for generated Node
+  module contracts. Calls such as `require("fs").readFileSync(...)` now use
+  `RequireObject<IFsModule>` and direct interface dispatch, including typed
+  parameters, contract properties, overloads, rest arguments, and `node:`
+  aliases; dynamic and non-contract requires retain the existing dispatcher.
 
 ## v0.12.1 - 2026-08-02
 
