@@ -32,6 +32,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   pinned official Node.js 24.18.1 documentation. Bind all seven implemented
   top-level process-creation functions directly through generated adapters and
   retain an explicit fallback for the unavailable exported constructor.
+- sdk/runtime: add a generated `node:perf_hooks` host contract from the pinned
+  official Node.js 24.18.1 documentation. Bind the implemented `performance`
+  export directly and retain explicit fallbacks for unavailable functions and
+  constructors.
 - compiler/runtime: strongly type literal CommonJS requires for generated Node
   module contracts. Calls such as `require("fs").readFileSync(...)` now use
   `RequireObject<IFsModule>` and direct interface dispatch, including typed

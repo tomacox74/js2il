@@ -51,6 +51,14 @@ npm run check:node-contract-child-process
 npm run test:node-contract-child-process
 ```
 
+For `node:perf_hooks`:
+
+```sh
+npm run generate:node-contract-perf-hooks
+npm run check:node-contract-perf-hooks
+npm run test:node-contract-perf-hooks
+```
+
 The checked-in override files record which contract members each intrinsic
 module currently implements and how each implementation is invoked. The
 generated intrinsic adapters use compile-time-bound calls for those members

@@ -5,7 +5,7 @@ namespace JavaScriptRuntime.Node
 {
     // Minimal perf_hooks module exposing performance.now()
     [NodeModule("perf_hooks")]
-    public sealed class PerfHooks
+    public sealed partial class PerfHooks
     {
         private readonly Performance _performance = new Performance();
         public Performance performance => _performance;
