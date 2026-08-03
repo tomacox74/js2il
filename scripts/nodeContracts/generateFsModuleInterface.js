@@ -44,6 +44,11 @@ const intrinsicImplementationOutputPath = path.join(
 
 const lock = JSON.parse(fs.readFileSync(lockPath, 'utf8'));
 const overrides = JSON.parse(fs.readFileSync(overridesPath, 'utf8'));
+const generatorSource = fs.readFileSync(__filename, 'utf8').replaceAll('\r\n', '\n');
+const generatorSha256 = crypto
+    .createHash('sha256')
+    .update(generatorSource)
+    .digest('hex');
 const checkOnly = args.includes('--check');
 const inputIndex = args.indexOf('--input');
 const inputPath = inputIndex >= 0 ? args[inputIndex + 1] : null;
@@ -445,7 +450,7 @@ function generateInterface(documentation) {
         '/// Nested option, result, and handle contracts intentionally remain dynamic in this proof of concept.',
         '/// They will be strongly typed by the work tracked in GitHub issue #1660.',
         '/// </remarks>',
-        '[global::System.CodeDom.Compiler.GeneratedCode("generateFsModuleInterface.js", "1.0.0")]',
+        `[global::System.CodeDom.Compiler.GeneratedCode("generateFsModuleInterface.js", "sha256:${generatorSha256}")]`,
         `[NodeModuleInterface("${contract.moduleSpecifier}")]`,
         `public interface ${contract.interfaceName}`,
         '{',

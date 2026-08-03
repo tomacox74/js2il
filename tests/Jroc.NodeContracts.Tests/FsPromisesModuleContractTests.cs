@@ -17,7 +17,10 @@ public class FsPromisesModuleContractTests
         Assert.Equal(
             "fs/promises",
             contractType.GetCustomAttribute<NodeModuleInterfaceAttribute>()?.ModuleName);
-        Assert.NotNull(contractType.GetCustomAttribute<GeneratedCodeAttribute>());
+        var generatedCode = contractType.GetCustomAttribute<GeneratedCodeAttribute>();
+        Assert.NotNull(generatedCode);
+        Assert.Equal("generateFsModuleInterface.js", generatedCode.Tool);
+        Assert.Matches("^sha256:[0-9a-f]{64}$", generatedCode.Version);
         Assert.Equal(
             "constants",
             contractType.GetProperty("constants")

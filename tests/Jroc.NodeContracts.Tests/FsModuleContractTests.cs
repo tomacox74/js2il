@@ -36,7 +36,10 @@ public class FsModuleContractTests
         Assert.Equal(
             "fs",
             contractType.GetCustomAttribute<NodeModuleInterfaceAttribute>()?.ModuleName);
-        Assert.NotNull(contractType.GetCustomAttribute<GeneratedCodeAttribute>());
+        var generatedCode = contractType.GetCustomAttribute<GeneratedCodeAttribute>();
+        Assert.NotNull(generatedCode);
+        Assert.Equal("generateFsModuleInterface.js", generatedCode.Tool);
+        Assert.Matches("^sha256:[0-9a-f]{64}$", generatedCode.Version);
 
         var deprecatedConstant = contractType.GetProperty("F_OK");
         Assert.Equal(typeof(double), deprecatedConstant?.PropertyType);
