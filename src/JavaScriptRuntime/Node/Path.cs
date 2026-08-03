@@ -6,7 +6,7 @@ namespace JavaScriptRuntime.Node
 {
     // Minimal path module as a stable class: join(...)
     [NodeModule("path")]
-    public sealed class Path
+    public sealed partial class Path
     {
         private static readonly VariantPath _posix = VariantPath.Posix;
         private static readonly VariantPath _win32 = VariantPath.Win32;
@@ -18,25 +18,9 @@ namespace JavaScriptRuntime.Node
         public string sep => System.IO.Path.DirectorySeparatorChar.ToString();
         public string delimiter => System.IO.Path.PathSeparator.ToString();
 
-        public string join(params object[] parts)
+        public string join(params object?[] parts)
         {
-            var strings = System.Array.ConvertAll(parts ?? System.Array.Empty<object>(), p => p?.ToString() ?? string.Empty);
-
-            if (strings.Length == 0)
-            {
-                // Node: path.join() with no args returns ".".
-                return ".";
-            }
-
-            // Node's path.join concatenates and then normalizes '.', '..', and duplicate separators.
-            // System.IO.Path.Combine does not normalize ".." segments, so we normalize after combining.
-            var combined = strings[0] ?? string.Empty;
-            for (int i = 1; i < strings.Length; i++)
-            {
-                combined = System.IO.Path.Combine(combined, strings[i] ?? string.Empty);
-            }
-
-            return Normalize(combined);
+            return (OperatingSystem.IsWindows() ? _win32 : _posix).join(parts);
         }
 
         private static string Normalize(string path)
@@ -85,15 +69,23 @@ namespace JavaScriptRuntime.Node
             }
 
             var joined = string.Join(sep, stack);
+            string normalized;
             if (rooted)
             {
-                return joined.Length == 0 ? root : root + joined;
+                normalized = joined.Length == 0 ? root : root + joined;
+            }
+            else
+            {
+                normalized = joined.Length == 0 ? "." : joined;
             }
 
-            return joined.Length == 0 ? "." : joined;
+            var hadTrailingSeparator = path.EndsWith(sep) || path.EndsWith(alt);
+            return hadTrailingSeparator && !normalized.EndsWith(sep)
+                ? normalized + sep
+                : normalized;
         }
 
-        public string resolve(params object[] parts)
+        public string resolve(params object?[] parts)
         {
             // Node's path.resolve resolves from right to left until an absolute path is constructed,
             // then normalizes. For our minimal needs in docs generation, combining and full-normalizing is sufficient.
@@ -134,7 +126,7 @@ namespace JavaScriptRuntime.Node
 
         public string basename(object path, object? ext = null)
         {
-            var p = path?.ToString() ?? string.Empty;
+            var p = TrimEndingSeparators(path?.ToString() ?? string.Empty);
             var name = System.IO.Path.GetFileName(p);
             if (ext is string es && es.Length > 0 && name.EndsWith(es, StringComparison.Ordinal))
             {
@@ -146,14 +138,21 @@ namespace JavaScriptRuntime.Node
         // Overload without extension argument to support dynamic invocation sites that provide only one argument.
         public string basename(object path)
         {
-            var p = path?.ToString() ?? string.Empty;
+            var p = TrimEndingSeparators(path?.ToString() ?? string.Empty);
             return System.IO.Path.GetFileName(p);
         }
 
         public string dirname(object path)
         {
-            var p = path?.ToString() ?? string.Empty;
-            return System.IO.Path.GetDirectoryName(p) ?? string.Empty;
+            var p = TrimEndingSeparators(path?.ToString() ?? string.Empty);
+            var root = System.IO.Path.GetPathRoot(p) ?? string.Empty;
+            if (p == root)
+            {
+                return root;
+            }
+
+            var directory = System.IO.Path.GetDirectoryName(p);
+            return string.IsNullOrEmpty(directory) ? "." : directory;
         }
 
         public string extname(object path)
@@ -202,9 +201,11 @@ namespace JavaScriptRuntime.Node
 
         public object parse(object path)
         {
-            var p = path?.ToString() ?? string.Empty;
+            var p = TrimEndingSeparators(path?.ToString() ?? string.Empty);
             var root = System.IO.Path.GetPathRoot(p) ?? string.Empty;
-            var dir = System.IO.Path.GetDirectoryName(p) ?? string.Empty;
+            var dir = p == root
+                ? root
+                : System.IO.Path.GetDirectoryName(p) ?? string.Empty;
             var baseName = System.IO.Path.GetFileName(p);
             var ext = extname(p);
             var name = baseName;
@@ -224,6 +225,20 @@ namespace JavaScriptRuntime.Node
             return result;
         }
 
+        private static string TrimEndingSeparators(string path)
+        {
+            var rootLength = (System.IO.Path.GetPathRoot(path) ?? string.Empty).Length;
+            var end = path.Length;
+            while (end > rootLength
+                && (path[end - 1] == System.IO.Path.DirectorySeparatorChar
+                    || path[end - 1] == System.IO.Path.AltDirectorySeparatorChar))
+            {
+                end--;
+            }
+
+            return end == path.Length ? path : path.Substring(0, end);
+        }
+
         public string format(object pathObject)
         {
             var dir = ReadPathProperty(pathObject, "dir");
@@ -234,7 +249,7 @@ namespace JavaScriptRuntime.Node
 
             if (string.IsNullOrEmpty(baseName))
             {
-                baseName = name + ext;
+                baseName = name + NormalizeExtension(ext);
             }
 
             if (!string.IsNullOrEmpty(dir))
@@ -274,6 +289,13 @@ namespace JavaScriptRuntime.Node
             return baseName;
         }
 
+        private static string NormalizeExtension(string extension)
+        {
+            return string.IsNullOrEmpty(extension) || extension.StartsWith('.')
+                ? extension
+                : "." + extension;
+        }
+
         // NOTE: VariantPath currently duplicates some of the outer Path surface to keep variant semantics isolated.
         // TODO: Consider delegating the host Path implementation to VariantPath to avoid duplication.
         private sealed class VariantPath
@@ -297,7 +319,7 @@ namespace JavaScriptRuntime.Node
             public string sep => _sep.ToString();
             public string delimiter => _delimiter;
 
-            public string join(params object[] parts)
+            public string join(params object?[] parts)
             {
                 var strings = System.Array.ConvertAll(parts ?? System.Array.Empty<object>(), p => p?.ToString() ?? string.Empty);
 
@@ -464,7 +486,7 @@ namespace JavaScriptRuntime.Node
 
             public string dirname(object path)
             {
-                var p = NormalizeSeparators(path?.ToString() ?? string.Empty);
+                var p = TrimEndingSeparators(path?.ToString() ?? string.Empty);
                 if (string.IsNullOrEmpty(p))
                 {
                     return ".";
@@ -523,7 +545,10 @@ namespace JavaScriptRuntime.Node
             public string normalize(object path)
             {
                 var p = NormalizeSeparators(path?.ToString() ?? string.Empty);
-                return NormalizeInternal(p);
+                var normalized = NormalizeInternal(p);
+                return p.EndsWith(_sep) && !normalized.EndsWith(_sep)
+                    ? normalized + _sep
+                    : normalized;
             }
 
             public string toNamespacedPath(object path)
@@ -534,7 +559,7 @@ namespace JavaScriptRuntime.Node
 
             public object parse(object path)
             {
-                var p = NormalizeSeparators(path?.ToString() ?? string.Empty);
+                var p = TrimEndingSeparators(path?.ToString() ?? string.Empty);
 
                 var (root, _, _) = SplitRoot(p);
                 var dir = dirname(p);
@@ -571,7 +596,7 @@ namespace JavaScriptRuntime.Node
 
                 if (string.IsNullOrEmpty(baseName))
                 {
-                    baseName = name + ext;
+                    baseName = name + NormalizeExtension(ext);
                 }
 
                 dir = NormalizeSeparators(dir);
@@ -638,20 +663,27 @@ namespace JavaScriptRuntime.Node
                     return string.Empty;
                 }
 
-                var p = NormalizeSeparators(path);
+                var p = TrimEndingSeparators(path);
                 var lastSep = p.LastIndexOf(_sep);
                 if (lastSep < 0)
                 {
                     return p;
                 }
 
-                if (lastSep == p.Length - 1)
+                return p.Substring(lastSep + 1);
+            }
+
+            private string TrimEndingSeparators(string path)
+            {
+                var p = NormalizeSeparators(path);
+                var (root, _, _) = SplitRoot(p);
+                var end = p.Length;
+                while (end > root.Length && p[end - 1] == _sep)
                 {
-                    // Trailing separator => empty basename.
-                    return string.Empty;
+                    end--;
                 }
 
-                return p.Substring(lastSep + 1);
+                return end == p.Length ? p : p.Substring(0, end);
             }
 
             private bool IsAbsoluteInternal(string path)

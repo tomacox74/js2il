@@ -32,12 +32,17 @@ namespace Jroc.Tests.Node.Path
         }
 
         [Fact]
-        public void Join_WithRootedPath_ResetsBase()
+        public void Join_WithRootedPath_DoesNotResetBase()
         {
             var rooted = IOPath.Combine(IOPath.GetPathRoot(IOPath.GetFullPath(".")) ?? string.Empty, "root");
             var p = new NodePath();
             var result = p.join("ignored", rooted, "file.txt");
-            Assert.Equal(IOPath.Combine("ignored", rooted, "file.txt"), result);
+            var expected = "ignored"
+                + IOPath.DirectorySeparatorChar
+                + rooted.TrimStart(IOPath.DirectorySeparatorChar, IOPath.AltDirectorySeparatorChar)
+                + IOPath.DirectorySeparatorChar
+                + "file.txt";
+            Assert.Equal(expected, result);
         }
 
         [Fact]
