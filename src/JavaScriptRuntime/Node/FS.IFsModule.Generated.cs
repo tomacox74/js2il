@@ -31,16 +31,16 @@ public sealed partial class FS : FsContract
         => throw CreateNotImplementedException("X_OK");
 
     void FsContract.access(object? path, global::System.Delegate callback)
-        => _ = InvokeContractMember("access", [path!, callback!]);
+        => _ = access(new object[] { path!, callback! });
 
     void FsContract.access(object? path, object? mode, global::System.Delegate callback)
-        => _ = InvokeContractMember("access", [path!, mode!, callback!]);
+        => _ = access(new object[] { path!, mode!, callback! });
 
     void FsContract.appendFile(object? path, object? data, global::System.Delegate callback)
-        => _ = InvokeContractMember("appendFile", [path!, data!, callback!]);
+        => _ = appendFile(new object[] { path!, data!, callback! });
 
     void FsContract.appendFile(object? path, object? data, object? options, global::System.Delegate callback)
-        => _ = InvokeContractMember("appendFile", [path!, data!, options!, callback!]);
+        => _ = appendFile(new object[] { path!, data!, options!, callback! });
 
     void FsContract.chmod(object? path, object? mode, global::System.Delegate callback)
         => throw CreateNotImplementedException("chmod");
@@ -55,10 +55,10 @@ public sealed partial class FS : FsContract
         => throw CreateNotImplementedException("close");
 
     void FsContract.copyFile(object? src, object? dest, global::System.Delegate callback)
-        => _ = InvokeContractMember("copyFile", [src!, dest!, callback!]);
+        => _ = copyFile(new object[] { src!, dest!, callback! });
 
     void FsContract.copyFile(object? src, object? dest, object? mode, global::System.Delegate callback)
-        => _ = InvokeContractMember("copyFile", [src!, dest!, mode!, callback!]);
+        => _ = copyFile(new object[] { src!, dest!, mode!, callback! });
 
     void FsContract.cp(object? src, object? dest, global::System.Delegate callback)
         => throw CreateNotImplementedException("cp");
@@ -67,16 +67,16 @@ public sealed partial class FS : FsContract
         => throw CreateNotImplementedException("cp");
 
     object? FsContract.createReadStream(object? path)
-        => InvokeContractMember("createReadStream", [path!]);
+        => createReadStream(path!);
 
     object? FsContract.createReadStream(object? path, object? options)
-        => InvokeContractMember("createReadStream", [path!, options!]);
+        => createReadStream(path!, options!);
 
     object? FsContract.createWriteStream(object? path)
-        => InvokeContractMember("createWriteStream", [path!]);
+        => createWriteStream(path!);
 
     object? FsContract.createWriteStream(object? path, object? options)
-        => InvokeContractMember("createWriteStream", [path!, options!]);
+        => createWriteStream(path!, options!);
 
     void FsContract.exists(object? path, global::System.Delegate callback)
         => throw CreateNotImplementedException("exists");
@@ -133,10 +133,10 @@ public sealed partial class FS : FsContract
         => throw CreateNotImplementedException("lstat");
 
     void FsContract.mkdir(object? path, global::System.Delegate callback)
-        => _ = InvokeContractMember("mkdir", [path!, callback!]);
+        => _ = mkdir(new object[] { path!, callback! });
 
     void FsContract.mkdir(object? path, object? options, global::System.Delegate callback)
-        => _ = InvokeContractMember("mkdir", [path!, options!, callback!]);
+        => _ = mkdir(new object[] { path!, options!, callback! });
 
     void FsContract.mkdtemp(object? prefix, global::System.Delegate callback)
         => throw CreateNotImplementedException("mkdtemp");
@@ -145,13 +145,13 @@ public sealed partial class FS : FsContract
         => throw CreateNotImplementedException("mkdtemp");
 
     void FsContract.open(object? path, global::System.Delegate callback)
-        => _ = InvokeContractMember("open", [path!, callback!]);
+        => _ = open(new object[] { path!, callback! });
 
     void FsContract.open(object? path, object? flags, global::System.Delegate callback)
-        => _ = InvokeContractMember("open", [path!, flags!, callback!]);
+        => _ = open(new object[] { path!, flags!, callback! });
 
     void FsContract.open(object? path, object? flags, object? mode, global::System.Delegate callback)
-        => _ = InvokeContractMember("open", [path!, flags!, mode!, callback!]);
+        => _ = open(new object[] { path!, flags!, mode!, callback! });
 
     global::JavaScriptRuntime.IJavaScriptPromise FsContract.openAsBlob(object? path)
         => throw CreateNotImplementedException("openAsBlob");
@@ -178,16 +178,16 @@ public sealed partial class FS : FsContract
         => throw CreateNotImplementedException("read");
 
     void FsContract.readdir(object? path, global::System.Delegate callback)
-        => _ = InvokeContractMember("readdir", [path!, callback!]);
+        => _ = readdir(new object[] { path!, callback! });
 
     void FsContract.readdir(object? path, object? options, global::System.Delegate callback)
-        => _ = InvokeContractMember("readdir", [path!, options!, callback!]);
+        => _ = readdir(new object[] { path!, options!, callback! });
 
     void FsContract.readFile(object? path, global::System.Delegate callback)
-        => _ = InvokeContractMember("readFile", [path!, callback!]);
+        => _ = readFile(new object[] { path!, callback! });
 
     void FsContract.readFile(object? path, object? options, global::System.Delegate callback)
-        => _ = InvokeContractMember("readFile", [path!, options!, callback!]);
+        => _ = readFile(new object[] { path!, options!, callback! });
 
     void FsContract.readlink(object? path, global::System.Delegate callback)
         => throw CreateNotImplementedException("readlink");
@@ -202,10 +202,10 @@ public sealed partial class FS : FsContract
         => throw CreateNotImplementedException("readv");
 
     void FsContract.realpath(object? path, global::System.Delegate callback)
-        => _ = InvokeContractMember("realpath", [path!, callback!]);
+        => _ = realpath(new object[] { path!, callback! });
 
     void FsContract.realpath(object? path, object? options, global::System.Delegate callback)
-        => _ = InvokeContractMember("realpath", [path!, options!, callback!]);
+        => _ = realpath(new object[] { path!, options!, callback! });
 
     void FsContract.realpathNative(object? path, global::System.Delegate callback)
         => throw CreateNotImplementedException("realpath.native");
@@ -214,7 +214,7 @@ public sealed partial class FS : FsContract
         => throw CreateNotImplementedException("realpath.native");
 
     void FsContract.rename(object? oldPath, object? newPath, global::System.Delegate callback)
-        => _ = InvokeContractMember("rename", [oldPath!, newPath!, callback!]);
+        => _ = rename(new object[] { oldPath!, newPath!, callback! });
 
     void FsContract.rmdir(object? path, global::System.Delegate callback)
         => throw CreateNotImplementedException("rmdir");
@@ -223,16 +223,16 @@ public sealed partial class FS : FsContract
         => throw CreateNotImplementedException("rmdir");
 
     void FsContract.rm(object? path, global::System.Delegate callback)
-        => _ = InvokeContractMember("rm", [path!, callback!]);
+        => _ = rm(new object[] { path!, callback! });
 
     void FsContract.rm(object? path, object? options, global::System.Delegate callback)
-        => _ = InvokeContractMember("rm", [path!, options!, callback!]);
+        => _ = rm(new object[] { path!, options!, callback! });
 
     void FsContract.stat(object? path, global::System.Delegate callback)
-        => _ = InvokeContractMember("stat", [path!, callback!]);
+        => _ = stat(new object[] { path!, callback! });
 
     void FsContract.stat(object? path, object? options, global::System.Delegate callback)
-        => _ = InvokeContractMember("stat", [path!, options!, callback!]);
+        => _ = stat(new object[] { path!, options!, callback! });
 
     void FsContract.statfs(object? path, global::System.Delegate callback)
         => throw CreateNotImplementedException("statfs");
@@ -253,7 +253,7 @@ public sealed partial class FS : FsContract
         => throw CreateNotImplementedException("truncate");
 
     void FsContract.unlink(object? path, global::System.Delegate callback)
-        => _ = InvokeContractMember("unlink", [path!, callback!]);
+        => _ = unlink(new object[] { path!, callback! });
 
     void FsContract.unwatchFile(object? filename)
         => throw CreateNotImplementedException("unwatchFile");
@@ -304,10 +304,10 @@ public sealed partial class FS : FsContract
         => throw CreateNotImplementedException("write");
 
     void FsContract.writeFile(object? file, object? data, global::System.Delegate callback)
-        => _ = InvokeContractMember("writeFile", [file!, data!, callback!]);
+        => _ = writeFile(new object[] { file!, data!, callback! });
 
     void FsContract.writeFile(object? file, object? data, object? options, global::System.Delegate callback)
-        => _ = InvokeContractMember("writeFile", [file!, data!, options!, callback!]);
+        => _ = writeFile(new object[] { file!, data!, options!, callback! });
 
     void FsContract.writev(double fd, global::JavaScriptRuntime.IJavaScriptArray buffers, global::System.Delegate callback)
         => throw CreateNotImplementedException("writev");
@@ -349,7 +349,7 @@ public sealed partial class FS : FsContract
         => throw CreateNotImplementedException("cpSync");
 
     bool FsContract.existsSync(object? path)
-        => global::JavaScriptRuntime.TypeUtilities.ToBoolean(InvokeContractMember("existsSync", [path!]));
+        => global::JavaScriptRuntime.TypeUtilities.ToBoolean(existsSync(path!));
 
     void FsContract.fchmodSync(double fd, object? mode)
         => throw CreateNotImplementedException("fchmodSync");
@@ -403,10 +403,10 @@ public sealed partial class FS : FsContract
         => throw CreateNotImplementedException("lstatSync");
 
     object? FsContract.mkdirSync(object? path)
-        => InvokeContractMember("mkdirSync", [path!]);
+        => mkdirSync(path!);
 
     object? FsContract.mkdirSync(object? path, object? options)
-        => InvokeContractMember("mkdirSync", [path!, options!]);
+        => mkdirSync(path!, options!);
 
     string FsContract.mkdtempSync(object? prefix)
         => throw CreateNotImplementedException("mkdtempSync");
@@ -436,16 +436,16 @@ public sealed partial class FS : FsContract
         => throw CreateNotImplementedException("openSync");
 
     global::JavaScriptRuntime.IJavaScriptArray FsContract.readdirSync(object? path)
-        => (global::JavaScriptRuntime.IJavaScriptArray)InvokeContractMember("readdirSync", [path!])!;
+        => (global::JavaScriptRuntime.IJavaScriptArray)readdirSync(path!)!;
 
     global::JavaScriptRuntime.IJavaScriptArray FsContract.readdirSync(object? path, object? options)
-        => (global::JavaScriptRuntime.IJavaScriptArray)InvokeContractMember("readdirSync", [path!, options!])!;
+        => (global::JavaScriptRuntime.IJavaScriptArray)readdirSync(path!, options!)!;
 
     object? FsContract.readFileSync(object? path)
-        => InvokeContractMember("readFileSync", [path!]);
+        => readFileSync(path!, null!);
 
     object? FsContract.readFileSync(object? path, object? options)
-        => InvokeContractMember("readFileSync", [path!, options!]);
+        => readFileSync(path!, options!);
 
     object? FsContract.readlinkSync(object? path)
         => throw CreateNotImplementedException("readlinkSync");
@@ -493,16 +493,16 @@ public sealed partial class FS : FsContract
         => throw CreateNotImplementedException("rmdirSync");
 
     void FsContract.rmSync(object? path)
-        => _ = InvokeContractMember("rmSync", [path!]);
+        => _ = rmSync(path!);
 
     void FsContract.rmSync(object? path, object? options)
-        => _ = InvokeContractMember("rmSync", [path!, options!]);
+        => _ = rmSync(path!, options!);
 
     object? FsContract.statSync(object? path)
-        => InvokeContractMember("statSync", [path!]);
+        => statSync(path!);
 
     object? FsContract.statSync(object? path, object? options)
-        => InvokeContractMember("statSync", [path!, options!]);
+        => statSync(path!);
 
     object? FsContract.statfsSync(object? path)
         => throw CreateNotImplementedException("statfsSync");
@@ -523,16 +523,16 @@ public sealed partial class FS : FsContract
         => throw CreateNotImplementedException("truncateSync");
 
     void FsContract.unlinkSync(object? path)
-        => _ = InvokeContractMember("unlinkSync", [path!]);
+        => _ = unlinkSync(path!);
 
     void FsContract.utimesSync(object? path, object? atime, object? mtime)
         => throw CreateNotImplementedException("utimesSync");
 
     void FsContract.writeFileSync(object? file, object? data)
-        => _ = InvokeContractMember("writeFileSync", [file!, data!]);
+        => _ = writeFileSync(file!, data!, null!);
 
     void FsContract.writeFileSync(object? file, object? data, object? options)
-        => _ = InvokeContractMember("writeFileSync", [file!, data!, options!]);
+        => _ = writeFileSync(file!, data!, options!);
 
     double FsContract.writeSync(double fd, object? buffer, double offset)
         => throw CreateNotImplementedException("writeSync");
@@ -563,45 +563,6 @@ public sealed partial class FS : FsContract
 
     double FsContract.writevSync(double fd, global::JavaScriptRuntime.IJavaScriptArray buffers, object? position)
         => throw CreateNotImplementedException("writevSync");
-
-    private static bool IsImplementedContractMethod(string memberName)
-        => memberName switch
-        {
-            nameof(access) => true,
-            nameof(appendFile) => true,
-            nameof(copyFile) => true,
-            nameof(createReadStream) => true,
-            nameof(createWriteStream) => true,
-            nameof(existsSync) => true,
-            nameof(mkdir) => true,
-            nameof(mkdirSync) => true,
-            nameof(open) => true,
-            nameof(readFile) => true,
-            nameof(readFileSync) => true,
-            nameof(readdir) => true,
-            nameof(readdirSync) => true,
-            nameof(realpath) => true,
-            nameof(rename) => true,
-            nameof(rm) => true,
-            nameof(rmSync) => true,
-            nameof(stat) => true,
-            nameof(statSync) => true,
-            nameof(unlink) => true,
-            nameof(unlinkSync) => true,
-            nameof(writeFile) => true,
-            nameof(writeFileSync) => true,
-            _ => false
-        };
-
-    private object? InvokeContractMember(string memberName, object[] arguments)
-    {
-        if (!IsImplementedContractMethod(memberName))
-        {
-            throw CreateNotImplementedException(memberName);
-        }
-
-        return global::JavaScriptRuntime.ObjectRuntime.CallInstanceMethod(this, memberName, arguments);
-    }
 
     private static global::System.NotImplementedException CreateNotImplementedException(string memberName)
         => new($"The intrinsic node:fs module does not implement 'fs.{memberName}'.");
