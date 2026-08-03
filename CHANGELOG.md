@@ -17,6 +17,8 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   implement it with explicit not-implemented fallbacks. Add
   `IJavaScriptPromise` as the public promise ABI implemented by the built-in
   JavaScript `Promise`.
+- runtime: replace reflection-based generated `node:fs` and `node:fs/promises`
+  intrinsic contract delegation with compile-time-bound calls.
 
 ## v0.12.1 - 2026-08-02
 

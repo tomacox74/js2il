@@ -28,7 +28,10 @@ npm run test:node-contract-fs-promises
 ```
 
 The checked-in override files record which contract members each intrinsic
-module currently implements. The generated intrinsic adapters delegate those
-members and throw `NotImplementedException` for the remaining surface.
+module currently implements and how each implementation is invoked. The
+generated intrinsic adapters use compile-time-bound calls for those members
+and throw `NotImplementedException` for the remaining surface. Legacy
+intrinsic methods that accept an `object[]` receive a statically generated
+argument-array bridge; no runtime method discovery is used.
 
 Do not edit any `*.Generated.cs` contract or intrinsic adapter directly.

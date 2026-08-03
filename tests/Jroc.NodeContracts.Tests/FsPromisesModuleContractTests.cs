@@ -93,6 +93,10 @@ public class FsPromisesModuleContractTests
     {
         WithRuntimeServices(module =>
         {
+            Assert.Null(
+                typeof(FSPromises).GetMethod(
+                    "InvokeContractMember",
+                    BindingFlags.NonPublic | BindingFlags.Instance));
             Assert.IsType<Promise>(module.access(Environment.CurrentDirectory));
             Assert.IsType<Promise>(module.stat(Environment.CurrentDirectory));
         });

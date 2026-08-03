@@ -519,11 +519,26 @@ function parseContractMembers(interfaceSource) {
     return members;
 }
 
-function renderImplementedMethodBody(member) {
-    const argumentsExpression = `[${member.parameters
-        .map(parameter => `${parameter.name}!`)
-        .join(', ')}]`;
-    const invocation = `InvokeContractMember("${member.nodeMemberName}", ${argumentsExpression})`;
+function renderImplementedMethodBody(member, implementation) {
+    const configuredArgumentCount = implementation.argumentCount ?? member.parameters.length;
+    const argumentCount = Math.min(configuredArgumentCount, member.parameters.length);
+    const argumentsList = member.parameters
+        .slice(0, argumentCount)
+        .map(parameter => `${parameter.name}!`);
+
+    while (argumentsList.length < (implementation.minimumArgumentCount ?? 0)) {
+        argumentsList.push('null!');
+    }
+
+    let invocation;
+    if (implementation.style === 'argument-array') {
+        invocation = `${member.csharpName}(new object[] { ${argumentsList.join(', ')} })`;
+    } else if (implementation.style === 'direct') {
+        invocation = `${member.csharpName}(${argumentsList.join(', ')})`;
+    } else {
+        throw new Error(
+            `Unsupported intrinsic invocation style '${implementation.style}' for '${member.nodeMemberName}'.`);
+    }
 
     if (member.returnType === 'void') {
         return `_ = ${invocation}`;
@@ -549,22 +564,18 @@ function renderImplementedMethodBody(member) {
 }
 
 function generateIntrinsicImplementation(interfaceSource) {
-    const implementedMembers = new Set(overrides.intrinsicImplementedMembers);
+    const intrinsicImplementations = new Map(
+        Object.entries(overrides.intrinsicImplementations));
     const members = parseContractMembers(interfaceSource);
-    const implementedMethodNames = [...new Set(
-        members
-            .filter(member =>
-                member.kind === 'method' && implementedMembers.has(member.nodeMemberName))
-            .map(member => member.csharpName)
-    )].sort();
     const generatedMembers = members.map(member => {
+        const implementation = intrinsicImplementations.get(member.nodeMemberName);
         const declaration = member.kind === 'property'
             ? `${member.returnType} FsContract.${member.csharpName}`
             : `${member.returnType} FsContract.${member.csharpName}(${member.parameters
                 .map(parameter => parameter.declaration)
                 .join(', ')})`;
 
-        if (!implementedMembers.has(member.nodeMemberName)) {
+        if (!implementation) {
             return [
                 `    ${declaration}`,
                 `        => throw CreateNotImplementedException("${member.nodeMemberName}");`
@@ -572,6 +583,11 @@ function generateIntrinsicImplementation(interfaceSource) {
         }
 
         if (member.kind === 'property') {
+            if (implementation.style !== 'direct') {
+                throw new Error(
+                    `Intrinsic property '${member.nodeMemberName}' must use direct invocation.`);
+            }
+
             return [
                 `    ${declaration}`,
                 `        => ${member.csharpName};`
@@ -580,7 +596,7 @@ function generateIntrinsicImplementation(interfaceSource) {
 
         return [
             `    ${declaration}`,
-            `        => ${renderImplementedMethodBody(member)};`
+            `        => ${renderImplementedMethodBody(member, implementation)};`
         ].join('\n');
     });
 
@@ -600,23 +616,6 @@ function generateIntrinsicImplementation(interfaceSource) {
         `public sealed partial class ${contract.intrinsicClassName} : FsContract`,
         '{',
         ...generatedMembers.flatMap(member => [member, '']),
-        '    private static bool IsImplementedContractMethod(string memberName)',
-        '        => memberName switch',
-        '        {',
-        ...implementedMethodNames.map(methodName => `            nameof(${methodName}) => true,`),
-        '            _ => false',
-        '        };',
-        '',
-        '    private object? InvokeContractMember(string memberName, object[] arguments)',
-        '    {',
-        '        if (!IsImplementedContractMethod(memberName))',
-        '        {',
-        '            throw CreateNotImplementedException(memberName);',
-        '        }',
-        '',
-        '        return global::JavaScriptRuntime.ObjectRuntime.CallInstanceMethod(this, memberName, arguments);',
-        '    }',
-        '',
         '    private static global::System.NotImplementedException CreateNotImplementedException(string memberName)',
         `        => new($"The intrinsic ${contract.displayName} module does not implement '${contract.documentationPrefix}{memberName}'.");`,
         '}',

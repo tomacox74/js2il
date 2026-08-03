@@ -138,6 +138,10 @@ public class FsModuleContractTests
     {
         IFsModule module = new FS();
 
+        Assert.Null(
+            typeof(FS).GetMethod(
+                "InvokeContractMember",
+                BindingFlags.NonPublic | BindingFlags.Instance));
         Assert.NotNull(module.constants);
         Assert.True(module.existsSync(Environment.CurrentDirectory));
         Assert.IsAssignableFrom<IJavaScriptArray>(
