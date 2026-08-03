@@ -146,7 +146,18 @@ public sealed partial class HIRToLIRLowerer
         {
             var symbol = funcVarExpr.Name;
 
-            if (!hasSpreadArgs && IsSafeInjectedCommonJsRequireBinding(symbol.BindingInfo))
+            if (!hasSpreadArgs
+                && IsSafeInjectedCommonJsRequireBinding(symbol.BindingInfo)
+                && callExpr.Arguments.Length > 0
+                && callExpr.Arguments[0] is HIRLiteralExpression
+                {
+                    Kind: JavascriptType.String,
+                    Value: string moduleSpecifier
+                }
+                && JavaScriptRuntime.Node.NodeModuleRegistry.TryGetModuleContractType(
+                    moduleSpecifier,
+                    out var contractType)
+                && contractType != null)
             {
                 if (!TryLowerExpression(funcVarExpr, out var requireValue)
                     || !TryEvaluateCallArguments(callExpr.Arguments, 1, out var requireArguments))
@@ -154,39 +165,14 @@ public sealed partial class HIRToLIRLowerer
                     return false;
                 }
 
-                TempVariable moduleId;
-                if (requireArguments.Count == 0)
-                {
-                    moduleId = CreateTempVariable();
-                    _methodBodyIR.Instructions.Add(new LIRConstUndefined(moduleId));
-                    DefineTempStorage(moduleId, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
-                }
-                else
-                {
-                    moduleId = requireArguments[0];
-                }
-
-                Type? contractType = null;
-                if (callExpr.Arguments.Length > 0
-                    && callExpr.Arguments[0] is HIRLiteralExpression
-                    {
-                        Kind: JavascriptType.String,
-                        Value: string moduleSpecifier
-                    })
-                {
-                    JavaScriptRuntime.Node.NodeModuleRegistry.TryGetModuleContractType(
-                        moduleSpecifier,
-                        out contractType);
-                }
-
                 _methodBodyIR.Instructions.Add(new LIRCallRequire(
                     requireValue,
-                    moduleId,
+                    requireArguments[0],
                     resultTempVar,
                     contractType));
                 DefineTempStorage(
                     resultTempVar,
-                    new ValueStorage(ValueStorageKind.Reference, contractType ?? typeof(object)));
+                    new ValueStorage(ValueStorageKind.Reference, contractType));
                 return true;
             }
 
