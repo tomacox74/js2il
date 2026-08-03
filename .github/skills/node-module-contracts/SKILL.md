@@ -66,7 +66,8 @@ The current generator has explicit modes for:
 - `fs/promises`;
 - `console`;
 - `path`;
-- `child_process`.
+- `child_process`;
+- `perf_hooks`.
 
 Extend the shared generator for another module. Do not copy it into a
 module-specific generator.
@@ -131,6 +132,20 @@ For example, `child_process` stores its seven exported functions in nested
 asynchronous and synchronous sections. Inspect the full JSON section tree and
 extract the documented public sections explicitly; do not assume
 `module.methods` is the complete surface.
+
+The JSON module name can also differ from the canonical specifier.
+`perf_hooks.json`, for example, names its root module
+`performance_measurement_apis`. Record the exact JSON name in the lock instead
+of assuming it matches the require specifier.
+
+Structured JSON can omit contract-critical metadata or an explicit export
+roster. Use the surrounding official API narrative first. When a pinned
+official Node source file is needed to disambiguate which documented classes
+are actually exported, record only those missing exports as cited overrides;
+do not derive method semantics or replace the documentation contract with the
+runtime implementation. A missing structured return type, such as
+`perf_hooks.timerify()`, also requires a narrow cited override rather than
+silently mapping the return to `void`.
 
 ## Phase 2A: Add a New Contract
 
@@ -384,6 +399,7 @@ npm run generate:node-contract-fs-promises
 npm run generate:node-contract-console
 npm run generate:node-contract-path
 npm run generate:node-contract-child-process
+npm run generate:node-contract-perf-hooks
 ```
 
 Include any newly added module command.

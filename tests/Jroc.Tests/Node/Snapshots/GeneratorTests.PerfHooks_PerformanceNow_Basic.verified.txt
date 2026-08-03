@@ -117,10 +117,11 @@
 			[9] object,
 			[10] float64,
 			[11] object,
-			[12] object,
+			[12] class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IPerfHooksModule,
 			[13] float64,
 			[14] object,
-			[15] bool
+			[15] object,
+			[16] bool
 		)
 
 		IL_0000: newobj instance void Modules.PerfHooks_PerformanceNow_Basic/Scope::.ctor()
@@ -128,7 +129,7 @@
 		IL_0006: nop
 		IL_0007: ldarg.1
 		IL_0008: ldstr "perf_hooks"
-		IL_000d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
+		IL_000d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireRuntime::RequireObject<class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IPerfHooksModule>(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object)
 		IL_0012: stloc.s 12
 		IL_0014: ldloc.s 12
 		IL_0016: brfalse IL_0027
@@ -249,19 +250,19 @@
 		IL_0149: ldstr "console"
 		IL_014e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
 		IL_0153: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0158: stloc.s 12
+		IL_0158: stloc.s 15
 		IL_015a: ldloc.s 10
 		IL_015c: ldc.r8 0.0
 		IL_0165: clt
-		IL_0167: stloc.s 15
-		IL_0169: ldloc.s 15
+		IL_0167: stloc.s 16
+		IL_0169: ldloc.s 16
 		IL_016b: ldc.i4.0
 		IL_016c: ceq
-		IL_016e: stloc.s 15
-		IL_0170: ldloc.s 15
+		IL_016e: stloc.s 16
+		IL_0170: ldloc.s 16
 		IL_0172: box [System.Runtime]System.Boolean
 		IL_0177: stloc.s 14
-		IL_0179: ldloc.s 12
+		IL_0179: ldloc.s 15
 		IL_017b: ldstr "log"
 		IL_0180: ldstr "elapsedMsNonNegative="
 		IL_0185: ldloc.s 14

@@ -2300,13 +2300,14 @@
 			[2] object,
 			[3] object,
 			[4] object,
-			[5] object,
-			[6] class [JavaScriptRuntime]JavaScriptRuntime.RegExp,
-			[7] float64,
-			[8] class [System.Runtime]System.Type,
-			[9] object[],
-			[10] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2,
-			[11] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1
+			[5] class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IPerfHooksModule,
+			[6] object,
+			[7] class [JavaScriptRuntime]JavaScriptRuntime.RegExp,
+			[8] float64,
+			[9] class [System.Runtime]System.Type,
+			[10] object[],
+			[11] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2,
+			[12] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1
 		)
 
 		IL_0000: newobj instance void Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/Scope::.ctor()
@@ -2329,7 +2330,7 @@
 		IL_003d: callvirt instance void Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/ObjectLiterals/L26C14_config::set_runtime(object)
 		IL_0042: ldarg.1
 		IL_0043: ldstr "perf_hooks"
-		IL_0048: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
+		IL_0048: call !!0 [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireRuntime::RequireObject<class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IPerfHooksModule>(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object)
 		IL_004d: stloc.s 5
 		IL_004f: ldloc.s 5
 		IL_0051: brfalse IL_0062
@@ -2346,80 +2347,80 @@
 		IL_0073: ldloc.s 5
 		IL_0075: ldstr "performance"
 		IL_007a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_007f: stloc.s 5
+		IL_007f: stloc.s 6
 		IL_0081: ldloc.0
-		IL_0082: ldloc.s 5
+		IL_0082: ldloc.s 6
 		IL_0084: stfld object Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/Scope::performance
 		IL_0089: ldstr "process"
 		IL_008e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
 		IL_0093: ldstr "argv"
 		IL_0098: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_009d: stloc.s 5
-		IL_009f: ldloc.s 5
+		IL_009d: stloc.s 6
+		IL_009f: ldloc.s 6
 		IL_00a1: ldc.r8 0.0
 		IL_00aa: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-		IL_00af: stloc.s 5
-		IL_00b1: ldloc.s 5
+		IL_00af: stloc.s 6
+		IL_00b1: ldloc.s 6
 		IL_00b3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00b8: stloc.s 5
+		IL_00b8: stloc.s 6
 		IL_00ba: ldstr "[\\\\/]"
 		IL_00bf: ldstr ""
 		IL_00c4: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.RegExp::.ctor(object, object)
-		IL_00c9: stloc.s 6
-		IL_00cb: ldloc.s 5
+		IL_00c9: stloc.s 7
+		IL_00cb: ldloc.s 6
 		IL_00cd: ldstr "split"
-		IL_00d2: ldloc.s 6
+		IL_00d2: ldloc.s 7
 		IL_00d4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
 		IL_00d9: stloc.2
 		IL_00da: ldloc.2
 		IL_00db: ldstr "length"
 		IL_00e0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_00e5: stloc.s 5
-		IL_00e7: ldloc.s 5
+		IL_00e5: stloc.s 6
+		IL_00e7: ldloc.s 6
 		IL_00e9: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
 		IL_00ee: ldc.r8 1
 		IL_00f7: sub
-		IL_00f8: stloc.s 7
+		IL_00f8: stloc.s 8
 		IL_00fa: ldloc.2
-		IL_00fb: ldloc.s 7
+		IL_00fb: ldloc.s 8
 		IL_00fd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-		IL_0102: stloc.s 5
+		IL_0102: stloc.s 6
 		IL_0104: ldloc.1
 		IL_0105: castclass Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/ObjectLiterals/L26C14_config
-		IL_010a: ldloc.s 5
+		IL_010a: ldloc.s 6
 		IL_010c: callvirt instance void Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/ObjectLiterals/L26C14_config::set_runtime(object)
 		IL_0111: ldstr "process"
 		IL_0116: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
 		IL_011b: ldstr "argv"
 		IL_0120: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0125: stloc.s 5
-		IL_0127: ldloc.s 5
+		IL_0125: stloc.s 6
+		IL_0127: ldloc.s 6
 		IL_0129: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
 		IL_012e: ldstr "includes"
 		IL_0133: ldstr "verbose"
 		IL_0138: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_013d: stloc.s 5
+		IL_013d: stloc.s 6
 		IL_013f: ldloc.1
 		IL_0140: castclass Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/ObjectLiterals/L26C14_config
-		IL_0145: ldloc.s 5
+		IL_0145: ldloc.s 6
 		IL_0147: callvirt instance void Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/ObjectLiterals/L26C14_config::set_verbose(object)
 		IL_014c: ldtoken Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/BitArray
 		IL_0151: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
 		IL_0156: ldtoken Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/BitArray
 		IL_015b: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_0160: stloc.s 8
+		IL_0160: stloc.s 9
 		IL_0162: ldc.i4.1
 		IL_0163: newarr [System.Runtime]System.Object
 		IL_0168: dup
 		IL_0169: ldc.i4.0
 		IL_016a: ldloc.0
 		IL_016b: stelem.ref
-		IL_016c: stloc.s 9
+		IL_016c: stloc.s 10
 		IL_016e: ldc.i4.s 10
 		IL_0170: newarr [System.Runtime]System.Object
 		IL_0175: dup
 		IL_0176: ldc.i4.0
-		IL_0177: ldloc.s 8
+		IL_0177: ldloc.s 9
 		IL_0179: stelem.ref
 		IL_017a: dup
 		IL_017b: ldc.i4.1
@@ -2460,7 +2461,7 @@
 		IL_01c6: stelem.ref
 		IL_01c7: dup
 		IL_01c8: ldc.i4.s 9
-		IL_01ca: ldloc.s 9
+		IL_01ca: ldloc.s 10
 		IL_01cc: stelem.ref
 		IL_01cd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RegisterLazyClassMethodDataProperty(object[])
 		IL_01d2: pop
@@ -2468,7 +2469,7 @@
 		IL_01d5: newarr [System.Runtime]System.Object
 		IL_01da: dup
 		IL_01db: ldc.i4.0
-		IL_01dc: ldloc.s 8
+		IL_01dc: ldloc.s 9
 		IL_01de: stelem.ref
 		IL_01df: dup
 		IL_01e0: ldc.i4.1
@@ -2509,7 +2510,7 @@
 		IL_022b: stelem.ref
 		IL_022c: dup
 		IL_022d: ldc.i4.s 9
-		IL_022f: ldloc.s 9
+		IL_022f: ldloc.s 10
 		IL_0231: stelem.ref
 		IL_0232: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RegisterLazyClassMethodDataProperty(object[])
 		IL_0237: pop
@@ -2517,7 +2518,7 @@
 		IL_023a: newarr [System.Runtime]System.Object
 		IL_023f: dup
 		IL_0240: ldc.i4.0
-		IL_0241: ldloc.s 8
+		IL_0241: ldloc.s 9
 		IL_0243: stelem.ref
 		IL_0244: dup
 		IL_0245: ldc.i4.1
@@ -2558,7 +2559,7 @@
 		IL_0290: stelem.ref
 		IL_0291: dup
 		IL_0292: ldc.i4.s 9
-		IL_0294: ldloc.s 9
+		IL_0294: ldloc.s 10
 		IL_0296: stelem.ref
 		IL_0297: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RegisterLazyClassMethodDataProperty(object[])
 		IL_029c: pop
@@ -2566,7 +2567,7 @@
 		IL_029f: newarr [System.Runtime]System.Object
 		IL_02a4: dup
 		IL_02a5: ldc.i4.0
-		IL_02a6: ldloc.s 8
+		IL_02a6: ldloc.s 9
 		IL_02a8: stelem.ref
 		IL_02a9: dup
 		IL_02aa: ldc.i4.1
@@ -2607,7 +2608,7 @@
 		IL_02f5: stelem.ref
 		IL_02f6: dup
 		IL_02f7: ldc.i4.s 9
-		IL_02f9: ldloc.s 9
+		IL_02f9: ldloc.s 10
 		IL_02fb: stelem.ref
 		IL_02fc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RegisterLazyClassMethodDataProperty(object[])
 		IL_0301: pop
@@ -2617,33 +2618,33 @@
 		IL_0309: ldc.i4.0
 		IL_030a: ldloc.0
 		IL_030b: stelem.ref
-		IL_030c: stloc.s 9
-		IL_030e: ldloc.s 8
-		IL_0310: ldloc.s 9
+		IL_030c: stloc.s 10
+		IL_030e: ldloc.s 9
+		IL_0310: ldloc.s 10
 		IL_0312: ldc.r8 1
 		IL_031b: box [System.Runtime]System.Double
 		IL_0320: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateClassConstructorValue(object, object, object)
-		IL_0325: stloc.s 5
+		IL_0325: stloc.s 6
 		IL_0327: ldloc.0
-		IL_0328: ldloc.s 5
+		IL_0328: ldloc.s 6
 		IL_032a: stfld object Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/Scope::BitArray
 		IL_032f: ldtoken Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/PrimeSieve
 		IL_0334: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
 		IL_0339: ldtoken Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/PrimeSieve
 		IL_033e: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_0343: stloc.s 8
+		IL_0343: stloc.s 9
 		IL_0345: ldc.i4.1
 		IL_0346: newarr [System.Runtime]System.Object
 		IL_034b: dup
 		IL_034c: ldc.i4.0
 		IL_034d: ldloc.0
 		IL_034e: stelem.ref
-		IL_034f: stloc.s 9
+		IL_034f: stloc.s 10
 		IL_0351: ldc.i4.s 10
 		IL_0353: newarr [System.Runtime]System.Object
 		IL_0358: dup
 		IL_0359: ldc.i4.0
-		IL_035a: ldloc.s 8
+		IL_035a: ldloc.s 9
 		IL_035c: stelem.ref
 		IL_035d: dup
 		IL_035e: ldc.i4.1
@@ -2684,7 +2685,7 @@
 		IL_03a9: stelem.ref
 		IL_03aa: dup
 		IL_03ab: ldc.i4.s 9
-		IL_03ad: ldloc.s 9
+		IL_03ad: ldloc.s 10
 		IL_03af: stelem.ref
 		IL_03b0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RegisterLazyClassMethodDataProperty(object[])
 		IL_03b5: pop
@@ -2692,7 +2693,7 @@
 		IL_03b8: newarr [System.Runtime]System.Object
 		IL_03bd: dup
 		IL_03be: ldc.i4.0
-		IL_03bf: ldloc.s 8
+		IL_03bf: ldloc.s 9
 		IL_03c1: stelem.ref
 		IL_03c2: dup
 		IL_03c3: ldc.i4.1
@@ -2733,7 +2734,7 @@
 		IL_040e: stelem.ref
 		IL_040f: dup
 		IL_0410: ldc.i4.s 9
-		IL_0412: ldloc.s 9
+		IL_0412: ldloc.s 10
 		IL_0414: stelem.ref
 		IL_0415: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RegisterLazyClassMethodDataProperty(object[])
 		IL_041a: pop
@@ -2741,7 +2742,7 @@
 		IL_041d: newarr [System.Runtime]System.Object
 		IL_0422: dup
 		IL_0423: ldc.i4.0
-		IL_0424: ldloc.s 8
+		IL_0424: ldloc.s 9
 		IL_0426: stelem.ref
 		IL_0427: dup
 		IL_0428: ldc.i4.1
@@ -2782,7 +2783,7 @@
 		IL_0473: stelem.ref
 		IL_0474: dup
 		IL_0475: ldc.i4.s 9
-		IL_0477: ldloc.s 9
+		IL_0477: ldloc.s 10
 		IL_0479: stelem.ref
 		IL_047a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RegisterLazyClassMethodDataProperty(object[])
 		IL_047f: pop
@@ -2790,7 +2791,7 @@
 		IL_0482: newarr [System.Runtime]System.Object
 		IL_0487: dup
 		IL_0488: ldc.i4.0
-		IL_0489: ldloc.s 8
+		IL_0489: ldloc.s 9
 		IL_048b: stelem.ref
 		IL_048c: dup
 		IL_048d: ldc.i4.1
@@ -2831,7 +2832,7 @@
 		IL_04d8: stelem.ref
 		IL_04d9: dup
 		IL_04da: ldc.i4.s 9
-		IL_04dc: ldloc.s 9
+		IL_04dc: ldloc.s 10
 		IL_04de: stelem.ref
 		IL_04df: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RegisterLazyClassMethodDataProperty(object[])
 		IL_04e4: pop
@@ -2841,15 +2842,15 @@
 		IL_04ec: ldc.i4.0
 		IL_04ed: ldloc.0
 		IL_04ee: stelem.ref
-		IL_04ef: stloc.s 9
-		IL_04f1: ldloc.s 8
-		IL_04f3: ldloc.s 9
+		IL_04ef: stloc.s 10
+		IL_04f1: ldloc.s 9
+		IL_04f3: ldloc.s 10
 		IL_04f5: ldc.r8 1
 		IL_04fe: box [System.Runtime]System.Double
 		IL_0503: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateClassConstructorValue(object, object, object)
-		IL_0508: stloc.s 5
+		IL_0508: stloc.s 6
 		IL_050a: ldloc.0
-		IL_050b: ldloc.s 5
+		IL_050b: ldloc.s 6
 		IL_050d: stfld object Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/Scope::PrimeSieve
 		IL_0512: ldloc.0
 		IL_0513: castclass Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/Scope
@@ -2871,8 +2872,8 @@
 		IL_0544: ldc.i4.0
 		IL_0545: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2>(!!0, float64, string, bool, bool)
 		IL_054a: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2>(!!0)
-		IL_054f: stloc.s 10
-		IL_0551: ldloc.s 10
+		IL_054f: stloc.s 11
+		IL_0551: ldloc.s 11
 		IL_0553: ldstr "runSieveBatch"
 		IL_0558: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetFunctionInferredName(object, object)
 		IL_055d: stloc.3
@@ -2896,8 +2897,8 @@
 		IL_0590: ldc.i4.0
 		IL_0591: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0, float64, string, bool, bool)
 		IL_0596: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0)
-		IL_059b: stloc.s 11
-		IL_059d: ldloc.s 11
+		IL_059b: stloc.s 12
+		IL_059d: ldloc.s 12
 		IL_059f: ldstr "main"
 		IL_05a4: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetFunctionInferredName(object, object)
 		IL_05a9: stloc.s 4

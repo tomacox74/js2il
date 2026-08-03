@@ -10,6 +10,7 @@ const promisesMode = args.includes('--promises');
 const consoleMode = args.includes('--console');
 const pathMode = args.includes('--path');
 const childProcessMode = args.includes('--child-process');
+const perfHooksMode = args.includes('--perf-hooks');
 
 for (let index = 0; index < args.length; index++) {
     const argument = args[index];
@@ -20,17 +21,41 @@ for (let index = 0; index < args.length; index++) {
         continue;
     }
 
-    if (!['--check', '--promises', '--console', '--path', '--child-process'].includes(argument)) {
+    if (![
+        '--check',
+        '--promises',
+        '--console',
+        '--path',
+        '--child-process',
+        '--perf-hooks'
+    ].includes(argument)) {
         throw new Error(`Unknown argument '${argument}'.`);
     }
 }
 
-if ([promisesMode, consoleMode, pathMode, childProcessMode].filter(Boolean).length > 1) {
+if ([
+    promisesMode,
+    consoleMode,
+    pathMode,
+    childProcessMode,
+    perfHooksMode
+].filter(Boolean).length > 1) {
     throw new Error(
-        '--promises, --console, --path, and --child-process cannot be used together.');
+        '--promises, --console, --path, --child-process, and --perf-hooks cannot be used together.');
 }
 
-const contract = childProcessMode
+const contract = perfHooksMode
+    ? {
+        moduleSpecifier: 'perf_hooks',
+        documentationPrefix: 'perf_hooks.',
+        interfaceName: 'IPerfHooksModule',
+        intrinsicClassName: 'PerfHooks',
+        displayName: 'node:perf_hooks',
+        outputStem: 'PerfHooks',
+        overrideStem: 'perfHooks',
+        lockStem: 'perfHooks'
+    }
+    : childProcessMode
     ? {
         moduleSpecifier: 'child_process',
         documentationPrefix: 'child_process.',
@@ -102,14 +127,18 @@ const intrinsicImplementationOutputPath = path.join(
 
 const lock = JSON.parse(fs.readFileSync(lockPath, 'utf8'));
 const overrides = JSON.parse(fs.readFileSync(overridesPath, 'utf8'));
-const contractAlias = childProcessMode
+const contractAlias = perfHooksMode
+    ? 'PerfHooksContract'
+    : childProcessMode
     ? 'ChildProcessContract'
     : pathMode
     ? 'PathContract'
     : consoleMode
         ? 'ConsoleContract'
         : 'FsContract';
-const documentationModule = childProcessMode
+const documentationModule = perfHooksMode
+    ? 'perf_hooks'
+    : childProcessMode
     ? 'child_process'
     : pathMode
         ? 'path'
@@ -383,7 +412,7 @@ function generateMethodOverloads(methods) {
 
         const descriptors = new Map(
             (signature.params ?? []).map(parameter => [parameter.name, parameter]));
-        const returnType = mapType(signature.return?.type, true);
+        const returnType = mapMethodReturnType(parsed.memberName, signature);
         const optionalNames = optionalParameterNames(parsed.parameters);
 
         for (const expanded of expandOptionalSegments(parsed.parameters)) {
@@ -444,7 +473,7 @@ function generateMethodsWithOptionalAndRestParameters(methods) {
             parameter => !parameter.name.startsWith('...'));
         const requiredCount = positionalParameters.filter(
             parameter => !optionalNames.has(parameter.name)).length;
-        const returnType = mapType(signature.return?.type, true);
+        const returnType = mapMethodReturnType(parsed.memberName, signature);
         const methodName = csharpMemberName(parsed.memberName);
 
         for (let parameterCount = requiredCount;
@@ -479,6 +508,17 @@ function generateMethodsWithOptionalAndRestParameters(methods) {
     return generated;
 }
 
+function mapMethodReturnType(memberName, signature) {
+    const override = overrides.methodReturnTypes?.[memberName];
+    if (override && (!override.type || !override.source)) {
+        throw new Error(
+            `Return type override for '${contract.documentationPrefix}${memberName}' ` +
+            'must include type and source.');
+    }
+
+    return mapType(override?.type ?? signature.return?.type, true);
+}
+
 function generateReadOnlyProperties(properties) {
     return properties.map(property => {
         const match = property.textRaw.match(/^`([^`]+)` Type: \{([^}]+)\}$/);
@@ -507,7 +547,21 @@ function generateInterface(documentation) {
     let methodGroups;
     let standardProperties;
 
-    if (childProcessMode) {
+    if (perfHooksMode) {
+        assertCount(module.methods?.length ?? 0, lock.methodCount, 'method count');
+        assertCount(module.properties?.length ?? 0, lock.propertyCount, 'property count');
+        assertCount(module.classes?.length ?? 0, lock.classCount, 'class count');
+        assertCount(
+            overrides.properties.length,
+            lock.exportPropertyCount,
+            'export property override count');
+
+        methodGroups = [{
+            heading: 'Performance hooks methods',
+            methods: generateMethodOverloads(module.methods)
+        }];
+        standardProperties = [];
+    } else if (childProcessMode) {
         const asynchronousApi = requireSection(module, 'asynchronous_process_creation');
         const synchronousApi = requireSection(module, 'synchronous_process_creation');
 
@@ -638,12 +692,24 @@ function generateInterface(documentation) {
                 `Unsupported access '${property.access}' for ${contract.moduleSpecifier} override property '${property.name}'.`);
         }
 
+        if (!property.source) {
+            throw new Error(
+                `${contract.moduleSpecifier} override property '${property.name}' requires a source.`);
+        }
+
+        const summary = property.summary
+            ?? (property.deprecated
+                ? `Gets the deprecated <c>${contract.documentationPrefix}${xmlEscape(property.name)}</c> constant.`
+                : `Gets the exported <c>${contract.documentationPrefix}${xmlEscape(property.name)}</c> member.`);
+
         return [
             '    /// <summary>',
-            `    /// Gets the deprecated <c>${contract.documentationPrefix}${xmlEscape(property.name)}</c> constant.`,
+            `    /// ${summary}`,
             '    /// </summary>',
             `    /// <remarks>Source: <c>${xmlEscape(property.source)}</c>.</remarks>`,
-            `    [global::System.Obsolete("${property.deprecated}")]`,
+            ...(property.deprecated
+                ? [`    [global::System.Obsolete("${property.deprecated}")]`]
+                : []),
             `    [NodeModuleMember("${property.name}")]`,
             `    ${mapType(property.type)} ${csharpMemberName(property.name)} { get; }`
         ].join('\n');
@@ -875,7 +941,9 @@ async function main() {
             .map(([outputPath]) => path.relative(repoRoot, outputPath));
 
         if (staleOutputs.length > 0) {
-            const modeArgument = childProcessMode
+            const modeArgument = perfHooksMode
+                ? ' --perf-hooks'
+                : childProcessMode
                 ? ' --child-process'
                 : pathMode
                 ? ' --path'
