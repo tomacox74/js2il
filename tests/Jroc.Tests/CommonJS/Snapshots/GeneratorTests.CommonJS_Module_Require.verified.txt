@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2181
+			// Method begins at RVA 0x21c5
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,11 +40,11 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 293 (0x125)
+		// Code size: 361 (0x169)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.CommonJS_Module_Require/Scope,
-			[1] object,
+			[1] class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IPathModule,
 			[2] object,
 			[3] object,
 			[4] object,
@@ -74,7 +74,7 @@
 		IL_0041: pop
 		IL_0042: ldarg.1
 		IL_0043: ldstr "path"
-		IL_0048: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
+		IL_0048: call !!0 [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireRuntime::RequireObject<class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IPathModule>(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object)
 		IL_004d: stloc.1
 		IL_004e: ldstr "console"
 		IL_0053: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
@@ -107,34 +107,69 @@
 		IL_00b0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
 		IL_00b5: pop
 		IL_00b6: ldloc.1
-		IL_00b7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00bc: ldstr "join"
-		IL_00c1: ldstr "a"
-		IL_00c6: ldstr "b"
-		IL_00cb: ldstr "c"
-		IL_00d0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember3(object, string, object, object, object)
-		IL_00d5: stloc.2
-		IL_00d6: ldloc.2
-		IL_00d7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00dc: ldstr "split"
-		IL_00e1: ldstr "\\"
-		IL_00e6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00eb: stloc.s 4
-		IL_00ed: ldloc.s 4
-		IL_00ef: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00f4: ldstr "join"
-		IL_00f9: ldstr "/"
-		IL_00fe: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0103: stloc.3
-		IL_0104: ldstr "console"
-		IL_0109: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_010e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0113: ldstr "log"
-		IL_0118: ldstr "path.join result:"
-		IL_011d: ldloc.3
-		IL_011e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_0123: pop
-		IL_0124: ret
+		IL_00b7: ldstr "join"
+		IL_00bc: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::HasOwnPropertyOverride(object, string)
+		IL_00c1: brtrue IL_00f0
+
+		IL_00c6: ldloc.1
+		IL_00c7: ldc.i4.3
+		IL_00c8: newarr [System.Runtime]System.Object
+		IL_00cd: dup
+		IL_00ce: ldc.i4.0
+		IL_00cf: ldstr "a"
+		IL_00d4: stelem.ref
+		IL_00d5: dup
+		IL_00d6: ldc.i4.1
+		IL_00d7: ldstr "b"
+		IL_00dc: stelem.ref
+		IL_00dd: dup
+		IL_00de: ldc.i4.2
+		IL_00df: ldstr "c"
+		IL_00e4: stelem.ref
+		IL_00e5: callvirt instance string [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IPathModule::join(object[])
+		IL_00ea: stloc.2
+		IL_00eb: br IL_011a
+
+		IL_00f0: ldloc.1
+		IL_00f1: ldstr "join"
+		IL_00f6: ldc.i4.3
+		IL_00f7: newarr [System.Runtime]System.Object
+		IL_00fc: dup
+		IL_00fd: ldc.i4.0
+		IL_00fe: ldstr "a"
+		IL_0103: stelem.ref
+		IL_0104: dup
+		IL_0105: ldc.i4.1
+		IL_0106: ldstr "b"
+		IL_010b: stelem.ref
+		IL_010c: dup
+		IL_010d: ldc.i4.2
+		IL_010e: ldstr "c"
+		IL_0113: stelem.ref
+		IL_0114: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallOwnPropertyMember(object, string, object[])
+		IL_0119: stloc.2
+
+		IL_011a: ldloc.2
+		IL_011b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0120: ldstr "split"
+		IL_0125: ldstr "\\"
+		IL_012a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_012f: stloc.s 4
+		IL_0131: ldloc.s 4
+		IL_0133: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0138: ldstr "join"
+		IL_013d: ldstr "/"
+		IL_0142: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0147: stloc.3
+		IL_0148: ldstr "console"
+		IL_014d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0152: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0157: ldstr "log"
+		IL_015c: ldstr "path.join result:"
+		IL_0161: ldloc.3
+		IL_0162: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_0167: pop
+		IL_0168: ret
 	} // end of method CommonJS_Module_Require::__js_module_init__
 
 } // end of class Modules.CommonJS_Module_Require
@@ -146,7 +181,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x218a
+		// Method begins at RVA 0x21ce
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
