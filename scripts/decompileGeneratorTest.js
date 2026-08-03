@@ -11,6 +11,7 @@ Examples:
   node scripts/decompileGeneratorTest.js Async Async_HelloWorld
   node scripts/decompileGeneratorTest.js Function Function_ReturnsStaticValueAndLogs
   node scripts/decompileGeneratorTest.js Classes Classes_ClassWithMethod_HelloWorld
+  node scripts/decompileGeneratorTest.js Node.FS FS_ReadWrite_Utf8
 
 Requirements:
   - ilspy must be in PATH
@@ -29,11 +30,28 @@ function getAssemblyFileBaseName(testName) {
   return segments.length > 0 ? segments[segments.length - 1] : String(testName);
 }
 
-function getCandidateCategoryRoots(category) {
+function normalizeCategory(category) {
+  const parts = String(category)
+    .trim()
+    .replace(/[\\/]+/g, '.')
+    .split('.')
+    .filter(Boolean);
+
+  if (parts.length === 0) {
+    throw new Error('Category must contain at least one name segment.');
+  }
+
+  return {
+    namespace: parts.join('.'),
+    path: parts.join('/'),
+  };
+}
+
+function getCandidateCategoryRoots(categoryPath) {
   const tempDir = os.tmpdir();
   return [
-    path.join(tempDir, 'Jroc.Tests', `${category}.GeneratorTests`),
-    path.join(tempDir, 'Jroc.Tests', `${category}.ExecutionTests`),
+    path.join(tempDir, 'Jroc.Tests', `${categoryPath}.GeneratorTests`),
+    path.join(tempDir, 'Jroc.Tests', `${categoryPath}.ExecutionTests`),
   ];
 }
 
@@ -63,8 +81,9 @@ function tryFindLatestGeneratedAssemblyInRoot(categoryRoot, assemblyFileName) {
   return bestPath;
 }
 
-function tryFindLatestGeneratedAssembly(category, assemblyFileBaseName) {
-  const [generatorRoot, executionRoot] = getCandidateCategoryRoots(category);
+function tryFindLatestGeneratedAssembly(categoryPath, assemblyFileBaseName) {
+  const [generatorRoot, executionRoot] =
+    getCandidateCategoryRoots(categoryPath);
   const assemblyFileName = `${assemblyFileBaseName}.dll`;
   const generated = tryFindLatestGeneratedAssemblyInRoot(generatorRoot, assemblyFileName);
   if (generated) {
@@ -92,12 +111,12 @@ function findProjectRoot(startDir) {
 
 const projectRoot = findProjectRoot(__dirname);
 
-function getGeneratorTestSnapshotPath(category, testName) {
+function getGeneratorTestSnapshotPath(categoryPath, testName) {
   return path.join(
     projectRoot,
     'tests',
     'Jroc.Tests',
-    category,
+    categoryPath,
     'Snapshots',
     `GeneratorTests.${testName}.verified.txt`
   );
@@ -127,16 +146,16 @@ function main() {
     process.exit(1);
   }
 
-  const category = args[0];
+  const category = normalizeCategory(args[0]);
   const testName = args[1];
-  const snapshotPath = getGeneratorTestSnapshotPath(category, testName);
+  const snapshotPath = getGeneratorTestSnapshotPath(category.path, testName);
   if (!fs.existsSync(snapshotPath)) {
     console.error(`Generator test snapshot not found: ${snapshotPath}`);
     console.error('Check the category and test name before running the helper.');
     process.exit(1);
   }
 
-  const fullTestName = `Jroc.Tests.${category}.GeneratorTests.${testName}`;
+  const fullTestName = `Jroc.Tests.${category.namespace}.GeneratorTests.${testName}`;
   const testProject = path.join(projectRoot, 'tests', 'Jroc.Tests', 'Jroc.Tests.csproj');
 
   console.log(`Running test: ${fullTestName}`);
@@ -155,7 +174,7 @@ function main() {
   const assemblyFileBaseName = getAssemblyFileBaseName(testName);
   let assemblyPath =
     testResult.status === 0
-      ? tryFindLatestGeneratedAssembly(category, assemblyFileBaseName)
+      ? tryFindLatestGeneratedAssembly(category.path, assemblyFileBaseName)
       : null;
 
   // `dotnet test --no-build` can exit successfully without running tests when
@@ -179,7 +198,7 @@ function main() {
     }
 
     assemblyPath = tryFindLatestGeneratedAssembly(
-      category,
+      category.path,
       assemblyFileBaseName
     );
   }
@@ -190,9 +209,9 @@ function main() {
   //   %TEMP%/Jroc.Tests/{Category}.ExecutionTests/{runId}/{assemblyName}.dll
   // where assemblyName is the basename of the JS entry file.
   if (!assemblyPath) {
-    console.error(`Assembly not found for category '${category}' and test '${testName}'.`);
+    console.error(`Assembly not found for category '${category.path}' and test '${testName}'.`);
     console.error('Looked under:');
-    const categoryRoots = getCandidateCategoryRoots(category);
+    const categoryRoots = getCandidateCategoryRoots(category.path);
     for (let i = 0; i < categoryRoots.length; i += 1) {
       console.error(`  - ${categoryRoots[i]}`);
     }
