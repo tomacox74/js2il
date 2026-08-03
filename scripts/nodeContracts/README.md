@@ -27,6 +27,14 @@ npm run check:node-contract-fs-promises
 npm run test:node-contract-fs-promises
 ```
 
+For `node:console`:
+
+```sh
+npm run generate:node-contract-console
+npm run check:node-contract-console
+npm run test:node-contract-console
+```
+
 The checked-in override files record which contract members each intrinsic
 module currently implements and how each implementation is invoked. The
 generated intrinsic adapters use compile-time-bound calls for those members

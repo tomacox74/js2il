@@ -19,6 +19,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   JavaScript `Promise`.
 - runtime: replace reflection-based generated `node:fs` and `node:fs/promises`
   intrinsic contract delegation with compile-time-bound calls.
+- sdk/runtime: add a generated `node:console` host contract from the pinned
+  official Node.js 24.18.1 documentation, including optional and rest
+  parameter mappings, direct intrinsic delegation for available members, and
+  explicit not-implemented fallbacks.
 
 ## v0.12.1 - 2026-08-02
 
