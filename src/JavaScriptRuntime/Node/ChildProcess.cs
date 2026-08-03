@@ -19,7 +19,7 @@ using DiagnosticsProcessStartInfo = System.Diagnostics.ProcessStartInfo;
 namespace JavaScriptRuntime.Node
 {
     [NodeModule("child_process")]
-    public sealed class ChildProcess
+    public sealed partial class ChildProcess
     {
         private IIOScheduler? _ioScheduler;
         private NodeSchedulerState? _nodeScheduler;

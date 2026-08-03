@@ -28,6 +28,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   and an explicit fallback for the unavailable `matchesGlob` method. Align
   intrinsic join, basename, dirname, normalize, parse, and format edge behavior
   with Node.js.
+- sdk/runtime: add a generated `node:child_process` host contract from the
+  pinned official Node.js 24.18.1 documentation. Bind all seven implemented
+  top-level process-creation functions directly through generated adapters and
+  retain an explicit fallback for the unavailable exported constructor.
 - compiler/runtime: strongly type literal CommonJS requires for generated Node
   module contracts. Calls such as `require("fs").readFileSync(...)` now use
   `RequireObject<IFsModule>` and direct interface dispatch, including typed
