@@ -1262,6 +1262,9 @@ public sealed partial class HIRToLIRLowerer
                     calleePropAccess.PropertyName,
                     calleePropAccess.PropertyName,
                     IsPropertyGet: false,
+                    RequiresOverrideGuard:
+                        calleePropAccess.Object is not HIRVariableExpression contractBindingReceiver
+                        || !contractBindingReceiver.Name.BindingInfo.CanSkipNodeModuleOverrideGuard,
                     contractArguments,
                     resultTempVar));
             }

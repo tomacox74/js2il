@@ -197,8 +197,9 @@ public record LIRCallMember2(TempVariable Receiver, string MethodName, TempVaria
 public record LIRCallMember3(TempVariable Receiver, string MethodName, TempVariable A0, TempVariable A1, TempVariable A2, TempVariable Result) : LIRInstruction;
 
 /// <summary>
-/// Calls a generated Node module contract member directly unless JavaScript has
-/// installed an own-property override, in which case normal runtime dispatch is used.
+/// Calls a generated Node module contract member directly. When
+/// <see cref="RequiresOverrideGuard"/> is true, an own-property override falls back to normal
+/// runtime dispatch.
 /// </summary>
 public record LIRCallNodeModuleContractMember(
     TempVariable Receiver,
@@ -206,6 +207,7 @@ public record LIRCallNodeModuleContractMember(
     string ClrMethodName,
     string JavaScriptMemberName,
     bool IsPropertyGet,
+    bool RequiresOverrideGuard,
     IReadOnlyList<TempVariable> Arguments,
     TempVariable Result) : LIRInstruction;
 

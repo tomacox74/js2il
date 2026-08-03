@@ -26,6 +26,17 @@ internal sealed partial class LIRToILCompiler
                 $"No matching Node contract member found: {instruction.ContractType.FullName}.{instruction.ClrMethodName}");
         }
 
+        if (!instruction.RequiresOverrideGuard)
+        {
+            EmitDirectNodeModuleContractMemberCall(
+                instruction,
+                chosen,
+                ilEncoder,
+                allocation,
+                methodDescriptor);
+            return;
+        }
+
         var fallbackLabel = ilEncoder.DefineLabel();
         var doneLabel = ilEncoder.DefineLabel();
 
@@ -39,26 +50,12 @@ internal sealed partial class LIRToILCompiler
         ilEncoder.Token(hasOverride);
         ilEncoder.Branch(ILOpCode.Brtrue, fallbackLabel);
 
-        EmitLoadInstanceMethodReceiver(
-            instruction.Receiver,
-            instruction.ContractType,
+        EmitDirectNodeModuleContractMemberCall(
+            instruction,
+            chosen,
             ilEncoder,
             allocation,
             methodDescriptor);
-        var parameters = chosen.GetParameters();
-        EmitInstanceMethodArguments(
-            instruction.Arguments,
-            parameters,
-            ilEncoder,
-            allocation,
-            methodDescriptor);
-        var methodReference = _memberRefRegistry.GetOrAddMethod(
-            instruction.ContractType,
-            chosen.Name,
-            parameters.Select(static parameter => parameter.ParameterType).ToArray());
-        ilEncoder.OpCode(ILOpCode.Callvirt);
-        ilEncoder.Token(methodReference);
-        EmitStoreNodeContractResult(chosen.ReturnType, instruction.Result, ilEncoder, allocation);
         ilEncoder.Branch(ILOpCode.Br, doneLabel);
 
         ilEncoder.MarkLabel(fallbackLabel);
@@ -98,6 +95,35 @@ internal sealed partial class LIRToILCompiler
         }
 
         ilEncoder.MarkLabel(doneLabel);
+    }
+
+    private void EmitDirectNodeModuleContractMemberCall(
+        LIRCallNodeModuleContractMember instruction,
+        System.Reflection.MethodInfo method,
+        InstructionEncoder ilEncoder,
+        TempLocalAllocation allocation,
+        MethodDescriptor methodDescriptor)
+    {
+        EmitLoadInstanceMethodReceiver(
+            instruction.Receiver,
+            instruction.ContractType,
+            ilEncoder,
+            allocation,
+            methodDescriptor);
+        var parameters = method.GetParameters();
+        EmitInstanceMethodArguments(
+            instruction.Arguments,
+            parameters,
+            ilEncoder,
+            allocation,
+            methodDescriptor);
+        var methodReference = _memberRefRegistry.GetOrAddMethod(
+            instruction.ContractType,
+            method.Name,
+            parameters.Select(static parameter => parameter.ParameterType).ToArray());
+        ilEncoder.OpCode(ILOpCode.Callvirt);
+        ilEncoder.Token(methodReference);
+        EmitStoreNodeContractResult(method.ReturnType, instruction.Result, ilEncoder, allocation);
     }
 
     private void EmitStoreNodeContractResult(

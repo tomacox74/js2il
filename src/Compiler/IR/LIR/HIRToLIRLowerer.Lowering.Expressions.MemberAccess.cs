@@ -209,6 +209,9 @@ public sealed partial class HIRToLIRLowerer
                 getterName,
                 propAccessExpr.PropertyName,
                 IsPropertyGet: true,
+                RequiresOverrideGuard:
+                    propAccessExpr.Object is not HIRVariableExpression contractBindingReceiver
+                    || !contractBindingReceiver.Name.BindingInfo.CanSkipNodeModuleOverrideGuard,
                 Array.Empty<TempVariable>(),
                 resultTempVar));
             DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
