@@ -7,7 +7,24 @@ const path = require('path');
 const repoRoot = path.resolve(__dirname, '..', '..');
 const args = process.argv.slice(2);
 const promisesMode = args.includes('--promises');
-const contract = promisesMode
+const consoleMode = args.includes('--console');
+
+if (promisesMode && consoleMode) {
+    throw new Error('--promises and --console cannot be used together.');
+}
+
+const contract = consoleMode
+    ? {
+        moduleSpecifier: 'console',
+        documentationPrefix: 'console.',
+        interfaceName: 'IConsoleModule',
+        intrinsicClassName: 'ConsoleModule',
+        displayName: 'node:console',
+        outputStem: 'Console',
+        overrideStem: 'console',
+        lockStem: 'console'
+    }
+    : promisesMode
     ? {
         moduleSpecifier: 'fs/promises',
         documentationPrefix: 'fsPromises.',
@@ -15,7 +32,8 @@ const contract = promisesMode
         intrinsicClassName: 'FSPromises',
         displayName: 'node:fs/promises',
         outputStem: 'FsPromises',
-        overrideStem: 'fsPromises'
+        overrideStem: 'fsPromises',
+        lockStem: 'fs'
     }
     : {
         moduleSpecifier: 'fs',
@@ -24,9 +42,10 @@ const contract = promisesMode
         intrinsicClassName: 'FS',
         displayName: 'node:fs',
         outputStem: 'Fs',
-        overrideStem: 'fs'
+        overrideStem: 'fs',
+        lockStem: 'fs'
     };
-const lockPath = path.join(__dirname, 'fs.node24.lock.json');
+const lockPath = path.join(__dirname, `${contract.lockStem}.node24.lock.json`);
 const overridesPath = path.join(__dirname, `${contract.overrideStem}.node24.overrides.json`);
 const interfaceOutputPath = path.join(
     repoRoot,
@@ -44,6 +63,8 @@ const intrinsicImplementationOutputPath = path.join(
 
 const lock = JSON.parse(fs.readFileSync(lockPath, 'utf8'));
 const overrides = JSON.parse(fs.readFileSync(overridesPath, 'utf8'));
+const contractAlias = consoleMode ? 'ConsoleContract' : 'FsContract';
+const documentationModule = consoleMode ? 'console' : 'fs';
 const generatorSource = fs.readFileSync(__filename, 'utf8').replaceAll('\r\n', '\n');
 const generatorSha256 = crypto
     .createHash('sha256')
@@ -73,7 +94,8 @@ async function loadDocumentation() {
 function requireSection(module, sectionName) {
     const section = module.modules?.find(candidate => candidate.name === sectionName);
     if (!section) {
-        throw new Error(`Official fs documentation is missing the '${sectionName}' section.`);
+        throw new Error(
+            `Official ${contract.moduleSpecifier} documentation is missing the '${sectionName}' section.`);
     }
 
     return section;
@@ -82,7 +104,8 @@ function requireSection(module, sectionName) {
 function assertCount(actual, expected, description) {
     if (actual !== expected) {
         throw new Error(
-            `Official fs documentation ${description} changed: expected ${expected}, found ${actual}. ` +
+            `Official ${contract.moduleSpecifier} documentation ${description} changed: ` +
+            `expected ${expected}, found ${actual}. ` +
             'Review the Node.js API change and update the generator and lock intentionally.');
     }
 }
@@ -353,6 +376,58 @@ function generateMethodOverloads(methods) {
     return generated;
 }
 
+function generateMethodsWithOptionalAndRestParameters(methods) {
+    const generated = [];
+
+    for (const method of methods) {
+        const parsed = extractSignature(method);
+        const signature = method.signatures?.[0];
+        if (!signature) {
+            throw new Error(`Official Node.js method '${parsed.signature}' has no structured signature.`);
+        }
+
+        const optionalNames = optionalParameterNames(parsed.parameters);
+        const descriptors = signature.params ?? [];
+        const restParameter = descriptors.find(parameter => parameter.name.startsWith('...'));
+        const positionalParameters = descriptors.filter(
+            parameter => !parameter.name.startsWith('...'));
+        const requiredCount = positionalParameters.filter(
+            parameter => !optionalNames.has(parameter.name)).length;
+        const returnType = mapType(signature.return?.type, true);
+        const methodName = csharpMemberName(parsed.memberName);
+
+        for (let parameterCount = requiredCount;
+            parameterCount <= positionalParameters.length;
+            parameterCount++) {
+            const parameters = positionalParameters
+                .slice(0, parameterCount)
+                .map(parameter => {
+                    const type = optionalNames.has(parameter.name)
+                        ? 'object?'
+                        : mapType(parameter.type);
+                    return `${type} ${csharpIdentifier(parameter.name)}`;
+                });
+
+            if (restParameter && parameterCount === positionalParameters.length) {
+                parameters.push(`params object?[] ${csharpIdentifier(restParameter.name.slice(3))}`);
+            }
+
+            generated.push([
+                '    /// <summary>',
+                `    /// Node.js signature: <c>${xmlEscape(parsed.signature)}</c>.`,
+                '    /// </summary>',
+                ...(method.meta?.deprecated
+                    ? [`    [global::System.Obsolete("Deprecated by Node.js since ${method.meta.deprecated.join(', ')}.")]`]
+                    : []),
+                `    [NodeModuleMember("${parsed.memberName}")]`,
+                `    ${returnType} ${methodName}(${parameters.join(', ')});`
+            ].join('\n'));
+        }
+    }
+
+    return generated;
+}
+
 function generateInterface(documentation) {
     const module = documentation.modules?.find(candidate => candidate.name === lock.module);
     if (!module) {
@@ -362,7 +437,38 @@ function generateInterface(documentation) {
     let methodGroups;
     let standardProperties;
 
-    if (promisesMode) {
+    if (consoleMode) {
+        const consoleClass = module.classes?.find(candidate => candidate.name === 'Console');
+        if (!consoleClass) {
+            throw new Error("Official console documentation is missing the 'Console' class.");
+        }
+        const inspectorApi = requireSection(module, 'inspector_only_methods');
+
+        assertCount(module.classes?.length ?? 0, lock.classCount, 'class count');
+        assertCount(consoleClass.methods?.length ?? 0, lock.classMethodCount, 'class method count');
+        assertCount(
+            inspectorApi.methods?.length ?? 0,
+            lock.inspectorMethodCount,
+            'inspector method count');
+
+        methodGroups = [
+            {
+                heading: 'Console methods',
+                methods: generateMethodsWithOptionalAndRestParameters(consoleClass.methods)
+            },
+            {
+                heading: 'Inspector-only methods',
+                methods: generateMethodsWithOptionalAndRestParameters(inspectorApi.methods)
+            }
+        ];
+        standardProperties = [[
+            '    /// <summary>',
+            '    /// Gets the exported Console constructor.',
+            '    /// </summary>',
+            '    [NodeModuleMember("Console")]',
+            '    object? Console { get; }'
+        ].join('\n')];
+    } else if (promisesMode) {
         const promisesApi = requireSection(module, 'promises_api');
         assertCount(promisesApi.methods?.length ?? 0, lock.promiseMethodCount, 'promise method count');
         assertCount(promisesApi.properties?.length ?? 0, lock.promisePropertyCount, 'promise property count');
@@ -435,7 +541,7 @@ function generateInterface(documentation) {
 
     return [
         '// <auto-generated />',
-        `// Generated from the official Node.js ${lock.nodeVersion} fs API documentation.`,
+        `// Generated from the official Node.js ${lock.nodeVersion} ${documentationModule} API documentation.`,
         `// Source: ${lock.sourceUrl}`,
         `// SHA-256: ${lock.sha256}`,
         '',
@@ -450,7 +556,7 @@ function generateInterface(documentation) {
         '/// Nested option, result, and handle contracts intentionally remain dynamic in this proof of concept.',
         '/// They will be strongly typed by the work tracked in GitHub issue #1660.',
         '/// </remarks>',
-        `[global::System.CodeDom.Compiler.GeneratedCode("generateFsModuleInterface.js", "sha256:${generatorSha256}")]`,
+        `[global::System.CodeDom.Compiler.GeneratedCode("generateNodeModuleInterface.js", "sha256:${generatorSha256}")]`,
         `[NodeModuleInterface("${contract.moduleSpecifier}")]`,
         `public interface ${contract.interfaceName}`,
         '{',
@@ -480,7 +586,7 @@ function parseContractMembers(interfaceSource) {
             continue;
         }
 
-        const propertyMatch = line.match(/^    (.+) ([A-Za-z_][A-Za-z0-9_]*) \{ get; \}$/);
+        const propertyMatch = line.match(/^    (.+) (@?[A-Za-z_][A-Za-z0-9_]*) \{ get; \}$/);
         if (propertyMatch) {
             members.push({
                 kind: 'property',
@@ -493,14 +599,24 @@ function parseContractMembers(interfaceSource) {
             continue;
         }
 
-        const methodMatch = line.match(/^    (.+) ([A-Za-z_][A-Za-z0-9_]*)\((.*)\);$/);
+        const methodMatch = line.match(/^    (.+) (@?[A-Za-z_][A-Za-z0-9_]*)\((.*)\);$/);
         if (methodMatch) {
             const parameters = methodMatch[3]
                 ? methodMatch[3].split(', ').map(parameter => {
-                    const separator = parameter.lastIndexOf(' ');
+                    const declaration = parameter.endsWith(' = null')
+                        ? parameter.slice(0, -' = null'.length)
+                        : parameter;
+                    const parameterMatch = declaration.match(
+                        /^(params )?(.+?) (@?[A-Za-z_][A-Za-z0-9_]*)$/);
+                    if (!parameterMatch) {
+                        throw new Error(`Cannot parse generated C# parameter '${parameter}'.`);
+                    }
+
                     return {
                         declaration: parameter,
-                        name: parameter.slice(separator + 1)
+                        implementationDeclaration:
+                            `${parameterMatch[1] ?? ''}${parameterMatch[2]} ${parameterMatch[3]}`,
+                        name: parameterMatch[3]
                     };
                 })
                 : [];
@@ -530,11 +646,12 @@ function renderImplementedMethodBody(member, implementation) {
         argumentsList.push('null!');
     }
 
+    const target = implementation.target ?? member.csharpName;
     let invocation;
     if (implementation.style === 'argument-array') {
-        invocation = `${member.csharpName}(new object[] { ${argumentsList.join(', ')} })`;
+        invocation = `${target}(new object[] { ${argumentsList.join(', ')} })`;
     } else if (implementation.style === 'direct') {
-        invocation = `${member.csharpName}(${argumentsList.join(', ')})`;
+        invocation = `${target}(${argumentsList.join(', ')})`;
     } else {
         throw new Error(
             `Unsupported intrinsic invocation style '${implementation.style}' for '${member.nodeMemberName}'.`);
@@ -569,13 +686,16 @@ function generateIntrinsicImplementation(interfaceSource) {
     const members = parseContractMembers(interfaceSource);
     const generatedMembers = members.map(member => {
         const implementation = intrinsicImplementations.get(member.nodeMemberName);
+        const isImplemented = implementation
+            && (!implementation.parameterCounts
+                || implementation.parameterCounts.includes(member.parameters.length));
         const declaration = member.kind === 'property'
-            ? `${member.returnType} FsContract.${member.csharpName}`
-            : `${member.returnType} FsContract.${member.csharpName}(${member.parameters
-                .map(parameter => parameter.declaration)
+            ? `${member.returnType} ${contractAlias}.${member.csharpName}`
+            : `${member.returnType} ${contractAlias}.${member.csharpName}(${member.parameters
+                .map(parameter => parameter.implementationDeclaration)
                 .join(', ')})`;
 
-        if (!implementation) {
+        if (!isImplemented) {
             return [
                 `    ${declaration}`,
                 `        => throw CreateNotImplementedException("${member.nodeMemberName}");`
@@ -602,18 +722,18 @@ function generateIntrinsicImplementation(interfaceSource) {
 
     return [
         '// <auto-generated />',
-        `// Generated from the official Node.js ${lock.nodeVersion} fs API documentation.`,
+        `// Generated from the official Node.js ${lock.nodeVersion} ${documentationModule} API documentation.`,
         `// Source: ${lock.sourceUrl}`,
         `// SHA-256: ${lock.sha256}`,
         '',
         '#nullable enable',
         '#pragma warning disable CS0618',
         '',
-        `using FsContract = Jroc.Runtime.Node.Contracts.${contract.interfaceName};`,
+        `using ${contractAlias} = Jroc.Runtime.Node.Contracts.${contract.interfaceName};`,
         '',
         'namespace JavaScriptRuntime.Node;',
         '',
-        `public sealed partial class ${contract.intrinsicClassName} : FsContract`,
+        `public sealed partial class ${contract.intrinsicClassName} : ${contractAlias}`,
         '{',
         ...generatedMembers.flatMap(member => [member, '']),
         '    private static global::System.NotImplementedException CreateNotImplementedException(string memberName)',
@@ -645,9 +765,9 @@ async function main() {
             .map(([outputPath]) => path.relative(repoRoot, outputPath));
 
         if (staleOutputs.length > 0) {
-            const generationCommand = promisesMode
-                ? 'node scripts/nodeContracts/generateFsModuleInterface.js --promises'
-                : 'node scripts/nodeContracts/generateFsModuleInterface.js';
+            const modeArgument = consoleMode ? ' --console' : promisesMode ? ' --promises' : '';
+            const generationCommand =
+                `node scripts/nodeContracts/generateNodeModuleInterface.js${modeArgument}`;
             throw new Error(
                 `${staleOutputs.join(', ')} ${staleOutputs.length === 1 ? 'is' : 'are'} stale. Run ` +
                 `\`${generationCommand}\`.`);
