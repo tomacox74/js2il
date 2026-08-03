@@ -1,0 +1,230 @@
+﻿// IL code: Require_Path_UpdateOverride
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class private auto ansi beforefieldinit Modules.Require_Path_UpdateOverride
+	extends [System.Runtime]System.Object
+{
+	// Nested Types
+	.class nested public auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested public auto ansi beforefieldinit Block_L7C4
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2171
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Block_L7C4::.ctor
+
+		} // end of class Block_L7C4
+
+		.class nested public auto ansi beforefieldinit Block_L9C16
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x217a
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Block_L9C16::.ctor
+
+		} // end of class Block_L9C16
+
+
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x2168
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method Scope::.ctor
+
+	} // end of class Scope
+
+
+	// Methods
+	.method public hidebysig static 
+		void __js_module_init__ (
+			object exports,
+			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			object module,
+			string __filename,
+			string __dirname
+		) cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 12
+		// Code size: 250 (0xfa)
+		.maxstack 8
+		.locals init (
+			[0] class Modules.Require_Path_UpdateOverride/Scope,
+			[1] class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IPathModule,
+			[2] class [System.Runtime]System.Exception,
+			[3] object,
+			[4] object,
+			[5] object,
+			[6] float64,
+			[7] object,
+			[8] object
+		)
+
+		IL_0000: newobj instance void Modules.Require_Path_UpdateOverride/Scope::.ctor()
+		IL_0005: stloc.0
+		IL_0006: nop
+		IL_0007: ldarg.1
+		IL_0008: ldstr "path"
+		IL_000d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireRuntime::RequireObject<class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IPathModule>(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object)
+		IL_0012: stloc.1
+		IL_0013: ldloc.1
+		IL_0014: ldstr "join"
+		IL_0019: call float64 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItemAsNumber(object, object)
+		IL_001e: stloc.s 6
+		IL_0020: ldloc.s 6
+		IL_0022: ldc.r8 1
+		IL_002b: add
+		IL_002c: stloc.s 6
+		IL_002e: ldloc.1
+		IL_002f: ldstr "join"
+		IL_0034: ldloc.s 6
+		IL_0036: ldc.i4.1
+		IL_0037: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, float64, bool)
+		IL_003c: pop
+		.try
+		{
+			IL_003d: nop
+			IL_003e: ldloc.1
+			IL_003f: ldstr "join"
+			IL_0044: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::HasOwnPropertyOverride(object, string)
+			IL_0049: brtrue IL_0070
+
+			IL_004e: ldloc.1
+			IL_004f: ldc.i4.2
+			IL_0050: newarr [System.Runtime]System.Object
+			IL_0055: dup
+			IL_0056: ldc.i4.0
+			IL_0057: ldstr "a"
+			IL_005c: stelem.ref
+			IL_005d: dup
+			IL_005e: ldc.i4.1
+			IL_005f: ldstr "b"
+			IL_0064: stelem.ref
+			IL_0065: callvirt instance string [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IPathModule::join(object[])
+			IL_006a: pop
+			IL_006b: br IL_0092
+
+			IL_0070: ldloc.1
+			IL_0071: ldstr "join"
+			IL_0076: ldc.i4.2
+			IL_0077: newarr [System.Runtime]System.Object
+			IL_007c: dup
+			IL_007d: ldc.i4.0
+			IL_007e: ldstr "a"
+			IL_0083: stelem.ref
+			IL_0084: dup
+			IL_0085: ldc.i4.1
+			IL_0086: ldstr "b"
+			IL_008b: stelem.ref
+			IL_008c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallOwnPropertyMember(object, string, object[])
+			IL_0091: pop
+
+			IL_0092: leave IL_00f6
+		} // end .try
+		catch [System.Runtime]System.Exception
+		{
+			IL_0097: stloc.2
+			IL_0098: ldloc.2
+			IL_0099: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+			IL_009e: dup
+			IL_009f: brtrue IL_00b4
+
+			IL_00a4: pop
+			IL_00a5: ldloc.2
+			IL_00a6: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+			IL_00ab: dup
+			IL_00ac: brtrue IL_00bf
+
+			IL_00b1: pop
+			IL_00b2: rethrow
+
+			IL_00b4: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+			IL_00b9: stloc.3
+			IL_00ba: br IL_00c0
+
+			IL_00bf: stloc.3
+
+			IL_00c0: ldloc.3
+			IL_00c1: stloc.s 4
+			IL_00c3: ldstr "console"
+			IL_00c8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_00cd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_00d2: stloc.s 7
+			IL_00d4: ldloc.s 4
+			IL_00d6: ldstr "name"
+			IL_00db: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_00e0: stloc.s 8
+			IL_00e2: ldloc.s 7
+			IL_00e4: ldstr "log"
+			IL_00e9: ldloc.s 8
+			IL_00eb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_00f0: pop
+			IL_00f1: leave IL_00f6
+		} // end handler
+
+		IL_00f6: ldnull
+		IL_00f7: stloc.s 5
+		IL_00f9: ret
+	} // end of method Require_Path_UpdateOverride::__js_module_init__
+
+} // end of class Modules.Require_Path_UpdateOverride
+
+.class private auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x2183
+		// Header size: 1
+		// Code size: 23 (0x17)
+		.maxstack 8
+		.entrypoint
+
+		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
+		IL_0005: ldnull
+		IL_0006: ldftn void Modules.Require_Path_UpdateOverride::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
+		IL_0016: ret
+	} // end of method Program::Main
+
+} // end of class Program
+

@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20e4
+			// Method begins at RVA 0x20d1
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,12 +40,12 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 136 (0x88)
+		// Code size: 117 (0x75)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.FS_ReadWrite_Utf8/Scope,
-			[1] object,
-			[2] object,
+			[1] class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule,
+			[2] class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IPathModule,
 			[3] object,
 			[4] object
 		)
@@ -55,42 +55,43 @@
 		IL_0006: nop
 		IL_0007: ldarg.1
 		IL_0008: ldstr "fs"
-		IL_000d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
+		IL_000d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireRuntime::RequireObject<class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule>(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object)
 		IL_0012: stloc.1
 		IL_0013: ldarg.1
 		IL_0014: ldstr "path"
-		IL_0019: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
+		IL_0019: call !!0 [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireRuntime::RequireObject<class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IPathModule>(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object)
 		IL_001e: stloc.2
 		IL_001f: ldloc.2
-		IL_0020: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0025: ldstr "join"
-		IL_002a: ldarg.s __dirname
-		IL_002c: ldstr "tmp.txt"
-		IL_0031: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_0036: stloc.3
-		IL_0037: ldloc.1
-		IL_0038: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_003d: ldstr "writeFileSync"
-		IL_0042: ldloc.3
-		IL_0043: ldstr "hello"
-		IL_0048: ldstr "utf8"
-		IL_004d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember3(object, string, object, object, object)
-		IL_0052: pop
-		IL_0053: ldloc.1
-		IL_0054: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0059: ldstr "readFileSync"
-		IL_005e: ldloc.3
-		IL_005f: ldstr "utf8"
-		IL_0064: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_0069: stloc.s 4
-		IL_006b: ldstr "console"
-		IL_0070: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0075: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_007a: ldstr "log"
-		IL_007f: ldloc.s 4
-		IL_0081: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0086: pop
-		IL_0087: ret
+		IL_0020: ldc.i4.2
+		IL_0021: newarr [System.Runtime]System.Object
+		IL_0026: dup
+		IL_0027: ldc.i4.0
+		IL_0028: ldarg.s __dirname
+		IL_002a: stelem.ref
+		IL_002b: dup
+		IL_002c: ldc.i4.1
+		IL_002d: ldstr "tmp.txt"
+		IL_0032: stelem.ref
+		IL_0033: callvirt instance string [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IPathModule::join(object[])
+		IL_0038: stloc.3
+		IL_0039: ldloc.1
+		IL_003a: ldloc.3
+		IL_003b: ldstr "hello"
+		IL_0040: ldstr "utf8"
+		IL_0045: callvirt instance void [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule::writeFileSync(object, object, object)
+		IL_004a: ldloc.1
+		IL_004b: ldloc.3
+		IL_004c: ldstr "utf8"
+		IL_0051: callvirt instance object [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule::readFileSync(object, object)
+		IL_0056: stloc.s 4
+		IL_0058: ldstr "console"
+		IL_005d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0062: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0067: ldstr "log"
+		IL_006c: ldloc.s 4
+		IL_006e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0073: pop
+		IL_0074: ret
 	} // end of method FS_ReadWrite_Utf8::__js_module_init__
 
 } // end of class Modules.FS_ReadWrite_Utf8
@@ -102,7 +103,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20ed
+		// Method begins at RVA 0x20da
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

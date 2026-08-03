@@ -13,6 +13,24 @@ namespace JavaScriptRuntime.CommonJS
     /// <returns></returns>
     public delegate object? RequireDelegate(object? moduleId);
 
+    public static class RequireRuntime
+    {
+        public static T RequireObject<T>(RequireDelegate require, object? moduleId)
+            where T : class
+        {
+            ArgumentNullException.ThrowIfNull(require);
+
+            var value = require(moduleId);
+            if (value is T typedValue)
+            {
+                return typedValue;
+            }
+
+            throw new InvalidOperationException(
+                $"Required module '{moduleId}' does not implement the expected contract '{typeof(T).FullName}'.");
+        }
+    }
+
     /// <summary>
     /// Defines a parameter for a module main method.
     /// </summary>

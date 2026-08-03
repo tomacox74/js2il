@@ -96,6 +96,9 @@ internal sealed partial class LIRToILCompiler
             case LIRCallInstanceMethod callInstance:
                 EmitInstanceMethodCall(callInstance, ilEncoder, allocation, methodDescriptor);
                 break;
+            case LIRCallNodeModuleContractMember callNodeContract:
+                EmitNodeModuleContractMemberCall(callNodeContract, ilEncoder, allocation, methodDescriptor);
+                break;
             case LIRCallIntrinsicStatic callIntrinsicStatic:
                 if (IsSchedulerScheduledInline(callIntrinsicStatic.Result))
                 {

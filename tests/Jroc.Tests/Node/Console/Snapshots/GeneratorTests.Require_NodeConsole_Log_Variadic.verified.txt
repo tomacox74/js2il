@@ -1,0 +1,104 @@
+﻿// IL code: Require_NodeConsole_Log_Variadic
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class private auto ansi beforefieldinit Modules.Require_NodeConsole_Log_Variadic
+	extends [System.Runtime]System.Object
+{
+	// Nested Types
+	.class nested public auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x20b4
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method Scope::.ctor
+
+	} // end of class Scope
+
+
+	// Methods
+	.method public hidebysig static 
+		void __js_module_init__ (
+			object exports,
+			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			object module,
+			string __filename,
+			string __dirname
+		) cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 12
+		// Code size: 88 (0x58)
+		.maxstack 8
+		.locals init (
+			[0] class Modules.Require_NodeConsole_Log_Variadic/Scope,
+			[1] class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IConsoleModule
+		)
+
+		IL_0000: newobj instance void Modules.Require_NodeConsole_Log_Variadic/Scope::.ctor()
+		IL_0005: stloc.0
+		IL_0006: nop
+		IL_0007: ldarg.1
+		IL_0008: ldstr "node:console"
+		IL_000d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireRuntime::RequireObject<class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IConsoleModule>(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object)
+		IL_0012: stloc.1
+		IL_0013: ldloc.1
+		IL_0014: ldstr "values:"
+		IL_0019: ldc.i4.3
+		IL_001a: newarr [System.Runtime]System.Object
+		IL_001f: dup
+		IL_0020: ldc.i4.0
+		IL_0021: ldc.r8 1
+		IL_002a: box [System.Runtime]System.Double
+		IL_002f: stelem.ref
+		IL_0030: dup
+		IL_0031: ldc.i4.1
+		IL_0032: ldc.r8 2
+		IL_003b: box [System.Runtime]System.Double
+		IL_0040: stelem.ref
+		IL_0041: dup
+		IL_0042: ldc.i4.2
+		IL_0043: ldc.r8 3
+		IL_004c: box [System.Runtime]System.Double
+		IL_0051: stelem.ref
+		IL_0052: callvirt instance void [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IConsoleModule::log(object, object[])
+		IL_0057: ret
+	} // end of method Require_NodeConsole_Log_Variadic::__js_module_init__
+
+} // end of class Modules.Require_NodeConsole_Log_Variadic
+
+.class private auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x20bd
+		// Header size: 1
+		// Code size: 23 (0x17)
+		.maxstack 8
+		.entrypoint
+
+		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
+		IL_0005: ldnull
+		IL_0006: ldftn void Modules.Require_NodeConsole_Log_Variadic::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
+		IL_0016: ret
+	} // end of method Program::Main
+
+} // end of class Program
+

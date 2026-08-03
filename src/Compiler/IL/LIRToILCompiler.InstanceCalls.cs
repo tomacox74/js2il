@@ -1,4 +1,5 @@
 using Jroc.IR;
+using Jroc.Runtime.Node.Contracts;
 using Jroc.Services.ILGenerators;
 using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
@@ -8,6 +9,148 @@ namespace Jroc.IL;
 internal sealed partial class LIRToILCompiler
 {
     #region Instance Calls
+
+    private void EmitNodeModuleContractMemberCall(
+        LIRCallNodeModuleContractMember instruction,
+        InstructionEncoder ilEncoder,
+        TempLocalAllocation allocation,
+        MethodDescriptor methodDescriptor)
+    {
+        var chosen = ResolveTypedInstanceMethodOverload(
+            instruction.ContractType,
+            instruction.ClrMethodName,
+            instruction.Arguments.Count);
+        if (chosen == null)
+        {
+            throw new InvalidOperationException(
+                $"No matching Node contract member found: {instruction.ContractType.FullName}.{instruction.ClrMethodName}");
+        }
+
+        if (!instruction.RequiresOverrideGuard)
+        {
+            EmitDirectNodeModuleContractMemberCall(
+                instruction,
+                chosen,
+                ilEncoder,
+                allocation,
+                methodDescriptor);
+            return;
+        }
+
+        var fallbackLabel = ilEncoder.DefineLabel();
+        var doneLabel = ilEncoder.DefineLabel();
+
+        EmitLoadTempAsObject(instruction.Receiver, ilEncoder, allocation, methodDescriptor);
+        ilEncoder.Ldstr(_metadataBuilder, instruction.JavaScriptMemberName);
+        var hasOverride = _memberRefRegistry.GetOrAddMethod(
+            typeof(JavaScriptRuntime.ObjectRuntime),
+            nameof(JavaScriptRuntime.ObjectRuntime.HasOwnPropertyOverride),
+            new[] { typeof(object), typeof(string) });
+        ilEncoder.OpCode(ILOpCode.Call);
+        ilEncoder.Token(hasOverride);
+        ilEncoder.Branch(ILOpCode.Brtrue, fallbackLabel);
+
+        EmitDirectNodeModuleContractMemberCall(
+            instruction,
+            chosen,
+            ilEncoder,
+            allocation,
+            methodDescriptor);
+        ilEncoder.Branch(ILOpCode.Br, doneLabel);
+
+        ilEncoder.MarkLabel(fallbackLabel);
+        EmitLoadTempAsObject(instruction.Receiver, ilEncoder, allocation, methodDescriptor);
+        ilEncoder.Ldstr(_metadataBuilder, instruction.JavaScriptMemberName);
+        if (instruction.IsPropertyGet)
+        {
+            var getProperty = _memberRefRegistry.GetOrAddMethod(
+                typeof(JavaScriptRuntime.ObjectRuntime),
+                nameof(JavaScriptRuntime.ObjectRuntime.GetProperty),
+                new[] { typeof(object), typeof(string) });
+            ilEncoder.OpCode(ILOpCode.Call);
+            ilEncoder.Token(getProperty);
+        }
+        else
+        {
+            EmitObjectArrayFromTemps(
+                instruction.Arguments,
+                ilEncoder,
+                allocation,
+                methodDescriptor);
+            var callOwnPropertyMember = _memberRefRegistry.GetOrAddMethod(
+                typeof(JavaScriptRuntime.ObjectRuntime),
+                nameof(JavaScriptRuntime.ObjectRuntime.CallOwnPropertyMember),
+                new[] { typeof(object), typeof(string), typeof(object[]) });
+            ilEncoder.OpCode(ILOpCode.Call);
+            ilEncoder.Token(callOwnPropertyMember);
+        }
+
+        if (IsMaterialized(instruction.Result, allocation))
+        {
+            EmitStoreTemp(instruction.Result, ilEncoder, allocation);
+        }
+        else
+        {
+            ilEncoder.OpCode(ILOpCode.Pop);
+        }
+
+        ilEncoder.MarkLabel(doneLabel);
+    }
+
+    private void EmitDirectNodeModuleContractMemberCall(
+        LIRCallNodeModuleContractMember instruction,
+        System.Reflection.MethodInfo method,
+        InstructionEncoder ilEncoder,
+        TempLocalAllocation allocation,
+        MethodDescriptor methodDescriptor)
+    {
+        EmitLoadInstanceMethodReceiver(
+            instruction.Receiver,
+            instruction.ContractType,
+            ilEncoder,
+            allocation,
+            methodDescriptor);
+        var parameters = method.GetParameters();
+        EmitInstanceMethodArguments(
+            instruction.Arguments,
+            parameters,
+            ilEncoder,
+            allocation,
+            methodDescriptor);
+        var methodReference = _memberRefRegistry.GetOrAddMethod(
+            instruction.ContractType,
+            method.Name,
+            parameters.Select(static parameter => parameter.ParameterType).ToArray());
+        ilEncoder.OpCode(ILOpCode.Callvirt);
+        ilEncoder.Token(methodReference);
+        EmitStoreNodeContractResult(method.ReturnType, instruction.Result, ilEncoder, allocation);
+    }
+
+    private void EmitStoreNodeContractResult(
+        Type returnType,
+        TempVariable result,
+        InstructionEncoder ilEncoder,
+        TempLocalAllocation allocation)
+    {
+        if (IsMaterialized(result, allocation))
+        {
+            if (returnType == typeof(void))
+            {
+                ilEncoder.OpCode(ILOpCode.Ldnull);
+            }
+            else if (returnType.IsValueType)
+            {
+                ilEncoder.OpCode(ILOpCode.Box);
+                ilEncoder.Token(_memberRefRegistry.GetOrAddTypeHandle(returnType));
+            }
+
+            EmitStoreTemp(result, ilEncoder, allocation);
+        }
+        else if (returnType != typeof(void))
+        {
+            ilEncoder.OpCode(ILOpCode.Pop);
+        }
+    }
 
     private void EmitInstanceMethodCall(
         LIRCallInstanceMethod instruction,
@@ -28,19 +171,12 @@ internal sealed partial class LIRToILCompiler
         EmitLoadInstanceMethodReceiver(instruction.Receiver, receiverType, ilEncoder, allocation, methodDescriptor);
 
         var parameters = chosen.GetParameters();
-        var expectsParamsArray = parameters.Length == 1 && parameters[0].ParameterType == typeof(object[]);
-
-        if (expectsParamsArray)
-        {
-            EmitObjectArrayFromTemps(instruction.Arguments, ilEncoder, allocation, methodDescriptor);
-        }
-        else
-        {
-            foreach (var arg in instruction.Arguments)
-            {
-                EmitLoadTempAsObject(arg, ilEncoder, allocation, methodDescriptor);
-            }
-        }
+        EmitInstanceMethodArguments(
+            instruction.Arguments,
+            parameters,
+            ilEncoder,
+            allocation,
+            methodDescriptor);
 
         var paramTypes = parameters.Select(p => p.ParameterType).ToArray();
         var methodRef = _memberRefRegistry.GetOrAddMethod(receiverType, chosen.Name, paramTypes);
@@ -97,19 +233,12 @@ internal sealed partial class LIRToILCompiler
         EmitLoadInstanceMethodReceiver(instruction.Receiver, receiverType, ilEncoder, allocation, methodDescriptor);
 
         var parameters = chosen.GetParameters();
-        var expectsParamsArray = parameters.Length == 1 && parameters[0].ParameterType == typeof(object[]);
-
-        if (expectsParamsArray)
-        {
-            EmitObjectArrayFromTemps(instruction.Arguments, ilEncoder, allocation, methodDescriptor);
-        }
-        else
-        {
-            foreach (var arg in instruction.Arguments)
-            {
-                EmitLoadTempAsObject(arg, ilEncoder, allocation, methodDescriptor);
-            }
-        }
+        EmitInstanceMethodArguments(
+            instruction.Arguments,
+            parameters,
+            ilEncoder,
+            allocation,
+            methodDescriptor);
 
         var paramTypes = parameters.Select(p => p.ParameterType).ToArray();
         var methodRef = _memberRefRegistry.GetOrAddMethod(receiverType, chosen.Name, paramTypes);
@@ -122,12 +251,16 @@ internal sealed partial class LIRToILCompiler
         string methodName,
         int argCount)
     {
+        var isNodeModuleContract = receiverType.GetCustomAttributes(
+                typeof(NodeModuleInterfaceAttribute),
+                inherit: false)
+            .Length == 1;
         var allMethods = receiverType
             .GetMethods(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance)
             .ToList();
 
         var namedMethods = allMethods
-            .Where(mi => string.Equals(mi.Name, methodName, StringComparison.Ordinal))
+            .Where(mi => string.Equals(GetJavaScriptMethodName(mi), methodName, StringComparison.Ordinal))
             .ToList();
 
         // Prefer exact JS casing, but keep a case-insensitive fallback for CLR surfaces
@@ -135,7 +268,7 @@ internal sealed partial class LIRToILCompiler
         if (namedMethods.Count == 0)
         {
             namedMethods = allMethods
-                .Where(mi => string.Equals(mi.Name, methodName, StringComparison.OrdinalIgnoreCase))
+                .Where(mi => string.Equals(GetJavaScriptMethodName(mi), methodName, StringComparison.OrdinalIgnoreCase))
                 .ToList();
         }
 
@@ -147,21 +280,65 @@ internal sealed partial class LIRToILCompiler
 
         return methods
             .Select(mi => new { Method = mi, Parameters = mi.GetParameters() })
-            .Where(static x =>
-                (x.Parameters.Length == 1 && x.Parameters[0].ParameterType == typeof(object[]))
-                || x.Parameters.All(p => p.ParameterType == typeof(object)))
+            .Where(x => isNodeModuleContract
+                || (x.Parameters.Length == 1 && x.Parameters[0].ParameterType == typeof(object[]))
+                || x.Parameters.All(parameter => parameter.ParameterType == typeof(object)))
             .Select(x => new
             {
                 x.Method,
                 x.Parameters,
-                IsVariadicFallback = x.Parameters.Length == 1 && x.Parameters[0].ParameterType == typeof(object[])
+                IsVariadic = x.Parameters.Length > 0
+                    && (x.Parameters[^1].GetCustomAttributes(typeof(ParamArrayAttribute), inherit: false).Length > 0
+                        || (x.Parameters.Length == 1 && x.Parameters[0].ParameterType == typeof(object[])))
             })
-            .Where(x => x.IsVariadicFallback || x.Parameters.Length == argCount)
-            .OrderBy(x => x.IsVariadicFallback ? 1 : 0)
-            .ThenBy(x => x.Parameters.Length)
+            .Where(x => x.IsVariadic
+                ? argCount >= x.Parameters.Length - 1
+                : x.Parameters.Length == argCount)
+            .OrderBy(x => x.IsVariadic ? 1 : 0)
+            .ThenByDescending(x => x.IsVariadic ? x.Parameters.Length - 1 : x.Parameters.Length)
             .ThenBy(x => x.Method.ToString(), StringComparer.Ordinal)
             .Select(x => x.Method)
             .FirstOrDefault();
+    }
+
+    private static string GetJavaScriptMethodName(System.Reflection.MethodInfo method)
+    {
+        var attribute = method.GetCustomAttributes(typeof(NodeModuleMemberAttribute), inherit: false)
+            .OfType<NodeModuleMemberAttribute>()
+            .SingleOrDefault();
+        return attribute?.MemberName ?? method.Name;
+    }
+
+    private void EmitInstanceMethodArguments(
+        IReadOnlyList<TempVariable> arguments,
+        IReadOnlyList<System.Reflection.ParameterInfo> parameters,
+        InstructionEncoder ilEncoder,
+        TempLocalAllocation allocation,
+        MethodDescriptor methodDescriptor)
+    {
+        var hasParamsArray = parameters.Count > 0
+            && (parameters[^1].GetCustomAttributes(typeof(ParamArrayAttribute), inherit: false).Length > 0
+                || (parameters.Count == 1 && parameters[0].ParameterType == typeof(object[])));
+        var fixedParameterCount = hasParamsArray ? parameters.Count - 1 : parameters.Count;
+
+        for (var i = 0; i < fixedParameterCount; i++)
+        {
+            EmitLoadTempAsParameterType(
+                arguments[i],
+                parameters[i].ParameterType,
+                ilEncoder,
+                allocation,
+                methodDescriptor);
+        }
+
+        if (hasParamsArray)
+        {
+            EmitObjectArrayFromTemps(
+                arguments.Skip(fixedParameterCount).ToArray(),
+                ilEncoder,
+                allocation,
+                methodDescriptor);
+        }
     }
 
     private void EmitLoadInstanceMethodReceiver(

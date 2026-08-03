@@ -252,6 +252,57 @@ namespace Jroc.Utilities.Ecma335
 
         /// <summary>
         /// Gets or creates a closed reference to
+        /// <c>T RequireObject&lt;T&gt;(RequireDelegate, object)</c>.
+        /// </summary>
+        public MethodSpecificationHandle GetOrAddGenericRequireObjectMethod(
+            Type declaringType,
+            string methodName,
+            Type typeArgument,
+            Type requireDelegateType)
+        {
+            var key = $"{declaringType.FullName}::{methodName}<{typeArgument.FullName}>({requireDelegateType.FullName},object)";
+            if (_methodSpecCache.TryGetValue(key, out var cached))
+            {
+                return cached;
+            }
+
+            var signatureBuilder = new BlobBuilder();
+            new BlobEncoder(signatureBuilder)
+                .MethodSignature(isInstanceMethod: false, genericParameterCount: 1)
+                .Parameters(
+                    2,
+                    returnType => returnType.Type().GenericMethodTypeParameter(0),
+                    parameters =>
+                    {
+                        parameters
+                            .AddParameter()
+                            .Type()
+                            .Type(GetOrAddTypeHandle(requireDelegateType), isValueType: false);
+                        parameters
+                            .AddParameter()
+                            .Type()
+                            .Object();
+                    });
+            var methodReference = _metadataBuilder.AddMemberReference(
+                GetOrAddDeclaringTypeHandle(declaringType),
+                _metadataBuilder.GetOrAddString(methodName),
+                _metadataBuilder.GetOrAddBlob(signatureBuilder));
+
+            var specificationBuilder = new BlobBuilder();
+            var argument = new BlobEncoder(specificationBuilder)
+                .MethodSpecificationSignature(1)
+                .AddArgument();
+            EncodeSignatureType(argument, typeArgument);
+
+            var methodSpecification = _metadataBuilder.AddMethodSpecification(
+                methodReference,
+                _metadataBuilder.GetOrAddBlob(specificationBuilder));
+            _methodSpecCache[key] = methodSpecification;
+            return methodSpecification;
+        }
+
+        /// <summary>
+        /// Gets or creates a closed reference to
         /// <c>T InitializeFunctionInstance&lt;T&gt;(T, double, string, bool, bool)</c>.
         /// </summary>
         public MethodSpecificationHandle GetOrAddGenericFunctionInitializer(

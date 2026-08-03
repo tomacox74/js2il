@@ -98,6 +98,7 @@ public class Compiler
         {
             _symbolTableBuilder.Build(mod);
         }
+        _symbolTableBuilder.AnalyzeNodeModuleContractOverrideSafety(modules._modules.Values);
 
         if (this.diagnosticsEnabled)
         {

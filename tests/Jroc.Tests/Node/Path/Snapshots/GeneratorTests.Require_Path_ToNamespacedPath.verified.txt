@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2180
+			// Method begins at RVA 0x216c
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,11 +40,11 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 292 (0x124)
+		// Code size: 272 (0x110)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Require_Path_ToNamespacedPath/Scope,
-			[1] object,
+			[1] class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IPathModule,
 			[2] object,
 			[3] object,
 			[4] string,
@@ -61,100 +61,96 @@
 		IL_0006: nop
 		IL_0007: ldarg.1
 		IL_0008: ldstr "path"
-		IL_000d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
+		IL_000d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireRuntime::RequireObject<class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IPathModule>(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object)
 		IL_0012: stloc.1
 		IL_0013: ldloc.1
-		IL_0014: ldstr "sep"
-		IL_0019: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_001e: stloc.2
-		IL_001f: ldc.i4.3
-		IL_0020: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_0025: dup
-		IL_0026: ldstr "tmp"
-		IL_002b: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-		IL_0030: dup
-		IL_0031: ldstr "a"
-		IL_0036: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-		IL_003b: dup
-		IL_003c: ldstr "b"
-		IL_0041: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-		IL_0046: stloc.s 5
-		IL_0048: ldloc.s 5
-		IL_004a: ldc.i4.1
-		IL_004b: newarr [System.Runtime]System.Object
-		IL_0050: dup
-		IL_0051: ldc.i4.0
-		IL_0052: ldloc.2
-		IL_0053: stelem.ref
-		IL_0054: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
-		IL_0059: stloc.s 6
-		IL_005b: ldloc.2
-		IL_005c: ldloc.s 6
-		IL_005e: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_0063: stloc.3
-		IL_0064: ldc.i4.2
-		IL_0065: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_006a: dup
-		IL_006b: ldstr "relative"
-		IL_0070: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-		IL_0075: dup
-		IL_0076: ldstr "path"
-		IL_007b: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-		IL_0080: stloc.s 5
-		IL_0082: ldloc.s 5
-		IL_0084: ldc.i4.1
-		IL_0085: newarr [System.Runtime]System.Object
-		IL_008a: dup
-		IL_008b: ldc.i4.0
-		IL_008c: ldloc.2
-		IL_008d: stelem.ref
-		IL_008e: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
-		IL_0093: stloc.s 4
-		IL_0095: ldstr "console"
-		IL_009a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_009f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00a4: stloc.s 7
-		IL_00a6: ldloc.1
-		IL_00a7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00ac: ldstr "toNamespacedPath"
+		IL_0014: callvirt instance string [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IPathModule::get_sep()
+		IL_0019: stloc.2
+		IL_001a: ldc.i4.3
+		IL_001b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_0020: dup
+		IL_0021: ldstr "tmp"
+		IL_0026: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+		IL_002b: dup
+		IL_002c: ldstr "a"
+		IL_0031: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+		IL_0036: dup
+		IL_0037: ldstr "b"
+		IL_003c: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+		IL_0041: stloc.s 5
+		IL_0043: ldloc.s 5
+		IL_0045: ldc.i4.1
+		IL_0046: newarr [System.Runtime]System.Object
+		IL_004b: dup
+		IL_004c: ldc.i4.0
+		IL_004d: ldloc.2
+		IL_004e: stelem.ref
+		IL_004f: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
+		IL_0054: stloc.s 6
+		IL_0056: ldloc.2
+		IL_0057: ldloc.s 6
+		IL_0059: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_005e: stloc.3
+		IL_005f: ldc.i4.2
+		IL_0060: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_0065: dup
+		IL_0066: ldstr "relative"
+		IL_006b: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+		IL_0070: dup
+		IL_0071: ldstr "path"
+		IL_0076: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+		IL_007b: stloc.s 5
+		IL_007d: ldloc.s 5
+		IL_007f: ldc.i4.1
+		IL_0080: newarr [System.Runtime]System.Object
+		IL_0085: dup
+		IL_0086: ldc.i4.0
+		IL_0087: ldloc.2
+		IL_0088: stelem.ref
+		IL_0089: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
+		IL_008e: stloc.s 4
+		IL_0090: ldstr "console"
+		IL_0095: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_009a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_009f: stloc.s 7
+		IL_00a1: ldloc.1
+		IL_00a2: ldstr "toNamespacedPath"
+		IL_00a7: ldloc.3
+		IL_00a8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_00ad: stloc.s 8
+		IL_00af: ldloc.s 8
 		IL_00b1: ldloc.3
-		IL_00b2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00b7: stloc.s 8
-		IL_00b9: ldloc.s 8
-		IL_00bb: ldloc.3
-		IL_00bc: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_00c1: stloc.s 9
-		IL_00c3: ldloc.s 9
-		IL_00c5: box [System.Runtime]System.Boolean
-		IL_00ca: stloc.s 10
-		IL_00cc: ldloc.s 7
-		IL_00ce: ldstr "log"
-		IL_00d3: ldloc.s 10
-		IL_00d5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00da: pop
-		IL_00db: ldstr "console"
-		IL_00e0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_00e5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00ea: stloc.s 7
-		IL_00ec: ldloc.1
-		IL_00ed: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00f2: ldstr "toNamespacedPath"
-		IL_00f7: ldloc.s 4
-		IL_00f9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00fe: stloc.s 8
-		IL_0100: ldloc.s 8
-		IL_0102: ldloc.s 4
-		IL_0104: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_0109: stloc.s 9
-		IL_010b: ldloc.s 9
-		IL_010d: box [System.Runtime]System.Boolean
-		IL_0112: stloc.s 10
-		IL_0114: ldloc.s 7
-		IL_0116: ldstr "log"
-		IL_011b: ldloc.s 10
-		IL_011d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0122: pop
-		IL_0123: ret
+		IL_00b2: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_00b7: stloc.s 9
+		IL_00b9: ldloc.s 9
+		IL_00bb: box [System.Runtime]System.Boolean
+		IL_00c0: stloc.s 10
+		IL_00c2: ldloc.s 7
+		IL_00c4: ldstr "log"
+		IL_00c9: ldloc.s 10
+		IL_00cb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_00d0: pop
+		IL_00d1: ldstr "console"
+		IL_00d6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_00db: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00e0: stloc.s 7
+		IL_00e2: ldloc.1
+		IL_00e3: ldloc.s 4
+		IL_00e5: callvirt instance string [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IPathModule::toNamespacedPath(string)
+		IL_00ea: stloc.s 8
+		IL_00ec: ldloc.s 8
+		IL_00ee: ldloc.s 4
+		IL_00f0: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_00f5: stloc.s 9
+		IL_00f7: ldloc.s 9
+		IL_00f9: box [System.Runtime]System.Boolean
+		IL_00fe: stloc.s 10
+		IL_0100: ldloc.s 7
+		IL_0102: ldstr "log"
+		IL_0107: ldloc.s 10
+		IL_0109: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_010e: pop
+		IL_010f: ret
 	} // end of method Require_Path_ToNamespacedPath::__js_module_init__
 
 } // end of class Modules.Require_Path_ToNamespacedPath
@@ -166,7 +162,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2189
+		// Method begins at RVA 0x2175
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

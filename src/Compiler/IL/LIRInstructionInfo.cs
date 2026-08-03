@@ -127,6 +127,7 @@ internal static class LIRInstructionInfo
         typeof(LIRCallMember1),
         typeof(LIRCallMember2),
         typeof(LIRCallMember3),
+        typeof(LIRCallNodeModuleContractMember),
         typeof(LIRCallRequire),
         typeof(LIRCallRuntimeServicesStatic),
         typeof(LIRCallTypedMember),
@@ -270,6 +271,7 @@ internal static class LIRInstructionInfo
         typeof(LIRAsyncStateSwitch),
         typeof(LIRAsyncStoreAwaitedResult),
         typeof(LIRAsyncLoadAwaitedResult),
+        typeof(LIRCallNodeModuleContractMember),
         typeof(LIRCreateLeafScopeInstance),
         typeof(LIRCreateScopeInstance)
     ];
@@ -606,6 +608,7 @@ internal static class LIRInstructionInfo
                 or LIRCallMember1
                 or LIRCallMember2
                 or LIRCallMember3
+                or LIRCallNodeModuleContractMember
                 or LIRCallTypedMember
                 or LIRCallTypedMemberWithFallback
                 or LIRCallUserClassInstanceMethod

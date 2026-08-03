@@ -174,6 +174,10 @@ public class AstWalker
                 Visit(parenthesizedExpr.Expression, visitor);
                 break;
 
+            case UpdateExpression updateExpr:
+                Visit(updateExpr.Argument, visitor);
+                break;
+
             case UnaryExpression unaryExpr:
                 Visit(unaryExpr.Argument, visitor);
                 break;
@@ -182,9 +186,18 @@ public class AstWalker
                 Visit(awaitExpr.Argument, visitor);
                 break;
 
+            case YieldExpression yieldExpr:
+                Visit(yieldExpr.Argument, visitor);
+                break;
+
             case AssignmentExpression assignExpr:
                 Visit(assignExpr.Left, visitor);
                 Visit(assignExpr.Right, visitor);
+                break;
+
+            case AssignmentPattern assignmentPattern:
+                Visit(assignmentPattern.Left, visitor);
+                Visit(assignmentPattern.Right, visitor);
                 break;
 
             case SequenceExpression seqExpr:
@@ -428,9 +441,18 @@ public class AstWalker
                 VisitWithContext(awaitExpr.Argument, enterNode, exitNode);
                 break;
 
+            case YieldExpression yieldExpr:
+                VisitWithContext(yieldExpr.Argument, enterNode, exitNode);
+                break;
+
             case AssignmentExpression assignExpr:
                 VisitWithContext(assignExpr.Left, enterNode, exitNode);
                 VisitWithContext(assignExpr.Right, enterNode, exitNode);
+                break;
+
+            case AssignmentPattern assignmentPattern:
+                VisitWithContext(assignmentPattern.Left, enterNode, exitNode);
+                VisitWithContext(assignmentPattern.Right, enterNode, exitNode);
                 break;
 
             case SequenceExpression seqExpr:

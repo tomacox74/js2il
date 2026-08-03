@@ -11,6 +11,38 @@ namespace Jroc.Tests.Node.Path
             nameof(Require_Path_Join_Basic));
 
         [Fact]
+        public Task Require_NodePath_Join_Basic() => GenerateTest(
+            nameof(Require_NodePath_Join_Basic));
+
+        [Fact]
+        public Task Require_Path_MemberOverrides() => GenerateTest(
+            nameof(Require_Path_MemberOverrides));
+
+        [Fact]
+        public Task Require_Path_AliasOverride() => GenerateTest(
+            nameof(Require_Path_AliasOverride));
+
+        [Fact]
+        public Task Require_Path_RequireAliasOverride() => GenerateTest(
+            nameof(Require_Path_RequireAliasOverride));
+
+        [Fact]
+        public Task Require_Path_ModuleRequireOverride() => GenerateTest(
+            nameof(Require_Path_ModuleRequireOverride));
+
+        [Fact]
+        public Task Require_Path_DefaultParameterOverride() => GenerateTest(
+            nameof(Require_Path_DefaultParameterOverride));
+
+        [Fact]
+        public Task Require_Path_UpdateOverride() => GenerateTest(
+            nameof(Require_Path_UpdateOverride));
+
+        [Fact]
+        public Task Require_Path_DynamicImportOverride() => GenerateTest(
+            nameof(Require_Path_DynamicImportOverride));
+
+        [Fact]
         public Task Require_Path_Join_NestedFunction() => GenerateTest(
             nameof(Require_Path_Join_NestedFunction));
 

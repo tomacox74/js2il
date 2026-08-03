@@ -92,6 +92,13 @@ public class BindingInfo
     public bool HasNonInitializationWrite { get; set; }
 
     /// <summary>
+    /// True when whole-program analysis proves that this binding is a direct import of a
+    /// generated Node module contract and no acquisition of that module singleton can install
+    /// an own-property override.
+    /// </summary>
+    public bool CanSkipNodeModuleOverrideGuard { get; set; }
+
+    /// <summary>
     /// True when a non-captured <c>var</c> or <c>let</c> binding is proven numeric and
     /// definitely initialized before every reachable read in its callable.
     /// </summary>

@@ -572,8 +572,6 @@ internal sealed partial class LIRToILCompiler
 
             case LIRCallRequire callRequire:
                 {
-                    // Emit: (RequireDelegate)requireValue(moduleId)
-                    // This avoids the generic Closure.InvokeWithArgs dispatcher.
                     var requireStorage = GetTempStorage(callRequire.RequireValue);
                     if (requireStorage.Kind == ValueStorageKind.Reference
                         && requireStorage.ClrType == typeof(JavaScriptRuntime.CommonJS.RequireDelegate))
@@ -590,12 +588,25 @@ internal sealed partial class LIRToILCompiler
                     }
 
                     EmitLoadTemp(callRequire.ModuleId, ilEncoder, allocation, methodDescriptor);
-                    var invokeRef = _memberRefRegistry.GetOrAddMethod(
-                        typeof(JavaScriptRuntime.CommonJS.RequireDelegate),
-                        nameof(JavaScriptRuntime.CommonJS.RequireDelegate.Invoke),
-                        new[] { typeof(object) });
-                    ilEncoder.OpCode(ILOpCode.Callvirt);
-                    ilEncoder.Token(invokeRef);
+                    if (callRequire.ContractType != null)
+                    {
+                        var requireObject = _memberRefRegistry.GetOrAddGenericRequireObjectMethod(
+                            typeof(JavaScriptRuntime.CommonJS.RequireRuntime),
+                            nameof(JavaScriptRuntime.CommonJS.RequireRuntime.RequireObject),
+                            callRequire.ContractType,
+                            typeof(JavaScriptRuntime.CommonJS.RequireDelegate));
+                        ilEncoder.OpCode(ILOpCode.Call);
+                        ilEncoder.Token(requireObject);
+                    }
+                    else
+                    {
+                        var invokeRef = _memberRefRegistry.GetOrAddMethod(
+                            typeof(JavaScriptRuntime.CommonJS.RequireDelegate),
+                            nameof(JavaScriptRuntime.CommonJS.RequireDelegate.Invoke),
+                            new[] { typeof(object) });
+                        ilEncoder.OpCode(ILOpCode.Callvirt);
+                        ilEncoder.Token(invokeRef);
+                    }
 
                     if (IsMaterialized(callRequire.Result, allocation))
                     {

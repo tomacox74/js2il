@@ -548,6 +548,8 @@ internal static class TempLocalAllocator
                 visitor.Visit(value.Receiver); visitor.Visit(value.A0); visitor.Visit(value.A1); break;
             case LIRCallMember3 value:
                 visitor.Visit(value.Receiver); visitor.Visit(value.A0); visitor.Visit(value.A1); visitor.Visit(value.A2); break;
+            case LIRCallNodeModuleContractMember value:
+                visitor.Visit(value.Receiver); VisitList(value.Arguments, ref visitor); break;
             case LIRCallTypedMember value:
                 visitor.Visit(value.Receiver); VisitList(value.Arguments, ref visitor); break;
             case LIRCallTypedMemberWithFallback value:
@@ -1054,6 +1056,9 @@ internal static class TempLocalAllocator
                 return true;
             case LIRCallMember3 callMember3:
                 defined = callMember3.Result;
+                return true;
+            case LIRCallNodeModuleContractMember callNodeContract:
+                defined = callNodeContract.Result;
                 return true;
 
             case LIRCallIntrinsicStaticWithArgsArray callStaticWithArgsArray:

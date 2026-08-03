@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Jroc.Runtime.Node.Contracts;
 
 namespace JavaScriptRuntime.Node
 {
@@ -30,6 +31,38 @@ namespace JavaScriptRuntime.Node
             }
 
             return modules;
+        });
+
+        private static readonly Lazy<Dictionary<string, Type>> ContractsByName = new(() =>
+        {
+            var contracts = new Dictionary<string, Type>(StringComparer.OrdinalIgnoreCase);
+            var contractTypes = typeof(NodeModuleInterfaceAttribute).Assembly
+                .GetTypes()
+                .Where(static type => type.IsInterface)
+                .OrderBy(static type => type.FullName, StringComparer.Ordinal);
+
+            foreach (var type in contractTypes)
+            {
+                var attribute = type.GetCustomAttribute<NodeModuleInterfaceAttribute>(false);
+                if (attribute == null)
+                {
+                    continue;
+                }
+
+                var name = NormalizeModuleName(attribute.ModuleName);
+                if (string.IsNullOrWhiteSpace(name))
+                {
+                    continue;
+                }
+
+                if (!contracts.TryAdd(name, type))
+                {
+                    throw new InvalidOperationException(
+                        $"Multiple Node module contracts are registered for '{name}'.");
+                }
+            }
+
+            return contracts;
         });
 
         public static string NormalizeModuleName(string specifier)
@@ -63,6 +96,18 @@ namespace JavaScriptRuntime.Node
             }
 
             return ModulesByName.Value.TryGetValue(key, out type);
+        }
+
+        public static bool TryGetModuleContractType(string specifier, out Type? type)
+        {
+            var key = NormalizeModuleName(specifier);
+            if (string.IsNullOrWhiteSpace(key))
+            {
+                type = null;
+                return false;
+            }
+
+            return ContractsByName.Value.TryGetValue(key, out type);
         }
     }
 }
