@@ -7,7 +7,7 @@ using JavaScriptRuntime.EngineCore;
 namespace JavaScriptRuntime;
 
 [IntrinsicObject("Promise")]
-public sealed class Promise
+public sealed class Promise : IJavaScriptPromise
 {
     private static readonly Func<object[], object?[]?, object?> PrototypeThenValue = PrototypeThen;
     private static readonly Func<object[], object?[]?, object?> PrototypeCatchValue = PrototypeCatch;
@@ -417,6 +417,15 @@ public sealed class Promise
 
         return nextPromise;
     }
+
+    IJavaScriptPromise IJavaScriptPromise.then(object? onFulfilled, object? onRejected)
+        => (IJavaScriptPromise)then(onFulfilled, onRejected)!;
+
+    IJavaScriptPromise IJavaScriptPromise.@catch(object? onRejected)
+        => (IJavaScriptPromise)@catch(onRejected)!;
+
+    IJavaScriptPromise IJavaScriptPromise.@finally(object? onFinally)
+        => (IJavaScriptPromise)@finally(onFinally)!;
 
     public static object? all(object? iterable)
     {

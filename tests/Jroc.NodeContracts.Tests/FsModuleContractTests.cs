@@ -36,7 +36,10 @@ public class FsModuleContractTests
         Assert.Equal(
             "fs",
             contractType.GetCustomAttribute<NodeModuleInterfaceAttribute>()?.ModuleName);
-        Assert.NotNull(contractType.GetCustomAttribute<GeneratedCodeAttribute>());
+        var generatedCode = contractType.GetCustomAttribute<GeneratedCodeAttribute>();
+        Assert.NotNull(generatedCode);
+        Assert.Equal("generateFsModuleInterface.js", generatedCode.Tool);
+        Assert.Matches("^sha256:[0-9a-f]{64}$", generatedCode.Version);
 
         var deprecatedConstant = contractType.GetProperty("F_OK");
         Assert.Equal(typeof(double), deprecatedConstant?.PropertyType);
@@ -108,7 +111,7 @@ public class FsModuleContractTests
     }
 
     [Fact]
-    public void IFsModule_UsesArrayContractInsteadOfRuntimeImplementation()
+    public void IFsModule_UsesRuntimeContractsInsteadOfImplementations()
     {
         Assert.Contains(
             typeof(IFsModule).GetMethods(),
@@ -119,6 +122,15 @@ public class FsModuleContractTests
                 || method.GetParameters().Any(
                     parameter => parameter.ParameterType == typeof(JavaScriptRuntime.Array)));
         Assert.True(typeof(IJavaScriptArray).IsAssignableFrom(typeof(JavaScriptRuntime.Array)));
+
+        Assert.Contains(
+            typeof(IFsModule).GetMethods(),
+            method => method.ReturnType == typeof(IJavaScriptPromise));
+        Assert.DoesNotContain(
+            typeof(IFsModule).GetMethods(),
+            method => method.ReturnType == typeof(Promise)
+                || method.GetParameters().Any(parameter => parameter.ParameterType == typeof(Promise)));
+        Assert.True(typeof(IJavaScriptPromise).IsAssignableFrom(typeof(Promise)));
     }
 
     [Fact]

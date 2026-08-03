@@ -5,25 +5,50 @@ const fs = require('fs');
 const path = require('path');
 
 const repoRoot = path.resolve(__dirname, '..', '..');
+const args = process.argv.slice(2);
+const promisesMode = args.includes('--promises');
+const contract = promisesMode
+    ? {
+        moduleSpecifier: 'fs/promises',
+        documentationPrefix: 'fsPromises.',
+        interfaceName: 'IFsPromisesModule',
+        intrinsicClassName: 'FSPromises',
+        displayName: 'node:fs/promises',
+        outputStem: 'FsPromises',
+        overrideStem: 'fsPromises'
+    }
+    : {
+        moduleSpecifier: 'fs',
+        documentationPrefix: 'fs.',
+        interfaceName: 'IFsModule',
+        intrinsicClassName: 'FS',
+        displayName: 'node:fs',
+        outputStem: 'Fs',
+        overrideStem: 'fs'
+    };
 const lockPath = path.join(__dirname, 'fs.node24.lock.json');
-const overridesPath = path.join(__dirname, 'fs.node24.overrides.json');
+const overridesPath = path.join(__dirname, `${contract.overrideStem}.node24.overrides.json`);
 const interfaceOutputPath = path.join(
     repoRoot,
     'src',
     'JavaScriptRuntime',
     'Node',
     'Contracts',
-    'IFsModule.Generated.cs');
+    `I${contract.outputStem}Module.Generated.cs`);
 const intrinsicImplementationOutputPath = path.join(
     repoRoot,
     'src',
     'JavaScriptRuntime',
     'Node',
-    'FS.IFsModule.Generated.cs');
+    `${contract.intrinsicClassName}.I${contract.outputStem}Module.Generated.cs`);
 
 const lock = JSON.parse(fs.readFileSync(lockPath, 'utf8'));
 const overrides = JSON.parse(fs.readFileSync(overridesPath, 'utf8'));
-const args = process.argv.slice(2);
+const generatorSource = fs.readFileSync(__filename, 'utf8').replaceAll('\r\n', '\n');
+const generatorSha256 = crypto
+    .createHash('sha256')
+    .update(generatorSource)
+    .digest('hex');
 const checkOnly = args.includes('--check');
 const inputIndex = args.indexOf('--input');
 const inputPath = inputIndex >= 0 ? args[inputIndex + 1] : null;
@@ -106,7 +131,7 @@ function extractSignature(method) {
 
     return {
         signature,
-        memberName: signature.slice(0, openParen).replace(/^fs\./, ''),
+        memberName: signature.slice(0, openParen).replace(contract.documentationPrefix, ''),
         parameters: signature.slice(openParen + 1, closeParen)
     };
 }
@@ -221,7 +246,7 @@ function mapType(type, isReturnType = false) {
     }
 
     if (normalized.startsWith('promise')) {
-        return 'global::JavaScriptRuntime.Promise';
+        return 'global::JavaScriptRuntime.IJavaScriptPromise';
     }
 
     if (normalized === 'iterator' || normalized === 'iterable') {
@@ -334,25 +359,72 @@ function generateInterface(documentation) {
         throw new Error(`Official documentation does not contain module '${lock.module}'.`);
     }
 
-    const callbackApi = requireSection(module, 'callback_api');
-    const synchronousApi = requireSection(module, 'synchronous_api');
-    const commonObjects = requireSection(module, 'common_objects');
+    let methodGroups;
+    let standardProperties;
 
-    assertCount(callbackApi.methods?.length ?? 0, lock.callbackMethodCount, 'callback method count');
-    assertCount(synchronousApi.methods?.length ?? 0, lock.synchronousMethodCount, 'synchronous method count');
-    assertCount(commonObjects.classes?.length ?? 0, lock.commonObjectClassCount, 'common object class count');
+    if (promisesMode) {
+        const promisesApi = requireSection(module, 'promises_api');
+        assertCount(promisesApi.methods?.length ?? 0, lock.promiseMethodCount, 'promise method count');
+        assertCount(promisesApi.properties?.length ?? 0, lock.promisePropertyCount, 'promise property count');
+        assertCount(promisesApi.classes?.length ?? 0, lock.promiseClassCount, 'promise class count');
 
-    const callbackMethods = generateMethodOverloads(callbackApi.methods);
-    const synchronousMethods = generateMethodOverloads(synchronousApi.methods);
+        methodGroups = [{
+            heading: 'Promise API',
+            methods: generateMethodOverloads(promisesApi.methods)
+        }];
+        standardProperties = [[
+            '    /// <summary>',
+            '    /// Gets the file system constants object.',
+            '    /// </summary>',
+            '    [NodeModuleMember("constants")]',
+            '    object? constants { get; }'
+        ].join('\n')];
+    } else {
+        const callbackApi = requireSection(module, 'callback_api');
+        const synchronousApi = requireSection(module, 'synchronous_api');
+        const commonObjects = requireSection(module, 'common_objects');
+
+        assertCount(callbackApi.methods?.length ?? 0, lock.callbackMethodCount, 'callback method count');
+        assertCount(synchronousApi.methods?.length ?? 0, lock.synchronousMethodCount, 'synchronous method count');
+        assertCount(commonObjects.classes?.length ?? 0, lock.commonObjectClassCount, 'common object class count');
+
+        methodGroups = [
+            {
+                heading: 'Callback API',
+                methods: generateMethodOverloads(callbackApi.methods)
+            },
+            {
+                heading: 'Synchronous API',
+                methods: generateMethodOverloads(synchronousApi.methods)
+            }
+        ];
+        standardProperties = [
+            [
+                '    /// <summary>',
+                '    /// Gets the file system constants object.',
+                '    /// </summary>',
+                '    [NodeModuleMember("constants")]',
+                '    object? constants { get; }'
+            ].join('\n'),
+            [
+                '    /// <summary>',
+                '    /// Gets the promise-based file system API.',
+                '    /// </summary>',
+                '    [NodeModuleMember("promises")]',
+                '    object? promises { get; }'
+            ].join('\n')
+        ];
+    }
+
     const overrideProperties = overrides.properties.map(property => {
         if (property.access !== 'read-only') {
             throw new Error(
-                `Unsupported access '${property.access}' for fs override property '${property.name}'.`);
+                `Unsupported access '${property.access}' for ${contract.moduleSpecifier} override property '${property.name}'.`);
         }
 
         return [
             '    /// <summary>',
-            `    /// Gets the deprecated <c>fs.${xmlEscape(property.name)}</c> constant.`,
+            `    /// Gets the deprecated <c>${contract.documentationPrefix}${xmlEscape(property.name)}</c> constant.`,
             '    /// </summary>',
             `    /// <remarks>Source: <c>${xmlEscape(property.source)}</c>.</remarks>`,
             `    [global::System.Obsolete("${property.deprecated}")]`,
@@ -372,33 +444,22 @@ function generateInterface(documentation) {
         'namespace Jroc.Runtime.Node.Contracts;',
         '',
         '/// <summary>',
-        `/// Defines the public top-level <c>node:fs</c> module contract from Node.js ${lock.nodeVersion}.`,
+        `/// Defines the public top-level <c>${contract.displayName}</c> module contract from Node.js ${lock.nodeVersion}.`,
         '/// </summary>',
         '/// <remarks>',
         '/// Nested option, result, and handle contracts intentionally remain dynamic in this proof of concept.',
         '/// They will be strongly typed by the work tracked in GitHub issue #1660.',
         '/// </remarks>',
-        '[global::System.CodeDom.Compiler.GeneratedCode("generateFsModuleInterface.js", "1.0.0")]',
-        '[NodeModuleInterface("fs")]',
-        'public interface IFsModule',
+        `[global::System.CodeDom.Compiler.GeneratedCode("generateFsModuleInterface.js", "sha256:${generatorSha256}")]`,
+        `[NodeModuleInterface("${contract.moduleSpecifier}")]`,
+        `public interface ${contract.interfaceName}`,
         '{',
-        '    /// <summary>',
-        '    /// Gets the file system constants object.',
-        '    /// </summary>',
-        '    [NodeModuleMember("constants")]',
-        '    object? constants { get; }',
-        '',
-        '    /// <summary>',
-        '    /// Gets the promise-based file system API.',
-        '    /// </summary>',
-        '    [NodeModuleMember("promises")]',
-        '    object? promises { get; }',
-        '',
+        ...standardProperties.flatMap(property => [property, '']),
         ...overrideProperties.flatMap(property => [property, '']),
-        '    // Callback API',
-        ...callbackMethods.flatMap(method => [method, '']),
-        '    // Synchronous API',
-        ...synchronousMethods.flatMap(method => [method, '']),
+        ...methodGroups.flatMap(group => [
+            `    // ${group.heading}`,
+            ...group.methods.flatMap(method => [method, ''])
+        ]),
         '}',
         ''
     ].join('\n');
@@ -532,11 +593,11 @@ function generateIntrinsicImplementation(interfaceSource) {
         '#nullable enable',
         '#pragma warning disable CS0618',
         '',
-        'using FsContract = Jroc.Runtime.Node.Contracts.IFsModule;',
+        `using FsContract = Jroc.Runtime.Node.Contracts.${contract.interfaceName};`,
         '',
         'namespace JavaScriptRuntime.Node;',
         '',
-        'public sealed partial class FS : FsContract',
+        `public sealed partial class ${contract.intrinsicClassName} : FsContract`,
         '{',
         ...generatedMembers.flatMap(member => [member, '']),
         '    private static bool IsImplementedContractMethod(string memberName)',
@@ -557,7 +618,7 @@ function generateIntrinsicImplementation(interfaceSource) {
         '    }',
         '',
         '    private static global::System.NotImplementedException CreateNotImplementedException(string memberName)',
-        '        => new($"The intrinsic node:fs module does not implement \'fs.{memberName}\'.");',
+        `        => new($"The intrinsic ${contract.displayName} module does not implement '${contract.documentationPrefix}{memberName}'.");`,
         '}',
         ''
     ].join('\n');
@@ -585,9 +646,12 @@ async function main() {
             .map(([outputPath]) => path.relative(repoRoot, outputPath));
 
         if (staleOutputs.length > 0) {
+            const generationCommand = promisesMode
+                ? 'node scripts/nodeContracts/generateFsModuleInterface.js --promises'
+                : 'node scripts/nodeContracts/generateFsModuleInterface.js';
             throw new Error(
                 `${staleOutputs.join(', ')} ${staleOutputs.length === 1 ? 'is' : 'are'} stale. Run ` +
-                '`node scripts/nodeContracts/generateFsModuleInterface.js`.');
+                `\`${generationCommand}\`.`);
         }
 
         for (const outputPath of outputs.keys()) {

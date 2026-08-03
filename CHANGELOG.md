@@ -12,6 +12,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   `IJavaScriptArray` as the public array ABI implemented by the built-in
   JavaScript `Array`, and make the intrinsic `node:fs` module implement the
   generated contract with explicit not-implemented fallbacks.
+- sdk/runtime: add a generated `node:fs/promises` host contract from the same
+  pinned Node.js 24.18.1 documentation and make the intrinsic promises module
+  implement it with explicit not-implemented fallbacks. Add
+  `IJavaScriptPromise` as the public promise ABI implemented by the built-in
+  JavaScript `Promise`.
 
 ## v0.12.1 - 2026-08-02
 

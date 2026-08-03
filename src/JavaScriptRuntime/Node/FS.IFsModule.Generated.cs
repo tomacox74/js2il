@@ -153,10 +153,10 @@ public sealed partial class FS : FsContract
     void FsContract.open(object? path, object? flags, object? mode, global::System.Delegate callback)
         => _ = InvokeContractMember("open", [path!, flags!, mode!, callback!]);
 
-    global::JavaScriptRuntime.Promise FsContract.openAsBlob(object? path)
+    global::JavaScriptRuntime.IJavaScriptPromise FsContract.openAsBlob(object? path)
         => throw CreateNotImplementedException("openAsBlob");
 
-    global::JavaScriptRuntime.Promise FsContract.openAsBlob(object? path, object? options)
+    global::JavaScriptRuntime.IJavaScriptPromise FsContract.openAsBlob(object? path, object? options)
         => throw CreateNotImplementedException("openAsBlob");
 
     void FsContract.opendir(object? path, global::System.Delegate callback)
