@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x222d
+				// Method begins at RVA 0x2219
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -36,7 +36,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2224
+			// Method begins at RVA 0x2210
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -62,7 +62,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 438 (0x1b6)
+		// Code size: 417 (0x1a1)
 		.maxstack 16
 		.locals init (
 			[0] class Modules.ControlFlow_ForOf_Array_SymbolIterator_SparseLiteral/Scope,
@@ -74,9 +74,8 @@
 			[6] object,
 			[7] class [JavaScriptRuntime]JavaScriptRuntime.Array,
 			[8] object,
-			[9] object[],
-			[10] bool,
-			[11] float64
+			[9] bool,
+			[10] float64
 		)
 
 		IL_0000: newobj instance void Modules.ControlFlow_ForOf_Array_SymbolIterator_SparseLiteral/Scope::.ctor()
@@ -138,92 +137,83 @@
 		IL_00d2: box [System.Runtime]System.Double
 		IL_00d7: stloc.2
 		IL_00d8: ldloc.1
-		IL_00d9: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class [JavaScriptRuntime]JavaScriptRuntime.Array>(!!0)
-		IL_00de: stloc.s 7
-		IL_00e0: ldstr "iterator"
-		IL_00e5: call object [JavaScriptRuntime]JavaScriptRuntime.Symbol::GetWellKnown(string)
-		IL_00ea: stloc.s 8
-		IL_00ec: ldc.i4.0
-		IL_00ed: newarr [System.Runtime]System.Object
-		IL_00f2: stloc.s 9
-		IL_00f4: ldloc.s 7
-		IL_00f6: ldloc.s 8
-		IL_00f8: ldloc.s 9
-		IL_00fa: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallComputedMember(object, object, object[])
-		IL_00ff: stloc.s 8
-		IL_0101: ldloc.s 8
-		IL_0103: call class [JavaScriptRuntime]JavaScriptRuntime.IJavaScriptIterator [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetIterator(object)
-		IL_0108: stloc.3
-		IL_0109: ldc.i4.0
-		IL_010a: stloc.s 4
-		IL_010c: ldc.i4.0
-		IL_010d: stloc.s 5
+		IL_00d9: ldstr "iterator"
+		IL_00de: call object [JavaScriptRuntime]JavaScriptRuntime.Symbol::GetWellKnown(string)
+		IL_00e3: ldc.i4.0
+		IL_00e4: newarr [System.Runtime]System.Object
+		IL_00e9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallComputedMember(object, object, object[])
+		IL_00ee: call class [JavaScriptRuntime]JavaScriptRuntime.IJavaScriptIterator [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetIterator(object)
+		IL_00f3: stloc.3
+		IL_00f4: ldc.i4.0
+		IL_00f5: stloc.s 4
+		IL_00f7: ldc.i4.0
+		IL_00f8: stloc.s 5
 		.try
 		{
-			// loop start (head: IL_010f)
-				IL_010f: ldloc.3
-				IL_0110: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorNext(object)
-				IL_0115: stloc.s 8
-				IL_0117: ldloc.s 8
-				IL_0119: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorResultDone(object)
-				IL_011e: stloc.s 10
-				IL_0120: ldloc.s 10
-				IL_0122: brtrue IL_017d
+			// loop start (head: IL_00fa)
+				IL_00fa: ldloc.3
+				IL_00fb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorNext(object)
+				IL_0100: stloc.s 8
+				IL_0102: ldloc.s 8
+				IL_0104: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorResultDone(object)
+				IL_0109: stloc.s 9
+				IL_010b: ldloc.s 9
+				IL_010d: brtrue IL_0168
 
-				IL_0127: ldloc.s 8
-				IL_0129: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorResultValue(object)
-				IL_012e: stloc.s 8
-				IL_0130: ldloc.s 8
-				IL_0132: stloc.s 6
-				IL_0134: ldstr "console"
-				IL_0139: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-				IL_013e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_0143: ldstr "log"
-				IL_0148: ldloc.s 6
-				IL_014a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-				IL_014f: pop
-				IL_0150: ldloc.2
-				IL_0151: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-				IL_0156: ldc.r8 1
-				IL_015f: add
-				IL_0160: stloc.s 11
-				IL_0162: ldloc.s 11
-				IL_0164: box [System.Runtime]System.Double
-				IL_0169: stloc.2
-				IL_016a: br IL_010f
+				IL_0112: ldloc.s 8
+				IL_0114: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorResultValue(object)
+				IL_0119: stloc.s 8
+				IL_011b: ldloc.s 8
+				IL_011d: stloc.s 6
+				IL_011f: ldstr "console"
+				IL_0124: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+				IL_0129: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_012e: ldstr "log"
+				IL_0133: ldloc.s 6
+				IL_0135: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+				IL_013a: pop
+				IL_013b: ldloc.2
+				IL_013c: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+				IL_0141: ldc.r8 1
+				IL_014a: add
+				IL_014b: stloc.s 10
+				IL_014d: ldloc.s 10
+				IL_014f: box [System.Runtime]System.Double
+				IL_0154: stloc.2
+				IL_0155: br IL_00fa
 			// end loop
-			IL_016f: ldloc.3
-			IL_0170: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorClose(object)
-			IL_0175: ldc.i4.1
-			IL_0176: stloc.s 5
-			IL_0178: leave IL_019a
+			IL_015a: ldloc.3
+			IL_015b: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorClose(object)
+			IL_0160: ldc.i4.1
+			IL_0161: stloc.s 5
+			IL_0163: leave IL_0185
 
-			IL_017d: ldc.i4.1
-			IL_017e: stloc.s 4
-			IL_0180: leave IL_019a
+			IL_0168: ldc.i4.1
+			IL_0169: stloc.s 4
+			IL_016b: leave IL_0185
 		} // end .try
 		finally
 		{
-			IL_0185: ldloc.s 4
-			IL_0187: brtrue IL_0199
+			IL_0170: ldloc.s 4
+			IL_0172: brtrue IL_0184
 
-			IL_018c: ldloc.s 5
-			IL_018e: brtrue IL_0199
+			IL_0177: ldloc.s 5
+			IL_0179: brtrue IL_0184
 
-			IL_0193: ldloc.3
-			IL_0194: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorCloseForThrowCompletion(object)
+			IL_017e: ldloc.3
+			IL_017f: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorCloseForThrowCompletion(object)
 
-			IL_0199: endfinally
+			IL_0184: endfinally
 		} // end handler
 
-		IL_019a: ldstr "console"
-		IL_019f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_01a4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_01a9: ldstr "log"
-		IL_01ae: ldloc.2
-		IL_01af: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_01b4: pop
-		IL_01b5: ret
+		IL_0185: ldstr "console"
+		IL_018a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_018f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0194: ldstr "log"
+		IL_0199: ldloc.2
+		IL_019a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_019f: pop
+		IL_01a0: ret
 	} // end of method ControlFlow_ForOf_Array_SymbolIterator_SparseLiteral::__js_module_init__
 
 } // end of class Modules.ControlFlow_ForOf_Array_SymbolIterator_SparseLiteral
@@ -235,7 +225,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2236
+		// Method begins at RVA 0x2222
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
