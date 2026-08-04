@@ -205,6 +205,62 @@ const contractDefinitions = [
         lockStem: 'util',
         contractAlias: 'UtilTypesContract',
         documentationModule: 'util'
+    },
+    {
+        flag: '--zlib',
+        kind: 'zlib',
+        moduleSpecifier: 'zlib',
+        documentationPrefix: 'zlib.',
+        interfaceName: 'IZlibModule',
+        intrinsicClassName: 'Zlib',
+        displayName: 'node:zlib',
+        outputStem: 'Zlib',
+        overrideStem: 'zlib',
+        lockStem: 'zlib',
+        contractAlias: 'ZlibContract',
+        documentationModule: 'zlib'
+    },
+    {
+        flag: '--string-decoder',
+        kind: 'string-decoder',
+        moduleSpecifier: 'string_decoder',
+        documentationPrefix: 'string_decoder.',
+        interfaceName: 'IStringDecoderModule',
+        intrinsicClassName: 'StringDecoderModule',
+        displayName: 'node:string_decoder',
+        outputStem: 'StringDecoder',
+        overrideStem: 'stringDecoder',
+        lockStem: 'stringDecoder',
+        contractAlias: 'StringDecoderContract',
+        documentationModule: 'string_decoder'
+    },
+    {
+        flag: '--timers',
+        kind: 'timers',
+        moduleSpecifier: 'timers',
+        documentationPrefix: 'timers.',
+        interfaceName: 'ITimersModule',
+        intrinsicClassName: 'TimersModule',
+        displayName: 'node:timers',
+        outputStem: 'Timers',
+        overrideStem: 'timers',
+        lockStem: 'timers',
+        contractAlias: 'TimersContract',
+        documentationModule: 'timers'
+    },
+    {
+        flag: '--timers-promises',
+        kind: 'timers-promises',
+        moduleSpecifier: 'timers/promises',
+        documentationPrefix: 'timersPromises.',
+        interfaceName: 'ITimersPromisesModule',
+        intrinsicClassName: 'TimersPromises',
+        displayName: 'node:timers/promises',
+        outputStem: 'TimersPromises',
+        overrideStem: 'timersPromises',
+        lockStem: 'timers',
+        contractAlias: 'TimersPromisesContract',
+        documentationModule: 'timers'
     }
 ];
 const args = process.argv.slice(2);
@@ -334,6 +390,33 @@ function assertCount(actual, expected, description) {
             `expected ${expected}, found ${actual}. ` +
             'Review the Node.js API change and update the generator and lock intentionally.');
     }
+}
+
+function collectDocumentedLegacyZlibConstants(module) {
+    const names = new Set();
+
+    function visit(value) {
+        if (!value || typeof value !== 'object') {
+            return;
+        }
+
+        if (typeof value.desc === 'string') {
+            for (const match of value.desc.matchAll(/zlib\.constants\.([A-Za-z0-9_]+)/g)) {
+                if (!match[1].startsWith('BROTLI')) {
+                    names.add(match[1]);
+                }
+            }
+        }
+
+        for (const child of Object.values(value)) {
+            if (child && typeof child === 'object') {
+                visit(child);
+            }
+        }
+    }
+
+    visit(module);
+    return [...names].sort();
 }
 
 function expandOptionalSegments(value) {
@@ -987,6 +1070,127 @@ function generateInterface(documentation) {
             heading: 'Type predicates',
             methods: generateMethodOverloads(
                 applyMethodSignatureOverrides(typesProperty.methods ?? []))
+        }];
+        standardProperties = [];
+    } else if (contract.kind === 'zlib') {
+        const convenienceMethods = requireMiscSection(module, 'Convenience methods');
+        const legacyConstants = collectDocumentedLegacyZlibConstants(module);
+
+        assertCount(module.methods?.length ?? 0, lock.methodCount, 'method count');
+        assertCount(module.properties?.length ?? 0, lock.propertyCount, 'property count');
+        assertCount(module.classes?.length ?? 0, lock.classCount, 'class count');
+        assertCount(module.miscs?.length ?? 0, lock.sectionCount, 'section count');
+        assertCount(
+            convenienceMethods.methods?.length ?? 0,
+            lock.convenienceMethodCount,
+            'convenience method count');
+        assertCount(
+            legacyConstants.length,
+            lock.deprecatedTopLevelConstantCount,
+            'deprecated top-level constant count');
+        assertCount(
+            overrides.properties.length,
+            lock.exportPropertyOverrideCount,
+            'export property override count');
+
+        methodGroups = [{
+            heading: 'Compression methods',
+            methods: generateMethodOverloads(module.methods)
+        }];
+        standardProperties = legacyConstants.map(constantName => [
+            '    /// <summary>',
+            `    /// Gets the deprecated top-level <c>zlib.${constantName}</c> constant.`,
+            '    /// </summary>',
+            '    /// <remarks>',
+            '    /// Use the corresponding member on <c>zlib.constants</c> instead.',
+            '    /// </remarks>',
+            '    [global::System.Obsolete("Access through zlib.constants instead.")]',
+            `    [NodeModuleMember("${constantName}")]`,
+            `    double ${constantName} { get; }`
+        ].join('\n'));
+    } else if (contract.kind === 'string-decoder') {
+        const stringDecoderClass = module.classes?.find(
+            candidate => candidate.name === 'StringDecoder');
+        if (!stringDecoderClass) {
+            throw new Error(
+                "Official string_decoder documentation is missing the 'StringDecoder' class.");
+        }
+
+        assertCount(module.classes?.length ?? 0, lock.classCount, 'class count');
+        assertCount(
+            stringDecoderClass.methods?.length ?? 0,
+            lock.classMethodCount,
+            'StringDecoder method count');
+        assertCount(
+            stringDecoderClass.properties?.length ?? 0,
+            lock.classPropertyCount,
+            'StringDecoder property count');
+        assertCount(
+            overrides.properties.length,
+            lock.exportPropertyOverrideCount,
+            'export property override count');
+
+        methodGroups = [{
+            heading: 'String decoder module methods',
+            methods: []
+        }];
+        standardProperties = [];
+    } else if (contract.kind === 'timers') {
+        const schedulingTimers = requireSection(module, 'scheduling_timers');
+        const cancellingTimers = requireSection(module, 'cancelling_timers');
+
+        assertCount(module.classes?.length ?? 0, lock.classCount, 'class count');
+        assertCount(module.modules?.length ?? 0, lock.sectionCount, 'section count');
+        assertCount(
+            schedulingTimers.methods?.length ?? 0,
+            lock.schedulingMethodCount,
+            'scheduling method count');
+        assertCount(
+            cancellingTimers.methods?.length ?? 0,
+            lock.cancellingMethodCount,
+            'cancelling method count');
+
+        methodGroups = [
+            {
+                heading: 'Scheduling timers',
+                methods: generateMethodsWithOptionalAndRestParameters(
+                    schedulingTimers.methods ?? [])
+            },
+            {
+                heading: 'Cancelling timers',
+                methods: generateMethodsWithOptionalAndRestParameters(
+                    cancellingTimers.methods ?? [])
+            }
+        ];
+        standardProperties = [];
+    } else if (contract.kind === 'timers-promises') {
+        const promisesApi = requireSection(module, 'timers_promises_api');
+        const topLevelMethods = (promisesApi.methods ?? [])
+            .filter(method => !extractSignature(method).memberName.includes('.'));
+
+        assertCount(
+            promisesApi.methods?.length ?? 0,
+            lock.promiseMethodCount,
+            'promise API method count');
+        assertCount(
+            topLevelMethods.length,
+            lock.promiseTopLevelMethodCount,
+            'promise top-level method count');
+        assertCount(
+            (promisesApi.methods?.length ?? 0) - topLevelMethods.length,
+            lock.promiseNestedMethodCount,
+            'promise nested method count');
+        assertCount(
+            overrides.properties.length,
+            lock.promiseExportPropertyCount,
+            'promise export property count');
+
+        methodGroups = [{
+            heading: 'Promise timer methods',
+            methods: [
+                ...generateMethodOverloads(removeNormalizedMethods(topLevelMethods)),
+                ...generateNormalizedMethods()
+            ]
         }];
         standardProperties = [];
     } else if (contract.kind === 'buffer') {
