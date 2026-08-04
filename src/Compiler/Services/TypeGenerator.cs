@@ -166,14 +166,7 @@ namespace Jroc.Services
 
             if (binding.IsStableType && binding.ClrType != null)
             {
-                if (binding.ClrType == typeof(double)
-                    || binding.ClrType == typeof(bool)
-                    || binding.ClrType == typeof(string)
-                    || binding.ClrType == typeof(JavaScriptRuntime.Array)
-                    || binding.ClrType == typeof(JavaScriptRuntime.RegExp))
-                {
-                    return binding.ClrType;
-                }
+                return binding.ClrType;
             }
 
             return typeof(object);

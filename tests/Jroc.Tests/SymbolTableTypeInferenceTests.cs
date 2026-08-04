@@ -555,6 +555,46 @@ public class SymbolTableTypeInferenceTests
     }
 
     [Fact]
+    public void GeneratedAssembly_CapturedNodeContractBindingUsesStableInterfaceFieldType()
+    {
+        var entryPath = Path.Combine(
+            Path.GetTempPath(),
+            "Jroc.Tests",
+            "CapturedNodeContractFieldType",
+            Guid.NewGuid().ToString("N"),
+            "entry.js");
+
+        var artifact = JrocInMemoryCompiler.Compile(new JrocInMemoryCompileRequest(entryPath)
+        {
+            SourceText = """
+                const stablePath = require('node:path');
+                let unstablePath = require('node:path');
+
+                function stable() {
+                    return stablePath.join('a', 'b');
+                }
+
+                function unstable() {
+                    return unstablePath.join('a', 'b');
+                }
+
+                unstablePath = { join: function (left, right) { return left + right; } };
+                """
+        });
+
+        using var loadedAssembly = JrocInMemoryAssemblyLoader.Load(artifact);
+        var moduleType = loadedAssembly.Assembly.GetType("Modules.entry", throwOnError: true)!;
+        var scopeType = moduleType.GetNestedType("Scope", BindingFlags.Public | BindingFlags.NonPublic)!;
+
+        Assert.Equal(
+            typeof(Jroc.Runtime.Node.Contracts.IPathModule),
+            scopeType.GetField("stablePath", BindingFlags.Public | BindingFlags.Instance)!.FieldType);
+        Assert.Equal(
+            typeof(object),
+            scopeType.GetField("unstablePath", BindingFlags.Public | BindingFlags.Instance)!.FieldType);
+    }
+
+    [Fact]
     public void SymbolTable_InferTypes_ClassInstanceFields_Primitives()
     {
         var code = @"
