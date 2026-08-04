@@ -5,9 +5,9 @@ using System.Linq;
 namespace JavaScriptRuntime.Node
 {
     [NodeModule("util")]
-    public sealed class Util
+    public sealed partial class Util
     {
-        private readonly object _types;
+        private readonly UtilTypesModule _types;
         private readonly Symbol _inspectCustomSymbol;
         private readonly Delegate _inspectFunction;
 
@@ -52,7 +52,7 @@ namespace JavaScriptRuntime.Node
                 Value = new Func<object[], object?[], object?>((scopes, args) => format(args))
             });
 
-            _types = CreateTypesObject();
+            _types = new UtilTypesModule();
         }
 
         public object promisify(object callback)
@@ -291,6 +291,46 @@ namespace JavaScriptRuntime.Node
             return sb.ToString();
         }
 
+        private string ContractFormat(string formatValue, object?[] args)
+        {
+            var combined = new object?[args.Length + 1];
+            combined[0] = formatValue;
+            System.Array.Copy(args, 0, combined, 1, args.Length);
+            return format(combined);
+        }
+
+        private string ContractInspect(object? value)
+            => inspect(value);
+
+        private string ContractInspect(object? value, object? optionsOrShowHidden)
+            => optionsOrShowHidden is bool showHidden
+                ? inspect(value, CreateLegacyInspectOptions(showHidden, null, null))
+                : inspect(value, optionsOrShowHidden);
+
+        private string ContractInspect(object? value, object? showHidden, object? depth)
+            => inspect(value, CreateLegacyInspectOptions(showHidden, depth, null));
+
+        private string ContractInspect(
+            object? value,
+            object? showHidden,
+            object? depth,
+            object? colors)
+            => inspect(value, CreateLegacyInspectOptions(showHidden, depth, colors));
+
+        private static JsObject CreateLegacyInspectOptions(
+            object? showHidden,
+            object? depth,
+            object? colors)
+        {
+            var options = new JsObject
+            {
+                ["showHidden"] = showHidden,
+                ["depth"] = depth,
+                ["colors"] = colors
+            };
+            return options;
+        }
+
         private string InspectForFormat(object? value)
         {
             if (value is null || value is JsNull)
@@ -402,51 +442,6 @@ namespace JavaScriptRuntime.Node
 
             // Best-effort fallback
             return System.Text.Json.JsonSerializer.Serialize(DotNet2JSConversions.ToString(value));
-        }
-
-        private static object CreateTypesObject()
-        {
-            var typesObj = new JsObject();
-            var dict = (IDictionary<string, object?>)typesObj;
-
-            dict["isArray"] = new Func<object?, bool>(v => v is JavaScriptRuntime.Array);
-            dict["isDate"] = new Func<object?, bool>(v => v is DateTime);
-            dict["isError"] = new Func<object?, bool>(v => v is Error || v is Exception);
-            dict["isFunction"] = new Func<object?, bool>(v => v is Delegate);
-            dict["isPromise"] = new Func<object?, bool>(v => v is Promise);
-            dict["isRegExp"] = new Func<object?, bool>(v => v is System.Text.RegularExpressions.Regex || v is JavaScriptRuntime.RegExp);
-            dict["isString"] = new Func<object?, bool>(v => v is string);
-            dict["isNumber"] = new Func<object?, bool>(v => v is double || v is float || v is int || v is long || v is short || v is byte || v is decimal);
-            dict["isBoolean"] = new Func<object?, bool>(v => v is bool);
-            dict["isUndefined"] = new Func<object?, bool>(v => v == null);
-            dict["isNull"] = new Func<object?, bool>(v => v is JsNull);
-            dict["isObject"] = new Func<object?, bool>(v => v != null && v is not JsNull && !(v is double || v is float || v is int || v is long || v is short || v is byte || v is decimal || v is string || v is bool));
-            dict["isBigInt"] = new Func<object?, bool>(v => v is System.Numerics.BigInteger);
-            dict["isSymbol"] = new Func<object?, bool>(v => v is Symbol);
-            dict["isAsyncFunction"] = new Func<object?, bool>(v => v is Delegate d && d.Method.GetCustomAttributes(typeof(System.Runtime.CompilerServices.AsyncStateMachineAttribute), false).Length > 0);
-
-            // Expanded for #787 (runtime-backed checks only)
-            dict["isMap"] = new Func<object?, bool>(v => v is JavaScriptRuntime.Map);
-            dict["isSet"] = new Func<object?, bool>(v => v is JavaScriptRuntime.Set);
-            dict["isProxy"] = new Func<object?, bool>(v => v is JavaScriptRuntime.Proxy);
-            dict["isTypedArray"] = new Func<object?, bool>(v => v is JavaScriptRuntime.TypedArrayBase || v is JavaScriptRuntime.Node.Buffer);
-            dict["isAnyArrayBuffer"] = new Func<object?, bool>(v => v is ArrayBuffer);
-            dict["isArrayBuffer"] = new Func<object?, bool>(v => v is ArrayBuffer);
-            dict["isDataView"] = new Func<object?, bool>(v => v is DataView);
-            dict["isInt8Array"] = new Func<object?, bool>(v => v is Int8Array);
-            dict["isUint8Array"] = new Func<object?, bool>(v => v is Uint8Array || v is JavaScriptRuntime.Node.Buffer);
-            dict["isUint8ClampedArray"] = new Func<object?, bool>(v => v is Uint8ClampedArray);
-            dict["isInt16Array"] = new Func<object?, bool>(v => v is Int16Array);
-            dict["isUint16Array"] = new Func<object?, bool>(v => v is JavaScriptRuntime.Uint16Array);
-            dict["isInt32Array"] = new Func<object?, bool>(v => v is Int32Array);
-            dict["isUint32Array"] = new Func<object?, bool>(v => v is JavaScriptRuntime.Uint32Array);
-            dict["isFloat32Array"] = new Func<object?, bool>(_ => false);
-            dict["isFloat64Array"] = new Func<object?, bool>(v => v is Float64Array);
-            dict["isBigInt64Array"] = new Func<object?, bool>(_ => false);
-            dict["isBigUint64Array"] = new Func<object?, bool>(_ => false);
-            dict["isSharedArrayBuffer"] = new Func<object?, bool>(_ => false);
-
-            return typesObj;
         }
 
         private string InspectValue(object? value, int maxDepth, int currentDepth, HashSet<object> visited)

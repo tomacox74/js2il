@@ -149,6 +149,62 @@ const contractDefinitions = [
         contractAlias: 'OsContract',
         documentationModule: 'os',
         methodGroupHeading: 'Operating system methods'
+    },
+    {
+        flag: '--stream',
+        kind: 'stream',
+        moduleSpecifier: 'stream',
+        documentationPrefix: 'stream.',
+        interfaceName: 'IStreamModule',
+        intrinsicClassName: 'Stream',
+        displayName: 'node:stream',
+        outputStem: 'Stream',
+        overrideStem: 'stream',
+        lockStem: 'stream',
+        contractAlias: 'StreamContract',
+        documentationModule: 'stream'
+    },
+    {
+        flag: '--stream-promises',
+        kind: 'stream-promises',
+        moduleSpecifier: 'stream/promises',
+        documentationPrefix: 'stream.',
+        interfaceName: 'IStreamPromisesModule',
+        intrinsicClassName: 'StreamPromises',
+        displayName: 'node:stream/promises',
+        outputStem: 'StreamPromises',
+        overrideStem: 'streamPromises',
+        lockStem: 'stream',
+        contractAlias: 'StreamPromisesContract',
+        documentationModule: 'stream'
+    },
+    {
+        flag: '--util',
+        kind: 'util',
+        moduleSpecifier: 'util',
+        documentationPrefix: 'util.',
+        interfaceName: 'IUtilModule',
+        intrinsicClassName: 'Util',
+        displayName: 'node:util',
+        outputStem: 'Util',
+        overrideStem: 'util',
+        lockStem: 'util',
+        contractAlias: 'UtilContract',
+        documentationModule: 'util'
+    },
+    {
+        flag: '--util-types',
+        kind: 'util-types',
+        moduleSpecifier: 'util/types',
+        documentationPrefix: 'util.types.',
+        interfaceName: 'IUtilTypesModule',
+        intrinsicClassName: 'UtilTypesModule',
+        displayName: 'node:util/types',
+        outputStem: 'UtilTypes',
+        overrideStem: 'utilTypes',
+        lockStem: 'util',
+        contractAlias: 'UtilTypesContract',
+        documentationModule: 'util'
     }
 ];
 const args = process.argv.slice(2);
@@ -253,6 +309,16 @@ async function loadDocumentation() {
 
 function requireSection(module, sectionName) {
     const section = module.modules?.find(candidate => candidate.name === sectionName);
+    if (!section) {
+        throw new Error(
+            `Official ${contract.moduleSpecifier} documentation is missing the '${sectionName}' section.`);
+    }
+
+    return section;
+}
+
+function requireMiscSection(container, sectionName) {
+    const section = container.miscs?.find(candidate => candidate.name === sectionName);
     if (!section) {
         throw new Error(
             `Official ${contract.moduleSpecifier} documentation is missing the '${sectionName}' section.`);
@@ -632,6 +698,95 @@ function generateMethodsWithOptionalAndRestParameters(methods) {
     return generated;
 }
 
+function generateNormalizedMethods() {
+    const methods = overrides.normalizedMethods ?? [];
+    return methods.map(method => {
+        if (!method.name
+            || !Array.isArray(method.signatures)
+            || method.signatures.length === 0
+            || !Array.isArray(method.parameters)
+            || !method.returnType
+            || !method.source) {
+            throw new Error(
+                `Normalized method for ${contract.moduleSpecifier} must include ` +
+                'name, signatures, parameters, returnType, and source.');
+        }
+
+        const parameters = method.parameters.map(parameter => {
+            if (!parameter.name || !parameter.type) {
+                throw new Error(
+                    `Normalized method '${method.name}' has an incomplete parameter.`);
+            }
+
+            if (parameter.rest) {
+                return `params object?[] ${csharpIdentifier(parameter.name)}`;
+            }
+
+            const type = parameter.optional ? 'object?' : mapType(parameter.type);
+            return `${type} ${csharpIdentifier(parameter.name)}`;
+        });
+
+        return [
+            '    /// <summary>',
+            `    /// Node.js ${method.signatures.length === 1 ? 'signature' : 'signatures'}: ` +
+                method.signatures
+                    .map(signature => `<c>${xmlEscape(signature)}</c>`)
+                    .join(', ') + '.',
+            '    /// </summary>',
+            `    /// <remarks>Source: <c>${xmlEscape(method.source)}</c>.</remarks>`,
+            ...(method.deprecated
+                ? [`    [global::System.Obsolete("${method.deprecated}")]`]
+                : []),
+            `    [NodeModuleMember("${method.name}")]`,
+            `    ${mapType(method.returnType, true)} ${csharpMemberName(method.name)}(${parameters.join(', ')});`
+        ].join('\n');
+    });
+}
+
+function removeNormalizedMethods(methods) {
+    const normalizedNames = new Set(
+        (overrides.normalizedMethods ?? []).map(method => method.name));
+    const documentedNames = new Set(
+        methods.map(method => extractSignature(method).memberName));
+    for (const normalizedName of normalizedNames) {
+        if (!documentedNames.has(normalizedName)) {
+            throw new Error(
+                `Normalized method '${contract.documentationPrefix}${normalizedName}' ` +
+                'does not match a selected official method record.');
+        }
+    }
+
+    return methods.filter(method => !normalizedNames.has(extractSignature(method).memberName));
+}
+
+function applyMethodSignatureOverrides(methods) {
+    const signatureOverrides = overrides.methodSignatureOverrides ?? {};
+    return methods.map(method => {
+        const signatureOverride = signatureOverrides[method.textRaw];
+        if (!signatureOverride) {
+            return method;
+        }
+
+        if (!Array.isArray(signatureOverride.parameters)
+            || !signatureOverride.returnType
+            || !signatureOverride.source) {
+            throw new Error(
+                `Signature override for '${method.textRaw}' must include ` +
+                'parameters, returnType, and source.');
+        }
+
+        const originalSignature = method.signatures?.[0] ?? {};
+        return {
+            ...method,
+            signatures: [{
+                ...originalSignature,
+                params: signatureOverride.parameters,
+                return: { type: signatureOverride.returnType }
+            }]
+        };
+    });
+}
+
 function mapMethodReturnType(memberName, signature) {
     const override = overrides.methodReturnTypes?.[memberName];
     if (override && (!override.type || !override.source)) {
@@ -719,6 +874,121 @@ function generateInterface(documentation) {
             methods: generateMethodsWithOptionalAndRestParameters(topLevelProcessMethods)
         }];
         standardProperties = generateProperties(standardProcessProperties);
+    } else if (contract.kind === 'stream') {
+        const consumerApi = requireMiscSection(module, 'API for stream consumers');
+        const duplexAndTransformStreams = requireMiscSection(
+            consumerApi,
+            'duplex_and_transform_streams');
+        const topLevelMethods = (module.methods ?? [])
+            .filter(method => {
+                const parsed = extractSignature(method);
+                return parsed.signature.startsWith('stream.')
+                    && !parsed.memberName.includes('.');
+            });
+        const duplexPairMethods = (duplexAndTransformStreams.methods ?? [])
+            .filter(method => extractSignature(method).memberName === 'duplexPair');
+
+        assertCount(module.methods?.length ?? 0, lock.rawMethodCount, 'raw method count');
+        assertCount(
+            topLevelMethods.length,
+            lock.topLevelMethodRecordCount,
+            'top-level method record count');
+        assertCount(
+            (module.methods?.length ?? 0) - topLevelMethods.length,
+            lock.excludedNestedMethodCount,
+            'excluded nested method count');
+        assertCount(
+            consumerApi.methods?.length ?? 0,
+            lock.consumerMethodCount,
+            'consumer API method count');
+        assertCount(
+            duplexPairMethods.length,
+            lock.duplexPairMethodCount,
+            'duplexPair method count');
+        assertCount(
+            overrides.properties.length,
+            lock.exportPropertyCount,
+            'export property override count');
+
+        methodGroups = [{
+            heading: 'Stream methods',
+            methods: [
+                ...generateMethodOverloads(removeNormalizedMethods([
+                    ...topLevelMethods,
+                    ...duplexPairMethods
+                ])),
+                ...generateNormalizedMethods()
+            ]
+        }];
+        standardProperties = [];
+    } else if (contract.kind === 'stream-promises') {
+        const typesOfStreams = requireSection(module, 'types_of_streams');
+
+        assertCount(
+            typesOfStreams.methods?.length ?? 0,
+            lock.promiseMethodCount,
+            'promise API method count');
+
+        methodGroups = [{
+            heading: 'Stream promise methods',
+            methods: [
+                ...generateMethodOverloads(
+                    removeNormalizedMethods(typesOfStreams.methods ?? [])),
+                ...generateNormalizedMethods()
+            ]
+        }];
+        standardProperties = [];
+    } else if (contract.kind === 'util') {
+        const deprecatedApi = requireSection(module, 'deprecated_apis');
+
+        assertCount(module.methods?.length ?? 0, lock.methodCount, 'method count');
+        assertCount(module.properties?.length ?? 0, lock.propertyCount, 'property count');
+        assertCount(module.classes?.length ?? 0, lock.classCount, 'class count');
+        assertCount(module.modules?.length ?? 0, lock.sectionCount, 'section count');
+        assertCount(
+            deprecatedApi.methods?.length ?? 0,
+            lock.deprecatedMethodCount,
+            'deprecated method count');
+        assertCount(
+            overrides.properties.length,
+            lock.exportPropertyCount,
+            'export property override count');
+
+        methodGroups = [
+            {
+                heading: 'Utility methods',
+                methods: [
+                    ...generateMethodOverloads(
+                        removeNormalizedMethods(module.methods ?? [])),
+                    ...generateNormalizedMethods()
+                ]
+            },
+            {
+                heading: 'Deprecated utility methods',
+                methods: generateMethodOverloads(deprecatedApi.methods ?? [])
+            }
+        ];
+        standardProperties = [];
+    } else if (contract.kind === 'util-types') {
+        const typesProperty = (module.properties ?? [])
+            .find(property => property.name === 'types');
+        if (!typesProperty) {
+            throw new Error(
+                "Official util documentation is missing the 'util.types' property.");
+        }
+
+        assertCount(module.properties?.length ?? 0, lock.propertyCount, 'property count');
+        assertCount(
+            typesProperty.methods?.length ?? 0,
+            lock.typeMethodCount,
+            'util.types method count');
+
+        methodGroups = [{
+            heading: 'Type predicates',
+            methods: generateMethodOverloads(
+                applyMethodSignatureOverrides(typesProperty.methods ?? []))
+        }];
+        standardProperties = [];
     } else if (contract.kind === 'buffer') {
         const moduleApis = requireSection(module, '`node:buffer`_module_apis');
         const bufferConstants = requireSection(moduleApis, 'buffer_constants');

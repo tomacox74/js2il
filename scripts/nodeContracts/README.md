@@ -83,6 +83,26 @@ npm run check:node-contract-os
 npm run test:node-contract-os
 ```
 
+For `node:stream`, `node:stream/promises`, `node:util`, and `node:util/types`:
+
+```sh
+npm run generate:node-contract-stream
+npm run check:node-contract-stream
+npm run test:node-contract-stream
+
+npm run generate:node-contract-stream-promises
+npm run check:node-contract-stream-promises
+npm run test:node-contract-stream-promises
+
+npm run generate:node-contract-util
+npm run check:node-contract-util
+npm run test:node-contract-util
+
+npm run generate:node-contract-util-types
+npm run check:node-contract-util-types
+npm run test:node-contract-util-types
+```
+
 Regenerate or check every configured contract in one command:
 
 ```sh
@@ -93,6 +113,11 @@ npm run check:node-contracts
 Module selection and generated path metadata live in the generator's
 `contractDefinitions` manifest. Add ordinary top-level modules there rather
 than duplicating command-line selection branches.
+
+Use cited `normalizedMethods` entries only when the official JSON loses
+signature metadata or a JavaScript variadic call form cannot be represented by
+the ordinary overload expansion. This keeps complex modules in the shared
+pipeline without adding module-specific rendering code.
 
 The checked-in override files record which contract members each intrinsic
 module currently implements and how each implementation is invoked. The

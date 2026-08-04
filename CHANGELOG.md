@@ -46,6 +46,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   intrinsic members directly, retain explicit fallbacks for unavailable APIs,
   and centralize contract modes in a shared manifest with aggregate
   generation/check commands.
+- sdk/runtime: add generated `node:stream`, `node:stream/promises`, `node:util`,
+  and `node:util/types` host contracts from pinned official Node.js 24.18.1
+  documentation. Preserve complete top-level export rosters across nested and
+  malformed documentation layouts, bind existing intrinsic members directly,
+  and retain explicit fallbacks for unavailable APIs.
 - compiler/runtime: strongly type literal CommonJS requires for generated Node
   module contracts. Calls such as `require("fs").readFileSync(...)` now use
   `RequireObject<IFsModule>` and direct interface dispatch, including typed

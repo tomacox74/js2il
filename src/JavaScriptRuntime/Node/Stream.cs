@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace JavaScriptRuntime.Node
 {
     [NodeModule("stream")]
-    public sealed class Stream
+    public sealed partial class Stream
     {
         public Type Readable => typeof(Readable);
 
@@ -35,6 +35,11 @@ namespace JavaScriptRuntime.Node
             var settled = false;
             var signal = GetValidatedAbortSignal(options);
             Action unregisterAbort = static () => { };
+            Action cleanup = () =>
+            {
+                observer?.Dispose();
+                unregisterAbort();
+            };
 
             void ResolveSuccess()
             {
@@ -83,11 +88,11 @@ namespace JavaScriptRuntime.Node
             if (abortReason != null)
             {
                 ResolveError(abortReason);
-                return callback != null ? stream! : deferred.promise;
+                return callback != null ? cleanup : deferred.promise;
             }
 
             observer = new StreamCompletionObserver(stream, ResolveSuccess, ResolveError);
-            return callback != null ? stream! : deferred.promise;
+            return callback != null ? cleanup : deferred.promise;
         }
 
         public object pipeline(object[] args)

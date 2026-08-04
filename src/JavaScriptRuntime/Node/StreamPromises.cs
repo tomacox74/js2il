@@ -3,7 +3,7 @@ using System;
 namespace JavaScriptRuntime.Node
 {
     [NodeModule("stream/promises")]
-    public sealed class StreamPromises
+    public sealed partial class StreamPromises
     {
         private readonly Stream _stream = new();
 

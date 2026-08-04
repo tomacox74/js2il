@@ -108,12 +108,13 @@
 			[2] object,
 			[3] object,
 			[4] object,
-			[5] object,
+			[5] class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IStreamModule,
 			[6] class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IConsoleModule,
 			[7] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes3,
 			[8] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
 			[9] class [JavaScriptRuntime]JavaScriptRuntime.Array,
-			[10] object
+			[10] object,
+			[11] object
 		)
 
 		IL_0000: newobj instance void Modules.Console_Undici_Transform_Table/Scope::.ctor()
@@ -121,7 +122,7 @@
 		IL_0006: nop
 		IL_0007: ldarg.1
 		IL_0008: ldstr "node:stream"
-		IL_000d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
+		IL_000d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireRuntime::RequireObject<class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IStreamModule>(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object)
 		IL_0012: stloc.s 5
 		IL_0014: ldloc.s 5
 		IL_0016: brfalse IL_0027
@@ -243,20 +244,20 @@
 		IL_018b: ldstr "console"
 		IL_0190: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
 		IL_0195: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_019a: stloc.s 5
+		IL_019a: stloc.s 10
 		IL_019c: ldloc.3
 		IL_019d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
 		IL_01a2: ldstr "read"
 		IL_01a7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-		IL_01ac: stloc.s 10
-		IL_01ae: ldloc.s 10
+		IL_01ac: stloc.s 11
+		IL_01ae: ldloc.s 11
 		IL_01b0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
 		IL_01b5: ldstr "toString"
 		IL_01ba: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-		IL_01bf: stloc.s 10
-		IL_01c1: ldloc.s 5
+		IL_01bf: stloc.s 11
+		IL_01c1: ldloc.s 10
 		IL_01c3: ldstr "log"
-		IL_01c8: ldloc.s 10
+		IL_01c8: ldloc.s 11
 		IL_01ca: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
 		IL_01cf: pop
 		IL_01d0: ret

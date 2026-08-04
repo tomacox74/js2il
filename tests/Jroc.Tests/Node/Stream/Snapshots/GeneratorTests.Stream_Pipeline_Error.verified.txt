@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2314
+				// Method begins at RVA 0x22f8
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -41,7 +41,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x21c0
+			// Method begins at RVA 0x21a4
 			// Header size: 12
 			// Code size: 39 (0x27)
 			.maxstack 8
@@ -82,7 +82,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x231d
+				// Method begins at RVA 0x2301
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -105,7 +105,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x21f3
+			// Method begins at RVA 0x21d7
 			// Header size: 1
 			// Code size: 2 (0x2)
 			.maxstack 8
@@ -127,7 +127,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2326
+				// Method begins at RVA 0x230a
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -154,7 +154,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 06 00 00 02
 			)
-			// Method begins at RVA 0x21f8
+			// Method begins at RVA 0x21dc
 			// Header size: 12
 			// Code size: 263 (0x107)
 			.maxstack 8
@@ -275,7 +275,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x230b
+			// Method begins at RVA 0x22ef
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -301,17 +301,16 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 356 (0x164)
+		// Code size: 327 (0x147)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Stream_Pipeline_Error/Scope,
-			[1] object,
+			[1] class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IStreamModule,
 			[2] object,
 			[3] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0,
 			[4] object,
 			[5] object,
-			[6] object,
-			[7] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1
+			[6] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1
 		)
 
 		IL_0000: newobj instance void Modules.Stream_Pipeline_Error/Scope::.ctor()
@@ -319,138 +318,131 @@
 		IL_0006: nop
 		IL_0007: ldarg.1
 		IL_0008: ldstr "node:stream"
-		IL_000d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
+		IL_000d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireRuntime::RequireObject<class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IStreamModule>(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object)
 		IL_0012: stloc.1
 		IL_0013: ldloc.1
-		IL_0014: ldstr "Readable"
-		IL_0019: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_001e: stloc.2
-		IL_001f: ldloc.2
-		IL_0020: ldc.i4.0
-		IL_0021: newarr [System.Runtime]System.Object
-		IL_0026: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::ConstructValue(object, object[])
-		IL_002b: stloc.2
-		IL_002c: ldloc.0
-		IL_002d: ldloc.2
-		IL_002e: stfld object Modules.Stream_Pipeline_Error/Scope::readable
-		IL_0033: ldloc.1
-		IL_0034: ldstr "Transform"
-		IL_0039: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_003e: stloc.2
-		IL_003f: ldloc.2
-		IL_0040: ldc.i4.0
-		IL_0041: newarr [System.Runtime]System.Object
-		IL_0046: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::ConstructValue(object, object[])
-		IL_004b: stloc.2
-		IL_004c: ldloc.0
-		IL_004d: ldloc.2
-		IL_004e: stfld object Modules.Stream_Pipeline_Error/Scope::transform
-		IL_0053: ldloc.1
-		IL_0054: ldstr "Writable"
-		IL_0059: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_005e: stloc.2
-		IL_005f: ldloc.2
-		IL_0060: ldc.i4.0
-		IL_0061: newarr [System.Runtime]System.Object
-		IL_0066: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::ConstructValue(object, object[])
-		IL_006b: stloc.2
-		IL_006c: ldloc.0
-		IL_006d: ldloc.2
-		IL_006e: stfld object Modules.Stream_Pipeline_Error/Scope::writable
-		IL_0073: ldloc.0
-		IL_0074: ldfld object Modules.Stream_Pipeline_Error/Scope::transform
-		IL_0079: stloc.2
-		IL_007a: ldnull
-		IL_007b: ldftn object Modules.Stream_Pipeline_Error/FunctionExpression_L9C23::__js_call__(object)
-		IL_0081: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_0086: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
-		IL_008b: ldc.i4.0
-		IL_008c: conv.r8
-		IL_008d: ldstr ""
-		IL_0092: ldc.i4.0
-		IL_0093: ldc.i4.1
-		IL_0094: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
-		IL_0099: stloc.3
-		IL_009a: ldloc.2
-		IL_009b: ldstr "_transform"
-		IL_00a0: ldloc.3
-		IL_00a1: ldc.i4.1
-		IL_00a2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
-		IL_00a7: pop
-		IL_00a8: ldloc.0
-		IL_00a9: ldfld object Modules.Stream_Pipeline_Error/Scope::writable
-		IL_00ae: stloc.2
-		IL_00af: ldnull
-		IL_00b0: ldftn object Modules.Stream_Pipeline_Error/FunctionExpression_L13C18::__js_call__(object)
-		IL_00b6: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_00bb: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
-		IL_00c0: ldc.i4.0
-		IL_00c1: conv.r8
-		IL_00c2: ldstr ""
-		IL_00c7: ldc.i4.0
-		IL_00c8: ldc.i4.1
-		IL_00c9: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
-		IL_00ce: stloc.3
-		IL_00cf: ldloc.2
-		IL_00d0: ldstr "_write"
-		IL_00d5: ldloc.3
-		IL_00d6: ldc.i4.1
-		IL_00d7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
-		IL_00dc: pop
-		IL_00dd: ldloc.1
-		IL_00de: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00e3: stloc.2
-		IL_00e4: ldloc.0
-		IL_00e5: ldfld object Modules.Stream_Pipeline_Error/Scope::readable
-		IL_00ea: stloc.s 4
-		IL_00ec: ldloc.0
-		IL_00ed: ldfld object Modules.Stream_Pipeline_Error/Scope::transform
-		IL_00f2: stloc.s 5
-		IL_00f4: ldloc.0
-		IL_00f5: ldfld object Modules.Stream_Pipeline_Error/Scope::writable
-		IL_00fa: stloc.s 6
-		IL_00fc: ldloc.0
-		IL_00fd: castclass Modules.Stream_Pipeline_Error/Scope
-		IL_0102: ldftn object Modules.Stream_Pipeline_Error/FunctionExpression_L15C47::__js_call__(class Modules.Stream_Pipeline_Error/Scope, object, object)
-		IL_0108: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-		IL_010d: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1
-		IL_0112: ldc.i4.1
-		IL_0113: conv.r8
-		IL_0114: ldstr ""
-		IL_0119: ldc.i4.0
-		IL_011a: ldc.i4.1
-		IL_011b: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0, float64, string, bool, bool)
-		IL_0120: stloc.s 7
-		IL_0122: ldloc.2
-		IL_0123: ldstr "pipeline"
-		IL_0128: ldc.i4.4
-		IL_0129: newarr [System.Runtime]System.Object
-		IL_012e: dup
-		IL_012f: ldc.i4.0
-		IL_0130: ldloc.s 4
-		IL_0132: stelem.ref
-		IL_0133: dup
-		IL_0134: ldc.i4.1
-		IL_0135: ldloc.s 5
-		IL_0137: stelem.ref
-		IL_0138: dup
-		IL_0139: ldc.i4.2
-		IL_013a: ldloc.s 6
-		IL_013c: stelem.ref
-		IL_013d: dup
-		IL_013e: ldc.i4.3
-		IL_013f: ldloc.s 7
-		IL_0141: stelem.ref
-		IL_0142: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember(object, string, object[])
-		IL_0147: pop
-		IL_0148: ldloc.0
-		IL_0149: ldfld object Modules.Stream_Pipeline_Error/Scope::readable
-		IL_014e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0153: ldstr "push"
-		IL_0158: ldstr "a"
-		IL_015d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0162: pop
-		IL_0163: ret
+		IL_0014: callvirt instance object [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IStreamModule::get_Readable()
+		IL_0019: stloc.2
+		IL_001a: ldloc.2
+		IL_001b: ldc.i4.0
+		IL_001c: newarr [System.Runtime]System.Object
+		IL_0021: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::ConstructValue(object, object[])
+		IL_0026: stloc.2
+		IL_0027: ldloc.0
+		IL_0028: ldloc.2
+		IL_0029: stfld object Modules.Stream_Pipeline_Error/Scope::readable
+		IL_002e: ldloc.1
+		IL_002f: callvirt instance object [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IStreamModule::get_Transform()
+		IL_0034: stloc.2
+		IL_0035: ldloc.2
+		IL_0036: ldc.i4.0
+		IL_0037: newarr [System.Runtime]System.Object
+		IL_003c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::ConstructValue(object, object[])
+		IL_0041: stloc.2
+		IL_0042: ldloc.0
+		IL_0043: ldloc.2
+		IL_0044: stfld object Modules.Stream_Pipeline_Error/Scope::transform
+		IL_0049: ldloc.1
+		IL_004a: callvirt instance object [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IStreamModule::get_Writable()
+		IL_004f: stloc.2
+		IL_0050: ldloc.2
+		IL_0051: ldc.i4.0
+		IL_0052: newarr [System.Runtime]System.Object
+		IL_0057: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::ConstructValue(object, object[])
+		IL_005c: stloc.2
+		IL_005d: ldloc.0
+		IL_005e: ldloc.2
+		IL_005f: stfld object Modules.Stream_Pipeline_Error/Scope::writable
+		IL_0064: ldloc.0
+		IL_0065: ldfld object Modules.Stream_Pipeline_Error/Scope::transform
+		IL_006a: stloc.2
+		IL_006b: ldnull
+		IL_006c: ldftn object Modules.Stream_Pipeline_Error/FunctionExpression_L9C23::__js_call__(object)
+		IL_0072: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_0077: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
+		IL_007c: ldc.i4.0
+		IL_007d: conv.r8
+		IL_007e: ldstr ""
+		IL_0083: ldc.i4.0
+		IL_0084: ldc.i4.1
+		IL_0085: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
+		IL_008a: stloc.3
+		IL_008b: ldloc.2
+		IL_008c: ldstr "_transform"
+		IL_0091: ldloc.3
+		IL_0092: ldc.i4.1
+		IL_0093: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
+		IL_0098: pop
+		IL_0099: ldloc.0
+		IL_009a: ldfld object Modules.Stream_Pipeline_Error/Scope::writable
+		IL_009f: stloc.2
+		IL_00a0: ldnull
+		IL_00a1: ldftn object Modules.Stream_Pipeline_Error/FunctionExpression_L13C18::__js_call__(object)
+		IL_00a7: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_00ac: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
+		IL_00b1: ldc.i4.0
+		IL_00b2: conv.r8
+		IL_00b3: ldstr ""
+		IL_00b8: ldc.i4.0
+		IL_00b9: ldc.i4.1
+		IL_00ba: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
+		IL_00bf: stloc.3
+		IL_00c0: ldloc.2
+		IL_00c1: ldstr "_write"
+		IL_00c6: ldloc.3
+		IL_00c7: ldc.i4.1
+		IL_00c8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
+		IL_00cd: pop
+		IL_00ce: ldloc.0
+		IL_00cf: ldfld object Modules.Stream_Pipeline_Error/Scope::readable
+		IL_00d4: stloc.2
+		IL_00d5: ldloc.0
+		IL_00d6: ldfld object Modules.Stream_Pipeline_Error/Scope::transform
+		IL_00db: stloc.s 4
+		IL_00dd: ldloc.0
+		IL_00de: ldfld object Modules.Stream_Pipeline_Error/Scope::writable
+		IL_00e3: stloc.s 5
+		IL_00e5: ldloc.0
+		IL_00e6: castclass Modules.Stream_Pipeline_Error/Scope
+		IL_00eb: ldftn object Modules.Stream_Pipeline_Error/FunctionExpression_L15C47::__js_call__(class Modules.Stream_Pipeline_Error/Scope, object, object)
+		IL_00f1: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_00f6: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1
+		IL_00fb: ldc.i4.1
+		IL_00fc: conv.r8
+		IL_00fd: ldstr ""
+		IL_0102: ldc.i4.0
+		IL_0103: ldc.i4.1
+		IL_0104: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0, float64, string, bool, bool)
+		IL_0109: stloc.s 6
+		IL_010b: ldloc.1
+		IL_010c: ldc.i4.4
+		IL_010d: newarr [System.Runtime]System.Object
+		IL_0112: dup
+		IL_0113: ldc.i4.0
+		IL_0114: ldloc.2
+		IL_0115: stelem.ref
+		IL_0116: dup
+		IL_0117: ldc.i4.1
+		IL_0118: ldloc.s 4
+		IL_011a: stelem.ref
+		IL_011b: dup
+		IL_011c: ldc.i4.2
+		IL_011d: ldloc.s 5
+		IL_011f: stelem.ref
+		IL_0120: dup
+		IL_0121: ldc.i4.3
+		IL_0122: ldloc.s 6
+		IL_0124: stelem.ref
+		IL_0125: callvirt instance object [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IStreamModule::pipeline(object[])
+		IL_012a: pop
+		IL_012b: ldloc.0
+		IL_012c: ldfld object Modules.Stream_Pipeline_Error/Scope::readable
+		IL_0131: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0136: ldstr "push"
+		IL_013b: ldstr "a"
+		IL_0140: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0145: pop
+		IL_0146: ret
 	} // end of method Stream_Pipeline_Error::__js_module_init__
 
 } // end of class Modules.Stream_Pipeline_Error
@@ -462,7 +454,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x232f
+		// Method begins at RVA 0x2313
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

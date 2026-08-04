@@ -57,7 +57,7 @@ public class NodeUtilityObjectRepresentationTests
 
         util.inherits(child, parent);
 
-        Assert.IsType<JsObject>(util.types);
+        Assert.IsAssignableFrom<JsObject>(util.types);
         Assert.IsType<JsObject>(ObjectRuntime.GetProperty(child, "prototype"));
     }
 
