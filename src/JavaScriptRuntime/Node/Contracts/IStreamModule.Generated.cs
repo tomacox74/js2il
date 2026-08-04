@@ -14,7 +14,7 @@ namespace Jroc.Runtime.Node.Contracts;
 /// Nested option, result, and handle contracts intentionally remain dynamic in this proof of concept.
 /// They will be strongly typed by the work tracked in GitHub issue #1660.
 /// </remarks>
-[global::System.CodeDom.Compiler.GeneratedCode("generateNodeModuleInterface.js", "sha256:6fe985f5ad468d3c30e514e91fe24149b71ecea13c7f0c442a919937f14d07f2")]
+[global::System.CodeDom.Compiler.GeneratedCode("generateNodeModuleInterface.js", "sha256:be6e78d5530a6d86fe34cd3cb26bca862717703f0617ff439ff5d5caa18b8c25")]
 [NodeModuleInterface("stream")]
 public interface IStreamModule
 {

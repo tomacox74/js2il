@@ -108,6 +108,45 @@ namespace Jroc.Tests.Node.TimersPromises
             }
         }
 
+        [Fact]
+        public void TimersPromises_SetTimeout_OmittedDelay_UsesNodeMinimum()
+        {
+            var tickSource = new Node.MockTickSource();
+            var waitHandle = new Node.MockWaitHandle(
+                onSet: () => { },
+                onWaitOne: milliseconds => tickSource.Increment(TimeSpan.FromMilliseconds(milliseconds)));
+            var serviceProvider = RuntimeServices.BuildServiceProvider();
+            serviceProvider.Replace<ITickSource>(tickSource);
+            serviceProvider.Replace<IWaitHandle>(waitHandle);
+
+            try
+            {
+                GlobalThis.ServiceProvider = serviceProvider;
+
+                var schedulerState = serviceProvider.Resolve<NodeSchedulerState>();
+                var eventLoop = new NodeEventLoopPump(schedulerState, tickSource, waitHandle);
+                var timersPromises = new JavaScriptRuntime.Node.TimersPromises();
+                var start = tickSource.GetTicks();
+
+                var promise = Assert.IsType<JavaScriptRuntime.Promise>(timersPromises.setTimeout());
+                var resolved = false;
+                promise.@then(new Func<object?[], object?, object?>((_, _) =>
+                {
+                    resolved = true;
+                    return null;
+                }));
+                DrainEventLoop(eventLoop);
+
+                Assert.True(resolved);
+                Assert.True(
+                    tickSource.GetTicks() - start >= TimeSpan.FromMilliseconds(1).Ticks);
+            }
+            finally
+            {
+                GlobalThis.ServiceProvider = null;
+            }
+        }
+
         private static JsObject CreateOptions(object signal)
         {
             var options = new JsObject();

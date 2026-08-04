@@ -16,7 +16,7 @@
 
 ## Notes
 
-Both `timers` and `node:timers` resolve to this module. This focused implementation provides the timeout APIs required by Undici's snapshot recorder; immediate and interval module exports are not yet implemented.
+Both `timers` and `node:timers` resolve to this module. All six top-level scheduling and cancellation functions delegate to JROC's existing Node event-loop timer implementation; advanced Immediate and Timeout handle methods remain partial.
 
 ## APIs
 
@@ -24,6 +24,10 @@ Both `timers` and `node:timers` resolve to this module. This focused implementat
 | --- | ---- | ------ | ---- |
 | setTimeout(callback[, delay[, ...args]]) | function | supported | [docs](https://nodejs.org/api/timers.html#settimeoutcallback-delay-args) |
 | clearTimeout(timeout) | function | supported | [docs](https://nodejs.org/api/timers.html#cleartimeouttimeout) |
+| setImmediate(callback[, ...args]) | function | supported | [docs](https://nodejs.org/api/timers.html#setimmediatecallback-args) |
+| clearImmediate(immediate) | function | supported | [docs](https://nodejs.org/api/timers.html#clearimmediateimmediate) |
+| setInterval(callback[, delay[, ...args]]) | function | supported | [docs](https://nodejs.org/api/timers.html#setintervalcallback-delay-args) |
+| clearInterval(timeout) | function | supported | [docs](https://nodejs.org/api/timers.html#clearintervaltimeout) |
 | timeout.refresh() | function | supported | [docs](https://nodejs.org/api/timers.html#timeoutrefresh) |
 
 ## API Details
@@ -43,6 +47,35 @@ Cancels an active Timeout handle. Repeated cleanup is safe, and refresh() does n
 **Tests:**
 - `Jroc.Tests.Node.Timers.ExecutionTests.Timeout_RefreshAfterClear_DoesNotReactivate` (`tests/Jroc.Tests/Node/Timers/ExecutionTests.cs`)
 - `Jroc.Tests.Node.Timers.GeneratorTests.Timeout_RefreshAfterClear_DoesNotReactivate` (`tests/Jroc.Tests/Node/Timers/GeneratorTests.cs`)
+
+### setImmediate(callback[, ...args])
+
+Delegates the module export to JROC's existing immediate queue and forwards callback arguments.
+
+**Tests:**
+- `Jroc.Tests.Node.Timers.ExecutionTests.SetImmediate_WithArgs_PassesCorrectly` (`tests/Jroc.Tests/Node/Timers/ExecutionTests.cs`)
+- `Jroc.Tests.Node.Timers.ExecutionTests.SetImmediate_ExecutesBeforeSetTimeout` (`tests/Jroc.Tests/Node/Timers/ExecutionTests.cs`)
+
+### clearImmediate(immediate)
+
+Cancels an immediate through the same scheduler used by the global timer API.
+
+**Tests:**
+- `Jroc.Tests.Node.Timers.ExecutionTests.ClearImmediate_CancelsCallback` (`tests/Jroc.Tests/Node/Timers/ExecutionTests.cs`)
+
+### setInterval(callback[, delay[, ...args]])
+
+Delegates the module export to JROC's repeating timer scheduler.
+
+**Tests:**
+- `Jroc.Tests.Node.Timers.ExecutionTests.SetInterval_ExecutesThreeTimes_ThenClears` (`tests/Jroc.Tests/Node/Timers/ExecutionTests.cs`)
+
+### clearInterval(timeout)
+
+Cancels an active repeating timer through the existing scheduler.
+
+**Tests:**
+- `Jroc.Tests.Node.Timers.ExecutionTests.SetInterval_ExecutesThreeTimes_ThenClears` (`tests/Jroc.Tests/Node/Timers/ExecutionTests.cs`)
 
 ### timeout.refresh()
 

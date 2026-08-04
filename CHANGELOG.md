@@ -51,6 +51,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   documentation. Preserve complete top-level export rosters across nested and
   malformed documentation layouts, bind existing intrinsic members directly,
   and retain explicit fallbacks for unavailable APIs.
+- sdk/runtime: add generated `node:zlib`, `node:string_decoder`, `node:timers`,
+  and `node:timers/promises` host contracts from pinned official Node.js
+  24.18.1 documentation. Preserve deprecated zlib constants and split timer
+  sections, bind implemented intrinsic members directly, and retain explicit
+  fallbacks for unavailable APIs.
 - compiler/runtime: strongly type literal CommonJS requires for generated Node
   module contracts. Calls such as `require("fs").readFileSync(...)` now use
   `RequireObject<IFsModule>` and direct interface dispatch, including typed

@@ -178,12 +178,13 @@
 			[1] object,
 			[2] object,
 			[3] object,
-			[4] object,
+			[4] class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.ITimersModule,
 			[5] object[],
 			[6] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0,
 			[7] object,
-			[8] bool,
-			[9] string
+			[8] object,
+			[9] bool,
+			[10] string
 		)
 
 		IL_0000: newobj instance void Modules.Timeout_RefreshAfterClear_DoesNotReactivate/Scope::.ctor()
@@ -191,7 +192,7 @@
 		IL_0006: nop
 		IL_0007: ldarg.1
 		IL_0008: ldstr "node:timers"
-		IL_000d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
+		IL_000d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireRuntime::RequireObject<class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.ITimersModule>(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object)
 		IL_0012: stloc.s 4
 		IL_0014: ldloc.s 4
 		IL_0016: brfalse IL_0027
@@ -255,27 +256,27 @@
 		IL_00ca: ldstr "console"
 		IL_00cf: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
 		IL_00d4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00d9: stloc.s 4
+		IL_00d9: stloc.s 7
 		IL_00db: ldloc.3
 		IL_00dc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
 		IL_00e1: ldstr "refresh"
 		IL_00e6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-		IL_00eb: stloc.s 7
-		IL_00ed: ldloc.s 7
+		IL_00eb: stloc.s 8
+		IL_00ed: ldloc.s 8
 		IL_00ef: ldloc.3
 		IL_00f0: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_00f5: stloc.s 8
-		IL_00f7: ldloc.s 8
+		IL_00f5: stloc.s 9
+		IL_00f7: ldloc.s 9
 		IL_00f9: box [System.Runtime]System.Boolean
 		IL_00fe: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-		IL_0103: stloc.s 9
+		IL_0103: stloc.s 10
 		IL_0105: ldstr "same handle: "
-		IL_010a: ldloc.s 9
+		IL_010a: ldloc.s 10
 		IL_010c: call string [System.Runtime]System.String::Concat(string, string)
-		IL_0111: stloc.s 9
-		IL_0113: ldloc.s 4
+		IL_0111: stloc.s 10
+		IL_0113: ldloc.s 7
 		IL_0115: ldstr "log"
-		IL_011a: ldloc.s 9
+		IL_011a: ldloc.s 10
 		IL_011c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
 		IL_0121: pop
 		IL_0122: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes

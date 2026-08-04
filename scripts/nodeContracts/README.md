@@ -103,6 +103,27 @@ npm run check:node-contract-util-types
 npm run test:node-contract-util-types
 ```
 
+For `node:zlib`, `node:string_decoder`, `node:timers`, and
+`node:timers/promises`:
+
+```sh
+npm run generate:node-contract-zlib
+npm run check:node-contract-zlib
+npm run test:node-contract-zlib
+
+npm run generate:node-contract-string-decoder
+npm run check:node-contract-string-decoder
+npm run test:node-contract-string-decoder
+
+npm run generate:node-contract-timers
+npm run check:node-contract-timers
+npm run test:node-contract-timers
+
+npm run generate:node-contract-timers-promises
+npm run check:node-contract-timers-promises
+npm run test:node-contract-timers-promises
+```
+
 Regenerate or check every configured contract in one command:
 
 ```sh
@@ -127,3 +148,17 @@ intrinsic methods that accept an `object[]` receive a statically generated
 argument-array bridge; no runtime method discovery is used.
 
 Do not edit any `*.Generated.cs` contract or intrinsic adapter directly.
+
+## Faster iteration
+
+Download each official JSON document once under `artifacts/nodeContracts` and
+pass it through `--input` while developing. Modules and submodules from the
+same document should share one lock and local input, as `timers` and
+`timers/promises` do.
+
+Classify the JSON shape before editing the generator: root methods, sibling API
+sections, constructor-only modules, nested namespace aliases, and malformed
+records each have existing extraction patterns. Run only the new module's
+generate/check/test commands while the extraction stabilizes; run the
+aggregate generator, contract project, and build once after the shared
+generator is settled.

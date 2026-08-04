@@ -5,7 +5,7 @@ using JavaScriptRuntime.EngineCore;
 namespace JavaScriptRuntime.Node
 {
     [NodeModule("timers/promises")]
-    public sealed class TimersPromises
+    public sealed partial class TimersPromises
     {
         private static readonly Action NoOp = () => { };
         private readonly IScheduler _scheduler;
@@ -16,7 +16,7 @@ namespace JavaScriptRuntime.Node
                 ?? throw new InvalidOperationException("IScheduler is not available for timers/promises.");
         }
 
-        public Promise setTimeout(object delay, object? value = null, object? options = null)
+        public Promise setTimeout(object? delay = null, object? value = null, object? options = null)
         {
             var deferred = Promise.withResolvers();
             object? signal;
@@ -195,9 +195,12 @@ namespace JavaScriptRuntime.Node
         private static double CoerceDelay(object? delay)
         {
             var delayMs = TypeUtilities.ToNumber(delay);
-            if (delayMs < 0 || double.IsNaN(delayMs))
+            if (delayMs < 1
+                || double.IsNaN(delayMs)
+                || double.IsInfinity(delayMs)
+                || delayMs > int.MaxValue)
             {
-                return 0;
+                return 1;
             }
 
             return delayMs;

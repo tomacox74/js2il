@@ -6,7 +6,7 @@ using System.Text;
 namespace JavaScriptRuntime.Node
 {
     [NodeModule("string_decoder")]
-    public sealed class StringDecoderModule
+    public sealed partial class StringDecoderModule
     {
         public Type StringDecoder => typeof(StringDecoder);
     }

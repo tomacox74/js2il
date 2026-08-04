@@ -75,7 +75,11 @@ The current generator manifest has explicit modes for:
 - `stream`;
 - `stream/promises`;
 - `util`;
-- `util/types`.
+- `util/types`;
+- `zlib`;
+- `string_decoder`;
+- `timers`;
+- `timers/promises`.
 
 Extend the shared generator for another module. Do not copy it into a
 module-specific generator.
@@ -134,6 +138,12 @@ the input must match the checked-in lock hash. `artifacts/` is gitignored.
 Do not change a hash or expected count merely to silence a failure. First
 inspect the upstream API change and decide how it affects the normalized
 contract.
+
+For faster iteration, download each official document once and reuse it with
+`--input` across every contract sourced from that document. Stabilize new
+module-specific generation and tests before running the aggregate generator;
+because the generator hash changes every generated contract, regenerating all
+contracts after each exploratory edit creates avoidable churn.
 
 Top-level exports are not always stored directly on the documentation module.
 For example, `child_process` stores its seven exported functions in nested
@@ -201,6 +211,29 @@ is incomplete or whose JavaScript variadic shape cannot be represented by the
 ordinary overload expander. Keep the selected official member roster and
 drift counts in generator code and locks; normalized methods are not a license
 to redefine the module around the runtime implementation.
+
+`zlib.json` has root methods but omits return metadata for constructors and
+convenience methods. Pin all 34 root methods, use cited return overrides for
+the 11 stream factories and 11 synchronous Buffer helpers, and cross-check the
+documented classes against the pinned `lib/zlib.js` export roster:
+`ZlibBase` is documented but is not a top-level constructor export. The JSON
+documents 39 non-Brotli constants that remain deprecated top-level exports;
+extract and drift-check those names from the official constant prose while
+keeping `constants`, `codes`, and the 11 constructors as cited properties.
+
+Constructor-only modules can have no root methods or properties.
+`string_decoder.json` documents a single `StringDecoder` class, so the
+top-level contract is the cited constructor property; class method counts
+remain useful drift detectors even though nested instance contracts are
+deferred to #1660.
+
+`timers.json` splits the six `node:timers` functions between
+`scheduling_timers` and `cancelling_timers`. Its `timers_promises_api` section
+contains three top-level functions plus flattened
+`timersPromises.scheduler.wait/yield` records. Exclude those dotted nested
+methods, expose one cited `scheduler` property, and normalize `setInterval`
+because its structured signature has no parameters or return type. Both
+contracts should share the same timers lock and downloaded input.
 
 Documentation nesting can also be flattened by the JSON renderer.
 `process.features.*` entries appear in the parent `Process.properties` array

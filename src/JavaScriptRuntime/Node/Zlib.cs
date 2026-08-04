@@ -6,7 +6,7 @@ using System.IO.Compression;
 namespace JavaScriptRuntime.Node
 {
     [NodeModule("zlib")]
-    public sealed class Zlib
+    public sealed partial class Zlib
     {
         private const string LevelTypeErrorMessage = "The \"level\" option must be a finite number between -1 and 9.";
         private const string LevelRangeErrorMessage = "The \"level\" option must be between -1 and 9.";
