@@ -41,6 +41,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   normalize nested `process.features` and `process.finalization` surfaces, bind
   implemented members directly, and retain explicit fallbacks for unavailable
   APIs.
+- sdk/runtime: add generated `node:buffer`, `node:events`, and `node:os` host
+  contracts from pinned official Node.js 24.18.1 documentation. Bind existing
+  intrinsic members directly, retain explicit fallbacks for unavailable APIs,
+  and centralize contract modes in a shared manifest with aggregate
+  generation/check commands.
 - compiler/runtime: strongly type literal CommonJS requires for generated Node
   module contracts. Calls such as `require("fs").readFileSync(...)` now use
   `RequireObject<IFsModule>` and direct interface dispatch, including typed

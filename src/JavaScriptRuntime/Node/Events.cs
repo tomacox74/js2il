@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace JavaScriptRuntime.Node
 {
     [NodeModule("events")]
-    public sealed class Events
+    public sealed partial class Events
     {
         internal static readonly Symbol ErrorMonitorSymbol = new("events.errorMonitor");
 

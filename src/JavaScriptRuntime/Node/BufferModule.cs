@@ -4,7 +4,7 @@ using System.Text;
 namespace JavaScriptRuntime.Node
 {
     [NodeModule("buffer")]
-    public sealed class BufferModule
+    public sealed partial class BufferModule
     {
         private static readonly UTF8Encoding StrictUtf8 = new(encoderShouldEmitUTF8Identifier: false, throwOnInvalidBytes: true);
 
@@ -35,6 +35,10 @@ namespace JavaScriptRuntime.Node
         // JROC does not yet support Blob object URL creation, so no object can resolve here.
         // Returning undefined matches Node's result for an unrecognized object URL.
         private static object? ResolveObjectURL(object? id) => null;
+
+        private bool ContractIsUtf8(object? input) => IsUtf8(input);
+
+        private object? ContractResolveObjectURL(string id) => ResolveObjectURL(id);
 
         private static bool TryGetBytes(object? input, out byte[] bytes)
         {
