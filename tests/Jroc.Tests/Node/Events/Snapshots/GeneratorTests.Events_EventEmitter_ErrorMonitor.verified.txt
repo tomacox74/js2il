@@ -295,7 +295,8 @@
 			[8] object,
 			[9] object,
 			[10] object,
-			[11] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1
+			[11] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1,
+			[12] class [JavaScriptRuntime]JavaScriptRuntime.Error
 		)
 
 		IL_0000: newobj instance void Modules.Events_EventEmitter_ErrorMonitor/Scope::.ctor()
@@ -361,11 +362,11 @@
 		IL_00ac: stloc.s 10
 		IL_00ae: ldstr "boom"
 		IL_00b3: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Error::.ctor(string)
-		IL_00b8: stloc.s 9
+		IL_00b8: stloc.s 12
 		IL_00ba: ldloc.s 10
 		IL_00bc: ldstr "emit"
 		IL_00c1: ldstr "error"
-		IL_00c6: ldloc.s 9
+		IL_00c6: ldloc.s 12
 		IL_00c8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
 		IL_00cd: pop
 		IL_00ce: ldloc.2
@@ -375,10 +376,10 @@
 		IL_00da: stloc.s 4
 		IL_00dc: ldloc.s 4
 		IL_00de: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00e3: stloc.s 9
+		IL_00e3: stloc.s 10
 		IL_00e5: ldloc.1
 		IL_00e6: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Symbol [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IEventsModule::get_errorMonitor()
-		IL_00eb: stloc.s 10
+		IL_00eb: stloc.s 9
 		IL_00ed: ldnull
 		IL_00ee: ldftn object Modules.Events_EventEmitter_ErrorMonitor/FunctionExpression_L17C33::__js_call__(object, object)
 		IL_00f4: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
@@ -390,9 +391,9 @@
 		IL_0106: ldc.i4.1
 		IL_0107: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0, float64, string, bool, bool)
 		IL_010c: stloc.s 11
-		IL_010e: ldloc.s 9
+		IL_010e: ldloc.s 10
 		IL_0110: ldstr "on"
-		IL_0115: ldloc.s 10
+		IL_0115: ldloc.s 9
 		IL_0117: ldloc.s 11
 		IL_0119: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
 		IL_011e: pop

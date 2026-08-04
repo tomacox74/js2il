@@ -145,7 +145,7 @@ public sealed partial class HIRToLIRLowerer
                 {
                     var errTemp = CreateTempVariable();
                     _methodBodyIR.Instructions.Add(new LIRNewBuiltInError("ReferenceError", Message: null, errTemp));
-                    DefineTempStorage(errTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                    DefineTempStorage(errTemp, GetBuiltInErrorStorage("ReferenceError"));
                     _methodBodyIR.Instructions.Add(new LIRThrow(errTemp));
 
                     resultTempVar = CreateTempVariable();
@@ -528,7 +528,7 @@ public sealed partial class HIRToLIRLowerer
 
                     var errorTemp = CreateTempVariable();
                     _methodBodyIR.Instructions.Add(new LIRNewBuiltInError("ReferenceError", messageTemp, errorTemp));
-                    DefineTempStorage(errorTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                    DefineTempStorage(errorTemp, GetBuiltInErrorStorage("ReferenceError"));
 
                     _methodBodyIR.Instructions.Add(new LIRThrow(errorTemp));
 
