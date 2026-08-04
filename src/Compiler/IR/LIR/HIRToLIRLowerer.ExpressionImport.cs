@@ -113,8 +113,9 @@ public sealed partial class HIRToLIRLowerer
         // Emit the import call
         _methodBodyIR.Instructions.Add(new LIRCallImport(specifierTemp, currentModuleIdTemp, resultTempVar));
         
-        // Import returns a Promise<object>
-        DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        DefineTempStorage(
+            resultTempVar,
+            new ValueStorage(ValueStorageKind.Reference, typeof(JavaScriptRuntime.Promise)));
 
         return true;
     }
