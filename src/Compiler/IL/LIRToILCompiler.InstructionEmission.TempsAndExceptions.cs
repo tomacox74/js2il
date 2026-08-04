@@ -164,15 +164,7 @@ internal sealed partial class LIRToILCompiler
 
                     if (newError.Message.HasValue)
                     {
-                        // JS: Error(message) stringifies message.
-                        EmitLoadTempAsObject(newError.Message.Value, ilEncoder, allocation, methodDescriptor);
-                        var toString = _memberRefRegistry.GetOrAddMethod(
-                            typeof(JavaScriptRuntime.DotNet2JSConversions),
-                            nameof(JavaScriptRuntime.DotNet2JSConversions.ToString),
-                            parameterTypes: new[] { typeof(object) });
-                        ilEncoder.OpCode(ILOpCode.Call);
-                        ilEncoder.Token(toString);
-
+                        EmitLoadBuiltInErrorMessage(newError.Message.Value, ilEncoder, allocation, methodDescriptor);
                         var ctor = _memberRefRegistry.GetOrAddConstructor(errorClrType, parameterTypes: new[] { typeof(string) });
                         ilEncoder.OpCode(ILOpCode.Newobj);
                         ilEncoder.Token(ctor);
@@ -207,5 +199,28 @@ internal sealed partial class LIRToILCompiler
             default:
                 return null;
         }
+    }
+
+    private void EmitLoadBuiltInErrorMessage(
+        TempVariable message,
+        InstructionEncoder ilEncoder,
+        TempLocalAllocation allocation,
+        MethodDescriptor methodDescriptor)
+    {
+        var storage = GetTempStorage(message);
+        if (storage.Kind == ValueStorageKind.Reference && storage.ClrType == typeof(string))
+        {
+            EmitLoadTempAsString(message, ilEncoder, allocation, methodDescriptor);
+            return;
+        }
+
+        // JavaScript Error constructors stringify non-string messages.
+        EmitLoadTempAsObject(message, ilEncoder, allocation, methodDescriptor);
+        var toString = _memberRefRegistry.GetOrAddMethod(
+            typeof(JavaScriptRuntime.DotNet2JSConversions),
+            nameof(JavaScriptRuntime.DotNet2JSConversions.ToString),
+            parameterTypes: new[] { typeof(object) });
+        ilEncoder.OpCode(ILOpCode.Call);
+        ilEncoder.Token(toString);
     }
 }

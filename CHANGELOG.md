@@ -79,6 +79,8 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   calls such as `String.Trim`.
 - compiler/runtime: emit rest-parameter collection with an unboxed `double`
   start index and a typed JavaScript `Array` result.
+- compiler: omit JavaScript-to-.NET string conversion when a built-in Error
+  constructor receives a value already known to be a CLR `string`.
 
 ## v0.12.1 - 2026-08-02
 
