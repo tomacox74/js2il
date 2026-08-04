@@ -355,8 +355,9 @@ public sealed partial class HIRToLIRLowerer
         _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
             MethodName: nameof(JavaScriptRuntime.RuntimeServices.CollectRestArguments),
             Arguments: new[] { startIndexTemp },
-            Result: restArrayTemp));
-        DefineTempStorage(restArrayTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            Result: restArrayTemp,
+            ParameterTypes: new[] { typeof(double) }));
+        DefineTempStorage(restArrayTemp, new ValueStorage(ValueStorageKind.Reference, typeof(JavaScriptRuntime.Array)));
 
         // Now assign the rest array to the binding
         return TryLowerDestructuringPattern(restParameter.Target, restArrayTemp, DestructuringWriteMode.Declaration, "rest");

@@ -1096,26 +1096,19 @@ public class RuntimeServices
     /// Collects rest arguments starting from the specified index into an array.
     /// Used for rest parameter (...args) initialization.
     /// </summary>
-    public static object CollectRestArguments(object startIndexObj)
+    public static Array CollectRestArguments(double startIndex)
     {
-        // Convert to int using JavaScript number conversion
-        int startIndex = startIndexObj switch
-        {
-            int i => i,
-            double d => (int)d,
-            _ => 0
-        };
-        
+        var startIndexAsInt = (int)startIndex;
         var args = _currentArguments.Value;
-        
-        if (args == null || startIndex >= args.Length)
+
+        if (args == null || startIndexAsInt >= args.Length)
         {
             return new Array();
         }
 
         // Collect arguments from startIndex to end
-        var restArgs = new object?[args.Length - startIndex];
-        System.Array.Copy(args, startIndex, restArgs, 0, restArgs.Length);
+        var restArgs = new object?[args.Length - startIndexAsInt];
+        System.Array.Copy(args, startIndexAsInt, restArgs, 0, restArgs.Length);
         return new Array(restArgs);
     }
 

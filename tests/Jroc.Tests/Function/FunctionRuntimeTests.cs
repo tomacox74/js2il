@@ -5,6 +5,24 @@ namespace Jroc.Tests.Function;
 public sealed class FunctionRuntimeTests
 {
     [Fact]
+    public void CollectRestArguments_UsesTypedStartIndexAndReturnsArray()
+    {
+        var previousArguments = RuntimeServices.SetCurrentArguments(new object?[] { "first", 2d, true });
+        try
+        {
+            var rest = RuntimeServices.CollectRestArguments(1d);
+
+            Assert.Equal(2, rest.Count);
+            Assert.Equal(2d, rest[0]);
+            Assert.True(Assert.IsType<bool>(rest[1]));
+        }
+        finally
+        {
+            RuntimeServices.SetCurrentArguments(previousArguments);
+        }
+    }
+
+    [Fact]
     public void Construct_UsesDescriptorFreeJsObjectStorage()
     {
         var runtime = RuntimeServices.BuildServiceProvider();
