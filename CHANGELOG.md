@@ -86,6 +86,8 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 - compiler: omit member-call object-coercibility guards for receivers proven
   non-null by object construction, preserving their concrete CLR types for
   direct instance calls.
+- compiler: preserve `DynamicImport.Import` results as concrete JavaScript
+  `Promise` values instead of widening them to `object`.
 
 ## v0.12.1 - 2026-08-02
 
