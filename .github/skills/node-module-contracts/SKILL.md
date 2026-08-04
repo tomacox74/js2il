@@ -71,7 +71,11 @@ The current generator manifest has explicit modes for:
 - `process`;
 - `buffer`;
 - `events`;
-- `os`.
+- `os`;
+- `stream`;
+- `stream/promises`;
+- `util`;
+- `util/types`.
 
 Extend the shared generator for another module. Do not copy it into a
 module-specific generator.
@@ -174,6 +178,29 @@ module's top-level named contract even though their documentation is split
 between root methods, malformed root properties, and class records. Confirm
 the export roster from the pinned Node source and do not include narrative
 Web API classes that are not assigned to the module export.
+
+Promise submodules can be documented inside a narrative section whose method
+records use the parent module prefix. `stream/promises`, for example, uses the
+three promise-returning `stream.pipeline` and `stream.finished` records under
+`types_of_streams`; keep the canonical contract identity
+`stream/promises` while preserving those official signatures.
+
+The stream JSON also hoists nested class statics and even example calls into
+the root method array. Select only exact `stream.<member>` signatures for the
+top-level contract, drift-check the excluded records, and obtain
+`stream.duplexPair` from its consumer subsection.
+
+Some submodules are aliases of a documented namespace property rather than a
+separate module record. `util/types` is the 43-method `util.types` property in
+`util.json`. The runtime object returned for the alias must itself implement
+the generated contract; otherwise `RequireObject<T>` fails even if a separate
+attributed intrinsic class exists.
+
+Use cited `normalizedMethods` overrides for signatures whose structured JSON
+is incomplete or whose JavaScript variadic shape cannot be represented by the
+ordinary overload expander. Keep the selected official member roster and
+drift counts in generator code and locks; normalized methods are not a license
+to redefine the module around the runtime implementation.
 
 Documentation nesting can also be flattened by the JSON renderer.
 `process.features.*` entries appear in the parent `Process.properties` array

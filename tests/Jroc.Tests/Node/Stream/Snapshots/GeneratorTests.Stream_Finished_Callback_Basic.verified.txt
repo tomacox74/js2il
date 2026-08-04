@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x220c
+				// Method begins at RVA 0x21fc
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -41,7 +41,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2163
+			// Method begins at RVA 0x2155
 			// Header size: 1
 			// Code size: 2 (0x2)
 			.maxstack 8
@@ -63,7 +63,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2215
+				// Method begins at RVA 0x2205
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -90,7 +90,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 05 00 00 02
 			)
-			// Method begins at RVA 0x2168
+			// Method begins at RVA 0x2158
 			// Header size: 12
 			// Code size: 143 (0x8f)
 			.maxstack 8
@@ -170,7 +170,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2203
+			// Method begins at RVA 0x21f3
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -196,15 +196,15 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 263 (0x107)
+		// Code size: 249 (0xf9)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Stream_Finished_Callback_Basic/Scope,
-			[1] object,
+			[1] class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IStreamModule,
 			[2] object,
 			[3] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0,
-			[4] object,
-			[5] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1,
+			[4] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1,
+			[5] object,
 			[6] object
 		)
 
@@ -213,90 +213,86 @@
 		IL_0006: nop
 		IL_0007: ldarg.1
 		IL_0008: ldstr "node:stream"
-		IL_000d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
+		IL_000d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireRuntime::RequireObject<class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IStreamModule>(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object)
 		IL_0012: stloc.1
 		IL_0013: ldloc.1
-		IL_0014: ldstr "Writable"
-		IL_0019: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_001e: stloc.2
-		IL_001f: ldloc.2
-		IL_0020: ldc.i4.0
-		IL_0021: newarr [System.Runtime]System.Object
-		IL_0026: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::ConstructValue(object, object[])
-		IL_002b: stloc.2
-		IL_002c: ldloc.0
-		IL_002d: ldloc.2
-		IL_002e: stfld object Modules.Stream_Finished_Callback_Basic/Scope::writable
-		IL_0033: ldloc.0
-		IL_0034: ldfld object Modules.Stream_Finished_Callback_Basic/Scope::writable
-		IL_0039: stloc.2
-		IL_003a: ldnull
-		IL_003b: ldftn object Modules.Stream_Finished_Callback_Basic/FunctionExpression_L6C18::__js_call__(object)
-		IL_0041: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_0046: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
-		IL_004b: ldc.i4.0
-		IL_004c: conv.r8
-		IL_004d: ldstr ""
-		IL_0052: ldc.i4.0
-		IL_0053: ldc.i4.1
-		IL_0054: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
-		IL_0059: stloc.3
-		IL_005a: ldloc.2
-		IL_005b: ldstr "_write"
-		IL_0060: ldloc.3
-		IL_0061: ldc.i4.1
-		IL_0062: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
-		IL_0067: pop
-		IL_0068: ldloc.1
-		IL_0069: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_006e: stloc.2
-		IL_006f: ldloc.0
-		IL_0070: ldfld object Modules.Stream_Finished_Callback_Basic/Scope::writable
-		IL_0075: stloc.s 4
-		IL_0077: ldloc.0
-		IL_0078: castclass Modules.Stream_Finished_Callback_Basic/Scope
-		IL_007d: ldftn object Modules.Stream_Finished_Callback_Basic/FunctionExpression_L8C26::__js_call__(class Modules.Stream_Finished_Callback_Basic/Scope, object, object)
-		IL_0083: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-		IL_0088: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1
-		IL_008d: ldc.i4.1
-		IL_008e: conv.r8
-		IL_008f: ldstr ""
-		IL_0094: ldc.i4.0
-		IL_0095: ldc.i4.1
-		IL_0096: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0, float64, string, bool, bool)
-		IL_009b: stloc.s 5
-		IL_009d: ldloc.2
-		IL_009e: ldstr "finished"
-		IL_00a3: ldloc.s 4
-		IL_00a5: ldloc.s 5
-		IL_00a7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_00ac: pop
-		IL_00ad: ldloc.0
-		IL_00ae: ldfld object Modules.Stream_Finished_Callback_Basic/Scope::writable
-		IL_00b3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00b8: ldstr "end"
-		IL_00bd: ldstr "done"
-		IL_00c2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00c7: pop
-		IL_00c8: ldstr "console"
-		IL_00cd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_00d2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00d7: stloc.s 4
-		IL_00d9: ldloc.0
-		IL_00da: ldfld object Modules.Stream_Finished_Callback_Basic/Scope::writable
-		IL_00df: ldstr "writable"
-		IL_00e4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_00e9: stloc.2
-		IL_00ea: ldstr "after-end:"
-		IL_00ef: ldloc.2
-		IL_00f0: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_00f5: stloc.s 6
-		IL_00f7: ldloc.s 4
-		IL_00f9: ldstr "log"
-		IL_00fe: ldloc.s 6
-		IL_0100: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0105: pop
-		IL_0106: ret
+		IL_0014: callvirt instance object [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IStreamModule::get_Writable()
+		IL_0019: stloc.2
+		IL_001a: ldloc.2
+		IL_001b: ldc.i4.0
+		IL_001c: newarr [System.Runtime]System.Object
+		IL_0021: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::ConstructValue(object, object[])
+		IL_0026: stloc.2
+		IL_0027: ldloc.0
+		IL_0028: ldloc.2
+		IL_0029: stfld object Modules.Stream_Finished_Callback_Basic/Scope::writable
+		IL_002e: ldloc.0
+		IL_002f: ldfld object Modules.Stream_Finished_Callback_Basic/Scope::writable
+		IL_0034: stloc.2
+		IL_0035: ldnull
+		IL_0036: ldftn object Modules.Stream_Finished_Callback_Basic/FunctionExpression_L6C18::__js_call__(object)
+		IL_003c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_0041: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
+		IL_0046: ldc.i4.0
+		IL_0047: conv.r8
+		IL_0048: ldstr ""
+		IL_004d: ldc.i4.0
+		IL_004e: ldc.i4.1
+		IL_004f: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
+		IL_0054: stloc.3
+		IL_0055: ldloc.2
+		IL_0056: ldstr "_write"
+		IL_005b: ldloc.3
+		IL_005c: ldc.i4.1
+		IL_005d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
+		IL_0062: pop
+		IL_0063: ldloc.0
+		IL_0064: ldfld object Modules.Stream_Finished_Callback_Basic/Scope::writable
+		IL_0069: stloc.2
+		IL_006a: ldloc.0
+		IL_006b: castclass Modules.Stream_Finished_Callback_Basic/Scope
+		IL_0070: ldftn object Modules.Stream_Finished_Callback_Basic/FunctionExpression_L8C26::__js_call__(class Modules.Stream_Finished_Callback_Basic/Scope, object, object)
+		IL_0076: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_007b: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1
+		IL_0080: ldc.i4.1
+		IL_0081: conv.r8
+		IL_0082: ldstr ""
+		IL_0087: ldc.i4.0
+		IL_0088: ldc.i4.1
+		IL_0089: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0, float64, string, bool, bool)
+		IL_008e: stloc.s 4
+		IL_0090: ldloc.1
+		IL_0091: ldloc.2
+		IL_0092: ldloc.s 4
+		IL_0094: castclass [System.Runtime]System.Delegate
+		IL_0099: callvirt instance class [System.Runtime]System.Delegate [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IStreamModule::finished(object, class [System.Runtime]System.Delegate)
+		IL_009e: pop
+		IL_009f: ldloc.0
+		IL_00a0: ldfld object Modules.Stream_Finished_Callback_Basic/Scope::writable
+		IL_00a5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00aa: ldstr "end"
+		IL_00af: ldstr "done"
+		IL_00b4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_00b9: pop
+		IL_00ba: ldstr "console"
+		IL_00bf: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_00c4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00c9: stloc.2
+		IL_00ca: ldloc.0
+		IL_00cb: ldfld object Modules.Stream_Finished_Callback_Basic/Scope::writable
+		IL_00d0: ldstr "writable"
+		IL_00d5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00da: stloc.s 5
+		IL_00dc: ldstr "after-end:"
+		IL_00e1: ldloc.s 5
+		IL_00e3: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_00e8: stloc.s 6
+		IL_00ea: ldloc.2
+		IL_00eb: ldstr "log"
+		IL_00f0: ldloc.s 6
+		IL_00f2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_00f7: pop
+		IL_00f8: ret
 	} // end of method Stream_Finished_Callback_Basic::__js_module_init__
 
 } // end of class Modules.Stream_Finished_Callback_Basic
@@ -308,7 +304,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x221e
+		// Method begins at RVA 0x220e
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

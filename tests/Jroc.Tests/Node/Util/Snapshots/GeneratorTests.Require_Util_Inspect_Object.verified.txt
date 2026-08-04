@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2156
+			// Method begins at RVA 0x2142
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,11 +40,11 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 250 (0xfa)
+		// Code size: 230 (0xe6)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Require_Util_Inspect_Object/Scope,
-			[1] object,
+			[1] class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IUtilModule,
 			[2] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
 			[3] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
 			[4] object,
@@ -56,7 +56,7 @@
 		IL_0006: nop
 		IL_0007: ldarg.1
 		IL_0008: ldstr "util"
-		IL_000d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
+		IL_000d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireRuntime::RequireObject<class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IUtilModule>(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object)
 		IL_0012: stloc.1
 		IL_0013: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
 		IL_0018: dup
@@ -77,50 +77,46 @@
 		IL_0053: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
 		IL_0058: stloc.s 4
 		IL_005a: ldloc.1
-		IL_005b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0060: ldstr "inspect"
-		IL_0065: ldloc.2
-		IL_0066: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_006b: stloc.s 5
-		IL_006d: ldloc.s 4
-		IL_006f: ldstr "log"
-		IL_0074: ldloc.s 5
-		IL_0076: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_007b: pop
-		IL_007c: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_0081: dup
-		IL_0082: ldstr "person"
-		IL_0087: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_008c: dup
-		IL_008d: ldstr "name"
-		IL_0092: ldstr "Jane"
-		IL_0097: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_009c: dup
-		IL_009d: ldstr "age"
-		IL_00a2: ldc.r8 25
-		IL_00ab: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
-		IL_00b0: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_00b5: dup
-		IL_00b6: ldstr "city"
-		IL_00bb: ldstr "NYC"
-		IL_00c0: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_00c5: stloc.3
-		IL_00c6: ldstr "console"
-		IL_00cb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_00d0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00d5: stloc.s 5
-		IL_00d7: ldloc.1
-		IL_00d8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00dd: ldstr "inspect"
-		IL_00e2: ldloc.3
-		IL_00e3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00e8: stloc.s 4
-		IL_00ea: ldloc.s 5
-		IL_00ec: ldstr "log"
-		IL_00f1: ldloc.s 4
-		IL_00f3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00f8: pop
-		IL_00f9: ret
+		IL_005b: ldloc.2
+		IL_005c: callvirt instance string [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IUtilModule::inspect(object)
+		IL_0061: stloc.s 5
+		IL_0063: ldloc.s 4
+		IL_0065: ldstr "log"
+		IL_006a: ldloc.s 5
+		IL_006c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0071: pop
+		IL_0072: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0077: dup
+		IL_0078: ldstr "person"
+		IL_007d: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0082: dup
+		IL_0083: ldstr "name"
+		IL_0088: ldstr "Jane"
+		IL_008d: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_0092: dup
+		IL_0093: ldstr "age"
+		IL_0098: ldc.r8 25
+		IL_00a1: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
+		IL_00a6: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_00ab: dup
+		IL_00ac: ldstr "city"
+		IL_00b1: ldstr "NYC"
+		IL_00b6: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_00bb: stloc.3
+		IL_00bc: ldstr "console"
+		IL_00c1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_00c6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00cb: stloc.s 5
+		IL_00cd: ldloc.1
+		IL_00ce: ldloc.3
+		IL_00cf: callvirt instance string [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IUtilModule::inspect(object)
+		IL_00d4: stloc.s 4
+		IL_00d6: ldloc.s 5
+		IL_00d8: ldstr "log"
+		IL_00dd: ldloc.s 4
+		IL_00df: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_00e4: pop
+		IL_00e5: ret
 	} // end of method Require_Util_Inspect_Object::__js_module_init__
 
 } // end of class Modules.Require_Util_Inspect_Object
@@ -132,7 +128,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x215f
+		// Method begins at RVA 0x214b
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
