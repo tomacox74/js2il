@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2240
+				// Method begins at RVA 0x2236
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -42,7 +42,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2252
+					// Method begins at RVA 0x2248
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -60,7 +60,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2249
+				// Method begins at RVA 0x223f
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -88,10 +88,10 @@
 			)
 			// Method begins at RVA 0x21b8
 			// Header size: 12
-			// Code size: 115 (0x73)
+			// Code size: 105 (0x69)
 			.maxstack 8
 			.locals init (
-				[0] object,
+				[0] class [JavaScriptRuntime]JavaScriptRuntime.Array,
 				[1] object,
 				[2] float64,
 				[3] float64,
@@ -102,47 +102,45 @@
 			)
 
 			IL_0000: ldc.r8 0.0
-			IL_0009: box [System.Runtime]System.Double
-			IL_000e: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CollectRestArguments(object)
-			IL_0013: stloc.0
-			IL_0014: ldc.r8 0.0
-			IL_001d: box [System.Runtime]System.Double
-			IL_0022: stloc.1
-			IL_0023: ldc.r8 0.0
-			IL_002c: stloc.2
-			// loop start (head: IL_002d)
-				IL_002d: ldloc.2
-				IL_002e: stloc.3
-				IL_002f: ldloc.0
-				IL_0030: ldstr "length"
-				IL_0035: call float64 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItemAsNumber(object, object)
-				IL_003a: stloc.s 4
-				IL_003c: ldloc.3
-				IL_003d: ldloc.s 4
-				IL_003f: clt
-				IL_0041: brfalse IL_0071
+			IL_0009: call class [JavaScriptRuntime]JavaScriptRuntime.Array [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CollectRestArguments(float64)
+			IL_000e: stloc.0
+			IL_000f: ldc.r8 0.0
+			IL_0018: box [System.Runtime]System.Double
+			IL_001d: stloc.1
+			IL_001e: ldc.r8 0.0
+			IL_0027: stloc.2
+			// loop start (head: IL_0028)
+				IL_0028: ldloc.2
+				IL_0029: stloc.3
+				IL_002a: ldloc.0
+				IL_002b: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::get_length()
+				IL_0030: stloc.s 4
+				IL_0032: ldloc.3
+				IL_0033: ldloc.s 4
+				IL_0035: clt
+				IL_0037: brfalse IL_0067
 
-				IL_0046: ldloc.1
-				IL_0047: stloc.s 5
-				IL_0049: ldloc.0
-				IL_004a: ldloc.2
-				IL_004b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-				IL_0050: stloc.s 6
-				IL_0052: ldloc.s 5
-				IL_0054: ldloc.s 6
-				IL_0056: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-				IL_005b: stloc.s 7
-				IL_005d: ldloc.s 7
-				IL_005f: stloc.1
-				IL_0060: ldloc.2
-				IL_0061: ldc.r8 1
-				IL_006a: add
-				IL_006b: stloc.2
-				IL_006c: br IL_002d
+				IL_003c: ldloc.1
+				IL_003d: stloc.s 5
+				IL_003f: ldloc.0
+				IL_0040: ldloc.2
+				IL_0041: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
+				IL_0046: stloc.s 6
+				IL_0048: ldloc.s 5
+				IL_004a: ldloc.s 6
+				IL_004c: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+				IL_0051: stloc.s 7
+				IL_0053: ldloc.s 7
+				IL_0055: stloc.1
+				IL_0056: ldloc.2
+				IL_0057: ldc.r8 1
+				IL_0060: add
+				IL_0061: stloc.2
+				IL_0062: br IL_0028
 			// end loop
 
-			IL_0071: ldloc.1
-			IL_0072: ret
+			IL_0067: ldloc.1
+			IL_0068: ret
 		} // end of method ArrowFunction_L3C13::__js_call__
 
 	} // end of class ArrowFunction_L3C13
@@ -154,7 +152,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2237
+			// Method begins at RVA 0x222d
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -306,7 +304,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x225b
+		// Method begins at RVA 0x2251
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

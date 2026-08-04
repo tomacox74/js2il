@@ -25,7 +25,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2248
+				// Method begins at RVA 0x223e
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -53,7 +53,7 @@
 					.method public hidebysig specialname rtspecialname 
 						instance void .ctor () cil managed 
 					{
-						// Method begins at RVA 0x2263
+						// Method begins at RVA 0x2259
 						// Header size: 1
 						// Code size: 8 (0x8)
 						.maxstack 8
@@ -71,7 +71,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x225a
+					// Method begins at RVA 0x2250
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -89,7 +89,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2251
+				// Method begins at RVA 0x2247
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -118,10 +118,10 @@
 			)
 			// Method begins at RVA 0x21a4
 			// Header size: 12
-			// Code size: 143 (0x8f)
+			// Code size: 133 (0x85)
 			.maxstack 8
 			.locals init (
-				[0] object,
+				[0] class [JavaScriptRuntime]JavaScriptRuntime.Array,
 				[1] string,
 				[2] float64,
 				[3] float64,
@@ -132,62 +132,60 @@
 			)
 
 			IL_0000: ldc.r8 1
-			IL_0009: box [System.Runtime]System.Double
-			IL_000e: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CollectRestArguments(object)
-			IL_0013: stloc.0
-			IL_0014: ldstr ""
-			IL_0019: stloc.1
-			IL_001a: ldc.r8 0.0
-			IL_0023: stloc.2
-			// loop start (head: IL_0024)
-				IL_0024: ldloc.2
-				IL_0025: stloc.3
-				IL_0026: ldloc.0
-				IL_0027: ldstr "length"
-				IL_002c: call float64 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItemAsNumber(object, object)
-				IL_0031: stloc.s 4
-				IL_0033: ldloc.3
-				IL_0034: ldloc.s 4
-				IL_0036: clt
-				IL_0038: brfalse IL_008d
+			IL_0009: call class [JavaScriptRuntime]JavaScriptRuntime.Array [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CollectRestArguments(float64)
+			IL_000e: stloc.0
+			IL_000f: ldstr ""
+			IL_0014: stloc.1
+			IL_0015: ldc.r8 0.0
+			IL_001e: stloc.2
+			// loop start (head: IL_001f)
+				IL_001f: ldloc.2
+				IL_0020: stloc.3
+				IL_0021: ldloc.0
+				IL_0022: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::get_length()
+				IL_0027: stloc.s 4
+				IL_0029: ldloc.3
+				IL_002a: ldloc.s 4
+				IL_002c: clt
+				IL_002e: brfalse IL_0083
 
-				IL_003d: ldloc.2
-				IL_003e: stloc.s 4
-				IL_0040: ldloc.s 4
-				IL_0042: ldc.r8 0.0
-				IL_004b: cgt
-				IL_004d: brfalse IL_0062
+				IL_0033: ldloc.2
+				IL_0034: stloc.s 4
+				IL_0036: ldloc.s 4
+				IL_0038: ldc.r8 0.0
+				IL_0041: cgt
+				IL_0043: brfalse IL_0058
 
-				IL_0052: ldloc.1
-				IL_0053: stloc.s 5
-				IL_0055: ldloc.s 5
-				IL_0057: ldarg.2
-				IL_0058: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-				IL_005d: stloc.s 6
-				IL_005f: ldloc.s 6
-				IL_0061: stloc.1
+				IL_0048: ldloc.1
+				IL_0049: stloc.s 5
+				IL_004b: ldloc.s 5
+				IL_004d: ldarg.2
+				IL_004e: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+				IL_0053: stloc.s 6
+				IL_0055: ldloc.s 6
+				IL_0057: stloc.1
 
-				IL_0062: ldloc.1
-				IL_0063: stloc.s 6
-				IL_0065: ldloc.0
-				IL_0066: ldloc.2
-				IL_0067: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-				IL_006c: stloc.s 7
-				IL_006e: ldloc.s 6
-				IL_0070: ldloc.s 7
-				IL_0072: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-				IL_0077: stloc.s 6
-				IL_0079: ldloc.s 6
-				IL_007b: stloc.1
-				IL_007c: ldloc.2
-				IL_007d: ldc.r8 1
-				IL_0086: add
-				IL_0087: stloc.2
-				IL_0088: br IL_0024
+				IL_0058: ldloc.1
+				IL_0059: stloc.s 6
+				IL_005b: ldloc.0
+				IL_005c: ldloc.2
+				IL_005d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
+				IL_0062: stloc.s 7
+				IL_0064: ldloc.s 6
+				IL_0066: ldloc.s 7
+				IL_0068: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+				IL_006d: stloc.s 6
+				IL_006f: ldloc.s 6
+				IL_0071: stloc.1
+				IL_0072: ldloc.2
+				IL_0073: ldc.r8 1
+				IL_007c: add
+				IL_007d: stloc.2
+				IL_007e: br IL_001f
 			// end loop
 
-			IL_008d: ldloc.1
-			IL_008e: ret
+			IL_0083: ldloc.1
+			IL_0084: ret
 		} // end of method ArrowFunction_L3C17::__js_call__
 
 	} // end of class ArrowFunction_L3C17
@@ -199,7 +197,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x223f
+			// Method begins at RVA 0x2235
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -358,7 +356,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x226c
+		// Method begins at RVA 0x2262
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

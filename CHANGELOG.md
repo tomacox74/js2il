@@ -77,6 +77,8 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 - compiler: preserve known reference types through
   `RequireObjectCoercible`, eliminating redundant casts before typed member
   calls such as `String.Trim`.
+- compiler/runtime: emit rest-parameter collection with an unboxed `double`
+  start index and a typed JavaScript `Array` result.
 
 ## v0.12.1 - 2026-08-02
 

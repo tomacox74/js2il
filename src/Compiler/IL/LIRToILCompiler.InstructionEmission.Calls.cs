@@ -1352,44 +1352,28 @@ internal sealed partial class LIRToILCompiler
                     // Emit call to JavaScriptRuntime.RuntimeServices static method
                     var runtimeServicesType = typeof(JavaScriptRuntime.RuntimeServices);
                     
-                    // Load arguments and box if necessary
-                    foreach (var arg in callRuntimeServices.Arguments)
+                    if (callRuntimeServices.ParameterTypes is { Count: var parameterTypeCount }
+                        && parameterTypeCount != callRuntimeServices.Arguments.Count)
                     {
-                        EmitLoadTemp(arg, ilEncoder, allocation, methodDescriptor);
-                        
-                        // Check if we need to box the value
-                        if (GetTempStorage(arg) is { } storage && 
-                            storage.Kind == ValueStorageKind.UnboxedValue &&
-                            storage.ClrType != null)
-                        {
-                            // Box the unboxed value to object
-                            ilEncoder.OpCode(ILOpCode.Box);
-                            if (storage.ClrType == typeof(double))
-                            {
-                                ilEncoder.Token(_bclReferences.DoubleType);
-                            }
-                            else if (storage.ClrType == typeof(bool))
-                            {
-                                ilEncoder.Token(_bclReferences.BooleanType);
-                            }
-                            else if (storage.ClrType == typeof(int))
-                            {
-                                ilEncoder.Token(_bclReferences.Int32Type);
-                            }
-                            else
-                            {
-                                throw new NotSupportedException($"Unsupported unboxed type for RuntimeServices call: {storage.ClrType}");
-                            }
-                        }
+                        throw new InvalidOperationException(
+                            $"RuntimeServices call '{callRuntimeServices.MethodName}' has {parameterTypeCount} parameter types for {callRuntimeServices.Arguments.Count} arguments.");
                     }
 
-                    // Emit call - use explicit parameter types to ensure correct method resolution
-                    ilEncoder.OpCode(ILOpCode.Call);
                     var paramTypes = new Type[callRuntimeServices.Arguments.Count];
-                    for (int i = 0; i < paramTypes.Length; i++)
+                    for (int i = 0; i < callRuntimeServices.Arguments.Count; i++)
                     {
-                        paramTypes[i] = typeof(object); // RuntimeServices methods take object parameters
+                        var parameterType = callRuntimeServices.ParameterTypes?[i] ?? typeof(object);
+                        paramTypes[i] = parameterType;
+                        EmitLoadTempForParameter(
+                            callRuntimeServices.Arguments[i],
+                            parameterType,
+                            ilEncoder,
+                            allocation,
+                            methodDescriptor);
                     }
+
+                    // Emit call - use explicit parameter types to ensure correct method resolution.
+                    ilEncoder.OpCode(ILOpCode.Call);
                     var methodRef = _memberRefRegistry.GetOrAddMethod(
                         runtimeServicesType, 
                         callRuntimeServices.MethodName,

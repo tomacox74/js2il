@@ -598,6 +598,11 @@ public record LIRCreateLeafScopeInstance(ScopeId Scope) : LIRInstruction;
 
 /// <summary>
 /// Calls a static method on JavaScriptRuntime.RuntimeServices (runtime helper methods, not ECMA-262 intrinsics).
-/// Used for runtime services like CollectRestArguments that support JavaScript features.
+/// Optional parameter types allow callers with compile-time-known runtime helper signatures
+/// to preserve unboxed arguments and typed results.
 /// </summary>
-public record LIRCallRuntimeServicesStatic(string MethodName, IReadOnlyList<TempVariable> Arguments, TempVariable Result) : LIRInstruction;
+public record LIRCallRuntimeServicesStatic(
+    string MethodName,
+    IReadOnlyList<TempVariable> Arguments,
+    TempVariable Result,
+    IReadOnlyList<Type>? ParameterTypes = null) : LIRInstruction;
