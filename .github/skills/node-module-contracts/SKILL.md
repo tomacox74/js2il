@@ -67,7 +67,8 @@ The current generator has explicit modes for:
 - `console`;
 - `path`;
 - `child_process`;
-- `perf_hooks`.
+- `perf_hooks`;
+- `process`.
 
 Extend the shared generator for another module. Do not copy it into a
 module-specific generator.
@@ -146,6 +147,29 @@ do not derive method semantics or replace the documentation contract with the
 runtime implementation. A missing structured return type, such as
 `perf_hooks.timerify()`, also requires a narrow cited override rather than
 silently mapping the return to `void`.
+Likewise, when prose and examples document an omitted argument but the
+structured signature lacks optional brackets, record the exact optional
+parameter as a cited override rather than treating every defaulted parameter as
+optional globally.
+
+Some API documents describe a module-shaped global rather than placing the
+contract under `modules`. `process.json`, for example, stores the public
+`Process` object under `globals` even though the same object is exported by
+`node:process`. Select the documented root by its actual JSON category and
+retain the canonical module specifier in `[NodeModuleInterface]`.
+
+Documentation nesting can also be flattened by the JSON renderer.
+`process.features.*` entries appear in the parent `Process.properties` array
+without their `features.` prefix. Normalize these back to one top-level
+`features` object and record the excluded nested names and counts as
+drift-checked overrides. Do not accidentally expose nested properties as
+top-level module members.
+
+Nested method records can likewise appear in a parent method array. Until
+nested contracts are supported, exclude dotted methods such as
+`process.hrtime.bigint()` from the top-level interface with drift-checked
+counts. A dotted `[NodeModuleMember]` on the root contract is not an equivalent
+representation and can incorrectly bind a nonexistent top-level property.
 
 ## Phase 2A: Add a New Contract
 
@@ -237,6 +261,11 @@ Supported concepts:
 - `minimumArgumentCount`: append `null` arguments required by a runtime
   overload;
 - `parameterCounts`: only selected generated overloads are implemented.
+- `returnsVoid`: the statically bound runtime target itself returns `void`
+  rather than returning a value that the adapter discards.
+- `getterOnly`: bind a documented read/write property directly to a runtime
+  getter while keeping its unavailable setter as an explicit
+  `NotImplementedException`.
 
 Every use must correspond to a concrete compile-time-resolvable runtime member.
 Unmapped generated members receive an explicit `NotImplementedException`
@@ -400,6 +429,7 @@ npm run generate:node-contract-console
 npm run generate:node-contract-path
 npm run generate:node-contract-child-process
 npm run generate:node-contract-perf-hooks
+npm run generate:node-contract-process
 ```
 
 Include any newly added module command.

@@ -11,6 +11,7 @@ const consoleMode = args.includes('--console');
 const pathMode = args.includes('--path');
 const childProcessMode = args.includes('--child-process');
 const perfHooksMode = args.includes('--perf-hooks');
+const processMode = args.includes('--process');
 
 for (let index = 0; index < args.length; index++) {
     const argument = args[index];
@@ -27,7 +28,8 @@ for (let index = 0; index < args.length; index++) {
         '--console',
         '--path',
         '--child-process',
-        '--perf-hooks'
+        '--perf-hooks',
+        '--process'
     ].includes(argument)) {
         throw new Error(`Unknown argument '${argument}'.`);
     }
@@ -38,13 +40,25 @@ if ([
     consoleMode,
     pathMode,
     childProcessMode,
-    perfHooksMode
+    perfHooksMode,
+    processMode
 ].filter(Boolean).length > 1) {
     throw new Error(
-        '--promises, --console, --path, --child-process, and --perf-hooks cannot be used together.');
+        '--promises, --console, --path, --child-process, --perf-hooks, and --process cannot be used together.');
 }
 
-const contract = perfHooksMode
+const contract = processMode
+    ? {
+        moduleSpecifier: 'process',
+        documentationPrefix: 'process.',
+        interfaceName: 'IProcessModule',
+        intrinsicClassName: 'Process',
+        displayName: 'node:process',
+        outputStem: 'Process',
+        overrideStem: 'process',
+        lockStem: 'process'
+    }
+    : perfHooksMode
     ? {
         moduleSpecifier: 'perf_hooks',
         documentationPrefix: 'perf_hooks.',
@@ -127,7 +141,9 @@ const intrinsicImplementationOutputPath = path.join(
 
 const lock = JSON.parse(fs.readFileSync(lockPath, 'utf8'));
 const overrides = JSON.parse(fs.readFileSync(overridesPath, 'utf8'));
-const contractAlias = perfHooksMode
+const contractAlias = processMode
+    ? 'ProcessContract'
+    : perfHooksMode
     ? 'PerfHooksContract'
     : childProcessMode
     ? 'ChildProcessContract'
@@ -136,7 +152,9 @@ const contractAlias = perfHooksMode
     : consoleMode
         ? 'ConsoleContract'
         : 'FsContract';
-const documentationModule = perfHooksMode
+const documentationModule = processMode
+    ? 'process'
+    : perfHooksMode
     ? 'perf_hooks'
     : childProcessMode
     ? 'child_process'
@@ -277,6 +295,32 @@ function optionalParameterNames(parameters) {
     return names;
 }
 
+function getOptionalParameterNames(memberName, parameters, descriptors) {
+    const names = optionalParameterNames(parameters);
+    const override = overrides.methodOptionalParameters?.[memberName];
+    if (!override) {
+        return names;
+    }
+
+    if (!Array.isArray(override.parameters) || !override.source) {
+        throw new Error(
+            `Optional parameter override for '${contract.documentationPrefix}${memberName}' ` +
+            'must include parameters and source.');
+    }
+
+    const descriptorNames = new Set(descriptors.map(parameter => parameter.name));
+    for (const parameterName of override.parameters) {
+        if (!descriptorNames.has(parameterName)) {
+            throw new Error(
+                `Optional parameter override for '${contract.documentationPrefix}${memberName}' ` +
+                `references unknown parameter '${parameterName}'.`);
+        }
+        names.add(parameterName);
+    }
+
+    return names;
+}
+
 function mapType(type, isReturnType = false) {
     const normalized = String(type ?? '')
         .replaceAll('\\', '')
@@ -387,9 +431,10 @@ function csharpIdentifier(name) {
 
 function csharpMemberName(nodeMemberName) {
     const parts = nodeMemberName.split('.');
-    return parts[0] + parts.slice(1)
+    const memberName = parts[0] + parts.slice(1)
         .map(part => part.length === 0 ? '' : part[0].toUpperCase() + part.slice(1))
         .join('');
+    return csharpIdentifier(memberName);
 }
 
 function xmlEscape(value) {
@@ -413,7 +458,10 @@ function generateMethodOverloads(methods) {
         const descriptors = new Map(
             (signature.params ?? []).map(parameter => [parameter.name, parameter]));
         const returnType = mapMethodReturnType(parsed.memberName, signature);
-        const optionalNames = optionalParameterNames(parsed.parameters);
+        const optionalNames = getOptionalParameterNames(
+            parsed.memberName,
+            parsed.parameters,
+            signature.params ?? []);
 
         for (const expanded of expandOptionalSegments(parsed.parameters)) {
             const parameterNames = expanded
@@ -458,6 +506,7 @@ function generateMethodOverloads(methods) {
 
 function generateMethodsWithOptionalAndRestParameters(methods) {
     const generated = [];
+    const signatures = new Set();
 
     for (const method of methods) {
         const parsed = extractSignature(method);
@@ -466,8 +515,11 @@ function generateMethodsWithOptionalAndRestParameters(methods) {
             throw new Error(`Official Node.js method '${parsed.signature}' has no structured signature.`);
         }
 
-        const optionalNames = optionalParameterNames(parsed.parameters);
         const descriptors = signature.params ?? [];
+        const optionalNames = getOptionalParameterNames(
+            parsed.memberName,
+            parsed.parameters,
+            descriptors);
         const restParameter = descriptors.find(parameter => parameter.name.startsWith('...'));
         const positionalParameters = descriptors.filter(
             parameter => !parameter.name.startsWith('...'));
@@ -491,6 +543,16 @@ function generateMethodsWithOptionalAndRestParameters(methods) {
             if (restParameter && parameterCount === positionalParameters.length) {
                 parameters.push(`params object?[] ${csharpIdentifier(restParameter.name.slice(3))}`);
             }
+
+            const signatureKey = `${methodName}(${parameters
+                .map(parameter => parameter.replace(
+                    /^(params )?(.+?) @?[A-Za-z_][A-Za-z0-9_]*$/,
+                    '$1$2'))
+                .join(',')})`;
+            if (signatures.has(signatureKey)) {
+                continue;
+            }
+            signatures.add(signatureKey);
 
             generated.push([
                 '    /// <summary>',
@@ -519,35 +581,84 @@ function mapMethodReturnType(memberName, signature) {
     return mapType(override?.type ?? signature.return?.type, true);
 }
 
-function generateReadOnlyProperties(properties) {
+function generateProperties(properties) {
     return properties.map(property => {
-        const match = property.textRaw.match(/^`([^`]+)` Type: \{([^}]+)\}$/);
+        const match = property.textRaw.match(/^`([^`]+)`(?: Type:)? \{([^}]+)\}/);
         if (!match) {
             throw new Error(
                 `Cannot parse official Node.js property signature '${property.textRaw}'.`);
         }
 
         const [, propertyName, propertyType] = match;
+        const access = overrides.propertyAccess?.[propertyName] ?? 'read-only';
+        if (!['read-only', 'read-write'].includes(access)) {
+            throw new Error(
+                `Unsupported access '${access}' for ${contract.moduleSpecifier} property '${propertyName}'.`);
+        }
+
         return [
             '    /// <summary>',
             `    /// Node.js property: <c>${xmlEscape(property.textRaw)}</c>.`,
             '    /// </summary>',
+            ...(property.meta?.deprecated
+                ? [`    [global::System.Obsolete("Deprecated by Node.js since ${property.meta.deprecated.join(', ')}.")]`]
+                : []),
             `    [NodeModuleMember("${propertyName}")]`,
-            `    ${mapType(propertyType)} ${csharpMemberName(propertyName)} { get; }`
+            `    ${mapType(propertyType)} ${csharpMemberName(propertyName)} { get;${access === 'read-write' ? ' set;' : ''} }`
         ].join('\n');
     });
 }
 
 function generateInterface(documentation) {
-    const module = documentation.modules?.find(candidate => candidate.name === lock.module);
+    const module = processMode
+        ? documentation.globals?.find(candidate => candidate.name === lock.module)
+        : documentation.modules?.find(candidate => candidate.name === lock.module);
     if (!module) {
-        throw new Error(`Official documentation does not contain module '${lock.module}'.`);
+        throw new Error(
+            `Official documentation does not contain ${processMode ? 'global' : 'module'} '${lock.module}'.`);
     }
 
     let methodGroups;
     let standardProperties;
 
-    if (perfHooksMode) {
+    if (processMode) {
+        const excludedProperties = new Set(overrides.excludedProperties);
+        const standardProcessProperties = (module.properties ?? [])
+            .filter(property => {
+                const match = property.textRaw.match(/^`([^`]+)`/);
+                return !match || !excludedProperties.has(match[1]);
+            });
+        const topLevelProcessMethods = (module.methods ?? [])
+            .filter(method => !extractSignature(method).memberName.includes('.'));
+        const processEvents = requireSection(module, 'process_events');
+
+        assertCount(module.methods?.length ?? 0, lock.methodCount, 'method count');
+        assertCount(
+            topLevelProcessMethods.length,
+            lock.topLevelMethodCount,
+            'top-level method count');
+        assertCount(
+            (module.methods?.length ?? 0) - topLevelProcessMethods.length,
+            lock.excludedNestedMethodCount,
+            'excluded nested method count');
+        assertCount(module.properties?.length ?? 0, lock.rawPropertyCount, 'raw property count');
+        assertCount(
+            standardProcessProperties.length,
+            lock.standardPropertyCount,
+            'normalized standard property count');
+        assertCount(excludedProperties.size, lock.excludedPropertyCount, 'excluded property count');
+        assertCount(
+            overrides.properties.length,
+            lock.overridePropertyCount,
+            'override property count');
+        assertCount(processEvents.events?.length ?? 0, lock.eventCount, 'event count');
+
+        methodGroups = [{
+            heading: 'Process methods',
+            methods: generateMethodsWithOptionalAndRestParameters(topLevelProcessMethods)
+        }];
+        standardProperties = generateProperties(standardProcessProperties);
+    } else if (perfHooksMode) {
         assertCount(module.methods?.length ?? 0, lock.methodCount, 'method count');
         assertCount(module.properties?.length ?? 0, lock.propertyCount, 'property count');
         assertCount(module.classes?.length ?? 0, lock.classCount, 'class count');
@@ -600,7 +711,7 @@ function generateInterface(documentation) {
             heading: 'Path methods',
             methods: generateMethodsWithOptionalAndRestParameters(module.methods)
         }];
-        standardProperties = generateReadOnlyProperties(module.properties);
+        standardProperties = generateProperties(module.properties);
     } else if (consoleMode) {
         const consoleClass = module.classes?.find(candidate => candidate.name === 'Console');
         if (!consoleClass) {
@@ -762,13 +873,15 @@ function parseContractMembers(interfaceSource) {
             continue;
         }
 
-        const propertyMatch = line.match(/^    (.+) (@?[A-Za-z_][A-Za-z0-9_]*) \{ get; \}$/);
+        const propertyMatch = line.match(
+            /^    (.+) (@?[A-Za-z_][A-Za-z0-9_]*) \{ get;( set;)? \}$/);
         if (propertyMatch) {
             members.push({
                 kind: 'property',
                 nodeMemberName,
                 returnType: propertyMatch[1],
                 csharpName: propertyMatch[2],
+                hasSetter: Boolean(propertyMatch[3]),
                 parameters: []
             });
             nodeMemberName = null;
@@ -834,7 +947,7 @@ function renderImplementedMethodBody(member, implementation) {
     }
 
     if (member.returnType === 'void') {
-        return `_ = ${invocation}`;
+        return implementation.returnsVoid ? invocation : `_ = ${invocation}`;
     }
 
     if (member.returnType === 'object?') {
@@ -872,6 +985,16 @@ function generateIntrinsicImplementation(interfaceSource) {
                 .join(', ')})`;
 
         if (!isImplemented) {
+            if (member.kind === 'property' && member.hasSetter) {
+                return [
+                    `    ${declaration}`,
+                    '    {',
+                    `        get => throw CreateNotImplementedException("${member.nodeMemberName}");`,
+                    `        set => throw CreateNotImplementedException("${member.nodeMemberName}");`,
+                    '    }'
+                ].join('\n');
+            }
+
             return [
                 `    ${declaration}`,
                 `        => throw CreateNotImplementedException("${member.nodeMemberName}");`
@@ -884,9 +1007,35 @@ function generateIntrinsicImplementation(interfaceSource) {
                     `Intrinsic property '${member.nodeMemberName}' must use direct invocation.`);
             }
 
+            const target = implementation.target ?? member.csharpName;
+            if (member.hasSetter) {
+                if (implementation.getterOnly) {
+                    return [
+                        `    ${declaration}`,
+                        '    {',
+                        `        get => ${target};`,
+                        `        set => throw CreateNotImplementedException("${member.nodeMemberName}");`,
+                        '    }'
+                    ].join('\n');
+                }
+
+                return [
+                    `    ${declaration}`,
+                    '    {',
+                    `        get => ${target};`,
+                    `        set => ${target} = value;`,
+                    '    }'
+                ].join('\n');
+            }
+
+            if (implementation.getterOnly) {
+                throw new Error(
+                    `Intrinsic property '${member.nodeMemberName}' cannot be getter-only because its contract is read-only.`);
+            }
+
             return [
                 `    ${declaration}`,
-                `        => ${member.csharpName};`
+                `        => ${target};`
             ].join('\n');
         }
 
@@ -941,7 +1090,9 @@ async function main() {
             .map(([outputPath]) => path.relative(repoRoot, outputPath));
 
         if (staleOutputs.length > 0) {
-            const modeArgument = perfHooksMode
+            const modeArgument = processMode
+                ? ' --process'
+                : perfHooksMode
                 ? ' --perf-hooks'
                 : childProcessMode
                 ? ' --child-process'

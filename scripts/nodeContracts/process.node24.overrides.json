@@ -1,0 +1,88 @@
+{
+  "excludedProperties": [
+    "cached_builtins",
+    "debug",
+    "inspector",
+    "ipv6",
+    "require_module",
+    "tls",
+    "tls_alpn",
+    "tls_ocsp",
+    "tls_sni",
+    "typescript",
+    "uv"
+  ],
+  "properties": [
+    {
+      "name": "features",
+      "type": "Object",
+      "access": "read-only",
+      "summary": "Gets the object describing features compiled into the current Node.js binary.",
+      "source": "https://nodejs.org/docs/v24.18.1/api/process.html#processfeatures"
+    },
+    {
+      "name": "finalization",
+      "type": "Object",
+      "access": "read-only",
+      "summary": "Gets the process finalization registration API.",
+      "source": "https://nodejs.org/docs/v24.18.1/api/process.html#processfinalizationregisterref-callback"
+    }
+  ],
+  "methodReturnTypes": {
+    "getegid": {
+      "type": "integer",
+      "source": "https://github.com/nodejs/node/blob/v24.18.1/src/node_credentials.cc#L282-L287"
+    },
+    "geteuid": {
+      "type": "integer",
+      "source": "https://github.com/nodejs/node/blob/v24.18.1/src/node_credentials.cc#L275-L280"
+    },
+    "getgid": {
+      "type": "integer",
+      "source": "https://github.com/nodejs/node/blob/v24.18.1/src/node_credentials.cc#L268-L273"
+    },
+    "kill": {
+      "type": "boolean",
+      "source": "https://github.com/nodejs/node/blob/v24.18.1/lib/internal/process/per_thread.js#L254-L280"
+    },
+    "umask": {
+      "type": "integer",
+      "source": "https://github.com/nodejs/node/blob/v24.18.1/src/node_process_methods.cc#L269-L286"
+    }
+  },
+  "methodOptionalParameters": {
+    "loadEnvFile": {
+      "parameters": ["path"],
+      "source": "https://nodejs.org/docs/v24.18.1/api/process.html#processloadenvfilepath"
+    }
+  },
+  "propertyAccess": {
+    "argv": "read-write",
+    "debugPort": "read-write",
+    "env": "read-write",
+    "execArgv": "read-write",
+    "execPath": "read-write",
+    "exitCode": "read-write",
+    "noDeprecation": "read-write",
+    "throwDeprecation": "read-write",
+    "title": "read-write",
+    "traceDeprecation": "read-write",
+    "traceProcessWarnings": "read-write"
+  },
+  "intrinsicImplementations": {
+    "argv": { "style": "direct", "getterOnly": true },
+    "connected": { "style": "direct" },
+    "env": { "style": "direct", "getterOnly": true },
+    "exitCode": { "style": "direct" },
+    "platform": { "style": "direct" },
+    "stderr": { "style": "direct" },
+    "stdout": { "style": "direct" },
+    "versions": { "style": "direct" },
+    "chdir": { "style": "direct" },
+    "cwd": { "style": "direct" },
+    "disconnect": { "style": "direct", "returnsVoid": true },
+    "exit": { "style": "direct", "returnsVoid": true },
+    "nextTick": { "style": "direct" },
+    "send": { "style": "direct", "parameterCounts": [1] }
+  }
+}

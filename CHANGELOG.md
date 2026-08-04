@@ -36,6 +36,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   official Node.js 24.18.1 documentation. Bind the implemented `performance`
   export directly and retain explicit fallbacks for unavailable functions and
   constructors.
+- sdk/runtime: add a generated `node:process` host contract from the pinned
+  official Node.js 24.18.1 documentation. Preserve writable property metadata,
+  normalize nested `process.features` and `process.finalization` surfaces, bind
+  implemented members directly, and retain explicit fallbacks for unavailable
+  APIs.
 - compiler/runtime: strongly type literal CommonJS requires for generated Node
   module contracts. Calls such as `require("fs").readFileSync(...)` now use
   `RequireObject<IFsModule>` and direct interface dispatch, including typed
