@@ -250,20 +250,7 @@ internal sealed partial class LIRToILCompiler
                 }
             case LIRNewBuiltInError newError:
                 {
-                    var errorClrType = Jroc.IR.BuiltInErrorTypes.GetRuntimeErrorClrType(newError.ErrorTypeName);
-
-                    if (newError.Message.HasValue)
-                    {
-                        EmitLoadBuiltInErrorMessage(newError.Message.Value, ilEncoder, allocation, methodDescriptor);
-                        var ctor = _memberRefRegistry.GetOrAddConstructor(errorClrType, parameterTypes: new[] { typeof(string) });
-                        ilEncoder.OpCode(ILOpCode.Newobj);
-                        ilEncoder.Token(ctor);
-                        break;
-                    }
-
-                    var defaultCtor = _memberRefRegistry.GetOrAddConstructor(errorClrType, parameterTypes: Type.EmptyTypes);
-                    ilEncoder.OpCode(ILOpCode.Newobj);
-                    ilEncoder.Token(defaultCtor);
+                    EmitNewBuiltInError(newError, ilEncoder, allocation, methodDescriptor);
                     break;
                 }
             case LIRCompareNumberLessThan cmpLt:

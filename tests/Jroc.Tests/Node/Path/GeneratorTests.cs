@@ -43,6 +43,14 @@ namespace Jroc.Tests.Node.Path
             nameof(Require_Path_DynamicImportOverride));
 
         [Fact]
+        public Task Require_Path_DynamicImportThenOverride() => GenerateTest(
+            nameof(Require_Path_DynamicImportThenOverride));
+
+        [Fact]
+        public Task Require_Path_DynamicImportThenPrototypeOverride() => GenerateTest(
+            nameof(Require_Path_DynamicImportThenPrototypeOverride));
+
+        [Fact]
         public Task Require_Path_Join_NestedFunction() => GenerateTest(
             nameof(Require_Path_Join_NestedFunction));
 

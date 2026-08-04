@@ -332,6 +332,18 @@ internal static class LIRIntrinsicNormalization
 
             if (instruction is LIRCallMember0 callMember0)
             {
+                if (TryNormalizePromiseMemberCall(
+                        methodBody,
+                        i,
+                        callMember0.Receiver,
+                        callMember0.MethodName,
+                        Array.Empty<TempVariable>(),
+                        callMember0.Result,
+                        knownSpecializedReceiverClrTypes))
+                {
+                    continue;
+                }
+
                 if (TryNormalizeArrayMemberCall(
                         methodBody,
                         i,
@@ -367,6 +379,18 @@ internal static class LIRIntrinsicNormalization
 
             if (instruction is LIRCallMember1 callMember1)
             {
+                if (TryNormalizePromiseMemberCall(
+                        methodBody,
+                        i,
+                        callMember1.Receiver,
+                        callMember1.MethodName,
+                        new[] { callMember1.A0 },
+                        callMember1.Result,
+                        knownSpecializedReceiverClrTypes))
+                {
+                    continue;
+                }
+
                 if (TryNormalizeArrayMemberCall(
                         methodBody,
                         i,
@@ -416,6 +440,18 @@ internal static class LIRIntrinsicNormalization
 
             if (instruction is LIRCallMember2 callMember2)
             {
+                if (TryNormalizePromiseMemberCall(
+                        methodBody,
+                        i,
+                        callMember2.Receiver,
+                        callMember2.MethodName,
+                        new[] { callMember2.A0, callMember2.A1 },
+                        callMember2.Result,
+                        knownSpecializedReceiverClrTypes))
+                {
+                    continue;
+                }
+
                 if (TryNormalizeArrayMemberCall(
                         methodBody,
                         i,
@@ -469,6 +505,36 @@ internal static class LIRIntrinsicNormalization
     public static void NormalizeLateNumericMemberCalls(MethodBodyIR methodBody)
     {
         FuseCharCodeAtWithConvertToNumber(methodBody);
+    }
+
+    private static bool TryNormalizePromiseMemberCall(
+        MethodBodyIR methodBody,
+        int instructionIndex,
+        TempVariable receiver,
+        string methodName,
+        IReadOnlyList<TempVariable> arguments,
+        TempVariable result,
+        IReadOnlyDictionary<int, Type> knownSpecializedReceiverClrTypes)
+    {
+        if (!knownSpecializedReceiverClrTypes.TryGetValue(receiver.Index, out var receiverType)
+            || receiverType != typeof(JavaScriptRuntime.Promise)
+            || !string.Equals(methodName, "then", StringComparison.Ordinal))
+        {
+            return false;
+        }
+
+        methodBody.Instructions[instructionIndex] = new LIRCallNodeModuleContractMember(
+            Receiver: receiver,
+            ContractType: typeof(JavaScriptRuntime.Promise),
+            ClrMethodName: methodName,
+            JavaScriptMemberName: methodName,
+            IsPropertyGet: false,
+            RequiresOverrideGuard: true,
+            Arguments: arguments,
+            Result: result,
+            OverrideGuardType: typeof(JavaScriptRuntime.Promise),
+            OverrideGuardMethodName: nameof(JavaScriptRuntime.Promise.HasMemberOverride));
+        return true;
     }
 
     private static void NormalizeDirectDeclaredFunctionCalls(MethodBodyIR methodBody, ICallableDeclarationReader? callableReader)

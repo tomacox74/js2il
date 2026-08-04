@@ -11,6 +11,16 @@ namespace JavaScriptRuntime
     public class DotNet2JSConversions
     {
         public static string ToString(object? value)
+            => ToStringCore(value, rejectSymbols: false);
+
+        /// <summary>
+        /// Applies the abstract ECMAScript ToString operation used by Error constructors.
+        /// Unlike the String callable, this rejects Symbol values.
+        /// </summary>
+        public static string ToErrorMessageString(object? value)
+            => ToStringCore(value, rejectSymbols: true);
+
+        private static string ToStringCore(object? value, bool rejectSymbols)
         {
             // In our runtime: CLR null represents JavaScript 'undefined'
             if (value == null)
@@ -21,6 +31,10 @@ namespace JavaScriptRuntime
             if (value is JsNull)
             {
                 return "null";
+            }
+            if (rejectSymbols && value is Symbol)
+            {
+                throw new TypeError("Cannot convert a Symbol value to a string");
             }
             if (value is string strValue)
             {
@@ -35,25 +49,25 @@ namespace JavaScriptRuntime
             {
                 if (TypeUtilities.TryCoerceObjectToPrimitive(jsArray, "string", out var arrayPrimitive))
                 {
-                    return ToString(arrayPrimitive);
+                    return ToStringCore(arrayPrimitive, rejectSymbols);
                 }
             }
 
             if (JavaScriptRuntime.Number.TryGetWrappedNumberValue(value, out var wrappedNumber))
             {
-                return ToString(wrappedNumber);
+                return ToStringCore(wrappedNumber, rejectSymbols);
             }
 
             if (PropertyDescriptorStore.TryGetOwn(value, JavaScriptRuntime.String.StringDataPropertyName, out var stringDataDescriptor)
                 && stringDataDescriptor.Kind == JsPropertyDescriptorKind.Data)
             {
-                return ToString(stringDataDescriptor.Value);
+                return ToStringCore(stringDataDescriptor.Value, rejectSymbols);
             }
 
             if (!value.GetType().IsValueType
                 && TypeUtilities.TryCoerceObjectToPrimitive(value, "string", out var primitive))
             {
-                return ToString(primitive);
+                return ToStringCore(primitive, rejectSymbols);
             }
 
             if (value is IDictionary<string, object?> dictObject)

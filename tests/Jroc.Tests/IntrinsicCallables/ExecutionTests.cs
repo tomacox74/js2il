@@ -80,6 +80,12 @@ namespace Jroc.Tests.IntrinsicCallables
         }
 
         [Fact]
+        public Task IntrinsicCallables_Error_MessageSemantics()
+        {
+            return ExecutionTest(nameof(IntrinsicCallables_Error_MessageSemantics));
+        }
+
+        [Fact]
         public Task IntrinsicCallables_Error_ConstructorSurface()
         {
             return ExecutionTest(nameof(IntrinsicCallables_Error_ConstructorSurface));

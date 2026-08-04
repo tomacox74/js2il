@@ -209,7 +209,9 @@ public record LIRCallNodeModuleContractMember(
     bool IsPropertyGet,
     bool RequiresOverrideGuard,
     IReadOnlyList<TempVariable> Arguments,
-    TempVariable Result) : LIRInstruction;
+    TempVariable Result,
+    Type? OverrideGuardType = null,
+    string? OverrideGuardMethodName = null) : LIRInstruction;
 
 /// <summary>
 /// Calls a uniquely-resolved user-defined class instance method on a receiver value.

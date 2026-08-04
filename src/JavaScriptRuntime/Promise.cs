@@ -116,6 +116,20 @@ public sealed class Promise : IJavaScriptPromise
         return GetPromiseReceiver("finally").@finally(args != null && args.Length > 0 ? args[0] : null);
     }
 
+    /// <summary>
+    /// Determines whether a member lookup would dispatch differently than the
+    /// intrinsic Promise prototype implementation.
+    /// </summary>
+    public static bool HasMemberOverride(object target, string memberName)
+    {
+        if (target is not Promise || !string.Equals(memberName, "then", StringComparison.Ordinal))
+        {
+            return true;
+        }
+
+        return !ReferenceEquals(ObjectRuntime.GetProperty(target, memberName), PrototypeThenValue);
+    }
+
     private void InitializeIntrinsicSurface()
     {
         PrototypeChain.SetPrototype(this, Prototype);
@@ -359,7 +373,13 @@ public sealed class Promise : IJavaScriptPromise
         return promise;
     }
 
-    public object? @then(object? onFulfilled = null, object? onRejected = null)
+    public object? @then()
+        => @then(null, null);
+
+    public object? @then(object? onFulfilled)
+        => @then(onFulfilled, null);
+
+    public object? @then(object? onFulfilled, object? onRejected)
     {
         var nextPromise = new Promise();
         var reaction = new Reaction(onFulfilled, onRejected, nextPromise, false);
