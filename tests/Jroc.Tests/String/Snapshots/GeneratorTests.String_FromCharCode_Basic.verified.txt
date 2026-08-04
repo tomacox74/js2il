@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x221d
+			// Method begins at RVA 0x2223
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,14 +40,15 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 449 (0x1c1)
-		.maxstack 11
+		// Code size: 455 (0x1c7)
+		.maxstack 10
 		.locals init (
 			[0] class Modules.String_FromCharCode_Basic/Scope,
 			[1] string,
 			[2] object,
 			[3] string,
-			[4] float64
+			[4] object,
+			[5] float64
 		)
 
 		IL_0000: newobj instance void Modules.String_FromCharCode_Basic/Scope::.ctor()
@@ -132,37 +133,47 @@
 		IL_0123: ldstr "console"
 		IL_0128: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
 		IL_012d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0132: ldc.r8 (00 00 00 00 00 00 F8 FF)
-		IL_013b: box [System.Runtime]System.Double
-		IL_0140: call string [JavaScriptRuntime]JavaScriptRuntime.String::FromCharCode(object)
-		IL_0145: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_014a: castclass [System.Runtime]System.String
-		IL_014f: ldc.r8 0.0
-		IL_0158: call float64 [JavaScriptRuntime]JavaScriptRuntime.String::CharCodeAt(string, float64)
-		IL_015d: stloc.s 4
-		IL_015f: ldstr "log"
-		IL_0164: ldloc.s 4
-		IL_0166: box [System.Runtime]System.Double
-		IL_016b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0170: pop
-		IL_0171: ldstr "console"
-		IL_0176: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_017b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0180: ldc.r8 1
-		IL_0189: neg
-		IL_018a: box [System.Runtime]System.Double
-		IL_018f: call string [JavaScriptRuntime]JavaScriptRuntime.String::FromCharCode(object)
-		IL_0194: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0199: castclass [System.Runtime]System.String
-		IL_019e: ldc.r8 0.0
-		IL_01a7: call float64 [JavaScriptRuntime]JavaScriptRuntime.String::CharCodeAt(string, float64)
-		IL_01ac: stloc.s 4
-		IL_01ae: ldstr "log"
-		IL_01b3: ldloc.s 4
-		IL_01b5: box [System.Runtime]System.Double
-		IL_01ba: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_01bf: pop
-		IL_01c0: ret
+		IL_0132: stloc.s 4
+		IL_0134: ldc.r8 (00 00 00 00 00 00 F8 FF)
+		IL_013d: box [System.Runtime]System.Double
+		IL_0142: call string [JavaScriptRuntime]JavaScriptRuntime.String::FromCharCode(object)
+		IL_0147: stloc.3
+		IL_0148: ldloc.3
+		IL_0149: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class [System.Runtime]System.String>(!!0)
+		IL_014e: stloc.3
+		IL_014f: ldloc.3
+		IL_0150: ldc.r8 0.0
+		IL_0159: call float64 [JavaScriptRuntime]JavaScriptRuntime.String::CharCodeAt(string, float64)
+		IL_015e: stloc.s 5
+		IL_0160: ldloc.s 4
+		IL_0162: ldstr "log"
+		IL_0167: ldloc.s 5
+		IL_0169: box [System.Runtime]System.Double
+		IL_016e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0173: pop
+		IL_0174: ldstr "console"
+		IL_0179: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_017e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0183: stloc.s 4
+		IL_0185: ldc.r8 1
+		IL_018e: neg
+		IL_018f: box [System.Runtime]System.Double
+		IL_0194: call string [JavaScriptRuntime]JavaScriptRuntime.String::FromCharCode(object)
+		IL_0199: stloc.3
+		IL_019a: ldloc.3
+		IL_019b: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class [System.Runtime]System.String>(!!0)
+		IL_01a0: stloc.3
+		IL_01a1: ldloc.3
+		IL_01a2: ldc.r8 0.0
+		IL_01ab: call float64 [JavaScriptRuntime]JavaScriptRuntime.String::CharCodeAt(string, float64)
+		IL_01b0: stloc.s 5
+		IL_01b2: ldloc.s 4
+		IL_01b4: ldstr "log"
+		IL_01b9: ldloc.s 5
+		IL_01bb: box [System.Runtime]System.Double
+		IL_01c0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_01c5: pop
+		IL_01c6: ret
 	} // end of method String_FromCharCode_Basic::__js_module_init__
 
 } // end of class Modules.String_FromCharCode_Basic
@@ -174,7 +185,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2226
+		// Method begins at RVA 0x222c
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -62,7 +62,8 @@
 			[16] object,
 			[17] object,
 			[18] object,
-			[19] class [JavaScriptRuntime]JavaScriptRuntime.JsObject
+			[19] string,
+			[20] class [JavaScriptRuntime]JavaScriptRuntime.JsObject
 		)
 
 		IL_0000: newobj instance void Modules.Require_Path_Parse_And_Format/Scope::.ctor()
@@ -237,8 +238,8 @@
 		IL_020b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
 		IL_0210: stloc.s 11
 		IL_0212: ldloc.s 5
-		IL_0214: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0219: stloc.s 15
+		IL_0214: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class [System.Runtime]System.String>(!!0)
+		IL_0219: stloc.s 10
 		IL_021b: ldc.i4.3
 		IL_021c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
 		IL_0221: dup
@@ -259,12 +260,12 @@
 		IL_024e: ldloc.2
 		IL_024f: stelem.ref
 		IL_0250: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
-		IL_0255: stloc.s 10
+		IL_0255: stloc.s 19
 		IL_0257: ldloc.2
-		IL_0258: ldloc.s 10
+		IL_0258: ldloc.s 19
 		IL_025a: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
 		IL_025f: stloc.s 18
-		IL_0261: ldloc.s 15
+		IL_0261: ldloc.s 10
 		IL_0263: ldstr "endsWith"
 		IL_0268: ldloc.s 18
 		IL_026a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
@@ -313,9 +314,9 @@
 		IL_02e8: ldstr "ext"
 		IL_02ed: ldstr ".tar"
 		IL_02f2: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_02f7: stloc.s 19
+		IL_02f7: stloc.s 20
 		IL_02f9: ldloc.1
-		IL_02fa: ldloc.s 19
+		IL_02fa: ldloc.s 20
 		IL_02fc: callvirt instance string [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IPathModule::format(object)
 		IL_0301: stloc.s 7
 		IL_0303: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
@@ -327,9 +328,9 @@
 		IL_0315: ldstr "base"
 		IL_031a: ldstr "index.js"
 		IL_031f: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_0324: stloc.s 19
+		IL_0324: stloc.s 20
 		IL_0326: ldloc.1
-		IL_0327: ldloc.s 19
+		IL_0327: ldloc.s 20
 		IL_0329: callvirt instance string [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IPathModule::format(object)
 		IL_032e: stloc.s 8
 		IL_0330: ldstr "console"

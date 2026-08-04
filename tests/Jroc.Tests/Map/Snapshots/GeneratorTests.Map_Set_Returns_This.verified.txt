@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20b9
+			// Method begins at RVA 0x20bd
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,16 +40,17 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 93 (0x5d)
+		// Code size: 97 (0x61)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Map_Set_Returns_This/Scope,
 			[1] class [JavaScriptRuntime]JavaScriptRuntime.Map,
 			[2] object,
-			[3] object,
+			[3] class [JavaScriptRuntime]JavaScriptRuntime.Map,
 			[4] object,
-			[5] bool,
-			[6] object
+			[5] object,
+			[6] bool,
+			[7] object
 		)
 
 		IL_0000: newobj instance void Modules.Map_Set_Returns_This/Scope::.ctor()
@@ -58,31 +59,33 @@
 		IL_0007: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Map::.ctor()
 		IL_000c: stloc.1
 		IL_000d: ldloc.1
-		IL_000e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0013: ldstr "set"
-		IL_0018: ldstr "key1"
-		IL_001d: ldstr "value1"
-		IL_0022: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_0027: stloc.2
-		IL_0028: ldstr "console"
-		IL_002d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0032: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0037: stloc.3
-		IL_0038: ldloc.2
+		IL_000e: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class [JavaScriptRuntime]JavaScriptRuntime.Map>(!!0)
+		IL_0013: stloc.3
+		IL_0014: ldloc.3
+		IL_0015: ldstr "set"
+		IL_001a: ldstr "key1"
+		IL_001f: ldstr "value1"
+		IL_0024: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_0029: stloc.2
+		IL_002a: ldstr "console"
+		IL_002f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0034: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
 		IL_0039: stloc.s 4
-		IL_003b: ldloc.s 4
-		IL_003d: ldloc.1
-		IL_003e: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_0043: stloc.s 5
-		IL_0045: ldloc.s 5
-		IL_0047: box [System.Runtime]System.Boolean
-		IL_004c: stloc.s 6
-		IL_004e: ldloc.3
-		IL_004f: ldstr "log"
-		IL_0054: ldloc.s 6
-		IL_0056: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_005b: pop
-		IL_005c: ret
+		IL_003b: ldloc.2
+		IL_003c: stloc.s 5
+		IL_003e: ldloc.s 5
+		IL_0040: ldloc.1
+		IL_0041: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_0046: stloc.s 6
+		IL_0048: ldloc.s 6
+		IL_004a: box [System.Runtime]System.Boolean
+		IL_004f: stloc.s 7
+		IL_0051: ldloc.s 4
+		IL_0053: ldstr "log"
+		IL_0058: ldloc.s 7
+		IL_005a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_005f: pop
+		IL_0060: ret
 	} // end of method Map_Set_Returns_This::__js_module_init__
 
 } // end of class Modules.Map_Set_Returns_This
@@ -94,7 +97,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20c2
+		// Method begins at RVA 0x20c6
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -291,8 +291,8 @@
 				[0] class Modules.Async_RealSuspension_SetTimeout/run/Scope,
 				[1] class [JavaScriptRuntime]JavaScriptRuntime.JsFunc1,
 				[2] class [JavaScriptRuntime]JavaScriptRuntime.Promise,
-				[3] object,
-				[4] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
+				[3] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0,
+				[4] object
 			)
 
 			IL_0000: newobj instance void Modules.Async_RealSuspension_SetTimeout/run/Scope::.ctor()
@@ -332,8 +332,8 @@
 			IL_0063: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Promise::.ctor(object)
 			IL_0068: stloc.2
 			IL_0069: ldloc.2
-			IL_006a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_006f: stloc.3
+			IL_006a: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class [JavaScriptRuntime]JavaScriptRuntime.Promise>(!!0)
+			IL_006f: stloc.2
 			IL_0070: ldnull
 			IL_0071: ldftn object Modules.Async_RealSuspension_SetTimeout/run/ArrowFunction_L13C13::__js_call__(object)
 			IL_0077: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
@@ -353,13 +353,13 @@
 			IL_009d: ldc.i4.0
 			IL_009e: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
 			IL_00a3: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0)
-			IL_00a8: stloc.s 4
-			IL_00aa: ldloc.3
-			IL_00ab: ldstr "then"
-			IL_00b0: ldloc.s 4
-			IL_00b2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_00b7: stloc.3
-			IL_00b8: ldloc.3
+			IL_00a8: stloc.3
+			IL_00a9: ldloc.2
+			IL_00aa: ldstr "then"
+			IL_00af: ldloc.3
+			IL_00b0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_00b5: stloc.s 4
+			IL_00b7: ldloc.s 4
 			IL_00b9: ret
 		} // end of method run::__js_call__
 

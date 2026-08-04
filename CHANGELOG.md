@@ -74,6 +74,9 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   bindings, extending existing string and array specialization to captured
   strings and other safe reference values instead of widening them to
   `object`.
+- compiler: preserve known reference types through
+  `RequireObjectCoercible`, eliminating redundant casts before typed member
+  calls such as `String.Trim`.
 
 ## v0.12.1 - 2026-08-02
 

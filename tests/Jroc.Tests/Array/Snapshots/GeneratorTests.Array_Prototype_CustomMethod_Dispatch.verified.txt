@@ -22,7 +22,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x21e8
+					// Method begins at RVA 0x21ec
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -40,7 +40,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21df
+				// Method begins at RVA 0x21e3
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -64,7 +64,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2150
+			// Method begins at RVA 0x2154
 			// Header size: 12
 			// Code size: 122 (0x7a)
 			.maxstack 8
@@ -125,7 +125,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x21d6
+			// Method begins at RVA 0x21da
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -151,15 +151,16 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 243 (0xf3)
+		// Code size: 247 (0xf7)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Array_Prototype_CustomMethod_Dispatch/Scope,
 			[1] class [JavaScriptRuntime]JavaScriptRuntime.Array,
 			[2] object,
 			[3] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1,
-			[4] object,
-			[5] string
+			[4] class [JavaScriptRuntime]JavaScriptRuntime.Array,
+			[5] object,
+			[6] string
 		)
 
 		IL_0000: newobj instance void Modules.Array_Prototype_CustomMethod_Dispatch/Scope::.ctor()
@@ -204,36 +205,38 @@
 		IL_0088: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
 		IL_008d: stloc.2
 		IL_008e: ldloc.1
-		IL_008f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0094: ldstr "removeGraphNode"
-		IL_0099: ldc.r8 2
-		IL_00a2: box [System.Runtime]System.Double
-		IL_00a7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00ac: stloc.s 4
-		IL_00ae: ldloc.2
-		IL_00af: ldstr "log"
-		IL_00b4: ldloc.s 4
-		IL_00b6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00bb: pop
-		IL_00bc: ldstr "console"
-		IL_00c1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_00c6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00cb: stloc.s 4
-		IL_00cd: ldloc.1
-		IL_00ce: ldc.i4.1
-		IL_00cf: newarr [System.Runtime]System.Object
-		IL_00d4: dup
-		IL_00d5: ldc.i4.0
-		IL_00d6: ldstr ","
-		IL_00db: stelem.ref
-		IL_00dc: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
-		IL_00e1: stloc.s 5
-		IL_00e3: ldloc.s 4
-		IL_00e5: ldstr "log"
-		IL_00ea: ldloc.s 5
-		IL_00ec: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00f1: pop
-		IL_00f2: ret
+		IL_008f: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class [JavaScriptRuntime]JavaScriptRuntime.Array>(!!0)
+		IL_0094: stloc.s 4
+		IL_0096: ldloc.s 4
+		IL_0098: ldstr "removeGraphNode"
+		IL_009d: ldc.r8 2
+		IL_00a6: box [System.Runtime]System.Double
+		IL_00ab: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_00b0: stloc.s 5
+		IL_00b2: ldloc.2
+		IL_00b3: ldstr "log"
+		IL_00b8: ldloc.s 5
+		IL_00ba: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_00bf: pop
+		IL_00c0: ldstr "console"
+		IL_00c5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_00ca: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00cf: stloc.s 5
+		IL_00d1: ldloc.1
+		IL_00d2: ldc.i4.1
+		IL_00d3: newarr [System.Runtime]System.Object
+		IL_00d8: dup
+		IL_00d9: ldc.i4.0
+		IL_00da: ldstr ","
+		IL_00df: stelem.ref
+		IL_00e0: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
+		IL_00e5: stloc.s 6
+		IL_00e7: ldloc.s 5
+		IL_00e9: ldstr "log"
+		IL_00ee: ldloc.s 6
+		IL_00f0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_00f5: pop
+		IL_00f6: ret
 	} // end of method Array_Prototype_CustomMethod_Dispatch::__js_module_init__
 
 } // end of class Modules.Array_Prototype_CustomMethod_Dispatch
@@ -245,7 +248,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21f1
+		// Method begins at RVA 0x21f5
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

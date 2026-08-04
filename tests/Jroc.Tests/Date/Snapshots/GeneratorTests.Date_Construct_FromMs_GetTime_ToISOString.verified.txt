@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20d4
+			// Method begins at RVA 0x20dc
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,13 +40,14 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 120 (0x78)
+		// Code size: 128 (0x80)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Date_Construct_FromMs_GetTime_ToISOString/Scope,
 			[1] class [JavaScriptRuntime]JavaScriptRuntime.Date,
 			[2] object,
-			[3] object
+			[3] class [JavaScriptRuntime]JavaScriptRuntime.Date,
+			[4] object
 		)
 
 		IL_0000: newobj instance void Modules.Date_Construct_FromMs_GetTime_ToISOString/Scope::.ctor()
@@ -61,30 +62,34 @@
 		IL_0025: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
 		IL_002a: stloc.2
 		IL_002b: ldloc.1
-		IL_002c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0031: ldstr "getTime"
-		IL_0036: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-		IL_003b: stloc.3
-		IL_003c: ldloc.2
-		IL_003d: ldstr "log"
-		IL_0042: ldloc.3
-		IL_0043: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0048: pop
-		IL_0049: ldstr "console"
-		IL_004e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0053: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0058: stloc.3
-		IL_0059: ldloc.1
-		IL_005a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_005f: ldstr "toISOString"
-		IL_0064: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-		IL_0069: stloc.2
-		IL_006a: ldloc.3
-		IL_006b: ldstr "log"
-		IL_0070: ldloc.2
-		IL_0071: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0076: pop
-		IL_0077: ret
+		IL_002c: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class [JavaScriptRuntime]JavaScriptRuntime.Date>(!!0)
+		IL_0031: stloc.3
+		IL_0032: ldloc.3
+		IL_0033: ldstr "getTime"
+		IL_0038: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+		IL_003d: stloc.s 4
+		IL_003f: ldloc.2
+		IL_0040: ldstr "log"
+		IL_0045: ldloc.s 4
+		IL_0047: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_004c: pop
+		IL_004d: ldstr "console"
+		IL_0052: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0057: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_005c: stloc.s 4
+		IL_005e: ldloc.1
+		IL_005f: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class [JavaScriptRuntime]JavaScriptRuntime.Date>(!!0)
+		IL_0064: stloc.3
+		IL_0065: ldloc.3
+		IL_0066: ldstr "toISOString"
+		IL_006b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+		IL_0070: stloc.2
+		IL_0071: ldloc.s 4
+		IL_0073: ldstr "log"
+		IL_0078: ldloc.2
+		IL_0079: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_007e: pop
+		IL_007f: ret
 	} // end of method Date_Construct_FromMs_GetTime_ToISOString::__js_module_init__
 
 } // end of class Modules.Date_Construct_FromMs_GetTime_ToISOString
@@ -96,7 +101,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20dd
+		// Method begins at RVA 0x20e5
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
