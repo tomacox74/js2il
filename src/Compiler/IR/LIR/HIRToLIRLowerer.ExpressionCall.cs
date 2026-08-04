@@ -301,7 +301,7 @@ public sealed partial class HIRToLIRLowerer
                                 var messageTemp = errorArgs.Count > 0 ? errorArgs[0] : (TempVariable?)null;
 
                                 _methodBodyIR.Instructions.Add(new LIRNewBuiltInError(intrinsicInfo.Name, messageTemp, resultTempVar));
-                                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                                DefineTempStorage(resultTempVar, GetBuiltInErrorStorage(intrinsicInfo.Name));
                                 return true;
                             }
 

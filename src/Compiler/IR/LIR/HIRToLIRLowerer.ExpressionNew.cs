@@ -65,7 +65,7 @@ public sealed partial class HIRToLIRLowerer
 
             resultTempVar = CreateTempVariable();
             _methodBodyIR.Instructions.Add(new LIRNewBuiltInError(ctorName, messageTemp, resultTempVar));
-            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            DefineTempStorage(resultTempVar, GetBuiltInErrorStorage(ctorName));
             return true;
         }
 

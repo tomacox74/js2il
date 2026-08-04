@@ -20,8 +20,12 @@ public sealed partial class HIRToLIRLowerer
         }
 
         argTemp = EnsureObject(argTemp);
+        var throwStorage = GetTempStorage(argTemp);
+        var throwSlotStorage = throwStorage.Kind == ValueStorageKind.Reference
+            ? throwStorage
+            : new ValueStorage(ValueStorageKind.Reference, typeof(object));
         argTemp = EnsureTempMappedToSlot(
-            CreateAnonymousVariableSlot("$throw_value", new ValueStorage(ValueStorageKind.Reference, typeof(object))),
+            CreateAnonymousVariableSlot("$throw_value", throwSlotStorage),
             argTemp);
 
         // In async MoveNext with awaits, do not emit CLR throws (they won't be caught by the runtime).
