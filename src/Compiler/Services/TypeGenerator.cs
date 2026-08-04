@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
 using System.Reflection;
+using Jroc.Runtime.Node.Contracts;
 using Jroc.SymbolTables;
 using Jroc.Services.VariableBindings;
 using System.Linq;
@@ -152,6 +153,13 @@ namespace Jroc.Services
                 && !binding.HasWrite;
         }
 
+        private static bool IsNodeModuleContractType(Type type)
+            => type.IsInterface
+                && type.GetCustomAttributes(
+                        typeof(NodeModuleInterfaceAttribute),
+                        inherit: false)
+                    .Length == 1;
+
         private static Type GetDeclaredScopeFieldClrType(Scope scope, BindingInfo binding)
         {
             if (IsSafeInjectedCommonJsRequireBinding(scope, binding))
@@ -170,7 +178,8 @@ namespace Jroc.Services
                     || binding.ClrType == typeof(bool)
                     || binding.ClrType == typeof(string)
                     || binding.ClrType == typeof(JavaScriptRuntime.Array)
-                    || binding.ClrType == typeof(JavaScriptRuntime.RegExp))
+                    || binding.ClrType == typeof(JavaScriptRuntime.RegExp)
+                    || IsNodeModuleContractType(binding.ClrType))
                 {
                     return binding.ClrType;
                 }
