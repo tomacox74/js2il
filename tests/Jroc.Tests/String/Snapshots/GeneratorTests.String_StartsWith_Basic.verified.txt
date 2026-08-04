@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x209e
+			// Method begins at RVA 0x209d
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,11 +40,13 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 66 (0x42)
+		// Code size: 65 (0x41)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.String_StartsWith_Basic/Scope,
-			[1] bool
+			[1] object,
+			[2] string,
+			[3] bool
 		)
 
 		IL_0000: newobj instance void Modules.String_StartsWith_Basic/Scope::.ctor()
@@ -53,18 +55,21 @@
 		IL_0007: ldstr "console"
 		IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
 		IL_0011: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0016: ldstr "abc"
-		IL_001b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0020: castclass [System.Runtime]System.String
-		IL_0025: ldstr "ab"
-		IL_002a: call bool [JavaScriptRuntime]JavaScriptRuntime.String::StartsWith(string, string)
-		IL_002f: stloc.1
-		IL_0030: ldstr "log"
-		IL_0035: ldloc.1
-		IL_0036: box [System.Runtime]System.Boolean
-		IL_003b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0040: pop
-		IL_0041: ret
+		IL_0016: stloc.1
+		IL_0017: ldstr "abc"
+		IL_001c: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class [System.Runtime]System.String>(!!0)
+		IL_0021: stloc.2
+		IL_0022: ldloc.2
+		IL_0023: ldstr "ab"
+		IL_0028: call bool [JavaScriptRuntime]JavaScriptRuntime.String::StartsWith(string, string)
+		IL_002d: stloc.3
+		IL_002e: ldloc.1
+		IL_002f: ldstr "log"
+		IL_0034: ldloc.3
+		IL_0035: box [System.Runtime]System.Boolean
+		IL_003a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_003f: pop
+		IL_0040: ret
 	} // end of method String_StartsWith_Basic::__js_module_init__
 
 } // end of class Modules.String_StartsWith_Basic
@@ -76,7 +81,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20a7
+		// Method begins at RVA 0x20a6
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

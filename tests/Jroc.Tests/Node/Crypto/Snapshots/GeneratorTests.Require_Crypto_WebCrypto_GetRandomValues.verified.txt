@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2284
+			// Method begins at RVA 0x2288
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,7 +40,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 552 (0x228)
+		// Code size: 556 (0x22c)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Require_Crypto_WebCrypto_GetRandomValues/Scope,
@@ -56,7 +56,8 @@
 			[10] object,
 			[11] float64,
 			[12] object,
-			[13] object
+			[13] object,
+			[14] class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer
 		)
 
 		IL_0000: newobj instance void Modules.Require_Crypto_WebCrypto_GetRandomValues/Scope::.ctor()
@@ -202,22 +203,24 @@
 		IL_01e6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
 		IL_01eb: stloc.s 13
 		IL_01ed: ldloc.s 6
-		IL_01ef: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_01f4: ldstr "toString"
-		IL_01f9: ldstr "hex"
-		IL_01fe: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0203: stloc.s 8
-		IL_0205: ldloc.s 8
-		IL_0207: ldstr "length"
-		IL_020c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0211: stloc.s 8
-		IL_0213: ldloc.s 13
-		IL_0215: ldstr "log"
-		IL_021a: ldstr "buffer hex length:"
-		IL_021f: ldloc.s 8
-		IL_0221: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_0226: pop
-		IL_0227: ret
+		IL_01ef: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer>(!!0)
+		IL_01f4: stloc.s 14
+		IL_01f6: ldloc.s 14
+		IL_01f8: ldstr "toString"
+		IL_01fd: ldstr "hex"
+		IL_0202: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0207: stloc.s 8
+		IL_0209: ldloc.s 8
+		IL_020b: ldstr "length"
+		IL_0210: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0215: stloc.s 8
+		IL_0217: ldloc.s 13
+		IL_0219: ldstr "log"
+		IL_021e: ldstr "buffer hex length:"
+		IL_0223: ldloc.s 8
+		IL_0225: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_022a: pop
+		IL_022b: ret
 	} // end of method Require_Crypto_WebCrypto_GetRandomValues::__js_module_init__
 
 } // end of class Modules.Require_Crypto_WebCrypto_GetRandomValues
@@ -229,7 +232,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x228d
+		// Method begins at RVA 0x2291
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
