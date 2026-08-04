@@ -67,6 +67,33 @@ npm run check:node-contract-process
 npm run test:node-contract-process
 ```
 
+For `node:buffer`, `node:events`, and `node:os`:
+
+```sh
+npm run generate:node-contract-buffer
+npm run check:node-contract-buffer
+npm run test:node-contract-buffer
+
+npm run generate:node-contract-events
+npm run check:node-contract-events
+npm run test:node-contract-events
+
+npm run generate:node-contract-os
+npm run check:node-contract-os
+npm run test:node-contract-os
+```
+
+Regenerate or check every configured contract in one command:
+
+```sh
+npm run generate:node-contracts
+npm run check:node-contracts
+```
+
+Module selection and generated path metadata live in the generator's
+`contractDefinitions` manifest. Add ordinary top-level modules there rather
+than duplicating command-line selection branches.
+
 The checked-in override files record which contract members each intrinsic
 module currently implements and how each implementation is invoked. The
 generated intrinsic adapters use compile-time-bound calls for those members

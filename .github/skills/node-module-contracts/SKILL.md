@@ -60,7 +60,7 @@ have one yet, or when changing an existing generated Node module contract.
 | Manual workflow documentation | `scripts/nodeContracts/README.md` |
 | JROC support documentation | `docs/nodejs` |
 
-The current generator has explicit modes for:
+The current generator manifest has explicit modes for:
 
 - `fs`;
 - `fs/promises`;
@@ -68,7 +68,10 @@ The current generator has explicit modes for:
 - `path`;
 - `child_process`;
 - `perf_hooks`;
-- `process`.
+- `process`;
+- `buffer`;
+- `events`;
+- `os`.
 
 Extend the shared generator for another module. Do not copy it into a
 module-specific generator.
@@ -134,6 +137,12 @@ asynchronous and synchronous sections. Inspect the full JSON section tree and
 extract the documented public sections explicitly; do not assume
 `module.methods` is the complete surface.
 
+`buffer.json`, for example, stores its module functions and legacy constants
+under the nested `` `node:buffer`_module_apis `` section while constructor
+exports are documented as classes elsewhere in the document. Drift-check both
+the containing document and selected API section, then add only the missing
+top-level constructor/object exports as cited overrides.
+
 The JSON module name can also differ from the canonical specifier.
 `perf_hooks.json`, for example, names its root module
 `performance_measurement_apis`. Record the exact JSON name in the lock instead
@@ -158,6 +167,14 @@ contract under `modules`. `process.json`, for example, stores the public
 `node:process`. Select the documented root by its actual JSON category and
 retain the canonical module specifier in `[NodeModuleInterface]`.
 
+Some CommonJS modules export a callable constructor carrying static members.
+`events` assigns `EventEmitter` itself to `module.exports`; its methods,
+properties, and `EventEmitterAsyncResource` constructor therefore form the
+module's top-level named contract even though their documentation is split
+between root methods, malformed root properties, and class records. Confirm
+the export roster from the pinned Node source and do not include narrative
+Web API classes that are not assigned to the module export.
+
 Documentation nesting can also be flattened by the JSON renderer.
 `process.features.*` entries appear in the parent `Process.properties` array
 without their `features.` prefix. Normalize these back to one top-level
@@ -175,8 +192,8 @@ representation and can incorrectly bind a nonexistent top-level property.
 
 ### 1. Add module configuration
 
-Extend `generateNodeModuleInterface.js` with one mode/configuration for the
-module. The configuration must identify:
+Add one entry to the `contractDefinitions` manifest in
+`generateNodeModuleInterface.js`. The configuration must identify:
 
 - canonical module specifier;
 - documentation prefix used in signatures;
@@ -188,26 +205,17 @@ module. The configuration must identify:
 - official documentation module/section used in generated provenance;
 - generated C# contract alias.
 
-Prefer moving repeated mode conditionals toward a small data-driven
-configuration when doing so reduces complexity. Do not create a second
-generation pipeline.
+Use the existing data-driven configuration and shared extraction kinds. Do not
+reintroduce parallel mode-selection conditionals or create a second generation
+pipeline.
 
-The current script's mode selection is not fully centralized. Wire every
-existing mode touch-point:
+The manifest centralizes command-line validation, contract metadata, aliases,
+documentation names, output paths, and stale-file diagnostics. Add a new
+extraction branch only when the official JSON shape cannot use an existing
+shared extraction kind.
 
-1. command-line flag parsing;
-2. mutually exclusive mode validation;
-3. the `contract` metadata selection;
-4. `contractAlias`;
-5. `documentationModule`;
-6. module/section extraction and count assertions in `generateInterface`;
-7. the mode argument emitted by stale-file diagnostics.
-
-An unrecognized flag currently falls through to the default `fs` mode. Add the
-new flag to parsing before running it, and preferably reject unknown flags as
-part of the same change. Verify that the new command reports the intended
-generated paths and provenance before accepting output; otherwise a missed
-mode branch can silently regenerate `fs`.
+Unknown flags are rejected. Verify that the new command reports the intended
+generated paths and provenance before accepting output.
 
 ### 2. Add a lock file
 
@@ -420,19 +428,15 @@ nested-contract architecture as part of the task.
 ### Generate
 
 Run the module's generation command. If the shared generator changed, run all
-contract generators:
+contract generators with the aggregate command:
 
 ```sh
-npm run generate:node-contract-fs
-npm run generate:node-contract-fs-promises
-npm run generate:node-contract-console
-npm run generate:node-contract-path
-npm run generate:node-contract-child-process
-npm run generate:node-contract-perf-hooks
-npm run generate:node-contract-process
+npm run generate:node-contracts
+npm run check:node-contracts
 ```
 
-Include any newly added module command.
+The aggregate commands execute every manifest entry. Add and document the
+module-specific generate/check/test scripts as well.
 
 ### Check determinism
 

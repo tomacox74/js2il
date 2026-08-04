@@ -1,17 +1,184 @@
 #!/usr/bin/env node
 
 const crypto = require('crypto');
+const childProcess = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
 const repoRoot = path.resolve(__dirname, '..', '..');
+const contractDefinitions = [
+    {
+        flag: null,
+        kind: 'fs',
+        moduleSpecifier: 'fs',
+        documentationPrefix: 'fs.',
+        interfaceName: 'IFsModule',
+        intrinsicClassName: 'FS',
+        displayName: 'node:fs',
+        outputStem: 'Fs',
+        overrideStem: 'fs',
+        lockStem: 'fs',
+        contractAlias: 'FsContract',
+        documentationModule: 'fs'
+    },
+    {
+        flag: '--promises',
+        kind: 'fs-promises',
+        moduleSpecifier: 'fs/promises',
+        documentationPrefix: 'fsPromises.',
+        interfaceName: 'IFsPromisesModule',
+        intrinsicClassName: 'FSPromises',
+        displayName: 'node:fs/promises',
+        outputStem: 'FsPromises',
+        overrideStem: 'fsPromises',
+        lockStem: 'fs',
+        contractAlias: 'FsContract',
+        documentationModule: 'fs'
+    },
+    {
+        flag: '--console',
+        kind: 'console',
+        moduleSpecifier: 'console',
+        documentationPrefix: 'console.',
+        interfaceName: 'IConsoleModule',
+        intrinsicClassName: 'ConsoleModule',
+        displayName: 'node:console',
+        outputStem: 'Console',
+        overrideStem: 'console',
+        lockStem: 'console',
+        contractAlias: 'ConsoleContract',
+        documentationModule: 'console'
+    },
+    {
+        flag: '--path',
+        kind: 'top-level-optional-rest',
+        moduleSpecifier: 'path',
+        documentationPrefix: 'path.',
+        interfaceName: 'IPathModule',
+        intrinsicClassName: 'Path',
+        displayName: 'node:path',
+        outputStem: 'Path',
+        overrideStem: 'path',
+        lockStem: 'path',
+        contractAlias: 'PathContract',
+        documentationModule: 'path',
+        methodGroupHeading: 'Path methods'
+    },
+    {
+        flag: '--child-process',
+        kind: 'child-process',
+        moduleSpecifier: 'child_process',
+        documentationPrefix: 'child_process.',
+        interfaceName: 'IChildProcessModule',
+        intrinsicClassName: 'ChildProcess',
+        displayName: 'node:child_process',
+        outputStem: 'ChildProcess',
+        overrideStem: 'childProcess',
+        lockStem: 'childProcess',
+        contractAlias: 'ChildProcessContract',
+        documentationModule: 'child_process'
+    },
+    {
+        flag: '--perf-hooks',
+        kind: 'perf-hooks',
+        moduleSpecifier: 'perf_hooks',
+        documentationPrefix: 'perf_hooks.',
+        interfaceName: 'IPerfHooksModule',
+        intrinsicClassName: 'PerfHooks',
+        displayName: 'node:perf_hooks',
+        outputStem: 'PerfHooks',
+        overrideStem: 'perfHooks',
+        lockStem: 'perfHooks',
+        contractAlias: 'PerfHooksContract',
+        documentationModule: 'perf_hooks'
+    },
+    {
+        flag: '--process',
+        kind: 'process',
+        moduleSpecifier: 'process',
+        documentationPrefix: 'process.',
+        interfaceName: 'IProcessModule',
+        intrinsicClassName: 'Process',
+        displayName: 'node:process',
+        outputStem: 'Process',
+        overrideStem: 'process',
+        lockStem: 'process',
+        contractAlias: 'ProcessContract',
+        documentationModule: 'process',
+        rootCategory: 'globals'
+    },
+    {
+        flag: '--buffer',
+        kind: 'buffer',
+        moduleSpecifier: 'buffer',
+        documentationPrefix: 'buffer.',
+        interfaceName: 'IBufferModule',
+        intrinsicClassName: 'BufferModule',
+        displayName: 'node:buffer',
+        outputStem: 'Buffer',
+        overrideStem: 'buffer',
+        lockStem: 'buffer',
+        contractAlias: 'BufferContract',
+        documentationModule: 'buffer'
+    },
+    {
+        flag: '--events',
+        kind: 'events',
+        moduleSpecifier: 'events',
+        documentationPrefix: 'events.',
+        interfaceName: 'IEventsModule',
+        intrinsicClassName: 'Events',
+        displayName: 'node:events',
+        outputStem: 'Events',
+        overrideStem: 'events',
+        lockStem: 'events',
+        contractAlias: 'EventsContract',
+        documentationModule: 'events'
+    },
+    {
+        flag: '--os',
+        kind: 'top-level-overloads',
+        moduleSpecifier: 'os',
+        documentationPrefix: 'os.',
+        interfaceName: 'IOsModule',
+        intrinsicClassName: 'OS',
+        displayName: 'node:os',
+        outputStem: 'Os',
+        overrideStem: 'os',
+        lockStem: 'os',
+        contractAlias: 'OsContract',
+        documentationModule: 'os',
+        methodGroupHeading: 'Operating system methods'
+    }
+];
 const args = process.argv.slice(2);
-const promisesMode = args.includes('--promises');
-const consoleMode = args.includes('--console');
-const pathMode = args.includes('--path');
-const childProcessMode = args.includes('--child-process');
-const perfHooksMode = args.includes('--perf-hooks');
-const processMode = args.includes('--process');
+
+if (args.includes('--all')) {
+    const unknownArguments = args.filter(argument => !['--all', '--check'].includes(argument));
+    if (unknownArguments.length > 0) {
+        throw new Error(`--all cannot be combined with '${unknownArguments[0]}'.`);
+    }
+
+    for (const definition of contractDefinitions) {
+        const childArguments = [
+            __filename,
+            ...(definition.flag ? [definition.flag] : []),
+            ...(args.includes('--check') ? ['--check'] : [])
+        ];
+        const result = childProcess.spawnSync(process.execPath, childArguments, {
+            cwd: repoRoot,
+            stdio: 'inherit'
+        });
+        if (result.status !== 0) {
+            process.exit(result.status ?? 1);
+        }
+    }
+    process.exit(0);
+}
+
+const modeFlags = contractDefinitions
+    .map(definition => definition.flag)
+    .filter(Boolean);
 
 for (let index = 0; index < args.length; index++) {
     const argument = args[index];
@@ -24,105 +191,20 @@ for (let index = 0; index < args.length; index++) {
 
     if (![
         '--check',
-        '--promises',
-        '--console',
-        '--path',
-        '--child-process',
-        '--perf-hooks',
-        '--process'
+        ...modeFlags
     ].includes(argument)) {
         throw new Error(`Unknown argument '${argument}'.`);
     }
 }
 
-if ([
-    promisesMode,
-    consoleMode,
-    pathMode,
-    childProcessMode,
-    perfHooksMode,
-    processMode
-].filter(Boolean).length > 1) {
+const selectedContracts = contractDefinitions.filter(
+    definition => definition.flag && args.includes(definition.flag));
+if (selectedContracts.length > 1) {
     throw new Error(
-        '--promises, --console, --path, --child-process, --perf-hooks, and --process cannot be used together.');
+        `${modeFlags.join(', ')} cannot be used together.`);
 }
 
-const contract = processMode
-    ? {
-        moduleSpecifier: 'process',
-        documentationPrefix: 'process.',
-        interfaceName: 'IProcessModule',
-        intrinsicClassName: 'Process',
-        displayName: 'node:process',
-        outputStem: 'Process',
-        overrideStem: 'process',
-        lockStem: 'process'
-    }
-    : perfHooksMode
-    ? {
-        moduleSpecifier: 'perf_hooks',
-        documentationPrefix: 'perf_hooks.',
-        interfaceName: 'IPerfHooksModule',
-        intrinsicClassName: 'PerfHooks',
-        displayName: 'node:perf_hooks',
-        outputStem: 'PerfHooks',
-        overrideStem: 'perfHooks',
-        lockStem: 'perfHooks'
-    }
-    : childProcessMode
-    ? {
-        moduleSpecifier: 'child_process',
-        documentationPrefix: 'child_process.',
-        interfaceName: 'IChildProcessModule',
-        intrinsicClassName: 'ChildProcess',
-        displayName: 'node:child_process',
-        outputStem: 'ChildProcess',
-        overrideStem: 'childProcess',
-        lockStem: 'childProcess'
-    }
-    : pathMode
-    ? {
-        moduleSpecifier: 'path',
-        documentationPrefix: 'path.',
-        interfaceName: 'IPathModule',
-        intrinsicClassName: 'Path',
-        displayName: 'node:path',
-        outputStem: 'Path',
-        overrideStem: 'path',
-        lockStem: 'path'
-    }
-    : consoleMode
-    ? {
-        moduleSpecifier: 'console',
-        documentationPrefix: 'console.',
-        interfaceName: 'IConsoleModule',
-        intrinsicClassName: 'ConsoleModule',
-        displayName: 'node:console',
-        outputStem: 'Console',
-        overrideStem: 'console',
-        lockStem: 'console'
-    }
-    : promisesMode
-    ? {
-        moduleSpecifier: 'fs/promises',
-        documentationPrefix: 'fsPromises.',
-        interfaceName: 'IFsPromisesModule',
-        intrinsicClassName: 'FSPromises',
-        displayName: 'node:fs/promises',
-        outputStem: 'FsPromises',
-        overrideStem: 'fsPromises',
-        lockStem: 'fs'
-    }
-    : {
-        moduleSpecifier: 'fs',
-        documentationPrefix: 'fs.',
-        interfaceName: 'IFsModule',
-        intrinsicClassName: 'FS',
-        displayName: 'node:fs',
-        outputStem: 'Fs',
-        overrideStem: 'fs',
-        lockStem: 'fs'
-    };
+const contract = selectedContracts[0] ?? contractDefinitions[0];
 const lockPath = path.join(__dirname, `${contract.lockStem}.node24.lock.json`);
 const overridesPath = path.join(__dirname, `${contract.overrideStem}.node24.overrides.json`);
 const interfaceOutputPath = path.join(
@@ -141,28 +223,8 @@ const intrinsicImplementationOutputPath = path.join(
 
 const lock = JSON.parse(fs.readFileSync(lockPath, 'utf8'));
 const overrides = JSON.parse(fs.readFileSync(overridesPath, 'utf8'));
-const contractAlias = processMode
-    ? 'ProcessContract'
-    : perfHooksMode
-    ? 'PerfHooksContract'
-    : childProcessMode
-    ? 'ChildProcessContract'
-    : pathMode
-    ? 'PathContract'
-    : consoleMode
-        ? 'ConsoleContract'
-        : 'FsContract';
-const documentationModule = processMode
-    ? 'process'
-    : perfHooksMode
-    ? 'perf_hooks'
-    : childProcessMode
-    ? 'child_process'
-    : pathMode
-        ? 'path'
-        : consoleMode
-            ? 'console'
-            : 'fs';
+const contractAlias = contract.contractAlias;
+const documentationModule = contract.documentationModule;
 const generatorSource = fs.readFileSync(__filename, 'utf8').replaceAll('\r\n', '\n');
 const generatorSha256 = crypto
     .createHash('sha256')
@@ -356,7 +418,7 @@ function mapType(type, isReturnType = false) {
         return 'global::System.Numerics.BigInteger';
     }
 
-    if (normalized === 'function') {
+    if (normalized === 'function' || normalized === 'eventlistener') {
         return 'global::System.Delegate';
     }
 
@@ -610,18 +672,17 @@ function generateProperties(properties) {
 }
 
 function generateInterface(documentation) {
-    const module = processMode
-        ? documentation.globals?.find(candidate => candidate.name === lock.module)
-        : documentation.modules?.find(candidate => candidate.name === lock.module);
+    const rootCategory = contract.rootCategory ?? 'modules';
+    const module = documentation[rootCategory]?.find(candidate => candidate.name === lock.module);
     if (!module) {
         throw new Error(
-            `Official documentation does not contain ${processMode ? 'global' : 'module'} '${lock.module}'.`);
+            `Official documentation does not contain ${rootCategory === 'globals' ? 'global' : 'module'} '${lock.module}'.`);
     }
 
     let methodGroups;
     let standardProperties;
 
-    if (processMode) {
+    if (contract.kind === 'process') {
         const excludedProperties = new Set(overrides.excludedProperties);
         const standardProcessProperties = (module.properties ?? [])
             .filter(property => {
@@ -658,7 +719,46 @@ function generateInterface(documentation) {
             methods: generateMethodsWithOptionalAndRestParameters(topLevelProcessMethods)
         }];
         standardProperties = generateProperties(standardProcessProperties);
-    } else if (perfHooksMode) {
+    } else if (contract.kind === 'buffer') {
+        const moduleApis = requireSection(module, '`node:buffer`_module_apis');
+        const bufferConstants = requireSection(moduleApis, 'buffer_constants');
+
+        assertCount(module.classes?.length ?? 0, lock.rootClassCount, 'root class count');
+        assertCount(module.modules?.length ?? 0, lock.rootSectionCount, 'root section count');
+        assertCount(moduleApis.methods?.length ?? 0, lock.methodCount, 'module API method count');
+        assertCount(moduleApis.properties?.length ?? 0, lock.propertyCount, 'module API property count');
+        assertCount(moduleApis.classes?.length ?? 0, lock.moduleClassCount, 'module API class count');
+        assertCount(moduleApis.modules?.length ?? 0, lock.moduleSectionCount, 'module API section count');
+        assertCount(
+            bufferConstants.properties?.length ?? 0,
+            lock.constantPropertyCount,
+            'buffer constants property count');
+        assertCount(
+            overrides.properties.length,
+            lock.exportPropertyOverrideCount,
+            'export property override count');
+
+        methodGroups = [{
+            heading: 'Buffer module methods',
+            methods: generateMethodsWithOptionalAndRestParameters(moduleApis.methods)
+        }];
+        standardProperties = generateProperties(moduleApis.properties);
+    } else if (contract.kind === 'events') {
+        assertCount(module.methods?.length ?? 0, lock.methodCount, 'method count');
+        assertCount(module.properties?.length ?? 0, lock.rawPropertyCount, 'raw property count');
+        assertCount(module.classes?.length ?? 0, lock.classCount, 'class count');
+        assertCount(module.modules?.length ?? 0, lock.sectionCount, 'section count');
+        assertCount(
+            overrides.properties.length,
+            lock.exportPropertyCount,
+            'export property override count');
+
+        methodGroups = [{
+            heading: 'Event methods',
+            methods: generateMethodsWithOptionalAndRestParameters(module.methods)
+        }];
+        standardProperties = [];
+    } else if (contract.kind === 'perf-hooks') {
         assertCount(module.methods?.length ?? 0, lock.methodCount, 'method count');
         assertCount(module.properties?.length ?? 0, lock.propertyCount, 'property count');
         assertCount(module.classes?.length ?? 0, lock.classCount, 'class count');
@@ -672,7 +772,7 @@ function generateInterface(documentation) {
             methods: generateMethodOverloads(module.methods)
         }];
         standardProperties = [];
-    } else if (childProcessMode) {
+    } else if (contract.kind === 'child-process') {
         const asynchronousApi = requireSection(module, 'asynchronous_process_creation');
         const synchronousApi = requireSection(module, 'synchronous_process_creation');
 
@@ -703,16 +803,26 @@ function generateInterface(documentation) {
             '    [NodeModuleMember("ChildProcess")]',
             '    object? ChildProcess { get; }'
         ].join('\n')];
-    } else if (pathMode) {
+    } else if (contract.kind === 'top-level-optional-rest') {
         assertCount(module.methods?.length ?? 0, lock.methodCount, 'method count');
         assertCount(module.properties?.length ?? 0, lock.propertyCount, 'property count');
 
         methodGroups = [{
-            heading: 'Path methods',
+            heading: contract.methodGroupHeading,
             methods: generateMethodsWithOptionalAndRestParameters(module.methods)
         }];
         standardProperties = generateProperties(module.properties);
-    } else if (consoleMode) {
+    } else if (contract.kind === 'top-level-overloads') {
+        assertCount(module.methods?.length ?? 0, lock.methodCount, 'method count');
+        assertCount(module.properties?.length ?? 0, lock.propertyCount, 'property count');
+        assertCount(module.modules?.length ?? 0, lock.sectionCount, 'section count');
+
+        methodGroups = [{
+            heading: contract.methodGroupHeading,
+            methods: generateMethodOverloads(module.methods)
+        }];
+        standardProperties = generateProperties(module.properties);
+    } else if (contract.kind === 'console') {
         const consoleClass = module.classes?.find(candidate => candidate.name === 'Console');
         if (!consoleClass) {
             throw new Error("Official console documentation is missing the 'Console' class.");
@@ -743,7 +853,7 @@ function generateInterface(documentation) {
             '    [NodeModuleMember("Console")]',
             '    object? Console { get; }'
         ].join('\n')];
-    } else if (promisesMode) {
+    } else if (contract.kind === 'fs-promises') {
         const promisesApi = requireSection(module, 'promises_api');
         assertCount(promisesApi.methods?.length ?? 0, lock.promiseMethodCount, 'promise method count');
         assertCount(promisesApi.properties?.length ?? 0, lock.promisePropertyCount, 'promise property count');
@@ -798,9 +908,10 @@ function generateInterface(documentation) {
     }
 
     const overrideProperties = overrides.properties.map(property => {
-        if (property.access !== 'read-only') {
+        const access = property.access ?? 'read-only';
+        if (!['read-only', 'read-write'].includes(access)) {
             throw new Error(
-                `Unsupported access '${property.access}' for ${contract.moduleSpecifier} override property '${property.name}'.`);
+                `Unsupported access '${access}' for ${contract.moduleSpecifier} override property '${property.name}'.`);
         }
 
         if (!property.source) {
@@ -822,7 +933,7 @@ function generateInterface(documentation) {
                 ? [`    [global::System.Obsolete("${property.deprecated}")]`]
                 : []),
             `    [NodeModuleMember("${property.name}")]`,
-            `    ${mapType(property.type)} ${csharpMemberName(property.name)} { get; }`
+            `    ${mapType(property.type)} ${csharpMemberName(property.name)} { get;${access === 'read-write' ? ' set;' : ''} }`
         ].join('\n');
     });
 
@@ -1090,19 +1201,7 @@ async function main() {
             .map(([outputPath]) => path.relative(repoRoot, outputPath));
 
         if (staleOutputs.length > 0) {
-            const modeArgument = processMode
-                ? ' --process'
-                : perfHooksMode
-                ? ' --perf-hooks'
-                : childProcessMode
-                ? ' --child-process'
-                : pathMode
-                ? ' --path'
-                : consoleMode
-                    ? ' --console'
-                    : promisesMode
-                        ? ' --promises'
-                        : '';
+            const modeArgument = contract.flag ? ` ${contract.flag}` : '';
             const generationCommand =
                 `node scripts/nodeContracts/generateNodeModuleInterface.js${modeArgument}`;
             throw new Error(

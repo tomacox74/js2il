@@ -4,7 +4,7 @@ using System.IO;
 namespace JavaScriptRuntime.Node
 {
     [NodeModule("os")]
-    public sealed class OS
+    public sealed partial class OS
     {
         public string tmpdir()
         {
