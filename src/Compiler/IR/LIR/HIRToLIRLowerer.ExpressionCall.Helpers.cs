@@ -36,13 +36,23 @@ public sealed partial class HIRToLIRLowerer
 
     private TempVariable RequireObjectCoercible(TempVariable receiverTemp)
     {
+        var objectReceiver = EnsureObject(receiverTemp);
+        var receiverStorage = GetTempStorage(objectReceiver);
+        var preservesKnownReferenceType = receiverStorage.Kind == ValueStorageKind.Reference
+            && receiverStorage.ClrType != null
+            && receiverStorage.ClrType != typeof(object);
         var checkedReceiver = CreateTempVariable();
         _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
             nameof(JavaScriptRuntime.ObjectRuntime),
             nameof(JavaScriptRuntime.ObjectRuntime.RequireObjectCoercible),
-            new[] { EnsureObject(receiverTemp) },
-            checkedReceiver));
-        DefineTempStorage(checkedReceiver, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            new[] { objectReceiver },
+            checkedReceiver,
+            preservesKnownReferenceType ? receiverStorage : null));
+        DefineTempStorage(
+            checkedReceiver,
+            preservesKnownReferenceType
+                ? receiverStorage
+                : new ValueStorage(ValueStorageKind.Reference, typeof(object)));
         return checkedReceiver;
     }
 
