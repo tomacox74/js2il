@@ -549,8 +549,9 @@
 			[19] class [JavaScriptRuntime]JavaScriptRuntime.Int32Array,
 			[20] object,
 			[21] object,
-			[22] bool,
-			[23] object
+			[22] class [JavaScriptRuntime]JavaScriptRuntime.ReferenceError,
+			[23] bool,
+			[24] object
 		)
 
 		IL_0000: newobj instance void Modules.Function_SchedulerConversionsStableLoads/Scope::.ctor()
@@ -825,14 +826,14 @@
 			IL_0372: stloc.s 20
 			IL_0374: ldstr "Cannot access 'tdzValue' before initialization"
 			IL_0379: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-			IL_037e: stloc.s 15
-			IL_0380: ldloc.s 15
+			IL_037e: stloc.s 22
+			IL_0380: ldloc.s 22
 			IL_0382: isinst [System.Runtime]System.Exception
 			IL_0387: dup
 			IL_0388: brtrue IL_0396
 
 			IL_038d: pop
-			IL_038e: ldloc.s 15
+			IL_038e: ldloc.s 22
 			IL_0390: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::.ctor(object)
 			IL_0395: throw
 
@@ -886,13 +887,13 @@
 			IL_040f: ldloc.s 15
 			IL_0411: ldloc.s 17
 			IL_0413: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::InstanceOf(object, object)
-			IL_0418: stloc.s 22
-			IL_041a: ldloc.s 22
+			IL_0418: stloc.s 23
+			IL_041a: ldloc.s 23
 			IL_041c: box [System.Runtime]System.Boolean
-			IL_0421: stloc.s 23
+			IL_0421: stloc.s 24
 			IL_0423: ldloc.s 20
 			IL_0425: ldstr "log"
-			IL_042a: ldloc.s 23
+			IL_042a: ldloc.s 24
 			IL_042c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
 			IL_0431: pop
 			IL_0432: leave IL_0437

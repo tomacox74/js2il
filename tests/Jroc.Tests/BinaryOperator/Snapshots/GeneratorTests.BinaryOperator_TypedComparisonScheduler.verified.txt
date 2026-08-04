@@ -622,7 +622,8 @@
 			[19] object,
 			[20] object,
 			[21] object,
-			[22] bool
+			[22] bool,
+			[23] class [JavaScriptRuntime]JavaScriptRuntime.ReferenceError
 		)
 
 		IL_0000: newobj instance void Modules.BinaryOperator_TypedComparisonScheduler/Scope::.ctor()
@@ -950,14 +951,14 @@
 			IL_046d: stloc.s 16
 			IL_046f: ldstr "Cannot access 'tdzValue' before initialization"
 			IL_0474: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-			IL_0479: stloc.s 20
-			IL_047b: ldloc.s 20
+			IL_0479: stloc.s 23
+			IL_047b: ldloc.s 23
 			IL_047d: isinst [System.Runtime]System.Exception
 			IL_0482: dup
 			IL_0483: brtrue IL_0491
 
 			IL_0488: pop
-			IL_0489: ldloc.s 20
+			IL_0489: ldloc.s 23
 			IL_048b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::.ctor(object)
 			IL_0490: throw
 
