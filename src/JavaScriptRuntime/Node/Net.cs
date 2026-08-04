@@ -11,7 +11,7 @@ using JavaScriptRuntime.EngineCore;
 namespace JavaScriptRuntime.Node
 {
     [NodeModule("net")]
-    public sealed class Net
+    public sealed partial class Net
     {
         public Type Server => typeof(NetServer);
 

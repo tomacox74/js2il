@@ -6,7 +6,7 @@ using JsArray = JavaScriptRuntime.Array;
 namespace JavaScriptRuntime.Node
 {
     [NodeModule("querystring")]
-    public sealed class QueryString
+    public sealed partial class QueryString
     {
         public object parse(object value)
             => parse(value, null, null, null);

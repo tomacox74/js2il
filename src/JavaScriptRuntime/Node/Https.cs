@@ -9,7 +9,7 @@ using System.Text;
 namespace JavaScriptRuntime.Node
 {
     [NodeModule("https")]
-    public sealed class Https
+    public sealed partial class Https
     {
         public Type IncomingMessage => typeof(HttpIncomingMessage);
 
@@ -104,7 +104,7 @@ namespace JavaScriptRuntime.Node
     }
 
     [NodeModule("tls")]
-    public sealed class Tls
+    public sealed partial class Tls
     {
         public Type TLSSocket => typeof(TlsSocket);
 

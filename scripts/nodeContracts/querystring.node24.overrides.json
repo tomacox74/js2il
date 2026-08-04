@@ -1,0 +1,77 @@
+{
+  "properties": [],
+  "normalizedMethods": [
+    {
+      "name": "decode",
+      "signatures": ["querystring.decode()"],
+      "parameters": [
+        { "name": "str", "type": "string" },
+        { "name": "sep", "type": "string" },
+        { "name": "eq", "type": "string" },
+        { "name": "options", "type": "Object" }
+      ],
+      "minimumParameterCount": 1,
+      "returnType": "Object",
+      "source": "https://nodejs.org/docs/v24.18.1/api/querystring.html#querystringdecode"
+    },
+    {
+      "name": "encode",
+      "signatures": ["querystring.encode()"],
+      "parameters": [
+        { "name": "obj", "type": "Object" },
+        { "name": "sep", "type": "string" },
+        { "name": "eq", "type": "string" },
+        { "name": "options", "type": "Object" }
+      ],
+      "minimumParameterCount": 1,
+      "returnType": "string",
+      "source": "https://nodejs.org/docs/v24.18.1/api/querystring.html#querystringencode"
+    },
+    {
+      "name": "escape",
+      "signatures": ["querystring.escape(str)"],
+      "parameters": [{ "name": "str", "type": "string" }],
+      "returnType": "string",
+      "source": "https://nodejs.org/docs/v24.18.1/api/querystring.html#querystringescapestr"
+    },
+    {
+      "name": "parse",
+      "signatures": ["querystring.parse(str[, sep[, eq[, options]]])"],
+      "parameters": [
+        { "name": "str", "type": "string" },
+        { "name": "sep", "type": "string" },
+        { "name": "eq", "type": "string" },
+        { "name": "options", "type": "Object" }
+      ],
+      "minimumParameterCount": 1,
+      "returnType": "Object",
+      "source": "https://nodejs.org/docs/v24.18.1/api/querystring.html#querystringparsestr-sep-eq-options"
+    },
+    {
+      "name": "stringify",
+      "signatures": ["querystring.stringify(obj[, sep[, eq[, options]]])"],
+      "parameters": [
+        { "name": "obj", "type": "Object" },
+        { "name": "sep", "type": "string" },
+        { "name": "eq", "type": "string" },
+        { "name": "options", "type": "Object" }
+      ],
+      "minimumParameterCount": 1,
+      "returnType": "string",
+      "source": "https://nodejs.org/docs/v24.18.1/api/querystring.html#querystringstringifyobj-sep-eq-options"
+    },
+    {
+      "name": "unescape",
+      "signatures": ["querystring.unescape(str)"],
+      "parameters": [{ "name": "str", "type": "string" }],
+      "returnType": "string",
+      "source": "https://nodejs.org/docs/v24.18.1/api/querystring.html#querystringunescapestr"
+    }
+  ],
+  "intrinsicImplementations": {
+    "decode": { "style": "direct", "target": "parse" },
+    "encode": { "style": "direct", "target": "stringify" },
+    "parse": { "style": "direct" },
+    "stringify": { "style": "direct" }
+  }
+}

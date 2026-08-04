@@ -1,0 +1,128 @@
+{
+  "properties": [
+    {
+      "name": "rootCertificates",
+      "type": "Array",
+      "source": "https://nodejs.org/docs/v24.18.1/api/tls.html#tlsrootcertificates"
+    },
+    {
+      "name": "DEFAULT_ECDH_CURVE",
+      "type": "string",
+      "access": "read-write",
+      "source": "https://nodejs.org/docs/v24.18.1/api/tls.html#tlsdefault_ecdh_curve"
+    },
+    {
+      "name": "DEFAULT_MAX_VERSION",
+      "type": "string",
+      "access": "read-write",
+      "source": "https://nodejs.org/docs/v24.18.1/api/tls.html#tlsdefault_max_version"
+    },
+    {
+      "name": "DEFAULT_MIN_VERSION",
+      "type": "string",
+      "access": "read-write",
+      "source": "https://nodejs.org/docs/v24.18.1/api/tls.html#tlsdefault_min_version"
+    },
+    {
+      "name": "DEFAULT_CIPHERS",
+      "type": "string",
+      "access": "read-write",
+      "source": "https://nodejs.org/docs/v24.18.1/api/tls.html#tlsdefault_ciphers"
+    },
+    {
+      "name": "TLSSocket",
+      "type": "Object",
+      "source": "https://nodejs.org/docs/v24.18.1/api/tls.html#class-tlstlssocket"
+    },
+    {
+      "name": "Server",
+      "type": "Object",
+      "source": "https://nodejs.org/docs/v24.18.1/api/tls.html#class-tlsserver"
+    }
+  ],
+  "normalizedMethods": [
+    {
+      "name": "checkServerIdentity",
+      "signatures": ["tls.checkServerIdentity(hostname, cert)"],
+      "parameters": [
+        { "name": "hostname", "type": "string" },
+        { "name": "cert", "type": "Object" }
+      ],
+      "returnType": "Error|undefined",
+      "source": "https://nodejs.org/docs/v24.18.1/api/tls.html#tlscheckserveridentityhostname-cert"
+    },
+    {
+      "name": "connect",
+      "signatures": [
+        "tls.connect(options[, callback])",
+        "tls.connect(path[, options][, callback])",
+        "tls.connect(port[, host][, options][, callback])"
+      ],
+      "source": "https://nodejs.org/docs/v24.18.1/api/tls.html#tlsconnect",
+      "overloads": [
+        { "parameters": [{ "name": "options", "type": "Object" }], "returnType": "tls.TLSSocket" },
+        { "parameters": [{ "name": "options", "type": "Object" }, { "name": "callback", "type": "Function" }], "returnType": "tls.TLSSocket" },
+        { "parameters": [{ "name": "path", "type": "string" }], "returnType": "tls.TLSSocket" },
+        { "parameters": [{ "name": "path", "type": "string" }, { "name": "options", "type": "Object" }], "returnType": "tls.TLSSocket" },
+        { "parameters": [{ "name": "path", "type": "string" }, { "name": "callback", "type": "Function" }], "returnType": "tls.TLSSocket" },
+        { "parameters": [{ "name": "path", "type": "string" }, { "name": "options", "type": "Object" }, { "name": "callback", "type": "Function" }], "returnType": "tls.TLSSocket" },
+        { "parameters": [{ "name": "port", "type": "number" }], "returnType": "tls.TLSSocket" },
+        { "parameters": [{ "name": "port", "type": "number" }, { "name": "host", "type": "string" }], "returnType": "tls.TLSSocket" },
+        { "parameters": [{ "name": "port", "type": "number" }, { "name": "options", "type": "Object" }], "returnType": "tls.TLSSocket" },
+        { "parameters": [{ "name": "port", "type": "number" }, { "name": "callback", "type": "Function" }], "returnType": "tls.TLSSocket" },
+        { "parameters": [{ "name": "port", "type": "number" }, { "name": "host", "type": "string" }, { "name": "options", "type": "Object" }], "returnType": "tls.TLSSocket" },
+        { "parameters": [{ "name": "port", "type": "number" }, { "name": "host", "type": "string" }, { "name": "callback", "type": "Function" }], "returnType": "tls.TLSSocket" },
+        { "parameters": [{ "name": "port", "type": "number" }, { "name": "options", "type": "Object" }, { "name": "callback", "type": "Function" }], "returnType": "tls.TLSSocket" },
+        { "parameters": [{ "name": "port", "type": "number" }, { "name": "host", "type": "string" }, { "name": "options", "type": "Object" }, { "name": "callback", "type": "Function" }], "returnType": "tls.TLSSocket" }
+      ]
+    },
+    {
+      "name": "createSecureContext",
+      "signatures": ["tls.createSecureContext([options])"],
+      "parameters": [{ "name": "options", "type": "Object" }],
+      "minimumParameterCount": 0,
+      "returnType": "SecureContext",
+      "source": "https://nodejs.org/docs/v24.18.1/api/tls.html#tlscreatesecurecontextoptions"
+    },
+    {
+      "name": "createServer",
+      "signatures": ["tls.createServer([options][, secureConnectionListener])"],
+      "source": "https://nodejs.org/docs/v24.18.1/api/tls.html#tlscreateserveroptions-secureconnectionlistener",
+      "overloads": [
+        { "parameters": [], "returnType": "tls.Server" },
+        { "parameters": [{ "name": "options", "type": "Object" }], "returnType": "tls.Server" },
+        { "parameters": [{ "name": "secureConnectionListener", "type": "Function" }], "returnType": "tls.Server" },
+        { "parameters": [{ "name": "options", "type": "Object" }, { "name": "secureConnectionListener", "type": "Function" }], "returnType": "tls.Server" }
+      ]
+    },
+    {
+      "name": "setDefaultCACertificates",
+      "signatures": ["tls.setDefaultCACertificates(certs)"],
+      "parameters": [{ "name": "certs", "type": "Array" }],
+      "returnType": "undefined",
+      "source": "https://nodejs.org/docs/v24.18.1/api/tls.html#tlssetdefaultcacertificatescerts"
+    },
+    {
+      "name": "getCACertificates",
+      "signatures": ["tls.getCACertificates([type])"],
+      "parameters": [{ "name": "type", "type": "string" }],
+      "minimumParameterCount": 0,
+      "returnType": "Array",
+      "source": "https://nodejs.org/docs/v24.18.1/api/tls.html#tlsgetcacertificatestype"
+    },
+    {
+      "name": "getCiphers",
+      "signatures": ["tls.getCiphers()"],
+      "parameters": [],
+      "returnType": "Array",
+      "source": "https://nodejs.org/docs/v24.18.1/api/tls.html#tlsgetciphers"
+    }
+  ],
+  "intrinsicImplementations": {
+    "TLSSocket": { "style": "direct" },
+    "Server": { "style": "direct" },
+    "connect": { "style": "argument-array" },
+    "createSecureContext": { "style": "direct" },
+    "createServer": { "style": "argument-array" }
+  }
+}

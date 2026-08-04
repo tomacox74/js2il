@@ -124,6 +124,39 @@ npm run check:node-contract-timers-promises
 npm run test:node-contract-timers-promises
 ```
 
+For `node:url`, `node:querystring`, `node:net`, `node:tls`, `node:http`,
+`node:https`, and `node:crypto`:
+
+```sh
+npm run generate:node-contract-url
+npm run check:node-contract-url
+npm run test:node-contract-url
+
+npm run generate:node-contract-querystring
+npm run check:node-contract-querystring
+npm run test:node-contract-querystring
+
+npm run generate:node-contract-net
+npm run check:node-contract-net
+npm run test:node-contract-net
+
+npm run generate:node-contract-tls
+npm run check:node-contract-tls
+npm run test:node-contract-tls
+
+npm run generate:node-contract-http
+npm run check:node-contract-http
+npm run test:node-contract-http
+
+npm run generate:node-contract-https
+npm run check:node-contract-https
+npm run test:node-contract-https
+
+npm run generate:node-contract-crypto
+npm run check:node-contract-crypto
+npm run test:node-contract-crypto
+```
+
 Regenerate or check every configured contract in one command:
 
 ```sh
@@ -139,6 +172,12 @@ Use cited `normalizedMethods` entries only when the official JSON loses
 signature metadata or a JavaScript variadic call form cannot be represented by
 the ordinary overload expansion. This keeps complex modules in the shared
 pipeline without adding module-specific rendering code.
+
+For a normalized method with trailing optional parameters, set
+`minimumParameterCount` and provide the full parameter list once. For
+non-prefix call forms or callback-sensitive return types, use the method's
+`overloads` array. Each overload can carry its own parameters and return type
+while sharing the official signatures and source citation.
 
 The checked-in override files record which contract members each intrinsic
 module currently implements and how each implementation is invoked. The
@@ -162,3 +201,15 @@ records each have existing extraction patterns. Run only the new module's
 generate/check/test commands while the extraction stabilizes; run the
 aggregate generator, contract project, and build once after the shared
 generator is settled.
+
+Use the `normalized-api` extraction kind when every selected method requires a
+cited normalized signature. Use `documented-api` for root or nested API
+sections that are mostly structured but need selected signature, return, or
+overload corrections. Both modes drift-check root topology, selected records,
+normalized overloads, and override counts.
+
+The next high-leverage automation is a contract scaffolder that downloads and
+hashes a pinned document, reports its module/section topology and malformed
+records, then emits manifest, lock, override, package-script, and test
+skeletons. It should leave API-roster and signature decisions for review while
+removing repetitive setup work.

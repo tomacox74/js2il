@@ -1999,8 +1999,8 @@
 					[8] object[],
 					[9] string,
 					[10] bool,
-					[11] class [JavaScriptRuntime]JavaScriptRuntime.Node.Https,
-					[12] class [JavaScriptRuntime]JavaScriptRuntime.Node.Http,
+					[11] class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IHttpsModule,
+					[12] class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IHttpModule,
 					[13] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
 					[14] class [JavaScriptRuntime]JavaScriptRuntime.JsFunc1
 				)
@@ -2114,7 +2114,7 @@
 				IL_00ef: ldelem.ref
 				IL_00f0: castclass Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/Scope
 				IL_00f5: ldfld object Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/Scope::https
-				IL_00fa: castclass [JavaScriptRuntime]JavaScriptRuntime.Node.Https
+				IL_00fa: castclass [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IHttpsModule
 				IL_00ff: stloc.s 11
 				IL_0101: ldloc.s 11
 				IL_0103: stloc.3
@@ -2125,7 +2125,7 @@
 				IL_010b: ldelem.ref
 				IL_010c: castclass Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/Scope
 				IL_0111: ldfld object Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/Scope::http
-				IL_0116: castclass [JavaScriptRuntime]JavaScriptRuntime.Node.Http
+				IL_0116: castclass [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IHttpModule
 				IL_011b: stloc.s 12
 				IL_011d: ldloc.s 12
 				IL_011f: stloc.3
@@ -5405,8 +5405,11 @@
 			[3] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1,
 			[4] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes3,
 			[5] class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule,
-			[6] object,
-			[7] class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IPathModule
+			[6] class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IHttpModule,
+			[7] class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IHttpsModule,
+			[8] class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IPathModule,
+			[9] class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IUrlModule,
+			[10] object
 		)
 
 		IL_0000: newobj instance void Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/Scope::.ctor()
@@ -5554,47 +5557,47 @@
 		IL_0193: stfld object Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/Scope::fs
 		IL_0198: ldarg.1
 		IL_0199: ldstr "node:http"
-		IL_019e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
+		IL_019e: call !!0 [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireRuntime::RequireObject<class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IHttpModule>(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object)
 		IL_01a3: stloc.s 6
 		IL_01a5: ldloc.0
 		IL_01a6: ldloc.s 6
 		IL_01a8: stfld object Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/Scope::http
 		IL_01ad: ldarg.1
 		IL_01ae: ldstr "node:https"
-		IL_01b3: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
-		IL_01b8: stloc.s 6
+		IL_01b3: call !!0 [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireRuntime::RequireObject<class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IHttpsModule>(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object)
+		IL_01b8: stloc.s 7
 		IL_01ba: ldloc.0
-		IL_01bb: ldloc.s 6
+		IL_01bb: ldloc.s 7
 		IL_01bd: stfld object Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/Scope::https
 		IL_01c2: ldarg.1
 		IL_01c3: ldstr "path"
 		IL_01c8: call !!0 [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireRuntime::RequireObject<class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IPathModule>(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object)
-		IL_01cd: stloc.s 7
+		IL_01cd: stloc.s 8
 		IL_01cf: ldloc.0
-		IL_01d0: ldloc.s 7
+		IL_01d0: ldloc.s 8
 		IL_01d2: stfld object Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/Scope::path
 		IL_01d7: ldarg.1
 		IL_01d8: ldstr "node:url"
-		IL_01dd: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
-		IL_01e2: stloc.s 6
-		IL_01e4: ldloc.s 6
+		IL_01dd: call !!0 [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireRuntime::RequireObject<class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IUrlModule>(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object)
+		IL_01e2: stloc.s 9
+		IL_01e4: ldloc.s 9
 		IL_01e6: brfalse IL_01f7
 
-		IL_01eb: ldloc.s 6
+		IL_01eb: ldloc.s 9
 		IL_01ed: isinst [JavaScriptRuntime]JavaScriptRuntime.JsNull
 		IL_01f2: brfalse IL_0208
 
-		IL_01f7: ldloc.s 6
+		IL_01f7: ldloc.s 9
 		IL_01f9: ldstr ""
 		IL_01fe: ldstr "URL"
 		IL_0203: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::ThrowDestructuringNullOrUndefined(object, string, string)
 
-		IL_0208: ldloc.s 6
+		IL_0208: ldloc.s 9
 		IL_020a: ldstr "URL"
 		IL_020f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0214: stloc.s 6
+		IL_0214: stloc.s 10
 		IL_0216: ldloc.0
-		IL_0217: ldloc.s 6
+		IL_0217: ldloc.s 10
 		IL_0219: stfld object Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/Scope::NodeUrl
 		IL_021e: nop
 		IL_021f: nop

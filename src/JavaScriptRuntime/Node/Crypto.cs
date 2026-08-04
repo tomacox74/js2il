@@ -4,11 +4,13 @@ using System.Security.Cryptography;
 namespace JavaScriptRuntime.Node
 {
     [NodeModule("crypto")]
-    public sealed class Crypto
+    public sealed partial class Crypto
     {
         private readonly WebCryptoBridge _webcrypto = new();
 
         public object webcrypto => _webcrypto;
+
+        public object subtle => _webcrypto.subtle;
 
         public Hash createHash(object? algorithm)
         {
