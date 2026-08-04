@@ -83,6 +83,9 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   constructor receives a value already known to be a CLR `string`.
 - compiler: preserve concrete built-in Error types through construction and
   throw slots instead of widening them to `object`.
+- compiler: omit member-call object-coercibility guards for receivers proven
+  non-null by object construction, preserving their concrete CLR types for
+  direct instance calls.
 
 ## v0.12.1 - 2026-08-02
 

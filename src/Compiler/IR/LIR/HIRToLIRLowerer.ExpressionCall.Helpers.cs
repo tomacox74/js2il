@@ -37,6 +37,11 @@ public sealed partial class HIRToLIRLowerer
     private TempVariable RequireObjectCoercible(TempVariable receiverTemp)
     {
         var objectReceiver = EnsureObject(receiverTemp);
+        if (IsProvenNonNullReference(objectReceiver))
+        {
+            return objectReceiver;
+        }
+
         var receiverStorage = GetTempStorage(objectReceiver);
         var preservesKnownReferenceType = receiverStorage.Kind == ValueStorageKind.Reference
             && receiverStorage.ClrType != null
@@ -54,6 +59,52 @@ public sealed partial class HIRToLIRLowerer
                 ? receiverStorage
                 : new ValueStorage(ValueStorageKind.Reference, typeof(object)));
         return checkedReceiver;
+    }
+
+    private bool IsProvenNonNullReference(TempVariable temp)
+    {
+        if (GetTempStorage(temp).Kind != ValueStorageKind.Reference)
+        {
+            return false;
+        }
+
+        return IsProvenNonNullReference(temp, new HashSet<int>());
+    }
+
+    private bool IsProvenNonNullReference(TempVariable temp, HashSet<int> visitedTemps)
+    {
+        if (GetTempStorage(temp).Kind != ValueStorageKind.Reference
+            || !visitedTemps.Add(temp.Index))
+        {
+            return false;
+        }
+
+        for (var i = _methodBodyIR.Instructions.Count - 1; i >= 0; i--)
+        {
+            switch (_methodBodyIR.Instructions[i])
+            {
+                case LIRCopyTemp { Destination: var destination, Source: var source }
+                    when destination == temp:
+                    return IsProvenNonNullReference(source, visitedTemps);
+
+                // These instructions all materialize a CLR object. They either produce a
+                // non-null receiver or throw before a member call can be evaluated.
+                case LIRConstString constString when constString.Result == temp:
+                case LIRBuildArray buildArray when buildArray.Result == temp:
+                case LIRNewJsArray newJsArray when newJsArray.Result == temp:
+                case LIRNewJsObject newJsObject when newJsObject.Result == temp:
+                case LIRNewInferredJsObject newInferredJsObject when newInferredJsObject.Result == temp:
+                case LIRNewIntrinsicObject newIntrinsicObject when newIntrinsicObject.Result == temp:
+                case LIRNewBuiltInError newBuiltInError when newBuiltInError.Result == temp:
+                case LIRCreateBoundArrowFunction createBoundArrow when createBoundArrow.Result == temp:
+                case LIRCreateBoundFunctionExpression createBoundFunction when createBoundFunction.Result == temp:
+                case LIRCreateScopeInstance createScope when createScope.Result == temp:
+                    return true;
+            }
+        }
+
+        // Typed bindings and arbitrary helper calls may still hold JavaScript null or undefined.
+        return false;
     }
 
     private bool TryLowerCallArgumentsToArgsArray(IReadOnlyList<HIRExpression> arguments, out TempVariable argsArrayTemp)
