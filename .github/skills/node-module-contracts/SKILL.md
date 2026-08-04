@@ -10,6 +10,11 @@ applyTo: 'scripts/nodeContracts/**,src/JavaScriptRuntime/Node/**,src/JavaScriptR
 Use this skill when adding a generated contract for a Node module that does not
 have one yet, or when changing an existing generated Node module contract.
 
+When contract work is triggered by adding a new Node runtime module or
+implementing a public member on an existing module, also follow the
+`node-module-implementation` skill. Runtime implementation and generated
+contract follow-through belong in the same change.
+
 ## Goals
 
 1. Generate the complete public module surface from the official Node.js 24 LTS
