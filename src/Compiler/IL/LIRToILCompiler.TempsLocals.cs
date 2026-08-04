@@ -254,13 +254,7 @@ internal sealed partial class LIRToILCompiler
 
                     if (newError.Message.HasValue)
                     {
-                        EmitLoadTempAsObject(newError.Message.Value, ilEncoder, allocation, methodDescriptor);
-                        var toString = _memberRefRegistry.GetOrAddMethod(
-                            typeof(JavaScriptRuntime.DotNet2JSConversions),
-                            nameof(JavaScriptRuntime.DotNet2JSConversions.ToString),
-                            parameterTypes: new[] { typeof(object) });
-                        ilEncoder.OpCode(ILOpCode.Call);
-                        ilEncoder.Token(toString);
+                        EmitLoadBuiltInErrorMessage(newError.Message.Value, ilEncoder, allocation, methodDescriptor);
                         var ctor = _memberRefRegistry.GetOrAddConstructor(errorClrType, parameterTypes: new[] { typeof(string) });
                         ilEncoder.OpCode(ILOpCode.Newobj);
                         ilEncoder.Token(ctor);
