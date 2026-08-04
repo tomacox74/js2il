@@ -51,7 +51,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2234
+			// Method begins at RVA 0x2238
 			// Header size: 12
 			// Code size: 175 (0xaf)
 			.maxstack 8
@@ -568,9 +568,9 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 0a 00 00 02
 			)
-			// Method begins at RVA 0x22f0
+			// Method begins at RVA 0x22f4
 			// Header size: 12
-			// Code size: 280 (0x118)
+			// Code size: 275 (0x113)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.Https_Request_UrlObject_WithOptions/ArrowFunction_L13C31/Scope,
@@ -580,8 +580,9 @@
 				[4] object,
 				[5] object,
 				[6] object,
-				[7] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
-				[8] class [JavaScriptRuntime]JavaScriptRuntime.JsFunc1
+				[7] class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IHttpsModule,
+				[8] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
+				[9] class [JavaScriptRuntime]JavaScriptRuntime.JsFunc1
 			)
 
 			IL_0000: newobj instance void Modules.Https_Request_UrlObject_WithOptions/ArrowFunction_L13C31/Scope::.ctor()
@@ -618,65 +619,64 @@
 			IL_005f: stloc.2
 			IL_0060: ldarg.0
 			IL_0061: ldfld object Modules.Https_Request_UrlObject_WithOptions/Scope::https
-			IL_0066: castclass [JavaScriptRuntime]JavaScriptRuntime.Node.Https
-			IL_006b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0070: stloc.s 4
-			IL_0072: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-			IL_0077: dup
-			IL_0078: ldstr "method"
-			IL_007d: ldstr "GET"
-			IL_0082: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-			IL_0087: dup
-			IL_0088: ldstr "headers"
-			IL_008d: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-			IL_0092: dup
-			IL_0093: ldstr "Accept-Encoding"
-			IL_0098: ldstr "identity"
+			IL_0066: castclass [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IHttpsModule
+			IL_006b: stloc.s 7
+			IL_006d: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+			IL_0072: dup
+			IL_0073: ldstr "method"
+			IL_0078: ldstr "GET"
+			IL_007d: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+			IL_0082: dup
+			IL_0083: ldstr "headers"
+			IL_0088: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+			IL_008d: dup
+			IL_008e: ldstr "Accept-Encoding"
+			IL_0093: ldstr "identity"
+			IL_0098: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
 			IL_009d: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-			IL_00a2: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-			IL_00a7: dup
-			IL_00a8: ldstr "rejectUnauthorized"
-			IL_00ad: ldc.i4.0
-			IL_00ae: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-			IL_00b3: stloc.s 7
-			IL_00b5: ldnull
-			IL_00b6: ldftn object Modules.Https_Request_UrlObject_WithOptions/ArrowFunction_L13C31/ArrowFunction_L25C5::__js_call__(object[], object, object)
-			IL_00bc: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::.ctor(object, native int)
-			IL_00c1: ldc.i4.2
-			IL_00c2: newarr [System.Runtime]System.Object
-			IL_00c7: dup
-			IL_00c8: ldc.i4.0
-			IL_00c9: ldarg.0
-			IL_00ca: stelem.ref
-			IL_00cb: dup
-			IL_00cc: ldc.i4.1
-			IL_00cd: ldloc.0
-			IL_00ce: stelem.ref
-			IL_00cf: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-			IL_00d4: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-			IL_00d9: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFunc1
-			IL_00de: ldc.i4.1
-			IL_00df: conv.r8
-			IL_00e0: ldstr ""
-			IL_00e5: ldc.i4.0
-			IL_00e6: ldc.i4.0
-			IL_00e7: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFunc1>(!!0, float64, string, bool, bool)
-			IL_00ec: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFunc1>(!!0)
-			IL_00f1: stloc.s 8
-			IL_00f3: ldloc.s 4
-			IL_00f5: ldstr "request"
-			IL_00fa: ldloc.2
-			IL_00fb: ldloc.s 7
-			IL_00fd: ldloc.s 8
-			IL_00ff: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember3(object, string, object, object, object)
-			IL_0104: stloc.3
-			IL_0105: ldloc.3
-			IL_0106: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_010b: ldstr "end"
-			IL_0110: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-			IL_0115: pop
-			IL_0116: ldnull
-			IL_0117: ret
+			IL_00a2: dup
+			IL_00a3: ldstr "rejectUnauthorized"
+			IL_00a8: ldc.i4.0
+			IL_00a9: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+			IL_00ae: stloc.s 8
+			IL_00b0: ldnull
+			IL_00b1: ldftn object Modules.Https_Request_UrlObject_WithOptions/ArrowFunction_L13C31/ArrowFunction_L25C5::__js_call__(object[], object, object)
+			IL_00b7: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::.ctor(object, native int)
+			IL_00bc: ldc.i4.2
+			IL_00bd: newarr [System.Runtime]System.Object
+			IL_00c2: dup
+			IL_00c3: ldc.i4.0
+			IL_00c4: ldarg.0
+			IL_00c5: stelem.ref
+			IL_00c6: dup
+			IL_00c7: ldc.i4.1
+			IL_00c8: ldloc.0
+			IL_00c9: stelem.ref
+			IL_00ca: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+			IL_00cf: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+			IL_00d4: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFunc1
+			IL_00d9: ldc.i4.1
+			IL_00da: conv.r8
+			IL_00db: ldstr ""
+			IL_00e0: ldc.i4.0
+			IL_00e1: ldc.i4.0
+			IL_00e2: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFunc1>(!!0, float64, string, bool, bool)
+			IL_00e7: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFunc1>(!!0)
+			IL_00ec: stloc.s 9
+			IL_00ee: ldloc.s 7
+			IL_00f0: ldloc.2
+			IL_00f1: ldloc.s 8
+			IL_00f3: ldloc.s 9
+			IL_00f5: castclass [System.Runtime]System.Delegate
+			IL_00fa: callvirt instance object [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IHttpsModule::'request'(object, object, class [System.Runtime]System.Delegate)
+			IL_00ff: stloc.3
+			IL_0100: ldloc.3
+			IL_0101: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0106: ldstr "end"
+			IL_010b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+			IL_0110: pop
+			IL_0111: ldnull
+			IL_0112: ret
 		} // end of method ArrowFunction_L13C31::__js_call__
 
 	} // end of class ArrowFunction_L13C31
@@ -725,16 +725,18 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 397 (0x18d)
+		// Code size: 404 (0x194)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Https_Request_UrlObject_WithOptions/Scope,
 			[1] object,
 			[2] object,
-			[3] object,
-			[4] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
-			[5] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2,
-			[6] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
+			[3] class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IHttpsModule,
+			[4] class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IUrlModule,
+			[5] object,
+			[6] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
+			[7] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2,
+			[8] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
 		)
 
 		IL_0000: newobj instance void Modules.Https_Request_UrlObject_WithOptions/Scope::.ctor()
@@ -742,136 +744,134 @@
 		IL_0006: nop
 		IL_0007: ldarg.1
 		IL_0008: ldstr "node:https"
-		IL_000d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
+		IL_000d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireRuntime::RequireObject<class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IHttpsModule>(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object)
 		IL_0012: stloc.3
 		IL_0013: ldloc.0
 		IL_0014: ldloc.3
 		IL_0015: stfld object Modules.Https_Request_UrlObject_WithOptions/Scope::https
 		IL_001a: ldarg.1
 		IL_001b: ldstr "node:url"
-		IL_0020: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
-		IL_0025: stloc.3
-		IL_0026: ldloc.3
-		IL_0027: brfalse IL_0037
+		IL_0020: call !!0 [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireRuntime::RequireObject<class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IUrlModule>(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object)
+		IL_0025: stloc.s 4
+		IL_0027: ldloc.s 4
+		IL_0029: brfalse IL_003a
 
-		IL_002c: ldloc.3
-		IL_002d: isinst [JavaScriptRuntime]JavaScriptRuntime.JsNull
-		IL_0032: brfalse IL_0047
+		IL_002e: ldloc.s 4
+		IL_0030: isinst [JavaScriptRuntime]JavaScriptRuntime.JsNull
+		IL_0035: brfalse IL_004b
 
-		IL_0037: ldloc.3
-		IL_0038: ldstr ""
-		IL_003d: ldstr "URL"
-		IL_0042: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::ThrowDestructuringNullOrUndefined(object, string, string)
+		IL_003a: ldloc.s 4
+		IL_003c: ldstr ""
+		IL_0041: ldstr "URL"
+		IL_0046: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::ThrowDestructuringNullOrUndefined(object, string, string)
 
-		IL_0047: ldloc.3
-		IL_0048: ldstr "URL"
-		IL_004d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0052: stloc.3
-		IL_0053: ldloc.0
-		IL_0054: ldloc.3
-		IL_0055: stfld object Modules.Https_Request_UrlObject_WithOptions/Scope::NodeUrl
-		IL_005a: ldarg.1
-		IL_005b: ldstr "./Tls_TestCertificates"
-		IL_0060: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
-		IL_0065: stloc.3
-		IL_0066: ldloc.3
-		IL_0067: brfalse IL_0077
+		IL_004b: ldloc.s 4
+		IL_004d: ldstr "URL"
+		IL_0052: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0057: stloc.s 5
+		IL_0059: ldloc.0
+		IL_005a: ldloc.s 5
+		IL_005c: stfld object Modules.Https_Request_UrlObject_WithOptions/Scope::NodeUrl
+		IL_0061: ldarg.1
+		IL_0062: ldstr "./Tls_TestCertificates"
+		IL_0067: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
+		IL_006c: stloc.s 5
+		IL_006e: ldloc.s 5
+		IL_0070: brfalse IL_0081
 
-		IL_006c: ldloc.3
-		IL_006d: isinst [JavaScriptRuntime]JavaScriptRuntime.JsNull
-		IL_0072: brfalse IL_0087
+		IL_0075: ldloc.s 5
+		IL_0077: isinst [JavaScriptRuntime]JavaScriptRuntime.JsNull
+		IL_007c: brfalse IL_0092
 
-		IL_0077: ldloc.3
-		IL_0078: ldstr ""
-		IL_007d: ldstr "certPem"
-		IL_0082: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::ThrowDestructuringNullOrUndefined(object, string, string)
-
-		IL_0087: ldloc.3
+		IL_0081: ldloc.s 5
+		IL_0083: ldstr ""
 		IL_0088: ldstr "certPem"
-		IL_008d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0092: stloc.1
-		IL_0093: ldloc.3
-		IL_0094: ldstr "keyPem"
+		IL_008d: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::ThrowDestructuringNullOrUndefined(object, string, string)
+
+		IL_0092: ldloc.s 5
+		IL_0094: ldstr "certPem"
 		IL_0099: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_009e: stloc.2
-		IL_009f: ldloc.0
-		IL_00a0: ldfld object Modules.Https_Request_UrlObject_WithOptions/Scope::https
-		IL_00a5: castclass [JavaScriptRuntime]JavaScriptRuntime.Node.Https
-		IL_00aa: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00af: stloc.3
-		IL_00b0: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_00b5: dup
-		IL_00b6: ldstr "key"
-		IL_00bb: ldloc.2
-		IL_00bc: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_00c1: dup
-		IL_00c2: ldstr "cert"
-		IL_00c7: ldloc.1
-		IL_00c8: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_00cd: stloc.s 4
-		IL_00cf: ldnull
-		IL_00d0: ldftn object Modules.Https_Request_UrlObject_WithOptions/ArrowFunction_L7C67::__js_call__(object, object, object)
-		IL_00d6: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::.ctor(object, native int)
-		IL_00db: ldc.i4.1
-		IL_00dc: newarr [System.Runtime]System.Object
-		IL_00e1: dup
-		IL_00e2: ldc.i4.0
-		IL_00e3: ldloc.0
-		IL_00e4: stelem.ref
-		IL_00e5: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_00ea: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_00ef: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2
-		IL_00f4: ldc.i4.2
-		IL_00f5: conv.r8
-		IL_00f6: ldstr ""
-		IL_00fb: ldc.i4.0
-		IL_00fc: ldc.i4.0
-		IL_00fd: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2>(!!0, float64, string, bool, bool)
-		IL_0102: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2>(!!0)
-		IL_0107: stloc.s 5
-		IL_0109: ldloc.3
-		IL_010a: ldstr "createServer"
-		IL_010f: ldloc.s 4
-		IL_0111: ldloc.s 5
-		IL_0113: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_0118: stloc.3
-		IL_0119: ldloc.0
-		IL_011a: ldloc.3
-		IL_011b: stfld object Modules.Https_Request_UrlObject_WithOptions/Scope::server
-		IL_0120: ldloc.0
-		IL_0121: ldfld object Modules.Https_Request_UrlObject_WithOptions/Scope::server
-		IL_0126: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_012b: stloc.3
-		IL_012c: ldloc.0
-		IL_012d: castclass Modules.Https_Request_UrlObject_WithOptions/Scope
-		IL_0132: ldftn object Modules.Https_Request_UrlObject_WithOptions/ArrowFunction_L13C31::__js_call__(class Modules.Https_Request_UrlObject_WithOptions/Scope, object)
-		IL_0138: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_013d: ldc.i4.1
-		IL_013e: newarr [System.Runtime]System.Object
-		IL_0143: dup
-		IL_0144: ldc.i4.0
-		IL_0145: ldloc.0
-		IL_0146: stelem.ref
-		IL_0147: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_014c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_0151: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
-		IL_0156: ldc.i4.0
-		IL_0157: conv.r8
-		IL_0158: ldstr ""
-		IL_015d: ldc.i4.0
-		IL_015e: ldc.i4.0
-		IL_015f: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
-		IL_0164: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0)
-		IL_0169: stloc.s 6
-		IL_016b: ldloc.3
-		IL_016c: ldstr "listen"
-		IL_0171: ldc.r8 0.0
-		IL_017a: box [System.Runtime]System.Double
-		IL_017f: ldstr "127.0.0.1"
-		IL_0184: ldloc.s 6
-		IL_0186: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember3(object, string, object, object, object)
-		IL_018b: pop
-		IL_018c: ret
+		IL_009e: stloc.1
+		IL_009f: ldloc.s 5
+		IL_00a1: ldstr "keyPem"
+		IL_00a6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00ab: stloc.2
+		IL_00ac: ldloc.0
+		IL_00ad: ldfld object Modules.Https_Request_UrlObject_WithOptions/Scope::https
+		IL_00b2: castclass [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IHttpsModule
+		IL_00b7: stloc.3
+		IL_00b8: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_00bd: dup
+		IL_00be: ldstr "key"
+		IL_00c3: ldloc.2
+		IL_00c4: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_00c9: dup
+		IL_00ca: ldstr "cert"
+		IL_00cf: ldloc.1
+		IL_00d0: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_00d5: stloc.s 6
+		IL_00d7: ldnull
+		IL_00d8: ldftn object Modules.Https_Request_UrlObject_WithOptions/ArrowFunction_L7C67::__js_call__(object, object, object)
+		IL_00de: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::.ctor(object, native int)
+		IL_00e3: ldc.i4.1
+		IL_00e4: newarr [System.Runtime]System.Object
+		IL_00e9: dup
+		IL_00ea: ldc.i4.0
+		IL_00eb: ldloc.0
+		IL_00ec: stelem.ref
+		IL_00ed: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_00f2: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_00f7: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2
+		IL_00fc: ldc.i4.2
+		IL_00fd: conv.r8
+		IL_00fe: ldstr ""
+		IL_0103: ldc.i4.0
+		IL_0104: ldc.i4.0
+		IL_0105: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2>(!!0, float64, string, bool, bool)
+		IL_010a: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2>(!!0)
+		IL_010f: stloc.s 7
+		IL_0111: ldloc.3
+		IL_0112: ldloc.s 6
+		IL_0114: ldloc.s 7
+		IL_0116: callvirt instance object [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IHttpsModule::createServer(object, object)
+		IL_011b: stloc.s 5
+		IL_011d: ldloc.0
+		IL_011e: ldloc.s 5
+		IL_0120: stfld object Modules.Https_Request_UrlObject_WithOptions/Scope::server
+		IL_0125: ldloc.0
+		IL_0126: ldfld object Modules.Https_Request_UrlObject_WithOptions/Scope::server
+		IL_012b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0130: stloc.s 5
+		IL_0132: ldloc.0
+		IL_0133: castclass Modules.Https_Request_UrlObject_WithOptions/Scope
+		IL_0138: ldftn object Modules.Https_Request_UrlObject_WithOptions/ArrowFunction_L13C31::__js_call__(class Modules.Https_Request_UrlObject_WithOptions/Scope, object)
+		IL_013e: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_0143: ldc.i4.1
+		IL_0144: newarr [System.Runtime]System.Object
+		IL_0149: dup
+		IL_014a: ldc.i4.0
+		IL_014b: ldloc.0
+		IL_014c: stelem.ref
+		IL_014d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_0152: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_0157: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
+		IL_015c: ldc.i4.0
+		IL_015d: conv.r8
+		IL_015e: ldstr ""
+		IL_0163: ldc.i4.0
+		IL_0164: ldc.i4.0
+		IL_0165: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
+		IL_016a: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0)
+		IL_016f: stloc.s 8
+		IL_0171: ldloc.s 5
+		IL_0173: ldstr "listen"
+		IL_0178: ldc.r8 0.0
+		IL_0181: box [System.Runtime]System.Double
+		IL_0186: ldstr "127.0.0.1"
+		IL_018b: ldloc.s 8
+		IL_018d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember3(object, string, object, object, object)
+		IL_0192: pop
+		IL_0193: ret
 	} // end of method Https_Request_UrlObject_WithOptions::__js_module_init__
 
 } // end of class Modules.Https_Request_UrlObject_WithOptions
@@ -911,7 +911,7 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x21ec
+		// Method begins at RVA 0x21f0
 		// Header size: 12
 		// Code size: 60 (0x3c)
 		.maxstack 8

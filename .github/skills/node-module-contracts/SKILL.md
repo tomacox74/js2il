@@ -79,7 +79,14 @@ The current generator manifest has explicit modes for:
 - `zlib`;
 - `string_decoder`;
 - `timers`;
-- `timers/promises`.
+- `timers/promises`;
+- `url`;
+- `querystring`;
+- `net`;
+- `tls`;
+- `http`;
+- `https`;
+- `crypto`.
 
 Extend the shared generator for another module. Do not copy it into a
 module-specific generator.
@@ -144,6 +151,12 @@ For faster iteration, download each official document once and reuse it with
 module-specific generation and tests before running the aggregate generator;
 because the generator hash changes every generated contract, regenerating all
 contracts after each exploratory edit creates avoidable churn.
+
+For larger batches, inventory every document with one cached download and one
+topology report, then group modules by `normalized-api`, `documented-api`, or
+an existing specialized shape. A future scaffolder should produce manifest,
+lock, override, package-script, and test skeletons from that inventory while
+leaving public-roster and semantic decisions for review.
 
 Top-level exports are not always stored directly on the documentation module.
 For example, `child_process` stores its seven exported functions in nested
@@ -211,6 +224,51 @@ is incomplete or whose JavaScript variadic shape cannot be represented by the
 ordinary overload expander. Keep the selected official member roster and
 drift counts in generator code and locks; normalized methods are not a license
 to redefine the module around the runtime implementation.
+
+Normalized methods support two compact overload forms:
+
+- `minimumParameterCount` expands trailing optional parameters from one full
+  parameter list;
+- `overloads` represents non-prefix call forms and overload-specific return
+  types while sharing the official signatures and source citation.
+
+Prefer the shared `normalized-api` extraction kind when every selected method
+needs normalization. Prefer `documented-api` when a root or nested API section
+is mostly structured and only selected methods need normalization, signature
+repair, or return overrides.
+
+`url.json` splits top-level methods between the WHATWG and legacy sections,
+and its root has no methods or properties. Select both sections, normalize the
+11 records, and cite the pinned `lib/url.js` export roster for `URL`,
+`URLSearchParams`, and `URLPattern`.
+
+`querystring.json` has six root method records, but all six have incomplete
+structured signatures. `decode` and `encode` are callable aliases of `parse`
+and `stringify`; normalize their full call forms and statically target the
+existing intrinsic methods rather than adding reflection.
+
+Networking call forms are not reliably represented by one structured record.
+`net.connect`, `net.createConnection`, and `tls.connect` need reviewed
+overloads for options, IPC paths, ports, hosts, and callbacks. The TLS JSON
+root is named `tls_(ssl)`, not `tls`. Preserve the canonical module identity
+while locking the actual JSON root name.
+
+The HTTP and HTTPS JSON renderers duplicate `get` and `request` records and can
+attach the wrong descriptor list to the options-only record. Normalize the
+combined URL/options/callback call forms. Cross-check documented constructor
+exports against pinned source; in Node 24.18.1, `http.WebSocket` is a real
+top-level export.
+
+The `crypto` top-level API lives under the nested
+`` `node:crypto`_module_methods_and_properties `` section. Its structured JSON
+contains malformed parameter records and callback-sensitive methods whose
+return type differs between synchronous and callback forms. Drift-check those
+malformed records, use narrow signature overrides where one return type
+applies, and normalized overloads where return types differ.
+
+Until nested contract support from #1660 exists, constructor exports remain
+`object?` in the public ABI even when an intrinsic currently represents them
+with a CLR `Type` or delegate.
 
 `zlib.json` has root methods but omits return metadata for constructors and
 convenience methods. Pin all 34 root methods, use cited return overrides for

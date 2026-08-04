@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21f5
+				// Method begins at RVA 0x21f1
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21fe
+				// Method begins at RVA 0x21fa
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -56,7 +56,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x21ec
+			// Method begins at RVA 0x21e8
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -82,11 +82,11 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 312 (0x138)
+		// Code size: 307 (0x133)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Tls_CreateServer_Unsupported_RequestCert_Fails_Clearly/Scope,
-			[1] object,
+			[1] class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.ITlsModule,
 			[2] object,
 			[3] object,
 			[4] class [System.Runtime]System.Exception,
@@ -104,7 +104,7 @@
 		IL_0006: nop
 		IL_0007: ldarg.1
 		IL_0008: ldstr "node:tls"
-		IL_000d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
+		IL_000d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireRuntime::RequireObject<class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.ITlsModule>(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object)
 		IL_0012: stloc.1
 		IL_0013: ldarg.1
 		IL_0014: ldstr "./Tls_TestCertificates"
@@ -133,83 +133,82 @@
 		.try
 		{
 			IL_005e: nop
-			IL_005f: ldloc.1
-			IL_0060: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0065: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-			IL_006a: dup
-			IL_006b: ldstr "key"
-			IL_0070: ldloc.3
-			IL_0071: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-			IL_0076: dup
-			IL_0077: ldstr "cert"
-			IL_007c: ldloc.2
-			IL_007d: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-			IL_0082: dup
-			IL_0083: ldstr "requestCert"
-			IL_0088: ldc.i4.1
-			IL_0089: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-			IL_008e: stloc.s 9
-			IL_0090: ldstr "createServer"
-			IL_0095: ldloc.s 9
-			IL_0097: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_009c: pop
-			IL_009d: ldstr "console"
-			IL_00a2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_00a7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_00ac: ldstr "log"
-			IL_00b1: ldstr "unexpected success"
-			IL_00b6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_00bb: pop
-			IL_00bc: leave IL_0134
+			IL_005f: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+			IL_0064: dup
+			IL_0065: ldstr "key"
+			IL_006a: ldloc.3
+			IL_006b: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+			IL_0070: dup
+			IL_0071: ldstr "cert"
+			IL_0076: ldloc.2
+			IL_0077: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+			IL_007c: dup
+			IL_007d: ldstr "requestCert"
+			IL_0082: ldc.i4.1
+			IL_0083: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+			IL_0088: stloc.s 9
+			IL_008a: ldloc.1
+			IL_008b: ldstr "createServer"
+			IL_0090: ldloc.s 9
+			IL_0092: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_0097: pop
+			IL_0098: ldstr "console"
+			IL_009d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_00a2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_00a7: ldstr "log"
+			IL_00ac: ldstr "unexpected success"
+			IL_00b1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_00b6: pop
+			IL_00b7: leave IL_012f
 		} // end .try
 		catch [System.Runtime]System.Exception
 		{
-			IL_00c1: stloc.s 4
-			IL_00c3: ldloc.s 4
-			IL_00c5: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-			IL_00ca: dup
-			IL_00cb: brtrue IL_00e1
+			IL_00bc: stloc.s 4
+			IL_00be: ldloc.s 4
+			IL_00c0: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+			IL_00c5: dup
+			IL_00c6: brtrue IL_00dc
 
-			IL_00d0: pop
-			IL_00d1: ldloc.s 4
-			IL_00d3: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
-			IL_00d8: dup
-			IL_00d9: brtrue IL_00ed
+			IL_00cb: pop
+			IL_00cc: ldloc.s 4
+			IL_00ce: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+			IL_00d3: dup
+			IL_00d4: brtrue IL_00e8
 
-			IL_00de: pop
-			IL_00df: rethrow
+			IL_00d9: pop
+			IL_00da: rethrow
 
-			IL_00e1: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-			IL_00e6: stloc.s 5
-			IL_00e8: br IL_00ef
+			IL_00dc: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+			IL_00e1: stloc.s 5
+			IL_00e3: br IL_00ea
 
-			IL_00ed: stloc.s 5
+			IL_00e8: stloc.s 5
 
-			IL_00ef: ldloc.s 5
-			IL_00f1: stloc.s 6
-			IL_00f3: ldstr "console"
-			IL_00f8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_00fd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0102: stloc.s 8
-			IL_0104: ldloc.s 6
-			IL_0106: ldstr "message"
-			IL_010b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0110: stloc.s 10
-			IL_0112: ldstr "message:"
-			IL_0117: ldloc.s 10
-			IL_0119: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_011e: stloc.s 11
-			IL_0120: ldloc.s 8
-			IL_0122: ldstr "log"
-			IL_0127: ldloc.s 11
-			IL_0129: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_012e: pop
-			IL_012f: leave IL_0134
+			IL_00ea: ldloc.s 5
+			IL_00ec: stloc.s 6
+			IL_00ee: ldstr "console"
+			IL_00f3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_00f8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_00fd: stloc.s 8
+			IL_00ff: ldloc.s 6
+			IL_0101: ldstr "message"
+			IL_0106: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_010b: stloc.s 10
+			IL_010d: ldstr "message:"
+			IL_0112: ldloc.s 10
+			IL_0114: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0119: stloc.s 11
+			IL_011b: ldloc.s 8
+			IL_011d: ldstr "log"
+			IL_0122: ldloc.s 11
+			IL_0124: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_0129: pop
+			IL_012a: leave IL_012f
 		} // end handler
 
-		IL_0134: ldnull
-		IL_0135: stloc.s 7
-		IL_0137: ret
+		IL_012f: ldnull
+		IL_0130: stloc.s 7
+		IL_0132: ret
 	} // end of method Tls_CreateServer_Unsupported_RequestCert_Fails_Clearly::__js_module_init__
 
 } // end of class Modules.Tls_CreateServer_Unsupported_RequestCert_Fails_Clearly
@@ -225,7 +224,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2207
+			// Method begins at RVA 0x2203
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -249,7 +248,7 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x21a4
+		// Method begins at RVA 0x21a0
 		// Header size: 12
 		// Code size: 60 (0x3c)
 		.maxstack 8
@@ -289,7 +288,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2210
+		// Method begins at RVA 0x220c
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

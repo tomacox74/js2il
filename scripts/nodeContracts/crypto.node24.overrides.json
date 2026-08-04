@@ -1,0 +1,348 @@
+{
+  "properties": [
+    {
+      "name": "constants",
+      "type": "Object",
+      "source": "https://nodejs.org/docs/v24.18.1/api/crypto.html#cryptoconstants"
+    },
+    {
+      "name": "subtle",
+      "type": "SubtleCrypto",
+      "source": "https://nodejs.org/docs/v24.18.1/api/crypto.html#cryptosubtle"
+    },
+    {
+      "name": "webcrypto",
+      "type": "Crypto",
+      "source": "https://nodejs.org/docs/v24.18.1/api/crypto.html#cryptowebcrypto"
+    },
+    {
+      "name": "fips",
+      "type": "number",
+      "access": "read-write",
+      "deprecated": "Use crypto.getFips() and crypto.setFips() instead.",
+      "source": "https://nodejs.org/docs/v24.18.1/api/crypto.html#cryptofips"
+    },
+    {
+      "name": "Certificate",
+      "type": "Object",
+      "source": "https://nodejs.org/docs/v24.18.1/api/crypto.html#class-certificate"
+    },
+    {
+      "name": "Cipheriv",
+      "type": "Object",
+      "source": "https://nodejs.org/docs/v24.18.1/api/crypto.html#class-cipheriv"
+    },
+    {
+      "name": "Decipheriv",
+      "type": "Object",
+      "source": "https://nodejs.org/docs/v24.18.1/api/crypto.html#class-decipheriv"
+    },
+    {
+      "name": "DiffieHellman",
+      "type": "Object",
+      "source": "https://nodejs.org/docs/v24.18.1/api/crypto.html#class-diffiehellman"
+    },
+    {
+      "name": "DiffieHellmanGroup",
+      "type": "Object",
+      "source": "https://nodejs.org/docs/v24.18.1/api/crypto.html#class-diffiehellmangroup"
+    },
+    {
+      "name": "ECDH",
+      "type": "Object",
+      "source": "https://nodejs.org/docs/v24.18.1/api/crypto.html#class-ecdh"
+    },
+    {
+      "name": "Hash",
+      "type": "Object",
+      "deprecated": "The crypto.Hash constructor is deprecated.",
+      "source": "https://nodejs.org/docs/v24.18.1/api/crypto.html#class-hash"
+    },
+    {
+      "name": "Hmac",
+      "type": "Object",
+      "deprecated": "The crypto.Hmac constructor is deprecated.",
+      "source": "https://nodejs.org/docs/v24.18.1/api/crypto.html#class-hmac"
+    },
+    {
+      "name": "KeyObject",
+      "type": "Object",
+      "source": "https://nodejs.org/docs/v24.18.1/api/crypto.html#class-keyobject"
+    },
+    {
+      "name": "Sign",
+      "type": "Object",
+      "source": "https://nodejs.org/docs/v24.18.1/api/crypto.html#class-sign"
+    },
+    {
+      "name": "Verify",
+      "type": "Object",
+      "source": "https://nodejs.org/docs/v24.18.1/api/crypto.html#class-verify"
+    },
+    {
+      "name": "X509Certificate",
+      "type": "Object",
+      "source": "https://nodejs.org/docs/v24.18.1/api/crypto.html#class-x509certificate"
+    }
+  ],
+  "normalizedMethods": [
+    {
+      "name": "decapsulate",
+      "signatures": ["crypto.decapsulate(key, ciphertext[, callback])"],
+      "source": "https://nodejs.org/docs/v24.18.1/api/crypto.html#cryptodecapsulatekey-ciphertext-callback",
+      "overloads": [
+        {
+          "parameters": [
+            { "name": "key", "type": "Object" },
+            { "name": "ciphertext", "type": "ArrayBuffer|Buffer|TypedArray|DataView" }
+          ],
+          "returnType": "Buffer"
+        },
+        {
+          "parameters": [
+            { "name": "key", "type": "Object" },
+            { "name": "ciphertext", "type": "ArrayBuffer|Buffer|TypedArray|DataView" },
+            { "name": "callback", "type": "Function" }
+          ],
+          "returnType": "undefined"
+        }
+      ]
+    },
+    {
+      "name": "diffieHellman",
+      "signatures": ["crypto.diffieHellman(options[, callback])"],
+      "source": "https://nodejs.org/docs/v24.18.1/api/crypto.html#cryptodiffiehellmanoptions-callback",
+      "overloads": [
+        {
+          "parameters": [{ "name": "options", "type": "Object" }],
+          "returnType": "Buffer"
+        },
+        {
+          "parameters": [
+            { "name": "options", "type": "Object" },
+            { "name": "callback", "type": "Function" }
+          ],
+          "returnType": "undefined"
+        }
+      ]
+    },
+    {
+      "name": "encapsulate",
+      "signatures": ["crypto.encapsulate(key[, callback])"],
+      "source": "https://nodejs.org/docs/v24.18.1/api/crypto.html#cryptoencapsulatekey-callback",
+      "overloads": [
+        {
+          "parameters": [{ "name": "key", "type": "Object" }],
+          "returnType": "Object"
+        },
+        {
+          "parameters": [
+            { "name": "key", "type": "Object" },
+            { "name": "callback", "type": "Function" }
+          ],
+          "returnType": "undefined"
+        }
+      ]
+    },
+    {
+      "name": "randomBytes",
+      "signatures": ["crypto.randomBytes(size[, callback])"],
+      "source": "https://nodejs.org/docs/v24.18.1/api/crypto.html#cryptorandombytessize-callback",
+      "overloads": [
+        {
+          "parameters": [{ "name": "size", "type": "number" }],
+          "returnType": "Buffer"
+        },
+        {
+          "parameters": [
+            { "name": "size", "type": "number" },
+            { "name": "callback", "type": "Function" }
+          ],
+          "returnType": "undefined"
+        }
+      ]
+    },
+    {
+      "name": "randomInt",
+      "signatures": ["crypto.randomInt([min, ]max[, callback])"],
+      "source": "https://nodejs.org/docs/v24.18.1/api/crypto.html#cryptorandomintmin-max-callback",
+      "overloads": [
+        {
+          "parameters": [{ "name": "max", "type": "integer" }],
+          "returnType": "number"
+        },
+        {
+          "parameters": [
+            { "name": "max", "type": "integer" },
+            { "name": "callback", "type": "Function" }
+          ],
+          "returnType": "undefined"
+        },
+        {
+          "parameters": [
+            { "name": "min", "type": "integer" },
+            { "name": "max", "type": "integer" }
+          ],
+          "returnType": "number"
+        },
+        {
+          "parameters": [
+            { "name": "min", "type": "integer" },
+            { "name": "max", "type": "integer" },
+            { "name": "callback", "type": "Function" }
+          ],
+          "returnType": "undefined"
+        }
+      ]
+    },
+    {
+      "name": "sign",
+      "signatures": ["crypto.sign(algorithm, data, key[, callback])"],
+      "source": "https://nodejs.org/docs/v24.18.1/api/crypto.html#cryptosignalgorithm-data-key-callback",
+      "overloads": [
+        {
+          "parameters": [
+            { "name": "algorithm", "type": "string|null" },
+            { "name": "data", "type": "ArrayBuffer|Buffer|TypedArray|DataView" },
+            { "name": "key", "type": "Object" }
+          ],
+          "returnType": "Buffer"
+        },
+        {
+          "parameters": [
+            { "name": "algorithm", "type": "string|null" },
+            { "name": "data", "type": "ArrayBuffer|Buffer|TypedArray|DataView" },
+            { "name": "key", "type": "Object" },
+            { "name": "callback", "type": "Function" }
+          ],
+          "returnType": "undefined"
+        }
+      ]
+    },
+    {
+      "name": "verify",
+      "signatures": ["crypto.verify(algorithm, data, key, signature[, callback])"],
+      "source": "https://nodejs.org/docs/v24.18.1/api/crypto.html#cryptoverifyalgorithm-data-key-signature-callback",
+      "overloads": [
+        {
+          "parameters": [
+            { "name": "algorithm", "type": "string|null" },
+            { "name": "data", "type": "ArrayBuffer|Buffer|TypedArray|DataView" },
+            { "name": "key", "type": "Object" },
+            { "name": "signature", "type": "ArrayBuffer|Buffer|TypedArray|DataView" }
+          ],
+          "returnType": "boolean"
+        },
+        {
+          "parameters": [
+            { "name": "algorithm", "type": "string|null" },
+            { "name": "data", "type": "ArrayBuffer|Buffer|TypedArray|DataView" },
+            { "name": "key", "type": "Object" },
+            { "name": "signature", "type": "ArrayBuffer|Buffer|TypedArray|DataView" },
+            { "name": "callback", "type": "Function" }
+          ],
+          "returnType": "undefined"
+        }
+      ]
+    }
+  ],
+  "methodSignatureOverrides": {
+    "`crypto.createPrivateKey(key)`": {
+      "parameters": [{ "name": "key", "type": "string|Buffer|Object" }],
+      "returnType": "KeyObject",
+      "source": "https://nodejs.org/docs/v24.18.1/api/crypto.html#cryptocreateprivatekeykey"
+    },
+    "`crypto.createPublicKey(key)`": {
+      "parameters": [{ "name": "key", "type": "string|Buffer|Object" }],
+      "returnType": "KeyObject",
+      "source": "https://nodejs.org/docs/v24.18.1/api/crypto.html#cryptocreatepublickeykey"
+    },
+    "`crypto.privateDecrypt(privateKey, buffer)`": {
+      "parameters": [
+        { "name": "privateKey", "type": "Object" },
+        { "name": "buffer", "type": "ArrayBuffer|Buffer|TypedArray|DataView" }
+      ],
+      "returnType": "Buffer",
+      "source": "https://nodejs.org/docs/v24.18.1/api/crypto.html#cryptoprivatedecryptprivatekey-buffer"
+    },
+    "`crypto.privateEncrypt(privateKey, buffer)`": {
+      "parameters": [
+        { "name": "privateKey", "type": "Object" },
+        { "name": "buffer", "type": "ArrayBuffer|Buffer|TypedArray|DataView" }
+      ],
+      "returnType": "Buffer",
+      "source": "https://nodejs.org/docs/v24.18.1/api/crypto.html#cryptoprivateencryptprivatekey-buffer"
+    },
+    "`crypto.publicDecrypt(key, buffer)`": {
+      "parameters": [
+        { "name": "key", "type": "Object" },
+        { "name": "buffer", "type": "ArrayBuffer|Buffer|TypedArray|DataView" }
+      ],
+      "returnType": "Buffer",
+      "source": "https://nodejs.org/docs/v24.18.1/api/crypto.html#cryptopublicdecryptkey-buffer"
+    },
+    "`crypto.publicEncrypt(key, buffer)`": {
+      "parameters": [
+        { "name": "key", "type": "Object" },
+        { "name": "buffer", "type": "ArrayBuffer|Buffer|TypedArray|DataView" }
+      ],
+      "returnType": "Buffer",
+      "source": "https://nodejs.org/docs/v24.18.1/api/crypto.html#cryptopublicencryptkey-buffer"
+    }
+  },
+  "methodReturnTypes": {
+    "argon2": {
+      "type": "undefined",
+      "source": "https://nodejs.org/docs/v24.18.1/api/crypto.html#cryptoargon2algorithm-parameters-callback"
+    },
+    "checkPrime": {
+      "type": "undefined",
+      "source": "https://nodejs.org/docs/v24.18.1/api/crypto.html#cryptocheckprimecandidate-options-callback"
+    },
+    "generateKey": {
+      "type": "undefined",
+      "source": "https://nodejs.org/docs/v24.18.1/api/crypto.html#cryptogeneratekeytype-options-callback"
+    },
+    "generateKeyPair": {
+      "type": "undefined",
+      "source": "https://nodejs.org/docs/v24.18.1/api/crypto.html#cryptogeneratekeypairtype-options-callback"
+    },
+    "generatePrime": {
+      "type": "undefined",
+      "source": "https://nodejs.org/docs/v24.18.1/api/crypto.html#cryptogenerateprimesize-options-callback"
+    },
+    "hkdf": {
+      "type": "undefined",
+      "source": "https://nodejs.org/docs/v24.18.1/api/crypto.html#cryptohkdfdigest-ikm-salt-info-keylen-callback"
+    },
+    "pbkdf2": {
+      "type": "undefined",
+      "source": "https://nodejs.org/docs/v24.18.1/api/crypto.html#cryptopbkdf2password-salt-iterations-keylen-digest-callback"
+    },
+    "randomFill": {
+      "type": "undefined",
+      "source": "https://nodejs.org/docs/v24.18.1/api/crypto.html#cryptorandomfillbuffer-offset-size-callback"
+    },
+    "scrypt": {
+      "type": "undefined",
+      "source": "https://nodejs.org/docs/v24.18.1/api/crypto.html#cryptoscryptpassword-salt-keylen-options-callback"
+    },
+    "setEngine": {
+      "type": "undefined",
+      "source": "https://nodejs.org/docs/v24.18.1/api/crypto.html#cryptosetengineengine-flags"
+    },
+    "setFips": {
+      "type": "undefined",
+      "source": "https://nodejs.org/docs/v24.18.1/api/crypto.html#cryptosetfipsbool"
+    }
+  },
+  "intrinsicImplementations": {
+    "subtle": { "style": "direct" },
+    "webcrypto": { "style": "direct" },
+    "createHash": { "style": "direct", "argumentCount": 1 },
+    "createHmac": { "style": "direct", "argumentCount": 2 },
+    "getRandomValues": { "style": "direct" },
+    "pbkdf2Sync": { "style": "direct" },
+    "randomBytes": { "style": "direct", "parameterCounts": [1] }
+  }
+}

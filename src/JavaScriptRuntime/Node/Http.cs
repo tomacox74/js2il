@@ -6,7 +6,7 @@ using System.Text;
 namespace JavaScriptRuntime.Node
 {
     [NodeModule("http")]
-    public sealed class Http
+    public sealed partial class Http
     {
         private readonly HttpAgent _globalAgent = new();
 

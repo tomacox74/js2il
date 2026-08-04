@@ -261,6 +261,106 @@ const contractDefinitions = [
         lockStem: 'timers',
         contractAlias: 'TimersPromisesContract',
         documentationModule: 'timers'
+    },
+    {
+        flag: '--url',
+        kind: 'normalized-api',
+        moduleSpecifier: 'url',
+        documentationPrefix: 'url.',
+        interfaceName: 'IUrlModule',
+        intrinsicClassName: 'Url',
+        displayName: 'node:url',
+        outputStem: 'Url',
+        overrideStem: 'url',
+        lockStem: 'url',
+        contractAlias: 'UrlContract',
+        documentationModule: 'url',
+        methodSections: ['the_whatwg_url_api', 'legacy_url_api']
+    },
+    {
+        flag: '--querystring',
+        kind: 'normalized-api',
+        moduleSpecifier: 'querystring',
+        documentationPrefix: 'querystring.',
+        interfaceName: 'IQueryStringModule',
+        intrinsicClassName: 'QueryString',
+        displayName: 'node:querystring',
+        outputStem: 'QueryString',
+        overrideStem: 'querystring',
+        lockStem: 'querystring',
+        contractAlias: 'QueryStringContract',
+        documentationModule: 'querystring'
+    },
+    {
+        flag: '--net',
+        kind: 'normalized-api',
+        moduleSpecifier: 'net',
+        documentationPrefix: 'net.',
+        interfaceName: 'INetModule',
+        intrinsicClassName: 'Net',
+        displayName: 'node:net',
+        outputStem: 'Net',
+        overrideStem: 'net',
+        lockStem: 'net',
+        contractAlias: 'NetContract',
+        documentationModule: 'net'
+    },
+    {
+        flag: '--tls',
+        kind: 'normalized-api',
+        moduleSpecifier: 'tls',
+        documentationPrefix: 'tls.',
+        interfaceName: 'ITlsModule',
+        intrinsicClassName: 'Tls',
+        displayName: 'node:tls',
+        outputStem: 'Tls',
+        overrideStem: 'tls',
+        lockStem: 'tls',
+        contractAlias: 'TlsContract',
+        documentationModule: 'tls'
+    },
+    {
+        flag: '--http',
+        kind: 'documented-api',
+        moduleSpecifier: 'http',
+        documentationPrefix: 'http.',
+        interfaceName: 'IHttpModule',
+        intrinsicClassName: 'Http',
+        displayName: 'node:http',
+        outputStem: 'Http',
+        overrideStem: 'http',
+        lockStem: 'http',
+        contractAlias: 'HttpContract',
+        documentationModule: 'http'
+    },
+    {
+        flag: '--https',
+        kind: 'documented-api',
+        moduleSpecifier: 'https',
+        documentationPrefix: 'https.',
+        interfaceName: 'IHttpsModule',
+        intrinsicClassName: 'Https',
+        displayName: 'node:https',
+        outputStem: 'Https',
+        overrideStem: 'https',
+        lockStem: 'https',
+        contractAlias: 'HttpsContract',
+        documentationModule: 'https'
+    },
+    {
+        flag: '--crypto',
+        kind: 'documented-api',
+        moduleSpecifier: 'crypto',
+        documentationPrefix: 'crypto.',
+        interfaceName: 'ICryptoModule',
+        intrinsicClassName: 'Crypto',
+        displayName: 'node:crypto',
+        outputStem: 'Crypto',
+        overrideStem: 'crypto',
+        lockStem: 'crypto',
+        contractAlias: 'CryptoContract',
+        documentationModule: 'crypto',
+        methodSection: '`node:crypto`_module_methods_and_properties'
     }
 ];
 const args = process.argv.slice(2);
@@ -782,7 +882,7 @@ function generateMethodsWithOptionalAndRestParameters(methods) {
 }
 
 function generateNormalizedMethods() {
-    const methods = overrides.normalizedMethods ?? [];
+    const methods = normalizedMethodOverloads();
     return methods.map(method => {
         if (!method.name
             || !Array.isArray(method.signatures)
@@ -823,6 +923,46 @@ function generateNormalizedMethods() {
             `    [NodeModuleMember("${method.name}")]`,
             `    ${mapType(method.returnType, true)} ${csharpMemberName(method.name)}(${parameters.join(', ')});`
         ].join('\n');
+    });
+}
+
+function normalizedMethodOverloads() {
+    return (overrides.normalizedMethods ?? []).flatMap(method => {
+        if (method.minimumParameterCount !== undefined) {
+            if (!Number.isInteger(method.minimumParameterCount)
+                || method.minimumParameterCount < 0
+                || method.minimumParameterCount > (method.parameters?.length ?? -1)) {
+                throw new Error(
+                    `Normalized method '${method.name}' has an invalid minimumParameterCount.`);
+            }
+
+            return Array.from(
+                { length: method.parameters.length - method.minimumParameterCount + 1 },
+                (_, index) => ({
+                    ...method,
+                    parameters: method.parameters.slice(
+                        0,
+                        method.minimumParameterCount + index),
+                    minimumParameterCount: undefined
+                }));
+        }
+
+        if (!method.overloads) {
+            return [method];
+        }
+
+        if (!Array.isArray(method.overloads) || method.overloads.length === 0) {
+            throw new Error(
+                `Normalized method '${method.name}' must include at least one overload.`);
+        }
+
+        return method.overloads.map(overload => ({
+            ...method,
+            ...overload,
+            signatures: overload.signatures ?? method.signatures,
+            source: overload.source ?? method.source,
+            overloads: undefined
+        }));
     });
 }
 
@@ -920,7 +1060,104 @@ function generateInterface(documentation) {
     let methodGroups;
     let standardProperties;
 
-    if (contract.kind === 'process') {
+    if (contract.kind === 'normalized-api') {
+        const methodSections = (contract.methodSections ?? [])
+            .map(sectionName => requireSection(module, sectionName));
+        const methodContainers = methodSections.length > 0 ? methodSections : [module];
+        const selectedMethods = methodContainers.flatMap(
+            container => container.methods ?? []);
+
+        assertCount(module.methods?.length ?? 0, lock.rootMethodCount, 'root method count');
+        assertCount(module.properties?.length ?? 0, lock.rootPropertyCount, 'root property count');
+        assertCount(module.classes?.length ?? 0, lock.rootClassCount, 'root class count');
+        assertCount(module.modules?.length ?? 0, lock.rootSectionCount, 'root section count');
+        assertCount(
+            selectedMethods.length,
+            lock.selectedMethodRecordCount,
+            'selected method record count');
+        assertCount(
+            normalizedMethodOverloads().length,
+            lock.normalizedMethodOverloadCount,
+            'normalized method overload count');
+        assertCount(
+            overrides.properties.length,
+            lock.exportPropertyOverrideCount,
+            'export property override count');
+
+        const expectedSectionCounts = lock.methodSectionMethodCounts ?? {};
+        for (const [index, sectionName] of (contract.methodSections ?? []).entries()) {
+            assertCount(
+                methodSections[index].methods?.length ?? 0,
+                expectedSectionCounts[sectionName],
+                `'${sectionName}' method count`);
+        }
+
+        methodGroups = [{
+            heading: `${contract.displayName} methods`,
+            methods: [
+                ...generateMethodOverloads(removeNormalizedMethods(selectedMethods)),
+                ...generateNormalizedMethods()
+            ]
+        }];
+        standardProperties = [];
+    } else if (contract.kind === 'documented-api') {
+        const api = contract.methodSection
+            ? requireSection(module, contract.methodSection)
+            : module;
+        const selectedMethods = api.methods ?? [];
+
+        assertCount(module.methods?.length ?? 0, lock.rootMethodCount, 'root method count');
+        assertCount(module.properties?.length ?? 0, lock.rootPropertyCount, 'root property count');
+        assertCount(module.classes?.length ?? 0, lock.rootClassCount, 'root class count');
+        assertCount(module.modules?.length ?? 0, lock.rootSectionCount, 'root section count');
+        assertCount(
+            selectedMethods.length,
+            lock.selectedMethodRecordCount,
+            'selected method record count');
+        assertCount(
+            api.properties?.length ?? 0,
+            lock.selectedPropertyCount,
+            'selected property count');
+        assertCount(
+            new Set(selectedMethods.map(method => extractSignature(method).memberName)).size,
+            lock.uniqueMethodCount,
+            'unique method count');
+        assertCount(
+            normalizedMethodOverloads().length,
+            lock.normalizedMethodOverloadCount,
+            'normalized method overload count');
+        assertCount(
+            Object.keys(overrides.methodSignatureOverrides ?? {}).length,
+            lock.methodSignatureOverrideCount,
+            'method signature override count');
+        assertCount(
+            selectedMethods.filter(method => {
+                const signature = extractSignature(method);
+                return signature.parameters.trim().length > 0
+                    && (method.signatures?.[0]?.params?.length ?? 0) === 0;
+            }).length,
+            lock.malformedMethodRecordCount,
+            'malformed method record count');
+        assertCount(
+            Object.keys(overrides.methodReturnTypes ?? {}).length,
+            lock.methodReturnTypeOverrideCount,
+            'method return type override count');
+        assertCount(
+            overrides.properties.length,
+            lock.exportPropertyOverrideCount,
+            'export property override count');
+
+        methodGroups = [{
+            heading: `${contract.displayName} methods`,
+            methods: [
+                ...generateMethodOverloads(
+                    applyMethodSignatureOverrides(
+                        removeNormalizedMethods(selectedMethods))),
+                ...generateNormalizedMethods()
+            ]
+        }];
+        standardProperties = [];
+    } else if (contract.kind === 'process') {
         const excludedProperties = new Set(overrides.excludedProperties);
         const standardProcessProperties = (module.properties ?? [])
             .filter(property => {

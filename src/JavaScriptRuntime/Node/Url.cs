@@ -6,7 +6,7 @@ using JsArray = JavaScriptRuntime.Array;
 namespace JavaScriptRuntime.Node
 {
     [NodeModule("url")]
-    public sealed class Url
+    public sealed partial class Url
     {
         internal static readonly JsFuncNoScopes2 URLConstructorValue = CreateUrlConstructorValue();
 
