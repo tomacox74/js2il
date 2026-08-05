@@ -20,7 +20,7 @@ public static class ValidationTest
         {
             "minimal",
             "dromaeo-object-array",
-            "linq-js",
+            "constructed-object",
             "stopwatch-modern"
         };
 
@@ -35,6 +35,18 @@ public static class ValidationTest
             }
         }
         Console.WriteLine($"Verified representative scenario discovery: {string.Join(", ", requiredScenarios)}");
+
+        if (scenarios.Any(scenario => string.Equals(scenario.Key, "PrimeJavaScript.OnePass", StringComparison.Ordinal)))
+        {
+            throw new InvalidOperationException(
+                "The Node-dependent Prime fixture must not be part of the cross-runtime scenario catalog.");
+        }
+
+        var primeFixturePath = Path.Combine(scriptsDir, "prime", "PrimeJavaScript.OnePass.js");
+        if (!File.Exists(primeFixturePath))
+        {
+            throw new InvalidOperationException($"Expected Prime benchmark fixture '{primeFixturePath}' was not found.");
+        }
 
         // Test Jint
         Console.WriteLine("1. Testing Jint...");

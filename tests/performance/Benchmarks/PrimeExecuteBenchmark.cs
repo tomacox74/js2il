@@ -16,6 +16,7 @@ namespace Benchmarks;
 public class PrimeExecuteBenchmark : ExecutionBenchmarksBase
 {
     private const string ScenarioName = "PrimeJavaScript.OnePass";
+    private const string ScenarioRelativePath = "prime/PrimeJavaScript.OnePass.js";
 
     private const string RuntimeBootstrapScript = """
         globalThis.console = { log: function() {} };
@@ -120,7 +121,7 @@ public class PrimeExecuteBenchmark : ExecutionBenchmarksBase
         var path = Path.Combine(
             AppDomain.CurrentDomain.BaseDirectory,
             "Scenarios",
-            ScenarioName + ".js");
+            ScenarioRelativePath);
         return File.ReadAllText(path);
     }
 }
