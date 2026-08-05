@@ -178,6 +178,141 @@
 
 } // end of class Modules.Classes_ClassMethod_ReturnsThis_IsSelf_Log
 
+.class private auto ansi sealed beforefieldinit FunctionObjects.Classes_ClassMethod_ReturnsThis_IsSelf_Log_3C0C1E01.FunctionObject_ClassConstructor_28EE6FB2_Self
+	extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+{
+	// Methods
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x2102
+		// Header size: 1
+		// Code size: 7 (0x7)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+		IL_0006: ret
+	} // end of method FunctionObject_ClassConstructor_28EE6FB2_Self::.ctor
+
+	.method public hidebysig specialname virtual 
+		instance bool get_IsConstructor () cil managed 
+	{
+		// Method begins at RVA 0x210a
+		// Header size: 1
+		// Code size: 2 (0x2)
+		.maxstack 8
+
+		IL_0000: ldc.i4.1
+		IL_0001: ret
+	} // end of method FunctionObject_ClassConstructor_28EE6FB2_Self::get_IsConstructor
+
+	.method public hidebysig specialname virtual 
+		instance bool get_RequiresInvocationContext () cil managed 
+	{
+		// Method begins at RVA 0x210d
+		// Header size: 1
+		// Code size: 2 (0x2)
+		.maxstack 8
+
+		IL_0000: ldc.i4.0
+		IL_0001: ret
+	} // end of method FunctionObject_ClassConstructor_28EE6FB2_Self::get_RequiresInvocationContext
+
+	.method family hidebysig virtual 
+		instance object CallCore (
+			object thisArgument,
+			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+		) cil managed 
+	{
+		// Method begins at RVA 0x2110
+		// Header size: 1
+		// Code size: 11 (0xb)
+		.maxstack 8
+
+		IL_0000: ldstr "Class constructor cannot be invoked without 'new'"
+		IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
+		IL_000a: throw
+	} // end of method FunctionObject_ClassConstructor_28EE6FB2_Self::CallCore
+
+	.method family hidebysig virtual 
+		instance object ConstructCore (
+			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
+			object newTarget
+		) cil managed 
+	{
+		// Method begins at RVA 0x211c
+		// Header size: 1
+		// Code size: 11 (0xb)
+		.maxstack 8
+
+		IL_0000: ldstr "Generated construction adapter is reserved for the callable-family construction migration"
+		IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
+		IL_000a: throw
+	} // end of method FunctionObject_ClassConstructor_28EE6FB2_Self::ConstructCore
+
+} // end of class FunctionObjects.Classes_ClassMethod_ReturnsThis_IsSelf_Log_3C0C1E01.FunctionObject_ClassConstructor_28EE6FB2_Self
+
+.class private auto ansi sealed beforefieldinit FunctionObjects.Classes_ClassMethod_ReturnsThis_IsSelf_Log_3C0C1E01.FunctionObject_ClassMethod_47927AE7_Self_isSelf
+	extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+{
+	// Methods
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x2128
+		// Header size: 1
+		// Code size: 7 (0x7)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+		IL_0006: ret
+	} // end of method FunctionObject_ClassMethod_47927AE7_Self_isSelf::.ctor
+
+	.method public hidebysig specialname virtual 
+		instance bool get_IsConstructor () cil managed 
+	{
+		// Method begins at RVA 0x2130
+		// Header size: 1
+		// Code size: 2 (0x2)
+		.maxstack 8
+
+		IL_0000: ldc.i4.0
+		IL_0001: ret
+	} // end of method FunctionObject_ClassMethod_47927AE7_Self_isSelf::get_IsConstructor
+
+	.method public hidebysig specialname virtual 
+		instance bool get_RequiresInvocationContext () cil managed 
+	{
+		// Method begins at RVA 0x2133
+		// Header size: 1
+		// Code size: 2 (0x2)
+		.maxstack 8
+
+		IL_0000: ldc.i4.0
+		IL_0001: ret
+	} // end of method FunctionObject_ClassMethod_47927AE7_Self_isSelf::get_RequiresInvocationContext
+
+	.method family hidebysig virtual 
+		instance object CallCore (
+			object thisArgument,
+			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+		) cil managed 
+	{
+		// Method begins at RVA 0x2136
+		// Header size: 1
+		// Code size: 12 (0xc)
+		.maxstack 8
+
+		IL_0000: ldarg.1
+		IL_0001: castclass Modules.Classes_ClassMethod_ReturnsThis_IsSelf_Log/Self
+		IL_0006: call instance class Modules.Classes_ClassMethod_ReturnsThis_IsSelf_Log/Self Modules.Classes_ClassMethod_ReturnsThis_IsSelf_Log/Self::isSelf()
+		IL_000b: ret
+	} // end of method FunctionObject_ClassMethod_47927AE7_Self_isSelf::CallCore
+
+} // end of class FunctionObjects.Classes_ClassMethod_ReturnsThis_IsSelf_Log_3C0C1E01.FunctionObject_ClassMethod_47927AE7_Self_isSelf
+
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object
 {
@@ -185,7 +320,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2102
+		// Method begins at RVA 0x2143
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

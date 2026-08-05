@@ -16,6 +16,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   `arguments` materialization, separate construction entry points, and a
   context-free generated-adapter path. Add arity analysis and allocation
   benchmarks comparing the new ABI with `Closure.InvokeWithArgs`.
+- compiler: plan and emit deterministic callee-shaped `JsFunctionObject`
+  subclasses keyed by `CallableId`, with typed environment captures,
+  conditional lexical state, inferred typed canonical entry points, dynamic
+  adapter thunks, constructability/return-family metadata, and reserved
+  construction entry points for the staged callable-family migrations.
 
 ## v0.12.3 - 2026-08-05
 

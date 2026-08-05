@@ -148,6 +148,82 @@
 
 } // end of class Modules.Function_ReturnsStaticValueAndLogs
 
+.class private auto ansi sealed beforefieldinit FunctionObjects.Function_ReturnsStaticValueAndLogs_CCB2E1F2.FunctionObject_FunctionDeclaration_754F5DB8_returnsFive
+	extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+{
+	// Methods
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x20fd
+		// Header size: 1
+		// Code size: 7 (0x7)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+		IL_0006: ret
+	} // end of method FunctionObject_FunctionDeclaration_754F5DB8_returnsFive::.ctor
+
+	.method public hidebysig specialname virtual 
+		instance bool get_IsConstructor () cil managed 
+	{
+		// Method begins at RVA 0x2105
+		// Header size: 1
+		// Code size: 2 (0x2)
+		.maxstack 8
+
+		IL_0000: ldc.i4.1
+		IL_0001: ret
+	} // end of method FunctionObject_FunctionDeclaration_754F5DB8_returnsFive::get_IsConstructor
+
+	.method public hidebysig specialname virtual 
+		instance bool get_RequiresInvocationContext () cil managed 
+	{
+		// Method begins at RVA 0x2108
+		// Header size: 1
+		// Code size: 2 (0x2)
+		.maxstack 8
+
+		IL_0000: ldc.i4.0
+		IL_0001: ret
+	} // end of method FunctionObject_FunctionDeclaration_754F5DB8_returnsFive::get_RequiresInvocationContext
+
+	.method family hidebysig virtual 
+		instance object CallCore (
+			object thisArgument,
+			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+		) cil managed 
+	{
+		// Method begins at RVA 0x210b
+		// Header size: 1
+		// Code size: 12 (0xc)
+		.maxstack 8
+
+		IL_0000: ldnull
+		IL_0001: call float64 Modules.Function_ReturnsStaticValueAndLogs/returnsFive::__js_call__(object)
+		IL_0006: box [System.Runtime]System.Double
+		IL_000b: ret
+	} // end of method FunctionObject_FunctionDeclaration_754F5DB8_returnsFive::CallCore
+
+	.method family hidebysig virtual 
+		instance object ConstructCore (
+			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
+			object newTarget
+		) cil managed 
+	{
+		// Method begins at RVA 0x2118
+		// Header size: 1
+		// Code size: 11 (0xb)
+		.maxstack 8
+
+		IL_0000: ldstr "Generated construction adapter is reserved for the callable-family construction migration"
+		IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
+		IL_000a: throw
+	} // end of method FunctionObject_FunctionDeclaration_754F5DB8_returnsFive::ConstructCore
+
+} // end of class FunctionObjects.Function_ReturnsStaticValueAndLogs_CCB2E1F2.FunctionObject_FunctionDeclaration_754F5DB8_returnsFive
+
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object
 {
@@ -155,7 +231,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20fd
+		// Method begins at RVA 0x2124
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

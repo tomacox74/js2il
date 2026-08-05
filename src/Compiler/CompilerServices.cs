@@ -119,6 +119,9 @@ public static class CompilerServices
         services.AddSingleton<ICallableDeclarationWriter>(sp => sp.GetRequiredService<CallableRegistry>());
         services.AddSingleton<ICallableDeclarationReader>(sp => sp.GetRequiredService<CallableRegistry>());
 
+        // Canonical plans and emitted metadata for callee-shaped JsFunctionObject subclasses.
+        services.AddSingleton<GeneratedFunctionObjectRegistry>();
+
         services.AddTransient<JsMethodCompiler>();
         
         // Two-phase compilation coordinator (singleton per compilation)

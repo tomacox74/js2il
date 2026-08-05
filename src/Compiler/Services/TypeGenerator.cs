@@ -142,6 +142,9 @@ namespace Jroc.Services
             }
         }
 
+        public int NextMethodDefinitionRowAfterDeferredConstructors
+            => _deferredCtorStartRow + _deferredCtorPlan.Count;
+
         private static string GetRegistryScopeName(Scope scope) => ScopeNaming.GetRegistryScopeName(scope);
 
         private static bool IsSafeInjectedCommonJsRequireBinding(Scope scope, BindingInfo binding)

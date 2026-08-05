@@ -22,6 +22,10 @@ This doc is written **ideal-first**:
 JROC now has a real two-phase coordinator:
 
 - **Phase 1: Discovery** runs via `CallableDiscovery` and populates `CallableRegistry` keyed by `CallableId`.
+- The same discovery pass plans canonical
+  [generated function-object types](GeneratedFunctionObjectTypes.md) in
+  `GeneratedFunctionObjectRegistry`; their TypeDefs and adapter MethodDefs are
+  predeclared before callable body compilation.
 - **Milestone 2b/2b1: Planner** computes a dependency graph, SCC groups, and a deterministic stage order.
 - **Phase 1 (token preallocation)** reserves `MethodDefinitionHandle` row ids for planned callables so Phase 2 can compile bodies without changing metadata ordering.
   - Anonymous callables (arrow functions + function expressions) use a deterministic **MethodDef row id reservation** strategy.

@@ -8,6 +8,7 @@ using Jroc.DebugSymbols;
 using Jroc.Services.ILGenerators;
 using Jroc.Services.Contracts;
 using Jroc.Services.TwoPhaseCompilation;
+using Jroc.Services.VariableBindings;
 using Jroc.SymbolTables;
 using Jroc.Utilities.Ecma335;
 using Jroc.Validation;
@@ -222,6 +223,19 @@ namespace Jroc.Services
                 typeGenerator.GenerateTypes(symbolTable, moduleTypeHandleForLiterals, nestedTypeRelationshipRegistry);
             }
 
+            var generatedFunctionObjectEmitter = new GeneratedFunctionObjectEmitter(
+                _metadataBuilder,
+                _bclReferences,
+                methodBodyStream,
+                _serviceProvider.GetRequiredService<ScopeMetadataRegistry>(),
+                _serviceProvider.GetRequiredService<CallableRegistry>(),
+                _serviceProvider.GetRequiredService<GeneratedFunctionObjectRegistry>(),
+                _serviceProvider.GetRequiredService<FunctionTypeMetadataRegistry>(),
+                _serviceProvider.GetRequiredService<AnonymousCallableTypeMetadataRegistry>(),
+                _serviceProvider.GetRequiredService<ClassRegistry>());
+            generatedFunctionObjectEmitter.DeclareTypes(
+                typeGenerator.NextMethodDefinitionRowAfterDeferredConstructors);
+
             // Phase 3: Compile module init methods now (after scope types, before callables).
             // Module types were declared earlier with MethodList pointing at these MethodDefs.
             foreach (var module in moduleList)
@@ -253,6 +267,10 @@ namespace Jroc.Services
 
             // Phase 5: Emit all deferred scope constructors in the exact TypeDef creation order.
             typeGenerator.EmitDeferredScopeConstructors();
+
+            // Phase 6: Emit generated function-object constructors and adapters at their
+            // predeclared MethodDef rows.
+            generatedFunctionObjectEmitter.EmitMethods();
 
             // create the entry point for spining up the execution engine
             createEntryPoint(methodBodyStream);

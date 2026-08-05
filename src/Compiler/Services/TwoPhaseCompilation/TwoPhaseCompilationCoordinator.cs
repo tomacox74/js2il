@@ -48,6 +48,7 @@ public sealed class TwoPhaseCompilationCoordinator
 
     private readonly FunctionTypeMetadataRegistry _functionTypeMetadataRegistry;
     private readonly AnonymousCallableTypeMetadataRegistry _anonymousCallableTypeMetadataRegistry;
+    private readonly GeneratedFunctionObjectRegistry _generatedFunctionObjectRegistry;
     
     private IReadOnlyList<CallableId>? _discoveredCallables;
 
@@ -65,13 +66,15 @@ public sealed class TwoPhaseCompilationCoordinator
         CallableRegistry registry,
         Microsoft.Extensions.Logging.ILogger<TwoPhaseCompilationCoordinator>? diagnosticLogger = null,
         FunctionTypeMetadataRegistry? functionTypeMetadataRegistry = null,
-        AnonymousCallableTypeMetadataRegistry? anonymousCallableTypeMetadataRegistry = null)
+        AnonymousCallableTypeMetadataRegistry? anonymousCallableTypeMetadataRegistry = null,
+        GeneratedFunctionObjectRegistry? generatedFunctionObjectRegistry = null)
     {
         _diagnosticLogger = diagnosticLogger ?? Microsoft.Extensions.Logging.Abstractions.NullLogger<TwoPhaseCompilationCoordinator>.Instance;
         _diagnosticsEnabled = compilerOptions?.DiagnosticsEnabled ?? false;
         _registry = registry ?? throw new ArgumentNullException(nameof(registry));
         _functionTypeMetadataRegistry = functionTypeMetadataRegistry ?? new FunctionTypeMetadataRegistry();
         _anonymousCallableTypeMetadataRegistry = anonymousCallableTypeMetadataRegistry ?? new AnonymousCallableTypeMetadataRegistry();
+        _generatedFunctionObjectRegistry = generatedFunctionObjectRegistry ?? new GeneratedFunctionObjectRegistry();
     }
 
     /// <summary>
@@ -1661,11 +1664,21 @@ public sealed class TwoPhaseCompilationCoordinator
                 ParameterClrTypes = parameterClrTypes,
                 ReturnClrType = returnClrType,
                 InvokeShape = CallableSignature.GetInvokeShape(callable.JsParamCount),
-                IsInstanceMethod = callable.Kind == CallableKind.ClassMethod,
+                IsInstanceMethod = callable.Kind is CallableKind.ClassMethod
+                    or CallableKind.ClassGetter
+                    or CallableKind.ClassSetter,
                 ILMethodName = GetILMethodName(callable)
             };
             
             _registry.Declare(callable, signature);
+            if (callable.Kind != CallableKind.ClassStaticInitializer)
+            {
+                _generatedFunctionObjectRegistry.Plan(
+                    GeneratedFunctionObjectPlanner.CreatePlan(
+                        callable,
+                        signature,
+                        symbolTable));
+            }
             
             // Add to AST node index for O(1) lookup
             if (callable.AstNode != null)
@@ -1995,6 +2008,7 @@ public sealed class TwoPhaseCompilationCoordinator
     public void EnableStrictMode()
     {
         _registry.StrictMode = true;
+        _generatedFunctionObjectRegistry.StrictMode = true;
         
         if (_diagnosticsEnabled)
         {

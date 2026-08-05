@@ -123,9 +123,32 @@ namespace Jroc.Services
         public TypeReferenceHandle ExceptionType => _typeRefRegistry.GetOrAdd(typeof(System.Exception));
         public TypeReferenceHandle SystemMathType => _typeRefRegistry.GetOrAdd(typeof(System.Math));
         public TypeReferenceHandle MethodBaseType => _typeRefRegistry.GetOrAdd(typeof(System.Reflection.MethodBase));
+        public TypeReferenceHandle JsFunctionObjectType => _typeRefRegistry.GetOrAdd(typeof(JavaScriptRuntime.JsFunctionObject));
+        public TypeReferenceHandle JsCallArgumentsType => _typeRefRegistry.GetOrAdd(typeof(JavaScriptRuntime.JsCallArguments));
+        public TypeReferenceHandle InAttributeType => _typeRefRegistry.GetOrAdd(typeof(System.Runtime.InteropServices.InAttribute));
 
         public MemberReferenceHandle Object_Ctor_Ref => _memberRefRegistry.GetOrAddConstructor(typeof(object), Type.EmptyTypes);
         public MemberReferenceHandle JsObject_Ctor_Ref => _memberRefRegistry.GetOrAddConstructor(typeof(JavaScriptRuntime.JsObject), Type.EmptyTypes);
+        public MemberReferenceHandle JsFunctionObject_Ctor_Ref => _memberRefRegistry.GetOrAddConstructor(typeof(JavaScriptRuntime.JsFunctionObject), Type.EmptyTypes);
+        public MemberReferenceHandle JsCallArguments_GetArgument_Ref => _memberRefRegistry.GetOrAddMethod(
+            typeof(JavaScriptRuntime.JsCallArguments),
+            nameof(JavaScriptRuntime.JsCallArguments.GetArgument),
+            new[] { typeof(int) });
+        public MemberReferenceHandle TypeUtilities_ToNumber_Object_Ref => _memberRefRegistry.GetOrAddMethod(
+            typeof(JavaScriptRuntime.TypeUtilities),
+            nameof(JavaScriptRuntime.TypeUtilities.ToNumber),
+            new[] { typeof(object) });
+        public MemberReferenceHandle TypeUtilities_ToBoolean_Object_Ref => _memberRefRegistry.GetOrAddMethod(
+            typeof(JavaScriptRuntime.TypeUtilities),
+            nameof(JavaScriptRuntime.TypeUtilities.ToBoolean),
+            new[] { typeof(object) });
+        public MemberReferenceHandle DotNet2JSConversions_ToString_Ref => _memberRefRegistry.GetOrAddMethod(
+            typeof(JavaScriptRuntime.DotNet2JSConversions),
+            nameof(JavaScriptRuntime.DotNet2JSConversions.ToString),
+            new[] { typeof(object) });
+        public MemberReferenceHandle TypeError_Ctor_String_Ref => _memberRefRegistry.GetOrAddConstructor(
+            typeof(JavaScriptRuntime.TypeError),
+            new[] { typeof(string) });
         public MemberReferenceHandle AsyncScope_Ctor_Ref => _memberRefRegistry.GetOrAddConstructor(typeof(JavaScriptRuntime.AsyncScope), Type.EmptyTypes);
         public MemberReferenceHandle AsyncGeneratorScope_Ctor_Ref => _memberRefRegistry.GetOrAddConstructor(typeof(JavaScriptRuntime.AsyncGeneratorScope), Type.EmptyTypes);
         public MemberReferenceHandle GeneratorScope_Ctor_Ref => _memberRefRegistry.GetOrAddConstructor(typeof(JavaScriptRuntime.GeneratorScope), Type.EmptyTypes);
