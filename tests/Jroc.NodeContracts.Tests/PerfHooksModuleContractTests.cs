@@ -75,15 +75,35 @@ public class PerfHooksModuleContractTests
     }
 
     [Fact]
-    public void IntrinsicPerfHooksModule_DelegatesAvailableMembers()
+    public void IPerfHooksModule_ExposesAStablePerformanceContract()
+    {
+        var performanceProperty = typeof(IPerfHooksModule).GetProperty(nameof(IPerfHooksModule.performance));
+
+        Assert.Equal(typeof(IPerfHooksPerformance), performanceProperty?.PropertyType);
+        var typeAttribute = typeof(IPerfHooksPerformance)
+            .GetCustomAttribute<NodeModuleTypeAttribute>();
+        Assert.NotNull(typeAttribute);
+        Assert.Equal("perf_hooks", typeAttribute.ModuleName);
+        Assert.Equal("Performance", typeAttribute.TypeName);
+        Assert.Equal(
+            typeof(double),
+            typeof(IPerfHooksPerformance).GetMethod(nameof(IPerfHooksPerformance.now))?.ReturnType);
+    }
+
+    [Fact]
+    public void IntrinsicPerfHooksModule_DelegatesPerformanceNowThroughTheTypedContract()
     {
         IPerfHooksModule module = new PerfHooks();
 
-        var performance = Assert.IsType<PerfHooks.Performance>(module.performance);
+        IPerfHooksPerformance performance = module.performance;
 
         Assert.IsType<double>(performance.now());
         Assert.Null(
             typeof(PerfHooks).GetMethod(
+                "InvokeContractMember",
+                BindingFlags.NonPublic | BindingFlags.Instance));
+        Assert.Null(
+            typeof(PerfHooks.Performance).GetMethod(
                 "InvokeContractMember",
                 BindingFlags.NonPublic | BindingFlags.Instance));
     }

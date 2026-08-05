@@ -109,7 +109,7 @@ public sealed partial class FSPromises : FsContract
         => (global::JavaScriptRuntime.IJavaScriptPromise)readFile(path!)!;
 
     global::JavaScriptRuntime.IJavaScriptPromise FsContract.readFile(object? path, object? options)
-        => (global::JavaScriptRuntime.IJavaScriptPromise)readFile(path!, options!)!;
+        => (global::JavaScriptRuntime.IJavaScriptPromise)readFile(path!, global::Jroc.Runtime.Node.Contracts.NodeModuleContractHosting.Unwrap(options!)!)!;
 
     global::JavaScriptRuntime.IJavaScriptPromise FsContract.readlink(object? path)
         => throw CreateNotImplementedException("readlink");
@@ -178,7 +178,7 @@ public sealed partial class FSPromises : FsContract
         => (global::JavaScriptRuntime.IJavaScriptPromise)writeFile(file!, data!)!;
 
     global::JavaScriptRuntime.IJavaScriptPromise FsContract.writeFile(object? file, object? data, object? options)
-        => (global::JavaScriptRuntime.IJavaScriptPromise)writeFile(file!, data!, options!)!;
+        => (global::JavaScriptRuntime.IJavaScriptPromise)writeFile(file!, data!, global::Jroc.Runtime.Node.Contracts.NodeModuleContractHosting.Unwrap(options!)!)!;
 
     private static global::System.NotImplementedException CreateNotImplementedException(string memberName)
         => new($"The intrinsic node:fs/promises module does not implement 'fsPromises.{memberName}'.");

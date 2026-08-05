@@ -6,7 +6,7 @@ using JavaScriptRuntime.EngineCore;
 
 namespace JavaScriptRuntime.Node
 {
-    public sealed class FileHandle
+    public sealed partial class FileHandle
     {
         private readonly IIOScheduler _ioScheduler;
         private readonly string _path;
@@ -24,6 +24,8 @@ namespace JavaScriptRuntime.Node
         }
 
         public double fd { get; }
+
+        object? Jroc.Runtime.Node.Contracts.IJavaScriptValueHost.JavaScriptValue => this;
 
         public object read(object? buffer)
             => read(buffer, null, null, null);

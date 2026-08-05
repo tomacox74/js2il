@@ -72,9 +72,10 @@ later work.
 - Do not expose concrete runtime `Array` or `Promise` types in the public ABI.
 - Do not manually edit `*.Generated.cs`.
 - Do not add reflection, generic dispatch, or success-shaped placeholders.
-- Nested class and stable-shape APIs still require the shared nested-contract
-  architecture tracked by #1660. Do not silently treat that limitation as a
-  reason to skip contract follow-through.
+- Nested class and stable-shape APIs use the shared #1660 generator
+  architecture. Configure a generated `[NodeModuleType]` contract and, when
+  inputs remain dynamically shaped, use the generated JavaScript-value host
+  adapter rather than a concrete runtime type or reflection.
 
 ## Focused Validation
 

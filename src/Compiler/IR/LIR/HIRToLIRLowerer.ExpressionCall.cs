@@ -1267,16 +1267,15 @@ public sealed partial class HIRToLIRLowerer
                         || !contractBindingReceiver.Name.BindingInfo.CanSkipNodeModuleOverrideGuard,
                     contractArguments,
                     resultTempVar));
-            }
-            else
-            {
-                EmitDynamicMemberCall(
-                    receiverTempVar,
-                    calleePropAccess.PropertyName,
-                    contractArguments,
-                    resultTempVar);
+                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                return true;
             }
 
+            EmitDynamicMemberCall(
+                receiverTempVar,
+                calleePropAccess.PropertyName,
+                contractArguments,
+                resultTempVar);
             DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
             return true;
         }
@@ -1632,6 +1631,10 @@ public sealed partial class HIRToLIRLowerer
 
         return type.GetCustomAttributes(
                 typeof(Jroc.Runtime.Node.Contracts.NodeModuleInterfaceAttribute),
+                inherit: false)
+            .Length == 1
+            || type.GetCustomAttributes(
+                typeof(Jroc.Runtime.Node.Contracts.NodeModuleTypeAttribute),
                 inherit: false)
             .Length == 1
             ? type

@@ -553,7 +553,7 @@ function expandOptionalSegments(value) {
     ];
 }
 
-function extractSignature(method) {
+function extractSignature(method, documentationPrefix = contract.documentationPrefix) {
     const signature = method.textRaw.replace(/^`|`$/g, '');
     const openParen = signature.indexOf('(');
     const closeParen = signature.lastIndexOf(')');
@@ -563,7 +563,7 @@ function extractSignature(method) {
 
     return {
         signature,
-        memberName: signature.slice(0, openParen).replace(contract.documentationPrefix, ''),
+        memberName: signature.slice(0, openParen).replace(documentationPrefix, ''),
         parameters: signature.slice(openParen + 1, closeParen)
     };
 }
@@ -606,9 +606,9 @@ function optionalParameterNames(parameters) {
     return names;
 }
 
-function getOptionalParameterNames(memberName, parameters, descriptors) {
+function getOptionalParameterNames(memberName, parameters, descriptors, configuration = overrides) {
     const names = optionalParameterNames(parameters);
-    const override = overrides.methodOptionalParameters?.[memberName];
+    const override = configuration.methodOptionalParameters?.[memberName];
     if (!override) {
         return names;
     }
@@ -632,7 +632,46 @@ function getOptionalParameterNames(memberName, parameters, descriptors) {
     return names;
 }
 
+function resolveContractType(type) {
+    const value = String(type ?? '');
+    if (!value.startsWith('contract:')) {
+        return null;
+    }
+
+    const reference = value.slice('contract:'.length);
+    const separator = reference.lastIndexOf('/');
+    const moduleSpecifier = separator < 0
+        ? contract.moduleSpecifier
+        : reference.slice(0, separator);
+    const typeName = separator < 0 ? reference : reference.slice(separator + 1);
+    const definition = contractDefinitions.find(
+        candidate => candidate.moduleSpecifier === moduleSpecifier);
+    if (!definition) {
+        throw new Error(
+            `Unknown nested contract module '${moduleSpecifier}' referenced by '${value}'.`);
+    }
+
+    const referencedOverrides = definition === contract
+        ? overrides
+        : JSON.parse(fs.readFileSync(
+            path.join(__dirname, `${definition.overrideStem}.node24.overrides.json`),
+            'utf8'));
+    const nestedContract = (referencedOverrides.nestedContracts ?? [])
+        .find(candidate => candidate.typeName === typeName);
+    if (!nestedContract?.interfaceName) {
+        throw new Error(
+            `Unknown nested contract type '${typeName}' for node:${moduleSpecifier}.`);
+    }
+
+    return `global::Jroc.Runtime.Node.Contracts.${nestedContract.interfaceName}`;
+}
+
 function mapType(type, isReturnType = false) {
+    const contractType = resolveContractType(type);
+    if (contractType) {
+        return contractType;
+    }
+
     const normalized = String(type ?? '')
         .replaceAll('\\', '')
         .replace(/\s+/g, '')
@@ -755,12 +794,56 @@ function xmlEscape(value) {
         .replaceAll('>', '&gt;');
 }
 
-function generateMethodOverloads(methods) {
+function getMemberContractMetadata(memberName, parameters, configuration = overrides) {
+    const parameterContracts = configuration.parameterContracts?.[memberName] ?? {};
+    const parameterAttributes = new Map();
+    for (const [parameterName, parameterContract] of Object.entries(parameterContracts)) {
+        const contractType = resolveContractType(parameterContract.type);
+        if (!contractType || !parameterContract.source) {
+            throw new Error(
+                `Parameter contract '${memberName}.${parameterName}' must include a nested contract type and source.`);
+        }
+        parameterAttributes.set(
+            parameterName,
+            `[global::Jroc.Runtime.Node.Contracts.NodeModuleParameterContract(typeof(${contractType}))]`);
+    }
+
+    const resultContracts = configuration.resultContracts?.[memberName] ?? [];
+    const normalizedResultContracts = Array.isArray(resultContracts)
+        ? resultContracts
+        : [resultContracts];
+    const resultAttributes = normalizedResultContracts.map(resultContract => {
+        const contractType = resolveContractType(resultContract.type)
+            ?? mapType(resultContract.type);
+        const kind = {
+            promise: 'Promise',
+            callback: 'Callback',
+            iterator: 'Iterator',
+            'async-iterator': 'AsyncIterator'
+        }[resultContract.kind];
+        if (!kind || !contractType || !resultContract.source) {
+            throw new Error(
+                `Result contract '${memberName}' must include a supported kind, type, and source.`);
+        }
+        const callbackParameter = resultContract.kind === 'callback'
+            ? `, "${resultContract.callbackParameter ?? 'callback'}"`
+            : '';
+        return `[global::Jroc.Runtime.Node.Contracts.NodeModuleResultContract(` +
+            `global::Jroc.Runtime.Node.Contracts.NodeModuleResultKind.${kind}, typeof(${contractType})${callbackParameter})]`;
+    });
+
+    return { parameterAttributes, resultAttributes };
+}
+
+function generateMethodOverloads(
+    methods,
+    configuration = overrides,
+    documentationPrefix = contract.documentationPrefix) {
     const generated = [];
     const signatures = new Set();
 
     for (const method of methods) {
-        const parsed = extractSignature(method);
+        const parsed = extractSignature(method, documentationPrefix);
         const signature = method.signatures?.[0];
         if (!signature) {
             throw new Error(`Official Node.js method '${parsed.signature}' has no structured signature.`);
@@ -768,11 +851,16 @@ function generateMethodOverloads(methods) {
 
         const descriptors = new Map(
             (signature.params ?? []).map(parameter => [parameter.name, parameter]));
-        const returnType = mapMethodReturnType(parsed.memberName, signature);
+        const returnType = mapMethodReturnType(parsed.memberName, signature, configuration);
         const optionalNames = getOptionalParameterNames(
             parsed.memberName,
             parsed.parameters,
-            signature.params ?? []);
+            signature.params ?? [],
+            configuration);
+        const contractMetadata = getMemberContractMetadata(
+            parsed.memberName,
+            signature.params ?? [],
+            configuration);
 
         for (const expanded of expandOptionalSegments(parsed.parameters)) {
             const parameterNames = expanded
@@ -788,7 +876,8 @@ function generateMethodOverloads(methods) {
 
                 return {
                     name: csharpIdentifier(name),
-                    type: optionalNames.has(name) ? 'object?' : mapType(descriptor.type)
+                    type: optionalNames.has(name) ? 'object?' : mapType(descriptor.type),
+                    attribute: contractMetadata.parameterAttributes.get(name)
                 };
             });
 
@@ -806,8 +895,10 @@ function generateMethodOverloads(methods) {
                 ...(method.meta?.deprecated
                     ? [`    [global::System.Obsolete("Deprecated by Node.js since ${method.meta.deprecated.join(', ')}.")]`]
                     : []),
+                ...contractMetadata.resultAttributes.map(attribute => `    ${attribute}`),
                 `    [NodeModuleMember("${parsed.memberName}")]`,
-                `    ${returnType} ${methodName}(${parameters.map(parameter => `${parameter.type} ${parameter.name}`).join(', ')});`
+                `    ${returnType} ${methodName}(${parameters.map(parameter =>
+                    `${parameter.attribute ? `${parameter.attribute} ` : ''}${parameter.type} ${parameter.name}`).join(', ')});`
             ].join('\n'));
         }
     }
@@ -815,12 +906,15 @@ function generateMethodOverloads(methods) {
     return generated;
 }
 
-function generateMethodsWithOptionalAndRestParameters(methods) {
+function generateMethodsWithOptionalAndRestParameters(
+    methods,
+    configuration = overrides,
+    documentationPrefix = contract.documentationPrefix) {
     const generated = [];
     const signatures = new Set();
 
     for (const method of methods) {
-        const parsed = extractSignature(method);
+        const parsed = extractSignature(method, documentationPrefix);
         const signature = method.signatures?.[0];
         if (!signature) {
             throw new Error(`Official Node.js method '${parsed.signature}' has no structured signature.`);
@@ -830,14 +924,19 @@ function generateMethodsWithOptionalAndRestParameters(methods) {
         const optionalNames = getOptionalParameterNames(
             parsed.memberName,
             parsed.parameters,
-            descriptors);
+            descriptors,
+            configuration);
         const restParameter = descriptors.find(parameter => parameter.name.startsWith('...'));
         const positionalParameters = descriptors.filter(
             parameter => !parameter.name.startsWith('...'));
         const requiredCount = positionalParameters.filter(
             parameter => !optionalNames.has(parameter.name)).length;
-        const returnType = mapMethodReturnType(parsed.memberName, signature);
+        const returnType = mapMethodReturnType(parsed.memberName, signature, configuration);
         const methodName = csharpMemberName(parsed.memberName);
+        const contractMetadata = getMemberContractMetadata(
+            parsed.memberName,
+            descriptors,
+            configuration);
 
         for (let parameterCount = requiredCount;
             parameterCount <= positionalParameters.length;
@@ -848,7 +947,8 @@ function generateMethodsWithOptionalAndRestParameters(methods) {
                     const type = optionalNames.has(parameter.name)
                         ? 'object?'
                         : mapType(parameter.type);
-                    return `${type} ${csharpIdentifier(parameter.name)}`;
+                    const attribute = contractMetadata.parameterAttributes.get(parameter.name);
+                    return `${attribute ? `${attribute} ` : ''}${type} ${csharpIdentifier(parameter.name)}`;
                 });
 
             if (restParameter && parameterCount === positionalParameters.length) {
@@ -872,6 +972,7 @@ function generateMethodsWithOptionalAndRestParameters(methods) {
                 ...(method.meta?.deprecated
                     ? [`    [global::System.Obsolete("Deprecated by Node.js since ${method.meta.deprecated.join(', ')}.")]`]
                     : []),
+                ...contractMetadata.resultAttributes.map(attribute => `    ${attribute}`),
                 `    [NodeModuleMember("${parsed.memberName}")]`,
                 `    ${returnType} ${methodName}(${parameters.join(', ')});`
             ].join('\n'));
@@ -1010,8 +1111,8 @@ function applyMethodSignatureOverrides(methods) {
     });
 }
 
-function mapMethodReturnType(memberName, signature) {
-    const override = overrides.methodReturnTypes?.[memberName];
+function mapMethodReturnType(memberName, signature, configuration = overrides) {
+    const override = configuration.methodReturnTypes?.[memberName];
     if (override && (!override.type || !override.source)) {
         throw new Error(
             `Return type override for '${contract.documentationPrefix}${memberName}' ` +
@@ -1021,7 +1122,7 @@ function mapMethodReturnType(memberName, signature) {
     return mapType(override?.type ?? signature.return?.type, true);
 }
 
-function generateProperties(properties) {
+function generateProperties(properties, configuration = overrides) {
     return properties.map(property => {
         const match = property.textRaw.match(/^`([^`]+)`(?: Type:)? \{([^}]+)\}/);
         if (!match) {
@@ -1030,7 +1131,7 @@ function generateProperties(properties) {
         }
 
         const [, propertyName, propertyType] = match;
-        const access = overrides.propertyAccess?.[propertyName] ?? 'read-only';
+        const access = configuration.propertyAccess?.[propertyName] ?? 'read-only';
         if (!['read-only', 'read-write'].includes(access)) {
             throw new Error(
                 `Unsupported access '${access}' for ${contract.moduleSpecifier} property '${propertyName}'.`);
@@ -1047,6 +1148,225 @@ function generateProperties(properties) {
             `    ${mapType(propertyType)} ${csharpMemberName(propertyName)} { get;${access === 'read-write' ? ' set;' : ''} }`
         ].join('\n');
     });
+}
+
+function generateConfiguredNestedProperties(nestedContract) {
+    return (nestedContract.properties ?? []).map(property => {
+        if (!property.name || !property.type || !property.source) {
+            throw new Error(
+                `Nested contract '${nestedContract.typeName}' has an incomplete property definition.`);
+        }
+
+        const access = property.access ?? 'read-only';
+        if (!['read-only', 'read-write'].includes(access)) {
+            throw new Error(
+                `Nested contract '${nestedContract.typeName}.${property.name}' has unsupported access '${access}'.`);
+        }
+
+        return [
+            '    /// <summary>',
+            `    /// ${property.summary ?? `Gets <c>${xmlEscape(property.name)}</c>.`}`,
+            '    /// </summary>',
+            `    /// <remarks>Source: <c>${xmlEscape(property.source)}</c>.</remarks>`,
+            `    [NodeModuleMember("${property.name}")]`,
+            `    ${mapType(property.type)} ${csharpMemberName(property.name)} { get;${access === 'read-write' ? ' set;' : ''} }`
+        ].join('\n');
+    });
+}
+
+function generateConfiguredNestedMethods(nestedContract) {
+    return (nestedContract.methods ?? []).map(method => {
+        if (!method.name
+            || !Array.isArray(method.signatures)
+            || method.signatures.length === 0
+            || !Array.isArray(method.parameters)
+            || !method.returnType
+            || !method.source) {
+            throw new Error(
+                `Nested contract '${nestedContract.typeName}' has an incomplete method definition.`);
+        }
+
+        const metadata = getMemberContractMetadata(method.name, method.parameters, nestedContract);
+        const parameters = method.parameters.map(parameter => {
+            if (!parameter.name || !parameter.type) {
+                throw new Error(
+                    `Nested contract '${nestedContract.typeName}.${method.name}' has an incomplete parameter.`);
+            }
+
+            const attribute = metadata.parameterAttributes.get(parameter.name);
+            return `${attribute ? `${attribute} ` : ''}${parameter.optional ? 'object?' : mapType(parameter.type)} ${csharpIdentifier(parameter.name)}`;
+        });
+
+        return [
+            '    /// <summary>',
+            `    /// Node.js ${method.signatures.length === 1 ? 'signature' : 'signatures'}: ` +
+                method.signatures.map(signature => `<c>${xmlEscape(signature)}</c>`).join(', ') + '.',
+            '    /// </summary>',
+            `    /// <remarks>Source: <c>${xmlEscape(method.source)}</c>.</remarks>`,
+            ...metadata.resultAttributes.map(attribute => `    ${attribute}`),
+            `    [NodeModuleMember("${method.name}")]`,
+            `    ${mapType(method.returnType, true)} ${csharpMemberName(method.name)}(${parameters.join(', ')});`
+        ].join('\n');
+    });
+}
+
+function resolveNestedDocumentationContainer(module, nestedContract) {
+    const documentation = nestedContract.documentation;
+    if (!documentation) {
+        return null;
+    }
+
+    const section = documentation.section
+        ? requireSection(module, documentation.section)
+        : module;
+    if (!documentation.class) {
+        return section;
+    }
+
+    const documentedClass = (section.classes ?? []).find(
+        candidate => candidate.name === documentation.class);
+    if (!documentedClass) {
+        throw new Error(
+            `Official ${contract.moduleSpecifier} documentation is missing nested class '${documentation.class}'.`);
+    }
+
+    return documentedClass;
+}
+
+function generateNestedContract(module, nestedContract) {
+    if (!nestedContract.typeName || !nestedContract.interfaceName || !nestedContract.source) {
+        throw new Error(
+            'Every nested contract must include typeName, interfaceName, and source.');
+    }
+
+    const documentedContainer = resolveNestedDocumentationContainer(module, nestedContract);
+    if (documentedContainer && nestedContract.methodCount !== undefined) {
+        assertCount(
+            documentedContainer.methods?.length ?? 0,
+            nestedContract.methodCount,
+            `nested ${nestedContract.typeName} method count`);
+    }
+    if (documentedContainer && nestedContract.propertyCount !== undefined) {
+        assertCount(
+            documentedContainer.properties?.length ?? 0,
+            nestedContract.propertyCount,
+            `nested ${nestedContract.typeName} property count`);
+    }
+    const documentationPrefix = nestedContract.documentationPrefix
+        ?? `${nestedContract.typeName.toLowerCase()}.`;
+    const documentedMethods = documentedContainer
+        ? generateMethodOverloads(
+            documentedContainer.methods ?? [],
+            nestedContract,
+            documentationPrefix)
+        : [];
+    const configuredMethods = generateConfiguredNestedMethods(nestedContract);
+    const documentedProperties = documentedContainer
+        ? generateProperties(documentedContainer.properties ?? [], nestedContract)
+        : [];
+    const configuredProperties = generateConfiguredNestedProperties(nestedContract);
+    const properties = [...documentedProperties, ...configuredProperties];
+
+    return [
+        '// <auto-generated />',
+        `// Generated from the official Node.js ${lock.nodeVersion} ${documentationModule} API documentation.`,
+        `// Source: ${lock.sourceUrl}`,
+        `// SHA-256: ${lock.sha256}`,
+        '',
+        '#nullable enable',
+        '',
+        'namespace Jroc.Runtime.Node.Contracts;',
+        '',
+        '/// <summary>',
+        `/// Defines the documented <c>${contract.displayName}.${nestedContract.typeName}</c> contract.`,
+        '/// </summary>',
+        `/// <remarks>Source: <c>${xmlEscape(nestedContract.source)}</c>.</remarks>`,
+        `[global::System.CodeDom.Compiler.GeneratedCode("generateNodeModuleInterface.js", "sha256:${generatorSha256}")]`,
+        `[NodeModuleType("${contract.moduleSpecifier}", "${nestedContract.typeName}")]`,
+        `public interface ${nestedContract.interfaceName} : IJavaScriptValueHost`,
+        '{',
+        ...properties.flatMap(property => [property, '']),
+        ...documentedMethods.flatMap(method => [method, '']),
+        ...configuredMethods.flatMap(method => [method, '']),
+        '}',
+        ''
+    ].join('\n');
+}
+
+function generatedNestedContractOutputPath(nestedContract) {
+    return path.join(
+        repoRoot,
+        'src',
+        'JavaScriptRuntime',
+        'Node',
+        'Contracts',
+        `${nestedContract.interfaceName}.Generated.cs`);
+}
+
+function generateNestedHostAdapters(nestedContracts) {
+    const hostedContracts = nestedContracts.filter(nestedContract => nestedContract.host);
+    if (hostedContracts.length === 0) {
+        return null;
+    }
+
+    const className = `${contract.outputStem}NestedContractAdapters`;
+    const members = hostedContracts.flatMap(nestedContract => {
+        const hostName = `${nestedContract.interfaceName.slice(1)}Host`;
+        const properties = nestedContract.properties ?? [];
+        const hostedProperties = properties.flatMap(property => {
+            const propertyType = mapType(property.type);
+            const value = `global::JavaScriptRuntime.ObjectRuntime.GetProperty(_value!, "${property.name}")`;
+            const convertedValue = propertyType === 'bool'
+                ? `global::JavaScriptRuntime.TypeUtilities.ToBoolean(${value})`
+                : propertyType === 'double'
+                    ? `global::JavaScriptRuntime.TypeUtilities.ToNumber(${value})`
+                    : propertyType === 'string'
+                        ? `global::JavaScriptRuntime.DotNet2JSConversions.ToString(${value})`
+                        : `(${propertyType})${value}!`;
+            return [
+                `        public ${propertyType} ${csharpMemberName(property.name)}`,
+                `            => ${convertedValue};`,
+                ''
+            ];
+        });
+        return [
+            `    public static ${nestedContract.interfaceName} As${nestedContract.interfaceName.slice(1)}(object? value)`,
+            `        => value as ${nestedContract.interfaceName} ?? new ${hostName}(value);`,
+            '',
+            `    private sealed class ${hostName} : ${nestedContract.interfaceName}`,
+            '    {',
+            '        private readonly object? _value;',
+            '',
+            `        public ${hostName}(object? value)`,
+            '        {',
+            '            _value = value;',
+            '        }',
+            '',
+            '        object? IJavaScriptValueHost.JavaScriptValue => _value;',
+            '',
+            ...hostedProperties,
+            '    }',
+            ''
+        ];
+    });
+
+    return [
+        '// <auto-generated />',
+        `// Generated from the official Node.js ${lock.nodeVersion} ${documentationModule} API documentation.`,
+        `// Source: ${lock.sourceUrl}`,
+        `// SHA-256: ${lock.sha256}`,
+        '',
+        '#nullable enable',
+        '',
+        'namespace Jroc.Runtime.Node.Contracts;',
+        '',
+        `[global::System.CodeDom.Compiler.GeneratedCode("generateNodeModuleInterface.js", "sha256:${generatorSha256}")]`,
+        `public static class ${className}`,
+        '{',
+        ...members,
+        '}',
+        ''
+    ].join('\n');
 }
 
 function generateInterface(documentation) {
@@ -1661,10 +1981,6 @@ function generateInterface(documentation) {
         '/// <summary>',
         `/// Defines the public top-level <c>${contract.displayName}</c> module contract from Node.js ${lock.nodeVersion}.`,
         '/// </summary>',
-        '/// <remarks>',
-        '/// Nested option, result, and handle contracts intentionally remain dynamic in this proof of concept.',
-        '/// They will be strongly typed by the work tracked in GitHub issue #1660.',
-        '/// </remarks>',
         `[global::System.CodeDom.Compiler.GeneratedCode("generateNodeModuleInterface.js", "sha256:${generatorSha256}")]`,
         `[NodeModuleInterface("${contract.moduleSpecifier}")]`,
         `public interface ${contract.interfaceName}`,
@@ -1714,9 +2030,9 @@ function parseContractMembers(interfaceSource) {
         if (methodMatch) {
             const parameters = methodMatch[3]
                 ? methodMatch[3].split(', ').map(parameter => {
-                    const declaration = parameter.endsWith(' = null')
-                        ? parameter.slice(0, -' = null'.length)
-                        : parameter;
+                    const declaration = parameter
+                        .replace(/\[global::Jroc\.Runtime\.Node\.Contracts\.NodeModuleParameterContract\(typeof\([^)]+\)\)\]\s*/g, '')
+                        .replace(/ = null$/, '');
                     const parameterMatch = declaration.match(
                         /^(params )?(.+?) (@?[A-Za-z_][A-Za-z0-9_]*)$/);
                     if (!parameterMatch) {
@@ -1751,7 +2067,9 @@ function renderImplementedMethodBody(member, implementation) {
     const argumentCount = Math.min(configuredArgumentCount, member.parameters.length);
     const argumentsList = member.parameters
         .slice(0, argumentCount)
-        .map(parameter => `${parameter.name}!`);
+        .map((parameter, index) => implementation.unwrapArguments?.includes(index)
+            ? `global::Jroc.Runtime.Node.Contracts.NodeModuleContractHosting.Unwrap(${parameter.name}!)!`
+            : `${parameter.name}!`);
 
     while (argumentsList.length < (implementation.minimumArgumentCount ?? 0)) {
         argumentsList.push('null!');
@@ -1773,6 +2091,10 @@ function renderImplementedMethodBody(member, implementation) {
     }
 
     if (member.returnType === 'object?') {
+        return invocation;
+    }
+
+    if (implementation.returnsDirectly) {
         return invocation;
     }
 
@@ -1830,12 +2152,15 @@ function generateIntrinsicImplementation(interfaceSource) {
             }
 
             const target = implementation.target ?? member.csharpName;
+            const getValue = member.returnType === 'object?'
+                ? target
+                : `(${member.returnType})${target}!`;
             if (member.hasSetter) {
                 if (implementation.getterOnly) {
                     return [
                         `    ${declaration}`,
                         '    {',
-                        `        get => ${target};`,
+                        `        get => ${getValue};`,
                         `        set => throw CreateNotImplementedException("${member.nodeMemberName}");`,
                         '    }'
                     ].join('\n');
@@ -1844,7 +2169,7 @@ function generateIntrinsicImplementation(interfaceSource) {
                 return [
                     `    ${declaration}`,
                     '    {',
-                    `        get => ${target};`,
+                    `        get => ${getValue};`,
                     `        set => ${target} = value;`,
                     '    }'
                 ].join('\n');
@@ -1857,7 +2182,7 @@ function generateIntrinsicImplementation(interfaceSource) {
 
             return [
                 `    ${declaration}`,
-                `        => ${target};`
+                `        => ${getValue};`
             ].join('\n');
         }
 
@@ -1890,6 +2215,90 @@ function generateIntrinsicImplementation(interfaceSource) {
     ].join('\n');
 }
 
+function generateNestedIntrinsicImplementation(interfaceSource, nestedContract) {
+    if (!nestedContract.intrinsicType) {
+        return null;
+    }
+
+    const intrinsicImplementations = new Map(
+        Object.entries(nestedContract.intrinsicImplementations ?? {}));
+    const members = parseContractMembers(interfaceSource);
+    const generatedMembers = members.map(member => {
+        const implementation = intrinsicImplementations.get(member.nodeMemberName);
+        const isImplemented = implementation
+            && (!implementation.parameterCounts
+                || implementation.parameterCounts.includes(member.parameters.length));
+        const declaration = member.kind === 'property'
+            ? `${member.returnType} NestedContract.${member.csharpName}`
+            : `${member.returnType} NestedContract.${member.csharpName}(${member.parameters
+                .map(parameter => parameter.implementationDeclaration)
+                .join(', ')})`;
+
+        if (!isImplemented) {
+            return [
+                `        ${declaration}`,
+                `            => throw CreateNotImplementedException("${member.nodeMemberName}");`
+            ].join('\n');
+        }
+
+        if (member.kind === 'property') {
+            if (implementation.style !== 'direct') {
+                throw new Error(
+                    `Nested intrinsic property '${member.nodeMemberName}' must use direct invocation.`);
+            }
+
+            const target = implementation.target ?? member.csharpName;
+            const getValue = member.returnType === 'object?'
+                ? target
+                : `(${member.returnType})${target}!`;
+            return [
+                `        ${declaration}`,
+                `            => ${getValue};`
+            ].join('\n');
+        }
+
+        return [
+            `        ${declaration}`,
+            `            => ${renderImplementedMethodBody(member, implementation)};`
+        ].join('\n');
+    });
+
+    const typeParts = nestedContract.intrinsicType.split('.');
+    const typeEnvelope = typeParts.flatMap((typePart, index) => [
+        index === typeParts.length - 1
+            ? `${'    '.repeat(index)}public sealed partial class ${typePart} : NestedContract`
+            : `${'    '.repeat(index)}public sealed partial class ${typePart}`,
+        `${'    '.repeat(index)}{`
+    ]);
+    const closingBraces = typeParts
+        .map((_, index) => `${'    '.repeat(index)}}`)
+        .reverse();
+    const memberIndent = '    '.repeat(typeParts.length);
+
+    return [
+        '// <auto-generated />',
+        `// Generated from the official Node.js ${lock.nodeVersion} ${documentationModule} API documentation.`,
+        `// Source: ${lock.sourceUrl}`,
+        `// SHA-256: ${lock.sha256}`,
+        '',
+        '#nullable enable',
+        '#pragma warning disable CS0618',
+        '',
+        `using NestedContract = Jroc.Runtime.Node.Contracts.${nestedContract.interfaceName};`,
+        '',
+        'namespace JavaScriptRuntime.Node;',
+        '',
+        ...typeEnvelope,
+        ...generatedMembers.map(member => member.replaceAll('\n        ', `\n${memberIndent}`)
+            .replace(/^        /, memberIndent)),
+        '',
+        `${memberIndent}private static global::System.NotImplementedException CreateNotImplementedException(string memberName)`,
+        `${memberIndent}    => new($"The intrinsic ${contract.displayName}.${nestedContract.typeName} contract does not implement '${nestedContract.documentationPrefix ?? `${nestedContract.typeName.toLowerCase()}.`}{memberName}'.");`,
+        ...closingBraces,
+        ''
+    ].join('\n');
+}
+
 async function main() {
     const source = await loadDocumentation();
     const hash = crypto.createHash('sha256').update(source).digest('hex');
@@ -1898,12 +2307,52 @@ async function main() {
             `Official Node.js documentation hash mismatch. Expected ${lock.sha256}, received ${hash}.`);
     }
 
-    const generatedInterface = generateInterface(JSON.parse(source.toString('utf8')));
+    const documentation = JSON.parse(source.toString('utf8'));
+    const generatedInterface = generateInterface(documentation);
     const generatedIntrinsicImplementation = generateIntrinsicImplementation(generatedInterface);
     const outputs = new Map([
         [interfaceOutputPath, generatedInterface],
         [intrinsicImplementationOutputPath, generatedIntrinsicImplementation]
     ]);
+    const rootCategory = contract.rootCategory ?? 'modules';
+    const module = documentation[rootCategory]?.find(candidate => candidate.name === lock.module);
+    if (!module) {
+        throw new Error(
+            `Official documentation does not contain ${rootCategory === 'globals' ? 'global' : 'module'} '${lock.module}'.`);
+    }
+
+    const nestedContracts = overrides.nestedContracts ?? [];
+    for (const nestedContract of nestedContracts) {
+        const nestedInterface = generateNestedContract(module, nestedContract);
+        outputs.set(generatedNestedContractOutputPath(nestedContract), nestedInterface);
+
+        const nestedIntrinsicImplementation = generateNestedIntrinsicImplementation(
+            nestedInterface,
+            nestedContract);
+        if (nestedIntrinsicImplementation) {
+            outputs.set(
+                path.join(
+                    repoRoot,
+                    'src',
+                    'JavaScriptRuntime',
+                    'Node',
+                    `${nestedContract.intrinsicType}.${nestedContract.interfaceName}.Generated.cs`),
+                nestedIntrinsicImplementation);
+        }
+    }
+
+    const nestedHostAdapters = generateNestedHostAdapters(nestedContracts);
+    if (nestedHostAdapters) {
+        outputs.set(
+            path.join(
+                repoRoot,
+                'src',
+                'JavaScriptRuntime',
+                'Node',
+                'Contracts',
+                `${contract.outputStem}NestedContractAdapters.Generated.cs`),
+            nestedHostAdapters);
+    }
 
     if (checkOnly) {
         const staleOutputs = [...outputs]

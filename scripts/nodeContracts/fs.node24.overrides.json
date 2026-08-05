@@ -39,14 +39,14 @@
     "createWriteStream": { "style": "direct" },
     "mkdir": { "style": "argument-array" },
     "open": { "style": "argument-array" },
-    "readFile": { "style": "argument-array" },
+    "readFile": { "style": "argument-array", "unwrapArguments": [1] },
     "readdir": { "style": "argument-array" },
     "realpath": { "style": "argument-array" },
     "rename": { "style": "argument-array" },
     "rm": { "style": "argument-array" },
     "stat": { "style": "argument-array" },
     "unlink": { "style": "argument-array" },
-    "writeFile": { "style": "argument-array" },
+    "writeFile": { "style": "argument-array", "unwrapArguments": [2] },
     "existsSync": { "style": "direct" },
     "mkdirSync": { "style": "direct" },
     "readFileSync": { "style": "direct", "minimumArgumentCount": 2 },
@@ -55,5 +55,91 @@
     "statSync": { "style": "direct", "argumentCount": 1 },
     "unlinkSync": { "style": "direct" },
     "writeFileSync": { "style": "direct", "minimumArgumentCount": 3 }
-  }
+  },
+  "parameterContracts": {
+    "readFile": {
+      "options": {
+        "type": "contract:ReadFileOptions",
+        "source": "https://nodejs.org/docs/v24.18.1/api/fs.html#fsreadfilepath-options-callback"
+      }
+    },
+    "writeFile": {
+      "options": {
+        "type": "contract:WriteFileOptions",
+        "source": "https://nodejs.org/docs/v24.18.1/api/fs.html#fswritefilefile-data-options-callback"
+      }
+    }
+  },
+  "resultContracts": {
+    "open": {
+      "kind": "callback",
+      "type": "contract:FileHandle",
+      "source": "https://nodejs.org/docs/v24.18.1/api/fs.html#fsopenpath-flags-mode-callback"
+    }
+  },
+  "nestedContracts": [
+    {
+      "typeName": "ReadFileOptions",
+      "interfaceName": "IFsReadFileOptions",
+      "source": "https://nodejs.org/docs/v24.18.1/api/fs.html#fsreadfilepath-options-callback",
+      "host": true,
+      "properties": [
+        {
+          "name": "encoding",
+          "type": "Object",
+          "source": "https://nodejs.org/docs/v24.18.1/api/fs.html#fsreadfilepath-options-callback"
+        },
+        {
+          "name": "flag",
+          "type": "Object",
+          "source": "https://nodejs.org/docs/v24.18.1/api/fs.html#fsreadfilepath-options-callback"
+        }
+      ]
+    },
+    {
+      "typeName": "WriteFileOptions",
+      "interfaceName": "IFsWriteFileOptions",
+      "source": "https://nodejs.org/docs/v24.18.1/api/fs.html#fswritefilefile-data-options-callback",
+      "host": true,
+      "properties": [
+        {
+          "name": "encoding",
+          "type": "Object",
+          "source": "https://nodejs.org/docs/v24.18.1/api/fs.html#fswritefilefile-data-options-callback"
+        },
+        {
+          "name": "mode",
+          "type": "Object",
+          "source": "https://nodejs.org/docs/v24.18.1/api/fs.html#fswritefilefile-data-options-callback"
+        },
+        {
+          "name": "flag",
+          "type": "Object",
+          "source": "https://nodejs.org/docs/v24.18.1/api/fs.html#fswritefilefile-data-options-callback"
+        },
+        {
+          "name": "flush",
+          "type": "boolean",
+          "source": "https://nodejs.org/docs/v24.18.1/api/fs.html#fswritefilefile-data-options-callback"
+        }
+      ]
+    },
+    {
+      "typeName": "FileHandle",
+      "interfaceName": "IFsFileHandle",
+      "source": "https://nodejs.org/docs/v24.18.1/api/fs.html#class-filehandle",
+      "documentation": {
+        "section": "promises_api",
+        "class": "FileHandle"
+      },
+      "documentationPrefix": "filehandle.",
+      "methodCount": 24,
+      "propertyCount": 1,
+      "intrinsicType": "FileHandle",
+      "intrinsicImplementations": {
+        "fd": { "style": "direct" },
+        "close": { "style": "direct" }
+      }
+    }
+  ]
 }

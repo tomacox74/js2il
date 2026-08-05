@@ -781,6 +781,45 @@ namespace Jroc.SymbolTables
             }
         }
 
+        private Type? TryResolveRequiredModulePropertyType(
+            Expression? initializer,
+            string propertyName)
+        {
+            if (initializer is not CallExpression
+            {
+                Callee: Identifier { Name: "require" },
+                Arguments.Count: 1,
+                Arguments: [Literal { Value: string moduleSpecifier }]
+            })
+            {
+                return null;
+            }
+
+            var moduleContract = ResolveNodeModuleType(NormalizeModuleName(moduleSpecifier));
+            if (moduleContract == null)
+            {
+                return null;
+            }
+
+            foreach (var property in moduleContract.GetProperties(
+                         BindingFlags.Public | BindingFlags.Instance))
+            {
+                var memberName = property.GetCustomAttributes(
+                        typeof(Jroc.Runtime.Node.Contracts.NodeModuleMemberAttribute),
+                        inherit: false)
+                    .OfType<Jroc.Runtime.Node.Contracts.NodeModuleMemberAttribute>()
+                    .SingleOrDefault()
+                    ?.MemberName
+                    ?? property.Name;
+                if (string.Equals(memberName, propertyName, StringComparison.Ordinal))
+                {
+                    return property.PropertyType;
+                }
+            }
+
+            return null;
+        }
+
         /// <summary>
         /// Analyzes all scopes to determine which ones reference variables from parent scopes.
         /// This is used to determine if classes need _scopes fields and if functions need scope arrays.
@@ -1347,7 +1386,20 @@ namespace Jroc.SymbolTables
                                 {
                                     if (!targetScope.Bindings.ContainsKey(bid.Name))
                                     {
-                                        targetScope.Bindings[bid.Name] = new BindingInfo(bid.Name, kind, targetScope, decl);
+                                        var binding = new BindingInfo(bid.Name, kind, targetScope, decl);
+                                        var propertyName = prop.Key switch
+                                        {
+                                            Identifier propertyIdentifier => propertyIdentifier.Name,
+                                            Literal { Value: string propertyString } => propertyString,
+                                            _ => null
+                                        };
+                                        if (propertyName != null)
+                                        {
+                                            binding.ClrType = TryResolveRequiredModulePropertyType(
+                                                decl.Init,
+                                                propertyName);
+                                        }
+                                        targetScope.Bindings[bid.Name] = binding;
                                     }
                                 }
                             }

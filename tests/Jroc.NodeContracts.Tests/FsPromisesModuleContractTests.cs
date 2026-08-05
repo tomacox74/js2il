@@ -66,6 +66,47 @@ public class FsPromisesModuleContractTests
     }
 
     [Fact]
+    public void IFsPromisesModule_DescribesNestedPromiseAndIteratorResults()
+    {
+        var open = GetMethods("open");
+        Assert.All(
+            open,
+            method =>
+            {
+                var result = method.GetCustomAttribute<NodeModuleResultContractAttribute>();
+                Assert.NotNull(result);
+                Assert.Equal(NodeModuleResultKind.Promise, result.Kind);
+                Assert.Equal(typeof(IFsFileHandle), result.ContractType);
+            });
+
+        var glob = GetMethods("glob");
+        Assert.All(
+            glob,
+            method =>
+            {
+                var result = method.GetCustomAttribute<NodeModuleResultContractAttribute>();
+                Assert.NotNull(result);
+                Assert.Equal(NodeModuleResultKind.AsyncIterator, result.Kind);
+                Assert.Equal(typeof(string), result.ContractType);
+            });
+    }
+
+    [Fact]
+    public void FsNestedContractAdapter_HostsJavaScriptOptionsWithoutChangingProperties()
+    {
+        var options = new JsObject();
+        options.SetString("encoding", "utf8");
+        options.SetString("flag", "r");
+
+        var hosted = FsNestedContractAdapters.AsFsReadFileOptions(options);
+
+        Assert.Equal("utf8", hosted.encoding);
+        Assert.Equal("r", hosted.flag);
+        Assert.Same(options, ((IJavaScriptValueHost)hosted).JavaScriptValue);
+        Assert.Same(options, NodeModuleContractHosting.Unwrap(hosted));
+    }
+
+    [Fact]
     public void IFsPromisesModule_MapsEveryGeneratedMemberToItsJavaScriptName()
     {
         var contractType = typeof(IFsPromisesModule);

@@ -271,9 +271,11 @@ return type differs between synchronous and callback forms. Drift-check those
 malformed records, use narrow signature overrides where one return type
 applies, and normalized overloads where return types differ.
 
-Until nested contract support from #1660 exists, constructor exports remain
-`object?` in the public ABI even when an intrinsic currently represents them
-with a CLR `Type` or delegate.
+Constructor exports remain `object?` unless the exported value itself has a
+documented stable instance contract. For such nested types, add a cited
+`nestedContracts` entry to the module override so the shared generator emits a
+`[NodeModuleType]` interface and static intrinsic adapter; do not substitute a
+concrete runtime type in the public ABI.
 
 `zlib.json` has root methods but omits return metadata for constructors and
 convenience methods. Pin all 34 root methods, use cited return overrides for
@@ -286,9 +288,9 @@ keeping `constants`, `codes`, and the 11 constructors as cited properties.
 
 Constructor-only modules can have no root methods or properties.
 `string_decoder.json` documents a single `StringDecoder` class, so the
-top-level contract is the cited constructor property; class method counts
-remain useful drift detectors even though nested instance contracts are
-deferred to #1660.
+top-level contract is the cited constructor property. When its instance API is
+needed, use the same cited nested-contract configuration and retain its class
+method counts as drift detectors.
 
 `timers.json` splits the six `node:timers` functions between
 `scheduling_timers` and `cancelling_timers`. Its `timers_promises_api` section
@@ -541,10 +543,13 @@ Union rules:
 - Rest parameters use `params object?[]`.
 - Callbacks use `Delegate`, not invented `Action`/`Func` signatures.
 
-Nested stable shapes are tracked by issue #1660. Until the generator/runtime
-adapter support exists, do not expose a built-in concrete implementation as a
-shortcut. Retain `object?` with documented metadata, or implement the shared
-nested-contract architecture as part of the task.
+Nested stable shapes use the shared #1660 architecture: generated interfaces
+carry `[NodeModuleType]` identity, generated contract hosts retain the original
+JavaScript value through `IJavaScriptValueHost`, and promise/callback/iterator
+payloads use `NodeModuleResultContractAttribute`. Keep heterogeneous JavaScript
+parameters as `object?` and annotate their documented shapes with
+`NodeModuleParameterContractAttribute`; this preserves JavaScript property
+semantics without reflection.
 
 ## Generation and Validation
 

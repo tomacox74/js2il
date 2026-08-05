@@ -36,8 +36,8 @@ public sealed partial class PerfHooks : PerfHooksContract
     object? PerfHooksContract.constants
         => throw CreateNotImplementedException("constants");
 
-    object? PerfHooksContract.performance
-        => performance;
+    global::Jroc.Runtime.Node.Contracts.IPerfHooksPerformance PerfHooksContract.performance
+        => (global::Jroc.Runtime.Node.Contracts.IPerfHooksPerformance)performance!;
 
     object? PerfHooksContract.createHistogram()
         => throw CreateNotImplementedException("createHistogram");

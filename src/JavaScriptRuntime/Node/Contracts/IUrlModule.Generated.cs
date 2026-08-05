@@ -10,11 +10,7 @@ namespace Jroc.Runtime.Node.Contracts;
 /// <summary>
 /// Defines the public top-level <c>node:url</c> module contract from Node.js 24.18.1.
 /// </summary>
-/// <remarks>
-/// Nested option, result, and handle contracts intentionally remain dynamic in this proof of concept.
-/// They will be strongly typed by the work tracked in GitHub issue #1660.
-/// </remarks>
-[global::System.CodeDom.Compiler.GeneratedCode("generateNodeModuleInterface.js", "sha256:e0d88d11483936ce8b947360e0bac6d198acd445d3e7638f60398a795de2bba7")]
+[global::System.CodeDom.Compiler.GeneratedCode("generateNodeModuleInterface.js", "sha256:13ea61f00a6a5629ba94c535a3f32f6ddcc06ed57c5bde2aa5bdbf56d257d242")]
 [NodeModuleInterface("url")]
 public interface IUrlModule
 {

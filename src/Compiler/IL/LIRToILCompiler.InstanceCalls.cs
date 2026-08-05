@@ -257,6 +257,10 @@ internal sealed partial class LIRToILCompiler
         var isNodeModuleContract = receiverType.GetCustomAttributes(
                 typeof(NodeModuleInterfaceAttribute),
                 inherit: false)
+            .Length == 1
+            || receiverType.GetCustomAttributes(
+                typeof(NodeModuleTypeAttribute),
+                inherit: false)
             .Length == 1;
         var allMethods = receiverType
             .GetMethods(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance)
