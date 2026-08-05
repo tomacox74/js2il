@@ -155,10 +155,14 @@ namespace Jroc.Services
 
         private static bool IsNodeModuleContractType(Type type)
             => type.IsInterface
-                && type.GetCustomAttributes(
+                && (type.GetCustomAttributes(
                         typeof(NodeModuleInterfaceAttribute),
                         inherit: false)
-                    .Length == 1;
+                    .Length == 1
+                    || type.GetCustomAttributes(
+                        typeof(NodeModuleTypeAttribute),
+                        inherit: false)
+                    .Length == 1);
 
         private static Type GetDeclaredScopeFieldClrType(Scope scope, BindingInfo binding)
         {
