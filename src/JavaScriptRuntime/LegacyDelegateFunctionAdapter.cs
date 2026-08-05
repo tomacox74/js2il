@@ -17,11 +17,11 @@ public sealed class LegacyDelegateFunctionAdapter : JsFunctionObject
 
     public override bool IsConstructor => ObjectRuntime.IsConstructibleValue(Target);
 
-    protected override object? CallCore(object? thisArgument, object?[] arguments)
-        => Invoke(Target, _scopes, thisArgument, arguments);
+    protected override object? CallCore(object? thisArgument, in JsCallArguments arguments)
+        => Invoke(Target, _scopes, thisArgument, arguments.ToArray());
 
-    protected override object? ConstructCore(object?[] arguments, object? newTarget)
-        => Function.Construct(Target, arguments, newTarget);
+    protected override object? ConstructCore(in JsCallArguments arguments, object? newTarget)
+        => Function.Construct(Target, arguments.ToArray(), newTarget);
 
     internal static object? Invoke(
         Delegate target,

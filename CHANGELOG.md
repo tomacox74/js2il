@@ -11,6 +11,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   delegate-backed functions. Function objects now share ordinary object,
   descriptor, prototype, proxy, and integrity behavior without storing mutable
   per-invocation receiver or argument state.
+- runtime/perf: define the `JsFunctionObject` dynamic invocation ABI with
+  inline arities 0-5, array-backed arbitrary/spread arguments, lazy
+  `arguments` materialization, separate construction entry points, and a
+  context-free generated-adapter path. Add arity analysis and allocation
+  benchmarks comparing the new ABI with `Closure.InvokeWithArgs`.
 
 ## v0.12.3 - 2026-08-05
 

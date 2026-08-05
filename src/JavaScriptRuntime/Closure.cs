@@ -703,6 +703,14 @@ namespace JavaScriptRuntime
             if (target == null) throw new ArgumentNullException(nameof(target));
             if (scopes == null) throw new ArgumentNullException(nameof(scopes));
 
+            if (target is JsFunctionObject functionObject)
+            {
+                return CallableOperations.Call(
+                    functionObject,
+                    RuntimeServices.GetCurrentThis(),
+                    args)!;
+            }
+
             if (target is Delegate fastDelegate
                 && !Function.RequiresInvocationContext(fastDelegate)
                 && !Function.HasBoundWithObject(fastDelegate))
@@ -744,14 +752,6 @@ namespace JavaScriptRuntime
                     }
 
                     return InvokeWithArgsCore(proxyTarget, scopes, newTarget, args);
-                }
-
-                if (target is JsFunctionObject functionObject)
-                {
-                    return CallableOperations.Call(
-                        functionObject,
-                        RuntimeServices.GetCurrentThis(),
-                        args)!;
                 }
 
                 // CommonJS require(...) is passed into scripts as a RequireDelegate, which does not include
@@ -953,6 +953,11 @@ namespace JavaScriptRuntime
             if (target == null) throw new ArgumentNullException(nameof(target));
             if (scopes == null) throw new ArgumentNullException(nameof(scopes));
 
+            if (target is JsFunctionObject)
+            {
+                return CallableOperations.Call0(target, RuntimeServices.GetCurrentThis())!;
+            }
+
             if (TryInvokeProxyCallFastPath(target, scopes, System.Array.Empty<object>(), out var proxyResult))
             {
                 return proxyResult;
@@ -1003,6 +1008,11 @@ namespace JavaScriptRuntime
         {
             if (target == null) throw new ArgumentNullException(nameof(target));
             if (scopes == null) throw new ArgumentNullException(nameof(scopes));
+
+            if (target is JsFunctionObject)
+            {
+                return CallableOperations.Call1(target, RuntimeServices.GetCurrentThis(), a0)!;
+            }
 
             var args = new object?[] { a0 };
 
@@ -1063,6 +1073,15 @@ namespace JavaScriptRuntime
             if (target == null) throw new ArgumentNullException(nameof(target));
             if (scopes == null) throw new ArgumentNullException(nameof(scopes));
 
+            if (target is JsFunctionObject)
+            {
+                return CallableOperations.Call2(
+                    target,
+                    RuntimeServices.GetCurrentThis(),
+                    a0,
+                    a1)!;
+            }
+
             var args = new object?[] { a0, a1 };
 
             if (TryInvokeProxyCallFastPath(target, scopes, args, out var proxyResult))
@@ -1121,6 +1140,16 @@ namespace JavaScriptRuntime
         {
             if (target == null) throw new ArgumentNullException(nameof(target));
             if (scopes == null) throw new ArgumentNullException(nameof(scopes));
+
+            if (target is JsFunctionObject)
+            {
+                return CallableOperations.Call3(
+                    target,
+                    RuntimeServices.GetCurrentThis(),
+                    a0,
+                    a1,
+                    a2)!;
+            }
 
             var args = new object?[] { a0, a1, a2 };
 
@@ -1181,6 +1210,17 @@ namespace JavaScriptRuntime
             if (target == null) throw new ArgumentNullException(nameof(target));
             if (scopes == null) throw new ArgumentNullException(nameof(scopes));
 
+            if (target is JsFunctionObject)
+            {
+                return CallableOperations.Call4(
+                    target,
+                    RuntimeServices.GetCurrentThis(),
+                    a0,
+                    a1,
+                    a2,
+                    a3)!;
+            }
+
             var args = new object?[] { a0, a1, a2, a3 };
 
             if (TryInvokeProxyCallFastPath(target, scopes, args, out var proxyResult))
@@ -1239,6 +1279,18 @@ namespace JavaScriptRuntime
         {
             if (target == null) throw new ArgumentNullException(nameof(target));
             if (scopes == null) throw new ArgumentNullException(nameof(scopes));
+
+            if (target is JsFunctionObject)
+            {
+                return CallableOperations.Call5(
+                    target,
+                    RuntimeServices.GetCurrentThis(),
+                    a0,
+                    a1,
+                    a2,
+                    a3,
+                    a4)!;
+            }
 
             var args = new object?[] { a0, a1, a2, a3, a4 };
 
