@@ -27,6 +27,20 @@ public class Scope
     public List<Scope> Children { get; } = new();
     public Dictionary<string, BindingInfo> Bindings { get; } = new();
     public Dictionary<Node, SourceSpan> DebugSequencePointOverrides { get; } = new(ReferenceEqualityComparer.Instance);
+    private readonly HashSet<Type> _directRequireContractsWithoutOverrides = new();
+
+    /// <summary>
+    /// True when whole-program analysis proves that a direct destructuring require of
+    /// <paramref name="contractType"/> cannot observe an own-property override.
+    /// </summary>
+    public bool CanSkipDirectRequireNodeModuleOverrideGuard(Type contractType)
+        => _directRequireContractsWithoutOverrides.Contains(contractType);
+
+    internal void ClearDirectRequireNodeModuleOverrideGuards()
+        => _directRequireContractsWithoutOverrides.Clear();
+
+    internal void MarkDirectRequireNodeModuleOverrideGuardSafe(Type contractType)
+        => _directRequireContractsWithoutOverrides.Add(contractType);
 
     /// <summary>
     /// Stable inferred CLR types for JavaScript class instance fields.

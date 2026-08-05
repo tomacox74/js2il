@@ -172,22 +172,24 @@ public sealed partial class HIRToLIRLowerer
                                 out var propertyType)
                             && TryGetNodeModuleContractType(propertyType) != null)
                         {
-                            // Node modules are cached mutable objects. A prior require can
-                            // replace this own property, so retain the override guard.
+                            var requiresOverrideGuard = !(_scope?.CanSkipDirectRequireNodeModuleOverrideGuard(
+                                sourceContract) ?? false);
                             _methodBodyIR.Instructions.Add(new LIRCallNodeModuleContractMember(
                                 sourceValue,
                                 sourceContract,
                                 getterName,
                                 prop.Key!,
                                 IsPropertyGet: true,
-                                RequiresOverrideGuard: true,
+                                RequiresOverrideGuard: requiresOverrideGuard,
                                 Array.Empty<TempVariable>(),
                                 getResult));
-                            // The override branch can return any JavaScript value, including
-                            // an object with an inherited implementation of this member.
+                            // An override can return any JavaScript value, including an object
+                            // with an inherited implementation of this member.
                             DefineTempStorage(
                                 getResult,
-                                new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                                new ValueStorage(
+                                    ValueStorageKind.Reference,
+                                    requiresOverrideGuard ? typeof(object) : propertyType));
                         }
                         else
                         {
