@@ -746,6 +746,13 @@ namespace JavaScriptRuntime
                     return InvokeWithArgsCore(proxyTarget, scopes, newTarget, args);
                 }
 
+                if (target is JsFunctionObject functionObject)
+                {
+                    return CallableOperations.Call(
+                        functionObject,
+                        RuntimeServices.GetCurrentThis(),
+                        args)!;
+                }
 
                 // CommonJS require(...) is passed into scripts as a RequireDelegate, which does not include
                 // the standard jroc scopes array parameter. Support calling it via the generic dispatcher.

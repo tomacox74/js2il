@@ -285,12 +285,12 @@ namespace JavaScriptRuntime
                 throw new TypeError("Cannot convert undefined or null to object");
             }
 
-            if (getter is not null && getter is not JsNull && getter is not Delegate)
+            if (getter is not null && getter is not JsNull && !CallableOperations.IsCallable(getter))
             {
                 throw new TypeError("Getter must be a function");
             }
 
-            if (setter is not null && setter is not JsNull && setter is not Delegate)
+            if (setter is not null && setter is not JsNull && !CallableOperations.IsCallable(setter))
             {
                 throw new TypeError("Setter must be a function");
             }

@@ -100,6 +100,7 @@ namespace JavaScriptRuntime
                 case JavaScriptRuntime.Proxy proxy:
                     return proxy.IsCallableTarget ? "function" : "object";
             }
+            if (value is JsFunctionObject) return "function";
             if (value is JsObject) return "object";
             if (value is Array) return "object";
             // Functions are delegates in our model; detect common delegate base

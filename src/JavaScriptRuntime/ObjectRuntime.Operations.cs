@@ -312,7 +312,7 @@ namespace JavaScriptRuntime
             if (descriptor.HasGet)
             {
                 descriptor.Get = GetProperty(attributes, "get");
-                if (descriptor.Get is not null && descriptor.Get is not Delegate)
+                if (descriptor.Get is not null && !CallableOperations.IsCallable(descriptor.Get))
                 {
                     throw new TypeError("Getter must be a function");
                 }
@@ -321,7 +321,7 @@ namespace JavaScriptRuntime
             if (descriptor.HasSet)
             {
                 descriptor.Set = GetProperty(attributes, "set");
-                if (descriptor.Set is not null && descriptor.Set is not Delegate)
+                if (descriptor.Set is not null && !CallableOperations.IsCallable(descriptor.Set))
                 {
                     throw new TypeError("Setter must be a function");
                 }
@@ -1983,7 +1983,7 @@ namespace JavaScriptRuntime
             if (thisVal is string) return "[object String]";
             if (thisVal is bool) return "[object Boolean]";
             if (thisVal is double or float or int or long) return "[object Number]";
-            if (thisVal is Delegate) return "[object Function]";
+            if (thisVal is Delegate or JsFunctionObject) return "[object Function]";
             if (thisVal is JavaScriptRuntime.RegExp) return "[object RegExp]";
             if (thisVal is GeneratorObject) return "[object Generator]";
             if (thisVal is AsyncGeneratorObject) return "[object AsyncGenerator]";
@@ -2001,7 +2001,7 @@ namespace JavaScriptRuntime
             var target = GetCurrentThisObjectOrThrow();
             var prop = args != null && args.Length > 0 ? args[0] : null;
             var getter = args != null && args.Length > 1 ? args[1] : null;
-            if (getter is null || getter is JsNull || getter is not Delegate)
+            if (getter is null || getter is JsNull || !CallableOperations.IsCallable(getter))
             {
                 throw new TypeError("Getter must be a function");
             }
@@ -2056,7 +2056,7 @@ namespace JavaScriptRuntime
             var target = GetCurrentThisObjectOrThrow();
             var prop = args != null && args.Length > 0 ? args[0] : null;
             var setter = args != null && args.Length > 1 ? args[1] : null;
-            if (setter is null || setter is JsNull || setter is not Delegate)
+            if (setter is null || setter is JsNull || !CallableOperations.IsCallable(setter))
             {
                 throw new TypeError("Setter must be a function");
             }
@@ -2261,6 +2261,11 @@ namespace JavaScriptRuntime
                 return IsConstructibleValue(proxy.GetTarget("construct"));
             }
 
+            if (constructor is JsFunctionObject functionObject)
+            {
+                return functionObject.IsConstructor;
+            }
+
             if (constructor is Type type)
             {
                 return !(type.IsAbstract && type.IsSealed);
@@ -2338,6 +2343,11 @@ namespace JavaScriptRuntime
             if (constructor is ClassConstructorValue classConstructor)
             {
                 return ConstructTypeValue(classConstructor.Type, callArgs, classConstructor.Scopes, classConstructor);
+            }
+
+            if (constructor is JsFunctionObject functionObject)
+            {
+                return CallableOperations.Construct(functionObject, callArgs, newTarget);
             }
 
             object? ConstructTypeValue(Type type, object[] callArgs, object[] scopes, object? prototypeOwner = null)
@@ -3635,17 +3645,9 @@ namespace JavaScriptRuntime
                 return null;
             }
 
-            if (callable is Delegate)
+            if (CallableOperations.IsCallable(callable))
             {
-                var previousThis = RuntimeServices.SetCurrentThis(thisArg);
-                try
-                {
-                    return Closure.InvokeWithArgs(callable, System.Array.Empty<object>(), args);
-                }
-                finally
-                {
-                    RuntimeServices.SetCurrentThis(previousThis);
-                }
+                return CallableOperations.Call(callable, thisArg, args);
             }
 
             throw new TypeError("Property accessor is not a function");

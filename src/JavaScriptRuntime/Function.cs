@@ -157,7 +157,7 @@ public static class Function
     }
 
         private static bool IsCallableObject(object? target)
-            => target is Delegate || target is Proxy proxy && proxy.IsCallableTarget;
+            => CallableOperations.IsCallable(target);
 
         private static object? PrototypeApply(object[] scopes, object?[]? args)
         {
@@ -300,23 +300,10 @@ public static class Function
 
         public static object? Apply(object target, object? thisArg, object? argArray)
         {
-            if (target is Delegate del)
-            {
-                return Apply(del, thisArg, argArray);
-            }
-
-            if (target is Proxy proxy && proxy.IsCallableTarget)
+            if (CallableOperations.IsCallable(target))
             {
                 var argsList = NormalizeApplyArguments(argArray);
-                var prevThis = RuntimeServices.SetCurrentThis(thisArg);
-                try
-                {
-                    return Closure.InvokeWithArgs(proxy, System.Array.Empty<object>(), argsList);
-                }
-                finally
-                {
-                    RuntimeServices.SetCurrentThis(prevThis);
-                }
+                return CallableOperations.Call(target, thisArg, argsList);
             }
 
             throw new TypeError("Function.prototype.apply called on non-function");
@@ -341,23 +328,10 @@ public static class Function
 
         public static object? Call(object target, object? thisArg, object?[] args)
         {
-            if (target is Delegate del)
-            {
-                return Call(del, thisArg, args);
-            }
-
-            if (target is Proxy proxy && proxy.IsCallableTarget)
+            if (CallableOperations.IsCallable(target))
             {
                 args ??= System.Array.Empty<object?>();
-                var prevThis = RuntimeServices.SetCurrentThis(thisArg);
-                try
-                {
-                    return Closure.InvokeWithArgs(proxy, System.Array.Empty<object>(), args);
-                }
-                finally
-                {
-                    RuntimeServices.SetCurrentThis(prevThis);
-                }
+                return CallableOperations.Call(target, thisArg, args);
             }
 
             throw new TypeError("Function.prototype.call called on non-function");
