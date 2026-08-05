@@ -88,6 +88,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   direct instance calls.
 - compiler: preserve `DynamicImport.Import` results as concrete JavaScript
   `Promise` values instead of widening them to `object`.
+- compiler/runtime: preserve Error constructor semantics for `undefined`
+  messages and throw `TypeError` when abstract string conversion receives a
+  Symbol. Directly invoke typed dynamic-import `Promise.then` calls while
+  retaining property-override fallback behavior.
 
 ## v0.12.1 - 2026-08-02
 

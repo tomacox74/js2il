@@ -160,21 +160,7 @@ internal sealed partial class LIRToILCompiler
                         return true;
                     }
 
-                    var errorClrType = Jroc.IR.BuiltInErrorTypes.GetRuntimeErrorClrType(newError.ErrorTypeName);
-
-                    if (newError.Message.HasValue)
-                    {
-                        EmitLoadBuiltInErrorMessage(newError.Message.Value, ilEncoder, allocation, methodDescriptor);
-                        var ctor = _memberRefRegistry.GetOrAddConstructor(errorClrType, parameterTypes: new[] { typeof(string) });
-                        ilEncoder.OpCode(ILOpCode.Newobj);
-                        ilEncoder.Token(ctor);
-                        EmitStoreTemp(newError.Result, ilEncoder, allocation);
-                        return true;
-                    }
-
-                    var defaultCtor = _memberRefRegistry.GetOrAddConstructor(errorClrType, parameterTypes: System.Type.EmptyTypes);
-                    ilEncoder.OpCode(ILOpCode.Newobj);
-                    ilEncoder.Token(defaultCtor);
+                    EmitNewBuiltInError(newError, ilEncoder, allocation, methodDescriptor);
                     EmitStoreTemp(newError.Result, ilEncoder, allocation);
                     return true;
                 }
@@ -201,26 +187,36 @@ internal sealed partial class LIRToILCompiler
         }
     }
 
-    private void EmitLoadBuiltInErrorMessage(
-        TempVariable message,
+    private void EmitNewBuiltInError(
+        LIRNewBuiltInError newError,
         InstructionEncoder ilEncoder,
         TempLocalAllocation allocation,
         MethodDescriptor methodDescriptor)
     {
+        var errorClrType = Jroc.IR.BuiltInErrorTypes.GetRuntimeErrorClrType(newError.ErrorTypeName);
+        if (!newError.Message.HasValue)
+        {
+            var defaultCtor = _memberRefRegistry.GetOrAddConstructor(errorClrType, parameterTypes: System.Type.EmptyTypes);
+            ilEncoder.OpCode(ILOpCode.Newobj);
+            ilEncoder.Token(defaultCtor);
+            return;
+        }
+
+        var message = newError.Message.Value;
         var storage = GetTempStorage(message);
         if (storage.Kind == ValueStorageKind.Reference && storage.ClrType == typeof(string))
         {
             EmitLoadTempAsString(message, ilEncoder, allocation, methodDescriptor);
-            return;
+            var stringConstructor = _memberRefRegistry.GetOrAddConstructor(errorClrType, parameterTypes: new[] { typeof(string) });
+            ilEncoder.OpCode(ILOpCode.Newobj);
+            ilEncoder.Token(stringConstructor);
         }
-
-        // JavaScript Error constructors stringify non-string messages.
-        EmitLoadTempAsObject(message, ilEncoder, allocation, methodDescriptor);
-        var toString = _memberRefRegistry.GetOrAddMethod(
-            typeof(JavaScriptRuntime.DotNet2JSConversions),
-            nameof(JavaScriptRuntime.DotNet2JSConversions.ToString),
-            parameterTypes: new[] { typeof(object) });
-        ilEncoder.OpCode(ILOpCode.Call);
-        ilEncoder.Token(toString);
+        else
+        {
+            EmitLoadTempAsObject(message, ilEncoder, allocation, methodDescriptor);
+            var objectConstructor = _memberRefRegistry.GetOrAddConstructor(errorClrType, parameterTypes: new[] { typeof(object) });
+            ilEncoder.OpCode(ILOpCode.Newobj);
+            ilEncoder.Token(objectConstructor);
+        }
     }
 }

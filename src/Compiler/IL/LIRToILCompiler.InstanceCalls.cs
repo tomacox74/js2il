@@ -39,12 +39,15 @@ internal sealed partial class LIRToILCompiler
 
         var fallbackLabel = ilEncoder.DefineLabel();
         var doneLabel = ilEncoder.DefineLabel();
+        var overrideGuardType = instruction.OverrideGuardType ?? typeof(JavaScriptRuntime.ObjectRuntime);
+        var overrideGuardMethodName = instruction.OverrideGuardMethodName
+            ?? nameof(JavaScriptRuntime.ObjectRuntime.HasOwnPropertyOverride);
 
         EmitLoadTempAsObject(instruction.Receiver, ilEncoder, allocation, methodDescriptor);
         ilEncoder.Ldstr(_metadataBuilder, instruction.JavaScriptMemberName);
         var hasOverride = _memberRefRegistry.GetOrAddMethod(
-            typeof(JavaScriptRuntime.ObjectRuntime),
-            nameof(JavaScriptRuntime.ObjectRuntime.HasOwnPropertyOverride),
+            overrideGuardType,
+            overrideGuardMethodName,
             new[] { typeof(object), typeof(string) });
         ilEncoder.OpCode(ILOpCode.Call);
         ilEncoder.Token(hasOverride);
