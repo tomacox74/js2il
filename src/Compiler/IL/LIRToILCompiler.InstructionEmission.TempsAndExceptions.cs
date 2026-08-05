@@ -203,38 +203,20 @@ internal sealed partial class LIRToILCompiler
         }
 
         var message = newError.Message.Value;
-        var hasMessage = ilEncoder.DefineLabel();
-        var done = ilEncoder.DefineLabel();
-
-        // Error(message) invokes ToString only when message is not JavaScript undefined.
-        EmitLoadTempAsObject(message, ilEncoder, allocation, methodDescriptor);
-        ilEncoder.Branch(ILOpCode.Brtrue, hasMessage);
-
-        var defaultConstructor = _memberRefRegistry.GetOrAddConstructor(errorClrType, parameterTypes: System.Type.EmptyTypes);
-        ilEncoder.OpCode(ILOpCode.Newobj);
-        ilEncoder.Token(defaultConstructor);
-        ilEncoder.Branch(ILOpCode.Br, done);
-
-        ilEncoder.MarkLabel(hasMessage);
         var storage = GetTempStorage(message);
         if (storage.Kind == ValueStorageKind.Reference && storage.ClrType == typeof(string))
         {
             EmitLoadTempAsString(message, ilEncoder, allocation, methodDescriptor);
+            var stringConstructor = _memberRefRegistry.GetOrAddConstructor(errorClrType, parameterTypes: new[] { typeof(string) });
+            ilEncoder.OpCode(ILOpCode.Newobj);
+            ilEncoder.Token(stringConstructor);
         }
         else
         {
             EmitLoadTempAsObject(message, ilEncoder, allocation, methodDescriptor);
-            var toString = _memberRefRegistry.GetOrAddMethod(
-                typeof(JavaScriptRuntime.DotNet2JSConversions),
-                nameof(JavaScriptRuntime.DotNet2JSConversions.ToErrorMessageString),
-                parameterTypes: new[] { typeof(object) });
-            ilEncoder.OpCode(ILOpCode.Call);
-            ilEncoder.Token(toString);
+            var objectConstructor = _memberRefRegistry.GetOrAddConstructor(errorClrType, parameterTypes: new[] { typeof(object) });
+            ilEncoder.OpCode(ILOpCode.Newobj);
+            ilEncoder.Token(objectConstructor);
         }
-
-        var messageConstructor = _memberRefRegistry.GetOrAddConstructor(errorClrType, parameterTypes: new[] { typeof(string) });
-        ilEncoder.OpCode(ILOpCode.Newobj);
-        ilEncoder.Token(messageConstructor);
-        ilEncoder.MarkLabel(done);
     }
 }

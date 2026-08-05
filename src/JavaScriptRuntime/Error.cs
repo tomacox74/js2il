@@ -35,6 +35,8 @@ namespace JavaScriptRuntime
 
         public Error() : this(string.Empty) { }
 
+        public Error(object? message) : this(CoerceMessage(message)) { }
+
         public Error(string? message) : base(message ?? string.Empty)
         {
             Name = "Error";
@@ -71,6 +73,9 @@ namespace JavaScriptRuntime
             PrototypeChain.SetPrototype(this, prototype);
         }
 
+        protected static string CoerceMessage(object? message)
+            => message is null ? string.Empty : DotNet2JSConversions.ToErrorMessageString(message);
+
         public override string ToString()
             => string.IsNullOrEmpty(Message) ? Name : $"{Name}: {Message}";
     }
@@ -79,6 +84,7 @@ namespace JavaScriptRuntime
     public class EvalError : Error
     {
         public EvalError() : base() { Name = "EvalError"; PrototypeChain.SetPrototype(this, GlobalThis.EvalErrorPrototypeValue); }
+        public EvalError(object? message) : base(message) { Name = "EvalError"; PrototypeChain.SetPrototype(this, GlobalThis.EvalErrorPrototypeValue); }
         public EvalError(string? message) : base(message) { Name = "EvalError"; PrototypeChain.SetPrototype(this, GlobalThis.EvalErrorPrototypeValue); }
         public EvalError(string? message, Exception? inner) : base(message, inner) { Name = "EvalError"; PrototypeChain.SetPrototype(this, GlobalThis.EvalErrorPrototypeValue); }
     }
@@ -87,6 +93,7 @@ namespace JavaScriptRuntime
     public class RangeError : Error
     {
         public RangeError() : base() { Name = "RangeError"; PrototypeChain.SetPrototype(this, GlobalThis.RangeErrorPrototypeValue); }
+        public RangeError(object? message) : base(message) { Name = "RangeError"; PrototypeChain.SetPrototype(this, GlobalThis.RangeErrorPrototypeValue); }
         public RangeError(string? message) : base(message) { Name = "RangeError"; PrototypeChain.SetPrototype(this, GlobalThis.RangeErrorPrototypeValue); }
         public RangeError(string? message, Exception? inner) : base(message, inner) { Name = "RangeError"; PrototypeChain.SetPrototype(this, GlobalThis.RangeErrorPrototypeValue); }
     }
@@ -95,6 +102,7 @@ namespace JavaScriptRuntime
     public class ReferenceError : Error
     {
         public ReferenceError() : base() { Name = "ReferenceError"; PrototypeChain.SetPrototype(this, GlobalThis.ReferenceErrorPrototypeValue); }
+        public ReferenceError(object? message) : base(message) { Name = "ReferenceError"; PrototypeChain.SetPrototype(this, GlobalThis.ReferenceErrorPrototypeValue); }
         public ReferenceError(string? message) : base(message) { Name = "ReferenceError"; PrototypeChain.SetPrototype(this, GlobalThis.ReferenceErrorPrototypeValue); }
         public ReferenceError(string? message, Exception? inner) : base(message, inner) { Name = "ReferenceError"; PrototypeChain.SetPrototype(this, GlobalThis.ReferenceErrorPrototypeValue); }
     }
@@ -103,6 +111,7 @@ namespace JavaScriptRuntime
     public class SyntaxError : Error
     {
         public SyntaxError() : base() { Name = "SyntaxError"; PrototypeChain.SetPrototype(this, GlobalThis.SyntaxErrorPrototypeValue); }
+        public SyntaxError(object? message) : base(message) { Name = "SyntaxError"; PrototypeChain.SetPrototype(this, GlobalThis.SyntaxErrorPrototypeValue); }
         public SyntaxError(string? message) : base(message) { Name = "SyntaxError"; PrototypeChain.SetPrototype(this, GlobalThis.SyntaxErrorPrototypeValue); }
         public SyntaxError(string? message, Exception? inner) : base(message, inner) { Name = "SyntaxError"; PrototypeChain.SetPrototype(this, GlobalThis.SyntaxErrorPrototypeValue); }
     }
@@ -111,6 +120,7 @@ namespace JavaScriptRuntime
     public class TypeError : Error
     {
         public TypeError() : base() { Name = "TypeError"; PrototypeChain.SetPrototype(this, GlobalThis.TypeErrorPrototypeValue); }
+        public TypeError(object? message) : base(message) { Name = "TypeError"; PrototypeChain.SetPrototype(this, GlobalThis.TypeErrorPrototypeValue); }
         public TypeError(string? message) : base(message) { Name = "TypeError"; PrototypeChain.SetPrototype(this, GlobalThis.TypeErrorPrototypeValue); }
         public TypeError(string? message, Exception? inner) : base(message, inner) { Name = "TypeError"; PrototypeChain.SetPrototype(this, GlobalThis.TypeErrorPrototypeValue); }
     }
@@ -119,6 +129,7 @@ namespace JavaScriptRuntime
     public class URIError : Error
     {
         public URIError() : base() { Name = "URIError"; PrototypeChain.SetPrototype(this, GlobalThis.URIErrorPrototypeValue); }
+        public URIError(object? message) : base(message) { Name = "URIError"; PrototypeChain.SetPrototype(this, GlobalThis.URIErrorPrototypeValue); }
         public URIError(string? message) : base(message) { Name = "URIError"; PrototypeChain.SetPrototype(this, GlobalThis.URIErrorPrototypeValue); }
         public URIError(string? message, Exception? inner) : base(message, inner) { Name = "URIError"; PrototypeChain.SetPrototype(this, GlobalThis.URIErrorPrototypeValue); }
     }
@@ -131,6 +142,7 @@ namespace JavaScriptRuntime
         public JavaScriptRuntime.Array errors => Errors; // JS-style alias
 
         public AggregateError() : this(System.Array.Empty<object?>(), null) { }
+        public AggregateError(object? message) : this(System.Array.Empty<object?>(), CoerceMessage(message)) { }
         public AggregateError(string? message) : this(System.Array.Empty<object?>(), message) { }
         public AggregateError(System.Collections.IEnumerable errors) : this(errors, null) { }
         public AggregateError(System.Collections.IEnumerable errors, string? message) : base(message)
