@@ -14,7 +14,11 @@ if (programArgs.Length > 0 && programArgs[0] == "--validate")
 }
 else
 {
-    if (programArgs.Length > 0 && programArgs[0] == "--dispatch")
+    if (programArgs.Length > 0 && programArgs[0] == "--callable-arity-analysis")
+    {
+        Environment.ExitCode = CallableArityAnalysis.Run();
+    }
+    else if (programArgs.Length > 0 && programArgs[0] == "--dispatch")
     {
         // Run the focused late-bound dispatch microbenchmarks without interactive benchmark selection.
         var summary = BenchmarkRunner.Run<LateBoundDispatchBenchmarks>(args: programArgs.Skip(1).ToArray());
@@ -43,6 +47,11 @@ else
     else if (programArgs.Length > 0 && programArgs[0] == "--callable-baselines")
     {
         var summary = BenchmarkRunner.Run<CallableArchitectureBenchmarks>(args: programArgs.Skip(1).ToArray());
+        SetExitCodeFromSummaries([summary]);
+    }
+    else if (programArgs.Length > 0 && programArgs[0] == "--callable-abi")
+    {
+        var summary = BenchmarkRunner.Run<JsFunctionObjectInvocationBenchmarks>(args: programArgs.Skip(1).ToArray());
         SetExitCodeFromSummaries([summary]);
     }
 #if SOURCE_JROC_PROJECTS
@@ -122,6 +131,8 @@ Console.WriteLine("  dotnet run -c Release --descriptor-storage # Run inline des
 Console.WriteLine("  dotnet run -c Release --array-operations # Run dense-array operation microbenchmarks");
 Console.WriteLine("  dotnet run -c Release --prototype-storage # Run prototype storage allocation microbenchmarks");
 Console.WriteLine("  dotnet run -c Release --callable-baselines # Run callable materialization and steady-state baselines");
+Console.WriteLine("  dotnet run -c Release --callable-abi # Compare function-object and legacy invocation ABIs");
+Console.WriteLine("  dotnet run -c Release --callable-arity-analysis # Measure benchmark/runtime call-site arities");
 Console.WriteLine("  dotnet run -c Release -- --dromaeo # Run Dromaeo execution benchmarks");
 Console.WriteLine("  dotnet run -c Release -- --kracken --scenario audio-oscillator # Run one Kraken scenario");
 Console.WriteLine("  dotnet run -c Release -- --prime-execute # Run the one-pass Prime sieve execution benchmark");

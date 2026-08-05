@@ -52,7 +52,7 @@ public sealed class JsFunctionObjectRuntimeTests
             var setter = new LambdaFunction((thisArgument, arguments) =>
             {
                 setterThis = thisArgument;
-                setterValue = arguments[0];
+                setterValue = arguments.GetArgument(0);
                 return null;
             });
             JavaScriptRuntime.Object.defineProperty(function, "accessor", new JsObject
@@ -254,21 +254,21 @@ public sealed class JsFunctionObjectRuntimeTests
 
     private sealed class RecordingFunction : JsFunctionObject
     {
-        protected override object? CallCore(object? thisArgument, object?[] arguments)
+        protected override object? CallCore(object? thisArgument, in JsCallArguments arguments)
             => Capture(arguments);
     }
 
-    private sealed class LambdaFunction(Func<object?, object?[], object?> implementation) : JsFunctionObject
+    private sealed class LambdaFunction(Func<object?, JsCallArguments, object?> implementation) : JsFunctionObject
     {
-        protected override object? CallCore(object? thisArgument, object?[] arguments)
+        protected override object? CallCore(object? thisArgument, in JsCallArguments arguments)
             => implementation(thisArgument, arguments);
     }
 
     private sealed class ReentrantFunction : JsFunctionObject
     {
-        protected override object? CallCore(object? thisArgument, object?[] arguments)
+        protected override object? CallCore(object? thisArgument, in JsCallArguments arguments)
         {
-            if (Equals(arguments[0], "outer"))
+            if (Equals(arguments.GetArgument(0), "outer"))
             {
                 var inner = Assert.IsType<CallSnapshot>(
                     CallableOperations.Call(this, "inner-this", new object?[] { "inner" }));
@@ -281,7 +281,7 @@ public sealed class JsFunctionObjectRuntimeTests
 
     private sealed class ConcurrentFunction(Barrier barrier) : JsFunctionObject
     {
-        protected override object? CallCore(object? thisArgument, object?[] arguments)
+        protected override object? CallCore(object? thisArgument, in JsCallArguments arguments)
         {
             barrier.SignalAndWait(TimeSpan.FromSeconds(10));
             return Capture(arguments);
@@ -292,20 +292,20 @@ public sealed class JsFunctionObjectRuntimeTests
     {
         public override bool IsConstructor => true;
 
-        protected override object? CallCore(object? thisArgument, object?[] arguments)
+        protected override object? CallCore(object? thisArgument, in JsCallArguments arguments)
             => Capture(arguments);
 
-        protected override object? ConstructCore(object?[] arguments, object? newTarget)
+        protected override object? ConstructCore(in JsCallArguments arguments, object? newTarget)
             => new ConstructSnapshot(
-                arguments[0],
+                arguments.GetArgument(0),
                 newTarget,
                 RuntimeServices.GetCurrentCallee());
     }
 
-    private static CallSnapshot Capture(object?[] arguments)
+    private static CallSnapshot Capture(in JsCallArguments arguments)
         => new(
             RuntimeServices.GetCurrentThis(),
-            arguments[0],
+            arguments.GetArgument(0),
             RuntimeServices.GetCurrentCallee(),
             RuntimeServices.GetCurrentNewTarget());
 

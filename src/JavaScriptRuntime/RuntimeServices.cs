@@ -15,6 +15,7 @@ public class RuntimeServices
     private static readonly System.Threading.AsyncLocal<object?> _currentLexicalSuperReceiver = new();
     private static readonly System.Threading.AsyncLocal<object[]?> _currentLexicalSuperScopes = new();
     private static readonly System.Threading.AsyncLocal<object?[]?> _currentArguments = new();
+    private static readonly System.Threading.AsyncLocal<JsCallArguments?> _currentCallArguments = new();
     private static readonly System.Threading.AsyncLocal<object?> _currentNewTarget = new();
     private static readonly System.Threading.AsyncLocal<object?> _currentCallee = new();
     [ThreadStatic] private static Stack<object?[]?>? _constructorArgStack;
@@ -942,7 +943,19 @@ public class RuntimeServices
 
     public static object?[]? GetCurrentArguments()
     {
-        return _currentArguments.Value;
+        if (_currentArguments.Value is { } materializedArguments)
+        {
+            return materializedArguments;
+        }
+
+        if (_currentCallArguments.Value is not { } callArguments)
+        {
+            return null;
+        }
+
+        materializedArguments = callArguments.ToArray();
+        _currentArguments.Value = materializedArguments;
+        return materializedArguments;
     }
 
     public static object?[]? SetCurrentArguments(object?[]? value)
@@ -951,6 +964,26 @@ public class RuntimeServices
         _currentArguments.Value = value;
         return previous;
     }
+
+    internal static CurrentCallArgumentsState SetCurrentCallArguments(in JsCallArguments value)
+    {
+        var previous = new CurrentCallArgumentsState(
+            _currentArguments.Value,
+            _currentCallArguments.Value);
+        _currentArguments.Value = null;
+        _currentCallArguments.Value = value;
+        return previous;
+    }
+
+    internal static void RestoreCurrentCallArguments(CurrentCallArgumentsState state)
+    {
+        _currentCallArguments.Value = state.PackedArguments;
+        _currentArguments.Value = state.MaterializedArguments;
+    }
+
+    internal readonly record struct CurrentCallArgumentsState(
+        object?[]? MaterializedArguments,
+        JsCallArguments? PackedArguments);
 
     /// <summary>
     /// Saves the current arguments onto a thread-local stack and sets new arguments.

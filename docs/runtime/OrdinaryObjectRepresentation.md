@@ -105,9 +105,9 @@ reentrancy, and concurrent calls remain isolated.
 
 `LegacyDelegateFunctionAdapter` keeps existing delegate-backed compiled
 functions available during the staged migration. New object-backed callables
-derive from `JsFunctionObject`; the final fixed-arity and arbitrary-argument ABI
-and compiler-generated subclasses are tracked separately under
-[#1710](https://github.com/tomacox74/js2il/issues/1710) and
+derive from `JsFunctionObject` and use the
+[fixed-arity/arbitrary invocation ABI](JsFunctionObjectInvocationAbi.md).
+Compiler-generated subclasses are tracked under
 [#1711](https://github.com/tomacox74/js2il/issues/1711).
 
 ## Host boundary

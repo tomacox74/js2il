@@ -19,20 +19,71 @@ public static class CallableOperations
 
     public static object? Call(object? target, object? thisArgument, object?[]? arguments)
     {
-        var callArguments = arguments ?? System.Array.Empty<object?>();
+        var callArguments = JsCallArguments.FromArray(arguments);
+        return CallCore(target, thisArgument, callArguments);
+    }
 
-        return target switch
-        {
-            JsFunctionObject functionObject => CallFunctionObject(functionObject, thisArgument, callArguments),
-            Delegate legacyDelegate => LegacyDelegateFunctionAdapter.Invoke(
-                legacyDelegate,
-                RuntimeServices.EmptyScopes,
-                thisArgument,
-                callArguments),
-            Proxy proxy when proxy.IsCallableTarget => CallProxy(proxy, thisArgument, callArguments),
-            ClassConstructorValue => throw new TypeError("Class constructor cannot be invoked without 'new'"),
-            _ => throw new TypeError("Value is not callable")
-        };
+    public static object? Call0(object? target, object? thisArgument)
+    {
+        var arguments = JsCallArguments.Empty;
+        return CallCore(target, thisArgument, arguments);
+    }
+
+    public static object? Call1(object? target, object? thisArgument, object? argument0)
+    {
+        var arguments = JsCallArguments.From(argument0);
+        return CallCore(target, thisArgument, arguments);
+    }
+
+    public static object? Call2(
+        object? target,
+        object? thisArgument,
+        object? argument0,
+        object? argument1)
+    {
+        var arguments = JsCallArguments.From(argument0, argument1);
+        return CallCore(target, thisArgument, arguments);
+    }
+
+    public static object? Call3(
+        object? target,
+        object? thisArgument,
+        object? argument0,
+        object? argument1,
+        object? argument2)
+    {
+        var arguments = JsCallArguments.From(argument0, argument1, argument2);
+        return CallCore(target, thisArgument, arguments);
+    }
+
+    public static object? Call4(
+        object? target,
+        object? thisArgument,
+        object? argument0,
+        object? argument1,
+        object? argument2,
+        object? argument3)
+    {
+        var arguments = JsCallArguments.From(argument0, argument1, argument2, argument3);
+        return CallCore(target, thisArgument, arguments);
+    }
+
+    public static object? Call5(
+        object? target,
+        object? thisArgument,
+        object? argument0,
+        object? argument1,
+        object? argument2,
+        object? argument3,
+        object? argument4)
+    {
+        var arguments = JsCallArguments.From(
+            argument0,
+            argument1,
+            argument2,
+            argument3,
+            argument4);
+        return CallCore(target, thisArgument, arguments);
     }
 
     public static bool IsConstructor(object? value)
@@ -49,8 +100,106 @@ public static class CallableOperations
 
     public static object? Construct(object? target, object?[]? arguments, object? newTarget)
     {
-        var constructArguments = arguments ?? System.Array.Empty<object?>();
+        var constructArguments = JsCallArguments.FromArray(arguments);
+        return ConstructCore(target, newTarget, constructArguments);
+    }
 
+    public static object? Construct0(object? target, object? newTarget)
+    {
+        var arguments = JsCallArguments.Empty;
+        return ConstructCore(target, newTarget, arguments);
+    }
+
+    public static object? Construct1(
+        object? target,
+        object? newTarget,
+        object? argument0)
+    {
+        var arguments = JsCallArguments.From(argument0);
+        return ConstructCore(target, newTarget, arguments);
+    }
+
+    public static object? Construct2(
+        object? target,
+        object? newTarget,
+        object? argument0,
+        object? argument1)
+    {
+        var arguments = JsCallArguments.From(argument0, argument1);
+        return ConstructCore(target, newTarget, arguments);
+    }
+
+    public static object? Construct3(
+        object? target,
+        object? newTarget,
+        object? argument0,
+        object? argument1,
+        object? argument2)
+    {
+        var arguments = JsCallArguments.From(argument0, argument1, argument2);
+        return ConstructCore(target, newTarget, arguments);
+    }
+
+    public static object? Construct4(
+        object? target,
+        object? newTarget,
+        object? argument0,
+        object? argument1,
+        object? argument2,
+        object? argument3)
+    {
+        var arguments = JsCallArguments.From(argument0, argument1, argument2, argument3);
+        return ConstructCore(target, newTarget, arguments);
+    }
+
+    public static object? Construct5(
+        object? target,
+        object? newTarget,
+        object? argument0,
+        object? argument1,
+        object? argument2,
+        object? argument3,
+        object? argument4)
+    {
+        var arguments = JsCallArguments.From(
+            argument0,
+            argument1,
+            argument2,
+            argument3,
+            argument4);
+        return ConstructCore(target, newTarget, arguments);
+    }
+
+    private static object? CallCore(
+        object? target,
+        object? thisArgument,
+        in JsCallArguments arguments)
+    {
+        return target switch
+        {
+            JsFunctionObject functionObject => CallFunctionObject(
+                functionObject,
+                thisArgument,
+                arguments),
+            Delegate legacyDelegate => LegacyDelegateFunctionAdapter.Invoke(
+                legacyDelegate,
+                RuntimeServices.EmptyScopes,
+                thisArgument,
+                arguments.ToArray()),
+            Proxy proxy when proxy.IsCallableTarget => CallProxy(
+                proxy,
+                thisArgument,
+                arguments.ToArray()),
+            ClassConstructorValue => throw new TypeError("Class constructor cannot be invoked without 'new'"),
+            _ => throw new TypeError("Value is not callable")
+        };
+    }
+
+    private static object? ConstructCore(
+        object? target,
+        object? newTarget,
+        in JsCallArguments arguments)
+    {
         if (target is JsFunctionObject functionObject)
         {
             if (!functionObject.IsConstructor)
@@ -58,7 +207,7 @@ public static class CallableOperations
                 throw new TypeError("Value is not a constructor");
             }
 
-            return ConstructFunctionObject(functionObject, constructArguments, newTarget);
+            return ConstructFunctionObject(functionObject, arguments, newTarget);
         }
 
         if (!ObjectRuntime.IsConstructibleValue(target))
@@ -66,17 +215,24 @@ public static class CallableOperations
             throw new TypeError("Value is not a constructor");
         }
 
-        var legacyArguments = System.Array.ConvertAll(constructArguments, static argument => argument!);
+        var legacyArguments = System.Array.ConvertAll(
+            arguments.ToArray(),
+            static argument => argument!);
         return ObjectRuntime.ConstructValue(target!, legacyArguments, newTarget);
     }
 
     private static object? CallFunctionObject(
         JsFunctionObject functionObject,
         object? thisArgument,
-        object?[] arguments)
+        in JsCallArguments arguments)
     {
+        if (!functionObject.RequiresInvocationContext)
+        {
+            return functionObject.InvokeCall(thisArgument, arguments);
+        }
+
         var previousThis = RuntimeServices.SetCurrentThis(thisArgument);
-        var previousArguments = RuntimeServices.SetCurrentArguments(arguments);
+        var previousArguments = RuntimeServices.SetCurrentCallArguments(arguments);
         var previousCallee = RuntimeServices.SetCurrentCallee(functionObject);
         var previousNewTarget = RuntimeServices.SetCurrentNewTarget(null);
         try
@@ -87,17 +243,22 @@ public static class CallableOperations
         {
             RuntimeServices.SetCurrentNewTarget(previousNewTarget);
             RuntimeServices.SetCurrentCallee(previousCallee);
-            RuntimeServices.SetCurrentArguments(previousArguments);
+            RuntimeServices.RestoreCurrentCallArguments(previousArguments);
             RuntimeServices.SetCurrentThis(previousThis);
         }
     }
 
     private static object? ConstructFunctionObject(
         JsFunctionObject functionObject,
-        object?[] arguments,
+        in JsCallArguments arguments,
         object? newTarget)
     {
-        var previousArguments = RuntimeServices.SetCurrentArguments(arguments);
+        if (!functionObject.RequiresInvocationContext)
+        {
+            return functionObject.InvokeConstruct(arguments, newTarget);
+        }
+
+        var previousArguments = RuntimeServices.SetCurrentCallArguments(arguments);
         var previousCallee = RuntimeServices.SetCurrentCallee(functionObject);
         var previousNewTarget = RuntimeServices.SetCurrentNewTarget(newTarget);
         try
@@ -108,7 +269,7 @@ public static class CallableOperations
         {
             RuntimeServices.SetCurrentNewTarget(previousNewTarget);
             RuntimeServices.SetCurrentCallee(previousCallee);
-            RuntimeServices.SetCurrentArguments(previousArguments);
+            RuntimeServices.RestoreCurrentCallArguments(previousArguments);
         }
     }
 

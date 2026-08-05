@@ -15,20 +15,25 @@ public abstract class JsFunctionObject : JsObject
     /// </summary>
     public virtual bool IsConstructor => false;
 
-    internal object? InvokeCall(object? thisArgument, object?[] arguments)
+    /// <summary>
+    /// Gets whether invocation must populate ambient runtime call state.
+    /// </summary>
+    public virtual bool RequiresInvocationContext => true;
+
+    internal object? InvokeCall(object? thisArgument, in JsCallArguments arguments)
         => CallCore(thisArgument, arguments);
 
-    internal object? InvokeConstruct(object?[] arguments, object? newTarget)
+    internal object? InvokeConstruct(in JsCallArguments arguments, object? newTarget)
         => ConstructCore(arguments, newTarget);
 
     /// <summary>
     /// Implements ECMAScript [[Call]] for this function object.
     /// </summary>
-    protected abstract object? CallCore(object? thisArgument, object?[] arguments);
+    protected abstract object? CallCore(object? thisArgument, in JsCallArguments arguments);
 
     /// <summary>
     /// Implements ECMAScript [[Construct]] for constructable function objects.
     /// </summary>
-    protected virtual object? ConstructCore(object?[] arguments, object? newTarget)
+    protected virtual object? ConstructCore(in JsCallArguments arguments, object? newTarget)
         => throw new TypeError("Value is not a constructor");
 }
