@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2225
+				// Method begins at RVA 0x2265
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x222e
+				// Method begins at RVA 0x226e
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -58,7 +58,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2237
+				// Method begins at RVA 0x2277
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -76,7 +76,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x221c
+			// Method begins at RVA 0x225c
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -102,11 +102,11 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 431 (0x1af)
+		// Code size: 494 (0x1ee)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.PerfHooks_PerformanceNow_Basic/Scope,
-			[1] object,
+			[1] class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IPerfHooksPerformance,
 			[2] object,
 			[3] float64,
 			[4] float64,
@@ -144,144 +144,170 @@
 		IL_0033: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::ThrowDestructuringNullOrUndefined(object, string, string)
 
 		IL_0038: ldloc.s 12
-		IL_003a: ldstr "performance"
-		IL_003f: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::HasOwnPropertyOverride(object, string)
-		IL_0044: brtrue IL_0056
+		IL_003a: callvirt instance class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IPerfHooksPerformance [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IPerfHooksModule::get_performance()
+		IL_003f: stloc.1
+		IL_0040: ldloc.1
+		IL_0041: ldstr "now"
+		IL_0046: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::HasOwnPropertyOverride(object, string)
+		IL_004b: brtrue IL_0061
 
-		IL_0049: ldloc.s 12
-		IL_004b: callvirt instance class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IPerfHooksPerformance [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IPerfHooksModule::get_performance()
-		IL_0050: stloc.1
-		IL_0051: br IL_0063
+		IL_0050: ldloc.1
+		IL_0051: callvirt instance float64 [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IPerfHooksPerformance::now()
+		IL_0056: box [System.Runtime]System.Double
+		IL_005b: stloc.2
+		IL_005c: br IL_0073
 
-		IL_0056: ldloc.s 12
-		IL_0058: ldstr "performance"
-		IL_005d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
-		IL_0062: stloc.1
+		IL_0061: ldloc.1
+		IL_0062: ldstr "now"
+		IL_0067: ldc.i4.0
+		IL_0068: newarr [System.Runtime]System.Object
+		IL_006d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallOwnPropertyMember(object, string, object[])
+		IL_0072: stloc.2
 
-		IL_0063: ldloc.1
-		IL_0064: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0069: ldstr "now"
-		IL_006e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-		IL_0073: stloc.2
-		IL_0074: ldc.r8 0.0
-		IL_007d: stloc.3
-		IL_007e: ldc.r8 0.0
-		IL_0087: stloc.s 4
-		// loop start (head: IL_0089)
-			IL_0089: ldloc.s 4
-			IL_008b: stloc.s 13
-			IL_008d: ldloc.s 13
-			IL_008f: ldc.r8 10000
-			IL_0098: clt
-			IL_009a: brfalse IL_00c7
+		IL_0073: ldc.r8 0.0
+		IL_007c: stloc.3
+		IL_007d: ldc.r8 0.0
+		IL_0086: stloc.s 4
+		// loop start (head: IL_0088)
+			IL_0088: ldloc.s 4
+			IL_008a: stloc.s 13
+			IL_008c: ldloc.s 13
+			IL_008e: ldc.r8 10000
+			IL_0097: clt
+			IL_0099: brfalse IL_00c6
 
-			IL_009f: ldloc.3
-			IL_00a0: stloc.s 13
-			IL_00a2: ldloc.s 13
-			IL_00a4: ldloc.s 4
-			IL_00a6: add
-			IL_00a7: stloc.s 13
-			IL_00a9: ldloc.s 13
-			IL_00ab: stloc.3
-			IL_00ac: ldloc.s 4
-			IL_00ae: stloc.s 13
-			IL_00b0: ldloc.s 13
-			IL_00b2: ldc.r8 1
-			IL_00bb: add
-			IL_00bc: stloc.s 13
-			IL_00be: ldloc.s 13
-			IL_00c0: stloc.s 4
-			IL_00c2: br IL_0089
+			IL_009e: ldloc.3
+			IL_009f: stloc.s 13
+			IL_00a1: ldloc.s 13
+			IL_00a3: ldloc.s 4
+			IL_00a5: add
+			IL_00a6: stloc.s 13
+			IL_00a8: ldloc.s 13
+			IL_00aa: stloc.3
+			IL_00ab: ldloc.s 4
+			IL_00ad: stloc.s 13
+			IL_00af: ldloc.s 13
+			IL_00b1: ldc.r8 1
+			IL_00ba: add
+			IL_00bb: stloc.s 13
+			IL_00bd: ldloc.s 13
+			IL_00bf: stloc.s 4
+			IL_00c1: br IL_0088
 		// end loop
 
-		IL_00c7: ldloc.1
-		IL_00c8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00cd: ldstr "now"
-		IL_00d2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-		IL_00d7: stloc.s 5
-		IL_00d9: ldc.i4.1
-		IL_00da: stloc.s 6
+		IL_00c6: ldloc.1
+		IL_00c7: ldstr "now"
+		IL_00cc: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::HasOwnPropertyOverride(object, string)
+		IL_00d1: brtrue IL_00e8
+
+		IL_00d6: ldloc.1
+		IL_00d7: callvirt instance float64 [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IPerfHooksPerformance::now()
+		IL_00dc: box [System.Runtime]System.Double
+		IL_00e1: stloc.s 5
+		IL_00e3: br IL_00fb
+
+		IL_00e8: ldloc.1
+		IL_00e9: ldstr "now"
+		IL_00ee: ldc.i4.0
+		IL_00ef: newarr [System.Runtime]System.Object
+		IL_00f4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallOwnPropertyMember(object, string, object[])
+		IL_00f9: stloc.s 5
+
+		IL_00fb: ldc.i4.1
+		IL_00fc: stloc.s 6
 		.try
 		{
-			IL_00dc: nop
-			IL_00dd: ldloc.1
-			IL_00de: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_00e3: ldstr "now"
-			IL_00e8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-			IL_00ed: pop
-			IL_00ee: leave IL_012d
+			IL_00fe: nop
+			IL_00ff: ldloc.1
+			IL_0100: ldstr "now"
+			IL_0105: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::HasOwnPropertyOverride(object, string)
+			IL_010a: brtrue IL_011b
+
+			IL_010f: ldloc.1
+			IL_0110: callvirt instance float64 [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IPerfHooksPerformance::now()
+			IL_0115: pop
+			IL_0116: br IL_012d
+
+			IL_011b: ldloc.1
+			IL_011c: ldstr "now"
+			IL_0121: ldc.i4.0
+			IL_0122: newarr [System.Runtime]System.Object
+			IL_0127: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallOwnPropertyMember(object, string, object[])
+			IL_012c: pop
+
+			IL_012d: leave IL_016c
 		} // end .try
 		catch [System.Runtime]System.Exception
 		{
-			IL_00f3: stloc.s 7
-			IL_00f5: ldloc.s 7
-			IL_00f7: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-			IL_00fc: dup
-			IL_00fd: brtrue IL_0113
+			IL_0132: stloc.s 7
+			IL_0134: ldloc.s 7
+			IL_0136: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+			IL_013b: dup
+			IL_013c: brtrue IL_0152
 
-			IL_0102: pop
-			IL_0103: ldloc.s 7
-			IL_0105: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
-			IL_010a: dup
-			IL_010b: brtrue IL_011f
+			IL_0141: pop
+			IL_0142: ldloc.s 7
+			IL_0144: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+			IL_0149: dup
+			IL_014a: brtrue IL_015e
 
-			IL_0110: pop
-			IL_0111: rethrow
+			IL_014f: pop
+			IL_0150: rethrow
 
-			IL_0113: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-			IL_0118: stloc.s 8
-			IL_011a: br IL_0121
+			IL_0152: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+			IL_0157: stloc.s 8
+			IL_0159: br IL_0160
 
-			IL_011f: stloc.s 8
+			IL_015e: stloc.s 8
 
-			IL_0121: ldloc.s 8
-			IL_0123: stloc.s 9
-			IL_0125: ldc.i4.0
-			IL_0126: stloc.s 6
-			IL_0128: leave IL_012d
+			IL_0160: ldloc.s 8
+			IL_0162: stloc.s 9
+			IL_0164: ldc.i4.0
+			IL_0165: stloc.s 6
+			IL_0167: leave IL_016c
 		} // end handler
 
-		IL_012d: ldloc.s 5
-		IL_012f: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_0134: ldloc.2
-		IL_0135: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_013a: sub
-		IL_013b: stloc.s 10
-		IL_013d: ldstr "console"
-		IL_0142: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0147: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_014c: ldloc.s 6
-		IL_014e: box [System.Runtime]System.Boolean
-		IL_0153: stloc.s 14
-		IL_0155: ldstr "log"
-		IL_015a: ldstr "hasNow="
-		IL_015f: ldloc.s 14
-		IL_0161: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_0166: pop
-		IL_0167: ldstr "console"
-		IL_016c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0171: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0176: stloc.s 15
-		IL_0178: ldloc.s 10
-		IL_017a: ldc.r8 0.0
-		IL_0183: clt
-		IL_0185: stloc.s 16
-		IL_0187: ldloc.s 16
-		IL_0189: ldc.i4.0
-		IL_018a: ceq
-		IL_018c: stloc.s 16
-		IL_018e: ldloc.s 16
-		IL_0190: box [System.Runtime]System.Boolean
-		IL_0195: stloc.s 14
-		IL_0197: ldloc.s 15
-		IL_0199: ldstr "log"
-		IL_019e: ldstr "elapsedMsNonNegative="
-		IL_01a3: ldloc.s 14
-		IL_01a5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_01aa: pop
-		IL_01ab: ldnull
-		IL_01ac: stloc.s 11
-		IL_01ae: ret
+		IL_016c: ldloc.s 5
+		IL_016e: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_0173: ldloc.2
+		IL_0174: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_0179: sub
+		IL_017a: stloc.s 10
+		IL_017c: ldstr "console"
+		IL_0181: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0186: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_018b: ldloc.s 6
+		IL_018d: box [System.Runtime]System.Boolean
+		IL_0192: stloc.s 14
+		IL_0194: ldstr "log"
+		IL_0199: ldstr "hasNow="
+		IL_019e: ldloc.s 14
+		IL_01a0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_01a5: pop
+		IL_01a6: ldstr "console"
+		IL_01ab: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_01b0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_01b5: stloc.s 15
+		IL_01b7: ldloc.s 10
+		IL_01b9: ldc.r8 0.0
+		IL_01c2: clt
+		IL_01c4: stloc.s 16
+		IL_01c6: ldloc.s 16
+		IL_01c8: ldc.i4.0
+		IL_01c9: ceq
+		IL_01cb: stloc.s 16
+		IL_01cd: ldloc.s 16
+		IL_01cf: box [System.Runtime]System.Boolean
+		IL_01d4: stloc.s 14
+		IL_01d6: ldloc.s 15
+		IL_01d8: ldstr "log"
+		IL_01dd: ldstr "elapsedMsNonNegative="
+		IL_01e2: ldloc.s 14
+		IL_01e4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_01e9: pop
+		IL_01ea: ldnull
+		IL_01eb: stloc.s 11
+		IL_01ed: ret
 	} // end of method PerfHooks_PerformanceNow_Basic::__js_module_init__
 
 } // end of class Modules.PerfHooks_PerformanceNow_Basic
@@ -293,7 +319,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2240
+		// Method begins at RVA 0x2280
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

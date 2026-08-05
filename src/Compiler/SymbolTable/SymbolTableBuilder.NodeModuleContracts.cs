@@ -12,6 +12,7 @@ public partial class SymbolTableBuilder
     {
         var candidates = new Dictionary<BindingInfo, Type>(ReferenceEqualityComparer.Instance);
         var moduleAnalyses = new List<NodeModuleAnalysis>();
+        var directDestructuringContracts = new Dictionary<Scope, HashSet<Type>>();
 
         foreach (var module in modules)
         {
@@ -24,6 +25,8 @@ public partial class SymbolTableBuilder
 
             foreach (var scope in EnumerateScopes(root))
             {
+                scope.ClearDirectRequireNodeModuleOverrideGuards();
+
                 foreach (var binding in scope.Bindings.Values)
                 {
                     binding.CanSkipNodeModuleOverrideGuard = false;
@@ -54,11 +57,6 @@ public partial class SymbolTableBuilder
                     candidates[binding] = binding.ClrType;
                 }
             }
-        }
-
-        if (candidates.Count == 0)
-        {
-            return;
         }
 
         var unsafeContracts = new HashSet<Type>();
@@ -109,6 +107,16 @@ public partial class SymbolTableBuilder
                     {
                         hasDynamicRequire |= call.Arguments.Count != 1
                             || call.Arguments[0] is not Literal { Value: string };
+                    }
+                    else if (IsDirectDestructuringAcquisition(call, analysis.ParentMap))
+                    {
+                        if (!directDestructuringContracts.TryGetValue(scope, out var contracts))
+                        {
+                            contracts = new HashSet<Type>();
+                            directDestructuringContracts.Add(scope, contracts);
+                        }
+
+                        contracts.Add(contractType);
                     }
                     else if (!IsSafeNodeModuleAcquisition(
                         call,
@@ -178,6 +186,17 @@ public partial class SymbolTableBuilder
         foreach (var (binding, contractType) in candidates)
         {
             binding.CanSkipNodeModuleOverrideGuard = !unsafeContracts.Contains(contractType);
+        }
+
+        foreach (var (scope, contractTypes) in directDestructuringContracts)
+        {
+            foreach (var contractType in contractTypes)
+            {
+                if (!unsafeContracts.Contains(contractType))
+                {
+                    scope.MarkDirectRequireNodeModuleOverrideGuardSafe(contractType);
+                }
+            }
         }
     }
 
@@ -278,6 +297,14 @@ public partial class SymbolTableBuilder
             && !IsNodeModuleMemberMutation(member, parentMap)
             && !NodeModuleMemberCanReturnContract(member, contractType);
     }
+
+    private static bool IsDirectDestructuringAcquisition(
+        CallExpression call,
+        Dictionary<Node, Node> parentMap)
+        => parentMap.TryGetValue(call, out var parent)
+            && parent is VariableDeclarator declarator
+            && ReferenceEquals(declarator.Init, call)
+            && declarator.Id is not Identifier;
 
     private static bool IsNodeModuleBindingValueReference(
         Identifier identifier,
