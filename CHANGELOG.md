@@ -74,9 +74,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   `RequireObject<IFsModule>` and direct interface dispatch, including typed
   parameters, contract properties, overloads, rest arguments, and `node:`
   aliases. Whole-program escape and mutation analysis also removes the
-  property-override guard for pristine direct destructuring requires while
-  preserving dynamic fallback after aliasing, mutation, deletion, reflection,
-  or escape; dynamic and non-contract requires retain the existing dispatcher.
+  property-override guard for pristine direct destructuring requires and keeps
+  their nested contract types through captured scope fields, while preserving
+  dynamic fallback after aliasing, mutation, deletion, reflection, or escape;
+  dynamic and non-contract requires retain the existing dispatcher.
 - compiler: preserve all proven-stable CLR reference types when reading
   bindings, extending existing string and array specialization to captured
   strings and other safe reference values instead of widening them to

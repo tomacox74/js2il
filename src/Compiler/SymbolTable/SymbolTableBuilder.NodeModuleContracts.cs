@@ -13,6 +13,7 @@ public partial class SymbolTableBuilder
         var candidates = new Dictionary<BindingInfo, Type>(ReferenceEqualityComparer.Instance);
         var moduleAnalyses = new List<NodeModuleAnalysis>();
         var directDestructuringContracts = new Dictionary<Scope, HashSet<Type>>();
+        var directDestructuringAcquisitions = new List<DirectDestructuringAcquisition>();
 
         foreach (var module in modules)
         {
@@ -108,7 +109,10 @@ public partial class SymbolTableBuilder
                         hasDynamicRequire |= call.Arguments.Count != 1
                             || call.Arguments[0] is not Literal { Value: string };
                     }
-                    else if (IsDirectDestructuringAcquisition(call, analysis.ParentMap))
+                    else if (TryGetDirectDestructuringAcquisition(
+                        call,
+                        analysis.ParentMap,
+                        out var declarator))
                     {
                         if (!directDestructuringContracts.TryGetValue(scope, out var contracts))
                         {
@@ -117,6 +121,8 @@ public partial class SymbolTableBuilder
                         }
 
                         contracts.Add(contractType);
+                        directDestructuringAcquisitions.Add(
+                            new DirectDestructuringAcquisition(scope, declarator, contractType));
                     }
                     else if (!IsSafeNodeModuleAcquisition(
                         call,
@@ -196,6 +202,14 @@ public partial class SymbolTableBuilder
                 {
                     scope.MarkDirectRequireNodeModuleOverrideGuardSafe(contractType);
                 }
+            }
+        }
+
+        foreach (var acquisition in directDestructuringAcquisitions)
+        {
+            if (!unsafeContracts.Contains(acquisition.ContractType))
+            {
+                InferSafeDirectDestructuringBindingTypes(acquisition);
             }
         }
     }
@@ -298,13 +312,68 @@ public partial class SymbolTableBuilder
             && !NodeModuleMemberCanReturnContract(member, contractType);
     }
 
-    private static bool IsDirectDestructuringAcquisition(
+    private static bool TryGetDirectDestructuringAcquisition(
         CallExpression call,
-        Dictionary<Node, Node> parentMap)
-        => parentMap.TryGetValue(call, out var parent)
-            && parent is VariableDeclarator declarator
-            && ReferenceEquals(declarator.Init, call)
-            && declarator.Id is not Identifier;
+        Dictionary<Node, Node> parentMap,
+        out VariableDeclarator declarator)
+    {
+        declarator = null!;
+        return parentMap.TryGetValue(call, out var parent)
+            && parent is VariableDeclarator candidate
+            && ReferenceEquals(candidate.Init, call)
+            && candidate.Id is not Identifier
+            && (declarator = candidate) != null;
+    }
+
+    private static void InferSafeDirectDestructuringBindingTypes(
+        DirectDestructuringAcquisition acquisition)
+    {
+        if (acquisition.Declarator.Id is not ObjectPattern objectPattern)
+        {
+            return;
+        }
+
+        foreach (var property in objectPattern.Properties.OfType<Property>())
+        {
+            if (property.Computed
+                || property.Key is not Identifier propertyKey
+                || property.Value is not Identifier targetIdentifier
+                || !acquisition.Scope.Bindings.TryGetValue(targetIdentifier.Name, out var binding)
+                || binding.Kind != BindingKind.Const
+                || binding.HasNonInitializationWrite
+                || !ReferenceEquals(binding.DeclarationNode, acquisition.Declarator)
+                || !TryGetNodeModuleContractPropertyType(
+                    acquisition.ContractType,
+                    propertyKey.Name,
+                    out var propertyType))
+            {
+                continue;
+            }
+
+            binding.ClrType = propertyType;
+            binding.IsStableType = true;
+        }
+    }
+
+    private static bool TryGetNodeModuleContractPropertyType(
+        Type contractType,
+        string memberName,
+        out Type propertyType)
+    {
+        propertyType = null!;
+        var property = contractType.GetProperties().SingleOrDefault(property =>
+            string.Equals(
+                GetNodeModuleMemberName(property),
+                memberName,
+                StringComparison.Ordinal));
+        if (property == null || !IsNodeModuleContractType(property.PropertyType))
+        {
+            return false;
+        }
+
+        propertyType = property.PropertyType;
+        return true;
+    }
 
     private static bool IsNodeModuleBindingValueReference(
         Identifier identifier,
@@ -466,4 +535,9 @@ public partial class SymbolTableBuilder
         Scope Root,
         Dictionary<Node, Node> ParentMap,
         Dictionary<Node, Scope> ScopeMap);
+
+    private sealed record DirectDestructuringAcquisition(
+        Scope Scope,
+        VariableDeclarator Declarator,
+        Type ContractType);
 }
