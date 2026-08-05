@@ -183,9 +183,11 @@ public sealed partial class HIRToLIRLowerer
                                 RequiresOverrideGuard: true,
                                 Array.Empty<TempVariable>(),
                                 getResult));
+                            // The override branch can return any JavaScript value, including
+                            // an object with an inherited implementation of this member.
                             DefineTempStorage(
                                 getResult,
-                                new ValueStorage(ValueStorageKind.Reference, propertyType));
+                                new ValueStorage(ValueStorageKind.Reference, typeof(object)));
                         }
                         else
                         {
