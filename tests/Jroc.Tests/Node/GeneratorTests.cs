@@ -14,5 +14,9 @@ namespace Jroc.Tests.Node
         public Task PerfHooks_PerformanceNow_Basic() => GenerateTest(
             nameof(PerfHooks_PerformanceNow_Basic));
 
+        [Fact]
+        public Task PerfHooks_DestructuredPerformanceOverride() => GenerateTest(
+            nameof(PerfHooks_DestructuredPerformanceOverride));
+
     }
 }

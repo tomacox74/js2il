@@ -188,6 +188,17 @@ argument-array bridge; no runtime method discovery is used.
 
 Do not edit any `*.Generated.cs` contract or intrinsic adapter directly.
 
+## Nested documented contracts
+
+Use the `nestedContracts` array in a module override for documented stable
+objects, handles, and option shapes. The shared generator emits a stable
+`[NodeModuleType]` identity, a generated intrinsic adapter when an
+`intrinsicType` is supplied, and a JavaScript-value host adapter for `host`
+option shapes. Keep heterogeneous JavaScript inputs as `object?`; attach
+`parameterContracts` and `resultContracts` metadata instead of narrowing the
+runtime call shape. This preserves normal `ObjectRuntime` property semantics
+and keeps adapters reflection-free.
+
 ## Faster iteration
 
 Download each official JSON document once under `artifacts/nodeContracts` and

@@ -111,6 +111,38 @@ public class FsModuleContractTests
     }
 
     [Fact]
+    public void IFsModule_DescribesFileHandleCallbackResultsAndNestedIdentity()
+    {
+        var openMethods = typeof(IFsModule)
+            .GetMethods()
+            .Where(method => GetNodeMemberName(method) == "open")
+            .ToArray();
+
+        Assert.All(
+            openMethods,
+            method =>
+            {
+                var result = method.GetCustomAttribute<NodeModuleResultContractAttribute>();
+                Assert.NotNull(result);
+                Assert.Equal(NodeModuleResultKind.Callback, result.Kind);
+                Assert.Equal(typeof(IFsFileHandle), result.ContractType);
+                Assert.Equal("callback", result.CallbackParameter);
+            });
+
+        var typeAttribute = typeof(IFsFileHandle)
+            .GetCustomAttribute<NodeModuleTypeAttribute>();
+        Assert.NotNull(typeAttribute);
+        Assert.Equal("fs", typeAttribute.ModuleName);
+        Assert.Equal("FileHandle", typeAttribute.TypeName);
+        Assert.Equal(typeof(double), typeof(IFsFileHandle).GetProperty(nameof(IFsFileHandle.fd))?.PropertyType);
+        Assert.True(typeof(IFsFileHandle).IsAssignableFrom(typeof(FileHandle)));
+        Assert.Null(
+            typeof(FileHandle).GetMethod(
+                "InvokeContractMember",
+                BindingFlags.NonPublic | BindingFlags.Instance));
+    }
+
+    [Fact]
     public void IFsModule_UsesRuntimeContractsInsteadOfImplementations()
     {
         Assert.Contains(

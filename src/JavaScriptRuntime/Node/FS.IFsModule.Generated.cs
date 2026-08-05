@@ -184,10 +184,10 @@ public sealed partial class FS : FsContract
         => _ = readdir(new object[] { path!, options!, callback! });
 
     void FsContract.readFile(object? path, global::System.Delegate callback)
-        => _ = readFile(new object[] { path!, callback! });
+        => _ = readFile(new object[] { path!, global::Jroc.Runtime.Node.Contracts.NodeModuleContractHosting.Unwrap(callback!)! });
 
     void FsContract.readFile(object? path, object? options, global::System.Delegate callback)
-        => _ = readFile(new object[] { path!, options!, callback! });
+        => _ = readFile(new object[] { path!, global::Jroc.Runtime.Node.Contracts.NodeModuleContractHosting.Unwrap(options!)!, callback! });
 
     void FsContract.readlink(object? path, global::System.Delegate callback)
         => throw CreateNotImplementedException("readlink");
@@ -304,10 +304,10 @@ public sealed partial class FS : FsContract
         => throw CreateNotImplementedException("write");
 
     void FsContract.writeFile(object? file, object? data, global::System.Delegate callback)
-        => _ = writeFile(new object[] { file!, data!, callback! });
+        => _ = writeFile(new object[] { file!, data!, global::Jroc.Runtime.Node.Contracts.NodeModuleContractHosting.Unwrap(callback!)! });
 
     void FsContract.writeFile(object? file, object? data, object? options, global::System.Delegate callback)
-        => _ = writeFile(new object[] { file!, data!, options!, callback! });
+        => _ = writeFile(new object[] { file!, data!, global::Jroc.Runtime.Node.Contracts.NodeModuleContractHosting.Unwrap(options!)!, callback! });
 
     void FsContract.writev(double fd, global::JavaScriptRuntime.IJavaScriptArray buffers, global::System.Delegate callback)
         => throw CreateNotImplementedException("writev");

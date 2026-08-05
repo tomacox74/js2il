@@ -158,8 +158,42 @@ public sealed partial class HIRToLIRLowerer
                         }
 
                         var getResult = CreateTempVariable();
-                        _methodBodyIR.Instructions.Add(new LIRGetItem(sourceValue, EnsureObject(keyTemp), getResult));
-                        DefineTempStorage(getResult, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                        var sourceContract = TryGetNodeModuleContractType(
+                            GetTempStorage(sourceValue).ClrType);
+                        if (sourceContract != null
+                            && _methodBodyIR.Instructions.Any(
+                                instruction => instruction is LIRCallRequire callRequire
+                                    && callRequire.Result == sourceValue)
+                            && prop.ComputedKey == null
+                            && TryResolveNodeModuleContractProperty(
+                                sourceContract,
+                                prop.Key!,
+                                out var getterName,
+                                out var propertyType)
+                            && TryGetNodeModuleContractType(propertyType) != null)
+                        {
+                            // Node modules are cached mutable objects. A prior require can
+                            // replace this own property, so retain the override guard.
+                            _methodBodyIR.Instructions.Add(new LIRCallNodeModuleContractMember(
+                                sourceValue,
+                                sourceContract,
+                                getterName,
+                                prop.Key!,
+                                IsPropertyGet: true,
+                                RequiresOverrideGuard: true,
+                                Array.Empty<TempVariable>(),
+                                getResult));
+                            // The override branch can return any JavaScript value, including
+                            // an object with an inherited implementation of this member.
+                            DefineTempStorage(
+                                getResult,
+                                new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                        }
+                        else
+                        {
+                            _methodBodyIR.Instructions.Add(new LIRGetItem(sourceValue, EnsureObject(keyTemp), getResult));
+                            DefineTempStorage(getResult, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                        }
 
                         if (!TryLowerDestructuringPattern(prop.Value, getResult, writeMode, prop.Key ?? "<computed>", nestedPreparedTarget))
                         {

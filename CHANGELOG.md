@@ -6,7 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-_Nothing yet._
+- sdk/runtime: add shared generated nested Node contract support with stable
+  type identity, JavaScript-value host adapters, and promise/callback/iterator
+  payload metadata. `node:perf_hooks.performance` and focused `node:fs`
+  options/FileHandle flows now use the generated contracts and direct adapters.
 
 ## v0.12.2 - 2026-08-05
 

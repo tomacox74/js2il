@@ -10,17 +10,16 @@ namespace JavaScriptRuntime.Node
         private readonly Performance _performance = new Performance();
         public Performance performance => _performance;
 
-        public sealed class Performance
+        public sealed partial class Performance
         {
             private static readonly long _origin = Stopwatch.GetTimestamp();
 
-            // Returns milliseconds with fractional precision since an arbitrary time origin (process start).
-            // Return type is object (boxed double) to align with JS number boxing semantics.
-            public object now()
+            object? Jroc.Runtime.Node.Contracts.IJavaScriptValueHost.JavaScriptValue => this;
+
+            public double now()
             {
                 long ticks = Stopwatch.GetTimestamp() - _origin;
-                double ms = (double)ticks * 1000.0 / Stopwatch.Frequency;
-                return ms; // boxed as object
+                return (double)ticks * 1000.0 / Stopwatch.Frequency;
             }
         }
     }

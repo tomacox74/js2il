@@ -20,7 +20,7 @@ public sealed partial class Process : ProcessContract
 
     global::JavaScriptRuntime.IJavaScriptArray ProcessContract.argv
     {
-        get => argv;
+        get => (global::JavaScriptRuntime.IJavaScriptArray)argv!;
         set => throw CreateNotImplementedException("argv");
     }
 
@@ -34,7 +34,7 @@ public sealed partial class Process : ProcessContract
         => throw CreateNotImplementedException("config");
 
     bool ProcessContract.connected
-        => connected;
+        => (bool)connected!;
 
     double ProcessContract.debugPort
     {
@@ -82,7 +82,7 @@ public sealed partial class Process : ProcessContract
         => throw CreateNotImplementedException("pid");
 
     string ProcessContract.platform
-        => platform;
+        => (string)platform!;
 
     double ProcessContract.ppid
         => throw CreateNotImplementedException("ppid");

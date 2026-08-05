@@ -26,5 +26,9 @@ namespace Jroc.Tests.Node
                     // Keep as-is; output is integer ms values which should be stable enough.
                 });
 
+        [Fact]
+        public Task PerfHooks_DestructuredPerformanceOverride()
+            => ExecutionTest(nameof(PerfHooks_DestructuredPerformanceOverride));
+
     }
 }

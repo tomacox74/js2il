@@ -58,7 +58,7 @@
     },
     {
       "name": "performance",
-      "type": "Object",
+      "type": "contract:Performance",
       "access": "read-only",
       "summary": "Gets the shared performance measurement object.",
       "source": "https://nodejs.org/docs/v24.18.1/api/perf_hooks.html#perf_hooksperformance"
@@ -72,5 +72,28 @@
   },
   "intrinsicImplementations": {
     "performance": { "style": "direct" }
-  }
+  },
+  "nestedContracts": [
+    {
+      "typeName": "Performance",
+      "interfaceName": "IPerfHooksPerformance",
+      "source": "https://nodejs.org/docs/v24.18.1/api/perf_hooks.html#perf_hooksperformance",
+      "documentationPrefix": "performance.",
+      "intrinsicType": "PerfHooks.Performance",
+      "methods": [
+        {
+          "name": "now",
+          "signatures": [
+            "performance.now()"
+          ],
+          "parameters": [],
+          "returnType": "number",
+          "source": "https://nodejs.org/docs/v24.18.1/api/perf_hooks.html#performancenow"
+        }
+      ],
+      "intrinsicImplementations": {
+        "now": { "style": "direct", "returnsDirectly": true }
+      }
+    }
+  ]
 }

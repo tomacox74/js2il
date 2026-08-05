@@ -7,12 +7,38 @@
     "lstat": { "style": "direct", "argumentCount": 1 },
     "mkdir": { "style": "direct" },
     "open": { "style": "direct" },
-    "readFile": { "style": "direct" },
+    "readFile": { "style": "direct", "unwrapArguments": [1] },
     "readdir": { "style": "direct" },
     "realpath": { "style": "direct", "argumentCount": 1 },
     "rename": { "style": "direct" },
     "stat": { "style": "direct", "argumentCount": 1 },
     "unlink": { "style": "direct" },
-    "writeFile": { "style": "direct" }
+    "writeFile": { "style": "direct", "unwrapArguments": [2] }
+  },
+  "parameterContracts": {
+    "readFile": {
+      "options": {
+        "type": "contract:fs/ReadFileOptions",
+        "source": "https://nodejs.org/docs/v24.18.1/api/fs.html#fspromisesreadfilepath-options"
+      }
+    },
+    "writeFile": {
+      "options": {
+        "type": "contract:fs/WriteFileOptions",
+        "source": "https://nodejs.org/docs/v24.18.1/api/fs.html#fspromiseswritefilefile-data-options"
+      }
+    }
+  },
+  "resultContracts": {
+    "open": {
+      "kind": "promise",
+      "type": "contract:fs/FileHandle",
+      "source": "https://nodejs.org/docs/v24.18.1/api/fs.html#fspromisesopenpath-flags-mode"
+    },
+    "glob": {
+      "kind": "async-iterator",
+      "type": "string",
+      "source": "https://nodejs.org/docs/v24.18.1/api/fs.html#fspromisesglobpattern-options"
+    }
   }
 }

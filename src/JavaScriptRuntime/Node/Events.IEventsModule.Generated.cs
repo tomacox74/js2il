@@ -25,7 +25,7 @@ public sealed partial class Events : EventsContract
     }
 
     global::JavaScriptRuntime.Symbol EventsContract.errorMonitor
-        => errorMonitor;
+        => (global::JavaScriptRuntime.Symbol)errorMonitor!;
 
     bool EventsContract.captureRejections
     {

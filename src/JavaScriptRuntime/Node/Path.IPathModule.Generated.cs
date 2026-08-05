@@ -13,13 +13,13 @@ namespace JavaScriptRuntime.Node;
 public sealed partial class Path : PathContract
 {
     string PathContract.delimiter
-        => delimiter;
+        => (string)delimiter!;
 
     object? PathContract.posix
         => posix;
 
     string PathContract.sep
-        => sep;
+        => (string)sep!;
 
     object? PathContract.win32
         => win32;
