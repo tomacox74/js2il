@@ -118,7 +118,7 @@ dotnet run -c Release -- --kracken --scenario audio-oscillator
 ```
 
 #### Prime Execution Comparison
-Runs a single `PrimeJavaScript` sieve pass after JROC compilation and interpreter preparation complete. The `PrimeJavaScript.OnePass.js` fixture is identical to `tests/performance/PrimeJavaScript.js` except that the timed five-second batch is replaced by one pass.
+Runs a single `PrimeJavaScript` sieve pass after JROC compilation and interpreter preparation complete. The dedicated `Scenarios/prime/PrimeJavaScript.OnePass.js` fixture is identical to `tests/performance/PrimeJavaScript.js` except that the timed five-second batch is replaced by one pass. It is intentionally outside the root cross-runtime catalog because it requires Node globals.
 
 ```powershell
 dotnet run -c Release -- --prime-execute
