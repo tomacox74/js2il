@@ -1,0 +1,106 @@
+{
+  "schemaVersion": 1,
+  "umbrellaIssue": 1707,
+  "boundaries": [
+    {
+      "id": "compiler-callable-planning",
+      "roles": [ "producer", "consumer" ],
+      "classifications": [ "direct-call", "materialization" ],
+      "trackingIssues": [ 1711, 1712, 1721 ],
+      "sourceGlobs": [
+        "src/Compiler/Services/TwoPhaseCompilation/*.cs"
+      ],
+      "rationale": "Discovers every compiled callable, plans signatures and dependency order, and allocates the metadata tokens used by direct calls and materialized values."
+    },
+    {
+      "id": "compiler-invocation-lowering",
+      "roles": [ "producer", "consumer" ],
+      "classifications": [ "direct-call", "materialization", "dynamic-call", "construction" ],
+      "trackingIssues": [ 768, 1710, 1713, 1721 ],
+      "sourceGlobs": [
+        "src/Compiler/IR/*.cs",
+        "src/Compiler/IR/**/*.cs",
+        "src/Compiler/IL/*.cs"
+      ],
+      "rationale": "Chooses direct, dynamic, member, spread, and construction call paths and emits their IL."
+    },
+    {
+      "id": "compiler-callable-generators",
+      "roles": [ "producer", "consumer" ],
+      "classifications": [ "direct-call", "materialization", "construction" ],
+      "trackingIssues": [ 1706, 1711, 1712, 1713, 1714, 1717, 1718 ],
+      "sourceGlobs": [
+        "src/Compiler/JsMethodCompiler.cs",
+        "src/Compiler/Services/ILGenerators/*.cs"
+      ],
+      "rationale": "Emits function, arrow, class, async, and generator bodies plus the current delegate materialization sites."
+    },
+    {
+      "id": "compiler-callable-support",
+      "roles": [ "producer", "consumer" ],
+      "classifications": [ "direct-call", "materialization", "dynamic-call", "export-interop", "reflection" ],
+      "trackingIssues": [ 1709, 1711, 1720, 1722 ],
+      "sourceGlobs": [
+        "src/Compiler/Services/AssemblyGenerator.cs",
+        "src/Compiler/Services/BaseClassLibraryReferences.cs",
+        "src/Compiler/Services/Runtime.cs",
+        "src/Compiler/Services/TypeGenerator.cs",
+        "src/Compiler/Services/Contracts/*.cs",
+        "src/Compiler/Utilities/Ecma335/*.cs",
+        "src/Compiler/Utilities/JavaScriptCallableNaming.cs"
+      ],
+      "rationale": "Defines delegate/runtime references, emitted module contracts, and CLR metadata used to expose callable values."
+    },
+    {
+      "id": "runtime-core-callables",
+      "roles": [ "producer", "consumer" ],
+      "classifications": [ "materialization", "dynamic-call", "construction", "callback", "reflection" ],
+      "trackingIssues": [ 1709, 1710, 1713, 1715, 1716, 1717, 1718, 1719, 1722 ],
+      "sourceGlobs": [
+        "src/JavaScriptRuntime/*.cs"
+      ],
+      "rationale": "Contains Closure, Function, object/proxy operations, async/generator runtime support, built-in callables, and callback dispatch."
+    },
+    {
+      "id": "runtime-engine-callbacks",
+      "roles": [ "consumer" ],
+      "classifications": [ "dynamic-call", "callback", "export-interop" ],
+      "trackingIssues": [ 1719, 1720 ],
+      "sourceGlobs": [
+        "src/JavaScriptRuntime/Engine/*.cs"
+      ],
+      "rationale": "Stores and dispatches callbacks on the runtime scheduler while preserving module-hosting lifetime and thread affinity."
+    },
+    {
+      "id": "runtime-node-callbacks",
+      "roles": [ "producer", "consumer" ],
+      "classifications": [ "dynamic-call", "construction", "callback" ],
+      "trackingIssues": [ 1709, 1719 ],
+      "sourceGlobs": [
+        "src/JavaScriptRuntime/Node/*.cs",
+        "src/JavaScriptRuntime/Node/**/*.cs"
+      ],
+      "rationale": "Accepts, stores, invokes, and occasionally constructs JavaScript-visible callbacks across Node module APIs."
+    },
+    {
+      "id": "runtime-hosting-exports",
+      "roles": [ "producer", "consumer" ],
+      "classifications": [ "dynamic-call", "export-interop", "reflection" ],
+      "trackingIssues": [ 1709, 1710, 1720 ],
+      "sourceGlobs": [
+        "src/JavaScriptRuntime/Hosting/*.cs"
+      ],
+      "rationale": "Adapts module exports and host calls between JavaScript callable values and CLR-facing APIs."
+    },
+    {
+      "id": "runtime-commonjs-boundaries",
+      "roles": [ "producer", "consumer" ],
+      "classifications": [ "dynamic-call", "callback", "export-interop" ],
+      "trackingIssues": [ 1709, 1719, 1720 ],
+      "sourceGlobs": [
+        "src/JavaScriptRuntime/CommonJS/*.cs"
+      ],
+      "rationale": "Creates module-main and require delegates and moves callable values through CommonJS exports."
+    }
+  ]
+}
