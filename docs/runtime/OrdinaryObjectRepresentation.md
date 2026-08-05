@@ -89,6 +89,27 @@ Array intrinsic prototypes, per-thread prototype overlays, and
 matches all other runtime-owned intrinsic prototypes and leaves no
 `ExpandoObject` representation in the runtime.
 
+## Function object foundation
+
+`JsFunctionObject : JsObject` is the common base for object-backed JavaScript
+callables. It inherits ordinary property, symbol, descriptor, prototype,
+integrity, deletion, and identity behavior from `JsObject`, and its
+`[[Prototype]]` is initialized to `Function.prototype`.
+
+`CallableOperations` is the centralized runtime boundary for `IsCallable`,
+`[[Call]]`, `IsConstructor`, and `[[Construct]]`. Receiver, arguments, callee,
+and `newTarget` are passed per invocation and installed in the runtime's
+`AsyncLocal` execution context only for the duration of the call. They are
+never stored as mutable fields on the function object, so recursion,
+reentrancy, and concurrent calls remain isolated.
+
+`LegacyDelegateFunctionAdapter` keeps existing delegate-backed compiled
+functions available during the staged migration. New object-backed callables
+derive from `JsFunctionObject`; the final fixed-arity and arbitrary-argument ABI
+and compiler-generated subclasses are tracked separately under
+[#1710](https://github.com/tomacox74/js2il/issues/1710) and
+[#1711](https://github.com/tomacox74/js2il/issues/1711).
+
 ## Host boundary
 
 C# dynamic interoperability is a hosting concern. `JsObject` still carries

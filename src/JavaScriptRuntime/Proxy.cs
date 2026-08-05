@@ -22,14 +22,7 @@ namespace JavaScriptRuntime
         }
 
         internal static bool IsCallableValue(object? value)
-        {
-            if (value is JavaScriptRuntime.Proxy proxy)
-            {
-                return proxy.IsCallableTarget;
-            }
-
-            return value is Delegate or ClassConstructorValue;
-        }
+            => CallableOperations.IsCallable(value);
 
         public Proxy(object? target, object? handler)
         {
