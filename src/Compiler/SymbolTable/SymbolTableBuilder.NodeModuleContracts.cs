@@ -189,11 +189,6 @@ public partial class SymbolTableBuilder
             return;
         }
 
-        foreach (var (binding, contractType) in candidates)
-        {
-            binding.CanSkipNodeModuleOverrideGuard = !unsafeContracts.Contains(contractType);
-        }
-
         foreach (var (scope, contractTypes) in directDestructuringContracts)
         {
             foreach (var contractType in contractTypes)
@@ -209,8 +204,18 @@ public partial class SymbolTableBuilder
         {
             if (!unsafeContracts.Contains(acquisition.ContractType))
             {
-                InferSafeDirectDestructuringBindingTypes(acquisition);
+                foreach (var binding in InferSafeDirectDestructuringBindingTypes(acquisition))
+                {
+                    candidates[binding] = binding.ClrType!;
+                }
             }
+        }
+
+        AnalyzeNodeModuleContractBindingUses(moduleAnalyses, candidates, unsafeContracts);
+
+        foreach (var (binding, contractType) in candidates)
+        {
+            binding.CanSkipNodeModuleOverrideGuard = !unsafeContracts.Contains(contractType);
         }
     }
 
@@ -325,12 +330,13 @@ public partial class SymbolTableBuilder
             && (declarator = candidate) != null;
     }
 
-    private static void InferSafeDirectDestructuringBindingTypes(
+    private static IReadOnlyList<BindingInfo> InferSafeDirectDestructuringBindingTypes(
         DirectDestructuringAcquisition acquisition)
     {
+        var inferredBindings = new List<BindingInfo>();
         if (acquisition.Declarator.Id is not ObjectPattern objectPattern)
         {
-            return;
+            return inferredBindings;
         }
 
         foreach (var property in objectPattern.Properties.OfType<Property>())
@@ -352,7 +358,10 @@ public partial class SymbolTableBuilder
 
             binding.ClrType = propertyType;
             binding.IsStableType = true;
+            inferredBindings.Add(binding);
         }
+
+        return inferredBindings;
     }
 
     private static bool TryGetNodeModuleContractPropertyType(
@@ -375,6 +384,46 @@ public partial class SymbolTableBuilder
         return true;
     }
 
+    private static void AnalyzeNodeModuleContractBindingUses(
+        IEnumerable<NodeModuleAnalysis> moduleAnalyses,
+        IReadOnlyDictionary<BindingInfo, Type> candidates,
+        HashSet<Type> unsafeContracts)
+    {
+        foreach (var analysis in moduleAnalyses)
+        {
+            var candidateNames = new HashSet<string>(
+                candidates.Keys.Select(static binding => binding.Name),
+                StringComparer.Ordinal);
+            var walker = new AstWalker();
+
+            walker.Visit(analysis.Root.AstNode, node =>
+            {
+                if (!analysis.ScopeMap.TryGetValue(node, out var scope)
+                    || node is not Identifier identifier
+                    || !candidateNames.Contains(identifier.Name)
+                    || !IsNodeModuleBindingValueReference(identifier, analysis.ParentMap))
+                {
+                    return;
+                }
+
+                var binding = TryResolveBinding(scope, identifier.Name);
+                if (binding == null
+                    || !candidates.TryGetValue(binding, out var candidateContract))
+                {
+                    return;
+                }
+
+                if (!IsSafeNodeModuleBindingUse(
+                    identifier,
+                    candidateContract,
+                    analysis.ParentMap))
+                {
+                    unsafeContracts.Add(candidateContract);
+                }
+            });
+        }
+    }
+
     private static bool IsNodeModuleBindingValueReference(
         Identifier identifier,
         Dictionary<Node, Node> parentMap)
@@ -393,6 +442,10 @@ public partial class SymbolTableBuilder
                 when !property.Computed
                     && ReferenceEquals(property.Key, identifier)
                     && !ReferenceEquals(property.Value, identifier) => false,
+            Property property
+                when ReferenceEquals(property.Value, identifier)
+                    && parentMap.TryGetValue(property, out var propertyParent)
+                    && propertyParent is ObjectPattern => false,
             FunctionDeclaration functionDeclaration
                 when ReferenceEquals(functionDeclaration.Id, identifier) => false,
             FunctionExpression functionExpression
