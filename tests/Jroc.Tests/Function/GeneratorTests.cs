@@ -329,6 +329,23 @@ namespace Jroc.Tests.Function
             });
         }
 
+        [Fact]
+        public Task Function_CallableArchitecture_InferredSignatureBaseline()
+        {
+            var testName = nameof(Function_CallableArchitecture_InferredSignatureBaseline);
+            return GenerateTest(testName, verifyAssembly: assembly =>
+            {
+                var moduleType = assembly.GetType($"Modules.{testName}", throwOnError: true)!;
+
+                AssertSignature(moduleType, "returnNumber", typeof(double), []);
+                AssertSignature(moduleType, "returnBoolean", typeof(object), []);
+                AssertSignature(moduleType, "negate", typeof(object), [typeof(bool)]);
+                AssertSignature(moduleType, "returnString", typeof(object), []);
+                AssertSignature(moduleType, "stringLength", typeof(object), [typeof(string)]);
+                AssertSignature(moduleType, "identity", typeof(object), [typeof(object)]);
+            });
+        }
+
         // ABI optimization tests: non-capturing functions should NOT have scopes parameter
         [Fact]
         public Task Function_NoCapture_NoScopesParameter() { var testName = nameof(Function_NoCapture_NoScopesParameter); return GenerateTest(testName); }
@@ -341,5 +358,24 @@ namespace Jroc.Tests.Function
 
         [Fact]
         public Task Arrow_Capture_HasScopesParameter() { var testName = nameof(Arrow_Capture_HasScopesParameter); return GenerateTest(testName); }
+
+        private static void AssertSignature(
+            Type moduleType,
+            string functionName,
+            Type expectedReturnType,
+            Type[] expectedParameterTypes)
+        {
+            var functionType = moduleType.GetNestedType(functionName, BindingFlags.Public | BindingFlags.NonPublic)!;
+            var callMethod = functionType.GetMethod("__js_call__", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static)!;
+            var jsParameterTypes = callMethod.GetParameters().Select(parameter => parameter.ParameterType).Skip(1).ToArray();
+
+            Assert.True(
+                callMethod.ReturnType == expectedReturnType,
+                $"{functionName} return type: expected {expectedReturnType}, actual {callMethod.ReturnType}.");
+            Assert.True(
+                expectedParameterTypes.SequenceEqual(jsParameterTypes),
+                $"{functionName} parameters: expected [{string.Join(", ", expectedParameterTypes.Select(type => type.Name))}], "
+                + $"actual [{string.Join(", ", jsParameterTypes.Select(type => type.Name))}].");
+        }
     }
 }

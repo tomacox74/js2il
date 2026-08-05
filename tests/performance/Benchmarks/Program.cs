@@ -40,6 +40,11 @@ else
         var summary = BenchmarkRunner.Run<PrototypeStorageBenchmarks>(args: programArgs.Skip(1).ToArray());
         SetExitCodeFromSummaries([summary]);
     }
+    else if (programArgs.Length > 0 && programArgs[0] == "--callable-baselines")
+    {
+        var summary = BenchmarkRunner.Run<CallableArchitectureBenchmarks>(args: programArgs.Skip(1).ToArray());
+        SetExitCodeFromSummaries([summary]);
+    }
 #if SOURCE_JROC_PROJECTS
     else if (programArgs.Length > 0 && programArgs[0] == "--shape-storage")
     {
@@ -116,6 +121,7 @@ Console.WriteLine("  dotnet run -c Release --object-operations # Run ordinary-ob
 Console.WriteLine("  dotnet run -c Release --descriptor-storage # Run inline descriptor storage microbenchmarks");
 Console.WriteLine("  dotnet run -c Release --array-operations # Run dense-array operation microbenchmarks");
 Console.WriteLine("  dotnet run -c Release --prototype-storage # Run prototype storage allocation microbenchmarks");
+Console.WriteLine("  dotnet run -c Release --callable-baselines # Run callable materialization and steady-state baselines");
 Console.WriteLine("  dotnet run -c Release -- --dromaeo # Run Dromaeo execution benchmarks");
 Console.WriteLine("  dotnet run -c Release -- --kracken --scenario audio-oscillator # Run one Kraken scenario");
 Console.WriteLine("  dotnet run -c Release -- --prime-execute # Run the one-pass Prime sieve execution benchmark");

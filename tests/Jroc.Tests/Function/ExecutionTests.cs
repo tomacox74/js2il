@@ -285,6 +285,12 @@ namespace Jroc.Tests.Function
         [Fact]
         public Task Function_ParameterTypeInference_BinaryArguments() { var testName = nameof(Function_ParameterTypeInference_BinaryArguments); return ExecutionTest(testName); }
 
+        [Fact]
+        public Task Function_CallableArchitecture_SemanticBaseline() { var testName = nameof(Function_CallableArchitecture_SemanticBaseline); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Function_CallableArchitecture_InferredSignatureBaseline() { var testName = nameof(Function_CallableArchitecture_InferredSignatureBaseline); return ExecutionTest(testName); }
+
         // ABI optimization tests: non-capturing functions should NOT have scopes parameter
         [Fact]
         public Task Function_NoCapture_NoScopesParameter() { var testName = nameof(Function_NoCapture_NoScopesParameter); return ExecutionTest(testName); }
