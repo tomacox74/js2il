@@ -41,8 +41,17 @@ function main() {
     process.exit(1);
   }
 
-  const filter = `*${scenarioName}*`;
-  const dotnetArgs = ["run", "-c", "Release", "--", "--dromaeo", "--filter", filter];
+  const dotnetArgs = [
+    "run",
+    "-c",
+    "Release",
+    "--",
+    "--dromaeo",
+    "--filter",
+    "*DromaeoExecutionBenchmarks*",
+    "--scenario",
+    scenarioName,
+  ];
 
   console.log(`Running phased benchmark for scenario: ${scenarioName}`);
   console.log(`Command: dotnet ${dotnetArgs.join(" ")}`);

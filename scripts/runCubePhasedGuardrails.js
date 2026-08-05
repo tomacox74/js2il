@@ -319,7 +319,15 @@ function runIlSmellScan(repoRoot, keepArtifacts, scenarios) {
 
   try {
     for (const scenario of scenarios) {
-      const scenarioPath = path.join(repoRoot, "tests", "performance", "Benchmarks", "Scenarios", `${scenario}.js`);
+      const scenarioPath = path.join(
+        repoRoot,
+        "tests",
+        "performance",
+        "Benchmarks",
+        "Scenarios",
+        "dromaeo",
+        `${scenario}.js`
+      );
       const outDir = path.join(tempRoot, scenario);
       fs.mkdirSync(outDir, { recursive: true });
 

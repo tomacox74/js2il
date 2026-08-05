@@ -29,6 +29,20 @@ dispatchable. Workflow ingestion is best-effort (`continue-on-error`), so
 verify that a workflow produced its artifact before treating a missing table
 row as a benchmark failure.
 
+Download the exact raw artifact before relying on ingested rows:
+
+```bash
+gh run download <run-id> \
+  --repo tomacox74/js2il \
+  --name <artifact-name> \
+  --dir <temporary-directory>
+```
+
+For BenchmarkDotNet, inspect `HostEnvironmentInfo` and each matching row's
+`Method`, `Parameters`, `Statistics` (including `N`), `Memory`, and `Metrics`.
+Do not reconstruct sample count or runtime identity from the Supabase row when
+the raw report is available.
+
 ## Local Supabase Access
 
 Development desktops can use these environment variables for read-only
@@ -139,6 +153,102 @@ Runtime names are normalized by the ingester. Relevant examples include
 `jint-prepare`, `jint-execute`, `jint-execute-prepared`, `clearscript`,
 `yantrajs`, and `yantrajs-execute`.
 
+Do not assume a runtime label from a C# method name or helper-script label.
+For example, a method named `Jint_ExecutePrepared` can be ingested as
+`jint-execute` when its BenchmarkDotNet description omits "prepared". Check
+the raw artifact and `normalizeRuntime()` before constructing a filter.
+
+Group comparable Supabase rows by at least:
+
+```text
+(run_id, run_attempt, source, scenario)
+```
+
+Rows for the same run can have slightly different `run_at` timestamps. Do not
+group by timestamp equality. Compare commits only when source, scenario,
+runtime, metric/unit, benchmark version, and host are compatible.
+
+## Understand the Timed Boundary
+
+An "execute-only" benchmark can still include substantial setup below the
+benchmark method. Read the benchmark implementation before interpreting the
+result. For example, a timed `JsEngine.LoadModule(...)` includes runtime/module
+initialization, JavaScript function materialization, and any workload executed
+at module load; it is not only steady-state generated JavaScript instructions.
+
+When two equivalent fixtures diverge:
+
+1. Preserve the end-to-end benchmark as the user-visible result.
+2. Create a temporary controlled variant that removes only the workload while
+   retaining declarations/module initialization.
+3. Compare that definitions-only phase with the full phase.
+4. If needed, create a load-once/workload-only variant as a second control.
+
+Record exactly what changed in the control. Never present a modified-fixture
+result as the original benchmark.
+
+Use BenchmarkDotNet `MemoryDiagnoser` allocation for claims. In a controlled
+runner, `GC.GetAllocatedBytesForCurrentThread()` is invalid when JROC executes
+on a runtime thread; use `GC.GetTotalAllocatedBytes(precise: true)` only as a
+phase-isolation diagnostic.
+
+## Generated Code and Runtime Profiling
+
+Whole-assembly IL counts are screening signals, not root-cause evidence. They
+mix module initialization, cold callables, and hot code. Compare corresponding
+executed methods and separately inspect module-main materialization:
+
+- method IL/native size and instruction count;
+- boxing/coercion and generic operator calls;
+- fixed-arity argument arrays and closure adapters;
+- scope/function/array/object construction;
+- direct versus runtime-dispatched calls.
+
+For arrow-heavy variants, inspect generated `Closure.BindArrow` sites and the
+current `Closure.CreateBoundDelegate` implementation. Per-instance expression
+tree compilation or dynamic-method creation can dominate repeated module loads
+even when the arrow bodies themselves have better IL.
+
+EventPipe/dotnet-trace reports include runtime, finalizer, and blocked
+background threads. Treat full call paths and phase-specific differences as
+evidence; do not interpret top-N percentages as hardware CPU percentages.
+
+These environment switches are useful causal diagnostics, not benchmark
+configurations:
+
+```bash
+COMPlus_JitNoInline=1
+COMPlus_TieredCompilation=0
+```
+
+If a variant gap changes materially, investigate JIT/inlining/tiering, but
+retain default-runtime BenchmarkDotNet results for performance claims.
+
+## Dromaeo Scenario Matching
+
+Inspect the actual fixture diff before assigning meaning to a filename suffix.
+Confirm whether the difference is `var` versus `let`/`const`, declarations
+versus arrows, constructors versus literals, or a real algorithm change.
+
+Scenario names can be prefixes of other scenarios. `dromaeo-3d-cube` also
+prefix-matches `dromaeo-3d-cube-modern`, so a wildcard BenchmarkDotNet filter
+alone is not exact. Use the catalog's exact selector:
+
+```bash
+dotnet run -c Release \
+  --project tests/performance/Benchmarks/Benchmarks.csproj -- \
+  --dromaeo \
+  --filter "*DromaeoExecutionBenchmarks*" \
+  --scenario dromaeo-3d-cube
+```
+
+For the paired cube investigation and IL counters, use:
+
+```bash
+node scripts/runCubePhasedGuardrails.js --dry
+node scripts/runCubePhasedGuardrails.js --dry --il-smells
+```
+
 ## Investigation Workflow
 
 1. Identify the exact scenario, source, metric, runtime, commit SHA, and
@@ -147,17 +257,18 @@ Runtime names are normalized by the ingester. Relevant examples include
    querying aggregate table results.
 3. Query recent comparable rows using the same `source`, `scenario`, `metric`,
    runtime, and host metadata. Compare several runs to account for noise.
-4. Inspect the generated IL snapshot or disassembly for the scenario. For
-   compiler changes, explain which call, allocation, coercion, or branch
-   changed in the hot path.
-5. Reproduce locally only with the documented single-scenario benchmark
+4. Read the timed benchmark method and identify its actual phase boundary.
+5. Inspect corresponding generated methods plus module initialization. For
+   compiler changes, explain which call, allocation, coercion, construction,
+   or branch changed in an executed path.
+6. Reproduce locally only with the documented single-scenario benchmark
    command. For Dromaeo use:
 
    ```bash
    node scripts/runPhasedBenchmarkScenario.js <scenario>
    ```
 
-6. Report the result with provenance: workflow run, SHA, source, scenario,
+7. Report the result with provenance: workflow run, SHA, source, scenario,
    metric/unit, runtime version, host, and sample size. State uncertainty when
    data is sparse or runners differ.
 
