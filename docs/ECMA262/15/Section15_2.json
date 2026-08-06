@@ -59,6 +59,7 @@
           "tests/Jroc.Tests/Function/JavaScript/Function_GlobalFunctionCallsGlobalFunction.js",
           "tests/Jroc.Tests/Function/JavaScript/Function_GlobalFunctionDeclaresAndCallsNestedFunction.js",
           "tests/Jroc.Tests/Function/JavaScript/Function_NestedFunctionAccessesMultipleScopes.js",
+          "tests/Jroc.Tests/Function/JavaScript/Function_CallableArchitecture_SemanticBaseline.js",
           "tests/Jroc.Tests/Function/JavaScript/Function_RestParameters_WithNamedParams.js",
           "tests/Jroc.Tests/Function/JavaScript/Function_RestParameters_MultipleNamed.js",
           "tests/Jroc.Tests/Function/JavaScript/Function_MaxParameters_32_CallViaVariable.js",
@@ -67,7 +68,7 @@
         "test262Paths": [
           "test/language/statements/function/dflt-params-ref-self.js"
         ],
-        "notes": "Ordinary functions compile end-to-end, including nested functions, closure capture, rest parameters, and default-parameter TDZ errors for self-references. Current validator/runtime coverage supports ordinary functions with up to 32 formal parameters; functions with more than 32 parameters are rejected during validation."
+        "notes": "Synchronous ordinary function declarations materialize as generated JsFunctionObject instances with stable identity, shared captures, recursion, strict/sloppy this semantics, ordinary metadata and property behavior, and compatibility construction behavior. Statically known calls retain the typed direct-call path, while dynamic calls use the common callable ABI without per-instance delegate or dynamic-method creation. Ordinary functions compile end-to-end, including nested functions, closure capture, rest parameters, and default-parameter TDZ errors for self-references. Current validator/runtime coverage supports ordinary functions with up to 32 formal parameters; functions with more than 32 parameters are rejected during validation."
       },
       {
         "clause": "15.2.2",
@@ -98,6 +99,7 @@
           "tests/Jroc.Tests/Function/JavaScript/Function_CallViaVariable_Reassignment.js",
           "tests/Jroc.Tests/Function/JavaScript/Function_Closure_MultiLevel_ReadWriteAcrossScopes.js",
           "tests/Jroc.Tests/Function/JavaScript/Function_FunctionExpression_AsExpression_ArrayMapCapturesOuter.js",
+          "tests/Jroc.Tests/Function/JavaScript/Function_CallableArchitecture_SemanticBaseline.js",
           "tests/Jroc.Test262.Tests/language/expressions/function/dstr/JavaScript/obj-ptrn-id-init-fn-name-gen.js",
           "tests/Jroc.Test262.Tests/language/expressions/function/JavaScript/dflt-params-ref-self.js",
           "tests/Jroc.Test262.Tests/language/expressions/function/JavaScript/dflt-params-ref-later.js",
@@ -118,7 +120,7 @@
           "test/language/expressions/function/dstr/ary-ptrn-elem-id-init-fn-name-arrow.js",
           "test/language/expressions/function/named-strict-error-reassign-fn-name-in-body-in-arrow.js"
         ],
-        "notes": "Named function expressions initialize the function-name binding to the created function object and keep that binding immutable for closures created from parameter initializers and function bodies. Covered test262 cases now include default-parameter TDZ errors for self/later references, separate parameter/body environments, and anonymous generator/function/arrow expressions used as destructuring defaults inferring covered target binding names."
+        "notes": "Synchronous ordinary function expressions materialize as generated JsFunctionObject instances while preserving repeated-evaluation identity, captured mutable bindings, named recursion, strict/sloppy this semantics, and typed direct calls. Named function expressions initialize the function-name binding to the created function object and keep that binding immutable for closures created from parameter initializers and function bodies. Covered test262 cases now include default-parameter TDZ errors for self/later references, separate parameter/body environments, and anonymous generator/function/arrow expressions used as destructuring defaults inferring covered target binding names."
       },
       {
         "clause": "15.2",

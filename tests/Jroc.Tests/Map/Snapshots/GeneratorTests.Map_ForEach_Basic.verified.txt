@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2276
+				// Method begins at RVA 0x227a
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -47,7 +47,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 04 00 00 02
 			)
-			// Method begins at RVA 0x21dc
+			// Method begins at RVA 0x21e0
 			// Header size: 12
 			// Code size: 133 (0x85)
 			.maxstack 8
@@ -128,7 +128,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x226d
+			// Method begins at RVA 0x2271
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -154,7 +154,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 381 (0x17d)
+		// Code size: 385 (0x181)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Map_ForEach_Basic/Scope,
@@ -162,9 +162,10 @@
 			[2] class [JavaScriptRuntime]JavaScriptRuntime.Array,
 			[3] class [JavaScriptRuntime]JavaScriptRuntime.Map,
 			[4] object,
-			[5] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes3,
-			[6] object,
-			[7] object
+			[5] object[],
+			[6] class FunctionObjects.Map_ForEach_Basic_B42A7201.FunctionObject_FunctionExpression_1DD06151_L11C13,
+			[7] object,
+			[8] object
 		)
 
 		IL_0000: newobj instance void Modules.Map_ForEach_Basic/Scope::.ctor()
@@ -215,70 +216,77 @@
 		IL_008d: ldfld object Modules.Map_ForEach_Basic/Scope::map
 		IL_0092: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
 		IL_0097: stloc.s 4
-		IL_0099: ldloc.0
-		IL_009a: castclass Modules.Map_ForEach_Basic/Scope
-		IL_009f: ldftn object Modules.Map_ForEach_Basic/FunctionExpression_L11C12::__js_call__(class Modules.Map_ForEach_Basic/Scope, object, object, object, object)
-		IL_00a5: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes3::.ctor(object, native int)
-		IL_00aa: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes3
-		IL_00af: ldc.i4.3
-		IL_00b0: conv.r8
-		IL_00b1: ldstr ""
-		IL_00b6: ldc.i4.0
-		IL_00b7: ldc.i4.1
-		IL_00b8: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes3>(!!0, float64, string, bool, bool)
-		IL_00bd: stloc.s 5
-		IL_00bf: ldloc.s 4
-		IL_00c1: ldstr "forEach"
-		IL_00c6: ldloc.s 5
-		IL_00c8: ldloc.1
-		IL_00c9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_00ce: pop
-		IL_00cf: ldstr "console"
-		IL_00d4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_00d9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00de: stloc.s 4
-		IL_00e0: ldloc.0
-		IL_00e1: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Map_ForEach_Basic/Scope::seen
-		IL_00e6: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
-		IL_00eb: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::get_length()
-		IL_00f0: box [System.Runtime]System.Double
-		IL_00f5: stloc.s 6
-		IL_00f7: ldloc.s 4
-		IL_00f9: ldstr "log"
-		IL_00fe: ldloc.s 6
-		IL_0100: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0105: pop
-		IL_0106: ldstr "console"
-		IL_010b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0110: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0115: stloc.s 4
-		IL_0117: ldloc.0
-		IL_0118: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Map_ForEach_Basic/Scope::seen
-		IL_011d: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
-		IL_0122: ldc.r8 0.0
-		IL_012b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
-		IL_0130: stloc.s 7
-		IL_0132: ldloc.s 4
-		IL_0134: ldstr "log"
-		IL_0139: ldloc.s 7
-		IL_013b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0140: pop
-		IL_0141: ldstr "console"
-		IL_0146: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_014b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0150: stloc.s 7
-		IL_0152: ldloc.0
-		IL_0153: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Map_ForEach_Basic/Scope::seen
-		IL_0158: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
-		IL_015d: ldc.r8 1
-		IL_0166: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
-		IL_016b: stloc.s 4
-		IL_016d: ldloc.s 7
-		IL_016f: ldstr "log"
-		IL_0174: ldloc.s 4
-		IL_0176: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_017b: pop
-		IL_017c: ret
+		IL_0099: ldc.i4.1
+		IL_009a: newarr [System.Runtime]System.Object
+		IL_009f: dup
+		IL_00a0: ldc.i4.0
+		IL_00a1: ldloc.0
+		IL_00a2: stelem.ref
+		IL_00a3: stloc.s 5
+		IL_00a5: ldloc.s 5
+		IL_00a7: ldc.i4.0
+		IL_00a8: ldelem.ref
+		IL_00a9: castclass Modules.Map_ForEach_Basic/Scope
+		IL_00ae: newobj instance void FunctionObjects.Map_ForEach_Basic_B42A7201.FunctionObject_FunctionExpression_1DD06151_L11C13::.ctor(class Modules.Map_ForEach_Basic/Scope)
+		IL_00b3: ldc.i4.3
+		IL_00b4: conv.r8
+		IL_00b5: ldstr ""
+		IL_00ba: ldc.i4.1
+		IL_00bb: ldc.i4.1
+		IL_00bc: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class FunctionObjects.Map_ForEach_Basic_B42A7201.FunctionObject_FunctionExpression_1DD06151_L11C13>(!!0, float64, string, bool, bool)
+		IL_00c1: stloc.s 6
+		IL_00c3: ldloc.s 4
+		IL_00c5: ldstr "forEach"
+		IL_00ca: ldloc.s 6
+		IL_00cc: ldloc.1
+		IL_00cd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_00d2: pop
+		IL_00d3: ldstr "console"
+		IL_00d8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_00dd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00e2: stloc.s 4
+		IL_00e4: ldloc.0
+		IL_00e5: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Map_ForEach_Basic/Scope::seen
+		IL_00ea: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
+		IL_00ef: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::get_length()
+		IL_00f4: box [System.Runtime]System.Double
+		IL_00f9: stloc.s 7
+		IL_00fb: ldloc.s 4
+		IL_00fd: ldstr "log"
+		IL_0102: ldloc.s 7
+		IL_0104: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0109: pop
+		IL_010a: ldstr "console"
+		IL_010f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0114: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0119: stloc.s 4
+		IL_011b: ldloc.0
+		IL_011c: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Map_ForEach_Basic/Scope::seen
+		IL_0121: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
+		IL_0126: ldc.r8 0.0
+		IL_012f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
+		IL_0134: stloc.s 8
+		IL_0136: ldloc.s 4
+		IL_0138: ldstr "log"
+		IL_013d: ldloc.s 8
+		IL_013f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0144: pop
+		IL_0145: ldstr "console"
+		IL_014a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_014f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0154: stloc.s 8
+		IL_0156: ldloc.0
+		IL_0157: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Map_ForEach_Basic/Scope::seen
+		IL_015c: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
+		IL_0161: ldc.r8 1
+		IL_016a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
+		IL_016f: stloc.s 4
+		IL_0171: ldloc.s 8
+		IL_0173: ldstr "log"
+		IL_0178: ldloc.s 4
+		IL_017a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_017f: pop
+		IL_0180: ret
 	} // end of method Map_ForEach_Basic::__js_module_init__
 
 } // end of class Modules.Map_ForEach_Basic
@@ -295,7 +303,7 @@
 			class Modules.Map_ForEach_Basic/Scope capture0
 		) cil managed 
 	{
-		// Method begins at RVA 0x227f
+		// Method begins at RVA 0x2283
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -311,7 +319,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x228e
+		// Method begins at RVA 0x2292
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -323,7 +331,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x2291
+		// Method begins at RVA 0x2295
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -338,25 +346,25 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x2294
+		// Method begins at RVA 0x2298
 		// Header size: 1
-		// Code size: 34 (0x22)
+		// Code size: 38 (0x26)
 		.maxstack 8
 
 		IL_0000: ldarg.0
 		IL_0001: ldfld class Modules.Map_ForEach_Basic/Scope FunctionObjects.Map_ForEach_Basic_B42A7201.FunctionObject_FunctionExpression_1DD06151_L11C13::_environment0_Map_ForEach_Basic
-		IL_0006: ldnull
-		IL_0007: ldarg.2
-		IL_0008: ldc.i4.0
-		IL_0009: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-		IL_000e: ldarg.2
-		IL_000f: ldc.i4.1
-		IL_0010: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-		IL_0015: ldarg.2
-		IL_0016: ldc.i4.2
-		IL_0017: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-		IL_001c: call object Modules.Map_ForEach_Basic/FunctionExpression_L11C12::__js_call__(class Modules.Map_ForEach_Basic/Scope, object, object, object, object)
-		IL_0021: ret
+		IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
+		IL_000b: ldarg.2
+		IL_000c: ldc.i4.0
+		IL_000d: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+		IL_0012: ldarg.2
+		IL_0013: ldc.i4.1
+		IL_0014: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+		IL_0019: ldarg.2
+		IL_001a: ldc.i4.2
+		IL_001b: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+		IL_0020: call object Modules.Map_ForEach_Basic/FunctionExpression_L11C12::__js_call__(class Modules.Map_ForEach_Basic/Scope, object, object, object, object)
+		IL_0025: ret
 	} // end of method FunctionObject_FunctionExpression_1DD06151_L11C13::CallCore
 
 	.method family hidebysig virtual 
@@ -365,14 +373,17 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x22b7
+		// Method begins at RVA 0x22bf
 		// Header size: 1
-		// Code size: 11 (0xb)
+		// Code size: 14 (0xe)
 		.maxstack 8
 
-		IL_0000: ldstr "Generated construction adapter is reserved for the callable-family construction migration"
-		IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-		IL_000a: throw
+		IL_0000: ldarg.0
+		IL_0001: ldarg.1
+		IL_0002: call instance object[] [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::ToArray()
+		IL_0007: ldarg.2
+		IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionObject(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, object[], object)
+		IL_000d: ret
 	} // end of method FunctionObject_FunctionExpression_1DD06151_L11C13::ConstructCore
 
 } // end of class FunctionObjects.Map_ForEach_Basic_B42A7201.FunctionObject_FunctionExpression_1DD06151_L11C13
@@ -384,7 +395,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x22c3
+		// Method begins at RVA 0x22ce
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

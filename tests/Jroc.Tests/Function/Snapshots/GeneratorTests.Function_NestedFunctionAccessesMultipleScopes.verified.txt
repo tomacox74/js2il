@@ -22,7 +22,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x21aa
+					// Method begins at RVA 0x21b2
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -46,7 +46,7 @@
 				.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 					01 00 02 00 00 00 00 00
 				)
-				// Method begins at RVA 0x2104
+				// Method begins at RVA 0x210c
 				// Header size: 12
 				// Code size: 136 (0x88)
 				.maxstack 8
@@ -121,7 +121,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21a1
+				// Method begins at RVA 0x21a9
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -149,11 +149,12 @@
 			)
 			// Method begins at RVA 0x20a4
 			// Header size: 12
-			// Code size: 82 (0x52)
+			// Code size: 89 (0x59)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.Function_NestedFunctionAccessesMultipleScopes/testFunction/Scope,
-				[1] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
+				[1] class FunctionObjects.Function_NestedFunctionAccessesMultipleScopes_AC96F27E.FunctionObject_FunctionDeclaration_9DB41BFE_innerFunction,
+				[2] object[]
 			)
 
 			IL_0000: newobj instance void Modules.Function_NestedFunctionAccessesMultipleScopes/testFunction/Scope::.ctor()
@@ -168,31 +169,39 @@
 			IL_0011: ldc.i4.1
 			IL_0012: ldloc.0
 			IL_0013: stelem.ref
-			IL_0014: ldftn object Modules.Function_NestedFunctionAccessesMultipleScopes/testFunction/innerFunction::__js_call__(object[], object)
-			IL_001a: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-			IL_001f: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
-			IL_0024: ldc.i4.0
-			IL_0025: conv.r8
-			IL_0026: ldstr "innerFunction"
+			IL_0014: stloc.2
+			IL_0015: ldloc.2
+			IL_0016: ldc.i4.0
+			IL_0017: ldelem.ref
+			IL_0018: castclass Modules.Function_NestedFunctionAccessesMultipleScopes/Scope
+			IL_001d: ldloc.2
+			IL_001e: ldc.i4.1
+			IL_001f: ldelem.ref
+			IL_0020: castclass Modules.Function_NestedFunctionAccessesMultipleScopes/testFunction/Scope
+			IL_0025: ldloc.2
+			IL_0026: newobj instance void FunctionObjects.Function_NestedFunctionAccessesMultipleScopes_AC96F27E.FunctionObject_FunctionDeclaration_9DB41BFE_innerFunction::.ctor(class Modules.Function_NestedFunctionAccessesMultipleScopes/Scope, class Modules.Function_NestedFunctionAccessesMultipleScopes/testFunction/Scope, object[])
 			IL_002b: ldc.i4.0
-			IL_002c: ldc.i4.1
-			IL_002d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
-			IL_0032: stloc.1
-			IL_0033: ldloc.0
-			IL_0034: ldstr "I am outer"
-			IL_0039: stfld string Modules.Function_NestedFunctionAccessesMultipleScopes/testFunction/Scope::outerVar
-			IL_003e: nop
-			IL_003f: ldloc.1
-			IL_0040: ldc.i4.1
-			IL_0041: newarr [System.Runtime]System.Object
-			IL_0046: dup
-			IL_0047: ldc.i4.0
-			IL_0048: ldarg.0
-			IL_0049: stelem.ref
-			IL_004a: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0, object[])
-			IL_004f: pop
-			IL_0050: ldnull
-			IL_0051: ret
+			IL_002c: conv.r8
+			IL_002d: ldstr "innerFunction"
+			IL_0032: ldc.i4.0
+			IL_0033: ldc.i4.1
+			IL_0034: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class FunctionObjects.Function_NestedFunctionAccessesMultipleScopes_AC96F27E.FunctionObject_FunctionDeclaration_9DB41BFE_innerFunction>(!!0, float64, string, bool, bool)
+			IL_0039: stloc.1
+			IL_003a: ldloc.0
+			IL_003b: ldstr "I am outer"
+			IL_0040: stfld string Modules.Function_NestedFunctionAccessesMultipleScopes/testFunction/Scope::outerVar
+			IL_0045: nop
+			IL_0046: ldloc.1
+			IL_0047: ldc.i4.1
+			IL_0048: newarr [System.Runtime]System.Object
+			IL_004d: dup
+			IL_004e: ldc.i4.0
+			IL_004f: ldarg.0
+			IL_0050: stelem.ref
+			IL_0051: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
+			IL_0056: pop
+			IL_0057: ldnull
+			IL_0058: ret
 		} // end of method testFunction::__js_call__
 
 	} // end of class testFunction
@@ -214,7 +223,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2198
+			// Method begins at RVA 0x21a0
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -240,37 +249,45 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 69 (0x45)
+		// Code size: 71 (0x47)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Function_NestedFunctionAccessesMultipleScopes/Scope,
-			[1] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
+			[1] class FunctionObjects.Function_NestedFunctionAccessesMultipleScopes_AC96F27E.FunctionObject_FunctionDeclaration_B1D31301_testFunction,
+			[2] object[]
 		)
 
 		IL_0000: newobj instance void Modules.Function_NestedFunctionAccessesMultipleScopes/Scope::.ctor()
 		IL_0005: stloc.0
-		IL_0006: ldloc.0
-		IL_0007: castclass Modules.Function_NestedFunctionAccessesMultipleScopes/Scope
-		IL_000c: ldftn object Modules.Function_NestedFunctionAccessesMultipleScopes/testFunction::__js_call__(class Modules.Function_NestedFunctionAccessesMultipleScopes/Scope, object)
-		IL_0012: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_0017: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
-		IL_001c: ldc.i4.0
-		IL_001d: conv.r8
-		IL_001e: ldstr "testFunction"
-		IL_0023: ldc.i4.0
-		IL_0024: ldc.i4.1
-		IL_0025: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
-		IL_002a: stloc.1
-		IL_002b: nop
-		IL_002c: ldloc.0
-		IL_002d: ldstr "I am global"
-		IL_0032: stfld string Modules.Function_NestedFunctionAccessesMultipleScopes/Scope::globalVar
-		IL_0037: nop
-		IL_0038: ldloc.1
-		IL_0039: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_003e: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0, object[])
-		IL_0043: pop
-		IL_0044: ret
+		IL_0006: ldc.i4.1
+		IL_0007: newarr [System.Runtime]System.Object
+		IL_000c: dup
+		IL_000d: ldc.i4.0
+		IL_000e: ldloc.0
+		IL_000f: stelem.ref
+		IL_0010: stloc.2
+		IL_0011: ldloc.2
+		IL_0012: ldc.i4.0
+		IL_0013: ldelem.ref
+		IL_0014: castclass Modules.Function_NestedFunctionAccessesMultipleScopes/Scope
+		IL_0019: newobj instance void FunctionObjects.Function_NestedFunctionAccessesMultipleScopes_AC96F27E.FunctionObject_FunctionDeclaration_B1D31301_testFunction::.ctor(class Modules.Function_NestedFunctionAccessesMultipleScopes/Scope)
+		IL_001e: ldc.i4.0
+		IL_001f: conv.r8
+		IL_0020: ldstr "testFunction"
+		IL_0025: ldc.i4.0
+		IL_0026: ldc.i4.1
+		IL_0027: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class FunctionObjects.Function_NestedFunctionAccessesMultipleScopes_AC96F27E.FunctionObject_FunctionDeclaration_B1D31301_testFunction>(!!0, float64, string, bool, bool)
+		IL_002c: stloc.1
+		IL_002d: nop
+		IL_002e: ldloc.0
+		IL_002f: ldstr "I am global"
+		IL_0034: stfld string Modules.Function_NestedFunctionAccessesMultipleScopes/Scope::globalVar
+		IL_0039: nop
+		IL_003a: ldloc.1
+		IL_003b: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0040: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
+		IL_0045: pop
+		IL_0046: ret
 	} // end of method Function_NestedFunctionAccessesMultipleScopes::__js_module_init__
 
 } // end of class Modules.Function_NestedFunctionAccessesMultipleScopes
@@ -287,7 +304,7 @@
 			class Modules.Function_NestedFunctionAccessesMultipleScopes/Scope capture0
 		) cil managed 
 	{
-		// Method begins at RVA 0x21b3
+		// Method begins at RVA 0x21bb
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -303,7 +320,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x21c2
+		// Method begins at RVA 0x21ca
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -315,7 +332,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x21c5
+		// Method begins at RVA 0x21cd
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -330,16 +347,16 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x21c8
+		// Method begins at RVA 0x21d0
 		// Header size: 1
-		// Code size: 13 (0xd)
+		// Code size: 17 (0x11)
 		.maxstack 8
 
 		IL_0000: ldarg.0
 		IL_0001: ldfld class Modules.Function_NestedFunctionAccessesMultipleScopes/Scope FunctionObjects.Function_NestedFunctionAccessesMultipleScopes_AC96F27E.FunctionObject_FunctionDeclaration_B1D31301_testFunction::_environment0_Function_NestedFunctionAccessesMultipleScopes
-		IL_0006: ldnull
-		IL_0007: call object Modules.Function_NestedFunctionAccessesMultipleScopes/testFunction::__js_call__(class Modules.Function_NestedFunctionAccessesMultipleScopes/Scope, object)
-		IL_000c: ret
+		IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
+		IL_000b: call object Modules.Function_NestedFunctionAccessesMultipleScopes/testFunction::__js_call__(class Modules.Function_NestedFunctionAccessesMultipleScopes/Scope, object)
+		IL_0010: ret
 	} // end of method FunctionObject_FunctionDeclaration_B1D31301_testFunction::CallCore
 
 	.method family hidebysig virtual 
@@ -348,14 +365,17 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x21d6
+		// Method begins at RVA 0x21e2
 		// Header size: 1
-		// Code size: 11 (0xb)
+		// Code size: 14 (0xe)
 		.maxstack 8
 
-		IL_0000: ldstr "Generated construction adapter is reserved for the callable-family construction migration"
-		IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-		IL_000a: throw
+		IL_0000: ldarg.0
+		IL_0001: ldarg.1
+		IL_0002: call instance object[] [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::ToArray()
+		IL_0007: ldarg.2
+		IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionObject(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, object[], object)
+		IL_000d: ret
 	} // end of method FunctionObject_FunctionDeclaration_B1D31301_testFunction::ConstructCore
 
 } // end of class FunctionObjects.Function_NestedFunctionAccessesMultipleScopes_AC96F27E.FunctionObject_FunctionDeclaration_B1D31301_testFunction
@@ -376,7 +396,7 @@
 			object[] capture2
 		) cil managed 
 	{
-		// Method begins at RVA 0x21e2
+		// Method begins at RVA 0x21f1
 		// Header size: 1
 		// Code size: 28 (0x1c)
 		.maxstack 8
@@ -398,7 +418,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x21ff
+		// Method begins at RVA 0x220e
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -410,7 +430,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x2202
+		// Method begins at RVA 0x2211
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -425,16 +445,16 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x2205
+		// Method begins at RVA 0x2214
 		// Header size: 1
-		// Code size: 13 (0xd)
+		// Code size: 17 (0x11)
 		.maxstack 8
 
 		IL_0000: ldarg.0
 		IL_0001: ldfld object[] FunctionObjects.Function_NestedFunctionAccessesMultipleScopes_AC96F27E.FunctionObject_FunctionDeclaration_9DB41BFE_innerFunction::_transitionalScopes
-		IL_0006: ldnull
-		IL_0007: call object Modules.Function_NestedFunctionAccessesMultipleScopes/testFunction/innerFunction::__js_call__(object[], object)
-		IL_000c: ret
+		IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
+		IL_000b: call object Modules.Function_NestedFunctionAccessesMultipleScopes/testFunction/innerFunction::__js_call__(object[], object)
+		IL_0010: ret
 	} // end of method FunctionObject_FunctionDeclaration_9DB41BFE_innerFunction::CallCore
 
 	.method family hidebysig virtual 
@@ -443,14 +463,17 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x2213
+		// Method begins at RVA 0x2226
 		// Header size: 1
-		// Code size: 11 (0xb)
+		// Code size: 14 (0xe)
 		.maxstack 8
 
-		IL_0000: ldstr "Generated construction adapter is reserved for the callable-family construction migration"
-		IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-		IL_000a: throw
+		IL_0000: ldarg.0
+		IL_0001: ldarg.1
+		IL_0002: call instance object[] [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::ToArray()
+		IL_0007: ldarg.2
+		IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionObject(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, object[], object)
+		IL_000d: ret
 	} // end of method FunctionObject_FunctionDeclaration_9DB41BFE_innerFunction::ConstructCore
 
 } // end of class FunctionObjects.Function_NestedFunctionAccessesMultipleScopes_AC96F27E.FunctionObject_FunctionDeclaration_9DB41BFE_innerFunction
@@ -462,7 +485,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x221f
+		// Method begins at RVA 0x2235
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

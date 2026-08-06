@@ -164,25 +164,30 @@
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Function_GlobalFunctionWithArrayIteration/Scope,
-			[1] class [System.Runtime]System.Func`3<object, class [JavaScriptRuntime]JavaScriptRuntime.Array, class [JavaScriptRuntime]JavaScriptRuntime.Array>,
+			[1] class FunctionObjects.Function_GlobalFunctionWithArrayIteration_CD578465.FunctionObject_FunctionDeclaration_88106FB6_processArray,
 			[2] class [JavaScriptRuntime]JavaScriptRuntime.Array,
 			[3] object,
-			[4] object,
-			[5] object
+			[4] object[],
+			[5] object,
+			[6] object
 		)
 
 		IL_0000: newobj instance void Modules.Function_GlobalFunctionWithArrayIteration/Scope::.ctor()
 		IL_0005: stloc.0
-		IL_0006: ldnull
-		IL_0007: ldftn class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Function_GlobalFunctionWithArrayIteration/processArray::__js_call__(object, class [JavaScriptRuntime]JavaScriptRuntime.Array)
-		IL_000d: newobj instance void class [System.Runtime]System.Func`3<object, class [JavaScriptRuntime]JavaScriptRuntime.Array, class [JavaScriptRuntime]JavaScriptRuntime.Array>::.ctor(object, native int)
-		IL_0012: castclass class [System.Runtime]System.Func`3<object, class [JavaScriptRuntime]JavaScriptRuntime.Array, class [JavaScriptRuntime]JavaScriptRuntime.Array>
+		IL_0006: ldc.i4.1
+		IL_0007: newarr [System.Runtime]System.Object
+		IL_000c: dup
+		IL_000d: ldc.i4.0
+		IL_000e: ldloc.0
+		IL_000f: stelem.ref
+		IL_0010: stloc.s 4
+		IL_0012: newobj instance void FunctionObjects.Function_GlobalFunctionWithArrayIteration_CD578465.FunctionObject_FunctionDeclaration_88106FB6_processArray::.ctor()
 		IL_0017: ldc.i4.1
 		IL_0018: conv.r8
 		IL_0019: ldstr "processArray"
 		IL_001e: ldc.i4.0
 		IL_001f: ldc.i4.1
-		IL_0020: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [System.Runtime]System.Func`3<object, class [JavaScriptRuntime]JavaScriptRuntime.Array, class [JavaScriptRuntime]JavaScriptRuntime.Array>>(!!0, float64, string, bool, bool)
+		IL_0020: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class FunctionObjects.Function_GlobalFunctionWithArrayIteration_CD578465.FunctionObject_FunctionDeclaration_88106FB6_processArray>(!!0, float64, string, bool, bool)
 		IL_0025: stloc.1
 		IL_0026: nop
 		IL_0027: nop
@@ -209,16 +214,16 @@
 		IL_0078: ldstr "console"
 		IL_007d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
 		IL_0082: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0087: stloc.s 4
+		IL_0087: stloc.s 5
 		IL_0089: ldloc.3
 		IL_008a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
 		IL_008f: ldstr "join"
 		IL_0094: ldstr ","
 		IL_0099: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_009e: stloc.s 5
-		IL_00a0: ldloc.s 4
+		IL_009e: stloc.s 6
+		IL_00a0: ldloc.s 5
 		IL_00a2: ldstr "log"
-		IL_00a7: ldloc.s 5
+		IL_00a7: ldloc.s 6
 		IL_00a9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
 		IL_00ae: pop
 		IL_00af: ret
@@ -275,16 +280,16 @@
 	{
 		// Method begins at RVA 0x21a1
 		// Header size: 1
-		// Code size: 19 (0x13)
+		// Code size: 23 (0x17)
 		.maxstack 8
 
-		IL_0000: ldnull
-		IL_0001: ldarg.2
-		IL_0002: ldc.i4.0
-		IL_0003: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-		IL_0008: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
-		IL_000d: call class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Function_GlobalFunctionWithArrayIteration/processArray::__js_call__(object, class [JavaScriptRuntime]JavaScriptRuntime.Array)
-		IL_0012: ret
+		IL_0000: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
+		IL_0005: ldarg.2
+		IL_0006: ldc.i4.0
+		IL_0007: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+		IL_000c: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
+		IL_0011: call class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Function_GlobalFunctionWithArrayIteration/processArray::__js_call__(object, class [JavaScriptRuntime]JavaScriptRuntime.Array)
+		IL_0016: ret
 	} // end of method FunctionObject_FunctionDeclaration_88106FB6_processArray::CallCore
 
 	.method family hidebysig virtual 
@@ -293,14 +298,17 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x21b5
+		// Method begins at RVA 0x21b9
 		// Header size: 1
-		// Code size: 11 (0xb)
+		// Code size: 14 (0xe)
 		.maxstack 8
 
-		IL_0000: ldstr "Generated construction adapter is reserved for the callable-family construction migration"
-		IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-		IL_000a: throw
+		IL_0000: ldarg.0
+		IL_0001: ldarg.1
+		IL_0002: call instance object[] [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::ToArray()
+		IL_0007: ldarg.2
+		IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionObject(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, object[], object)
+		IL_000d: ret
 	} // end of method FunctionObject_FunctionDeclaration_88106FB6_processArray::ConstructCore
 
 } // end of class FunctionObjects.Function_GlobalFunctionWithArrayIteration_CD578465.FunctionObject_FunctionDeclaration_88106FB6_processArray
@@ -312,7 +320,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21c1
+		// Method begins at RVA 0x21c8
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

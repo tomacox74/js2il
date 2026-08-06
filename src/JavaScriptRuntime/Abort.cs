@@ -22,7 +22,7 @@ namespace JavaScriptRuntime
     public sealed class AbortSignal
     {
         private readonly object _syncRoot = new();
-        private readonly List<Delegate> _eventListeners = new();
+        private readonly List<object> _eventListeners = new();
         private readonly List<Action<object?>> _internalListeners = new();
 
         public bool aborted { get; private set; }
@@ -33,16 +33,16 @@ namespace JavaScriptRuntime
         {
             _ = options;
 
-            if (!IsAbortEventName(eventName) || listener is not Delegate del)
+            if (!IsAbortEventName(eventName) || !CallableOperations.IsCallable(listener))
             {
                 return null;
             }
 
             lock (_syncRoot)
             {
-                if (!aborted && !_eventListeners.Contains(del))
+                if (!aborted && !_eventListeners.Contains(listener!))
                 {
-                    _eventListeners.Add(del);
+                    _eventListeners.Add(listener!);
                 }
             }
 
@@ -53,14 +53,14 @@ namespace JavaScriptRuntime
         {
             _ = options;
 
-            if (!IsAbortEventName(eventName) || listener is not Delegate del)
+            if (!IsAbortEventName(eventName) || !CallableOperations.IsCallable(listener))
             {
                 return null;
             }
 
             lock (_syncRoot)
             {
-                _eventListeners.Remove(del);
+                _eventListeners.Remove(listener!);
             }
 
             return null;
@@ -92,7 +92,7 @@ namespace JavaScriptRuntime
 
         internal void Abort(object? abortReason = null)
         {
-            Delegate[] listeners;
+            object[] listeners;
             Action<object?>[] internalListeners;
             object? resolvedReason;
 
@@ -114,7 +114,7 @@ namespace JavaScriptRuntime
 
             foreach (var listener in listeners)
             {
-                Closure.InvokeWithArgs(listener, System.Array.Empty<object>(), System.Array.Empty<object>());
+                CallableOperations.Call0(listener, null);
             }
 
             foreach (var listener in internalListeners)

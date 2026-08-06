@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2504
+				// Method begins at RVA 0x251c
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -44,7 +44,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 04 00 00 02
 			)
-			// Method begins at RVA 0x24bc
+			// Method begins at RVA 0x24d4
 			// Header size: 12
 			// Code size: 51 (0x33)
 			.maxstack 8
@@ -87,7 +87,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x250d
+				// Method begins at RVA 0x2525
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -107,7 +107,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2516
+				// Method begins at RVA 0x252e
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -128,7 +128,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x24fb
+			// Method begins at RVA 0x2513
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -154,8 +154,8 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 1104 (0x450)
-		.maxstack 8
+		// Code size: 1128 (0x468)
+		.maxstack 10
 		.locals init (
 			[0] class Modules.TypedArray_SignedAndClamped_ConversionSemantics/Scope,
 			[1] class [JavaScriptRuntime]JavaScriptRuntime.Int8Array,
@@ -171,7 +171,8 @@
 			[11] class [JavaScriptRuntime]JavaScriptRuntime.Array,
 			[12] object,
 			[13] object,
-			[14] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
+			[14] object[],
+			[15] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
 		)
 
 		IL_0000: newobj instance void Modules.TypedArray_SignedAndClamped_ConversionSemantics/Scope::.ctor()
@@ -372,107 +373,119 @@
 		IL_031a: ldc.r8 0.0
 		IL_0323: box [System.Runtime]System.Double
 		IL_0328: stfld object Modules.TypedArray_SignedAndClamped_ConversionSemantics/Scope::coercions
-		IL_032d: ldloc.0
-		IL_032e: castclass Modules.TypedArray_SignedAndClamped_ConversionSemantics/Scope
-		IL_0333: ldftn object Modules.TypedArray_SignedAndClamped_ConversionSemantics/FunctionExpression_dynamicValue::__js_call__(class Modules.TypedArray_SignedAndClamped_ConversionSemantics/Scope, object)
-		IL_0339: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_033e: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
-		IL_0343: ldc.i4.0
-		IL_0344: conv.r8
-		IL_0345: ldstr ""
-		IL_034a: ldc.i4.0
-		IL_034b: ldc.i4.1
-		IL_034c: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
-		IL_0351: stloc.s 14
-		IL_0353: ldloc.s 14
-		IL_0355: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0)
-		IL_035a: stloc.s 14
-		IL_035c: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_0361: dup
-		IL_0362: ldstr "valueOf"
-		IL_0367: ldloc.s 14
-		IL_0369: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_036e: stloc.s 5
-		IL_0370: ldc.r8 0.0
-		IL_0379: box [System.Runtime]System.Double
-		IL_037e: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Uint8Array::.ctor(object)
-		IL_0383: stloc.s 6
-		IL_0385: ldloc.s 6
-		IL_0387: ldc.r8 0.0
-		IL_0390: ldloc.s 5
-		IL_0392: ldc.i4.1
-		IL_0393: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, float64, object, bool)
-		IL_0398: pop
-		IL_0399: ldstr "console"
-		IL_039e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_03a3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_03a8: stloc.s 12
-		IL_03aa: ldloc.0
-		IL_03ab: ldfld object Modules.TypedArray_SignedAndClamped_ConversionSemantics/Scope::coercions
-		IL_03b0: stloc.s 13
-		IL_03b2: ldloc.s 12
-		IL_03b4: ldstr "log"
-		IL_03b9: ldloc.s 13
-		IL_03bb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_03c0: pop
+		IL_032d: ldc.i4.1
+		IL_032e: newarr [System.Runtime]System.Object
+		IL_0333: dup
+		IL_0334: ldc.i4.0
+		IL_0335: ldloc.0
+		IL_0336: stelem.ref
+		IL_0337: stloc.s 14
+		IL_0339: ldloc.s 14
+		IL_033b: ldc.i4.0
+		IL_033c: ldelem.ref
+		IL_033d: castclass Modules.TypedArray_SignedAndClamped_ConversionSemantics/Scope
+		IL_0342: ldftn object Modules.TypedArray_SignedAndClamped_ConversionSemantics/FunctionExpression_dynamicValue::__js_call__(class Modules.TypedArray_SignedAndClamped_ConversionSemantics/Scope, object)
+		IL_0348: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_034d: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
+		IL_0352: ldc.i4.0
+		IL_0353: conv.r8
+		IL_0354: ldstr ""
+		IL_0359: ldc.i4.0
+		IL_035a: ldc.i4.1
+		IL_035b: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
+		IL_0360: stloc.s 15
+		IL_0362: ldloc.s 15
+		IL_0364: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0)
+		IL_0369: stloc.s 15
+		IL_036b: ldloc.s 15
+		IL_036d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0)
+		IL_0372: stloc.s 15
+		IL_0374: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0379: dup
+		IL_037a: ldstr "valueOf"
+		IL_037f: ldloc.s 15
+		IL_0381: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_0386: stloc.s 5
+		IL_0388: ldc.r8 0.0
+		IL_0391: box [System.Runtime]System.Double
+		IL_0396: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Uint8Array::.ctor(object)
+		IL_039b: stloc.s 6
+		IL_039d: ldloc.s 6
+		IL_039f: ldc.r8 0.0
+		IL_03a8: ldloc.s 5
+		IL_03aa: ldc.i4.1
+		IL_03ab: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, float64, object, bool)
+		IL_03b0: pop
+		IL_03b1: ldstr "console"
+		IL_03b6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_03bb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_03c0: stloc.s 12
+		IL_03c2: ldloc.0
+		IL_03c3: ldfld object Modules.TypedArray_SignedAndClamped_ConversionSemantics/Scope::coercions
+		IL_03c8: stloc.s 13
+		IL_03ca: ldloc.s 12
+		IL_03cc: ldstr "log"
+		IL_03d1: ldloc.s 13
+		IL_03d3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_03d8: pop
 		.try
 		{
-			IL_03c1: nop
-			IL_03c2: ldstr "value"
-			IL_03c7: call object [JavaScriptRuntime]JavaScriptRuntime.Symbol::Call(object)
-			IL_03cc: stloc.s 13
-			IL_03ce: ldloc.s 6
-			IL_03d0: ldc.r8 0.0
-			IL_03d9: ldloc.s 13
-			IL_03db: ldc.i4.1
-			IL_03dc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, float64, object, bool)
-			IL_03e1: pop
-			IL_03e2: leave IL_044c
+			IL_03d9: nop
+			IL_03da: ldstr "value"
+			IL_03df: call object [JavaScriptRuntime]JavaScriptRuntime.Symbol::Call(object)
+			IL_03e4: stloc.s 13
+			IL_03e6: ldloc.s 6
+			IL_03e8: ldc.r8 0.0
+			IL_03f1: ldloc.s 13
+			IL_03f3: ldc.i4.1
+			IL_03f4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, float64, object, bool)
+			IL_03f9: pop
+			IL_03fa: leave IL_0464
 		} // end .try
 		catch [System.Runtime]System.Exception
 		{
-			IL_03e7: stloc.s 7
-			IL_03e9: ldloc.s 7
-			IL_03eb: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-			IL_03f0: dup
-			IL_03f1: brtrue IL_0407
+			IL_03ff: stloc.s 7
+			IL_0401: ldloc.s 7
+			IL_0403: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+			IL_0408: dup
+			IL_0409: brtrue IL_041f
 
-			IL_03f6: pop
-			IL_03f7: ldloc.s 7
-			IL_03f9: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
-			IL_03fe: dup
-			IL_03ff: brtrue IL_0413
+			IL_040e: pop
+			IL_040f: ldloc.s 7
+			IL_0411: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+			IL_0416: dup
+			IL_0417: brtrue IL_042b
 
-			IL_0404: pop
-			IL_0405: rethrow
+			IL_041c: pop
+			IL_041d: rethrow
 
-			IL_0407: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-			IL_040c: stloc.s 8
-			IL_040e: br IL_0415
+			IL_041f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+			IL_0424: stloc.s 8
+			IL_0426: br IL_042d
 
-			IL_0413: stloc.s 8
+			IL_042b: stloc.s 8
 
-			IL_0415: ldloc.s 8
-			IL_0417: stloc.s 9
-			IL_0419: ldstr "console"
-			IL_041e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_0423: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0428: stloc.s 13
-			IL_042a: ldloc.s 9
-			IL_042c: ldstr "name"
-			IL_0431: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0436: stloc.s 12
-			IL_0438: ldloc.s 13
-			IL_043a: ldstr "log"
-			IL_043f: ldloc.s 12
-			IL_0441: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_0446: pop
-			IL_0447: leave IL_044c
+			IL_042d: ldloc.s 8
+			IL_042f: stloc.s 9
+			IL_0431: ldstr "console"
+			IL_0436: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_043b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0440: stloc.s 13
+			IL_0442: ldloc.s 9
+			IL_0444: ldstr "name"
+			IL_0449: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_044e: stloc.s 12
+			IL_0450: ldloc.s 13
+			IL_0452: ldstr "log"
+			IL_0457: ldloc.s 12
+			IL_0459: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_045e: pop
+			IL_045f: leave IL_0464
 		} // end handler
 
-		IL_044c: ldnull
-		IL_044d: stloc.s 10
-		IL_044f: ret
+		IL_0464: ldnull
+		IL_0465: stloc.s 10
+		IL_0467: ret
 	} // end of method TypedArray_SignedAndClamped_ConversionSemantics::__js_module_init__
 
 } // end of class Modules.TypedArray_SignedAndClamped_ConversionSemantics
@@ -489,7 +502,7 @@
 			class Modules.TypedArray_SignedAndClamped_ConversionSemantics/Scope capture0
 		) cil managed 
 	{
-		// Method begins at RVA 0x251f
+		// Method begins at RVA 0x2537
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -505,7 +518,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x252e
+		// Method begins at RVA 0x2546
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -517,7 +530,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x2531
+		// Method begins at RVA 0x2549
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -532,16 +545,16 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x2534
+		// Method begins at RVA 0x254c
 		// Header size: 1
-		// Code size: 13 (0xd)
+		// Code size: 17 (0x11)
 		.maxstack 8
 
 		IL_0000: ldarg.0
 		IL_0001: ldfld class Modules.TypedArray_SignedAndClamped_ConversionSemantics/Scope FunctionObjects.TypedArray_SignedAndClamped_ConversionSemantics_05315922.FunctionObject_FunctionExpression_0242BF45_L17C10::_environment0_TypedArray_SignedAndClamped_ConversionSemantics
-		IL_0006: ldnull
-		IL_0007: call object Modules.TypedArray_SignedAndClamped_ConversionSemantics/FunctionExpression_dynamicValue::__js_call__(class Modules.TypedArray_SignedAndClamped_ConversionSemantics/Scope, object)
-		IL_000c: ret
+		IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
+		IL_000b: call object Modules.TypedArray_SignedAndClamped_ConversionSemantics/FunctionExpression_dynamicValue::__js_call__(class Modules.TypedArray_SignedAndClamped_ConversionSemantics/Scope, object)
+		IL_0010: ret
 	} // end of method FunctionObject_FunctionExpression_0242BF45_L17C10::CallCore
 
 	.method family hidebysig virtual 
@@ -550,14 +563,17 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x2542
+		// Method begins at RVA 0x255e
 		// Header size: 1
-		// Code size: 11 (0xb)
+		// Code size: 14 (0xe)
 		.maxstack 8
 
-		IL_0000: ldstr "Generated construction adapter is reserved for the callable-family construction migration"
-		IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-		IL_000a: throw
+		IL_0000: ldarg.0
+		IL_0001: ldarg.1
+		IL_0002: call instance object[] [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::ToArray()
+		IL_0007: ldarg.2
+		IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionObject(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, object[], object)
+		IL_000d: ret
 	} // end of method FunctionObject_FunctionExpression_0242BF45_L17C10::ConstructCore
 
 } // end of class FunctionObjects.TypedArray_SignedAndClamped_ConversionSemantics_05315922.FunctionObject_FunctionExpression_0242BF45_L17C10
@@ -569,7 +585,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x254e
+		// Method begins at RVA 0x256d
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

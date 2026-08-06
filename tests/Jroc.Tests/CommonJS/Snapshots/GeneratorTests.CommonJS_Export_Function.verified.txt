@@ -177,35 +177,40 @@
 	{
 		// Method begins at RVA 0x20a4
 		// Header size: 12
-		// Code size: 55 (0x37)
+		// Code size: 54 (0x36)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.CommonJS_Export_Function_Lib/Scope,
-			[1] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1
+			[1] class FunctionObjects.CommonJS_Export_Function_Lib_548AACBF.FunctionObject_FunctionDeclaration_8633A077_greet,
+			[2] object[]
 		)
 
 		IL_0000: newobj instance void Modules.CommonJS_Export_Function_Lib/Scope::.ctor()
 		IL_0005: stloc.0
-		IL_0006: ldnull
-		IL_0007: ldftn object Modules.CommonJS_Export_Function_Lib/greet::__js_call__(object, object)
-		IL_000d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-		IL_0012: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1
-		IL_0017: ldc.i4.1
-		IL_0018: conv.r8
-		IL_0019: ldstr "greet"
-		IL_001e: ldc.i4.0
-		IL_001f: ldc.i4.1
-		IL_0020: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0, float64, string, bool, bool)
-		IL_0025: stloc.1
+		IL_0006: ldc.i4.1
+		IL_0007: newarr [System.Runtime]System.Object
+		IL_000c: dup
+		IL_000d: ldc.i4.0
+		IL_000e: ldloc.0
+		IL_000f: stelem.ref
+		IL_0010: stloc.2
+		IL_0011: newobj instance void FunctionObjects.CommonJS_Export_Function_Lib_548AACBF.FunctionObject_FunctionDeclaration_8633A077_greet::.ctor()
+		IL_0016: ldc.i4.1
+		IL_0017: conv.r8
+		IL_0018: ldstr "greet"
+		IL_001d: ldc.i4.0
+		IL_001e: ldc.i4.1
+		IL_001f: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class FunctionObjects.CommonJS_Export_Function_Lib_548AACBF.FunctionObject_FunctionDeclaration_8633A077_greet>(!!0, float64, string, bool, bool)
+		IL_0024: stloc.1
+		IL_0025: nop
 		IL_0026: nop
-		IL_0027: nop
-		IL_0028: ldarg.2
-		IL_0029: ldstr "exports"
-		IL_002e: ldloc.1
-		IL_002f: ldc.i4.1
-		IL_0030: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
-		IL_0035: pop
-		IL_0036: ret
+		IL_0027: ldarg.2
+		IL_0028: ldstr "exports"
+		IL_002d: ldloc.1
+		IL_002e: ldc.i4.1
+		IL_002f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
+		IL_0034: pop
+		IL_0035: ret
 	} // end of method CommonJS_Export_Function_Lib::__js_module_init__
 
 } // end of class Modules.CommonJS_Export_Function_Lib
@@ -259,15 +264,15 @@
 	{
 		// Method begins at RVA 0x2137
 		// Header size: 1
-		// Code size: 14 (0xe)
+		// Code size: 18 (0x12)
 		.maxstack 8
 
-		IL_0000: ldnull
-		IL_0001: ldarg.2
-		IL_0002: ldc.i4.0
-		IL_0003: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-		IL_0008: call object Modules.CommonJS_Export_Function_Lib/greet::__js_call__(object, object)
-		IL_000d: ret
+		IL_0000: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
+		IL_0005: ldarg.2
+		IL_0006: ldc.i4.0
+		IL_0007: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+		IL_000c: call object Modules.CommonJS_Export_Function_Lib/greet::__js_call__(object, object)
+		IL_0011: ret
 	} // end of method FunctionObject_FunctionDeclaration_8633A077_greet::CallCore
 
 	.method family hidebysig virtual 
@@ -276,14 +281,17 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x2146
+		// Method begins at RVA 0x214a
 		// Header size: 1
-		// Code size: 11 (0xb)
+		// Code size: 14 (0xe)
 		.maxstack 8
 
-		IL_0000: ldstr "Generated construction adapter is reserved for the callable-family construction migration"
-		IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-		IL_000a: throw
+		IL_0000: ldarg.0
+		IL_0001: ldarg.1
+		IL_0002: call instance object[] [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::ToArray()
+		IL_0007: ldarg.2
+		IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionObject(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, object[], object)
+		IL_000d: ret
 	} // end of method FunctionObject_FunctionDeclaration_8633A077_greet::ConstructCore
 
 } // end of class FunctionObjects.CommonJS_Export_Function_Lib_548AACBF.FunctionObject_FunctionDeclaration_8633A077_greet
@@ -295,7 +303,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2152
+		// Method begins at RVA 0x2159
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

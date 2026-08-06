@@ -438,7 +438,7 @@ namespace JavaScriptRuntime
                 throw new TypeError("undefined is not a function");
             }
 
-            if (callback is not Delegate callbackDel)
+            if (!CallableOperations.IsCallable(callback))
             {
                 throw new TypeError("callback is not a function");
             }
@@ -484,13 +484,13 @@ namespace JavaScriptRuntime
                     continue;
                 }
                 var current = JavaScriptRuntime.ObjectRuntime.GetItem(iterationReceiver, (double)i);
-                accumulator = JavaScriptRuntime.Function.Call(callbackDel, null, new object?[]
-                {
+                accumulator = CallableOperations.Call4(
+                    callback,
+                    null,
                     accumulator,
                     current,
                     (double)i,
-                    callbackReceiver
-                });
+                    callbackReceiver);
             }
 
             return accumulator;
@@ -537,7 +537,7 @@ namespace JavaScriptRuntime
                 throw new TypeError("undefined is not a function");
             }
 
-            if (callback is not Delegate callbackDel)
+            if (!CallableOperations.IsCallable(callback))
             {
                 throw new TypeError("callback is not a function");
             }
@@ -582,13 +582,13 @@ namespace JavaScriptRuntime
                     continue;
                 }
                 var current = JavaScriptRuntime.ObjectRuntime.GetItem(iterationReceiver, (double)i);
-                accumulator = JavaScriptRuntime.Function.Call(callbackDel, null, new object?[]
-                {
+                accumulator = CallableOperations.Call4(
+                    callback,
+                    null,
                     accumulator,
                     current,
                     (double)i,
-                    callbackReceiver
-                });
+                    callbackReceiver);
             }
 
             return accumulator;

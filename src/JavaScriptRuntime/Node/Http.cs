@@ -602,11 +602,6 @@ namespace JavaScriptRuntime.Node
 
         public override void end(object? chunk, object? callback)
         {
-            if (callback is Delegate del)
-            {
-                once("finish", del);
-            }
-
             base.end(chunk, callback);
             CompleteResponse();
         }
@@ -945,11 +940,6 @@ namespace JavaScriptRuntime.Node
 
         public override void end(object? chunk, object? callback)
         {
-            if (callback is Delegate del)
-            {
-                once("finish", del);
-            }
-
             base.end(chunk, callback);
             _requestEnded = true;
             StartIfNeeded();

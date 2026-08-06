@@ -156,6 +156,11 @@ public static class Function
             : thisArg;
     }
 
+    public static object? ResolveOrdinaryThisArgument(object? thisArg)
+        => thisArg is null or JsNull
+            ? GlobalThis.globalThis
+            : thisArg;
+
         private static bool IsCallableObject(object? target)
             => CallableOperations.IsCallable(target);
 
@@ -252,9 +257,11 @@ public static class Function
         private static object? PrototypeToString(object[] scopes, object?[]? args)
         {
             var target = RuntimeServices.GetCurrentThis();
-            if (target is JsFunctionObject)
+            if (target is JsFunctionObject functionObject)
             {
-                return "function () { [native code] }";
+                var name = ObjectRuntime.GetProperty(functionObject, "name") as string
+                    ?? string.Empty;
+                return $"function {name}() {{ [native code] }}";
             }
             if (target is not Delegate del)
             {
@@ -454,8 +461,38 @@ public static class Function
             }
             DefineMetadataProperty(functionValue, "length", length);
             DefineMetadataProperty(functionValue, "name", name ?? string.Empty);
+            if (functionValue is JsFunctionObject { IsConstructor: true } functionObject)
+            {
+                EnsureOrdinaryFunctionPrototype(functionObject);
+            }
 
             return functionValue;
+        }
+
+        private static void EnsureOrdinaryFunctionPrototype(JsFunctionObject functionObject)
+        {
+            if (PropertyDescriptorStore.TryGetOwn(functionObject, "prototype", out _))
+            {
+                return;
+            }
+
+            var prototype = ObjectRuntime.CreateOrdinaryObject();
+            PropertyDescriptorStore.DefineOrUpdate(functionObject, "prototype", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = false,
+                Writable = true,
+                Value = prototype
+            });
+            PropertyDescriptorStore.DefineOrUpdate(prototype, "constructor", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = functionObject
+            });
         }
 
         public static object InitializeFunctionInstance(object functionValue, double length, string? name, bool requiresInvocationContext, bool hasRestrictedProperties)
@@ -564,6 +601,42 @@ public static class Function
 
         public static bool IsConstructorReturnOverride(object? value)
             => TypeUtilities.IsConstructorReturnOverride(value);
+
+        public static object? ConstructGeneratedFunctionObject(
+            JsFunctionObject constructor,
+            object?[] arguments,
+            object? newTarget)
+        {
+            ArgumentNullException.ThrowIfNull(constructor);
+            if (!constructor.IsConstructor)
+            {
+                throw new TypeError("Value is not a constructor");
+            }
+
+            var instance = ObjectRuntime.CreateOrdinaryObject();
+            var prototypeSource = newTarget is null or JsNull
+                ? constructor
+                : newTarget;
+            var prototype = ObjectRuntime.GetItem(prototypeSource, "prototype");
+            if (TypeUtilities.IsConstructorReturnOverride(prototype))
+            {
+                PrototypeChain.SetPrototype(instance, prototype);
+            }
+
+            var callArguments = JsCallArguments.FromArray(arguments);
+            var previousThis = RuntimeServices.SetCurrentThis(instance);
+            try
+            {
+                var result = constructor.InvokeCall(instance, callArguments);
+                return TypeUtilities.IsConstructorReturnOverride(result)
+                    ? result
+                    : instance;
+            }
+            finally
+            {
+                RuntimeServices.SetCurrentThis(previousThis);
+            }
+        }
 
         internal static void DefineMetadataProperty(object target, string propName, object? value)
         {

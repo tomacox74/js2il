@@ -55,6 +55,16 @@ try {
 
 console.log("construct", receiver.value, receiver.wasConstructed, arrowConstructionThrows, typeof arrow.prototype);
 
+function AlternateReceiver() {}
+AlternateReceiver.prototype.kind = "alternate";
+const alternateReceiver = Reflect.construct(Receiver, [17], AlternateReceiver);
+console.log(
+    "newTarget",
+    alternateReceiver.value,
+    alternateReceiver.wasConstructed,
+    Object.getPrototypeOf(alternateReceiver) === AlternateReceiver.prototype,
+    alternateReceiver.kind);
+
 const lengthDescriptor = Object.getOwnPropertyDescriptor(Receiver, "length");
 console.log(
     "descriptor",
@@ -75,3 +85,6 @@ const proxied = new Proxy(
 
 console.log("proxy", proxied(5));
 console.log("callback", [1, 2, 3].map(value => value * 2).join(","));
+console.log("replace", "abc".replace("b", function (match, offset) {
+    return match.toUpperCase() + offset;
+}));

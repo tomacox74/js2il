@@ -35,10 +35,16 @@ internal static class GeneratedFunctionObjectPlanner
             RequiresInvocationContext =
                 callable.NeedsArgumentsObject
                 || callable.HasRestParameters
+                || callable.AstNode is FunctionExpression { Id: not null }
                 || callableScope?.MayUseBoundWithObject == true
+                || HasNestedArrowLexicalContext(callable.AstNode)
                 || requirements.UsesThis
                 || requirements.UsesNewTarget
                 || requirements.UsesSuper,
+            UsesNonStrictThisBinding =
+                callable.Kind is CallableKind.FunctionDeclaration
+                    or CallableKind.FunctionExpression
+                && !callable.HasRestrictedFunctionProperties,
             ReturnKind = GetReturnKind(callable)
         };
     }
@@ -303,6 +309,54 @@ internal static class GeneratedFunctionObjectPlanner
             foreach (var child in node.ChildNodes)
             {
                 Visit(child, isRoot: false);
+            }
+        }
+
+    }
+
+    private static bool HasNestedArrowLexicalContext(Node? root)
+    {
+        if (root is null)
+        {
+            return false;
+        }
+
+        return Visit(root, isRoot: true);
+
+        static bool Visit(Node node, bool isRoot)
+        {
+            if (!isRoot && node is FunctionDeclaration or FunctionExpression)
+            {
+                return false;
+            }
+
+            if (!isRoot
+                && node is ArrowFunctionExpression arrow
+                && ArrowUsesLexicalContext(arrow))
+            {
+                return true;
+            }
+
+            return node.ChildNodes.Any(child => Visit(child, isRoot: false));
+        }
+
+        static bool ArrowUsesLexicalContext(ArrowFunctionExpression arrow)
+        {
+            return VisitArrowBody(arrow.Body);
+
+            static bool VisitArrowBody(Node node)
+            {
+                if (node is FunctionDeclaration or FunctionExpression)
+                {
+                    return false;
+                }
+
+                if (node is ThisExpression or MetaProperty or Super)
+                {
+                    return true;
+                }
+
+                return node.ChildNodes.Any(VisitArrowBody);
             }
         }
     }

@@ -249,29 +249,19 @@ namespace JavaScriptRuntime
             }
         }
 
-        private Delegate GetCallableAdder(string name)
+        private object GetCallableAdder(string name)
         {
             var adder = ObjectRuntime.GetProperty(this, name);
-            if (adder is not Delegate del)
+            if (!CallableOperations.IsCallable(adder))
             {
                 throw new TypeError($"Set.prototype.{name} is not callable");
             }
 
-            return del;
+            return adder!;
         }
 
-        private object? CallAdder(Delegate adder, object? value)
-        {
-            var previousThis = RuntimeServices.SetCurrentThis(this);
-            try
-            {
-                return Closure.InvokeWithArgs(adder, System.Array.Empty<object>(), new object?[] { value });
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentThis(previousThis);
-            }
-        }
+        private object? CallAdder(object adder, object? value)
+            => CallableOperations.Call1(adder, this, value);
 
         /// <summary>
         /// ECMA-262 Set Record, the result of GetSetRecord. Captures the set-like object together
@@ -472,7 +462,7 @@ namespace JavaScriptRuntime
 
         public void forEach(object? callback, object? thisArg)
         {
-            if (callback is not Delegate del)
+            if (!CallableOperations.IsCallable(callback))
             {
                 throw new TypeError("Set.prototype.forEach callback must be a function");
             }
@@ -480,15 +470,7 @@ namespace JavaScriptRuntime
             for (int i = 0; i < _items.Count; i++)
             {
                 var value = _items[i];
-                var previousThis = RuntimeServices.SetCurrentThis(thisArg);
-                try
-                {
-                    Closure.InvokeWithArgs(del, System.Array.Empty<object>(), new object?[] { value, value, this });
-                }
-                finally
-                {
-                    RuntimeServices.SetCurrentThis(previousThis);
-                }
+                CallableOperations.Call3(callback, thisArg, value, value, this);
             }
         }
 

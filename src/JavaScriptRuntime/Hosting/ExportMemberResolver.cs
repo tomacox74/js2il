@@ -17,7 +17,10 @@ internal static class ExportMemberResolver
 
         if (JavaScriptRuntime.CallableOperations.IsCallable(callable))
         {
-            return JavaScriptRuntime.CallableOperations.Call(callable, null, args);
+            return JavaScriptRuntime.CallableOperations.Call(
+                callable,
+                null,
+                NormalizeArgs(args));
         }
 
         throw new ArgumentException("Value is not callable.", nameof(callable));

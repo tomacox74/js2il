@@ -40,9 +40,13 @@ public sealed partial class HIRToLIRLowerer
     private readonly JavaScriptRuntime.IRuntimeIntrinsicCatalog _runtimeIntrinsicCatalog;
     private bool _superConstructorCalled;
 
-    private ValueStorage GetMaterializedCallableStorage(TwoPhase.CallableId callableId)
+    private ValueStorage GetMaterializedCallableStorage(
+        TwoPhase.CallableId callableId,
+        bool allowGeneratedFunctionObject = true)
     {
-        if (callableId.Kind == TwoPhase.CallableKind.Arrow
+        if (allowGeneratedFunctionObject
+            && (callableId.Kind == TwoPhase.CallableKind.Arrow
+                || IsSynchronousOrdinaryFunction(callableId))
             && _generatedFunctionObjectRegistry?.TryGetMetadata(
                 callableId,
                 out var generatedMetadata) == true)
@@ -56,6 +60,18 @@ public sealed partial class HIRToLIRLowerer
         var signature = _callableRegistry?.GetSignature(callableId);
         var delegateType = TwoPhase.CallableDelegateTypeResolver.GetMaterializedDelegateType(callableId, signature);
         return new ValueStorage(ValueStorageKind.Reference, delegateType);
+    }
+
+    private static bool IsSynchronousOrdinaryFunction(TwoPhase.CallableId callableId)
+    {
+        return callableId.AstNode switch
+        {
+            FunctionDeclaration function =>
+                !function.Async && !function.Generator,
+            FunctionExpression function =>
+                !function.Async && !function.Generator,
+            _ => false
+        };
     }
 
     // Source-level variables map to the current SSA value (TempVariable) at the current program point.

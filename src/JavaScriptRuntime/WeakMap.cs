@@ -56,29 +56,19 @@ namespace JavaScriptRuntime
             }
         }
 
-        private Delegate GetCallableAdder(string name)
+        private object GetCallableAdder(string name)
         {
             var adder = ObjectRuntime.GetProperty(this, name);
-            if (adder is not Delegate del)
+            if (!CallableOperations.IsCallable(adder))
             {
                 throw new TypeError($"WeakMap.prototype.{name} is not callable");
             }
 
-            return del;
+            return adder!;
         }
 
-        private object? CallAdder(Delegate adder, object? key, object? value)
-        {
-            var previousThis = RuntimeServices.SetCurrentThis(this);
-            try
-            {
-                return Closure.InvokeWithArgs(adder, System.Array.Empty<object>(), new object?[] { key, value });
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentThis(previousThis);
-            }
-        }
+        private object? CallAdder(object adder, object? key, object? value)
+            => CallableOperations.Call2(adder, this, key, value);
 
         private static (object? Key, object? Value) ExtractEntry(object? entry)
         {

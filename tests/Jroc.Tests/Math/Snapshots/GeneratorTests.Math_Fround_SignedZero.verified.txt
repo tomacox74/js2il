@@ -146,28 +146,32 @@
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Math_Fround_SignedZero/Scope,
-			[1] class [System.Runtime]System.Func`3<object, float64, object>,
+			[1] class FunctionObjects.Math_Fround_SignedZero_A0F213A5.FunctionObject_FunctionDeclaration_F210FF6C_toStr,
 			[2] float64,
 			[3] float64,
-			[4] object,
+			[4] object[],
 			[5] object,
-			[6] object[],
+			[6] object,
 			[7] object,
 			[8] object
 		)
 
 		IL_0000: newobj instance void Modules.Math_Fround_SignedZero/Scope::.ctor()
 		IL_0005: stloc.0
-		IL_0006: ldnull
-		IL_0007: ldftn object Modules.Math_Fround_SignedZero/toStr::__js_call__(object, float64)
-		IL_000d: newobj instance void class [System.Runtime]System.Func`3<object, float64, object>::.ctor(object, native int)
-		IL_0012: castclass class [System.Runtime]System.Func`3<object, float64, object>
+		IL_0006: ldc.i4.1
+		IL_0007: newarr [System.Runtime]System.Object
+		IL_000c: dup
+		IL_000d: ldc.i4.0
+		IL_000e: ldloc.0
+		IL_000f: stelem.ref
+		IL_0010: stloc.s 4
+		IL_0012: newobj instance void FunctionObjects.Math_Fround_SignedZero_A0F213A5.FunctionObject_FunctionDeclaration_F210FF6C_toStr::.ctor()
 		IL_0017: ldc.i4.1
 		IL_0018: conv.r8
 		IL_0019: ldstr "toStr"
 		IL_001e: ldc.i4.0
 		IL_001f: ldc.i4.1
-		IL_0020: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [System.Runtime]System.Func`3<object, float64, object>>(!!0, float64, string, bool, bool)
+		IL_0020: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class FunctionObjects.Math_Fround_SignedZero_A0F213A5.FunctionObject_FunctionDeclaration_F210FF6C_toStr>(!!0, float64, string, bool, bool)
 		IL_0025: stloc.1
 		IL_0026: nop
 		IL_0027: ldc.r8 1.337
@@ -183,31 +187,31 @@
 		IL_0051: ldstr "console"
 		IL_0056: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
 		IL_005b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0060: stloc.s 4
+		IL_0060: stloc.s 5
 		IL_0062: ldstr ""
 		IL_0067: ldloc.2
 		IL_0068: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
-		IL_006d: stloc.s 5
-		IL_006f: ldloc.s 4
+		IL_006d: stloc.s 6
+		IL_006f: ldloc.s 5
 		IL_0071: ldstr "log"
-		IL_0076: ldloc.s 5
+		IL_0076: ldloc.s 6
 		IL_0078: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
 		IL_007d: pop
 		IL_007e: ldstr "console"
 		IL_0083: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
 		IL_0088: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_008d: stloc.s 4
+		IL_008d: stloc.s 5
 		IL_008f: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0094: stloc.s 6
+		IL_0094: stloc.s 4
 		IL_0096: ldloc.3
 		IL_0097: box [System.Runtime]System.Double
 		IL_009c: stloc.s 7
 		IL_009e: ldloc.1
-		IL_009f: ldloc.s 6
+		IL_009f: ldloc.s 4
 		IL_00a1: ldloc.s 7
 		IL_00a3: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
 		IL_00a8: stloc.s 8
-		IL_00aa: ldloc.s 4
+		IL_00aa: ldloc.s 5
 		IL_00ac: ldstr "log"
 		IL_00b1: ldloc.s 8
 		IL_00b3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
@@ -266,16 +270,16 @@
 	{
 		// Method begins at RVA 0x21b2
 		// Header size: 1
-		// Code size: 19 (0x13)
+		// Code size: 23 (0x17)
 		.maxstack 8
 
-		IL_0000: ldnull
-		IL_0001: ldarg.2
-		IL_0002: ldc.i4.0
-		IL_0003: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-		IL_0008: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_000d: call object Modules.Math_Fround_SignedZero/toStr::__js_call__(object, float64)
-		IL_0012: ret
+		IL_0000: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
+		IL_0005: ldarg.2
+		IL_0006: ldc.i4.0
+		IL_0007: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+		IL_000c: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_0011: call object Modules.Math_Fround_SignedZero/toStr::__js_call__(object, float64)
+		IL_0016: ret
 	} // end of method FunctionObject_FunctionDeclaration_F210FF6C_toStr::CallCore
 
 	.method family hidebysig virtual 
@@ -284,14 +288,17 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x21c6
+		// Method begins at RVA 0x21ca
 		// Header size: 1
-		// Code size: 11 (0xb)
+		// Code size: 14 (0xe)
 		.maxstack 8
 
-		IL_0000: ldstr "Generated construction adapter is reserved for the callable-family construction migration"
-		IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-		IL_000a: throw
+		IL_0000: ldarg.0
+		IL_0001: ldarg.1
+		IL_0002: call instance object[] [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::ToArray()
+		IL_0007: ldarg.2
+		IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionObject(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, object[], object)
+		IL_000d: ret
 	} // end of method FunctionObject_FunctionDeclaration_F210FF6C_toStr::ConstructCore
 
 } // end of class FunctionObjects.Math_Fround_SignedZero_A0F213A5.FunctionObject_FunctionDeclaration_F210FF6C_toStr
@@ -303,7 +310,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21d2
+		// Method begins at RVA 0x21d9
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

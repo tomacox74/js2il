@@ -68,11 +68,21 @@ public sealed class GeneratedFunctionObjectEmissionTests
                     .ToArray();
                 Assert.True(constructor.MetadataToken < methods[0].MetadataToken);
                 var methodNames = methods.Select(method => method.Name).ToArray();
-                Assert.Equal(
-                    methodNames.Contains("ConstructCore", StringComparer.Ordinal)
-                        ? ["get_IsConstructor", "get_RequiresInvocationContext", "CallCore", "ConstructCore"]
-                        : ["get_IsConstructor", "get_RequiresInvocationContext", "CallCore"],
-                    methodNames);
+                var expectedMethods = new List<string>
+                {
+                    "get_IsConstructor",
+                    "get_RequiresInvocationContext"
+                };
+                if (methodNames.Contains("ResolveThisArgumentCore", StringComparer.Ordinal))
+                {
+                    expectedMethods.Add("ResolveThisArgumentCore");
+                }
+                expectedMethods.Add("CallCore");
+                if (methodNames.Contains("ConstructCore", StringComparer.Ordinal))
+                {
+                    expectedMethods.Add("ConstructCore");
+                }
+                Assert.Equal(expectedMethods, methodNames);
             });
 
         var answerType = Assert.Single(

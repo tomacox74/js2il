@@ -687,14 +687,14 @@ public static class Iterator
         }
     }
 
-    private readonly record struct CallableMember(Delegate? Delegate, MethodInfo? Method)
+    private readonly record struct CallableMember(object? Callable, MethodInfo? Method)
     {
         public static bool TryCreate(object target, string name, out CallableMember member)
         {
             var propertyValue = ObjectRuntime.GetProperty(target, name);
-            if (propertyValue is Delegate del)
+            if (CallableOperations.IsCallable(propertyValue))
             {
-                member = new CallableMember(del, null);
+                member = new CallableMember(propertyValue, null);
                 return true;
             }
 
@@ -714,16 +714,16 @@ public static class Iterator
             return false;
         }
 
-        public bool HasValue => Delegate != null || Method != null;
+        public bool HasValue => Callable != null || Method != null;
 
         public object? Invoke(object target, params object?[] args)
         {
             var previousThis = RuntimeServices.SetCurrentThis(target);
             try
             {
-                if (Delegate != null)
+                if (Callable != null)
                 {
-                    return Closure.InvokeWithArgs(Delegate, System.Array.Empty<object>(), args);
+                    return CallableOperations.Call(Callable, target, args);
                 }
 
                 if (Method == null)

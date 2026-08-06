@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x20f4
+				// Method begins at RVA 0x20f5
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -41,7 +41,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x20c1
+			// Method begins at RVA 0x20c2
 			// Header size: 1
 			// Code size: 41 (0x29)
 			.maxstack 8
@@ -74,7 +74,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20eb
+			// Method begins at RVA 0x20ec
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -100,50 +100,55 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 101 (0x65)
+		// Code size: 102 (0x66)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Function_ReturnsStaticValueAndLogs/Scope,
-			[1] class [JavaScriptRuntime]JavaScriptRuntime.JsDoubleFuncNoScopes0,
+			[1] class FunctionObjects.Function_ReturnsStaticValueAndLogs_CCB2E1F2.FunctionObject_FunctionDeclaration_754F5DB8_returnsFive,
 			[2] float64,
-			[3] object,
-			[4] object
+			[3] object[],
+			[4] object,
+			[5] object
 		)
 
 		IL_0000: newobj instance void Modules.Function_ReturnsStaticValueAndLogs/Scope::.ctor()
 		IL_0005: stloc.0
-		IL_0006: ldnull
-		IL_0007: ldftn float64 Modules.Function_ReturnsStaticValueAndLogs/returnsFive::__js_call__(object)
-		IL_000d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsDoubleFuncNoScopes0::.ctor(object, native int)
-		IL_0012: castclass [JavaScriptRuntime]JavaScriptRuntime.JsDoubleFuncNoScopes0
-		IL_0017: ldc.i4.0
-		IL_0018: conv.r8
-		IL_0019: ldstr "returnsFive"
-		IL_001e: ldc.i4.0
-		IL_001f: ldc.i4.1
-		IL_0020: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsDoubleFuncNoScopes0>(!!0, float64, string, bool, bool)
-		IL_0025: stloc.1
+		IL_0006: ldc.i4.1
+		IL_0007: newarr [System.Runtime]System.Object
+		IL_000c: dup
+		IL_000d: ldc.i4.0
+		IL_000e: ldloc.0
+		IL_000f: stelem.ref
+		IL_0010: stloc.3
+		IL_0011: newobj instance void FunctionObjects.Function_ReturnsStaticValueAndLogs_CCB2E1F2.FunctionObject_FunctionDeclaration_754F5DB8_returnsFive::.ctor()
+		IL_0016: ldc.i4.0
+		IL_0017: conv.r8
+		IL_0018: ldstr "returnsFive"
+		IL_001d: ldc.i4.0
+		IL_001e: ldc.i4.1
+		IL_001f: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class FunctionObjects.Function_ReturnsStaticValueAndLogs_CCB2E1F2.FunctionObject_FunctionDeclaration_754F5DB8_returnsFive>(!!0, float64, string, bool, bool)
+		IL_0024: stloc.1
+		IL_0025: nop
 		IL_0026: nop
-		IL_0027: nop
-		IL_0028: ldloc.1
-		IL_0029: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_002e: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
-		IL_0033: stloc.3
-		IL_0034: ldloc.3
-		IL_0035: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_003a: stloc.2
-		IL_003b: ldstr "console"
-		IL_0040: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0045: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_004a: ldloc.2
-		IL_004b: box [System.Runtime]System.Double
-		IL_0050: stloc.s 4
-		IL_0052: ldstr "log"
-		IL_0057: ldstr "Output:"
-		IL_005c: ldloc.s 4
-		IL_005e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_0063: pop
-		IL_0064: ret
+		IL_0027: ldloc.1
+		IL_0028: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_002d: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
+		IL_0032: stloc.s 4
+		IL_0034: ldloc.s 4
+		IL_0036: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_003b: stloc.2
+		IL_003c: ldstr "console"
+		IL_0041: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0046: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_004b: ldloc.2
+		IL_004c: box [System.Runtime]System.Double
+		IL_0051: stloc.s 5
+		IL_0053: ldstr "log"
+		IL_0058: ldstr "Output:"
+		IL_005d: ldloc.s 5
+		IL_005f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_0064: pop
+		IL_0065: ret
 	} // end of method Function_ReturnsStaticValueAndLogs::__js_module_init__
 
 } // end of class Modules.Function_ReturnsStaticValueAndLogs
@@ -155,7 +160,7 @@
 	.method public hidebysig specialname rtspecialname 
 		instance void .ctor () cil managed 
 	{
-		// Method begins at RVA 0x20fd
+		// Method begins at RVA 0x20fe
 		// Header size: 1
 		// Code size: 7 (0x7)
 		.maxstack 8
@@ -168,7 +173,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x2105
+		// Method begins at RVA 0x2106
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -180,7 +185,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x2108
+		// Method begins at RVA 0x2109
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -195,15 +200,15 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x210b
+		// Method begins at RVA 0x210c
 		// Header size: 1
-		// Code size: 12 (0xc)
+		// Code size: 16 (0x10)
 		.maxstack 8
 
-		IL_0000: ldnull
-		IL_0001: call float64 Modules.Function_ReturnsStaticValueAndLogs/returnsFive::__js_call__(object)
-		IL_0006: box [System.Runtime]System.Double
-		IL_000b: ret
+		IL_0000: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
+		IL_0005: call float64 Modules.Function_ReturnsStaticValueAndLogs/returnsFive::__js_call__(object)
+		IL_000a: box [System.Runtime]System.Double
+		IL_000f: ret
 	} // end of method FunctionObject_FunctionDeclaration_754F5DB8_returnsFive::CallCore
 
 	.method family hidebysig virtual 
@@ -212,14 +217,17 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x2118
+		// Method begins at RVA 0x211d
 		// Header size: 1
-		// Code size: 11 (0xb)
+		// Code size: 14 (0xe)
 		.maxstack 8
 
-		IL_0000: ldstr "Generated construction adapter is reserved for the callable-family construction migration"
-		IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-		IL_000a: throw
+		IL_0000: ldarg.0
+		IL_0001: ldarg.1
+		IL_0002: call instance object[] [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::ToArray()
+		IL_0007: ldarg.2
+		IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionObject(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, object[], object)
+		IL_000d: ret
 	} // end of method FunctionObject_FunctionDeclaration_754F5DB8_returnsFive::ConstructCore
 
 } // end of class FunctionObjects.Function_ReturnsStaticValueAndLogs_CCB2E1F2.FunctionObject_FunctionDeclaration_754F5DB8_returnsFive
@@ -231,7 +239,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2124
+		// Method begins at RVA 0x212c
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
