@@ -6,7 +6,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-- compiler/runtime: materialize synchronous ordinary function declarations and
+- compiler/runtime: close issue #1712 by materializing synchronous ordinary function declarations and
   expressions as generated `JsFunctionObject` instances, preserving typed
   direct calls, shared captures, recursion, identity, strict/sloppy `this`,
   function metadata, and existing construction behavior without per-instance
