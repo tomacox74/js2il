@@ -1826,16 +1826,18 @@
 {
 	// Fields
 	.field private initonly class Modules.Function_ConstructedInstance_ObjectSemantics/makeConstructor/Scope _environment1_makeConstructor
+	.field private initonly object[] _transitionalScopes
 
 	// Methods
 	.method public hidebysig specialname rtspecialname 
 		instance void .ctor (
-			class Modules.Function_ConstructedInstance_ObjectSemantics/makeConstructor/Scope capture0
+			class Modules.Function_ConstructedInstance_ObjectSemantics/makeConstructor/Scope capture0,
+			object[] capture1
 		) cil managed 
 	{
 		// Method begins at RVA 0x2bcd
 		// Header size: 1
-		// Code size: 14 (0xe)
+		// Code size: 21 (0x15)
 		.maxstack 8
 
 		IL_0000: ldarg.0
@@ -1843,13 +1845,16 @@
 		IL_0006: ldarg.0
 		IL_0007: ldarg.1
 		IL_0008: stfld class Modules.Function_ConstructedInstance_ObjectSemantics/makeConstructor/Scope FunctionObjects.Function_ConstructedInstance_ObjectSemantics_DC5CBADE.FunctionObject_FunctionExpression_9C50FAD2_L48C12::_environment1_makeConstructor
-		IL_000d: ret
+		IL_000d: ldarg.0
+		IL_000e: ldarg.2
+		IL_000f: stfld object[] FunctionObjects.Function_ConstructedInstance_ObjectSemantics_DC5CBADE.FunctionObject_FunctionExpression_9C50FAD2_L48C12::_transitionalScopes
+		IL_0014: ret
 	} // end of method FunctionObject_FunctionExpression_9C50FAD2_L48C12::.ctor
 
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x2bdc
+		// Method begins at RVA 0x2be3
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -1861,7 +1866,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x2bdf
+		// Method begins at RVA 0x2be6
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -1876,24 +1881,19 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x2be2
+		// Method begins at RVA 0x2be9
 		// Header size: 1
-		// Code size: 29 (0x1d)
+		// Code size: 20 (0x14)
 		.maxstack 8
 
-		IL_0000: ldc.i4.2
-		IL_0001: newarr [System.Runtime]System.Object
-		IL_0006: dup
-		IL_0007: ldc.i4.1
-		IL_0008: ldarg.0
-		IL_0009: ldfld class Modules.Function_ConstructedInstance_ObjectSemantics/makeConstructor/Scope FunctionObjects.Function_ConstructedInstance_ObjectSemantics_DC5CBADE.FunctionObject_FunctionExpression_9C50FAD2_L48C12::_environment1_makeConstructor
-		IL_000e: stelem.ref
-		IL_000f: ldnull
-		IL_0010: ldarg.2
-		IL_0011: ldc.i4.0
-		IL_0012: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-		IL_0017: call object Modules.Function_ConstructedInstance_ObjectSemantics/makeConstructor/FunctionExpression_L48C11::__js_call__(object[], object, object)
-		IL_001c: ret
+		IL_0000: ldarg.0
+		IL_0001: ldfld object[] FunctionObjects.Function_ConstructedInstance_ObjectSemantics_DC5CBADE.FunctionObject_FunctionExpression_9C50FAD2_L48C12::_transitionalScopes
+		IL_0006: ldnull
+		IL_0007: ldarg.2
+		IL_0008: ldc.i4.0
+		IL_0009: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+		IL_000e: call object Modules.Function_ConstructedInstance_ObjectSemantics/makeConstructor/FunctionExpression_L48C11::__js_call__(object[], object, object)
+		IL_0013: ret
 	} // end of method FunctionObject_FunctionExpression_9C50FAD2_L48C12::CallCore
 
 	.method family hidebysig virtual 
@@ -1902,7 +1902,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x2c00
+		// Method begins at RVA 0x2bfe
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -1921,7 +1921,7 @@
 	.method public hidebysig specialname rtspecialname 
 		instance void .ctor () cil managed 
 	{
-		// Method begins at RVA 0x2c0c
+		// Method begins at RVA 0x2c0a
 		// Header size: 1
 		// Code size: 7 (0x7)
 		.maxstack 8
@@ -1934,7 +1934,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x2c14
+		// Method begins at RVA 0x2c12
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -1946,7 +1946,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x2c17
+		// Method begins at RVA 0x2c15
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -1961,7 +1961,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x2c1a
+		// Method begins at RVA 0x2c18
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -1980,7 +1980,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x2c29
+		// Method begins at RVA 0x2c27
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -1999,7 +1999,7 @@
 	.method public hidebysig specialname rtspecialname 
 		instance void .ctor () cil managed 
 	{
-		// Method begins at RVA 0x2c35
+		// Method begins at RVA 0x2c33
 		// Header size: 1
 		// Code size: 7 (0x7)
 		.maxstack 8
@@ -2012,7 +2012,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x2c3d
+		// Method begins at RVA 0x2c3b
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -2024,7 +2024,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x2c40
+		// Method begins at RVA 0x2c3e
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -2039,7 +2039,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x2c43
+		// Method begins at RVA 0x2c41
 		// Header size: 1
 		// Code size: 7 (0x7)
 		.maxstack 8
@@ -2055,7 +2055,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x2c4b
+		// Method begins at RVA 0x2c49
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -2074,7 +2074,7 @@
 	.method public hidebysig specialname rtspecialname 
 		instance void .ctor () cil managed 
 	{
-		// Method begins at RVA 0x2c57
+		// Method begins at RVA 0x2c55
 		// Header size: 1
 		// Code size: 7 (0x7)
 		.maxstack 8
@@ -2087,7 +2087,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x2c5f
+		// Method begins at RVA 0x2c5d
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -2099,7 +2099,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x2c62
+		// Method begins at RVA 0x2c60
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -2114,7 +2114,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x2c65
+		// Method begins at RVA 0x2c63
 		// Header size: 1
 		// Code size: 7 (0x7)
 		.maxstack 8
@@ -2130,7 +2130,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x2c6d
+		// Method begins at RVA 0x2c6b
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -2145,24 +2145,32 @@
 .class private auto ansi sealed beforefieldinit FunctionObjects.Function_ConstructedInstance_ObjectSemantics_DC5CBADE.FunctionObject_ClassConstructor_3BB98598_PointReader
 	extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
 {
+	// Fields
+	.field private initonly object[] _transitionalScopes
+
 	// Methods
 	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
+		instance void .ctor (
+			object[] capture0
+		) cil managed 
 	{
-		// Method begins at RVA 0x2c79
+		// Method begins at RVA 0x2c77
 		// Header size: 1
-		// Code size: 7 (0x7)
+		// Code size: 14 (0xe)
 		.maxstack 8
 
 		IL_0000: ldarg.0
 		IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-		IL_0006: ret
+		IL_0006: ldarg.0
+		IL_0007: ldarg.1
+		IL_0008: stfld object[] FunctionObjects.Function_ConstructedInstance_ObjectSemantics_DC5CBADE.FunctionObject_ClassConstructor_3BB98598_PointReader::_transitionalScopes
+		IL_000d: ret
 	} // end of method FunctionObject_ClassConstructor_3BB98598_PointReader::.ctor
 
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x2c81
+		// Method begins at RVA 0x2c86
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -2174,7 +2182,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x2c84
+		// Method begins at RVA 0x2c89
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -2189,7 +2197,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x2c87
+		// Method begins at RVA 0x2c8c
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -2205,7 +2213,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x2c93
+		// Method begins at RVA 0x2c98
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -2224,7 +2232,7 @@
 	.method public hidebysig specialname rtspecialname 
 		instance void .ctor () cil managed 
 	{
-		// Method begins at RVA 0x2c9f
+		// Method begins at RVA 0x2ca4
 		// Header size: 1
 		// Code size: 7 (0x7)
 		.maxstack 8
@@ -2237,7 +2245,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x2ca7
+		// Method begins at RVA 0x2cac
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -2249,7 +2257,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x2caa
+		// Method begins at RVA 0x2caf
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -2264,7 +2272,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x2cad
+		// Method begins at RVA 0x2cb2
 		// Header size: 1
 		// Code size: 13 (0xd)
 		.maxstack 8
@@ -2285,7 +2293,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2cbb
+		// Method begins at RVA 0x2cc0
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

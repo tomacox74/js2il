@@ -21,20 +21,20 @@ namespace JavaScriptRuntime.Node
         {
             var srcArgs = args ?? System.Array.Empty<object>();
             object? options = null;
-            Delegate? connectionListener = null;
+            object? connectionListener = null;
 
             if (srcArgs.Length > 0)
             {
-                if (srcArgs[0] is Delegate listener)
+                if (CallableOperations.IsCallable(srcArgs[0]))
                 {
-                    connectionListener = listener;
+                    connectionListener = srcArgs[0];
                 }
                 else
                 {
                     options = srcArgs[0];
-                    if (srcArgs.Length > 1 && srcArgs[1] is Delegate nextListener)
+                    if (srcArgs.Length > 1 && CallableOperations.IsCallable(srcArgs[1]))
                     {
-                        connectionListener = nextListener;
+                        connectionListener = srcArgs[1];
                     }
                 }
             }
@@ -501,18 +501,18 @@ namespace JavaScriptRuntime.Node
 
         public NetServer close(object? callback)
         {
-            if (callback is Delegate del)
+            if (CallableOperations.IsCallable(callback))
             {
                 if (_listener == null)
                 {
                     NodeNetworkingCommon.ScheduleOnEventLoop(_nodeScheduler, () =>
                     {
-                        Closure.InvokeWithArgs(del, RuntimeServices.EmptyScopes, System.Array.Empty<object?>());
+                        CallableOperations.Call0(callback, null);
                     });
                 }
                 else
                 {
-                    once("close", del);
+                    once("close", callback);
                 }
             }
 
@@ -632,7 +632,7 @@ namespace JavaScriptRuntime.Node
             }
         }
 
-        private void ParseListenArgs(object[] args, out int port, out string? host, out Delegate? callback)
+        private void ParseListenArgs(object[] args, out int port, out string? host, out object? callback)
         {
             port = 0;
             host = null;
@@ -651,9 +651,9 @@ namespace JavaScriptRuntime.Node
                 port = NodeNetworkingCommon.CoercePort(NodeNetworkingCommon.TryGetOption(args[0], "port"));
                 host = NodeNetworkingCommon.TryGetStringOption(args[0], "host")
                     ?? NodeNetworkingCommon.TryGetStringOption(args[0], "hostname");
-                if (args.Length > 1 && args[1] is Delegate optCallback)
+                if (args.Length > 1 && CallableOperations.IsCallable(args[1]))
                 {
-                    callback = optCallback;
+                    callback = args[1];
                 }
 
                 return;
@@ -663,18 +663,18 @@ namespace JavaScriptRuntime.Node
 
             if (args.Length > 1)
             {
-                if (args[1] is Delegate callbackArg)
+                if (CallableOperations.IsCallable(args[1]))
                 {
-                    callback = callbackArg;
+                    callback = args[1];
                     return;
                 }
 
                 host = args[1]?.ToString();
             }
 
-            if (args.Length > 2 && args[2] is Delegate finalCallback)
+            if (args.Length > 2 && CallableOperations.IsCallable(args[2]))
             {
-                callback = finalCallback;
+                callback = args[2];
             }
         }
     }
@@ -794,9 +794,9 @@ namespace JavaScriptRuntime.Node
 
         public NetSocket setTimeout(object? timeout, object? callback)
         {
-            if (callback is Delegate del)
+            if (CallableOperations.IsCallable(callback))
             {
-                once("timeout", del);
+                once("timeout", callback);
             }
 
             double timeoutMilliseconds;
@@ -916,9 +916,9 @@ namespace JavaScriptRuntime.Node
 
         public override void end(object? chunk, object? callback)
         {
-            if (callback is Delegate del)
+            if (CallableOperations.IsCallable(callback))
             {
-                once("finish", del);
+                once("finish", callback);
             }
 
             base.end(chunk, callback);
@@ -1463,7 +1463,7 @@ namespace JavaScriptRuntime.Node
             }
         }
 
-        private void ParseConnectArgs(object[] args, out int port, out string host, out Delegate? callback)
+        private void ParseConnectArgs(object[] args, out int port, out string host, out object? callback)
         {
             port = 0;
             host = "127.0.0.1";
@@ -1480,9 +1480,9 @@ namespace JavaScriptRuntime.Node
                 host = NodeNetworkingCommon.CoerceHost(
                     NodeNetworkingCommon.TryGetStringOption(args[0], "host")
                     ?? NodeNetworkingCommon.TryGetStringOption(args[0], "hostname"));
-                if (args.Length > 1 && args[1] is Delegate optCallback)
+                if (args.Length > 1 && CallableOperations.IsCallable(args[1]))
                 {
-                    callback = optCallback;
+                    callback = args[1];
                 }
             }
             else
@@ -1490,9 +1490,9 @@ namespace JavaScriptRuntime.Node
                 port = NodeNetworkingCommon.CoercePort(args[0]);
                 if (args.Length > 1)
                 {
-                    if (args[1] is Delegate cb)
+                    if (CallableOperations.IsCallable(args[1]))
                     {
-                        callback = cb;
+                        callback = args[1];
                     }
                     else
                     {
@@ -1500,9 +1500,9 @@ namespace JavaScriptRuntime.Node
                     }
                 }
 
-                if (args.Length > 2 && args[2] is Delegate thirdCallback)
+                if (args.Length > 2 && CallableOperations.IsCallable(args[2]))
                 {
-                    callback = thirdCallback;
+                    callback = args[2];
                 }
             }
 

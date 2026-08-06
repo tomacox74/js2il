@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x4f34
+				// Method begins at RVA 0x4f64
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -65,7 +65,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x4f3d
+				// Method begins at RVA 0x4f6d
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -114,7 +114,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x4f4f
+					// Method begins at RVA 0x4f7f
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -132,7 +132,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x4f46
+				// Method begins at RVA 0x4f76
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -157,21 +157,31 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Method begins at RVA 0x3230
-			// Header size: 1
-			// Code size: 25 (0x19)
+			// Header size: 12
+			// Code size: 39 (0x27)
 			.maxstack 8
+			.locals init (
+				[0] string,
+				[1] bool
+			)
 
 			IL_0000: ldarg.1
-			IL_0001: isinst [System.Runtime]System.Delegate
-			IL_0006: brfalse IL_0017
+			IL_0001: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
+			IL_0006: stloc.0
+			IL_0007: ldloc.0
+			IL_0008: ldstr "function"
+			IL_000d: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+			IL_0012: stloc.1
+			IL_0013: ldloc.1
+			IL_0014: brfalse IL_0025
 
-			IL_000b: ldarg.1
-			IL_000c: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-			IL_0011: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
-			IL_0016: pop
+			IL_0019: ldarg.1
+			IL_001a: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+			IL_001f: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
+			IL_0024: pop
 
-			IL_0017: ldnull
-			IL_0018: ret
+			IL_0025: ldnull
+			IL_0026: ret
 		} // end of method prep::__js_call__
 
 	} // end of class prep
@@ -191,7 +201,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x4f61
+					// Method begins at RVA 0x4f91
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -209,7 +219,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x4f58
+				// Method begins at RVA 0x4f88
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -234,22 +244,32 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x324a
-			// Header size: 1
-			// Code size: 25 (0x19)
+			// Method begins at RVA 0x3264
+			// Header size: 12
+			// Code size: 39 (0x27)
 			.maxstack 8
+			.locals init (
+				[0] string,
+				[1] bool
+			)
 
 			IL_0000: ldarg.2
-			IL_0001: isinst [System.Runtime]System.Delegate
-			IL_0006: brfalse IL_0017
+			IL_0001: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
+			IL_0006: stloc.0
+			IL_0007: ldloc.0
+			IL_0008: ldstr "function"
+			IL_000d: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+			IL_0012: stloc.1
+			IL_0013: ldloc.1
+			IL_0014: brfalse IL_0025
 
-			IL_000b: ldarg.2
-			IL_000c: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-			IL_0011: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
-			IL_0016: pop
+			IL_0019: ldarg.2
+			IL_001a: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+			IL_001f: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
+			IL_0024: pop
 
-			IL_0017: ldnull
-			IL_0018: ret
+			IL_0025: ldnull
+			IL_0026: ret
 		} // end of method test::__js_call__
 
 	} // end of class test
@@ -265,7 +285,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x4f6a
+				// Method begins at RVA 0x4f9a
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -288,7 +308,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x3264
+			// Method begins at RVA 0x3297
 			// Header size: 1
 			// Code size: 36 (0x24)
 			.maxstack 8
@@ -324,7 +344,7 @@
 					.method public hidebysig specialname rtspecialname 
 						instance void .ctor () cil managed 
 					{
-						// Method begins at RVA 0x4f85
+						// Method begins at RVA 0x4fb5
 						// Header size: 1
 						// Code size: 8 (0x8)
 						.maxstack 8
@@ -344,7 +364,7 @@
 					.method public hidebysig specialname rtspecialname 
 						instance void .ctor () cil managed 
 					{
-						// Method begins at RVA 0x4f8e
+						// Method begins at RVA 0x4fbe
 						// Header size: 1
 						// Code size: 8 (0x8)
 						.maxstack 8
@@ -362,7 +382,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x4f7c
+					// Method begins at RVA 0x4fac
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -380,7 +400,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x4f73
+				// Method begins at RVA 0x4fa3
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -407,7 +427,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 51 00 00 02
 			)
-			// Method begins at RVA 0x328c
+			// Method begins at RVA 0x32bc
 			// Header size: 12
 			// Code size: 511 (0x1ff)
 			.maxstack 8
@@ -642,7 +662,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x4f97
+				// Method begins at RVA 0x4fc7
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -668,7 +688,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 51 00 00 02
 			)
-			// Method begins at RVA 0x3498
+			// Method begins at RVA 0x34c8
 			// Header size: 12
 			// Code size: 75 (0x4b)
 			.maxstack 8
@@ -720,7 +740,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x4fa0
+				// Method begins at RVA 0x4fd0
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -746,7 +766,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 51 00 00 02
 			)
-			// Method begins at RVA 0x34f0
+			// Method begins at RVA 0x3520
 			// Header size: 12
 			// Code size: 105 (0x69)
 			.maxstack 8
@@ -812,7 +832,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x4fa9
+				// Method begins at RVA 0x4fd9
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -838,7 +858,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 51 00 00 02
 			)
-			// Method begins at RVA 0x3568
+			// Method begins at RVA 0x3598
 			// Header size: 12
 			// Code size: 75 (0x4b)
 			.maxstack 8
@@ -890,7 +910,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x4fb2
+				// Method begins at RVA 0x4fe2
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -916,7 +936,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 51 00 00 02
 			)
-			// Method begins at RVA 0x35c0
+			// Method begins at RVA 0x35f0
 			// Header size: 12
 			// Code size: 105 (0x69)
 			.maxstack 8
@@ -982,7 +1002,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x4fbb
+				// Method begins at RVA 0x4feb
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -1008,7 +1028,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 51 00 00 02
 			)
-			// Method begins at RVA 0x3638
+			// Method begins at RVA 0x3668
 			// Header size: 12
 			// Code size: 75 (0x4b)
 			.maxstack 8
@@ -1060,7 +1080,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x4fc4
+				// Method begins at RVA 0x4ff4
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -1086,7 +1106,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 51 00 00 02
 			)
-			// Method begins at RVA 0x3690
+			// Method begins at RVA 0x36c0
 			// Header size: 12
 			// Code size: 105 (0x69)
 			.maxstack 8
@@ -1152,7 +1172,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x4fcd
+				// Method begins at RVA 0x4ffd
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -1178,7 +1198,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 51 00 00 02
 			)
-			// Method begins at RVA 0x3708
+			// Method begins at RVA 0x3738
 			// Header size: 12
 			// Code size: 75 (0x4b)
 			.maxstack 8
@@ -1230,7 +1250,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x4fd6
+				// Method begins at RVA 0x5006
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -1256,7 +1276,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 51 00 00 02
 			)
-			// Method begins at RVA 0x3760
+			// Method begins at RVA 0x3790
 			// Header size: 12
 			// Code size: 105 (0x69)
 			.maxstack 8
@@ -1322,7 +1342,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x4fdf
+				// Method begins at RVA 0x500f
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -1348,7 +1368,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 51 00 00 02
 			)
-			// Method begins at RVA 0x37d8
+			// Method begins at RVA 0x3808
 			// Header size: 12
 			// Code size: 52 (0x34)
 			.maxstack 8
@@ -1392,7 +1412,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x4fe8
+				// Method begins at RVA 0x5018
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -1418,7 +1438,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 51 00 00 02
 			)
-			// Method begins at RVA 0x3818
+			// Method begins at RVA 0x3848
 			// Header size: 12
 			// Code size: 103 (0x67)
 			.maxstack 8
@@ -1482,7 +1502,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x4ff1
+				// Method begins at RVA 0x5021
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -1508,7 +1528,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 51 00 00 02
 			)
-			// Method begins at RVA 0x388c
+			// Method begins at RVA 0x38bc
 			// Header size: 12
 			// Code size: 52 (0x34)
 			.maxstack 8
@@ -1552,7 +1572,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x4ffa
+				// Method begins at RVA 0x502a
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -1578,7 +1598,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 51 00 00 02
 			)
-			// Method begins at RVA 0x38cc
+			// Method begins at RVA 0x38fc
 			// Header size: 12
 			// Code size: 110 (0x6e)
 			.maxstack 8
@@ -1645,7 +1665,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x5003
+				// Method begins at RVA 0x5033
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -1671,7 +1691,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 51 00 00 02
 			)
-			// Method begins at RVA 0x3948
+			// Method begins at RVA 0x3978
 			// Header size: 12
 			// Code size: 52 (0x34)
 			.maxstack 8
@@ -1715,7 +1735,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x500c
+				// Method begins at RVA 0x503c
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -1741,7 +1761,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 51 00 00 02
 			)
-			// Method begins at RVA 0x3988
+			// Method begins at RVA 0x39b8
 			// Header size: 12
 			// Code size: 110 (0x6e)
 			.maxstack 8
@@ -1808,7 +1828,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x5015
+				// Method begins at RVA 0x5045
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -1834,7 +1854,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 51 00 00 02
 			)
-			// Method begins at RVA 0x3a04
+			// Method begins at RVA 0x3a34
 			// Header size: 12
 			// Code size: 75 (0x4b)
 			.maxstack 8
@@ -1886,7 +1906,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x501e
+				// Method begins at RVA 0x504e
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -1912,7 +1932,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 51 00 00 02
 			)
-			// Method begins at RVA 0x3a5c
+			// Method begins at RVA 0x3a8c
 			// Header size: 12
 			// Code size: 105 (0x69)
 			.maxstack 8
@@ -1978,7 +1998,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x5027
+				// Method begins at RVA 0x5057
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -2004,7 +2024,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 51 00 00 02
 			)
-			// Method begins at RVA 0x3ad4
+			// Method begins at RVA 0x3b04
 			// Header size: 12
 			// Code size: 52 (0x34)
 			.maxstack 8
@@ -2048,7 +2068,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x5030
+				// Method begins at RVA 0x5060
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -2074,7 +2094,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 51 00 00 02
 			)
-			// Method begins at RVA 0x3b14
+			// Method begins at RVA 0x3b44
 			// Header size: 12
 			// Code size: 103 (0x67)
 			.maxstack 8
@@ -2138,7 +2158,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x5039
+				// Method begins at RVA 0x5069
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -2164,7 +2184,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 51 00 00 02
 			)
-			// Method begins at RVA 0x3b88
+			// Method begins at RVA 0x3bb8
 			// Header size: 12
 			// Code size: 52 (0x34)
 			.maxstack 8
@@ -2208,7 +2228,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x5042
+				// Method begins at RVA 0x5072
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -2234,7 +2254,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 51 00 00 02
 			)
-			// Method begins at RVA 0x3bc8
+			// Method begins at RVA 0x3bf8
 			// Header size: 12
 			// Code size: 110 (0x6e)
 			.maxstack 8
@@ -2301,7 +2321,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x504b
+				// Method begins at RVA 0x507b
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -2327,7 +2347,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 51 00 00 02
 			)
-			// Method begins at RVA 0x3c44
+			// Method begins at RVA 0x3c74
 			// Header size: 12
 			// Code size: 52 (0x34)
 			.maxstack 8
@@ -2371,7 +2391,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x5054
+				// Method begins at RVA 0x5084
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -2397,7 +2417,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 51 00 00 02
 			)
-			// Method begins at RVA 0x3c84
+			// Method begins at RVA 0x3cb4
 			// Header size: 12
 			// Code size: 110 (0x6e)
 			.maxstack 8
@@ -2464,7 +2484,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x505d
+				// Method begins at RVA 0x508d
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -2490,7 +2510,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 51 00 00 02
 			)
-			// Method begins at RVA 0x3d00
+			// Method begins at RVA 0x3d30
 			// Header size: 12
 			// Code size: 52 (0x34)
 			.maxstack 8
@@ -2538,7 +2558,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x506f
+					// Method begins at RVA 0x509f
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -2562,7 +2582,7 @@
 				.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 					01 00 00 00 00 00 00 00
 				)
-				// Method begins at RVA 0x4ed5
+				// Method begins at RVA 0x4f05
 				// Header size: 1
 				// Code size: 6 (0x6)
 				.maxstack 8
@@ -2580,7 +2600,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x5066
+				// Method begins at RVA 0x5096
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -2606,7 +2626,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 51 00 00 02
 			)
-			// Method begins at RVA 0x3d40
+			// Method begins at RVA 0x3d70
 			// Header size: 12
 			// Code size: 150 (0x96)
 			.maxstack 8
@@ -2688,7 +2708,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x5078
+				// Method begins at RVA 0x50a8
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -2714,7 +2734,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 51 00 00 02
 			)
-			// Method begins at RVA 0x3de4
+			// Method begins at RVA 0x3e14
 			// Header size: 12
 			// Code size: 75 (0x4b)
 			.maxstack 8
@@ -2766,7 +2786,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x5081
+				// Method begins at RVA 0x50b1
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -2792,7 +2812,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 51 00 00 02
 			)
-			// Method begins at RVA 0x3e3c
+			// Method begins at RVA 0x3e6c
 			// Header size: 12
 			// Code size: 105 (0x69)
 			.maxstack 8
@@ -2858,7 +2878,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x508a
+				// Method begins at RVA 0x50ba
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -2884,7 +2904,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 51 00 00 02
 			)
-			// Method begins at RVA 0x3eb4
+			// Method begins at RVA 0x3ee4
 			// Header size: 12
 			// Code size: 52 (0x34)
 			.maxstack 8
@@ -2928,7 +2948,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x5093
+				// Method begins at RVA 0x50c3
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -2954,7 +2974,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 51 00 00 02
 			)
-			// Method begins at RVA 0x3ef4
+			// Method begins at RVA 0x3f24
 			// Header size: 12
 			// Code size: 103 (0x67)
 			.maxstack 8
@@ -3018,7 +3038,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x509c
+				// Method begins at RVA 0x50cc
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -3044,7 +3064,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 51 00 00 02
 			)
-			// Method begins at RVA 0x3f68
+			// Method begins at RVA 0x3f98
 			// Header size: 12
 			// Code size: 52 (0x34)
 			.maxstack 8
@@ -3088,7 +3108,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x50a5
+				// Method begins at RVA 0x50d5
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -3114,7 +3134,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 51 00 00 02
 			)
-			// Method begins at RVA 0x3fa8
+			// Method begins at RVA 0x3fd8
 			// Header size: 12
 			// Code size: 110 (0x6e)
 			.maxstack 8
@@ -3181,7 +3201,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x50ae
+				// Method begins at RVA 0x50de
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -3207,7 +3227,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 51 00 00 02
 			)
-			// Method begins at RVA 0x4024
+			// Method begins at RVA 0x4054
 			// Header size: 12
 			// Code size: 52 (0x34)
 			.maxstack 8
@@ -3251,7 +3271,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x50b7
+				// Method begins at RVA 0x50e7
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -3277,7 +3297,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 51 00 00 02
 			)
-			// Method begins at RVA 0x4064
+			// Method begins at RVA 0x4094
 			// Header size: 12
 			// Code size: 110 (0x6e)
 			.maxstack 8
@@ -3344,7 +3364,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x50c0
+				// Method begins at RVA 0x50f0
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -3370,7 +3390,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 51 00 00 02
 			)
-			// Method begins at RVA 0x40e0
+			// Method begins at RVA 0x4110
 			// Header size: 12
 			// Code size: 75 (0x4b)
 			.maxstack 8
@@ -3422,7 +3442,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x50c9
+				// Method begins at RVA 0x50f9
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -3448,7 +3468,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 51 00 00 02
 			)
-			// Method begins at RVA 0x4138
+			// Method begins at RVA 0x4168
 			// Header size: 12
 			// Code size: 105 (0x69)
 			.maxstack 8
@@ -3514,7 +3534,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x50d2
+				// Method begins at RVA 0x5102
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -3540,7 +3560,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 51 00 00 02
 			)
-			// Method begins at RVA 0x41b0
+			// Method begins at RVA 0x41e0
 			// Header size: 12
 			// Code size: 52 (0x34)
 			.maxstack 8
@@ -3584,7 +3604,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x50db
+				// Method begins at RVA 0x510b
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -3610,7 +3630,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 51 00 00 02
 			)
-			// Method begins at RVA 0x41f0
+			// Method begins at RVA 0x4220
 			// Header size: 12
 			// Code size: 103 (0x67)
 			.maxstack 8
@@ -3674,7 +3694,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x50e4
+				// Method begins at RVA 0x5114
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -3700,7 +3720,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 51 00 00 02
 			)
-			// Method begins at RVA 0x4264
+			// Method begins at RVA 0x4294
 			// Header size: 12
 			// Code size: 52 (0x34)
 			.maxstack 8
@@ -3744,7 +3764,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x50ed
+				// Method begins at RVA 0x511d
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -3770,7 +3790,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 51 00 00 02
 			)
-			// Method begins at RVA 0x42a4
+			// Method begins at RVA 0x42d4
 			// Header size: 12
 			// Code size: 110 (0x6e)
 			.maxstack 8
@@ -3837,7 +3857,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x50f6
+				// Method begins at RVA 0x5126
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -3863,7 +3883,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 51 00 00 02
 			)
-			// Method begins at RVA 0x4320
+			// Method begins at RVA 0x4350
 			// Header size: 12
 			// Code size: 52 (0x34)
 			.maxstack 8
@@ -3907,7 +3927,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x50ff
+				// Method begins at RVA 0x512f
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -3933,7 +3953,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 51 00 00 02
 			)
-			// Method begins at RVA 0x4360
+			// Method begins at RVA 0x4390
 			// Header size: 12
 			// Code size: 110 (0x6e)
 			.maxstack 8
@@ -4000,7 +4020,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x5108
+				// Method begins at RVA 0x5138
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -4026,7 +4046,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 51 00 00 02
 			)
-			// Method begins at RVA 0x43dc
+			// Method begins at RVA 0x440c
 			// Header size: 12
 			// Code size: 52 (0x34)
 			.maxstack 8
@@ -4074,7 +4094,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x511a
+					// Method begins at RVA 0x514a
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -4098,7 +4118,7 @@
 				.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 					01 00 00 00 00 00 00 00
 				)
-				// Method begins at RVA 0x4edc
+				// Method begins at RVA 0x4f0c
 				// Header size: 1
 				// Code size: 6 (0x6)
 				.maxstack 8
@@ -4116,7 +4136,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x5111
+				// Method begins at RVA 0x5141
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -4142,7 +4162,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 51 00 00 02
 			)
-			// Method begins at RVA 0x441c
+			// Method begins at RVA 0x444c
 			// Header size: 12
 			// Code size: 150 (0x96)
 			.maxstack 8
@@ -4224,7 +4244,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x5123
+				// Method begins at RVA 0x5153
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -4250,7 +4270,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 51 00 00 02
 			)
-			// Method begins at RVA 0x44c0
+			// Method begins at RVA 0x44f0
 			// Header size: 12
 			// Code size: 75 (0x4b)
 			.maxstack 8
@@ -4302,7 +4322,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x512c
+				// Method begins at RVA 0x515c
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -4328,7 +4348,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 51 00 00 02
 			)
-			// Method begins at RVA 0x4518
+			// Method begins at RVA 0x4548
 			// Header size: 12
 			// Code size: 105 (0x69)
 			.maxstack 8
@@ -4394,7 +4414,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x5135
+				// Method begins at RVA 0x5165
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -4420,7 +4440,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 51 00 00 02
 			)
-			// Method begins at RVA 0x4590
+			// Method begins at RVA 0x45c0
 			// Header size: 12
 			// Code size: 52 (0x34)
 			.maxstack 8
@@ -4464,7 +4484,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x513e
+				// Method begins at RVA 0x516e
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -4490,7 +4510,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 51 00 00 02
 			)
-			// Method begins at RVA 0x45d0
+			// Method begins at RVA 0x4600
 			// Header size: 12
 			// Code size: 110 (0x6e)
 			.maxstack 8
@@ -4557,7 +4577,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x5147
+				// Method begins at RVA 0x5177
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -4583,7 +4603,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 51 00 00 02
 			)
-			// Method begins at RVA 0x464c
+			// Method begins at RVA 0x467c
 			// Header size: 12
 			// Code size: 52 (0x34)
 			.maxstack 8
@@ -4627,7 +4647,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x5150
+				// Method begins at RVA 0x5180
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -4653,7 +4673,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 51 00 00 02
 			)
-			// Method begins at RVA 0x468c
+			// Method begins at RVA 0x46bc
 			// Header size: 12
 			// Code size: 110 (0x6e)
 			.maxstack 8
@@ -4720,7 +4740,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x5159
+				// Method begins at RVA 0x5189
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -4746,7 +4766,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 51 00 00 02
 			)
-			// Method begins at RVA 0x4708
+			// Method begins at RVA 0x4738
 			// Header size: 12
 			// Code size: 52 (0x34)
 			.maxstack 8
@@ -4794,7 +4814,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x516b
+					// Method begins at RVA 0x519b
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -4819,7 +4839,7 @@
 				.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 					01 00 00 00 00 00 00 00
 				)
-				// Method begins at RVA 0x4ee4
+				// Method begins at RVA 0x4f14
 				// Header size: 12
 				// Code size: 26 (0x1a)
 				.maxstack 8
@@ -4848,7 +4868,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x5162
+				// Method begins at RVA 0x5192
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -4874,7 +4894,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 51 00 00 02
 			)
-			// Method begins at RVA 0x4748
+			// Method begins at RVA 0x4778
 			// Header size: 12
 			// Code size: 150 (0x96)
 			.maxstack 8
@@ -4956,7 +4976,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x5174
+				// Method begins at RVA 0x51a4
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -4982,7 +5002,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 51 00 00 02
 			)
-			// Method begins at RVA 0x47ec
+			// Method begins at RVA 0x481c
 			// Header size: 12
 			// Code size: 52 (0x34)
 			.maxstack 8
@@ -5030,7 +5050,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x5186
+					// Method begins at RVA 0x51b6
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -5055,7 +5075,7 @@
 				.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 					01 00 00 00 00 00 00 00
 				)
-				// Method begins at RVA 0x4f0c
+				// Method begins at RVA 0x4f3c
 				// Header size: 12
 				// Code size: 19 (0x13)
 				.maxstack 8
@@ -5081,7 +5101,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x517d
+				// Method begins at RVA 0x51ad
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -5107,7 +5127,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 51 00 00 02
 			)
-			// Method begins at RVA 0x482c
+			// Method begins at RVA 0x485c
 			// Header size: 12
 			// Code size: 150 (0x96)
 			.maxstack 8
@@ -5189,7 +5209,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x518f
+				// Method begins at RVA 0x51bf
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -5215,7 +5235,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 51 00 00 02
 			)
-			// Method begins at RVA 0x48d0
+			// Method begins at RVA 0x4900
 			// Header size: 12
 			// Code size: 52 (0x34)
 			.maxstack 8
@@ -5259,7 +5279,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x5198
+				// Method begins at RVA 0x51c8
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -5285,7 +5305,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 51 00 00 02
 			)
-			// Method begins at RVA 0x4910
+			// Method begins at RVA 0x4940
 			// Header size: 12
 			// Code size: 116 (0x74)
 			.maxstack 8
@@ -5353,7 +5373,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x51a1
+				// Method begins at RVA 0x51d1
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -5379,7 +5399,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 51 00 00 02
 			)
-			// Method begins at RVA 0x4990
+			// Method begins at RVA 0x49c0
 			// Header size: 12
 			// Code size: 52 (0x34)
 			.maxstack 8
@@ -5423,7 +5443,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x51aa
+				// Method begins at RVA 0x51da
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -5449,7 +5469,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 51 00 00 02
 			)
-			// Method begins at RVA 0x49d0
+			// Method begins at RVA 0x4a00
 			// Header size: 12
 			// Code size: 104 (0x68)
 			.maxstack 8
@@ -5513,7 +5533,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x51b3
+				// Method begins at RVA 0x51e3
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -5539,7 +5559,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 51 00 00 02
 			)
-			// Method begins at RVA 0x4a44
+			// Method begins at RVA 0x4a74
 			// Header size: 12
 			// Code size: 52 (0x34)
 			.maxstack 8
@@ -5583,7 +5603,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x51bc
+				// Method begins at RVA 0x51ec
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -5609,7 +5629,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 51 00 00 02
 			)
-			// Method begins at RVA 0x4a84
+			// Method begins at RVA 0x4ab4
 			// Header size: 12
 			// Code size: 121 (0x79)
 			.maxstack 8
@@ -5678,7 +5698,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x51c5
+				// Method begins at RVA 0x51f5
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -5704,7 +5724,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 51 00 00 02
 			)
-			// Method begins at RVA 0x4b0c
+			// Method begins at RVA 0x4b3c
 			// Header size: 12
 			// Code size: 52 (0x34)
 			.maxstack 8
@@ -5748,7 +5768,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x51ce
+				// Method begins at RVA 0x51fe
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -5774,7 +5794,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 51 00 00 02
 			)
-			// Method begins at RVA 0x4b4c
+			// Method begins at RVA 0x4b7c
 			// Header size: 12
 			// Code size: 121 (0x79)
 			.maxstack 8
@@ -5843,7 +5863,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x51d7
+				// Method begins at RVA 0x5207
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -5869,7 +5889,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 51 00 00 02
 			)
-			// Method begins at RVA 0x4bd4
+			// Method begins at RVA 0x4c04
 			// Header size: 12
 			// Code size: 52 (0x34)
 			.maxstack 8
@@ -5913,7 +5933,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x51e0
+				// Method begins at RVA 0x5210
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -5939,7 +5959,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 51 00 00 02
 			)
-			// Method begins at RVA 0x4c14
+			// Method begins at RVA 0x4c44
 			// Header size: 12
 			// Code size: 116 (0x74)
 			.maxstack 8
@@ -6007,7 +6027,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x51e9
+				// Method begins at RVA 0x5219
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -6033,7 +6053,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 51 00 00 02
 			)
-			// Method begins at RVA 0x4c94
+			// Method begins at RVA 0x4cc4
 			// Header size: 12
 			// Code size: 52 (0x34)
 			.maxstack 8
@@ -6077,7 +6097,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x51f2
+				// Method begins at RVA 0x5222
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -6103,7 +6123,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 51 00 00 02
 			)
-			// Method begins at RVA 0x4cd4
+			// Method begins at RVA 0x4d04
 			// Header size: 12
 			// Code size: 104 (0x68)
 			.maxstack 8
@@ -6167,7 +6187,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x51fb
+				// Method begins at RVA 0x522b
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -6193,7 +6213,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 51 00 00 02
 			)
-			// Method begins at RVA 0x4d48
+			// Method begins at RVA 0x4d78
 			// Header size: 12
 			// Code size: 52 (0x34)
 			.maxstack 8
@@ -6237,7 +6257,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x5204
+				// Method begins at RVA 0x5234
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -6263,7 +6283,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 51 00 00 02
 			)
-			// Method begins at RVA 0x4d88
+			// Method begins at RVA 0x4db8
 			// Header size: 12
 			// Code size: 121 (0x79)
 			.maxstack 8
@@ -6332,7 +6352,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x520d
+				// Method begins at RVA 0x523d
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -6358,7 +6378,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 51 00 00 02
 			)
-			// Method begins at RVA 0x4e10
+			// Method begins at RVA 0x4e40
 			// Header size: 12
 			// Code size: 52 (0x34)
 			.maxstack 8
@@ -6402,7 +6422,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x5216
+				// Method begins at RVA 0x5246
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -6428,7 +6448,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 51 00 00 02
 			)
-			// Method begins at RVA 0x4e50
+			// Method begins at RVA 0x4e80
 			// Header size: 12
 			// Code size: 121 (0x79)
 			.maxstack 8
@@ -6516,7 +6536,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x4f2b
+			// Method begins at RVA 0x4f5b
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -8085,7 +8105,7 @@
 	.method public hidebysig specialname rtspecialname 
 		instance void .ctor () cil managed 
 	{
-		// Method begins at RVA 0x521f
+		// Method begins at RVA 0x524f
 		// Header size: 1
 		// Code size: 7 (0x7)
 		.maxstack 8
@@ -8098,7 +8118,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x5227
+		// Method begins at RVA 0x5257
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -8110,7 +8130,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x522a
+		// Method begins at RVA 0x525a
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -8125,7 +8145,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x522d
+		// Method begins at RVA 0x525d
 		// Header size: 1
 		// Code size: 31 (0x1f)
 		.maxstack 8
@@ -8149,7 +8169,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x524d
+		// Method begins at RVA 0x527d
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -8168,7 +8188,7 @@
 	.method public hidebysig specialname rtspecialname 
 		instance void .ctor () cil managed 
 	{
-		// Method begins at RVA 0x5259
+		// Method begins at RVA 0x5289
 		// Header size: 1
 		// Code size: 7 (0x7)
 		.maxstack 8
@@ -8181,7 +8201,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x5261
+		// Method begins at RVA 0x5291
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -8193,7 +8213,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x5264
+		// Method begins at RVA 0x5294
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -8208,7 +8228,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x5267
+		// Method begins at RVA 0x5297
 		// Header size: 1
 		// Code size: 7 (0x7)
 		.maxstack 8
@@ -8224,7 +8244,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x526f
+		// Method begins at RVA 0x529f
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -8243,7 +8263,7 @@
 	.method public hidebysig specialname rtspecialname 
 		instance void .ctor () cil managed 
 	{
-		// Method begins at RVA 0x527b
+		// Method begins at RVA 0x52ab
 		// Header size: 1
 		// Code size: 7 (0x7)
 		.maxstack 8
@@ -8256,7 +8276,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x5283
+		// Method begins at RVA 0x52b3
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -8268,7 +8288,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x5286
+		// Method begins at RVA 0x52b6
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -8283,7 +8303,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x5289
+		// Method begins at RVA 0x52b9
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -8302,7 +8322,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x5298
+		// Method begins at RVA 0x52c8
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -8321,7 +8341,7 @@
 	.method public hidebysig specialname rtspecialname 
 		instance void .ctor () cil managed 
 	{
-		// Method begins at RVA 0x52a4
+		// Method begins at RVA 0x52d4
 		// Header size: 1
 		// Code size: 7 (0x7)
 		.maxstack 8
@@ -8334,7 +8354,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x52ac
+		// Method begins at RVA 0x52dc
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -8346,7 +8366,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x52af
+		// Method begins at RVA 0x52df
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -8361,7 +8381,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x52b2
+		// Method begins at RVA 0x52e2
 		// Header size: 1
 		// Code size: 26 (0x1a)
 		.maxstack 8
@@ -8384,7 +8404,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x52cd
+		// Method begins at RVA 0x52fd
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -8403,7 +8423,7 @@
 	.method public hidebysig specialname rtspecialname 
 		instance void .ctor () cil managed 
 	{
-		// Method begins at RVA 0x52d9
+		// Method begins at RVA 0x5309
 		// Header size: 1
 		// Code size: 7 (0x7)
 		.maxstack 8
@@ -8416,7 +8436,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x52e1
+		// Method begins at RVA 0x5311
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -8428,7 +8448,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x52e4
+		// Method begins at RVA 0x5314
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -8443,7 +8463,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x52e7
+		// Method begins at RVA 0x5317
 		// Header size: 1
 		// Code size: 7 (0x7)
 		.maxstack 8
@@ -8459,7 +8479,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x52ef
+		// Method begins at RVA 0x531f
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -8483,7 +8503,7 @@
 			class Modules.Compile_Performance_Dromaeo_Object_Regexp/Scope capture0
 		) cil managed 
 	{
-		// Method begins at RVA 0x52fb
+		// Method begins at RVA 0x532b
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -8499,7 +8519,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x530a
+		// Method begins at RVA 0x533a
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -8511,7 +8531,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x530d
+		// Method begins at RVA 0x533d
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -8526,7 +8546,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x5310
+		// Method begins at RVA 0x5340
 		// Header size: 1
 		// Code size: 25 (0x19)
 		.maxstack 8
@@ -8548,7 +8568,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x532a
+		// Method begins at RVA 0x535a
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -8572,7 +8592,7 @@
 			class Modules.Compile_Performance_Dromaeo_Object_Regexp/Scope capture0
 		) cil managed 
 	{
-		// Method begins at RVA 0x5336
+		// Method begins at RVA 0x5366
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -8588,7 +8608,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x5345
+		// Method begins at RVA 0x5375
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -8600,7 +8620,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x5348
+		// Method begins at RVA 0x5378
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -8615,7 +8635,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x534b
+		// Method begins at RVA 0x537b
 		// Header size: 1
 		// Code size: 13 (0xd)
 		.maxstack 8
@@ -8633,7 +8653,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x5359
+		// Method begins at RVA 0x5389
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -8657,7 +8677,7 @@
 			class Modules.Compile_Performance_Dromaeo_Object_Regexp/Scope capture0
 		) cil managed 
 	{
-		// Method begins at RVA 0x5365
+		// Method begins at RVA 0x5395
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -8673,7 +8693,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x5374
+		// Method begins at RVA 0x53a4
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -8685,7 +8705,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x5377
+		// Method begins at RVA 0x53a7
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -8700,7 +8720,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x537a
+		// Method begins at RVA 0x53aa
 		// Header size: 1
 		// Code size: 13 (0xd)
 		.maxstack 8
@@ -8718,7 +8738,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x5388
+		// Method begins at RVA 0x53b8
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -8742,7 +8762,7 @@
 			class Modules.Compile_Performance_Dromaeo_Object_Regexp/Scope capture0
 		) cil managed 
 	{
-		// Method begins at RVA 0x5394
+		// Method begins at RVA 0x53c4
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -8758,7 +8778,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x53a3
+		// Method begins at RVA 0x53d3
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -8770,7 +8790,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x53a6
+		// Method begins at RVA 0x53d6
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -8785,7 +8805,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x53a9
+		// Method begins at RVA 0x53d9
 		// Header size: 1
 		// Code size: 13 (0xd)
 		.maxstack 8
@@ -8803,7 +8823,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x53b7
+		// Method begins at RVA 0x53e7
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -8827,7 +8847,7 @@
 			class Modules.Compile_Performance_Dromaeo_Object_Regexp/Scope capture0
 		) cil managed 
 	{
-		// Method begins at RVA 0x53c3
+		// Method begins at RVA 0x53f3
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -8843,7 +8863,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x53d2
+		// Method begins at RVA 0x5402
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -8855,7 +8875,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x53d5
+		// Method begins at RVA 0x5405
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -8870,7 +8890,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x53d8
+		// Method begins at RVA 0x5408
 		// Header size: 1
 		// Code size: 13 (0xd)
 		.maxstack 8
@@ -8888,7 +8908,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x53e6
+		// Method begins at RVA 0x5416
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -8912,7 +8932,7 @@
 			class Modules.Compile_Performance_Dromaeo_Object_Regexp/Scope capture0
 		) cil managed 
 	{
-		// Method begins at RVA 0x53f2
+		// Method begins at RVA 0x5422
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -8928,7 +8948,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x5401
+		// Method begins at RVA 0x5431
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -8940,7 +8960,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x5404
+		// Method begins at RVA 0x5434
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -8955,7 +8975,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x5407
+		// Method begins at RVA 0x5437
 		// Header size: 1
 		// Code size: 13 (0xd)
 		.maxstack 8
@@ -8973,7 +8993,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x5415
+		// Method begins at RVA 0x5445
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -8997,7 +9017,7 @@
 			class Modules.Compile_Performance_Dromaeo_Object_Regexp/Scope capture0
 		) cil managed 
 	{
-		// Method begins at RVA 0x5421
+		// Method begins at RVA 0x5451
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -9013,7 +9033,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x5430
+		// Method begins at RVA 0x5460
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -9025,7 +9045,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x5433
+		// Method begins at RVA 0x5463
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -9040,7 +9060,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x5436
+		// Method begins at RVA 0x5466
 		// Header size: 1
 		// Code size: 13 (0xd)
 		.maxstack 8
@@ -9058,7 +9078,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x5444
+		// Method begins at RVA 0x5474
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -9082,7 +9102,7 @@
 			class Modules.Compile_Performance_Dromaeo_Object_Regexp/Scope capture0
 		) cil managed 
 	{
-		// Method begins at RVA 0x5450
+		// Method begins at RVA 0x5480
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -9098,7 +9118,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x545f
+		// Method begins at RVA 0x548f
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -9110,7 +9130,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x5462
+		// Method begins at RVA 0x5492
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -9125,7 +9145,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x5465
+		// Method begins at RVA 0x5495
 		// Header size: 1
 		// Code size: 13 (0xd)
 		.maxstack 8
@@ -9143,7 +9163,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x5473
+		// Method begins at RVA 0x54a3
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -9167,7 +9187,7 @@
 			class Modules.Compile_Performance_Dromaeo_Object_Regexp/Scope capture0
 		) cil managed 
 	{
-		// Method begins at RVA 0x547f
+		// Method begins at RVA 0x54af
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -9183,7 +9203,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x548e
+		// Method begins at RVA 0x54be
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -9195,7 +9215,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x5491
+		// Method begins at RVA 0x54c1
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -9210,7 +9230,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x5494
+		// Method begins at RVA 0x54c4
 		// Header size: 1
 		// Code size: 13 (0xd)
 		.maxstack 8
@@ -9228,7 +9248,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x54a2
+		// Method begins at RVA 0x54d2
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -9252,7 +9272,7 @@
 			class Modules.Compile_Performance_Dromaeo_Object_Regexp/Scope capture0
 		) cil managed 
 	{
-		// Method begins at RVA 0x54ae
+		// Method begins at RVA 0x54de
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -9268,7 +9288,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x54bd
+		// Method begins at RVA 0x54ed
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -9280,7 +9300,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x54c0
+		// Method begins at RVA 0x54f0
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -9295,7 +9315,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x54c3
+		// Method begins at RVA 0x54f3
 		// Header size: 1
 		// Code size: 13 (0xd)
 		.maxstack 8
@@ -9313,7 +9333,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x54d1
+		// Method begins at RVA 0x5501
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -9337,7 +9357,7 @@
 			class Modules.Compile_Performance_Dromaeo_Object_Regexp/Scope capture0
 		) cil managed 
 	{
-		// Method begins at RVA 0x54dd
+		// Method begins at RVA 0x550d
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -9353,7 +9373,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x54ec
+		// Method begins at RVA 0x551c
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -9365,7 +9385,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x54ef
+		// Method begins at RVA 0x551f
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -9380,7 +9400,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x54f2
+		// Method begins at RVA 0x5522
 		// Header size: 1
 		// Code size: 13 (0xd)
 		.maxstack 8
@@ -9398,7 +9418,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x5500
+		// Method begins at RVA 0x5530
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -9422,7 +9442,7 @@
 			class Modules.Compile_Performance_Dromaeo_Object_Regexp/Scope capture0
 		) cil managed 
 	{
-		// Method begins at RVA 0x550c
+		// Method begins at RVA 0x553c
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -9438,7 +9458,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x551b
+		// Method begins at RVA 0x554b
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -9450,7 +9470,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x551e
+		// Method begins at RVA 0x554e
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -9465,7 +9485,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x5521
+		// Method begins at RVA 0x5551
 		// Header size: 1
 		// Code size: 13 (0xd)
 		.maxstack 8
@@ -9483,7 +9503,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x552f
+		// Method begins at RVA 0x555f
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -9507,7 +9527,7 @@
 			class Modules.Compile_Performance_Dromaeo_Object_Regexp/Scope capture0
 		) cil managed 
 	{
-		// Method begins at RVA 0x553b
+		// Method begins at RVA 0x556b
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -9523,7 +9543,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x554a
+		// Method begins at RVA 0x557a
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -9535,7 +9555,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x554d
+		// Method begins at RVA 0x557d
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -9550,7 +9570,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x5550
+		// Method begins at RVA 0x5580
 		// Header size: 1
 		// Code size: 13 (0xd)
 		.maxstack 8
@@ -9568,7 +9588,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x555e
+		// Method begins at RVA 0x558e
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -9592,7 +9612,7 @@
 			class Modules.Compile_Performance_Dromaeo_Object_Regexp/Scope capture0
 		) cil managed 
 	{
-		// Method begins at RVA 0x556a
+		// Method begins at RVA 0x559a
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -9608,7 +9628,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x5579
+		// Method begins at RVA 0x55a9
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -9620,7 +9640,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x557c
+		// Method begins at RVA 0x55ac
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -9635,7 +9655,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x557f
+		// Method begins at RVA 0x55af
 		// Header size: 1
 		// Code size: 13 (0xd)
 		.maxstack 8
@@ -9653,7 +9673,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x558d
+		// Method begins at RVA 0x55bd
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -9677,7 +9697,7 @@
 			class Modules.Compile_Performance_Dromaeo_Object_Regexp/Scope capture0
 		) cil managed 
 	{
-		// Method begins at RVA 0x5599
+		// Method begins at RVA 0x55c9
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -9693,7 +9713,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x55a8
+		// Method begins at RVA 0x55d8
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -9705,7 +9725,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x55ab
+		// Method begins at RVA 0x55db
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -9720,7 +9740,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x55ae
+		// Method begins at RVA 0x55de
 		// Header size: 1
 		// Code size: 13 (0xd)
 		.maxstack 8
@@ -9738,7 +9758,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x55bc
+		// Method begins at RVA 0x55ec
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -9762,7 +9782,7 @@
 			class Modules.Compile_Performance_Dromaeo_Object_Regexp/Scope capture0
 		) cil managed 
 	{
-		// Method begins at RVA 0x55c8
+		// Method begins at RVA 0x55f8
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -9778,7 +9798,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x55d7
+		// Method begins at RVA 0x5607
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -9790,7 +9810,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x55da
+		// Method begins at RVA 0x560a
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -9805,7 +9825,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x55dd
+		// Method begins at RVA 0x560d
 		// Header size: 1
 		// Code size: 13 (0xd)
 		.maxstack 8
@@ -9823,7 +9843,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x55eb
+		// Method begins at RVA 0x561b
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -9847,7 +9867,7 @@
 			class Modules.Compile_Performance_Dromaeo_Object_Regexp/Scope capture0
 		) cil managed 
 	{
-		// Method begins at RVA 0x55f7
+		// Method begins at RVA 0x5627
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -9863,7 +9883,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x5606
+		// Method begins at RVA 0x5636
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -9875,7 +9895,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x5609
+		// Method begins at RVA 0x5639
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -9890,7 +9910,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x560c
+		// Method begins at RVA 0x563c
 		// Header size: 1
 		// Code size: 13 (0xd)
 		.maxstack 8
@@ -9908,7 +9928,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x561a
+		// Method begins at RVA 0x564a
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -9932,7 +9952,7 @@
 			class Modules.Compile_Performance_Dromaeo_Object_Regexp/Scope capture0
 		) cil managed 
 	{
-		// Method begins at RVA 0x5626
+		// Method begins at RVA 0x5656
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -9948,7 +9968,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x5635
+		// Method begins at RVA 0x5665
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -9960,7 +9980,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x5638
+		// Method begins at RVA 0x5668
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -9975,7 +9995,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x563b
+		// Method begins at RVA 0x566b
 		// Header size: 1
 		// Code size: 13 (0xd)
 		.maxstack 8
@@ -9993,7 +10013,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x5649
+		// Method begins at RVA 0x5679
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -10017,7 +10037,7 @@
 			class Modules.Compile_Performance_Dromaeo_Object_Regexp/Scope capture0
 		) cil managed 
 	{
-		// Method begins at RVA 0x5655
+		// Method begins at RVA 0x5685
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -10033,7 +10053,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x5664
+		// Method begins at RVA 0x5694
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -10045,7 +10065,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x5667
+		// Method begins at RVA 0x5697
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -10060,7 +10080,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x566a
+		// Method begins at RVA 0x569a
 		// Header size: 1
 		// Code size: 13 (0xd)
 		.maxstack 8
@@ -10078,7 +10098,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x5678
+		// Method begins at RVA 0x56a8
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -10102,7 +10122,7 @@
 			class Modules.Compile_Performance_Dromaeo_Object_Regexp/Scope capture0
 		) cil managed 
 	{
-		// Method begins at RVA 0x5684
+		// Method begins at RVA 0x56b4
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -10118,7 +10138,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x5693
+		// Method begins at RVA 0x56c3
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -10130,7 +10150,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x5696
+		// Method begins at RVA 0x56c6
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -10145,7 +10165,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x5699
+		// Method begins at RVA 0x56c9
 		// Header size: 1
 		// Code size: 13 (0xd)
 		.maxstack 8
@@ -10163,7 +10183,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x56a7
+		// Method begins at RVA 0x56d7
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -10187,7 +10207,7 @@
 			class Modules.Compile_Performance_Dromaeo_Object_Regexp/Scope capture0
 		) cil managed 
 	{
-		// Method begins at RVA 0x56b3
+		// Method begins at RVA 0x56e3
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -10203,7 +10223,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x56c2
+		// Method begins at RVA 0x56f2
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -10215,7 +10235,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x56c5
+		// Method begins at RVA 0x56f5
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -10230,7 +10250,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x56c8
+		// Method begins at RVA 0x56f8
 		// Header size: 1
 		// Code size: 13 (0xd)
 		.maxstack 8
@@ -10248,7 +10268,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x56d6
+		// Method begins at RVA 0x5706
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -10272,7 +10292,7 @@
 			class Modules.Compile_Performance_Dromaeo_Object_Regexp/Scope capture0
 		) cil managed 
 	{
-		// Method begins at RVA 0x56e2
+		// Method begins at RVA 0x5712
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -10288,7 +10308,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x56f1
+		// Method begins at RVA 0x5721
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -10300,7 +10320,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x56f4
+		// Method begins at RVA 0x5724
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -10315,7 +10335,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x56f7
+		// Method begins at RVA 0x5727
 		// Header size: 1
 		// Code size: 13 (0xd)
 		.maxstack 8
@@ -10333,7 +10353,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x5705
+		// Method begins at RVA 0x5735
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -10357,7 +10377,7 @@
 			class Modules.Compile_Performance_Dromaeo_Object_Regexp/Scope capture0
 		) cil managed 
 	{
-		// Method begins at RVA 0x5711
+		// Method begins at RVA 0x5741
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -10373,7 +10393,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x5720
+		// Method begins at RVA 0x5750
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -10385,7 +10405,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x5723
+		// Method begins at RVA 0x5753
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -10400,7 +10420,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x5726
+		// Method begins at RVA 0x5756
 		// Header size: 1
 		// Code size: 13 (0xd)
 		.maxstack 8
@@ -10418,7 +10438,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x5734
+		// Method begins at RVA 0x5764
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -10442,7 +10462,7 @@
 			class Modules.Compile_Performance_Dromaeo_Object_Regexp/Scope capture0
 		) cil managed 
 	{
-		// Method begins at RVA 0x5740
+		// Method begins at RVA 0x5770
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -10458,7 +10478,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x574f
+		// Method begins at RVA 0x577f
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -10470,7 +10490,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x5752
+		// Method begins at RVA 0x5782
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -10485,7 +10505,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x5755
+		// Method begins at RVA 0x5785
 		// Header size: 1
 		// Code size: 13 (0xd)
 		.maxstack 8
@@ -10503,7 +10523,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x5763
+		// Method begins at RVA 0x5793
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -10527,7 +10547,7 @@
 			class Modules.Compile_Performance_Dromaeo_Object_Regexp/Scope capture0
 		) cil managed 
 	{
-		// Method begins at RVA 0x576f
+		// Method begins at RVA 0x579f
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -10543,7 +10563,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x577e
+		// Method begins at RVA 0x57ae
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -10555,7 +10575,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x5781
+		// Method begins at RVA 0x57b1
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -10570,7 +10590,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x5784
+		// Method begins at RVA 0x57b4
 		// Header size: 1
 		// Code size: 13 (0xd)
 		.maxstack 8
@@ -10588,7 +10608,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x5792
+		// Method begins at RVA 0x57c2
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -10607,7 +10627,7 @@
 	.method public hidebysig specialname rtspecialname 
 		instance void .ctor () cil managed 
 	{
-		// Method begins at RVA 0x579e
+		// Method begins at RVA 0x57ce
 		// Header size: 1
 		// Code size: 7 (0x7)
 		.maxstack 8
@@ -10620,7 +10640,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x57a6
+		// Method begins at RVA 0x57d6
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -10632,7 +10652,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x57a9
+		// Method begins at RVA 0x57d9
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -10647,7 +10667,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x57ac
+		// Method begins at RVA 0x57dc
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -10666,7 +10686,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x57bb
+		// Method begins at RVA 0x57eb
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -10690,7 +10710,7 @@
 			class Modules.Compile_Performance_Dromaeo_Object_Regexp/Scope capture0
 		) cil managed 
 	{
-		// Method begins at RVA 0x57c7
+		// Method begins at RVA 0x57f7
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -10706,7 +10726,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x57d6
+		// Method begins at RVA 0x5806
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -10718,7 +10738,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x57d9
+		// Method begins at RVA 0x5809
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -10733,7 +10753,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x57dc
+		// Method begins at RVA 0x580c
 		// Header size: 1
 		// Code size: 13 (0xd)
 		.maxstack 8
@@ -10751,7 +10771,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x57ea
+		// Method begins at RVA 0x581a
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -10775,7 +10795,7 @@
 			class Modules.Compile_Performance_Dromaeo_Object_Regexp/Scope capture0
 		) cil managed 
 	{
-		// Method begins at RVA 0x57f6
+		// Method begins at RVA 0x5826
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -10791,7 +10811,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x5805
+		// Method begins at RVA 0x5835
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -10803,7 +10823,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x5808
+		// Method begins at RVA 0x5838
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -10818,7 +10838,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x580b
+		// Method begins at RVA 0x583b
 		// Header size: 1
 		// Code size: 13 (0xd)
 		.maxstack 8
@@ -10836,7 +10856,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x5819
+		// Method begins at RVA 0x5849
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -10860,7 +10880,7 @@
 			class Modules.Compile_Performance_Dromaeo_Object_Regexp/Scope capture0
 		) cil managed 
 	{
-		// Method begins at RVA 0x5825
+		// Method begins at RVA 0x5855
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -10876,7 +10896,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x5834
+		// Method begins at RVA 0x5864
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -10888,7 +10908,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x5837
+		// Method begins at RVA 0x5867
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -10903,7 +10923,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x583a
+		// Method begins at RVA 0x586a
 		// Header size: 1
 		// Code size: 13 (0xd)
 		.maxstack 8
@@ -10921,7 +10941,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x5848
+		// Method begins at RVA 0x5878
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -10945,7 +10965,7 @@
 			class Modules.Compile_Performance_Dromaeo_Object_Regexp/Scope capture0
 		) cil managed 
 	{
-		// Method begins at RVA 0x5854
+		// Method begins at RVA 0x5884
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -10961,7 +10981,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x5863
+		// Method begins at RVA 0x5893
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -10973,7 +10993,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x5866
+		// Method begins at RVA 0x5896
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -10988,7 +11008,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x5869
+		// Method begins at RVA 0x5899
 		// Header size: 1
 		// Code size: 13 (0xd)
 		.maxstack 8
@@ -11006,7 +11026,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x5877
+		// Method begins at RVA 0x58a7
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -11030,7 +11050,7 @@
 			class Modules.Compile_Performance_Dromaeo_Object_Regexp/Scope capture0
 		) cil managed 
 	{
-		// Method begins at RVA 0x5883
+		// Method begins at RVA 0x58b3
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -11046,7 +11066,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x5892
+		// Method begins at RVA 0x58c2
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -11058,7 +11078,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x5895
+		// Method begins at RVA 0x58c5
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -11073,7 +11093,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x5898
+		// Method begins at RVA 0x58c8
 		// Header size: 1
 		// Code size: 13 (0xd)
 		.maxstack 8
@@ -11091,7 +11111,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x58a6
+		// Method begins at RVA 0x58d6
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -11115,7 +11135,7 @@
 			class Modules.Compile_Performance_Dromaeo_Object_Regexp/Scope capture0
 		) cil managed 
 	{
-		// Method begins at RVA 0x58b2
+		// Method begins at RVA 0x58e2
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -11131,7 +11151,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x58c1
+		// Method begins at RVA 0x58f1
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -11143,7 +11163,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x58c4
+		// Method begins at RVA 0x58f4
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -11158,7 +11178,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x58c7
+		// Method begins at RVA 0x58f7
 		// Header size: 1
 		// Code size: 13 (0xd)
 		.maxstack 8
@@ -11176,7 +11196,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x58d5
+		// Method begins at RVA 0x5905
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -11200,7 +11220,7 @@
 			class Modules.Compile_Performance_Dromaeo_Object_Regexp/Scope capture0
 		) cil managed 
 	{
-		// Method begins at RVA 0x58e1
+		// Method begins at RVA 0x5911
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -11216,7 +11236,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x58f0
+		// Method begins at RVA 0x5920
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -11228,7 +11248,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x58f3
+		// Method begins at RVA 0x5923
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -11243,7 +11263,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x58f6
+		// Method begins at RVA 0x5926
 		// Header size: 1
 		// Code size: 13 (0xd)
 		.maxstack 8
@@ -11261,7 +11281,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x5904
+		// Method begins at RVA 0x5934
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -11285,7 +11305,7 @@
 			class Modules.Compile_Performance_Dromaeo_Object_Regexp/Scope capture0
 		) cil managed 
 	{
-		// Method begins at RVA 0x5910
+		// Method begins at RVA 0x5940
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -11301,7 +11321,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x591f
+		// Method begins at RVA 0x594f
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -11313,7 +11333,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x5922
+		// Method begins at RVA 0x5952
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -11328,7 +11348,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x5925
+		// Method begins at RVA 0x5955
 		// Header size: 1
 		// Code size: 13 (0xd)
 		.maxstack 8
@@ -11346,7 +11366,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x5933
+		// Method begins at RVA 0x5963
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -11370,7 +11390,7 @@
 			class Modules.Compile_Performance_Dromaeo_Object_Regexp/Scope capture0
 		) cil managed 
 	{
-		// Method begins at RVA 0x593f
+		// Method begins at RVA 0x596f
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -11386,7 +11406,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x594e
+		// Method begins at RVA 0x597e
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -11398,7 +11418,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x5951
+		// Method begins at RVA 0x5981
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -11413,7 +11433,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x5954
+		// Method begins at RVA 0x5984
 		// Header size: 1
 		// Code size: 13 (0xd)
 		.maxstack 8
@@ -11431,7 +11451,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x5962
+		// Method begins at RVA 0x5992
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -11455,7 +11475,7 @@
 			class Modules.Compile_Performance_Dromaeo_Object_Regexp/Scope capture0
 		) cil managed 
 	{
-		// Method begins at RVA 0x596e
+		// Method begins at RVA 0x599e
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -11471,7 +11491,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x597d
+		// Method begins at RVA 0x59ad
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -11483,7 +11503,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x5980
+		// Method begins at RVA 0x59b0
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -11498,7 +11518,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x5983
+		// Method begins at RVA 0x59b3
 		// Header size: 1
 		// Code size: 13 (0xd)
 		.maxstack 8
@@ -11516,7 +11536,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x5991
+		// Method begins at RVA 0x59c1
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -11540,7 +11560,7 @@
 			class Modules.Compile_Performance_Dromaeo_Object_Regexp/Scope capture0
 		) cil managed 
 	{
-		// Method begins at RVA 0x599d
+		// Method begins at RVA 0x59cd
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -11556,7 +11576,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x59ac
+		// Method begins at RVA 0x59dc
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -11568,7 +11588,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x59af
+		// Method begins at RVA 0x59df
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -11583,7 +11603,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x59b2
+		// Method begins at RVA 0x59e2
 		// Header size: 1
 		// Code size: 13 (0xd)
 		.maxstack 8
@@ -11601,7 +11621,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x59c0
+		// Method begins at RVA 0x59f0
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -11625,7 +11645,7 @@
 			class Modules.Compile_Performance_Dromaeo_Object_Regexp/Scope capture0
 		) cil managed 
 	{
-		// Method begins at RVA 0x59cc
+		// Method begins at RVA 0x59fc
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -11641,7 +11661,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x59db
+		// Method begins at RVA 0x5a0b
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -11653,7 +11673,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x59de
+		// Method begins at RVA 0x5a0e
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -11668,7 +11688,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x59e1
+		// Method begins at RVA 0x5a11
 		// Header size: 1
 		// Code size: 13 (0xd)
 		.maxstack 8
@@ -11686,7 +11706,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x59ef
+		// Method begins at RVA 0x5a1f
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -11710,7 +11730,7 @@
 			class Modules.Compile_Performance_Dromaeo_Object_Regexp/Scope capture0
 		) cil managed 
 	{
-		// Method begins at RVA 0x59fb
+		// Method begins at RVA 0x5a2b
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -11726,7 +11746,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x5a0a
+		// Method begins at RVA 0x5a3a
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -11738,7 +11758,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x5a0d
+		// Method begins at RVA 0x5a3d
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -11753,7 +11773,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x5a10
+		// Method begins at RVA 0x5a40
 		// Header size: 1
 		// Code size: 13 (0xd)
 		.maxstack 8
@@ -11771,7 +11791,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x5a1e
+		// Method begins at RVA 0x5a4e
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -11795,7 +11815,7 @@
 			class Modules.Compile_Performance_Dromaeo_Object_Regexp/Scope capture0
 		) cil managed 
 	{
-		// Method begins at RVA 0x5a2a
+		// Method begins at RVA 0x5a5a
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -11811,7 +11831,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x5a39
+		// Method begins at RVA 0x5a69
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -11823,7 +11843,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x5a3c
+		// Method begins at RVA 0x5a6c
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -11838,7 +11858,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x5a3f
+		// Method begins at RVA 0x5a6f
 		// Header size: 1
 		// Code size: 13 (0xd)
 		.maxstack 8
@@ -11856,7 +11876,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x5a4d
+		// Method begins at RVA 0x5a7d
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -11880,7 +11900,7 @@
 			class Modules.Compile_Performance_Dromaeo_Object_Regexp/Scope capture0
 		) cil managed 
 	{
-		// Method begins at RVA 0x5a59
+		// Method begins at RVA 0x5a89
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -11896,7 +11916,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x5a68
+		// Method begins at RVA 0x5a98
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -11908,7 +11928,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x5a6b
+		// Method begins at RVA 0x5a9b
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -11923,7 +11943,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x5a6e
+		// Method begins at RVA 0x5a9e
 		// Header size: 1
 		// Code size: 13 (0xd)
 		.maxstack 8
@@ -11941,7 +11961,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x5a7c
+		// Method begins at RVA 0x5aac
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -11965,7 +11985,7 @@
 			class Modules.Compile_Performance_Dromaeo_Object_Regexp/Scope capture0
 		) cil managed 
 	{
-		// Method begins at RVA 0x5a88
+		// Method begins at RVA 0x5ab8
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -11981,7 +12001,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x5a97
+		// Method begins at RVA 0x5ac7
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -11993,7 +12013,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x5a9a
+		// Method begins at RVA 0x5aca
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -12008,7 +12028,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x5a9d
+		// Method begins at RVA 0x5acd
 		// Header size: 1
 		// Code size: 13 (0xd)
 		.maxstack 8
@@ -12026,7 +12046,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x5aab
+		// Method begins at RVA 0x5adb
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -12050,7 +12070,7 @@
 			class Modules.Compile_Performance_Dromaeo_Object_Regexp/Scope capture0
 		) cil managed 
 	{
-		// Method begins at RVA 0x5ab7
+		// Method begins at RVA 0x5ae7
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -12066,7 +12086,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x5ac6
+		// Method begins at RVA 0x5af6
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -12078,7 +12098,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x5ac9
+		// Method begins at RVA 0x5af9
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -12093,7 +12113,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x5acc
+		// Method begins at RVA 0x5afc
 		// Header size: 1
 		// Code size: 13 (0xd)
 		.maxstack 8
@@ -12111,7 +12131,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x5ada
+		// Method begins at RVA 0x5b0a
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -12135,7 +12155,7 @@
 			class Modules.Compile_Performance_Dromaeo_Object_Regexp/Scope capture0
 		) cil managed 
 	{
-		// Method begins at RVA 0x5ae6
+		// Method begins at RVA 0x5b16
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -12151,7 +12171,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x5af5
+		// Method begins at RVA 0x5b25
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -12163,7 +12183,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x5af8
+		// Method begins at RVA 0x5b28
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -12178,7 +12198,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x5afb
+		// Method begins at RVA 0x5b2b
 		// Header size: 1
 		// Code size: 13 (0xd)
 		.maxstack 8
@@ -12196,7 +12216,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x5b09
+		// Method begins at RVA 0x5b39
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -12215,7 +12235,7 @@
 	.method public hidebysig specialname rtspecialname 
 		instance void .ctor () cil managed 
 	{
-		// Method begins at RVA 0x5b15
+		// Method begins at RVA 0x5b45
 		// Header size: 1
 		// Code size: 7 (0x7)
 		.maxstack 8
@@ -12228,7 +12248,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x5b1d
+		// Method begins at RVA 0x5b4d
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -12240,7 +12260,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x5b20
+		// Method begins at RVA 0x5b50
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -12255,7 +12275,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x5b23
+		// Method begins at RVA 0x5b53
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -12274,7 +12294,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x5b32
+		// Method begins at RVA 0x5b62
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -12298,7 +12318,7 @@
 			class Modules.Compile_Performance_Dromaeo_Object_Regexp/Scope capture0
 		) cil managed 
 	{
-		// Method begins at RVA 0x5b3e
+		// Method begins at RVA 0x5b6e
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -12314,7 +12334,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x5b4d
+		// Method begins at RVA 0x5b7d
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -12326,7 +12346,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x5b50
+		// Method begins at RVA 0x5b80
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -12341,7 +12361,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x5b53
+		// Method begins at RVA 0x5b83
 		// Header size: 1
 		// Code size: 13 (0xd)
 		.maxstack 8
@@ -12359,7 +12379,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x5b61
+		// Method begins at RVA 0x5b91
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -12383,7 +12403,7 @@
 			class Modules.Compile_Performance_Dromaeo_Object_Regexp/Scope capture0
 		) cil managed 
 	{
-		// Method begins at RVA 0x5b6d
+		// Method begins at RVA 0x5b9d
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -12399,7 +12419,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x5b7c
+		// Method begins at RVA 0x5bac
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -12411,7 +12431,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x5b7f
+		// Method begins at RVA 0x5baf
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -12426,7 +12446,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x5b82
+		// Method begins at RVA 0x5bb2
 		// Header size: 1
 		// Code size: 13 (0xd)
 		.maxstack 8
@@ -12444,7 +12464,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x5b90
+		// Method begins at RVA 0x5bc0
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -12468,7 +12488,7 @@
 			class Modules.Compile_Performance_Dromaeo_Object_Regexp/Scope capture0
 		) cil managed 
 	{
-		// Method begins at RVA 0x5b9c
+		// Method begins at RVA 0x5bcc
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -12484,7 +12504,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x5bab
+		// Method begins at RVA 0x5bdb
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -12496,7 +12516,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x5bae
+		// Method begins at RVA 0x5bde
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -12511,7 +12531,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x5bb1
+		// Method begins at RVA 0x5be1
 		// Header size: 1
 		// Code size: 13 (0xd)
 		.maxstack 8
@@ -12529,7 +12549,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x5bbf
+		// Method begins at RVA 0x5bef
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -12553,7 +12573,7 @@
 			class Modules.Compile_Performance_Dromaeo_Object_Regexp/Scope capture0
 		) cil managed 
 	{
-		// Method begins at RVA 0x5bcb
+		// Method begins at RVA 0x5bfb
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -12569,7 +12589,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x5bda
+		// Method begins at RVA 0x5c0a
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -12581,7 +12601,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x5bdd
+		// Method begins at RVA 0x5c0d
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -12596,7 +12616,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x5be0
+		// Method begins at RVA 0x5c10
 		// Header size: 1
 		// Code size: 13 (0xd)
 		.maxstack 8
@@ -12614,7 +12634,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x5bee
+		// Method begins at RVA 0x5c1e
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -12638,7 +12658,7 @@
 			class Modules.Compile_Performance_Dromaeo_Object_Regexp/Scope capture0
 		) cil managed 
 	{
-		// Method begins at RVA 0x5bfa
+		// Method begins at RVA 0x5c2a
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -12654,7 +12674,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x5c09
+		// Method begins at RVA 0x5c39
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -12666,7 +12686,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x5c0c
+		// Method begins at RVA 0x5c3c
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -12681,7 +12701,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x5c0f
+		// Method begins at RVA 0x5c3f
 		// Header size: 1
 		// Code size: 13 (0xd)
 		.maxstack 8
@@ -12699,7 +12719,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x5c1d
+		// Method begins at RVA 0x5c4d
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -12723,7 +12743,7 @@
 			class Modules.Compile_Performance_Dromaeo_Object_Regexp/Scope capture0
 		) cil managed 
 	{
-		// Method begins at RVA 0x5c29
+		// Method begins at RVA 0x5c59
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -12739,7 +12759,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x5c38
+		// Method begins at RVA 0x5c68
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -12751,7 +12771,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x5c3b
+		// Method begins at RVA 0x5c6b
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -12766,7 +12786,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x5c3e
+		// Method begins at RVA 0x5c6e
 		// Header size: 1
 		// Code size: 13 (0xd)
 		.maxstack 8
@@ -12784,7 +12804,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x5c4c
+		// Method begins at RVA 0x5c7c
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -12808,7 +12828,7 @@
 			class Modules.Compile_Performance_Dromaeo_Object_Regexp/Scope capture0
 		) cil managed 
 	{
-		// Method begins at RVA 0x5c58
+		// Method begins at RVA 0x5c88
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -12824,7 +12844,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x5c67
+		// Method begins at RVA 0x5c97
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -12836,7 +12856,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x5c6a
+		// Method begins at RVA 0x5c9a
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -12851,7 +12871,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x5c6d
+		// Method begins at RVA 0x5c9d
 		// Header size: 1
 		// Code size: 13 (0xd)
 		.maxstack 8
@@ -12869,7 +12889,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x5c7b
+		// Method begins at RVA 0x5cab
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -12893,7 +12913,7 @@
 			class Modules.Compile_Performance_Dromaeo_Object_Regexp/Scope capture0
 		) cil managed 
 	{
-		// Method begins at RVA 0x5c87
+		// Method begins at RVA 0x5cb7
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -12909,7 +12929,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x5c96
+		// Method begins at RVA 0x5cc6
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -12921,7 +12941,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x5c99
+		// Method begins at RVA 0x5cc9
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -12936,7 +12956,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x5c9c
+		// Method begins at RVA 0x5ccc
 		// Header size: 1
 		// Code size: 13 (0xd)
 		.maxstack 8
@@ -12954,7 +12974,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x5caa
+		// Method begins at RVA 0x5cda
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -12973,7 +12993,7 @@
 	.method public hidebysig specialname rtspecialname 
 		instance void .ctor () cil managed 
 	{
-		// Method begins at RVA 0x5cb6
+		// Method begins at RVA 0x5ce6
 		// Header size: 1
 		// Code size: 7 (0x7)
 		.maxstack 8
@@ -12986,7 +13006,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x5cbe
+		// Method begins at RVA 0x5cee
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -12998,7 +13018,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x5cc1
+		// Method begins at RVA 0x5cf1
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -13013,7 +13033,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x5cc4
+		// Method begins at RVA 0x5cf4
 		// Header size: 1
 		// Code size: 21 (0x15)
 		.maxstack 8
@@ -13035,7 +13055,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x5cda
+		// Method begins at RVA 0x5d0a
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -13059,7 +13079,7 @@
 			class Modules.Compile_Performance_Dromaeo_Object_Regexp/Scope capture0
 		) cil managed 
 	{
-		// Method begins at RVA 0x5ce6
+		// Method begins at RVA 0x5d16
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -13075,7 +13095,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x5cf5
+		// Method begins at RVA 0x5d25
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -13087,7 +13107,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x5cf8
+		// Method begins at RVA 0x5d28
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -13102,7 +13122,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x5cfb
+		// Method begins at RVA 0x5d2b
 		// Header size: 1
 		// Code size: 13 (0xd)
 		.maxstack 8
@@ -13120,7 +13140,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x5d09
+		// Method begins at RVA 0x5d39
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -13144,7 +13164,7 @@
 			class Modules.Compile_Performance_Dromaeo_Object_Regexp/Scope capture0
 		) cil managed 
 	{
-		// Method begins at RVA 0x5d15
+		// Method begins at RVA 0x5d45
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -13160,7 +13180,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x5d24
+		// Method begins at RVA 0x5d54
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -13172,7 +13192,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x5d27
+		// Method begins at RVA 0x5d57
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -13187,7 +13207,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x5d2a
+		// Method begins at RVA 0x5d5a
 		// Header size: 1
 		// Code size: 13 (0xd)
 		.maxstack 8
@@ -13205,7 +13225,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x5d38
+		// Method begins at RVA 0x5d68
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -13224,7 +13244,7 @@
 	.method public hidebysig specialname rtspecialname 
 		instance void .ctor () cil managed 
 	{
-		// Method begins at RVA 0x5d44
+		// Method begins at RVA 0x5d74
 		// Header size: 1
 		// Code size: 7 (0x7)
 		.maxstack 8
@@ -13237,7 +13257,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x5d4c
+		// Method begins at RVA 0x5d7c
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -13249,7 +13269,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x5d4f
+		// Method begins at RVA 0x5d7f
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -13264,7 +13284,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x5d52
+		// Method begins at RVA 0x5d82
 		// Header size: 1
 		// Code size: 21 (0x15)
 		.maxstack 8
@@ -13286,7 +13306,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x5d68
+		// Method begins at RVA 0x5d98
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -13310,7 +13330,7 @@
 			class Modules.Compile_Performance_Dromaeo_Object_Regexp/Scope capture0
 		) cil managed 
 	{
-		// Method begins at RVA 0x5d74
+		// Method begins at RVA 0x5da4
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -13326,7 +13346,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x5d83
+		// Method begins at RVA 0x5db3
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -13338,7 +13358,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x5d86
+		// Method begins at RVA 0x5db6
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -13353,7 +13373,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x5d89
+		// Method begins at RVA 0x5db9
 		// Header size: 1
 		// Code size: 13 (0xd)
 		.maxstack 8
@@ -13371,7 +13391,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x5d97
+		// Method begins at RVA 0x5dc7
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -13395,7 +13415,7 @@
 			class Modules.Compile_Performance_Dromaeo_Object_Regexp/Scope capture0
 		) cil managed 
 	{
-		// Method begins at RVA 0x5da3
+		// Method begins at RVA 0x5dd3
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -13411,7 +13431,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x5db2
+		// Method begins at RVA 0x5de2
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -13423,7 +13443,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x5db5
+		// Method begins at RVA 0x5de5
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -13438,7 +13458,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x5db8
+		// Method begins at RVA 0x5de8
 		// Header size: 1
 		// Code size: 13 (0xd)
 		.maxstack 8
@@ -13456,7 +13476,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x5dc6
+		// Method begins at RVA 0x5df6
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -13480,7 +13500,7 @@
 			class Modules.Compile_Performance_Dromaeo_Object_Regexp/Scope capture0
 		) cil managed 
 	{
-		// Method begins at RVA 0x5dd2
+		// Method begins at RVA 0x5e02
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -13496,7 +13516,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x5de1
+		// Method begins at RVA 0x5e11
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -13508,7 +13528,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x5de4
+		// Method begins at RVA 0x5e14
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -13523,7 +13543,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x5de7
+		// Method begins at RVA 0x5e17
 		// Header size: 1
 		// Code size: 13 (0xd)
 		.maxstack 8
@@ -13541,7 +13561,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x5df5
+		// Method begins at RVA 0x5e25
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -13565,7 +13585,7 @@
 			class Modules.Compile_Performance_Dromaeo_Object_Regexp/Scope capture0
 		) cil managed 
 	{
-		// Method begins at RVA 0x5e01
+		// Method begins at RVA 0x5e31
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -13581,7 +13601,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x5e10
+		// Method begins at RVA 0x5e40
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -13593,7 +13613,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x5e13
+		// Method begins at RVA 0x5e43
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -13608,7 +13628,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x5e16
+		// Method begins at RVA 0x5e46
 		// Header size: 1
 		// Code size: 13 (0xd)
 		.maxstack 8
@@ -13626,7 +13646,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x5e24
+		// Method begins at RVA 0x5e54
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -13650,7 +13670,7 @@
 			class Modules.Compile_Performance_Dromaeo_Object_Regexp/Scope capture0
 		) cil managed 
 	{
-		// Method begins at RVA 0x5e30
+		// Method begins at RVA 0x5e60
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -13666,7 +13686,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x5e3f
+		// Method begins at RVA 0x5e6f
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -13678,7 +13698,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x5e42
+		// Method begins at RVA 0x5e72
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -13693,7 +13713,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x5e45
+		// Method begins at RVA 0x5e75
 		// Header size: 1
 		// Code size: 13 (0xd)
 		.maxstack 8
@@ -13711,7 +13731,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x5e53
+		// Method begins at RVA 0x5e83
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -13735,7 +13755,7 @@
 			class Modules.Compile_Performance_Dromaeo_Object_Regexp/Scope capture0
 		) cil managed 
 	{
-		// Method begins at RVA 0x5e5f
+		// Method begins at RVA 0x5e8f
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -13751,7 +13771,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x5e6e
+		// Method begins at RVA 0x5e9e
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -13763,7 +13783,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x5e71
+		// Method begins at RVA 0x5ea1
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -13778,7 +13798,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x5e74
+		// Method begins at RVA 0x5ea4
 		// Header size: 1
 		// Code size: 13 (0xd)
 		.maxstack 8
@@ -13796,7 +13816,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x5e82
+		// Method begins at RVA 0x5eb2
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -13820,7 +13840,7 @@
 			class Modules.Compile_Performance_Dromaeo_Object_Regexp/Scope capture0
 		) cil managed 
 	{
-		// Method begins at RVA 0x5e8e
+		// Method begins at RVA 0x5ebe
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -13836,7 +13856,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x5e9d
+		// Method begins at RVA 0x5ecd
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -13848,7 +13868,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x5ea0
+		// Method begins at RVA 0x5ed0
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -13863,7 +13883,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x5ea3
+		// Method begins at RVA 0x5ed3
 		// Header size: 1
 		// Code size: 13 (0xd)
 		.maxstack 8
@@ -13881,7 +13901,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x5eb1
+		// Method begins at RVA 0x5ee1
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -13905,7 +13925,7 @@
 			class Modules.Compile_Performance_Dromaeo_Object_Regexp/Scope capture0
 		) cil managed 
 	{
-		// Method begins at RVA 0x5ebd
+		// Method begins at RVA 0x5eed
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -13921,7 +13941,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x5ecc
+		// Method begins at RVA 0x5efc
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -13933,7 +13953,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x5ecf
+		// Method begins at RVA 0x5eff
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -13948,7 +13968,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x5ed2
+		// Method begins at RVA 0x5f02
 		// Header size: 1
 		// Code size: 13 (0xd)
 		.maxstack 8
@@ -13966,7 +13986,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x5ee0
+		// Method begins at RVA 0x5f10
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -13990,7 +14010,7 @@
 			class Modules.Compile_Performance_Dromaeo_Object_Regexp/Scope capture0
 		) cil managed 
 	{
-		// Method begins at RVA 0x5eec
+		// Method begins at RVA 0x5f1c
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -14006,7 +14026,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x5efb
+		// Method begins at RVA 0x5f2b
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -14018,7 +14038,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x5efe
+		// Method begins at RVA 0x5f2e
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -14033,7 +14053,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x5f01
+		// Method begins at RVA 0x5f31
 		// Header size: 1
 		// Code size: 13 (0xd)
 		.maxstack 8
@@ -14051,7 +14071,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x5f0f
+		// Method begins at RVA 0x5f3f
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -14075,7 +14095,7 @@
 			class Modules.Compile_Performance_Dromaeo_Object_Regexp/Scope capture0
 		) cil managed 
 	{
-		// Method begins at RVA 0x5f1b
+		// Method begins at RVA 0x5f4b
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -14091,7 +14111,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x5f2a
+		// Method begins at RVA 0x5f5a
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -14103,7 +14123,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x5f2d
+		// Method begins at RVA 0x5f5d
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -14118,7 +14138,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x5f30
+		// Method begins at RVA 0x5f60
 		// Header size: 1
 		// Code size: 13 (0xd)
 		.maxstack 8
@@ -14136,7 +14156,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x5f3e
+		// Method begins at RVA 0x5f6e
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -14160,7 +14180,7 @@
 			class Modules.Compile_Performance_Dromaeo_Object_Regexp/Scope capture0
 		) cil managed 
 	{
-		// Method begins at RVA 0x5f4a
+		// Method begins at RVA 0x5f7a
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -14176,7 +14196,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x5f59
+		// Method begins at RVA 0x5f89
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -14188,7 +14208,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x5f5c
+		// Method begins at RVA 0x5f8c
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -14203,7 +14223,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x5f5f
+		// Method begins at RVA 0x5f8f
 		// Header size: 1
 		// Code size: 13 (0xd)
 		.maxstack 8
@@ -14221,7 +14241,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x5f6d
+		// Method begins at RVA 0x5f9d
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -14245,7 +14265,7 @@
 			class Modules.Compile_Performance_Dromaeo_Object_Regexp/Scope capture0
 		) cil managed 
 	{
-		// Method begins at RVA 0x5f79
+		// Method begins at RVA 0x5fa9
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -14261,7 +14281,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x5f88
+		// Method begins at RVA 0x5fb8
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -14273,7 +14293,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x5f8b
+		// Method begins at RVA 0x5fbb
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -14288,7 +14308,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x5f8e
+		// Method begins at RVA 0x5fbe
 		// Header size: 1
 		// Code size: 13 (0xd)
 		.maxstack 8
@@ -14306,7 +14326,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x5f9c
+		// Method begins at RVA 0x5fcc
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -14330,7 +14350,7 @@
 			class Modules.Compile_Performance_Dromaeo_Object_Regexp/Scope capture0
 		) cil managed 
 	{
-		// Method begins at RVA 0x5fa8
+		// Method begins at RVA 0x5fd8
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -14346,7 +14366,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x5fb7
+		// Method begins at RVA 0x5fe7
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -14358,7 +14378,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x5fba
+		// Method begins at RVA 0x5fea
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -14373,7 +14393,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x5fbd
+		// Method begins at RVA 0x5fed
 		// Header size: 1
 		// Code size: 13 (0xd)
 		.maxstack 8
@@ -14391,7 +14411,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x5fcb
+		// Method begins at RVA 0x5ffb
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -14415,7 +14435,7 @@
 			class Modules.Compile_Performance_Dromaeo_Object_Regexp/Scope capture0
 		) cil managed 
 	{
-		// Method begins at RVA 0x5fd7
+		// Method begins at RVA 0x6007
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -14431,7 +14451,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x5fe6
+		// Method begins at RVA 0x6016
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -14443,7 +14463,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x5fe9
+		// Method begins at RVA 0x6019
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -14458,7 +14478,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x5fec
+		// Method begins at RVA 0x601c
 		// Header size: 1
 		// Code size: 13 (0xd)
 		.maxstack 8
@@ -14476,7 +14496,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x5ffa
+		// Method begins at RVA 0x602a
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -14500,7 +14520,7 @@
 			class Modules.Compile_Performance_Dromaeo_Object_Regexp/Scope capture0
 		) cil managed 
 	{
-		// Method begins at RVA 0x6006
+		// Method begins at RVA 0x6036
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -14516,7 +14536,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x6015
+		// Method begins at RVA 0x6045
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -14528,7 +14548,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x6018
+		// Method begins at RVA 0x6048
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -14543,7 +14563,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x601b
+		// Method begins at RVA 0x604b
 		// Header size: 1
 		// Code size: 13 (0xd)
 		.maxstack 8
@@ -14561,7 +14581,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x6029
+		// Method begins at RVA 0x6059
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -14585,7 +14605,7 @@
 			class Modules.Compile_Performance_Dromaeo_Object_Regexp/Scope capture0
 		) cil managed 
 	{
-		// Method begins at RVA 0x6035
+		// Method begins at RVA 0x6065
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -14601,7 +14621,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x6044
+		// Method begins at RVA 0x6074
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -14613,7 +14633,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x6047
+		// Method begins at RVA 0x6077
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -14628,7 +14648,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x604a
+		// Method begins at RVA 0x607a
 		// Header size: 1
 		// Code size: 13 (0xd)
 		.maxstack 8
@@ -14646,7 +14666,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x6058
+		// Method begins at RVA 0x6088
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -14665,7 +14685,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x6064
+		// Method begins at RVA 0x6094
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

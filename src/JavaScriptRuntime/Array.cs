@@ -893,19 +893,20 @@ namespace JavaScriptRuntime
             return receiver;
         }
 
-        private static Delegate RequireCallback(object?[]? args, string methodName)
+        private static object RequireCallback(object?[]? args, string methodName)
         {
             if (args == null || args.Length == 0 || args[0] is null || args[0] is JsNull)
             {
                 throw new TypeError($"Array.prototype.{methodName} requires a callback function");
             }
 
-            if (args[0] is not Delegate callback)
+            var callback = args[0];
+            if (!CallableOperations.IsCallable(callback))
             {
                 throw new TypeError("callback is not a function");
             }
 
-            return callback;
+            return callback!;
         }
 
         private static object GetArrayMethodIterationReceiver(object receiver)
@@ -2947,6 +2948,11 @@ namespace JavaScriptRuntime
 
         private static Func<object, object, object?>? CreateSortComparatorInvoker(object? cb, Array array)
         {
+            if (cb is JsFunctionObject functionObject)
+            {
+                return (a, b) => CallableOperations.Call2(functionObject, null, a, b);
+            }
+
             if (cb is Delegate del)
             {
                 return (a, b) => Closure.InvokeWithArgs2(del, System.Array.Empty<object>(), a, b);
@@ -2967,6 +2973,18 @@ namespace JavaScriptRuntime
 
         private static ArrayCallbackInvoker CreateArrayCallbackInvoker(object? cb, int argCount, string callbackKind)
         {
+            if (cb is JsFunctionObject functionObject)
+            {
+                return argCount switch
+                {
+                    0 => (_, _, _, _) => CallableOperations.Call0(functionObject, null),
+                    1 => (a0, _, _, _) => CallableOperations.Call1(functionObject, null, a0),
+                    2 => (a0, a1, _, _) => CallableOperations.Call2(functionObject, null, a0, a1),
+                    3 => (a0, a1, a2, _) => CallableOperations.Call3(functionObject, null, a0, a1, a2),
+                    _ => (a0, a1, a2, a3) => CallableOperations.Call4(functionObject, null, a0, a1, a2, a3)
+                };
+            }
+
             if (cb is Delegate del)
             {
                 var scopes = System.Array.Empty<object>();

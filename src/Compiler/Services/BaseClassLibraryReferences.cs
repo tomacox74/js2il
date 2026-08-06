@@ -126,6 +126,7 @@ namespace Jroc.Services
         public TypeReferenceHandle JsFunctionObjectType => _typeRefRegistry.GetOrAdd(typeof(JavaScriptRuntime.JsFunctionObject));
         public TypeReferenceHandle JsCallArgumentsType => _typeRefRegistry.GetOrAdd(typeof(JavaScriptRuntime.JsCallArguments));
         public TypeReferenceHandle InAttributeType => _typeRefRegistry.GetOrAdd(typeof(System.Runtime.InteropServices.InAttribute));
+        public EntityHandle ObjectArrayType => _memberRefRegistry.GetOrAddTypeHandle(typeof(object[]));
 
         public MemberReferenceHandle Object_Ctor_Ref => _memberRefRegistry.GetOrAddConstructor(typeof(object), Type.EmptyTypes);
         public MemberReferenceHandle JsObject_Ctor_Ref => _memberRefRegistry.GetOrAddConstructor(typeof(JavaScriptRuntime.JsObject), Type.EmptyTypes);

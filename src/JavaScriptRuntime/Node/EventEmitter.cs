@@ -11,7 +11,7 @@ namespace JavaScriptRuntime.Node
 
         public EventEmitter on(object? eventName, object? listener)
         {
-            if (listener is not Delegate)
+            if (!CallableOperations.IsCallable(listener))
             {
                 throw new TypeError("EventEmitter listener must be a function");
             }
@@ -32,7 +32,7 @@ namespace JavaScriptRuntime.Node
 
         public EventEmitter once(object? eventName, object? listener)
         {
-            if (listener is not Delegate)
+            if (!CallableOperations.IsCallable(listener))
             {
                 throw new TypeError("EventEmitter listener must be a function");
             }
@@ -181,7 +181,7 @@ namespace JavaScriptRuntime.Node
 
         public EventEmitter prependListener(object? eventName, object? listener)
         {
-            if (listener is not Delegate)
+            if (!CallableOperations.IsCallable(listener))
             {
                 throw new TypeError("EventEmitter listener must be a function");
             }
@@ -199,7 +199,7 @@ namespace JavaScriptRuntime.Node
 
         public EventEmitter prependOnceListener(object? eventName, object? listener)
         {
-            if (listener is not Delegate)
+            if (!CallableOperations.IsCallable(listener))
             {
                 throw new TypeError("EventEmitter listener must be a function");
             }
@@ -235,20 +235,12 @@ namespace JavaScriptRuntime.Node
 
         private object? InvokeListener(object? listener, object?[] args)
         {
-            if (listener is not Delegate)
+            if (!CallableOperations.IsCallable(listener))
             {
                 return null;
             }
 
-            var previousThis = RuntimeServices.SetCurrentThis(this);
-            try
-            {
-                return Closure.InvokeWithArgs(listener, System.Array.Empty<object>(), args);
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentThis(previousThis);
-            }
+            return CallableOperations.Call(listener, this, args);
         }
 
         private static string GetEventKey(object? eventName)

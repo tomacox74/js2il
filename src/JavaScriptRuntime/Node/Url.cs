@@ -479,23 +479,20 @@ namespace JavaScriptRuntime.Node
 
         public object? forEach(object callback, object? thisArg)
         {
-            if (callback is not Delegate del)
+            if (!CallableOperations.IsCallable(callback))
             {
                 throw new TypeError("URLSearchParams.forEach callback must be callable");
             }
 
-            var previousThis = RuntimeServices.SetCurrentThis(thisArg);
-            try
+            for (int i = 0; i < _entries.Count; i++)
             {
-                for (int i = 0; i < _entries.Count; i++)
-                {
-                    var entry = _entries[i];
-                    Closure.InvokeWithArgs(del, System.Array.Empty<object>(), entry.Value, entry.Key, this);
-                }
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentThis(previousThis);
+                var entry = _entries[i];
+                CallableOperations.Call3(
+                    callback,
+                    thisArg,
+                    entry.Value,
+                    entry.Key,
+                    this);
             }
 
             return null;

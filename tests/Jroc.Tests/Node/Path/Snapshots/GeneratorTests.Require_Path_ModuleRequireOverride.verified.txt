@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2190
+				// Method begins at RVA 0x2180
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -41,7 +41,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2144
+			// Method begins at RVA 0x2134
 			// Header size: 12
 			// Code size: 55 (0x37)
 			.maxstack 8
@@ -80,7 +80,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2187
+			// Method begins at RVA 0x2177
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -106,14 +106,15 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 229 (0xe5)
+		// Code size: 215 (0xd7)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Require_Path_ModuleRequireOverride/Scope,
 			[1] class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IPathModule,
 			[2] object,
-			[3] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0,
-			[4] object
+			[3] object[],
+			[4] class FunctionObjects.Require_Path_ModuleRequireOverride_8E188436.FunctionObject_Arrow_42734BA2_L5C31,
+			[5] object
 		)
 
 		IL_0000: newobj instance void Modules.Require_Path_ModuleRequireOverride/Scope::.ctor()
@@ -129,77 +130,74 @@
 		IL_001e: ldstr "path"
 		IL_0023: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
 		IL_0028: stloc.2
-		IL_0029: ldnull
-		IL_002a: ldftn object Modules.Require_Path_ModuleRequireOverride/ArrowFunction_L5C31::__js_call__(object)
-		IL_0030: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_0035: ldc.i4.1
-		IL_0036: newarr [System.Runtime]System.Object
-		IL_003b: dup
-		IL_003c: ldc.i4.0
-		IL_003d: ldloc.0
-		IL_003e: stelem.ref
-		IL_003f: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_0044: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_0049: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
-		IL_004e: ldc.i4.0
-		IL_004f: conv.r8
-		IL_0050: ldstr ""
-		IL_0055: ldc.i4.1
-		IL_0056: ldc.i4.0
-		IL_0057: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
-		IL_005c: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0)
-		IL_0061: stloc.3
-		IL_0062: ldloc.2
-		IL_0063: ldstr "join"
-		IL_0068: ldloc.3
-		IL_0069: ldc.i4.1
-		IL_006a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
-		IL_006f: pop
-		IL_0070: ldstr "console"
-		IL_0075: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_007a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_007f: stloc.2
-		IL_0080: ldloc.1
-		IL_0081: ldstr "join"
-		IL_0086: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::HasOwnPropertyOverride(object, string)
-		IL_008b: brtrue IL_00b3
+		IL_0029: ldc.i4.1
+		IL_002a: newarr [System.Runtime]System.Object
+		IL_002f: dup
+		IL_0030: ldc.i4.0
+		IL_0031: ldloc.0
+		IL_0032: stelem.ref
+		IL_0033: stloc.3
+		IL_0034: newobj instance void FunctionObjects.Require_Path_ModuleRequireOverride_8E188436.FunctionObject_Arrow_42734BA2_L5C31::.ctor()
+		IL_0039: ldc.i4.0
+		IL_003a: conv.r8
+		IL_003b: ldstr ""
+		IL_0040: ldc.i4.1
+		IL_0041: ldc.i4.0
+		IL_0042: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
+		IL_0047: call object [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype(object)
+		IL_004c: castclass FunctionObjects.Require_Path_ModuleRequireOverride_8E188436.FunctionObject_Arrow_42734BA2_L5C31
+		IL_0051: stloc.s 4
+		IL_0053: ldloc.2
+		IL_0054: ldstr "join"
+		IL_0059: ldloc.s 4
+		IL_005b: ldc.i4.1
+		IL_005c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
+		IL_0061: pop
+		IL_0062: ldstr "console"
+		IL_0067: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_006c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0071: stloc.2
+		IL_0072: ldloc.1
+		IL_0073: ldstr "join"
+		IL_0078: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::HasOwnPropertyOverride(object, string)
+		IL_007d: brtrue IL_00a5
 
-		IL_0090: ldloc.1
-		IL_0091: ldc.i4.2
-		IL_0092: newarr [System.Runtime]System.Object
-		IL_0097: dup
-		IL_0098: ldc.i4.0
-		IL_0099: ldstr "a"
-		IL_009e: stelem.ref
-		IL_009f: dup
-		IL_00a0: ldc.i4.1
-		IL_00a1: ldstr "b"
-		IL_00a6: stelem.ref
-		IL_00a7: callvirt instance string [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IPathModule::join(object[])
-		IL_00ac: stloc.s 4
-		IL_00ae: br IL_00d6
+		IL_0082: ldloc.1
+		IL_0083: ldc.i4.2
+		IL_0084: newarr [System.Runtime]System.Object
+		IL_0089: dup
+		IL_008a: ldc.i4.0
+		IL_008b: ldstr "a"
+		IL_0090: stelem.ref
+		IL_0091: dup
+		IL_0092: ldc.i4.1
+		IL_0093: ldstr "b"
+		IL_0098: stelem.ref
+		IL_0099: callvirt instance string [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IPathModule::join(object[])
+		IL_009e: stloc.s 5
+		IL_00a0: br IL_00c8
 
-		IL_00b3: ldloc.1
-		IL_00b4: ldstr "join"
-		IL_00b9: ldc.i4.2
-		IL_00ba: newarr [System.Runtime]System.Object
-		IL_00bf: dup
-		IL_00c0: ldc.i4.0
-		IL_00c1: ldstr "a"
-		IL_00c6: stelem.ref
-		IL_00c7: dup
-		IL_00c8: ldc.i4.1
-		IL_00c9: ldstr "b"
-		IL_00ce: stelem.ref
-		IL_00cf: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallOwnPropertyMember(object, string, object[])
-		IL_00d4: stloc.s 4
+		IL_00a5: ldloc.1
+		IL_00a6: ldstr "join"
+		IL_00ab: ldc.i4.2
+		IL_00ac: newarr [System.Runtime]System.Object
+		IL_00b1: dup
+		IL_00b2: ldc.i4.0
+		IL_00b3: ldstr "a"
+		IL_00b8: stelem.ref
+		IL_00b9: dup
+		IL_00ba: ldc.i4.1
+		IL_00bb: ldstr "b"
+		IL_00c0: stelem.ref
+		IL_00c1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallOwnPropertyMember(object, string, object[])
+		IL_00c6: stloc.s 5
 
-		IL_00d6: ldloc.2
-		IL_00d7: ldstr "log"
-		IL_00dc: ldloc.s 4
-		IL_00de: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00e3: pop
-		IL_00e4: ret
+		IL_00c8: ldloc.2
+		IL_00c9: ldstr "log"
+		IL_00ce: ldloc.s 5
+		IL_00d0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_00d5: pop
+		IL_00d6: ret
 	} // end of method Require_Path_ModuleRequireOverride::__js_module_init__
 
 } // end of class Modules.Require_Path_ModuleRequireOverride
@@ -211,7 +209,7 @@
 	.method public hidebysig specialname rtspecialname 
 		instance void .ctor () cil managed 
 	{
-		// Method begins at RVA 0x2199
+		// Method begins at RVA 0x2189
 		// Header size: 1
 		// Code size: 7 (0x7)
 		.maxstack 8
@@ -224,7 +222,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x21a1
+		// Method begins at RVA 0x2191
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -236,7 +234,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x21a4
+		// Method begins at RVA 0x2194
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -251,7 +249,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x21a7
+		// Method begins at RVA 0x2197
 		// Header size: 1
 		// Code size: 7 (0x7)
 		.maxstack 8
@@ -270,7 +268,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21af
+		// Method begins at RVA 0x219f
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

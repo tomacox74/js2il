@@ -33,7 +33,7 @@ public static class Function
 
     private static readonly ConditionalWeakTable<Delegate, InvocationMetadataSlot> _invocationMetadata = new();
     private static readonly ConditionalWeakTable<Delegate, UndefinedPrototypeSlot> _undefinedPrototypeFunctions = new();
-    private static readonly ConditionalWeakTable<Delegate, WithObjectSlot> _withObjectBindings = new();
+    private static readonly ConditionalWeakTable<object, WithObjectSlot> _withObjectBindings = new();
     private static readonly Func<object[], object?[], object?> _restrictedPropertyThrower =
         static (_, _) => throw new TypeError("Cannot access restricted function property");
 
@@ -211,6 +211,15 @@ public static class Function
                 return BindClassConstructor(new ClassConstructorValue(classConstructor, RuntimeServices.EmptyScopes), thisArgForClass, boundClassArgs);
             }
 
+            if (target is JsFunctionObject functionObject)
+            {
+                var thisArgForFunction = args != null && args.Length > 0 ? args[0] : null;
+                var boundFunctionArgs = args != null && args.Length > 1
+                    ? args.Skip(1).ToArray()
+                    : System.Array.Empty<object?>();
+                return Bind(functionObject, thisArgForFunction, boundFunctionArgs);
+            }
+
             if (target is not Delegate del)
             {
                 throw new TypeError("Function.prototype.bind called on non-function");
@@ -243,6 +252,10 @@ public static class Function
         private static object? PrototypeToString(object[] scopes, object?[]? args)
         {
             var target = RuntimeServices.GetCurrentThis();
+            if (target is JsFunctionObject)
+            {
+                return "function () { [native code] }";
+            }
             if (target is not Delegate del)
             {
                 throw new TypeError("Function.prototype.toString called on non-function");
@@ -372,6 +385,28 @@ public static class Function
             return boundDelegate;
         }
 
+        public static JsFunctionObject Bind(
+            JsFunctionObject target,
+            object? thisArg,
+            object?[] boundArgs)
+        {
+            ArgumentNullException.ThrowIfNull(target);
+            var copiedArguments = boundArgs is null || boundArgs.Length == 0
+                ? System.Array.Empty<object?>()
+                : boundArgs.ToArray();
+            var bound = new BoundFunctionObject(target, thisArg, copiedArguments);
+
+            var targetLength = TypeUtilities.ToNumber(ObjectRuntime.GetProperty(target, "length"));
+            var targetName = ObjectRuntime.GetProperty(target, "name") as string ?? string.Empty;
+            InitializeFunctionInstance(
+                bound,
+                System.Math.Max(targetLength - copiedArguments.Length, 0d),
+                $"bound {targetName}",
+                requiresInvocationContext: false);
+            MarkUndefinedPrototype(bound);
+            return bound;
+        }
+
         public static T InitializeFunctionInstance<T>(T functionValue)
             where T : class
         {
@@ -416,9 +451,9 @@ public static class Function
             if (functionValue is Delegate del)
             {
                 SetRequiresInvocationContext(del, requiresInvocationContext);
-                DefineMetadataProperty(del, "length", length);
-                DefineMetadataProperty(del, "name", name ?? string.Empty);
             }
+            DefineMetadataProperty(functionValue, "length", length);
+            DefineMetadataProperty(functionValue, "name", name ?? string.Empty);
 
             return functionValue;
         }
@@ -449,6 +484,10 @@ public static class Function
             {
                 MarkUndefinedPrototype(del);
             }
+            else if (functionValue is JsFunctionObject)
+            {
+                PropertyDescriptorStore.Delete(functionValue, "prototype");
+            }
 
             return functionValue;
         }
@@ -467,16 +506,13 @@ public static class Function
 
         public static object BindWithObject(object functionValue, object withObject)
         {
-            if (functionValue is Delegate del)
-            {
-                var slot = _withObjectBindings.GetOrCreateValue(del);
-                slot.Value = withObject;
-            }
+            var slot = _withObjectBindings.GetOrCreateValue(functionValue);
+            slot.Value = withObject;
 
             return functionValue;
         }
 
-        internal static bool TryGetBoundWithObject(Delegate functionValue, out object? withObject)
+        internal static bool TryGetBoundWithObject(object functionValue, out object? withObject)
         {
             if (_withObjectBindings.TryGetValue(functionValue, out var slot))
             {
@@ -488,7 +524,7 @@ public static class Function
             return false;
         }
 
-        internal static bool HasBoundWithObject(Delegate functionValue)
+        internal static bool HasBoundWithObject(object functionValue)
             => _withObjectBindings.TryGetValue(functionValue, out var slot) && slot.Value is not null;
 
         internal static string[] ParseDynamicFunctionParameterNames(object?[] args)
@@ -504,12 +540,15 @@ public static class Function
 
         public static object? SetInferredNameIfAnonymous(object? functionValue, object? propertyKey)
         {
-            if (functionValue is not Delegate del)
+            if (!CallableOperations.IsCallable(functionValue))
             {
                 return functionValue;
             }
 
-            if (TryEnsureOwnMetadataPropertyDescriptor(del, "name", out var nameDescriptor)
+            var hasName = functionValue is Delegate del
+                ? TryEnsureOwnMetadataPropertyDescriptor(del, "name", out var nameDescriptor)
+                : PropertyDescriptorStore.TryGetOwn(functionValue!, "name", out nameDescriptor);
+            if (hasName
                 && nameDescriptor.Value is string existingName
                 && !string.IsNullOrEmpty(existingName))
             {
@@ -519,14 +558,14 @@ public static class Function
             var functionName = propertyKey is Symbol sym
                 ? sym.Description is null ? string.Empty : $"[{sym.Description}]"
                 : ObjectRuntime.ToPropertyKeyString(propertyKey);
-            DefineMetadataProperty(del, "name", functionName);
+            DefineMetadataProperty(functionValue!, "name", functionName);
             return functionValue;
         }
 
         public static bool IsConstructorReturnOverride(object? value)
             => TypeUtilities.IsConstructorReturnOverride(value);
 
-        internal static void DefineMetadataProperty(Delegate target, string propName, object? value)
+        internal static void DefineMetadataProperty(object target, string propName, object? value)
         {
             PropertyDescriptorStore.DefineOrUpdate(target, propName, new JsPropertyDescriptor
             {
@@ -537,7 +576,10 @@ public static class Function
                 Value = value
             });
 
-            ClearDeletedMetadataProperty(target, propName);
+            if (target is Delegate del)
+            {
+                ClearDeletedMetadataProperty(del, propName);
+            }
         }
 
         public static object? Construct(Delegate constructor, object?[]? args)

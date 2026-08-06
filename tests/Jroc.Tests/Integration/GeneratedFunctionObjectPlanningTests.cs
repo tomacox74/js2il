@@ -119,6 +119,8 @@ public sealed class GeneratedFunctionObjectPlanningTests
             ConstructorHandle = MetadataTokens.MethodDefinitionHandle(1),
             IsConstructorGetterHandle = MetadataTokens.MethodDefinitionHandle(2),
             RequiresInvocationContextGetterHandle = MetadataTokens.MethodDefinitionHandle(3),
+            StateAccessorHandles =
+                new Dictionary<GeneratedFunctionStateKind, System.Reflection.Metadata.MethodDefinitionHandle>(),
             CallAdapterHandle = MetadataTokens.MethodDefinitionHandle(4),
             ConstructAdapterHandle = MetadataTokens.MethodDefinitionHandle(5),
             FieldHandles = new Dictionary<string, System.Reflection.Metadata.FieldDefinitionHandle>(),

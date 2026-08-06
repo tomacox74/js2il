@@ -623,15 +623,11 @@ public sealed class Promise : IJavaScriptPromise
     // Private methods
     private void InvokeExecutor(object? executor)
     {
-        if (executor is not Delegate jsFunction)
+        if (!CallableOperations.IsCallable(executor))
         {
             throw new JavaScriptRuntime.TypeError("Promise resolver is not a function");
         }
 
-        // The first parameter is the scopes array.
-        // JROC's scopes ABI expects at least one slot (even when there are no captured scopes).
-        // Using an empty array can cause IndexOutOfRange when nested closures access parent scopes.
-        var unusedContext = new object[1];
         var Resolve = new Func<object[]?, object?, object?>((_, value) =>
         {
             return ResolveValue(value);
@@ -645,16 +641,7 @@ public sealed class Promise : IJavaScriptPromise
 
         try 
         {
-            // Invoke as a JavaScript call with undefined this; non-strict functions substitute globalThis.
-            var previousThis = RuntimeServices.SetCurrentThis(Function.GetEffectiveThisArg(jsFunction, null));
-            try
-            {
-                Closure.InvokeWithArgs(jsFunction, unusedContext, Resolve, Reject);
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentThis(previousThis);
-            }
+            CallableOperations.Call2(executor, null, Resolve, Reject);
         }
         catch (Exception ex)
         {
@@ -761,17 +748,14 @@ public sealed class Promise : IJavaScriptPromise
     private static object? ExecuteHandler(object? handler, object? previousResult, bool isFinally)
     {
         // for then, catch, finally. etc
-        if (handler is not Delegate jsFunction)
+        if (!CallableOperations.IsCallable(handler))
         {
             return previousResult;
         }
 
-        // for then and catch 1 value is passed to the delegate
-        // for finally no parameters are passed
-        var handlerScopes = new object[1];
         return isFinally
-            ? Closure.InvokeWithArgs(jsFunction, handlerScopes)
-            : Closure.InvokeWithArgs(jsFunction, handlerScopes, previousResult);
+            ? CallableOperations.Call0(handler, null)
+            : CallableOperations.Call1(handler, null, previousResult);
     }
 
     private static System.Collections.IEnumerable? ToEnumerableOrThrow(object? obj, out TypeError? typeError)
@@ -869,7 +853,7 @@ public sealed class Promise : IJavaScriptPromise
             return true;
         }
 
-        if (thenProp is not Delegate thenDelegate)
+        if (!CallableOperations.IsCallable(thenProp))
         {
             return false;
         }
@@ -891,16 +875,7 @@ public sealed class Promise : IJavaScriptPromise
 
         try
         {
-            // Invoke the previously retrieved 'then' value, preserving 'this' binding.
-            var previousThis = RuntimeServices.SetCurrentThis(value);
-            try
-            {
-                Closure.InvokeWithArgs(thenDelegate, System.Array.Empty<object>(), resolve, reject);
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentThis(previousThis);
-            }
+            CallableOperations.Call2(thenProp, value, resolve, reject);
         }
         catch (Exception ex)
         {
@@ -957,7 +932,7 @@ public sealed class Promise : IJavaScriptPromise
             return true;
         }
 
-        if (thenProp is not Delegate thenDelegate)
+        if (!CallableOperations.IsCallable(thenProp))
         {
             return false;
         }
@@ -979,15 +954,7 @@ public sealed class Promise : IJavaScriptPromise
 
         try
         {
-            var previousThis = RuntimeServices.SetCurrentThis(cleanupResult);
-            try
-            {
-                Closure.InvokeWithArgs(thenDelegate, System.Array.Empty<object>(), resolve, reject);
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentThis(previousThis);
-            }
+            CallableOperations.Call2(thenProp, cleanupResult, resolve, reject);
         }
         catch (Exception ex)
         {

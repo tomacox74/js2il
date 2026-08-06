@@ -367,12 +367,12 @@ public static class Iterator
         return false;
     }
 
-    private static Delegate GetRequiredCallback(object?[]? args, string methodName)
+    private static object GetRequiredCallback(object?[]? args, string methodName)
     {
         var callback = args != null && args.Length > 0 ? args[0] : null;
-        if (callback is Delegate del)
+        if (CallableOperations.IsCallable(callback))
         {
-            return del;
+            return callback!;
         }
 
         throw new TypeError($"Iterator.prototype.{methodName} requires a callback function");
@@ -404,18 +404,8 @@ public static class Iterator
         return System.Math.Truncate(value);
     }
 
-    private static object? InvokeCallback(Delegate callback, params object?[] args)
-    {
-        var previousThis = RuntimeServices.SetCurrentThis(null);
-        try
-        {
-            return Closure.InvokeWithArgs(callback, System.Array.Empty<object>(), args);
-        }
-        finally
-        {
-            RuntimeServices.SetCurrentThis(previousThis);
-        }
-    }
+    private static object? InvokeCallback(object callback, params object?[] args)
+        => CallableOperations.Call(callback, null, args);
 
     private static void CloseIterator(IJavaScriptIterator iterator)
     {
@@ -513,10 +503,10 @@ public static class Iterator
 
     private sealed class MapIteratorHelper : IteratorHelperBase
     {
-        private readonly Delegate _mapper;
+        private readonly object _mapper;
         private long _index;
 
-        public MapIteratorHelper(IJavaScriptIterator source, Delegate mapper)
+        public MapIteratorHelper(IJavaScriptIterator source, object mapper)
             : base(source)
         {
             _mapper = mapper;
@@ -536,10 +526,10 @@ public static class Iterator
 
     private sealed class FilterIteratorHelper : IteratorHelperBase
     {
-        private readonly Delegate _predicate;
+        private readonly object _predicate;
         private long _index;
 
-        public FilterIteratorHelper(IJavaScriptIterator source, Delegate predicate)
+        public FilterIteratorHelper(IJavaScriptIterator source, object predicate)
             : base(source)
         {
             _predicate = predicate;
@@ -623,11 +613,11 @@ public static class Iterator
 
     private sealed class FlatMapIteratorHelper : IteratorHelperBase
     {
-        private readonly Delegate _mapper;
+        private readonly object _mapper;
         private long _index;
         private IJavaScriptIterator? _inner;
 
-        public FlatMapIteratorHelper(IJavaScriptIterator source, Delegate mapper)
+        public FlatMapIteratorHelper(IJavaScriptIterator source, object mapper)
             : base(source)
         {
             _mapper = mapper;

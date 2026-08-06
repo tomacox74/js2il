@@ -367,16 +367,18 @@
 {
 	// Fields
 	.field private initonly class Modules.Function_FunctionExpression_AsExpression_ArrayMapCapturesOuter/makeOffsetMapper/Scope _environment1_makeOffsetMapper
+	.field private initonly object[] _transitionalScopes
 
 	// Methods
 	.method public hidebysig specialname rtspecialname 
 		instance void .ctor (
-			class Modules.Function_FunctionExpression_AsExpression_ArrayMapCapturesOuter/makeOffsetMapper/Scope capture0
+			class Modules.Function_FunctionExpression_AsExpression_ArrayMapCapturesOuter/makeOffsetMapper/Scope capture0,
+			object[] capture1
 		) cil managed 
 	{
 		// Method begins at RVA 0x21e1
 		// Header size: 1
-		// Code size: 14 (0xe)
+		// Code size: 21 (0x15)
 		.maxstack 8
 
 		IL_0000: ldarg.0
@@ -384,13 +386,16 @@
 		IL_0006: ldarg.0
 		IL_0007: ldarg.1
 		IL_0008: stfld class Modules.Function_FunctionExpression_AsExpression_ArrayMapCapturesOuter/makeOffsetMapper/Scope FunctionObjects.Function_FunctionExpression_AsExpression_ArrayMapCapturesOuter_7F55A461.FunctionObject_FunctionExpression_CBDAF3AF_L9C26::_environment1_makeOffsetMapper
-		IL_000d: ret
+		IL_000d: ldarg.0
+		IL_000e: ldarg.2
+		IL_000f: stfld object[] FunctionObjects.Function_FunctionExpression_AsExpression_ArrayMapCapturesOuter_7F55A461.FunctionObject_FunctionExpression_CBDAF3AF_L9C26::_transitionalScopes
+		IL_0014: ret
 	} // end of method FunctionObject_FunctionExpression_CBDAF3AF_L9C26::.ctor
 
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x21f0
+		// Method begins at RVA 0x21f7
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -402,7 +407,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x21f3
+		// Method begins at RVA 0x21fa
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -417,24 +422,19 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x21f6
+		// Method begins at RVA 0x21fd
 		// Header size: 1
-		// Code size: 29 (0x1d)
+		// Code size: 20 (0x14)
 		.maxstack 8
 
-		IL_0000: ldc.i4.2
-		IL_0001: newarr [System.Runtime]System.Object
-		IL_0006: dup
-		IL_0007: ldc.i4.1
-		IL_0008: ldarg.0
-		IL_0009: ldfld class Modules.Function_FunctionExpression_AsExpression_ArrayMapCapturesOuter/makeOffsetMapper/Scope FunctionObjects.Function_FunctionExpression_AsExpression_ArrayMapCapturesOuter_7F55A461.FunctionObject_FunctionExpression_CBDAF3AF_L9C26::_environment1_makeOffsetMapper
-		IL_000e: stelem.ref
-		IL_000f: ldnull
-		IL_0010: ldarg.2
-		IL_0011: ldc.i4.0
-		IL_0012: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-		IL_0017: call object Modules.Function_FunctionExpression_AsExpression_ArrayMapCapturesOuter/makeOffsetMapper/FunctionExpression_L9C25::__js_call__(object[], object, object)
-		IL_001c: ret
+		IL_0000: ldarg.0
+		IL_0001: ldfld object[] FunctionObjects.Function_FunctionExpression_AsExpression_ArrayMapCapturesOuter_7F55A461.FunctionObject_FunctionExpression_CBDAF3AF_L9C26::_transitionalScopes
+		IL_0006: ldnull
+		IL_0007: ldarg.2
+		IL_0008: ldc.i4.0
+		IL_0009: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+		IL_000e: call object Modules.Function_FunctionExpression_AsExpression_ArrayMapCapturesOuter/makeOffsetMapper/FunctionExpression_L9C25::__js_call__(object[], object, object)
+		IL_0013: ret
 	} // end of method FunctionObject_FunctionExpression_CBDAF3AF_L9C26::CallCore
 
 	.method family hidebysig virtual 
@@ -443,7 +443,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x2214
+		// Method begins at RVA 0x2212
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -462,7 +462,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2220
+		// Method begins at RVA 0x221e
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

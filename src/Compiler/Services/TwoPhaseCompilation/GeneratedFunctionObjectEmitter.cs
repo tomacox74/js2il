@@ -72,15 +72,26 @@ internal sealed class GeneratedFunctionObjectEmitter
 
             foreach (var state in plan.StateFields)
             {
+                var stateType = GetStateTypeHandle(state.Kind);
                 fieldHandles[state.FieldName] = typeBuilder.AddFieldDefinition(
                     FieldAttributes.Private | FieldAttributes.InitOnly,
                     state.FieldName,
-                    CreateFieldSignature(typeof(object)));
+                    CreateFieldSignature(stateType));
             }
 
             var constructor = MetadataTokens.MethodDefinitionHandle(nextMethodRow++);
             var isConstructorGetter = MetadataTokens.MethodDefinitionHandle(nextMethodRow++);
             var requiresContextGetter = MetadataTokens.MethodDefinitionHandle(nextMethodRow++);
+            var stateAccessorHandles =
+                new Dictionary<GeneratedFunctionStateKind, MethodDefinitionHandle>();
+            foreach (var state in plan.StateFields)
+            {
+                if (TryGetStateAccessorName(state.Kind, out _))
+                {
+                    stateAccessorHandles[state.Kind] =
+                        MetadataTokens.MethodDefinitionHandle(nextMethodRow++);
+                }
+            }
             var callAdapter = MetadataTokens.MethodDefinitionHandle(nextMethodRow++);
             var constructAdapter = plan.IsConstructable
                 ? MetadataTokens.MethodDefinitionHandle(nextMethodRow++)
@@ -112,6 +123,7 @@ internal sealed class GeneratedFunctionObjectEmitter
                 ConstructorHandle = constructor,
                 IsConstructorGetterHandle = isConstructorGetter,
                 RequiresInvocationContextGetterHandle = requiresContextGetter,
+                StateAccessorHandles = stateAccessorHandles,
                 CallAdapterHandle = callAdapter,
                 ConstructAdapterHandle = constructAdapter,
                 FieldHandles = fieldHandles,
@@ -149,6 +161,21 @@ internal sealed class GeneratedFunctionObjectEmitter
                     metadata.Plan.RequiresInvocationContext),
                 metadata.Plan,
                 "get_RequiresInvocationContext");
+            foreach (var state in metadata.Plan.StateFields)
+            {
+                if (!metadata.StateAccessorHandles.TryGetValue(
+                        state.Kind,
+                        out var expectedAccessor))
+                {
+                    continue;
+                }
+
+                EmitAndValidate(
+                    expectedAccessor,
+                    EmitStateAccessor(metadata, state),
+                    metadata.Plan,
+                    GetStateAccessorName(state.Kind));
+            }
             EmitAndValidate(
                 metadata.CallAdapterHandle,
                 EmitCallAdapter(metadata),
@@ -257,6 +284,32 @@ internal sealed class GeneratedFunctionObjectEmitter
             inParameterIndex: 1);
     }
 
+    private MethodDefinitionHandle EmitStateAccessor(
+        GeneratedFunctionObjectMetadata metadata,
+        GeneratedFunctionStatePlan state)
+    {
+        var name = GetStateAccessorName(state.Kind);
+        var returnType = GetStateTypeHandle(state.Kind);
+        var hasThisArgument = state.Kind == GeneratedFunctionStateKind.LexicalThis;
+        var signature = CreateStateAccessorSignature(returnType, hasThisArgument);
+        var il = new BlobBuilder();
+        var encoder = new InstructionEncoder(il);
+        encoder.OpCode(ILOpCode.Ldarg_0);
+        encoder.OpCode(ILOpCode.Ldfld);
+        encoder.Token(metadata.FieldHandles[state.FieldName]);
+        encoder.OpCode(ILOpCode.Ret);
+
+        return AddMethod(
+            metadata,
+            MethodAttributes.Family
+            | MethodAttributes.HideBySig
+            | MethodAttributes.Virtual,
+            name,
+            signature,
+            AddMethodBody(encoder),
+            hasThisArgument ? ["thisArgument"] : Array.Empty<string>());
+    }
+
     private MethodDefinitionHandle EmitConstructAdapter(
         GeneratedFunctionObjectMetadata metadata)
     {
@@ -297,7 +350,19 @@ internal sealed class GeneratedFunctionObjectEmitter
             or CallableKind.FunctionExpression
             or CallableKind.Arrow)
         {
-            encoder.OpCode(ILOpCode.Ldnull);
+            var lexicalNewTarget = plan.StateFields.FirstOrDefault(
+                state => state.Kind == GeneratedFunctionStateKind.LexicalNewTarget);
+            if (plan.Callable.Kind == CallableKind.Arrow
+                && lexicalNewTarget is not null)
+            {
+                encoder.OpCode(ILOpCode.Ldarg_0);
+                encoder.OpCode(ILOpCode.Ldfld);
+                encoder.Token(metadata.FieldHandles[lexicalNewTarget.FieldName]);
+            }
+            else
+            {
+                encoder.OpCode(ILOpCode.Ldnull);
+            }
         }
 
         for (var index = 0; index < plan.Signature.JsParamCount; index++)
@@ -329,6 +394,16 @@ internal sealed class GeneratedFunctionObjectEmitter
             encoder.OpCode(ILOpCode.Ldarg_0);
             encoder.OpCode(ILOpCode.Ldfld);
             encoder.Token(metadata.FieldHandles[capture.FieldName]);
+            return;
+        }
+
+        var transitionalScopes = plan.StateFields.FirstOrDefault(
+            state => state.Kind == GeneratedFunctionStateKind.TransitionalScopeArray);
+        if (transitionalScopes is not null)
+        {
+            encoder.OpCode(ILOpCode.Ldarg_0);
+            encoder.OpCode(ILOpCode.Ldfld);
+            encoder.Token(metadata.FieldHandles[transitionalScopes.FieldName]);
             return;
         }
 
@@ -397,9 +472,9 @@ internal sealed class GeneratedFunctionObjectEmitter
             yield return _scopeMetadata.GetScopeTypeHandle(capture.ScopeName);
         }
 
-        foreach (var _ in metadata.Plan.StateFields)
+        foreach (var state in metadata.Plan.StateFields)
         {
-            yield return _bclReferences.ObjectType;
+            yield return GetStateTypeHandle(state.Kind);
         }
     }
 
@@ -452,7 +527,15 @@ internal sealed class GeneratedFunctionObjectEmitter
     private BlobHandle CreateFieldSignature(EntityHandle typeHandle)
     {
         var blob = new BlobBuilder();
-        new BlobEncoder(blob).Field().Type().Type(typeHandle, isValueType: false);
+        var encoder = new BlobEncoder(blob).Field().Type();
+        if (typeHandle == _bclReferences.ObjectArrayType)
+        {
+            encoder.SZArray().Object();
+        }
+        else
+        {
+            encoder.Type(typeHandle, isValueType: false);
+        }
         return _metadataBuilder.GetOrAddBlob(blob);
     }
 
@@ -485,7 +568,15 @@ internal sealed class GeneratedFunctionObjectEmitter
                 {
                     foreach (var parameterType in parameterTypes)
                     {
-                        parameters.AddParameter().Type().Type(parameterType, isValueType: false);
+                        var parameterEncoder = parameters.AddParameter().Type();
+                        if (parameterType == _bclReferences.ObjectArrayType)
+                        {
+                            parameterEncoder.SZArray().Object();
+                        }
+                        else
+                        {
+                            parameterEncoder.Type(parameterType, isValueType: false);
+                        }
                     }
                 });
         return _metadataBuilder.GetOrAddBlob(blob);
@@ -502,6 +593,69 @@ internal sealed class GeneratedFunctionObjectEmitter
                 _ => { });
         return _metadataBuilder.GetOrAddBlob(blob);
     }
+
+    private BlobHandle CreateStateAccessorSignature(
+        EntityHandle returnTypeHandle,
+        bool hasThisArgument)
+    {
+        var blob = new BlobBuilder();
+        new BlobEncoder(blob)
+            .MethodSignature(isInstanceMethod: true)
+            .Parameters(
+                hasThisArgument ? 1 : 0,
+                returnType =>
+                {
+                    if (returnTypeHandle == _bclReferences.ObjectType)
+                    {
+                        returnType.Type().Object();
+                    }
+                    else if (returnTypeHandle == _bclReferences.ObjectArrayType)
+                    {
+                        returnType.Type().SZArray().Object();
+                    }
+                    else
+                    {
+                        returnType.Type().Type(
+                            returnTypeHandle,
+                            isValueType: false);
+                    }
+                },
+                parameters =>
+                {
+                    if (hasThisArgument)
+                    {
+                        parameters.AddParameter().Type().Object();
+                    }
+                });
+        return _metadataBuilder.GetOrAddBlob(blob);
+    }
+
+    private EntityHandle GetStateTypeHandle(GeneratedFunctionStateKind kind)
+        => kind is GeneratedFunctionStateKind.LexicalSuperScopes
+            or GeneratedFunctionStateKind.TransitionalScopeArray
+            ? _bclReferences.ObjectArrayType
+            : _bclReferences.ObjectType;
+
+    private static bool TryGetStateAccessorName(
+        GeneratedFunctionStateKind kind,
+        out string name)
+    {
+        name = kind switch
+        {
+            GeneratedFunctionStateKind.LexicalThis => "ResolveThisArgumentCore",
+            GeneratedFunctionStateKind.LexicalNewTarget => "ResolveCallNewTargetCore",
+            GeneratedFunctionStateKind.HomeObject => "GetLexicalSuperReceiverCore",
+            GeneratedFunctionStateKind.LexicalSuperScopes => "GetLexicalSuperScopesCore",
+            _ => string.Empty
+        };
+        return name.Length != 0;
+    }
+
+    private static string GetStateAccessorName(GeneratedFunctionStateKind kind)
+        => TryGetStateAccessorName(kind, out var name)
+            ? name
+            : throw new InvalidOperationException(
+                $"State kind '{kind}' does not define an invocation accessor.");
 
     private BlobHandle CreateCallAdapterSignature()
     {

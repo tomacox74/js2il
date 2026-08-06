@@ -1007,7 +1007,7 @@ internal sealed class JsMethodCompiler
 
         var classRegistry = _serviceProvider.GetService<Jroc.Services.ClassRegistry>();
         var callableRegistry = _serviceProvider.GetService<CallableRegistry>();
-        if (!HIRToLIRLowerer.TryLower(hirMethod!, scope, _scopeMetadataRegistry, callableKind, hasScopesParameter, classRegistry, out var lirMethod, isAsync: isAsyncCallable, isGenerator: isGeneratorCallable, callableId: callableId, isDerivedConstructor: isDerivedConstructor, callableRegistry: callableRegistry, runtimeIntrinsicCatalog: _runtimeIntrinsicCatalog))
+        if (!HIRToLIRLowerer.TryLower(hirMethod!, scope, _scopeMetadataRegistry, callableKind, hasScopesParameter, classRegistry, out var lirMethod, isAsync: isAsyncCallable, isGenerator: isGeneratorCallable, callableId: callableId, isDerivedConstructor: isDerivedConstructor, callableRegistry: callableRegistry, generatedFunctionObjectRegistry: _serviceProvider.GetService<GeneratedFunctionObjectRegistry>(), runtimeIntrinsicCatalog: _runtimeIntrinsicCatalog))
         {
             IR.IRPipelineMetrics.RecordFailureIfUnset($"HIR->LIR lowering failed for scope '{scope.GetQualifiedName()}' (kind={scope.Kind}) node={node.Type}");
             return false;

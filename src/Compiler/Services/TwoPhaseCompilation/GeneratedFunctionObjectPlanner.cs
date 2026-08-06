@@ -29,7 +29,7 @@ internal static class GeneratedFunctionObjectPlanner
                 callableScope,
                 classScope),
             Captures = captures,
-            StateFields = BuildStatePlan(callable, requirements),
+            StateFields = BuildStatePlan(callable, signature, requirements),
             ScopeChainSlotCount = slotCount,
             IsConstructable = IsConstructable(callable),
             RequiresInvocationContext =
@@ -174,10 +174,19 @@ internal static class GeneratedFunctionObjectPlanner
 
     private static IReadOnlyList<GeneratedFunctionStatePlan> BuildStatePlan(
         CallableId callable,
+        CallableSignature signature,
         CallableRequirements requirements)
     {
         var state = new List<GeneratedFunctionStatePlan>();
-        if (callable.Kind == CallableKind.Arrow && requirements.UsesThis)
+        if (signature.ScopeAbiKind == Jroc.Runtime.CallableScopeAbiKind.ScopeArray)
+        {
+            state.Add(new GeneratedFunctionStatePlan(
+                "_transitionalScopes",
+                GeneratedFunctionStateKind.TransitionalScopeArray));
+        }
+
+        if (callable.Kind == CallableKind.Arrow
+            && (requirements.UsesThis || requirements.UsesSuper))
         {
             state.Add(new GeneratedFunctionStatePlan(
                 "_lexicalThis",
@@ -196,6 +205,9 @@ internal static class GeneratedFunctionObjectPlanner
             state.Add(new GeneratedFunctionStatePlan(
                 "_homeObject",
                 GeneratedFunctionStateKind.HomeObject));
+            state.Add(new GeneratedFunctionStatePlan(
+                "_lexicalSuperScopes",
+                GeneratedFunctionStateKind.LexicalSuperScopes));
         }
 
         if (requirements.UsesPrivateNames)
@@ -279,6 +291,12 @@ internal static class GeneratedFunctionObjectPlanner
                 MetaProperty => requirements with { UsesNewTarget = true },
                 Super => requirements with { UsesSuper = true },
                 PrivateIdentifier => requirements with { UsesPrivateNames = true },
+                CallExpression { Callee: Identifier { Name: "eval" } } =>
+                    requirements with
+                    {
+                        UsesThis = true,
+                        UsesNewTarget = true
+                    },
                 _ => requirements
             };
 

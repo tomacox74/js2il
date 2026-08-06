@@ -1445,17 +1445,19 @@
 	// Fields
 	.field private initonly class Modules.Set_Constructor_Iterable/Scope _environment0_Set_Constructor_Iterable
 	.field private initonly class Modules.Set_Constructor_Iterable/FunctionExpression_iterable/Scope _environment1_FunctionExpression_iterable
+	.field private initonly object[] _transitionalScopes
 
 	// Methods
 	.method public hidebysig specialname rtspecialname 
 		instance void .ctor (
 			class Modules.Set_Constructor_Iterable/Scope capture0,
-			class Modules.Set_Constructor_Iterable/FunctionExpression_iterable/Scope capture1
+			class Modules.Set_Constructor_Iterable/FunctionExpression_iterable/Scope capture1,
+			object[] capture2
 		) cil managed 
 	{
 		// Method begins at RVA 0x29dd
 		// Header size: 1
-		// Code size: 21 (0x15)
+		// Code size: 28 (0x1c)
 		.maxstack 8
 
 		IL_0000: ldarg.0
@@ -1466,13 +1468,16 @@
 		IL_000d: ldarg.0
 		IL_000e: ldarg.2
 		IL_000f: stfld class Modules.Set_Constructor_Iterable/FunctionExpression_iterable/Scope FunctionObjects.Set_Constructor_Iterable_4D9D841B.FunctionObject_FunctionExpression_3451F94E_L9C17::_environment1_FunctionExpression_iterable
-		IL_0014: ret
+		IL_0014: ldarg.0
+		IL_0015: ldarg.3
+		IL_0016: stfld object[] FunctionObjects.Set_Constructor_Iterable_4D9D841B.FunctionObject_FunctionExpression_3451F94E_L9C17::_transitionalScopes
+		IL_001b: ret
 	} // end of method FunctionObject_FunctionExpression_3451F94E_L9C17::.ctor
 
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x29f3
+		// Method begins at RVA 0x29fa
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -1484,7 +1489,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x29f6
+		// Method begins at RVA 0x29fd
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -1499,26 +1504,16 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x29f9
+		// Method begins at RVA 0x2a00
 		// Header size: 1
-		// Code size: 31 (0x1f)
+		// Code size: 13 (0xd)
 		.maxstack 8
 
-		IL_0000: ldc.i4.2
-		IL_0001: newarr [System.Runtime]System.Object
-		IL_0006: dup
-		IL_0007: ldc.i4.0
-		IL_0008: ldarg.0
-		IL_0009: ldfld class Modules.Set_Constructor_Iterable/Scope FunctionObjects.Set_Constructor_Iterable_4D9D841B.FunctionObject_FunctionExpression_3451F94E_L9C17::_environment0_Set_Constructor_Iterable
-		IL_000e: stelem.ref
-		IL_000f: dup
-		IL_0010: ldc.i4.1
-		IL_0011: ldarg.0
-		IL_0012: ldfld class Modules.Set_Constructor_Iterable/FunctionExpression_iterable/Scope FunctionObjects.Set_Constructor_Iterable_4D9D841B.FunctionObject_FunctionExpression_3451F94E_L9C17::_environment1_FunctionExpression_iterable
-		IL_0017: stelem.ref
-		IL_0018: ldnull
-		IL_0019: call object Modules.Set_Constructor_Iterable/FunctionExpression_iterable/FunctionExpression_iterable::__js_call__(object[], object)
-		IL_001e: ret
+		IL_0000: ldarg.0
+		IL_0001: ldfld object[] FunctionObjects.Set_Constructor_Iterable_4D9D841B.FunctionObject_FunctionExpression_3451F94E_L9C17::_transitionalScopes
+		IL_0006: ldnull
+		IL_0007: call object Modules.Set_Constructor_Iterable/FunctionExpression_iterable/FunctionExpression_iterable::__js_call__(object[], object)
+		IL_000c: ret
 	} // end of method FunctionObject_FunctionExpression_3451F94E_L9C17::CallCore
 
 	.method family hidebysig virtual 
@@ -1527,7 +1522,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x2a19
+		// Method begins at RVA 0x2a0e
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -1551,7 +1546,7 @@
 			class Modules.Set_Constructor_Iterable/Scope capture0
 		) cil managed 
 	{
-		// Method begins at RVA 0x2a25
+		// Method begins at RVA 0x2a1a
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -1567,7 +1562,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x2a34
+		// Method begins at RVA 0x2a29
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -1579,7 +1574,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x2a37
+		// Method begins at RVA 0x2a2c
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -1594,7 +1589,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x2a3a
+		// Method begins at RVA 0x2a2f
 		// Header size: 1
 		// Code size: 13 (0xd)
 		.maxstack 8
@@ -1612,7 +1607,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x2a48
+		// Method begins at RVA 0x2a3d
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -1630,17 +1625,19 @@
 	// Fields
 	.field private initonly class Modules.Set_Constructor_Iterable/Scope _environment0_Set_Constructor_Iterable
 	.field private initonly class Modules.Set_Constructor_Iterable/FunctionExpression_closableIterable/Scope _environment1_FunctionExpression_closableIterable
+	.field private initonly object[] _transitionalScopes
 
 	// Methods
 	.method public hidebysig specialname rtspecialname 
 		instance void .ctor (
 			class Modules.Set_Constructor_Iterable/Scope capture0,
-			class Modules.Set_Constructor_Iterable/FunctionExpression_closableIterable/Scope capture1
+			class Modules.Set_Constructor_Iterable/FunctionExpression_closableIterable/Scope capture1,
+			object[] capture2
 		) cil managed 
 	{
-		// Method begins at RVA 0x2a54
+		// Method begins at RVA 0x2a49
 		// Header size: 1
-		// Code size: 21 (0x15)
+		// Code size: 28 (0x1c)
 		.maxstack 8
 
 		IL_0000: ldarg.0
@@ -1651,13 +1648,16 @@
 		IL_000d: ldarg.0
 		IL_000e: ldarg.2
 		IL_000f: stfld class Modules.Set_Constructor_Iterable/FunctionExpression_closableIterable/Scope FunctionObjects.Set_Constructor_Iterable_4D9D841B.FunctionObject_FunctionExpression_ECF2574C_L33C17::_environment1_FunctionExpression_closableIterable
-		IL_0014: ret
+		IL_0014: ldarg.0
+		IL_0015: ldarg.3
+		IL_0016: stfld object[] FunctionObjects.Set_Constructor_Iterable_4D9D841B.FunctionObject_FunctionExpression_ECF2574C_L33C17::_transitionalScopes
+		IL_001b: ret
 	} // end of method FunctionObject_FunctionExpression_ECF2574C_L33C17::.ctor
 
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x2a6a
+		// Method begins at RVA 0x2a66
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -1669,7 +1669,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x2a6d
+		// Method begins at RVA 0x2a69
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -1684,26 +1684,16 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x2a70
+		// Method begins at RVA 0x2a6c
 		// Header size: 1
-		// Code size: 31 (0x1f)
+		// Code size: 13 (0xd)
 		.maxstack 8
 
-		IL_0000: ldc.i4.2
-		IL_0001: newarr [System.Runtime]System.Object
-		IL_0006: dup
-		IL_0007: ldc.i4.0
-		IL_0008: ldarg.0
-		IL_0009: ldfld class Modules.Set_Constructor_Iterable/Scope FunctionObjects.Set_Constructor_Iterable_4D9D841B.FunctionObject_FunctionExpression_ECF2574C_L33C17::_environment0_Set_Constructor_Iterable
-		IL_000e: stelem.ref
-		IL_000f: dup
-		IL_0010: ldc.i4.1
-		IL_0011: ldarg.0
-		IL_0012: ldfld class Modules.Set_Constructor_Iterable/FunctionExpression_closableIterable/Scope FunctionObjects.Set_Constructor_Iterable_4D9D841B.FunctionObject_FunctionExpression_ECF2574C_L33C17::_environment1_FunctionExpression_closableIterable
-		IL_0017: stelem.ref
-		IL_0018: ldnull
-		IL_0019: call object Modules.Set_Constructor_Iterable/FunctionExpression_closableIterable/FunctionExpression_closableIterable::__js_call__(object[], object)
-		IL_001e: ret
+		IL_0000: ldarg.0
+		IL_0001: ldfld object[] FunctionObjects.Set_Constructor_Iterable_4D9D841B.FunctionObject_FunctionExpression_ECF2574C_L33C17::_transitionalScopes
+		IL_0006: ldnull
+		IL_0007: call object Modules.Set_Constructor_Iterable/FunctionExpression_closableIterable/FunctionExpression_closableIterable::__js_call__(object[], object)
+		IL_000c: ret
 	} // end of method FunctionObject_FunctionExpression_ECF2574C_L33C17::CallCore
 
 	.method family hidebysig virtual 
@@ -1712,7 +1702,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x2a90
+		// Method begins at RVA 0x2a7a
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -1730,17 +1720,19 @@
 	// Fields
 	.field private initonly class Modules.Set_Constructor_Iterable/Scope _environment0_Set_Constructor_Iterable
 	.field private initonly class Modules.Set_Constructor_Iterable/FunctionExpression_closableIterable/Scope _environment1_FunctionExpression_closableIterable
+	.field private initonly object[] _transitionalScopes
 
 	// Methods
 	.method public hidebysig specialname rtspecialname 
 		instance void .ctor (
 			class Modules.Set_Constructor_Iterable/Scope capture0,
-			class Modules.Set_Constructor_Iterable/FunctionExpression_closableIterable/Scope capture1
+			class Modules.Set_Constructor_Iterable/FunctionExpression_closableIterable/Scope capture1,
+			object[] capture2
 		) cil managed 
 	{
-		// Method begins at RVA 0x2a9c
+		// Method begins at RVA 0x2a86
 		// Header size: 1
-		// Code size: 21 (0x15)
+		// Code size: 28 (0x1c)
 		.maxstack 8
 
 		IL_0000: ldarg.0
@@ -1751,13 +1743,16 @@
 		IL_000d: ldarg.0
 		IL_000e: ldarg.2
 		IL_000f: stfld class Modules.Set_Constructor_Iterable/FunctionExpression_closableIterable/Scope FunctionObjects.Set_Constructor_Iterable_4D9D841B.FunctionObject_FunctionExpression_2F5B02BC_L40C19::_environment1_FunctionExpression_closableIterable
-		IL_0014: ret
+		IL_0014: ldarg.0
+		IL_0015: ldarg.3
+		IL_0016: stfld object[] FunctionObjects.Set_Constructor_Iterable_4D9D841B.FunctionObject_FunctionExpression_2F5B02BC_L40C19::_transitionalScopes
+		IL_001b: ret
 	} // end of method FunctionObject_FunctionExpression_2F5B02BC_L40C19::.ctor
 
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x2ab2
+		// Method begins at RVA 0x2aa3
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -1769,7 +1764,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x2ab5
+		// Method begins at RVA 0x2aa6
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -1784,26 +1779,16 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x2ab8
+		// Method begins at RVA 0x2aa9
 		// Header size: 1
-		// Code size: 31 (0x1f)
+		// Code size: 13 (0xd)
 		.maxstack 8
 
-		IL_0000: ldc.i4.2
-		IL_0001: newarr [System.Runtime]System.Object
-		IL_0006: dup
-		IL_0007: ldc.i4.0
-		IL_0008: ldarg.0
-		IL_0009: ldfld class Modules.Set_Constructor_Iterable/Scope FunctionObjects.Set_Constructor_Iterable_4D9D841B.FunctionObject_FunctionExpression_2F5B02BC_L40C19::_environment0_Set_Constructor_Iterable
-		IL_000e: stelem.ref
-		IL_000f: dup
-		IL_0010: ldc.i4.1
-		IL_0011: ldarg.0
-		IL_0012: ldfld class Modules.Set_Constructor_Iterable/FunctionExpression_closableIterable/Scope FunctionObjects.Set_Constructor_Iterable_4D9D841B.FunctionObject_FunctionExpression_2F5B02BC_L40C19::_environment1_FunctionExpression_closableIterable
-		IL_0017: stelem.ref
-		IL_0018: ldnull
-		IL_0019: call object Modules.Set_Constructor_Iterable/FunctionExpression_closableIterable/FunctionExpression_closableIterable_L40C18::__js_call__(object[], object)
-		IL_001e: ret
+		IL_0000: ldarg.0
+		IL_0001: ldfld object[] FunctionObjects.Set_Constructor_Iterable_4D9D841B.FunctionObject_FunctionExpression_2F5B02BC_L40C19::_transitionalScopes
+		IL_0006: ldnull
+		IL_0007: call object Modules.Set_Constructor_Iterable/FunctionExpression_closableIterable/FunctionExpression_closableIterable_L40C18::__js_call__(object[], object)
+		IL_000c: ret
 	} // end of method FunctionObject_FunctionExpression_2F5B02BC_L40C19::CallCore
 
 	.method family hidebysig virtual 
@@ -1812,7 +1797,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x2ad8
+		// Method begins at RVA 0x2ab7
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -1831,7 +1816,7 @@
 	.method public hidebysig specialname rtspecialname 
 		instance void .ctor () cil managed 
 	{
-		// Method begins at RVA 0x2ae4
+		// Method begins at RVA 0x2ac3
 		// Header size: 1
 		// Code size: 7 (0x7)
 		.maxstack 8
@@ -1844,7 +1829,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x2aec
+		// Method begins at RVA 0x2acb
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -1856,7 +1841,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x2aef
+		// Method begins at RVA 0x2ace
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -1871,7 +1856,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x2af2
+		// Method begins at RVA 0x2ad1
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -1890,7 +1875,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x2b01
+		// Method begins at RVA 0x2ae0
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -1914,7 +1899,7 @@
 			class Modules.Set_Constructor_Iterable/Scope capture0
 		) cil managed 
 	{
-		// Method begins at RVA 0x2b0d
+		// Method begins at RVA 0x2aec
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -1930,7 +1915,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x2b1c
+		// Method begins at RVA 0x2afb
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -1942,7 +1927,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x2b1f
+		// Method begins at RVA 0x2afe
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -1957,7 +1942,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x2b22
+		// Method begins at RVA 0x2b01
 		// Header size: 1
 		// Code size: 13 (0xd)
 		.maxstack 8
@@ -1975,7 +1960,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x2b30
+		// Method begins at RVA 0x2b0f
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -1993,17 +1978,19 @@
 	// Fields
 	.field private initonly class Modules.Set_Constructor_Iterable/Scope _environment0_Set_Constructor_Iterable
 	.field private initonly class Modules.Set_Constructor_Iterable/FunctionExpression_unionSetLike_L58C8/Scope _environment1_FunctionExpression_unionSetLike_L58C8
+	.field private initonly object[] _transitionalScopes
 
 	// Methods
 	.method public hidebysig specialname rtspecialname 
 		instance void .ctor (
 			class Modules.Set_Constructor_Iterable/Scope capture0,
-			class Modules.Set_Constructor_Iterable/FunctionExpression_unionSetLike_L58C8/Scope capture1
+			class Modules.Set_Constructor_Iterable/FunctionExpression_unionSetLike_L58C8/Scope capture1,
+			object[] capture2
 		) cil managed 
 	{
-		// Method begins at RVA 0x2b3c
+		// Method begins at RVA 0x2b1b
 		// Header size: 1
-		// Code size: 21 (0x15)
+		// Code size: 28 (0x1c)
 		.maxstack 8
 
 		IL_0000: ldarg.0
@@ -2014,13 +2001,16 @@
 		IL_000d: ldarg.0
 		IL_000e: ldarg.2
 		IL_000f: stfld class Modules.Set_Constructor_Iterable/FunctionExpression_unionSetLike_L58C8/Scope FunctionObjects.Set_Constructor_Iterable_4D9D841B.FunctionObject_FunctionExpression_FCD9C04F_L63C17::_environment1_FunctionExpression_unionSetLike_L58C8
-		IL_0014: ret
+		IL_0014: ldarg.0
+		IL_0015: ldarg.3
+		IL_0016: stfld object[] FunctionObjects.Set_Constructor_Iterable_4D9D841B.FunctionObject_FunctionExpression_FCD9C04F_L63C17::_transitionalScopes
+		IL_001b: ret
 	} // end of method FunctionObject_FunctionExpression_FCD9C04F_L63C17::.ctor
 
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x2b52
+		// Method begins at RVA 0x2b38
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -2032,7 +2022,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x2b55
+		// Method begins at RVA 0x2b3b
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -2047,26 +2037,16 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x2b58
+		// Method begins at RVA 0x2b3e
 		// Header size: 1
-		// Code size: 31 (0x1f)
+		// Code size: 13 (0xd)
 		.maxstack 8
 
-		IL_0000: ldc.i4.2
-		IL_0001: newarr [System.Runtime]System.Object
-		IL_0006: dup
-		IL_0007: ldc.i4.0
-		IL_0008: ldarg.0
-		IL_0009: ldfld class Modules.Set_Constructor_Iterable/Scope FunctionObjects.Set_Constructor_Iterable_4D9D841B.FunctionObject_FunctionExpression_FCD9C04F_L63C17::_environment0_Set_Constructor_Iterable
-		IL_000e: stelem.ref
-		IL_000f: dup
-		IL_0010: ldc.i4.1
-		IL_0011: ldarg.0
-		IL_0012: ldfld class Modules.Set_Constructor_Iterable/FunctionExpression_unionSetLike_L58C8/Scope FunctionObjects.Set_Constructor_Iterable_4D9D841B.FunctionObject_FunctionExpression_FCD9C04F_L63C17::_environment1_FunctionExpression_unionSetLike_L58C8
-		IL_0017: stelem.ref
-		IL_0018: ldnull
-		IL_0019: call object Modules.Set_Constructor_Iterable/FunctionExpression_unionSetLike_L58C8/FunctionExpression_unionSetLike::__js_call__(object[], object)
-		IL_001e: ret
+		IL_0000: ldarg.0
+		IL_0001: ldfld object[] FunctionObjects.Set_Constructor_Iterable_4D9D841B.FunctionObject_FunctionExpression_FCD9C04F_L63C17::_transitionalScopes
+		IL_0006: ldnull
+		IL_0007: call object Modules.Set_Constructor_Iterable/FunctionExpression_unionSetLike_L58C8/FunctionExpression_unionSetLike::__js_call__(object[], object)
+		IL_000c: ret
 	} // end of method FunctionObject_FunctionExpression_FCD9C04F_L63C17::CallCore
 
 	.method family hidebysig virtual 
@@ -2075,7 +2055,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x2b78
+		// Method begins at RVA 0x2b4c
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -2093,17 +2073,19 @@
 	// Fields
 	.field private initonly class Modules.Set_Constructor_Iterable/Scope _environment0_Set_Constructor_Iterable
 	.field private initonly class Modules.Set_Constructor_Iterable/FunctionExpression_unionSetLike_L58C8/Scope _environment1_FunctionExpression_unionSetLike_L58C8
+	.field private initonly object[] _transitionalScopes
 
 	// Methods
 	.method public hidebysig specialname rtspecialname 
 		instance void .ctor (
 			class Modules.Set_Constructor_Iterable/Scope capture0,
-			class Modules.Set_Constructor_Iterable/FunctionExpression_unionSetLike_L58C8/Scope capture1
+			class Modules.Set_Constructor_Iterable/FunctionExpression_unionSetLike_L58C8/Scope capture1,
+			object[] capture2
 		) cil managed 
 	{
-		// Method begins at RVA 0x2b84
+		// Method begins at RVA 0x2b58
 		// Header size: 1
-		// Code size: 21 (0x15)
+		// Code size: 28 (0x1c)
 		.maxstack 8
 
 		IL_0000: ldarg.0
@@ -2114,13 +2096,16 @@
 		IL_000d: ldarg.0
 		IL_000e: ldarg.2
 		IL_000f: stfld class Modules.Set_Constructor_Iterable/FunctionExpression_unionSetLike_L58C8/Scope FunctionObjects.Set_Constructor_Iterable_4D9D841B.FunctionObject_FunctionExpression_71DDD6ED_L70C19::_environment1_FunctionExpression_unionSetLike_L58C8
-		IL_0014: ret
+		IL_0014: ldarg.0
+		IL_0015: ldarg.3
+		IL_0016: stfld object[] FunctionObjects.Set_Constructor_Iterable_4D9D841B.FunctionObject_FunctionExpression_71DDD6ED_L70C19::_transitionalScopes
+		IL_001b: ret
 	} // end of method FunctionObject_FunctionExpression_71DDD6ED_L70C19::.ctor
 
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x2b9a
+		// Method begins at RVA 0x2b75
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -2132,7 +2117,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x2b9d
+		// Method begins at RVA 0x2b78
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -2147,26 +2132,16 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x2ba0
+		// Method begins at RVA 0x2b7b
 		// Header size: 1
-		// Code size: 31 (0x1f)
+		// Code size: 13 (0xd)
 		.maxstack 8
 
-		IL_0000: ldc.i4.2
-		IL_0001: newarr [System.Runtime]System.Object
-		IL_0006: dup
-		IL_0007: ldc.i4.0
-		IL_0008: ldarg.0
-		IL_0009: ldfld class Modules.Set_Constructor_Iterable/Scope FunctionObjects.Set_Constructor_Iterable_4D9D841B.FunctionObject_FunctionExpression_71DDD6ED_L70C19::_environment0_Set_Constructor_Iterable
-		IL_000e: stelem.ref
-		IL_000f: dup
-		IL_0010: ldc.i4.1
-		IL_0011: ldarg.0
-		IL_0012: ldfld class Modules.Set_Constructor_Iterable/FunctionExpression_unionSetLike_L58C8/Scope FunctionObjects.Set_Constructor_Iterable_4D9D841B.FunctionObject_FunctionExpression_71DDD6ED_L70C19::_environment1_FunctionExpression_unionSetLike_L58C8
-		IL_0017: stelem.ref
-		IL_0018: ldnull
-		IL_0019: call object Modules.Set_Constructor_Iterable/FunctionExpression_unionSetLike_L58C8/FunctionExpression_unionSetLike_L70C18::__js_call__(object[], object)
-		IL_001e: ret
+		IL_0000: ldarg.0
+		IL_0001: ldfld object[] FunctionObjects.Set_Constructor_Iterable_4D9D841B.FunctionObject_FunctionExpression_71DDD6ED_L70C19::_transitionalScopes
+		IL_0006: ldnull
+		IL_0007: call object Modules.Set_Constructor_Iterable/FunctionExpression_unionSetLike_L58C8/FunctionExpression_unionSetLike_L70C18::__js_call__(object[], object)
+		IL_000c: ret
 	} // end of method FunctionObject_FunctionExpression_71DDD6ED_L70C19::CallCore
 
 	.method family hidebysig virtual 
@@ -2175,7 +2150,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x2bc0
+		// Method begins at RVA 0x2b89
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -2194,7 +2169,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2bcc
+		// Method begins at RVA 0x2b95
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

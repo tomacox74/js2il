@@ -2605,9 +2605,9 @@ namespace JavaScriptRuntime
             if (receiver is Array jsArray)
             {
                 var arrayMemberValue = GetProperty(jsArray, methodName);
-                if (arrayMemberValue is Delegate memberDelegate)
+                if (CallableOperations.IsCallable(arrayMemberValue))
                 {
-                    return InvokeMemberDelegate(receiver, memberDelegate, callArgs);
+                    return InvokeCallableMember(receiver, arrayMemberValue!, callArgs);
                 }
 
                 if (arrayMemberValue is not null && arrayMemberValue is not JsNull)
@@ -2643,9 +2643,9 @@ namespace JavaScriptRuntime
 
             if (TryGetFastDictionaryOwnValue(receiver, methodName, out var directMemberValue))
             {
-                if (directMemberValue is Delegate directMember)
+                if (CallableOperations.IsCallable(directMemberValue))
                 {
-                    return InvokeMemberDelegate(receiver, directMember, callArgs);
+                    return InvokeCallableMember(receiver, directMemberValue!, callArgs);
                 }
 
                 throw new TypeError($"{methodName} is not a function");
@@ -2656,17 +2656,9 @@ namespace JavaScriptRuntime
             //   const r = Promise.withResolvers(); r.resolve(123);
             // where `resolve` is exposed as a delegate-valued property.
             var memberValue = GetProperty(receiver, methodName);
-            if (memberValue is Delegate)
+            if (CallableOperations.IsCallable(memberValue))
             {
-                var previousThis = RuntimeServices.SetCurrentThis(receiver);
-                try
-                {
-                    return Closure.InvokeWithArgs(memberValue, System.Array.Empty<object>(), callArgs);
-                }
-                finally
-                {
-                    RuntimeServices.SetCurrentThis(previousThis);
-                }
+                return InvokeCallableMember(receiver, memberValue!, callArgs);
             }
 
             if (TryCallStaticClassMethod(receiver, methodName, callArgs, out var staticClassResult))
@@ -2689,9 +2681,9 @@ namespace JavaScriptRuntime
             var callArgs = args ?? System.Array.Empty<object>();
             var memberValue = ObjectRuntime.GetItem(receiver, propertyKey!);
 
-            if (memberValue is Delegate memberDelegate)
+            if (CallableOperations.IsCallable(memberValue))
             {
-                return InvokeMemberDelegate(receiver, memberDelegate, callArgs);
+                return InvokeCallableMember(receiver, memberValue!, callArgs);
             }
 
             if (memberValue is not null && memberValue is not JsNull)
@@ -2706,12 +2698,15 @@ namespace JavaScriptRuntime
         public static object? CallOwnPropertyMember(object receiver, string methodName, object[]? args)
         {
             var memberValue = GetProperty(receiver, methodName);
-            if (memberValue is not Delegate memberDelegate)
+            if (!CallableOperations.IsCallable(memberValue))
             {
                 throw new TypeError($"{methodName} is not a function");
             }
 
-            return InvokeMemberDelegate(receiver, memberDelegate, args ?? System.Array.Empty<object>());
+            return InvokeCallableMember(
+                receiver,
+                memberValue!,
+                args ?? System.Array.Empty<object>());
         }
 
         private static bool TryGetFastDictionaryOwnValue(object receiver, string memberName, out object? value)
@@ -2754,6 +2749,16 @@ namespace JavaScriptRuntime
 
             value = dictionaryValue;
             return true;
+        }
+
+        private static object? InvokeCallableMember(
+            object receiver,
+            object member,
+            object?[] callArgs)
+        {
+            return member is Delegate legacyDelegate
+                ? InvokeMemberDelegate(receiver, legacyDelegate, callArgs)
+                : CallableOperations.Call(member, receiver, callArgs);
         }
 
         private static object InvokeMemberDelegate(object receiver, Delegate member, object?[] callArgs)
@@ -4488,9 +4493,12 @@ namespace JavaScriptRuntime
             var hasIteratorProperty = HasProperty(iterable, iteratorKey);
             object? iteratorMethod = ObjectRuntime.GetItem(iterable, Symbol.iterator);
 
-            if (iteratorMethod is Delegate del)
+            if (CallableOperations.IsCallable(iteratorMethod))
             {
-                var iteratorObj = InvokeMemberDelegate0PreservingContext(iterable, del);
+                var iteratorObj = InvokeCallableMember(
+                    iterable,
+                    iteratorMethod!,
+                    System.Array.Empty<object?>());
                 if (iteratorObj is null)
                 {
                     throw new JavaScriptRuntime.TypeError("Iterator method returned null or undefined");
@@ -4593,9 +4601,12 @@ namespace JavaScriptRuntime
                 asyncIteratorMethod = null;
             }
 
-            if (asyncIteratorMethod is Delegate asyncDel)
+            if (CallableOperations.IsCallable(asyncIteratorMethod))
             {
-                var iteratorObj = InvokeMemberDelegate0PreservingContext(iterable, asyncDel);
+                var iteratorObj = InvokeCallableMember(
+                    iterable,
+                    asyncIteratorMethod!,
+                    System.Array.Empty<object?>());
                 if (iteratorObj is null)
                 {
                     throw new JavaScriptRuntime.TypeError("Async iterator method returned null or undefined");
@@ -4931,7 +4942,7 @@ namespace JavaScriptRuntime
         private sealed class DynamicIterator : IJavaScriptIterator
         {
             private readonly object _iterator;
-            private readonly Delegate _next;
+            private readonly object _next;
             private bool _returnResolved;
             private object? _return;
 
@@ -4940,11 +4951,11 @@ namespace JavaScriptRuntime
                 _iterator = iterator;
 
                 var nextMember = GetProperty(_iterator, "next");
-                if (nextMember is not Delegate nextDel)
+                if (!CallableOperations.IsCallable(nextMember))
                 {
                     throw new JavaScriptRuntime.TypeError("Iterator.next is not a function");
                 }
-                _next = nextDel;
+                _next = nextMember!;
 
                 JavaScriptRuntime.Iterator.InitializeIteratorSurface(this);
             }
@@ -4983,7 +4994,10 @@ namespace JavaScriptRuntime
 
             public object NextRaw()
             {
-                var result = InvokeMemberDelegate0PreservingContext(_iterator, _next);
+                var result = InvokeCallableMember(
+                    _iterator,
+                    _next,
+                    System.Array.Empty<object?>());
                 if (result is null || result is JsNull || !IsObjectLikeForPrototype(result))
                 {
                     throw new JavaScriptRuntime.TypeError("Iterator.next result must be an object");
@@ -5000,12 +5014,15 @@ namespace JavaScriptRuntime
                     return;
                 }
 
-                if (returnMember is not Delegate del)
+                if (!CallableOperations.IsCallable(returnMember))
                 {
                     throw new JavaScriptRuntime.TypeError("Iterator.return is not a function");
                 }
 
-                ValidateIteratorCloseResult(InvokeMemberDelegate0PreservingContext(_iterator, del));
+                ValidateIteratorCloseResult(InvokeCallableMember(
+                    _iterator,
+                    returnMember,
+                    System.Array.Empty<object?>()));
             }
         }
 
@@ -5038,7 +5055,7 @@ namespace JavaScriptRuntime
         private sealed class AsyncDynamicIterator : IJavaScriptAsyncIterator
         {
             private readonly object _iterator;
-            private readonly Delegate _next;
+            private readonly object _next;
             private readonly object? _return;
 
             public AsyncDynamicIterator(object iterator)
@@ -5046,11 +5063,11 @@ namespace JavaScriptRuntime
                 _iterator = iterator;
 
                 var nextMember = GetProperty(_iterator, "next");
-                if (nextMember is not Delegate nextDel)
+                if (!CallableOperations.IsCallable(nextMember))
                 {
                     throw new JavaScriptRuntime.TypeError("Iterator.next is not a function");
                 }
-                _next = nextDel;
+                _next = nextMember!;
 
                 _return = GetProperty(_iterator, "return");
                 JavaScriptRuntime.AsyncIterator.InitializeAsyncIteratorSurface(this);
@@ -5059,7 +5076,10 @@ namespace JavaScriptRuntime
             public bool HasReturn => _return != null;
 
             public object? Next()
-                => InvokeMemberDelegate0PreservingContext(_iterator, _next);
+                => InvokeCallableMember(
+                    _iterator,
+                    _next,
+                    System.Array.Empty<object?>());
 
             public object? Return()
             {
@@ -5068,12 +5088,15 @@ namespace JavaScriptRuntime
                     return JavaScriptRuntime.Promise.resolve(IteratorResult.Create(null, done: true));
                 }
 
-                if (_return is not Delegate del)
+                if (!CallableOperations.IsCallable(_return))
                 {
                     throw new JavaScriptRuntime.TypeError("Iterator.return is not a function");
                 }
 
-                return InvokeMemberDelegate0PreservingContext(_iterator, del);
+                return InvokeCallableMember(
+                    _iterator,
+                    _return,
+                    System.Array.Empty<object?>());
             }
         }
 

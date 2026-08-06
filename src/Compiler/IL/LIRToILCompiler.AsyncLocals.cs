@@ -142,6 +142,11 @@ internal sealed partial class LIRToILCompiler
                 ilEncoder.OpCode(ILOpCode.Unbox_any);
                 ilEncoder.Token(GetBoxingTypeToken(storage.ClrType ?? typeof(object)));
             }
+            else if (storage.Kind == ValueStorageKind.Reference && !storage.TypeHandle.IsNil)
+            {
+                ilEncoder.OpCode(ILOpCode.Castclass);
+                ilEncoder.Token(storage.TypeHandle);
+            }
             else if (storage.Kind == ValueStorageKind.Reference && !string.IsNullOrWhiteSpace(storage.ScopeName))
             {
                 ilEncoder.OpCode(ILOpCode.Castclass);
@@ -169,6 +174,11 @@ internal sealed partial class LIRToILCompiler
             {
                 ilEncoder.OpCode(ILOpCode.Unbox_any);
                 ilEncoder.Token(GetBoxingTypeToken(storage.ClrType ?? typeof(object)));
+            }
+            else if (storage.Kind == ValueStorageKind.Reference && !storage.TypeHandle.IsNil)
+            {
+                ilEncoder.OpCode(ILOpCode.Castclass);
+                ilEncoder.Token(storage.TypeHandle);
             }
             else if (storage.Kind == ValueStorageKind.Reference && !string.IsNullOrWhiteSpace(storage.ScopeName))
             {

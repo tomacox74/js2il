@@ -1409,6 +1409,15 @@ internal sealed partial class LIRToILCompiler
 
             case LIRCreateBoundArrowFunction createArrow:
                 {
+                    if (TryEmitGeneratedArrowFunctionObject(
+                            createArrow,
+                            ilEncoder,
+                            allocation,
+                            methodDescriptor))
+                    {
+                        break;
+                    }
+
                     var reader = _serviceProvider.GetService<ICallableDeclarationReader>();
                     var callableId = createArrow.CallableId;
                     if (reader == null || !reader.TryGetDeclaredToken(callableId, out var token) || token.Kind != HandleKind.MethodDefinition)

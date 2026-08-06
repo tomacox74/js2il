@@ -255,7 +255,7 @@ namespace JavaScriptRuntime.Node
 
             if (srcArgs.Length > 1)
             {
-                if (srcArgs[1] is Delegate)
+                if (CallableOperations.IsCallable(srcArgs[1]))
                 {
                     callback = srcArgs[1];
                 }
@@ -294,7 +294,7 @@ namespace JavaScriptRuntime.Node
 
             if (srcArgs.Length > 1)
             {
-                if (srcArgs[1] is Delegate)
+                if (CallableOperations.IsCallable(srcArgs[1]))
                 {
                     callback = srcArgs[1];
                 }
@@ -310,7 +310,7 @@ namespace JavaScriptRuntime.Node
 
             if (srcArgs.Length > 2)
             {
-                if (srcArgs[2] is Delegate)
+                if (CallableOperations.IsCallable(srcArgs[2]))
                 {
                     callback = srcArgs[2];
                 }
@@ -514,7 +514,7 @@ namespace JavaScriptRuntime.Node
             public object stderr { get; }
         }
 
-        private object StartChildProcess(object command, object? args, object? options, bool? shellOverride, Delegate? callback, bool suppressUnhandledError, string apiName)
+        private object StartChildProcess(object command, object? args, object? options, bool? shellOverride, object? callback, bool suppressUnhandledError, string apiName)
         {
             var commandText = command?.ToString() ?? string.Empty;
             if (string.IsNullOrWhiteSpace(commandText))
@@ -629,7 +629,7 @@ namespace JavaScriptRuntime.Node
             }
         }
 
-        private PromiseWithResolvers CreateCompletionPromise(ChildProcessHandle child, string commandText, Delegate? callback, bool suppressUnhandledError)
+        private PromiseWithResolvers CreateCompletionPromise(ChildProcessHandle child, string commandText, object? callback, bool suppressUnhandledError)
         {
             JsFunc1 resolve = (scopes, newTarget, value) =>
             {
@@ -667,10 +667,10 @@ namespace JavaScriptRuntime.Node
             return new PromiseWithResolvers(new Promise(), resolve, reject);
         }
 
-        private static void InvokeExecCallback(Delegate callback, object? error, string stdout, string stderr)
+        private static void InvokeExecCallback(object callback, object? error, string stdout, string stderr)
         {
             var errArg = error ?? JsNull.Null;
-            Closure.InvokeWithArgs(callback, RuntimeServices.EmptyScopes, errArg, stdout, stderr);
+            CallableOperations.Call3(callback, null, errArg, stdout, stderr);
         }
 
         private static ProcessCompletionResult WaitForProcessCompletionSync(DiagnosticsProcess process, StdioConfiguration stdio)
@@ -989,16 +989,16 @@ namespace JavaScriptRuntime.Node
             return false;
         }
 
-        private static Delegate? ValidateCallback(object? callback)
+        private static object? ValidateCallback(object? callback)
         {
             if (callback == null || callback is JsNull)
             {
                 return null;
             }
 
-            if (callback is Delegate del)
+            if (CallableOperations.IsCallable(callback))
             {
-                return del;
+                return callback;
             }
 
             throw new TypeError("The \"callback\" argument must be of type function");

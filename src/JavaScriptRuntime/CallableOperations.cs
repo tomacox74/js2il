@@ -226,21 +226,36 @@ public static class CallableOperations
         object? thisArgument,
         in JsCallArguments arguments)
     {
+        var effectiveThisArgument = functionObject.ResolveThisArgument(thisArgument);
         if (!functionObject.RequiresInvocationContext)
         {
-            return functionObject.InvokeCall(thisArgument, arguments);
+            return functionObject.InvokeCall(effectiveThisArgument, arguments);
         }
 
-        var previousThis = RuntimeServices.SetCurrentThis(thisArgument);
+        var previousThis = RuntimeServices.SetCurrentThis(effectiveThisArgument);
         var previousArguments = RuntimeServices.SetCurrentCallArguments(arguments);
         var previousCallee = RuntimeServices.SetCurrentCallee(functionObject);
-        var previousNewTarget = RuntimeServices.SetCurrentNewTarget(null);
+        var previousNewTarget = RuntimeServices.SetCurrentNewTarget(
+            functionObject.ResolveCallNewTarget());
+        var lexicalSuperScopes = functionObject.GetLexicalSuperScopes();
+        var previousSuperReceiver = lexicalSuperScopes is null
+            ? null
+            : RuntimeServices.SetCurrentLexicalSuperReceiver(
+                functionObject.GetLexicalSuperReceiver());
+        var previousSuperScopes = lexicalSuperScopes is null
+            ? null
+            : RuntimeServices.SetCurrentLexicalSuperScopes(lexicalSuperScopes);
         try
         {
-            return functionObject.InvokeCall(thisArgument, arguments);
+            return functionObject.InvokeCall(effectiveThisArgument, arguments);
         }
         finally
         {
+            if (lexicalSuperScopes is not null)
+            {
+                RuntimeServices.SetCurrentLexicalSuperScopes(previousSuperScopes);
+                RuntimeServices.SetCurrentLexicalSuperReceiver(previousSuperReceiver);
+            }
             RuntimeServices.SetCurrentNewTarget(previousNewTarget);
             RuntimeServices.SetCurrentCallee(previousCallee);
             RuntimeServices.RestoreCurrentCallArguments(previousArguments);

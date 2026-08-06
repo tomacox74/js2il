@@ -757,24 +757,32 @@
 .class private auto ansi sealed beforefieldinit FunctionObjects.Async_ForOf_AwaitInBody_D18CFB48.FunctionObject_FunctionDeclaration_BBEFEBAA_sum
 	extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
 {
+	// Fields
+	.field private initonly object[] _transitionalScopes
+
 	// Methods
 	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
+		instance void .ctor (
+			object[] capture0
+		) cil managed 
 	{
 		// Method begins at RVA 0x257c
 		// Header size: 1
-		// Code size: 7 (0x7)
+		// Code size: 14 (0xe)
 		.maxstack 8
 
 		IL_0000: ldarg.0
 		IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-		IL_0006: ret
+		IL_0006: ldarg.0
+		IL_0007: ldarg.1
+		IL_0008: stfld object[] FunctionObjects.Async_ForOf_AwaitInBody_D18CFB48.FunctionObject_FunctionDeclaration_BBEFEBAA_sum::_transitionalScopes
+		IL_000d: ret
 	} // end of method FunctionObject_FunctionDeclaration_BBEFEBAA_sum::.ctor
 
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x2584
+		// Method begins at RVA 0x258b
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -786,7 +794,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x2587
+		// Method begins at RVA 0x258e
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -801,13 +809,13 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x258a
+		// Method begins at RVA 0x2591
 		// Header size: 1
 		// Code size: 20 (0x14)
 		.maxstack 8
 
-		IL_0000: ldc.i4.0
-		IL_0001: newarr [System.Runtime]System.Object
+		IL_0000: ldarg.0
+		IL_0001: ldfld object[] FunctionObjects.Async_ForOf_AwaitInBody_D18CFB48.FunctionObject_FunctionDeclaration_BBEFEBAA_sum::_transitionalScopes
 		IL_0006: ldnull
 		IL_0007: ldarg.2
 		IL_0008: ldc.i4.0
@@ -825,7 +833,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x259f
+		// Method begins at RVA 0x25a6
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
