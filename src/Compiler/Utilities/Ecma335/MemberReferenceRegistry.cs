@@ -350,6 +350,57 @@ namespace Jroc.Utilities.Ecma335
         }
 
         /// <summary>
+        /// Gets or creates a closed reference to
+        /// <c>T InitializeFunctionInstance&lt;T&gt;(T, double, string, bool, bool)</c>
+        /// for a generated metadata type.
+        /// </summary>
+        public MethodSpecificationHandle GetOrAddGenericFunctionInitializer(
+            Type declaringType,
+            string methodName,
+            EntityHandle typeArgument,
+            bool isValueType)
+        {
+            var key =
+                $"{declaringType.FullName}::{methodName}<{typeArgument.Kind}:{MetadataTokens.GetToken(typeArgument)}>(T,double,string,bool,bool)";
+            if (_methodSpecCache.TryGetValue(key, out var cached))
+            {
+                return cached;
+            }
+
+            var signatureBuilder = new BlobBuilder();
+            new BlobEncoder(signatureBuilder)
+                .MethodSignature(isInstanceMethod: false, genericParameterCount: 1)
+                .Parameters(
+                    5,
+                    returnType => returnType.Type().GenericMethodTypeParameter(0),
+                    parameters =>
+                    {
+                        parameters.AddParameter().Type().GenericMethodTypeParameter(0);
+                        parameters.AddParameter().Type().Double();
+                        parameters.AddParameter().Type().String();
+                        parameters.AddParameter().Type().Boolean();
+                        parameters.AddParameter().Type().Boolean();
+                    });
+
+            var methodReference = _metadataBuilder.AddMemberReference(
+                GetOrAddDeclaringTypeHandle(declaringType),
+                _metadataBuilder.GetOrAddString(methodName),
+                _metadataBuilder.GetOrAddBlob(signatureBuilder));
+
+            var specificationBuilder = new BlobBuilder();
+            new BlobEncoder(specificationBuilder)
+                .MethodSpecificationSignature(1)
+                .AddArgument()
+                .Type(typeArgument, isValueType);
+
+            var methodSpecification = _metadataBuilder.AddMethodSpecification(
+                methodReference,
+                _metadataBuilder.GetOrAddBlob(specificationBuilder));
+            _methodSpecCache[key] = methodSpecification;
+            return methodSpecification;
+        }
+
+        /// <summary>
         /// Gets or creates a constructor member reference handle.
         /// Uses reflection to discover the constructor signature automatically.
         /// Supports constructed generic types (e.g., Func&lt;object, object&gt;) by automatically creating TypeSpecifications.

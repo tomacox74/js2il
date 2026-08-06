@@ -144,25 +144,18 @@ internal sealed partial class LIRToILCompiler
         ilEncoder.LoadConstantI4(metadata.Plan.RequiresInvocationContext ? 1 : 0);
         ilEncoder.LoadConstantI4(callableId.HasRestrictedFunctionProperties ? 1 : 0);
         ilEncoder.OpCode(ILOpCode.Call);
-        ilEncoder.Token(_memberRefRegistry.GetOrAddMethod(
+        ilEncoder.Token(_memberRefRegistry.GetOrAddGenericFunctionInitializer(
             isAsync
                 ? typeof(JavaScriptRuntime.AsyncFunction)
                 : typeof(JavaScriptRuntime.Function),
             nameof(JavaScriptRuntime.Function.InitializeFunctionInstance),
-            new[]
-            {
-                typeof(object),
-                typeof(double),
-                typeof(string),
-                typeof(bool),
-                typeof(bool)
-            }));
+            metadata.TypeHandle,
+            isValueType: false));
         ilEncoder.OpCode(ILOpCode.Call);
-        ilEncoder.Token(_memberRefRegistry.GetOrAddMethod(
+        ilEncoder.Token(_memberRefRegistry.GetOrAddGenericUnaryMethod(
             typeof(JavaScriptRuntime.Function),
             nameof(JavaScriptRuntime.Function.MarkUndefinedPrototype),
-            new[] { typeof(object) }));
-        ilEncoder.OpCode(ILOpCode.Castclass);
-        ilEncoder.Token(metadata.TypeHandle);
+            metadata.TypeHandle,
+            isValueType: false));
     }
 }
