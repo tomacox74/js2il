@@ -19,6 +19,7 @@ internal sealed class GeneratedFunctionObjectEmitter
     private readonly FunctionTypeMetadataRegistry _functionTypeRegistry;
     private readonly AnonymousCallableTypeMetadataRegistry _anonymousTypeRegistry;
     private readonly ClassRegistry _classRegistry;
+    private readonly NestedTypeRelationshipRegistry _nestedTypeRegistry;
 
     public GeneratedFunctionObjectEmitter(
         MetadataBuilder metadataBuilder,
@@ -29,7 +30,8 @@ internal sealed class GeneratedFunctionObjectEmitter
         GeneratedFunctionObjectRegistry functionObjectRegistry,
         FunctionTypeMetadataRegistry functionTypeRegistry,
         AnonymousCallableTypeMetadataRegistry anonymousTypeRegistry,
-        ClassRegistry classRegistry)
+        ClassRegistry classRegistry,
+        NestedTypeRelationshipRegistry nestedTypeRegistry)
     {
         _metadataBuilder = metadataBuilder;
         _bclReferences = bclReferences;
@@ -40,6 +42,7 @@ internal sealed class GeneratedFunctionObjectEmitter
         _functionTypeRegistry = functionTypeRegistry;
         _anonymousTypeRegistry = anonymousTypeRegistry;
         _classRegistry = classRegistry;
+        _nestedTypeRegistry = nestedTypeRegistry;
     }
 
     public void DeclareTypes(int firstMethodRow)
@@ -98,7 +101,9 @@ internal sealed class GeneratedFunctionObjectEmitter
                 : default;
 
             var typeHandle = typeBuilder.AddTypeDefinition(
-                TypeAttributes.NotPublic
+                (plan.Callable.Kind == CallableKind.Arrow
+                    ? TypeAttributes.NestedPublic
+                    : TypeAttributes.NotPublic)
                 | TypeAttributes.Class
                 | TypeAttributes.Sealed
                 | TypeAttributes.BeforeFieldInit,
@@ -115,6 +120,10 @@ internal sealed class GeneratedFunctionObjectEmitter
 
             var canonicalBody = (MethodDefinitionHandle)bodyToken;
             var ownerType = ResolveCanonicalOwnerType(plan);
+            if (plan.Callable.Kind == CallableKind.Arrow)
+            {
+                _nestedTypeRegistry.Add(typeHandle, ownerType);
+            }
             _functionObjectRegistry.SetMetadata(new GeneratedFunctionObjectMetadata
             {
                 Plan = plan,

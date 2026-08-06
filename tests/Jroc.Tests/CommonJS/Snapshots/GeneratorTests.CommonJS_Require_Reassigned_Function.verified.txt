@@ -38,6 +38,68 @@
 
 		} // end of class Scope
 
+		.class nested public auto ansi sealed beforefieldinit FunctionObject
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x20ec
+				// Header size: 1
+				// Code size: 7 (0x7)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0006: ret
+			} // end of method FunctionObject::.ctor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_IsConstructor () cil managed 
+			{
+				// Method begins at RVA 0x20f4
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_IsConstructor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_RequiresInvocationContext () cil managed 
+			{
+				// Method begins at RVA 0x20f7
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_RequiresInvocationContext
+
+			.method family hidebysig virtual 
+				instance object CallCore (
+					object thisArgument,
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+				) cil managed 
+			{
+				// Method begins at RVA 0x20fa
+				// Header size: 1
+				// Code size: 14 (0xe)
+				.maxstack 8
+
+				IL_0000: ldnull
+				IL_0001: ldarg.2
+				IL_0002: ldc.i4.0
+				IL_0003: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+				IL_0008: call object Modules.CommonJS_Require_Reassigned_Function/ArrowFunction_L3C11::__js_call__(object, object)
+				IL_000d: ret
+			} // end of method FunctionObject::CallCore
+
+		} // end of class FunctionObject
+
 
 		// Methods
 		.method public hidebysig static 
@@ -105,7 +167,7 @@
 		.locals init (
 			[0] class Modules.CommonJS_Require_Reassigned_Function/Scope,
 			[1] object[],
-			[2] class FunctionObjects.CommonJS_Require_Reassigned_Function_B698DFFA.FunctionObject_Arrow_A298713E_L3C11,
+			[2] class Modules.CommonJS_Require_Reassigned_Function/ArrowFunction_L3C11/FunctionObject,
 			[3] object,
 			[4] object
 		)
@@ -120,14 +182,14 @@
 		IL_000f: ldloc.0
 		IL_0010: stelem.ref
 		IL_0011: stloc.1
-		IL_0012: newobj instance void FunctionObjects.CommonJS_Require_Reassigned_Function_B698DFFA.FunctionObject_Arrow_A298713E_L3C11::.ctor()
+		IL_0012: newobj instance void Modules.CommonJS_Require_Reassigned_Function/ArrowFunction_L3C11/FunctionObject::.ctor()
 		IL_0017: ldc.i4.1
 		IL_0018: conv.r8
 		IL_0019: ldstr ""
 		IL_001e: ldc.i4.0
 		IL_001f: ldc.i4.0
-		IL_0020: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class FunctionObjects.CommonJS_Require_Reassigned_Function_B698DFFA.FunctionObject_Arrow_A298713E_L3C11>(!!0, float64, string, bool, bool)
-		IL_0025: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class FunctionObjects.CommonJS_Require_Reassigned_Function_B698DFFA.FunctionObject_Arrow_A298713E_L3C11>(!!0)
+		IL_0020: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.CommonJS_Require_Reassigned_Function/ArrowFunction_L3C11/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_0025: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.CommonJS_Require_Reassigned_Function/ArrowFunction_L3C11/FunctionObject>(!!0)
 		IL_002a: stloc.2
 		IL_002b: ldloc.2
 		IL_002c: starg.s require
@@ -151,68 +213,6 @@
 	} // end of method CommonJS_Require_Reassigned_Function::__js_module_init__
 
 } // end of class Modules.CommonJS_Require_Reassigned_Function
-
-.class private auto ansi sealed beforefieldinit FunctionObjects.CommonJS_Require_Reassigned_Function_B698DFFA.FunctionObject_Arrow_A298713E_L3C11
-	extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-{
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x20ec
-		// Header size: 1
-		// Code size: 7 (0x7)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-		IL_0006: ret
-	} // end of method FunctionObject_Arrow_A298713E_L3C11::.ctor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_IsConstructor () cil managed 
-	{
-		// Method begins at RVA 0x20f4
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_A298713E_L3C11::get_IsConstructor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_RequiresInvocationContext () cil managed 
-	{
-		// Method begins at RVA 0x20f7
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_A298713E_L3C11::get_RequiresInvocationContext
-
-	.method family hidebysig virtual 
-		instance object CallCore (
-			object thisArgument,
-			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-		) cil managed 
-	{
-		// Method begins at RVA 0x20fa
-		// Header size: 1
-		// Code size: 14 (0xe)
-		.maxstack 8
-
-		IL_0000: ldnull
-		IL_0001: ldarg.2
-		IL_0002: ldc.i4.0
-		IL_0003: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-		IL_0008: call object Modules.CommonJS_Require_Reassigned_Function/ArrowFunction_L3C11::__js_call__(object, object)
-		IL_000d: ret
-	} // end of method FunctionObject_Arrow_A298713E_L3C11::CallCore
-
-} // end of class FunctionObjects.CommonJS_Require_Reassigned_Function_B698DFFA.FunctionObject_Arrow_A298713E_L3C11
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object

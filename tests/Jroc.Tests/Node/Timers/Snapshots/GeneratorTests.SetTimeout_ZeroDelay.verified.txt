@@ -31,6 +31,65 @@
 
 		} // end of class Scope
 
+		.class nested public auto ansi sealed beforefieldinit FunctionObject
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2102
+				// Header size: 1
+				// Code size: 7 (0x7)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0006: ret
+			} // end of method FunctionObject::.ctor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_IsConstructor () cil managed 
+			{
+				// Method begins at RVA 0x210a
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_IsConstructor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_RequiresInvocationContext () cil managed 
+			{
+				// Method begins at RVA 0x210d
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_RequiresInvocationContext
+
+			.method family hidebysig virtual 
+				instance object CallCore (
+					object thisArgument,
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+				) cil managed 
+			{
+				// Method begins at RVA 0x2110
+				// Header size: 1
+				// Code size: 7 (0x7)
+				.maxstack 8
+
+				IL_0000: ldnull
+				IL_0001: call object Modules.SetTimeout_ZeroDelay/ArrowFunction_L3C18::__js_call__(object)
+				IL_0006: ret
+			} // end of method FunctionObject::CallCore
+
+		} // end of class FunctionObject
+
 
 		// Methods
 		.method public hidebysig static 
@@ -98,7 +157,7 @@
 			[0] class Modules.SetTimeout_ZeroDelay/Scope,
 			[1] object,
 			[2] object[],
-			[3] class FunctionObjects.SetTimeout_ZeroDelay_A3477588.FunctionObject_Arrow_CEE7AE37_L3C18
+			[3] class Modules.SetTimeout_ZeroDelay/ArrowFunction_L3C18/FunctionObject
 		)
 
 		IL_0000: newobj instance void Modules.SetTimeout_ZeroDelay/Scope::.ctor()
@@ -111,14 +170,14 @@
 		IL_000f: ldloc.0
 		IL_0010: stelem.ref
 		IL_0011: stloc.2
-		IL_0012: newobj instance void FunctionObjects.SetTimeout_ZeroDelay_A3477588.FunctionObject_Arrow_CEE7AE37_L3C18::.ctor()
+		IL_0012: newobj instance void Modules.SetTimeout_ZeroDelay/ArrowFunction_L3C18/FunctionObject::.ctor()
 		IL_0017: ldc.i4.0
 		IL_0018: conv.r8
 		IL_0019: ldstr ""
 		IL_001e: ldc.i4.0
 		IL_001f: ldc.i4.0
-		IL_0020: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class FunctionObjects.SetTimeout_ZeroDelay_A3477588.FunctionObject_Arrow_CEE7AE37_L3C18>(!!0, float64, string, bool, bool)
-		IL_0025: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class FunctionObjects.SetTimeout_ZeroDelay_A3477588.FunctionObject_Arrow_CEE7AE37_L3C18>(!!0)
+		IL_0020: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.SetTimeout_ZeroDelay/ArrowFunction_L3C18/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_0025: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.SetTimeout_ZeroDelay/ArrowFunction_L3C18/FunctionObject>(!!0)
 		IL_002a: stloc.3
 		IL_002b: ldloc.3
 		IL_002c: ldstr "logHello"
@@ -142,65 +201,6 @@
 	} // end of method SetTimeout_ZeroDelay::__js_module_init__
 
 } // end of class Modules.SetTimeout_ZeroDelay
-
-.class private auto ansi sealed beforefieldinit FunctionObjects.SetTimeout_ZeroDelay_A3477588.FunctionObject_Arrow_CEE7AE37_L3C18
-	extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-{
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x2102
-		// Header size: 1
-		// Code size: 7 (0x7)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-		IL_0006: ret
-	} // end of method FunctionObject_Arrow_CEE7AE37_L3C18::.ctor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_IsConstructor () cil managed 
-	{
-		// Method begins at RVA 0x210a
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_CEE7AE37_L3C18::get_IsConstructor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_RequiresInvocationContext () cil managed 
-	{
-		// Method begins at RVA 0x210d
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_CEE7AE37_L3C18::get_RequiresInvocationContext
-
-	.method family hidebysig virtual 
-		instance object CallCore (
-			object thisArgument,
-			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-		) cil managed 
-	{
-		// Method begins at RVA 0x2110
-		// Header size: 1
-		// Code size: 7 (0x7)
-		.maxstack 8
-
-		IL_0000: ldnull
-		IL_0001: call object Modules.SetTimeout_ZeroDelay/ArrowFunction_L3C18::__js_call__(object)
-		IL_0006: ret
-	} // end of method FunctionObject_Arrow_CEE7AE37_L3C18::CallCore
-
-} // end of class FunctionObjects.SetTimeout_ZeroDelay_A3477588.FunctionObject_Arrow_CEE7AE37_L3C18
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object

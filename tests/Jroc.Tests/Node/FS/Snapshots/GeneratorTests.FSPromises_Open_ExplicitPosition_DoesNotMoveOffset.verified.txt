@@ -134,6 +134,80 @@
 
 		} // end of class Scope
 
+		.class nested public auto ansi sealed beforefieldinit FunctionObject
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+		{
+			// Fields
+			.field private initonly class Modules.FSPromises_Open_ExplicitPosition_DoesNotMoveOffset/Scope _environment0_FSPromises_Open_ExplicitPosition_DoesNotMoveOffset
+			.field private initonly object[] _transitionalScopes
+
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor (
+					class Modules.FSPromises_Open_ExplicitPosition_DoesNotMoveOffset/Scope capture0,
+					object[] capture1
+				) cil managed 
+			{
+				// Method begins at RVA 0x2d87
+				// Header size: 1
+				// Code size: 21 (0x15)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0006: ldarg.0
+				IL_0007: ldarg.1
+				IL_0008: stfld class Modules.FSPromises_Open_ExplicitPosition_DoesNotMoveOffset/Scope Modules.FSPromises_Open_ExplicitPosition_DoesNotMoveOffset/ArrowFunction_L7C2/FunctionObject::_environment0_FSPromises_Open_ExplicitPosition_DoesNotMoveOffset
+				IL_000d: ldarg.0
+				IL_000e: ldarg.2
+				IL_000f: stfld object[] Modules.FSPromises_Open_ExplicitPosition_DoesNotMoveOffset/ArrowFunction_L7C2/FunctionObject::_transitionalScopes
+				IL_0014: ret
+			} // end of method FunctionObject::.ctor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_IsConstructor () cil managed 
+			{
+				// Method begins at RVA 0x2d9d
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_IsConstructor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_RequiresInvocationContext () cil managed 
+			{
+				// Method begins at RVA 0x2da0
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_RequiresInvocationContext
+
+			.method family hidebysig virtual 
+				instance object CallCore (
+					object thisArgument,
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+				) cil managed 
+			{
+				// Method begins at RVA 0x2da3
+				// Header size: 1
+				// Code size: 13 (0xd)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: ldfld object[] Modules.FSPromises_Open_ExplicitPosition_DoesNotMoveOffset/ArrowFunction_L7C2/FunctionObject::_transitionalScopes
+				IL_0006: ldnull
+				IL_0007: call object Modules.FSPromises_Open_ExplicitPosition_DoesNotMoveOffset/ArrowFunction_L7C2::__js_call__(object[], object)
+				IL_000c: ret
+			} // end of method FunctionObject::CallCore
+
+		} // end of class FunctionObject
+
 
 		// Methods
 		.method public hidebysig static 
@@ -1706,7 +1780,7 @@
 			[2] class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IPathModule,
 			[3] class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IOsModule,
 			[4] object[],
-			[5] class FunctionObjects.FSPromises_Open_ExplicitPosition_DoesNotMoveOffset_E95D21F2.FunctionObject_Arrow_B4B8D982_L7C2
+			[5] class Modules.FSPromises_Open_ExplicitPosition_DoesNotMoveOffset/ArrowFunction_L7C2/FunctionObject
 		)
 
 		IL_0000: newobj instance void Modules.FSPromises_Open_ExplicitPosition_DoesNotMoveOffset/Scope::.ctor()
@@ -1745,14 +1819,14 @@
 		IL_004f: ldelem.ref
 		IL_0050: castclass Modules.FSPromises_Open_ExplicitPosition_DoesNotMoveOffset/Scope
 		IL_0055: ldloc.s 4
-		IL_0057: newobj instance void FunctionObjects.FSPromises_Open_ExplicitPosition_DoesNotMoveOffset_E95D21F2.FunctionObject_Arrow_B4B8D982_L7C2::.ctor(class Modules.FSPromises_Open_ExplicitPosition_DoesNotMoveOffset/Scope, object[])
+		IL_0057: newobj instance void Modules.FSPromises_Open_ExplicitPosition_DoesNotMoveOffset/ArrowFunction_L7C2/FunctionObject::.ctor(class Modules.FSPromises_Open_ExplicitPosition_DoesNotMoveOffset/Scope, object[])
 		IL_005c: ldc.i4.0
 		IL_005d: conv.r8
 		IL_005e: ldstr ""
 		IL_0063: ldc.i4.0
 		IL_0064: ldc.i4.0
-		IL_0065: call !!0 [JavaScriptRuntime]JavaScriptRuntime.AsyncFunction::InitializeFunctionInstance<class FunctionObjects.FSPromises_Open_ExplicitPosition_DoesNotMoveOffset_E95D21F2.FunctionObject_Arrow_B4B8D982_L7C2>(!!0, float64, string, bool, bool)
-		IL_006a: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class FunctionObjects.FSPromises_Open_ExplicitPosition_DoesNotMoveOffset_E95D21F2.FunctionObject_Arrow_B4B8D982_L7C2>(!!0)
+		IL_0065: call !!0 [JavaScriptRuntime]JavaScriptRuntime.AsyncFunction::InitializeFunctionInstance<class Modules.FSPromises_Open_ExplicitPosition_DoesNotMoveOffset/ArrowFunction_L7C2/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_006a: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.FSPromises_Open_ExplicitPosition_DoesNotMoveOffset/ArrowFunction_L7C2/FunctionObject>(!!0)
 		IL_006f: stloc.s 5
 		IL_0071: ldc.i4.0
 		IL_0072: newarr [System.Runtime]System.Object
@@ -1766,80 +1840,6 @@
 	} // end of method FSPromises_Open_ExplicitPosition_DoesNotMoveOffset::__js_module_init__
 
 } // end of class Modules.FSPromises_Open_ExplicitPosition_DoesNotMoveOffset
-
-.class private auto ansi sealed beforefieldinit FunctionObjects.FSPromises_Open_ExplicitPosition_DoesNotMoveOffset_E95D21F2.FunctionObject_Arrow_B4B8D982_L7C2
-	extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-{
-	// Fields
-	.field private initonly class Modules.FSPromises_Open_ExplicitPosition_DoesNotMoveOffset/Scope _environment0_FSPromises_Open_ExplicitPosition_DoesNotMoveOffset
-	.field private initonly object[] _transitionalScopes
-
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor (
-			class Modules.FSPromises_Open_ExplicitPosition_DoesNotMoveOffset/Scope capture0,
-			object[] capture1
-		) cil managed 
-	{
-		// Method begins at RVA 0x2d87
-		// Header size: 1
-		// Code size: 21 (0x15)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-		IL_0006: ldarg.0
-		IL_0007: ldarg.1
-		IL_0008: stfld class Modules.FSPromises_Open_ExplicitPosition_DoesNotMoveOffset/Scope FunctionObjects.FSPromises_Open_ExplicitPosition_DoesNotMoveOffset_E95D21F2.FunctionObject_Arrow_B4B8D982_L7C2::_environment0_FSPromises_Open_ExplicitPosition_DoesNotMoveOffset
-		IL_000d: ldarg.0
-		IL_000e: ldarg.2
-		IL_000f: stfld object[] FunctionObjects.FSPromises_Open_ExplicitPosition_DoesNotMoveOffset_E95D21F2.FunctionObject_Arrow_B4B8D982_L7C2::_transitionalScopes
-		IL_0014: ret
-	} // end of method FunctionObject_Arrow_B4B8D982_L7C2::.ctor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_IsConstructor () cil managed 
-	{
-		// Method begins at RVA 0x2d9d
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_B4B8D982_L7C2::get_IsConstructor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_RequiresInvocationContext () cil managed 
-	{
-		// Method begins at RVA 0x2da0
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_B4B8D982_L7C2::get_RequiresInvocationContext
-
-	.method family hidebysig virtual 
-		instance object CallCore (
-			object thisArgument,
-			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-		) cil managed 
-	{
-		// Method begins at RVA 0x2da3
-		// Header size: 1
-		// Code size: 13 (0xd)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: ldfld object[] FunctionObjects.FSPromises_Open_ExplicitPosition_DoesNotMoveOffset_E95D21F2.FunctionObject_Arrow_B4B8D982_L7C2::_transitionalScopes
-		IL_0006: ldnull
-		IL_0007: call object Modules.FSPromises_Open_ExplicitPosition_DoesNotMoveOffset/ArrowFunction_L7C2::__js_call__(object[], object)
-		IL_000c: ret
-	} // end of method FunctionObject_Arrow_B4B8D982_L7C2::CallCore
-
-} // end of class FunctionObjects.FSPromises_Open_ExplicitPosition_DoesNotMoveOffset_E95D21F2.FunctionObject_Arrow_B4B8D982_L7C2
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object

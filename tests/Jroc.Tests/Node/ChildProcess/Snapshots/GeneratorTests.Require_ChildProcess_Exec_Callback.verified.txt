@@ -42,6 +42,84 @@
 
 		} // end of class Scope
 
+		.class nested public auto ansi sealed beforefieldinit FunctionObject
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+		{
+			// Fields
+			.field private initonly class Modules.Require_ChildProcess_Exec_Callback/Scope _environment0_Require_ChildProcess_Exec_Callback
+
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor (
+					class Modules.Require_ChildProcess_Exec_Callback/Scope capture0
+				) cil managed 
+			{
+				// Method begins at RVA 0x229d
+				// Header size: 1
+				// Code size: 14 (0xe)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0006: ldarg.0
+				IL_0007: ldarg.1
+				IL_0008: stfld class Modules.Require_ChildProcess_Exec_Callback/Scope Modules.Require_ChildProcess_Exec_Callback/ArrowFunction_L9C42/FunctionObject::_environment0_Require_ChildProcess_Exec_Callback
+				IL_000d: ret
+			} // end of method FunctionObject::.ctor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_IsConstructor () cil managed 
+			{
+				// Method begins at RVA 0x22ac
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_IsConstructor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_RequiresInvocationContext () cil managed 
+			{
+				// Method begins at RVA 0x22af
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_RequiresInvocationContext
+
+			.method family hidebysig virtual 
+				instance object CallCore (
+					object thisArgument,
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+				) cil managed 
+			{
+				// Method begins at RVA 0x22b2
+				// Header size: 1
+				// Code size: 34 (0x22)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: ldfld class Modules.Require_ChildProcess_Exec_Callback/Scope Modules.Require_ChildProcess_Exec_Callback/ArrowFunction_L9C42/FunctionObject::_environment0_Require_ChildProcess_Exec_Callback
+				IL_0006: ldnull
+				IL_0007: ldarg.2
+				IL_0008: ldc.i4.0
+				IL_0009: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+				IL_000e: ldarg.2
+				IL_000f: ldc.i4.1
+				IL_0010: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+				IL_0015: ldarg.2
+				IL_0016: ldc.i4.2
+				IL_0017: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+				IL_001c: call object Modules.Require_ChildProcess_Exec_Callback/ArrowFunction_L9C42::__js_call__(class Modules.Require_ChildProcess_Exec_Callback/Scope, object, object, object, object)
+				IL_0021: ret
+			} // end of method FunctionObject::CallCore
+
+		} // end of class FunctionObject
+
 
 		// Methods
 		.method public hidebysig static 
@@ -193,7 +271,7 @@
 			[4] object,
 			[5] bool,
 			[6] object[],
-			[7] class FunctionObjects.Require_ChildProcess_Exec_Callback_8D482A34.FunctionObject_Arrow_FC7CFEFE_L9C42,
+			[7] class Modules.Require_ChildProcess_Exec_Callback/ArrowFunction_L9C42/FunctionObject,
 			[8] object,
 			[9] string,
 			[10] object
@@ -238,14 +316,14 @@
 		IL_005f: ldc.i4.0
 		IL_0060: ldelem.ref
 		IL_0061: castclass Modules.Require_ChildProcess_Exec_Callback/Scope
-		IL_0066: newobj instance void FunctionObjects.Require_ChildProcess_Exec_Callback_8D482A34.FunctionObject_Arrow_FC7CFEFE_L9C42::.ctor(class Modules.Require_ChildProcess_Exec_Callback/Scope)
+		IL_0066: newobj instance void Modules.Require_ChildProcess_Exec_Callback/ArrowFunction_L9C42/FunctionObject::.ctor(class Modules.Require_ChildProcess_Exec_Callback/Scope)
 		IL_006b: ldc.i4.3
 		IL_006c: conv.r8
 		IL_006d: ldstr ""
 		IL_0072: ldc.i4.0
 		IL_0073: ldc.i4.0
-		IL_0074: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class FunctionObjects.Require_ChildProcess_Exec_Callback_8D482A34.FunctionObject_Arrow_FC7CFEFE_L9C42>(!!0, float64, string, bool, bool)
-		IL_0079: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class FunctionObjects.Require_ChildProcess_Exec_Callback_8D482A34.FunctionObject_Arrow_FC7CFEFE_L9C42>(!!0)
+		IL_0074: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_ChildProcess_Exec_Callback/ArrowFunction_L9C42/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_0079: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_ChildProcess_Exec_Callback/ArrowFunction_L9C42/FunctionObject>(!!0)
 		IL_007e: stloc.s 7
 		IL_0080: ldloc.1
 		IL_0081: ldstr "exec"
@@ -305,84 +383,6 @@
 	} // end of method Require_ChildProcess_Exec_Callback::__js_module_init__
 
 } // end of class Modules.Require_ChildProcess_Exec_Callback
-
-.class private auto ansi sealed beforefieldinit FunctionObjects.Require_ChildProcess_Exec_Callback_8D482A34.FunctionObject_Arrow_FC7CFEFE_L9C42
-	extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-{
-	// Fields
-	.field private initonly class Modules.Require_ChildProcess_Exec_Callback/Scope _environment0_Require_ChildProcess_Exec_Callback
-
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor (
-			class Modules.Require_ChildProcess_Exec_Callback/Scope capture0
-		) cil managed 
-	{
-		// Method begins at RVA 0x229d
-		// Header size: 1
-		// Code size: 14 (0xe)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-		IL_0006: ldarg.0
-		IL_0007: ldarg.1
-		IL_0008: stfld class Modules.Require_ChildProcess_Exec_Callback/Scope FunctionObjects.Require_ChildProcess_Exec_Callback_8D482A34.FunctionObject_Arrow_FC7CFEFE_L9C42::_environment0_Require_ChildProcess_Exec_Callback
-		IL_000d: ret
-	} // end of method FunctionObject_Arrow_FC7CFEFE_L9C42::.ctor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_IsConstructor () cil managed 
-	{
-		// Method begins at RVA 0x22ac
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_FC7CFEFE_L9C42::get_IsConstructor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_RequiresInvocationContext () cil managed 
-	{
-		// Method begins at RVA 0x22af
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_FC7CFEFE_L9C42::get_RequiresInvocationContext
-
-	.method family hidebysig virtual 
-		instance object CallCore (
-			object thisArgument,
-			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-		) cil managed 
-	{
-		// Method begins at RVA 0x22b2
-		// Header size: 1
-		// Code size: 34 (0x22)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: ldfld class Modules.Require_ChildProcess_Exec_Callback/Scope FunctionObjects.Require_ChildProcess_Exec_Callback_8D482A34.FunctionObject_Arrow_FC7CFEFE_L9C42::_environment0_Require_ChildProcess_Exec_Callback
-		IL_0006: ldnull
-		IL_0007: ldarg.2
-		IL_0008: ldc.i4.0
-		IL_0009: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-		IL_000e: ldarg.2
-		IL_000f: ldc.i4.1
-		IL_0010: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-		IL_0015: ldarg.2
-		IL_0016: ldc.i4.2
-		IL_0017: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-		IL_001c: call object Modules.Require_ChildProcess_Exec_Callback/ArrowFunction_L9C42::__js_call__(class Modules.Require_ChildProcess_Exec_Callback/Scope, object, object, object, object)
-		IL_0021: ret
-	} // end of method FunctionObject_Arrow_FC7CFEFE_L9C42::CallCore
-
-} // end of class FunctionObjects.Require_ChildProcess_Exec_Callback_8D482A34.FunctionObject_Arrow_FC7CFEFE_L9C42
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object

@@ -46,6 +46,68 @@
 
 		} // end of class Scope
 
+		.class nested public auto ansi sealed beforefieldinit FunctionObject
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2315
+				// Header size: 1
+				// Code size: 7 (0x7)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0006: ret
+			} // end of method FunctionObject::.ctor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_IsConstructor () cil managed 
+			{
+				// Method begins at RVA 0x231d
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_IsConstructor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_RequiresInvocationContext () cil managed 
+			{
+				// Method begins at RVA 0x2320
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_RequiresInvocationContext
+
+			.method family hidebysig virtual 
+				instance object CallCore (
+					object thisArgument,
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+				) cil managed 
+			{
+				// Method begins at RVA 0x2323
+				// Header size: 1
+				// Code size: 14 (0xe)
+				.maxstack 8
+
+				IL_0000: ldnull
+				IL_0001: ldarg.2
+				IL_0002: ldc.i4.0
+				IL_0003: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+				IL_0008: call object Modules.ObjectLiteral_DestructuredParameterInference_Parity/ArrowFunction_L11C14::__js_call__(object, object)
+				IL_000d: ret
+			} // end of method FunctionObject::CallCore
+
+		} // end of class FunctionObject
+
 
 		// Methods
 		.method public hidebysig static 
@@ -383,7 +445,7 @@
 			[2] object,
 			[3] object,
 			[4] object[],
-			[5] class FunctionObjects.ObjectLiteral_DestructuredParameterInference_Parity_108B8FF4.FunctionObject_Arrow_5CBE814E_L11C14
+			[5] class Modules.ObjectLiteral_DestructuredParameterInference_Parity/ArrowFunction_L11C14/FunctionObject
 		)
 
 		IL_0000: newobj instance void Modules.ObjectLiteral_DestructuredParameterInference_Parity/Scope::.ctor()
@@ -438,14 +500,14 @@
 		IL_00b1: ldloc.0
 		IL_00b2: stelem.ref
 		IL_00b3: stloc.s 4
-		IL_00b5: newobj instance void FunctionObjects.ObjectLiteral_DestructuredParameterInference_Parity_108B8FF4.FunctionObject_Arrow_5CBE814E_L11C14::.ctor()
+		IL_00b5: newobj instance void Modules.ObjectLiteral_DestructuredParameterInference_Parity/ArrowFunction_L11C14/FunctionObject::.ctor()
 		IL_00ba: ldc.i4.1
 		IL_00bb: conv.r8
 		IL_00bc: ldstr ""
 		IL_00c1: ldc.i4.0
 		IL_00c2: ldc.i4.0
-		IL_00c3: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class FunctionObjects.ObjectLiteral_DestructuredParameterInference_Parity_108B8FF4.FunctionObject_Arrow_5CBE814E_L11C14>(!!0, float64, string, bool, bool)
-		IL_00c8: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class FunctionObjects.ObjectLiteral_DestructuredParameterInference_Parity_108B8FF4.FunctionObject_Arrow_5CBE814E_L11C14>(!!0)
+		IL_00c3: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.ObjectLiteral_DestructuredParameterInference_Parity/ArrowFunction_L11C14/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_00c8: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.ObjectLiteral_DestructuredParameterInference_Parity/ArrowFunction_L11C14/FunctionObject>(!!0)
 		IL_00cd: stloc.s 5
 		IL_00cf: ldloc.s 5
 		IL_00d1: ldstr "main"
@@ -459,68 +521,6 @@
 	} // end of method ObjectLiteral_DestructuredParameterInference_Parity::__js_module_init__
 
 } // end of class Modules.ObjectLiteral_DestructuredParameterInference_Parity
-
-.class private auto ansi sealed beforefieldinit FunctionObjects.ObjectLiteral_DestructuredParameterInference_Parity_108B8FF4.FunctionObject_Arrow_5CBE814E_L11C14
-	extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-{
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x2315
-		// Header size: 1
-		// Code size: 7 (0x7)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-		IL_0006: ret
-	} // end of method FunctionObject_Arrow_5CBE814E_L11C14::.ctor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_IsConstructor () cil managed 
-	{
-		// Method begins at RVA 0x231d
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_5CBE814E_L11C14::get_IsConstructor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_RequiresInvocationContext () cil managed 
-	{
-		// Method begins at RVA 0x2320
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_5CBE814E_L11C14::get_RequiresInvocationContext
-
-	.method family hidebysig virtual 
-		instance object CallCore (
-			object thisArgument,
-			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-		) cil managed 
-	{
-		// Method begins at RVA 0x2323
-		// Header size: 1
-		// Code size: 14 (0xe)
-		.maxstack 8
-
-		IL_0000: ldnull
-		IL_0001: ldarg.2
-		IL_0002: ldc.i4.0
-		IL_0003: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-		IL_0008: call object Modules.ObjectLiteral_DestructuredParameterInference_Parity/ArrowFunction_L11C14::__js_call__(object, object)
-		IL_000d: ret
-	} // end of method FunctionObject_Arrow_5CBE814E_L11C14::CallCore
-
-} // end of class FunctionObjects.ObjectLiteral_DestructuredParameterInference_Parity_108B8FF4.FunctionObject_Arrow_5CBE814E_L11C14
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object

@@ -86,6 +86,85 @@
 
 			} // end of class Scope
 
+			.class nested public auto ansi sealed beforefieldinit FunctionObject
+				extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+			{
+				// Fields
+				.field private initonly class Modules.Variable_ConstPrimitivePropagation/Scope _environment0_Variable_ConstPrimitivePropagation
+				.field private initonly class Modules.Variable_ConstPrimitivePropagation/sameCallableTdz/Scope _environment1_sameCallableTdz
+				.field private initonly object[] _transitionalScopes
+
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor (
+						class Modules.Variable_ConstPrimitivePropagation/Scope capture0,
+						class Modules.Variable_ConstPrimitivePropagation/sameCallableTdz/Scope capture1,
+						object[] capture2
+					) cil managed 
+				{
+					// Method begins at RVA 0x2ea8
+					// Header size: 1
+					// Code size: 28 (0x1c)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+					IL_0006: ldarg.0
+					IL_0007: ldarg.1
+					IL_0008: stfld class Modules.Variable_ConstPrimitivePropagation/Scope Modules.Variable_ConstPrimitivePropagation/sameCallableTdz/ArrowFunction_L112C10/FunctionObject::_environment0_Variable_ConstPrimitivePropagation
+					IL_000d: ldarg.0
+					IL_000e: ldarg.2
+					IL_000f: stfld class Modules.Variable_ConstPrimitivePropagation/sameCallableTdz/Scope Modules.Variable_ConstPrimitivePropagation/sameCallableTdz/ArrowFunction_L112C10/FunctionObject::_environment1_sameCallableTdz
+					IL_0014: ldarg.0
+					IL_0015: ldarg.3
+					IL_0016: stfld object[] Modules.Variable_ConstPrimitivePropagation/sameCallableTdz/ArrowFunction_L112C10/FunctionObject::_transitionalScopes
+					IL_001b: ret
+				} // end of method FunctionObject::.ctor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_IsConstructor () cil managed 
+				{
+					// Method begins at RVA 0x2ec5
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_IsConstructor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_RequiresInvocationContext () cil managed 
+				{
+					// Method begins at RVA 0x2ec8
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_RequiresInvocationContext
+
+				.method family hidebysig virtual 
+					instance object CallCore (
+						object thisArgument,
+						[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+					) cil managed 
+				{
+					// Method begins at RVA 0x2ecb
+					// Header size: 1
+					// Code size: 13 (0xd)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: ldfld object[] Modules.Variable_ConstPrimitivePropagation/sameCallableTdz/ArrowFunction_L112C10/FunctionObject::_transitionalScopes
+					IL_0006: ldnull
+					IL_0007: call object Modules.Variable_ConstPrimitivePropagation/sameCallableTdz/ArrowFunction_L112C10::__js_call__(object[], object)
+					IL_000c: ret
+				} // end of method FunctionObject::CallCore
+
+			} // end of class FunctionObject
+
 
 			// Methods
 			.method public hidebysig static 
@@ -213,7 +292,7 @@
 				[5] object,
 				[6] object,
 				[7] object[],
-				[8] class FunctionObjects.Variable_ConstPrimitivePropagation_58CF6D64.FunctionObject_Arrow_E4659C93_L112C10
+				[8] class Modules.Variable_ConstPrimitivePropagation/sameCallableTdz/ArrowFunction_L112C10/FunctionObject
 			)
 
 			IL_0000: newobj instance void Modules.Variable_ConstPrimitivePropagation/sameCallableTdz/Scope::.ctor()
@@ -296,14 +375,14 @@
 			IL_00bd: ldelem.ref
 			IL_00be: castclass Modules.Variable_ConstPrimitivePropagation/sameCallableTdz/Scope
 			IL_00c3: ldloc.s 7
-			IL_00c5: newobj instance void FunctionObjects.Variable_ConstPrimitivePropagation_58CF6D64.FunctionObject_Arrow_E4659C93_L112C10::.ctor(class Modules.Variable_ConstPrimitivePropagation/Scope, class Modules.Variable_ConstPrimitivePropagation/sameCallableTdz/Scope, object[])
+			IL_00c5: newobj instance void Modules.Variable_ConstPrimitivePropagation/sameCallableTdz/ArrowFunction_L112C10/FunctionObject::.ctor(class Modules.Variable_ConstPrimitivePropagation/Scope, class Modules.Variable_ConstPrimitivePropagation/sameCallableTdz/Scope, object[])
 			IL_00ca: ldc.i4.0
 			IL_00cb: conv.r8
 			IL_00cc: ldstr ""
 			IL_00d1: ldc.i4.0
 			IL_00d2: ldc.i4.0
-			IL_00d3: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class FunctionObjects.Variable_ConstPrimitivePropagation_58CF6D64.FunctionObject_Arrow_E4659C93_L112C10>(!!0, float64, string, bool, bool)
-			IL_00d8: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class FunctionObjects.Variable_ConstPrimitivePropagation_58CF6D64.FunctionObject_Arrow_E4659C93_L112C10>(!!0)
+			IL_00d3: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Variable_ConstPrimitivePropagation/sameCallableTdz/ArrowFunction_L112C10/FunctionObject>(!!0, float64, string, bool, bool)
+			IL_00d8: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Variable_ConstPrimitivePropagation/sameCallableTdz/ArrowFunction_L112C10/FunctionObject>(!!0)
 			IL_00dd: stloc.s 8
 			IL_00df: ldloc.s 8
 			IL_00e1: ret
@@ -339,6 +418,85 @@
 			} // end of method Scope::.ctor
 
 		} // end of class Scope
+
+		.class nested public auto ansi sealed beforefieldinit FunctionObject
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+		{
+			// Fields
+			.field private initonly class Modules.Variable_ConstPrimitivePropagation/Scope _environment0_Variable_ConstPrimitivePropagation
+			.field private initonly class Modules.Variable_ConstPrimitivePropagation/Scope/Switch_L118C0 _environment1_Switch_L118C0
+			.field private initonly object[] _transitionalScopes
+
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor (
+					class Modules.Variable_ConstPrimitivePropagation/Scope capture0,
+					class Modules.Variable_ConstPrimitivePropagation/Scope/Switch_L118C0 capture1,
+					object[] capture2
+				) cil managed 
+			{
+				// Method begins at RVA 0x2ed9
+				// Header size: 1
+				// Code size: 28 (0x1c)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0006: ldarg.0
+				IL_0007: ldarg.1
+				IL_0008: stfld class Modules.Variable_ConstPrimitivePropagation/Scope Modules.Variable_ConstPrimitivePropagation/ArrowFunction_L122C21/FunctionObject::_environment0_Variable_ConstPrimitivePropagation
+				IL_000d: ldarg.0
+				IL_000e: ldarg.2
+				IL_000f: stfld class Modules.Variable_ConstPrimitivePropagation/Scope/Switch_L118C0 Modules.Variable_ConstPrimitivePropagation/ArrowFunction_L122C21/FunctionObject::_environment1_Switch_L118C0
+				IL_0014: ldarg.0
+				IL_0015: ldarg.3
+				IL_0016: stfld object[] Modules.Variable_ConstPrimitivePropagation/ArrowFunction_L122C21/FunctionObject::_transitionalScopes
+				IL_001b: ret
+			} // end of method FunctionObject::.ctor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_IsConstructor () cil managed 
+			{
+				// Method begins at RVA 0x2ef6
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_IsConstructor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_RequiresInvocationContext () cil managed 
+			{
+				// Method begins at RVA 0x2ef9
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_RequiresInvocationContext
+
+			.method family hidebysig virtual 
+				instance object CallCore (
+					object thisArgument,
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+				) cil managed 
+			{
+				// Method begins at RVA 0x2efc
+				// Header size: 1
+				// Code size: 13 (0xd)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: ldfld object[] Modules.Variable_ConstPrimitivePropagation/ArrowFunction_L122C21/FunctionObject::_transitionalScopes
+				IL_0006: ldnull
+				IL_0007: call object Modules.Variable_ConstPrimitivePropagation/ArrowFunction_L122C21::__js_call__(object[], object)
+				IL_000c: ret
+			} // end of method FunctionObject::CallCore
+
+		} // end of class FunctionObject
 
 
 		// Methods
@@ -1244,7 +1402,7 @@
 			[38] class Modules.Variable_ConstPrimitivePropagation/LoopReader,
 			[39] class Modules.Variable_ConstPrimitivePropagation/DestructuredReader,
 			[40] object,
-			[41] class FunctionObjects.Variable_ConstPrimitivePropagation_58CF6D64.FunctionObject_Arrow_CB00510A_L122C21
+			[41] class Modules.Variable_ConstPrimitivePropagation/ArrowFunction_L122C21/FunctionObject
 		)
 
 		IL_0000: newobj instance void Modules.Variable_ConstPrimitivePropagation/Scope::.ctor()
@@ -1962,14 +2120,14 @@
 		IL_07cd: ldelem.ref
 		IL_07ce: castclass Modules.Variable_ConstPrimitivePropagation/Scope/Switch_L118C0
 		IL_07d3: ldloc.s 29
-		IL_07d5: newobj instance void FunctionObjects.Variable_ConstPrimitivePropagation_58CF6D64.FunctionObject_Arrow_CB00510A_L122C21::.ctor(class Modules.Variable_ConstPrimitivePropagation/Scope, class Modules.Variable_ConstPrimitivePropagation/Scope/Switch_L118C0, object[])
+		IL_07d5: newobj instance void Modules.Variable_ConstPrimitivePropagation/ArrowFunction_L122C21/FunctionObject::.ctor(class Modules.Variable_ConstPrimitivePropagation/Scope, class Modules.Variable_ConstPrimitivePropagation/Scope/Switch_L118C0, object[])
 		IL_07da: ldc.i4.0
 		IL_07db: conv.r8
 		IL_07dc: ldstr ""
 		IL_07e1: ldc.i4.0
 		IL_07e2: ldc.i4.0
-		IL_07e3: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class FunctionObjects.Variable_ConstPrimitivePropagation_58CF6D64.FunctionObject_Arrow_CB00510A_L122C21>(!!0, float64, string, bool, bool)
-		IL_07e8: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class FunctionObjects.Variable_ConstPrimitivePropagation_58CF6D64.FunctionObject_Arrow_CB00510A_L122C21>(!!0)
+		IL_07e3: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Variable_ConstPrimitivePropagation/ArrowFunction_L122C21/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_07e8: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Variable_ConstPrimitivePropagation/ArrowFunction_L122C21/FunctionObject>(!!0)
 		IL_07ed: stloc.s 41
 		IL_07ef: ldloc.s 41
 		IL_07f1: stloc.s 26
@@ -2929,164 +3087,6 @@
 	} // end of method FunctionObject_FunctionDeclaration_A5C35AA9_sameCallableTdz::ConstructCore
 
 } // end of class FunctionObjects.Variable_ConstPrimitivePropagation_58CF6D64.FunctionObject_FunctionDeclaration_A5C35AA9_sameCallableTdz
-
-.class private auto ansi sealed beforefieldinit FunctionObjects.Variable_ConstPrimitivePropagation_58CF6D64.FunctionObject_Arrow_E4659C93_L112C10
-	extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-{
-	// Fields
-	.field private initonly class Modules.Variable_ConstPrimitivePropagation/Scope _environment0_Variable_ConstPrimitivePropagation
-	.field private initonly class Modules.Variable_ConstPrimitivePropagation/sameCallableTdz/Scope _environment1_sameCallableTdz
-	.field private initonly object[] _transitionalScopes
-
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor (
-			class Modules.Variable_ConstPrimitivePropagation/Scope capture0,
-			class Modules.Variable_ConstPrimitivePropagation/sameCallableTdz/Scope capture1,
-			object[] capture2
-		) cil managed 
-	{
-		// Method begins at RVA 0x2ea8
-		// Header size: 1
-		// Code size: 28 (0x1c)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-		IL_0006: ldarg.0
-		IL_0007: ldarg.1
-		IL_0008: stfld class Modules.Variable_ConstPrimitivePropagation/Scope FunctionObjects.Variable_ConstPrimitivePropagation_58CF6D64.FunctionObject_Arrow_E4659C93_L112C10::_environment0_Variable_ConstPrimitivePropagation
-		IL_000d: ldarg.0
-		IL_000e: ldarg.2
-		IL_000f: stfld class Modules.Variable_ConstPrimitivePropagation/sameCallableTdz/Scope FunctionObjects.Variable_ConstPrimitivePropagation_58CF6D64.FunctionObject_Arrow_E4659C93_L112C10::_environment1_sameCallableTdz
-		IL_0014: ldarg.0
-		IL_0015: ldarg.3
-		IL_0016: stfld object[] FunctionObjects.Variable_ConstPrimitivePropagation_58CF6D64.FunctionObject_Arrow_E4659C93_L112C10::_transitionalScopes
-		IL_001b: ret
-	} // end of method FunctionObject_Arrow_E4659C93_L112C10::.ctor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_IsConstructor () cil managed 
-	{
-		// Method begins at RVA 0x2ec5
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_E4659C93_L112C10::get_IsConstructor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_RequiresInvocationContext () cil managed 
-	{
-		// Method begins at RVA 0x2ec8
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_E4659C93_L112C10::get_RequiresInvocationContext
-
-	.method family hidebysig virtual 
-		instance object CallCore (
-			object thisArgument,
-			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-		) cil managed 
-	{
-		// Method begins at RVA 0x2ecb
-		// Header size: 1
-		// Code size: 13 (0xd)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: ldfld object[] FunctionObjects.Variable_ConstPrimitivePropagation_58CF6D64.FunctionObject_Arrow_E4659C93_L112C10::_transitionalScopes
-		IL_0006: ldnull
-		IL_0007: call object Modules.Variable_ConstPrimitivePropagation/sameCallableTdz/ArrowFunction_L112C10::__js_call__(object[], object)
-		IL_000c: ret
-	} // end of method FunctionObject_Arrow_E4659C93_L112C10::CallCore
-
-} // end of class FunctionObjects.Variable_ConstPrimitivePropagation_58CF6D64.FunctionObject_Arrow_E4659C93_L112C10
-
-.class private auto ansi sealed beforefieldinit FunctionObjects.Variable_ConstPrimitivePropagation_58CF6D64.FunctionObject_Arrow_CB00510A_L122C21
-	extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-{
-	// Fields
-	.field private initonly class Modules.Variable_ConstPrimitivePropagation/Scope _environment0_Variable_ConstPrimitivePropagation
-	.field private initonly class Modules.Variable_ConstPrimitivePropagation/Scope/Switch_L118C0 _environment1_Switch_L118C0
-	.field private initonly object[] _transitionalScopes
-
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor (
-			class Modules.Variable_ConstPrimitivePropagation/Scope capture0,
-			class Modules.Variable_ConstPrimitivePropagation/Scope/Switch_L118C0 capture1,
-			object[] capture2
-		) cil managed 
-	{
-		// Method begins at RVA 0x2ed9
-		// Header size: 1
-		// Code size: 28 (0x1c)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-		IL_0006: ldarg.0
-		IL_0007: ldarg.1
-		IL_0008: stfld class Modules.Variable_ConstPrimitivePropagation/Scope FunctionObjects.Variable_ConstPrimitivePropagation_58CF6D64.FunctionObject_Arrow_CB00510A_L122C21::_environment0_Variable_ConstPrimitivePropagation
-		IL_000d: ldarg.0
-		IL_000e: ldarg.2
-		IL_000f: stfld class Modules.Variable_ConstPrimitivePropagation/Scope/Switch_L118C0 FunctionObjects.Variable_ConstPrimitivePropagation_58CF6D64.FunctionObject_Arrow_CB00510A_L122C21::_environment1_Switch_L118C0
-		IL_0014: ldarg.0
-		IL_0015: ldarg.3
-		IL_0016: stfld object[] FunctionObjects.Variable_ConstPrimitivePropagation_58CF6D64.FunctionObject_Arrow_CB00510A_L122C21::_transitionalScopes
-		IL_001b: ret
-	} // end of method FunctionObject_Arrow_CB00510A_L122C21::.ctor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_IsConstructor () cil managed 
-	{
-		// Method begins at RVA 0x2ef6
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_CB00510A_L122C21::get_IsConstructor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_RequiresInvocationContext () cil managed 
-	{
-		// Method begins at RVA 0x2ef9
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_CB00510A_L122C21::get_RequiresInvocationContext
-
-	.method family hidebysig virtual 
-		instance object CallCore (
-			object thisArgument,
-			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-		) cil managed 
-	{
-		// Method begins at RVA 0x2efc
-		// Header size: 1
-		// Code size: 13 (0xd)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: ldfld object[] FunctionObjects.Variable_ConstPrimitivePropagation_58CF6D64.FunctionObject_Arrow_CB00510A_L122C21::_transitionalScopes
-		IL_0006: ldnull
-		IL_0007: call object Modules.Variable_ConstPrimitivePropagation/ArrowFunction_L122C21::__js_call__(object[], object)
-		IL_000c: ret
-	} // end of method FunctionObject_Arrow_CB00510A_L122C21::CallCore
-
-} // end of class FunctionObjects.Variable_ConstPrimitivePropagation_58CF6D64.FunctionObject_Arrow_CB00510A_L122C21
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object

@@ -232,7 +232,8 @@ namespace Jroc.Services
                 _serviceProvider.GetRequiredService<GeneratedFunctionObjectRegistry>(),
                 _serviceProvider.GetRequiredService<FunctionTypeMetadataRegistry>(),
                 _serviceProvider.GetRequiredService<AnonymousCallableTypeMetadataRegistry>(),
-                _serviceProvider.GetRequiredService<ClassRegistry>());
+                _serviceProvider.GetRequiredService<ClassRegistry>(),
+                nestedTypeRelationshipRegistry);
             generatedFunctionObjectEmitter.DeclareTypes(
                 typeGenerator.NextMethodDefinitionRowAfterDeferredConstructors);
 

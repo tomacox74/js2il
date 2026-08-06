@@ -31,6 +31,75 @@
 
 		} // end of class Scope
 
+		.class nested public auto ansi sealed beforefieldinit FunctionObject
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+		{
+			// Fields
+			.field private initonly class Modules.ControlFlow_ForLoop_VarClosureCapture/Scope _environment0_ControlFlow_ForLoop_VarClosureCapture
+
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor (
+					class Modules.ControlFlow_ForLoop_VarClosureCapture/Scope capture0
+				) cil managed 
+			{
+				// Method begins at RVA 0x21cc
+				// Header size: 1
+				// Code size: 14 (0xe)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0006: ldarg.0
+				IL_0007: ldarg.1
+				IL_0008: stfld class Modules.ControlFlow_ForLoop_VarClosureCapture/Scope Modules.ControlFlow_ForLoop_VarClosureCapture/ArrowFunction_L6C12/FunctionObject::_environment0_ControlFlow_ForLoop_VarClosureCapture
+				IL_000d: ret
+			} // end of method FunctionObject::.ctor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_IsConstructor () cil managed 
+			{
+				// Method begins at RVA 0x21db
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_IsConstructor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_RequiresInvocationContext () cil managed 
+			{
+				// Method begins at RVA 0x21de
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_RequiresInvocationContext
+
+			.method family hidebysig virtual 
+				instance object CallCore (
+					object thisArgument,
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+				) cil managed 
+			{
+				// Method begins at RVA 0x21e1
+				// Header size: 1
+				// Code size: 13 (0xd)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: ldfld class Modules.ControlFlow_ForLoop_VarClosureCapture/Scope Modules.ControlFlow_ForLoop_VarClosureCapture/ArrowFunction_L6C12/FunctionObject::_environment0_ControlFlow_ForLoop_VarClosureCapture
+				IL_0006: ldnull
+				IL_0007: call object Modules.ControlFlow_ForLoop_VarClosureCapture/ArrowFunction_L6C12::__js_call__(class Modules.ControlFlow_ForLoop_VarClosureCapture/Scope, object)
+				IL_000c: ret
+			} // end of method FunctionObject::CallCore
+
+		} // end of class FunctionObject
+
 
 		// Methods
 		.method public hidebysig static 
@@ -123,7 +192,7 @@
 			[0] class Modules.ControlFlow_ForLoop_VarClosureCapture/Scope,
 			[1] class [JavaScriptRuntime]JavaScriptRuntime.Array,
 			[2] object[],
-			[3] class FunctionObjects.ControlFlow_ForLoop_VarClosureCapture_08584E3F.FunctionObject_Arrow_9429FB74_L6C12,
+			[3] class Modules.ControlFlow_ForLoop_VarClosureCapture/ArrowFunction_L6C12/FunctionObject,
 			[4] float64,
 			[5] object,
 			[6] object
@@ -158,14 +227,14 @@
 			IL_0049: ldc.i4.0
 			IL_004a: ldelem.ref
 			IL_004b: castclass Modules.ControlFlow_ForLoop_VarClosureCapture/Scope
-			IL_0050: newobj instance void FunctionObjects.ControlFlow_ForLoop_VarClosureCapture_08584E3F.FunctionObject_Arrow_9429FB74_L6C12::.ctor(class Modules.ControlFlow_ForLoop_VarClosureCapture/Scope)
+			IL_0050: newobj instance void Modules.ControlFlow_ForLoop_VarClosureCapture/ArrowFunction_L6C12/FunctionObject::.ctor(class Modules.ControlFlow_ForLoop_VarClosureCapture/Scope)
 			IL_0055: ldc.i4.0
 			IL_0056: conv.r8
 			IL_0057: ldstr ""
 			IL_005c: ldc.i4.0
 			IL_005d: ldc.i4.0
-			IL_005e: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class FunctionObjects.ControlFlow_ForLoop_VarClosureCapture_08584E3F.FunctionObject_Arrow_9429FB74_L6C12>(!!0, float64, string, bool, bool)
-			IL_0063: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class FunctionObjects.ControlFlow_ForLoop_VarClosureCapture_08584E3F.FunctionObject_Arrow_9429FB74_L6C12>(!!0)
+			IL_005e: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.ControlFlow_ForLoop_VarClosureCapture/ArrowFunction_L6C12/FunctionObject>(!!0, float64, string, bool, bool)
+			IL_0063: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.ControlFlow_ForLoop_VarClosureCapture/ArrowFunction_L6C12/FunctionObject>(!!0)
 			IL_0068: stloc.3
 			IL_0069: ldloc.1
 			IL_006a: ldloc.3
@@ -238,75 +307,6 @@
 	} // end of method ControlFlow_ForLoop_VarClosureCapture::__js_module_init__
 
 } // end of class Modules.ControlFlow_ForLoop_VarClosureCapture
-
-.class private auto ansi sealed beforefieldinit FunctionObjects.ControlFlow_ForLoop_VarClosureCapture_08584E3F.FunctionObject_Arrow_9429FB74_L6C12
-	extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-{
-	// Fields
-	.field private initonly class Modules.ControlFlow_ForLoop_VarClosureCapture/Scope _environment0_ControlFlow_ForLoop_VarClosureCapture
-
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor (
-			class Modules.ControlFlow_ForLoop_VarClosureCapture/Scope capture0
-		) cil managed 
-	{
-		// Method begins at RVA 0x21cc
-		// Header size: 1
-		// Code size: 14 (0xe)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-		IL_0006: ldarg.0
-		IL_0007: ldarg.1
-		IL_0008: stfld class Modules.ControlFlow_ForLoop_VarClosureCapture/Scope FunctionObjects.ControlFlow_ForLoop_VarClosureCapture_08584E3F.FunctionObject_Arrow_9429FB74_L6C12::_environment0_ControlFlow_ForLoop_VarClosureCapture
-		IL_000d: ret
-	} // end of method FunctionObject_Arrow_9429FB74_L6C12::.ctor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_IsConstructor () cil managed 
-	{
-		// Method begins at RVA 0x21db
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_9429FB74_L6C12::get_IsConstructor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_RequiresInvocationContext () cil managed 
-	{
-		// Method begins at RVA 0x21de
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_9429FB74_L6C12::get_RequiresInvocationContext
-
-	.method family hidebysig virtual 
-		instance object CallCore (
-			object thisArgument,
-			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-		) cil managed 
-	{
-		// Method begins at RVA 0x21e1
-		// Header size: 1
-		// Code size: 13 (0xd)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: ldfld class Modules.ControlFlow_ForLoop_VarClosureCapture/Scope FunctionObjects.ControlFlow_ForLoop_VarClosureCapture_08584E3F.FunctionObject_Arrow_9429FB74_L6C12::_environment0_ControlFlow_ForLoop_VarClosureCapture
-		IL_0006: ldnull
-		IL_0007: call object Modules.ControlFlow_ForLoop_VarClosureCapture/ArrowFunction_L6C12::__js_call__(class Modules.ControlFlow_ForLoop_VarClosureCapture/Scope, object)
-		IL_000c: ret
-	} // end of method FunctionObject_Arrow_9429FB74_L6C12::CallCore
-
-} // end of class FunctionObjects.ControlFlow_ForLoop_VarClosureCapture_08584E3F.FunctionObject_Arrow_9429FB74_L6C12
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object

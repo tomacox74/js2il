@@ -35,6 +35,80 @@
 
 			} // end of class Scope
 
+			.class nested public auto ansi sealed beforefieldinit FunctionObject
+				extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+			{
+				// Fields
+				.field private initonly class Modules.ArrowFunction_ClosureMutatesOuterVariable/createCounter/Scope _environment1_createCounter
+				.field private initonly object[] _transitionalScopes
+
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor (
+						class Modules.ArrowFunction_ClosureMutatesOuterVariable/createCounter/Scope capture0,
+						object[] capture1
+					) cil managed 
+				{
+					// Method begins at RVA 0x2238
+					// Header size: 1
+					// Code size: 21 (0x15)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+					IL_0006: ldarg.0
+					IL_0007: ldarg.1
+					IL_0008: stfld class Modules.ArrowFunction_ClosureMutatesOuterVariable/createCounter/Scope Modules.ArrowFunction_ClosureMutatesOuterVariable/createCounter/ArrowFunction_L9C23/FunctionObject::_environment1_createCounter
+					IL_000d: ldarg.0
+					IL_000e: ldarg.2
+					IL_000f: stfld object[] Modules.ArrowFunction_ClosureMutatesOuterVariable/createCounter/ArrowFunction_L9C23/FunctionObject::_transitionalScopes
+					IL_0014: ret
+				} // end of method FunctionObject::.ctor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_IsConstructor () cil managed 
+				{
+					// Method begins at RVA 0x224e
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_IsConstructor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_RequiresInvocationContext () cil managed 
+				{
+					// Method begins at RVA 0x2251
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_RequiresInvocationContext
+
+				.method family hidebysig virtual 
+					instance object CallCore (
+						object thisArgument,
+						[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+					) cil managed 
+				{
+					// Method begins at RVA 0x2254
+					// Header size: 1
+					// Code size: 13 (0xd)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: ldfld object[] Modules.ArrowFunction_ClosureMutatesOuterVariable/createCounter/ArrowFunction_L9C23/FunctionObject::_transitionalScopes
+					IL_0006: ldnull
+					IL_0007: call object Modules.ArrowFunction_ClosureMutatesOuterVariable/createCounter/ArrowFunction_L9C23::__js_call__(object[], object)
+					IL_000c: ret
+				} // end of method FunctionObject::CallCore
+
+			} // end of class FunctionObject
+
 
 			// Methods
 			.method public hidebysig static 
@@ -130,7 +204,7 @@
 				[0] class Modules.ArrowFunction_ClosureMutatesOuterVariable/createCounter/Scope,
 				[1] object,
 				[2] object[],
-				[3] class FunctionObjects.ArrowFunction_ClosureMutatesOuterVariable_CDEC60F2.FunctionObject_Arrow_F2AB5F1E_L9C23
+				[3] class Modules.ArrowFunction_ClosureMutatesOuterVariable/createCounter/ArrowFunction_L9C23/FunctionObject
 			)
 
 			IL_0000: newobj instance void Modules.ArrowFunction_ClosureMutatesOuterVariable/createCounter/Scope::.ctor()
@@ -155,14 +229,14 @@
 			IL_0023: ldelem.ref
 			IL_0024: castclass Modules.ArrowFunction_ClosureMutatesOuterVariable/createCounter/Scope
 			IL_0029: ldloc.2
-			IL_002a: newobj instance void FunctionObjects.ArrowFunction_ClosureMutatesOuterVariable_CDEC60F2.FunctionObject_Arrow_F2AB5F1E_L9C23::.ctor(class Modules.ArrowFunction_ClosureMutatesOuterVariable/createCounter/Scope, object[])
+			IL_002a: newobj instance void Modules.ArrowFunction_ClosureMutatesOuterVariable/createCounter/ArrowFunction_L9C23/FunctionObject::.ctor(class Modules.ArrowFunction_ClosureMutatesOuterVariable/createCounter/Scope, object[])
 			IL_002f: ldc.i4.0
 			IL_0030: conv.r8
 			IL_0031: ldstr ""
 			IL_0036: ldc.i4.0
 			IL_0037: ldc.i4.0
-			IL_0038: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class FunctionObjects.ArrowFunction_ClosureMutatesOuterVariable_CDEC60F2.FunctionObject_Arrow_F2AB5F1E_L9C23>(!!0, float64, string, bool, bool)
-			IL_003d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class FunctionObjects.ArrowFunction_ClosureMutatesOuterVariable_CDEC60F2.FunctionObject_Arrow_F2AB5F1E_L9C23>(!!0)
+			IL_0038: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.ArrowFunction_ClosureMutatesOuterVariable/createCounter/ArrowFunction_L9C23/FunctionObject>(!!0, float64, string, bool, bool)
+			IL_003d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.ArrowFunction_ClosureMutatesOuterVariable/createCounter/ArrowFunction_L9C23/FunctionObject>(!!0)
 			IL_0042: stloc.3
 			IL_0043: ldloc.3
 			IL_0044: ldstr "increment"
@@ -385,80 +459,6 @@
 	} // end of method FunctionObject_FunctionDeclaration_61C7CF9F_createCounter::ConstructCore
 
 } // end of class FunctionObjects.ArrowFunction_ClosureMutatesOuterVariable_CDEC60F2.FunctionObject_FunctionDeclaration_61C7CF9F_createCounter
-
-.class private auto ansi sealed beforefieldinit FunctionObjects.ArrowFunction_ClosureMutatesOuterVariable_CDEC60F2.FunctionObject_Arrow_F2AB5F1E_L9C23
-	extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-{
-	// Fields
-	.field private initonly class Modules.ArrowFunction_ClosureMutatesOuterVariable/createCounter/Scope _environment1_createCounter
-	.field private initonly object[] _transitionalScopes
-
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor (
-			class Modules.ArrowFunction_ClosureMutatesOuterVariable/createCounter/Scope capture0,
-			object[] capture1
-		) cil managed 
-	{
-		// Method begins at RVA 0x2238
-		// Header size: 1
-		// Code size: 21 (0x15)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-		IL_0006: ldarg.0
-		IL_0007: ldarg.1
-		IL_0008: stfld class Modules.ArrowFunction_ClosureMutatesOuterVariable/createCounter/Scope FunctionObjects.ArrowFunction_ClosureMutatesOuterVariable_CDEC60F2.FunctionObject_Arrow_F2AB5F1E_L9C23::_environment1_createCounter
-		IL_000d: ldarg.0
-		IL_000e: ldarg.2
-		IL_000f: stfld object[] FunctionObjects.ArrowFunction_ClosureMutatesOuterVariable_CDEC60F2.FunctionObject_Arrow_F2AB5F1E_L9C23::_transitionalScopes
-		IL_0014: ret
-	} // end of method FunctionObject_Arrow_F2AB5F1E_L9C23::.ctor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_IsConstructor () cil managed 
-	{
-		// Method begins at RVA 0x224e
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_F2AB5F1E_L9C23::get_IsConstructor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_RequiresInvocationContext () cil managed 
-	{
-		// Method begins at RVA 0x2251
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_F2AB5F1E_L9C23::get_RequiresInvocationContext
-
-	.method family hidebysig virtual 
-		instance object CallCore (
-			object thisArgument,
-			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-		) cil managed 
-	{
-		// Method begins at RVA 0x2254
-		// Header size: 1
-		// Code size: 13 (0xd)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: ldfld object[] FunctionObjects.ArrowFunction_ClosureMutatesOuterVariable_CDEC60F2.FunctionObject_Arrow_F2AB5F1E_L9C23::_transitionalScopes
-		IL_0006: ldnull
-		IL_0007: call object Modules.ArrowFunction_ClosureMutatesOuterVariable/createCounter/ArrowFunction_L9C23::__js_call__(object[], object)
-		IL_000c: ret
-	} // end of method FunctionObject_Arrow_F2AB5F1E_L9C23::CallCore
-
-} // end of class FunctionObjects.ArrowFunction_ClosureMutatesOuterVariable_CDEC60F2.FunctionObject_Arrow_F2AB5F1E_L9C23
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object

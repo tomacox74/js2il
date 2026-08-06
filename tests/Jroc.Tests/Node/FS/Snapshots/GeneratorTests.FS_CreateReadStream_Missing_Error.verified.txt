@@ -38,6 +38,68 @@
 
 		} // end of class Scope
 
+		.class nested public auto ansi sealed beforefieldinit FunctionObject
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2298
+				// Header size: 1
+				// Code size: 7 (0x7)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0006: ret
+			} // end of method FunctionObject::.ctor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_IsConstructor () cil managed 
+			{
+				// Method begins at RVA 0x22a0
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_IsConstructor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_RequiresInvocationContext () cil managed 
+			{
+				// Method begins at RVA 0x22a3
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_RequiresInvocationContext
+
+			.method family hidebysig virtual 
+				instance object CallCore (
+					object thisArgument,
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+				) cil managed 
+			{
+				// Method begins at RVA 0x22a6
+				// Header size: 1
+				// Code size: 14 (0xe)
+				.maxstack 8
+
+				IL_0000: ldnull
+				IL_0001: ldarg.2
+				IL_0002: ldc.i4.0
+				IL_0003: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+				IL_0008: call object Modules.FS_CreateReadStream_Missing_Error/ArrowFunction_L13C20::__js_call__(object, object)
+				IL_000d: ret
+			} // end of method FunctionObject::CallCore
+
+		} // end of class FunctionObject
+
 
 		// Methods
 		.method public hidebysig static 
@@ -127,6 +189,65 @@
 
 		} // end of class Scope
 
+		.class nested public auto ansi sealed beforefieldinit FunctionObject
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x22b5
+				// Header size: 1
+				// Code size: 7 (0x7)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0006: ret
+			} // end of method FunctionObject::.ctor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_IsConstructor () cil managed 
+			{
+				// Method begins at RVA 0x22bd
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_IsConstructor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_RequiresInvocationContext () cil managed 
+			{
+				// Method begins at RVA 0x22c0
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_RequiresInvocationContext
+
+			.method family hidebysig virtual 
+				instance object CallCore (
+					object thisArgument,
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+				) cil managed 
+			{
+				// Method begins at RVA 0x22c3
+				// Header size: 1
+				// Code size: 7 (0x7)
+				.maxstack 8
+
+				IL_0000: ldnull
+				IL_0001: call object Modules.FS_CreateReadStream_Missing_Error/ArrowFunction_L17C20::__js_call__(object)
+				IL_0006: ret
+			} // end of method FunctionObject::CallCore
+
+		} // end of class FunctionObject
+
 
 		// Methods
 		.method public hidebysig static 
@@ -205,8 +326,8 @@
 			[9] float64,
 			[10] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
 			[11] object[],
-			[12] class FunctionObjects.FS_CreateReadStream_Missing_Error_65F4CDF1.FunctionObject_Arrow_99AA0D3C_L13C20,
-			[13] class FunctionObjects.FS_CreateReadStream_Missing_Error_65F4CDF1.FunctionObject_Arrow_EE03C9C0_L17C20
+			[12] class Modules.FS_CreateReadStream_Missing_Error/ArrowFunction_L13C20/FunctionObject,
+			[13] class Modules.FS_CreateReadStream_Missing_Error/ArrowFunction_L17C20/FunctionObject
 		)
 
 		IL_0000: newobj instance void Modules.FS_CreateReadStream_Missing_Error/Scope::.ctor()
@@ -303,14 +424,14 @@
 		IL_0115: ldloc.0
 		IL_0116: stelem.ref
 		IL_0117: stloc.s 11
-		IL_0119: newobj instance void FunctionObjects.FS_CreateReadStream_Missing_Error_65F4CDF1.FunctionObject_Arrow_99AA0D3C_L13C20::.ctor()
+		IL_0119: newobj instance void Modules.FS_CreateReadStream_Missing_Error/ArrowFunction_L13C20/FunctionObject::.ctor()
 		IL_011e: ldc.i4.1
 		IL_011f: conv.r8
 		IL_0120: ldstr ""
 		IL_0125: ldc.i4.0
 		IL_0126: ldc.i4.0
-		IL_0127: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class FunctionObjects.FS_CreateReadStream_Missing_Error_65F4CDF1.FunctionObject_Arrow_99AA0D3C_L13C20>(!!0, float64, string, bool, bool)
-		IL_012c: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class FunctionObjects.FS_CreateReadStream_Missing_Error_65F4CDF1.FunctionObject_Arrow_99AA0D3C_L13C20>(!!0)
+		IL_0127: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.FS_CreateReadStream_Missing_Error/ArrowFunction_L13C20/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_012c: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.FS_CreateReadStream_Missing_Error/ArrowFunction_L13C20/FunctionObject>(!!0)
 		IL_0131: stloc.s 12
 		IL_0133: ldloc.s 7
 		IL_0135: ldstr "on"
@@ -328,14 +449,14 @@
 		IL_0158: ldloc.0
 		IL_0159: stelem.ref
 		IL_015a: stloc.s 11
-		IL_015c: newobj instance void FunctionObjects.FS_CreateReadStream_Missing_Error_65F4CDF1.FunctionObject_Arrow_EE03C9C0_L17C20::.ctor()
+		IL_015c: newobj instance void Modules.FS_CreateReadStream_Missing_Error/ArrowFunction_L17C20/FunctionObject::.ctor()
 		IL_0161: ldc.i4.0
 		IL_0162: conv.r8
 		IL_0163: ldstr ""
 		IL_0168: ldc.i4.0
 		IL_0169: ldc.i4.0
-		IL_016a: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class FunctionObjects.FS_CreateReadStream_Missing_Error_65F4CDF1.FunctionObject_Arrow_EE03C9C0_L17C20>(!!0, float64, string, bool, bool)
-		IL_016f: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class FunctionObjects.FS_CreateReadStream_Missing_Error_65F4CDF1.FunctionObject_Arrow_EE03C9C0_L17C20>(!!0)
+		IL_016a: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.FS_CreateReadStream_Missing_Error/ArrowFunction_L17C20/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_016f: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.FS_CreateReadStream_Missing_Error/ArrowFunction_L17C20/FunctionObject>(!!0)
 		IL_0174: stloc.s 13
 		IL_0176: ldloc.s 7
 		IL_0178: ldstr "on"
@@ -347,127 +468,6 @@
 	} // end of method FS_CreateReadStream_Missing_Error::__js_module_init__
 
 } // end of class Modules.FS_CreateReadStream_Missing_Error
-
-.class private auto ansi sealed beforefieldinit FunctionObjects.FS_CreateReadStream_Missing_Error_65F4CDF1.FunctionObject_Arrow_99AA0D3C_L13C20
-	extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-{
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x2298
-		// Header size: 1
-		// Code size: 7 (0x7)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-		IL_0006: ret
-	} // end of method FunctionObject_Arrow_99AA0D3C_L13C20::.ctor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_IsConstructor () cil managed 
-	{
-		// Method begins at RVA 0x22a0
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_99AA0D3C_L13C20::get_IsConstructor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_RequiresInvocationContext () cil managed 
-	{
-		// Method begins at RVA 0x22a3
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_99AA0D3C_L13C20::get_RequiresInvocationContext
-
-	.method family hidebysig virtual 
-		instance object CallCore (
-			object thisArgument,
-			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-		) cil managed 
-	{
-		// Method begins at RVA 0x22a6
-		// Header size: 1
-		// Code size: 14 (0xe)
-		.maxstack 8
-
-		IL_0000: ldnull
-		IL_0001: ldarg.2
-		IL_0002: ldc.i4.0
-		IL_0003: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-		IL_0008: call object Modules.FS_CreateReadStream_Missing_Error/ArrowFunction_L13C20::__js_call__(object, object)
-		IL_000d: ret
-	} // end of method FunctionObject_Arrow_99AA0D3C_L13C20::CallCore
-
-} // end of class FunctionObjects.FS_CreateReadStream_Missing_Error_65F4CDF1.FunctionObject_Arrow_99AA0D3C_L13C20
-
-.class private auto ansi sealed beforefieldinit FunctionObjects.FS_CreateReadStream_Missing_Error_65F4CDF1.FunctionObject_Arrow_EE03C9C0_L17C20
-	extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-{
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x22b5
-		// Header size: 1
-		// Code size: 7 (0x7)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-		IL_0006: ret
-	} // end of method FunctionObject_Arrow_EE03C9C0_L17C20::.ctor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_IsConstructor () cil managed 
-	{
-		// Method begins at RVA 0x22bd
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_EE03C9C0_L17C20::get_IsConstructor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_RequiresInvocationContext () cil managed 
-	{
-		// Method begins at RVA 0x22c0
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_EE03C9C0_L17C20::get_RequiresInvocationContext
-
-	.method family hidebysig virtual 
-		instance object CallCore (
-			object thisArgument,
-			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-		) cil managed 
-	{
-		// Method begins at RVA 0x22c3
-		// Header size: 1
-		// Code size: 7 (0x7)
-		.maxstack 8
-
-		IL_0000: ldnull
-		IL_0001: call object Modules.FS_CreateReadStream_Missing_Error/ArrowFunction_L17C20::__js_call__(object)
-		IL_0006: ret
-	} // end of method FunctionObject_Arrow_EE03C9C0_L17C20::CallCore
-
-} // end of class FunctionObjects.FS_CreateReadStream_Missing_Error_65F4CDF1.FunctionObject_Arrow_EE03C9C0_L17C20
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object

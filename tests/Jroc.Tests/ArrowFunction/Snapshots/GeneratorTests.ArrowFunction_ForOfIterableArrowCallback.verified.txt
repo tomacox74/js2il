@@ -41,6 +41,68 @@
 
 			} // end of class Scope
 
+			.class nested public auto ansi sealed beforefieldinit FunctionObject
+				extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+			{
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor () cil managed 
+				{
+					// Method begins at RVA 0x224c
+					// Header size: 1
+					// Code size: 7 (0x7)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+					IL_0006: ret
+				} // end of method FunctionObject::.ctor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_IsConstructor () cil managed 
+				{
+					// Method begins at RVA 0x2254
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_IsConstructor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_RequiresInvocationContext () cil managed 
+				{
+					// Method begins at RVA 0x2257
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_RequiresInvocationContext
+
+				.method family hidebysig virtual 
+					instance object CallCore (
+						object thisArgument,
+						[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+					) cil managed 
+				{
+					// Method begins at RVA 0x225a
+					// Header size: 1
+					// Code size: 14 (0xe)
+					.maxstack 8
+
+					IL_0000: ldnull
+					IL_0001: ldarg.2
+					IL_0002: ldc.i4.0
+					IL_0003: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+					IL_0008: call object Modules.ArrowFunction_ForOfIterableArrowCallback/ArrowFunction_L1C26/ArrowFunction_L2C48::__js_call__(object, object)
+					IL_000d: ret
+				} // end of method FunctionObject::CallCore
+
+			} // end of class FunctionObject
+
 
 			// Methods
 			.method public hidebysig static 
@@ -144,6 +206,68 @@
 
 		} // end of class Scope_ForOf_L2C9
 
+		.class nested public auto ansi sealed beforefieldinit FunctionObject
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x222f
+				// Header size: 1
+				// Code size: 7 (0x7)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0006: ret
+			} // end of method FunctionObject::.ctor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_IsConstructor () cil managed 
+			{
+				// Method begins at RVA 0x2237
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_IsConstructor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_RequiresInvocationContext () cil managed 
+			{
+				// Method begins at RVA 0x223a
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_RequiresInvocationContext
+
+			.method family hidebysig virtual 
+				instance object CallCore (
+					object thisArgument,
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+				) cil managed 
+			{
+				// Method begins at RVA 0x223d
+				// Header size: 1
+				// Code size: 14 (0xe)
+				.maxstack 8
+
+				IL_0000: ldnull
+				IL_0001: ldarg.2
+				IL_0002: ldc.i4.0
+				IL_0003: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+				IL_0008: call object Modules.ArrowFunction_ForOfIterableArrowCallback/ArrowFunction_L1C26::__js_call__(object, object)
+				IL_000d: ret
+			} // end of method FunctionObject::CallCore
+
+		} // end of class FunctionObject
+
 
 		// Methods
 		.method public hidebysig static 
@@ -167,7 +291,7 @@
 				[4] object,
 				[5] object,
 				[6] object[],
-				[7] class FunctionObjects.ArrowFunction_ForOfIterableArrowCallback_98B4E81D.FunctionObject_Arrow_E683F59B_L2C48,
+				[7] class Modules.ArrowFunction_ForOfIterableArrowCallback/ArrowFunction_L1C26/ArrowFunction_L2C48/FunctionObject,
 				[8] bool
 			)
 
@@ -179,14 +303,14 @@
 			IL_0011: stloc.s 5
 			IL_0013: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
 			IL_0018: stloc.s 6
-			IL_001a: newobj instance void FunctionObjects.ArrowFunction_ForOfIterableArrowCallback_98B4E81D.FunctionObject_Arrow_E683F59B_L2C48::.ctor()
+			IL_001a: newobj instance void Modules.ArrowFunction_ForOfIterableArrowCallback/ArrowFunction_L1C26/ArrowFunction_L2C48/FunctionObject::.ctor()
 			IL_001f: ldc.i4.1
 			IL_0020: conv.r8
 			IL_0021: ldstr ""
 			IL_0026: ldc.i4.0
 			IL_0027: ldc.i4.0
-			IL_0028: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class FunctionObjects.ArrowFunction_ForOfIterableArrowCallback_98B4E81D.FunctionObject_Arrow_E683F59B_L2C48>(!!0, float64, string, bool, bool)
-			IL_002d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class FunctionObjects.ArrowFunction_ForOfIterableArrowCallback_98B4E81D.FunctionObject_Arrow_E683F59B_L2C48>(!!0)
+			IL_0028: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.ArrowFunction_ForOfIterableArrowCallback/ArrowFunction_L1C26/ArrowFunction_L2C48/FunctionObject>(!!0, float64, string, bool, bool)
+			IL_002d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.ArrowFunction_ForOfIterableArrowCallback/ArrowFunction_L1C26/ArrowFunction_L2C48/FunctionObject>(!!0)
 			IL_0032: stloc.s 7
 			IL_0034: ldloc.s 5
 			IL_0036: ldstr "filter"
@@ -299,7 +423,7 @@
 			[0] class Modules.ArrowFunction_ForOfIterableArrowCallback/Scope,
 			[1] object,
 			[2] object[],
-			[3] class FunctionObjects.ArrowFunction_ForOfIterableArrowCallback_98B4E81D.FunctionObject_Arrow_6E5E4789_L1C26,
+			[3] class Modules.ArrowFunction_ForOfIterableArrowCallback/ArrowFunction_L1C26/FunctionObject,
 			[4] object,
 			[5] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
 			[6] object
@@ -314,14 +438,14 @@
 		IL_000e: ldloc.0
 		IL_000f: stelem.ref
 		IL_0010: stloc.2
-		IL_0011: newobj instance void FunctionObjects.ArrowFunction_ForOfIterableArrowCallback_98B4E81D.FunctionObject_Arrow_6E5E4789_L1C26::.ctor()
+		IL_0011: newobj instance void Modules.ArrowFunction_ForOfIterableArrowCallback/ArrowFunction_L1C26/FunctionObject::.ctor()
 		IL_0016: ldc.i4.1
 		IL_0017: conv.r8
 		IL_0018: ldstr ""
 		IL_001d: ldc.i4.0
 		IL_001e: ldc.i4.0
-		IL_001f: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class FunctionObjects.ArrowFunction_ForOfIterableArrowCallback_98B4E81D.FunctionObject_Arrow_6E5E4789_L1C26>(!!0, float64, string, bool, bool)
-		IL_0024: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class FunctionObjects.ArrowFunction_ForOfIterableArrowCallback_98B4E81D.FunctionObject_Arrow_6E5E4789_L1C26>(!!0)
+		IL_001f: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.ArrowFunction_ForOfIterableArrowCallback/ArrowFunction_L1C26/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_0024: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.ArrowFunction_ForOfIterableArrowCallback/ArrowFunction_L1C26/FunctionObject>(!!0)
 		IL_0029: stloc.3
 		IL_002a: ldloc.3
 		IL_002b: ldstr "stripUnderscores"
@@ -358,130 +482,6 @@
 	} // end of method ArrowFunction_ForOfIterableArrowCallback::__js_module_init__
 
 } // end of class Modules.ArrowFunction_ForOfIterableArrowCallback
-
-.class private auto ansi sealed beforefieldinit FunctionObjects.ArrowFunction_ForOfIterableArrowCallback_98B4E81D.FunctionObject_Arrow_6E5E4789_L1C26
-	extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-{
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x222f
-		// Header size: 1
-		// Code size: 7 (0x7)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-		IL_0006: ret
-	} // end of method FunctionObject_Arrow_6E5E4789_L1C26::.ctor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_IsConstructor () cil managed 
-	{
-		// Method begins at RVA 0x2237
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_6E5E4789_L1C26::get_IsConstructor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_RequiresInvocationContext () cil managed 
-	{
-		// Method begins at RVA 0x223a
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_6E5E4789_L1C26::get_RequiresInvocationContext
-
-	.method family hidebysig virtual 
-		instance object CallCore (
-			object thisArgument,
-			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-		) cil managed 
-	{
-		// Method begins at RVA 0x223d
-		// Header size: 1
-		// Code size: 14 (0xe)
-		.maxstack 8
-
-		IL_0000: ldnull
-		IL_0001: ldarg.2
-		IL_0002: ldc.i4.0
-		IL_0003: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-		IL_0008: call object Modules.ArrowFunction_ForOfIterableArrowCallback/ArrowFunction_L1C26::__js_call__(object, object)
-		IL_000d: ret
-	} // end of method FunctionObject_Arrow_6E5E4789_L1C26::CallCore
-
-} // end of class FunctionObjects.ArrowFunction_ForOfIterableArrowCallback_98B4E81D.FunctionObject_Arrow_6E5E4789_L1C26
-
-.class private auto ansi sealed beforefieldinit FunctionObjects.ArrowFunction_ForOfIterableArrowCallback_98B4E81D.FunctionObject_Arrow_E683F59B_L2C48
-	extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-{
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x224c
-		// Header size: 1
-		// Code size: 7 (0x7)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-		IL_0006: ret
-	} // end of method FunctionObject_Arrow_E683F59B_L2C48::.ctor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_IsConstructor () cil managed 
-	{
-		// Method begins at RVA 0x2254
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_E683F59B_L2C48::get_IsConstructor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_RequiresInvocationContext () cil managed 
-	{
-		// Method begins at RVA 0x2257
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_E683F59B_L2C48::get_RequiresInvocationContext
-
-	.method family hidebysig virtual 
-		instance object CallCore (
-			object thisArgument,
-			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-		) cil managed 
-	{
-		// Method begins at RVA 0x225a
-		// Header size: 1
-		// Code size: 14 (0xe)
-		.maxstack 8
-
-		IL_0000: ldnull
-		IL_0001: ldarg.2
-		IL_0002: ldc.i4.0
-		IL_0003: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-		IL_0008: call object Modules.ArrowFunction_ForOfIterableArrowCallback/ArrowFunction_L1C26/ArrowFunction_L2C48::__js_call__(object, object)
-		IL_000d: ret
-	} // end of method FunctionObject_Arrow_E683F59B_L2C48::CallCore
-
-} // end of class FunctionObjects.ArrowFunction_ForOfIterableArrowCallback_98B4E81D.FunctionObject_Arrow_E683F59B_L2C48
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object

@@ -130,6 +130,75 @@
 
 		} // end of class Scope
 
+		.class nested public auto ansi sealed beforefieldinit FunctionObject
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+		{
+			// Fields
+			.field private initonly class Modules.WeakRef_Deref_KeptObjects/Scope _environment0_WeakRef_Deref_KeptObjects
+
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor (
+					class Modules.WeakRef_Deref_KeptObjects/Scope capture0
+				) cil managed 
+			{
+				// Method begins at RVA 0x236f
+				// Header size: 1
+				// Code size: 14 (0xe)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0006: ldarg.0
+				IL_0007: ldarg.1
+				IL_0008: stfld class Modules.WeakRef_Deref_KeptObjects/Scope Modules.WeakRef_Deref_KeptObjects/ArrowFunction_L23C14/FunctionObject::_environment0_WeakRef_Deref_KeptObjects
+				IL_000d: ret
+			} // end of method FunctionObject::.ctor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_IsConstructor () cil managed 
+			{
+				// Method begins at RVA 0x237e
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_IsConstructor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_RequiresInvocationContext () cil managed 
+			{
+				// Method begins at RVA 0x2381
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_RequiresInvocationContext
+
+			.method family hidebysig virtual 
+				instance object CallCore (
+					object thisArgument,
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+				) cil managed 
+			{
+				// Method begins at RVA 0x2384
+				// Header size: 1
+				// Code size: 13 (0xd)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: ldfld class Modules.WeakRef_Deref_KeptObjects/Scope Modules.WeakRef_Deref_KeptObjects/ArrowFunction_L23C14/FunctionObject::_environment0_WeakRef_Deref_KeptObjects
+				IL_0006: ldnull
+				IL_0007: call object Modules.WeakRef_Deref_KeptObjects/ArrowFunction_L23C14::__js_call__(class Modules.WeakRef_Deref_KeptObjects/Scope, object)
+				IL_000c: ret
+			} // end of method FunctionObject::CallCore
+
+		} // end of class FunctionObject
+
 
 		// Methods
 		.method public hidebysig static 
@@ -283,7 +352,7 @@
 			[7] object,
 			[8] object,
 			[9] object[],
-			[10] class FunctionObjects.WeakRef_Deref_KeptObjects_F1393EDE.FunctionObject_Arrow_35C54A27_L23C14
+			[10] class Modules.WeakRef_Deref_KeptObjects/ArrowFunction_L23C14/FunctionObject
 		)
 
 		IL_0000: newobj instance void Modules.WeakRef_Deref_KeptObjects/Scope::.ctor()
@@ -418,14 +487,14 @@
 		IL_017d: ldc.i4.0
 		IL_017e: ldelem.ref
 		IL_017f: castclass Modules.WeakRef_Deref_KeptObjects/Scope
-		IL_0184: newobj instance void FunctionObjects.WeakRef_Deref_KeptObjects_F1393EDE.FunctionObject_Arrow_35C54A27_L23C14::.ctor(class Modules.WeakRef_Deref_KeptObjects/Scope)
+		IL_0184: newobj instance void Modules.WeakRef_Deref_KeptObjects/ArrowFunction_L23C14/FunctionObject::.ctor(class Modules.WeakRef_Deref_KeptObjects/Scope)
 		IL_0189: ldc.i4.0
 		IL_018a: conv.r8
 		IL_018b: ldstr ""
 		IL_0190: ldc.i4.0
 		IL_0191: ldc.i4.0
-		IL_0192: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class FunctionObjects.WeakRef_Deref_KeptObjects_F1393EDE.FunctionObject_Arrow_35C54A27_L23C14>(!!0, float64, string, bool, bool)
-		IL_0197: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class FunctionObjects.WeakRef_Deref_KeptObjects_F1393EDE.FunctionObject_Arrow_35C54A27_L23C14>(!!0)
+		IL_0192: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.WeakRef_Deref_KeptObjects/ArrowFunction_L23C14/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_0197: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.WeakRef_Deref_KeptObjects/ArrowFunction_L23C14/FunctionObject>(!!0)
 		IL_019c: stloc.s 10
 		IL_019e: ldloc.s 10
 		IL_01a0: ldc.i4.0
@@ -523,75 +592,6 @@
 	} // end of method FunctionObject_FunctionDeclaration_7A1B9D8E_createWeakRef::ConstructCore
 
 } // end of class FunctionObjects.WeakRef_Deref_KeptObjects_F1393EDE.FunctionObject_FunctionDeclaration_7A1B9D8E_createWeakRef
-
-.class private auto ansi sealed beforefieldinit FunctionObjects.WeakRef_Deref_KeptObjects_F1393EDE.FunctionObject_Arrow_35C54A27_L23C14
-	extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-{
-	// Fields
-	.field private initonly class Modules.WeakRef_Deref_KeptObjects/Scope _environment0_WeakRef_Deref_KeptObjects
-
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor (
-			class Modules.WeakRef_Deref_KeptObjects/Scope capture0
-		) cil managed 
-	{
-		// Method begins at RVA 0x236f
-		// Header size: 1
-		// Code size: 14 (0xe)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-		IL_0006: ldarg.0
-		IL_0007: ldarg.1
-		IL_0008: stfld class Modules.WeakRef_Deref_KeptObjects/Scope FunctionObjects.WeakRef_Deref_KeptObjects_F1393EDE.FunctionObject_Arrow_35C54A27_L23C14::_environment0_WeakRef_Deref_KeptObjects
-		IL_000d: ret
-	} // end of method FunctionObject_Arrow_35C54A27_L23C14::.ctor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_IsConstructor () cil managed 
-	{
-		// Method begins at RVA 0x237e
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_35C54A27_L23C14::get_IsConstructor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_RequiresInvocationContext () cil managed 
-	{
-		// Method begins at RVA 0x2381
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_35C54A27_L23C14::get_RequiresInvocationContext
-
-	.method family hidebysig virtual 
-		instance object CallCore (
-			object thisArgument,
-			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-		) cil managed 
-	{
-		// Method begins at RVA 0x2384
-		// Header size: 1
-		// Code size: 13 (0xd)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: ldfld class Modules.WeakRef_Deref_KeptObjects/Scope FunctionObjects.WeakRef_Deref_KeptObjects_F1393EDE.FunctionObject_Arrow_35C54A27_L23C14::_environment0_WeakRef_Deref_KeptObjects
-		IL_0006: ldnull
-		IL_0007: call object Modules.WeakRef_Deref_KeptObjects/ArrowFunction_L23C14::__js_call__(class Modules.WeakRef_Deref_KeptObjects/Scope, object)
-		IL_000c: ret
-	} // end of method FunctionObject_Arrow_35C54A27_L23C14::CallCore
-
-} // end of class FunctionObjects.WeakRef_Deref_KeptObjects_F1393EDE.FunctionObject_Arrow_35C54A27_L23C14
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object

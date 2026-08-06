@@ -37,6 +37,79 @@
 
 		} // end of class Scope
 
+		.class nested public auto ansi sealed beforefieldinit FunctionObject
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+		{
+			// Fields
+			.field private initonly class Modules.Arrow_Capture_HasScopesParameter/Scope _environment0_Arrow_Capture_HasScopesParameter
+
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor (
+					class Modules.Arrow_Capture_HasScopesParameter/Scope capture0
+				) cil managed 
+			{
+				// Method begins at RVA 0x211b
+				// Header size: 1
+				// Code size: 14 (0xe)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0006: ldarg.0
+				IL_0007: ldarg.1
+				IL_0008: stfld class Modules.Arrow_Capture_HasScopesParameter/Scope Modules.Arrow_Capture_HasScopesParameter/ArrowFunction_L6C15/FunctionObject::_environment0_Arrow_Capture_HasScopesParameter
+				IL_000d: ret
+			} // end of method FunctionObject::.ctor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_IsConstructor () cil managed 
+			{
+				// Method begins at RVA 0x212a
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_IsConstructor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_RequiresInvocationContext () cil managed 
+			{
+				// Method begins at RVA 0x212d
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_RequiresInvocationContext
+
+			.method family hidebysig virtual 
+				instance object CallCore (
+					object thisArgument,
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+				) cil managed 
+			{
+				// Method begins at RVA 0x2130
+				// Header size: 1
+				// Code size: 25 (0x19)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: ldfld class Modules.Arrow_Capture_HasScopesParameter/Scope Modules.Arrow_Capture_HasScopesParameter/ArrowFunction_L6C15/FunctionObject::_environment0_Arrow_Capture_HasScopesParameter
+				IL_0006: ldnull
+				IL_0007: ldarg.2
+				IL_0008: ldc.i4.0
+				IL_0009: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+				IL_000e: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+				IL_0013: call object Modules.Arrow_Capture_HasScopesParameter/ArrowFunction_L6C15::__js_call__(class Modules.Arrow_Capture_HasScopesParameter/Scope, object, float64)
+				IL_0018: ret
+			} // end of method FunctionObject::CallCore
+
+		} // end of class FunctionObject
+
 
 		// Methods
 		.method public hidebysig static 
@@ -118,7 +191,7 @@
 			[0] class Modules.Arrow_Capture_HasScopesParameter/Scope,
 			[1] object,
 			[2] object[],
-			[3] class FunctionObjects.Arrow_Capture_HasScopesParameter_43EA4A1C.FunctionObject_Arrow_BCB993D5_L6C15,
+			[3] class Modules.Arrow_Capture_HasScopesParameter/ArrowFunction_L6C15/FunctionObject,
 			[4] object,
 			[5] object
 		)
@@ -141,14 +214,14 @@
 		IL_0027: ldc.i4.0
 		IL_0028: ldelem.ref
 		IL_0029: castclass Modules.Arrow_Capture_HasScopesParameter/Scope
-		IL_002e: newobj instance void FunctionObjects.Arrow_Capture_HasScopesParameter_43EA4A1C.FunctionObject_Arrow_BCB993D5_L6C15::.ctor(class Modules.Arrow_Capture_HasScopesParameter/Scope)
+		IL_002e: newobj instance void Modules.Arrow_Capture_HasScopesParameter/ArrowFunction_L6C15/FunctionObject::.ctor(class Modules.Arrow_Capture_HasScopesParameter/Scope)
 		IL_0033: ldc.i4.1
 		IL_0034: conv.r8
 		IL_0035: ldstr ""
 		IL_003a: ldc.i4.0
 		IL_003b: ldc.i4.0
-		IL_003c: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class FunctionObjects.Arrow_Capture_HasScopesParameter_43EA4A1C.FunctionObject_Arrow_BCB993D5_L6C15>(!!0, float64, string, bool, bool)
-		IL_0041: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class FunctionObjects.Arrow_Capture_HasScopesParameter_43EA4A1C.FunctionObject_Arrow_BCB993D5_L6C15>(!!0)
+		IL_003c: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Arrow_Capture_HasScopesParameter/ArrowFunction_L6C15/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_0041: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Arrow_Capture_HasScopesParameter/ArrowFunction_L6C15/FunctionObject>(!!0)
 		IL_0046: stloc.3
 		IL_0047: ldloc.3
 		IL_0048: ldstr "scale"
@@ -173,79 +246,6 @@
 	} // end of method Arrow_Capture_HasScopesParameter::__js_module_init__
 
 } // end of class Modules.Arrow_Capture_HasScopesParameter
-
-.class private auto ansi sealed beforefieldinit FunctionObjects.Arrow_Capture_HasScopesParameter_43EA4A1C.FunctionObject_Arrow_BCB993D5_L6C15
-	extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-{
-	// Fields
-	.field private initonly class Modules.Arrow_Capture_HasScopesParameter/Scope _environment0_Arrow_Capture_HasScopesParameter
-
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor (
-			class Modules.Arrow_Capture_HasScopesParameter/Scope capture0
-		) cil managed 
-	{
-		// Method begins at RVA 0x211b
-		// Header size: 1
-		// Code size: 14 (0xe)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-		IL_0006: ldarg.0
-		IL_0007: ldarg.1
-		IL_0008: stfld class Modules.Arrow_Capture_HasScopesParameter/Scope FunctionObjects.Arrow_Capture_HasScopesParameter_43EA4A1C.FunctionObject_Arrow_BCB993D5_L6C15::_environment0_Arrow_Capture_HasScopesParameter
-		IL_000d: ret
-	} // end of method FunctionObject_Arrow_BCB993D5_L6C15::.ctor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_IsConstructor () cil managed 
-	{
-		// Method begins at RVA 0x212a
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_BCB993D5_L6C15::get_IsConstructor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_RequiresInvocationContext () cil managed 
-	{
-		// Method begins at RVA 0x212d
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_BCB993D5_L6C15::get_RequiresInvocationContext
-
-	.method family hidebysig virtual 
-		instance object CallCore (
-			object thisArgument,
-			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-		) cil managed 
-	{
-		// Method begins at RVA 0x2130
-		// Header size: 1
-		// Code size: 25 (0x19)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: ldfld class Modules.Arrow_Capture_HasScopesParameter/Scope FunctionObjects.Arrow_Capture_HasScopesParameter_43EA4A1C.FunctionObject_Arrow_BCB993D5_L6C15::_environment0_Arrow_Capture_HasScopesParameter
-		IL_0006: ldnull
-		IL_0007: ldarg.2
-		IL_0008: ldc.i4.0
-		IL_0009: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-		IL_000e: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_0013: call object Modules.Arrow_Capture_HasScopesParameter/ArrowFunction_L6C15::__js_call__(class Modules.Arrow_Capture_HasScopesParameter/Scope, object, float64)
-		IL_0018: ret
-	} // end of method FunctionObject_Arrow_BCB993D5_L6C15::CallCore
-
-} // end of class FunctionObjects.Arrow_Capture_HasScopesParameter_43EA4A1C.FunctionObject_Arrow_BCB993D5_L6C15
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object

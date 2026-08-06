@@ -130,6 +130,75 @@
 
 		} // end of class Scope
 
+		.class nested public auto ansi sealed beforefieldinit FunctionObject
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+		{
+			// Fields
+			.field private initonly class Modules.Classes_ClassMethod_AccessArrowFunctionVariable_Log/Scope _environment0_Classes_ClassMethod_AccessArrowFunctionVariable_Log
+
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor (
+					class Modules.Classes_ClassMethod_AccessArrowFunctionVariable_Log/Scope capture0
+				) cil managed 
+			{
+				// Method begins at RVA 0x2172
+				// Header size: 1
+				// Code size: 14 (0xe)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0006: ldarg.0
+				IL_0007: ldarg.1
+				IL_0008: stfld class Modules.Classes_ClassMethod_AccessArrowFunctionVariable_Log/Scope Modules.Classes_ClassMethod_AccessArrowFunctionVariable_Log/ArrowFunction_L3C27/FunctionObject::_environment0_Classes_ClassMethod_AccessArrowFunctionVariable_Log
+				IL_000d: ret
+			} // end of method FunctionObject::.ctor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_IsConstructor () cil managed 
+			{
+				// Method begins at RVA 0x2181
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_IsConstructor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_RequiresInvocationContext () cil managed 
+			{
+				// Method begins at RVA 0x2184
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_RequiresInvocationContext
+
+			.method family hidebysig virtual 
+				instance object CallCore (
+					object thisArgument,
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+				) cil managed 
+			{
+				// Method begins at RVA 0x2187
+				// Header size: 1
+				// Code size: 13 (0xd)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: ldfld class Modules.Classes_ClassMethod_AccessArrowFunctionVariable_Log/Scope Modules.Classes_ClassMethod_AccessArrowFunctionVariable_Log/ArrowFunction_L3C27/FunctionObject::_environment0_Classes_ClassMethod_AccessArrowFunctionVariable_Log
+				IL_0006: ldnull
+				IL_0007: call object Modules.Classes_ClassMethod_AccessArrowFunctionVariable_Log/ArrowFunction_L3C27::__js_call__(class Modules.Classes_ClassMethod_AccessArrowFunctionVariable_Log/Scope, object)
+				IL_000c: ret
+			} // end of method FunctionObject::CallCore
+
+		} // end of class FunctionObject
+
 
 		// Methods
 		.method public hidebysig static 
@@ -232,7 +301,7 @@
 			[0] class Modules.Classes_ClassMethod_AccessArrowFunctionVariable_Log/Scope,
 			[1] object,
 			[2] object[],
-			[3] class FunctionObjects.Classes_ClassMethod_AccessArrowFunctionVariable_Log_19ACBDA8.FunctionObject_Arrow_CA4E5231_L3C27
+			[3] class Modules.Classes_ClassMethod_AccessArrowFunctionVariable_Log/ArrowFunction_L3C27/FunctionObject
 		)
 
 		IL_0000: newobj instance void Modules.Classes_ClassMethod_AccessArrowFunctionVariable_Log/Scope::.ctor()
@@ -249,14 +318,14 @@
 		IL_0013: ldc.i4.0
 		IL_0014: ldelem.ref
 		IL_0015: castclass Modules.Classes_ClassMethod_AccessArrowFunctionVariable_Log/Scope
-		IL_001a: newobj instance void FunctionObjects.Classes_ClassMethod_AccessArrowFunctionVariable_Log_19ACBDA8.FunctionObject_Arrow_CA4E5231_L3C27::.ctor(class Modules.Classes_ClassMethod_AccessArrowFunctionVariable_Log/Scope)
+		IL_001a: newobj instance void Modules.Classes_ClassMethod_AccessArrowFunctionVariable_Log/ArrowFunction_L3C27/FunctionObject::.ctor(class Modules.Classes_ClassMethod_AccessArrowFunctionVariable_Log/Scope)
 		IL_001f: ldc.i4.0
 		IL_0020: conv.r8
 		IL_0021: ldstr ""
 		IL_0026: ldc.i4.0
 		IL_0027: ldc.i4.0
-		IL_0028: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class FunctionObjects.Classes_ClassMethod_AccessArrowFunctionVariable_Log_19ACBDA8.FunctionObject_Arrow_CA4E5231_L3C27>(!!0, float64, string, bool, bool)
-		IL_002d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class FunctionObjects.Classes_ClassMethod_AccessArrowFunctionVariable_Log_19ACBDA8.FunctionObject_Arrow_CA4E5231_L3C27>(!!0)
+		IL_0028: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Classes_ClassMethod_AccessArrowFunctionVariable_Log/ArrowFunction_L3C27/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_002d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Classes_ClassMethod_AccessArrowFunctionVariable_Log/ArrowFunction_L3C27/FunctionObject>(!!0)
 		IL_0032: stloc.3
 		IL_0033: ldloc.3
 		IL_0034: ldstr "testArrowFunction"
@@ -271,75 +340,6 @@
 	} // end of method Classes_ClassMethod_AccessArrowFunctionVariable_Log::__js_module_init__
 
 } // end of class Modules.Classes_ClassMethod_AccessArrowFunctionVariable_Log
-
-.class private auto ansi sealed beforefieldinit FunctionObjects.Classes_ClassMethod_AccessArrowFunctionVariable_Log_19ACBDA8.FunctionObject_Arrow_CA4E5231_L3C27
-	extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-{
-	// Fields
-	.field private initonly class Modules.Classes_ClassMethod_AccessArrowFunctionVariable_Log/Scope _environment0_Classes_ClassMethod_AccessArrowFunctionVariable_Log
-
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor (
-			class Modules.Classes_ClassMethod_AccessArrowFunctionVariable_Log/Scope capture0
-		) cil managed 
-	{
-		// Method begins at RVA 0x2172
-		// Header size: 1
-		// Code size: 14 (0xe)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-		IL_0006: ldarg.0
-		IL_0007: ldarg.1
-		IL_0008: stfld class Modules.Classes_ClassMethod_AccessArrowFunctionVariable_Log/Scope FunctionObjects.Classes_ClassMethod_AccessArrowFunctionVariable_Log_19ACBDA8.FunctionObject_Arrow_CA4E5231_L3C27::_environment0_Classes_ClassMethod_AccessArrowFunctionVariable_Log
-		IL_000d: ret
-	} // end of method FunctionObject_Arrow_CA4E5231_L3C27::.ctor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_IsConstructor () cil managed 
-	{
-		// Method begins at RVA 0x2181
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_CA4E5231_L3C27::get_IsConstructor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_RequiresInvocationContext () cil managed 
-	{
-		// Method begins at RVA 0x2184
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_CA4E5231_L3C27::get_RequiresInvocationContext
-
-	.method family hidebysig virtual 
-		instance object CallCore (
-			object thisArgument,
-			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-		) cil managed 
-	{
-		// Method begins at RVA 0x2187
-		// Header size: 1
-		// Code size: 13 (0xd)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: ldfld class Modules.Classes_ClassMethod_AccessArrowFunctionVariable_Log/Scope FunctionObjects.Classes_ClassMethod_AccessArrowFunctionVariable_Log_19ACBDA8.FunctionObject_Arrow_CA4E5231_L3C27::_environment0_Classes_ClassMethod_AccessArrowFunctionVariable_Log
-		IL_0006: ldnull
-		IL_0007: call object Modules.Classes_ClassMethod_AccessArrowFunctionVariable_Log/ArrowFunction_L3C27::__js_call__(class Modules.Classes_ClassMethod_AccessArrowFunctionVariable_Log/Scope, object)
-		IL_000c: ret
-	} // end of method FunctionObject_Arrow_CA4E5231_L3C27::CallCore
-
-} // end of class FunctionObjects.Classes_ClassMethod_AccessArrowFunctionVariable_Log_19ACBDA8.FunctionObject_Arrow_CA4E5231_L3C27
 
 .class private auto ansi sealed beforefieldinit FunctionObjects.Classes_ClassMethod_AccessArrowFunctionVariable_Log_19ACBDA8.FunctionObject_ClassConstructor_D311ADDD_MyClass
 	extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject

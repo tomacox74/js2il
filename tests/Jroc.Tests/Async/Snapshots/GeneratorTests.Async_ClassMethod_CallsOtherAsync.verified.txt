@@ -38,6 +38,68 @@
 
 		} // end of class Scope
 
+		.class nested public auto ansi sealed beforefieldinit FunctionObject
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x24ef
+				// Header size: 1
+				// Code size: 7 (0x7)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0006: ret
+			} // end of method FunctionObject::.ctor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_IsConstructor () cil managed 
+			{
+				// Method begins at RVA 0x24f7
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_IsConstructor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_RequiresInvocationContext () cil managed 
+			{
+				// Method begins at RVA 0x24fa
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_RequiresInvocationContext
+
+			.method family hidebysig virtual 
+				instance object CallCore (
+					object thisArgument,
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+				) cil managed 
+			{
+				// Method begins at RVA 0x24fd
+				// Header size: 1
+				// Code size: 14 (0xe)
+				.maxstack 8
+
+				IL_0000: ldnull
+				IL_0001: ldarg.2
+				IL_0002: ldc.i4.0
+				IL_0003: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+				IL_0008: call object Modules.Async_ClassMethod_CallsOtherAsync/ArrowFunction_L15C28::__js_call__(object, object)
+				IL_000d: ret
+			} // end of method FunctionObject::CallCore
+
+		} // end of class FunctionObject
+
 
 		// Methods
 		.method public hidebysig static 
@@ -492,7 +554,7 @@
 			[4] object[],
 			[5] object,
 			[6] class Modules.Async_ClassMethod_CallsOtherAsync/Service,
-			[7] class FunctionObjects.Async_ClassMethod_CallsOtherAsync_B88200CD.FunctionObject_Arrow_5A67A22A_L15C28
+			[7] class Modules.Async_ClassMethod_CallsOtherAsync/ArrowFunction_L15C28/FunctionObject
 		)
 
 		IL_0000: newobj instance void Modules.Async_ClassMethod_CallsOtherAsync/Scope::.ctor()
@@ -658,14 +720,14 @@
 		IL_0174: ldloc.0
 		IL_0175: stelem.ref
 		IL_0176: stloc.s 4
-		IL_0178: newobj instance void FunctionObjects.Async_ClassMethod_CallsOtherAsync_B88200CD.FunctionObject_Arrow_5A67A22A_L15C28::.ctor()
+		IL_0178: newobj instance void Modules.Async_ClassMethod_CallsOtherAsync/ArrowFunction_L15C28/FunctionObject::.ctor()
 		IL_017d: ldc.i4.1
 		IL_017e: conv.r8
 		IL_017f: ldstr ""
 		IL_0184: ldc.i4.0
 		IL_0185: ldc.i4.0
-		IL_0186: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class FunctionObjects.Async_ClassMethod_CallsOtherAsync_B88200CD.FunctionObject_Arrow_5A67A22A_L15C28>(!!0, float64, string, bool, bool)
-		IL_018b: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class FunctionObjects.Async_ClassMethod_CallsOtherAsync_B88200CD.FunctionObject_Arrow_5A67A22A_L15C28>(!!0)
+		IL_0186: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Async_ClassMethod_CallsOtherAsync/ArrowFunction_L15C28/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_018b: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Async_ClassMethod_CallsOtherAsync/ArrowFunction_L15C28/FunctionObject>(!!0)
 		IL_0190: stloc.s 7
 		IL_0192: ldloc.s 5
 		IL_0194: ldstr "then"
@@ -879,68 +941,6 @@
 	} // end of method FunctionObject_ClassMethod_D1758AD5_Service_processData::CallCore
 
 } // end of class FunctionObjects.Async_ClassMethod_CallsOtherAsync_B88200CD.FunctionObject_ClassMethod_D1758AD5_Service_processData
-
-.class private auto ansi sealed beforefieldinit FunctionObjects.Async_ClassMethod_CallsOtherAsync_B88200CD.FunctionObject_Arrow_5A67A22A_L15C28
-	extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-{
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x24ef
-		// Header size: 1
-		// Code size: 7 (0x7)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-		IL_0006: ret
-	} // end of method FunctionObject_Arrow_5A67A22A_L15C28::.ctor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_IsConstructor () cil managed 
-	{
-		// Method begins at RVA 0x24f7
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_5A67A22A_L15C28::get_IsConstructor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_RequiresInvocationContext () cil managed 
-	{
-		// Method begins at RVA 0x24fa
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_5A67A22A_L15C28::get_RequiresInvocationContext
-
-	.method family hidebysig virtual 
-		instance object CallCore (
-			object thisArgument,
-			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-		) cil managed 
-	{
-		// Method begins at RVA 0x24fd
-		// Header size: 1
-		// Code size: 14 (0xe)
-		.maxstack 8
-
-		IL_0000: ldnull
-		IL_0001: ldarg.2
-		IL_0002: ldc.i4.0
-		IL_0003: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-		IL_0008: call object Modules.Async_ClassMethod_CallsOtherAsync/ArrowFunction_L15C28::__js_call__(object, object)
-		IL_000d: ret
-	} // end of method FunctionObject_Arrow_5A67A22A_L15C28::CallCore
-
-} // end of class FunctionObjects.Async_ClassMethod_CallsOtherAsync_B88200CD.FunctionObject_Arrow_5A67A22A_L15C28
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object

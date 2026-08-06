@@ -20,10 +20,13 @@ internal static class GeneratedFunctionObjectPlanner
         {
             Callable = callable,
             Signature = signature,
-            Namespace =
-                $"FunctionObjects.{Sanitize(symbolTable.Root.Name)}_{StableSuffix(symbolTable.Root.Name)}",
+            Namespace = callable.Kind == CallableKind.Arrow
+                ? string.Empty
+                : $"FunctionObjects.{Sanitize(symbolTable.Root.Name)}_{StableSuffix(symbolTable.Root.Name)}",
             ModuleName = symbolTable.Root.Name,
-            TypeName = BuildTypeName(callable),
+            TypeName = callable.Kind == CallableKind.Arrow
+                ? GeneratedFunctionObjectNaming.WrapperTypeName
+                : BuildTypeName(callable),
             CanonicalOwnerTypeName = ResolveCanonicalOwnerTypeName(
                 callable,
                 callableScope,

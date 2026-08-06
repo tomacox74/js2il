@@ -710,7 +710,13 @@ public sealed class TwoPhaseCompilationCoordinator
 
                     if (!_functionTypeMetadataRegistry.TryGet(moduleName, callable.DeclaringScopeName, functionName, out ownerTypeHandle) || ownerTypeHandle.IsNil)
                     {
-                        var tb = new TypeBuilder(metadataBuilder, string.Empty, functionName);
+                        var callableScope = symbolTable.FindScopeByAstNode(callable.AstNode!);
+                        var emittedTypeName = callableScope == null
+                            ? functionName
+                            : GeneratedFunctionObjectNaming.AvoidArrowWrapperCollision(
+                                functionName,
+                                callableScope);
+                        var tb = new TypeBuilder(metadataBuilder, string.Empty, emittedTypeName);
                         ownerTypeHandle = tb.AddTypeDefinition(
                             TypeAttributes.NestedPublic | TypeAttributes.Abstract | TypeAttributes.Sealed | TypeAttributes.BeforeFieldInit,
                             bclReferences.ObjectType,
@@ -769,7 +775,13 @@ public sealed class TwoPhaseCompilationCoordinator
                     if (!_anonymousCallableTypeMetadataRegistry.TryGetOwnerTypeHandle(moduleName, callable.DeclaringScopeName, ilMethodName, out ownerTypeHandle)
                         || ownerTypeHandle.IsNil)
                     {
-                        var tb = new TypeBuilder(metadataBuilder, string.Empty, ilMethodName);
+                        var callableScope = symbolTable.FindScopeByAstNode(callable.AstNode!);
+                        var emittedTypeName = callableScope == null
+                            ? ilMethodName
+                            : GeneratedFunctionObjectNaming.AvoidArrowWrapperCollision(
+                                ilMethodName,
+                                callableScope);
+                        var tb = new TypeBuilder(metadataBuilder, string.Empty, emittedTypeName);
                         ownerTypeHandle = tb.AddTypeDefinition(
                             TypeAttributes.NestedPublic | TypeAttributes.Abstract | TypeAttributes.Sealed | TypeAttributes.BeforeFieldInit,
                             bclReferences.ObjectType,

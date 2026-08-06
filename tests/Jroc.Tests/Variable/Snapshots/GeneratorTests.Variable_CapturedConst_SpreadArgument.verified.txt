@@ -31,6 +31,75 @@
 
 		} // end of class Scope
 
+		.class nested public auto ansi sealed beforefieldinit FunctionObject
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+		{
+			// Fields
+			.field private initonly class Modules.Variable_CapturedConst_SpreadArgument/Scope _environment0_Variable_CapturedConst_SpreadArgument
+
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor (
+					class Modules.Variable_CapturedConst_SpreadArgument/Scope capture0
+				) cil managed 
+			{
+				// Method begins at RVA 0x2150
+				// Header size: 1
+				// Code size: 14 (0xe)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0006: ldarg.0
+				IL_0007: ldarg.1
+				IL_0008: stfld class Modules.Variable_CapturedConst_SpreadArgument/Scope Modules.Variable_CapturedConst_SpreadArgument/ArrowFunction_L2C17/FunctionObject::_environment0_Variable_CapturedConst_SpreadArgument
+				IL_000d: ret
+			} // end of method FunctionObject::.ctor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_IsConstructor () cil managed 
+			{
+				// Method begins at RVA 0x215f
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_IsConstructor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_RequiresInvocationContext () cil managed 
+			{
+				// Method begins at RVA 0x2162
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_RequiresInvocationContext
+
+			.method family hidebysig virtual 
+				instance object CallCore (
+					object thisArgument,
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+				) cil managed 
+			{
+				// Method begins at RVA 0x2165
+				// Header size: 1
+				// Code size: 13 (0xd)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: ldfld class Modules.Variable_CapturedConst_SpreadArgument/Scope Modules.Variable_CapturedConst_SpreadArgument/ArrowFunction_L2C17/FunctionObject::_environment0_Variable_CapturedConst_SpreadArgument
+				IL_0006: ldnull
+				IL_0007: call object Modules.Variable_CapturedConst_SpreadArgument/ArrowFunction_L2C17::__js_call__(class Modules.Variable_CapturedConst_SpreadArgument/Scope, object)
+				IL_000c: ret
+			} // end of method FunctionObject::CallCore
+
+		} // end of class FunctionObject
+
 
 		// Methods
 		.method public hidebysig static 
@@ -125,7 +194,7 @@
 			[1] object,
 			[2] class [JavaScriptRuntime]JavaScriptRuntime.Array,
 			[3] object[],
-			[4] class FunctionObjects.Variable_CapturedConst_SpreadArgument_2477ADA8.FunctionObject_Arrow_BF40D11F_L2C17,
+			[4] class Modules.Variable_CapturedConst_SpreadArgument/ArrowFunction_L2C17/FunctionObject,
 			[5] object,
 			[6] object
 		)
@@ -158,14 +227,14 @@
 		IL_004d: ldc.i4.0
 		IL_004e: ldelem.ref
 		IL_004f: castclass Modules.Variable_CapturedConst_SpreadArgument/Scope
-		IL_0054: newobj instance void FunctionObjects.Variable_CapturedConst_SpreadArgument_2477ADA8.FunctionObject_Arrow_BF40D11F_L2C17::.ctor(class Modules.Variable_CapturedConst_SpreadArgument/Scope)
+		IL_0054: newobj instance void Modules.Variable_CapturedConst_SpreadArgument/ArrowFunction_L2C17/FunctionObject::.ctor(class Modules.Variable_CapturedConst_SpreadArgument/Scope)
 		IL_0059: ldc.i4.0
 		IL_005a: conv.r8
 		IL_005b: ldstr ""
 		IL_0060: ldc.i4.0
 		IL_0061: ldc.i4.0
-		IL_0062: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class FunctionObjects.Variable_CapturedConst_SpreadArgument_2477ADA8.FunctionObject_Arrow_BF40D11F_L2C17>(!!0, float64, string, bool, bool)
-		IL_0067: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class FunctionObjects.Variable_CapturedConst_SpreadArgument_2477ADA8.FunctionObject_Arrow_BF40D11F_L2C17>(!!0)
+		IL_0062: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Variable_CapturedConst_SpreadArgument/ArrowFunction_L2C17/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_0067: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Variable_CapturedConst_SpreadArgument/ArrowFunction_L2C17/FunctionObject>(!!0)
 		IL_006c: stloc.s 4
 		IL_006e: ldloc.s 4
 		IL_0070: ldstr "readMax"
@@ -189,75 +258,6 @@
 	} // end of method Variable_CapturedConst_SpreadArgument::__js_module_init__
 
 } // end of class Modules.Variable_CapturedConst_SpreadArgument
-
-.class private auto ansi sealed beforefieldinit FunctionObjects.Variable_CapturedConst_SpreadArgument_2477ADA8.FunctionObject_Arrow_BF40D11F_L2C17
-	extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-{
-	// Fields
-	.field private initonly class Modules.Variable_CapturedConst_SpreadArgument/Scope _environment0_Variable_CapturedConst_SpreadArgument
-
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor (
-			class Modules.Variable_CapturedConst_SpreadArgument/Scope capture0
-		) cil managed 
-	{
-		// Method begins at RVA 0x2150
-		// Header size: 1
-		// Code size: 14 (0xe)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-		IL_0006: ldarg.0
-		IL_0007: ldarg.1
-		IL_0008: stfld class Modules.Variable_CapturedConst_SpreadArgument/Scope FunctionObjects.Variable_CapturedConst_SpreadArgument_2477ADA8.FunctionObject_Arrow_BF40D11F_L2C17::_environment0_Variable_CapturedConst_SpreadArgument
-		IL_000d: ret
-	} // end of method FunctionObject_Arrow_BF40D11F_L2C17::.ctor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_IsConstructor () cil managed 
-	{
-		// Method begins at RVA 0x215f
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_BF40D11F_L2C17::get_IsConstructor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_RequiresInvocationContext () cil managed 
-	{
-		// Method begins at RVA 0x2162
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_BF40D11F_L2C17::get_RequiresInvocationContext
-
-	.method family hidebysig virtual 
-		instance object CallCore (
-			object thisArgument,
-			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-		) cil managed 
-	{
-		// Method begins at RVA 0x2165
-		// Header size: 1
-		// Code size: 13 (0xd)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: ldfld class Modules.Variable_CapturedConst_SpreadArgument/Scope FunctionObjects.Variable_CapturedConst_SpreadArgument_2477ADA8.FunctionObject_Arrow_BF40D11F_L2C17::_environment0_Variable_CapturedConst_SpreadArgument
-		IL_0006: ldnull
-		IL_0007: call object Modules.Variable_CapturedConst_SpreadArgument/ArrowFunction_L2C17::__js_call__(class Modules.Variable_CapturedConst_SpreadArgument/Scope, object)
-		IL_000c: ret
-	} // end of method FunctionObject_Arrow_BF40D11F_L2C17::CallCore
-
-} // end of class FunctionObjects.Variable_CapturedConst_SpreadArgument_2477ADA8.FunctionObject_Arrow_BF40D11F_L2C17
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object

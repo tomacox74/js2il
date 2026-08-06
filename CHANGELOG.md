@@ -6,7 +6,9 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-_Nothing yet._
+- compiler/IL: emit each generated arrow function wrapper as a readable
+  `FunctionObject` nested under its canonical `ArrowFunction_*` owner instead
+  of a standalone hashed `FunctionObjects.*` type.
 
 ## v0.12.4 - 2026-08-06
 

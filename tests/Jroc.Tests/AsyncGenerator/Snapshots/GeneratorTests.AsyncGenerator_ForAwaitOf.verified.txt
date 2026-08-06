@@ -361,6 +361,80 @@
 
 		} // end of class Scope_ForOf_L10C13
 
+		.class nested public auto ansi sealed beforefieldinit FunctionObject
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+		{
+			// Fields
+			.field private initonly class Modules.AsyncGenerator_ForAwaitOf/Scope _environment0_AsyncGenerator_ForAwaitOf
+			.field private initonly object[] _transitionalScopes
+
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor (
+					class Modules.AsyncGenerator_ForAwaitOf/Scope capture0,
+					object[] capture1
+				) cil managed 
+			{
+				// Method begins at RVA 0x27b2
+				// Header size: 1
+				// Code size: 21 (0x15)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0006: ldarg.0
+				IL_0007: ldarg.1
+				IL_0008: stfld class Modules.AsyncGenerator_ForAwaitOf/Scope Modules.AsyncGenerator_ForAwaitOf/ArrowFunction_L8C2/FunctionObject::_environment0_AsyncGenerator_ForAwaitOf
+				IL_000d: ldarg.0
+				IL_000e: ldarg.2
+				IL_000f: stfld object[] Modules.AsyncGenerator_ForAwaitOf/ArrowFunction_L8C2/FunctionObject::_transitionalScopes
+				IL_0014: ret
+			} // end of method FunctionObject::.ctor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_IsConstructor () cil managed 
+			{
+				// Method begins at RVA 0x27c8
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_IsConstructor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_RequiresInvocationContext () cil managed 
+			{
+				// Method begins at RVA 0x27cb
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_RequiresInvocationContext
+
+			.method family hidebysig virtual 
+				instance object CallCore (
+					object thisArgument,
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+				) cil managed 
+			{
+				// Method begins at RVA 0x27ce
+				// Header size: 1
+				// Code size: 13 (0xd)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: ldfld object[] Modules.AsyncGenerator_ForAwaitOf/ArrowFunction_L8C2/FunctionObject::_transitionalScopes
+				IL_0006: ldnull
+				IL_0007: call object Modules.AsyncGenerator_ForAwaitOf/ArrowFunction_L8C2::__js_call__(object[], object)
+				IL_000c: ret
+			} // end of method FunctionObject::CallCore
+
+		} // end of class FunctionObject
+
 
 		// Methods
 		.method public hidebysig static 
@@ -897,7 +971,7 @@
 			[0] class Modules.AsyncGenerator_ForAwaitOf/Scope,
 			[1] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0,
 			[2] object[],
-			[3] class FunctionObjects.AsyncGenerator_ForAwaitOf_8317DFDF.FunctionObject_Arrow_1E8E9AE0_L8C2
+			[3] class Modules.AsyncGenerator_ForAwaitOf/ArrowFunction_L8C2/FunctionObject
 		)
 
 		IL_0000: newobj instance void Modules.AsyncGenerator_ForAwaitOf/Scope::.ctor()
@@ -939,14 +1013,14 @@
 		IL_0059: ldelem.ref
 		IL_005a: castclass Modules.AsyncGenerator_ForAwaitOf/Scope
 		IL_005f: ldloc.2
-		IL_0060: newobj instance void FunctionObjects.AsyncGenerator_ForAwaitOf_8317DFDF.FunctionObject_Arrow_1E8E9AE0_L8C2::.ctor(class Modules.AsyncGenerator_ForAwaitOf/Scope, object[])
+		IL_0060: newobj instance void Modules.AsyncGenerator_ForAwaitOf/ArrowFunction_L8C2/FunctionObject::.ctor(class Modules.AsyncGenerator_ForAwaitOf/Scope, object[])
 		IL_0065: ldc.i4.0
 		IL_0066: conv.r8
 		IL_0067: ldstr ""
 		IL_006c: ldc.i4.0
 		IL_006d: ldc.i4.0
-		IL_006e: call !!0 [JavaScriptRuntime]JavaScriptRuntime.AsyncFunction::InitializeFunctionInstance<class FunctionObjects.AsyncGenerator_ForAwaitOf_8317DFDF.FunctionObject_Arrow_1E8E9AE0_L8C2>(!!0, float64, string, bool, bool)
-		IL_0073: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class FunctionObjects.AsyncGenerator_ForAwaitOf_8317DFDF.FunctionObject_Arrow_1E8E9AE0_L8C2>(!!0)
+		IL_006e: call !!0 [JavaScriptRuntime]JavaScriptRuntime.AsyncFunction::InitializeFunctionInstance<class Modules.AsyncGenerator_ForAwaitOf/ArrowFunction_L8C2/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_0073: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.AsyncGenerator_ForAwaitOf/ArrowFunction_L8C2/FunctionObject>(!!0)
 		IL_0078: stloc.3
 		IL_0079: ldc.i4.0
 		IL_007a: newarr [System.Runtime]System.Object
@@ -1029,80 +1103,6 @@
 	} // end of method FunctionObject_FunctionDeclaration_CEF26CCF_g::CallCore
 
 } // end of class FunctionObjects.AsyncGenerator_ForAwaitOf_8317DFDF.FunctionObject_FunctionDeclaration_CEF26CCF_g
-
-.class private auto ansi sealed beforefieldinit FunctionObjects.AsyncGenerator_ForAwaitOf_8317DFDF.FunctionObject_Arrow_1E8E9AE0_L8C2
-	extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-{
-	// Fields
-	.field private initonly class Modules.AsyncGenerator_ForAwaitOf/Scope _environment0_AsyncGenerator_ForAwaitOf
-	.field private initonly object[] _transitionalScopes
-
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor (
-			class Modules.AsyncGenerator_ForAwaitOf/Scope capture0,
-			object[] capture1
-		) cil managed 
-	{
-		// Method begins at RVA 0x27b2
-		// Header size: 1
-		// Code size: 21 (0x15)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-		IL_0006: ldarg.0
-		IL_0007: ldarg.1
-		IL_0008: stfld class Modules.AsyncGenerator_ForAwaitOf/Scope FunctionObjects.AsyncGenerator_ForAwaitOf_8317DFDF.FunctionObject_Arrow_1E8E9AE0_L8C2::_environment0_AsyncGenerator_ForAwaitOf
-		IL_000d: ldarg.0
-		IL_000e: ldarg.2
-		IL_000f: stfld object[] FunctionObjects.AsyncGenerator_ForAwaitOf_8317DFDF.FunctionObject_Arrow_1E8E9AE0_L8C2::_transitionalScopes
-		IL_0014: ret
-	} // end of method FunctionObject_Arrow_1E8E9AE0_L8C2::.ctor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_IsConstructor () cil managed 
-	{
-		// Method begins at RVA 0x27c8
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_1E8E9AE0_L8C2::get_IsConstructor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_RequiresInvocationContext () cil managed 
-	{
-		// Method begins at RVA 0x27cb
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_1E8E9AE0_L8C2::get_RequiresInvocationContext
-
-	.method family hidebysig virtual 
-		instance object CallCore (
-			object thisArgument,
-			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-		) cil managed 
-	{
-		// Method begins at RVA 0x27ce
-		// Header size: 1
-		// Code size: 13 (0xd)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: ldfld object[] FunctionObjects.AsyncGenerator_ForAwaitOf_8317DFDF.FunctionObject_Arrow_1E8E9AE0_L8C2::_transitionalScopes
-		IL_0006: ldnull
-		IL_0007: call object Modules.AsyncGenerator_ForAwaitOf/ArrowFunction_L8C2::__js_call__(object[], object)
-		IL_000c: ret
-	} // end of method FunctionObject_Arrow_1E8E9AE0_L8C2::CallCore
-
-} // end of class FunctionObjects.AsyncGenerator_ForAwaitOf_8317DFDF.FunctionObject_Arrow_1E8E9AE0_L8C2
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object

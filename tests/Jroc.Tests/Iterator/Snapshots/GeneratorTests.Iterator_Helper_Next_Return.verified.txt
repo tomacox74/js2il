@@ -333,6 +333,68 @@
 
 		} // end of class Scope
 
+		.class nested public auto ansi sealed beforefieldinit FunctionObject
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x27c2
+				// Header size: 1
+				// Code size: 7 (0x7)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0006: ret
+			} // end of method FunctionObject::.ctor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_IsConstructor () cil managed 
+			{
+				// Method begins at RVA 0x27ca
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_IsConstructor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_RequiresInvocationContext () cil managed 
+			{
+				// Method begins at RVA 0x27cd
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_RequiresInvocationContext
+
+			.method family hidebysig virtual 
+				instance object CallCore (
+					object thisArgument,
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+				) cil managed 
+			{
+				// Method begins at RVA 0x27d0
+				// Header size: 1
+				// Code size: 14 (0xe)
+				.maxstack 8
+
+				IL_0000: ldnull
+				IL_0001: ldarg.2
+				IL_0002: ldc.i4.0
+				IL_0003: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+				IL_0008: call object Modules.Iterator_Helper_Next_Return/ArrowFunction_L20C44::__js_call__(object, object)
+				IL_000d: ret
+			} // end of method FunctionObject::CallCore
+
+		} // end of class FunctionObject
+
 
 		// Methods
 		.method public hidebysig static 
@@ -413,7 +475,7 @@
 			[8] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0,
 			[9] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
 			[10] object[],
-			[11] class FunctionObjects.Iterator_Helper_Next_Return_B29B0767.FunctionObject_Arrow_5BD220AA_L20C44,
+			[11] class Modules.Iterator_Helper_Next_Return/ArrowFunction_L20C44/FunctionObject,
 			[12] object,
 			[13] bool,
 			[14] object,
@@ -473,14 +535,14 @@
 		IL_0099: ldloc.0
 		IL_009a: stelem.ref
 		IL_009b: stloc.s 10
-		IL_009d: newobj instance void FunctionObjects.Iterator_Helper_Next_Return_B29B0767.FunctionObject_Arrow_5BD220AA_L20C44::.ctor()
+		IL_009d: newobj instance void Modules.Iterator_Helper_Next_Return/ArrowFunction_L20C44/FunctionObject::.ctor()
 		IL_00a2: ldc.i4.1
 		IL_00a3: conv.r8
 		IL_00a4: ldstr ""
 		IL_00a9: ldc.i4.0
 		IL_00aa: ldc.i4.0
-		IL_00ab: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class FunctionObjects.Iterator_Helper_Next_Return_B29B0767.FunctionObject_Arrow_5BD220AA_L20C44>(!!0, float64, string, bool, bool)
-		IL_00b0: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class FunctionObjects.Iterator_Helper_Next_Return_B29B0767.FunctionObject_Arrow_5BD220AA_L20C44>(!!0)
+		IL_00ab: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Iterator_Helper_Next_Return/ArrowFunction_L20C44/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_00b0: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Iterator_Helper_Next_Return/ArrowFunction_L20C44/FunctionObject>(!!0)
 		IL_00b5: stloc.s 11
 		IL_00b7: ldloc.s 7
 		IL_00b9: ldstr "map"
@@ -1059,68 +1121,6 @@
 	} // end of method FunctionObject_FunctionExpression_C90FF228_L12C19::ConstructCore
 
 } // end of class FunctionObjects.Iterator_Helper_Next_Return_B29B0767.FunctionObject_FunctionExpression_C90FF228_L12C19
-
-.class private auto ansi sealed beforefieldinit FunctionObjects.Iterator_Helper_Next_Return_B29B0767.FunctionObject_Arrow_5BD220AA_L20C44
-	extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-{
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x27c2
-		// Header size: 1
-		// Code size: 7 (0x7)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-		IL_0006: ret
-	} // end of method FunctionObject_Arrow_5BD220AA_L20C44::.ctor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_IsConstructor () cil managed 
-	{
-		// Method begins at RVA 0x27ca
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_5BD220AA_L20C44::get_IsConstructor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_RequiresInvocationContext () cil managed 
-	{
-		// Method begins at RVA 0x27cd
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_5BD220AA_L20C44::get_RequiresInvocationContext
-
-	.method family hidebysig virtual 
-		instance object CallCore (
-			object thisArgument,
-			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-		) cil managed 
-	{
-		// Method begins at RVA 0x27d0
-		// Header size: 1
-		// Code size: 14 (0xe)
-		.maxstack 8
-
-		IL_0000: ldnull
-		IL_0001: ldarg.2
-		IL_0002: ldc.i4.0
-		IL_0003: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-		IL_0008: call object Modules.Iterator_Helper_Next_Return/ArrowFunction_L20C44::__js_call__(object, object)
-		IL_000d: ret
-	} // end of method FunctionObject_Arrow_5BD220AA_L20C44::CallCore
-
-} // end of class FunctionObjects.Iterator_Helper_Next_Return_B29B0767.FunctionObject_Arrow_5BD220AA_L20C44
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object

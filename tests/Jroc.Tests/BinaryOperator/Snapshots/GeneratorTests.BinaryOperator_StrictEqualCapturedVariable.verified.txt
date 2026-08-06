@@ -189,6 +189,68 @@
 
 		} // end of class Scope
 
+		.class nested public auto ansi sealed beforefieldinit FunctionObject
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2230
+				// Header size: 1
+				// Code size: 7 (0x7)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0006: ret
+			} // end of method FunctionObject::.ctor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_IsConstructor () cil managed 
+			{
+				// Method begins at RVA 0x2238
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_IsConstructor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_RequiresInvocationContext () cil managed 
+			{
+				// Method begins at RVA 0x223b
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_RequiresInvocationContext
+
+			.method family hidebysig virtual 
+				instance object CallCore (
+					object thisArgument,
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+				) cil managed 
+			{
+				// Method begins at RVA 0x223e
+				// Header size: 1
+				// Code size: 14 (0xe)
+				.maxstack 8
+
+				IL_0000: ldnull
+				IL_0001: ldarg.2
+				IL_0002: ldc.i4.0
+				IL_0003: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+				IL_0008: call object Modules.BinaryOperator_StrictEqualCapturedVariable/ArrowFunction_L14C9::__js_call__(object, object)
+				IL_000d: ret
+			} // end of method FunctionObject::CallCore
+
+		} // end of class FunctionObject
+
 
 		// Methods
 		.method public hidebysig static 
@@ -309,7 +371,7 @@
 			[1] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1,
 			[2] object[],
 			[3] object[],
-			[4] class FunctionObjects.BinaryOperator_StrictEqualCapturedVariable_AA17CA36.FunctionObject_Arrow_D1C8E67B_L14C9
+			[4] class Modules.BinaryOperator_StrictEqualCapturedVariable/ArrowFunction_L14C9/FunctionObject
 		)
 
 		IL_0000: newobj instance void Modules.BinaryOperator_StrictEqualCapturedVariable/Scope::.ctor()
@@ -337,14 +399,14 @@
 		IL_003b: ldloc.0
 		IL_003c: stelem.ref
 		IL_003d: stloc.3
-		IL_003e: newobj instance void FunctionObjects.BinaryOperator_StrictEqualCapturedVariable_AA17CA36.FunctionObject_Arrow_D1C8E67B_L14C9::.ctor()
+		IL_003e: newobj instance void Modules.BinaryOperator_StrictEqualCapturedVariable/ArrowFunction_L14C9/FunctionObject::.ctor()
 		IL_0043: ldc.i4.1
 		IL_0044: conv.r8
 		IL_0045: ldstr ""
 		IL_004a: ldc.i4.0
 		IL_004b: ldc.i4.0
-		IL_004c: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class FunctionObjects.BinaryOperator_StrictEqualCapturedVariable_AA17CA36.FunctionObject_Arrow_D1C8E67B_L14C9>(!!0, float64, string, bool, bool)
-		IL_0051: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class FunctionObjects.BinaryOperator_StrictEqualCapturedVariable_AA17CA36.FunctionObject_Arrow_D1C8E67B_L14C9>(!!0)
+		IL_004c: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.BinaryOperator_StrictEqualCapturedVariable/ArrowFunction_L14C9/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_0051: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.BinaryOperator_StrictEqualCapturedVariable/ArrowFunction_L14C9/FunctionObject>(!!0)
 		IL_0056: stloc.s 4
 		IL_0058: ldloc.1
 		IL_0059: ldloc.2
@@ -450,68 +512,6 @@
 	} // end of method FunctionObject_FunctionDeclaration_3E7EB29A_process::ConstructCore
 
 } // end of class FunctionObjects.BinaryOperator_StrictEqualCapturedVariable_AA17CA36.FunctionObject_FunctionDeclaration_3E7EB29A_process
-
-.class private auto ansi sealed beforefieldinit FunctionObjects.BinaryOperator_StrictEqualCapturedVariable_AA17CA36.FunctionObject_Arrow_D1C8E67B_L14C9
-	extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-{
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x2230
-		// Header size: 1
-		// Code size: 7 (0x7)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-		IL_0006: ret
-	} // end of method FunctionObject_Arrow_D1C8E67B_L14C9::.ctor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_IsConstructor () cil managed 
-	{
-		// Method begins at RVA 0x2238
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_D1C8E67B_L14C9::get_IsConstructor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_RequiresInvocationContext () cil managed 
-	{
-		// Method begins at RVA 0x223b
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_D1C8E67B_L14C9::get_RequiresInvocationContext
-
-	.method family hidebysig virtual 
-		instance object CallCore (
-			object thisArgument,
-			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-		) cil managed 
-	{
-		// Method begins at RVA 0x223e
-		// Header size: 1
-		// Code size: 14 (0xe)
-		.maxstack 8
-
-		IL_0000: ldnull
-		IL_0001: ldarg.2
-		IL_0002: ldc.i4.0
-		IL_0003: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-		IL_0008: call object Modules.BinaryOperator_StrictEqualCapturedVariable/ArrowFunction_L14C9::__js_call__(object, object)
-		IL_000d: ret
-	} // end of method FunctionObject_Arrow_D1C8E67B_L14C9::CallCore
-
-} // end of class FunctionObjects.BinaryOperator_StrictEqualCapturedVariable_AA17CA36.FunctionObject_Arrow_D1C8E67B_L14C9
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object

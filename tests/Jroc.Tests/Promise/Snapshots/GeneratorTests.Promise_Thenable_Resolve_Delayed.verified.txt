@@ -211,6 +211,68 @@
 
 		} // end of class Scope
 
+		.class nested public auto ansi sealed beforefieldinit FunctionObject
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2248
+				// Header size: 1
+				// Code size: 7 (0x7)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0006: ret
+			} // end of method FunctionObject::.ctor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_IsConstructor () cil managed 
+			{
+				// Method begins at RVA 0x2250
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_IsConstructor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_RequiresInvocationContext () cil managed 
+			{
+				// Method begins at RVA 0x2253
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_RequiresInvocationContext
+
+			.method family hidebysig virtual 
+				instance object CallCore (
+					object thisArgument,
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+				) cil managed 
+			{
+				// Method begins at RVA 0x2256
+				// Header size: 1
+				// Code size: 14 (0xe)
+				.maxstack 8
+
+				IL_0000: ldnull
+				IL_0001: ldarg.2
+				IL_0002: ldc.i4.0
+				IL_0003: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+				IL_0008: call object Modules.Promise_Thenable_Resolve_Delayed/ArrowFunction_L12C32::__js_call__(object, object)
+				IL_000d: ret
+			} // end of method FunctionObject::CallCore
+
+		} // end of class FunctionObject
+
 
 		// Methods
 		.method public hidebysig static 
@@ -291,7 +353,7 @@
 			[2] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
 			[3] object,
 			[4] object[],
-			[5] class FunctionObjects.Promise_Thenable_Resolve_Delayed_A5DDD276.FunctionObject_Arrow_09155B83_L12C32
+			[5] class Modules.Promise_Thenable_Resolve_Delayed/ArrowFunction_L12C32/FunctionObject
 		)
 
 		IL_0000: newobj instance void Modules.Promise_Thenable_Resolve_Delayed/Scope::.ctor()
@@ -327,14 +389,14 @@
 		IL_0053: ldloc.0
 		IL_0054: stelem.ref
 		IL_0055: stloc.s 4
-		IL_0057: newobj instance void FunctionObjects.Promise_Thenable_Resolve_Delayed_A5DDD276.FunctionObject_Arrow_09155B83_L12C32::.ctor()
+		IL_0057: newobj instance void Modules.Promise_Thenable_Resolve_Delayed/ArrowFunction_L12C32/FunctionObject::.ctor()
 		IL_005c: ldc.i4.1
 		IL_005d: conv.r8
 		IL_005e: ldstr ""
 		IL_0063: ldc.i4.0
 		IL_0064: ldc.i4.0
-		IL_0065: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class FunctionObjects.Promise_Thenable_Resolve_Delayed_A5DDD276.FunctionObject_Arrow_09155B83_L12C32>(!!0, float64, string, bool, bool)
-		IL_006a: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class FunctionObjects.Promise_Thenable_Resolve_Delayed_A5DDD276.FunctionObject_Arrow_09155B83_L12C32>(!!0)
+		IL_0065: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Promise_Thenable_Resolve_Delayed/ArrowFunction_L12C32/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_006a: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Promise_Thenable_Resolve_Delayed/ArrowFunction_L12C32/FunctionObject>(!!0)
 		IL_006f: stloc.s 5
 		IL_0071: ldloc.3
 		IL_0072: ldstr "then"
@@ -526,68 +588,6 @@
 	} // end of method FunctionObject_FunctionDeclaration_A1F718B1_later::ConstructCore
 
 } // end of class FunctionObjects.Promise_Thenable_Resolve_Delayed_A5DDD276.FunctionObject_FunctionDeclaration_A1F718B1_later
-
-.class private auto ansi sealed beforefieldinit FunctionObjects.Promise_Thenable_Resolve_Delayed_A5DDD276.FunctionObject_Arrow_09155B83_L12C32
-	extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-{
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x2248
-		// Header size: 1
-		// Code size: 7 (0x7)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-		IL_0006: ret
-	} // end of method FunctionObject_Arrow_09155B83_L12C32::.ctor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_IsConstructor () cil managed 
-	{
-		// Method begins at RVA 0x2250
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_09155B83_L12C32::get_IsConstructor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_RequiresInvocationContext () cil managed 
-	{
-		// Method begins at RVA 0x2253
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_09155B83_L12C32::get_RequiresInvocationContext
-
-	.method family hidebysig virtual 
-		instance object CallCore (
-			object thisArgument,
-			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-		) cil managed 
-	{
-		// Method begins at RVA 0x2256
-		// Header size: 1
-		// Code size: 14 (0xe)
-		.maxstack 8
-
-		IL_0000: ldnull
-		IL_0001: ldarg.2
-		IL_0002: ldc.i4.0
-		IL_0003: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-		IL_0008: call object Modules.Promise_Thenable_Resolve_Delayed/ArrowFunction_L12C32::__js_call__(object, object)
-		IL_000d: ret
-	} // end of method FunctionObject_Arrow_09155B83_L12C32::CallCore
-
-} // end of class FunctionObjects.Promise_Thenable_Resolve_Delayed_A5DDD276.FunctionObject_Arrow_09155B83_L12C32
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object

@@ -140,7 +140,14 @@ namespace Jroc.Services.ILGenerators
                         }
 
                         // Owner type will be nested under the module TypeDef later via NestedClass rows.
-                        var tb = new TypeBuilder(_metadata, string.Empty, functionName);
+                        var emittedTypeName =
+                            GeneratedFunctionObjectNaming.AvoidArrowWrapperCollision(
+                                functionName,
+                                current);
+                        var tb = new TypeBuilder(
+                            _metadata,
+                            string.Empty,
+                            emittedTypeName);
                         ownerType = tb.AddTypeDefinition(
                             TypeAttributes.NestedPublic | TypeAttributes.Abstract | TypeAttributes.Sealed | TypeAttributes.BeforeFieldInit,
                             _bcl.ObjectType,
@@ -240,6 +247,12 @@ namespace Jroc.Services.ILGenerators
                 ? (classScope.DotNetNamespace ?? "Classes")
                 : string.Empty;
             var name = classScope.DotNetTypeName ?? classScope.Name;
+            if (!parentType.IsNil)
+            {
+                name = GeneratedFunctionObjectNaming.AvoidArrowWrapperCollision(
+                    name,
+                    classScope);
+            }
             var tb = new TypeBuilder(_metadata, ns, name);
 
             var typeAttrs = parentType.IsNil
