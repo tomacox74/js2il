@@ -11,7 +11,8 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   direct calls, shared captures, recursion, identity, strict/sloppy `this`,
   function metadata, and existing construction behavior without per-instance
   delegate or dynamic-method creation. Route affected ECMAScript and Node.js
-  callback consumers through the centralized callable ABI.
+  callback consumers through the centralized callable ABI while retaining
+  inferred typed entry points for statically known calls.
 
 ## v0.12.4 - 2026-08-06
 
