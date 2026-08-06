@@ -248,7 +248,11 @@ internal sealed class GeneratedFunctionObjectEmitter
             | MethodAttributes.Virtual,
             "CallCore",
             signature,
-            AddMethodBody(encoder),
+            AddMethodBody(
+                encoder,
+                maxStack: System.Math.Max(
+                    8,
+                    metadata.Plan.Signature.JsParamCount + 3)),
             ["thisArgument", "arguments"],
             inParameterIndex: 1);
     }
@@ -541,10 +545,11 @@ internal sealed class GeneratedFunctionObjectEmitter
             isValueType: true);
     }
 
-    private int AddMethodBody(InstructionEncoder encoder)
+    private int AddMethodBody(InstructionEncoder encoder, int maxStack = 8)
     {
         return _methodBodyStream.AddMethodBody(
             encoder,
+            maxStack,
             localVariablesSignature: default,
             attributes: MethodBodyAttributes.None);
     }
