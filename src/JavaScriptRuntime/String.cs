@@ -1562,14 +1562,14 @@ namespace JavaScriptRuntime
             }
 
             var pattern = ToSearchString(patternOrString);
-            var replacementCallback = replacement as Delegate;
-            var replacementText = replacementCallback is null
+            var hasReplacementCallback = CallableOperations.IsCallable(replacement);
+            var replacementText = !hasReplacementCallback
                 ? ToSearchString(replacement)
                 : null;
             if (pattern.Length == 0)
             {
-                var startReplacement = replacementCallback is not null
-                    ? InvokeStringReplaceCallback(replacementCallback, string.Empty, 0d, input)
+                var startReplacement = hasReplacementCallback
+                    ? InvokeStringReplaceCallback(replacement!, string.Empty, 0d, input)
                     : GetSubstitution(replacementText!, string.Empty, input, 0, null);
                 return startReplacement + input;
             }
@@ -1577,8 +1577,8 @@ namespace JavaScriptRuntime
             var idx = input.IndexOf(pattern, StringComparison.Ordinal);
             if (idx < 0) return input;
 
-            var repl = replacementCallback is not null
-                ? InvokeStringReplaceCallback(replacementCallback, pattern, (double)idx, input)
+            var repl = hasReplacementCallback
+                ? InvokeStringReplaceCallback(replacement!, pattern, (double)idx, input)
                 : GetSubstitution(replacementText!, pattern, input, idx, null);
 
             return input.Substring(0, idx) + repl + input.Substring(idx + pattern.Length);
@@ -2621,16 +2621,8 @@ namespace JavaScriptRuntime
                 return false;
             }
 
-            var previousThis = RuntimeServices.SetCurrentThis(target);
-            try
-            {
-                result = Closure.InvokeWithArgs1(callable, System.Array.Empty<object>(), input);
-                return true;
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentThis(previousThis);
-            }
+            result = CallableOperations.Call1(callable, target, input);
+            return true;
         }
 
         private static bool TryInvokeWellKnownSymbol(object? target, Symbol symbol, string input, object? arg1, out object? result)
@@ -2647,19 +2639,11 @@ namespace JavaScriptRuntime
                 return false;
             }
 
-            var previousThis = RuntimeServices.SetCurrentThis(target);
-            try
-            {
-                result = Closure.InvokeWithArgs2(callable, System.Array.Empty<object>(), input, arg1);
-                return true;
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentThis(previousThis);
-            }
+            result = CallableOperations.Call2(callable, target, input, arg1);
+            return true;
         }
 
-        private static bool TryGetWellKnownSymbolCallable(object? target, Symbol symbol, out Delegate callable)
+        private static bool TryGetWellKnownSymbolCallable(object? target, Symbol symbol, out object callable)
         {
             callable = null!;
             if (target is null || target is JsNull)
@@ -2673,12 +2657,12 @@ namespace JavaScriptRuntime
                 return false;
             }
 
-            if (symbolMethod is not Delegate resolvedCallable)
+            if (!CallableOperations.IsCallable(symbolMethod))
             {
                 throw new JavaScriptRuntime.TypeError($"{GetWellKnownSymbolName(symbol)} is not a function");
             }
 
-            callable = resolvedCallable;
+            callable = symbolMethod;
             return true;
         }
 

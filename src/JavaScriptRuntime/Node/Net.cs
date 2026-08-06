@@ -84,7 +84,7 @@ namespace JavaScriptRuntime.Node
             return value != null
                 && value is not JsNull
                 && value is not string
-                && value is not Delegate
+                && !CallableOperations.IsCallable(value)
                 && value is not double
                 && value is not int
                 && value is not long

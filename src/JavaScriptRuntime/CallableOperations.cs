@@ -86,6 +86,30 @@ public static class CallableOperations
         return CallCore(target, thisArgument, arguments);
     }
 
+    internal static object? ConstructWithReceiver(
+        JsFunctionObject functionObject,
+        object receiver,
+        object?[]? arguments,
+        object? newTarget)
+    {
+        ArgumentNullException.ThrowIfNull(functionObject);
+        ArgumentNullException.ThrowIfNull(receiver);
+        if (!functionObject.IsConstructor)
+        {
+            throw new TypeError("Value is not a constructor");
+        }
+
+        var callArguments = JsCallArguments.FromArray(arguments);
+        var result = CallFunctionObject(
+            functionObject,
+            receiver,
+            callArguments,
+            newTarget);
+        return TypeUtilities.IsConstructorReturnOverride(result)
+            ? result
+            : receiver;
+    }
+
     public static bool IsConstructor(object? value)
     {
         return value switch
@@ -225,6 +249,17 @@ public static class CallableOperations
         JsFunctionObject functionObject,
         object? thisArgument,
         in JsCallArguments arguments)
+        => CallFunctionObject(
+            functionObject,
+            thisArgument,
+            arguments,
+            functionObject.ResolveCallNewTarget());
+
+    private static object? CallFunctionObject(
+        JsFunctionObject functionObject,
+        object? thisArgument,
+        in JsCallArguments arguments,
+        object? newTarget)
     {
         var effectiveThisArgument = functionObject.ResolveThisArgument(thisArgument);
         if (!functionObject.RequiresInvocationContext)
@@ -235,8 +270,7 @@ public static class CallableOperations
         var previousThis = RuntimeServices.SetCurrentThis(effectiveThisArgument);
         var previousArguments = RuntimeServices.SetCurrentCallArguments(arguments);
         var previousCallee = RuntimeServices.SetCurrentCallee(functionObject);
-        var previousNewTarget = RuntimeServices.SetCurrentNewTarget(
-            functionObject.ResolveCallNewTarget());
+        var previousNewTarget = RuntimeServices.SetCurrentNewTarget(newTarget);
         var lexicalSuperScopes = functionObject.GetLexicalSuperScopes();
         var previousSuperReceiver = lexicalSuperScopes is null
             ? null

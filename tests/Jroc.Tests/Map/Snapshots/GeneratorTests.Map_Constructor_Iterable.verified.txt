@@ -26,7 +26,7 @@
 					.method public hidebysig specialname rtspecialname 
 						instance void .ctor () cil managed 
 					{
-						// Method begins at RVA 0x2906
+						// Method begins at RVA 0x2986
 						// Header size: 1
 						// Code size: 8 (0x8)
 						.maxstack 8
@@ -44,7 +44,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x28fd
+					// Method begins at RVA 0x297d
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -68,7 +68,7 @@
 				.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 					01 00 02 00 00 00 00 00
 				)
-				// Method begins at RVA 0x2678
+				// Method begins at RVA 0x26f8
 				// Header size: 12
 				// Code size: 199 (0xc7)
 				.maxstack 8
@@ -178,7 +178,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x28f4
+				// Method begins at RVA 0x2974
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -204,15 +204,16 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 0b 00 00 02
 			)
-			// Method begins at RVA 0x23d4
+			// Method begins at RVA 0x241c
 			// Header size: 12
-			// Code size: 226 (0xe2)
-			.maxstack 8
+			// Code size: 237 (0xed)
+			.maxstack 10
 			.locals init (
 				[0] class Modules.Map_Constructor_Iterable/FunctionExpression_iterable/Scope,
 				[1] class [JavaScriptRuntime]JavaScriptRuntime.Array,
-				[2] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0,
-				[3] class [JavaScriptRuntime]JavaScriptRuntime.JsObject
+				[2] object[],
+				[3] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0,
+				[4] class [JavaScriptRuntime]JavaScriptRuntime.JsObject
 			)
 
 			IL_0000: newobj instance void Modules.Map_Constructor_Iterable/FunctionExpression_iterable/Scope::.ctor()
@@ -267,27 +268,32 @@
 			IL_00a5: ldc.i4.1
 			IL_00a6: ldloc.0
 			IL_00a7: stelem.ref
-			IL_00a8: ldftn object Modules.Map_Constructor_Iterable/FunctionExpression_iterable/FunctionExpression_iterable::__js_call__(object[], object)
-			IL_00ae: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-			IL_00b3: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
-			IL_00b8: ldc.i4.0
-			IL_00b9: conv.r8
-			IL_00ba: ldstr ""
-			IL_00bf: ldc.i4.0
-			IL_00c0: ldc.i4.1
-			IL_00c1: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
-			IL_00c6: stloc.2
-			IL_00c7: ldloc.2
-			IL_00c8: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0)
-			IL_00cd: stloc.2
-			IL_00ce: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-			IL_00d3: dup
-			IL_00d4: ldstr "next"
-			IL_00d9: ldloc.2
-			IL_00da: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-			IL_00df: stloc.3
-			IL_00e0: ldloc.3
-			IL_00e1: ret
+			IL_00a8: stloc.2
+			IL_00a9: ldloc.2
+			IL_00aa: ldftn object Modules.Map_Constructor_Iterable/FunctionExpression_iterable/FunctionExpression_iterable::__js_call__(object[], object)
+			IL_00b0: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+			IL_00b5: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
+			IL_00ba: ldc.i4.0
+			IL_00bb: conv.r8
+			IL_00bc: ldstr ""
+			IL_00c1: ldc.i4.0
+			IL_00c2: ldc.i4.1
+			IL_00c3: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
+			IL_00c8: stloc.3
+			IL_00c9: ldloc.3
+			IL_00ca: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0)
+			IL_00cf: stloc.3
+			IL_00d0: ldloc.3
+			IL_00d1: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0)
+			IL_00d6: stloc.3
+			IL_00d7: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+			IL_00dc: dup
+			IL_00dd: ldstr "next"
+			IL_00e2: ldloc.3
+			IL_00e3: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+			IL_00e8: stloc.s 4
+			IL_00ea: ldloc.s 4
+			IL_00ec: ret
 		} // end of method FunctionExpression_iterable::__js_call__
 
 	} // end of class FunctionExpression_iterable
@@ -311,7 +317,7 @@
 					.method public hidebysig specialname rtspecialname 
 						instance void .ctor () cil managed 
 					{
-						// Method begins at RVA 0x2921
+						// Method begins at RVA 0x29a1
 						// Header size: 1
 						// Code size: 8 (0x8)
 						.maxstack 8
@@ -329,7 +335,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2918
+					// Method begins at RVA 0x2998
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -353,7 +359,7 @@
 				.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 					01 00 02 00 00 00 00 00
 				)
-				// Method begins at RVA 0x274c
+				// Method begins at RVA 0x27cc
 				// Header size: 12
 				// Code size: 199 (0xc7)
 				.maxstack 8
@@ -458,7 +464,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x292a
+					// Method begins at RVA 0x29aa
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -482,7 +488,7 @@
 				.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 					01 00 02 00 00 00 00 00
 				)
-				// Method begins at RVA 0x281f
+				// Method begins at RVA 0x289f
 				// Header size: 1
 				// Code size: 37 (0x25)
 				.maxstack 8
@@ -520,7 +526,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x290f
+				// Method begins at RVA 0x298f
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -546,16 +552,17 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 0b 00 00 02
 			)
-			// Method begins at RVA 0x24c4
+			// Method begins at RVA 0x2518
 			// Header size: 12
-			// Code size: 254 (0xfe)
-			.maxstack 8
+			// Code size: 278 (0x116)
+			.maxstack 10
 			.locals init (
 				[0] class Modules.Map_Constructor_Iterable/FunctionExpression_closableIterable/Scope,
 				[1] class [JavaScriptRuntime]JavaScriptRuntime.Array,
-				[2] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0,
+				[2] object[],
 				[3] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0,
-				[4] class [JavaScriptRuntime]JavaScriptRuntime.JsObject
+				[4] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0,
+				[5] class [JavaScriptRuntime]JavaScriptRuntime.JsObject
 			)
 
 			IL_0000: newobj instance void Modules.Map_Constructor_Iterable/FunctionExpression_closableIterable/Scope::.ctor()
@@ -600,54 +607,64 @@
 			IL_007f: ldc.i4.1
 			IL_0080: ldloc.0
 			IL_0081: stelem.ref
-			IL_0082: ldftn object Modules.Map_Constructor_Iterable/FunctionExpression_closableIterable/FunctionExpression_closableIterable::__js_call__(object[], object)
-			IL_0088: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-			IL_008d: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
-			IL_0092: ldc.i4.0
-			IL_0093: conv.r8
-			IL_0094: ldstr ""
-			IL_0099: ldc.i4.0
-			IL_009a: ldc.i4.1
-			IL_009b: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
-			IL_00a0: stloc.2
-			IL_00a1: ldloc.2
-			IL_00a2: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0)
-			IL_00a7: stloc.2
-			IL_00a8: ldc.i4.2
-			IL_00a9: newarr [System.Runtime]System.Object
-			IL_00ae: dup
-			IL_00af: ldc.i4.0
-			IL_00b0: ldarg.0
-			IL_00b1: stelem.ref
-			IL_00b2: dup
-			IL_00b3: ldc.i4.1
-			IL_00b4: ldloc.0
-			IL_00b5: stelem.ref
-			IL_00b6: ldftn object Modules.Map_Constructor_Iterable/FunctionExpression_closableIterable/FunctionExpression_closableIterable_L46C18::__js_call__(object[], object)
-			IL_00bc: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-			IL_00c1: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
-			IL_00c6: ldc.i4.0
-			IL_00c7: conv.r8
-			IL_00c8: ldstr ""
-			IL_00cd: ldc.i4.0
-			IL_00ce: ldc.i4.1
-			IL_00cf: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
-			IL_00d4: stloc.3
-			IL_00d5: ldloc.3
-			IL_00d6: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0)
-			IL_00db: stloc.3
-			IL_00dc: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-			IL_00e1: dup
-			IL_00e2: ldstr "next"
-			IL_00e7: ldloc.2
-			IL_00e8: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-			IL_00ed: dup
-			IL_00ee: ldstr "return"
-			IL_00f3: ldloc.3
-			IL_00f4: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-			IL_00f9: stloc.s 4
-			IL_00fb: ldloc.s 4
-			IL_00fd: ret
+			IL_0082: stloc.2
+			IL_0083: ldloc.2
+			IL_0084: ldftn object Modules.Map_Constructor_Iterable/FunctionExpression_closableIterable/FunctionExpression_closableIterable::__js_call__(object[], object)
+			IL_008a: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+			IL_008f: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
+			IL_0094: ldc.i4.0
+			IL_0095: conv.r8
+			IL_0096: ldstr ""
+			IL_009b: ldc.i4.0
+			IL_009c: ldc.i4.1
+			IL_009d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
+			IL_00a2: stloc.3
+			IL_00a3: ldloc.3
+			IL_00a4: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0)
+			IL_00a9: stloc.3
+			IL_00aa: ldloc.3
+			IL_00ab: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0)
+			IL_00b0: stloc.3
+			IL_00b1: ldc.i4.2
+			IL_00b2: newarr [System.Runtime]System.Object
+			IL_00b7: dup
+			IL_00b8: ldc.i4.0
+			IL_00b9: ldarg.0
+			IL_00ba: stelem.ref
+			IL_00bb: dup
+			IL_00bc: ldc.i4.1
+			IL_00bd: ldloc.0
+			IL_00be: stelem.ref
+			IL_00bf: stloc.2
+			IL_00c0: ldloc.2
+			IL_00c1: ldftn object Modules.Map_Constructor_Iterable/FunctionExpression_closableIterable/FunctionExpression_closableIterable_L46C18::__js_call__(object[], object)
+			IL_00c7: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+			IL_00cc: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
+			IL_00d1: ldc.i4.0
+			IL_00d2: conv.r8
+			IL_00d3: ldstr ""
+			IL_00d8: ldc.i4.0
+			IL_00d9: ldc.i4.1
+			IL_00da: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
+			IL_00df: stloc.s 4
+			IL_00e1: ldloc.s 4
+			IL_00e3: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0)
+			IL_00e8: stloc.s 4
+			IL_00ea: ldloc.s 4
+			IL_00ec: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0)
+			IL_00f1: stloc.s 4
+			IL_00f3: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+			IL_00f8: dup
+			IL_00f9: ldstr "next"
+			IL_00fe: ldloc.3
+			IL_00ff: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+			IL_0104: dup
+			IL_0105: ldstr "return"
+			IL_010a: ldloc.s 4
+			IL_010c: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+			IL_0111: stloc.s 5
+			IL_0113: ldloc.s 5
+			IL_0115: ret
 		} // end of method FunctionExpression_closableIterable::__js_call__
 
 	} // end of class FunctionExpression_closableIterable
@@ -671,7 +688,7 @@
 					.method public hidebysig specialname rtspecialname 
 						instance void .ctor () cil managed 
 					{
-						// Method begins at RVA 0x2945
+						// Method begins at RVA 0x29c5
 						// Header size: 1
 						// Code size: 8 (0x8)
 						.maxstack 8
@@ -689,7 +706,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x293c
+					// Method begins at RVA 0x29bc
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -713,7 +730,7 @@
 				.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 					01 00 02 00 00 00 00 00
 				)
-				// Method begins at RVA 0x2848
+				// Method begins at RVA 0x28c8
 				// Header size: 12
 				// Code size: 113 (0x71)
 				.maxstack 8
@@ -779,7 +796,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x294e
+					// Method begins at RVA 0x29ce
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -803,7 +820,7 @@
 				.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 					01 00 02 00 00 00 00 00
 				)
-				// Method begins at RVA 0x28c5
+				// Method begins at RVA 0x2945
 				// Header size: 1
 				// Code size: 37 (0x25)
 				.maxstack 8
@@ -839,7 +856,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2933
+				// Method begins at RVA 0x29b3
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -865,15 +882,16 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 0b 00 00 02
 			)
-			// Method begins at RVA 0x25d0
+			// Method begins at RVA 0x263c
 			// Header size: 12
-			// Code size: 154 (0x9a)
-			.maxstack 8
+			// Code size: 174 (0xae)
+			.maxstack 10
 			.locals init (
 				[0] class Modules.Map_Constructor_Iterable/FunctionExpression_invalidIterable/Scope,
-				[1] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0,
+				[1] object[],
 				[2] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0,
-				[3] class [JavaScriptRuntime]JavaScriptRuntime.JsObject
+				[3] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0,
+				[4] class [JavaScriptRuntime]JavaScriptRuntime.JsObject
 			)
 
 			IL_0000: newobj instance void Modules.Map_Constructor_Iterable/FunctionExpression_invalidIterable/Scope::.ctor()
@@ -892,54 +910,64 @@
 			IL_001d: ldc.i4.1
 			IL_001e: ldloc.0
 			IL_001f: stelem.ref
-			IL_0020: ldftn object Modules.Map_Constructor_Iterable/FunctionExpression_invalidIterable/FunctionExpression_invalidIterable::__js_call__(object[], object)
-			IL_0026: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-			IL_002b: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
-			IL_0030: ldc.i4.0
-			IL_0031: conv.r8
-			IL_0032: ldstr ""
-			IL_0037: ldc.i4.0
-			IL_0038: ldc.i4.1
-			IL_0039: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
-			IL_003e: stloc.1
-			IL_003f: ldloc.1
-			IL_0040: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0)
-			IL_0045: stloc.1
-			IL_0046: ldc.i4.2
-			IL_0047: newarr [System.Runtime]System.Object
-			IL_004c: dup
-			IL_004d: ldc.i4.0
-			IL_004e: ldarg.0
-			IL_004f: stelem.ref
-			IL_0050: dup
-			IL_0051: ldc.i4.1
-			IL_0052: ldloc.0
-			IL_0053: stelem.ref
-			IL_0054: ldftn object Modules.Map_Constructor_Iterable/FunctionExpression_invalidIterable/FunctionExpression_invalidIterable_L78C18::__js_call__(object[], object)
-			IL_005a: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-			IL_005f: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
-			IL_0064: ldc.i4.0
-			IL_0065: conv.r8
-			IL_0066: ldstr ""
-			IL_006b: ldc.i4.0
-			IL_006c: ldc.i4.1
-			IL_006d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
-			IL_0072: stloc.2
-			IL_0073: ldloc.2
-			IL_0074: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0)
-			IL_0079: stloc.2
-			IL_007a: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-			IL_007f: dup
-			IL_0080: ldstr "next"
-			IL_0085: ldloc.1
-			IL_0086: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-			IL_008b: dup
-			IL_008c: ldstr "return"
-			IL_0091: ldloc.2
-			IL_0092: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-			IL_0097: stloc.3
-			IL_0098: ldloc.3
-			IL_0099: ret
+			IL_0020: stloc.1
+			IL_0021: ldloc.1
+			IL_0022: ldftn object Modules.Map_Constructor_Iterable/FunctionExpression_invalidIterable/FunctionExpression_invalidIterable::__js_call__(object[], object)
+			IL_0028: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+			IL_002d: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
+			IL_0032: ldc.i4.0
+			IL_0033: conv.r8
+			IL_0034: ldstr ""
+			IL_0039: ldc.i4.0
+			IL_003a: ldc.i4.1
+			IL_003b: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
+			IL_0040: stloc.2
+			IL_0041: ldloc.2
+			IL_0042: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0)
+			IL_0047: stloc.2
+			IL_0048: ldloc.2
+			IL_0049: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0)
+			IL_004e: stloc.2
+			IL_004f: ldc.i4.2
+			IL_0050: newarr [System.Runtime]System.Object
+			IL_0055: dup
+			IL_0056: ldc.i4.0
+			IL_0057: ldarg.0
+			IL_0058: stelem.ref
+			IL_0059: dup
+			IL_005a: ldc.i4.1
+			IL_005b: ldloc.0
+			IL_005c: stelem.ref
+			IL_005d: stloc.1
+			IL_005e: ldloc.1
+			IL_005f: ldftn object Modules.Map_Constructor_Iterable/FunctionExpression_invalidIterable/FunctionExpression_invalidIterable_L78C18::__js_call__(object[], object)
+			IL_0065: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+			IL_006a: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
+			IL_006f: ldc.i4.0
+			IL_0070: conv.r8
+			IL_0071: ldstr ""
+			IL_0076: ldc.i4.0
+			IL_0077: ldc.i4.1
+			IL_0078: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
+			IL_007d: stloc.3
+			IL_007e: ldloc.3
+			IL_007f: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0)
+			IL_0084: stloc.3
+			IL_0085: ldloc.3
+			IL_0086: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0)
+			IL_008b: stloc.3
+			IL_008c: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+			IL_0091: dup
+			IL_0092: ldstr "next"
+			IL_0097: ldloc.2
+			IL_0098: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+			IL_009d: dup
+			IL_009e: ldstr "return"
+			IL_00a3: ldloc.3
+			IL_00a4: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+			IL_00a9: stloc.s 4
+			IL_00ab: ldloc.s 4
+			IL_00ad: ret
 		} // end of method FunctionExpression_invalidIterable::__js_call__
 
 	} // end of class FunctionExpression_invalidIterable
@@ -965,7 +993,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2957
+				// Method begins at RVA 0x29d7
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -985,7 +1013,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2960
+				// Method begins at RVA 0x29e0
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -1007,7 +1035,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x28eb
+			// Method begins at RVA 0x296b
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -1033,8 +1061,8 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 872 (0x368)
-		.maxstack 8
+		// Code size: 944 (0x3b0)
+		.maxstack 10
 		.locals init (
 			[0] class Modules.Map_Constructor_Iterable/Scope,
 			[1] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
@@ -1048,12 +1076,13 @@
 			[9] object,
 			[10] object,
 			[11] object,
-			[12] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0,
-			[13] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
-			[14] object,
-			[15] class [JavaScriptRuntime]JavaScriptRuntime.Array,
-			[16] bool,
-			[17] object
+			[12] object[],
+			[13] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0,
+			[14] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
+			[15] object,
+			[16] class [JavaScriptRuntime]JavaScriptRuntime.Array,
+			[17] bool,
+			[18] object
 		)
 
 		IL_0000: newobj instance void Modules.Map_Constructor_Iterable/Scope::.ctor()
@@ -1062,283 +1091,319 @@
 		IL_0007: ldstr "iterator"
 		IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.Symbol::GetWellKnown(string)
 		IL_0011: stloc.s 11
-		IL_0013: ldloc.0
-		IL_0014: castclass Modules.Map_Constructor_Iterable/Scope
-		IL_0019: ldftn object Modules.Map_Constructor_Iterable/FunctionExpression_iterable::__js_call__(class Modules.Map_Constructor_Iterable/Scope, object)
-		IL_001f: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_0024: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
-		IL_0029: ldc.i4.0
-		IL_002a: conv.r8
-		IL_002b: ldstr ""
-		IL_0030: ldc.i4.0
-		IL_0031: ldc.i4.1
-		IL_0032: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
-		IL_0037: stloc.s 12
-		IL_0039: ldloc.s 12
-		IL_003b: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0)
-		IL_0040: stloc.s 12
-		IL_0042: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_0047: stloc.s 13
-		IL_0049: ldloc.s 13
-		IL_004b: ldloc.s 11
-		IL_004d: ldloc.s 12
-		IL_004f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineObjectLiteralDataProperty(object, object, object)
-		IL_0054: pop
-		IL_0055: ldloc.s 13
-		IL_0057: stloc.1
-		IL_0058: ldloc.1
-		IL_0059: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Map::.ctor(object)
-		IL_005e: stloc.2
-		IL_005f: ldstr "console"
-		IL_0064: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0069: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_006e: stloc.s 11
-		IL_0070: ldloc.2
-		IL_0071: ldstr "size"
-		IL_0076: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_007b: stloc.s 14
-		IL_007d: ldloc.s 11
-		IL_007f: ldstr "log"
-		IL_0084: ldloc.s 14
-		IL_0086: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_008b: pop
-		IL_008c: ldstr "console"
-		IL_0091: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0096: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_009b: stloc.s 14
-		IL_009d: ldloc.2
-		IL_009e: ldstr "get"
-		IL_00a3: ldstr "alpha"
-		IL_00a8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00ad: stloc.s 11
-		IL_00af: ldloc.s 14
-		IL_00b1: ldstr "log"
-		IL_00b6: ldloc.s 11
-		IL_00b8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00bd: pop
-		IL_00be: ldstr "console"
-		IL_00c3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_00c8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00cd: stloc.s 11
-		IL_00cf: ldloc.2
-		IL_00d0: ldstr "get"
-		IL_00d5: ldstr "beta"
-		IL_00da: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00df: stloc.s 14
-		IL_00e1: ldloc.s 11
-		IL_00e3: ldstr "log"
-		IL_00e8: ldloc.s 14
-		IL_00ea: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00ef: pop
-		IL_00f0: ldloc.0
-		IL_00f1: ldc.i4.0
-		IL_00f2: box [System.Runtime]System.Boolean
-		IL_00f7: stfld object Modules.Map_Constructor_Iterable/Scope::closedOnNormalCompletion
-		IL_00fc: ldstr "iterator"
-		IL_0101: call object [JavaScriptRuntime]JavaScriptRuntime.Symbol::GetWellKnown(string)
-		IL_0106: stloc.s 14
+		IL_0013: ldc.i4.1
+		IL_0014: newarr [System.Runtime]System.Object
+		IL_0019: dup
+		IL_001a: ldc.i4.0
+		IL_001b: ldloc.0
+		IL_001c: stelem.ref
+		IL_001d: stloc.s 12
+		IL_001f: ldloc.s 12
+		IL_0021: ldc.i4.0
+		IL_0022: ldelem.ref
+		IL_0023: castclass Modules.Map_Constructor_Iterable/Scope
+		IL_0028: ldftn object Modules.Map_Constructor_Iterable/FunctionExpression_iterable::__js_call__(class Modules.Map_Constructor_Iterable/Scope, object)
+		IL_002e: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_0033: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
+		IL_0038: ldc.i4.0
+		IL_0039: conv.r8
+		IL_003a: ldstr ""
+		IL_003f: ldc.i4.0
+		IL_0040: ldc.i4.1
+		IL_0041: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
+		IL_0046: stloc.s 13
+		IL_0048: ldloc.s 13
+		IL_004a: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0)
+		IL_004f: stloc.s 13
+		IL_0051: ldloc.s 13
+		IL_0053: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0)
+		IL_0058: stloc.s 13
+		IL_005a: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_005f: stloc.s 14
+		IL_0061: ldloc.s 14
+		IL_0063: ldloc.s 11
+		IL_0065: ldloc.s 13
+		IL_0067: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineObjectLiteralDataProperty(object, object, object)
+		IL_006c: pop
+		IL_006d: ldloc.s 14
+		IL_006f: stloc.1
+		IL_0070: ldloc.1
+		IL_0071: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Map::.ctor(object)
+		IL_0076: stloc.2
+		IL_0077: ldstr "console"
+		IL_007c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0081: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0086: stloc.s 11
+		IL_0088: ldloc.2
+		IL_0089: ldstr "size"
+		IL_008e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0093: stloc.s 15
+		IL_0095: ldloc.s 11
+		IL_0097: ldstr "log"
+		IL_009c: ldloc.s 15
+		IL_009e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_00a3: pop
+		IL_00a4: ldstr "console"
+		IL_00a9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_00ae: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00b3: stloc.s 15
+		IL_00b5: ldloc.2
+		IL_00b6: ldstr "get"
+		IL_00bb: ldstr "alpha"
+		IL_00c0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_00c5: stloc.s 11
+		IL_00c7: ldloc.s 15
+		IL_00c9: ldstr "log"
+		IL_00ce: ldloc.s 11
+		IL_00d0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_00d5: pop
+		IL_00d6: ldstr "console"
+		IL_00db: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_00e0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00e5: stloc.s 11
+		IL_00e7: ldloc.2
+		IL_00e8: ldstr "get"
+		IL_00ed: ldstr "beta"
+		IL_00f2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_00f7: stloc.s 15
+		IL_00f9: ldloc.s 11
+		IL_00fb: ldstr "log"
+		IL_0100: ldloc.s 15
+		IL_0102: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0107: pop
 		IL_0108: ldloc.0
-		IL_0109: castclass Modules.Map_Constructor_Iterable/Scope
-		IL_010e: ldftn object Modules.Map_Constructor_Iterable/FunctionExpression_closableIterable::__js_call__(class Modules.Map_Constructor_Iterable/Scope, object)
-		IL_0114: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_0119: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
-		IL_011e: ldc.i4.0
-		IL_011f: conv.r8
-		IL_0120: ldstr ""
-		IL_0125: ldc.i4.0
-		IL_0126: ldc.i4.1
-		IL_0127: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
-		IL_012c: stloc.s 12
-		IL_012e: ldloc.s 12
-		IL_0130: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0)
-		IL_0135: stloc.s 12
-		IL_0137: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_013c: stloc.s 13
-		IL_013e: ldloc.s 13
-		IL_0140: ldloc.s 14
-		IL_0142: ldloc.s 12
-		IL_0144: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineObjectLiteralDataProperty(object, object, object)
-		IL_0149: pop
-		IL_014a: ldloc.s 13
-		IL_014c: stloc.3
-		IL_014d: ldloc.3
-		IL_014e: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Map::.ctor(object)
-		IL_0153: stloc.s 4
-		IL_0155: ldstr "console"
-		IL_015a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_015f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0164: stloc.s 14
-		IL_0166: ldloc.0
-		IL_0167: ldfld object Modules.Map_Constructor_Iterable/Scope::closedOnNormalCompletion
-		IL_016c: stloc.s 11
+		IL_0109: ldc.i4.0
+		IL_010a: box [System.Runtime]System.Boolean
+		IL_010f: stfld object Modules.Map_Constructor_Iterable/Scope::closedOnNormalCompletion
+		IL_0114: ldstr "iterator"
+		IL_0119: call object [JavaScriptRuntime]JavaScriptRuntime.Symbol::GetWellKnown(string)
+		IL_011e: stloc.s 15
+		IL_0120: ldc.i4.1
+		IL_0121: newarr [System.Runtime]System.Object
+		IL_0126: dup
+		IL_0127: ldc.i4.0
+		IL_0128: ldloc.0
+		IL_0129: stelem.ref
+		IL_012a: stloc.s 12
+		IL_012c: ldloc.s 12
+		IL_012e: ldc.i4.0
+		IL_012f: ldelem.ref
+		IL_0130: castclass Modules.Map_Constructor_Iterable/Scope
+		IL_0135: ldftn object Modules.Map_Constructor_Iterable/FunctionExpression_closableIterable::__js_call__(class Modules.Map_Constructor_Iterable/Scope, object)
+		IL_013b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_0140: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
+		IL_0145: ldc.i4.0
+		IL_0146: conv.r8
+		IL_0147: ldstr ""
+		IL_014c: ldc.i4.0
+		IL_014d: ldc.i4.1
+		IL_014e: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
+		IL_0153: stloc.s 13
+		IL_0155: ldloc.s 13
+		IL_0157: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0)
+		IL_015c: stloc.s 13
+		IL_015e: ldloc.s 13
+		IL_0160: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0)
+		IL_0165: stloc.s 13
+		IL_0167: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_016c: stloc.s 14
 		IL_016e: ldloc.s 14
-		IL_0170: ldstr "log"
-		IL_0175: ldloc.s 11
-		IL_0177: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_017c: pop
-		IL_017d: ldstr "console"
-		IL_0182: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0187: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_018c: stloc.s 11
-		IL_018e: ldloc.s 4
-		IL_0190: ldstr "size"
-		IL_0195: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_019a: stloc.s 14
-		IL_019c: ldloc.s 11
-		IL_019e: ldstr "log"
-		IL_01a3: ldloc.s 14
-		IL_01a5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_01aa: pop
-		IL_01ab: ldc.i4.1
-		IL_01ac: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_01b1: dup
-		IL_01b2: ldc.i4.1
-		IL_01b3: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_01b8: dup
-		IL_01b9: ldstr "short"
-		IL_01be: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-		IL_01c3: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-		IL_01c8: stloc.s 15
-		IL_01ca: ldloc.s 15
-		IL_01cc: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Map::.ctor(object)
-		IL_01d1: stloc.s 5
-		IL_01d3: ldstr "console"
-		IL_01d8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_01dd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_01e2: stloc.s 14
-		IL_01e4: ldloc.s 5
-		IL_01e6: ldstr "has"
-		IL_01eb: ldstr "short"
-		IL_01f0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_01f5: stloc.s 11
-		IL_01f7: ldloc.s 14
-		IL_01f9: ldstr "log"
-		IL_01fe: ldloc.s 11
-		IL_0200: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0205: pop
-		IL_0206: ldstr "console"
-		IL_020b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0210: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0215: stloc.s 11
-		IL_0217: ldloc.s 5
-		IL_0219: ldstr "get"
-		IL_021e: ldstr "short"
-		IL_0223: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0228: stloc.s 14
-		IL_022a: ldloc.s 14
-		IL_022c: ldnull
-		IL_022d: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_0232: stloc.s 16
-		IL_0234: ldloc.s 16
-		IL_0236: box [System.Runtime]System.Boolean
-		IL_023b: stloc.s 17
-		IL_023d: ldloc.s 11
-		IL_023f: ldstr "log"
-		IL_0244: ldloc.s 17
-		IL_0246: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_024b: pop
-		IL_024c: ldloc.0
-		IL_024d: ldc.i4.0
-		IL_024e: box [System.Runtime]System.Boolean
-		IL_0253: stfld object Modules.Map_Constructor_Iterable/Scope::closedOnAbruptCompletion
-		IL_0258: ldstr "iterator"
-		IL_025d: call object [JavaScriptRuntime]JavaScriptRuntime.Symbol::GetWellKnown(string)
-		IL_0262: stloc.s 11
-		IL_0264: ldloc.0
-		IL_0265: castclass Modules.Map_Constructor_Iterable/Scope
-		IL_026a: ldftn object Modules.Map_Constructor_Iterable/FunctionExpression_invalidIterable::__js_call__(class Modules.Map_Constructor_Iterable/Scope, object)
-		IL_0270: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_0275: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
-		IL_027a: ldc.i4.0
-		IL_027b: conv.r8
-		IL_027c: ldstr ""
-		IL_0281: ldc.i4.0
-		IL_0282: ldc.i4.1
-		IL_0283: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
-		IL_0288: stloc.s 12
-		IL_028a: ldloc.s 12
-		IL_028c: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0)
-		IL_0291: stloc.s 12
-		IL_0293: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_0298: stloc.s 13
-		IL_029a: ldloc.s 13
-		IL_029c: ldloc.s 11
-		IL_029e: ldloc.s 12
-		IL_02a0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineObjectLiteralDataProperty(object, object, object)
-		IL_02a5: pop
-		IL_02a6: ldloc.s 13
-		IL_02a8: stloc.s 6
+		IL_0170: ldloc.s 15
+		IL_0172: ldloc.s 13
+		IL_0174: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineObjectLiteralDataProperty(object, object, object)
+		IL_0179: pop
+		IL_017a: ldloc.s 14
+		IL_017c: stloc.3
+		IL_017d: ldloc.3
+		IL_017e: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Map::.ctor(object)
+		IL_0183: stloc.s 4
+		IL_0185: ldstr "console"
+		IL_018a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_018f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0194: stloc.s 15
+		IL_0196: ldloc.0
+		IL_0197: ldfld object Modules.Map_Constructor_Iterable/Scope::closedOnNormalCompletion
+		IL_019c: stloc.s 11
+		IL_019e: ldloc.s 15
+		IL_01a0: ldstr "log"
+		IL_01a5: ldloc.s 11
+		IL_01a7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_01ac: pop
+		IL_01ad: ldstr "console"
+		IL_01b2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_01b7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_01bc: stloc.s 11
+		IL_01be: ldloc.s 4
+		IL_01c0: ldstr "size"
+		IL_01c5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_01ca: stloc.s 15
+		IL_01cc: ldloc.s 11
+		IL_01ce: ldstr "log"
+		IL_01d3: ldloc.s 15
+		IL_01d5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_01da: pop
+		IL_01db: ldc.i4.1
+		IL_01dc: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_01e1: dup
+		IL_01e2: ldc.i4.1
+		IL_01e3: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_01e8: dup
+		IL_01e9: ldstr "short"
+		IL_01ee: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+		IL_01f3: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+		IL_01f8: stloc.s 16
+		IL_01fa: ldloc.s 16
+		IL_01fc: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Map::.ctor(object)
+		IL_0201: stloc.s 5
+		IL_0203: ldstr "console"
+		IL_0208: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_020d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0212: stloc.s 15
+		IL_0214: ldloc.s 5
+		IL_0216: ldstr "has"
+		IL_021b: ldstr "short"
+		IL_0220: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0225: stloc.s 11
+		IL_0227: ldloc.s 15
+		IL_0229: ldstr "log"
+		IL_022e: ldloc.s 11
+		IL_0230: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0235: pop
+		IL_0236: ldstr "console"
+		IL_023b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0240: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0245: stloc.s 11
+		IL_0247: ldloc.s 5
+		IL_0249: ldstr "get"
+		IL_024e: ldstr "short"
+		IL_0253: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0258: stloc.s 15
+		IL_025a: ldloc.s 15
+		IL_025c: ldnull
+		IL_025d: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_0262: stloc.s 17
+		IL_0264: ldloc.s 17
+		IL_0266: box [System.Runtime]System.Boolean
+		IL_026b: stloc.s 18
+		IL_026d: ldloc.s 11
+		IL_026f: ldstr "log"
+		IL_0274: ldloc.s 18
+		IL_0276: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_027b: pop
+		IL_027c: ldloc.0
+		IL_027d: ldc.i4.0
+		IL_027e: box [System.Runtime]System.Boolean
+		IL_0283: stfld object Modules.Map_Constructor_Iterable/Scope::closedOnAbruptCompletion
+		IL_0288: ldstr "iterator"
+		IL_028d: call object [JavaScriptRuntime]JavaScriptRuntime.Symbol::GetWellKnown(string)
+		IL_0292: stloc.s 11
+		IL_0294: ldc.i4.1
+		IL_0295: newarr [System.Runtime]System.Object
+		IL_029a: dup
+		IL_029b: ldc.i4.0
+		IL_029c: ldloc.0
+		IL_029d: stelem.ref
+		IL_029e: stloc.s 12
+		IL_02a0: ldloc.s 12
+		IL_02a2: ldc.i4.0
+		IL_02a3: ldelem.ref
+		IL_02a4: castclass Modules.Map_Constructor_Iterable/Scope
+		IL_02a9: ldftn object Modules.Map_Constructor_Iterable/FunctionExpression_invalidIterable::__js_call__(class Modules.Map_Constructor_Iterable/Scope, object)
+		IL_02af: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_02b4: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
+		IL_02b9: ldc.i4.0
+		IL_02ba: conv.r8
+		IL_02bb: ldstr ""
+		IL_02c0: ldc.i4.0
+		IL_02c1: ldc.i4.1
+		IL_02c2: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
+		IL_02c7: stloc.s 13
+		IL_02c9: ldloc.s 13
+		IL_02cb: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0)
+		IL_02d0: stloc.s 13
+		IL_02d2: ldloc.s 13
+		IL_02d4: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0)
+		IL_02d9: stloc.s 13
+		IL_02db: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_02e0: stloc.s 14
+		IL_02e2: ldloc.s 14
+		IL_02e4: ldloc.s 11
+		IL_02e6: ldloc.s 13
+		IL_02e8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineObjectLiteralDataProperty(object, object, object)
+		IL_02ed: pop
+		IL_02ee: ldloc.s 14
+		IL_02f0: stloc.s 6
 		.try
 		{
-			IL_02aa: nop
-			IL_02ab: ldloc.s 6
-			IL_02ad: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Map::.ctor(object)
-			IL_02b2: pop
-			IL_02b3: ldstr "console"
-			IL_02b8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_02bd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_02c2: ldstr "log"
-			IL_02c7: ldstr "no error"
-			IL_02cc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_02d1: pop
-			IL_02d2: leave IL_033c
+			IL_02f2: nop
+			IL_02f3: ldloc.s 6
+			IL_02f5: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Map::.ctor(object)
+			IL_02fa: pop
+			IL_02fb: ldstr "console"
+			IL_0300: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_0305: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_030a: ldstr "log"
+			IL_030f: ldstr "no error"
+			IL_0314: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_0319: pop
+			IL_031a: leave IL_0384
 		} // end .try
 		catch [System.Runtime]System.Exception
 		{
-			IL_02d7: stloc.s 7
-			IL_02d9: ldloc.s 7
-			IL_02db: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-			IL_02e0: dup
-			IL_02e1: brtrue IL_02f7
+			IL_031f: stloc.s 7
+			IL_0321: ldloc.s 7
+			IL_0323: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+			IL_0328: dup
+			IL_0329: brtrue IL_033f
 
-			IL_02e6: pop
-			IL_02e7: ldloc.s 7
-			IL_02e9: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
-			IL_02ee: dup
-			IL_02ef: brtrue IL_0303
+			IL_032e: pop
+			IL_032f: ldloc.s 7
+			IL_0331: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+			IL_0336: dup
+			IL_0337: brtrue IL_034b
 
-			IL_02f4: pop
-			IL_02f5: rethrow
+			IL_033c: pop
+			IL_033d: rethrow
 
-			IL_02f7: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-			IL_02fc: stloc.s 8
-			IL_02fe: br IL_0305
+			IL_033f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+			IL_0344: stloc.s 8
+			IL_0346: br IL_034d
 
-			IL_0303: stloc.s 8
+			IL_034b: stloc.s 8
 
-			IL_0305: ldloc.s 8
-			IL_0307: stloc.s 9
-			IL_0309: ldstr "console"
-			IL_030e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_0313: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0318: stloc.s 11
-			IL_031a: ldloc.s 9
-			IL_031c: ldstr "name"
-			IL_0321: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0326: stloc.s 14
-			IL_0328: ldloc.s 11
-			IL_032a: ldstr "log"
-			IL_032f: ldloc.s 14
-			IL_0331: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_0336: pop
-			IL_0337: leave IL_033c
+			IL_034d: ldloc.s 8
+			IL_034f: stloc.s 9
+			IL_0351: ldstr "console"
+			IL_0356: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_035b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0360: stloc.s 11
+			IL_0362: ldloc.s 9
+			IL_0364: ldstr "name"
+			IL_0369: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_036e: stloc.s 15
+			IL_0370: ldloc.s 11
+			IL_0372: ldstr "log"
+			IL_0377: ldloc.s 15
+			IL_0379: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_037e: pop
+			IL_037f: leave IL_0384
 		} // end handler
 
-		IL_033c: ldstr "console"
-		IL_0341: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0346: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_034b: stloc.s 14
-		IL_034d: ldloc.0
-		IL_034e: ldfld object Modules.Map_Constructor_Iterable/Scope::closedOnAbruptCompletion
-		IL_0353: stloc.s 11
-		IL_0355: ldloc.s 14
-		IL_0357: ldstr "log"
-		IL_035c: ldloc.s 11
-		IL_035e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0363: pop
-		IL_0364: ldnull
-		IL_0365: stloc.s 10
-		IL_0367: ret
+		IL_0384: ldstr "console"
+		IL_0389: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_038e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0393: stloc.s 15
+		IL_0395: ldloc.0
+		IL_0396: ldfld object Modules.Map_Constructor_Iterable/Scope::closedOnAbruptCompletion
+		IL_039b: stloc.s 11
+		IL_039d: ldloc.s 15
+		IL_039f: ldstr "log"
+		IL_03a4: ldloc.s 11
+		IL_03a6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_03ab: pop
+		IL_03ac: ldnull
+		IL_03ad: stloc.s 10
+		IL_03af: ret
 	} // end of method Map_Constructor_Iterable::__js_module_init__
 
 } // end of class Modules.Map_Constructor_Iterable
@@ -1355,7 +1420,7 @@
 			class Modules.Map_Constructor_Iterable/Scope capture0
 		) cil managed 
 	{
-		// Method begins at RVA 0x2969
+		// Method begins at RVA 0x29e9
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -1371,7 +1436,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x2978
+		// Method begins at RVA 0x29f8
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -1383,7 +1448,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x297b
+		// Method begins at RVA 0x29fb
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -1398,16 +1463,16 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x297e
+		// Method begins at RVA 0x29fe
 		// Header size: 1
-		// Code size: 13 (0xd)
+		// Code size: 17 (0x11)
 		.maxstack 8
 
 		IL_0000: ldarg.0
 		IL_0001: ldfld class Modules.Map_Constructor_Iterable/Scope FunctionObjects.Map_Constructor_Iterable_014AC4BD.FunctionObject_FunctionExpression_A18A3F87_L4C22::_environment0_Map_Constructor_Iterable
-		IL_0006: ldnull
-		IL_0007: call object Modules.Map_Constructor_Iterable/FunctionExpression_iterable::__js_call__(class Modules.Map_Constructor_Iterable/Scope, object)
-		IL_000c: ret
+		IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
+		IL_000b: call object Modules.Map_Constructor_Iterable/FunctionExpression_iterable::__js_call__(class Modules.Map_Constructor_Iterable/Scope, object)
+		IL_0010: ret
 	} // end of method FunctionObject_FunctionExpression_A18A3F87_L4C22::CallCore
 
 	.method family hidebysig virtual 
@@ -1416,14 +1481,17 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x298c
+		// Method begins at RVA 0x2a10
 		// Header size: 1
-		// Code size: 11 (0xb)
+		// Code size: 14 (0xe)
 		.maxstack 8
 
-		IL_0000: ldstr "Generated construction adapter is reserved for the callable-family construction migration"
-		IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-		IL_000a: throw
+		IL_0000: ldarg.0
+		IL_0001: ldarg.1
+		IL_0002: call instance object[] [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::ToArray()
+		IL_0007: ldarg.2
+		IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionObject(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, object[], object)
+		IL_000d: ret
 	} // end of method FunctionObject_FunctionExpression_A18A3F87_L4C22::ConstructCore
 
 } // end of class FunctionObjects.Map_Constructor_Iterable_014AC4BD.FunctionObject_FunctionExpression_A18A3F87_L4C22
@@ -1444,7 +1512,7 @@
 			object[] capture2
 		) cil managed 
 	{
-		// Method begins at RVA 0x2998
+		// Method begins at RVA 0x2a1f
 		// Header size: 1
 		// Code size: 28 (0x1c)
 		.maxstack 8
@@ -1466,7 +1534,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x29b5
+		// Method begins at RVA 0x2a3c
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -1478,7 +1546,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x29b8
+		// Method begins at RVA 0x2a3f
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -1493,16 +1561,16 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x29bb
+		// Method begins at RVA 0x2a42
 		// Header size: 1
-		// Code size: 13 (0xd)
+		// Code size: 17 (0x11)
 		.maxstack 8
 
 		IL_0000: ldarg.0
 		IL_0001: ldfld object[] FunctionObjects.Map_Constructor_Iterable_014AC4BD.FunctionObject_FunctionExpression_E1161D0D_L13C17::_transitionalScopes
-		IL_0006: ldnull
-		IL_0007: call object Modules.Map_Constructor_Iterable/FunctionExpression_iterable/FunctionExpression_iterable::__js_call__(object[], object)
-		IL_000c: ret
+		IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
+		IL_000b: call object Modules.Map_Constructor_Iterable/FunctionExpression_iterable/FunctionExpression_iterable::__js_call__(object[], object)
+		IL_0010: ret
 	} // end of method FunctionObject_FunctionExpression_E1161D0D_L13C17::CallCore
 
 	.method family hidebysig virtual 
@@ -1511,14 +1579,17 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x29c9
+		// Method begins at RVA 0x2a54
 		// Header size: 1
-		// Code size: 11 (0xb)
+		// Code size: 14 (0xe)
 		.maxstack 8
 
-		IL_0000: ldstr "Generated construction adapter is reserved for the callable-family construction migration"
-		IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-		IL_000a: throw
+		IL_0000: ldarg.0
+		IL_0001: ldarg.1
+		IL_0002: call instance object[] [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::ToArray()
+		IL_0007: ldarg.2
+		IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionObject(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, object[], object)
+		IL_000d: ret
 	} // end of method FunctionObject_FunctionExpression_E1161D0D_L13C17::ConstructCore
 
 } // end of class FunctionObjects.Map_Constructor_Iterable_014AC4BD.FunctionObject_FunctionExpression_E1161D0D_L13C17
@@ -1535,7 +1606,7 @@
 			class Modules.Map_Constructor_Iterable/Scope capture0
 		) cil managed 
 	{
-		// Method begins at RVA 0x29d5
+		// Method begins at RVA 0x2a63
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -1551,7 +1622,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x29e4
+		// Method begins at RVA 0x2a72
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -1563,7 +1634,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x29e7
+		// Method begins at RVA 0x2a75
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -1578,16 +1649,16 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x29ea
+		// Method begins at RVA 0x2a78
 		// Header size: 1
-		// Code size: 13 (0xd)
+		// Code size: 17 (0x11)
 		.maxstack 8
 
 		IL_0000: ldarg.0
 		IL_0001: ldfld class Modules.Map_Constructor_Iterable/Scope FunctionObjects.Map_Constructor_Iterable_014AC4BD.FunctionObject_FunctionExpression_17108703_L31C22::_environment0_Map_Constructor_Iterable
-		IL_0006: ldnull
-		IL_0007: call object Modules.Map_Constructor_Iterable/FunctionExpression_closableIterable::__js_call__(class Modules.Map_Constructor_Iterable/Scope, object)
-		IL_000c: ret
+		IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
+		IL_000b: call object Modules.Map_Constructor_Iterable/FunctionExpression_closableIterable::__js_call__(class Modules.Map_Constructor_Iterable/Scope, object)
+		IL_0010: ret
 	} // end of method FunctionObject_FunctionExpression_17108703_L31C22::CallCore
 
 	.method family hidebysig virtual 
@@ -1596,14 +1667,17 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x29f8
+		// Method begins at RVA 0x2a8a
 		// Header size: 1
-		// Code size: 11 (0xb)
+		// Code size: 14 (0xe)
 		.maxstack 8
 
-		IL_0000: ldstr "Generated construction adapter is reserved for the callable-family construction migration"
-		IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-		IL_000a: throw
+		IL_0000: ldarg.0
+		IL_0001: ldarg.1
+		IL_0002: call instance object[] [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::ToArray()
+		IL_0007: ldarg.2
+		IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionObject(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, object[], object)
+		IL_000d: ret
 	} // end of method FunctionObject_FunctionExpression_17108703_L31C22::ConstructCore
 
 } // end of class FunctionObjects.Map_Constructor_Iterable_014AC4BD.FunctionObject_FunctionExpression_17108703_L31C22
@@ -1624,7 +1698,7 @@
 			object[] capture2
 		) cil managed 
 	{
-		// Method begins at RVA 0x2a04
+		// Method begins at RVA 0x2a99
 		// Header size: 1
 		// Code size: 28 (0x1c)
 		.maxstack 8
@@ -1646,7 +1720,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x2a21
+		// Method begins at RVA 0x2ab6
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -1658,7 +1732,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x2a24
+		// Method begins at RVA 0x2ab9
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -1673,16 +1747,16 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x2a27
+		// Method begins at RVA 0x2abc
 		// Header size: 1
-		// Code size: 13 (0xd)
+		// Code size: 17 (0x11)
 		.maxstack 8
 
 		IL_0000: ldarg.0
 		IL_0001: ldfld object[] FunctionObjects.Map_Constructor_Iterable_014AC4BD.FunctionObject_FunctionExpression_99568244_L39C17::_transitionalScopes
-		IL_0006: ldnull
-		IL_0007: call object Modules.Map_Constructor_Iterable/FunctionExpression_closableIterable/FunctionExpression_closableIterable::__js_call__(object[], object)
-		IL_000c: ret
+		IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
+		IL_000b: call object Modules.Map_Constructor_Iterable/FunctionExpression_closableIterable/FunctionExpression_closableIterable::__js_call__(object[], object)
+		IL_0010: ret
 	} // end of method FunctionObject_FunctionExpression_99568244_L39C17::CallCore
 
 	.method family hidebysig virtual 
@@ -1691,14 +1765,17 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x2a35
+		// Method begins at RVA 0x2ace
 		// Header size: 1
-		// Code size: 11 (0xb)
+		// Code size: 14 (0xe)
 		.maxstack 8
 
-		IL_0000: ldstr "Generated construction adapter is reserved for the callable-family construction migration"
-		IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-		IL_000a: throw
+		IL_0000: ldarg.0
+		IL_0001: ldarg.1
+		IL_0002: call instance object[] [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::ToArray()
+		IL_0007: ldarg.2
+		IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionObject(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, object[], object)
+		IL_000d: ret
 	} // end of method FunctionObject_FunctionExpression_99568244_L39C17::ConstructCore
 
 } // end of class FunctionObjects.Map_Constructor_Iterable_014AC4BD.FunctionObject_FunctionExpression_99568244_L39C17
@@ -1719,7 +1796,7 @@
 			object[] capture2
 		) cil managed 
 	{
-		// Method begins at RVA 0x2a41
+		// Method begins at RVA 0x2add
 		// Header size: 1
 		// Code size: 28 (0x1c)
 		.maxstack 8
@@ -1741,7 +1818,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x2a5e
+		// Method begins at RVA 0x2afa
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -1753,7 +1830,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x2a61
+		// Method begins at RVA 0x2afd
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -1768,16 +1845,16 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x2a64
+		// Method begins at RVA 0x2b00
 		// Header size: 1
-		// Code size: 13 (0xd)
+		// Code size: 17 (0x11)
 		.maxstack 8
 
 		IL_0000: ldarg.0
 		IL_0001: ldfld object[] FunctionObjects.Map_Constructor_Iterable_014AC4BD.FunctionObject_FunctionExpression_D3F48DAC_L46C19::_transitionalScopes
-		IL_0006: ldnull
-		IL_0007: call object Modules.Map_Constructor_Iterable/FunctionExpression_closableIterable/FunctionExpression_closableIterable_L46C18::__js_call__(object[], object)
-		IL_000c: ret
+		IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
+		IL_000b: call object Modules.Map_Constructor_Iterable/FunctionExpression_closableIterable/FunctionExpression_closableIterable_L46C18::__js_call__(object[], object)
+		IL_0010: ret
 	} // end of method FunctionObject_FunctionExpression_D3F48DAC_L46C19::CallCore
 
 	.method family hidebysig virtual 
@@ -1786,14 +1863,17 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x2a72
+		// Method begins at RVA 0x2b12
 		// Header size: 1
-		// Code size: 11 (0xb)
+		// Code size: 14 (0xe)
 		.maxstack 8
 
-		IL_0000: ldstr "Generated construction adapter is reserved for the callable-family construction migration"
-		IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-		IL_000a: throw
+		IL_0000: ldarg.0
+		IL_0001: ldarg.1
+		IL_0002: call instance object[] [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::ToArray()
+		IL_0007: ldarg.2
+		IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionObject(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, object[], object)
+		IL_000d: ret
 	} // end of method FunctionObject_FunctionExpression_D3F48DAC_L46C19::ConstructCore
 
 } // end of class FunctionObjects.Map_Constructor_Iterable_014AC4BD.FunctionObject_FunctionExpression_D3F48DAC_L46C19
@@ -1810,7 +1890,7 @@
 			class Modules.Map_Constructor_Iterable/Scope capture0
 		) cil managed 
 	{
-		// Method begins at RVA 0x2a7e
+		// Method begins at RVA 0x2b21
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -1826,7 +1906,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x2a8d
+		// Method begins at RVA 0x2b30
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -1838,7 +1918,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x2a90
+		// Method begins at RVA 0x2b33
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -1853,16 +1933,16 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x2a93
+		// Method begins at RVA 0x2b36
 		// Header size: 1
-		// Code size: 13 (0xd)
+		// Code size: 17 (0x11)
 		.maxstack 8
 
 		IL_0000: ldarg.0
 		IL_0001: ldfld class Modules.Map_Constructor_Iterable/Scope FunctionObjects.Map_Constructor_Iterable_014AC4BD.FunctionObject_FunctionExpression_EEAD530B_L66C22::_environment0_Map_Constructor_Iterable
-		IL_0006: ldnull
-		IL_0007: call object Modules.Map_Constructor_Iterable/FunctionExpression_invalidIterable::__js_call__(class Modules.Map_Constructor_Iterable/Scope, object)
-		IL_000c: ret
+		IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
+		IL_000b: call object Modules.Map_Constructor_Iterable/FunctionExpression_invalidIterable::__js_call__(class Modules.Map_Constructor_Iterable/Scope, object)
+		IL_0010: ret
 	} // end of method FunctionObject_FunctionExpression_EEAD530B_L66C22::CallCore
 
 	.method family hidebysig virtual 
@@ -1871,14 +1951,17 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x2aa1
+		// Method begins at RVA 0x2b48
 		// Header size: 1
-		// Code size: 11 (0xb)
+		// Code size: 14 (0xe)
 		.maxstack 8
 
-		IL_0000: ldstr "Generated construction adapter is reserved for the callable-family construction migration"
-		IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-		IL_000a: throw
+		IL_0000: ldarg.0
+		IL_0001: ldarg.1
+		IL_0002: call instance object[] [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::ToArray()
+		IL_0007: ldarg.2
+		IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionObject(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, object[], object)
+		IL_000d: ret
 	} // end of method FunctionObject_FunctionExpression_EEAD530B_L66C22::ConstructCore
 
 } // end of class FunctionObjects.Map_Constructor_Iterable_014AC4BD.FunctionObject_FunctionExpression_EEAD530B_L66C22
@@ -1899,7 +1982,7 @@
 			object[] capture2
 		) cil managed 
 	{
-		// Method begins at RVA 0x2aad
+		// Method begins at RVA 0x2b57
 		// Header size: 1
 		// Code size: 28 (0x1c)
 		.maxstack 8
@@ -1921,7 +2004,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x2aca
+		// Method begins at RVA 0x2b74
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -1933,7 +2016,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x2acd
+		// Method begins at RVA 0x2b77
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -1948,16 +2031,16 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x2ad0
+		// Method begins at RVA 0x2b7a
 		// Header size: 1
-		// Code size: 13 (0xd)
+		// Code size: 17 (0x11)
 		.maxstack 8
 
 		IL_0000: ldarg.0
 		IL_0001: ldfld object[] FunctionObjects.Map_Constructor_Iterable_014AC4BD.FunctionObject_FunctionExpression_A2D37BB5_L70C17::_transitionalScopes
-		IL_0006: ldnull
-		IL_0007: call object Modules.Map_Constructor_Iterable/FunctionExpression_invalidIterable/FunctionExpression_invalidIterable::__js_call__(object[], object)
-		IL_000c: ret
+		IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
+		IL_000b: call object Modules.Map_Constructor_Iterable/FunctionExpression_invalidIterable/FunctionExpression_invalidIterable::__js_call__(object[], object)
+		IL_0010: ret
 	} // end of method FunctionObject_FunctionExpression_A2D37BB5_L70C17::CallCore
 
 	.method family hidebysig virtual 
@@ -1966,14 +2049,17 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x2ade
+		// Method begins at RVA 0x2b8c
 		// Header size: 1
-		// Code size: 11 (0xb)
+		// Code size: 14 (0xe)
 		.maxstack 8
 
-		IL_0000: ldstr "Generated construction adapter is reserved for the callable-family construction migration"
-		IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-		IL_000a: throw
+		IL_0000: ldarg.0
+		IL_0001: ldarg.1
+		IL_0002: call instance object[] [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::ToArray()
+		IL_0007: ldarg.2
+		IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionObject(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, object[], object)
+		IL_000d: ret
 	} // end of method FunctionObject_FunctionExpression_A2D37BB5_L70C17::ConstructCore
 
 } // end of class FunctionObjects.Map_Constructor_Iterable_014AC4BD.FunctionObject_FunctionExpression_A2D37BB5_L70C17
@@ -1994,7 +2080,7 @@
 			object[] capture2
 		) cil managed 
 	{
-		// Method begins at RVA 0x2aea
+		// Method begins at RVA 0x2b9b
 		// Header size: 1
 		// Code size: 28 (0x1c)
 		.maxstack 8
@@ -2016,7 +2102,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x2b07
+		// Method begins at RVA 0x2bb8
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -2028,7 +2114,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x2b0a
+		// Method begins at RVA 0x2bbb
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -2043,16 +2129,16 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x2b0d
+		// Method begins at RVA 0x2bbe
 		// Header size: 1
-		// Code size: 13 (0xd)
+		// Code size: 17 (0x11)
 		.maxstack 8
 
 		IL_0000: ldarg.0
 		IL_0001: ldfld object[] FunctionObjects.Map_Constructor_Iterable_014AC4BD.FunctionObject_FunctionExpression_471A5FC3_L78C19::_transitionalScopes
-		IL_0006: ldnull
-		IL_0007: call object Modules.Map_Constructor_Iterable/FunctionExpression_invalidIterable/FunctionExpression_invalidIterable_L78C18::__js_call__(object[], object)
-		IL_000c: ret
+		IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
+		IL_000b: call object Modules.Map_Constructor_Iterable/FunctionExpression_invalidIterable/FunctionExpression_invalidIterable_L78C18::__js_call__(object[], object)
+		IL_0010: ret
 	} // end of method FunctionObject_FunctionExpression_471A5FC3_L78C19::CallCore
 
 	.method family hidebysig virtual 
@@ -2061,14 +2147,17 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x2b1b
+		// Method begins at RVA 0x2bd0
 		// Header size: 1
-		// Code size: 11 (0xb)
+		// Code size: 14 (0xe)
 		.maxstack 8
 
-		IL_0000: ldstr "Generated construction adapter is reserved for the callable-family construction migration"
-		IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-		IL_000a: throw
+		IL_0000: ldarg.0
+		IL_0001: ldarg.1
+		IL_0002: call instance object[] [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::ToArray()
+		IL_0007: ldarg.2
+		IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionObject(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, object[], object)
+		IL_000d: ret
 	} // end of method FunctionObject_FunctionExpression_471A5FC3_L78C19::ConstructCore
 
 } // end of class FunctionObjects.Map_Constructor_Iterable_014AC4BD.FunctionObject_FunctionExpression_471A5FC3_L78C19
@@ -2080,7 +2169,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2b27
+		// Method begins at RVA 0x2bdf
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

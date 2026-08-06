@@ -280,7 +280,7 @@ namespace JavaScriptRuntime.Node
             }
 
             var addListener = ObjectRuntime.GetProperty(signal, "addEventListener");
-            if (addListener is not Delegate addDelegate)
+            if (!CallableOperations.IsCallable(addListener))
             {
                 return false;
             }
@@ -291,12 +291,12 @@ namespace JavaScriptRuntime.Node
                 return null;
             };
 
-            Function.Call(addDelegate, signal, new object?[] { "abort", listenerDelegate });
+            CallableOperations.Call2(addListener, signal, "abort", listenerDelegate);
 
             var removeListener = ObjectRuntime.GetProperty(signal, "removeEventListener");
-            if (removeListener is Delegate removeDelegate)
+            if (CallableOperations.IsCallable(removeListener))
             {
-                unregister = () => Function.Call(removeDelegate, signal, new object?[] { "abort", listenerDelegate });
+                unregister = () => CallableOperations.Call2(removeListener, signal, "abort", listenerDelegate);
             }
 
             return true;

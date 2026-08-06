@@ -101,54 +101,58 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 118 (0x76)
+		// Code size: 117 (0x75)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Function_CallViaVariable_Arity2/Scope,
-			[1] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2,
-			[2] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2,
-			[3] object,
-			[4] object[],
+			[1] class FunctionObjects.Function_CallViaVariable_Arity2_92C7D1E2.FunctionObject_FunctionDeclaration_5E16C7E8_add,
+			[2] class FunctionObjects.Function_CallViaVariable_Arity2_92C7D1E2.FunctionObject_FunctionDeclaration_5E16C7E8_add,
+			[3] object[],
+			[4] object,
 			[5] object
 		)
 
 		IL_0000: newobj instance void Modules.Function_CallViaVariable_Arity2/Scope::.ctor()
 		IL_0005: stloc.0
-		IL_0006: ldnull
-		IL_0007: ldftn object Modules.Function_CallViaVariable_Arity2/'add'::__js_call__(object, object, object)
-		IL_000d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::.ctor(object, native int)
-		IL_0012: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2
-		IL_0017: ldc.i4.2
-		IL_0018: conv.r8
-		IL_0019: ldstr "add"
-		IL_001e: ldc.i4.0
-		IL_001f: ldc.i4.1
-		IL_0020: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2>(!!0, float64, string, bool, bool)
-		IL_0025: stloc.1
+		IL_0006: ldc.i4.1
+		IL_0007: newarr [System.Runtime]System.Object
+		IL_000c: dup
+		IL_000d: ldc.i4.0
+		IL_000e: ldloc.0
+		IL_000f: stelem.ref
+		IL_0010: stloc.3
+		IL_0011: newobj instance void FunctionObjects.Function_CallViaVariable_Arity2_92C7D1E2.FunctionObject_FunctionDeclaration_5E16C7E8_add::.ctor()
+		IL_0016: ldc.i4.2
+		IL_0017: conv.r8
+		IL_0018: ldstr "add"
+		IL_001d: ldc.i4.0
+		IL_001e: ldc.i4.1
+		IL_001f: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class FunctionObjects.Function_CallViaVariable_Arity2_92C7D1E2.FunctionObject_FunctionDeclaration_5E16C7E8_add>(!!0, float64, string, bool, bool)
+		IL_0024: stloc.1
+		IL_0025: nop
 		IL_0026: nop
-		IL_0027: nop
-		IL_0028: ldloc.1
-		IL_0029: stloc.2
-		IL_002a: ldstr "console"
-		IL_002f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0034: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0039: stloc.3
+		IL_0027: ldloc.1
+		IL_0028: stloc.2
+		IL_0029: ldstr "console"
+		IL_002e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0033: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0038: stloc.s 4
 		IL_003a: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_003f: stloc.s 4
-		IL_0041: ldloc.2
-		IL_0042: ldloc.s 4
-		IL_0044: ldc.r8 10
-		IL_004d: box [System.Runtime]System.Double
-		IL_0052: ldc.r8 20
-		IL_005b: box [System.Runtime]System.Double
-		IL_0060: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2, object[], object, object)
-		IL_0065: stloc.s 5
-		IL_0067: ldloc.3
-		IL_0068: ldstr "log"
-		IL_006d: ldloc.s 5
-		IL_006f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0074: pop
-		IL_0075: ret
+		IL_003f: stloc.3
+		IL_0040: ldloc.2
+		IL_0041: ldloc.3
+		IL_0042: ldc.r8 10
+		IL_004b: box [System.Runtime]System.Double
+		IL_0050: ldc.r8 20
+		IL_0059: box [System.Runtime]System.Double
+		IL_005e: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
+		IL_0063: stloc.s 5
+		IL_0065: ldloc.s 4
+		IL_0067: ldstr "log"
+		IL_006c: ldloc.s 5
+		IL_006e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0073: pop
+		IL_0074: ret
 	} // end of method Function_CallViaVariable_Arity2::__js_module_init__
 
 } // end of class Modules.Function_CallViaVariable_Arity2
@@ -202,18 +206,18 @@
 	{
 		// Method begins at RVA 0x210a
 		// Header size: 1
-		// Code size: 21 (0x15)
+		// Code size: 25 (0x19)
 		.maxstack 8
 
-		IL_0000: ldnull
-		IL_0001: ldarg.2
-		IL_0002: ldc.i4.0
-		IL_0003: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-		IL_0008: ldarg.2
-		IL_0009: ldc.i4.1
-		IL_000a: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-		IL_000f: call object Modules.Function_CallViaVariable_Arity2/'add'::__js_call__(object, object, object)
-		IL_0014: ret
+		IL_0000: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
+		IL_0005: ldarg.2
+		IL_0006: ldc.i4.0
+		IL_0007: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+		IL_000c: ldarg.2
+		IL_000d: ldc.i4.1
+		IL_000e: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+		IL_0013: call object Modules.Function_CallViaVariable_Arity2/'add'::__js_call__(object, object, object)
+		IL_0018: ret
 	} // end of method FunctionObject_FunctionDeclaration_5E16C7E8_add::CallCore
 
 	.method family hidebysig virtual 
@@ -222,14 +226,17 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x2120
+		// Method begins at RVA 0x2124
 		// Header size: 1
-		// Code size: 11 (0xb)
+		// Code size: 14 (0xe)
 		.maxstack 8
 
-		IL_0000: ldstr "Generated construction adapter is reserved for the callable-family construction migration"
-		IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-		IL_000a: throw
+		IL_0000: ldarg.0
+		IL_0001: ldarg.1
+		IL_0002: call instance object[] [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::ToArray()
+		IL_0007: ldarg.2
+		IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionObject(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, object[], object)
+		IL_000d: ret
 	} // end of method FunctionObject_FunctionDeclaration_5E16C7E8_add::ConstructCore
 
 } // end of class FunctionObjects.Function_CallViaVariable_Arity2_92C7D1E2.FunctionObject_FunctionDeclaration_5E16C7E8_add
@@ -241,7 +248,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x212c
+		// Method begins at RVA 0x2133
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

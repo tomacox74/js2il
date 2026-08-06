@@ -1805,7 +1805,7 @@ namespace JavaScriptRuntime
                 throw new TypeError("Cannot convert undefined or null to object");
             }
 
-            if (callback is null || callback is JsNull || callback is not Delegate)
+            if (!CallableOperations.IsCallable(callback))
             {
                 throw new TypeError("Object.groupBy callback must be a function");
             }
@@ -4249,6 +4249,38 @@ namespace JavaScriptRuntime
                 return true;
             }
 
+            if (target is JsFunctionObject functionObject
+                && functionObject.IsConstructor
+                && string.Equals(propName, "prototype", StringComparison.Ordinal))
+            {
+                if (PropertyDescriptorStore.IsDeleted(functionObject, propName))
+                {
+                    value = null;
+                    return true;
+                }
+
+                var prototypeObject = CreateOrdinaryObject();
+                PropertyDescriptorStore.DefineOrUpdate(functionObject, propName, new JsPropertyDescriptor
+                {
+                    Kind = JsPropertyDescriptorKind.Data,
+                    Enumerable = false,
+                    Configurable = false,
+                    Writable = true,
+                    Value = prototypeObject
+                });
+                PropertyDescriptorStore.DefineOrUpdate(prototypeObject, "constructor", new JsPropertyDescriptor
+                {
+                    Kind = JsPropertyDescriptorKind.Data,
+                    Enumerable = false,
+                    Configurable = true,
+                    Writable = true,
+                    Value = functionObject
+                });
+
+                value = prototypeObject;
+                return true;
+            }
+
             try
             {
                 if (target is Type staticType)
@@ -4795,12 +4827,12 @@ namespace JavaScriptRuntime
                     return;
                 }
 
-                if (ret is not Delegate del)
+                if (!CallableOperations.IsCallable(ret))
                 {
                     throw new JavaScriptRuntime.TypeError("Iterator.return is not a function");
                 }
 
-                ValidateIteratorCloseResult(InvokeMemberDelegate0PreservingContext(iterator, del));
+                ValidateIteratorCloseResult(CallableOperations.Call0(ret, iterator));
                 return;
             }
 
@@ -4810,12 +4842,12 @@ namespace JavaScriptRuntime
             {
                 return;
             }
-            if (memberValue is not Delegate memberDel)
+            if (!CallableOperations.IsCallable(memberValue))
             {
                 throw new JavaScriptRuntime.TypeError("Iterator.return is not a function");
             }
 
-            ValidateIteratorCloseResult(InvokeMemberDelegate0PreservingContext(iterator, memberDel));
+            ValidateIteratorCloseResult(CallableOperations.Call0(memberValue, iterator));
         }
 
         private static void ValidateIteratorCloseResult(object? result)

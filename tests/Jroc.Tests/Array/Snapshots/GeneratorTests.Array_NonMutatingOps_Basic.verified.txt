@@ -104,7 +104,8 @@
 			[6] class [JavaScriptRuntime]JavaScriptRuntime.Array,
 			[7] object,
 			[8] string,
-			[9] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2
+			[9] object[],
+			[10] class FunctionObjects.Array_NonMutatingOps_Basic_A67BBE20.FunctionObject_FunctionExpression_49940B4B_L14C24
 		)
 
 		IL_0000: newobj instance void Modules.Array_NonMutatingOps_Basic/Scope::.ctor()
@@ -239,23 +240,27 @@
 		IL_01c5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
 		IL_01ca: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
 		IL_01cf: stloc.s 7
-		IL_01d1: ldnull
-		IL_01d2: ldftn object Modules.Array_NonMutatingOps_Basic/FunctionExpression_L14C23::__js_call__(object, object, object)
-		IL_01d8: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::.ctor(object, native int)
-		IL_01dd: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2
+		IL_01d1: ldc.i4.1
+		IL_01d2: newarr [System.Runtime]System.Object
+		IL_01d7: dup
+		IL_01d8: ldc.i4.0
+		IL_01d9: ldloc.0
+		IL_01da: stelem.ref
+		IL_01db: stloc.s 9
+		IL_01dd: newobj instance void FunctionObjects.Array_NonMutatingOps_Basic_A67BBE20.FunctionObject_FunctionExpression_49940B4B_L14C24::.ctor()
 		IL_01e2: ldc.i4.2
 		IL_01e3: conv.r8
 		IL_01e4: ldstr ""
 		IL_01e9: ldc.i4.0
 		IL_01ea: ldc.i4.1
-		IL_01eb: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2>(!!0, float64, string, bool, bool)
-		IL_01f0: stloc.s 9
+		IL_01eb: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class FunctionObjects.Array_NonMutatingOps_Basic_A67BBE20.FunctionObject_FunctionExpression_49940B4B_L14C24>(!!0, float64, string, bool, bool)
+		IL_01f0: stloc.s 10
 		IL_01f2: ldloc.3
 		IL_01f3: ldc.i4.1
 		IL_01f4: newarr [System.Runtime]System.Object
 		IL_01f9: dup
 		IL_01fa: ldc.i4.0
-		IL_01fb: ldloc.s 9
+		IL_01fb: ldloc.s 10
 		IL_01fd: stelem.ref
 		IL_01fe: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Array [JavaScriptRuntime]JavaScriptRuntime.Array::toSorted(object[])
 		IL_0203: stloc.s 6
@@ -412,18 +417,18 @@
 	{
 		// Method begins at RVA 0x23f1
 		// Header size: 1
-		// Code size: 21 (0x15)
+		// Code size: 25 (0x19)
 		.maxstack 8
 
-		IL_0000: ldnull
-		IL_0001: ldarg.2
-		IL_0002: ldc.i4.0
-		IL_0003: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-		IL_0008: ldarg.2
-		IL_0009: ldc.i4.1
-		IL_000a: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-		IL_000f: call object Modules.Array_NonMutatingOps_Basic/FunctionExpression_L14C23::__js_call__(object, object, object)
-		IL_0014: ret
+		IL_0000: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
+		IL_0005: ldarg.2
+		IL_0006: ldc.i4.0
+		IL_0007: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+		IL_000c: ldarg.2
+		IL_000d: ldc.i4.1
+		IL_000e: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+		IL_0013: call object Modules.Array_NonMutatingOps_Basic/FunctionExpression_L14C23::__js_call__(object, object, object)
+		IL_0018: ret
 	} // end of method FunctionObject_FunctionExpression_49940B4B_L14C24::CallCore
 
 	.method family hidebysig virtual 
@@ -432,14 +437,17 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x2407
+		// Method begins at RVA 0x240b
 		// Header size: 1
-		// Code size: 11 (0xb)
+		// Code size: 14 (0xe)
 		.maxstack 8
 
-		IL_0000: ldstr "Generated construction adapter is reserved for the callable-family construction migration"
-		IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-		IL_000a: throw
+		IL_0000: ldarg.0
+		IL_0001: ldarg.1
+		IL_0002: call instance object[] [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::ToArray()
+		IL_0007: ldarg.2
+		IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionObject(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, object[], object)
+		IL_000d: ret
 	} // end of method FunctionObject_FunctionExpression_49940B4B_L14C24::ConstructCore
 
 } // end of class FunctionObjects.Array_NonMutatingOps_Basic_A67BBE20.FunctionObject_FunctionExpression_49940B4B_L14C24
@@ -451,7 +459,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2413
+		// Method begins at RVA 0x241a
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

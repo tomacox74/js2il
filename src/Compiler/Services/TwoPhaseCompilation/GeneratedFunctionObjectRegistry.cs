@@ -44,6 +44,7 @@ public sealed class GeneratedFunctionObjectRegistry
             && left.ScopeChainSlotCount == right.ScopeChainSlotCount
             && left.IsConstructable == right.IsConstructable
             && left.RequiresInvocationContext == right.RequiresInvocationContext
+            && left.UsesNonStrictThisBinding == right.UsesNonStrictThisBinding
             && left.ReturnKind == right.ReturnKind
             && left.Captures.SequenceEqual(right.Captures)
             && left.StateFields.SequenceEqual(right.StateFields);

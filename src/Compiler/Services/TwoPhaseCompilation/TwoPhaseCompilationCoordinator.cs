@@ -1741,6 +1741,11 @@ public sealed class TwoPhaseCompilationCoordinator
                 }
 
                 member.ClrType = callableId.Kind == CallableKind.Arrow
+                    || callableId.AstNode is FunctionExpression
+                    {
+                        Async: false,
+                        Generator: false
+                    }
                     ? typeof(JavaScriptRuntime.JsFunctionObject)
                     : CallableDelegateTypeResolver.GetMaterializedDelegateType(
                         callableId,

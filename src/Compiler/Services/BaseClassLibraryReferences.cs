@@ -135,6 +135,20 @@ namespace Jroc.Services
             typeof(JavaScriptRuntime.JsCallArguments),
             nameof(JavaScriptRuntime.JsCallArguments.GetArgument),
             new[] { typeof(int) });
+        public MemberReferenceHandle JsCallArguments_ToArray_Ref => _memberRefRegistry.GetOrAddMethod(
+            typeof(JavaScriptRuntime.JsCallArguments),
+            nameof(JavaScriptRuntime.JsCallArguments.ToArray),
+            Type.EmptyTypes);
+        public MemberReferenceHandle Function_ConstructGeneratedFunctionObject_Ref =>
+            _memberRefRegistry.GetOrAddMethod(
+                typeof(JavaScriptRuntime.Function),
+                nameof(JavaScriptRuntime.Function.ConstructGeneratedFunctionObject),
+                new[]
+                {
+                    typeof(JavaScriptRuntime.JsFunctionObject),
+                    typeof(object[]),
+                    typeof(object)
+                });
         public MemberReferenceHandle TypeUtilities_ToNumber_Object_Ref => _memberRefRegistry.GetOrAddMethod(
             typeof(JavaScriptRuntime.TypeUtilities),
             nameof(JavaScriptRuntime.TypeUtilities.ToNumber),
@@ -154,6 +168,16 @@ namespace Jroc.Services
             _memberRefRegistry.GetOrAddMethod(
                 typeof(JavaScriptRuntime.RuntimeServices),
                 nameof(JavaScriptRuntime.RuntimeServices.ResolveLexicalThis),
+                new[] { typeof(object) });
+        public MemberReferenceHandle RuntimeServices_GetCurrentNewTarget_Ref =>
+            _memberRefRegistry.GetOrAddMethod(
+                typeof(JavaScriptRuntime.RuntimeServices),
+                nameof(JavaScriptRuntime.RuntimeServices.GetCurrentNewTarget),
+                Type.EmptyTypes);
+        public MemberReferenceHandle Function_ResolveOrdinaryThisArgument_Ref =>
+            _memberRefRegistry.GetOrAddMethod(
+                typeof(JavaScriptRuntime.Function),
+                nameof(JavaScriptRuntime.Function.ResolveOrdinaryThisArgument),
                 new[] { typeof(object) });
         public MemberReferenceHandle AsyncScope_Ctor_Ref => _memberRefRegistry.GetOrAddConstructor(typeof(JavaScriptRuntime.AsyncScope), Type.EmptyTypes);
         public MemberReferenceHandle AsyncGeneratorScope_Ctor_Ref => _memberRefRegistry.GetOrAddConstructor(typeof(JavaScriptRuntime.AsyncGeneratorScope), Type.EmptyTypes);

@@ -17,39 +17,31 @@ namespace JavaScriptRuntime.Node
 
         protected override void InvokeWrite(object? chunk)
         {
-            if (_transform != null && _transform is Delegate transformFunc)
+            if (CallableOperations.IsCallable(_transform))
             {
                 try
                 {
-                    var previousThis = RuntimeServices.SetCurrentThis(this);
-                    try
-                    {
-                        Closure.InvokeWithArgs(
-                            transformFunc,
-                            System.Array.Empty<object>(),
-                            chunk,
-                            JsNull.Null,
-                            new Func<object[], object?[], object?>((_, args) =>
+                    CallableOperations.Call3(
+                        _transform,
+                        this,
+                        chunk,
+                        JsNull.Null,
+                        new Func<object[], object?[], object?>((_, args) =>
+                        {
+                            var error = args.Length > 0 ? args[0] : null;
+                            if (error != null && error is not JsNull)
                             {
-                                var error = args.Length > 0 ? args[0] : null;
-                                if (error != null && error is not JsNull)
-                                {
-                                    destroy(error as Error ?? new Error(DotNet2JSConversions.ToString(error)));
-                                    return null;
-                                }
-
-                                if (args.Length > 1 && args[1] != null && args[1] is not JsNull)
-                                {
-                                    push(args[1]);
-                                }
-
+                                destroy(error as Error ?? new Error(DotNet2JSConversions.ToString(error)));
                                 return null;
-                            }));
-                    }
-                    finally
-                    {
-                        RuntimeServices.SetCurrentThis(previousThis);
-                    }
+                            }
+
+                            if (args.Length > 1 && args[1] != null && args[1] is not JsNull)
+                            {
+                                push(args[1]);
+                            }
+
+                            return null;
+                        }));
                 }
                 catch (Exception ex)
                 {

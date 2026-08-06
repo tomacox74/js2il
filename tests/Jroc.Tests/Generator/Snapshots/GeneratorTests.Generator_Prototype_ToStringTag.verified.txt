@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x22d4
+				// Method begins at RVA 0x22d8
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -42,7 +42,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 02 00 00 00 00 00
 			)
-			// Method begins at RVA 0x21dc
+			// Method begins at RVA 0x21e0
 			// Header size: 12
 			// Code size: 227 (0xe3)
 			.maxstack 8
@@ -161,7 +161,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x22cb
+			// Method begins at RVA 0x22cf
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -187,7 +187,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 381 (0x17d)
+		// Code size: 385 (0x181)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Generator_Prototype_ToStringTag/Scope,
@@ -195,8 +195,9 @@
 			[2] object,
 			[3] object,
 			[4] object,
-			[5] object,
-			[6] object
+			[5] object[],
+			[6] object,
+			[7] object
 		)
 
 		IL_0000: newobj instance void Modules.Generator_Prototype_ToStringTag/Scope::.ctor()
@@ -207,109 +208,111 @@
 		IL_000d: ldc.i4.0
 		IL_000e: ldloc.0
 		IL_000f: stelem.ref
-		IL_0010: ldftn object Modules.Generator_Prototype_ToStringTag/g::__js_call__(object[], object)
-		IL_0016: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_001b: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
-		IL_0020: ldc.i4.0
-		IL_0021: conv.r8
-		IL_0022: ldstr "g"
-		IL_0027: ldc.i4.0
-		IL_0028: ldc.i4.1
-		IL_0029: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
-		IL_002e: call object [JavaScriptRuntime]JavaScriptRuntime.GeneratorObject::InitializeGeneratorFunctionSurface(object)
-		IL_0033: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
-		IL_0038: stloc.1
-		IL_0039: nop
-		IL_003a: nop
-		IL_003b: ldloc.1
-		IL_003c: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0041: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0, object[])
-		IL_0046: stloc.2
-		IL_0047: ldstr "Object"
-		IL_004c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0051: ldstr "prototype"
-		IL_0056: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_005b: stloc.s 5
-		IL_005d: ldloc.s 5
-		IL_005f: ldstr "toString"
-		IL_0064: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0069: stloc.s 5
-		IL_006b: ldloc.s 5
-		IL_006d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0072: ldstr "call"
-		IL_0077: ldloc.2
-		IL_0078: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_007d: stloc.3
-		IL_007e: ldstr "console"
-		IL_0083: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0088: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_008d: ldstr "log"
-		IL_0092: ldloc.3
-		IL_0093: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0098: pop
-		IL_0099: ldloc.1
-		IL_009a: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_009f: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0, object[])
-		IL_00a4: stloc.s 4
-		IL_00a6: ldstr "console"
-		IL_00ab: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_00b0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00b5: stloc.s 5
-		IL_00b7: ldstr "Object"
-		IL_00bc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_00c1: ldstr "prototype"
-		IL_00c6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_00cb: stloc.s 6
-		IL_00cd: ldloc.s 6
-		IL_00cf: ldstr "toString"
-		IL_00d4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_00d9: stloc.s 6
-		IL_00db: ldloc.s 6
-		IL_00dd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00e2: ldstr "call"
-		IL_00e7: ldloc.s 4
-		IL_00e9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00ee: stloc.s 6
-		IL_00f0: ldloc.s 5
-		IL_00f2: ldstr "log"
-		IL_00f7: ldloc.s 6
-		IL_00f9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00fe: pop
-		IL_00ff: ldloc.s 4
-		IL_0101: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0106: ldstr "next"
-		IL_010b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-		IL_0110: pop
-		IL_0111: ldloc.s 4
-		IL_0113: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0118: ldstr "next"
-		IL_011d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-		IL_0122: pop
-		IL_0123: ldstr "console"
-		IL_0128: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_012d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0132: stloc.s 6
-		IL_0134: ldstr "Object"
-		IL_0139: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_013e: ldstr "prototype"
-		IL_0143: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0148: stloc.s 5
-		IL_014a: ldloc.s 5
-		IL_014c: ldstr "toString"
-		IL_0151: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0156: stloc.s 5
-		IL_0158: ldloc.s 5
-		IL_015a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_015f: ldstr "call"
-		IL_0164: ldloc.s 4
-		IL_0166: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_016b: stloc.s 5
-		IL_016d: ldloc.s 6
-		IL_016f: ldstr "log"
-		IL_0174: ldloc.s 5
-		IL_0176: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_017b: pop
-		IL_017c: ret
+		IL_0010: stloc.s 5
+		IL_0012: ldloc.s 5
+		IL_0014: ldftn object Modules.Generator_Prototype_ToStringTag/g::__js_call__(object[], object)
+		IL_001a: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_001f: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
+		IL_0024: ldc.i4.0
+		IL_0025: conv.r8
+		IL_0026: ldstr "g"
+		IL_002b: ldc.i4.0
+		IL_002c: ldc.i4.1
+		IL_002d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
+		IL_0032: call object [JavaScriptRuntime]JavaScriptRuntime.GeneratorObject::InitializeGeneratorFunctionSurface(object)
+		IL_0037: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
+		IL_003c: stloc.1
+		IL_003d: nop
+		IL_003e: nop
+		IL_003f: ldloc.1
+		IL_0040: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0045: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0, object[])
+		IL_004a: stloc.2
+		IL_004b: ldstr "Object"
+		IL_0050: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0055: ldstr "prototype"
+		IL_005a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_005f: stloc.s 6
+		IL_0061: ldloc.s 6
+		IL_0063: ldstr "toString"
+		IL_0068: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_006d: stloc.s 6
+		IL_006f: ldloc.s 6
+		IL_0071: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0076: ldstr "call"
+		IL_007b: ldloc.2
+		IL_007c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0081: stloc.3
+		IL_0082: ldstr "console"
+		IL_0087: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_008c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0091: ldstr "log"
+		IL_0096: ldloc.3
+		IL_0097: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_009c: pop
+		IL_009d: ldloc.1
+		IL_009e: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_00a3: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0, object[])
+		IL_00a8: stloc.s 4
+		IL_00aa: ldstr "console"
+		IL_00af: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_00b4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00b9: stloc.s 6
+		IL_00bb: ldstr "Object"
+		IL_00c0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_00c5: ldstr "prototype"
+		IL_00ca: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00cf: stloc.s 7
+		IL_00d1: ldloc.s 7
+		IL_00d3: ldstr "toString"
+		IL_00d8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00dd: stloc.s 7
+		IL_00df: ldloc.s 7
+		IL_00e1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00e6: ldstr "call"
+		IL_00eb: ldloc.s 4
+		IL_00ed: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_00f2: stloc.s 7
+		IL_00f4: ldloc.s 6
+		IL_00f6: ldstr "log"
+		IL_00fb: ldloc.s 7
+		IL_00fd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0102: pop
+		IL_0103: ldloc.s 4
+		IL_0105: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_010a: ldstr "next"
+		IL_010f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+		IL_0114: pop
+		IL_0115: ldloc.s 4
+		IL_0117: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_011c: ldstr "next"
+		IL_0121: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+		IL_0126: pop
+		IL_0127: ldstr "console"
+		IL_012c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0131: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0136: stloc.s 7
+		IL_0138: ldstr "Object"
+		IL_013d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0142: ldstr "prototype"
+		IL_0147: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_014c: stloc.s 6
+		IL_014e: ldloc.s 6
+		IL_0150: ldstr "toString"
+		IL_0155: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_015a: stloc.s 6
+		IL_015c: ldloc.s 6
+		IL_015e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0163: ldstr "call"
+		IL_0168: ldloc.s 4
+		IL_016a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_016f: stloc.s 6
+		IL_0171: ldloc.s 7
+		IL_0173: ldstr "log"
+		IL_0178: ldloc.s 6
+		IL_017a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_017f: pop
+		IL_0180: ret
 	} // end of method Generator_Prototype_ToStringTag::__js_module_init__
 
 } // end of class Modules.Generator_Prototype_ToStringTag
@@ -326,7 +329,7 @@
 			object[] capture0
 		) cil managed 
 	{
-		// Method begins at RVA 0x22dd
+		// Method begins at RVA 0x22e1
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -342,7 +345,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x22ec
+		// Method begins at RVA 0x22f0
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -354,7 +357,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x22ef
+		// Method begins at RVA 0x22f3
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -369,16 +372,16 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x22f2
+		// Method begins at RVA 0x22f6
 		// Header size: 1
-		// Code size: 13 (0xd)
+		// Code size: 17 (0x11)
 		.maxstack 8
 
 		IL_0000: ldarg.0
 		IL_0001: ldfld object[] FunctionObjects.Generator_Prototype_ToStringTag_A2283B08.FunctionObject_FunctionDeclaration_5DFC87C8_g::_transitionalScopes
-		IL_0006: ldnull
-		IL_0007: call object Modules.Generator_Prototype_ToStringTag/g::__js_call__(object[], object)
-		IL_000c: ret
+		IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
+		IL_000b: call object Modules.Generator_Prototype_ToStringTag/g::__js_call__(object[], object)
+		IL_0010: ret
 	} // end of method FunctionObject_FunctionDeclaration_5DFC87C8_g::CallCore
 
 } // end of class FunctionObjects.Generator_Prototype_ToStringTag_A2283B08.FunctionObject_FunctionDeclaration_5DFC87C8_g
@@ -390,7 +393,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2300
+		// Method begins at RVA 0x2308
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

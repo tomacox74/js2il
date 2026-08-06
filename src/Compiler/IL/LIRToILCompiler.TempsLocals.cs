@@ -1516,6 +1516,15 @@ internal sealed partial class LIRToILCompiler
 
             case LIRCreateBoundFunctionExpression createFunc:
                 {
+                    if (TryEmitGeneratedOrdinaryFunctionObject(
+                            createFunc,
+                            ilEncoder,
+                            allocation,
+                            methodDescriptor))
+                    {
+                        break;
+                    }
+
                     var reader = _serviceProvider.GetService<ICallableDeclarationReader>();
                     var callableId = createFunc.CallableId;
                     if (reader == null || !reader.TryGetDeclaredToken(callableId, out var token) || token.Kind != HandleKind.MethodDefinition)

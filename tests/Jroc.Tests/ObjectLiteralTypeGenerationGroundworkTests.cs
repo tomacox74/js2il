@@ -190,8 +190,8 @@ public sealed class ObjectLiteralTypeGenerationGroundworkTests
         var searchGetter = astarType.GetMethod("get_search", BindingFlags.Public | BindingFlags.Instance)!;
 
         Assert.Equal(astarType, astarField.FieldType);
-        Assert.Equal(typeof(JavaScriptRuntime.JsFuncNoScopes3), searchField.FieldType);
-        Assert.Equal(typeof(JavaScriptRuntime.JsFuncNoScopes3), searchGetter.ReturnType);
+        Assert.Equal(typeof(JavaScriptRuntime.JsFunctionObject), searchField.FieldType);
+        Assert.Equal(typeof(JavaScriptRuntime.JsFunctionObject), searchGetter.ReturnType);
     }
 
     [Fact]

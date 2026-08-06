@@ -197,6 +197,15 @@ public class RuntimeServices
         {
             constructed = JavaScriptRuntime.Function.ConstructWithReceiver(del, receiver, args, constructor);
         }
+        else if (constructor is JsFunctionObject functionObject
+            && functionObject.IsConstructor)
+        {
+            constructed = CallableOperations.ConstructWithReceiver(
+                functionObject,
+                receiver,
+                args,
+                constructor);
+        }
         else if (constructor is JavaScriptRuntime.Proxy)
         {
             constructed = ObjectRuntime.ConstructValue(constructor, args);

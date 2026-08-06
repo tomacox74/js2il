@@ -4195,6 +4195,14 @@ class HIRMethodBuilder
                         {
                             return false;
                         }
+                        if (objProp.Method
+                            && computedValueExpr is HIRFunctionExpression computedMethod)
+                        {
+                            computedValueExpr = new HIRFunctionExpression(
+                                computedMethod.CallableId,
+                                computedMethod.FunctionScope,
+                                isNonConstructible: true);
+                        }
 
                         objectMembers.Add(new HIRObjectComputedProperty(
                             keyExprHir!,
@@ -4218,6 +4226,13 @@ class HIRMethodBuilder
                     if (!TryParseExpression(valueExpression, out var valueExpr))
                     {
                         return false;
+                    }
+                    if (objProp.Method && valueExpr is HIRFunctionExpression method)
+                    {
+                        valueExpr = new HIRFunctionExpression(
+                            method.CallableId,
+                            method.FunctionScope,
+                            isNonConstructible: true);
                     }
 
                     objectMembers.Add(new HIRObjectProperty(

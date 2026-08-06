@@ -132,9 +132,9 @@ namespace JavaScriptRuntime.Node
 
         public virtual void end(object? chunk, object? callback)
         {
-            if (callback is Delegate del)
+            if (CallableOperations.IsCallable(callback))
             {
-                once("finish", del);
+                once("finish", callback);
             }
 
             end(chunk);
@@ -170,22 +170,14 @@ namespace JavaScriptRuntime.Node
 
         protected virtual void InvokeWrite(object? chunk)
         {
-            if (_write is not Delegate writeFunc)
+            if (!CallableOperations.IsCallable(_write))
             {
                 return;
             }
 
             try
             {
-                var previousThis = RuntimeServices.SetCurrentThis(this);
-                try
-                {
-                    Closure.InvokeWithArgs(writeFunc, System.Array.Empty<object>(), new[] { chunk });
-                }
-                finally
-                {
-                    RuntimeServices.SetCurrentThis(previousThis);
-                }
+                CallableOperations.Call1(_write, this, chunk);
             }
             catch (Exception ex)
             {

@@ -198,12 +198,13 @@ public sealed class Promise : IJavaScriptPromise
         Function.MarkUndefinedPrototype(executor);
 
         var promise = ObjectRuntime.ConstructValue(constructor, new object[] { executor });
-        if (capabilityResolve is not Delegate resolveFunction || capabilityReject is not Delegate)
+        if (!CallableOperations.IsCallable(capabilityResolve)
+            || !CallableOperations.IsCallable(capabilityReject))
         {
             throw new TypeError("Promise constructor did not supply resolving functions");
         }
 
-        Closure.InvokeWithArgs(resolveFunction, RuntimeServices.EmptyScopes, value);
+        CallableOperations.Call1(capabilityResolve, null, value);
         return promise;
     }
 
@@ -232,7 +233,8 @@ public sealed class Promise : IJavaScriptPromise
         Function.MarkUndefinedPrototype(executor);
 
         var promise = ObjectRuntime.ConstructValue(constructor, new object[] { executor });
-        if (capabilityResolve is not Delegate resolveFunction || capabilityReject is not Delegate rejectFunction)
+        if (!CallableOperations.IsCallable(capabilityResolve)
+            || !CallableOperations.IsCallable(capabilityReject))
         {
             throw new TypeError("Promise constructor did not supply resolving functions");
         }
@@ -243,11 +245,11 @@ public sealed class Promise : IJavaScriptPromise
                 callback!,
                 RuntimeServices.EmptyScopes,
                 args ?? System.Array.Empty<object?>());
-            Closure.InvokeWithArgs(resolveFunction, RuntimeServices.EmptyScopes, callbackResult);
+            CallableOperations.Call1(capabilityResolve, null, callbackResult);
         }
         catch (Exception ex)
         {
-            Closure.InvokeWithArgs(rejectFunction, RuntimeServices.EmptyScopes, ex.InnerException ?? ex);
+            CallableOperations.Call1(capabilityReject, null, ex.InnerException ?? ex);
         }
 
         return promise;

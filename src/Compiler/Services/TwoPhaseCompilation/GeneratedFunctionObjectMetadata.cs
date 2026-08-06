@@ -62,6 +62,8 @@ public sealed record GeneratedFunctionObjectPlan
 
     public bool RequiresInvocationContext { get; init; }
 
+    public bool UsesNonStrictThisBinding { get; init; }
+
     public GeneratedFunctionReturnKind ReturnKind { get; init; }
 }
 
@@ -80,6 +82,8 @@ public sealed record GeneratedFunctionObjectMetadata
     public required MethodDefinitionHandle IsConstructorGetterHandle { get; init; }
 
     public required MethodDefinitionHandle RequiresInvocationContextGetterHandle { get; init; }
+
+    public MethodDefinitionHandle OrdinaryThisResolverHandle { get; init; }
 
     public required IReadOnlyDictionary<GeneratedFunctionStateKind, MethodDefinitionHandle>
         StateAccessorHandles { get; init; }

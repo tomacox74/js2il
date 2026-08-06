@@ -136,7 +136,7 @@
 					[0] object,
 					[1] object,
 					[2] object,
-					[3] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1
+					[3] class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
 				)
 
 				IL_0000: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentCallee()
@@ -159,7 +159,7 @@
 					IL_002f: stloc.2
 					IL_0030: ldloc.2
 					IL_0031: castclass Modules.ControlFlow_LabeledStatement_CapturesParentVar/ObjectLiterals/L4C23_NodeTraversal
-					IL_0036: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1 Modules.ControlFlow_LabeledStatement_CapturesParentVar/ObjectLiterals/L4C23_NodeTraversal::get_nextSkippingChildren()
+					IL_0036: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject Modules.ControlFlow_LabeledStatement_CapturesParentVar/ObjectLiterals/L4C23_NodeTraversal::get_nextSkippingChildren()
 					IL_003b: stloc.3
 					IL_003c: ldloc.3
 					IL_003d: ldc.i4.2
@@ -177,7 +177,7 @@
 					IL_004d: ldelem.ref
 					IL_004e: stelem.ref
 					IL_004f: ldloc.1
-					IL_0050: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1, object[], object)
+					IL_0050: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
 					IL_0055: stloc.2
 					IL_0056: ldloc.2
 					IL_0057: stloc.1
@@ -246,53 +246,62 @@
 			.maxstack 8
 			.locals init (
 				[0] class Modules.ControlFlow_LabeledStatement_CapturesParentVar/outer/Scope,
-				[1] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1,
-				[2] class Modules.ControlFlow_LabeledStatement_CapturesParentVar/ObjectLiterals/L4C23_NodeTraversal,
-				[3] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
+				[1] object[],
+				[2] class FunctionObjects.ControlFlow_LabeledStatement_CapturesParentVar_CA1708B0.FunctionObject_FunctionExpression_DE156F42_L5C27,
+				[3] class Modules.ControlFlow_LabeledStatement_CapturesParentVar/ObjectLiterals/L4C23_NodeTraversal,
+				[4] class FunctionObjects.ControlFlow_LabeledStatement_CapturesParentVar_CA1708B0.FunctionObject_FunctionExpression_A6260E1E_nextNode
 			)
 
 			IL_0000: newobj instance void Modules.ControlFlow_LabeledStatement_CapturesParentVar/outer/Scope::.ctor()
 			IL_0005: stloc.0
-			IL_0006: ldnull
-			IL_0007: ldftn object Modules.ControlFlow_LabeledStatement_CapturesParentVar/outer/FunctionExpression_NodeTraversal::__js_call__(object, object)
-			IL_000d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-			IL_0012: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1
-			IL_0017: ldc.i4.1
-			IL_0018: conv.r8
-			IL_0019: ldstr ""
-			IL_001e: ldc.i4.0
-			IL_001f: ldc.i4.1
-			IL_0020: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0, float64, string, bool, bool)
-			IL_0025: stloc.1
-			IL_0026: newobj instance void Modules.ControlFlow_LabeledStatement_CapturesParentVar/ObjectLiterals/L4C23_NodeTraversal::.ctor()
-			IL_002b: stloc.2
+			IL_0006: ldc.i4.1
+			IL_0007: newarr [System.Runtime]System.Object
+			IL_000c: dup
+			IL_000d: ldc.i4.0
+			IL_000e: ldarg.0
+			IL_000f: stelem.ref
+			IL_0010: stloc.1
+			IL_0011: newobj instance void FunctionObjects.ControlFlow_LabeledStatement_CapturesParentVar_CA1708B0.FunctionObject_FunctionExpression_DE156F42_L5C27::.ctor()
+			IL_0016: ldc.i4.1
+			IL_0017: conv.r8
+			IL_0018: ldstr ""
+			IL_001d: ldc.i4.0
+			IL_001e: ldc.i4.1
+			IL_001f: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class FunctionObjects.ControlFlow_LabeledStatement_CapturesParentVar_CA1708B0.FunctionObject_FunctionExpression_DE156F42_L5C27>(!!0, float64, string, bool, bool)
+			IL_0024: stloc.2
+			IL_0025: newobj instance void Modules.ControlFlow_LabeledStatement_CapturesParentVar/ObjectLiterals/L4C23_NodeTraversal::.ctor()
+			IL_002a: stloc.3
+			IL_002b: ldloc.3
 			IL_002c: ldloc.2
-			IL_002d: ldloc.1
-			IL_002e: callvirt instance void Modules.ControlFlow_LabeledStatement_CapturesParentVar/ObjectLiterals/L4C23_NodeTraversal::set_nextSkippingChildren(class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1)
-			IL_0033: ldloc.0
-			IL_0034: ldloc.2
-			IL_0035: stfld class Modules.ControlFlow_LabeledStatement_CapturesParentVar/ObjectLiterals/L4C23_NodeTraversal Modules.ControlFlow_LabeledStatement_CapturesParentVar/outer/Scope::NodeTraversal
-			IL_003a: ldc.i4.2
-			IL_003b: newarr [System.Runtime]System.Object
-			IL_0040: dup
-			IL_0041: ldc.i4.0
-			IL_0042: ldarg.0
-			IL_0043: stelem.ref
-			IL_0044: dup
-			IL_0045: ldc.i4.1
-			IL_0046: ldloc.0
-			IL_0047: stelem.ref
-			IL_0048: ldftn object Modules.ControlFlow_LabeledStatement_CapturesParentVar/outer/nextNode::__js_call__(object[], object)
-			IL_004e: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-			IL_0053: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
-			IL_0058: ldc.i4.0
-			IL_0059: conv.r8
-			IL_005a: ldstr "nextNode"
-			IL_005f: ldc.i4.1
-			IL_0060: ldc.i4.1
-			IL_0061: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
-			IL_0066: stloc.3
-			IL_0067: ldloc.3
+			IL_002d: callvirt instance void Modules.ControlFlow_LabeledStatement_CapturesParentVar/ObjectLiterals/L4C23_NodeTraversal::set_nextSkippingChildren(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
+			IL_0032: ldloc.0
+			IL_0033: ldloc.3
+			IL_0034: stfld class Modules.ControlFlow_LabeledStatement_CapturesParentVar/ObjectLiterals/L4C23_NodeTraversal Modules.ControlFlow_LabeledStatement_CapturesParentVar/outer/Scope::NodeTraversal
+			IL_0039: ldc.i4.2
+			IL_003a: newarr [System.Runtime]System.Object
+			IL_003f: dup
+			IL_0040: ldc.i4.0
+			IL_0041: ldarg.0
+			IL_0042: stelem.ref
+			IL_0043: dup
+			IL_0044: ldc.i4.1
+			IL_0045: ldloc.0
+			IL_0046: stelem.ref
+			IL_0047: stloc.1
+			IL_0048: ldloc.1
+			IL_0049: ldc.i4.1
+			IL_004a: ldelem.ref
+			IL_004b: castclass Modules.ControlFlow_LabeledStatement_CapturesParentVar/outer/Scope
+			IL_0050: ldloc.1
+			IL_0051: newobj instance void FunctionObjects.ControlFlow_LabeledStatement_CapturesParentVar_CA1708B0.FunctionObject_FunctionExpression_A6260E1E_nextNode::.ctor(class Modules.ControlFlow_LabeledStatement_CapturesParentVar/outer/Scope, object[])
+			IL_0056: ldc.i4.0
+			IL_0057: conv.r8
+			IL_0058: ldstr "nextNode"
+			IL_005d: ldc.i4.1
+			IL_005e: ldc.i4.1
+			IL_005f: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class FunctionObjects.ControlFlow_LabeledStatement_CapturesParentVar_CA1708B0.FunctionObject_FunctionExpression_A6260E1E_nextNode>(!!0, float64, string, bool, bool)
+			IL_0064: stloc.s 4
+			IL_0066: ldloc.s 4
 			IL_0068: ret
 		} // end of method outer::__js_call__
 
@@ -333,7 +342,7 @@
 			extends [JavaScriptRuntime]JavaScriptRuntime.JsObject
 		{
 			// Fields
-			.field private class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1 _nextSkippingChildren
+			.field private class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject _nextSkippingChildren
 
 			// Methods
 			.method public hidebysig specialname rtspecialname 
@@ -350,7 +359,7 @@
 			} // end of method L4C23_NodeTraversal::.ctor
 
 			.method public hidebysig 
-				instance class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1 get_nextSkippingChildren () cil managed 
+				instance class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject get_nextSkippingChildren () cil managed 
 			{
 				// Method begins at RVA 0x2204
 				// Header size: 1
@@ -358,13 +367,13 @@
 				.maxstack 8
 
 				IL_0000: ldarg.0
-				IL_0001: ldfld class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1 Modules.ControlFlow_LabeledStatement_CapturesParentVar/ObjectLiterals/L4C23_NodeTraversal::_nextSkippingChildren
+				IL_0001: ldfld class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject Modules.ControlFlow_LabeledStatement_CapturesParentVar/ObjectLiterals/L4C23_NodeTraversal::_nextSkippingChildren
 				IL_0006: ret
 			} // end of method L4C23_NodeTraversal::get_nextSkippingChildren
 
 			.method public hidebysig 
 				instance void set_nextSkippingChildren (
-					class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1 ''
+					class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject ''
 				) cil managed 
 			{
 				// Method begins at RVA 0x220c
@@ -374,7 +383,7 @@
 
 				IL_0000: ldarg.0
 				IL_0001: ldarg.1
-				IL_0002: stfld class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1 Modules.ControlFlow_LabeledStatement_CapturesParentVar/ObjectLiterals/L4C23_NodeTraversal::_nextSkippingChildren
+				IL_0002: stfld class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject Modules.ControlFlow_LabeledStatement_CapturesParentVar/ObjectLiterals/L4C23_NodeTraversal::_nextSkippingChildren
 				IL_0007: ldarg.0
 				IL_0008: ldstr "nextSkippingChildren"
 				IL_000d: ldarg.1
@@ -400,44 +409,51 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 78 (0x4e)
+		// Code size: 80 (0x50)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ControlFlow_LabeledStatement_CapturesParentVar/Scope,
-			[1] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0,
-			[2] object,
-			[3] object[]
+			[1] class FunctionObjects.ControlFlow_LabeledStatement_CapturesParentVar_CA1708B0.FunctionObject_FunctionDeclaration_E39E6AE2_outer,
+			[2] object[],
+			[3] object
 		)
 
 		IL_0000: newobj instance void Modules.ControlFlow_LabeledStatement_CapturesParentVar/Scope::.ctor()
 		IL_0005: stloc.0
-		IL_0006: ldloc.0
-		IL_0007: castclass Modules.ControlFlow_LabeledStatement_CapturesParentVar/Scope
-		IL_000c: ldftn object Modules.ControlFlow_LabeledStatement_CapturesParentVar/outer::__js_call__(class Modules.ControlFlow_LabeledStatement_CapturesParentVar/Scope, object)
-		IL_0012: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_0017: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
-		IL_001c: ldc.i4.0
-		IL_001d: conv.r8
-		IL_001e: ldstr "outer"
-		IL_0023: ldc.i4.0
-		IL_0024: ldc.i4.1
-		IL_0025: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
-		IL_002a: stloc.1
-		IL_002b: nop
-		IL_002c: nop
-		IL_002d: ldloc.1
-		IL_002e: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0033: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0, object[])
-		IL_0038: stloc.2
-		IL_0039: ldc.i4.0
-		IL_003a: newarr [System.Runtime]System.Object
-		IL_003f: stloc.3
-		IL_0040: ldloc.2
-		IL_0041: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0046: ldloc.3
-		IL_0047: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs(object, object[], object[])
-		IL_004c: pop
-		IL_004d: ret
+		IL_0006: ldc.i4.1
+		IL_0007: newarr [System.Runtime]System.Object
+		IL_000c: dup
+		IL_000d: ldc.i4.0
+		IL_000e: ldloc.0
+		IL_000f: stelem.ref
+		IL_0010: stloc.2
+		IL_0011: ldloc.2
+		IL_0012: ldc.i4.0
+		IL_0013: ldelem.ref
+		IL_0014: castclass Modules.ControlFlow_LabeledStatement_CapturesParentVar/Scope
+		IL_0019: newobj instance void FunctionObjects.ControlFlow_LabeledStatement_CapturesParentVar_CA1708B0.FunctionObject_FunctionDeclaration_E39E6AE2_outer::.ctor(class Modules.ControlFlow_LabeledStatement_CapturesParentVar/Scope)
+		IL_001e: ldc.i4.0
+		IL_001f: conv.r8
+		IL_0020: ldstr "outer"
+		IL_0025: ldc.i4.0
+		IL_0026: ldc.i4.1
+		IL_0027: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class FunctionObjects.ControlFlow_LabeledStatement_CapturesParentVar_CA1708B0.FunctionObject_FunctionDeclaration_E39E6AE2_outer>(!!0, float64, string, bool, bool)
+		IL_002c: stloc.1
+		IL_002d: nop
+		IL_002e: nop
+		IL_002f: ldloc.1
+		IL_0030: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0035: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
+		IL_003a: stloc.3
+		IL_003b: ldc.i4.0
+		IL_003c: newarr [System.Runtime]System.Object
+		IL_0041: stloc.2
+		IL_0042: ldloc.3
+		IL_0043: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0048: ldloc.2
+		IL_0049: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs(object, object[], object[])
+		IL_004e: pop
+		IL_004f: ret
 	} // end of method ControlFlow_LabeledStatement_CapturesParentVar::__js_module_init__
 
 } // end of class Modules.ControlFlow_LabeledStatement_CapturesParentVar
@@ -499,14 +515,14 @@
 	{
 		// Method begins at RVA 0x2236
 		// Header size: 1
-		// Code size: 13 (0xd)
+		// Code size: 17 (0x11)
 		.maxstack 8
 
 		IL_0000: ldarg.0
 		IL_0001: ldfld class Modules.ControlFlow_LabeledStatement_CapturesParentVar/Scope FunctionObjects.ControlFlow_LabeledStatement_CapturesParentVar_CA1708B0.FunctionObject_FunctionDeclaration_E39E6AE2_outer::_environment0_ControlFlow_LabeledStatement_CapturesParentVar
-		IL_0006: ldnull
-		IL_0007: call object Modules.ControlFlow_LabeledStatement_CapturesParentVar/outer::__js_call__(class Modules.ControlFlow_LabeledStatement_CapturesParentVar/Scope, object)
-		IL_000c: ret
+		IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
+		IL_000b: call object Modules.ControlFlow_LabeledStatement_CapturesParentVar/outer::__js_call__(class Modules.ControlFlow_LabeledStatement_CapturesParentVar/Scope, object)
+		IL_0010: ret
 	} // end of method FunctionObject_FunctionDeclaration_E39E6AE2_outer::CallCore
 
 	.method family hidebysig virtual 
@@ -515,14 +531,17 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x2244
+		// Method begins at RVA 0x2248
 		// Header size: 1
-		// Code size: 11 (0xb)
+		// Code size: 14 (0xe)
 		.maxstack 8
 
-		IL_0000: ldstr "Generated construction adapter is reserved for the callable-family construction migration"
-		IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-		IL_000a: throw
+		IL_0000: ldarg.0
+		IL_0001: ldarg.1
+		IL_0002: call instance object[] [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::ToArray()
+		IL_0007: ldarg.2
+		IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionObject(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, object[], object)
+		IL_000d: ret
 	} // end of method FunctionObject_FunctionDeclaration_E39E6AE2_outer::ConstructCore
 
 } // end of class FunctionObjects.ControlFlow_LabeledStatement_CapturesParentVar_CA1708B0.FunctionObject_FunctionDeclaration_E39E6AE2_outer
@@ -534,7 +553,7 @@
 	.method public hidebysig specialname rtspecialname 
 		instance void .ctor () cil managed 
 	{
-		// Method begins at RVA 0x2250
+		// Method begins at RVA 0x2257
 		// Header size: 1
 		// Code size: 7 (0x7)
 		.maxstack 8
@@ -547,7 +566,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x2258
+		// Method begins at RVA 0x225f
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -559,7 +578,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x225b
+		// Method begins at RVA 0x2262
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -574,17 +593,17 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x225e
+		// Method begins at RVA 0x2265
 		// Header size: 1
-		// Code size: 14 (0xe)
+		// Code size: 18 (0x12)
 		.maxstack 8
 
-		IL_0000: ldnull
-		IL_0001: ldarg.2
-		IL_0002: ldc.i4.0
-		IL_0003: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-		IL_0008: call object Modules.ControlFlow_LabeledStatement_CapturesParentVar/outer/FunctionExpression_NodeTraversal::__js_call__(object, object)
-		IL_000d: ret
+		IL_0000: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
+		IL_0005: ldarg.2
+		IL_0006: ldc.i4.0
+		IL_0007: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+		IL_000c: call object Modules.ControlFlow_LabeledStatement_CapturesParentVar/outer/FunctionExpression_NodeTraversal::__js_call__(object, object)
+		IL_0011: ret
 	} // end of method FunctionObject_FunctionExpression_DE156F42_L5C27::CallCore
 
 	.method family hidebysig virtual 
@@ -593,14 +612,17 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x226d
+		// Method begins at RVA 0x2278
 		// Header size: 1
-		// Code size: 11 (0xb)
+		// Code size: 14 (0xe)
 		.maxstack 8
 
-		IL_0000: ldstr "Generated construction adapter is reserved for the callable-family construction migration"
-		IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-		IL_000a: throw
+		IL_0000: ldarg.0
+		IL_0001: ldarg.1
+		IL_0002: call instance object[] [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::ToArray()
+		IL_0007: ldarg.2
+		IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionObject(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, object[], object)
+		IL_000d: ret
 	} // end of method FunctionObject_FunctionExpression_DE156F42_L5C27::ConstructCore
 
 } // end of class FunctionObjects.ControlFlow_LabeledStatement_CapturesParentVar_CA1708B0.FunctionObject_FunctionExpression_DE156F42_L5C27
@@ -619,7 +641,7 @@
 			object[] capture1
 		) cil managed 
 	{
-		// Method begins at RVA 0x2279
+		// Method begins at RVA 0x2287
 		// Header size: 1
 		// Code size: 21 (0x15)
 		.maxstack 8
@@ -638,7 +660,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x228f
+		// Method begins at RVA 0x229d
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -650,12 +672,12 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x2292
+		// Method begins at RVA 0x22a0
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
 
-		IL_0000: ldc.i4.0
+		IL_0000: ldc.i4.1
 		IL_0001: ret
 	} // end of method FunctionObject_FunctionExpression_A6260E1E_nextNode::get_RequiresInvocationContext
 
@@ -665,16 +687,16 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x2295
+		// Method begins at RVA 0x22a3
 		// Header size: 1
-		// Code size: 13 (0xd)
+		// Code size: 17 (0x11)
 		.maxstack 8
 
 		IL_0000: ldarg.0
 		IL_0001: ldfld object[] FunctionObjects.ControlFlow_LabeledStatement_CapturesParentVar_CA1708B0.FunctionObject_FunctionExpression_A6260E1E_nextNode::_transitionalScopes
-		IL_0006: ldnull
-		IL_0007: call object Modules.ControlFlow_LabeledStatement_CapturesParentVar/outer/nextNode::__js_call__(object[], object)
-		IL_000c: ret
+		IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
+		IL_000b: call object Modules.ControlFlow_LabeledStatement_CapturesParentVar/outer/nextNode::__js_call__(object[], object)
+		IL_0010: ret
 	} // end of method FunctionObject_FunctionExpression_A6260E1E_nextNode::CallCore
 
 	.method family hidebysig virtual 
@@ -683,14 +705,17 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x22a3
+		// Method begins at RVA 0x22b5
 		// Header size: 1
-		// Code size: 11 (0xb)
+		// Code size: 14 (0xe)
 		.maxstack 8
 
-		IL_0000: ldstr "Generated construction adapter is reserved for the callable-family construction migration"
-		IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-		IL_000a: throw
+		IL_0000: ldarg.0
+		IL_0001: ldarg.1
+		IL_0002: call instance object[] [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::ToArray()
+		IL_0007: ldarg.2
+		IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionObject(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, object[], object)
+		IL_000d: ret
 	} // end of method FunctionObject_FunctionExpression_A6260E1E_nextNode::ConstructCore
 
 } // end of class FunctionObjects.ControlFlow_LabeledStatement_CapturesParentVar_CA1708B0.FunctionObject_FunctionExpression_A6260E1E_nextNode
@@ -702,7 +727,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x22af
+		// Method begins at RVA 0x22c4
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
