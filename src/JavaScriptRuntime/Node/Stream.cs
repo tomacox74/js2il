@@ -109,7 +109,7 @@ namespace JavaScriptRuntime.Node
             {
                 var optionsCandidate = args[effectiveArgumentCount - 1];
                 if (optionsCandidate is not EventEmitter
-                    && optionsCandidate is not Delegate
+                    && !CallableOperations.IsCallable(optionsCandidate)
                     && NodeNetworkingCommon.LooksLikeOptionsObject(optionsCandidate))
                 {
                     options = optionsCandidate;
@@ -272,9 +272,9 @@ namespace JavaScriptRuntime.Node
             emitter.once("close", removeGuard);
         }
 
-        private static void InvokeCallback(Delegate callback, params object?[] args)
+        private static void InvokeCallback(object callback, params object?[] args)
         {
-            Closure.InvokeWithArgs(callback, System.Array.Empty<object>(), args);
+            CallableOperations.Call(callback, null, args);
         }
 
         private static AbortError CreateAbortError(object? signalReason)
@@ -355,14 +355,14 @@ namespace JavaScriptRuntime.Node
             }
         }
 
-        private static Delegate? TryGetTrailingCallback(object[] args, int minimumArgumentCount)
+        private static object? TryGetTrailingCallback(object[] args, int minimumArgumentCount)
         {
             if (args.Length <= minimumArgumentCount)
             {
                 return null;
             }
 
-            return args[^1] as Delegate;
+            return CallableOperations.IsCallable(args[^1]) ? args[^1] : null;
         }
 
         private static TypeError CreateInvalidSignalTypeError(object? value)

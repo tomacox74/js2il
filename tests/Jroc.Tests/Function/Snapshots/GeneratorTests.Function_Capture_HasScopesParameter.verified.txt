@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x20d8
+				// Method begins at RVA 0x20dc
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -44,7 +44,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 04 00 00 02
 			)
-			// Method begins at RVA 0x20c7
+			// Method begins at RVA 0x20cb
 			// Header size: 1
 			// Code size: 7 (0x7)
 			.maxstack 8
@@ -73,7 +73,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20cf
+			// Method begins at RVA 0x20d3
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -99,49 +99,57 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 107 (0x6b)
+		// Code size: 111 (0x6f)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Function_Capture_HasScopesParameter/Scope,
-			[1] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0,
-			[2] object,
-			[3] object
+			[1] class FunctionObjects.Function_Capture_HasScopesParameter_CEC68461.FunctionObject_FunctionDeclaration_76C99FCD_captureOuter,
+			[2] object[],
+			[3] object,
+			[4] object
 		)
 
 		IL_0000: newobj instance void Modules.Function_Capture_HasScopesParameter/Scope::.ctor()
 		IL_0005: stloc.0
-		IL_0006: ldloc.0
-		IL_0007: castclass Modules.Function_Capture_HasScopesParameter/Scope
-		IL_000c: ldftn object Modules.Function_Capture_HasScopesParameter/captureOuter::__js_call__(class Modules.Function_Capture_HasScopesParameter/Scope, object)
-		IL_0012: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_0017: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
-		IL_001c: ldc.i4.0
-		IL_001d: conv.r8
-		IL_001e: ldstr "captureOuter"
-		IL_0023: ldc.i4.0
-		IL_0024: ldc.i4.1
-		IL_0025: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
-		IL_002a: stloc.1
-		IL_002b: nop
-		IL_002c: ldloc.0
-		IL_002d: ldc.r8 42
-		IL_0036: box [System.Runtime]System.Double
-		IL_003b: stfld object Modules.Function_Capture_HasScopesParameter/Scope::outerValue
-		IL_0040: nop
-		IL_0041: ldstr "console"
-		IL_0046: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_004b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0050: stloc.2
-		IL_0051: ldloc.1
-		IL_0052: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0057: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0, object[])
-		IL_005c: stloc.3
-		IL_005d: ldloc.2
-		IL_005e: ldstr "log"
-		IL_0063: ldloc.3
-		IL_0064: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0069: pop
-		IL_006a: ret
+		IL_0006: ldc.i4.1
+		IL_0007: newarr [System.Runtime]System.Object
+		IL_000c: dup
+		IL_000d: ldc.i4.0
+		IL_000e: ldloc.0
+		IL_000f: stelem.ref
+		IL_0010: stloc.2
+		IL_0011: ldloc.2
+		IL_0012: ldc.i4.0
+		IL_0013: ldelem.ref
+		IL_0014: castclass Modules.Function_Capture_HasScopesParameter/Scope
+		IL_0019: newobj instance void FunctionObjects.Function_Capture_HasScopesParameter_CEC68461.FunctionObject_FunctionDeclaration_76C99FCD_captureOuter::.ctor(class Modules.Function_Capture_HasScopesParameter/Scope)
+		IL_001e: ldc.i4.0
+		IL_001f: conv.r8
+		IL_0020: ldstr "captureOuter"
+		IL_0025: ldc.i4.0
+		IL_0026: ldc.i4.1
+		IL_0027: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class FunctionObjects.Function_Capture_HasScopesParameter_CEC68461.FunctionObject_FunctionDeclaration_76C99FCD_captureOuter>(!!0, float64, string, bool, bool)
+		IL_002c: stloc.1
+		IL_002d: nop
+		IL_002e: ldloc.0
+		IL_002f: ldc.r8 42
+		IL_0038: box [System.Runtime]System.Double
+		IL_003d: stfld object Modules.Function_Capture_HasScopesParameter/Scope::outerValue
+		IL_0042: nop
+		IL_0043: ldstr "console"
+		IL_0048: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_004d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0052: stloc.3
+		IL_0053: ldloc.1
+		IL_0054: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0059: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
+		IL_005e: stloc.s 4
+		IL_0060: ldloc.3
+		IL_0061: ldstr "log"
+		IL_0066: ldloc.s 4
+		IL_0068: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_006d: pop
+		IL_006e: ret
 	} // end of method Function_Capture_HasScopesParameter::__js_module_init__
 
 } // end of class Modules.Function_Capture_HasScopesParameter
@@ -158,7 +166,7 @@
 			class Modules.Function_Capture_HasScopesParameter/Scope capture0
 		) cil managed 
 	{
-		// Method begins at RVA 0x20e1
+		// Method begins at RVA 0x20e5
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -174,7 +182,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x20f0
+		// Method begins at RVA 0x20f4
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -186,7 +194,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x20f3
+		// Method begins at RVA 0x20f7
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -201,16 +209,16 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x20f6
+		// Method begins at RVA 0x20fa
 		// Header size: 1
-		// Code size: 13 (0xd)
+		// Code size: 17 (0x11)
 		.maxstack 8
 
 		IL_0000: ldarg.0
 		IL_0001: ldfld class Modules.Function_Capture_HasScopesParameter/Scope FunctionObjects.Function_Capture_HasScopesParameter_CEC68461.FunctionObject_FunctionDeclaration_76C99FCD_captureOuter::_environment0_Function_Capture_HasScopesParameter
-		IL_0006: ldnull
-		IL_0007: call object Modules.Function_Capture_HasScopesParameter/captureOuter::__js_call__(class Modules.Function_Capture_HasScopesParameter/Scope, object)
-		IL_000c: ret
+		IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
+		IL_000b: call object Modules.Function_Capture_HasScopesParameter/captureOuter::__js_call__(class Modules.Function_Capture_HasScopesParameter/Scope, object)
+		IL_0010: ret
 	} // end of method FunctionObject_FunctionDeclaration_76C99FCD_captureOuter::CallCore
 
 	.method family hidebysig virtual 
@@ -219,14 +227,17 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x2104
+		// Method begins at RVA 0x210c
 		// Header size: 1
-		// Code size: 11 (0xb)
+		// Code size: 14 (0xe)
 		.maxstack 8
 
-		IL_0000: ldstr "Generated construction adapter is reserved for the callable-family construction migration"
-		IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-		IL_000a: throw
+		IL_0000: ldarg.0
+		IL_0001: ldarg.1
+		IL_0002: call instance object[] [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::ToArray()
+		IL_0007: ldarg.2
+		IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionObject(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, object[], object)
+		IL_000d: ret
 	} // end of method FunctionObject_FunctionDeclaration_76C99FCD_captureOuter::ConstructCore
 
 } // end of class FunctionObjects.Function_Capture_HasScopesParameter_CEC68461.FunctionObject_FunctionDeclaration_76C99FCD_captureOuter
@@ -238,7 +249,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2110
+		// Method begins at RVA 0x211b
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

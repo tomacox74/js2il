@@ -181,7 +181,7 @@
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Require_Util_Promisify_Basic/Scope,
-			[1] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2,
+			[1] class FunctionObjects.Require_Util_Promisify_Basic_4BC2C8DF.FunctionObject_FunctionDeclaration_5D339815_callbackFn,
 			[2] class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IUtilModule,
 			[3] object,
 			[4] object[],
@@ -191,16 +191,20 @@
 
 		IL_0000: newobj instance void Modules.Require_Util_Promisify_Basic/Scope::.ctor()
 		IL_0005: stloc.0
-		IL_0006: ldnull
-		IL_0007: ldftn object Modules.Require_Util_Promisify_Basic/callbackFn::__js_call__(object, object, object)
-		IL_000d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::.ctor(object, native int)
-		IL_0012: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2
+		IL_0006: ldc.i4.1
+		IL_0007: newarr [System.Runtime]System.Object
+		IL_000c: dup
+		IL_000d: ldc.i4.0
+		IL_000e: ldloc.0
+		IL_000f: stelem.ref
+		IL_0010: stloc.s 4
+		IL_0012: newobj instance void FunctionObjects.Require_Util_Promisify_Basic_4BC2C8DF.FunctionObject_FunctionDeclaration_5D339815_callbackFn::.ctor()
 		IL_0017: ldc.i4.2
 		IL_0018: conv.r8
 		IL_0019: ldstr "callbackFn"
 		IL_001e: ldc.i4.0
 		IL_001f: ldc.i4.1
-		IL_0020: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2>(!!0, float64, string, bool, bool)
+		IL_0020: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class FunctionObjects.Require_Util_Promisify_Basic_4BC2C8DF.FunctionObject_FunctionDeclaration_5D339815_callbackFn>(!!0, float64, string, bool, bool)
 		IL_0025: stloc.1
 		IL_0026: nop
 		IL_0027: ldarg.1
@@ -209,9 +213,9 @@
 		IL_0032: stloc.2
 		IL_0033: nop
 		IL_0034: ldloc.2
-		IL_0035: ldloc.1
-		IL_0036: castclass [System.Runtime]System.Delegate
-		IL_003b: callvirt instance class [System.Runtime]System.Delegate [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IUtilModule::promisify(class [System.Runtime]System.Delegate)
+		IL_0035: ldstr "promisify"
+		IL_003a: ldloc.1
+		IL_003b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
 		IL_0040: stloc.3
 		IL_0041: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
 		IL_0046: stloc.s 4
@@ -299,18 +303,18 @@
 	{
 		// Method begins at RVA 0x217e
 		// Header size: 1
-		// Code size: 21 (0x15)
+		// Code size: 25 (0x19)
 		.maxstack 8
 
-		IL_0000: ldnull
-		IL_0001: ldarg.2
-		IL_0002: ldc.i4.0
-		IL_0003: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-		IL_0008: ldarg.2
-		IL_0009: ldc.i4.1
-		IL_000a: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-		IL_000f: call object Modules.Require_Util_Promisify_Basic/callbackFn::__js_call__(object, object, object)
-		IL_0014: ret
+		IL_0000: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
+		IL_0005: ldarg.2
+		IL_0006: ldc.i4.0
+		IL_0007: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+		IL_000c: ldarg.2
+		IL_000d: ldc.i4.1
+		IL_000e: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+		IL_0013: call object Modules.Require_Util_Promisify_Basic/callbackFn::__js_call__(object, object, object)
+		IL_0018: ret
 	} // end of method FunctionObject_FunctionDeclaration_5D339815_callbackFn::CallCore
 
 	.method family hidebysig virtual 
@@ -319,14 +323,17 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x2194
+		// Method begins at RVA 0x2198
 		// Header size: 1
-		// Code size: 11 (0xb)
+		// Code size: 14 (0xe)
 		.maxstack 8
 
-		IL_0000: ldstr "Generated construction adapter is reserved for the callable-family construction migration"
-		IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-		IL_000a: throw
+		IL_0000: ldarg.0
+		IL_0001: ldarg.1
+		IL_0002: call instance object[] [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::ToArray()
+		IL_0007: ldarg.2
+		IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionObject(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, object[], object)
+		IL_000d: ret
 	} // end of method FunctionObject_FunctionDeclaration_5D339815_callbackFn::ConstructCore
 
 } // end of class FunctionObjects.Require_Util_Promisify_Basic_4BC2C8DF.FunctionObject_FunctionDeclaration_5D339815_callbackFn
@@ -338,7 +345,7 @@
 	.method public hidebysig specialname rtspecialname 
 		instance void .ctor () cil managed 
 	{
-		// Method begins at RVA 0x21a0
+		// Method begins at RVA 0x21a7
 		// Header size: 1
 		// Code size: 7 (0x7)
 		.maxstack 8
@@ -351,7 +358,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x21a8
+		// Method begins at RVA 0x21af
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -363,7 +370,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x21ab
+		// Method begins at RVA 0x21b2
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -378,7 +385,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x21ae
+		// Method begins at RVA 0x21b5
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -400,7 +407,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21bd
+		// Method begins at RVA 0x21c4
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

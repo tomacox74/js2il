@@ -210,7 +210,7 @@ namespace JavaScriptRuntime
 
         public static Map groupBy(object? items, object? callback)
         {
-            if (callback is not Delegate)
+            if (!CallableOperations.IsCallable(callback))
             {
                 throw new TypeError("Map.groupBy callback must be a function");
             }
@@ -292,29 +292,19 @@ namespace JavaScriptRuntime
             }
         }
 
-        private Delegate GetCallableAdder(string name)
+        private object GetCallableAdder(string name)
         {
             var adder = ObjectRuntime.GetProperty(this, name);
-            if (adder is not Delegate del)
+            if (!CallableOperations.IsCallable(adder))
             {
                 throw new TypeError($"Map.prototype.{name} is not callable");
             }
 
-            return del;
+            return adder!;
         }
 
-        private object? CallAdder(Delegate adder, object? key, object? value)
-        {
-            var previousThis = RuntimeServices.SetCurrentThis(this);
-            try
-            {
-                return Closure.InvokeWithArgs(adder, System.Array.Empty<object>(), new object?[] { key, value });
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentThis(previousThis);
-            }
-        }
+        private object? CallAdder(object adder, object? key, object? value)
+            => CallableOperations.Call2(adder, this, key, value);
 
         private static (object? Key, object? Value) ExtractEntry(object? entry)
         {
@@ -454,7 +444,7 @@ namespace JavaScriptRuntime
 
         public void forEach(object? callback, object? thisArg)
         {
-            if (callback is not Delegate del)
+            if (!CallableOperations.IsCallable(callback))
             {
                 throw new TypeError("Map.prototype.forEach callback must be a function");
             }
@@ -462,15 +452,7 @@ namespace JavaScriptRuntime
             for (int i = 0; i < _entries.Count; i++)
             {
                 var entry = _entries[i];
-                var previousThis = RuntimeServices.SetCurrentThis(thisArg);
-                try
-                {
-                    Closure.InvokeWithArgs(del, System.Array.Empty<object>(), new object?[] { entry[1], entry[0], this });
-                }
-                finally
-                {
-                    RuntimeServices.SetCurrentThis(previousThis);
-                }
+                CallableOperations.Call3(callback, thisArg, entry[1], entry[0], this);
             }
         }
 

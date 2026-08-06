@@ -86,7 +86,7 @@ public class ModuleLoadTests
         var exports = Assert.IsType<JsObject>(exportsProxy.UnwrapExports());
 
         Assert.Equal("1.0.0", ExportMemberResolver.GetExportMember(exports, "version"));
-        Assert.IsAssignableFrom<Delegate>(ExportMemberResolver.GetExportMember(exports, "add"));
+        Assert.IsAssignableFrom<JsFunctionObject>(ExportMemberResolver.GetExportMember(exports, "add"));
     }
 
     [Fact]

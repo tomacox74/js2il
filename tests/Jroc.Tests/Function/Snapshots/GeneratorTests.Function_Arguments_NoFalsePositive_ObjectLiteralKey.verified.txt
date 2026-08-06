@@ -183,34 +183,42 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 58 (0x3a)
+		// Code size: 60 (0x3c)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Function_Arguments_NoFalsePositive_ObjectLiteralKey/Scope,
-			[1] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
+			[1] class FunctionObjects.Function_Arguments_NoFalsePositive_ObjectLiteralKey_128F2550.FunctionObject_FunctionDeclaration_491D1403_f,
+			[2] object[]
 		)
 
 		IL_0000: newobj instance void Modules.Function_Arguments_NoFalsePositive_ObjectLiteralKey/Scope::.ctor()
 		IL_0005: stloc.0
-		IL_0006: ldloc.0
-		IL_0007: castclass Modules.Function_Arguments_NoFalsePositive_ObjectLiteralKey/Scope
-		IL_000c: ldftn object Modules.Function_Arguments_NoFalsePositive_ObjectLiteralKey/f::__js_call__(class Modules.Function_Arguments_NoFalsePositive_ObjectLiteralKey/Scope, object)
-		IL_0012: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_0017: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
-		IL_001c: ldc.i4.0
-		IL_001d: conv.r8
-		IL_001e: ldstr "f"
-		IL_0023: ldc.i4.0
-		IL_0024: ldc.i4.1
-		IL_0025: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
-		IL_002a: stloc.1
-		IL_002b: nop
-		IL_002c: nop
-		IL_002d: ldloc.1
-		IL_002e: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0033: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0, object[])
-		IL_0038: pop
-		IL_0039: ret
+		IL_0006: ldc.i4.1
+		IL_0007: newarr [System.Runtime]System.Object
+		IL_000c: dup
+		IL_000d: ldc.i4.0
+		IL_000e: ldloc.0
+		IL_000f: stelem.ref
+		IL_0010: stloc.2
+		IL_0011: ldloc.2
+		IL_0012: ldc.i4.0
+		IL_0013: ldelem.ref
+		IL_0014: castclass Modules.Function_Arguments_NoFalsePositive_ObjectLiteralKey/Scope
+		IL_0019: newobj instance void FunctionObjects.Function_Arguments_NoFalsePositive_ObjectLiteralKey_128F2550.FunctionObject_FunctionDeclaration_491D1403_f::.ctor(class Modules.Function_Arguments_NoFalsePositive_ObjectLiteralKey/Scope)
+		IL_001e: ldc.i4.0
+		IL_001f: conv.r8
+		IL_0020: ldstr "f"
+		IL_0025: ldc.i4.0
+		IL_0026: ldc.i4.1
+		IL_0027: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class FunctionObjects.Function_Arguments_NoFalsePositive_ObjectLiteralKey_128F2550.FunctionObject_FunctionDeclaration_491D1403_f>(!!0, float64, string, bool, bool)
+		IL_002c: stloc.1
+		IL_002d: nop
+		IL_002e: nop
+		IL_002f: ldloc.1
+		IL_0030: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0035: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
+		IL_003a: pop
+		IL_003b: ret
 	} // end of method Function_Arguments_NoFalsePositive_ObjectLiteralKey::__js_module_init__
 
 } // end of class Modules.Function_Arguments_NoFalsePositive_ObjectLiteralKey
@@ -272,14 +280,14 @@
 	{
 		// Method begins at RVA 0x2137
 		// Header size: 1
-		// Code size: 13 (0xd)
+		// Code size: 17 (0x11)
 		.maxstack 8
 
 		IL_0000: ldarg.0
 		IL_0001: ldfld class Modules.Function_Arguments_NoFalsePositive_ObjectLiteralKey/Scope FunctionObjects.Function_Arguments_NoFalsePositive_ObjectLiteralKey_128F2550.FunctionObject_FunctionDeclaration_491D1403_f::_environment0_Function_Arguments_NoFalsePositive_ObjectLiteralKey
-		IL_0006: ldnull
-		IL_0007: call object Modules.Function_Arguments_NoFalsePositive_ObjectLiteralKey/f::__js_call__(class Modules.Function_Arguments_NoFalsePositive_ObjectLiteralKey/Scope, object)
-		IL_000c: ret
+		IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
+		IL_000b: call object Modules.Function_Arguments_NoFalsePositive_ObjectLiteralKey/f::__js_call__(class Modules.Function_Arguments_NoFalsePositive_ObjectLiteralKey/Scope, object)
+		IL_0010: ret
 	} // end of method FunctionObject_FunctionDeclaration_491D1403_f::CallCore
 
 	.method family hidebysig virtual 
@@ -288,14 +296,17 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x2145
+		// Method begins at RVA 0x2149
 		// Header size: 1
-		// Code size: 11 (0xb)
+		// Code size: 14 (0xe)
 		.maxstack 8
 
-		IL_0000: ldstr "Generated construction adapter is reserved for the callable-family construction migration"
-		IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-		IL_000a: throw
+		IL_0000: ldarg.0
+		IL_0001: ldarg.1
+		IL_0002: call instance object[] [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::ToArray()
+		IL_0007: ldarg.2
+		IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionObject(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, object[], object)
+		IL_000d: ret
 	} // end of method FunctionObject_FunctionDeclaration_491D1403_f::ConstructCore
 
 } // end of class FunctionObjects.Function_Arguments_NoFalsePositive_ObjectLiteralKey_128F2550.FunctionObject_FunctionDeclaration_491D1403_f
@@ -307,7 +318,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2151
+		// Method begins at RVA 0x2158
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -57,7 +57,7 @@ namespace JavaScriptRuntime.Node
 
         public object promisify(object callback)
         {
-            if (callback is not Delegate original)
+            if (!CallableOperations.IsCallable(callback))
             {
                 throw new TypeError("The \"original\" argument must be of type function");
             }
@@ -92,7 +92,7 @@ namespace JavaScriptRuntime.Node
                 // Invoke the original callback-style function
                 try
                 {
-                    Closure.InvokeWithArgs(original, scopes, newArgs.ToArray());
+                    CallableOperations.Call(callback, RuntimeServices.GetCurrentThis(), newArgs.ToArray());
                 }
                 catch (Exception ex)
                 {
@@ -105,12 +105,12 @@ namespace JavaScriptRuntime.Node
 
         public object? inherits(object constructor, object superConstructor)
         {
-            if (constructor is not Delegate && constructor is not Type)
+            if (!CallableOperations.IsCallable(constructor) && constructor is not Type)
             {
                 throw new TypeError("The \"constructor\" argument must be of type function");
             }
 
-            if (superConstructor is not Delegate && superConstructor is not Type)
+            if (!CallableOperations.IsCallable(superConstructor) && superConstructor is not Type)
             {
                 throw new TypeError("The \"superConstructor\" argument must be of type function");
             }
@@ -180,23 +180,20 @@ namespace JavaScriptRuntime.Node
             {
                 var customInspector = ObjectRuntime.GetItem(value, _inspectCustomSymbol);
 
-                if (customInspector is Delegate del)
+                if (CallableOperations.IsCallable(customInspector))
                 {
-                    var previousThis = RuntimeServices.SetCurrentThis(value);
-                    try
+                    var result = CallableOperations.Call3(
+                        customInspector,
+                        value,
+                        (double)depth,
+                        options ?? (object)JsNull.Null,
+                        _inspectFunction);
+                    if (result is string s)
                     {
-                        var result = Closure.InvokeWithArgs(del, System.Array.Empty<object>(), (double)depth, options ?? (object)JsNull.Null, _inspectFunction);
-                        if (result is string s)
-                        {
-                            return s;
-                        }
+                        return s;
+                    }
 
-                        return InspectValue(result, depth, 0, new HashSet<object>(ReferenceEqualityComparer.Instance));
-                    }
-                    finally
-                    {
-                        RuntimeServices.SetCurrentThis(previousThis);
-                    }
+                    return InspectValue(result, depth, 0, new HashSet<object>(ReferenceEqualityComparer.Instance));
                 }
             }
 
@@ -481,7 +478,7 @@ namespace JavaScriptRuntime.Node
                 return sym.ToString();
             }
 
-            if (value is Delegate)
+            if (CallableOperations.IsCallable(value))
             {
                 return "[Function]";
             }

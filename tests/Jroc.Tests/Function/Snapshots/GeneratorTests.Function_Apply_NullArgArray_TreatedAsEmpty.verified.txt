@@ -117,48 +117,53 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 94 (0x5e)
+		// Code size: 95 (0x5f)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Function_Apply_NullArgArray_TreatedAsEmpty/Scope,
-			[1] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0,
-			[2] object,
-			[3] object
+			[1] class FunctionObjects.Function_Apply_NullArgArray_TreatedAsEmpty_D8861CF6.FunctionObject_FunctionDeclaration_D8AAA3E9_countArgs,
+			[2] object[],
+			[3] object,
+			[4] object
 		)
 
 		IL_0000: newobj instance void Modules.Function_Apply_NullArgArray_TreatedAsEmpty/Scope::.ctor()
 		IL_0005: stloc.0
-		IL_0006: ldnull
-		IL_0007: ldftn object Modules.Function_Apply_NullArgArray_TreatedAsEmpty/countArgs::__js_call__(object)
-		IL_000d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_0012: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
-		IL_0017: ldc.i4.0
-		IL_0018: conv.r8
-		IL_0019: ldstr "countArgs"
+		IL_0006: ldc.i4.1
+		IL_0007: newarr [System.Runtime]System.Object
+		IL_000c: dup
+		IL_000d: ldc.i4.0
+		IL_000e: ldloc.0
+		IL_000f: stelem.ref
+		IL_0010: stloc.2
+		IL_0011: newobj instance void FunctionObjects.Function_Apply_NullArgArray_TreatedAsEmpty_D8861CF6.FunctionObject_FunctionDeclaration_D8AAA3E9_countArgs::.ctor()
+		IL_0016: ldc.i4.0
+		IL_0017: conv.r8
+		IL_0018: ldstr "countArgs"
+		IL_001d: ldc.i4.1
 		IL_001e: ldc.i4.1
-		IL_001f: ldc.i4.1
-		IL_0020: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
-		IL_0025: stloc.1
+		IL_001f: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class FunctionObjects.Function_Apply_NullArgArray_TreatedAsEmpty_D8861CF6.FunctionObject_FunctionDeclaration_D8AAA3E9_countArgs>(!!0, float64, string, bool, bool)
+		IL_0024: stloc.1
+		IL_0025: nop
 		IL_0026: nop
-		IL_0027: nop
-		IL_0028: ldstr "console"
-		IL_002d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0032: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0037: stloc.2
-		IL_0038: ldloc.1
-		IL_0039: ldstr "apply"
-		IL_003e: ldc.i4.0
-		IL_003f: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
-		IL_0044: ldc.i4.0
-		IL_0045: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
-		IL_004a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_004f: stloc.3
-		IL_0050: ldloc.2
+		IL_0027: ldstr "console"
+		IL_002c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0031: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0036: stloc.3
+		IL_0037: ldloc.1
+		IL_0038: ldstr "apply"
+		IL_003d: ldc.i4.0
+		IL_003e: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
+		IL_0043: ldc.i4.0
+		IL_0044: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
+		IL_0049: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_004e: stloc.s 4
+		IL_0050: ldloc.3
 		IL_0051: ldstr "log"
-		IL_0056: ldloc.3
-		IL_0057: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_005c: pop
-		IL_005d: ret
+		IL_0056: ldloc.s 4
+		IL_0058: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_005d: pop
+		IL_005e: ret
 	} // end of method Function_Apply_NullArgArray_TreatedAsEmpty::__js_module_init__
 
 } // end of class Modules.Function_Apply_NullArgArray_TreatedAsEmpty
@@ -212,12 +217,12 @@
 	{
 		// Method begins at RVA 0x2110
 		// Header size: 1
-		// Code size: 7 (0x7)
+		// Code size: 11 (0xb)
 		.maxstack 8
 
-		IL_0000: ldnull
-		IL_0001: call object Modules.Function_Apply_NullArgArray_TreatedAsEmpty/countArgs::__js_call__(object)
-		IL_0006: ret
+		IL_0000: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
+		IL_0005: call object Modules.Function_Apply_NullArgArray_TreatedAsEmpty/countArgs::__js_call__(object)
+		IL_000a: ret
 	} // end of method FunctionObject_FunctionDeclaration_D8AAA3E9_countArgs::CallCore
 
 	.method family hidebysig virtual 
@@ -226,14 +231,17 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x2118
+		// Method begins at RVA 0x211c
 		// Header size: 1
-		// Code size: 11 (0xb)
+		// Code size: 14 (0xe)
 		.maxstack 8
 
-		IL_0000: ldstr "Generated construction adapter is reserved for the callable-family construction migration"
-		IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-		IL_000a: throw
+		IL_0000: ldarg.0
+		IL_0001: ldarg.1
+		IL_0002: call instance object[] [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::ToArray()
+		IL_0007: ldarg.2
+		IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionObject(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, object[], object)
+		IL_000d: ret
 	} // end of method FunctionObject_FunctionDeclaration_D8AAA3E9_countArgs::ConstructCore
 
 } // end of class FunctionObjects.Function_Apply_NullArgArray_TreatedAsEmpty_D8861CF6.FunctionObject_FunctionDeclaration_D8AAA3E9_countArgs
@@ -245,7 +253,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2124
+		// Method begins at RVA 0x212b
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

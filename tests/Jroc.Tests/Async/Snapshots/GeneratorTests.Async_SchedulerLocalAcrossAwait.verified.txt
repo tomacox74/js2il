@@ -253,7 +253,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 78 (0x4e)
+		// Code size: 80 (0x50)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Async_SchedulerLocalAcrossAwait/Scope,
@@ -269,27 +269,29 @@
 		IL_000d: ldc.i4.0
 		IL_000e: ldloc.0
 		IL_000f: stelem.ref
-		IL_0010: ldftn object Modules.Async_SchedulerLocalAcrossAwait/test::__js_call__(object[], object, object)
-		IL_0016: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-		IL_001b: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1
-		IL_0020: ldc.i4.1
-		IL_0021: conv.r8
-		IL_0022: ldstr "test"
-		IL_0027: ldc.i4.0
-		IL_0028: ldc.i4.1
-		IL_0029: call !!0 [JavaScriptRuntime]JavaScriptRuntime.AsyncFunction::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0, float64, string, bool, bool)
-		IL_002e: stloc.1
-		IL_002f: nop
-		IL_0030: nop
-		IL_0031: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0036: stloc.2
-		IL_0037: ldloc.1
-		IL_0038: ldloc.2
-		IL_0039: ldc.r8 4
-		IL_0042: box [System.Runtime]System.Double
-		IL_0047: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1, object[], object)
-		IL_004c: pop
-		IL_004d: ret
+		IL_0010: stloc.2
+		IL_0011: ldloc.2
+		IL_0012: ldftn object Modules.Async_SchedulerLocalAcrossAwait/test::__js_call__(object[], object, object)
+		IL_0018: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_001d: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1
+		IL_0022: ldc.i4.1
+		IL_0023: conv.r8
+		IL_0024: ldstr "test"
+		IL_0029: ldc.i4.0
+		IL_002a: ldc.i4.1
+		IL_002b: call !!0 [JavaScriptRuntime]JavaScriptRuntime.AsyncFunction::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0, float64, string, bool, bool)
+		IL_0030: stloc.1
+		IL_0031: nop
+		IL_0032: nop
+		IL_0033: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0038: stloc.2
+		IL_0039: ldloc.1
+		IL_003a: ldloc.2
+		IL_003b: ldc.r8 4
+		IL_0044: box [System.Runtime]System.Double
+		IL_0049: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1, object[], object)
+		IL_004e: pop
+		IL_004f: ret
 	} // end of method Async_SchedulerLocalAcrossAwait::__js_module_init__
 
 } // end of class Modules.Async_SchedulerLocalAcrossAwait
@@ -351,17 +353,17 @@
 	{
 		// Method begins at RVA 0x222c
 		// Header size: 1
-		// Code size: 20 (0x14)
+		// Code size: 24 (0x18)
 		.maxstack 8
 
 		IL_0000: ldarg.0
 		IL_0001: ldfld object[] FunctionObjects.Async_SchedulerLocalAcrossAwait_34C80B01.FunctionObject_FunctionDeclaration_E9DF5E10_test::_transitionalScopes
-		IL_0006: ldnull
-		IL_0007: ldarg.2
-		IL_0008: ldc.i4.0
-		IL_0009: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-		IL_000e: call object Modules.Async_SchedulerLocalAcrossAwait/test::__js_call__(object[], object, object)
-		IL_0013: ret
+		IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
+		IL_000b: ldarg.2
+		IL_000c: ldc.i4.0
+		IL_000d: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+		IL_0012: call object Modules.Async_SchedulerLocalAcrossAwait/test::__js_call__(object[], object, object)
+		IL_0017: ret
 	} // end of method FunctionObject_FunctionDeclaration_E9DF5E10_test::CallCore
 
 } // end of class FunctionObjects.Async_SchedulerLocalAcrossAwait_34C80B01.FunctionObject_FunctionDeclaration_E9DF5E10_test
@@ -373,7 +375,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2241
+		// Method begins at RVA 0x2245
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

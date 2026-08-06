@@ -82,6 +82,9 @@ internal sealed class GeneratedFunctionObjectEmitter
             var constructor = MetadataTokens.MethodDefinitionHandle(nextMethodRow++);
             var isConstructorGetter = MetadataTokens.MethodDefinitionHandle(nextMethodRow++);
             var requiresContextGetter = MetadataTokens.MethodDefinitionHandle(nextMethodRow++);
+            var ordinaryThisResolver = plan.UsesNonStrictThisBinding
+                ? MetadataTokens.MethodDefinitionHandle(nextMethodRow++)
+                : default;
             var stateAccessorHandles =
                 new Dictionary<GeneratedFunctionStateKind, MethodDefinitionHandle>();
             foreach (var state in plan.StateFields)
@@ -123,6 +126,7 @@ internal sealed class GeneratedFunctionObjectEmitter
                 ConstructorHandle = constructor,
                 IsConstructorGetterHandle = isConstructorGetter,
                 RequiresInvocationContextGetterHandle = requiresContextGetter,
+                OrdinaryThisResolverHandle = ordinaryThisResolver,
                 StateAccessorHandles = stateAccessorHandles,
                 CallAdapterHandle = callAdapter,
                 ConstructAdapterHandle = constructAdapter,
@@ -161,6 +165,14 @@ internal sealed class GeneratedFunctionObjectEmitter
                     metadata.Plan.RequiresInvocationContext),
                 metadata.Plan,
                 "get_RequiresInvocationContext");
+            if (!metadata.OrdinaryThisResolverHandle.IsNil)
+            {
+                EmitAndValidate(
+                    metadata.OrdinaryThisResolverHandle,
+                    EmitOrdinaryThisResolver(metadata),
+                    metadata.Plan,
+                    "ResolveThisArgumentCore");
+            }
             foreach (var state in metadata.Plan.StateFields)
             {
                 if (!metadata.StateAccessorHandles.TryGetValue(
@@ -310,15 +322,51 @@ internal sealed class GeneratedFunctionObjectEmitter
             hasThisArgument ? ["thisArgument"] : Array.Empty<string>());
     }
 
+    private MethodDefinitionHandle EmitOrdinaryThisResolver(
+        GeneratedFunctionObjectMetadata metadata)
+    {
+        var signature = CreateStateAccessorSignature(
+            _bclReferences.ObjectType,
+            hasThisArgument: true);
+        var il = new BlobBuilder();
+        var encoder = new InstructionEncoder(il);
+        encoder.OpCode(ILOpCode.Ldarg_1);
+        encoder.Call(_bclReferences.Function_ResolveOrdinaryThisArgument_Ref);
+        encoder.OpCode(ILOpCode.Ret);
+
+        return AddMethod(
+            metadata,
+            MethodAttributes.Family
+            | MethodAttributes.HideBySig
+            | MethodAttributes.Virtual,
+            "ResolveThisArgumentCore",
+            signature,
+            AddMethodBody(encoder),
+            ["thisArgument"]);
+    }
+
     private MethodDefinitionHandle EmitConstructAdapter(
         GeneratedFunctionObjectMetadata metadata)
     {
         var signature = CreateConstructAdapterSignature();
         var il = new BlobBuilder();
         var encoder = new InstructionEncoder(il);
-        EmitTypeError(
-            encoder,
-            "Generated construction adapter is reserved for the callable-family construction migration");
+        if (metadata.Plan.Callable.Kind is CallableKind.FunctionDeclaration
+            or CallableKind.FunctionExpression)
+        {
+            encoder.OpCode(ILOpCode.Ldarg_0);
+            encoder.OpCode(ILOpCode.Ldarg_1);
+            encoder.Call(_bclReferences.JsCallArguments_ToArray_Ref);
+            encoder.OpCode(ILOpCode.Ldarg_2);
+            encoder.Call(_bclReferences.Function_ConstructGeneratedFunctionObject_Ref);
+            encoder.OpCode(ILOpCode.Ret);
+        }
+        else
+        {
+            EmitTypeError(
+                encoder,
+                "Generated construction adapter is reserved for the callable-family construction migration");
+        }
 
         return AddMethod(
             metadata,
@@ -358,6 +406,11 @@ internal sealed class GeneratedFunctionObjectEmitter
                 encoder.OpCode(ILOpCode.Ldarg_0);
                 encoder.OpCode(ILOpCode.Ldfld);
                 encoder.Token(metadata.FieldHandles[lexicalNewTarget.FieldName]);
+            }
+            else if (plan.Callable.Kind is CallableKind.FunctionDeclaration
+                or CallableKind.FunctionExpression)
+            {
+                encoder.Call(_bclReferences.RuntimeServices_GetCurrentNewTarget_Ref);
             }
             else
             {

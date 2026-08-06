@@ -295,8 +295,11 @@
 			[8] object,
 			[9] object,
 			[10] object,
-			[11] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1,
-			[12] class [JavaScriptRuntime]JavaScriptRuntime.Error
+			[11] object[],
+			[12] class FunctionObjects.Events_EventEmitter_ErrorMonitor_4ED5806C.FunctionObject_FunctionExpression_DA01CEF5_L7C33,
+			[13] class FunctionObjects.Events_EventEmitter_ErrorMonitor_4ED5806C.FunctionObject_FunctionExpression_2AF8E8BC_L10C21,
+			[14] class [JavaScriptRuntime]JavaScriptRuntime.Error,
+			[15] class FunctionObjects.Events_EventEmitter_ErrorMonitor_4ED5806C.FunctionObject_FunctionExpression_A8471C41_L17C34
 		)
 
 		IL_0000: newobj instance void Modules.Events_EventEmitter_ErrorMonitor/Scope::.ctor()
@@ -320,41 +323,49 @@
 		IL_002f: ldloc.1
 		IL_0030: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Symbol [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IEventsModule::get_errorMonitor()
 		IL_0035: stloc.s 10
-		IL_0037: ldnull
-		IL_0038: ldftn object Modules.Events_EventEmitter_ErrorMonitor/FunctionExpression_L7C32::__js_call__(object, object)
-		IL_003e: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-		IL_0043: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1
+		IL_0037: ldc.i4.1
+		IL_0038: newarr [System.Runtime]System.Object
+		IL_003d: dup
+		IL_003e: ldc.i4.0
+		IL_003f: ldloc.0
+		IL_0040: stelem.ref
+		IL_0041: stloc.s 11
+		IL_0043: newobj instance void FunctionObjects.Events_EventEmitter_ErrorMonitor_4ED5806C.FunctionObject_FunctionExpression_DA01CEF5_L7C33::.ctor()
 		IL_0048: ldc.i4.1
 		IL_0049: conv.r8
 		IL_004a: ldstr ""
 		IL_004f: ldc.i4.0
 		IL_0050: ldc.i4.1
-		IL_0051: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0, float64, string, bool, bool)
-		IL_0056: stloc.s 11
+		IL_0051: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class FunctionObjects.Events_EventEmitter_ErrorMonitor_4ED5806C.FunctionObject_FunctionExpression_DA01CEF5_L7C33>(!!0, float64, string, bool, bool)
+		IL_0056: stloc.s 12
 		IL_0058: ldloc.s 9
 		IL_005a: ldstr "on"
 		IL_005f: ldloc.s 10
-		IL_0061: ldloc.s 11
+		IL_0061: ldloc.s 12
 		IL_0063: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
 		IL_0068: pop
 		IL_0069: ldloc.3
 		IL_006a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
 		IL_006f: stloc.s 10
-		IL_0071: ldnull
-		IL_0072: ldftn object Modules.Events_EventEmitter_ErrorMonitor/FunctionExpression_L10C20::__js_call__(object, object)
-		IL_0078: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-		IL_007d: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1
+		IL_0071: ldc.i4.1
+		IL_0072: newarr [System.Runtime]System.Object
+		IL_0077: dup
+		IL_0078: ldc.i4.0
+		IL_0079: ldloc.0
+		IL_007a: stelem.ref
+		IL_007b: stloc.s 11
+		IL_007d: newobj instance void FunctionObjects.Events_EventEmitter_ErrorMonitor_4ED5806C.FunctionObject_FunctionExpression_2AF8E8BC_L10C21::.ctor()
 		IL_0082: ldc.i4.1
 		IL_0083: conv.r8
 		IL_0084: ldstr ""
 		IL_0089: ldc.i4.0
 		IL_008a: ldc.i4.1
-		IL_008b: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0, float64, string, bool, bool)
-		IL_0090: stloc.s 11
+		IL_008b: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class FunctionObjects.Events_EventEmitter_ErrorMonitor_4ED5806C.FunctionObject_FunctionExpression_2AF8E8BC_L10C21>(!!0, float64, string, bool, bool)
+		IL_0090: stloc.s 13
 		IL_0092: ldloc.s 10
 		IL_0094: ldstr "on"
 		IL_0099: ldstr "error"
-		IL_009e: ldloc.s 11
+		IL_009e: ldloc.s 13
 		IL_00a0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
 		IL_00a5: pop
 		IL_00a6: ldloc.3
@@ -362,11 +373,11 @@
 		IL_00ac: stloc.s 10
 		IL_00ae: ldstr "boom"
 		IL_00b3: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Error::.ctor(string)
-		IL_00b8: stloc.s 12
+		IL_00b8: stloc.s 14
 		IL_00ba: ldloc.s 10
 		IL_00bc: ldstr "emit"
 		IL_00c1: ldstr "error"
-		IL_00c6: ldloc.s 12
+		IL_00c6: ldloc.s 14
 		IL_00c8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
 		IL_00cd: pop
 		IL_00ce: ldloc.2
@@ -380,21 +391,25 @@
 		IL_00e5: ldloc.1
 		IL_00e6: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Symbol [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IEventsModule::get_errorMonitor()
 		IL_00eb: stloc.s 9
-		IL_00ed: ldnull
-		IL_00ee: ldftn object Modules.Events_EventEmitter_ErrorMonitor/FunctionExpression_L17C33::__js_call__(object, object)
-		IL_00f4: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-		IL_00f9: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1
+		IL_00ed: ldc.i4.1
+		IL_00ee: newarr [System.Runtime]System.Object
+		IL_00f3: dup
+		IL_00f4: ldc.i4.0
+		IL_00f5: ldloc.0
+		IL_00f6: stelem.ref
+		IL_00f7: stloc.s 11
+		IL_00f9: newobj instance void FunctionObjects.Events_EventEmitter_ErrorMonitor_4ED5806C.FunctionObject_FunctionExpression_A8471C41_L17C34::.ctor()
 		IL_00fe: ldc.i4.1
 		IL_00ff: conv.r8
 		IL_0100: ldstr ""
 		IL_0105: ldc.i4.0
 		IL_0106: ldc.i4.1
-		IL_0107: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0, float64, string, bool, bool)
-		IL_010c: stloc.s 11
+		IL_0107: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class FunctionObjects.Events_EventEmitter_ErrorMonitor_4ED5806C.FunctionObject_FunctionExpression_A8471C41_L17C34>(!!0, float64, string, bool, bool)
+		IL_010c: stloc.s 15
 		IL_010e: ldloc.s 10
 		IL_0110: ldstr "on"
 		IL_0115: ldloc.s 9
-		IL_0117: ldloc.s 11
+		IL_0117: ldloc.s 15
 		IL_0119: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
 		IL_011e: pop
 		.try
@@ -507,15 +522,15 @@
 	{
 		// Method begins at RVA 0x232b
 		// Header size: 1
-		// Code size: 14 (0xe)
+		// Code size: 18 (0x12)
 		.maxstack 8
 
-		IL_0000: ldnull
-		IL_0001: ldarg.2
-		IL_0002: ldc.i4.0
-		IL_0003: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-		IL_0008: call object Modules.Events_EventEmitter_ErrorMonitor/FunctionExpression_L7C32::__js_call__(object, object)
-		IL_000d: ret
+		IL_0000: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
+		IL_0005: ldarg.2
+		IL_0006: ldc.i4.0
+		IL_0007: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+		IL_000c: call object Modules.Events_EventEmitter_ErrorMonitor/FunctionExpression_L7C32::__js_call__(object, object)
+		IL_0011: ret
 	} // end of method FunctionObject_FunctionExpression_DA01CEF5_L7C33::CallCore
 
 	.method family hidebysig virtual 
@@ -524,14 +539,17 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x233a
+		// Method begins at RVA 0x233e
 		// Header size: 1
-		// Code size: 11 (0xb)
+		// Code size: 14 (0xe)
 		.maxstack 8
 
-		IL_0000: ldstr "Generated construction adapter is reserved for the callable-family construction migration"
-		IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-		IL_000a: throw
+		IL_0000: ldarg.0
+		IL_0001: ldarg.1
+		IL_0002: call instance object[] [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::ToArray()
+		IL_0007: ldarg.2
+		IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionObject(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, object[], object)
+		IL_000d: ret
 	} // end of method FunctionObject_FunctionExpression_DA01CEF5_L7C33::ConstructCore
 
 } // end of class FunctionObjects.Events_EventEmitter_ErrorMonitor_4ED5806C.FunctionObject_FunctionExpression_DA01CEF5_L7C33
@@ -543,7 +561,7 @@
 	.method public hidebysig specialname rtspecialname 
 		instance void .ctor () cil managed 
 	{
-		// Method begins at RVA 0x2346
+		// Method begins at RVA 0x234d
 		// Header size: 1
 		// Code size: 7 (0x7)
 		.maxstack 8
@@ -556,7 +574,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x234e
+		// Method begins at RVA 0x2355
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -568,7 +586,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x2351
+		// Method begins at RVA 0x2358
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -583,17 +601,17 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x2354
+		// Method begins at RVA 0x235b
 		// Header size: 1
-		// Code size: 14 (0xe)
+		// Code size: 18 (0x12)
 		.maxstack 8
 
-		IL_0000: ldnull
-		IL_0001: ldarg.2
-		IL_0002: ldc.i4.0
-		IL_0003: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-		IL_0008: call object Modules.Events_EventEmitter_ErrorMonitor/FunctionExpression_L10C20::__js_call__(object, object)
-		IL_000d: ret
+		IL_0000: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
+		IL_0005: ldarg.2
+		IL_0006: ldc.i4.0
+		IL_0007: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+		IL_000c: call object Modules.Events_EventEmitter_ErrorMonitor/FunctionExpression_L10C20::__js_call__(object, object)
+		IL_0011: ret
 	} // end of method FunctionObject_FunctionExpression_2AF8E8BC_L10C21::CallCore
 
 	.method family hidebysig virtual 
@@ -602,14 +620,17 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x2363
+		// Method begins at RVA 0x236e
 		// Header size: 1
-		// Code size: 11 (0xb)
+		// Code size: 14 (0xe)
 		.maxstack 8
 
-		IL_0000: ldstr "Generated construction adapter is reserved for the callable-family construction migration"
-		IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-		IL_000a: throw
+		IL_0000: ldarg.0
+		IL_0001: ldarg.1
+		IL_0002: call instance object[] [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::ToArray()
+		IL_0007: ldarg.2
+		IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionObject(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, object[], object)
+		IL_000d: ret
 	} // end of method FunctionObject_FunctionExpression_2AF8E8BC_L10C21::ConstructCore
 
 } // end of class FunctionObjects.Events_EventEmitter_ErrorMonitor_4ED5806C.FunctionObject_FunctionExpression_2AF8E8BC_L10C21
@@ -621,7 +642,7 @@
 	.method public hidebysig specialname rtspecialname 
 		instance void .ctor () cil managed 
 	{
-		// Method begins at RVA 0x236f
+		// Method begins at RVA 0x237d
 		// Header size: 1
 		// Code size: 7 (0x7)
 		.maxstack 8
@@ -634,7 +655,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x2377
+		// Method begins at RVA 0x2385
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -646,7 +667,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x237a
+		// Method begins at RVA 0x2388
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -661,17 +682,17 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x237d
+		// Method begins at RVA 0x238b
 		// Header size: 1
-		// Code size: 14 (0xe)
+		// Code size: 18 (0x12)
 		.maxstack 8
 
-		IL_0000: ldnull
-		IL_0001: ldarg.2
-		IL_0002: ldc.i4.0
-		IL_0003: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-		IL_0008: call object Modules.Events_EventEmitter_ErrorMonitor/FunctionExpression_L17C33::__js_call__(object, object)
-		IL_000d: ret
+		IL_0000: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
+		IL_0005: ldarg.2
+		IL_0006: ldc.i4.0
+		IL_0007: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+		IL_000c: call object Modules.Events_EventEmitter_ErrorMonitor/FunctionExpression_L17C33::__js_call__(object, object)
+		IL_0011: ret
 	} // end of method FunctionObject_FunctionExpression_A8471C41_L17C34::CallCore
 
 	.method family hidebysig virtual 
@@ -680,14 +701,17 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x238c
+		// Method begins at RVA 0x239e
 		// Header size: 1
-		// Code size: 11 (0xb)
+		// Code size: 14 (0xe)
 		.maxstack 8
 
-		IL_0000: ldstr "Generated construction adapter is reserved for the callable-family construction migration"
-		IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-		IL_000a: throw
+		IL_0000: ldarg.0
+		IL_0001: ldarg.1
+		IL_0002: call instance object[] [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::ToArray()
+		IL_0007: ldarg.2
+		IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionObject(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, object[], object)
+		IL_000d: ret
 	} // end of method FunctionObject_FunctionExpression_A8471C41_L17C34::ConstructCore
 
 } // end of class FunctionObjects.Events_EventEmitter_ErrorMonitor_4ED5806C.FunctionObject_FunctionExpression_A8471C41_L17C34
@@ -699,7 +723,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2398
+		// Method begins at RVA 0x23ad
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

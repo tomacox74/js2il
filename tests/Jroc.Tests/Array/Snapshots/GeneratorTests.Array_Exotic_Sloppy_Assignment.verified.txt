@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2350
+				// Method begins at RVA 0x2354
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -44,7 +44,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 04 00 00 02
 			)
-			// Method begins at RVA 0x2308
+			// Method begins at RVA 0x230c
 			// Header size: 12
 			// Code size: 51 (0x33)
 			.maxstack 8
@@ -86,7 +86,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2347
+			// Method begins at RVA 0x234b
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -112,7 +112,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 681 (0x2a9)
+		// Code size: 685 (0x2ad)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Array_Exotic_Sloppy_Assignment/Scope,
@@ -126,8 +126,9 @@
 			[8] bool,
 			[9] object,
 			[10] object,
-			[11] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0,
-			[12] object
+			[11] object[],
+			[12] class FunctionObjects.Array_Exotic_Sloppy_Assignment_C606A9F7.FunctionObject_FunctionExpression_70743D8E_L19C14,
+			[13] object
 		)
 
 		IL_0000: newobj instance void Modules.Array_Exotic_Sloppy_Assignment/Scope::.ctor()
@@ -263,61 +264,68 @@
 		IL_01e4: ldc.r8 0.0
 		IL_01ed: box [System.Runtime]System.Double
 		IL_01f2: stfld object Modules.Array_Exotic_Sloppy_Assignment/Scope::coercions
-		IL_01f7: ldloc.0
-		IL_01f8: castclass Modules.Array_Exotic_Sloppy_Assignment/Scope
-		IL_01fd: ldftn object Modules.Array_Exotic_Sloppy_Assignment/FunctionExpression_rhs::__js_call__(class Modules.Array_Exotic_Sloppy_Assignment/Scope, object)
-		IL_0203: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_0208: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
-		IL_020d: ldc.i4.0
-		IL_020e: conv.r8
-		IL_020f: ldstr ""
-		IL_0214: ldc.i4.0
-		IL_0215: ldc.i4.0
-		IL_0216: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
-		IL_021b: stloc.s 11
-		IL_021d: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_0222: dup
-		IL_0223: ldstr "valueOf"
-		IL_0228: ldloc.s 11
-		IL_022a: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_022f: stloc.s 4
-		IL_0231: ldc.i4.1
-		IL_0232: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_0237: dup
-		IL_0238: ldc.r8 1
-		IL_0241: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::AddNumber(float64)
-		IL_0246: stloc.s 5
-		IL_0248: ldloc.s 5
-		IL_024a: ldstr "length"
-		IL_024f: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_0254: dup
-		IL_0255: ldstr "writable"
-		IL_025a: ldc.i4.0
-		IL_025b: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-		IL_0260: call object [JavaScriptRuntime]JavaScriptRuntime.Object::defineProperty(object, object, object)
-		IL_0265: pop
-		IL_0266: ldloc.s 5
-		IL_0268: ldloc.s 4
-		IL_026a: ldc.i4.0
-		IL_026b: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::SetLength(object, bool)
-		IL_0270: ldstr "console"
-		IL_0275: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_027a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_027f: stloc.s 6
-		IL_0281: ldloc.0
-		IL_0282: ldfld object Modules.Array_Exotic_Sloppy_Assignment/Scope::coercions
-		IL_0287: stloc.s 12
-		IL_0289: ldloc.s 5
-		IL_028b: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::get_length()
-		IL_0290: box [System.Runtime]System.Double
-		IL_0295: stloc.s 7
-		IL_0297: ldloc.s 6
-		IL_0299: ldstr "log"
-		IL_029e: ldloc.s 12
-		IL_02a0: ldloc.s 7
-		IL_02a2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_02a7: pop
-		IL_02a8: ret
+		IL_01f7: ldc.i4.1
+		IL_01f8: newarr [System.Runtime]System.Object
+		IL_01fd: dup
+		IL_01fe: ldc.i4.0
+		IL_01ff: ldloc.0
+		IL_0200: stelem.ref
+		IL_0201: stloc.s 11
+		IL_0203: ldloc.s 11
+		IL_0205: ldc.i4.0
+		IL_0206: ldelem.ref
+		IL_0207: castclass Modules.Array_Exotic_Sloppy_Assignment/Scope
+		IL_020c: newobj instance void FunctionObjects.Array_Exotic_Sloppy_Assignment_C606A9F7.FunctionObject_FunctionExpression_70743D8E_L19C14::.ctor(class Modules.Array_Exotic_Sloppy_Assignment/Scope)
+		IL_0211: ldc.i4.0
+		IL_0212: conv.r8
+		IL_0213: ldstr ""
+		IL_0218: ldc.i4.0
+		IL_0219: ldc.i4.0
+		IL_021a: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class FunctionObjects.Array_Exotic_Sloppy_Assignment_C606A9F7.FunctionObject_FunctionExpression_70743D8E_L19C14>(!!0, float64, string, bool, bool)
+		IL_021f: stloc.s 12
+		IL_0221: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0226: dup
+		IL_0227: ldstr "valueOf"
+		IL_022c: ldloc.s 12
+		IL_022e: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_0233: stloc.s 4
+		IL_0235: ldc.i4.1
+		IL_0236: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_023b: dup
+		IL_023c: ldc.r8 1
+		IL_0245: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::AddNumber(float64)
+		IL_024a: stloc.s 5
+		IL_024c: ldloc.s 5
+		IL_024e: ldstr "length"
+		IL_0253: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0258: dup
+		IL_0259: ldstr "writable"
+		IL_025e: ldc.i4.0
+		IL_025f: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+		IL_0264: call object [JavaScriptRuntime]JavaScriptRuntime.Object::defineProperty(object, object, object)
+		IL_0269: pop
+		IL_026a: ldloc.s 5
+		IL_026c: ldloc.s 4
+		IL_026e: ldc.i4.0
+		IL_026f: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::SetLength(object, bool)
+		IL_0274: ldstr "console"
+		IL_0279: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_027e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0283: stloc.s 6
+		IL_0285: ldloc.0
+		IL_0286: ldfld object Modules.Array_Exotic_Sloppy_Assignment/Scope::coercions
+		IL_028b: stloc.s 13
+		IL_028d: ldloc.s 5
+		IL_028f: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::get_length()
+		IL_0294: box [System.Runtime]System.Double
+		IL_0299: stloc.s 7
+		IL_029b: ldloc.s 6
+		IL_029d: ldstr "log"
+		IL_02a2: ldloc.s 13
+		IL_02a4: ldloc.s 7
+		IL_02a6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_02ab: pop
+		IL_02ac: ret
 	} // end of method Array_Exotic_Sloppy_Assignment::__js_module_init__
 
 } // end of class Modules.Array_Exotic_Sloppy_Assignment
@@ -334,7 +342,7 @@
 			class Modules.Array_Exotic_Sloppy_Assignment/Scope capture0
 		) cil managed 
 	{
-		// Method begins at RVA 0x2359
+		// Method begins at RVA 0x235d
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -350,7 +358,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x2368
+		// Method begins at RVA 0x236c
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -362,7 +370,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x236b
+		// Method begins at RVA 0x236f
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -372,21 +380,36 @@
 	} // end of method FunctionObject_FunctionExpression_70743D8E_L19C14::get_RequiresInvocationContext
 
 	.method family hidebysig virtual 
+		instance object ResolveThisArgumentCore (
+			object thisArgument
+		) cil managed 
+	{
+		// Method begins at RVA 0x2372
+		// Header size: 1
+		// Code size: 7 (0x7)
+		.maxstack 8
+
+		IL_0000: ldarg.1
+		IL_0001: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ResolveOrdinaryThisArgument(object)
+		IL_0006: ret
+	} // end of method FunctionObject_FunctionExpression_70743D8E_L19C14::ResolveThisArgumentCore
+
+	.method family hidebysig virtual 
 		instance object CallCore (
 			object thisArgument,
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x236e
+		// Method begins at RVA 0x237a
 		// Header size: 1
-		// Code size: 13 (0xd)
+		// Code size: 17 (0x11)
 		.maxstack 8
 
 		IL_0000: ldarg.0
 		IL_0001: ldfld class Modules.Array_Exotic_Sloppy_Assignment/Scope FunctionObjects.Array_Exotic_Sloppy_Assignment_C606A9F7.FunctionObject_FunctionExpression_70743D8E_L19C14::_environment0_Array_Exotic_Sloppy_Assignment
-		IL_0006: ldnull
-		IL_0007: call object Modules.Array_Exotic_Sloppy_Assignment/FunctionExpression_rhs::__js_call__(class Modules.Array_Exotic_Sloppy_Assignment/Scope, object)
-		IL_000c: ret
+		IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
+		IL_000b: call object Modules.Array_Exotic_Sloppy_Assignment/FunctionExpression_rhs::__js_call__(class Modules.Array_Exotic_Sloppy_Assignment/Scope, object)
+		IL_0010: ret
 	} // end of method FunctionObject_FunctionExpression_70743D8E_L19C14::CallCore
 
 	.method family hidebysig virtual 
@@ -395,14 +418,17 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x237c
+		// Method begins at RVA 0x238c
 		// Header size: 1
-		// Code size: 11 (0xb)
+		// Code size: 14 (0xe)
 		.maxstack 8
 
-		IL_0000: ldstr "Generated construction adapter is reserved for the callable-family construction migration"
-		IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-		IL_000a: throw
+		IL_0000: ldarg.0
+		IL_0001: ldarg.1
+		IL_0002: call instance object[] [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::ToArray()
+		IL_0007: ldarg.2
+		IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionObject(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, object[], object)
+		IL_000d: ret
 	} // end of method FunctionObject_FunctionExpression_70743D8E_L19C14::ConstructCore
 
 } // end of class FunctionObjects.Array_Exotic_Sloppy_Assignment_C606A9F7.FunctionObject_FunctionExpression_70743D8E_L19C14
@@ -414,7 +440,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2388
+		// Method begins at RVA 0x239b
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

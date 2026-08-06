@@ -21,10 +21,71 @@ internal sealed partial class LIRToILCompiler
             return false;
         }
 
+        EmitGeneratedFunctionObjectConstructorArguments(
+            metadata,
+            createArrow.ScopesArray,
+            isArrow: true,
+            ilEncoder,
+            allocation,
+            methodDescriptor);
+
+        ilEncoder.OpCode(ILOpCode.Newobj);
+        ilEncoder.Token(metadata.ConstructorHandle);
+        EmitInitializeGeneratedFunctionInstance(
+            createArrow.CallableId,
+            createArrow.IsAsync,
+            markUndefinedPrototype: true,
+            metadata,
+            ilEncoder);
+        return true;
+    }
+
+    private bool TryEmitGeneratedOrdinaryFunctionObject(
+        LIRCreateBoundFunctionExpression createFunction,
+        InstructionEncoder ilEncoder,
+        TempLocalAllocation allocation,
+        MethodDescriptor methodDescriptor)
+    {
+        if (createFunction.IsAsync
+            || IsGeneratorCallable(createFunction.CallableId)
+            || !_generatedFunctionObjectRegistry.TryGetMetadata(
+                createFunction.CallableId,
+                out var metadata))
+        {
+            return false;
+        }
+
+        EmitGeneratedFunctionObjectConstructorArguments(
+            metadata,
+            createFunction.ScopesArray,
+            isArrow: false,
+            ilEncoder,
+            allocation,
+            methodDescriptor);
+
+        ilEncoder.OpCode(ILOpCode.Newobj);
+        ilEncoder.Token(metadata.ConstructorHandle);
+        EmitInitializeGeneratedFunctionInstance(
+            createFunction.CallableId,
+            isAsync: false,
+            markUndefinedPrototype: false,
+            metadata,
+            ilEncoder);
+        return true;
+    }
+
+    private void EmitGeneratedFunctionObjectConstructorArguments(
+        GeneratedFunctionObjectMetadata metadata,
+        TempVariable scopesArray,
+        bool isArrow,
+        InstructionEncoder ilEncoder,
+        TempLocalAllocation allocation,
+        MethodDescriptor methodDescriptor)
+    {
         foreach (var capture in metadata.Plan.Captures)
         {
             EmitLoadTemp(
-                createArrow.ScopesArray,
+                scopesArray,
                 ilEncoder,
                 allocation,
                 methodDescriptor);
@@ -36,26 +97,20 @@ internal sealed partial class LIRToILCompiler
 
         foreach (var state in metadata.Plan.StateFields)
         {
-            EmitArrowStateArgument(
+            EmitGeneratedFunctionStateArgument(
                 state.Kind,
+                isArrow,
                 ilEncoder,
-                createArrow.ScopesArray,
+                scopesArray,
                 allocation,
                 methodDescriptor);
         }
 
-        ilEncoder.OpCode(ILOpCode.Newobj);
-        ilEncoder.Token(metadata.ConstructorHandle);
-        EmitInitializeGeneratedArrowFunctionInstance(
-            createArrow.CallableId,
-            createArrow.IsAsync,
-            metadata,
-            ilEncoder);
-        return true;
     }
 
-    private void EmitArrowStateArgument(
+    private void EmitGeneratedFunctionStateArgument(
         GeneratedFunctionStateKind stateKind,
+        bool isArrow,
         InstructionEncoder ilEncoder,
         TempVariable scopesArray,
         TempLocalAllocation allocation,
@@ -64,6 +119,11 @@ internal sealed partial class LIRToILCompiler
         switch (stateKind)
         {
             case GeneratedFunctionStateKind.LexicalThis:
+                if (!isArrow)
+                {
+                    throw new InvalidOperationException(
+                        "Ordinary function object unexpectedly requested lexical this state.");
+                }
                 EmitLoadArrowLexicalThis(ilEncoder, methodDescriptor);
                 break;
 
@@ -132,9 +192,10 @@ internal sealed partial class LIRToILCompiler
             nameof(JavaScriptRuntime.RuntimeServices.GetCurrentLexicalSuperReceiver)));
     }
 
-    private void EmitInitializeGeneratedArrowFunctionInstance(
+    private void EmitInitializeGeneratedFunctionInstance(
         CallableId callableId,
         bool isAsync,
+        bool markUndefinedPrototype,
         GeneratedFunctionObjectMetadata metadata,
         InstructionEncoder ilEncoder)
     {
@@ -151,11 +212,14 @@ internal sealed partial class LIRToILCompiler
             nameof(JavaScriptRuntime.Function.InitializeFunctionInstance),
             metadata.TypeHandle,
             isValueType: false));
-        ilEncoder.OpCode(ILOpCode.Call);
-        ilEncoder.Token(_memberRefRegistry.GetOrAddGenericUnaryMethod(
-            typeof(JavaScriptRuntime.Function),
-            nameof(JavaScriptRuntime.Function.MarkUndefinedPrototype),
-            metadata.TypeHandle,
-            isValueType: false));
+        if (markUndefinedPrototype)
+        {
+            ilEncoder.OpCode(ILOpCode.Call);
+            ilEncoder.Token(_memberRefRegistry.GetOrAddGenericUnaryMethod(
+                typeof(JavaScriptRuntime.Function),
+                nameof(JavaScriptRuntime.Function.MarkUndefinedPrototype),
+                metadata.TypeHandle,
+                isValueType: false));
+        }
     }
 }

@@ -355,7 +355,7 @@
 			[7] object,
 			[8] object[],
 			[9] class FunctionObjects.Require_Url_SearchParams_Mutate_C429D800.FunctionObject_Arrow_FE10CE8B_L14C29,
-			[10] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2,
+			[10] class FunctionObjects.Require_Url_SearchParams_Mutate_C429D800.FunctionObject_FunctionExpression_7B874945_L19C29,
 			[11] class FunctionObjects.Require_Url_SearchParams_Mutate_C429D800.FunctionObject_Arrow_CC312B3E_L33C18
 		)
 
@@ -518,16 +518,20 @@
 		IL_0210: ldloc.s 7
 		IL_0212: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
 		IL_0217: stloc.s 7
-		IL_0219: ldnull
-		IL_021a: ldftn object Modules.Require_Url_SearchParams_Mutate/FunctionExpression_L19C28::__js_call__(object, object, object)
-		IL_0220: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::.ctor(object, native int)
-		IL_0225: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2
+		IL_0219: ldc.i4.1
+		IL_021a: newarr [System.Runtime]System.Object
+		IL_021f: dup
+		IL_0220: ldc.i4.0
+		IL_0221: ldloc.0
+		IL_0222: stelem.ref
+		IL_0223: stloc.s 8
+		IL_0225: newobj instance void FunctionObjects.Require_Url_SearchParams_Mutate_C429D800.FunctionObject_FunctionExpression_7B874945_L19C29::.ctor()
 		IL_022a: ldc.i4.2
 		IL_022b: conv.r8
 		IL_022c: ldstr ""
-		IL_0231: ldc.i4.0
+		IL_0231: ldc.i4.1
 		IL_0232: ldc.i4.1
-		IL_0233: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2>(!!0, float64, string, bool, bool)
+		IL_0233: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class FunctionObjects.Require_Url_SearchParams_Mutate_C429D800.FunctionObject_FunctionExpression_7B874945_L19C29>(!!0, float64, string, bool, bool)
 		IL_0238: stloc.s 10
 		IL_023a: ldloc.s 7
 		IL_023c: ldstr "forEach"
@@ -829,18 +833,18 @@
 	{
 		// Method begins at RVA 0x2662
 		// Header size: 1
-		// Code size: 21 (0x15)
+		// Code size: 25 (0x19)
 		.maxstack 8
 
-		IL_0000: ldnull
-		IL_0001: ldarg.2
-		IL_0002: ldc.i4.0
-		IL_0003: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-		IL_0008: ldarg.2
-		IL_0009: ldc.i4.1
-		IL_000a: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-		IL_000f: call object Modules.Require_Url_SearchParams_Mutate/FunctionExpression_L19C28::__js_call__(object, object, object)
-		IL_0014: ret
+		IL_0000: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
+		IL_0005: ldarg.2
+		IL_0006: ldc.i4.0
+		IL_0007: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+		IL_000c: ldarg.2
+		IL_000d: ldc.i4.1
+		IL_000e: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+		IL_0013: call object Modules.Require_Url_SearchParams_Mutate/FunctionExpression_L19C28::__js_call__(object, object, object)
+		IL_0018: ret
 	} // end of method FunctionObject_FunctionExpression_7B874945_L19C29::CallCore
 
 	.method family hidebysig virtual 
@@ -849,14 +853,17 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x2678
+		// Method begins at RVA 0x267c
 		// Header size: 1
-		// Code size: 11 (0xb)
+		// Code size: 14 (0xe)
 		.maxstack 8
 
-		IL_0000: ldstr "Generated construction adapter is reserved for the callable-family construction migration"
-		IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-		IL_000a: throw
+		IL_0000: ldarg.0
+		IL_0001: ldarg.1
+		IL_0002: call instance object[] [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::ToArray()
+		IL_0007: ldarg.2
+		IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionObject(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, object[], object)
+		IL_000d: ret
 	} // end of method FunctionObject_FunctionExpression_7B874945_L19C29::ConstructCore
 
 } // end of class FunctionObjects.Require_Url_SearchParams_Mutate_C429D800.FunctionObject_FunctionExpression_7B874945_L19C29
@@ -873,7 +880,7 @@
 			class Modules.Require_Url_SearchParams_Mutate/Scope capture0
 		) cil managed 
 	{
-		// Method begins at RVA 0x2684
+		// Method begins at RVA 0x268b
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -889,7 +896,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x2693
+		// Method begins at RVA 0x269a
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -901,7 +908,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x2696
+		// Method begins at RVA 0x269d
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -916,7 +923,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x2699
+		// Method begins at RVA 0x26a0
 		// Header size: 1
 		// Code size: 27 (0x1b)
 		.maxstack 8
@@ -943,7 +950,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x26b5
+		// Method begins at RVA 0x26bc
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -6,7 +6,12 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-_Nothing yet._
+- compiler/runtime: materialize synchronous ordinary function declarations and
+  expressions as generated `JsFunctionObject` instances, preserving typed
+  direct calls, shared captures, recursion, identity, strict/sloppy `this`,
+  function metadata, and existing construction behavior without per-instance
+  delegate or dynamic-method creation. Route affected ECMAScript and Node.js
+  callback consumers through the centralized callable ABI.
 
 ## v0.12.4 - 2026-08-06
 

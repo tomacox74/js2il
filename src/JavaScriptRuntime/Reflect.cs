@@ -119,7 +119,7 @@ namespace JavaScriptRuntime
         }
 
         private static bool IsCallableValue(object? value)
-            => value is Delegate || (value is Proxy proxy && proxy.IsCallableTarget);
+            => CallableOperations.IsCallable(value);
 
         /// <summary>
         /// ECMA-262 CreateListFromArrayLike: reads <c>length</c> and every index, so holes

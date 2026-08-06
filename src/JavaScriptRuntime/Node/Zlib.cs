@@ -207,9 +207,9 @@ namespace JavaScriptRuntime.Node
 
             private void CompleteAndEnd(object? chunk, object? callback)
             {
-                if (callback is Delegate del)
+                if (CallableOperations.IsCallable(callback))
                 {
-                    once("finish", del);
+                    once("finish", callback);
                 }
 
                 if (_completed)

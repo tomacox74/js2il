@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x26eb
+				// Method begins at RVA 0x26f7
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -42,7 +42,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x258f
+			// Method begins at RVA 0x259b
 			// Header size: 1
 			// Code size: 32 (0x20)
 			.maxstack 8
@@ -70,7 +70,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x26f4
+				// Method begins at RVA 0x2700
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -97,7 +97,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x25b0
+			// Method begins at RVA 0x25bc
 			// Header size: 1
 			// Code size: 14 (0xe)
 			.maxstack 8
@@ -126,7 +126,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x26fd
+				// Method begins at RVA 0x2709
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -153,7 +153,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x25bf
+			// Method begins at RVA 0x25cb
 			// Header size: 1
 			// Code size: 14 (0xe)
 			.maxstack 8
@@ -182,60 +182,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2706
-				// Header size: 1
-				// Code size: 8 (0x8)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-				IL_0006: nop
-				IL_0007: ret
-			} // end of method Scope::.ctor
-
-		} // end of class Scope
-
-
-		// Methods
-		.method public hidebysig static 
-			object __js_call__ (
-				object newTarget,
-				float64 a,
-				float64 b,
-				float64 c
-			) cil managed 
-		{
-			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
-				01 00 00 00 00 00 00 00
-			)
-			// Method begins at RVA 0x25ce
-			// Header size: 1
-			// Code size: 11 (0xb)
-			.maxstack 8
-
-			IL_0000: ldarg.1
-			IL_0001: ldarg.2
-			IL_0002: sub
-			IL_0003: ldarg.3
-			IL_0004: sub
-			IL_0005: box [System.Runtime]System.Double
-			IL_000a: ret
-		} // end of method subChain::__js_call__
-
-	} // end of class subChain
-
-	.class nested public auto ansi abstract sealed beforefieldinit divMod
-		extends [System.Runtime]System.Object
-	{
-		// Nested Types
-		.class nested public auto ansi beforefieldinit Scope
-			extends [System.Runtime]System.Object
-		{
-			// Methods
-			.method public hidebysig specialname rtspecialname 
-				instance void .ctor () cil managed 
-			{
-				// Method begins at RVA 0x270f
+				// Method begins at RVA 0x2712
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -268,16 +215,16 @@
 
 			IL_0000: ldarg.1
 			IL_0001: ldarg.2
-			IL_0002: div
+			IL_0002: sub
 			IL_0003: ldarg.3
-			IL_0004: rem
+			IL_0004: sub
 			IL_0005: box [System.Runtime]System.Double
 			IL_000a: ret
-		} // end of method divMod::__js_call__
+		} // end of method subChain::__js_call__
 
-	} // end of class divMod
+	} // end of class subChain
 
-	.class nested public auto ansi abstract sealed beforefieldinit expAdd
+	.class nested public auto ansi abstract sealed beforefieldinit divMod
 		extends [System.Runtime]System.Object
 	{
 		// Nested Types
@@ -288,7 +235,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2718
+				// Method begins at RVA 0x271b
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -316,6 +263,59 @@
 			)
 			// Method begins at RVA 0x25e6
 			// Header size: 1
+			// Code size: 11 (0xb)
+			.maxstack 8
+
+			IL_0000: ldarg.1
+			IL_0001: ldarg.2
+			IL_0002: div
+			IL_0003: ldarg.3
+			IL_0004: rem
+			IL_0005: box [System.Runtime]System.Double
+			IL_000a: ret
+		} // end of method divMod::__js_call__
+
+	} // end of class divMod
+
+	.class nested public auto ansi abstract sealed beforefieldinit expAdd
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested public auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2724
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				object newTarget,
+				float64 a,
+				float64 b,
+				float64 c
+			) cil managed 
+		{
+			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
+				01 00 00 00 00 00 00 00
+			)
+			// Method begins at RVA 0x25f2
+			// Header size: 1
 			// Code size: 15 (0xf)
 			.maxstack 8
 
@@ -341,7 +341,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2721
+				// Method begins at RVA 0x272d
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -367,7 +367,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 0d 00 00 02
 			)
-			// Method begins at RVA 0x25f8
+			// Method begins at RVA 0x2604
 			// Header size: 12
 			// Code size: 41 (0x29)
 			.maxstack 8
@@ -404,7 +404,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x272a
+				// Method begins at RVA 0x2736
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -430,7 +430,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 0d 00 00 02
 			)
-			// Method begins at RVA 0x2630
+			// Method begins at RVA 0x263c
 			// Header size: 12
 			// Code size: 41 (0x29)
 			.maxstack 8
@@ -467,7 +467,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2733
+				// Method begins at RVA 0x273f
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -493,7 +493,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 0d 00 00 02
 			)
-			// Method begins at RVA 0x2668
+			// Method begins at RVA 0x2674
 			// Header size: 12
 			// Code size: 54 (0x36)
 			.maxstack 8
@@ -544,7 +544,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x273c
+				// Method begins at RVA 0x2748
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -568,7 +568,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x26ac
+			// Method begins at RVA 0x26b8
 			// Header size: 12
 			// Code size: 42 (0x2a)
 			.maxstack 8
@@ -634,7 +634,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x26e2
+			// Method begins at RVA 0x26ee
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -660,416 +660,466 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 1331 (0x533)
+		// Code size: 1343 (0x53f)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.BinaryOperator_TypedNumericScheduler/Scope,
-			[1] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1,
-			[2] class [System.Runtime]System.Func`6<object, float64, float64, float64, float64, object>,
-			[3] class [System.Runtime]System.Func`6<object, float64, float64, float64, float64, object>,
-			[4] class [System.Runtime]System.Func`5<object, float64, float64, float64, object>,
-			[5] class [System.Runtime]System.Func`5<object, float64, float64, float64, object>,
-			[6] class [System.Runtime]System.Func`5<object, float64, float64, float64, object>,
-			[7] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0,
-			[8] class [System.Runtime]System.Func`3<object, float64, class [JavaScriptRuntime]JavaScriptRuntime.Array>,
-			[9] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0,
-			[10] object,
-			[11] object[],
+			[1] class FunctionObjects.BinaryOperator_TypedNumericScheduler_15BB9EDF.FunctionObject_FunctionDeclaration_ECDDA9F7_mulAdd,
+			[2] class FunctionObjects.BinaryOperator_TypedNumericScheduler_15BB9EDF.FunctionObject_FunctionDeclaration_F48743DA_addChain,
+			[3] class FunctionObjects.BinaryOperator_TypedNumericScheduler_15BB9EDF.FunctionObject_FunctionDeclaration_A433882E_tree,
+			[4] class FunctionObjects.BinaryOperator_TypedNumericScheduler_15BB9EDF.FunctionObject_FunctionDeclaration_73DC7159_subChain,
+			[5] class FunctionObjects.BinaryOperator_TypedNumericScheduler_15BB9EDF.FunctionObject_FunctionDeclaration_14EF6D03_divMod,
+			[6] class FunctionObjects.BinaryOperator_TypedNumericScheduler_15BB9EDF.FunctionObject_FunctionDeclaration_03A3A6D4_expAdd,
+			[7] class FunctionObjects.BinaryOperator_TypedNumericScheduler_15BB9EDF.FunctionObject_FunctionDeclaration_D8F5465F_calls,
+			[8] class FunctionObjects.BinaryOperator_TypedNumericScheduler_15BB9EDF.FunctionObject_FunctionDeclaration_B3DBBF8F_postfix,
+			[9] object[],
+			[10] class FunctionObjects.BinaryOperator_TypedNumericScheduler_15BB9EDF.FunctionObject_FunctionDeclaration_4AA8841F_left,
+			[11] class FunctionObjects.BinaryOperator_TypedNumericScheduler_15BB9EDF.FunctionObject_FunctionDeclaration_BF4CE850_right,
 			[12] object,
 			[13] object,
-			[14] float64,
-			[15] object,
-			[16] object
+			[14] object,
+			[15] float64,
+			[16] object,
+			[17] object
 		)
 
 		IL_0000: newobj instance void Modules.BinaryOperator_TypedNumericScheduler/Scope::.ctor()
 		IL_0005: stloc.0
-		IL_0006: ldnull
-		IL_0007: ldftn object Modules.BinaryOperator_TypedNumericScheduler/mulAdd::__js_call__(object, object)
-		IL_000d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-		IL_0012: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1
+		IL_0006: ldc.i4.1
+		IL_0007: newarr [System.Runtime]System.Object
+		IL_000c: dup
+		IL_000d: ldc.i4.0
+		IL_000e: ldloc.0
+		IL_000f: stelem.ref
+		IL_0010: stloc.s 9
+		IL_0012: newobj instance void FunctionObjects.BinaryOperator_TypedNumericScheduler_15BB9EDF.FunctionObject_FunctionDeclaration_ECDDA9F7_mulAdd::.ctor()
 		IL_0017: ldc.i4.1
 		IL_0018: conv.r8
 		IL_0019: ldstr "mulAdd"
 		IL_001e: ldc.i4.0
 		IL_001f: ldc.i4.1
-		IL_0020: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0, float64, string, bool, bool)
+		IL_0020: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class FunctionObjects.BinaryOperator_TypedNumericScheduler_15BB9EDF.FunctionObject_FunctionDeclaration_ECDDA9F7_mulAdd>(!!0, float64, string, bool, bool)
 		IL_0025: stloc.1
-		IL_0026: ldnull
-		IL_0027: ldftn object Modules.BinaryOperator_TypedNumericScheduler/addChain::__js_call__(object, float64, float64, float64, float64)
-		IL_002d: newobj instance void class [System.Runtime]System.Func`6<object, float64, float64, float64, float64, object>::.ctor(object, native int)
-		IL_0032: castclass class [System.Runtime]System.Func`6<object, float64, float64, float64, float64, object>
+		IL_0026: ldc.i4.1
+		IL_0027: newarr [System.Runtime]System.Object
+		IL_002c: dup
+		IL_002d: ldc.i4.0
+		IL_002e: ldloc.0
+		IL_002f: stelem.ref
+		IL_0030: stloc.s 9
+		IL_0032: newobj instance void FunctionObjects.BinaryOperator_TypedNumericScheduler_15BB9EDF.FunctionObject_FunctionDeclaration_F48743DA_addChain::.ctor()
 		IL_0037: ldc.i4.4
 		IL_0038: conv.r8
 		IL_0039: ldstr "addChain"
 		IL_003e: ldc.i4.0
 		IL_003f: ldc.i4.1
-		IL_0040: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [System.Runtime]System.Func`6<object, float64, float64, float64, float64, object>>(!!0, float64, string, bool, bool)
+		IL_0040: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class FunctionObjects.BinaryOperator_TypedNumericScheduler_15BB9EDF.FunctionObject_FunctionDeclaration_F48743DA_addChain>(!!0, float64, string, bool, bool)
 		IL_0045: stloc.2
-		IL_0046: ldnull
-		IL_0047: ldftn object Modules.BinaryOperator_TypedNumericScheduler/tree::__js_call__(object, float64, float64, float64, float64)
-		IL_004d: newobj instance void class [System.Runtime]System.Func`6<object, float64, float64, float64, float64, object>::.ctor(object, native int)
-		IL_0052: castclass class [System.Runtime]System.Func`6<object, float64, float64, float64, float64, object>
+		IL_0046: ldc.i4.1
+		IL_0047: newarr [System.Runtime]System.Object
+		IL_004c: dup
+		IL_004d: ldc.i4.0
+		IL_004e: ldloc.0
+		IL_004f: stelem.ref
+		IL_0050: stloc.s 9
+		IL_0052: newobj instance void FunctionObjects.BinaryOperator_TypedNumericScheduler_15BB9EDF.FunctionObject_FunctionDeclaration_A433882E_tree::.ctor()
 		IL_0057: ldc.i4.4
 		IL_0058: conv.r8
 		IL_0059: ldstr "tree"
 		IL_005e: ldc.i4.0
 		IL_005f: ldc.i4.1
-		IL_0060: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [System.Runtime]System.Func`6<object, float64, float64, float64, float64, object>>(!!0, float64, string, bool, bool)
+		IL_0060: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class FunctionObjects.BinaryOperator_TypedNumericScheduler_15BB9EDF.FunctionObject_FunctionDeclaration_A433882E_tree>(!!0, float64, string, bool, bool)
 		IL_0065: stloc.3
-		IL_0066: ldnull
-		IL_0067: ldftn object Modules.BinaryOperator_TypedNumericScheduler/subChain::__js_call__(object, float64, float64, float64)
-		IL_006d: newobj instance void class [System.Runtime]System.Func`5<object, float64, float64, float64, object>::.ctor(object, native int)
-		IL_0072: castclass class [System.Runtime]System.Func`5<object, float64, float64, float64, object>
+		IL_0066: ldc.i4.1
+		IL_0067: newarr [System.Runtime]System.Object
+		IL_006c: dup
+		IL_006d: ldc.i4.0
+		IL_006e: ldloc.0
+		IL_006f: stelem.ref
+		IL_0070: stloc.s 9
+		IL_0072: newobj instance void FunctionObjects.BinaryOperator_TypedNumericScheduler_15BB9EDF.FunctionObject_FunctionDeclaration_73DC7159_subChain::.ctor()
 		IL_0077: ldc.i4.3
 		IL_0078: conv.r8
 		IL_0079: ldstr "subChain"
 		IL_007e: ldc.i4.0
 		IL_007f: ldc.i4.1
-		IL_0080: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [System.Runtime]System.Func`5<object, float64, float64, float64, object>>(!!0, float64, string, bool, bool)
+		IL_0080: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class FunctionObjects.BinaryOperator_TypedNumericScheduler_15BB9EDF.FunctionObject_FunctionDeclaration_73DC7159_subChain>(!!0, float64, string, bool, bool)
 		IL_0085: stloc.s 4
-		IL_0087: ldnull
-		IL_0088: ldftn object Modules.BinaryOperator_TypedNumericScheduler/divMod::__js_call__(object, float64, float64, float64)
-		IL_008e: newobj instance void class [System.Runtime]System.Func`5<object, float64, float64, float64, object>::.ctor(object, native int)
-		IL_0093: castclass class [System.Runtime]System.Func`5<object, float64, float64, float64, object>
+		IL_0087: ldc.i4.1
+		IL_0088: newarr [System.Runtime]System.Object
+		IL_008d: dup
+		IL_008e: ldc.i4.0
+		IL_008f: ldloc.0
+		IL_0090: stelem.ref
+		IL_0091: stloc.s 9
+		IL_0093: newobj instance void FunctionObjects.BinaryOperator_TypedNumericScheduler_15BB9EDF.FunctionObject_FunctionDeclaration_14EF6D03_divMod::.ctor()
 		IL_0098: ldc.i4.3
 		IL_0099: conv.r8
 		IL_009a: ldstr "divMod"
 		IL_009f: ldc.i4.0
 		IL_00a0: ldc.i4.1
-		IL_00a1: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [System.Runtime]System.Func`5<object, float64, float64, float64, object>>(!!0, float64, string, bool, bool)
+		IL_00a1: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class FunctionObjects.BinaryOperator_TypedNumericScheduler_15BB9EDF.FunctionObject_FunctionDeclaration_14EF6D03_divMod>(!!0, float64, string, bool, bool)
 		IL_00a6: stloc.s 5
-		IL_00a8: ldnull
-		IL_00a9: ldftn object Modules.BinaryOperator_TypedNumericScheduler/expAdd::__js_call__(object, float64, float64, float64)
-		IL_00af: newobj instance void class [System.Runtime]System.Func`5<object, float64, float64, float64, object>::.ctor(object, native int)
-		IL_00b4: castclass class [System.Runtime]System.Func`5<object, float64, float64, float64, object>
+		IL_00a8: ldc.i4.1
+		IL_00a9: newarr [System.Runtime]System.Object
+		IL_00ae: dup
+		IL_00af: ldc.i4.0
+		IL_00b0: ldloc.0
+		IL_00b1: stelem.ref
+		IL_00b2: stloc.s 9
+		IL_00b4: newobj instance void FunctionObjects.BinaryOperator_TypedNumericScheduler_15BB9EDF.FunctionObject_FunctionDeclaration_03A3A6D4_expAdd::.ctor()
 		IL_00b9: ldc.i4.3
 		IL_00ba: conv.r8
 		IL_00bb: ldstr "expAdd"
 		IL_00c0: ldc.i4.0
 		IL_00c1: ldc.i4.1
-		IL_00c2: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [System.Runtime]System.Func`5<object, float64, float64, float64, object>>(!!0, float64, string, bool, bool)
+		IL_00c2: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class FunctionObjects.BinaryOperator_TypedNumericScheduler_15BB9EDF.FunctionObject_FunctionDeclaration_03A3A6D4_expAdd>(!!0, float64, string, bool, bool)
 		IL_00c7: stloc.s 6
-		IL_00c9: ldloc.0
-		IL_00ca: castclass Modules.BinaryOperator_TypedNumericScheduler/Scope
-		IL_00cf: ldftn object Modules.BinaryOperator_TypedNumericScheduler/left::__js_call__(class Modules.BinaryOperator_TypedNumericScheduler/Scope, object)
-		IL_00d5: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_00da: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
-		IL_00df: ldc.i4.0
-		IL_00e0: conv.r8
-		IL_00e1: ldstr "left"
-		IL_00e6: ldc.i4.0
-		IL_00e7: ldc.i4.1
-		IL_00e8: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
-		IL_00ed: stloc.s 9
-		IL_00ef: ldloc.0
-		IL_00f0: ldloc.s 9
-		IL_00f2: stfld object Modules.BinaryOperator_TypedNumericScheduler/Scope::left
-		IL_00f7: ldloc.0
-		IL_00f8: castclass Modules.BinaryOperator_TypedNumericScheduler/Scope
-		IL_00fd: ldftn object Modules.BinaryOperator_TypedNumericScheduler/right::__js_call__(class Modules.BinaryOperator_TypedNumericScheduler/Scope, object)
-		IL_0103: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_0108: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
-		IL_010d: ldc.i4.0
-		IL_010e: conv.r8
-		IL_010f: ldstr "right"
-		IL_0114: ldc.i4.0
-		IL_0115: ldc.i4.1
-		IL_0116: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
-		IL_011b: stloc.s 9
-		IL_011d: ldloc.0
-		IL_011e: ldloc.s 9
-		IL_0120: stfld object Modules.BinaryOperator_TypedNumericScheduler/Scope::right
+		IL_00c9: ldc.i4.1
+		IL_00ca: newarr [System.Runtime]System.Object
+		IL_00cf: dup
+		IL_00d0: ldc.i4.0
+		IL_00d1: ldloc.0
+		IL_00d2: stelem.ref
+		IL_00d3: stloc.s 9
+		IL_00d5: ldloc.s 9
+		IL_00d7: ldc.i4.0
+		IL_00d8: ldelem.ref
+		IL_00d9: castclass Modules.BinaryOperator_TypedNumericScheduler/Scope
+		IL_00de: newobj instance void FunctionObjects.BinaryOperator_TypedNumericScheduler_15BB9EDF.FunctionObject_FunctionDeclaration_4AA8841F_left::.ctor(class Modules.BinaryOperator_TypedNumericScheduler/Scope)
+		IL_00e3: ldc.i4.0
+		IL_00e4: conv.r8
+		IL_00e5: ldstr "left"
+		IL_00ea: ldc.i4.0
+		IL_00eb: ldc.i4.1
+		IL_00ec: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class FunctionObjects.BinaryOperator_TypedNumericScheduler_15BB9EDF.FunctionObject_FunctionDeclaration_4AA8841F_left>(!!0, float64, string, bool, bool)
+		IL_00f1: stloc.s 10
+		IL_00f3: ldloc.0
+		IL_00f4: ldloc.s 10
+		IL_00f6: stfld object Modules.BinaryOperator_TypedNumericScheduler/Scope::left
+		IL_00fb: ldc.i4.1
+		IL_00fc: newarr [System.Runtime]System.Object
+		IL_0101: dup
+		IL_0102: ldc.i4.0
+		IL_0103: ldloc.0
+		IL_0104: stelem.ref
+		IL_0105: stloc.s 9
+		IL_0107: ldloc.s 9
+		IL_0109: ldc.i4.0
+		IL_010a: ldelem.ref
+		IL_010b: castclass Modules.BinaryOperator_TypedNumericScheduler/Scope
+		IL_0110: newobj instance void FunctionObjects.BinaryOperator_TypedNumericScheduler_15BB9EDF.FunctionObject_FunctionDeclaration_BF4CE850_right::.ctor(class Modules.BinaryOperator_TypedNumericScheduler/Scope)
+		IL_0115: ldc.i4.0
+		IL_0116: conv.r8
+		IL_0117: ldstr "right"
+		IL_011c: ldc.i4.0
+		IL_011d: ldc.i4.1
+		IL_011e: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class FunctionObjects.BinaryOperator_TypedNumericScheduler_15BB9EDF.FunctionObject_FunctionDeclaration_BF4CE850_right>(!!0, float64, string, bool, bool)
+		IL_0123: stloc.s 11
 		IL_0125: ldloc.0
-		IL_0126: castclass Modules.BinaryOperator_TypedNumericScheduler/Scope
-		IL_012b: ldftn object Modules.BinaryOperator_TypedNumericScheduler/calls::__js_call__(class Modules.BinaryOperator_TypedNumericScheduler/Scope, object)
-		IL_0131: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_0136: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
+		IL_0126: ldloc.s 11
+		IL_0128: stfld object Modules.BinaryOperator_TypedNumericScheduler/Scope::right
+		IL_012d: ldc.i4.1
+		IL_012e: newarr [System.Runtime]System.Object
+		IL_0133: dup
+		IL_0134: ldc.i4.0
+		IL_0135: ldloc.0
+		IL_0136: stelem.ref
+		IL_0137: stloc.s 9
+		IL_0139: ldloc.s 9
 		IL_013b: ldc.i4.0
-		IL_013c: conv.r8
-		IL_013d: ldstr "calls"
-		IL_0142: ldc.i4.0
-		IL_0143: ldc.i4.1
-		IL_0144: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
-		IL_0149: stloc.s 7
-		IL_014b: ldnull
-		IL_014c: ldftn class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.BinaryOperator_TypedNumericScheduler/postfix::__js_call__(object, float64)
-		IL_0152: newobj instance void class [System.Runtime]System.Func`3<object, float64, class [JavaScriptRuntime]JavaScriptRuntime.Array>::.ctor(object, native int)
-		IL_0157: castclass class [System.Runtime]System.Func`3<object, float64, class [JavaScriptRuntime]JavaScriptRuntime.Array>
-		IL_015c: ldc.i4.1
-		IL_015d: conv.r8
-		IL_015e: ldstr "postfix"
-		IL_0163: ldc.i4.0
-		IL_0164: ldc.i4.1
-		IL_0165: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [System.Runtime]System.Func`3<object, float64, class [JavaScriptRuntime]JavaScriptRuntime.Array>>(!!0, float64, string, bool, bool)
-		IL_016a: stloc.s 8
-		IL_016c: nop
-		IL_016d: nop
-		IL_016e: nop
-		IL_016f: nop
-		IL_0170: nop
-		IL_0171: nop
-		IL_0172: nop
-		IL_0173: ldloc.0
-		IL_0174: ldstr ""
-		IL_0179: stfld object Modules.BinaryOperator_TypedNumericScheduler/Scope::order
+		IL_013c: ldelem.ref
+		IL_013d: castclass Modules.BinaryOperator_TypedNumericScheduler/Scope
+		IL_0142: newobj instance void FunctionObjects.BinaryOperator_TypedNumericScheduler_15BB9EDF.FunctionObject_FunctionDeclaration_D8F5465F_calls::.ctor(class Modules.BinaryOperator_TypedNumericScheduler/Scope)
+		IL_0147: ldc.i4.0
+		IL_0148: conv.r8
+		IL_0149: ldstr "calls"
+		IL_014e: ldc.i4.0
+		IL_014f: ldc.i4.1
+		IL_0150: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class FunctionObjects.BinaryOperator_TypedNumericScheduler_15BB9EDF.FunctionObject_FunctionDeclaration_D8F5465F_calls>(!!0, float64, string, bool, bool)
+		IL_0155: stloc.s 7
+		IL_0157: ldc.i4.1
+		IL_0158: newarr [System.Runtime]System.Object
+		IL_015d: dup
+		IL_015e: ldc.i4.0
+		IL_015f: ldloc.0
+		IL_0160: stelem.ref
+		IL_0161: stloc.s 9
+		IL_0163: newobj instance void FunctionObjects.BinaryOperator_TypedNumericScheduler_15BB9EDF.FunctionObject_FunctionDeclaration_B3DBBF8F_postfix::.ctor()
+		IL_0168: ldc.i4.1
+		IL_0169: conv.r8
+		IL_016a: ldstr "postfix"
+		IL_016f: ldc.i4.0
+		IL_0170: ldc.i4.1
+		IL_0171: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class FunctionObjects.BinaryOperator_TypedNumericScheduler_15BB9EDF.FunctionObject_FunctionDeclaration_B3DBBF8F_postfix>(!!0, float64, string, bool, bool)
+		IL_0176: stloc.s 8
+		IL_0178: nop
+		IL_0179: nop
+		IL_017a: nop
+		IL_017b: nop
+		IL_017c: nop
+		IL_017d: nop
 		IL_017e: nop
-		IL_017f: nop
-		IL_0180: nop
-		IL_0181: nop
-		IL_0182: ldstr "console"
-		IL_0187: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_018c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0191: stloc.s 10
-		IL_0193: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0198: stloc.s 11
-		IL_019a: ldloc.1
-		IL_019b: ldloc.s 11
-		IL_019d: ldc.r8 4
-		IL_01a6: box [System.Runtime]System.Double
-		IL_01ab: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1, object[], object)
-		IL_01b0: stloc.s 12
-		IL_01b2: ldloc.s 10
-		IL_01b4: ldstr "log"
-		IL_01b9: ldloc.s 12
-		IL_01bb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_01c0: pop
-		IL_01c1: ldstr "console"
-		IL_01c6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_01cb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_01d0: stloc.s 12
-		IL_01d2: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_01d7: stloc.s 11
-		IL_01d9: ldloc.2
-		IL_01da: ldloc.s 11
-		IL_01dc: ldc.i4.4
-		IL_01dd: newarr [System.Runtime]System.Object
-		IL_01e2: dup
-		IL_01e3: ldc.i4.0
-		IL_01e4: ldc.r8 1
-		IL_01ed: box [System.Runtime]System.Double
-		IL_01f2: stelem.ref
-		IL_01f3: dup
-		IL_01f4: ldc.i4.1
-		IL_01f5: ldc.r8 2
-		IL_01fe: box [System.Runtime]System.Double
-		IL_0203: stelem.ref
-		IL_0204: dup
-		IL_0205: ldc.i4.2
-		IL_0206: ldc.r8 3
-		IL_020f: box [System.Runtime]System.Double
-		IL_0214: stelem.ref
-		IL_0215: dup
-		IL_0216: ldc.i4.3
-		IL_0217: ldc.r8 4
-		IL_0220: box [System.Runtime]System.Double
-		IL_0225: stelem.ref
-		IL_0226: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs(object, object[], object[])
-		IL_022b: stloc.s 10
-		IL_022d: ldloc.s 12
-		IL_022f: ldstr "log"
-		IL_0234: ldloc.s 10
-		IL_0236: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_023b: pop
-		IL_023c: ldstr "console"
-		IL_0241: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0246: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_024b: stloc.s 10
-		IL_024d: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0252: stloc.s 11
-		IL_0254: ldloc.3
-		IL_0255: ldloc.s 11
-		IL_0257: ldc.i4.4
-		IL_0258: newarr [System.Runtime]System.Object
-		IL_025d: dup
-		IL_025e: ldc.i4.0
-		IL_025f: ldc.r8 2
-		IL_0268: box [System.Runtime]System.Double
-		IL_026d: stelem.ref
-		IL_026e: dup
-		IL_026f: ldc.i4.1
-		IL_0270: ldc.r8 3
-		IL_0279: box [System.Runtime]System.Double
-		IL_027e: stelem.ref
-		IL_027f: dup
-		IL_0280: ldc.i4.2
-		IL_0281: ldc.r8 4
-		IL_028a: box [System.Runtime]System.Double
-		IL_028f: stelem.ref
-		IL_0290: dup
-		IL_0291: ldc.i4.3
-		IL_0292: ldc.r8 5
-		IL_029b: box [System.Runtime]System.Double
-		IL_02a0: stelem.ref
-		IL_02a1: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs(object, object[], object[])
-		IL_02a6: stloc.s 12
-		IL_02a8: ldloc.s 10
-		IL_02aa: ldstr "log"
-		IL_02af: ldloc.s 12
-		IL_02b1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_02b6: pop
-		IL_02b7: ldstr "console"
-		IL_02bc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_02c1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_02c6: stloc.s 12
-		IL_02c8: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_02cd: stloc.s 11
-		IL_02cf: ldloc.s 4
-		IL_02d1: ldloc.s 11
-		IL_02d3: ldc.r8 10
-		IL_02dc: box [System.Runtime]System.Double
-		IL_02e1: ldc.r8 3
-		IL_02ea: box [System.Runtime]System.Double
-		IL_02ef: ldc.r8 2
-		IL_02f8: box [System.Runtime]System.Double
-		IL_02fd: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs3(object, object[], object, object, object)
-		IL_0302: stloc.s 10
-		IL_0304: ldloc.s 12
-		IL_0306: ldstr "log"
-		IL_030b: ldloc.s 10
-		IL_030d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0312: pop
-		IL_0313: ldstr "console"
-		IL_0318: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_031d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0322: stloc.s 10
-		IL_0324: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0329: stloc.s 11
-		IL_032b: ldloc.s 5
-		IL_032d: ldloc.s 11
-		IL_032f: ldc.r8 20
-		IL_0338: box [System.Runtime]System.Double
-		IL_033d: ldc.r8 3
-		IL_0346: box [System.Runtime]System.Double
-		IL_034b: ldc.r8 2
-		IL_0354: box [System.Runtime]System.Double
-		IL_0359: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs3(object, object[], object, object, object)
-		IL_035e: stloc.s 12
-		IL_0360: ldloc.s 10
-		IL_0362: ldstr "log"
-		IL_0367: ldloc.s 12
-		IL_0369: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_036e: pop
-		IL_036f: ldstr "console"
-		IL_0374: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0379: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_037e: stloc.s 12
-		IL_0380: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0385: stloc.s 11
-		IL_0387: ldloc.s 6
-		IL_0389: ldloc.s 11
-		IL_038b: ldc.r8 2
-		IL_0394: box [System.Runtime]System.Double
-		IL_0399: ldc.r8 3
-		IL_03a2: box [System.Runtime]System.Double
-		IL_03a7: ldc.r8 1
-		IL_03b0: box [System.Runtime]System.Double
-		IL_03b5: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs3(object, object[], object, object, object)
-		IL_03ba: stloc.s 10
-		IL_03bc: ldloc.s 12
-		IL_03be: ldstr "log"
-		IL_03c3: ldloc.s 10
-		IL_03c5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_03ca: pop
-		IL_03cb: ldstr "console"
-		IL_03d0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_03d5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_03da: stloc.s 10
-		IL_03dc: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_03e1: stloc.s 11
-		IL_03e3: ldloc.1
-		IL_03e4: ldloc.s 11
-		IL_03e6: ldc.r8 (00 00 00 00 00 00 F8 FF)
-		IL_03ef: box [System.Runtime]System.Double
-		IL_03f4: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1, object[], object)
-		IL_03f9: stloc.s 12
-		IL_03fb: ldloc.s 12
-		IL_03fd: call bool [JavaScriptRuntime]JavaScriptRuntime.Number::isNaN(object)
-		IL_0402: box [System.Runtime]System.Boolean
-		IL_0407: stloc.s 13
-		IL_0409: ldloc.s 10
-		IL_040b: ldstr "log"
-		IL_0410: ldloc.s 13
-		IL_0412: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0417: pop
-		IL_0418: ldstr "console"
-		IL_041d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0422: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0427: stloc.s 10
-		IL_0429: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_042e: stloc.s 11
-		IL_0430: ldc.r8 0.0
-		IL_0439: neg
-		IL_043a: stloc.s 14
-		IL_043c: ldloc.s 14
-		IL_043e: box [System.Runtime]System.Double
-		IL_0443: stloc.s 15
-		IL_0445: ldloc.s 5
-		IL_0447: ldloc.s 11
-		IL_0449: ldloc.s 15
-		IL_044b: ldc.r8 1
-		IL_0454: box [System.Runtime]System.Double
-		IL_0459: ldc.r8 2
-		IL_0462: box [System.Runtime]System.Double
-		IL_0467: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs3(object, object[], object, object, object)
-		IL_046c: stloc.s 12
-		IL_046e: ldc.r8 0.0
-		IL_0477: neg
-		IL_0478: stloc.s 14
-		IL_047a: ldloc.s 14
-		IL_047c: box [System.Runtime]System.Double
-		IL_0481: stloc.s 15
-		IL_0483: ldloc.s 12
-		IL_0485: ldloc.s 15
-		IL_0487: call bool [JavaScriptRuntime]JavaScriptRuntime.Object::is(object, object)
-		IL_048c: box [System.Runtime]System.Boolean
-		IL_0491: stloc.s 13
-		IL_0493: ldloc.s 10
-		IL_0495: ldstr "log"
-		IL_049a: ldloc.s 13
-		IL_049c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_04a1: pop
-		IL_04a2: ldstr "console"
-		IL_04a7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_04ac: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_04b1: stloc.s 10
-		IL_04b3: ldloc.s 7
-		IL_04b5: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_04ba: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0, object[])
-		IL_04bf: stloc.s 12
-		IL_04c1: ldloc.0
-		IL_04c2: ldfld object Modules.BinaryOperator_TypedNumericScheduler/Scope::order
-		IL_04c7: stloc.s 16
-		IL_04c9: ldloc.s 10
-		IL_04cb: ldstr "log"
-		IL_04d0: ldloc.s 12
-		IL_04d2: ldloc.s 16
-		IL_04d4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_04d9: pop
-		IL_04da: ldstr "console"
-		IL_04df: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_04e4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_04e9: stloc.s 16
-		IL_04eb: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_04f0: stloc.s 11
-		IL_04f2: ldloc.s 8
-		IL_04f4: ldloc.s 11
-		IL_04f6: ldc.r8 3
-		IL_04ff: box [System.Runtime]System.Double
-		IL_0504: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
-		IL_0509: stloc.s 12
-		IL_050b: ldloc.s 12
-		IL_050d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0512: ldstr "join"
-		IL_0517: ldstr ","
-		IL_051c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0521: stloc.s 12
-		IL_0523: ldloc.s 16
-		IL_0525: ldstr "log"
-		IL_052a: ldloc.s 12
-		IL_052c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0531: pop
-		IL_0532: ret
+		IL_017f: ldloc.0
+		IL_0180: ldstr ""
+		IL_0185: stfld object Modules.BinaryOperator_TypedNumericScheduler/Scope::order
+		IL_018a: nop
+		IL_018b: nop
+		IL_018c: nop
+		IL_018d: nop
+		IL_018e: ldstr "console"
+		IL_0193: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0198: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_019d: stloc.s 12
+		IL_019f: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_01a4: stloc.s 9
+		IL_01a6: ldloc.1
+		IL_01a7: ldloc.s 9
+		IL_01a9: ldc.r8 4
+		IL_01b2: box [System.Runtime]System.Double
+		IL_01b7: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
+		IL_01bc: stloc.s 13
+		IL_01be: ldloc.s 12
+		IL_01c0: ldstr "log"
+		IL_01c5: ldloc.s 13
+		IL_01c7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_01cc: pop
+		IL_01cd: ldstr "console"
+		IL_01d2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_01d7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_01dc: stloc.s 13
+		IL_01de: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_01e3: stloc.s 9
+		IL_01e5: ldloc.2
+		IL_01e6: ldloc.s 9
+		IL_01e8: ldc.i4.4
+		IL_01e9: newarr [System.Runtime]System.Object
+		IL_01ee: dup
+		IL_01ef: ldc.i4.0
+		IL_01f0: ldc.r8 1
+		IL_01f9: box [System.Runtime]System.Double
+		IL_01fe: stelem.ref
+		IL_01ff: dup
+		IL_0200: ldc.i4.1
+		IL_0201: ldc.r8 2
+		IL_020a: box [System.Runtime]System.Double
+		IL_020f: stelem.ref
+		IL_0210: dup
+		IL_0211: ldc.i4.2
+		IL_0212: ldc.r8 3
+		IL_021b: box [System.Runtime]System.Double
+		IL_0220: stelem.ref
+		IL_0221: dup
+		IL_0222: ldc.i4.3
+		IL_0223: ldc.r8 4
+		IL_022c: box [System.Runtime]System.Double
+		IL_0231: stelem.ref
+		IL_0232: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs(object, object[], object[])
+		IL_0237: stloc.s 12
+		IL_0239: ldloc.s 13
+		IL_023b: ldstr "log"
+		IL_0240: ldloc.s 12
+		IL_0242: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0247: pop
+		IL_0248: ldstr "console"
+		IL_024d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0252: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0257: stloc.s 12
+		IL_0259: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_025e: stloc.s 9
+		IL_0260: ldloc.3
+		IL_0261: ldloc.s 9
+		IL_0263: ldc.i4.4
+		IL_0264: newarr [System.Runtime]System.Object
+		IL_0269: dup
+		IL_026a: ldc.i4.0
+		IL_026b: ldc.r8 2
+		IL_0274: box [System.Runtime]System.Double
+		IL_0279: stelem.ref
+		IL_027a: dup
+		IL_027b: ldc.i4.1
+		IL_027c: ldc.r8 3
+		IL_0285: box [System.Runtime]System.Double
+		IL_028a: stelem.ref
+		IL_028b: dup
+		IL_028c: ldc.i4.2
+		IL_028d: ldc.r8 4
+		IL_0296: box [System.Runtime]System.Double
+		IL_029b: stelem.ref
+		IL_029c: dup
+		IL_029d: ldc.i4.3
+		IL_029e: ldc.r8 5
+		IL_02a7: box [System.Runtime]System.Double
+		IL_02ac: stelem.ref
+		IL_02ad: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs(object, object[], object[])
+		IL_02b2: stloc.s 13
+		IL_02b4: ldloc.s 12
+		IL_02b6: ldstr "log"
+		IL_02bb: ldloc.s 13
+		IL_02bd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_02c2: pop
+		IL_02c3: ldstr "console"
+		IL_02c8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_02cd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_02d2: stloc.s 13
+		IL_02d4: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_02d9: stloc.s 9
+		IL_02db: ldloc.s 4
+		IL_02dd: ldloc.s 9
+		IL_02df: ldc.r8 10
+		IL_02e8: box [System.Runtime]System.Double
+		IL_02ed: ldc.r8 3
+		IL_02f6: box [System.Runtime]System.Double
+		IL_02fb: ldc.r8 2
+		IL_0304: box [System.Runtime]System.Double
+		IL_0309: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs3(object, object[], object, object, object)
+		IL_030e: stloc.s 12
+		IL_0310: ldloc.s 13
+		IL_0312: ldstr "log"
+		IL_0317: ldloc.s 12
+		IL_0319: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_031e: pop
+		IL_031f: ldstr "console"
+		IL_0324: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0329: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_032e: stloc.s 12
+		IL_0330: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0335: stloc.s 9
+		IL_0337: ldloc.s 5
+		IL_0339: ldloc.s 9
+		IL_033b: ldc.r8 20
+		IL_0344: box [System.Runtime]System.Double
+		IL_0349: ldc.r8 3
+		IL_0352: box [System.Runtime]System.Double
+		IL_0357: ldc.r8 2
+		IL_0360: box [System.Runtime]System.Double
+		IL_0365: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs3(object, object[], object, object, object)
+		IL_036a: stloc.s 13
+		IL_036c: ldloc.s 12
+		IL_036e: ldstr "log"
+		IL_0373: ldloc.s 13
+		IL_0375: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_037a: pop
+		IL_037b: ldstr "console"
+		IL_0380: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0385: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_038a: stloc.s 13
+		IL_038c: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0391: stloc.s 9
+		IL_0393: ldloc.s 6
+		IL_0395: ldloc.s 9
+		IL_0397: ldc.r8 2
+		IL_03a0: box [System.Runtime]System.Double
+		IL_03a5: ldc.r8 3
+		IL_03ae: box [System.Runtime]System.Double
+		IL_03b3: ldc.r8 1
+		IL_03bc: box [System.Runtime]System.Double
+		IL_03c1: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs3(object, object[], object, object, object)
+		IL_03c6: stloc.s 12
+		IL_03c8: ldloc.s 13
+		IL_03ca: ldstr "log"
+		IL_03cf: ldloc.s 12
+		IL_03d1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_03d6: pop
+		IL_03d7: ldstr "console"
+		IL_03dc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_03e1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_03e6: stloc.s 12
+		IL_03e8: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_03ed: stloc.s 9
+		IL_03ef: ldloc.1
+		IL_03f0: ldloc.s 9
+		IL_03f2: ldc.r8 (00 00 00 00 00 00 F8 FF)
+		IL_03fb: box [System.Runtime]System.Double
+		IL_0400: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
+		IL_0405: stloc.s 13
+		IL_0407: ldloc.s 13
+		IL_0409: call bool [JavaScriptRuntime]JavaScriptRuntime.Number::isNaN(object)
+		IL_040e: box [System.Runtime]System.Boolean
+		IL_0413: stloc.s 14
+		IL_0415: ldloc.s 12
+		IL_0417: ldstr "log"
+		IL_041c: ldloc.s 14
+		IL_041e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0423: pop
+		IL_0424: ldstr "console"
+		IL_0429: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_042e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0433: stloc.s 12
+		IL_0435: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_043a: stloc.s 9
+		IL_043c: ldc.r8 0.0
+		IL_0445: neg
+		IL_0446: stloc.s 15
+		IL_0448: ldloc.s 15
+		IL_044a: box [System.Runtime]System.Double
+		IL_044f: stloc.s 16
+		IL_0451: ldloc.s 5
+		IL_0453: ldloc.s 9
+		IL_0455: ldloc.s 16
+		IL_0457: ldc.r8 1
+		IL_0460: box [System.Runtime]System.Double
+		IL_0465: ldc.r8 2
+		IL_046e: box [System.Runtime]System.Double
+		IL_0473: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs3(object, object[], object, object, object)
+		IL_0478: stloc.s 13
+		IL_047a: ldc.r8 0.0
+		IL_0483: neg
+		IL_0484: stloc.s 15
+		IL_0486: ldloc.s 15
+		IL_0488: box [System.Runtime]System.Double
+		IL_048d: stloc.s 16
+		IL_048f: ldloc.s 13
+		IL_0491: ldloc.s 16
+		IL_0493: call bool [JavaScriptRuntime]JavaScriptRuntime.Object::is(object, object)
+		IL_0498: box [System.Runtime]System.Boolean
+		IL_049d: stloc.s 14
+		IL_049f: ldloc.s 12
+		IL_04a1: ldstr "log"
+		IL_04a6: ldloc.s 14
+		IL_04a8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_04ad: pop
+		IL_04ae: ldstr "console"
+		IL_04b3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_04b8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_04bd: stloc.s 12
+		IL_04bf: ldloc.s 7
+		IL_04c1: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_04c6: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
+		IL_04cb: stloc.s 13
+		IL_04cd: ldloc.0
+		IL_04ce: ldfld object Modules.BinaryOperator_TypedNumericScheduler/Scope::order
+		IL_04d3: stloc.s 17
+		IL_04d5: ldloc.s 12
+		IL_04d7: ldstr "log"
+		IL_04dc: ldloc.s 13
+		IL_04de: ldloc.s 17
+		IL_04e0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_04e5: pop
+		IL_04e6: ldstr "console"
+		IL_04eb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_04f0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_04f5: stloc.s 17
+		IL_04f7: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_04fc: stloc.s 9
+		IL_04fe: ldloc.s 8
+		IL_0500: ldloc.s 9
+		IL_0502: ldc.r8 3
+		IL_050b: box [System.Runtime]System.Double
+		IL_0510: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
+		IL_0515: stloc.s 13
+		IL_0517: ldloc.s 13
+		IL_0519: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_051e: ldstr "join"
+		IL_0523: ldstr ","
+		IL_0528: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_052d: stloc.s 13
+		IL_052f: ldloc.s 17
+		IL_0531: ldstr "log"
+		IL_0536: ldloc.s 13
+		IL_0538: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_053d: pop
+		IL_053e: ret
 	} // end of method BinaryOperator_TypedNumericScheduler::__js_module_init__
 
 } // end of class Modules.BinaryOperator_TypedNumericScheduler
@@ -1081,7 +1131,7 @@
 	.method public hidebysig specialname rtspecialname 
 		instance void .ctor () cil managed 
 	{
-		// Method begins at RVA 0x2745
+		// Method begins at RVA 0x2751
 		// Header size: 1
 		// Code size: 7 (0x7)
 		.maxstack 8
@@ -1094,7 +1144,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x274d
+		// Method begins at RVA 0x2759
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -1106,7 +1156,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x2750
+		// Method begins at RVA 0x275c
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -1121,17 +1171,17 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x2753
+		// Method begins at RVA 0x275f
 		// Header size: 1
-		// Code size: 14 (0xe)
+		// Code size: 18 (0x12)
 		.maxstack 8
 
-		IL_0000: ldnull
-		IL_0001: ldarg.2
-		IL_0002: ldc.i4.0
-		IL_0003: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-		IL_0008: call object Modules.BinaryOperator_TypedNumericScheduler/mulAdd::__js_call__(object, object)
-		IL_000d: ret
+		IL_0000: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
+		IL_0005: ldarg.2
+		IL_0006: ldc.i4.0
+		IL_0007: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+		IL_000c: call object Modules.BinaryOperator_TypedNumericScheduler/mulAdd::__js_call__(object, object)
+		IL_0011: ret
 	} // end of method FunctionObject_FunctionDeclaration_ECDDA9F7_mulAdd::CallCore
 
 	.method family hidebysig virtual 
@@ -1140,14 +1190,17 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x2762
+		// Method begins at RVA 0x2772
 		// Header size: 1
-		// Code size: 11 (0xb)
+		// Code size: 14 (0xe)
 		.maxstack 8
 
-		IL_0000: ldstr "Generated construction adapter is reserved for the callable-family construction migration"
-		IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-		IL_000a: throw
+		IL_0000: ldarg.0
+		IL_0001: ldarg.1
+		IL_0002: call instance object[] [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::ToArray()
+		IL_0007: ldarg.2
+		IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionObject(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, object[], object)
+		IL_000d: ret
 	} // end of method FunctionObject_FunctionDeclaration_ECDDA9F7_mulAdd::ConstructCore
 
 } // end of class FunctionObjects.BinaryOperator_TypedNumericScheduler_15BB9EDF.FunctionObject_FunctionDeclaration_ECDDA9F7_mulAdd
@@ -1159,7 +1212,7 @@
 	.method public hidebysig specialname rtspecialname 
 		instance void .ctor () cil managed 
 	{
-		// Method begins at RVA 0x276e
+		// Method begins at RVA 0x2781
 		// Header size: 1
 		// Code size: 7 (0x7)
 		.maxstack 8
@@ -1172,7 +1225,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x2776
+		// Method begins at RVA 0x2789
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -1184,7 +1237,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x2779
+		// Method begins at RVA 0x278c
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -1199,30 +1252,30 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x277c
+		// Method begins at RVA 0x278f
 		// Header size: 1
-		// Code size: 55 (0x37)
+		// Code size: 59 (0x3b)
 		.maxstack 8
 
-		IL_0000: ldnull
-		IL_0001: ldarg.2
-		IL_0002: ldc.i4.0
-		IL_0003: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-		IL_0008: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_000d: ldarg.2
-		IL_000e: ldc.i4.1
-		IL_000f: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-		IL_0014: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_0019: ldarg.2
-		IL_001a: ldc.i4.2
-		IL_001b: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-		IL_0020: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_0025: ldarg.2
-		IL_0026: ldc.i4.3
-		IL_0027: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-		IL_002c: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_0031: call object Modules.BinaryOperator_TypedNumericScheduler/addChain::__js_call__(object, float64, float64, float64, float64)
-		IL_0036: ret
+		IL_0000: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
+		IL_0005: ldarg.2
+		IL_0006: ldc.i4.0
+		IL_0007: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+		IL_000c: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_0011: ldarg.2
+		IL_0012: ldc.i4.1
+		IL_0013: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+		IL_0018: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_001d: ldarg.2
+		IL_001e: ldc.i4.2
+		IL_001f: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+		IL_0024: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_0029: ldarg.2
+		IL_002a: ldc.i4.3
+		IL_002b: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+		IL_0030: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_0035: call object Modules.BinaryOperator_TypedNumericScheduler/addChain::__js_call__(object, float64, float64, float64, float64)
+		IL_003a: ret
 	} // end of method FunctionObject_FunctionDeclaration_F48743DA_addChain::CallCore
 
 	.method family hidebysig virtual 
@@ -1231,14 +1284,17 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x27b4
+		// Method begins at RVA 0x27cb
 		// Header size: 1
-		// Code size: 11 (0xb)
+		// Code size: 14 (0xe)
 		.maxstack 8
 
-		IL_0000: ldstr "Generated construction adapter is reserved for the callable-family construction migration"
-		IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-		IL_000a: throw
+		IL_0000: ldarg.0
+		IL_0001: ldarg.1
+		IL_0002: call instance object[] [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::ToArray()
+		IL_0007: ldarg.2
+		IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionObject(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, object[], object)
+		IL_000d: ret
 	} // end of method FunctionObject_FunctionDeclaration_F48743DA_addChain::ConstructCore
 
 } // end of class FunctionObjects.BinaryOperator_TypedNumericScheduler_15BB9EDF.FunctionObject_FunctionDeclaration_F48743DA_addChain
@@ -1250,7 +1306,7 @@
 	.method public hidebysig specialname rtspecialname 
 		instance void .ctor () cil managed 
 	{
-		// Method begins at RVA 0x27c0
+		// Method begins at RVA 0x27da
 		// Header size: 1
 		// Code size: 7 (0x7)
 		.maxstack 8
@@ -1263,7 +1319,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x27c8
+		// Method begins at RVA 0x27e2
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -1275,7 +1331,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x27cb
+		// Method begins at RVA 0x27e5
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -1290,30 +1346,30 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x27ce
+		// Method begins at RVA 0x27e8
 		// Header size: 1
-		// Code size: 55 (0x37)
+		// Code size: 59 (0x3b)
 		.maxstack 8
 
-		IL_0000: ldnull
-		IL_0001: ldarg.2
-		IL_0002: ldc.i4.0
-		IL_0003: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-		IL_0008: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_000d: ldarg.2
-		IL_000e: ldc.i4.1
-		IL_000f: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-		IL_0014: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_0019: ldarg.2
-		IL_001a: ldc.i4.2
-		IL_001b: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-		IL_0020: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_0025: ldarg.2
-		IL_0026: ldc.i4.3
-		IL_0027: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-		IL_002c: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_0031: call object Modules.BinaryOperator_TypedNumericScheduler/tree::__js_call__(object, float64, float64, float64, float64)
-		IL_0036: ret
+		IL_0000: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
+		IL_0005: ldarg.2
+		IL_0006: ldc.i4.0
+		IL_0007: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+		IL_000c: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_0011: ldarg.2
+		IL_0012: ldc.i4.1
+		IL_0013: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+		IL_0018: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_001d: ldarg.2
+		IL_001e: ldc.i4.2
+		IL_001f: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+		IL_0024: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_0029: ldarg.2
+		IL_002a: ldc.i4.3
+		IL_002b: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+		IL_0030: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_0035: call object Modules.BinaryOperator_TypedNumericScheduler/tree::__js_call__(object, float64, float64, float64, float64)
+		IL_003a: ret
 	} // end of method FunctionObject_FunctionDeclaration_A433882E_tree::CallCore
 
 	.method family hidebysig virtual 
@@ -1322,14 +1378,17 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x2806
+		// Method begins at RVA 0x2824
 		// Header size: 1
-		// Code size: 11 (0xb)
+		// Code size: 14 (0xe)
 		.maxstack 8
 
-		IL_0000: ldstr "Generated construction adapter is reserved for the callable-family construction migration"
-		IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-		IL_000a: throw
+		IL_0000: ldarg.0
+		IL_0001: ldarg.1
+		IL_0002: call instance object[] [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::ToArray()
+		IL_0007: ldarg.2
+		IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionObject(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, object[], object)
+		IL_000d: ret
 	} // end of method FunctionObject_FunctionDeclaration_A433882E_tree::ConstructCore
 
 } // end of class FunctionObjects.BinaryOperator_TypedNumericScheduler_15BB9EDF.FunctionObject_FunctionDeclaration_A433882E_tree
@@ -1341,7 +1400,7 @@
 	.method public hidebysig specialname rtspecialname 
 		instance void .ctor () cil managed 
 	{
-		// Method begins at RVA 0x2812
+		// Method begins at RVA 0x2833
 		// Header size: 1
 		// Code size: 7 (0x7)
 		.maxstack 8
@@ -1354,7 +1413,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x281a
+		// Method begins at RVA 0x283b
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -1366,7 +1425,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x281d
+		// Method begins at RVA 0x283e
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -1381,26 +1440,26 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x2820
+		// Method begins at RVA 0x2841
 		// Header size: 1
-		// Code size: 43 (0x2b)
+		// Code size: 47 (0x2f)
 		.maxstack 8
 
-		IL_0000: ldnull
-		IL_0001: ldarg.2
-		IL_0002: ldc.i4.0
-		IL_0003: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-		IL_0008: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_000d: ldarg.2
-		IL_000e: ldc.i4.1
-		IL_000f: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-		IL_0014: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_0019: ldarg.2
-		IL_001a: ldc.i4.2
-		IL_001b: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-		IL_0020: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_0025: call object Modules.BinaryOperator_TypedNumericScheduler/subChain::__js_call__(object, float64, float64, float64)
-		IL_002a: ret
+		IL_0000: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
+		IL_0005: ldarg.2
+		IL_0006: ldc.i4.0
+		IL_0007: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+		IL_000c: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_0011: ldarg.2
+		IL_0012: ldc.i4.1
+		IL_0013: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+		IL_0018: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_001d: ldarg.2
+		IL_001e: ldc.i4.2
+		IL_001f: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+		IL_0024: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_0029: call object Modules.BinaryOperator_TypedNumericScheduler/subChain::__js_call__(object, float64, float64, float64)
+		IL_002e: ret
 	} // end of method FunctionObject_FunctionDeclaration_73DC7159_subChain::CallCore
 
 	.method family hidebysig virtual 
@@ -1409,14 +1468,17 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x284c
+		// Method begins at RVA 0x2871
 		// Header size: 1
-		// Code size: 11 (0xb)
+		// Code size: 14 (0xe)
 		.maxstack 8
 
-		IL_0000: ldstr "Generated construction adapter is reserved for the callable-family construction migration"
-		IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-		IL_000a: throw
+		IL_0000: ldarg.0
+		IL_0001: ldarg.1
+		IL_0002: call instance object[] [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::ToArray()
+		IL_0007: ldarg.2
+		IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionObject(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, object[], object)
+		IL_000d: ret
 	} // end of method FunctionObject_FunctionDeclaration_73DC7159_subChain::ConstructCore
 
 } // end of class FunctionObjects.BinaryOperator_TypedNumericScheduler_15BB9EDF.FunctionObject_FunctionDeclaration_73DC7159_subChain
@@ -1428,7 +1490,7 @@
 	.method public hidebysig specialname rtspecialname 
 		instance void .ctor () cil managed 
 	{
-		// Method begins at RVA 0x2858
+		// Method begins at RVA 0x2880
 		// Header size: 1
 		// Code size: 7 (0x7)
 		.maxstack 8
@@ -1441,7 +1503,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x2860
+		// Method begins at RVA 0x2888
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -1453,7 +1515,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x2863
+		// Method begins at RVA 0x288b
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -1468,26 +1530,26 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x2866
+		// Method begins at RVA 0x288e
 		// Header size: 1
-		// Code size: 43 (0x2b)
+		// Code size: 47 (0x2f)
 		.maxstack 8
 
-		IL_0000: ldnull
-		IL_0001: ldarg.2
-		IL_0002: ldc.i4.0
-		IL_0003: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-		IL_0008: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_000d: ldarg.2
-		IL_000e: ldc.i4.1
-		IL_000f: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-		IL_0014: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_0019: ldarg.2
-		IL_001a: ldc.i4.2
-		IL_001b: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-		IL_0020: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_0025: call object Modules.BinaryOperator_TypedNumericScheduler/divMod::__js_call__(object, float64, float64, float64)
-		IL_002a: ret
+		IL_0000: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
+		IL_0005: ldarg.2
+		IL_0006: ldc.i4.0
+		IL_0007: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+		IL_000c: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_0011: ldarg.2
+		IL_0012: ldc.i4.1
+		IL_0013: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+		IL_0018: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_001d: ldarg.2
+		IL_001e: ldc.i4.2
+		IL_001f: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+		IL_0024: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_0029: call object Modules.BinaryOperator_TypedNumericScheduler/divMod::__js_call__(object, float64, float64, float64)
+		IL_002e: ret
 	} // end of method FunctionObject_FunctionDeclaration_14EF6D03_divMod::CallCore
 
 	.method family hidebysig virtual 
@@ -1496,14 +1558,17 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x2892
+		// Method begins at RVA 0x28be
 		// Header size: 1
-		// Code size: 11 (0xb)
+		// Code size: 14 (0xe)
 		.maxstack 8
 
-		IL_0000: ldstr "Generated construction adapter is reserved for the callable-family construction migration"
-		IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-		IL_000a: throw
+		IL_0000: ldarg.0
+		IL_0001: ldarg.1
+		IL_0002: call instance object[] [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::ToArray()
+		IL_0007: ldarg.2
+		IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionObject(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, object[], object)
+		IL_000d: ret
 	} // end of method FunctionObject_FunctionDeclaration_14EF6D03_divMod::ConstructCore
 
 } // end of class FunctionObjects.BinaryOperator_TypedNumericScheduler_15BB9EDF.FunctionObject_FunctionDeclaration_14EF6D03_divMod
@@ -1515,7 +1580,7 @@
 	.method public hidebysig specialname rtspecialname 
 		instance void .ctor () cil managed 
 	{
-		// Method begins at RVA 0x289e
+		// Method begins at RVA 0x28cd
 		// Header size: 1
 		// Code size: 7 (0x7)
 		.maxstack 8
@@ -1528,7 +1593,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x28a6
+		// Method begins at RVA 0x28d5
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -1540,7 +1605,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x28a9
+		// Method begins at RVA 0x28d8
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -1555,26 +1620,26 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x28ac
+		// Method begins at RVA 0x28db
 		// Header size: 1
-		// Code size: 43 (0x2b)
+		// Code size: 47 (0x2f)
 		.maxstack 8
 
-		IL_0000: ldnull
-		IL_0001: ldarg.2
-		IL_0002: ldc.i4.0
-		IL_0003: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-		IL_0008: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_000d: ldarg.2
-		IL_000e: ldc.i4.1
-		IL_000f: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-		IL_0014: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_0019: ldarg.2
-		IL_001a: ldc.i4.2
-		IL_001b: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-		IL_0020: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_0025: call object Modules.BinaryOperator_TypedNumericScheduler/expAdd::__js_call__(object, float64, float64, float64)
-		IL_002a: ret
+		IL_0000: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
+		IL_0005: ldarg.2
+		IL_0006: ldc.i4.0
+		IL_0007: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+		IL_000c: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_0011: ldarg.2
+		IL_0012: ldc.i4.1
+		IL_0013: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+		IL_0018: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_001d: ldarg.2
+		IL_001e: ldc.i4.2
+		IL_001f: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+		IL_0024: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_0029: call object Modules.BinaryOperator_TypedNumericScheduler/expAdd::__js_call__(object, float64, float64, float64)
+		IL_002e: ret
 	} // end of method FunctionObject_FunctionDeclaration_03A3A6D4_expAdd::CallCore
 
 	.method family hidebysig virtual 
@@ -1583,14 +1648,17 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x28d8
+		// Method begins at RVA 0x290b
 		// Header size: 1
-		// Code size: 11 (0xb)
+		// Code size: 14 (0xe)
 		.maxstack 8
 
-		IL_0000: ldstr "Generated construction adapter is reserved for the callable-family construction migration"
-		IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-		IL_000a: throw
+		IL_0000: ldarg.0
+		IL_0001: ldarg.1
+		IL_0002: call instance object[] [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::ToArray()
+		IL_0007: ldarg.2
+		IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionObject(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, object[], object)
+		IL_000d: ret
 	} // end of method FunctionObject_FunctionDeclaration_03A3A6D4_expAdd::ConstructCore
 
 } // end of class FunctionObjects.BinaryOperator_TypedNumericScheduler_15BB9EDF.FunctionObject_FunctionDeclaration_03A3A6D4_expAdd
@@ -1607,7 +1675,7 @@
 			class Modules.BinaryOperator_TypedNumericScheduler/Scope capture0
 		) cil managed 
 	{
-		// Method begins at RVA 0x28e4
+		// Method begins at RVA 0x291a
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -1623,7 +1691,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x28f3
+		// Method begins at RVA 0x2929
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -1635,7 +1703,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x28f6
+		// Method begins at RVA 0x292c
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -1650,16 +1718,16 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x28f9
+		// Method begins at RVA 0x292f
 		// Header size: 1
-		// Code size: 13 (0xd)
+		// Code size: 17 (0x11)
 		.maxstack 8
 
 		IL_0000: ldarg.0
 		IL_0001: ldfld class Modules.BinaryOperator_TypedNumericScheduler/Scope FunctionObjects.BinaryOperator_TypedNumericScheduler_15BB9EDF.FunctionObject_FunctionDeclaration_4AA8841F_left::_environment0_BinaryOperator_TypedNumericScheduler
-		IL_0006: ldnull
-		IL_0007: call object Modules.BinaryOperator_TypedNumericScheduler/left::__js_call__(class Modules.BinaryOperator_TypedNumericScheduler/Scope, object)
-		IL_000c: ret
+		IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
+		IL_000b: call object Modules.BinaryOperator_TypedNumericScheduler/left::__js_call__(class Modules.BinaryOperator_TypedNumericScheduler/Scope, object)
+		IL_0010: ret
 	} // end of method FunctionObject_FunctionDeclaration_4AA8841F_left::CallCore
 
 	.method family hidebysig virtual 
@@ -1668,14 +1736,17 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x2907
+		// Method begins at RVA 0x2941
 		// Header size: 1
-		// Code size: 11 (0xb)
+		// Code size: 14 (0xe)
 		.maxstack 8
 
-		IL_0000: ldstr "Generated construction adapter is reserved for the callable-family construction migration"
-		IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-		IL_000a: throw
+		IL_0000: ldarg.0
+		IL_0001: ldarg.1
+		IL_0002: call instance object[] [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::ToArray()
+		IL_0007: ldarg.2
+		IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionObject(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, object[], object)
+		IL_000d: ret
 	} // end of method FunctionObject_FunctionDeclaration_4AA8841F_left::ConstructCore
 
 } // end of class FunctionObjects.BinaryOperator_TypedNumericScheduler_15BB9EDF.FunctionObject_FunctionDeclaration_4AA8841F_left
@@ -1692,7 +1763,7 @@
 			class Modules.BinaryOperator_TypedNumericScheduler/Scope capture0
 		) cil managed 
 	{
-		// Method begins at RVA 0x2913
+		// Method begins at RVA 0x2950
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -1708,7 +1779,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x2922
+		// Method begins at RVA 0x295f
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -1720,7 +1791,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x2925
+		// Method begins at RVA 0x2962
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -1735,16 +1806,16 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x2928
+		// Method begins at RVA 0x2965
 		// Header size: 1
-		// Code size: 13 (0xd)
+		// Code size: 17 (0x11)
 		.maxstack 8
 
 		IL_0000: ldarg.0
 		IL_0001: ldfld class Modules.BinaryOperator_TypedNumericScheduler/Scope FunctionObjects.BinaryOperator_TypedNumericScheduler_15BB9EDF.FunctionObject_FunctionDeclaration_BF4CE850_right::_environment0_BinaryOperator_TypedNumericScheduler
-		IL_0006: ldnull
-		IL_0007: call object Modules.BinaryOperator_TypedNumericScheduler/right::__js_call__(class Modules.BinaryOperator_TypedNumericScheduler/Scope, object)
-		IL_000c: ret
+		IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
+		IL_000b: call object Modules.BinaryOperator_TypedNumericScheduler/right::__js_call__(class Modules.BinaryOperator_TypedNumericScheduler/Scope, object)
+		IL_0010: ret
 	} // end of method FunctionObject_FunctionDeclaration_BF4CE850_right::CallCore
 
 	.method family hidebysig virtual 
@@ -1753,14 +1824,17 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x2936
+		// Method begins at RVA 0x2977
 		// Header size: 1
-		// Code size: 11 (0xb)
+		// Code size: 14 (0xe)
 		.maxstack 8
 
-		IL_0000: ldstr "Generated construction adapter is reserved for the callable-family construction migration"
-		IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-		IL_000a: throw
+		IL_0000: ldarg.0
+		IL_0001: ldarg.1
+		IL_0002: call instance object[] [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::ToArray()
+		IL_0007: ldarg.2
+		IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionObject(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, object[], object)
+		IL_000d: ret
 	} // end of method FunctionObject_FunctionDeclaration_BF4CE850_right::ConstructCore
 
 } // end of class FunctionObjects.BinaryOperator_TypedNumericScheduler_15BB9EDF.FunctionObject_FunctionDeclaration_BF4CE850_right
@@ -1777,7 +1851,7 @@
 			class Modules.BinaryOperator_TypedNumericScheduler/Scope capture0
 		) cil managed 
 	{
-		// Method begins at RVA 0x2942
+		// Method begins at RVA 0x2986
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -1793,7 +1867,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x2951
+		// Method begins at RVA 0x2995
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -1805,7 +1879,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x2954
+		// Method begins at RVA 0x2998
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -1820,16 +1894,16 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x2957
+		// Method begins at RVA 0x299b
 		// Header size: 1
-		// Code size: 13 (0xd)
+		// Code size: 17 (0x11)
 		.maxstack 8
 
 		IL_0000: ldarg.0
 		IL_0001: ldfld class Modules.BinaryOperator_TypedNumericScheduler/Scope FunctionObjects.BinaryOperator_TypedNumericScheduler_15BB9EDF.FunctionObject_FunctionDeclaration_D8F5465F_calls::_environment0_BinaryOperator_TypedNumericScheduler
-		IL_0006: ldnull
-		IL_0007: call object Modules.BinaryOperator_TypedNumericScheduler/calls::__js_call__(class Modules.BinaryOperator_TypedNumericScheduler/Scope, object)
-		IL_000c: ret
+		IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
+		IL_000b: call object Modules.BinaryOperator_TypedNumericScheduler/calls::__js_call__(class Modules.BinaryOperator_TypedNumericScheduler/Scope, object)
+		IL_0010: ret
 	} // end of method FunctionObject_FunctionDeclaration_D8F5465F_calls::CallCore
 
 	.method family hidebysig virtual 
@@ -1838,14 +1912,17 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x2965
+		// Method begins at RVA 0x29ad
 		// Header size: 1
-		// Code size: 11 (0xb)
+		// Code size: 14 (0xe)
 		.maxstack 8
 
-		IL_0000: ldstr "Generated construction adapter is reserved for the callable-family construction migration"
-		IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-		IL_000a: throw
+		IL_0000: ldarg.0
+		IL_0001: ldarg.1
+		IL_0002: call instance object[] [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::ToArray()
+		IL_0007: ldarg.2
+		IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionObject(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, object[], object)
+		IL_000d: ret
 	} // end of method FunctionObject_FunctionDeclaration_D8F5465F_calls::ConstructCore
 
 } // end of class FunctionObjects.BinaryOperator_TypedNumericScheduler_15BB9EDF.FunctionObject_FunctionDeclaration_D8F5465F_calls
@@ -1857,7 +1934,7 @@
 	.method public hidebysig specialname rtspecialname 
 		instance void .ctor () cil managed 
 	{
-		// Method begins at RVA 0x2971
+		// Method begins at RVA 0x29bc
 		// Header size: 1
 		// Code size: 7 (0x7)
 		.maxstack 8
@@ -1870,7 +1947,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x2979
+		// Method begins at RVA 0x29c4
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -1882,7 +1959,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x297c
+		// Method begins at RVA 0x29c7
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -1897,18 +1974,18 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x297f
+		// Method begins at RVA 0x29ca
 		// Header size: 1
-		// Code size: 19 (0x13)
+		// Code size: 23 (0x17)
 		.maxstack 8
 
-		IL_0000: ldnull
-		IL_0001: ldarg.2
-		IL_0002: ldc.i4.0
-		IL_0003: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-		IL_0008: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_000d: call class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.BinaryOperator_TypedNumericScheduler/postfix::__js_call__(object, float64)
-		IL_0012: ret
+		IL_0000: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
+		IL_0005: ldarg.2
+		IL_0006: ldc.i4.0
+		IL_0007: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+		IL_000c: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_0011: call class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.BinaryOperator_TypedNumericScheduler/postfix::__js_call__(object, float64)
+		IL_0016: ret
 	} // end of method FunctionObject_FunctionDeclaration_B3DBBF8F_postfix::CallCore
 
 	.method family hidebysig virtual 
@@ -1917,14 +1994,17 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x2993
+		// Method begins at RVA 0x29e2
 		// Header size: 1
-		// Code size: 11 (0xb)
+		// Code size: 14 (0xe)
 		.maxstack 8
 
-		IL_0000: ldstr "Generated construction adapter is reserved for the callable-family construction migration"
-		IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-		IL_000a: throw
+		IL_0000: ldarg.0
+		IL_0001: ldarg.1
+		IL_0002: call instance object[] [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::ToArray()
+		IL_0007: ldarg.2
+		IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionObject(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, object[], object)
+		IL_000d: ret
 	} // end of method FunctionObject_FunctionDeclaration_B3DBBF8F_postfix::ConstructCore
 
 } // end of class FunctionObjects.BinaryOperator_TypedNumericScheduler_15BB9EDF.FunctionObject_FunctionDeclaration_B3DBBF8F_postfix
@@ -1936,7 +2016,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x299f
+		// Method begins at RVA 0x29f1
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
