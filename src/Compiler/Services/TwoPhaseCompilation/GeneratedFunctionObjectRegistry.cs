@@ -1,17 +1,15 @@
-using System.Collections.Concurrent;
 using System.Reflection.Metadata;
 
 namespace Jroc.Services.TwoPhaseCompilation;
 
 /// <summary>
-/// Canonical CallableId-keyed store for generated function-object plans and metadata.
+/// Canonical, compilation-scoped CallableId-keyed store for generated function-object plans and metadata.
 /// </summary>
 public sealed class GeneratedFunctionObjectRegistry
 {
-    private readonly ConcurrentDictionary<CallableId, GeneratedFunctionObjectPlan> _plans = new();
-    private readonly ConcurrentDictionary<CallableId, GeneratedFunctionObjectMetadata> _metadata = new();
+    private readonly Dictionary<CallableId, GeneratedFunctionObjectPlan> _plans = new();
+    private readonly Dictionary<CallableId, GeneratedFunctionObjectMetadata> _metadata = new();
     private readonly List<CallableId> _stableOrder = new();
-    private readonly object _orderLock = new();
 
     public bool StrictMode { get; set; }
 
@@ -19,16 +17,14 @@ public sealed class GeneratedFunctionObjectRegistry
     {
         ArgumentNullException.ThrowIfNull(plan);
 
-        if (_plans.TryAdd(plan.Callable, plan))
+        if (!_plans.TryGetValue(plan.Callable, out var existing))
         {
-            lock (_orderLock)
-            {
-                _stableOrder.Add(plan.Callable);
-            }
+            _plans.Add(plan.Callable, plan);
+            _stableOrder.Add(plan.Callable);
             return;
         }
 
-        if (!_plans.TryGetValue(plan.Callable, out var existing) || !PlansEquivalent(existing, plan))
+        if (!PlansEquivalent(existing, plan))
         {
             throw new InvalidOperationException(
                 $"Generated function object '{plan.Callable.DisplayName}' was planned inconsistently.");
@@ -79,13 +75,17 @@ public sealed class GeneratedFunctionObjectRegistry
                 $"Cannot set generated function-object metadata for unplanned callable '{metadata.Plan.Callable.DisplayName}'.");
         }
 
-        if (!_metadata.TryAdd(metadata.Plan.Callable, metadata)
-            && (!_metadata.TryGetValue(metadata.Plan.Callable, out var existing)
-                || existing != metadata))
+        if (_metadata.TryGetValue(metadata.Plan.Callable, out var existing))
         {
-            throw new InvalidOperationException(
-                $"Generated function-object metadata for '{metadata.Plan.Callable.DisplayName}' was assigned more than once.");
+            if (existing != metadata)
+            {
+                throw new InvalidOperationException(
+                    $"Generated function-object metadata for '{metadata.Plan.Callable.DisplayName}' was assigned more than once.");
+            }
+            return;
         }
+
+        _metadata.Add(metadata.Plan.Callable, metadata);
     }
 
     public bool TryGetPlan(CallableId callable, out GeneratedFunctionObjectPlan plan)
@@ -109,11 +109,7 @@ public sealed class GeneratedFunctionObjectRegistry
         {
             EntryPoints = metadata.EntryPoints.Concat([entryPoint]).ToArray()
         };
-        if (!_metadata.TryUpdate(callable, updated, metadata))
-        {
-            throw new InvalidOperationException(
-                $"Generated function-object metadata changed while adding specialization for '{callable.DisplayName}'.");
-        }
+        _metadata[callable] = updated;
     }
 
     public GeneratedFunctionObjectMetadata GetMetadata(CallableId callable)
@@ -134,23 +130,17 @@ public sealed class GeneratedFunctionObjectRegistry
 
     public IReadOnlyList<GeneratedFunctionObjectPlan> GetPlansInStableOrder()
     {
-        lock (_orderLock)
-        {
-            return _stableOrder
-                .Where(_plans.ContainsKey)
-                .Select(callable => _plans[callable])
-                .ToArray();
-        }
+        return _stableOrder
+            .Where(_plans.ContainsKey)
+            .Select(callable => _plans[callable])
+            .ToArray();
     }
 
     public IReadOnlyList<GeneratedFunctionObjectMetadata> GetMetadataInStableOrder()
     {
-        lock (_orderLock)
-        {
-            return _stableOrder
-                .Where(_metadata.ContainsKey)
-                .Select(callable => _metadata[callable])
-                .ToArray();
-        }
+        return _stableOrder
+            .Where(_metadata.ContainsKey)
+            .Select(callable => _metadata[callable])
+            .ToArray();
     }
 }
