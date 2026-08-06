@@ -21,6 +21,12 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   conditional lexical state, inferred typed canonical entry points, dynamic
   adapter thunks, constructability/return-family metadata, and reserved
   construction entry points for the staged callable-family migrations.
+- compiler/runtime/perf: materialize compiled arrows as generated
+  `JsFunctionObject` instances instead of compiling an expression-tree
+  `DynamicMethod` per evaluation. Preserve lexical `this`, `new.target`,
+  `super`, async/rest/callback semantics and route callable runtime consumers
+  through the common ABI. Modern cube execution improves from 9.658 ms to
+  5.437 ms on the same host and emits no `Closure.BindArrow` sites.
 
 ## v0.12.3 - 2026-08-05
 

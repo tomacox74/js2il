@@ -57,7 +57,8 @@ field: the object stores only required typed environments.
 This phase emits metadata and callable adapters but does not replace an
 existing callable family's materialization path. In particular:
 
-- arrows continue using their current delegate binder until #1706;
+- arrows materialize generated function objects directly; see
+  [Generated arrow function objects](GeneratedArrowFunctionObjects.md);
 - ordinary function declarations/expressions migrate under #1712;
 - ordinary and class construction semantics activate under #1713;
 - methods/accessors and their home-object behavior migrate under #1714.

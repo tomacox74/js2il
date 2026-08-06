@@ -64,10 +64,10 @@ dotnet run -c Release \
   --callable-baselines --filter '*'
 ```
 
-`Arrow delegate materialization` calls the current `Closure.BindArrow` path for
-every benchmark operation. It isolates expression-tree compilation,
-`DynamicMethod` creation, delegate setup, and callable metadata allocation from
-module startup and runtime teardown.
+`Legacy arrow delegate materialization` calls `Closure.BindArrow` for every
+benchmark operation, while `Generated arrow object materialization` allocates
+the replacement object-backed representation. Together they isolate the old
+expression-tree/`DynamicMethod` cost from the new heap-object cost.
 
 `Loaded module direct-call loop` loads the same module once during setup, then
 invokes an exported loop containing 1,000 direct calls to a compiled function.
@@ -78,7 +78,8 @@ A reference ShortRun on 2026-08-05 used .NET 10.0.10 on Linux x64:
 
 | Phase | Mean | Allocated |
 | --- | ---: | ---: |
-| Arrow delegate materialization | 150.743 us | 5,841 B |
+| Legacy arrow delegate materialization | 152.064 us | 5,821 B |
+| Generated arrow object materialization | 15.496 ns | 64 B |
 | Loaded module direct-call loop | 163.9 ns | 89 B |
 
 These values are diagnostic reference points, not cross-machine pass/fail
