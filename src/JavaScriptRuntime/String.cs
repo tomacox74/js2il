@@ -1646,13 +1646,18 @@ namespace JavaScriptRuntime
             return result.ToString();
         }
 
-        private static string InvokeStringReplaceCallback(Delegate callback, string matched, double position, string input)
+        private static string InvokeStringReplaceCallback(object callback, string matched, double position, string input)
         {
-            var callbackResult = Closure.InvokeFunctionCallWithArgs3(callback, System.Array.Empty<object>(), matched, position, input);
+            var callbackResult = CallableOperations.Call3(
+                callback,
+                null,
+                matched,
+                position,
+                input);
             return ToSearchString(callbackResult);
         }
 
-        private static string InvokeRegExpReplaceCallback(Delegate callback, Match match, string input)
+        private static string InvokeRegExpReplaceCallback(object callback, Match match, string input)
         {
             var args = new object?[match.Groups.Count + 2];
             args[0] = match.Value;
@@ -1666,7 +1671,7 @@ namespace JavaScriptRuntime
             args[match.Groups.Count] = (double)match.Index;
             args[match.Groups.Count + 1] = input;
 
-            var callbackResult = Closure.InvokeFunctionCallWithArgs(callback, System.Array.Empty<object>(), args);
+            var callbackResult = CallableOperations.Call(callback, null, args);
             return ToSearchString(callbackResult);
         }
 
@@ -1953,9 +1958,9 @@ namespace JavaScriptRuntime
 
             string Invoke(object? cb, Match match)
             {
-                if (cb is Delegate callback)
+                if (CallableOperations.IsCallable(cb))
                 {
-                    return InvokeRegExpReplaceCallback(callback, match, input);
+                    return InvokeRegExpReplaceCallback(cb!, match, input);
                 }
 
                 // Fallback: ToString on callback object (unlikely useful)
@@ -2217,9 +2222,9 @@ namespace JavaScriptRuntime
                     return literalReplaceResult;
                 }
 
-                if (replacement is Delegate replacementCallback)
+                if (CallableOperations.IsCallable(replacement))
                 {
-                    var evaluator = new MatchEvaluator(m => InvokeRegExpReplaceCallback(replacementCallback, m, input));
+                    var evaluator = new MatchEvaluator(m => InvokeRegExpReplaceCallback(replacement!, m, input));
                     if (regExp.Global)
                     {
                         return regExp.Regex.Replace(input, evaluator);
@@ -2258,13 +2263,13 @@ namespace JavaScriptRuntime
                 return false;
             }
 
-            if (replacement is Delegate replacementCallback)
+            if (CallableOperations.IsCallable(replacement))
             {
                 result = ReplaceLiteralWithCallback(
                     input,
                     literalPattern,
                     regExp.Global,
-                    (match, index) => InvokeStringReplaceCallback(replacementCallback, match, (double)index, input));
+                    (match, index) => InvokeStringReplaceCallback(replacement!, match, (double)index, input));
                 return true;
             }
 

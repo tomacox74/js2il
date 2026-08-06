@@ -150,6 +150,11 @@ namespace Jroc.Services
         public MemberReferenceHandle TypeError_Ctor_String_Ref => _memberRefRegistry.GetOrAddConstructor(
             typeof(JavaScriptRuntime.TypeError),
             new[] { typeof(string) });
+        public MemberReferenceHandle RuntimeServices_ResolveLexicalThis_Ref =>
+            _memberRefRegistry.GetOrAddMethod(
+                typeof(JavaScriptRuntime.RuntimeServices),
+                nameof(JavaScriptRuntime.RuntimeServices.ResolveLexicalThis),
+                new[] { typeof(object) });
         public MemberReferenceHandle AsyncScope_Ctor_Ref => _memberRefRegistry.GetOrAddConstructor(typeof(JavaScriptRuntime.AsyncScope), Type.EmptyTypes);
         public MemberReferenceHandle AsyncGeneratorScope_Ctor_Ref => _memberRefRegistry.GetOrAddConstructor(typeof(JavaScriptRuntime.AsyncGeneratorScope), Type.EmptyTypes);
         public MemberReferenceHandle GeneratorScope_Ctor_Ref => _memberRefRegistry.GetOrAddConstructor(typeof(JavaScriptRuntime.GeneratorScope), Type.EmptyTypes);

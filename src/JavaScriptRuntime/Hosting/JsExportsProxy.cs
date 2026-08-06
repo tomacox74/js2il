@@ -91,12 +91,14 @@ internal class JsExportsProxy : DispatchProxy
             return runtime.Invoke(() =>
             {
                 var callable = ExportMemberResolver.GetExportMember(runtime.Exports, exportName);
-                if (callable is not Delegate d)
+                if (!JavaScriptRuntime.CallableOperations.IsCallable(callable))
                 {
                     throw new MissingMethodException($"Export '{exportName}' is not a callable function.");
                 }
 
-                var result = ExportMemberResolver.InvokeJsDelegate(d, args ?? Array.Empty<object?>());
+                var result = ExportMemberResolver.InvokeJsCallable(
+                    callable!,
+                    args ?? Array.Empty<object?>());
                 return JsReturnConverter.ConvertReturn(runtime, result, targetMethod.ReturnType);
             });
         }

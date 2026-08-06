@@ -2759,18 +2759,7 @@ namespace JavaScriptRuntime
                 return value;
             }
 
-            var effectiveThisArg = mapFn is Delegate mapDelegate
-                ? JavaScriptRuntime.Function.GetEffectiveThisArg(mapDelegate, thisArg)
-                : thisArg;
-            var previousThis = RuntimeServices.SetCurrentThis(effectiveThisArg);
-            try
-            {
-                return Closure.InvokeWithArgs(mapFn, System.Array.Empty<object>(), value, (double)index);
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentThis(previousThis);
-            }
+            return CallableOperations.Call2(mapFn, thisArg, value, (double)index);
         }
 
         private static bool TryGetArrayLikeLength(object source, out int length)
@@ -2794,7 +2783,7 @@ namespace JavaScriptRuntime
         }
 
         private static bool IsCallable(object? value)
-            => value is Delegate || value is Proxy proxy && proxy.IsCallableTarget;
+            => CallableOperations.IsCallable(value);
 
         /// <summary>
         /// JavaScript Array.isArray(value) static method.

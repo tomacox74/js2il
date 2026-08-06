@@ -922,23 +922,23 @@ public class RuntimeServices
 
     public static object SetFunctionInferredName(object functionValue, object nameValue)
     {
-        if (functionValue is not Delegate functionDelegate
+        if (!CallableOperations.IsCallable(functionValue)
             || nameValue is not string inferredName
             || string.IsNullOrWhiteSpace(inferredName))
         {
             return functionValue;
         }
 
-        if (PropertyDescriptorStore.TryGetOwn(functionDelegate, "name", out var existingDescriptor)
+        if (PropertyDescriptorStore.TryGetOwn(functionValue, "name", out var existingDescriptor)
             && existingDescriptor.Kind == JsPropertyDescriptorKind.Data
             && existingDescriptor.Value is string existingName
             && !string.IsNullOrEmpty(existingName))
         {
-            return functionDelegate;
+            return functionValue;
         }
 
-        Function.DefineMetadataProperty(functionDelegate, "name", inferredName);
-        return functionDelegate;
+        Function.DefineMetadataProperty(functionValue, "name", inferredName);
+        return functionValue;
     }
 
     public static object?[]? GetCurrentArguments()
