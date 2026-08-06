@@ -40,9 +40,12 @@ public sealed partial class HIRToLIRLowerer
     private readonly JavaScriptRuntime.IRuntimeIntrinsicCatalog _runtimeIntrinsicCatalog;
     private bool _superConstructorCalled;
 
-    private ValueStorage GetMaterializedCallableStorage(TwoPhase.CallableId callableId)
+    private ValueStorage GetMaterializedCallableStorage(
+        TwoPhase.CallableId callableId,
+        bool allowGeneratedFunctionObject = true)
     {
-        if ((callableId.Kind == TwoPhase.CallableKind.Arrow
+        if (allowGeneratedFunctionObject
+            && (callableId.Kind == TwoPhase.CallableKind.Arrow
                 || IsSynchronousOrdinaryFunction(callableId))
             && _generatedFunctionObjectRegistry?.TryGetMetadata(
                 callableId,

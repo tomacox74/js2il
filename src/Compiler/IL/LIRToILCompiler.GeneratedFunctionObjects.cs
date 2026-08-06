@@ -46,7 +46,8 @@ internal sealed partial class LIRToILCompiler
         TempLocalAllocation allocation,
         MethodDescriptor methodDescriptor)
     {
-        if (createFunction.IsAsync
+        if (createFunction.IsNonConstructible
+            || createFunction.IsAsync
             || IsGeneratorCallable(createFunction.CallableId)
             || !_generatedFunctionObjectRegistry.TryGetMetadata(
                 createFunction.CallableId,

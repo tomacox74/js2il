@@ -1141,8 +1141,13 @@ public sealed partial class HIRToLIRLowerer
             ScopesArray: scopesTemp,
             Result: resultTempVar,
             IsAsyncGeneratorFunction: funcScope.IsAsync && funcScope.IsGenerator,
-            IsAsync: funcScope.IsAsync));
-        DefineTempStorage(resultTempVar, GetMaterializedCallableStorage(funcExpr.CallableId));
+            IsAsync: funcScope.IsAsync,
+            IsNonConstructible: funcExpr.IsNonConstructible));
+        DefineTempStorage(
+            resultTempVar,
+            GetMaterializedCallableStorage(
+                funcExpr.CallableId,
+                allowGeneratedFunctionObject: !funcExpr.IsNonConstructible));
 
         if (funcExpr.IsNonConstructible)
         {
