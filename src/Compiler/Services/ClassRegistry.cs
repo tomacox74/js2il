@@ -44,6 +44,28 @@ namespace Jroc.Services
             return _classes.TryGetValue(className, out handle);
         }
 
+        public bool TryGetBySimpleTypeName(string typeName, out TypeDefinitionHandle handle)
+        {
+            var matches = _classes
+                .Where(entry =>
+                    string.Equals(
+                        entry.Key.Split('.').Last(),
+                        typeName,
+                        StringComparison.Ordinal))
+                .Select(entry => entry.Value)
+                .Distinct()
+                .Take(2)
+                .ToArray();
+            if (matches.Length == 1)
+            {
+                handle = matches[0];
+                return true;
+            }
+
+            handle = default;
+            return false;
+        }
+
         public void RegisterField(string className, string fieldName, FieldDefinitionHandle fieldHandle)
         {
             if (string.IsNullOrEmpty(className) || string.IsNullOrEmpty(fieldName)) return;

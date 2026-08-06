@@ -259,6 +259,141 @@
 
 } // end of class Modules.Classes_ClassConstructor_TwoParams_AddMethod
 
+.class private auto ansi sealed beforefieldinit FunctionObjects.Classes_ClassConstructor_TwoParams_AddMethod_8EDEE1A6.FunctionObject_ClassConstructor_3E5F8A45_Adder
+	extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+{
+	// Methods
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x21d8
+		// Header size: 1
+		// Code size: 7 (0x7)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+		IL_0006: ret
+	} // end of method FunctionObject_ClassConstructor_3E5F8A45_Adder::.ctor
+
+	.method public hidebysig specialname virtual 
+		instance bool get_IsConstructor () cil managed 
+	{
+		// Method begins at RVA 0x21e0
+		// Header size: 1
+		// Code size: 2 (0x2)
+		.maxstack 8
+
+		IL_0000: ldc.i4.1
+		IL_0001: ret
+	} // end of method FunctionObject_ClassConstructor_3E5F8A45_Adder::get_IsConstructor
+
+	.method public hidebysig specialname virtual 
+		instance bool get_RequiresInvocationContext () cil managed 
+	{
+		// Method begins at RVA 0x21e3
+		// Header size: 1
+		// Code size: 2 (0x2)
+		.maxstack 8
+
+		IL_0000: ldc.i4.0
+		IL_0001: ret
+	} // end of method FunctionObject_ClassConstructor_3E5F8A45_Adder::get_RequiresInvocationContext
+
+	.method family hidebysig virtual 
+		instance object CallCore (
+			object thisArgument,
+			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+		) cil managed 
+	{
+		// Method begins at RVA 0x21e6
+		// Header size: 1
+		// Code size: 11 (0xb)
+		.maxstack 8
+
+		IL_0000: ldstr "Class constructor cannot be invoked without 'new'"
+		IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
+		IL_000a: throw
+	} // end of method FunctionObject_ClassConstructor_3E5F8A45_Adder::CallCore
+
+	.method family hidebysig virtual 
+		instance object ConstructCore (
+			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
+			object newTarget
+		) cil managed 
+	{
+		// Method begins at RVA 0x21f2
+		// Header size: 1
+		// Code size: 11 (0xb)
+		.maxstack 8
+
+		IL_0000: ldstr "Generated construction adapter is reserved for the callable-family construction migration"
+		IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
+		IL_000a: throw
+	} // end of method FunctionObject_ClassConstructor_3E5F8A45_Adder::ConstructCore
+
+} // end of class FunctionObjects.Classes_ClassConstructor_TwoParams_AddMethod_8EDEE1A6.FunctionObject_ClassConstructor_3E5F8A45_Adder
+
+.class private auto ansi sealed beforefieldinit FunctionObjects.Classes_ClassConstructor_TwoParams_AddMethod_8EDEE1A6.FunctionObject_ClassMethod_BBF2F92B_Adder_add
+	extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+{
+	// Methods
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x21fe
+		// Header size: 1
+		// Code size: 7 (0x7)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+		IL_0006: ret
+	} // end of method FunctionObject_ClassMethod_BBF2F92B_Adder_add::.ctor
+
+	.method public hidebysig specialname virtual 
+		instance bool get_IsConstructor () cil managed 
+	{
+		// Method begins at RVA 0x2206
+		// Header size: 1
+		// Code size: 2 (0x2)
+		.maxstack 8
+
+		IL_0000: ldc.i4.0
+		IL_0001: ret
+	} // end of method FunctionObject_ClassMethod_BBF2F92B_Adder_add::get_IsConstructor
+
+	.method public hidebysig specialname virtual 
+		instance bool get_RequiresInvocationContext () cil managed 
+	{
+		// Method begins at RVA 0x2209
+		// Header size: 1
+		// Code size: 2 (0x2)
+		.maxstack 8
+
+		IL_0000: ldc.i4.0
+		IL_0001: ret
+	} // end of method FunctionObject_ClassMethod_BBF2F92B_Adder_add::get_RequiresInvocationContext
+
+	.method family hidebysig virtual 
+		instance object CallCore (
+			object thisArgument,
+			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+		) cil managed 
+	{
+		// Method begins at RVA 0x220c
+		// Header size: 1
+		// Code size: 12 (0xc)
+		.maxstack 8
+
+		IL_0000: ldarg.1
+		IL_0001: castclass Modules.Classes_ClassConstructor_TwoParams_AddMethod/Adder
+		IL_0006: call instance object Modules.Classes_ClassConstructor_TwoParams_AddMethod/Adder::'add'()
+		IL_000b: ret
+	} // end of method FunctionObject_ClassMethod_BBF2F92B_Adder_add::CallCore
+
+} // end of class FunctionObjects.Classes_ClassConstructor_TwoParams_AddMethod_8EDEE1A6.FunctionObject_ClassMethod_BBF2F92B_Adder_add
+
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object
 {
@@ -266,7 +401,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21d8
+		// Method begins at RVA 0x2219
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
