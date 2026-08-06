@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.12.4 - 2026-08-06
+
 - runtime: add the `JsFunctionObject : JsObject` foundation, centralized
   callable/constructor operations, and an explicit transitional adapter for
   delegate-backed functions. Function objects now share ordinary object,
