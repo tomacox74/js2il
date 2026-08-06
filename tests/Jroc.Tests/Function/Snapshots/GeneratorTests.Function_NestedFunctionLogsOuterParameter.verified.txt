@@ -349,16 +349,18 @@
 {
 	// Fields
 	.field private initonly class Modules.Function_NestedFunctionLogsOuterParameter/outerFunction/Scope _environment1_outerFunction
+	.field private initonly object[] _transitionalScopes
 
 	// Methods
 	.method public hidebysig specialname rtspecialname 
 		instance void .ctor (
-			class Modules.Function_NestedFunctionLogsOuterParameter/outerFunction/Scope capture0
+			class Modules.Function_NestedFunctionLogsOuterParameter/outerFunction/Scope capture0,
+			object[] capture1
 		) cil managed 
 	{
 		// Method begins at RVA 0x21ab
 		// Header size: 1
-		// Code size: 14 (0xe)
+		// Code size: 21 (0x15)
 		.maxstack 8
 
 		IL_0000: ldarg.0
@@ -366,13 +368,16 @@
 		IL_0006: ldarg.0
 		IL_0007: ldarg.1
 		IL_0008: stfld class Modules.Function_NestedFunctionLogsOuterParameter/outerFunction/Scope FunctionObjects.Function_NestedFunctionLogsOuterParameter_8340F31C.FunctionObject_FunctionDeclaration_F8FBF66D_innerFunction::_environment1_outerFunction
-		IL_000d: ret
+		IL_000d: ldarg.0
+		IL_000e: ldarg.2
+		IL_000f: stfld object[] FunctionObjects.Function_NestedFunctionLogsOuterParameter_8340F31C.FunctionObject_FunctionDeclaration_F8FBF66D_innerFunction::_transitionalScopes
+		IL_0014: ret
 	} // end of method FunctionObject_FunctionDeclaration_F8FBF66D_innerFunction::.ctor
 
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x21ba
+		// Method begins at RVA 0x21c1
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -384,7 +389,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x21bd
+		// Method begins at RVA 0x21c4
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -399,24 +404,19 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x21c0
+		// Method begins at RVA 0x21c7
 		// Header size: 1
-		// Code size: 29 (0x1d)
+		// Code size: 20 (0x14)
 		.maxstack 8
 
-		IL_0000: ldc.i4.2
-		IL_0001: newarr [System.Runtime]System.Object
-		IL_0006: dup
-		IL_0007: ldc.i4.1
-		IL_0008: ldarg.0
-		IL_0009: ldfld class Modules.Function_NestedFunctionLogsOuterParameter/outerFunction/Scope FunctionObjects.Function_NestedFunctionLogsOuterParameter_8340F31C.FunctionObject_FunctionDeclaration_F8FBF66D_innerFunction::_environment1_outerFunction
-		IL_000e: stelem.ref
-		IL_000f: ldnull
-		IL_0010: ldarg.2
-		IL_0011: ldc.i4.0
-		IL_0012: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-		IL_0017: call object Modules.Function_NestedFunctionLogsOuterParameter/outerFunction/innerFunction::__js_call__(object[], object, object)
-		IL_001c: ret
+		IL_0000: ldarg.0
+		IL_0001: ldfld object[] FunctionObjects.Function_NestedFunctionLogsOuterParameter_8340F31C.FunctionObject_FunctionDeclaration_F8FBF66D_innerFunction::_transitionalScopes
+		IL_0006: ldnull
+		IL_0007: ldarg.2
+		IL_0008: ldc.i4.0
+		IL_0009: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+		IL_000e: call object Modules.Function_NestedFunctionLogsOuterParameter/outerFunction/innerFunction::__js_call__(object[], object, object)
+		IL_0013: ret
 	} // end of method FunctionObject_FunctionDeclaration_F8FBF66D_innerFunction::CallCore
 
 	.method family hidebysig virtual 
@@ -425,7 +425,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x21de
+		// Method begins at RVA 0x21dc
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -444,7 +444,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21ea
+		// Method begins at RVA 0x21e8
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

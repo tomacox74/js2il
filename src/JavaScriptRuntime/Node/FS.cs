@@ -177,7 +177,7 @@ namespace JavaScriptRuntime.Node
             object? flags = null;
 
             var cbArg = srcArgs[srcArgs.Length - 1];
-            if (cbArg is not Delegate callback)
+            if (cbArg is not { } callback || !CallableOperations.IsCallable(callback))
             {
                 throw new TypeError("The \"callback\" argument must be of type function");
             }
@@ -220,7 +220,7 @@ namespace JavaScriptRuntime.Node
             var file = srcArgs[0];
             object? options = null;
             var cbArg = srcArgs[srcArgs.Length - 1];
-            if (cbArg is not Delegate callback)
+            if (cbArg is not { } callback || !CallableOperations.IsCallable(callback))
             {
                 throw new TypeError("The \"callback\" argument must be of type function");
             }
@@ -271,7 +271,7 @@ namespace JavaScriptRuntime.Node
             object? options = null;
 
             var cbArg = srcArgs[srcArgs.Length - 1];
-            if (cbArg is not Delegate callback)
+            if (cbArg is not { } callback || !CallableOperations.IsCallable(callback))
             {
                 throw new TypeError("The \"callback\" argument must be of type function");
             }
@@ -344,7 +344,7 @@ namespace JavaScriptRuntime.Node
             object? options = null;
 
             var cbArg = srcArgs[srcArgs.Length - 1];
-            if (cbArg is not Delegate callback)
+            if (cbArg is not { } callback || !CallableOperations.IsCallable(callback))
             {
                 throw new TypeError("The \"callback\" argument must be of type function");
             }
@@ -416,7 +416,7 @@ namespace JavaScriptRuntime.Node
             var dest = srcArgs[1]?.ToString() ?? string.Empty;
 
             var cbArg = srcArgs[srcArgs.Length - 1];
-            if (cbArg is not Delegate callback)
+            if (cbArg is not { } callback || !CallableOperations.IsCallable(callback))
             {
                 throw new TypeError("The \"callback\" argument must be of type function");
             }
@@ -453,7 +453,7 @@ namespace JavaScriptRuntime.Node
             var oldPath = srcArgs[0]?.ToString() ?? string.Empty;
             var newPath = srcArgs[1]?.ToString() ?? string.Empty;
             var cbArg = srcArgs[srcArgs.Length - 1];
-            if (cbArg is not Delegate callback)
+            if (cbArg is not { } callback || !CallableOperations.IsCallable(callback))
             {
                 throw new TypeError("The \"callback\" argument must be of type function");
             }
@@ -489,7 +489,7 @@ namespace JavaScriptRuntime.Node
 
             var file = srcArgs[0];
             var cbArg = srcArgs[srcArgs.Length - 1];
-            if (cbArg is not Delegate callback)
+            if (cbArg is not { } callback || !CallableOperations.IsCallable(callback))
             {
                 throw new TypeError("The \"callback\" argument must be of type function");
             }
@@ -528,7 +528,7 @@ namespace JavaScriptRuntime.Node
             object? options = null;
 
             var cbArg = srcArgs[srcArgs.Length - 1];
-            if (cbArg is not Delegate callback)
+            if (cbArg is not { } callback || !CallableOperations.IsCallable(callback))
             {
                 throw new TypeError("The \"callback\" argument must be of type function");
             }
@@ -573,7 +573,7 @@ namespace JavaScriptRuntime.Node
             object? options = null;
 
             var cbArg = srcArgs[srcArgs.Length - 1];
-            if (cbArg is not Delegate callback)
+            if (cbArg is not { } callback || !CallableOperations.IsCallable(callback))
             {
                 throw new TypeError("The \"callback\" argument must be of type function");
             }
@@ -627,7 +627,7 @@ namespace JavaScriptRuntime.Node
 
             var file = srcArgs[0];
             var cbArg = srcArgs[srcArgs.Length - 1];
-            if (cbArg is not Delegate callback)
+            if (cbArg is not { } callback || !CallableOperations.IsCallable(callback))
             {
                 throw new TypeError("The \"callback\" argument must be of type function");
             }
@@ -666,7 +666,7 @@ namespace JavaScriptRuntime.Node
             object? options = null;
 
             var cbArg = srcArgs[srcArgs.Length - 1];
-            if (cbArg is not Delegate callback)
+            if (cbArg is not { } callback || !CallableOperations.IsCallable(callback))
             {
                 throw new TypeError("The \"callback\" argument must be of type function");
             }
@@ -711,7 +711,7 @@ namespace JavaScriptRuntime.Node
 
             var file = srcArgs[0];
             var cbArg = srcArgs[srcArgs.Length - 1];
-            if (cbArg is not Delegate callback)
+            if (cbArg is not { } callback || !CallableOperations.IsCallable(callback))
             {
                 throw new TypeError("The \"callback\" argument must be of type function");
             }
@@ -748,7 +748,7 @@ namespace JavaScriptRuntime.Node
 
             var file = srcArgs[0];
             var cbArg = srcArgs[srcArgs.Length - 1];
-            if (cbArg is not Delegate callback)
+            if (cbArg is not { } callback || !CallableOperations.IsCallable(callback))
             {
                 throw new TypeError("The \"callback\" argument must be of type function");
             }
@@ -782,17 +782,17 @@ namespace JavaScriptRuntime.Node
             }
         }
 
-        private static PromiseWithResolvers CreateCallbackPromiseWithResolvers(Delegate callback)
+        private static PromiseWithResolvers CreateCallbackPromiseWithResolvers(object callback)
         {
             JsFunc1 resolve = (scopes, newTarget, value) =>
             {
-                Closure.InvokeWithArgs(callback, System.Array.Empty<object>(), JsNull.Null, value);
+                CallableOperations.Call2(callback, null, JsNull.Null, value);
                 return null;
             };
 
             JsFunc1 reject = (scopes, newTarget, reason) =>
             {
-                Closure.InvokeWithArgs(callback, System.Array.Empty<object>(), reason, null);
+                CallableOperations.Call2(callback, null, reason, null);
                 return null;
             };
 

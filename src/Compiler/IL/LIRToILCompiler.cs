@@ -31,6 +31,7 @@ internal sealed partial class LIRToILCompiler
     private readonly MemberReferenceRegistry _memberRefRegistry;
     private readonly ScopeMetadataRegistry _scopeMetadataRegistry;
     private readonly VariableRegistry _variableRegistry;
+    private readonly GeneratedFunctionObjectRegistry _generatedFunctionObjectRegistry;
     private readonly JavaScriptRuntime.IRuntimeIntrinsicCatalog _runtimeIntrinsicCatalog;
     private MethodBodyIR? _methodBody;
     private bool _compiled;
@@ -642,6 +643,8 @@ internal sealed partial class LIRToILCompiler
         _memberRefRegistry = memberReferenceRegistry;
         _scopeMetadataRegistry = scopeMetadataRegistry;
         _variableRegistry = serviceProvider.GetRequiredService<VariableRegistry>();
+        _generatedFunctionObjectRegistry =
+            serviceProvider.GetRequiredService<GeneratedFunctionObjectRegistry>();
         _runtimeIntrinsicCatalog = serviceProvider.GetService(typeof(JavaScriptRuntime.IRuntimeIntrinsicCatalog)) as JavaScriptRuntime.IRuntimeIntrinsicCatalog
             ?? new JavaScriptRuntime.RuntimeIntrinsicCatalog();
     }

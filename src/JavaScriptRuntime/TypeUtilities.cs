@@ -430,20 +430,10 @@ namespace JavaScriptRuntime
         }
 
         private static object? InvokeWithThis(object receiver, object callable, params object?[] args)
-        {
-            var previousThis = RuntimeServices.SetCurrentThis(receiver);
-            try
-            {
-                return Closure.InvokeWithArgs(callable, System.Array.Empty<object>(), args);
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentThis(previousThis);
-            }
-        }
+            => CallableOperations.Call(callable, receiver, args);
 
         private static bool IsCallable(object? value)
-            => value is Delegate || value is Proxy proxy && proxy.IsCallableTarget;
+            => CallableOperations.IsCallable(value);
 
         internal static bool IsPrimitive(object? value)
         {

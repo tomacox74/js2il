@@ -873,16 +873,18 @@
 {
 	// Fields
 	.field private initonly class Modules.TimersPromises_SetInterval_Backpressure_And_Return/Scope _environment0_TimersPromises_SetInterval_Backpressure_And_Return
+	.field private initonly object[] _transitionalScopes
 
 	// Methods
 	.method public hidebysig specialname rtspecialname 
 		instance void .ctor (
-			class Modules.TimersPromises_SetInterval_Backpressure_And_Return/Scope capture0
+			class Modules.TimersPromises_SetInterval_Backpressure_And_Return/Scope capture0,
+			object[] capture1
 		) cil managed 
 	{
 		// Method begins at RVA 0x26aa
 		// Header size: 1
-		// Code size: 14 (0xe)
+		// Code size: 21 (0x15)
 		.maxstack 8
 
 		IL_0000: ldarg.0
@@ -890,13 +892,16 @@
 		IL_0006: ldarg.0
 		IL_0007: ldarg.1
 		IL_0008: stfld class Modules.TimersPromises_SetInterval_Backpressure_And_Return/Scope FunctionObjects.TimersPromises_SetInterval_Backpressure_And_Return_A22FE5A9.FunctionObject_FunctionDeclaration_8247CAD9_main::_environment0_TimersPromises_SetInterval_Backpressure_And_Return
-		IL_000d: ret
+		IL_000d: ldarg.0
+		IL_000e: ldarg.2
+		IL_000f: stfld object[] FunctionObjects.TimersPromises_SetInterval_Backpressure_And_Return_A22FE5A9.FunctionObject_FunctionDeclaration_8247CAD9_main::_transitionalScopes
+		IL_0014: ret
 	} // end of method FunctionObject_FunctionDeclaration_8247CAD9_main::.ctor
 
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x26b9
+		// Method begins at RVA 0x26c0
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -908,7 +913,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x26bc
+		// Method begins at RVA 0x26c3
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -923,21 +928,16 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x26bf
+		// Method begins at RVA 0x26c6
 		// Header size: 1
-		// Code size: 22 (0x16)
+		// Code size: 13 (0xd)
 		.maxstack 8
 
-		IL_0000: ldc.i4.1
-		IL_0001: newarr [System.Runtime]System.Object
-		IL_0006: dup
-		IL_0007: ldc.i4.0
-		IL_0008: ldarg.0
-		IL_0009: ldfld class Modules.TimersPromises_SetInterval_Backpressure_And_Return/Scope FunctionObjects.TimersPromises_SetInterval_Backpressure_And_Return_A22FE5A9.FunctionObject_FunctionDeclaration_8247CAD9_main::_environment0_TimersPromises_SetInterval_Backpressure_And_Return
-		IL_000e: stelem.ref
-		IL_000f: ldnull
-		IL_0010: call object Modules.TimersPromises_SetInterval_Backpressure_And_Return/main::__js_call__(object[], object)
-		IL_0015: ret
+		IL_0000: ldarg.0
+		IL_0001: ldfld object[] FunctionObjects.TimersPromises_SetInterval_Backpressure_And_Return_A22FE5A9.FunctionObject_FunctionDeclaration_8247CAD9_main::_transitionalScopes
+		IL_0006: ldnull
+		IL_0007: call object Modules.TimersPromises_SetInterval_Backpressure_And_Return/main::__js_call__(object[], object)
+		IL_000c: ret
 	} // end of method FunctionObject_FunctionDeclaration_8247CAD9_main::CallCore
 
 } // end of class FunctionObjects.TimersPromises_SetInterval_Backpressure_And_Return_A22FE5A9.FunctionObject_FunctionDeclaration_8247CAD9_main
@@ -949,7 +949,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x26d6
+		// Method begins at RVA 0x26d4
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

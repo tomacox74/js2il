@@ -447,24 +447,32 @@
 .class private auto ansi sealed beforefieldinit FunctionObjects.Generator_BasicNext_4872927E.FunctionObject_FunctionDeclaration_362D250E_g
 	extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
 {
+	// Fields
+	.field private initonly object[] _transitionalScopes
+
 	// Methods
 	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
+		instance void .ctor (
+			object[] capture0
+		) cil managed 
 	{
 		// Method begins at RVA 0x245a
 		// Header size: 1
-		// Code size: 7 (0x7)
+		// Code size: 14 (0xe)
 		.maxstack 8
 
 		IL_0000: ldarg.0
 		IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-		IL_0006: ret
+		IL_0006: ldarg.0
+		IL_0007: ldarg.1
+		IL_0008: stfld object[] FunctionObjects.Generator_BasicNext_4872927E.FunctionObject_FunctionDeclaration_362D250E_g::_transitionalScopes
+		IL_000d: ret
 	} // end of method FunctionObject_FunctionDeclaration_362D250E_g::.ctor
 
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x2462
+		// Method begins at RVA 0x2469
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -476,7 +484,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x2465
+		// Method begins at RVA 0x246c
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -491,13 +499,13 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x2468
+		// Method begins at RVA 0x246f
 		// Header size: 1
 		// Code size: 13 (0xd)
 		.maxstack 8
 
-		IL_0000: ldc.i4.0
-		IL_0001: newarr [System.Runtime]System.Object
+		IL_0000: ldarg.0
+		IL_0001: ldfld object[] FunctionObjects.Generator_BasicNext_4872927E.FunctionObject_FunctionDeclaration_362D250E_g::_transitionalScopes
 		IL_0006: ldnull
 		IL_0007: call object Modules.Generator_BasicNext/g::__js_call__(object[], object)
 		IL_000c: ret
@@ -512,7 +520,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2476
+		// Method begins at RVA 0x247d
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

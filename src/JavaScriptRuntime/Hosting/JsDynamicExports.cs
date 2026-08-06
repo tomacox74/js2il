@@ -50,12 +50,14 @@ internal sealed class JsDynamicExports : DynamicObject, IDisposable
             var value = _runtime.Invoke(() =>
             {
                 var callable = ExportMemberResolver.GetExportMember(_runtime.Exports, name);
-                if (callable is not Delegate d)
+                if (!JavaScriptRuntime.CallableOperations.IsCallable(callable))
                 {
                     throw new MissingMethodException($"Export '{name}' is not a callable function.");
                 }
 
-                return ExportMemberResolver.InvokeJsDelegate(d, args ?? Array.Empty<object?>());
+                return ExportMemberResolver.InvokeJsCallable(
+                    callable!,
+                    args ?? Array.Empty<object?>());
             });
             return JsDynamicValueProxy.Wrap(_runtime, value);
         }
@@ -95,12 +97,14 @@ internal sealed class JsDynamicExports : DynamicObject, IDisposable
             result = _runtime.Invoke(() =>
             {
                 var callable = ExportMemberResolver.GetExportMember(_runtime.Exports, binder.Name);
-                if (callable is not Delegate d)
+                if (!JavaScriptRuntime.CallableOperations.IsCallable(callable))
                 {
                     throw new MissingMethodException($"Export '{binder.Name}' is not a callable function.");
                 }
 
-                return ExportMemberResolver.InvokeJsDelegate(d, args ?? Array.Empty<object?>());
+                return ExportMemberResolver.InvokeJsCallable(
+                    callable!,
+                    args ?? Array.Empty<object?>());
             });
             result = JsDynamicValueProxy.Wrap(_runtime, result);
             return true;

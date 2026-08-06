@@ -23,20 +23,20 @@ namespace JavaScriptRuntime.Node
         {
             var sourceArgs = args ?? System.Array.Empty<object>();
             object? options = null;
-            Delegate? requestListener = null;
+            object? requestListener = null;
 
             if (sourceArgs.Length > 0)
             {
-                if (sourceArgs[0] is Delegate listener)
+                if (CallableOperations.IsCallable(sourceArgs[0]))
                 {
-                    requestListener = listener;
+                    requestListener = sourceArgs[0];
                 }
                 else
                 {
                     options = sourceArgs[0];
-                    if (sourceArgs.Length > 1 && sourceArgs[1] is Delegate nextListener)
+                    if (sourceArgs.Length > 1 && CallableOperations.IsCallable(sourceArgs[1]))
                     {
-                        requestListener = nextListener;
+                        requestListener = sourceArgs[1];
                     }
                 }
             }
@@ -116,20 +116,20 @@ namespace JavaScriptRuntime.Node
         {
             var sourceArgs = args ?? System.Array.Empty<object>();
             object? options = null;
-            Delegate? secureConnectionListener = null;
+            object? secureConnectionListener = null;
 
             if (sourceArgs.Length > 0)
             {
-                if (sourceArgs[0] is Delegate listener)
+                if (CallableOperations.IsCallable(sourceArgs[0]))
                 {
-                    secureConnectionListener = listener;
+                    secureConnectionListener = sourceArgs[0];
                 }
                 else
                 {
                     options = sourceArgs[0];
-                    if (sourceArgs.Length > 1 && sourceArgs[1] is Delegate nextListener)
+                    if (sourceArgs.Length > 1 && CallableOperations.IsCallable(sourceArgs[1]))
                     {
-                        secureConnectionListener = nextListener;
+                        secureConnectionListener = sourceArgs[1];
                     }
                 }
             }
@@ -463,7 +463,7 @@ namespace JavaScriptRuntime.Node
 
         public string? ServerName { get; set; }
 
-        public Delegate? Callback { get; set; }
+        public object? Callback { get; set; }
     }
 
     internal static class TlsOptionParser
@@ -564,7 +564,7 @@ namespace JavaScriptRuntime.Node
                 if (NodeNetworkingCommon.LooksLikeOptionsObject(first))
                 {
                     optionsObject = first;
-                    result.Callback = second as Delegate;
+                    result.Callback = GetCallableOrNull(second);
                 }
                 else
                 {
@@ -572,19 +572,19 @@ namespace JavaScriptRuntime.Node
                     if (second is string hostText)
                     {
                         result.Host = NodeNetworkingCommon.CoerceHost(hostText);
-                        if (third is Delegate thirdCallback)
+                        if (CallableOperations.IsCallable(third))
                         {
-                            result.Callback = thirdCallback;
+                            result.Callback = third;
                         }
                     }
                     else if (NodeNetworkingCommon.LooksLikeOptionsObject(second))
                     {
                         optionsObject = second;
-                        result.Callback = third as Delegate;
+                        result.Callback = GetCallableOrNull(third);
                     }
                     else
                     {
-                        result.Callback = second as Delegate;
+                        result.Callback = GetCallableOrNull(second);
                     }
                 }
             }
@@ -593,6 +593,9 @@ namespace JavaScriptRuntime.Node
             result.Host = NodeNetworkingCommon.CoerceHost(result.Host);
             return result;
         }
+
+        private static object? GetCallableOrNull(object? value)
+            => CallableOperations.IsCallable(value) ? value : null;
 
         internal static TlsClientSocketOptions ParseRequestClientOptions(object[] args, HttpRequestOptions requestOptions, string moduleName)
         {

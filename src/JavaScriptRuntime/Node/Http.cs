@@ -26,9 +26,9 @@ namespace JavaScriptRuntime.Node
         {
             var server = new HttpServer();
             var srcArgs = args ?? System.Array.Empty<object>();
-            if (srcArgs.Length > 0 && srcArgs[0] is Delegate requestListener)
+            if (srcArgs.Length > 0 && CallableOperations.IsCallable(srcArgs[0]))
             {
-                server.on("request", requestListener);
+                server.on("request", srcArgs[0]);
             }
 
             return server;
@@ -1284,7 +1284,7 @@ namespace JavaScriptRuntime.Node
 
         public string ModuleName { get; set; } = "node:http";
 
-        public Delegate? Callback { get; set; }
+        public object? Callback { get; set; }
 
         public object? Agent { get; set; }
 
@@ -1315,30 +1315,30 @@ namespace JavaScriptRuntime.Node
             if (primary is string urlText)
             {
                 ApplyUrl(result, urlText, scheme, defaultPort, moduleName);
-                if (secondary != null && secondary is not JsNull && secondary is not Delegate)
+                if (secondary != null && secondary is not JsNull && !CallableOperations.IsCallable(secondary))
                 {
                     ApplyObjectOptions(result, secondary);
                 }
 
-                result.Callback = tertiary as Delegate ?? secondary as Delegate;
+                result.Callback = GetCallableOrNull(tertiary) ?? GetCallableOrNull(secondary);
             }
             else if (TryApplyUrlObject(result, primary, scheme, defaultPort, moduleName))
             {
-                if (secondary != null && secondary is not JsNull && secondary is not Delegate)
+                if (secondary != null && secondary is not JsNull && !CallableOperations.IsCallable(secondary))
                 {
                     ApplyObjectOptions(result, secondary);
                 }
 
-                result.Callback = tertiary as Delegate ?? secondary as Delegate;
+                result.Callback = GetCallableOrNull(tertiary) ?? GetCallableOrNull(secondary);
             }
-            else if (primary is Delegate callbackOnly)
+            else if (CallableOperations.IsCallable(primary))
             {
-                result.Callback = callbackOnly;
+                result.Callback = primary;
             }
             else if (primary != null && primary is not JsNull)
             {
                 ApplyObjectOptions(result, primary);
-                result.Callback = secondary as Delegate;
+                result.Callback = GetCallableOrNull(secondary);
             }
 
             if (string.IsNullOrWhiteSpace(result.Path))
@@ -1352,6 +1352,9 @@ namespace JavaScriptRuntime.Node
 
             return result;
         }
+
+        private static object? GetCallableOrNull(object? value)
+            => CallableOperations.IsCallable(value) ? value : null;
 
         private static bool TryApplyUrlObject(HttpRequestOptions options, object? value, string scheme, int defaultPort, string moduleName)
         {

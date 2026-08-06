@@ -26,10 +26,34 @@ public abstract class JsFunctionObject : JsObject
     internal object? InvokeConstruct(in JsCallArguments arguments, object? newTarget)
         => ConstructCore(arguments, newTarget);
 
+    internal object? ResolveThisArgument(object? thisArgument)
+        => ResolveThisArgumentCore(thisArgument);
+
+    internal object? ResolveCallNewTarget()
+        => ResolveCallNewTargetCore();
+
+    internal object? GetLexicalSuperReceiver()
+        => GetLexicalSuperReceiverCore();
+
+    internal object[]? GetLexicalSuperScopes()
+        => GetLexicalSuperScopesCore();
+
     /// <summary>
     /// Implements ECMAScript [[Call]] for this function object.
     /// </summary>
     protected abstract object? CallCore(object? thisArgument, in JsCallArguments arguments);
+
+    protected virtual object? ResolveThisArgumentCore(object? thisArgument)
+        => thisArgument;
+
+    protected virtual object? ResolveCallNewTargetCore()
+        => null;
+
+    protected virtual object? GetLexicalSuperReceiverCore()
+        => null;
+
+    protected virtual object[]? GetLexicalSuperScopesCore()
+        => null;
 
     /// <summary>
     /// Implements ECMAScript [[Construct]] for constructable function objects.

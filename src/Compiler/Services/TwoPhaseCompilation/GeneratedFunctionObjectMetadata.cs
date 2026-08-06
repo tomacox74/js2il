@@ -16,6 +16,8 @@ public enum GeneratedFunctionStateKind
     LexicalThis,
     LexicalNewTarget,
     HomeObject,
+    LexicalSuperScopes,
+    TransitionalScopeArray,
     PrivateBrand
 }
 
@@ -78,6 +80,9 @@ public sealed record GeneratedFunctionObjectMetadata
     public required MethodDefinitionHandle IsConstructorGetterHandle { get; init; }
 
     public required MethodDefinitionHandle RequiresInvocationContextGetterHandle { get; init; }
+
+    public required IReadOnlyDictionary<GeneratedFunctionStateKind, MethodDefinitionHandle>
+        StateAccessorHandles { get; init; }
 
     public MethodDefinitionHandle ConstructAdapterHandle { get; init; }
 

@@ -22,7 +22,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2200
+					// Method begins at RVA 0x21f4
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -46,7 +46,7 @@
 				.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 					01 00 02 00 00 00 00 00
 				)
-				// Method begins at RVA 0x21a8
+				// Method begins at RVA 0x219c
 				// Header size: 12
 				// Code size: 58 (0x3a)
 				.maxstack 8
@@ -95,7 +95,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21f7
+				// Method begins at RVA 0x21eb
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -124,12 +124,13 @@
 			)
 			// Method begins at RVA 0x213c
 			// Header size: 12
-			// Code size: 93 (0x5d)
+			// Code size: 81 (0x51)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.ArrowFunction_ClosureMutatesOuterVariable/createCounter/Scope,
 				[1] object,
-				[2] class [JavaScriptRuntime]JavaScriptRuntime.JsFunc0
+				[2] object[],
+				[3] class FunctionObjects.ArrowFunction_ClosureMutatesOuterVariable_CDEC60F2.FunctionObject_Arrow_F2AB5F1E_L9C23
 			)
 
 			IL_0000: newobj instance void Modules.ArrowFunction_ClosureMutatesOuterVariable/createCounter/Scope::.ctor()
@@ -138,36 +139,37 @@
 			IL_0007: ldarg.2
 			IL_0008: box [System.Runtime]System.Double
 			IL_000d: stfld object Modules.ArrowFunction_ClosureMutatesOuterVariable/createCounter/Scope::count
-			IL_0012: ldnull
-			IL_0013: ldftn object Modules.ArrowFunction_ClosureMutatesOuterVariable/createCounter/ArrowFunction_L9C23::__js_call__(object[], object)
-			IL_0019: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc0::.ctor(object, native int)
-			IL_001e: ldc.i4.2
-			IL_001f: newarr [System.Runtime]System.Object
-			IL_0024: dup
-			IL_0025: ldc.i4.0
-			IL_0026: ldarg.0
-			IL_0027: stelem.ref
-			IL_0028: dup
-			IL_0029: ldc.i4.1
-			IL_002a: ldloc.0
-			IL_002b: stelem.ref
-			IL_002c: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-			IL_0031: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-			IL_0036: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFunc0
-			IL_003b: ldc.i4.0
-			IL_003c: conv.r8
-			IL_003d: ldstr ""
-			IL_0042: ldc.i4.0
-			IL_0043: ldc.i4.0
-			IL_0044: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFunc0>(!!0, float64, string, bool, bool)
-			IL_0049: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFunc0>(!!0)
-			IL_004e: stloc.2
-			IL_004f: ldloc.2
-			IL_0050: ldstr "increment"
-			IL_0055: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetFunctionInferredName(object, object)
-			IL_005a: stloc.1
-			IL_005b: ldloc.1
-			IL_005c: ret
+			IL_0012: ldc.i4.2
+			IL_0013: newarr [System.Runtime]System.Object
+			IL_0018: dup
+			IL_0019: ldc.i4.0
+			IL_001a: ldarg.0
+			IL_001b: stelem.ref
+			IL_001c: dup
+			IL_001d: ldc.i4.1
+			IL_001e: ldloc.0
+			IL_001f: stelem.ref
+			IL_0020: stloc.2
+			IL_0021: ldloc.2
+			IL_0022: ldc.i4.1
+			IL_0023: ldelem.ref
+			IL_0024: castclass Modules.ArrowFunction_ClosureMutatesOuterVariable/createCounter/Scope
+			IL_0029: ldloc.2
+			IL_002a: newobj instance void FunctionObjects.ArrowFunction_ClosureMutatesOuterVariable_CDEC60F2.FunctionObject_Arrow_F2AB5F1E_L9C23::.ctor(class Modules.ArrowFunction_ClosureMutatesOuterVariable/createCounter/Scope, object[])
+			IL_002f: ldc.i4.0
+			IL_0030: conv.r8
+			IL_0031: ldstr ""
+			IL_0036: ldc.i4.0
+			IL_0037: ldc.i4.0
+			IL_0038: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class FunctionObjects.ArrowFunction_ClosureMutatesOuterVariable_CDEC60F2.FunctionObject_Arrow_F2AB5F1E_L9C23>(!!0, float64, string, bool, bool)
+			IL_003d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class FunctionObjects.ArrowFunction_ClosureMutatesOuterVariable_CDEC60F2.FunctionObject_Arrow_F2AB5F1E_L9C23>(!!0)
+			IL_0042: stloc.3
+			IL_0043: ldloc.3
+			IL_0044: ldstr "increment"
+			IL_0049: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetFunctionInferredName(object, object)
+			IL_004e: stloc.1
+			IL_004f: ldloc.1
+			IL_0050: ret
 		} // end of method createCounter::__js_call__
 
 	} // end of class createCounter
@@ -187,7 +189,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x21ee
+			// Method begins at RVA 0x21e2
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -307,7 +309,7 @@
 			class Modules.ArrowFunction_ClosureMutatesOuterVariable/Scope capture0
 		) cil managed 
 	{
-		// Method begins at RVA 0x2209
+		// Method begins at RVA 0x21fd
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -323,7 +325,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x2218
+		// Method begins at RVA 0x220c
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -335,7 +337,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x221b
+		// Method begins at RVA 0x220f
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -350,7 +352,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x221e
+		// Method begins at RVA 0x2212
 		// Header size: 1
 		// Code size: 25 (0x19)
 		.maxstack 8
@@ -372,7 +374,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x2238
+		// Method begins at RVA 0x222c
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -389,16 +391,18 @@
 {
 	// Fields
 	.field private initonly class Modules.ArrowFunction_ClosureMutatesOuterVariable/createCounter/Scope _environment1_createCounter
+	.field private initonly object[] _transitionalScopes
 
 	// Methods
 	.method public hidebysig specialname rtspecialname 
 		instance void .ctor (
-			class Modules.ArrowFunction_ClosureMutatesOuterVariable/createCounter/Scope capture0
+			class Modules.ArrowFunction_ClosureMutatesOuterVariable/createCounter/Scope capture0,
+			object[] capture1
 		) cil managed 
 	{
-		// Method begins at RVA 0x2244
+		// Method begins at RVA 0x2238
 		// Header size: 1
-		// Code size: 14 (0xe)
+		// Code size: 21 (0x15)
 		.maxstack 8
 
 		IL_0000: ldarg.0
@@ -406,13 +410,16 @@
 		IL_0006: ldarg.0
 		IL_0007: ldarg.1
 		IL_0008: stfld class Modules.ArrowFunction_ClosureMutatesOuterVariable/createCounter/Scope FunctionObjects.ArrowFunction_ClosureMutatesOuterVariable_CDEC60F2.FunctionObject_Arrow_F2AB5F1E_L9C23::_environment1_createCounter
-		IL_000d: ret
+		IL_000d: ldarg.0
+		IL_000e: ldarg.2
+		IL_000f: stfld object[] FunctionObjects.ArrowFunction_ClosureMutatesOuterVariable_CDEC60F2.FunctionObject_Arrow_F2AB5F1E_L9C23::_transitionalScopes
+		IL_0014: ret
 	} // end of method FunctionObject_Arrow_F2AB5F1E_L9C23::.ctor
 
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x2253
+		// Method begins at RVA 0x224e
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -424,7 +431,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x2256
+		// Method begins at RVA 0x2251
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -439,21 +446,16 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x2259
+		// Method begins at RVA 0x2254
 		// Header size: 1
-		// Code size: 22 (0x16)
+		// Code size: 13 (0xd)
 		.maxstack 8
 
-		IL_0000: ldc.i4.2
-		IL_0001: newarr [System.Runtime]System.Object
-		IL_0006: dup
-		IL_0007: ldc.i4.1
-		IL_0008: ldarg.0
-		IL_0009: ldfld class Modules.ArrowFunction_ClosureMutatesOuterVariable/createCounter/Scope FunctionObjects.ArrowFunction_ClosureMutatesOuterVariable_CDEC60F2.FunctionObject_Arrow_F2AB5F1E_L9C23::_environment1_createCounter
-		IL_000e: stelem.ref
-		IL_000f: ldnull
-		IL_0010: call object Modules.ArrowFunction_ClosureMutatesOuterVariable/createCounter/ArrowFunction_L9C23::__js_call__(object[], object)
-		IL_0015: ret
+		IL_0000: ldarg.0
+		IL_0001: ldfld object[] FunctionObjects.ArrowFunction_ClosureMutatesOuterVariable_CDEC60F2.FunctionObject_Arrow_F2AB5F1E_L9C23::_transitionalScopes
+		IL_0006: ldnull
+		IL_0007: call object Modules.ArrowFunction_ClosureMutatesOuterVariable/createCounter/ArrowFunction_L9C23::__js_call__(object[], object)
+		IL_000c: ret
 	} // end of method FunctionObject_Arrow_F2AB5F1E_L9C23::CallCore
 
 } // end of class FunctionObjects.ArrowFunction_ClosureMutatesOuterVariable_CDEC60F2.FunctionObject_Arrow_F2AB5F1E_L9C23
@@ -465,7 +467,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2270
+		// Method begins at RVA 0x2262
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

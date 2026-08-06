@@ -7,7 +7,7 @@ namespace JavaScriptRuntime.Node
         {
             AddPredicate("isArray", value => value is JavaScriptRuntime.Array);
             AddPredicate("isError", value => value is Error or Exception);
-            AddPredicate("isFunction", value => value is Delegate);
+            AddPredicate("isFunction", CallableOperations.IsCallable);
             AddPredicate("isString", value => value is string);
             AddPredicate("isNumber", IsNumber);
             AddPredicate("isBoolean", value => value is bool);

@@ -31,6 +31,7 @@ public sealed partial class HIRToLIRLowerer
     private readonly Jroc.Services.ClassRegistry? _classRegistry;
     private readonly CallableKind _callableKind;
     private readonly TwoPhase.CallableRegistry? _callableRegistry;
+    private readonly TwoPhase.GeneratedFunctionObjectRegistry? _generatedFunctionObjectRegistry;
     private readonly bool _preserveNonClassDoubleReturn;
     private readonly HIRExpression? _superClassExpression;
     private readonly bool _isAsync;
@@ -41,6 +42,17 @@ public sealed partial class HIRToLIRLowerer
 
     private ValueStorage GetMaterializedCallableStorage(TwoPhase.CallableId callableId)
     {
+        if (callableId.Kind == TwoPhase.CallableKind.Arrow
+            && _generatedFunctionObjectRegistry?.TryGetMetadata(
+                callableId,
+                out var generatedMetadata) == true)
+        {
+            return new ValueStorage(
+                ValueStorageKind.Reference,
+                typeof(JavaScriptRuntime.JsFunctionObject),
+                generatedMetadata.TypeHandle);
+        }
+
         var signature = _callableRegistry?.GetSignature(callableId);
         var delegateType = TwoPhase.CallableDelegateTypeResolver.GetMaterializedDelegateType(callableId, signature);
         return new ValueStorage(ValueStorageKind.Reference, delegateType);
@@ -113,7 +125,7 @@ public sealed partial class HIRToLIRLowerer
 
     private readonly bool _isGenerator;
 
-    private HIRToLIRLowerer(Scope? scope, EnvironmentLayout? environmentLayout, EnvironmentLayoutBuilder? environmentLayoutBuilder, Jroc.Services.ClassRegistry? classRegistry, CallableKind callableKind, IReadOnlyList<HIRPattern> parameters, HIRExpression? superClassExpression = null, bool isAsync = false, bool isGenerator = false, bool isDerivedConstructor = false, bool isLexicallyEnclosedByDerivedConstructor = false, TwoPhase.CallableRegistry? callableRegistry = null, bool preserveNonClassDoubleReturn = false, JavaScriptRuntime.IRuntimeIntrinsicCatalog? runtimeIntrinsicCatalog = null)
+    private HIRToLIRLowerer(Scope? scope, EnvironmentLayout? environmentLayout, EnvironmentLayoutBuilder? environmentLayoutBuilder, Jroc.Services.ClassRegistry? classRegistry, CallableKind callableKind, IReadOnlyList<HIRPattern> parameters, HIRExpression? superClassExpression = null, bool isAsync = false, bool isGenerator = false, bool isDerivedConstructor = false, bool isLexicallyEnclosedByDerivedConstructor = false, TwoPhase.CallableRegistry? callableRegistry = null, TwoPhase.GeneratedFunctionObjectRegistry? generatedFunctionObjectRegistry = null, bool preserveNonClassDoubleReturn = false, JavaScriptRuntime.IRuntimeIntrinsicCatalog? runtimeIntrinsicCatalog = null)
     {
         _scope = scope;
         _environmentLayout = environmentLayout;
@@ -121,6 +133,7 @@ public sealed partial class HIRToLIRLowerer
         _classRegistry = classRegistry;
         _callableKind = callableKind;
         _callableRegistry = callableRegistry;
+        _generatedFunctionObjectRegistry = generatedFunctionObjectRegistry;
         _superClassExpression = superClassExpression;
         _isAsync = isAsync;
         _isGenerator = isGenerator;
@@ -131,7 +144,7 @@ public sealed partial class HIRToLIRLowerer
         InitializeParameters(parameters);
     }
 
-    internal static bool TryLower(HIRMethod hirMethod, Scope? scope, Services.VariableBindings.ScopeMetadataRegistry? scopeMetadataRegistry, Jroc.Services.ScopesAbi.CallableKind callableKind, bool hasScopesParameter, Jroc.Services.ClassRegistry? classRegistry, out MethodBodyIR? lirMethod, bool isAsync = false, bool isGenerator = false, TwoPhase.CallableId? callableId = null, bool isDerivedConstructor = false, TwoPhase.CallableRegistry? callableRegistry = null, JavaScriptRuntime.IRuntimeIntrinsicCatalog? runtimeIntrinsicCatalog = null)
+    internal static bool TryLower(HIRMethod hirMethod, Scope? scope, Services.VariableBindings.ScopeMetadataRegistry? scopeMetadataRegistry, Jroc.Services.ScopesAbi.CallableKind callableKind, bool hasScopesParameter, Jroc.Services.ClassRegistry? classRegistry, out MethodBodyIR? lirMethod, bool isAsync = false, bool isGenerator = false, TwoPhase.CallableId? callableId = null, bool isDerivedConstructor = false, TwoPhase.CallableRegistry? callableRegistry = null, TwoPhase.GeneratedFunctionObjectRegistry? generatedFunctionObjectRegistry = null, JavaScriptRuntime.IRuntimeIntrinsicCatalog? runtimeIntrinsicCatalog = null)
     {
         lirMethod = null;
 
@@ -178,6 +191,7 @@ public sealed partial class HIRToLIRLowerer
             isDerivedConstructor,
             hirMethod.IsLexicallyEnclosedByDerivedConstructor,
             callableRegistry,
+            generatedFunctionObjectRegistry,
             preserveNonClassDoubleReturn,
             runtimeIntrinsicCatalog);
         lowerer.CollectStringBuilderAccumulatorCandidates(hirMethod.Body.Statements);

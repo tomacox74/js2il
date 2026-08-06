@@ -34,12 +34,12 @@ namespace JavaScriptRuntime
 
         public FinalizationRegistry(object? cleanupCallback)
         {
-            if (cleanupCallback is not Delegate)
+            if (!CallableOperations.IsCallable(cleanupCallback))
             {
                 throw new TypeError("FinalizationRegistry cleanupCallback must be a function");
             }
 
-            _cleanupCallback = cleanupCallback;
+            _cleanupCallback = cleanupCallback!;
             InitializeIntrinsicSurface();
         }
 
@@ -119,7 +119,7 @@ namespace JavaScriptRuntime
 
         internal void InvokeCleanupCallback(object? heldValue)
         {
-            Closure.InvokeWithArgs(_cleanupCallback, RuntimeServices.EmptyScopes, heldValue);
+            CallableOperations.Call1(_cleanupCallback, null, heldValue);
         }
 
         private void EnsureTrackedWithHost()

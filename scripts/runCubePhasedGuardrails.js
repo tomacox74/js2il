@@ -17,6 +17,8 @@ const SMELL_PATTERNS = [
   { key: "newarrObject", label: "newarr System.Object", regex: /newarr\s+(?:class\s+)?(?:\[[^\]]+\])?System\.Object\b/g },
   { key: "box", label: "box", regex: /\bbox\s+/g },
   { key: "closureInvoke", label: "Closure::InvokeWithArgs*", regex: /Closure::InvokeWithArgs\d*/g },
+  { key: "bindArrow", label: "Closure::BindArrow", regex: /Closure::BindArrow\b/g },
+  { key: "generatedArrow", label: "newobj generated arrow", regex: /newobj[^\n]*FunctionObject_Arrow_/g },
   { key: "toNumber", label: "TypeUtilities::ToNumber", regex: /TypeUtilities::ToNumber\b/g },
   { key: "getItem", label: "ObjectRuntime::GetItem(", regex: /ObjectRuntime::GetItem\(/g },
 ];

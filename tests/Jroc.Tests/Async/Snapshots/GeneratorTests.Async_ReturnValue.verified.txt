@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2128
+				// Method begins at RVA 0x2115
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -42,7 +42,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 02 00 00 00 00 00
 			)
-			// Method begins at RVA 0x20e7
+			// Method begins at RVA 0x20d4
 			// Header size: 1
 			// Code size: 20 (0x14)
 			.maxstack 8
@@ -73,7 +73,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2131
+				// Method begins at RVA 0x211e
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -97,7 +97,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x20fc
+			// Method begins at RVA 0x20e9
 			// Header size: 1
 			// Code size: 34 (0x22)
 			.maxstack 8
@@ -130,7 +130,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x211f
+			// Method begins at RVA 0x210c
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -156,13 +156,14 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 139 (0x8b)
+		// Code size: 120 (0x78)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Async_ReturnValue/Scope,
 			[1] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0,
 			[2] object,
-			[3] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1
+			[3] object[],
+			[4] class FunctionObjects.Async_ReturnValue_30933137.FunctionObject_Arrow_067EEDDD_L7C17
 		)
 
 		IL_0000: newobj instance void Modules.Async_ReturnValue/Scope::.ctor()
@@ -192,32 +193,28 @@
 		IL_003d: ldloc.2
 		IL_003e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
 		IL_0043: stloc.2
-		IL_0044: ldnull
-		IL_0045: ldftn object Modules.Async_ReturnValue/ArrowFunction_L7C17::__js_call__(object, object)
-		IL_004b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-		IL_0050: ldc.i4.1
-		IL_0051: newarr [System.Runtime]System.Object
-		IL_0056: dup
-		IL_0057: ldc.i4.0
-		IL_0058: ldloc.0
-		IL_0059: stelem.ref
-		IL_005a: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_005f: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_0064: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1
-		IL_0069: ldc.i4.1
-		IL_006a: conv.r8
-		IL_006b: ldstr ""
-		IL_0070: ldc.i4.0
-		IL_0071: ldc.i4.0
-		IL_0072: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0, float64, string, bool, bool)
-		IL_0077: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0)
-		IL_007c: stloc.3
-		IL_007d: ldloc.2
-		IL_007e: ldstr "then"
-		IL_0083: ldloc.3
-		IL_0084: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0089: pop
-		IL_008a: ret
+		IL_0044: ldc.i4.1
+		IL_0045: newarr [System.Runtime]System.Object
+		IL_004a: dup
+		IL_004b: ldc.i4.0
+		IL_004c: ldloc.0
+		IL_004d: stelem.ref
+		IL_004e: stloc.3
+		IL_004f: newobj instance void FunctionObjects.Async_ReturnValue_30933137.FunctionObject_Arrow_067EEDDD_L7C17::.ctor()
+		IL_0054: ldc.i4.1
+		IL_0055: conv.r8
+		IL_0056: ldstr ""
+		IL_005b: ldc.i4.0
+		IL_005c: ldc.i4.0
+		IL_005d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class FunctionObjects.Async_ReturnValue_30933137.FunctionObject_Arrow_067EEDDD_L7C17>(!!0, float64, string, bool, bool)
+		IL_0062: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class FunctionObjects.Async_ReturnValue_30933137.FunctionObject_Arrow_067EEDDD_L7C17>(!!0)
+		IL_0067: stloc.s 4
+		IL_0069: ldloc.2
+		IL_006a: ldstr "then"
+		IL_006f: ldloc.s 4
+		IL_0071: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0076: pop
+		IL_0077: ret
 	} // end of method Async_ReturnValue::__js_module_init__
 
 } // end of class Modules.Async_ReturnValue
@@ -225,24 +222,32 @@
 .class private auto ansi sealed beforefieldinit FunctionObjects.Async_ReturnValue_30933137.FunctionObject_FunctionDeclaration_BA1FCA97_getValue
 	extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
 {
+	// Fields
+	.field private initonly object[] _transitionalScopes
+
 	// Methods
 	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
+		instance void .ctor (
+			object[] capture0
+		) cil managed 
 	{
-		// Method begins at RVA 0x213a
+		// Method begins at RVA 0x2127
 		// Header size: 1
-		// Code size: 7 (0x7)
+		// Code size: 14 (0xe)
 		.maxstack 8
 
 		IL_0000: ldarg.0
 		IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-		IL_0006: ret
+		IL_0006: ldarg.0
+		IL_0007: ldarg.1
+		IL_0008: stfld object[] FunctionObjects.Async_ReturnValue_30933137.FunctionObject_FunctionDeclaration_BA1FCA97_getValue::_transitionalScopes
+		IL_000d: ret
 	} // end of method FunctionObject_FunctionDeclaration_BA1FCA97_getValue::.ctor
 
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x2142
+		// Method begins at RVA 0x2136
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -254,7 +259,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x2145
+		// Method begins at RVA 0x2139
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -269,13 +274,13 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x2148
+		// Method begins at RVA 0x213c
 		// Header size: 1
 		// Code size: 13 (0xd)
 		.maxstack 8
 
-		IL_0000: ldc.i4.0
-		IL_0001: newarr [System.Runtime]System.Object
+		IL_0000: ldarg.0
+		IL_0001: ldfld object[] FunctionObjects.Async_ReturnValue_30933137.FunctionObject_FunctionDeclaration_BA1FCA97_getValue::_transitionalScopes
 		IL_0006: ldnull
 		IL_0007: call object Modules.Async_ReturnValue/getValue::__js_call__(object[], object)
 		IL_000c: ret
@@ -290,7 +295,7 @@
 	.method public hidebysig specialname rtspecialname 
 		instance void .ctor () cil managed 
 	{
-		// Method begins at RVA 0x2156
+		// Method begins at RVA 0x214a
 		// Header size: 1
 		// Code size: 7 (0x7)
 		.maxstack 8
@@ -303,7 +308,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x215e
+		// Method begins at RVA 0x2152
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -315,7 +320,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x2161
+		// Method begins at RVA 0x2155
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -330,7 +335,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x2164
+		// Method begins at RVA 0x2158
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -352,7 +357,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2173
+		// Method begins at RVA 0x2167
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

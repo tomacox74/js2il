@@ -50,6 +50,7 @@ internal sealed partial class LIRToILCompiler
                         var getThisRef = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.RuntimeServices), nameof(JavaScriptRuntime.RuntimeServices.GetCurrentThis));
                         ilEncoder.OpCode(ILOpCode.Call);
                         ilEncoder.Token(getThisRef);
+                        ilEncoder.Call(_bclReferences.RuntimeServices_ResolveLexicalThis_Ref);
                         EmitStoreTemp(loadThis.Result, ilEncoder, allocation);
                         break;
                     }

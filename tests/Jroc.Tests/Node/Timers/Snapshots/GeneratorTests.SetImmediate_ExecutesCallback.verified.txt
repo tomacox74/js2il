@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2100
+				// Method begins at RVA 0x20eb
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -41,7 +41,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x20d5
+			// Method begins at RVA 0x20c0
 			// Header size: 1
 			// Code size: 33 (0x21)
 			.maxstack 8
@@ -66,7 +66,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20f7
+			// Method begins at RVA 0x20e2
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -92,54 +92,51 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 121 (0x79)
+		// Code size: 100 (0x64)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.SetImmediate_ExecutesCallback/Scope,
 			[1] object,
-			[2] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
+			[2] object[],
+			[3] class FunctionObjects.SetImmediate_ExecutesCallback_E210B8B6.FunctionObject_Arrow_6B60D825_L3C18
 		)
 
 		IL_0000: newobj instance void Modules.SetImmediate_ExecutesCallback/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: nop
-		IL_0007: ldnull
-		IL_0008: ldftn object Modules.SetImmediate_ExecutesCallback/ArrowFunction_L3C18::__js_call__(object)
-		IL_000e: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_0013: ldc.i4.1
-		IL_0014: newarr [System.Runtime]System.Object
-		IL_0019: dup
-		IL_001a: ldc.i4.0
-		IL_001b: ldloc.0
-		IL_001c: stelem.ref
-		IL_001d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_0022: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_0027: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
-		IL_002c: ldc.i4.0
-		IL_002d: conv.r8
-		IL_002e: ldstr ""
-		IL_0033: ldc.i4.0
-		IL_0034: ldc.i4.0
-		IL_0035: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
-		IL_003a: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0)
-		IL_003f: stloc.2
-		IL_0040: ldloc.2
-		IL_0041: ldstr "logHello"
-		IL_0046: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetFunctionInferredName(object, object)
-		IL_004b: stloc.1
-		IL_004c: ldloc.1
-		IL_004d: ldc.i4.0
-		IL_004e: newarr [System.Runtime]System.Object
-		IL_0053: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::setImmediate(object, object[])
-		IL_0058: pop
-		IL_0059: ldstr "console"
-		IL_005e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0063: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0068: ldstr "log"
-		IL_006d: ldstr "setImmediate scheduled."
-		IL_0072: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0077: pop
-		IL_0078: ret
+		IL_0007: ldc.i4.1
+		IL_0008: newarr [System.Runtime]System.Object
+		IL_000d: dup
+		IL_000e: ldc.i4.0
+		IL_000f: ldloc.0
+		IL_0010: stelem.ref
+		IL_0011: stloc.2
+		IL_0012: newobj instance void FunctionObjects.SetImmediate_ExecutesCallback_E210B8B6.FunctionObject_Arrow_6B60D825_L3C18::.ctor()
+		IL_0017: ldc.i4.0
+		IL_0018: conv.r8
+		IL_0019: ldstr ""
+		IL_001e: ldc.i4.0
+		IL_001f: ldc.i4.0
+		IL_0020: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class FunctionObjects.SetImmediate_ExecutesCallback_E210B8B6.FunctionObject_Arrow_6B60D825_L3C18>(!!0, float64, string, bool, bool)
+		IL_0025: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class FunctionObjects.SetImmediate_ExecutesCallback_E210B8B6.FunctionObject_Arrow_6B60D825_L3C18>(!!0)
+		IL_002a: stloc.3
+		IL_002b: ldloc.3
+		IL_002c: ldstr "logHello"
+		IL_0031: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetFunctionInferredName(object, object)
+		IL_0036: stloc.1
+		IL_0037: ldloc.1
+		IL_0038: ldc.i4.0
+		IL_0039: newarr [System.Runtime]System.Object
+		IL_003e: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::setImmediate(object, object[])
+		IL_0043: pop
+		IL_0044: ldstr "console"
+		IL_0049: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_004e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0053: ldstr "log"
+		IL_0058: ldstr "setImmediate scheduled."
+		IL_005d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0062: pop
+		IL_0063: ret
 	} // end of method SetImmediate_ExecutesCallback::__js_module_init__
 
 } // end of class Modules.SetImmediate_ExecutesCallback
@@ -151,7 +148,7 @@
 	.method public hidebysig specialname rtspecialname 
 		instance void .ctor () cil managed 
 	{
-		// Method begins at RVA 0x2109
+		// Method begins at RVA 0x20f4
 		// Header size: 1
 		// Code size: 7 (0x7)
 		.maxstack 8
@@ -164,7 +161,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x2111
+		// Method begins at RVA 0x20fc
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -176,7 +173,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x2114
+		// Method begins at RVA 0x20ff
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -191,7 +188,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x2117
+		// Method begins at RVA 0x2102
 		// Header size: 1
 		// Code size: 7 (0x7)
 		.maxstack 8
@@ -210,7 +207,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x211f
+		// Method begins at RVA 0x210a
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

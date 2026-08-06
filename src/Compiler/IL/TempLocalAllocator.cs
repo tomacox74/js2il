@@ -646,7 +646,12 @@ internal static class TempLocalAllocator
             case LIRCallDeclaredCallable value:
                 VisitList(value.Arguments, ref visitor); break;
             case LIRCreateBoundArrowFunction value:
-                visitor.Visit(value.ScopesArray); break;
+                // Generated arrow constructors may read multiple typed captures plus the
+                // transitional scope-array payload from this value. Count it as shared so
+                // the scheduler materializes it once instead of rebuilding the array.
+                visitor.Visit(value.ScopesArray);
+                visitor.Visit(value.ScopesArray);
+                break;
             case LIRCreateBoundFunctionExpression value:
                 visitor.Visit(value.ScopesArray); break;
             case LIRStoreUserClassInstanceField value:

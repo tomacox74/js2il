@@ -1409,6 +1409,15 @@ internal sealed partial class LIRToILCompiler
 
             case LIRCreateBoundArrowFunction createArrow:
                 {
+                    if (TryEmitGeneratedArrowFunctionObject(
+                            createArrow,
+                            ilEncoder,
+                            allocation,
+                            methodDescriptor))
+                    {
+                        break;
+                    }
+
                     var reader = _serviceProvider.GetService<ICallableDeclarationReader>();
                     var callableId = createArrow.CallableId;
                     if (reader == null || !reader.TryGetDeclaredToken(callableId, out var token) || token.Kind != HandleKind.MethodDefinition)
@@ -1857,6 +1866,16 @@ internal sealed partial class LIRToILCompiler
                         nameof(JavaScriptRuntime.RuntimeServices.GetCurrentThis));
                     ilEncoder.OpCode(ILOpCode.Call);
                     ilEncoder.Token(getThisRef);
+                    ilEncoder.Call(_bclReferences.RuntimeServices_ResolveLexicalThis_Ref);
+                    return true;
+                }
+                if (methodDescriptor.IsDerivedConstructor)
+                {
+                    ilEncoder.OpCode(ILOpCode.Call);
+                    ilEncoder.Token(_memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.RuntimeServices),
+                        nameof(JavaScriptRuntime.RuntimeServices.GetCurrentThis)));
+                    ilEncoder.Call(_bclReferences.RuntimeServices_ResolveLexicalThis_Ref);
                     return true;
                 }
                 ilEncoder.LoadArgument(0);

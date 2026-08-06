@@ -89,11 +89,27 @@ public class CallableArchitectureBenchmarks : IDisposable
         _assembly = null;
     }
 
-    [Benchmark(Description = "Arrow delegate materialization")]
-    public object MaterializeArrow()
+    [Benchmark(Description = "Legacy arrow delegate materialization")]
+    public object MaterializeLegacyArrowDelegate()
         => JavaScriptRuntime.Closure.BindArrow(ArrowTarget, _boundScopes, boundThis: null);
+
+    [Benchmark(Description = "Generated arrow object materialization")]
+    public object MaterializeGeneratedArrowObject()
+        => new BenchmarkArrowFunctionObject(_boundScopes);
 
     [Benchmark(Description = "Loaded module direct-call loop", OperationsPerInvoke = DirectCallsPerOperation)]
     public double InvokeSteadyState()
         => (double)_steadyState.run(DirectCallsPerOperation);
+
+    private sealed class BenchmarkArrowFunctionObject(object[] scopes) : JavaScriptRuntime.JsFunctionObject
+    {
+        private readonly object[] _scopes = scopes;
+
+        public override bool RequiresInvocationContext => false;
+
+        protected override object? CallCore(
+            object? thisArgument,
+            in JavaScriptRuntime.JsCallArguments arguments)
+            => _scopes.Length;
+    }
 }

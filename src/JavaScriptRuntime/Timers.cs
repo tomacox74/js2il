@@ -11,7 +11,7 @@ internal class Timers
 
     public object setTimeout(object callback, object delay, params object[] args)
     {
-        if (callback is not Delegate del)
+        if (!CallableOperations.IsCallable(callback))
         {
             throw new TypeError("First argument to setTimeout must be a function");
         }
@@ -27,19 +27,7 @@ internal class Timers
             delay: TimeSpan.FromMilliseconds(delayMs),
             callback: () =>
             {
-                // Parameter count includes the leading scopes array parameter.
-                var paramCount = del.Method.GetParameters().Length;
-                var expectedArgCount = System.Math.Max(0, paramCount - 1);
-
-                // JS semantics: missing args -> undefined (null); extra args ignored.
-                var invokeArgs = new object[expectedArgCount];
-                for (int i = 0; i < expectedArgCount; i++)
-                {
-                    invokeArgs[i] = i < args.Length ? args[i] : null!;
-                }
-
-                // Provide a non-null scopes array; bound closures ignore it.
-                Closure.InvokeWithArgs(del, System.Array.Empty<object>(), invokeArgs);
+                CallableOperations.Call(callback, null, args);
             });
 
         return timeout.refresh();
@@ -60,7 +48,7 @@ internal class Timers
 
     public object setInterval(object callback, object delay, params object[] args)
     {
-        if (callback is not Delegate del)
+        if (!CallableOperations.IsCallable(callback))
         {
             throw new TypeError("First argument to setInterval must be a function");
         }
@@ -73,16 +61,7 @@ internal class Timers
 
         var handle = _scheduler.ScheduleInterval(() =>
         {
-            var paramCount = del.Method.GetParameters().Length;
-            var expectedArgCount = System.Math.Max(0, paramCount - 1);
-
-            var invokeArgs = new object[expectedArgCount];
-            for (int i = 0; i < expectedArgCount; i++)
-            {
-                invokeArgs[i] = i < args.Length ? args[i] : null!;
-            }
-
-            Closure.InvokeWithArgs(del, System.Array.Empty<object>(), invokeArgs);
+            CallableOperations.Call(callback, null, args);
         }, TimeSpan.FromMilliseconds(delayMs));
 
         return handle;
@@ -99,23 +78,14 @@ internal class Timers
 
     public object setImmediate(object callback, params object[] args)
     {
-        if (callback is not Delegate del)
+        if (!CallableOperations.IsCallable(callback))
         {
             throw new TypeError("First argument to setImmediate must be a function");
         }
 
         var handle = _scheduler.ScheduleImmediate(() =>
         {
-            var paramCount = del.Method.GetParameters().Length;
-            var expectedArgCount = System.Math.Max(0, paramCount - 1);
-
-            var invokeArgs = new object[expectedArgCount];
-            for (int i = 0; i < expectedArgCount; i++)
-            {
-                invokeArgs[i] = i < args.Length ? args[i] : null!;
-            }
-
-            Closure.InvokeWithArgs(del, System.Array.Empty<object>(), invokeArgs);
+            CallableOperations.Call(callback, null, args);
         });
 
         return handle;

@@ -8,6 +8,21 @@ namespace Jroc.Runtime;
 
 internal static class ExportMemberResolver
 {
+    public static object? InvokeJsCallable(object callable, object?[] args)
+    {
+        if (callable is Delegate legacyDelegate)
+        {
+            return InvokeJsDelegate(legacyDelegate, args);
+        }
+
+        if (JavaScriptRuntime.CallableOperations.IsCallable(callable))
+        {
+            return JavaScriptRuntime.CallableOperations.Call(callable, null, args);
+        }
+
+        throw new ArgumentException("Value is not callable.", nameof(callable));
+    }
+
     private static object[] CreateDefaultScopes(object? seed)
     {
         // Resumable callables assume scopes[0] exists (they probe it for the state-machine scope).

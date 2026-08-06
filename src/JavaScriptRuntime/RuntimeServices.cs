@@ -922,23 +922,23 @@ public class RuntimeServices
 
     public static object SetFunctionInferredName(object functionValue, object nameValue)
     {
-        if (functionValue is not Delegate functionDelegate
+        if (!CallableOperations.IsCallable(functionValue)
             || nameValue is not string inferredName
             || string.IsNullOrWhiteSpace(inferredName))
         {
             return functionValue;
         }
 
-        if (PropertyDescriptorStore.TryGetOwn(functionDelegate, "name", out var existingDescriptor)
+        if (PropertyDescriptorStore.TryGetOwn(functionValue, "name", out var existingDescriptor)
             && existingDescriptor.Kind == JsPropertyDescriptorKind.Data
             && existingDescriptor.Value is string existingName
             && !string.IsNullOrEmpty(existingName))
         {
-            return functionDelegate;
+            return functionValue;
         }
 
-        Function.DefineMetadataProperty(functionDelegate, "name", inferredName);
-        return functionDelegate;
+        Function.DefineMetadataProperty(functionValue, "name", inferredName);
+        return functionValue;
     }
 
     public static object?[]? GetCurrentArguments()
@@ -1036,8 +1036,8 @@ public class RuntimeServices
     public static object? ResolveWithBindingOrDefault(object? nameValue, object? defaultValue)
     {
         var callee = _currentCallee.Value;
-        if (callee is Delegate del
-            && JavaScriptRuntime.Function.TryGetBoundWithObject(del, out var withObject)
+        if (callee is not null
+            && JavaScriptRuntime.Function.TryGetBoundWithObject(callee, out var withObject)
             && withObject is not null)
         {
             var name = nameValue as string ?? DotNet2JSConversions.ToString(nameValue);
@@ -1111,7 +1111,7 @@ public class RuntimeServices
     /// </summary>
     public static ArgumentsObject CreateArgumentsObject(object? scopeInstance, string[]? parameterNames, bool includeCallee, bool restrictCallee)
     {
-        var args = _currentArguments.Value;
+        var args = GetCurrentArguments();
         return new ArgumentsObject(args, scopeInstance, parameterNames, includeCallee ? _currentCallee.Value : null, restrictCallee);
     }
 
@@ -1121,7 +1121,7 @@ public class RuntimeServices
     /// </summary>
     public static int GetArgumentCount()
     {
-        var args = _currentArguments.Value;
+        var args = GetCurrentArguments();
         return args?.Length ?? 0;
     }
 
@@ -1132,7 +1132,7 @@ public class RuntimeServices
     public static Array CollectRestArguments(double startIndex)
     {
         var startIndexAsInt = (int)startIndex;
-        var args = _currentArguments.Value;
+        var args = GetCurrentArguments();
 
         if (args == null || startIndexAsInt >= args.Length)
         {

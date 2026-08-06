@@ -84,22 +84,33 @@ public sealed class GeneratedFunctionObjectEmissionTests
 
         Assert.Empty(answerType.GetFields(BindingFlags.Instance | BindingFlags.NonPublic));
 
+        var innerFields = innerType.GetFields(
+            BindingFlags.Instance | BindingFlags.NonPublic);
         var captureField = Assert.Single(
-            innerType.GetFields(BindingFlags.Instance | BindingFlags.NonPublic));
+            innerFields,
+            field => field.FieldType != typeof(object[]));
+        var transitionalScopesField = Assert.Single(
+            innerFields,
+            field => field.FieldType == typeof(object[]));
         Assert.NotEqual(typeof(object), captureField.FieldType);
         Assert.Contains("Scope", captureField.FieldType.Name, StringComparison.Ordinal);
 
         var captureConstructor = Assert.Single(
             innerType.GetConstructors(BindingFlags.Instance | BindingFlags.Public));
-        var captureParameter = Assert.Single(captureConstructor.GetParameters());
+        var captureParameters = captureConstructor.GetParameters();
+        Assert.Equal(2, captureParameters.Length);
+        var captureParameter = captureParameters[0];
         Assert.Equal(captureField.FieldType, captureParameter.ParameterType);
+        Assert.Equal(typeof(object[]), captureParameters[1].ParameterType);
 
         var scopeInstance = Activator.CreateInstance(captureField.FieldType)!;
-        var firstInner = captureConstructor.Invoke([scopeInstance]);
-        var secondInner = captureConstructor.Invoke([scopeInstance]);
+        object[] scopes = [scopeInstance];
+        var firstInner = captureConstructor.Invoke([scopeInstance, scopes]);
+        var secondInner = captureConstructor.Invoke([scopeInstance, scopes]);
         Assert.NotSame(firstInner, secondInner);
         Assert.Same(scopeInstance, captureField.GetValue(firstInner));
         Assert.Same(scopeInstance, captureField.GetValue(secondInner));
+        Assert.Same(scopes, transitionalScopesField.GetValue(firstInner));
     }
 
     [Fact]

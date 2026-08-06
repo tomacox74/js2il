@@ -18,7 +18,6 @@ internal static class LIRTypeNormalization
     {
         // Specialize IsTruthy calls regardless of whether a ClassRegistry is present.
         SpecializeIsTruthyCalls(methodBody);
-        RewriteTypeofFunctionBranchComparisons(methodBody);
 
         if (classRegistry == null)
         {

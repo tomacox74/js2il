@@ -88,10 +88,10 @@ public static class AsyncFunction
         if (functionValue is Delegate del)
         {
             Function.SetRequiresInvocationContext(del, requiresInvocationContext);
-            Function.DefineMetadataProperty(del, "length", length);
-            Function.DefineMetadataProperty(del, "name", name ?? string.Empty);
             Function.MarkUndefinedPrototype(del);
         }
+        Function.DefineMetadataProperty(functionValue, "length", length);
+        Function.DefineMetadataProperty(functionValue, "name", name ?? string.Empty);
 
         return functionValue;
     }

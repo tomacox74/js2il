@@ -30,7 +30,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2a06
+				// Method begins at RVA 0x29fa
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -54,7 +54,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 02 00 00 00 00 00
 			)
-			// Method begins at RVA 0x20f8
+			// Method begins at RVA 0x20ec
 			// Header size: 12
 			// Code size: 1062 (0x426)
 			.maxstack 8
@@ -537,7 +537,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2a0f
+				// Method begins at RVA 0x2a03
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -561,7 +561,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 02 00 00 00 00 00
 			)
-			// Method begins at RVA 0x252c
+			// Method begins at RVA 0x2520
 			// Header size: 12
 			// Code size: 1221 (0x4c5)
 			.maxstack 8
@@ -1119,7 +1119,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x29fd
+			// Method begins at RVA 0x29f1
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -1145,13 +1145,13 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 154 (0x9a)
+		// Code size: 142 (0x8e)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.AsyncGenerator_YieldAwait/Scope,
 			[1] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0,
-			[2] class [JavaScriptRuntime]JavaScriptRuntime.JsFunc0,
-			[3] object[]
+			[2] object[],
+			[3] class FunctionObjects.AsyncGenerator_YieldAwait_7DE58974.FunctionObject_Arrow_5A8537B8_L10C2
 		)
 
 		IL_0000: newobj instance void Modules.AsyncGenerator_YieldAwait/Scope::.ctor()
@@ -1181,35 +1181,36 @@
 		IL_0045: stfld object Modules.AsyncGenerator_YieldAwait/Scope::g
 		IL_004a: nop
 		IL_004b: nop
-		IL_004c: ldnull
-		IL_004d: ldftn object Modules.AsyncGenerator_YieldAwait/ArrowFunction_L10C2::__js_call__(object[], object)
-		IL_0053: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc0::.ctor(object, native int)
-		IL_0058: ldc.i4.1
-		IL_0059: newarr [System.Runtime]System.Object
-		IL_005e: dup
-		IL_005f: ldc.i4.0
-		IL_0060: ldloc.0
-		IL_0061: stelem.ref
-		IL_0062: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_0067: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_006c: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFunc0
-		IL_0071: ldc.i4.0
-		IL_0072: conv.r8
-		IL_0073: ldstr ""
-		IL_0078: ldc.i4.0
+		IL_004c: ldc.i4.1
+		IL_004d: newarr [System.Runtime]System.Object
+		IL_0052: dup
+		IL_0053: ldc.i4.0
+		IL_0054: ldloc.0
+		IL_0055: stelem.ref
+		IL_0056: stloc.2
+		IL_0057: ldloc.2
+		IL_0058: ldc.i4.0
+		IL_0059: ldelem.ref
+		IL_005a: castclass Modules.AsyncGenerator_YieldAwait/Scope
+		IL_005f: ldloc.2
+		IL_0060: newobj instance void FunctionObjects.AsyncGenerator_YieldAwait_7DE58974.FunctionObject_Arrow_5A8537B8_L10C2::.ctor(class Modules.AsyncGenerator_YieldAwait/Scope, object[])
+		IL_0065: ldc.i4.0
+		IL_0066: conv.r8
+		IL_0067: ldstr ""
+		IL_006c: ldc.i4.0
+		IL_006d: ldc.i4.0
+		IL_006e: call !!0 [JavaScriptRuntime]JavaScriptRuntime.AsyncFunction::InitializeFunctionInstance<class FunctionObjects.AsyncGenerator_YieldAwait_7DE58974.FunctionObject_Arrow_5A8537B8_L10C2>(!!0, float64, string, bool, bool)
+		IL_0073: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class FunctionObjects.AsyncGenerator_YieldAwait_7DE58974.FunctionObject_Arrow_5A8537B8_L10C2>(!!0)
+		IL_0078: stloc.3
 		IL_0079: ldc.i4.0
-		IL_007a: call !!0 [JavaScriptRuntime]JavaScriptRuntime.AsyncFunction::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFunc0>(!!0, float64, string, bool, bool)
-		IL_007f: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFunc0>(!!0)
-		IL_0084: stloc.2
-		IL_0085: ldc.i4.0
-		IL_0086: newarr [System.Runtime]System.Object
-		IL_008b: stloc.3
-		IL_008c: ldloc.2
-		IL_008d: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0092: ldloc.3
-		IL_0093: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs(object, object[], object[])
-		IL_0098: pop
-		IL_0099: ret
+		IL_007a: newarr [System.Runtime]System.Object
+		IL_007f: stloc.2
+		IL_0080: ldloc.3
+		IL_0081: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0086: ldloc.2
+		IL_0087: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs(object, object[], object[])
+		IL_008c: pop
+		IL_008d: ret
 	} // end of method AsyncGenerator_YieldAwait::__js_module_init__
 
 } // end of class Modules.AsyncGenerator_YieldAwait
@@ -1217,24 +1218,32 @@
 .class private auto ansi sealed beforefieldinit FunctionObjects.AsyncGenerator_YieldAwait_7DE58974.FunctionObject_FunctionDeclaration_30E5A464_g
 	extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
 {
+	// Fields
+	.field private initonly object[] _transitionalScopes
+
 	// Methods
 	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
+		instance void .ctor (
+			object[] capture0
+		) cil managed 
 	{
-		// Method begins at RVA 0x2a18
+		// Method begins at RVA 0x2a0c
 		// Header size: 1
-		// Code size: 7 (0x7)
+		// Code size: 14 (0xe)
 		.maxstack 8
 
 		IL_0000: ldarg.0
 		IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-		IL_0006: ret
+		IL_0006: ldarg.0
+		IL_0007: ldarg.1
+		IL_0008: stfld object[] FunctionObjects.AsyncGenerator_YieldAwait_7DE58974.FunctionObject_FunctionDeclaration_30E5A464_g::_transitionalScopes
+		IL_000d: ret
 	} // end of method FunctionObject_FunctionDeclaration_30E5A464_g::.ctor
 
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x2a20
+		// Method begins at RVA 0x2a1b
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -1246,7 +1255,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x2a23
+		// Method begins at RVA 0x2a1e
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -1261,13 +1270,13 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x2a26
+		// Method begins at RVA 0x2a21
 		// Header size: 1
 		// Code size: 13 (0xd)
 		.maxstack 8
 
-		IL_0000: ldc.i4.0
-		IL_0001: newarr [System.Runtime]System.Object
+		IL_0000: ldarg.0
+		IL_0001: ldfld object[] FunctionObjects.AsyncGenerator_YieldAwait_7DE58974.FunctionObject_FunctionDeclaration_30E5A464_g::_transitionalScopes
 		IL_0006: ldnull
 		IL_0007: call object Modules.AsyncGenerator_YieldAwait/g::__js_call__(object[], object)
 		IL_000c: ret
@@ -1280,16 +1289,18 @@
 {
 	// Fields
 	.field private initonly class Modules.AsyncGenerator_YieldAwait/Scope _environment0_AsyncGenerator_YieldAwait
+	.field private initonly object[] _transitionalScopes
 
 	// Methods
 	.method public hidebysig specialname rtspecialname 
 		instance void .ctor (
-			class Modules.AsyncGenerator_YieldAwait/Scope capture0
+			class Modules.AsyncGenerator_YieldAwait/Scope capture0,
+			object[] capture1
 		) cil managed 
 	{
-		// Method begins at RVA 0x2a34
+		// Method begins at RVA 0x2a2f
 		// Header size: 1
-		// Code size: 14 (0xe)
+		// Code size: 21 (0x15)
 		.maxstack 8
 
 		IL_0000: ldarg.0
@@ -1297,13 +1308,16 @@
 		IL_0006: ldarg.0
 		IL_0007: ldarg.1
 		IL_0008: stfld class Modules.AsyncGenerator_YieldAwait/Scope FunctionObjects.AsyncGenerator_YieldAwait_7DE58974.FunctionObject_Arrow_5A8537B8_L10C2::_environment0_AsyncGenerator_YieldAwait
-		IL_000d: ret
+		IL_000d: ldarg.0
+		IL_000e: ldarg.2
+		IL_000f: stfld object[] FunctionObjects.AsyncGenerator_YieldAwait_7DE58974.FunctionObject_Arrow_5A8537B8_L10C2::_transitionalScopes
+		IL_0014: ret
 	} // end of method FunctionObject_Arrow_5A8537B8_L10C2::.ctor
 
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x2a43
+		// Method begins at RVA 0x2a45
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -1315,7 +1329,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x2a46
+		// Method begins at RVA 0x2a48
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -1330,21 +1344,16 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x2a49
+		// Method begins at RVA 0x2a4b
 		// Header size: 1
-		// Code size: 22 (0x16)
+		// Code size: 13 (0xd)
 		.maxstack 8
 
-		IL_0000: ldc.i4.1
-		IL_0001: newarr [System.Runtime]System.Object
-		IL_0006: dup
-		IL_0007: ldc.i4.0
-		IL_0008: ldarg.0
-		IL_0009: ldfld class Modules.AsyncGenerator_YieldAwait/Scope FunctionObjects.AsyncGenerator_YieldAwait_7DE58974.FunctionObject_Arrow_5A8537B8_L10C2::_environment0_AsyncGenerator_YieldAwait
-		IL_000e: stelem.ref
-		IL_000f: ldnull
-		IL_0010: call object Modules.AsyncGenerator_YieldAwait/ArrowFunction_L10C2::__js_call__(object[], object)
-		IL_0015: ret
+		IL_0000: ldarg.0
+		IL_0001: ldfld object[] FunctionObjects.AsyncGenerator_YieldAwait_7DE58974.FunctionObject_Arrow_5A8537B8_L10C2::_transitionalScopes
+		IL_0006: ldnull
+		IL_0007: call object Modules.AsyncGenerator_YieldAwait/ArrowFunction_L10C2::__js_call__(object[], object)
+		IL_000c: ret
 	} // end of method FunctionObject_Arrow_5A8537B8_L10C2::CallCore
 
 } // end of class FunctionObjects.AsyncGenerator_YieldAwait_7DE58974.FunctionObject_Arrow_5A8537B8_L10C2
@@ -1356,7 +1365,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2a60
+		// Method begins at RVA 0x2a59
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

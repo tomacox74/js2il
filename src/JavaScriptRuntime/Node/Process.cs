@@ -301,7 +301,7 @@ namespace JavaScriptRuntime.Node
         /// </summary>
         public object? nextTick(object callback, params object[] args)
         {
-            if (callback is not Delegate del)
+            if (!CallableOperations.IsCallable(callback))
             {
                 throw new TypeError("Callback must be a function.");
             }
@@ -316,7 +316,7 @@ namespace JavaScriptRuntime.Node
 
             scheduler.QueueNextTick(() =>
             {
-                Closure.InvokeWithArgs(del, System.Array.Empty<object>(), tickArgs);
+                CallableOperations.Call(callback, null, tickArgs);
             });
 
             return null;

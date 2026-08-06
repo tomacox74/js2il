@@ -46,6 +46,12 @@ namespace Jroc.Tests.ArrowFunction
         [Fact]
         public Task ArrowFunction_LexicalThis_ObjectLiteralProperty() { var testName = nameof(ArrowFunction_LexicalThis_ObjectLiteralProperty); return ExecutionTest(testName); }
 
+        [Fact]
+        public Task ArrowFunction_LexicalSuper_MethodAndConstructor() { var testName = nameof(ArrowFunction_LexicalSuper_MethodAndConstructor); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task ArrowFunction_GeneratedFunctionObjectSurface() { var testName = nameof(ArrowFunction_GeneratedFunctionObjectSurface); return ExecutionTest(testName); }
+
         // New: parameter destructuring (object)
         [Fact]
         public Task ArrowFunction_ParameterDestructuring_Object() { var testName = nameof(ArrowFunction_ParameterDestructuring_Object); return ExecutionTest(testName); }

@@ -98,13 +98,17 @@ internal sealed class JsDynamicValueProxy : DynamicObject
         {
             var normalizedArgs = NormalizeArgs(args);
 
-            if (_target is not Delegate del)
+            if (!JavaScriptRuntime.CallableOperations.IsCallable(_target))
             {
                 result = null;
                 return false;
             }
 
-            result = _runtime.Invoke(() => JavaScriptRuntime.Function.Call(del, thisArg: null, normalizedArgs));
+            result = _runtime.Invoke(
+                () => JavaScriptRuntime.CallableOperations.Call(
+                    _target,
+                    thisArgument: null,
+                    normalizedArgs));
             result = Wrap(_runtime, result);
             return true;
         }

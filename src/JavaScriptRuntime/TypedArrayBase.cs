@@ -662,7 +662,7 @@ namespace JavaScriptRuntime
         private List<double> GetSortedValues(object?[]? args)
         {
             var compareFunction = args != null && args.Length > 0 ? args[0] : null;
-            if (compareFunction is not null && compareFunction is not Delegate)
+            if (compareFunction is not null && !CallableOperations.IsCallable(compareFunction))
             {
                 throw new TypeError($"{TypedArrayName}.prototype.sort requires a callback function");
             }
@@ -673,7 +673,7 @@ namespace JavaScriptRuntime
                 values.Add(new SortableTypedArrayValue(ReadElementValue(i)));
             }
 
-            StableSortValues(values, compareFunction as Delegate);
+            StableSortValues(values, compareFunction);
 
             var sorted = new List<double>(_length);
             foreach (var value in values)
@@ -684,7 +684,7 @@ namespace JavaScriptRuntime
             return sorted;
         }
 
-        private void StableSortValues(List<SortableTypedArrayValue> values, Delegate? compareFunction)
+        private void StableSortValues(List<SortableTypedArrayValue> values, object? compareFunction)
         {
             var buffer = new SortableTypedArrayValue[values.Count];
             for (var width = 1; width < values.Count; width *= 2)
@@ -732,7 +732,7 @@ namespace JavaScriptRuntime
             }
         }
 
-        private int CompareValues(double left, double right, Delegate? compareFunction)
+        private int CompareValues(double left, double right, object? compareFunction)
             => compareFunction is not null
                 ? CompareUsingCallback(compareFunction, left, right)
                 : CompareDefaultValues(left, right);
@@ -1168,7 +1168,7 @@ namespace JavaScriptRuntime
         private object? GetRequiredCallback(object?[]? args, string methodName)
         {
             var callback = args != null && args.Length > 0 ? args[0] : null;
-            if (callback is not Delegate)
+            if (!CallableOperations.IsCallable(callback))
             {
                 throw new TypeError($"{TypedArrayName}.prototype.{methodName} requires a callback function");
             }
@@ -1184,28 +1184,19 @@ namespace JavaScriptRuntime
 
         private static object? InvokeCallback(object? callback, object? thisArg, string callbackKind, int argCount, object? a0, object? a1, object? a2, object? a3)
         {
-            if (callback is not Delegate del)
+            if (!CallableOperations.IsCallable(callback))
             {
                 throw new TypeError($"{callbackKind} callback is not a function");
             }
 
-            var effectiveThisArg = Function.GetEffectiveThisArg(del, thisArg);
-            var previousThis = RuntimeServices.SetCurrentThis(effectiveThisArg);
-            try
+            return argCount switch
             {
-                return argCount switch
-                {
-                    <= 0 => Closure.InvokeWithArgs0(del, System.Array.Empty<object>()),
-                    1 => Closure.InvokeWithArgs1(del, System.Array.Empty<object>(), a0),
-                    2 => Closure.InvokeWithArgs2(del, System.Array.Empty<object>(), a0, a1),
-                    3 => Closure.InvokeWithArgs3(del, System.Array.Empty<object>(), a0, a1, a2),
-                    _ => Closure.InvokeWithArgs(del, System.Array.Empty<object>(), new object?[] { a0, a1, a2, a3 })
-                };
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentThis(previousThis);
-            }
+                <= 0 => CallableOperations.Call0(callback, thisArg),
+                1 => CallableOperations.Call1(callback, thisArg, a0),
+                2 => CallableOperations.Call2(callback, thisArg, a0, a1),
+                3 => CallableOperations.Call3(callback, thisArg, a0, a1, a2),
+                _ => CallableOperations.Call4(callback, thisArg, a0, a1, a2, a3)
+            };
         }
 
         private static List<object?> CaptureSourceItems(object? source)

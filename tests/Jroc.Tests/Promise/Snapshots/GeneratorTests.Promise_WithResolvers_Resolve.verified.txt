@@ -25,7 +25,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2101
+				// Method begins at RVA 0x20ed
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -49,7 +49,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x20da
+			// Method begins at RVA 0x20c6
 			// Header size: 1
 			// Code size: 29 (0x1d)
 			.maxstack 8
@@ -74,7 +74,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20f8
+			// Method begins at RVA 0x20e4
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -100,15 +100,16 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 126 (0x7e)
+		// Code size: 106 (0x6a)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Promise_WithResolvers_Resolve/Scope,
 			[1] class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers,
 			[2] class [JavaScriptRuntime]JavaScriptRuntime.Promise,
 			[3] object,
-			[4] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1,
-			[5] class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers
+			[4] object[],
+			[5] class FunctionObjects.Promise_WithResolvers_Resolve_25376DC5.FunctionObject_Arrow_002FFD2A_L5C16,
+			[6] class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers
 		)
 
 		IL_0000: newobj instance void Modules.Promise_WithResolvers_Resolve/Scope::.ctor()
@@ -122,40 +123,36 @@
 		IL_0014: ldloc.2
 		IL_0015: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
 		IL_001a: stloc.3
-		IL_001b: ldnull
-		IL_001c: ldftn object Modules.Promise_WithResolvers_Resolve/ArrowFunction_L5C16::__js_call__(object, object)
-		IL_0022: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-		IL_0027: ldc.i4.1
-		IL_0028: newarr [System.Runtime]System.Object
-		IL_002d: dup
-		IL_002e: ldc.i4.0
-		IL_002f: ldloc.0
-		IL_0030: stelem.ref
-		IL_0031: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_0036: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_003b: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1
-		IL_0040: ldc.i4.1
-		IL_0041: conv.r8
-		IL_0042: ldstr ""
-		IL_0047: ldc.i4.0
-		IL_0048: ldc.i4.0
-		IL_0049: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0, float64, string, bool, bool)
-		IL_004e: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1>(!!0)
-		IL_0053: stloc.s 4
-		IL_0055: ldloc.3
-		IL_0056: ldstr "then"
-		IL_005b: ldloc.s 4
-		IL_005d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0062: pop
-		IL_0063: ldloc.1
-		IL_0064: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers>(!!0)
-		IL_0069: stloc.s 5
-		IL_006b: ldloc.s 5
-		IL_006d: ldstr "resolve"
-		IL_0072: ldstr "resolved"
-		IL_0077: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_007c: pop
-		IL_007d: ret
+		IL_001b: ldc.i4.1
+		IL_001c: newarr [System.Runtime]System.Object
+		IL_0021: dup
+		IL_0022: ldc.i4.0
+		IL_0023: ldloc.0
+		IL_0024: stelem.ref
+		IL_0025: stloc.s 4
+		IL_0027: newobj instance void FunctionObjects.Promise_WithResolvers_Resolve_25376DC5.FunctionObject_Arrow_002FFD2A_L5C16::.ctor()
+		IL_002c: ldc.i4.1
+		IL_002d: conv.r8
+		IL_002e: ldstr ""
+		IL_0033: ldc.i4.0
+		IL_0034: ldc.i4.0
+		IL_0035: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class FunctionObjects.Promise_WithResolvers_Resolve_25376DC5.FunctionObject_Arrow_002FFD2A_L5C16>(!!0, float64, string, bool, bool)
+		IL_003a: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class FunctionObjects.Promise_WithResolvers_Resolve_25376DC5.FunctionObject_Arrow_002FFD2A_L5C16>(!!0)
+		IL_003f: stloc.s 5
+		IL_0041: ldloc.3
+		IL_0042: ldstr "then"
+		IL_0047: ldloc.s 5
+		IL_0049: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_004e: pop
+		IL_004f: ldloc.1
+		IL_0050: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers>(!!0)
+		IL_0055: stloc.s 6
+		IL_0057: ldloc.s 6
+		IL_0059: ldstr "resolve"
+		IL_005e: ldstr "resolved"
+		IL_0063: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0068: pop
+		IL_0069: ret
 	} // end of method Promise_WithResolvers_Resolve::__js_module_init__
 
 } // end of class Modules.Promise_WithResolvers_Resolve
@@ -167,7 +164,7 @@
 	.method public hidebysig specialname rtspecialname 
 		instance void .ctor () cil managed 
 	{
-		// Method begins at RVA 0x210a
+		// Method begins at RVA 0x20f6
 		// Header size: 1
 		// Code size: 7 (0x7)
 		.maxstack 8
@@ -180,7 +177,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x2112
+		// Method begins at RVA 0x20fe
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -192,7 +189,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x2115
+		// Method begins at RVA 0x2101
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -207,7 +204,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x2118
+		// Method begins at RVA 0x2104
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -229,7 +226,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2127
+		// Method begins at RVA 0x2113
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

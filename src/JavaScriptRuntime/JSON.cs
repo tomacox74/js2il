@@ -21,14 +21,14 @@ namespace JavaScriptRuntime
             {
                 using var doc = JsonDocument.Parse(s ?? "undefined");
                 var parsed = FromElement(doc.RootElement);
-                if (reviver is not Delegate reviverFunction)
+                if (!CallableOperations.IsCallable(reviver))
                 {
                     return parsed;
                 }
 
                 var root = ObjectRuntime.CreateOrdinaryObject();
                 root.SetBoxedValue(string.Empty, parsed);
-                return InternalizeJsonProperty(root, string.Empty, reviverFunction);
+                return InternalizeJsonProperty(root, string.Empty, reviver!);
             }
             catch (JsonException ex)
             {
@@ -37,7 +37,7 @@ namespace JavaScriptRuntime
             }
         }
 
-        private static object? InternalizeJsonProperty(object holder, string name, Delegate reviver)
+        private static object? InternalizeJsonProperty(object holder, string name, object reviver)
         {
             var value = ObjectRuntime.GetItem(holder, name);
             if (value is Array array)
@@ -80,15 +80,7 @@ namespace JavaScriptRuntime
                 }
             }
 
-            var previousThis = RuntimeServices.SetCurrentThis(holder);
-            try
-            {
-                return Closure.InvokeWithArgs(reviver, System.Array.Empty<object>(), new object?[] { name, value });
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentThis(previousThis);
-            }
+            return CallableOperations.Call2(reviver, holder, name, value);
         }
 
         public static object? Stringify(object? value)
@@ -100,7 +92,9 @@ namespace JavaScriptRuntime
         public static object? Stringify(object? value, object? replacer, object? space)
         {
             var propertyList = CreatePropertyList(replacer);
-            var replacerFunction = replacer as Delegate;
+            var replacerFunction = CallableOperations.IsCallable(replacer)
+                ? replacer
+                : null;
             var gap = CreateGap(space);
             var holder = ObjectRuntime.CreateOrdinaryObject();
             ObjectRuntime.SetItem(holder, string.Empty, value);
@@ -152,7 +146,7 @@ namespace JavaScriptRuntime
 
         private static List<string>? CreatePropertyList(object? replacer)
         {
-            if (replacer is null || replacer is JsNull || replacer is Delegate)
+            if (replacer is null || replacer is JsNull || CallableOperations.IsCallable(replacer))
             {
                 return null;
             }
@@ -230,29 +224,21 @@ namespace JavaScriptRuntime
         private static bool TryInvokeObjectToString(object receiver, out object? result)
         {
             var toString = ObjectRuntime.GetItem(receiver, "toString");
-            if (toString is not Delegate)
+            if (!CallableOperations.IsCallable(toString))
             {
                 result = null;
                 return false;
             }
 
-            var previousThis = RuntimeServices.SetCurrentThis(receiver);
-            try
-            {
-                result = Closure.InvokeWithArgs(toString, System.Array.Empty<object>(), System.Array.Empty<object?>());
-                return result is null || result is JsNull || result is string || result is Symbol || result.GetType().IsValueType;
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentThis(previousThis);
-            }
+            result = CallableOperations.Call0(toString, receiver);
+            return result is null || result is JsNull || result is string || result is Symbol || result.GetType().IsValueType;
         }
 
         private static object? InvokeToJsonIfPresent(object? value, string key)
         {
             if (value is null
                 || value is JsNull
-                || value is Delegate
+                || CallableOperations.IsCallable(value)
                 || value is Symbol
                 || value is string
                 || value.GetType().IsValueType)
@@ -261,20 +247,12 @@ namespace JavaScriptRuntime
             }
 
             var toJson = ObjectRuntime.GetItem(value, "toJSON");
-            if (toJson is not Delegate toJsonFunction)
+            if (!CallableOperations.IsCallable(toJson))
             {
                 return value;
             }
 
-            var previousThis = RuntimeServices.SetCurrentThis(value);
-            try
-            {
-                return Closure.InvokeWithArgs(toJsonFunction, System.Array.Empty<object>(), new object?[] { key });
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentThis(previousThis);
-            }
+            return CallableOperations.Call1(toJson, value, key);
         }
 
         private static void PushToStackOrThrowIfCircular(HashSet<object> stack, object value)
@@ -285,29 +263,21 @@ namespace JavaScriptRuntime
             }
         }
 
-        private static object? ApplyReplacer(Delegate? replacerFunction, object holder, string key, object? value)
+        private static object? ApplyReplacer(object? replacerFunction, object holder, string key, object? value)
         {
             if (replacerFunction is null)
             {
                 return value;
             }
 
-            var previousThis = RuntimeServices.SetCurrentThis(holder);
-            try
-            {
-                return Closure.InvokeWithArgs(replacerFunction, System.Array.Empty<object>(), new object?[] { key, value });
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentThis(previousThis);
-            }
+            return CallableOperations.Call2(replacerFunction, holder, key, value);
         }
 
         private static string? SerializeProperty(
             object holder,
             string key,
             List<string>? propertyList,
-            Delegate? replacerFunction,
+            object? replacerFunction,
             HashSet<object> stack,
             string gap,
             string indent)
@@ -321,7 +291,7 @@ namespace JavaScriptRuntime
         private static string? SerializeValue(
             object? value,
             List<string>? propertyList,
-            Delegate? replacerFunction,
+            object? replacerFunction,
             HashSet<object> stack,
             string gap,
             string indent)
@@ -330,6 +300,7 @@ namespace JavaScriptRuntime
             {
                 case null:
                 case Delegate:
+                case JsFunctionObject:
                 case Symbol:
                     return null;
                 case JsNull:
@@ -403,7 +374,7 @@ namespace JavaScriptRuntime
         private static string SerializeArray(
             Array array,
             List<string>? propertyList,
-            Delegate? replacerFunction,
+            object? replacerFunction,
             HashSet<object> stack,
             string gap,
             string indent)
@@ -442,7 +413,7 @@ namespace JavaScriptRuntime
         private static string SerializeObject(
             object value,
             List<string>? propertyList,
-            Delegate? replacerFunction,
+            object? replacerFunction,
             HashSet<object> stack,
             string gap,
             string indent)

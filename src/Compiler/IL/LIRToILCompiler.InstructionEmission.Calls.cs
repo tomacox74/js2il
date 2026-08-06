@@ -1159,6 +1159,16 @@ internal sealed partial class LIRToILCompiler
                         break;
                     }
 
+                    if (TryEmitGeneratedArrowFunctionObject(
+                            createArrow,
+                            ilEncoder,
+                            allocation,
+                            methodDescriptor))
+                    {
+                        EmitStoreTemp(createArrow.Result, ilEncoder, allocation);
+                        break;
+                    }
+
                     var reader = _serviceProvider.GetService<Jroc.Services.TwoPhaseCompilation.ICallableDeclarationReader>();
                     if (reader == null)
                     {

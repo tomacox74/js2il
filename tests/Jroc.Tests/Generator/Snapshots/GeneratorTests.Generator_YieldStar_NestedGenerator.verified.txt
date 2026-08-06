@@ -793,24 +793,32 @@
 .class private auto ansi sealed beforefieldinit FunctionObjects.Generator_YieldStar_NestedGenerator_4AFD7CAB.FunctionObject_FunctionDeclaration_05E19C5E_inner
 	extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
 {
+	// Fields
+	.field private initonly object[] _transitionalScopes
+
 	// Methods
 	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
+		instance void .ctor (
+			object[] capture0
+		) cil managed 
 	{
 		// Method begins at RVA 0x273b
 		// Header size: 1
-		// Code size: 7 (0x7)
+		// Code size: 14 (0xe)
 		.maxstack 8
 
 		IL_0000: ldarg.0
 		IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-		IL_0006: ret
+		IL_0006: ldarg.0
+		IL_0007: ldarg.1
+		IL_0008: stfld object[] FunctionObjects.Generator_YieldStar_NestedGenerator_4AFD7CAB.FunctionObject_FunctionDeclaration_05E19C5E_inner::_transitionalScopes
+		IL_000d: ret
 	} // end of method FunctionObject_FunctionDeclaration_05E19C5E_inner::.ctor
 
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x2743
+		// Method begins at RVA 0x274a
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -822,7 +830,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x2746
+		// Method begins at RVA 0x274d
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -837,13 +845,13 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x2749
+		// Method begins at RVA 0x2750
 		// Header size: 1
 		// Code size: 13 (0xd)
 		.maxstack 8
 
-		IL_0000: ldc.i4.0
-		IL_0001: newarr [System.Runtime]System.Object
+		IL_0000: ldarg.0
+		IL_0001: ldfld object[] FunctionObjects.Generator_YieldStar_NestedGenerator_4AFD7CAB.FunctionObject_FunctionDeclaration_05E19C5E_inner::_transitionalScopes
 		IL_0006: ldnull
 		IL_0007: call object Modules.Generator_YieldStar_NestedGenerator/inner::__js_call__(object[], object)
 		IL_000c: ret
@@ -856,16 +864,18 @@
 {
 	// Fields
 	.field private initonly class Modules.Generator_YieldStar_NestedGenerator/Scope _environment0_Generator_YieldStar_NestedGenerator
+	.field private initonly object[] _transitionalScopes
 
 	// Methods
 	.method public hidebysig specialname rtspecialname 
 		instance void .ctor (
-			class Modules.Generator_YieldStar_NestedGenerator/Scope capture0
+			class Modules.Generator_YieldStar_NestedGenerator/Scope capture0,
+			object[] capture1
 		) cil managed 
 	{
-		// Method begins at RVA 0x2757
+		// Method begins at RVA 0x275e
 		// Header size: 1
-		// Code size: 14 (0xe)
+		// Code size: 21 (0x15)
 		.maxstack 8
 
 		IL_0000: ldarg.0
@@ -873,13 +883,16 @@
 		IL_0006: ldarg.0
 		IL_0007: ldarg.1
 		IL_0008: stfld class Modules.Generator_YieldStar_NestedGenerator/Scope FunctionObjects.Generator_YieldStar_NestedGenerator_4AFD7CAB.FunctionObject_FunctionDeclaration_0AE70585_outer::_environment0_Generator_YieldStar_NestedGenerator
-		IL_000d: ret
+		IL_000d: ldarg.0
+		IL_000e: ldarg.2
+		IL_000f: stfld object[] FunctionObjects.Generator_YieldStar_NestedGenerator_4AFD7CAB.FunctionObject_FunctionDeclaration_0AE70585_outer::_transitionalScopes
+		IL_0014: ret
 	} // end of method FunctionObject_FunctionDeclaration_0AE70585_outer::.ctor
 
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x2766
+		// Method begins at RVA 0x2774
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -891,7 +904,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x2769
+		// Method begins at RVA 0x2777
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -906,21 +919,16 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x276c
+		// Method begins at RVA 0x277a
 		// Header size: 1
-		// Code size: 22 (0x16)
+		// Code size: 13 (0xd)
 		.maxstack 8
 
-		IL_0000: ldc.i4.1
-		IL_0001: newarr [System.Runtime]System.Object
-		IL_0006: dup
-		IL_0007: ldc.i4.0
-		IL_0008: ldarg.0
-		IL_0009: ldfld class Modules.Generator_YieldStar_NestedGenerator/Scope FunctionObjects.Generator_YieldStar_NestedGenerator_4AFD7CAB.FunctionObject_FunctionDeclaration_0AE70585_outer::_environment0_Generator_YieldStar_NestedGenerator
-		IL_000e: stelem.ref
-		IL_000f: ldnull
-		IL_0010: call object Modules.Generator_YieldStar_NestedGenerator/outer::__js_call__(object[], object)
-		IL_0015: ret
+		IL_0000: ldarg.0
+		IL_0001: ldfld object[] FunctionObjects.Generator_YieldStar_NestedGenerator_4AFD7CAB.FunctionObject_FunctionDeclaration_0AE70585_outer::_transitionalScopes
+		IL_0006: ldnull
+		IL_0007: call object Modules.Generator_YieldStar_NestedGenerator/outer::__js_call__(object[], object)
+		IL_000c: ret
 	} // end of method FunctionObject_FunctionDeclaration_0AE70585_outer::CallCore
 
 } // end of class FunctionObjects.Generator_YieldStar_NestedGenerator_4AFD7CAB.FunctionObject_FunctionDeclaration_0AE70585_outer
@@ -932,7 +940,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2783
+		// Method begins at RVA 0x2788
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

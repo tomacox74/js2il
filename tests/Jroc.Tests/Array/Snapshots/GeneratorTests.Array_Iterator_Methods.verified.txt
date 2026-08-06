@@ -906,16 +906,18 @@
 {
 	// Fields
 	.field private initonly class Modules.Array_Iterator_Methods/FunctionExpression_L41C30/Scope _environment1_FunctionExpression_L41C30
+	.field private initonly object[] _transitionalScopes
 
 	// Methods
 	.method public hidebysig specialname rtspecialname 
 		instance void .ctor (
-			class Modules.Array_Iterator_Methods/FunctionExpression_L41C30/Scope capture0
+			class Modules.Array_Iterator_Methods/FunctionExpression_L41C30/Scope capture0,
+			object[] capture1
 		) cil managed 
 	{
 		// Method begins at RVA 0x288b
 		// Header size: 1
-		// Code size: 14 (0xe)
+		// Code size: 21 (0x15)
 		.maxstack 8
 
 		IL_0000: ldarg.0
@@ -923,13 +925,16 @@
 		IL_0006: ldarg.0
 		IL_0007: ldarg.1
 		IL_0008: stfld class Modules.Array_Iterator_Methods/FunctionExpression_L41C30/Scope FunctionObjects.Array_Iterator_Methods_6A205F6C.FunctionObject_FunctionExpression_DBFD1C9F_L44C11::_environment1_FunctionExpression_L41C30
-		IL_000d: ret
+		IL_000d: ldarg.0
+		IL_000e: ldarg.2
+		IL_000f: stfld object[] FunctionObjects.Array_Iterator_Methods_6A205F6C.FunctionObject_FunctionExpression_DBFD1C9F_L44C11::_transitionalScopes
+		IL_0014: ret
 	} // end of method FunctionObject_FunctionExpression_DBFD1C9F_L44C11::.ctor
 
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x289a
+		// Method begins at RVA 0x28a1
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -941,7 +946,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x289d
+		// Method begins at RVA 0x28a4
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -956,21 +961,16 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x28a0
+		// Method begins at RVA 0x28a7
 		// Header size: 1
-		// Code size: 22 (0x16)
+		// Code size: 13 (0xd)
 		.maxstack 8
 
-		IL_0000: ldc.i4.2
-		IL_0001: newarr [System.Runtime]System.Object
-		IL_0006: dup
-		IL_0007: ldc.i4.1
-		IL_0008: ldarg.0
-		IL_0009: ldfld class Modules.Array_Iterator_Methods/FunctionExpression_L41C30/Scope FunctionObjects.Array_Iterator_Methods_6A205F6C.FunctionObject_FunctionExpression_DBFD1C9F_L44C11::_environment1_FunctionExpression_L41C30
-		IL_000e: stelem.ref
-		IL_000f: ldnull
-		IL_0010: call object Modules.Array_Iterator_Methods/FunctionExpression_L41C30/FunctionExpression_L44C10::__js_call__(object[], object)
-		IL_0015: ret
+		IL_0000: ldarg.0
+		IL_0001: ldfld object[] FunctionObjects.Array_Iterator_Methods_6A205F6C.FunctionObject_FunctionExpression_DBFD1C9F_L44C11::_transitionalScopes
+		IL_0006: ldnull
+		IL_0007: call object Modules.Array_Iterator_Methods/FunctionExpression_L41C30/FunctionExpression_L44C10::__js_call__(object[], object)
+		IL_000c: ret
 	} // end of method FunctionObject_FunctionExpression_DBFD1C9F_L44C11::CallCore
 
 	.method family hidebysig virtual 
@@ -979,7 +979,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x28b7
+		// Method begins at RVA 0x28b5
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -998,7 +998,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x28c3
+		// Method begins at RVA 0x28c1
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

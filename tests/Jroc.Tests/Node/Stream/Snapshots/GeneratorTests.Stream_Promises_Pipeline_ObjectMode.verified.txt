@@ -22,7 +22,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x263a
+					// Method begins at RVA 0x2642
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -49,7 +49,7 @@
 				)
 				// Method begins at RVA 0x25a4
 				// Header size: 12
-				// Code size: 72 (0x48)
+				// Code size: 77 (0x4d)
 				.maxstack 8
 				.locals init (
 					[0] object,
@@ -59,29 +59,30 @@
 				)
 
 				IL_0000: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-				IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_000a: stloc.0
-				IL_000b: ldarg.2
-				IL_000c: ldstr "value"
-				IL_0011: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-				IL_0016: stloc.1
-				IL_0017: ldloc.1
-				IL_0018: ldc.r8 1
-				IL_0021: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
-				IL_0026: stloc.2
-				IL_0027: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-				IL_002c: dup
-				IL_002d: ldstr "value"
-				IL_0032: ldloc.2
-				IL_0033: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-				IL_0038: stloc.3
-				IL_0039: ldloc.0
-				IL_003a: ldstr "push"
-				IL_003f: ldloc.3
-				IL_0040: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-				IL_0045: pop
-				IL_0046: ldnull
-				IL_0047: ret
+				IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
+				IL_000a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_000f: stloc.0
+				IL_0010: ldarg.2
+				IL_0011: ldstr "value"
+				IL_0016: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+				IL_001b: stloc.1
+				IL_001c: ldloc.1
+				IL_001d: ldc.r8 1
+				IL_0026: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
+				IL_002b: stloc.2
+				IL_002c: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+				IL_0031: dup
+				IL_0032: ldstr "value"
+				IL_0037: ldloc.2
+				IL_0038: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+				IL_003d: stloc.3
+				IL_003e: ldloc.0
+				IL_003f: ldstr "push"
+				IL_0044: ldloc.3
+				IL_0045: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+				IL_004a: pop
+				IL_004b: ldnull
+				IL_004c: ret
 			} // end of method FunctionExpression_L12C25::__js_call__
 
 		} // end of class FunctionExpression_L12C25
@@ -97,7 +98,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2643
+					// Method begins at RVA 0x264b
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -122,7 +123,7 @@
 				.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 					01 00 02 00 00 00 00 00
 				)
-				// Method begins at RVA 0x25f8
+				// Method begins at RVA 0x2600
 				// Header size: 12
 				// Code size: 36 (0x24)
 				.maxstack 8
@@ -167,7 +168,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2631
+				// Method begins at RVA 0x2639
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -743,7 +744,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2628
+			// Method begins at RVA 0x2630
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -826,16 +827,18 @@
 {
 	// Fields
 	.field private initonly class Modules.Stream_Promises_Pipeline_ObjectMode/Scope _environment0_Stream_Promises_Pipeline_ObjectMode
+	.field private initonly object[] _transitionalScopes
 
 	// Methods
 	.method public hidebysig specialname rtspecialname 
 		instance void .ctor (
-			class Modules.Stream_Promises_Pipeline_ObjectMode/Scope capture0
+			class Modules.Stream_Promises_Pipeline_ObjectMode/Scope capture0,
+			object[] capture1
 		) cil managed 
 	{
-		// Method begins at RVA 0x264c
+		// Method begins at RVA 0x2654
 		// Header size: 1
-		// Code size: 14 (0xe)
+		// Code size: 21 (0x15)
 		.maxstack 8
 
 		IL_0000: ldarg.0
@@ -843,13 +846,16 @@
 		IL_0006: ldarg.0
 		IL_0007: ldarg.1
 		IL_0008: stfld class Modules.Stream_Promises_Pipeline_ObjectMode/Scope FunctionObjects.Stream_Promises_Pipeline_ObjectMode_710391A0.FunctionObject_FunctionDeclaration_8763DEC6_main::_environment0_Stream_Promises_Pipeline_ObjectMode
-		IL_000d: ret
+		IL_000d: ldarg.0
+		IL_000e: ldarg.2
+		IL_000f: stfld object[] FunctionObjects.Stream_Promises_Pipeline_ObjectMode_710391A0.FunctionObject_FunctionDeclaration_8763DEC6_main::_transitionalScopes
+		IL_0014: ret
 	} // end of method FunctionObject_FunctionDeclaration_8763DEC6_main::.ctor
 
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x265b
+		// Method begins at RVA 0x266a
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -861,7 +867,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x265e
+		// Method begins at RVA 0x266d
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -876,21 +882,16 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x2661
+		// Method begins at RVA 0x2670
 		// Header size: 1
-		// Code size: 22 (0x16)
+		// Code size: 13 (0xd)
 		.maxstack 8
 
-		IL_0000: ldc.i4.1
-		IL_0001: newarr [System.Runtime]System.Object
-		IL_0006: dup
-		IL_0007: ldc.i4.0
-		IL_0008: ldarg.0
-		IL_0009: ldfld class Modules.Stream_Promises_Pipeline_ObjectMode/Scope FunctionObjects.Stream_Promises_Pipeline_ObjectMode_710391A0.FunctionObject_FunctionDeclaration_8763DEC6_main::_environment0_Stream_Promises_Pipeline_ObjectMode
-		IL_000e: stelem.ref
-		IL_000f: ldnull
-		IL_0010: call object Modules.Stream_Promises_Pipeline_ObjectMode/main::__js_call__(object[], object)
-		IL_0015: ret
+		IL_0000: ldarg.0
+		IL_0001: ldfld object[] FunctionObjects.Stream_Promises_Pipeline_ObjectMode_710391A0.FunctionObject_FunctionDeclaration_8763DEC6_main::_transitionalScopes
+		IL_0006: ldnull
+		IL_0007: call object Modules.Stream_Promises_Pipeline_ObjectMode/main::__js_call__(object[], object)
+		IL_000c: ret
 	} // end of method FunctionObject_FunctionDeclaration_8763DEC6_main::CallCore
 
 } // end of class FunctionObjects.Stream_Promises_Pipeline_ObjectMode_710391A0.FunctionObject_FunctionDeclaration_8763DEC6_main
@@ -901,17 +902,19 @@
 	// Fields
 	.field private initonly class Modules.Stream_Promises_Pipeline_ObjectMode/Scope _environment0_Stream_Promises_Pipeline_ObjectMode
 	.field private initonly class Modules.Stream_Promises_Pipeline_ObjectMode/main/Scope _environment1_main
+	.field private initonly object[] _transitionalScopes
 
 	// Methods
 	.method public hidebysig specialname rtspecialname 
 		instance void .ctor (
 			class Modules.Stream_Promises_Pipeline_ObjectMode/Scope capture0,
-			class Modules.Stream_Promises_Pipeline_ObjectMode/main/Scope capture1
+			class Modules.Stream_Promises_Pipeline_ObjectMode/main/Scope capture1,
+			object[] capture2
 		) cil managed 
 	{
-		// Method begins at RVA 0x2678
+		// Method begins at RVA 0x267e
 		// Header size: 1
-		// Code size: 21 (0x15)
+		// Code size: 28 (0x1c)
 		.maxstack 8
 
 		IL_0000: ldarg.0
@@ -922,13 +925,16 @@
 		IL_000d: ldarg.0
 		IL_000e: ldarg.2
 		IL_000f: stfld class Modules.Stream_Promises_Pipeline_ObjectMode/main/Scope FunctionObjects.Stream_Promises_Pipeline_ObjectMode_710391A0.FunctionObject_FunctionExpression_6DDAF3C3_L12C26::_environment1_main
-		IL_0014: ret
+		IL_0014: ldarg.0
+		IL_0015: ldarg.3
+		IL_0016: stfld object[] FunctionObjects.Stream_Promises_Pipeline_ObjectMode_710391A0.FunctionObject_FunctionExpression_6DDAF3C3_L12C26::_transitionalScopes
+		IL_001b: ret
 	} // end of method FunctionObject_FunctionExpression_6DDAF3C3_L12C26::.ctor
 
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x268e
+		// Method begins at RVA 0x269b
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -940,7 +946,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x2691
+		// Method begins at RVA 0x269e
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -955,29 +961,19 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x2694
+		// Method begins at RVA 0x26a1
 		// Header size: 1
-		// Code size: 38 (0x26)
+		// Code size: 20 (0x14)
 		.maxstack 8
 
-		IL_0000: ldc.i4.2
-		IL_0001: newarr [System.Runtime]System.Object
-		IL_0006: dup
-		IL_0007: ldc.i4.0
-		IL_0008: ldarg.0
-		IL_0009: ldfld class Modules.Stream_Promises_Pipeline_ObjectMode/Scope FunctionObjects.Stream_Promises_Pipeline_ObjectMode_710391A0.FunctionObject_FunctionExpression_6DDAF3C3_L12C26::_environment0_Stream_Promises_Pipeline_ObjectMode
-		IL_000e: stelem.ref
-		IL_000f: dup
-		IL_0010: ldc.i4.1
-		IL_0011: ldarg.0
-		IL_0012: ldfld class Modules.Stream_Promises_Pipeline_ObjectMode/main/Scope FunctionObjects.Stream_Promises_Pipeline_ObjectMode_710391A0.FunctionObject_FunctionExpression_6DDAF3C3_L12C26::_environment1_main
-		IL_0017: stelem.ref
-		IL_0018: ldnull
-		IL_0019: ldarg.2
-		IL_001a: ldc.i4.0
-		IL_001b: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-		IL_0020: call object Modules.Stream_Promises_Pipeline_ObjectMode/main/FunctionExpression_L12C25::__js_call__(object[], object, object)
-		IL_0025: ret
+		IL_0000: ldarg.0
+		IL_0001: ldfld object[] FunctionObjects.Stream_Promises_Pipeline_ObjectMode_710391A0.FunctionObject_FunctionExpression_6DDAF3C3_L12C26::_transitionalScopes
+		IL_0006: ldnull
+		IL_0007: ldarg.2
+		IL_0008: ldc.i4.0
+		IL_0009: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+		IL_000e: call object Modules.Stream_Promises_Pipeline_ObjectMode/main/FunctionExpression_L12C25::__js_call__(object[], object, object)
+		IL_0013: ret
 	} // end of method FunctionObject_FunctionExpression_6DDAF3C3_L12C26::CallCore
 
 	.method family hidebysig virtual 
@@ -986,7 +982,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x26bb
+		// Method begins at RVA 0x26b6
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -1004,17 +1000,19 @@
 	// Fields
 	.field private initonly class Modules.Stream_Promises_Pipeline_ObjectMode/Scope _environment0_Stream_Promises_Pipeline_ObjectMode
 	.field private initonly class Modules.Stream_Promises_Pipeline_ObjectMode/main/Scope _environment1_main
+	.field private initonly object[] _transitionalScopes
 
 	// Methods
 	.method public hidebysig specialname rtspecialname 
 		instance void .ctor (
 			class Modules.Stream_Promises_Pipeline_ObjectMode/Scope capture0,
-			class Modules.Stream_Promises_Pipeline_ObjectMode/main/Scope capture1
+			class Modules.Stream_Promises_Pipeline_ObjectMode/main/Scope capture1,
+			object[] capture2
 		) cil managed 
 	{
-		// Method begins at RVA 0x26c7
+		// Method begins at RVA 0x26c2
 		// Header size: 1
-		// Code size: 21 (0x15)
+		// Code size: 28 (0x1c)
 		.maxstack 8
 
 		IL_0000: ldarg.0
@@ -1025,13 +1023,16 @@
 		IL_000d: ldarg.0
 		IL_000e: ldarg.2
 		IL_000f: stfld class Modules.Stream_Promises_Pipeline_ObjectMode/main/Scope FunctionObjects.Stream_Promises_Pipeline_ObjectMode_710391A0.FunctionObject_FunctionExpression_53DB12A6_L16C21::_environment1_main
-		IL_0014: ret
+		IL_0014: ldarg.0
+		IL_0015: ldarg.3
+		IL_0016: stfld object[] FunctionObjects.Stream_Promises_Pipeline_ObjectMode_710391A0.FunctionObject_FunctionExpression_53DB12A6_L16C21::_transitionalScopes
+		IL_001b: ret
 	} // end of method FunctionObject_FunctionExpression_53DB12A6_L16C21::.ctor
 
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x26dd
+		// Method begins at RVA 0x26df
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -1043,7 +1044,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x26e0
+		// Method begins at RVA 0x26e2
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -1058,29 +1059,19 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x26e3
+		// Method begins at RVA 0x26e5
 		// Header size: 1
-		// Code size: 38 (0x26)
+		// Code size: 20 (0x14)
 		.maxstack 8
 
-		IL_0000: ldc.i4.2
-		IL_0001: newarr [System.Runtime]System.Object
-		IL_0006: dup
-		IL_0007: ldc.i4.0
-		IL_0008: ldarg.0
-		IL_0009: ldfld class Modules.Stream_Promises_Pipeline_ObjectMode/Scope FunctionObjects.Stream_Promises_Pipeline_ObjectMode_710391A0.FunctionObject_FunctionExpression_53DB12A6_L16C21::_environment0_Stream_Promises_Pipeline_ObjectMode
-		IL_000e: stelem.ref
-		IL_000f: dup
-		IL_0010: ldc.i4.1
-		IL_0011: ldarg.0
-		IL_0012: ldfld class Modules.Stream_Promises_Pipeline_ObjectMode/main/Scope FunctionObjects.Stream_Promises_Pipeline_ObjectMode_710391A0.FunctionObject_FunctionExpression_53DB12A6_L16C21::_environment1_main
-		IL_0017: stelem.ref
-		IL_0018: ldnull
-		IL_0019: ldarg.2
-		IL_001a: ldc.i4.0
-		IL_001b: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-		IL_0020: call object Modules.Stream_Promises_Pipeline_ObjectMode/main/FunctionExpression_L16C20::__js_call__(object[], object, object)
-		IL_0025: ret
+		IL_0000: ldarg.0
+		IL_0001: ldfld object[] FunctionObjects.Stream_Promises_Pipeline_ObjectMode_710391A0.FunctionObject_FunctionExpression_53DB12A6_L16C21::_transitionalScopes
+		IL_0006: ldnull
+		IL_0007: ldarg.2
+		IL_0008: ldc.i4.0
+		IL_0009: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+		IL_000e: call object Modules.Stream_Promises_Pipeline_ObjectMode/main/FunctionExpression_L16C20::__js_call__(object[], object, object)
+		IL_0013: ret
 	} // end of method FunctionObject_FunctionExpression_53DB12A6_L16C21::CallCore
 
 	.method family hidebysig virtual 
@@ -1089,7 +1080,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x270a
+		// Method begins at RVA 0x26fa
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -1108,7 +1099,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2716
+		// Method begins at RVA 0x2706
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

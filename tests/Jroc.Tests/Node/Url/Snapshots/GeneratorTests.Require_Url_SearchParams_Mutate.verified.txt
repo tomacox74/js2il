@@ -27,7 +27,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2623
+				// Method begins at RVA 0x2603
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -52,7 +52,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x250c
+			// Method begins at RVA 0x24e8
 			// Header size: 12
 			// Code size: 56 (0x38)
 			.maxstack 8
@@ -100,7 +100,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2635
+					// Method begins at RVA 0x2615
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -118,7 +118,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x262c
+				// Method begins at RVA 0x260c
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -143,9 +143,9 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2550
+			// Method begins at RVA 0x252c
 			// Header size: 12
-			// Code size: 70 (0x46)
+			// Code size: 75 (0x4b)
 			.maxstack 8
 			.locals init (
 				[0] bool,
@@ -158,25 +158,26 @@
 			IL_0006: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
 			IL_000b: stloc.0
 			IL_000c: ldloc.0
-			IL_000d: brfalse IL_0044
+			IL_000d: brfalse IL_0049
 
 			IL_0012: ldstr "console"
 			IL_0017: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
 			IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
 			IL_0021: stloc.1
 			IL_0022: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-			IL_0027: ldstr "tag"
-			IL_002c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0031: stloc.2
-			IL_0032: ldloc.1
-			IL_0033: ldstr "log"
-			IL_0038: ldstr "this tag:"
-			IL_003d: ldloc.2
-			IL_003e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-			IL_0043: pop
+			IL_0027: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
+			IL_002c: ldstr "tag"
+			IL_0031: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0036: stloc.2
+			IL_0037: ldloc.1
+			IL_0038: ldstr "log"
+			IL_003d: ldstr "this tag:"
+			IL_0042: ldloc.2
+			IL_0043: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+			IL_0048: pop
 
-			IL_0044: ldnull
-			IL_0045: ret
+			IL_0049: ldnull
+			IL_004a: ret
 		} // end of method FunctionExpression_L19C28::__js_call__
 
 	} // end of class FunctionExpression_L19C28
@@ -201,7 +202,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2647
+					// Method begins at RVA 0x2627
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -223,7 +224,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x263e
+				// Method begins at RVA 0x261e
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -251,7 +252,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 06 00 00 02
 			)
-			// Method begins at RVA 0x25a4
+			// Method begins at RVA 0x2584
 			// Header size: 12
 			// Code size: 106 (0x6a)
 			.maxstack 8
@@ -315,7 +316,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x261a
+			// Method begins at RVA 0x25fa
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -341,7 +342,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 1198 (0x4ae)
+		// Code size: 1162 (0x48a)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Require_Url_SearchParams_Mutate/Scope,
@@ -352,7 +353,10 @@
 			[5] object,
 			[6] object,
 			[7] object,
-			[8] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2
+			[8] object[],
+			[9] class FunctionObjects.Require_Url_SearchParams_Mutate_C429D800.FunctionObject_Arrow_FE10CE8B_L14C29,
+			[10] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2,
+			[11] class FunctionObjects.Require_Url_SearchParams_Mutate_C429D800.FunctionObject_Arrow_CC312B3E_L33C18
 		)
 
 		IL_0000: newobj instance void Modules.Require_Url_SearchParams_Mutate/Scope::.ctor()
@@ -480,238 +484,233 @@
 		IL_01af: ldloc.s 7
 		IL_01b1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
 		IL_01b6: stloc.s 7
-		IL_01b8: ldnull
-		IL_01b9: ldftn object Modules.Require_Url_SearchParams_Mutate/ArrowFunction_L14C29::__js_call__(object, object, object)
-		IL_01bf: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::.ctor(object, native int)
-		IL_01c4: ldc.i4.1
-		IL_01c5: newarr [System.Runtime]System.Object
-		IL_01ca: dup
-		IL_01cb: ldc.i4.0
-		IL_01cc: ldloc.0
-		IL_01cd: stelem.ref
-		IL_01ce: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_01d3: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_01d8: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2
-		IL_01dd: ldc.i4.2
-		IL_01de: conv.r8
-		IL_01df: ldstr ""
-		IL_01e4: ldc.i4.0
-		IL_01e5: ldc.i4.0
-		IL_01e6: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2>(!!0, float64, string, bool, bool)
-		IL_01eb: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2>(!!0)
-		IL_01f0: stloc.s 8
-		IL_01f2: ldloc.s 7
-		IL_01f4: ldstr "forEach"
-		IL_01f9: ldloc.s 8
-		IL_01fb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0200: pop
-		IL_0201: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_0206: dup
-		IL_0207: ldstr "tag"
-		IL_020c: ldstr "ctx"
-		IL_0211: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_0216: stloc.3
-		IL_0217: ldloc.2
-		IL_0218: ldstr "searchParams"
-		IL_021d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0222: stloc.s 7
-		IL_0224: ldloc.s 7
-		IL_0226: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_022b: stloc.s 7
-		IL_022d: ldnull
-		IL_022e: ldftn object Modules.Require_Url_SearchParams_Mutate/FunctionExpression_L19C28::__js_call__(object, object, object)
-		IL_0234: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::.ctor(object, native int)
-		IL_0239: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2
-		IL_023e: ldc.i4.2
-		IL_023f: conv.r8
-		IL_0240: ldstr ""
-		IL_0245: ldc.i4.0
-		IL_0246: ldc.i4.1
-		IL_0247: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2>(!!0, float64, string, bool, bool)
-		IL_024c: stloc.s 8
-		IL_024e: ldloc.s 7
-		IL_0250: ldstr "forEach"
-		IL_0255: ldloc.s 8
-		IL_0257: ldloc.3
-		IL_0258: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_025d: pop
-		IL_025e: ldstr "console"
-		IL_0263: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0268: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_026d: stloc.s 7
-		IL_026f: ldloc.2
-		IL_0270: ldstr "search"
-		IL_0275: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_027a: stloc.s 6
-		IL_027c: ldloc.s 7
-		IL_027e: ldstr "log"
-		IL_0283: ldstr "search:"
-		IL_0288: ldloc.s 6
-		IL_028a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_028f: pop
-		IL_0290: ldstr "console"
-		IL_0295: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_029a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_029f: stloc.s 6
-		IL_02a1: ldloc.2
-		IL_02a2: ldstr "href"
-		IL_02a7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_02ac: stloc.s 7
-		IL_02ae: ldloc.s 6
-		IL_02b0: ldstr "log"
-		IL_02b5: ldstr "href:"
-		IL_02ba: ldloc.s 7
-		IL_02bc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_02c1: pop
-		IL_02c2: ldloc.1
-		IL_02c3: callvirt instance object [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IUrlModule::get_URLSearchParams()
-		IL_02c8: stloc.s 7
-		IL_02ca: ldloc.s 7
-		IL_02cc: ldc.i4.1
-		IL_02cd: newarr [System.Runtime]System.Object
-		IL_02d2: dup
-		IL_02d3: ldc.i4.0
-		IL_02d4: ldstr "alpha=1&beta=two+words"
-		IL_02d9: stelem.ref
-		IL_02da: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::ConstructValue(object, object[])
-		IL_02df: stloc.s 4
-		IL_02e1: ldstr "console"
-		IL_02e6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_02eb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_02f0: stloc.s 7
-		IL_02f2: ldloc.s 4
-		IL_02f4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_02f9: ldstr "toString"
-		IL_02fe: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-		IL_0303: stloc.s 6
-		IL_0305: ldloc.s 7
-		IL_0307: ldstr "log"
-		IL_030c: ldstr "copy:"
-		IL_0311: ldloc.s 6
-		IL_0313: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_0318: pop
-		IL_0319: ldstr "console"
-		IL_031e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0323: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0328: stloc.s 6
-		IL_032a: ldloc.s 4
-		IL_032c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0331: ldstr "get"
-		IL_0336: ldstr "beta"
-		IL_033b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0340: stloc.s 7
-		IL_0342: ldloc.s 6
-		IL_0344: ldstr "log"
-		IL_0349: ldstr "copy beta:"
-		IL_034e: ldloc.s 7
-		IL_0350: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_0355: pop
-		IL_0356: ldloc.1
-		IL_0357: callvirt instance object [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IUrlModule::get_URLSearchParams()
-		IL_035c: stloc.s 7
-		IL_035e: ldloc.s 7
-		IL_0360: ldc.i4.1
-		IL_0361: newarr [System.Runtime]System.Object
-		IL_0366: dup
-		IL_0367: ldc.i4.0
-		IL_0368: ldstr "a=1"
-		IL_036d: stelem.ref
-		IL_036e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::ConstructValue(object, object[])
-		IL_0373: stloc.s 7
-		IL_0375: ldloc.0
-		IL_0376: ldloc.s 7
-		IL_0378: stfld object Modules.Require_Url_SearchParams_Mutate/Scope::mutating
-		IL_037d: ldloc.0
-		IL_037e: ldfld object Modules.Require_Url_SearchParams_Mutate/Scope::mutating
-		IL_0383: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0388: stloc.s 7
-		IL_038a: ldloc.0
-		IL_038b: castclass Modules.Require_Url_SearchParams_Mutate/Scope
-		IL_0390: ldftn object Modules.Require_Url_SearchParams_Mutate/ArrowFunction_L33C18::__js_call__(class Modules.Require_Url_SearchParams_Mutate/Scope, object, object, object)
-		IL_0396: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::.ctor(object, native int)
-		IL_039b: ldc.i4.1
-		IL_039c: newarr [System.Runtime]System.Object
-		IL_03a1: dup
-		IL_03a2: ldc.i4.0
-		IL_03a3: ldloc.0
-		IL_03a4: stelem.ref
-		IL_03a5: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_03aa: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_03af: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2
-		IL_03b4: ldc.i4.2
-		IL_03b5: conv.r8
-		IL_03b6: ldstr ""
-		IL_03bb: ldc.i4.0
-		IL_03bc: ldc.i4.0
-		IL_03bd: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2>(!!0, float64, string, bool, bool)
-		IL_03c2: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2>(!!0)
-		IL_03c7: stloc.s 8
-		IL_03c9: ldloc.s 7
-		IL_03cb: ldstr "forEach"
-		IL_03d0: ldloc.s 8
-		IL_03d2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_03d7: pop
-		IL_03d8: ldstr "console"
-		IL_03dd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_03e2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_03e7: stloc.s 7
-		IL_03e9: ldloc.0
-		IL_03ea: ldfld object Modules.Require_Url_SearchParams_Mutate/Scope::mutating
-		IL_03ef: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_03f4: ldstr "toString"
-		IL_03f9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-		IL_03fe: stloc.s 6
-		IL_0400: ldloc.s 7
-		IL_0402: ldstr "log"
-		IL_0407: ldstr "mutating final:"
-		IL_040c: ldloc.s 6
-		IL_040e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_0413: pop
-		IL_0414: ldloc.1
-		IL_0415: callvirt instance object [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IUrlModule::get_URLSearchParams()
-		IL_041a: stloc.s 6
-		IL_041c: ldloc.s 6
-		IL_041e: ldc.i4.1
-		IL_041f: newarr [System.Runtime]System.Object
-		IL_0424: dup
-		IL_0425: ldc.i4.0
-		IL_0426: ldstr "bad=%&plus=a+b%"
-		IL_042b: stelem.ref
-		IL_042c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::ConstructValue(object, object[])
-		IL_0431: stloc.s 5
-		IL_0433: ldstr "console"
-		IL_0438: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_043d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0442: stloc.s 6
-		IL_0444: ldloc.s 5
-		IL_0446: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_044b: ldstr "get"
-		IL_0450: ldstr "bad"
-		IL_0455: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_045a: stloc.s 7
-		IL_045c: ldloc.s 6
-		IL_045e: ldstr "log"
-		IL_0463: ldstr "malformed bad:"
-		IL_0468: ldloc.s 7
-		IL_046a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_046f: pop
-		IL_0470: ldstr "console"
-		IL_0475: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_047a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_047f: stloc.s 7
-		IL_0481: ldloc.s 5
-		IL_0483: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0488: ldstr "get"
-		IL_048d: ldstr "plus"
-		IL_0492: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0497: stloc.s 6
-		IL_0499: ldloc.s 7
-		IL_049b: ldstr "log"
-		IL_04a0: ldstr "malformed plus:"
-		IL_04a5: ldloc.s 6
-		IL_04a7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_04ac: pop
-		IL_04ad: ret
+		IL_01b8: ldc.i4.1
+		IL_01b9: newarr [System.Runtime]System.Object
+		IL_01be: dup
+		IL_01bf: ldc.i4.0
+		IL_01c0: ldloc.0
+		IL_01c1: stelem.ref
+		IL_01c2: stloc.s 8
+		IL_01c4: newobj instance void FunctionObjects.Require_Url_SearchParams_Mutate_C429D800.FunctionObject_Arrow_FE10CE8B_L14C29::.ctor()
+		IL_01c9: ldc.i4.2
+		IL_01ca: conv.r8
+		IL_01cb: ldstr ""
+		IL_01d0: ldc.i4.0
+		IL_01d1: ldc.i4.0
+		IL_01d2: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class FunctionObjects.Require_Url_SearchParams_Mutate_C429D800.FunctionObject_Arrow_FE10CE8B_L14C29>(!!0, float64, string, bool, bool)
+		IL_01d7: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class FunctionObjects.Require_Url_SearchParams_Mutate_C429D800.FunctionObject_Arrow_FE10CE8B_L14C29>(!!0)
+		IL_01dc: stloc.s 9
+		IL_01de: ldloc.s 7
+		IL_01e0: ldstr "forEach"
+		IL_01e5: ldloc.s 9
+		IL_01e7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_01ec: pop
+		IL_01ed: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_01f2: dup
+		IL_01f3: ldstr "tag"
+		IL_01f8: ldstr "ctx"
+		IL_01fd: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_0202: stloc.3
+		IL_0203: ldloc.2
+		IL_0204: ldstr "searchParams"
+		IL_0209: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_020e: stloc.s 7
+		IL_0210: ldloc.s 7
+		IL_0212: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0217: stloc.s 7
+		IL_0219: ldnull
+		IL_021a: ldftn object Modules.Require_Url_SearchParams_Mutate/FunctionExpression_L19C28::__js_call__(object, object, object)
+		IL_0220: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::.ctor(object, native int)
+		IL_0225: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2
+		IL_022a: ldc.i4.2
+		IL_022b: conv.r8
+		IL_022c: ldstr ""
+		IL_0231: ldc.i4.0
+		IL_0232: ldc.i4.1
+		IL_0233: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2>(!!0, float64, string, bool, bool)
+		IL_0238: stloc.s 10
+		IL_023a: ldloc.s 7
+		IL_023c: ldstr "forEach"
+		IL_0241: ldloc.s 10
+		IL_0243: ldloc.3
+		IL_0244: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_0249: pop
+		IL_024a: ldstr "console"
+		IL_024f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0254: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0259: stloc.s 7
+		IL_025b: ldloc.2
+		IL_025c: ldstr "search"
+		IL_0261: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0266: stloc.s 6
+		IL_0268: ldloc.s 7
+		IL_026a: ldstr "log"
+		IL_026f: ldstr "search:"
+		IL_0274: ldloc.s 6
+		IL_0276: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_027b: pop
+		IL_027c: ldstr "console"
+		IL_0281: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0286: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_028b: stloc.s 6
+		IL_028d: ldloc.2
+		IL_028e: ldstr "href"
+		IL_0293: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0298: stloc.s 7
+		IL_029a: ldloc.s 6
+		IL_029c: ldstr "log"
+		IL_02a1: ldstr "href:"
+		IL_02a6: ldloc.s 7
+		IL_02a8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_02ad: pop
+		IL_02ae: ldloc.1
+		IL_02af: callvirt instance object [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IUrlModule::get_URLSearchParams()
+		IL_02b4: stloc.s 7
+		IL_02b6: ldloc.s 7
+		IL_02b8: ldc.i4.1
+		IL_02b9: newarr [System.Runtime]System.Object
+		IL_02be: dup
+		IL_02bf: ldc.i4.0
+		IL_02c0: ldstr "alpha=1&beta=two+words"
+		IL_02c5: stelem.ref
+		IL_02c6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::ConstructValue(object, object[])
+		IL_02cb: stloc.s 4
+		IL_02cd: ldstr "console"
+		IL_02d2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_02d7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_02dc: stloc.s 7
+		IL_02de: ldloc.s 4
+		IL_02e0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_02e5: ldstr "toString"
+		IL_02ea: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+		IL_02ef: stloc.s 6
+		IL_02f1: ldloc.s 7
+		IL_02f3: ldstr "log"
+		IL_02f8: ldstr "copy:"
+		IL_02fd: ldloc.s 6
+		IL_02ff: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_0304: pop
+		IL_0305: ldstr "console"
+		IL_030a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_030f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0314: stloc.s 6
+		IL_0316: ldloc.s 4
+		IL_0318: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_031d: ldstr "get"
+		IL_0322: ldstr "beta"
+		IL_0327: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_032c: stloc.s 7
+		IL_032e: ldloc.s 6
+		IL_0330: ldstr "log"
+		IL_0335: ldstr "copy beta:"
+		IL_033a: ldloc.s 7
+		IL_033c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_0341: pop
+		IL_0342: ldloc.1
+		IL_0343: callvirt instance object [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IUrlModule::get_URLSearchParams()
+		IL_0348: stloc.s 7
+		IL_034a: ldloc.s 7
+		IL_034c: ldc.i4.1
+		IL_034d: newarr [System.Runtime]System.Object
+		IL_0352: dup
+		IL_0353: ldc.i4.0
+		IL_0354: ldstr "a=1"
+		IL_0359: stelem.ref
+		IL_035a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::ConstructValue(object, object[])
+		IL_035f: stloc.s 7
+		IL_0361: ldloc.0
+		IL_0362: ldloc.s 7
+		IL_0364: stfld object Modules.Require_Url_SearchParams_Mutate/Scope::mutating
+		IL_0369: ldloc.0
+		IL_036a: ldfld object Modules.Require_Url_SearchParams_Mutate/Scope::mutating
+		IL_036f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0374: stloc.s 7
+		IL_0376: ldc.i4.1
+		IL_0377: newarr [System.Runtime]System.Object
+		IL_037c: dup
+		IL_037d: ldc.i4.0
+		IL_037e: ldloc.0
+		IL_037f: stelem.ref
+		IL_0380: stloc.s 8
+		IL_0382: ldloc.s 8
+		IL_0384: ldc.i4.0
+		IL_0385: ldelem.ref
+		IL_0386: castclass Modules.Require_Url_SearchParams_Mutate/Scope
+		IL_038b: newobj instance void FunctionObjects.Require_Url_SearchParams_Mutate_C429D800.FunctionObject_Arrow_CC312B3E_L33C18::.ctor(class Modules.Require_Url_SearchParams_Mutate/Scope)
+		IL_0390: ldc.i4.2
+		IL_0391: conv.r8
+		IL_0392: ldstr ""
+		IL_0397: ldc.i4.0
+		IL_0398: ldc.i4.0
+		IL_0399: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class FunctionObjects.Require_Url_SearchParams_Mutate_C429D800.FunctionObject_Arrow_CC312B3E_L33C18>(!!0, float64, string, bool, bool)
+		IL_039e: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class FunctionObjects.Require_Url_SearchParams_Mutate_C429D800.FunctionObject_Arrow_CC312B3E_L33C18>(!!0)
+		IL_03a3: stloc.s 11
+		IL_03a5: ldloc.s 7
+		IL_03a7: ldstr "forEach"
+		IL_03ac: ldloc.s 11
+		IL_03ae: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_03b3: pop
+		IL_03b4: ldstr "console"
+		IL_03b9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_03be: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_03c3: stloc.s 7
+		IL_03c5: ldloc.0
+		IL_03c6: ldfld object Modules.Require_Url_SearchParams_Mutate/Scope::mutating
+		IL_03cb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_03d0: ldstr "toString"
+		IL_03d5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+		IL_03da: stloc.s 6
+		IL_03dc: ldloc.s 7
+		IL_03de: ldstr "log"
+		IL_03e3: ldstr "mutating final:"
+		IL_03e8: ldloc.s 6
+		IL_03ea: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_03ef: pop
+		IL_03f0: ldloc.1
+		IL_03f1: callvirt instance object [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IUrlModule::get_URLSearchParams()
+		IL_03f6: stloc.s 6
+		IL_03f8: ldloc.s 6
+		IL_03fa: ldc.i4.1
+		IL_03fb: newarr [System.Runtime]System.Object
+		IL_0400: dup
+		IL_0401: ldc.i4.0
+		IL_0402: ldstr "bad=%&plus=a+b%"
+		IL_0407: stelem.ref
+		IL_0408: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::ConstructValue(object, object[])
+		IL_040d: stloc.s 5
+		IL_040f: ldstr "console"
+		IL_0414: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0419: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_041e: stloc.s 6
+		IL_0420: ldloc.s 5
+		IL_0422: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0427: ldstr "get"
+		IL_042c: ldstr "bad"
+		IL_0431: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0436: stloc.s 7
+		IL_0438: ldloc.s 6
+		IL_043a: ldstr "log"
+		IL_043f: ldstr "malformed bad:"
+		IL_0444: ldloc.s 7
+		IL_0446: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_044b: pop
+		IL_044c: ldstr "console"
+		IL_0451: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0456: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_045b: stloc.s 7
+		IL_045d: ldloc.s 5
+		IL_045f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0464: ldstr "get"
+		IL_0469: ldstr "plus"
+		IL_046e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0473: stloc.s 6
+		IL_0475: ldloc.s 7
+		IL_0477: ldstr "log"
+		IL_047c: ldstr "malformed plus:"
+		IL_0481: ldloc.s 6
+		IL_0483: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_0488: pop
+		IL_0489: ret
 	} // end of method Require_Url_SearchParams_Mutate::__js_module_init__
 
 } // end of class Modules.Require_Url_SearchParams_Mutate
@@ -723,7 +722,7 @@
 	.method public hidebysig specialname rtspecialname 
 		instance void .ctor () cil managed 
 	{
-		// Method begins at RVA 0x2650
+		// Method begins at RVA 0x2630
 		// Header size: 1
 		// Code size: 7 (0x7)
 		.maxstack 8
@@ -736,7 +735,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x2658
+		// Method begins at RVA 0x2638
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -748,7 +747,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x265b
+		// Method begins at RVA 0x263b
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -763,7 +762,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x265e
+		// Method begins at RVA 0x263e
 		// Header size: 1
 		// Code size: 21 (0x15)
 		.maxstack 8
@@ -788,7 +787,7 @@
 	.method public hidebysig specialname rtspecialname 
 		instance void .ctor () cil managed 
 	{
-		// Method begins at RVA 0x2674
+		// Method begins at RVA 0x2654
 		// Header size: 1
 		// Code size: 7 (0x7)
 		.maxstack 8
@@ -801,7 +800,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x267c
+		// Method begins at RVA 0x265c
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -813,7 +812,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x267f
+		// Method begins at RVA 0x265f
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -828,7 +827,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x2682
+		// Method begins at RVA 0x2662
 		// Header size: 1
 		// Code size: 21 (0x15)
 		.maxstack 8
@@ -850,7 +849,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x2698
+		// Method begins at RVA 0x2678
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -874,7 +873,7 @@
 			class Modules.Require_Url_SearchParams_Mutate/Scope capture0
 		) cil managed 
 	{
-		// Method begins at RVA 0x26a4
+		// Method begins at RVA 0x2684
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -890,7 +889,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x26b3
+		// Method begins at RVA 0x2693
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -902,7 +901,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x26b6
+		// Method begins at RVA 0x2696
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -917,7 +916,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x26b9
+		// Method begins at RVA 0x2699
 		// Header size: 1
 		// Code size: 27 (0x1b)
 		.maxstack 8
@@ -944,7 +943,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x26d5
+		// Method begins at RVA 0x26b5
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

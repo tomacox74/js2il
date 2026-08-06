@@ -1728,9 +1728,11 @@ public sealed class TwoPhaseCompilationCoordinator
                     continue;
                 }
 
-                member.ClrType = CallableDelegateTypeResolver.GetMaterializedDelegateType(
-                    callableId,
-                    _registry.GetSignature(callableId));
+                member.ClrType = callableId.Kind == CallableKind.Arrow
+                    ? typeof(JavaScriptRuntime.JsFunctionObject)
+                    : CallableDelegateTypeResolver.GetMaterializedDelegateType(
+                        callableId,
+                        _registry.GetSignature(callableId));
             }
         }
 

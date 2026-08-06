@@ -354,7 +354,7 @@ namespace JavaScriptRuntime
         }
 
         private static bool IsCallableValue(object? value)
-            => value is Delegate || (value is Proxy proxy && proxy.IsCallableTarget);
+            => CallableOperations.IsCallable(value);
 
         /// <summary>ECMA-262 ToIntegerOrInfinity, applied to an already-coerced number.</summary>
         private static double ToIntegerOrInfinity(double number)
