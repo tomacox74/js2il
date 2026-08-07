@@ -839,6 +839,28 @@
 		IL_0017: ret
 	} // end of method FunctionObject_FunctionDeclaration_BBEFEBAA_sum::CallCore
 
+	.method family hidebysig virtual 
+		instance object ConstructBodyCore (
+			object receiver,
+			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
+			object newTarget
+		) cil managed 
+	{
+		// Method begins at RVA 0x25b2
+		// Header size: 1
+		// Code size: 20 (0x14)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: ldfld object[] FunctionObjects.Async_ForOf_AwaitInBody_D18CFB48.FunctionObject_FunctionDeclaration_BBEFEBAA_sum::_transitionalScopes
+		IL_0006: ldarg.3
+		IL_0007: ldarg.2
+		IL_0008: ldc.i4.0
+		IL_0009: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+		IL_000e: call object Modules.Async_ForOf_AwaitInBody/sum::__js_call__(object[], object, object)
+		IL_0013: ret
+	} // end of method FunctionObject_FunctionDeclaration_BBEFEBAA_sum::ConstructBodyCore
+
 } // end of class FunctionObjects.Async_ForOf_AwaitInBody_D18CFB48.FunctionObject_FunctionDeclaration_BBEFEBAA_sum
 
 .class private auto ansi beforefieldinit Program
@@ -848,7 +870,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x25b2
+		// Method begins at RVA 0x25c7
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

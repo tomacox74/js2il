@@ -26,6 +26,12 @@ public abstract class JsFunctionObject : JsObject
     internal object? InvokeConstruct(in JsCallArguments arguments, object? newTarget)
         => ConstructCore(arguments, newTarget);
 
+    internal object? InvokeConstructBody(
+        object receiver,
+        in JsCallArguments arguments,
+        object? newTarget)
+        => ConstructBodyCore(receiver, arguments, newTarget);
+
     internal object? ResolveThisArgument(object? thisArgument)
         => ResolveThisArgumentCore(thisArgument);
 
@@ -59,5 +65,15 @@ public abstract class JsFunctionObject : JsObject
     /// Implements ECMAScript [[Construct]] for constructable function objects.
     /// </summary>
     protected virtual object? ConstructCore(in JsCallArguments arguments, object? newTarget)
+        => throw new TypeError("Value is not a constructor");
+
+    /// <summary>
+    /// Invokes the callable body for an already allocated construction receiver.
+    /// Generated ordinary functions override this separately from <see cref="CallCore"/>.
+    /// </summary>
+    protected virtual object? ConstructBodyCore(
+        object receiver,
+        in JsCallArguments arguments,
+        object? newTarget)
         => throw new TypeError("Value is not a constructor");
 }

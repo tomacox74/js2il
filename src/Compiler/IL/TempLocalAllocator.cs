@@ -637,6 +637,10 @@ internal static class TempLocalAllocator
             case LIRNewIntrinsicObject value:
                 VisitList(value.Arguments, ref visitor); break;
             case LIRNewUserClass value:
+                if (value.IsDerivedConstructor)
+                {
+                    visitor.Visit(value.NewTarget);
+                }
                 if (value.NeedsScopes && value.ScopesArray.HasValue)
                 {
                     visitor.Visit(value.ScopesArray.Value);

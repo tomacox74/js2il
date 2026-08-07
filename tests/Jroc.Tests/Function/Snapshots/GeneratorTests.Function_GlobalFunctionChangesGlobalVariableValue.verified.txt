@@ -366,21 +366,40 @@
 	} // end of method FunctionObject_FunctionDeclaration_F85FF87C_changeGlobalValues::CallCore
 
 	.method family hidebysig virtual 
-		instance object ConstructCore (
+		instance object ConstructBodyCore (
+			object receiver,
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
 			object newTarget
 		) cil managed 
 	{
 		// Method begins at RVA 0x2250
 		// Header size: 1
+		// Code size: 13 (0xd)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: ldfld class Modules.Function_GlobalFunctionChangesGlobalVariableValue/Scope FunctionObjects.Function_GlobalFunctionChangesGlobalVariableValue_3AA92506.FunctionObject_FunctionDeclaration_F85FF87C_changeGlobalValues::_environment0_Function_GlobalFunctionChangesGlobalVariableValue
+		IL_0006: ldarg.3
+		IL_0007: call object Modules.Function_GlobalFunctionChangesGlobalVariableValue/changeGlobalValues::__js_call__(class Modules.Function_GlobalFunctionChangesGlobalVariableValue/Scope, object)
+		IL_000c: ret
+	} // end of method FunctionObject_FunctionDeclaration_F85FF87C_changeGlobalValues::ConstructBodyCore
+
+	.method family hidebysig virtual 
+		instance object ConstructCore (
+			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
+			object newTarget
+		) cil managed 
+	{
+		// Method begins at RVA 0x225e
+		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
 
 		IL_0000: ldarg.0
 		IL_0001: ldarg.1
-		IL_0002: call instance object[] [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::ToArray()
+		IL_0002: ldobj [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments
 		IL_0007: ldarg.2
-		IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionObject(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, object[], object)
+		IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionObject(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments, object)
 		IL_000d: ret
 	} // end of method FunctionObject_FunctionDeclaration_F85FF87C_changeGlobalValues::ConstructCore
 
@@ -393,7 +412,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x225f
+		// Method begins at RVA 0x226d
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

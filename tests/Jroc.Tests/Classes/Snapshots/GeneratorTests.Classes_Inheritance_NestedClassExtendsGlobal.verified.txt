@@ -22,7 +22,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x232f
+					// Method begins at RVA 0x2337
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -42,7 +42,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2338
+					// Method begins at RVA 0x2340
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -63,7 +63,7 @@
 				.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 					01 00 00 00 00 00 00 00
 				)
-				// Method begins at RVA 0x22cc
+				// Method begins at RVA 0x22d6
 				// Header size: 1
 				// Code size: 13 (0xd)
 				.maxstack 8
@@ -81,7 +81,7 @@
 				.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 					01 00 00 00 00 00 00 00
 				)
-				// Method begins at RVA 0x22dc
+				// Method begins at RVA 0x22e4
 				// Header size: 12
 				// Code size: 24 (0x18)
 				.maxstack 8
@@ -108,7 +108,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2326
+				// Method begins at RVA 0x232e
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -133,7 +133,7 @@
 			)
 			// Method begins at RVA 0x213c
 			// Header size: 12
-			// Code size: 380 (0x17c)
+			// Code size: 390 (0x186)
 			.maxstack 12
 			.locals init (
 				[0] class Modules.Classes_Inheritance_NestedClassExtendsGlobal/makeAndRun/Scope,
@@ -236,45 +236,48 @@
 			IL_00f2: ldc.i4.0
 			IL_00f3: newarr [System.Runtime]System.Object
 			IL_00f8: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
-			IL_00fd: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushDerivedConstructorThisBinding()
-			IL_0102: newobj instance void Modules.Classes_Inheritance_NestedClassExtendsGlobal/makeAndRun/NestedDerived::.ctor()
-			IL_0107: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
-			IL_010c: stloc.s 4
-			IL_010e: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-			IL_0113: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
-			IL_0118: stloc.s 4
-			IL_011a: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopDerivedConstructorThisBinding()
-			IL_011f: ldloc.s 4
-			IL_0121: ldtoken Modules.Classes_Inheritance_NestedClassExtendsGlobal/makeAndRun/NestedDerived
-			IL_0126: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-			IL_012b: ldstr "prototype"
-			IL_0130: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
-			IL_0135: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
-			IL_013a: ldloc.s 4
-			IL_013c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0141: stloc.s 4
-			IL_0143: ldloc.s 4
-			IL_0145: isinst Modules.Classes_Inheritance_NestedClassExtendsGlobal/makeAndRun/NestedDerived
-			IL_014a: dup
-			IL_014b: brfalse IL_015c
+			IL_00fd: ldloc.1
+			IL_00fe: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentNewTarget(object)
+			IL_0103: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushDerivedConstructorThisBinding()
+			IL_0108: newobj instance void Modules.Classes_Inheritance_NestedClassExtendsGlobal/makeAndRun/NestedDerived::.ctor()
+			IL_010d: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentNewTarget()
+			IL_0112: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
+			IL_0117: dup
+			IL_0118: ldtoken Modules.Classes_Inheritance_NestedClassExtendsGlobal/makeAndRun/NestedDerived
+			IL_011d: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+			IL_0122: ldstr "prototype"
+			IL_0127: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
+			IL_012c: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
+			IL_0131: stloc.s 4
+			IL_0133: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+			IL_0138: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
+			IL_013d: stloc.s 4
+			IL_013f: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopDerivedConstructorThisBinding()
+			IL_0144: ldloc.s 4
+			IL_0146: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_014b: stloc.s 4
+			IL_014d: ldloc.s 4
+			IL_014f: isinst Modules.Classes_Inheritance_NestedClassExtendsGlobal/makeAndRun/NestedDerived
+			IL_0154: dup
+			IL_0155: brfalse IL_0166
 
-			IL_0150: callvirt instance object Modules.Classes_Inheritance_NestedClassExtendsGlobal/makeAndRun/NestedDerived::n()
-			IL_0155: stloc.s 4
-			IL_0157: br IL_016b
+			IL_015a: callvirt instance object Modules.Classes_Inheritance_NestedClassExtendsGlobal/makeAndRun/NestedDerived::n()
+			IL_015f: stloc.s 4
+			IL_0161: br IL_0175
 
-			IL_015c: pop
-			IL_015d: ldloc.s 4
-			IL_015f: ldstr "n"
-			IL_0164: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-			IL_0169: stloc.s 4
+			IL_0166: pop
+			IL_0167: ldloc.s 4
+			IL_0169: ldstr "n"
+			IL_016e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+			IL_0173: stloc.s 4
 
-			IL_016b: ldloc.s 5
-			IL_016d: ldstr "log"
-			IL_0172: ldloc.s 4
-			IL_0174: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_0179: pop
-			IL_017a: ldnull
-			IL_017b: ret
+			IL_0175: ldloc.s 5
+			IL_0177: ldstr "log"
+			IL_017c: ldloc.s 4
+			IL_017e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_0183: pop
+			IL_0184: ldnull
+			IL_0185: ret
 		} // end of method makeAndRun::__js_call__
 
 	} // end of class makeAndRun
@@ -290,7 +293,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2314
+				// Method begins at RVA 0x231c
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -310,7 +313,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x231d
+				// Method begins at RVA 0x2325
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -331,7 +334,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x22c4
+			// Method begins at RVA 0x22ce
 			// Header size: 1
 			// Code size: 7 (0x7)
 			.maxstack 8
@@ -347,7 +350,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2300
+			// Method begins at RVA 0x2308
 			// Header size: 1
 			// Code size: 10 (0xa)
 			.maxstack 8
@@ -373,7 +376,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x230b
+			// Method begins at RVA 0x2313
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -526,7 +529,7 @@
 			object[] capture0
 		) cil managed 
 	{
-		// Method begins at RVA 0x2341
+		// Method begins at RVA 0x2349
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -542,7 +545,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x2350
+		// Method begins at RVA 0x2358
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -554,7 +557,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x2353
+		// Method begins at RVA 0x235b
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -569,7 +572,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x2356
+		// Method begins at RVA 0x235e
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -585,7 +588,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x2362
+		// Method begins at RVA 0x236a
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -604,7 +607,7 @@
 	.method public hidebysig specialname rtspecialname 
 		instance void .ctor () cil managed 
 	{
-		// Method begins at RVA 0x236e
+		// Method begins at RVA 0x2376
 		// Header size: 1
 		// Code size: 7 (0x7)
 		.maxstack 8
@@ -617,7 +620,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x2376
+		// Method begins at RVA 0x237e
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -629,7 +632,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x2379
+		// Method begins at RVA 0x2381
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -644,7 +647,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x237c
+		// Method begins at RVA 0x2384
 		// Header size: 1
 		// Code size: 17 (0x11)
 		.maxstack 8
@@ -665,7 +668,7 @@
 	.method public hidebysig specialname rtspecialname 
 		instance void .ctor () cil managed 
 	{
-		// Method begins at RVA 0x238e
+		// Method begins at RVA 0x2396
 		// Header size: 1
 		// Code size: 7 (0x7)
 		.maxstack 8
@@ -678,7 +681,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x2396
+		// Method begins at RVA 0x239e
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -690,7 +693,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x2399
+		// Method begins at RVA 0x23a1
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -705,7 +708,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x239c
+		// Method begins at RVA 0x23a4
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -716,21 +719,38 @@
 	} // end of method FunctionObject_FunctionDeclaration_82BB358F_makeAndRun::CallCore
 
 	.method family hidebysig virtual 
+		instance object ConstructBodyCore (
+			object receiver,
+			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
+			object newTarget
+		) cil managed 
+	{
+		// Method begins at RVA 0x23b0
+		// Header size: 1
+		// Code size: 7 (0x7)
+		.maxstack 8
+
+		IL_0000: ldarg.3
+		IL_0001: call object Modules.Classes_Inheritance_NestedClassExtendsGlobal/makeAndRun::__js_call__(object)
+		IL_0006: ret
+	} // end of method FunctionObject_FunctionDeclaration_82BB358F_makeAndRun::ConstructBodyCore
+
+	.method family hidebysig virtual 
 		instance object ConstructCore (
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x23a8
+		// Method begins at RVA 0x23b8
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
 
 		IL_0000: ldarg.0
 		IL_0001: ldarg.1
-		IL_0002: call instance object[] [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::ToArray()
+		IL_0002: ldobj [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments
 		IL_0007: ldarg.2
-		IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionObject(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, object[], object)
+		IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionObject(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments, object)
 		IL_000d: ret
 	} // end of method FunctionObject_FunctionDeclaration_82BB358F_makeAndRun::ConstructCore
 
@@ -748,7 +768,7 @@
 			object[] capture0
 		) cil managed 
 	{
-		// Method begins at RVA 0x23b7
+		// Method begins at RVA 0x23c7
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -764,7 +784,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x23c6
+		// Method begins at RVA 0x23d6
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -776,7 +796,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x23c9
+		// Method begins at RVA 0x23d9
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -791,7 +811,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x23cc
+		// Method begins at RVA 0x23dc
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -807,7 +827,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x23d8
+		// Method begins at RVA 0x23e8
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -826,7 +846,7 @@
 	.method public hidebysig specialname rtspecialname 
 		instance void .ctor () cil managed 
 	{
-		// Method begins at RVA 0x23e4
+		// Method begins at RVA 0x23f4
 		// Header size: 1
 		// Code size: 7 (0x7)
 		.maxstack 8
@@ -839,7 +859,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x23ec
+		// Method begins at RVA 0x23fc
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -851,7 +871,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x23ef
+		// Method begins at RVA 0x23ff
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -866,7 +886,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x23f2
+		// Method begins at RVA 0x2402
 		// Header size: 1
 		// Code size: 12 (0xc)
 		.maxstack 8
@@ -886,7 +906,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x23ff
+		// Method begins at RVA 0x240f
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

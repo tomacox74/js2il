@@ -142,7 +142,7 @@
 					class Modules.WeakRef_Deref_KeptObjects/Scope capture0
 				) cil managed 
 			{
-				// Method begins at RVA 0x237a
+				// Method begins at RVA 0x2388
 				// Header size: 1
 				// Code size: 14 (0xe)
 				.maxstack 8
@@ -158,7 +158,7 @@
 			.method public hidebysig specialname virtual 
 				instance bool get_IsConstructor () cil managed 
 			{
-				// Method begins at RVA 0x2389
+				// Method begins at RVA 0x2397
 				// Header size: 1
 				// Code size: 2 (0x2)
 				.maxstack 8
@@ -170,7 +170,7 @@
 			.method public hidebysig specialname virtual 
 				instance bool get_RequiresInvocationContext () cil managed 
 			{
-				// Method begins at RVA 0x238c
+				// Method begins at RVA 0x239a
 				// Header size: 1
 				// Code size: 2 (0x2)
 				.maxstack 8
@@ -185,7 +185,7 @@
 					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 				) cil managed 
 			{
-				// Method begins at RVA 0x238f
+				// Method begins at RVA 0x239d
 				// Header size: 1
 				// Code size: 13 (0xd)
 				.maxstack 8
@@ -583,21 +583,40 @@
 	} // end of method FunctionObject_FunctionDeclaration_7A1B9D8E_createWeakRef::CallCore
 
 	.method family hidebysig virtual 
-		instance object ConstructCore (
+		instance object ConstructBodyCore (
+			object receiver,
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
 			object newTarget
 		) cil managed 
 	{
 		// Method begins at RVA 0x236b
 		// Header size: 1
+		// Code size: 13 (0xd)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: ldfld class Modules.WeakRef_Deref_KeptObjects/Scope FunctionObjects.WeakRef_Deref_KeptObjects_F1393EDE.FunctionObject_FunctionDeclaration_7A1B9D8E_createWeakRef::_environment0_WeakRef_Deref_KeptObjects
+		IL_0006: ldarg.3
+		IL_0007: call object Modules.WeakRef_Deref_KeptObjects/createWeakRef::__js_call__(class Modules.WeakRef_Deref_KeptObjects/Scope, object)
+		IL_000c: ret
+	} // end of method FunctionObject_FunctionDeclaration_7A1B9D8E_createWeakRef::ConstructBodyCore
+
+	.method family hidebysig virtual 
+		instance object ConstructCore (
+			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
+			object newTarget
+		) cil managed 
+	{
+		// Method begins at RVA 0x2379
+		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
 
 		IL_0000: ldarg.0
 		IL_0001: ldarg.1
-		IL_0002: call instance object[] [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::ToArray()
+		IL_0002: ldobj [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments
 		IL_0007: ldarg.2
-		IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionObject(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, object[], object)
+		IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionObject(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments, object)
 		IL_000d: ret
 	} // end of method FunctionObject_FunctionDeclaration_7A1B9D8E_createWeakRef::ConstructCore
 
@@ -610,7 +629,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x239d
+		// Method begins at RVA 0x23ab
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

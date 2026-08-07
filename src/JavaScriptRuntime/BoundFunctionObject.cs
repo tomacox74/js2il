@@ -23,6 +23,8 @@ internal sealed class BoundFunctionObject : JsFunctionObject
 
     public override bool RequiresInvocationContext => false;
 
+    internal JsFunctionObject Target => _target;
+
     protected override object? CallCore(
         object? thisArgument,
         in JsCallArguments arguments)

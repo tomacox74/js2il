@@ -582,7 +582,8 @@
 	} // end of method FunctionObject_FunctionExpression_3D3F853C_L8C19::CallCore
 
 	.method family hidebysig virtual 
-		instance object ConstructCore (
+		instance object ConstructBodyCore (
+			object receiver,
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
 			object newTarget
 		) cil managed 
@@ -592,11 +593,30 @@
 		// Code size: 14 (0xe)
 		.maxstack 8
 
+		IL_0000: ldarg.3
+		IL_0001: ldarg.2
+		IL_0002: ldc.i4.0
+		IL_0003: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+		IL_0008: call object Modules.Stream_Writable_Destroy_Error/FunctionExpression_L8C18::__js_call__(object, object)
+		IL_000d: ret
+	} // end of method FunctionObject_FunctionExpression_3D3F853C_L8C19::ConstructBodyCore
+
+	.method family hidebysig virtual 
+		instance object ConstructCore (
+			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
+			object newTarget
+		) cil managed 
+	{
+		// Method begins at RVA 0x2379
+		// Header size: 1
+		// Code size: 14 (0xe)
+		.maxstack 8
+
 		IL_0000: ldarg.0
 		IL_0001: ldarg.1
-		IL_0002: call instance object[] [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::ToArray()
+		IL_0002: ldobj [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments
 		IL_0007: ldarg.2
-		IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionObject(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, object[], object)
+		IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionObject(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments, object)
 		IL_000d: ret
 	} // end of method FunctionObject_FunctionExpression_3D3F853C_L8C19::ConstructCore
 
@@ -614,7 +634,7 @@
 			class Modules.Stream_Writable_Destroy_Error/Scope capture0
 		) cil managed 
 	{
-		// Method begins at RVA 0x2379
+		// Method begins at RVA 0x2388
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -630,7 +650,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x2388
+		// Method begins at RVA 0x2397
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -642,7 +662,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x238b
+		// Method begins at RVA 0x239a
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -657,7 +677,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x238e
+		// Method begins at RVA 0x239d
 		// Header size: 1
 		// Code size: 24 (0x18)
 		.maxstack 8
@@ -673,21 +693,43 @@
 	} // end of method FunctionObject_FunctionExpression_88247D05_L12C22::CallCore
 
 	.method family hidebysig virtual 
+		instance object ConstructBodyCore (
+			object receiver,
+			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
+			object newTarget
+		) cil managed 
+	{
+		// Method begins at RVA 0x23b6
+		// Header size: 1
+		// Code size: 20 (0x14)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: ldfld class Modules.Stream_Writable_Destroy_Error/Scope FunctionObjects.Stream_Writable_Destroy_Error_5FED0656.FunctionObject_FunctionExpression_88247D05_L12C22::_environment0_Stream_Writable_Destroy_Error
+		IL_0006: ldarg.3
+		IL_0007: ldarg.2
+		IL_0008: ldc.i4.0
+		IL_0009: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+		IL_000e: call object Modules.Stream_Writable_Destroy_Error/FunctionExpression_L12C21::__js_call__(class Modules.Stream_Writable_Destroy_Error/Scope, object, object)
+		IL_0013: ret
+	} // end of method FunctionObject_FunctionExpression_88247D05_L12C22::ConstructBodyCore
+
+	.method family hidebysig virtual 
 		instance object ConstructCore (
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x23a7
+		// Method begins at RVA 0x23cb
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
 
 		IL_0000: ldarg.0
 		IL_0001: ldarg.1
-		IL_0002: call instance object[] [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::ToArray()
+		IL_0002: ldobj [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments
 		IL_0007: ldarg.2
-		IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionObject(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, object[], object)
+		IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionObject(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments, object)
 		IL_000d: ret
 	} // end of method FunctionObject_FunctionExpression_88247D05_L12C22::ConstructCore
 
@@ -705,7 +747,7 @@
 			class Modules.Stream_Writable_Destroy_Error/Scope capture0
 		) cil managed 
 	{
-		// Method begins at RVA 0x23b6
+		// Method begins at RVA 0x23da
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -721,7 +763,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x23c5
+		// Method begins at RVA 0x23e9
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -733,7 +775,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x23c8
+		// Method begins at RVA 0x23ec
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -748,7 +790,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x23cb
+		// Method begins at RVA 0x23ef
 		// Header size: 1
 		// Code size: 17 (0x11)
 		.maxstack 8
@@ -761,21 +803,40 @@
 	} // end of method FunctionObject_FunctionExpression_B3B90B0E_L16C23::CallCore
 
 	.method family hidebysig virtual 
+		instance object ConstructBodyCore (
+			object receiver,
+			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
+			object newTarget
+		) cil managed 
+	{
+		// Method begins at RVA 0x2401
+		// Header size: 1
+		// Code size: 13 (0xd)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: ldfld class Modules.Stream_Writable_Destroy_Error/Scope FunctionObjects.Stream_Writable_Destroy_Error_5FED0656.FunctionObject_FunctionExpression_B3B90B0E_L16C23::_environment0_Stream_Writable_Destroy_Error
+		IL_0006: ldarg.3
+		IL_0007: call object Modules.Stream_Writable_Destroy_Error/FunctionExpression_L16C22::__js_call__(class Modules.Stream_Writable_Destroy_Error/Scope, object)
+		IL_000c: ret
+	} // end of method FunctionObject_FunctionExpression_B3B90B0E_L16C23::ConstructBodyCore
+
+	.method family hidebysig virtual 
 		instance object ConstructCore (
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x23dd
+		// Method begins at RVA 0x240f
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
 
 		IL_0000: ldarg.0
 		IL_0001: ldarg.1
-		IL_0002: call instance object[] [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::ToArray()
+		IL_0002: ldobj [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments
 		IL_0007: ldarg.2
-		IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionObject(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, object[], object)
+		IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionObject(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments, object)
 		IL_000d: ret
 	} // end of method FunctionObject_FunctionExpression_B3B90B0E_L16C23::ConstructCore
 
@@ -793,7 +854,7 @@
 			class Modules.Stream_Writable_Destroy_Error/Scope capture0
 		) cil managed 
 	{
-		// Method begins at RVA 0x23ec
+		// Method begins at RVA 0x241e
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -809,7 +870,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x23fb
+		// Method begins at RVA 0x242d
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -821,7 +882,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x23fe
+		// Method begins at RVA 0x2430
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -836,7 +897,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x2401
+		// Method begins at RVA 0x2433
 		// Header size: 1
 		// Code size: 17 (0x11)
 		.maxstack 8
@@ -849,21 +910,40 @@
 	} // end of method FunctionObject_FunctionExpression_5E2C9FCA_L20C22::CallCore
 
 	.method family hidebysig virtual 
+		instance object ConstructBodyCore (
+			object receiver,
+			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
+			object newTarget
+		) cil managed 
+	{
+		// Method begins at RVA 0x2445
+		// Header size: 1
+		// Code size: 13 (0xd)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: ldfld class Modules.Stream_Writable_Destroy_Error/Scope FunctionObjects.Stream_Writable_Destroy_Error_5FED0656.FunctionObject_FunctionExpression_5E2C9FCA_L20C22::_environment0_Stream_Writable_Destroy_Error
+		IL_0006: ldarg.3
+		IL_0007: call object Modules.Stream_Writable_Destroy_Error/FunctionExpression_L20C21::__js_call__(class Modules.Stream_Writable_Destroy_Error/Scope, object)
+		IL_000c: ret
+	} // end of method FunctionObject_FunctionExpression_5E2C9FCA_L20C22::ConstructBodyCore
+
+	.method family hidebysig virtual 
 		instance object ConstructCore (
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x2413
+		// Method begins at RVA 0x2453
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
 
 		IL_0000: ldarg.0
 		IL_0001: ldarg.1
-		IL_0002: call instance object[] [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::ToArray()
+		IL_0002: ldobj [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments
 		IL_0007: ldarg.2
-		IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionObject(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, object[], object)
+		IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionObject(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments, object)
 		IL_000d: ret
 	} // end of method FunctionObject_FunctionExpression_5E2C9FCA_L20C22::ConstructCore
 
@@ -876,7 +956,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2422
+		// Method begins at RVA 0x2462
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

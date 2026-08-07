@@ -219,6 +219,7 @@ public sealed class LIRStackSchedulerTests
     public void Identity_UserConstructorFieldStore_GroupsOnlyEligibleStructuralCandidate()
     {
         var body = new MethodBodyIR();
+        var newTarget = AddTemp(body);
         var result = AddTemp(body);
         var callable = new CallableId
         {
@@ -232,6 +233,7 @@ public sealed class LIRStackSchedulerTests
             "Child",
             "Child",
             callable,
+            NewTarget: newTarget,
             NeedsScopes: false,
             ScopesArray: null,
             MinArgCount: 0,
@@ -257,6 +259,7 @@ public sealed class LIRStackSchedulerTests
     public void Identity_DerivedUserConstructor_DoesNotGroupFusionCandidate()
     {
         var body = new MethodBodyIR();
+        var newTarget = AddTemp(body);
         var result = AddTemp(body);
         var callable = new CallableId
         {
@@ -270,6 +273,7 @@ public sealed class LIRStackSchedulerTests
             "Derived",
             "Derived",
             callable,
+            NewTarget: newTarget,
             NeedsScopes: false,
             ScopesArray: null,
             MinArgCount: 0,

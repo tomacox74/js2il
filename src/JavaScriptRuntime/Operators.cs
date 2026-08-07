@@ -1228,6 +1228,11 @@ namespace JavaScriptRuntime
             if (value is string) return false;
             if (value.GetType().IsValueType) return false;
 
+            while (ctor is BoundFunctionObject boundFunction)
+            {
+                ctor = boundFunction.Target;
+            }
+
             // Spec: let proto = ctor.prototype; if proto is not an object, throw.
             var proto = JavaScriptRuntime.ObjectRuntime.GetItem(ctor, "prototype");
             if (proto is null || proto is JsNull || proto is string || proto.GetType().IsValueType)

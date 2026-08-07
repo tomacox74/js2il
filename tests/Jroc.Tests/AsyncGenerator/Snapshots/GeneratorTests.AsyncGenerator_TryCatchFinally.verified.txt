@@ -762,7 +762,7 @@
 					object[] capture1
 				) cil managed 
 			{
-				// Method begins at RVA 0x2b13
+				// Method begins at RVA 0x2b21
 				// Header size: 1
 				// Code size: 21 (0x15)
 				.maxstack 8
@@ -781,7 +781,7 @@
 			.method public hidebysig specialname virtual 
 				instance bool get_IsConstructor () cil managed 
 			{
-				// Method begins at RVA 0x2b29
+				// Method begins at RVA 0x2b37
 				// Header size: 1
 				// Code size: 2 (0x2)
 				.maxstack 8
@@ -793,7 +793,7 @@
 			.method public hidebysig specialname virtual 
 				instance bool get_RequiresInvocationContext () cil managed 
 			{
-				// Method begins at RVA 0x2b2c
+				// Method begins at RVA 0x2b3a
 				// Header size: 1
 				// Code size: 2 (0x2)
 				.maxstack 8
@@ -808,7 +808,7 @@
 					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 				) cil managed 
 			{
-				// Method begins at RVA 0x2b2f
+				// Method begins at RVA 0x2b3d
 				// Header size: 1
 				// Code size: 13 (0xd)
 				.maxstack 8
@@ -1492,6 +1492,25 @@
 		IL_0010: ret
 	} // end of method FunctionObject_FunctionDeclaration_6BD12A88_g::CallCore
 
+	.method family hidebysig virtual 
+		instance object ConstructBodyCore (
+			object receiver,
+			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
+			object newTarget
+		) cil managed 
+	{
+		// Method begins at RVA 0x2b13
+		// Header size: 1
+		// Code size: 13 (0xd)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: ldfld object[] FunctionObjects.AsyncGenerator_TryCatchFinally_A76846C8.FunctionObject_FunctionDeclaration_6BD12A88_g::_transitionalScopes
+		IL_0006: ldarg.3
+		IL_0007: call object Modules.AsyncGenerator_TryCatchFinally/g::__js_call__(object[], object)
+		IL_000c: ret
+	} // end of method FunctionObject_FunctionDeclaration_6BD12A88_g::ConstructBodyCore
+
 } // end of class FunctionObjects.AsyncGenerator_TryCatchFinally_A76846C8.FunctionObject_FunctionDeclaration_6BD12A88_g
 
 .class private auto ansi beforefieldinit Program
@@ -1501,7 +1520,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2b3d
+		// Method begins at RVA 0x2b4b
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

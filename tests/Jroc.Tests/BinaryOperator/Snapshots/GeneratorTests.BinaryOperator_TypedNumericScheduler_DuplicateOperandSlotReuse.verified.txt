@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21cf
+				// Method begins at RVA 0x21f7
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21d8
+				// Method begins at RVA 0x2200
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -58,7 +58,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21e1
+				// Method begins at RVA 0x2209
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -86,7 +86,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2138
+			// Method begins at RVA 0x2160
 			// Header size: 12
 			// Code size: 45 (0x2d)
 			.maxstack 8
@@ -126,7 +126,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2174
+			// Method begins at RVA 0x219c
 			// Header size: 12
 			// Code size: 70 (0x46)
 			.maxstack 8
@@ -176,7 +176,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x21c6
+			// Method begins at RVA 0x21ee
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -202,14 +202,16 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 218 (0xda)
+		// Code size: 259 (0x103)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.BinaryOperator_TypedNumericScheduler_DuplicateOperandSlotReuse/Scope,
 			[1] object,
-			[2] class Modules.BinaryOperator_TypedNumericScheduler_DuplicateOperandSlotReuse/K,
-			[3] object,
-			[4] string
+			[2] object[],
+			[3] class [System.Runtime]System.Type,
+			[4] class Modules.BinaryOperator_TypedNumericScheduler_DuplicateOperandSlotReuse/K,
+			[5] object,
+			[6] string
 		)
 
 		IL_0000: newobj instance void Modules.BinaryOperator_TypedNumericScheduler_DuplicateOperandSlotReuse/Scope::.ctor()
@@ -220,61 +222,73 @@
 		IL_000d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
 		IL_0012: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
 		IL_0017: stloc.1
-		IL_0018: ldc.i4.2
+		IL_0018: ldc.i4.1
 		IL_0019: newarr [System.Runtime]System.Object
 		IL_001e: dup
 		IL_001f: ldc.i4.0
-		IL_0020: ldc.r8 2
-		IL_0029: box [System.Runtime]System.Double
-		IL_002e: stelem.ref
-		IL_002f: dup
-		IL_0030: ldc.i4.1
-		IL_0031: ldc.r8 4
-		IL_003a: box [System.Runtime]System.Double
-		IL_003f: stelem.ref
-		IL_0040: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
-		IL_0045: ldc.r8 2
-		IL_004e: ldc.r8 4
-		IL_0057: newobj instance void Modules.BinaryOperator_TypedNumericScheduler_DuplicateOperandSlotReuse/K::.ctor(float64, float64)
-		IL_005c: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
-		IL_0061: stloc.2
-		IL_0062: ldloc.2
-		IL_0063: ldtoken Modules.BinaryOperator_TypedNumericScheduler_DuplicateOperandSlotReuse/K
-		IL_0068: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_006d: ldstr "prototype"
-		IL_0072: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
-		IL_0077: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
-		IL_007c: ldloc.2
-		IL_007d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0082: stloc.3
-		IL_0083: ldloc.3
-		IL_0084: isinst Modules.BinaryOperator_TypedNumericScheduler_DuplicateOperandSlotReuse/K
-		IL_0089: dup
-		IL_008a: brfalse IL_00a8
+		IL_0020: ldloc.0
+		IL_0021: stelem.ref
+		IL_0022: stloc.2
+		IL_0023: ldtoken Modules.BinaryOperator_TypedNumericScheduler_DuplicateOperandSlotReuse/K
+		IL_0028: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_002d: ldtoken Modules.BinaryOperator_TypedNumericScheduler_DuplicateOperandSlotReuse/K
+		IL_0032: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_0037: stloc.3
+		IL_0038: ldc.i4.2
+		IL_0039: newarr [System.Runtime]System.Object
+		IL_003e: dup
+		IL_003f: ldc.i4.0
+		IL_0040: ldc.r8 2
+		IL_0049: box [System.Runtime]System.Double
+		IL_004e: stelem.ref
+		IL_004f: dup
+		IL_0050: ldc.i4.1
+		IL_0051: ldc.r8 4
+		IL_005a: box [System.Runtime]System.Double
+		IL_005f: stelem.ref
+		IL_0060: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
+		IL_0065: ldc.r8 2
+		IL_006e: ldc.r8 4
+		IL_0077: newobj instance void Modules.BinaryOperator_TypedNumericScheduler_DuplicateOperandSlotReuse/K::.ctor(float64, float64)
+		IL_007c: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
+		IL_0081: stloc.s 4
+		IL_0083: ldloc.s 4
+		IL_0085: ldtoken Modules.BinaryOperator_TypedNumericScheduler_DuplicateOperandSlotReuse/K
+		IL_008a: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_008f: ldstr "prototype"
+		IL_0094: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
+		IL_0099: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
+		IL_009e: ldloc.s 4
+		IL_00a0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00a5: stloc.s 5
+		IL_00a7: ldloc.s 5
+		IL_00a9: isinst Modules.BinaryOperator_TypedNumericScheduler_DuplicateOperandSlotReuse/K
+		IL_00ae: dup
+		IL_00af: brfalse IL_00ce
 
-		IL_008f: ldc.r8 4
-		IL_0098: box [System.Runtime]System.Double
-		IL_009d: callvirt instance object Modules.BinaryOperator_TypedNumericScheduler_DuplicateOperandSlotReuse/K::calc(object)
-		IL_00a2: stloc.3
-		IL_00a3: br IL_00c3
+		IL_00b4: ldc.r8 4
+		IL_00bd: box [System.Runtime]System.Double
+		IL_00c2: callvirt instance object Modules.BinaryOperator_TypedNumericScheduler_DuplicateOperandSlotReuse/K::calc(object)
+		IL_00c7: stloc.s 5
+		IL_00c9: br IL_00eb
 
-		IL_00a8: pop
-		IL_00a9: ldloc.3
-		IL_00aa: ldstr "calc"
-		IL_00af: ldc.r8 4
-		IL_00b8: box [System.Runtime]System.Double
-		IL_00bd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00c2: stloc.3
+		IL_00ce: pop
+		IL_00cf: ldloc.s 5
+		IL_00d1: ldstr "calc"
+		IL_00d6: ldc.r8 4
+		IL_00df: box [System.Runtime]System.Double
+		IL_00e4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_00e9: stloc.s 5
 
-		IL_00c3: ldloc.3
-		IL_00c4: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-		IL_00c9: stloc.s 4
-		IL_00cb: ldloc.1
-		IL_00cc: ldstr "log"
-		IL_00d1: ldloc.s 4
-		IL_00d3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00d8: pop
-		IL_00d9: ret
+		IL_00eb: ldloc.s 5
+		IL_00ed: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+		IL_00f2: stloc.s 6
+		IL_00f4: ldloc.1
+		IL_00f5: ldstr "log"
+		IL_00fa: ldloc.s 6
+		IL_00fc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0101: pop
+		IL_0102: ret
 	} // end of method BinaryOperator_TypedNumericScheduler_DuplicateOperandSlotReuse::__js_module_init__
 
 } // end of class Modules.BinaryOperator_TypedNumericScheduler_DuplicateOperandSlotReuse
@@ -291,7 +305,7 @@
 			object[] capture0
 		) cil managed 
 	{
-		// Method begins at RVA 0x21ea
+		// Method begins at RVA 0x2212
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -307,7 +321,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x21f9
+		// Method begins at RVA 0x2221
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -319,7 +333,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x21fc
+		// Method begins at RVA 0x2224
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -334,7 +348,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x21ff
+		// Method begins at RVA 0x2227
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -350,7 +364,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x220b
+		// Method begins at RVA 0x2233
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -369,7 +383,7 @@
 	.method public hidebysig specialname rtspecialname 
 		instance void .ctor () cil managed 
 	{
-		// Method begins at RVA 0x2217
+		// Method begins at RVA 0x223f
 		// Header size: 1
 		// Code size: 7 (0x7)
 		.maxstack 8
@@ -382,7 +396,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x221f
+		// Method begins at RVA 0x2247
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -394,7 +408,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x2222
+		// Method begins at RVA 0x224a
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -409,7 +423,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x2225
+		// Method begins at RVA 0x224d
 		// Header size: 1
 		// Code size: 19 (0x13)
 		.maxstack 8
@@ -432,7 +446,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2239
+		// Method begins at RVA 0x2261
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -476,21 +476,40 @@
 	} // end of method FunctionObject_FunctionExpression_DCE75730_L9C14::CallCore
 
 	.method family hidebysig virtual 
-		instance object ConstructCore (
+		instance object ConstructBodyCore (
+			object receiver,
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
 			object newTarget
 		) cil managed 
 	{
 		// Method begins at RVA 0x22ed
 		// Header size: 1
+		// Code size: 13 (0xd)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: ldfld class Modules.Classes_ClassComputedFieldAndMethod_DynamicKey_Log/Scope FunctionObjects.Classes_ClassComputedFieldAndMethod_DynamicKey_Log_B3DCC751.FunctionObject_FunctionExpression_DCE75730_L9C14::_environment0_Classes_ClassComputedFieldAndMethod_DynamicKey_Log
+		IL_0006: ldarg.3
+		IL_0007: call object Modules.Classes_ClassComputedFieldAndMethod_DynamicKey_Log/methodKey::__js_call__(class Modules.Classes_ClassComputedFieldAndMethod_DynamicKey_Log/Scope, object)
+		IL_000c: ret
+	} // end of method FunctionObject_FunctionExpression_DCE75730_L9C14::ConstructBodyCore
+
+	.method family hidebysig virtual 
+		instance object ConstructCore (
+			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
+			object newTarget
+		) cil managed 
+	{
+		// Method begins at RVA 0x22fb
+		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
 
 		IL_0000: ldarg.0
 		IL_0001: ldarg.1
-		IL_0002: call instance object[] [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::ToArray()
+		IL_0002: ldobj [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments
 		IL_0007: ldarg.2
-		IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionObject(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, object[], object)
+		IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionObject(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments, object)
 		IL_000d: ret
 	} // end of method FunctionObject_FunctionExpression_DCE75730_L9C14::ConstructCore
 
@@ -503,7 +522,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x22fc
+		// Method begins at RVA 0x230a
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

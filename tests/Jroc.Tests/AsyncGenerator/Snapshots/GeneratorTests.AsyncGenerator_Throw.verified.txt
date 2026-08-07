@@ -556,7 +556,7 @@
 					object[] capture1
 				) cil managed 
 			{
-				// Method begins at RVA 0x28f8
+				// Method begins at RVA 0x2906
 				// Header size: 1
 				// Code size: 21 (0x15)
 				.maxstack 8
@@ -575,7 +575,7 @@
 			.method public hidebysig specialname virtual 
 				instance bool get_IsConstructor () cil managed 
 			{
-				// Method begins at RVA 0x290e
+				// Method begins at RVA 0x291c
 				// Header size: 1
 				// Code size: 2 (0x2)
 				.maxstack 8
@@ -587,7 +587,7 @@
 			.method public hidebysig specialname virtual 
 				instance bool get_RequiresInvocationContext () cil managed 
 			{
-				// Method begins at RVA 0x2911
+				// Method begins at RVA 0x291f
 				// Header size: 1
 				// Code size: 2 (0x2)
 				.maxstack 8
@@ -602,7 +602,7 @@
 					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 				) cil managed 
 			{
-				// Method begins at RVA 0x2914
+				// Method begins at RVA 0x2922
 				// Header size: 1
 				// Code size: 13 (0xd)
 				.maxstack 8
@@ -1232,6 +1232,25 @@
 		IL_0010: ret
 	} // end of method FunctionObject_FunctionDeclaration_31CD1283_g::CallCore
 
+	.method family hidebysig virtual 
+		instance object ConstructBodyCore (
+			object receiver,
+			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
+			object newTarget
+		) cil managed 
+	{
+		// Method begins at RVA 0x28f8
+		// Header size: 1
+		// Code size: 13 (0xd)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: ldfld object[] FunctionObjects.AsyncGenerator_Throw_7E7B0CA3.FunctionObject_FunctionDeclaration_31CD1283_g::_transitionalScopes
+		IL_0006: ldarg.3
+		IL_0007: call object Modules.AsyncGenerator_Throw/g::__js_call__(object[], object)
+		IL_000c: ret
+	} // end of method FunctionObject_FunctionDeclaration_31CD1283_g::ConstructBodyCore
+
 } // end of class FunctionObjects.AsyncGenerator_Throw_7E7B0CA3.FunctionObject_FunctionDeclaration_31CD1283_g
 
 .class private auto ansi beforefieldinit Program
@@ -1241,7 +1260,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2922
+		// Method begins at RVA 0x2930
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

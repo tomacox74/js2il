@@ -20,14 +20,33 @@ public sealed partial class HIRToLIRLowerer
 
         if (newExpr.Callee is HIRInitializedUserClassTypeExpression initializedClassExpr)
         {
-            return TryLowerNewInitializedUserClass(initializedClassExpr, newExpr.Arguments, out resultTempVar);
+            if (!TryLowerExpression(initializedClassExpr, out var initializedClassValue))
+            {
+                return false;
+            }
+
+            return TryLowerNewUserDefinedClass(
+                initializedClassExpr.RegistryClassName,
+                initializedClassExpr.ClassScope,
+                newExpr.Arguments,
+                EnsureObject(initializedClassValue),
+                out resultTempVar);
         }
 
         // User-defined class: `new ClassName(...)`
         // Note: top-level classes live in the global scope but still have a declaration node.
         if (calleeVar != null && calleeVar.Name.BindingInfo.DeclarationNode is ClassDeclaration declaredClass)
         {
-            return TryLowerNewUserDefinedClass(declaredClass, newExpr.Arguments, out resultTempVar);
+            if (!TryLowerExpression(calleeVar, out var classValue))
+            {
+                return false;
+            }
+
+            return TryLowerNewUserDefinedClass(
+                declaredClass,
+                newExpr.Arguments,
+                EnsureObject(classValue),
+                out resultTempVar);
         }
 
         var ctorName = calleeVar?.Name.Name;
@@ -185,23 +204,6 @@ public sealed partial class HIRToLIRLowerer
         return TryLowerDynamicNewExpression(newExpr, out resultTempVar);
     }
 
-    private bool TryLowerNewInitializedUserClass(
-        HIRInitializedUserClassTypeExpression initializedClassExpr,
-        IReadOnlyList<HIRExpression> args,
-        out TempVariable resultTempVar)
-    {
-        foreach (var initStatement in initializedClassExpr.InitializationStatements)
-        {
-            if (!TryLowerStatement(initStatement))
-            {
-                resultTempVar = default;
-                return false;
-            }
-        }
-
-        return TryLowerNewUserDefinedClass(initializedClassExpr.RegistryClassName, initializedClassExpr.ClassScope, args, out resultTempVar);
-    }
-
     private bool TryLowerDynamicNewExpression(HIRNewExpression newExpr, out TempVariable resultTempVar)
     {
         resultTempVar = default;
@@ -257,7 +259,11 @@ public sealed partial class HIRToLIRLowerer
         return true;
     }
 
-    private bool TryLowerNewUserDefinedClass(ClassDeclaration classDecl, IReadOnlyList<HIRExpression> args, out TempVariable resultTempVar)
+    private bool TryLowerNewUserDefinedClass(
+        ClassDeclaration classDecl,
+        IReadOnlyList<HIRExpression> args,
+        TempVariable newTarget,
+        out TempVariable resultTempVar)
     {
         resultTempVar = default;
 
@@ -283,13 +289,14 @@ public sealed partial class HIRToLIRLowerer
         // This allows IL emission to look up type/field handles for the class.
         var registryClassName = $"{(classScope.DotNetNamespace ?? "Classes")}.{(classScope.DotNetTypeName ?? classScope.Name)}";
 
-        return TryLowerNewUserDefinedClass(registryClassName, classScope, args, out resultTempVar);
+        return TryLowerNewUserDefinedClass(registryClassName, classScope, args, newTarget, out resultTempVar);
     }
 
     private bool TryLowerNewUserDefinedClass(
         string registryClassName,
         Scope classScope,
         IReadOnlyList<HIRExpression> args,
+        TempVariable newTarget,
         out TempVariable resultTempVar)
     {
         resultTempVar = default;
@@ -436,6 +443,7 @@ public sealed partial class HIRToLIRLowerer
             ClassName: className,
             RegistryClassName: registryClassName,
             ConstructorCallableId: ctorCallableId,
+            NewTarget: newTarget,
             NeedsScopes: needsScopes,
             ScopesArray: scopesTemp,
             MinArgCount: minArgs,

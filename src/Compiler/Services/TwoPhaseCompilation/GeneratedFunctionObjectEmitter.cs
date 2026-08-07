@@ -99,6 +99,10 @@ internal sealed class GeneratedFunctionObjectEmitter
                 }
             }
             var callAdapter = MetadataTokens.MethodDefinitionHandle(nextMethodRow++);
+            var constructBodyAdapter = plan.Callable.Kind is
+                CallableKind.FunctionDeclaration or CallableKind.FunctionExpression
+                ? MetadataTokens.MethodDefinitionHandle(nextMethodRow++)
+                : default;
             var constructAdapter = plan.IsConstructable
                 ? MetadataTokens.MethodDefinitionHandle(nextMethodRow++)
                 : default;
@@ -138,6 +142,7 @@ internal sealed class GeneratedFunctionObjectEmitter
                 OrdinaryThisResolverHandle = ordinaryThisResolver,
                 StateAccessorHandles = stateAccessorHandles,
                 CallAdapterHandle = callAdapter,
+                ConstructBodyAdapterHandle = constructBodyAdapter,
                 ConstructAdapterHandle = constructAdapter,
                 FieldHandles = fieldHandles,
                 EntryPoints =
@@ -202,6 +207,15 @@ internal sealed class GeneratedFunctionObjectEmitter
                 EmitCallAdapter(metadata),
                 metadata.Plan,
                 "CallCore");
+
+            if (!metadata.ConstructBodyAdapterHandle.IsNil)
+            {
+                EmitAndValidate(
+                    metadata.ConstructBodyAdapterHandle,
+                    EmitConstructBodyAdapter(metadata),
+                    metadata.Plan,
+                    "ConstructBodyCore");
+            }
 
             if (!metadata.ConstructAdapterHandle.IsNil)
             {
@@ -365,7 +379,8 @@ internal sealed class GeneratedFunctionObjectEmitter
         {
             encoder.OpCode(ILOpCode.Ldarg_0);
             encoder.OpCode(ILOpCode.Ldarg_1);
-            encoder.Call(_bclReferences.JsCallArguments_ToArray_Ref);
+            encoder.OpCode(ILOpCode.Ldobj);
+            encoder.Token(_bclReferences.JsCallArgumentsType);
             encoder.OpCode(ILOpCode.Ldarg_2);
             encoder.Call(_bclReferences.Function_ConstructGeneratedFunctionObject_Ref);
             encoder.OpCode(ILOpCode.Ret);
@@ -389,14 +404,47 @@ internal sealed class GeneratedFunctionObjectEmitter
             inParameterIndex: 0);
     }
 
+    private MethodDefinitionHandle EmitConstructBodyAdapter(
+        GeneratedFunctionObjectMetadata metadata)
+    {
+        var signature = CreateConstructBodyAdapterSignature();
+        var il = new BlobBuilder();
+        var encoder = new InstructionEncoder(il);
+        EmitCanonicalCall(
+            metadata,
+            encoder,
+            thisArgumentIndex: 1,
+            argumentsIndex: 2,
+            newTargetIndex: 3);
+        encoder.OpCode(ILOpCode.Ret);
+
+        return AddMethod(
+            metadata,
+            MethodAttributes.Family
+            | MethodAttributes.HideBySig
+            | MethodAttributes.Virtual,
+            "ConstructBodyCore",
+            signature,
+            AddMethodBody(
+                encoder,
+                maxStack: System.Math.Max(
+                    8,
+                    metadata.Plan.Signature.JsParamCount + 3)),
+            ["receiver", "arguments", "newTarget"],
+            inParameterIndex: 1);
+    }
+
     private void EmitCanonicalCall(
         GeneratedFunctionObjectMetadata metadata,
-        InstructionEncoder encoder)
+        InstructionEncoder encoder,
+        int thisArgumentIndex = 1,
+        int argumentsIndex = 2,
+        int? newTargetIndex = null)
     {
         var plan = metadata.Plan;
         if (plan.Signature.IsInstanceMethod)
         {
-            encoder.OpCode(ILOpCode.Ldarg_1);
+            encoder.LoadArgument(thisArgumentIndex);
             encoder.OpCode(ILOpCode.Castclass);
             encoder.Token(metadata.CanonicalOwnerTypeHandle);
         }
@@ -419,7 +467,14 @@ internal sealed class GeneratedFunctionObjectEmitter
             else if (plan.Callable.Kind is CallableKind.FunctionDeclaration
                 or CallableKind.FunctionExpression)
             {
-                encoder.Call(_bclReferences.RuntimeServices_GetCurrentNewTarget_Ref);
+                if (newTargetIndex.HasValue)
+                {
+                    encoder.LoadArgument(newTargetIndex.Value);
+                }
+                else
+                {
+                    encoder.Call(_bclReferences.RuntimeServices_GetCurrentNewTarget_Ref);
+                }
             }
             else
             {
@@ -429,7 +484,7 @@ internal sealed class GeneratedFunctionObjectEmitter
 
         for (var index = 0; index < plan.Signature.JsParamCount; index++)
         {
-            encoder.OpCode(ILOpCode.Ldarg_2);
+            encoder.LoadArgument(argumentsIndex);
             encoder.LoadConstantI4(index);
             encoder.Call(_bclReferences.JsCallArguments_GetArgument_Ref);
             EmitDynamicArgumentConversion(encoder, plan.Signature.ParameterClrTypes.ElementAtOrDefault(index));
@@ -748,6 +803,20 @@ internal sealed class GeneratedFunctionObjectEmitter
                     EncodeInCallArguments(parameters.AddParameter());
                     parameters.AddParameter().Type().Object();
                 });
+        return _metadataBuilder.GetOrAddBlob(blob);
+    }
+
+    private BlobHandle CreateConstructBodyAdapterSignature()
+    {
+        var blob = new BlobBuilder();
+        new BlobEncoder(blob)
+            .MethodSignature(isInstanceMethod: true)
+            .Parameters(3, returnType => returnType.Type().Object(), parameters =>
+            {
+                parameters.AddParameter().Type().Object();
+                EncodeInCallArguments(parameters.AddParameter());
+                parameters.AddParameter().Type().Object();
+            });
         return _metadataBuilder.GetOrAddBlob(blob);
     }
 

@@ -289,6 +289,9 @@ namespace Jroc.Tests.Function
         public Task Function_CallableArchitecture_SemanticBaseline() { var testName = nameof(Function_CallableArchitecture_SemanticBaseline); return ExecutionTest(testName); }
 
         [Fact]
+        public Task Function_GeneratedConstruction_Semantics() { var testName = nameof(Function_GeneratedConstruction_Semantics); return ExecutionTest(testName); }
+
+        [Fact]
         public Task Function_CallableArchitecture_InferredSignatureBaseline() { var testName = nameof(Function_CallableArchitecture_InferredSignatureBaseline); return ExecutionTest(testName); }
 
         // ABI optimization tests: non-capturing functions should NOT have scopes parameter

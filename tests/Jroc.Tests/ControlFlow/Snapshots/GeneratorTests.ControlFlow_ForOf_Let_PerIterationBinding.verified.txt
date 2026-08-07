@@ -453,21 +453,40 @@
 	} // end of method FunctionObject_FunctionExpression_C4DB1299_L6C14::CallCore
 
 	.method family hidebysig virtual 
-		instance object ConstructCore (
+		instance object ConstructBodyCore (
+			object receiver,
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
 			object newTarget
 		) cil managed 
 	{
 		// Method begins at RVA 0x228f
 		// Header size: 1
+		// Code size: 13 (0xd)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: ldfld object[] FunctionObjects.ControlFlow_ForOf_Let_PerIterationBinding_74889661.FunctionObject_FunctionExpression_C4DB1299_L6C14::_transitionalScopes
+		IL_0006: ldarg.3
+		IL_0007: call object Modules.ControlFlow_ForOf_Let_PerIterationBinding/FunctionExpression_L6C13::__js_call__(object[], object)
+		IL_000c: ret
+	} // end of method FunctionObject_FunctionExpression_C4DB1299_L6C14::ConstructBodyCore
+
+	.method family hidebysig virtual 
+		instance object ConstructCore (
+			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
+			object newTarget
+		) cil managed 
+	{
+		// Method begins at RVA 0x229d
+		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
 
 		IL_0000: ldarg.0
 		IL_0001: ldarg.1
-		IL_0002: call instance object[] [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::ToArray()
+		IL_0002: ldobj [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments
 		IL_0007: ldarg.2
-		IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionObject(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, object[], object)
+		IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionObject(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments, object)
 		IL_000d: ret
 	} // end of method FunctionObject_FunctionExpression_C4DB1299_L6C14::ConstructCore
 
@@ -480,7 +499,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x229e
+		// Method begins at RVA 0x22ac
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

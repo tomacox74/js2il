@@ -19,6 +19,7 @@ public class RuntimeServices
     private static readonly System.Threading.AsyncLocal<object?> _currentNewTarget = new();
     private static readonly System.Threading.AsyncLocal<object?> _currentCallee = new();
     [ThreadStatic] private static Stack<object?[]?>? _constructorArgStack;
+    [ThreadStatic] private static Stack<object?>? _constructorNewTargetStack;
     [ThreadStatic] private static Stack<object?>? _derivedConstructorThisStack;
     private static readonly ConcurrentDictionary<string, JsObject> _importMetaByUrl = new(StringComparer.Ordinal);
     private static readonly ConcurrentDictionary<string, JavaScriptRuntime.CommonJS.RequireDelegate> _requireByModuleId = new(StringComparer.OrdinalIgnoreCase);
@@ -192,10 +193,15 @@ public class RuntimeServices
 
     public static void ConstructDerivedFunctionBase(object receiver, object constructor, object[] args)
     {
+        var newTarget = GetCurrentNewTarget() ?? constructor;
         object? constructed;
         if (constructor is Delegate del)
         {
-            constructed = JavaScriptRuntime.Function.ConstructWithReceiver(del, receiver, args, constructor);
+            constructed = JavaScriptRuntime.Function.ConstructWithReceiver(
+                del,
+                receiver,
+                args,
+                newTarget);
         }
         else if (constructor is JsFunctionObject functionObject
             && functionObject.IsConstructor)
@@ -204,7 +210,7 @@ public class RuntimeServices
                 functionObject,
                 receiver,
                 args,
-                constructor);
+                newTarget);
         }
         else if (constructor is JavaScriptRuntime.Proxy)
         {
@@ -1015,6 +1021,21 @@ public class RuntimeServices
         if (_constructorArgStack?.Count > 0)
         {
             _currentArguments.Value = _constructorArgStack.Pop();
+        }
+    }
+
+    public static void PushCurrentNewTarget(object? value)
+    {
+        _constructorNewTargetStack ??= new Stack<object?>();
+        _constructorNewTargetStack.Push(_currentNewTarget.Value);
+        _currentNewTarget.Value = value;
+    }
+
+    public static void PopCurrentNewTarget()
+    {
+        if (_constructorNewTargetStack?.Count > 0)
+        {
+            _currentNewTarget.Value = _constructorNewTargetStack.Pop();
         }
     }
 

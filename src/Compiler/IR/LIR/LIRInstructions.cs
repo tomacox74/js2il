@@ -503,6 +503,7 @@ public record LIRNewUserClass(
     string ClassName,
     string RegistryClassName,
     CallableId ConstructorCallableId,
+    TempVariable NewTarget,
     bool NeedsScopes,
     TempVariable? ScopesArray,
     int MinArgCount,
