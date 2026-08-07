@@ -95,6 +95,68 @@
 
 		} // end of class Scope
 
+		.class nested public auto ansi sealed beforefieldinit FunctionObject
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2165
+				// Header size: 1
+				// Code size: 7 (0x7)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0006: ret
+			} // end of method FunctionObject::.ctor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_IsConstructor () cil managed 
+			{
+				// Method begins at RVA 0x216d
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_IsConstructor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_RequiresInvocationContext () cil managed 
+			{
+				// Method begins at RVA 0x2170
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_RequiresInvocationContext
+
+			.method family hidebysig virtual 
+				instance object CallCore (
+					object thisArgument,
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+				) cil managed 
+			{
+				// Method begins at RVA 0x2173
+				// Header size: 1
+				// Code size: 14 (0xe)
+				.maxstack 8
+
+				IL_0000: ldnull
+				IL_0001: ldarg.2
+				IL_0002: ldc.i4.0
+				IL_0003: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+				IL_0008: call object Modules.CommonJS_Require_Shadowed_Parameter/ArrowFunction_L7C18::__js_call__(object, object)
+				IL_000d: ret
+			} // end of method FunctionObject::CallCore
+
+		} // end of class FunctionObject
+
 
 		// Methods
 		.method public hidebysig static 
@@ -172,7 +234,7 @@
 			[2] object[],
 			[3] object,
 			[4] object[],
-			[5] class FunctionObjects.CommonJS_Require_Shadowed_Parameter_64FDFF0D.FunctionObject_Arrow_FDD8182E_L7C18,
+			[5] class Modules.CommonJS_Require_Shadowed_Parameter/ArrowFunction_L7C18/FunctionObject,
 			[6] object
 		)
 
@@ -208,14 +270,14 @@
 		IL_0045: ldloc.0
 		IL_0046: stelem.ref
 		IL_0047: stloc.s 4
-		IL_0049: newobj instance void FunctionObjects.CommonJS_Require_Shadowed_Parameter_64FDFF0D.FunctionObject_Arrow_FDD8182E_L7C18::.ctor()
+		IL_0049: newobj instance void Modules.CommonJS_Require_Shadowed_Parameter/ArrowFunction_L7C18/FunctionObject::.ctor()
 		IL_004e: ldc.i4.1
 		IL_004f: conv.r8
 		IL_0050: ldstr ""
 		IL_0055: ldc.i4.0
 		IL_0056: ldc.i4.0
-		IL_0057: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class FunctionObjects.CommonJS_Require_Shadowed_Parameter_64FDFF0D.FunctionObject_Arrow_FDD8182E_L7C18>(!!0, float64, string, bool, bool)
-		IL_005c: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class FunctionObjects.CommonJS_Require_Shadowed_Parameter_64FDFF0D.FunctionObject_Arrow_FDD8182E_L7C18>(!!0)
+		IL_0057: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.CommonJS_Require_Shadowed_Parameter/ArrowFunction_L7C18/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_005c: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.CommonJS_Require_Shadowed_Parameter/ArrowFunction_L7C18/FunctionObject>(!!0)
 		IL_0061: stloc.s 5
 		IL_0063: ldloc.1
 		IL_0064: ldloc.2
@@ -312,68 +374,6 @@
 	} // end of method FunctionObject_FunctionDeclaration_9681A6B4_test::ConstructCore
 
 } // end of class FunctionObjects.CommonJS_Require_Shadowed_Parameter_64FDFF0D.FunctionObject_FunctionDeclaration_9681A6B4_test
-
-.class private auto ansi sealed beforefieldinit FunctionObjects.CommonJS_Require_Shadowed_Parameter_64FDFF0D.FunctionObject_Arrow_FDD8182E_L7C18
-	extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-{
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x2165
-		// Header size: 1
-		// Code size: 7 (0x7)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-		IL_0006: ret
-	} // end of method FunctionObject_Arrow_FDD8182E_L7C18::.ctor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_IsConstructor () cil managed 
-	{
-		// Method begins at RVA 0x216d
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_FDD8182E_L7C18::get_IsConstructor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_RequiresInvocationContext () cil managed 
-	{
-		// Method begins at RVA 0x2170
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_FDD8182E_L7C18::get_RequiresInvocationContext
-
-	.method family hidebysig virtual 
-		instance object CallCore (
-			object thisArgument,
-			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-		) cil managed 
-	{
-		// Method begins at RVA 0x2173
-		// Header size: 1
-		// Code size: 14 (0xe)
-		.maxstack 8
-
-		IL_0000: ldnull
-		IL_0001: ldarg.2
-		IL_0002: ldc.i4.0
-		IL_0003: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-		IL_0008: call object Modules.CommonJS_Require_Shadowed_Parameter/ArrowFunction_L7C18::__js_call__(object, object)
-		IL_000d: ret
-	} // end of method FunctionObject_Arrow_FDD8182E_L7C18::CallCore
-
-} // end of class FunctionObjects.CommonJS_Require_Shadowed_Parameter_64FDFF0D.FunctionObject_Arrow_FDD8182E_L7C18
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object

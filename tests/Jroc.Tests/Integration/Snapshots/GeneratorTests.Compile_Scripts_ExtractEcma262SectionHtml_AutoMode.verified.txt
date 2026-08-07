@@ -223,6 +223,68 @@
 
 		} // end of class Scope
 
+		.class nested public auto ansi sealed beforefieldinit FunctionObject
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x4762
+				// Header size: 1
+				// Code size: 7 (0x7)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0006: ret
+			} // end of method FunctionObject::.ctor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_IsConstructor () cil managed 
+			{
+				// Method begins at RVA 0x476a
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_IsConstructor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_RequiresInvocationContext () cil managed 
+			{
+				// Method begins at RVA 0x476d
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_RequiresInvocationContext
+
+			.method family hidebysig virtual 
+				instance object CallCore (
+					object thisArgument,
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+				) cil managed 
+			{
+				// Method begins at RVA 0x4770
+				// Header size: 1
+				// Code size: 14 (0xe)
+				.maxstack 8
+
+				IL_0000: ldnull
+				IL_0001: ldarg.2
+				IL_0002: ldc.i4.0
+				IL_0003: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+				IL_0008: call object Modules.Compile_Scripts_ExtractEcma262SectionHtml_AutoMode/ArrowFunction_L8C13::__js_call__(object, object)
+				IL_000d: ret
+			} // end of method FunctionObject::CallCore
+
+		} // end of class FunctionObject
+
 
 		// Methods
 		.method public hidebysig static 
@@ -388,7 +450,7 @@
 			[1] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0,
 			[2] object[],
 			[3] object,
-			[4] class FunctionObjects.Compile_Scripts_ExtractEcma262SectionHtml_AutoMode_B8E9D3F2.FunctionObject_Arrow_CB8177D3_L8C13
+			[4] class Modules.Compile_Scripts_ExtractEcma262SectionHtml_AutoMode/ArrowFunction_L8C13/FunctionObject
 		)
 
 		IL_0000: newobj instance void Modules.Compile_Scripts_ExtractEcma262SectionHtml_AutoMode/Scope::.ctor()
@@ -431,14 +493,14 @@
 		IL_005a: ldloc.0
 		IL_005b: stelem.ref
 		IL_005c: stloc.2
-		IL_005d: newobj instance void FunctionObjects.Compile_Scripts_ExtractEcma262SectionHtml_AutoMode_B8E9D3F2.FunctionObject_Arrow_CB8177D3_L8C13::.ctor()
+		IL_005d: newobj instance void Modules.Compile_Scripts_ExtractEcma262SectionHtml_AutoMode/ArrowFunction_L8C13/FunctionObject::.ctor()
 		IL_0062: ldc.i4.1
 		IL_0063: conv.r8
 		IL_0064: ldstr ""
 		IL_0069: ldc.i4.0
 		IL_006a: ldc.i4.0
-		IL_006b: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class FunctionObjects.Compile_Scripts_ExtractEcma262SectionHtml_AutoMode_B8E9D3F2.FunctionObject_Arrow_CB8177D3_L8C13>(!!0, float64, string, bool, bool)
-		IL_0070: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class FunctionObjects.Compile_Scripts_ExtractEcma262SectionHtml_AutoMode_B8E9D3F2.FunctionObject_Arrow_CB8177D3_L8C13>(!!0)
+		IL_006b: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Compile_Scripts_ExtractEcma262SectionHtml_AutoMode/ArrowFunction_L8C13/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_0070: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Compile_Scripts_ExtractEcma262SectionHtml_AutoMode/ArrowFunction_L8C13/FunctionObject>(!!0)
 		IL_0075: stloc.s 4
 		IL_0077: ldloc.3
 		IL_0078: ldstr "catch"
@@ -1168,6 +1230,98 @@
 
 					} // end of class Scope
 
+					.class nested public auto ansi sealed beforefieldinit FunctionObject
+						extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+					{
+						// Fields
+						.field private initonly class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/Scope _environment0_Compile_Scripts_ExtractEcma262SectionHtml_TestHarness
+						.field private initonly class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/Scope _environment1_fetchText
+						.field private initonly class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/ArrowFunction_L72C22/Scope _environment2_ArrowFunction_L72C22
+						.field private initonly class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/ArrowFunction_L72C22/ArrowFunction_L91C7/Scope _environment3_ArrowFunction_L91C7
+						.field private initonly object[] _transitionalScopes
+
+						// Methods
+						.method public hidebysig specialname rtspecialname 
+							instance void .ctor (
+								class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/Scope capture0,
+								class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/Scope capture1,
+								class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/ArrowFunction_L72C22/Scope capture2,
+								class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/ArrowFunction_L72C22/ArrowFunction_L91C7/Scope capture3,
+								object[] capture4
+							) cil managed 
+						{
+							// Method begins at RVA 0x48b6
+							// Header size: 1
+							// Code size: 44 (0x2c)
+							.maxstack 8
+
+							IL_0000: ldarg.0
+							IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+							IL_0006: ldarg.0
+							IL_0007: ldarg.1
+							IL_0008: stfld class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/Scope Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/ArrowFunction_L72C22/ArrowFunction_L91C7/ArrowFunction_L116C24/FunctionObject::_environment0_Compile_Scripts_ExtractEcma262SectionHtml_TestHarness
+							IL_000d: ldarg.0
+							IL_000e: ldarg.2
+							IL_000f: stfld class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/Scope Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/ArrowFunction_L72C22/ArrowFunction_L91C7/ArrowFunction_L116C24/FunctionObject::_environment1_fetchText
+							IL_0014: ldarg.0
+							IL_0015: ldarg.3
+							IL_0016: stfld class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/ArrowFunction_L72C22/Scope Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/ArrowFunction_L72C22/ArrowFunction_L91C7/ArrowFunction_L116C24/FunctionObject::_environment2_ArrowFunction_L72C22
+							IL_001b: ldarg.0
+							IL_001c: ldarg.s capture3
+							IL_001e: stfld class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/ArrowFunction_L72C22/ArrowFunction_L91C7/Scope Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/ArrowFunction_L72C22/ArrowFunction_L91C7/ArrowFunction_L116C24/FunctionObject::_environment3_ArrowFunction_L91C7
+							IL_0023: ldarg.0
+							IL_0024: ldarg.s capture4
+							IL_0026: stfld object[] Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/ArrowFunction_L72C22/ArrowFunction_L91C7/ArrowFunction_L116C24/FunctionObject::_transitionalScopes
+							IL_002b: ret
+						} // end of method FunctionObject::.ctor
+
+						.method public hidebysig specialname virtual 
+							instance bool get_IsConstructor () cil managed 
+						{
+							// Method begins at RVA 0x48e3
+							// Header size: 1
+							// Code size: 2 (0x2)
+							.maxstack 8
+
+							IL_0000: ldc.i4.0
+							IL_0001: ret
+						} // end of method FunctionObject::get_IsConstructor
+
+						.method public hidebysig specialname virtual 
+							instance bool get_RequiresInvocationContext () cil managed 
+						{
+							// Method begins at RVA 0x48e6
+							// Header size: 1
+							// Code size: 2 (0x2)
+							.maxstack 8
+
+							IL_0000: ldc.i4.0
+							IL_0001: ret
+						} // end of method FunctionObject::get_RequiresInvocationContext
+
+						.method family hidebysig virtual 
+							instance object CallCore (
+								object thisArgument,
+								[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+							) cil managed 
+						{
+							// Method begins at RVA 0x48e9
+							// Header size: 1
+							// Code size: 20 (0x14)
+							.maxstack 8
+
+							IL_0000: ldarg.0
+							IL_0001: ldfld object[] Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/ArrowFunction_L72C22/ArrowFunction_L91C7/ArrowFunction_L116C24/FunctionObject::_transitionalScopes
+							IL_0006: ldnull
+							IL_0007: ldarg.2
+							IL_0008: ldc.i4.0
+							IL_0009: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+							IL_000e: call object Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/ArrowFunction_L72C22/ArrowFunction_L91C7/ArrowFunction_L116C24::__js_call__(object[], object, object)
+							IL_0013: ret
+						} // end of method FunctionObject::CallCore
+
+					} // end of class FunctionObject
+
 
 					// Methods
 					.method public hidebysig static 
@@ -1234,6 +1388,95 @@
 						} // end of method Scope::.ctor
 
 					} // end of class Scope
+
+					.class nested public auto ansi sealed beforefieldinit FunctionObject
+						extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+					{
+						// Fields
+						.field private initonly class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/Scope _environment0_Compile_Scripts_ExtractEcma262SectionHtml_TestHarness
+						.field private initonly class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/Scope _environment1_fetchText
+						.field private initonly class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/ArrowFunction_L72C22/Scope _environment2_ArrowFunction_L72C22
+						.field private initonly class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/ArrowFunction_L72C22/ArrowFunction_L91C7/Scope _environment3_ArrowFunction_L91C7
+						.field private initonly object[] _transitionalScopes
+
+						// Methods
+						.method public hidebysig specialname rtspecialname 
+							instance void .ctor (
+								class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/Scope capture0,
+								class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/Scope capture1,
+								class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/ArrowFunction_L72C22/Scope capture2,
+								class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/ArrowFunction_L72C22/ArrowFunction_L91C7/Scope capture3,
+								object[] capture4
+							) cil managed 
+						{
+							// Method begins at RVA 0x48fe
+							// Header size: 1
+							// Code size: 44 (0x2c)
+							.maxstack 8
+
+							IL_0000: ldarg.0
+							IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+							IL_0006: ldarg.0
+							IL_0007: ldarg.1
+							IL_0008: stfld class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/Scope Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/ArrowFunction_L72C22/ArrowFunction_L91C7/ArrowFunction_L119C23/FunctionObject::_environment0_Compile_Scripts_ExtractEcma262SectionHtml_TestHarness
+							IL_000d: ldarg.0
+							IL_000e: ldarg.2
+							IL_000f: stfld class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/Scope Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/ArrowFunction_L72C22/ArrowFunction_L91C7/ArrowFunction_L119C23/FunctionObject::_environment1_fetchText
+							IL_0014: ldarg.0
+							IL_0015: ldarg.3
+							IL_0016: stfld class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/ArrowFunction_L72C22/Scope Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/ArrowFunction_L72C22/ArrowFunction_L91C7/ArrowFunction_L119C23/FunctionObject::_environment2_ArrowFunction_L72C22
+							IL_001b: ldarg.0
+							IL_001c: ldarg.s capture3
+							IL_001e: stfld class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/ArrowFunction_L72C22/ArrowFunction_L91C7/Scope Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/ArrowFunction_L72C22/ArrowFunction_L91C7/ArrowFunction_L119C23/FunctionObject::_environment3_ArrowFunction_L91C7
+							IL_0023: ldarg.0
+							IL_0024: ldarg.s capture4
+							IL_0026: stfld object[] Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/ArrowFunction_L72C22/ArrowFunction_L91C7/ArrowFunction_L119C23/FunctionObject::_transitionalScopes
+							IL_002b: ret
+						} // end of method FunctionObject::.ctor
+
+						.method public hidebysig specialname virtual 
+							instance bool get_IsConstructor () cil managed 
+						{
+							// Method begins at RVA 0x492b
+							// Header size: 1
+							// Code size: 2 (0x2)
+							.maxstack 8
+
+							IL_0000: ldc.i4.0
+							IL_0001: ret
+						} // end of method FunctionObject::get_IsConstructor
+
+						.method public hidebysig specialname virtual 
+							instance bool get_RequiresInvocationContext () cil managed 
+						{
+							// Method begins at RVA 0x492e
+							// Header size: 1
+							// Code size: 2 (0x2)
+							.maxstack 8
+
+							IL_0000: ldc.i4.0
+							IL_0001: ret
+						} // end of method FunctionObject::get_RequiresInvocationContext
+
+						.method family hidebysig virtual 
+							instance object CallCore (
+								object thisArgument,
+								[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+							) cil managed 
+						{
+							// Method begins at RVA 0x4931
+							// Header size: 1
+							// Code size: 13 (0xd)
+							.maxstack 8
+
+							IL_0000: ldarg.0
+							IL_0001: ldfld object[] Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/ArrowFunction_L72C22/ArrowFunction_L91C7/ArrowFunction_L119C23/FunctionObject::_transitionalScopes
+							IL_0006: ldnull
+							IL_0007: call object Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/ArrowFunction_L72C22/ArrowFunction_L91C7/ArrowFunction_L119C23::__js_call__(object[], object)
+							IL_000c: ret
+						} // end of method FunctionObject::CallCore
+
+					} // end of class FunctionObject
 
 
 					// Methods
@@ -1398,6 +1641,93 @@
 
 				} // end of class Scope
 
+				.class nested public auto ansi sealed beforefieldinit FunctionObject
+					extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+				{
+					// Fields
+					.field private initonly class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/Scope _environment0_Compile_Scripts_ExtractEcma262SectionHtml_TestHarness
+					.field private initonly class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/Scope _environment1_fetchText
+					.field private initonly class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/ArrowFunction_L72C22/Scope _environment2_ArrowFunction_L72C22
+					.field private initonly object[] _transitionalScopes
+
+					// Methods
+					.method public hidebysig specialname rtspecialname 
+						instance void .ctor (
+							class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/Scope capture0,
+							class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/Scope capture1,
+							class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/ArrowFunction_L72C22/Scope capture2,
+							object[] capture3
+						) cil managed 
+					{
+						// Method begins at RVA 0x4876
+						// Header size: 1
+						// Code size: 36 (0x24)
+						.maxstack 8
+
+						IL_0000: ldarg.0
+						IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+						IL_0006: ldarg.0
+						IL_0007: ldarg.1
+						IL_0008: stfld class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/Scope Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/ArrowFunction_L72C22/ArrowFunction_L91C7/FunctionObject::_environment0_Compile_Scripts_ExtractEcma262SectionHtml_TestHarness
+						IL_000d: ldarg.0
+						IL_000e: ldarg.2
+						IL_000f: stfld class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/Scope Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/ArrowFunction_L72C22/ArrowFunction_L91C7/FunctionObject::_environment1_fetchText
+						IL_0014: ldarg.0
+						IL_0015: ldarg.3
+						IL_0016: stfld class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/ArrowFunction_L72C22/Scope Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/ArrowFunction_L72C22/ArrowFunction_L91C7/FunctionObject::_environment2_ArrowFunction_L72C22
+						IL_001b: ldarg.0
+						IL_001c: ldarg.s capture3
+						IL_001e: stfld object[] Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/ArrowFunction_L72C22/ArrowFunction_L91C7/FunctionObject::_transitionalScopes
+						IL_0023: ret
+					} // end of method FunctionObject::.ctor
+
+					.method public hidebysig specialname virtual 
+						instance bool get_IsConstructor () cil managed 
+					{
+						// Method begins at RVA 0x489b
+						// Header size: 1
+						// Code size: 2 (0x2)
+						.maxstack 8
+
+						IL_0000: ldc.i4.0
+						IL_0001: ret
+					} // end of method FunctionObject::get_IsConstructor
+
+					.method public hidebysig specialname virtual 
+						instance bool get_RequiresInvocationContext () cil managed 
+					{
+						// Method begins at RVA 0x489e
+						// Header size: 1
+						// Code size: 2 (0x2)
+						.maxstack 8
+
+						IL_0000: ldc.i4.0
+						IL_0001: ret
+					} // end of method FunctionObject::get_RequiresInvocationContext
+
+					.method family hidebysig virtual 
+						instance object CallCore (
+							object thisArgument,
+							[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+						) cil managed 
+					{
+						// Method begins at RVA 0x48a1
+						// Header size: 1
+						// Code size: 20 (0x14)
+						.maxstack 8
+
+						IL_0000: ldarg.0
+						IL_0001: ldfld object[] Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/ArrowFunction_L72C22/ArrowFunction_L91C7/FunctionObject::_transitionalScopes
+						IL_0006: ldnull
+						IL_0007: ldarg.2
+						IL_0008: ldc.i4.0
+						IL_0009: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+						IL_000e: call object Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/ArrowFunction_L72C22/ArrowFunction_L91C7::__js_call__(object[], object, object)
+						IL_0013: ret
+					} // end of method FunctionObject::CallCore
+
+				} // end of class FunctionObject
+
 
 				// Methods
 				.method public hidebysig static 
@@ -1435,8 +1765,8 @@
 						[17] object,
 						[18] object,
 						[19] object,
-						[20] class FunctionObjects.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness_5CFF973A.FunctionObject_Arrow_79F8D77B_L116C24,
-						[21] class FunctionObjects.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness_5CFF973A.FunctionObject_Arrow_AFB05A1D_L119C23
+						[20] class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/ArrowFunction_L72C22/ArrowFunction_L91C7/ArrowFunction_L116C24/FunctionObject,
+						[21] class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/ArrowFunction_L72C22/ArrowFunction_L91C7/ArrowFunction_L119C23/FunctionObject
 					)
 
 					IL_0000: newobj instance void Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/ArrowFunction_L72C22/ArrowFunction_L91C7/Scope::.ctor()
@@ -1840,14 +2170,14 @@
 					IL_03bf: ldelem.ref
 					IL_03c0: castclass Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/ArrowFunction_L72C22/ArrowFunction_L91C7/Scope
 					IL_03c5: ldloc.s 12
-					IL_03c7: newobj instance void FunctionObjects.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness_5CFF973A.FunctionObject_Arrow_79F8D77B_L116C24::.ctor(class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/Scope, class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/Scope, class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/ArrowFunction_L72C22/Scope, class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/ArrowFunction_L72C22/ArrowFunction_L91C7/Scope, object[])
+					IL_03c7: newobj instance void Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/ArrowFunction_L72C22/ArrowFunction_L91C7/ArrowFunction_L116C24/FunctionObject::.ctor(class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/Scope, class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/Scope, class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/ArrowFunction_L72C22/Scope, class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/ArrowFunction_L72C22/ArrowFunction_L91C7/Scope, object[])
 					IL_03cc: ldc.i4.1
 					IL_03cd: conv.r8
 					IL_03ce: ldstr ""
 					IL_03d3: ldc.i4.0
 					IL_03d4: ldc.i4.0
-					IL_03d5: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class FunctionObjects.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness_5CFF973A.FunctionObject_Arrow_79F8D77B_L116C24>(!!0, float64, string, bool, bool)
-					IL_03da: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class FunctionObjects.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness_5CFF973A.FunctionObject_Arrow_79F8D77B_L116C24>(!!0)
+					IL_03d5: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/ArrowFunction_L72C22/ArrowFunction_L91C7/ArrowFunction_L116C24/FunctionObject>(!!0, float64, string, bool, bool)
+					IL_03da: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/ArrowFunction_L72C22/ArrowFunction_L91C7/ArrowFunction_L116C24/FunctionObject>(!!0)
 					IL_03df: stloc.s 20
 					IL_03e1: ldloc.s 18
 					IL_03e3: ldstr "on"
@@ -1900,14 +2230,14 @@
 					IL_0439: ldelem.ref
 					IL_043a: castclass Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/ArrowFunction_L72C22/ArrowFunction_L91C7/Scope
 					IL_043f: ldloc.s 12
-					IL_0441: newobj instance void FunctionObjects.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness_5CFF973A.FunctionObject_Arrow_AFB05A1D_L119C23::.ctor(class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/Scope, class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/Scope, class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/ArrowFunction_L72C22/Scope, class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/ArrowFunction_L72C22/ArrowFunction_L91C7/Scope, object[])
+					IL_0441: newobj instance void Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/ArrowFunction_L72C22/ArrowFunction_L91C7/ArrowFunction_L119C23/FunctionObject::.ctor(class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/Scope, class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/Scope, class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/ArrowFunction_L72C22/Scope, class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/ArrowFunction_L72C22/ArrowFunction_L91C7/Scope, object[])
 					IL_0446: ldc.i4.0
 					IL_0447: conv.r8
 					IL_0448: ldstr ""
 					IL_044d: ldc.i4.0
 					IL_044e: ldc.i4.0
-					IL_044f: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class FunctionObjects.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness_5CFF973A.FunctionObject_Arrow_AFB05A1D_L119C23>(!!0, float64, string, bool, bool)
-					IL_0454: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class FunctionObjects.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness_5CFF973A.FunctionObject_Arrow_AFB05A1D_L119C23>(!!0)
+					IL_044f: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/ArrowFunction_L72C22/ArrowFunction_L91C7/ArrowFunction_L119C23/FunctionObject>(!!0, float64, string, bool, bool)
+					IL_0454: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/ArrowFunction_L72C22/ArrowFunction_L91C7/ArrowFunction_L119C23/FunctionObject>(!!0)
 					IL_0459: stloc.s 21
 					IL_045b: ldloc.s 18
 					IL_045d: ldstr "on"
@@ -1994,6 +2324,91 @@
 
 			} // end of class Scope
 
+			.class nested public auto ansi sealed beforefieldinit FunctionObject
+				extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+			{
+				// Fields
+				.field private initonly class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/Scope _environment0_Compile_Scripts_ExtractEcma262SectionHtml_TestHarness
+				.field private initonly class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/Scope _environment1_fetchText
+				.field private initonly object[] _transitionalScopes
+
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor (
+						class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/Scope capture0,
+						class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/Scope capture1,
+						object[] capture2
+					) cil managed 
+				{
+					// Method begins at RVA 0x4837
+					// Header size: 1
+					// Code size: 28 (0x1c)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+					IL_0006: ldarg.0
+					IL_0007: ldarg.1
+					IL_0008: stfld class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/Scope Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/ArrowFunction_L72C22/FunctionObject::_environment0_Compile_Scripts_ExtractEcma262SectionHtml_TestHarness
+					IL_000d: ldarg.0
+					IL_000e: ldarg.2
+					IL_000f: stfld class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/Scope Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/ArrowFunction_L72C22/FunctionObject::_environment1_fetchText
+					IL_0014: ldarg.0
+					IL_0015: ldarg.3
+					IL_0016: stfld object[] Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/ArrowFunction_L72C22/FunctionObject::_transitionalScopes
+					IL_001b: ret
+				} // end of method FunctionObject::.ctor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_IsConstructor () cil managed 
+				{
+					// Method begins at RVA 0x4854
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_IsConstructor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_RequiresInvocationContext () cil managed 
+				{
+					// Method begins at RVA 0x4857
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_RequiresInvocationContext
+
+				.method family hidebysig virtual 
+					instance object CallCore (
+						object thisArgument,
+						[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+					) cil managed 
+				{
+					// Method begins at RVA 0x485a
+					// Header size: 1
+					// Code size: 27 (0x1b)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: ldfld object[] Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/ArrowFunction_L72C22/FunctionObject::_transitionalScopes
+					IL_0006: ldnull
+					IL_0007: ldarg.2
+					IL_0008: ldc.i4.0
+					IL_0009: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+					IL_000e: ldarg.2
+					IL_000f: ldc.i4.1
+					IL_0010: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+					IL_0015: call object Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/ArrowFunction_L72C22::__js_call__(object[], object, object, object)
+					IL_001a: ret
+				} // end of method FunctionObject::CallCore
+
+			} // end of class FunctionObject
+
 
 			// Methods
 			.method public hidebysig static 
@@ -2027,7 +2442,7 @@
 					[12] class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IHttpsModule,
 					[13] class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IHttpModule,
 					[14] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
-					[15] class FunctionObjects.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness_5CFF973A.FunctionObject_Arrow_E701CB65_L91C7
+					[15] class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/ArrowFunction_L72C22/ArrowFunction_L91C7/FunctionObject
 				)
 
 				IL_0000: newobj instance void Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/ArrowFunction_L72C22/Scope::.ctor()
@@ -2210,14 +2625,14 @@
 				IL_0199: ldelem.ref
 				IL_019a: castclass Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/ArrowFunction_L72C22/Scope
 				IL_019f: ldloc.s 8
-				IL_01a1: newobj instance void FunctionObjects.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness_5CFF973A.FunctionObject_Arrow_E701CB65_L91C7::.ctor(class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/Scope, class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/Scope, class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/ArrowFunction_L72C22/Scope, object[])
+				IL_01a1: newobj instance void Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/ArrowFunction_L72C22/ArrowFunction_L91C7/FunctionObject::.ctor(class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/Scope, class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/Scope, class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/ArrowFunction_L72C22/Scope, object[])
 				IL_01a6: ldc.i4.1
 				IL_01a7: conv.r8
 				IL_01a8: ldstr ""
 				IL_01ad: ldc.i4.0
 				IL_01ae: ldc.i4.0
-				IL_01af: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class FunctionObjects.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness_5CFF973A.FunctionObject_Arrow_E701CB65_L91C7>(!!0, float64, string, bool, bool)
-				IL_01b4: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class FunctionObjects.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness_5CFF973A.FunctionObject_Arrow_E701CB65_L91C7>(!!0)
+				IL_01af: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/ArrowFunction_L72C22/ArrowFunction_L91C7/FunctionObject>(!!0, float64, string, bool, bool)
+				IL_01b4: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/ArrowFunction_L72C22/ArrowFunction_L91C7/FunctionObject>(!!0)
 				IL_01b9: stloc.s 15
 				IL_01bb: ldloc.s 6
 				IL_01bd: ldstr "request"
@@ -2324,7 +2739,7 @@
 			.locals init (
 				[0] class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/Scope,
 				[1] object[],
-				[2] class FunctionObjects.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness_5CFF973A.FunctionObject_Arrow_EB0B1E76_L72C22,
+				[2] class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/ArrowFunction_L72C22/FunctionObject,
 				[3] class [JavaScriptRuntime]JavaScriptRuntime.Promise
 			)
 
@@ -2363,14 +2778,14 @@
 			IL_0043: ldelem.ref
 			IL_0044: castclass Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/Scope
 			IL_0049: ldloc.1
-			IL_004a: newobj instance void FunctionObjects.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness_5CFF973A.FunctionObject_Arrow_EB0B1E76_L72C22::.ctor(class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/Scope, class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/Scope, object[])
+			IL_004a: newobj instance void Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/ArrowFunction_L72C22/FunctionObject::.ctor(class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/Scope, class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/Scope, object[])
 			IL_004f: ldc.i4.2
 			IL_0050: conv.r8
 			IL_0051: ldstr ""
 			IL_0056: ldc.i4.0
 			IL_0057: ldc.i4.0
-			IL_0058: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class FunctionObjects.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness_5CFF973A.FunctionObject_Arrow_EB0B1E76_L72C22>(!!0, float64, string, bool, bool)
-			IL_005d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class FunctionObjects.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness_5CFF973A.FunctionObject_Arrow_EB0B1E76_L72C22>(!!0)
+			IL_0058: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/ArrowFunction_L72C22/FunctionObject>(!!0, float64, string, bool, bool)
+			IL_005d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/ArrowFunction_L72C22/FunctionObject>(!!0)
 			IL_0062: stloc.2
 			IL_0063: ldloc.2
 			IL_0064: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Promise::.ctor(object)
@@ -5776,68 +6191,6 @@
 
 } // end of class FunctionObjects.Compile_Scripts_ExtractEcma262SectionHtml_AutoMode_B8E9D3F2.FunctionObject_FunctionDeclaration_5C26764E_run
 
-.class private auto ansi sealed beforefieldinit FunctionObjects.Compile_Scripts_ExtractEcma262SectionHtml_AutoMode_B8E9D3F2.FunctionObject_Arrow_CB8177D3_L8C13
-	extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-{
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x4762
-		// Header size: 1
-		// Code size: 7 (0x7)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-		IL_0006: ret
-	} // end of method FunctionObject_Arrow_CB8177D3_L8C13::.ctor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_IsConstructor () cil managed 
-	{
-		// Method begins at RVA 0x476a
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_CB8177D3_L8C13::get_IsConstructor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_RequiresInvocationContext () cil managed 
-	{
-		// Method begins at RVA 0x476d
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_CB8177D3_L8C13::get_RequiresInvocationContext
-
-	.method family hidebysig virtual 
-		instance object CallCore (
-			object thisArgument,
-			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-		) cil managed 
-	{
-		// Method begins at RVA 0x4770
-		// Header size: 1
-		// Code size: 14 (0xe)
-		.maxstack 8
-
-		IL_0000: ldnull
-		IL_0001: ldarg.2
-		IL_0002: ldc.i4.0
-		IL_0003: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-		IL_0008: call object Modules.Compile_Scripts_ExtractEcma262SectionHtml_AutoMode/ArrowFunction_L8C13::__js_call__(object, object)
-		IL_000d: ret
-	} // end of method FunctionObject_Arrow_CB8177D3_L8C13::CallCore
-
-} // end of class FunctionObjects.Compile_Scripts_ExtractEcma262SectionHtml_AutoMode_B8E9D3F2.FunctionObject_Arrow_CB8177D3_L8C13
-
 .class private auto ansi sealed beforefieldinit FunctionObjects.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness_5CFF973A.FunctionObject_FunctionDeclaration_DA704280_normalize
 	extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
 {
@@ -6106,359 +6459,6 @@
 	} // end of method FunctionObject_FunctionDeclaration_A95D6710_fetchText::ConstructCore
 
 } // end of class FunctionObjects.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness_5CFF973A.FunctionObject_FunctionDeclaration_A95D6710_fetchText
-
-.class private auto ansi sealed beforefieldinit FunctionObjects.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness_5CFF973A.FunctionObject_Arrow_EB0B1E76_L72C22
-	extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-{
-	// Fields
-	.field private initonly class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/Scope _environment0_Compile_Scripts_ExtractEcma262SectionHtml_TestHarness
-	.field private initonly class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/Scope _environment1_fetchText
-	.field private initonly object[] _transitionalScopes
-
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor (
-			class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/Scope capture0,
-			class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/Scope capture1,
-			object[] capture2
-		) cil managed 
-	{
-		// Method begins at RVA 0x4837
-		// Header size: 1
-		// Code size: 28 (0x1c)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-		IL_0006: ldarg.0
-		IL_0007: ldarg.1
-		IL_0008: stfld class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/Scope FunctionObjects.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness_5CFF973A.FunctionObject_Arrow_EB0B1E76_L72C22::_environment0_Compile_Scripts_ExtractEcma262SectionHtml_TestHarness
-		IL_000d: ldarg.0
-		IL_000e: ldarg.2
-		IL_000f: stfld class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/Scope FunctionObjects.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness_5CFF973A.FunctionObject_Arrow_EB0B1E76_L72C22::_environment1_fetchText
-		IL_0014: ldarg.0
-		IL_0015: ldarg.3
-		IL_0016: stfld object[] FunctionObjects.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness_5CFF973A.FunctionObject_Arrow_EB0B1E76_L72C22::_transitionalScopes
-		IL_001b: ret
-	} // end of method FunctionObject_Arrow_EB0B1E76_L72C22::.ctor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_IsConstructor () cil managed 
-	{
-		// Method begins at RVA 0x4854
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_EB0B1E76_L72C22::get_IsConstructor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_RequiresInvocationContext () cil managed 
-	{
-		// Method begins at RVA 0x4857
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_EB0B1E76_L72C22::get_RequiresInvocationContext
-
-	.method family hidebysig virtual 
-		instance object CallCore (
-			object thisArgument,
-			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-		) cil managed 
-	{
-		// Method begins at RVA 0x485a
-		// Header size: 1
-		// Code size: 27 (0x1b)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: ldfld object[] FunctionObjects.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness_5CFF973A.FunctionObject_Arrow_EB0B1E76_L72C22::_transitionalScopes
-		IL_0006: ldnull
-		IL_0007: ldarg.2
-		IL_0008: ldc.i4.0
-		IL_0009: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-		IL_000e: ldarg.2
-		IL_000f: ldc.i4.1
-		IL_0010: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-		IL_0015: call object Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/ArrowFunction_L72C22::__js_call__(object[], object, object, object)
-		IL_001a: ret
-	} // end of method FunctionObject_Arrow_EB0B1E76_L72C22::CallCore
-
-} // end of class FunctionObjects.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness_5CFF973A.FunctionObject_Arrow_EB0B1E76_L72C22
-
-.class private auto ansi sealed beforefieldinit FunctionObjects.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness_5CFF973A.FunctionObject_Arrow_E701CB65_L91C7
-	extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-{
-	// Fields
-	.field private initonly class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/Scope _environment0_Compile_Scripts_ExtractEcma262SectionHtml_TestHarness
-	.field private initonly class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/Scope _environment1_fetchText
-	.field private initonly class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/ArrowFunction_L72C22/Scope _environment2_ArrowFunction_L72C22
-	.field private initonly object[] _transitionalScopes
-
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor (
-			class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/Scope capture0,
-			class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/Scope capture1,
-			class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/ArrowFunction_L72C22/Scope capture2,
-			object[] capture3
-		) cil managed 
-	{
-		// Method begins at RVA 0x4876
-		// Header size: 1
-		// Code size: 36 (0x24)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-		IL_0006: ldarg.0
-		IL_0007: ldarg.1
-		IL_0008: stfld class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/Scope FunctionObjects.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness_5CFF973A.FunctionObject_Arrow_E701CB65_L91C7::_environment0_Compile_Scripts_ExtractEcma262SectionHtml_TestHarness
-		IL_000d: ldarg.0
-		IL_000e: ldarg.2
-		IL_000f: stfld class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/Scope FunctionObjects.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness_5CFF973A.FunctionObject_Arrow_E701CB65_L91C7::_environment1_fetchText
-		IL_0014: ldarg.0
-		IL_0015: ldarg.3
-		IL_0016: stfld class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/ArrowFunction_L72C22/Scope FunctionObjects.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness_5CFF973A.FunctionObject_Arrow_E701CB65_L91C7::_environment2_ArrowFunction_L72C22
-		IL_001b: ldarg.0
-		IL_001c: ldarg.s capture3
-		IL_001e: stfld object[] FunctionObjects.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness_5CFF973A.FunctionObject_Arrow_E701CB65_L91C7::_transitionalScopes
-		IL_0023: ret
-	} // end of method FunctionObject_Arrow_E701CB65_L91C7::.ctor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_IsConstructor () cil managed 
-	{
-		// Method begins at RVA 0x489b
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_E701CB65_L91C7::get_IsConstructor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_RequiresInvocationContext () cil managed 
-	{
-		// Method begins at RVA 0x489e
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_E701CB65_L91C7::get_RequiresInvocationContext
-
-	.method family hidebysig virtual 
-		instance object CallCore (
-			object thisArgument,
-			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-		) cil managed 
-	{
-		// Method begins at RVA 0x48a1
-		// Header size: 1
-		// Code size: 20 (0x14)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: ldfld object[] FunctionObjects.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness_5CFF973A.FunctionObject_Arrow_E701CB65_L91C7::_transitionalScopes
-		IL_0006: ldnull
-		IL_0007: ldarg.2
-		IL_0008: ldc.i4.0
-		IL_0009: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-		IL_000e: call object Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/ArrowFunction_L72C22/ArrowFunction_L91C7::__js_call__(object[], object, object)
-		IL_0013: ret
-	} // end of method FunctionObject_Arrow_E701CB65_L91C7::CallCore
-
-} // end of class FunctionObjects.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness_5CFF973A.FunctionObject_Arrow_E701CB65_L91C7
-
-.class private auto ansi sealed beforefieldinit FunctionObjects.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness_5CFF973A.FunctionObject_Arrow_79F8D77B_L116C24
-	extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-{
-	// Fields
-	.field private initonly class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/Scope _environment0_Compile_Scripts_ExtractEcma262SectionHtml_TestHarness
-	.field private initonly class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/Scope _environment1_fetchText
-	.field private initonly class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/ArrowFunction_L72C22/Scope _environment2_ArrowFunction_L72C22
-	.field private initonly class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/ArrowFunction_L72C22/ArrowFunction_L91C7/Scope _environment3_ArrowFunction_L91C7
-	.field private initonly object[] _transitionalScopes
-
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor (
-			class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/Scope capture0,
-			class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/Scope capture1,
-			class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/ArrowFunction_L72C22/Scope capture2,
-			class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/ArrowFunction_L72C22/ArrowFunction_L91C7/Scope capture3,
-			object[] capture4
-		) cil managed 
-	{
-		// Method begins at RVA 0x48b6
-		// Header size: 1
-		// Code size: 44 (0x2c)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-		IL_0006: ldarg.0
-		IL_0007: ldarg.1
-		IL_0008: stfld class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/Scope FunctionObjects.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness_5CFF973A.FunctionObject_Arrow_79F8D77B_L116C24::_environment0_Compile_Scripts_ExtractEcma262SectionHtml_TestHarness
-		IL_000d: ldarg.0
-		IL_000e: ldarg.2
-		IL_000f: stfld class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/Scope FunctionObjects.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness_5CFF973A.FunctionObject_Arrow_79F8D77B_L116C24::_environment1_fetchText
-		IL_0014: ldarg.0
-		IL_0015: ldarg.3
-		IL_0016: stfld class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/ArrowFunction_L72C22/Scope FunctionObjects.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness_5CFF973A.FunctionObject_Arrow_79F8D77B_L116C24::_environment2_ArrowFunction_L72C22
-		IL_001b: ldarg.0
-		IL_001c: ldarg.s capture3
-		IL_001e: stfld class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/ArrowFunction_L72C22/ArrowFunction_L91C7/Scope FunctionObjects.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness_5CFF973A.FunctionObject_Arrow_79F8D77B_L116C24::_environment3_ArrowFunction_L91C7
-		IL_0023: ldarg.0
-		IL_0024: ldarg.s capture4
-		IL_0026: stfld object[] FunctionObjects.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness_5CFF973A.FunctionObject_Arrow_79F8D77B_L116C24::_transitionalScopes
-		IL_002b: ret
-	} // end of method FunctionObject_Arrow_79F8D77B_L116C24::.ctor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_IsConstructor () cil managed 
-	{
-		// Method begins at RVA 0x48e3
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_79F8D77B_L116C24::get_IsConstructor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_RequiresInvocationContext () cil managed 
-	{
-		// Method begins at RVA 0x48e6
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_79F8D77B_L116C24::get_RequiresInvocationContext
-
-	.method family hidebysig virtual 
-		instance object CallCore (
-			object thisArgument,
-			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-		) cil managed 
-	{
-		// Method begins at RVA 0x48e9
-		// Header size: 1
-		// Code size: 20 (0x14)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: ldfld object[] FunctionObjects.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness_5CFF973A.FunctionObject_Arrow_79F8D77B_L116C24::_transitionalScopes
-		IL_0006: ldnull
-		IL_0007: ldarg.2
-		IL_0008: ldc.i4.0
-		IL_0009: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-		IL_000e: call object Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/ArrowFunction_L72C22/ArrowFunction_L91C7/ArrowFunction_L116C24::__js_call__(object[], object, object)
-		IL_0013: ret
-	} // end of method FunctionObject_Arrow_79F8D77B_L116C24::CallCore
-
-} // end of class FunctionObjects.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness_5CFF973A.FunctionObject_Arrow_79F8D77B_L116C24
-
-.class private auto ansi sealed beforefieldinit FunctionObjects.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness_5CFF973A.FunctionObject_Arrow_AFB05A1D_L119C23
-	extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-{
-	// Fields
-	.field private initonly class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/Scope _environment0_Compile_Scripts_ExtractEcma262SectionHtml_TestHarness
-	.field private initonly class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/Scope _environment1_fetchText
-	.field private initonly class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/ArrowFunction_L72C22/Scope _environment2_ArrowFunction_L72C22
-	.field private initonly class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/ArrowFunction_L72C22/ArrowFunction_L91C7/Scope _environment3_ArrowFunction_L91C7
-	.field private initonly object[] _transitionalScopes
-
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor (
-			class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/Scope capture0,
-			class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/Scope capture1,
-			class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/ArrowFunction_L72C22/Scope capture2,
-			class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/ArrowFunction_L72C22/ArrowFunction_L91C7/Scope capture3,
-			object[] capture4
-		) cil managed 
-	{
-		// Method begins at RVA 0x48fe
-		// Header size: 1
-		// Code size: 44 (0x2c)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-		IL_0006: ldarg.0
-		IL_0007: ldarg.1
-		IL_0008: stfld class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/Scope FunctionObjects.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness_5CFF973A.FunctionObject_Arrow_AFB05A1D_L119C23::_environment0_Compile_Scripts_ExtractEcma262SectionHtml_TestHarness
-		IL_000d: ldarg.0
-		IL_000e: ldarg.2
-		IL_000f: stfld class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/Scope FunctionObjects.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness_5CFF973A.FunctionObject_Arrow_AFB05A1D_L119C23::_environment1_fetchText
-		IL_0014: ldarg.0
-		IL_0015: ldarg.3
-		IL_0016: stfld class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/ArrowFunction_L72C22/Scope FunctionObjects.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness_5CFF973A.FunctionObject_Arrow_AFB05A1D_L119C23::_environment2_ArrowFunction_L72C22
-		IL_001b: ldarg.0
-		IL_001c: ldarg.s capture3
-		IL_001e: stfld class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/ArrowFunction_L72C22/ArrowFunction_L91C7/Scope FunctionObjects.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness_5CFF973A.FunctionObject_Arrow_AFB05A1D_L119C23::_environment3_ArrowFunction_L91C7
-		IL_0023: ldarg.0
-		IL_0024: ldarg.s capture4
-		IL_0026: stfld object[] FunctionObjects.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness_5CFF973A.FunctionObject_Arrow_AFB05A1D_L119C23::_transitionalScopes
-		IL_002b: ret
-	} // end of method FunctionObject_Arrow_AFB05A1D_L119C23::.ctor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_IsConstructor () cil managed 
-	{
-		// Method begins at RVA 0x492b
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_AFB05A1D_L119C23::get_IsConstructor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_RequiresInvocationContext () cil managed 
-	{
-		// Method begins at RVA 0x492e
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_AFB05A1D_L119C23::get_RequiresInvocationContext
-
-	.method family hidebysig virtual 
-		instance object CallCore (
-			object thisArgument,
-			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-		) cil managed 
-	{
-		// Method begins at RVA 0x4931
-		// Header size: 1
-		// Code size: 13 (0xd)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: ldfld object[] FunctionObjects.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness_5CFF973A.FunctionObject_Arrow_AFB05A1D_L119C23::_transitionalScopes
-		IL_0006: ldnull
-		IL_0007: call object Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/ArrowFunction_L72C22/ArrowFunction_L91C7/ArrowFunction_L119C23::__js_call__(object[], object)
-		IL_000c: ret
-	} // end of method FunctionObject_Arrow_AFB05A1D_L119C23::CallCore
-
-} // end of class FunctionObjects.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness_5CFF973A.FunctionObject_Arrow_AFB05A1D_L119C23
 
 .class private auto ansi sealed beforefieldinit FunctionObjects.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness_5CFF973A.FunctionObject_FunctionDeclaration_A6520F2F_escapeRegExp
 	extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject

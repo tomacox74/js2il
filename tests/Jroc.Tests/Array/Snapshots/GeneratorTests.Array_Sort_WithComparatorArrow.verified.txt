@@ -39,6 +39,71 @@
 
 		} // end of class Scope
 
+		.class nested public auto ansi sealed beforefieldinit FunctionObject
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2172
+				// Header size: 1
+				// Code size: 7 (0x7)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0006: ret
+			} // end of method FunctionObject::.ctor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_IsConstructor () cil managed 
+			{
+				// Method begins at RVA 0x217a
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_IsConstructor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_RequiresInvocationContext () cil managed 
+			{
+				// Method begins at RVA 0x217d
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_RequiresInvocationContext
+
+			.method family hidebysig virtual 
+				instance object CallCore (
+					object thisArgument,
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+				) cil managed 
+			{
+				// Method begins at RVA 0x2180
+				// Header size: 1
+				// Code size: 21 (0x15)
+				.maxstack 8
+
+				IL_0000: ldnull
+				IL_0001: ldarg.2
+				IL_0002: ldc.i4.0
+				IL_0003: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+				IL_0008: ldarg.2
+				IL_0009: ldc.i4.1
+				IL_000a: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+				IL_000f: call object Modules.Array_Sort_WithComparatorArrow/ArrowFunction_L4C10::__js_call__(object, object, object)
+				IL_0014: ret
+			} // end of method FunctionObject::CallCore
+
+		} // end of class FunctionObject
+
 
 		// Methods
 		.method public hidebysig static 
@@ -129,7 +194,7 @@
 			[1] class [JavaScriptRuntime]JavaScriptRuntime.Array,
 			[2] float64,
 			[3] object[],
-			[4] class FunctionObjects.Array_Sort_WithComparatorArrow_05AB1619.FunctionObject_Arrow_265981E5_L4C10,
+			[4] class Modules.Array_Sort_WithComparatorArrow/ArrowFunction_L4C10/FunctionObject,
 			[5] float64,
 			[6] float64,
 			[7] object
@@ -163,14 +228,14 @@
 		IL_0061: ldloc.0
 		IL_0062: stelem.ref
 		IL_0063: stloc.3
-		IL_0064: newobj instance void FunctionObjects.Array_Sort_WithComparatorArrow_05AB1619.FunctionObject_Arrow_265981E5_L4C10::.ctor()
+		IL_0064: newobj instance void Modules.Array_Sort_WithComparatorArrow/ArrowFunction_L4C10/FunctionObject::.ctor()
 		IL_0069: ldc.i4.2
 		IL_006a: conv.r8
 		IL_006b: ldstr ""
 		IL_0070: ldc.i4.0
 		IL_0071: ldc.i4.0
-		IL_0072: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class FunctionObjects.Array_Sort_WithComparatorArrow_05AB1619.FunctionObject_Arrow_265981E5_L4C10>(!!0, float64, string, bool, bool)
-		IL_0077: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class FunctionObjects.Array_Sort_WithComparatorArrow_05AB1619.FunctionObject_Arrow_265981E5_L4C10>(!!0)
+		IL_0072: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Array_Sort_WithComparatorArrow/ArrowFunction_L4C10/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_0077: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Array_Sort_WithComparatorArrow/ArrowFunction_L4C10/FunctionObject>(!!0)
 		IL_007c: stloc.s 4
 		IL_007e: ldloc.1
 		IL_007f: ldc.i4.1
@@ -216,71 +281,6 @@
 	} // end of method Array_Sort_WithComparatorArrow::__js_module_init__
 
 } // end of class Modules.Array_Sort_WithComparatorArrow
-
-.class private auto ansi sealed beforefieldinit FunctionObjects.Array_Sort_WithComparatorArrow_05AB1619.FunctionObject_Arrow_265981E5_L4C10
-	extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-{
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x2172
-		// Header size: 1
-		// Code size: 7 (0x7)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-		IL_0006: ret
-	} // end of method FunctionObject_Arrow_265981E5_L4C10::.ctor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_IsConstructor () cil managed 
-	{
-		// Method begins at RVA 0x217a
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_265981E5_L4C10::get_IsConstructor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_RequiresInvocationContext () cil managed 
-	{
-		// Method begins at RVA 0x217d
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_265981E5_L4C10::get_RequiresInvocationContext
-
-	.method family hidebysig virtual 
-		instance object CallCore (
-			object thisArgument,
-			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-		) cil managed 
-	{
-		// Method begins at RVA 0x2180
-		// Header size: 1
-		// Code size: 21 (0x15)
-		.maxstack 8
-
-		IL_0000: ldnull
-		IL_0001: ldarg.2
-		IL_0002: ldc.i4.0
-		IL_0003: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-		IL_0008: ldarg.2
-		IL_0009: ldc.i4.1
-		IL_000a: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-		IL_000f: call object Modules.Array_Sort_WithComparatorArrow/ArrowFunction_L4C10::__js_call__(object, object, object)
-		IL_0014: ret
-	} // end of method FunctionObject_Arrow_265981E5_L4C10::CallCore
-
-} // end of class FunctionObjects.Array_Sort_WithComparatorArrow_05AB1619.FunctionObject_Arrow_265981E5_L4C10
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object

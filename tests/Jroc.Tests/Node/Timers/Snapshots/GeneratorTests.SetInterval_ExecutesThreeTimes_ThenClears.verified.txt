@@ -53,6 +53,75 @@
 
 		} // end of class Scope
 
+		.class nested public auto ansi sealed beforefieldinit FunctionObject
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+		{
+			// Fields
+			.field private initonly class Modules.SetInterval_ExecutesThreeTimes_ThenClears/Scope _environment0_SetInterval_ExecutesThreeTimes_ThenClears
+
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor (
+					class Modules.SetInterval_ExecutesThreeTimes_ThenClears/Scope capture0
+				) cil managed 
+			{
+				// Method begins at RVA 0x21cd
+				// Header size: 1
+				// Code size: 14 (0xe)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0006: ldarg.0
+				IL_0007: ldarg.1
+				IL_0008: stfld class Modules.SetInterval_ExecutesThreeTimes_ThenClears/Scope Modules.SetInterval_ExecutesThreeTimes_ThenClears/ArrowFunction_L5C24/FunctionObject::_environment0_SetInterval_ExecutesThreeTimes_ThenClears
+				IL_000d: ret
+			} // end of method FunctionObject::.ctor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_IsConstructor () cil managed 
+			{
+				// Method begins at RVA 0x21dc
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_IsConstructor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_RequiresInvocationContext () cil managed 
+			{
+				// Method begins at RVA 0x21df
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_RequiresInvocationContext
+
+			.method family hidebysig virtual 
+				instance object CallCore (
+					object thisArgument,
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+				) cil managed 
+			{
+				// Method begins at RVA 0x21e2
+				// Header size: 1
+				// Code size: 13 (0xd)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: ldfld class Modules.SetInterval_ExecutesThreeTimes_ThenClears/Scope Modules.SetInterval_ExecutesThreeTimes_ThenClears/ArrowFunction_L5C24/FunctionObject::_environment0_SetInterval_ExecutesThreeTimes_ThenClears
+				IL_0006: ldnull
+				IL_0007: call object Modules.SetInterval_ExecutesThreeTimes_ThenClears/ArrowFunction_L5C24::__js_call__(class Modules.SetInterval_ExecutesThreeTimes_ThenClears/Scope, object)
+				IL_000c: ret
+			} // end of method FunctionObject::CallCore
+
+		} // end of class FunctionObject
+
 
 		// Methods
 		.method public hidebysig static 
@@ -189,7 +258,7 @@
 		.locals init (
 			[0] class Modules.SetInterval_ExecutesThreeTimes_ThenClears/Scope,
 			[1] object[],
-			[2] class FunctionObjects.SetInterval_ExecutesThreeTimes_ThenClears_8090C2C3.FunctionObject_Arrow_11977F15_L5C24,
+			[2] class Modules.SetInterval_ExecutesThreeTimes_ThenClears/ArrowFunction_L5C24/FunctionObject,
 			[3] object
 		)
 
@@ -211,14 +280,14 @@
 		IL_0027: ldc.i4.0
 		IL_0028: ldelem.ref
 		IL_0029: castclass Modules.SetInterval_ExecutesThreeTimes_ThenClears/Scope
-		IL_002e: newobj instance void FunctionObjects.SetInterval_ExecutesThreeTimes_ThenClears_8090C2C3.FunctionObject_Arrow_11977F15_L5C24::.ctor(class Modules.SetInterval_ExecutesThreeTimes_ThenClears/Scope)
+		IL_002e: newobj instance void Modules.SetInterval_ExecutesThreeTimes_ThenClears/ArrowFunction_L5C24/FunctionObject::.ctor(class Modules.SetInterval_ExecutesThreeTimes_ThenClears/Scope)
 		IL_0033: ldc.i4.0
 		IL_0034: conv.r8
 		IL_0035: ldstr ""
 		IL_003a: ldc.i4.0
 		IL_003b: ldc.i4.0
-		IL_003c: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class FunctionObjects.SetInterval_ExecutesThreeTimes_ThenClears_8090C2C3.FunctionObject_Arrow_11977F15_L5C24>(!!0, float64, string, bool, bool)
-		IL_0041: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class FunctionObjects.SetInterval_ExecutesThreeTimes_ThenClears_8090C2C3.FunctionObject_Arrow_11977F15_L5C24>(!!0)
+		IL_003c: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.SetInterval_ExecutesThreeTimes_ThenClears/ArrowFunction_L5C24/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_0041: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.SetInterval_ExecutesThreeTimes_ThenClears/ArrowFunction_L5C24/FunctionObject>(!!0)
 		IL_0046: stloc.2
 		IL_0047: ldloc.2
 		IL_0048: ldc.r8 50
@@ -241,75 +310,6 @@
 	} // end of method SetInterval_ExecutesThreeTimes_ThenClears::__js_module_init__
 
 } // end of class Modules.SetInterval_ExecutesThreeTimes_ThenClears
-
-.class private auto ansi sealed beforefieldinit FunctionObjects.SetInterval_ExecutesThreeTimes_ThenClears_8090C2C3.FunctionObject_Arrow_11977F15_L5C24
-	extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-{
-	// Fields
-	.field private initonly class Modules.SetInterval_ExecutesThreeTimes_ThenClears/Scope _environment0_SetInterval_ExecutesThreeTimes_ThenClears
-
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor (
-			class Modules.SetInterval_ExecutesThreeTimes_ThenClears/Scope capture0
-		) cil managed 
-	{
-		// Method begins at RVA 0x21cd
-		// Header size: 1
-		// Code size: 14 (0xe)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-		IL_0006: ldarg.0
-		IL_0007: ldarg.1
-		IL_0008: stfld class Modules.SetInterval_ExecutesThreeTimes_ThenClears/Scope FunctionObjects.SetInterval_ExecutesThreeTimes_ThenClears_8090C2C3.FunctionObject_Arrow_11977F15_L5C24::_environment0_SetInterval_ExecutesThreeTimes_ThenClears
-		IL_000d: ret
-	} // end of method FunctionObject_Arrow_11977F15_L5C24::.ctor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_IsConstructor () cil managed 
-	{
-		// Method begins at RVA 0x21dc
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_11977F15_L5C24::get_IsConstructor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_RequiresInvocationContext () cil managed 
-	{
-		// Method begins at RVA 0x21df
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_11977F15_L5C24::get_RequiresInvocationContext
-
-	.method family hidebysig virtual 
-		instance object CallCore (
-			object thisArgument,
-			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-		) cil managed 
-	{
-		// Method begins at RVA 0x21e2
-		// Header size: 1
-		// Code size: 13 (0xd)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: ldfld class Modules.SetInterval_ExecutesThreeTimes_ThenClears/Scope FunctionObjects.SetInterval_ExecutesThreeTimes_ThenClears_8090C2C3.FunctionObject_Arrow_11977F15_L5C24::_environment0_SetInterval_ExecutesThreeTimes_ThenClears
-		IL_0006: ldnull
-		IL_0007: call object Modules.SetInterval_ExecutesThreeTimes_ThenClears/ArrowFunction_L5C24::__js_call__(class Modules.SetInterval_ExecutesThreeTimes_ThenClears/Scope, object)
-		IL_000c: ret
-	} // end of method FunctionObject_Arrow_11977F15_L5C24::CallCore
-
-} // end of class FunctionObjects.SetInterval_ExecutesThreeTimes_ThenClears_8090C2C3.FunctionObject_Arrow_11977F15_L5C24
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object

@@ -90,6 +90,65 @@
 
 		} // end of class Scope
 
+		.class nested public auto ansi sealed beforefieldinit FunctionObject
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x25b8
+				// Header size: 1
+				// Code size: 7 (0x7)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0006: ret
+			} // end of method FunctionObject::.ctor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_IsConstructor () cil managed 
+			{
+				// Method begins at RVA 0x25c0
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_IsConstructor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_RequiresInvocationContext () cil managed 
+			{
+				// Method begins at RVA 0x25c3
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.1
+				IL_0001: ret
+			} // end of method FunctionObject::get_RequiresInvocationContext
+
+			.method family hidebysig virtual 
+				instance object CallCore (
+					object thisArgument,
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+				) cil managed 
+			{
+				// Method begins at RVA 0x25c6
+				// Header size: 1
+				// Code size: 7 (0x7)
+				.maxstack 8
+
+				IL_0000: ldnull
+				IL_0001: call object Modules.Require_Path_MemberOverrides/ArrowFunction_L13C13::__js_call__(object)
+				IL_0006: ret
+			} // end of method FunctionObject::CallCore
+
+		} // end of class FunctionObject
+
 
 		// Methods
 		.method public hidebysig static 
@@ -274,7 +333,7 @@
 			[12] class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IPathModule,
 			[13] object,
 			[14] object,
-			[15] class FunctionObjects.Require_Path_MemberOverrides_0C4995F2.FunctionObject_Arrow_07773C13_L13C13,
+			[15] class Modules.Require_Path_MemberOverrides/ArrowFunction_L13C13/FunctionObject,
 			[16] bool,
 			[17] object
 		)
@@ -359,14 +418,14 @@
 		IL_00d9: ldloc.0
 		IL_00da: stelem.ref
 		IL_00db: stloc.s 11
-		IL_00dd: newobj instance void FunctionObjects.Require_Path_MemberOverrides_0C4995F2.FunctionObject_Arrow_07773C13_L13C13::.ctor()
+		IL_00dd: newobj instance void Modules.Require_Path_MemberOverrides/ArrowFunction_L13C13/FunctionObject::.ctor()
 		IL_00e2: ldc.i4.0
 		IL_00e3: conv.r8
 		IL_00e4: ldstr ""
 		IL_00e9: ldc.i4.1
 		IL_00ea: ldc.i4.0
-		IL_00eb: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class FunctionObjects.Require_Path_MemberOverrides_0C4995F2.FunctionObject_Arrow_07773C13_L13C13>(!!0, float64, string, bool, bool)
-		IL_00f0: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class FunctionObjects.Require_Path_MemberOverrides_0C4995F2.FunctionObject_Arrow_07773C13_L13C13>(!!0)
+		IL_00eb: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_Path_MemberOverrides/ArrowFunction_L13C13/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_00f0: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_Path_MemberOverrides/ArrowFunction_L13C13/FunctionObject>(!!0)
 		IL_00f5: stloc.s 15
 		IL_00f7: ldloc.s 12
 		IL_00f9: ldstr "join"
@@ -782,65 +841,6 @@
 	} // end of method FunctionObject_FunctionDeclaration_2DB7A438_normalize::ConstructCore
 
 } // end of class FunctionObjects.Require_Path_MemberOverrides_0C4995F2.FunctionObject_FunctionDeclaration_2DB7A438_normalize
-
-.class private auto ansi sealed beforefieldinit FunctionObjects.Require_Path_MemberOverrides_0C4995F2.FunctionObject_Arrow_07773C13_L13C13
-	extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-{
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x25b8
-		// Header size: 1
-		// Code size: 7 (0x7)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-		IL_0006: ret
-	} // end of method FunctionObject_Arrow_07773C13_L13C13::.ctor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_IsConstructor () cil managed 
-	{
-		// Method begins at RVA 0x25c0
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_07773C13_L13C13::get_IsConstructor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_RequiresInvocationContext () cil managed 
-	{
-		// Method begins at RVA 0x25c3
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.1
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_07773C13_L13C13::get_RequiresInvocationContext
-
-	.method family hidebysig virtual 
-		instance object CallCore (
-			object thisArgument,
-			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-		) cil managed 
-	{
-		// Method begins at RVA 0x25c6
-		// Header size: 1
-		// Code size: 7 (0x7)
-		.maxstack 8
-
-		IL_0000: ldnull
-		IL_0001: call object Modules.Require_Path_MemberOverrides/ArrowFunction_L13C13::__js_call__(object)
-		IL_0006: ret
-	} // end of method FunctionObject_Arrow_07773C13_L13C13::CallCore
-
-} // end of class FunctionObjects.Require_Path_MemberOverrides_0C4995F2.FunctionObject_Arrow_07773C13_L13C13
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object

@@ -38,6 +38,68 @@
 
 		} // end of class Scope
 
+		.class nested public auto ansi sealed beforefieldinit FunctionObject
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x20f6
+				// Header size: 1
+				// Code size: 7 (0x7)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0006: ret
+			} // end of method FunctionObject::.ctor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_IsConstructor () cil managed 
+			{
+				// Method begins at RVA 0x20fe
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_IsConstructor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_RequiresInvocationContext () cil managed 
+			{
+				// Method begins at RVA 0x2101
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_RequiresInvocationContext
+
+			.method family hidebysig virtual 
+				instance object CallCore (
+					object thisArgument,
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+				) cil managed 
+			{
+				// Method begins at RVA 0x2104
+				// Header size: 1
+				// Code size: 14 (0xe)
+				.maxstack 8
+
+				IL_0000: ldnull
+				IL_0001: ldarg.2
+				IL_0002: ldc.i4.0
+				IL_0003: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+				IL_0008: call object Modules.Promise_All_EmptyArray/ArrowFunction_L3C22::__js_call__(object, object)
+				IL_000d: ret
+			} // end of method FunctionObject::CallCore
+
+		} // end of class FunctionObject
+
 
 		// Methods
 		.method public hidebysig static 
@@ -117,7 +179,7 @@
 			[0] class Modules.Promise_All_EmptyArray/Scope,
 			[1] object,
 			[2] object[],
-			[3] class FunctionObjects.Promise_All_EmptyArray_C241E2E9.FunctionObject_Arrow_7375B757_L3C22
+			[3] class Modules.Promise_All_EmptyArray/ArrowFunction_L3C22/FunctionObject
 		)
 
 		IL_0000: newobj instance void Modules.Promise_All_EmptyArray/Scope::.ctor()
@@ -135,14 +197,14 @@
 		IL_0020: ldloc.0
 		IL_0021: stelem.ref
 		IL_0022: stloc.2
-		IL_0023: newobj instance void FunctionObjects.Promise_All_EmptyArray_C241E2E9.FunctionObject_Arrow_7375B757_L3C22::.ctor()
+		IL_0023: newobj instance void Modules.Promise_All_EmptyArray/ArrowFunction_L3C22/FunctionObject::.ctor()
 		IL_0028: ldc.i4.1
 		IL_0029: conv.r8
 		IL_002a: ldstr ""
 		IL_002f: ldc.i4.0
 		IL_0030: ldc.i4.0
-		IL_0031: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class FunctionObjects.Promise_All_EmptyArray_C241E2E9.FunctionObject_Arrow_7375B757_L3C22>(!!0, float64, string, bool, bool)
-		IL_0036: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class FunctionObjects.Promise_All_EmptyArray_C241E2E9.FunctionObject_Arrow_7375B757_L3C22>(!!0)
+		IL_0031: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Promise_All_EmptyArray/ArrowFunction_L3C22/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_0036: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Promise_All_EmptyArray/ArrowFunction_L3C22/FunctionObject>(!!0)
 		IL_003b: stloc.3
 		IL_003c: ldloc.1
 		IL_003d: ldstr "then"
@@ -153,68 +215,6 @@
 	} // end of method Promise_All_EmptyArray::__js_module_init__
 
 } // end of class Modules.Promise_All_EmptyArray
-
-.class private auto ansi sealed beforefieldinit FunctionObjects.Promise_All_EmptyArray_C241E2E9.FunctionObject_Arrow_7375B757_L3C22
-	extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-{
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x20f6
-		// Header size: 1
-		// Code size: 7 (0x7)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-		IL_0006: ret
-	} // end of method FunctionObject_Arrow_7375B757_L3C22::.ctor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_IsConstructor () cil managed 
-	{
-		// Method begins at RVA 0x20fe
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_7375B757_L3C22::get_IsConstructor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_RequiresInvocationContext () cil managed 
-	{
-		// Method begins at RVA 0x2101
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_7375B757_L3C22::get_RequiresInvocationContext
-
-	.method family hidebysig virtual 
-		instance object CallCore (
-			object thisArgument,
-			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-		) cil managed 
-	{
-		// Method begins at RVA 0x2104
-		// Header size: 1
-		// Code size: 14 (0xe)
-		.maxstack 8
-
-		IL_0000: ldnull
-		IL_0001: ldarg.2
-		IL_0002: ldc.i4.0
-		IL_0003: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-		IL_0008: call object Modules.Promise_All_EmptyArray/ArrowFunction_L3C22::__js_call__(object, object)
-		IL_000d: ret
-	} // end of method FunctionObject_Arrow_7375B757_L3C22::CallCore
-
-} // end of class FunctionObjects.Promise_All_EmptyArray_C241E2E9.FunctionObject_Arrow_7375B757_L3C22
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object

@@ -41,6 +41,68 @@
 
 			} // end of class Scope
 
+			.class nested public auto ansi sealed beforefieldinit FunctionObject
+				extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+			{
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor () cil managed 
+				{
+					// Method begins at RVA 0x23f3
+					// Header size: 1
+					// Code size: 7 (0x7)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+					IL_0006: ret
+				} // end of method FunctionObject::.ctor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_IsConstructor () cil managed 
+				{
+					// Method begins at RVA 0x23fb
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_IsConstructor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_RequiresInvocationContext () cil managed 
+				{
+					// Method begins at RVA 0x23fe
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_RequiresInvocationContext
+
+				.method family hidebysig virtual 
+					instance object CallCore (
+						object thisArgument,
+						[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+					) cil managed 
+				{
+					// Method begins at RVA 0x2401
+					// Header size: 1
+					// Code size: 14 (0xe)
+					.maxstack 8
+
+					IL_0000: ldnull
+					IL_0001: ldarg.2
+					IL_0002: ldc.i4.0
+					IL_0003: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+					IL_0008: call object Modules.FSPromises_Readdir_Names/ArrowFunction_L14C11/ArrowFunction_L16C24::__js_call__(object, object)
+					IL_000d: ret
+				} // end of method FunctionObject::CallCore
+
+			} // end of class FunctionObject
+
 
 			// Methods
 			.method public hidebysig static 
@@ -100,6 +162,68 @@
 
 		} // end of class Scope
 
+		.class nested public auto ansi sealed beforefieldinit FunctionObject
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x23d6
+				// Header size: 1
+				// Code size: 7 (0x7)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0006: ret
+			} // end of method FunctionObject::.ctor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_IsConstructor () cil managed 
+			{
+				// Method begins at RVA 0x23de
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_IsConstructor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_RequiresInvocationContext () cil managed 
+			{
+				// Method begins at RVA 0x23e1
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_RequiresInvocationContext
+
+			.method family hidebysig virtual 
+				instance object CallCore (
+					object thisArgument,
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+				) cil managed 
+			{
+				// Method begins at RVA 0x23e4
+				// Header size: 1
+				// Code size: 14 (0xe)
+				.maxstack 8
+
+				IL_0000: ldnull
+				IL_0001: ldarg.2
+				IL_0002: ldc.i4.0
+				IL_0003: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+				IL_0008: call object Modules.FSPromises_Readdir_Names/ArrowFunction_L14C11::__js_call__(object, object)
+				IL_000d: ret
+			} // end of method FunctionObject::CallCore
+
+		} // end of class FunctionObject
+
 
 		// Methods
 		.method public hidebysig static 
@@ -120,7 +244,7 @@
 				[1] object,
 				[2] object,
 				[3] object[],
-				[4] class FunctionObjects.FSPromises_Readdir_Names_A29EDAA7.FunctionObject_Arrow_2284F0F0_L16C24
+				[4] class Modules.FSPromises_Readdir_Names/ArrowFunction_L14C11/ArrowFunction_L16C24/FunctionObject
 			)
 
 			IL_0000: newobj instance void Modules.FSPromises_Readdir_Names/ArrowFunction_L14C11/Scope::.ctor()
@@ -140,14 +264,14 @@
 			IL_002e: stloc.2
 			IL_002f: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
 			IL_0034: stloc.3
-			IL_0035: newobj instance void FunctionObjects.FSPromises_Readdir_Names_A29EDAA7.FunctionObject_Arrow_2284F0F0_L16C24::.ctor()
+			IL_0035: newobj instance void Modules.FSPromises_Readdir_Names/ArrowFunction_L14C11/ArrowFunction_L16C24/FunctionObject::.ctor()
 			IL_003a: ldc.i4.1
 			IL_003b: conv.r8
 			IL_003c: ldstr ""
 			IL_0041: ldc.i4.0
 			IL_0042: ldc.i4.0
-			IL_0043: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class FunctionObjects.FSPromises_Readdir_Names_A29EDAA7.FunctionObject_Arrow_2284F0F0_L16C24>(!!0, float64, string, bool, bool)
-			IL_0048: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class FunctionObjects.FSPromises_Readdir_Names_A29EDAA7.FunctionObject_Arrow_2284F0F0_L16C24>(!!0)
+			IL_0043: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.FSPromises_Readdir_Names/ArrowFunction_L14C11/ArrowFunction_L16C24/FunctionObject>(!!0, float64, string, bool, bool)
+			IL_0048: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.FSPromises_Readdir_Names/ArrowFunction_L14C11/ArrowFunction_L16C24/FunctionObject>(!!0)
 			IL_004d: stloc.s 4
 			IL_004f: ldloc.2
 			IL_0050: ldstr "forEach"
@@ -190,6 +314,68 @@
 			} // end of method Scope::.ctor
 
 		} // end of class Scope
+
+		.class nested public auto ansi sealed beforefieldinit FunctionObject
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2410
+				// Header size: 1
+				// Code size: 7 (0x7)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0006: ret
+			} // end of method FunctionObject::.ctor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_IsConstructor () cil managed 
+			{
+				// Method begins at RVA 0x2418
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_IsConstructor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_RequiresInvocationContext () cil managed 
+			{
+				// Method begins at RVA 0x241b
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_RequiresInvocationContext
+
+			.method family hidebysig virtual 
+				instance object CallCore (
+					object thisArgument,
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+				) cil managed 
+			{
+				// Method begins at RVA 0x241e
+				// Header size: 1
+				// Code size: 14 (0xe)
+				.maxstack 8
+
+				IL_0000: ldnull
+				IL_0001: ldarg.2
+				IL_0002: ldc.i4.0
+				IL_0003: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+				IL_0008: call object Modules.FSPromises_Readdir_Names/ArrowFunction_L18C12::__js_call__(object, object)
+				IL_000d: ret
+			} // end of method FunctionObject::CallCore
+
+		} // end of class FunctionObject
 
 
 		// Methods
@@ -254,6 +440,75 @@
 			} // end of method Scope::.ctor
 
 		} // end of class Scope
+
+		.class nested public auto ansi sealed beforefieldinit FunctionObject
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+		{
+			// Fields
+			.field private initonly class Modules.FSPromises_Readdir_Names/Scope _environment0_FSPromises_Readdir_Names
+
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor (
+					class Modules.FSPromises_Readdir_Names/Scope capture0
+				) cil managed 
+			{
+				// Method begins at RVA 0x242d
+				// Header size: 1
+				// Code size: 14 (0xe)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0006: ldarg.0
+				IL_0007: ldarg.1
+				IL_0008: stfld class Modules.FSPromises_Readdir_Names/Scope Modules.FSPromises_Readdir_Names/ArrowFunction_L21C14/FunctionObject::_environment0_FSPromises_Readdir_Names
+				IL_000d: ret
+			} // end of method FunctionObject::.ctor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_IsConstructor () cil managed 
+			{
+				// Method begins at RVA 0x243c
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_IsConstructor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_RequiresInvocationContext () cil managed 
+			{
+				// Method begins at RVA 0x243f
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_RequiresInvocationContext
+
+			.method family hidebysig virtual 
+				instance object CallCore (
+					object thisArgument,
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+				) cil managed 
+			{
+				// Method begins at RVA 0x2442
+				// Header size: 1
+				// Code size: 13 (0xd)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: ldfld class Modules.FSPromises_Readdir_Names/Scope Modules.FSPromises_Readdir_Names/ArrowFunction_L21C14/FunctionObject::_environment0_FSPromises_Readdir_Names
+				IL_0006: ldnull
+				IL_0007: call object Modules.FSPromises_Readdir_Names/ArrowFunction_L21C14::__js_call__(class Modules.FSPromises_Readdir_Names/Scope, object)
+				IL_000c: ret
+			} // end of method FunctionObject::CallCore
+
+		} // end of class FunctionObject
 
 
 		// Methods
@@ -359,9 +614,9 @@
 			[7] object,
 			[8] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
 			[9] object[],
-			[10] class FunctionObjects.FSPromises_Readdir_Names_A29EDAA7.FunctionObject_Arrow_60A96B15_L14C11,
-			[11] class FunctionObjects.FSPromises_Readdir_Names_A29EDAA7.FunctionObject_Arrow_3114D6C0_L18C12,
-			[12] class FunctionObjects.FSPromises_Readdir_Names_A29EDAA7.FunctionObject_Arrow_0BCF8FFE_L21C14
+			[10] class Modules.FSPromises_Readdir_Names/ArrowFunction_L14C11/FunctionObject,
+			[11] class Modules.FSPromises_Readdir_Names/ArrowFunction_L18C12/FunctionObject,
+			[12] class Modules.FSPromises_Readdir_Names/ArrowFunction_L21C14/FunctionObject
 		)
 
 		IL_0000: newobj instance void Modules.FSPromises_Readdir_Names/Scope::.ctor()
@@ -516,14 +771,14 @@
 		IL_0180: ldloc.0
 		IL_0181: stelem.ref
 		IL_0182: stloc.s 9
-		IL_0184: newobj instance void FunctionObjects.FSPromises_Readdir_Names_A29EDAA7.FunctionObject_Arrow_60A96B15_L14C11::.ctor()
+		IL_0184: newobj instance void Modules.FSPromises_Readdir_Names/ArrowFunction_L14C11/FunctionObject::.ctor()
 		IL_0189: ldc.i4.1
 		IL_018a: conv.r8
 		IL_018b: ldstr ""
 		IL_0190: ldc.i4.0
 		IL_0191: ldc.i4.0
-		IL_0192: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class FunctionObjects.FSPromises_Readdir_Names_A29EDAA7.FunctionObject_Arrow_60A96B15_L14C11>(!!0, float64, string, bool, bool)
-		IL_0197: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class FunctionObjects.FSPromises_Readdir_Names_A29EDAA7.FunctionObject_Arrow_60A96B15_L14C11>(!!0)
+		IL_0192: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.FSPromises_Readdir_Names/ArrowFunction_L14C11/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_0197: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.FSPromises_Readdir_Names/ArrowFunction_L14C11/FunctionObject>(!!0)
 		IL_019c: stloc.s 10
 		IL_019e: ldloc.s 5
 		IL_01a0: ldstr "then"
@@ -540,14 +795,14 @@
 		IL_01bf: ldloc.0
 		IL_01c0: stelem.ref
 		IL_01c1: stloc.s 9
-		IL_01c3: newobj instance void FunctionObjects.FSPromises_Readdir_Names_A29EDAA7.FunctionObject_Arrow_3114D6C0_L18C12::.ctor()
+		IL_01c3: newobj instance void Modules.FSPromises_Readdir_Names/ArrowFunction_L18C12/FunctionObject::.ctor()
 		IL_01c8: ldc.i4.1
 		IL_01c9: conv.r8
 		IL_01ca: ldstr ""
 		IL_01cf: ldc.i4.0
 		IL_01d0: ldc.i4.0
-		IL_01d1: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class FunctionObjects.FSPromises_Readdir_Names_A29EDAA7.FunctionObject_Arrow_3114D6C0_L18C12>(!!0, float64, string, bool, bool)
-		IL_01d6: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class FunctionObjects.FSPromises_Readdir_Names_A29EDAA7.FunctionObject_Arrow_3114D6C0_L18C12>(!!0)
+		IL_01d1: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.FSPromises_Readdir_Names/ArrowFunction_L18C12/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_01d6: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.FSPromises_Readdir_Names/ArrowFunction_L18C12/FunctionObject>(!!0)
 		IL_01db: stloc.s 11
 		IL_01dd: ldloc.s 5
 		IL_01df: ldstr "catch"
@@ -568,14 +823,14 @@
 		IL_0204: ldc.i4.0
 		IL_0205: ldelem.ref
 		IL_0206: castclass Modules.FSPromises_Readdir_Names/Scope
-		IL_020b: newobj instance void FunctionObjects.FSPromises_Readdir_Names_A29EDAA7.FunctionObject_Arrow_0BCF8FFE_L21C14::.ctor(class Modules.FSPromises_Readdir_Names/Scope)
+		IL_020b: newobj instance void Modules.FSPromises_Readdir_Names/ArrowFunction_L21C14/FunctionObject::.ctor(class Modules.FSPromises_Readdir_Names/Scope)
 		IL_0210: ldc.i4.0
 		IL_0211: conv.r8
 		IL_0212: ldstr ""
 		IL_0217: ldc.i4.0
 		IL_0218: ldc.i4.0
-		IL_0219: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class FunctionObjects.FSPromises_Readdir_Names_A29EDAA7.FunctionObject_Arrow_0BCF8FFE_L21C14>(!!0, float64, string, bool, bool)
-		IL_021e: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class FunctionObjects.FSPromises_Readdir_Names_A29EDAA7.FunctionObject_Arrow_0BCF8FFE_L21C14>(!!0)
+		IL_0219: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.FSPromises_Readdir_Names/ArrowFunction_L21C14/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_021e: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.FSPromises_Readdir_Names/ArrowFunction_L21C14/FunctionObject>(!!0)
 		IL_0223: stloc.s 12
 		IL_0225: ldloc.s 5
 		IL_0227: ldstr "finally"
@@ -586,261 +841,6 @@
 	} // end of method FSPromises_Readdir_Names::__js_module_init__
 
 } // end of class Modules.FSPromises_Readdir_Names
-
-.class private auto ansi sealed beforefieldinit FunctionObjects.FSPromises_Readdir_Names_A29EDAA7.FunctionObject_Arrow_60A96B15_L14C11
-	extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-{
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x23d6
-		// Header size: 1
-		// Code size: 7 (0x7)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-		IL_0006: ret
-	} // end of method FunctionObject_Arrow_60A96B15_L14C11::.ctor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_IsConstructor () cil managed 
-	{
-		// Method begins at RVA 0x23de
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_60A96B15_L14C11::get_IsConstructor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_RequiresInvocationContext () cil managed 
-	{
-		// Method begins at RVA 0x23e1
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_60A96B15_L14C11::get_RequiresInvocationContext
-
-	.method family hidebysig virtual 
-		instance object CallCore (
-			object thisArgument,
-			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-		) cil managed 
-	{
-		// Method begins at RVA 0x23e4
-		// Header size: 1
-		// Code size: 14 (0xe)
-		.maxstack 8
-
-		IL_0000: ldnull
-		IL_0001: ldarg.2
-		IL_0002: ldc.i4.0
-		IL_0003: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-		IL_0008: call object Modules.FSPromises_Readdir_Names/ArrowFunction_L14C11::__js_call__(object, object)
-		IL_000d: ret
-	} // end of method FunctionObject_Arrow_60A96B15_L14C11::CallCore
-
-} // end of class FunctionObjects.FSPromises_Readdir_Names_A29EDAA7.FunctionObject_Arrow_60A96B15_L14C11
-
-.class private auto ansi sealed beforefieldinit FunctionObjects.FSPromises_Readdir_Names_A29EDAA7.FunctionObject_Arrow_2284F0F0_L16C24
-	extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-{
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x23f3
-		// Header size: 1
-		// Code size: 7 (0x7)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-		IL_0006: ret
-	} // end of method FunctionObject_Arrow_2284F0F0_L16C24::.ctor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_IsConstructor () cil managed 
-	{
-		// Method begins at RVA 0x23fb
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_2284F0F0_L16C24::get_IsConstructor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_RequiresInvocationContext () cil managed 
-	{
-		// Method begins at RVA 0x23fe
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_2284F0F0_L16C24::get_RequiresInvocationContext
-
-	.method family hidebysig virtual 
-		instance object CallCore (
-			object thisArgument,
-			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-		) cil managed 
-	{
-		// Method begins at RVA 0x2401
-		// Header size: 1
-		// Code size: 14 (0xe)
-		.maxstack 8
-
-		IL_0000: ldnull
-		IL_0001: ldarg.2
-		IL_0002: ldc.i4.0
-		IL_0003: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-		IL_0008: call object Modules.FSPromises_Readdir_Names/ArrowFunction_L14C11/ArrowFunction_L16C24::__js_call__(object, object)
-		IL_000d: ret
-	} // end of method FunctionObject_Arrow_2284F0F0_L16C24::CallCore
-
-} // end of class FunctionObjects.FSPromises_Readdir_Names_A29EDAA7.FunctionObject_Arrow_2284F0F0_L16C24
-
-.class private auto ansi sealed beforefieldinit FunctionObjects.FSPromises_Readdir_Names_A29EDAA7.FunctionObject_Arrow_3114D6C0_L18C12
-	extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-{
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x2410
-		// Header size: 1
-		// Code size: 7 (0x7)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-		IL_0006: ret
-	} // end of method FunctionObject_Arrow_3114D6C0_L18C12::.ctor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_IsConstructor () cil managed 
-	{
-		// Method begins at RVA 0x2418
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_3114D6C0_L18C12::get_IsConstructor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_RequiresInvocationContext () cil managed 
-	{
-		// Method begins at RVA 0x241b
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_3114D6C0_L18C12::get_RequiresInvocationContext
-
-	.method family hidebysig virtual 
-		instance object CallCore (
-			object thisArgument,
-			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-		) cil managed 
-	{
-		// Method begins at RVA 0x241e
-		// Header size: 1
-		// Code size: 14 (0xe)
-		.maxstack 8
-
-		IL_0000: ldnull
-		IL_0001: ldarg.2
-		IL_0002: ldc.i4.0
-		IL_0003: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-		IL_0008: call object Modules.FSPromises_Readdir_Names/ArrowFunction_L18C12::__js_call__(object, object)
-		IL_000d: ret
-	} // end of method FunctionObject_Arrow_3114D6C0_L18C12::CallCore
-
-} // end of class FunctionObjects.FSPromises_Readdir_Names_A29EDAA7.FunctionObject_Arrow_3114D6C0_L18C12
-
-.class private auto ansi sealed beforefieldinit FunctionObjects.FSPromises_Readdir_Names_A29EDAA7.FunctionObject_Arrow_0BCF8FFE_L21C14
-	extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-{
-	// Fields
-	.field private initonly class Modules.FSPromises_Readdir_Names/Scope _environment0_FSPromises_Readdir_Names
-
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor (
-			class Modules.FSPromises_Readdir_Names/Scope capture0
-		) cil managed 
-	{
-		// Method begins at RVA 0x242d
-		// Header size: 1
-		// Code size: 14 (0xe)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-		IL_0006: ldarg.0
-		IL_0007: ldarg.1
-		IL_0008: stfld class Modules.FSPromises_Readdir_Names/Scope FunctionObjects.FSPromises_Readdir_Names_A29EDAA7.FunctionObject_Arrow_0BCF8FFE_L21C14::_environment0_FSPromises_Readdir_Names
-		IL_000d: ret
-	} // end of method FunctionObject_Arrow_0BCF8FFE_L21C14::.ctor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_IsConstructor () cil managed 
-	{
-		// Method begins at RVA 0x243c
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_0BCF8FFE_L21C14::get_IsConstructor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_RequiresInvocationContext () cil managed 
-	{
-		// Method begins at RVA 0x243f
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_0BCF8FFE_L21C14::get_RequiresInvocationContext
-
-	.method family hidebysig virtual 
-		instance object CallCore (
-			object thisArgument,
-			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-		) cil managed 
-	{
-		// Method begins at RVA 0x2442
-		// Header size: 1
-		// Code size: 13 (0xd)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: ldfld class Modules.FSPromises_Readdir_Names/Scope FunctionObjects.FSPromises_Readdir_Names_A29EDAA7.FunctionObject_Arrow_0BCF8FFE_L21C14::_environment0_FSPromises_Readdir_Names
-		IL_0006: ldnull
-		IL_0007: call object Modules.FSPromises_Readdir_Names/ArrowFunction_L21C14::__js_call__(class Modules.FSPromises_Readdir_Names/Scope, object)
-		IL_000c: ret
-	} // end of method FunctionObject_Arrow_0BCF8FFE_L21C14::CallCore
-
-} // end of class FunctionObjects.FSPromises_Readdir_Names_A29EDAA7.FunctionObject_Arrow_0BCF8FFE_L21C14
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object

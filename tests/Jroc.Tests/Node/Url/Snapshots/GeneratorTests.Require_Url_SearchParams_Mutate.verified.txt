@@ -40,6 +40,71 @@
 
 		} // end of class Scope
 
+		.class nested public auto ansi sealed beforefieldinit FunctionObject
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2630
+				// Header size: 1
+				// Code size: 7 (0x7)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0006: ret
+			} // end of method FunctionObject::.ctor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_IsConstructor () cil managed 
+			{
+				// Method begins at RVA 0x2638
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_IsConstructor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_RequiresInvocationContext () cil managed 
+			{
+				// Method begins at RVA 0x263b
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_RequiresInvocationContext
+
+			.method family hidebysig virtual 
+				instance object CallCore (
+					object thisArgument,
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+				) cil managed 
+			{
+				// Method begins at RVA 0x263e
+				// Header size: 1
+				// Code size: 21 (0x15)
+				.maxstack 8
+
+				IL_0000: ldnull
+				IL_0001: ldarg.2
+				IL_0002: ldc.i4.0
+				IL_0003: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+				IL_0008: ldarg.2
+				IL_0009: ldc.i4.1
+				IL_000a: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+				IL_000f: call object Modules.Require_Url_SearchParams_Mutate/ArrowFunction_L14C29::__js_call__(object, object, object)
+				IL_0014: ret
+			} // end of method FunctionObject::CallCore
+
+		} // end of class FunctionObject
+
 
 		// Methods
 		.method public hidebysig static 
@@ -237,6 +302,81 @@
 
 		} // end of class Scope
 
+		.class nested public auto ansi sealed beforefieldinit FunctionObject
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+		{
+			// Fields
+			.field private initonly class Modules.Require_Url_SearchParams_Mutate/Scope _environment0_Require_Url_SearchParams_Mutate
+
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor (
+					class Modules.Require_Url_SearchParams_Mutate/Scope capture0
+				) cil managed 
+			{
+				// Method begins at RVA 0x268b
+				// Header size: 1
+				// Code size: 14 (0xe)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0006: ldarg.0
+				IL_0007: ldarg.1
+				IL_0008: stfld class Modules.Require_Url_SearchParams_Mutate/Scope Modules.Require_Url_SearchParams_Mutate/ArrowFunction_L33C18/FunctionObject::_environment0_Require_Url_SearchParams_Mutate
+				IL_000d: ret
+			} // end of method FunctionObject::.ctor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_IsConstructor () cil managed 
+			{
+				// Method begins at RVA 0x269a
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_IsConstructor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_RequiresInvocationContext () cil managed 
+			{
+				// Method begins at RVA 0x269d
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_RequiresInvocationContext
+
+			.method family hidebysig virtual 
+				instance object CallCore (
+					object thisArgument,
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+				) cil managed 
+			{
+				// Method begins at RVA 0x26a0
+				// Header size: 1
+				// Code size: 27 (0x1b)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: ldfld class Modules.Require_Url_SearchParams_Mutate/Scope Modules.Require_Url_SearchParams_Mutate/ArrowFunction_L33C18/FunctionObject::_environment0_Require_Url_SearchParams_Mutate
+				IL_0006: ldnull
+				IL_0007: ldarg.2
+				IL_0008: ldc.i4.0
+				IL_0009: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+				IL_000e: ldarg.2
+				IL_000f: ldc.i4.1
+				IL_0010: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+				IL_0015: call object Modules.Require_Url_SearchParams_Mutate/ArrowFunction_L33C18::__js_call__(class Modules.Require_Url_SearchParams_Mutate/Scope, object, object, object)
+				IL_001a: ret
+			} // end of method FunctionObject::CallCore
+
+		} // end of class FunctionObject
+
 
 		// Methods
 		.method public hidebysig static 
@@ -354,9 +494,9 @@
 			[6] object,
 			[7] object,
 			[8] object[],
-			[9] class FunctionObjects.Require_Url_SearchParams_Mutate_C429D800.FunctionObject_Arrow_FE10CE8B_L14C29,
+			[9] class Modules.Require_Url_SearchParams_Mutate/ArrowFunction_L14C29/FunctionObject,
 			[10] class FunctionObjects.Require_Url_SearchParams_Mutate_C429D800.FunctionObject_FunctionExpression_7B874945_L19C29,
-			[11] class FunctionObjects.Require_Url_SearchParams_Mutate_C429D800.FunctionObject_Arrow_CC312B3E_L33C18
+			[11] class Modules.Require_Url_SearchParams_Mutate/ArrowFunction_L33C18/FunctionObject
 		)
 
 		IL_0000: newobj instance void Modules.Require_Url_SearchParams_Mutate/Scope::.ctor()
@@ -491,14 +631,14 @@
 		IL_01c0: ldloc.0
 		IL_01c1: stelem.ref
 		IL_01c2: stloc.s 8
-		IL_01c4: newobj instance void FunctionObjects.Require_Url_SearchParams_Mutate_C429D800.FunctionObject_Arrow_FE10CE8B_L14C29::.ctor()
+		IL_01c4: newobj instance void Modules.Require_Url_SearchParams_Mutate/ArrowFunction_L14C29/FunctionObject::.ctor()
 		IL_01c9: ldc.i4.2
 		IL_01ca: conv.r8
 		IL_01cb: ldstr ""
 		IL_01d0: ldc.i4.0
 		IL_01d1: ldc.i4.0
-		IL_01d2: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class FunctionObjects.Require_Url_SearchParams_Mutate_C429D800.FunctionObject_Arrow_FE10CE8B_L14C29>(!!0, float64, string, bool, bool)
-		IL_01d7: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class FunctionObjects.Require_Url_SearchParams_Mutate_C429D800.FunctionObject_Arrow_FE10CE8B_L14C29>(!!0)
+		IL_01d2: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_Url_SearchParams_Mutate/ArrowFunction_L14C29/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_01d7: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_Url_SearchParams_Mutate/ArrowFunction_L14C29/FunctionObject>(!!0)
 		IL_01dc: stloc.s 9
 		IL_01de: ldloc.s 7
 		IL_01e0: ldstr "forEach"
@@ -640,14 +780,14 @@
 		IL_0384: ldc.i4.0
 		IL_0385: ldelem.ref
 		IL_0386: castclass Modules.Require_Url_SearchParams_Mutate/Scope
-		IL_038b: newobj instance void FunctionObjects.Require_Url_SearchParams_Mutate_C429D800.FunctionObject_Arrow_CC312B3E_L33C18::.ctor(class Modules.Require_Url_SearchParams_Mutate/Scope)
+		IL_038b: newobj instance void Modules.Require_Url_SearchParams_Mutate/ArrowFunction_L33C18/FunctionObject::.ctor(class Modules.Require_Url_SearchParams_Mutate/Scope)
 		IL_0390: ldc.i4.2
 		IL_0391: conv.r8
 		IL_0392: ldstr ""
 		IL_0397: ldc.i4.0
 		IL_0398: ldc.i4.0
-		IL_0399: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class FunctionObjects.Require_Url_SearchParams_Mutate_C429D800.FunctionObject_Arrow_CC312B3E_L33C18>(!!0, float64, string, bool, bool)
-		IL_039e: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class FunctionObjects.Require_Url_SearchParams_Mutate_C429D800.FunctionObject_Arrow_CC312B3E_L33C18>(!!0)
+		IL_0399: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_Url_SearchParams_Mutate/ArrowFunction_L33C18/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_039e: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_Url_SearchParams_Mutate/ArrowFunction_L33C18/FunctionObject>(!!0)
 		IL_03a3: stloc.s 11
 		IL_03a5: ldloc.s 7
 		IL_03a7: ldstr "forEach"
@@ -718,71 +858,6 @@
 	} // end of method Require_Url_SearchParams_Mutate::__js_module_init__
 
 } // end of class Modules.Require_Url_SearchParams_Mutate
-
-.class private auto ansi sealed beforefieldinit FunctionObjects.Require_Url_SearchParams_Mutate_C429D800.FunctionObject_Arrow_FE10CE8B_L14C29
-	extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-{
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x2630
-		// Header size: 1
-		// Code size: 7 (0x7)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-		IL_0006: ret
-	} // end of method FunctionObject_Arrow_FE10CE8B_L14C29::.ctor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_IsConstructor () cil managed 
-	{
-		// Method begins at RVA 0x2638
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_FE10CE8B_L14C29::get_IsConstructor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_RequiresInvocationContext () cil managed 
-	{
-		// Method begins at RVA 0x263b
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_FE10CE8B_L14C29::get_RequiresInvocationContext
-
-	.method family hidebysig virtual 
-		instance object CallCore (
-			object thisArgument,
-			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-		) cil managed 
-	{
-		// Method begins at RVA 0x263e
-		// Header size: 1
-		// Code size: 21 (0x15)
-		.maxstack 8
-
-		IL_0000: ldnull
-		IL_0001: ldarg.2
-		IL_0002: ldc.i4.0
-		IL_0003: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-		IL_0008: ldarg.2
-		IL_0009: ldc.i4.1
-		IL_000a: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-		IL_000f: call object Modules.Require_Url_SearchParams_Mutate/ArrowFunction_L14C29::__js_call__(object, object, object)
-		IL_0014: ret
-	} // end of method FunctionObject_Arrow_FE10CE8B_L14C29::CallCore
-
-} // end of class FunctionObjects.Require_Url_SearchParams_Mutate_C429D800.FunctionObject_Arrow_FE10CE8B_L14C29
 
 .class private auto ansi sealed beforefieldinit FunctionObjects.Require_Url_SearchParams_Mutate_C429D800.FunctionObject_FunctionExpression_7B874945_L19C29
 	extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
@@ -867,81 +942,6 @@
 	} // end of method FunctionObject_FunctionExpression_7B874945_L19C29::ConstructCore
 
 } // end of class FunctionObjects.Require_Url_SearchParams_Mutate_C429D800.FunctionObject_FunctionExpression_7B874945_L19C29
-
-.class private auto ansi sealed beforefieldinit FunctionObjects.Require_Url_SearchParams_Mutate_C429D800.FunctionObject_Arrow_CC312B3E_L33C18
-	extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-{
-	// Fields
-	.field private initonly class Modules.Require_Url_SearchParams_Mutate/Scope _environment0_Require_Url_SearchParams_Mutate
-
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor (
-			class Modules.Require_Url_SearchParams_Mutate/Scope capture0
-		) cil managed 
-	{
-		// Method begins at RVA 0x268b
-		// Header size: 1
-		// Code size: 14 (0xe)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-		IL_0006: ldarg.0
-		IL_0007: ldarg.1
-		IL_0008: stfld class Modules.Require_Url_SearchParams_Mutate/Scope FunctionObjects.Require_Url_SearchParams_Mutate_C429D800.FunctionObject_Arrow_CC312B3E_L33C18::_environment0_Require_Url_SearchParams_Mutate
-		IL_000d: ret
-	} // end of method FunctionObject_Arrow_CC312B3E_L33C18::.ctor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_IsConstructor () cil managed 
-	{
-		// Method begins at RVA 0x269a
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_CC312B3E_L33C18::get_IsConstructor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_RequiresInvocationContext () cil managed 
-	{
-		// Method begins at RVA 0x269d
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_CC312B3E_L33C18::get_RequiresInvocationContext
-
-	.method family hidebysig virtual 
-		instance object CallCore (
-			object thisArgument,
-			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-		) cil managed 
-	{
-		// Method begins at RVA 0x26a0
-		// Header size: 1
-		// Code size: 27 (0x1b)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: ldfld class Modules.Require_Url_SearchParams_Mutate/Scope FunctionObjects.Require_Url_SearchParams_Mutate_C429D800.FunctionObject_Arrow_CC312B3E_L33C18::_environment0_Require_Url_SearchParams_Mutate
-		IL_0006: ldnull
-		IL_0007: ldarg.2
-		IL_0008: ldc.i4.0
-		IL_0009: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-		IL_000e: ldarg.2
-		IL_000f: ldc.i4.1
-		IL_0010: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-		IL_0015: call object Modules.Require_Url_SearchParams_Mutate/ArrowFunction_L33C18::__js_call__(class Modules.Require_Url_SearchParams_Mutate/Scope, object, object, object)
-		IL_001a: ret
-	} // end of method FunctionObject_Arrow_CC312B3E_L33C18::CallCore
-
-} // end of class FunctionObjects.Require_Url_SearchParams_Mutate_C429D800.FunctionObject_Arrow_CC312B3E_L33C18
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object

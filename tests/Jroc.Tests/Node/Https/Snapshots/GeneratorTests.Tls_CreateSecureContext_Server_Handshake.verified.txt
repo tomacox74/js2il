@@ -38,6 +38,68 @@
 
 		} // end of class Scope
 
+		.class nested public auto ansi sealed beforefieldinit FunctionObject
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2503
+				// Header size: 1
+				// Code size: 7 (0x7)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0006: ret
+			} // end of method FunctionObject::.ctor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_IsConstructor () cil managed 
+			{
+				// Method begins at RVA 0x250b
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_IsConstructor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_RequiresInvocationContext () cil managed 
+			{
+				// Method begins at RVA 0x250e
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_RequiresInvocationContext
+
+			.method family hidebysig virtual 
+				instance object CallCore (
+					object thisArgument,
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+				) cil managed 
+			{
+				// Method begins at RVA 0x2511
+				// Header size: 1
+				// Code size: 14 (0xe)
+				.maxstack 8
+
+				IL_0000: ldnull
+				IL_0001: ldarg.2
+				IL_0002: ldc.i4.0
+				IL_0003: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+				IL_0008: call object Modules.Tls_CreateSecureContext_Server_Handshake/ArrowFunction_L9C52::__js_call__(object, object)
+				IL_000d: ret
+			} // end of method FunctionObject::CallCore
+
+		} // end of class FunctionObject
+
 
 		// Methods
 		.method public hidebysig static 
@@ -93,6 +155,85 @@
 				} // end of method Scope::.ctor
 
 			} // end of class Scope
+
+			.class nested public auto ansi sealed beforefieldinit FunctionObject
+				extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+			{
+				// Fields
+				.field private initonly class Modules.Tls_CreateSecureContext_Server_Handshake/Scope _environment0_Tls_CreateSecureContext_Server_Handshake
+				.field private initonly class Modules.Tls_CreateSecureContext_Server_Handshake/ArrowFunction_L13C31/Scope _environment1_ArrowFunction_L13C31
+				.field private initonly object[] _transitionalScopes
+
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor (
+						class Modules.Tls_CreateSecureContext_Server_Handshake/Scope capture0,
+						class Modules.Tls_CreateSecureContext_Server_Handshake/ArrowFunction_L13C31/Scope capture1,
+						object[] capture2
+					) cil managed 
+				{
+					// Method begins at RVA 0x2543
+					// Header size: 1
+					// Code size: 28 (0x1c)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+					IL_0006: ldarg.0
+					IL_0007: ldarg.1
+					IL_0008: stfld class Modules.Tls_CreateSecureContext_Server_Handshake/Scope Modules.Tls_CreateSecureContext_Server_Handshake/ArrowFunction_L13C31/ArrowFunction_L17C5/FunctionObject::_environment0_Tls_CreateSecureContext_Server_Handshake
+					IL_000d: ldarg.0
+					IL_000e: ldarg.2
+					IL_000f: stfld class Modules.Tls_CreateSecureContext_Server_Handshake/ArrowFunction_L13C31/Scope Modules.Tls_CreateSecureContext_Server_Handshake/ArrowFunction_L13C31/ArrowFunction_L17C5/FunctionObject::_environment1_ArrowFunction_L13C31
+					IL_0014: ldarg.0
+					IL_0015: ldarg.3
+					IL_0016: stfld object[] Modules.Tls_CreateSecureContext_Server_Handshake/ArrowFunction_L13C31/ArrowFunction_L17C5/FunctionObject::_transitionalScopes
+					IL_001b: ret
+				} // end of method FunctionObject::.ctor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_IsConstructor () cil managed 
+				{
+					// Method begins at RVA 0x2560
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_IsConstructor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_RequiresInvocationContext () cil managed 
+				{
+					// Method begins at RVA 0x2563
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_RequiresInvocationContext
+
+				.method family hidebysig virtual 
+					instance object CallCore (
+						object thisArgument,
+						[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+					) cil managed 
+				{
+					// Method begins at RVA 0x2566
+					// Header size: 1
+					// Code size: 13 (0xd)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: ldfld object[] Modules.Tls_CreateSecureContext_Server_Handshake/ArrowFunction_L13C31/ArrowFunction_L17C5/FunctionObject::_transitionalScopes
+					IL_0006: ldnull
+					IL_0007: call object Modules.Tls_CreateSecureContext_Server_Handshake/ArrowFunction_L13C31/ArrowFunction_L17C5::__js_call__(object[], object)
+					IL_000c: ret
+				} // end of method FunctionObject::CallCore
+
+			} // end of class FunctionObject
 
 
 			// Methods
@@ -158,6 +299,68 @@
 				} // end of method Scope::.ctor
 
 			} // end of class Scope
+
+			.class nested public auto ansi sealed beforefieldinit FunctionObject
+				extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+			{
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor () cil managed 
+				{
+					// Method begins at RVA 0x2574
+					// Header size: 1
+					// Code size: 7 (0x7)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+					IL_0006: ret
+				} // end of method FunctionObject::.ctor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_IsConstructor () cil managed 
+				{
+					// Method begins at RVA 0x257c
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_IsConstructor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_RequiresInvocationContext () cil managed 
+				{
+					// Method begins at RVA 0x257f
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_RequiresInvocationContext
+
+				.method family hidebysig virtual 
+					instance object CallCore (
+						object thisArgument,
+						[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+					) cil managed 
+				{
+					// Method begins at RVA 0x2582
+					// Header size: 1
+					// Code size: 14 (0xe)
+					.maxstack 8
+
+					IL_0000: ldnull
+					IL_0001: ldarg.2
+					IL_0002: ldc.i4.0
+					IL_0003: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+					IL_0008: call object Modules.Tls_CreateSecureContext_Server_Handshake/ArrowFunction_L13C31/ArrowFunction_L22C21::__js_call__(object, object)
+					IL_000d: ret
+				} // end of method FunctionObject::CallCore
+
+			} // end of class FunctionObject
 
 
 			// Methods
@@ -226,6 +429,65 @@
 
 				} // end of class Scope
 
+				.class nested public auto ansi sealed beforefieldinit FunctionObject
+					extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+				{
+					// Methods
+					.method public hidebysig specialname rtspecialname 
+						instance void .ctor () cil managed 
+					{
+						// Method begins at RVA 0x25c2
+						// Header size: 1
+						// Code size: 7 (0x7)
+						.maxstack 8
+
+						IL_0000: ldarg.0
+						IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+						IL_0006: ret
+					} // end of method FunctionObject::.ctor
+
+					.method public hidebysig specialname virtual 
+						instance bool get_IsConstructor () cil managed 
+					{
+						// Method begins at RVA 0x25ca
+						// Header size: 1
+						// Code size: 2 (0x2)
+						.maxstack 8
+
+						IL_0000: ldc.i4.0
+						IL_0001: ret
+					} // end of method FunctionObject::get_IsConstructor
+
+					.method public hidebysig specialname virtual 
+						instance bool get_RequiresInvocationContext () cil managed 
+					{
+						// Method begins at RVA 0x25cd
+						// Header size: 1
+						// Code size: 2 (0x2)
+						.maxstack 8
+
+						IL_0000: ldc.i4.0
+						IL_0001: ret
+					} // end of method FunctionObject::get_RequiresInvocationContext
+
+					.method family hidebysig virtual 
+						instance object CallCore (
+							object thisArgument,
+							[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+						) cil managed 
+					{
+						// Method begins at RVA 0x25d0
+						// Header size: 1
+						// Code size: 7 (0x7)
+						.maxstack 8
+
+						IL_0000: ldnull
+						IL_0001: call object Modules.Tls_CreateSecureContext_Server_Handshake/ArrowFunction_L13C31/ArrowFunction_L26C22/ArrowFunction_L27C18::__js_call__(object)
+						IL_0006: ret
+					} // end of method FunctionObject::CallCore
+
+				} // end of class FunctionObject
+
 
 				// Methods
 				.method public hidebysig static 
@@ -274,6 +536,85 @@
 
 			} // end of class Scope
 
+			.class nested public auto ansi sealed beforefieldinit FunctionObject
+				extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+			{
+				// Fields
+				.field private initonly class Modules.Tls_CreateSecureContext_Server_Handshake/Scope _environment0_Tls_CreateSecureContext_Server_Handshake
+				.field private initonly class Modules.Tls_CreateSecureContext_Server_Handshake/ArrowFunction_L13C31/Scope _environment1_ArrowFunction_L13C31
+				.field private initonly object[] _transitionalScopes
+
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor (
+						class Modules.Tls_CreateSecureContext_Server_Handshake/Scope capture0,
+						class Modules.Tls_CreateSecureContext_Server_Handshake/ArrowFunction_L13C31/Scope capture1,
+						object[] capture2
+					) cil managed 
+				{
+					// Method begins at RVA 0x2591
+					// Header size: 1
+					// Code size: 28 (0x1c)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+					IL_0006: ldarg.0
+					IL_0007: ldarg.1
+					IL_0008: stfld class Modules.Tls_CreateSecureContext_Server_Handshake/Scope Modules.Tls_CreateSecureContext_Server_Handshake/ArrowFunction_L13C31/ArrowFunction_L26C22/FunctionObject::_environment0_Tls_CreateSecureContext_Server_Handshake
+					IL_000d: ldarg.0
+					IL_000e: ldarg.2
+					IL_000f: stfld class Modules.Tls_CreateSecureContext_Server_Handshake/ArrowFunction_L13C31/Scope Modules.Tls_CreateSecureContext_Server_Handshake/ArrowFunction_L13C31/ArrowFunction_L26C22/FunctionObject::_environment1_ArrowFunction_L13C31
+					IL_0014: ldarg.0
+					IL_0015: ldarg.3
+					IL_0016: stfld object[] Modules.Tls_CreateSecureContext_Server_Handshake/ArrowFunction_L13C31/ArrowFunction_L26C22/FunctionObject::_transitionalScopes
+					IL_001b: ret
+				} // end of method FunctionObject::.ctor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_IsConstructor () cil managed 
+				{
+					// Method begins at RVA 0x25ae
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_IsConstructor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_RequiresInvocationContext () cil managed 
+				{
+					// Method begins at RVA 0x25b1
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_RequiresInvocationContext
+
+				.method family hidebysig virtual 
+					instance object CallCore (
+						object thisArgument,
+						[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+					) cil managed 
+				{
+					// Method begins at RVA 0x25b4
+					// Header size: 1
+					// Code size: 13 (0xd)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: ldfld object[] Modules.Tls_CreateSecureContext_Server_Handshake/ArrowFunction_L13C31/ArrowFunction_L26C22/FunctionObject::_transitionalScopes
+					IL_0006: ldnull
+					IL_0007: call object Modules.Tls_CreateSecureContext_Server_Handshake/ArrowFunction_L13C31/ArrowFunction_L26C22::__js_call__(object[], object)
+					IL_000c: ret
+				} // end of method FunctionObject::CallCore
+
+			} // end of class FunctionObject
+
 
 			// Methods
 			.method public hidebysig static 
@@ -293,7 +634,7 @@
 					[0] class Modules.Tls_CreateSecureContext_Server_Handshake/ArrowFunction_L13C31/ArrowFunction_L26C22/Scope,
 					[1] object,
 					[2] object[],
-					[3] class FunctionObjects.Tls_CreateSecureContext_Server_Handshake_B135688F.FunctionObject_Arrow_EAA016F4_L27C18
+					[3] class Modules.Tls_CreateSecureContext_Server_Handshake/ArrowFunction_L13C31/ArrowFunction_L26C22/ArrowFunction_L27C18/FunctionObject
 				)
 
 				IL_0000: newobj instance void Modules.Tls_CreateSecureContext_Server_Handshake/ArrowFunction_L13C31/ArrowFunction_L26C22/Scope::.ctor()
@@ -314,14 +655,14 @@
 				IL_0023: ldelem.ref
 				IL_0024: stelem.ref
 				IL_0025: stloc.2
-				IL_0026: newobj instance void FunctionObjects.Tls_CreateSecureContext_Server_Handshake_B135688F.FunctionObject_Arrow_EAA016F4_L27C18::.ctor()
+				IL_0026: newobj instance void Modules.Tls_CreateSecureContext_Server_Handshake/ArrowFunction_L13C31/ArrowFunction_L26C22/ArrowFunction_L27C18/FunctionObject::.ctor()
 				IL_002b: ldc.i4.0
 				IL_002c: conv.r8
 				IL_002d: ldstr ""
 				IL_0032: ldc.i4.0
 				IL_0033: ldc.i4.0
-				IL_0034: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class FunctionObjects.Tls_CreateSecureContext_Server_Handshake_B135688F.FunctionObject_Arrow_EAA016F4_L27C18>(!!0, float64, string, bool, bool)
-				IL_0039: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class FunctionObjects.Tls_CreateSecureContext_Server_Handshake_B135688F.FunctionObject_Arrow_EAA016F4_L27C18>(!!0)
+				IL_0034: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Tls_CreateSecureContext_Server_Handshake/ArrowFunction_L13C31/ArrowFunction_L26C22/ArrowFunction_L27C18/FunctionObject>(!!0, float64, string, bool, bool)
+				IL_0039: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Tls_CreateSecureContext_Server_Handshake/ArrowFunction_L13C31/ArrowFunction_L26C22/ArrowFunction_L27C18/FunctionObject>(!!0)
 				IL_003e: stloc.3
 				IL_003f: ldloc.1
 				IL_0040: ldstr "close"
@@ -364,6 +705,75 @@
 
 		} // end of class Scope
 
+		.class nested public auto ansi sealed beforefieldinit FunctionObject
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+		{
+			// Fields
+			.field private initonly class Modules.Tls_CreateSecureContext_Server_Handshake/Scope _environment0_Tls_CreateSecureContext_Server_Handshake
+
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor (
+					class Modules.Tls_CreateSecureContext_Server_Handshake/Scope capture0
+				) cil managed 
+			{
+				// Method begins at RVA 0x2520
+				// Header size: 1
+				// Code size: 14 (0xe)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0006: ldarg.0
+				IL_0007: ldarg.1
+				IL_0008: stfld class Modules.Tls_CreateSecureContext_Server_Handshake/Scope Modules.Tls_CreateSecureContext_Server_Handshake/ArrowFunction_L13C31/FunctionObject::_environment0_Tls_CreateSecureContext_Server_Handshake
+				IL_000d: ret
+			} // end of method FunctionObject::.ctor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_IsConstructor () cil managed 
+			{
+				// Method begins at RVA 0x252f
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_IsConstructor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_RequiresInvocationContext () cil managed 
+			{
+				// Method begins at RVA 0x2532
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_RequiresInvocationContext
+
+			.method family hidebysig virtual 
+				instance object CallCore (
+					object thisArgument,
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+				) cil managed 
+			{
+				// Method begins at RVA 0x2535
+				// Header size: 1
+				// Code size: 13 (0xd)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: ldfld class Modules.Tls_CreateSecureContext_Server_Handshake/Scope Modules.Tls_CreateSecureContext_Server_Handshake/ArrowFunction_L13C31/FunctionObject::_environment0_Tls_CreateSecureContext_Server_Handshake
+				IL_0006: ldnull
+				IL_0007: call object Modules.Tls_CreateSecureContext_Server_Handshake/ArrowFunction_L13C31::__js_call__(class Modules.Tls_CreateSecureContext_Server_Handshake/Scope, object)
+				IL_000c: ret
+			} // end of method FunctionObject::CallCore
+
+		} // end of class FunctionObject
+
 
 		// Methods
 		.method public hidebysig static 
@@ -387,9 +797,9 @@
 				[2] object,
 				[3] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
 				[4] object[],
-				[5] class FunctionObjects.Tls_CreateSecureContext_Server_Handshake_B135688F.FunctionObject_Arrow_4E8F5167_L17C5,
-				[6] class FunctionObjects.Tls_CreateSecureContext_Server_Handshake_B135688F.FunctionObject_Arrow_D732485D_L22C21,
-				[7] class FunctionObjects.Tls_CreateSecureContext_Server_Handshake_B135688F.FunctionObject_Arrow_28DBB208_L26C22
+				[5] class Modules.Tls_CreateSecureContext_Server_Handshake/ArrowFunction_L13C31/ArrowFunction_L17C5/FunctionObject,
+				[6] class Modules.Tls_CreateSecureContext_Server_Handshake/ArrowFunction_L13C31/ArrowFunction_L22C21/FunctionObject,
+				[7] class Modules.Tls_CreateSecureContext_Server_Handshake/ArrowFunction_L13C31/ArrowFunction_L26C22/FunctionObject
 			)
 
 			IL_0000: newobj instance void Modules.Tls_CreateSecureContext_Server_Handshake/ArrowFunction_L13C31/Scope::.ctor()
@@ -440,14 +850,14 @@
 			IL_0078: ldelem.ref
 			IL_0079: castclass Modules.Tls_CreateSecureContext_Server_Handshake/ArrowFunction_L13C31/Scope
 			IL_007e: ldloc.s 4
-			IL_0080: newobj instance void FunctionObjects.Tls_CreateSecureContext_Server_Handshake_B135688F.FunctionObject_Arrow_4E8F5167_L17C5::.ctor(class Modules.Tls_CreateSecureContext_Server_Handshake/Scope, class Modules.Tls_CreateSecureContext_Server_Handshake/ArrowFunction_L13C31/Scope, object[])
+			IL_0080: newobj instance void Modules.Tls_CreateSecureContext_Server_Handshake/ArrowFunction_L13C31/ArrowFunction_L17C5/FunctionObject::.ctor(class Modules.Tls_CreateSecureContext_Server_Handshake/Scope, class Modules.Tls_CreateSecureContext_Server_Handshake/ArrowFunction_L13C31/Scope, object[])
 			IL_0085: ldc.i4.0
 			IL_0086: conv.r8
 			IL_0087: ldstr ""
 			IL_008c: ldc.i4.0
 			IL_008d: ldc.i4.0
-			IL_008e: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class FunctionObjects.Tls_CreateSecureContext_Server_Handshake_B135688F.FunctionObject_Arrow_4E8F5167_L17C5>(!!0, float64, string, bool, bool)
-			IL_0093: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class FunctionObjects.Tls_CreateSecureContext_Server_Handshake_B135688F.FunctionObject_Arrow_4E8F5167_L17C5>(!!0)
+			IL_008e: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Tls_CreateSecureContext_Server_Handshake/ArrowFunction_L13C31/ArrowFunction_L17C5/FunctionObject>(!!0, float64, string, bool, bool)
+			IL_0093: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Tls_CreateSecureContext_Server_Handshake/ArrowFunction_L13C31/ArrowFunction_L17C5/FunctionObject>(!!0)
 			IL_0098: stloc.s 5
 			IL_009a: ldstr "connect"
 			IL_009f: ldloc.3
@@ -470,14 +880,14 @@
 			IL_00cd: ldarg.0
 			IL_00ce: stelem.ref
 			IL_00cf: stloc.s 4
-			IL_00d1: newobj instance void FunctionObjects.Tls_CreateSecureContext_Server_Handshake_B135688F.FunctionObject_Arrow_D732485D_L22C21::.ctor()
+			IL_00d1: newobj instance void Modules.Tls_CreateSecureContext_Server_Handshake/ArrowFunction_L13C31/ArrowFunction_L22C21/FunctionObject::.ctor()
 			IL_00d6: ldc.i4.1
 			IL_00d7: conv.r8
 			IL_00d8: ldstr ""
 			IL_00dd: ldc.i4.0
 			IL_00de: ldc.i4.0
-			IL_00df: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class FunctionObjects.Tls_CreateSecureContext_Server_Handshake_B135688F.FunctionObject_Arrow_D732485D_L22C21>(!!0, float64, string, bool, bool)
-			IL_00e4: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class FunctionObjects.Tls_CreateSecureContext_Server_Handshake_B135688F.FunctionObject_Arrow_D732485D_L22C21>(!!0)
+			IL_00df: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Tls_CreateSecureContext_Server_Handshake/ArrowFunction_L13C31/ArrowFunction_L22C21/FunctionObject>(!!0, float64, string, bool, bool)
+			IL_00e4: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Tls_CreateSecureContext_Server_Handshake/ArrowFunction_L13C31/ArrowFunction_L22C21/FunctionObject>(!!0)
 			IL_00e9: stloc.s 6
 			IL_00eb: ldloc.2
 			IL_00ec: ldstr "on"
@@ -511,14 +921,14 @@
 			IL_0130: ldelem.ref
 			IL_0131: castclass Modules.Tls_CreateSecureContext_Server_Handshake/ArrowFunction_L13C31/Scope
 			IL_0136: ldloc.s 4
-			IL_0138: newobj instance void FunctionObjects.Tls_CreateSecureContext_Server_Handshake_B135688F.FunctionObject_Arrow_28DBB208_L26C22::.ctor(class Modules.Tls_CreateSecureContext_Server_Handshake/Scope, class Modules.Tls_CreateSecureContext_Server_Handshake/ArrowFunction_L13C31/Scope, object[])
+			IL_0138: newobj instance void Modules.Tls_CreateSecureContext_Server_Handshake/ArrowFunction_L13C31/ArrowFunction_L26C22/FunctionObject::.ctor(class Modules.Tls_CreateSecureContext_Server_Handshake/Scope, class Modules.Tls_CreateSecureContext_Server_Handshake/ArrowFunction_L13C31/Scope, object[])
 			IL_013d: ldc.i4.0
 			IL_013e: conv.r8
 			IL_013f: ldstr ""
 			IL_0144: ldc.i4.0
 			IL_0145: ldc.i4.0
-			IL_0146: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class FunctionObjects.Tls_CreateSecureContext_Server_Handshake_B135688F.FunctionObject_Arrow_28DBB208_L26C22>(!!0, float64, string, bool, bool)
-			IL_014b: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class FunctionObjects.Tls_CreateSecureContext_Server_Handshake_B135688F.FunctionObject_Arrow_28DBB208_L26C22>(!!0)
+			IL_0146: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Tls_CreateSecureContext_Server_Handshake/ArrowFunction_L13C31/ArrowFunction_L26C22/FunctionObject>(!!0, float64, string, bool, bool)
+			IL_014b: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Tls_CreateSecureContext_Server_Handshake/ArrowFunction_L13C31/ArrowFunction_L26C22/FunctionObject>(!!0)
 			IL_0150: stloc.s 7
 			IL_0152: ldloc.2
 			IL_0153: ldstr "on"
@@ -588,8 +998,8 @@
 			[8] object,
 			[9] object,
 			[10] object[],
-			[11] class FunctionObjects.Tls_CreateSecureContext_Server_Handshake_B135688F.FunctionObject_Arrow_CBD6B1A0_L9C52,
-			[12] class FunctionObjects.Tls_CreateSecureContext_Server_Handshake_B135688F.FunctionObject_Arrow_31936E00_L13C31
+			[11] class Modules.Tls_CreateSecureContext_Server_Handshake/ArrowFunction_L9C52/FunctionObject,
+			[12] class Modules.Tls_CreateSecureContext_Server_Handshake/ArrowFunction_L13C31/FunctionObject
 		)
 
 		IL_0000: newobj instance void Modules.Tls_CreateSecureContext_Server_Handshake/Scope::.ctor()
@@ -683,14 +1093,14 @@
 		IL_0102: ldloc.0
 		IL_0103: stelem.ref
 		IL_0104: stloc.s 10
-		IL_0106: newobj instance void FunctionObjects.Tls_CreateSecureContext_Server_Handshake_B135688F.FunctionObject_Arrow_CBD6B1A0_L9C52::.ctor()
+		IL_0106: newobj instance void Modules.Tls_CreateSecureContext_Server_Handshake/ArrowFunction_L9C52/FunctionObject::.ctor()
 		IL_010b: ldc.i4.1
 		IL_010c: conv.r8
 		IL_010d: ldstr ""
 		IL_0112: ldc.i4.0
 		IL_0113: ldc.i4.0
-		IL_0114: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class FunctionObjects.Tls_CreateSecureContext_Server_Handshake_B135688F.FunctionObject_Arrow_CBD6B1A0_L9C52>(!!0, float64, string, bool, bool)
-		IL_0119: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class FunctionObjects.Tls_CreateSecureContext_Server_Handshake_B135688F.FunctionObject_Arrow_CBD6B1A0_L9C52>(!!0)
+		IL_0114: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Tls_CreateSecureContext_Server_Handshake/ArrowFunction_L9C52/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_0119: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Tls_CreateSecureContext_Server_Handshake/ArrowFunction_L9C52/FunctionObject>(!!0)
 		IL_011e: stloc.s 11
 		IL_0120: ldstr "createServer"
 		IL_0125: ldloc.s 6
@@ -715,14 +1125,14 @@
 		IL_0153: ldc.i4.0
 		IL_0154: ldelem.ref
 		IL_0155: castclass Modules.Tls_CreateSecureContext_Server_Handshake/Scope
-		IL_015a: newobj instance void FunctionObjects.Tls_CreateSecureContext_Server_Handshake_B135688F.FunctionObject_Arrow_31936E00_L13C31::.ctor(class Modules.Tls_CreateSecureContext_Server_Handshake/Scope)
+		IL_015a: newobj instance void Modules.Tls_CreateSecureContext_Server_Handshake/ArrowFunction_L13C31/FunctionObject::.ctor(class Modules.Tls_CreateSecureContext_Server_Handshake/Scope)
 		IL_015f: ldc.i4.0
 		IL_0160: conv.r8
 		IL_0161: ldstr ""
 		IL_0166: ldc.i4.0
 		IL_0167: ldc.i4.0
-		IL_0168: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class FunctionObjects.Tls_CreateSecureContext_Server_Handshake_B135688F.FunctionObject_Arrow_31936E00_L13C31>(!!0, float64, string, bool, bool)
-		IL_016d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class FunctionObjects.Tls_CreateSecureContext_Server_Handshake_B135688F.FunctionObject_Arrow_31936E00_L13C31>(!!0)
+		IL_0168: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Tls_CreateSecureContext_Server_Handshake/ArrowFunction_L13C31/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_016d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Tls_CreateSecureContext_Server_Handshake/ArrowFunction_L13C31/FunctionObject>(!!0)
 		IL_0172: stloc.s 12
 		IL_0174: ldloc.s 5
 		IL_0176: ldstr "listen"
@@ -804,416 +1214,6 @@
 	} // end of method Tls_TestCertificates::__js_module_init__
 
 } // end of class Modules.Tls_TestCertificates
-
-.class private auto ansi sealed beforefieldinit FunctionObjects.Tls_CreateSecureContext_Server_Handshake_B135688F.FunctionObject_Arrow_CBD6B1A0_L9C52
-	extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-{
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x2503
-		// Header size: 1
-		// Code size: 7 (0x7)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-		IL_0006: ret
-	} // end of method FunctionObject_Arrow_CBD6B1A0_L9C52::.ctor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_IsConstructor () cil managed 
-	{
-		// Method begins at RVA 0x250b
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_CBD6B1A0_L9C52::get_IsConstructor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_RequiresInvocationContext () cil managed 
-	{
-		// Method begins at RVA 0x250e
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_CBD6B1A0_L9C52::get_RequiresInvocationContext
-
-	.method family hidebysig virtual 
-		instance object CallCore (
-			object thisArgument,
-			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-		) cil managed 
-	{
-		// Method begins at RVA 0x2511
-		// Header size: 1
-		// Code size: 14 (0xe)
-		.maxstack 8
-
-		IL_0000: ldnull
-		IL_0001: ldarg.2
-		IL_0002: ldc.i4.0
-		IL_0003: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-		IL_0008: call object Modules.Tls_CreateSecureContext_Server_Handshake/ArrowFunction_L9C52::__js_call__(object, object)
-		IL_000d: ret
-	} // end of method FunctionObject_Arrow_CBD6B1A0_L9C52::CallCore
-
-} // end of class FunctionObjects.Tls_CreateSecureContext_Server_Handshake_B135688F.FunctionObject_Arrow_CBD6B1A0_L9C52
-
-.class private auto ansi sealed beforefieldinit FunctionObjects.Tls_CreateSecureContext_Server_Handshake_B135688F.FunctionObject_Arrow_31936E00_L13C31
-	extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-{
-	// Fields
-	.field private initonly class Modules.Tls_CreateSecureContext_Server_Handshake/Scope _environment0_Tls_CreateSecureContext_Server_Handshake
-
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor (
-			class Modules.Tls_CreateSecureContext_Server_Handshake/Scope capture0
-		) cil managed 
-	{
-		// Method begins at RVA 0x2520
-		// Header size: 1
-		// Code size: 14 (0xe)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-		IL_0006: ldarg.0
-		IL_0007: ldarg.1
-		IL_0008: stfld class Modules.Tls_CreateSecureContext_Server_Handshake/Scope FunctionObjects.Tls_CreateSecureContext_Server_Handshake_B135688F.FunctionObject_Arrow_31936E00_L13C31::_environment0_Tls_CreateSecureContext_Server_Handshake
-		IL_000d: ret
-	} // end of method FunctionObject_Arrow_31936E00_L13C31::.ctor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_IsConstructor () cil managed 
-	{
-		// Method begins at RVA 0x252f
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_31936E00_L13C31::get_IsConstructor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_RequiresInvocationContext () cil managed 
-	{
-		// Method begins at RVA 0x2532
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_31936E00_L13C31::get_RequiresInvocationContext
-
-	.method family hidebysig virtual 
-		instance object CallCore (
-			object thisArgument,
-			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-		) cil managed 
-	{
-		// Method begins at RVA 0x2535
-		// Header size: 1
-		// Code size: 13 (0xd)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: ldfld class Modules.Tls_CreateSecureContext_Server_Handshake/Scope FunctionObjects.Tls_CreateSecureContext_Server_Handshake_B135688F.FunctionObject_Arrow_31936E00_L13C31::_environment0_Tls_CreateSecureContext_Server_Handshake
-		IL_0006: ldnull
-		IL_0007: call object Modules.Tls_CreateSecureContext_Server_Handshake/ArrowFunction_L13C31::__js_call__(class Modules.Tls_CreateSecureContext_Server_Handshake/Scope, object)
-		IL_000c: ret
-	} // end of method FunctionObject_Arrow_31936E00_L13C31::CallCore
-
-} // end of class FunctionObjects.Tls_CreateSecureContext_Server_Handshake_B135688F.FunctionObject_Arrow_31936E00_L13C31
-
-.class private auto ansi sealed beforefieldinit FunctionObjects.Tls_CreateSecureContext_Server_Handshake_B135688F.FunctionObject_Arrow_4E8F5167_L17C5
-	extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-{
-	// Fields
-	.field private initonly class Modules.Tls_CreateSecureContext_Server_Handshake/Scope _environment0_Tls_CreateSecureContext_Server_Handshake
-	.field private initonly class Modules.Tls_CreateSecureContext_Server_Handshake/ArrowFunction_L13C31/Scope _environment1_ArrowFunction_L13C31
-	.field private initonly object[] _transitionalScopes
-
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor (
-			class Modules.Tls_CreateSecureContext_Server_Handshake/Scope capture0,
-			class Modules.Tls_CreateSecureContext_Server_Handshake/ArrowFunction_L13C31/Scope capture1,
-			object[] capture2
-		) cil managed 
-	{
-		// Method begins at RVA 0x2543
-		// Header size: 1
-		// Code size: 28 (0x1c)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-		IL_0006: ldarg.0
-		IL_0007: ldarg.1
-		IL_0008: stfld class Modules.Tls_CreateSecureContext_Server_Handshake/Scope FunctionObjects.Tls_CreateSecureContext_Server_Handshake_B135688F.FunctionObject_Arrow_4E8F5167_L17C5::_environment0_Tls_CreateSecureContext_Server_Handshake
-		IL_000d: ldarg.0
-		IL_000e: ldarg.2
-		IL_000f: stfld class Modules.Tls_CreateSecureContext_Server_Handshake/ArrowFunction_L13C31/Scope FunctionObjects.Tls_CreateSecureContext_Server_Handshake_B135688F.FunctionObject_Arrow_4E8F5167_L17C5::_environment1_ArrowFunction_L13C31
-		IL_0014: ldarg.0
-		IL_0015: ldarg.3
-		IL_0016: stfld object[] FunctionObjects.Tls_CreateSecureContext_Server_Handshake_B135688F.FunctionObject_Arrow_4E8F5167_L17C5::_transitionalScopes
-		IL_001b: ret
-	} // end of method FunctionObject_Arrow_4E8F5167_L17C5::.ctor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_IsConstructor () cil managed 
-	{
-		// Method begins at RVA 0x2560
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_4E8F5167_L17C5::get_IsConstructor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_RequiresInvocationContext () cil managed 
-	{
-		// Method begins at RVA 0x2563
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_4E8F5167_L17C5::get_RequiresInvocationContext
-
-	.method family hidebysig virtual 
-		instance object CallCore (
-			object thisArgument,
-			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-		) cil managed 
-	{
-		// Method begins at RVA 0x2566
-		// Header size: 1
-		// Code size: 13 (0xd)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: ldfld object[] FunctionObjects.Tls_CreateSecureContext_Server_Handshake_B135688F.FunctionObject_Arrow_4E8F5167_L17C5::_transitionalScopes
-		IL_0006: ldnull
-		IL_0007: call object Modules.Tls_CreateSecureContext_Server_Handshake/ArrowFunction_L13C31/ArrowFunction_L17C5::__js_call__(object[], object)
-		IL_000c: ret
-	} // end of method FunctionObject_Arrow_4E8F5167_L17C5::CallCore
-
-} // end of class FunctionObjects.Tls_CreateSecureContext_Server_Handshake_B135688F.FunctionObject_Arrow_4E8F5167_L17C5
-
-.class private auto ansi sealed beforefieldinit FunctionObjects.Tls_CreateSecureContext_Server_Handshake_B135688F.FunctionObject_Arrow_D732485D_L22C21
-	extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-{
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x2574
-		// Header size: 1
-		// Code size: 7 (0x7)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-		IL_0006: ret
-	} // end of method FunctionObject_Arrow_D732485D_L22C21::.ctor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_IsConstructor () cil managed 
-	{
-		// Method begins at RVA 0x257c
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_D732485D_L22C21::get_IsConstructor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_RequiresInvocationContext () cil managed 
-	{
-		// Method begins at RVA 0x257f
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_D732485D_L22C21::get_RequiresInvocationContext
-
-	.method family hidebysig virtual 
-		instance object CallCore (
-			object thisArgument,
-			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-		) cil managed 
-	{
-		// Method begins at RVA 0x2582
-		// Header size: 1
-		// Code size: 14 (0xe)
-		.maxstack 8
-
-		IL_0000: ldnull
-		IL_0001: ldarg.2
-		IL_0002: ldc.i4.0
-		IL_0003: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-		IL_0008: call object Modules.Tls_CreateSecureContext_Server_Handshake/ArrowFunction_L13C31/ArrowFunction_L22C21::__js_call__(object, object)
-		IL_000d: ret
-	} // end of method FunctionObject_Arrow_D732485D_L22C21::CallCore
-
-} // end of class FunctionObjects.Tls_CreateSecureContext_Server_Handshake_B135688F.FunctionObject_Arrow_D732485D_L22C21
-
-.class private auto ansi sealed beforefieldinit FunctionObjects.Tls_CreateSecureContext_Server_Handshake_B135688F.FunctionObject_Arrow_28DBB208_L26C22
-	extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-{
-	// Fields
-	.field private initonly class Modules.Tls_CreateSecureContext_Server_Handshake/Scope _environment0_Tls_CreateSecureContext_Server_Handshake
-	.field private initonly class Modules.Tls_CreateSecureContext_Server_Handshake/ArrowFunction_L13C31/Scope _environment1_ArrowFunction_L13C31
-	.field private initonly object[] _transitionalScopes
-
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor (
-			class Modules.Tls_CreateSecureContext_Server_Handshake/Scope capture0,
-			class Modules.Tls_CreateSecureContext_Server_Handshake/ArrowFunction_L13C31/Scope capture1,
-			object[] capture2
-		) cil managed 
-	{
-		// Method begins at RVA 0x2591
-		// Header size: 1
-		// Code size: 28 (0x1c)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-		IL_0006: ldarg.0
-		IL_0007: ldarg.1
-		IL_0008: stfld class Modules.Tls_CreateSecureContext_Server_Handshake/Scope FunctionObjects.Tls_CreateSecureContext_Server_Handshake_B135688F.FunctionObject_Arrow_28DBB208_L26C22::_environment0_Tls_CreateSecureContext_Server_Handshake
-		IL_000d: ldarg.0
-		IL_000e: ldarg.2
-		IL_000f: stfld class Modules.Tls_CreateSecureContext_Server_Handshake/ArrowFunction_L13C31/Scope FunctionObjects.Tls_CreateSecureContext_Server_Handshake_B135688F.FunctionObject_Arrow_28DBB208_L26C22::_environment1_ArrowFunction_L13C31
-		IL_0014: ldarg.0
-		IL_0015: ldarg.3
-		IL_0016: stfld object[] FunctionObjects.Tls_CreateSecureContext_Server_Handshake_B135688F.FunctionObject_Arrow_28DBB208_L26C22::_transitionalScopes
-		IL_001b: ret
-	} // end of method FunctionObject_Arrow_28DBB208_L26C22::.ctor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_IsConstructor () cil managed 
-	{
-		// Method begins at RVA 0x25ae
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_28DBB208_L26C22::get_IsConstructor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_RequiresInvocationContext () cil managed 
-	{
-		// Method begins at RVA 0x25b1
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_28DBB208_L26C22::get_RequiresInvocationContext
-
-	.method family hidebysig virtual 
-		instance object CallCore (
-			object thisArgument,
-			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-		) cil managed 
-	{
-		// Method begins at RVA 0x25b4
-		// Header size: 1
-		// Code size: 13 (0xd)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: ldfld object[] FunctionObjects.Tls_CreateSecureContext_Server_Handshake_B135688F.FunctionObject_Arrow_28DBB208_L26C22::_transitionalScopes
-		IL_0006: ldnull
-		IL_0007: call object Modules.Tls_CreateSecureContext_Server_Handshake/ArrowFunction_L13C31/ArrowFunction_L26C22::__js_call__(object[], object)
-		IL_000c: ret
-	} // end of method FunctionObject_Arrow_28DBB208_L26C22::CallCore
-
-} // end of class FunctionObjects.Tls_CreateSecureContext_Server_Handshake_B135688F.FunctionObject_Arrow_28DBB208_L26C22
-
-.class private auto ansi sealed beforefieldinit FunctionObjects.Tls_CreateSecureContext_Server_Handshake_B135688F.FunctionObject_Arrow_EAA016F4_L27C18
-	extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-{
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x25c2
-		// Header size: 1
-		// Code size: 7 (0x7)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-		IL_0006: ret
-	} // end of method FunctionObject_Arrow_EAA016F4_L27C18::.ctor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_IsConstructor () cil managed 
-	{
-		// Method begins at RVA 0x25ca
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_EAA016F4_L27C18::get_IsConstructor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_RequiresInvocationContext () cil managed 
-	{
-		// Method begins at RVA 0x25cd
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_EAA016F4_L27C18::get_RequiresInvocationContext
-
-	.method family hidebysig virtual 
-		instance object CallCore (
-			object thisArgument,
-			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-		) cil managed 
-	{
-		// Method begins at RVA 0x25d0
-		// Header size: 1
-		// Code size: 7 (0x7)
-		.maxstack 8
-
-		IL_0000: ldnull
-		IL_0001: call object Modules.Tls_CreateSecureContext_Server_Handshake/ArrowFunction_L13C31/ArrowFunction_L26C22/ArrowFunction_L27C18::__js_call__(object)
-		IL_0006: ret
-	} // end of method FunctionObject_Arrow_EAA016F4_L27C18::CallCore
-
-} // end of class FunctionObjects.Tls_CreateSecureContext_Server_Handshake_B135688F.FunctionObject_Arrow_EAA016F4_L27C18
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object

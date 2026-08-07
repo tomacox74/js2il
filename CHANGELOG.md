@@ -6,6 +6,9 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- compiler/IL: emit each generated arrow function wrapper as a readable
+  `FunctionObject` nested under its canonical `ArrowFunction_*` owner instead
+  of a standalone hashed `FunctionObjects.*` type.
 - compiler/runtime: close issue #1712 by materializing synchronous ordinary function declarations and
   expressions as generated `JsFunctionObject` instances, preserving typed
   direct calls, shared captures, recursion, identity, strict/sloppy `this`,

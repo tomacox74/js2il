@@ -539,6 +539,65 @@
 
 		} // end of class Scope
 
+		.class nested public auto ansi sealed beforefieldinit FunctionObject
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x24ff
+				// Header size: 1
+				// Code size: 7 (0x7)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0006: ret
+			} // end of method FunctionObject::.ctor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_IsConstructor () cil managed 
+			{
+				// Method begins at RVA 0x2507
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_IsConstructor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_RequiresInvocationContext () cil managed 
+			{
+				// Method begins at RVA 0x250a
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_RequiresInvocationContext
+
+			.method family hidebysig virtual 
+				instance object CallCore (
+					object thisArgument,
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+				) cil managed 
+			{
+				// Method begins at RVA 0x250d
+				// Header size: 1
+				// Code size: 7 (0x7)
+				.maxstack 8
+
+				IL_0000: ldnull
+				IL_0001: call object Modules.Async_TryFinally_PreservesExceptionThroughAwait/ArrowFunction_L22C13::__js_call__(object)
+				IL_0006: ret
+			} // end of method FunctionObject::CallCore
+
+		} // end of class FunctionObject
+
 
 		// Methods
 		.method public hidebysig static 
@@ -617,7 +676,7 @@
 			[1] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0,
 			[2] object[],
 			[3] object,
-			[4] class FunctionObjects.Async_TryFinally_PreservesExceptionThroughAwait_CD294C42.FunctionObject_Arrow_6471BBCB_L22C13
+			[4] class Modules.Async_TryFinally_PreservesExceptionThroughAwait/ArrowFunction_L22C13/FunctionObject
 		)
 
 		IL_0000: newobj instance void Modules.Async_TryFinally_PreservesExceptionThroughAwait/Scope::.ctor()
@@ -656,14 +715,14 @@
 		IL_004e: ldloc.0
 		IL_004f: stelem.ref
 		IL_0050: stloc.2
-		IL_0051: newobj instance void FunctionObjects.Async_TryFinally_PreservesExceptionThroughAwait_CD294C42.FunctionObject_Arrow_6471BBCB_L22C13::.ctor()
+		IL_0051: newobj instance void Modules.Async_TryFinally_PreservesExceptionThroughAwait/ArrowFunction_L22C13/FunctionObject::.ctor()
 		IL_0056: ldc.i4.0
 		IL_0057: conv.r8
 		IL_0058: ldstr ""
 		IL_005d: ldc.i4.0
 		IL_005e: ldc.i4.0
-		IL_005f: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class FunctionObjects.Async_TryFinally_PreservesExceptionThroughAwait_CD294C42.FunctionObject_Arrow_6471BBCB_L22C13>(!!0, float64, string, bool, bool)
-		IL_0064: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class FunctionObjects.Async_TryFinally_PreservesExceptionThroughAwait_CD294C42.FunctionObject_Arrow_6471BBCB_L22C13>(!!0)
+		IL_005f: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Async_TryFinally_PreservesExceptionThroughAwait/ArrowFunction_L22C13/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_0064: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Async_TryFinally_PreservesExceptionThroughAwait/ArrowFunction_L22C13/FunctionObject>(!!0)
 		IL_0069: stloc.s 4
 		IL_006b: ldloc.3
 		IL_006c: ldstr "then"
@@ -743,65 +802,6 @@
 	} // end of method FunctionObject_FunctionDeclaration_E25B5249_test::CallCore
 
 } // end of class FunctionObjects.Async_TryFinally_PreservesExceptionThroughAwait_CD294C42.FunctionObject_FunctionDeclaration_E25B5249_test
-
-.class private auto ansi sealed beforefieldinit FunctionObjects.Async_TryFinally_PreservesExceptionThroughAwait_CD294C42.FunctionObject_Arrow_6471BBCB_L22C13
-	extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-{
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x24ff
-		// Header size: 1
-		// Code size: 7 (0x7)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-		IL_0006: ret
-	} // end of method FunctionObject_Arrow_6471BBCB_L22C13::.ctor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_IsConstructor () cil managed 
-	{
-		// Method begins at RVA 0x2507
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_6471BBCB_L22C13::get_IsConstructor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_RequiresInvocationContext () cil managed 
-	{
-		// Method begins at RVA 0x250a
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_6471BBCB_L22C13::get_RequiresInvocationContext
-
-	.method family hidebysig virtual 
-		instance object CallCore (
-			object thisArgument,
-			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-		) cil managed 
-	{
-		// Method begins at RVA 0x250d
-		// Header size: 1
-		// Code size: 7 (0x7)
-		.maxstack 8
-
-		IL_0000: ldnull
-		IL_0001: call object Modules.Async_TryFinally_PreservesExceptionThroughAwait/ArrowFunction_L22C13::__js_call__(object)
-		IL_0006: ret
-	} // end of method FunctionObject_Arrow_6471BBCB_L22C13::CallCore
-
-} // end of class FunctionObjects.Async_TryFinally_PreservesExceptionThroughAwait_CD294C42.FunctionObject_Arrow_6471BBCB_L22C13
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object

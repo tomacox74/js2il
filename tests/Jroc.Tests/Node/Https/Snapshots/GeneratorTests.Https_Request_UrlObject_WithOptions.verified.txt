@@ -39,6 +39,71 @@
 
 		} // end of class Scope
 
+		.class nested public auto ansi sealed beforefieldinit FunctionObject
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x263a
+				// Header size: 1
+				// Code size: 7 (0x7)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0006: ret
+			} // end of method FunctionObject::.ctor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_IsConstructor () cil managed 
+			{
+				// Method begins at RVA 0x2642
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_IsConstructor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_RequiresInvocationContext () cil managed 
+			{
+				// Method begins at RVA 0x2645
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_RequiresInvocationContext
+
+			.method family hidebysig virtual 
+				instance object CallCore (
+					object thisArgument,
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+				) cil managed 
+			{
+				// Method begins at RVA 0x2648
+				// Header size: 1
+				// Code size: 21 (0x15)
+				.maxstack 8
+
+				IL_0000: ldnull
+				IL_0001: ldarg.2
+				IL_0002: ldc.i4.0
+				IL_0003: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+				IL_0008: ldarg.2
+				IL_0009: ldc.i4.1
+				IL_000a: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+				IL_000f: call object Modules.Https_Request_UrlObject_WithOptions/ArrowFunction_L7C67::__js_call__(object, object, object)
+				IL_0014: ret
+			} // end of method FunctionObject::CallCore
+
+		} // end of class FunctionObject
+
 
 		// Methods
 		.method public hidebysig static 
@@ -163,6 +228,88 @@
 
 				} // end of class Scope
 
+				.class nested public auto ansi sealed beforefieldinit FunctionObject
+					extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+				{
+					// Fields
+					.field private initonly class Modules.Https_Request_UrlObject_WithOptions/Scope _environment0_Https_Request_UrlObject_WithOptions
+					.field private initonly class Modules.Https_Request_UrlObject_WithOptions/ArrowFunction_L13C31/ArrowFunction_L25C5/Scope _environment2_ArrowFunction_L25C5
+					.field private initonly object[] _transitionalScopes
+
+					// Methods
+					.method public hidebysig specialname rtspecialname 
+						instance void .ctor (
+							class Modules.Https_Request_UrlObject_WithOptions/Scope capture0,
+							class Modules.Https_Request_UrlObject_WithOptions/ArrowFunction_L13C31/ArrowFunction_L25C5/Scope capture1,
+							object[] capture2
+						) cil managed 
+					{
+						// Method begins at RVA 0x26b2
+						// Header size: 1
+						// Code size: 28 (0x1c)
+						.maxstack 8
+
+						IL_0000: ldarg.0
+						IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+						IL_0006: ldarg.0
+						IL_0007: ldarg.1
+						IL_0008: stfld class Modules.Https_Request_UrlObject_WithOptions/Scope Modules.Https_Request_UrlObject_WithOptions/ArrowFunction_L13C31/ArrowFunction_L25C5/ArrowFunction_L30C22/FunctionObject::_environment0_Https_Request_UrlObject_WithOptions
+						IL_000d: ldarg.0
+						IL_000e: ldarg.2
+						IL_000f: stfld class Modules.Https_Request_UrlObject_WithOptions/ArrowFunction_L13C31/ArrowFunction_L25C5/Scope Modules.Https_Request_UrlObject_WithOptions/ArrowFunction_L13C31/ArrowFunction_L25C5/ArrowFunction_L30C22/FunctionObject::_environment2_ArrowFunction_L25C5
+						IL_0014: ldarg.0
+						IL_0015: ldarg.3
+						IL_0016: stfld object[] Modules.Https_Request_UrlObject_WithOptions/ArrowFunction_L13C31/ArrowFunction_L25C5/ArrowFunction_L30C22/FunctionObject::_transitionalScopes
+						IL_001b: ret
+					} // end of method FunctionObject::.ctor
+
+					.method public hidebysig specialname virtual 
+						instance bool get_IsConstructor () cil managed 
+					{
+						// Method begins at RVA 0x26cf
+						// Header size: 1
+						// Code size: 2 (0x2)
+						.maxstack 8
+
+						IL_0000: ldc.i4.0
+						IL_0001: ret
+					} // end of method FunctionObject::get_IsConstructor
+
+					.method public hidebysig specialname virtual 
+						instance bool get_RequiresInvocationContext () cil managed 
+					{
+						// Method begins at RVA 0x26d2
+						// Header size: 1
+						// Code size: 2 (0x2)
+						.maxstack 8
+
+						IL_0000: ldc.i4.0
+						IL_0001: ret
+					} // end of method FunctionObject::get_RequiresInvocationContext
+
+					.method family hidebysig virtual 
+						instance object CallCore (
+							object thisArgument,
+							[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+						) cil managed 
+					{
+						// Method begins at RVA 0x26d5
+						// Header size: 1
+						// Code size: 20 (0x14)
+						.maxstack 8
+
+						IL_0000: ldarg.0
+						IL_0001: ldfld object[] Modules.Https_Request_UrlObject_WithOptions/ArrowFunction_L13C31/ArrowFunction_L25C5/ArrowFunction_L30C22/FunctionObject::_transitionalScopes
+						IL_0006: ldnull
+						IL_0007: ldarg.2
+						IL_0008: ldc.i4.0
+						IL_0009: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+						IL_000e: call object Modules.Https_Request_UrlObject_WithOptions/ArrowFunction_L13C31/ArrowFunction_L25C5/ArrowFunction_L30C22::__js_call__(object[], object, object)
+						IL_0013: ret
+					} // end of method FunctionObject::CallCore
+
+				} // end of class FunctionObject
+
 
 				// Methods
 				.method public hidebysig static 
@@ -234,6 +381,65 @@
 
 					} // end of class Scope
 
+					.class nested public auto ansi sealed beforefieldinit FunctionObject
+						extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+					{
+						// Methods
+						.method public hidebysig specialname rtspecialname 
+							instance void .ctor () cil managed 
+						{
+							// Method begins at RVA 0x271b
+							// Header size: 1
+							// Code size: 7 (0x7)
+							.maxstack 8
+
+							IL_0000: ldarg.0
+							IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+							IL_0006: ret
+						} // end of method FunctionObject::.ctor
+
+						.method public hidebysig specialname virtual 
+							instance bool get_IsConstructor () cil managed 
+						{
+							// Method begins at RVA 0x2723
+							// Header size: 1
+							// Code size: 2 (0x2)
+							.maxstack 8
+
+							IL_0000: ldc.i4.0
+							IL_0001: ret
+						} // end of method FunctionObject::get_IsConstructor
+
+						.method public hidebysig specialname virtual 
+							instance bool get_RequiresInvocationContext () cil managed 
+						{
+							// Method begins at RVA 0x2726
+							// Header size: 1
+							// Code size: 2 (0x2)
+							.maxstack 8
+
+							IL_0000: ldc.i4.0
+							IL_0001: ret
+						} // end of method FunctionObject::get_RequiresInvocationContext
+
+						.method family hidebysig virtual 
+							instance object CallCore (
+								object thisArgument,
+								[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+							) cil managed 
+						{
+							// Method begins at RVA 0x2729
+							// Header size: 1
+							// Code size: 7 (0x7)
+							.maxstack 8
+
+							IL_0000: ldnull
+							IL_0001: call object Modules.Https_Request_UrlObject_WithOptions/ArrowFunction_L13C31/ArrowFunction_L25C5/ArrowFunction_L33C21/ArrowFunction_L35C22::__js_call__(object)
+							IL_0006: ret
+						} // end of method FunctionObject::CallCore
+
+					} // end of class FunctionObject
+
 
 					// Methods
 					.method public hidebysig static 
@@ -282,6 +488,85 @@
 
 				} // end of class Scope
 
+				.class nested public auto ansi sealed beforefieldinit FunctionObject
+					extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+				{
+					// Fields
+					.field private initonly class Modules.Https_Request_UrlObject_WithOptions/Scope _environment0_Https_Request_UrlObject_WithOptions
+					.field private initonly class Modules.Https_Request_UrlObject_WithOptions/ArrowFunction_L13C31/ArrowFunction_L25C5/Scope _environment2_ArrowFunction_L25C5
+					.field private initonly object[] _transitionalScopes
+
+					// Methods
+					.method public hidebysig specialname rtspecialname 
+						instance void .ctor (
+							class Modules.Https_Request_UrlObject_WithOptions/Scope capture0,
+							class Modules.Https_Request_UrlObject_WithOptions/ArrowFunction_L13C31/ArrowFunction_L25C5/Scope capture1,
+							object[] capture2
+						) cil managed 
+					{
+						// Method begins at RVA 0x26ea
+						// Header size: 1
+						// Code size: 28 (0x1c)
+						.maxstack 8
+
+						IL_0000: ldarg.0
+						IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+						IL_0006: ldarg.0
+						IL_0007: ldarg.1
+						IL_0008: stfld class Modules.Https_Request_UrlObject_WithOptions/Scope Modules.Https_Request_UrlObject_WithOptions/ArrowFunction_L13C31/ArrowFunction_L25C5/ArrowFunction_L33C21/FunctionObject::_environment0_Https_Request_UrlObject_WithOptions
+						IL_000d: ldarg.0
+						IL_000e: ldarg.2
+						IL_000f: stfld class Modules.Https_Request_UrlObject_WithOptions/ArrowFunction_L13C31/ArrowFunction_L25C5/Scope Modules.Https_Request_UrlObject_WithOptions/ArrowFunction_L13C31/ArrowFunction_L25C5/ArrowFunction_L33C21/FunctionObject::_environment2_ArrowFunction_L25C5
+						IL_0014: ldarg.0
+						IL_0015: ldarg.3
+						IL_0016: stfld object[] Modules.Https_Request_UrlObject_WithOptions/ArrowFunction_L13C31/ArrowFunction_L25C5/ArrowFunction_L33C21/FunctionObject::_transitionalScopes
+						IL_001b: ret
+					} // end of method FunctionObject::.ctor
+
+					.method public hidebysig specialname virtual 
+						instance bool get_IsConstructor () cil managed 
+					{
+						// Method begins at RVA 0x2707
+						// Header size: 1
+						// Code size: 2 (0x2)
+						.maxstack 8
+
+						IL_0000: ldc.i4.0
+						IL_0001: ret
+					} // end of method FunctionObject::get_IsConstructor
+
+					.method public hidebysig specialname virtual 
+						instance bool get_RequiresInvocationContext () cil managed 
+					{
+						// Method begins at RVA 0x270a
+						// Header size: 1
+						// Code size: 2 (0x2)
+						.maxstack 8
+
+						IL_0000: ldc.i4.0
+						IL_0001: ret
+					} // end of method FunctionObject::get_RequiresInvocationContext
+
+					.method family hidebysig virtual 
+						instance object CallCore (
+							object thisArgument,
+							[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+						) cil managed 
+					{
+						// Method begins at RVA 0x270d
+						// Header size: 1
+						// Code size: 13 (0xd)
+						.maxstack 8
+
+						IL_0000: ldarg.0
+						IL_0001: ldfld object[] Modules.Https_Request_UrlObject_WithOptions/ArrowFunction_L13C31/ArrowFunction_L25C5/ArrowFunction_L33C21/FunctionObject::_transitionalScopes
+						IL_0006: ldnull
+						IL_0007: call object Modules.Https_Request_UrlObject_WithOptions/ArrowFunction_L13C31/ArrowFunction_L25C5/ArrowFunction_L33C21::__js_call__(object[], object)
+						IL_000c: ret
+					} // end of method FunctionObject::CallCore
+
+				} // end of class FunctionObject
+
 
 				// Methods
 				.method public hidebysig static 
@@ -303,7 +588,7 @@
 						[2] object,
 						[3] object,
 						[4] object[],
-						[5] class FunctionObjects.Https_Request_UrlObject_WithOptions_126F256C.FunctionObject_Arrow_11FA2A60_L35C22
+						[5] class Modules.Https_Request_UrlObject_WithOptions/ArrowFunction_L13C31/ArrowFunction_L25C5/ArrowFunction_L33C21/ArrowFunction_L35C22/FunctionObject
 					)
 
 					IL_0000: newobj instance void Modules.Https_Request_UrlObject_WithOptions/ArrowFunction_L13C31/ArrowFunction_L25C5/ArrowFunction_L33C21/Scope::.ctor()
@@ -343,14 +628,14 @@
 					IL_005a: ldelem.ref
 					IL_005b: stelem.ref
 					IL_005c: stloc.s 4
-					IL_005e: newobj instance void FunctionObjects.Https_Request_UrlObject_WithOptions_126F256C.FunctionObject_Arrow_11FA2A60_L35C22::.ctor()
+					IL_005e: newobj instance void Modules.Https_Request_UrlObject_WithOptions/ArrowFunction_L13C31/ArrowFunction_L25C5/ArrowFunction_L33C21/ArrowFunction_L35C22/FunctionObject::.ctor()
 					IL_0063: ldc.i4.0
 					IL_0064: conv.r8
 					IL_0065: ldstr ""
 					IL_006a: ldc.i4.0
 					IL_006b: ldc.i4.0
-					IL_006c: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class FunctionObjects.Https_Request_UrlObject_WithOptions_126F256C.FunctionObject_Arrow_11FA2A60_L35C22>(!!0, float64, string, bool, bool)
-					IL_0071: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class FunctionObjects.Https_Request_UrlObject_WithOptions_126F256C.FunctionObject_Arrow_11FA2A60_L35C22>(!!0)
+					IL_006c: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Https_Request_UrlObject_WithOptions/ArrowFunction_L13C31/ArrowFunction_L25C5/ArrowFunction_L33C21/ArrowFunction_L35C22/FunctionObject>(!!0, float64, string, bool, bool)
+					IL_0071: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Https_Request_UrlObject_WithOptions/ArrowFunction_L13C31/ArrowFunction_L25C5/ArrowFunction_L33C21/ArrowFunction_L35C22/FunctionObject>(!!0)
 					IL_0076: stloc.s 5
 					IL_0078: ldloc.1
 					IL_0079: ldstr "close"
@@ -391,6 +676,83 @@
 
 			} // end of class Scope
 
+			.class nested public auto ansi sealed beforefieldinit FunctionObject
+				extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+			{
+				// Fields
+				.field private initonly class Modules.Https_Request_UrlObject_WithOptions/Scope _environment0_Https_Request_UrlObject_WithOptions
+				.field private initonly object[] _transitionalScopes
+
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor (
+						class Modules.Https_Request_UrlObject_WithOptions/Scope capture0,
+						object[] capture1
+					) cil managed 
+				{
+					// Method begins at RVA 0x2681
+					// Header size: 1
+					// Code size: 21 (0x15)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+					IL_0006: ldarg.0
+					IL_0007: ldarg.1
+					IL_0008: stfld class Modules.Https_Request_UrlObject_WithOptions/Scope Modules.Https_Request_UrlObject_WithOptions/ArrowFunction_L13C31/ArrowFunction_L25C5/FunctionObject::_environment0_Https_Request_UrlObject_WithOptions
+					IL_000d: ldarg.0
+					IL_000e: ldarg.2
+					IL_000f: stfld object[] Modules.Https_Request_UrlObject_WithOptions/ArrowFunction_L13C31/ArrowFunction_L25C5/FunctionObject::_transitionalScopes
+					IL_0014: ret
+				} // end of method FunctionObject::.ctor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_IsConstructor () cil managed 
+				{
+					// Method begins at RVA 0x2697
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_IsConstructor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_RequiresInvocationContext () cil managed 
+				{
+					// Method begins at RVA 0x269a
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_RequiresInvocationContext
+
+				.method family hidebysig virtual 
+					instance object CallCore (
+						object thisArgument,
+						[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+					) cil managed 
+				{
+					// Method begins at RVA 0x269d
+					// Header size: 1
+					// Code size: 20 (0x14)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: ldfld object[] Modules.Https_Request_UrlObject_WithOptions/ArrowFunction_L13C31/ArrowFunction_L25C5/FunctionObject::_transitionalScopes
+					IL_0006: ldnull
+					IL_0007: ldarg.2
+					IL_0008: ldc.i4.0
+					IL_0009: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+					IL_000e: call object Modules.Https_Request_UrlObject_WithOptions/ArrowFunction_L13C31/ArrowFunction_L25C5::__js_call__(object[], object, object)
+					IL_0013: ret
+				} // end of method FunctionObject::CallCore
+
+			} // end of class FunctionObject
+
 
 			// Methods
 			.method public hidebysig static 
@@ -413,8 +775,8 @@
 					[2] object,
 					[3] object,
 					[4] object[],
-					[5] class FunctionObjects.Https_Request_UrlObject_WithOptions_126F256C.FunctionObject_Arrow_1FE7D0C2_L30C22,
-					[6] class FunctionObjects.Https_Request_UrlObject_WithOptions_126F256C.FunctionObject_Arrow_35E2ECF0_L33C21
+					[5] class Modules.Https_Request_UrlObject_WithOptions/ArrowFunction_L13C31/ArrowFunction_L25C5/ArrowFunction_L30C22/FunctionObject,
+					[6] class Modules.Https_Request_UrlObject_WithOptions/ArrowFunction_L13C31/ArrowFunction_L25C5/ArrowFunction_L33C21/FunctionObject
 				)
 
 				IL_0000: newobj instance void Modules.Https_Request_UrlObject_WithOptions/ArrowFunction_L13C31/ArrowFunction_L25C5/Scope::.ctor()
@@ -476,14 +838,14 @@
 				IL_0087: ldelem.ref
 				IL_0088: castclass Modules.Https_Request_UrlObject_WithOptions/ArrowFunction_L13C31/ArrowFunction_L25C5/Scope
 				IL_008d: ldloc.s 4
-				IL_008f: newobj instance void FunctionObjects.Https_Request_UrlObject_WithOptions_126F256C.FunctionObject_Arrow_1FE7D0C2_L30C22::.ctor(class Modules.Https_Request_UrlObject_WithOptions/Scope, class Modules.Https_Request_UrlObject_WithOptions/ArrowFunction_L13C31/ArrowFunction_L25C5/Scope, object[])
+				IL_008f: newobj instance void Modules.Https_Request_UrlObject_WithOptions/ArrowFunction_L13C31/ArrowFunction_L25C5/ArrowFunction_L30C22/FunctionObject::.ctor(class Modules.Https_Request_UrlObject_WithOptions/Scope, class Modules.Https_Request_UrlObject_WithOptions/ArrowFunction_L13C31/ArrowFunction_L25C5/Scope, object[])
 				IL_0094: ldc.i4.1
 				IL_0095: conv.r8
 				IL_0096: ldstr ""
 				IL_009b: ldc.i4.0
 				IL_009c: ldc.i4.0
-				IL_009d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class FunctionObjects.Https_Request_UrlObject_WithOptions_126F256C.FunctionObject_Arrow_1FE7D0C2_L30C22>(!!0, float64, string, bool, bool)
-				IL_00a2: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class FunctionObjects.Https_Request_UrlObject_WithOptions_126F256C.FunctionObject_Arrow_1FE7D0C2_L30C22>(!!0)
+				IL_009d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Https_Request_UrlObject_WithOptions/ArrowFunction_L13C31/ArrowFunction_L25C5/ArrowFunction_L30C22/FunctionObject>(!!0, float64, string, bool, bool)
+				IL_00a2: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Https_Request_UrlObject_WithOptions/ArrowFunction_L13C31/ArrowFunction_L25C5/ArrowFunction_L30C22/FunctionObject>(!!0)
 				IL_00a7: stloc.s 5
 				IL_00a9: ldloc.1
 				IL_00aa: ldstr "on"
@@ -522,14 +884,14 @@
 				IL_00e7: ldelem.ref
 				IL_00e8: castclass Modules.Https_Request_UrlObject_WithOptions/ArrowFunction_L13C31/ArrowFunction_L25C5/Scope
 				IL_00ed: ldloc.s 4
-				IL_00ef: newobj instance void FunctionObjects.Https_Request_UrlObject_WithOptions_126F256C.FunctionObject_Arrow_35E2ECF0_L33C21::.ctor(class Modules.Https_Request_UrlObject_WithOptions/Scope, class Modules.Https_Request_UrlObject_WithOptions/ArrowFunction_L13C31/ArrowFunction_L25C5/Scope, object[])
+				IL_00ef: newobj instance void Modules.Https_Request_UrlObject_WithOptions/ArrowFunction_L13C31/ArrowFunction_L25C5/ArrowFunction_L33C21/FunctionObject::.ctor(class Modules.Https_Request_UrlObject_WithOptions/Scope, class Modules.Https_Request_UrlObject_WithOptions/ArrowFunction_L13C31/ArrowFunction_L25C5/Scope, object[])
 				IL_00f4: ldc.i4.0
 				IL_00f5: conv.r8
 				IL_00f6: ldstr ""
 				IL_00fb: ldc.i4.0
 				IL_00fc: ldc.i4.0
-				IL_00fd: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class FunctionObjects.Https_Request_UrlObject_WithOptions_126F256C.FunctionObject_Arrow_35E2ECF0_L33C21>(!!0, float64, string, bool, bool)
-				IL_0102: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class FunctionObjects.Https_Request_UrlObject_WithOptions_126F256C.FunctionObject_Arrow_35E2ECF0_L33C21>(!!0)
+				IL_00fd: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Https_Request_UrlObject_WithOptions/ArrowFunction_L13C31/ArrowFunction_L25C5/ArrowFunction_L33C21/FunctionObject>(!!0, float64, string, bool, bool)
+				IL_0102: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Https_Request_UrlObject_WithOptions/ArrowFunction_L13C31/ArrowFunction_L25C5/ArrowFunction_L33C21/FunctionObject>(!!0)
 				IL_0107: stloc.s 6
 				IL_0109: ldloc.1
 				IL_010a: ldstr "on"
@@ -563,6 +925,75 @@
 
 		} // end of class Scope
 
+		.class nested public auto ansi sealed beforefieldinit FunctionObject
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+		{
+			// Fields
+			.field private initonly class Modules.Https_Request_UrlObject_WithOptions/Scope _environment0_Https_Request_UrlObject_WithOptions
+
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor (
+					class Modules.Https_Request_UrlObject_WithOptions/Scope capture0
+				) cil managed 
+			{
+				// Method begins at RVA 0x265e
+				// Header size: 1
+				// Code size: 14 (0xe)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0006: ldarg.0
+				IL_0007: ldarg.1
+				IL_0008: stfld class Modules.Https_Request_UrlObject_WithOptions/Scope Modules.Https_Request_UrlObject_WithOptions/ArrowFunction_L13C31/FunctionObject::_environment0_Https_Request_UrlObject_WithOptions
+				IL_000d: ret
+			} // end of method FunctionObject::.ctor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_IsConstructor () cil managed 
+			{
+				// Method begins at RVA 0x266d
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_IsConstructor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_RequiresInvocationContext () cil managed 
+			{
+				// Method begins at RVA 0x2670
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_RequiresInvocationContext
+
+			.method family hidebysig virtual 
+				instance object CallCore (
+					object thisArgument,
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+				) cil managed 
+			{
+				// Method begins at RVA 0x2673
+				// Header size: 1
+				// Code size: 13 (0xd)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: ldfld class Modules.Https_Request_UrlObject_WithOptions/Scope Modules.Https_Request_UrlObject_WithOptions/ArrowFunction_L13C31/FunctionObject::_environment0_Https_Request_UrlObject_WithOptions
+				IL_0006: ldnull
+				IL_0007: call object Modules.Https_Request_UrlObject_WithOptions/ArrowFunction_L13C31::__js_call__(class Modules.Https_Request_UrlObject_WithOptions/Scope, object)
+				IL_000c: ret
+			} // end of method FunctionObject::CallCore
+
+		} // end of class FunctionObject
+
 
 		// Methods
 		.method public hidebysig static 
@@ -590,7 +1021,7 @@
 				[6] object,
 				[7] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
 				[8] object[],
-				[9] class FunctionObjects.Https_Request_UrlObject_WithOptions_126F256C.FunctionObject_Arrow_322374DF_L25C5
+				[9] class Modules.Https_Request_UrlObject_WithOptions/ArrowFunction_L13C31/ArrowFunction_L25C5/FunctionObject
 			)
 
 			IL_0000: newobj instance void Modules.Https_Request_UrlObject_WithOptions/ArrowFunction_L13C31/Scope::.ctor()
@@ -661,14 +1092,14 @@
 			IL_00bc: ldelem.ref
 			IL_00bd: castclass Modules.Https_Request_UrlObject_WithOptions/Scope
 			IL_00c2: ldloc.s 8
-			IL_00c4: newobj instance void FunctionObjects.Https_Request_UrlObject_WithOptions_126F256C.FunctionObject_Arrow_322374DF_L25C5::.ctor(class Modules.Https_Request_UrlObject_WithOptions/Scope, object[])
+			IL_00c4: newobj instance void Modules.Https_Request_UrlObject_WithOptions/ArrowFunction_L13C31/ArrowFunction_L25C5/FunctionObject::.ctor(class Modules.Https_Request_UrlObject_WithOptions/Scope, object[])
 			IL_00c9: ldc.i4.1
 			IL_00ca: conv.r8
 			IL_00cb: ldstr ""
 			IL_00d0: ldc.i4.0
 			IL_00d1: ldc.i4.0
-			IL_00d2: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class FunctionObjects.Https_Request_UrlObject_WithOptions_126F256C.FunctionObject_Arrow_322374DF_L25C5>(!!0, float64, string, bool, bool)
-			IL_00d7: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class FunctionObjects.Https_Request_UrlObject_WithOptions_126F256C.FunctionObject_Arrow_322374DF_L25C5>(!!0)
+			IL_00d2: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Https_Request_UrlObject_WithOptions/ArrowFunction_L13C31/ArrowFunction_L25C5/FunctionObject>(!!0, float64, string, bool, bool)
+			IL_00d7: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Https_Request_UrlObject_WithOptions/ArrowFunction_L13C31/ArrowFunction_L25C5/FunctionObject>(!!0)
 			IL_00dc: stloc.s 9
 			IL_00de: ldstr "request"
 			IL_00e3: ldloc.2
@@ -742,8 +1173,8 @@
 			[5] object,
 			[6] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
 			[7] object[],
-			[8] class FunctionObjects.Https_Request_UrlObject_WithOptions_126F256C.FunctionObject_Arrow_64AC0425_L7C67,
-			[9] class FunctionObjects.Https_Request_UrlObject_WithOptions_126F256C.FunctionObject_Arrow_FB6C3431_L13C31
+			[8] class Modules.Https_Request_UrlObject_WithOptions/ArrowFunction_L7C67/FunctionObject,
+			[9] class Modules.Https_Request_UrlObject_WithOptions/ArrowFunction_L13C31/FunctionObject
 		)
 
 		IL_0000: newobj instance void Modules.Https_Request_UrlObject_WithOptions/Scope::.ctor()
@@ -823,14 +1254,14 @@
 		IL_00da: ldloc.0
 		IL_00db: stelem.ref
 		IL_00dc: stloc.s 7
-		IL_00de: newobj instance void FunctionObjects.Https_Request_UrlObject_WithOptions_126F256C.FunctionObject_Arrow_64AC0425_L7C67::.ctor()
+		IL_00de: newobj instance void Modules.Https_Request_UrlObject_WithOptions/ArrowFunction_L7C67/FunctionObject::.ctor()
 		IL_00e3: ldc.i4.2
 		IL_00e4: conv.r8
 		IL_00e5: ldstr ""
 		IL_00ea: ldc.i4.0
 		IL_00eb: ldc.i4.0
-		IL_00ec: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class FunctionObjects.Https_Request_UrlObject_WithOptions_126F256C.FunctionObject_Arrow_64AC0425_L7C67>(!!0, float64, string, bool, bool)
-		IL_00f1: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class FunctionObjects.Https_Request_UrlObject_WithOptions_126F256C.FunctionObject_Arrow_64AC0425_L7C67>(!!0)
+		IL_00ec: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Https_Request_UrlObject_WithOptions/ArrowFunction_L7C67/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_00f1: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Https_Request_UrlObject_WithOptions/ArrowFunction_L7C67/FunctionObject>(!!0)
 		IL_00f6: stloc.s 8
 		IL_00f8: ldloc.3
 		IL_00f9: ldloc.s 6
@@ -855,14 +1286,14 @@
 		IL_0127: ldc.i4.0
 		IL_0128: ldelem.ref
 		IL_0129: castclass Modules.Https_Request_UrlObject_WithOptions/Scope
-		IL_012e: newobj instance void FunctionObjects.Https_Request_UrlObject_WithOptions_126F256C.FunctionObject_Arrow_FB6C3431_L13C31::.ctor(class Modules.Https_Request_UrlObject_WithOptions/Scope)
+		IL_012e: newobj instance void Modules.Https_Request_UrlObject_WithOptions/ArrowFunction_L13C31/FunctionObject::.ctor(class Modules.Https_Request_UrlObject_WithOptions/Scope)
 		IL_0133: ldc.i4.0
 		IL_0134: conv.r8
 		IL_0135: ldstr ""
 		IL_013a: ldc.i4.0
 		IL_013b: ldc.i4.0
-		IL_013c: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class FunctionObjects.Https_Request_UrlObject_WithOptions_126F256C.FunctionObject_Arrow_FB6C3431_L13C31>(!!0, float64, string, bool, bool)
-		IL_0141: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class FunctionObjects.Https_Request_UrlObject_WithOptions_126F256C.FunctionObject_Arrow_FB6C3431_L13C31>(!!0)
+		IL_013c: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Https_Request_UrlObject_WithOptions/ArrowFunction_L13C31/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_0141: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Https_Request_UrlObject_WithOptions/ArrowFunction_L13C31/FunctionObject>(!!0)
 		IL_0146: stloc.s 9
 		IL_0148: ldloc.s 5
 		IL_014a: ldstr "listen"
@@ -944,437 +1375,6 @@
 	} // end of method Tls_TestCertificates::__js_module_init__
 
 } // end of class Modules.Tls_TestCertificates
-
-.class private auto ansi sealed beforefieldinit FunctionObjects.Https_Request_UrlObject_WithOptions_126F256C.FunctionObject_Arrow_64AC0425_L7C67
-	extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-{
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x263a
-		// Header size: 1
-		// Code size: 7 (0x7)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-		IL_0006: ret
-	} // end of method FunctionObject_Arrow_64AC0425_L7C67::.ctor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_IsConstructor () cil managed 
-	{
-		// Method begins at RVA 0x2642
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_64AC0425_L7C67::get_IsConstructor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_RequiresInvocationContext () cil managed 
-	{
-		// Method begins at RVA 0x2645
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_64AC0425_L7C67::get_RequiresInvocationContext
-
-	.method family hidebysig virtual 
-		instance object CallCore (
-			object thisArgument,
-			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-		) cil managed 
-	{
-		// Method begins at RVA 0x2648
-		// Header size: 1
-		// Code size: 21 (0x15)
-		.maxstack 8
-
-		IL_0000: ldnull
-		IL_0001: ldarg.2
-		IL_0002: ldc.i4.0
-		IL_0003: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-		IL_0008: ldarg.2
-		IL_0009: ldc.i4.1
-		IL_000a: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-		IL_000f: call object Modules.Https_Request_UrlObject_WithOptions/ArrowFunction_L7C67::__js_call__(object, object, object)
-		IL_0014: ret
-	} // end of method FunctionObject_Arrow_64AC0425_L7C67::CallCore
-
-} // end of class FunctionObjects.Https_Request_UrlObject_WithOptions_126F256C.FunctionObject_Arrow_64AC0425_L7C67
-
-.class private auto ansi sealed beforefieldinit FunctionObjects.Https_Request_UrlObject_WithOptions_126F256C.FunctionObject_Arrow_FB6C3431_L13C31
-	extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-{
-	// Fields
-	.field private initonly class Modules.Https_Request_UrlObject_WithOptions/Scope _environment0_Https_Request_UrlObject_WithOptions
-
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor (
-			class Modules.Https_Request_UrlObject_WithOptions/Scope capture0
-		) cil managed 
-	{
-		// Method begins at RVA 0x265e
-		// Header size: 1
-		// Code size: 14 (0xe)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-		IL_0006: ldarg.0
-		IL_0007: ldarg.1
-		IL_0008: stfld class Modules.Https_Request_UrlObject_WithOptions/Scope FunctionObjects.Https_Request_UrlObject_WithOptions_126F256C.FunctionObject_Arrow_FB6C3431_L13C31::_environment0_Https_Request_UrlObject_WithOptions
-		IL_000d: ret
-	} // end of method FunctionObject_Arrow_FB6C3431_L13C31::.ctor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_IsConstructor () cil managed 
-	{
-		// Method begins at RVA 0x266d
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_FB6C3431_L13C31::get_IsConstructor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_RequiresInvocationContext () cil managed 
-	{
-		// Method begins at RVA 0x2670
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_FB6C3431_L13C31::get_RequiresInvocationContext
-
-	.method family hidebysig virtual 
-		instance object CallCore (
-			object thisArgument,
-			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-		) cil managed 
-	{
-		// Method begins at RVA 0x2673
-		// Header size: 1
-		// Code size: 13 (0xd)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: ldfld class Modules.Https_Request_UrlObject_WithOptions/Scope FunctionObjects.Https_Request_UrlObject_WithOptions_126F256C.FunctionObject_Arrow_FB6C3431_L13C31::_environment0_Https_Request_UrlObject_WithOptions
-		IL_0006: ldnull
-		IL_0007: call object Modules.Https_Request_UrlObject_WithOptions/ArrowFunction_L13C31::__js_call__(class Modules.Https_Request_UrlObject_WithOptions/Scope, object)
-		IL_000c: ret
-	} // end of method FunctionObject_Arrow_FB6C3431_L13C31::CallCore
-
-} // end of class FunctionObjects.Https_Request_UrlObject_WithOptions_126F256C.FunctionObject_Arrow_FB6C3431_L13C31
-
-.class private auto ansi sealed beforefieldinit FunctionObjects.Https_Request_UrlObject_WithOptions_126F256C.FunctionObject_Arrow_322374DF_L25C5
-	extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-{
-	// Fields
-	.field private initonly class Modules.Https_Request_UrlObject_WithOptions/Scope _environment0_Https_Request_UrlObject_WithOptions
-	.field private initonly object[] _transitionalScopes
-
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor (
-			class Modules.Https_Request_UrlObject_WithOptions/Scope capture0,
-			object[] capture1
-		) cil managed 
-	{
-		// Method begins at RVA 0x2681
-		// Header size: 1
-		// Code size: 21 (0x15)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-		IL_0006: ldarg.0
-		IL_0007: ldarg.1
-		IL_0008: stfld class Modules.Https_Request_UrlObject_WithOptions/Scope FunctionObjects.Https_Request_UrlObject_WithOptions_126F256C.FunctionObject_Arrow_322374DF_L25C5::_environment0_Https_Request_UrlObject_WithOptions
-		IL_000d: ldarg.0
-		IL_000e: ldarg.2
-		IL_000f: stfld object[] FunctionObjects.Https_Request_UrlObject_WithOptions_126F256C.FunctionObject_Arrow_322374DF_L25C5::_transitionalScopes
-		IL_0014: ret
-	} // end of method FunctionObject_Arrow_322374DF_L25C5::.ctor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_IsConstructor () cil managed 
-	{
-		// Method begins at RVA 0x2697
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_322374DF_L25C5::get_IsConstructor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_RequiresInvocationContext () cil managed 
-	{
-		// Method begins at RVA 0x269a
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_322374DF_L25C5::get_RequiresInvocationContext
-
-	.method family hidebysig virtual 
-		instance object CallCore (
-			object thisArgument,
-			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-		) cil managed 
-	{
-		// Method begins at RVA 0x269d
-		// Header size: 1
-		// Code size: 20 (0x14)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: ldfld object[] FunctionObjects.Https_Request_UrlObject_WithOptions_126F256C.FunctionObject_Arrow_322374DF_L25C5::_transitionalScopes
-		IL_0006: ldnull
-		IL_0007: ldarg.2
-		IL_0008: ldc.i4.0
-		IL_0009: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-		IL_000e: call object Modules.Https_Request_UrlObject_WithOptions/ArrowFunction_L13C31/ArrowFunction_L25C5::__js_call__(object[], object, object)
-		IL_0013: ret
-	} // end of method FunctionObject_Arrow_322374DF_L25C5::CallCore
-
-} // end of class FunctionObjects.Https_Request_UrlObject_WithOptions_126F256C.FunctionObject_Arrow_322374DF_L25C5
-
-.class private auto ansi sealed beforefieldinit FunctionObjects.Https_Request_UrlObject_WithOptions_126F256C.FunctionObject_Arrow_1FE7D0C2_L30C22
-	extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-{
-	// Fields
-	.field private initonly class Modules.Https_Request_UrlObject_WithOptions/Scope _environment0_Https_Request_UrlObject_WithOptions
-	.field private initonly class Modules.Https_Request_UrlObject_WithOptions/ArrowFunction_L13C31/ArrowFunction_L25C5/Scope _environment2_ArrowFunction_L25C5
-	.field private initonly object[] _transitionalScopes
-
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor (
-			class Modules.Https_Request_UrlObject_WithOptions/Scope capture0,
-			class Modules.Https_Request_UrlObject_WithOptions/ArrowFunction_L13C31/ArrowFunction_L25C5/Scope capture1,
-			object[] capture2
-		) cil managed 
-	{
-		// Method begins at RVA 0x26b2
-		// Header size: 1
-		// Code size: 28 (0x1c)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-		IL_0006: ldarg.0
-		IL_0007: ldarg.1
-		IL_0008: stfld class Modules.Https_Request_UrlObject_WithOptions/Scope FunctionObjects.Https_Request_UrlObject_WithOptions_126F256C.FunctionObject_Arrow_1FE7D0C2_L30C22::_environment0_Https_Request_UrlObject_WithOptions
-		IL_000d: ldarg.0
-		IL_000e: ldarg.2
-		IL_000f: stfld class Modules.Https_Request_UrlObject_WithOptions/ArrowFunction_L13C31/ArrowFunction_L25C5/Scope FunctionObjects.Https_Request_UrlObject_WithOptions_126F256C.FunctionObject_Arrow_1FE7D0C2_L30C22::_environment2_ArrowFunction_L25C5
-		IL_0014: ldarg.0
-		IL_0015: ldarg.3
-		IL_0016: stfld object[] FunctionObjects.Https_Request_UrlObject_WithOptions_126F256C.FunctionObject_Arrow_1FE7D0C2_L30C22::_transitionalScopes
-		IL_001b: ret
-	} // end of method FunctionObject_Arrow_1FE7D0C2_L30C22::.ctor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_IsConstructor () cil managed 
-	{
-		// Method begins at RVA 0x26cf
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_1FE7D0C2_L30C22::get_IsConstructor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_RequiresInvocationContext () cil managed 
-	{
-		// Method begins at RVA 0x26d2
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_1FE7D0C2_L30C22::get_RequiresInvocationContext
-
-	.method family hidebysig virtual 
-		instance object CallCore (
-			object thisArgument,
-			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-		) cil managed 
-	{
-		// Method begins at RVA 0x26d5
-		// Header size: 1
-		// Code size: 20 (0x14)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: ldfld object[] FunctionObjects.Https_Request_UrlObject_WithOptions_126F256C.FunctionObject_Arrow_1FE7D0C2_L30C22::_transitionalScopes
-		IL_0006: ldnull
-		IL_0007: ldarg.2
-		IL_0008: ldc.i4.0
-		IL_0009: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-		IL_000e: call object Modules.Https_Request_UrlObject_WithOptions/ArrowFunction_L13C31/ArrowFunction_L25C5/ArrowFunction_L30C22::__js_call__(object[], object, object)
-		IL_0013: ret
-	} // end of method FunctionObject_Arrow_1FE7D0C2_L30C22::CallCore
-
-} // end of class FunctionObjects.Https_Request_UrlObject_WithOptions_126F256C.FunctionObject_Arrow_1FE7D0C2_L30C22
-
-.class private auto ansi sealed beforefieldinit FunctionObjects.Https_Request_UrlObject_WithOptions_126F256C.FunctionObject_Arrow_35E2ECF0_L33C21
-	extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-{
-	// Fields
-	.field private initonly class Modules.Https_Request_UrlObject_WithOptions/Scope _environment0_Https_Request_UrlObject_WithOptions
-	.field private initonly class Modules.Https_Request_UrlObject_WithOptions/ArrowFunction_L13C31/ArrowFunction_L25C5/Scope _environment2_ArrowFunction_L25C5
-	.field private initonly object[] _transitionalScopes
-
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor (
-			class Modules.Https_Request_UrlObject_WithOptions/Scope capture0,
-			class Modules.Https_Request_UrlObject_WithOptions/ArrowFunction_L13C31/ArrowFunction_L25C5/Scope capture1,
-			object[] capture2
-		) cil managed 
-	{
-		// Method begins at RVA 0x26ea
-		// Header size: 1
-		// Code size: 28 (0x1c)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-		IL_0006: ldarg.0
-		IL_0007: ldarg.1
-		IL_0008: stfld class Modules.Https_Request_UrlObject_WithOptions/Scope FunctionObjects.Https_Request_UrlObject_WithOptions_126F256C.FunctionObject_Arrow_35E2ECF0_L33C21::_environment0_Https_Request_UrlObject_WithOptions
-		IL_000d: ldarg.0
-		IL_000e: ldarg.2
-		IL_000f: stfld class Modules.Https_Request_UrlObject_WithOptions/ArrowFunction_L13C31/ArrowFunction_L25C5/Scope FunctionObjects.Https_Request_UrlObject_WithOptions_126F256C.FunctionObject_Arrow_35E2ECF0_L33C21::_environment2_ArrowFunction_L25C5
-		IL_0014: ldarg.0
-		IL_0015: ldarg.3
-		IL_0016: stfld object[] FunctionObjects.Https_Request_UrlObject_WithOptions_126F256C.FunctionObject_Arrow_35E2ECF0_L33C21::_transitionalScopes
-		IL_001b: ret
-	} // end of method FunctionObject_Arrow_35E2ECF0_L33C21::.ctor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_IsConstructor () cil managed 
-	{
-		// Method begins at RVA 0x2707
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_35E2ECF0_L33C21::get_IsConstructor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_RequiresInvocationContext () cil managed 
-	{
-		// Method begins at RVA 0x270a
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_35E2ECF0_L33C21::get_RequiresInvocationContext
-
-	.method family hidebysig virtual 
-		instance object CallCore (
-			object thisArgument,
-			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-		) cil managed 
-	{
-		// Method begins at RVA 0x270d
-		// Header size: 1
-		// Code size: 13 (0xd)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: ldfld object[] FunctionObjects.Https_Request_UrlObject_WithOptions_126F256C.FunctionObject_Arrow_35E2ECF0_L33C21::_transitionalScopes
-		IL_0006: ldnull
-		IL_0007: call object Modules.Https_Request_UrlObject_WithOptions/ArrowFunction_L13C31/ArrowFunction_L25C5/ArrowFunction_L33C21::__js_call__(object[], object)
-		IL_000c: ret
-	} // end of method FunctionObject_Arrow_35E2ECF0_L33C21::CallCore
-
-} // end of class FunctionObjects.Https_Request_UrlObject_WithOptions_126F256C.FunctionObject_Arrow_35E2ECF0_L33C21
-
-.class private auto ansi sealed beforefieldinit FunctionObjects.Https_Request_UrlObject_WithOptions_126F256C.FunctionObject_Arrow_11FA2A60_L35C22
-	extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-{
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x271b
-		// Header size: 1
-		// Code size: 7 (0x7)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-		IL_0006: ret
-	} // end of method FunctionObject_Arrow_11FA2A60_L35C22::.ctor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_IsConstructor () cil managed 
-	{
-		// Method begins at RVA 0x2723
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_11FA2A60_L35C22::get_IsConstructor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_RequiresInvocationContext () cil managed 
-	{
-		// Method begins at RVA 0x2726
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_11FA2A60_L35C22::get_RequiresInvocationContext
-
-	.method family hidebysig virtual 
-		instance object CallCore (
-			object thisArgument,
-			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-		) cil managed 
-	{
-		// Method begins at RVA 0x2729
-		// Header size: 1
-		// Code size: 7 (0x7)
-		.maxstack 8
-
-		IL_0000: ldnull
-		IL_0001: call object Modules.Https_Request_UrlObject_WithOptions/ArrowFunction_L13C31/ArrowFunction_L25C5/ArrowFunction_L33C21/ArrowFunction_L35C22::__js_call__(object)
-		IL_0006: ret
-	} // end of method FunctionObject_Arrow_11FA2A60_L35C22::CallCore
-
-} // end of class FunctionObjects.Https_Request_UrlObject_WithOptions_126F256C.FunctionObject_Arrow_11FA2A60_L35C22
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object

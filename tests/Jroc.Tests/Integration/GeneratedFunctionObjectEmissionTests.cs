@@ -3,6 +3,7 @@ using System.Reflection.Emit;
 using System.Runtime.Loader;
 using JavaScriptRuntime;
 using Jroc.Services;
+using Jroc.Services.TwoPhaseCompilation;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Jroc.Tests.Integration;
@@ -29,9 +30,28 @@ public sealed class GeneratedFunctionObjectEmissionTests
             }
         }
 
+        const increment = value => {
+            {
+                class FunctionObject {
+                    read() {
+                        return value;
+                    }
+                }
+
+                new FunctionObject().read();
+            }
+
+            function FunctionObject() {
+                return value + 1;
+            }
+
+            return FunctionObject();
+        };
+
         console.log(answer());
         console.log(outer());
         console.log(new Echo().method(5));
+        console.log(increment(5));
         """;
 
     [Fact]
@@ -91,8 +111,25 @@ public sealed class GeneratedFunctionObjectEmissionTests
         var innerType = Assert.Single(
             GetFunctionObjectTypes(first.Assembly),
             type => type.Name.EndsWith("_inner", StringComparison.Ordinal));
+        var arrowTypes = GetFunctionObjectTypes(first.Assembly)
+            .Where(type => type.DeclaringType?.Name.StartsWith(
+                    "ArrowFunction_",
+                    StringComparison.Ordinal) == true)
+            .ToArray();
 
         Assert.Empty(answerType.GetFields(BindingFlags.Instance | BindingFlags.NonPublic));
+        Assert.NotEmpty(arrowTypes);
+        Assert.All(
+            arrowTypes,
+            arrowType =>
+            {
+                Assert.Equal(GeneratedFunctionObjectNaming.WrapperTypeName, arrowType.Name);
+                Assert.NotNull(arrowType.DeclaringType);
+            });
+        Assert.True(
+            first.Assembly.GetTypes().Count(type => type.Name.StartsWith(
+                $"<User>{GeneratedFunctionObjectNaming.WrapperTypeName}_",
+                StringComparison.Ordinal)) >= 2);
 
         var innerFields = innerType.GetFields(
             BindingFlags.Instance | BindingFlags.NonPublic);
@@ -200,8 +237,8 @@ public sealed class GeneratedFunctionObjectEmissionTests
     private static Type[] GetFunctionObjectTypes(Assembly assembly)
     {
         return assembly.GetTypes()
-            .Where(type =>
-                type.Namespace?.StartsWith("FunctionObjects.", StringComparison.Ordinal) == true)
+            .Where(type => type != typeof(JsFunctionObject)
+                && typeof(JsFunctionObject).IsAssignableFrom(type))
             .OrderBy(type => type.MetadataToken)
             .ToArray();
     }

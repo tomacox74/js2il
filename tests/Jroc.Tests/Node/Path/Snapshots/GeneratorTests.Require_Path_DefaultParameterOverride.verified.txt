@@ -35,6 +35,65 @@
 
 			} // end of class Scope
 
+			.class nested public auto ansi sealed beforefieldinit FunctionObject
+				extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+			{
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor () cil managed 
+				{
+					// Method begins at RVA 0x2220
+					// Header size: 1
+					// Code size: 7 (0x7)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+					IL_0006: ret
+				} // end of method FunctionObject::.ctor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_IsConstructor () cil managed 
+				{
+					// Method begins at RVA 0x2228
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_IsConstructor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_RequiresInvocationContext () cil managed 
+				{
+					// Method begins at RVA 0x222b
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.1
+					IL_0001: ret
+				} // end of method FunctionObject::get_RequiresInvocationContext
+
+				.method family hidebysig virtual 
+					instance object CallCore (
+						object thisArgument,
+						[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+					) cil managed 
+				{
+					// Method begins at RVA 0x222e
+					// Header size: 1
+					// Code size: 7 (0x7)
+					.maxstack 8
+
+					IL_0000: ldnull
+					IL_0001: call object Modules.Require_Path_DefaultParameterOverride/patchPath/ArrowFunction_L6C28::__js_call__(object)
+					IL_0006: ret
+				} // end of method FunctionObject::CallCore
+
+			} // end of class FunctionObject
+
 
 			// Methods
 			.method public hidebysig static 
@@ -140,7 +199,7 @@
 			.locals init (
 				[0] class Modules.Require_Path_DefaultParameterOverride/patchPath/Scope,
 				[1] object[],
-				[2] class FunctionObjects.Require_Path_DefaultParameterOverride_D7B98D47.FunctionObject_Arrow_149B5DAC_L6C28,
+				[2] class Modules.Require_Path_DefaultParameterOverride/patchPath/ArrowFunction_L6C28/FunctionObject,
 				[3] object
 			)
 
@@ -158,14 +217,14 @@
 			IL_001a: ldarg.0
 			IL_001b: stelem.ref
 			IL_001c: stloc.1
-			IL_001d: newobj instance void FunctionObjects.Require_Path_DefaultParameterOverride_D7B98D47.FunctionObject_Arrow_149B5DAC_L6C28::.ctor()
+			IL_001d: newobj instance void Modules.Require_Path_DefaultParameterOverride/patchPath/ArrowFunction_L6C28/FunctionObject::.ctor()
 			IL_0022: ldc.i4.0
 			IL_0023: conv.r8
 			IL_0024: ldstr ""
 			IL_0029: ldc.i4.1
 			IL_002a: ldc.i4.0
-			IL_002b: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class FunctionObjects.Require_Path_DefaultParameterOverride_D7B98D47.FunctionObject_Arrow_149B5DAC_L6C28>(!!0, float64, string, bool, bool)
-			IL_0030: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class FunctionObjects.Require_Path_DefaultParameterOverride_D7B98D47.FunctionObject_Arrow_149B5DAC_L6C28>(!!0)
+			IL_002b: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_Path_DefaultParameterOverride/patchPath/ArrowFunction_L6C28/FunctionObject>(!!0, float64, string, bool, bool)
+			IL_0030: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_Path_DefaultParameterOverride/patchPath/ArrowFunction_L6C28/FunctionObject>(!!0)
 			IL_0035: stloc.2
 			IL_0036: ldstr "join"
 			IL_003b: ldloc.2
@@ -410,65 +469,6 @@
 	} // end of method FunctionObject_FunctionDeclaration_2695CFF7_patchPath::ConstructCore
 
 } // end of class FunctionObjects.Require_Path_DefaultParameterOverride_D7B98D47.FunctionObject_FunctionDeclaration_2695CFF7_patchPath
-
-.class private auto ansi sealed beforefieldinit FunctionObjects.Require_Path_DefaultParameterOverride_D7B98D47.FunctionObject_Arrow_149B5DAC_L6C28
-	extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-{
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x2220
-		// Header size: 1
-		// Code size: 7 (0x7)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-		IL_0006: ret
-	} // end of method FunctionObject_Arrow_149B5DAC_L6C28::.ctor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_IsConstructor () cil managed 
-	{
-		// Method begins at RVA 0x2228
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_149B5DAC_L6C28::get_IsConstructor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_RequiresInvocationContext () cil managed 
-	{
-		// Method begins at RVA 0x222b
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.1
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_149B5DAC_L6C28::get_RequiresInvocationContext
-
-	.method family hidebysig virtual 
-		instance object CallCore (
-			object thisArgument,
-			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-		) cil managed 
-	{
-		// Method begins at RVA 0x222e
-		// Header size: 1
-		// Code size: 7 (0x7)
-		.maxstack 8
-
-		IL_0000: ldnull
-		IL_0001: call object Modules.Require_Path_DefaultParameterOverride/patchPath/ArrowFunction_L6C28::__js_call__(object)
-		IL_0006: ret
-	} // end of method FunctionObject_Arrow_149B5DAC_L6C28::CallCore
-
-} // end of class FunctionObjects.Require_Path_DefaultParameterOverride_D7B98D47.FunctionObject_Arrow_149B5DAC_L6C28
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object

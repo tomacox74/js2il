@@ -35,6 +35,65 @@
 
 			} // end of class Scope
 
+			.class nested public auto ansi sealed beforefieldinit FunctionObject
+				extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+			{
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor () cil managed 
+				{
+					// Method begins at RVA 0x224c
+					// Header size: 1
+					// Code size: 7 (0x7)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+					IL_0006: ret
+				} // end of method FunctionObject::.ctor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_IsConstructor () cil managed 
+				{
+					// Method begins at RVA 0x2254
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_IsConstructor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_RequiresInvocationContext () cil managed 
+				{
+					// Method begins at RVA 0x2257
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.1
+					IL_0001: ret
+				} // end of method FunctionObject::get_RequiresInvocationContext
+
+				.method family hidebysig virtual 
+					instance object CallCore (
+						object thisArgument,
+						[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+					) cil managed 
+				{
+					// Method begins at RVA 0x225a
+					// Header size: 1
+					// Code size: 7 (0x7)
+					.maxstack 8
+
+					IL_0000: ldnull
+					IL_0001: call object Modules.Require_Path_DynamicImportOverride/ArrowFunction_L5C26/ArrowFunction_L6C30::__js_call__(object)
+					IL_0006: ret
+				} // end of method FunctionObject::CallCore
+
+			} // end of class FunctionObject
+
 
 			// Methods
 			.method public hidebysig static 
@@ -104,6 +163,78 @@
 
 		} // end of class Scope
 
+		.class nested public auto ansi sealed beforefieldinit FunctionObject
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+		{
+			// Fields
+			.field private initonly class Modules.Require_Path_DynamicImportOverride/Scope _environment0_Require_Path_DynamicImportOverride
+
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor (
+					class Modules.Require_Path_DynamicImportOverride/Scope capture0
+				) cil managed 
+			{
+				// Method begins at RVA 0x2222
+				// Header size: 1
+				// Code size: 14 (0xe)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0006: ldarg.0
+				IL_0007: ldarg.1
+				IL_0008: stfld class Modules.Require_Path_DynamicImportOverride/Scope Modules.Require_Path_DynamicImportOverride/ArrowFunction_L5C26/FunctionObject::_environment0_Require_Path_DynamicImportOverride
+				IL_000d: ret
+			} // end of method FunctionObject::.ctor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_IsConstructor () cil managed 
+			{
+				// Method begins at RVA 0x2231
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_IsConstructor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_RequiresInvocationContext () cil managed 
+			{
+				// Method begins at RVA 0x2234
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_RequiresInvocationContext
+
+			.method family hidebysig virtual 
+				instance object CallCore (
+					object thisArgument,
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+				) cil managed 
+			{
+				// Method begins at RVA 0x2237
+				// Header size: 1
+				// Code size: 20 (0x14)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: ldfld class Modules.Require_Path_DynamicImportOverride/Scope Modules.Require_Path_DynamicImportOverride/ArrowFunction_L5C26/FunctionObject::_environment0_Require_Path_DynamicImportOverride
+				IL_0006: ldnull
+				IL_0007: ldarg.2
+				IL_0008: ldc.i4.0
+				IL_0009: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+				IL_000e: call object Modules.Require_Path_DynamicImportOverride/ArrowFunction_L5C26::__js_call__(class Modules.Require_Path_DynamicImportOverride/Scope, object, object)
+				IL_0013: ret
+			} // end of method FunctionObject::CallCore
+
+		} // end of class FunctionObject
+
 
 		// Methods
 		.method public hidebysig static 
@@ -126,7 +257,7 @@
 				[0] class Modules.Require_Path_DynamicImportOverride/ArrowFunction_L5C26/Scope,
 				[1] object,
 				[2] object[],
-				[3] class FunctionObjects.Require_Path_DynamicImportOverride_535ED209.FunctionObject_Arrow_8F4EDF90_L6C30,
+				[3] class Modules.Require_Path_DynamicImportOverride/ArrowFunction_L5C26/ArrowFunction_L6C30/FunctionObject,
 				[4] class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IPathModule,
 				[5] object
 			)
@@ -144,14 +275,14 @@
 			IL_001a: ldarg.0
 			IL_001b: stelem.ref
 			IL_001c: stloc.2
-			IL_001d: newobj instance void FunctionObjects.Require_Path_DynamicImportOverride_535ED209.FunctionObject_Arrow_8F4EDF90_L6C30::.ctor()
+			IL_001d: newobj instance void Modules.Require_Path_DynamicImportOverride/ArrowFunction_L5C26/ArrowFunction_L6C30/FunctionObject::.ctor()
 			IL_0022: ldc.i4.0
 			IL_0023: conv.r8
 			IL_0024: ldstr ""
 			IL_0029: ldc.i4.1
 			IL_002a: ldc.i4.0
-			IL_002b: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class FunctionObjects.Require_Path_DynamicImportOverride_535ED209.FunctionObject_Arrow_8F4EDF90_L6C30>(!!0, float64, string, bool, bool)
-			IL_0030: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class FunctionObjects.Require_Path_DynamicImportOverride_535ED209.FunctionObject_Arrow_8F4EDF90_L6C30>(!!0)
+			IL_002b: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_Path_DynamicImportOverride/ArrowFunction_L5C26/ArrowFunction_L6C30/FunctionObject>(!!0, float64, string, bool, bool)
+			IL_0030: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_Path_DynamicImportOverride/ArrowFunction_L5C26/ArrowFunction_L6C30/FunctionObject>(!!0)
 			IL_0035: stloc.3
 			IL_0036: ldloc.1
 			IL_0037: ldstr "join"
@@ -259,7 +390,7 @@
 			[1] class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IPathModule,
 			[2] class [JavaScriptRuntime]JavaScriptRuntime.Promise,
 			[3] object[],
-			[4] class FunctionObjects.Require_Path_DynamicImportOverride_535ED209.FunctionObject_Arrow_939A5A89_L5C26
+			[4] class Modules.Require_Path_DynamicImportOverride/ArrowFunction_L5C26/FunctionObject
 		)
 
 		IL_0000: newobj instance void Modules.Require_Path_DynamicImportOverride/Scope::.ctor()
@@ -290,14 +421,14 @@
 		IL_003d: ldc.i4.0
 		IL_003e: ldelem.ref
 		IL_003f: castclass Modules.Require_Path_DynamicImportOverride/Scope
-		IL_0044: newobj instance void FunctionObjects.Require_Path_DynamicImportOverride_535ED209.FunctionObject_Arrow_939A5A89_L5C26::.ctor(class Modules.Require_Path_DynamicImportOverride/Scope)
+		IL_0044: newobj instance void Modules.Require_Path_DynamicImportOverride/ArrowFunction_L5C26/FunctionObject::.ctor(class Modules.Require_Path_DynamicImportOverride/Scope)
 		IL_0049: ldc.i4.1
 		IL_004a: conv.r8
 		IL_004b: ldstr ""
 		IL_0050: ldc.i4.0
 		IL_0051: ldc.i4.0
-		IL_0052: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class FunctionObjects.Require_Path_DynamicImportOverride_535ED209.FunctionObject_Arrow_939A5A89_L5C26>(!!0, float64, string, bool, bool)
-		IL_0057: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class FunctionObjects.Require_Path_DynamicImportOverride_535ED209.FunctionObject_Arrow_939A5A89_L5C26>(!!0)
+		IL_0052: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_Path_DynamicImportOverride/ArrowFunction_L5C26/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_0057: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_Path_DynamicImportOverride/ArrowFunction_L5C26/FunctionObject>(!!0)
 		IL_005c: stloc.s 4
 		IL_005e: ldloc.2
 		IL_005f: ldstr "then"
@@ -325,137 +456,6 @@
 	} // end of method Require_Path_DynamicImportOverride::__js_module_init__
 
 } // end of class Modules.Require_Path_DynamicImportOverride
-
-.class private auto ansi sealed beforefieldinit FunctionObjects.Require_Path_DynamicImportOverride_535ED209.FunctionObject_Arrow_939A5A89_L5C26
-	extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-{
-	// Fields
-	.field private initonly class Modules.Require_Path_DynamicImportOverride/Scope _environment0_Require_Path_DynamicImportOverride
-
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor (
-			class Modules.Require_Path_DynamicImportOverride/Scope capture0
-		) cil managed 
-	{
-		// Method begins at RVA 0x2222
-		// Header size: 1
-		// Code size: 14 (0xe)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-		IL_0006: ldarg.0
-		IL_0007: ldarg.1
-		IL_0008: stfld class Modules.Require_Path_DynamicImportOverride/Scope FunctionObjects.Require_Path_DynamicImportOverride_535ED209.FunctionObject_Arrow_939A5A89_L5C26::_environment0_Require_Path_DynamicImportOverride
-		IL_000d: ret
-	} // end of method FunctionObject_Arrow_939A5A89_L5C26::.ctor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_IsConstructor () cil managed 
-	{
-		// Method begins at RVA 0x2231
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_939A5A89_L5C26::get_IsConstructor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_RequiresInvocationContext () cil managed 
-	{
-		// Method begins at RVA 0x2234
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_939A5A89_L5C26::get_RequiresInvocationContext
-
-	.method family hidebysig virtual 
-		instance object CallCore (
-			object thisArgument,
-			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-		) cil managed 
-	{
-		// Method begins at RVA 0x2237
-		// Header size: 1
-		// Code size: 20 (0x14)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: ldfld class Modules.Require_Path_DynamicImportOverride/Scope FunctionObjects.Require_Path_DynamicImportOverride_535ED209.FunctionObject_Arrow_939A5A89_L5C26::_environment0_Require_Path_DynamicImportOverride
-		IL_0006: ldnull
-		IL_0007: ldarg.2
-		IL_0008: ldc.i4.0
-		IL_0009: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-		IL_000e: call object Modules.Require_Path_DynamicImportOverride/ArrowFunction_L5C26::__js_call__(class Modules.Require_Path_DynamicImportOverride/Scope, object, object)
-		IL_0013: ret
-	} // end of method FunctionObject_Arrow_939A5A89_L5C26::CallCore
-
-} // end of class FunctionObjects.Require_Path_DynamicImportOverride_535ED209.FunctionObject_Arrow_939A5A89_L5C26
-
-.class private auto ansi sealed beforefieldinit FunctionObjects.Require_Path_DynamicImportOverride_535ED209.FunctionObject_Arrow_8F4EDF90_L6C30
-	extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-{
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x224c
-		// Header size: 1
-		// Code size: 7 (0x7)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-		IL_0006: ret
-	} // end of method FunctionObject_Arrow_8F4EDF90_L6C30::.ctor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_IsConstructor () cil managed 
-	{
-		// Method begins at RVA 0x2254
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_8F4EDF90_L6C30::get_IsConstructor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_RequiresInvocationContext () cil managed 
-	{
-		// Method begins at RVA 0x2257
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.1
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_8F4EDF90_L6C30::get_RequiresInvocationContext
-
-	.method family hidebysig virtual 
-		instance object CallCore (
-			object thisArgument,
-			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-		) cil managed 
-	{
-		// Method begins at RVA 0x225a
-		// Header size: 1
-		// Code size: 7 (0x7)
-		.maxstack 8
-
-		IL_0000: ldnull
-		IL_0001: call object Modules.Require_Path_DynamicImportOverride/ArrowFunction_L5C26/ArrowFunction_L6C30::__js_call__(object)
-		IL_0006: ret
-	} // end of method FunctionObject_Arrow_8F4EDF90_L6C30::CallCore
-
-} // end of class FunctionObjects.Require_Path_DynamicImportOverride_535ED209.FunctionObject_Arrow_8F4EDF90_L6C30
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object

@@ -35,6 +35,99 @@
 
 			} // end of class Scope
 
+			.class nested public auto ansi sealed beforefieldinit FunctionObject
+				extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+			{
+				// Fields
+				.field private initonly class Modules.Function_NewTarget_Arrow_Inherits/Scope _environment0_Function_NewTarget_Arrow_Inherits
+				.field private initonly object[] _transitionalScopes
+				.field private initonly class [System.Runtime]System.Object _lexicalNewTarget
+
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor (
+						class Modules.Function_NewTarget_Arrow_Inherits/Scope capture0,
+						object[] capture1,
+						class [System.Runtime]System.Object capture2
+					) cil managed 
+				{
+					// Method begins at RVA 0x21c1
+					// Header size: 1
+					// Code size: 28 (0x1c)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+					IL_0006: ldarg.0
+					IL_0007: ldarg.1
+					IL_0008: stfld class Modules.Function_NewTarget_Arrow_Inherits/Scope Modules.Function_NewTarget_Arrow_Inherits/Outer/ArrowFunction_L4C19/FunctionObject::_environment0_Function_NewTarget_Arrow_Inherits
+					IL_000d: ldarg.0
+					IL_000e: ldarg.2
+					IL_000f: stfld object[] Modules.Function_NewTarget_Arrow_Inherits/Outer/ArrowFunction_L4C19/FunctionObject::_transitionalScopes
+					IL_0014: ldarg.0
+					IL_0015: ldarg.3
+					IL_0016: stfld class [System.Runtime]System.Object Modules.Function_NewTarget_Arrow_Inherits/Outer/ArrowFunction_L4C19/FunctionObject::_lexicalNewTarget
+					IL_001b: ret
+				} // end of method FunctionObject::.ctor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_IsConstructor () cil managed 
+				{
+					// Method begins at RVA 0x21de
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_IsConstructor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_RequiresInvocationContext () cil managed 
+				{
+					// Method begins at RVA 0x21e1
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.1
+					IL_0001: ret
+				} // end of method FunctionObject::get_RequiresInvocationContext
+
+				.method family hidebysig virtual 
+					instance object ResolveCallNewTargetCore () cil managed 
+				{
+					// Method begins at RVA 0x21e4
+					// Header size: 1
+					// Code size: 7 (0x7)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: ldfld class [System.Runtime]System.Object Modules.Function_NewTarget_Arrow_Inherits/Outer/ArrowFunction_L4C19/FunctionObject::_lexicalNewTarget
+					IL_0006: ret
+				} // end of method FunctionObject::ResolveCallNewTargetCore
+
+				.method family hidebysig virtual 
+					instance object CallCore (
+						object thisArgument,
+						[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+					) cil managed 
+				{
+					// Method begins at RVA 0x21ec
+					// Header size: 1
+					// Code size: 18 (0x12)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: ldfld object[] Modules.Function_NewTarget_Arrow_Inherits/Outer/ArrowFunction_L4C19/FunctionObject::_transitionalScopes
+					IL_0006: ldarg.0
+					IL_0007: ldfld class [System.Runtime]System.Object Modules.Function_NewTarget_Arrow_Inherits/Outer/ArrowFunction_L4C19/FunctionObject::_lexicalNewTarget
+					IL_000c: call object Modules.Function_NewTarget_Arrow_Inherits/Outer/ArrowFunction_L4C19::__js_call__(object[], object)
+					IL_0011: ret
+				} // end of method FunctionObject::CallCore
+
+			} // end of class FunctionObject
+
 
 			// Methods
 			.method public hidebysig static 
@@ -129,7 +222,7 @@
 				[0] class Modules.Function_NewTarget_Arrow_Inherits/Outer/Scope,
 				[1] object,
 				[2] object[],
-				[3] class FunctionObjects.Function_NewTarget_Arrow_Inherits_B5B38874.FunctionObject_Arrow_9517347F_L4C19
+				[3] class Modules.Function_NewTarget_Arrow_Inherits/Outer/ArrowFunction_L4C19/FunctionObject
 			)
 
 			IL_0000: newobj instance void Modules.Function_NewTarget_Arrow_Inherits/Outer/Scope::.ctor()
@@ -151,14 +244,14 @@
 			IL_0018: castclass Modules.Function_NewTarget_Arrow_Inherits/Scope
 			IL_001d: ldloc.2
 			IL_001e: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
-			IL_0023: newobj instance void FunctionObjects.Function_NewTarget_Arrow_Inherits_B5B38874.FunctionObject_Arrow_9517347F_L4C19::.ctor(class Modules.Function_NewTarget_Arrow_Inherits/Scope, object[], class [System.Runtime]System.Object)
+			IL_0023: newobj instance void Modules.Function_NewTarget_Arrow_Inherits/Outer/ArrowFunction_L4C19/FunctionObject::.ctor(class Modules.Function_NewTarget_Arrow_Inherits/Scope, object[], class [System.Runtime]System.Object)
 			IL_0028: ldc.i4.0
 			IL_0029: conv.r8
 			IL_002a: ldstr ""
 			IL_002f: ldc.i4.1
 			IL_0030: ldc.i4.0
-			IL_0031: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class FunctionObjects.Function_NewTarget_Arrow_Inherits_B5B38874.FunctionObject_Arrow_9517347F_L4C19>(!!0, float64, string, bool, bool)
-			IL_0036: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class FunctionObjects.Function_NewTarget_Arrow_Inherits_B5B38874.FunctionObject_Arrow_9517347F_L4C19>(!!0)
+			IL_0031: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Function_NewTarget_Arrow_Inherits/Outer/ArrowFunction_L4C19/FunctionObject>(!!0, float64, string, bool, bool)
+			IL_0036: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Function_NewTarget_Arrow_Inherits/Outer/ArrowFunction_L4C19/FunctionObject>(!!0)
 			IL_003b: stloc.3
 			IL_003c: ldloc.3
 			IL_003d: ldstr "arrow"
@@ -361,99 +454,6 @@
 	} // end of method FunctionObject_FunctionDeclaration_B41BFF0E_Outer::ConstructCore
 
 } // end of class FunctionObjects.Function_NewTarget_Arrow_Inherits_B5B38874.FunctionObject_FunctionDeclaration_B41BFF0E_Outer
-
-.class private auto ansi sealed beforefieldinit FunctionObjects.Function_NewTarget_Arrow_Inherits_B5B38874.FunctionObject_Arrow_9517347F_L4C19
-	extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-{
-	// Fields
-	.field private initonly class Modules.Function_NewTarget_Arrow_Inherits/Scope _environment0_Function_NewTarget_Arrow_Inherits
-	.field private initonly object[] _transitionalScopes
-	.field private initonly class [System.Runtime]System.Object _lexicalNewTarget
-
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor (
-			class Modules.Function_NewTarget_Arrow_Inherits/Scope capture0,
-			object[] capture1,
-			class [System.Runtime]System.Object capture2
-		) cil managed 
-	{
-		// Method begins at RVA 0x21c1
-		// Header size: 1
-		// Code size: 28 (0x1c)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-		IL_0006: ldarg.0
-		IL_0007: ldarg.1
-		IL_0008: stfld class Modules.Function_NewTarget_Arrow_Inherits/Scope FunctionObjects.Function_NewTarget_Arrow_Inherits_B5B38874.FunctionObject_Arrow_9517347F_L4C19::_environment0_Function_NewTarget_Arrow_Inherits
-		IL_000d: ldarg.0
-		IL_000e: ldarg.2
-		IL_000f: stfld object[] FunctionObjects.Function_NewTarget_Arrow_Inherits_B5B38874.FunctionObject_Arrow_9517347F_L4C19::_transitionalScopes
-		IL_0014: ldarg.0
-		IL_0015: ldarg.3
-		IL_0016: stfld class [System.Runtime]System.Object FunctionObjects.Function_NewTarget_Arrow_Inherits_B5B38874.FunctionObject_Arrow_9517347F_L4C19::_lexicalNewTarget
-		IL_001b: ret
-	} // end of method FunctionObject_Arrow_9517347F_L4C19::.ctor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_IsConstructor () cil managed 
-	{
-		// Method begins at RVA 0x21de
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_9517347F_L4C19::get_IsConstructor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_RequiresInvocationContext () cil managed 
-	{
-		// Method begins at RVA 0x21e1
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.1
-		IL_0001: ret
-	} // end of method FunctionObject_Arrow_9517347F_L4C19::get_RequiresInvocationContext
-
-	.method family hidebysig virtual 
-		instance object ResolveCallNewTargetCore () cil managed 
-	{
-		// Method begins at RVA 0x21e4
-		// Header size: 1
-		// Code size: 7 (0x7)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: ldfld class [System.Runtime]System.Object FunctionObjects.Function_NewTarget_Arrow_Inherits_B5B38874.FunctionObject_Arrow_9517347F_L4C19::_lexicalNewTarget
-		IL_0006: ret
-	} // end of method FunctionObject_Arrow_9517347F_L4C19::ResolveCallNewTargetCore
-
-	.method family hidebysig virtual 
-		instance object CallCore (
-			object thisArgument,
-			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-		) cil managed 
-	{
-		// Method begins at RVA 0x21ec
-		// Header size: 1
-		// Code size: 18 (0x12)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: ldfld object[] FunctionObjects.Function_NewTarget_Arrow_Inherits_B5B38874.FunctionObject_Arrow_9517347F_L4C19::_transitionalScopes
-		IL_0006: ldarg.0
-		IL_0007: ldfld class [System.Runtime]System.Object FunctionObjects.Function_NewTarget_Arrow_Inherits_B5B38874.FunctionObject_Arrow_9517347F_L4C19::_lexicalNewTarget
-		IL_000c: call object Modules.Function_NewTarget_Arrow_Inherits/Outer/ArrowFunction_L4C19::__js_call__(object[], object)
-		IL_0011: ret
-	} // end of method FunctionObject_Arrow_9517347F_L4C19::CallCore
-
-} // end of class FunctionObjects.Function_NewTarget_Arrow_Inherits_B5B38874.FunctionObject_Arrow_9517347F_L4C19
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object
