@@ -540,8 +540,6 @@ public class SymbolTableTypeInferenceTests
             ";
 
         var outputDir = Path.Combine(Path.GetTempPath(), "Jroc.Tests", "CapturedLetArray", Guid.NewGuid().ToString("N"));
-        Directory.CreateDirectory(outputDir);
-
         var compiled = TestCompiler.Compile(
             testName: "CapturedLetArray",
             testCategory: "SymbolTable",
@@ -549,7 +547,11 @@ public class SymbolTableTypeInferenceTests
             getJavaScriptAndSourcePath: _ => (source, null),
             additionalScripts: null);
 
-        var il = Utilities.AssemblyToText.ConvertToText(compiled.AssemblyPath);
+        Assert.Null(compiled.AssemblyPath);
+
+        var il = Utilities.AssemblyToText.ConvertToText(
+            compiled.Artifact.PeBytes,
+            compiled.Artifact.AssemblyName);
         Assert.Contains("object 'ret'", il);
         Assert.DoesNotContain("JavaScriptRuntime.Array 'ret'", il);
     }
