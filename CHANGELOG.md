@@ -16,6 +16,12 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   delegate or dynamic-method creation. Route affected ECMAScript and Node.js
   callback consumers through the centralized callable ABI while retaining
   inferred typed entry points for statically known calls.
+- compiler/runtime: close issue #1713 by giving generated ordinary function
+  objects their own `[[Construct]]` body adapters, mutable prototype objects,
+  receiver allocation, return-override handling, and explicit `new.target`
+  propagation. Preserve alternate `Reflect.construct` targets, bound
+  constructors, derived classes with function-valued bases, and
+  non-constructability for arrows and methods.
 
 ## v0.12.4 - 2026-08-06
 

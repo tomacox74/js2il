@@ -77,9 +77,10 @@
         "specUrl": "https://tc39.es/ecma262/#sec-getnewtarget",
         "testScripts": [
           "tests/Jroc.Tests/Function/JavaScript/Function_NewTarget_NewVsCall.js",
-          "tests/Jroc.Tests/Function/JavaScript/Function_NewTarget_Arrow_Inherits.js"
+          "tests/Jroc.Tests/Function/JavaScript/Function_NewTarget_Arrow_Inherits.js",
+          "tests/Jroc.Tests/Function/JavaScript/Function_GeneratedConstruction_Semantics.js"
         ],
-        "notes": "new.target is propagated through runtime call helpers for supported function/arrow/class behaviors."
+        "notes": "new.target is propagated through generated function construction adapters and runtime call helpers, including alternate Reflect.construct targets, bound constructors, arrows, and derived classes with function-valued bases."
       },
       {
         "clause": "9.4.6",
