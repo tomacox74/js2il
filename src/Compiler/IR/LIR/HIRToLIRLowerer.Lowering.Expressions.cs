@@ -1050,7 +1050,15 @@ public sealed partial class HIRToLIRLowerer
                 }
             }
 
-            resultTempVar = classConstructorValue;
+            resultTempVar = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
+                MethodName:
+                    nameof(JavaScriptRuntime.RuntimeServices.RefreshClassConstructorDescriptors),
+                Arguments: [EnsureObject(classConstructorValue)],
+                Result: resultTempVar));
+            DefineTempStorage(
+                resultTempVar,
+                new ValueStorage(ValueStorageKind.Reference, typeof(object)));
             return true;
         }
         finally

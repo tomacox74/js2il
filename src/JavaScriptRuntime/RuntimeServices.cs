@@ -263,7 +263,11 @@ public class RuntimeServices
 
         var scopes = scopesValue as object[] ?? EmptyScopes;
         var cacheKey = new ClassConstructorCacheKey(type, scopes, length);
-        return _classConstructorValues.GetOrAdd(cacheKey, _ => new ClassConstructorValue(type, scopes, length));
+        var constructor = _classConstructorValues.GetOrAdd(
+            cacheKey,
+            _ => new ClassConstructorValue(type, scopes, length));
+        CopyStaticClassDescriptors(type, constructor);
+        return constructor;
     }
 
     public static object CreateFreshClassConstructorValue(
@@ -279,6 +283,18 @@ public class RuntimeServices
         var length = formalParamCountValue is double value ? (int)value : 0;
         var scopes = scopesValue as object[] ?? EmptyScopes;
         var constructor = new ClassConstructorValue(type, scopes, length);
+        CopyStaticClassDescriptors(type, constructor);
+        _ = TryEnsureClassConstructorMetadataPropertyDescriptor(
+            constructor,
+            "prototype",
+            out _);
+        return constructor;
+    }
+
+    private static void CopyStaticClassDescriptors(
+        Type type,
+        ClassConstructorValue constructor)
+    {
         foreach (var key in PropertyDescriptorStore.GetOwnKeys(type))
         {
             if (string.Equals(key, "prototype", StringComparison.Ordinal)
@@ -295,11 +311,45 @@ public class RuntimeServices
                     CloneDescriptor(descriptor));
             }
         }
-        _ = TryEnsureClassConstructorMetadataPropertyDescriptor(
-            constructor,
-            "prototype",
-            out _);
-        return constructor;
+    }
+
+    public static object RefreshClassConstructorDescriptors(
+        object constructorValue)
+    {
+        if (constructorValue is not ClassConstructorValue constructor)
+        {
+            return constructorValue;
+        }
+
+        CopyStaticClassDescriptors(constructor.Type, constructor);
+        if (!TryEnsureClassConstructorMetadataPropertyDescriptor(
+                constructor,
+                "prototype",
+                out var constructorPrototype)
+            || constructorPrototype.Value is not object targetPrototype
+            || !PropertyDescriptorStore.TryGetOwn(
+                constructor.Type,
+                "prototype",
+                out var typePrototype)
+            || typePrototype.Value is not object sourcePrototype)
+        {
+            return constructorValue;
+        }
+
+        foreach (var key in PropertyDescriptorStore.GetOwnKeys(sourcePrototype))
+        {
+            if (PropertyDescriptorStore.TryGetOwn(
+                    sourcePrototype,
+                    key,
+                    out var descriptor))
+            {
+                PropertyDescriptorStore.DefineOrUpdate(
+                    targetPrototype,
+                    key,
+                    CloneDescriptor(descriptor));
+            }
+        }
+        return constructorValue;
     }
 
     public static object SetClassConstructorPrototype(object constructorValue, object? baseConstructorValue)

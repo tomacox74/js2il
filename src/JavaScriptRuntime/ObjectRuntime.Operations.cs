@@ -3786,6 +3786,16 @@ namespace JavaScriptRuntime
                 return true;
             }
 
+            if (target is ClassConstructorValue staticClassConstructor
+                && PropertyDescriptorStore.TryGetOwn(
+                    staticClassConstructor.Type,
+                    propName,
+                    out descriptor))
+            {
+                descriptor = PropertyDescriptorStore.CloneDescriptor(descriptor);
+                return true;
+            }
+
             if (RuntimeServices.TryEnsureLazyClassMethodDataProperty(target, propName, out descriptor))
             {
                 return true;
@@ -4197,6 +4207,23 @@ namespace JavaScriptRuntime
                 && RuntimeServices.TryEnsureClassConstructorMetadataPropertyDescriptor(classConstructorValue, propName, out var classMetadataDesc))
             {
                 value = classMetadataDesc.Value;
+                return true;
+            }
+
+            if (target is ClassConstructorValue staticClassConstructor
+                && PropertyDescriptorStore.TryGetOwn(
+                    staticClassConstructor.Type,
+                    propName,
+                    out var staticClassDescriptor))
+            {
+                value = staticClassDescriptor.Kind == JsPropertyDescriptorKind.Accessor
+                    ? staticClassDescriptor.Get is null or JsNull
+                        ? null
+                        : InvokeCallable(
+                            staticClassDescriptor.Get,
+                            target,
+                            System.Array.Empty<object>())
+                    : staticClassDescriptor.Value;
                 return true;
             }
 

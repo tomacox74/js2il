@@ -736,6 +736,7 @@ public sealed partial class HIRToLIRLowerer
                 {
                     return true;
                 }
+
             }
             catch
             {
@@ -810,6 +811,15 @@ public sealed partial class HIRToLIRLowerer
         _methodBodyIR.Instructions.Add(new LIRBuildScopesArray(new[] { globalSlotSource }, resultTemp));
         return true;
     }
+
+    private bool TryBuildScopesArrayForClassMethod(
+        Scope methodScope,
+        TempVariable resultTemp)
+        => TryBuildScopesArrayFromLayout(
+            methodScope,
+            CallableKind.Function,
+            resultTemp);
+
     /// <summary>
     /// Finds the scope associated with a function symbol.
     /// </summary>

@@ -1,6 +1,8 @@
 using Jroc.HIR;
 using Jroc.Services;
 using Jroc.Services.TwoPhaseCompilation;
+using Jroc.SymbolTables;
+using Acornima.Ast;
 
 namespace Jroc.IR;
 
@@ -110,9 +112,19 @@ public sealed partial class HIRToLIRLowerer
         }
 
         var scopesTemp = CreateTempVariable();
-        if (!TryBuildScopesArrayForClassConstructor(expression.ClassScope, scopesTemp, allowEmptyOnUnmappedGlobal: true))
+        var methodScope = ResolveClassMethodScope(
+            expression.ClassScope,
+            expression.CallableId);
+        if (methodScope == null
+            || !TryBuildScopesArrayForClassMethod(methodScope, scopesTemp))
         {
-            return false;
+            if (!TryBuildScopesArrayForClassConstructor(
+                    expression.ClassScope,
+                    scopesTemp,
+                    allowEmptyOnUnmappedGlobal: true))
+            {
+                return false;
+            }
         }
         DefineTempStorage(scopesTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
         if (expression.Owner is HIRUserClassTypeExpression accessorOwnerClass)
@@ -219,10 +231,14 @@ public sealed partial class HIRToLIRLowerer
         }
 
         var scopesTemp = CreateTempVariable();
-        if (!TryBuildScopesArrayForClassConstructor(expression.ClassScope, scopesTemp, allowEmptyOnUnmappedGlobal: true))
+        if (!TryBuildScopesArrayForClassConstructor(
+                expression.ClassScope,
+                scopesTemp,
+                allowEmptyOnUnmappedGlobal: true))
         {
             return false;
         }
+
         DefineTempStorage(scopesTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
         if (expression.Owner is HIRUserClassTypeExpression methodOwnerClass)
         {
@@ -238,9 +254,28 @@ public sealed partial class HIRToLIRLowerer
                 var targetTemp = methodDefinition.IsStatic
                     ? ownerTemp
                     : prototypeTemp;
+                var methodScopesTemp = scopesTemp;
+                var methodScope = ResolveClassMethodScope(
+                    expression.ClassScope,
+                    methodDefinition.CallableId);
+                if (methodScope != null)
+                {
+                    var candidateScopesTemp = CreateTempVariable();
+                    if (TryBuildScopesArrayForClassMethod(
+                            methodScope,
+                            candidateScopesTemp))
+                    {
+                        DefineTempStorage(
+                            candidateScopesTemp,
+                            new ValueStorage(
+                                ValueStorageKind.Reference,
+                                typeof(object[])));
+                        methodScopesTemp = candidateScopesTemp;
+                    }
+                }
                 var functionObject = EmitGeneratedClassMethodObject(
                     methodDefinition.CallableId,
-                    scopesTemp,
+                    methodScopesTemp,
                     targetTemp,
                     ownerTemp,
                     methodDefinition.FunctionName);
@@ -316,6 +351,19 @@ public sealed partial class HIRToLIRLowerer
                 callableId,
                 allowGeneratedFunctionObject: true));
         return EmitMarkUndefinedPrototype(result);
+    }
+
+    private static Scope? ResolveClassMethodScope(
+        Scope classScope,
+        CallableId callableId)
+    {
+        if (callableId.AstNode is not MethodDefinition methodDefinition)
+        {
+            return null;
+        }
+
+        return classScope.Children.FirstOrDefault(scope =>
+            ReferenceEquals(scope.AstNode, methodDefinition.Value));
     }
 
     private TempVariable CreateStringConstant(string value)

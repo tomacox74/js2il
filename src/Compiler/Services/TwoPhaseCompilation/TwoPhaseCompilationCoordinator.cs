@@ -1867,7 +1867,10 @@ public sealed class TwoPhaseCompilationCoordinator
             return null;
         }
 
-        if (callable.Kind is CallableKind.ClassMethod or CallableKind.ClassStaticMethod)
+        if (callable.Kind is CallableKind.ClassMethod
+            or CallableKind.ClassStaticMethod
+            or CallableKind.ClassGetter
+            or CallableKind.ClassStaticGetter)
         {
             return scope.StableReturnClrType;
         }
