@@ -66,10 +66,11 @@ namespace Jroc.Tests
 
         private static string GetTestOutputPath(string testCategory, string testName)
         {
-            // Keep per-compilation isolation when artifacts are materialized. No directory is
-            // created during the default in-memory path.
+            // Keep per-compilation isolation for relative filesystem behavior. Assemblies remain
+            // in memory unless artifact materialization is explicitly requested.
             var runId = Guid.NewGuid().ToString("N");
             var path = Path.Combine(_sharedOutputRoot, $"{testCategory}.ExecutionTests", runId);
+            Directory.CreateDirectory(path);
             return path;
         }
 
