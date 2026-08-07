@@ -47,12 +47,13 @@ function normalizeCategory(category) {
   };
 }
 
-function getCandidateCategoryRoots(categoryPath) {
+function getCandidateCategoryRoots(category) {
   const tempDir = os.tmpdir();
-  return [
-    path.join(tempDir, 'Jroc.Tests', `${categoryPath}.GeneratorTests`),
-    path.join(tempDir, 'Jroc.Tests', `${categoryPath}.ExecutionTests`),
-  ];
+  const categoryRoots = new Set([category.namespace, category.path]);
+  return [...categoryRoots].flatMap((categoryRoot) => [
+    path.join(tempDir, 'Jroc.Tests', `${categoryRoot}.GeneratorTests`),
+    path.join(tempDir, 'Jroc.Tests', `${categoryRoot}.ExecutionTests`),
+  ]);
 }
 
 function tryFindLatestGeneratedAssemblyInRoot(categoryRoot, assemblyFileName) {
@@ -81,15 +82,15 @@ function tryFindLatestGeneratedAssemblyInRoot(categoryRoot, assemblyFileName) {
   return bestPath;
 }
 
-function tryFindLatestGeneratedAssembly(categoryPath, assemblyFileBaseName) {
-  const [generatorRoot, executionRoot] =
-    getCandidateCategoryRoots(categoryPath);
+function tryFindLatestGeneratedAssembly(category, assemblyFileBaseName) {
   const assemblyFileName = `${assemblyFileBaseName}.dll`;
-  const generated = tryFindLatestGeneratedAssemblyInRoot(generatorRoot, assemblyFileName);
-  if (generated) {
-    return generated;
+  for (const categoryRoot of getCandidateCategoryRoots(category)) {
+    const generated = tryFindLatestGeneratedAssemblyInRoot(categoryRoot, assemblyFileName);
+    if (generated) {
+      return generated;
+    }
   }
-  return tryFindLatestGeneratedAssemblyInRoot(executionRoot, assemblyFileName);
+  return null;
 }
 
 function findProjectRoot(startDir) {
@@ -159,8 +160,12 @@ function main() {
   const testProject = path.join(projectRoot, 'tests', 'Jroc.Tests', 'Jroc.Tests.csproj');
 
   console.log(`Running test: ${fullTestName}`);
+  const testEnvironment = {
+    ...process.env,
+    JROC_WRITE_TEST_ARTIFACTS: '1',
+  };
 
-  // Step 1: Run the generator test
+  // Step 1: Run the generator test with explicit artifact materialization enabled.
   const testResult = childProcess.spawnSync(
     'dotnet',
     ['test', testProject, '--filter', `FullyQualifiedName=${fullTestName}`, '--no-build'],
@@ -168,13 +173,14 @@ function main() {
       stdio: 'inherit',
       shell: true,
       cwd: projectRoot,
+      env: testEnvironment,
     }
   );
 
   const assemblyFileBaseName = getAssemblyFileBaseName(testName);
   let assemblyPath =
     testResult.status === 0
-      ? tryFindLatestGeneratedAssembly(category.path, assemblyFileBaseName)
+      ? tryFindLatestGeneratedAssembly(category, assemblyFileBaseName)
       : null;
 
   // `dotnet test --no-build` can exit successfully without running tests when
@@ -189,6 +195,7 @@ function main() {
         stdio: 'inherit',
         shell: true,
         cwd: projectRoot,
+        env: testEnvironment,
       }
     );
 
@@ -197,21 +204,18 @@ function main() {
       process.exit(1);
     }
 
-    assemblyPath = tryFindLatestGeneratedAssembly(
-      category.path,
-      assemblyFileBaseName
-    );
+    assemblyPath = tryFindLatestGeneratedAssembly(category, assemblyFileBaseName);
   }
 
   // Step 2: Find the generated assembly
-  // Current test harness can write to either:
+  // JROC_WRITE_TEST_ARTIFACTS=1 writes to one of:
   //   %TEMP%/Jroc.Tests/{Category}.GeneratorTests/{runId}/{assemblyName}.dll
   //   %TEMP%/Jroc.Tests/{Category}.ExecutionTests/{runId}/{assemblyName}.dll
   // where assemblyName is the basename of the JS entry file.
   if (!assemblyPath) {
     console.error(`Assembly not found for category '${category.path}' and test '${testName}'.`);
     console.error('Looked under:');
-    const categoryRoots = getCandidateCategoryRoots(category.path);
+    const categoryRoots = getCandidateCategoryRoots(category);
     for (let i = 0; i < categoryRoots.length; i += 1) {
       console.error(`  - ${categoryRoots[i]}`);
     }

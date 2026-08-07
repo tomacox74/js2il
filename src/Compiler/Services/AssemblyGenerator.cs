@@ -679,74 +679,7 @@ namespace Jroc.Services
         {
             ArgumentNullException.ThrowIfNull(artifact);
             ArgumentNullException.ThrowIfNull(outputPath);
-
-            var name = artifact.AssemblyName;
-            string assemblyDll = Path.Combine(outputPath, $"{name}.dll");
-            WriteBytesAtomicallyWithRetry(assemblyDll, artifact.PeBytes);
-
-            if (artifact.PdbBytes is { Length: > 0 } pdbBytes)
-            {
-                var pdbPath = Path.Combine(outputPath, $"{name}.pdb");
-                WriteBytesAtomicallyWithRetry(pdbPath, pdbBytes);
-            }
-
-            RuntimeConfigWriter.WriteRuntimeConfigJson(assemblyDll, typeof(object).Assembly.GetName());
-
-            // Copy JavaScriptRuntime.dll to output directory
-            // when it differs from the source.
-            var jsRuntimeDll = typeof(JavaScriptRuntime.ObjectRuntime).Assembly.Location!;
-            var jsRuntimeAssemblyFileName = Path.GetFileName(jsRuntimeDll);
-            var jsRuntimeDllDest = Path.Combine(outputPath, jsRuntimeAssemblyFileName);
-            if (File.Exists(jsRuntimeDll))
-            {
-                var sourceInfo = new FileInfo(jsRuntimeDll);
-
-                // Assembly file version often remains constant during local development.
-                // Use metadata on disk to detect changes and avoid leaving stale runtimes in output folders.
-                if (File.Exists(jsRuntimeDllDest))
-                {
-                    var destInfo = new FileInfo(jsRuntimeDllDest);
-                    if (sourceInfo.Length == destInfo.Length && sourceInfo.LastWriteTimeUtc == destInfo.LastWriteTimeUtc)
-                    {
-                        return;
-                    }
-                }
-
-                try
-                {
-                    File.Copy(jsRuntimeDll, jsRuntimeDllDest, true);
-                    File.SetLastWriteTimeUtc(jsRuntimeDllDest, sourceInfo.LastWriteTimeUtc);
-                }
-                catch (IOException)
-                {
-                    // In parallel test runs multiple compilations may attempt to write the runtime
-                    // into the same output folder at the same time, or the runtime may already be
-                    // loaded by another process. If the destination exists, treat it as good enough.
-                    if (!File.Exists(jsRuntimeDllDest))
-                    {
-                        throw;
-                    }
-                }
-
-                var jsRuntimePdb = Path.ChangeExtension(jsRuntimeDll, ".pdb");
-                var jsRuntimePdbDest = Path.ChangeExtension(jsRuntimeDllDest, ".pdb");
-                if (File.Exists(jsRuntimePdb))
-                {
-                    var sourcePdbInfo = new FileInfo(jsRuntimePdb);
-                    try
-                    {
-                        File.Copy(jsRuntimePdb, jsRuntimePdbDest, true);
-                        File.SetLastWriteTimeUtc(jsRuntimePdbDest, sourcePdbInfo.LastWriteTimeUtc);
-                    }
-                    catch (IOException)
-                    {
-                        if (!File.Exists(jsRuntimePdbDest))
-                        {
-                            throw;
-                        }
-                    }
-                }
-            }
+            artifact.Materialize(outputPath);
         }
 
         private JrocCompiledAssemblyArtifact CreateCompiledAssemblyArtifact(string name, IReadOnlyList<string> moduleIds)
@@ -808,52 +741,5 @@ namespace Jroc.Services
             return publishedIds;
         }
 
-        private static void WriteBytesAtomicallyWithRetry(string destinationPath, byte[] bytes)
-        {
-            Directory.CreateDirectory(Path.GetDirectoryName(destinationPath) ?? ".");
-
-            // Windows can keep the output file briefly locked (AV/indexing/build hosts). Writing the final
-            // file repeatedly can prolong the lock (each write can re-trigger scanning), so we write to a
-            // unique temp file first and then retry only the final replace.
-            string tempPath = destinationPath + ".tmp_" + Guid.NewGuid().ToString("N");
-            File.WriteAllBytes(tempPath, bytes);
-
-            try
-            {
-                const int maxReplaceWaitMs = 60_000;
-                long startTick = Environment.TickCount64;
-                int attempt = 0;
-                while (true)
-                {
-                    attempt++;
-                    try
-                    {
-                        File.Move(tempPath, destinationPath, overwrite: true);
-                        break;
-                    }
-                    catch (IOException) when ((Environment.TickCount64 - startTick) < maxReplaceWaitMs)
-                    {
-                        int delayMs = Math.Min(1000, 50 * attempt);
-                        Thread.Sleep(delayMs);
-                    }
-                    catch (UnauthorizedAccessException) when ((Environment.TickCount64 - startTick) < maxReplaceWaitMs)
-                    {
-                        int delayMs = Math.Min(1000, 50 * attempt);
-                        Thread.Sleep(delayMs);
-                    }
-                }
-            }
-            finally
-            {
-                try
-                {
-                    if (File.Exists(tempPath)) File.Delete(tempPath);
-                }
-                catch (IOException)
-                {
-                    // Best-effort cleanup; temp files are safe to leave behind.
-                }
-            }
-        }
     }
 }

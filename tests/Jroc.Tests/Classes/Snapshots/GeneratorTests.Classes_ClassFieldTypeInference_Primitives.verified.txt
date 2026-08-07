@@ -71,6 +71,156 @@
 
 		} // end of class Scope_increment
 
+		.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassConstructor_E57E053D_Counter
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+		{
+			// Fields
+			.field private initonly object[] _transitionalScopes
+
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor (
+					object[] capture0
+				) cil managed 
+			{
+				// Method begins at RVA 0x2242
+				// Header size: 1
+				// Code size: 14 (0xe)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0006: ldarg.0
+				IL_0007: ldarg.1
+				IL_0008: stfld object[] Modules.Classes_ClassFieldTypeInference_Primitives/Counter/FunctionObject_ClassConstructor_E57E053D_Counter::_transitionalScopes
+				IL_000d: ret
+			} // end of method FunctionObject_ClassConstructor_E57E053D_Counter::.ctor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_IsConstructor () cil managed 
+			{
+				// Method begins at RVA 0x2251
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.1
+				IL_0001: ret
+			} // end of method FunctionObject_ClassConstructor_E57E053D_Counter::get_IsConstructor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_RequiresInvocationContext () cil managed 
+			{
+				// Method begins at RVA 0x2254
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.1
+				IL_0001: ret
+			} // end of method FunctionObject_ClassConstructor_E57E053D_Counter::get_RequiresInvocationContext
+
+			.method family hidebysig virtual 
+				instance object CallCore (
+					object thisArgument,
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+				) cil managed 
+			{
+				// Method begins at RVA 0x2257
+				// Header size: 1
+				// Code size: 11 (0xb)
+				.maxstack 8
+
+				IL_0000: ldstr "Class constructor cannot be invoked without 'new'"
+				IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
+				IL_000a: throw
+			} // end of method FunctionObject_ClassConstructor_E57E053D_Counter::CallCore
+
+			.method family hidebysig virtual 
+				instance object ConstructCore (
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
+					object newTarget
+				) cil managed 
+			{
+				// Method begins at RVA 0x2263
+				// Header size: 1
+				// Code size: 11 (0xb)
+				.maxstack 8
+
+				IL_0000: ldstr "Generated construction adapter is reserved for the callable-family construction migration"
+				IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
+				IL_000a: throw
+			} // end of method FunctionObject_ClassConstructor_E57E053D_Counter::ConstructCore
+
+		} // end of class FunctionObject_ClassConstructor_E57E053D_Counter
+
+		.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassMethod_8D75F331_Counter_increment
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x226f
+				// Header size: 1
+				// Code size: 7 (0x7)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0006: ret
+			} // end of method FunctionObject_ClassMethod_8D75F331_Counter_increment::.ctor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_IsConstructor () cil managed 
+			{
+				// Method begins at RVA 0x2277
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject_ClassMethod_8D75F331_Counter_increment::get_IsConstructor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_RequiresInvocationContext () cil managed 
+			{
+				// Method begins at RVA 0x227a
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.1
+				IL_0001: ret
+			} // end of method FunctionObject_ClassMethod_8D75F331_Counter_increment::get_RequiresInvocationContext
+
+			.method family hidebysig virtual 
+				instance object CallCore (
+					object thisArgument,
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+				) cil managed 
+			{
+				// Method begins at RVA 0x227d
+				// Header size: 1
+				// Code size: 35 (0x23)
+				.maxstack 8
+
+				IL_0000: ldarg.1
+				IL_0001: ldtoken Modules.Classes_ClassFieldTypeInference_Primitives/Counter
+				IL_0006: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+				IL_000b: ldc.i4.1
+				IL_000c: newarr [System.Runtime]System.Object
+				IL_0011: ldnull
+				IL_0012: ldarg.0
+				IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodReceiver(object, class [System.Runtime]System.Type, object[], object, class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
+				IL_0018: castclass Modules.Classes_ClassFieldTypeInference_Primitives/Counter
+				IL_001d: call instance object Modules.Classes_ClassFieldTypeInference_Primitives/Counter::increment()
+				IL_0022: ret
+			} // end of method FunctionObject_ClassMethod_8D75F331_Counter_increment::CallCore
+
+		} // end of class FunctionObject_ClassMethod_8D75F331_Counter_increment
+
 
 		// Fields
 		.field public float64 'value'
@@ -174,7 +324,7 @@
 			[4] class [System.Runtime]System.Type,
 			[5] object,
 			[6] object[],
-			[7] class FunctionObjects.Classes_ClassFieldTypeInference_Primitives_A66D3DCA.FunctionObject_ClassMethod_8D75F331_Counter_increment,
+			[7] class Modules.Classes_ClassFieldTypeInference_Primitives/Counter/FunctionObject_ClassMethod_8D75F331_Counter_increment,
 			[8] class Modules.Classes_ClassFieldTypeInference_Primitives/Counter,
 			[9] object
 		)
@@ -198,16 +348,16 @@
 		IL_003e: stloc.s 5
 		IL_0040: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
 		IL_0045: stloc.s 6
-		IL_0047: newobj instance void FunctionObjects.Classes_ClassFieldTypeInference_Primitives_A66D3DCA.FunctionObject_ClassMethod_8D75F331_Counter_increment::.ctor()
+		IL_0047: newobj instance void Modules.Classes_ClassFieldTypeInference_Primitives/Counter/FunctionObject_ClassMethod_8D75F331_Counter_increment::.ctor()
 		IL_004c: ldc.i4.0
 		IL_004d: conv.r8
 		IL_004e: ldstr "increment"
 		IL_0053: ldc.i4.1
 		IL_0054: ldc.i4.1
-		IL_0055: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class FunctionObjects.Classes_ClassFieldTypeInference_Primitives_A66D3DCA.FunctionObject_ClassMethod_8D75F331_Counter_increment>(!!0, float64, string, bool, bool)
+		IL_0055: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Classes_ClassFieldTypeInference_Primitives/Counter/FunctionObject_ClassMethod_8D75F331_Counter_increment>(!!0, float64, string, bool, bool)
 		IL_005a: stloc.s 7
 		IL_005c: ldloc.s 7
-		IL_005e: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class FunctionObjects.Classes_ClassFieldTypeInference_Primitives_A66D3DCA.FunctionObject_ClassMethod_8D75F331_Counter_increment>(!!0)
+		IL_005e: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Classes_ClassFieldTypeInference_Primitives/Counter/FunctionObject_ClassMethod_8D75F331_Counter_increment>(!!0)
 		IL_0063: stloc.s 7
 		IL_0065: ldloc.s 5
 		IL_0067: ldstr "increment"
@@ -296,156 +446,6 @@
 	} // end of method Classes_ClassFieldTypeInference_Primitives::__js_module_init__
 
 } // end of class Modules.Classes_ClassFieldTypeInference_Primitives
-
-.class private auto ansi sealed beforefieldinit FunctionObjects.Classes_ClassFieldTypeInference_Primitives_A66D3DCA.FunctionObject_ClassConstructor_E57E053D_Counter
-	extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-{
-	// Fields
-	.field private initonly object[] _transitionalScopes
-
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor (
-			object[] capture0
-		) cil managed 
-	{
-		// Method begins at RVA 0x2242
-		// Header size: 1
-		// Code size: 14 (0xe)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-		IL_0006: ldarg.0
-		IL_0007: ldarg.1
-		IL_0008: stfld object[] FunctionObjects.Classes_ClassFieldTypeInference_Primitives_A66D3DCA.FunctionObject_ClassConstructor_E57E053D_Counter::_transitionalScopes
-		IL_000d: ret
-	} // end of method FunctionObject_ClassConstructor_E57E053D_Counter::.ctor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_IsConstructor () cil managed 
-	{
-		// Method begins at RVA 0x2251
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.1
-		IL_0001: ret
-	} // end of method FunctionObject_ClassConstructor_E57E053D_Counter::get_IsConstructor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_RequiresInvocationContext () cil managed 
-	{
-		// Method begins at RVA 0x2254
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.1
-		IL_0001: ret
-	} // end of method FunctionObject_ClassConstructor_E57E053D_Counter::get_RequiresInvocationContext
-
-	.method family hidebysig virtual 
-		instance object CallCore (
-			object thisArgument,
-			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-		) cil managed 
-	{
-		// Method begins at RVA 0x2257
-		// Header size: 1
-		// Code size: 11 (0xb)
-		.maxstack 8
-
-		IL_0000: ldstr "Class constructor cannot be invoked without 'new'"
-		IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-		IL_000a: throw
-	} // end of method FunctionObject_ClassConstructor_E57E053D_Counter::CallCore
-
-	.method family hidebysig virtual 
-		instance object ConstructCore (
-			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
-			object newTarget
-		) cil managed 
-	{
-		// Method begins at RVA 0x2263
-		// Header size: 1
-		// Code size: 11 (0xb)
-		.maxstack 8
-
-		IL_0000: ldstr "Generated construction adapter is reserved for the callable-family construction migration"
-		IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-		IL_000a: throw
-	} // end of method FunctionObject_ClassConstructor_E57E053D_Counter::ConstructCore
-
-} // end of class FunctionObjects.Classes_ClassFieldTypeInference_Primitives_A66D3DCA.FunctionObject_ClassConstructor_E57E053D_Counter
-
-.class private auto ansi sealed beforefieldinit FunctionObjects.Classes_ClassFieldTypeInference_Primitives_A66D3DCA.FunctionObject_ClassMethod_8D75F331_Counter_increment
-	extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-{
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x226f
-		// Header size: 1
-		// Code size: 7 (0x7)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-		IL_0006: ret
-	} // end of method FunctionObject_ClassMethod_8D75F331_Counter_increment::.ctor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_IsConstructor () cil managed 
-	{
-		// Method begins at RVA 0x2277
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_ClassMethod_8D75F331_Counter_increment::get_IsConstructor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_RequiresInvocationContext () cil managed 
-	{
-		// Method begins at RVA 0x227a
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.1
-		IL_0001: ret
-	} // end of method FunctionObject_ClassMethod_8D75F331_Counter_increment::get_RequiresInvocationContext
-
-	.method family hidebysig virtual 
-		instance object CallCore (
-			object thisArgument,
-			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-		) cil managed 
-	{
-		// Method begins at RVA 0x227d
-		// Header size: 1
-		// Code size: 35 (0x23)
-		.maxstack 8
-
-		IL_0000: ldarg.1
-		IL_0001: ldtoken Modules.Classes_ClassFieldTypeInference_Primitives/Counter
-		IL_0006: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_000b: ldc.i4.1
-		IL_000c: newarr [System.Runtime]System.Object
-		IL_0011: ldnull
-		IL_0012: ldarg.0
-		IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodReceiver(object, class [System.Runtime]System.Type, object[], object, class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
-		IL_0018: castclass Modules.Classes_ClassFieldTypeInference_Primitives/Counter
-		IL_001d: call instance object Modules.Classes_ClassFieldTypeInference_Primitives/Counter::increment()
-		IL_0022: ret
-	} // end of method FunctionObject_ClassMethod_8D75F331_Counter_increment::CallCore
-
-} // end of class FunctionObjects.Classes_ClassFieldTypeInference_Primitives_A66D3DCA.FunctionObject_ClassMethod_8D75F331_Counter_increment
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object

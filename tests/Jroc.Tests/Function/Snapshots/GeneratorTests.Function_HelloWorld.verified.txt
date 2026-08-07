@@ -31,6 +31,101 @@
 
 		} // end of class Scope
 
+		.class nested public auto ansi sealed beforefieldinit FunctionObject_FunctionDeclaration_9A002B81_helloWorld
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x20c4
+				// Header size: 1
+				// Code size: 7 (0x7)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0006: ret
+			} // end of method FunctionObject_FunctionDeclaration_9A002B81_helloWorld::.ctor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_IsConstructor () cil managed 
+			{
+				// Method begins at RVA 0x20cc
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.1
+				IL_0001: ret
+			} // end of method FunctionObject_FunctionDeclaration_9A002B81_helloWorld::get_IsConstructor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_RequiresInvocationContext () cil managed 
+			{
+				// Method begins at RVA 0x20cf
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject_FunctionDeclaration_9A002B81_helloWorld::get_RequiresInvocationContext
+
+			.method family hidebysig virtual 
+				instance object CallCore (
+					object thisArgument,
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+				) cil managed 
+			{
+				// Method begins at RVA 0x20d2
+				// Header size: 1
+				// Code size: 11 (0xb)
+				.maxstack 8
+
+				IL_0000: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
+				IL_0005: call object Modules.Function_HelloWorld/helloWorld::__js_call__(object)
+				IL_000a: ret
+			} // end of method FunctionObject_FunctionDeclaration_9A002B81_helloWorld::CallCore
+
+			.method family hidebysig virtual 
+				instance object ConstructBodyCore (
+					object receiver,
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
+					object newTarget
+				) cil managed 
+			{
+				// Method begins at RVA 0x20de
+				// Header size: 1
+				// Code size: 7 (0x7)
+				.maxstack 8
+
+				IL_0000: ldarg.3
+				IL_0001: call object Modules.Function_HelloWorld/helloWorld::__js_call__(object)
+				IL_0006: ret
+			} // end of method FunctionObject_FunctionDeclaration_9A002B81_helloWorld::ConstructBodyCore
+
+			.method family hidebysig virtual 
+				instance object ConstructCore (
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
+					object newTarget
+				) cil managed 
+			{
+				// Method begins at RVA 0x20e6
+				// Header size: 1
+				// Code size: 14 (0xe)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: ldarg.1
+				IL_0002: ldobj [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments
+				IL_0007: ldarg.2
+				IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionObject(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments, object)
+				IL_000d: ret
+			} // end of method FunctionObject_FunctionDeclaration_9A002B81_helloWorld::ConstructCore
+
+		} // end of class FunctionObject_FunctionDeclaration_9A002B81_helloWorld
+
 
 		// Methods
 		.method public hidebysig static 
@@ -104,7 +199,7 @@
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Function_HelloWorld/Scope,
-			[1] class FunctionObjects.Function_HelloWorld_337CB4D6.FunctionObject_FunctionDeclaration_9A002B81_helloWorld,
+			[1] class Modules.Function_HelloWorld/helloWorld/FunctionObject_FunctionDeclaration_9A002B81_helloWorld,
 			[2] object[]
 		)
 
@@ -117,13 +212,13 @@
 		IL_000e: ldloc.0
 		IL_000f: stelem.ref
 		IL_0010: stloc.2
-		IL_0011: newobj instance void FunctionObjects.Function_HelloWorld_337CB4D6.FunctionObject_FunctionDeclaration_9A002B81_helloWorld::.ctor()
+		IL_0011: newobj instance void Modules.Function_HelloWorld/helloWorld/FunctionObject_FunctionDeclaration_9A002B81_helloWorld::.ctor()
 		IL_0016: ldc.i4.0
 		IL_0017: conv.r8
 		IL_0018: ldstr "helloWorld"
 		IL_001d: ldc.i4.0
 		IL_001e: ldc.i4.1
-		IL_001f: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class FunctionObjects.Function_HelloWorld_337CB4D6.FunctionObject_FunctionDeclaration_9A002B81_helloWorld>(!!0, float64, string, bool, bool)
+		IL_001f: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Function_HelloWorld/helloWorld/FunctionObject_FunctionDeclaration_9A002B81_helloWorld>(!!0, float64, string, bool, bool)
 		IL_0024: stloc.1
 		IL_0025: nop
 		IL_0026: nop
@@ -135,101 +230,6 @@
 	} // end of method Function_HelloWorld::__js_module_init__
 
 } // end of class Modules.Function_HelloWorld
-
-.class private auto ansi sealed beforefieldinit FunctionObjects.Function_HelloWorld_337CB4D6.FunctionObject_FunctionDeclaration_9A002B81_helloWorld
-	extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-{
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x20c4
-		// Header size: 1
-		// Code size: 7 (0x7)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-		IL_0006: ret
-	} // end of method FunctionObject_FunctionDeclaration_9A002B81_helloWorld::.ctor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_IsConstructor () cil managed 
-	{
-		// Method begins at RVA 0x20cc
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.1
-		IL_0001: ret
-	} // end of method FunctionObject_FunctionDeclaration_9A002B81_helloWorld::get_IsConstructor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_RequiresInvocationContext () cil managed 
-	{
-		// Method begins at RVA 0x20cf
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_FunctionDeclaration_9A002B81_helloWorld::get_RequiresInvocationContext
-
-	.method family hidebysig virtual 
-		instance object CallCore (
-			object thisArgument,
-			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-		) cil managed 
-	{
-		// Method begins at RVA 0x20d2
-		// Header size: 1
-		// Code size: 11 (0xb)
-		.maxstack 8
-
-		IL_0000: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
-		IL_0005: call object Modules.Function_HelloWorld/helloWorld::__js_call__(object)
-		IL_000a: ret
-	} // end of method FunctionObject_FunctionDeclaration_9A002B81_helloWorld::CallCore
-
-	.method family hidebysig virtual 
-		instance object ConstructBodyCore (
-			object receiver,
-			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
-			object newTarget
-		) cil managed 
-	{
-		// Method begins at RVA 0x20de
-		// Header size: 1
-		// Code size: 7 (0x7)
-		.maxstack 8
-
-		IL_0000: ldarg.3
-		IL_0001: call object Modules.Function_HelloWorld/helloWorld::__js_call__(object)
-		IL_0006: ret
-	} // end of method FunctionObject_FunctionDeclaration_9A002B81_helloWorld::ConstructBodyCore
-
-	.method family hidebysig virtual 
-		instance object ConstructCore (
-			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
-			object newTarget
-		) cil managed 
-	{
-		// Method begins at RVA 0x20e6
-		// Header size: 1
-		// Code size: 14 (0xe)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: ldarg.1
-		IL_0002: ldobj [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments
-		IL_0007: ldarg.2
-		IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionObject(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments, object)
-		IL_000d: ret
-	} // end of method FunctionObject_FunctionDeclaration_9A002B81_helloWorld::ConstructCore
-
-} // end of class FunctionObjects.Function_HelloWorld_337CB4D6.FunctionObject_FunctionDeclaration_9A002B81_helloWorld
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object

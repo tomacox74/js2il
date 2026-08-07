@@ -20,9 +20,7 @@ internal static class GeneratedFunctionObjectPlanner
         {
             Callable = callable,
             Signature = signature,
-            Namespace = callable.Kind == CallableKind.Arrow
-                ? string.Empty
-                : $"FunctionObjects.{Sanitize(symbolTable.Root.Name)}_{StableSuffix(symbolTable.Root.Name)}",
+            Namespace = string.Empty,
             ModuleName = symbolTable.Root.Name,
             TypeName = callable.Kind == CallableKind.Arrow
                 ? GeneratedFunctionObjectNaming.WrapperTypeName

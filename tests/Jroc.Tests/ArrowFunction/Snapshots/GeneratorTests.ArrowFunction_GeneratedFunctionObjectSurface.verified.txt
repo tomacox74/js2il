@@ -192,6 +192,101 @@
 
 		} // end of class Scope
 
+		.class nested public auto ansi sealed beforefieldinit FunctionObject_FunctionDeclaration_83EB34AC_makeArrow
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x24a0
+				// Header size: 1
+				// Code size: 7 (0x7)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0006: ret
+			} // end of method FunctionObject_FunctionDeclaration_83EB34AC_makeArrow::.ctor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_IsConstructor () cil managed 
+			{
+				// Method begins at RVA 0x24a8
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.1
+				IL_0001: ret
+			} // end of method FunctionObject_FunctionDeclaration_83EB34AC_makeArrow::get_IsConstructor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_RequiresInvocationContext () cil managed 
+			{
+				// Method begins at RVA 0x24ab
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.1
+				IL_0001: ret
+			} // end of method FunctionObject_FunctionDeclaration_83EB34AC_makeArrow::get_RequiresInvocationContext
+
+			.method family hidebysig virtual 
+				instance object CallCore (
+					object thisArgument,
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+				) cil managed 
+			{
+				// Method begins at RVA 0x24ae
+				// Header size: 1
+				// Code size: 11 (0xb)
+				.maxstack 8
+
+				IL_0000: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
+				IL_0005: call object Modules.ArrowFunction_GeneratedFunctionObjectSurface/makeArrow::__js_call__(object)
+				IL_000a: ret
+			} // end of method FunctionObject_FunctionDeclaration_83EB34AC_makeArrow::CallCore
+
+			.method family hidebysig virtual 
+				instance object ConstructBodyCore (
+					object receiver,
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
+					object newTarget
+				) cil managed 
+			{
+				// Method begins at RVA 0x24ba
+				// Header size: 1
+				// Code size: 7 (0x7)
+				.maxstack 8
+
+				IL_0000: ldarg.3
+				IL_0001: call object Modules.ArrowFunction_GeneratedFunctionObjectSurface/makeArrow::__js_call__(object)
+				IL_0006: ret
+			} // end of method FunctionObject_FunctionDeclaration_83EB34AC_makeArrow::ConstructBodyCore
+
+			.method family hidebysig virtual 
+				instance object ConstructCore (
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
+					object newTarget
+				) cil managed 
+			{
+				// Method begins at RVA 0x24c2
+				// Header size: 1
+				// Code size: 14 (0xe)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: ldarg.1
+				IL_0002: ldobj [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments
+				IL_0007: ldarg.2
+				IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionObject(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments, object)
+				IL_000d: ret
+			} // end of method FunctionObject_FunctionDeclaration_83EB34AC_makeArrow::ConstructCore
+
+		} // end of class FunctionObject_FunctionDeclaration_83EB34AC_makeArrow
+
 
 		// Methods
 		.method public hidebysig static 
@@ -318,7 +413,7 @@
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ArrowFunction_GeneratedFunctionObjectSurface/Scope,
-			[1] class FunctionObjects.ArrowFunction_GeneratedFunctionObjectSurface_832750F6.FunctionObject_FunctionDeclaration_83EB34AC_makeArrow,
+			[1] class Modules.ArrowFunction_GeneratedFunctionObjectSurface/makeArrow/FunctionObject_FunctionDeclaration_83EB34AC_makeArrow,
 			[2] object,
 			[3] object,
 			[4] object,
@@ -346,13 +441,13 @@
 		IL_000e: ldloc.0
 		IL_000f: stelem.ref
 		IL_0010: stloc.s 9
-		IL_0012: newobj instance void FunctionObjects.ArrowFunction_GeneratedFunctionObjectSurface_832750F6.FunctionObject_FunctionDeclaration_83EB34AC_makeArrow::.ctor()
+		IL_0012: newobj instance void Modules.ArrowFunction_GeneratedFunctionObjectSurface/makeArrow/FunctionObject_FunctionDeclaration_83EB34AC_makeArrow::.ctor()
 		IL_0017: ldc.i4.0
 		IL_0018: conv.r8
 		IL_0019: ldstr "makeArrow"
 		IL_001e: ldc.i4.1
 		IL_001f: ldc.i4.1
-		IL_0020: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class FunctionObjects.ArrowFunction_GeneratedFunctionObjectSurface_832750F6.FunctionObject_FunctionDeclaration_83EB34AC_makeArrow>(!!0, float64, string, bool, bool)
+		IL_0020: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.ArrowFunction_GeneratedFunctionObjectSurface/makeArrow/FunctionObject_FunctionDeclaration_83EB34AC_makeArrow>(!!0, float64, string, bool, bool)
 		IL_0025: stloc.1
 		IL_0026: nop
 		IL_0027: nop
@@ -620,101 +715,6 @@
 	} // end of method ArrowFunction_GeneratedFunctionObjectSurface::__js_module_init__
 
 } // end of class Modules.ArrowFunction_GeneratedFunctionObjectSurface
-
-.class private auto ansi sealed beforefieldinit FunctionObjects.ArrowFunction_GeneratedFunctionObjectSurface_832750F6.FunctionObject_FunctionDeclaration_83EB34AC_makeArrow
-	extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-{
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x24a0
-		// Header size: 1
-		// Code size: 7 (0x7)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-		IL_0006: ret
-	} // end of method FunctionObject_FunctionDeclaration_83EB34AC_makeArrow::.ctor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_IsConstructor () cil managed 
-	{
-		// Method begins at RVA 0x24a8
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.1
-		IL_0001: ret
-	} // end of method FunctionObject_FunctionDeclaration_83EB34AC_makeArrow::get_IsConstructor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_RequiresInvocationContext () cil managed 
-	{
-		// Method begins at RVA 0x24ab
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.1
-		IL_0001: ret
-	} // end of method FunctionObject_FunctionDeclaration_83EB34AC_makeArrow::get_RequiresInvocationContext
-
-	.method family hidebysig virtual 
-		instance object CallCore (
-			object thisArgument,
-			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-		) cil managed 
-	{
-		// Method begins at RVA 0x24ae
-		// Header size: 1
-		// Code size: 11 (0xb)
-		.maxstack 8
-
-		IL_0000: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
-		IL_0005: call object Modules.ArrowFunction_GeneratedFunctionObjectSurface/makeArrow::__js_call__(object)
-		IL_000a: ret
-	} // end of method FunctionObject_FunctionDeclaration_83EB34AC_makeArrow::CallCore
-
-	.method family hidebysig virtual 
-		instance object ConstructBodyCore (
-			object receiver,
-			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
-			object newTarget
-		) cil managed 
-	{
-		// Method begins at RVA 0x24ba
-		// Header size: 1
-		// Code size: 7 (0x7)
-		.maxstack 8
-
-		IL_0000: ldarg.3
-		IL_0001: call object Modules.ArrowFunction_GeneratedFunctionObjectSurface/makeArrow::__js_call__(object)
-		IL_0006: ret
-	} // end of method FunctionObject_FunctionDeclaration_83EB34AC_makeArrow::ConstructBodyCore
-
-	.method family hidebysig virtual 
-		instance object ConstructCore (
-			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
-			object newTarget
-		) cil managed 
-	{
-		// Method begins at RVA 0x24c2
-		// Header size: 1
-		// Code size: 14 (0xe)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: ldarg.1
-		IL_0002: ldobj [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments
-		IL_0007: ldarg.2
-		IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionObject(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments, object)
-		IL_000d: ret
-	} // end of method FunctionObject_FunctionDeclaration_83EB34AC_makeArrow::ConstructCore
-
-} // end of class FunctionObjects.ArrowFunction_GeneratedFunctionObjectSurface_832750F6.FunctionObject_FunctionDeclaration_83EB34AC_makeArrow
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object

@@ -63,4 +63,66 @@ public sealed class CompiledAssemblyArtifactTests
             try { Directory.Delete(outputPath, recursive: true); } catch { }
         }
     }
+
+    [Fact]
+    public void Materialize_WritesLaunchableAssemblyAndSymbols()
+    {
+        var root = Path.Combine(Path.GetTempPath(), "Jroc.Tests", "CompiledAssemblyArtifact", Guid.NewGuid().ToString("N"));
+        var outputPath = Path.Combine(root, "output");
+
+        try
+        {
+            var entryPath = Path.Combine(root, "materialize.js");
+            var mockFs = new MockFileSystem();
+            mockFs.AddFile(entryPath, "\"use strict\";\nconsole.log('materialized');\n");
+
+            var artifact = JrocInMemoryCompiler.Compile(
+                new JrocInMemoryCompileRequest(entryPath)
+                {
+                    FileSystem = mockFs,
+                    EmitPdb = true
+                });
+
+            var materialized = artifact.Materialize(outputPath);
+
+            Assert.Equal(Path.Combine(outputPath, "materialize.dll"), materialized.AssemblyPath);
+            Assert.True(File.Exists(materialized.AssemblyPath));
+            Assert.True(File.Exists(materialized.PdbPath!));
+            Assert.True(File.Exists(materialized.RuntimeConfigPath));
+            Assert.Equal(artifact.PeBytes, File.ReadAllBytes(materialized.AssemblyPath));
+            Assert.Equal(artifact.PdbBytes, File.ReadAllBytes(materialized.PdbPath!));
+        }
+        finally
+        {
+            try { Directory.Delete(root, recursive: true); } catch { }
+        }
+    }
+
+    [Fact]
+    public void TestCompiler_ExplicitArtifactMaterialization_WritesOutput()
+    {
+        var root = Path.Combine(Path.GetTempPath(), "Jroc.Tests", "CompiledAssemblyArtifact", Guid.NewGuid().ToString("N"));
+        var outputPath = Path.Combine(root, "output");
+
+        try
+        {
+            var compiled = TestCompiler.Compile(
+                testName: "test-compiler-materialize",
+                testCategory: "CompiledAssemblyArtifact",
+                outputDirectory: outputPath,
+                getJavaScriptAndSourcePath: _ => ("\"use strict\";\nconsole.log('materialized');\n", null),
+                additionalScripts: null,
+                writeArtifacts: true);
+
+            Assert.NotNull(compiled.MaterializedArtifact);
+            Assert.NotNull(compiled.AssemblyPath);
+            Assert.NotNull(compiled.PdbPath);
+            Assert.True(File.Exists(compiled.AssemblyPath));
+            Assert.True(File.Exists(compiled.PdbPath));
+        }
+        finally
+        {
+            try { Directory.Delete(root, recursive: true); } catch { }
+        }
+    }
 }

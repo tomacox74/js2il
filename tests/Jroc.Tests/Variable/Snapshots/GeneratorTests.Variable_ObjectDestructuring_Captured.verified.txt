@@ -31,6 +31,113 @@
 
 		} // end of class Scope
 
+		.class nested public auto ansi sealed beforefieldinit FunctionObject_FunctionDeclaration_85C461C3_compute
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+		{
+			// Fields
+			.field private initonly class Modules.Variable_ObjectDestructuring_Captured/Scope _environment0_Variable_ObjectDestructuring_Captured
+
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor (
+					class Modules.Variable_ObjectDestructuring_Captured/Scope capture0
+				) cil managed 
+			{
+				// Method begins at RVA 0x21d3
+				// Header size: 1
+				// Code size: 14 (0xe)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0006: ldarg.0
+				IL_0007: ldarg.1
+				IL_0008: stfld class Modules.Variable_ObjectDestructuring_Captured/Scope Modules.Variable_ObjectDestructuring_Captured/compute/FunctionObject_FunctionDeclaration_85C461C3_compute::_environment0_Variable_ObjectDestructuring_Captured
+				IL_000d: ret
+			} // end of method FunctionObject_FunctionDeclaration_85C461C3_compute::.ctor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_IsConstructor () cil managed 
+			{
+				// Method begins at RVA 0x21e2
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.1
+				IL_0001: ret
+			} // end of method FunctionObject_FunctionDeclaration_85C461C3_compute::get_IsConstructor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_RequiresInvocationContext () cil managed 
+			{
+				// Method begins at RVA 0x21e5
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject_FunctionDeclaration_85C461C3_compute::get_RequiresInvocationContext
+
+			.method family hidebysig virtual 
+				instance object CallCore (
+					object thisArgument,
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+				) cil managed 
+			{
+				// Method begins at RVA 0x21e8
+				// Header size: 1
+				// Code size: 17 (0x11)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: ldfld class Modules.Variable_ObjectDestructuring_Captured/Scope Modules.Variable_ObjectDestructuring_Captured/compute/FunctionObject_FunctionDeclaration_85C461C3_compute::_environment0_Variable_ObjectDestructuring_Captured
+				IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
+				IL_000b: call object Modules.Variable_ObjectDestructuring_Captured/compute::__js_call__(class Modules.Variable_ObjectDestructuring_Captured/Scope, object)
+				IL_0010: ret
+			} // end of method FunctionObject_FunctionDeclaration_85C461C3_compute::CallCore
+
+			.method family hidebysig virtual 
+				instance object ConstructBodyCore (
+					object receiver,
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
+					object newTarget
+				) cil managed 
+			{
+				// Method begins at RVA 0x21fa
+				// Header size: 1
+				// Code size: 13 (0xd)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: ldfld class Modules.Variable_ObjectDestructuring_Captured/Scope Modules.Variable_ObjectDestructuring_Captured/compute/FunctionObject_FunctionDeclaration_85C461C3_compute::_environment0_Variable_ObjectDestructuring_Captured
+				IL_0006: ldarg.3
+				IL_0007: call object Modules.Variable_ObjectDestructuring_Captured/compute::__js_call__(class Modules.Variable_ObjectDestructuring_Captured/Scope, object)
+				IL_000c: ret
+			} // end of method FunctionObject_FunctionDeclaration_85C461C3_compute::ConstructBodyCore
+
+			.method family hidebysig virtual 
+				instance object ConstructCore (
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
+					object newTarget
+				) cil managed 
+			{
+				// Method begins at RVA 0x2208
+				// Header size: 1
+				// Code size: 14 (0xe)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: ldarg.1
+				IL_0002: ldobj [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments
+				IL_0007: ldarg.2
+				IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionObject(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments, object)
+				IL_000d: ret
+			} // end of method FunctionObject_FunctionDeclaration_85C461C3_compute::ConstructCore
+
+		} // end of class FunctionObject_FunctionDeclaration_85C461C3_compute
+
 
 		// Methods
 		.method public hidebysig static 
@@ -117,7 +224,7 @@
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Variable_ObjectDestructuring_Captured/Scope,
-			[1] class FunctionObjects.Variable_ObjectDestructuring_Captured_D85095BB.FunctionObject_FunctionDeclaration_85C461C3_compute,
+			[1] class Modules.Variable_ObjectDestructuring_Captured/compute/FunctionObject_FunctionDeclaration_85C461C3_compute,
 			[2] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
 			[3] object[],
 			[4] object,
@@ -137,13 +244,13 @@
 		IL_0012: ldc.i4.0
 		IL_0013: ldelem.ref
 		IL_0014: castclass Modules.Variable_ObjectDestructuring_Captured/Scope
-		IL_0019: newobj instance void FunctionObjects.Variable_ObjectDestructuring_Captured_D85095BB.FunctionObject_FunctionDeclaration_85C461C3_compute::.ctor(class Modules.Variable_ObjectDestructuring_Captured/Scope)
+		IL_0019: newobj instance void Modules.Variable_ObjectDestructuring_Captured/compute/FunctionObject_FunctionDeclaration_85C461C3_compute::.ctor(class Modules.Variable_ObjectDestructuring_Captured/Scope)
 		IL_001e: ldc.i4.0
 		IL_001f: conv.r8
 		IL_0020: ldstr "compute"
 		IL_0025: ldc.i4.0
 		IL_0026: ldc.i4.1
-		IL_0027: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class FunctionObjects.Variable_ObjectDestructuring_Captured_D85095BB.FunctionObject_FunctionDeclaration_85C461C3_compute>(!!0, float64, string, bool, bool)
+		IL_0027: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Variable_ObjectDestructuring_Captured/compute/FunctionObject_FunctionDeclaration_85C461C3_compute>(!!0, float64, string, bool, bool)
 		IL_002c: stloc.1
 		IL_002d: nop
 		IL_002e: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
@@ -227,113 +334,6 @@
 	} // end of method Variable_ObjectDestructuring_Captured::__js_module_init__
 
 } // end of class Modules.Variable_ObjectDestructuring_Captured
-
-.class private auto ansi sealed beforefieldinit FunctionObjects.Variable_ObjectDestructuring_Captured_D85095BB.FunctionObject_FunctionDeclaration_85C461C3_compute
-	extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-{
-	// Fields
-	.field private initonly class Modules.Variable_ObjectDestructuring_Captured/Scope _environment0_Variable_ObjectDestructuring_Captured
-
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor (
-			class Modules.Variable_ObjectDestructuring_Captured/Scope capture0
-		) cil managed 
-	{
-		// Method begins at RVA 0x21d3
-		// Header size: 1
-		// Code size: 14 (0xe)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-		IL_0006: ldarg.0
-		IL_0007: ldarg.1
-		IL_0008: stfld class Modules.Variable_ObjectDestructuring_Captured/Scope FunctionObjects.Variable_ObjectDestructuring_Captured_D85095BB.FunctionObject_FunctionDeclaration_85C461C3_compute::_environment0_Variable_ObjectDestructuring_Captured
-		IL_000d: ret
-	} // end of method FunctionObject_FunctionDeclaration_85C461C3_compute::.ctor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_IsConstructor () cil managed 
-	{
-		// Method begins at RVA 0x21e2
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.1
-		IL_0001: ret
-	} // end of method FunctionObject_FunctionDeclaration_85C461C3_compute::get_IsConstructor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_RequiresInvocationContext () cil managed 
-	{
-		// Method begins at RVA 0x21e5
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_FunctionDeclaration_85C461C3_compute::get_RequiresInvocationContext
-
-	.method family hidebysig virtual 
-		instance object CallCore (
-			object thisArgument,
-			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-		) cil managed 
-	{
-		// Method begins at RVA 0x21e8
-		// Header size: 1
-		// Code size: 17 (0x11)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: ldfld class Modules.Variable_ObjectDestructuring_Captured/Scope FunctionObjects.Variable_ObjectDestructuring_Captured_D85095BB.FunctionObject_FunctionDeclaration_85C461C3_compute::_environment0_Variable_ObjectDestructuring_Captured
-		IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
-		IL_000b: call object Modules.Variable_ObjectDestructuring_Captured/compute::__js_call__(class Modules.Variable_ObjectDestructuring_Captured/Scope, object)
-		IL_0010: ret
-	} // end of method FunctionObject_FunctionDeclaration_85C461C3_compute::CallCore
-
-	.method family hidebysig virtual 
-		instance object ConstructBodyCore (
-			object receiver,
-			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
-			object newTarget
-		) cil managed 
-	{
-		// Method begins at RVA 0x21fa
-		// Header size: 1
-		// Code size: 13 (0xd)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: ldfld class Modules.Variable_ObjectDestructuring_Captured/Scope FunctionObjects.Variable_ObjectDestructuring_Captured_D85095BB.FunctionObject_FunctionDeclaration_85C461C3_compute::_environment0_Variable_ObjectDestructuring_Captured
-		IL_0006: ldarg.3
-		IL_0007: call object Modules.Variable_ObjectDestructuring_Captured/compute::__js_call__(class Modules.Variable_ObjectDestructuring_Captured/Scope, object)
-		IL_000c: ret
-	} // end of method FunctionObject_FunctionDeclaration_85C461C3_compute::ConstructBodyCore
-
-	.method family hidebysig virtual 
-		instance object ConstructCore (
-			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
-			object newTarget
-		) cil managed 
-	{
-		// Method begins at RVA 0x2208
-		// Header size: 1
-		// Code size: 14 (0xe)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: ldarg.1
-		IL_0002: ldobj [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments
-		IL_0007: ldarg.2
-		IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionObject(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments, object)
-		IL_000d: ret
-	} // end of method FunctionObject_FunctionDeclaration_85C461C3_compute::ConstructCore
-
-} // end of class FunctionObjects.Variable_ObjectDestructuring_Captured_D85095BB.FunctionObject_FunctionDeclaration_85C461C3_compute
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object

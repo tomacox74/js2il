@@ -31,6 +31,118 @@
 
 		} // end of class Scope
 
+		.class nested public auto ansi sealed beforefieldinit FunctionObject_FunctionExpression_22FAF068_L1C25
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2127
+				// Header size: 1
+				// Code size: 7 (0x7)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0006: ret
+			} // end of method FunctionObject_FunctionExpression_22FAF068_L1C25::.ctor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_IsConstructor () cil managed 
+			{
+				// Method begins at RVA 0x212f
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.1
+				IL_0001: ret
+			} // end of method FunctionObject_FunctionExpression_22FAF068_L1C25::get_IsConstructor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_RequiresInvocationContext () cil managed 
+			{
+				// Method begins at RVA 0x2132
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject_FunctionExpression_22FAF068_L1C25::get_RequiresInvocationContext
+
+			.method family hidebysig virtual 
+				instance object ResolveThisArgumentCore (
+					object thisArgument
+				) cil managed 
+			{
+				// Method begins at RVA 0x2135
+				// Header size: 1
+				// Code size: 7 (0x7)
+				.maxstack 8
+
+				IL_0000: ldarg.1
+				IL_0001: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ResolveOrdinaryThisArgument(object)
+				IL_0006: ret
+			} // end of method FunctionObject_FunctionExpression_22FAF068_L1C25::ResolveThisArgumentCore
+
+			.method family hidebysig virtual 
+				instance object CallCore (
+					object thisArgument,
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+				) cil managed 
+			{
+				// Method begins at RVA 0x213d
+				// Header size: 1
+				// Code size: 16 (0x10)
+				.maxstack 8
+
+				IL_0000: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
+				IL_0005: call float64 Modules.Math_GlobalThisReplacement_Dispatch/FunctionExpression_L1C24::__js_call__(object)
+				IL_000a: box [System.Runtime]System.Double
+				IL_000f: ret
+			} // end of method FunctionObject_FunctionExpression_22FAF068_L1C25::CallCore
+
+			.method family hidebysig virtual 
+				instance object ConstructBodyCore (
+					object receiver,
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
+					object newTarget
+				) cil managed 
+			{
+				// Method begins at RVA 0x214e
+				// Header size: 1
+				// Code size: 12 (0xc)
+				.maxstack 8
+
+				IL_0000: ldarg.3
+				IL_0001: call float64 Modules.Math_GlobalThisReplacement_Dispatch/FunctionExpression_L1C24::__js_call__(object)
+				IL_0006: box [System.Runtime]System.Double
+				IL_000b: ret
+			} // end of method FunctionObject_FunctionExpression_22FAF068_L1C25::ConstructBodyCore
+
+			.method family hidebysig virtual 
+				instance object ConstructCore (
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
+					object newTarget
+				) cil managed 
+			{
+				// Method begins at RVA 0x215b
+				// Header size: 1
+				// Code size: 14 (0xe)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: ldarg.1
+				IL_0002: ldobj [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments
+				IL_0007: ldarg.2
+				IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionObject(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments, object)
+				IL_000d: ret
+			} // end of method FunctionObject_FunctionExpression_22FAF068_L1C25::ConstructCore
+
+		} // end of class FunctionObject_FunctionExpression_22FAF068_L1C25
+
 
 		// Methods
 		.method public hidebysig static 
@@ -91,7 +203,7 @@
 			[0] class Modules.Math_GlobalThisReplacement_Dispatch/Scope,
 			[1] object,
 			[2] object[],
-			[3] class FunctionObjects.Math_GlobalThisReplacement_Dispatch_D98F56BC.FunctionObject_FunctionExpression_22FAF068_L1C25,
+			[3] class Modules.Math_GlobalThisReplacement_Dispatch/FunctionExpression_L1C24/FunctionObject_FunctionExpression_22FAF068_L1C25,
 			[4] object
 		)
 
@@ -115,13 +227,13 @@
 		IL_0041: ldloc.0
 		IL_0042: stelem.ref
 		IL_0043: stloc.2
-		IL_0044: newobj instance void FunctionObjects.Math_GlobalThisReplacement_Dispatch_D98F56BC.FunctionObject_FunctionExpression_22FAF068_L1C25::.ctor()
+		IL_0044: newobj instance void Modules.Math_GlobalThisReplacement_Dispatch/FunctionExpression_L1C24/FunctionObject_FunctionExpression_22FAF068_L1C25::.ctor()
 		IL_0049: ldc.i4.0
 		IL_004a: conv.r8
 		IL_004b: ldstr ""
 		IL_0050: ldc.i4.0
 		IL_0051: ldc.i4.0
-		IL_0052: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class FunctionObjects.Math_GlobalThisReplacement_Dispatch_D98F56BC.FunctionObject_FunctionExpression_22FAF068_L1C25>(!!0, float64, string, bool, bool)
+		IL_0052: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Math_GlobalThisReplacement_Dispatch/FunctionExpression_L1C24/FunctionObject_FunctionExpression_22FAF068_L1C25>(!!0, float64, string, bool, bool)
 		IL_0057: stloc.3
 		IL_0058: ldloc.1
 		IL_0059: ldstr "round"
@@ -150,118 +262,6 @@
 	} // end of method Math_GlobalThisReplacement_Dispatch::__js_module_init__
 
 } // end of class Modules.Math_GlobalThisReplacement_Dispatch
-
-.class private auto ansi sealed beforefieldinit FunctionObjects.Math_GlobalThisReplacement_Dispatch_D98F56BC.FunctionObject_FunctionExpression_22FAF068_L1C25
-	extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-{
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x2127
-		// Header size: 1
-		// Code size: 7 (0x7)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-		IL_0006: ret
-	} // end of method FunctionObject_FunctionExpression_22FAF068_L1C25::.ctor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_IsConstructor () cil managed 
-	{
-		// Method begins at RVA 0x212f
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.1
-		IL_0001: ret
-	} // end of method FunctionObject_FunctionExpression_22FAF068_L1C25::get_IsConstructor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_RequiresInvocationContext () cil managed 
-	{
-		// Method begins at RVA 0x2132
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_FunctionExpression_22FAF068_L1C25::get_RequiresInvocationContext
-
-	.method family hidebysig virtual 
-		instance object ResolveThisArgumentCore (
-			object thisArgument
-		) cil managed 
-	{
-		// Method begins at RVA 0x2135
-		// Header size: 1
-		// Code size: 7 (0x7)
-		.maxstack 8
-
-		IL_0000: ldarg.1
-		IL_0001: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ResolveOrdinaryThisArgument(object)
-		IL_0006: ret
-	} // end of method FunctionObject_FunctionExpression_22FAF068_L1C25::ResolveThisArgumentCore
-
-	.method family hidebysig virtual 
-		instance object CallCore (
-			object thisArgument,
-			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-		) cil managed 
-	{
-		// Method begins at RVA 0x213d
-		// Header size: 1
-		// Code size: 16 (0x10)
-		.maxstack 8
-
-		IL_0000: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
-		IL_0005: call float64 Modules.Math_GlobalThisReplacement_Dispatch/FunctionExpression_L1C24::__js_call__(object)
-		IL_000a: box [System.Runtime]System.Double
-		IL_000f: ret
-	} // end of method FunctionObject_FunctionExpression_22FAF068_L1C25::CallCore
-
-	.method family hidebysig virtual 
-		instance object ConstructBodyCore (
-			object receiver,
-			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
-			object newTarget
-		) cil managed 
-	{
-		// Method begins at RVA 0x214e
-		// Header size: 1
-		// Code size: 12 (0xc)
-		.maxstack 8
-
-		IL_0000: ldarg.3
-		IL_0001: call float64 Modules.Math_GlobalThisReplacement_Dispatch/FunctionExpression_L1C24::__js_call__(object)
-		IL_0006: box [System.Runtime]System.Double
-		IL_000b: ret
-	} // end of method FunctionObject_FunctionExpression_22FAF068_L1C25::ConstructBodyCore
-
-	.method family hidebysig virtual 
-		instance object ConstructCore (
-			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
-			object newTarget
-		) cil managed 
-	{
-		// Method begins at RVA 0x215b
-		// Header size: 1
-		// Code size: 14 (0xe)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: ldarg.1
-		IL_0002: ldobj [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments
-		IL_0007: ldarg.2
-		IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionObject(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments, object)
-		IL_000d: ret
-	} // end of method FunctionObject_FunctionExpression_22FAF068_L1C25::ConstructCore
-
-} // end of class FunctionObjects.Math_GlobalThisReplacement_Dispatch_D98F56BC.FunctionObject_FunctionExpression_22FAF068_L1C25
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object

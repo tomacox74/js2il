@@ -51,6 +51,125 @@
 
 		} // end of class Scope_ctor
 
+		.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassConstructor_B384E33B_DerivedArray
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+		{
+			// Fields
+			.field private initonly object[] _transitionalScopes
+			.field private initonly class [System.Runtime]System.Object _homeObject
+			.field private initonly object[] _lexicalSuperScopes
+
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor (
+					object[] capture0,
+					class [System.Runtime]System.Object capture1,
+					object[] capture2
+				) cil managed 
+			{
+				// Method begins at RVA 0x281f
+				// Header size: 1
+				// Code size: 28 (0x1c)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0006: ldarg.0
+				IL_0007: ldarg.1
+				IL_0008: stfld object[] Modules.Array_JsObject_NamedProperties/DerivedArray/FunctionObject_ClassConstructor_B384E33B_DerivedArray::_transitionalScopes
+				IL_000d: ldarg.0
+				IL_000e: ldarg.2
+				IL_000f: stfld class [System.Runtime]System.Object Modules.Array_JsObject_NamedProperties/DerivedArray/FunctionObject_ClassConstructor_B384E33B_DerivedArray::_homeObject
+				IL_0014: ldarg.0
+				IL_0015: ldarg.3
+				IL_0016: stfld object[] Modules.Array_JsObject_NamedProperties/DerivedArray/FunctionObject_ClassConstructor_B384E33B_DerivedArray::_lexicalSuperScopes
+				IL_001b: ret
+			} // end of method FunctionObject_ClassConstructor_B384E33B_DerivedArray::.ctor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_IsConstructor () cil managed 
+			{
+				// Method begins at RVA 0x283c
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.1
+				IL_0001: ret
+			} // end of method FunctionObject_ClassConstructor_B384E33B_DerivedArray::get_IsConstructor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_RequiresInvocationContext () cil managed 
+			{
+				// Method begins at RVA 0x283f
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.1
+				IL_0001: ret
+			} // end of method FunctionObject_ClassConstructor_B384E33B_DerivedArray::get_RequiresInvocationContext
+
+			.method family hidebysig virtual 
+				instance object GetLexicalSuperReceiverCore () cil managed 
+			{
+				// Method begins at RVA 0x2842
+				// Header size: 1
+				// Code size: 7 (0x7)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: ldfld class [System.Runtime]System.Object Modules.Array_JsObject_NamedProperties/DerivedArray/FunctionObject_ClassConstructor_B384E33B_DerivedArray::_homeObject
+				IL_0006: ret
+			} // end of method FunctionObject_ClassConstructor_B384E33B_DerivedArray::GetLexicalSuperReceiverCore
+
+			.method family hidebysig virtual 
+				instance object[] GetLexicalSuperScopesCore () cil managed 
+			{
+				// Method begins at RVA 0x284a
+				// Header size: 1
+				// Code size: 7 (0x7)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: ldfld object[] Modules.Array_JsObject_NamedProperties/DerivedArray/FunctionObject_ClassConstructor_B384E33B_DerivedArray::_lexicalSuperScopes
+				IL_0006: ret
+			} // end of method FunctionObject_ClassConstructor_B384E33B_DerivedArray::GetLexicalSuperScopesCore
+
+			.method family hidebysig virtual 
+				instance object CallCore (
+					object thisArgument,
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+				) cil managed 
+			{
+				// Method begins at RVA 0x2852
+				// Header size: 1
+				// Code size: 11 (0xb)
+				.maxstack 8
+
+				IL_0000: ldstr "Class constructor cannot be invoked without 'new'"
+				IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
+				IL_000a: throw
+			} // end of method FunctionObject_ClassConstructor_B384E33B_DerivedArray::CallCore
+
+			.method family hidebysig virtual 
+				instance object ConstructCore (
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
+					object newTarget
+				) cil managed 
+			{
+				// Method begins at RVA 0x285e
+				// Header size: 1
+				// Code size: 11 (0xb)
+				.maxstack 8
+
+				IL_0000: ldstr "Generated construction adapter is reserved for the callable-family construction migration"
+				IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
+				IL_000a: throw
+			} // end of method FunctionObject_ClassConstructor_B384E33B_DerivedArray::ConstructCore
+
+		} // end of class FunctionObject_ClassConstructor_B384E33B_DerivedArray
+
 
 		// Methods
 		.method public hidebysig specialname rtspecialname 
@@ -739,125 +858,6 @@
 	} // end of method Array_JsObject_NamedProperties::__js_module_init__
 
 } // end of class Modules.Array_JsObject_NamedProperties
-
-.class private auto ansi sealed beforefieldinit FunctionObjects.Array_JsObject_NamedProperties_B3058DD4.FunctionObject_ClassConstructor_B384E33B_DerivedArray
-	extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-{
-	// Fields
-	.field private initonly object[] _transitionalScopes
-	.field private initonly class [System.Runtime]System.Object _homeObject
-	.field private initonly object[] _lexicalSuperScopes
-
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor (
-			object[] capture0,
-			class [System.Runtime]System.Object capture1,
-			object[] capture2
-		) cil managed 
-	{
-		// Method begins at RVA 0x281f
-		// Header size: 1
-		// Code size: 28 (0x1c)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-		IL_0006: ldarg.0
-		IL_0007: ldarg.1
-		IL_0008: stfld object[] FunctionObjects.Array_JsObject_NamedProperties_B3058DD4.FunctionObject_ClassConstructor_B384E33B_DerivedArray::_transitionalScopes
-		IL_000d: ldarg.0
-		IL_000e: ldarg.2
-		IL_000f: stfld class [System.Runtime]System.Object FunctionObjects.Array_JsObject_NamedProperties_B3058DD4.FunctionObject_ClassConstructor_B384E33B_DerivedArray::_homeObject
-		IL_0014: ldarg.0
-		IL_0015: ldarg.3
-		IL_0016: stfld object[] FunctionObjects.Array_JsObject_NamedProperties_B3058DD4.FunctionObject_ClassConstructor_B384E33B_DerivedArray::_lexicalSuperScopes
-		IL_001b: ret
-	} // end of method FunctionObject_ClassConstructor_B384E33B_DerivedArray::.ctor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_IsConstructor () cil managed 
-	{
-		// Method begins at RVA 0x283c
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.1
-		IL_0001: ret
-	} // end of method FunctionObject_ClassConstructor_B384E33B_DerivedArray::get_IsConstructor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_RequiresInvocationContext () cil managed 
-	{
-		// Method begins at RVA 0x283f
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.1
-		IL_0001: ret
-	} // end of method FunctionObject_ClassConstructor_B384E33B_DerivedArray::get_RequiresInvocationContext
-
-	.method family hidebysig virtual 
-		instance object GetLexicalSuperReceiverCore () cil managed 
-	{
-		// Method begins at RVA 0x2842
-		// Header size: 1
-		// Code size: 7 (0x7)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: ldfld class [System.Runtime]System.Object FunctionObjects.Array_JsObject_NamedProperties_B3058DD4.FunctionObject_ClassConstructor_B384E33B_DerivedArray::_homeObject
-		IL_0006: ret
-	} // end of method FunctionObject_ClassConstructor_B384E33B_DerivedArray::GetLexicalSuperReceiverCore
-
-	.method family hidebysig virtual 
-		instance object[] GetLexicalSuperScopesCore () cil managed 
-	{
-		// Method begins at RVA 0x284a
-		// Header size: 1
-		// Code size: 7 (0x7)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: ldfld object[] FunctionObjects.Array_JsObject_NamedProperties_B3058DD4.FunctionObject_ClassConstructor_B384E33B_DerivedArray::_lexicalSuperScopes
-		IL_0006: ret
-	} // end of method FunctionObject_ClassConstructor_B384E33B_DerivedArray::GetLexicalSuperScopesCore
-
-	.method family hidebysig virtual 
-		instance object CallCore (
-			object thisArgument,
-			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-		) cil managed 
-	{
-		// Method begins at RVA 0x2852
-		// Header size: 1
-		// Code size: 11 (0xb)
-		.maxstack 8
-
-		IL_0000: ldstr "Class constructor cannot be invoked without 'new'"
-		IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-		IL_000a: throw
-	} // end of method FunctionObject_ClassConstructor_B384E33B_DerivedArray::CallCore
-
-	.method family hidebysig virtual 
-		instance object ConstructCore (
-			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
-			object newTarget
-		) cil managed 
-	{
-		// Method begins at RVA 0x285e
-		// Header size: 1
-		// Code size: 11 (0xb)
-		.maxstack 8
-
-		IL_0000: ldstr "Generated construction adapter is reserved for the callable-family construction migration"
-		IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-		IL_000a: throw
-	} // end of method FunctionObject_ClassConstructor_B384E33B_DerivedArray::ConstructCore
-
-} // end of class FunctionObjects.Array_JsObject_NamedProperties_B3058DD4.FunctionObject_ClassConstructor_B384E33B_DerivedArray
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object

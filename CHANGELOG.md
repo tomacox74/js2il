@@ -6,6 +6,9 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- compiler/IL: nest generated function-object wrappers under their canonical
+  callable or class owner type, eliminating detached `FunctionObjects.*`
+  namespaces for ordinary functions and class methods.
 - compiler/IL: emit each generated arrow function wrapper as a readable
   `FunctionObject` nested under its canonical `ArrowFunction_*` owner instead
   of a standalone hashed `FunctionObjects.*` type.

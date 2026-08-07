@@ -33,6 +33,7 @@ namespace Jroc.Tests.Node.ChildProcess
         public Task Require_ChildProcess_Fork_Kill_And_Env()
             => ExecutionTest(
                 nameof(Require_ChildProcess_Fork_Kill_And_Env),
+                preferOutOfProc: true,
                 additionalScripts: new[] { "Require_ChildProcess_Fork_Kill_And_Env_Child" });
 
         [Fact(Skip = "Temporarily skipped due to CI flakiness. Tracked by #1344.")]

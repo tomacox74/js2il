@@ -109,9 +109,7 @@ internal sealed class GeneratedFunctionObjectEmitter
                 : default;
 
             var typeHandle = typeBuilder.AddTypeDefinition(
-                (plan.Callable.Kind == CallableKind.Arrow
-                    ? TypeAttributes.NestedPublic
-                    : TypeAttributes.NotPublic)
+                TypeAttributes.NestedPublic
                 | TypeAttributes.Class
                 | TypeAttributes.Sealed
                 | TypeAttributes.BeforeFieldInit,
@@ -128,10 +126,7 @@ internal sealed class GeneratedFunctionObjectEmitter
 
             var canonicalBody = (MethodDefinitionHandle)bodyToken;
             var ownerType = ResolveCanonicalOwnerType(plan);
-            if (plan.Callable.Kind == CallableKind.Arrow)
-            {
-                _nestedTypeRegistry.Add(typeHandle, ownerType);
-            }
+            _nestedTypeRegistry.Add(typeHandle, ownerType);
             _functionObjectRegistry.SetMetadata(new GeneratedFunctionObjectMetadata
             {
                 Plan = plan,
