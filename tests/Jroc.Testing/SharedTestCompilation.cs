@@ -13,7 +13,8 @@ namespace Jroc.Tests
     /// </summary>
     internal static class SharedTestCompilation
     {
-        private static readonly ConcurrentDictionary<CompilationKey, Lazy<CompilationResult>> _cache = new();
+        private const int ConsumersPerCompilation = 2;
+        private static readonly ConcurrentDictionary<CompilationKey, CacheEntry> _cache = new();
         private static readonly string _sharedOutputRoot;
 
         static SharedTestCompilation()
@@ -35,8 +36,8 @@ namespace Jroc.Tests
             var keyScripts = additionalScripts?.ToArray();
             var key = new CompilationKey(testCategory, testName, keyScripts);
 
-            // Use Lazy<T> to ensure only one thread compiles, even with concurrent access
-            var lazyResult = _cache.GetOrAdd(key, _ => new Lazy<CompilationResult>(() =>
+            // Use Lazy<T> to ensure only one thread compiles, even with concurrent access.
+            var cacheEntry = _cache.GetOrAdd(key, _ => new CacheEntry(() =>
             {
                 try
                 {
@@ -50,9 +51,14 @@ namespace Jroc.Tests
                 {
                     return new CompilationResult(ex);
                 }
-            }, LazyThreadSafetyMode.ExecutionAndPublication));
+            }));
 
-            var result = lazyResult.Value;
+            var result = cacheEntry.Result.Value;
+            if (cacheEntry.RegisterConsumer() == ConsumersPerCompilation)
+            {
+                ((ICollection<KeyValuePair<CompilationKey, CacheEntry>>)_cache)
+                    .Remove(new KeyValuePair<CompilationKey, CacheEntry>(key, cacheEntry));
+            }
 
             if (result.Exception != null)
             {
@@ -81,6 +87,13 @@ namespace Jroc.Tests
         {
             _cache.Clear();
         }
+
+        internal static bool IsCached(
+            string testCategory,
+            string testName,
+            string[]? additionalScripts)
+            => _cache.ContainsKey(
+                new CompilationKey(testCategory, testName, additionalScripts?.ToArray()));
 
         private record CompilationKey(string Category, string TestName, string[]? AdditionalScripts)
         {
@@ -139,6 +152,23 @@ namespace Jroc.Tests
             {
                 Exception = exception;
             }
+        }
+
+        private sealed class CacheEntry
+        {
+            private int _consumerCount;
+
+            public CacheEntry(Func<CompilationResult> createResult)
+            {
+                Result = new Lazy<CompilationResult>(
+                    createResult,
+                    LazyThreadSafetyMode.ExecutionAndPublication);
+            }
+
+            public Lazy<CompilationResult> Result { get; }
+
+            public int RegisterConsumer()
+                => Interlocked.Increment(ref _consumerCount);
         }
     }
 
