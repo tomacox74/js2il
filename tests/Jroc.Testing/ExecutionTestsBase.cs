@@ -58,11 +58,14 @@ namespace Jroc.Tests
                     outputDir,
                     name => GetJavaScriptAndSourcePath(name, sourceFilePath),
                     additionalScripts,
-                    enableIRMetrics: true));
+                    enableIRMetrics: true,
+                    writeArtifacts: preferOutOfProc));
 
             string output;
-            if (preferOutOfProc && compiled.MaterializedArtifact is { } materializedArtifact)
+            if (preferOutOfProc)
             {
+                var materializedArtifact = compiled.MaterializedArtifact
+                    ?? compiled.Artifact.Materialize(compiled.OutputDirectory);
                 output = ExecuteGeneratedAssembly(materializedArtifact.AssemblyPath, allowUnhandledException, testName);
             }
             else

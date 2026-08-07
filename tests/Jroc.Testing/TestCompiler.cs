@@ -40,7 +40,7 @@ public static class TestCompiler
                     ?? Path.Combine(outputDirectory, $"{scriptName}.js");
 
                 fileSystem.AddFile(additionalPath, additionalScript, additionalSourcePath);
-                additionalScriptPaths.Add(additionalPath);
+                additionalScriptPaths.Add(Path.Combine(outputDirectory, $"{scriptName}.js"));
             }
         }
 
@@ -69,7 +69,7 @@ public static class TestCompiler
 
             return new CompiledAssembly(
                 artifact,
-                entryPath,
+                logicalTestPath,
                 additionalScriptPaths,
                 outputDirectory,
                 materializedArtifact);
