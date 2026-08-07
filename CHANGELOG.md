@@ -22,6 +22,12 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   propagation. Preserve alternate `Reflect.construct` targets, bound
   constructors, derived classes with function-valued bases, and
   non-constructability for arrows and methods.
+- compiler/runtime: close issue #1714 by materializing synchronous class
+  methods, static methods, object-literal methods, getters, and setters as
+  generated `JsFunctionObject` instances. Preserve method identity,
+  descriptor identity, receiver and `super` behavior, computed names,
+  per-evaluation private brands, and non-constructability while retaining
+  direct typed dispatch for statically known calls.
 
 ## v0.12.4 - 2026-08-06
 

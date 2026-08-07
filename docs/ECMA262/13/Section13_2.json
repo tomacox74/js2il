@@ -466,6 +466,7 @@
         "specUrl": "https://tc39.es/ecma262/#sec-object-initializer",
         "testScripts": [
           "tests/Jroc.Tests/Object/JavaScript/ObjectLiteral_ShorthandAndMethod.js",
+          "tests/Jroc.Tests/Object/JavaScript/ObjectLiteral_GeneratedMethodFunctionObjects.js",
           "tests/Jroc.Test262.Tests/language/expressions/object/dstr/JavaScript/gen-meth-dflt-ary-ptrn-elem-id-init-fn-name-cover.js"
         ],
         "test262Paths": [
@@ -475,7 +476,7 @@
           "test/language/expressions/object/method-definition/generator-invoke-fn-no-strict.js",
           "test/language/expressions/object/method-definition/generator-invoke-fn-strict.js"
         ],
-        "notes": "Method definitions are lowered as property assignments whose values are compiled function delegates; calls via member dispatch bind 'this' using RuntimeServices.SetCurrentThis. Generator method values initialize the generator-function surface, reject construction with TypeError, remain callable as generator functions, and support covered parameter default/name inference behavior."
+        "notes": "Synchronous object-literal methods and accessors are generated JsFunctionObject instances installed directly into data/accessor descriptors. They preserve dynamic this, inferred method/accessor names, computed keys, per-evaluation identity, non-constructability, and home-object state for super property reads/calls. Generator method values retain their generator-function surface and transitional representation until the generator callable-family migration."
       },
       {
         "clause": "13.2.5.1",

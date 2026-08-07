@@ -4,7 +4,7 @@
 
 [Back to Section10](Section10.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-08-07T08:24:54Z
+> Last generated (UTC): 2026-08-07T18:30:40Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -58,6 +58,18 @@ Feature-level support tracking with repo test references and optional test262 ev
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
 | Function prototype objects and constructor-style metadata | Supported with Limitations | [`Function_Prototype_ObjectCreate_ObjectPrototype.js`](../../../tests/Jroc.Tests/Function/JavaScript/Function_Prototype_ObjectCreate_ObjectPrototype.js)<br>[`Function_Prototype_Bind_PropertyExists.js`](../../../tests/Jroc.Tests/Function/JavaScript/Function_Prototype_Bind_PropertyExists.js)<br>[`Function_GeneratedConstruction_Semantics.js`](../../../tests/Jroc.Tests/Function/JavaScript/Function_GeneratedConstruction_Semantics.js)<br>[`Function_Prototype_ToString_Basic.js`](../../../tests/Jroc.Tests/Function/JavaScript/Function_Prototype_ToString_Basic.js) |  | Generated ordinary function objects receive writable, non-enumerable, non-configurable prototype properties whose prototype objects carry the expected writable, non-enumerable, configurable constructor link. Prototype replacement affects subsequent construction. Transitional delegate-backed callables still synthesize metadata lazily, and exact realm-sensitive MakeConstructor behavior remains limited. |
+
+### 10.2.7 ([tc39.es](https://tc39.es/ecma262/#sec-makemethod))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Generated method function objects with home-object state | Supported with Limitations | [`Classes_GeneratedMethodFunctionObjects.js`](../../../tests/Jroc.Tests/Classes/JavaScript/Classes_GeneratedMethodFunctionObjects.js)<br>[`ObjectLiteral_GeneratedMethodFunctionObjects.js`](../../../tests/Jroc.Tests/Object/JavaScript/ObjectLiteral_GeneratedMethodFunctionObjects.js) |  | Synchronous class and object-literal methods/accessors materialize as generated JsFunctionObject instances. Generated objects capture home-object and lexical super state only when required, preserve dynamic receiver behavior and per-evaluation identity, and remain non-constructable without an ordinary-function prototype property. Async and generator method values remain on their dedicated transitional paths pending their callable-family migrations. |
+
+### 10.2.8 ([tc39.es](https://tc39.es/ecma262/#sec-definemethodproperty))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Generated method and accessor descriptor installation | Supported with Limitations | [`Classes_GeneratedMethodFunctionObjects.js`](../../../tests/Jroc.Tests/Classes/JavaScript/Classes_GeneratedMethodFunctionObjects.js)<br>[`ObjectLiteral_GeneratedMethodFunctionObjects.js`](../../../tests/Jroc.Tests/Object/JavaScript/ObjectLiteral_GeneratedMethodFunctionObjects.js) |  | Class prototype/static properties and object-literal data/accessor descriptors install the same generated method objects returned by descriptor reflection. Covered computed names, getter/setter names, private-brand checks, and repeated class/object evaluations preserve observable identity. |
 
 ### 10.2.9 ([tc39.es](https://tc39.es/ecma262/#sec-setfunctionname))
 

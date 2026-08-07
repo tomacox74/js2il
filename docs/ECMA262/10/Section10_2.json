@@ -174,6 +174,28 @@
         "notes": "Generated ordinary function objects receive writable, non-enumerable, non-configurable prototype properties whose prototype objects carry the expected writable, non-enumerable, configurable constructor link. Prototype replacement affects subsequent construction. Transitional delegate-backed callables still synthesize metadata lazily, and exact realm-sensitive MakeConstructor behavior remains limited."
       },
       {
+        "clause": "10.2.7",
+        "feature": "Generated method function objects with home-object state",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-makemethod",
+        "testScripts": [
+          "tests/Jroc.Tests/Classes/JavaScript/Classes_GeneratedMethodFunctionObjects.js",
+          "tests/Jroc.Tests/Object/JavaScript/ObjectLiteral_GeneratedMethodFunctionObjects.js"
+        ],
+        "notes": "Synchronous class and object-literal methods/accessors materialize as generated JsFunctionObject instances. Generated objects capture home-object and lexical super state only when required, preserve dynamic receiver behavior and per-evaluation identity, and remain non-constructable without an ordinary-function prototype property. Async and generator method values remain on their dedicated transitional paths pending their callable-family migrations."
+      },
+      {
+        "clause": "10.2.8",
+        "feature": "Generated method and accessor descriptor installation",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-definemethodproperty",
+        "testScripts": [
+          "tests/Jroc.Tests/Classes/JavaScript/Classes_GeneratedMethodFunctionObjects.js",
+          "tests/Jroc.Tests/Object/JavaScript/ObjectLiteral_GeneratedMethodFunctionObjects.js"
+        ],
+        "notes": "Class prototype/static properties and object-literal data/accessor descriptors install the same generated method objects returned by descriptor reflection. Covered computed names, getter/setter names, private-brand checks, and repeated class/object evaluations preserve observable identity."
+      },
+      {
         "clause": "10.2.9",
         "feature": "SetFunctionName for anonymous functions in destructuring defaults",
         "status": "Supported with Limitations",
