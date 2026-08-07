@@ -102,9 +102,9 @@ public sealed partial class HIRToLIRLowerer
 
     private readonly Stack<TempVariable> _activeWithObjects = new();
 
-    // Class method property initialization needs the class Type as the method owner; class constructor
-    // value creation immediately afterward can reuse that temp instead of re-emitting RunClassConstructor.
-    private readonly Dictionary<string, TempVariable> _classMethodOwnerTempsByRegistryName = new(StringComparer.Ordinal);
+    // Class element initialization needs the class Type as its owner. Reuse it for every element
+    // and for class-constructor value creation, rather than repeatedly running the CLR initializer.
+    private readonly Dictionary<string, TempVariable> _classInitializationOwnerTempsByRegistryName = new(StringComparer.Ordinal);
     private readonly Dictionary<string, TempVariable> _classMethodScopesTempsByRegistryName = new(StringComparer.Ordinal);
 
     // Flow-sensitive numeric type refinement: maps a binding to the last proven unboxed-double

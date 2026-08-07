@@ -104,8 +104,8 @@ public sealed partial class HIRToLIRLowerer
     {
         resultTempVar = default;
 
-        if (!TryLowerExpression(expression.Target, out var targetTemp)
-            || !TryLowerExpression(expression.Owner, out var ownerTemp)
+        if (!TryLowerClassInitializationOwner(expression.Owner, out var ownerTemp)
+            || !TryLowerClassInitializationTarget(expression.Target, expression.Owner, ownerTemp, out var targetTemp)
             || !TryLowerExpression(expression.Key, out var keyTemp))
         {
             return false;
@@ -215,19 +215,18 @@ public sealed partial class HIRToLIRLowerer
             return false;
         }
 
-        if (!TryLowerExpression(expression.Owner, out var ownerTemp))
+        if (!TryLowerClassInitializationOwner(expression.Owner, out var ownerTemp))
         {
             return false;
         }
 
-        if (!TryLowerExpression(expression.Prototype, out var prototypeTemp))
+        if (!TryLowerClassInitializationTarget(
+                expression.Prototype,
+                expression.Owner,
+                ownerTemp,
+                out var prototypeTemp))
         {
             return false;
-        }
-
-        if (expression.Owner is HIRUserClassTypeExpression ownerClassType)
-        {
-            _classMethodOwnerTempsByRegistryName[ownerClassType.RegistryClassName] = ownerTemp;
         }
 
         var scopesTemp = CreateTempVariable();
@@ -364,6 +363,63 @@ public sealed partial class HIRToLIRLowerer
 
         return classScope.Children.FirstOrDefault(scope =>
             ReferenceEquals(scope.AstNode, methodDefinition.Value));
+    }
+
+    private bool TryLowerClassInitializationOwner(
+        HIRExpression owner,
+        out TempVariable ownerTemp)
+    {
+        if (owner is HIRUserClassTypeExpression classType
+            && _classInitializationOwnerTempsByRegistryName.TryGetValue(
+                classType.RegistryClassName,
+                out ownerTemp))
+        {
+            return true;
+        }
+
+        if (!TryLowerExpression(owner, out ownerTemp))
+        {
+            return false;
+        }
+
+        if (owner is HIRUserClassTypeExpression initializedClassType)
+        {
+            _classInitializationOwnerTempsByRegistryName[
+                initializedClassType.RegistryClassName] = ownerTemp;
+        }
+
+        return true;
+    }
+
+    private bool TryLowerClassInitializationTarget(
+        HIRExpression target,
+        HIRExpression owner,
+        TempVariable ownerTemp,
+        out TempVariable targetTemp)
+    {
+        if (target is HIRPropertyAccessExpression
+            {
+                Object: HIRUserClassTypeExpression targetClassType,
+                PropertyName: "prototype"
+            }
+            && owner is HIRUserClassTypeExpression ownerClassType
+            && string.Equals(
+                targetClassType.RegistryClassName,
+                ownerClassType.RegistryClassName,
+                StringComparison.Ordinal))
+        {
+            var prototypeKeyTemp = CreateStringConstant("prototype");
+            targetTemp = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRGetItem(
+                EnsureObject(ownerTemp),
+                EnsureObject(prototypeKeyTemp),
+                targetTemp));
+            DefineTempStorage(
+                targetTemp,
+                new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            return true;
+        }
+        return TryLowerExpression(target, out targetTemp);
     }
 
     private TempVariable CreateStringConstant(string value)

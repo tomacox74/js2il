@@ -6,6 +6,9 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- compiler/IL: reuse the class type throughout straight-line class element
+  initialization, eliminating redundant `RunClassConstructor` calls for
+  private accessors and method metadata.
 - compiler/IL: nest generated function-object wrappers under their canonical
   callable or class owner type, eliminating detached `FunctionObjects.*`
   namespaces for ordinary functions and class methods.
