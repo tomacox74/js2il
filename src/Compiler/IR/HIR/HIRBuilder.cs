@@ -1069,11 +1069,14 @@ class HIRMethodBuilder
             ArgumentsParameterNames = ArgumentsObjectSemantics.GetMappedParameterNames(functionScope),
             IncludeCalleeInArgumentsObject = functionScope.NeedsArgumentsObject && !isStrictFunction,
             HasRestrictedFunctionProperties = isStrictFunction,
+            IsMethodDefinition = functionScope.IsMethodDefinition,
+            IsAccessorDefinition = functionScope.IsAccessorDefinition,
             AstNode = funcExpr
         };
 
-        var isNonConstructible = functionScope.AstNode is MethodDefinition methodDefinition
-            && ReferenceEquals(methodDefinition.Value, funcExpr);
+        var isNonConstructible = functionScope.IsMethodDefinition
+            || functionScope.AstNode is MethodDefinition methodDefinition
+                && ReferenceEquals(methodDefinition.Value, funcExpr);
         return new HIRFunctionExpression(callableId, functionScope, isNonConstructible);
     }
 
@@ -1683,6 +1686,7 @@ class HIRMethodBuilder
                             classTypeExpr,
                             keyExpr,
                             classScope,
+                            CreateClassMethodCallableId(classScope, methodDefinition),
                             clrMethodName,
                             CountExpectedFunctionLength(methodFunction.Params),
                             functionName,
@@ -1726,6 +1730,7 @@ class HIRMethodBuilder
                             : propertyKey;
 
                         var definition = new HIRClassMethodDataPropertyDefinition(
+                            CreateClassMethodCallableId(classScope, methodDefinition),
                             propertyKey,
                             clrMethodName,
                             CountExpectedFunctionLength(methodFunction.Params),
@@ -1735,7 +1740,12 @@ class HIRMethodBuilder
                             methodFunction.Generator,
                             methodFunction.Async);
 
-                        AppendClassMethodDataPropertyDefinition(statements, classTypeExpr, classScope, definition);
+                        AppendClassMethodDataPropertyDefinition(
+                            statements,
+                            classTypeExpr,
+                            prototypeTypeExpr,
+                            classScope,
+                            definition);
                         break;
                     }
 
@@ -2081,6 +2091,7 @@ class HIRMethodBuilder
     private static void AppendClassMethodDataPropertyDefinition(
         List<HIRStatement> statements,
         HIRExpression classTypeExpr,
+        HIRExpression prototypeTypeExpr,
         Scope classScope,
         HIRClassMethodDataPropertyDefinition definition)
     {
@@ -2095,8 +2106,110 @@ class HIRMethodBuilder
         statements.Add(new HIRExpressionStatement(
             new HIRDefineClassMethodDataPropertiesExpression(
                 classTypeExpr,
+                prototypeTypeExpr,
                 classScope,
                 new List<HIRClassMethodDataPropertyDefinition> { definition })));
+    }
+
+    private static CallableId CreateClassMethodCallableId(
+        Scope classScope,
+        MethodDefinition methodDefinition)
+    {
+        var className = classScope.AstNode switch
+        {
+            ClassDeclaration { Id: Identifier id } => id.Name,
+            ClassExpression { Id: Identifier id } => id.Name,
+            _ => classScope.Name
+        };
+        if (!ClassElementNames.TryGetPropertyName(
+                methodDefinition.Key,
+                methodDefinition.Computed,
+                out var methodName)
+            || string.IsNullOrWhiteSpace(methodName))
+        {
+            throw new InvalidOperationException(
+                "A generated class method object requires a stable property name.");
+        }
+
+        var kind = methodDefinition.Kind switch
+        {
+            PropertyKind.Get => methodDefinition.Static
+                ? CallableKind.ClassStaticGetter
+                : CallableKind.ClassGetter,
+            PropertyKind.Set => methodDefinition.Static
+                ? CallableKind.ClassStaticSetter
+                : CallableKind.ClassSetter,
+            _ => methodDefinition.Static
+                ? CallableKind.ClassStaticMethod
+                : CallableKind.ClassMethod
+        };
+        var effectiveMethodName = methodDefinition.Key is PrivateIdentifier
+            ? methodDefinition.Kind switch
+            {
+                PropertyKind.Get =>
+                    ClassElementNames.ManglePrivateAccessorMethodName(
+                        "get",
+                        methodName),
+                PropertyKind.Set =>
+                    ClassElementNames.ManglePrivateAccessorMethodName(
+                        "set",
+                        methodName),
+                _ => ClassElementNames.ManglePrivateMethodName(methodName)
+            }
+            : methodName;
+        var callableName = kind switch
+        {
+            CallableKind.ClassGetter or CallableKind.ClassStaticGetter =>
+                JavaScriptCallableNaming.MakeClassAccessorCallableName(
+                    className,
+                    "get",
+                    effectiveMethodName),
+            CallableKind.ClassSetter or CallableKind.ClassStaticSetter =>
+                JavaScriptCallableNaming.MakeClassAccessorCallableName(
+                    className,
+                    "set",
+                    effectiveMethodName),
+            _ => JavaScriptCallableNaming.MakeClassMethodCallableName(
+                className,
+                effectiveMethodName)
+        };
+
+        var methodFunction = (FunctionExpression)methodDefinition.Value;
+        var methodScope = classScope.Children.FirstOrDefault(scope =>
+            ReferenceEquals(scope.AstNode, methodFunction));
+        var root = classScope;
+        while (root.Parent != null)
+        {
+            root = root.Parent;
+        }
+        var parentScope = classScope.Parent;
+        var declaringScopeName = parentScope == null
+            || parentScope.Kind == ScopeKind.Global
+                ? root.Name
+                : $"{root.Name}/{parentScope.GetQualifiedName()}";
+
+        return new CallableId
+        {
+            Kind = kind,
+            DeclaringScopeName = declaringScopeName,
+            Name = callableName,
+            Location = SourceLocation.FromNode(methodDefinition),
+            JsParamCount = methodFunction.Params.Count(parameter =>
+                parameter is not RestElement),
+            NeedsArgumentsObject = methodScope?.NeedsArgumentsObject ?? false,
+            HasRestParameters = methodScope?.HasRestParameters ?? false,
+            UsesMappedArgumentsObject = methodScope != null
+                && ArgumentsObjectSemantics.UsesMappedArgumentsObject(methodScope),
+            ArgumentsParameterNames = methodScope != null
+                ? ArgumentsObjectSemantics.GetMappedParameterNames(methodScope)
+                : Array.Empty<string>(),
+            IncludeCalleeInArgumentsObject = false,
+            HasRestrictedFunctionProperties = true,
+            IsMethodDefinition = true,
+            IsAccessorDefinition =
+                methodDefinition.Kind is PropertyKind.Get or PropertyKind.Set,
+            AstNode = methodDefinition
+        };
     }
 
     private static int CountExpectedFunctionLength(NodeList<Node> parameters)

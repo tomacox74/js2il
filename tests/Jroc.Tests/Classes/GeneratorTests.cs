@@ -92,6 +92,7 @@ namespace Jroc.Tests.Classes
         [Fact] public Task Classes_ClassMethod_ReturnsThis_IsSelf_Log() { var testName = nameof(Classes_ClassMethod_ReturnsThis_IsSelf_Log); return GenerateTest(testName); }
         [Fact] public Task Classes_ClassMethod_CallsAnotherMethod() { var testName = nameof(Classes_ClassMethod_CallsAnotherMethod); return GenerateTest(testName); }
         [Fact] public Task Classes_ClassMethod_MethodValueRequiresMetadata() { var testName = nameof(Classes_ClassMethod_MethodValueRequiresMetadata); return GenerateTest(testName); }
+        [Fact] public Task Classes_GeneratedMethodFunctionObjects() { var testName = nameof(Classes_GeneratedMethodFunctionObjects); return GenerateTest(testName); }
         [Fact] public Task Classes_AccessorMethods_InstanceAndStatic() { var testName = nameof(Classes_AccessorMethods_InstanceAndStatic); return GenerateTest(testName); }
         [Fact] public Task Classes_ClassMethod_ForLoop_CallsAnotherMethod() { var testName = nameof(Classes_ClassMethod_ForLoop_CallsAnotherMethod); return GenerateTest(testName); }
 

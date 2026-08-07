@@ -170,6 +170,17 @@ public class Scope
     public bool HasRestParameters { get; set; }
 
     /// <summary>
+    /// True when this function scope is the body of an object/class method or accessor.
+    /// Method functions are callable but never constructable.
+    /// </summary>
+    public bool IsMethodDefinition { get; set; }
+
+    /// <summary>
+    /// True when this method definition is a getter or setter.
+    /// </summary>
+    public bool IsAccessorDefinition { get; set; }
+
+    /// <summary>
     /// True when this callable has parameter expressions (defaults, rest, or destructuring)
     /// that require a distinct parameter environment.
     /// </summary>

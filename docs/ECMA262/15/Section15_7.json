@@ -252,9 +252,10 @@
         "specUrl": "https://tc39.es/ecma262/#sec-class-definitions",
         "testScripts": [
           "tests/Jroc.Tests/Classes/JavaScript/Classes_ClassWithMethod_HelloWorld.js",
+          "tests/Jroc.Tests/Classes/JavaScript/Classes_GeneratedMethodFunctionObjects.js",
           "tests/Jroc.Test262.Tests/language/expressions/class/JavaScript/gen-method-length-dflt.js"
         ],
-        "notes": "Instance methods are available through normal direct dispatch and as non-enumerable configurable writable function-valued properties on the class prototype."
+        "notes": "Synchronous instance methods retain direct typed dispatch for known calls and materialize as generated non-constructable JsFunctionObject properties when observed. Generated objects preserve descriptor identity, receiver/super state, private-brand checks, and per-class-evaluation identity."
       },
       {
         "clause": "15.7.1",
@@ -304,6 +305,7 @@
         "specUrl": "https://tc39.es/ecma262/#sec-class-definitions",
         "testScripts": [
           "tests/Jroc.Tests/Classes/JavaScript/Classes_ClassWithStaticMethod_HelloWorld.js",
+          "tests/Jroc.Tests/Classes/JavaScript/Classes_GeneratedMethodFunctionObjects.js",
           "tests/Jroc.Test262.Tests/language/expressions/class/elements/JavaScript/fields-multiple-definitions-static-private-methods-proxy.js",
           "tests/Jroc.Test262.Tests/language/statements/class/elements/JavaScript/new-sc-line-method-rs-static-method-privatename-identifier-alt.js"
         ],
@@ -311,7 +313,7 @@
           "test/language/expressions/class/elements/fields-multiple-definitions-static-private-methods-proxy.js",
           "test/language/statements/class/elements/new-sc-line-method-rs-static-method-privatename-identifier-alt.js"
         ],
-        "notes": "Static methods are available through normal direct dispatch and as non-enumerable configurable writable function-valued properties on the class constructor value. Static private method calls dispatch through private-callable metadata instead of normal property lookup and enforce the declaring-class receiver brand, including proxy mismatch rejection."
+        "notes": "Synchronous static methods retain direct typed dispatch and materialize as generated non-constructable JsFunctionObject properties on the class constructor value. Static private calls continue to enforce the declaring-class receiver brand, including proxy mismatch rejection."
       },
       {
         "clause": "15.7.1",
@@ -319,9 +321,10 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-class-definitions",
         "testScripts": [
-          "tests/Jroc.Tests/Classes/JavaScript/Classes_AccessorMethods_InstanceAndStatic.js"
+          "tests/Jroc.Tests/Classes/JavaScript/Classes_AccessorMethods_InstanceAndStatic.js",
+          "tests/Jroc.Tests/Classes/JavaScript/Classes_GeneratedMethodFunctionObjects.js"
         ],
-        "notes": "Identifier-named instance and static accessors compile and dispatch correctly for normal property reads/writes, including accessor this binding and static access through the class object. Object.getOwnPropertyDescriptor() correctly identifies getter/setter descriptors on class prototypes and static class objects. Static accessor methods use the correct CLR static ABI. Private accessors are compiled as hidden callable members. More complex runtime-computed accessor keys still have limitations."
+        "notes": "Identifier-named synchronous instance/static accessors materialize as generated non-constructable function objects installed in class descriptors. Property reads/writes and Object.getOwnPropertyDescriptor() observe the same getter/setter identities, with correct receiver binding, static ABI, names, lengths, and private-brand behavior. Async/generator-family edge cases remain transitional."
       },
       {
         "clause": "15.7.1",

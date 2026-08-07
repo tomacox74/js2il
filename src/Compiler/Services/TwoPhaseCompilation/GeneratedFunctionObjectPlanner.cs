@@ -30,7 +30,11 @@ internal static class GeneratedFunctionObjectPlanner
                 callableScope,
                 classScope),
             Captures = captures,
-            StateFields = BuildStatePlan(callable, signature, requirements),
+            StateFields = BuildStatePlan(
+                callable,
+                callableScope,
+                signature,
+                requirements),
             ScopeChainSlotCount = slotCount,
             IsConstructable = IsConstructable(callable),
             RequiresInvocationContext =
@@ -181,11 +185,25 @@ internal static class GeneratedFunctionObjectPlanner
 
     private static IReadOnlyList<GeneratedFunctionStatePlan> BuildStatePlan(
         CallableId callable,
+        Scope? callableScope,
         CallableSignature signature,
         CallableRequirements requirements)
     {
         var state = new List<GeneratedFunctionStatePlan>();
         if (signature.ScopeAbiKind == Jroc.Runtime.CallableScopeAbiKind.ScopeArray)
+        {
+            state.Add(new GeneratedFunctionStatePlan(
+                "_transitionalScopes",
+                GeneratedFunctionStateKind.TransitionalScopeArray));
+        }
+        else if (callable.Kind is CallableKind.ClassMethod
+                or CallableKind.ClassGetter
+                or CallableKind.ClassSetter
+            && callableScope != null
+            && (callableScope.ReferencesParentScopeVariables
+                || callableScope.HasDescendantCallableReferencingParentScopeVariables
+                || callableScope.Children.Any(child =>
+                    child.Kind is ScopeKind.Function or ScopeKind.Class)))
         {
             state.Add(new GeneratedFunctionStatePlan(
                 "_transitionalScopes",
@@ -239,6 +257,11 @@ internal static class GeneratedFunctionObjectPlanner
             return false;
         }
 
+        if (callable.IsMethodDefinition)
+        {
+            return false;
+        }
+
         return callable.AstNode switch
         {
             FunctionDeclaration function => !function.Async && !function.Generator,
@@ -278,7 +301,10 @@ internal static class GeneratedFunctionObjectPlanner
             return requirements;
         }
 
-        Visit(root, isRoot: true);
+        var callableRoot = root is MethodDefinition methodDefinition
+            ? methodDefinition.Value
+            : root;
+        Visit(callableRoot, isRoot: true);
         return requirements;
 
         void Visit(Node node, bool isRoot)

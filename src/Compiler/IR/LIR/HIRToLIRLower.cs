@@ -46,7 +46,7 @@ public sealed partial class HIRToLIRLowerer
     {
         if (allowGeneratedFunctionObject
             && (callableId.Kind == TwoPhase.CallableKind.Arrow
-                || IsSynchronousOrdinaryFunction(callableId))
+                || IsSynchronousGeneratedFunction(callableId))
             && _generatedFunctionObjectRegistry?.TryGetMetadata(
                 callableId,
                 out var generatedMetadata) == true)
@@ -62,7 +62,7 @@ public sealed partial class HIRToLIRLowerer
         return new ValueStorage(ValueStorageKind.Reference, delegateType);
     }
 
-    private static bool IsSynchronousOrdinaryFunction(TwoPhase.CallableId callableId)
+    private static bool IsSynchronousGeneratedFunction(TwoPhase.CallableId callableId)
     {
         return callableId.AstNode switch
         {
@@ -70,6 +70,8 @@ public sealed partial class HIRToLIRLowerer
                 !function.Async && !function.Generator,
             FunctionExpression function =>
                 !function.Async && !function.Generator,
+            MethodDefinition { Value: FunctionExpression method } =>
+                !method.Async && !method.Generator,
             _ => false
         };
     }
@@ -103,6 +105,7 @@ public sealed partial class HIRToLIRLowerer
     // Class method property initialization needs the class Type as the method owner; class constructor
     // value creation immediately afterward can reuse that temp instead of re-emitting RunClassConstructor.
     private readonly Dictionary<string, TempVariable> _classMethodOwnerTempsByRegistryName = new(StringComparer.Ordinal);
+    private readonly Dictionary<string, TempVariable> _classMethodScopesTempsByRegistryName = new(StringComparer.Ordinal);
 
     // Flow-sensitive numeric type refinement: maps a binding to the last proven unboxed-double
     // temp that holds its value.  Used to avoid redundant TypeUtilities.ToNumber calls when the
@@ -733,6 +736,7 @@ public sealed partial class HIRToLIRLowerer
                 {
                     return true;
                 }
+
             }
             catch
             {
@@ -807,6 +811,15 @@ public sealed partial class HIRToLIRLowerer
         _methodBodyIR.Instructions.Add(new LIRBuildScopesArray(new[] { globalSlotSource }, resultTemp));
         return true;
     }
+
+    private bool TryBuildScopesArrayForClassMethod(
+        Scope methodScope,
+        TempVariable resultTemp)
+        => TryBuildScopesArrayFromLayout(
+            methodScope,
+            CallableKind.Function,
+            resultTemp);
+
     /// <summary>
     /// Finds the scope associated with a function symbol.
     /// </summary>

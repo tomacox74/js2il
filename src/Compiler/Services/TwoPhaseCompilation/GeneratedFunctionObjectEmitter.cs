@@ -101,6 +101,7 @@ internal sealed class GeneratedFunctionObjectEmitter
             var callAdapter = MetadataTokens.MethodDefinitionHandle(nextMethodRow++);
             var constructBodyAdapter = plan.Callable.Kind is
                 CallableKind.FunctionDeclaration or CallableKind.FunctionExpression
+                && !plan.Callable.IsMethodDefinition
                 ? MetadataTokens.MethodDefinitionHandle(nextMethodRow++)
                 : default;
             var constructAdapter = plan.IsConstructable
@@ -437,11 +438,47 @@ internal sealed class GeneratedFunctionObjectEmitter
         int? newTargetIndex = null)
     {
         var plan = metadata.Plan;
-        if (plan.Signature.IsInstanceMethod)
+        if (plan.Callable.Kind is CallableKind.ClassStaticMethod
+                or CallableKind.ClassStaticGetter
+                or CallableKind.ClassStaticSetter
+            && plan.StateFields.Any(state =>
+                state.Kind == GeneratedFunctionStateKind.PrivateBrand))
         {
             encoder.LoadArgument(thisArgumentIndex);
-            encoder.OpCode(ILOpCode.Castclass);
+            encoder.OpCode(ILOpCode.Ldtoken);
             encoder.Token(metadata.CanonicalOwnerTypeHandle);
+            encoder.Call(_bclReferences.Type_GetTypeFromHandle_Ref);
+            EmitPrivateBrand(metadata, encoder);
+            encoder.OpCode(ILOpCode.Ldarg_0);
+            encoder.Call(
+                _bclReferences.RuntimeServices_ValidateGeneratedStaticMethodReceiver_Ref);
+            encoder.OpCode(ILOpCode.Pop);
+        }
+
+        if (plan.Signature.IsInstanceMethod)
+        {
+            if (plan.Callable.Kind is CallableKind.ClassMethod
+                or CallableKind.ClassGetter
+                or CallableKind.ClassSetter)
+            {
+                encoder.LoadArgument(thisArgumentIndex);
+                encoder.OpCode(ILOpCode.Ldtoken);
+                encoder.Token(metadata.CanonicalOwnerTypeHandle);
+                encoder.Call(_bclReferences.Type_GetTypeFromHandle_Ref);
+                EmitScopeArray(metadata, encoder);
+                EmitPrivateBrand(metadata, encoder);
+                encoder.OpCode(ILOpCode.Ldarg_0);
+                encoder.Call(
+                    _bclReferences.RuntimeServices_ResolveGeneratedClassMethodReceiver_Ref);
+                encoder.OpCode(ILOpCode.Castclass);
+                encoder.Token(metadata.CanonicalOwnerTypeHandle);
+            }
+            else
+            {
+                encoder.LoadArgument(thisArgumentIndex);
+                encoder.OpCode(ILOpCode.Castclass);
+                encoder.Token(metadata.CanonicalOwnerTypeHandle);
+            }
         }
 
         EmitScopePayload(metadata, encoder);
@@ -476,6 +513,14 @@ internal sealed class GeneratedFunctionObjectEmitter
                 encoder.OpCode(ILOpCode.Ldnull);
             }
         }
+        else if ((plan.Callable.Kind is CallableKind.ClassStaticMethod
+                or CallableKind.ClassStaticGetter
+                or CallableKind.ClassStaticSetter)
+            && plan.Signature.ScopeAbiKind
+                != Jroc.Runtime.CallableScopeAbiKind.NoScopes)
+        {
+            encoder.OpCode(ILOpCode.Ldnull);
+        }
 
         for (var index = 0; index < plan.Signature.JsParamCount; index++)
         {
@@ -488,6 +533,52 @@ internal sealed class GeneratedFunctionObjectEmitter
         encoder.OpCode(ILOpCode.Call);
         encoder.Token(metadata.EntryPoints[0].MethodHandle);
         EmitReturnAdaptation(encoder, plan.Signature.ReturnClrType);
+    }
+
+    private void EmitPrivateBrand(
+        GeneratedFunctionObjectMetadata metadata,
+        InstructionEncoder encoder)
+    {
+        var privateBrand = metadata.Plan.StateFields.FirstOrDefault(
+            state => state.Kind == GeneratedFunctionStateKind.PrivateBrand);
+        if (privateBrand is null)
+        {
+            encoder.OpCode(ILOpCode.Ldnull);
+            return;
+        }
+
+        encoder.OpCode(ILOpCode.Ldarg_0);
+        encoder.OpCode(ILOpCode.Ldfld);
+        encoder.Token(metadata.FieldHandles[privateBrand.FieldName]);
+    }
+
+    private void EmitScopeArray(
+        GeneratedFunctionObjectMetadata metadata,
+        InstructionEncoder encoder)
+    {
+        var transitionalScopes = metadata.Plan.StateFields.FirstOrDefault(
+            state => state.Kind == GeneratedFunctionStateKind.TransitionalScopeArray);
+        if (transitionalScopes is not null)
+        {
+            encoder.OpCode(ILOpCode.Ldarg_0);
+            encoder.OpCode(ILOpCode.Ldfld);
+            encoder.Token(metadata.FieldHandles[transitionalScopes.FieldName]);
+            return;
+        }
+
+        encoder.LoadConstantI4(
+            System.Math.Max(1, metadata.Plan.ScopeChainSlotCount));
+        encoder.OpCode(ILOpCode.Newarr);
+        encoder.Token(_bclReferences.ObjectType);
+        foreach (var capture in metadata.Plan.Captures)
+        {
+            encoder.OpCode(ILOpCode.Dup);
+            encoder.LoadConstantI4(capture.ScopeIndex);
+            encoder.OpCode(ILOpCode.Ldarg_0);
+            encoder.OpCode(ILOpCode.Ldfld);
+            encoder.Token(metadata.FieldHandles[capture.FieldName]);
+            encoder.OpCode(ILOpCode.Stelem_ref);
+        }
     }
 
     private void EmitScopePayload(

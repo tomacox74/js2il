@@ -43,7 +43,7 @@
 					class [System.Runtime]System.Object capture0
 				) cil managed 
 			{
-				// Method begins at RVA 0x223e
+				// Method begins at RVA 0x225c
 				// Header size: 1
 				// Code size: 14 (0xe)
 				.maxstack 8
@@ -59,7 +59,7 @@
 			.method public hidebysig specialname virtual 
 				instance bool get_IsConstructor () cil managed 
 			{
-				// Method begins at RVA 0x224d
+				// Method begins at RVA 0x226b
 				// Header size: 1
 				// Code size: 2 (0x2)
 				.maxstack 8
@@ -71,7 +71,7 @@
 			.method public hidebysig specialname virtual 
 				instance bool get_RequiresInvocationContext () cil managed 
 			{
-				// Method begins at RVA 0x2250
+				// Method begins at RVA 0x226e
 				// Header size: 1
 				// Code size: 2 (0x2)
 				.maxstack 8
@@ -85,7 +85,7 @@
 					object thisArgument
 				) cil managed 
 			{
-				// Method begins at RVA 0x2253
+				// Method begins at RVA 0x2271
 				// Header size: 1
 				// Code size: 7 (0x7)
 				.maxstack 8
@@ -101,7 +101,7 @@
 					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 				) cil managed 
 			{
-				// Method begins at RVA 0x225b
+				// Method begins at RVA 0x2279
 				// Header size: 1
 				// Code size: 12 (0xc)
 				.maxstack 8
@@ -246,7 +246,7 @@
 				// Code size: 2 (0x2)
 				.maxstack 8
 
-				IL_0000: ldc.i4.0
+				IL_0000: ldc.i4.1
 				IL_0001: ret
 			} // end of method FunctionObject_ClassConstructor_85FC1835_C::get_RequiresInvocationContext
 
@@ -287,24 +287,32 @@
 		.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassMethod_79440680_C_make
 			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
 		{
+			// Fields
+			.field private initonly object[] _transitionalScopes
+
 			// Methods
 			.method public hidebysig specialname rtspecialname 
-				instance void .ctor () cil managed 
+				instance void .ctor (
+					object[] capture0
+				) cil managed 
 			{
 				// Method begins at RVA 0x2223
 				// Header size: 1
-				// Code size: 7 (0x7)
+				// Code size: 14 (0xe)
 				.maxstack 8
 
 				IL_0000: ldarg.0
 				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-				IL_0006: ret
+				IL_0006: ldarg.0
+				IL_0007: ldarg.1
+				IL_0008: stfld object[] Modules.ArrowFunction_LexicalThis_ObjectLiteralProperty/C/FunctionObject_ClassMethod_79440680_C_make::_transitionalScopes
+				IL_000d: ret
 			} // end of method FunctionObject_ClassMethod_79440680_C_make::.ctor
 
 			.method public hidebysig specialname virtual 
 				instance bool get_IsConstructor () cil managed 
 			{
-				// Method begins at RVA 0x222b
+				// Method begins at RVA 0x2232
 				// Header size: 1
 				// Code size: 2 (0x2)
 				.maxstack 8
@@ -316,7 +324,7 @@
 			.method public hidebysig specialname virtual 
 				instance bool get_RequiresInvocationContext () cil managed 
 			{
-				// Method begins at RVA 0x222e
+				// Method begins at RVA 0x2235
 				// Header size: 1
 				// Code size: 2 (0x2)
 				.maxstack 8
@@ -331,15 +339,22 @@
 					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 				) cil managed 
 			{
-				// Method begins at RVA 0x2231
+				// Method begins at RVA 0x2238
 				// Header size: 1
-				// Code size: 12 (0xc)
+				// Code size: 35 (0x23)
 				.maxstack 8
 
 				IL_0000: ldarg.1
-				IL_0001: castclass Modules.ArrowFunction_LexicalThis_ObjectLiteralProperty/C
-				IL_0006: call instance object Modules.ArrowFunction_LexicalThis_ObjectLiteralProperty/C::make()
-				IL_000b: ret
+				IL_0001: ldtoken Modules.ArrowFunction_LexicalThis_ObjectLiteralProperty/C
+				IL_0006: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+				IL_000b: ldarg.0
+				IL_000c: ldfld object[] Modules.ArrowFunction_LexicalThis_ObjectLiteralProperty/C/FunctionObject_ClassMethod_79440680_C_make::_transitionalScopes
+				IL_0011: ldnull
+				IL_0012: ldarg.0
+				IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodReceiver(object, class [System.Runtime]System.Type, object[], object, class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
+				IL_0018: castclass Modules.ArrowFunction_LexicalThis_ObjectLiteralProperty/C
+				IL_001d: call instance object Modules.ArrowFunction_LexicalThis_ObjectLiteralProperty/C::make()
+				IL_0022: ret
 			} // end of method FunctionObject_ClassMethod_79440680_C_make::CallCore
 
 		} // end of class FunctionObject_ClassMethod_79440680_C_make
@@ -564,7 +579,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2268
+		// Method begins at RVA 0x2286
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

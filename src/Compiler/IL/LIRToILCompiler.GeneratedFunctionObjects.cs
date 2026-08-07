@@ -25,6 +25,8 @@ internal sealed partial class LIRToILCompiler
             metadata,
             createArrow.ScopesArray,
             isArrow: true,
+            homeObject: null,
+            privateBrand: null,
             ilEncoder,
             allocation,
             methodDescriptor);
@@ -46,8 +48,7 @@ internal sealed partial class LIRToILCompiler
         TempLocalAllocation allocation,
         MethodDescriptor methodDescriptor)
     {
-        if (createFunction.IsNonConstructible
-            || createFunction.IsAsync
+        if (createFunction.IsAsync
             || IsGeneratorCallable(createFunction.CallableId)
             || !_generatedFunctionObjectRegistry.TryGetMetadata(
                 createFunction.CallableId,
@@ -60,6 +61,8 @@ internal sealed partial class LIRToILCompiler
             metadata,
             createFunction.ScopesArray,
             isArrow: false,
+            createFunction.HomeObject,
+            createFunction.PrivateBrand,
             ilEncoder,
             allocation,
             methodDescriptor);
@@ -71,7 +74,8 @@ internal sealed partial class LIRToILCompiler
             isAsync: false,
             markUndefinedPrototype: false,
             metadata,
-            ilEncoder);
+            ilEncoder,
+            createFunction.FunctionName);
         return true;
     }
 
@@ -79,6 +83,8 @@ internal sealed partial class LIRToILCompiler
         GeneratedFunctionObjectMetadata metadata,
         TempVariable scopesArray,
         bool isArrow,
+        TempVariable? homeObject,
+        TempVariable? privateBrand,
         InstructionEncoder ilEncoder,
         TempLocalAllocation allocation,
         MethodDescriptor methodDescriptor)
@@ -101,6 +107,8 @@ internal sealed partial class LIRToILCompiler
             EmitGeneratedFunctionStateArgument(
                 state.Kind,
                 isArrow,
+                homeObject,
+                privateBrand,
                 ilEncoder,
                 scopesArray,
                 allocation,
@@ -112,6 +120,8 @@ internal sealed partial class LIRToILCompiler
     private void EmitGeneratedFunctionStateArgument(
         GeneratedFunctionStateKind stateKind,
         bool isArrow,
+        TempVariable? homeObject,
+        TempVariable? privateBrand,
         InstructionEncoder ilEncoder,
         TempVariable scopesArray,
         TempLocalAllocation allocation,
@@ -136,11 +146,33 @@ internal sealed partial class LIRToILCompiler
                 break;
 
             case GeneratedFunctionStateKind.HomeObject:
-                EmitLoadArrowLexicalSuperReceiver(ilEncoder, methodDescriptor);
+                if (homeObject.HasValue)
+                {
+                    EmitLoadTemp(
+                        homeObject.Value,
+                        ilEncoder,
+                        allocation,
+                        methodDescriptor);
+                }
+                else
+                {
+                    EmitLoadArrowLexicalSuperReceiver(ilEncoder, methodDescriptor);
+                }
                 break;
 
             case GeneratedFunctionStateKind.LexicalSuperScopes:
-                EmitLoadScopesArrayOrEmpty(ilEncoder, methodDescriptor);
+                if (homeObject.HasValue)
+                {
+                    EmitLoadTemp(
+                        scopesArray,
+                        ilEncoder,
+                        allocation,
+                        methodDescriptor);
+                }
+                else
+                {
+                    EmitLoadScopesArrayOrEmpty(ilEncoder, methodDescriptor);
+                }
                 break;
 
             case GeneratedFunctionStateKind.TransitionalScopeArray:
@@ -152,7 +184,18 @@ internal sealed partial class LIRToILCompiler
                 break;
 
             case GeneratedFunctionStateKind.PrivateBrand:
-                ilEncoder.OpCode(ILOpCode.Ldnull);
+                if (privateBrand.HasValue)
+                {
+                    EmitLoadTemp(
+                        privateBrand.Value,
+                        ilEncoder,
+                        allocation,
+                        methodDescriptor);
+                }
+                else
+                {
+                    ilEncoder.OpCode(ILOpCode.Ldnull);
+                }
                 break;
 
             default:
@@ -198,11 +241,14 @@ internal sealed partial class LIRToILCompiler
         bool isAsync,
         bool markUndefinedPrototype,
         GeneratedFunctionObjectMetadata metadata,
-        InstructionEncoder ilEncoder)
+        InstructionEncoder ilEncoder,
+        string? functionName = null)
     {
         ilEncoder.LoadConstantI4(GetExpectedFunctionLength(callableId));
         ilEncoder.OpCode(ILOpCode.Conv_r8);
-        ilEncoder.Ldstr(_metadataBuilder, GetFunctionName(callableId));
+        ilEncoder.Ldstr(
+            _metadataBuilder,
+            functionName ?? GetFunctionName(callableId));
         ilEncoder.LoadConstantI4(metadata.Plan.RequiresInvocationContext ? 1 : 0);
         ilEncoder.LoadConstantI4(callableId.HasRestrictedFunctionProperties ? 1 : 0);
         ilEncoder.OpCode(ILOpCode.Call);

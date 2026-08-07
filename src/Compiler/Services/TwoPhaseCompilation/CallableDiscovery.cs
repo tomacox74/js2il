@@ -114,7 +114,10 @@ public sealed class CallableDiscovery
                 UsesMappedArgumentsObject = ArgumentsObjectSemantics.UsesMappedArgumentsObject(functionScope),
                 ArgumentsParameterNames = ArgumentsObjectSemantics.GetMappedParameterNames(functionScope),
                 IncludeCalleeInArgumentsObject = HasImplicitArgumentsBinding(functionScope) && !ArgumentsObjectSemantics.IsStrictScope(functionScope),
-                HasRestrictedFunctionProperties = ArgumentsObjectSemantics.IsStrictScope(functionScope),
+                HasRestrictedFunctionProperties =
+                    ArgumentsObjectSemantics.IsStrictScope(functionScope),
+                IsMethodDefinition = functionScope.IsMethodDefinition,
+                IsAccessorDefinition = functionScope.IsAccessorDefinition,
                 AstNode = funcExpr
             };
             
@@ -332,7 +335,11 @@ public sealed class CallableDiscovery
                         UsesMappedArgumentsObject = dynamicMethodScope != null && ArgumentsObjectSemantics.UsesMappedArgumentsObject(dynamicMethodScope),
                         ArgumentsParameterNames = dynamicMethodScope != null ? ArgumentsObjectSemantics.GetMappedParameterNames(dynamicMethodScope) : Array.Empty<string>(),
                         IncludeCalleeInArgumentsObject = dynamicMethodNeedsArgumentsObject && dynamicMethodScope != null && !ArgumentsObjectSemantics.IsStrictScope(dynamicMethodScope),
-                        HasRestrictedFunctionProperties = dynamicMethodScope != null && ArgumentsObjectSemantics.IsStrictScope(dynamicMethodScope),
+                        HasRestrictedFunctionProperties =
+                            dynamicMethodScope != null
+                            && ArgumentsObjectSemantics.IsStrictScope(dynamicMethodScope),
+                        IsMethodDefinition = true,
+                        IsAccessorDefinition = member.Kind is PropertyKind.Get or PropertyKind.Set,
                         AstNode = computedFunc
                     });
                 }

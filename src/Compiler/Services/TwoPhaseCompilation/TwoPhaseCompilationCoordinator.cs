@@ -1867,7 +1867,10 @@ public sealed class TwoPhaseCompilationCoordinator
             return null;
         }
 
-        if (callable.Kind is CallableKind.ClassMethod or CallableKind.ClassStaticMethod)
+        if (callable.Kind is CallableKind.ClassMethod
+            or CallableKind.ClassStaticMethod
+            or CallableKind.ClassGetter
+            or CallableKind.ClassStaticGetter)
         {
             return scope.StableReturnClrType;
         }
@@ -1922,9 +1925,18 @@ public sealed class TwoPhaseCompilationCoordinator
         CallableId callable,
         SymbolTable symbolTable)
     {
-        if (callable.Kind is CallableKind.ClassStaticMethod && callable.AstNode != null)
+        if (callable.Kind is CallableKind.ClassStaticMethod
+                or CallableKind.ClassStaticGetter
+                or CallableKind.ClassStaticSetter
+            && callable.AstNode != null)
         {
             var staticScope = symbolTable.FindScopeByAstNode(callable.AstNode);
+            if (staticScope == null
+                && callable.AstNode is Acornima.Ast.MethodDefinition methodDefinition)
+            {
+                staticScope = symbolTable.FindScopeByAstNode(
+                    methodDefinition.Value);
+            }
             if (staticScope != null
                 && (staticScope.ReferencesParentScopeVariables
                     || staticScope.HasDescendantCallableReferencingParentScopeVariables

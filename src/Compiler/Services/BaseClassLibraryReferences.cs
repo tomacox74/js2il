@@ -174,6 +174,34 @@ namespace Jroc.Services
                 typeof(JavaScriptRuntime.RuntimeServices),
                 nameof(JavaScriptRuntime.RuntimeServices.GetCurrentNewTarget),
                 Type.EmptyTypes);
+        public MemberReferenceHandle Type_GetTypeFromHandle_Ref =>
+            _memberRefRegistry.GetOrAddMethod(
+                typeof(Type),
+                nameof(Type.GetTypeFromHandle),
+                new[] { typeof(RuntimeTypeHandle) });
+        public MemberReferenceHandle RuntimeServices_ResolveGeneratedClassMethodReceiver_Ref =>
+            _memberRefRegistry.GetOrAddMethod(
+                typeof(JavaScriptRuntime.RuntimeServices),
+                nameof(JavaScriptRuntime.RuntimeServices.ResolveGeneratedClassMethodReceiver),
+                new[]
+                {
+                    typeof(object),
+                    typeof(Type),
+                    typeof(object[]),
+                    typeof(object),
+                    typeof(JavaScriptRuntime.JsFunctionObject)
+                });
+        public MemberReferenceHandle RuntimeServices_ValidateGeneratedStaticMethodReceiver_Ref =>
+            _memberRefRegistry.GetOrAddMethod(
+                typeof(JavaScriptRuntime.RuntimeServices),
+                nameof(JavaScriptRuntime.RuntimeServices.ValidateGeneratedStaticMethodReceiver),
+                new[]
+                {
+                    typeof(object),
+                    typeof(Type),
+                    typeof(object),
+                    typeof(JavaScriptRuntime.JsFunctionObject)
+                });
         public MemberReferenceHandle Function_ResolveOrdinaryThisArgument_Ref =>
             _memberRefRegistry.GetOrAddMethod(
                 typeof(JavaScriptRuntime.Function),

@@ -181,6 +181,25 @@ public sealed partial class HIRToLIRLowerer
             return true;
         }
 
+        if (propAccessExpr.Object is HIRSuperExpression)
+        {
+            var propertyName = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(
+                new LIRConstString(propAccessExpr.PropertyName, propertyName));
+            DefineTempStorage(
+                propertyName,
+                new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+            _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
+                IntrinsicName: nameof(JavaScriptRuntime.ObjectRuntime),
+                MethodName: nameof(JavaScriptRuntime.ObjectRuntime.GetSuperProperty),
+                Arguments: [propertyName],
+                Result: resultTempVar));
+            DefineTempStorage(
+                resultTempVar,
+                new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            return true;
+        }
+
     LowerGenericPropertyAccess:
         // Lower the object expression
         if (!TryLowerExpression(propAccessExpr.Object, out var objectTemp))

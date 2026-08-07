@@ -116,7 +116,7 @@
 				// Code size: 2 (0x2)
 				.maxstack 8
 
-				IL_0000: ldc.i4.0
+				IL_0000: ldc.i4.1
 				IL_0001: ret
 			} // end of method FunctionObject_ClassConstructor_3E5F8A45_Adder::get_RequiresInvocationContext
 
@@ -191,7 +191,7 @@
 				// Code size: 2 (0x2)
 				.maxstack 8
 
-				IL_0000: ldc.i4.0
+				IL_0000: ldc.i4.1
 				IL_0001: ret
 			} // end of method FunctionObject_ClassMethod_BBF2F92B_Adder_add::get_RequiresInvocationContext
 
@@ -203,13 +203,20 @@
 			{
 				// Method begins at RVA 0x2257
 				// Header size: 1
-				// Code size: 12 (0xc)
+				// Code size: 35 (0x23)
 				.maxstack 8
 
 				IL_0000: ldarg.1
-				IL_0001: castclass Modules.Classes_ClassConstructor_TwoParams_AddMethod/Adder
-				IL_0006: call instance object Modules.Classes_ClassConstructor_TwoParams_AddMethod/Adder::'add'()
-				IL_000b: ret
+				IL_0001: ldtoken Modules.Classes_ClassConstructor_TwoParams_AddMethod/Adder
+				IL_0006: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+				IL_000b: ldc.i4.1
+				IL_000c: newarr [System.Runtime]System.Object
+				IL_0011: ldnull
+				IL_0012: ldarg.0
+				IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodReceiver(object, class [System.Runtime]System.Type, object[], object, class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
+				IL_0018: castclass Modules.Classes_ClassConstructor_TwoParams_AddMethod/Adder
+				IL_001d: call instance object Modules.Classes_ClassConstructor_TwoParams_AddMethod/Adder::'add'()
+				IL_0022: ret
 			} // end of method FunctionObject_ClassMethod_BBF2F92B_Adder_add::CallCore
 
 		} // end of class FunctionObject_ClassMethod_BBF2F92B_Adder_add
@@ -435,7 +442,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2264
+		// Method begins at RVA 0x227b
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

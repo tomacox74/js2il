@@ -337,7 +337,10 @@ public record LIRCreateBoundFunctionExpression(
     TempVariable Result,
     bool IsAsyncGeneratorFunction = false,
     bool IsAsync = false,
-    bool IsNonConstructible = false) : LIRInstruction;
+    bool IsNonConstructible = false,
+    TempVariable? HomeObject = null,
+    TempVariable? PrivateBrand = null,
+    string? FunctionName = null) : LIRInstruction;
 
 /// <summary>
 /// Represents a scope slot in the scopes array along with the source of its value.

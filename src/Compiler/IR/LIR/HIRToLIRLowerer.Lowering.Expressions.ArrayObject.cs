@@ -148,9 +148,54 @@ public sealed partial class HIRToLIRLowerer
         resultTempVar = CreateTempVariable();
         var objectTemp = resultTempVar;
 
+        var hasMethodDefinitions = objectExpr.Members.Any(static member =>
+            member is HIRObjectProperty { IsMethodDefinition: true }
+                or HIRObjectComputedProperty { IsMethodDefinition: true }
+                or HIRObjectAccessorProperty
+                or HIRObjectComputedAccessorProperty);
+        if (hasMethodDefinitions
+            && objectExpr.ObjectLiteralShape is { IsEligible: true } methodShape
+            && !methodShape.GeneratedClrTypeHandle.IsNil
+            && objectExpr.Members.All(static member => member is HIRObjectProperty))
+        {
+            _methodBodyIR.Instructions.Add(new LIRNewInferredJsObject(
+                methodShape,
+                Array.Empty<InferredObjectProperty>(),
+                resultTempVar));
+            DefineTempStorage(
+                resultTempVar,
+                new ValueStorage(
+                    ValueStorageKind.Reference,
+                    TypeHandle: methodShape.GeneratedClrTypeHandle));
+
+            foreach (HIRObjectProperty property in objectExpr.Members)
+            {
+                if (!TryLowerObjectLiteralMemberValue(
+                        property.Value,
+                        property.IsMethodDefinition ? objectTemp : null,
+                        out var valueTemp))
+                {
+                    return false;
+                }
+
+                _methodBodyIR.Instructions.Add(new LIRSetInferredMember(
+                    methodShape,
+                    property.Key,
+                    objectTemp,
+                    valueTemp));
+            }
+
+            return true;
+        }
+
         // Fast path: simple object literal with only non-computed properties.
         // Preserve the existing LIRNewJsObject initialization pattern for minimal IL/snapshot churn.
-        bool allSimple = objectExpr.Members.All(static member => member is HIRObjectProperty { IsPrototypeMutation: false });
+        bool allSimple = objectExpr.Members.All(static member =>
+            member is HIRObjectProperty
+            {
+                IsPrototypeMutation: false,
+                IsMethodDefinition: false
+            });
 
         if (allSimple)
         {
@@ -164,11 +209,6 @@ public sealed partial class HIRToLIRLowerer
                     if (!TryLowerExpression(prop.Value, out var valueTemp))
                     {
                         return false;
-                    }
-
-                    if (prop.IsMethodDefinition)
-                    {
-                        valueTemp = EmitMarkUndefinedPrototype(valueTemp);
                     }
 
                     inferredProperties.Add(new InferredObjectProperty(prop.Key, valueTemp));
@@ -187,11 +227,6 @@ public sealed partial class HIRToLIRLowerer
                 if (!TryLowerExpression(prop.Value, out var valueTemp))
                 {
                     return false;
-                }
-
-                if (prop.IsMethodDefinition)
-                {
-                    valueTemp = EmitMarkUndefinedPrototype(valueTemp);
                 }
 
                 properties.Add(new ObjectProperty(prop.Key, valueTemp));
@@ -223,14 +258,17 @@ public sealed partial class HIRToLIRLowerer
             {
                 case HIRObjectProperty prop:
                 {
-                    if (!TryLowerExpression(prop.Value, out var valueTemp))
-                    {
-                        return false;
-                    }
-
                     if (prop.IsMethodDefinition)
                     {
-                        valueTemp = EmitMarkUndefinedPrototype(valueTemp);
+                        EnsureObjectTargetCreated();
+                    }
+
+                    if (!TryLowerObjectLiteralMemberValue(
+                            prop.Value,
+                            prop.IsMethodDefinition ? objectTemp : null,
+                            out var valueTemp))
+                    {
+                        return false;
                     }
 
                     EnsureObjectTargetCreated();
@@ -256,14 +294,17 @@ public sealed partial class HIRToLIRLowerer
                         return false;
                     }
 
-                    if (!TryLowerExpression(computed.Value, out var valueTemp))
-                    {
-                        return false;
-                    }
-
                     if (computed.IsMethodDefinition)
                     {
-                        valueTemp = EmitMarkUndefinedPrototype(valueTemp);
+                        EnsureObjectTargetCreated();
+                    }
+
+                    if (!TryLowerObjectLiteralMemberValue(
+                            computed.Value,
+                            computed.IsMethodDefinition ? objectTemp : null,
+                            out var valueTemp))
+                    {
+                        return false;
                     }
 
                     EnsureObjectTargetCreated();
@@ -388,12 +429,22 @@ public sealed partial class HIRToLIRLowerer
 
     private bool TryLowerObjectLiteralAccessorProperty(TempVariable targetTemp, TempVariable keyTemp, HIRExpression? getterExpression, HIRExpression? setterExpression)
     {
-        if (!TryLowerOptionalObjectLiteralAccessorExpression(getterExpression, out var getterTemp))
+        if (!TryLowerOptionalObjectLiteralAccessorExpression(
+                targetTemp,
+                keyTemp,
+                "get",
+                getterExpression,
+                out var getterTemp))
         {
             return false;
         }
 
-        if (!TryLowerOptionalObjectLiteralAccessorExpression(setterExpression, out var setterTemp))
+        if (!TryLowerOptionalObjectLiteralAccessorExpression(
+                targetTemp,
+                keyTemp,
+                "set",
+                setterExpression,
+                out var setterTemp))
         {
             return false;
         }
@@ -412,7 +463,12 @@ public sealed partial class HIRToLIRLowerer
         return true;
     }
 
-    private bool TryLowerOptionalObjectLiteralAccessorExpression(HIRExpression? accessorExpression, out TempVariable accessorTemp)
+    private bool TryLowerOptionalObjectLiteralAccessorExpression(
+        TempVariable targetTemp,
+        TempVariable keyTemp,
+        string prefix,
+        HIRExpression? accessorExpression,
+        out TempVariable accessorTemp)
     {
         if (accessorExpression is null)
         {
@@ -422,12 +478,49 @@ public sealed partial class HIRToLIRLowerer
             return true;
         }
 
-        if (!TryLowerExpression(accessorExpression, out accessorTemp))
+        if (!TryLowerObjectLiteralMemberValue(
+                accessorExpression,
+                targetTemp,
+                out accessorTemp))
         {
             return false;
         }
 
         accessorTemp = EmitMarkUndefinedPrototype(accessorTemp);
+        var prefixTemp = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRConstString(prefix, prefixTemp));
+        DefineTempStorage(prefixTemp, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+        var namedAccessor = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
+            IntrinsicName: nameof(JavaScriptRuntime.Function),
+            MethodName: nameof(JavaScriptRuntime.Function.SetAccessorNameIfAnonymous),
+            Arguments:
+            [
+                EnsureObject(accessorTemp),
+                EnsureObject(keyTemp),
+                EnsureObject(prefixTemp)
+            ],
+            Result: namedAccessor));
+        DefineTempStorage(namedAccessor, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        accessorTemp = namedAccessor;
         return true;
+    }
+
+    private bool TryLowerObjectLiteralMemberValue(
+        HIRExpression expression,
+        TempVariable? homeObject,
+        out TempVariable valueTemp)
+    {
+        if (homeObject.HasValue && expression is HIRFunctionExpression functionExpression)
+        {
+            return TryLowerFunctionExpression(
+                functionExpression,
+                homeObject,
+                privateBrand: null,
+                functionName: null,
+                out valueTemp);
+        }
+
+        return TryLowerExpression(expression, out valueTemp);
     }
 }

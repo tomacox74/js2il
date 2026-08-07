@@ -140,6 +140,17 @@ public sealed record CallableId
     /// True when the function object should expose restricted <c>caller</c>/<c>arguments</c> accessors.
     /// </summary>
     public bool HasRestrictedFunctionProperties { get; init; }
+
+    /// <summary>
+    /// True when this callable originates from method-definition syntax.
+    /// Such callables do not implement [[Construct]].
+    /// </summary>
+    public bool IsMethodDefinition { get; init; }
+
+    /// <summary>
+    /// True when this method-definition callable is a getter or setter.
+    /// </summary>
+    public bool IsAccessorDefinition { get; init; }
     
     /// <summary>
     /// Optional reference to the original AST node for diagnostics.

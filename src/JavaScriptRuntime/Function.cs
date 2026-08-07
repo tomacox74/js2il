@@ -599,6 +599,27 @@ public static class Function
             return functionValue;
         }
 
+        public static object? SetAccessorNameIfAnonymous(
+            object? functionValue,
+            object? propertyKey,
+            object? prefixValue)
+        {
+            if (!CallableOperations.IsCallable(functionValue))
+            {
+                return functionValue;
+            }
+
+            var prefix = prefixValue as string ?? string.Empty;
+            var propertyName = propertyKey is Symbol symbol
+                ? symbol.Description is null ? string.Empty : $"[{symbol.Description}]"
+                : ObjectRuntime.ToPropertyKeyString(propertyKey);
+            return SetInferredNameIfAnonymous(
+                functionValue,
+                string.IsNullOrEmpty(prefix)
+                    ? propertyName
+                    : $"{prefix} {propertyName}");
+        }
+
         public static bool IsConstructorReturnOverride(object? value)
             => TypeUtilities.IsConstructorReturnOverride(value);
 

@@ -137,24 +137,32 @@
 		.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassMethod_FE1F8DEB_MyClass_logGlobal
 			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
 		{
+			// Fields
+			.field private initonly object[] _transitionalScopes
+
 			// Methods
 			.method public hidebysig specialname rtspecialname 
-				instance void .ctor () cil managed 
+				instance void .ctor (
+					object[] capture0
+				) cil managed 
 			{
 				// Method begins at RVA 0x215a
 				// Header size: 1
-				// Code size: 7 (0x7)
+				// Code size: 14 (0xe)
 				.maxstack 8
 
 				IL_0000: ldarg.0
 				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-				IL_0006: ret
+				IL_0006: ldarg.0
+				IL_0007: ldarg.1
+				IL_0008: stfld object[] Modules.Classes_ClassMethod_AccessGlobalVariable_Log/MyClass/FunctionObject_ClassMethod_FE1F8DEB_MyClass_logGlobal::_transitionalScopes
+				IL_000d: ret
 			} // end of method FunctionObject_ClassMethod_FE1F8DEB_MyClass_logGlobal::.ctor
 
 			.method public hidebysig specialname virtual 
 				instance bool get_IsConstructor () cil managed 
 			{
-				// Method begins at RVA 0x2162
+				// Method begins at RVA 0x2169
 				// Header size: 1
 				// Code size: 2 (0x2)
 				.maxstack 8
@@ -166,7 +174,7 @@
 			.method public hidebysig specialname virtual 
 				instance bool get_RequiresInvocationContext () cil managed 
 			{
-				// Method begins at RVA 0x2165
+				// Method begins at RVA 0x216c
 				// Header size: 1
 				// Code size: 2 (0x2)
 				.maxstack 8
@@ -181,15 +189,22 @@
 					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 				) cil managed 
 			{
-				// Method begins at RVA 0x2168
+				// Method begins at RVA 0x216f
 				// Header size: 1
-				// Code size: 12 (0xc)
+				// Code size: 35 (0x23)
 				.maxstack 8
 
 				IL_0000: ldarg.1
-				IL_0001: castclass Modules.Classes_ClassMethod_AccessGlobalVariable_Log/MyClass
-				IL_0006: call instance object Modules.Classes_ClassMethod_AccessGlobalVariable_Log/MyClass::logGlobal()
-				IL_000b: ret
+				IL_0001: ldtoken Modules.Classes_ClassMethod_AccessGlobalVariable_Log/MyClass
+				IL_0006: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+				IL_000b: ldarg.0
+				IL_000c: ldfld object[] Modules.Classes_ClassMethod_AccessGlobalVariable_Log/MyClass/FunctionObject_ClassMethod_FE1F8DEB_MyClass_logGlobal::_transitionalScopes
+				IL_0011: ldnull
+				IL_0012: ldarg.0
+				IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodReceiver(object, class [System.Runtime]System.Type, object[], object, class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
+				IL_0018: castclass Modules.Classes_ClassMethod_AccessGlobalVariable_Log/MyClass
+				IL_001d: call instance object Modules.Classes_ClassMethod_AccessGlobalVariable_Log/MyClass::logGlobal()
+				IL_0022: ret
 			} // end of method FunctionObject_ClassMethod_FE1F8DEB_MyClass_logGlobal::CallCore
 
 		} // end of class FunctionObject_ClassMethod_FE1F8DEB_MyClass_logGlobal
@@ -346,7 +361,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2175
+		// Method begins at RVA 0x2193
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
