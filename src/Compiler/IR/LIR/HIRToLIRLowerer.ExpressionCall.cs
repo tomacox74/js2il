@@ -798,6 +798,40 @@ public sealed partial class HIRToLIRLowerer
             return true;
         }
 
+        if (calleePropAccess.Object is HIRSuperExpression)
+        {
+            var arguments = new List<TempVariable>();
+            foreach (var argument in callExpr.Arguments)
+            {
+                if (!TryLowerExpression(argument, out var argumentTemp))
+                {
+                    return false;
+                }
+                arguments.Add(EnsureObject(argumentTemp));
+            }
+
+            var argumentsArray = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRBuildArray(arguments, argumentsArray));
+            DefineTempStorage(
+                argumentsArray,
+                new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
+            var propertyName = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(
+                new LIRConstString(calleePropAccess.PropertyName, propertyName));
+            DefineTempStorage(
+                propertyName,
+                new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+            _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
+                IntrinsicName: nameof(JavaScriptRuntime.ObjectRuntime),
+                MethodName: nameof(JavaScriptRuntime.ObjectRuntime.CallSuperMember),
+                Arguments: [propertyName, argumentsArray],
+                Result: resultTempVar));
+            DefineTempStorage(
+                resultTempVar,
+                new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            return true;
+        }
+
         // Eligible object-literal function member call. Resolve the member through the
         // generated getter, then invoke the returned closure using the existing function-value
         // call instructions. Shape analysis only permits this when the member is never replaced

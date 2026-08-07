@@ -659,6 +659,14 @@ internal static class TempLocalAllocator
             case LIRCreateBoundFunctionExpression value:
                 visitor.Visit(value.ScopesArray);
                 visitor.Visit(value.ScopesArray);
+                if (value.HomeObject.HasValue)
+                {
+                    visitor.Visit(value.HomeObject.Value);
+                }
+                if (value.PrivateBrand.HasValue)
+                {
+                    visitor.Visit(value.PrivateBrand.Value);
+                }
                 break;
             case LIRStoreUserClassInstanceField value:
                 visitor.Visit(value.Value); break;

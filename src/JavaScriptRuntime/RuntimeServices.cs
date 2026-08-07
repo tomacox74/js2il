@@ -31,6 +31,8 @@ public class RuntimeServices
     public static readonly object[] EmptyScopes = new object[1];
     public static readonly object TemporalDeadZoneSentinel = new();
 
+    public static object[] GetEmptyScopes() => EmptyScopes;
+
     private sealed class DerivedConstructorThisBinding
     {
         public object? Value = TemporalDeadZoneSentinel;
@@ -262,6 +264,42 @@ public class RuntimeServices
         var scopes = scopesValue as object[] ?? EmptyScopes;
         var cacheKey = new ClassConstructorCacheKey(type, scopes, length);
         return _classConstructorValues.GetOrAdd(cacheKey, _ => new ClassConstructorValue(type, scopes, length));
+    }
+
+    public static object CreateFreshClassConstructorValue(
+        object typeValue,
+        object scopesValue,
+        object formalParamCountValue)
+    {
+        if (typeValue is not Type type)
+        {
+            throw new TypeError("Class constructor value requires a CLR Type");
+        }
+
+        var length = formalParamCountValue is double value ? (int)value : 0;
+        var scopes = scopesValue as object[] ?? EmptyScopes;
+        var constructor = new ClassConstructorValue(type, scopes, length);
+        foreach (var key in PropertyDescriptorStore.GetOwnKeys(type))
+        {
+            if (string.Equals(key, "prototype", StringComparison.Ordinal)
+                || string.Equals(key, "length", StringComparison.Ordinal))
+            {
+                continue;
+            }
+
+            if (PropertyDescriptorStore.TryGetOwn(type, key, out var descriptor))
+            {
+                PropertyDescriptorStore.DefineOrUpdate(
+                    constructor,
+                    key,
+                    CloneDescriptor(descriptor));
+            }
+        }
+        _ = TryEnsureClassConstructorMetadataPropertyDescriptor(
+            constructor,
+            "prototype",
+            out _);
+        return constructor;
     }
 
     public static object SetClassConstructorPrototype(object constructorValue, object? baseConstructorValue)
@@ -773,6 +811,155 @@ public class RuntimeServices
             ExceptionDispatchInfo.Capture(tie.InnerException).Throw();
             throw;
         }
+    }
+
+    public static object ResolveGeneratedClassMethodReceiver(
+        object? receiver,
+        Type ownerType,
+        object[] scopes,
+        object? privateBrand,
+        JsFunctionObject functionObject)
+    {
+        receiver = ResolveLexicalThis(receiver);
+        if (privateBrand != null
+            && !HasGeneratedClassPrivateBrand(
+                receiver,
+                ownerType,
+                privateBrand,
+                functionObject))
+        {
+            throw new TypeError("Receiver does not have the requested private method");
+        }
+
+        if (receiver != null
+            && receiver is not JsNull
+            && ownerType.IsInstanceOfType(receiver))
+        {
+            return receiver;
+        }
+
+        if (!IsPrototypeObjectForClass(receiver, ownerType))
+        {
+            throw new TypeError("Class method receiver is incompatible with its declaring class");
+        }
+
+        var instance = RuntimeHelpers.GetUninitializedObject(ownerType);
+        ownerType.GetField(
+                "_scopes",
+                BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)
+            ?.SetValue(instance, scopes);
+        return instance;
+    }
+
+    public static object ValidateGeneratedStaticMethodReceiver(
+        object? receiver,
+        Type ownerType,
+        object? privateBrand,
+        JsFunctionObject functionObject)
+    {
+        receiver = ResolveLexicalThis(receiver);
+        var hasOwnerType = receiver switch
+        {
+            Type type => type == ownerType,
+            ClassConstructorValue constructor => constructor.Type == ownerType,
+            _ => false
+        };
+        if (!hasOwnerType)
+        {
+            throw new TypeError(
+                "Class method receiver is incompatible with its declaring class");
+        }
+
+        if (privateBrand != null
+            && !OwnPropertiesContainFunction(receiver!, functionObject))
+        {
+            throw new TypeError("Receiver does not have the requested private method");
+        }
+
+        return receiver!;
+    }
+
+    private static bool OwnPropertiesContainFunction(
+        object owner,
+        JsFunctionObject functionObject)
+    {
+        foreach (var key in PropertyDescriptorStore.GetOwnKeys(owner))
+        {
+            if (PropertyDescriptorStore.TryGetOwn(owner, key, out var descriptor)
+                && ((descriptor.Kind == JsPropertyDescriptorKind.Data
+                        && ReferenceEquals(descriptor.Value, functionObject))
+                    || (descriptor.Kind == JsPropertyDescriptorKind.Accessor
+                        && (ReferenceEquals(descriptor.Get, functionObject)
+                            || ReferenceEquals(descriptor.Set, functionObject)))))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static bool HasGeneratedClassPrivateBrand(
+        object? receiver,
+        Type ownerType,
+        object privateBrand,
+        JsFunctionObject functionObject)
+    {
+        if (receiver is null
+            || receiver is JsNull
+            || !ownerType.IsInstanceOfType(receiver))
+        {
+            return false;
+        }
+
+        if (privateBrand is not ClassConstructorValue classConstructor)
+        {
+            return PrototypeChainContainsFunction(receiver, functionObject);
+        }
+
+        var expectedPrototype = ObjectRuntime.GetProperty(
+            classConstructor,
+            "prototype");
+        var current = PrototypeChain.GetPrototypeOrNull(receiver);
+        while (current != null && current is not JsNull)
+        {
+            if (ReferenceEquals(current, expectedPrototype))
+            {
+                return true;
+            }
+            current = PrototypeChain.GetPrototypeOrNull(current);
+        }
+        return false;
+    }
+
+    private static bool PrototypeChainContainsFunction(
+        object receiver,
+        JsFunctionObject functionObject)
+    {
+        var current = PrototypeChain.GetPrototypeOrNull(receiver);
+        while (current != null && current is not JsNull)
+        {
+            foreach (var key in PropertyDescriptorStore.GetOwnKeys(current))
+            {
+                if (!PropertyDescriptorStore.TryGetOwn(
+                        current,
+                        key,
+                        out var descriptor))
+                {
+                    continue;
+                }
+
+                if ((descriptor.Kind == JsPropertyDescriptorKind.Data
+                        && ReferenceEquals(descriptor.Value, functionObject))
+                    || (descriptor.Kind == JsPropertyDescriptorKind.Accessor
+                        && (ReferenceEquals(descriptor.Get, functionObject)
+                            || ReferenceEquals(descriptor.Set, functionObject))))
+                {
+                    return true;
+                }
+            }
+            current = PrototypeChain.GetPrototypeOrNull(current);
+        }
+        return false;
     }
 
     public static object ValidateClassPrivateMethodReceiver(object? receiver, Type ownerType, bool isStatic)

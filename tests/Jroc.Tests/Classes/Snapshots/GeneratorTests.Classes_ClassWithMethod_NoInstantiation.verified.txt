@@ -273,14 +273,21 @@
 	{
 		// Method begins at RVA 0x20ed
 		// Header size: 1
-		// Code size: 17 (0x11)
+		// Code size: 40 (0x28)
 		.maxstack 8
 
 		IL_0000: ldarg.1
-		IL_0001: castclass Modules.Classes_ClassWithMethod_NoInstantiation/Greeter
-		IL_0006: call instance float64 Modules.Classes_ClassWithMethod_NoInstantiation/Greeter::hello()
-		IL_000b: box [System.Runtime]System.Double
-		IL_0010: ret
+		IL_0001: ldtoken Modules.Classes_ClassWithMethod_NoInstantiation/Greeter
+		IL_0006: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_000b: ldc.i4.1
+		IL_000c: newarr [System.Runtime]System.Object
+		IL_0011: ldnull
+		IL_0012: ldarg.0
+		IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodReceiver(object, class [System.Runtime]System.Type, object[], object, class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
+		IL_0018: castclass Modules.Classes_ClassWithMethod_NoInstantiation/Greeter
+		IL_001d: call instance float64 Modules.Classes_ClassWithMethod_NoInstantiation/Greeter::hello()
+		IL_0022: box [System.Runtime]System.Double
+		IL_0027: ret
 	} // end of method FunctionObject_ClassMethod_47BE6AB2_Greeter_hello::CallCore
 
 } // end of class FunctionObjects.Classes_ClassWithMethod_NoInstantiation_DCF6BB96.FunctionObject_ClassMethod_47BE6AB2_Greeter_hello
@@ -292,7 +299,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20ff
+		// Method begins at RVA 0x2116
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

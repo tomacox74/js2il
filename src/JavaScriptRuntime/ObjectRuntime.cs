@@ -172,6 +172,25 @@ namespace JavaScriptRuntime
         public static object ValidateDirectClassPrivateMethodReceiver(object? receiver, Type ownerType)
             => RuntimeServices.ValidateDirectClassPrivateMethodReceiver(receiver, ownerType);
 
+        public static object? GetSuperProperty(string propertyName)
+        {
+            var homeObject = RuntimeServices.GetCurrentLexicalSuperReceiver();
+            if (homeObject is null or JsNull)
+            {
+                throw new TypeError("Super object is unavailable");
+            }
+            var prototype = PrototypeChain.GetPrototypeOrNull(homeObject)
+                ?? throw new TypeError("Super object has no prototype");
+            return GetProperty(prototype, propertyName);
+        }
+
+        public static object? CallSuperMember(string propertyName, object?[] arguments)
+        {
+            var method = GetSuperProperty(propertyName);
+            var receiver = RuntimeServices.GetCurrentLexicalSuperPropertyReceiver();
+            return CallableOperations.Call(method, receiver, arguments);
+        }
+
         public static object DefineObjectLiteralAccessorProperty(object target, object? prop, object? getter, object? setter)
             => DefineAccessorProperty(target, prop, getter, setter, enumerable: true, createDictionarySlot: true);
 

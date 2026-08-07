@@ -379,14 +379,21 @@
 	{
 		// Method begins at RVA 0x220f
 		// Header size: 1
-		// Code size: 17 (0x11)
+		// Code size: 40 (0x28)
 		.maxstack 8
 
 		IL_0000: ldarg.1
-		IL_0001: castclass Modules.BinaryOperator_EqualMethodReturn/TestClass
-		IL_0006: call instance float64 Modules.BinaryOperator_EqualMethodReturn/TestClass::getValue()
-		IL_000b: box [System.Runtime]System.Double
-		IL_0010: ret
+		IL_0001: ldtoken Modules.BinaryOperator_EqualMethodReturn/TestClass
+		IL_0006: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_000b: ldc.i4.1
+		IL_000c: newarr [System.Runtime]System.Object
+		IL_0011: ldnull
+		IL_0012: ldarg.0
+		IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodReceiver(object, class [System.Runtime]System.Type, object[], object, class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
+		IL_0018: castclass Modules.BinaryOperator_EqualMethodReturn/TestClass
+		IL_001d: call instance float64 Modules.BinaryOperator_EqualMethodReturn/TestClass::getValue()
+		IL_0022: box [System.Runtime]System.Double
+		IL_0027: ret
 	} // end of method FunctionObject_ClassMethod_5E9218E3_TestClass_getValue::CallCore
 
 } // end of class FunctionObjects.BinaryOperator_EqualMethodReturn_7C2E835C.FunctionObject_ClassMethod_5E9218E3_TestClass_getValue
@@ -398,7 +405,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2221
+		// Method begins at RVA 0x2238
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

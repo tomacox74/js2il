@@ -148,6 +148,12 @@ public partial class SymbolTableBuilder
                 return;
             }
 
+            if (property.Method)
+            {
+                shape.Disqualify("method definition in literal");
+                return;
+            }
+
             if (property.Computed)
             {
                 shape.Disqualify("computed key in literal");

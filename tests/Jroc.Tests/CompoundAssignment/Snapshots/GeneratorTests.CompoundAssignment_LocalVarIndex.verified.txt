@@ -309,7 +309,7 @@
 		// Code size: 2 (0x2)
 		.maxstack 8
 
-		IL_0000: ldc.i4.0
+		IL_0000: ldc.i4.1
 		IL_0001: ret
 	} // end of method FunctionObject_ClassConstructor_3F6DB619_TestClass::get_RequiresInvocationContext
 
@@ -384,7 +384,7 @@
 		// Code size: 2 (0x2)
 		.maxstack 8
 
-		IL_0000: ldc.i4.0
+		IL_0000: ldc.i4.1
 		IL_0001: ret
 	} // end of method FunctionObject_ClassMethod_49028540_TestClass_test::get_RequiresInvocationContext
 
@@ -396,13 +396,20 @@
 	{
 		// Method begins at RVA 0x220c
 		// Header size: 1
-		// Code size: 12 (0xc)
+		// Code size: 35 (0x23)
 		.maxstack 8
 
 		IL_0000: ldarg.1
-		IL_0001: castclass Modules.CompoundAssignment_LocalVarIndex/TestClass
-		IL_0006: call instance object Modules.CompoundAssignment_LocalVarIndex/TestClass::test()
-		IL_000b: ret
+		IL_0001: ldtoken Modules.CompoundAssignment_LocalVarIndex/TestClass
+		IL_0006: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_000b: ldc.i4.1
+		IL_000c: newarr [System.Runtime]System.Object
+		IL_0011: ldnull
+		IL_0012: ldarg.0
+		IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodReceiver(object, class [System.Runtime]System.Type, object[], object, class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
+		IL_0018: castclass Modules.CompoundAssignment_LocalVarIndex/TestClass
+		IL_001d: call instance object Modules.CompoundAssignment_LocalVarIndex/TestClass::test()
+		IL_0022: ret
 	} // end of method FunctionObject_ClassMethod_49028540_TestClass_test::CallCore
 
 } // end of class FunctionObjects.CompoundAssignment_LocalVarIndex_ABF93992.FunctionObject_ClassMethod_49028540_TestClass_test
@@ -414,7 +421,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2219
+		// Method begins at RVA 0x2230
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

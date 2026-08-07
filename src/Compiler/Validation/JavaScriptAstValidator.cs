@@ -150,6 +150,23 @@ public class JavaScriptAstValidator : IAstValidator
                     AllowsImportMeta = currentContext.AllowsImportMeta
                 });
             }
+            else if (node is Property
+                {
+                    Value: FunctionExpression propertyFunction
+                } property
+                && (property.Method || property.Kind is PropertyKind.Get or PropertyKind.Set))
+            {
+                contextStack.Push(new ValidationContext
+                {
+                    AllowsThis = true,
+                    AllowsSuper = true,
+                    ScopeOwner = property,
+                    MethodDefinitionFunctionValue = propertyFunction,
+                    InDerivedClass = false,
+                    AllowsNewTarget = true,
+                    AllowsImportMeta = currentContext.AllowsImportMeta
+                });
+            }
             // Push new context for functions (exclude the method body itself).
             else if ((node is ArrowFunctionExpression || node is FunctionExpression || node is FunctionDeclaration)
                      && !ReferenceEquals(node, currentContext.MethodDefinitionFunctionValue))

@@ -951,6 +951,8 @@ namespace Jroc.SymbolTables
                             var mname = (mdef.Key as Identifier)?.Name ?? $"Method_L{mdef.Location.Start.Line}C{mdef.Location.Start.Column}";
                             var methodScope = new Scope(mname, ScopeKind.Function, classScope, mfunc);
                             methodScope.MayUseBoundWithObject = _activeWithDepth > 0;
+                            methodScope.IsMethodDefinition = !ClassElementNames.IsConstructor(mdef);
+                            methodScope.IsAccessorDefinition = mdef.Kind is PropertyKind.Get or PropertyKind.Set;
 
                             // Class methods can be async/generators; propagate these flags so type generation
                             // and IL lowering can emit the correct state-machine fields.
@@ -1092,6 +1094,8 @@ namespace Jroc.SymbolTables
                             var mname = (mdef.Key as Identifier)?.Name ?? $"Method_L{mdef.Location.Start.Line}C{mdef.Location.Start.Column}";
                             var methodScope = new Scope(mname, ScopeKind.Function, classExprScope, mfunc);
                             methodScope.MayUseBoundWithObject = _activeWithDepth > 0;
+                            methodScope.IsMethodDefinition = !ClassElementNames.IsConstructor(mdef);
+                            methodScope.IsAccessorDefinition = mdef.Kind is PropertyKind.Get or PropertyKind.Set;
                             methodScope.IsAsync = mfunc.Async;
                             if (mfunc.Async)
                             {
@@ -1693,6 +1697,18 @@ namespace Jroc.SymbolTables
                         BuildScopeRecursive(globalScope, prop.Key as Node, currentScope);
                     }
                     BuildScopeRecursive(globalScope, prop.Value as Node, currentScope);
+                    if (prop.Value is FunctionExpression propertyFunction
+                        && (prop.Method || prop.Kind is PropertyKind.Get or PropertyKind.Set))
+                    {
+                        var propertyScope = currentScope.Children.LastOrDefault(child =>
+                            ReferenceEquals(child.AstNode, propertyFunction));
+                        if (propertyScope != null)
+                        {
+                            propertyScope.IsMethodDefinition = true;
+                            propertyScope.IsAccessorDefinition =
+                                prop.Kind is PropertyKind.Get or PropertyKind.Set;
+                        }
+                    }
                     break;
 
                 case MethodDefinition methodDef:

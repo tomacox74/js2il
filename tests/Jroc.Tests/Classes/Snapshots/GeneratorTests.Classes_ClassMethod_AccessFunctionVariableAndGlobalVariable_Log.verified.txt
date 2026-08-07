@@ -556,13 +556,20 @@
 	{
 		// Method begins at RVA 0x224c
 		// Header size: 1
-		// Code size: 12 (0xc)
+		// Code size: 35 (0x23)
 		.maxstack 8
 
 		IL_0000: ldarg.1
-		IL_0001: castclass Modules.Classes_ClassMethod_AccessFunctionVariableAndGlobalVariable_Log/testFunction/MyClass
-		IL_0006: call instance object Modules.Classes_ClassMethod_AccessFunctionVariableAndGlobalVariable_Log/testFunction/MyClass::logValues()
-		IL_000b: ret
+		IL_0001: ldtoken Modules.Classes_ClassMethod_AccessFunctionVariableAndGlobalVariable_Log/testFunction/MyClass
+		IL_0006: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_000b: ldc.i4.1
+		IL_000c: newarr [System.Runtime]System.Object
+		IL_0011: ldnull
+		IL_0012: ldarg.0
+		IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodReceiver(object, class [System.Runtime]System.Type, object[], object, class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
+		IL_0018: castclass Modules.Classes_ClassMethod_AccessFunctionVariableAndGlobalVariable_Log/testFunction/MyClass
+		IL_001d: call instance object Modules.Classes_ClassMethod_AccessFunctionVariableAndGlobalVariable_Log/testFunction/MyClass::logValues()
+		IL_0022: ret
 	} // end of method FunctionObject_ClassMethod_C6CDAD84_MyClass_logValues::CallCore
 
 } // end of class FunctionObjects.Classes_ClassMethod_AccessFunctionVariableAndGlobalVariable_Log_D9BE2747.FunctionObject_ClassMethod_C6CDAD84_MyClass_logValues
@@ -574,7 +581,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2259
+		// Method begins at RVA 0x2270
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

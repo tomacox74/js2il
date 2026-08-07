@@ -241,6 +241,11 @@ internal static class GeneratedFunctionObjectPlanner
             return false;
         }
 
+        if (callable.IsMethodDefinition)
+        {
+            return false;
+        }
+
         return callable.AstNode switch
         {
             FunctionDeclaration function => !function.Async && !function.Generator,
@@ -280,7 +285,10 @@ internal static class GeneratedFunctionObjectPlanner
             return requirements;
         }
 
-        Visit(root, isRoot: true);
+        var callableRoot = root is MethodDefinition methodDefinition
+            ? methodDefinition.Value
+            : root;
+        Visit(callableRoot, isRoot: true);
         return requirements;
 
         void Visit(Node node, bool isRoot)

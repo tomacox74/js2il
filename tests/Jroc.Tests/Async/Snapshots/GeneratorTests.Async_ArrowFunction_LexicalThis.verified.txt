@@ -45,7 +45,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x23ed
+				// Method begins at RVA 0x2404
 				// Header size: 1
 				// Code size: 7 (0x7)
 				.maxstack 8
@@ -58,7 +58,7 @@
 			.method public hidebysig specialname virtual 
 				instance bool get_IsConstructor () cil managed 
 			{
-				// Method begins at RVA 0x23f5
+				// Method begins at RVA 0x240c
 				// Header size: 1
 				// Code size: 2 (0x2)
 				.maxstack 8
@@ -70,7 +70,7 @@
 			.method public hidebysig specialname virtual 
 				instance bool get_RequiresInvocationContext () cil managed 
 			{
-				// Method begins at RVA 0x23f8
+				// Method begins at RVA 0x240f
 				// Header size: 1
 				// Code size: 2 (0x2)
 				.maxstack 8
@@ -85,7 +85,7 @@
 					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 				) cil managed 
 			{
-				// Method begins at RVA 0x23fb
+				// Method begins at RVA 0x2412
 				// Header size: 1
 				// Code size: 14 (0xe)
 				.maxstack 8
@@ -178,7 +178,7 @@
 					class [System.Runtime]System.Object capture1
 				) cil managed 
 			{
-				// Method begins at RVA 0x23bb
+				// Method begins at RVA 0x23d2
 				// Header size: 1
 				// Code size: 21 (0x15)
 				.maxstack 8
@@ -197,7 +197,7 @@
 			.method public hidebysig specialname virtual 
 				instance bool get_IsConstructor () cil managed 
 			{
-				// Method begins at RVA 0x23d1
+				// Method begins at RVA 0x23e8
 				// Header size: 1
 				// Code size: 2 (0x2)
 				.maxstack 8
@@ -209,7 +209,7 @@
 			.method public hidebysig specialname virtual 
 				instance bool get_RequiresInvocationContext () cil managed 
 			{
-				// Method begins at RVA 0x23d4
+				// Method begins at RVA 0x23eb
 				// Header size: 1
 				// Code size: 2 (0x2)
 				.maxstack 8
@@ -223,7 +223,7 @@
 					object thisArgument
 				) cil managed 
 			{
-				// Method begins at RVA 0x23d7
+				// Method begins at RVA 0x23ee
 				// Header size: 1
 				// Code size: 7 (0x7)
 				.maxstack 8
@@ -239,7 +239,7 @@
 					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 				) cil managed 
 			{
-				// Method begins at RVA 0x23df
+				// Method begins at RVA 0x23f6
 				// Header size: 1
 				// Code size: 13 (0xd)
 				.maxstack 8
@@ -714,7 +714,7 @@
 		// Code size: 2 (0x2)
 		.maxstack 8
 
-		IL_0000: ldc.i4.0
+		IL_0000: ldc.i4.1
 		IL_0001: ret
 	} // end of method FunctionObject_ClassConstructor_48958275_Counter::get_RequiresInvocationContext
 
@@ -801,13 +801,20 @@
 	{
 		// Method begins at RVA 0x23ae
 		// Header size: 1
-		// Code size: 12 (0xc)
+		// Code size: 35 (0x23)
 		.maxstack 8
 
 		IL_0000: ldarg.1
-		IL_0001: castclass Modules.Async_ArrowFunction_LexicalThis/Counter
-		IL_0006: call instance object Modules.Async_ArrowFunction_LexicalThis/Counter::makeGetter()
-		IL_000b: ret
+		IL_0001: ldtoken Modules.Async_ArrowFunction_LexicalThis/Counter
+		IL_0006: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_000b: ldc.i4.1
+		IL_000c: newarr [System.Runtime]System.Object
+		IL_0011: ldnull
+		IL_0012: ldarg.0
+		IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodReceiver(object, class [System.Runtime]System.Type, object[], object, class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
+		IL_0018: castclass Modules.Async_ArrowFunction_LexicalThis/Counter
+		IL_001d: call instance object Modules.Async_ArrowFunction_LexicalThis/Counter::makeGetter()
+		IL_0022: ret
 	} // end of method FunctionObject_ClassMethod_020123DD_Counter_makeGetter::CallCore
 
 } // end of class FunctionObjects.Async_ArrowFunction_LexicalThis_00D7EEF2.FunctionObject_ClassMethod_020123DD_Counter_makeGetter
@@ -819,7 +826,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x240a
+		// Method begins at RVA 0x2421
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

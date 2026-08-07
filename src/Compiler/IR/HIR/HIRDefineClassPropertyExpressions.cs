@@ -1,4 +1,5 @@
 using Jroc.SymbolTables;
+using Jroc.Services.TwoPhaseCompilation;
 using System.Collections.Generic;
 
 namespace Jroc.HIR;
@@ -36,6 +37,7 @@ public sealed class HIRDefineClassAccessorPropertyExpression : HIRExpression
 }
 
 public sealed record HIRClassMethodDataPropertyDefinition(
+    CallableId CallableId,
     string PropertyKey,
     string ClrMethodName,
     double Length,
@@ -52,6 +54,7 @@ public sealed class HIRDefineClassAccessorMethodPropertyExpression : HIRExpressi
         HIRExpression owner,
         HIRExpression key,
         Scope classScope,
+        CallableId callableId,
         string clrMethodName,
         double length,
         string functionName,
@@ -65,6 +68,7 @@ public sealed class HIRDefineClassAccessorMethodPropertyExpression : HIRExpressi
         Owner = owner;
         Key = key;
         ClassScope = classScope;
+        CallableId = callableId;
         ClrMethodName = clrMethodName;
         Length = length;
         FunctionName = functionName;
@@ -79,6 +83,7 @@ public sealed class HIRDefineClassAccessorMethodPropertyExpression : HIRExpressi
     public HIRExpression Owner { get; }
     public HIRExpression Key { get; }
     public Scope ClassScope { get; }
+    public CallableId CallableId { get; }
     public string ClrMethodName { get; }
     public double Length { get; }
     public string FunctionName { get; }
@@ -93,15 +98,18 @@ public sealed class HIRDefineClassMethodDataPropertiesExpression : HIRExpression
 {
     public HIRDefineClassMethodDataPropertiesExpression(
         HIRExpression owner,
+        HIRExpression prototype,
         Scope classScope,
         List<HIRClassMethodDataPropertyDefinition> methodDefinitions)
     {
         Owner = owner;
+        Prototype = prototype;
         ClassScope = classScope;
         MethodDefinitions = methodDefinitions;
     }
 
     public HIRExpression Owner { get; init; }
+    public HIRExpression Prototype { get; init; }
     public Scope ClassScope { get; init; }
     public List<HIRClassMethodDataPropertyDefinition> MethodDefinitions { get; init; }
 }

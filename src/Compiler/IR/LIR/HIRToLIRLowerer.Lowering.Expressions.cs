@@ -865,6 +865,10 @@ public sealed partial class HIRToLIRLowerer
                     if (!TryLowerClassConstructorValue(
                             initializedUserClassType.RegistryClassName,
                             initializedUserClassType.ClassScope,
+                            out resultTempVar)
+                        && !TryLowerFreshClassConstructorFallback(
+                            initializedUserClassType.RegistryClassName,
+                            initializedUserClassType.ClassScope,
                             out resultTempVar))
                     {
                         resultTempVar = CreateTempVariable();
@@ -890,6 +894,10 @@ public sealed partial class HIRToLIRLowerer
 
                 if (initializedUserClassType.SuperClass == null
                     && !TryLowerClassConstructorValue(
+                        initializedUserClassType.RegistryClassName,
+                        initializedUserClassType.ClassScope,
+                        out resultTempVar)
+                    && !TryLowerFreshClassConstructorFallback(
                         initializedUserClassType.RegistryClassName,
                         initializedUserClassType.ClassScope,
                         out resultTempVar))
@@ -1067,10 +1075,18 @@ public sealed partial class HIRToLIRLowerer
         var allowEmptyOnUnmappedGlobal = !DoesClassNeedParentScopes(classScope);
         if (!TryBuildScopesArrayForClassConstructor(classScope, scopesTemp, allowEmptyOnUnmappedGlobal))
         {
-            resultTempVar = default;
-            return false;
+            if (!_classMethodScopesTempsByRegistryName.Remove(
+                    registryClassName,
+                    out scopesTemp))
+            {
+                resultTempVar = default;
+                return false;
+            }
         }
-        DefineTempStorage(scopesTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
+        else
+        {
+            DefineTempStorage(scopesTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
+        }
 
         if (!_classMethodOwnerTempsByRegistryName.Remove(registryClassName, out var typeTemp))
         {
@@ -1092,11 +1108,77 @@ public sealed partial class HIRToLIRLowerer
 
         resultTempVar = CreateTempVariable();
         _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
-            MethodName: nameof(JavaScriptRuntime.RuntimeServices.CreateClassConstructorValue),
+            MethodName: classScope.AstNode is ClassExpression
+                ? nameof(JavaScriptRuntime.RuntimeServices.CreateFreshClassConstructorValue)
+                : nameof(JavaScriptRuntime.RuntimeServices.CreateClassConstructorValue),
             Arguments: new[] { EnsureObject(typeTemp), EnsureObject(scopesTemp), EnsureObject(paramCountTemp) },
             Result: resultTempVar));
         DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
 
+        return true;
+    }
+
+    private bool TryLowerFreshClassConstructorFallback(
+        string registryClassName,
+        Scope classScope,
+        out TempVariable resultTempVar)
+    {
+        resultTempVar = default;
+        if (classScope.AstNode is not ClassExpression
+            || DoesClassNeedParentScopes(classScope))
+        {
+            return false;
+        }
+
+        var typeTemp = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(
+            new LIRGetUserClassType(registryClassName, typeTemp));
+        DefineTempStorage(
+            typeTemp,
+            new ValueStorage(ValueStorageKind.Reference, typeof(Type)));
+
+        var scopesTemp = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
+            MethodName: nameof(JavaScriptRuntime.RuntimeServices.GetEmptyScopes),
+            Arguments: Array.Empty<TempVariable>(),
+            Result: scopesTemp));
+        DefineTempStorage(
+            scopesTemp,
+            new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
+
+        var parameterCount = 0;
+        if (_classRegistry != null
+            && _classRegistry.TryGetConstructor(
+                registryClassName,
+                out _,
+                out _,
+                out var minimumParameterCount,
+                out _))
+        {
+            parameterCount = minimumParameterCount;
+        }
+
+        var parameterCountTemp = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(
+            new LIRConstNumber(parameterCount, parameterCountTemp));
+        DefineTempStorage(
+            parameterCountTemp,
+            new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+
+        resultTempVar = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
+            MethodName:
+                nameof(JavaScriptRuntime.RuntimeServices.CreateFreshClassConstructorValue),
+            Arguments:
+            [
+                EnsureObject(typeTemp),
+                EnsureObject(scopesTemp),
+                EnsureObject(parameterCountTemp)
+            ],
+            Result: resultTempVar));
+        DefineTempStorage(
+            resultTempVar,
+            new ValueStorage(ValueStorageKind.Reference, typeof(object)));
         return true;
     }
 
@@ -1125,6 +1207,19 @@ public sealed partial class HIRToLIRLowerer
     }
 
     private bool TryLowerFunctionExpression(HIRFunctionExpression funcExpr, out TempVariable resultTempVar)
+        => TryLowerFunctionExpression(
+            funcExpr,
+            homeObject: null,
+            privateBrand: null,
+            functionName: null,
+            out resultTempVar);
+
+    private bool TryLowerFunctionExpression(
+        HIRFunctionExpression funcExpr,
+        TempVariable? homeObject,
+        TempVariable? privateBrand,
+        string? functionName,
+        out TempVariable resultTempVar)
     {
         resultTempVar = default;
 
@@ -1151,12 +1246,21 @@ public sealed partial class HIRToLIRLowerer
             Result: resultTempVar,
             IsAsyncGeneratorFunction: funcScope.IsAsync && funcScope.IsGenerator,
             IsAsync: funcScope.IsAsync,
-            IsNonConstructible: funcExpr.IsNonConstructible));
+            IsNonConstructible: funcExpr.IsNonConstructible,
+            HomeObject: homeObject,
+            PrivateBrand: privateBrand,
+            FunctionName: functionName));
+        var supportsGeneratedMethodObject =
+            funcExpr.IsNonConstructible
+            && !funcScope.IsAsync
+            && !funcScope.IsGenerator;
         DefineTempStorage(
             resultTempVar,
             GetMaterializedCallableStorage(
                 funcExpr.CallableId,
-                allowGeneratedFunctionObject: !funcExpr.IsNonConstructible));
+                allowGeneratedFunctionObject:
+                    !funcExpr.IsNonConstructible
+                    || supportsGeneratedMethodObject));
 
         if (funcExpr.IsNonConstructible)
         {
