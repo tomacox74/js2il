@@ -71,6 +71,149 @@
 
 		} // end of class Scope_test
 
+		.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassConstructor_3F6DB619_TestClass
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+		{
+			// Fields
+			.field private initonly object[] _transitionalScopes
+
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor (
+					object[] capture0
+				) cil managed 
+			{
+				// Method begins at RVA 0x21d1
+				// Header size: 1
+				// Code size: 14 (0xe)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0006: ldarg.0
+				IL_0007: ldarg.1
+				IL_0008: stfld object[] Modules.CompoundAssignment_LocalVarIndex/TestClass/FunctionObject_ClassConstructor_3F6DB619_TestClass::_transitionalScopes
+				IL_000d: ret
+			} // end of method FunctionObject_ClassConstructor_3F6DB619_TestClass::.ctor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_IsConstructor () cil managed 
+			{
+				// Method begins at RVA 0x21e0
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.1
+				IL_0001: ret
+			} // end of method FunctionObject_ClassConstructor_3F6DB619_TestClass::get_IsConstructor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_RequiresInvocationContext () cil managed 
+			{
+				// Method begins at RVA 0x21e3
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject_ClassConstructor_3F6DB619_TestClass::get_RequiresInvocationContext
+
+			.method family hidebysig virtual 
+				instance object CallCore (
+					object thisArgument,
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+				) cil managed 
+			{
+				// Method begins at RVA 0x21e6
+				// Header size: 1
+				// Code size: 11 (0xb)
+				.maxstack 8
+
+				IL_0000: ldstr "Class constructor cannot be invoked without 'new'"
+				IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
+				IL_000a: throw
+			} // end of method FunctionObject_ClassConstructor_3F6DB619_TestClass::CallCore
+
+			.method family hidebysig virtual 
+				instance object ConstructCore (
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
+					object newTarget
+				) cil managed 
+			{
+				// Method begins at RVA 0x21f2
+				// Header size: 1
+				// Code size: 11 (0xb)
+				.maxstack 8
+
+				IL_0000: ldstr "Generated construction adapter is reserved for the callable-family construction migration"
+				IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
+				IL_000a: throw
+			} // end of method FunctionObject_ClassConstructor_3F6DB619_TestClass::ConstructCore
+
+		} // end of class FunctionObject_ClassConstructor_3F6DB619_TestClass
+
+		.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassMethod_49028540_TestClass_test
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x21fe
+				// Header size: 1
+				// Code size: 7 (0x7)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0006: ret
+			} // end of method FunctionObject_ClassMethod_49028540_TestClass_test::.ctor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_IsConstructor () cil managed 
+			{
+				// Method begins at RVA 0x2206
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject_ClassMethod_49028540_TestClass_test::get_IsConstructor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_RequiresInvocationContext () cil managed 
+			{
+				// Method begins at RVA 0x2209
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject_ClassMethod_49028540_TestClass_test::get_RequiresInvocationContext
+
+			.method family hidebysig virtual 
+				instance object CallCore (
+					object thisArgument,
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+				) cil managed 
+			{
+				// Method begins at RVA 0x220c
+				// Header size: 1
+				// Code size: 12 (0xc)
+				.maxstack 8
+
+				IL_0000: ldarg.1
+				IL_0001: castclass Modules.CompoundAssignment_LocalVarIndex/TestClass
+				IL_0006: call instance object Modules.CompoundAssignment_LocalVarIndex/TestClass::test()
+				IL_000b: ret
+			} // end of method FunctionObject_ClassMethod_49028540_TestClass_test::CallCore
+
+		} // end of class FunctionObject_ClassMethod_49028540_TestClass_test
+
 
 		// Fields
 		.field public class [JavaScriptRuntime]JavaScriptRuntime.Int32Array arr
@@ -263,149 +406,6 @@
 	} // end of method CompoundAssignment_LocalVarIndex::__js_module_init__
 
 } // end of class Modules.CompoundAssignment_LocalVarIndex
-
-.class private auto ansi sealed beforefieldinit FunctionObjects.CompoundAssignment_LocalVarIndex_ABF93992.FunctionObject_ClassConstructor_3F6DB619_TestClass
-	extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-{
-	// Fields
-	.field private initonly object[] _transitionalScopes
-
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor (
-			object[] capture0
-		) cil managed 
-	{
-		// Method begins at RVA 0x21d1
-		// Header size: 1
-		// Code size: 14 (0xe)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-		IL_0006: ldarg.0
-		IL_0007: ldarg.1
-		IL_0008: stfld object[] FunctionObjects.CompoundAssignment_LocalVarIndex_ABF93992.FunctionObject_ClassConstructor_3F6DB619_TestClass::_transitionalScopes
-		IL_000d: ret
-	} // end of method FunctionObject_ClassConstructor_3F6DB619_TestClass::.ctor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_IsConstructor () cil managed 
-	{
-		// Method begins at RVA 0x21e0
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.1
-		IL_0001: ret
-	} // end of method FunctionObject_ClassConstructor_3F6DB619_TestClass::get_IsConstructor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_RequiresInvocationContext () cil managed 
-	{
-		// Method begins at RVA 0x21e3
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_ClassConstructor_3F6DB619_TestClass::get_RequiresInvocationContext
-
-	.method family hidebysig virtual 
-		instance object CallCore (
-			object thisArgument,
-			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-		) cil managed 
-	{
-		// Method begins at RVA 0x21e6
-		// Header size: 1
-		// Code size: 11 (0xb)
-		.maxstack 8
-
-		IL_0000: ldstr "Class constructor cannot be invoked without 'new'"
-		IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-		IL_000a: throw
-	} // end of method FunctionObject_ClassConstructor_3F6DB619_TestClass::CallCore
-
-	.method family hidebysig virtual 
-		instance object ConstructCore (
-			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
-			object newTarget
-		) cil managed 
-	{
-		// Method begins at RVA 0x21f2
-		// Header size: 1
-		// Code size: 11 (0xb)
-		.maxstack 8
-
-		IL_0000: ldstr "Generated construction adapter is reserved for the callable-family construction migration"
-		IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-		IL_000a: throw
-	} // end of method FunctionObject_ClassConstructor_3F6DB619_TestClass::ConstructCore
-
-} // end of class FunctionObjects.CompoundAssignment_LocalVarIndex_ABF93992.FunctionObject_ClassConstructor_3F6DB619_TestClass
-
-.class private auto ansi sealed beforefieldinit FunctionObjects.CompoundAssignment_LocalVarIndex_ABF93992.FunctionObject_ClassMethod_49028540_TestClass_test
-	extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-{
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x21fe
-		// Header size: 1
-		// Code size: 7 (0x7)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-		IL_0006: ret
-	} // end of method FunctionObject_ClassMethod_49028540_TestClass_test::.ctor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_IsConstructor () cil managed 
-	{
-		// Method begins at RVA 0x2206
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_ClassMethod_49028540_TestClass_test::get_IsConstructor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_RequiresInvocationContext () cil managed 
-	{
-		// Method begins at RVA 0x2209
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_ClassMethod_49028540_TestClass_test::get_RequiresInvocationContext
-
-	.method family hidebysig virtual 
-		instance object CallCore (
-			object thisArgument,
-			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-		) cil managed 
-	{
-		// Method begins at RVA 0x220c
-		// Header size: 1
-		// Code size: 12 (0xc)
-		.maxstack 8
-
-		IL_0000: ldarg.1
-		IL_0001: castclass Modules.CompoundAssignment_LocalVarIndex/TestClass
-		IL_0006: call instance object Modules.CompoundAssignment_LocalVarIndex/TestClass::test()
-		IL_000b: ret
-	} // end of method FunctionObject_ClassMethod_49028540_TestClass_test::CallCore
-
-} // end of class FunctionObjects.CompoundAssignment_LocalVarIndex_ABF93992.FunctionObject_ClassMethod_49028540_TestClass_test
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object

@@ -31,6 +31,117 @@
 
 		} // end of class Scope
 
+		.class nested public auto ansi sealed beforefieldinit FunctionObject_FunctionDeclaration_979E7041_add
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x20e9
+				// Header size: 1
+				// Code size: 7 (0x7)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0006: ret
+			} // end of method FunctionObject_FunctionDeclaration_979E7041_add::.ctor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_IsConstructor () cil managed 
+			{
+				// Method begins at RVA 0x20f1
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.1
+				IL_0001: ret
+			} // end of method FunctionObject_FunctionDeclaration_979E7041_add::get_IsConstructor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_RequiresInvocationContext () cil managed 
+			{
+				// Method begins at RVA 0x20f4
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject_FunctionDeclaration_979E7041_add::get_RequiresInvocationContext
+
+			.method family hidebysig virtual 
+				instance object CallCore (
+					object thisArgument,
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+				) cil managed 
+			{
+				// Method begins at RVA 0x20f7
+				// Header size: 1
+				// Code size: 35 (0x23)
+				.maxstack 8
+
+				IL_0000: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
+				IL_0005: ldarg.2
+				IL_0006: ldc.i4.0
+				IL_0007: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+				IL_000c: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+				IL_0011: ldarg.2
+				IL_0012: ldc.i4.1
+				IL_0013: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+				IL_0018: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+				IL_001d: call object Modules.Function_NoCapture_NoScopesParameter/'add'::__js_call__(object, float64, float64)
+				IL_0022: ret
+			} // end of method FunctionObject_FunctionDeclaration_979E7041_add::CallCore
+
+			.method family hidebysig virtual 
+				instance object ConstructBodyCore (
+					object receiver,
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
+					object newTarget
+				) cil managed 
+			{
+				// Method begins at RVA 0x211b
+				// Header size: 1
+				// Code size: 31 (0x1f)
+				.maxstack 8
+
+				IL_0000: ldarg.3
+				IL_0001: ldarg.2
+				IL_0002: ldc.i4.0
+				IL_0003: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+				IL_0008: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+				IL_000d: ldarg.2
+				IL_000e: ldc.i4.1
+				IL_000f: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+				IL_0014: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+				IL_0019: call object Modules.Function_NoCapture_NoScopesParameter/'add'::__js_call__(object, float64, float64)
+				IL_001e: ret
+			} // end of method FunctionObject_FunctionDeclaration_979E7041_add::ConstructBodyCore
+
+			.method family hidebysig virtual 
+				instance object ConstructCore (
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
+					object newTarget
+				) cil managed 
+			{
+				// Method begins at RVA 0x213b
+				// Header size: 1
+				// Code size: 14 (0xe)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: ldarg.1
+				IL_0002: ldobj [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments
+				IL_0007: ldarg.2
+				IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionObject(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments, object)
+				IL_000d: ret
+			} // end of method FunctionObject_FunctionDeclaration_979E7041_add::ConstructCore
+
+		} // end of class FunctionObject_FunctionDeclaration_979E7041_add
+
 
 		// Methods
 		.method public hidebysig static 
@@ -101,7 +212,7 @@
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Function_NoCapture_NoScopesParameter/Scope,
-			[1] class FunctionObjects.Function_NoCapture_NoScopesParameter_4836B897.FunctionObject_FunctionDeclaration_979E7041_add,
+			[1] class Modules.Function_NoCapture_NoScopesParameter/'add'/FunctionObject_FunctionDeclaration_979E7041_add,
 			[2] object[],
 			[3] object,
 			[4] object
@@ -116,13 +227,13 @@
 		IL_000e: ldloc.0
 		IL_000f: stelem.ref
 		IL_0010: stloc.2
-		IL_0011: newobj instance void FunctionObjects.Function_NoCapture_NoScopesParameter_4836B897.FunctionObject_FunctionDeclaration_979E7041_add::.ctor()
+		IL_0011: newobj instance void Modules.Function_NoCapture_NoScopesParameter/'add'/FunctionObject_FunctionDeclaration_979E7041_add::.ctor()
 		IL_0016: ldc.i4.2
 		IL_0017: conv.r8
 		IL_0018: ldstr "add"
 		IL_001d: ldc.i4.0
 		IL_001e: ldc.i4.1
-		IL_001f: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class FunctionObjects.Function_NoCapture_NoScopesParameter_4836B897.FunctionObject_FunctionDeclaration_979E7041_add>(!!0, float64, string, bool, bool)
+		IL_001f: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Function_NoCapture_NoScopesParameter/'add'/FunctionObject_FunctionDeclaration_979E7041_add>(!!0, float64, string, bool, bool)
 		IL_0024: stloc.1
 		IL_0025: nop
 		IL_0026: nop
@@ -149,117 +260,6 @@
 	} // end of method Function_NoCapture_NoScopesParameter::__js_module_init__
 
 } // end of class Modules.Function_NoCapture_NoScopesParameter
-
-.class private auto ansi sealed beforefieldinit FunctionObjects.Function_NoCapture_NoScopesParameter_4836B897.FunctionObject_FunctionDeclaration_979E7041_add
-	extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-{
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x20e9
-		// Header size: 1
-		// Code size: 7 (0x7)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-		IL_0006: ret
-	} // end of method FunctionObject_FunctionDeclaration_979E7041_add::.ctor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_IsConstructor () cil managed 
-	{
-		// Method begins at RVA 0x20f1
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.1
-		IL_0001: ret
-	} // end of method FunctionObject_FunctionDeclaration_979E7041_add::get_IsConstructor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_RequiresInvocationContext () cil managed 
-	{
-		// Method begins at RVA 0x20f4
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_FunctionDeclaration_979E7041_add::get_RequiresInvocationContext
-
-	.method family hidebysig virtual 
-		instance object CallCore (
-			object thisArgument,
-			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-		) cil managed 
-	{
-		// Method begins at RVA 0x20f7
-		// Header size: 1
-		// Code size: 35 (0x23)
-		.maxstack 8
-
-		IL_0000: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
-		IL_0005: ldarg.2
-		IL_0006: ldc.i4.0
-		IL_0007: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-		IL_000c: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_0011: ldarg.2
-		IL_0012: ldc.i4.1
-		IL_0013: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-		IL_0018: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_001d: call object Modules.Function_NoCapture_NoScopesParameter/'add'::__js_call__(object, float64, float64)
-		IL_0022: ret
-	} // end of method FunctionObject_FunctionDeclaration_979E7041_add::CallCore
-
-	.method family hidebysig virtual 
-		instance object ConstructBodyCore (
-			object receiver,
-			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
-			object newTarget
-		) cil managed 
-	{
-		// Method begins at RVA 0x211b
-		// Header size: 1
-		// Code size: 31 (0x1f)
-		.maxstack 8
-
-		IL_0000: ldarg.3
-		IL_0001: ldarg.2
-		IL_0002: ldc.i4.0
-		IL_0003: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-		IL_0008: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_000d: ldarg.2
-		IL_000e: ldc.i4.1
-		IL_000f: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-		IL_0014: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_0019: call object Modules.Function_NoCapture_NoScopesParameter/'add'::__js_call__(object, float64, float64)
-		IL_001e: ret
-	} // end of method FunctionObject_FunctionDeclaration_979E7041_add::ConstructBodyCore
-
-	.method family hidebysig virtual 
-		instance object ConstructCore (
-			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
-			object newTarget
-		) cil managed 
-	{
-		// Method begins at RVA 0x213b
-		// Header size: 1
-		// Code size: 14 (0xe)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: ldarg.1
-		IL_0002: ldobj [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments
-		IL_0007: ldarg.2
-		IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionObject(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments, object)
-		IL_000d: ret
-	} // end of method FunctionObject_FunctionDeclaration_979E7041_add::ConstructCore
-
-} // end of class FunctionObjects.Function_NoCapture_NoScopesParameter_4836B897.FunctionObject_FunctionDeclaration_979E7041_add
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object

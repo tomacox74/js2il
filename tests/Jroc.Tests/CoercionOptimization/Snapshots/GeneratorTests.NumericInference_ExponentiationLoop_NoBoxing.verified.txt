@@ -53,6 +53,118 @@
 
 		} // end of class Scope
 
+		.class nested public auto ansi sealed beforefieldinit FunctionObject_FunctionDeclaration_B5D0B4A9_arith
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2173
+				// Header size: 1
+				// Code size: 7 (0x7)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0006: ret
+			} // end of method FunctionObject_FunctionDeclaration_B5D0B4A9_arith::.ctor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_IsConstructor () cil managed 
+			{
+				// Method begins at RVA 0x217b
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.1
+				IL_0001: ret
+			} // end of method FunctionObject_FunctionDeclaration_B5D0B4A9_arith::get_IsConstructor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_RequiresInvocationContext () cil managed 
+			{
+				// Method begins at RVA 0x217e
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject_FunctionDeclaration_B5D0B4A9_arith::get_RequiresInvocationContext
+
+			.method family hidebysig virtual 
+				instance object ResolveThisArgumentCore (
+					object thisArgument
+				) cil managed 
+			{
+				// Method begins at RVA 0x2181
+				// Header size: 1
+				// Code size: 7 (0x7)
+				.maxstack 8
+
+				IL_0000: ldarg.1
+				IL_0001: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ResolveOrdinaryThisArgument(object)
+				IL_0006: ret
+			} // end of method FunctionObject_FunctionDeclaration_B5D0B4A9_arith::ResolveThisArgumentCore
+
+			.method family hidebysig virtual 
+				instance object CallCore (
+					object thisArgument,
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+				) cil managed 
+			{
+				// Method begins at RVA 0x2189
+				// Header size: 1
+				// Code size: 16 (0x10)
+				.maxstack 8
+
+				IL_0000: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
+				IL_0005: call float64 Modules.NumericInference_ExponentiationLoop_NoBoxing/arith::__js_call__(object)
+				IL_000a: box [System.Runtime]System.Double
+				IL_000f: ret
+			} // end of method FunctionObject_FunctionDeclaration_B5D0B4A9_arith::CallCore
+
+			.method family hidebysig virtual 
+				instance object ConstructBodyCore (
+					object receiver,
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
+					object newTarget
+				) cil managed 
+			{
+				// Method begins at RVA 0x219a
+				// Header size: 1
+				// Code size: 12 (0xc)
+				.maxstack 8
+
+				IL_0000: ldarg.3
+				IL_0001: call float64 Modules.NumericInference_ExponentiationLoop_NoBoxing/arith::__js_call__(object)
+				IL_0006: box [System.Runtime]System.Double
+				IL_000b: ret
+			} // end of method FunctionObject_FunctionDeclaration_B5D0B4A9_arith::ConstructBodyCore
+
+			.method family hidebysig virtual 
+				instance object ConstructCore (
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
+					object newTarget
+				) cil managed 
+			{
+				// Method begins at RVA 0x21a7
+				// Header size: 1
+				// Code size: 14 (0xe)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: ldarg.1
+				IL_0002: ldobj [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments
+				IL_0007: ldarg.2
+				IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionObject(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments, object)
+				IL_000d: ret
+			} // end of method FunctionObject_FunctionDeclaration_B5D0B4A9_arith::ConstructCore
+
+		} // end of class FunctionObject_FunctionDeclaration_B5D0B4A9_arith
+
 
 		// Methods
 		.method public hidebysig static 
@@ -185,7 +297,7 @@
 		.maxstack 8
 		.locals init (
 			[0] class Modules.NumericInference_ExponentiationLoop_NoBoxing/Scope,
-			[1] class FunctionObjects.NumericInference_ExponentiationLoop_NoBoxing_AC191332.FunctionObject_FunctionDeclaration_B5D0B4A9_arith,
+			[1] class Modules.NumericInference_ExponentiationLoop_NoBoxing/arith/FunctionObject_FunctionDeclaration_B5D0B4A9_arith,
 			[2] object[],
 			[3] object,
 			[4] float64,
@@ -201,13 +313,13 @@
 		IL_000e: ldloc.0
 		IL_000f: stelem.ref
 		IL_0010: stloc.2
-		IL_0011: newobj instance void FunctionObjects.NumericInference_ExponentiationLoop_NoBoxing_AC191332.FunctionObject_FunctionDeclaration_B5D0B4A9_arith::.ctor()
+		IL_0011: newobj instance void Modules.NumericInference_ExponentiationLoop_NoBoxing/arith/FunctionObject_FunctionDeclaration_B5D0B4A9_arith::.ctor()
 		IL_0016: ldc.i4.0
 		IL_0017: conv.r8
 		IL_0018: ldstr "arith"
 		IL_001d: ldc.i4.0
 		IL_001e: ldc.i4.0
-		IL_001f: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class FunctionObjects.NumericInference_ExponentiationLoop_NoBoxing_AC191332.FunctionObject_FunctionDeclaration_B5D0B4A9_arith>(!!0, float64, string, bool, bool)
+		IL_001f: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.NumericInference_ExponentiationLoop_NoBoxing/arith/FunctionObject_FunctionDeclaration_B5D0B4A9_arith>(!!0, float64, string, bool, bool)
 		IL_0024: stloc.1
 		IL_0025: nop
 		IL_0026: ldstr "console"
@@ -229,118 +341,6 @@
 	} // end of method NumericInference_ExponentiationLoop_NoBoxing::__js_module_init__
 
 } // end of class Modules.NumericInference_ExponentiationLoop_NoBoxing
-
-.class private auto ansi sealed beforefieldinit FunctionObjects.NumericInference_ExponentiationLoop_NoBoxing_AC191332.FunctionObject_FunctionDeclaration_B5D0B4A9_arith
-	extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-{
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x2173
-		// Header size: 1
-		// Code size: 7 (0x7)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-		IL_0006: ret
-	} // end of method FunctionObject_FunctionDeclaration_B5D0B4A9_arith::.ctor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_IsConstructor () cil managed 
-	{
-		// Method begins at RVA 0x217b
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.1
-		IL_0001: ret
-	} // end of method FunctionObject_FunctionDeclaration_B5D0B4A9_arith::get_IsConstructor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_RequiresInvocationContext () cil managed 
-	{
-		// Method begins at RVA 0x217e
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.0
-		IL_0001: ret
-	} // end of method FunctionObject_FunctionDeclaration_B5D0B4A9_arith::get_RequiresInvocationContext
-
-	.method family hidebysig virtual 
-		instance object ResolveThisArgumentCore (
-			object thisArgument
-		) cil managed 
-	{
-		// Method begins at RVA 0x2181
-		// Header size: 1
-		// Code size: 7 (0x7)
-		.maxstack 8
-
-		IL_0000: ldarg.1
-		IL_0001: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ResolveOrdinaryThisArgument(object)
-		IL_0006: ret
-	} // end of method FunctionObject_FunctionDeclaration_B5D0B4A9_arith::ResolveThisArgumentCore
-
-	.method family hidebysig virtual 
-		instance object CallCore (
-			object thisArgument,
-			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-		) cil managed 
-	{
-		// Method begins at RVA 0x2189
-		// Header size: 1
-		// Code size: 16 (0x10)
-		.maxstack 8
-
-		IL_0000: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
-		IL_0005: call float64 Modules.NumericInference_ExponentiationLoop_NoBoxing/arith::__js_call__(object)
-		IL_000a: box [System.Runtime]System.Double
-		IL_000f: ret
-	} // end of method FunctionObject_FunctionDeclaration_B5D0B4A9_arith::CallCore
-
-	.method family hidebysig virtual 
-		instance object ConstructBodyCore (
-			object receiver,
-			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
-			object newTarget
-		) cil managed 
-	{
-		// Method begins at RVA 0x219a
-		// Header size: 1
-		// Code size: 12 (0xc)
-		.maxstack 8
-
-		IL_0000: ldarg.3
-		IL_0001: call float64 Modules.NumericInference_ExponentiationLoop_NoBoxing/arith::__js_call__(object)
-		IL_0006: box [System.Runtime]System.Double
-		IL_000b: ret
-	} // end of method FunctionObject_FunctionDeclaration_B5D0B4A9_arith::ConstructBodyCore
-
-	.method family hidebysig virtual 
-		instance object ConstructCore (
-			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
-			object newTarget
-		) cil managed 
-	{
-		// Method begins at RVA 0x21a7
-		// Header size: 1
-		// Code size: 14 (0xe)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: ldarg.1
-		IL_0002: ldobj [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments
-		IL_0007: ldarg.2
-		IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionObject(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments, object)
-		IL_000d: ret
-	} // end of method FunctionObject_FunctionDeclaration_B5D0B4A9_arith::ConstructCore
-
-} // end of class FunctionObjects.NumericInference_ExponentiationLoop_NoBoxing_AC191332.FunctionObject_FunctionDeclaration_B5D0B4A9_arith
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object

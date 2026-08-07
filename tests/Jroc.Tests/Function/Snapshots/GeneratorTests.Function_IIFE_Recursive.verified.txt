@@ -80,6 +80,113 @@
 
 		} // end of class Scope
 
+		.class nested public auto ansi sealed beforefieldinit FunctionObject_FunctionExpression_F39F0734_walk
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2259
+				// Header size: 1
+				// Code size: 7 (0x7)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0006: ret
+			} // end of method FunctionObject_FunctionExpression_F39F0734_walk::.ctor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_IsConstructor () cil managed 
+			{
+				// Method begins at RVA 0x2261
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.1
+				IL_0001: ret
+			} // end of method FunctionObject_FunctionExpression_F39F0734_walk::get_IsConstructor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_RequiresInvocationContext () cil managed 
+			{
+				// Method begins at RVA 0x2264
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.1
+				IL_0001: ret
+			} // end of method FunctionObject_FunctionExpression_F39F0734_walk::get_RequiresInvocationContext
+
+			.method family hidebysig virtual 
+				instance object CallCore (
+					object thisArgument,
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+				) cil managed 
+			{
+				// Method begins at RVA 0x2267
+				// Header size: 1
+				// Code size: 25 (0x19)
+				.maxstack 8
+
+				IL_0000: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
+				IL_0005: ldarg.2
+				IL_0006: ldc.i4.0
+				IL_0007: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+				IL_000c: ldarg.2
+				IL_000d: ldc.i4.1
+				IL_000e: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+				IL_0013: call object Modules.Function_IIFE_Recursive/walk::__js_call__(object, object, object)
+				IL_0018: ret
+			} // end of method FunctionObject_FunctionExpression_F39F0734_walk::CallCore
+
+			.method family hidebysig virtual 
+				instance object ConstructBodyCore (
+					object receiver,
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
+					object newTarget
+				) cil managed 
+			{
+				// Method begins at RVA 0x2281
+				// Header size: 1
+				// Code size: 21 (0x15)
+				.maxstack 8
+
+				IL_0000: ldarg.3
+				IL_0001: ldarg.2
+				IL_0002: ldc.i4.0
+				IL_0003: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+				IL_0008: ldarg.2
+				IL_0009: ldc.i4.1
+				IL_000a: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+				IL_000f: call object Modules.Function_IIFE_Recursive/walk::__js_call__(object, object, object)
+				IL_0014: ret
+			} // end of method FunctionObject_FunctionExpression_F39F0734_walk::ConstructBodyCore
+
+			.method family hidebysig virtual 
+				instance object ConstructCore (
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
+					object newTarget
+				) cil managed 
+			{
+				// Method begins at RVA 0x2297
+				// Header size: 1
+				// Code size: 14 (0xe)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: ldarg.1
+				IL_0002: ldobj [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments
+				IL_0007: ldarg.2
+				IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionObject(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments, object)
+				IL_000d: ret
+			} // end of method FunctionObject_FunctionExpression_F39F0734_walk::ConstructCore
+
+		} // end of class FunctionObject_FunctionExpression_F39F0734_walk
+
 
 		// Methods
 		.method public hidebysig static 
@@ -225,7 +332,7 @@
 		.locals init (
 			[0] class Modules.Function_IIFE_Recursive/Scope,
 			[1] object[],
-			[2] class FunctionObjects.Function_IIFE_Recursive_C02B9FB2.FunctionObject_FunctionExpression_F39F0734_walk
+			[2] class Modules.Function_IIFE_Recursive/walk/FunctionObject_FunctionExpression_F39F0734_walk
 		)
 
 		IL_0000: newobj instance void Modules.Function_IIFE_Recursive/Scope::.ctor()
@@ -238,13 +345,13 @@
 		IL_000f: ldloc.0
 		IL_0010: stelem.ref
 		IL_0011: stloc.1
-		IL_0012: newobj instance void FunctionObjects.Function_IIFE_Recursive_C02B9FB2.FunctionObject_FunctionExpression_F39F0734_walk::.ctor()
+		IL_0012: newobj instance void Modules.Function_IIFE_Recursive/walk/FunctionObject_FunctionExpression_F39F0734_walk::.ctor()
 		IL_0017: ldc.i4.2
 		IL_0018: conv.r8
 		IL_0019: ldstr "walk"
 		IL_001e: ldc.i4.1
 		IL_001f: ldc.i4.1
-		IL_0020: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class FunctionObjects.Function_IIFE_Recursive_C02B9FB2.FunctionObject_FunctionExpression_F39F0734_walk>(!!0, float64, string, bool, bool)
+		IL_0020: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Function_IIFE_Recursive/walk/FunctionObject_FunctionExpression_F39F0734_walk>(!!0, float64, string, bool, bool)
 		IL_0025: stloc.2
 		IL_0026: ldc.i4.2
 		IL_0027: newarr [System.Runtime]System.Object
@@ -312,113 +419,6 @@
 	} // end of method Function_IIFE_Recursive::__js_module_init__
 
 } // end of class Modules.Function_IIFE_Recursive
-
-.class private auto ansi sealed beforefieldinit FunctionObjects.Function_IIFE_Recursive_C02B9FB2.FunctionObject_FunctionExpression_F39F0734_walk
-	extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-{
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x2259
-		// Header size: 1
-		// Code size: 7 (0x7)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-		IL_0006: ret
-	} // end of method FunctionObject_FunctionExpression_F39F0734_walk::.ctor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_IsConstructor () cil managed 
-	{
-		// Method begins at RVA 0x2261
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.1
-		IL_0001: ret
-	} // end of method FunctionObject_FunctionExpression_F39F0734_walk::get_IsConstructor
-
-	.method public hidebysig specialname virtual 
-		instance bool get_RequiresInvocationContext () cil managed 
-	{
-		// Method begins at RVA 0x2264
-		// Header size: 1
-		// Code size: 2 (0x2)
-		.maxstack 8
-
-		IL_0000: ldc.i4.1
-		IL_0001: ret
-	} // end of method FunctionObject_FunctionExpression_F39F0734_walk::get_RequiresInvocationContext
-
-	.method family hidebysig virtual 
-		instance object CallCore (
-			object thisArgument,
-			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-		) cil managed 
-	{
-		// Method begins at RVA 0x2267
-		// Header size: 1
-		// Code size: 25 (0x19)
-		.maxstack 8
-
-		IL_0000: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
-		IL_0005: ldarg.2
-		IL_0006: ldc.i4.0
-		IL_0007: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-		IL_000c: ldarg.2
-		IL_000d: ldc.i4.1
-		IL_000e: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-		IL_0013: call object Modules.Function_IIFE_Recursive/walk::__js_call__(object, object, object)
-		IL_0018: ret
-	} // end of method FunctionObject_FunctionExpression_F39F0734_walk::CallCore
-
-	.method family hidebysig virtual 
-		instance object ConstructBodyCore (
-			object receiver,
-			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
-			object newTarget
-		) cil managed 
-	{
-		// Method begins at RVA 0x2281
-		// Header size: 1
-		// Code size: 21 (0x15)
-		.maxstack 8
-
-		IL_0000: ldarg.3
-		IL_0001: ldarg.2
-		IL_0002: ldc.i4.0
-		IL_0003: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-		IL_0008: ldarg.2
-		IL_0009: ldc.i4.1
-		IL_000a: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-		IL_000f: call object Modules.Function_IIFE_Recursive/walk::__js_call__(object, object, object)
-		IL_0014: ret
-	} // end of method FunctionObject_FunctionExpression_F39F0734_walk::ConstructBodyCore
-
-	.method family hidebysig virtual 
-		instance object ConstructCore (
-			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
-			object newTarget
-		) cil managed 
-	{
-		// Method begins at RVA 0x2297
-		// Header size: 1
-		// Code size: 14 (0xe)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: ldarg.1
-		IL_0002: ldobj [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments
-		IL_0007: ldarg.2
-		IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionObject(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments, object)
-		IL_000d: ret
-	} // end of method FunctionObject_FunctionExpression_F39F0734_walk::ConstructCore
-
-} // end of class FunctionObjects.Function_IIFE_Recursive_C02B9FB2.FunctionObject_FunctionExpression_F39F0734_walk
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object

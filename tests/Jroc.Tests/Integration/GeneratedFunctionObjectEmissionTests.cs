@@ -122,6 +122,18 @@ public sealed class GeneratedFunctionObjectEmissionTests
             .ToArray();
 
         Assert.Empty(answerType.GetFields(BindingFlags.Instance | BindingFlags.NonPublic));
+        Assert.All(
+            emittedTypes,
+            type =>
+            {
+                Assert.NotNull(type.DeclaringType);
+                Assert.DoesNotContain(
+                    "FunctionObjects.",
+                    type.Namespace,
+                    StringComparison.Ordinal);
+            });
+        Assert.Equal("answer", answerType.DeclaringType!.Name);
+        Assert.Equal("inner", innerType.DeclaringType!.Name);
         Assert.NotEmpty(arrowTypes);
         Assert.All(
             arrowTypes,
@@ -206,6 +218,7 @@ public sealed class GeneratedFunctionObjectEmissionTests
             GetFunctionObjectTypes(compiled.Assembly),
             type => type.Name.Contains("ClassMethod", StringComparison.Ordinal)
                 && type.Name.EndsWith("_Echo_method", StringComparison.Ordinal));
+        Assert.Equal("Echo", methodFunctionType.DeclaringType!.Name);
         var methodFunction = Assert.IsAssignableFrom<JsFunctionObject>(
             Activator.CreateInstance(methodFunctionType));
         var echoType = compiled.Assembly.GetTypes().Single(type => type.Name == "Echo");
