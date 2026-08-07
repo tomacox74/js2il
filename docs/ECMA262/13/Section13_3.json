@@ -329,16 +329,20 @@
         "specUrl": "https://tc39.es/ecma262/#sec-new-operator",
         "testScripts": [
           "tests/Jroc.Tests/Classes/JavaScript/Classes_DeclareEmptyClass.js",
-          "tests/Jroc.Tests/Classes/JavaScript/Classes_ClassConstructor_WithMultipleParameters.js"
+          "tests/Jroc.Tests/Classes/JavaScript/Classes_ClassConstructor_WithMultipleParameters.js",
+          "tests/Jroc.Tests/Function/JavaScript/Function_GeneratedConstruction_Semantics.js"
         ],
-        "notes": "User-defined classes are lowered to direct CLR construction of the generated type, including scope-array wiring for closures in constructors/methods. Spread arguments in `new` are not supported."
+        "notes": "User-defined classes are lowered to direct CLR construction of the generated type, including scope-array wiring for closures in constructors/methods. Derived classes with function-valued bases preserve replacement-object returns and propagate the derived constructor as new.target. Spread arguments in `new` are not supported."
       },
       {
         "clause": "13.3.5",
         "feature": "NewExpression where the constructor is a runtime value (new valueCtor(...))",
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-new-operator",
-        "notes": "When the constructor is not statically known, JROC lowers to a runtime dispatch (`JavaScriptRuntime.Object.ConstructValue`) by packing arguments into an object[]. Spread arguments in `new` are not supported."
+        "testScripts": [
+          "tests/Jroc.Tests/Function/JavaScript/Function_GeneratedConstruction_Semantics.js"
+        ],
+        "notes": "When the constructor is not statically known, JROC lowers to runtime construction dispatch by packing arguments into an object[]. Generated ordinary function objects honor mutable prototype values, alternate Reflect.construct newTarget values, and constructor return overrides. Spread arguments in `new` are not supported."
       },
       {
         "clause": "13.3.2",
@@ -422,9 +426,10 @@
         "specUrl": "https://tc39.es/ecma262/#sec-meta-properties",
         "testScripts": [
           "tests/Jroc.Tests/Function/JavaScript/Function_NewTarget_NewVsCall.js",
-          "tests/Jroc.Tests/Function/JavaScript/Function_NewTarget_Arrow_Inherits.js"
+          "tests/Jroc.Tests/Function/JavaScript/Function_NewTarget_Arrow_Inherits.js",
+          "tests/Jroc.Tests/Function/JavaScript/Function_GeneratedConstruction_Semantics.js"
         ],
-        "notes": "`new.target` is propagated through function call/new invocation ABI. Normal calls observe undefined; constructor calls observe a defined newTarget value. Arrow functions capture lexical newTarget."
+        "notes": "`new.target` is propagated through function call/new invocation ABI. Normal calls observe undefined; constructor calls observe the actual newTarget, including alternate Reflect.construct targets and derived classes whose base is an ordinary function. Arrow functions capture lexical newTarget."
       },
       {
         "clause": "13.3.12",

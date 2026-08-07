@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2156
+				// Method begins at RVA 0x217a
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x215f
+				// Method begins at RVA 0x2183
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -58,7 +58,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2168
+				// Method begins at RVA 0x218c
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -79,7 +79,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x20c0
+			// Method begins at RVA 0x20e3
 			// Header size: 1
 			// Code size: 7 (0x7)
 			.maxstack 8
@@ -95,7 +95,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x20c8
+			// Method begins at RVA 0x20ec
 			// Header size: 12
 			// Code size: 116 (0x74)
 			.maxstack 8
@@ -142,7 +142,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2148
+			// Method begins at RVA 0x216c
 			// Header size: 1
 			// Code size: 4 (0x4)
 			.maxstack 8
@@ -162,7 +162,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x214d
+			// Method begins at RVA 0x2171
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -188,49 +188,63 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 100 (0x64)
+		// Code size: 135 (0x87)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Classes_ClassMethod_ParameterTypeInference_DirectThis_Number/Scope,
-			[1] class Modules.Classes_ClassMethod_ParameterTypeInference_DirectThis_Number/Accumulator,
-			[2] object
+			[1] object[],
+			[2] class [System.Runtime]System.Type,
+			[3] class Modules.Classes_ClassMethod_ParameterTypeInference_DirectThis_Number/Accumulator,
+			[4] object
 		)
 
 		IL_0000: newobj instance void Modules.Classes_ClassMethod_ParameterTypeInference_DirectThis_Number/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: nop
 		IL_0007: nop
-		IL_0008: ldc.i4.0
+		IL_0008: ldc.i4.1
 		IL_0009: newarr [System.Runtime]System.Object
-		IL_000e: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
-		IL_0013: newobj instance void Modules.Classes_ClassMethod_ParameterTypeInference_DirectThis_Number/Accumulator::.ctor()
-		IL_0018: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
-		IL_001d: stloc.1
-		IL_001e: ldloc.1
-		IL_001f: ldtoken Modules.Classes_ClassMethod_ParameterTypeInference_DirectThis_Number/Accumulator
-		IL_0024: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_0029: ldstr "prototype"
-		IL_002e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
-		IL_0033: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
-		IL_0038: ldloc.1
-		IL_0039: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_003e: stloc.2
-		IL_003f: ldloc.2
-		IL_0040: isinst Modules.Classes_ClassMethod_ParameterTypeInference_DirectThis_Number/Accumulator
-		IL_0045: dup
-		IL_0046: brfalse IL_0056
+		IL_000e: dup
+		IL_000f: ldc.i4.0
+		IL_0010: ldloc.0
+		IL_0011: stelem.ref
+		IL_0012: stloc.1
+		IL_0013: ldtoken Modules.Classes_ClassMethod_ParameterTypeInference_DirectThis_Number/Accumulator
+		IL_0018: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_001d: ldtoken Modules.Classes_ClassMethod_ParameterTypeInference_DirectThis_Number/Accumulator
+		IL_0022: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_0027: stloc.2
+		IL_0028: ldc.i4.0
+		IL_0029: newarr [System.Runtime]System.Object
+		IL_002e: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
+		IL_0033: newobj instance void Modules.Classes_ClassMethod_ParameterTypeInference_DirectThis_Number/Accumulator::.ctor()
+		IL_0038: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
+		IL_003d: stloc.3
+		IL_003e: ldloc.3
+		IL_003f: ldtoken Modules.Classes_ClassMethod_ParameterTypeInference_DirectThis_Number/Accumulator
+		IL_0044: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_0049: ldstr "prototype"
+		IL_004e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
+		IL_0053: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
+		IL_0058: ldloc.3
+		IL_0059: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_005e: stloc.s 4
+		IL_0060: ldloc.s 4
+		IL_0062: isinst Modules.Classes_ClassMethod_ParameterTypeInference_DirectThis_Number/Accumulator
+		IL_0067: dup
+		IL_0068: brfalse IL_0078
 
-		IL_004b: callvirt instance object Modules.Classes_ClassMethod_ParameterTypeInference_DirectThis_Number/Accumulator::run()
-		IL_0050: pop
-		IL_0051: br IL_0063
+		IL_006d: callvirt instance object Modules.Classes_ClassMethod_ParameterTypeInference_DirectThis_Number/Accumulator::run()
+		IL_0072: pop
+		IL_0073: br IL_0086
 
-		IL_0056: pop
-		IL_0057: ldloc.2
-		IL_0058: ldstr "run"
-		IL_005d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-		IL_0062: pop
+		IL_0078: pop
+		IL_0079: ldloc.s 4
+		IL_007b: ldstr "run"
+		IL_0080: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+		IL_0085: pop
 
-		IL_0063: ret
+		IL_0086: ret
 	} // end of method Classes_ClassMethod_ParameterTypeInference_DirectThis_Number::__js_module_init__
 
 } // end of class Modules.Classes_ClassMethod_ParameterTypeInference_DirectThis_Number
@@ -247,7 +261,7 @@
 			object[] capture0
 		) cil managed 
 	{
-		// Method begins at RVA 0x2171
+		// Method begins at RVA 0x2195
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -263,7 +277,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x2180
+		// Method begins at RVA 0x21a4
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -275,7 +289,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x2183
+		// Method begins at RVA 0x21a7
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -290,7 +304,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x2186
+		// Method begins at RVA 0x21aa
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -306,7 +320,7 @@
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x2192
+		// Method begins at RVA 0x21b6
 		// Header size: 1
 		// Code size: 11 (0xb)
 		.maxstack 8
@@ -325,7 +339,7 @@
 	.method public hidebysig specialname rtspecialname 
 		instance void .ctor () cil managed 
 	{
-		// Method begins at RVA 0x219e
+		// Method begins at RVA 0x21c2
 		// Header size: 1
 		// Code size: 7 (0x7)
 		.maxstack 8
@@ -338,7 +352,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x21a6
+		// Method begins at RVA 0x21ca
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -350,7 +364,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x21a9
+		// Method begins at RVA 0x21cd
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -365,7 +379,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x21ac
+		// Method begins at RVA 0x21d0
 		// Header size: 1
 		// Code size: 12 (0xc)
 		.maxstack 8
@@ -385,7 +399,7 @@
 	.method public hidebysig specialname rtspecialname 
 		instance void .ctor () cil managed 
 	{
-		// Method begins at RVA 0x21b9
+		// Method begins at RVA 0x21dd
 		// Header size: 1
 		// Code size: 7 (0x7)
 		.maxstack 8
@@ -398,7 +412,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x21c1
+		// Method begins at RVA 0x21e5
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -410,7 +424,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x21c4
+		// Method begins at RVA 0x21e8
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -425,7 +439,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x21c7
+		// Method begins at RVA 0x21eb
 		// Header size: 1
 		// Code size: 41 (0x29)
 		.maxstack 8
@@ -454,7 +468,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21f1
+		// Method begins at RVA 0x2215
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

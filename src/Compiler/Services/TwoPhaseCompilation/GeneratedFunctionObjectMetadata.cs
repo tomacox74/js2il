@@ -90,6 +90,8 @@ public sealed record GeneratedFunctionObjectMetadata
 
     public MethodDefinitionHandle ConstructAdapterHandle { get; init; }
 
+    public MethodDefinitionHandle ConstructBodyAdapterHandle { get; init; }
+
     public required IReadOnlyDictionary<string, FieldDefinitionHandle> FieldHandles { get; init; }
 
     public required IReadOnlyList<GeneratedFunctionEntryPointPlan> EntryPoints { get; init; }

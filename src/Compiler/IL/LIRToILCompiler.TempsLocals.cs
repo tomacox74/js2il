@@ -1902,16 +1902,10 @@ internal sealed partial class LIRToILCompiler
                 {
                     throw new InvalidOperationException("Cannot emit new.target when method has no newTarget parameter");
                 }
-                // newTarget follows scopes for static functions and instance callables that carry scopes.
-                // Static functions: arg1. Instance: arg2 when scopes exists; otherwise arg1.
-                if (methodDescriptor.IsStatic)
-                {
-                    ilEncoder.LoadArgument(1);
-                }
-                else
-                {
-                    ilEncoder.LoadArgument(methodDescriptor.HasScopesParameter ? 2 : 1);
-                }
+                // newTarget follows scopes when a scopes parameter exists.
+                ilEncoder.LoadArgument(methodDescriptor.IsStatic
+                    ? methodDescriptor.HasScopesParameter ? 1 : 0
+                    : methodDescriptor.HasScopesParameter ? 2 : 1);
                 return true;
             case LIRLoadParameter loadParam:
                 // Emit ldarg.X inline - no local slot needed

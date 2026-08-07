@@ -98,6 +98,10 @@ public sealed class GeneratedFunctionObjectEmissionTests
                     expectedMethods.Add("ResolveThisArgumentCore");
                 }
                 expectedMethods.Add("CallCore");
+                if (methodNames.Contains("ConstructBodyCore", StringComparer.Ordinal))
+                {
+                    expectedMethods.Add("ConstructBodyCore");
+                }
                 if (methodNames.Contains("ConstructCore", StringComparer.Ordinal))
                 {
                     expectedMethods.Add("ConstructCore");

@@ -4,7 +4,7 @@
 
 [Back to Section10](Section10.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-07-02T16:37:57Z
+> Last generated (UTC): 2026-08-07T08:24:54Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -45,7 +45,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Constructor calls and new.target-aware function execution | Supported with Limitations | [`Function_NewTarget_NewVsCall.js`](../../../tests/Jroc.Tests/Function/JavaScript/Function_NewTarget_NewVsCall.js)<br>[`Function_NewTarget_Arrow_Inherits.js`](../../../tests/Jroc.Tests/Function/JavaScript/Function_NewTarget_Arrow_Inherits.js)<br>[`Classes_Constructor_ReturnObjectOverridesThis.js`](../../../tests/Jroc.Tests/Classes/JavaScript/Classes_Constructor_ReturnObjectOverridesThis.js)<br>[`Classes_DeclareEmptyClass.js`](../../../tests/Jroc.Tests/Classes/JavaScript/Classes_DeclareEmptyClass.js) |  | JROC constructs delegate-backed functions and class constructors by creating an instance, binding this, and forwarding a newTarget value into the call path. Constructor return override works, but super/inheritance semantics and full OrdinaryCreateFromConstructor behavior remain incomplete. |
+| Constructor calls and new.target-aware function execution | Supported with Limitations | [`Function_NewTarget_NewVsCall.js`](../../../tests/Jroc.Tests/Function/JavaScript/Function_NewTarget_NewVsCall.js)<br>[`Function_NewTarget_Arrow_Inherits.js`](../../../tests/Jroc.Tests/Function/JavaScript/Function_NewTarget_Arrow_Inherits.js)<br>[`Function_GeneratedConstruction_Semantics.js`](../../../tests/Jroc.Tests/Function/JavaScript/Function_GeneratedConstruction_Semantics.js)<br>[`Classes_Constructor_ReturnObjectOverridesThis.js`](../../../tests/Jroc.Tests/Classes/JavaScript/Classes_Constructor_ReturnObjectOverridesThis.js)<br>[`Classes_DeclareEmptyClass.js`](../../../tests/Jroc.Tests/Classes/JavaScript/Classes_DeclareEmptyClass.js) |  | Generated ordinary function objects implement a separate construction-body adapter rather than routing construction through ordinary [[Call]]. The runtime allocates from newTarget.prototype with Object.prototype fallback, propagates new.target, honors object-versus-primitive return overrides, forwards bound construction, and supports function-valued bases of derived classes. Less-common exotic and realm-sensitive OrdinaryCreateFromConstructor cases remain limited. |
 
 ### 10.2.4 ([tc39.es](https://tc39.es/ecma262/#sec-addrestrictedfunctionproperties))
 
@@ -57,7 +57,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Function prototype objects and constructor-style metadata | Supported with Limitations | [`Function_Prototype_ObjectCreate_ObjectPrototype.js`](../../../tests/Jroc.Tests/Function/JavaScript/Function_Prototype_ObjectCreate_ObjectPrototype.js)<br>[`Function_Prototype_Bind_PropertyExists.js`](../../../tests/Jroc.Tests/Function/JavaScript/Function_Prototype_Bind_PropertyExists.js)<br>[`Function_Prototype_ToString_Basic.js`](../../../tests/Jroc.Tests/Function/JavaScript/Function_Prototype_ToString_Basic.js) |  | Delegate-backed functions lazily synthesize prototype, constructor, name, length, and toString metadata so common library patterns continue to work. These properties are inferred from CLR delegates rather than being installed through the exact SetFunctionName / SetFunctionLength / MakeConstructor abstract-operation flow. |
+| Function prototype objects and constructor-style metadata | Supported with Limitations | [`Function_Prototype_ObjectCreate_ObjectPrototype.js`](../../../tests/Jroc.Tests/Function/JavaScript/Function_Prototype_ObjectCreate_ObjectPrototype.js)<br>[`Function_Prototype_Bind_PropertyExists.js`](../../../tests/Jroc.Tests/Function/JavaScript/Function_Prototype_Bind_PropertyExists.js)<br>[`Function_GeneratedConstruction_Semantics.js`](../../../tests/Jroc.Tests/Function/JavaScript/Function_GeneratedConstruction_Semantics.js)<br>[`Function_Prototype_ToString_Basic.js`](../../../tests/Jroc.Tests/Function/JavaScript/Function_Prototype_ToString_Basic.js) |  | Generated ordinary function objects receive writable, non-enumerable, non-configurable prototype properties whose prototype objects carry the expected writable, non-enumerable, configurable constructor link. Prototype replacement affects subsequent construction. Transitional delegate-backed callables still synthesize metadata lazily, and exact realm-sensitive MakeConstructor behavior remains limited. |
 
 ### 10.2.9 ([tc39.es](https://tc39.es/ecma262/#sec-setfunctionname))
 

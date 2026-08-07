@@ -42,7 +42,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2220
+					// Method begins at RVA 0x2235
 					// Header size: 1
 					// Code size: 7 (0x7)
 					.maxstack 8
@@ -55,7 +55,7 @@
 				.method public hidebysig specialname virtual 
 					instance bool get_IsConstructor () cil managed 
 				{
-					// Method begins at RVA 0x2228
+					// Method begins at RVA 0x223d
 					// Header size: 1
 					// Code size: 2 (0x2)
 					.maxstack 8
@@ -67,7 +67,7 @@
 				.method public hidebysig specialname virtual 
 					instance bool get_RequiresInvocationContext () cil managed 
 				{
-					// Method begins at RVA 0x222b
+					// Method begins at RVA 0x2240
 					// Header size: 1
 					// Code size: 2 (0x2)
 					.maxstack 8
@@ -82,7 +82,7 @@
 						[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 					) cil managed 
 				{
-					// Method begins at RVA 0x222e
+					// Method begins at RVA 0x2243
 					// Header size: 1
 					// Code size: 7 (0x7)
 					.maxstack 8
@@ -450,21 +450,43 @@
 	} // end of method FunctionObject_FunctionDeclaration_2695CFF7_patchPath::CallCore
 
 	.method family hidebysig virtual 
-		instance object ConstructCore (
+		instance object ConstructBodyCore (
+			object receiver,
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
 			object newTarget
 		) cil managed 
 	{
 		// Method begins at RVA 0x2211
 		// Header size: 1
+		// Code size: 20 (0x14)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: ldfld class Modules.Require_Path_DefaultParameterOverride/Scope FunctionObjects.Require_Path_DefaultParameterOverride_D7B98D47.FunctionObject_FunctionDeclaration_2695CFF7_patchPath::_environment0_Require_Path_DefaultParameterOverride
+		IL_0006: ldarg.3
+		IL_0007: ldarg.2
+		IL_0008: ldc.i4.0
+		IL_0009: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+		IL_000e: call object Modules.Require_Path_DefaultParameterOverride/patchPath::__js_call__(class Modules.Require_Path_DefaultParameterOverride/Scope, object, object)
+		IL_0013: ret
+	} // end of method FunctionObject_FunctionDeclaration_2695CFF7_patchPath::ConstructBodyCore
+
+	.method family hidebysig virtual 
+		instance object ConstructCore (
+			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
+			object newTarget
+		) cil managed 
+	{
+		// Method begins at RVA 0x2226
+		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
 
 		IL_0000: ldarg.0
 		IL_0001: ldarg.1
-		IL_0002: call instance object[] [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::ToArray()
+		IL_0002: ldobj [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments
 		IL_0007: ldarg.2
-		IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionObject(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, object[], object)
+		IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionObject(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments, object)
 		IL_000d: ret
 	} // end of method FunctionObject_FunctionDeclaration_2695CFF7_patchPath::ConstructCore
 
@@ -477,7 +499,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2236
+		// Method begins at RVA 0x224b
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

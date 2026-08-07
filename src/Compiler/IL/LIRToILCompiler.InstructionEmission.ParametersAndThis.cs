@@ -105,10 +105,10 @@ internal sealed partial class LIRToILCompiler
                         return false;
                     }
 
-                    // new.target follows scopes in the method signature
-                    // Static functions: newTarget is arg1 (after scopes at arg0)
-                    // Instance constructors: newTarget is arg2 (after this at arg0, scopes at arg1)
-                    int newTargetArgIndex = methodDescriptor.IsStatic ? 1 : 2;
+                    // new.target follows scopes when a scopes parameter exists.
+                    int newTargetArgIndex = methodDescriptor.IsStatic
+                        ? methodDescriptor.HasScopesParameter ? 1 : 0
+                        : methodDescriptor.HasScopesParameter ? 2 : 1;
                     ilEncoder.LoadArgument(newTargetArgIndex);
                     EmitStoreTemp(loadNewTarget.Result, ilEncoder, allocation);
                     break;

@@ -267,21 +267,40 @@
 	} // end of method FunctionObject_FunctionDeclaration_CCCFA6D2_bump::CallCore
 
 	.method family hidebysig virtual 
-		instance object ConstructCore (
+		instance object ConstructBodyCore (
+			object receiver,
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
 			object newTarget
 		) cil managed 
 	{
 		// Method begins at RVA 0x2192
 		// Header size: 1
+		// Code size: 13 (0xd)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: ldfld class Modules.ControlFlow_Conditional_Ternary_ShortCircuit/Scope FunctionObjects.ControlFlow_Conditional_Ternary_ShortCircuit_345A95FF.FunctionObject_FunctionDeclaration_CCCFA6D2_bump::_environment0_ControlFlow_Conditional_Ternary_ShortCircuit
+		IL_0006: ldarg.3
+		IL_0007: call object Modules.ControlFlow_Conditional_Ternary_ShortCircuit/bump::__js_call__(class Modules.ControlFlow_Conditional_Ternary_ShortCircuit/Scope, object)
+		IL_000c: ret
+	} // end of method FunctionObject_FunctionDeclaration_CCCFA6D2_bump::ConstructBodyCore
+
+	.method family hidebysig virtual 
+		instance object ConstructCore (
+			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
+			object newTarget
+		) cil managed 
+	{
+		// Method begins at RVA 0x21a0
+		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
 
 		IL_0000: ldarg.0
 		IL_0001: ldarg.1
-		IL_0002: call instance object[] [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::ToArray()
+		IL_0002: ldobj [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments
 		IL_0007: ldarg.2
-		IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionObject(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, object[], object)
+		IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionObject(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments, object)
 		IL_000d: ret
 	} // end of method FunctionObject_FunctionDeclaration_CCCFA6D2_bump::ConstructCore
 
@@ -294,7 +313,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21a1
+		// Method begins at RVA 0x21af
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

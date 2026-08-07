@@ -258,21 +258,40 @@
 	} // end of method FunctionObject_FunctionDeclaration_5E9AB76A_inc::CallCore
 
 	.method family hidebysig virtual 
-		instance object ConstructCore (
+		instance object ConstructBodyCore (
+			object receiver,
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
 			object newTarget
 		) cil managed 
 	{
 		// Method begins at RVA 0x216a
 		// Header size: 1
+		// Code size: 13 (0xd)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: ldfld class Modules.BinaryOperator_LogicalAnd_ShortCircuit/Scope FunctionObjects.BinaryOperator_LogicalAnd_ShortCircuit_B4DD41AF.FunctionObject_FunctionDeclaration_5E9AB76A_inc::_environment0_BinaryOperator_LogicalAnd_ShortCircuit
+		IL_0006: ldarg.3
+		IL_0007: call object Modules.BinaryOperator_LogicalAnd_ShortCircuit/inc::__js_call__(class Modules.BinaryOperator_LogicalAnd_ShortCircuit/Scope, object)
+		IL_000c: ret
+	} // end of method FunctionObject_FunctionDeclaration_5E9AB76A_inc::ConstructBodyCore
+
+	.method family hidebysig virtual 
+		instance object ConstructCore (
+			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
+			object newTarget
+		) cil managed 
+	{
+		// Method begins at RVA 0x2178
+		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
 
 		IL_0000: ldarg.0
 		IL_0001: ldarg.1
-		IL_0002: call instance object[] [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::ToArray()
+		IL_0002: ldobj [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments
 		IL_0007: ldarg.2
-		IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionObject(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, object[], object)
+		IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionObject(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments, object)
 		IL_000d: ret
 	} // end of method FunctionObject_FunctionDeclaration_5E9AB76A_inc::ConstructCore
 
@@ -285,7 +304,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2179
+		// Method begins at RVA 0x2187
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

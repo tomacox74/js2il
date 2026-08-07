@@ -546,7 +546,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x24ff
+				// Method begins at RVA 0x250d
 				// Header size: 1
 				// Code size: 7 (0x7)
 				.maxstack 8
@@ -559,7 +559,7 @@
 			.method public hidebysig specialname virtual 
 				instance bool get_IsConstructor () cil managed 
 			{
-				// Method begins at RVA 0x2507
+				// Method begins at RVA 0x2515
 				// Header size: 1
 				// Code size: 2 (0x2)
 				.maxstack 8
@@ -571,7 +571,7 @@
 			.method public hidebysig specialname virtual 
 				instance bool get_RequiresInvocationContext () cil managed 
 			{
-				// Method begins at RVA 0x250a
+				// Method begins at RVA 0x2518
 				// Header size: 1
 				// Code size: 2 (0x2)
 				.maxstack 8
@@ -586,7 +586,7 @@
 					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 				) cil managed 
 			{
-				// Method begins at RVA 0x250d
+				// Method begins at RVA 0x251b
 				// Header size: 1
 				// Code size: 7 (0x7)
 				.maxstack 8
@@ -801,6 +801,25 @@
 		IL_0010: ret
 	} // end of method FunctionObject_FunctionDeclaration_E25B5249_test::CallCore
 
+	.method family hidebysig virtual 
+		instance object ConstructBodyCore (
+			object receiver,
+			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
+			object newTarget
+		) cil managed 
+	{
+		// Method begins at RVA 0x24ff
+		// Header size: 1
+		// Code size: 13 (0xd)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: ldfld object[] FunctionObjects.Async_TryFinally_PreservesExceptionThroughAwait_CD294C42.FunctionObject_FunctionDeclaration_E25B5249_test::_transitionalScopes
+		IL_0006: ldarg.3
+		IL_0007: call object Modules.Async_TryFinally_PreservesExceptionThroughAwait/test::__js_call__(object[], object)
+		IL_000c: ret
+	} // end of method FunctionObject_FunctionDeclaration_E25B5249_test::ConstructBodyCore
+
 } // end of class FunctionObjects.Async_TryFinally_PreservesExceptionThroughAwait_CD294C42.FunctionObject_FunctionDeclaration_E25B5249_test
 
 .class private auto ansi beforefieldinit Program
@@ -810,7 +829,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2515
+		// Method begins at RVA 0x2523
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

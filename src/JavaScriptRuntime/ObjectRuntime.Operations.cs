@@ -2357,7 +2357,11 @@ namespace JavaScriptRuntime
                     throw new TypeError("Value is not a constructor");
                 }
 
-                var isDerivedClassType = type.BaseType is { } baseType && baseType != typeof(object);
+                var isDerivedClassType = prototypeOwner is ClassConstructorValue
+                    && type.BaseType is { } baseType
+                    && baseType != typeof(object);
+                var previousNewTarget = RuntimeServices.SetCurrentNewTarget(
+                    newTarget ?? prototypeOwner ?? type);
                 if (isDerivedClassType)
                 {
                     RuntimeServices.PushDerivedConstructorThisBinding();
@@ -2373,11 +2377,26 @@ namespace JavaScriptRuntime
                     return instance;
                 }
 
+                object? CompleteClassConstruction(object? instance)
+                {
+                    if (!isDerivedClassType)
+                    {
+                        return AttachClassPrototype(instance);
+                    }
+
+                    var effectiveThis = RuntimeServices.ResolveLexicalThis(
+                        RuntimeServices.GetCurrentThis());
+                    return ReferenceEquals(effectiveThis, instance)
+                        ? AttachClassPrototype(instance)
+                        : effectiveThis;
+                }
+
                 try
                 {
                     try
                     {
-                        return AttachClassPrototype(Activator.CreateInstance(type, callArgs));
+                        return CompleteClassConstruction(
+                            Activator.CreateInstance(type, callArgs));
                     }
                     catch (MissingMethodException)
                     {
@@ -2418,7 +2437,8 @@ namespace JavaScriptRuntime
 
                             try
                             {
-                                return AttachClassPrototype(ctor.Invoke(invokeArgs));
+                                return CompleteClassConstruction(
+                                    ctor.Invoke(invokeArgs));
                             }
                             catch (TargetInvocationException tie) when (tie.InnerException != null)
                             {
@@ -2444,6 +2464,7 @@ namespace JavaScriptRuntime
                     {
                         RuntimeServices.PopDerivedConstructorThisBinding();
                     }
+                    RuntimeServices.SetCurrentNewTarget(previousNewTarget);
                 }
             }
 

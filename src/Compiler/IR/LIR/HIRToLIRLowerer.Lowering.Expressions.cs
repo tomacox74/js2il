@@ -160,8 +160,17 @@ public sealed partial class HIRToLIRLowerer
                 return true;
 
             case HIRNewTargetExpression:
-                // Function/arrow path: use hidden newTarget parameter.
-                // Constructor path (class ctor): approximate new.target as this.GetType().
+                if (_callableKind == CallableKind.Constructor && _isDerivedConstructor)
+                {
+                    resultTempVar = CreateTempVariable();
+                    _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
+                        MethodName: nameof(JavaScriptRuntime.RuntimeServices.GetCurrentNewTarget),
+                        Arguments: Array.Empty<TempVariable>(),
+                        Result: resultTempVar));
+                    DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                    return true;
+                }
+
                 if (_callableKind == CallableKind.Constructor)
                 {
                     var thisTemp = CreateTempVariable();

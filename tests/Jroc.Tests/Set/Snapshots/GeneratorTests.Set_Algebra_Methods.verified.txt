@@ -804,7 +804,8 @@
 	} // end of method FunctionObject_FunctionExpression_EA56ECA5_L18C10::CallCore
 
 	.method family hidebysig virtual 
-		instance object ConstructCore (
+		instance object ConstructBodyCore (
+			object receiver,
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
 			object newTarget
 		) cil managed 
@@ -814,11 +815,30 @@
 		// Code size: 14 (0xe)
 		.maxstack 8
 
+		IL_0000: ldarg.3
+		IL_0001: ldarg.2
+		IL_0002: ldc.i4.0
+		IL_0003: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+		IL_0008: call object Modules.Set_Algebra_Methods/FunctionExpression_setLike::__js_call__(object, object)
+		IL_000d: ret
+	} // end of method FunctionObject_FunctionExpression_EA56ECA5_L18C10::ConstructBodyCore
+
+	.method family hidebysig virtual 
+		instance object ConstructCore (
+			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
+			object newTarget
+		) cil managed 
+	{
+		// Method begins at RVA 0x2739
+		// Header size: 1
+		// Code size: 14 (0xe)
+		.maxstack 8
+
 		IL_0000: ldarg.0
 		IL_0001: ldarg.1
-		IL_0002: call instance object[] [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::ToArray()
+		IL_0002: ldobj [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments
 		IL_0007: ldarg.2
-		IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionObject(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, object[], object)
+		IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionObject(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments, object)
 		IL_000d: ret
 	} // end of method FunctionObject_FunctionExpression_EA56ECA5_L18C10::ConstructCore
 
@@ -836,7 +856,7 @@
 			object[] capture0
 		) cil managed 
 	{
-		// Method begins at RVA 0x2739
+		// Method begins at RVA 0x2748
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
@@ -852,7 +872,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x2748
+		// Method begins at RVA 0x2757
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -864,7 +884,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x274b
+		// Method begins at RVA 0x275a
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -879,7 +899,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x274e
+		// Method begins at RVA 0x275d
 		// Header size: 1
 		// Code size: 17 (0x11)
 		.maxstack 8
@@ -891,6 +911,25 @@
 		IL_0010: ret
 	} // end of method FunctionObject_FunctionExpression_C83E3C37_L19C11::CallCore
 
+	.method family hidebysig virtual 
+		instance object ConstructBodyCore (
+			object receiver,
+			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
+			object newTarget
+		) cil managed 
+	{
+		// Method begins at RVA 0x276f
+		// Header size: 1
+		// Code size: 13 (0xd)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: ldfld object[] FunctionObjects.Set_Algebra_Methods_AA963BE5.FunctionObject_FunctionExpression_C83E3C37_L19C11::_transitionalScopes
+		IL_0006: ldarg.3
+		IL_0007: call object Modules.Set_Algebra_Methods/FunctionExpression_setLike_L19C10::__js_call__(object[], object)
+		IL_000c: ret
+	} // end of method FunctionObject_FunctionExpression_C83E3C37_L19C11::ConstructBodyCore
+
 } // end of class FunctionObjects.Set_Algebra_Methods_AA963BE5.FunctionObject_FunctionExpression_C83E3C37_L19C11
 
 .class private auto ansi beforefieldinit Program
@@ -900,7 +939,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2760
+		// Method begins at RVA 0x277d
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

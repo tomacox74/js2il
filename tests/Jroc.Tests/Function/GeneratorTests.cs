@@ -346,6 +346,13 @@ namespace Jroc.Tests.Function
             });
         }
 
+        [Fact]
+        public Task Function_GeneratedConstruction_Semantics()
+        {
+            var testName = nameof(Function_GeneratedConstruction_Semantics);
+            return GenerateTest(testName);
+        }
+
         // ABI optimization tests: non-capturing functions should NOT have scopes parameter
         [Fact]
         public Task Function_NoCapture_NoScopesParameter() { var testName = nameof(Function_NoCapture_NoScopesParameter); return GenerateTest(testName); }

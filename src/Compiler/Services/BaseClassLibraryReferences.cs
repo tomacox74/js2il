@@ -146,7 +146,7 @@ namespace Jroc.Services
                 new[]
                 {
                     typeof(JavaScriptRuntime.JsFunctionObject),
-                    typeof(object[]),
+                    typeof(JavaScriptRuntime.JsCallArguments),
                     typeof(object)
                 });
         public MemberReferenceHandle TypeUtilities_ToNumber_Object_Ref => _memberRefRegistry.GetOrAddMethod(

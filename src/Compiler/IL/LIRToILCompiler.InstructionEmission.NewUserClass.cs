@@ -97,6 +97,14 @@ internal sealed partial class LIRToILCompiler
 
                     if (newUserClass.IsDerivedConstructor)
                     {
+                        EmitLoadTempAsObject(newUserClass.NewTarget, ilEncoder, allocation, methodDescriptor);
+                        var pushCurrentNewTarget = _memberRefRegistry.GetOrAddMethod(
+                            typeof(JavaScriptRuntime.RuntimeServices),
+                            nameof(JavaScriptRuntime.RuntimeServices.PushCurrentNewTarget),
+                            parameterTypes: new[] { typeof(object) });
+                        ilEncoder.OpCode(ILOpCode.Call);
+                        ilEncoder.Token(pushCurrentNewTarget);
+
                         var pushDerivedThis = _memberRefRegistry.GetOrAddMethod(
                             typeof(JavaScriptRuntime.RuntimeServices),
                             nameof(JavaScriptRuntime.RuntimeServices.PushDerivedConstructorThisBinding),
@@ -140,6 +148,16 @@ internal sealed partial class LIRToILCompiler
                     bool resultUsed = IsMaterialized(newUserClass.Result, allocation);
                     bool resultAlreadyStored = false;
 
+                    if (newUserClass.IsDerivedConstructor)
+                    {
+                        var popCurrentNewTarget = _memberRefRegistry.GetOrAddMethod(
+                            typeof(JavaScriptRuntime.RuntimeServices),
+                            nameof(JavaScriptRuntime.RuntimeServices.PopCurrentNewTarget),
+                            parameterTypes: Type.EmptyTypes);
+                        ilEncoder.OpCode(ILOpCode.Call);
+                        ilEncoder.Token(popCurrentNewTarget);
+                    }
+
                     // Restore _currentArguments to its pre-construction state.
                     {
                         var popCurrentArguments = _memberRefRegistry.GetOrAddMethod(
@@ -149,6 +167,43 @@ internal sealed partial class LIRToILCompiler
                         ilEncoder.OpCode(ILOpCode.Call);
                         ilEncoder.Token(popCurrentArguments);
                         // Stack: [instance] (unchanged — PopCurrentArguments returns void)
+                    }
+
+                    void EmitAttachClassPrototype()
+                    {
+                        ilEncoder.OpCode(ILOpCode.Ldtoken);
+                        ilEncoder.Token(classTypeForPrototype);
+                        var getTypeFromHandleForPrototype = _memberRefRegistry.GetOrAddMethod(
+                            typeof(Type),
+                            nameof(Type.GetTypeFromHandle),
+                            parameterTypes: new[] { typeof(RuntimeTypeHandle) });
+                        ilEncoder.OpCode(ILOpCode.Call);
+                        ilEncoder.Token(getTypeFromHandleForPrototype);
+
+                        ilEncoder.LoadString(_metadataBuilder.GetOrAddUserString("prototype"));
+                        var getProperty = _memberRefRegistry.GetOrAddMethod(
+                            typeof(JavaScriptRuntime.ObjectRuntime),
+                            nameof(JavaScriptRuntime.ObjectRuntime.GetProperty),
+                            parameterTypes: new[] { typeof(object), typeof(string) });
+                        ilEncoder.OpCode(ILOpCode.Call);
+                        ilEncoder.Token(getProperty);
+
+                        var setPrototype = _memberRefRegistry.GetOrAddMethod(
+                            typeof(JavaScriptRuntime.PrototypeChain),
+                            nameof(JavaScriptRuntime.PrototypeChain.SetPrototype),
+                            parameterTypes: new[] { typeof(object), typeof(object) });
+                        ilEncoder.OpCode(ILOpCode.Call);
+                        ilEncoder.Token(setPrototype);
+                    }
+
+                    bool derivedReceiverPrototypeAttached = false;
+                    if (newUserClass.IsDerivedConstructor && hasPrototype)
+                    {
+                        // Attach the class prototype only to the receiver allocated by newobj.
+                        // A function-valued base constructor may replace the derived result object.
+                        ilEncoder.OpCode(ILOpCode.Dup);
+                        EmitAttachClassPrototype();
+                        derivedReceiverPrototypeAttached = true;
                     }
 
                     if (newUserClass.IsDerivedConstructor && resultUsed)
@@ -200,7 +255,7 @@ internal sealed partial class LIRToILCompiler
                         }
                     }
 
-                    if (hasPrototype)
+                    if (hasPrototype && !derivedReceiverPrototypeAttached)
                     {
                         if (resultUsed)
                         {
@@ -210,34 +265,16 @@ internal sealed partial class LIRToILCompiler
                         // Else: instance is still on the stack from newobj — use it directly.
                         // Stack: [instance]
 
-                        ilEncoder.OpCode(ILOpCode.Ldtoken);
-                        ilEncoder.Token(classTypeForPrototype);
-                        var getTypeFromHandleForPrototype = _memberRefRegistry.GetOrAddMethod(
-                            typeof(Type),
-                            nameof(Type.GetTypeFromHandle),
-                            parameterTypes: new[] { typeof(RuntimeTypeHandle) });
-                        ilEncoder.OpCode(ILOpCode.Call);
-                        ilEncoder.Token(getTypeFromHandleForPrototype);
-
-                        ilEncoder.LoadString(_metadataBuilder.GetOrAddUserString("prototype"));
-                        var getProperty = _memberRefRegistry.GetOrAddMethod(
-                            typeof(JavaScriptRuntime.ObjectRuntime),
-                            nameof(JavaScriptRuntime.ObjectRuntime.GetProperty),
-                            parameterTypes: new[] { typeof(object), typeof(string) });
-                        ilEncoder.OpCode(ILOpCode.Call);
-                        ilEncoder.Token(getProperty);
-
-                        var setPrototype = _memberRefRegistry.GetOrAddMethod(
-                            typeof(JavaScriptRuntime.PrototypeChain),
-                            nameof(JavaScriptRuntime.PrototypeChain.SetPrototype),
-                            parameterTypes: new[] { typeof(object), typeof(object) });
-                        ilEncoder.OpCode(ILOpCode.Call);
-                        ilEncoder.Token(setPrototype);
+                        EmitAttachClassPrototype();
                         // Stack: [] (instance consumed by SetPrototype)
                     }
 
                     if (!resultUsed)
                     {
+                        if (derivedReceiverPrototypeAttached)
+                        {
+                            ilEncoder.OpCode(ILOpCode.Pop);
+                        }
                         // Prototype was set; instance was consumed. Nothing left to do.
                         break;
                     }

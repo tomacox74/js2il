@@ -135,10 +135,11 @@
         "testScripts": [
           "tests/Jroc.Tests/Function/JavaScript/Function_NewTarget_NewVsCall.js",
           "tests/Jroc.Tests/Function/JavaScript/Function_NewTarget_Arrow_Inherits.js",
+          "tests/Jroc.Tests/Function/JavaScript/Function_GeneratedConstruction_Semantics.js",
           "tests/Jroc.Tests/Classes/JavaScript/Classes_Constructor_ReturnObjectOverridesThis.js",
           "tests/Jroc.Tests/Classes/JavaScript/Classes_DeclareEmptyClass.js"
         ],
-        "notes": "JROC constructs delegate-backed functions and class constructors by creating an instance, binding this, and forwarding a newTarget value into the call path. Constructor return override works, but super/inheritance semantics and full OrdinaryCreateFromConstructor behavior remain incomplete."
+        "notes": "Generated ordinary function objects implement a separate construction-body adapter rather than routing construction through ordinary [[Call]]. The runtime allocates from newTarget.prototype with Object.prototype fallback, propagates new.target, honors object-versus-primitive return overrides, forwards bound construction, and supports function-valued bases of derived classes. Less-common exotic and realm-sensitive OrdinaryCreateFromConstructor cases remain limited."
       },
       {
         "clause": "10.2.4",
@@ -167,9 +168,10 @@
         "testScripts": [
           "tests/Jroc.Tests/Function/JavaScript/Function_Prototype_ObjectCreate_ObjectPrototype.js",
           "tests/Jroc.Tests/Function/JavaScript/Function_Prototype_Bind_PropertyExists.js",
+          "tests/Jroc.Tests/Function/JavaScript/Function_GeneratedConstruction_Semantics.js",
           "tests/Jroc.Tests/Function/JavaScript/Function_Prototype_ToString_Basic.js"
         ],
-        "notes": "Delegate-backed functions lazily synthesize prototype, constructor, name, length, and toString metadata so common library patterns continue to work. These properties are inferred from CLR delegates rather than being installed through the exact SetFunctionName / SetFunctionLength / MakeConstructor abstract-operation flow."
+        "notes": "Generated ordinary function objects receive writable, non-enumerable, non-configurable prototype properties whose prototype objects carry the expected writable, non-enumerable, configurable constructor link. Prototype replacement affects subsequent construction. Transitional delegate-backed callables still synthesize metadata lazily, and exact realm-sensitive MakeConstructor behavior remains limited."
       },
       {
         "clause": "10.2.9",

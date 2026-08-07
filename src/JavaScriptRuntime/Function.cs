@@ -604,7 +604,7 @@ public static class Function
 
         public static object? ConstructGeneratedFunctionObject(
             JsFunctionObject constructor,
-            object?[] arguments,
+            JsCallArguments arguments,
             object? newTarget)
         {
             ArgumentNullException.ThrowIfNull(constructor);
@@ -623,11 +623,13 @@ public static class Function
                 PrototypeChain.SetPrototype(instance, prototype);
             }
 
-            var callArguments = JsCallArguments.FromArray(arguments);
             var previousThis = RuntimeServices.SetCurrentThis(instance);
             try
             {
-                var result = constructor.InvokeCall(instance, callArguments);
+                var result = constructor.InvokeConstructBody(
+                    instance,
+                    arguments,
+                    newTarget);
                 return TypeUtilities.IsConstructorReturnOverride(result)
                     ? result
                     : instance;

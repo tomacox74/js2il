@@ -413,21 +413,40 @@
 	} // end of method FunctionObject_FunctionExpression_70743D8E_L19C14::CallCore
 
 	.method family hidebysig virtual 
-		instance object ConstructCore (
+		instance object ConstructBodyCore (
+			object receiver,
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
 			object newTarget
 		) cil managed 
 	{
 		// Method begins at RVA 0x238c
 		// Header size: 1
+		// Code size: 13 (0xd)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: ldfld class Modules.Array_Exotic_Sloppy_Assignment/Scope FunctionObjects.Array_Exotic_Sloppy_Assignment_C606A9F7.FunctionObject_FunctionExpression_70743D8E_L19C14::_environment0_Array_Exotic_Sloppy_Assignment
+		IL_0006: ldarg.3
+		IL_0007: call object Modules.Array_Exotic_Sloppy_Assignment/FunctionExpression_rhs::__js_call__(class Modules.Array_Exotic_Sloppy_Assignment/Scope, object)
+		IL_000c: ret
+	} // end of method FunctionObject_FunctionExpression_70743D8E_L19C14::ConstructBodyCore
+
+	.method family hidebysig virtual 
+		instance object ConstructCore (
+			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
+			object newTarget
+		) cil managed 
+	{
+		// Method begins at RVA 0x239a
+		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
 
 		IL_0000: ldarg.0
 		IL_0001: ldarg.1
-		IL_0002: call instance object[] [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::ToArray()
+		IL_0002: ldobj [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments
 		IL_0007: ldarg.2
-		IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionObject(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, object[], object)
+		IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionObject(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments, object)
 		IL_000d: ret
 	} // end of method FunctionObject_FunctionExpression_70743D8E_L19C14::ConstructCore
 
@@ -440,7 +459,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x239b
+		// Method begins at RVA 0x23a9
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

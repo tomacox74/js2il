@@ -100,7 +100,7 @@ public static class CallableOperations
         }
 
         var callArguments = JsCallArguments.FromArray(arguments);
-        var result = CallFunctionObject(
+        var result = InvokeConstructBody(
             functionObject,
             receiver,
             callArguments,
@@ -319,6 +319,47 @@ public static class CallableOperations
             RuntimeServices.SetCurrentNewTarget(previousNewTarget);
             RuntimeServices.SetCurrentCallee(previousCallee);
             RuntimeServices.RestoreCurrentCallArguments(previousArguments);
+        }
+    }
+
+    private static object? InvokeConstructBody(
+        JsFunctionObject functionObject,
+        object receiver,
+        in JsCallArguments arguments,
+        object? newTarget)
+    {
+        var previousThis = RuntimeServices.SetCurrentThis(receiver);
+        if (!functionObject.RequiresInvocationContext)
+        {
+            try
+            {
+                return functionObject.InvokeConstructBody(
+                    receiver,
+                    arguments,
+                    newTarget);
+            }
+            finally
+            {
+                RuntimeServices.SetCurrentThis(previousThis);
+            }
+        }
+
+        var previousArguments = RuntimeServices.SetCurrentCallArguments(arguments);
+        var previousCallee = RuntimeServices.SetCurrentCallee(functionObject);
+        var previousNewTarget = RuntimeServices.SetCurrentNewTarget(newTarget);
+        try
+        {
+            return functionObject.InvokeConstructBody(
+                receiver,
+                arguments,
+                newTarget);
+        }
+        finally
+        {
+            RuntimeServices.SetCurrentNewTarget(previousNewTarget);
+            RuntimeServices.SetCurrentCallee(previousCallee);
+            RuntimeServices.RestoreCurrentCallArguments(previousArguments);
+            RuntimeServices.SetCurrentThis(previousThis);
         }
     }
 

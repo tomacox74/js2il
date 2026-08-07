@@ -919,6 +919,25 @@
 		IL_0010: ret
 	} // end of method FunctionObject_FunctionDeclaration_8763DEC6_main::CallCore
 
+	.method family hidebysig virtual 
+		instance object ConstructBodyCore (
+			object receiver,
+			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
+			object newTarget
+		) cil managed 
+	{
+		// Method begins at RVA 0x26a6
+		// Header size: 1
+		// Code size: 13 (0xd)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: ldfld object[] FunctionObjects.Stream_Promises_Pipeline_ObjectMode_710391A0.FunctionObject_FunctionDeclaration_8763DEC6_main::_transitionalScopes
+		IL_0006: ldarg.3
+		IL_0007: call object Modules.Stream_Promises_Pipeline_ObjectMode/main::__js_call__(object[], object)
+		IL_000c: ret
+	} // end of method FunctionObject_FunctionDeclaration_8763DEC6_main::ConstructBodyCore
+
 } // end of class FunctionObjects.Stream_Promises_Pipeline_ObjectMode_710391A0.FunctionObject_FunctionDeclaration_8763DEC6_main
 
 .class private auto ansi sealed beforefieldinit FunctionObjects.Stream_Promises_Pipeline_ObjectMode_710391A0.FunctionObject_FunctionExpression_6DDAF3C3_L12C26
@@ -937,7 +956,7 @@
 			object[] capture2
 		) cil managed 
 	{
-		// Method begins at RVA 0x26a6
+		// Method begins at RVA 0x26b4
 		// Header size: 1
 		// Code size: 28 (0x1c)
 		.maxstack 8
@@ -959,7 +978,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x26c3
+		// Method begins at RVA 0x26d1
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -971,7 +990,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x26c6
+		// Method begins at RVA 0x26d4
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -986,7 +1005,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x26c9
+		// Method begins at RVA 0x26d7
 		// Header size: 1
 		// Code size: 24 (0x18)
 		.maxstack 8
@@ -1002,21 +1021,43 @@
 	} // end of method FunctionObject_FunctionExpression_6DDAF3C3_L12C26::CallCore
 
 	.method family hidebysig virtual 
+		instance object ConstructBodyCore (
+			object receiver,
+			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
+			object newTarget
+		) cil managed 
+	{
+		// Method begins at RVA 0x26f0
+		// Header size: 1
+		// Code size: 20 (0x14)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: ldfld object[] FunctionObjects.Stream_Promises_Pipeline_ObjectMode_710391A0.FunctionObject_FunctionExpression_6DDAF3C3_L12C26::_transitionalScopes
+		IL_0006: ldarg.3
+		IL_0007: ldarg.2
+		IL_0008: ldc.i4.0
+		IL_0009: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+		IL_000e: call object Modules.Stream_Promises_Pipeline_ObjectMode/main/FunctionExpression_L12C25::__js_call__(object[], object, object)
+		IL_0013: ret
+	} // end of method FunctionObject_FunctionExpression_6DDAF3C3_L12C26::ConstructBodyCore
+
+	.method family hidebysig virtual 
 		instance object ConstructCore (
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x26e2
+		// Method begins at RVA 0x2705
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
 
 		IL_0000: ldarg.0
 		IL_0001: ldarg.1
-		IL_0002: call instance object[] [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::ToArray()
+		IL_0002: ldobj [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments
 		IL_0007: ldarg.2
-		IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionObject(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, object[], object)
+		IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionObject(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments, object)
 		IL_000d: ret
 	} // end of method FunctionObject_FunctionExpression_6DDAF3C3_L12C26::ConstructCore
 
@@ -1038,7 +1079,7 @@
 			object[] capture2
 		) cil managed 
 	{
-		// Method begins at RVA 0x26f1
+		// Method begins at RVA 0x2714
 		// Header size: 1
 		// Code size: 28 (0x1c)
 		.maxstack 8
@@ -1060,7 +1101,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_IsConstructor () cil managed 
 	{
-		// Method begins at RVA 0x270e
+		// Method begins at RVA 0x2731
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -1072,7 +1113,7 @@
 	.method public hidebysig specialname virtual 
 		instance bool get_RequiresInvocationContext () cil managed 
 	{
-		// Method begins at RVA 0x2711
+		// Method begins at RVA 0x2734
 		// Header size: 1
 		// Code size: 2 (0x2)
 		.maxstack 8
@@ -1087,7 +1128,7 @@
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 		) cil managed 
 	{
-		// Method begins at RVA 0x2714
+		// Method begins at RVA 0x2737
 		// Header size: 1
 		// Code size: 24 (0x18)
 		.maxstack 8
@@ -1103,21 +1144,43 @@
 	} // end of method FunctionObject_FunctionExpression_53DB12A6_L16C21::CallCore
 
 	.method family hidebysig virtual 
+		instance object ConstructBodyCore (
+			object receiver,
+			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
+			object newTarget
+		) cil managed 
+	{
+		// Method begins at RVA 0x2750
+		// Header size: 1
+		// Code size: 20 (0x14)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: ldfld object[] FunctionObjects.Stream_Promises_Pipeline_ObjectMode_710391A0.FunctionObject_FunctionExpression_53DB12A6_L16C21::_transitionalScopes
+		IL_0006: ldarg.3
+		IL_0007: ldarg.2
+		IL_0008: ldc.i4.0
+		IL_0009: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+		IL_000e: call object Modules.Stream_Promises_Pipeline_ObjectMode/main/FunctionExpression_L16C20::__js_call__(object[], object, object)
+		IL_0013: ret
+	} // end of method FunctionObject_FunctionExpression_53DB12A6_L16C21::ConstructBodyCore
+
+	.method family hidebysig virtual 
 		instance object ConstructCore (
 			[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
 			object newTarget
 		) cil managed 
 	{
-		// Method begins at RVA 0x272d
+		// Method begins at RVA 0x2765
 		// Header size: 1
 		// Code size: 14 (0xe)
 		.maxstack 8
 
 		IL_0000: ldarg.0
 		IL_0001: ldarg.1
-		IL_0002: call instance object[] [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::ToArray()
+		IL_0002: ldobj [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments
 		IL_0007: ldarg.2
-		IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionObject(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, object[], object)
+		IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionObject(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments, object)
 		IL_000d: ret
 	} // end of method FunctionObject_FunctionExpression_53DB12A6_L16C21::ConstructCore
 
@@ -1130,7 +1193,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x273c
+		// Method begins at RVA 0x2774
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
