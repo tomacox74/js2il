@@ -127,18 +127,53 @@ public static class InMemoryTestCompiler
             }
         }
 
+        return ExecuteArtifact(
+            artifact,
+            entryPath,
+            testName,
+            allowUnhandledException,
+            addMocks,
+            hostRuntimeIntrinsics,
+            timeoutMs);
+    }
+
+    public static InMemoryTestExecutionResult ExecuteArtifact(
+        JrocCompiledAssemblyArtifact artifact,
+        string entryPath,
+        string testName,
+        bool allowUnhandledException = false,
+        Action<ServiceContainer>? addMocks = null,
+        HostRuntimeIntrinsicDescriptors? hostRuntimeIntrinsics = null,
+        int timeoutMs = 30000,
+        Action<IConsoleOutput>? postTestProcessingAction = null)
+    {
+        ArgumentNullException.ThrowIfNull(artifact);
+        ArgumentException.ThrowIfNullOrWhiteSpace(entryPath);
+        ArgumentException.ThrowIfNullOrWhiteSpace(testName);
+
         using var loadedAssembly = JrocInMemoryAssemblyLoader.Load(artifact);
-        var output = ExecuteLoadedAssembly(loadedAssembly.Assembly, testName, allowUnhandledException, addMocks, hostRuntimeIntrinsics, timeoutMs);
+        var output = ExecuteLoadedAssembly(
+            loadedAssembly.Assembly,
+            entryPath,
+            testName,
+            allowUnhandledException,
+            addMocks,
+            hostRuntimeIntrinsics,
+            timeoutMs,
+            postTestProcessingAction);
+
         return new InMemoryTestExecutionResult(output, loadedAssembly.LoadContextWeakReference);
     }
 
     private static string ExecuteLoadedAssembly(
         Assembly assembly,
+        string entryPath,
         string testName,
         bool allowUnhandledException,
         Action<ServiceContainer>? addMocks,
         HostRuntimeIntrinsicDescriptors? hostRuntimeIntrinsics,
-        int timeoutMs)
+        int timeoutMs,
+        Action<IConsoleOutput>? postTestProcessingAction)
     {
         var output = new InMemoryConsoleOutput();
         var serviceProvider = RuntimeServices.BuildServiceProvider();
@@ -162,6 +197,9 @@ public static class InMemoryTestCompiler
             {
                 JavaScriptRuntime.Array.ResetPrototypeForTests();
                 EnvironmentProvider.SuppressExit = true;
+                JavaScriptRuntime.CommonJS.ModuleContext.SetModuleContext(
+                    Path.GetDirectoryName(entryPath) ?? string.Empty,
+                    entryPath);
                 Engine._serviceProviderOverride.Value = serviceProvider;
 
                 var entryPoint = assembly.EntryPoint
@@ -198,6 +236,8 @@ public static class InMemoryTestCompiler
         {
             threadException.Throw();
         }
+
+        postTestProcessingAction?.Invoke(output);
 
         if (testName.StartsWith("Process_Exit_", StringComparison.Ordinal))
         {

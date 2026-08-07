@@ -39,13 +39,36 @@ namespace Jroc.Tests.Utilities
             //return ConvertToTextUsingIlSpyCmd(assemblyPath);
             return ILSpyBasedDisassembler.DisassembleIL(assemblyPath);
         }
+
+        public static string ConvertToText(byte[] peBytes, string assemblyName)
+        {
+            ArgumentNullException.ThrowIfNull(peBytes);
+            ArgumentException.ThrowIfNullOrWhiteSpace(assemblyName);
+
+            return ILSpyBasedDisassembler.DisassembleIL(peBytes, assemblyName);
+        }
     }
 
     public static class ILSpyBasedDisassembler
     {
         public static string DisassembleIL(string dllPath)
         {
-            using var peFile = new PEFile(dllPath); 
+            using var peFile = new PEFile(dllPath);
+            return DisassembleIL(peFile);
+        }
+
+        public static string DisassembleIL(byte[] peBytes, string assemblyName)
+        {
+            using var stream = new MemoryStream(peBytes, writable: false);
+            using var peFile = new PEFile(
+                $"{assemblyName}.dll",
+                stream,
+                System.Reflection.PortableExecutable.PEStreamOptions.PrefetchEntireImage);
+            return DisassembleIL(peFile);
+        }
+
+        private static string DisassembleIL(PEFile peFile)
+        {
             var stringWriter = new StringWriter();
             var output = new PlainTextOutput(stringWriter);
 
@@ -62,5 +85,3 @@ namespace Jroc.Tests.Utilities
         }
     }
 }
-
-

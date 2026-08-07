@@ -1,12 +1,8 @@
-using Jroc.Services;
-using Jroc.IR;
-using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Threading;
 
 namespace Jroc.Tests
@@ -22,10 +18,9 @@ namespace Jroc.Tests
 
         static SharedTestCompilation()
         {
-            // Use the same temp root shape as the historical execution tests output.
-            var root = Path.Combine(Path.GetTempPath(), "Jroc.Tests");
-            _sharedOutputRoot = root;
-            Directory.CreateDirectory(_sharedOutputRoot);
+            // Keep the historical path shape as a logical source/module root. The directory is
+            // created only when JROC_WRITE_TEST_ARTIFACTS=1 materializes an artifact.
+            _sharedOutputRoot = Path.Combine(Path.GetTempPath(), "Jroc.Tests");
         }
 
         /// <summary>
@@ -45,8 +40,8 @@ namespace Jroc.Tests
             {
                 try
                 {
-                    // Create a unique output subdirectory per test to avoid collisions
-                    // when multiple tests produce assemblies with the same name (e.g., "a.dll")
+                    // Keep a unique logical output subdirectory per test. This also becomes the
+                    // materialization directory when artifact output is explicitly requested.
                     var testOutputPath = GetTestOutputPath(testCategory, testName);
                     var compiled = compileFunc(testOutputPath);
                     return new CompilationResult(compiled);
@@ -71,11 +66,10 @@ namespace Jroc.Tests
 
         private static string GetTestOutputPath(string testCategory, string testName)
         {
-            // Keep per-compilation isolation via a unique leaf directory so repeated test runs
-            // in the same process do not collide on locked output files.
+            // Keep per-compilation isolation when artifacts are materialized. No directory is
+            // created during the default in-memory path.
             var runId = Guid.NewGuid().ToString("N");
             var path = Path.Combine(_sharedOutputRoot, $"{testCategory}.ExecutionTests", runId);
-            Directory.CreateDirectory(path);
             return path;
         }
 
@@ -152,17 +146,37 @@ namespace Jroc.Tests
     /// </summary>
     public class CompiledAssembly
     {
-        public string AssemblyPath { get; }
-        public string PdbPath { get; }
+        public JrocCompiledAssemblyArtifact Artifact { get; }
+        public JrocMaterializedAssembly? MaterializedArtifact { get; }
+        public string? AssemblyPath => MaterializedArtifact?.AssemblyPath;
+        public string? PdbPath => MaterializedArtifact?.PdbPath;
         public string TestFilePath { get; }
+        public IReadOnlyList<string> AdditionalScriptPaths { get; }
         public string OutputDirectory { get; }
 
-        public CompiledAssembly(string assemblyPath, string pdbPath, string testFilePath, string outputDirectory)
+        public CompiledAssembly(
+            JrocCompiledAssemblyArtifact artifact,
+            string testFilePath,
+            IReadOnlyList<string> additionalScriptPaths,
+            string outputDirectory,
+            JrocMaterializedAssembly? materializedArtifact = null)
         {
-            AssemblyPath = assemblyPath;
-            PdbPath = pdbPath;
+            Artifact = artifact;
+            MaterializedArtifact = materializedArtifact;
             TestFilePath = testFilePath;
+            AdditionalScriptPaths = additionalScriptPaths;
             OutputDirectory = outputDirectory;
         }
+    }
+
+    internal static class TestArtifactOutput
+    {
+        internal const string WriteArtifactsEnvironmentVariable = "JROC_WRITE_TEST_ARTIFACTS";
+
+        internal static bool IsEnabled
+            => string.Equals(
+                Environment.GetEnvironmentVariable(WriteArtifactsEnvironmentVariable),
+                "1",
+                StringComparison.Ordinal);
     }
 }

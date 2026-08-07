@@ -1,5 +1,3 @@
-using Jroc.Services;
-using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.IO;
 using System.Reflection;
@@ -42,15 +40,19 @@ namespace Jroc.Tests
                         additionalScripts,
                         enableIRMetrics: false));
 
-                var expectedPath = compiled.AssemblyPath;
-                AssertCompiledModuleManifest(expectedPath, compiled.TestFilePath, additionalScripts, compiled.OutputDirectory);
+                AssertCompiledModuleManifest(
+                    compiled.Artifact.PeBytes,
+                    compiled.TestFilePath,
+                    compiled.AdditionalScriptPaths);
 
-                var il = Utilities.AssemblyToText.ConvertToText(expectedPath);
+                var il = Utilities.AssemblyToText.ConvertToText(
+                    compiled.Artifact.PeBytes,
+                    compiled.Artifact.AssemblyName);
 
                 if (verifyAssembly is not null)
                 {
-                    var assembly = Assembly.LoadFile(expectedPath);
-                    verifyAssembly(assembly);
+                    using var loadedAssembly = JrocInMemoryAssemblyLoader.Load(compiled.Artifact);
+                    verifyAssembly(loadedAssembly.Assembly);
                 }
 
                 var settings = new VerifySettings(_verifySettings);
@@ -176,18 +178,20 @@ namespace Jroc.Tests
             return Path.GetFullPath(Path.Combine(projectRoot, relativePath));
         }
 
-        private void AssertCompiledModuleManifest(string assemblyPath, string rootScriptPath, string[]? additionalScripts, string outputDirectory)
+        private void AssertCompiledModuleManifest(
+            byte[] peBytes,
+            string rootScriptPath,
+            IReadOnlyList<string> additionalScriptPaths)
         {
             var expected = new HashSet<string>(StringComparer.Ordinal)
             {
                 GetExpectedModuleId(rootScriptPath, rootScriptPath)
             };
 
-            expected.UnionWith((additionalScripts ?? System.Array.Empty<string>())
-                .Select(scriptName => Path.Combine(outputDirectory, $"{scriptName}.js"))
+            expected.UnionWith(additionalScriptPaths
                 .Select(scriptPath => GetExpectedModuleId(scriptPath, rootScriptPath)));
 
-            var actual = ReadCompiledModuleIdsFromManifest(assemblyPath);
+            var actual = ReadCompiledModuleIdsFromManifest(peBytes);
 
             Assert.NotEmpty(actual);
             Assert.All(expected, moduleId => Assert.Contains(moduleId, actual));
@@ -250,9 +254,9 @@ namespace Jroc.Tests
             return true;
         }
 
-        private static IReadOnlyCollection<string> ReadCompiledModuleIdsFromManifest(string assemblyPath)
+        private static IReadOnlyCollection<string> ReadCompiledModuleIdsFromManifest(byte[] peBytes)
         {
-            using var stream = File.OpenRead(assemblyPath);
+            using var stream = new MemoryStream(peBytes, writable: false);
             using var peReader = new PEReader(stream);
             var reader = peReader.GetMetadataReader();
 
