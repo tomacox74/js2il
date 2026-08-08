@@ -51,12 +51,13 @@
           "tests/Jroc.Tests/AsyncGenerator/JavaScript/AsyncGenerator_BasicNext.js",
           "tests/Jroc.Tests/AsyncGenerator/JavaScript/AsyncGenerator_ForAwaitOf.js",
           "tests/Jroc.Tests/AsyncGenerator/JavaScript/AsyncGenerator_YieldAwait.js",
+          "tests/Jroc.Tests/AsyncGenerator/JavaScript/AsyncGenerator_GeneratedFunctionObject_Semantics.js",
           "tests/Jroc.Test262.Tests/language/expressions/async-generator/JavaScript/dstr/named-dflt-obj-ptrn-prop-obj-value-undef.js"
         ],
         "test262Paths": [
           "test/language/expressions/async-generator/dstr/named-dflt-obj-ptrn-prop-obj-value-undef.js"
         ],
-        "notes": "Async generators are compiled via dual-dispatch state machine combining async (Promise-based suspension) with generator (user-controlled iteration) semantics. AsyncGeneratorScope inherits from AsyncScope and includes generator state. AsyncGeneratorObject implements IJavaScriptAsyncIterator with next() returning Promises. Parameter binding runs when the async generator function is called, so covered destructuring/default errors are thrown synchronously before iteration. Known limitations: throw() and return() protocol methods have known issues; try/catch/finally with async generators may generate invalid IL in some cases."
+        "notes": "Async generator declarations, expressions, object methods, and class methods materialize as generated non-constructable JsFunctionObject instances. Every call creates an independent AsyncGeneratorScope and AsyncGeneratorObject while retaining shared lexical captures and the call-time receiver. Parameter binding runs synchronously when called. Known limitations: throw() and return() protocol methods have known issues; try/catch/finally with async generators may generate invalid IL in some cases."
       },
       {
         "clause": "15.6",

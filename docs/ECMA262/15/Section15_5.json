@@ -49,12 +49,13 @@
         "specUrl": "https://tc39.es/ecma262/#sec-generator-function-definitions",
         "testScripts": [
           "tests/Jroc.Tests/Generator/JavaScript/Generator_BasicNext.js",
+          "tests/Jroc.Tests/Generator/JavaScript/Generator_GeneratedFunctionObject_Semantics.js",
           "tests/Jroc.Test262.Tests/language/expressions/generators/JavaScript/arguments-with-arguments-lex.js"
         ],
         "test262Paths": [
           "test/language/expressions/generators/arguments-with-arguments-lex.js"
         ],
-        "notes": "Synchronous generators compile via lowering to a state machine. Generator parameter initialization runs once at first start and can observe the original generator-call arguments object before body lexical declarations. Known limitations: throw/return propagation through try/finally is not fully implemented."
+        "notes": "Generator declarations, expressions, object methods, and class methods materialize as generated non-constructable JsFunctionObject instances. Every call creates a fresh iterator scope/state machine; captures are shared through environments while mutable execution state remains isolated per invocation. Known limitations: non-simple parameter initialization remains deferred until first resumption, and throw/return propagation through try/finally is not fully implemented."
       },
       {
         "clause": "15.5.1",
