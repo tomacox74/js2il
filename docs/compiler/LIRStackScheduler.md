@@ -28,6 +28,9 @@ validated identity foundation:
 
 All unsupported shapes retain source-order, materialized behavior.
 
+For a visual introduction to stack-resident chains and the generated-callable
+installation rules, see [Instruction chaining](InstructionChaining.md).
+
 ## Why a scheduler is needed
 
 JROC LIR names intermediate values with `TempVariable` instances. A direct IL
