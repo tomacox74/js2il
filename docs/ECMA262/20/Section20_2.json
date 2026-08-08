@@ -138,7 +138,7 @@
           "tests/Jroc.Tests/Function/JavaScript/Function_CallViaVariable_Reassignment.js",
           "tests/Jroc.Tests/Function/JavaScript/Function_GeneratedConstruction_Semantics.js"
         ],
-        "notes": "Synchronous ordinary functions are materialized as generated JsFunctionObject instances with typed canonical entry points plus centralized dynamic call and construct adapters. Function.prototype.apply, call, and bind operate across generated function objects and transitional delegate-backed callable families; less-common exotic function cases remain limited."
+        "notes": "Synchronous ordinary functions are materialized as generated JsFunctionObject instances with typed canonical entry points plus centralized dynamic call and construct adapters. Function.prototype.apply, call, bind, and toString route every callable family through centralized operations; bind always produces an explicit bound function object."
       },
       {
         "clause": "20.2.4",
@@ -173,7 +173,7 @@
           "tests/Jroc.Tests/Function/JavaScript/Function_Apply_ThisArg.js",
           "tests/Jroc.Tests/Function/JavaScript/Function_Apply_NullArgArray_TreatedAsEmpty.js"
         ],
-        "notes": "Implemented for delegate-backed function values via the runtime member-call dispatcher. Supports null/undefined argArray as an empty argument list. Full CreateListFromArrayLike semantics and non-delegate callable objects are not implemented."
+        "notes": "Implemented through centralized callable operations for generated functions, bound functions, methods, arrows, classes, proxies, and transitional delegates. Supports null/undefined argArray as an empty argument list. Full CreateListFromArrayLike semantics for every array-like exotic value remain limited."
       },
       {
         "clause": "20.2.3.2",
@@ -185,6 +185,7 @@
           "tests/Jroc.Tests/Function/JavaScript/Function_Bind_Construct_NewTargetAndPrototype.js",
           "tests/Jroc.Tests/Function/JavaScript/Function_Bind_Metadata_LengthNameAndPrototype.js",
           "tests/Jroc.Tests/Function/JavaScript/Function_Bind_ThisBinding_IgnoresCallReceiver.js",
+          "tests/Jroc.Tests/Function/JavaScript/Function_BoundFunctionObject_UnifiedTargets.js",
           "tests/Jroc.Tests/Function/JavaScript/Function_Prototype_Bind_PropertyExists.js",
           "tests/Jroc.Test262.Tests/built-ins/Function/prototype/bind/JavaScript/15.3.4.5-0-1.js",
           "tests/Jroc.Test262.Tests/built-ins/Function/prototype/bind/JavaScript/15.3.4.5-2-1.js",
@@ -206,7 +207,7 @@
           "test/built-ins/Function/prototype/bind/15.3.4.5-2-15.js",
           "test/built-ins/Function/prototype/bind/15.3.4.5-2-16.js"
         ],
-        "notes": "Implemented for generated function objects and transitional delegate-backed values via Function.prototype and centralized callable dispatch. Supports binding this and partial application of arguments, routes `new` on bound constructors through the target with spec-aligned `new.target` rewriting, derives bound `length` / `name` metadata from the target, and keeps bound functions from surfacing an own `prototype` property. Current bounded test262 coverage also exercises broader bound-function metadata and boxed/ordinary thisArg cases."
+        "notes": "Implemented as an explicit BoundFunctionObject for every callable target. Supports chained binding, bound this and argument concatenation, constructability classification, spec-aligned newTarget rewriting, target-based instanceof behavior, bound length/name metadata, and no own prototype property. Transitional delegate targets are adapted through centralized callable operations rather than represented by new bound delegates."
       },
       {
         "clause": "20.2.3.3",
@@ -233,7 +234,7 @@
           "test/built-ins/Function/prototype/call/S15.3.4.4_A15.js",
           "test/built-ins/Function/prototype/call/S15.3.4.4_A16.js"
         ],
-        "notes": "Implemented for delegate-backed function values via JavaScriptRuntime.Function.Call. Current bounded test262 coverage also exercises direct argument forwarding, primitive/ordinary thisArg cases, null/undefined global-this substitution, and non-enumerable `length` metadata on Function.prototype.call. Non-delegate callable objects and full CreateListFromArrayLike semantics are not implemented."
+        "notes": "Implemented through centralized callable operations for all callable representations. Covered behavior includes direct argument forwarding, primitive/ordinary thisArg cases, null/undefined global-this substitution, generated and bound function objects, and transitional delegates."
       },
       {
         "clause": "20.2.4",
@@ -274,7 +275,7 @@
         "testScripts": [
           "tests/Jroc.Tests/Function/JavaScript/Function_Prototype_ToString_Basic.js"
         ],
-        "notes": "Implemented for delegate-backed function values with a native-source style string. Full source text reconstruction and HostHasSourceTextAvailable semantics are not implemented."
+        "notes": "Implemented through the common callable path with a native-source style string for generated, bound, method, class, proxy-backed, and transitional delegate callables. Full source text reconstruction and HostHasSourceTextAvailable semantics are not implemented."
       },
       {
         "clause": "20.2.4.1",
