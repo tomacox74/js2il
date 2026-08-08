@@ -41,6 +41,13 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   operations; preserve chained binding, metadata, construction/new-target
   forwarding, and common-arity argument transport without expression-tree
   compilation or bound-function delegate metadata tables.
+- runtime: close issue #1716 by routing callable classification, strict
+  identity, `instanceof`, descriptor accessors, host construction adapters,
+  and proxy apply/construct/trap invocation through centralized callable
+  operations. Preserve function-object properties, own keys, spread, JSON
+  omission, prototype mutation, integrity state, and proxy extensibility
+  invariants without generic object fast paths bypassing callable/proxy
+  semantics.
 
 ## v0.12.4 - 2026-08-06
 

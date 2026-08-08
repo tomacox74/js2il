@@ -4,7 +4,7 @@
 
 [Back to Section7](Section7.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-07-07T20:14:57Z
+> Last generated (UTC): 2026-08-08T05:06:20Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -120,13 +120,13 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| SetIntegrityLevel through Object.preventExtensions, Object.seal, and Object.freeze | Supported with Limitations | [`Object_Integrity_FreezeSeal_PreventExtensions.js`](../../../tests/Jroc.Tests/Object/JavaScript/Object_Integrity_FreezeSeal_PreventExtensions.js)<br>[`Object_Integrity_DefineProperty_And_StrictWrites.js`](../../../tests/Jroc.Tests/Object/JavaScript/Object_Integrity_DefineProperty_And_StrictWrites.js) |  | Ordinary-object integrity state is tracked and enforced for the covered preventExtensions/seal/freeze paths, including strict-mode write failures after freezing. Full proxy invariants and every exotic-object integrity rule are still incomplete. |
+| SetIntegrityLevel through Object.preventExtensions, Object.seal, and Object.freeze | Supported with Limitations | [`Object_Integrity_FreezeSeal_PreventExtensions.js`](../../../tests/Jroc.Tests/Object/JavaScript/Object_Integrity_FreezeSeal_PreventExtensions.js)<br>[`Object_Integrity_DefineProperty_And_StrictWrites.js`](../../../tests/Jroc.Tests/Object/JavaScript/Object_Integrity_DefineProperty_And_StrictWrites.js)<br>[`Function_CallableReflection_ProxyIntegration.js`](../../../tests/Jroc.Tests/Function/JavaScript/Function_CallableReflection_ProxyIntegration.js) |  | Integrity state is tracked and enforced for ordinary and generated function objects, including preventExtensions/freeze and strict-mode write failures. Proxy preventExtensions dispatch and target-extensibility invariants are covered; full seal/freeze proxy invariants and every exotic-object rule remain incomplete. |
 
 ### 7.3.16 ([tc39.es](https://tc39.es/ecma262/#sec-testintegritylevel))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| TestIntegrityLevel through Object.isExtensible, Object.isSealed, and Object.isFrozen | Supported with Limitations | [`Object_Integrity_FreezeSeal_PreventExtensions.js`](../../../tests/Jroc.Tests/Object/JavaScript/Object_Integrity_FreezeSeal_PreventExtensions.js)<br>[`Object_Integrity_DefineProperty_And_StrictWrites.js`](../../../tests/Jroc.Tests/Object/JavaScript/Object_Integrity_DefineProperty_And_StrictWrites.js) |  | The runtime reports integrity state consistently for the covered ordinary-object transitions and descriptor combinations. Coverage is still strongest for ordinary objects rather than every proxy and host-object edge case. |
+| TestIntegrityLevel through Object.isExtensible, Object.isSealed, and Object.isFrozen | Supported with Limitations | [`Object_Integrity_FreezeSeal_PreventExtensions.js`](../../../tests/Jroc.Tests/Object/JavaScript/Object_Integrity_FreezeSeal_PreventExtensions.js)<br>[`Object_Integrity_DefineProperty_And_StrictWrites.js`](../../../tests/Jroc.Tests/Object/JavaScript/Object_Integrity_DefineProperty_And_StrictWrites.js)<br>[`Function_CallableReflection_ProxyIntegration.js`](../../../tests/Jroc.Tests/Function/JavaScript/Function_CallableReflection_ProxyIntegration.js) |  | The runtime reports integrity state consistently for ordinary/function objects and validates proxy isExtensible trap results against the target. Coverage remains incomplete for every proxy seal/freeze and host-object edge case. |
 
 ### 7.3.18 ([tc39.es](https://tc39.es/ecma262/#sec-lengthofarraylike))
 
@@ -144,7 +144,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| OrdinaryHasInstance (instanceof paths) | Supported with Limitations | [`BinaryOperator_InstanceOf_Basic.js`](../../../tests/Jroc.Tests/BinaryOperator/JavaScript/BinaryOperator_InstanceOf_Basic.js) |  | Implemented with prototype-chain checks for supported callable constructor values; full spec hooks are incomplete. |
+| OrdinaryHasInstance (instanceof paths) | Supported with Limitations | [`BinaryOperator_InstanceOf_Basic.js`](../../../tests/Jroc.Tests/BinaryOperator/JavaScript/BinaryOperator_InstanceOf_Basic.js)<br>[`Function_CallableReflection_ProxyIntegration.js`](../../../tests/Jroc.Tests/Function/JavaScript/Function_CallableReflection_ProxyIntegration.js) |  | RHS callability uses centralized CallableOperations, then prototype-chain checks cover generated, bound, class, proxy, host-adapter, and transitional callable constructors. Custom @@hasInstance hooks remain incomplete. |
 
 ### 7.3.22 ([tc39.es](https://tc39.es/ecma262/#sec-speciesconstructor))
 
