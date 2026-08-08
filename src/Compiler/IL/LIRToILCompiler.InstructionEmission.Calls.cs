@@ -1364,6 +1364,21 @@ internal sealed partial class LIRToILCompiler
                     EmitInitializeFunctionInstance(createFunc.CallableId, createFunc.IsAsync, ilEncoder);
                     EmitInitializeGeneratorFunctionSurfaceIfNeeded(callableId, ilEncoder);
 
+                    if (createFunc.IsNonConstructible
+                        && !IsGeneratorCallable(callableId))
+                    {
+                        // Generated function objects mark their prototype during initialization;
+                        // this branch handles only the delegate-backed fallback.
+                        var delegateType = CallableDelegateTypeResolver.GetMaterializedDelegateType(
+                            callableId,
+                            signature);
+                        ilEncoder.OpCode(ILOpCode.Call);
+                        ilEncoder.Token(_memberRefRegistry.GetOrAddGenericUnaryMethod(
+                            typeof(JavaScriptRuntime.Function),
+                            nameof(JavaScriptRuntime.Function.MarkUndefinedPrototype),
+                            delegateType));
+                    }
+
                     if (createFunc.IsAsyncGeneratorFunction)
                     {
                         var initAsyncGeneratorFunctionRef = _memberRefRegistry.GetOrAddMethod(

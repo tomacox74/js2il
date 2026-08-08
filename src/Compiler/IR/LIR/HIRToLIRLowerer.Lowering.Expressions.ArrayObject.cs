@@ -490,7 +490,6 @@ public sealed partial class HIRToLIRLowerer
             return false;
         }
 
-        accessorTemp = EmitMarkUndefinedPrototype(accessorTemp);
         var namedAccessor = CreateTempVariable();
         _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
             IntrinsicName: nameof(JavaScriptRuntime.Function),

@@ -1267,12 +1267,6 @@ public sealed partial class HIRToLIRLowerer
                     !funcExpr.IsNonConstructible
                     || supportsGeneratedMethodObject));
 
-        if (funcExpr.IsNonConstructible
-            && !IsGeneratorCallable(funcExpr.CallableId))
-        {
-            resultTempVar = EmitMarkUndefinedPrototype(resultTempVar);
-        }
-
         resultTempVar = EmitBindWithObjectIfNeeded(resultTempVar);
 
         return true;

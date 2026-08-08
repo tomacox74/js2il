@@ -4,24 +4,6 @@ namespace Jroc.IR;
 
 public sealed partial class HIRToLIRLowerer
 {
-    private TempVariable EmitMarkUndefinedPrototype(TempVariable functionValueTemp)
-    {
-        var functionStorage = GetTempStorage(functionValueTemp);
-        var argumentTemp = functionStorage.Kind == ValueStorageKind.Reference
-            ? functionValueTemp
-            : EnsureObject(functionValueTemp);
-        var markedStorage = GetTempStorage(argumentTemp);
-        var markedTemp = CreateTempVariable();
-        _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
-            IntrinsicName: nameof(JavaScriptRuntime.Function),
-            MethodName: nameof(JavaScriptRuntime.Function.MarkUndefinedPrototype),
-            Arguments: new List<TempVariable> { argumentTemp },
-            Result: markedTemp,
-            GenericTypeArgument: markedStorage));
-        DefineTempStorage(markedTemp, markedStorage);
-        return markedTemp;
-    }
-
     /// <summary>
     /// Attaches the active <c>with</c>-object to a newly created function/arrow value.
     /// This is the creation-time side of <c>with</c> support and only records callable metadata.

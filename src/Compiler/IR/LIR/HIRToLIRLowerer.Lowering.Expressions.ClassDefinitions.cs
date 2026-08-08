@@ -349,9 +349,7 @@ public sealed partial class HIRToLIRLowerer
             GetMaterializedCallableStorage(
                 callableId,
                 allowGeneratedFunctionObject: true));
-        return IsGeneratorCallable(callableId)
-            ? result
-            : EmitMarkUndefinedPrototype(result);
+        return result;
     }
 
     private static Scope? ResolveClassMethodScope(
