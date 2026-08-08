@@ -255,7 +255,7 @@
 		} // end of class FunctionObject_ClassConstructor_398688B9_Base
 
 		.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassMethod_F1077DEC_Base_inc
-			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsAsyncFunctionObject
 		{
 			// Fields
 			.field private initonly object[] _transitionalScopes
@@ -271,7 +271,7 @@
 				.maxstack 8
 
 				IL_0000: ldarg.0
-				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsAsyncFunctionObject::.ctor()
 				IL_0006: ldarg.0
 				IL_0007: ldarg.1
 				IL_0008: stfld object[] Modules.Async_Inheritance_SuperAsyncMethod/Base/FunctionObject_ClassMethod_F1077DEC_Base_inc::_transitionalScopes
@@ -301,62 +301,33 @@
 			} // end of method FunctionObject_ClassMethod_F1077DEC_Base_inc::get_RequiresInvocationContext
 
 			.method family hidebysig virtual 
-				instance object CallCore (
+				instance object CallCoreAsync (
 					object thisArgument,
 					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 				) cil managed 
 			{
-				// Header size: 12
-				// Code size: 93 (0x5d)
+				// Header size: 1
+				// Code size: 49 (0x31)
 				.maxstack 8
-				.locals init (
-					[0] object
-				)
 
-				.try
-				{
-					IL_0000: ldarg.1
-					IL_0001: ldtoken Modules.Async_Inheritance_SuperAsyncMethod/Base
-					IL_0006: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-					IL_000b: ldarg.0
-					IL_000c: ldfld object[] Modules.Async_Inheritance_SuperAsyncMethod/Base/FunctionObject_ClassMethod_F1077DEC_Base_inc::_transitionalScopes
-					IL_0011: ldnull
-					IL_0012: ldarg.0
-					IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodReceiver(object, class [System.Runtime]System.Type, object[], object, class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
-					IL_0018: castclass Modules.Async_Inheritance_SuperAsyncMethod/Base
-					IL_001d: ldarg.0
-					IL_001e: ldfld object[] Modules.Async_Inheritance_SuperAsyncMethod/Base/FunctionObject_ClassMethod_F1077DEC_Base_inc::_transitionalScopes
-					IL_0023: ldnull
-					IL_0024: ldarg.2
-					IL_0025: ldc.i4.0
-					IL_0026: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-					IL_002b: call instance object Modules.Async_Inheritance_SuperAsyncMethod/Base::inc(object[], object, object)
-					IL_0030: stloc.0
-					IL_0031: leave IL_005b
-				} // end .try
-				catch [System.Runtime]System.Exception
-				{
-					IL_0036: dup
-					IL_0037: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-					IL_003c: dup
-					IL_003d: brtrue IL_0048
-
-					IL_0042: pop
-					IL_0043: br IL_0050
-
-					IL_0048: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-					IL_004d: stloc.0
-					IL_004e: pop
-					IL_004f: ldloc.0
-
-					IL_0050: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::reject(object)
-					IL_0055: stloc.0
-					IL_0056: leave IL_005b
-				} // end handler
-
-				IL_005b: ldloc.0
-				IL_005c: ret
-			} // end of method FunctionObject_ClassMethod_F1077DEC_Base_inc::CallCore
+				IL_0000: ldarg.1
+				IL_0001: ldtoken Modules.Async_Inheritance_SuperAsyncMethod/Base
+				IL_0006: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+				IL_000b: ldarg.0
+				IL_000c: ldfld object[] Modules.Async_Inheritance_SuperAsyncMethod/Base/FunctionObject_ClassMethod_F1077DEC_Base_inc::_transitionalScopes
+				IL_0011: ldnull
+				IL_0012: ldarg.0
+				IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodReceiver(object, class [System.Runtime]System.Type, object[], object, class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
+				IL_0018: castclass Modules.Async_Inheritance_SuperAsyncMethod/Base
+				IL_001d: ldarg.0
+				IL_001e: ldfld object[] Modules.Async_Inheritance_SuperAsyncMethod/Base/FunctionObject_ClassMethod_F1077DEC_Base_inc::_transitionalScopes
+				IL_0023: ldnull
+				IL_0024: ldarg.2
+				IL_0025: ldc.i4.0
+				IL_0026: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+				IL_002b: call instance object Modules.Async_Inheritance_SuperAsyncMethod/Base::inc(object[], object, object)
+				IL_0030: ret
+			} // end of method FunctionObject_ClassMethod_F1077DEC_Base_inc::CallCoreAsync
 
 		} // end of class FunctionObject_ClassMethod_F1077DEC_Base_inc
 
@@ -647,7 +618,7 @@
 		} // end of class FunctionObject_ClassConstructor_468B227D_Derived
 
 		.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassMethod_B6E78F2B_Derived_run
-			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsAsyncFunctionObject
 		{
 			// Fields
 			.field private initonly object[] _transitionalScopes
@@ -667,7 +638,7 @@
 				.maxstack 8
 
 				IL_0000: ldarg.0
-				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsAsyncFunctionObject::.ctor()
 				IL_0006: ldarg.0
 				IL_0007: ldarg.1
 				IL_0008: stfld object[] Modules.Async_Inheritance_SuperAsyncMethod/Derived/FunctionObject_ClassMethod_B6E78F2B_Derived_run::_transitionalScopes
@@ -727,59 +698,30 @@
 			} // end of method FunctionObject_ClassMethod_B6E78F2B_Derived_run::GetLexicalSuperScopesCore
 
 			.method family hidebysig virtual 
-				instance object CallCore (
+				instance object CallCoreAsync (
 					object thisArgument,
 					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 				) cil managed 
 			{
-				// Header size: 12
-				// Code size: 86 (0x56)
+				// Header size: 1
+				// Code size: 42 (0x2a)
 				.maxstack 8
-				.locals init (
-					[0] object
-				)
 
-				.try
-				{
-					IL_0000: ldarg.1
-					IL_0001: ldtoken Modules.Async_Inheritance_SuperAsyncMethod/Derived
-					IL_0006: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-					IL_000b: ldarg.0
-					IL_000c: ldfld object[] Modules.Async_Inheritance_SuperAsyncMethod/Derived/FunctionObject_ClassMethod_B6E78F2B_Derived_run::_transitionalScopes
-					IL_0011: ldnull
-					IL_0012: ldarg.0
-					IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodReceiver(object, class [System.Runtime]System.Type, object[], object, class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
-					IL_0018: castclass Modules.Async_Inheritance_SuperAsyncMethod/Derived
-					IL_001d: ldarg.0
-					IL_001e: ldfld object[] Modules.Async_Inheritance_SuperAsyncMethod/Derived/FunctionObject_ClassMethod_B6E78F2B_Derived_run::_transitionalScopes
-					IL_0023: ldnull
-					IL_0024: call instance object Modules.Async_Inheritance_SuperAsyncMethod/Derived::run(object[], object)
-					IL_0029: stloc.0
-					IL_002a: leave IL_0054
-				} // end .try
-				catch [System.Runtime]System.Exception
-				{
-					IL_002f: dup
-					IL_0030: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-					IL_0035: dup
-					IL_0036: brtrue IL_0041
-
-					IL_003b: pop
-					IL_003c: br IL_0049
-
-					IL_0041: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-					IL_0046: stloc.0
-					IL_0047: pop
-					IL_0048: ldloc.0
-
-					IL_0049: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::reject(object)
-					IL_004e: stloc.0
-					IL_004f: leave IL_0054
-				} // end handler
-
-				IL_0054: ldloc.0
-				IL_0055: ret
-			} // end of method FunctionObject_ClassMethod_B6E78F2B_Derived_run::CallCore
+				IL_0000: ldarg.1
+				IL_0001: ldtoken Modules.Async_Inheritance_SuperAsyncMethod/Derived
+				IL_0006: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+				IL_000b: ldarg.0
+				IL_000c: ldfld object[] Modules.Async_Inheritance_SuperAsyncMethod/Derived/FunctionObject_ClassMethod_B6E78F2B_Derived_run::_transitionalScopes
+				IL_0011: ldnull
+				IL_0012: ldarg.0
+				IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodReceiver(object, class [System.Runtime]System.Type, object[], object, class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
+				IL_0018: castclass Modules.Async_Inheritance_SuperAsyncMethod/Derived
+				IL_001d: ldarg.0
+				IL_001e: ldfld object[] Modules.Async_Inheritance_SuperAsyncMethod/Derived/FunctionObject_ClassMethod_B6E78F2B_Derived_run::_transitionalScopes
+				IL_0023: ldnull
+				IL_0024: call instance object Modules.Async_Inheritance_SuperAsyncMethod/Derived::run(object[], object)
+				IL_0029: ret
+			} // end of method FunctionObject_ClassMethod_B6E78F2B_Derived_run::CallCoreAsync
 
 		} // end of class FunctionObject_ClassMethod_B6E78F2B_Derived_run
 

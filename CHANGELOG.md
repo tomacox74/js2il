@@ -64,6 +64,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   as generated `JsFunctionObject` instances. Preserve generator-family
   prototypes, metadata, identity, captures, receivers, non-constructability,
   and isolated per-invocation iterator state.
+- runtime/compiler: centralize generated async-function exception conversion in
+  `JsAsyncFunctionObject`, whose sealed `CallCore` converts synchronous setup
+  failures to rejected Promises while generated types provide only their
+  callable-specific `CallCoreAsync` implementation.
 
 ## v0.12.4 - 2026-08-06
 
