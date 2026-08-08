@@ -34,6 +34,13 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   descriptor identity, receiver and `super` behavior, computed names,
   per-evaluation private brands, and non-constructability while retaining
   direct typed dispatch for statically known calls.
+- runtime: close issue #1715 by representing every `Function.prototype.bind`
+  result as an explicit bound function object across generated functions,
+  classes, methods, arrows, and transitional host/delegate callables. Route
+  `call`, `apply`, `bind`, and `toString` through centralized callable
+  operations; preserve chained binding, metadata, construction/new-target
+  forwarding, and common-arity argument transport without expression-tree
+  compilation or bound-function delegate metadata tables.
 
 ## v0.12.4 - 2026-08-06
 

@@ -23,6 +23,12 @@ public static class CallableOperations
         return CallCore(target, thisArgument, callArguments);
     }
 
+    internal static object? Call(
+        object? target,
+        object? thisArgument,
+        in JsCallArguments arguments)
+        => CallCore(target, thisArgument, arguments);
+
     public static object? Call0(object? target, object? thisArgument)
     {
         var arguments = JsCallArguments.Empty;
@@ -127,6 +133,12 @@ public static class CallableOperations
         var constructArguments = JsCallArguments.FromArray(arguments);
         return ConstructCore(target, newTarget, constructArguments);
     }
+
+    internal static object? Construct(
+        object? target,
+        in JsCallArguments arguments,
+        object? newTarget)
+        => ConstructCore(target, newTarget, arguments);
 
     public static object? Construct0(object? target, object? newTarget)
     {

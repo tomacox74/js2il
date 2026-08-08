@@ -2540,40 +2540,8 @@ namespace JavaScriptRuntime
 
             var callArgs = args ?? System.Array.Empty<object>();
 
-            // Function.prototype.apply / Function.prototype.bind support.
-            // In JROC, function values are represented as CLR delegates.
             if (receiver is Delegate del)
             {
-                if (string.Equals(methodName, "apply", StringComparison.Ordinal))
-                {
-                    var thisArg = callArgs.Length > 0 ? callArgs[0] : null;
-                    var argArray = callArgs.Length > 1 ? callArgs[1] : null;
-                    return JavaScriptRuntime.Function.Apply(del, thisArg, argArray);
-                }
-
-                if (string.Equals(methodName, "call", StringComparison.Ordinal))
-                {
-                    var thisArg = callArgs.Length > 0 ? callArgs[0] : null;
-                    var rest = callArgs.Length > 1
-                        ? callArgs.Skip(1).Cast<object?>().ToArray()
-                        : System.Array.Empty<object?>();
-                    return JavaScriptRuntime.Function.Call(del, thisArg, rest);
-                }
-
-                if (string.Equals(methodName, "bind", StringComparison.Ordinal))
-                {
-                    var boundThis = callArgs.Length > 0 ? callArgs[0] : null;
-                    var boundArgs = callArgs.Length > 1
-                        ? callArgs.Skip(1).Cast<object?>().ToArray()
-                        : System.Array.Empty<object?>();
-                    return JavaScriptRuntime.Function.Bind(del, boundThis, boundArgs);
-                }
-
-                if (string.Equals(methodName, "toString", StringComparison.Ordinal))
-                {
-                    return JavaScriptRuntime.Function.ToSourceString(del);
-                }
-
                 if (string.Equals(methodName, "hasOwnProperty", StringComparison.Ordinal))
                 {
                     var prop = callArgs.Length > 0 ? callArgs[0] : null;
@@ -2782,6 +2750,36 @@ namespace JavaScriptRuntime
                 : CallableOperations.Call(member, receiver, callArgs);
         }
 
+        private static bool TryGetCallableFunctionMember(
+            object receiver,
+            string memberName,
+            out object member)
+        {
+            member = null!;
+            if (!CallableOperations.IsCallable(receiver))
+            {
+                return false;
+            }
+
+            var value = GetProperty(receiver, memberName);
+            if (!CallableOperations.IsCallable(value)
+                && receiver is Delegate
+                && !HasProperty(receiver, memberName)
+                && Function.TryGetPrototypeValue(
+                    memberName,
+                    out var prototypeValue))
+            {
+                value = prototypeValue;
+            }
+            if (!CallableOperations.IsCallable(value))
+            {
+                return false;
+            }
+
+            member = value!;
+            return true;
+        }
+
         private static object InvokeMemberDelegate(object receiver, Delegate member, object?[] callArgs)
         {
             var previousThis = RuntimeServices.SetCurrentThis(receiver);
@@ -2868,26 +2866,14 @@ namespace JavaScriptRuntime
         public static object? CallMember0(object receiver, string methodName)
         {
             if (methodName == null) throw new ArgumentNullException(nameof(methodName));
-
-            // Function.prototype methods with 0 args
-            if (receiver is Delegate del)
+            if (TryGetCallableFunctionMember(
+                    receiver,
+                    methodName,
+                    out var functionMember))
             {
-                if (string.Equals(methodName, "apply", StringComparison.Ordinal))
-                {
-                    return JavaScriptRuntime.Function.Apply(del, null, null);
-                }
-                if (string.Equals(methodName, "call", StringComparison.Ordinal))
-                {
-                    return JavaScriptRuntime.Function.Call(del, null, System.Array.Empty<object?>());
-                }
-                if (string.Equals(methodName, "bind", StringComparison.Ordinal))
-                {
-                    return JavaScriptRuntime.Function.Bind(del, null, System.Array.Empty<object?>());
-                }
-                if (string.Equals(methodName, "toString", StringComparison.Ordinal))
-                {
-                    return JavaScriptRuntime.Function.ToSourceString(del);
-                }
+                return functionMember is Delegate legacyDelegate
+                    ? InvokeMemberDelegate0(receiver, legacyDelegate)
+                    : CallableOperations.Call0(functionMember, receiver);
             }
 
             if (TryGetFastDictionaryOwnValue(receiver, methodName, out var directMemberValue))
@@ -2918,26 +2904,14 @@ namespace JavaScriptRuntime
         public static object? CallMember1(object receiver, string methodName, object? a0)
         {
             if (methodName == null) throw new ArgumentNullException(nameof(methodName));
-
-            // Function.prototype methods with 1 arg
-            if (receiver is Delegate del)
+            if (TryGetCallableFunctionMember(
+                    receiver,
+                    methodName,
+                    out var functionMember))
             {
-                if (string.Equals(methodName, "apply", StringComparison.Ordinal))
-                {
-                    return JavaScriptRuntime.Function.Apply(del, a0, null);
-                }
-                if (string.Equals(methodName, "call", StringComparison.Ordinal))
-                {
-                    return JavaScriptRuntime.Function.Call(del, a0, System.Array.Empty<object?>());
-                }
-                if (string.Equals(methodName, "bind", StringComparison.Ordinal))
-                {
-                    return JavaScriptRuntime.Function.Bind(del, a0, System.Array.Empty<object?>());
-                }
-                if (string.Equals(methodName, "toString", StringComparison.Ordinal))
-                {
-                    return JavaScriptRuntime.Function.ToSourceString(del);
-                }
+                return functionMember is Delegate legacyDelegate
+                    ? InvokeMemberDelegate1(receiver, legacyDelegate, a0)
+                    : CallableOperations.Call1(functionMember, receiver, a0);
             }
 
             if (TryGetFastDictionaryOwnValue(receiver, methodName, out var directMemberValue))
@@ -2968,26 +2942,18 @@ namespace JavaScriptRuntime
         public static object? CallMember2(object receiver, string methodName, object? a0, object? a1)
         {
             if (methodName == null) throw new ArgumentNullException(nameof(methodName));
-
-            // Function.prototype methods with 2 args
-            if (receiver is Delegate del)
+            if (TryGetCallableFunctionMember(
+                    receiver,
+                    methodName,
+                    out var functionMember))
             {
-                if (string.Equals(methodName, "apply", StringComparison.Ordinal))
-                {
-                    return JavaScriptRuntime.Function.Apply(del, a0, a1);
-                }
-                if (string.Equals(methodName, "call", StringComparison.Ordinal))
-                {
-                    return JavaScriptRuntime.Function.Call(del, a0, new object?[] { a1 });
-                }
-                if (string.Equals(methodName, "bind", StringComparison.Ordinal))
-                {
-                    return JavaScriptRuntime.Function.Bind(del, a0, new object?[] { a1 });
-                }
-                if (string.Equals(methodName, "toString", StringComparison.Ordinal))
-                {
-                    return JavaScriptRuntime.Function.ToSourceString(del);
-                }
+                return functionMember is Delegate legacyDelegate
+                    ? InvokeMemberDelegate2(receiver, legacyDelegate, a0, a1)
+                    : CallableOperations.Call2(
+                        functionMember,
+                        receiver,
+                        a0,
+                        a1);
             }
 
             if (TryGetFastDictionaryOwnValue(receiver, methodName, out var directMemberValue))
@@ -3018,26 +2984,24 @@ namespace JavaScriptRuntime
         public static object? CallMember3(object receiver, string methodName, object? a0, object? a1, object? a2)
         {
             if (methodName == null) throw new ArgumentNullException(nameof(methodName));
-
-            // Function.prototype methods with 3 args
-            if (receiver is Delegate del)
+            if (TryGetCallableFunctionMember(
+                    receiver,
+                    methodName,
+                    out var functionMember))
             {
-                if (string.Equals(methodName, "apply", StringComparison.Ordinal))
-                {
-                    return JavaScriptRuntime.Function.Apply(del, a0, a1);
-                }
-                if (string.Equals(methodName, "call", StringComparison.Ordinal))
-                {
-                    return JavaScriptRuntime.Function.Call(del, a0, new object?[] { a1, a2 });
-                }
-                if (string.Equals(methodName, "bind", StringComparison.Ordinal))
-                {
-                    return JavaScriptRuntime.Function.Bind(del, a0, new object?[] { a1, a2 });
-                }
-                if (string.Equals(methodName, "toString", StringComparison.Ordinal))
-                {
-                    return JavaScriptRuntime.Function.ToSourceString(del);
-                }
+                return functionMember is Delegate legacyDelegate
+                    ? InvokeMemberDelegate3(
+                        receiver,
+                        legacyDelegate,
+                        a0,
+                        a1,
+                        a2)
+                    : CallableOperations.Call3(
+                        functionMember,
+                        receiver,
+                        a0,
+                        a1,
+                        a2);
             }
 
             if (TryGetFastDictionaryOwnValue(receiver, methodName, out var directMemberValue))
@@ -4265,7 +4229,6 @@ namespace JavaScriptRuntime
             }
 
             if (target is Delegate delPrototype
-                && !Closure.IsFunctionPrototypeBoundDelegate(delPrototype)
                 && string.Equals(propName, "prototype", StringComparison.Ordinal))
             {
                 if (GlobalThis.HasUndefinedPrototype(delPrototype))

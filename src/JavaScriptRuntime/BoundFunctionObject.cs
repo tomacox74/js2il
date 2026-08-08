@@ -1,16 +1,16 @@
 namespace JavaScriptRuntime;
 
 /// <summary>
-/// Transitional bound-function representation used while callable families migrate.
+/// ECMAScript bound-function exotic object.
 /// </summary>
 internal sealed class BoundFunctionObject : JsFunctionObject
 {
-    private readonly JsFunctionObject _target;
+    private readonly object _target;
     private readonly object? _boundThis;
     private readonly object?[] _boundArguments;
 
     public BoundFunctionObject(
-        JsFunctionObject target,
+        object target,
         object? boundThis,
         object?[] boundArguments)
     {
@@ -19,20 +19,21 @@ internal sealed class BoundFunctionObject : JsFunctionObject
         _boundArguments = boundArguments;
     }
 
-    public override bool IsConstructor => _target.IsConstructor;
+    public override bool IsConstructor => CallableOperations.IsConstructor(_target);
 
     public override bool RequiresInvocationContext => false;
 
-    internal JsFunctionObject Target => _target;
+    internal object Target => _target;
 
     protected override object? CallCore(
         object? thisArgument,
         in JsCallArguments arguments)
     {
+        var combined = JsCallArguments.Prepend(_boundArguments, arguments);
         return CallableOperations.Call(
             _target,
             _boundThis,
-            Combine(arguments));
+            combined);
     }
 
     protected override object? ConstructCore(
@@ -42,25 +43,10 @@ internal sealed class BoundFunctionObject : JsFunctionObject
         var effectiveNewTarget = ReferenceEquals(newTarget, this)
             ? _target
             : newTarget;
+        var combined = JsCallArguments.Prepend(_boundArguments, arguments);
         return CallableOperations.Construct(
             _target,
-            Combine(arguments),
+            combined,
             effectiveNewTarget);
-    }
-
-    private object?[] Combine(in JsCallArguments arguments)
-    {
-        if (_boundArguments.Length == 0)
-        {
-            return arguments.ToArray();
-        }
-
-        var result = new object?[_boundArguments.Length + arguments.Count];
-        System.Array.Copy(_boundArguments, result, _boundArguments.Length);
-        for (var index = 0; index < arguments.Count; index++)
-        {
-            result[_boundArguments.Length + index] = arguments.GetArgument(index);
-        }
-        return result;
     }
 }

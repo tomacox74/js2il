@@ -176,6 +176,119 @@ public sealed class JsFunctionObjectRuntimeTests
     }
 
     [Fact]
+    public void BoundFunctionObjects_UnifyCallsConstructionMetadataAndArguments()
+    {
+        var target = new ArgumentTransportFunction();
+        JavaScriptRuntime.Function.InitializeFunctionInstance(
+            target,
+            4d,
+            "target",
+            requiresInvocationContext: true);
+        var bound = Assert.IsType<BoundFunctionObject>(
+            JavaScriptRuntime.Function.Bind(
+                target,
+                "bound-this",
+                new object?[] { "bound-0", "bound-1" }));
+
+        var call = Assert.IsType<BoundCallSnapshot>(
+            CallableOperations.Call(
+                bound,
+                "ignored-this",
+                new object?[] { "call-0", "call-1" }));
+        Assert.Equal("bound-this", call.ThisArgument);
+        Assert.Equal(
+            new[] { "bound-0", "bound-1", "call-0", "call-1" },
+            call.Arguments);
+        Assert.False(call.UsesArrayStorage);
+        Assert.Equal(2d, ObjectRuntime.GetProperty(bound, "length"));
+        Assert.Equal("bound target", ObjectRuntime.GetProperty(bound, "name"));
+        Assert.False(JavaScriptRuntime.Object.hasOwn(bound, "prototype"));
+
+        var chained = Assert.IsType<BoundFunctionObject>(
+            JavaScriptRuntime.Function.Bind(
+                bound,
+                "ignored-again",
+                new object?[] { "chained" }));
+        var chainedCall = Assert.IsType<BoundCallSnapshot>(
+            CallableOperations.Call(chained, null, new object?[] { "runtime" }));
+        Assert.Equal("bound-this", chainedCall.ThisArgument);
+        Assert.Equal(
+            new[] { "bound-0", "bound-1", "chained", "runtime" },
+            chainedCall.Arguments);
+        Assert.Equal("bound bound target", ObjectRuntime.GetProperty(chained, "name"));
+        Assert.Equal(1d, ObjectRuntime.GetProperty(chained, "length"));
+
+        var constructor = new ConstructableFunction();
+        JavaScriptRuntime.Function.InitializeFunctionInstance(
+            constructor,
+            2d,
+            "Constructor",
+            requiresInvocationContext: true);
+        var boundConstructor = Assert.IsType<BoundFunctionObject>(
+            JavaScriptRuntime.Function.Bind(
+                constructor,
+                "ignored-constructor-this",
+                new object?[] { "bound-constructor-argument" }));
+        var constructed = Assert.IsType<ConstructSnapshot>(
+            CallableOperations.Construct(
+                boundConstructor,
+                new object?[] { "runtime-constructor-argument" }));
+        Assert.Equal("bound-constructor-argument", constructed.Argument);
+        Assert.Same(constructor, constructed.NewTarget);
+        Assert.True(boundConstructor.IsConstructor);
+    }
+
+    [Fact]
+    public void BindingLegacyDelegatesProducesExplicitBoundFunctionObjects()
+    {
+        Func<object[], object?[]?, object?> legacy = static (_, args) =>
+            new BoundCallSnapshot(
+                RuntimeServices.GetCurrentThis(),
+                args ?? System.Array.Empty<object?>(),
+                UsesArrayStorage: true);
+        JavaScriptRuntime.Function.InitializeFunctionInstance(
+            legacy,
+            1d,
+            "legacy",
+            requiresInvocationContext: true);
+
+        var bound = Assert.IsType<BoundFunctionObject>(
+            JavaScriptRuntime.Function.Bind(
+                legacy,
+                "legacy-this",
+                new object?[] { "bound" }));
+        var result = Assert.IsType<BoundCallSnapshot>(
+            CallableOperations.Call(bound, null, new object?[] { "runtime" }));
+
+        Assert.Equal("legacy-this", result.ThisArgument);
+        Assert.Equal(new[] { "bound", "runtime" }, result.Arguments);
+        Assert.Equal("bound legacy", ObjectRuntime.GetProperty(bound, "name"));
+    }
+
+    [Fact]
+    public void FixedArityLegacyInvocationPadsMissingHostArguments()
+    {
+        object?[]? received = null;
+        Action<object?, object?, object?> host = (first, second, third) =>
+            received = [first, second, third];
+        JavaScriptRuntime.Function.InitializeFunctionInstance(
+            host,
+            3d,
+            "host",
+            requiresInvocationContext: false);
+
+        Closure.InvokeWithArgs2(
+            host,
+            RuntimeServices.EmptyScopes,
+            "first",
+            "second");
+
+        Assert.Equal(
+            new object?[] { "first", "second", null },
+            received);
+    }
+
+    [Fact]
     public void CallableOperations_RejectsNonCallableValuesConsistently()
     {
         var value = new JsObject();
@@ -302,6 +415,17 @@ public sealed class JsFunctionObjectRuntimeTests
                 RuntimeServices.GetCurrentCallee());
     }
 
+    private sealed class ArgumentTransportFunction : JsFunctionObject
+    {
+        protected override object? CallCore(
+            object? thisArgument,
+            in JsCallArguments arguments)
+            => new BoundCallSnapshot(
+                RuntimeServices.GetCurrentThis(),
+                arguments.ToArray(),
+                arguments.UsesArrayStorage);
+    }
+
     private static CallSnapshot Capture(in JsCallArguments arguments)
         => new(
             RuntimeServices.GetCurrentThis(),
@@ -323,4 +447,9 @@ public sealed class JsFunctionObjectRuntimeTests
         object? Argument,
         object? NewTarget,
         object? Callee);
+
+    private sealed record BoundCallSnapshot(
+        object? ThisArgument,
+        object?[] Arguments,
+        bool UsesArrayStorage);
 }
