@@ -369,9 +369,10 @@
         "specUrl": "https://tc39.es/ecma262/#sec-setintegritylevel",
         "testScripts": [
           "tests/Jroc.Tests/Object/JavaScript/Object_Integrity_FreezeSeal_PreventExtensions.js",
-          "tests/Jroc.Tests/Object/JavaScript/Object_Integrity_DefineProperty_And_StrictWrites.js"
+          "tests/Jroc.Tests/Object/JavaScript/Object_Integrity_DefineProperty_And_StrictWrites.js",
+          "tests/Jroc.Tests/Function/JavaScript/Function_CallableReflection_ProxyIntegration.js"
         ],
-        "notes": "Ordinary-object integrity state is tracked and enforced for the covered preventExtensions/seal/freeze paths, including strict-mode write failures after freezing. Full proxy invariants and every exotic-object integrity rule are still incomplete."
+        "notes": "Integrity state is tracked and enforced for ordinary and generated function objects, including preventExtensions/freeze and strict-mode write failures. Proxy preventExtensions dispatch and target-extensibility invariants are covered; full seal/freeze proxy invariants and every exotic-object rule remain incomplete."
       },
       {
         "clause": "7.3.16",
@@ -380,9 +381,10 @@
         "specUrl": "https://tc39.es/ecma262/#sec-testintegritylevel",
         "testScripts": [
           "tests/Jroc.Tests/Object/JavaScript/Object_Integrity_FreezeSeal_PreventExtensions.js",
-          "tests/Jroc.Tests/Object/JavaScript/Object_Integrity_DefineProperty_And_StrictWrites.js"
+          "tests/Jroc.Tests/Object/JavaScript/Object_Integrity_DefineProperty_And_StrictWrites.js",
+          "tests/Jroc.Tests/Function/JavaScript/Function_CallableReflection_ProxyIntegration.js"
         ],
-        "notes": "The runtime reports integrity state consistently for the covered ordinary-object transitions and descriptor combinations. Coverage is still strongest for ordinary objects rather than every proxy and host-object edge case."
+        "notes": "The runtime reports integrity state consistently for ordinary/function objects and validates proxy isExtensible trap results against the target. Coverage remains incomplete for every proxy seal/freeze and host-object edge case."
       },
       {
         "clause": "7.3.19",
@@ -404,9 +406,10 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-ordinaryhasinstance",
         "testScripts": [
-          "tests/Jroc.Tests/BinaryOperator/JavaScript/BinaryOperator_InstanceOf_Basic.js"
+          "tests/Jroc.Tests/BinaryOperator/JavaScript/BinaryOperator_InstanceOf_Basic.js",
+          "tests/Jroc.Tests/Function/JavaScript/Function_CallableReflection_ProxyIntegration.js"
         ],
-        "notes": "Implemented with prototype-chain checks for supported callable constructor values; full spec hooks are incomplete."
+        "notes": "RHS callability uses centralized CallableOperations, then prototype-chain checks cover generated, bound, class, proxy, host-adapter, and transitional callable constructors. Custom @@hasInstance hooks remain incomplete."
       },
       {
         "clause": "7.3.22",

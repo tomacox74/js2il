@@ -12,6 +12,7 @@ public static class CallableOperations
             JsFunctionObject => true,
             Delegate => true,
             ClassConstructorValue => true,
+            Type type => ObjectRuntime.IsConstructibleValue(type),
             Proxy proxy => proxy.IsCallableTarget,
             _ => false
         };
@@ -225,8 +226,9 @@ public static class CallableOperations
             Proxy proxy when proxy.IsCallableTarget => CallProxy(
                 proxy,
                 thisArgument,
-                arguments.ToArray()),
+                arguments),
             ClassConstructorValue => throw new TypeError("Class constructor cannot be invoked without 'new'"),
+            Type => throw new TypeError("Class constructor cannot be invoked without 'new'"),
             _ => throw new TypeError("Value is not callable")
         };
     }
@@ -236,6 +238,11 @@ public static class CallableOperations
         object? newTarget,
         in JsCallArguments arguments)
     {
+        if (target is Proxy proxy)
+        {
+            return ConstructProxy(proxy, arguments, newTarget);
+        }
+
         if (target is JsFunctionObject functionObject)
         {
             if (!functionObject.IsConstructor)
@@ -375,16 +382,56 @@ public static class CallableOperations
         }
     }
 
-    private static object? CallProxy(Proxy proxy, object? thisArgument, object?[] arguments)
+    private static object? CallProxy(
+        Proxy proxy,
+        object? thisArgument,
+        in JsCallArguments arguments)
     {
-        var previousThis = RuntimeServices.SetCurrentThis(thisArgument);
-        try
+        var target = proxy.GetTarget("apply");
+        if (!IsCallable(target))
         {
-            return Closure.InvokeWithArgs(proxy, RuntimeServices.EmptyScopes, arguments);
+            throw new TypeError("Proxy target is not callable");
         }
-        finally
+
+        var trapArguments = new JavaScriptRuntime.Array(arguments.ToArray());
+        if (proxy.TryInvokeTrap(
+                "apply",
+                "apply",
+                [target, thisArgument, trapArguments],
+                out var trapResult))
         {
-            RuntimeServices.SetCurrentThis(previousThis);
+            return trapResult;
         }
+
+        return CallCore(target, thisArgument, arguments);
+    }
+
+    private static object? ConstructProxy(
+        Proxy proxy,
+        in JsCallArguments arguments,
+        object? newTarget)
+    {
+        var target = proxy.GetTarget("construct");
+        if (!ObjectRuntime.IsConstructibleValue(target))
+        {
+            throw new TypeError("Proxy target is not a constructor");
+        }
+
+        var effectiveNewTarget = newTarget ?? proxy;
+        var trapArguments = new JavaScriptRuntime.Array(arguments.ToArray());
+        if (proxy.TryInvokeTrap(
+                "construct",
+                "construct",
+                [target, trapArguments, effectiveNewTarget],
+                out var trapResult))
+        {
+            if (!Proxy.IsObjectLikeValue(trapResult))
+            {
+                throw new TypeError("Proxy construct trap must return an object");
+            }
+            return trapResult;
+        }
+
+        return ConstructCore(target, effectiveNewTarget, arguments);
     }
 }

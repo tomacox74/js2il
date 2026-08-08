@@ -1076,7 +1076,8 @@ namespace JavaScriptRuntime
                 return false;
             }
 
-            if (a is Delegate || b is Delegate)
+            if (CallableOperations.IsCallable(a)
+                || CallableOperations.IsCallable(b))
             {
                 return ReferenceEquals(a, b);
             }
@@ -1213,11 +1214,7 @@ namespace JavaScriptRuntime
                 throw new TypeError("Right-hand side of 'instanceof' is not callable");
             }
 
-            // Minimal: require a callable delegate-backed function value or a JROC class constructor Type.
-            if (ctor is not Delegate
-                && ctor is not JsFunctionObject
-                && ctor is not Type
-                && ctor is not ClassConstructorValue)
+            if (!CallableOperations.IsCallable(ctor))
             {
                 throw new TypeError("Right-hand side of 'instanceof' is not callable");
             }

@@ -24,25 +24,25 @@
     {
       "clause": "10.5.3",
       "title": "[[IsExtensible]] ( )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-proxy-object-internal-methods-and-internal-slots-isextensible"
     },
     {
       "clause": "10.5.4",
       "title": "[[PreventExtensions]] ( )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-proxy-object-internal-methods-and-internal-slots-preventextensions"
     },
     {
       "clause": "10.5.5",
       "title": "[[GetOwnProperty]] ( P )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-proxy-object-internal-methods-and-internal-slots-getownproperty-p"
     },
     {
       "clause": "10.5.6",
       "title": "[[DefineOwnProperty]] ( P , Desc )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-proxy-object-internal-methods-and-internal-slots-defineownproperty-p-desc"
     },
     {
@@ -103,6 +103,30 @@
   "support": {
     "entries": [
       {
+        "clause": "10.5.3",
+        "feature": "Proxy callable, descriptor, and extensibility integration",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-proxy-object-internal-methods-and-internal-slots",
+        "testScripts": [
+          "tests/Jroc.Tests/Function/JavaScript/Function_CallableReflection_ProxyIntegration.js",
+          "tests/Jroc.Test262.Tests/built-ins/Proxy/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Proxy/getOwnPropertyDescriptor/ExecutionTests.cs"
+        ],
+        "notes": "Callable classification, typeof, descriptor traps/accessor invocation, own keys, prototype operations, isExtensible, and preventExtensions route through proxy internal operations. Extensibility trap results are checked against target state; descriptor-heavy invariants remain partial."
+      },
+      {
+        "clause": "10.5.12",
+        "feature": "Centralized proxy [[Call]] and [[Construct]]",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-proxy-object-internal-methods-and-internal-slots-call-thisargument-argumentslist",
+        "testScripts": [
+          "tests/Jroc.Tests/Function/JavaScript/Function_CallableReflection_ProxyIntegration.js",
+          "tests/Jroc.Test262.Tests/built-ins/Proxy/apply/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Proxy/construct/ExecutionTests.cs"
+        ],
+        "notes": "Proxy apply/construct traps invoke generated or adapted trap functions through CallableOperations with the correct handler this, target, thisArgument/argument list, and newTarget. Missing traps forward through centralized target call/construct; non-callable traps and non-object construct results throw TypeError."
+      },
+      {
         "clause": "10.5.7",
         "feature": "Proxy has trap (handler.has)",
         "status": "Supported with Limitations",
@@ -161,9 +185,9 @@
           "tests/Jroc.Tests/Proxy/JavaScript/Proxy_Revocable_ThrowsAfterRevoke.js",
           "tests/Jroc.Tests/Proxy/JavaScript/Proxy_Validation_EdgeCases.js"
         ],
-        "notes": "deleteProperty, ownKeys, getPrototypeOf, setPrototypeOf, apply, construct, and revocation now route through proxy handlers and throw once revoked. isExtensible, preventExtensions, getOwnProperty, defineProperty, and full spec invariant validation are still not modeled."
+        "notes": "deleteProperty, ownKeys, getPrototypeOf, setPrototypeOf, apply, construct, isExtensible, preventExtensions, getOwnPropertyDescriptor, defineProperty, and revocation route through proxy handlers and throw once revoked. Full invariant validation remains incomplete for some descriptor and seal/freeze combinations."
       }
     ]
   },
-  "intro": "JROC implements the core get/set/has proxy traps plus deleteProperty, ownKeys, apply, construct, getPrototypeOf, setPrototypeOf, and revocable proxies. Proxy support is still incomplete because descriptor-heavy traps and full Proxy invariant enforcement are not modeled yet."
+  "intro": "JROC implements get/set/has/deleteProperty/ownKeys, descriptor, prototype, extensibility, apply, construct, and revocation proxy operations. Trap invocation uses centralized callable dispatch across generated and adapted callables. Proxy support remains incomplete for some descriptor-heavy, seal/freeze, and full invariant cases."
 }

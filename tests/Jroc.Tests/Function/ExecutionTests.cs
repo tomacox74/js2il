@@ -295,6 +295,9 @@ namespace Jroc.Tests.Function
         public Task Function_BoundFunctionObject_UnifiedTargets() { var testName = nameof(Function_BoundFunctionObject_UnifiedTargets); return ExecutionTest(testName); }
 
         [Fact]
+        public Task Function_CallableReflection_ProxyIntegration() { var testName = nameof(Function_CallableReflection_ProxyIntegration); return ExecutionTest(testName); }
+
+        [Fact]
         public Task Function_CallableArchitecture_InferredSignatureBaseline() { var testName = nameof(Function_CallableArchitecture_InferredSignatureBaseline); return ExecutionTest(testName); }
 
         // ABI optimization tests: non-capturing functions should NOT have scopes parameter

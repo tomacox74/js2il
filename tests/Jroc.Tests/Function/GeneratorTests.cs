@@ -360,6 +360,13 @@ namespace Jroc.Tests.Function
             return GenerateTest(testName);
         }
 
+        [Fact]
+        public Task Function_CallableReflection_ProxyIntegration()
+        {
+            var testName = nameof(Function_CallableReflection_ProxyIntegration);
+            return GenerateTest(testName);
+        }
+
         // ABI optimization tests: non-capturing functions should NOT have scopes parameter
         [Fact]
         public Task Function_NoCapture_NoScopesParameter() { var testName = nameof(Function_NoCapture_NoScopesParameter); return GenerateTest(testName); }

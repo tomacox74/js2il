@@ -1,0 +1,3045 @@
+﻿// IL code: Function_CallableReflection_ProxyIntegration
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class private auto ansi beforefieldinit Modules.Function_CallableReflection_ProxyIntegration
+	extends [System.Runtime]System.Object
+{
+	// Nested Types
+	.class nested public auto ansi abstract sealed beforefieldinit target
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested public auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2e69
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+		.class nested public auto ansi sealed beforefieldinit FunctionObject_FunctionDeclaration_4F6BEF40_target
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2f1d
+				// Header size: 1
+				// Code size: 7 (0x7)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0006: ret
+			} // end of method FunctionObject_FunctionDeclaration_4F6BEF40_target::.ctor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_IsConstructor () cil managed 
+			{
+				// Method begins at RVA 0x2f25
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.1
+				IL_0001: ret
+			} // end of method FunctionObject_FunctionDeclaration_4F6BEF40_target::get_IsConstructor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_RequiresInvocationContext () cil managed 
+			{
+				// Method begins at RVA 0x2f28
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.1
+				IL_0001: ret
+			} // end of method FunctionObject_FunctionDeclaration_4F6BEF40_target::get_RequiresInvocationContext
+
+			.method family hidebysig virtual 
+				instance object CallCore (
+					object thisArgument,
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+				) cil managed 
+			{
+				// Method begins at RVA 0x2f2b
+				// Header size: 1
+				// Code size: 18 (0x12)
+				.maxstack 8
+
+				IL_0000: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
+				IL_0005: ldarg.2
+				IL_0006: ldc.i4.0
+				IL_0007: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+				IL_000c: call object Modules.Function_CallableReflection_ProxyIntegration/target::__js_call__(object, object)
+				IL_0011: ret
+			} // end of method FunctionObject_FunctionDeclaration_4F6BEF40_target::CallCore
+
+			.method family hidebysig virtual 
+				instance object ConstructBodyCore (
+					object receiver,
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
+					object newTarget
+				) cil managed 
+			{
+				// Method begins at RVA 0x2f3e
+				// Header size: 1
+				// Code size: 14 (0xe)
+				.maxstack 8
+
+				IL_0000: ldarg.3
+				IL_0001: ldarg.2
+				IL_0002: ldc.i4.0
+				IL_0003: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+				IL_0008: call object Modules.Function_CallableReflection_ProxyIntegration/target::__js_call__(object, object)
+				IL_000d: ret
+			} // end of method FunctionObject_FunctionDeclaration_4F6BEF40_target::ConstructBodyCore
+
+			.method family hidebysig virtual 
+				instance object ConstructCore (
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
+					object newTarget
+				) cil managed 
+			{
+				// Method begins at RVA 0x2f4d
+				// Header size: 1
+				// Code size: 14 (0xe)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: ldarg.1
+				IL_0002: ldobj [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments
+				IL_0007: ldarg.2
+				IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionObject(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments, object)
+				IL_000d: ret
+			} // end of method FunctionObject_FunctionDeclaration_4F6BEF40_target::ConstructCore
+
+		} // end of class FunctionObject_FunctionDeclaration_4F6BEF40_target
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				object newTarget,
+				object 'value'
+			) cil managed 
+		{
+			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
+				01 00 00 00 00 00 00 00
+			)
+			// Method begins at RVA 0x2cb4
+			// Header size: 12
+			// Code size: 31 (0x1f)
+			.maxstack 8
+			.locals init (
+				[0] object,
+				[1] object
+			)
+
+			IL_0000: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+			IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
+			IL_000a: ldstr "base"
+			IL_000f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0014: stloc.0
+			IL_0015: ldloc.0
+			IL_0016: ldarg.1
+			IL_0017: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_001c: stloc.1
+			IL_001d: ldloc.1
+			IL_001e: ret
+		} // end of method target::__js_call__
+
+	} // end of class target
+
+	.class nested public auto ansi abstract sealed beforefieldinit FunctionExpression_L10C7
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested public auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2e72
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+		.class nested public auto ansi sealed beforefieldinit FunctionObject_FunctionExpression_B1EFE281_L10C8
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+		{
+			// Fields
+			.field private initonly class Modules.Function_CallableReflection_ProxyIntegration/Scope _environment0_Function_CallableReflection_ProxyIntegration
+
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor (
+					class Modules.Function_CallableReflection_ProxyIntegration/Scope capture0
+				) cil managed 
+			{
+				// Method begins at RVA 0x2f5c
+				// Header size: 1
+				// Code size: 14 (0xe)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0006: ldarg.0
+				IL_0007: ldarg.1
+				IL_0008: stfld class Modules.Function_CallableReflection_ProxyIntegration/Scope Modules.Function_CallableReflection_ProxyIntegration/FunctionExpression_L10C7/FunctionObject_FunctionExpression_B1EFE281_L10C8::_environment0_Function_CallableReflection_ProxyIntegration
+				IL_000d: ret
+			} // end of method FunctionObject_FunctionExpression_B1EFE281_L10C8::.ctor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_IsConstructor () cil managed 
+			{
+				// Method begins at RVA 0x2f6b
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject_FunctionExpression_B1EFE281_L10C8::get_IsConstructor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_RequiresInvocationContext () cil managed 
+			{
+				// Method begins at RVA 0x2f6e
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject_FunctionExpression_B1EFE281_L10C8::get_RequiresInvocationContext
+
+			.method family hidebysig virtual 
+				instance object CallCore (
+					object thisArgument,
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+				) cil managed 
+			{
+				// Method begins at RVA 0x2f71
+				// Header size: 1
+				// Code size: 17 (0x11)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: ldfld class Modules.Function_CallableReflection_ProxyIntegration/Scope Modules.Function_CallableReflection_ProxyIntegration/FunctionExpression_L10C7/FunctionObject_FunctionExpression_B1EFE281_L10C8::_environment0_Function_CallableReflection_ProxyIntegration
+				IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
+				IL_000b: call object Modules.Function_CallableReflection_ProxyIntegration/FunctionExpression_L10C7::__js_call__(class Modules.Function_CallableReflection_ProxyIntegration/Scope, object)
+				IL_0010: ret
+			} // end of method FunctionObject_FunctionExpression_B1EFE281_L10C8::CallCore
+
+		} // end of class FunctionObject_FunctionExpression_B1EFE281_L10C8
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				class Modules.Function_CallableReflection_ProxyIntegration/Scope scope,
+				object newTarget
+			) cil managed 
+		{
+			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
+				01 00 01 00 00 00 01 00 54 08 1c 53 69 6e 67 6c
+				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
+				74 61 54 6f 6b 65 6e 0f 00 00 02
+			)
+			// Method begins at RVA 0x2cdf
+			// Header size: 1
+			// Code size: 7 (0x7)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: ldfld object Modules.Function_CallableReflection_ProxyIntegration/Scope::accessorValue
+			IL_0006: ret
+		} // end of method FunctionExpression_L10C7::__js_call__
+
+	} // end of class FunctionExpression_L10C7
+
+	.class nested public auto ansi abstract sealed beforefieldinit FunctionExpression_L13C7
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested public auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2e7b
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+		.class nested public auto ansi sealed beforefieldinit FunctionObject_FunctionExpression_47046CC4_L13C8
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+		{
+			// Fields
+			.field private initonly class Modules.Function_CallableReflection_ProxyIntegration/Scope _environment0_Function_CallableReflection_ProxyIntegration
+
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor (
+					class Modules.Function_CallableReflection_ProxyIntegration/Scope capture0
+				) cil managed 
+			{
+				// Method begins at RVA 0x2f83
+				// Header size: 1
+				// Code size: 14 (0xe)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0006: ldarg.0
+				IL_0007: ldarg.1
+				IL_0008: stfld class Modules.Function_CallableReflection_ProxyIntegration/Scope Modules.Function_CallableReflection_ProxyIntegration/FunctionExpression_L13C7/FunctionObject_FunctionExpression_47046CC4_L13C8::_environment0_Function_CallableReflection_ProxyIntegration
+				IL_000d: ret
+			} // end of method FunctionObject_FunctionExpression_47046CC4_L13C8::.ctor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_IsConstructor () cil managed 
+			{
+				// Method begins at RVA 0x2f92
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject_FunctionExpression_47046CC4_L13C8::get_IsConstructor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_RequiresInvocationContext () cil managed 
+			{
+				// Method begins at RVA 0x2f95
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject_FunctionExpression_47046CC4_L13C8::get_RequiresInvocationContext
+
+			.method family hidebysig virtual 
+				instance object CallCore (
+					object thisArgument,
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+				) cil managed 
+			{
+				// Method begins at RVA 0x2f98
+				// Header size: 1
+				// Code size: 24 (0x18)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: ldfld class Modules.Function_CallableReflection_ProxyIntegration/Scope Modules.Function_CallableReflection_ProxyIntegration/FunctionExpression_L13C7/FunctionObject_FunctionExpression_47046CC4_L13C8::_environment0_Function_CallableReflection_ProxyIntegration
+				IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
+				IL_000b: ldarg.2
+				IL_000c: ldc.i4.0
+				IL_000d: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+				IL_0012: call object Modules.Function_CallableReflection_ProxyIntegration/FunctionExpression_L13C7::__js_call__(class Modules.Function_CallableReflection_ProxyIntegration/Scope, object, object)
+				IL_0017: ret
+			} // end of method FunctionObject_FunctionExpression_47046CC4_L13C8::CallCore
+
+		} // end of class FunctionObject_FunctionExpression_47046CC4_L13C8
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				class Modules.Function_CallableReflection_ProxyIntegration/Scope scope,
+				object newTarget,
+				object 'value'
+			) cil managed 
+		{
+			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
+				01 00 01 00 00 00 01 00 54 08 1c 53 69 6e 67 6c
+				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
+				74 61 54 6f 6b 65 6e 0f 00 00 02
+			)
+			// Method begins at RVA 0x2ce7
+			// Header size: 1
+			// Code size: 9 (0x9)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: ldarg.2
+			IL_0002: stfld object Modules.Function_CallableReflection_ProxyIntegration/Scope::accessorValue
+			IL_0007: ldnull
+			IL_0008: ret
+		} // end of method FunctionExpression_L13C7::__js_call__
+
+	} // end of class FunctionExpression_L13C7
+
+	.class nested public auto ansi abstract sealed beforefieldinit prototypeFunction
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested public auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2e84
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+		.class nested public auto ansi sealed beforefieldinit FunctionObject_FunctionDeclaration_5909AFB5_prototypeFunction
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2fb1
+				// Header size: 1
+				// Code size: 7 (0x7)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0006: ret
+			} // end of method FunctionObject_FunctionDeclaration_5909AFB5_prototypeFunction::.ctor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_IsConstructor () cil managed 
+			{
+				// Method begins at RVA 0x2fb9
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.1
+				IL_0001: ret
+			} // end of method FunctionObject_FunctionDeclaration_5909AFB5_prototypeFunction::get_IsConstructor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_RequiresInvocationContext () cil managed 
+			{
+				// Method begins at RVA 0x2fbc
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject_FunctionDeclaration_5909AFB5_prototypeFunction::get_RequiresInvocationContext
+
+			.method family hidebysig virtual 
+				instance object CallCore (
+					object thisArgument,
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+				) cil managed 
+			{
+				// Method begins at RVA 0x2fbf
+				// Header size: 1
+				// Code size: 11 (0xb)
+				.maxstack 8
+
+				IL_0000: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
+				IL_0005: call object Modules.Function_CallableReflection_ProxyIntegration/prototypeFunction::__js_call__(object)
+				IL_000a: ret
+			} // end of method FunctionObject_FunctionDeclaration_5909AFB5_prototypeFunction::CallCore
+
+			.method family hidebysig virtual 
+				instance object ConstructBodyCore (
+					object receiver,
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
+					object newTarget
+				) cil managed 
+			{
+				// Method begins at RVA 0x2fcb
+				// Header size: 1
+				// Code size: 7 (0x7)
+				.maxstack 8
+
+				IL_0000: ldarg.3
+				IL_0001: call object Modules.Function_CallableReflection_ProxyIntegration/prototypeFunction::__js_call__(object)
+				IL_0006: ret
+			} // end of method FunctionObject_FunctionDeclaration_5909AFB5_prototypeFunction::ConstructBodyCore
+
+			.method family hidebysig virtual 
+				instance object ConstructCore (
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
+					object newTarget
+				) cil managed 
+			{
+				// Method begins at RVA 0x2fd3
+				// Header size: 1
+				// Code size: 14 (0xe)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: ldarg.1
+				IL_0002: ldobj [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments
+				IL_0007: ldarg.2
+				IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionObject(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments, object)
+				IL_000d: ret
+			} // end of method FunctionObject_FunctionDeclaration_5909AFB5_prototypeFunction::ConstructCore
+
+		} // end of class FunctionObject_FunctionDeclaration_5909AFB5_prototypeFunction
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				object newTarget
+			) cil managed 
+		{
+			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
+				01 00 00 00 00 00 00 00
+			)
+			// Method begins at RVA 0x2cf1
+			// Header size: 1
+			// Code size: 2 (0x2)
+			.maxstack 8
+
+			IL_0000: ldnull
+			IL_0001: ret
+		} // end of method prototypeFunction::__js_call__
+
+	} // end of class prototypeFunction
+
+	.class nested public auto ansi abstract sealed beforefieldinit FunctionExpression_applyHandler
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested public auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2e8d
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+		.class nested public auto ansi sealed beforefieldinit FunctionObject_FunctionExpression_171A4342_L54C10
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+		{
+			// Fields
+			.field private initonly class Modules.Function_CallableReflection_ProxyIntegration/Scope _environment0_Function_CallableReflection_ProxyIntegration
+
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor (
+					class Modules.Function_CallableReflection_ProxyIntegration/Scope capture0
+				) cil managed 
+			{
+				// Method begins at RVA 0x2fe2
+				// Header size: 1
+				// Code size: 14 (0xe)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0006: ldarg.0
+				IL_0007: ldarg.1
+				IL_0008: stfld class Modules.Function_CallableReflection_ProxyIntegration/Scope Modules.Function_CallableReflection_ProxyIntegration/FunctionExpression_applyHandler/FunctionObject_FunctionExpression_171A4342_L54C10::_environment0_Function_CallableReflection_ProxyIntegration
+				IL_000d: ret
+			} // end of method FunctionObject_FunctionExpression_171A4342_L54C10::.ctor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_IsConstructor () cil managed 
+			{
+				// Method begins at RVA 0x2ff1
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject_FunctionExpression_171A4342_L54C10::get_IsConstructor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_RequiresInvocationContext () cil managed 
+			{
+				// Method begins at RVA 0x2ff4
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.1
+				IL_0001: ret
+			} // end of method FunctionObject_FunctionExpression_171A4342_L54C10::get_RequiresInvocationContext
+
+			.method family hidebysig virtual 
+				instance object CallCore (
+					object thisArgument,
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+				) cil managed 
+			{
+				// Method begins at RVA 0x2ff7
+				// Header size: 1
+				// Code size: 38 (0x26)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: ldfld class Modules.Function_CallableReflection_ProxyIntegration/Scope Modules.Function_CallableReflection_ProxyIntegration/FunctionExpression_applyHandler/FunctionObject_FunctionExpression_171A4342_L54C10::_environment0_Function_CallableReflection_ProxyIntegration
+				IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
+				IL_000b: ldarg.2
+				IL_000c: ldc.i4.0
+				IL_000d: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+				IL_0012: ldarg.2
+				IL_0013: ldc.i4.1
+				IL_0014: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+				IL_0019: ldarg.2
+				IL_001a: ldc.i4.2
+				IL_001b: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+				IL_0020: call object Modules.Function_CallableReflection_ProxyIntegration/FunctionExpression_applyHandler::__js_call__(class Modules.Function_CallableReflection_ProxyIntegration/Scope, object, object, object, object)
+				IL_0025: ret
+			} // end of method FunctionObject_FunctionExpression_171A4342_L54C10::CallCore
+
+		} // end of class FunctionObject_FunctionExpression_171A4342_L54C10
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				class Modules.Function_CallableReflection_ProxyIntegration/Scope scope,
+				object newTarget,
+				object actualTarget,
+				object thisArgument,
+				object argumentsList
+			) cil managed 
+		{
+			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
+				01 00 01 00 00 00 01 00 54 08 1c 53 69 6e 67 6c
+				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
+				74 61 54 6f 6b 65 6e 0f 00 00 02
+			)
+			// Method begins at RVA 0x2cf4
+			// Header size: 12
+			// Code size: 150 (0x96)
+			.maxstack 8
+			.locals init (
+				[0] object,
+				[1] bool,
+				[2] bool,
+				[3] object,
+				[4] class [JavaScriptRuntime]JavaScriptRuntime.Array,
+				[5] string
+			)
+
+			IL_0000: ldarg.0
+			IL_0001: ldfld object Modules.Function_CallableReflection_ProxyIntegration/Scope::target
+			IL_0006: stloc.0
+			IL_0007: ldarg.2
+			IL_0008: ldloc.0
+			IL_0009: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+			IL_000e: stloc.1
+			IL_000f: ldarg.0
+			IL_0010: ldfld object Modules.Function_CallableReflection_ProxyIntegration/Scope::applyHandler
+			IL_0015: ldstr "Cannot access 'applyHandler' before initialization"
+			IL_001a: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_001f: stloc.0
+			IL_0020: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+			IL_0025: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
+			IL_002a: ldloc.0
+			IL_002b: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+			IL_0030: stloc.2
+			IL_0031: ldarg.3
+			IL_0032: ldstr "base"
+			IL_0037: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_003c: stloc.0
+			IL_003d: ldarg.s argumentsList
+			IL_003f: ldc.r8 0.0
+			IL_0048: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+			IL_004d: stloc.3
+			IL_004e: ldc.i4.4
+			IL_004f: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+			IL_0054: dup
+			IL_0055: ldloc.1
+			IL_0056: box [System.Runtime]System.Boolean
+			IL_005b: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+			IL_0060: dup
+			IL_0061: ldloc.2
+			IL_0062: box [System.Runtime]System.Boolean
+			IL_0067: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+			IL_006c: dup
+			IL_006d: ldloc.0
+			IL_006e: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+			IL_0073: dup
+			IL_0074: ldloc.3
+			IL_0075: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+			IL_007a: stloc.s 4
+			IL_007c: ldloc.s 4
+			IL_007e: ldc.i4.1
+			IL_007f: newarr [System.Runtime]System.Object
+			IL_0084: dup
+			IL_0085: ldc.i4.0
+			IL_0086: ldstr ":"
+			IL_008b: stelem.ref
+			IL_008c: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
+			IL_0091: stloc.s 5
+			IL_0093: ldloc.s 5
+			IL_0095: ret
+		} // end of method FunctionExpression_applyHandler::__js_call__
+
+	} // end of class FunctionExpression_applyHandler
+
+	.class nested public auto ansi abstract sealed beforefieldinit Constructor
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested public auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2e96
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+		.class nested public auto ansi sealed beforefieldinit FunctionObject_FunctionDeclaration_E01112C7_Constructor
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x301e
+				// Header size: 1
+				// Code size: 7 (0x7)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0006: ret
+			} // end of method FunctionObject_FunctionDeclaration_E01112C7_Constructor::.ctor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_IsConstructor () cil managed 
+			{
+				// Method begins at RVA 0x3026
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.1
+				IL_0001: ret
+			} // end of method FunctionObject_FunctionDeclaration_E01112C7_Constructor::get_IsConstructor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_RequiresInvocationContext () cil managed 
+			{
+				// Method begins at RVA 0x3029
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.1
+				IL_0001: ret
+			} // end of method FunctionObject_FunctionDeclaration_E01112C7_Constructor::get_RequiresInvocationContext
+
+			.method family hidebysig virtual 
+				instance object CallCore (
+					object thisArgument,
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+				) cil managed 
+			{
+				// Method begins at RVA 0x302c
+				// Header size: 1
+				// Code size: 18 (0x12)
+				.maxstack 8
+
+				IL_0000: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
+				IL_0005: ldarg.2
+				IL_0006: ldc.i4.0
+				IL_0007: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+				IL_000c: call object Modules.Function_CallableReflection_ProxyIntegration/Constructor::__js_call__(object, object)
+				IL_0011: ret
+			} // end of method FunctionObject_FunctionDeclaration_E01112C7_Constructor::CallCore
+
+			.method family hidebysig virtual 
+				instance object ConstructBodyCore (
+					object receiver,
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
+					object newTarget
+				) cil managed 
+			{
+				// Method begins at RVA 0x303f
+				// Header size: 1
+				// Code size: 14 (0xe)
+				.maxstack 8
+
+				IL_0000: ldarg.3
+				IL_0001: ldarg.2
+				IL_0002: ldc.i4.0
+				IL_0003: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+				IL_0008: call object Modules.Function_CallableReflection_ProxyIntegration/Constructor::__js_call__(object, object)
+				IL_000d: ret
+			} // end of method FunctionObject_FunctionDeclaration_E01112C7_Constructor::ConstructBodyCore
+
+			.method family hidebysig virtual 
+				instance object ConstructCore (
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
+					object newTarget
+				) cil managed 
+			{
+				// Method begins at RVA 0x304e
+				// Header size: 1
+				// Code size: 14 (0xe)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: ldarg.1
+				IL_0002: ldobj [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments
+				IL_0007: ldarg.2
+				IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionObject(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments, object)
+				IL_000d: ret
+			} // end of method FunctionObject_FunctionDeclaration_E01112C7_Constructor::ConstructCore
+
+		} // end of class FunctionObject_FunctionDeclaration_E01112C7_Constructor
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				object newTarget,
+				object 'value'
+			) cil managed 
+		{
+			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
+				01 00 00 00 00 00 00 00
+			)
+			// Method begins at RVA 0x2d96
+			// Header size: 1
+			// Code size: 25 (0x19)
+			.maxstack 8
+
+			IL_0000: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+			IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
+			IL_000a: ldstr "value"
+			IL_000f: ldarg.1
+			IL_0010: ldc.i4.1
+			IL_0011: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
+			IL_0016: pop
+			IL_0017: ldnull
+			IL_0018: ret
+		} // end of method Constructor::__js_call__
+
+	} // end of class Constructor
+
+	.class nested public auto ansi abstract sealed beforefieldinit FunctionExpression_constructHandler
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested public auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2e9f
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+		.class nested public auto ansi sealed beforefieldinit FunctionObject_FunctionExpression_7F246675_L80C14
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+		{
+			// Fields
+			.field private initonly class Modules.Function_CallableReflection_ProxyIntegration/Scope _environment0_Function_CallableReflection_ProxyIntegration
+
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor (
+					class Modules.Function_CallableReflection_ProxyIntegration/Scope capture0
+				) cil managed 
+			{
+				// Method begins at RVA 0x305d
+				// Header size: 1
+				// Code size: 14 (0xe)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0006: ldarg.0
+				IL_0007: ldarg.1
+				IL_0008: stfld class Modules.Function_CallableReflection_ProxyIntegration/Scope Modules.Function_CallableReflection_ProxyIntegration/FunctionExpression_constructHandler/FunctionObject_FunctionExpression_7F246675_L80C14::_environment0_Function_CallableReflection_ProxyIntegration
+				IL_000d: ret
+			} // end of method FunctionObject_FunctionExpression_7F246675_L80C14::.ctor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_IsConstructor () cil managed 
+			{
+				// Method begins at RVA 0x306c
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject_FunctionExpression_7F246675_L80C14::get_IsConstructor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_RequiresInvocationContext () cil managed 
+			{
+				// Method begins at RVA 0x306f
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject_FunctionExpression_7F246675_L80C14::get_RequiresInvocationContext
+
+			.method family hidebysig virtual 
+				instance object CallCore (
+					object thisArgument,
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+				) cil managed 
+			{
+				// Method begins at RVA 0x3072
+				// Header size: 1
+				// Code size: 38 (0x26)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: ldfld class Modules.Function_CallableReflection_ProxyIntegration/Scope Modules.Function_CallableReflection_ProxyIntegration/FunctionExpression_constructHandler/FunctionObject_FunctionExpression_7F246675_L80C14::_environment0_Function_CallableReflection_ProxyIntegration
+				IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
+				IL_000b: ldarg.2
+				IL_000c: ldc.i4.0
+				IL_000d: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+				IL_0012: ldarg.2
+				IL_0013: ldc.i4.1
+				IL_0014: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+				IL_0019: ldarg.2
+				IL_001a: ldc.i4.2
+				IL_001b: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+				IL_0020: call object Modules.Function_CallableReflection_ProxyIntegration/FunctionExpression_constructHandler::__js_call__(class Modules.Function_CallableReflection_ProxyIntegration/Scope, object, object, object, object)
+				IL_0025: ret
+			} // end of method FunctionObject_FunctionExpression_7F246675_L80C14::CallCore
+
+		} // end of class FunctionObject_FunctionExpression_7F246675_L80C14
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				class Modules.Function_CallableReflection_ProxyIntegration/Scope scope,
+				object newTarget,
+				object actualTarget,
+				object argumentsList,
+				object newTarget
+			) cil managed 
+		{
+			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
+				01 00 01 00 00 00 01 00 54 08 1c 53 69 6e 67 6c
+				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
+				74 61 54 6f 6b 65 6e 0f 00 00 02
+			)
+			// Method begins at RVA 0x2db0
+			// Header size: 12
+			// Code size: 98 (0x62)
+			.maxstack 8
+			.locals init (
+				[0] object,
+				[1] bool,
+				[2] class [JavaScriptRuntime]JavaScriptRuntime.Proxy,
+				[3] bool,
+				[4] class [JavaScriptRuntime]JavaScriptRuntime.JsObject
+			)
+
+			IL_0000: ldarg.0
+			IL_0001: ldfld object Modules.Function_CallableReflection_ProxyIntegration/Scope::Constructor
+			IL_0006: stloc.0
+			IL_0007: ldarg.2
+			IL_0008: ldloc.0
+			IL_0009: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+			IL_000e: stloc.1
+			IL_000f: ldarg.3
+			IL_0010: ldc.r8 0.0
+			IL_0019: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+			IL_001e: stloc.0
+			IL_001f: ldarg.0
+			IL_0020: ldfld object Modules.Function_CallableReflection_ProxyIntegration/Scope::constructProxy
+			IL_0025: castclass [JavaScriptRuntime]JavaScriptRuntime.Proxy
+			IL_002a: stloc.2
+			IL_002b: ldarg.s newTarget
+			IL_002d: ldloc.2
+			IL_002e: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+			IL_0033: stloc.3
+			IL_0034: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+			IL_0039: dup
+			IL_003a: ldstr "targetMatches"
+			IL_003f: ldloc.1
+			IL_0040: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+			IL_0045: dup
+			IL_0046: ldstr "argument"
+			IL_004b: ldloc.0
+			IL_004c: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+			IL_0051: dup
+			IL_0052: ldstr "newTargetMatches"
+			IL_0057: ldloc.3
+			IL_0058: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+			IL_005d: stloc.s 4
+			IL_005f: ldloc.s 4
+			IL_0061: ret
+		} // end of method FunctionExpression_constructHandler::__js_call__
+
+	} // end of class FunctionExpression_constructHandler
+
+	.class nested public auto ansi abstract sealed beforefieldinit FunctionExpression_invalidConstructProxy
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested public auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2ea8
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+		.class nested public auto ansi sealed beforefieldinit FunctionObject_FunctionExpression_F84AC1B6_L98C14
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x3099
+				// Header size: 1
+				// Code size: 7 (0x7)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0006: ret
+			} // end of method FunctionObject_FunctionExpression_F84AC1B6_L98C14::.ctor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_IsConstructor () cil managed 
+			{
+				// Method begins at RVA 0x30a1
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject_FunctionExpression_F84AC1B6_L98C14::get_IsConstructor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_RequiresInvocationContext () cil managed 
+			{
+				// Method begins at RVA 0x30a4
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject_FunctionExpression_F84AC1B6_L98C14::get_RequiresInvocationContext
+
+			.method family hidebysig virtual 
+				instance object CallCore (
+					object thisArgument,
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+				) cil managed 
+			{
+				// Method begins at RVA 0x30a7
+				// Header size: 1
+				// Code size: 16 (0x10)
+				.maxstack 8
+
+				IL_0000: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
+				IL_0005: call float64 Modules.Function_CallableReflection_ProxyIntegration/FunctionExpression_invalidConstructProxy::__js_call__(object)
+				IL_000a: box [System.Runtime]System.Double
+				IL_000f: ret
+			} // end of method FunctionObject_FunctionExpression_F84AC1B6_L98C14::CallCore
+
+		} // end of class FunctionObject_FunctionExpression_F84AC1B6_L98C14
+
+
+		// Methods
+		.method public hidebysig static 
+			float64 __js_call__ (
+				object newTarget
+			) cil managed 
+		{
+			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
+				01 00 00 00 00 00 00 00
+			)
+			// Method begins at RVA 0x2e1e
+			// Header size: 1
+			// Code size: 10 (0xa)
+			.maxstack 8
+
+			IL_0000: ldc.r8 1
+			IL_0009: ret
+		} // end of method FunctionExpression_invalidConstructProxy::__js_call__
+
+	} // end of class FunctionExpression_invalidConstructProxy
+
+	.class nested public auto ansi abstract sealed beforefieldinit FunctionExpression_integrityHandler
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested public auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2ed5
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+		.class nested public auto ansi sealed beforefieldinit FunctionObject_FunctionExpression_A54C4041_L120C17
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x30b8
+				// Header size: 1
+				// Code size: 7 (0x7)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0006: ret
+			} // end of method FunctionObject_FunctionExpression_A54C4041_L120C17::.ctor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_IsConstructor () cil managed 
+			{
+				// Method begins at RVA 0x30c0
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject_FunctionExpression_A54C4041_L120C17::get_IsConstructor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_RequiresInvocationContext () cil managed 
+			{
+				// Method begins at RVA 0x30c3
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject_FunctionExpression_A54C4041_L120C17::get_RequiresInvocationContext
+
+			.method family hidebysig virtual 
+				instance object CallCore (
+					object thisArgument,
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+				) cil managed 
+			{
+				// Method begins at RVA 0x30c6
+				// Header size: 1
+				// Code size: 18 (0x12)
+				.maxstack 8
+
+				IL_0000: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
+				IL_0005: ldarg.2
+				IL_0006: ldc.i4.0
+				IL_0007: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+				IL_000c: call object Modules.Function_CallableReflection_ProxyIntegration/FunctionExpression_integrityHandler::__js_call__(object, object)
+				IL_0011: ret
+			} // end of method FunctionObject_FunctionExpression_A54C4041_L120C17::CallCore
+
+		} // end of class FunctionObject_FunctionExpression_A54C4041_L120C17
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				object newTarget,
+				object actualTarget
+			) cil managed 
+		{
+			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
+				01 00 00 00 00 00 00 00
+			)
+			// Method begins at RVA 0x2e29
+			// Header size: 1
+			// Code size: 12 (0xc)
+			.maxstack 8
+
+			IL_0000: ldarg.1
+			IL_0001: call bool [JavaScriptRuntime]JavaScriptRuntime.Object::isExtensible(object)
+			IL_0006: box [System.Runtime]System.Boolean
+			IL_000b: ret
+		} // end of method FunctionExpression_integrityHandler::__js_call__
+
+	} // end of class FunctionExpression_integrityHandler
+
+	.class nested public auto ansi abstract sealed beforefieldinit FunctionExpression_integrityHandler_L123C21
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested public auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2ede
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+		.class nested public auto ansi sealed beforefieldinit FunctionObject_FunctionExpression_0158934E_L123C22
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x30d9
+				// Header size: 1
+				// Code size: 7 (0x7)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0006: ret
+			} // end of method FunctionObject_FunctionExpression_0158934E_L123C22::.ctor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_IsConstructor () cil managed 
+			{
+				// Method begins at RVA 0x30e1
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject_FunctionExpression_0158934E_L123C22::get_IsConstructor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_RequiresInvocationContext () cil managed 
+			{
+				// Method begins at RVA 0x30e4
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject_FunctionExpression_0158934E_L123C22::get_RequiresInvocationContext
+
+			.method family hidebysig virtual 
+				instance object CallCore (
+					object thisArgument,
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+				) cil managed 
+			{
+				// Method begins at RVA 0x30e7
+				// Header size: 1
+				// Code size: 18 (0x12)
+				.maxstack 8
+
+				IL_0000: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
+				IL_0005: ldarg.2
+				IL_0006: ldc.i4.0
+				IL_0007: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+				IL_000c: call object Modules.Function_CallableReflection_ProxyIntegration/FunctionExpression_integrityHandler_L123C21::__js_call__(object, object)
+				IL_0011: ret
+			} // end of method FunctionObject_FunctionExpression_0158934E_L123C22::CallCore
+
+		} // end of class FunctionObject_FunctionExpression_0158934E_L123C22
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				object newTarget,
+				object actualTarget
+			) cil managed 
+		{
+			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
+				01 00 00 00 00 00 00 00
+			)
+			// Method begins at RVA 0x2e36
+			// Header size: 1
+			// Code size: 14 (0xe)
+			.maxstack 8
+
+			IL_0000: ldarg.1
+			IL_0001: call object [JavaScriptRuntime]JavaScriptRuntime.Object::preventExtensions(object)
+			IL_0006: pop
+			IL_0007: ldc.i4.1
+			IL_0008: box [System.Runtime]System.Boolean
+			IL_000d: ret
+		} // end of method FunctionExpression_integrityHandler_L123C21::__js_call__
+
+	} // end of class FunctionExpression_integrityHandler_L123C21
+
+	.class nested public auto ansi abstract sealed beforefieldinit FunctionExpression_L139C52
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested public auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2ef0
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+		.class nested public auto ansi sealed beforefieldinit FunctionObject_FunctionExpression_456E4DC3_L139C53
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x30fa
+				// Header size: 1
+				// Code size: 7 (0x7)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0006: ret
+			} // end of method FunctionObject_FunctionExpression_456E4DC3_L139C53::.ctor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_IsConstructor () cil managed 
+			{
+				// Method begins at RVA 0x3102
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject_FunctionExpression_456E4DC3_L139C53::get_IsConstructor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_RequiresInvocationContext () cil managed 
+			{
+				// Method begins at RVA 0x3105
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject_FunctionExpression_456E4DC3_L139C53::get_RequiresInvocationContext
+
+			.method family hidebysig virtual 
+				instance object CallCore (
+					object thisArgument,
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+				) cil managed 
+			{
+				// Method begins at RVA 0x3108
+				// Header size: 1
+				// Code size: 11 (0xb)
+				.maxstack 8
+
+				IL_0000: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
+				IL_0005: call object Modules.Function_CallableReflection_ProxyIntegration/FunctionExpression_L139C52::__js_call__(object)
+				IL_000a: ret
+			} // end of method FunctionObject_FunctionExpression_456E4DC3_L139C53::CallCore
+
+		} // end of class FunctionObject_FunctionExpression_456E4DC3_L139C53
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				object newTarget
+			) cil managed 
+		{
+			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
+				01 00 00 00 00 00 00 00
+			)
+			// Method begins at RVA 0x2e45
+			// Header size: 1
+			// Code size: 7 (0x7)
+			.maxstack 8
+
+			IL_0000: ldc.i4.0
+			IL_0001: box [System.Runtime]System.Boolean
+			IL_0006: ret
+		} // end of method FunctionExpression_L139C52::__js_call__
+
+	} // end of class FunctionExpression_L139C52
+
+	.class nested public auto ansi abstract sealed beforefieldinit FunctionExpression_L145C62
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested public auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2f0b
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+		.class nested public auto ansi sealed beforefieldinit FunctionObject_FunctionExpression_F90B20CC_L145C63
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x3114
+				// Header size: 1
+				// Code size: 7 (0x7)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0006: ret
+			} // end of method FunctionObject_FunctionExpression_F90B20CC_L145C63::.ctor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_IsConstructor () cil managed 
+			{
+				// Method begins at RVA 0x311c
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject_FunctionExpression_F90B20CC_L145C63::get_IsConstructor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_RequiresInvocationContext () cil managed 
+			{
+				// Method begins at RVA 0x311f
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject_FunctionExpression_F90B20CC_L145C63::get_RequiresInvocationContext
+
+			.method family hidebysig virtual 
+				instance object CallCore (
+					object thisArgument,
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+				) cil managed 
+			{
+				// Method begins at RVA 0x3122
+				// Header size: 1
+				// Code size: 11 (0xb)
+				.maxstack 8
+
+				IL_0000: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
+				IL_0005: call object Modules.Function_CallableReflection_ProxyIntegration/FunctionExpression_L145C62::__js_call__(object)
+				IL_000a: ret
+			} // end of method FunctionObject_FunctionExpression_F90B20CC_L145C63::CallCore
+
+		} // end of class FunctionObject_FunctionExpression_F90B20CC_L145C63
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				object newTarget
+			) cil managed 
+		{
+			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
+				01 00 00 00 00 00 00 00
+			)
+			// Method begins at RVA 0x2e4d
+			// Header size: 1
+			// Code size: 7 (0x7)
+			.maxstack 8
+
+			IL_0000: ldc.i4.1
+			IL_0001: box [System.Runtime]System.Boolean
+			IL_0006: ret
+		} // end of method FunctionExpression_L145C62::__js_call__
+
+	} // end of class FunctionExpression_L145C62
+
+	.class nested public auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
+		.custom instance void [System.Runtime]System.Diagnostics.DebuggerDisplayAttribute::.ctor(string) = (
+			01 00 80 b4 53 63 6f 70 65 20 74 61 72 67 65 74
+			3d 7b 74 61 72 67 65 74 7d 2c 20 61 63 63 65 73
+			73 6f 72 56 61 6c 75 65 3d 7b 61 63 63 65 73 73
+			6f 72 56 61 6c 75 65 7d 2c 20 70 72 6f 74 6f 74
+			79 70 65 46 75 6e 63 74 69 6f 6e 3d 7b 70 72 6f
+			74 6f 74 79 70 65 46 75 6e 63 74 69 6f 6e 7d 2c
+			20 61 70 70 6c 79 48 61 6e 64 6c 65 72 3d 7b 61
+			70 70 6c 79 48 61 6e 64 6c 65 72 7d 2c 20 43 6f
+			6e 73 74 72 75 63 74 6f 72 3d 7b 43 6f 6e 73 74
+			72 75 63 74 6f 72 7d 2c 20 63 6f 6e 73 74 72 75
+			63 74 50 72 6f 78 79 3d 7b 63 6f 6e 73 74 72 75
+			63 74 50 72 6f 78 79 7d 00 00
+		)
+		// Nested Types
+		.class nested public auto ansi beforefieldinit Block_L103C4
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2eb1
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Block_L103C4::.ctor
+
+		} // end of class Block_L103C4
+
+		.class nested public auto ansi beforefieldinit Block_L105C16
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2eba
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Block_L105C16::.ctor
+
+		} // end of class Block_L105C16
+
+		.class nested public auto ansi beforefieldinit Block_L111C4
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2ec3
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Block_L111C4::.ctor
+
+		} // end of class Block_L111C4
+
+		.class nested public auto ansi beforefieldinit Block_L113C16
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2ecc
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Block_L113C16::.ctor
+
+		} // end of class Block_L113C16
+
+		.class nested public auto ansi beforefieldinit Block_L138C4
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2ee7
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Block_L138C4::.ctor
+
+		} // end of class Block_L138C4
+
+		.class nested public auto ansi beforefieldinit Block_L140C16
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2ef9
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Block_L140C16::.ctor
+
+		} // end of class Block_L140C16
+
+		.class nested public auto ansi beforefieldinit Block_L144C4
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2f02
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Block_L144C4::.ctor
+
+		} // end of class Block_L144C4
+
+		.class nested public auto ansi beforefieldinit Block_L146C16
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2f14
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Block_L146C16::.ctor
+
+		} // end of class Block_L146C16
+
+
+		// Fields
+		.field public object target
+		.field public object accessorValue
+		.field public object prototypeFunction
+		.field public object applyHandler
+		.field public object Constructor
+		.field public object constructProxy
+
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x2e55
+			// Header size: 1
+			// Code size: 19 (0x13)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: ldarg.0
+			IL_0007: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+			IL_000c: stfld object Modules.Function_CallableReflection_ProxyIntegration/Scope::applyHandler
+			IL_0011: nop
+			IL_0012: ret
+		} // end of method Scope::.ctor
+
+	} // end of class Scope
+
+
+	// Methods
+	.method public hidebysig static 
+		void __js_module_init__ (
+			object exports,
+			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			object module,
+			string __filename,
+			string __dirname
+		) cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 12
+		// Code size: 3105 (0xc21)
+		.maxstack 10
+		.locals init (
+			[0] class Modules.Function_CallableReflection_ProxyIntegration/Scope,
+			[1] class Modules.Function_CallableReflection_ProxyIntegration/prototypeFunction/FunctionObject_FunctionDeclaration_5909AFB5_prototypeFunction,
+			[2] object,
+			[3] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
+			[4] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
+			[5] class [JavaScriptRuntime]JavaScriptRuntime.Proxy,
+			[6] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
+			[7] class [JavaScriptRuntime]JavaScriptRuntime.Proxy,
+			[8] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
+			[9] object,
+			[10] class [JavaScriptRuntime]JavaScriptRuntime.Proxy,
+			[11] object,
+			[12] class [System.Runtime]System.Exception,
+			[13] object,
+			[14] object,
+			[15] class [JavaScriptRuntime]JavaScriptRuntime.Proxy,
+			[16] object,
+			[17] class [System.Runtime]System.Exception,
+			[18] object,
+			[19] object,
+			[20] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
+			[21] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
+			[22] class [JavaScriptRuntime]JavaScriptRuntime.Proxy,
+			[23] bool,
+			[24] object,
+			[25] class [System.Runtime]System.Exception,
+			[26] object,
+			[27] object,
+			[28] object,
+			[29] class [System.Runtime]System.Exception,
+			[30] object,
+			[31] object,
+			[32] object,
+			[33] object[],
+			[34] class Modules.Function_CallableReflection_ProxyIntegration/target/FunctionObject_FunctionDeclaration_4F6BEF40_target,
+			[35] class Modules.Function_CallableReflection_ProxyIntegration/Constructor/FunctionObject_FunctionDeclaration_E01112C7_Constructor,
+			[36] object,
+			[37] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
+			[38] class Modules.Function_CallableReflection_ProxyIntegration/FunctionExpression_L10C7/FunctionObject_FunctionExpression_B1EFE281_L10C8,
+			[39] class Modules.Function_CallableReflection_ProxyIntegration/FunctionExpression_L13C7/FunctionObject_FunctionExpression_47046CC4_L13C8,
+			[40] object,
+			[41] string,
+			[42] object,
+			[43] bool,
+			[44] object,
+			[45] object,
+			[46] object,
+			[47] class Modules.Function_CallableReflection_ProxyIntegration/FunctionExpression_applyHandler/FunctionObject_FunctionExpression_171A4342_L54C10,
+			[48] class Modules.Function_CallableReflection_ProxyIntegration/FunctionExpression_constructHandler/FunctionObject_FunctionExpression_7F246675_L80C14,
+			[49] class [JavaScriptRuntime]JavaScriptRuntime.Proxy,
+			[50] class Modules.Function_CallableReflection_ProxyIntegration/FunctionExpression_invalidConstructProxy/FunctionObject_FunctionExpression_F84AC1B6_L98C14,
+			[51] class Modules.Function_CallableReflection_ProxyIntegration/FunctionExpression_integrityHandler/FunctionObject_FunctionExpression_A54C4041_L120C17,
+			[52] class Modules.Function_CallableReflection_ProxyIntegration/FunctionExpression_integrityHandler_L123C21/FunctionObject_FunctionExpression_0158934E_L123C22,
+			[53] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
+			[54] class Modules.Function_CallableReflection_ProxyIntegration/FunctionExpression_L139C52/FunctionObject_FunctionExpression_456E4DC3_L139C53,
+			[55] class Modules.Function_CallableReflection_ProxyIntegration/FunctionExpression_L145C62/FunctionObject_FunctionExpression_F90B20CC_L145C63
+		)
+
+		IL_0000: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::Enable()
+		IL_0005: newobj instance void Modules.Function_CallableReflection_ProxyIntegration/Scope::.ctor()
+		IL_000a: stloc.0
+		IL_000b: ldc.i4.1
+		IL_000c: newarr [System.Runtime]System.Object
+		IL_0011: dup
+		IL_0012: ldc.i4.0
+		IL_0013: ldloc.0
+		IL_0014: stelem.ref
+		IL_0015: stloc.s 33
+		IL_0017: newobj instance void Modules.Function_CallableReflection_ProxyIntegration/target/FunctionObject_FunctionDeclaration_4F6BEF40_target::.ctor()
+		IL_001c: ldc.i4.1
+		IL_001d: conv.r8
+		IL_001e: ldstr "target"
+		IL_0023: ldc.i4.1
+		IL_0024: ldc.i4.1
+		IL_0025: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Function_CallableReflection_ProxyIntegration/target/FunctionObject_FunctionDeclaration_4F6BEF40_target>(!!0, float64, string, bool, bool)
+		IL_002a: stloc.s 34
+		IL_002c: ldloc.0
+		IL_002d: ldloc.s 34
+		IL_002f: stfld object Modules.Function_CallableReflection_ProxyIntegration/Scope::target
+		IL_0034: ldc.i4.1
+		IL_0035: newarr [System.Runtime]System.Object
+		IL_003a: dup
+		IL_003b: ldc.i4.0
+		IL_003c: ldloc.0
+		IL_003d: stelem.ref
+		IL_003e: stloc.s 33
+		IL_0040: newobj instance void Modules.Function_CallableReflection_ProxyIntegration/prototypeFunction/FunctionObject_FunctionDeclaration_5909AFB5_prototypeFunction::.ctor()
+		IL_0045: ldc.i4.0
+		IL_0046: conv.r8
+		IL_0047: ldstr "prototypeFunction"
+		IL_004c: ldc.i4.0
+		IL_004d: ldc.i4.1
+		IL_004e: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Function_CallableReflection_ProxyIntegration/prototypeFunction/FunctionObject_FunctionDeclaration_5909AFB5_prototypeFunction>(!!0, float64, string, bool, bool)
+		IL_0053: stloc.1
+		IL_0054: ldc.i4.1
+		IL_0055: newarr [System.Runtime]System.Object
+		IL_005a: dup
+		IL_005b: ldc.i4.0
+		IL_005c: ldloc.0
+		IL_005d: stelem.ref
+		IL_005e: stloc.s 33
+		IL_0060: newobj instance void Modules.Function_CallableReflection_ProxyIntegration/Constructor/FunctionObject_FunctionDeclaration_E01112C7_Constructor::.ctor()
+		IL_0065: ldc.i4.1
+		IL_0066: conv.r8
+		IL_0067: ldstr "Constructor"
+		IL_006c: ldc.i4.1
+		IL_006d: ldc.i4.1
+		IL_006e: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Function_CallableReflection_ProxyIntegration/Constructor/FunctionObject_FunctionDeclaration_E01112C7_Constructor>(!!0, float64, string, bool, bool)
+		IL_0073: stloc.s 35
+		IL_0075: ldloc.0
+		IL_0076: ldloc.s 35
+		IL_0078: stfld object Modules.Function_CallableReflection_ProxyIntegration/Scope::Constructor
+		IL_007d: nop
+		IL_007e: nop
+		IL_007f: ldloc.0
+		IL_0080: ldfld object Modules.Function_CallableReflection_ProxyIntegration/Scope::target
+		IL_0085: stloc.s 36
+		IL_0087: ldloc.s 36
+		IL_0089: ldstr "custom"
+		IL_008e: ldc.r8 3
+		IL_0097: ldc.i4.1
+		IL_0098: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, float64, bool)
+		IL_009d: pop
+		IL_009e: ldloc.0
+		IL_009f: ldc.r8 4
+		IL_00a8: box [System.Runtime]System.Double
+		IL_00ad: stfld object Modules.Function_CallableReflection_ProxyIntegration/Scope::accessorValue
+		IL_00b2: ldloc.0
+		IL_00b3: ldfld object Modules.Function_CallableReflection_ProxyIntegration/Scope::target
+		IL_00b8: stloc.s 36
+		IL_00ba: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_00bf: stloc.s 37
+		IL_00c1: ldc.i4.1
+		IL_00c2: newarr [System.Runtime]System.Object
+		IL_00c7: dup
+		IL_00c8: ldc.i4.0
+		IL_00c9: ldloc.0
+		IL_00ca: stelem.ref
+		IL_00cb: stloc.s 33
+		IL_00cd: ldloc.s 33
+		IL_00cf: ldc.i4.0
+		IL_00d0: ldelem.ref
+		IL_00d1: castclass Modules.Function_CallableReflection_ProxyIntegration/Scope
+		IL_00d6: newobj instance void Modules.Function_CallableReflection_ProxyIntegration/FunctionExpression_L10C7/FunctionObject_FunctionExpression_B1EFE281_L10C8::.ctor(class Modules.Function_CallableReflection_ProxyIntegration/Scope)
+		IL_00db: ldc.i4.0
+		IL_00dc: conv.r8
+		IL_00dd: ldstr ""
+		IL_00e2: ldc.i4.0
+		IL_00e3: ldc.i4.1
+		IL_00e4: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Function_CallableReflection_ProxyIntegration/FunctionExpression_L10C7/FunctionObject_FunctionExpression_B1EFE281_L10C8>(!!0, float64, string, bool, bool)
+		IL_00e9: stloc.s 38
+		IL_00eb: ldloc.s 38
+		IL_00ed: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Function_CallableReflection_ProxyIntegration/FunctionExpression_L10C7/FunctionObject_FunctionExpression_B1EFE281_L10C8>(!!0)
+		IL_00f2: stloc.s 38
+		IL_00f4: ldloc.s 37
+		IL_00f6: ldstr "get"
+		IL_00fb: ldloc.s 38
+		IL_00fd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineObjectLiteralDataProperty(object, string, object)
+		IL_0102: pop
+		IL_0103: ldc.i4.1
+		IL_0104: newarr [System.Runtime]System.Object
+		IL_0109: dup
+		IL_010a: ldc.i4.0
+		IL_010b: ldloc.0
+		IL_010c: stelem.ref
+		IL_010d: stloc.s 33
+		IL_010f: ldloc.s 33
+		IL_0111: ldc.i4.0
+		IL_0112: ldelem.ref
+		IL_0113: castclass Modules.Function_CallableReflection_ProxyIntegration/Scope
+		IL_0118: newobj instance void Modules.Function_CallableReflection_ProxyIntegration/FunctionExpression_L13C7/FunctionObject_FunctionExpression_47046CC4_L13C8::.ctor(class Modules.Function_CallableReflection_ProxyIntegration/Scope)
+		IL_011d: ldc.i4.1
+		IL_011e: conv.r8
+		IL_011f: ldstr ""
+		IL_0124: ldc.i4.0
+		IL_0125: ldc.i4.1
+		IL_0126: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Function_CallableReflection_ProxyIntegration/FunctionExpression_L13C7/FunctionObject_FunctionExpression_47046CC4_L13C8>(!!0, float64, string, bool, bool)
+		IL_012b: stloc.s 39
+		IL_012d: ldloc.s 39
+		IL_012f: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Function_CallableReflection_ProxyIntegration/FunctionExpression_L13C7/FunctionObject_FunctionExpression_47046CC4_L13C8>(!!0)
+		IL_0134: stloc.s 39
+		IL_0136: ldloc.s 37
+		IL_0138: ldstr "set"
+		IL_013d: ldloc.s 39
+		IL_013f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineObjectLiteralDataProperty(object, string, object)
+		IL_0144: pop
+		IL_0145: ldloc.s 37
+		IL_0147: ldstr "enumerable"
+		IL_014c: ldc.i4.1
+		IL_014d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineObjectLiteralDataProperty(object, string, bool)
+		IL_0152: pop
+		IL_0153: ldloc.s 37
+		IL_0155: ldstr "configurable"
+		IL_015a: ldc.i4.1
+		IL_015b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineObjectLiteralDataProperty(object, string, bool)
+		IL_0160: pop
+		IL_0161: ldloc.s 36
+		IL_0163: ldstr "accessor"
+		IL_0168: ldloc.s 37
+		IL_016a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::defineProperty(object, object, object)
+		IL_016f: pop
+		IL_0170: ldloc.0
+		IL_0171: ldfld object Modules.Function_CallableReflection_ProxyIntegration/Scope::target
+		IL_0176: stloc.s 36
+		IL_0178: ldloc.s 36
+		IL_017a: ldstr "accessor"
+		IL_017f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::getOwnPropertyDescriptor(object, object)
+		IL_0184: stloc.2
+		IL_0185: ldloc.0
+		IL_0186: ldfld object Modules.Function_CallableReflection_ProxyIntegration/Scope::target
+		IL_018b: stloc.s 36
+		IL_018d: ldloc.s 36
+		IL_018f: ldstr "accessor"
+		IL_0194: ldc.r8 8
+		IL_019d: ldc.i4.1
+		IL_019e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, float64, bool)
+		IL_01a3: pop
+		IL_01a4: ldloc.0
+		IL_01a5: ldfld object Modules.Function_CallableReflection_ProxyIntegration/Scope::target
+		IL_01aa: stloc.s 36
+		IL_01ac: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_01b1: stloc.s 37
+		IL_01b3: ldloc.s 37
+		IL_01b5: ldloc.s 36
+		IL_01b7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SpreadIntoObjectLiteral(object, object)
+		IL_01bc: pop
+		IL_01bd: ldloc.s 37
+		IL_01bf: stloc.3
+		IL_01c0: ldstr "console"
+		IL_01c5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_01ca: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_01cf: stloc.s 36
+		IL_01d1: ldloc.0
+		IL_01d2: ldfld object Modules.Function_CallableReflection_ProxyIntegration/Scope::target
+		IL_01d7: stloc.s 40
+		IL_01d9: ldloc.s 40
+		IL_01db: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
+		IL_01e0: stloc.s 41
+		IL_01e2: ldloc.2
+		IL_01e3: ldstr "get"
+		IL_01e8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_01ed: stloc.s 40
+		IL_01ef: ldloc.0
+		IL_01f0: ldfld object Modules.Function_CallableReflection_ProxyIntegration/Scope::target
+		IL_01f5: stloc.s 42
+		IL_01f7: ldloc.s 42
+		IL_01f9: ldstr "accessor"
+		IL_01fe: call object [JavaScriptRuntime]JavaScriptRuntime.Object::getOwnPropertyDescriptor(object, object)
+		IL_0203: ldstr "get"
+		IL_0208: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_020d: stloc.s 42
+		IL_020f: ldloc.s 40
+		IL_0211: ldloc.s 42
+		IL_0213: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_0218: stloc.s 43
+		IL_021a: ldloc.s 43
+		IL_021c: box [System.Runtime]System.Boolean
+		IL_0221: stloc.s 44
+		IL_0223: ldloc.2
+		IL_0224: ldstr "set"
+		IL_0229: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_022e: stloc.s 42
+		IL_0230: ldloc.0
+		IL_0231: ldfld object Modules.Function_CallableReflection_ProxyIntegration/Scope::target
+		IL_0236: stloc.s 40
+		IL_0238: ldloc.s 40
+		IL_023a: ldstr "accessor"
+		IL_023f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::getOwnPropertyDescriptor(object, object)
+		IL_0244: ldstr "set"
+		IL_0249: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_024e: stloc.s 40
+		IL_0250: ldloc.s 42
+		IL_0252: ldloc.s 40
+		IL_0254: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_0259: stloc.s 43
+		IL_025b: ldloc.s 43
+		IL_025d: box [System.Runtime]System.Boolean
+		IL_0262: stloc.s 45
+		IL_0264: ldloc.0
+		IL_0265: ldfld object Modules.Function_CallableReflection_ProxyIntegration/Scope::target
+		IL_026a: ldstr "accessor"
+		IL_026f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0274: stloc.s 40
+		IL_0276: ldloc.3
+		IL_0277: ldstr "custom"
+		IL_027c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0281: stloc.s 42
+		IL_0283: ldloc.3
+		IL_0284: ldstr "accessor"
+		IL_0289: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_028e: stloc.s 46
+		IL_0290: ldloc.s 36
+		IL_0292: ldstr "log"
+		IL_0297: ldc.i4.7
+		IL_0298: newarr [System.Runtime]System.Object
+		IL_029d: dup
+		IL_029e: ldc.i4.0
+		IL_029f: ldstr "reflection"
+		IL_02a4: stelem.ref
+		IL_02a5: dup
+		IL_02a6: ldc.i4.1
+		IL_02a7: ldloc.s 41
+		IL_02a9: stelem.ref
+		IL_02aa: dup
+		IL_02ab: ldc.i4.2
+		IL_02ac: ldloc.s 44
+		IL_02ae: stelem.ref
+		IL_02af: dup
+		IL_02b0: ldc.i4.3
+		IL_02b1: ldloc.s 45
+		IL_02b3: stelem.ref
+		IL_02b4: dup
+		IL_02b5: ldc.i4.4
+		IL_02b6: ldloc.s 40
+		IL_02b8: stelem.ref
+		IL_02b9: dup
+		IL_02ba: ldc.i4.5
+		IL_02bb: ldloc.s 42
+		IL_02bd: stelem.ref
+		IL_02be: dup
+		IL_02bf: ldc.i4.6
+		IL_02c0: ldloc.s 46
+		IL_02c2: stelem.ref
+		IL_02c3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember(object, string, object[])
+		IL_02c8: pop
+		IL_02c9: ldstr "console"
+		IL_02ce: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_02d3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_02d8: stloc.s 36
+		IL_02da: ldloc.0
+		IL_02db: ldfld object Modules.Function_CallableReflection_ProxyIntegration/Scope::target
+		IL_02e0: stloc.s 46
+		IL_02e2: ldloc.s 46
+		IL_02e4: call object [JavaScriptRuntime]JavaScriptRuntime.Object::keys(object)
+		IL_02e9: stloc.s 46
+		IL_02eb: ldloc.s 46
+		IL_02ed: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_02f2: ldstr "join"
+		IL_02f7: ldstr ","
+		IL_02fc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0301: stloc.s 46
+		IL_0303: ldloc.0
+		IL_0304: ldfld object Modules.Function_CallableReflection_ProxyIntegration/Scope::target
+		IL_0309: stloc.s 42
+		IL_030b: ldloc.s 42
+		IL_030d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::getOwnPropertyNames(object)
+		IL_0312: stloc.s 42
+		IL_0314: ldloc.s 42
+		IL_0316: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_031b: ldstr "includes"
+		IL_0320: ldstr "name"
+		IL_0325: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_032a: stloc.s 42
+		IL_032c: ldloc.0
+		IL_032d: ldfld object Modules.Function_CallableReflection_ProxyIntegration/Scope::target
+		IL_0332: stloc.s 40
+		IL_0334: ldloc.s 40
+		IL_0336: call object [JavaScriptRuntime]JavaScriptRuntime.Object::getOwnPropertyNames(object)
+		IL_033b: stloc.s 40
+		IL_033d: ldloc.s 40
+		IL_033f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0344: ldstr "includes"
+		IL_0349: ldstr "length"
+		IL_034e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0353: stloc.s 40
+		IL_0355: ldloc.s 36
+		IL_0357: ldstr "log"
+		IL_035c: ldc.i4.4
+		IL_035d: newarr [System.Runtime]System.Object
+		IL_0362: dup
+		IL_0363: ldc.i4.0
+		IL_0364: ldstr "keys"
+		IL_0369: stelem.ref
+		IL_036a: dup
+		IL_036b: ldc.i4.1
+		IL_036c: ldloc.s 46
+		IL_036e: stelem.ref
+		IL_036f: dup
+		IL_0370: ldc.i4.2
+		IL_0371: ldloc.s 42
+		IL_0373: stelem.ref
+		IL_0374: dup
+		IL_0375: ldc.i4.3
+		IL_0376: ldloc.s 40
+		IL_0378: stelem.ref
+		IL_0379: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember(object, string, object[])
+		IL_037e: pop
+		IL_037f: ldloc.0
+		IL_0380: ldfld object Modules.Function_CallableReflection_ProxyIntegration/Scope::target
+		IL_0385: stloc.s 36
+		IL_0387: ldloc.s 36
+		IL_0389: call object [JavaScriptRuntime]JavaScriptRuntime.Object::preventExtensions(object)
+		IL_038e: pop
+		IL_038f: ldstr "console"
+		IL_0394: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0399: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_039e: stloc.s 36
+		IL_03a0: ldloc.0
+		IL_03a1: ldfld object Modules.Function_CallableReflection_ProxyIntegration/Scope::target
+		IL_03a6: stloc.s 40
+		IL_03a8: ldloc.s 40
+		IL_03aa: call bool [JavaScriptRuntime]JavaScriptRuntime.Object::isExtensible(object)
+		IL_03af: box [System.Runtime]System.Boolean
+		IL_03b4: stloc.s 45
+		IL_03b6: ldloc.2
+		IL_03b7: ldstr "get"
+		IL_03bc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_03c1: stloc.s 40
+		IL_03c3: ldloc.s 40
+		IL_03c5: call bool [JavaScriptRuntime]JavaScriptRuntime.Object::isExtensible(object)
+		IL_03ca: box [System.Runtime]System.Boolean
+		IL_03cf: stloc.s 44
+		IL_03d1: ldloc.s 36
+		IL_03d3: ldstr "log"
+		IL_03d8: ldstr "integrity"
+		IL_03dd: ldloc.s 45
+		IL_03df: ldloc.s 44
+		IL_03e1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember3(object, string, object, object, object)
+		IL_03e6: pop
+		IL_03e7: ldloc.2
+		IL_03e8: ldstr "get"
+		IL_03ed: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_03f2: stloc.s 36
+		IL_03f4: ldloc.s 36
+		IL_03f6: call object [JavaScriptRuntime]JavaScriptRuntime.Object::freeze(object)
+		IL_03fb: pop
+		IL_03fc: ldstr "console"
+		IL_0401: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0406: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_040b: stloc.s 36
+		IL_040d: ldloc.2
+		IL_040e: ldstr "get"
+		IL_0413: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0418: stloc.s 40
+		IL_041a: ldloc.s 40
+		IL_041c: call bool [JavaScriptRuntime]JavaScriptRuntime.Object::isFrozen(object)
+		IL_0421: box [System.Runtime]System.Boolean
+		IL_0426: stloc.s 44
+		IL_0428: ldloc.s 36
+		IL_042a: ldstr "log"
+		IL_042f: ldstr "frozenFunction"
+		IL_0434: ldloc.s 44
+		IL_0436: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_043b: pop
+		IL_043c: nop
+		IL_043d: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0442: dup
+		IL_0443: ldstr "marker"
+		IL_0448: ldstr "custom-function-prototype"
+		IL_044d: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_0452: stloc.s 4
+		IL_0454: ldloc.1
+		IL_0455: ldloc.s 4
+		IL_0457: call object [JavaScriptRuntime]JavaScriptRuntime.Object::setPrototypeOf(object, object)
+		IL_045c: pop
+		IL_045d: ldstr "console"
+		IL_0462: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0467: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_046c: stloc.s 36
+		IL_046e: ldloc.1
+		IL_046f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::getPrototypeOf(object)
+		IL_0474: stloc.s 40
+		IL_0476: ldloc.s 40
+		IL_0478: ldloc.s 4
+		IL_047a: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_047f: stloc.s 43
+		IL_0481: ldloc.s 43
+		IL_0483: box [System.Runtime]System.Boolean
+		IL_0488: stloc.s 44
+		IL_048a: ldloc.1
+		IL_048b: ldstr "marker"
+		IL_0490: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0495: stloc.s 40
+		IL_0497: ldloc.s 36
+		IL_0499: ldstr "log"
+		IL_049e: ldstr "prototypeMutation"
+		IL_04a3: ldloc.s 44
+		IL_04a5: ldloc.s 40
+		IL_04a7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember3(object, string, object, object, object)
+		IL_04ac: pop
+		IL_04ad: ldstr "console"
+		IL_04b2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_04b7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_04bc: stloc.s 40
+		IL_04be: ldloc.0
+		IL_04bf: ldfld object Modules.Function_CallableReflection_ProxyIntegration/Scope::target
+		IL_04c4: stloc.s 36
+		IL_04c6: ldloc.s 36
+		IL_04c8: call object [JavaScriptRuntime]JavaScriptRuntime.JSON::Stringify(object)
+		IL_04cd: stloc.s 36
+		IL_04cf: ldloc.s 36
+		IL_04d1: ldnull
+		IL_04d2: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_04d7: stloc.s 43
+		IL_04d9: ldloc.s 43
+		IL_04db: box [System.Runtime]System.Boolean
+		IL_04e0: stloc.s 44
+		IL_04e2: ldloc.0
+		IL_04e3: ldfld object Modules.Function_CallableReflection_ProxyIntegration/Scope::target
+		IL_04e8: stloc.s 36
+		IL_04ea: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_04ef: dup
+		IL_04f0: ldstr "target"
+		IL_04f5: ldloc.s 36
+		IL_04f7: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_04fc: stloc.s 37
+		IL_04fe: ldloc.s 37
+		IL_0500: call object [JavaScriptRuntime]JavaScriptRuntime.JSON::Stringify(object)
+		IL_0505: stloc.s 36
+		IL_0507: ldloc.s 36
+		IL_0509: ldstr "{}"
+		IL_050e: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_0513: stloc.s 43
+		IL_0515: ldloc.s 43
+		IL_0517: box [System.Runtime]System.Boolean
+		IL_051c: stloc.s 45
+		IL_051e: ldloc.s 40
+		IL_0520: ldstr "log"
+		IL_0525: ldstr "json"
+		IL_052a: ldloc.s 44
+		IL_052c: ldloc.s 45
+		IL_052e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember3(object, string, object, object, object)
+		IL_0533: pop
+		IL_0534: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0539: stloc.s 37
+		IL_053b: ldc.i4.1
+		IL_053c: newarr [System.Runtime]System.Object
+		IL_0541: dup
+		IL_0542: ldc.i4.0
+		IL_0543: ldloc.0
+		IL_0544: stelem.ref
+		IL_0545: stloc.s 33
+		IL_0547: ldloc.s 33
+		IL_0549: ldc.i4.0
+		IL_054a: ldelem.ref
+		IL_054b: castclass Modules.Function_CallableReflection_ProxyIntegration/Scope
+		IL_0550: newobj instance void Modules.Function_CallableReflection_ProxyIntegration/FunctionExpression_applyHandler/FunctionObject_FunctionExpression_171A4342_L54C10::.ctor(class Modules.Function_CallableReflection_ProxyIntegration/Scope)
+		IL_0555: ldc.i4.3
+		IL_0556: conv.r8
+		IL_0557: ldstr ""
+		IL_055c: ldc.i4.1
+		IL_055d: ldc.i4.1
+		IL_055e: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Function_CallableReflection_ProxyIntegration/FunctionExpression_applyHandler/FunctionObject_FunctionExpression_171A4342_L54C10>(!!0, float64, string, bool, bool)
+		IL_0563: stloc.s 47
+		IL_0565: ldloc.s 47
+		IL_0567: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Function_CallableReflection_ProxyIntegration/FunctionExpression_applyHandler/FunctionObject_FunctionExpression_171A4342_L54C10>(!!0)
+		IL_056c: stloc.s 47
+		IL_056e: ldloc.s 37
+		IL_0570: ldstr "apply"
+		IL_0575: ldloc.s 47
+		IL_0577: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineObjectLiteralDataProperty(object, string, object)
+		IL_057c: pop
+		IL_057d: ldloc.0
+		IL_057e: ldloc.s 37
+		IL_0580: stfld object Modules.Function_CallableReflection_ProxyIntegration/Scope::applyHandler
+		IL_0585: ldloc.0
+		IL_0586: ldfld object Modules.Function_CallableReflection_ProxyIntegration/Scope::target
+		IL_058b: stloc.s 40
+		IL_058d: ldloc.0
+		IL_058e: ldfld object Modules.Function_CallableReflection_ProxyIntegration/Scope::applyHandler
+		IL_0593: ldstr "Cannot access 'applyHandler' before initialization"
+		IL_0598: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+		IL_059d: stloc.s 36
+		IL_059f: ldloc.s 40
+		IL_05a1: ldloc.s 36
+		IL_05a3: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Proxy::.ctor(object, object)
+		IL_05a8: stloc.s 5
+		IL_05aa: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_05af: dup
+		IL_05b0: ldstr "base"
+		IL_05b5: ldc.r8 10
+		IL_05be: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
+		IL_05c3: dup
+		IL_05c4: ldstr "method"
+		IL_05c9: ldloc.s 5
+		IL_05cb: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_05d0: stloc.s 6
+		IL_05d2: ldstr "console"
+		IL_05d7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_05dc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_05e1: stloc.s 36
+		IL_05e3: ldloc.s 5
+		IL_05e5: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
+		IL_05ea: stloc.s 41
+		IL_05ec: ldloc.s 6
+		IL_05ee: ldstr "method"
+		IL_05f3: ldc.r8 5
+		IL_05fc: box [System.Runtime]System.Double
+		IL_0601: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0606: stloc.s 40
+		IL_0608: ldloc.0
+		IL_0609: ldfld object Modules.Function_CallableReflection_ProxyIntegration/Scope::target
+		IL_060e: stloc.s 42
+		IL_0610: ldloc.s 5
+		IL_0612: ldloc.s 42
+		IL_0614: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::InstanceOf(object, object)
+		IL_0619: stloc.s 43
+		IL_061b: ldloc.s 43
+		IL_061d: box [System.Runtime]System.Boolean
+		IL_0622: stloc.s 45
+		IL_0624: ldloc.s 36
+		IL_0626: ldstr "log"
+		IL_062b: ldc.i4.4
+		IL_062c: newarr [System.Runtime]System.Object
+		IL_0631: dup
+		IL_0632: ldc.i4.0
+		IL_0633: ldstr "apply"
+		IL_0638: stelem.ref
+		IL_0639: dup
+		IL_063a: ldc.i4.1
+		IL_063b: ldloc.s 41
+		IL_063d: stelem.ref
+		IL_063e: dup
+		IL_063f: ldc.i4.2
+		IL_0640: ldloc.s 40
+		IL_0642: stelem.ref
+		IL_0643: dup
+		IL_0644: ldc.i4.3
+		IL_0645: ldloc.s 45
+		IL_0647: stelem.ref
+		IL_0648: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember(object, string, object[])
+		IL_064d: pop
+		IL_064e: ldloc.0
+		IL_064f: ldfld object Modules.Function_CallableReflection_ProxyIntegration/Scope::target
+		IL_0654: stloc.s 36
+		IL_0656: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_065b: stloc.s 37
+		IL_065d: ldloc.s 36
+		IL_065f: ldloc.s 37
+		IL_0661: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Proxy::.ctor(object, object)
+		IL_0666: stloc.s 7
+		IL_0668: ldstr "console"
+		IL_066d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0672: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0677: stloc.s 36
+		IL_0679: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_067e: dup
+		IL_067f: ldstr "base"
+		IL_0684: ldc.r8 20
+		IL_068d: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
+		IL_0692: stloc.s 37
+		IL_0694: ldloc.s 7
+		IL_0696: ldstr "call"
+		IL_069b: ldloc.s 37
+		IL_069d: ldc.r8 2
+		IL_06a6: box [System.Runtime]System.Double
+		IL_06ab: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_06b0: stloc.s 40
+		IL_06b2: ldloc.s 36
+		IL_06b4: ldstr "log"
+		IL_06b9: ldstr "fallback"
+		IL_06be: ldloc.s 40
+		IL_06c0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_06c5: pop
+		IL_06c6: nop
+		IL_06c7: ldloc.0
+		IL_06c8: ldnull
+		IL_06c9: stfld object Modules.Function_CallableReflection_ProxyIntegration/Scope::constructProxy
+		IL_06ce: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_06d3: stloc.s 37
+		IL_06d5: ldc.i4.1
+		IL_06d6: newarr [System.Runtime]System.Object
+		IL_06db: dup
+		IL_06dc: ldc.i4.0
+		IL_06dd: ldloc.0
+		IL_06de: stelem.ref
+		IL_06df: stloc.s 33
+		IL_06e1: ldloc.s 33
+		IL_06e3: ldc.i4.0
+		IL_06e4: ldelem.ref
+		IL_06e5: castclass Modules.Function_CallableReflection_ProxyIntegration/Scope
+		IL_06ea: newobj instance void Modules.Function_CallableReflection_ProxyIntegration/FunctionExpression_constructHandler/FunctionObject_FunctionExpression_7F246675_L80C14::.ctor(class Modules.Function_CallableReflection_ProxyIntegration/Scope)
+		IL_06ef: ldc.i4.3
+		IL_06f0: conv.r8
+		IL_06f1: ldstr ""
+		IL_06f6: ldc.i4.0
+		IL_06f7: ldc.i4.1
+		IL_06f8: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Function_CallableReflection_ProxyIntegration/FunctionExpression_constructHandler/FunctionObject_FunctionExpression_7F246675_L80C14>(!!0, float64, string, bool, bool)
+		IL_06fd: stloc.s 48
+		IL_06ff: ldloc.s 48
+		IL_0701: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Function_CallableReflection_ProxyIntegration/FunctionExpression_constructHandler/FunctionObject_FunctionExpression_7F246675_L80C14>(!!0)
+		IL_0706: stloc.s 48
+		IL_0708: ldloc.s 37
+		IL_070a: ldstr "construct"
+		IL_070f: ldloc.s 48
+		IL_0711: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineObjectLiteralDataProperty(object, string, object)
+		IL_0716: pop
+		IL_0717: ldloc.s 37
+		IL_0719: stloc.s 8
+		IL_071b: ldloc.0
+		IL_071c: ldfld object Modules.Function_CallableReflection_ProxyIntegration/Scope::Constructor
+		IL_0721: stloc.s 40
+		IL_0723: ldloc.s 40
+		IL_0725: ldloc.s 8
+		IL_0727: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Proxy::.ctor(object, object)
+		IL_072c: stloc.s 49
+		IL_072e: ldloc.0
+		IL_072f: ldloc.s 49
+		IL_0731: stfld object Modules.Function_CallableReflection_ProxyIntegration/Scope::constructProxy
+		IL_0736: ldloc.0
+		IL_0737: ldfld object Modules.Function_CallableReflection_ProxyIntegration/Scope::constructProxy
+		IL_073c: castclass [JavaScriptRuntime]JavaScriptRuntime.Proxy
+		IL_0741: stloc.s 49
+		IL_0743: ldloc.s 49
+		IL_0745: ldc.i4.1
+		IL_0746: newarr [System.Runtime]System.Object
+		IL_074b: dup
+		IL_074c: ldc.i4.0
+		IL_074d: ldc.r8 12
+		IL_0756: box [System.Runtime]System.Double
+		IL_075b: stelem.ref
+		IL_075c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::ConstructValue(object, object[])
+		IL_0761: stloc.s 9
+		IL_0763: ldstr "console"
+		IL_0768: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_076d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0772: stloc.s 40
+		IL_0774: ldloc.0
+		IL_0775: ldfld object Modules.Function_CallableReflection_ProxyIntegration/Scope::constructProxy
+		IL_077a: castclass [JavaScriptRuntime]JavaScriptRuntime.Proxy
+		IL_077f: stloc.s 49
+		IL_0781: ldloc.s 49
+		IL_0783: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
+		IL_0788: stloc.s 41
+		IL_078a: ldloc.s 9
+		IL_078c: ldstr "targetMatches"
+		IL_0791: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0796: stloc.s 36
+		IL_0798: ldloc.s 9
+		IL_079a: ldstr "argument"
+		IL_079f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_07a4: stloc.s 42
+		IL_07a6: ldloc.s 9
+		IL_07a8: ldstr "newTargetMatches"
+		IL_07ad: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_07b2: stloc.s 46
+		IL_07b4: ldloc.s 40
+		IL_07b6: ldstr "log"
+		IL_07bb: ldc.i4.5
+		IL_07bc: newarr [System.Runtime]System.Object
+		IL_07c1: dup
+		IL_07c2: ldc.i4.0
+		IL_07c3: ldstr "construct"
+		IL_07c8: stelem.ref
+		IL_07c9: dup
+		IL_07ca: ldc.i4.1
+		IL_07cb: ldloc.s 41
+		IL_07cd: stelem.ref
+		IL_07ce: dup
+		IL_07cf: ldc.i4.2
+		IL_07d0: ldloc.s 36
+		IL_07d2: stelem.ref
+		IL_07d3: dup
+		IL_07d4: ldc.i4.3
+		IL_07d5: ldloc.s 42
+		IL_07d7: stelem.ref
+		IL_07d8: dup
+		IL_07d9: ldc.i4.4
+		IL_07da: ldloc.s 46
+		IL_07dc: stelem.ref
+		IL_07dd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember(object, string, object[])
+		IL_07e2: pop
+		IL_07e3: ldloc.0
+		IL_07e4: ldfld object Modules.Function_CallableReflection_ProxyIntegration/Scope::Constructor
+		IL_07e9: stloc.s 40
+		IL_07eb: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_07f0: stloc.s 37
+		IL_07f2: ldc.i4.1
+		IL_07f3: newarr [System.Runtime]System.Object
+		IL_07f8: dup
+		IL_07f9: ldc.i4.0
+		IL_07fa: ldloc.0
+		IL_07fb: stelem.ref
+		IL_07fc: stloc.s 33
+		IL_07fe: newobj instance void Modules.Function_CallableReflection_ProxyIntegration/FunctionExpression_invalidConstructProxy/FunctionObject_FunctionExpression_F84AC1B6_L98C14::.ctor()
+		IL_0803: ldc.i4.0
+		IL_0804: conv.r8
+		IL_0805: ldstr ""
+		IL_080a: ldc.i4.0
+		IL_080b: ldc.i4.1
+		IL_080c: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Function_CallableReflection_ProxyIntegration/FunctionExpression_invalidConstructProxy/FunctionObject_FunctionExpression_F84AC1B6_L98C14>(!!0, float64, string, bool, bool)
+		IL_0811: stloc.s 50
+		IL_0813: ldloc.s 50
+		IL_0815: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Function_CallableReflection_ProxyIntegration/FunctionExpression_invalidConstructProxy/FunctionObject_FunctionExpression_F84AC1B6_L98C14>(!!0)
+		IL_081a: stloc.s 50
+		IL_081c: ldloc.s 37
+		IL_081e: ldstr "construct"
+		IL_0823: ldloc.s 50
+		IL_0825: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineObjectLiteralDataProperty(object, string, object)
+		IL_082a: pop
+		IL_082b: ldloc.s 40
+		IL_082d: ldloc.s 37
+		IL_082f: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Proxy::.ctor(object, object)
+		IL_0834: stloc.s 10
+		IL_0836: ldc.i4.0
+		IL_0837: box [System.Runtime]System.Boolean
+		IL_083c: stloc.s 11
+		.try
+		{
+			IL_083e: nop
+			IL_083f: ldloc.s 10
+			IL_0841: ldc.i4.0
+			IL_0842: newarr [System.Runtime]System.Object
+			IL_0847: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::ConstructValue(object, object[])
+			IL_084c: pop
+			IL_084d: leave IL_08b1
+		} // end .try
+		catch [System.Runtime]System.Exception
+		{
+			IL_0852: stloc.s 12
+			IL_0854: ldloc.s 12
+			IL_0856: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+			IL_085b: dup
+			IL_085c: brtrue IL_0872
+
+			IL_0861: pop
+			IL_0862: ldloc.s 12
+			IL_0864: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+			IL_0869: dup
+			IL_086a: brtrue IL_087e
+
+			IL_086f: pop
+			IL_0870: rethrow
+
+			IL_0872: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+			IL_0877: stloc.s 13
+			IL_0879: br IL_0880
+
+			IL_087e: stloc.s 13
+
+			IL_0880: ldloc.s 13
+			IL_0882: stloc.s 14
+			IL_0884: ldloc.s 14
+			IL_0886: stloc.s 40
+			IL_0888: ldstr "TypeError"
+			IL_088d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_0892: stloc.s 46
+			IL_0894: ldloc.s 40
+			IL_0896: ldloc.s 46
+			IL_0898: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::InstanceOf(object, object)
+			IL_089d: stloc.s 43
+			IL_089f: ldloc.s 43
+			IL_08a1: box [System.Runtime]System.Boolean
+			IL_08a6: stloc.s 45
+			IL_08a8: ldloc.s 45
+			IL_08aa: stloc.s 11
+			IL_08ac: leave IL_08b1
+		} // end handler
+
+		IL_08b1: ldloc.0
+		IL_08b2: ldfld object Modules.Function_CallableReflection_ProxyIntegration/Scope::target
+		IL_08b7: stloc.s 46
+		IL_08b9: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_08be: dup
+		IL_08bf: ldstr "apply"
+		IL_08c4: ldc.r8 1
+		IL_08cd: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
+		IL_08d2: stloc.s 37
+		IL_08d4: ldloc.s 46
+		IL_08d6: ldloc.s 37
+		IL_08d8: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Proxy::.ctor(object, object)
+		IL_08dd: stloc.s 15
+		IL_08df: ldc.i4.0
+		IL_08e0: box [System.Runtime]System.Boolean
+		IL_08e5: stloc.s 16
+		.try
+		{
+			IL_08e7: nop
+			IL_08e8: ldloc.s 15
+			IL_08ea: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+			IL_08ef: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
+			IL_08f4: pop
+			IL_08f5: leave IL_0959
+		} // end .try
+		catch [System.Runtime]System.Exception
+		{
+			IL_08fa: stloc.s 17
+			IL_08fc: ldloc.s 17
+			IL_08fe: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+			IL_0903: dup
+			IL_0904: brtrue IL_091a
+
+			IL_0909: pop
+			IL_090a: ldloc.s 17
+			IL_090c: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+			IL_0911: dup
+			IL_0912: brtrue IL_0926
+
+			IL_0917: pop
+			IL_0918: rethrow
+
+			IL_091a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+			IL_091f: stloc.s 18
+			IL_0921: br IL_0928
+
+			IL_0926: stloc.s 18
+
+			IL_0928: ldloc.s 18
+			IL_092a: stloc.s 19
+			IL_092c: ldloc.s 19
+			IL_092e: stloc.s 46
+			IL_0930: ldstr "TypeError"
+			IL_0935: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_093a: stloc.s 40
+			IL_093c: ldloc.s 46
+			IL_093e: ldloc.s 40
+			IL_0940: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::InstanceOf(object, object)
+			IL_0945: stloc.s 43
+			IL_0947: ldloc.s 43
+			IL_0949: box [System.Runtime]System.Boolean
+			IL_094e: stloc.s 45
+			IL_0950: ldloc.s 45
+			IL_0952: stloc.s 16
+			IL_0954: leave IL_0959
+		} // end handler
+
+		IL_0959: ldstr "console"
+		IL_095e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0963: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0968: ldstr "log"
+		IL_096d: ldstr "invalidTraps"
+		IL_0972: ldloc.s 11
+		IL_0974: ldloc.s 16
+		IL_0976: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember3(object, string, object, object, object)
+		IL_097b: pop
+		IL_097c: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0981: stloc.s 20
+		IL_0983: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0988: stloc.s 37
+		IL_098a: ldc.i4.1
+		IL_098b: newarr [System.Runtime]System.Object
+		IL_0990: dup
+		IL_0991: ldc.i4.0
+		IL_0992: ldloc.0
+		IL_0993: stelem.ref
+		IL_0994: stloc.s 33
+		IL_0996: newobj instance void Modules.Function_CallableReflection_ProxyIntegration/FunctionExpression_integrityHandler/FunctionObject_FunctionExpression_A54C4041_L120C17::.ctor()
+		IL_099b: ldc.i4.1
+		IL_099c: conv.r8
+		IL_099d: ldstr ""
+		IL_09a2: ldc.i4.0
+		IL_09a3: ldc.i4.1
+		IL_09a4: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Function_CallableReflection_ProxyIntegration/FunctionExpression_integrityHandler/FunctionObject_FunctionExpression_A54C4041_L120C17>(!!0, float64, string, bool, bool)
+		IL_09a9: stloc.s 51
+		IL_09ab: ldloc.s 51
+		IL_09ad: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Function_CallableReflection_ProxyIntegration/FunctionExpression_integrityHandler/FunctionObject_FunctionExpression_A54C4041_L120C17>(!!0)
+		IL_09b2: stloc.s 51
+		IL_09b4: ldloc.s 37
+		IL_09b6: ldstr "isExtensible"
+		IL_09bb: ldloc.s 51
+		IL_09bd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineObjectLiteralDataProperty(object, string, object)
+		IL_09c2: pop
+		IL_09c3: ldc.i4.1
+		IL_09c4: newarr [System.Runtime]System.Object
+		IL_09c9: dup
+		IL_09ca: ldc.i4.0
+		IL_09cb: ldloc.0
+		IL_09cc: stelem.ref
+		IL_09cd: stloc.s 33
+		IL_09cf: newobj instance void Modules.Function_CallableReflection_ProxyIntegration/FunctionExpression_integrityHandler_L123C21/FunctionObject_FunctionExpression_0158934E_L123C22::.ctor()
+		IL_09d4: ldc.i4.1
+		IL_09d5: conv.r8
+		IL_09d6: ldstr ""
+		IL_09db: ldc.i4.0
+		IL_09dc: ldc.i4.1
+		IL_09dd: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Function_CallableReflection_ProxyIntegration/FunctionExpression_integrityHandler_L123C21/FunctionObject_FunctionExpression_0158934E_L123C22>(!!0, float64, string, bool, bool)
+		IL_09e2: stloc.s 52
+		IL_09e4: ldloc.s 52
+		IL_09e6: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Function_CallableReflection_ProxyIntegration/FunctionExpression_integrityHandler_L123C21/FunctionObject_FunctionExpression_0158934E_L123C22>(!!0)
+		IL_09eb: stloc.s 52
+		IL_09ed: ldloc.s 37
+		IL_09ef: ldstr "preventExtensions"
+		IL_09f4: ldloc.s 52
+		IL_09f6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineObjectLiteralDataProperty(object, string, object)
+		IL_09fb: pop
+		IL_09fc: ldloc.s 37
+		IL_09fe: stloc.s 21
+		IL_0a00: ldloc.s 20
+		IL_0a02: ldloc.s 21
+		IL_0a04: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Proxy::.ctor(object, object)
+		IL_0a09: stloc.s 22
+		IL_0a0b: ldloc.s 22
+		IL_0a0d: call bool [JavaScriptRuntime]JavaScriptRuntime.Object::isExtensible(object)
+		IL_0a12: stloc.s 23
+		IL_0a14: ldloc.s 22
+		IL_0a16: call object [JavaScriptRuntime]JavaScriptRuntime.Object::preventExtensions(object)
+		IL_0a1b: pop
+		IL_0a1c: ldstr "console"
+		IL_0a21: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0a26: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0a2b: ldstr "log"
+		IL_0a30: ldc.i4.4
+		IL_0a31: newarr [System.Runtime]System.Object
+		IL_0a36: dup
+		IL_0a37: ldc.i4.0
+		IL_0a38: ldstr "proxyIntegrity"
+		IL_0a3d: stelem.ref
+		IL_0a3e: dup
+		IL_0a3f: ldc.i4.1
+		IL_0a40: ldloc.s 23
+		IL_0a42: box [System.Runtime]System.Boolean
+		IL_0a47: stelem.ref
+		IL_0a48: dup
+		IL_0a49: ldc.i4.2
+		IL_0a4a: ldloc.s 22
+		IL_0a4c: call bool [JavaScriptRuntime]JavaScriptRuntime.Object::isExtensible(object)
+		IL_0a51: box [System.Runtime]System.Boolean
+		IL_0a56: stelem.ref
+		IL_0a57: dup
+		IL_0a58: ldc.i4.3
+		IL_0a59: ldloc.s 20
+		IL_0a5b: call bool [JavaScriptRuntime]JavaScriptRuntime.Object::isExtensible(object)
+		IL_0a60: box [System.Runtime]System.Boolean
+		IL_0a65: stelem.ref
+		IL_0a66: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember(object, string, object[])
+		IL_0a6b: pop
+		IL_0a6c: ldc.i4.0
+		IL_0a6d: box [System.Runtime]System.Boolean
+		IL_0a72: stloc.s 24
+		.try
+		{
+			IL_0a74: nop
+			IL_0a75: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+			IL_0a7a: stloc.s 37
+			IL_0a7c: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+			IL_0a81: stloc.s 53
+			IL_0a83: ldc.i4.1
+			IL_0a84: newarr [System.Runtime]System.Object
+			IL_0a89: dup
+			IL_0a8a: ldc.i4.0
+			IL_0a8b: ldloc.0
+			IL_0a8c: stelem.ref
+			IL_0a8d: stloc.s 33
+			IL_0a8f: newobj instance void Modules.Function_CallableReflection_ProxyIntegration/FunctionExpression_L139C52/FunctionObject_FunctionExpression_456E4DC3_L139C53::.ctor()
+			IL_0a94: ldc.i4.0
+			IL_0a95: conv.r8
+			IL_0a96: ldstr ""
+			IL_0a9b: ldc.i4.0
+			IL_0a9c: ldc.i4.1
+			IL_0a9d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Function_CallableReflection_ProxyIntegration/FunctionExpression_L139C52/FunctionObject_FunctionExpression_456E4DC3_L139C53>(!!0, float64, string, bool, bool)
+			IL_0aa2: stloc.s 54
+			IL_0aa4: ldloc.s 54
+			IL_0aa6: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Function_CallableReflection_ProxyIntegration/FunctionExpression_L139C52/FunctionObject_FunctionExpression_456E4DC3_L139C53>(!!0)
+			IL_0aab: stloc.s 54
+			IL_0aad: ldloc.s 53
+			IL_0aaf: ldstr "isExtensible"
+			IL_0ab4: ldloc.s 54
+			IL_0ab6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineObjectLiteralDataProperty(object, string, object)
+			IL_0abb: pop
+			IL_0abc: ldloc.s 37
+			IL_0abe: ldloc.s 53
+			IL_0ac0: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Proxy::.ctor(object, object)
+			IL_0ac5: stloc.s 49
+			IL_0ac7: ldloc.s 49
+			IL_0ac9: call bool [JavaScriptRuntime]JavaScriptRuntime.Object::isExtensible(object)
+			IL_0ace: pop
+			IL_0acf: leave IL_0b33
+		} // end .try
+		catch [System.Runtime]System.Exception
+		{
+			IL_0ad4: stloc.s 25
+			IL_0ad6: ldloc.s 25
+			IL_0ad8: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+			IL_0add: dup
+			IL_0ade: brtrue IL_0af4
+
+			IL_0ae3: pop
+			IL_0ae4: ldloc.s 25
+			IL_0ae6: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+			IL_0aeb: dup
+			IL_0aec: brtrue IL_0b00
+
+			IL_0af1: pop
+			IL_0af2: rethrow
+
+			IL_0af4: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+			IL_0af9: stloc.s 26
+			IL_0afb: br IL_0b02
+
+			IL_0b00: stloc.s 26
+
+			IL_0b02: ldloc.s 26
+			IL_0b04: stloc.s 27
+			IL_0b06: ldloc.s 27
+			IL_0b08: stloc.s 40
+			IL_0b0a: ldstr "TypeError"
+			IL_0b0f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_0b14: stloc.s 46
+			IL_0b16: ldloc.s 40
+			IL_0b18: ldloc.s 46
+			IL_0b1a: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::InstanceOf(object, object)
+			IL_0b1f: stloc.s 43
+			IL_0b21: ldloc.s 43
+			IL_0b23: box [System.Runtime]System.Boolean
+			IL_0b28: stloc.s 45
+			IL_0b2a: ldloc.s 45
+			IL_0b2c: stloc.s 24
+			IL_0b2e: leave IL_0b33
+		} // end handler
+
+		IL_0b33: ldc.i4.0
+		IL_0b34: box [System.Runtime]System.Boolean
+		IL_0b39: stloc.s 28
+		.try
+		{
+			IL_0b3b: nop
+			IL_0b3c: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+			IL_0b41: stloc.s 53
+			IL_0b43: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+			IL_0b48: stloc.s 37
+			IL_0b4a: ldc.i4.1
+			IL_0b4b: newarr [System.Runtime]System.Object
+			IL_0b50: dup
+			IL_0b51: ldc.i4.0
+			IL_0b52: ldloc.0
+			IL_0b53: stelem.ref
+			IL_0b54: stloc.s 33
+			IL_0b56: newobj instance void Modules.Function_CallableReflection_ProxyIntegration/FunctionExpression_L145C62/FunctionObject_FunctionExpression_F90B20CC_L145C63::.ctor()
+			IL_0b5b: ldc.i4.0
+			IL_0b5c: conv.r8
+			IL_0b5d: ldstr ""
+			IL_0b62: ldc.i4.0
+			IL_0b63: ldc.i4.1
+			IL_0b64: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Function_CallableReflection_ProxyIntegration/FunctionExpression_L145C62/FunctionObject_FunctionExpression_F90B20CC_L145C63>(!!0, float64, string, bool, bool)
+			IL_0b69: stloc.s 55
+			IL_0b6b: ldloc.s 55
+			IL_0b6d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Function_CallableReflection_ProxyIntegration/FunctionExpression_L145C62/FunctionObject_FunctionExpression_F90B20CC_L145C63>(!!0)
+			IL_0b72: stloc.s 55
+			IL_0b74: ldloc.s 37
+			IL_0b76: ldstr "preventExtensions"
+			IL_0b7b: ldloc.s 55
+			IL_0b7d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineObjectLiteralDataProperty(object, string, object)
+			IL_0b82: pop
+			IL_0b83: ldloc.s 53
+			IL_0b85: ldloc.s 37
+			IL_0b87: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Proxy::.ctor(object, object)
+			IL_0b8c: stloc.s 49
+			IL_0b8e: ldloc.s 49
+			IL_0b90: call object [JavaScriptRuntime]JavaScriptRuntime.Object::preventExtensions(object)
+			IL_0b95: pop
+			IL_0b96: leave IL_0bfa
+		} // end .try
+		catch [System.Runtime]System.Exception
+		{
+			IL_0b9b: stloc.s 29
+			IL_0b9d: ldloc.s 29
+			IL_0b9f: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+			IL_0ba4: dup
+			IL_0ba5: brtrue IL_0bbb
+
+			IL_0baa: pop
+			IL_0bab: ldloc.s 29
+			IL_0bad: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+			IL_0bb2: dup
+			IL_0bb3: brtrue IL_0bc7
+
+			IL_0bb8: pop
+			IL_0bb9: rethrow
+
+			IL_0bbb: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+			IL_0bc0: stloc.s 30
+			IL_0bc2: br IL_0bc9
+
+			IL_0bc7: stloc.s 30
+
+			IL_0bc9: ldloc.s 30
+			IL_0bcb: stloc.s 31
+			IL_0bcd: ldloc.s 31
+			IL_0bcf: stloc.s 46
+			IL_0bd1: ldstr "TypeError"
+			IL_0bd6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_0bdb: stloc.s 40
+			IL_0bdd: ldloc.s 46
+			IL_0bdf: ldloc.s 40
+			IL_0be1: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::InstanceOf(object, object)
+			IL_0be6: stloc.s 43
+			IL_0be8: ldloc.s 43
+			IL_0bea: box [System.Runtime]System.Boolean
+			IL_0bef: stloc.s 45
+			IL_0bf1: ldloc.s 45
+			IL_0bf3: stloc.s 28
+			IL_0bf5: leave IL_0bfa
+		} // end handler
+
+		IL_0bfa: ldstr "console"
+		IL_0bff: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0c04: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0c09: ldstr "log"
+		IL_0c0e: ldstr "proxyIntegrityInvariants"
+		IL_0c13: ldloc.s 24
+		IL_0c15: ldloc.s 28
+		IL_0c17: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember3(object, string, object, object, object)
+		IL_0c1c: pop
+		IL_0c1d: ldnull
+		IL_0c1e: stloc.s 32
+		IL_0c20: ret
+	} // end of method Function_CallableReflection_ProxyIntegration::__js_module_init__
+
+} // end of class Modules.Function_CallableReflection_ProxyIntegration
+
+.class private auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x312e
+		// Header size: 1
+		// Code size: 23 (0x17)
+		.maxstack 8
+		.entrypoint
+
+		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
+		IL_0005: ldnull
+		IL_0006: ldftn void Modules.Function_CallableReflection_ProxyIntegration::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
+		IL_0016: ret
+	} // end of method Program::Main
+
+} // end of class Program
+

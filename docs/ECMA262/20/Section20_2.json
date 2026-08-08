@@ -136,9 +136,10 @@
         "testScripts": [
           "tests/Jroc.Tests/Function/JavaScript/Function_HelloWorld.js",
           "tests/Jroc.Tests/Function/JavaScript/Function_CallViaVariable_Reassignment.js",
-          "tests/Jroc.Tests/Function/JavaScript/Function_GeneratedConstruction_Semantics.js"
+          "tests/Jroc.Tests/Function/JavaScript/Function_GeneratedConstruction_Semantics.js",
+          "tests/Jroc.Tests/Function/JavaScript/Function_CallableReflection_ProxyIntegration.js"
         ],
-        "notes": "Synchronous ordinary functions are materialized as generated JsFunctionObject instances with typed canonical entry points plus centralized dynamic call and construct adapters. Function.prototype.apply, call, bind, and toString route every callable family through centralized operations; bind always produces an explicit bound function object."
+        "notes": "Synchronous ordinary functions are generated JsFunctionObject instances with ordinary property/descriptor, own-key, spread, prototype mutation, extensibility/freeze, JSON omission, identity, typeof, and instanceof behavior. Function.prototype operations and proxy call/construct traps route every callable family through centralized operations."
       },
       {
         "clause": "20.2.4",

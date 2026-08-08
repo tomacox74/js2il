@@ -139,9 +139,10 @@
         "specUrl": "https://tc39.es/ecma262/#sec-iscallable",
         "testScripts": [
           "tests/Jroc.Tests/Function/JavaScript/Function_CallViaVariable_Reassignment.js",
-          "tests/Jroc.Tests/Function/JavaScript/Function_Apply_Basic.js"
+          "tests/Jroc.Tests/Function/JavaScript/Function_Apply_Basic.js",
+          "tests/Jroc.Tests/Function/JavaScript/Function_CallableReflection_ProxyIntegration.js"
         ],
-        "notes": "Callable detection is primarily delegate-based in runtime dispatch and intrinsic paths."
+        "notes": "Callable detection is centralized in CallableOperations across generated function/method/arrow objects, bound functions, class constructors, callable proxies, host adapters, and transitional delegates. typeof, invocation, reflection, and proxy paths consume the same classification."
       },
       {
         "clause": "7.2.4",
@@ -150,9 +151,10 @@
         "specUrl": "https://tc39.es/ecma262/#sec-isconstructor",
         "testScripts": [
           "tests/Jroc.Tests/Classes/JavaScript/Classes_DeclareEmptyClass.js",
-          "tests/Jroc.Tests/BinaryOperator/JavaScript/BinaryOperator_InstanceOf_Basic.js"
+          "tests/Jroc.Tests/BinaryOperator/JavaScript/BinaryOperator_InstanceOf_Basic.js",
+          "tests/Jroc.Tests/Function/JavaScript/Function_CallableReflection_ProxyIntegration.js"
         ],
-        "notes": "Dynamic construction supports delegate/type/Construct-member shapes used by JROC; full constructability semantics are not complete."
+        "notes": "Constructability is centralized for generated ordinary functions, bound functions, class constructors, callable proxies, host adapters, and transitional delegates. Methods/arrows and proxies over non-constructors remain non-constructable; less-common host/exotic cases remain limited."
       },
       {
         "clause": "7.2.5",
@@ -161,9 +163,10 @@
         "specUrl": "https://tc39.es/ecma262/#sec-isextensible-o",
         "testScripts": [
           "tests/Jroc.Tests/Object/JavaScript/Object_Integrity_FreezeSeal_PreventExtensions.js",
+          "tests/Jroc.Tests/Function/JavaScript/Function_CallableReflection_ProxyIntegration.js",
           "tests/Jroc.Test262.Tests/language/expressions/arrow-function/ExecutionTests.cs"
         ],
-        "notes": "Object.isExtensible and the shared integrity-state tracking behave correctly for the covered ordinary-object and function-like cases. Proxy extensibility traps and some host-object edge cases are not fully modeled."
+        "notes": "Object.isExtensible and shared integrity state cover ordinary and function objects. Proxy isExtensible/preventExtensions traps are invoked through generated/adapter callables and enforce result agreement with target extensibility. Some host-object and seal/freeze proxy edge cases remain limited."
       },
       {
         "clause": "7.2.6",
