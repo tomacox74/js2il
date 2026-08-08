@@ -156,18 +156,18 @@ internal sealed partial class LIRToILCompiler
                 {
                     if (callFunc.CallableId is not { } callableId)
                     {
-                        return false; // Fall back to legacy emitter
+                        return false; // Fall back to the ordinary emitter
                     }
 
                     var reader = _serviceProvider.GetService<ICallableDeclarationReader>();
                     if (reader == null)
                     {
-                        return false; // Fall back to legacy emitter
+                        return false; // Fall back to the ordinary emitter
                     }
 
                     if (!reader.TryGetDeclaredToken(callableId, out var token) || token.Kind != HandleKind.MethodDefinition)
                     {
-                        return false; // Fall back to legacy emitter
+                        return false; // Fall back to the ordinary emitter
                     }
 
                     var methodHandle = (MethodDefinitionHandle)token;
@@ -360,18 +360,18 @@ internal sealed partial class LIRToILCompiler
                 {
                     if (callFuncArray.CallableId is not { } callableId)
                     {
-                        return false; // Fall back to legacy emitter
+                        return false; // Fall back to the ordinary emitter
                     }
 
                     var reader = _serviceProvider.GetService<ICallableDeclarationReader>();
                     if (reader == null)
                     {
-                        return false; // Fall back to legacy emitter
+                        return false; // Fall back to the ordinary emitter
                     }
 
                     if (!reader.TryGetDeclaredToken(callableId, out var token) || token.Kind != HandleKind.MethodDefinition)
                     {
-                        return false; // Fall back to legacy emitter
+                        return false; // Fall back to the ordinary emitter
                     }
 
                     var methodHandle = (MethodDefinitionHandle)token;
@@ -1116,12 +1116,12 @@ internal sealed partial class LIRToILCompiler
                     var reader = _serviceProvider.GetService<ICallableDeclarationReader>();
                     if (reader == null)
                     {
-                        return false; // Fall back to legacy emitter
+                        return false; // Fall back to the ordinary emitter
                     }
 
                     if (!reader.TryGetDeclaredToken(callDeclared.CallableId, out var token) || token.Kind != HandleKind.MethodDefinition)
                     {
-                        return false; // Fall back to legacy emitter
+                        return false; // Fall back to the ordinary emitter
                     }
 
                     var methodHandle = (MethodDefinitionHandle)token;

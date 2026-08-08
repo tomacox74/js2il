@@ -310,7 +310,7 @@ The pinned-slot guard is required because a temp can be both a temp and a write
 to a stable IL local. Removing such an instruction can break loop-carried state,
 try/finally state, generator state, or other compiler-created variables.
 
-The use scan relies on `TempLocalAllocator.VisitUsedTemps`, so this PR also
+The use scan relies on `LIRInstructionInfo.VisitUsedTemps`, so this work also
 adds missing tracking for `LIRGetItemAsNumberString`. Without that, a boxed temp
 used by string-key item access could be incorrectly deleted.
 
@@ -350,14 +350,15 @@ uses but still be read through the variable slot by later generated IL.
 
 ### Temp allocation and `LIRGetItemAsNumberString`
 
-This PR updates `TempLocalAllocator` in two related ways:
+This work updates the canonical `LIRInstructionInfo` operand metadata in two
+related ways:
 
 1. `VisitUsedTemps` reports the `Object` and `Index` operands for
    `LIRGetItemAsNumberString`.
 2. `TryGetDefinedTemp` now reports its `Result`.
 
-This keeps liveness, dead-temp checks, and stackification decisions consistent
-with IL emission. If an instruction emits IL that loads a temp, the allocator
+This keeps liveness, dead-temp checks, and scheduling decisions consistent with
+IL emission. If an instruction emits IL that loads a temp, canonical metadata
 must report that temp as used.
 
 ### Why snapshots changed beyond the headline examples
@@ -371,7 +372,7 @@ snapshots:
 - `Classes_ClassMethod_ForLoop_CallsAnotherMethod`: `box` 5 -> 4.
 
 Other generator snapshots can change because removing or preserving a temp
-materialization changes local signatures, local numbering, stackification, or
+materialization changes local signatures, local numbering, stack scheduling, or
 method body offsets. Those changes are expected when the IL is semantically
 equivalent and the relevant execution/generator tests pass.
 
@@ -385,7 +386,7 @@ Future typed-temp optimizations should preserve these invariants:
    slot write is proven redundant.
 3. Do not use `ValueStorageFacts.IsSameRuntimeRepresentation` as a general
    conversion test. It is intentionally stricter.
-4. Keep `TempLocalAllocator.VisitUsedTemps` and `TryGetDefinedTemp` in sync
+4. Keep `LIRInstructionInfo.VisitUsedTemps` and `TryGetDefinedTemp` in sync
    with every instruction shape that IL emission reads or writes.
 5. Treat `object` call boundaries differently from typed boundaries. Avoiding a
    box for a typed parameter is good; moving a box to a runtime-dispatch fallback
@@ -406,5 +407,7 @@ Future typed-temp optimizations should preserve these invariants:
   for dead non-pinned temp copies.
 - `IL/LIRToILCompiler.TempsLocals.cs`: helper methods used by IL emission to
   check temp operand use and variable-slot pinning.
-- `IL/TempLocalAllocator.cs`: temp use/def tracking that liveness,
-  materialization, and stackification depend on.
+- `IL/LIRInstructionInfo.cs`: canonical temp use/def, effect, stack, and
+  scheduling-boundary metadata.
+- `IL/TempLocalAllocator.cs`: compatible-slot allocation for materialized
+  temps.

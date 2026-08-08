@@ -80,8 +80,8 @@ internal readonly record struct LIRStackScheduleMetrics(
 
 /// <summary>
 /// Immutable scheduler output consumed by local allocation and IL emission.
-/// Identity mode deliberately delegates all residency decisions to the legacy
-/// pipeline while making emission order and atomic operation ownership explicit.
+/// Identity mode delegates residency decisions to the materialization plan
+/// while making emission order and atomic operation ownership explicit.
 /// </summary>
 internal sealed record LIRStackSchedule(
     LIRStackSchedulerMode Mode,

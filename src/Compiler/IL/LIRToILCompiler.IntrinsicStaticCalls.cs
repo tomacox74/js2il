@@ -96,7 +96,7 @@ internal sealed partial class LIRToILCompiler
 
     /// <summary>
     /// Emits a static method call on an intrinsic type (e.g., Array.isArray, Math.abs).
-    /// Uses the same method resolution strategy as the legacy pipeline.
+    /// Uses the shared intrinsic method resolution strategy.
     /// </summary>
     private void EmitIntrinsicStaticCall(
         LIRCallIntrinsicStatic instruction,
@@ -118,7 +118,7 @@ internal sealed partial class LIRToILCompiler
             return;
         }
 
-        // Resolve the static method using the same heuristics as the legacy pipeline:
+        // Resolve the static method using the shared intrinsic heuristics:
         // 1. Exact arity match first
         // 2. Fallback to params object[] signature
         var allMethods = intrinsicType.GetMethods(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);

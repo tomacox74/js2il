@@ -18,9 +18,9 @@ internal static class BranchConditionOptimizer
     {
         var result = new Dictionary<int, LIRInstruction>();
         foreach (var instruction in methodBody.Instructions
-            .Where(instr => TempLocalAllocator.TryGetDefinedTemp(instr, out var d) && d.Index >= 0))
+            .Where(instr => LIRInstructionInfo.TryGetDefinedTemp(instr, out var d) && d.Index >= 0))
         {
-            TempLocalAllocator.TryGetDefinedTemp(instruction, out var defined);
+            LIRInstructionInfo.TryGetDefinedTemp(instruction, out var defined);
             result[defined.Index] = instruction;
         }
         return result;
@@ -53,7 +53,7 @@ internal static class BranchConditionOptimizer
             bool isBranch = instruction is LIRBranchIfFalse or LIRBranchIfTrue;
             
             var visitor = new BranchUseVisitor(useCount, usedByBranchOnly, tempCount, isBranch);
-            TempLocalAllocator.VisitUsedTemps(instruction, ref visitor);
+            LIRInstructionInfo.VisitUsedTemps(instruction, ref visitor);
         }
 
         for (int i = 0; i < tempCount; i++)
