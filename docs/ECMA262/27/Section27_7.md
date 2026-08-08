@@ -4,7 +4,7 @@
 
 [Back to Section27](Section27.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-05-26T20:34:21Z
+> Last generated (UTC): 2026-08-08T05:59:23Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -22,8 +22,8 @@
 | 27.7.3.1 | AsyncFunction.prototype.constructor | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-async-function-prototype-properties-constructor) |
 | 27.7.3.2 | AsyncFunction.prototype [ %Symbol.toStringTag% ] | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-async-function-prototype-%symbol.tostringtag%) |
 | 27.7.4 | AsyncFunction Instances | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-async-function-instances) |
-| 27.7.4.1 | length | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-async-function-instances-length) |
-| 27.7.4.2 | name | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-async-function-instances-name) |
+| 27.7.4.1 | length | Supported | [tc39.es](https://tc39.es/ecma262/#sec-async-function-instances-length) |
+| 27.7.4.2 | name | Supported | [tc39.es](https://tc39.es/ecma262/#sec-async-function-instances-name) |
 | 27.7.5 | Async Functions Abstract Operations | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-async-functions-abstract-operations) |
 | 27.7.5.1 | AsyncFunctionStart ( promiseCapability , asyncFunctionBody ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-async-functions-abstract-operations-async-function-start) |
 | 27.7.5.2 | AsyncBlockStart ( promiseCapability , asyncBody , asyncContext ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-asyncblockstart) |
@@ -38,6 +38,12 @@ Feature-level support tracking with repo test references and optional test262 ev
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
 | async function instances expose a dedicated AsyncFunction constructor/prototype surface | Supported with Limitations | [`AsyncFunction_intrinsic.js`](../../../tests/Jroc.Test262.Tests/built-ins/AsyncFunction/JavaScript/AsyncFunction_intrinsic.js) |  | Async function values now inherit from a dedicated `AsyncFunction.prototype`, and expose `instance.constructor`, `AsyncFunction.prototype.constructor`, and `%Symbol.toStringTag%`. Calling the `AsyncFunction` constructor itself is still not supported. |
+
+### 27.7.4 ([tc39.es](https://tc39.es/ecma262/#sec-async-function-instances))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Generated AsyncFunction instances | Supported with Limitations | [`Async_GeneratedFunctionObject_Semantics.js`](../../../tests/Jroc.Tests/Async/JavaScript/Async_GeneratedFunctionObject_Semantics.js)<br>`tests/Jroc.Test262.Tests/built-ins/AsyncFunction/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/language/statements/async-function/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/language/expressions/async-arrow-function/ExecutionTests.cs` |  | Compiled async declarations, expressions, and arrows are generated JsFunctionObject instances inheriting from AsyncFunction.prototype. They expose own name/length metadata, arbitrary properties, stable identity, no ordinary prototype property, and no [[Construct]]. Dynamic calls and callbacks use the common ABI; generator-family migration is tracked separately. |
 
 ### 27.7.5.3 ([tc39.es](https://tc39.es/ecma262/#await))
 

@@ -60,13 +60,13 @@
     {
       "clause": "27.7.4.1",
       "title": "length",
-      "status": "Not Yet Supported",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-async-function-instances-length"
     },
     {
       "clause": "27.7.4.2",
       "title": "name",
-      "status": "Not Yet Supported",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-async-function-instances-name"
     },
     {
@@ -105,6 +105,19 @@
           "tests/Jroc.Test262.Tests/built-ins/AsyncFunction/JavaScript/AsyncFunction_intrinsic.js"
         ],
         "notes": "Async function values now inherit from a dedicated `AsyncFunction.prototype`, and expose `instance.constructor`, `AsyncFunction.prototype.constructor`, and `%Symbol.toStringTag%`. Calling the `AsyncFunction` constructor itself is still not supported."
+      },
+      {
+        "clause": "27.7.4",
+        "feature": "Generated AsyncFunction instances",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-async-function-instances",
+        "testScripts": [
+          "tests/Jroc.Tests/Async/JavaScript/Async_GeneratedFunctionObject_Semantics.js",
+          "tests/Jroc.Test262.Tests/built-ins/AsyncFunction/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/statements/async-function/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/expressions/async-arrow-function/ExecutionTests.cs"
+        ],
+        "notes": "Compiled async declarations, expressions, and arrows are generated JsFunctionObject instances inheriting from AsyncFunction.prototype. They expose own name/length metadata, arbitrary properties, stable identity, no ordinary prototype property, and no [[Construct]]. Dynamic calls and callbacks use the common ABI; generator-family migration is tracked separately."
       },
       {
         "clause": "27.7.5.3",

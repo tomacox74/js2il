@@ -48,6 +48,13 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   omission, prototype mutation, integrity state, and proxy extensibility
   invariants without generic object fast paths bypassing callable/proxy
   semantics.
+- compiler/runtime: close issue #1717 by materializing async function
+  declarations, expressions, and arrows as generated `JsFunctionObject`
+  instances backed by the existing Promise/state-machine implementation.
+  Preserve captures, ordinary/lexical receivers, metadata, identity,
+  properties, non-constructability, overlapping calls, and dynamic
+  invocation; generated async adapters convert synchronous parameter/setup
+  failures into rejected Promises.
 
 ## v0.12.4 - 2026-08-06
 
