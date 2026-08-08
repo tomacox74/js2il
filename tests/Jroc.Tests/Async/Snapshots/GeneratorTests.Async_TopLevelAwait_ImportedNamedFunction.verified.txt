@@ -3198,34 +3198,45 @@
 					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 				) cil managed 
 			{
-				// Header size: 1
-				// Code size: 17 (0x11)
+				// Header size: 12
+				// Code size: 61 (0x3d)
 				.maxstack 8
+				.locals init (
+					[0] object
+				)
 
-				IL_0000: ldarg.0
-				IL_0001: ldfld object[] Modules.Async_TopLevelAwait_ImportedNamedFunction_Dependency/run/FunctionObject_FunctionDeclaration_219C8DFB_run::_transitionalScopes
-				IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
-				IL_000b: call object Modules.Async_TopLevelAwait_ImportedNamedFunction_Dependency/run::__js_call__(object[], object)
-				IL_0010: ret
+				.try
+				{
+					IL_0000: ldarg.0
+					IL_0001: ldfld object[] Modules.Async_TopLevelAwait_ImportedNamedFunction_Dependency/run/FunctionObject_FunctionDeclaration_219C8DFB_run::_transitionalScopes
+					IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
+					IL_000b: call object Modules.Async_TopLevelAwait_ImportedNamedFunction_Dependency/run::__js_call__(object[], object)
+					IL_0010: stloc.0
+					IL_0011: leave IL_003b
+				} // end .try
+				catch [System.Runtime]System.Exception
+				{
+					IL_0016: dup
+					IL_0017: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+					IL_001c: dup
+					IL_001d: brtrue IL_0028
+
+					IL_0022: pop
+					IL_0023: br IL_0030
+
+					IL_0028: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+					IL_002d: stloc.0
+					IL_002e: pop
+					IL_002f: ldloc.0
+
+					IL_0030: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::reject(object)
+					IL_0035: stloc.0
+					IL_0036: leave IL_003b
+				} // end handler
+
+				IL_003b: ldloc.0
+				IL_003c: ret
 			} // end of method FunctionObject_FunctionDeclaration_219C8DFB_run::CallCore
-
-			.method family hidebysig virtual 
-				instance object ConstructBodyCore (
-					object receiver,
-					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
-					object newTarget
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 13 (0xd)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: ldfld object[] Modules.Async_TopLevelAwait_ImportedNamedFunction_Dependency/run/FunctionObject_FunctionDeclaration_219C8DFB_run::_transitionalScopes
-				IL_0006: ldarg.3
-				IL_0007: call object Modules.Async_TopLevelAwait_ImportedNamedFunction_Dependency/run::__js_call__(object[], object)
-				IL_000c: ret
-			} // end of method FunctionObject_FunctionDeclaration_219C8DFB_run::ConstructBodyCore
 
 		} // end of class FunctionObject_FunctionDeclaration_219C8DFB_run
 
@@ -5805,7 +5816,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 340 (0x154)
+		// Code size: 334 (0x14e)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Async_TopLevelAwait_ImportedNamedFunction_Dependency/Scope,
@@ -5814,7 +5825,7 @@
 			[3] class Modules.Async_TopLevelAwait_ImportedNamedFunction_Dependency/__jroc_esm_namespace/FunctionObject_FunctionDeclaration_C475DC7A___jroc_esm_namespace,
 			[4] class Modules.Async_TopLevelAwait_ImportedNamedFunction_Dependency/__jroc_esm_export/FunctionObject_FunctionDeclaration_3AE313B5___jroc_esm_export,
 			[5] object[],
-			[6] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0,
+			[6] class Modules.Async_TopLevelAwait_ImportedNamedFunction_Dependency/run/FunctionObject_FunctionDeclaration_219C8DFB_run,
 			[7] class Modules.Async_TopLevelAwait_ImportedNamedFunction_Dependency/__jroc_esm_mark/FunctionObject_FunctionDeclaration_43F83872___jroc_esm_mark,
 			[8] class Modules.Async_TopLevelAwait_ImportedNamedFunction_Dependency/FunctionExpression_L3C25/FunctionObject_FunctionExpression_787D0E6A_L3C26
 		)
@@ -5832,141 +5843,140 @@
 		IL_0016: stelem.ref
 		IL_0017: stloc.s 5
 		IL_0019: ldloc.s 5
-		IL_001b: ldftn object Modules.Async_TopLevelAwait_ImportedNamedFunction_Dependency/run::__js_call__(object[], object)
-		IL_0021: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_0026: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
-		IL_002b: ldc.i4.0
-		IL_002c: conv.r8
-		IL_002d: ldstr "run"
-		IL_0032: ldc.i4.0
-		IL_0033: ldc.i4.0
-		IL_0034: call !!0 [JavaScriptRuntime]JavaScriptRuntime.AsyncFunction::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
-		IL_0039: stloc.s 6
-		IL_003b: ldloc.0
-		IL_003c: ldloc.s 6
-		IL_003e: stfld object Modules.Async_TopLevelAwait_ImportedNamedFunction_Dependency/Scope::run
-		IL_0043: ldc.i4.1
-		IL_0044: newarr [System.Runtime]System.Object
-		IL_0049: dup
-		IL_004a: ldc.i4.0
-		IL_004b: ldloc.0
-		IL_004c: stelem.ref
-		IL_004d: stloc.s 5
-		IL_004f: ldloc.s 5
-		IL_0051: ldc.i4.0
-		IL_0052: ldelem.ref
-		IL_0053: castclass Modules.Async_TopLevelAwait_ImportedNamedFunction_Dependency/Scope
-		IL_0058: newobj instance void Modules.Async_TopLevelAwait_ImportedNamedFunction_Dependency/__jroc_esm_mark/FunctionObject_FunctionDeclaration_43F83872___jroc_esm_mark::.ctor(class Modules.Async_TopLevelAwait_ImportedNamedFunction_Dependency/Scope)
-		IL_005d: ldc.i4.0
-		IL_005e: conv.r8
-		IL_005f: ldstr "__jroc_esm_mark"
-		IL_0064: ldc.i4.0
-		IL_0065: ldc.i4.0
-		IL_0066: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Async_TopLevelAwait_ImportedNamedFunction_Dependency/__jroc_esm_mark/FunctionObject_FunctionDeclaration_43F83872___jroc_esm_mark>(!!0, float64, string, bool, bool)
-		IL_006b: stloc.s 7
-		IL_006d: ldloc.0
-		IL_006e: ldloc.s 7
-		IL_0070: stfld object Modules.Async_TopLevelAwait_ImportedNamedFunction_Dependency/Scope::__jroc_esm_mark
-		IL_0075: ldc.i4.1
-		IL_0076: newarr [System.Runtime]System.Object
-		IL_007b: dup
-		IL_007c: ldc.i4.0
-		IL_007d: ldloc.0
-		IL_007e: stelem.ref
-		IL_007f: stloc.s 5
-		IL_0081: newobj instance void Modules.Async_TopLevelAwait_ImportedNamedFunction_Dependency/__jroc_esm_default/FunctionObject_FunctionDeclaration_CA5B05D0___jroc_esm_default::.ctor()
-		IL_0086: ldc.i4.1
-		IL_0087: conv.r8
-		IL_0088: ldstr "__jroc_esm_default"
-		IL_008d: ldc.i4.0
-		IL_008e: ldc.i4.0
-		IL_008f: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Async_TopLevelAwait_ImportedNamedFunction_Dependency/__jroc_esm_default/FunctionObject_FunctionDeclaration_CA5B05D0___jroc_esm_default>(!!0, float64, string, bool, bool)
-		IL_0094: stloc.1
-		IL_0095: ldc.i4.1
-		IL_0096: newarr [System.Runtime]System.Object
-		IL_009b: dup
-		IL_009c: ldc.i4.0
-		IL_009d: ldloc.0
-		IL_009e: stelem.ref
-		IL_009f: stloc.s 5
-		IL_00a1: newobj instance void Modules.Async_TopLevelAwait_ImportedNamedFunction_Dependency/__jroc_esm_get/FunctionObject_FunctionDeclaration_D3648E51___jroc_esm_get::.ctor()
-		IL_00a6: ldc.i4.2
-		IL_00a7: conv.r8
-		IL_00a8: ldstr "__jroc_esm_get"
-		IL_00ad: ldc.i4.0
-		IL_00ae: ldc.i4.0
-		IL_00af: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Async_TopLevelAwait_ImportedNamedFunction_Dependency/__jroc_esm_get/FunctionObject_FunctionDeclaration_D3648E51___jroc_esm_get>(!!0, float64, string, bool, bool)
-		IL_00b4: stloc.2
-		IL_00b5: ldc.i4.1
-		IL_00b6: newarr [System.Runtime]System.Object
-		IL_00bb: dup
-		IL_00bc: ldc.i4.0
-		IL_00bd: ldloc.0
-		IL_00be: stelem.ref
-		IL_00bf: stloc.s 5
-		IL_00c1: ldloc.s 5
-		IL_00c3: ldc.i4.0
-		IL_00c4: ldelem.ref
-		IL_00c5: castclass Modules.Async_TopLevelAwait_ImportedNamedFunction_Dependency/Scope
-		IL_00ca: newobj instance void Modules.Async_TopLevelAwait_ImportedNamedFunction_Dependency/__jroc_esm_namespace/FunctionObject_FunctionDeclaration_C475DC7A___jroc_esm_namespace::.ctor(class Modules.Async_TopLevelAwait_ImportedNamedFunction_Dependency/Scope)
-		IL_00cf: ldc.i4.1
-		IL_00d0: conv.r8
-		IL_00d1: ldstr "__jroc_esm_namespace"
-		IL_00d6: ldc.i4.0
-		IL_00d7: ldc.i4.0
-		IL_00d8: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Async_TopLevelAwait_ImportedNamedFunction_Dependency/__jroc_esm_namespace/FunctionObject_FunctionDeclaration_C475DC7A___jroc_esm_namespace>(!!0, float64, string, bool, bool)
-		IL_00dd: stloc.3
-		IL_00de: ldc.i4.1
-		IL_00df: newarr [System.Runtime]System.Object
-		IL_00e4: dup
-		IL_00e5: ldc.i4.0
-		IL_00e6: ldloc.0
-		IL_00e7: stelem.ref
-		IL_00e8: stloc.s 5
-		IL_00ea: ldloc.s 5
-		IL_00ec: ldc.i4.0
-		IL_00ed: ldelem.ref
-		IL_00ee: castclass Modules.Async_TopLevelAwait_ImportedNamedFunction_Dependency/Scope
-		IL_00f3: newobj instance void Modules.Async_TopLevelAwait_ImportedNamedFunction_Dependency/__jroc_esm_export/FunctionObject_FunctionDeclaration_3AE313B5___jroc_esm_export::.ctor(class Modules.Async_TopLevelAwait_ImportedNamedFunction_Dependency/Scope)
-		IL_00f8: ldc.i4.2
-		IL_00f9: conv.r8
-		IL_00fa: ldstr "__jroc_esm_export"
-		IL_00ff: ldc.i4.0
-		IL_0100: ldc.i4.0
-		IL_0101: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Async_TopLevelAwait_ImportedNamedFunction_Dependency/__jroc_esm_export/FunctionObject_FunctionDeclaration_3AE313B5___jroc_esm_export>(!!0, float64, string, bool, bool)
-		IL_0106: stloc.s 4
-		IL_0108: ldloc.0
-		IL_0109: castclass Modules.Async_TopLevelAwait_ImportedNamedFunction_Dependency/Scope
-		IL_010e: ldnull
-		IL_010f: call object Modules.Async_TopLevelAwait_ImportedNamedFunction_Dependency/__jroc_esm_mark::__js_call__(class Modules.Async_TopLevelAwait_ImportedNamedFunction_Dependency/Scope, object)
-		IL_0114: pop
-		IL_0115: ldc.i4.1
-		IL_0116: newarr [System.Runtime]System.Object
-		IL_011b: dup
-		IL_011c: ldc.i4.0
-		IL_011d: ldloc.0
-		IL_011e: stelem.ref
-		IL_011f: stloc.s 5
-		IL_0121: ldloc.s 5
-		IL_0123: ldc.i4.0
-		IL_0124: ldelem.ref
-		IL_0125: castclass Modules.Async_TopLevelAwait_ImportedNamedFunction_Dependency/Scope
-		IL_012a: newobj instance void Modules.Async_TopLevelAwait_ImportedNamedFunction_Dependency/FunctionExpression_L3C25/FunctionObject_FunctionExpression_787D0E6A_L3C26::.ctor(class Modules.Async_TopLevelAwait_ImportedNamedFunction_Dependency/Scope)
-		IL_012f: ldc.i4.0
-		IL_0130: conv.r8
-		IL_0131: ldstr ""
-		IL_0136: ldc.i4.0
-		IL_0137: ldc.i4.0
-		IL_0138: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Async_TopLevelAwait_ImportedNamedFunction_Dependency/FunctionExpression_L3C25/FunctionObject_FunctionExpression_787D0E6A_L3C26>(!!0, float64, string, bool, bool)
-		IL_013d: stloc.s 8
-		IL_013f: ldloc.0
-		IL_0140: castclass Modules.Async_TopLevelAwait_ImportedNamedFunction_Dependency/Scope
-		IL_0145: ldnull
-		IL_0146: ldstr "run"
-		IL_014b: ldloc.s 8
-		IL_014d: call object Modules.Async_TopLevelAwait_ImportedNamedFunction_Dependency/__jroc_esm_export::__js_call__(class Modules.Async_TopLevelAwait_ImportedNamedFunction_Dependency/Scope, object, string, object)
-		IL_0152: pop
-		IL_0153: ret
+		IL_001b: newobj instance void Modules.Async_TopLevelAwait_ImportedNamedFunction_Dependency/run/FunctionObject_FunctionDeclaration_219C8DFB_run::.ctor(object[])
+		IL_0020: ldc.i4.0
+		IL_0021: conv.r8
+		IL_0022: ldstr "run"
+		IL_0027: ldc.i4.0
+		IL_0028: ldc.i4.0
+		IL_0029: call !!0 [JavaScriptRuntime]JavaScriptRuntime.AsyncFunction::InitializeFunctionInstance<class Modules.Async_TopLevelAwait_ImportedNamedFunction_Dependency/run/FunctionObject_FunctionDeclaration_219C8DFB_run>(!!0, float64, string, bool, bool)
+		IL_002e: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Async_TopLevelAwait_ImportedNamedFunction_Dependency/run/FunctionObject_FunctionDeclaration_219C8DFB_run>(!!0)
+		IL_0033: stloc.s 6
+		IL_0035: ldloc.0
+		IL_0036: ldloc.s 6
+		IL_0038: stfld object Modules.Async_TopLevelAwait_ImportedNamedFunction_Dependency/Scope::run
+		IL_003d: ldc.i4.1
+		IL_003e: newarr [System.Runtime]System.Object
+		IL_0043: dup
+		IL_0044: ldc.i4.0
+		IL_0045: ldloc.0
+		IL_0046: stelem.ref
+		IL_0047: stloc.s 5
+		IL_0049: ldloc.s 5
+		IL_004b: ldc.i4.0
+		IL_004c: ldelem.ref
+		IL_004d: castclass Modules.Async_TopLevelAwait_ImportedNamedFunction_Dependency/Scope
+		IL_0052: newobj instance void Modules.Async_TopLevelAwait_ImportedNamedFunction_Dependency/__jroc_esm_mark/FunctionObject_FunctionDeclaration_43F83872___jroc_esm_mark::.ctor(class Modules.Async_TopLevelAwait_ImportedNamedFunction_Dependency/Scope)
+		IL_0057: ldc.i4.0
+		IL_0058: conv.r8
+		IL_0059: ldstr "__jroc_esm_mark"
+		IL_005e: ldc.i4.0
+		IL_005f: ldc.i4.0
+		IL_0060: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Async_TopLevelAwait_ImportedNamedFunction_Dependency/__jroc_esm_mark/FunctionObject_FunctionDeclaration_43F83872___jroc_esm_mark>(!!0, float64, string, bool, bool)
+		IL_0065: stloc.s 7
+		IL_0067: ldloc.0
+		IL_0068: ldloc.s 7
+		IL_006a: stfld object Modules.Async_TopLevelAwait_ImportedNamedFunction_Dependency/Scope::__jroc_esm_mark
+		IL_006f: ldc.i4.1
+		IL_0070: newarr [System.Runtime]System.Object
+		IL_0075: dup
+		IL_0076: ldc.i4.0
+		IL_0077: ldloc.0
+		IL_0078: stelem.ref
+		IL_0079: stloc.s 5
+		IL_007b: newobj instance void Modules.Async_TopLevelAwait_ImportedNamedFunction_Dependency/__jroc_esm_default/FunctionObject_FunctionDeclaration_CA5B05D0___jroc_esm_default::.ctor()
+		IL_0080: ldc.i4.1
+		IL_0081: conv.r8
+		IL_0082: ldstr "__jroc_esm_default"
+		IL_0087: ldc.i4.0
+		IL_0088: ldc.i4.0
+		IL_0089: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Async_TopLevelAwait_ImportedNamedFunction_Dependency/__jroc_esm_default/FunctionObject_FunctionDeclaration_CA5B05D0___jroc_esm_default>(!!0, float64, string, bool, bool)
+		IL_008e: stloc.1
+		IL_008f: ldc.i4.1
+		IL_0090: newarr [System.Runtime]System.Object
+		IL_0095: dup
+		IL_0096: ldc.i4.0
+		IL_0097: ldloc.0
+		IL_0098: stelem.ref
+		IL_0099: stloc.s 5
+		IL_009b: newobj instance void Modules.Async_TopLevelAwait_ImportedNamedFunction_Dependency/__jroc_esm_get/FunctionObject_FunctionDeclaration_D3648E51___jroc_esm_get::.ctor()
+		IL_00a0: ldc.i4.2
+		IL_00a1: conv.r8
+		IL_00a2: ldstr "__jroc_esm_get"
+		IL_00a7: ldc.i4.0
+		IL_00a8: ldc.i4.0
+		IL_00a9: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Async_TopLevelAwait_ImportedNamedFunction_Dependency/__jroc_esm_get/FunctionObject_FunctionDeclaration_D3648E51___jroc_esm_get>(!!0, float64, string, bool, bool)
+		IL_00ae: stloc.2
+		IL_00af: ldc.i4.1
+		IL_00b0: newarr [System.Runtime]System.Object
+		IL_00b5: dup
+		IL_00b6: ldc.i4.0
+		IL_00b7: ldloc.0
+		IL_00b8: stelem.ref
+		IL_00b9: stloc.s 5
+		IL_00bb: ldloc.s 5
+		IL_00bd: ldc.i4.0
+		IL_00be: ldelem.ref
+		IL_00bf: castclass Modules.Async_TopLevelAwait_ImportedNamedFunction_Dependency/Scope
+		IL_00c4: newobj instance void Modules.Async_TopLevelAwait_ImportedNamedFunction_Dependency/__jroc_esm_namespace/FunctionObject_FunctionDeclaration_C475DC7A___jroc_esm_namespace::.ctor(class Modules.Async_TopLevelAwait_ImportedNamedFunction_Dependency/Scope)
+		IL_00c9: ldc.i4.1
+		IL_00ca: conv.r8
+		IL_00cb: ldstr "__jroc_esm_namespace"
+		IL_00d0: ldc.i4.0
+		IL_00d1: ldc.i4.0
+		IL_00d2: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Async_TopLevelAwait_ImportedNamedFunction_Dependency/__jroc_esm_namespace/FunctionObject_FunctionDeclaration_C475DC7A___jroc_esm_namespace>(!!0, float64, string, bool, bool)
+		IL_00d7: stloc.3
+		IL_00d8: ldc.i4.1
+		IL_00d9: newarr [System.Runtime]System.Object
+		IL_00de: dup
+		IL_00df: ldc.i4.0
+		IL_00e0: ldloc.0
+		IL_00e1: stelem.ref
+		IL_00e2: stloc.s 5
+		IL_00e4: ldloc.s 5
+		IL_00e6: ldc.i4.0
+		IL_00e7: ldelem.ref
+		IL_00e8: castclass Modules.Async_TopLevelAwait_ImportedNamedFunction_Dependency/Scope
+		IL_00ed: newobj instance void Modules.Async_TopLevelAwait_ImportedNamedFunction_Dependency/__jroc_esm_export/FunctionObject_FunctionDeclaration_3AE313B5___jroc_esm_export::.ctor(class Modules.Async_TopLevelAwait_ImportedNamedFunction_Dependency/Scope)
+		IL_00f2: ldc.i4.2
+		IL_00f3: conv.r8
+		IL_00f4: ldstr "__jroc_esm_export"
+		IL_00f9: ldc.i4.0
+		IL_00fa: ldc.i4.0
+		IL_00fb: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Async_TopLevelAwait_ImportedNamedFunction_Dependency/__jroc_esm_export/FunctionObject_FunctionDeclaration_3AE313B5___jroc_esm_export>(!!0, float64, string, bool, bool)
+		IL_0100: stloc.s 4
+		IL_0102: ldloc.0
+		IL_0103: castclass Modules.Async_TopLevelAwait_ImportedNamedFunction_Dependency/Scope
+		IL_0108: ldnull
+		IL_0109: call object Modules.Async_TopLevelAwait_ImportedNamedFunction_Dependency/__jroc_esm_mark::__js_call__(class Modules.Async_TopLevelAwait_ImportedNamedFunction_Dependency/Scope, object)
+		IL_010e: pop
+		IL_010f: ldc.i4.1
+		IL_0110: newarr [System.Runtime]System.Object
+		IL_0115: dup
+		IL_0116: ldc.i4.0
+		IL_0117: ldloc.0
+		IL_0118: stelem.ref
+		IL_0119: stloc.s 5
+		IL_011b: ldloc.s 5
+		IL_011d: ldc.i4.0
+		IL_011e: ldelem.ref
+		IL_011f: castclass Modules.Async_TopLevelAwait_ImportedNamedFunction_Dependency/Scope
+		IL_0124: newobj instance void Modules.Async_TopLevelAwait_ImportedNamedFunction_Dependency/FunctionExpression_L3C25/FunctionObject_FunctionExpression_787D0E6A_L3C26::.ctor(class Modules.Async_TopLevelAwait_ImportedNamedFunction_Dependency/Scope)
+		IL_0129: ldc.i4.0
+		IL_012a: conv.r8
+		IL_012b: ldstr ""
+		IL_0130: ldc.i4.0
+		IL_0131: ldc.i4.0
+		IL_0132: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Async_TopLevelAwait_ImportedNamedFunction_Dependency/FunctionExpression_L3C25/FunctionObject_FunctionExpression_787D0E6A_L3C26>(!!0, float64, string, bool, bool)
+		IL_0137: stloc.s 8
+		IL_0139: ldloc.0
+		IL_013a: castclass Modules.Async_TopLevelAwait_ImportedNamedFunction_Dependency/Scope
+		IL_013f: ldnull
+		IL_0140: ldstr "run"
+		IL_0145: ldloc.s 8
+		IL_0147: call object Modules.Async_TopLevelAwait_ImportedNamedFunction_Dependency/__jroc_esm_export::__js_call__(class Modules.Async_TopLevelAwait_ImportedNamedFunction_Dependency/Scope, object, string, object)
+		IL_014c: pop
+		IL_014d: ret
 	} // end of method Async_TopLevelAwait_ImportedNamedFunction_Dependency::__js_module_init__
 
 } // end of class Modules.Async_TopLevelAwait_ImportedNamedFunction_Dependency

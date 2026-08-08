@@ -48,8 +48,7 @@ internal sealed partial class LIRToILCompiler
         TempLocalAllocation allocation,
         MethodDescriptor methodDescriptor)
     {
-        if (createFunction.IsAsync
-            || IsGeneratorCallable(createFunction.CallableId)
+        if (IsGeneratorCallable(createFunction.CallableId)
             || !_generatedFunctionObjectRegistry.TryGetMetadata(
                 createFunction.CallableId,
                 out var metadata))
@@ -71,8 +70,9 @@ internal sealed partial class LIRToILCompiler
         ilEncoder.Token(metadata.ConstructorHandle);
         EmitInitializeGeneratedFunctionInstance(
             createFunction.CallableId,
-            isAsync: false,
-            markUndefinedPrototype: false,
+            isAsync: createFunction.IsAsync,
+            markUndefinedPrototype:
+                createFunction.IsAsync || createFunction.IsNonConstructible,
             metadata,
             ilEncoder,
             createFunction.FunctionName);

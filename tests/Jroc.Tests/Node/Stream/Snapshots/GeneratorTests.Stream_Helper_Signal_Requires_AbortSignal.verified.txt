@@ -1036,34 +1036,45 @@
 					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 				) cil managed 
 			{
-				// Header size: 1
-				// Code size: 17 (0x11)
+				// Header size: 12
+				// Code size: 61 (0x3d)
 				.maxstack 8
+				.locals init (
+					[0] object
+				)
 
-				IL_0000: ldarg.0
-				IL_0001: ldfld object[] Modules.Stream_Helper_Signal_Requires_AbortSignal/main/FunctionObject_FunctionDeclaration_1D6C2B21_main::_transitionalScopes
-				IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
-				IL_000b: call object Modules.Stream_Helper_Signal_Requires_AbortSignal/main::__js_call__(object[], object)
-				IL_0010: ret
+				.try
+				{
+					IL_0000: ldarg.0
+					IL_0001: ldfld object[] Modules.Stream_Helper_Signal_Requires_AbortSignal/main/FunctionObject_FunctionDeclaration_1D6C2B21_main::_transitionalScopes
+					IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
+					IL_000b: call object Modules.Stream_Helper_Signal_Requires_AbortSignal/main::__js_call__(object[], object)
+					IL_0010: stloc.0
+					IL_0011: leave IL_003b
+				} // end .try
+				catch [System.Runtime]System.Exception
+				{
+					IL_0016: dup
+					IL_0017: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+					IL_001c: dup
+					IL_001d: brtrue IL_0028
+
+					IL_0022: pop
+					IL_0023: br IL_0030
+
+					IL_0028: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+					IL_002d: stloc.0
+					IL_002e: pop
+					IL_002f: ldloc.0
+
+					IL_0030: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::reject(object)
+					IL_0035: stloc.0
+					IL_0036: leave IL_003b
+				} // end handler
+
+				IL_003b: ldloc.0
+				IL_003c: ret
 			} // end of method FunctionObject_FunctionDeclaration_1D6C2B21_main::CallCore
-
-			.method family hidebysig virtual 
-				instance object ConstructBodyCore (
-					object receiver,
-					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
-					object newTarget
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 13 (0xd)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: ldfld object[] Modules.Stream_Helper_Signal_Requires_AbortSignal/main/FunctionObject_FunctionDeclaration_1D6C2B21_main::_transitionalScopes
-				IL_0006: ldarg.3
-				IL_0007: call object Modules.Stream_Helper_Signal_Requires_AbortSignal/main::__js_call__(object[], object)
-				IL_000c: ret
-			} // end of method FunctionObject_FunctionDeclaration_1D6C2B21_main::ConstructBodyCore
 
 		} // end of class FunctionObject_FunctionDeclaration_1D6C2B21_main
 
@@ -2095,11 +2106,11 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 202 (0xca)
+		// Code size: 204 (0xcc)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Stream_Helper_Signal_Requires_AbortSignal/Scope,
-			[1] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0,
+			[1] class Modules.Stream_Helper_Signal_Requires_AbortSignal/main/FunctionObject_FunctionDeclaration_1D6C2B21_main,
 			[2] object[],
 			[3] class Modules.Stream_Helper_Signal_Requires_AbortSignal/createWritable/FunctionObject_FunctionDeclaration_CEE88488_createWritable,
 			[4] class Modules.Stream_Helper_Signal_Requires_AbortSignal/createReadable/FunctionObject_FunctionDeclaration_ECED33DC_createReadable,
@@ -2161,39 +2172,42 @@
 		IL_006d: stelem.ref
 		IL_006e: stloc.2
 		IL_006f: ldloc.2
-		IL_0070: ldftn object Modules.Stream_Helper_Signal_Requires_AbortSignal/main::__js_call__(object[], object)
-		IL_0076: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_007b: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
-		IL_0080: ldc.i4.0
-		IL_0081: conv.r8
-		IL_0082: ldstr "main"
-		IL_0087: ldc.i4.0
-		IL_0088: ldc.i4.1
-		IL_0089: call !!0 [JavaScriptRuntime]JavaScriptRuntime.AsyncFunction::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
-		IL_008e: stloc.1
-		IL_008f: nop
-		IL_0090: ldarg.1
-		IL_0091: ldstr "node:stream"
-		IL_0096: call !!0 [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireRuntime::RequireObject<class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IStreamModule>(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object)
-		IL_009b: stloc.s 5
-		IL_009d: ldloc.0
-		IL_009e: ldloc.s 5
-		IL_00a0: stfld class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IStreamModule Modules.Stream_Helper_Signal_Requires_AbortSignal/Scope::'stream'
-		IL_00a5: ldarg.1
-		IL_00a6: ldstr "node:stream/promises"
-		IL_00ab: call !!0 [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireRuntime::RequireObject<class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IStreamPromisesModule>(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object)
-		IL_00b0: stloc.s 6
-		IL_00b2: ldloc.0
-		IL_00b3: ldloc.s 6
-		IL_00b5: stfld class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IStreamPromisesModule Modules.Stream_Helper_Signal_Requires_AbortSignal/Scope::streamPromises
-		IL_00ba: nop
-		IL_00bb: nop
+		IL_0070: ldc.i4.0
+		IL_0071: ldelem.ref
+		IL_0072: castclass Modules.Stream_Helper_Signal_Requires_AbortSignal/Scope
+		IL_0077: ldloc.2
+		IL_0078: newobj instance void Modules.Stream_Helper_Signal_Requires_AbortSignal/main/FunctionObject_FunctionDeclaration_1D6C2B21_main::.ctor(class Modules.Stream_Helper_Signal_Requires_AbortSignal/Scope, object[])
+		IL_007d: ldc.i4.0
+		IL_007e: conv.r8
+		IL_007f: ldstr "main"
+		IL_0084: ldc.i4.0
+		IL_0085: ldc.i4.1
+		IL_0086: call !!0 [JavaScriptRuntime]JavaScriptRuntime.AsyncFunction::InitializeFunctionInstance<class Modules.Stream_Helper_Signal_Requires_AbortSignal/main/FunctionObject_FunctionDeclaration_1D6C2B21_main>(!!0, float64, string, bool, bool)
+		IL_008b: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Stream_Helper_Signal_Requires_AbortSignal/main/FunctionObject_FunctionDeclaration_1D6C2B21_main>(!!0)
+		IL_0090: stloc.1
+		IL_0091: nop
+		IL_0092: ldarg.1
+		IL_0093: ldstr "node:stream"
+		IL_0098: call !!0 [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireRuntime::RequireObject<class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IStreamModule>(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object)
+		IL_009d: stloc.s 5
+		IL_009f: ldloc.0
+		IL_00a0: ldloc.s 5
+		IL_00a2: stfld class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IStreamModule Modules.Stream_Helper_Signal_Requires_AbortSignal/Scope::'stream'
+		IL_00a7: ldarg.1
+		IL_00a8: ldstr "node:stream/promises"
+		IL_00ad: call !!0 [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireRuntime::RequireObject<class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IStreamPromisesModule>(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object)
+		IL_00b2: stloc.s 6
+		IL_00b4: ldloc.0
+		IL_00b5: ldloc.s 6
+		IL_00b7: stfld class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IStreamPromisesModule Modules.Stream_Helper_Signal_Requires_AbortSignal/Scope::streamPromises
 		IL_00bc: nop
-		IL_00bd: ldloc.1
-		IL_00be: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_00c3: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0, object[])
-		IL_00c8: pop
-		IL_00c9: ret
+		IL_00bd: nop
+		IL_00be: nop
+		IL_00bf: ldloc.1
+		IL_00c0: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_00c5: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
+		IL_00ca: pop
+		IL_00cb: ret
 	} // end of method Stream_Helper_Signal_Requires_AbortSignal::__js_module_init__
 
 } // end of class Modules.Stream_Helper_Signal_Requires_AbortSignal

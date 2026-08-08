@@ -50,6 +50,7 @@
         "testScripts": [
           "tests/Jroc.Tests/Async/JavaScript/Async_ArrowFunction_SimpleAwait.js",
           "tests/Jroc.Tests/Async/JavaScript/Async_ArrowFunction_LexicalThis.js",
+          "tests/Jroc.Tests/Async/JavaScript/Async_GeneratedFunctionObject_Semantics.js",
           "tests/Jroc.Test262.Tests/language/expressions/async-arrow-function/JavaScript/arrow-returns-promise.js",
           "tests/Jroc.Test262.Tests/language/expressions/async-arrow-function/JavaScript/dflt-params-arg-val-not-undefined.js",
           "tests/Jroc.Test262.Tests/language/expressions/async-arrow-function/JavaScript/dflt-params-arg-val-undefined.js",
@@ -57,7 +58,7 @@
           "tests/Jroc.Test262.Tests/language/expressions/async-arrow-function/JavaScript/try-return-finally-throw.js",
           "tests/Jroc.Test262.Tests/language/expressions/async-arrow-function/JavaScript/try-throw-finally-return.js"
         ],
-        "notes": "Covered by Async and test262 fixtures. Async arrow functions compile and run, including await, Promise chaining, default-parameter binding, no-await Promise completion/rejection, and finally completion overrides."
+        "notes": "Async arrows materialize as generated non-constructable function objects, capture lexical state once per evaluation, and use the common callable ABI for dynamic invocation. Covered behavior includes await, Promise chaining, default-parameter binding, no-await completion/rejection, metadata/identity, and finally completion overrides."
       },
       {
         "clause": "15.9.2",

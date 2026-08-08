@@ -57,6 +57,9 @@ namespace Jroc.Tests.Async
         public Task Async_FunctionExpression_SimpleAwait() { var testName = nameof(Async_FunctionExpression_SimpleAwait); return GenerateTest(testName); }
 
         [Fact]
+        public Task Async_GeneratedFunctionObject_Semantics() { var testName = nameof(Async_GeneratedFunctionObject_Semantics); return GenerateTest(testName); }
+
+        [Fact]
         public Task Async_TryCatch_AwaitReject() { var testName = nameof(Async_TryCatch_AwaitReject); return GenerateTest(testName); }
 
         [Fact]

@@ -662,34 +662,45 @@
 					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 				) cil managed 
 			{
-				// Header size: 1
-				// Code size: 17 (0x11)
+				// Header size: 12
+				// Code size: 61 (0x3d)
 				.maxstack 8
+				.locals init (
+					[0] object
+				)
 
-				IL_0000: ldarg.0
-				IL_0001: ldfld object[] Modules.Async_ForAwaitOf_AsyncIterator_BreakCloses/test/FunctionObject_FunctionDeclaration_2FA20F6D_test::_transitionalScopes
-				IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
-				IL_000b: call object Modules.Async_ForAwaitOf_AsyncIterator_BreakCloses/test::__js_call__(object[], object)
-				IL_0010: ret
+				.try
+				{
+					IL_0000: ldarg.0
+					IL_0001: ldfld object[] Modules.Async_ForAwaitOf_AsyncIterator_BreakCloses/test/FunctionObject_FunctionDeclaration_2FA20F6D_test::_transitionalScopes
+					IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
+					IL_000b: call object Modules.Async_ForAwaitOf_AsyncIterator_BreakCloses/test::__js_call__(object[], object)
+					IL_0010: stloc.0
+					IL_0011: leave IL_003b
+				} // end .try
+				catch [System.Runtime]System.Exception
+				{
+					IL_0016: dup
+					IL_0017: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+					IL_001c: dup
+					IL_001d: brtrue IL_0028
+
+					IL_0022: pop
+					IL_0023: br IL_0030
+
+					IL_0028: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+					IL_002d: stloc.0
+					IL_002e: pop
+					IL_002f: ldloc.0
+
+					IL_0030: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::reject(object)
+					IL_0035: stloc.0
+					IL_0036: leave IL_003b
+				} // end handler
+
+				IL_003b: ldloc.0
+				IL_003c: ret
 			} // end of method FunctionObject_FunctionDeclaration_2FA20F6D_test::CallCore
-
-			.method family hidebysig virtual 
-				instance object ConstructBodyCore (
-					object receiver,
-					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
-					object newTarget
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 13 (0xd)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: ldfld object[] Modules.Async_ForAwaitOf_AsyncIterator_BreakCloses/test/FunctionObject_FunctionDeclaration_2FA20F6D_test::_transitionalScopes
-				IL_0006: ldarg.3
-				IL_0007: call object Modules.Async_ForAwaitOf_AsyncIterator_BreakCloses/test::__js_call__(object[], object)
-				IL_000c: ret
-			} // end of method FunctionObject_FunctionDeclaration_2FA20F6D_test::ConstructBodyCore
 
 		} // end of class FunctionObject_FunctionDeclaration_2FA20F6D_test
 
@@ -1259,11 +1270,11 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 200 (0xc8)
+		// Code size: 207 (0xcf)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Async_ForAwaitOf_AsyncIterator_BreakCloses/Scope,
-			[1] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0,
+			[1] class Modules.Async_ForAwaitOf_AsyncIterator_BreakCloses/test/FunctionObject_FunctionDeclaration_2FA20F6D_test,
 			[2] object[],
 			[3] object,
 			[4] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
@@ -1280,78 +1291,82 @@
 		IL_000f: stelem.ref
 		IL_0010: stloc.2
 		IL_0011: ldloc.2
-		IL_0012: ldftn object Modules.Async_ForAwaitOf_AsyncIterator_BreakCloses/test::__js_call__(object[], object)
-		IL_0018: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_001d: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
-		IL_0022: ldc.i4.0
-		IL_0023: conv.r8
-		IL_0024: ldstr "test"
-		IL_0029: ldc.i4.0
-		IL_002a: ldc.i4.1
-		IL_002b: call !!0 [JavaScriptRuntime]JavaScriptRuntime.AsyncFunction::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
-		IL_0030: stloc.1
-		IL_0031: nop
-		IL_0032: ldstr "asyncIterator"
-		IL_0037: call object [JavaScriptRuntime]JavaScriptRuntime.Symbol::GetWellKnown(string)
-		IL_003c: stloc.3
-		IL_003d: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_0042: stloc.s 4
-		IL_0044: ldc.i4.1
-		IL_0045: newarr [System.Runtime]System.Object
-		IL_004a: dup
-		IL_004b: ldc.i4.0
-		IL_004c: ldloc.0
-		IL_004d: stelem.ref
-		IL_004e: stloc.2
-		IL_004f: ldloc.s 4
-		IL_0051: ldloc.3
-		IL_0052: ldloc.2
-		IL_0053: ldc.i4.0
-		IL_0054: ldelem.ref
-		IL_0055: castclass Modules.Async_ForAwaitOf_AsyncIterator_BreakCloses/Scope
-		IL_005a: newobj instance void Modules.Async_ForAwaitOf_AsyncIterator_BreakCloses/FunctionExpression_iterable/FunctionObject_FunctionExpression_79857E5C_L5C27::.ctor(class Modules.Async_ForAwaitOf_AsyncIterator_BreakCloses/Scope)
-		IL_005f: ldc.i4.0
-		IL_0060: conv.r8
-		IL_0061: ldstr ""
-		IL_0066: ldc.i4.0
-		IL_0067: ldc.i4.1
-		IL_0068: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Async_ForAwaitOf_AsyncIterator_BreakCloses/FunctionExpression_iterable/FunctionObject_FunctionExpression_79857E5C_L5C27>(!!0, float64, string, bool, bool)
-		IL_006d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Async_ForAwaitOf_AsyncIterator_BreakCloses/FunctionExpression_iterable/FunctionObject_FunctionExpression_79857E5C_L5C27>(!!0)
-		IL_0072: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineObjectLiteralDataProperty(object, object, object)
-		IL_0077: pop
-		IL_0078: ldloc.0
-		IL_0079: ldloc.s 4
-		IL_007b: stfld object Modules.Async_ForAwaitOf_AsyncIterator_BreakCloses/Scope::iterable
-		IL_0080: nop
-		IL_0081: ldloc.1
-		IL_0082: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0087: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0, object[])
-		IL_008c: stloc.3
-		IL_008d: ldloc.3
-		IL_008e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0012: ldc.i4.0
+		IL_0013: ldelem.ref
+		IL_0014: castclass Modules.Async_ForAwaitOf_AsyncIterator_BreakCloses/Scope
+		IL_0019: ldloc.2
+		IL_001a: newobj instance void Modules.Async_ForAwaitOf_AsyncIterator_BreakCloses/test/FunctionObject_FunctionDeclaration_2FA20F6D_test::.ctor(class Modules.Async_ForAwaitOf_AsyncIterator_BreakCloses/Scope, object[])
+		IL_001f: ldc.i4.0
+		IL_0020: conv.r8
+		IL_0021: ldstr "test"
+		IL_0026: ldc.i4.0
+		IL_0027: ldc.i4.1
+		IL_0028: call !!0 [JavaScriptRuntime]JavaScriptRuntime.AsyncFunction::InitializeFunctionInstance<class Modules.Async_ForAwaitOf_AsyncIterator_BreakCloses/test/FunctionObject_FunctionDeclaration_2FA20F6D_test>(!!0, float64, string, bool, bool)
+		IL_002d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Async_ForAwaitOf_AsyncIterator_BreakCloses/test/FunctionObject_FunctionDeclaration_2FA20F6D_test>(!!0)
+		IL_0032: stloc.1
+		IL_0033: nop
+		IL_0034: ldstr "asyncIterator"
+		IL_0039: call object [JavaScriptRuntime]JavaScriptRuntime.Symbol::GetWellKnown(string)
+		IL_003e: stloc.3
+		IL_003f: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0044: stloc.s 4
+		IL_0046: ldc.i4.1
+		IL_0047: newarr [System.Runtime]System.Object
+		IL_004c: dup
+		IL_004d: ldc.i4.0
+		IL_004e: ldloc.0
+		IL_004f: stelem.ref
+		IL_0050: stloc.2
+		IL_0051: ldloc.s 4
+		IL_0053: ldloc.3
+		IL_0054: ldloc.2
+		IL_0055: ldc.i4.0
+		IL_0056: ldelem.ref
+		IL_0057: castclass Modules.Async_ForAwaitOf_AsyncIterator_BreakCloses/Scope
+		IL_005c: newobj instance void Modules.Async_ForAwaitOf_AsyncIterator_BreakCloses/FunctionExpression_iterable/FunctionObject_FunctionExpression_79857E5C_L5C27::.ctor(class Modules.Async_ForAwaitOf_AsyncIterator_BreakCloses/Scope)
+		IL_0061: ldc.i4.0
+		IL_0062: conv.r8
+		IL_0063: ldstr ""
+		IL_0068: ldc.i4.0
+		IL_0069: ldc.i4.1
+		IL_006a: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Async_ForAwaitOf_AsyncIterator_BreakCloses/FunctionExpression_iterable/FunctionObject_FunctionExpression_79857E5C_L5C27>(!!0, float64, string, bool, bool)
+		IL_006f: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Async_ForAwaitOf_AsyncIterator_BreakCloses/FunctionExpression_iterable/FunctionObject_FunctionExpression_79857E5C_L5C27>(!!0)
+		IL_0074: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Async_ForAwaitOf_AsyncIterator_BreakCloses/FunctionExpression_iterable/FunctionObject_FunctionExpression_79857E5C_L5C27>(!!0)
+		IL_0079: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineObjectLiteralDataProperty(object, object, object)
+		IL_007e: pop
+		IL_007f: ldloc.0
+		IL_0080: ldloc.s 4
+		IL_0082: stfld object Modules.Async_ForAwaitOf_AsyncIterator_BreakCloses/Scope::iterable
+		IL_0087: nop
+		IL_0088: ldloc.1
+		IL_0089: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_008e: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
 		IL_0093: stloc.3
-		IL_0094: ldc.i4.1
-		IL_0095: newarr [System.Runtime]System.Object
-		IL_009a: dup
-		IL_009b: ldc.i4.0
-		IL_009c: ldloc.0
-		IL_009d: stelem.ref
-		IL_009e: stloc.2
-		IL_009f: newobj instance void Modules.Async_ForAwaitOf_AsyncIterator_BreakCloses/ArrowFunction_L28C13/FunctionObject::.ctor()
-		IL_00a4: ldc.i4.0
-		IL_00a5: conv.r8
-		IL_00a6: ldstr ""
+		IL_0094: ldloc.3
+		IL_0095: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_009a: stloc.3
+		IL_009b: ldc.i4.1
+		IL_009c: newarr [System.Runtime]System.Object
+		IL_00a1: dup
+		IL_00a2: ldc.i4.0
+		IL_00a3: ldloc.0
+		IL_00a4: stelem.ref
+		IL_00a5: stloc.2
+		IL_00a6: newobj instance void Modules.Async_ForAwaitOf_AsyncIterator_BreakCloses/ArrowFunction_L28C13/FunctionObject::.ctor()
 		IL_00ab: ldc.i4.0
-		IL_00ac: ldc.i4.0
-		IL_00ad: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Async_ForAwaitOf_AsyncIterator_BreakCloses/ArrowFunction_L28C13/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_00b2: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Async_ForAwaitOf_AsyncIterator_BreakCloses/ArrowFunction_L28C13/FunctionObject>(!!0)
-		IL_00b7: stloc.s 5
-		IL_00b9: ldloc.3
-		IL_00ba: ldstr "then"
-		IL_00bf: ldloc.s 5
-		IL_00c1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00c6: pop
-		IL_00c7: ret
+		IL_00ac: conv.r8
+		IL_00ad: ldstr ""
+		IL_00b2: ldc.i4.0
+		IL_00b3: ldc.i4.0
+		IL_00b4: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Async_ForAwaitOf_AsyncIterator_BreakCloses/ArrowFunction_L28C13/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_00b9: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Async_ForAwaitOf_AsyncIterator_BreakCloses/ArrowFunction_L28C13/FunctionObject>(!!0)
+		IL_00be: stloc.s 5
+		IL_00c0: ldloc.3
+		IL_00c1: ldstr "then"
+		IL_00c6: ldloc.s 5
+		IL_00c8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_00cd: pop
+		IL_00ce: ret
 	} // end of method Async_ForAwaitOf_AsyncIterator_BreakCloses::__js_module_init__
 
 } // end of class Modules.Async_ForAwaitOf_AsyncIterator_BreakCloses

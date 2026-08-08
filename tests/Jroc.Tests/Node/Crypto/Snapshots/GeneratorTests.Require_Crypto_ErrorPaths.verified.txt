@@ -2843,46 +2843,51 @@
 					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 				) cil managed 
 			{
-				// Header size: 1
-				// Code size: 31 (0x1f)
+				// Header size: 12
+				// Code size: 75 (0x4b)
 				.maxstack 8
+				.locals init (
+					[0] object
+				)
 
-				IL_0000: ldarg.0
-				IL_0001: ldfld object[] Modules.Require_Crypto_ErrorPaths/logPromiseError/FunctionObject_FunctionDeclaration_8C7B1B0D_logPromiseError::_transitionalScopes
-				IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
-				IL_000b: ldarg.2
-				IL_000c: ldc.i4.0
-				IL_000d: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-				IL_0012: ldarg.2
-				IL_0013: ldc.i4.1
-				IL_0014: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-				IL_0019: call object Modules.Require_Crypto_ErrorPaths/logPromiseError::__js_call__(object[], object, object, object)
-				IL_001e: ret
+				.try
+				{
+					IL_0000: ldarg.0
+					IL_0001: ldfld object[] Modules.Require_Crypto_ErrorPaths/logPromiseError/FunctionObject_FunctionDeclaration_8C7B1B0D_logPromiseError::_transitionalScopes
+					IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
+					IL_000b: ldarg.2
+					IL_000c: ldc.i4.0
+					IL_000d: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+					IL_0012: ldarg.2
+					IL_0013: ldc.i4.1
+					IL_0014: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+					IL_0019: call object Modules.Require_Crypto_ErrorPaths/logPromiseError::__js_call__(object[], object, object, object)
+					IL_001e: stloc.0
+					IL_001f: leave IL_0049
+				} // end .try
+				catch [System.Runtime]System.Exception
+				{
+					IL_0024: dup
+					IL_0025: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+					IL_002a: dup
+					IL_002b: brtrue IL_0036
+
+					IL_0030: pop
+					IL_0031: br IL_003e
+
+					IL_0036: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+					IL_003b: stloc.0
+					IL_003c: pop
+					IL_003d: ldloc.0
+
+					IL_003e: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::reject(object)
+					IL_0043: stloc.0
+					IL_0044: leave IL_0049
+				} // end handler
+
+				IL_0049: ldloc.0
+				IL_004a: ret
 			} // end of method FunctionObject_FunctionDeclaration_8C7B1B0D_logPromiseError::CallCore
-
-			.method family hidebysig virtual 
-				instance object ConstructBodyCore (
-					object receiver,
-					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
-					object newTarget
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 27 (0x1b)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: ldfld object[] Modules.Require_Crypto_ErrorPaths/logPromiseError/FunctionObject_FunctionDeclaration_8C7B1B0D_logPromiseError::_transitionalScopes
-				IL_0006: ldarg.3
-				IL_0007: ldarg.2
-				IL_0008: ldc.i4.0
-				IL_0009: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-				IL_000e: ldarg.2
-				IL_000f: ldc.i4.1
-				IL_0010: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-				IL_0015: call object Modules.Require_Crypto_ErrorPaths/logPromiseError::__js_call__(object[], object, object, object)
-				IL_001a: ret
-			} // end of method FunctionObject_FunctionDeclaration_8C7B1B0D_logPromiseError::ConstructBodyCore
 
 		} // end of class FunctionObject_FunctionDeclaration_8C7B1B0D_logPromiseError
 
@@ -4868,34 +4873,45 @@
 					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 				) cil managed 
 			{
-				// Header size: 1
-				// Code size: 17 (0x11)
+				// Header size: 12
+				// Code size: 61 (0x3d)
 				.maxstack 8
+				.locals init (
+					[0] object
+				)
 
-				IL_0000: ldarg.0
-				IL_0001: ldfld object[] Modules.Require_Crypto_ErrorPaths/runWebCryptoErrors/FunctionObject_FunctionDeclaration_F31DA885_runWebCryptoErrors::_transitionalScopes
-				IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
-				IL_000b: call object Modules.Require_Crypto_ErrorPaths/runWebCryptoErrors::__js_call__(object[], object)
-				IL_0010: ret
+				.try
+				{
+					IL_0000: ldarg.0
+					IL_0001: ldfld object[] Modules.Require_Crypto_ErrorPaths/runWebCryptoErrors/FunctionObject_FunctionDeclaration_F31DA885_runWebCryptoErrors::_transitionalScopes
+					IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
+					IL_000b: call object Modules.Require_Crypto_ErrorPaths/runWebCryptoErrors::__js_call__(object[], object)
+					IL_0010: stloc.0
+					IL_0011: leave IL_003b
+				} // end .try
+				catch [System.Runtime]System.Exception
+				{
+					IL_0016: dup
+					IL_0017: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+					IL_001c: dup
+					IL_001d: brtrue IL_0028
+
+					IL_0022: pop
+					IL_0023: br IL_0030
+
+					IL_0028: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+					IL_002d: stloc.0
+					IL_002e: pop
+					IL_002f: ldloc.0
+
+					IL_0030: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::reject(object)
+					IL_0035: stloc.0
+					IL_0036: leave IL_003b
+				} // end handler
+
+				IL_003b: ldloc.0
+				IL_003c: ret
 			} // end of method FunctionObject_FunctionDeclaration_F31DA885_runWebCryptoErrors::CallCore
-
-			.method family hidebysig virtual 
-				instance object ConstructBodyCore (
-					object receiver,
-					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
-					object newTarget
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 13 (0xd)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: ldfld object[] Modules.Require_Crypto_ErrorPaths/runWebCryptoErrors/FunctionObject_FunctionDeclaration_F31DA885_runWebCryptoErrors::_transitionalScopes
-				IL_0006: ldarg.3
-				IL_0007: call object Modules.Require_Crypto_ErrorPaths/runWebCryptoErrors::__js_call__(object[], object)
-				IL_000c: ret
-			} // end of method FunctionObject_FunctionDeclaration_F31DA885_runWebCryptoErrors::ConstructBodyCore
 
 		} // end of class FunctionObject_FunctionDeclaration_F31DA885_runWebCryptoErrors
 
@@ -6790,14 +6806,14 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 1681 (0x691)
+		// Code size: 1677 (0x68d)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Require_Crypto_ErrorPaths/Scope,
 			[1] class Modules.Require_Crypto_ErrorPaths/logError/FunctionObject_FunctionDeclaration_B38D6CE6_logError,
-			[2] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0,
+			[2] class Modules.Require_Crypto_ErrorPaths/runWebCryptoErrors/FunctionObject_FunctionDeclaration_F31DA885_runWebCryptoErrors,
 			[3] object[],
-			[4] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2,
+			[4] class Modules.Require_Crypto_ErrorPaths/logPromiseError/FunctionObject_FunctionDeclaration_8C7B1B0D_logPromiseError,
 			[5] class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.ICryptoModule,
 			[6] object[],
 			[7] class Modules.Require_Crypto_ErrorPaths/ArrowFunction_L16C28/FunctionObject,
@@ -6849,654 +6865,656 @@
 		IL_002e: stelem.ref
 		IL_002f: stloc.3
 		IL_0030: ldloc.3
-		IL_0031: ldftn object Modules.Require_Crypto_ErrorPaths/logPromiseError::__js_call__(object[], object, object, object)
-		IL_0037: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::.ctor(object, native int)
-		IL_003c: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2
-		IL_0041: ldc.i4.2
-		IL_0042: conv.r8
-		IL_0043: ldstr "logPromiseError"
-		IL_0048: ldc.i4.0
-		IL_0049: ldc.i4.1
-		IL_004a: call !!0 [JavaScriptRuntime]JavaScriptRuntime.AsyncFunction::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2>(!!0, float64, string, bool, bool)
-		IL_004f: stloc.s 4
-		IL_0051: ldloc.0
-		IL_0052: ldloc.s 4
-		IL_0054: stfld object Modules.Require_Crypto_ErrorPaths/Scope::logPromiseError
-		IL_0059: ldc.i4.1
-		IL_005a: newarr [System.Runtime]System.Object
-		IL_005f: dup
-		IL_0060: ldc.i4.0
-		IL_0061: ldloc.0
-		IL_0062: stelem.ref
-		IL_0063: stloc.3
-		IL_0064: ldloc.3
-		IL_0065: ldftn object Modules.Require_Crypto_ErrorPaths/runWebCryptoErrors::__js_call__(object[], object)
-		IL_006b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_0070: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
-		IL_0075: ldc.i4.0
-		IL_0076: conv.r8
-		IL_0077: ldstr "runWebCryptoErrors"
-		IL_007c: ldc.i4.0
-		IL_007d: ldc.i4.1
-		IL_007e: call !!0 [JavaScriptRuntime]JavaScriptRuntime.AsyncFunction::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
-		IL_0083: stloc.2
-		IL_0084: nop
-		IL_0085: ldarg.1
-		IL_0086: ldstr "crypto"
-		IL_008b: call !!0 [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireRuntime::RequireObject<class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.ICryptoModule>(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object)
-		IL_0090: stloc.s 5
-		IL_0092: ldloc.0
-		IL_0093: ldloc.s 5
-		IL_0095: stfld class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.ICryptoModule Modules.Require_Crypto_ErrorPaths/Scope::crypto
-		IL_009a: nop
-		IL_009b: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_00a0: stloc.3
-		IL_00a1: ldc.i4.1
-		IL_00a2: newarr [System.Runtime]System.Object
-		IL_00a7: dup
-		IL_00a8: ldc.i4.0
-		IL_00a9: ldloc.0
-		IL_00aa: stelem.ref
-		IL_00ab: stloc.s 6
-		IL_00ad: ldloc.s 6
-		IL_00af: ldc.i4.0
-		IL_00b0: ldelem.ref
-		IL_00b1: castclass Modules.Require_Crypto_ErrorPaths/Scope
-		IL_00b6: newobj instance void Modules.Require_Crypto_ErrorPaths/ArrowFunction_L16C28/FunctionObject::.ctor(class Modules.Require_Crypto_ErrorPaths/Scope)
-		IL_00bb: ldc.i4.0
-		IL_00bc: conv.r8
-		IL_00bd: ldstr ""
-		IL_00c2: ldc.i4.0
-		IL_00c3: ldc.i4.0
-		IL_00c4: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_Crypto_ErrorPaths/ArrowFunction_L16C28/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_00c9: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_Crypto_ErrorPaths/ArrowFunction_L16C28/FunctionObject>(!!0)
-		IL_00ce: stloc.s 7
-		IL_00d0: ldloc.1
-		IL_00d1: ldloc.3
-		IL_00d2: ldstr "algorithm type"
-		IL_00d7: ldloc.s 7
-		IL_00d9: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
-		IL_00de: pop
-		IL_00df: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_00e4: stloc.3
-		IL_00e5: ldc.i4.1
-		IL_00e6: newarr [System.Runtime]System.Object
-		IL_00eb: dup
-		IL_00ec: ldc.i4.0
-		IL_00ed: ldloc.0
-		IL_00ee: stelem.ref
-		IL_00ef: stloc.s 6
-		IL_00f1: ldloc.s 6
-		IL_00f3: ldc.i4.0
-		IL_00f4: ldelem.ref
-		IL_00f5: castclass Modules.Require_Crypto_ErrorPaths/Scope
-		IL_00fa: newobj instance void Modules.Require_Crypto_ErrorPaths/ArrowFunction_L17C35/FunctionObject::.ctor(class Modules.Require_Crypto_ErrorPaths/Scope)
-		IL_00ff: ldc.i4.0
-		IL_0100: conv.r8
-		IL_0101: ldstr ""
-		IL_0106: ldc.i4.0
-		IL_0107: ldc.i4.0
-		IL_0108: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_Crypto_ErrorPaths/ArrowFunction_L17C35/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_010d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_Crypto_ErrorPaths/ArrowFunction_L17C35/FunctionObject>(!!0)
-		IL_0112: stloc.s 8
-		IL_0114: ldloc.1
-		IL_0115: ldloc.3
-		IL_0116: ldstr "algorithm unsupported"
-		IL_011b: ldloc.s 8
-		IL_011d: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
-		IL_0122: pop
-		IL_0123: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0128: stloc.3
-		IL_0129: ldc.i4.1
-		IL_012a: newarr [System.Runtime]System.Object
-		IL_012f: dup
-		IL_0130: ldc.i4.0
-		IL_0131: ldloc.0
-		IL_0132: stelem.ref
-		IL_0133: stloc.s 6
-		IL_0135: ldloc.s 6
-		IL_0137: ldc.i4.0
-		IL_0138: ldelem.ref
-		IL_0139: castclass Modules.Require_Crypto_ErrorPaths/Scope
-		IL_013e: newobj instance void Modules.Require_Crypto_ErrorPaths/ArrowFunction_L18C33/FunctionObject::.ctor(class Modules.Require_Crypto_ErrorPaths/Scope)
-		IL_0143: ldc.i4.0
-		IL_0144: conv.r8
-		IL_0145: ldstr ""
-		IL_014a: ldc.i4.0
-		IL_014b: ldc.i4.0
-		IL_014c: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_Crypto_ErrorPaths/ArrowFunction_L18C33/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_0151: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_Crypto_ErrorPaths/ArrowFunction_L18C33/FunctionObject>(!!0)
-		IL_0156: stloc.s 9
-		IL_0158: ldloc.1
-		IL_0159: ldloc.3
-		IL_015a: ldstr "hmac algorithm type"
-		IL_015f: ldloc.s 9
-		IL_0161: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
-		IL_0166: pop
-		IL_0167: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_016c: stloc.3
-		IL_016d: ldc.i4.1
-		IL_016e: newarr [System.Runtime]System.Object
-		IL_0173: dup
-		IL_0174: ldc.i4.0
-		IL_0175: ldloc.0
-		IL_0176: stelem.ref
-		IL_0177: stloc.s 6
-		IL_0179: ldloc.s 6
-		IL_017b: ldc.i4.0
-		IL_017c: ldelem.ref
-		IL_017d: castclass Modules.Require_Crypto_ErrorPaths/Scope
-		IL_0182: newobj instance void Modules.Require_Crypto_ErrorPaths/ArrowFunction_L19C40/FunctionObject::.ctor(class Modules.Require_Crypto_ErrorPaths/Scope)
-		IL_0187: ldc.i4.0
-		IL_0188: conv.r8
-		IL_0189: ldstr ""
-		IL_018e: ldc.i4.0
-		IL_018f: ldc.i4.0
-		IL_0190: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_Crypto_ErrorPaths/ArrowFunction_L19C40/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_0195: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_Crypto_ErrorPaths/ArrowFunction_L19C40/FunctionObject>(!!0)
-		IL_019a: stloc.s 10
-		IL_019c: ldloc.1
-		IL_019d: ldloc.3
-		IL_019e: ldstr "hmac algorithm unsupported"
-		IL_01a3: ldloc.s 10
-		IL_01a5: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
-		IL_01aa: pop
-		IL_01ab: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_01b0: stloc.3
-		IL_01b1: ldc.i4.1
-		IL_01b2: newarr [System.Runtime]System.Object
-		IL_01b7: dup
-		IL_01b8: ldc.i4.0
-		IL_01b9: ldloc.0
-		IL_01ba: stelem.ref
-		IL_01bb: stloc.s 6
-		IL_01bd: ldloc.s 6
-		IL_01bf: ldc.i4.0
-		IL_01c0: ldelem.ref
-		IL_01c1: castclass Modules.Require_Crypto_ErrorPaths/Scope
-		IL_01c6: newobj instance void Modules.Require_Crypto_ErrorPaths/ArrowFunction_L20C27/FunctionObject::.ctor(class Modules.Require_Crypto_ErrorPaths/Scope)
-		IL_01cb: ldc.i4.0
-		IL_01cc: conv.r8
-		IL_01cd: ldstr ""
-		IL_01d2: ldc.i4.0
-		IL_01d3: ldc.i4.0
-		IL_01d4: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_Crypto_ErrorPaths/ArrowFunction_L20C27/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_01d9: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_Crypto_ErrorPaths/ArrowFunction_L20C27/FunctionObject>(!!0)
-		IL_01de: stloc.s 11
-		IL_01e0: ldloc.1
-		IL_01e1: ldloc.3
-		IL_01e2: ldstr "hmac key null"
-		IL_01e7: ldloc.s 11
-		IL_01e9: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
-		IL_01ee: pop
-		IL_01ef: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_01f4: stloc.3
-		IL_01f5: ldc.i4.1
-		IL_01f6: newarr [System.Runtime]System.Object
-		IL_01fb: dup
-		IL_01fc: ldc.i4.0
-		IL_01fd: ldloc.0
-		IL_01fe: stelem.ref
-		IL_01ff: stloc.s 6
-		IL_0201: ldloc.s 6
-		IL_0203: ldc.i4.0
-		IL_0204: ldelem.ref
-		IL_0205: castclass Modules.Require_Crypto_ErrorPaths/Scope
-		IL_020a: newobj instance void Modules.Require_Crypto_ErrorPaths/ArrowFunction_L21C29/FunctionObject::.ctor(class Modules.Require_Crypto_ErrorPaths/Scope)
-		IL_020f: ldc.i4.0
-		IL_0210: conv.r8
-		IL_0211: ldstr ""
-		IL_0216: ldc.i4.0
-		IL_0217: ldc.i4.0
-		IL_0218: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_Crypto_ErrorPaths/ArrowFunction_L21C29/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_021d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_Crypto_ErrorPaths/ArrowFunction_L21C29/FunctionObject>(!!0)
-		IL_0222: stloc.s 12
-		IL_0224: ldloc.1
-		IL_0225: ldloc.3
-		IL_0226: ldstr "hmac key number"
-		IL_022b: ldloc.s 12
-		IL_022d: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
-		IL_0232: pop
-		IL_0233: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0238: stloc.3
-		IL_0239: ldc.i4.1
-		IL_023a: newarr [System.Runtime]System.Object
-		IL_023f: dup
-		IL_0240: ldc.i4.0
-		IL_0241: ldloc.0
-		IL_0242: stelem.ref
-		IL_0243: stloc.s 6
-		IL_0245: ldloc.s 6
-		IL_0247: ldc.i4.0
-		IL_0248: ldelem.ref
-		IL_0249: castclass Modules.Require_Crypto_ErrorPaths/Scope
-		IL_024e: newobj instance void Modules.Require_Crypto_ErrorPaths/ArrowFunction_L22C35/FunctionObject::.ctor(class Modules.Require_Crypto_ErrorPaths/Scope)
-		IL_0253: ldc.i4.0
-		IL_0254: conv.r8
-		IL_0255: ldstr ""
-		IL_025a: ldc.i4.0
-		IL_025b: ldc.i4.0
-		IL_025c: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_Crypto_ErrorPaths/ArrowFunction_L22C35/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_0261: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_Crypto_ErrorPaths/ArrowFunction_L22C35/FunctionObject>(!!0)
-		IL_0266: stloc.s 13
-		IL_0268: ldloc.1
-		IL_0269: ldloc.3
-		IL_026a: ldstr "pbkdf2 digest missing"
-		IL_026f: ldloc.s 13
-		IL_0271: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
-		IL_0276: pop
-		IL_0277: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_027c: stloc.3
-		IL_027d: ldc.i4.1
-		IL_027e: newarr [System.Runtime]System.Object
-		IL_0283: dup
-		IL_0284: ldc.i4.0
-		IL_0285: ldloc.0
-		IL_0286: stelem.ref
-		IL_0287: stloc.s 6
-		IL_0289: ldloc.s 6
-		IL_028b: ldc.i4.0
-		IL_028c: ldelem.ref
-		IL_028d: castclass Modules.Require_Crypto_ErrorPaths/Scope
-		IL_0292: newobj instance void Modules.Require_Crypto_ErrorPaths/ArrowFunction_L23C39/FunctionObject::.ctor(class Modules.Require_Crypto_ErrorPaths/Scope)
-		IL_0297: ldc.i4.0
-		IL_0298: conv.r8
-		IL_0299: ldstr ""
-		IL_029e: ldc.i4.0
-		IL_029f: ldc.i4.0
-		IL_02a0: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_Crypto_ErrorPaths/ArrowFunction_L23C39/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_02a5: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_Crypto_ErrorPaths/ArrowFunction_L23C39/FunctionObject>(!!0)
-		IL_02aa: stloc.s 14
-		IL_02ac: ldloc.1
-		IL_02ad: ldloc.3
-		IL_02ae: ldstr "pbkdf2 digest unsupported"
-		IL_02b3: ldloc.s 14
-		IL_02b5: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
-		IL_02ba: pop
-		IL_02bb: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_02c0: stloc.3
-		IL_02c1: ldc.i4.1
-		IL_02c2: newarr [System.Runtime]System.Object
-		IL_02c7: dup
-		IL_02c8: ldc.i4.0
-		IL_02c9: ldloc.0
-		IL_02ca: stelem.ref
-		IL_02cb: stloc.s 6
-		IL_02cd: ldloc.s 6
-		IL_02cf: ldc.i4.0
-		IL_02d0: ldelem.ref
-		IL_02d1: castclass Modules.Require_Crypto_ErrorPaths/Scope
-		IL_02d6: newobj instance void Modules.Require_Crypto_ErrorPaths/ArrowFunction_L24C36/FunctionObject::.ctor(class Modules.Require_Crypto_ErrorPaths/Scope)
-		IL_02db: ldc.i4.0
-		IL_02dc: conv.r8
-		IL_02dd: ldstr ""
-		IL_02e2: ldc.i4.0
-		IL_02e3: ldc.i4.0
-		IL_02e4: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_Crypto_ErrorPaths/ArrowFunction_L24C36/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_02e9: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_Crypto_ErrorPaths/ArrowFunction_L24C36/FunctionObject>(!!0)
-		IL_02ee: stloc.s 15
-		IL_02f0: ldloc.1
-		IL_02f1: ldloc.3
-		IL_02f2: ldstr "pbkdf2 password number"
-		IL_02f7: ldloc.s 15
-		IL_02f9: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
-		IL_02fe: pop
-		IL_02ff: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0304: stloc.3
-		IL_0305: ldc.i4.1
-		IL_0306: newarr [System.Runtime]System.Object
-		IL_030b: dup
-		IL_030c: ldc.i4.0
-		IL_030d: ldloc.0
-		IL_030e: stelem.ref
-		IL_030f: stloc.s 6
-		IL_0311: ldloc.s 6
-		IL_0313: ldc.i4.0
-		IL_0314: ldelem.ref
-		IL_0315: castclass Modules.Require_Crypto_ErrorPaths/Scope
-		IL_031a: newobj instance void Modules.Require_Crypto_ErrorPaths/ArrowFunction_L25C30/FunctionObject::.ctor(class Modules.Require_Crypto_ErrorPaths/Scope)
-		IL_031f: ldc.i4.0
-		IL_0320: conv.r8
-		IL_0321: ldstr ""
-		IL_0326: ldc.i4.0
-		IL_0327: ldc.i4.0
-		IL_0328: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_Crypto_ErrorPaths/ArrowFunction_L25C30/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_032d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_Crypto_ErrorPaths/ArrowFunction_L25C30/FunctionObject>(!!0)
-		IL_0332: stloc.s 16
-		IL_0334: ldloc.1
-		IL_0335: ldloc.3
-		IL_0336: ldstr "pbkdf2 salt null"
-		IL_033b: ldloc.s 16
-		IL_033d: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
-		IL_0342: pop
-		IL_0343: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0348: stloc.3
-		IL_0349: ldc.i4.1
-		IL_034a: newarr [System.Runtime]System.Object
-		IL_034f: dup
-		IL_0350: ldc.i4.0
-		IL_0351: ldloc.0
-		IL_0352: stelem.ref
-		IL_0353: stloc.s 6
-		IL_0355: ldloc.s 6
-		IL_0357: ldc.i4.0
-		IL_0358: ldelem.ref
-		IL_0359: castclass Modules.Require_Crypto_ErrorPaths/Scope
-		IL_035e: newobj instance void Modules.Require_Crypto_ErrorPaths/ArrowFunction_L26C36/FunctionObject::.ctor(class Modules.Require_Crypto_ErrorPaths/Scope)
-		IL_0363: ldc.i4.0
-		IL_0364: conv.r8
-		IL_0365: ldstr ""
-		IL_036a: ldc.i4.0
-		IL_036b: ldc.i4.0
-		IL_036c: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_Crypto_ErrorPaths/ArrowFunction_L26C36/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_0371: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_Crypto_ErrorPaths/ArrowFunction_L26C36/FunctionObject>(!!0)
-		IL_0376: stloc.s 17
-		IL_0378: ldloc.1
-		IL_0379: ldloc.3
-		IL_037a: ldstr "pbkdf2 iterations type"
-		IL_037f: ldloc.s 17
-		IL_0381: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
-		IL_0386: pop
-		IL_0387: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_038c: stloc.3
-		IL_038d: ldc.i4.1
-		IL_038e: newarr [System.Runtime]System.Object
-		IL_0393: dup
-		IL_0394: ldc.i4.0
-		IL_0395: ldloc.0
-		IL_0396: stelem.ref
-		IL_0397: stloc.s 6
-		IL_0399: ldloc.s 6
-		IL_039b: ldc.i4.0
-		IL_039c: ldelem.ref
-		IL_039d: castclass Modules.Require_Crypto_ErrorPaths/Scope
-		IL_03a2: newobj instance void Modules.Require_Crypto_ErrorPaths/ArrowFunction_L27C37/FunctionObject::.ctor(class Modules.Require_Crypto_ErrorPaths/Scope)
-		IL_03a7: ldc.i4.0
-		IL_03a8: conv.r8
-		IL_03a9: ldstr ""
-		IL_03ae: ldc.i4.0
-		IL_03af: ldc.i4.0
-		IL_03b0: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_Crypto_ErrorPaths/ArrowFunction_L27C37/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_03b5: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_Crypto_ErrorPaths/ArrowFunction_L27C37/FunctionObject>(!!0)
-		IL_03ba: stloc.s 18
-		IL_03bc: ldloc.1
-		IL_03bd: ldloc.3
-		IL_03be: ldstr "pbkdf2 iterations float"
-		IL_03c3: ldloc.s 18
-		IL_03c5: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
-		IL_03ca: pop
-		IL_03cb: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_03d0: stloc.3
-		IL_03d1: ldc.i4.1
-		IL_03d2: newarr [System.Runtime]System.Object
-		IL_03d7: dup
-		IL_03d8: ldc.i4.0
-		IL_03d9: ldloc.0
-		IL_03da: stelem.ref
-		IL_03db: stloc.s 6
-		IL_03dd: ldloc.s 6
-		IL_03df: ldc.i4.0
-		IL_03e0: ldelem.ref
-		IL_03e1: castclass Modules.Require_Crypto_ErrorPaths/Scope
-		IL_03e6: newobj instance void Modules.Require_Crypto_ErrorPaths/ArrowFunction_L28C36/FunctionObject::.ctor(class Modules.Require_Crypto_ErrorPaths/Scope)
-		IL_03eb: ldc.i4.0
-		IL_03ec: conv.r8
-		IL_03ed: ldstr ""
-		IL_03f2: ldc.i4.0
-		IL_03f3: ldc.i4.0
-		IL_03f4: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_Crypto_ErrorPaths/ArrowFunction_L28C36/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_03f9: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_Crypto_ErrorPaths/ArrowFunction_L28C36/FunctionObject>(!!0)
-		IL_03fe: stloc.s 19
-		IL_0400: ldloc.1
-		IL_0401: ldloc.3
-		IL_0402: ldstr "pbkdf2 iterations zero"
-		IL_0407: ldloc.s 19
-		IL_0409: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
-		IL_040e: pop
-		IL_040f: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0414: stloc.3
-		IL_0415: ldc.i4.1
-		IL_0416: newarr [System.Runtime]System.Object
-		IL_041b: dup
-		IL_041c: ldc.i4.0
-		IL_041d: ldloc.0
-		IL_041e: stelem.ref
-		IL_041f: stloc.s 6
-		IL_0421: ldloc.s 6
-		IL_0423: ldc.i4.0
-		IL_0424: ldelem.ref
-		IL_0425: castclass Modules.Require_Crypto_ErrorPaths/Scope
-		IL_042a: newobj instance void Modules.Require_Crypto_ErrorPaths/ArrowFunction_L29C33/FunctionObject::.ctor(class Modules.Require_Crypto_ErrorPaths/Scope)
-		IL_042f: ldc.i4.0
-		IL_0430: conv.r8
-		IL_0431: ldstr ""
-		IL_0436: ldc.i4.0
-		IL_0437: ldc.i4.0
-		IL_0438: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_Crypto_ErrorPaths/ArrowFunction_L29C33/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_043d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_Crypto_ErrorPaths/ArrowFunction_L29C33/FunctionObject>(!!0)
-		IL_0442: stloc.s 20
-		IL_0444: ldloc.1
-		IL_0445: ldloc.3
-		IL_0446: ldstr "pbkdf2 keylen float"
-		IL_044b: ldloc.s 20
-		IL_044d: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
-		IL_0452: pop
-		IL_0453: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0458: stloc.3
-		IL_0459: ldc.i4.1
-		IL_045a: newarr [System.Runtime]System.Object
-		IL_045f: dup
-		IL_0460: ldc.i4.0
-		IL_0461: ldloc.0
-		IL_0462: stelem.ref
-		IL_0463: stloc.s 6
-		IL_0465: ldloc.s 6
-		IL_0467: ldc.i4.0
-		IL_0468: ldelem.ref
-		IL_0469: castclass Modules.Require_Crypto_ErrorPaths/Scope
-		IL_046e: newobj instance void Modules.Require_Crypto_ErrorPaths/ArrowFunction_L30C36/FunctionObject::.ctor(class Modules.Require_Crypto_ErrorPaths/Scope)
-		IL_0473: ldc.i4.0
-		IL_0474: conv.r8
-		IL_0475: ldstr ""
-		IL_047a: ldc.i4.0
-		IL_047b: ldc.i4.0
-		IL_047c: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_Crypto_ErrorPaths/ArrowFunction_L30C36/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_0481: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_Crypto_ErrorPaths/ArrowFunction_L30C36/FunctionObject>(!!0)
-		IL_0486: stloc.s 21
-		IL_0488: ldloc.1
-		IL_0489: ldloc.3
-		IL_048a: ldstr "pbkdf2 keylen negative"
-		IL_048f: ldloc.s 21
-		IL_0491: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
-		IL_0496: pop
-		IL_0497: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_049c: stloc.3
-		IL_049d: ldc.i4.1
-		IL_049e: newarr [System.Runtime]System.Object
-		IL_04a3: dup
-		IL_04a4: ldc.i4.0
-		IL_04a5: ldloc.0
-		IL_04a6: stelem.ref
-		IL_04a7: stloc.s 6
-		IL_04a9: ldloc.s 6
-		IL_04ab: ldc.i4.0
-		IL_04ac: ldelem.ref
-		IL_04ad: castclass Modules.Require_Crypto_ErrorPaths/Scope
-		IL_04b2: newobj instance void Modules.Require_Crypto_ErrorPaths/ArrowFunction_L31C30/FunctionObject::.ctor(class Modules.Require_Crypto_ErrorPaths/Scope)
-		IL_04b7: ldc.i4.0
-		IL_04b8: conv.r8
-		IL_04b9: ldstr ""
-		IL_04be: ldc.i4.0
-		IL_04bf: ldc.i4.0
-		IL_04c0: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_Crypto_ErrorPaths/ArrowFunction_L31C30/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_04c5: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_Crypto_ErrorPaths/ArrowFunction_L31C30/FunctionObject>(!!0)
-		IL_04ca: stloc.s 22
-		IL_04cc: ldloc.1
-		IL_04cd: ldloc.3
-		IL_04ce: ldstr "random size type"
-		IL_04d3: ldloc.s 22
-		IL_04d5: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
-		IL_04da: pop
-		IL_04db: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_04e0: stloc.3
-		IL_04e1: ldc.i4.1
-		IL_04e2: newarr [System.Runtime]System.Object
-		IL_04e7: dup
-		IL_04e8: ldc.i4.0
-		IL_04e9: ldloc.0
-		IL_04ea: stelem.ref
-		IL_04eb: stloc.s 6
-		IL_04ed: ldloc.s 6
-		IL_04ef: ldc.i4.0
-		IL_04f0: ldelem.ref
-		IL_04f1: castclass Modules.Require_Crypto_ErrorPaths/Scope
-		IL_04f6: newobj instance void Modules.Require_Crypto_ErrorPaths/ArrowFunction_L32C34/FunctionObject::.ctor(class Modules.Require_Crypto_ErrorPaths/Scope)
-		IL_04fb: ldc.i4.0
-		IL_04fc: conv.r8
-		IL_04fd: ldstr ""
-		IL_0502: ldc.i4.0
-		IL_0503: ldc.i4.0
-		IL_0504: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_Crypto_ErrorPaths/ArrowFunction_L32C34/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_0509: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_Crypto_ErrorPaths/ArrowFunction_L32C34/FunctionObject>(!!0)
-		IL_050e: stloc.s 23
-		IL_0510: ldloc.1
-		IL_0511: ldloc.3
-		IL_0512: ldstr "random size negative"
-		IL_0517: ldloc.s 23
-		IL_0519: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
-		IL_051e: pop
-		IL_051f: ldloc.0
-		IL_0520: ldfld class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.ICryptoModule Modules.Require_Crypto_ErrorPaths/Scope::crypto
-		IL_0525: stloc.s 5
-		IL_0527: ldloc.s 5
-		IL_0529: ldstr "sha256"
-		IL_052e: callvirt instance object [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.ICryptoModule::createHash(string)
-		IL_0533: stloc.s 24
-		IL_0535: ldloc.0
-		IL_0536: ldloc.s 24
-		IL_0538: stfld object Modules.Require_Crypto_ErrorPaths/Scope::hash
-		IL_053d: ldloc.0
-		IL_053e: ldfld object Modules.Require_Crypto_ErrorPaths/Scope::hash
-		IL_0543: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0548: ldstr "update"
-		IL_054d: ldstr "abc"
-		IL_0552: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0557: pop
-		IL_0558: ldstr "console"
-		IL_055d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0562: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0567: stloc.s 24
-		IL_0569: ldloc.0
-		IL_056a: ldfld object Modules.Require_Crypto_ErrorPaths/Scope::hash
-		IL_056f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0574: ldstr "digest"
-		IL_0579: ldstr "hex"
-		IL_057e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0583: stloc.s 25
-		IL_0585: ldloc.s 24
-		IL_0587: ldstr "log"
-		IL_058c: ldstr "digest first:"
-		IL_0591: ldloc.s 25
-		IL_0593: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_0598: pop
-		IL_0599: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_059e: stloc.3
-		IL_059f: ldc.i4.1
-		IL_05a0: newarr [System.Runtime]System.Object
-		IL_05a5: dup
-		IL_05a6: ldc.i4.0
-		IL_05a7: ldloc.0
-		IL_05a8: stelem.ref
-		IL_05a9: stloc.s 6
-		IL_05ab: ldloc.s 6
-		IL_05ad: ldc.i4.0
-		IL_05ae: ldelem.ref
-		IL_05af: castclass Modules.Require_Crypto_ErrorPaths/Scope
-		IL_05b4: newobj instance void Modules.Require_Crypto_ErrorPaths/ArrowFunction_L37C26/FunctionObject::.ctor(class Modules.Require_Crypto_ErrorPaths/Scope)
-		IL_05b9: ldc.i4.0
-		IL_05ba: conv.r8
-		IL_05bb: ldstr ""
-		IL_05c0: ldc.i4.0
-		IL_05c1: ldc.i4.0
-		IL_05c2: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_Crypto_ErrorPaths/ArrowFunction_L37C26/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_05c7: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_Crypto_ErrorPaths/ArrowFunction_L37C26/FunctionObject>(!!0)
-		IL_05cc: stloc.s 26
-		IL_05ce: ldloc.1
-		IL_05cf: ldloc.3
-		IL_05d0: ldstr "digest twice"
-		IL_05d5: ldloc.s 26
-		IL_05d7: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
-		IL_05dc: pop
-		IL_05dd: ldloc.0
-		IL_05de: ldfld class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.ICryptoModule Modules.Require_Crypto_ErrorPaths/Scope::crypto
-		IL_05e3: stloc.s 5
-		IL_05e5: ldloc.s 5
-		IL_05e7: ldstr "sha256"
-		IL_05ec: ldstr "key"
-		IL_05f1: callvirt instance object [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.ICryptoModule::createHmac(string, object)
-		IL_05f6: stloc.s 25
-		IL_05f8: ldloc.0
-		IL_05f9: ldloc.s 25
-		IL_05fb: stfld object Modules.Require_Crypto_ErrorPaths/Scope::hmac
-		IL_0600: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0605: stloc.3
-		IL_0606: ldc.i4.1
-		IL_0607: newarr [System.Runtime]System.Object
-		IL_060c: dup
-		IL_060d: ldc.i4.0
-		IL_060e: ldloc.0
-		IL_060f: stelem.ref
-		IL_0610: stloc.s 6
-		IL_0612: ldloc.s 6
-		IL_0614: ldc.i4.0
-		IL_0615: ldelem.ref
-		IL_0616: castclass Modules.Require_Crypto_ErrorPaths/Scope
-		IL_061b: newobj instance void Modules.Require_Crypto_ErrorPaths/ArrowFunction_L40C30/FunctionObject::.ctor(class Modules.Require_Crypto_ErrorPaths/Scope)
-		IL_0620: ldc.i4.0
-		IL_0621: conv.r8
-		IL_0622: ldstr ""
-		IL_0627: ldc.i4.0
-		IL_0628: ldc.i4.0
-		IL_0629: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_Crypto_ErrorPaths/ArrowFunction_L40C30/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_062e: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_Crypto_ErrorPaths/ArrowFunction_L40C30/FunctionObject>(!!0)
-		IL_0633: stloc.s 27
-		IL_0635: ldloc.1
-		IL_0636: ldloc.3
-		IL_0637: ldstr "hmac update type"
-		IL_063c: ldloc.s 27
-		IL_063e: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
-		IL_0643: pop
-		IL_0644: nop
-		IL_0645: nop
-		IL_0646: ldloc.2
-		IL_0647: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_064c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0, object[])
-		IL_0651: stloc.s 25
-		IL_0653: ldloc.s 25
-		IL_0655: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_065a: stloc.s 25
-		IL_065c: ldc.i4.1
-		IL_065d: newarr [System.Runtime]System.Object
-		IL_0662: dup
-		IL_0663: ldc.i4.0
-		IL_0664: ldloc.0
-		IL_0665: stelem.ref
-		IL_0666: stloc.3
-		IL_0667: newobj instance void Modules.Require_Crypto_ErrorPaths/ArrowFunction_L111C27/FunctionObject::.ctor()
-		IL_066c: ldc.i4.0
-		IL_066d: conv.r8
-		IL_066e: ldstr ""
-		IL_0673: ldc.i4.0
-		IL_0674: ldc.i4.0
-		IL_0675: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_Crypto_ErrorPaths/ArrowFunction_L111C27/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_067a: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_Crypto_ErrorPaths/ArrowFunction_L111C27/FunctionObject>(!!0)
-		IL_067f: stloc.s 28
-		IL_0681: ldloc.s 25
-		IL_0683: ldstr "then"
-		IL_0688: ldloc.s 28
-		IL_068a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_068f: pop
-		IL_0690: ret
+		IL_0031: newobj instance void Modules.Require_Crypto_ErrorPaths/logPromiseError/FunctionObject_FunctionDeclaration_8C7B1B0D_logPromiseError::.ctor(object[])
+		IL_0036: ldc.i4.2
+		IL_0037: conv.r8
+		IL_0038: ldstr "logPromiseError"
+		IL_003d: ldc.i4.0
+		IL_003e: ldc.i4.1
+		IL_003f: call !!0 [JavaScriptRuntime]JavaScriptRuntime.AsyncFunction::InitializeFunctionInstance<class Modules.Require_Crypto_ErrorPaths/logPromiseError/FunctionObject_FunctionDeclaration_8C7B1B0D_logPromiseError>(!!0, float64, string, bool, bool)
+		IL_0044: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_Crypto_ErrorPaths/logPromiseError/FunctionObject_FunctionDeclaration_8C7B1B0D_logPromiseError>(!!0)
+		IL_0049: stloc.s 4
+		IL_004b: ldloc.0
+		IL_004c: ldloc.s 4
+		IL_004e: stfld object Modules.Require_Crypto_ErrorPaths/Scope::logPromiseError
+		IL_0053: ldc.i4.1
+		IL_0054: newarr [System.Runtime]System.Object
+		IL_0059: dup
+		IL_005a: ldc.i4.0
+		IL_005b: ldloc.0
+		IL_005c: stelem.ref
+		IL_005d: stloc.3
+		IL_005e: ldloc.3
+		IL_005f: ldc.i4.0
+		IL_0060: ldelem.ref
+		IL_0061: castclass Modules.Require_Crypto_ErrorPaths/Scope
+		IL_0066: ldloc.3
+		IL_0067: newobj instance void Modules.Require_Crypto_ErrorPaths/runWebCryptoErrors/FunctionObject_FunctionDeclaration_F31DA885_runWebCryptoErrors::.ctor(class Modules.Require_Crypto_ErrorPaths/Scope, object[])
+		IL_006c: ldc.i4.0
+		IL_006d: conv.r8
+		IL_006e: ldstr "runWebCryptoErrors"
+		IL_0073: ldc.i4.0
+		IL_0074: ldc.i4.1
+		IL_0075: call !!0 [JavaScriptRuntime]JavaScriptRuntime.AsyncFunction::InitializeFunctionInstance<class Modules.Require_Crypto_ErrorPaths/runWebCryptoErrors/FunctionObject_FunctionDeclaration_F31DA885_runWebCryptoErrors>(!!0, float64, string, bool, bool)
+		IL_007a: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_Crypto_ErrorPaths/runWebCryptoErrors/FunctionObject_FunctionDeclaration_F31DA885_runWebCryptoErrors>(!!0)
+		IL_007f: stloc.2
+		IL_0080: nop
+		IL_0081: ldarg.1
+		IL_0082: ldstr "crypto"
+		IL_0087: call !!0 [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireRuntime::RequireObject<class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.ICryptoModule>(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object)
+		IL_008c: stloc.s 5
+		IL_008e: ldloc.0
+		IL_008f: ldloc.s 5
+		IL_0091: stfld class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.ICryptoModule Modules.Require_Crypto_ErrorPaths/Scope::crypto
+		IL_0096: nop
+		IL_0097: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_009c: stloc.3
+		IL_009d: ldc.i4.1
+		IL_009e: newarr [System.Runtime]System.Object
+		IL_00a3: dup
+		IL_00a4: ldc.i4.0
+		IL_00a5: ldloc.0
+		IL_00a6: stelem.ref
+		IL_00a7: stloc.s 6
+		IL_00a9: ldloc.s 6
+		IL_00ab: ldc.i4.0
+		IL_00ac: ldelem.ref
+		IL_00ad: castclass Modules.Require_Crypto_ErrorPaths/Scope
+		IL_00b2: newobj instance void Modules.Require_Crypto_ErrorPaths/ArrowFunction_L16C28/FunctionObject::.ctor(class Modules.Require_Crypto_ErrorPaths/Scope)
+		IL_00b7: ldc.i4.0
+		IL_00b8: conv.r8
+		IL_00b9: ldstr ""
+		IL_00be: ldc.i4.0
+		IL_00bf: ldc.i4.0
+		IL_00c0: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_Crypto_ErrorPaths/ArrowFunction_L16C28/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_00c5: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_Crypto_ErrorPaths/ArrowFunction_L16C28/FunctionObject>(!!0)
+		IL_00ca: stloc.s 7
+		IL_00cc: ldloc.1
+		IL_00cd: ldloc.3
+		IL_00ce: ldstr "algorithm type"
+		IL_00d3: ldloc.s 7
+		IL_00d5: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
+		IL_00da: pop
+		IL_00db: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_00e0: stloc.3
+		IL_00e1: ldc.i4.1
+		IL_00e2: newarr [System.Runtime]System.Object
+		IL_00e7: dup
+		IL_00e8: ldc.i4.0
+		IL_00e9: ldloc.0
+		IL_00ea: stelem.ref
+		IL_00eb: stloc.s 6
+		IL_00ed: ldloc.s 6
+		IL_00ef: ldc.i4.0
+		IL_00f0: ldelem.ref
+		IL_00f1: castclass Modules.Require_Crypto_ErrorPaths/Scope
+		IL_00f6: newobj instance void Modules.Require_Crypto_ErrorPaths/ArrowFunction_L17C35/FunctionObject::.ctor(class Modules.Require_Crypto_ErrorPaths/Scope)
+		IL_00fb: ldc.i4.0
+		IL_00fc: conv.r8
+		IL_00fd: ldstr ""
+		IL_0102: ldc.i4.0
+		IL_0103: ldc.i4.0
+		IL_0104: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_Crypto_ErrorPaths/ArrowFunction_L17C35/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_0109: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_Crypto_ErrorPaths/ArrowFunction_L17C35/FunctionObject>(!!0)
+		IL_010e: stloc.s 8
+		IL_0110: ldloc.1
+		IL_0111: ldloc.3
+		IL_0112: ldstr "algorithm unsupported"
+		IL_0117: ldloc.s 8
+		IL_0119: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
+		IL_011e: pop
+		IL_011f: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0124: stloc.3
+		IL_0125: ldc.i4.1
+		IL_0126: newarr [System.Runtime]System.Object
+		IL_012b: dup
+		IL_012c: ldc.i4.0
+		IL_012d: ldloc.0
+		IL_012e: stelem.ref
+		IL_012f: stloc.s 6
+		IL_0131: ldloc.s 6
+		IL_0133: ldc.i4.0
+		IL_0134: ldelem.ref
+		IL_0135: castclass Modules.Require_Crypto_ErrorPaths/Scope
+		IL_013a: newobj instance void Modules.Require_Crypto_ErrorPaths/ArrowFunction_L18C33/FunctionObject::.ctor(class Modules.Require_Crypto_ErrorPaths/Scope)
+		IL_013f: ldc.i4.0
+		IL_0140: conv.r8
+		IL_0141: ldstr ""
+		IL_0146: ldc.i4.0
+		IL_0147: ldc.i4.0
+		IL_0148: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_Crypto_ErrorPaths/ArrowFunction_L18C33/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_014d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_Crypto_ErrorPaths/ArrowFunction_L18C33/FunctionObject>(!!0)
+		IL_0152: stloc.s 9
+		IL_0154: ldloc.1
+		IL_0155: ldloc.3
+		IL_0156: ldstr "hmac algorithm type"
+		IL_015b: ldloc.s 9
+		IL_015d: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
+		IL_0162: pop
+		IL_0163: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0168: stloc.3
+		IL_0169: ldc.i4.1
+		IL_016a: newarr [System.Runtime]System.Object
+		IL_016f: dup
+		IL_0170: ldc.i4.0
+		IL_0171: ldloc.0
+		IL_0172: stelem.ref
+		IL_0173: stloc.s 6
+		IL_0175: ldloc.s 6
+		IL_0177: ldc.i4.0
+		IL_0178: ldelem.ref
+		IL_0179: castclass Modules.Require_Crypto_ErrorPaths/Scope
+		IL_017e: newobj instance void Modules.Require_Crypto_ErrorPaths/ArrowFunction_L19C40/FunctionObject::.ctor(class Modules.Require_Crypto_ErrorPaths/Scope)
+		IL_0183: ldc.i4.0
+		IL_0184: conv.r8
+		IL_0185: ldstr ""
+		IL_018a: ldc.i4.0
+		IL_018b: ldc.i4.0
+		IL_018c: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_Crypto_ErrorPaths/ArrowFunction_L19C40/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_0191: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_Crypto_ErrorPaths/ArrowFunction_L19C40/FunctionObject>(!!0)
+		IL_0196: stloc.s 10
+		IL_0198: ldloc.1
+		IL_0199: ldloc.3
+		IL_019a: ldstr "hmac algorithm unsupported"
+		IL_019f: ldloc.s 10
+		IL_01a1: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
+		IL_01a6: pop
+		IL_01a7: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_01ac: stloc.3
+		IL_01ad: ldc.i4.1
+		IL_01ae: newarr [System.Runtime]System.Object
+		IL_01b3: dup
+		IL_01b4: ldc.i4.0
+		IL_01b5: ldloc.0
+		IL_01b6: stelem.ref
+		IL_01b7: stloc.s 6
+		IL_01b9: ldloc.s 6
+		IL_01bb: ldc.i4.0
+		IL_01bc: ldelem.ref
+		IL_01bd: castclass Modules.Require_Crypto_ErrorPaths/Scope
+		IL_01c2: newobj instance void Modules.Require_Crypto_ErrorPaths/ArrowFunction_L20C27/FunctionObject::.ctor(class Modules.Require_Crypto_ErrorPaths/Scope)
+		IL_01c7: ldc.i4.0
+		IL_01c8: conv.r8
+		IL_01c9: ldstr ""
+		IL_01ce: ldc.i4.0
+		IL_01cf: ldc.i4.0
+		IL_01d0: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_Crypto_ErrorPaths/ArrowFunction_L20C27/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_01d5: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_Crypto_ErrorPaths/ArrowFunction_L20C27/FunctionObject>(!!0)
+		IL_01da: stloc.s 11
+		IL_01dc: ldloc.1
+		IL_01dd: ldloc.3
+		IL_01de: ldstr "hmac key null"
+		IL_01e3: ldloc.s 11
+		IL_01e5: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
+		IL_01ea: pop
+		IL_01eb: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_01f0: stloc.3
+		IL_01f1: ldc.i4.1
+		IL_01f2: newarr [System.Runtime]System.Object
+		IL_01f7: dup
+		IL_01f8: ldc.i4.0
+		IL_01f9: ldloc.0
+		IL_01fa: stelem.ref
+		IL_01fb: stloc.s 6
+		IL_01fd: ldloc.s 6
+		IL_01ff: ldc.i4.0
+		IL_0200: ldelem.ref
+		IL_0201: castclass Modules.Require_Crypto_ErrorPaths/Scope
+		IL_0206: newobj instance void Modules.Require_Crypto_ErrorPaths/ArrowFunction_L21C29/FunctionObject::.ctor(class Modules.Require_Crypto_ErrorPaths/Scope)
+		IL_020b: ldc.i4.0
+		IL_020c: conv.r8
+		IL_020d: ldstr ""
+		IL_0212: ldc.i4.0
+		IL_0213: ldc.i4.0
+		IL_0214: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_Crypto_ErrorPaths/ArrowFunction_L21C29/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_0219: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_Crypto_ErrorPaths/ArrowFunction_L21C29/FunctionObject>(!!0)
+		IL_021e: stloc.s 12
+		IL_0220: ldloc.1
+		IL_0221: ldloc.3
+		IL_0222: ldstr "hmac key number"
+		IL_0227: ldloc.s 12
+		IL_0229: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
+		IL_022e: pop
+		IL_022f: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0234: stloc.3
+		IL_0235: ldc.i4.1
+		IL_0236: newarr [System.Runtime]System.Object
+		IL_023b: dup
+		IL_023c: ldc.i4.0
+		IL_023d: ldloc.0
+		IL_023e: stelem.ref
+		IL_023f: stloc.s 6
+		IL_0241: ldloc.s 6
+		IL_0243: ldc.i4.0
+		IL_0244: ldelem.ref
+		IL_0245: castclass Modules.Require_Crypto_ErrorPaths/Scope
+		IL_024a: newobj instance void Modules.Require_Crypto_ErrorPaths/ArrowFunction_L22C35/FunctionObject::.ctor(class Modules.Require_Crypto_ErrorPaths/Scope)
+		IL_024f: ldc.i4.0
+		IL_0250: conv.r8
+		IL_0251: ldstr ""
+		IL_0256: ldc.i4.0
+		IL_0257: ldc.i4.0
+		IL_0258: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_Crypto_ErrorPaths/ArrowFunction_L22C35/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_025d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_Crypto_ErrorPaths/ArrowFunction_L22C35/FunctionObject>(!!0)
+		IL_0262: stloc.s 13
+		IL_0264: ldloc.1
+		IL_0265: ldloc.3
+		IL_0266: ldstr "pbkdf2 digest missing"
+		IL_026b: ldloc.s 13
+		IL_026d: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
+		IL_0272: pop
+		IL_0273: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0278: stloc.3
+		IL_0279: ldc.i4.1
+		IL_027a: newarr [System.Runtime]System.Object
+		IL_027f: dup
+		IL_0280: ldc.i4.0
+		IL_0281: ldloc.0
+		IL_0282: stelem.ref
+		IL_0283: stloc.s 6
+		IL_0285: ldloc.s 6
+		IL_0287: ldc.i4.0
+		IL_0288: ldelem.ref
+		IL_0289: castclass Modules.Require_Crypto_ErrorPaths/Scope
+		IL_028e: newobj instance void Modules.Require_Crypto_ErrorPaths/ArrowFunction_L23C39/FunctionObject::.ctor(class Modules.Require_Crypto_ErrorPaths/Scope)
+		IL_0293: ldc.i4.0
+		IL_0294: conv.r8
+		IL_0295: ldstr ""
+		IL_029a: ldc.i4.0
+		IL_029b: ldc.i4.0
+		IL_029c: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_Crypto_ErrorPaths/ArrowFunction_L23C39/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_02a1: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_Crypto_ErrorPaths/ArrowFunction_L23C39/FunctionObject>(!!0)
+		IL_02a6: stloc.s 14
+		IL_02a8: ldloc.1
+		IL_02a9: ldloc.3
+		IL_02aa: ldstr "pbkdf2 digest unsupported"
+		IL_02af: ldloc.s 14
+		IL_02b1: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
+		IL_02b6: pop
+		IL_02b7: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_02bc: stloc.3
+		IL_02bd: ldc.i4.1
+		IL_02be: newarr [System.Runtime]System.Object
+		IL_02c3: dup
+		IL_02c4: ldc.i4.0
+		IL_02c5: ldloc.0
+		IL_02c6: stelem.ref
+		IL_02c7: stloc.s 6
+		IL_02c9: ldloc.s 6
+		IL_02cb: ldc.i4.0
+		IL_02cc: ldelem.ref
+		IL_02cd: castclass Modules.Require_Crypto_ErrorPaths/Scope
+		IL_02d2: newobj instance void Modules.Require_Crypto_ErrorPaths/ArrowFunction_L24C36/FunctionObject::.ctor(class Modules.Require_Crypto_ErrorPaths/Scope)
+		IL_02d7: ldc.i4.0
+		IL_02d8: conv.r8
+		IL_02d9: ldstr ""
+		IL_02de: ldc.i4.0
+		IL_02df: ldc.i4.0
+		IL_02e0: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_Crypto_ErrorPaths/ArrowFunction_L24C36/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_02e5: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_Crypto_ErrorPaths/ArrowFunction_L24C36/FunctionObject>(!!0)
+		IL_02ea: stloc.s 15
+		IL_02ec: ldloc.1
+		IL_02ed: ldloc.3
+		IL_02ee: ldstr "pbkdf2 password number"
+		IL_02f3: ldloc.s 15
+		IL_02f5: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
+		IL_02fa: pop
+		IL_02fb: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0300: stloc.3
+		IL_0301: ldc.i4.1
+		IL_0302: newarr [System.Runtime]System.Object
+		IL_0307: dup
+		IL_0308: ldc.i4.0
+		IL_0309: ldloc.0
+		IL_030a: stelem.ref
+		IL_030b: stloc.s 6
+		IL_030d: ldloc.s 6
+		IL_030f: ldc.i4.0
+		IL_0310: ldelem.ref
+		IL_0311: castclass Modules.Require_Crypto_ErrorPaths/Scope
+		IL_0316: newobj instance void Modules.Require_Crypto_ErrorPaths/ArrowFunction_L25C30/FunctionObject::.ctor(class Modules.Require_Crypto_ErrorPaths/Scope)
+		IL_031b: ldc.i4.0
+		IL_031c: conv.r8
+		IL_031d: ldstr ""
+		IL_0322: ldc.i4.0
+		IL_0323: ldc.i4.0
+		IL_0324: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_Crypto_ErrorPaths/ArrowFunction_L25C30/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_0329: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_Crypto_ErrorPaths/ArrowFunction_L25C30/FunctionObject>(!!0)
+		IL_032e: stloc.s 16
+		IL_0330: ldloc.1
+		IL_0331: ldloc.3
+		IL_0332: ldstr "pbkdf2 salt null"
+		IL_0337: ldloc.s 16
+		IL_0339: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
+		IL_033e: pop
+		IL_033f: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0344: stloc.3
+		IL_0345: ldc.i4.1
+		IL_0346: newarr [System.Runtime]System.Object
+		IL_034b: dup
+		IL_034c: ldc.i4.0
+		IL_034d: ldloc.0
+		IL_034e: stelem.ref
+		IL_034f: stloc.s 6
+		IL_0351: ldloc.s 6
+		IL_0353: ldc.i4.0
+		IL_0354: ldelem.ref
+		IL_0355: castclass Modules.Require_Crypto_ErrorPaths/Scope
+		IL_035a: newobj instance void Modules.Require_Crypto_ErrorPaths/ArrowFunction_L26C36/FunctionObject::.ctor(class Modules.Require_Crypto_ErrorPaths/Scope)
+		IL_035f: ldc.i4.0
+		IL_0360: conv.r8
+		IL_0361: ldstr ""
+		IL_0366: ldc.i4.0
+		IL_0367: ldc.i4.0
+		IL_0368: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_Crypto_ErrorPaths/ArrowFunction_L26C36/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_036d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_Crypto_ErrorPaths/ArrowFunction_L26C36/FunctionObject>(!!0)
+		IL_0372: stloc.s 17
+		IL_0374: ldloc.1
+		IL_0375: ldloc.3
+		IL_0376: ldstr "pbkdf2 iterations type"
+		IL_037b: ldloc.s 17
+		IL_037d: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
+		IL_0382: pop
+		IL_0383: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0388: stloc.3
+		IL_0389: ldc.i4.1
+		IL_038a: newarr [System.Runtime]System.Object
+		IL_038f: dup
+		IL_0390: ldc.i4.0
+		IL_0391: ldloc.0
+		IL_0392: stelem.ref
+		IL_0393: stloc.s 6
+		IL_0395: ldloc.s 6
+		IL_0397: ldc.i4.0
+		IL_0398: ldelem.ref
+		IL_0399: castclass Modules.Require_Crypto_ErrorPaths/Scope
+		IL_039e: newobj instance void Modules.Require_Crypto_ErrorPaths/ArrowFunction_L27C37/FunctionObject::.ctor(class Modules.Require_Crypto_ErrorPaths/Scope)
+		IL_03a3: ldc.i4.0
+		IL_03a4: conv.r8
+		IL_03a5: ldstr ""
+		IL_03aa: ldc.i4.0
+		IL_03ab: ldc.i4.0
+		IL_03ac: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_Crypto_ErrorPaths/ArrowFunction_L27C37/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_03b1: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_Crypto_ErrorPaths/ArrowFunction_L27C37/FunctionObject>(!!0)
+		IL_03b6: stloc.s 18
+		IL_03b8: ldloc.1
+		IL_03b9: ldloc.3
+		IL_03ba: ldstr "pbkdf2 iterations float"
+		IL_03bf: ldloc.s 18
+		IL_03c1: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
+		IL_03c6: pop
+		IL_03c7: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_03cc: stloc.3
+		IL_03cd: ldc.i4.1
+		IL_03ce: newarr [System.Runtime]System.Object
+		IL_03d3: dup
+		IL_03d4: ldc.i4.0
+		IL_03d5: ldloc.0
+		IL_03d6: stelem.ref
+		IL_03d7: stloc.s 6
+		IL_03d9: ldloc.s 6
+		IL_03db: ldc.i4.0
+		IL_03dc: ldelem.ref
+		IL_03dd: castclass Modules.Require_Crypto_ErrorPaths/Scope
+		IL_03e2: newobj instance void Modules.Require_Crypto_ErrorPaths/ArrowFunction_L28C36/FunctionObject::.ctor(class Modules.Require_Crypto_ErrorPaths/Scope)
+		IL_03e7: ldc.i4.0
+		IL_03e8: conv.r8
+		IL_03e9: ldstr ""
+		IL_03ee: ldc.i4.0
+		IL_03ef: ldc.i4.0
+		IL_03f0: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_Crypto_ErrorPaths/ArrowFunction_L28C36/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_03f5: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_Crypto_ErrorPaths/ArrowFunction_L28C36/FunctionObject>(!!0)
+		IL_03fa: stloc.s 19
+		IL_03fc: ldloc.1
+		IL_03fd: ldloc.3
+		IL_03fe: ldstr "pbkdf2 iterations zero"
+		IL_0403: ldloc.s 19
+		IL_0405: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
+		IL_040a: pop
+		IL_040b: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0410: stloc.3
+		IL_0411: ldc.i4.1
+		IL_0412: newarr [System.Runtime]System.Object
+		IL_0417: dup
+		IL_0418: ldc.i4.0
+		IL_0419: ldloc.0
+		IL_041a: stelem.ref
+		IL_041b: stloc.s 6
+		IL_041d: ldloc.s 6
+		IL_041f: ldc.i4.0
+		IL_0420: ldelem.ref
+		IL_0421: castclass Modules.Require_Crypto_ErrorPaths/Scope
+		IL_0426: newobj instance void Modules.Require_Crypto_ErrorPaths/ArrowFunction_L29C33/FunctionObject::.ctor(class Modules.Require_Crypto_ErrorPaths/Scope)
+		IL_042b: ldc.i4.0
+		IL_042c: conv.r8
+		IL_042d: ldstr ""
+		IL_0432: ldc.i4.0
+		IL_0433: ldc.i4.0
+		IL_0434: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_Crypto_ErrorPaths/ArrowFunction_L29C33/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_0439: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_Crypto_ErrorPaths/ArrowFunction_L29C33/FunctionObject>(!!0)
+		IL_043e: stloc.s 20
+		IL_0440: ldloc.1
+		IL_0441: ldloc.3
+		IL_0442: ldstr "pbkdf2 keylen float"
+		IL_0447: ldloc.s 20
+		IL_0449: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
+		IL_044e: pop
+		IL_044f: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0454: stloc.3
+		IL_0455: ldc.i4.1
+		IL_0456: newarr [System.Runtime]System.Object
+		IL_045b: dup
+		IL_045c: ldc.i4.0
+		IL_045d: ldloc.0
+		IL_045e: stelem.ref
+		IL_045f: stloc.s 6
+		IL_0461: ldloc.s 6
+		IL_0463: ldc.i4.0
+		IL_0464: ldelem.ref
+		IL_0465: castclass Modules.Require_Crypto_ErrorPaths/Scope
+		IL_046a: newobj instance void Modules.Require_Crypto_ErrorPaths/ArrowFunction_L30C36/FunctionObject::.ctor(class Modules.Require_Crypto_ErrorPaths/Scope)
+		IL_046f: ldc.i4.0
+		IL_0470: conv.r8
+		IL_0471: ldstr ""
+		IL_0476: ldc.i4.0
+		IL_0477: ldc.i4.0
+		IL_0478: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_Crypto_ErrorPaths/ArrowFunction_L30C36/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_047d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_Crypto_ErrorPaths/ArrowFunction_L30C36/FunctionObject>(!!0)
+		IL_0482: stloc.s 21
+		IL_0484: ldloc.1
+		IL_0485: ldloc.3
+		IL_0486: ldstr "pbkdf2 keylen negative"
+		IL_048b: ldloc.s 21
+		IL_048d: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
+		IL_0492: pop
+		IL_0493: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0498: stloc.3
+		IL_0499: ldc.i4.1
+		IL_049a: newarr [System.Runtime]System.Object
+		IL_049f: dup
+		IL_04a0: ldc.i4.0
+		IL_04a1: ldloc.0
+		IL_04a2: stelem.ref
+		IL_04a3: stloc.s 6
+		IL_04a5: ldloc.s 6
+		IL_04a7: ldc.i4.0
+		IL_04a8: ldelem.ref
+		IL_04a9: castclass Modules.Require_Crypto_ErrorPaths/Scope
+		IL_04ae: newobj instance void Modules.Require_Crypto_ErrorPaths/ArrowFunction_L31C30/FunctionObject::.ctor(class Modules.Require_Crypto_ErrorPaths/Scope)
+		IL_04b3: ldc.i4.0
+		IL_04b4: conv.r8
+		IL_04b5: ldstr ""
+		IL_04ba: ldc.i4.0
+		IL_04bb: ldc.i4.0
+		IL_04bc: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_Crypto_ErrorPaths/ArrowFunction_L31C30/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_04c1: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_Crypto_ErrorPaths/ArrowFunction_L31C30/FunctionObject>(!!0)
+		IL_04c6: stloc.s 22
+		IL_04c8: ldloc.1
+		IL_04c9: ldloc.3
+		IL_04ca: ldstr "random size type"
+		IL_04cf: ldloc.s 22
+		IL_04d1: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
+		IL_04d6: pop
+		IL_04d7: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_04dc: stloc.3
+		IL_04dd: ldc.i4.1
+		IL_04de: newarr [System.Runtime]System.Object
+		IL_04e3: dup
+		IL_04e4: ldc.i4.0
+		IL_04e5: ldloc.0
+		IL_04e6: stelem.ref
+		IL_04e7: stloc.s 6
+		IL_04e9: ldloc.s 6
+		IL_04eb: ldc.i4.0
+		IL_04ec: ldelem.ref
+		IL_04ed: castclass Modules.Require_Crypto_ErrorPaths/Scope
+		IL_04f2: newobj instance void Modules.Require_Crypto_ErrorPaths/ArrowFunction_L32C34/FunctionObject::.ctor(class Modules.Require_Crypto_ErrorPaths/Scope)
+		IL_04f7: ldc.i4.0
+		IL_04f8: conv.r8
+		IL_04f9: ldstr ""
+		IL_04fe: ldc.i4.0
+		IL_04ff: ldc.i4.0
+		IL_0500: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_Crypto_ErrorPaths/ArrowFunction_L32C34/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_0505: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_Crypto_ErrorPaths/ArrowFunction_L32C34/FunctionObject>(!!0)
+		IL_050a: stloc.s 23
+		IL_050c: ldloc.1
+		IL_050d: ldloc.3
+		IL_050e: ldstr "random size negative"
+		IL_0513: ldloc.s 23
+		IL_0515: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
+		IL_051a: pop
+		IL_051b: ldloc.0
+		IL_051c: ldfld class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.ICryptoModule Modules.Require_Crypto_ErrorPaths/Scope::crypto
+		IL_0521: stloc.s 5
+		IL_0523: ldloc.s 5
+		IL_0525: ldstr "sha256"
+		IL_052a: callvirt instance object [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.ICryptoModule::createHash(string)
+		IL_052f: stloc.s 24
+		IL_0531: ldloc.0
+		IL_0532: ldloc.s 24
+		IL_0534: stfld object Modules.Require_Crypto_ErrorPaths/Scope::hash
+		IL_0539: ldloc.0
+		IL_053a: ldfld object Modules.Require_Crypto_ErrorPaths/Scope::hash
+		IL_053f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0544: ldstr "update"
+		IL_0549: ldstr "abc"
+		IL_054e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0553: pop
+		IL_0554: ldstr "console"
+		IL_0559: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_055e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0563: stloc.s 24
+		IL_0565: ldloc.0
+		IL_0566: ldfld object Modules.Require_Crypto_ErrorPaths/Scope::hash
+		IL_056b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0570: ldstr "digest"
+		IL_0575: ldstr "hex"
+		IL_057a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_057f: stloc.s 25
+		IL_0581: ldloc.s 24
+		IL_0583: ldstr "log"
+		IL_0588: ldstr "digest first:"
+		IL_058d: ldloc.s 25
+		IL_058f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_0594: pop
+		IL_0595: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_059a: stloc.3
+		IL_059b: ldc.i4.1
+		IL_059c: newarr [System.Runtime]System.Object
+		IL_05a1: dup
+		IL_05a2: ldc.i4.0
+		IL_05a3: ldloc.0
+		IL_05a4: stelem.ref
+		IL_05a5: stloc.s 6
+		IL_05a7: ldloc.s 6
+		IL_05a9: ldc.i4.0
+		IL_05aa: ldelem.ref
+		IL_05ab: castclass Modules.Require_Crypto_ErrorPaths/Scope
+		IL_05b0: newobj instance void Modules.Require_Crypto_ErrorPaths/ArrowFunction_L37C26/FunctionObject::.ctor(class Modules.Require_Crypto_ErrorPaths/Scope)
+		IL_05b5: ldc.i4.0
+		IL_05b6: conv.r8
+		IL_05b7: ldstr ""
+		IL_05bc: ldc.i4.0
+		IL_05bd: ldc.i4.0
+		IL_05be: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_Crypto_ErrorPaths/ArrowFunction_L37C26/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_05c3: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_Crypto_ErrorPaths/ArrowFunction_L37C26/FunctionObject>(!!0)
+		IL_05c8: stloc.s 26
+		IL_05ca: ldloc.1
+		IL_05cb: ldloc.3
+		IL_05cc: ldstr "digest twice"
+		IL_05d1: ldloc.s 26
+		IL_05d3: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
+		IL_05d8: pop
+		IL_05d9: ldloc.0
+		IL_05da: ldfld class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.ICryptoModule Modules.Require_Crypto_ErrorPaths/Scope::crypto
+		IL_05df: stloc.s 5
+		IL_05e1: ldloc.s 5
+		IL_05e3: ldstr "sha256"
+		IL_05e8: ldstr "key"
+		IL_05ed: callvirt instance object [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.ICryptoModule::createHmac(string, object)
+		IL_05f2: stloc.s 25
+		IL_05f4: ldloc.0
+		IL_05f5: ldloc.s 25
+		IL_05f7: stfld object Modules.Require_Crypto_ErrorPaths/Scope::hmac
+		IL_05fc: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0601: stloc.3
+		IL_0602: ldc.i4.1
+		IL_0603: newarr [System.Runtime]System.Object
+		IL_0608: dup
+		IL_0609: ldc.i4.0
+		IL_060a: ldloc.0
+		IL_060b: stelem.ref
+		IL_060c: stloc.s 6
+		IL_060e: ldloc.s 6
+		IL_0610: ldc.i4.0
+		IL_0611: ldelem.ref
+		IL_0612: castclass Modules.Require_Crypto_ErrorPaths/Scope
+		IL_0617: newobj instance void Modules.Require_Crypto_ErrorPaths/ArrowFunction_L40C30/FunctionObject::.ctor(class Modules.Require_Crypto_ErrorPaths/Scope)
+		IL_061c: ldc.i4.0
+		IL_061d: conv.r8
+		IL_061e: ldstr ""
+		IL_0623: ldc.i4.0
+		IL_0624: ldc.i4.0
+		IL_0625: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_Crypto_ErrorPaths/ArrowFunction_L40C30/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_062a: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_Crypto_ErrorPaths/ArrowFunction_L40C30/FunctionObject>(!!0)
+		IL_062f: stloc.s 27
+		IL_0631: ldloc.1
+		IL_0632: ldloc.3
+		IL_0633: ldstr "hmac update type"
+		IL_0638: ldloc.s 27
+		IL_063a: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
+		IL_063f: pop
+		IL_0640: nop
+		IL_0641: nop
+		IL_0642: ldloc.2
+		IL_0643: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0648: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
+		IL_064d: stloc.s 25
+		IL_064f: ldloc.s 25
+		IL_0651: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0656: stloc.s 25
+		IL_0658: ldc.i4.1
+		IL_0659: newarr [System.Runtime]System.Object
+		IL_065e: dup
+		IL_065f: ldc.i4.0
+		IL_0660: ldloc.0
+		IL_0661: stelem.ref
+		IL_0662: stloc.3
+		IL_0663: newobj instance void Modules.Require_Crypto_ErrorPaths/ArrowFunction_L111C27/FunctionObject::.ctor()
+		IL_0668: ldc.i4.0
+		IL_0669: conv.r8
+		IL_066a: ldstr ""
+		IL_066f: ldc.i4.0
+		IL_0670: ldc.i4.0
+		IL_0671: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_Crypto_ErrorPaths/ArrowFunction_L111C27/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_0676: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_Crypto_ErrorPaths/ArrowFunction_L111C27/FunctionObject>(!!0)
+		IL_067b: stloc.s 28
+		IL_067d: ldloc.s 25
+		IL_067f: ldstr "then"
+		IL_0684: ldloc.s 28
+		IL_0686: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_068b: pop
+		IL_068c: ret
 	} // end of method Require_Crypto_ErrorPaths::__js_module_init__
 
 } // end of class Modules.Require_Crypto_ErrorPaths

@@ -124,6 +124,9 @@ namespace Jroc.Services
         public TypeReferenceHandle SystemMathType => _typeRefRegistry.GetOrAdd(typeof(System.Math));
         public TypeReferenceHandle MethodBaseType => _typeRefRegistry.GetOrAdd(typeof(System.Reflection.MethodBase));
         public TypeReferenceHandle JsFunctionObjectType => _typeRefRegistry.GetOrAdd(typeof(JavaScriptRuntime.JsFunctionObject));
+        public TypeReferenceHandle JsThrownValueExceptionType =>
+            _typeRefRegistry.GetOrAdd(
+                typeof(JavaScriptRuntime.JsThrownValueException));
         public TypeReferenceHandle JsCallArgumentsType => _typeRefRegistry.GetOrAdd(typeof(JavaScriptRuntime.JsCallArguments));
         public TypeReferenceHandle InAttributeType => _typeRefRegistry.GetOrAdd(typeof(System.Runtime.InteropServices.InAttribute));
         public EntityHandle ObjectArrayType => _memberRefRegistry.GetOrAddTypeHandle(typeof(object[]));
@@ -164,6 +167,15 @@ namespace Jroc.Services
         public MemberReferenceHandle TypeError_Ctor_String_Ref => _memberRefRegistry.GetOrAddConstructor(
             typeof(JavaScriptRuntime.TypeError),
             new[] { typeof(string) });
+        public MemberReferenceHandle Promise_Reject_Object_Ref =>
+            _memberRefRegistry.GetOrAddMethod(
+                typeof(JavaScriptRuntime.Promise),
+                nameof(JavaScriptRuntime.Promise.reject),
+                new[] { typeof(object) });
+        public MemberReferenceHandle JsThrownValueException_Value_Getter_Ref =>
+            _memberRefRegistry.GetOrAddMethod(
+                typeof(JavaScriptRuntime.JsThrownValueException),
+                $"get_{nameof(JavaScriptRuntime.JsThrownValueException.Value)}");
         public MemberReferenceHandle RuntimeServices_ResolveLexicalThis_Ref =>
             _memberRefRegistry.GetOrAddMethod(
                 typeof(JavaScriptRuntime.RuntimeServices),

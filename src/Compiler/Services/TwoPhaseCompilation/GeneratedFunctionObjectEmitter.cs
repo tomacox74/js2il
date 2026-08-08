@@ -100,8 +100,19 @@ internal sealed class GeneratedFunctionObjectEmitter
             }
             var callAdapter = MetadataTokens.MethodDefinitionHandle(nextMethodRow++);
             var constructBodyAdapter = plan.Callable.Kind is
-                CallableKind.FunctionDeclaration or CallableKind.FunctionExpression
+                    CallableKind.FunctionDeclaration
+                    or CallableKind.FunctionExpression
                 && !plan.Callable.IsMethodDefinition
+                && plan.Callable.AstNode is not FunctionDeclaration
+                    {
+                        Async: true,
+                        Generator: false
+                    }
+                && plan.Callable.AstNode is not FunctionExpression
+                    {
+                        Async: true,
+                        Generator: false
+                    }
                 ? MetadataTokens.MethodDefinitionHandle(nextMethodRow++)
                 : default;
             var constructAdapter = plan.IsConstructable
@@ -287,11 +298,69 @@ internal sealed class GeneratedFunctionObjectEmitter
     {
         var signature = CreateCallAdapterSignature();
         var il = new BlobBuilder();
-        var encoder = new InstructionEncoder(il);
+        var controlFlow = metadata.Plan.ReturnKind
+            == GeneratedFunctionReturnKind.Promise
+            ? new ControlFlowBuilder()
+            : null;
+        var encoder = controlFlow == null
+            ? new InstructionEncoder(il)
+            : new InstructionEncoder(il, controlFlow);
+        var localSignature = default(StandaloneSignatureHandle);
 
         if (metadata.Plan.Callable.Kind == CallableKind.ClassConstructor)
         {
             EmitTypeError(encoder, "Class constructor cannot be invoked without 'new'");
+        }
+        else if (metadata.Plan.ReturnKind == GeneratedFunctionReturnKind.Promise)
+        {
+            localSignature = CreateObjectLocalSignature();
+            var tryStart = encoder.DefineLabel();
+            var tryEnd = encoder.DefineLabel();
+            var handlerStart = encoder.DefineLabel();
+            var handlerEnd = encoder.DefineLabel();
+            var done = encoder.DefineLabel();
+
+            encoder.MarkLabel(tryStart);
+            EmitCanonicalCall(metadata, encoder);
+            encoder.StoreLocal(0);
+            encoder.Branch(ILOpCode.Leave, done);
+            encoder.MarkLabel(tryEnd);
+
+            encoder.MarkLabel(handlerStart);
+            var rejectReasonReady = encoder.DefineLabel();
+            var wrappedThrownValue = encoder.DefineLabel();
+            encoder.OpCode(ILOpCode.Dup);
+            encoder.OpCode(ILOpCode.Isinst);
+            encoder.Token(_bclReferences.JsThrownValueExceptionType);
+            encoder.OpCode(ILOpCode.Dup);
+            encoder.Branch(ILOpCode.Brtrue, wrappedThrownValue);
+            encoder.OpCode(ILOpCode.Pop);
+            encoder.Branch(ILOpCode.Br, rejectReasonReady);
+
+            encoder.MarkLabel(wrappedThrownValue);
+            encoder.OpCode(ILOpCode.Callvirt);
+            encoder.Token(
+                _bclReferences.JsThrownValueException_Value_Getter_Ref);
+            encoder.StoreLocal(0);
+            encoder.OpCode(ILOpCode.Pop);
+            encoder.LoadLocal(0);
+
+            encoder.MarkLabel(rejectReasonReady);
+            encoder.Call(_bclReferences.Promise_Reject_Object_Ref);
+            encoder.StoreLocal(0);
+            encoder.Branch(ILOpCode.Leave, done);
+            encoder.MarkLabel(handlerEnd);
+
+            encoder.MarkLabel(done);
+            encoder.LoadLocal(0);
+            encoder.OpCode(ILOpCode.Ret);
+
+            controlFlow!.AddCatchRegion(
+                tryStart,
+                tryEnd,
+                handlerStart,
+                handlerEnd,
+                _bclReferences.ExceptionType);
         }
         else
         {
@@ -310,7 +379,8 @@ internal sealed class GeneratedFunctionObjectEmitter
                 encoder,
                 maxStack: System.Math.Max(
                     8,
-                    metadata.Plan.Signature.JsParamCount + 3)),
+                    metadata.Plan.Signature.JsParamCount + 3),
+                localVariablesSignature: localSignature),
             ["thisArgument", "arguments"],
             inParameterIndex: 1);
     }
@@ -916,13 +986,30 @@ internal sealed class GeneratedFunctionObjectEmitter
             isValueType: true);
     }
 
-    private int AddMethodBody(InstructionEncoder encoder, int maxStack = 8)
+    private StandaloneSignatureHandle CreateObjectLocalSignature()
+    {
+        var blob = new BlobBuilder();
+        new BlobEncoder(blob)
+            .LocalVariableSignature(1)
+            .AddVariable()
+            .Type()
+            .Object();
+        return _metadataBuilder.AddStandaloneSignature(
+            _metadataBuilder.GetOrAddBlob(blob));
+    }
+
+    private int AddMethodBody(
+        InstructionEncoder encoder,
+        int maxStack = 8,
+        StandaloneSignatureHandle localVariablesSignature = default)
     {
         return _methodBodyStream.AddMethodBody(
             encoder,
             maxStack,
-            localVariablesSignature: default,
-            attributes: MethodBodyAttributes.None);
+            localVariablesSignature,
+            attributes: localVariablesSignature.IsNil
+                ? MethodBodyAttributes.None
+                : MethodBodyAttributes.InitLocals);
     }
 
     private MethodDefinitionHandle AddMethod(
