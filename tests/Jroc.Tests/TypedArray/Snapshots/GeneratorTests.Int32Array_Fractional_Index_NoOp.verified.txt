@@ -38,12 +38,13 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 268 (0x10c)
+		// Code size: 229 (0xe5)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Int32Array_Fractional_Index_NoOp/Scope,
 			[1] class [JavaScriptRuntime]JavaScriptRuntime.Int32Array,
-			[2] object
+			[2] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+			[3] object
 		)
 
 		IL_0000: newobj instance void Modules.Int32Array_Fractional_Index_NoOp/Scope::.ctor()
@@ -69,43 +70,40 @@
 		IL_0064: ldc.r8 1.9
 		IL_006d: ldc.r8 888
 		IL_0076: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Int32Array::set_Item(float64, float64)
-		IL_007b: ldstr "console"
-		IL_0080: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0085: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_008a: ldloc.1
-		IL_008b: ldc.r8 0.0
-		IL_0094: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Int32Array::get_Item(float64)
-		IL_0099: box [System.Runtime]System.Double
-		IL_009e: stloc.2
-		IL_009f: ldstr "log"
-		IL_00a4: ldloc.2
-		IL_00a5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00aa: pop
-		IL_00ab: ldstr "console"
-		IL_00b0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_00b5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00ba: ldloc.1
-		IL_00bb: ldc.r8 1
-		IL_00c4: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Int32Array::get_Item(float64)
-		IL_00c9: box [System.Runtime]System.Double
-		IL_00ce: stloc.2
-		IL_00cf: ldstr "log"
-		IL_00d4: ldloc.2
-		IL_00d5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00da: pop
-		IL_00db: ldstr "console"
-		IL_00e0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_00e5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00ea: ldloc.1
-		IL_00eb: ldc.r8 2
-		IL_00f4: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Int32Array::get_Item(float64)
-		IL_00f9: box [System.Runtime]System.Double
-		IL_00fe: stloc.2
-		IL_00ff: ldstr "log"
-		IL_0104: ldloc.2
-		IL_0105: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_010a: pop
-		IL_010b: ret
+		IL_007b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0080: stloc.2
+		IL_0081: ldloc.1
+		IL_0082: ldc.r8 0.0
+		IL_008b: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Int32Array::get_Item(float64)
+		IL_0090: box [System.Runtime]System.Double
+		IL_0095: stloc.3
+		IL_0096: ldloc.2
+		IL_0097: ldloc.3
+		IL_0098: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_009d: pop
+		IL_009e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00a3: stloc.2
+		IL_00a4: ldloc.1
+		IL_00a5: ldc.r8 1
+		IL_00ae: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Int32Array::get_Item(float64)
+		IL_00b3: box [System.Runtime]System.Double
+		IL_00b8: stloc.3
+		IL_00b9: ldloc.2
+		IL_00ba: ldloc.3
+		IL_00bb: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00c0: pop
+		IL_00c1: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00c6: stloc.2
+		IL_00c7: ldloc.1
+		IL_00c8: ldc.r8 2
+		IL_00d1: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Int32Array::get_Item(float64)
+		IL_00d6: box [System.Runtime]System.Double
+		IL_00db: stloc.3
+		IL_00dc: ldloc.2
+		IL_00dd: ldloc.3
+		IL_00de: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00e3: pop
+		IL_00e4: ret
 	} // end of method Int32Array_Fractional_Index_NoOp::__js_module_init__
 
 } // end of class Modules.Int32Array_Fractional_Index_NoOp

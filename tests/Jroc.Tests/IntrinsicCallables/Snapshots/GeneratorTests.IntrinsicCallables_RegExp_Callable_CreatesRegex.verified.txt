@@ -38,12 +38,12 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 121 (0x79)
+		// Code size: 91 (0x5b)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.IntrinsicCallables_RegExp_Callable_CreatesRegex/Scope,
 			[1] object,
-			[2] object,
+			[2] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 			[3] object
 		)
 
@@ -53,37 +53,31 @@
 		IL_0007: ldstr "a+"
 		IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.RegExp::Call(object)
 		IL_0011: stloc.1
-		IL_0012: ldstr "console"
-		IL_0017: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0021: stloc.2
-		IL_0022: ldloc.1
-		IL_0023: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0028: ldstr "test"
-		IL_002d: ldstr "aa"
-		IL_0032: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0037: stloc.3
-		IL_0038: ldloc.2
-		IL_0039: ldstr "log"
-		IL_003e: ldloc.3
-		IL_003f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0044: pop
-		IL_0045: ldstr "console"
-		IL_004a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_004f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0054: stloc.3
-		IL_0055: ldloc.1
-		IL_0056: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_005b: ldstr "test"
-		IL_0060: ldstr "b"
-		IL_0065: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_006a: stloc.2
-		IL_006b: ldloc.3
-		IL_006c: ldstr "log"
-		IL_0071: ldloc.2
-		IL_0072: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0077: pop
-		IL_0078: ret
+		IL_0012: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0017: stloc.2
+		IL_0018: ldloc.1
+		IL_0019: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_001e: ldstr "test"
+		IL_0023: ldstr "aa"
+		IL_0028: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_002d: stloc.3
+		IL_002e: ldloc.2
+		IL_002f: ldloc.3
+		IL_0030: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0035: pop
+		IL_0036: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_003b: stloc.2
+		IL_003c: ldloc.1
+		IL_003d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0042: ldstr "test"
+		IL_0047: ldstr "b"
+		IL_004c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0051: stloc.3
+		IL_0052: ldloc.2
+		IL_0053: ldloc.3
+		IL_0054: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0059: pop
+		IL_005a: ret
 	} // end of method IntrinsicCallables_RegExp_Callable_CreatesRegex::__js_module_init__
 
 } // end of class Modules.IntrinsicCallables_RegExp_Callable_CreatesRegex

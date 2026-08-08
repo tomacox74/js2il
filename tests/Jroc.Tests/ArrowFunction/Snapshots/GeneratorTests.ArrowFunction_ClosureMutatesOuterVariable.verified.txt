@@ -388,14 +388,14 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 226 (0xe2)
+		// Code size: 181 (0xb5)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ArrowFunction_ClosureMutatesOuterVariable/Scope,
 			[1] class Modules.ArrowFunction_ClosureMutatesOuterVariable/createCounter/FunctionObject_FunctionDeclaration_61C7CF9F_createCounter,
 			[2] object,
 			[3] object[],
-			[4] object,
+			[4] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 			[5] object
 		)
 
@@ -430,49 +430,40 @@
 		IL_0040: box [System.Runtime]System.Double
 		IL_0045: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
 		IL_004a: stloc.2
-		IL_004b: ldstr "console"
-		IL_0050: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0055: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_005a: stloc.s 4
-		IL_005c: ldloc.2
-		IL_005d: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0062: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
-		IL_0067: stloc.s 5
-		IL_0069: ldloc.s 4
-		IL_006b: ldstr "log"
-		IL_0070: ldstr "First increment:"
-		IL_0075: ldloc.s 5
-		IL_0077: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_007c: pop
-		IL_007d: ldstr "console"
-		IL_0082: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0087: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_008c: stloc.s 5
-		IL_008e: ldloc.2
-		IL_008f: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0094: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
-		IL_0099: stloc.s 4
-		IL_009b: ldloc.s 5
-		IL_009d: ldstr "log"
-		IL_00a2: ldstr "Second increment:"
-		IL_00a7: ldloc.s 4
-		IL_00a9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_00ae: pop
-		IL_00af: ldstr "console"
-		IL_00b4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_00b9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00be: stloc.s 4
-		IL_00c0: ldloc.2
-		IL_00c1: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_00c6: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
-		IL_00cb: stloc.s 5
-		IL_00cd: ldloc.s 4
-		IL_00cf: ldstr "log"
-		IL_00d4: ldstr "Third increment:"
-		IL_00d9: ldloc.s 5
-		IL_00db: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_00e0: pop
-		IL_00e1: ret
+		IL_004b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0050: stloc.s 4
+		IL_0052: ldloc.2
+		IL_0053: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0058: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
+		IL_005d: stloc.s 5
+		IL_005f: ldloc.s 4
+		IL_0061: ldstr "First increment:"
+		IL_0066: ldloc.s 5
+		IL_0068: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_006d: pop
+		IL_006e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0073: stloc.s 4
+		IL_0075: ldloc.2
+		IL_0076: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_007b: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
+		IL_0080: stloc.s 5
+		IL_0082: ldloc.s 4
+		IL_0084: ldstr "Second increment:"
+		IL_0089: ldloc.s 5
+		IL_008b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_0090: pop
+		IL_0091: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0096: stloc.s 4
+		IL_0098: ldloc.2
+		IL_0099: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_009e: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
+		IL_00a3: stloc.s 5
+		IL_00a5: ldloc.s 4
+		IL_00a7: ldstr "Third increment:"
+		IL_00ac: ldloc.s 5
+		IL_00ae: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_00b3: pop
+		IL_00b4: ret
 	} // end of method ArrowFunction_ClosureMutatesOuterVariable::__js_module_init__
 
 } // end of class Modules.ArrowFunction_ClosureMutatesOuterVariable

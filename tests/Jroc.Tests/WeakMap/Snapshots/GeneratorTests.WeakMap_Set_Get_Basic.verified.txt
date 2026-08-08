@@ -38,13 +38,13 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 82 (0x52)
+		// Code size: 67 (0x43)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.WeakMap_Set_Get_Basic/Scope,
 			[1] class [JavaScriptRuntime]JavaScriptRuntime.WeakMap,
 			[2] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
-			[3] object,
+			[3] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 			[4] object
 		)
 
@@ -61,21 +61,18 @@
 		IL_001a: ldstr "value1"
 		IL_001f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
 		IL_0024: pop
-		IL_0025: ldstr "console"
-		IL_002a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_002f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0034: stloc.3
-		IL_0035: ldloc.1
-		IL_0036: ldstr "get"
-		IL_003b: ldloc.2
-		IL_003c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0041: stloc.s 4
-		IL_0043: ldloc.3
-		IL_0044: ldstr "log"
-		IL_0049: ldloc.s 4
-		IL_004b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0050: pop
-		IL_0051: ret
+		IL_0025: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_002a: stloc.3
+		IL_002b: ldloc.1
+		IL_002c: ldstr "get"
+		IL_0031: ldloc.2
+		IL_0032: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0037: stloc.s 4
+		IL_0039: ldloc.3
+		IL_003a: ldloc.s 4
+		IL_003c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0041: pop
+		IL_0042: ret
 	} // end of method WeakMap_Set_Get_Basic::__js_module_init__
 
 } // end of class Modules.WeakMap_Set_Get_Basic

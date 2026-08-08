@@ -186,14 +186,14 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 145 (0x91)
+		// Code size: 130 (0x82)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Math_AliasReplacement_Dispatch/Scope,
 			[1] object,
 			[2] object[],
 			[3] class Modules.Math_AliasReplacement_Dispatch/FunctionExpression_L2C16/FunctionObject_FunctionExpression_BAC020DF_L2C17,
-			[4] object,
+			[4] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 			[5] float64,
 			[6] object,
 			[7] object
@@ -225,29 +225,26 @@
 		IL_0037: ldc.i4.0
 		IL_0038: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
 		IL_003d: pop
-		IL_003e: ldstr "console"
-		IL_0043: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0048: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_004d: stloc.s 4
-		IL_004f: ldstr "Math"
-		IL_0054: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0059: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_005e: ldc.r8 1
-		IL_0067: neg
-		IL_0068: stloc.s 5
-		IL_006a: ldloc.s 5
-		IL_006c: box [System.Runtime]System.Double
-		IL_0071: stloc.s 6
-		IL_0073: ldstr "abs"
-		IL_0078: ldloc.s 6
-		IL_007a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_007f: stloc.s 7
-		IL_0081: ldloc.s 4
-		IL_0083: ldstr "log"
-		IL_0088: ldloc.s 7
-		IL_008a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_008f: pop
-		IL_0090: ret
+		IL_003e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0043: stloc.s 4
+		IL_0045: ldstr "Math"
+		IL_004a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_004f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0054: ldc.r8 1
+		IL_005d: neg
+		IL_005e: stloc.s 5
+		IL_0060: ldloc.s 5
+		IL_0062: box [System.Runtime]System.Double
+		IL_0067: stloc.s 6
+		IL_0069: ldstr "abs"
+		IL_006e: ldloc.s 6
+		IL_0070: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0075: stloc.s 7
+		IL_0077: ldloc.s 4
+		IL_0079: ldloc.s 7
+		IL_007b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0080: pop
+		IL_0081: ret
 	} // end of method Math_AliasReplacement_Dispatch::__js_module_init__
 
 } // end of class Modules.Math_AliasReplacement_Dispatch

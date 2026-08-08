@@ -38,7 +38,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 634 (0x27a)
+		// Code size: 548 (0x224)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Require_Crypto_CreateHmac/Scope,
@@ -46,7 +46,7 @@
 			[2] object,
 			[3] object,
 			[4] class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer,
-			[5] object,
+			[5] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 			[6] object,
 			[7] object
 		)
@@ -78,151 +78,135 @@
 		IL_0051: ldloc.s 4
 		IL_0053: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
 		IL_0058: pop
-		IL_0059: ldstr "console"
-		IL_005e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0063: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0068: stloc.s 5
-		IL_006a: ldloc.2
-		IL_006b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0070: ldstr "digest"
-		IL_0075: ldstr "hex"
-		IL_007a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_007f: stloc.s 6
-		IL_0081: ldloc.s 5
-		IL_0083: ldstr "log"
-		IL_0088: ldstr "hmac sha256 hex:"
-		IL_008d: ldloc.s 6
-		IL_008f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_0094: pop
-		IL_0095: ldstr "console"
-		IL_009a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_009f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00a4: stloc.s 6
-		IL_00a6: ldloc.1
-		IL_00a7: ldstr "md5"
-		IL_00ac: ldstr "key"
-		IL_00b1: callvirt instance object [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.ICryptoModule::createHmac(string, object)
-		IL_00b6: stloc.s 5
-		IL_00b8: ldloc.s 5
-		IL_00ba: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00bf: ldstr "update"
-		IL_00c4: ldstr "abc"
-		IL_00c9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00ce: stloc.s 5
-		IL_00d0: ldloc.s 5
-		IL_00d2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00d7: ldstr "digest"
-		IL_00dc: ldstr "hex"
-		IL_00e1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00e6: stloc.s 5
-		IL_00e8: ldloc.s 6
-		IL_00ea: ldstr "log"
-		IL_00ef: ldstr "hmac md5 hex:"
-		IL_00f4: ldloc.s 5
-		IL_00f6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_00fb: pop
-		IL_00fc: ldstr "console"
-		IL_0101: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0106: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_010b: stloc.s 5
-		IL_010d: ldloc.1
-		IL_010e: ldstr "sha384"
-		IL_0113: ldstr "key"
-		IL_0118: callvirt instance object [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.ICryptoModule::createHmac(string, object)
-		IL_011d: stloc.s 6
-		IL_011f: ldloc.s 6
-		IL_0121: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0126: ldstr "update"
-		IL_012b: ldstr "abc"
-		IL_0130: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0135: stloc.s 6
-		IL_0137: ldloc.s 6
-		IL_0139: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_013e: ldstr "digest"
-		IL_0143: ldstr "hex"
-		IL_0148: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0059: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_005e: stloc.s 5
+		IL_0060: ldloc.2
+		IL_0061: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0066: ldstr "digest"
+		IL_006b: ldstr "hex"
+		IL_0070: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0075: stloc.s 6
+		IL_0077: ldloc.s 5
+		IL_0079: ldstr "hmac sha256 hex:"
+		IL_007e: ldloc.s 6
+		IL_0080: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_0085: pop
+		IL_0086: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_008b: stloc.s 5
+		IL_008d: ldloc.1
+		IL_008e: ldstr "md5"
+		IL_0093: ldstr "key"
+		IL_0098: callvirt instance object [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.ICryptoModule::createHmac(string, object)
+		IL_009d: stloc.s 6
+		IL_009f: ldloc.s 6
+		IL_00a1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00a6: ldstr "update"
+		IL_00ab: ldstr "abc"
+		IL_00b0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_00b5: stloc.s 6
+		IL_00b7: ldloc.s 6
+		IL_00b9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00be: ldstr "digest"
+		IL_00c3: ldstr "hex"
+		IL_00c8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_00cd: stloc.s 6
+		IL_00cf: ldloc.s 5
+		IL_00d1: ldstr "hmac md5 hex:"
+		IL_00d6: ldloc.s 6
+		IL_00d8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_00dd: pop
+		IL_00de: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00e3: stloc.s 5
+		IL_00e5: ldloc.1
+		IL_00e6: ldstr "sha384"
+		IL_00eb: ldstr "key"
+		IL_00f0: callvirt instance object [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.ICryptoModule::createHmac(string, object)
+		IL_00f5: stloc.s 6
+		IL_00f7: ldloc.s 6
+		IL_00f9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00fe: ldstr "update"
+		IL_0103: ldstr "abc"
+		IL_0108: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_010d: stloc.s 6
+		IL_010f: ldloc.s 6
+		IL_0111: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0116: ldstr "digest"
+		IL_011b: ldstr "hex"
+		IL_0120: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0125: stloc.s 6
+		IL_0127: ldloc.s 5
+		IL_0129: ldstr "hmac sha384 hex:"
+		IL_012e: ldloc.s 6
+		IL_0130: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_0135: pop
+		IL_0136: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_013b: stloc.s 5
+		IL_013d: ldloc.1
+		IL_013e: ldstr "sha512"
+		IL_0143: ldstr "key"
+		IL_0148: callvirt instance object [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.ICryptoModule::createHmac(string, object)
 		IL_014d: stloc.s 6
-		IL_014f: ldloc.s 5
-		IL_0151: ldstr "log"
-		IL_0156: ldstr "hmac sha384 hex:"
-		IL_015b: ldloc.s 6
-		IL_015d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_0162: pop
-		IL_0163: ldstr "console"
-		IL_0168: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_016d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0172: stloc.s 6
-		IL_0174: ldloc.1
-		IL_0175: ldstr "sha512"
-		IL_017a: ldstr "key"
-		IL_017f: callvirt instance object [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.ICryptoModule::createHmac(string, object)
-		IL_0184: stloc.s 5
-		IL_0186: ldloc.s 5
-		IL_0188: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_018d: ldstr "update"
-		IL_0192: ldstr "abc"
-		IL_0197: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_019c: stloc.s 5
-		IL_019e: ldloc.s 5
-		IL_01a0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_01a5: ldstr "digest"
-		IL_01aa: ldstr "hex"
-		IL_01af: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_01b4: stloc.s 5
-		IL_01b6: ldloc.s 6
-		IL_01b8: ldstr "log"
-		IL_01bd: ldstr "hmac sha512 hex:"
-		IL_01c2: ldloc.s 5
-		IL_01c4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_01c9: pop
-		IL_01ca: ldstr "key"
-		IL_01cf: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer::from(object)
-		IL_01d4: stloc.s 4
-		IL_01d6: ldloc.1
-		IL_01d7: ldstr "sha1"
-		IL_01dc: ldloc.s 4
-		IL_01de: callvirt instance object [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.ICryptoModule::createHmac(string, object)
-		IL_01e3: stloc.s 5
-		IL_01e5: ldloc.s 5
-		IL_01e7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_01ec: ldstr "update"
-		IL_01f1: ldstr "abc"
-		IL_01f6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_014f: ldloc.s 6
+		IL_0151: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0156: ldstr "update"
+		IL_015b: ldstr "abc"
+		IL_0160: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0165: stloc.s 6
+		IL_0167: ldloc.s 6
+		IL_0169: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_016e: ldstr "digest"
+		IL_0173: ldstr "hex"
+		IL_0178: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_017d: stloc.s 6
+		IL_017f: ldloc.s 5
+		IL_0181: ldstr "hmac sha512 hex:"
+		IL_0186: ldloc.s 6
+		IL_0188: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_018d: pop
+		IL_018e: ldstr "key"
+		IL_0193: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer::from(object)
+		IL_0198: stloc.s 4
+		IL_019a: ldloc.1
+		IL_019b: ldstr "sha1"
+		IL_01a0: ldloc.s 4
+		IL_01a2: callvirt instance object [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.ICryptoModule::createHmac(string, object)
+		IL_01a7: stloc.s 6
+		IL_01a9: ldloc.s 6
+		IL_01ab: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_01b0: ldstr "update"
+		IL_01b5: ldstr "abc"
+		IL_01ba: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_01bf: stloc.s 6
+		IL_01c1: ldloc.s 6
+		IL_01c3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_01c8: ldstr "digest"
+		IL_01cd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+		IL_01d2: stloc.3
+		IL_01d3: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_01d8: stloc.s 5
+		IL_01da: ldloc.3
+		IL_01db: call bool [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer::isBuffer(object)
+		IL_01e0: box [System.Runtime]System.Boolean
+		IL_01e5: stloc.s 7
+		IL_01e7: ldloc.s 5
+		IL_01e9: ldstr "hmac buffer:"
+		IL_01ee: ldloc.s 7
+		IL_01f0: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_01f5: pop
+		IL_01f6: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 		IL_01fb: stloc.s 5
-		IL_01fd: ldloc.s 5
-		IL_01ff: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0204: ldstr "digest"
-		IL_0209: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-		IL_020e: stloc.3
-		IL_020f: ldstr "console"
-		IL_0214: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0219: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_021e: ldloc.3
-		IL_021f: call bool [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer::isBuffer(object)
-		IL_0224: box [System.Runtime]System.Boolean
-		IL_0229: stloc.s 7
-		IL_022b: ldstr "log"
-		IL_0230: ldstr "hmac buffer:"
-		IL_0235: ldloc.s 7
-		IL_0237: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_023c: pop
-		IL_023d: ldstr "console"
-		IL_0242: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0247: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_024c: stloc.s 5
-		IL_024e: ldloc.3
-		IL_024f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0254: ldstr "toString"
-		IL_0259: ldstr "hex"
-		IL_025e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0263: stloc.s 6
-		IL_0265: ldloc.s 5
-		IL_0267: ldstr "log"
-		IL_026c: ldstr "hmac sha1 hex:"
-		IL_0271: ldloc.s 6
-		IL_0273: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_0278: pop
-		IL_0279: ret
+		IL_01fd: ldloc.3
+		IL_01fe: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0203: ldstr "toString"
+		IL_0208: ldstr "hex"
+		IL_020d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0212: stloc.s 6
+		IL_0214: ldloc.s 5
+		IL_0216: ldstr "hmac sha1 hex:"
+		IL_021b: ldloc.s 6
+		IL_021d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_0222: pop
+		IL_0223: ret
 	} // end of method Require_Crypto_CreateHmac::__js_module_init__
 
 } // end of class Modules.Require_Crypto_CreateHmac

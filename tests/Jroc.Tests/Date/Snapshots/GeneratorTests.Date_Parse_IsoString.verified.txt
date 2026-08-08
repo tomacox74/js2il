@@ -38,11 +38,12 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 46 (0x2e)
+		// Code size: 33 (0x21)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Date_Parse_IsoString/Scope,
-			[1] object
+			[1] object,
+			[2] class [JavaScriptRuntime]JavaScriptRuntime.Console
 		)
 
 		IL_0000: newobj instance void Modules.Date_Parse_IsoString/Scope::.ctor()
@@ -51,14 +52,13 @@
 		IL_0007: ldstr "2024-12-11T15:33:20.000Z"
 		IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.Date::parse(string)
 		IL_0011: stloc.1
-		IL_0012: ldstr "console"
-		IL_0017: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0021: ldstr "log"
-		IL_0026: ldloc.1
-		IL_0027: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_002c: pop
-		IL_002d: ret
+		IL_0012: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0017: stloc.2
+		IL_0018: ldloc.2
+		IL_0019: ldloc.1
+		IL_001a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_001f: pop
+		IL_0020: ret
 	} // end of method Date_Parse_IsoString::__js_module_init__
 
 } // end of class Modules.Date_Parse_IsoString

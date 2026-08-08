@@ -38,31 +38,30 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 67 (0x43)
+		// Code size: 41 (0x29)
 		.maxstack 8
-		.locals (
-			[0] class Modules.Literals_NullAndUndefined/Scope
+		.locals init (
+			[0] class Modules.Literals_NullAndUndefined/Scope,
+			[1] class [JavaScriptRuntime]JavaScriptRuntime.Console
 		)
 
 		IL_0000: newobj instance void Modules.Literals_NullAndUndefined/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: nop
-		IL_0007: ldstr "console"
-		IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0011: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0016: ldstr "log"
-		IL_001b: ldc.i4.0
-		IL_001c: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
-		IL_0021: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0026: pop
-		IL_0027: ldstr "console"
-		IL_002c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0031: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0036: ldstr "log"
-		IL_003b: ldnull
-		IL_003c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0041: pop
-		IL_0042: ret
+		IL_0007: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_000c: stloc.1
+		IL_000d: ldloc.1
+		IL_000e: ldc.i4.0
+		IL_000f: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
+		IL_0014: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0019: pop
+		IL_001a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_001f: stloc.1
+		IL_0020: ldloc.1
+		IL_0021: ldnull
+		IL_0022: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0027: pop
+		IL_0028: ret
 	} // end of method Literals_NullAndUndefined::__js_module_init__
 
 } // end of class Modules.Literals_NullAndUndefined

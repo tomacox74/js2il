@@ -120,50 +120,50 @@
 						01 00 02 00 00 00 00 00
 					)
 					// Header size: 12
-					// Code size: 78 (0x4e)
+					// Code size: 65 (0x41)
 					.maxstack 8
 					.locals init (
-						[0] object
+						[0] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+						[1] object
 					)
 
-					IL_0000: ldstr "console"
-					IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-					IL_000a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-					IL_000f: ldstr "log"
-					IL_0014: ldstr "Timer fired"
-					IL_0019: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-					IL_001e: pop
-					IL_001f: ldarg.0
-					IL_0020: ldc.i4.2
-					IL_0021: ldelem.ref
-					IL_0022: castclass Modules.Async_RealSuspension_SetTimeout/run/ArrowFunction_L8C24/Scope
-					IL_0027: ldfld object Modules.Async_RealSuspension_SetTimeout/run/ArrowFunction_L8C24/Scope::resolve
-					IL_002c: stloc.0
-					IL_002d: ldloc.0
-					IL_002e: ldc.i4.3
-					IL_002f: newarr [System.Runtime]System.Object
-					IL_0034: dup
-					IL_0035: ldc.i4.0
-					IL_0036: ldarg.0
-					IL_0037: ldc.i4.0
-					IL_0038: ldelem.ref
-					IL_0039: stelem.ref
-					IL_003a: dup
-					IL_003b: ldc.i4.1
-					IL_003c: ldarg.0
-					IL_003d: ldc.i4.1
-					IL_003e: ldelem.ref
-					IL_003f: stelem.ref
-					IL_0040: dup
-					IL_0041: ldc.i4.2
-					IL_0042: ldarg.0
-					IL_0043: ldc.i4.2
-					IL_0044: ldelem.ref
-					IL_0045: stelem.ref
-					IL_0046: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
-					IL_004b: pop
-					IL_004c: ldnull
-					IL_004d: ret
+					IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+					IL_0005: stloc.0
+					IL_0006: ldloc.0
+					IL_0007: ldstr "Timer fired"
+					IL_000c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+					IL_0011: pop
+					IL_0012: ldarg.0
+					IL_0013: ldc.i4.2
+					IL_0014: ldelem.ref
+					IL_0015: castclass Modules.Async_RealSuspension_SetTimeout/run/ArrowFunction_L8C24/Scope
+					IL_001a: ldfld object Modules.Async_RealSuspension_SetTimeout/run/ArrowFunction_L8C24/Scope::resolve
+					IL_001f: stloc.1
+					IL_0020: ldloc.1
+					IL_0021: ldc.i4.3
+					IL_0022: newarr [System.Runtime]System.Object
+					IL_0027: dup
+					IL_0028: ldc.i4.0
+					IL_0029: ldarg.0
+					IL_002a: ldc.i4.0
+					IL_002b: ldelem.ref
+					IL_002c: stelem.ref
+					IL_002d: dup
+					IL_002e: ldc.i4.1
+					IL_002f: ldarg.0
+					IL_0030: ldc.i4.1
+					IL_0031: ldelem.ref
+					IL_0032: stelem.ref
+					IL_0033: dup
+					IL_0034: ldc.i4.2
+					IL_0035: ldarg.0
+					IL_0036: ldc.i4.2
+					IL_0037: ldelem.ref
+					IL_0038: stelem.ref
+					IL_0039: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
+					IL_003e: pop
+					IL_003f: ldnull
+					IL_0040: ret
 				} // end of method ArrowFunction_L9C20::__js_call__
 
 			} // end of class ArrowFunction_L9C20
@@ -422,19 +422,21 @@
 				.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 					01 00 00 00 00 00 00 00
 				)
-				// Header size: 1
-				// Code size: 33 (0x21)
+				// Header size: 12
+				// Code size: 20 (0x14)
 				.maxstack 8
+				.locals init (
+					[0] class [JavaScriptRuntime]JavaScriptRuntime.Console
+				)
 
-				IL_0000: ldstr "console"
-				IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-				IL_000a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_000f: ldstr "log"
-				IL_0014: ldstr "Inside async function (after await)"
-				IL_0019: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-				IL_001e: pop
-				IL_001f: ldnull
-				IL_0020: ret
+				IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_0005: stloc.0
+				IL_0006: ldloc.0
+				IL_0007: ldstr "Inside async function (after await)"
+				IL_000c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+				IL_0011: pop
+				IL_0012: ldnull
+				IL_0013: ret
 			} // end of method ArrowFunction_L13C13::__js_call__
 
 		} // end of class ArrowFunction_L13C13
@@ -573,90 +575,90 @@
 				74 61 54 6f 6b 65 6e 08 00 00 02
 			)
 			// Header size: 12
-			// Code size: 180 (0xb4)
+			// Code size: 171 (0xab)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.Async_RealSuspension_SetTimeout/run/Scope,
-				[1] object[],
-				[2] class Modules.Async_RealSuspension_SetTimeout/run/ArrowFunction_L8C24/FunctionObject,
-				[3] class [JavaScriptRuntime]JavaScriptRuntime.Promise,
-				[4] class Modules.Async_RealSuspension_SetTimeout/run/ArrowFunction_L13C13/FunctionObject,
-				[5] object
+				[1] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+				[2] object[],
+				[3] class Modules.Async_RealSuspension_SetTimeout/run/ArrowFunction_L8C24/FunctionObject,
+				[4] class [JavaScriptRuntime]JavaScriptRuntime.Promise,
+				[5] class Modules.Async_RealSuspension_SetTimeout/run/ArrowFunction_L13C13/FunctionObject,
+				[6] object
 			)
 
 			IL_0000: newobj instance void Modules.Async_RealSuspension_SetTimeout/run/Scope::.ctor()
 			IL_0005: stloc.0
-			IL_0006: ldstr "console"
-			IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_0010: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0015: ldstr "log"
-			IL_001a: ldstr "Inside async function (before await)"
-			IL_001f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_0024: pop
-			IL_0025: ldc.i4.2
-			IL_0026: newarr [System.Runtime]System.Object
-			IL_002b: dup
-			IL_002c: ldc.i4.0
-			IL_002d: ldarg.0
-			IL_002e: stelem.ref
-			IL_002f: dup
-			IL_0030: ldc.i4.1
-			IL_0031: ldloc.0
-			IL_0032: stelem.ref
-			IL_0033: stloc.1
-			IL_0034: ldloc.1
-			IL_0035: newobj instance void Modules.Async_RealSuspension_SetTimeout/run/ArrowFunction_L8C24/FunctionObject::.ctor(object[])
-			IL_003a: ldc.i4.1
-			IL_003b: conv.r8
-			IL_003c: ldstr ""
-			IL_0041: ldc.i4.0
-			IL_0042: ldc.i4.0
-			IL_0043: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Async_RealSuspension_SetTimeout/run/ArrowFunction_L8C24/FunctionObject>(!!0, float64, string, bool, bool)
-			IL_0048: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Async_RealSuspension_SetTimeout/run/ArrowFunction_L8C24/FunctionObject>(!!0)
-			IL_004d: stloc.2
-			IL_004e: ldloc.2
-			IL_004f: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Promise::.ctor(object)
-			IL_0054: stloc.3
-			IL_0055: ldc.i4.1
-			IL_0056: newarr [System.Runtime]System.Object
-			IL_005b: dup
-			IL_005c: ldc.i4.0
-			IL_005d: ldarg.0
-			IL_005e: stelem.ref
-			IL_005f: stloc.1
-			IL_0060: newobj instance void Modules.Async_RealSuspension_SetTimeout/run/ArrowFunction_L13C13/FunctionObject::.ctor()
-			IL_0065: ldc.i4.0
-			IL_0066: conv.r8
-			IL_0067: ldstr ""
-			IL_006c: ldc.i4.0
-			IL_006d: ldc.i4.0
-			IL_006e: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Async_RealSuspension_SetTimeout/run/ArrowFunction_L13C13/FunctionObject>(!!0, float64, string, bool, bool)
-			IL_0073: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Async_RealSuspension_SetTimeout/run/ArrowFunction_L13C13/FunctionObject>(!!0)
-			IL_0078: stloc.s 4
-			IL_007a: ldloc.3
-			IL_007b: ldstr "then"
-			IL_0080: call bool [JavaScriptRuntime]JavaScriptRuntime.Promise::HasMemberOverride(object, string)
-			IL_0085: brtrue IL_0099
+			IL_0006: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_000b: stloc.1
+			IL_000c: ldloc.1
+			IL_000d: ldstr "Inside async function (before await)"
+			IL_0012: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0017: pop
+			IL_0018: ldc.i4.2
+			IL_0019: newarr [System.Runtime]System.Object
+			IL_001e: dup
+			IL_001f: ldc.i4.0
+			IL_0020: ldarg.0
+			IL_0021: stelem.ref
+			IL_0022: dup
+			IL_0023: ldc.i4.1
+			IL_0024: ldloc.0
+			IL_0025: stelem.ref
+			IL_0026: stloc.2
+			IL_0027: ldloc.2
+			IL_0028: newobj instance void Modules.Async_RealSuspension_SetTimeout/run/ArrowFunction_L8C24/FunctionObject::.ctor(object[])
+			IL_002d: ldc.i4.1
+			IL_002e: conv.r8
+			IL_002f: ldstr ""
+			IL_0034: ldc.i4.0
+			IL_0035: ldc.i4.0
+			IL_0036: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Async_RealSuspension_SetTimeout/run/ArrowFunction_L8C24/FunctionObject>(!!0, float64, string, bool, bool)
+			IL_003b: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Async_RealSuspension_SetTimeout/run/ArrowFunction_L8C24/FunctionObject>(!!0)
+			IL_0040: stloc.3
+			IL_0041: ldloc.3
+			IL_0042: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Promise::.ctor(object)
+			IL_0047: stloc.s 4
+			IL_0049: ldc.i4.1
+			IL_004a: newarr [System.Runtime]System.Object
+			IL_004f: dup
+			IL_0050: ldc.i4.0
+			IL_0051: ldarg.0
+			IL_0052: stelem.ref
+			IL_0053: stloc.2
+			IL_0054: newobj instance void Modules.Async_RealSuspension_SetTimeout/run/ArrowFunction_L13C13/FunctionObject::.ctor()
+			IL_0059: ldc.i4.0
+			IL_005a: conv.r8
+			IL_005b: ldstr ""
+			IL_0060: ldc.i4.0
+			IL_0061: ldc.i4.0
+			IL_0062: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Async_RealSuspension_SetTimeout/run/ArrowFunction_L13C13/FunctionObject>(!!0, float64, string, bool, bool)
+			IL_0067: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Async_RealSuspension_SetTimeout/run/ArrowFunction_L13C13/FunctionObject>(!!0)
+			IL_006c: stloc.s 5
+			IL_006e: ldloc.s 4
+			IL_0070: ldstr "then"
+			IL_0075: call bool [JavaScriptRuntime]JavaScriptRuntime.Promise::HasMemberOverride(object, string)
+			IL_007a: brtrue IL_008f
 
-			IL_008a: ldloc.3
-			IL_008b: ldloc.s 4
-			IL_008d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Promise::then(object)
-			IL_0092: stloc.s 5
-			IL_0094: br IL_00b1
+			IL_007f: ldloc.s 4
+			IL_0081: ldloc.s 5
+			IL_0083: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Promise::then(object)
+			IL_0088: stloc.s 6
+			IL_008a: br IL_00a8
 
-			IL_0099: ldloc.3
-			IL_009a: ldstr "then"
-			IL_009f: ldc.i4.1
-			IL_00a0: newarr [System.Runtime]System.Object
-			IL_00a5: dup
-			IL_00a6: ldc.i4.0
-			IL_00a7: ldloc.s 4
-			IL_00a9: stelem.ref
-			IL_00aa: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallOwnPropertyMember(object, string, object[])
-			IL_00af: stloc.s 5
+			IL_008f: ldloc.s 4
+			IL_0091: ldstr "then"
+			IL_0096: ldc.i4.1
+			IL_0097: newarr [System.Runtime]System.Object
+			IL_009c: dup
+			IL_009d: ldc.i4.0
+			IL_009e: ldloc.s 5
+			IL_00a0: stelem.ref
+			IL_00a1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallOwnPropertyMember(object, string, object[])
+			IL_00a6: stloc.s 6
 
-			IL_00b1: ldloc.s 5
-			IL_00b3: ret
+			IL_00a8: ldloc.s 6
+			IL_00aa: ret
 		} // end of method run::__js_call__
 
 	} // end of class run
@@ -749,19 +751,21 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Header size: 1
-			// Code size: 33 (0x21)
+			// Header size: 12
+			// Code size: 20 (0x14)
 			.maxstack 8
+			.locals init (
+				[0] class [JavaScriptRuntime]JavaScriptRuntime.Console
+			)
 
-			IL_0000: ldstr "console"
-			IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_000a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_000f: ldstr "log"
-			IL_0014: ldstr "After calling async function"
-			IL_0019: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_001e: pop
-			IL_001f: ldnull
-			IL_0020: ret
+			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0005: stloc.0
+			IL_0006: ldloc.0
+			IL_0007: ldstr "After calling async function"
+			IL_000c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0011: pop
+			IL_0012: ldnull
+			IL_0013: ret
 		} // end of method ArrowFunction_L18C12::__js_call__
 
 	} // end of class ArrowFunction_L18C12
@@ -804,14 +808,15 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 149 (0x95)
+		// Code size: 140 (0x8c)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Async_RealSuspension_SetTimeout/Scope,
 			[1] class Modules.Async_RealSuspension_SetTimeout/run/FunctionObject_FunctionDeclaration_1C358AD9_run,
 			[2] object[],
-			[3] object,
-			[4] class Modules.Async_RealSuspension_SetTimeout/ArrowFunction_L18C12/FunctionObject
+			[3] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+			[4] object,
+			[5] class Modules.Async_RealSuspension_SetTimeout/ArrowFunction_L18C12/FunctionObject
 		)
 
 		IL_0000: newobj instance void Modules.Async_RealSuspension_SetTimeout/Scope::.ctor()
@@ -836,43 +841,42 @@
 		IL_0027: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Async_RealSuspension_SetTimeout/run/FunctionObject_FunctionDeclaration_1C358AD9_run>(!!0, float64, string, bool, bool)
 		IL_002c: stloc.1
 		IL_002d: nop
-		IL_002e: ldstr "console"
-		IL_0033: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0038: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_003d: ldstr "log"
-		IL_0042: ldstr "Before calling async function"
-		IL_0047: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_004c: pop
-		IL_004d: nop
-		IL_004e: ldloc.1
-		IL_004f: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0054: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
-		IL_0059: stloc.3
-		IL_005a: ldloc.3
-		IL_005b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0060: stloc.3
-		IL_0061: ldc.i4.1
-		IL_0062: newarr [System.Runtime]System.Object
-		IL_0067: dup
-		IL_0068: ldc.i4.0
-		IL_0069: ldloc.0
-		IL_006a: stelem.ref
-		IL_006b: stloc.2
-		IL_006c: newobj instance void Modules.Async_RealSuspension_SetTimeout/ArrowFunction_L18C12/FunctionObject::.ctor()
-		IL_0071: ldc.i4.0
-		IL_0072: conv.r8
-		IL_0073: ldstr ""
-		IL_0078: ldc.i4.0
-		IL_0079: ldc.i4.0
-		IL_007a: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Async_RealSuspension_SetTimeout/ArrowFunction_L18C12/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_007f: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Async_RealSuspension_SetTimeout/ArrowFunction_L18C12/FunctionObject>(!!0)
-		IL_0084: stloc.s 4
-		IL_0086: ldloc.3
-		IL_0087: ldstr "then"
-		IL_008c: ldloc.s 4
-		IL_008e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0093: pop
-		IL_0094: ret
+		IL_002e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0033: stloc.3
+		IL_0034: ldloc.3
+		IL_0035: ldstr "Before calling async function"
+		IL_003a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_003f: pop
+		IL_0040: nop
+		IL_0041: ldloc.1
+		IL_0042: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0047: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
+		IL_004c: stloc.s 4
+		IL_004e: ldloc.s 4
+		IL_0050: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0055: stloc.s 4
+		IL_0057: ldc.i4.1
+		IL_0058: newarr [System.Runtime]System.Object
+		IL_005d: dup
+		IL_005e: ldc.i4.0
+		IL_005f: ldloc.0
+		IL_0060: stelem.ref
+		IL_0061: stloc.2
+		IL_0062: newobj instance void Modules.Async_RealSuspension_SetTimeout/ArrowFunction_L18C12/FunctionObject::.ctor()
+		IL_0067: ldc.i4.0
+		IL_0068: conv.r8
+		IL_0069: ldstr ""
+		IL_006e: ldc.i4.0
+		IL_006f: ldc.i4.0
+		IL_0070: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Async_RealSuspension_SetTimeout/ArrowFunction_L18C12/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_0075: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Async_RealSuspension_SetTimeout/ArrowFunction_L18C12/FunctionObject>(!!0)
+		IL_007a: stloc.s 5
+		IL_007c: ldloc.s 4
+		IL_007e: ldstr "then"
+		IL_0083: ldloc.s 5
+		IL_0085: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_008a: pop
+		IL_008b: ret
 	} // end of method Async_RealSuspension_SetTimeout::__js_module_init__
 
 } // end of class Modules.Async_RealSuspension_SetTimeout

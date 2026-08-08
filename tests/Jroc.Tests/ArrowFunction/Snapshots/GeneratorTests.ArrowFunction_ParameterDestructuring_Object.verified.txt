@@ -108,11 +108,12 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 87 (0x57)
+			// Code size: 74 (0x4a)
 			.maxstack 8
 			.locals init (
 				[0] object,
-				[1] object
+				[1] object,
+				[2] class [JavaScriptRuntime]JavaScriptRuntime.Console
 			)
 
 			IL_0000: ldarg.1
@@ -135,16 +136,15 @@
 			IL_002e: ldstr "b"
 			IL_0033: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
 			IL_0038: stloc.1
-			IL_0039: ldstr "console"
-			IL_003e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_0043: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0048: ldstr "log"
-			IL_004d: ldloc.0
-			IL_004e: ldloc.1
-			IL_004f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-			IL_0054: pop
-			IL_0055: ldnull
-			IL_0056: ret
+			IL_0039: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_003e: stloc.2
+			IL_003f: ldloc.2
+			IL_0040: ldloc.0
+			IL_0041: ldloc.1
+			IL_0042: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_0047: pop
+			IL_0048: ldnull
+			IL_0049: ret
 		} // end of method ArrowFunction_L3C14::__js_call__
 
 	} // end of class ArrowFunction_L3C14
@@ -274,7 +274,7 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 248 (0xf8)
+			// Code size: 233 (0xe9)
 			.maxstack 8
 			.locals init (
 				[0] object,
@@ -282,8 +282,9 @@
 				[2] object,
 				[3] object,
 				[4] object,
-				[5] bool,
-				[6] object
+				[5] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+				[6] bool,
+				[7] object
 			)
 
 			IL_0000: ldarg.1
@@ -342,44 +343,41 @@
 			IL_008e: ldloc.s 4
 			IL_0090: stloc.2
 
-			IL_0091: ldstr "console"
-			IL_0096: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_009b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_00a0: stloc.s 4
-			IL_00a2: ldloc.2
-			IL_00a3: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-			IL_00a8: stloc.s 5
-			IL_00aa: ldloc.s 5
-			IL_00ac: brfalse IL_00bc
+			IL_0091: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0096: stloc.s 5
+			IL_0098: ldloc.2
+			IL_0099: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+			IL_009e: stloc.s 6
+			IL_00a0: ldloc.s 6
+			IL_00a2: brfalse IL_00b2
 
-			IL_00b1: ldstr "https://"
-			IL_00b6: stloc.3
-			IL_00b7: br IL_00c2
+			IL_00a7: ldstr "https://"
+			IL_00ac: stloc.3
+			IL_00ad: br IL_00b8
 
-			IL_00bc: ldstr "http://"
-			IL_00c1: stloc.3
+			IL_00b2: ldstr "http://"
+			IL_00b7: stloc.3
 
-			IL_00c2: ldloc.3
-			IL_00c3: stloc.s 6
-			IL_00c5: ldloc.s 6
-			IL_00c7: ldloc.0
-			IL_00c8: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_00cd: stloc.s 6
-			IL_00cf: ldloc.s 6
-			IL_00d1: ldstr ":"
+			IL_00b8: ldloc.3
+			IL_00b9: stloc.s 7
+			IL_00bb: ldloc.s 7
+			IL_00bd: ldloc.0
+			IL_00be: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_00c3: stloc.s 7
+			IL_00c5: ldloc.s 7
+			IL_00c7: ldstr ":"
+			IL_00cc: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_00d1: stloc.s 7
+			IL_00d3: ldloc.s 7
+			IL_00d5: ldloc.1
 			IL_00d6: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_00db: stloc.s 6
-			IL_00dd: ldloc.s 6
-			IL_00df: ldloc.1
-			IL_00e0: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_00e5: stloc.s 6
-			IL_00e7: ldloc.s 4
-			IL_00e9: ldstr "log"
-			IL_00ee: ldloc.s 6
-			IL_00f0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_00f5: pop
-			IL_00f6: ldnull
-			IL_00f7: ret
+			IL_00db: stloc.s 7
+			IL_00dd: ldloc.s 5
+			IL_00df: ldloc.s 7
+			IL_00e1: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_00e6: pop
+			IL_00e7: ldnull
+			IL_00e8: ret
 		} // end of method ArrowFunction_L10C16::__js_call__
 
 	} // end of class ArrowFunction_L10C16

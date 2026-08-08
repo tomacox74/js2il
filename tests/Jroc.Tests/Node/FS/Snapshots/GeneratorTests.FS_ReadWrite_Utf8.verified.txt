@@ -38,14 +38,15 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 117 (0x75)
+		// Code size: 106 (0x6a)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.FS_ReadWrite_Utf8/Scope,
 			[1] class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule,
 			[2] class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IPathModule,
 			[3] object,
-			[4] object
+			[4] object,
+			[5] class [JavaScriptRuntime]JavaScriptRuntime.Console
 		)
 
 		IL_0000: newobj instance void Modules.FS_ReadWrite_Utf8/Scope::.ctor()
@@ -82,14 +83,13 @@
 		IL_004c: ldstr "utf8"
 		IL_0051: callvirt instance object [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule::readFileSync(object, object)
 		IL_0056: stloc.s 4
-		IL_0058: ldstr "console"
-		IL_005d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0062: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0067: ldstr "log"
-		IL_006c: ldloc.s 4
-		IL_006e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0073: pop
-		IL_0074: ret
+		IL_0058: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_005d: stloc.s 5
+		IL_005f: ldloc.s 5
+		IL_0061: ldloc.s 4
+		IL_0063: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0068: pop
+		IL_0069: ret
 	} // end of method FS_ReadWrite_Utf8::__js_module_init__
 
 } // end of class Modules.FS_ReadWrite_Utf8

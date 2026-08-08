@@ -431,7 +431,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 301 (0x12d)
+		// Code size: 271 (0x10f)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ArrowFunction_LexicalThis_CreatedInMethod/Scope,
@@ -442,7 +442,7 @@
 			[5] object[],
 			[6] class [System.Runtime]System.Type,
 			[7] class Modules.ArrowFunction_LexicalThis_CreatedInMethod/Counter,
-			[8] object,
+			[8] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 			[9] object
 		)
 
@@ -506,33 +506,27 @@
 		IL_00c9: ldloc.2
 		IL_00ca: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
 		IL_00cf: stloc.s 4
-		IL_00d1: ldstr "console"
-		IL_00d6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_00db: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00e0: stloc.s 8
-		IL_00e2: ldloc.3
-		IL_00e3: ldstr "g"
-		IL_00e8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-		IL_00ed: stloc.s 9
-		IL_00ef: ldloc.s 8
-		IL_00f1: ldstr "log"
-		IL_00f6: ldloc.s 9
-		IL_00f8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00fd: pop
-		IL_00fe: ldstr "console"
-		IL_0103: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0108: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_010d: stloc.s 9
-		IL_010f: ldloc.s 4
-		IL_0111: ldstr "g"
-		IL_0116: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-		IL_011b: stloc.s 8
-		IL_011d: ldloc.s 9
-		IL_011f: ldstr "log"
-		IL_0124: ldloc.s 8
-		IL_0126: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_012b: pop
-		IL_012c: ret
+		IL_00d1: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00d6: stloc.s 8
+		IL_00d8: ldloc.3
+		IL_00d9: ldstr "g"
+		IL_00de: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+		IL_00e3: stloc.s 9
+		IL_00e5: ldloc.s 8
+		IL_00e7: ldloc.s 9
+		IL_00e9: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00ee: pop
+		IL_00ef: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00f4: stloc.s 8
+		IL_00f6: ldloc.s 4
+		IL_00f8: ldstr "g"
+		IL_00fd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+		IL_0102: stloc.s 9
+		IL_0104: ldloc.s 8
+		IL_0106: ldloc.s 9
+		IL_0108: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_010d: pop
+		IL_010e: ret
 	} // end of method ArrowFunction_LexicalThis_CreatedInMethod::__js_module_init__
 
 } // end of class Modules.ArrowFunction_LexicalThis_CreatedInMethod

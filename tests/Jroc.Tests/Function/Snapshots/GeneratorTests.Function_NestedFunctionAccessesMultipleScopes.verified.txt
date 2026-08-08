@@ -157,58 +157,51 @@
 					01 00 02 00 00 00 00 00
 				)
 				// Header size: 12
-				// Code size: 136 (0x88)
+				// Code size: 93 (0x5d)
 				.maxstack 8
 				.locals init (
 					[0] string,
-					[1] object,
+					[1] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 					[2] object
 				)
 
 				IL_0000: ldstr "I am inner"
 				IL_0005: stloc.0
-				IL_0006: ldstr "console"
-				IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-				IL_0010: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_0015: stloc.1
-				IL_0016: ldarg.0
-				IL_0017: ldc.i4.0
-				IL_0018: ldelem.ref
-				IL_0019: castclass Modules.Function_NestedFunctionAccessesMultipleScopes/Scope
-				IL_001e: ldfld string Modules.Function_NestedFunctionAccessesMultipleScopes/Scope::globalVar
-				IL_0023: stloc.2
-				IL_0024: ldloc.1
-				IL_0025: ldstr "log"
-				IL_002a: ldstr "Global:"
-				IL_002f: ldloc.2
-				IL_0030: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-				IL_0035: pop
-				IL_0036: ldstr "console"
-				IL_003b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-				IL_0040: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_0045: stloc.2
-				IL_0046: ldarg.0
-				IL_0047: ldc.i4.1
-				IL_0048: ldelem.ref
-				IL_0049: castclass Modules.Function_NestedFunctionAccessesMultipleScopes/testFunction/Scope
-				IL_004e: ldfld string Modules.Function_NestedFunctionAccessesMultipleScopes/testFunction/Scope::outerVar
-				IL_0053: stloc.1
-				IL_0054: ldloc.2
-				IL_0055: ldstr "log"
-				IL_005a: ldstr "Outer:"
-				IL_005f: ldloc.1
-				IL_0060: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-				IL_0065: pop
-				IL_0066: ldstr "console"
-				IL_006b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-				IL_0070: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_0075: ldstr "log"
-				IL_007a: ldstr "Inner:"
-				IL_007f: ldloc.0
-				IL_0080: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-				IL_0085: pop
-				IL_0086: ldnull
-				IL_0087: ret
+				IL_0006: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_000b: stloc.1
+				IL_000c: ldarg.0
+				IL_000d: ldc.i4.0
+				IL_000e: ldelem.ref
+				IL_000f: castclass Modules.Function_NestedFunctionAccessesMultipleScopes/Scope
+				IL_0014: ldfld string Modules.Function_NestedFunctionAccessesMultipleScopes/Scope::globalVar
+				IL_0019: stloc.2
+				IL_001a: ldloc.1
+				IL_001b: ldstr "Global:"
+				IL_0020: ldloc.2
+				IL_0021: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+				IL_0026: pop
+				IL_0027: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_002c: stloc.1
+				IL_002d: ldarg.0
+				IL_002e: ldc.i4.1
+				IL_002f: ldelem.ref
+				IL_0030: castclass Modules.Function_NestedFunctionAccessesMultipleScopes/testFunction/Scope
+				IL_0035: ldfld string Modules.Function_NestedFunctionAccessesMultipleScopes/testFunction/Scope::outerVar
+				IL_003a: stloc.2
+				IL_003b: ldloc.1
+				IL_003c: ldstr "Outer:"
+				IL_0041: ldloc.2
+				IL_0042: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+				IL_0047: pop
+				IL_0048: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_004d: stloc.1
+				IL_004e: ldloc.1
+				IL_004f: ldstr "Inner:"
+				IL_0054: ldloc.0
+				IL_0055: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+				IL_005a: pop
+				IL_005b: ldnull
+				IL_005c: ret
 			} // end of method innerFunction::__js_call__
 
 		} // end of class innerFunction

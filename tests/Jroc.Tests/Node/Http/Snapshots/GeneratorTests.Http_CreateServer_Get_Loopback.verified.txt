@@ -144,116 +144,108 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 318 (0x13e)
+			// Code size: 275 (0x113)
 			.maxstack 8
 			.locals init (
-				[0] object,
+				[0] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 				[1] object,
 				[2] object,
 				[3] bool,
-				[4] object
+				[4] object,
+				[5] object
 			)
 
-			IL_0000: ldstr "console"
-			IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_000a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_000f: stloc.0
-			IL_0010: ldarg.1
-			IL_0011: ldstr "method"
-			IL_0016: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_001b: stloc.1
-			IL_001c: ldstr "req method:"
-			IL_0021: ldloc.1
-			IL_0022: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_0027: stloc.2
-			IL_0028: ldloc.0
-			IL_0029: ldstr "log"
-			IL_002e: ldloc.2
-			IL_002f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_0034: pop
-			IL_0035: ldstr "console"
-			IL_003a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_003f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0044: stloc.0
-			IL_0045: ldarg.1
-			IL_0046: ldstr "url"
-			IL_004b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0050: stloc.1
-			IL_0051: ldstr "req url:"
-			IL_0056: ldloc.1
-			IL_0057: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_005c: stloc.2
-			IL_005d: ldloc.0
-			IL_005e: ldstr "log"
-			IL_0063: ldloc.2
-			IL_0064: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_0069: pop
-			IL_006a: ldstr "console"
-			IL_006f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_0074: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0079: stloc.0
-			IL_007a: ldarg.1
-			IL_007b: ldstr "headers"
-			IL_0080: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0085: stloc.1
-			IL_0086: ldloc.1
-			IL_0087: ldstr "host"
-			IL_008c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0091: stloc.1
-			IL_0092: ldloc.1
-			IL_0093: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0098: ldstr "indexOf"
-			IL_009d: ldstr "127.0.0.1:"
-			IL_00a2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_00a7: stloc.1
-			IL_00a8: ldloc.1
-			IL_00a9: ldc.r8 0.0
-			IL_00b2: box [System.Runtime]System.Double
-			IL_00b7: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-			IL_00bc: stloc.3
-			IL_00bd: ldloc.3
-			IL_00be: box [System.Runtime]System.Boolean
-			IL_00c3: stloc.s 4
-			IL_00c5: ldstr "req host:"
-			IL_00ca: ldloc.s 4
-			IL_00cc: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_00d1: stloc.2
-			IL_00d2: ldloc.0
-			IL_00d3: ldstr "log"
-			IL_00d8: ldloc.2
-			IL_00d9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_00de: pop
-			IL_00df: ldarg.2
-			IL_00e0: ldstr "statusCode"
-			IL_00e5: ldc.r8 201
-			IL_00ee: ldc.i4.1
-			IL_00ef: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, float64, bool)
-			IL_00f4: pop
-			IL_00f5: ldarg.2
-			IL_00f6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_00fb: ldstr "setHeader"
-			IL_0100: ldstr "X-Answer"
-			IL_0105: ldstr "42"
-			IL_010a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-			IL_010f: pop
-			IL_0110: ldarg.2
-			IL_0111: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0116: stloc.0
-			IL_0117: ldarg.1
-			IL_0118: ldstr "url"
-			IL_011d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0122: stloc.1
-			IL_0123: ldstr "hello:"
-			IL_0128: ldloc.1
-			IL_0129: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_012e: stloc.2
-			IL_012f: ldloc.0
-			IL_0130: ldstr "end"
-			IL_0135: ldloc.2
-			IL_0136: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_013b: pop
-			IL_013c: ldnull
-			IL_013d: ret
+			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0005: stloc.0
+			IL_0006: ldarg.1
+			IL_0007: ldstr "method"
+			IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0011: stloc.1
+			IL_0012: ldstr "req method:"
+			IL_0017: ldloc.1
+			IL_0018: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_001d: stloc.2
+			IL_001e: ldloc.0
+			IL_001f: ldloc.2
+			IL_0020: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0025: pop
+			IL_0026: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_002b: stloc.0
+			IL_002c: ldarg.1
+			IL_002d: ldstr "url"
+			IL_0032: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0037: stloc.1
+			IL_0038: ldstr "req url:"
+			IL_003d: ldloc.1
+			IL_003e: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0043: stloc.2
+			IL_0044: ldloc.0
+			IL_0045: ldloc.2
+			IL_0046: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_004b: pop
+			IL_004c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0051: stloc.0
+			IL_0052: ldarg.1
+			IL_0053: ldstr "headers"
+			IL_0058: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_005d: stloc.1
+			IL_005e: ldloc.1
+			IL_005f: ldstr "host"
+			IL_0064: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0069: stloc.1
+			IL_006a: ldloc.1
+			IL_006b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0070: ldstr "indexOf"
+			IL_0075: ldstr "127.0.0.1:"
+			IL_007a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_007f: stloc.1
+			IL_0080: ldloc.1
+			IL_0081: ldc.r8 0.0
+			IL_008a: box [System.Runtime]System.Double
+			IL_008f: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+			IL_0094: stloc.3
+			IL_0095: ldloc.3
+			IL_0096: box [System.Runtime]System.Boolean
+			IL_009b: stloc.s 4
+			IL_009d: ldstr "req host:"
+			IL_00a2: ldloc.s 4
+			IL_00a4: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_00a9: stloc.2
+			IL_00aa: ldloc.0
+			IL_00ab: ldloc.2
+			IL_00ac: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_00b1: pop
+			IL_00b2: ldarg.2
+			IL_00b3: ldstr "statusCode"
+			IL_00b8: ldc.r8 201
+			IL_00c1: ldc.i4.1
+			IL_00c2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, float64, bool)
+			IL_00c7: pop
+			IL_00c8: ldarg.2
+			IL_00c9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_00ce: ldstr "setHeader"
+			IL_00d3: ldstr "X-Answer"
+			IL_00d8: ldstr "42"
+			IL_00dd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+			IL_00e2: pop
+			IL_00e3: ldarg.2
+			IL_00e4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_00e9: stloc.1
+			IL_00ea: ldarg.1
+			IL_00eb: ldstr "url"
+			IL_00f0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_00f5: stloc.s 5
+			IL_00f7: ldstr "hello:"
+			IL_00fc: ldloc.s 5
+			IL_00fe: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0103: stloc.2
+			IL_0104: ldloc.1
+			IL_0105: ldstr "end"
+			IL_010a: ldloc.2
+			IL_010b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_0110: pop
+			IL_0111: ldnull
+			IL_0112: ret
 		} // end of method FunctionExpression_server::__js_call__
 
 	} // end of class FunctionExpression_server
@@ -574,19 +566,21 @@
 						.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 							01 00 00 00 00 00 00 00
 						)
-						// Header size: 1
-						// Code size: 33 (0x21)
+						// Header size: 12
+						// Code size: 20 (0x14)
 						.maxstack 8
+						.locals init (
+							[0] class [JavaScriptRuntime]JavaScriptRuntime.Console
+						)
 
-						IL_0000: ldstr "console"
-						IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-						IL_000a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-						IL_000f: ldstr "log"
-						IL_0014: ldstr "closed"
-						IL_0019: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-						IL_001e: pop
-						IL_001f: ldnull
-						IL_0020: ret
+						IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+						IL_0005: stloc.0
+						IL_0006: ldloc.0
+						IL_0007: ldstr "closed"
+						IL_000c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+						IL_0011: pop
+						IL_0012: ldnull
+						IL_0013: ret
 					} // end of method FunctionExpression_L31C19::__js_call__
 
 				} // end of class FunctionExpression_L31C19
@@ -733,11 +727,11 @@
 						01 00 02 00 00 00 00 00
 					)
 					// Header size: 12
-					// Code size: 131 (0x83)
+					// Code size: 116 (0x74)
 					.maxstack 8
 					.locals init (
 						[0] class Modules.Http_CreateServer_Get_Loopback/FunctionExpression_L15C30/FunctionExpression_L19C76/FunctionExpression_L29C18/Scope,
-						[1] object,
+						[1] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 						[2] object,
 						[3] object,
 						[4] object[],
@@ -746,56 +740,53 @@
 
 					IL_0000: newobj instance void Modules.Http_CreateServer_Get_Loopback/FunctionExpression_L15C30/FunctionExpression_L19C76/FunctionExpression_L29C18/Scope::.ctor()
 					IL_0005: stloc.0
-					IL_0006: ldstr "console"
-					IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-					IL_0010: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-					IL_0015: stloc.1
-					IL_0016: ldarg.0
-					IL_0017: ldc.i4.2
-					IL_0018: ldelem.ref
-					IL_0019: castclass Modules.Http_CreateServer_Get_Loopback/FunctionExpression_L15C30/FunctionExpression_L19C76/Scope
-					IL_001e: ldfld object Modules.Http_CreateServer_Get_Loopback/FunctionExpression_L15C30/FunctionExpression_L19C76/Scope::body
-					IL_0023: stloc.2
-					IL_0024: ldstr "body:"
-					IL_0029: ldloc.2
-					IL_002a: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-					IL_002f: stloc.3
-					IL_0030: ldloc.1
-					IL_0031: ldstr "log"
-					IL_0036: ldloc.3
-					IL_0037: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-					IL_003c: pop
-					IL_003d: ldarg.0
-					IL_003e: ldc.i4.0
-					IL_003f: ldelem.ref
-					IL_0040: castclass Modules.Http_CreateServer_Get_Loopback/Scope
-					IL_0045: ldfld object Modules.Http_CreateServer_Get_Loopback/Scope::server
-					IL_004a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-					IL_004f: stloc.1
-					IL_0050: ldc.i4.1
-					IL_0051: newarr [System.Runtime]System.Object
-					IL_0056: dup
-					IL_0057: ldc.i4.0
-					IL_0058: ldarg.0
-					IL_0059: ldc.i4.0
-					IL_005a: ldelem.ref
-					IL_005b: stelem.ref
-					IL_005c: stloc.s 4
-					IL_005e: newobj instance void Modules.Http_CreateServer_Get_Loopback/FunctionExpression_L15C30/FunctionExpression_L19C76/FunctionExpression_L29C18/FunctionExpression_L31C19/FunctionObject_FunctionExpression_8F7EC3DF_L31C20::.ctor()
-					IL_0063: ldc.i4.0
-					IL_0064: conv.r8
-					IL_0065: ldstr ""
-					IL_006a: ldc.i4.0
-					IL_006b: ldc.i4.1
-					IL_006c: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Http_CreateServer_Get_Loopback/FunctionExpression_L15C30/FunctionExpression_L19C76/FunctionExpression_L29C18/FunctionExpression_L31C19/FunctionObject_FunctionExpression_8F7EC3DF_L31C20>(!!0, float64, string, bool, bool)
-					IL_0071: stloc.s 5
-					IL_0073: ldloc.1
-					IL_0074: ldstr "close"
-					IL_0079: ldloc.s 5
-					IL_007b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-					IL_0080: pop
-					IL_0081: ldnull
-					IL_0082: ret
+					IL_0006: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+					IL_000b: stloc.1
+					IL_000c: ldarg.0
+					IL_000d: ldc.i4.2
+					IL_000e: ldelem.ref
+					IL_000f: castclass Modules.Http_CreateServer_Get_Loopback/FunctionExpression_L15C30/FunctionExpression_L19C76/Scope
+					IL_0014: ldfld object Modules.Http_CreateServer_Get_Loopback/FunctionExpression_L15C30/FunctionExpression_L19C76/Scope::body
+					IL_0019: stloc.2
+					IL_001a: ldstr "body:"
+					IL_001f: ldloc.2
+					IL_0020: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+					IL_0025: stloc.3
+					IL_0026: ldloc.1
+					IL_0027: ldloc.3
+					IL_0028: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+					IL_002d: pop
+					IL_002e: ldarg.0
+					IL_002f: ldc.i4.0
+					IL_0030: ldelem.ref
+					IL_0031: castclass Modules.Http_CreateServer_Get_Loopback/Scope
+					IL_0036: ldfld object Modules.Http_CreateServer_Get_Loopback/Scope::server
+					IL_003b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+					IL_0040: stloc.2
+					IL_0041: ldc.i4.1
+					IL_0042: newarr [System.Runtime]System.Object
+					IL_0047: dup
+					IL_0048: ldc.i4.0
+					IL_0049: ldarg.0
+					IL_004a: ldc.i4.0
+					IL_004b: ldelem.ref
+					IL_004c: stelem.ref
+					IL_004d: stloc.s 4
+					IL_004f: newobj instance void Modules.Http_CreateServer_Get_Loopback/FunctionExpression_L15C30/FunctionExpression_L19C76/FunctionExpression_L29C18/FunctionExpression_L31C19/FunctionObject_FunctionExpression_8F7EC3DF_L31C20::.ctor()
+					IL_0054: ldc.i4.0
+					IL_0055: conv.r8
+					IL_0056: ldstr ""
+					IL_005b: ldc.i4.0
+					IL_005c: ldc.i4.1
+					IL_005d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Http_CreateServer_Get_Loopback/FunctionExpression_L15C30/FunctionExpression_L19C76/FunctionExpression_L29C18/FunctionExpression_L31C19/FunctionObject_FunctionExpression_8F7EC3DF_L31C20>(!!0, float64, string, bool, bool)
+					IL_0062: stloc.s 5
+					IL_0064: ldloc.2
+					IL_0065: ldstr "close"
+					IL_006a: ldloc.s 5
+					IL_006c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+					IL_0071: pop
+					IL_0072: ldnull
+					IL_0073: ret
 				} // end of method FunctionExpression_L29C18::__js_call__
 
 			} // end of class FunctionExpression_L29C18
@@ -951,11 +942,11 @@
 					01 00 02 00 00 00 00 00
 				)
 				// Header size: 12
-				// Code size: 341 (0x155)
+				// Code size: 311 (0x137)
 				.maxstack 8
 				.locals init (
 					[0] class Modules.Http_CreateServer_Get_Loopback/FunctionExpression_L15C30/FunctionExpression_L19C76/Scope,
-					[1] object,
+					[1] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 					[2] object,
 					[3] object,
 					[4] object[],
@@ -971,139 +962,133 @@
 				IL_0011: ldstr "utf8"
 				IL_0016: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
 				IL_001b: pop
-				IL_001c: ldstr "console"
-				IL_0021: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-				IL_0026: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_002b: stloc.1
-				IL_002c: ldarg.2
-				IL_002d: ldstr "statusCode"
-				IL_0032: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-				IL_0037: stloc.2
-				IL_0038: ldstr "status:"
-				IL_003d: ldloc.2
-				IL_003e: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-				IL_0043: stloc.3
-				IL_0044: ldloc.1
-				IL_0045: ldstr "log"
-				IL_004a: ldloc.3
-				IL_004b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-				IL_0050: pop
-				IL_0051: ldstr "console"
-				IL_0056: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-				IL_005b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_0060: stloc.1
-				IL_0061: ldarg.2
-				IL_0062: ldstr "headers"
-				IL_0067: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-				IL_006c: stloc.2
-				IL_006d: ldloc.2
-				IL_006e: ldstr "x-answer"
-				IL_0073: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-				IL_0078: stloc.2
-				IL_0079: ldstr "answer:"
-				IL_007e: ldloc.2
-				IL_007f: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-				IL_0084: stloc.3
-				IL_0085: ldloc.1
-				IL_0086: ldstr "log"
-				IL_008b: ldloc.3
-				IL_008c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-				IL_0091: pop
-				IL_0092: ldloc.0
-				IL_0093: ldstr ""
-				IL_0098: stfld object Modules.Http_CreateServer_Get_Loopback/FunctionExpression_L15C30/FunctionExpression_L19C76/Scope::body
-				IL_009d: ldarg.2
-				IL_009e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_00a3: stloc.1
-				IL_00a4: ldc.i4.3
-				IL_00a5: newarr [System.Runtime]System.Object
-				IL_00aa: dup
-				IL_00ab: ldc.i4.0
-				IL_00ac: ldarg.0
-				IL_00ad: ldc.i4.0
-				IL_00ae: ldelem.ref
-				IL_00af: stelem.ref
-				IL_00b0: dup
-				IL_00b1: ldc.i4.1
-				IL_00b2: ldarg.0
-				IL_00b3: ldc.i4.1
-				IL_00b4: ldelem.ref
-				IL_00b5: stelem.ref
-				IL_00b6: dup
-				IL_00b7: ldc.i4.2
-				IL_00b8: ldloc.0
-				IL_00b9: stelem.ref
-				IL_00ba: stloc.s 4
-				IL_00bc: ldloc.s 4
+				IL_001c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_0021: stloc.1
+				IL_0022: ldarg.2
+				IL_0023: ldstr "statusCode"
+				IL_0028: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+				IL_002d: stloc.2
+				IL_002e: ldstr "status:"
+				IL_0033: ldloc.2
+				IL_0034: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+				IL_0039: stloc.3
+				IL_003a: ldloc.1
+				IL_003b: ldloc.3
+				IL_003c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+				IL_0041: pop
+				IL_0042: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_0047: stloc.1
+				IL_0048: ldarg.2
+				IL_0049: ldstr "headers"
+				IL_004e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+				IL_0053: stloc.2
+				IL_0054: ldloc.2
+				IL_0055: ldstr "x-answer"
+				IL_005a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+				IL_005f: stloc.2
+				IL_0060: ldstr "answer:"
+				IL_0065: ldloc.2
+				IL_0066: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+				IL_006b: stloc.3
+				IL_006c: ldloc.1
+				IL_006d: ldloc.3
+				IL_006e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+				IL_0073: pop
+				IL_0074: ldloc.0
+				IL_0075: ldstr ""
+				IL_007a: stfld object Modules.Http_CreateServer_Get_Loopback/FunctionExpression_L15C30/FunctionExpression_L19C76/Scope::body
+				IL_007f: ldarg.2
+				IL_0080: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_0085: stloc.2
+				IL_0086: ldc.i4.3
+				IL_0087: newarr [System.Runtime]System.Object
+				IL_008c: dup
+				IL_008d: ldc.i4.0
+				IL_008e: ldarg.0
+				IL_008f: ldc.i4.0
+				IL_0090: ldelem.ref
+				IL_0091: stelem.ref
+				IL_0092: dup
+				IL_0093: ldc.i4.1
+				IL_0094: ldarg.0
+				IL_0095: ldc.i4.1
+				IL_0096: ldelem.ref
+				IL_0097: stelem.ref
+				IL_0098: dup
+				IL_0099: ldc.i4.2
+				IL_009a: ldloc.0
+				IL_009b: stelem.ref
+				IL_009c: stloc.s 4
+				IL_009e: ldloc.s 4
+				IL_00a0: ldc.i4.0
+				IL_00a1: ldelem.ref
+				IL_00a2: castclass Modules.Http_CreateServer_Get_Loopback/Scope
+				IL_00a7: ldloc.s 4
+				IL_00a9: ldc.i4.2
+				IL_00aa: ldelem.ref
+				IL_00ab: castclass Modules.Http_CreateServer_Get_Loopback/FunctionExpression_L15C30/FunctionExpression_L19C76/Scope
+				IL_00b0: ldloc.s 4
+				IL_00b2: newobj instance void Modules.Http_CreateServer_Get_Loopback/FunctionExpression_L15C30/FunctionExpression_L19C76/FunctionExpression_L25C19/FunctionObject_FunctionExpression_C8F0E4C7_L25C20::.ctor(class Modules.Http_CreateServer_Get_Loopback/Scope, class Modules.Http_CreateServer_Get_Loopback/FunctionExpression_L15C30/FunctionExpression_L19C76/Scope, object[])
+				IL_00b7: ldc.i4.1
+				IL_00b8: conv.r8
+				IL_00b9: ldstr ""
 				IL_00be: ldc.i4.0
-				IL_00bf: ldelem.ref
-				IL_00c0: castclass Modules.Http_CreateServer_Get_Loopback/Scope
-				IL_00c5: ldloc.s 4
-				IL_00c7: ldc.i4.2
-				IL_00c8: ldelem.ref
-				IL_00c9: castclass Modules.Http_CreateServer_Get_Loopback/FunctionExpression_L15C30/FunctionExpression_L19C76/Scope
-				IL_00ce: ldloc.s 4
-				IL_00d0: newobj instance void Modules.Http_CreateServer_Get_Loopback/FunctionExpression_L15C30/FunctionExpression_L19C76/FunctionExpression_L25C19/FunctionObject_FunctionExpression_C8F0E4C7_L25C20::.ctor(class Modules.Http_CreateServer_Get_Loopback/Scope, class Modules.Http_CreateServer_Get_Loopback/FunctionExpression_L15C30/FunctionExpression_L19C76/Scope, object[])
-				IL_00d5: ldc.i4.1
-				IL_00d6: conv.r8
-				IL_00d7: ldstr ""
-				IL_00dc: ldc.i4.0
-				IL_00dd: ldc.i4.1
-				IL_00de: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Http_CreateServer_Get_Loopback/FunctionExpression_L15C30/FunctionExpression_L19C76/FunctionExpression_L25C19/FunctionObject_FunctionExpression_C8F0E4C7_L25C20>(!!0, float64, string, bool, bool)
-				IL_00e3: stloc.s 5
-				IL_00e5: ldloc.1
-				IL_00e6: ldstr "on"
-				IL_00eb: ldstr "data"
-				IL_00f0: ldloc.s 5
-				IL_00f2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-				IL_00f7: pop
-				IL_00f8: ldarg.2
-				IL_00f9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_00fe: stloc.1
-				IL_00ff: ldc.i4.3
-				IL_0100: newarr [System.Runtime]System.Object
-				IL_0105: dup
-				IL_0106: ldc.i4.0
-				IL_0107: ldarg.0
-				IL_0108: ldc.i4.0
-				IL_0109: ldelem.ref
-				IL_010a: stelem.ref
-				IL_010b: dup
-				IL_010c: ldc.i4.1
-				IL_010d: ldarg.0
-				IL_010e: ldc.i4.1
-				IL_010f: ldelem.ref
-				IL_0110: stelem.ref
-				IL_0111: dup
-				IL_0112: ldc.i4.2
-				IL_0113: ldloc.0
-				IL_0114: stelem.ref
-				IL_0115: stloc.s 4
-				IL_0117: ldloc.s 4
+				IL_00bf: ldc.i4.1
+				IL_00c0: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Http_CreateServer_Get_Loopback/FunctionExpression_L15C30/FunctionExpression_L19C76/FunctionExpression_L25C19/FunctionObject_FunctionExpression_C8F0E4C7_L25C20>(!!0, float64, string, bool, bool)
+				IL_00c5: stloc.s 5
+				IL_00c7: ldloc.2
+				IL_00c8: ldstr "on"
+				IL_00cd: ldstr "data"
+				IL_00d2: ldloc.s 5
+				IL_00d4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+				IL_00d9: pop
+				IL_00da: ldarg.2
+				IL_00db: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_00e0: stloc.2
+				IL_00e1: ldc.i4.3
+				IL_00e2: newarr [System.Runtime]System.Object
+				IL_00e7: dup
+				IL_00e8: ldc.i4.0
+				IL_00e9: ldarg.0
+				IL_00ea: ldc.i4.0
+				IL_00eb: ldelem.ref
+				IL_00ec: stelem.ref
+				IL_00ed: dup
+				IL_00ee: ldc.i4.1
+				IL_00ef: ldarg.0
+				IL_00f0: ldc.i4.1
+				IL_00f1: ldelem.ref
+				IL_00f2: stelem.ref
+				IL_00f3: dup
+				IL_00f4: ldc.i4.2
+				IL_00f5: ldloc.0
+				IL_00f6: stelem.ref
+				IL_00f7: stloc.s 4
+				IL_00f9: ldloc.s 4
+				IL_00fb: ldc.i4.0
+				IL_00fc: ldelem.ref
+				IL_00fd: castclass Modules.Http_CreateServer_Get_Loopback/Scope
+				IL_0102: ldloc.s 4
+				IL_0104: ldc.i4.2
+				IL_0105: ldelem.ref
+				IL_0106: castclass Modules.Http_CreateServer_Get_Loopback/FunctionExpression_L15C30/FunctionExpression_L19C76/Scope
+				IL_010b: ldloc.s 4
+				IL_010d: newobj instance void Modules.Http_CreateServer_Get_Loopback/FunctionExpression_L15C30/FunctionExpression_L19C76/FunctionExpression_L29C18/FunctionObject_FunctionExpression_20E9685B_L29C19::.ctor(class Modules.Http_CreateServer_Get_Loopback/Scope, class Modules.Http_CreateServer_Get_Loopback/FunctionExpression_L15C30/FunctionExpression_L19C76/Scope, object[])
+				IL_0112: ldc.i4.0
+				IL_0113: conv.r8
+				IL_0114: ldstr ""
 				IL_0119: ldc.i4.0
-				IL_011a: ldelem.ref
-				IL_011b: castclass Modules.Http_CreateServer_Get_Loopback/Scope
-				IL_0120: ldloc.s 4
-				IL_0122: ldc.i4.2
-				IL_0123: ldelem.ref
-				IL_0124: castclass Modules.Http_CreateServer_Get_Loopback/FunctionExpression_L15C30/FunctionExpression_L19C76/Scope
-				IL_0129: ldloc.s 4
-				IL_012b: newobj instance void Modules.Http_CreateServer_Get_Loopback/FunctionExpression_L15C30/FunctionExpression_L19C76/FunctionExpression_L29C18/FunctionObject_FunctionExpression_20E9685B_L29C19::.ctor(class Modules.Http_CreateServer_Get_Loopback/Scope, class Modules.Http_CreateServer_Get_Loopback/FunctionExpression_L15C30/FunctionExpression_L19C76/Scope, object[])
-				IL_0130: ldc.i4.0
-				IL_0131: conv.r8
-				IL_0132: ldstr ""
-				IL_0137: ldc.i4.0
-				IL_0138: ldc.i4.1
-				IL_0139: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Http_CreateServer_Get_Loopback/FunctionExpression_L15C30/FunctionExpression_L19C76/FunctionExpression_L29C18/FunctionObject_FunctionExpression_20E9685B_L29C19>(!!0, float64, string, bool, bool)
-				IL_013e: stloc.s 6
-				IL_0140: ldloc.1
-				IL_0141: ldstr "on"
-				IL_0146: ldstr "end"
-				IL_014b: ldloc.s 6
-				IL_014d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-				IL_0152: pop
-				IL_0153: ldnull
-				IL_0154: ret
+				IL_011a: ldc.i4.1
+				IL_011b: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Http_CreateServer_Get_Loopback/FunctionExpression_L15C30/FunctionExpression_L19C76/FunctionExpression_L29C18/FunctionObject_FunctionExpression_20E9685B_L29C19>(!!0, float64, string, bool, bool)
+				IL_0120: stloc.s 6
+				IL_0122: ldloc.2
+				IL_0123: ldstr "on"
+				IL_0128: ldstr "end"
+				IL_012d: ldloc.s 6
+				IL_012f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+				IL_0134: pop
+				IL_0135: ldnull
+				IL_0136: ret
 			} // end of method FunctionExpression_L19C76::__js_call__
 
 		} // end of class FunctionExpression_L19C76
@@ -1242,12 +1227,12 @@
 				74 61 54 6f 6b 65 6e 09 00 00 02
 			)
 			// Header size: 12
-			// Code size: 298 (0x12a)
+			// Code size: 283 (0x11b)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.Http_CreateServer_Get_Loopback/FunctionExpression_L15C30/Scope,
 				[1] object,
-				[2] object,
+				[2] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 				[3] object,
 				[4] object,
 				[5] bool,
@@ -1265,102 +1250,99 @@
 			IL_0011: ldstr "address"
 			IL_0016: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
 			IL_001b: stloc.1
-			IL_001c: ldstr "console"
-			IL_0021: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_0026: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_002b: stloc.2
-			IL_002c: ldloc.1
-			IL_002d: ldstr "address"
-			IL_0032: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0037: stloc.3
-			IL_0038: ldstr "server ready:"
-			IL_003d: ldloc.3
-			IL_003e: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_0043: stloc.s 4
-			IL_0045: ldloc.s 4
-			IL_0047: ldstr ":"
-			IL_004c: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_0051: stloc.s 4
-			IL_0053: ldloc.1
-			IL_0054: ldstr "port"
-			IL_0059: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_005e: stloc.3
-			IL_005f: ldloc.3
-			IL_0060: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_0065: ldc.r8 0.0
-			IL_006e: cgt
-			IL_0070: stloc.s 5
-			IL_0072: ldloc.s 5
-			IL_0074: box [System.Runtime]System.Boolean
-			IL_0079: stloc.s 6
-			IL_007b: ldloc.s 4
-			IL_007d: ldloc.s 6
-			IL_007f: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_0084: stloc.s 4
-			IL_0086: ldloc.2
-			IL_0087: ldstr "log"
-			IL_008c: ldloc.s 4
-			IL_008e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_0093: pop
-			IL_0094: ldarg.0
-			IL_0095: ldfld class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IHttpModule Modules.Http_CreateServer_Get_Loopback/Scope::http
-			IL_009a: stloc.s 7
-			IL_009c: ldloc.1
-			IL_009d: ldstr "address"
-			IL_00a2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_00a7: stloc.2
-			IL_00a8: ldstr "http://"
-			IL_00ad: ldloc.2
-			IL_00ae: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_00b3: stloc.s 4
-			IL_00b5: ldloc.s 4
-			IL_00b7: ldstr ":"
-			IL_00bc: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_00c1: stloc.s 4
-			IL_00c3: ldloc.1
-			IL_00c4: ldstr "port"
-			IL_00c9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_00ce: stloc.2
-			IL_00cf: ldloc.s 4
-			IL_00d1: ldloc.2
-			IL_00d2: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_00d7: stloc.s 4
-			IL_00d9: ldloc.s 4
-			IL_00db: ldstr "/hello?name=jroc"
-			IL_00e0: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_00e5: stloc.s 4
-			IL_00e7: ldc.i4.2
-			IL_00e8: newarr [System.Runtime]System.Object
-			IL_00ed: dup
-			IL_00ee: ldc.i4.0
-			IL_00ef: ldarg.0
-			IL_00f0: stelem.ref
-			IL_00f1: dup
-			IL_00f2: ldc.i4.1
-			IL_00f3: ldloc.0
-			IL_00f4: stelem.ref
-			IL_00f5: stloc.s 8
-			IL_00f7: ldloc.s 8
-			IL_00f9: ldc.i4.0
-			IL_00fa: ldelem.ref
-			IL_00fb: castclass Modules.Http_CreateServer_Get_Loopback/Scope
-			IL_0100: ldloc.s 8
-			IL_0102: newobj instance void Modules.Http_CreateServer_Get_Loopback/FunctionExpression_L15C30/FunctionExpression_L19C76/FunctionObject_FunctionExpression_D2B33758_L19C77::.ctor(class Modules.Http_CreateServer_Get_Loopback/Scope, object[])
-			IL_0107: ldc.i4.1
-			IL_0108: conv.r8
-			IL_0109: ldstr ""
-			IL_010e: ldc.i4.0
-			IL_010f: ldc.i4.1
-			IL_0110: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Http_CreateServer_Get_Loopback/FunctionExpression_L15C30/FunctionExpression_L19C76/FunctionObject_FunctionExpression_D2B33758_L19C77>(!!0, float64, string, bool, bool)
-			IL_0115: stloc.s 9
-			IL_0117: ldloc.s 7
-			IL_0119: ldstr "get"
-			IL_011e: ldloc.s 4
-			IL_0120: ldloc.s 9
-			IL_0122: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-			IL_0127: pop
-			IL_0128: ldnull
-			IL_0129: ret
+			IL_001c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0021: stloc.2
+			IL_0022: ldloc.1
+			IL_0023: ldstr "address"
+			IL_0028: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_002d: stloc.3
+			IL_002e: ldstr "server ready:"
+			IL_0033: ldloc.3
+			IL_0034: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0039: stloc.s 4
+			IL_003b: ldloc.s 4
+			IL_003d: ldstr ":"
+			IL_0042: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0047: stloc.s 4
+			IL_0049: ldloc.1
+			IL_004a: ldstr "port"
+			IL_004f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0054: stloc.3
+			IL_0055: ldloc.3
+			IL_0056: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_005b: ldc.r8 0.0
+			IL_0064: cgt
+			IL_0066: stloc.s 5
+			IL_0068: ldloc.s 5
+			IL_006a: box [System.Runtime]System.Boolean
+			IL_006f: stloc.s 6
+			IL_0071: ldloc.s 4
+			IL_0073: ldloc.s 6
+			IL_0075: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_007a: stloc.s 4
+			IL_007c: ldloc.2
+			IL_007d: ldloc.s 4
+			IL_007f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0084: pop
+			IL_0085: ldarg.0
+			IL_0086: ldfld class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IHttpModule Modules.Http_CreateServer_Get_Loopback/Scope::http
+			IL_008b: stloc.s 7
+			IL_008d: ldloc.1
+			IL_008e: ldstr "address"
+			IL_0093: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0098: stloc.3
+			IL_0099: ldstr "http://"
+			IL_009e: ldloc.3
+			IL_009f: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_00a4: stloc.s 4
+			IL_00a6: ldloc.s 4
+			IL_00a8: ldstr ":"
+			IL_00ad: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_00b2: stloc.s 4
+			IL_00b4: ldloc.1
+			IL_00b5: ldstr "port"
+			IL_00ba: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_00bf: stloc.3
+			IL_00c0: ldloc.s 4
+			IL_00c2: ldloc.3
+			IL_00c3: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_00c8: stloc.s 4
+			IL_00ca: ldloc.s 4
+			IL_00cc: ldstr "/hello?name=jroc"
+			IL_00d1: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_00d6: stloc.s 4
+			IL_00d8: ldc.i4.2
+			IL_00d9: newarr [System.Runtime]System.Object
+			IL_00de: dup
+			IL_00df: ldc.i4.0
+			IL_00e0: ldarg.0
+			IL_00e1: stelem.ref
+			IL_00e2: dup
+			IL_00e3: ldc.i4.1
+			IL_00e4: ldloc.0
+			IL_00e5: stelem.ref
+			IL_00e6: stloc.s 8
+			IL_00e8: ldloc.s 8
+			IL_00ea: ldc.i4.0
+			IL_00eb: ldelem.ref
+			IL_00ec: castclass Modules.Http_CreateServer_Get_Loopback/Scope
+			IL_00f1: ldloc.s 8
+			IL_00f3: newobj instance void Modules.Http_CreateServer_Get_Loopback/FunctionExpression_L15C30/FunctionExpression_L19C76/FunctionObject_FunctionExpression_D2B33758_L19C77::.ctor(class Modules.Http_CreateServer_Get_Loopback/Scope, object[])
+			IL_00f8: ldc.i4.1
+			IL_00f9: conv.r8
+			IL_00fa: ldstr ""
+			IL_00ff: ldc.i4.0
+			IL_0100: ldc.i4.1
+			IL_0101: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Http_CreateServer_Get_Loopback/FunctionExpression_L15C30/FunctionExpression_L19C76/FunctionObject_FunctionExpression_D2B33758_L19C77>(!!0, float64, string, bool, bool)
+			IL_0106: stloc.s 9
+			IL_0108: ldloc.s 7
+			IL_010a: ldstr "get"
+			IL_010f: ldloc.s 4
+			IL_0111: ldloc.s 9
+			IL_0113: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+			IL_0118: pop
+			IL_0119: ldnull
+			IL_011a: ret
 		} // end of method FunctionExpression_L15C30::__js_call__
 
 	} // end of class FunctionExpression_L15C30

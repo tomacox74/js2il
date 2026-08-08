@@ -2162,15 +2162,15 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 713 (0x2c9)
+			// Code size: 584 (0x248)
 			.maxstack 8
 			.locals init (
 				[0] float64,
 				[1] string,
 				[2] object,
 				[3] object,
-				[4] float64,
-				[5] object,
+				[4] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+				[5] float64,
 				[6] object,
 				[7] object,
 				[8] object,
@@ -2190,217 +2190,202 @@
 			IL_002d: box [System.Runtime]System.Double
 			IL_0032: call object [JavaScriptRuntime]JavaScriptRuntime.BigInt::Call(object)
 			IL_0037: stloc.3
-			IL_0038: ldstr "console"
-			IL_003d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_0042: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0047: ldloc.0
-			IL_0048: ldc.r8 1
-			IL_0051: add
-			IL_0052: stloc.s 4
-			IL_0054: ldarg.0
-			IL_0055: ldloc.s 4
-			IL_0057: callvirt instance float64 Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver::'add'(float64)
-			IL_005c: box [System.Runtime]System.Double
-			IL_0061: stloc.s 5
-			IL_0063: ldstr "log"
-			IL_0068: ldloc.s 5
-			IL_006a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_006f: pop
-			IL_0070: ldstr "console"
-			IL_0075: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_007a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_007f: ldloc.0
-			IL_0080: ldc.r8 2
-			IL_0089: mul
-			IL_008a: stloc.s 4
-			IL_008c: ldarg.0
-			IL_008d: ldloc.s 4
-			IL_008f: callvirt instance float64 Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver::multiply(float64)
-			IL_0094: box [System.Runtime]System.Double
-			IL_0099: stloc.s 5
-			IL_009b: ldstr "log"
-			IL_00a0: ldloc.s 5
-			IL_00a2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_00a7: pop
-			IL_00a8: ldstr "console"
-			IL_00ad: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_00b2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0038: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_003d: stloc.s 4
+			IL_003f: ldloc.0
+			IL_0040: ldc.r8 1
+			IL_0049: add
+			IL_004a: stloc.s 5
+			IL_004c: ldarg.0
+			IL_004d: ldloc.s 5
+			IL_004f: callvirt instance float64 Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver::'add'(float64)
+			IL_0054: box [System.Runtime]System.Double
+			IL_0059: stloc.s 6
+			IL_005b: ldloc.s 4
+			IL_005d: ldloc.s 6
+			IL_005f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0064: pop
+			IL_0065: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_006a: stloc.s 4
+			IL_006c: ldloc.0
+			IL_006d: ldc.r8 2
+			IL_0076: mul
+			IL_0077: stloc.s 5
+			IL_0079: ldarg.0
+			IL_007a: ldloc.s 5
+			IL_007c: callvirt instance float64 Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver::multiply(float64)
+			IL_0081: box [System.Runtime]System.Double
+			IL_0086: stloc.s 6
+			IL_0088: ldloc.s 4
+			IL_008a: ldloc.s 6
+			IL_008c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0091: pop
+			IL_0092: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0097: stloc.s 4
+			IL_0099: ldloc.0
+			IL_009a: conv.i4
+			IL_009b: conv.u4
+			IL_009c: ldc.r8 1
+			IL_00a5: conv.i4
+			IL_00a6: shr.un
+			IL_00a7: conv.r.un
+			IL_00a8: stloc.s 5
+			IL_00aa: ldarg.0
+			IL_00ab: ldloc.s 5
+			IL_00ad: callvirt instance float64 Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver::shift(float64)
+			IL_00b2: box [System.Runtime]System.Double
 			IL_00b7: stloc.s 6
-			IL_00b9: ldloc.0
-			IL_00ba: conv.i4
-			IL_00bb: conv.u4
-			IL_00bc: ldc.r8 1
-			IL_00c5: conv.i4
-			IL_00c6: shr.un
-			IL_00c7: conv.r.un
+			IL_00b9: ldloc.s 4
+			IL_00bb: ldloc.s 6
+			IL_00bd: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_00c2: pop
+			IL_00c3: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 			IL_00c8: stloc.s 4
-			IL_00ca: ldarg.0
-			IL_00cb: ldloc.s 4
-			IL_00cd: callvirt instance float64 Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver::shift(float64)
-			IL_00d2: box [System.Runtime]System.Double
-			IL_00d7: stloc.s 5
-			IL_00d9: ldloc.s 6
-			IL_00db: ldstr "log"
-			IL_00e0: ldloc.s 5
-			IL_00e2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_00e7: pop
-			IL_00e8: ldstr "console"
-			IL_00ed: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_00f2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_00f7: ldloc.0
-			IL_00f8: ldc.r8 1
-			IL_0101: add
-			IL_0102: stloc.s 4
-			IL_0104: ldarg.0
-			IL_0105: ldloc.s 4
-			IL_0107: callvirt instance float64 Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver::increment(float64)
-			IL_010c: box [System.Runtime]System.Double
-			IL_0111: stloc.s 5
-			IL_0113: ldstr "log"
-			IL_0118: ldloc.s 5
-			IL_011a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_011f: pop
-			IL_0120: ldstr "console"
-			IL_0125: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_012a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_012f: ldarg.0
-			IL_0130: ldc.i4.1
-			IL_0131: box [System.Runtime]System.Boolean
-			IL_0136: callvirt instance float64 Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver::incrementBoolean(object)
-			IL_013b: box [System.Runtime]System.Double
-			IL_0140: stloc.s 5
-			IL_0142: ldstr "log"
-			IL_0147: ldloc.s 5
-			IL_0149: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_014e: pop
-			IL_014f: ldstr "console"
-			IL_0154: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_0159: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_015e: stloc.s 6
-			IL_0160: ldloc.1
-			IL_0161: ldc.r8 1
-			IL_016a: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
-			IL_016f: stloc.s 7
-			IL_0171: ldarg.0
-			IL_0172: ldloc.s 7
-			IL_0174: callvirt instance object Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver::dynamicAdd(object)
-			IL_0179: stloc.s 8
-			IL_017b: ldloc.s 6
-			IL_017d: ldstr "log"
-			IL_0182: ldloc.s 8
-			IL_0184: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_0189: pop
-			IL_018a: ldstr "console"
-			IL_018f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_0194: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0199: ldloc.0
-			IL_019a: box [System.Runtime]System.Double
-			IL_019f: stloc.s 5
-			IL_01a1: ldarg.0
-			IL_01a2: ldloc.s 5
-			IL_01a4: callvirt instance object Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver::destructure(object)
-			IL_01a9: stloc.s 8
-			IL_01ab: ldstr "log"
-			IL_01b0: ldloc.s 8
-			IL_01b2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_01b7: pop
-			IL_01b8: ldstr "console"
-			IL_01bd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_01c2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_01c7: ldloc.0
-			IL_01c8: box [System.Runtime]System.Double
-			IL_01cd: stloc.s 5
-			IL_01cf: ldarg.0
-			IL_01d0: ldloc.s 5
-			IL_01d2: callvirt instance object Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver::iterate(object)
-			IL_01d7: stloc.s 8
-			IL_01d9: ldstr "log"
-			IL_01de: ldloc.s 8
-			IL_01e0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_01e5: pop
-			IL_01e6: ldstr "console"
-			IL_01eb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_01f0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_01f5: ldloc.0
-			IL_01f6: box [System.Runtime]System.Double
-			IL_01fb: stloc.s 5
-			IL_01fd: ldarg.0
-			IL_01fe: ldloc.s 5
-			IL_0200: callvirt instance object Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver::iterateVar(object)
-			IL_0205: stloc.s 8
-			IL_0207: ldstr "log"
-			IL_020c: ldloc.s 8
-			IL_020e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_0213: pop
-			IL_0214: ldstr "console"
-			IL_0219: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_021e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0223: ldloc.0
-			IL_0224: box [System.Runtime]System.Double
-			IL_0229: stloc.s 5
-			IL_022b: ldarg.0
-			IL_022c: ldloc.s 5
-			IL_022e: callvirt instance object Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver::iterateVarIn(object)
-			IL_0233: stloc.s 8
-			IL_0235: ldstr "log"
-			IL_023a: ldloc.s 8
-			IL_023c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_0241: pop
-			IL_0242: ldstr "console"
-			IL_0247: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_024c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0251: ldloc.0
-			IL_0252: box [System.Runtime]System.Double
-			IL_0257: stloc.s 5
-			IL_0259: ldarg.0
-			IL_025a: ldloc.s 5
-			IL_025c: callvirt instance object Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver::redeclare(object)
-			IL_0261: stloc.s 8
-			IL_0263: ldstr "log"
-			IL_0268: ldloc.s 8
-			IL_026a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_026f: pop
-			IL_0270: ldc.i4.0
-			IL_0271: brfalse IL_02c7
+			IL_00ca: ldloc.0
+			IL_00cb: ldc.r8 1
+			IL_00d4: add
+			IL_00d5: stloc.s 5
+			IL_00d7: ldarg.0
+			IL_00d8: ldloc.s 5
+			IL_00da: callvirt instance float64 Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver::increment(float64)
+			IL_00df: box [System.Runtime]System.Double
+			IL_00e4: stloc.s 6
+			IL_00e6: ldloc.s 4
+			IL_00e8: ldloc.s 6
+			IL_00ea: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_00ef: pop
+			IL_00f0: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_00f5: stloc.s 4
+			IL_00f7: ldarg.0
+			IL_00f8: ldc.i4.1
+			IL_00f9: box [System.Runtime]System.Boolean
+			IL_00fe: callvirt instance float64 Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver::incrementBoolean(object)
+			IL_0103: box [System.Runtime]System.Double
+			IL_0108: stloc.s 6
+			IL_010a: ldloc.s 4
+			IL_010c: ldloc.s 6
+			IL_010e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0113: pop
+			IL_0114: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0119: stloc.s 4
+			IL_011b: ldloc.1
+			IL_011c: ldc.r8 1
+			IL_0125: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
+			IL_012a: stloc.s 7
+			IL_012c: ldarg.0
+			IL_012d: ldloc.s 7
+			IL_012f: callvirt instance object Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver::dynamicAdd(object)
+			IL_0134: stloc.s 8
+			IL_0136: ldloc.s 4
+			IL_0138: ldloc.s 8
+			IL_013a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_013f: pop
+			IL_0140: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0145: stloc.s 4
+			IL_0147: ldloc.0
+			IL_0148: box [System.Runtime]System.Double
+			IL_014d: stloc.s 6
+			IL_014f: ldarg.0
+			IL_0150: ldloc.s 6
+			IL_0152: callvirt instance object Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver::destructure(object)
+			IL_0157: stloc.s 8
+			IL_0159: ldloc.s 4
+			IL_015b: ldloc.s 8
+			IL_015d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0162: pop
+			IL_0163: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0168: stloc.s 4
+			IL_016a: ldloc.0
+			IL_016b: box [System.Runtime]System.Double
+			IL_0170: stloc.s 6
+			IL_0172: ldarg.0
+			IL_0173: ldloc.s 6
+			IL_0175: callvirt instance object Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver::iterate(object)
+			IL_017a: stloc.s 8
+			IL_017c: ldloc.s 4
+			IL_017e: ldloc.s 8
+			IL_0180: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0185: pop
+			IL_0186: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_018b: stloc.s 4
+			IL_018d: ldloc.0
+			IL_018e: box [System.Runtime]System.Double
+			IL_0193: stloc.s 6
+			IL_0195: ldarg.0
+			IL_0196: ldloc.s 6
+			IL_0198: callvirt instance object Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver::iterateVar(object)
+			IL_019d: stloc.s 8
+			IL_019f: ldloc.s 4
+			IL_01a1: ldloc.s 8
+			IL_01a3: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_01a8: pop
+			IL_01a9: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_01ae: stloc.s 4
+			IL_01b0: ldloc.0
+			IL_01b1: box [System.Runtime]System.Double
+			IL_01b6: stloc.s 6
+			IL_01b8: ldarg.0
+			IL_01b9: ldloc.s 6
+			IL_01bb: callvirt instance object Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver::iterateVarIn(object)
+			IL_01c0: stloc.s 8
+			IL_01c2: ldloc.s 4
+			IL_01c4: ldloc.s 8
+			IL_01c6: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_01cb: pop
+			IL_01cc: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_01d1: stloc.s 4
+			IL_01d3: ldloc.0
+			IL_01d4: box [System.Runtime]System.Double
+			IL_01d9: stloc.s 6
+			IL_01db: ldarg.0
+			IL_01dc: ldloc.s 6
+			IL_01de: callvirt instance object Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver::redeclare(object)
+			IL_01e3: stloc.s 8
+			IL_01e5: ldloc.s 4
+			IL_01e7: ldloc.s 8
+			IL_01e9: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_01ee: pop
+			IL_01ef: ldc.i4.0
+			IL_01f0: brfalse IL_0246
 
-			IL_0276: ldloc.2
-			IL_0277: ldloc.3
-			IL_0278: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::BitwiseAnd(object, object)
-			IL_027d: stloc.s 7
-			IL_027f: ldloc.2
-			IL_0280: ldloc.3
-			IL_0281: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::BitwiseAnd(object, object)
-			IL_0286: stloc.s 9
-			IL_0288: ldloc.s 7
-			IL_028a: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_028f: stloc.s 4
-			IL_0291: ldloc.s 9
-			IL_0293: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_0298: stloc.s 10
-			IL_029a: ldloc.s 4
-			IL_029c: conv.i4
-			IL_029d: ldloc.s 10
-			IL_029f: conv.i4
-			IL_02a0: or
-			IL_02a1: conv.r8
-			IL_02a2: stloc.s 10
-			IL_02a4: ldloc.s 10
-			IL_02a6: box [System.Runtime]System.Double
-			IL_02ab: stloc.s 5
-			IL_02ad: ldarg.0
-			IL_02ae: ldloc.s 5
-			IL_02b0: callvirt instance object Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver::bigint(object)
-			IL_02b5: pop
-			IL_02b6: ldloc.0
-			IL_02b7: box [System.Runtime]System.Double
-			IL_02bc: stloc.s 5
-			IL_02be: ldarg.0
-			IL_02bf: ldloc.s 5
-			IL_02c1: callvirt instance object Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver::functionRedeclare(object)
-			IL_02c6: pop
+			IL_01f5: ldloc.2
+			IL_01f6: ldloc.3
+			IL_01f7: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::BitwiseAnd(object, object)
+			IL_01fc: stloc.s 7
+			IL_01fe: ldloc.2
+			IL_01ff: ldloc.3
+			IL_0200: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::BitwiseAnd(object, object)
+			IL_0205: stloc.s 9
+			IL_0207: ldloc.s 7
+			IL_0209: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_020e: stloc.s 5
+			IL_0210: ldloc.s 9
+			IL_0212: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0217: stloc.s 10
+			IL_0219: ldloc.s 5
+			IL_021b: conv.i4
+			IL_021c: ldloc.s 10
+			IL_021e: conv.i4
+			IL_021f: or
+			IL_0220: conv.r8
+			IL_0221: stloc.s 10
+			IL_0223: ldloc.s 10
+			IL_0225: box [System.Runtime]System.Double
+			IL_022a: stloc.s 6
+			IL_022c: ldarg.0
+			IL_022d: ldloc.s 6
+			IL_022f: callvirt instance object Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver::bigint(object)
+			IL_0234: pop
+			IL_0235: ldloc.0
+			IL_0236: box [System.Runtime]System.Double
+			IL_023b: stloc.s 6
+			IL_023d: ldarg.0
+			IL_023e: ldloc.s 6
+			IL_0240: callvirt instance object Modules.Function_ParameterTypeInference_BinaryArguments/BinaryReceiver::functionRedeclare(object)
+			IL_0245: pop
 
-			IL_02c7: ldnull
-			IL_02c8: ret
+			IL_0246: ldnull
+			IL_0247: ret
 		} // end of method BinaryReceiver::run
 
 	} // end of class BinaryReceiver

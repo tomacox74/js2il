@@ -38,14 +38,14 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 748 (0x2ec)
+		// Code size: 628 (0x274)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Array_Splice_Basic/Scope,
 			[1] class [JavaScriptRuntime]JavaScriptRuntime.Array,
 			[2] object,
 			[3] class [JavaScriptRuntime]JavaScriptRuntime.Array,
-			[4] object,
+			[4] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 			[5] string,
 			[6] float64,
 			[7] object
@@ -86,203 +86,179 @@
 		IL_008c: stloc.3
 		IL_008d: ldloc.3
 		IL_008e: stloc.2
-		IL_008f: ldstr "console"
-		IL_0094: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0099: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_009e: stloc.s 4
-		IL_00a0: ldloc.2
-		IL_00a1: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
-		IL_00a6: ldc.i4.1
-		IL_00a7: newarr [System.Runtime]System.Object
-		IL_00ac: dup
-		IL_00ad: ldc.i4.0
-		IL_00ae: ldstr ","
-		IL_00b3: stelem.ref
-		IL_00b4: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
-		IL_00b9: stloc.s 5
-		IL_00bb: ldloc.s 4
-		IL_00bd: ldstr "log"
-		IL_00c2: ldloc.s 5
-		IL_00c4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00c9: pop
-		IL_00ca: ldstr "console"
-		IL_00cf: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_00d4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00d9: stloc.s 4
-		IL_00db: ldloc.1
-		IL_00dc: ldc.i4.1
-		IL_00dd: newarr [System.Runtime]System.Object
-		IL_00e2: dup
-		IL_00e3: ldc.i4.0
-		IL_00e4: ldstr ","
-		IL_00e9: stelem.ref
-		IL_00ea: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
-		IL_00ef: stloc.s 5
-		IL_00f1: ldloc.s 4
-		IL_00f3: ldstr "log"
-		IL_00f8: ldloc.s 5
-		IL_00fa: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00ff: pop
-		IL_0100: ldloc.1
-		IL_0101: ldc.i4.4
-		IL_0102: newarr [System.Runtime]System.Object
-		IL_0107: dup
-		IL_0108: ldc.i4.0
-		IL_0109: ldc.r8 2
-		IL_0112: box [System.Runtime]System.Double
-		IL_0117: stelem.ref
-		IL_0118: dup
-		IL_0119: ldc.i4.1
-		IL_011a: ldc.r8 0.0
-		IL_0123: box [System.Runtime]System.Double
-		IL_0128: stelem.ref
-		IL_0129: dup
-		IL_012a: ldc.i4.2
-		IL_012b: ldc.r8 2
-		IL_0134: box [System.Runtime]System.Double
-		IL_0139: stelem.ref
-		IL_013a: dup
-		IL_013b: ldc.i4.3
-		IL_013c: ldc.r8 3
-		IL_0145: box [System.Runtime]System.Double
-		IL_014a: stelem.ref
-		IL_014b: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Array [JavaScriptRuntime]JavaScriptRuntime.Array::splice(object[])
-		IL_0150: stloc.3
-		IL_0151: ldloc.3
-		IL_0152: stloc.2
-		IL_0153: ldstr "console"
-		IL_0158: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_015d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0162: stloc.s 4
-		IL_0164: ldloc.2
-		IL_0165: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
-		IL_016a: ldc.i4.1
-		IL_016b: newarr [System.Runtime]System.Object
-		IL_0170: dup
-		IL_0171: ldc.i4.0
-		IL_0172: ldstr ","
-		IL_0177: stelem.ref
-		IL_0178: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
-		IL_017d: stloc.s 5
-		IL_017f: ldloc.s 4
-		IL_0181: ldstr "log"
-		IL_0186: ldloc.s 5
-		IL_0188: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_018d: pop
-		IL_018e: ldstr "console"
-		IL_0193: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0198: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_019d: stloc.s 4
-		IL_019f: ldloc.1
-		IL_01a0: ldc.i4.1
-		IL_01a1: newarr [System.Runtime]System.Object
-		IL_01a6: dup
-		IL_01a7: ldc.i4.0
-		IL_01a8: ldstr ","
-		IL_01ad: stelem.ref
-		IL_01ae: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
-		IL_01b3: stloc.s 5
-		IL_01b5: ldloc.s 4
-		IL_01b7: ldstr "log"
-		IL_01bc: ldloc.s 5
-		IL_01be: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_01c3: pop
-		IL_01c4: ldloc.1
-		IL_01c5: ldc.r8 4
-		IL_01ce: box [System.Runtime]System.Double
-		IL_01d3: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Array [JavaScriptRuntime]JavaScriptRuntime.Array::splice(object)
-		IL_01d8: stloc.3
-		IL_01d9: ldloc.3
-		IL_01da: stloc.2
-		IL_01db: ldstr "console"
-		IL_01e0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_01e5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_01ea: stloc.s 4
-		IL_01ec: ldloc.2
-		IL_01ed: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
-		IL_01f2: ldc.i4.1
-		IL_01f3: newarr [System.Runtime]System.Object
-		IL_01f8: dup
-		IL_01f9: ldc.i4.0
-		IL_01fa: ldstr ","
-		IL_01ff: stelem.ref
-		IL_0200: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
-		IL_0205: stloc.s 5
-		IL_0207: ldloc.s 4
-		IL_0209: ldstr "log"
-		IL_020e: ldloc.s 5
-		IL_0210: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0215: pop
-		IL_0216: ldstr "console"
-		IL_021b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0220: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_008f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0094: stloc.s 4
+		IL_0096: ldloc.2
+		IL_0097: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
+		IL_009c: ldc.i4.1
+		IL_009d: newarr [System.Runtime]System.Object
+		IL_00a2: dup
+		IL_00a3: ldc.i4.0
+		IL_00a4: ldstr ","
+		IL_00a9: stelem.ref
+		IL_00aa: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
+		IL_00af: stloc.s 5
+		IL_00b1: ldloc.s 4
+		IL_00b3: ldloc.s 5
+		IL_00b5: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00ba: pop
+		IL_00bb: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00c0: stloc.s 4
+		IL_00c2: ldloc.1
+		IL_00c3: ldc.i4.1
+		IL_00c4: newarr [System.Runtime]System.Object
+		IL_00c9: dup
+		IL_00ca: ldc.i4.0
+		IL_00cb: ldstr ","
+		IL_00d0: stelem.ref
+		IL_00d1: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
+		IL_00d6: stloc.s 5
+		IL_00d8: ldloc.s 4
+		IL_00da: ldloc.s 5
+		IL_00dc: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00e1: pop
+		IL_00e2: ldloc.1
+		IL_00e3: ldc.i4.4
+		IL_00e4: newarr [System.Runtime]System.Object
+		IL_00e9: dup
+		IL_00ea: ldc.i4.0
+		IL_00eb: ldc.r8 2
+		IL_00f4: box [System.Runtime]System.Double
+		IL_00f9: stelem.ref
+		IL_00fa: dup
+		IL_00fb: ldc.i4.1
+		IL_00fc: ldc.r8 0.0
+		IL_0105: box [System.Runtime]System.Double
+		IL_010a: stelem.ref
+		IL_010b: dup
+		IL_010c: ldc.i4.2
+		IL_010d: ldc.r8 2
+		IL_0116: box [System.Runtime]System.Double
+		IL_011b: stelem.ref
+		IL_011c: dup
+		IL_011d: ldc.i4.3
+		IL_011e: ldc.r8 3
+		IL_0127: box [System.Runtime]System.Double
+		IL_012c: stelem.ref
+		IL_012d: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Array [JavaScriptRuntime]JavaScriptRuntime.Array::splice(object[])
+		IL_0132: stloc.3
+		IL_0133: ldloc.3
+		IL_0134: stloc.2
+		IL_0135: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_013a: stloc.s 4
+		IL_013c: ldloc.2
+		IL_013d: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
+		IL_0142: ldc.i4.1
+		IL_0143: newarr [System.Runtime]System.Object
+		IL_0148: dup
+		IL_0149: ldc.i4.0
+		IL_014a: ldstr ","
+		IL_014f: stelem.ref
+		IL_0150: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
+		IL_0155: stloc.s 5
+		IL_0157: ldloc.s 4
+		IL_0159: ldloc.s 5
+		IL_015b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0160: pop
+		IL_0161: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0166: stloc.s 4
+		IL_0168: ldloc.1
+		IL_0169: ldc.i4.1
+		IL_016a: newarr [System.Runtime]System.Object
+		IL_016f: dup
+		IL_0170: ldc.i4.0
+		IL_0171: ldstr ","
+		IL_0176: stelem.ref
+		IL_0177: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
+		IL_017c: stloc.s 5
+		IL_017e: ldloc.s 4
+		IL_0180: ldloc.s 5
+		IL_0182: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0187: pop
+		IL_0188: ldloc.1
+		IL_0189: ldc.r8 4
+		IL_0192: box [System.Runtime]System.Double
+		IL_0197: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Array [JavaScriptRuntime]JavaScriptRuntime.Array::splice(object)
+		IL_019c: stloc.3
+		IL_019d: ldloc.3
+		IL_019e: stloc.2
+		IL_019f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_01a4: stloc.s 4
+		IL_01a6: ldloc.2
+		IL_01a7: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
+		IL_01ac: ldc.i4.1
+		IL_01ad: newarr [System.Runtime]System.Object
+		IL_01b2: dup
+		IL_01b3: ldc.i4.0
+		IL_01b4: ldstr ","
+		IL_01b9: stelem.ref
+		IL_01ba: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
+		IL_01bf: stloc.s 5
+		IL_01c1: ldloc.s 4
+		IL_01c3: ldloc.s 5
+		IL_01c5: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_01ca: pop
+		IL_01cb: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_01d0: stloc.s 4
+		IL_01d2: ldloc.1
+		IL_01d3: ldc.i4.1
+		IL_01d4: newarr [System.Runtime]System.Object
+		IL_01d9: dup
+		IL_01da: ldc.i4.0
+		IL_01db: ldstr ","
+		IL_01e0: stelem.ref
+		IL_01e1: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
+		IL_01e6: stloc.s 5
+		IL_01e8: ldloc.s 4
+		IL_01ea: ldloc.s 5
+		IL_01ec: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_01f1: pop
+		IL_01f2: ldc.r8 3
+		IL_01fb: neg
+		IL_01fc: stloc.s 6
+		IL_01fe: ldloc.s 6
+		IL_0200: box [System.Runtime]System.Double
+		IL_0205: stloc.s 7
+		IL_0207: ldloc.1
+		IL_0208: ldloc.s 7
+		IL_020a: ldc.r8 10
+		IL_0213: box [System.Runtime]System.Double
+		IL_0218: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Array [JavaScriptRuntime]JavaScriptRuntime.Array::splice(object, object)
+		IL_021d: stloc.3
+		IL_021e: ldloc.3
+		IL_021f: stloc.2
+		IL_0220: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 		IL_0225: stloc.s 4
-		IL_0227: ldloc.1
-		IL_0228: ldc.i4.1
-		IL_0229: newarr [System.Runtime]System.Object
-		IL_022e: dup
-		IL_022f: ldc.i4.0
-		IL_0230: ldstr ","
-		IL_0235: stelem.ref
-		IL_0236: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
-		IL_023b: stloc.s 5
-		IL_023d: ldloc.s 4
-		IL_023f: ldstr "log"
+		IL_0227: ldloc.2
+		IL_0228: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
+		IL_022d: ldc.i4.1
+		IL_022e: newarr [System.Runtime]System.Object
+		IL_0233: dup
+		IL_0234: ldc.i4.0
+		IL_0235: ldstr ","
+		IL_023a: stelem.ref
+		IL_023b: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
+		IL_0240: stloc.s 5
+		IL_0242: ldloc.s 4
 		IL_0244: ldloc.s 5
-		IL_0246: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0246: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
 		IL_024b: pop
-		IL_024c: ldc.r8 3
-		IL_0255: neg
-		IL_0256: stloc.s 6
-		IL_0258: ldloc.s 6
-		IL_025a: box [System.Runtime]System.Double
-		IL_025f: stloc.s 7
-		IL_0261: ldloc.1
-		IL_0262: ldloc.s 7
-		IL_0264: ldc.r8 10
-		IL_026d: box [System.Runtime]System.Double
-		IL_0272: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Array [JavaScriptRuntime]JavaScriptRuntime.Array::splice(object, object)
-		IL_0277: stloc.3
-		IL_0278: ldloc.3
-		IL_0279: stloc.2
-		IL_027a: ldstr "console"
-		IL_027f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0284: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0289: stloc.s 4
-		IL_028b: ldloc.2
-		IL_028c: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
-		IL_0291: ldc.i4.1
-		IL_0292: newarr [System.Runtime]System.Object
-		IL_0297: dup
-		IL_0298: ldc.i4.0
-		IL_0299: ldstr ","
-		IL_029e: stelem.ref
-		IL_029f: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
-		IL_02a4: stloc.s 5
-		IL_02a6: ldloc.s 4
-		IL_02a8: ldstr "log"
-		IL_02ad: ldloc.s 5
-		IL_02af: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_02b4: pop
-		IL_02b5: ldstr "console"
-		IL_02ba: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_02bf: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_02c4: stloc.s 4
-		IL_02c6: ldloc.1
-		IL_02c7: ldc.i4.1
-		IL_02c8: newarr [System.Runtime]System.Object
-		IL_02cd: dup
-		IL_02ce: ldc.i4.0
-		IL_02cf: ldstr ","
-		IL_02d4: stelem.ref
-		IL_02d5: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
-		IL_02da: stloc.s 5
-		IL_02dc: ldloc.s 4
-		IL_02de: ldstr "log"
-		IL_02e3: ldloc.s 5
-		IL_02e5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_02ea: pop
-		IL_02eb: ret
+		IL_024c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0251: stloc.s 4
+		IL_0253: ldloc.1
+		IL_0254: ldc.i4.1
+		IL_0255: newarr [System.Runtime]System.Object
+		IL_025a: dup
+		IL_025b: ldc.i4.0
+		IL_025c: ldstr ","
+		IL_0261: stelem.ref
+		IL_0262: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
+		IL_0267: stloc.s 5
+		IL_0269: ldloc.s 4
+		IL_026b: ldloc.s 5
+		IL_026d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0272: pop
+		IL_0273: ret
 	} // end of method Array_Splice_Basic::__js_module_init__
 
 } // end of class Modules.Array_Splice_Basic

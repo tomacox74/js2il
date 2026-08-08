@@ -118,54 +118,45 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 125 (0x7d)
+			// Code size: 80 (0x50)
 			.maxstack 8
 			.locals init (
-				[0] object,
+				[0] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 				[1] object
 			)
 
-			IL_0000: ldstr "console"
-			IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_000a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_000f: stloc.0
-			IL_0010: ldstr "Name: "
-			IL_0015: ldarg.1
-			IL_0016: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_001b: stloc.1
-			IL_001c: ldloc.0
-			IL_001d: ldstr "log"
-			IL_0022: ldloc.1
-			IL_0023: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_0028: pop
-			IL_0029: ldstr "console"
-			IL_002e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_0033: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0038: stloc.0
-			IL_0039: ldstr "Age: "
-			IL_003e: ldarg.2
-			IL_003f: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_0044: stloc.1
-			IL_0045: ldloc.0
-			IL_0046: ldstr "log"
-			IL_004b: ldloc.1
-			IL_004c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_0051: pop
-			IL_0052: ldstr "console"
-			IL_0057: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_005c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0061: stloc.0
-			IL_0062: ldstr "City: "
-			IL_0067: ldarg.3
-			IL_0068: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_006d: stloc.1
-			IL_006e: ldloc.0
-			IL_006f: ldstr "log"
-			IL_0074: ldloc.1
-			IL_0075: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_007a: pop
-			IL_007b: ldnull
-			IL_007c: ret
+			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0005: stloc.0
+			IL_0006: ldstr "Name: "
+			IL_000b: ldarg.1
+			IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0011: stloc.1
+			IL_0012: ldloc.0
+			IL_0013: ldloc.1
+			IL_0014: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0019: pop
+			IL_001a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_001f: stloc.0
+			IL_0020: ldstr "Age: "
+			IL_0025: ldarg.2
+			IL_0026: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_002b: stloc.1
+			IL_002c: ldloc.0
+			IL_002d: ldloc.1
+			IL_002e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0033: pop
+			IL_0034: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0039: stloc.0
+			IL_003a: ldstr "City: "
+			IL_003f: ldarg.3
+			IL_0040: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0045: stloc.1
+			IL_0046: ldloc.0
+			IL_0047: ldloc.1
+			IL_0048: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_004d: pop
+			IL_004e: ldnull
+			IL_004f: ret
 		} // end of method ArrowFunction_L3C20::__js_call__
 
 	} // end of class ArrowFunction_L3C20
@@ -201,13 +192,14 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 147 (0x93)
+		// Code size: 136 (0x88)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.SetTimeout_ZeroDelay_WithArgs/Scope,
 			[1] object,
 			[2] object[],
-			[3] class Modules.SetTimeout_ZeroDelay_WithArgs/ArrowFunction_L3C20/FunctionObject
+			[3] class Modules.SetTimeout_ZeroDelay_WithArgs/ArrowFunction_L3C20/FunctionObject,
+			[4] class [JavaScriptRuntime]JavaScriptRuntime.Console
 		)
 
 		IL_0000: newobj instance void Modules.SetTimeout_ZeroDelay_WithArgs/Scope::.ctor()
@@ -253,14 +245,13 @@
 		IL_006c: stelem.ref
 		IL_006d: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::setTimeout(object, object, object[])
 		IL_0072: pop
-		IL_0073: ldstr "console"
-		IL_0078: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_007d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0082: ldstr "log"
-		IL_0087: ldstr "setTimeout with zero delay and arguments scheduled."
-		IL_008c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0091: pop
-		IL_0092: ret
+		IL_0073: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0078: stloc.s 4
+		IL_007a: ldloc.s 4
+		IL_007c: ldstr "setTimeout with zero delay and arguments scheduled."
+		IL_0081: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0086: pop
+		IL_0087: ret
 	} // end of method SetTimeout_ZeroDelay_WithArgs::__js_module_init__
 
 } // end of class Modules.SetTimeout_ZeroDelay_WithArgs

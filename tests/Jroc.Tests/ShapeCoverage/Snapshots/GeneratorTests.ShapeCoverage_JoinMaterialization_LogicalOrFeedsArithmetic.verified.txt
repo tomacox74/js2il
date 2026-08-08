@@ -38,7 +38,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 228 (0xe4)
+		// Code size: 206 (0xce)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ShapeCoverage_JoinMaterialization_LogicalOrFeedsArithmetic/Scope,
@@ -54,7 +54,8 @@
 			[10] object,
 			[11] object,
 			[12] object,
-			[13] object
+			[13] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+			[14] object
 		)
 
 		IL_0000: newobj instance void Modules.ShapeCoverage_JoinMaterialization_LogicalOrFeedsArithmetic/Scope::.ctor()
@@ -89,48 +90,46 @@
 		IL_004c: ldc.r8 10
 		IL_0055: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
 		IL_005a: stloc.s 4
-		IL_005c: ldstr "console"
-		IL_0061: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0066: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_006b: ldstr "log"
-		IL_0070: ldloc.s 4
-		IL_0072: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0077: pop
-		IL_0078: ldc.r8 3
-		IL_0081: stloc.s 5
-		IL_0083: ldloc.s 5
-		IL_0085: box [System.Runtime]System.Double
-		IL_008a: stloc.s 8
-		IL_008c: ldloc.s 8
-		IL_008e: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-		IL_0093: stloc.s 9
-		IL_0095: ldloc.s 9
-		IL_0097: brtrue IL_00ad
+		IL_005c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0061: stloc.s 13
+		IL_0063: ldloc.s 13
+		IL_0065: ldloc.s 4
+		IL_0067: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_006c: pop
+		IL_006d: ldc.r8 3
+		IL_0076: stloc.s 5
+		IL_0078: ldloc.s 5
+		IL_007a: box [System.Runtime]System.Double
+		IL_007f: stloc.s 8
+		IL_0081: ldloc.s 8
+		IL_0083: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+		IL_0088: stloc.s 9
+		IL_008a: ldloc.s 9
+		IL_008c: brtrue IL_00a2
 
-		IL_009c: ldloc.2
-		IL_009d: box [System.Runtime]System.Double
-		IL_00a2: stloc.s 10
-		IL_00a4: ldloc.s 10
-		IL_00a6: stloc.s 13
-		IL_00a8: br IL_00b1
+		IL_0091: ldloc.2
+		IL_0092: box [System.Runtime]System.Double
+		IL_0097: stloc.s 10
+		IL_0099: ldloc.s 10
+		IL_009b: stloc.s 14
+		IL_009d: br IL_00a6
 
-		IL_00ad: ldloc.s 8
-		IL_00af: stloc.s 13
+		IL_00a2: ldloc.s 8
+		IL_00a4: stloc.s 14
 
-		IL_00b1: ldloc.s 13
-		IL_00b3: stloc.s 6
-		IL_00b5: ldloc.s 6
-		IL_00b7: ldc.r8 10
-		IL_00c0: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
-		IL_00c5: stloc.s 7
-		IL_00c7: ldstr "console"
-		IL_00cc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_00d1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00d6: ldstr "log"
-		IL_00db: ldloc.s 7
-		IL_00dd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00e2: pop
-		IL_00e3: ret
+		IL_00a6: ldloc.s 14
+		IL_00a8: stloc.s 6
+		IL_00aa: ldloc.s 6
+		IL_00ac: ldc.r8 10
+		IL_00b5: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
+		IL_00ba: stloc.s 7
+		IL_00bc: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00c1: stloc.s 13
+		IL_00c3: ldloc.s 13
+		IL_00c5: ldloc.s 7
+		IL_00c7: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00cc: pop
+		IL_00cd: ret
 	} // end of method ShapeCoverage_JoinMaterialization_LogicalOrFeedsArithmetic::__js_module_init__
 
 } // end of class Modules.ShapeCoverage_JoinMaterialization_LogicalOrFeedsArithmetic

@@ -137,83 +137,71 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 241 (0xf1)
+			// Code size: 181 (0xb5)
 			.maxstack 8
 			.locals init (
 				[0] class [JavaScriptRuntime]JavaScriptRuntime.Array,
-				[1] object,
+				[1] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 				[2] object
 			)
 
 			IL_0000: ldc.r8 1
 			IL_0009: call class [JavaScriptRuntime]JavaScriptRuntime.Array [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CollectRestArguments(float64)
 			IL_000e: stloc.0
-			IL_000f: ldstr "console"
-			IL_0014: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_0019: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_001e: stloc.1
-			IL_001f: ldarg.1
-			IL_0020: ldc.r8 0.0
-			IL_0029: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-			IL_002e: stloc.2
-			IL_002f: ldloc.1
-			IL_0030: ldstr "log"
-			IL_0035: ldstr "cooked[0]:"
-			IL_003a: ldloc.2
-			IL_003b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-			IL_0040: pop
-			IL_0041: ldstr "console"
-			IL_0046: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_004b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0050: stloc.2
-			IL_0051: ldarg.1
-			IL_0052: ldstr "raw"
-			IL_0057: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_005c: stloc.1
-			IL_005d: ldloc.1
-			IL_005e: ldc.r8 0.0
-			IL_0067: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-			IL_006c: stloc.1
-			IL_006d: ldloc.2
-			IL_006e: ldstr "log"
-			IL_0073: ldstr "raw[0]:"
-			IL_0078: ldloc.1
-			IL_0079: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-			IL_007e: pop
-			IL_007f: ldstr "console"
-			IL_0084: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_0089: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_008e: stloc.1
-			IL_008f: ldarg.1
-			IL_0090: ldc.r8 1
-			IL_0099: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-			IL_009e: stloc.2
-			IL_009f: ldloc.1
-			IL_00a0: ldstr "log"
-			IL_00a5: ldstr "cooked[1]:"
-			IL_00aa: ldloc.2
-			IL_00ab: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-			IL_00b0: pop
-			IL_00b1: ldstr "console"
-			IL_00b6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_00bb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_00c0: stloc.2
-			IL_00c1: ldarg.1
-			IL_00c2: ldstr "raw"
-			IL_00c7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_00cc: stloc.1
-			IL_00cd: ldloc.1
-			IL_00ce: ldc.r8 1
-			IL_00d7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-			IL_00dc: stloc.1
-			IL_00dd: ldloc.2
-			IL_00de: ldstr "log"
-			IL_00e3: ldstr "raw[1]:"
-			IL_00e8: ldloc.1
-			IL_00e9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-			IL_00ee: pop
-			IL_00ef: ldnull
-			IL_00f0: ret
+			IL_000f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0014: stloc.1
+			IL_0015: ldarg.1
+			IL_0016: ldc.r8 0.0
+			IL_001f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+			IL_0024: stloc.2
+			IL_0025: ldloc.1
+			IL_0026: ldstr "cooked[0]:"
+			IL_002b: ldloc.2
+			IL_002c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_0031: pop
+			IL_0032: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0037: stloc.1
+			IL_0038: ldarg.1
+			IL_0039: ldstr "raw"
+			IL_003e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0043: stloc.2
+			IL_0044: ldloc.2
+			IL_0045: ldc.r8 0.0
+			IL_004e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+			IL_0053: stloc.2
+			IL_0054: ldloc.1
+			IL_0055: ldstr "raw[0]:"
+			IL_005a: ldloc.2
+			IL_005b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_0060: pop
+			IL_0061: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0066: stloc.1
+			IL_0067: ldarg.1
+			IL_0068: ldc.r8 1
+			IL_0071: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+			IL_0076: stloc.2
+			IL_0077: ldloc.1
+			IL_0078: ldstr "cooked[1]:"
+			IL_007d: ldloc.2
+			IL_007e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_0083: pop
+			IL_0084: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0089: stloc.1
+			IL_008a: ldarg.1
+			IL_008b: ldstr "raw"
+			IL_0090: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0095: stloc.2
+			IL_0096: ldloc.2
+			IL_0097: ldc.r8 1
+			IL_00a0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+			IL_00a5: stloc.2
+			IL_00a6: ldloc.1
+			IL_00a7: ldstr "raw[1]:"
+			IL_00ac: ldloc.2
+			IL_00ad: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_00b2: pop
+			IL_00b3: ldnull
+			IL_00b4: ret
 		} // end of method tag::__js_call__
 
 	} // end of class tag

@@ -38,11 +38,11 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 539 (0x21b)
+		// Code size: 389 (0x185)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.IntrinsicCallables_ParseFloat_IsFinite_Basic/Scope,
-			[1] object,
+			[1] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 			[2] float64,
 			[3] object,
 			[4] bool,
@@ -52,166 +52,136 @@
 		IL_0000: newobj instance void Modules.IntrinsicCallables_ParseFloat_IsFinite_Basic/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: nop
-		IL_0007: ldstr "console"
-		IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0011: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0016: stloc.1
-		IL_0017: ldstr "1.25abc"
-		IL_001c: call float64 [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::parseFloat(object)
-		IL_0021: stloc.2
-		IL_0022: ldloc.2
-		IL_0023: box [System.Runtime]System.Double
-		IL_0028: stloc.3
-		IL_0029: ldloc.1
-		IL_002a: ldstr "log"
-		IL_002f: ldloc.3
-		IL_0030: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0035: pop
-		IL_0036: ldstr "console"
-		IL_003b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0040: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0045: stloc.1
-		IL_0046: ldstr "   -3.5e2zzz"
-		IL_004b: call float64 [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::parseFloat(object)
-		IL_0050: stloc.2
-		IL_0051: ldloc.2
-		IL_0052: box [System.Runtime]System.Double
-		IL_0057: stloc.3
-		IL_0058: ldloc.1
-		IL_0059: ldstr "log"
-		IL_005e: ldloc.3
-		IL_005f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0064: pop
-		IL_0065: ldstr "console"
-		IL_006a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_006f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0074: stloc.1
-		IL_0075: ldstr "Infinity"
-		IL_007a: call float64 [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::parseFloat(object)
-		IL_007f: stloc.2
-		IL_0080: ldloc.2
-		IL_0081: box [System.Runtime]System.Double
-		IL_0086: stloc.3
-		IL_0087: ldloc.1
-		IL_0088: ldstr "log"
-		IL_008d: ldloc.3
-		IL_008e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0093: pop
-		IL_0094: ldstr "console"
-		IL_0099: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_009e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00a3: stloc.1
-		IL_00a4: ldstr "-Infinity"
-		IL_00a9: call float64 [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::parseFloat(object)
-		IL_00ae: stloc.2
-		IL_00af: ldloc.2
-		IL_00b0: box [System.Runtime]System.Double
-		IL_00b5: stloc.3
-		IL_00b6: ldloc.1
-		IL_00b7: ldstr "log"
-		IL_00bc: ldloc.3
-		IL_00bd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00c2: pop
-		IL_00c3: ldstr "console"
-		IL_00c8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_00cd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00d2: stloc.1
-		IL_00d3: ldstr "not-a-number"
-		IL_00d8: call float64 [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::parseFloat(object)
-		IL_00dd: stloc.2
-		IL_00de: ldloc.2
-		IL_00df: box [System.Runtime]System.Double
-		IL_00e4: stloc.3
-		IL_00e5: ldloc.1
-		IL_00e6: ldstr "log"
-		IL_00eb: ldloc.3
-		IL_00ec: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00f1: pop
-		IL_00f2: ldstr "console"
-		IL_00f7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_00fc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0101: stloc.1
-		IL_0102: ldc.r8 123
-		IL_010b: box [System.Runtime]System.Double
-		IL_0110: call bool [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::isFinite(object)
-		IL_0115: stloc.s 4
-		IL_0117: ldloc.s 4
-		IL_0119: box [System.Runtime]System.Boolean
-		IL_011e: stloc.s 5
-		IL_0120: ldloc.1
-		IL_0121: ldstr "log"
-		IL_0126: ldloc.s 5
-		IL_0128: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_012d: pop
-		IL_012e: ldstr "console"
-		IL_0133: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0138: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_013d: stloc.1
-		IL_013e: ldc.r8 (00 00 00 00 00 00 F0 7F)
-		IL_0147: box [System.Runtime]System.Double
-		IL_014c: call bool [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::isFinite(object)
-		IL_0151: stloc.s 4
-		IL_0153: ldloc.s 4
-		IL_0155: box [System.Runtime]System.Boolean
-		IL_015a: stloc.s 5
-		IL_015c: ldloc.1
-		IL_015d: ldstr "log"
-		IL_0162: ldloc.s 5
-		IL_0164: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0169: pop
-		IL_016a: ldstr "console"
-		IL_016f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0174: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0179: stloc.1
-		IL_017a: ldc.r8 (00 00 00 00 00 00 F0 7F)
-		IL_0183: neg
-		IL_0184: stloc.2
-		IL_0185: ldloc.2
-		IL_0186: box [System.Runtime]System.Double
-		IL_018b: stloc.3
-		IL_018c: ldloc.3
-		IL_018d: call bool [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::isFinite(object)
-		IL_0192: stloc.s 4
-		IL_0194: ldloc.s 4
-		IL_0196: box [System.Runtime]System.Boolean
-		IL_019b: stloc.s 5
-		IL_019d: ldloc.1
-		IL_019e: ldstr "log"
-		IL_01a3: ldloc.s 5
-		IL_01a5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_01aa: pop
-		IL_01ab: ldstr "console"
-		IL_01b0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_01b5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_01ba: stloc.1
-		IL_01bb: ldc.r8 (00 00 00 00 00 00 F8 FF)
-		IL_01c4: box [System.Runtime]System.Double
-		IL_01c9: call bool [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::isFinite(object)
-		IL_01ce: stloc.s 4
-		IL_01d0: ldloc.s 4
-		IL_01d2: box [System.Runtime]System.Boolean
-		IL_01d7: stloc.s 5
-		IL_01d9: ldloc.1
-		IL_01da: ldstr "log"
-		IL_01df: ldloc.s 5
-		IL_01e1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_01e6: pop
-		IL_01e7: ldstr "console"
-		IL_01ec: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_01f1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_01f6: stloc.1
-		IL_01f7: ldstr "  4.5 "
-		IL_01fc: call bool [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::isFinite(object)
-		IL_0201: stloc.s 4
-		IL_0203: ldloc.s 4
-		IL_0205: box [System.Runtime]System.Boolean
-		IL_020a: stloc.s 5
-		IL_020c: ldloc.1
-		IL_020d: ldstr "log"
-		IL_0212: ldloc.s 5
-		IL_0214: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0219: pop
-		IL_021a: ret
+		IL_0007: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_000c: stloc.1
+		IL_000d: ldstr "1.25abc"
+		IL_0012: call float64 [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::parseFloat(object)
+		IL_0017: stloc.2
+		IL_0018: ldloc.2
+		IL_0019: box [System.Runtime]System.Double
+		IL_001e: stloc.3
+		IL_001f: ldloc.1
+		IL_0020: ldloc.3
+		IL_0021: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0026: pop
+		IL_0027: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_002c: stloc.1
+		IL_002d: ldstr "   -3.5e2zzz"
+		IL_0032: call float64 [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::parseFloat(object)
+		IL_0037: stloc.2
+		IL_0038: ldloc.2
+		IL_0039: box [System.Runtime]System.Double
+		IL_003e: stloc.3
+		IL_003f: ldloc.1
+		IL_0040: ldloc.3
+		IL_0041: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0046: pop
+		IL_0047: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_004c: stloc.1
+		IL_004d: ldstr "Infinity"
+		IL_0052: call float64 [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::parseFloat(object)
+		IL_0057: stloc.2
+		IL_0058: ldloc.2
+		IL_0059: box [System.Runtime]System.Double
+		IL_005e: stloc.3
+		IL_005f: ldloc.1
+		IL_0060: ldloc.3
+		IL_0061: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0066: pop
+		IL_0067: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_006c: stloc.1
+		IL_006d: ldstr "-Infinity"
+		IL_0072: call float64 [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::parseFloat(object)
+		IL_0077: stloc.2
+		IL_0078: ldloc.2
+		IL_0079: box [System.Runtime]System.Double
+		IL_007e: stloc.3
+		IL_007f: ldloc.1
+		IL_0080: ldloc.3
+		IL_0081: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0086: pop
+		IL_0087: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_008c: stloc.1
+		IL_008d: ldstr "not-a-number"
+		IL_0092: call float64 [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::parseFloat(object)
+		IL_0097: stloc.2
+		IL_0098: ldloc.2
+		IL_0099: box [System.Runtime]System.Double
+		IL_009e: stloc.3
+		IL_009f: ldloc.1
+		IL_00a0: ldloc.3
+		IL_00a1: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00a6: pop
+		IL_00a7: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00ac: stloc.1
+		IL_00ad: ldc.r8 123
+		IL_00b6: box [System.Runtime]System.Double
+		IL_00bb: call bool [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::isFinite(object)
+		IL_00c0: stloc.s 4
+		IL_00c2: ldloc.s 4
+		IL_00c4: box [System.Runtime]System.Boolean
+		IL_00c9: stloc.s 5
+		IL_00cb: ldloc.1
+		IL_00cc: ldloc.s 5
+		IL_00ce: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00d3: pop
+		IL_00d4: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00d9: stloc.1
+		IL_00da: ldc.r8 (00 00 00 00 00 00 F0 7F)
+		IL_00e3: box [System.Runtime]System.Double
+		IL_00e8: call bool [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::isFinite(object)
+		IL_00ed: stloc.s 4
+		IL_00ef: ldloc.s 4
+		IL_00f1: box [System.Runtime]System.Boolean
+		IL_00f6: stloc.s 5
+		IL_00f8: ldloc.1
+		IL_00f9: ldloc.s 5
+		IL_00fb: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0100: pop
+		IL_0101: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0106: stloc.1
+		IL_0107: ldc.r8 (00 00 00 00 00 00 F0 7F)
+		IL_0110: neg
+		IL_0111: stloc.2
+		IL_0112: ldloc.2
+		IL_0113: box [System.Runtime]System.Double
+		IL_0118: stloc.3
+		IL_0119: ldloc.3
+		IL_011a: call bool [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::isFinite(object)
+		IL_011f: stloc.s 4
+		IL_0121: ldloc.s 4
+		IL_0123: box [System.Runtime]System.Boolean
+		IL_0128: stloc.s 5
+		IL_012a: ldloc.1
+		IL_012b: ldloc.s 5
+		IL_012d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0132: pop
+		IL_0133: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0138: stloc.1
+		IL_0139: ldc.r8 (00 00 00 00 00 00 F8 FF)
+		IL_0142: box [System.Runtime]System.Double
+		IL_0147: call bool [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::isFinite(object)
+		IL_014c: stloc.s 4
+		IL_014e: ldloc.s 4
+		IL_0150: box [System.Runtime]System.Boolean
+		IL_0155: stloc.s 5
+		IL_0157: ldloc.1
+		IL_0158: ldloc.s 5
+		IL_015a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_015f: pop
+		IL_0160: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0165: stloc.1
+		IL_0166: ldstr "  4.5 "
+		IL_016b: call bool [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::isFinite(object)
+		IL_0170: stloc.s 4
+		IL_0172: ldloc.s 4
+		IL_0174: box [System.Runtime]System.Boolean
+		IL_0179: stloc.s 5
+		IL_017b: ldloc.1
+		IL_017c: ldloc.s 5
+		IL_017e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0183: pop
+		IL_0184: ret
 	} // end of method IntrinsicCallables_ParseFloat_IsFinite_Basic::__js_module_init__
 
 } // end of class Modules.IntrinsicCallables_ParseFloat_IsFinite_Basic

@@ -118,7 +118,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 307 (0x133)
+		// Code size: 285 (0x11d)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ControlFlow_If_Truthiness/Scope,
@@ -127,7 +127,8 @@
 			[3] float64,
 			[4] float64,
 			[5] object,
-			[6] bool
+			[6] bool,
+			[7] class [JavaScriptRuntime]JavaScriptRuntime.Console
 		)
 
 		IL_0000: newobj instance void Modules.ControlFlow_If_Truthiness/Scope::.ctor()
@@ -187,7 +188,7 @@
 			IL_00bb: ldloc.3
 			IL_00bc: ldloc.s 4
 			IL_00be: clt
-			IL_00c0: brfalse IL_0132
+			IL_00c0: brfalse IL_011c
 
 			IL_00c5: ldloc.1
 			IL_00c6: ldloc.2
@@ -197,33 +198,31 @@
 			IL_00d0: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
 			IL_00d5: stloc.s 6
 			IL_00d7: ldloc.s 6
-			IL_00d9: brfalse IL_0102
+			IL_00d9: brfalse IL_00f7
 
-			IL_00de: ldstr "console"
-			IL_00e3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_00e8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_00ed: ldstr "log"
-			IL_00f2: ldstr "T"
-			IL_00f7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_00fc: pop
-			IL_00fd: br IL_0121
+			IL_00de: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_00e3: stloc.s 7
+			IL_00e5: ldloc.s 7
+			IL_00e7: ldstr "T"
+			IL_00ec: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_00f1: pop
+			IL_00f2: br IL_010b
 
-			IL_0102: ldstr "console"
-			IL_0107: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_010c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0111: ldstr "log"
-			IL_0116: ldstr "F"
-			IL_011b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_0120: pop
+			IL_00f7: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_00fc: stloc.s 7
+			IL_00fe: ldloc.s 7
+			IL_0100: ldstr "F"
+			IL_0105: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_010a: pop
 
-			IL_0121: ldloc.2
-			IL_0122: ldc.r8 1
-			IL_012b: add
-			IL_012c: stloc.2
-			IL_012d: br IL_00b1
+			IL_010b: ldloc.2
+			IL_010c: ldc.r8 1
+			IL_0115: add
+			IL_0116: stloc.2
+			IL_0117: br IL_00b1
 		// end loop
 
-		IL_0132: ret
+		IL_011c: ret
 	} // end of method ControlFlow_If_Truthiness::__js_module_init__
 
 } // end of class Modules.ControlFlow_If_Truthiness

@@ -582,13 +582,13 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 91 (0x5b)
+		// Code size: 76 (0x4c)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Function_NewExpression_CapturesOuterCtor/Scope,
 			[1] class Modules.Function_NewExpression_CapturesOuterCtor/outer/FunctionObject_FunctionDeclaration_93D08467_outer,
 			[2] object[],
-			[3] object,
+			[3] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 			[4] object
 		)
 
@@ -615,20 +615,17 @@
 		IL_002c: stloc.1
 		IL_002d: nop
 		IL_002e: nop
-		IL_002f: ldstr "console"
-		IL_0034: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0039: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_003e: stloc.3
-		IL_003f: ldloc.1
-		IL_0040: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0045: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
-		IL_004a: stloc.s 4
-		IL_004c: ldloc.3
-		IL_004d: ldstr "log"
-		IL_0052: ldloc.s 4
-		IL_0054: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0059: pop
-		IL_005a: ret
+		IL_002f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0034: stloc.3
+		IL_0035: ldloc.1
+		IL_0036: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_003b: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
+		IL_0040: stloc.s 4
+		IL_0042: ldloc.3
+		IL_0043: ldloc.s 4
+		IL_0045: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_004a: pop
+		IL_004b: ret
 	} // end of method Function_NewExpression_CapturesOuterCtor::__js_module_init__
 
 } // end of class Modules.Function_NewExpression_CapturesOuterCtor

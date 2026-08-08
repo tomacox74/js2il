@@ -177,11 +177,11 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 195 (0xc3)
+		// Code size: 180 (0xb4)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Function_ArrowFunctionExpression_ConciseBody_ForEachCapturesOuter/Scope,
-			[1] object,
+			[1] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 			[2] class [JavaScriptRuntime]JavaScriptRuntime.Array,
 			[3] object[],
 			[4] class Modules.Function_ArrowFunctionExpression_ConciseBody_ForEachCapturesOuter/ArrowFunction_L5C27/FunctionObject,
@@ -195,66 +195,63 @@
 		IL_0008: ldc.r8 1
 		IL_0011: box [System.Runtime]System.Double
 		IL_0016: stfld object Modules.Function_ArrowFunctionExpression_ConciseBody_ForEachCapturesOuter/Scope::'add'
-		IL_001b: ldstr "console"
-		IL_0020: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0025: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_002a: stloc.1
-		IL_002b: ldc.i4.3
-		IL_002c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_0031: dup
-		IL_0032: ldc.r8 1
-		IL_003b: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::AddNumber(float64)
-		IL_0040: dup
-		IL_0041: ldc.r8 2
-		IL_004a: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::AddNumber(float64)
-		IL_004f: dup
-		IL_0050: ldc.r8 3
-		IL_0059: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::AddNumber(float64)
-		IL_005e: stloc.2
-		IL_005f: ldc.i4.1
-		IL_0060: newarr [System.Runtime]System.Object
-		IL_0065: dup
-		IL_0066: ldc.i4.0
-		IL_0067: ldloc.0
-		IL_0068: stelem.ref
-		IL_0069: stloc.3
-		IL_006a: ldloc.3
-		IL_006b: ldc.i4.0
-		IL_006c: ldelem.ref
-		IL_006d: castclass Modules.Function_ArrowFunctionExpression_ConciseBody_ForEachCapturesOuter/Scope
-		IL_0072: newobj instance void Modules.Function_ArrowFunctionExpression_ConciseBody_ForEachCapturesOuter/ArrowFunction_L5C27/FunctionObject::.ctor(class Modules.Function_ArrowFunctionExpression_ConciseBody_ForEachCapturesOuter/Scope)
-		IL_0077: ldc.i4.1
-		IL_0078: conv.r8
-		IL_0079: ldstr ""
-		IL_007e: ldc.i4.0
-		IL_007f: ldc.i4.0
-		IL_0080: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Function_ArrowFunctionExpression_ConciseBody_ForEachCapturesOuter/ArrowFunction_L5C27/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_0085: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Function_ArrowFunctionExpression_ConciseBody_ForEachCapturesOuter/ArrowFunction_L5C27/FunctionObject>(!!0)
-		IL_008a: stloc.s 4
-		IL_008c: ldloc.2
-		IL_008d: ldc.i4.1
-		IL_008e: newarr [System.Runtime]System.Object
-		IL_0093: dup
-		IL_0094: ldc.i4.0
-		IL_0095: ldloc.s 4
-		IL_0097: stelem.ref
-		IL_0098: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Array [JavaScriptRuntime]JavaScriptRuntime.Array::map(object[])
-		IL_009d: stloc.2
-		IL_009e: ldloc.2
-		IL_009f: ldc.i4.1
-		IL_00a0: newarr [System.Runtime]System.Object
-		IL_00a5: dup
-		IL_00a6: ldc.i4.0
-		IL_00a7: ldstr ","
-		IL_00ac: stelem.ref
-		IL_00ad: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
-		IL_00b2: stloc.s 5
-		IL_00b4: ldloc.1
-		IL_00b5: ldstr "log"
-		IL_00ba: ldloc.s 5
-		IL_00bc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00c1: pop
-		IL_00c2: ret
+		IL_001b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0020: stloc.1
+		IL_0021: ldc.i4.3
+		IL_0022: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_0027: dup
+		IL_0028: ldc.r8 1
+		IL_0031: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::AddNumber(float64)
+		IL_0036: dup
+		IL_0037: ldc.r8 2
+		IL_0040: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::AddNumber(float64)
+		IL_0045: dup
+		IL_0046: ldc.r8 3
+		IL_004f: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::AddNumber(float64)
+		IL_0054: stloc.2
+		IL_0055: ldc.i4.1
+		IL_0056: newarr [System.Runtime]System.Object
+		IL_005b: dup
+		IL_005c: ldc.i4.0
+		IL_005d: ldloc.0
+		IL_005e: stelem.ref
+		IL_005f: stloc.3
+		IL_0060: ldloc.3
+		IL_0061: ldc.i4.0
+		IL_0062: ldelem.ref
+		IL_0063: castclass Modules.Function_ArrowFunctionExpression_ConciseBody_ForEachCapturesOuter/Scope
+		IL_0068: newobj instance void Modules.Function_ArrowFunctionExpression_ConciseBody_ForEachCapturesOuter/ArrowFunction_L5C27/FunctionObject::.ctor(class Modules.Function_ArrowFunctionExpression_ConciseBody_ForEachCapturesOuter/Scope)
+		IL_006d: ldc.i4.1
+		IL_006e: conv.r8
+		IL_006f: ldstr ""
+		IL_0074: ldc.i4.0
+		IL_0075: ldc.i4.0
+		IL_0076: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Function_ArrowFunctionExpression_ConciseBody_ForEachCapturesOuter/ArrowFunction_L5C27/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_007b: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Function_ArrowFunctionExpression_ConciseBody_ForEachCapturesOuter/ArrowFunction_L5C27/FunctionObject>(!!0)
+		IL_0080: stloc.s 4
+		IL_0082: ldloc.2
+		IL_0083: ldc.i4.1
+		IL_0084: newarr [System.Runtime]System.Object
+		IL_0089: dup
+		IL_008a: ldc.i4.0
+		IL_008b: ldloc.s 4
+		IL_008d: stelem.ref
+		IL_008e: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Array [JavaScriptRuntime]JavaScriptRuntime.Array::map(object[])
+		IL_0093: stloc.2
+		IL_0094: ldloc.2
+		IL_0095: ldc.i4.1
+		IL_0096: newarr [System.Runtime]System.Object
+		IL_009b: dup
+		IL_009c: ldc.i4.0
+		IL_009d: ldstr ","
+		IL_00a2: stelem.ref
+		IL_00a3: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
+		IL_00a8: stloc.s 5
+		IL_00aa: ldloc.1
+		IL_00ab: ldloc.s 5
+		IL_00ad: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00b2: pop
+		IL_00b3: ret
 	} // end of method Function_ArrowFunctionExpression_ConciseBody_ForEachCapturesOuter::__js_module_init__
 
 } // end of class Modules.Function_ArrowFunctionExpression_ConciseBody_ForEachCapturesOuter

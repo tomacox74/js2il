@@ -191,14 +191,14 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 209 (0xd1)
+			// Code size: 190 (0xbe)
 			.maxstack 8
 			.locals init (
 				[0] object,
 				[1] float64,
 				[2] object,
 				[3] object,
-				[4] object,
+				[4] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 				[5] float64,
 				[6] float64,
 				[7] object[],
@@ -209,77 +209,74 @@
 			IL_0005: stloc.3
 			IL_0006: ldloc.3
 			IL_0007: stloc.0
-			IL_0008: ldstr "console"
-			IL_000d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_0012: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0017: stloc.3
-			IL_0018: ldarg.1
-			IL_0019: ldstr "name"
-			IL_001e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0023: stloc.s 4
-			IL_0025: ldloc.3
-			IL_0026: ldstr "log"
-			IL_002b: ldstr "visit"
-			IL_0030: ldloc.s 4
-			IL_0032: ldarg.2
-			IL_0033: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember3(object, string, object, object, object)
-			IL_0038: pop
-			IL_0039: ldarg.2
-			IL_003a: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_003f: ldc.r8 2
-			IL_0048: cgt
-			IL_004a: brfalse IL_0051
+			IL_0008: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_000d: stloc.s 4
+			IL_000f: ldarg.1
+			IL_0010: ldstr "name"
+			IL_0015: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_001a: stloc.3
+			IL_001b: ldloc.s 4
+			IL_001d: ldstr "visit"
+			IL_0022: ldloc.3
+			IL_0023: ldarg.2
+			IL_0024: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object, object)
+			IL_0029: pop
+			IL_002a: ldarg.2
+			IL_002b: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0030: ldc.r8 2
+			IL_0039: cgt
+			IL_003b: brfalse IL_0042
 
-			IL_004f: ldnull
-			IL_0050: ret
+			IL_0040: ldnull
+			IL_0041: ret
 
-			IL_0051: ldc.r8 0.0
-			IL_005a: stloc.1
-			// loop start (head: IL_005b)
-				IL_005b: ldloc.1
-				IL_005c: stloc.s 5
-				IL_005e: ldarg.1
-				IL_005f: ldstr "children"
-				IL_0064: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-				IL_0069: stloc.s 4
-				IL_006b: ldloc.s 4
-				IL_006d: ldstr "length"
-				IL_0072: call float64 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItemAsNumber(object, object)
-				IL_0077: stloc.s 6
-				IL_0079: ldloc.s 5
-				IL_007b: ldloc.s 6
-				IL_007d: clt
-				IL_007f: brfalse IL_00cf
+			IL_0042: ldc.r8 0.0
+			IL_004b: stloc.1
+			// loop start (head: IL_004c)
+				IL_004c: ldloc.1
+				IL_004d: stloc.s 5
+				IL_004f: ldarg.1
+				IL_0050: ldstr "children"
+				IL_0055: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+				IL_005a: stloc.3
+				IL_005b: ldloc.3
+				IL_005c: ldstr "length"
+				IL_0061: call float64 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItemAsNumber(object, object)
+				IL_0066: stloc.s 6
+				IL_0068: ldloc.s 5
+				IL_006a: ldloc.s 6
+				IL_006c: clt
+				IL_006e: brfalse IL_00bc
 
-				IL_0084: ldarg.1
-				IL_0085: ldstr "children"
-				IL_008a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-				IL_008f: stloc.s 4
-				IL_0091: ldloc.s 4
-				IL_0093: ldloc.1
-				IL_0094: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-				IL_0099: stloc.2
-				IL_009a: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-				IL_009f: stloc.s 7
-				IL_00a1: ldarg.2
-				IL_00a2: ldc.r8 1
-				IL_00ab: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
-				IL_00b0: stloc.s 8
-				IL_00b2: ldloc.0
-				IL_00b3: ldloc.s 7
-				IL_00b5: ldloc.2
-				IL_00b6: ldloc.s 8
-				IL_00b8: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
-				IL_00bd: pop
-				IL_00be: ldloc.1
-				IL_00bf: ldc.r8 1
-				IL_00c8: add
-				IL_00c9: stloc.1
-				IL_00ca: br IL_005b
+				IL_0073: ldarg.1
+				IL_0074: ldstr "children"
+				IL_0079: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+				IL_007e: stloc.3
+				IL_007f: ldloc.3
+				IL_0080: ldloc.1
+				IL_0081: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+				IL_0086: stloc.2
+				IL_0087: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+				IL_008c: stloc.s 7
+				IL_008e: ldarg.2
+				IL_008f: ldc.r8 1
+				IL_0098: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
+				IL_009d: stloc.s 8
+				IL_009f: ldloc.0
+				IL_00a0: ldloc.s 7
+				IL_00a2: ldloc.2
+				IL_00a3: ldloc.s 8
+				IL_00a5: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
+				IL_00aa: pop
+				IL_00ab: ldloc.1
+				IL_00ac: ldc.r8 1
+				IL_00b5: add
+				IL_00b6: stloc.1
+				IL_00b7: br IL_004c
 			// end loop
 
-			IL_00cf: ldnull
-			IL_00d0: ret
+			IL_00bc: ldnull
+			IL_00bd: ret
 		} // end of method walk::__js_call__
 
 	} // end of class walk

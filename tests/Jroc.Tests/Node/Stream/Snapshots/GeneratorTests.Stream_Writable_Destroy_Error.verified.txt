@@ -638,11 +638,11 @@
 				74 61 54 6f 6b 65 6e 07 00 00 02
 			)
 			// Header size: 12
-			// Code size: 136 (0x88)
+			// Code size: 106 (0x6a)
 			.maxstack 8
 			.locals init (
 				[0] class [JavaScriptRuntime]JavaScriptRuntime.Array,
-				[1] object,
+				[1] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 				[2] string,
 				[3] object,
 				[4] object
@@ -655,45 +655,39 @@
 			IL_0008: ldstr "close"
 			IL_000d: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object)
 			IL_0012: pop
-			IL_0013: ldstr "console"
-			IL_0018: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_001d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0022: stloc.1
-			IL_0023: ldarg.0
-			IL_0024: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Stream_Writable_Destroy_Error/Scope::sequence
-			IL_0029: ldc.i4.1
-			IL_002a: newarr [System.Runtime]System.Object
-			IL_002f: dup
-			IL_0030: ldc.i4.0
-			IL_0031: ldstr ","
-			IL_0036: stelem.ref
-			IL_0037: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
-			IL_003c: stloc.2
-			IL_003d: ldloc.1
-			IL_003e: ldstr "log"
-			IL_0043: ldloc.2
-			IL_0044: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_0049: pop
-			IL_004a: ldstr "console"
-			IL_004f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_0054: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0059: stloc.1
-			IL_005a: ldarg.0
-			IL_005b: ldfld object Modules.Stream_Writable_Destroy_Error/Scope::writable
-			IL_0060: ldstr "destroyed"
-			IL_0065: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_006a: stloc.3
-			IL_006b: ldstr "destroyed:"
-			IL_0070: ldloc.3
-			IL_0071: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_0076: stloc.s 4
-			IL_0078: ldloc.1
-			IL_0079: ldstr "log"
-			IL_007e: ldloc.s 4
-			IL_0080: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_0085: pop
-			IL_0086: ldnull
-			IL_0087: ret
+			IL_0013: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0018: stloc.1
+			IL_0019: ldarg.0
+			IL_001a: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Stream_Writable_Destroy_Error/Scope::sequence
+			IL_001f: ldc.i4.1
+			IL_0020: newarr [System.Runtime]System.Object
+			IL_0025: dup
+			IL_0026: ldc.i4.0
+			IL_0027: ldstr ","
+			IL_002c: stelem.ref
+			IL_002d: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
+			IL_0032: stloc.2
+			IL_0033: ldloc.1
+			IL_0034: ldloc.2
+			IL_0035: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_003a: pop
+			IL_003b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0040: stloc.1
+			IL_0041: ldarg.0
+			IL_0042: ldfld object Modules.Stream_Writable_Destroy_Error/Scope::writable
+			IL_0047: ldstr "destroyed"
+			IL_004c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0051: stloc.3
+			IL_0052: ldstr "destroyed:"
+			IL_0057: ldloc.3
+			IL_0058: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_005d: stloc.s 4
+			IL_005f: ldloc.1
+			IL_0060: ldloc.s 4
+			IL_0062: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0067: pop
+			IL_0068: ldnull
+			IL_0069: ret
 		} // end of method FunctionExpression_L20C21::__js_call__
 
 	} // end of class FunctionExpression_L20C21
@@ -739,7 +733,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 407 (0x197)
+		// Code size: 392 (0x188)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Stream_Writable_Destroy_Error/Scope,
@@ -751,7 +745,7 @@
 			[6] class Modules.Stream_Writable_Destroy_Error/FunctionExpression_L12C21/FunctionObject_FunctionExpression_88247D05_L12C22,
 			[7] class Modules.Stream_Writable_Destroy_Error/FunctionExpression_L16C22/FunctionObject_FunctionExpression_B3B90B0E_L16C23,
 			[8] class Modules.Stream_Writable_Destroy_Error/FunctionExpression_L20C21/FunctionObject_FunctionExpression_5E2C9FCA_L20C22,
-			[9] object,
+			[9] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 			[10] object
 		)
 
@@ -890,27 +884,24 @@
 		IL_0146: ldloc.s 8
 		IL_0148: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
 		IL_014d: pop
-		IL_014e: ldstr "console"
-		IL_0153: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0158: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_015d: stloc.2
-		IL_015e: ldloc.0
-		IL_015f: ldfld object Modules.Stream_Writable_Destroy_Error/Scope::writable
-		IL_0164: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0169: ldstr "write"
-		IL_016e: ldstr "x"
-		IL_0173: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0178: stloc.s 9
-		IL_017a: ldstr "write-return:"
-		IL_017f: ldloc.s 9
-		IL_0181: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_0186: stloc.s 10
-		IL_0188: ldloc.2
-		IL_0189: ldstr "log"
-		IL_018e: ldloc.s 10
-		IL_0190: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0195: pop
-		IL_0196: ret
+		IL_014e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0153: stloc.s 9
+		IL_0155: ldloc.0
+		IL_0156: ldfld object Modules.Stream_Writable_Destroy_Error/Scope::writable
+		IL_015b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0160: ldstr "write"
+		IL_0165: ldstr "x"
+		IL_016a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_016f: stloc.2
+		IL_0170: ldstr "write-return:"
+		IL_0175: ldloc.2
+		IL_0176: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_017b: stloc.s 10
+		IL_017d: ldloc.s 9
+		IL_017f: ldloc.s 10
+		IL_0181: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0186: pop
+		IL_0187: ret
 	} // end of method Stream_Writable_Destroy_Error::__js_module_init__
 
 } // end of class Modules.Stream_Writable_Destroy_Error

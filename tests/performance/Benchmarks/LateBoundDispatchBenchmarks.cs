@@ -27,11 +27,20 @@ public class LateBoundDispatchBenchmarks
     private readonly dynamic _dynamicReceiver;
     private readonly string _noArgsMethodName = nameof(ClrReceiver.NoArgs);
     private readonly string _oneArgMethodName = nameof(ClrReceiver.OneArg);
+    private readonly JavaScriptRuntime.Console _console;
+    private readonly object _consoleAsObject;
+    private readonly string _consoleLogMethodName = nameof(JavaScriptRuntime.Console.log);
 
     public LateBoundDispatchBenchmarks()
     {
         _receiverAsObject = _receiver;
         _dynamicReceiver = _receiver;
+        _console = new JavaScriptRuntime.Console(new JavaScriptRuntime.ConsoleOutputSinks
+        {
+            Output = NullConsoleOutput.Instance,
+            ErrorOutput = NullConsoleOutput.Instance
+        });
+        _consoleAsObject = _console;
     }
 
     [GlobalSetup]
@@ -44,6 +53,8 @@ public class LateBoundDispatchBenchmarks
         _ = _dynamicReceiver.OneArg(1.0);
         _ = RuntimeNamedCallSite0Dispatcher.Invoke(_receiverAsObject, _noArgsMethodName);
         _ = RuntimeNamedCallSite1Dispatcher.Invoke(_receiverAsObject, _oneArgMethodName, 1.0);
+        _ = _console.log("value");
+        _ = JavaScriptRuntime.ObjectRuntime.CallMember1(_consoleAsObject, _consoleLogMethodName, "value");
     }
 
     [Benchmark(Baseline = true, Description = "Direct CLR call (0 args)")]
@@ -69,6 +80,13 @@ public class LateBoundDispatchBenchmarks
 
     [Benchmark(Description = "DLR CallSite runtime method name (1 arg)")]
     public double RuntimeNamedCallSite1_ClrReceiver() => (double)RuntimeNamedCallSite1Dispatcher.Invoke(_receiverAsObject, _oneArgMethodName, 1.0)!;
+
+    [Benchmark(Description = "Direct Console.log (1 arg)")]
+    public object? DirectConsoleLog1() => _console.log("value");
+
+    [Benchmark(Description = "CallMember1 Console.log")]
+    public object? CallMember1_ConsoleLog() =>
+        JavaScriptRuntime.ObjectRuntime.CallMember1(_consoleAsObject, _consoleLogMethodName, "value");
 
     private static MethodInfo ResolveMethod(Type receiverType, string methodName, int argCount)
     {
@@ -183,5 +201,18 @@ public class LateBoundDispatchBenchmarks
         public int NoArgs() => 42;
 
         public double OneArg(double value) => value + 1.0;
+    }
+
+    private sealed class NullConsoleOutput : JavaScriptRuntime.IConsoleOutput
+    {
+        public static readonly NullConsoleOutput Instance = new();
+
+        public void Write(string text)
+        {
+        }
+
+        public void WriteLine(string line)
+        {
+        }
     }
 }

@@ -38,14 +38,14 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 366 (0x16e)
+		// Code size: 306 (0x132)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.CommonJS_Export_ClassWithConstructor/Scope,
 			[1] object,
 			[2] object,
 			[3] object,
-			[4] object,
+			[4] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 			[5] object
 		)
 
@@ -70,105 +70,93 @@
 		IL_0032: stelem.ref
 		IL_0033: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::ConstructValue(object, object[])
 		IL_0038: stloc.2
-		IL_0039: ldstr "console"
-		IL_003e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0043: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0048: stloc.s 4
-		IL_004a: ldloc.2
-		IL_004b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0050: stloc.s 5
-		IL_0052: ldloc.s 5
-		IL_0054: isinst Modules.CommonJS_Export_ClassWithConstructor_Lib/Person
-		IL_0059: dup
-		IL_005a: brfalse IL_006b
+		IL_0039: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_003e: stloc.s 4
+		IL_0040: ldloc.2
+		IL_0041: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0046: stloc.s 5
+		IL_0048: ldloc.s 5
+		IL_004a: isinst Modules.CommonJS_Export_ClassWithConstructor_Lib/Person
+		IL_004f: dup
+		IL_0050: brfalse IL_0061
 
-		IL_005f: callvirt instance object Modules.CommonJS_Export_ClassWithConstructor_Lib/Person::greet()
-		IL_0064: stloc.s 5
-		IL_0066: br IL_007a
+		IL_0055: callvirt instance object Modules.CommonJS_Export_ClassWithConstructor_Lib/Person::greet()
+		IL_005a: stloc.s 5
+		IL_005c: br IL_0070
 
-		IL_006b: pop
-		IL_006c: ldloc.s 5
-		IL_006e: ldstr "greet"
-		IL_0073: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-		IL_0078: stloc.s 5
+		IL_0061: pop
+		IL_0062: ldloc.s 5
+		IL_0064: ldstr "greet"
+		IL_0069: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+		IL_006e: stloc.s 5
 
-		IL_007a: ldloc.s 4
-		IL_007c: ldstr "log"
-		IL_0081: ldstr "default greeting:"
-		IL_0086: ldloc.s 5
-		IL_0088: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_008d: pop
-		IL_008e: ldloc.1
-		IL_008f: ldc.i4.2
-		IL_0090: newarr [System.Runtime]System.Object
-		IL_0095: dup
-		IL_0096: ldc.i4.0
-		IL_0097: ldstr "Alice"
-		IL_009c: stelem.ref
-		IL_009d: dup
-		IL_009e: ldc.i4.1
-		IL_009f: ldc.r8 30
-		IL_00a8: box [System.Runtime]System.Double
-		IL_00ad: stelem.ref
-		IL_00ae: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::ConstructValue(object, object[])
-		IL_00b3: stloc.3
-		IL_00b4: ldstr "console"
-		IL_00b9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_00be: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00c3: stloc.s 5
-		IL_00c5: ldloc.3
-		IL_00c6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00cb: stloc.s 4
-		IL_00cd: ldloc.s 4
-		IL_00cf: isinst Modules.CommonJS_Export_ClassWithConstructor_Lib/Person
-		IL_00d4: dup
-		IL_00d5: brfalse IL_00e6
+		IL_0070: ldloc.s 4
+		IL_0072: ldstr "default greeting:"
+		IL_0077: ldloc.s 5
+		IL_0079: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_007e: pop
+		IL_007f: ldloc.1
+		IL_0080: ldc.i4.2
+		IL_0081: newarr [System.Runtime]System.Object
+		IL_0086: dup
+		IL_0087: ldc.i4.0
+		IL_0088: ldstr "Alice"
+		IL_008d: stelem.ref
+		IL_008e: dup
+		IL_008f: ldc.i4.1
+		IL_0090: ldc.r8 30
+		IL_0099: box [System.Runtime]System.Double
+		IL_009e: stelem.ref
+		IL_009f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::ConstructValue(object, object[])
+		IL_00a4: stloc.3
+		IL_00a5: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00aa: stloc.s 4
+		IL_00ac: ldloc.3
+		IL_00ad: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00b2: stloc.s 5
+		IL_00b4: ldloc.s 5
+		IL_00b6: isinst Modules.CommonJS_Export_ClassWithConstructor_Lib/Person
+		IL_00bb: dup
+		IL_00bc: brfalse IL_00cd
 
-		IL_00da: callvirt instance object Modules.CommonJS_Export_ClassWithConstructor_Lib/Person::greet()
-		IL_00df: stloc.s 4
-		IL_00e1: br IL_00f5
+		IL_00c1: callvirt instance object Modules.CommonJS_Export_ClassWithConstructor_Lib/Person::greet()
+		IL_00c6: stloc.s 5
+		IL_00c8: br IL_00dc
 
-		IL_00e6: pop
-		IL_00e7: ldloc.s 4
-		IL_00e9: ldstr "greet"
-		IL_00ee: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-		IL_00f3: stloc.s 4
+		IL_00cd: pop
+		IL_00ce: ldloc.s 5
+		IL_00d0: ldstr "greet"
+		IL_00d5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+		IL_00da: stloc.s 5
 
-		IL_00f5: ldloc.s 5
-		IL_00f7: ldstr "log"
-		IL_00fc: ldstr "alice greeting:"
-		IL_0101: ldloc.s 4
-		IL_0103: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_0108: pop
-		IL_0109: ldstr "console"
-		IL_010e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0113: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0118: stloc.s 4
-		IL_011a: ldloc.3
-		IL_011b: ldstr "name"
-		IL_0120: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0125: stloc.s 5
-		IL_0127: ldloc.s 4
-		IL_0129: ldstr "log"
-		IL_012e: ldstr "alice name:"
-		IL_0133: ldloc.s 5
-		IL_0135: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_013a: pop
-		IL_013b: ldstr "console"
-		IL_0140: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0145: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_014a: stloc.s 5
-		IL_014c: ldloc.3
-		IL_014d: ldstr "age"
-		IL_0152: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0157: stloc.s 4
-		IL_0159: ldloc.s 5
-		IL_015b: ldstr "log"
-		IL_0160: ldstr "alice age:"
-		IL_0165: ldloc.s 4
-		IL_0167: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_016c: pop
-		IL_016d: ret
+		IL_00dc: ldloc.s 4
+		IL_00de: ldstr "alice greeting:"
+		IL_00e3: ldloc.s 5
+		IL_00e5: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_00ea: pop
+		IL_00eb: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00f0: stloc.s 4
+		IL_00f2: ldloc.3
+		IL_00f3: ldstr "name"
+		IL_00f8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00fd: stloc.s 5
+		IL_00ff: ldloc.s 4
+		IL_0101: ldstr "alice name:"
+		IL_0106: ldloc.s 5
+		IL_0108: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_010d: pop
+		IL_010e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0113: stloc.s 4
+		IL_0115: ldloc.3
+		IL_0116: ldstr "age"
+		IL_011b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0120: stloc.s 5
+		IL_0122: ldloc.s 4
+		IL_0124: ldstr "alice age:"
+		IL_0129: ldloc.s 5
+		IL_012b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_0130: pop
+		IL_0131: ret
 	} // end of method CommonJS_Export_ClassWithConstructor::__js_module_init__
 
 } // end of class Modules.CommonJS_Export_ClassWithConstructor

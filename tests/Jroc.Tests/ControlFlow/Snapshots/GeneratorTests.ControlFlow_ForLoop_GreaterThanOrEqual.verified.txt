@@ -78,13 +78,14 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 91 (0x5b)
+		// Code size: 80 (0x50)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ControlFlow_ForLoop_GreaterThanOrEqual/Scope,
 			[1] float64,
 			[2] float64,
-			[3] object
+			[3] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+			[4] object
 		)
 
 		IL_0000: newobj instance void Modules.ControlFlow_ForLoop_GreaterThanOrEqual/Scope::.ctor()
@@ -100,26 +101,25 @@
 			IL_001d: cgt
 			IL_001f: ldc.i4.0
 			IL_0020: ceq
-			IL_0022: brfalse IL_005a
+			IL_0022: brfalse IL_004f
 
-			IL_0027: ldstr "console"
-			IL_002c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_0031: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0036: ldloc.1
-			IL_0037: box [System.Runtime]System.Double
-			IL_003c: stloc.3
-			IL_003d: ldstr "log"
-			IL_0042: ldloc.3
-			IL_0043: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_0048: pop
-			IL_0049: ldloc.1
-			IL_004a: ldc.r8 1
-			IL_0053: add
-			IL_0054: stloc.1
-			IL_0055: br IL_0011
+			IL_0027: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_002c: stloc.3
+			IL_002d: ldloc.1
+			IL_002e: box [System.Runtime]System.Double
+			IL_0033: stloc.s 4
+			IL_0035: ldloc.3
+			IL_0036: ldloc.s 4
+			IL_0038: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_003d: pop
+			IL_003e: ldloc.1
+			IL_003f: ldc.r8 1
+			IL_0048: add
+			IL_0049: stloc.1
+			IL_004a: br IL_0011
 		// end loop
 
-		IL_005a: ret
+		IL_004f: ret
 	} // end of method ControlFlow_ForLoop_GreaterThanOrEqual::__js_module_init__
 
 } // end of class Modules.ControlFlow_ForLoop_GreaterThanOrEqual

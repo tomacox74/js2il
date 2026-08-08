@@ -197,14 +197,14 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 137 (0x89)
+		// Code size: 122 (0x7a)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Function_Apply_ThisArg/Scope,
 			[1] class Modules.Function_Apply_ThisArg/addBase/FunctionObject_FunctionDeclaration_992E512E_addBase,
 			[2] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
 			[3] object[],
-			[4] object,
+			[4] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 			[5] class [JavaScriptRuntime]JavaScriptRuntime.Array,
 			[6] object
 		)
@@ -234,28 +234,25 @@
 		IL_0032: ldc.r8 10
 		IL_003b: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
 		IL_0040: stloc.2
-		IL_0041: ldstr "console"
-		IL_0046: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_004b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0050: stloc.s 4
-		IL_0052: ldc.i4.1
-		IL_0053: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_0058: dup
-		IL_0059: ldc.r8 5
-		IL_0062: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::AddNumber(float64)
-		IL_0067: stloc.s 5
-		IL_0069: ldloc.1
-		IL_006a: ldstr "apply"
-		IL_006f: ldloc.2
-		IL_0070: ldloc.s 5
-		IL_0072: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_0077: stloc.s 6
-		IL_0079: ldloc.s 4
-		IL_007b: ldstr "log"
-		IL_0080: ldloc.s 6
-		IL_0082: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0087: pop
-		IL_0088: ret
+		IL_0041: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0046: stloc.s 4
+		IL_0048: ldc.i4.1
+		IL_0049: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_004e: dup
+		IL_004f: ldc.r8 5
+		IL_0058: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::AddNumber(float64)
+		IL_005d: stloc.s 5
+		IL_005f: ldloc.1
+		IL_0060: ldstr "apply"
+		IL_0065: ldloc.2
+		IL_0066: ldloc.s 5
+		IL_0068: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_006d: stloc.s 6
+		IL_006f: ldloc.s 4
+		IL_0071: ldloc.s 6
+		IL_0073: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0078: pop
+		IL_0079: ret
 	} // end of method Function_Apply_ThisArg::__js_module_init__
 
 } // end of class Modules.Function_Apply_ThisArg

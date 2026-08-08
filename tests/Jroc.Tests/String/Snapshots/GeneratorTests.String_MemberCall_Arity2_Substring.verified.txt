@@ -38,12 +38,13 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 76 (0x4c)
+		// Code size: 63 (0x3f)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.String_MemberCall_Arity2_Substring/Scope,
 			[1] string,
-			[2] string
+			[2] string,
+			[3] class [JavaScriptRuntime]JavaScriptRuntime.Console
 		)
 
 		IL_0000: newobj instance void Modules.String_MemberCall_Arity2_Substring/Scope::.ctor()
@@ -58,14 +59,13 @@
 		IL_0025: box [System.Runtime]System.Double
 		IL_002a: call string [JavaScriptRuntime]JavaScriptRuntime.String::Substring(string, object, object)
 		IL_002f: stloc.2
-		IL_0030: ldstr "console"
-		IL_0035: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_003a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_003f: ldstr "log"
-		IL_0044: ldloc.2
-		IL_0045: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_004a: pop
-		IL_004b: ret
+		IL_0030: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0035: stloc.3
+		IL_0036: ldloc.3
+		IL_0037: ldloc.2
+		IL_0038: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_003d: pop
+		IL_003e: ret
 	} // end of method String_MemberCall_Arity2_Substring::__js_module_init__
 
 } // end of class Modules.String_MemberCall_Arity2_Substring

@@ -107,10 +107,10 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 97 (0x61)
+			// Code size: 82 (0x52)
 			.maxstack 8
 			.locals init (
-				[0] object,
+				[0] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 				[1] class [JavaScriptRuntime]JavaScriptRuntime.RegExp,
 				[2] bool,
 				[3] object,
@@ -118,43 +118,40 @@
 				[5] object
 			)
 
-			IL_0000: ldstr "console"
-			IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_000a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_000f: stloc.0
-			IL_0010: ldstr "^ENOENT:"
-			IL_0015: ldstr ""
-			IL_001a: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.RegExp::.ctor(object, object)
-			IL_001f: stloc.1
-			IL_0020: ldarg.1
-			IL_0021: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-			IL_0026: stloc.2
-			IL_0027: ldloc.2
-			IL_0028: brfalse IL_0041
+			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0005: stloc.0
+			IL_0006: ldstr "^ENOENT:"
+			IL_000b: ldstr ""
+			IL_0010: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.RegExp::.ctor(object, object)
+			IL_0015: stloc.1
+			IL_0016: ldarg.1
+			IL_0017: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+			IL_001c: stloc.2
+			IL_001d: ldloc.2
+			IL_001e: brfalse IL_0037
 
-			IL_002d: ldarg.1
-			IL_002e: ldstr "message"
-			IL_0033: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0038: stloc.3
-			IL_0039: ldloc.3
-			IL_003a: stloc.s 5
-			IL_003c: br IL_0044
+			IL_0023: ldarg.1
+			IL_0024: ldstr "message"
+			IL_0029: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_002e: stloc.3
+			IL_002f: ldloc.3
+			IL_0030: stloc.s 5
+			IL_0032: br IL_003a
 
-			IL_0041: ldarg.1
-			IL_0042: stloc.s 5
+			IL_0037: ldarg.1
+			IL_0038: stloc.s 5
 
-			IL_0044: ldloc.1
-			IL_0045: ldloc.s 5
-			IL_0047: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.RegExp::test(object)
-			IL_004c: stloc.3
-			IL_004d: ldloc.0
-			IL_004e: ldstr "log"
-			IL_0053: ldstr "ErrorStartsWithENOENT:"
-			IL_0058: ldloc.3
-			IL_0059: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-			IL_005e: pop
-			IL_005f: ldnull
-			IL_0060: ret
+			IL_003a: ldloc.1
+			IL_003b: ldloc.s 5
+			IL_003d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.RegExp::test(object)
+			IL_0042: stloc.3
+			IL_0043: ldloc.0
+			IL_0044: ldstr "ErrorStartsWithENOENT:"
+			IL_0049: ldloc.3
+			IL_004a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_004f: pop
+			IL_0050: ldnull
+			IL_0051: ret
 		} // end of method ArrowFunction_L13C20::__js_call__
 
 	} // end of class ArrowFunction_L13C20
@@ -247,21 +244,23 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Header size: 1
-			// Code size: 39 (0x27)
+			// Header size: 12
+			// Code size: 26 (0x1a)
 			.maxstack 8
+			.locals init (
+				[0] class [JavaScriptRuntime]JavaScriptRuntime.Console
+			)
 
-			IL_0000: ldstr "console"
-			IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_000a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_000f: ldstr "log"
-			IL_0014: ldstr "Closed:"
-			IL_0019: ldc.i4.1
-			IL_001a: box [System.Runtime]System.Boolean
-			IL_001f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-			IL_0024: pop
-			IL_0025: ldnull
-			IL_0026: ret
+			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0005: stloc.0
+			IL_0006: ldloc.0
+			IL_0007: ldstr "Closed:"
+			IL_000c: ldc.i4.1
+			IL_000d: box [System.Runtime]System.Boolean
+			IL_0012: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_0017: pop
+			IL_0018: ldnull
+			IL_0019: ret
 		} // end of method ArrowFunction_L17C20::__js_call__
 
 	} // end of class ArrowFunction_L17C20

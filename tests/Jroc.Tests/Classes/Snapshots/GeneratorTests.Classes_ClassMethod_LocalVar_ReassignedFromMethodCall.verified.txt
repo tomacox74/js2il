@@ -511,14 +511,15 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 129 (0x81)
+			// Code size: 107 (0x6b)
 			.maxstack 8
 			.locals init (
 				[0] float64,
 				[1] float64,
 				[2] class Modules.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall/Counter,
 				[3] float64,
-				[4] object
+				[4] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+				[5] object
 			)
 
 			IL_0000: ldc.r8 1
@@ -532,36 +533,34 @@
 			IL_001c: stloc.3
 			IL_001d: ldloc.3
 			IL_001e: stloc.0
-			IL_001f: ldstr "console"
-			IL_0024: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_0029: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_002e: ldloc.0
-			IL_002f: box [System.Runtime]System.Double
-			IL_0034: stloc.s 4
-			IL_0036: ldstr "log"
-			IL_003b: ldstr "factor after getNext:"
-			IL_0040: ldloc.s 4
-			IL_0042: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-			IL_0047: pop
-			IL_0048: ldloc.0
-			IL_0049: stloc.3
-			IL_004a: ldloc.3
-			IL_004b: ldc.r8 2
-			IL_0054: mul
-			IL_0055: stloc.1
-			IL_0056: ldstr "console"
-			IL_005b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_0060: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0065: ldloc.1
-			IL_0066: box [System.Runtime]System.Double
-			IL_006b: stloc.s 4
-			IL_006d: ldstr "log"
-			IL_0072: ldstr "result:"
-			IL_0077: ldloc.s 4
-			IL_0079: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-			IL_007e: pop
-			IL_007f: ldloc.1
-			IL_0080: ret
+			IL_001f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0024: stloc.s 4
+			IL_0026: ldloc.0
+			IL_0027: box [System.Runtime]System.Double
+			IL_002c: stloc.s 5
+			IL_002e: ldloc.s 4
+			IL_0030: ldstr "factor after getNext:"
+			IL_0035: ldloc.s 5
+			IL_0037: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_003c: pop
+			IL_003d: ldloc.0
+			IL_003e: stloc.3
+			IL_003f: ldloc.3
+			IL_0040: ldc.r8 2
+			IL_0049: mul
+			IL_004a: stloc.1
+			IL_004b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0050: stloc.s 4
+			IL_0052: ldloc.1
+			IL_0053: box [System.Runtime]System.Double
+			IL_0058: stloc.s 5
+			IL_005a: ldloc.s 4
+			IL_005c: ldstr "result:"
+			IL_0061: ldloc.s 5
+			IL_0063: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_0068: pop
+			IL_0069: ldloc.1
+			IL_006a: ret
 		} // end of method Calculator::compute
 
 	} // end of class Calculator
@@ -604,7 +603,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 288 (0x120)
+		// Code size: 277 (0x115)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall/Scope,
@@ -614,7 +613,8 @@
 			[4] object,
 			[5] object[],
 			[6] class Modules.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall/Calculator,
-			[7] float64
+			[7] float64,
+			[8] class [JavaScriptRuntime]JavaScriptRuntime.Console
 		)
 
 		IL_0000: newobj instance void Modules.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall/Scope::.ctor()
@@ -702,15 +702,14 @@
 		IL_00f7: ldloc.s 7
 		IL_00f9: box [System.Runtime]System.Double
 		IL_00fe: stloc.2
-		IL_00ff: ldstr "console"
-		IL_0104: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0109: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_010e: ldstr "log"
-		IL_0113: ldstr "final output:"
-		IL_0118: ldloc.2
-		IL_0119: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_011e: pop
-		IL_011f: ret
+		IL_00ff: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0104: stloc.s 8
+		IL_0106: ldloc.s 8
+		IL_0108: ldstr "final output:"
+		IL_010d: ldloc.2
+		IL_010e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_0113: pop
+		IL_0114: ret
 	} // end of method Classes_ClassMethod_LocalVar_ReassignedFromMethodCall::__js_module_init__
 
 } // end of class Modules.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall

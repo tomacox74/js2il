@@ -191,13 +191,13 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 123 (0x7b)
+		// Code size: 108 (0x6c)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Function_IsEven_CompareResultToTrue/Scope,
 			[1] class Modules.Function_IsEven_CompareResultToTrue/isEven/FunctionObject_FunctionDeclaration_24CC1E21_isEven,
 			[2] object[],
-			[3] object,
+			[3] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 			[4] object,
 			[5] bool,
 			[6] object
@@ -222,32 +222,29 @@
 		IL_0024: stloc.1
 		IL_0025: nop
 		IL_0026: nop
-		IL_0027: ldstr "console"
-		IL_002c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0031: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0036: stloc.3
-		IL_0037: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_003c: stloc.2
-		IL_003d: ldloc.1
-		IL_003e: ldloc.2
-		IL_003f: ldc.r8 4
-		IL_0048: box [System.Runtime]System.Double
-		IL_004d: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
-		IL_0052: stloc.s 4
-		IL_0054: ldloc.s 4
-		IL_0056: ldc.i4.1
-		IL_0057: box [System.Runtime]System.Boolean
-		IL_005c: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::Equal(object, object)
-		IL_0061: stloc.s 5
-		IL_0063: ldloc.s 5
-		IL_0065: box [System.Runtime]System.Boolean
-		IL_006a: stloc.s 6
-		IL_006c: ldloc.3
-		IL_006d: ldstr "log"
-		IL_0072: ldloc.s 6
-		IL_0074: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0079: pop
-		IL_007a: ret
+		IL_0027: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_002c: stloc.3
+		IL_002d: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0032: stloc.2
+		IL_0033: ldloc.1
+		IL_0034: ldloc.2
+		IL_0035: ldc.r8 4
+		IL_003e: box [System.Runtime]System.Double
+		IL_0043: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
+		IL_0048: stloc.s 4
+		IL_004a: ldloc.s 4
+		IL_004c: ldc.i4.1
+		IL_004d: box [System.Runtime]System.Boolean
+		IL_0052: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::Equal(object, object)
+		IL_0057: stloc.s 5
+		IL_0059: ldloc.s 5
+		IL_005b: box [System.Runtime]System.Boolean
+		IL_0060: stloc.s 6
+		IL_0062: ldloc.3
+		IL_0063: ldloc.s 6
+		IL_0065: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_006a: pop
+		IL_006b: ret
 	} // end of method Function_IsEven_CompareResultToTrue::__js_module_init__
 
 } // end of class Modules.Function_IsEven_CompareResultToTrue

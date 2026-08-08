@@ -95,21 +95,23 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Header size: 1
-			// Code size: 47 (0x2f)
+			// Header size: 12
+			// Code size: 34 (0x22)
 			.maxstack 8
+			.locals init (
+				[0] class [JavaScriptRuntime]JavaScriptRuntime.Console
+			)
 
-			IL_0000: ldstr "console"
-			IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_000a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_000f: ldstr "log"
-			IL_0014: ldstr "Hello, World!"
-			IL_0019: ldc.r8 2
-			IL_0022: box [System.Runtime]System.Double
-			IL_0027: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-			IL_002c: pop
-			IL_002d: ldnull
-			IL_002e: ret
+			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0005: stloc.0
+			IL_0006: ldloc.0
+			IL_0007: ldstr "Hello, World!"
+			IL_000c: ldc.r8 2
+			IL_0015: box [System.Runtime]System.Double
+			IL_001a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_001f: pop
+			IL_0020: ldnull
+			IL_0021: ret
 		} // end of method ArrowFunction_L4C20::__js_call__
 
 	} // end of class ArrowFunction_L4C20
@@ -215,24 +217,26 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 05 00 00 02
 			)
-			// Header size: 1
-			// Code size: 54 (0x36)
+			// Header size: 12
+			// Code size: 41 (0x29)
 			.maxstack 8
+			.locals init (
+				[0] class [JavaScriptRuntime]JavaScriptRuntime.Console
+			)
 
-			IL_0000: ldstr "console"
-			IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_000a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_000f: ldstr "log"
-			IL_0014: ldstr "This is a proxy function."
-			IL_0019: ldc.r8 1
-			IL_0022: box [System.Runtime]System.Double
-			IL_0027: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-			IL_002c: pop
-			IL_002d: ldnull
-			IL_002e: call object Modules.ArrowFunction_GlobalFunctionCallsGlobalFunction/ArrowFunction_L4C20::__js_call__(object)
-			IL_0033: pop
-			IL_0034: ldnull
-			IL_0035: ret
+			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0005: stloc.0
+			IL_0006: ldloc.0
+			IL_0007: ldstr "This is a proxy function."
+			IL_000c: ldc.r8 1
+			IL_0015: box [System.Runtime]System.Double
+			IL_001a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_001f: pop
+			IL_0020: ldnull
+			IL_0021: call object Modules.ArrowFunction_GlobalFunctionCallsGlobalFunction/ArrowFunction_L4C20::__js_call__(object)
+			IL_0026: pop
+			IL_0027: ldnull
+			IL_0028: ret
 		} // end of method ArrowFunction_L8C25::__js_call__
 
 	} // end of class ArrowFunction_L8C25
@@ -276,7 +280,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 181 (0xb5)
+		// Code size: 170 (0xaa)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ArrowFunction_GlobalFunctionCallsGlobalFunction/Scope,
@@ -284,7 +288,8 @@
 			[2] object[],
 			[3] class Modules.ArrowFunction_GlobalFunctionCallsGlobalFunction/ArrowFunction_L4C20/FunctionObject,
 			[4] object,
-			[5] class Modules.ArrowFunction_GlobalFunctionCallsGlobalFunction/ArrowFunction_L8C25/FunctionObject
+			[5] class Modules.ArrowFunction_GlobalFunctionCallsGlobalFunction/ArrowFunction_L8C25/FunctionObject,
+			[6] class [JavaScriptRuntime]JavaScriptRuntime.Console
 		)
 
 		IL_0000: newobj instance void Modules.ArrowFunction_GlobalFunctionCallsGlobalFunction/Scope::.ctor()
@@ -342,16 +347,15 @@
 		IL_0080: ldnull
 		IL_0081: call object Modules.ArrowFunction_GlobalFunctionCallsGlobalFunction/ArrowFunction_L8C25::__js_call__(class Modules.ArrowFunction_GlobalFunctionCallsGlobalFunction/Scope, object)
 		IL_0086: pop
-		IL_0087: ldstr "console"
-		IL_008c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0091: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0096: ldstr "log"
-		IL_009b: ldstr "finally is now"
-		IL_00a0: ldc.r8 3
-		IL_00a9: box [System.Runtime]System.Double
-		IL_00ae: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_00b3: pop
-		IL_00b4: ret
+		IL_0087: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_008c: stloc.s 6
+		IL_008e: ldloc.s 6
+		IL_0090: ldstr "finally is now"
+		IL_0095: ldc.r8 3
+		IL_009e: box [System.Runtime]System.Double
+		IL_00a3: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_00a8: pop
+		IL_00a9: ret
 	} // end of method ArrowFunction_GlobalFunctionCallsGlobalFunction::__js_module_init__
 
 } // end of class Modules.ArrowFunction_GlobalFunctionCallsGlobalFunction

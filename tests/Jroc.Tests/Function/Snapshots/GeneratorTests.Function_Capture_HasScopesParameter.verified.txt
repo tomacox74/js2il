@@ -196,13 +196,13 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 111 (0x6f)
+		// Code size: 96 (0x60)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Function_Capture_HasScopesParameter/Scope,
 			[1] class Modules.Function_Capture_HasScopesParameter/captureOuter/FunctionObject_FunctionDeclaration_76C99FCD_captureOuter,
 			[2] object[],
-			[3] object,
+			[3] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 			[4] object
 		)
 
@@ -233,20 +233,17 @@
 		IL_0038: box [System.Runtime]System.Double
 		IL_003d: stfld object Modules.Function_Capture_HasScopesParameter/Scope::outerValue
 		IL_0042: nop
-		IL_0043: ldstr "console"
-		IL_0048: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_004d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0052: stloc.3
-		IL_0053: ldloc.1
-		IL_0054: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0059: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
-		IL_005e: stloc.s 4
-		IL_0060: ldloc.3
-		IL_0061: ldstr "log"
-		IL_0066: ldloc.s 4
-		IL_0068: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_006d: pop
-		IL_006e: ret
+		IL_0043: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0048: stloc.3
+		IL_0049: ldloc.1
+		IL_004a: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_004f: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
+		IL_0054: stloc.s 4
+		IL_0056: ldloc.3
+		IL_0057: ldloc.s 4
+		IL_0059: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_005e: pop
+		IL_005f: ret
 	} // end of method Function_Capture_HasScopesParameter::__js_module_init__
 
 } // end of class Modules.Function_Capture_HasScopesParameter

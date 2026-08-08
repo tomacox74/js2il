@@ -95,19 +95,21 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Header size: 1
-			// Code size: 33 (0x21)
+			// Header size: 12
+			// Code size: 20 (0x14)
 			.maxstack 8
+			.locals init (
+				[0] class [JavaScriptRuntime]JavaScriptRuntime.Console
+			)
 
-			IL_0000: ldstr "console"
-			IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_000a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_000f: ldstr "log"
-			IL_0014: ldstr "Hello, World!"
-			IL_0019: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_001e: pop
-			IL_001f: ldnull
-			IL_0020: ret
+			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0005: stloc.0
+			IL_0006: ldloc.0
+			IL_0007: ldstr "Hello, World!"
+			IL_000c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0011: pop
+			IL_0012: ldnull
+			IL_0013: ret
 		} // end of method ArrowFunction_L3C18::__js_call__
 
 	} // end of class ArrowFunction_L3C18
@@ -143,13 +145,14 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 100 (0x64)
+		// Code size: 89 (0x59)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.SetImmediate_ExecutesCallback/Scope,
 			[1] object,
 			[2] object[],
-			[3] class Modules.SetImmediate_ExecutesCallback/ArrowFunction_L3C18/FunctionObject
+			[3] class Modules.SetImmediate_ExecutesCallback/ArrowFunction_L3C18/FunctionObject,
+			[4] class [JavaScriptRuntime]JavaScriptRuntime.Console
 		)
 
 		IL_0000: newobj instance void Modules.SetImmediate_ExecutesCallback/Scope::.ctor()
@@ -180,14 +183,13 @@
 		IL_0039: newarr [System.Runtime]System.Object
 		IL_003e: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::setImmediate(object, object[])
 		IL_0043: pop
-		IL_0044: ldstr "console"
-		IL_0049: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_004e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0053: ldstr "log"
-		IL_0058: ldstr "setImmediate scheduled."
-		IL_005d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0062: pop
-		IL_0063: ret
+		IL_0044: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0049: stloc.s 4
+		IL_004b: ldloc.s 4
+		IL_004d: ldstr "setImmediate scheduled."
+		IL_0052: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0057: pop
+		IL_0058: ret
 	} // end of method SetImmediate_ExecutesCallback::__js_module_init__
 
 } // end of class Modules.SetImmediate_ExecutesCallback

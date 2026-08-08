@@ -59,7 +59,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 142 (0x8e)
+		// Code size: 131 (0x83)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ArrayLiteral/Scope,
@@ -67,7 +67,8 @@
 			[2] float64,
 			[3] float64,
 			[4] float64,
-			[5] string
+			[5] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+			[6] string
 		)
 
 		IL_0000: newobj instance void Modules.ArrayLiteral/Scope::.ctor()
@@ -96,29 +97,28 @@
 			IL_0043: ldloc.3
 			IL_0044: ldloc.s 4
 			IL_0046: clt
-			IL_0048: brfalse IL_008d
+			IL_0048: brfalse IL_0082
 
-			IL_004d: ldstr "console"
-			IL_0052: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_0057: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_005c: ldloc.1
-			IL_005d: ldloc.2
-			IL_005e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
-			IL_0063: castclass [System.Runtime]System.String
-			IL_0068: stloc.s 5
-			IL_006a: ldstr "log"
-			IL_006f: ldstr ""
-			IL_0074: ldloc.s 5
-			IL_0076: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-			IL_007b: pop
-			IL_007c: ldloc.2
-			IL_007d: ldc.r8 1
-			IL_0086: add
-			IL_0087: stloc.2
-			IL_0088: br IL_0039
+			IL_004d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0052: stloc.s 5
+			IL_0054: ldloc.1
+			IL_0055: ldloc.2
+			IL_0056: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
+			IL_005b: castclass [System.Runtime]System.String
+			IL_0060: stloc.s 6
+			IL_0062: ldloc.s 5
+			IL_0064: ldstr ""
+			IL_0069: ldloc.s 6
+			IL_006b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_0070: pop
+			IL_0071: ldloc.2
+			IL_0072: ldc.r8 1
+			IL_007b: add
+			IL_007c: stloc.2
+			IL_007d: br IL_0039
 		// end loop
 
-		IL_008d: ret
+		IL_0082: ret
 	} // end of method ArrayLiteral::__js_module_init__
 
 } // end of class Modules.ArrayLiteral

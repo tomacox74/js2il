@@ -183,14 +183,14 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 163 (0xa3)
+		// Code size: 148 (0x94)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.String_LocaleCompare_Numeric/Scope,
 			[1] class [JavaScriptRuntime]JavaScriptRuntime.Array,
 			[2] object[],
 			[3] class Modules.String_LocaleCompare_Numeric/ArrowFunction_L4C13/FunctionObject,
-			[4] object,
+			[4] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 			[5] string
 		)
 
@@ -238,25 +238,22 @@
 		IL_0065: stelem.ref
 		IL_0066: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Array [JavaScriptRuntime]JavaScriptRuntime.Array::sort(object[])
 		IL_006b: pop
-		IL_006c: ldstr "console"
-		IL_0071: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0076: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_007b: stloc.s 4
-		IL_007d: ldloc.1
-		IL_007e: ldc.i4.1
-		IL_007f: newarr [System.Runtime]System.Object
-		IL_0084: dup
-		IL_0085: ldc.i4.0
-		IL_0086: ldstr ","
-		IL_008b: stelem.ref
-		IL_008c: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
-		IL_0091: stloc.s 5
-		IL_0093: ldloc.s 4
-		IL_0095: ldstr "log"
-		IL_009a: ldloc.s 5
-		IL_009c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00a1: pop
-		IL_00a2: ret
+		IL_006c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0071: stloc.s 4
+		IL_0073: ldloc.1
+		IL_0074: ldc.i4.1
+		IL_0075: newarr [System.Runtime]System.Object
+		IL_007a: dup
+		IL_007b: ldc.i4.0
+		IL_007c: ldstr ","
+		IL_0081: stelem.ref
+		IL_0082: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
+		IL_0087: stloc.s 5
+		IL_0089: ldloc.s 4
+		IL_008b: ldloc.s 5
+		IL_008d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0092: pop
+		IL_0093: ret
 	} // end of method String_LocaleCompare_Numeric::__js_module_init__
 
 } // end of class Modules.String_LocaleCompare_Numeric

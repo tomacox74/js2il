@@ -38,13 +38,13 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 154 (0x9a)
+		// Code size: 124 (0x7c)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ArrayBuffer_Construct_ByteLength/Scope,
 			[1] class [JavaScriptRuntime]JavaScriptRuntime.ArrayBuffer,
 			[2] object,
-			[3] object,
+			[3] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 			[4] object
 		)
 
@@ -63,33 +63,27 @@
 		IL_0038: box [System.Runtime]System.Double
 		IL_003d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
 		IL_0042: stloc.2
-		IL_0043: ldstr "console"
-		IL_0048: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_004d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0052: stloc.3
-		IL_0053: ldloc.1
-		IL_0054: ldstr "byteLength"
-		IL_0059: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_005e: stloc.s 4
-		IL_0060: ldloc.3
-		IL_0061: ldstr "log"
-		IL_0066: ldloc.s 4
-		IL_0068: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_006d: pop
-		IL_006e: ldstr "console"
-		IL_0073: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0078: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_007d: stloc.s 4
-		IL_007f: ldloc.2
-		IL_0080: ldstr "byteLength"
-		IL_0085: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_008a: stloc.3
-		IL_008b: ldloc.s 4
-		IL_008d: ldstr "log"
-		IL_0092: ldloc.3
-		IL_0093: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0098: pop
-		IL_0099: ret
+		IL_0043: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0048: stloc.3
+		IL_0049: ldloc.1
+		IL_004a: ldstr "byteLength"
+		IL_004f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0054: stloc.s 4
+		IL_0056: ldloc.3
+		IL_0057: ldloc.s 4
+		IL_0059: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_005e: pop
+		IL_005f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0064: stloc.3
+		IL_0065: ldloc.2
+		IL_0066: ldstr "byteLength"
+		IL_006b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0070: stloc.s 4
+		IL_0072: ldloc.3
+		IL_0073: ldloc.s 4
+		IL_0075: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_007a: pop
+		IL_007b: ret
 	} // end of method ArrayBuffer_Construct_ByteLength::__js_module_init__
 
 } // end of class Modules.ArrayBuffer_Construct_ByteLength

@@ -160,7 +160,7 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 273 (0x111)
+			// Code size: 262 (0x106)
 			.maxstack 8
 			.locals init (
 				[0] string,
@@ -171,7 +171,8 @@
 				[5] string,
 				[6] bool,
 				[7] float64,
-				[8] object
+				[8] object,
+				[9] class [JavaScriptRuntime]JavaScriptRuntime.Console
 			)
 
 			IL_0000: ldstr "3"
@@ -251,32 +252,31 @@
 			IL_00d6: stloc.s 5
 			IL_00d8: br IL_00dd
 
-			IL_00dd: ldstr "console"
-			IL_00e2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_00e7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_00ec: ldstr "log"
-			IL_00f1: ldc.i4.4
-			IL_00f2: newarr [System.Runtime]System.Object
-			IL_00f7: dup
-			IL_00f8: ldc.i4.0
-			IL_00f9: ldarg.1
-			IL_00fa: stelem.ref
-			IL_00fb: dup
-			IL_00fc: ldc.i4.1
-			IL_00fd: ldloc.3
-			IL_00fe: stelem.ref
-			IL_00ff: dup
-			IL_0100: ldc.i4.2
-			IL_0101: ldloc.s 4
-			IL_0103: stelem.ref
-			IL_0104: dup
-			IL_0105: ldc.i4.3
-			IL_0106: ldloc.s 5
-			IL_0108: stelem.ref
-			IL_0109: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember(object, string, object[])
-			IL_010e: pop
-			IL_010f: ldnull
-			IL_0110: ret
+			IL_00dd: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_00e2: stloc.s 9
+			IL_00e4: ldloc.s 9
+			IL_00e6: ldc.i4.4
+			IL_00e7: newarr [System.Runtime]System.Object
+			IL_00ec: dup
+			IL_00ed: ldc.i4.0
+			IL_00ee: ldarg.1
+			IL_00ef: stelem.ref
+			IL_00f0: dup
+			IL_00f1: ldc.i4.1
+			IL_00f2: ldloc.3
+			IL_00f3: stelem.ref
+			IL_00f4: dup
+			IL_00f5: ldc.i4.2
+			IL_00f6: ldloc.s 4
+			IL_00f8: stelem.ref
+			IL_00f9: dup
+			IL_00fa: ldc.i4.3
+			IL_00fb: ldloc.s 5
+			IL_00fd: stelem.ref
+			IL_00fe: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_0103: pop
+			IL_0104: ldnull
+			IL_0105: ret
 		} // end of method bump::__js_call__
 
 	} // end of class bump

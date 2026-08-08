@@ -109,13 +109,14 @@
 				74 61 54 6f 6b 65 6e 05 00 00 02
 			)
 			// Header size: 12
-			// Code size: 200 (0xc8)
+			// Code size: 189 (0xbd)
 			.maxstack 8
 			.locals init (
 				[0] object,
 				[1] class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate,
 				[2] class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule,
-				[3] object
+				[3] object,
+				[4] class [JavaScriptRuntime]JavaScriptRuntime.Console
 			)
 
 			IL_0000: ldarg.0
@@ -155,47 +156,46 @@
 			IL_0054: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallOwnPropertyMember(object, string, object[])
 			IL_0059: stloc.0
 
-			IL_005a: ldstr "console"
-			IL_005f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_0064: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0069: ldstr "log"
-			IL_006e: ldstr "Written content:"
-			IL_0073: ldloc.0
-			IL_0074: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-			IL_0079: pop
-			IL_007a: ldarg.0
-			IL_007b: ldfld class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate Modules.FSPromises_WriteFile_Utf8/Scope::require
-			IL_0080: stloc.1
-			IL_0081: ldloc.1
-			IL_0082: ldstr "fs"
-			IL_0087: call !!0 [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireRuntime::RequireObject<class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule>(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object)
-			IL_008c: stloc.2
-			IL_008d: ldarg.0
-			IL_008e: ldfld object Modules.FSPromises_WriteFile_Utf8/Scope::testFile
-			IL_0093: stloc.3
-			IL_0094: ldloc.2
-			IL_0095: ldstr "rmSync"
-			IL_009a: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::HasOwnPropertyOverride(object, string)
-			IL_009f: brtrue IL_00b0
+			IL_005a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_005f: stloc.s 4
+			IL_0061: ldloc.s 4
+			IL_0063: ldstr "Written content:"
+			IL_0068: ldloc.0
+			IL_0069: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_006e: pop
+			IL_006f: ldarg.0
+			IL_0070: ldfld class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate Modules.FSPromises_WriteFile_Utf8/Scope::require
+			IL_0075: stloc.1
+			IL_0076: ldloc.1
+			IL_0077: ldstr "fs"
+			IL_007c: call !!0 [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireRuntime::RequireObject<class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule>(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object)
+			IL_0081: stloc.2
+			IL_0082: ldarg.0
+			IL_0083: ldfld object Modules.FSPromises_WriteFile_Utf8/Scope::testFile
+			IL_0088: stloc.3
+			IL_0089: ldloc.2
+			IL_008a: ldstr "rmSync"
+			IL_008f: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::HasOwnPropertyOverride(object, string)
+			IL_0094: brtrue IL_00a5
 
-			IL_00a4: ldloc.2
-			IL_00a5: ldloc.3
-			IL_00a6: callvirt instance void [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule::rmSync(object)
-			IL_00ab: br IL_00c6
+			IL_0099: ldloc.2
+			IL_009a: ldloc.3
+			IL_009b: callvirt instance void [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule::rmSync(object)
+			IL_00a0: br IL_00bb
 
-			IL_00b0: ldloc.2
-			IL_00b1: ldstr "rmSync"
-			IL_00b6: ldc.i4.1
-			IL_00b7: newarr [System.Runtime]System.Object
-			IL_00bc: dup
-			IL_00bd: ldc.i4.0
-			IL_00be: ldloc.3
-			IL_00bf: stelem.ref
-			IL_00c0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallOwnPropertyMember(object, string, object[])
-			IL_00c5: pop
+			IL_00a5: ldloc.2
+			IL_00a6: ldstr "rmSync"
+			IL_00ab: ldc.i4.1
+			IL_00ac: newarr [System.Runtime]System.Object
+			IL_00b1: dup
+			IL_00b2: ldc.i4.0
+			IL_00b3: ldloc.3
+			IL_00b4: stelem.ref
+			IL_00b5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallOwnPropertyMember(object, string, object[])
+			IL_00ba: pop
 
-			IL_00c6: ldnull
-			IL_00c7: ret
+			IL_00bb: ldnull
+			IL_00bc: ret
 		} // end of method ArrowFunction_L7C63::__js_call__
 
 	} // end of class ArrowFunction_L7C63

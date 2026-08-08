@@ -78,13 +78,14 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 122 (0x7a)
+		// Code size: 111 (0x6f)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ControlFlow_ForLoop_Continue_SkipEven/Scope,
 			[1] float64,
 			[2] float64,
-			[3] object
+			[3] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+			[4] object
 		)
 
 		IL_0000: newobj instance void Modules.ControlFlow_ForLoop_Continue_SkipEven/Scope::.ctor()
@@ -98,7 +99,7 @@
 			IL_0013: ldloc.2
 			IL_0014: ldc.r8 10
 			IL_001d: clt
-			IL_001f: brfalse IL_0079
+			IL_001f: brfalse IL_006e
 
 			IL_0024: ldloc.1
 			IL_0025: stloc.2
@@ -109,27 +110,26 @@
 			IL_003a: ceq
 			IL_003c: brfalse IL_0046
 
-			IL_0041: br IL_0068
+			IL_0041: br IL_005d
 
-			IL_0046: ldstr "console"
-			IL_004b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_0050: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0055: ldloc.1
-			IL_0056: box [System.Runtime]System.Double
-			IL_005b: stloc.3
-			IL_005c: ldstr "log"
-			IL_0061: ldloc.3
-			IL_0062: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_0067: pop
+			IL_0046: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_004b: stloc.3
+			IL_004c: ldloc.1
+			IL_004d: box [System.Runtime]System.Double
+			IL_0052: stloc.s 4
+			IL_0054: ldloc.3
+			IL_0055: ldloc.s 4
+			IL_0057: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_005c: pop
 
-			IL_0068: ldloc.1
-			IL_0069: ldc.r8 1
-			IL_0072: add
-			IL_0073: stloc.1
-			IL_0074: br IL_0011
+			IL_005d: ldloc.1
+			IL_005e: ldc.r8 1
+			IL_0067: add
+			IL_0068: stloc.1
+			IL_0069: br IL_0011
 		// end loop
 
-		IL_0079: ret
+		IL_006e: ret
 	} // end of method ControlFlow_ForLoop_Continue_SkipEven::__js_module_init__
 
 } // end of class Modules.ControlFlow_ForLoop_Continue_SkipEven

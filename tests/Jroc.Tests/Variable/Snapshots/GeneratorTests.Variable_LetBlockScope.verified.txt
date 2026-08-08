@@ -59,13 +59,14 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 97 (0x61)
+		// Code size: 75 (0x4b)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Variable_LetBlockScope/Scope,
 			[1] float64,
 			[2] float64,
-			[3] object
+			[3] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+			[4] object
 		)
 
 		IL_0000: newobj instance void Modules.Variable_LetBlockScope/Scope::.ctor()
@@ -76,27 +77,25 @@
 		IL_0011: nop
 		IL_0012: ldc.r8 2
 		IL_001b: stloc.2
-		IL_001c: ldstr "console"
-		IL_0021: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0026: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_002b: ldloc.2
-		IL_002c: box [System.Runtime]System.Double
-		IL_0031: stloc.3
-		IL_0032: ldstr "log"
-		IL_0037: ldloc.3
-		IL_0038: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_003d: pop
-		IL_003e: ldstr "console"
-		IL_0043: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0048: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_004d: ldloc.1
-		IL_004e: box [System.Runtime]System.Double
-		IL_0053: stloc.3
-		IL_0054: ldstr "log"
-		IL_0059: ldloc.3
-		IL_005a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_005f: pop
-		IL_0060: ret
+		IL_001c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0021: stloc.3
+		IL_0022: ldloc.2
+		IL_0023: box [System.Runtime]System.Double
+		IL_0028: stloc.s 4
+		IL_002a: ldloc.3
+		IL_002b: ldloc.s 4
+		IL_002d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0032: pop
+		IL_0033: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0038: stloc.3
+		IL_0039: ldloc.1
+		IL_003a: box [System.Runtime]System.Double
+		IL_003f: stloc.s 4
+		IL_0041: ldloc.3
+		IL_0042: ldloc.s 4
+		IL_0044: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0049: pop
+		IL_004a: ret
 	} // end of method Variable_LetBlockScope::__js_module_init__
 
 } // end of class Modules.Variable_LetBlockScope
