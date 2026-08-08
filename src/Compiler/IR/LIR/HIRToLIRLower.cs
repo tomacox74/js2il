@@ -67,15 +67,25 @@ public sealed partial class HIRToLIRLowerer
     {
         return callableId.AstNode switch
         {
-            FunctionDeclaration function =>
-                !function.Generator,
-            FunctionExpression function =>
-                !function.Generator,
+            FunctionDeclaration => true,
+            FunctionExpression => true,
             MethodDefinition { Value: FunctionExpression method } =>
-                !method.Async && !method.Generator,
+                !method.Async || method.Generator,
             _ => false
         };
     }
+
+    private static bool IsGeneratorCallable(TwoPhase.CallableId callableId)
+        => callableId.AstNode switch
+        {
+            FunctionDeclaration { Generator: true } => true,
+            FunctionExpression { Generator: true } => true,
+            MethodDefinition
+            {
+                Value: FunctionExpression { Generator: true }
+            } => true,
+            _ => false
+        };
 
     // Source-level variables map to the current SSA value (TempVariable) at the current program point.
     // Keyed by BindingInfo reference to correctly handle shadowed variables with the same name.

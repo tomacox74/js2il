@@ -1302,7 +1302,7 @@
 		} // end of class Scope
 
 		.class nested public auto ansi sealed beforefieldinit FunctionObject_FunctionDeclaration_AF64659D_main
-			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsAsyncFunctionObject
 		{
 			// Fields
 			.field private initonly class Modules.TimersPromises_SetInterval_Abort_RejectsActiveIterator/Scope _environment0_TimersPromises_SetInterval_Abort_RejectsActiveIterator
@@ -1320,7 +1320,7 @@
 				.maxstack 8
 
 				IL_0000: ldarg.0
-				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsAsyncFunctionObject::.ctor()
 				IL_0006: ldarg.0
 				IL_0007: ldarg.1
 				IL_0008: stfld class Modules.TimersPromises_SetInterval_Abort_RejectsActiveIterator/Scope Modules.TimersPromises_SetInterval_Abort_RejectsActiveIterator/main/FunctionObject_FunctionDeclaration_AF64659D_main::_environment0_TimersPromises_SetInterval_Abort_RejectsActiveIterator
@@ -1353,50 +1353,22 @@
 			} // end of method FunctionObject_FunctionDeclaration_AF64659D_main::get_RequiresInvocationContext
 
 			.method family hidebysig virtual 
-				instance object CallCore (
+				instance class [JavaScriptRuntime]JavaScriptRuntime.Promise CallCoreAsync (
 					object thisArgument,
 					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 				) cil managed 
 			{
-				// Header size: 12
-				// Code size: 61 (0x3d)
+				// Header size: 1
+				// Code size: 22 (0x16)
 				.maxstack 8
-				.locals init (
-					[0] object
-				)
 
-				.try
-				{
-					IL_0000: ldarg.0
-					IL_0001: ldfld object[] Modules.TimersPromises_SetInterval_Abort_RejectsActiveIterator/main/FunctionObject_FunctionDeclaration_AF64659D_main::_transitionalScopes
-					IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
-					IL_000b: call object Modules.TimersPromises_SetInterval_Abort_RejectsActiveIterator/main::__js_call__(object[], object)
-					IL_0010: stloc.0
-					IL_0011: leave IL_003b
-				} // end .try
-				catch [System.Runtime]System.Exception
-				{
-					IL_0016: dup
-					IL_0017: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-					IL_001c: dup
-					IL_001d: brtrue IL_0028
-
-					IL_0022: pop
-					IL_0023: br IL_0030
-
-					IL_0028: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-					IL_002d: stloc.0
-					IL_002e: pop
-					IL_002f: ldloc.0
-
-					IL_0030: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::reject(object)
-					IL_0035: stloc.0
-					IL_0036: leave IL_003b
-				} // end handler
-
-				IL_003b: ldloc.0
-				IL_003c: ret
-			} // end of method FunctionObject_FunctionDeclaration_AF64659D_main::CallCore
+				IL_0000: ldarg.0
+				IL_0001: ldfld object[] Modules.TimersPromises_SetInterval_Abort_RejectsActiveIterator/main/FunctionObject_FunctionDeclaration_AF64659D_main::_transitionalScopes
+				IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
+				IL_000b: call object Modules.TimersPromises_SetInterval_Abort_RejectsActiveIterator/main::__js_call__(object[], object)
+				IL_0010: castclass [JavaScriptRuntime]JavaScriptRuntime.Promise
+				IL_0015: ret
+			} // end of method FunctionObject_FunctionDeclaration_AF64659D_main::CallCoreAsync
 
 		} // end of class FunctionObject_FunctionDeclaration_AF64659D_main
 

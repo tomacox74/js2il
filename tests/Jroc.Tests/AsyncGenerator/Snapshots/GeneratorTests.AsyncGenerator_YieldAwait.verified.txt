@@ -84,7 +84,7 @@
 				// Code size: 2 (0x2)
 				.maxstack 8
 
-				IL_0000: ldc.i4.0
+				IL_0000: ldc.i4.1
 				IL_0001: ret
 			} // end of method FunctionObject_FunctionDeclaration_30E5A464_g::get_RequiresInvocationContext
 
@@ -95,33 +95,17 @@
 				) cil managed 
 			{
 				// Header size: 1
-				// Code size: 17 (0x11)
+				// Code size: 23 (0x17)
 				.maxstack 8
 
 				IL_0000: ldarg.0
 				IL_0001: ldfld object[] Modules.AsyncGenerator_YieldAwait/g/FunctionObject_FunctionDeclaration_30E5A464_g::_transitionalScopes
 				IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
 				IL_000b: call object Modules.AsyncGenerator_YieldAwait/g::__js_call__(object[], object)
-				IL_0010: ret
+				IL_0010: ldarg.0
+				IL_0011: call object [JavaScriptRuntime]JavaScriptRuntime.GeneratorObject::InitializeInstanceFromFunction(object, object)
+				IL_0016: ret
 			} // end of method FunctionObject_FunctionDeclaration_30E5A464_g::CallCore
-
-			.method family hidebysig virtual 
-				instance object ConstructBodyCore (
-					object receiver,
-					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
-					object newTarget
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 13 (0xd)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: ldfld object[] Modules.AsyncGenerator_YieldAwait/g/FunctionObject_FunctionDeclaration_30E5A464_g::_transitionalScopes
-				IL_0006: ldarg.3
-				IL_0007: call object Modules.AsyncGenerator_YieldAwait/g::__js_call__(object[], object)
-				IL_000c: ret
-			} // end of method FunctionObject_FunctionDeclaration_30E5A464_g::ConstructBodyCore
 
 		} // end of class FunctionObject_FunctionDeclaration_30E5A464_g
 
@@ -631,7 +615,7 @@
 		} // end of class Scope
 
 		.class nested public auto ansi sealed beforefieldinit FunctionObject
-			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsAsyncFunctionObject
 		{
 			// Fields
 			.field private initonly class Modules.AsyncGenerator_YieldAwait/Scope _environment0_AsyncGenerator_YieldAwait
@@ -649,7 +633,7 @@
 				.maxstack 8
 
 				IL_0000: ldarg.0
-				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsAsyncFunctionObject::.ctor()
 				IL_0006: ldarg.0
 				IL_0007: ldarg.1
 				IL_0008: stfld class Modules.AsyncGenerator_YieldAwait/Scope Modules.AsyncGenerator_YieldAwait/ArrowFunction_L10C2/FunctionObject::_environment0_AsyncGenerator_YieldAwait
@@ -682,50 +666,22 @@
 			} // end of method FunctionObject::get_RequiresInvocationContext
 
 			.method family hidebysig virtual 
-				instance object CallCore (
+				instance class [JavaScriptRuntime]JavaScriptRuntime.Promise CallCoreAsync (
 					object thisArgument,
 					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 				) cil managed 
 			{
-				// Header size: 12
-				// Code size: 57 (0x39)
+				// Header size: 1
+				// Code size: 18 (0x12)
 				.maxstack 8
-				.locals init (
-					[0] object
-				)
 
-				.try
-				{
-					IL_0000: ldarg.0
-					IL_0001: ldfld object[] Modules.AsyncGenerator_YieldAwait/ArrowFunction_L10C2/FunctionObject::_transitionalScopes
-					IL_0006: ldnull
-					IL_0007: call object Modules.AsyncGenerator_YieldAwait/ArrowFunction_L10C2::__js_call__(object[], object)
-					IL_000c: stloc.0
-					IL_000d: leave IL_0037
-				} // end .try
-				catch [System.Runtime]System.Exception
-				{
-					IL_0012: dup
-					IL_0013: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-					IL_0018: dup
-					IL_0019: brtrue IL_0024
-
-					IL_001e: pop
-					IL_001f: br IL_002c
-
-					IL_0024: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-					IL_0029: stloc.0
-					IL_002a: pop
-					IL_002b: ldloc.0
-
-					IL_002c: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::reject(object)
-					IL_0031: stloc.0
-					IL_0032: leave IL_0037
-				} // end handler
-
-				IL_0037: ldloc.0
-				IL_0038: ret
-			} // end of method FunctionObject::CallCore
+				IL_0000: ldarg.0
+				IL_0001: ldfld object[] Modules.AsyncGenerator_YieldAwait/ArrowFunction_L10C2/FunctionObject::_transitionalScopes
+				IL_0006: ldnull
+				IL_0007: call object Modules.AsyncGenerator_YieldAwait/ArrowFunction_L10C2::__js_call__(object[], object)
+				IL_000c: castclass [JavaScriptRuntime]JavaScriptRuntime.Promise
+				IL_0011: ret
+			} // end of method FunctionObject::CallCoreAsync
 
 		} // end of class FunctionObject
 
@@ -1321,12 +1277,12 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 144 (0x90)
+		// Code size: 123 (0x7b)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.AsyncGenerator_YieldAwait/Scope,
 			[1] object[],
-			[2] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0,
+			[2] class Modules.AsyncGenerator_YieldAwait/g/FunctionObject_FunctionDeclaration_30E5A464_g,
 			[3] class Modules.AsyncGenerator_YieldAwait/ArrowFunction_L10C2/FunctionObject
 		)
 
@@ -1340,55 +1296,51 @@
 		IL_000f: stelem.ref
 		IL_0010: stloc.1
 		IL_0011: ldloc.1
-		IL_0012: ldftn object Modules.AsyncGenerator_YieldAwait/g::__js_call__(object[], object)
-		IL_0018: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_001d: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
-		IL_0022: ldc.i4.0
-		IL_0023: conv.r8
-		IL_0024: ldstr "g"
-		IL_0029: ldc.i4.0
-		IL_002a: ldc.i4.1
-		IL_002b: call !!0 [JavaScriptRuntime]JavaScriptRuntime.AsyncFunction::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
-		IL_0030: call object [JavaScriptRuntime]JavaScriptRuntime.GeneratorObject::InitializeGeneratorFunctionSurface(object)
-		IL_0035: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
-		IL_003a: call object [JavaScriptRuntime]JavaScriptRuntime.AsyncGeneratorFunction::InitializeFunctionObject(object)
-		IL_003f: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
-		IL_0044: stloc.2
-		IL_0045: ldloc.0
-		IL_0046: ldloc.2
-		IL_0047: stfld object Modules.AsyncGenerator_YieldAwait/Scope::g
-		IL_004c: nop
-		IL_004d: nop
-		IL_004e: ldc.i4.1
-		IL_004f: newarr [System.Runtime]System.Object
-		IL_0054: dup
-		IL_0055: ldc.i4.0
-		IL_0056: ldloc.0
-		IL_0057: stelem.ref
-		IL_0058: stloc.1
-		IL_0059: ldloc.1
+		IL_0012: newobj instance void Modules.AsyncGenerator_YieldAwait/g/FunctionObject_FunctionDeclaration_30E5A464_g::.ctor(object[])
+		IL_0017: ldc.i4.0
+		IL_0018: conv.r8
+		IL_0019: ldstr "g"
+		IL_001e: ldc.i4.1
+		IL_001f: ldc.i4.1
+		IL_0020: call !!0 [JavaScriptRuntime]JavaScriptRuntime.AsyncFunction::InitializeFunctionInstance<class Modules.AsyncGenerator_YieldAwait/g/FunctionObject_FunctionDeclaration_30E5A464_g>(!!0, float64, string, bool, bool)
+		IL_0025: call object [JavaScriptRuntime]JavaScriptRuntime.AsyncGeneratorFunction::InitializeFunctionObject(object)
+		IL_002a: castclass Modules.AsyncGenerator_YieldAwait/g/FunctionObject_FunctionDeclaration_30E5A464_g
+		IL_002f: stloc.2
+		IL_0030: ldloc.0
+		IL_0031: ldloc.2
+		IL_0032: stfld object Modules.AsyncGenerator_YieldAwait/Scope::g
+		IL_0037: nop
+		IL_0038: nop
+		IL_0039: ldc.i4.1
+		IL_003a: newarr [System.Runtime]System.Object
+		IL_003f: dup
+		IL_0040: ldc.i4.0
+		IL_0041: ldloc.0
+		IL_0042: stelem.ref
+		IL_0043: stloc.1
+		IL_0044: ldloc.1
+		IL_0045: ldc.i4.0
+		IL_0046: ldelem.ref
+		IL_0047: castclass Modules.AsyncGenerator_YieldAwait/Scope
+		IL_004c: ldloc.1
+		IL_004d: newobj instance void Modules.AsyncGenerator_YieldAwait/ArrowFunction_L10C2/FunctionObject::.ctor(class Modules.AsyncGenerator_YieldAwait/Scope, object[])
+		IL_0052: ldc.i4.0
+		IL_0053: conv.r8
+		IL_0054: ldstr ""
+		IL_0059: ldc.i4.0
 		IL_005a: ldc.i4.0
-		IL_005b: ldelem.ref
-		IL_005c: castclass Modules.AsyncGenerator_YieldAwait/Scope
-		IL_0061: ldloc.1
-		IL_0062: newobj instance void Modules.AsyncGenerator_YieldAwait/ArrowFunction_L10C2/FunctionObject::.ctor(class Modules.AsyncGenerator_YieldAwait/Scope, object[])
-		IL_0067: ldc.i4.0
-		IL_0068: conv.r8
-		IL_0069: ldstr ""
-		IL_006e: ldc.i4.0
-		IL_006f: ldc.i4.0
-		IL_0070: call !!0 [JavaScriptRuntime]JavaScriptRuntime.AsyncFunction::InitializeFunctionInstance<class Modules.AsyncGenerator_YieldAwait/ArrowFunction_L10C2/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_0075: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.AsyncGenerator_YieldAwait/ArrowFunction_L10C2/FunctionObject>(!!0)
-		IL_007a: stloc.3
-		IL_007b: ldc.i4.0
-		IL_007c: newarr [System.Runtime]System.Object
-		IL_0081: stloc.1
-		IL_0082: ldloc.3
-		IL_0083: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0088: ldloc.1
-		IL_0089: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs(object, object[], object[])
-		IL_008e: pop
-		IL_008f: ret
+		IL_005b: call !!0 [JavaScriptRuntime]JavaScriptRuntime.AsyncFunction::InitializeFunctionInstance<class Modules.AsyncGenerator_YieldAwait/ArrowFunction_L10C2/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_0060: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.AsyncGenerator_YieldAwait/ArrowFunction_L10C2/FunctionObject>(!!0)
+		IL_0065: stloc.3
+		IL_0066: ldc.i4.0
+		IL_0067: newarr [System.Runtime]System.Object
+		IL_006c: stloc.1
+		IL_006d: ldloc.3
+		IL_006e: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0073: ldloc.1
+		IL_0074: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs(object, object[], object[])
+		IL_0079: pop
+		IL_007a: ret
 	} // end of method AsyncGenerator_YieldAwait::__js_module_init__
 
 } // end of class Modules.AsyncGenerator_YieldAwait

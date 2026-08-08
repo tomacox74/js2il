@@ -265,19 +265,27 @@
 		} // end of class FunctionObject_ClassConstructor_0CEBEFB8_Fetcher
 
 		.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassStaticMethod_A234F6EB_Fetcher_getData
-			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsAsyncFunctionObject
 		{
+			// Fields
+			.field private initonly object[] _transitionalScopes
+
 			// Methods
 			.method public hidebysig specialname rtspecialname 
-				instance void .ctor () cil managed 
+				instance void .ctor (
+					object[] capture0
+				) cil managed 
 			{
 				// Header size: 1
-				// Code size: 7 (0x7)
+				// Code size: 14 (0xe)
 				.maxstack 8
 
 				IL_0000: ldarg.0
-				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-				IL_0006: ret
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsAsyncFunctionObject::.ctor()
+				IL_0006: ldarg.0
+				IL_0007: ldarg.1
+				IL_0008: stfld object[] Modules.Async_StaticMethod_SimpleAwait/Fetcher/FunctionObject_ClassStaticMethod_A234F6EB_Fetcher_getData::_transitionalScopes
+				IL_000d: ret
 			} // end of method FunctionObject_ClassStaticMethod_A234F6EB_Fetcher_getData::.ctor
 
 			.method public hidebysig specialname virtual 
@@ -303,18 +311,22 @@
 			} // end of method FunctionObject_ClassStaticMethod_A234F6EB_Fetcher_getData::get_RequiresInvocationContext
 
 			.method family hidebysig virtual 
-				instance object CallCore (
+				instance class [JavaScriptRuntime]JavaScriptRuntime.Promise CallCoreAsync (
 					object thisArgument,
 					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 				) cil managed 
 			{
 				// Header size: 1
-				// Code size: 6 (0x6)
+				// Code size: 18 (0x12)
 				.maxstack 8
 
-				IL_0000: call object Modules.Async_StaticMethod_SimpleAwait/Fetcher::getData(object[], object)
-				IL_0005: ret
-			} // end of method FunctionObject_ClassStaticMethod_A234F6EB_Fetcher_getData::CallCore
+				IL_0000: ldarg.0
+				IL_0001: ldfld object[] Modules.Async_StaticMethod_SimpleAwait/Fetcher/FunctionObject_ClassStaticMethod_A234F6EB_Fetcher_getData::_transitionalScopes
+				IL_0006: ldnull
+				IL_0007: call object Modules.Async_StaticMethod_SimpleAwait/Fetcher::getData(object[], object)
+				IL_000c: castclass [JavaScriptRuntime]JavaScriptRuntime.Promise
+				IL_0011: ret
+			} // end of method FunctionObject_ClassStaticMethod_A234F6EB_Fetcher_getData::CallCoreAsync
 
 		} // end of class FunctionObject_ClassStaticMethod_A234F6EB_Fetcher_getData
 

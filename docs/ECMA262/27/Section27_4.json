@@ -67,24 +67,36 @@
     {
       "clause": "27.4.4.1",
       "title": "length",
-      "status": "Not Yet Supported",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-asyncgeneratorfunction-instance-length"
     },
     {
       "clause": "27.4.4.2",
       "title": "name",
-      "status": "Not Yet Supported",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-asyncgeneratorfunction-instance-name"
     },
     {
       "clause": "27.4.4.3",
       "title": "prototype",
-      "status": "Not Yet Supported",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-asyncgeneratorfunction-instance-prototype"
     }
   ],
   "support": {
     "entries": [
+      {
+        "clause": "27.4.4",
+        "feature": "Compiled async-generator callables are generated function objects",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-asyncgeneratorfunction-instances",
+        "testScripts": [
+          "tests/Jroc.Tests/AsyncGenerator/JavaScript/AsyncGenerator_GeneratedFunctionObject_Semantics.js",
+          "tests/Jroc.Test262.Tests/built-ins/AsyncGeneratorFunction/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/expressions/async-generator/ExecutionTests.cs"
+        ],
+        "notes": "Async-generator declarations, expressions, object methods, and class methods use generated JsFunctionObject instances with stable identity, own name/length/prototype properties, AsyncGeneratorFunction.prototype inheritance, arbitrary properties, and no [[Construct]]. Each invocation creates a fresh async iterator and execution scope."
+      },
       {
         "clause": "27.4",
         "feature": "async generator functions via syntax (`async function*`) compile to async iterators (next/return/throw) and integrate with `for await..of`",

@@ -103,16 +103,7 @@ internal sealed class GeneratedFunctionObjectEmitter
                     CallableKind.FunctionDeclaration
                     or CallableKind.FunctionExpression
                 && !plan.Callable.IsMethodDefinition
-                && plan.Callable.AstNode is not FunctionDeclaration
-                    {
-                        Async: true,
-                        Generator: false
-                    }
-                && plan.Callable.AstNode is not FunctionExpression
-                    {
-                        Async: true,
-                        Generator: false
-                    }
+                && plan.IsConstructable
                 ? MetadataTokens.MethodDefinitionHandle(nextMethodRow++)
                 : default;
             var constructAdapter = plan.IsConstructable
@@ -124,7 +115,9 @@ internal sealed class GeneratedFunctionObjectEmitter
                 | TypeAttributes.Class
                 | TypeAttributes.Sealed
                 | TypeAttributes.BeforeFieldInit,
-                _bclReferences.JsFunctionObjectType,
+                plan.ReturnKind == GeneratedFunctionReturnKind.Promise
+                    ? _bclReferences.JsAsyncFunctionObjectType
+                    : _bclReferences.JsFunctionObjectType,
                 firstFieldOverride: null,
                 firstMethodOverride: constructor);
 
@@ -213,7 +206,10 @@ internal sealed class GeneratedFunctionObjectEmitter
                 metadata.CallAdapterHandle,
                 EmitCallAdapter(metadata),
                 metadata.Plan,
-                "CallCore");
+                metadata.Plan.ReturnKind
+                    == GeneratedFunctionReturnKind.Promise
+                    ? "CallCoreAsync"
+                    : "CallCore");
 
             if (!metadata.ConstructBodyAdapterHandle.IsNil)
             {
@@ -242,7 +238,10 @@ internal sealed class GeneratedFunctionObjectEmitter
         var il = new BlobBuilder();
         var encoder = new InstructionEncoder(il);
         encoder.OpCode(ILOpCode.Ldarg_0);
-        encoder.Call(_bclReferences.JsFunctionObject_Ctor_Ref);
+        encoder.Call(metadata.Plan.ReturnKind
+                == GeneratedFunctionReturnKind.Promise
+            ? _bclReferences.JsAsyncFunctionObject_Ctor_Ref
+            : _bclReferences.JsFunctionObject_Ctor_Ref);
 
         for (var index = 0; index < parameterTypes.Length; index++)
         {
@@ -296,75 +295,36 @@ internal sealed class GeneratedFunctionObjectEmitter
 
     private MethodDefinitionHandle EmitCallAdapter(GeneratedFunctionObjectMetadata metadata)
     {
-        var signature = CreateCallAdapterSignature();
+        var returnsPromise = metadata.Plan.ReturnKind
+            == GeneratedFunctionReturnKind.Promise;
+        var signature = CreateCallAdapterSignature(returnsPromise);
         var il = new BlobBuilder();
-        var controlFlow = metadata.Plan.ReturnKind
-            == GeneratedFunctionReturnKind.Promise
-            ? new ControlFlowBuilder()
-            : null;
-        var encoder = controlFlow == null
-            ? new InstructionEncoder(il)
-            : new InstructionEncoder(il, controlFlow);
-        var localSignature = default(StandaloneSignatureHandle);
+        var encoder = new InstructionEncoder(il);
 
         if (metadata.Plan.Callable.Kind == CallableKind.ClassConstructor)
         {
             EmitTypeError(encoder, "Class constructor cannot be invoked without 'new'");
         }
-        else if (metadata.Plan.ReturnKind == GeneratedFunctionReturnKind.Promise)
-        {
-            localSignature = CreateObjectLocalSignature();
-            var tryStart = encoder.DefineLabel();
-            var tryEnd = encoder.DefineLabel();
-            var handlerStart = encoder.DefineLabel();
-            var handlerEnd = encoder.DefineLabel();
-            var done = encoder.DefineLabel();
-
-            encoder.MarkLabel(tryStart);
-            EmitCanonicalCall(metadata, encoder);
-            encoder.StoreLocal(0);
-            encoder.Branch(ILOpCode.Leave, done);
-            encoder.MarkLabel(tryEnd);
-
-            encoder.MarkLabel(handlerStart);
-            var rejectReasonReady = encoder.DefineLabel();
-            var wrappedThrownValue = encoder.DefineLabel();
-            encoder.OpCode(ILOpCode.Dup);
-            encoder.OpCode(ILOpCode.Isinst);
-            encoder.Token(_bclReferences.JsThrownValueExceptionType);
-            encoder.OpCode(ILOpCode.Dup);
-            encoder.Branch(ILOpCode.Brtrue, wrappedThrownValue);
-            encoder.OpCode(ILOpCode.Pop);
-            encoder.Branch(ILOpCode.Br, rejectReasonReady);
-
-            encoder.MarkLabel(wrappedThrownValue);
-            encoder.OpCode(ILOpCode.Callvirt);
-            encoder.Token(
-                _bclReferences.JsThrownValueException_Value_Getter_Ref);
-            encoder.StoreLocal(0);
-            encoder.OpCode(ILOpCode.Pop);
-            encoder.LoadLocal(0);
-
-            encoder.MarkLabel(rejectReasonReady);
-            encoder.Call(_bclReferences.Promise_Reject_Object_Ref);
-            encoder.StoreLocal(0);
-            encoder.Branch(ILOpCode.Leave, done);
-            encoder.MarkLabel(handlerEnd);
-
-            encoder.MarkLabel(done);
-            encoder.LoadLocal(0);
-            encoder.OpCode(ILOpCode.Ret);
-
-            controlFlow!.AddCatchRegion(
-                tryStart,
-                tryEnd,
-                handlerStart,
-                handlerEnd,
-                _bclReferences.ExceptionType);
-        }
         else
         {
             EmitCanonicalCall(metadata, encoder);
+            if (returnsPromise)
+            {
+                encoder.OpCode(ILOpCode.Castclass);
+                encoder.Token(_bclReferences.PromiseType);
+            }
+            if (metadata.Plan.ReturnKind
+                    == GeneratedFunctionReturnKind.AsyncGenerator
+                || metadata.Plan.ReturnKind
+                    == GeneratedFunctionReturnKind.Generator
+                    && HasSimpleGeneratorParameters(
+                        metadata.Plan.Callable.AstNode))
+            {
+                encoder.OpCode(ILOpCode.Ldarg_0);
+                encoder.Call(
+                    _bclReferences
+                        .GeneratorObject_InitializeInstanceFromFunction_Ref);
+            }
             encoder.OpCode(ILOpCode.Ret);
         }
 
@@ -373,16 +333,35 @@ internal sealed class GeneratedFunctionObjectEmitter
             MethodAttributes.Family
             | MethodAttributes.HideBySig
             | MethodAttributes.Virtual,
-            "CallCore",
+            metadata.Plan.ReturnKind
+                == GeneratedFunctionReturnKind.Promise
+                ? "CallCoreAsync"
+                : "CallCore",
             signature,
             AddMethodBody(
                 encoder,
                 maxStack: System.Math.Max(
                     8,
-                    metadata.Plan.Signature.JsParamCount + 3),
-                localVariablesSignature: localSignature),
+                    metadata.Plan.Signature.JsParamCount + 3)),
             ["thisArgument", "arguments"],
             inParameterIndex: 1);
+    }
+
+    private static bool HasSimpleGeneratorParameters(Node? callableNode)
+    {
+        var parameters = callableNode switch
+        {
+            FunctionDeclaration function => function.Params,
+            FunctionExpression function => function.Params,
+            Acornima.Ast.MethodDefinition
+            {
+                Value: FunctionExpression function
+            } => function.Params,
+            _ => default
+        };
+
+        return parameters.Count == 0
+            || parameters.All(parameter => parameter is Identifier);
     }
 
     private MethodDefinitionHandle EmitStateAccessor(
@@ -583,7 +562,10 @@ internal sealed class GeneratedFunctionObjectEmitter
                 encoder.OpCode(ILOpCode.Ldnull);
             }
         }
-        else if ((plan.Callable.Kind is CallableKind.ClassStaticMethod
+        else if ((plan.Callable.Kind is CallableKind.ClassMethod
+                or CallableKind.ClassGetter
+                or CallableKind.ClassSetter
+                or CallableKind.ClassStaticMethod
                 or CallableKind.ClassStaticGetter
                 or CallableKind.ClassStaticSetter)
             && plan.Signature.ScopeAbiKind
@@ -930,14 +912,26 @@ internal sealed class GeneratedFunctionObjectEmitter
             : throw new InvalidOperationException(
                 $"State kind '{kind}' does not define an invocation accessor.");
 
-    private BlobHandle CreateCallAdapterSignature()
+    private BlobHandle CreateCallAdapterSignature(bool returnsPromise)
     {
         var blob = new BlobBuilder();
         new BlobEncoder(blob)
             .MethodSignature(isInstanceMethod: true)
             .Parameters(
                 2,
-                returnType => returnType.Type().Object(),
+                returnType =>
+                {
+                    if (returnsPromise)
+                    {
+                        returnType.Type().Type(
+                            _bclReferences.PromiseType,
+                            isValueType: false);
+                    }
+                    else
+                    {
+                        returnType.Type().Object();
+                    }
+                },
                 parameters =>
                 {
                     parameters.AddParameter().Type().Object();
@@ -984,18 +978,6 @@ internal sealed class GeneratedFunctionObjectEmitter
         parameter.Type(isByRef: true).Type(
             _bclReferences.JsCallArgumentsType,
             isValueType: true);
-    }
-
-    private StandaloneSignatureHandle CreateObjectLocalSignature()
-    {
-        var blob = new BlobBuilder();
-        new BlobEncoder(blob)
-            .LocalVariableSignature(1)
-            .AddVariable()
-            .Type()
-            .Object();
-        return _metadataBuilder.AddStandaloneSignature(
-            _metadataBuilder.GetOrAddBlob(blob));
     }
 
     private int AddMethodBody(

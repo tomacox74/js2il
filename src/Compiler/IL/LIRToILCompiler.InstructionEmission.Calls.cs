@@ -704,60 +704,70 @@ internal sealed partial class LIRToILCompiler
                         throw new InvalidOperationException($"Cannot emit direct instance call for '{callUserClass.RegistryClassName}.{callUserClass.MethodName}' - missing method token");
                     }
 
-                    // Receiver is implicit 'this'
-                    ilEncoder.OpCode(ILOpCode.Ldarg_0);
-
-                    if (callUserClass.RequiresPrivateBrandCheck
-                        && _serviceProvider.GetService<ClassRegistry>() is { } privateMethodClassRegistry
-                        && privateMethodClassRegistry.TryGet(callUserClass.RegistryClassName, out var privateMethodOwnerTypeHandle))
+                    if (callUserClass.IsGenerator)
                     {
-                        ilEncoder.OpCode(ILOpCode.Dup);
-                        ilEncoder.OpCode(ILOpCode.Ldtoken);
-                        ilEncoder.Token(privateMethodOwnerTypeHandle);
-                        var getTypeFromHandle = _memberRefRegistry.GetOrAddMethod(
-                            typeof(Type),
-                            nameof(Type.GetTypeFromHandle),
-                            parameterTypes: new[] { typeof(RuntimeTypeHandle) });
-                        ilEncoder.OpCode(ILOpCode.Call);
-                        ilEncoder.Token(getTypeFromHandle);
-                        var validateReceiver = _memberRefRegistry.GetOrAddMethod(
-                            typeof(JavaScriptRuntime.RuntimeServices),
-                            nameof(JavaScriptRuntime.RuntimeServices.ValidateDirectClassPrivateMethodReceiver),
-                            parameterTypes: new[] { typeof(object), typeof(Type) });
-                        ilEncoder.OpCode(ILOpCode.Call);
-                        ilEncoder.Token(validateReceiver);
-                        ilEncoder.OpCode(ILOpCode.Pop);
+                        EmitCallGeneratorInstanceMethod(
+                            callUserClass.MethodName,
+                            callUserClass.Arguments,
+                            ilEncoder,
+                            allocation,
+                            methodDescriptor);
                     }
-
-                    // Async class methods use the standard jroc calling convention and expect a leading scopes array.
-                    if (callUserClass.HasScopesParameter)
+                    else
                     {
-                        EmitLoadScopesArrayOrEmpty(ilEncoder, methodDescriptor);
-                        ilEncoder.OpCode(ILOpCode.Ldnull);
-                    }
+                        // Receiver is implicit 'this'
+                        ilEncoder.OpCode(ILOpCode.Ldarg_0);
 
-                    // Match the declared signature (ignore extra args, pad missing args with null).
-                    int jsParamCount = callUserClass.MaxParamCount;
-                    int argsToPass = Math.Min(callUserClass.Arguments.Count, jsParamCount);
-                    IReadOnlyList<Type?> parameterClrTypes = Array.Empty<Type?>();
-                    if (_serviceProvider.GetService<ClassRegistry>() is { } classRegistry)
-                    {
-                        classRegistry.TryGetMethodParameterClrTypes(callUserClass.RegistryClassName, callUserClass.MethodName, out parameterClrTypes);
-                    }
+                        if (callUserClass.RequiresPrivateBrandCheck
+                            && _serviceProvider.GetService<ClassRegistry>() is { } privateMethodClassRegistry
+                            && privateMethodClassRegistry.TryGet(callUserClass.RegistryClassName, out var privateMethodOwnerTypeHandle))
+                        {
+                            ilEncoder.OpCode(ILOpCode.Dup);
+                            ilEncoder.OpCode(ILOpCode.Ldtoken);
+                            ilEncoder.Token(privateMethodOwnerTypeHandle);
+                            var getTypeFromHandle = _memberRefRegistry.GetOrAddMethod(
+                                typeof(Type),
+                                nameof(Type.GetTypeFromHandle),
+                                parameterTypes: new[] { typeof(RuntimeTypeHandle) });
+                            ilEncoder.OpCode(ILOpCode.Call);
+                            ilEncoder.Token(getTypeFromHandle);
+                            var validateReceiver = _memberRefRegistry.GetOrAddMethod(
+                                typeof(JavaScriptRuntime.RuntimeServices),
+                                nameof(JavaScriptRuntime.RuntimeServices.ValidateDirectClassPrivateMethodReceiver),
+                                parameterTypes: new[] { typeof(object), typeof(Type) });
+                            ilEncoder.OpCode(ILOpCode.Call);
+                            ilEncoder.Token(validateReceiver);
+                            ilEncoder.OpCode(ILOpCode.Pop);
+                        }
 
-                    for (int i = 0; i < argsToPass; i++)
-                    {
-                        var parameterClrType = i < parameterClrTypes.Count ? parameterClrTypes[i] : null;
-                        EmitLoadTempAsParameterType(callUserClass.Arguments[i], parameterClrType, ilEncoder, allocation, methodDescriptor);
-                    }
+                        if (callUserClass.HasScopesParameter)
+                        {
+                            EmitLoadScopesArrayOrEmpty(ilEncoder, methodDescriptor);
+                            ilEncoder.OpCode(ILOpCode.Ldnull);
+                        }
 
-                    for (int i = argsToPass; i < jsParamCount; i++)
-                    {
-                        ilEncoder.OpCode(ILOpCode.Ldnull);
-                    }
+                        int jsParamCount = callUserClass.MaxParamCount;
+                        int argsToPass = Math.Min(callUserClass.Arguments.Count, jsParamCount);
+                        IReadOnlyList<Type?> parameterClrTypes = Array.Empty<Type?>();
+                        if (_serviceProvider.GetService<ClassRegistry>() is { } classRegistry)
+                        {
+                            classRegistry.TryGetMethodParameterClrTypes(callUserClass.RegistryClassName, callUserClass.MethodName, out parameterClrTypes);
+                        }
 
-                    ilEncoder.OpCode(ILOpCode.Callvirt);
-                    ilEncoder.Token(callUserClass.MethodHandle);
+                        for (int i = 0; i < argsToPass; i++)
+                        {
+                            var parameterClrType = i < parameterClrTypes.Count ? parameterClrTypes[i] : null;
+                            EmitLoadTempAsParameterType(callUserClass.Arguments[i], parameterClrType, ilEncoder, allocation, methodDescriptor);
+                        }
+
+                        for (int i = argsToPass; i < jsParamCount; i++)
+                        {
+                            ilEncoder.OpCode(ILOpCode.Ldnull);
+                        }
+
+                        ilEncoder.OpCode(ILOpCode.Callvirt);
+                        ilEncoder.Token(callUserClass.MethodHandle);
+                    }
 
                     if (IsSchedulerStackResident(callUserClass.Result))
                     {
@@ -916,48 +926,61 @@ internal sealed partial class LIRToILCompiler
                         throw new InvalidOperationException($"Cannot emit base method call for '{callBaseMethod.BaseRegistryClassName}.{callBaseMethod.MethodName}' - missing method token");
                     }
 
-                    if (methodDescriptor.IsStatic)
+                    if (callBaseMethod.IsGenerator)
                     {
-                        var getCurrentThis = _memberRefRegistry.GetOrAddMethod(
-                            typeof(JavaScriptRuntime.RuntimeServices),
-                            nameof(JavaScriptRuntime.RuntimeServices.GetCurrentLexicalSuperPropertyReceiver));
-                        ilEncoder.OpCode(ILOpCode.Call);
-                        ilEncoder.Token(getCurrentThis);
-
-                        if (_serviceProvider.GetService<ClassRegistry>() is not { } classRegistry
-                            || !classRegistry.TryGet(callBaseMethod.BaseRegistryClassName, out var baseTypeHandle))
-                        {
-                            throw new InvalidOperationException($"Cannot emit lexical base method call for '{callBaseMethod.BaseRegistryClassName}.{callBaseMethod.MethodName}' - missing base type token");
-                        }
-
-                        ilEncoder.OpCode(ILOpCode.Castclass);
-                        ilEncoder.Token(baseTypeHandle);
+                        EmitCallGeneratorBaseMethod(
+                            callBaseMethod.BaseRegistryClassName,
+                            callBaseMethod.MethodName,
+                            callBaseMethod.Arguments,
+                            ilEncoder,
+                            allocation,
+                            methodDescriptor);
                     }
                     else
                     {
-                        ilEncoder.OpCode(ILOpCode.Ldarg_0);
-                    }
+                        if (methodDescriptor.IsStatic)
+                        {
+                            var getCurrentThis = _memberRefRegistry.GetOrAddMethod(
+                                typeof(JavaScriptRuntime.RuntimeServices),
+                                nameof(JavaScriptRuntime.RuntimeServices.GetCurrentLexicalSuperPropertyReceiver));
+                            ilEncoder.OpCode(ILOpCode.Call);
+                            ilEncoder.Token(getCurrentThis);
 
-                    if (callBaseMethod.HasScopesParameter)
-                    {
-                        EmitLoadScopesArrayOrEmpty(ilEncoder, methodDescriptor);
-                        ilEncoder.OpCode(ILOpCode.Ldnull);
-                    }
+                            if (_serviceProvider.GetService<ClassRegistry>() is not { } classRegistry
+                                || !classRegistry.TryGet(callBaseMethod.BaseRegistryClassName, out var baseTypeHandle))
+                            {
+                                throw new InvalidOperationException($"Cannot emit lexical base method call for '{callBaseMethod.BaseRegistryClassName}.{callBaseMethod.MethodName}' - missing base type token");
+                            }
 
-                    int jsParamCount = callBaseMethod.MaxParamCount;
-                    int argsToPass = Math.Min(callBaseMethod.Arguments.Count, jsParamCount);
-                    for (int i = 0; i < argsToPass; i++)
-                    {
-                        EmitLoadTemp(callBaseMethod.Arguments[i], ilEncoder, allocation, methodDescriptor);
-                    }
+                            ilEncoder.OpCode(ILOpCode.Castclass);
+                            ilEncoder.Token(baseTypeHandle);
+                        }
+                        else
+                        {
+                            ilEncoder.OpCode(ILOpCode.Ldarg_0);
+                        }
 
-                    for (int i = argsToPass; i < jsParamCount; i++)
-                    {
-                        ilEncoder.OpCode(ILOpCode.Ldnull);
-                    }
+                        if (callBaseMethod.HasScopesParameter)
+                        {
+                            EmitLoadScopesArrayOrEmpty(ilEncoder, methodDescriptor);
+                            ilEncoder.OpCode(ILOpCode.Ldnull);
+                        }
 
-                    ilEncoder.OpCode(ILOpCode.Call);
-                    ilEncoder.Token(callBaseMethod.MethodHandle);
+                        int jsParamCount = callBaseMethod.MaxParamCount;
+                        int argsToPass = Math.Min(callBaseMethod.Arguments.Count, jsParamCount);
+                        for (int i = 0; i < argsToPass; i++)
+                        {
+                            EmitLoadTemp(callBaseMethod.Arguments[i], ilEncoder, allocation, methodDescriptor);
+                        }
+
+                        for (int i = argsToPass; i < jsParamCount; i++)
+                        {
+                            ilEncoder.OpCode(ILOpCode.Ldnull);
+                        }
+
+                        ilEncoder.OpCode(ILOpCode.Call);
+                        ilEncoder.Token(callBaseMethod.MethodHandle);
+                    }
 
                     if (IsMaterialized(callBaseMethod.Result, allocation))
                     {
@@ -1435,6 +1458,111 @@ internal sealed partial class LIRToILCompiler
         {
             ilEncoder.OpCode(ILOpCode.Box);
             ilEncoder.Token(_bclReferences.BooleanType);
+        }
+    }
+
+    private void EmitCallGeneratorInstanceMethod(
+        string methodName,
+        IReadOnlyList<TempVariable> arguments,
+        InstructionEncoder ilEncoder,
+        TempLocalAllocation allocation,
+        MethodDescriptor methodDescriptor)
+    {
+        if (methodDescriptor.IsStatic)
+        {
+            ilEncoder.Call(_memberRefRegistry.GetOrAddMethod(
+                typeof(JavaScriptRuntime.RuntimeServices),
+                nameof(JavaScriptRuntime.RuntimeServices.GetCurrentThis),
+                Type.EmptyTypes));
+        }
+        else
+        {
+            ilEncoder.OpCode(ILOpCode.Ldarg_0);
+        }
+        ilEncoder.Ldstr(_metadataBuilder, methodName);
+        EmitGeneratorCallArguments(
+            arguments,
+            ilEncoder,
+            allocation,
+            methodDescriptor);
+        ilEncoder.Call(_memberRefRegistry.GetOrAddMethod(
+            typeof(JavaScriptRuntime.ObjectRuntime),
+            nameof(JavaScriptRuntime.ObjectRuntime.CallMember),
+            new[] { typeof(object), typeof(string), typeof(object[]) }));
+    }
+
+    private void EmitCallGeneratorBaseMethod(
+        string registryClassName,
+        string methodName,
+        IReadOnlyList<TempVariable> arguments,
+        InstructionEncoder ilEncoder,
+        TempLocalAllocation allocation,
+        MethodDescriptor methodDescriptor)
+    {
+        if (_serviceProvider.GetService<ClassRegistry>() is not
+                { } classRegistry
+            || !classRegistry.TryGet(
+                registryClassName,
+                out var classTypeHandle))
+        {
+            throw new InvalidOperationException(
+                $"Cannot initialize generator instance for '{registryClassName}.{methodName}' because the class type token is missing.");
+        }
+
+        ilEncoder.OpCode(ILOpCode.Ldtoken);
+        ilEncoder.Token(classTypeHandle);
+        ilEncoder.Call(_bclReferences.Type_GetTypeFromHandle_Ref);
+        ilEncoder.Ldstr(_metadataBuilder, "prototype");
+        ilEncoder.Call(_memberRefRegistry.GetOrAddMethod(
+            typeof(JavaScriptRuntime.ObjectRuntime),
+            nameof(JavaScriptRuntime.ObjectRuntime.GetItem),
+            new[] { typeof(object), typeof(string) }));
+        ilEncoder.Ldstr(_metadataBuilder, methodName);
+        ilEncoder.Call(_memberRefRegistry.GetOrAddMethod(
+            typeof(JavaScriptRuntime.ObjectRuntime),
+            nameof(JavaScriptRuntime.ObjectRuntime.GetItem),
+            new[] { typeof(object), typeof(string) }));
+        if (methodDescriptor.IsStatic)
+        {
+            ilEncoder.Call(_memberRefRegistry.GetOrAddMethod(
+                typeof(JavaScriptRuntime.RuntimeServices),
+                nameof(JavaScriptRuntime.RuntimeServices.GetCurrentLexicalSuperPropertyReceiver),
+                Type.EmptyTypes));
+        }
+        else
+        {
+            ilEncoder.OpCode(ILOpCode.Ldarg_0);
+        }
+        EmitGeneratorCallArguments(
+            arguments,
+            ilEncoder,
+            allocation,
+            methodDescriptor);
+        ilEncoder.Call(_memberRefRegistry.GetOrAddMethod(
+            typeof(JavaScriptRuntime.CallableOperations),
+            nameof(JavaScriptRuntime.CallableOperations.Call),
+            new[] { typeof(object), typeof(object), typeof(object[]) }));
+    }
+
+    private void EmitGeneratorCallArguments(
+        IReadOnlyList<TempVariable> arguments,
+        InstructionEncoder ilEncoder,
+        TempLocalAllocation allocation,
+        MethodDescriptor methodDescriptor)
+    {
+        ilEncoder.LoadConstantI4(arguments.Count);
+        ilEncoder.OpCode(ILOpCode.Newarr);
+        ilEncoder.Token(_bclReferences.ObjectType);
+        for (var index = 0; index < arguments.Count; index++)
+        {
+            ilEncoder.OpCode(ILOpCode.Dup);
+            ilEncoder.LoadConstantI4(index);
+            EmitLoadTempAsObject(
+                arguments[index],
+                ilEncoder,
+                allocation,
+                methodDescriptor);
+            ilEncoder.OpCode(ILOpCode.Stelem_ref);
         }
     }
 

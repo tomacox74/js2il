@@ -1258,8 +1258,7 @@ public sealed partial class HIRToLIRLowerer
             FunctionName: functionName));
         var supportsGeneratedMethodObject =
             funcExpr.IsNonConstructible
-            && !funcScope.IsAsync
-            && !funcScope.IsGenerator;
+            && (!funcScope.IsAsync || funcScope.IsGenerator);
         DefineTempStorage(
             resultTempVar,
             GetMaterializedCallableStorage(
@@ -1268,7 +1267,8 @@ public sealed partial class HIRToLIRLowerer
                     !funcExpr.IsNonConstructible
                     || supportsGeneratedMethodObject));
 
-        if (funcExpr.IsNonConstructible)
+        if (funcExpr.IsNonConstructible
+            && !IsGeneratorCallable(funcExpr.CallableId))
         {
             resultTempVar = EmitMarkUndefinedPrototype(resultTempVar);
         }

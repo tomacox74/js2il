@@ -1211,6 +1211,17 @@ internal sealed partial class LIRToILCompiler
                         throw new InvalidOperationException($"Cannot emit unmaterialized temp {temp.Index} - missing method token for '{callUserClass.RegistryClassName}.{callUserClass.MethodName}'");
                     }
 
+                    if (callUserClass.IsGenerator)
+                    {
+                        EmitCallGeneratorInstanceMethod(
+                            callUserClass.MethodName,
+                            callUserClass.Arguments,
+                            ilEncoder,
+                            allocation,
+                            methodDescriptor);
+                        break;
+                    }
+
                     ilEncoder.OpCode(ILOpCode.Ldarg_0);
 
                     if (callUserClass.HasScopesParameter)
@@ -1334,6 +1345,18 @@ internal sealed partial class LIRToILCompiler
                     if (callBaseMethod.MethodHandle.IsNil)
                     {
                         throw new InvalidOperationException($"Cannot emit unmaterialized base method call for '{callBaseMethod.BaseRegistryClassName}.{callBaseMethod.MethodName}' - missing method token");
+                    }
+
+                    if (callBaseMethod.IsGenerator)
+                    {
+                        EmitCallGeneratorBaseMethod(
+                            callBaseMethod.BaseRegistryClassName,
+                            callBaseMethod.MethodName,
+                            callBaseMethod.Arguments,
+                            ilEncoder,
+                            allocation,
+                            methodDescriptor);
+                        break;
                     }
 
                     if (methodDescriptor.IsStatic)

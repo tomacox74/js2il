@@ -362,7 +362,10 @@ public sealed partial class HIRToLIRLowerer
         }
 
         var callableId = TryCreateCallableIdForFunctionDeclaration(symbol);
-        if (callableId == null || callableId.NeedsArgumentsObject || callableId.HasRestParameters)
+        if (callableId == null
+            || callableId.NeedsArgumentsObject
+            || callableId.HasRestParameters
+            || RequiresFunctionObjectInvocation(callableId))
         {
             return false;
         }

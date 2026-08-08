@@ -41,7 +41,7 @@
 		} // end of class Scope
 
 		.class nested public auto ansi sealed beforefieldinit FunctionObject_FunctionDeclaration_5AC71590_main
-			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsAsyncFunctionObject
 		{
 			// Fields
 			.field private initonly object[] _transitionalScopes
@@ -57,7 +57,7 @@
 				.maxstack 8
 
 				IL_0000: ldarg.0
-				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsAsyncFunctionObject::.ctor()
 				IL_0006: ldarg.0
 				IL_0007: ldarg.1
 				IL_0008: stfld object[] Modules.TimersPromises_SetTimeout_AwaitsValue/main/FunctionObject_FunctionDeclaration_5AC71590_main::_transitionalScopes
@@ -87,53 +87,25 @@
 			} // end of method FunctionObject_FunctionDeclaration_5AC71590_main::get_RequiresInvocationContext
 
 			.method family hidebysig virtual 
-				instance object CallCore (
+				instance class [JavaScriptRuntime]JavaScriptRuntime.Promise CallCoreAsync (
 					object thisArgument,
 					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 				) cil managed 
 			{
-				// Header size: 12
-				// Code size: 68 (0x44)
+				// Header size: 1
+				// Code size: 29 (0x1d)
 				.maxstack 8
-				.locals init (
-					[0] object
-				)
 
-				.try
-				{
-					IL_0000: ldarg.0
-					IL_0001: ldfld object[] Modules.TimersPromises_SetTimeout_AwaitsValue/main/FunctionObject_FunctionDeclaration_5AC71590_main::_transitionalScopes
-					IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
-					IL_000b: ldarg.2
-					IL_000c: ldc.i4.0
-					IL_000d: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-					IL_0012: call object Modules.TimersPromises_SetTimeout_AwaitsValue/main::__js_call__(object[], object, object)
-					IL_0017: stloc.0
-					IL_0018: leave IL_0042
-				} // end .try
-				catch [System.Runtime]System.Exception
-				{
-					IL_001d: dup
-					IL_001e: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-					IL_0023: dup
-					IL_0024: brtrue IL_002f
-
-					IL_0029: pop
-					IL_002a: br IL_0037
-
-					IL_002f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-					IL_0034: stloc.0
-					IL_0035: pop
-					IL_0036: ldloc.0
-
-					IL_0037: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::reject(object)
-					IL_003c: stloc.0
-					IL_003d: leave IL_0042
-				} // end handler
-
-				IL_0042: ldloc.0
-				IL_0043: ret
-			} // end of method FunctionObject_FunctionDeclaration_5AC71590_main::CallCore
+				IL_0000: ldarg.0
+				IL_0001: ldfld object[] Modules.TimersPromises_SetTimeout_AwaitsValue/main/FunctionObject_FunctionDeclaration_5AC71590_main::_transitionalScopes
+				IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
+				IL_000b: ldarg.2
+				IL_000c: ldc.i4.0
+				IL_000d: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+				IL_0012: call object Modules.TimersPromises_SetTimeout_AwaitsValue/main::__js_call__(object[], object, object)
+				IL_0017: castclass [JavaScriptRuntime]JavaScriptRuntime.Promise
+				IL_001c: ret
+			} // end of method FunctionObject_FunctionDeclaration_5AC71590_main::CallCoreAsync
 
 		} // end of class FunctionObject_FunctionDeclaration_5AC71590_main
 

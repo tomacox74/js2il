@@ -120,13 +120,14 @@ namespace Jroc.Services
         public TypeReferenceHandle Int32Type => _typeRefRegistry.GetOrAdd(typeof(int));
         public TypeReferenceHandle ObjectType => _typeRefRegistry.GetOrAdd(typeof(object));
         public TypeReferenceHandle StringType => _typeRefRegistry.GetOrAdd(typeof(string));
-        public TypeReferenceHandle ExceptionType => _typeRefRegistry.GetOrAdd(typeof(System.Exception));
         public TypeReferenceHandle SystemMathType => _typeRefRegistry.GetOrAdd(typeof(System.Math));
         public TypeReferenceHandle MethodBaseType => _typeRefRegistry.GetOrAdd(typeof(System.Reflection.MethodBase));
         public TypeReferenceHandle JsFunctionObjectType => _typeRefRegistry.GetOrAdd(typeof(JavaScriptRuntime.JsFunctionObject));
-        public TypeReferenceHandle JsThrownValueExceptionType =>
+        public TypeReferenceHandle JsAsyncFunctionObjectType =>
             _typeRefRegistry.GetOrAdd(
-                typeof(JavaScriptRuntime.JsThrownValueException));
+                typeof(JavaScriptRuntime.JsAsyncFunctionObject));
+        public TypeReferenceHandle PromiseType =>
+            _typeRefRegistry.GetOrAdd(typeof(JavaScriptRuntime.Promise));
         public TypeReferenceHandle JsCallArgumentsType => _typeRefRegistry.GetOrAdd(typeof(JavaScriptRuntime.JsCallArguments));
         public TypeReferenceHandle InAttributeType => _typeRefRegistry.GetOrAdd(typeof(System.Runtime.InteropServices.InAttribute));
         public EntityHandle ObjectArrayType => _memberRefRegistry.GetOrAddTypeHandle(typeof(object[]));
@@ -134,6 +135,10 @@ namespace Jroc.Services
         public MemberReferenceHandle Object_Ctor_Ref => _memberRefRegistry.GetOrAddConstructor(typeof(object), Type.EmptyTypes);
         public MemberReferenceHandle JsObject_Ctor_Ref => _memberRefRegistry.GetOrAddConstructor(typeof(JavaScriptRuntime.JsObject), Type.EmptyTypes);
         public MemberReferenceHandle JsFunctionObject_Ctor_Ref => _memberRefRegistry.GetOrAddConstructor(typeof(JavaScriptRuntime.JsFunctionObject), Type.EmptyTypes);
+        public MemberReferenceHandle JsAsyncFunctionObject_Ctor_Ref =>
+            _memberRefRegistry.GetOrAddConstructor(
+                typeof(JavaScriptRuntime.JsAsyncFunctionObject),
+                Type.EmptyTypes);
         public MemberReferenceHandle JsCallArguments_GetArgument_Ref => _memberRefRegistry.GetOrAddMethod(
             typeof(JavaScriptRuntime.JsCallArguments),
             nameof(JavaScriptRuntime.JsCallArguments.GetArgument),
@@ -167,15 +172,21 @@ namespace Jroc.Services
         public MemberReferenceHandle TypeError_Ctor_String_Ref => _memberRefRegistry.GetOrAddConstructor(
             typeof(JavaScriptRuntime.TypeError),
             new[] { typeof(string) });
-        public MemberReferenceHandle Promise_Reject_Object_Ref =>
+        public MemberReferenceHandle GeneratorObject_InitializeGeneratorFunctionSurface_Ref =>
             _memberRefRegistry.GetOrAddMethod(
-                typeof(JavaScriptRuntime.Promise),
-                nameof(JavaScriptRuntime.Promise.reject),
+                typeof(JavaScriptRuntime.GeneratorObject),
+                nameof(JavaScriptRuntime.GeneratorObject.InitializeGeneratorFunctionSurface),
                 new[] { typeof(object) });
-        public MemberReferenceHandle JsThrownValueException_Value_Getter_Ref =>
+        public MemberReferenceHandle AsyncGeneratorFunction_InitializeFunctionObject_Ref =>
             _memberRefRegistry.GetOrAddMethod(
-                typeof(JavaScriptRuntime.JsThrownValueException),
-                $"get_{nameof(JavaScriptRuntime.JsThrownValueException.Value)}");
+                typeof(JavaScriptRuntime.AsyncGeneratorFunction),
+                nameof(JavaScriptRuntime.AsyncGeneratorFunction.InitializeFunctionObject),
+                new[] { typeof(object) });
+        public MemberReferenceHandle GeneratorObject_InitializeInstanceFromFunction_Ref =>
+            _memberRefRegistry.GetOrAddMethod(
+                typeof(JavaScriptRuntime.GeneratorObject),
+                nameof(JavaScriptRuntime.GeneratorObject.InitializeInstanceFromFunction),
+                new[] { typeof(object), typeof(object) });
         public MemberReferenceHandle RuntimeServices_ResolveLexicalThis_Ref =>
             _memberRefRegistry.GetOrAddMethod(
                 typeof(JavaScriptRuntime.RuntimeServices),

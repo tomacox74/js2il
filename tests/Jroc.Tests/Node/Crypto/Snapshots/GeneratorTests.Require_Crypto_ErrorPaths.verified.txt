@@ -2792,7 +2792,7 @@
 		} // end of class Scope
 
 		.class nested public auto ansi sealed beforefieldinit FunctionObject_FunctionDeclaration_8C7B1B0D_logPromiseError
-			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsAsyncFunctionObject
 		{
 			// Fields
 			.field private initonly object[] _transitionalScopes
@@ -2808,7 +2808,7 @@
 				.maxstack 8
 
 				IL_0000: ldarg.0
-				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsAsyncFunctionObject::.ctor()
 				IL_0006: ldarg.0
 				IL_0007: ldarg.1
 				IL_0008: stfld object[] Modules.Require_Crypto_ErrorPaths/logPromiseError/FunctionObject_FunctionDeclaration_8C7B1B0D_logPromiseError::_transitionalScopes
@@ -2838,56 +2838,28 @@
 			} // end of method FunctionObject_FunctionDeclaration_8C7B1B0D_logPromiseError::get_RequiresInvocationContext
 
 			.method family hidebysig virtual 
-				instance object CallCore (
+				instance class [JavaScriptRuntime]JavaScriptRuntime.Promise CallCoreAsync (
 					object thisArgument,
 					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 				) cil managed 
 			{
-				// Header size: 12
-				// Code size: 75 (0x4b)
+				// Header size: 1
+				// Code size: 36 (0x24)
 				.maxstack 8
-				.locals init (
-					[0] object
-				)
 
-				.try
-				{
-					IL_0000: ldarg.0
-					IL_0001: ldfld object[] Modules.Require_Crypto_ErrorPaths/logPromiseError/FunctionObject_FunctionDeclaration_8C7B1B0D_logPromiseError::_transitionalScopes
-					IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
-					IL_000b: ldarg.2
-					IL_000c: ldc.i4.0
-					IL_000d: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-					IL_0012: ldarg.2
-					IL_0013: ldc.i4.1
-					IL_0014: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-					IL_0019: call object Modules.Require_Crypto_ErrorPaths/logPromiseError::__js_call__(object[], object, object, object)
-					IL_001e: stloc.0
-					IL_001f: leave IL_0049
-				} // end .try
-				catch [System.Runtime]System.Exception
-				{
-					IL_0024: dup
-					IL_0025: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-					IL_002a: dup
-					IL_002b: brtrue IL_0036
-
-					IL_0030: pop
-					IL_0031: br IL_003e
-
-					IL_0036: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-					IL_003b: stloc.0
-					IL_003c: pop
-					IL_003d: ldloc.0
-
-					IL_003e: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::reject(object)
-					IL_0043: stloc.0
-					IL_0044: leave IL_0049
-				} // end handler
-
-				IL_0049: ldloc.0
-				IL_004a: ret
-			} // end of method FunctionObject_FunctionDeclaration_8C7B1B0D_logPromiseError::CallCore
+				IL_0000: ldarg.0
+				IL_0001: ldfld object[] Modules.Require_Crypto_ErrorPaths/logPromiseError/FunctionObject_FunctionDeclaration_8C7B1B0D_logPromiseError::_transitionalScopes
+				IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
+				IL_000b: ldarg.2
+				IL_000c: ldc.i4.0
+				IL_000d: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+				IL_0012: ldarg.2
+				IL_0013: ldc.i4.1
+				IL_0014: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+				IL_0019: call object Modules.Require_Crypto_ErrorPaths/logPromiseError::__js_call__(object[], object, object, object)
+				IL_001e: castclass [JavaScriptRuntime]JavaScriptRuntime.Promise
+				IL_0023: ret
+			} // end of method FunctionObject_FunctionDeclaration_8C7B1B0D_logPromiseError::CallCoreAsync
 
 		} // end of class FunctionObject_FunctionDeclaration_8C7B1B0D_logPromiseError
 
@@ -4817,7 +4789,7 @@
 		} // end of class Scope
 
 		.class nested public auto ansi sealed beforefieldinit FunctionObject_FunctionDeclaration_F31DA885_runWebCryptoErrors
-			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsAsyncFunctionObject
 		{
 			// Fields
 			.field private initonly class Modules.Require_Crypto_ErrorPaths/Scope _environment0_Require_Crypto_ErrorPaths
@@ -4835,7 +4807,7 @@
 				.maxstack 8
 
 				IL_0000: ldarg.0
-				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsAsyncFunctionObject::.ctor()
 				IL_0006: ldarg.0
 				IL_0007: ldarg.1
 				IL_0008: stfld class Modules.Require_Crypto_ErrorPaths/Scope Modules.Require_Crypto_ErrorPaths/runWebCryptoErrors/FunctionObject_FunctionDeclaration_F31DA885_runWebCryptoErrors::_environment0_Require_Crypto_ErrorPaths
@@ -4868,50 +4840,22 @@
 			} // end of method FunctionObject_FunctionDeclaration_F31DA885_runWebCryptoErrors::get_RequiresInvocationContext
 
 			.method family hidebysig virtual 
-				instance object CallCore (
+				instance class [JavaScriptRuntime]JavaScriptRuntime.Promise CallCoreAsync (
 					object thisArgument,
 					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 				) cil managed 
 			{
-				// Header size: 12
-				// Code size: 61 (0x3d)
+				// Header size: 1
+				// Code size: 22 (0x16)
 				.maxstack 8
-				.locals init (
-					[0] object
-				)
 
-				.try
-				{
-					IL_0000: ldarg.0
-					IL_0001: ldfld object[] Modules.Require_Crypto_ErrorPaths/runWebCryptoErrors/FunctionObject_FunctionDeclaration_F31DA885_runWebCryptoErrors::_transitionalScopes
-					IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
-					IL_000b: call object Modules.Require_Crypto_ErrorPaths/runWebCryptoErrors::__js_call__(object[], object)
-					IL_0010: stloc.0
-					IL_0011: leave IL_003b
-				} // end .try
-				catch [System.Runtime]System.Exception
-				{
-					IL_0016: dup
-					IL_0017: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-					IL_001c: dup
-					IL_001d: brtrue IL_0028
-
-					IL_0022: pop
-					IL_0023: br IL_0030
-
-					IL_0028: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-					IL_002d: stloc.0
-					IL_002e: pop
-					IL_002f: ldloc.0
-
-					IL_0030: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::reject(object)
-					IL_0035: stloc.0
-					IL_0036: leave IL_003b
-				} // end handler
-
-				IL_003b: ldloc.0
-				IL_003c: ret
-			} // end of method FunctionObject_FunctionDeclaration_F31DA885_runWebCryptoErrors::CallCore
+				IL_0000: ldarg.0
+				IL_0001: ldfld object[] Modules.Require_Crypto_ErrorPaths/runWebCryptoErrors/FunctionObject_FunctionDeclaration_F31DA885_runWebCryptoErrors::_transitionalScopes
+				IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
+				IL_000b: call object Modules.Require_Crypto_ErrorPaths/runWebCryptoErrors::__js_call__(object[], object)
+				IL_0010: castclass [JavaScriptRuntime]JavaScriptRuntime.Promise
+				IL_0015: ret
+			} // end of method FunctionObject_FunctionDeclaration_F31DA885_runWebCryptoErrors::CallCoreAsync
 
 		} // end of class FunctionObject_FunctionDeclaration_F31DA885_runWebCryptoErrors
 

@@ -31,6 +31,7 @@ public class AsyncGeneratorScope : AsyncScope
 
     public object? _returnValue;
     public bool _hasReturn;
+    public object? _thisValue;
 
     // Pending completion for try/finally lowering in generators.
     // Used when suspension occurs within try/finally so we cannot rely on CLR EH regions.
@@ -91,5 +92,11 @@ public class AsyncGeneratorScope : AsyncScope
     {
         get => _hasReturn;
         set => _hasReturn = value;
+    }
+
+    public object? ThisValue
+    {
+        get => _thisValue;
+        set => _thisValue = value;
     }
 }

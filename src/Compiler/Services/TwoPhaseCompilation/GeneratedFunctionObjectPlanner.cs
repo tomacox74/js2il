@@ -15,6 +15,7 @@ internal static class GeneratedFunctionObjectPlanner
         var classScope = ResolveClassScope(callable, symbolTable, callableScope);
         var captures = BuildCapturePlan(callableScope, signature, out var slotCount);
         var requirements = InspectOwnCallableBody(callable.AstNode);
+        var returnKind = GetReturnKind(callable);
 
         return new GeneratedFunctionObjectPlan
         {
@@ -45,12 +46,14 @@ internal static class GeneratedFunctionObjectPlanner
                 || HasNestedArrowLexicalContext(callable.AstNode)
                 || requirements.UsesThis
                 || requirements.UsesNewTarget
-                || requirements.UsesSuper,
+                || requirements.UsesSuper
+                || returnKind is GeneratedFunctionReturnKind.Generator
+                    or GeneratedFunctionReturnKind.AsyncGenerator,
             UsesNonStrictThisBinding =
                 callable.Kind is CallableKind.FunctionDeclaration
                     or CallableKind.FunctionExpression
                 && !callable.HasRestrictedFunctionProperties,
-            ReturnKind = GetReturnKind(callable)
+            ReturnKind = returnKind
         };
     }
 
@@ -281,13 +284,29 @@ internal static class GeneratedFunctionObjectPlanner
         {
             FunctionDeclaration { Async: true, Generator: true }
                 or FunctionExpression { Async: true, Generator: true }
+                or MethodDefinition
+                {
+                    Value: FunctionExpression
+                    {
+                        Async: true,
+                        Generator: true
+                    }
+                }
                 => GeneratedFunctionReturnKind.AsyncGenerator,
             FunctionDeclaration { Async: true }
                 or FunctionExpression { Async: true }
                 or ArrowFunctionExpression { Async: true }
+                or MethodDefinition
+                {
+                    Value: FunctionExpression { Async: true }
+                }
                 => GeneratedFunctionReturnKind.Promise,
             FunctionDeclaration { Generator: true }
                 or FunctionExpression { Generator: true }
+                or MethodDefinition
+                {
+                    Value: FunctionExpression { Generator: true }
+                }
                 => GeneratedFunctionReturnKind.Generator,
             _ => GeneratedFunctionReturnKind.Value
         };

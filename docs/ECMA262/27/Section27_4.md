@@ -4,7 +4,7 @@
 
 [Back to Section27](Section27.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-05-26T20:34:21Z
+> Last generated (UTC): 2026-08-08T11:28:52Z
 
 _Lists clause numbers/titles/links only (no spec text)._
 
@@ -25,9 +25,9 @@ _Lists clause numbers/titles/links only (no spec text)._
 | 27.4.3.2 | AsyncGeneratorFunction.prototype.prototype | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-asyncgeneratorfunction-prototype-prototype) |
 | 27.4.3.3 | AsyncGeneratorFunction.prototype [ %Symbol.toStringTag% ] | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-asyncgeneratorfunction-prototype-%symbol.tostringtag%) |
 | 27.4.4 | AsyncGeneratorFunction Instances | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-asyncgeneratorfunction-instances) |
-| 27.4.4.1 | length | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-asyncgeneratorfunction-instance-length) |
-| 27.4.4.2 | name | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-asyncgeneratorfunction-instance-name) |
-| 27.4.4.3 | prototype | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-asyncgeneratorfunction-instance-prototype) |
+| 27.4.4.1 | length | Supported | [tc39.es](https://tc39.es/ecma262/#sec-asyncgeneratorfunction-instance-length) |
+| 27.4.4.2 | name | Supported | [tc39.es](https://tc39.es/ecma262/#sec-asyncgeneratorfunction-instance-name) |
+| 27.4.4.3 | prototype | Supported | [tc39.es](https://tc39.es/ecma262/#sec-asyncgeneratorfunction-instance-prototype) |
 
 ## Support
 
@@ -38,4 +38,10 @@ Feature-level support tracking with repo test references and optional test262 ev
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
 | async generator functions via syntax (`async function*`) compile to async iterators (next/return/throw) and integrate with `for await..of` | Supported with Limitations | [`AsyncGenerator_BasicNext.js`](../../../tests/Jroc.Tests/AsyncGenerator/JavaScript/AsyncGenerator_BasicNext.js)<br>[`AsyncGenerator_ForAwaitOf.js`](../../../tests/Jroc.Tests/AsyncGenerator/JavaScript/AsyncGenerator_ForAwaitOf.js)<br>[`AsyncGeneratorFunction_length.js`](../../../tests/Jroc.Test262.Tests/built-ins/AsyncGeneratorFunction/JavaScript/AsyncGeneratorFunction_length.js)<br>[`length.js`](../../../tests/Jroc.Test262.Tests/built-ins/AsyncGeneratorFunction/JavaScript/length.js)<br>[`prop-desc.js`](../../../tests/Jroc.Test262.Tests/built-ins/AsyncGeneratorFunction/prototype/JavaScript/prop-desc.js)<br>[`not-callable.js`](../../../tests/Jroc.Test262.Tests/built-ins/AsyncGeneratorFunction/prototype/JavaScript/not-callable.js) |  | Async generators are supported via syntax (`async function*`, `yield`, `await`) and a runtime async iterator object. Checked-in test262 evidence now also covers the callable `%AsyncGeneratorFunction%` length surface plus non-callable `%AsyncGeneratorFunction.prototype%` metadata, but the full spec-level AsyncGeneratorFunction constructor/prototype intrinsic set is still not exposed globally. |
+
+### 27.4.4 ([tc39.es](https://tc39.es/ecma262/#sec-asyncgeneratorfunction-instances))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Compiled async-generator callables are generated function objects | Supported | [`AsyncGenerator_GeneratedFunctionObject_Semantics.js`](../../../tests/Jroc.Tests/AsyncGenerator/JavaScript/AsyncGenerator_GeneratedFunctionObject_Semantics.js)<br>`tests/Jroc.Test262.Tests/built-ins/AsyncGeneratorFunction/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/language/expressions/async-generator/ExecutionTests.cs` |  | Async-generator declarations, expressions, object methods, and class methods use generated JsFunctionObject instances with stable identity, own name/length/prototype properties, AsyncGeneratorFunction.prototype inheritance, arbitrary properties, and no [[Construct]]. Each invocation creates a fresh async iterator and execution scope. |
 
