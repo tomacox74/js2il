@@ -31,6 +31,50 @@ public sealed partial class HIRToLIRLowerer
            && string.Equals(symbol.Name, "Math", StringComparison.Ordinal)
            && !symbol.BindingInfo.HasWrite;
 
+    private bool TryLowerStableGlobalMemberCall(
+        HIRCallExpression callExpr,
+        HIRPropertyAccessExpression callee,
+        bool hasSpreadArgs,
+        TempVariable resultTemp)
+    {
+        if (hasSpreadArgs
+            || _activeWithObjects.Count > 0
+            || callee.Object is not HIRVariableExpression globalVariable
+            || globalVariable.Name.Kind != BindingKind.Global
+            || globalVariable.Name.BindingInfo.HasWrite
+            || !GlobalMemberIntrinsicRegistry.TryGet(
+                globalVariable.Name.Name,
+                callee.PropertyName,
+                out var intrinsic))
+        {
+            return false;
+        }
+
+        var receiver = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRGetIntrinsicGlobal(intrinsic.GlobalName, receiver));
+        DefineTempStorage(receiver, new ValueStorage(ValueStorageKind.Reference, intrinsic.ReceiverType));
+
+        var arguments = new List<TempVariable>(callExpr.Arguments.Length);
+        foreach (var argumentExpression in callExpr.Arguments)
+        {
+            if (!TryLowerExpression(argumentExpression, out var argument))
+            {
+                return false;
+            }
+
+            arguments.Add(EnsureObject(argument));
+        }
+
+        _methodBodyIR.Instructions.Add(new LIRCallInstanceMethod(
+            receiver,
+            intrinsic.ReceiverType,
+            intrinsic.MemberName,
+            arguments,
+            resultTemp));
+        DefineTempStorage(resultTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        return true;
+    }
+
     private static bool IsNumericMathUnaryFastPathMethod(string methodName)
         => NumericMathUnaryFastPathMethods.Contains(methodName);
 
