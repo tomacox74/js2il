@@ -637,7 +637,7 @@ namespace JavaScriptRuntime
                 && obj is not JavaScriptRuntime.TypedArrayBase
                 && obj is not string
                 && obj is not JavaScriptRuntime.Symbol
-                && obj is not Delegate
+                && !CallableOperations.IsCallable(obj)
                 && !obj.GetType().IsValueType)
             {
                 var type = obj.GetType();
@@ -1679,6 +1679,32 @@ namespace JavaScriptRuntime
                 return obj;
             }
 
+            if (obj is JavaScriptRuntime.Proxy proxy)
+            {
+                var target = proxy.GetTarget("preventExtensions");
+                if (proxy.TryInvokeTrap(
+                        "preventExtensions",
+                        "preventExtensions",
+                        [target],
+                        out var trapResult))
+                {
+                    if (!TypeUtilities.ToBoolean(trapResult))
+                    {
+                        throw new TypeError(
+                            "Proxy preventExtensions trap returned false");
+                    }
+                    if (IsExtensibleInternal(target))
+                    {
+                        throw new TypeError(
+                            "Proxy preventExtensions trap returned true for an extensible target");
+                    }
+                    return proxy;
+                }
+
+                preventExtensions(target);
+                return proxy;
+            }
+
             GetIntegrityState(obj).Extensible = false;
             if (obj is Array array)
             {
@@ -1697,6 +1723,28 @@ namespace JavaScriptRuntime
             if (IsPrimitiveObjectOperationTarget(obj))
             {
                 return false;
+            }
+
+            if (obj is JavaScriptRuntime.Proxy proxy)
+            {
+                var target = proxy.GetTarget("isExtensible");
+                var targetResult = IsExtensibleInternal(target);
+                if (!proxy.TryInvokeTrap(
+                        "isExtensible",
+                        "isExtensible",
+                        [target],
+                        out var trapResult))
+                {
+                    return targetResult;
+                }
+
+                var proxyResult = TypeUtilities.ToBoolean(trapResult);
+                if (proxyResult != targetResult)
+                {
+                    throw new TypeError(
+                        "Proxy isExtensible trap result does not match target extensibility");
+                }
+                return proxyResult;
             }
 
             return IsExtensibleInternal(obj);
@@ -1983,7 +2031,7 @@ namespace JavaScriptRuntime
             if (thisVal is string) return "[object String]";
             if (thisVal is bool) return "[object Boolean]";
             if (thisVal is double or float or int or long) return "[object Number]";
-            if (thisVal is Delegate or JsFunctionObject) return "[object Function]";
+            if (CallableOperations.IsCallable(thisVal)) return "[object Function]";
             if (thisVal is JavaScriptRuntime.RegExp) return "[object RegExp]";
             if (thisVal is GeneratorObject) return "[object Generator]";
             if (thisVal is AsyncGeneratorObject) return "[object AsyncGenerator]";
@@ -2296,7 +2344,7 @@ namespace JavaScriptRuntime
             if (constructor is JsObject)
             {
                 return ObjectRuntime.TryGetOwnValue(constructor, "Construct", out var constructValue)
-                    && constructValue is Delegate;
+                    && CallableOperations.IsCallable(constructValue);
             }
 
             return constructor.GetType().GetMethod("Construct", BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase) != null;
@@ -2315,24 +2363,7 @@ namespace JavaScriptRuntime
 
             if (constructor is JavaScriptRuntime.Proxy proxy)
             {
-                var proxyTarget = proxy.GetTarget("construct");
-                if (!IsConstructibleValue(proxyTarget))
-                {
-                    throw new TypeError("Value is not a constructor");
-                }
-
-                var trapArgs = new JavaScriptRuntime.Array(callArgs);
-                if (proxy.TryInvokeTrap("construct", "construct", new object?[] { proxyTarget, trapArgs, newTarget }, out var trapResult))
-                {
-                    if (!JavaScriptRuntime.Proxy.IsObjectLikeValue(trapResult))
-                    {
-                        throw new TypeError("Proxy construct trap must return an object");
-                    }
-
-                    return trapResult;
-                }
-
-                return ConstructValue(proxyTarget, callArgs, newTarget);
+                return CallableOperations.Construct(proxy, callArgs, newTarget);
             }
 
             if (constructor is Type type)
@@ -2475,9 +2506,12 @@ namespace JavaScriptRuntime
 
             if (constructor is JsObject
                 && ObjectRuntime.TryGetOwnValue(constructor, "Construct", out var constructValue)
-                && constructValue is Delegate constructDel)
+                && CallableOperations.IsCallable(constructValue))
             {
-                return Closure.InvokeWithArgs(constructDel, System.Array.Empty<object>(), callArgs);
+                return CallableOperations.Call(
+                    constructValue,
+                    constructor,
+                    callArgs);
             }
 
             // Generic reflection fallback: instance method named Construct(...)
@@ -5486,10 +5520,13 @@ namespace JavaScriptRuntime
 
         public static double GetLength(object obj)
         {
+            if (CallableOperations.IsCallable(obj))
+            {
+                return TypeUtilities.ToNumber(GetProperty(obj, "length"));
+            }
+
             switch (obj)
             {
-                case Delegate del:
-                    return JavaScriptRuntime.Function.GetLength(del);
                 case Array arr:
                     return arr.length;
                 case ArgumentsObject argumentsObject:

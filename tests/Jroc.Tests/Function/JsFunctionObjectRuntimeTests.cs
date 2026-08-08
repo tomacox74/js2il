@@ -365,6 +365,87 @@ public sealed class JsFunctionObjectRuntimeTests
         Assert.Same(target, result.Callee);
     }
 
+    [Fact]
+    public void CallableProxyApplyAndConstructTrapsUseCentralizedOperations()
+    {
+        var target = new ConstructableFunction();
+        JavaScriptRuntime.Function.InitializeFunctionInstance(
+            target,
+            1d,
+            "target",
+            requiresInvocationContext: true);
+        var handler = new JsObject();
+        object? applyThis = null;
+        object? applyTarget = null;
+        handler["apply"] = new LambdaFunction((thisArgument, arguments) =>
+        {
+            applyThis = thisArgument;
+            applyTarget = arguments.GetArgument(0);
+            var argumentList = Assert.IsType<JavaScriptRuntime.Array>(
+                arguments.GetArgument(2));
+            return new CallSnapshot(
+                arguments.GetArgument(1),
+                argumentList[0],
+                RuntimeServices.GetCurrentCallee(),
+                RuntimeServices.GetCurrentNewTarget());
+        });
+        var proxy = new JavaScriptRuntime.Proxy(target, handler);
+
+        var applyResult = Assert.IsType<CallSnapshot>(
+            CallableOperations.Call(proxy, "proxy-this", new object?[] { "proxy-argument" }));
+        Assert.Same(handler, applyThis);
+        Assert.Same(target, applyTarget);
+        Assert.Equal("proxy-this", applyResult.ThisArgument);
+        Assert.Equal("proxy-argument", applyResult.Argument);
+
+        object? constructThis = null;
+        object? constructTarget = null;
+        object? constructNewTarget = null;
+        var constructed = new JsObject();
+        handler["construct"] = new LambdaFunction((thisArgument, arguments) =>
+        {
+            constructThis = thisArgument;
+            constructTarget = arguments.GetArgument(0);
+            constructNewTarget = arguments.GetArgument(2);
+            var argumentList = Assert.IsType<JavaScriptRuntime.Array>(
+                arguments.GetArgument(1));
+            constructed["argument"] = argumentList[0];
+            return constructed;
+        });
+
+        Assert.Same(
+            constructed,
+            CallableOperations.Construct(proxy, new object?[] { 42d }));
+        Assert.Same(handler, constructThis);
+        Assert.Same(target, constructTarget);
+        Assert.Same(proxy, constructNewTarget);
+        Assert.Equal(42d, constructed["argument"]);
+
+        handler["construct"] = new LambdaFunction((_, _) => 1d);
+        Assert.Throws<TypeError>(
+            () => CallableOperations.Construct(proxy, System.Array.Empty<object?>()));
+        handler["apply"] = 1d;
+        Assert.Throws<TypeError>(
+            () => CallableOperations.Call(proxy, null, System.Array.Empty<object?>()));
+    }
+
+    [Fact]
+    public void CallableClassificationAndIdentityUseCentralizedOperations()
+    {
+        var function = new RecordingFunction();
+        var callableProxy = new JavaScriptRuntime.Proxy(function, new JsObject());
+        var ordinaryProxy = new JavaScriptRuntime.Proxy(new JsObject(), new JsObject());
+
+        Assert.Equal("function", TypeUtilities.Typeof(function));
+        Assert.Equal("function", TypeUtilities.Typeof(callableProxy));
+        Assert.Equal("object", TypeUtilities.Typeof(ordinaryProxy));
+        Assert.True(CallableOperations.IsCallable(function));
+        Assert.True(CallableOperations.IsCallable(callableProxy));
+        Assert.False(CallableOperations.IsCallable(ordinaryProxy));
+        Assert.True(Operators.StrictEqual(function, function));
+        Assert.False(Operators.StrictEqual(function, new RecordingFunction()));
+    }
+
     private sealed class RecordingFunction : JsFunctionObject
     {
         protected override object? CallCore(object? thisArgument, in JsCallArguments arguments)

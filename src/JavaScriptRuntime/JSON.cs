@@ -296,11 +296,14 @@ namespace JavaScriptRuntime
             string gap,
             string indent)
         {
+            if (CallableOperations.IsCallable(value))
+            {
+                return null;
+            }
+
             switch (value)
             {
                 case null:
-                case Delegate:
-                case JsFunctionObject:
                 case Symbol:
                     return null;
                 case JsNull:

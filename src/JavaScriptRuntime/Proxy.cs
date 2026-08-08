@@ -78,16 +78,13 @@ namespace JavaScriptRuntime
                 return false;
             }
 
-            var previousThis = RuntimeServices.SetCurrentThis(handler);
-            try
+            if (!CallableOperations.IsCallable(trap))
             {
-                result = Closure.InvokeWithArgs(trap, System.Array.Empty<object>(), args);
-                return true;
+                throw new TypeError($"Proxy {trapName} trap is not callable");
             }
-            finally
-            {
-                RuntimeServices.SetCurrentThis(previousThis);
-            }
+
+            result = CallableOperations.Call(trap, handler, args);
+            return true;
         }
 
         internal void Revoke()
