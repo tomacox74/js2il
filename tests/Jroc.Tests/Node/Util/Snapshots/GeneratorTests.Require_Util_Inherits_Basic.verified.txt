@@ -498,7 +498,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 379 (0x17b)
+		// Code size: 323 (0x143)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Require_Util_Inherits_Basic/Scope,
@@ -509,7 +509,7 @@
 			[5] object[],
 			[6] object,
 			[7] class Modules.Require_Util_Inherits_Basic/FunctionExpression_L10C25/FunctionObject_FunctionExpression_9DFEAE32_L10C26,
-			[8] object,
+			[8] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 			[9] bool,
 			[10] object
 		)
@@ -584,73 +584,63 @@
 		IL_009a: ldloc.1
 		IL_009b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
 		IL_00a0: pop
-		IL_00a1: ldstr "console"
-		IL_00a6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_00ab: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00b0: ldstr "log"
-		IL_00b5: ldstr "inherits completed"
-		IL_00ba: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00bf: pop
-		IL_00c0: ldstr "console"
-		IL_00c5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_00ca: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00cf: stloc.s 6
-		IL_00d1: ldloc.2
-		IL_00d2: ldstr "super_"
-		IL_00d7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_00dc: stloc.s 8
-		IL_00de: ldloc.s 8
-		IL_00e0: ldloc.1
-		IL_00e1: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_00e6: stloc.s 9
-		IL_00e8: ldloc.s 9
-		IL_00ea: box [System.Runtime]System.Boolean
-		IL_00ef: stloc.s 10
-		IL_00f1: ldloc.s 6
-		IL_00f3: ldstr "log"
-		IL_00f8: ldloc.s 10
-		IL_00fa: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00ff: pop
-		IL_0100: ldloc.2
-		IL_0101: ldc.i4.2
-		IL_0102: newarr [System.Runtime]System.Object
-		IL_0107: dup
-		IL_0108: ldc.i4.0
-		IL_0109: ldstr "Buddy"
-		IL_010e: stelem.ref
-		IL_010f: dup
-		IL_0110: ldc.i4.1
-		IL_0111: ldstr "Golden Retriever"
-		IL_0116: stelem.ref
-		IL_0117: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::ConstructValue(object, object[])
-		IL_011c: stloc.s 4
-		IL_011e: ldstr "console"
-		IL_0123: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0128: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_012d: stloc.s 6
-		IL_012f: ldloc.s 4
-		IL_0131: ldstr "name"
-		IL_0136: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_013b: stloc.s 8
-		IL_013d: ldloc.s 6
-		IL_013f: ldstr "log"
-		IL_0144: ldloc.s 8
-		IL_0146: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_014b: pop
-		IL_014c: ldstr "console"
-		IL_0151: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0156: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_015b: stloc.s 8
-		IL_015d: ldloc.s 4
-		IL_015f: ldstr "breed"
-		IL_0164: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0169: stloc.s 6
-		IL_016b: ldloc.s 8
-		IL_016d: ldstr "log"
-		IL_0172: ldloc.s 6
-		IL_0174: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0179: pop
-		IL_017a: ret
+		IL_00a1: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00a6: stloc.s 8
+		IL_00a8: ldloc.s 8
+		IL_00aa: ldstr "inherits completed"
+		IL_00af: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00b4: pop
+		IL_00b5: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00ba: stloc.s 8
+		IL_00bc: ldloc.2
+		IL_00bd: ldstr "super_"
+		IL_00c2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00c7: stloc.s 6
+		IL_00c9: ldloc.s 6
+		IL_00cb: ldloc.1
+		IL_00cc: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_00d1: stloc.s 9
+		IL_00d3: ldloc.s 9
+		IL_00d5: box [System.Runtime]System.Boolean
+		IL_00da: stloc.s 10
+		IL_00dc: ldloc.s 8
+		IL_00de: ldloc.s 10
+		IL_00e0: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00e5: pop
+		IL_00e6: ldloc.2
+		IL_00e7: ldc.i4.2
+		IL_00e8: newarr [System.Runtime]System.Object
+		IL_00ed: dup
+		IL_00ee: ldc.i4.0
+		IL_00ef: ldstr "Buddy"
+		IL_00f4: stelem.ref
+		IL_00f5: dup
+		IL_00f6: ldc.i4.1
+		IL_00f7: ldstr "Golden Retriever"
+		IL_00fc: stelem.ref
+		IL_00fd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::ConstructValue(object, object[])
+		IL_0102: stloc.s 4
+		IL_0104: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0109: stloc.s 8
+		IL_010b: ldloc.s 4
+		IL_010d: ldstr "name"
+		IL_0112: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0117: stloc.s 6
+		IL_0119: ldloc.s 8
+		IL_011b: ldloc.s 6
+		IL_011d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0122: pop
+		IL_0123: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0128: stloc.s 8
+		IL_012a: ldloc.s 4
+		IL_012c: ldstr "breed"
+		IL_0131: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0136: stloc.s 6
+		IL_0138: ldloc.s 8
+		IL_013a: ldloc.s 6
+		IL_013c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0141: pop
+		IL_0142: ret
 	} // end of method Require_Util_Inherits_Basic::__js_module_init__
 
 } // end of class Modules.Require_Util_Inherits_Basic

@@ -38,7 +38,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 221 (0xdd)
+		// Code size: 199 (0xc7)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Variable_DestructuringAssignment_Basic/Scope,
@@ -46,7 +46,8 @@
 			[2] float64,
 			[3] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
 			[4] float64,
-			[5] object
+			[5] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+			[6] object
 		)
 
 		IL_0000: newobj instance void Modules.Variable_DestructuringAssignment_Basic/Scope::.ctor()
@@ -90,29 +91,27 @@
 		IL_0085: stloc.s 4
 		IL_0087: ldloc.s 4
 		IL_0089: stloc.2
-		IL_008a: ldstr "console"
-		IL_008f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0094: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0099: ldloc.1
-		IL_009a: box [System.Runtime]System.Double
-		IL_009f: stloc.s 5
-		IL_00a1: ldstr "log"
-		IL_00a6: ldstr "x="
-		IL_00ab: ldloc.s 5
-		IL_00ad: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_00b2: pop
-		IL_00b3: ldstr "console"
-		IL_00b8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_00bd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00c2: ldloc.2
-		IL_00c3: box [System.Runtime]System.Double
-		IL_00c8: stloc.s 5
-		IL_00ca: ldstr "log"
-		IL_00cf: ldstr "y="
-		IL_00d4: ldloc.s 5
-		IL_00d6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_00db: pop
-		IL_00dc: ret
+		IL_008a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_008f: stloc.s 5
+		IL_0091: ldloc.1
+		IL_0092: box [System.Runtime]System.Double
+		IL_0097: stloc.s 6
+		IL_0099: ldloc.s 5
+		IL_009b: ldstr "x="
+		IL_00a0: ldloc.s 6
+		IL_00a2: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_00a7: pop
+		IL_00a8: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00ad: stloc.s 5
+		IL_00af: ldloc.2
+		IL_00b0: box [System.Runtime]System.Double
+		IL_00b5: stloc.s 6
+		IL_00b7: ldloc.s 5
+		IL_00b9: ldstr "y="
+		IL_00be: ldloc.s 6
+		IL_00c0: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_00c5: pop
+		IL_00c6: ret
 	} // end of method Variable_DestructuringAssignment_Basic::__js_module_init__
 
 } // end of class Modules.Variable_DestructuringAssignment_Basic

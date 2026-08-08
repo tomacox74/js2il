@@ -339,11 +339,11 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 259 (0x103)
+		// Code size: 244 (0xf4)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.BinaryOperator_TypedNumericScheduler_DuplicateOperandSlotReuse/Scope,
-			[1] object,
+			[1] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 			[2] object[],
 			[3] class [System.Runtime]System.Type,
 			[4] class Modules.BinaryOperator_TypedNumericScheduler_DuplicateOperandSlotReuse/K,
@@ -355,77 +355,74 @@
 		IL_0005: stloc.0
 		IL_0006: nop
 		IL_0007: nop
-		IL_0008: ldstr "console"
-		IL_000d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0012: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0017: stloc.1
-		IL_0018: ldc.i4.1
-		IL_0019: newarr [System.Runtime]System.Object
-		IL_001e: dup
-		IL_001f: ldc.i4.0
-		IL_0020: ldloc.0
-		IL_0021: stelem.ref
-		IL_0022: stloc.2
+		IL_0008: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_000d: stloc.1
+		IL_000e: ldc.i4.1
+		IL_000f: newarr [System.Runtime]System.Object
+		IL_0014: dup
+		IL_0015: ldc.i4.0
+		IL_0016: ldloc.0
+		IL_0017: stelem.ref
+		IL_0018: stloc.2
+		IL_0019: ldtoken Modules.BinaryOperator_TypedNumericScheduler_DuplicateOperandSlotReuse/K
+		IL_001e: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
 		IL_0023: ldtoken Modules.BinaryOperator_TypedNumericScheduler_DuplicateOperandSlotReuse/K
-		IL_0028: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_002d: ldtoken Modules.BinaryOperator_TypedNumericScheduler_DuplicateOperandSlotReuse/K
-		IL_0032: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_0037: stloc.3
-		IL_0038: ldc.i4.2
-		IL_0039: newarr [System.Runtime]System.Object
-		IL_003e: dup
-		IL_003f: ldc.i4.0
-		IL_0040: ldc.r8 2
-		IL_0049: box [System.Runtime]System.Double
-		IL_004e: stelem.ref
-		IL_004f: dup
-		IL_0050: ldc.i4.1
-		IL_0051: ldc.r8 4
-		IL_005a: box [System.Runtime]System.Double
-		IL_005f: stelem.ref
-		IL_0060: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
-		IL_0065: ldc.r8 2
-		IL_006e: ldc.r8 4
-		IL_0077: newobj instance void Modules.BinaryOperator_TypedNumericScheduler_DuplicateOperandSlotReuse/K::.ctor(float64, float64)
-		IL_007c: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
-		IL_0081: stloc.s 4
-		IL_0083: ldloc.s 4
-		IL_0085: ldtoken Modules.BinaryOperator_TypedNumericScheduler_DuplicateOperandSlotReuse/K
-		IL_008a: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_008f: ldstr "prototype"
-		IL_0094: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
-		IL_0099: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
-		IL_009e: ldloc.s 4
-		IL_00a0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00a5: stloc.s 5
-		IL_00a7: ldloc.s 5
-		IL_00a9: isinst Modules.BinaryOperator_TypedNumericScheduler_DuplicateOperandSlotReuse/K
-		IL_00ae: dup
-		IL_00af: brfalse IL_00ce
+		IL_0028: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_002d: stloc.3
+		IL_002e: ldc.i4.2
+		IL_002f: newarr [System.Runtime]System.Object
+		IL_0034: dup
+		IL_0035: ldc.i4.0
+		IL_0036: ldc.r8 2
+		IL_003f: box [System.Runtime]System.Double
+		IL_0044: stelem.ref
+		IL_0045: dup
+		IL_0046: ldc.i4.1
+		IL_0047: ldc.r8 4
+		IL_0050: box [System.Runtime]System.Double
+		IL_0055: stelem.ref
+		IL_0056: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
+		IL_005b: ldc.r8 2
+		IL_0064: ldc.r8 4
+		IL_006d: newobj instance void Modules.BinaryOperator_TypedNumericScheduler_DuplicateOperandSlotReuse/K::.ctor(float64, float64)
+		IL_0072: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
+		IL_0077: stloc.s 4
+		IL_0079: ldloc.s 4
+		IL_007b: ldtoken Modules.BinaryOperator_TypedNumericScheduler_DuplicateOperandSlotReuse/K
+		IL_0080: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_0085: ldstr "prototype"
+		IL_008a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
+		IL_008f: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
+		IL_0094: ldloc.s 4
+		IL_0096: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_009b: stloc.s 5
+		IL_009d: ldloc.s 5
+		IL_009f: isinst Modules.BinaryOperator_TypedNumericScheduler_DuplicateOperandSlotReuse/K
+		IL_00a4: dup
+		IL_00a5: brfalse IL_00c4
 
-		IL_00b4: ldc.r8 4
-		IL_00bd: box [System.Runtime]System.Double
-		IL_00c2: callvirt instance object Modules.BinaryOperator_TypedNumericScheduler_DuplicateOperandSlotReuse/K::calc(object)
-		IL_00c7: stloc.s 5
-		IL_00c9: br IL_00eb
+		IL_00aa: ldc.r8 4
+		IL_00b3: box [System.Runtime]System.Double
+		IL_00b8: callvirt instance object Modules.BinaryOperator_TypedNumericScheduler_DuplicateOperandSlotReuse/K::calc(object)
+		IL_00bd: stloc.s 5
+		IL_00bf: br IL_00e1
 
-		IL_00ce: pop
-		IL_00cf: ldloc.s 5
-		IL_00d1: ldstr "calc"
-		IL_00d6: ldc.r8 4
-		IL_00df: box [System.Runtime]System.Double
-		IL_00e4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00e9: stloc.s 5
+		IL_00c4: pop
+		IL_00c5: ldloc.s 5
+		IL_00c7: ldstr "calc"
+		IL_00cc: ldc.r8 4
+		IL_00d5: box [System.Runtime]System.Double
+		IL_00da: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_00df: stloc.s 5
 
-		IL_00eb: ldloc.s 5
-		IL_00ed: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-		IL_00f2: stloc.s 6
-		IL_00f4: ldloc.1
-		IL_00f5: ldstr "log"
-		IL_00fa: ldloc.s 6
-		IL_00fc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0101: pop
-		IL_0102: ret
+		IL_00e1: ldloc.s 5
+		IL_00e3: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+		IL_00e8: stloc.s 6
+		IL_00ea: ldloc.1
+		IL_00eb: ldloc.s 6
+		IL_00ed: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00f2: pop
+		IL_00f3: ret
 	} // end of method BinaryOperator_TypedNumericScheduler_DuplicateOperandSlotReuse::__js_module_init__
 
 } // end of class Modules.BinaryOperator_TypedNumericScheduler_DuplicateOperandSlotReuse

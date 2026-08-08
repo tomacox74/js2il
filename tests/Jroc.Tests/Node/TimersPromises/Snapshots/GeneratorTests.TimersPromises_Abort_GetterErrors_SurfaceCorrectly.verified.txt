@@ -279,19 +279,21 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Header size: 1
-			// Code size: 33 (0x21)
+			// Header size: 12
+			// Code size: 20 (0x14)
 			.maxstack 8
+			.locals init (
+				[0] class [JavaScriptRuntime]JavaScriptRuntime.Console
+			)
 
-			IL_0000: ldstr "console"
-			IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_000a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_000f: ldstr "log"
-			IL_0014: ldstr "signal-getter-no-reject"
-			IL_0019: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_001e: pop
-			IL_001f: ldnull
-			IL_0020: ret
+			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0005: stloc.0
+			IL_0006: ldloc.0
+			IL_0007: ldstr "signal-getter-no-reject"
+			IL_000c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0011: pop
+			IL_0012: ldnull
+			IL_0013: ret
 		} // end of method FunctionExpression_L17C8::__js_call__
 
 	} // end of class FunctionExpression_L17C8
@@ -426,41 +428,35 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 84 (0x54)
+			// Code size: 54 (0x36)
 			.maxstack 8
 			.locals init (
-				[0] object,
+				[0] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 				[1] object
 			)
 
-			IL_0000: ldstr "console"
-			IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_000a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_000f: stloc.0
-			IL_0010: ldarg.1
-			IL_0011: ldstr "name"
-			IL_0016: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_001b: stloc.1
-			IL_001c: ldloc.0
-			IL_001d: ldstr "log"
-			IL_0022: ldloc.1
-			IL_0023: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_0028: pop
-			IL_0029: ldstr "console"
-			IL_002e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_0033: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0038: stloc.1
-			IL_0039: ldarg.1
-			IL_003a: ldstr "message"
-			IL_003f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0044: stloc.0
-			IL_0045: ldloc.1
-			IL_0046: ldstr "log"
-			IL_004b: ldloc.0
-			IL_004c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_0051: pop
-			IL_0052: ldnull
-			IL_0053: ret
+			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0005: stloc.0
+			IL_0006: ldarg.1
+			IL_0007: ldstr "name"
+			IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0011: stloc.1
+			IL_0012: ldloc.0
+			IL_0013: ldloc.1
+			IL_0014: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0019: pop
+			IL_001a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_001f: stloc.0
+			IL_0020: ldarg.1
+			IL_0021: ldstr "message"
+			IL_0026: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_002b: stloc.1
+			IL_002c: ldloc.0
+			IL_002d: ldloc.1
+			IL_002e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0033: pop
+			IL_0034: ldnull
+			IL_0035: ret
 		} // end of method FunctionExpression_L20C9::__js_call__
 
 	} // end of class FunctionExpression_L20C9
@@ -925,7 +921,7 @@
 				74 61 54 6f 6b 65 6e 09 00 00 02
 			)
 			// Header size: 12
-			// Code size: 365 (0x16d)
+			// Code size: 324 (0x144)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.TimersPromises_Abort_GetterErrors_SurfaceCorrectly/FunctionExpression_L24C8/Scope,
@@ -939,7 +935,7 @@
 				[8] class Modules.TimersPromises_Abort_GetterErrors_SurfaceCorrectly/FunctionExpression_L24C8/FunctionExpression_L29C11/FunctionObject_FunctionExpression_68F621F1_L29C12,
 				[9] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
 				[10] class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.ITimersPromisesModule,
-				[11] object,
+				[11] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 				[12] object
 			)
 
@@ -1011,73 +1007,66 @@
 				IL_00ae: ldloc.s 9
 				IL_00b0: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.IJavaScriptPromise [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.ITimersPromisesModule::setTimeout(object, object, object)
 				IL_00b5: pop
-				IL_00b6: ldstr "console"
-				IL_00bb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-				IL_00c0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_00c5: ldstr "log"
-				IL_00ca: ldstr "aborted-getter-no-throw"
-				IL_00cf: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-				IL_00d4: pop
-				IL_00d5: leave IL_0167
+				IL_00b6: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_00bb: stloc.s 11
+				IL_00bd: ldloc.s 11
+				IL_00bf: ldstr "aborted-getter-no-throw"
+				IL_00c4: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+				IL_00c9: pop
+				IL_00ca: leave IL_013e
 			} // end .try
 			catch [System.Runtime]System.Exception
 			{
-				IL_00da: stloc.2
-				IL_00db: ldloc.2
-				IL_00dc: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-				IL_00e1: dup
-				IL_00e2: brtrue IL_00f7
+				IL_00cf: stloc.2
+				IL_00d0: ldloc.2
+				IL_00d1: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+				IL_00d6: dup
+				IL_00d7: brtrue IL_00ec
 
-				IL_00e7: pop
-				IL_00e8: ldloc.2
-				IL_00e9: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
-				IL_00ee: dup
-				IL_00ef: brtrue IL_0102
+				IL_00dc: pop
+				IL_00dd: ldloc.2
+				IL_00de: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+				IL_00e3: dup
+				IL_00e4: brtrue IL_00f7
 
-				IL_00f4: pop
-				IL_00f5: rethrow
+				IL_00e9: pop
+				IL_00ea: rethrow
 
-				IL_00f7: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-				IL_00fc: stloc.3
-				IL_00fd: br IL_0103
+				IL_00ec: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+				IL_00f1: stloc.3
+				IL_00f2: br IL_00f8
 
-				IL_0102: stloc.3
+				IL_00f7: stloc.3
 
-				IL_0103: ldloc.3
-				IL_0104: stloc.s 4
-				IL_0106: ldstr "console"
-				IL_010b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-				IL_0110: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_0115: stloc.s 11
-				IL_0117: ldloc.s 4
-				IL_0119: ldstr "name"
-				IL_011e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-				IL_0123: stloc.s 12
-				IL_0125: ldloc.s 11
-				IL_0127: ldstr "log"
-				IL_012c: ldloc.s 12
-				IL_012e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-				IL_0133: pop
-				IL_0134: ldstr "console"
-				IL_0139: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-				IL_013e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_0143: stloc.s 12
-				IL_0145: ldloc.s 4
-				IL_0147: ldstr "message"
-				IL_014c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-				IL_0151: stloc.s 11
-				IL_0153: ldloc.s 12
-				IL_0155: ldstr "log"
-				IL_015a: ldloc.s 11
-				IL_015c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-				IL_0161: pop
-				IL_0162: leave IL_0167
+				IL_00f8: ldloc.3
+				IL_00f9: stloc.s 4
+				IL_00fb: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_0100: stloc.s 11
+				IL_0102: ldloc.s 4
+				IL_0104: ldstr "name"
+				IL_0109: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+				IL_010e: stloc.s 12
+				IL_0110: ldloc.s 11
+				IL_0112: ldloc.s 12
+				IL_0114: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+				IL_0119: pop
+				IL_011a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_011f: stloc.s 11
+				IL_0121: ldloc.s 4
+				IL_0123: ldstr "message"
+				IL_0128: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+				IL_012d: stloc.s 12
+				IL_012f: ldloc.s 11
+				IL_0131: ldloc.s 12
+				IL_0133: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+				IL_0138: pop
+				IL_0139: leave IL_013e
 			} // end handler
 
-			IL_0167: ldnull
-			IL_0168: stloc.s 5
-			IL_016a: ldloc.s 5
-			IL_016c: ret
+			IL_013e: ldnull
+			IL_013f: stloc.s 5
+			IL_0141: ldloc.s 5
+			IL_0143: ret
 		} // end of method FunctionExpression_L24C8::__js_call__
 
 	} // end of class FunctionExpression_L24C8
@@ -1121,7 +1110,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 369 (0x171)
+		// Code size: 354 (0x162)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.TimersPromises_Abort_GetterErrors_SurfaceCorrectly/Scope,
@@ -1131,7 +1120,7 @@
 			[4] object[],
 			[5] class Modules.TimersPromises_Abort_GetterErrors_SurfaceCorrectly/FunctionExpression_L7C7/FunctionObject_FunctionExpression_0AB671BF_L7C8,
 			[6] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
-			[7] object,
+			[7] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 			[8] object,
 			[9] string,
 			[10] class Modules.TimersPromises_Abort_GetterErrors_SurfaceCorrectly/FunctionExpression_L17C8/FunctionObject_FunctionExpression_E62F123B_L17C9,
@@ -1187,96 +1176,93 @@
 		IL_007e: ldloc.1
 		IL_007f: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.IJavaScriptPromise [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.ITimersPromisesModule::setTimeout(object, object, object)
 		IL_0084: stloc.2
-		IL_0085: ldstr "console"
-		IL_008a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_008f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0094: stloc.s 7
-		IL_0096: ldloc.2
-		IL_0097: ldstr "then"
-		IL_009c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_00a1: stloc.s 8
-		IL_00a3: ldloc.s 8
-		IL_00a5: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
-		IL_00aa: stloc.s 9
-		IL_00ac: ldloc.s 7
-		IL_00ae: ldstr "log"
-		IL_00b3: ldloc.s 9
-		IL_00b5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00ba: pop
-		IL_00bb: ldloc.2
-		IL_00bc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00c1: stloc.s 7
-		IL_00c3: ldc.i4.1
-		IL_00c4: newarr [System.Runtime]System.Object
-		IL_00c9: dup
-		IL_00ca: ldc.i4.0
-		IL_00cb: ldloc.0
-		IL_00cc: stelem.ref
-		IL_00cd: stloc.s 4
-		IL_00cf: newobj instance void Modules.TimersPromises_Abort_GetterErrors_SurfaceCorrectly/FunctionExpression_L17C8/FunctionObject_FunctionExpression_E62F123B_L17C9::.ctor()
-		IL_00d4: ldc.i4.0
-		IL_00d5: conv.r8
-		IL_00d6: ldstr ""
-		IL_00db: ldc.i4.0
-		IL_00dc: ldc.i4.1
-		IL_00dd: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.TimersPromises_Abort_GetterErrors_SurfaceCorrectly/FunctionExpression_L17C8/FunctionObject_FunctionExpression_E62F123B_L17C9>(!!0, float64, string, bool, bool)
-		IL_00e2: stloc.s 10
-		IL_00e4: ldloc.s 7
-		IL_00e6: ldstr "then"
-		IL_00eb: ldloc.s 10
-		IL_00ed: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00f2: stloc.s 7
-		IL_00f4: ldloc.s 7
-		IL_00f6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00fb: stloc.s 7
-		IL_00fd: ldc.i4.1
-		IL_00fe: newarr [System.Runtime]System.Object
-		IL_0103: dup
-		IL_0104: ldc.i4.0
-		IL_0105: ldloc.0
-		IL_0106: stelem.ref
-		IL_0107: stloc.s 4
-		IL_0109: newobj instance void Modules.TimersPromises_Abort_GetterErrors_SurfaceCorrectly/FunctionExpression_L20C9/FunctionObject_FunctionExpression_D519D947_L20C10::.ctor()
-		IL_010e: ldc.i4.1
-		IL_010f: conv.r8
-		IL_0110: ldstr ""
-		IL_0115: ldc.i4.0
-		IL_0116: ldc.i4.1
-		IL_0117: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.TimersPromises_Abort_GetterErrors_SurfaceCorrectly/FunctionExpression_L20C9/FunctionObject_FunctionExpression_D519D947_L20C10>(!!0, float64, string, bool, bool)
-		IL_011c: stloc.s 11
-		IL_011e: ldloc.s 7
-		IL_0120: ldstr "catch"
-		IL_0125: ldloc.s 11
-		IL_0127: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_012c: stloc.s 7
-		IL_012e: ldloc.s 7
-		IL_0130: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0135: stloc.s 7
-		IL_0137: ldc.i4.1
-		IL_0138: newarr [System.Runtime]System.Object
-		IL_013d: dup
-		IL_013e: ldc.i4.0
-		IL_013f: ldloc.0
-		IL_0140: stelem.ref
-		IL_0141: stloc.s 4
-		IL_0143: ldloc.s 4
-		IL_0145: ldc.i4.0
-		IL_0146: ldelem.ref
-		IL_0147: castclass Modules.TimersPromises_Abort_GetterErrors_SurfaceCorrectly/Scope
-		IL_014c: newobj instance void Modules.TimersPromises_Abort_GetterErrors_SurfaceCorrectly/FunctionExpression_L24C8/FunctionObject_FunctionExpression_20FF4171_L24C9::.ctor(class Modules.TimersPromises_Abort_GetterErrors_SurfaceCorrectly/Scope)
-		IL_0151: ldc.i4.0
-		IL_0152: conv.r8
-		IL_0153: ldstr ""
-		IL_0158: ldc.i4.0
-		IL_0159: ldc.i4.1
-		IL_015a: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.TimersPromises_Abort_GetterErrors_SurfaceCorrectly/FunctionExpression_L24C8/FunctionObject_FunctionExpression_20FF4171_L24C9>(!!0, float64, string, bool, bool)
-		IL_015f: stloc.s 12
-		IL_0161: ldloc.s 7
-		IL_0163: ldstr "then"
-		IL_0168: ldloc.s 12
-		IL_016a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_016f: pop
-		IL_0170: ret
+		IL_0085: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_008a: stloc.s 7
+		IL_008c: ldloc.2
+		IL_008d: ldstr "then"
+		IL_0092: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0097: stloc.s 8
+		IL_0099: ldloc.s 8
+		IL_009b: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
+		IL_00a0: stloc.s 9
+		IL_00a2: ldloc.s 7
+		IL_00a4: ldloc.s 9
+		IL_00a6: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00ab: pop
+		IL_00ac: ldloc.2
+		IL_00ad: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00b2: stloc.s 8
+		IL_00b4: ldc.i4.1
+		IL_00b5: newarr [System.Runtime]System.Object
+		IL_00ba: dup
+		IL_00bb: ldc.i4.0
+		IL_00bc: ldloc.0
+		IL_00bd: stelem.ref
+		IL_00be: stloc.s 4
+		IL_00c0: newobj instance void Modules.TimersPromises_Abort_GetterErrors_SurfaceCorrectly/FunctionExpression_L17C8/FunctionObject_FunctionExpression_E62F123B_L17C9::.ctor()
+		IL_00c5: ldc.i4.0
+		IL_00c6: conv.r8
+		IL_00c7: ldstr ""
+		IL_00cc: ldc.i4.0
+		IL_00cd: ldc.i4.1
+		IL_00ce: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.TimersPromises_Abort_GetterErrors_SurfaceCorrectly/FunctionExpression_L17C8/FunctionObject_FunctionExpression_E62F123B_L17C9>(!!0, float64, string, bool, bool)
+		IL_00d3: stloc.s 10
+		IL_00d5: ldloc.s 8
+		IL_00d7: ldstr "then"
+		IL_00dc: ldloc.s 10
+		IL_00de: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_00e3: stloc.s 8
+		IL_00e5: ldloc.s 8
+		IL_00e7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00ec: stloc.s 8
+		IL_00ee: ldc.i4.1
+		IL_00ef: newarr [System.Runtime]System.Object
+		IL_00f4: dup
+		IL_00f5: ldc.i4.0
+		IL_00f6: ldloc.0
+		IL_00f7: stelem.ref
+		IL_00f8: stloc.s 4
+		IL_00fa: newobj instance void Modules.TimersPromises_Abort_GetterErrors_SurfaceCorrectly/FunctionExpression_L20C9/FunctionObject_FunctionExpression_D519D947_L20C10::.ctor()
+		IL_00ff: ldc.i4.1
+		IL_0100: conv.r8
+		IL_0101: ldstr ""
+		IL_0106: ldc.i4.0
+		IL_0107: ldc.i4.1
+		IL_0108: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.TimersPromises_Abort_GetterErrors_SurfaceCorrectly/FunctionExpression_L20C9/FunctionObject_FunctionExpression_D519D947_L20C10>(!!0, float64, string, bool, bool)
+		IL_010d: stloc.s 11
+		IL_010f: ldloc.s 8
+		IL_0111: ldstr "catch"
+		IL_0116: ldloc.s 11
+		IL_0118: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_011d: stloc.s 8
+		IL_011f: ldloc.s 8
+		IL_0121: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0126: stloc.s 8
+		IL_0128: ldc.i4.1
+		IL_0129: newarr [System.Runtime]System.Object
+		IL_012e: dup
+		IL_012f: ldc.i4.0
+		IL_0130: ldloc.0
+		IL_0131: stelem.ref
+		IL_0132: stloc.s 4
+		IL_0134: ldloc.s 4
+		IL_0136: ldc.i4.0
+		IL_0137: ldelem.ref
+		IL_0138: castclass Modules.TimersPromises_Abort_GetterErrors_SurfaceCorrectly/Scope
+		IL_013d: newobj instance void Modules.TimersPromises_Abort_GetterErrors_SurfaceCorrectly/FunctionExpression_L24C8/FunctionObject_FunctionExpression_20FF4171_L24C9::.ctor(class Modules.TimersPromises_Abort_GetterErrors_SurfaceCorrectly/Scope)
+		IL_0142: ldc.i4.0
+		IL_0143: conv.r8
+		IL_0144: ldstr ""
+		IL_0149: ldc.i4.0
+		IL_014a: ldc.i4.1
+		IL_014b: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.TimersPromises_Abort_GetterErrors_SurfaceCorrectly/FunctionExpression_L24C8/FunctionObject_FunctionExpression_20FF4171_L24C9>(!!0, float64, string, bool, bool)
+		IL_0150: stloc.s 12
+		IL_0152: ldloc.s 8
+		IL_0154: ldstr "then"
+		IL_0159: ldloc.s 12
+		IL_015b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0160: pop
+		IL_0161: ret
 	} // end of method TimersPromises_Abort_GetterErrors_SurfaceCorrectly::__js_module_init__
 
 } // end of class Modules.TimersPromises_Abort_GetterErrors_SurfaceCorrectly

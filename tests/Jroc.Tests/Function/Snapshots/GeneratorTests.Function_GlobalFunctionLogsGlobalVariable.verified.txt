@@ -145,41 +145,35 @@
 				74 61 54 6f 6b 65 6e 04 00 00 02
 			)
 			// Header size: 12
-			// Code size: 84 (0x54)
+			// Code size: 54 (0x36)
 			.maxstack 8
 			.locals init (
-				[0] object,
+				[0] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 				[1] object
 			)
 
-			IL_0000: ldstr "console"
-			IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_000a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_000f: stloc.0
-			IL_0010: ldarg.0
-			IL_0011: ldfld string Modules.Function_GlobalFunctionLogsGlobalVariable/Scope::globalMessage
-			IL_0016: stloc.1
-			IL_0017: ldloc.0
-			IL_0018: ldstr "log"
-			IL_001d: ldstr "Global message:"
-			IL_0022: ldloc.1
-			IL_0023: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-			IL_0028: pop
-			IL_0029: ldstr "console"
-			IL_002e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_0033: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0038: stloc.1
-			IL_0039: ldarg.0
-			IL_003a: ldfld object Modules.Function_GlobalFunctionLogsGlobalVariable/Scope::globalNumber
-			IL_003f: stloc.0
-			IL_0040: ldloc.1
-			IL_0041: ldstr "log"
-			IL_0046: ldstr "Global number:"
-			IL_004b: ldloc.0
-			IL_004c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-			IL_0051: pop
-			IL_0052: ldnull
-			IL_0053: ret
+			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0005: stloc.0
+			IL_0006: ldarg.0
+			IL_0007: ldfld string Modules.Function_GlobalFunctionLogsGlobalVariable/Scope::globalMessage
+			IL_000c: stloc.1
+			IL_000d: ldloc.0
+			IL_000e: ldstr "Global message:"
+			IL_0013: ldloc.1
+			IL_0014: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_0019: pop
+			IL_001a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_001f: stloc.0
+			IL_0020: ldarg.0
+			IL_0021: ldfld object Modules.Function_GlobalFunctionLogsGlobalVariable/Scope::globalNumber
+			IL_0026: stloc.1
+			IL_0027: ldloc.0
+			IL_0028: ldstr "Global number:"
+			IL_002d: ldloc.1
+			IL_002e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_0033: pop
+			IL_0034: ldnull
+			IL_0035: ret
 		} // end of method logGlobalValues::__js_call__
 
 	} // end of class logGlobalValues

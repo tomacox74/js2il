@@ -38,7 +38,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 1168 (0x490)
+		// Code size: 1098 (0x44a)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Process_Versions_Expanded/Scope,
@@ -59,8 +59,8 @@
 			[15] object,
 			[16] object,
 			[17] object,
-			[18] class [JavaScriptRuntime]JavaScriptRuntime.RegExp,
-			[19] object
+			[18] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+			[19] class [JavaScriptRuntime]JavaScriptRuntime.RegExp
 		)
 
 		IL_0000: newobj instance void Modules.Process_Versions_Expanded/Scope::.ctor()
@@ -341,74 +341,66 @@
 
 		IL_0384: ldloc.s 17
 		IL_0386: stloc.s 5
-		IL_0388: ldstr "console"
-		IL_038d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0392: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0397: ldstr "log"
-		IL_039c: ldstr "has versions.node"
-		IL_03a1: ldloc.1
-		IL_03a2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_03a7: pop
-		IL_03a8: ldstr "console"
-		IL_03ad: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_03b2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_03b7: ldstr "log"
-		IL_03bc: ldstr "has versions.v8"
-		IL_03c1: ldloc.2
-		IL_03c2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_03c7: pop
-		IL_03c8: ldstr "console"
-		IL_03cd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_03d2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_03d7: ldstr "log"
-		IL_03dc: ldstr "has versions.modules"
-		IL_03e1: ldloc.3
-		IL_03e2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_03e7: pop
-		IL_03e8: ldstr "console"
-		IL_03ed: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_03f2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_03f7: ldstr "log"
-		IL_03fc: ldstr "has versions.jroc"
-		IL_0401: ldloc.s 4
-		IL_0403: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_0408: pop
-		IL_0409: ldstr "console"
-		IL_040e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0413: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0418: ldstr "log"
-		IL_041d: ldstr "has versions.dotnet"
-		IL_0422: ldloc.s 5
-		IL_0424: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_0429: pop
-		IL_042a: ldstr "process"
-		IL_042f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0434: ldstr "versions"
-		IL_0439: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_043e: stloc.s 7
-		IL_0440: ldloc.s 7
-		IL_0442: ldstr "node"
-		IL_0447: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_044c: stloc.s 6
-		IL_044e: ldstr "console"
-		IL_0453: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0458: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_045d: stloc.s 7
-		IL_045f: ldstr "^\\d+\\.\\d+\\.\\d+$"
-		IL_0464: ldstr ""
-		IL_0469: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.RegExp::.ctor(object, object)
-		IL_046e: stloc.s 18
-		IL_0470: ldloc.s 18
-		IL_0472: ldloc.s 6
-		IL_0474: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.RegExp::test(object)
-		IL_0479: stloc.s 19
-		IL_047b: ldloc.s 7
-		IL_047d: ldstr "log"
-		IL_0482: ldstr "node version format valid"
-		IL_0487: ldloc.s 19
-		IL_0489: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_048e: pop
-		IL_048f: ret
+		IL_0388: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_038d: stloc.s 18
+		IL_038f: ldloc.s 18
+		IL_0391: ldstr "has versions.node"
+		IL_0396: ldloc.1
+		IL_0397: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_039c: pop
+		IL_039d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_03a2: stloc.s 18
+		IL_03a4: ldloc.s 18
+		IL_03a6: ldstr "has versions.v8"
+		IL_03ab: ldloc.2
+		IL_03ac: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_03b1: pop
+		IL_03b2: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_03b7: stloc.s 18
+		IL_03b9: ldloc.s 18
+		IL_03bb: ldstr "has versions.modules"
+		IL_03c0: ldloc.3
+		IL_03c1: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_03c6: pop
+		IL_03c7: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_03cc: stloc.s 18
+		IL_03ce: ldloc.s 18
+		IL_03d0: ldstr "has versions.jroc"
+		IL_03d5: ldloc.s 4
+		IL_03d7: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_03dc: pop
+		IL_03dd: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_03e2: stloc.s 18
+		IL_03e4: ldloc.s 18
+		IL_03e6: ldstr "has versions.dotnet"
+		IL_03eb: ldloc.s 5
+		IL_03ed: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_03f2: pop
+		IL_03f3: ldstr "process"
+		IL_03f8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_03fd: ldstr "versions"
+		IL_0402: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0407: stloc.s 7
+		IL_0409: ldloc.s 7
+		IL_040b: ldstr "node"
+		IL_0410: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0415: stloc.s 6
+		IL_0417: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_041c: stloc.s 18
+		IL_041e: ldstr "^\\d+\\.\\d+\\.\\d+$"
+		IL_0423: ldstr ""
+		IL_0428: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.RegExp::.ctor(object, object)
+		IL_042d: stloc.s 19
+		IL_042f: ldloc.s 19
+		IL_0431: ldloc.s 6
+		IL_0433: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.RegExp::test(object)
+		IL_0438: stloc.s 7
+		IL_043a: ldloc.s 18
+		IL_043c: ldstr "node version format valid"
+		IL_0441: ldloc.s 7
+		IL_0443: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_0448: pop
+		IL_0449: ret
 	} // end of method Process_Versions_Expanded::__js_module_init__
 
 } // end of class Modules.Process_Versions_Expanded

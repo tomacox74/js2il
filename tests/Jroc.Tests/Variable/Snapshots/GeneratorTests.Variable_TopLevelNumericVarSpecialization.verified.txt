@@ -59,7 +59,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 130 (0x82)
+		// Code size: 119 (0x77)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Variable_TopLevelNumericVarSpecialization/Scope,
@@ -68,7 +68,8 @@
 			[3] float64,
 			[4] float64,
 			[5] float64,
-			[6] object
+			[6] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+			[7] object
 		)
 
 		IL_0000: newobj instance void Modules.Variable_TopLevelNumericVarSpecialization/Scope::.ctor()
@@ -107,17 +108,16 @@
 			IL_0058: br IL_0025
 		// end loop
 
-		IL_005d: ldstr "console"
-		IL_0062: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0067: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_006c: ldloc.2
-		IL_006d: box [System.Runtime]System.Double
-		IL_0072: stloc.s 6
-		IL_0074: ldstr "log"
-		IL_0079: ldloc.s 6
-		IL_007b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0080: pop
-		IL_0081: ret
+		IL_005d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0062: stloc.s 6
+		IL_0064: ldloc.2
+		IL_0065: box [System.Runtime]System.Double
+		IL_006a: stloc.s 7
+		IL_006c: ldloc.s 6
+		IL_006e: ldloc.s 7
+		IL_0070: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0075: pop
+		IL_0076: ret
 	} // end of method Variable_TopLevelNumericVarSpecialization::__js_module_init__
 
 } // end of class Modules.Variable_TopLevelNumericVarSpecialization

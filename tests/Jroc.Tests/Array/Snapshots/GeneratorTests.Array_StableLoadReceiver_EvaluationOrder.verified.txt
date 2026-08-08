@@ -323,7 +323,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 409 (0x199)
+		// Code size: 379 (0x17b)
 		.maxstack 13
 		.locals init (
 			[0] class Modules.Array_StableLoadReceiver_EvaluationOrder/Scope,
@@ -334,7 +334,7 @@
 			[5] class Modules.Array_StableLoadReceiver_EvaluationOrder/FunctionExpression_nested/FunctionObject_FunctionExpression_3434C852_L7C14,
 			[6] object,
 			[7] class Modules.Array_StableLoadReceiver_EvaluationOrder/FunctionExpression_L16C7/FunctionObject_FunctionExpression_52357B65_L16C8,
-			[8] object,
+			[8] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 			[9] object,
 			[10] object
 		)
@@ -436,46 +436,40 @@
 		IL_0106: ldloc.3
 		IL_0107: call object [JavaScriptRuntime]JavaScriptRuntime.Object::defineProperty(object, object, object)
 		IL_010c: pop
-		IL_010d: ldstr "console"
-		IL_0112: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0117: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_011c: stloc.s 6
-		IL_011e: ldloc.1
-		IL_011f: ldc.r8 0.0
-		IL_0128: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
-		IL_012d: ldstr "value"
-		IL_0132: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0137: stloc.s 8
-		IL_0139: ldloc.s 6
-		IL_013b: ldstr "log"
-		IL_0140: ldloc.s 8
-		IL_0142: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0147: pop
-		IL_0148: ldstr "console"
-		IL_014d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0152: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0157: stloc.s 8
-		IL_0159: ldloc.0
-		IL_015a: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Array_StableLoadReceiver_EvaluationOrder/Scope::order
-		IL_015f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0164: ldstr "join"
-		IL_0169: ldstr ","
-		IL_016e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0173: stloc.s 6
-		IL_0175: ldloc.0
-		IL_0176: ldfld object Modules.Array_StableLoadReceiver_EvaluationOrder/Scope::innerReadCount
-		IL_017b: stloc.s 9
-		IL_017d: ldloc.0
-		IL_017e: ldfld object Modules.Array_StableLoadReceiver_EvaluationOrder/Scope::outerReadCount
-		IL_0183: stloc.s 10
-		IL_0185: ldloc.s 8
-		IL_0187: ldstr "log"
-		IL_018c: ldloc.s 6
-		IL_018e: ldloc.s 9
-		IL_0190: ldloc.s 10
-		IL_0192: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember3(object, string, object, object, object)
-		IL_0197: pop
-		IL_0198: ret
+		IL_010d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0112: stloc.s 8
+		IL_0114: ldloc.1
+		IL_0115: ldc.r8 0.0
+		IL_011e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
+		IL_0123: ldstr "value"
+		IL_0128: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_012d: stloc.s 6
+		IL_012f: ldloc.s 8
+		IL_0131: ldloc.s 6
+		IL_0133: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0138: pop
+		IL_0139: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_013e: stloc.s 8
+		IL_0140: ldloc.0
+		IL_0141: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Array_StableLoadReceiver_EvaluationOrder/Scope::order
+		IL_0146: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_014b: ldstr "join"
+		IL_0150: ldstr ","
+		IL_0155: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_015a: stloc.s 6
+		IL_015c: ldloc.0
+		IL_015d: ldfld object Modules.Array_StableLoadReceiver_EvaluationOrder/Scope::innerReadCount
+		IL_0162: stloc.s 9
+		IL_0164: ldloc.0
+		IL_0165: ldfld object Modules.Array_StableLoadReceiver_EvaluationOrder/Scope::outerReadCount
+		IL_016a: stloc.s 10
+		IL_016c: ldloc.s 8
+		IL_016e: ldloc.s 6
+		IL_0170: ldloc.s 9
+		IL_0172: ldloc.s 10
+		IL_0174: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object, object)
+		IL_0179: pop
+		IL_017a: ret
 	} // end of method Array_StableLoadReceiver_EvaluationOrder::__js_module_init__
 
 } // end of class Modules.Array_StableLoadReceiver_EvaluationOrder

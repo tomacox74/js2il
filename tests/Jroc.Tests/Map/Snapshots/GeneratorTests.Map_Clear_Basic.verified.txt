@@ -38,12 +38,12 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 152 (0x98)
+		// Code size: 122 (0x7a)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Map_Clear_Basic/Scope,
 			[1] class [JavaScriptRuntime]JavaScriptRuntime.Map,
-			[2] object,
+			[2] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 			[3] object
 		)
 
@@ -64,37 +64,31 @@
 		IL_002e: ldstr "value2"
 		IL_0033: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
 		IL_0038: pop
-		IL_0039: ldstr "console"
-		IL_003e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0043: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0048: stloc.2
-		IL_0049: ldloc.1
-		IL_004a: ldstr "size"
-		IL_004f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0054: stloc.3
-		IL_0055: ldloc.2
-		IL_0056: ldstr "log"
-		IL_005b: ldloc.3
-		IL_005c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0061: pop
-		IL_0062: ldloc.1
-		IL_0063: ldstr "clear"
-		IL_0068: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-		IL_006d: pop
-		IL_006e: ldstr "console"
-		IL_0073: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0078: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_007d: stloc.3
-		IL_007e: ldloc.1
-		IL_007f: ldstr "size"
-		IL_0084: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0089: stloc.2
-		IL_008a: ldloc.3
-		IL_008b: ldstr "log"
-		IL_0090: ldloc.2
-		IL_0091: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0096: pop
-		IL_0097: ret
+		IL_0039: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_003e: stloc.2
+		IL_003f: ldloc.1
+		IL_0040: ldstr "size"
+		IL_0045: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_004a: stloc.3
+		IL_004b: ldloc.2
+		IL_004c: ldloc.3
+		IL_004d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0052: pop
+		IL_0053: ldloc.1
+		IL_0054: ldstr "clear"
+		IL_0059: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+		IL_005e: pop
+		IL_005f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0064: stloc.2
+		IL_0065: ldloc.1
+		IL_0066: ldstr "size"
+		IL_006b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0070: stloc.3
+		IL_0071: ldloc.2
+		IL_0072: ldloc.3
+		IL_0073: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0078: pop
+		IL_0079: ret
 	} // end of method Map_Clear_Basic::__js_module_init__
 
 } // end of class Modules.Map_Clear_Basic

@@ -391,7 +391,7 @@
 				74 61 54 6f 6b 65 6e 07 00 00 02
 			)
 			// Header size: 12
-			// Code size: 431 (0x1af)
+			// Code size: 401 (0x191)
 			.maxstack 8
 			.locals init (
 				[0] float64,
@@ -405,7 +405,7 @@
 				[8] object,
 				[9] class Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/PrimeSieve,
 				[10] bool,
-				[11] object,
+				[11] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 				[12] string,
 				[13] float64,
 				[14] object
@@ -483,72 +483,66 @@
 			IL_00c4: ldloc.s 10
 			IL_00c6: box [System.Runtime]System.Boolean
 			IL_00cb: stloc.s 5
-			IL_00cd: ldstr "console"
-			IL_00d2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_00d7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_00dc: stloc.s 11
-			IL_00de: ldloc.0
-			IL_00df: box [System.Runtime]System.Double
-			IL_00e4: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-			IL_00e9: stloc.s 12
-			IL_00eb: ldstr "prime-sieve;size="
-			IL_00f0: ldloc.s 12
+			IL_00cd: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_00d2: stloc.s 11
+			IL_00d4: ldloc.0
+			IL_00d5: box [System.Runtime]System.Double
+			IL_00da: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+			IL_00df: stloc.s 12
+			IL_00e1: ldstr "prime-sieve;size="
+			IL_00e6: ldloc.s 12
+			IL_00e8: call string [System.Runtime]System.String::Concat(string, string)
+			IL_00ed: ldstr ";count="
 			IL_00f2: call string [System.Runtime]System.String::Concat(string, string)
-			IL_00f7: ldstr ";count="
-			IL_00fc: call string [System.Runtime]System.String::Concat(string, string)
-			IL_0101: ldloc.s 4
-			IL_0103: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/PrimeSieve>(!!0)
-			IL_0108: stloc.s 9
-			IL_010a: ldloc.s 9
-			IL_010c: callvirt instance float64 Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/PrimeSieve::countPrimes()
-			IL_0111: stloc.s 13
-			IL_0113: ldloc.s 13
-			IL_0115: box [System.Runtime]System.Double
-			IL_011a: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-			IL_011f: stloc.s 12
-			IL_0121: ldloc.s 12
+			IL_00f7: ldloc.s 4
+			IL_00f9: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/PrimeSieve>(!!0)
+			IL_00fe: stloc.s 9
+			IL_0100: ldloc.s 9
+			IL_0102: callvirt instance float64 Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/PrimeSieve::countPrimes()
+			IL_0107: stloc.s 13
+			IL_0109: ldloc.s 13
+			IL_010b: box [System.Runtime]System.Double
+			IL_0110: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+			IL_0115: stloc.s 12
+			IL_0117: ldloc.s 12
+			IL_0119: call string [System.Runtime]System.String::Concat(string, string)
+			IL_011e: ldstr ";valid="
 			IL_0123: call string [System.Runtime]System.String::Concat(string, string)
-			IL_0128: ldstr ";valid="
-			IL_012d: call string [System.Runtime]System.String::Concat(string, string)
-			IL_0132: ldloc.s 5
-			IL_0134: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-			IL_0139: stloc.s 12
-			IL_013b: ldloc.s 12
-			IL_013d: call string [System.Runtime]System.String::Concat(string, string)
-			IL_0142: stloc.s 12
-			IL_0144: ldloc.s 11
-			IL_0146: ldstr "log"
-			IL_014b: ldloc.s 12
-			IL_014d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_0152: pop
-			IL_0153: ldloc.s 4
-			IL_0155: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/PrimeSieve>(!!0)
-			IL_015a: stloc.s 9
-			IL_015c: ldloc.s 4
-			IL_015e: ldstr "sieveSizeInBits"
-			IL_0163: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0168: stloc.s 11
-			IL_016a: ldloc.s 9
-			IL_016c: ldloc.s 11
-			IL_016e: callvirt instance object Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/PrimeSieve::getPrimes(object)
-			IL_0173: stloc.s 6
-			IL_0175: ldstr "console"
-			IL_017a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_017f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0184: stloc.s 11
-			IL_0186: ldloc.s 6
-			IL_0188: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_018d: ldstr "join"
-			IL_0192: ldstr ","
-			IL_0197: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_019c: stloc.s 14
-			IL_019e: ldloc.s 11
-			IL_01a0: ldstr "log"
-			IL_01a5: ldloc.s 14
-			IL_01a7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_01ac: pop
-			IL_01ad: ldnull
-			IL_01ae: ret
+			IL_0128: ldloc.s 5
+			IL_012a: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+			IL_012f: stloc.s 12
+			IL_0131: ldloc.s 12
+			IL_0133: call string [System.Runtime]System.String::Concat(string, string)
+			IL_0138: stloc.s 12
+			IL_013a: ldloc.s 11
+			IL_013c: ldloc.s 12
+			IL_013e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0143: pop
+			IL_0144: ldloc.s 4
+			IL_0146: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/PrimeSieve>(!!0)
+			IL_014b: stloc.s 9
+			IL_014d: ldloc.s 4
+			IL_014f: ldstr "sieveSizeInBits"
+			IL_0154: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0159: stloc.s 14
+			IL_015b: ldloc.s 9
+			IL_015d: ldloc.s 14
+			IL_015f: callvirt instance object Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/PrimeSieve::getPrimes(object)
+			IL_0164: stloc.s 6
+			IL_0166: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_016b: stloc.s 11
+			IL_016d: ldloc.s 6
+			IL_016f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0174: ldstr "join"
+			IL_0179: ldstr ","
+			IL_017e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_0183: stloc.s 14
+			IL_0185: ldloc.s 11
+			IL_0187: ldloc.s 14
+			IL_0189: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_018e: pop
+			IL_018f: ldnull
+			IL_0190: ret
 		} // end of method ArrowFunction_L232C14::__js_call__
 
 	} // end of class ArrowFunction_L232C14
@@ -2710,7 +2704,7 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 643 (0x283)
+			// Code size: 598 (0x256)
 			.maxstack 8
 			.locals init (
 				[0] float64,
@@ -2722,7 +2716,7 @@
 				[6] object,
 				[7] bool,
 				[8] object,
-				[9] object,
+				[9] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 				[10] string,
 				[11] string
 			)
@@ -2782,7 +2776,7 @@
 			IL_00d7: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::In(object, object)
 			IL_00dc: stloc.s 7
 			IL_00de: ldloc.s 7
-			IL_00e0: brfalse IL_01b6
+			IL_00e0: brfalse IL_01a7
 
 			IL_00e5: ldloc.1
 			IL_00e6: ldarg.0
@@ -2807,112 +2801,103 @@
 			IL_011b: ceq
 			IL_011d: stloc.s 7
 			IL_011f: ldloc.s 7
-			IL_0121: brfalse IL_01b1
+			IL_0121: brfalse IL_01a2
 
-			IL_0126: ldstr "console"
-			IL_012b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_0130: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0135: stloc.s 9
-			IL_0137: ldarg.0
-			IL_0138: ldfld object Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/PrimeSieve::sieveSize
-			IL_013d: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-			IL_0142: stloc.s 10
-			IL_0144: ldstr "Limit for "
-			IL_0149: ldloc.s 10
+			IL_0126: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_012b: stloc.s 9
+			IL_012d: ldarg.0
+			IL_012e: ldfld object Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/PrimeSieve::sieveSize
+			IL_0133: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+			IL_0138: stloc.s 10
+			IL_013a: ldstr "Limit for "
+			IL_013f: ldloc.s 10
+			IL_0141: call string [System.Runtime]System.String::Concat(string, string)
+			IL_0146: ldstr " should be "
 			IL_014b: call string [System.Runtime]System.String::Concat(string, string)
-			IL_0150: ldstr " should be "
-			IL_0155: call string [System.Runtime]System.String::Concat(string, string)
-			IL_015a: ldloc.s 5
-			IL_015c: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-			IL_0161: stloc.s 10
-			IL_0163: ldloc.s 10
+			IL_0150: ldloc.s 5
+			IL_0152: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+			IL_0157: stloc.s 10
+			IL_0159: ldloc.s 10
+			IL_015b: call string [System.Runtime]System.String::Concat(string, string)
+			IL_0160: ldstr " "
 			IL_0165: call string [System.Runtime]System.String::Concat(string, string)
-			IL_016a: ldstr " "
-			IL_016f: call string [System.Runtime]System.String::Concat(string, string)
-			IL_0174: stloc.s 10
-			IL_0176: ldloc.2
-			IL_0177: box [System.Runtime]System.Double
-			IL_017c: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-			IL_0181: stloc.s 11
-			IL_0183: ldstr "but result contains "
-			IL_0188: ldloc.s 11
+			IL_016a: stloc.s 10
+			IL_016c: ldloc.2
+			IL_016d: box [System.Runtime]System.Double
+			IL_0172: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+			IL_0177: stloc.s 11
+			IL_0179: ldstr "but result contains "
+			IL_017e: ldloc.s 11
+			IL_0180: call string [System.Runtime]System.String::Concat(string, string)
+			IL_0185: ldstr " primes"
 			IL_018a: call string [System.Runtime]System.String::Concat(string, string)
-			IL_018f: ldstr " primes"
-			IL_0194: call string [System.Runtime]System.String::Concat(string, string)
-			IL_0199: stloc.s 11
-			IL_019b: ldloc.s 9
-			IL_019d: ldstr "log"
-			IL_01a2: ldstr "\nError: invalid result."
-			IL_01a7: ldloc.s 10
-			IL_01a9: ldloc.s 11
-			IL_01ab: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember3(object, string, object, object, object)
-			IL_01b0: pop
+			IL_018f: stloc.s 11
+			IL_0191: ldloc.s 9
+			IL_0193: ldstr "\nError: invalid result."
+			IL_0198: ldloc.s 10
+			IL_019a: ldloc.s 11
+			IL_019c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object, object)
+			IL_01a1: pop
 
-			IL_01b1: br IL_0222
+			IL_01a2: br IL_0204
 
-			IL_01b6: ldstr "console"
-			IL_01bb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_01c0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_01c5: stloc.s 9
-			IL_01c7: ldloc.2
-			IL_01c8: box [System.Runtime]System.Double
-			IL_01cd: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-			IL_01d2: stloc.s 11
-			IL_01d4: ldstr "Warning: cannot validate result of "
-			IL_01d9: ldloc.s 11
-			IL_01db: call string [System.Runtime]System.String::Concat(string, string)
-			IL_01e0: ldstr " primes:"
-			IL_01e5: call string [System.Runtime]System.String::Concat(string, string)
-			IL_01ea: stloc.s 11
-			IL_01ec: ldarg.0
-			IL_01ed: ldfld object Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/PrimeSieve::sieveSize
-			IL_01f2: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-			IL_01f7: stloc.s 10
-			IL_01f9: ldstr "limit "
-			IL_01fe: ldloc.s 10
-			IL_0200: call string [System.Runtime]System.String::Concat(string, string)
-			IL_0205: ldstr " is not in the known list of number of primes!"
-			IL_020a: call string [System.Runtime]System.String::Concat(string, string)
-			IL_020f: stloc.s 10
-			IL_0211: ldloc.s 9
-			IL_0213: ldstr "log"
-			IL_0218: ldloc.s 11
-			IL_021a: ldloc.s 10
-			IL_021c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-			IL_0221: pop
+			IL_01a7: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_01ac: stloc.s 9
+			IL_01ae: ldloc.2
+			IL_01af: box [System.Runtime]System.Double
+			IL_01b4: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+			IL_01b9: stloc.s 11
+			IL_01bb: ldstr "Warning: cannot validate result of "
+			IL_01c0: ldloc.s 11
+			IL_01c2: call string [System.Runtime]System.String::Concat(string, string)
+			IL_01c7: ldstr " primes:"
+			IL_01cc: call string [System.Runtime]System.String::Concat(string, string)
+			IL_01d1: stloc.s 11
+			IL_01d3: ldarg.0
+			IL_01d4: ldfld object Modules.Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes/PrimeSieve::sieveSize
+			IL_01d9: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+			IL_01de: stloc.s 10
+			IL_01e0: ldstr "limit "
+			IL_01e5: ldloc.s 10
+			IL_01e7: call string [System.Runtime]System.String::Concat(string, string)
+			IL_01ec: ldstr " is not in the known list of number of primes!"
+			IL_01f1: call string [System.Runtime]System.String::Concat(string, string)
+			IL_01f6: stloc.s 10
+			IL_01f8: ldloc.s 9
+			IL_01fa: ldloc.s 11
+			IL_01fc: ldloc.s 10
+			IL_01fe: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_0203: pop
 
-			IL_0222: ldarg.1
-			IL_0223: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-			IL_0228: stloc.s 7
-			IL_022a: ldloc.s 7
-			IL_022c: brfalse IL_0277
+			IL_0204: ldarg.1
+			IL_0205: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+			IL_020a: stloc.s 7
+			IL_020c: ldloc.s 7
+			IL_020e: brfalse IL_024a
 
-			IL_0231: ldstr "console"
-			IL_0236: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_023b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0240: stloc.s 9
-			IL_0242: ldloc.0
-			IL_0243: box [System.Runtime]System.Double
-			IL_0248: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-			IL_024d: stloc.s 10
-			IL_024f: ldstr "\nThe first "
-			IL_0254: ldloc.s 10
-			IL_0256: call string [System.Runtime]System.String::Concat(string, string)
-			IL_025b: ldstr " found primes are:"
-			IL_0260: call string [System.Runtime]System.String::Concat(string, string)
-			IL_0265: stloc.s 10
-			IL_0267: ldloc.s 9
-			IL_0269: ldstr "log"
-			IL_026e: ldloc.s 10
-			IL_0270: ldloc.3
-			IL_0271: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-			IL_0276: pop
+			IL_0213: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0218: stloc.s 9
+			IL_021a: ldloc.0
+			IL_021b: box [System.Runtime]System.Double
+			IL_0220: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+			IL_0225: stloc.s 10
+			IL_0227: ldstr "\nThe first "
+			IL_022c: ldloc.s 10
+			IL_022e: call string [System.Runtime]System.String::Concat(string, string)
+			IL_0233: ldstr " found primes are:"
+			IL_0238: call string [System.Runtime]System.String::Concat(string, string)
+			IL_023d: stloc.s 10
+			IL_023f: ldloc.s 9
+			IL_0241: ldloc.s 10
+			IL_0243: ldloc.3
+			IL_0244: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_0249: pop
 
-			IL_0277: ldloc.s 4
-			IL_0279: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
-			IL_027e: stloc.s 7
-			IL_0280: ldloc.s 7
-			IL_0282: ret
+			IL_024a: ldloc.s 4
+			IL_024c: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
+			IL_0251: stloc.s 7
+			IL_0253: ldloc.s 7
+			IL_0255: ret
 		} // end of method PrimeSieve::validatePrimeCount
 
 	} // end of class PrimeSieve

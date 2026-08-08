@@ -38,14 +38,14 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 361 (0x169)
+		// Code size: 305 (0x131)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.CommonJS_Module_Require/Scope,
 			[1] class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IPathModule,
 			[2] object,
 			[3] object,
-			[4] object,
+			[4] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 			[5] object,
 			[6] string
 		)
@@ -53,121 +53,111 @@
 		IL_0000: newobj instance void Modules.CommonJS_Module_Require/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: nop
-		IL_0007: ldstr "console"
-		IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0011: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0016: stloc.s 4
-		IL_0018: ldarg.2
-		IL_0019: ldstr "require"
-		IL_001e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0023: stloc.s 5
-		IL_0025: ldloc.s 5
-		IL_0027: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
-		IL_002c: stloc.s 6
-		IL_002e: ldloc.s 4
-		IL_0030: ldstr "log"
-		IL_0035: ldstr "module.require type:"
-		IL_003a: ldloc.s 6
-		IL_003c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_0041: pop
-		IL_0042: ldarg.1
-		IL_0043: ldstr "path"
-		IL_0048: call !!0 [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireRuntime::RequireObject<class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IPathModule>(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object)
-		IL_004d: stloc.1
-		IL_004e: ldstr "console"
-		IL_0053: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0058: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_005d: stloc.s 4
-		IL_005f: ldloc.1
-		IL_0060: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
-		IL_0065: stloc.s 6
-		IL_0067: ldloc.s 4
-		IL_0069: ldstr "log"
-		IL_006e: ldstr "path module type:"
-		IL_0073: ldloc.s 6
-		IL_0075: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_007a: pop
-		IL_007b: ldstr "console"
-		IL_0080: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0085: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_008a: stloc.s 4
-		IL_008c: ldloc.1
-		IL_008d: ldstr "join"
-		IL_0092: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0097: stloc.s 5
-		IL_0099: ldloc.s 5
-		IL_009b: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
-		IL_00a0: stloc.s 6
-		IL_00a2: ldloc.s 4
-		IL_00a4: ldstr "log"
-		IL_00a9: ldstr "path.join type:"
-		IL_00ae: ldloc.s 6
-		IL_00b0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_00b5: pop
-		IL_00b6: ldloc.1
-		IL_00b7: ldstr "join"
-		IL_00bc: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::HasOwnPropertyOverride(object, string)
-		IL_00c1: brtrue IL_00f0
+		IL_0007: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_000c: stloc.s 4
+		IL_000e: ldarg.2
+		IL_000f: ldstr "require"
+		IL_0014: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0019: stloc.s 5
+		IL_001b: ldloc.s 5
+		IL_001d: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
+		IL_0022: stloc.s 6
+		IL_0024: ldloc.s 4
+		IL_0026: ldstr "module.require type:"
+		IL_002b: ldloc.s 6
+		IL_002d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_0032: pop
+		IL_0033: ldarg.1
+		IL_0034: ldstr "path"
+		IL_0039: call !!0 [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireRuntime::RequireObject<class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IPathModule>(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object)
+		IL_003e: stloc.1
+		IL_003f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0044: stloc.s 4
+		IL_0046: ldloc.1
+		IL_0047: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
+		IL_004c: stloc.s 6
+		IL_004e: ldloc.s 4
+		IL_0050: ldstr "path module type:"
+		IL_0055: ldloc.s 6
+		IL_0057: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_005c: pop
+		IL_005d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0062: stloc.s 4
+		IL_0064: ldloc.1
+		IL_0065: ldstr "join"
+		IL_006a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_006f: stloc.s 5
+		IL_0071: ldloc.s 5
+		IL_0073: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
+		IL_0078: stloc.s 6
+		IL_007a: ldloc.s 4
+		IL_007c: ldstr "path.join type:"
+		IL_0081: ldloc.s 6
+		IL_0083: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_0088: pop
+		IL_0089: ldloc.1
+		IL_008a: ldstr "join"
+		IL_008f: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::HasOwnPropertyOverride(object, string)
+		IL_0094: brtrue IL_00c3
 
-		IL_00c6: ldloc.1
-		IL_00c7: ldc.i4.3
-		IL_00c8: newarr [System.Runtime]System.Object
-		IL_00cd: dup
-		IL_00ce: ldc.i4.0
-		IL_00cf: ldstr "a"
-		IL_00d4: stelem.ref
-		IL_00d5: dup
-		IL_00d6: ldc.i4.1
-		IL_00d7: ldstr "b"
-		IL_00dc: stelem.ref
-		IL_00dd: dup
-		IL_00de: ldc.i4.2
-		IL_00df: ldstr "c"
-		IL_00e4: stelem.ref
-		IL_00e5: callvirt instance string [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IPathModule::join(object[])
-		IL_00ea: stloc.2
-		IL_00eb: br IL_011a
+		IL_0099: ldloc.1
+		IL_009a: ldc.i4.3
+		IL_009b: newarr [System.Runtime]System.Object
+		IL_00a0: dup
+		IL_00a1: ldc.i4.0
+		IL_00a2: ldstr "a"
+		IL_00a7: stelem.ref
+		IL_00a8: dup
+		IL_00a9: ldc.i4.1
+		IL_00aa: ldstr "b"
+		IL_00af: stelem.ref
+		IL_00b0: dup
+		IL_00b1: ldc.i4.2
+		IL_00b2: ldstr "c"
+		IL_00b7: stelem.ref
+		IL_00b8: callvirt instance string [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IPathModule::join(object[])
+		IL_00bd: stloc.2
+		IL_00be: br IL_00ed
 
-		IL_00f0: ldloc.1
-		IL_00f1: ldstr "join"
-		IL_00f6: ldc.i4.3
-		IL_00f7: newarr [System.Runtime]System.Object
-		IL_00fc: dup
-		IL_00fd: ldc.i4.0
-		IL_00fe: ldstr "a"
-		IL_0103: stelem.ref
-		IL_0104: dup
-		IL_0105: ldc.i4.1
-		IL_0106: ldstr "b"
-		IL_010b: stelem.ref
-		IL_010c: dup
-		IL_010d: ldc.i4.2
-		IL_010e: ldstr "c"
-		IL_0113: stelem.ref
-		IL_0114: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallOwnPropertyMember(object, string, object[])
-		IL_0119: stloc.2
+		IL_00c3: ldloc.1
+		IL_00c4: ldstr "join"
+		IL_00c9: ldc.i4.3
+		IL_00ca: newarr [System.Runtime]System.Object
+		IL_00cf: dup
+		IL_00d0: ldc.i4.0
+		IL_00d1: ldstr "a"
+		IL_00d6: stelem.ref
+		IL_00d7: dup
+		IL_00d8: ldc.i4.1
+		IL_00d9: ldstr "b"
+		IL_00de: stelem.ref
+		IL_00df: dup
+		IL_00e0: ldc.i4.2
+		IL_00e1: ldstr "c"
+		IL_00e6: stelem.ref
+		IL_00e7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallOwnPropertyMember(object, string, object[])
+		IL_00ec: stloc.2
 
-		IL_011a: ldloc.2
-		IL_011b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0120: ldstr "split"
-		IL_0125: ldstr "\\"
-		IL_012a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_012f: stloc.s 4
-		IL_0131: ldloc.s 4
-		IL_0133: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0138: ldstr "join"
-		IL_013d: ldstr "/"
-		IL_0142: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0147: stloc.3
-		IL_0148: ldstr "console"
-		IL_014d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0152: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0157: ldstr "log"
-		IL_015c: ldstr "path.join result:"
-		IL_0161: ldloc.3
-		IL_0162: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_0167: pop
-		IL_0168: ret
+		IL_00ed: ldloc.2
+		IL_00ee: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00f3: ldstr "split"
+		IL_00f8: ldstr "\\"
+		IL_00fd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0102: stloc.s 5
+		IL_0104: ldloc.s 5
+		IL_0106: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_010b: ldstr "join"
+		IL_0110: ldstr "/"
+		IL_0115: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_011a: stloc.3
+		IL_011b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0120: stloc.s 4
+		IL_0122: ldloc.s 4
+		IL_0124: ldstr "path.join result:"
+		IL_0129: ldloc.3
+		IL_012a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_012f: pop
+		IL_0130: ret
 	} // end of method CommonJS_Module_Require::__js_module_init__
 
 } // end of class Modules.CommonJS_Module_Require

@@ -484,7 +484,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 213 (0xd5)
+		// Code size: 198 (0xc6)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Classes_BitShiftInCtor_Int32Array/Scope,
@@ -492,7 +492,7 @@
 			[2] object[],
 			[3] class [System.Runtime]System.Type,
 			[4] class Modules.Classes_BitShiftInCtor_Int32Array/BitBag,
-			[5] object,
+			[5] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 			[6] float64
 		)
 
@@ -538,25 +538,22 @@
 		IL_0085: box [System.Runtime]System.Double
 		IL_008a: callvirt instance object Modules.Classes_BitShiftInCtor_Int32Array/BitBag::set(object)
 		IL_008f: pop
-		IL_0090: ldstr "console"
-		IL_0095: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_009a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_009f: stloc.s 5
-		IL_00a1: ldloc.1
-		IL_00a2: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Classes_BitShiftInCtor_Int32Array/BitBag>(!!0)
-		IL_00a7: stloc.s 4
-		IL_00a9: ldloc.s 4
-		IL_00ab: ldc.r8 1
-		IL_00b4: box [System.Runtime]System.Double
-		IL_00b9: callvirt instance float64 Modules.Classes_BitShiftInCtor_Int32Array/BitBag::test(object)
-		IL_00be: stloc.s 6
-		IL_00c0: ldloc.s 5
-		IL_00c2: ldstr "log"
-		IL_00c7: ldloc.s 6
-		IL_00c9: box [System.Runtime]System.Double
-		IL_00ce: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00d3: pop
-		IL_00d4: ret
+		IL_0090: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0095: stloc.s 5
+		IL_0097: ldloc.1
+		IL_0098: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Classes_BitShiftInCtor_Int32Array/BitBag>(!!0)
+		IL_009d: stloc.s 4
+		IL_009f: ldloc.s 4
+		IL_00a1: ldc.r8 1
+		IL_00aa: box [System.Runtime]System.Double
+		IL_00af: callvirt instance float64 Modules.Classes_BitShiftInCtor_Int32Array/BitBag::test(object)
+		IL_00b4: stloc.s 6
+		IL_00b6: ldloc.s 5
+		IL_00b8: ldloc.s 6
+		IL_00ba: box [System.Runtime]System.Double
+		IL_00bf: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00c4: pop
+		IL_00c5: ret
 	} // end of method Classes_BitShiftInCtor_Int32Array::__js_module_init__
 
 } // end of class Modules.Classes_BitShiftInCtor_Int32Array

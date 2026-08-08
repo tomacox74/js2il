@@ -163,14 +163,14 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 124 (0x7c)
+		// Code size: 109 (0x6d)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ArrowFunction_CapturesOuterVariable/Scope,
 			[1] object,
 			[2] object[],
 			[3] class Modules.ArrowFunction_CapturesOuterVariable/ArrowFunction_L4C13/FunctionObject,
-			[4] object,
+			[4] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 			[5] object
 		)
 
@@ -201,23 +201,20 @@
 		IL_0034: ldstr "mul"
 		IL_0039: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetFunctionInferredName(object, object)
 		IL_003e: stloc.1
-		IL_003f: ldstr "console"
-		IL_0044: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0049: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_004e: stloc.s 4
-		IL_0050: ldloc.0
-		IL_0051: castclass Modules.ArrowFunction_CapturesOuterVariable/Scope
-		IL_0056: ldnull
-		IL_0057: ldc.r8 3
-		IL_0060: call object Modules.ArrowFunction_CapturesOuterVariable/ArrowFunction_L4C13::__js_call__(class Modules.ArrowFunction_CapturesOuterVariable/Scope, object, float64)
-		IL_0065: stloc.s 5
-		IL_0067: ldloc.s 4
-		IL_0069: ldstr "log"
-		IL_006e: ldstr "product is "
-		IL_0073: ldloc.s 5
-		IL_0075: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_007a: pop
-		IL_007b: ret
+		IL_003f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0044: stloc.s 4
+		IL_0046: ldloc.0
+		IL_0047: castclass Modules.ArrowFunction_CapturesOuterVariable/Scope
+		IL_004c: ldnull
+		IL_004d: ldc.r8 3
+		IL_0056: call object Modules.ArrowFunction_CapturesOuterVariable/ArrowFunction_L4C13::__js_call__(class Modules.ArrowFunction_CapturesOuterVariable/Scope, object, float64)
+		IL_005b: stloc.s 5
+		IL_005d: ldloc.s 4
+		IL_005f: ldstr "product is "
+		IL_0064: ldloc.s 5
+		IL_0066: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_006b: pop
+		IL_006c: ret
 	} // end of method ArrowFunction_CapturesOuterVariable::__js_module_init__
 
 } // end of class Modules.ArrowFunction_CapturesOuterVariable

@@ -38,12 +38,12 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 122 (0x7a)
+		// Code size: 92 (0x5c)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.CommonJS_Module_Exports_ChainedAssignment/Scope,
 			[1] object,
-			[2] object,
+			[2] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 			[3] object
 		)
 
@@ -54,37 +54,31 @@
 		IL_0008: ldstr "./CommonJS_Module_Exports_ChainedAssignment_Lib"
 		IL_000d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
 		IL_0012: stloc.1
-		IL_0013: ldstr "console"
-		IL_0018: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_001d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0022: stloc.2
-		IL_0023: ldloc.1
-		IL_0024: ldstr "answer"
-		IL_0029: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_002e: stloc.3
-		IL_002f: ldloc.2
-		IL_0030: ldstr "log"
-		IL_0035: ldstr "answer:"
-		IL_003a: ldloc.3
-		IL_003b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_0040: pop
-		IL_0041: ldstr "console"
-		IL_0046: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_004b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0050: stloc.3
-		IL_0051: ldloc.1
-		IL_0052: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0057: ldstr "greet"
-		IL_005c: ldstr "world"
-		IL_0061: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0066: stloc.2
-		IL_0067: ldloc.3
-		IL_0068: ldstr "log"
-		IL_006d: ldstr "greet:"
-		IL_0072: ldloc.2
-		IL_0073: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_0078: pop
-		IL_0079: ret
+		IL_0013: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0018: stloc.2
+		IL_0019: ldloc.1
+		IL_001a: ldstr "answer"
+		IL_001f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0024: stloc.3
+		IL_0025: ldloc.2
+		IL_0026: ldstr "answer:"
+		IL_002b: ldloc.3
+		IL_002c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_0031: pop
+		IL_0032: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0037: stloc.2
+		IL_0038: ldloc.1
+		IL_0039: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_003e: ldstr "greet"
+		IL_0043: ldstr "world"
+		IL_0048: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_004d: stloc.3
+		IL_004e: ldloc.2
+		IL_004f: ldstr "greet:"
+		IL_0054: ldloc.3
+		IL_0055: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_005a: pop
+		IL_005b: ret
 	} // end of method CommonJS_Module_Exports_ChainedAssignment::__js_module_init__
 
 } // end of class Modules.CommonJS_Module_Exports_ChainedAssignment

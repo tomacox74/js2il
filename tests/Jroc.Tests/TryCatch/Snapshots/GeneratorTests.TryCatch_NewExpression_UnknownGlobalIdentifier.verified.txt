@@ -78,7 +78,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 201 (0xc9)
+		// Code size: 168 (0xa8)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.TryCatch_NewExpression_UnknownGlobalIdentifier/Scope,
@@ -86,7 +86,8 @@
 			[2] object,
 			[3] object,
 			[4] object,
-			[5] object
+			[5] object,
+			[6] class [JavaScriptRuntime]JavaScriptRuntime.Console
 		)
 
 		IL_0000: newobj instance void Modules.TryCatch_NewExpression_UnknownGlobalIdentifier/Scope::.ctor()
@@ -108,60 +109,57 @@
 			IL_002c: stelem.ref
 			IL_002d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::ConstructValue(object, object[])
 			IL_0032: pop
-			IL_0033: ldstr "console"
-			IL_0038: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_003d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0042: ldstr "log"
-			IL_0047: ldstr "unreachable"
-			IL_004c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_0051: pop
-			IL_0052: leave IL_00a6
+			IL_0033: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0038: stloc.s 6
+			IL_003a: ldloc.s 6
+			IL_003c: ldstr "unreachable"
+			IL_0041: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0046: pop
+			IL_0047: leave IL_0090
 		} // end .try
 		catch [System.Runtime]System.Exception
 		{
-			IL_0057: stloc.1
-			IL_0058: ldloc.1
-			IL_0059: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-			IL_005e: dup
-			IL_005f: brtrue IL_0074
+			IL_004c: stloc.1
+			IL_004d: ldloc.1
+			IL_004e: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+			IL_0053: dup
+			IL_0054: brtrue IL_0069
 
-			IL_0064: pop
-			IL_0065: ldloc.1
-			IL_0066: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
-			IL_006b: dup
-			IL_006c: brtrue IL_007f
+			IL_0059: pop
+			IL_005a: ldloc.1
+			IL_005b: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+			IL_0060: dup
+			IL_0061: brtrue IL_0074
 
-			IL_0071: pop
-			IL_0072: rethrow
+			IL_0066: pop
+			IL_0067: rethrow
 
-			IL_0074: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-			IL_0079: stloc.2
-			IL_007a: br IL_0080
+			IL_0069: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+			IL_006e: stloc.2
+			IL_006f: br IL_0075
 
-			IL_007f: stloc.2
+			IL_0074: stloc.2
 
-			IL_0080: ldloc.2
-			IL_0081: stloc.3
-			IL_0082: ldstr "console"
-			IL_0087: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_008c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0091: ldstr "log"
-			IL_0096: ldstr "caught"
-			IL_009b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_00a0: pop
-			IL_00a1: leave IL_00a6
+			IL_0075: ldloc.2
+			IL_0076: stloc.3
+			IL_0077: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_007c: stloc.s 6
+			IL_007e: ldloc.s 6
+			IL_0080: ldstr "caught"
+			IL_0085: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_008a: pop
+			IL_008b: leave IL_0090
 		} // end handler
 
-		IL_00a6: ldstr "console"
-		IL_00ab: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_00b0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00b5: ldstr "log"
-		IL_00ba: ldstr "done"
-		IL_00bf: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00c4: pop
-		IL_00c5: ldnull
-		IL_00c6: stloc.s 4
-		IL_00c8: ret
+		IL_0090: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0095: stloc.s 6
+		IL_0097: ldloc.s 6
+		IL_0099: ldstr "done"
+		IL_009e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00a3: pop
+		IL_00a4: ldnull
+		IL_00a5: stloc.s 4
+		IL_00a7: ret
 	} // end of method TryCatch_NewExpression_UnknownGlobalIdentifier::__js_module_init__
 
 } // end of class Modules.TryCatch_NewExpression_UnknownGlobalIdentifier

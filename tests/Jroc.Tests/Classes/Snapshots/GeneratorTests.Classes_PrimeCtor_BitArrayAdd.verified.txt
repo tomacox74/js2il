@@ -378,13 +378,14 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 217 (0xd9)
+		// Code size: 206 (0xce)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Classes_PrimeCtor_BitArrayAdd/Scope,
 			[1] object[],
 			[2] class [System.Runtime]System.Type,
-			[3] object
+			[3] object,
+			[4] class [JavaScriptRuntime]JavaScriptRuntime.Console
 		)
 
 		IL_0000: newobj instance void Modules.Classes_PrimeCtor_BitArrayAdd/Scope::.ctor()
@@ -448,14 +449,13 @@
 		IL_00aa: ldstr "prototype"
 		IL_00af: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
 		IL_00b4: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
-		IL_00b9: ldstr "console"
-		IL_00be: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_00c3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00c8: ldstr "log"
-		IL_00cd: ldstr "Classes_PrimeCtor_BitArrayAdd"
-		IL_00d2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00d7: pop
-		IL_00d8: ret
+		IL_00b9: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00be: stloc.s 4
+		IL_00c0: ldloc.s 4
+		IL_00c2: ldstr "Classes_PrimeCtor_BitArrayAdd"
+		IL_00c7: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00cc: pop
+		IL_00cd: ret
 	} // end of method Classes_PrimeCtor_BitArrayAdd::__js_module_init__
 
 } // end of class Modules.Classes_PrimeCtor_BitArrayAdd

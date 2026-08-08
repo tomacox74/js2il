@@ -202,13 +202,13 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 95 (0x5f)
+		// Code size: 80 (0x50)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Function_Apply_NullArgArray_TreatedAsEmpty/Scope,
 			[1] class Modules.Function_Apply_NullArgArray_TreatedAsEmpty/countArgs/FunctionObject_FunctionDeclaration_D8AAA3E9_countArgs,
 			[2] object[],
-			[3] object,
+			[3] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 			[4] object
 		)
 
@@ -231,24 +231,21 @@
 		IL_0024: stloc.1
 		IL_0025: nop
 		IL_0026: nop
-		IL_0027: ldstr "console"
-		IL_002c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0031: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0036: stloc.3
-		IL_0037: ldloc.1
-		IL_0038: ldstr "apply"
-		IL_003d: ldc.i4.0
-		IL_003e: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
-		IL_0043: ldc.i4.0
-		IL_0044: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
-		IL_0049: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_004e: stloc.s 4
-		IL_0050: ldloc.3
-		IL_0051: ldstr "log"
-		IL_0056: ldloc.s 4
-		IL_0058: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_005d: pop
-		IL_005e: ret
+		IL_0027: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_002c: stloc.3
+		IL_002d: ldloc.1
+		IL_002e: ldstr "apply"
+		IL_0033: ldc.i4.0
+		IL_0034: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
+		IL_0039: ldc.i4.0
+		IL_003a: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
+		IL_003f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_0044: stloc.s 4
+		IL_0046: ldloc.3
+		IL_0047: ldloc.s 4
+		IL_0049: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_004e: pop
+		IL_004f: ret
 	} // end of method Function_Apply_NullArgArray_TreatedAsEmpty::__js_module_init__
 
 } // end of class Modules.Function_Apply_NullArgArray_TreatedAsEmpty

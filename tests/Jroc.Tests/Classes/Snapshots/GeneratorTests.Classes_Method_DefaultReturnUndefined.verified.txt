@@ -579,7 +579,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 665 (0x299)
+		// Code size: 609 (0x261)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Classes_Method_DefaultReturnUndefined/Scope,
@@ -596,8 +596,9 @@
 			[11] object,
 			[12] object[],
 			[13] class Modules.Classes_Method_DefaultReturnUndefined/Calculator,
-			[14] bool,
-			[15] float64
+			[14] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+			[15] bool,
+			[16] float64
 		)
 
 		IL_0000: newobj instance void Modules.Classes_Method_DefaultReturnUndefined/Scope::.ctor()
@@ -711,106 +712,96 @@
 		IL_0169: ldloc.s 13
 		IL_016b: callvirt instance object Modules.Classes_Method_DefaultReturnUndefined/Calculator::doNothing()
 		IL_0170: stloc.3
-		IL_0171: ldstr "console"
-		IL_0176: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_017b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0180: stloc.s 11
-		IL_0182: ldloc.3
-		IL_0183: ldnull
-		IL_0184: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_0189: stloc.s 14
-		IL_018b: ldloc.s 14
-		IL_018d: brfalse IL_019e
+		IL_0171: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0176: stloc.s 14
+		IL_0178: ldloc.3
+		IL_0179: ldnull
+		IL_017a: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_017f: stloc.s 15
+		IL_0181: ldloc.s 15
+		IL_0183: brfalse IL_0194
 
-		IL_0192: ldstr "undefined"
-		IL_0197: stloc.s 4
-		IL_0199: br IL_01a5
+		IL_0188: ldstr "undefined"
+		IL_018d: stloc.s 4
+		IL_018f: br IL_019b
 
-		IL_019e: ldstr "not undefined"
-		IL_01a3: stloc.s 4
+		IL_0194: ldstr "not undefined"
+		IL_0199: stloc.s 4
 
-		IL_01a5: ldloc.s 11
-		IL_01a7: ldstr "log"
-		IL_01ac: ldloc.s 4
-		IL_01ae: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_01b3: pop
-		IL_01b4: ldloc.2
-		IL_01b5: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Classes_Method_DefaultReturnUndefined/Calculator>(!!0)
-		IL_01ba: stloc.s 13
-		IL_01bc: ldloc.s 13
-		IL_01be: callvirt instance object Modules.Classes_Method_DefaultReturnUndefined/Calculator::returnsUndefined()
-		IL_01c3: stloc.s 5
-		IL_01c5: ldstr "console"
-		IL_01ca: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_01cf: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_01d4: stloc.s 11
-		IL_01d6: ldloc.s 5
-		IL_01d8: ldnull
-		IL_01d9: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_01de: stloc.s 14
-		IL_01e0: ldloc.s 14
-		IL_01e2: brfalse IL_01f3
+		IL_019b: ldloc.s 14
+		IL_019d: ldloc.s 4
+		IL_019f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_01a4: pop
+		IL_01a5: ldloc.2
+		IL_01a6: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Classes_Method_DefaultReturnUndefined/Calculator>(!!0)
+		IL_01ab: stloc.s 13
+		IL_01ad: ldloc.s 13
+		IL_01af: callvirt instance object Modules.Classes_Method_DefaultReturnUndefined/Calculator::returnsUndefined()
+		IL_01b4: stloc.s 5
+		IL_01b6: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_01bb: stloc.s 14
+		IL_01bd: ldloc.s 5
+		IL_01bf: ldnull
+		IL_01c0: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_01c5: stloc.s 15
+		IL_01c7: ldloc.s 15
+		IL_01c9: brfalse IL_01da
 
-		IL_01e7: ldstr "undefined"
-		IL_01ec: stloc.s 6
-		IL_01ee: br IL_01fa
+		IL_01ce: ldstr "undefined"
+		IL_01d3: stloc.s 6
+		IL_01d5: br IL_01e1
 
-		IL_01f3: ldstr "not undefined"
-		IL_01f8: stloc.s 6
+		IL_01da: ldstr "not undefined"
+		IL_01df: stloc.s 6
 
-		IL_01fa: ldloc.s 11
-		IL_01fc: ldstr "log"
-		IL_0201: ldloc.s 6
-		IL_0203: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0208: pop
-		IL_0209: ldloc.2
-		IL_020a: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Classes_Method_DefaultReturnUndefined/Calculator>(!!0)
-		IL_020f: stloc.s 13
-		IL_0211: ldloc.s 13
-		IL_0213: callvirt instance float64 Modules.Classes_Method_DefaultReturnUndefined/Calculator::returnsValue()
-		IL_0218: stloc.s 15
-		IL_021a: ldloc.s 15
-		IL_021c: box [System.Runtime]System.Double
-		IL_0221: stloc.s 7
-		IL_0223: ldstr "console"
-		IL_0228: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_022d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0232: ldstr "log"
-		IL_0237: ldloc.s 7
-		IL_0239: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_023e: pop
-		IL_023f: ldloc.2
-		IL_0240: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Classes_Method_DefaultReturnUndefined/Calculator>(!!0)
-		IL_0245: stloc.s 13
-		IL_0247: ldloc.s 13
-		IL_0249: callvirt instance class Modules.Classes_Method_DefaultReturnUndefined/Calculator Modules.Classes_Method_DefaultReturnUndefined/Calculator::returnsThis()
-		IL_024e: stloc.s 13
-		IL_0250: ldloc.s 13
-		IL_0252: stloc.s 8
-		IL_0254: ldstr "console"
-		IL_0259: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_025e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0263: stloc.s 11
-		IL_0265: ldloc.s 8
-		IL_0267: ldloc.2
-		IL_0268: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_026d: stloc.s 14
-		IL_026f: ldloc.s 14
-		IL_0271: brfalse IL_0282
+		IL_01e1: ldloc.s 14
+		IL_01e3: ldloc.s 6
+		IL_01e5: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_01ea: pop
+		IL_01eb: ldloc.2
+		IL_01ec: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Classes_Method_DefaultReturnUndefined/Calculator>(!!0)
+		IL_01f1: stloc.s 13
+		IL_01f3: ldloc.s 13
+		IL_01f5: callvirt instance float64 Modules.Classes_Method_DefaultReturnUndefined/Calculator::returnsValue()
+		IL_01fa: stloc.s 16
+		IL_01fc: ldloc.s 16
+		IL_01fe: box [System.Runtime]System.Double
+		IL_0203: stloc.s 7
+		IL_0205: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_020a: stloc.s 14
+		IL_020c: ldloc.s 14
+		IL_020e: ldloc.s 7
+		IL_0210: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0215: pop
+		IL_0216: ldloc.2
+		IL_0217: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Classes_Method_DefaultReturnUndefined/Calculator>(!!0)
+		IL_021c: stloc.s 13
+		IL_021e: ldloc.s 13
+		IL_0220: callvirt instance class Modules.Classes_Method_DefaultReturnUndefined/Calculator Modules.Classes_Method_DefaultReturnUndefined/Calculator::returnsThis()
+		IL_0225: stloc.s 13
+		IL_0227: ldloc.s 13
+		IL_0229: stloc.s 8
+		IL_022b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0230: stloc.s 14
+		IL_0232: ldloc.s 8
+		IL_0234: ldloc.2
+		IL_0235: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_023a: stloc.s 15
+		IL_023c: ldloc.s 15
+		IL_023e: brfalse IL_024f
 
-		IL_0276: ldstr "same instance"
-		IL_027b: stloc.s 9
-		IL_027d: br IL_0289
+		IL_0243: ldstr "same instance"
+		IL_0248: stloc.s 9
+		IL_024a: br IL_0256
 
-		IL_0282: ldstr "different"
-		IL_0287: stloc.s 9
+		IL_024f: ldstr "different"
+		IL_0254: stloc.s 9
 
-		IL_0289: ldloc.s 11
-		IL_028b: ldstr "log"
-		IL_0290: ldloc.s 9
-		IL_0292: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0297: pop
-		IL_0298: ret
+		IL_0256: ldloc.s 14
+		IL_0258: ldloc.s 9
+		IL_025a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_025f: pop
+		IL_0260: ret
 	} // end of method Classes_Method_DefaultReturnUndefined::__js_module_init__
 
 } // end of class Modules.Classes_Method_DefaultReturnUndefined

@@ -160,7 +160,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 472 (0x1d8)
+		// Code size: 457 (0x1c9)
 		.maxstack 11
 		.locals init (
 			[0] class Modules.Console_Undici_Transform_Table/Scope,
@@ -174,7 +174,7 @@
 			[8] object[],
 			[9] class Modules.Console_Undici_Transform_Table/FunctionExpression_output/FunctionObject_FunctionExpression_B23CAF09_L7C12,
 			[10] class [JavaScriptRuntime]JavaScriptRuntime.Array,
-			[11] object,
+			[11] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 			[12] object
 		)
 
@@ -308,26 +308,23 @@
 		IL_018a: ldloc.s 10
 		IL_018c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
 		IL_0191: pop
-		IL_0192: ldstr "console"
-		IL_0197: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_019c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_01a1: stloc.s 11
-		IL_01a3: ldloc.3
-		IL_01a4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_01a9: ldstr "read"
-		IL_01ae: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-		IL_01b3: stloc.s 12
-		IL_01b5: ldloc.s 12
-		IL_01b7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_01bc: ldstr "toString"
-		IL_01c1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-		IL_01c6: stloc.s 12
-		IL_01c8: ldloc.s 11
-		IL_01ca: ldstr "log"
-		IL_01cf: ldloc.s 12
-		IL_01d1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_01d6: pop
-		IL_01d7: ret
+		IL_0192: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0197: stloc.s 11
+		IL_0199: ldloc.3
+		IL_019a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_019f: ldstr "read"
+		IL_01a4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+		IL_01a9: stloc.s 12
+		IL_01ab: ldloc.s 12
+		IL_01ad: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_01b2: ldstr "toString"
+		IL_01b7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+		IL_01bc: stloc.s 12
+		IL_01be: ldloc.s 11
+		IL_01c0: ldloc.s 12
+		IL_01c2: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_01c7: pop
+		IL_01c8: ret
 	} // end of method Console_Undici_Transform_Table::__js_module_init__
 
 } // end of class Modules.Console_Undici_Transform_Table

@@ -38,14 +38,14 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 280 (0x118)
+		// Code size: 205 (0xcd)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.String_Match_NonGlobal/Scope,
 			[1] string,
 			[2] object,
 			[3] class [JavaScriptRuntime]JavaScriptRuntime.RegExp,
-			[4] object,
+			[4] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 			[5] object
 		)
 
@@ -63,72 +63,57 @@
 		IL_0023: ldloc.3
 		IL_0024: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
 		IL_0029: stloc.2
-		IL_002a: ldstr "console"
-		IL_002f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0034: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0039: stloc.s 4
-		IL_003b: ldloc.2
-		IL_003c: ldc.r8 0.0
-		IL_0045: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-		IL_004a: stloc.s 5
-		IL_004c: ldloc.s 4
-		IL_004e: ldstr "log"
-		IL_0053: ldloc.s 5
-		IL_0055: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_005a: pop
-		IL_005b: ldstr "console"
-		IL_0060: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0065: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_006a: stloc.s 5
-		IL_006c: ldloc.2
-		IL_006d: ldc.r8 1
-		IL_0076: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-		IL_007b: stloc.s 4
-		IL_007d: ldloc.s 5
-		IL_007f: ldstr "log"
-		IL_0084: ldloc.s 4
-		IL_0086: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_008b: pop
-		IL_008c: ldstr "console"
-		IL_0091: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0096: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_009b: stloc.s 4
-		IL_009d: ldloc.2
-		IL_009e: ldc.r8 2
-		IL_00a7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-		IL_00ac: stloc.s 5
-		IL_00ae: ldloc.s 4
-		IL_00b0: ldstr "log"
-		IL_00b5: ldloc.s 5
-		IL_00b7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00bc: pop
-		IL_00bd: ldstr "console"
-		IL_00c2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_00c7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00cc: stloc.s 5
-		IL_00ce: ldloc.2
-		IL_00cf: ldstr "index"
-		IL_00d4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_00d9: stloc.s 4
-		IL_00db: ldloc.s 5
-		IL_00dd: ldstr "log"
-		IL_00e2: ldloc.s 4
-		IL_00e4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00e9: pop
-		IL_00ea: ldstr "console"
-		IL_00ef: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_00f4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00f9: stloc.s 4
-		IL_00fb: ldloc.2
-		IL_00fc: ldstr "input"
-		IL_0101: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0106: stloc.s 5
-		IL_0108: ldloc.s 4
-		IL_010a: ldstr "log"
-		IL_010f: ldloc.s 5
-		IL_0111: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0116: pop
-		IL_0117: ret
+		IL_002a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_002f: stloc.s 4
+		IL_0031: ldloc.2
+		IL_0032: ldc.r8 0.0
+		IL_003b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+		IL_0040: stloc.s 5
+		IL_0042: ldloc.s 4
+		IL_0044: ldloc.s 5
+		IL_0046: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_004b: pop
+		IL_004c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0051: stloc.s 4
+		IL_0053: ldloc.2
+		IL_0054: ldc.r8 1
+		IL_005d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+		IL_0062: stloc.s 5
+		IL_0064: ldloc.s 4
+		IL_0066: ldloc.s 5
+		IL_0068: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_006d: pop
+		IL_006e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0073: stloc.s 4
+		IL_0075: ldloc.2
+		IL_0076: ldc.r8 2
+		IL_007f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+		IL_0084: stloc.s 5
+		IL_0086: ldloc.s 4
+		IL_0088: ldloc.s 5
+		IL_008a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_008f: pop
+		IL_0090: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0095: stloc.s 4
+		IL_0097: ldloc.2
+		IL_0098: ldstr "index"
+		IL_009d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00a2: stloc.s 5
+		IL_00a4: ldloc.s 4
+		IL_00a6: ldloc.s 5
+		IL_00a8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00ad: pop
+		IL_00ae: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00b3: stloc.s 4
+		IL_00b5: ldloc.2
+		IL_00b6: ldstr "input"
+		IL_00bb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00c0: stloc.s 5
+		IL_00c2: ldloc.s 4
+		IL_00c4: ldloc.s 5
+		IL_00c6: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00cb: pop
+		IL_00cc: ret
 	} // end of method String_Match_NonGlobal::__js_module_init__
 
 } // end of class Modules.String_Match_NonGlobal

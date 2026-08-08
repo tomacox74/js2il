@@ -154,13 +154,13 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 97 (0x61)
+		// Code size: 82 (0x52)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.CommonJS_Require_Reassigned_Function/Scope,
 			[1] object[],
 			[2] class Modules.CommonJS_Require_Reassigned_Function/ArrowFunction_L3C11/FunctionObject,
-			[3] object,
+			[3] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 			[4] object
 		)
 
@@ -185,23 +185,20 @@
 		IL_002a: stloc.2
 		IL_002b: ldloc.2
 		IL_002c: starg.s require
-		IL_002e: ldstr "console"
-		IL_0033: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0038: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_003d: stloc.3
-		IL_003e: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0043: stloc.1
-		IL_0044: ldarg.1
-		IL_0045: ldloc.1
-		IL_0046: ldstr "fs"
-		IL_004b: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
-		IL_0050: stloc.s 4
-		IL_0052: ldloc.3
-		IL_0053: ldstr "log"
-		IL_0058: ldloc.s 4
-		IL_005a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_005f: pop
-		IL_0060: ret
+		IL_002e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0033: stloc.3
+		IL_0034: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0039: stloc.1
+		IL_003a: ldarg.1
+		IL_003b: ldloc.1
+		IL_003c: ldstr "fs"
+		IL_0041: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
+		IL_0046: stloc.s 4
+		IL_0048: ldloc.3
+		IL_0049: ldloc.s 4
+		IL_004b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0050: pop
+		IL_0051: ret
 	} // end of method CommonJS_Require_Reassigned_Function::__js_module_init__
 
 } // end of class Modules.CommonJS_Require_Reassigned_Function

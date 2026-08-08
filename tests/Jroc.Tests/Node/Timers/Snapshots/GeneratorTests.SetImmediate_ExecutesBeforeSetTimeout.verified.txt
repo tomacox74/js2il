@@ -96,21 +96,21 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 33 (0x21)
+			// Code size: 20 (0x14)
 			.maxstack 8
 			.locals init (
-				[0] object
+				[0] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+				[1] object
 			)
 
-			IL_0000: ldstr "console"
-			IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_000a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_000f: ldstr "log"
-			IL_0014: ldstr "timeout"
-			IL_0019: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_001e: stloc.0
-			IL_001f: ldloc.0
-			IL_0020: ret
+			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0005: stloc.0
+			IL_0006: ldloc.0
+			IL_0007: ldstr "timeout"
+			IL_000c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0011: stloc.1
+			IL_0012: ldloc.1
+			IL_0013: ret
 		} // end of method ArrowFunction_L3C12::__js_call__
 
 	} // end of class ArrowFunction_L3C12
@@ -204,21 +204,21 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 33 (0x21)
+			// Code size: 20 (0x14)
 			.maxstack 8
 			.locals init (
-				[0] object
+				[0] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+				[1] object
 			)
 
-			IL_0000: ldstr "console"
-			IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_000a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_000f: ldstr "log"
-			IL_0014: ldstr "immediate"
-			IL_0019: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_001e: stloc.0
-			IL_001f: ldloc.0
-			IL_0020: ret
+			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0005: stloc.0
+			IL_0006: ldloc.0
+			IL_0007: ldstr "immediate"
+			IL_000c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0011: stloc.1
+			IL_0012: ldloc.1
+			IL_0013: ret
 		} // end of method ArrowFunction_L4C14::__js_call__
 
 	} // end of class ArrowFunction_L4C14
@@ -254,13 +254,14 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 151 (0x97)
+		// Code size: 140 (0x8c)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.SetImmediate_ExecutesBeforeSetTimeout/Scope,
 			[1] object[],
 			[2] class Modules.SetImmediate_ExecutesBeforeSetTimeout/ArrowFunction_L3C12/FunctionObject,
-			[3] class Modules.SetImmediate_ExecutesBeforeSetTimeout/ArrowFunction_L4C14/FunctionObject
+			[3] class Modules.SetImmediate_ExecutesBeforeSetTimeout/ArrowFunction_L4C14/FunctionObject,
+			[4] class [JavaScriptRuntime]JavaScriptRuntime.Console
 		)
 
 		IL_0000: newobj instance void Modules.SetImmediate_ExecutesBeforeSetTimeout/Scope::.ctor()
@@ -310,14 +311,13 @@
 		IL_006c: newarr [System.Runtime]System.Object
 		IL_0071: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::setImmediate(object, object[])
 		IL_0076: pop
-		IL_0077: ldstr "console"
-		IL_007c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0081: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0086: ldstr "log"
-		IL_008b: ldstr "scheduled immediate and timeout."
-		IL_0090: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0095: pop
-		IL_0096: ret
+		IL_0077: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_007c: stloc.s 4
+		IL_007e: ldloc.s 4
+		IL_0080: ldstr "scheduled immediate and timeout."
+		IL_0085: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_008a: pop
+		IL_008b: ret
 	} // end of method SetImmediate_ExecutesBeforeSetTimeout::__js_module_init__
 
 } // end of class Modules.SetImmediate_ExecutesBeforeSetTimeout

@@ -38,14 +38,14 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 230 (0xe6)
+		// Code size: 200 (0xc8)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Require_Util_Inspect_Object/Scope,
 			[1] class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IUtilModule,
 			[2] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
 			[3] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
-			[4] object,
+			[4] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 			[5] object
 		)
 
@@ -70,51 +70,45 @@
 		IL_0042: ldc.i4.1
 		IL_0043: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
 		IL_0048: stloc.2
-		IL_0049: ldstr "console"
-		IL_004e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0053: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0058: stloc.s 4
-		IL_005a: ldloc.1
-		IL_005b: ldloc.2
-		IL_005c: callvirt instance string [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IUtilModule::inspect(object)
-		IL_0061: stloc.s 5
-		IL_0063: ldloc.s 4
-		IL_0065: ldstr "log"
-		IL_006a: ldloc.s 5
-		IL_006c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0071: pop
-		IL_0072: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_0077: dup
-		IL_0078: ldstr "person"
-		IL_007d: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_0082: dup
-		IL_0083: ldstr "name"
-		IL_0088: ldstr "Jane"
-		IL_008d: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_0092: dup
-		IL_0093: ldstr "age"
-		IL_0098: ldc.r8 25
-		IL_00a1: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
-		IL_00a6: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_00ab: dup
-		IL_00ac: ldstr "city"
-		IL_00b1: ldstr "NYC"
-		IL_00b6: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_00bb: stloc.3
-		IL_00bc: ldstr "console"
-		IL_00c1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_00c6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00cb: stloc.s 5
-		IL_00cd: ldloc.1
-		IL_00ce: ldloc.3
-		IL_00cf: callvirt instance string [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IUtilModule::inspect(object)
-		IL_00d4: stloc.s 4
-		IL_00d6: ldloc.s 5
-		IL_00d8: ldstr "log"
-		IL_00dd: ldloc.s 4
-		IL_00df: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00e4: pop
-		IL_00e5: ret
+		IL_0049: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_004e: stloc.s 4
+		IL_0050: ldloc.1
+		IL_0051: ldloc.2
+		IL_0052: callvirt instance string [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IUtilModule::inspect(object)
+		IL_0057: stloc.s 5
+		IL_0059: ldloc.s 4
+		IL_005b: ldloc.s 5
+		IL_005d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0062: pop
+		IL_0063: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0068: dup
+		IL_0069: ldstr "person"
+		IL_006e: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0073: dup
+		IL_0074: ldstr "name"
+		IL_0079: ldstr "Jane"
+		IL_007e: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_0083: dup
+		IL_0084: ldstr "age"
+		IL_0089: ldc.r8 25
+		IL_0092: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
+		IL_0097: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_009c: dup
+		IL_009d: ldstr "city"
+		IL_00a2: ldstr "NYC"
+		IL_00a7: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_00ac: stloc.3
+		IL_00ad: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00b2: stloc.s 4
+		IL_00b4: ldloc.1
+		IL_00b5: ldloc.3
+		IL_00b6: callvirt instance string [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IUtilModule::inspect(object)
+		IL_00bb: stloc.s 5
+		IL_00bd: ldloc.s 4
+		IL_00bf: ldloc.s 5
+		IL_00c1: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00c6: pop
+		IL_00c7: ret
 	} // end of method Require_Util_Inspect_Object::__js_module_init__
 
 } // end of class Modules.Require_Util_Inspect_Object

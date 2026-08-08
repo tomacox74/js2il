@@ -78,7 +78,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 307 (0x133)
+		// Code size: 281 (0x119)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Tls_CreateServer_Unsupported_RequestCert_Fails_Clearly/Scope,
@@ -91,7 +91,7 @@
 			[7] object,
 			[8] object,
 			[9] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
-			[10] object,
+			[10] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 			[11] object
 		)
 
@@ -148,63 +148,59 @@
 			IL_0090: ldloc.s 9
 			IL_0092: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
 			IL_0097: pop
-			IL_0098: ldstr "console"
-			IL_009d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_00a2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_00a7: ldstr "log"
-			IL_00ac: ldstr "unexpected success"
-			IL_00b1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_00b6: pop
-			IL_00b7: leave IL_012f
+			IL_0098: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_009d: stloc.s 10
+			IL_009f: ldloc.s 10
+			IL_00a1: ldstr "unexpected success"
+			IL_00a6: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_00ab: pop
+			IL_00ac: leave IL_0115
 		} // end .try
 		catch [System.Runtime]System.Exception
 		{
-			IL_00bc: stloc.s 4
-			IL_00be: ldloc.s 4
-			IL_00c0: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-			IL_00c5: dup
-			IL_00c6: brtrue IL_00dc
+			IL_00b1: stloc.s 4
+			IL_00b3: ldloc.s 4
+			IL_00b5: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+			IL_00ba: dup
+			IL_00bb: brtrue IL_00d1
 
-			IL_00cb: pop
-			IL_00cc: ldloc.s 4
-			IL_00ce: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
-			IL_00d3: dup
-			IL_00d4: brtrue IL_00e8
+			IL_00c0: pop
+			IL_00c1: ldloc.s 4
+			IL_00c3: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+			IL_00c8: dup
+			IL_00c9: brtrue IL_00dd
 
-			IL_00d9: pop
-			IL_00da: rethrow
+			IL_00ce: pop
+			IL_00cf: rethrow
 
-			IL_00dc: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-			IL_00e1: stloc.s 5
-			IL_00e3: br IL_00ea
+			IL_00d1: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+			IL_00d6: stloc.s 5
+			IL_00d8: br IL_00df
 
-			IL_00e8: stloc.s 5
+			IL_00dd: stloc.s 5
 
-			IL_00ea: ldloc.s 5
-			IL_00ec: stloc.s 6
-			IL_00ee: ldstr "console"
-			IL_00f3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_00f8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_00fd: stloc.s 8
-			IL_00ff: ldloc.s 6
-			IL_0101: ldstr "message"
-			IL_0106: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_010b: stloc.s 10
-			IL_010d: ldstr "message:"
-			IL_0112: ldloc.s 10
-			IL_0114: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_0119: stloc.s 11
-			IL_011b: ldloc.s 8
-			IL_011d: ldstr "log"
-			IL_0122: ldloc.s 11
-			IL_0124: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_0129: pop
-			IL_012a: leave IL_012f
+			IL_00df: ldloc.s 5
+			IL_00e1: stloc.s 6
+			IL_00e3: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_00e8: stloc.s 10
+			IL_00ea: ldloc.s 6
+			IL_00ec: ldstr "message"
+			IL_00f1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_00f6: stloc.s 8
+			IL_00f8: ldstr "message:"
+			IL_00fd: ldloc.s 8
+			IL_00ff: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0104: stloc.s 11
+			IL_0106: ldloc.s 10
+			IL_0108: ldloc.s 11
+			IL_010a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_010f: pop
+			IL_0110: leave IL_0115
 		} // end handler
 
-		IL_012f: ldnull
-		IL_0130: stloc.s 7
-		IL_0132: ret
+		IL_0115: ldnull
+		IL_0116: stloc.s 7
+		IL_0118: ret
 	} // end of method Tls_CreateServer_Unsupported_RequestCert_Fails_Clearly::__js_module_init__
 
 } // end of class Modules.Tls_CreateServer_Unsupported_RequestCert_Fails_Clearly

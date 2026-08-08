@@ -38,32 +38,31 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 72 (0x48)
+		// Code size: 46 (0x2e)
 		.maxstack 8
-		.locals (
-			[0] class Modules.BooleanLiteral/Scope
+		.locals init (
+			[0] class Modules.BooleanLiteral/Scope,
+			[1] class [JavaScriptRuntime]JavaScriptRuntime.Console
 		)
 
 		IL_0000: newobj instance void Modules.BooleanLiteral/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: nop
-		IL_0007: ldstr "console"
-		IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0011: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0016: ldstr "log"
-		IL_001b: ldc.i4.1
-		IL_001c: box [System.Runtime]System.Boolean
-		IL_0021: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0026: pop
-		IL_0027: ldstr "console"
-		IL_002c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0031: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0036: ldstr "log"
-		IL_003b: ldc.i4.0
-		IL_003c: box [System.Runtime]System.Boolean
-		IL_0041: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0046: pop
-		IL_0047: ret
+		IL_0007: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_000c: stloc.1
+		IL_000d: ldloc.1
+		IL_000e: ldc.i4.1
+		IL_000f: box [System.Runtime]System.Boolean
+		IL_0014: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0019: pop
+		IL_001a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_001f: stloc.1
+		IL_0020: ldloc.1
+		IL_0021: ldc.i4.0
+		IL_0022: box [System.Runtime]System.Boolean
+		IL_0027: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_002c: pop
+		IL_002d: ret
 	} // end of method BooleanLiteral::__js_module_init__
 
 } // end of class Modules.BooleanLiteral

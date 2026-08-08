@@ -436,7 +436,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 354 (0x162)
+		// Code size: 339 (0x153)
 		.maxstack 10
 		.locals init (
 			[0] class Modules.ControlFlow_ForIn_Shadowing_NoDuplicateKeys/Scope,
@@ -450,7 +450,8 @@
 			[8] class [System.Runtime]System.Type,
 			[9] object,
 			[10] bool,
-			[11] string
+			[11] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+			[12] string
 		)
 
 		IL_0000: newobj instance void Modules.ControlFlow_ForIn_Shadowing_NoDuplicateKeys/Scope::.ctor()
@@ -551,25 +552,22 @@
 		IL_0122: ldloc.s 4
 		IL_0124: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Array [JavaScriptRuntime]JavaScriptRuntime.Array::sort()
 		IL_0129: pop
-		IL_012a: ldstr "console"
-		IL_012f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0134: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0139: stloc.s 9
-		IL_013b: ldloc.s 4
-		IL_013d: ldc.i4.1
-		IL_013e: newarr [System.Runtime]System.Object
-		IL_0143: dup
-		IL_0144: ldc.i4.0
-		IL_0145: ldstr ","
-		IL_014a: stelem.ref
-		IL_014b: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
-		IL_0150: stloc.s 11
-		IL_0152: ldloc.s 9
-		IL_0154: ldstr "log"
-		IL_0159: ldloc.s 11
-		IL_015b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0160: pop
-		IL_0161: ret
+		IL_012a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_012f: stloc.s 11
+		IL_0131: ldloc.s 4
+		IL_0133: ldc.i4.1
+		IL_0134: newarr [System.Runtime]System.Object
+		IL_0139: dup
+		IL_013a: ldc.i4.0
+		IL_013b: ldstr ","
+		IL_0140: stelem.ref
+		IL_0141: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
+		IL_0146: stloc.s 12
+		IL_0148: ldloc.s 11
+		IL_014a: ldloc.s 12
+		IL_014c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0151: pop
+		IL_0152: ret
 	} // end of method ControlFlow_ForIn_Shadowing_NoDuplicateKeys::__js_module_init__
 
 } // end of class Modules.ControlFlow_ForIn_Shadowing_NoDuplicateKeys

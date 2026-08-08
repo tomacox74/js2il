@@ -139,14 +139,15 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 160 (0xa0)
+		// Code size: 149 (0x95)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ControlFlow_ForLoop_LabeledBreak/Scope,
 			[1] float64,
 			[2] float64,
 			[3] float64,
-			[4] object
+			[4] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+			[5] object
 		)
 
 		IL_0000: newobj instance void Modules.ControlFlow_ForLoop_LabeledBreak/Scope::.ctor()
@@ -160,7 +161,7 @@
 			IL_0013: ldloc.3
 			IL_0014: ldc.r8 3
 			IL_001d: clt
-			IL_001f: brfalse IL_009f
+			IL_001f: brfalse IL_0094
 
 			IL_0024: ldc.r8 0.0
 			IL_002d: stloc.2
@@ -170,42 +171,41 @@
 				IL_0030: ldloc.3
 				IL_0031: ldc.r8 1
 				IL_003a: clt
-				IL_003c: brfalse IL_008e
+				IL_003c: brfalse IL_0083
 
-				IL_0041: ldstr "console"
-				IL_0046: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-				IL_004b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_0050: ldloc.1
-				IL_0051: box [System.Runtime]System.Double
-				IL_0056: stloc.s 4
-				IL_0058: ldstr "log"
-				IL_005d: ldloc.s 4
-				IL_005f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-				IL_0064: pop
-				IL_0065: ldloc.1
-				IL_0066: stloc.3
-				IL_0067: ldloc.3
-				IL_0068: ldc.r8 1
-				IL_0071: ceq
-				IL_0073: brfalse IL_007d
+				IL_0041: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_0046: stloc.s 4
+				IL_0048: ldloc.1
+				IL_0049: box [System.Runtime]System.Double
+				IL_004e: stloc.s 5
+				IL_0050: ldloc.s 4
+				IL_0052: ldloc.s 5
+				IL_0054: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+				IL_0059: pop
+				IL_005a: ldloc.1
+				IL_005b: stloc.3
+				IL_005c: ldloc.3
+				IL_005d: ldc.r8 1
+				IL_0066: ceq
+				IL_0068: brfalse IL_0072
 
-				IL_0078: br IL_009f
+				IL_006d: br IL_0094
 
-				IL_007d: ldloc.2
-				IL_007e: ldc.r8 1
-				IL_0087: add
-				IL_0088: stloc.2
-				IL_0089: br IL_002e
+				IL_0072: ldloc.2
+				IL_0073: ldc.r8 1
+				IL_007c: add
+				IL_007d: stloc.2
+				IL_007e: br IL_002e
 			// end loop
 
-			IL_008e: ldloc.1
-			IL_008f: ldc.r8 1
-			IL_0098: add
-			IL_0099: stloc.1
-			IL_009a: br IL_0011
+			IL_0083: ldloc.1
+			IL_0084: ldc.r8 1
+			IL_008d: add
+			IL_008e: stloc.1
+			IL_008f: br IL_0011
 		// end loop
 
-		IL_009f: ret
+		IL_0094: ret
 	} // end of method ControlFlow_ForLoop_LabeledBreak::__js_module_init__
 
 } // end of class Modules.ControlFlow_ForLoop_LabeledBreak

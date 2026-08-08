@@ -302,10 +302,10 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 123 (0x7b)
+			// Code size: 93 (0x5d)
 			.maxstack 8
 			.locals init (
-				[0] object,
+				[0] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 				[1] float64,
 				[2] bool,
 				[3] object
@@ -313,55 +313,49 @@
 
 			IL_0000: ldarg.0
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-			IL_0006: ldstr "console"
-			IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_0010: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0015: stloc.0
-			IL_0016: ldarg.0
-			IL_0017: callvirt instance float64 Modules.UnaryOperator_DoubleNot_NaNTruthiness/C::returnNaN()
-			IL_001c: stloc.1
-			IL_001d: ldloc.1
-			IL_001e: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(float64)
-			IL_0023: ldc.i4.0
-			IL_0024: ceq
-			IL_0026: stloc.2
-			IL_0027: ldloc.2
-			IL_0028: ldc.i4.0
-			IL_0029: ceq
-			IL_002b: stloc.2
-			IL_002c: ldloc.2
-			IL_002d: box [System.Runtime]System.Boolean
-			IL_0032: stloc.3
-			IL_0033: ldloc.0
-			IL_0034: ldstr "log"
-			IL_0039: ldloc.3
-			IL_003a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_003f: pop
-			IL_0040: ldstr "console"
-			IL_0045: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_004a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_004f: stloc.0
-			IL_0050: ldarg.0
-			IL_0051: callvirt instance float64 Modules.UnaryOperator_DoubleNot_NaNTruthiness/C::returnNumber()
-			IL_0056: stloc.1
-			IL_0057: ldloc.1
-			IL_0058: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(float64)
-			IL_005d: ldc.i4.0
-			IL_005e: ceq
-			IL_0060: stloc.2
-			IL_0061: ldloc.2
-			IL_0062: ldc.i4.0
-			IL_0063: ceq
-			IL_0065: stloc.2
-			IL_0066: ldloc.2
-			IL_0067: box [System.Runtime]System.Boolean
-			IL_006c: stloc.3
-			IL_006d: ldloc.0
-			IL_006e: ldstr "log"
-			IL_0073: ldloc.3
-			IL_0074: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_0079: pop
-			IL_007a: ret
+			IL_0006: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_000b: stloc.0
+			IL_000c: ldarg.0
+			IL_000d: callvirt instance float64 Modules.UnaryOperator_DoubleNot_NaNTruthiness/C::returnNaN()
+			IL_0012: stloc.1
+			IL_0013: ldloc.1
+			IL_0014: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(float64)
+			IL_0019: ldc.i4.0
+			IL_001a: ceq
+			IL_001c: stloc.2
+			IL_001d: ldloc.2
+			IL_001e: ldc.i4.0
+			IL_001f: ceq
+			IL_0021: stloc.2
+			IL_0022: ldloc.2
+			IL_0023: box [System.Runtime]System.Boolean
+			IL_0028: stloc.3
+			IL_0029: ldloc.0
+			IL_002a: ldloc.3
+			IL_002b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0030: pop
+			IL_0031: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0036: stloc.0
+			IL_0037: ldarg.0
+			IL_0038: callvirt instance float64 Modules.UnaryOperator_DoubleNot_NaNTruthiness/C::returnNumber()
+			IL_003d: stloc.1
+			IL_003e: ldloc.1
+			IL_003f: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(float64)
+			IL_0044: ldc.i4.0
+			IL_0045: ceq
+			IL_0047: stloc.2
+			IL_0048: ldloc.2
+			IL_0049: ldc.i4.0
+			IL_004a: ceq
+			IL_004c: stloc.2
+			IL_004d: ldloc.2
+			IL_004e: box [System.Runtime]System.Boolean
+			IL_0053: stloc.3
+			IL_0054: ldloc.0
+			IL_0055: ldloc.3
+			IL_0056: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_005b: pop
+			IL_005c: ret
 		} // end of method C::.ctor
 
 		.method public hidebysig 

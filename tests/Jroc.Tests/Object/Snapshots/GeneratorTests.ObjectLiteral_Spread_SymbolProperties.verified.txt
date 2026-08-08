@@ -38,7 +38,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 179 (0xb3)
+		// Code size: 149 (0x95)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ObjectLiteral_Spread_SymbolProperties/Scope,
@@ -46,7 +46,7 @@
 			[2] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
 			[3] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
 			[4] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
-			[5] object,
+			[5] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 			[6] object
 		)
 
@@ -79,33 +79,27 @@
 		IL_0058: pop
 		IL_0059: ldloc.s 4
 		IL_005b: stloc.3
-		IL_005c: ldstr "console"
-		IL_0061: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0066: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_006b: stloc.s 5
-		IL_006d: ldloc.3
-		IL_006e: ldloc.1
-		IL_006f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, object)
-		IL_0074: stloc.s 6
-		IL_0076: ldloc.s 5
-		IL_0078: ldstr "log"
-		IL_007d: ldloc.s 6
-		IL_007f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0084: pop
-		IL_0085: ldstr "console"
-		IL_008a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_008f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0094: stloc.s 6
-		IL_0096: ldloc.3
-		IL_0097: ldstr "a"
-		IL_009c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_00a1: stloc.s 5
-		IL_00a3: ldloc.s 6
-		IL_00a5: ldstr "log"
-		IL_00aa: ldloc.s 5
-		IL_00ac: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00b1: pop
-		IL_00b2: ret
+		IL_005c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0061: stloc.s 5
+		IL_0063: ldloc.3
+		IL_0064: ldloc.1
+		IL_0065: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, object)
+		IL_006a: stloc.s 6
+		IL_006c: ldloc.s 5
+		IL_006e: ldloc.s 6
+		IL_0070: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0075: pop
+		IL_0076: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_007b: stloc.s 5
+		IL_007d: ldloc.3
+		IL_007e: ldstr "a"
+		IL_0083: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0088: stloc.s 6
+		IL_008a: ldloc.s 5
+		IL_008c: ldloc.s 6
+		IL_008e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0093: pop
+		IL_0094: ret
 	} // end of method ObjectLiteral_Spread_SymbolProperties::__js_module_init__
 
 } // end of class Modules.ObjectLiteral_Spread_SymbolProperties

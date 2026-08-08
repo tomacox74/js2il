@@ -38,12 +38,12 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 174 (0xae)
+		// Code size: 129 (0x81)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Map_Delete_Basic/Scope,
 			[1] class [JavaScriptRuntime]JavaScriptRuntime.Map,
-			[2] object,
+			[2] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 			[3] object
 		)
 
@@ -58,49 +58,40 @@
 		IL_0018: ldstr "value1"
 		IL_001d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
 		IL_0022: pop
-		IL_0023: ldstr "console"
-		IL_0028: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_002d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0032: stloc.2
-		IL_0033: ldloc.1
-		IL_0034: ldstr "delete"
-		IL_0039: ldstr "key1"
-		IL_003e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0043: stloc.3
-		IL_0044: ldloc.2
-		IL_0045: ldstr "log"
-		IL_004a: ldloc.3
-		IL_004b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0050: pop
-		IL_0051: ldstr "console"
-		IL_0056: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_005b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0060: stloc.3
-		IL_0061: ldloc.1
-		IL_0062: ldstr "has"
-		IL_0067: ldstr "key1"
-		IL_006c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0071: stloc.2
-		IL_0072: ldloc.3
-		IL_0073: ldstr "log"
+		IL_0023: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0028: stloc.2
+		IL_0029: ldloc.1
+		IL_002a: ldstr "delete"
+		IL_002f: ldstr "key1"
+		IL_0034: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0039: stloc.3
+		IL_003a: ldloc.2
+		IL_003b: ldloc.3
+		IL_003c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0041: pop
+		IL_0042: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0047: stloc.2
+		IL_0048: ldloc.1
+		IL_0049: ldstr "has"
+		IL_004e: ldstr "key1"
+		IL_0053: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0058: stloc.3
+		IL_0059: ldloc.2
+		IL_005a: ldloc.3
+		IL_005b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0060: pop
+		IL_0061: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0066: stloc.2
+		IL_0067: ldloc.1
+		IL_0068: ldstr "delete"
+		IL_006d: ldstr "key2"
+		IL_0072: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0077: stloc.3
 		IL_0078: ldloc.2
-		IL_0079: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_007e: pop
-		IL_007f: ldstr "console"
-		IL_0084: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0089: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_008e: stloc.2
-		IL_008f: ldloc.1
-		IL_0090: ldstr "delete"
-		IL_0095: ldstr "key2"
-		IL_009a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_009f: stloc.3
-		IL_00a0: ldloc.2
-		IL_00a1: ldstr "log"
-		IL_00a6: ldloc.3
-		IL_00a7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00ac: pop
-		IL_00ad: ret
+		IL_0079: ldloc.3
+		IL_007a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_007f: pop
+		IL_0080: ret
 	} // end of method Map_Delete_Basic::__js_module_init__
 
 } // end of class Modules.Map_Delete_Basic

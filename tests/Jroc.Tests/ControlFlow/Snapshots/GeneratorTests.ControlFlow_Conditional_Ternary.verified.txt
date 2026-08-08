@@ -38,7 +38,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 145 (0x91)
+		// Code size: 123 (0x7b)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ControlFlow_Conditional_Ternary/Scope,
@@ -47,7 +47,8 @@
 			[3] object,
 			[4] object,
 			[5] object,
-			[6] object
+			[6] object,
+			[7] class [JavaScriptRuntime]JavaScriptRuntime.Console
 		)
 
 		IL_0000: newobj instance void Modules.ControlFlow_Conditional_Ternary/Scope::.ctor()
@@ -85,21 +86,19 @@
 
 		IL_0054: ldloc.s 5
 		IL_0056: stloc.s 6
-		IL_0058: ldstr "console"
-		IL_005d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0062: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0067: ldstr "log"
-		IL_006c: ldloc.s 4
-		IL_006e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0073: pop
-		IL_0074: ldstr "console"
-		IL_0079: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_007e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0083: ldstr "log"
-		IL_0088: ldloc.s 6
-		IL_008a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_008f: pop
-		IL_0090: ret
+		IL_0058: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_005d: stloc.s 7
+		IL_005f: ldloc.s 7
+		IL_0061: ldloc.s 4
+		IL_0063: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0068: pop
+		IL_0069: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_006e: stloc.s 7
+		IL_0070: ldloc.s 7
+		IL_0072: ldloc.s 6
+		IL_0074: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0079: pop
+		IL_007a: ret
 	} // end of method ControlFlow_Conditional_Ternary::__js_module_init__
 
 } // end of class Modules.ControlFlow_Conditional_Ternary

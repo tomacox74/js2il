@@ -208,13 +208,13 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 109 (0x6d)
+		// Code size: 94 (0x5e)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Variable_CapturedConst_BoolStringFieldType/Scope,
 			[1] class Modules.Variable_CapturedConst_BoolStringFieldType/run/FunctionObject_FunctionDeclaration_BA7E0883_run,
 			[2] object[],
-			[3] object,
+			[3] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 			[4] object
 		)
 
@@ -247,20 +247,17 @@
 		IL_0036: ldstr "typed"
 		IL_003b: stfld string Modules.Variable_CapturedConst_BoolStringFieldType/Scope::NAME
 		IL_0040: nop
-		IL_0041: ldstr "console"
-		IL_0046: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_004b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0050: stloc.3
-		IL_0051: ldloc.1
-		IL_0052: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0057: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
-		IL_005c: stloc.s 4
-		IL_005e: ldloc.3
-		IL_005f: ldstr "log"
-		IL_0064: ldloc.s 4
-		IL_0066: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_006b: pop
-		IL_006c: ret
+		IL_0041: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0046: stloc.3
+		IL_0047: ldloc.1
+		IL_0048: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_004d: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
+		IL_0052: stloc.s 4
+		IL_0054: ldloc.3
+		IL_0055: ldloc.s 4
+		IL_0057: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_005c: pop
+		IL_005d: ret
 	} // end of method Variable_CapturedConst_BoolStringFieldType::__js_module_init__
 
 } // end of class Modules.Variable_CapturedConst_BoolStringFieldType

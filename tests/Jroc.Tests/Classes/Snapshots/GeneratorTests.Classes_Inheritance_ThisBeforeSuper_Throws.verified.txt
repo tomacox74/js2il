@@ -357,7 +357,7 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 298 (0x12a)
+			// Code size: 257 (0x101)
 			.maxstack 8
 			.locals init (
 				[0] class [System.Runtime]System.Exception,
@@ -365,7 +365,7 @@
 				[2] object,
 				[3] object,
 				[4] class [JavaScriptRuntime]JavaScriptRuntime.ReferenceError,
-				[5] object,
+				[5] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 				[6] object
 			)
 
@@ -392,88 +392,81 @@
 				IL_002e: ldc.i4.1
 				IL_002f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, float64, bool)
 				IL_0034: pop
-				IL_0035: ldstr "console"
-				IL_003a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-				IL_003f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_0044: ldstr "log"
-				IL_0049: ldstr "no-throw"
-				IL_004e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-				IL_0053: pop
-				IL_0054: leave IL_00b6
+				IL_0035: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_003a: stloc.s 5
+				IL_003c: ldloc.s 5
+				IL_003e: ldstr "no-throw"
+				IL_0043: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+				IL_0048: pop
+				IL_0049: leave IL_009c
 			} // end .try
 			catch [System.Runtime]System.Exception
 			{
-				IL_0059: stloc.0
-				IL_005a: ldloc.0
-				IL_005b: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-				IL_0060: dup
-				IL_0061: brtrue IL_0076
+				IL_004e: stloc.0
+				IL_004f: ldloc.0
+				IL_0050: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+				IL_0055: dup
+				IL_0056: brtrue IL_006b
 
-				IL_0066: pop
-				IL_0067: ldloc.0
-				IL_0068: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
-				IL_006d: dup
-				IL_006e: brtrue IL_0081
+				IL_005b: pop
+				IL_005c: ldloc.0
+				IL_005d: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+				IL_0062: dup
+				IL_0063: brtrue IL_0076
 
-				IL_0073: pop
-				IL_0074: rethrow
+				IL_0068: pop
+				IL_0069: rethrow
 
-				IL_0076: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-				IL_007b: stloc.1
-				IL_007c: br IL_0082
+				IL_006b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+				IL_0070: stloc.1
+				IL_0071: br IL_0077
 
-				IL_0081: stloc.1
+				IL_0076: stloc.1
 
-				IL_0082: ldloc.1
-				IL_0083: stloc.2
-				IL_0084: ldstr "console"
-				IL_0089: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-				IL_008e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_0093: stloc.s 5
-				IL_0095: ldloc.2
-				IL_0096: ldstr "name"
-				IL_009b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-				IL_00a0: stloc.s 6
-				IL_00a2: ldloc.s 5
-				IL_00a4: ldstr "log"
-				IL_00a9: ldloc.s 6
-				IL_00ab: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-				IL_00b0: pop
-				IL_00b1: leave IL_00b6
+				IL_0077: ldloc.1
+				IL_0078: stloc.2
+				IL_0079: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_007e: stloc.s 5
+				IL_0080: ldloc.2
+				IL_0081: ldstr "name"
+				IL_0086: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+				IL_008b: stloc.s 6
+				IL_008d: ldloc.s 5
+				IL_008f: ldloc.s 6
+				IL_0091: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+				IL_0096: pop
+				IL_0097: leave IL_009c
 			} // end handler
 
-			IL_00b6: ldc.i4.1
-			IL_00b7: newarr [System.Runtime]System.Object
-			IL_00bc: dup
-			IL_00bd: ldc.i4.0
-			IL_00be: ldc.r8 5
-			IL_00c7: box [System.Runtime]System.Double
-			IL_00cc: stelem.ref
-			IL_00cd: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
-			IL_00d2: ldarg.0
-			IL_00d3: ldc.r8 5
-			IL_00dc: box [System.Runtime]System.Double
-			IL_00e1: call instance void Modules.Classes_Inheritance_ThisBeforeSuper_Throws/B::.ctor(object)
-			IL_00e6: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
-			IL_00eb: ldarg.0
-			IL_00ec: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeDerivedConstructorThisBinding(object)
-			IL_00f1: ldstr "console"
-			IL_00f6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_00fb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0100: stloc.s 6
-			IL_0102: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-			IL_0107: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
-			IL_010c: ldstr "x"
-			IL_0111: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0116: stloc.s 5
-			IL_0118: ldloc.s 6
-			IL_011a: ldstr "log"
-			IL_011f: ldloc.s 5
-			IL_0121: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_0126: pop
-			IL_0127: ldnull
-			IL_0128: stloc.3
-			IL_0129: ret
+			IL_009c: ldc.i4.1
+			IL_009d: newarr [System.Runtime]System.Object
+			IL_00a2: dup
+			IL_00a3: ldc.i4.0
+			IL_00a4: ldc.r8 5
+			IL_00ad: box [System.Runtime]System.Double
+			IL_00b2: stelem.ref
+			IL_00b3: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
+			IL_00b8: ldarg.0
+			IL_00b9: ldc.r8 5
+			IL_00c2: box [System.Runtime]System.Double
+			IL_00c7: call instance void Modules.Classes_Inheritance_ThisBeforeSuper_Throws/B::.ctor(object)
+			IL_00cc: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
+			IL_00d1: ldarg.0
+			IL_00d2: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeDerivedConstructorThisBinding(object)
+			IL_00d7: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_00dc: stloc.s 5
+			IL_00de: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+			IL_00e3: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
+			IL_00e8: ldstr "x"
+			IL_00ed: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_00f2: stloc.s 6
+			IL_00f4: ldloc.s 5
+			IL_00f6: ldloc.s 6
+			IL_00f8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_00fd: pop
+			IL_00fe: ldnull
+			IL_00ff: stloc.3
+			IL_0100: ret
 		} // end of method D::.ctor
 
 	} // end of class D
