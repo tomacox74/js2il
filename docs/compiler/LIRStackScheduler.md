@@ -434,9 +434,9 @@ uses `TryClaim`, so it cannot also claim a scheduler-owned or already-owned
 temp. The allocator may claim rematerialization only while the temp still has
 the default owner.
 
-Multi-definition temps preserve first-definition behavior: snapshot/resume
-ownership is based on the first canonical definition rather than every
-assignment to the temp. This matters for generator state-machine result temps.
+Mandatory owners scan every definition of a multi-definition state-machine
+temp. Any `LIRCopyTemp` snapshot or await/yield resume definition keeps stable
+materialization even when synthetic catch/unwrapping definitions appear first.
 
 ### Instruction disposition
 

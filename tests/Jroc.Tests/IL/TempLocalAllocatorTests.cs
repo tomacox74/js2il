@@ -166,6 +166,33 @@ public sealed class TempLocalAllocatorTests
     }
 
     [Fact]
+    public void MaterializationPlan_MultiplyDefinedTemp_PreservesSnapshotBarrier()
+    {
+        var body = new MethodBodyIR();
+        var exception = AddTemp(
+            body,
+            new ValueStorage(ValueStorageKind.Reference, typeof(Exception)));
+        var source = AddTemp(
+            body,
+            new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        var snapshot = AddTemp(
+            body,
+            new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        body.Instructions.Add(new LIRUnwrapCatchException(exception, snapshot));
+        body.Instructions.Add(new LIRCopyTemp(source, snapshot));
+
+        var plan = TempMaterializationPlan.Create(
+            body,
+            schedule: null,
+            requiresConstructorResultOverride: _ => false);
+
+        Assert.Equal(
+            TempValueOwner.SnapshotBarrier,
+            plan.GetOwner(snapshot.Index));
+        Assert.True(plan.ShouldMaterialize(snapshot.Index));
+    }
+
+    [Fact]
     public void MaterializationPlan_RejectsOverlappingRematerializationClaim()
     {
         var body = new MethodBodyIR();
