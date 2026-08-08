@@ -983,7 +983,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 2333 (0x91d)
+		// Code size: 2063 (0x80f)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Events_Callback_Identity_And_Function_Objects/Scope,
@@ -1002,7 +1002,7 @@
 			[13] object[],
 			[14] class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IEventsModule,
 			[15] object,
-			[16] object,
+			[16] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 			[17] bool,
 			[18] object,
 			[19] object,
@@ -1152,572 +1152,518 @@
 		IL_0160: ldloc.1
 		IL_0161: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
 		IL_0166: pop
-		IL_0167: ldstr "console"
-		IL_016c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0171: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0176: stloc.s 15
-		IL_0178: ldloc.0
-		IL_0179: ldfld object Modules.Events_Callback_Identity_And_Function_Objects/Scope::emitter
-		IL_017e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0183: ldstr "listeners"
-		IL_0188: ldstr "once"
-		IL_018d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0192: stloc.s 16
-		IL_0194: ldloc.s 16
-		IL_0196: ldc.r8 0.0
-		IL_019f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-		IL_01a4: stloc.s 16
-		IL_01a6: ldloc.s 16
-		IL_01a8: ldloc.1
-		IL_01a9: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_01ae: stloc.s 17
-		IL_01b0: ldloc.s 17
-		IL_01b2: box [System.Runtime]System.Boolean
-		IL_01b7: stloc.s 18
-		IL_01b9: ldstr "listeners-identity:"
-		IL_01be: ldloc.s 18
-		IL_01c0: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_01c5: stloc.s 19
-		IL_01c7: ldloc.s 15
-		IL_01c9: ldstr "log"
-		IL_01ce: ldloc.s 19
-		IL_01d0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_01d5: pop
-		IL_01d6: ldloc.0
-		IL_01d7: ldfld object Modules.Events_Callback_Identity_And_Function_Objects/Scope::emitter
-		IL_01dc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_01e1: ldstr "off"
-		IL_01e6: ldstr "once"
-		IL_01eb: ldloc.1
-		IL_01ec: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_01f1: pop
-		IL_01f2: ldstr "console"
-		IL_01f7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_01fc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0201: stloc.s 15
-		IL_0203: ldloc.0
-		IL_0204: ldfld object Modules.Events_Callback_Identity_And_Function_Objects/Scope::emitter
-		IL_0209: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_020e: ldstr "listenerCount"
-		IL_0213: ldstr "once"
-		IL_0218: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_021d: stloc.s 16
-		IL_021f: ldstr "off-once-count:"
-		IL_0224: ldloc.s 16
-		IL_0226: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_022b: stloc.s 19
-		IL_022d: ldloc.s 15
-		IL_022f: ldstr "log"
-		IL_0234: ldloc.s 19
-		IL_0236: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_023b: pop
-		IL_023c: ldstr "console"
-		IL_0241: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0246: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_024b: stloc.s 15
-		IL_024d: ldloc.0
-		IL_024e: ldfld object Modules.Events_Callback_Identity_And_Function_Objects/Scope::emitter
-		IL_0253: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0258: ldstr "emit"
-		IL_025d: ldstr "once"
-		IL_0262: ldc.r8 1
-		IL_026b: box [System.Runtime]System.Double
-		IL_0270: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_0275: stloc.s 16
-		IL_0277: ldstr "off-once-emitted:"
-		IL_027c: ldloc.s 16
-		IL_027e: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_0283: stloc.s 19
-		IL_0285: ldloc.s 15
-		IL_0287: ldstr "log"
-		IL_028c: ldloc.s 19
-		IL_028e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0293: pop
-		IL_0294: ldstr "console"
-		IL_0299: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_029e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_02a3: stloc.s 15
-		IL_02a5: ldloc.0
-		IL_02a6: ldfld object Modules.Events_Callback_Identity_And_Function_Objects/Scope::total
-		IL_02ab: stloc.s 16
-		IL_02ad: ldstr "total:"
-		IL_02b2: ldloc.s 16
-		IL_02b4: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_02b9: stloc.s 19
-		IL_02bb: ldloc.s 15
-		IL_02bd: ldstr "log"
-		IL_02c2: ldloc.s 19
-		IL_02c4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_02c9: pop
-		IL_02ca: ldloc.0
-		IL_02cb: ldfld object Modules.Events_Callback_Identity_And_Function_Objects/Scope::emitter
-		IL_02d0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_02d5: ldstr "on"
-		IL_02da: ldstr "duplicate"
-		IL_02df: ldloc.1
-		IL_02e0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_02e5: pop
-		IL_02e6: ldloc.0
-		IL_02e7: ldfld object Modules.Events_Callback_Identity_And_Function_Objects/Scope::emitter
-		IL_02ec: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_02f1: ldstr "on"
-		IL_02f6: ldstr "duplicate"
-		IL_02fb: ldloc.1
-		IL_02fc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_0301: pop
-		IL_0302: ldloc.0
-		IL_0303: ldfld object Modules.Events_Callback_Identity_And_Function_Objects/Scope::emitter
-		IL_0308: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_030d: ldstr "off"
-		IL_0312: ldstr "duplicate"
-		IL_0317: ldloc.1
-		IL_0318: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_031d: pop
-		IL_031e: ldstr "console"
-		IL_0323: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0328: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_032d: stloc.s 15
-		IL_032f: ldloc.0
-		IL_0330: ldfld object Modules.Events_Callback_Identity_And_Function_Objects/Scope::emitter
-		IL_0335: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_033a: ldstr "listenerCount"
-		IL_033f: ldstr "duplicate"
-		IL_0344: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0349: stloc.s 16
-		IL_034b: ldstr "duplicate-count:"
-		IL_0350: ldloc.s 16
-		IL_0352: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_0357: stloc.s 19
-		IL_0359: ldloc.s 15
-		IL_035b: ldstr "log"
-		IL_0360: ldloc.s 19
-		IL_0362: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0367: pop
-		IL_0368: ldloc.0
-		IL_0369: ldc.r8 0.0
-		IL_0372: box [System.Runtime]System.Double
-		IL_0377: stfld object Modules.Events_Callback_Identity_And_Function_Objects/Scope::rawTotal
-		IL_037c: ldc.r8 1
-		IL_0385: neg
-		IL_0386: stloc.s 20
-		IL_0388: ldloc.s 20
-		IL_038a: box [System.Runtime]System.Double
-		IL_038f: stloc.s 21
-		IL_0391: ldloc.0
-		IL_0392: ldloc.s 21
-		IL_0394: stfld object Modules.Events_Callback_Identity_And_Function_Objects/Scope::rawCountDuringCall
-		IL_0399: nop
-		IL_039a: ldloc.0
-		IL_039b: ldfld object Modules.Events_Callback_Identity_And_Function_Objects/Scope::emitter
-		IL_03a0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_03a5: ldstr "once"
-		IL_03aa: ldstr "raw-once"
-		IL_03af: ldloc.2
-		IL_03b0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_03b5: pop
-		IL_03b6: ldloc.0
-		IL_03b7: ldfld object Modules.Events_Callback_Identity_And_Function_Objects/Scope::emitter
-		IL_03bc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_03c1: ldstr "rawListeners"
-		IL_03c6: ldstr "raw-once"
-		IL_03cb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_03d0: stloc.s 15
-		IL_03d2: ldloc.s 15
-		IL_03d4: ldc.r8 0.0
-		IL_03dd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-		IL_03e2: stloc.s 7
-		IL_03e4: ldstr "console"
-		IL_03e9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_03ee: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_03f3: stloc.s 15
-		IL_03f5: ldloc.s 7
-		IL_03f7: ldstr "listener"
-		IL_03fc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0401: stloc.s 16
-		IL_0403: ldloc.s 16
-		IL_0405: ldloc.2
-		IL_0406: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_040b: stloc.s 17
-		IL_040d: ldloc.s 17
-		IL_040f: box [System.Runtime]System.Boolean
-		IL_0414: stloc.s 18
-		IL_0416: ldstr "raw-listener:"
-		IL_041b: ldloc.s 18
-		IL_041d: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_0422: stloc.s 19
-		IL_0424: ldloc.s 15
-		IL_0426: ldstr "log"
-		IL_042b: ldloc.s 19
-		IL_042d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0432: pop
-		IL_0433: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0438: stloc.s 13
-		IL_043a: ldloc.s 7
-		IL_043c: ldloc.s 13
-		IL_043e: ldc.r8 2
-		IL_0447: box [System.Runtime]System.Double
-		IL_044c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
-		IL_0451: pop
-		IL_0452: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0457: stloc.s 13
-		IL_0459: ldloc.s 7
-		IL_045b: ldloc.s 13
-		IL_045d: ldc.r8 4
-		IL_0466: box [System.Runtime]System.Double
-		IL_046b: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
-		IL_0470: pop
-		IL_0471: ldstr "console"
-		IL_0476: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_047b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0480: stloc.s 15
-		IL_0482: ldloc.0
-		IL_0483: ldfld object Modules.Events_Callback_Identity_And_Function_Objects/Scope::rawCountDuringCall
-		IL_0488: stloc.s 16
-		IL_048a: ldstr "raw-removal-count:"
-		IL_048f: ldloc.s 16
-		IL_0491: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_0496: stloc.s 19
-		IL_0498: ldloc.s 15
-		IL_049a: ldstr "log"
-		IL_049f: ldloc.s 19
-		IL_04a1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_04a6: pop
-		IL_04a7: ldstr "console"
-		IL_04ac: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_04b1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_04b6: stloc.s 15
-		IL_04b8: ldloc.0
-		IL_04b9: ldfld object Modules.Events_Callback_Identity_And_Function_Objects/Scope::emitter
-		IL_04be: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_04c3: ldstr "listenerCount"
-		IL_04c8: ldstr "raw-once"
-		IL_04cd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_04d2: stloc.s 16
-		IL_04d4: ldstr "raw-count:"
-		IL_04d9: ldloc.s 16
-		IL_04db: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_04e0: stloc.s 19
-		IL_04e2: ldloc.s 15
-		IL_04e4: ldstr "log"
-		IL_04e9: ldloc.s 19
-		IL_04eb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_04f0: pop
-		IL_04f1: ldstr "console"
-		IL_04f6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_04fb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0500: stloc.s 15
-		IL_0502: ldloc.0
-		IL_0503: ldfld object Modules.Events_Callback_Identity_And_Function_Objects/Scope::rawTotal
-		IL_0508: stloc.s 16
-		IL_050a: ldstr "raw-total:"
-		IL_050f: ldloc.s 16
-		IL_0511: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_0516: stloc.s 19
-		IL_0518: ldloc.s 15
-		IL_051a: ldstr "log"
-		IL_051f: ldloc.s 19
-		IL_0521: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0526: pop
-		IL_0527: ldloc.0
-		IL_0528: ldc.r8 0.0
-		IL_0531: box [System.Runtime]System.Double
-		IL_0536: stfld object Modules.Events_Callback_Identity_And_Function_Objects/Scope::duplicateOnceCalls
-		IL_053b: nop
-		IL_053c: ldloc.0
-		IL_053d: ldfld object Modules.Events_Callback_Identity_And_Function_Objects/Scope::emitter
-		IL_0542: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0547: ldstr "once"
-		IL_054c: ldstr "duplicate-once"
-		IL_0551: ldloc.3
-		IL_0552: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_0557: pop
-		IL_0558: ldloc.0
-		IL_0559: ldfld object Modules.Events_Callback_Identity_And_Function_Objects/Scope::emitter
-		IL_055e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0563: ldstr "once"
-		IL_0568: ldstr "duplicate-once"
-		IL_056d: ldloc.3
-		IL_056e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_0573: pop
-		IL_0574: ldloc.0
-		IL_0575: ldfld object Modules.Events_Callback_Identity_And_Function_Objects/Scope::emitter
-		IL_057a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_057f: ldstr "listeners"
-		IL_0584: ldstr "duplicate-once"
-		IL_0589: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_058e: stloc.s 8
-		IL_0590: ldstr "console"
-		IL_0595: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_059a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_059f: stloc.s 15
-		IL_05a1: ldloc.s 8
-		IL_05a3: ldc.r8 0.0
-		IL_05ac: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-		IL_05b1: stloc.s 16
-		IL_05b3: ldloc.s 16
-		IL_05b5: ldloc.3
-		IL_05b6: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_05bb: stloc.s 17
-		IL_05bd: ldloc.s 17
-		IL_05bf: box [System.Runtime]System.Boolean
-		IL_05c4: stloc.s 18
-		IL_05c6: ldloc.s 18
-		IL_05c8: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-		IL_05cd: stloc.s 17
-		IL_05cf: ldloc.s 17
-		IL_05d1: brfalse IL_0604
+		IL_0167: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_016c: stloc.s 16
+		IL_016e: ldloc.0
+		IL_016f: ldfld object Modules.Events_Callback_Identity_And_Function_Objects/Scope::emitter
+		IL_0174: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0179: ldstr "listeners"
+		IL_017e: ldstr "once"
+		IL_0183: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0188: stloc.s 15
+		IL_018a: ldloc.s 15
+		IL_018c: ldc.r8 0.0
+		IL_0195: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+		IL_019a: stloc.s 15
+		IL_019c: ldloc.s 15
+		IL_019e: ldloc.1
+		IL_019f: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_01a4: stloc.s 17
+		IL_01a6: ldloc.s 17
+		IL_01a8: box [System.Runtime]System.Boolean
+		IL_01ad: stloc.s 18
+		IL_01af: ldstr "listeners-identity:"
+		IL_01b4: ldloc.s 18
+		IL_01b6: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_01bb: stloc.s 19
+		IL_01bd: ldloc.s 16
+		IL_01bf: ldloc.s 19
+		IL_01c1: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_01c6: pop
+		IL_01c7: ldloc.0
+		IL_01c8: ldfld object Modules.Events_Callback_Identity_And_Function_Objects/Scope::emitter
+		IL_01cd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_01d2: ldstr "off"
+		IL_01d7: ldstr "once"
+		IL_01dc: ldloc.1
+		IL_01dd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_01e2: pop
+		IL_01e3: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_01e8: stloc.s 16
+		IL_01ea: ldloc.0
+		IL_01eb: ldfld object Modules.Events_Callback_Identity_And_Function_Objects/Scope::emitter
+		IL_01f0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_01f5: ldstr "listenerCount"
+		IL_01fa: ldstr "once"
+		IL_01ff: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0204: stloc.s 15
+		IL_0206: ldstr "off-once-count:"
+		IL_020b: ldloc.s 15
+		IL_020d: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_0212: stloc.s 19
+		IL_0214: ldloc.s 16
+		IL_0216: ldloc.s 19
+		IL_0218: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_021d: pop
+		IL_021e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0223: stloc.s 16
+		IL_0225: ldloc.0
+		IL_0226: ldfld object Modules.Events_Callback_Identity_And_Function_Objects/Scope::emitter
+		IL_022b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0230: ldstr "emit"
+		IL_0235: ldstr "once"
+		IL_023a: ldc.r8 1
+		IL_0243: box [System.Runtime]System.Double
+		IL_0248: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_024d: stloc.s 15
+		IL_024f: ldstr "off-once-emitted:"
+		IL_0254: ldloc.s 15
+		IL_0256: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_025b: stloc.s 19
+		IL_025d: ldloc.s 16
+		IL_025f: ldloc.s 19
+		IL_0261: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0266: pop
+		IL_0267: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_026c: stloc.s 16
+		IL_026e: ldloc.0
+		IL_026f: ldfld object Modules.Events_Callback_Identity_And_Function_Objects/Scope::total
+		IL_0274: stloc.s 15
+		IL_0276: ldstr "total:"
+		IL_027b: ldloc.s 15
+		IL_027d: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_0282: stloc.s 19
+		IL_0284: ldloc.s 16
+		IL_0286: ldloc.s 19
+		IL_0288: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_028d: pop
+		IL_028e: ldloc.0
+		IL_028f: ldfld object Modules.Events_Callback_Identity_And_Function_Objects/Scope::emitter
+		IL_0294: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0299: ldstr "on"
+		IL_029e: ldstr "duplicate"
+		IL_02a3: ldloc.1
+		IL_02a4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_02a9: pop
+		IL_02aa: ldloc.0
+		IL_02ab: ldfld object Modules.Events_Callback_Identity_And_Function_Objects/Scope::emitter
+		IL_02b0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_02b5: ldstr "on"
+		IL_02ba: ldstr "duplicate"
+		IL_02bf: ldloc.1
+		IL_02c0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_02c5: pop
+		IL_02c6: ldloc.0
+		IL_02c7: ldfld object Modules.Events_Callback_Identity_And_Function_Objects/Scope::emitter
+		IL_02cc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_02d1: ldstr "off"
+		IL_02d6: ldstr "duplicate"
+		IL_02db: ldloc.1
+		IL_02dc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_02e1: pop
+		IL_02e2: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_02e7: stloc.s 16
+		IL_02e9: ldloc.0
+		IL_02ea: ldfld object Modules.Events_Callback_Identity_And_Function_Objects/Scope::emitter
+		IL_02ef: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_02f4: ldstr "listenerCount"
+		IL_02f9: ldstr "duplicate"
+		IL_02fe: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0303: stloc.s 15
+		IL_0305: ldstr "duplicate-count:"
+		IL_030a: ldloc.s 15
+		IL_030c: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_0311: stloc.s 19
+		IL_0313: ldloc.s 16
+		IL_0315: ldloc.s 19
+		IL_0317: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_031c: pop
+		IL_031d: ldloc.0
+		IL_031e: ldc.r8 0.0
+		IL_0327: box [System.Runtime]System.Double
+		IL_032c: stfld object Modules.Events_Callback_Identity_And_Function_Objects/Scope::rawTotal
+		IL_0331: ldc.r8 1
+		IL_033a: neg
+		IL_033b: stloc.s 20
+		IL_033d: ldloc.s 20
+		IL_033f: box [System.Runtime]System.Double
+		IL_0344: stloc.s 21
+		IL_0346: ldloc.0
+		IL_0347: ldloc.s 21
+		IL_0349: stfld object Modules.Events_Callback_Identity_And_Function_Objects/Scope::rawCountDuringCall
+		IL_034e: nop
+		IL_034f: ldloc.0
+		IL_0350: ldfld object Modules.Events_Callback_Identity_And_Function_Objects/Scope::emitter
+		IL_0355: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_035a: ldstr "once"
+		IL_035f: ldstr "raw-once"
+		IL_0364: ldloc.2
+		IL_0365: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_036a: pop
+		IL_036b: ldloc.0
+		IL_036c: ldfld object Modules.Events_Callback_Identity_And_Function_Objects/Scope::emitter
+		IL_0371: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0376: ldstr "rawListeners"
+		IL_037b: ldstr "raw-once"
+		IL_0380: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0385: stloc.s 15
+		IL_0387: ldloc.s 15
+		IL_0389: ldc.r8 0.0
+		IL_0392: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+		IL_0397: stloc.s 7
+		IL_0399: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_039e: stloc.s 16
+		IL_03a0: ldloc.s 7
+		IL_03a2: ldstr "listener"
+		IL_03a7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_03ac: stloc.s 15
+		IL_03ae: ldloc.s 15
+		IL_03b0: ldloc.2
+		IL_03b1: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_03b6: stloc.s 17
+		IL_03b8: ldloc.s 17
+		IL_03ba: box [System.Runtime]System.Boolean
+		IL_03bf: stloc.s 18
+		IL_03c1: ldstr "raw-listener:"
+		IL_03c6: ldloc.s 18
+		IL_03c8: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_03cd: stloc.s 19
+		IL_03cf: ldloc.s 16
+		IL_03d1: ldloc.s 19
+		IL_03d3: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_03d8: pop
+		IL_03d9: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_03de: stloc.s 13
+		IL_03e0: ldloc.s 7
+		IL_03e2: ldloc.s 13
+		IL_03e4: ldc.r8 2
+		IL_03ed: box [System.Runtime]System.Double
+		IL_03f2: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
+		IL_03f7: pop
+		IL_03f8: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_03fd: stloc.s 13
+		IL_03ff: ldloc.s 7
+		IL_0401: ldloc.s 13
+		IL_0403: ldc.r8 4
+		IL_040c: box [System.Runtime]System.Double
+		IL_0411: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
+		IL_0416: pop
+		IL_0417: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_041c: stloc.s 16
+		IL_041e: ldloc.0
+		IL_041f: ldfld object Modules.Events_Callback_Identity_And_Function_Objects/Scope::rawCountDuringCall
+		IL_0424: stloc.s 15
+		IL_0426: ldstr "raw-removal-count:"
+		IL_042b: ldloc.s 15
+		IL_042d: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_0432: stloc.s 19
+		IL_0434: ldloc.s 16
+		IL_0436: ldloc.s 19
+		IL_0438: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_043d: pop
+		IL_043e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0443: stloc.s 16
+		IL_0445: ldloc.0
+		IL_0446: ldfld object Modules.Events_Callback_Identity_And_Function_Objects/Scope::emitter
+		IL_044b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0450: ldstr "listenerCount"
+		IL_0455: ldstr "raw-once"
+		IL_045a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_045f: stloc.s 15
+		IL_0461: ldstr "raw-count:"
+		IL_0466: ldloc.s 15
+		IL_0468: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_046d: stloc.s 19
+		IL_046f: ldloc.s 16
+		IL_0471: ldloc.s 19
+		IL_0473: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0478: pop
+		IL_0479: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_047e: stloc.s 16
+		IL_0480: ldloc.0
+		IL_0481: ldfld object Modules.Events_Callback_Identity_And_Function_Objects/Scope::rawTotal
+		IL_0486: stloc.s 15
+		IL_0488: ldstr "raw-total:"
+		IL_048d: ldloc.s 15
+		IL_048f: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_0494: stloc.s 19
+		IL_0496: ldloc.s 16
+		IL_0498: ldloc.s 19
+		IL_049a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_049f: pop
+		IL_04a0: ldloc.0
+		IL_04a1: ldc.r8 0.0
+		IL_04aa: box [System.Runtime]System.Double
+		IL_04af: stfld object Modules.Events_Callback_Identity_And_Function_Objects/Scope::duplicateOnceCalls
+		IL_04b4: nop
+		IL_04b5: ldloc.0
+		IL_04b6: ldfld object Modules.Events_Callback_Identity_And_Function_Objects/Scope::emitter
+		IL_04bb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_04c0: ldstr "once"
+		IL_04c5: ldstr "duplicate-once"
+		IL_04ca: ldloc.3
+		IL_04cb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_04d0: pop
+		IL_04d1: ldloc.0
+		IL_04d2: ldfld object Modules.Events_Callback_Identity_And_Function_Objects/Scope::emitter
+		IL_04d7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_04dc: ldstr "once"
+		IL_04e1: ldstr "duplicate-once"
+		IL_04e6: ldloc.3
+		IL_04e7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_04ec: pop
+		IL_04ed: ldloc.0
+		IL_04ee: ldfld object Modules.Events_Callback_Identity_And_Function_Objects/Scope::emitter
+		IL_04f3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_04f8: ldstr "listeners"
+		IL_04fd: ldstr "duplicate-once"
+		IL_0502: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0507: stloc.s 8
+		IL_0509: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_050e: stloc.s 16
+		IL_0510: ldloc.s 8
+		IL_0512: ldc.r8 0.0
+		IL_051b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+		IL_0520: stloc.s 15
+		IL_0522: ldloc.s 15
+		IL_0524: ldloc.3
+		IL_0525: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_052a: stloc.s 17
+		IL_052c: ldloc.s 17
+		IL_052e: box [System.Runtime]System.Boolean
+		IL_0533: stloc.s 18
+		IL_0535: ldloc.s 18
+		IL_0537: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+		IL_053c: stloc.s 17
+		IL_053e: ldloc.s 17
+		IL_0540: brfalse IL_0573
 
-		IL_05d6: ldloc.s 8
-		IL_05d8: ldc.r8 1
-		IL_05e1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-		IL_05e6: stloc.s 16
-		IL_05e8: ldloc.s 16
-		IL_05ea: ldloc.3
-		IL_05eb: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_05f0: stloc.s 17
-		IL_05f2: ldloc.s 17
-		IL_05f4: box [System.Runtime]System.Boolean
-		IL_05f9: stloc.s 22
-		IL_05fb: ldloc.s 22
-		IL_05fd: stloc.s 23
-		IL_05ff: br IL_0608
+		IL_0545: ldloc.s 8
+		IL_0547: ldc.r8 1
+		IL_0550: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+		IL_0555: stloc.s 15
+		IL_0557: ldloc.s 15
+		IL_0559: ldloc.3
+		IL_055a: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_055f: stloc.s 17
+		IL_0561: ldloc.s 17
+		IL_0563: box [System.Runtime]System.Boolean
+		IL_0568: stloc.s 22
+		IL_056a: ldloc.s 22
+		IL_056c: stloc.s 23
+		IL_056e: br IL_0577
 
-		IL_0604: ldloc.s 18
-		IL_0606: stloc.s 23
+		IL_0573: ldloc.s 18
+		IL_0575: stloc.s 23
 
-		IL_0608: ldstr "duplicate-once-identities:"
-		IL_060d: ldloc.s 23
-		IL_060f: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_0614: stloc.s 23
-		IL_0616: ldloc.s 15
-		IL_0618: ldstr "log"
-		IL_061d: ldloc.s 23
-		IL_061f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0624: pop
-		IL_0625: ldloc.0
-		IL_0626: ldfld object Modules.Events_Callback_Identity_And_Function_Objects/Scope::emitter
-		IL_062b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0630: ldstr "removeListener"
-		IL_0635: ldstr "duplicate-once"
-		IL_063a: ldloc.3
-		IL_063b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_0640: pop
-		IL_0641: ldstr "console"
-		IL_0646: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_064b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0650: stloc.s 15
-		IL_0652: ldloc.0
-		IL_0653: ldfld object Modules.Events_Callback_Identity_And_Function_Objects/Scope::emitter
-		IL_0658: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_065d: ldstr "listenerCount"
-		IL_0662: ldstr "duplicate-once"
-		IL_0667: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_066c: stloc.s 16
-		IL_066e: ldstr "duplicate-once-after-remove:"
-		IL_0673: ldloc.s 16
-		IL_0675: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_067a: stloc.s 23
-		IL_067c: ldloc.s 15
-		IL_067e: ldstr "log"
-		IL_0683: ldloc.s 23
-		IL_0685: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_068a: pop
-		IL_068b: ldstr "console"
-		IL_0690: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0695: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_069a: stloc.s 15
-		IL_069c: ldloc.0
-		IL_069d: ldfld object Modules.Events_Callback_Identity_And_Function_Objects/Scope::emitter
-		IL_06a2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_06a7: ldstr "emit"
-		IL_06ac: ldstr "duplicate-once"
-		IL_06b1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_06b6: stloc.s 16
-		IL_06b8: ldstr "duplicate-once-emitted:"
-		IL_06bd: ldloc.s 16
-		IL_06bf: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_06c4: stloc.s 23
-		IL_06c6: ldloc.s 15
-		IL_06c8: ldstr "log"
-		IL_06cd: ldloc.s 23
-		IL_06cf: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_06d4: pop
-		IL_06d5: ldstr "console"
-		IL_06da: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_06df: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_06e4: stloc.s 15
-		IL_06e6: ldloc.0
-		IL_06e7: ldfld object Modules.Events_Callback_Identity_And_Function_Objects/Scope::duplicateOnceCalls
-		IL_06ec: stloc.s 16
-		IL_06ee: ldstr "duplicate-once-calls:"
-		IL_06f3: ldloc.s 16
-		IL_06f5: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_06fa: stloc.s 23
-		IL_06fc: ldloc.s 15
-		IL_06fe: ldstr "log"
-		IL_0703: ldloc.s 23
-		IL_0705: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_070a: pop
-		IL_070b: ldstr "console"
-		IL_0710: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0577: ldstr "duplicate-once-identities:"
+		IL_057c: ldloc.s 23
+		IL_057e: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_0583: stloc.s 23
+		IL_0585: ldloc.s 16
+		IL_0587: ldloc.s 23
+		IL_0589: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_058e: pop
+		IL_058f: ldloc.0
+		IL_0590: ldfld object Modules.Events_Callback_Identity_And_Function_Objects/Scope::emitter
+		IL_0595: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_059a: ldstr "removeListener"
+		IL_059f: ldstr "duplicate-once"
+		IL_05a4: ldloc.3
+		IL_05a5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_05aa: pop
+		IL_05ab: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_05b0: stloc.s 16
+		IL_05b2: ldloc.0
+		IL_05b3: ldfld object Modules.Events_Callback_Identity_And_Function_Objects/Scope::emitter
+		IL_05b8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_05bd: ldstr "listenerCount"
+		IL_05c2: ldstr "duplicate-once"
+		IL_05c7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_05cc: stloc.s 15
+		IL_05ce: ldstr "duplicate-once-after-remove:"
+		IL_05d3: ldloc.s 15
+		IL_05d5: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_05da: stloc.s 23
+		IL_05dc: ldloc.s 16
+		IL_05de: ldloc.s 23
+		IL_05e0: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_05e5: pop
+		IL_05e6: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_05eb: stloc.s 16
+		IL_05ed: ldloc.0
+		IL_05ee: ldfld object Modules.Events_Callback_Identity_And_Function_Objects/Scope::emitter
+		IL_05f3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_05f8: ldstr "emit"
+		IL_05fd: ldstr "duplicate-once"
+		IL_0602: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0607: stloc.s 15
+		IL_0609: ldstr "duplicate-once-emitted:"
+		IL_060e: ldloc.s 15
+		IL_0610: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_0615: stloc.s 23
+		IL_0617: ldloc.s 16
+		IL_0619: ldloc.s 23
+		IL_061b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0620: pop
+		IL_0621: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0626: stloc.s 16
+		IL_0628: ldloc.0
+		IL_0629: ldfld object Modules.Events_Callback_Identity_And_Function_Objects/Scope::duplicateOnceCalls
+		IL_062e: stloc.s 15
+		IL_0630: ldstr "duplicate-once-calls:"
+		IL_0635: ldloc.s 15
+		IL_0637: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_063c: stloc.s 23
+		IL_063e: ldloc.s 16
+		IL_0640: ldloc.s 23
+		IL_0642: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0647: pop
+		IL_0648: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_064d: stloc.s 16
+		IL_064f: ldloc.0
+		IL_0650: ldfld object Modules.Events_Callback_Identity_And_Function_Objects/Scope::emitter
+		IL_0655: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_065a: ldstr "listenerCount"
+		IL_065f: ldstr "duplicate-once"
+		IL_0664: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0669: stloc.s 15
+		IL_066b: ldstr "duplicate-once-final-count:"
+		IL_0670: ldloc.s 15
+		IL_0672: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_0677: stloc.s 23
+		IL_0679: ldloc.s 16
+		IL_067b: ldloc.s 23
+		IL_067d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0682: pop
+		IL_0683: nop
+		IL_0684: nop
+		IL_0685: ldloc.0
+		IL_0686: ldfld object Modules.Events_Callback_Identity_And_Function_Objects/Scope::emitter
+		IL_068b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0690: ldstr "on"
+		IL_0695: ldstr "async"
+		IL_069a: ldloc.s 4
+		IL_069c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_06a1: pop
+		IL_06a2: ldloc.0
+		IL_06a3: ldfld object Modules.Events_Callback_Identity_And_Function_Objects/Scope::emitter
+		IL_06a8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_06ad: ldstr "on"
+		IL_06b2: ldstr "generator"
+		IL_06b7: ldloc.s 5
+		IL_06b9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_06be: pop
+		IL_06bf: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_06c4: stloc.s 16
+		IL_06c6: ldloc.0
+		IL_06c7: ldfld object Modules.Events_Callback_Identity_And_Function_Objects/Scope::emitter
+		IL_06cc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_06d1: ldstr "emit"
+		IL_06d6: ldstr "async"
+		IL_06db: ldc.r8 2
+		IL_06e4: box [System.Runtime]System.Double
+		IL_06e9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_06ee: stloc.s 15
+		IL_06f0: ldstr "async-emitted:"
+		IL_06f5: ldloc.s 15
+		IL_06f7: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_06fc: stloc.s 23
+		IL_06fe: ldloc.s 16
+		IL_0700: ldloc.s 23
+		IL_0702: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0707: pop
+		IL_0708: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_070d: stloc.s 16
+		IL_070f: ldloc.0
+		IL_0710: ldfld object Modules.Events_Callback_Identity_And_Function_Objects/Scope::emitter
 		IL_0715: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_071a: stloc.s 15
-		IL_071c: ldloc.0
-		IL_071d: ldfld object Modules.Events_Callback_Identity_And_Function_Objects/Scope::emitter
-		IL_0722: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0727: ldstr "listenerCount"
-		IL_072c: ldstr "duplicate-once"
-		IL_0731: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0736: stloc.s 16
-		IL_0738: ldstr "duplicate-once-final-count:"
-		IL_073d: ldloc.s 16
-		IL_073f: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_0744: stloc.s 23
-		IL_0746: ldloc.s 15
-		IL_0748: ldstr "log"
-		IL_074d: ldloc.s 23
-		IL_074f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0754: pop
-		IL_0755: nop
-		IL_0756: nop
-		IL_0757: ldloc.0
-		IL_0758: ldfld object Modules.Events_Callback_Identity_And_Function_Objects/Scope::emitter
-		IL_075d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0762: ldstr "on"
-		IL_0767: ldstr "async"
-		IL_076c: ldloc.s 4
-		IL_076e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_0773: pop
-		IL_0774: ldloc.0
-		IL_0775: ldfld object Modules.Events_Callback_Identity_And_Function_Objects/Scope::emitter
-		IL_077a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_077f: ldstr "on"
-		IL_0784: ldstr "generator"
-		IL_0789: ldloc.s 5
-		IL_078b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_0790: pop
-		IL_0791: ldstr "console"
-		IL_0796: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_079b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_07a0: stloc.s 15
-		IL_07a2: ldloc.0
-		IL_07a3: ldfld object Modules.Events_Callback_Identity_And_Function_Objects/Scope::emitter
-		IL_07a8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_07ad: ldstr "emit"
-		IL_07b2: ldstr "async"
-		IL_07b7: ldc.r8 2
-		IL_07c0: box [System.Runtime]System.Double
-		IL_07c5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_07ca: stloc.s 16
-		IL_07cc: ldstr "async-emitted:"
-		IL_07d1: ldloc.s 16
-		IL_07d3: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_07d8: stloc.s 23
-		IL_07da: ldloc.s 15
-		IL_07dc: ldstr "log"
-		IL_07e1: ldloc.s 23
-		IL_07e3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_07e8: pop
-		IL_07e9: ldstr "console"
-		IL_07ee: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_07f3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_07f8: stloc.s 15
-		IL_07fa: ldloc.0
-		IL_07fb: ldfld object Modules.Events_Callback_Identity_And_Function_Objects/Scope::emitter
-		IL_0800: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0805: ldstr "emit"
-		IL_080a: ldstr "generator"
-		IL_080f: ldc.r8 3
-		IL_0818: box [System.Runtime]System.Double
-		IL_081d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_0822: stloc.s 16
-		IL_0824: ldstr "generator-emitted:"
-		IL_0829: ldloc.s 16
-		IL_082b: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_0830: stloc.s 23
-		IL_0832: ldloc.s 15
-		IL_0834: ldstr "log"
-		IL_0839: ldloc.s 23
-		IL_083b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0840: pop
-		IL_0841: ldstr "console"
-		IL_0846: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_084b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0850: stloc.s 15
-		IL_0852: ldloc.0
-		IL_0853: ldfld object Modules.Events_Callback_Identity_And_Function_Objects/Scope::total
-		IL_0858: stloc.s 16
-		IL_085a: ldstr "async-total:"
-		IL_085f: ldloc.s 16
-		IL_0861: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_0866: stloc.s 23
-		IL_0868: ldloc.s 15
-		IL_086a: ldstr "log"
-		IL_086f: ldloc.s 23
-		IL_0871: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0876: pop
+		IL_071a: ldstr "emit"
+		IL_071f: ldstr "generator"
+		IL_0724: ldc.r8 3
+		IL_072d: box [System.Runtime]System.Double
+		IL_0732: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_0737: stloc.s 15
+		IL_0739: ldstr "generator-emitted:"
+		IL_073e: ldloc.s 15
+		IL_0740: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_0745: stloc.s 23
+		IL_0747: ldloc.s 16
+		IL_0749: ldloc.s 23
+		IL_074b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0750: pop
+		IL_0751: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0756: stloc.s 16
+		IL_0758: ldloc.0
+		IL_0759: ldfld object Modules.Events_Callback_Identity_And_Function_Objects/Scope::total
+		IL_075e: stloc.s 15
+		IL_0760: ldstr "async-total:"
+		IL_0765: ldloc.s 15
+		IL_0767: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_076c: stloc.s 23
+		IL_076e: ldloc.s 16
+		IL_0770: ldloc.s 23
+		IL_0772: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0777: pop
 		.try
 		{
-			IL_0877: nop
-			IL_0878: ldloc.0
-			IL_0879: ldfld object Modules.Events_Callback_Identity_And_Function_Objects/Scope::emitter
-			IL_087e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0883: ldstr "off"
-			IL_0888: ldstr "generator"
-			IL_088d: ldc.r8 42
-			IL_0896: box [System.Runtime]System.Double
-			IL_089b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-			IL_08a0: pop
-			IL_08a1: leave IL_0919
+			IL_0778: nop
+			IL_0779: ldloc.0
+			IL_077a: ldfld object Modules.Events_Callback_Identity_And_Function_Objects/Scope::emitter
+			IL_077f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0784: ldstr "off"
+			IL_0789: ldstr "generator"
+			IL_078e: ldc.r8 42
+			IL_0797: box [System.Runtime]System.Double
+			IL_079c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+			IL_07a1: pop
+			IL_07a2: leave IL_080b
 		} // end .try
 		catch [System.Runtime]System.Exception
 		{
-			IL_08a6: stloc.s 9
-			IL_08a8: ldloc.s 9
-			IL_08aa: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-			IL_08af: dup
-			IL_08b0: brtrue IL_08c6
+			IL_07a7: stloc.s 9
+			IL_07a9: ldloc.s 9
+			IL_07ab: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+			IL_07b0: dup
+			IL_07b1: brtrue IL_07c7
 
-			IL_08b5: pop
-			IL_08b6: ldloc.s 9
-			IL_08b8: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
-			IL_08bd: dup
-			IL_08be: brtrue IL_08d2
+			IL_07b6: pop
+			IL_07b7: ldloc.s 9
+			IL_07b9: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+			IL_07be: dup
+			IL_07bf: brtrue IL_07d3
 
-			IL_08c3: pop
-			IL_08c4: rethrow
+			IL_07c4: pop
+			IL_07c5: rethrow
 
-			IL_08c6: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-			IL_08cb: stloc.s 10
-			IL_08cd: br IL_08d4
+			IL_07c7: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+			IL_07cc: stloc.s 10
+			IL_07ce: br IL_07d5
 
-			IL_08d2: stloc.s 10
+			IL_07d3: stloc.s 10
 
-			IL_08d4: ldloc.s 10
-			IL_08d6: stloc.s 11
-			IL_08d8: ldstr "console"
-			IL_08dd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_08e2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_08e7: stloc.s 15
-			IL_08e9: ldloc.s 11
-			IL_08eb: ldstr "message"
-			IL_08f0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_08f5: stloc.s 16
-			IL_08f7: ldstr "error:"
-			IL_08fc: ldloc.s 16
-			IL_08fe: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_0903: stloc.s 23
-			IL_0905: ldloc.s 15
-			IL_0907: ldstr "log"
-			IL_090c: ldloc.s 23
-			IL_090e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_0913: pop
-			IL_0914: leave IL_0919
+			IL_07d5: ldloc.s 10
+			IL_07d7: stloc.s 11
+			IL_07d9: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_07de: stloc.s 16
+			IL_07e0: ldloc.s 11
+			IL_07e2: ldstr "message"
+			IL_07e7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_07ec: stloc.s 15
+			IL_07ee: ldstr "error:"
+			IL_07f3: ldloc.s 15
+			IL_07f5: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_07fa: stloc.s 23
+			IL_07fc: ldloc.s 16
+			IL_07fe: ldloc.s 23
+			IL_0800: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0805: pop
+			IL_0806: leave IL_080b
 		} // end handler
 
-		IL_0919: ldnull
-		IL_091a: stloc.s 12
-		IL_091c: ret
+		IL_080b: ldnull
+		IL_080c: stloc.s 12
+		IL_080e: ret
 	} // end of method Events_Callback_Identity_And_Function_Objects::__js_module_init__
 
 } // end of class Modules.Events_Callback_Identity_And_Function_Objects

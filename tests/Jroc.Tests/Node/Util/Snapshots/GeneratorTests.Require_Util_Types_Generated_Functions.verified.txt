@@ -468,7 +468,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 514 (0x202)
+		// Code size: 439 (0x1b7)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Require_Util_Types_Generated_Functions/Scope,
@@ -477,7 +477,7 @@
 			[3] class Modules.Require_Util_Types_Generated_Functions/generatorFunction/FunctionObject_FunctionDeclaration_98441C17_generatorFunction,
 			[4] class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IUtilModule,
 			[5] object[],
-			[6] object,
+			[6] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 			[7] object,
 			[8] object
 		)
@@ -542,117 +542,102 @@
 		IL_0087: nop
 		IL_0088: nop
 		IL_0089: nop
-		IL_008a: ldstr "console"
-		IL_008f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0094: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0099: stloc.s 6
-		IL_009b: ldloc.s 4
-		IL_009d: callvirt instance object [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IUtilModule::get_types()
-		IL_00a2: stloc.s 7
-		IL_00a4: ldloc.s 7
-		IL_00a6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00ab: ldstr "isFunction"
-		IL_00b0: ldloc.1
-		IL_00b1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00b6: stloc.s 7
-		IL_00b8: ldstr "ordinary:"
-		IL_00bd: ldloc.s 7
-		IL_00bf: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_00c4: stloc.s 8
-		IL_00c6: ldloc.s 6
-		IL_00c8: ldstr "log"
-		IL_00cd: ldloc.s 8
-		IL_00cf: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00d4: pop
-		IL_00d5: ldstr "console"
-		IL_00da: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_00df: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00e4: stloc.s 6
-		IL_00e6: ldloc.s 4
-		IL_00e8: callvirt instance object [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IUtilModule::get_types()
-		IL_00ed: stloc.s 7
+		IL_008a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_008f: stloc.s 6
+		IL_0091: ldloc.s 4
+		IL_0093: callvirt instance object [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IUtilModule::get_types()
+		IL_0098: stloc.s 7
+		IL_009a: ldloc.s 7
+		IL_009c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00a1: ldstr "isFunction"
+		IL_00a6: ldloc.1
+		IL_00a7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_00ac: stloc.s 7
+		IL_00ae: ldstr "ordinary:"
+		IL_00b3: ldloc.s 7
+		IL_00b5: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_00ba: stloc.s 8
+		IL_00bc: ldloc.s 6
+		IL_00be: ldloc.s 8
+		IL_00c0: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00c5: pop
+		IL_00c6: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00cb: stloc.s 6
+		IL_00cd: ldloc.s 4
+		IL_00cf: callvirt instance object [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IUtilModule::get_types()
+		IL_00d4: stloc.s 7
+		IL_00d6: ldloc.s 7
+		IL_00d8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00dd: ldstr "isFunction"
+		IL_00e2: ldloc.2
+		IL_00e3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_00e8: stloc.s 7
+		IL_00ea: ldstr "async-function:"
 		IL_00ef: ldloc.s 7
-		IL_00f1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00f6: ldstr "isFunction"
-		IL_00fb: ldloc.2
-		IL_00fc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0101: stloc.s 7
-		IL_0103: ldstr "async-function:"
-		IL_0108: ldloc.s 7
-		IL_010a: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_010f: stloc.s 8
-		IL_0111: ldloc.s 6
-		IL_0113: ldstr "log"
-		IL_0118: ldloc.s 8
-		IL_011a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_011f: pop
-		IL_0120: ldstr "console"
-		IL_0125: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_012a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_012f: stloc.s 6
-		IL_0131: ldloc.s 4
-		IL_0133: callvirt instance object [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IUtilModule::get_types()
-		IL_0138: stloc.s 7
-		IL_013a: ldloc.s 7
-		IL_013c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0141: ldstr "isFunction"
-		IL_0146: ldloc.3
-		IL_0147: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_00f1: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_00f6: stloc.s 8
+		IL_00f8: ldloc.s 6
+		IL_00fa: ldloc.s 8
+		IL_00fc: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0101: pop
+		IL_0102: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0107: stloc.s 6
+		IL_0109: ldloc.s 4
+		IL_010b: callvirt instance object [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IUtilModule::get_types()
+		IL_0110: stloc.s 7
+		IL_0112: ldloc.s 7
+		IL_0114: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0119: ldstr "isFunction"
+		IL_011e: ldloc.3
+		IL_011f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0124: stloc.s 7
+		IL_0126: ldstr "generator-function:"
+		IL_012b: ldloc.s 7
+		IL_012d: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_0132: stloc.s 8
+		IL_0134: ldloc.s 6
+		IL_0136: ldloc.s 8
+		IL_0138: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_013d: pop
+		IL_013e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0143: stloc.s 6
+		IL_0145: ldloc.s 4
+		IL_0147: callvirt instance object [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IUtilModule::get_types()
 		IL_014c: stloc.s 7
-		IL_014e: ldstr "generator-function:"
-		IL_0153: ldloc.s 7
-		IL_0155: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_015a: stloc.s 8
-		IL_015c: ldloc.s 6
-		IL_015e: ldstr "log"
-		IL_0163: ldloc.s 8
-		IL_0165: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_016a: pop
-		IL_016b: ldstr "console"
-		IL_0170: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0175: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_017a: stloc.s 6
-		IL_017c: ldloc.s 4
-		IL_017e: callvirt instance object [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IUtilModule::get_types()
-		IL_0183: stloc.s 7
-		IL_0185: ldloc.s 7
-		IL_0187: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_018c: ldstr "isAsyncFunction"
-		IL_0191: ldloc.2
-		IL_0192: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0197: stloc.s 7
-		IL_0199: ldstr "is-async:"
-		IL_019e: ldloc.s 7
-		IL_01a0: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_01a5: stloc.s 8
-		IL_01a7: ldloc.s 6
-		IL_01a9: ldstr "log"
+		IL_014e: ldloc.s 7
+		IL_0150: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0155: ldstr "isAsyncFunction"
+		IL_015a: ldloc.2
+		IL_015b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0160: stloc.s 7
+		IL_0162: ldstr "is-async:"
+		IL_0167: ldloc.s 7
+		IL_0169: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_016e: stloc.s 8
+		IL_0170: ldloc.s 6
+		IL_0172: ldloc.s 8
+		IL_0174: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0179: pop
+		IL_017a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_017f: stloc.s 6
+		IL_0181: ldloc.s 4
+		IL_0183: callvirt instance object [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IUtilModule::get_types()
+		IL_0188: stloc.s 7
+		IL_018a: ldloc.s 7
+		IL_018c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0191: ldstr "isAsyncFunction"
+		IL_0196: ldloc.1
+		IL_0197: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_019c: stloc.s 7
+		IL_019e: ldstr "ordinary-is-async:"
+		IL_01a3: ldloc.s 7
+		IL_01a5: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_01aa: stloc.s 8
+		IL_01ac: ldloc.s 6
 		IL_01ae: ldloc.s 8
-		IL_01b0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_01b0: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
 		IL_01b5: pop
-		IL_01b6: ldstr "console"
-		IL_01bb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_01c0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_01c5: stloc.s 6
-		IL_01c7: ldloc.s 4
-		IL_01c9: callvirt instance object [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IUtilModule::get_types()
-		IL_01ce: stloc.s 7
-		IL_01d0: ldloc.s 7
-		IL_01d2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_01d7: ldstr "isAsyncFunction"
-		IL_01dc: ldloc.1
-		IL_01dd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_01e2: stloc.s 7
-		IL_01e4: ldstr "ordinary-is-async:"
-		IL_01e9: ldloc.s 7
-		IL_01eb: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_01f0: stloc.s 8
-		IL_01f2: ldloc.s 6
-		IL_01f4: ldstr "log"
-		IL_01f9: ldloc.s 8
-		IL_01fb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0200: pop
-		IL_0201: ret
+		IL_01b6: ret
 	} // end of method Require_Util_Types_Generated_Functions::__js_module_init__
 
 } // end of class Modules.Require_Util_Types_Generated_Functions
