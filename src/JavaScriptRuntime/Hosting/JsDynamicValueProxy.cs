@@ -34,6 +34,11 @@ internal sealed class JsDynamicValueProxy : DynamicObject
             return value;
         }
 
+        if (JavaScriptRuntime.CallableOperations.IsCallable(value))
+        {
+            return runtime.GetOrCreateCallableWrapper(value);
+        }
+
         // Avoid wrapping primitives/value-types; callers expect normal CLR behavior here.
         if (value is string
             || value is bool
@@ -53,12 +58,23 @@ internal sealed class JsDynamicValueProxy : DynamicObject
             return value;
         }
 
-        // Wrap everything else (including delegates) so dynamic invocation and member access
-        // are marshalled to the runtime thread and use JS semantics.
+        // Wrap other reference values so dynamic member access is marshalled to the runtime
+        // thread and uses JavaScript semantics.
         return new JsDynamicValueProxy(runtime, value);
     }
 
     internal object Unwrap() => _target;
+
+    internal object Unwrap(JsRuntimeInstance runtime)
+    {
+        if (!ReferenceEquals(_runtime, runtime))
+        {
+            throw new InvalidOperationException(
+                "JavaScript values cannot cross module runtime instances.");
+        }
+
+        return _target;
+    }
 
     public override bool TryGetMember(GetMemberBinder binder, out object? result)
     {
@@ -80,8 +96,11 @@ internal sealed class JsDynamicValueProxy : DynamicObject
     {
         try
         {
-            var unwrapped = NormalizeArg(value);
-            _ = _runtime.Invoke(() => JavaScriptRuntime.ObjectRuntime.SetItem(_target, binder.Name, unwrapped));
+            _ = _runtime.Invoke(
+                () => JavaScriptRuntime.ObjectRuntime.SetItem(
+                    _target,
+                    binder.Name,
+                    _runtime.NormalizeHostValue(value)));
             return true;
         }
         catch (Exception ex)
@@ -96,8 +115,6 @@ internal sealed class JsDynamicValueProxy : DynamicObject
     {
         try
         {
-            var normalizedArgs = NormalizeArgs(args);
-
             if (!JavaScriptRuntime.CallableOperations.IsCallable(_target))
             {
                 result = null;
@@ -108,8 +125,8 @@ internal sealed class JsDynamicValueProxy : DynamicObject
                 () => JavaScriptRuntime.CallableOperations.Call(
                     _target,
                     thisArgument: null,
-                    normalizedArgs));
-            result = Wrap(_runtime, result);
+                    _runtime.NormalizeHostArguments(args)));
+            result = _runtime.ProjectHostValue(result);
             return true;
         }
         catch (Exception ex)
@@ -124,9 +141,12 @@ internal sealed class JsDynamicValueProxy : DynamicObject
     {
         try
         {
-            var normalizedArgs = NormalizeArgs(args);
-            result = _runtime.Invoke(() => JavaScriptRuntime.ObjectRuntime.CallMember(_target, binder.Name, normalizedArgs));
-            result = Wrap(_runtime, result);
+            result = _runtime.Invoke(
+                () => JavaScriptRuntime.ObjectRuntime.CallMember(
+                    _target,
+                    binder.Name,
+                    _runtime.NormalizeHostArguments(args)));
+            result = _runtime.ProjectHostValue(result);
             return true;
         }
         catch (Exception ex)
@@ -137,59 +157,4 @@ internal sealed class JsDynamicValueProxy : DynamicObject
         }
     }
 
-    private static object[] NormalizeArgs(object?[]? args)
-    {
-        if (args == null || args.Length == 0)
-        {
-            return Array.Empty<object>();
-        }
-
-        var normalized = new object[args.Length];
-        for (var i = 0; i < args.Length; i++)
-        {
-            normalized[i] = NormalizeArg(args[i])!;
-        }
-
-        return normalized;
-    }
-
-    private static object? NormalizeArg(object? arg)
-    {
-        if (arg is null)
-        {
-            return null;
-        }
-
-        // If the caller passes values previously returned by the hosting layer, unwrap them
-        // back to the underlying JS value so the runtime doesn't see the proxy object.
-        if (arg is JsDynamicValueProxy proxy)
-        {
-            arg = proxy.Unwrap();
-        }
-        else if (arg is JsDynamicExports exports)
-        {
-            arg = exports.UnwrapExports();
-        }
-        else if (arg is JsHandleProxy handleProxy)
-        {
-            arg = handleProxy.UnwrapTarget();
-        }
-        else if (arg is JsConstructorProxy ctorProxy)
-        {
-            arg = ctorProxy.UnwrapConstructor();
-        }
-
-        // JS numbers are represented as System.Double throughout the runtime.
-        return arg switch
-        {
-            double => arg,
-            float f => (double)f,
-            decimal m => (double)m,
-
-            sbyte or byte or short or ushort or int or uint or long or ulong => Convert.ToDouble(arg),
-
-            char c => c.ToString(),
-            _ => arg,
-        };
-    }
 }

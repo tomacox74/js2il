@@ -73,6 +73,48 @@ internal static class JsCallableScopeAbiResolver
         return InferFromParameters(method.GetParameters());
     }
 
+    public static JsCallableScopeAbiDescriptor ResolveHosted(Delegate del)
+    {
+        ArgumentNullException.ThrowIfNull(del);
+
+        var invoke = del.GetType().GetMethod("Invoke")
+            ?? throw new ArgumentException($"Delegate type '{del.GetType()}' does not define Invoke().", nameof(del));
+        var abiSource = GetAbiSourceDelegate(del);
+
+        if (TryResolveFromAttribute(abiSource.Method, out var descriptor))
+        {
+            if (descriptor.HasExplicitScopePayload
+                && IsFirstScopeParameterAlreadyBound(abiSource, invoke.GetParameters()))
+            {
+                return new JsCallableScopeAbiDescriptor(
+                    CallableScopeAbiKind.NoScopes,
+                    SingleScopeType: null,
+                    IsFromAttribute: true);
+            }
+
+            return descriptor;
+        }
+
+        return JavaScriptRuntime.JsFuncDelegates.IsJsFuncDelegateType(del.GetType())
+            ? InferFromParameters(invoke.GetParameters())
+            : new JsCallableScopeAbiDescriptor(
+                CallableScopeAbiKind.NoScopes,
+                SingleScopeType: null,
+                IsFromAttribute: false);
+    }
+
+    public static JsCallableScopeAbiDescriptor ResolveHosted(MethodInfo method)
+    {
+        ArgumentNullException.ThrowIfNull(method);
+
+        return TryResolveFromAttribute(method, out var descriptor)
+            ? descriptor
+            : new JsCallableScopeAbiDescriptor(
+                CallableScopeAbiKind.NoScopes,
+                SingleScopeType: null,
+                IsFromAttribute: false);
+    }
+
     public static bool HasNewTargetParameter(ParameterInfo[] parameters, CallableScopeAbiKind kind)
     {
         ArgumentNullException.ThrowIfNull(parameters);

@@ -63,6 +63,18 @@ public class PromiseTaskInteropTests
         Assert.Equal("later", ex.Value);
     }
 
+    [Fact]
+    public async Task PromiseToTask_RuntimeDisposalFaultsPendingTask()
+    {
+        var exports = LoadExports(out _);
+        var pending = exports.NeverResolve();
+
+        exports.Dispose();
+
+        _ = await Assert.ThrowsAsync<ObjectDisposedException>(
+            () => pending.WaitAsync(TimeSpan.FromSeconds(2)));
+    }
+
     private static IPromiseExports LoadExports(out string moduleId)
     {
         var assembly = CompileModule("Hosting_PromiseTaskInterop", out moduleId);
@@ -128,4 +140,6 @@ public interface IPromiseExports : IDisposable
     Task<int> TimeoutResolve(int ms, int value);
 
     Task<int> TimeoutReject(int ms, string reason);
+
+    Task NeverResolve();
 }

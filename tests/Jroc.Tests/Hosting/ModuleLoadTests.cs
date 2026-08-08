@@ -13,6 +13,10 @@ namespace Jroc.Tests.Hosting;
 public class ModuleLoadTests
 {
     private const string HostingJavaScriptResourcePrefix = "Jroc.Tests.Hosting.JavaScript.";
+    private delegate object? HostedSingleScopeDelegate(
+        PackedArgumentsHost scope,
+        object? newTarget,
+        object? addend);
 
     public interface IMathExports : IDisposable
     {
@@ -25,6 +29,37 @@ public class ModuleLoadTests
         object GetWindow();
         string GetTitle(object win);
         double GetHostValue(object win);
+    }
+
+    public interface IGeneratedCallableExports : IDisposable
+    {
+        JsCallable Ordinary { get; }
+        JsCallable Describe { get; }
+        JsCallable SumSeven { get; }
+        JsCallable DoubleAsync { get; }
+        JsCallable RejectAsync { get; }
+        JsCallable Sequence { get; }
+        JsCallable Thrower { get; }
+        JsCallable Person { get; }
+        JsCallable NewTargetProbe { get; }
+        JsCallable Arrow { get; }
+        object Nested { get; }
+        object Echo(object value);
+        bool Same(object left, object right);
+        object InspectCallback(object callback);
+        double InvokeCallback(object callback, double left, double right);
+        string InvokeCallbackVariadic(object callback);
+        Task<object?> AwaitCallback(
+            object callback,
+            object? first,
+            object? second);
+        string InvokeCallbackWithReceiver(
+            object callback,
+            string value,
+            string prefix,
+            string suffix);
+        object ConstructCallback(object callback, double value);
+        double ReadValue(object value);
     }
 
     private sealed class CompiledModuleAssembly : IDisposable
@@ -54,6 +89,62 @@ public class ModuleLoadTests
         }
     }
 
+    private sealed class PackedArgumentsHost
+    {
+        public double BaseValue { get; init; }
+
+        public string Pack(object[] arguments)
+            => $"{arguments.Length}:{arguments[0]}:{arguments[1]}:{arguments[2]}";
+
+        [JsCallableScopeAbi(
+            CallableScopeAbiKind.SingleScope,
+            SingleScopeType = typeof(PackedArgumentsHost))]
+        public object? AddWithScope(
+            PackedArgumentsHost scope,
+            object? newTarget,
+            object? addend)
+            => scope.BaseValue + Convert.ToDouble(addend);
+    }
+
+    [Fact]
+    public void JsEngine_LoadModule_NonGenericSignaturesRemainBinaryCompatible()
+    {
+        var loadModule = typeof(JsEngine)
+            .GetMethods(BindingFlags.Public | BindingFlags.Static)
+            .Single(method =>
+                method.Name == nameof(JsEngine.LoadModule)
+                && !method.IsGenericMethod
+                && method.GetParameters()
+                    .Select(parameter => parameter.ParameterType)
+                    .SequenceEqual(
+                        new[] { typeof(Assembly), typeof(string) }));
+        var loadModuleWithOptions = typeof(JsEngine)
+            .GetMethods(BindingFlags.Public | BindingFlags.Static)
+            .Single(method =>
+                method.Name == nameof(JsEngine.LoadModule)
+                && !method.IsGenericMethod
+                && method.GetParameters()
+                    .Select(parameter => parameter.ParameterType)
+                    .SequenceEqual(
+                        new[]
+                        {
+                            typeof(Assembly),
+                            typeof(string),
+                            typeof(JsModuleLoadOptions)
+                        }));
+        var loadDynamicModule = typeof(JsEngine).GetMethod(
+            nameof(JsEngine.LoadDynamicModule),
+            BindingFlags.Public | BindingFlags.Static,
+            binder: null,
+            types: new[] { typeof(Assembly), typeof(string) },
+            modifiers: null);
+
+        Assert.NotNull(loadDynamicModule);
+        Assert.Equal(typeof(IDisposable), loadModule.ReturnType);
+        Assert.Equal(typeof(IDisposable), loadModuleWithOptions.ReturnType);
+        Assert.Equal(typeof(JsDynamicExports), loadDynamicModule.ReturnType);
+    }
+
     [Fact]
     public void JsEngine_LoadModule_AllowsCallingExports()
     {
@@ -69,7 +160,7 @@ public class ModuleLoadTests
     {
         using var module = CompileAndLoadModuleAssemblyFromResource("math", "math.js");
 
-        using var exportsObj = Jroc.Runtime.JsEngine.LoadModule(module.Assembly, "math");
+        using var exportsObj = Jroc.Runtime.JsEngine.LoadDynamicModule(module.Assembly, "math");
         dynamic exports = exportsObj;
 
         Assert.Equal("1.0.0", (string)exports.version);
@@ -82,7 +173,7 @@ public class ModuleLoadTests
         using var module = CompileAndLoadModuleAssemblyFromResource("math", "math.js");
 
         using var exportsProxy = Assert.IsType<Jroc.Runtime.JsDynamicExports>(
-            Jroc.Runtime.JsEngine.LoadModule(module.Assembly, "math"));
+            Jroc.Runtime.JsEngine.LoadDynamicModule(module.Assembly, "math"));
         var exports = Assert.IsType<JsObject>(exportsProxy.UnwrapExports());
 
         Assert.Equal("1.0.0", ExportMemberResolver.GetExportMember(exports, "version"));
@@ -104,7 +195,7 @@ public class ModuleLoadTests
     {
         using var module = CompileAndLoadModuleAssemblyFromResource("mathEsm", "mathEsm.js");
 
-        using var exportsObj = Jroc.Runtime.JsEngine.LoadModule(module.Assembly, "mathEsm");
+        using var exportsObj = Jroc.Runtime.JsEngine.LoadDynamicModule(module.Assembly, "mathEsm");
         dynamic exports = exportsObj;
 
         Assert.Equal("2.0.0", (string)exports.version);
@@ -116,7 +207,7 @@ public class ModuleLoadTests
     {
         using var module = CompileAndLoadModuleAssemblyFromResource("hostingMutable", "Hosting_TypedExports.js");
 
-        using var exportsObj = Jroc.Runtime.JsEngine.LoadModule(module.Assembly, "hostingMutable");
+        using var exportsObj = Jroc.Runtime.JsEngine.LoadDynamicModule(module.Assembly, "hostingMutable");
         dynamic exports = exportsObj;
 
         Assert.Equal(0.0, (double)exports.mutableValue);
@@ -218,7 +309,7 @@ public class ModuleLoadTests
     {
         using var module = CompileAndLoadModuleAssemblyFromResource("immutableExports", "immutableExports.js");
 
-        using var exportsObj = Jroc.Runtime.JsEngine.LoadModule(module.Assembly, "immutableExports");
+        using var exportsObj = Jroc.Runtime.JsEngine.LoadDynamicModule(module.Assembly, "immutableExports");
         dynamic exports = exportsObj;
 
         var ex = Assert.Throws<JsInvocationException>(() =>
@@ -242,7 +333,7 @@ public class ModuleLoadTests
     {
         using var module = CompileAndLoadModuleAssemblyFromResource("nestedReturn", "nestedReturn.js");
 
-        using var exportsObj = Jroc.Runtime.JsEngine.LoadModule(module.Assembly, "nestedReturn");
+        using var exportsObj = Jroc.Runtime.JsEngine.LoadDynamicModule(module.Assembly, "nestedReturn");
         dynamic exports = exportsObj;
 
         dynamic win = exports.getWindow();
@@ -281,7 +372,7 @@ public class ModuleLoadTests
     {
         using var module = CompileAndLoadModuleAssemblyFromResource("nestedReturn", "nestedReturn.js");
 
-        using var exportsObj = Jroc.Runtime.JsEngine.LoadModule(module.Assembly, "nestedReturn");
+        using var exportsObj = Jroc.Runtime.JsEngine.LoadDynamicModule(module.Assembly, "nestedReturn");
         dynamic exports = exportsObj;
         dynamic win = exports.getWindow();
 
@@ -302,7 +393,7 @@ public class ModuleLoadTests
     {
         using var module = CompileAndLoadModuleAssemblyFromResource("functionReturn", "functionReturn.js");
 
-        using var exportsObj = Jroc.Runtime.JsEngine.LoadModule(module.Assembly, "functionReturn");
+        using var exportsObj = Jroc.Runtime.JsEngine.LoadDynamicModule(module.Assembly, "functionReturn");
         dynamic exports = exportsObj;
 
         dynamic inc = exports.getIncrementer();
@@ -310,11 +401,393 @@ public class ModuleLoadTests
     }
 
     [Fact]
+    public void JsEngine_ProjectsGeneratedFunctions_WithStableIdentityAndProperties()
+    {
+        using var module = CompileAndLoadModuleAssemblyFromResource(
+            "generatedFunctionInterop",
+            "Hosting_GeneratedFunctionInterop.js");
+        using var exports = JsEngine.LoadModule<IGeneratedCallableExports>(
+            module.Assembly,
+            "generatedFunctionInterop");
+
+        var ordinary = exports.Ordinary;
+
+        Assert.Same(ordinary, exports.Ordinary);
+        Assert.Same(ordinary, exports.Echo(ordinary));
+
+        dynamic nested = exports.Nested;
+        Assert.Same(ordinary, (object)nested.ordinary);
+
+        Assert.Equal("ordinary", ordinary.Name);
+        Assert.Equal(2.0, ordinary.Length);
+        Assert.Equal("ordinary-property", ordinary.GetProperty("extra"));
+
+        ordinary.SetProperty("hostProperty", 42);
+        Assert.Equal(42.0, ordinary.GetProperty("hostProperty"));
+        Assert.Equal(3.0, ordinary.Call(1, 2));
+        Assert.Equal(28.0, exports.SumSeven.Call(1, 2, 3, 4, 5, 6, 7));
+    }
+
+    [Fact]
+    public void JsCallable_PreservesReceiverErrorsAsyncGeneratorsAndConstruction()
+    {
+        using var module = CompileAndLoadModuleAssemblyFromResource(
+            "generatedFunctionBehavior",
+            "Hosting_GeneratedFunctionInterop.js");
+        using var exports = JsEngine.LoadModule<IGeneratedCallableExports>(
+            module.Assembly,
+            "generatedFunctionBehavior");
+
+        dynamic receiver = new Dictionary<string, object?>
+        {
+            ["value"] = "middle"
+        };
+        Assert.Equal(
+            "<middle>",
+            exports.Describe.CallWithReceiver(receiver, "<", ">"));
+
+        var error = Assert.Throws<JsInvocationException>(
+            () => exports.Thrower.Call());
+        var jsError = Assert.IsType<JsErrorException>(error.InnerException);
+        Assert.Contains(
+            "hosted callable boom",
+            jsError.JsMessage ?? jsError.Message,
+            StringComparison.Ordinal);
+
+        dynamic iterator = exports.Sequence.Call(5)!;
+        dynamic first = iterator.next();
+        dynamic second = iterator.next();
+        dynamic completed = iterator.next();
+        Assert.Equal(5.0, (double)first.value);
+        Assert.False((bool)first.done);
+        Assert.Equal(6.0, (double)second.value);
+        Assert.Equal(7.0, (double)completed.value);
+        Assert.True((bool)completed.done);
+
+        Assert.True(exports.Person.IsConstructor);
+        dynamic person = exports.Person.Construct("Ada")!;
+        Assert.Equal("Ada", (string)person.name);
+        dynamic newTargetProbe = exports.NewTargetProbe.ConstructWithNewTarget(
+            exports.Ordinary)!;
+        Assert.Equal("ordinary", (string)newTargetProbe.targetName);
+
+        var arrowNewTargetError = Assert.Throws<JsInvocationException>(
+            () => exports.Person.ConstructWithNewTarget(
+                exports.Arrow,
+                "Ada"));
+        Assert.Equal(
+            "TypeError",
+            Assert.IsType<JsErrorException>(
+                arrowNewTargetError.InnerException).JsName);
+
+        var primitiveNewTargetError = Assert.Throws<JsInvocationException>(
+            () => exports.Person.ConstructWithNewTarget(42, "Ada"));
+        Assert.Equal(
+            "TypeError",
+            Assert.IsType<JsErrorException>(
+                primitiveNewTargetError.InnerException).JsName);
+
+        Assert.False(exports.Arrow.IsConstructor);
+        _ = Assert.Throws<JsInvocationException>(
+            () => exports.Arrow.Construct());
+    }
+
+    [Fact]
+    public async Task JsCallable_BridgesPromiseResultsToTask()
+    {
+        using var module = CompileAndLoadModuleAssemblyFromResource(
+            "generatedFunctionAsync",
+            "Hosting_GeneratedFunctionInterop.js");
+        using var exports = JsEngine.LoadModule<IGeneratedCallableExports>(
+            module.Assembly,
+            "generatedFunctionAsync");
+
+        Assert.Equal(42.0, await exports.DoubleAsync.CallAsync<double>(21));
+
+        var error = await Assert.ThrowsAsync<JavaScriptRuntime.Error>(
+            () => exports.RejectAsync.CallAsync<object?>());
+        Assert.Contains(
+            "async hosted boom",
+            error.Message,
+            StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void JsEngine_AdaptsHostDelegates_WithStableRoundTripIdentity()
+    {
+        using var module = CompileAndLoadModuleAssemblyFromResource(
+            "hostDelegateInterop",
+            "Hosting_GeneratedFunctionInterop.js");
+        using var exports = JsEngine.LoadModule<IGeneratedCallableExports>(
+            module.Assembly,
+            "hostDelegateInterop");
+
+        Func<object, object, object?> add = (left, right) =>
+            Convert.ToDouble(left) + Convert.ToDouble(right);
+
+        Assert.True(exports.Same(add, add));
+        Assert.Equal(7.0, exports.InvokeCallback(add, 3, 4));
+
+        var returned = Assert.IsType<JsCallable>(exports.Echo(add));
+        Assert.Same(returned, exports.Echo(add));
+        Assert.True(exports.Same(returned, add));
+        Assert.Equal(11.0, returned.Call(5, 6));
+        Assert.False(returned.IsConstructor);
+
+        exports.Dispose();
+        _ = Assert.Throws<ObjectDisposedException>(
+            () => returned.Call(1, 2));
+    }
+
+    [Fact]
+    public void JsEngine_HostObjectArrayParametersReceivePackedJavaScriptArguments()
+    {
+        using var module = CompileAndLoadModuleAssemblyFromResource(
+            "hostPackedArguments",
+            "Hosting_GeneratedFunctionInterop.js");
+        using var exports = JsEngine.LoadModule<IGeneratedCallableExports>(
+            module.Assembly,
+            "hostPackedArguments");
+
+        Func<object[], object?> packedDelegate = arguments =>
+            $"{arguments.Length}:{arguments[0]}:{arguments[1]}:{arguments[2]}";
+        Assert.Equal(
+            "3:first:2:True",
+            exports.InvokeCallbackVariadic(packedDelegate));
+
+        var hostFunction = new JsHostFunction(
+            (_, arguments) =>
+                $"{arguments.Length}:{arguments[0]}:{arguments[1]}:{arguments[2]}");
+        Assert.Equal(
+            "3:first:2:True",
+            exports.InvokeCallbackVariadic(hostFunction));
+
+        using var runtime = new JsRuntimeInstance(
+            module.Assembly,
+            "hostPackedArguments");
+        var host = new PackedArgumentsHost { BaseValue = 5 };
+        var method = typeof(PackedArgumentsHost).GetMethod(
+            nameof(PackedArgumentsHost.Pack))
+            ?? throw new InvalidOperationException("Expected Pack method.");
+        var adapter = runtime.GetOrCreateHostMethodAdapter(host, method);
+        var methodResult = runtime.Invoke(
+            () => CallableOperations.Call(
+                adapter,
+                null,
+                new object?[] { "first", 2d, true }));
+
+        Assert.Equal("3:first:2:True", methodResult);
+
+        HostedSingleScopeDelegate generatedDelegate = host.AddWithScope;
+        var generatedDelegateAdapter = Assert.IsAssignableFrom<JsFunctionObject>(
+            runtime.NormalizeHostValue(generatedDelegate));
+        var generatedDelegateResult = runtime.Invoke(
+            () => CallableOperations.Call(
+                generatedDelegateAdapter,
+                null,
+                new object?[] { 2d }));
+        Assert.Equal(7d, generatedDelegateResult);
+
+        var generatedMethod = typeof(PackedArgumentsHost).GetMethod(
+            nameof(PackedArgumentsHost.AddWithScope))
+            ?? throw new InvalidOperationException("Expected AddWithScope method.");
+        var generatedMethodAdapter = runtime.GetOrCreateHostMethodAdapter(
+            host,
+            generatedMethod);
+        var generatedMethodResult = runtime.Invoke(
+            () => CallableOperations.Call(
+                generatedMethodAdapter,
+                null,
+                new object?[] { 3d }));
+        Assert.Equal(8d, generatedMethodResult);
+    }
+
+    [Fact]
+    public async Task JsEngine_HostTasksBecomeJavaScriptPromises()
+    {
+        using var module = CompileAndLoadModuleAssemblyFromResource(
+            "hostTaskInterop",
+            "Hosting_GeneratedFunctionInterop.js");
+        using var exports = JsEngine.LoadModule<IGeneratedCallableExports>(
+            module.Assembly,
+            "hostTaskInterop");
+
+        var delegateSource = new TaskCompletionSource<object?>(
+            TaskCreationOptions.RunContinuationsAsynchronously);
+        Func<object[], Task<object?>> delegateSuccess = arguments =>
+        {
+            Assert.Equal(3d, Convert.ToDouble(arguments[0]));
+            Assert.Equal(4d, Convert.ToDouble(arguments[1]));
+            return delegateSource.Task;
+        };
+        var delegatePending = exports.AwaitCallback(
+            delegateSuccess,
+            3,
+            4);
+        delegateSource.SetResult(7d);
+        Assert.Equal(
+            7d,
+            await delegatePending
+                .WaitAsync(TimeSpan.FromSeconds(2)));
+
+        var hostFunctionSuccess = new JsHostFunction(
+            (_, arguments) => Task.FromResult<object?>(
+                $"{arguments[0]}:{arguments[1]}"));
+        Assert.Equal(
+            "left:right",
+            await exports.AwaitCallback(
+                    hostFunctionSuccess,
+                    "left",
+                    "right")
+                .WaitAsync(TimeSpan.FromSeconds(2)));
+
+        Func<object[], Task<object?>> delegateFailure = _ =>
+            Task.FromException<object?>(
+                new InvalidOperationException("host task boom"));
+        var failure = await Assert.ThrowsAsync<InvalidOperationException>(
+            () => exports.AwaitCallback(
+                    delegateFailure,
+                    null,
+                    null)
+                .WaitAsync(TimeSpan.FromSeconds(2)));
+        Assert.Equal("host task boom", failure.Message);
+
+        var hostFunctionCancellation = new JsHostFunction(
+            (_, _) => Task.FromCanceled<object?>(
+                new CancellationToken(canceled: true)));
+        _ = await Assert.ThrowsAnyAsync<OperationCanceledException>(
+            () => exports.AwaitCallback(
+                    hostFunctionCancellation,
+                    null,
+                    null)
+                .WaitAsync(TimeSpan.FromSeconds(2)));
+    }
+
+    [Fact]
+    public async Task JsEngine_DisposeFaultsPendingHostTaskPromiseBridge()
+    {
+        using var module = CompileAndLoadModuleAssemblyFromResource(
+            "hostTaskDisposal",
+            "Hosting_GeneratedFunctionInterop.js");
+        var exports = JsEngine.LoadModule<IGeneratedCallableExports>(
+            module.Assembly,
+            "hostTaskDisposal");
+        var source = new TaskCompletionSource<object?>(
+            TaskCreationOptions.RunContinuationsAsynchronously);
+        var hostFunction = new JsHostFunction(
+            (_, _) => source.Task);
+
+        var pending = exports.AwaitCallback(
+            hostFunction,
+            null,
+            null);
+        exports.Dispose();
+
+        _ = await Assert.ThrowsAsync<ObjectDisposedException>(
+            () => pending.WaitAsync(TimeSpan.FromSeconds(2)));
+        source.TrySetResult("late");
+    }
+
+    [Fact]
+    public void JsEngine_AdaptsExplicitHostFunctions_WithMetadataReceiverAndConstruction()
+    {
+        using var module = CompileAndLoadModuleAssemblyFromResource(
+            "explicitHostFunctionInterop",
+            "Hosting_GeneratedFunctionInterop.js");
+        using var exports = JsEngine.LoadModule<IGeneratedCallableExports>(
+            module.Assembly,
+            "explicitHostFunctionInterop");
+
+        var receiverAware = new JsHostFunction(
+            (receiver, arguments) =>
+            {
+                dynamic projectedReceiver = receiver
+                    ?? throw new InvalidOperationException("Expected a receiver.");
+                return $"{arguments[0]}{projectedReceiver.value}{arguments[1]}";
+            },
+            name: "receiverAware",
+            length: 2);
+
+        dynamic info = exports.InspectCallback(receiverAware);
+        Assert.Equal("receiverAware", (string)info.name);
+        Assert.Equal(2.0, (double)info.length);
+        Assert.True((bool)info.functionPrototype);
+        Assert.Equal("set-by-js", (string)info.customProperty);
+        Assert.False((bool)info.constructable);
+        var projected = Assert.IsType<JsCallable>(
+            exports.Echo(receiverAware));
+        Assert.Equal("receiverAware", projected.Name);
+        Assert.Equal(2.0, projected.Length);
+        Assert.Equal("set-by-js", projected.GetProperty("customProperty"));
+        Assert.Equal(
+            "<middle>",
+            exports.InvokeCallbackWithReceiver(
+                receiverAware,
+                "middle",
+                "<",
+                ">"));
+
+        var constructor = new JsHostFunction(
+            (_, _) => null,
+            name: "HostBox",
+            length: 1,
+            constructor: (arguments, _) =>
+                new Dictionary<string, object?>
+                {
+                    ["value"] = arguments.Length > 0 ? arguments[0] : null
+                });
+
+        dynamic constructorInfo = exports.InspectCallback(constructor);
+        Assert.True((bool)constructorInfo.constructable);
+        var instance = exports.ConstructCallback(constructor, 9);
+        Assert.Equal(9.0, exports.ReadValue(instance));
+    }
+
+    [Fact]
+    public void JsCallable_ThrowsAfterOwningRuntimeIsDisposed()
+    {
+        using var module = CompileAndLoadModuleAssemblyFromResource(
+            "disposedCallableInterop",
+            "Hosting_GeneratedFunctionInterop.js");
+        var exports = JsEngine.LoadModule<IGeneratedCallableExports>(
+            module.Assembly,
+            "disposedCallableInterop");
+        var callable = exports.Ordinary;
+
+        exports.Dispose();
+
+        _ = Assert.Throws<ObjectDisposedException>(
+            () => callable.Call(1, 2));
+        _ = Assert.Throws<ObjectDisposedException>(
+            () => _ = callable.Name);
+    }
+
+    [Fact]
+    public void JsEngine_DynamicRootFunctionExport_UsesPublicCallableProjection()
+    {
+        using var module = CompileAndLoadModuleAssemblyFromResource(
+            "rootFunctionExport",
+            "Hosting_RootFunctionExport.js");
+        using var exports = JsEngine.LoadDynamicModule(
+            module.Assembly,
+            "rootFunctionExport");
+
+        var callable = Assert.IsType<JsCallable>(exports.Value);
+        Assert.Same(callable, exports.Value);
+        Assert.Equal("rootIncrement", callable.Name);
+        Assert.Equal("root-function", callable.GetProperty("kind"));
+        Assert.Equal(3.0, callable.Call(2));
+
+        dynamic dynamicExports = exports;
+        Assert.Equal(4.0, (double)dynamicExports(3));
+    }
+
+    [Fact]
     public void JsEngine_LoadModule_Dynamic_NewOnValue_PadsMissingArgsWithUndefined()
     {
         using var module = CompileAndLoadModuleAssemblyFromResource("ctorPadding", "ctorPadding.js");
 
-        using var exportsObj = Jroc.Runtime.JsEngine.LoadModule(module.Assembly, "ctorPadding");
+        using var exportsObj = Jroc.Runtime.JsEngine.LoadDynamicModule(module.Assembly, "ctorPadding");
         dynamic exports = exportsObj;
 
         Assert.True((bool)exports.undefinedWhenMissingArgs());
@@ -336,7 +809,7 @@ public class ModuleLoadTests
     {
         using var module = CompileAndLoadModuleAssemblyFromResource("hostingMutable", "Hosting_TypedExports.js");
 
-        using var exportsObj = Jroc.Runtime.JsEngine.LoadModule(module.Assembly, "hostingMutable");
+        using var exportsObj = Jroc.Runtime.JsEngine.LoadDynamicModule(module.Assembly, "hostingMutable");
         dynamic exports = exportsObj;
 
         var result = await Task.Run(() =>
@@ -366,12 +839,54 @@ public class ModuleLoadTests
     {
         using var module = CompileAndLoadModuleAssemblyFromResource("math", "math.js");
 
-        var exportsObj = Jroc.Runtime.JsEngine.LoadModule(module.Assembly, "math");
+        var exportsObj = Jroc.Runtime.JsEngine.LoadDynamicModule(module.Assembly, "math");
         var exports = Assert.IsType<Jroc.Runtime.JsDynamicExports>(exportsObj);
 
         exports.Dispose();
 
         Assert.True(exports.WaitForShutdown(TimeSpan.FromSeconds(2)));
+    }
+
+    [Fact]
+    public async Task JsRuntimeInstance_DisposeFaultsQueuedInvokeWithoutBlocking()
+    {
+        using var module = CompileAndLoadModuleAssemblyFromResource(
+            "concurrentDispose",
+            "math.js");
+        using var runtime = new JsRuntimeInstance(
+            module.Assembly,
+            "concurrentDispose");
+        using var started = new ManualResetEventSlim();
+        using var release = new ManualResetEventSlim();
+
+        var running = Task.Run(() => runtime.Invoke(() =>
+        {
+            started.Set();
+            if (!release.Wait(TimeSpan.FromSeconds(2)))
+            {
+                throw new TimeoutException("The test did not release the running invocation.");
+            }
+        }));
+
+        Assert.True(started.Wait(TimeSpan.FromSeconds(2)));
+        var queued = Task.Run(() => runtime.Invoke(() => 42));
+        Assert.True(SpinWait.SpinUntil(
+            () => runtime.PendingWorkItemCount >= 2,
+            TimeSpan.FromSeconds(2)));
+
+        var dispose = Task.Run(runtime.Dispose);
+        try
+        {
+            _ = await Assert.ThrowsAsync<ObjectDisposedException>(
+                () => queued.WaitAsync(TimeSpan.FromSeconds(2)));
+        }
+        finally
+        {
+            release.Set();
+        }
+
+        await running.WaitAsync(TimeSpan.FromSeconds(2));
+        await dispose.WaitAsync(TimeSpan.FromSeconds(2));
     }
 
     [Fact]
@@ -395,7 +910,8 @@ public class ModuleLoadTests
     {
         using var module = CompileAndLoadModuleAssemblyFromResource("boom", "boom.js");
 
-        var ex = Assert.Throws<Jroc.Runtime.JsModuleLoadException>(() => Jroc.Runtime.JsEngine.LoadModule(module.Assembly, "boom"));
+        var ex = Assert.Throws<Jroc.Runtime.JsModuleLoadException>(
+            () => Jroc.Runtime.JsEngine.LoadDynamicModule(module.Assembly, "boom"));
         Assert.Equal("boom", ex.ModuleId);
 
         var jsError = Assert.IsType<Jroc.Runtime.JsErrorException>(ex.InnerException);
@@ -500,7 +1016,9 @@ public class ModuleLoadTests
 
     private static void AssertHostedForkConfigurationError(CompiledModuleAssembly module)
     {
-        using var exportsObj = Jroc.Runtime.JsEngine.LoadModule(module.Assembly, "hostingForkUnsupported");
+        using var exportsObj = Jroc.Runtime.JsEngine.LoadDynamicModule(
+            module.Assembly,
+            "hostingForkUnsupported");
         dynamic exports = exportsObj;
 
         var ex = Assert.Throws<JsInvocationException>(() => exports.attemptFork());

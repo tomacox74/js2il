@@ -1,5 +1,7 @@
 using System.Collections.Concurrent;
+using System.Globalization;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using JavaScriptRuntime;
 using JavaScriptRuntime.CommonJS;
 using JavaScriptRuntime.DependencyInjection;
@@ -25,6 +27,8 @@ internal sealed class JsRuntimeInstance : IDisposable
 
     // Cross-thread work queue used to marshal calls onto the dedicated script thread.
     private readonly BlockingCollection<IWorkItem> _queue = new();
+    private readonly ConcurrentDictionary<IWorkItem, byte> _pendingWorkItems = new();
+    private readonly ConcurrentDictionary<IRuntimeDependentOperation, byte> _runtimeDependentOperations = new();
 
     // Dedicated thread that owns the engine, synchronization context, and event loop.
     private readonly Thread _thread;
@@ -46,6 +50,10 @@ internal sealed class JsRuntimeInstance : IDisposable
     // 0 -> not disposed, 1 -> dispose requested (used to guard multiple Dispose calls).
     private int _disposeSignaled;
     private readonly JsModuleLoadOptions? _options;
+    private readonly ConditionalWeakTable<object, JsCallable> _callableWrappers = new();
+    private readonly ConditionalWeakTable<Delegate, HostedDelegateFunctionObject> _hostDelegateAdapters = new();
+    private readonly ConditionalWeakTable<JsHostFunction, HostedCallbackFunctionObject> _hostFunctionAdapters = new();
+    private readonly ConditionalWeakTable<object, ConcurrentDictionary<MethodInfo, HostedMethodFunctionObject>> _hostMethodAdapters = new();
 
     public JsRuntimeInstance(Assembly compiledAssembly, string moduleId, JsModuleLoadOptions? options = null)
     {
@@ -106,16 +114,25 @@ internal sealed class JsRuntimeInstance : IDisposable
 
         // Marshal onto the script thread; the worker completes the TCS when done.
         var tcs = new TaskCompletionSource<TResult>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var item = new WorkItem<TResult>(func, tcs);
+        RegisterWorkItem(item);
         try
         {
-            _queue.Add(new WorkItem<TResult>(func, tcs), _shutdown.Token);
+            _queue.Add(item, _shutdown.Token);
         }
         catch (OperationCanceledException)
         {
+            FailWorkItem(item);
+            throw new ObjectDisposedException(nameof(JsRuntimeInstance));
+        }
+        catch (ObjectDisposedException)
+        {
+            FailWorkItem(item);
             throw new ObjectDisposedException(nameof(JsRuntimeInstance));
         }
         catch (InvalidOperationException)
         {
+            FailWorkItem(item);
             throw new ObjectDisposedException(nameof(JsRuntimeInstance));
         }
         return tcs.Task.GetAwaiter().GetResult();
@@ -138,25 +155,29 @@ internal sealed class JsRuntimeInstance : IDisposable
         }
 
         var tcs = new TaskCompletionSource<object?>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var item = new WorkItem<object?>(() =>
+        {
+            action();
+            return null;
+        }, tcs);
+        RegisterWorkItem(item);
         try
         {
-            _queue.Add(new WorkItem<object?>(() =>
-            {
-                action();
-                return null;
-            }, tcs), _shutdown.Token);
+            _queue.Add(item, _shutdown.Token);
         }
         catch (OperationCanceledException)
         {
+            FailWorkItem(item);
             throw new ObjectDisposedException(nameof(JsRuntimeInstance));
         }
         catch (ObjectDisposedException)
         {
-            // The queue can be disposed by the script thread during shutdown.
+            FailWorkItem(item);
             throw new ObjectDisposedException(nameof(JsRuntimeInstance));
         }
         catch (InvalidOperationException)
         {
+            FailWorkItem(item);
             throw new ObjectDisposedException(nameof(JsRuntimeInstance));
         }
 
@@ -171,6 +192,8 @@ internal sealed class JsRuntimeInstance : IDisposable
         {
             return;
         }
+
+        FailPendingOperations();
 
         // Stop accepting work and wake the consuming enumerable.
         try
@@ -208,6 +231,8 @@ internal sealed class JsRuntimeInstance : IDisposable
 
     internal bool IsShutdown => _terminated.Task.IsCompleted;
 
+    internal int PendingWorkItemCount => _pendingWorkItems.Count;
+
     internal bool WaitForShutdown(TimeSpan timeout)
     {
         // Never block waiting for ourselves.
@@ -217,6 +242,164 @@ internal sealed class JsRuntimeInstance : IDisposable
         }
 
         return _terminated.Task.Wait(timeout);
+    }
+
+    internal JsCallable GetOrCreateCallableWrapper(object callable)
+    {
+        ArgumentNullException.ThrowIfNull(callable);
+        return _callableWrappers.GetValue(
+            callable,
+            target => new JsCallable(this, target));
+    }
+
+    internal HostedMethodFunctionObject GetOrCreateHostMethodAdapter(
+        object target,
+        MethodInfo method)
+    {
+        var methods = _hostMethodAdapters.GetOrCreateValue(target);
+        return methods.GetOrAdd(
+            method,
+            candidate => new HostedMethodFunctionObject(this, target, candidate));
+    }
+
+    internal bool TryPost(Action action)
+    {
+        ArgumentNullException.ThrowIfNull(action);
+
+        if (Volatile.Read(ref _disposeSignaled) != 0)
+        {
+            return false;
+        }
+
+        if (Thread.CurrentThread.ManagedThreadId == _thread.ManagedThreadId)
+        {
+            action();
+            return true;
+        }
+
+        var item = new PostedWorkItem(action);
+        if (!TryRegisterWorkItem(item))
+        {
+            return false;
+        }
+
+        try
+        {
+            _queue.Add(item, _shutdown.Token);
+            return true;
+        }
+        catch (Exception exception)
+            when (exception is OperationCanceledException
+                or ObjectDisposedException
+                or InvalidOperationException)
+        {
+            FailWorkItem(item);
+            return false;
+        }
+    }
+
+    internal bool TryRegisterRuntimeDependentOperation(
+        IRuntimeDependentOperation operation)
+    {
+        ArgumentNullException.ThrowIfNull(operation);
+
+        if (Volatile.Read(ref _disposeSignaled) != 0)
+        {
+            operation.OnRuntimeDisposed(CreateDisposedException());
+            return false;
+        }
+
+        if (!_runtimeDependentOperations.TryAdd(operation, 0))
+        {
+            throw new InvalidOperationException("The runtime-dependent operation is already registered.");
+        }
+
+        if (Volatile.Read(ref _disposeSignaled) == 0)
+        {
+            return true;
+        }
+
+        if (_runtimeDependentOperations.TryRemove(operation, out _))
+        {
+            operation.OnRuntimeDisposed(CreateDisposedException());
+        }
+
+        return false;
+    }
+
+    internal void UnregisterRuntimeDependentOperation(
+        IRuntimeDependentOperation operation)
+        => _runtimeDependentOperations.TryRemove(operation, out _);
+
+    internal object? NormalizeHostValue(object? value)
+    {
+        if (value is null)
+        {
+            return null;
+        }
+
+        value = value switch
+        {
+            JsCallable callable => callable.Unwrap(this),
+            JsDynamicValueProxy proxy => proxy.Unwrap(this),
+            JsDynamicExports exports => exports.UnwrapExports(this),
+            JsHandleProxy handleProxy => handleProxy.UnwrapTarget(this),
+            JsConstructorProxy ctorProxy => ctorProxy.UnwrapConstructor(this),
+            Task task => JsTaskPromiseInterop.ToPromise(this, task),
+            JsHostFunction hostFunction => _hostFunctionAdapters.GetValue(
+                hostFunction,
+                descriptor => new HostedCallbackFunctionObject(this, descriptor)),
+            Delegate callback => _hostDelegateAdapters.GetValue(
+                callback,
+                target => new HostedDelegateFunctionObject(this, target)),
+            _ => value,
+        };
+
+        return value switch
+        {
+            double => value,
+            float single => (double)single,
+            decimal number => (double)number,
+            sbyte or byte or short or ushort or int or uint or long or ulong
+                => Convert.ToDouble(value, CultureInfo.InvariantCulture),
+            char character => character.ToString(),
+            _ => value,
+        };
+    }
+
+    internal object[] NormalizeHostArguments(object?[]? arguments)
+    {
+        if (arguments == null || arguments.Length == 0)
+        {
+            return System.Array.Empty<object>();
+        }
+
+        var normalized = new object[arguments.Length];
+        for (var index = 0; index < arguments.Length; index++)
+        {
+            normalized[index] = NormalizeHostValue(arguments[index])!;
+        }
+
+        return normalized;
+    }
+
+    internal object? ProjectHostValue(object? value)
+        => JsDynamicValueProxy.Wrap(this, value);
+
+    internal object?[] ProjectHostArguments(object?[] arguments)
+    {
+        if (arguments.Length == 0)
+        {
+            return System.Array.Empty<object?>();
+        }
+
+        var projected = new object?[arguments.Length];
+        for (var index = 0; index < arguments.Length; index++)
+        {
+            projected[index] = ProjectHostValue(arguments[index]);
+        }
+
+        return projected;
     }
 
     private void ThreadMain(Assembly compiledAssembly, string moduleSpecifier)
@@ -271,7 +454,14 @@ internal sealed class JsRuntimeInstance : IDisposable
 
                 if (_queue.TryTake(out var item, waitMs, _shutdown.Token))
                 {
-                    item.Execute();
+                    try
+                    {
+                        item.Execute();
+                    }
+                    finally
+                    {
+                        _pendingWorkItems.TryRemove(item, out _);
+                    }
                     Engine.RunEventLoopUntilIdle(_eventLoop, waitForTimers: false);
                     continue;
                 }
@@ -292,6 +482,8 @@ internal sealed class JsRuntimeInstance : IDisposable
         }
         finally
         {
+            FailPendingOperations();
+
             if (_serviceProvider?.TryResolve<RuntimeExecutionContext>(out var runtimeContext) == true && runtimeContext != null)
             {
                 RuntimeServices.UnregisterModuleRequires(runtimeContext.RegisteredModuleRequires);
@@ -299,6 +491,9 @@ internal sealed class JsRuntimeInstance : IDisposable
 
             // Clear ambient global provider to avoid leaking thread-local state after thread exits.
             GlobalThis.ServiceProvider = null;
+            _exports = null;
+            _eventLoop = null;
+            _serviceProvider = null;
 
             // Mark thread termination before disposing shared resources.
             _terminated.TrySetResult();
@@ -316,6 +511,63 @@ internal sealed class JsRuntimeInstance : IDisposable
             throw new ObjectDisposedException(nameof(JsRuntimeInstance));
         }
     }
+
+    private void RegisterWorkItem(IWorkItem item)
+    {
+        if (!TryRegisterWorkItem(item))
+        {
+            throw CreateDisposedException();
+        }
+    }
+
+    private bool TryRegisterWorkItem(IWorkItem item)
+    {
+        if (Volatile.Read(ref _disposeSignaled) != 0)
+        {
+            item.FailIfNotStarted(CreateDisposedException());
+            return false;
+        }
+
+        if (!_pendingWorkItems.TryAdd(item, 0))
+        {
+            throw new InvalidOperationException("The work item is already registered.");
+        }
+
+        if (Volatile.Read(ref _disposeSignaled) == 0)
+        {
+            return true;
+        }
+
+        FailWorkItem(item);
+        return false;
+    }
+
+    private void FailWorkItem(IWorkItem item)
+    {
+        if (_pendingWorkItems.TryRemove(item, out _))
+        {
+            item.FailIfNotStarted(CreateDisposedException());
+        }
+    }
+
+    private void FailPendingOperations()
+    {
+        foreach (var item in _pendingWorkItems.Keys)
+        {
+            FailWorkItem(item);
+        }
+
+        foreach (var operation in _runtimeDependentOperations.Keys)
+        {
+            if (_runtimeDependentOperations.TryRemove(operation, out _))
+            {
+                operation.OnRuntimeDisposed(CreateDisposedException());
+            }
+        }
+    }
+
+    private static ObjectDisposedException CreateDisposedException()
+        => new(nameof(JsRuntimeInstance));
 
     private static string NormalizeLocalModuleSpecifier(string moduleId)
     {
@@ -335,12 +587,14 @@ internal sealed class JsRuntimeInstance : IDisposable
     private interface IWorkItem
     {
         void Execute();
+        void FailIfNotStarted(Exception exception);
     }
 
     private sealed class WorkItem<TResult> : IWorkItem
     {
         private readonly Func<TResult> _func;
         private readonly TaskCompletionSource<TResult> _tcs;
+        private int _state;
 
         public WorkItem(Func<TResult> func, TaskCompletionSource<TResult> tcs)
         {
@@ -350,6 +604,11 @@ internal sealed class JsRuntimeInstance : IDisposable
 
         public void Execute()
         {
+            if (Interlocked.CompareExchange(ref _state, 1, 0) != 0)
+            {
+                return;
+            }
+
             try
             {
                 var result = _func();
@@ -364,6 +623,54 @@ internal sealed class JsRuntimeInstance : IDisposable
             {
                 _tcs.TrySetException(ex);
             }
+            finally
+            {
+                Volatile.Write(ref _state, 2);
+            }
+        }
+
+        public void FailIfNotStarted(Exception exception)
+        {
+            if (Interlocked.CompareExchange(ref _state, 2, 0) == 0)
+            {
+                _tcs.TrySetException(exception);
+            }
         }
     }
+
+    private sealed class PostedWorkItem : IWorkItem
+    {
+        private readonly Action _action;
+        private int _state;
+
+        public PostedWorkItem(Action action)
+        {
+            _action = action;
+        }
+
+        public void Execute()
+        {
+            if (Interlocked.CompareExchange(ref _state, 1, 0) != 0)
+            {
+                return;
+            }
+
+            try
+            {
+                _action();
+            }
+            finally
+            {
+                Volatile.Write(ref _state, 2);
+            }
+        }
+
+        public void FailIfNotStarted(Exception exception)
+            => Interlocked.CompareExchange(ref _state, 2, 0);
+    }
+}
+
+internal interface IRuntimeDependentOperation
+{
+    void OnRuntimeDisposed(ObjectDisposedException exception);
 }

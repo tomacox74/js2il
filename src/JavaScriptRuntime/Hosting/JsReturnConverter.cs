@@ -73,6 +73,17 @@ internal static class JsReturnConverter
             return returnType.IsValueType ? Activator.CreateInstance(returnType) : null;
         }
 
+        if (JavaScriptRuntime.CallableOperations.IsCallable(value))
+        {
+            var callable = runtime.GetOrCreateCallableWrapper(value);
+            if (returnType == typeof(object)
+                || returnType == typeof(JsCallable)
+                || returnType.IsInstanceOfType(callable))
+            {
+                return callable;
+            }
+        }
+
         if (returnType == typeof(object))
         {
             // An object-typed host contract erases whether the value is a JS reference.

@@ -10,29 +10,38 @@ internal static class JsPromiseTaskInterop
         ArgumentNullException.ThrowIfNull(runtime);
         ArgumentNullException.ThrowIfNull(promise);
 
-        var tcs = new TaskCompletionSource<object?>(TaskCreationOptions.RunContinuationsAsynchronously);
-
-        // IMPORTANT: Promise.then() queues microtasks via GlobalThis.ServiceProvider.
-        // That provider is only configured on the runtime's dedicated script thread.
-        // Subscribe to the promise on that thread so async/await works for hosts.
-        runtime.Invoke(() =>
+        var completion = new RuntimeTaskCompletion<object?>(runtime);
+        if (!runtime.TryRegisterRuntimeDependentOperation(completion))
         {
-            promise.then(
-                onFulfilled: new Func<object[]?, object?, object?>((_, _) =>
-                {
-                    tcs.TrySetResult(null);
-                    return null;
-                }),
-                onRejected: new Func<object[]?, object?, object?>((_, reason) =>
-                {
-                    tcs.TrySetException(ToException(reason));
-                    return null;
-                }));
+            return completion.Task;
+        }
 
-            return (object?)null;
-        });
+        try
+        {
+            // Promise.then() queues microtasks via the runtime-thread service provider.
+            runtime.Invoke(() =>
+            {
+                promise.then(
+                    onFulfilled: new Func<object[]?, object?, object?>((_, _) =>
+                    {
+                        completion.TrySetResult(null);
+                        return null;
+                    }),
+                    onRejected: new Func<object[]?, object?, object?>((_, reason) =>
+                    {
+                        completion.TrySetException(ToException(reason));
+                        return null;
+                    }));
 
-        return tcs.Task;
+                return (object?)null;
+            });
+        }
+        catch (Exception exception)
+        {
+            completion.TrySetException(exception);
+        }
+
+        return completion.Task;
     }
 
     internal static Task<T> ToTask<T>(JsRuntimeInstance runtime, Promise promise)
@@ -40,36 +49,46 @@ internal static class JsPromiseTaskInterop
         ArgumentNullException.ThrowIfNull(runtime);
         ArgumentNullException.ThrowIfNull(promise);
 
-        var tcs = new TaskCompletionSource<T>(TaskCreationOptions.RunContinuationsAsynchronously);
-
-        // See note above: ensure promise wiring happens on the script thread.
-        runtime.Invoke(() =>
+        var completion = new RuntimeTaskCompletion<T>(runtime);
+        if (!runtime.TryRegisterRuntimeDependentOperation(completion))
         {
-            promise.then(
-                onFulfilled: new Func<object[]?, object?, object?>((_, value) =>
-                {
-                    try
+            return completion.Task;
+        }
+
+        try
+        {
+            runtime.Invoke(() =>
+            {
+                promise.then(
+                    onFulfilled: new Func<object[]?, object?, object?>((_, value) =>
                     {
-                        var converted = JsReturnConverter.ConvertReturn(runtime, value, typeof(T));
-                        tcs.TrySetResult((T)converted!);
-                    }
-                    catch (Exception ex)
+                        try
+                        {
+                            var converted = JsReturnConverter.ConvertReturn(runtime, value, typeof(T));
+                            completion.TrySetResult((T)converted!);
+                        }
+                        catch (Exception ex)
+                        {
+                            completion.TrySetException(ex);
+                        }
+
+                        return null;
+                    }),
+                    onRejected: new Func<object[]?, object?, object?>((_, reason) =>
                     {
-                        tcs.TrySetException(ex);
-                    }
+                        completion.TrySetException(ToException(reason));
+                        return null;
+                    }));
 
-                    return null;
-                }),
-                onRejected: new Func<object[]?, object?, object?>((_, reason) =>
-                {
-                    tcs.TrySetException(ToException(reason));
-                    return null;
-                }));
+                return (object?)null;
+            });
+        }
+        catch (Exception exception)
+        {
+            completion.TrySetException(exception);
+        }
 
-            return (object?)null;
-        });
-
-        return tcs.Task;
+        return completion.Task;
     }
 
     private static Exception ToException(object? reason)
@@ -80,5 +99,38 @@ internal static class JsPromiseTaskInterop
         }
 
         return new JsThrownValueException(reason);
+    }
+
+    private sealed class RuntimeTaskCompletion<T> : IRuntimeDependentOperation
+    {
+        private readonly JsRuntimeInstance _runtime;
+        private readonly TaskCompletionSource<T> _completion =
+            new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        internal RuntimeTaskCompletion(JsRuntimeInstance runtime)
+        {
+            _runtime = runtime;
+        }
+
+        internal Task<T> Task => _completion.Task;
+
+        internal void TrySetResult(T result)
+        {
+            if (_completion.TrySetResult(result))
+            {
+                _runtime.UnregisterRuntimeDependentOperation(this);
+            }
+        }
+
+        internal void TrySetException(Exception exception)
+        {
+            if (_completion.TrySetException(exception))
+            {
+                _runtime.UnregisterRuntimeDependentOperation(this);
+            }
+        }
+
+        public void OnRuntimeDisposed(ObjectDisposedException exception)
+            => _completion.TrySetException(exception);
     }
 }

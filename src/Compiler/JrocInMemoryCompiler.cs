@@ -61,7 +61,10 @@ public static class JrocInMemoryCompiler
         try
         {
             var resolvedModuleId = ResolveModuleId(request, artifact, moduleId);
-            var exports = JsEngine.LoadModule(loadedAssembly.Assembly, resolvedModuleId, options);
+            var exports = JsEngine.LoadDynamicModule(
+                loadedAssembly.Assembly,
+                resolvedModuleId,
+                options);
             return new JrocInMemoryModule(loadedAssembly, exports, exports);
         }
         catch

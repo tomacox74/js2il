@@ -7,7 +7,7 @@ namespace Jroc.Runtime;
 /// Reflection/dynamic-friendly exports proxy.
 /// Member access and invocations are marshalled onto the owning runtime thread.
 /// </summary>
-internal sealed class JsDynamicExports : DynamicObject, IDisposable
+public sealed class JsDynamicExports : DynamicObject, IDisposable
 {
     private readonly JsRuntimeInstance _runtime;
 
@@ -17,6 +17,43 @@ internal sealed class JsDynamicExports : DynamicObject, IDisposable
     }
 
     internal object UnwrapExports() => _runtime.Exports ?? throw new InvalidOperationException("Runtime exports are not available.");
+
+    internal object UnwrapExports(JsRuntimeInstance runtime)
+    {
+        if (!ReferenceEquals(_runtime, runtime))
+        {
+            throw new InvalidOperationException(
+                "Module exports cannot cross module runtime instances.");
+        }
+
+        return UnwrapExports();
+    }
+
+    /// <summary>
+    /// Gets the module's complete exports value through the public hosting projection.
+    /// This supports modules whose <c>module.exports</c> value is itself callable.
+    /// </summary>
+    public object? Value
+    {
+        get
+        {
+            try
+            {
+                var value = _runtime.Invoke(() => _runtime.Exports);
+                return _runtime.ProjectHostValue(value);
+            }
+            catch (Exception ex)
+            {
+                var translated = JsHostingExceptionTranslator.TranslateProxyCall(
+                    ex,
+                    _runtime,
+                    memberName: "<exports>",
+                    contractType: typeof(JsDynamicExports));
+                ExceptionDispatchInfo.Capture(translated).Throw();
+                throw;
+            }
+        }
+    }
 
     public void Dispose() => _runtime.Dispose();
 
@@ -32,7 +69,7 @@ internal sealed class JsDynamicExports : DynamicObject, IDisposable
         try
         {
             var value = _runtime.Invoke(() => ExportMemberResolver.GetExportMember(_runtime.Exports, name));
-            return JsDynamicValueProxy.Wrap(_runtime, value);
+            return _runtime.ProjectHostValue(value);
         }
         catch (Exception ex)
         {
@@ -56,10 +93,11 @@ internal sealed class JsDynamicExports : DynamicObject, IDisposable
                 }
 
                 return ExportMemberResolver.InvokeJsCallable(
+                    _runtime,
                     callable!,
                     args ?? Array.Empty<object?>());
             });
-            return JsDynamicValueProxy.Wrap(_runtime, value);
+            return _runtime.ProjectHostValue(value);
         }
         catch (Exception ex)
         {
@@ -74,7 +112,7 @@ internal sealed class JsDynamicExports : DynamicObject, IDisposable
         try
         {
             result = _runtime.Invoke(() => ExportMemberResolver.GetExportMember(_runtime.Exports, binder.Name));
-            result = JsDynamicValueProxy.Wrap(_runtime, result);
+            result = _runtime.ProjectHostValue(result);
             return true;
         }
         catch (MissingMemberException)
@@ -103,10 +141,11 @@ internal sealed class JsDynamicExports : DynamicObject, IDisposable
                 }
 
                 return ExportMemberResolver.InvokeJsCallable(
+                    _runtime,
                     callable!,
                     args ?? Array.Empty<object?>());
             });
-            result = JsDynamicValueProxy.Wrap(_runtime, result);
+            result = _runtime.ProjectHostValue(result);
             return true;
         }
         catch (MissingMemberException)
@@ -126,12 +165,47 @@ internal sealed class JsDynamicExports : DynamicObject, IDisposable
     {
         try
         {
-            _runtime.Invoke(() => ExportMemberResolver.SetExportMember(_runtime.Exports, binder.Name, value));
+            _runtime.Invoke(() => ExportMemberResolver.SetExportMember(_runtime, _runtime.Exports, binder.Name, value));
             return true;
         }
         catch (Exception ex)
         {
             var translated = JsHostingExceptionTranslator.TranslateProxyCall(ex, _runtime, memberName: binder.Name, contractType: null);
+            ExceptionDispatchInfo.Capture(translated).Throw();
+            throw;
+        }
+    }
+
+    public override bool TryInvoke(
+        InvokeBinder binder,
+        object?[]? args,
+        out object? result)
+    {
+        try
+        {
+            result = _runtime.Invoke(() =>
+            {
+                var callable = _runtime.Exports;
+                if (!JavaScriptRuntime.CallableOperations.IsCallable(callable))
+                {
+                    throw new MissingMethodException("The module exports value is not callable.");
+                }
+
+                return ExportMemberResolver.InvokeJsCallable(
+                    _runtime,
+                    callable!,
+                    args ?? Array.Empty<object?>());
+            });
+            result = _runtime.ProjectHostValue(result);
+            return true;
+        }
+        catch (Exception ex)
+        {
+            var translated = JsHostingExceptionTranslator.TranslateProxyCall(
+                ex,
+                _runtime,
+                memberName: "<exports>",
+                contractType: typeof(JsDynamicExports));
             ExceptionDispatchInfo.Capture(translated).Throw();
             throw;
         }
