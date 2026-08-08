@@ -140,6 +140,11 @@ public class GeneratorTests : GeneratorTestsBase
         return GenerateTest(nameof(Promise_Catch_ReturnsRejectedPromise));
     }
 
+    [Fact]
+    public Task Promise_Callback_Function_Objects()
+    {
+        return GenerateTest(nameof(Promise_Callback_Function_Objects));
+    }
 
     [Fact]
     public Task Promise_Executor_Rejected()

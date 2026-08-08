@@ -20,6 +20,10 @@ namespace Jroc.Tests.Node.ChildProcess
             => ExecutionTest(nameof(Require_ChildProcess_Exec_Callback));
 
         [Fact]
+        public Task Require_ChildProcess_Exec_Callback_Function_Objects()
+            => ExecutionTest(nameof(Require_ChildProcess_Exec_Callback_Function_Objects));
+
+        [Fact]
         public Task Require_ChildProcess_ExecFile_NonZero()
             => ExecutionTest(nameof(Require_ChildProcess_ExecFile_NonZero));
 

@@ -29,5 +29,9 @@ namespace Jroc.Tests.Node.Events
         [Fact]
         public Task Events_AsyncHelpers_On_Once()
             => GenerateTest(nameof(Events_AsyncHelpers_On_Once));
+
+        [Fact]
+        public Task Events_Callback_Identity_And_Function_Objects()
+            => GenerateTest(nameof(Events_Callback_Identity_And_Function_Objects));
     }
 }

@@ -76,10 +76,11 @@ namespace JavaScriptRuntime.Node
             => value is ArrayBuffer and not SharedArrayBuffer;
 
         private bool ContractIsAsyncFunction(object? value)
-            => value is Delegate callback
-                && callback.Method.GetCustomAttributes(
-                    typeof(System.Runtime.CompilerServices.AsyncStateMachineAttribute),
-                    false).Length > 0;
+            => value is JsAsyncFunctionObject
+                || value is Delegate callback
+                    && callback.Method.GetCustomAttributes(
+                        typeof(System.Runtime.CompilerServices.AsyncStateMachineAttribute),
+                        false).Length > 0;
 
         private bool ContractIsBigInt64Array(object? value)
             => false;

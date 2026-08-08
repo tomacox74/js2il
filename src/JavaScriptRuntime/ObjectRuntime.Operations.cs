@@ -6460,7 +6460,12 @@ namespace JavaScriptRuntime
                 {
                     try
                     {
-                        return chosen.Invoke(instance, invokeArgs);
+                        var result = chosen.Invoke(instance, invokeArgs);
+                        // Preserve CLR signatures while exposing managed arrays as JavaScript arrays.
+                        return chosen.ReturnType == typeof(object[])
+                            && result is object?[] array
+                                ? new JavaScriptRuntime.Array(array)
+                                : result;
                     }
                     catch (TargetInvocationException tie) when (tie.InnerException != null)
                     {

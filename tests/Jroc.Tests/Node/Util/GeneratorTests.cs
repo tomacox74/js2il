@@ -51,6 +51,10 @@ namespace Jroc.Tests.Node.Util
             => GenerateTest(nameof(Require_Util_Types_Expanded));
 
         [Fact]
+        public Task Require_Util_Types_Generated_Functions()
+            => GenerateTest(nameof(Require_Util_Types_Generated_Functions));
+
+        [Fact]
         public Task Require_Util_Types_TypedBinary()
             => GenerateTest(nameof(Require_Util_Types_TypedBinary));
 

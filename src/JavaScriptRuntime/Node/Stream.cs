@@ -272,9 +272,9 @@ namespace JavaScriptRuntime.Node
             emitter.once("close", removeGuard);
         }
 
-        private static void InvokeCallback(object callback, params object?[] args)
+        private static void InvokeCallback(object callback, object? argument)
         {
-            CallableOperations.Call(callback, null, args);
+            CallableOperations.Call1(callback, null, argument);
         }
 
         private static AbortError CreateAbortError(object? signalReason)
@@ -341,18 +341,12 @@ namespace JavaScriptRuntime.Node
 
         private static void RejectPromise(PromiseWithResolvers deferred, object? reason)
         {
-            if (deferred.reject is Delegate reject)
-            {
-                Closure.InvokeWithArgs(reject, System.Array.Empty<object>(), new object?[] { reason });
-            }
+            CallableOperations.Call1(deferred.reject, null, reason);
         }
 
         private static void ResolvePromise(PromiseWithResolvers deferred, object? value)
         {
-            if (deferred.resolve is Delegate resolve)
-            {
-                Closure.InvokeWithArgs(resolve, System.Array.Empty<object>(), new object?[] { value });
-            }
+            CallableOperations.Call1(deferred.resolve, null, value);
         }
 
         private static object? TryGetTrailingCallback(object[] args, int minimumArgumentCount)

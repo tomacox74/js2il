@@ -27,7 +27,7 @@ Complete EventEmitter implementation for event-driven programming patterns. Supp
 
 ### EventEmitter
 
-Comprehensive EventEmitter implementation supporting all core listener lifecycle APIs: on/addListener, once, off/removeListener, emit (with argument forwarding), listenerCount, removeAllListeners, prependListener, prependOnceListener, eventNames, listeners, rawListeners, setMaxListeners, getMaxListeners, and errorMonitor behavior for error events.
+Comprehensive EventEmitter implementation supporting all core listener lifecycle APIs: on/addListener, once, off/removeListener, emit (with argument forwarding), listenerCount, removeAllListeners, prependListener, prependOnceListener, eventNames, listeners, rawListeners, setMaxListeners, getMaxListeners, and errorMonitor behavior for error events. Once-listener wrappers preserve the original JavaScript callback identity for listeners() and off()/removeListener().
 
 **Tests:**
 - `Jroc.Tests.Node.Events.ExecutionTests.Events_EventEmitter_On_Off_Once` (`tests/Jroc.Tests/Node/Events/ExecutionTests.cs`)
@@ -40,3 +40,4 @@ Comprehensive EventEmitter implementation supporting all core listener lifecycle
 - `Jroc.Tests.Node.Events.GeneratorTests.Events_EventEmitter_ErrorMonitor` (`tests/Jroc.Tests/Node/Events/GeneratorTests.cs`)
 - `Jroc.Tests.Node.Events.ExecutionTests.Events_AsyncHelpers_On_Once` (`tests/Jroc.Tests/Node/Events/ExecutionTests.cs`)
 - `Jroc.Tests.Node.Events.GeneratorTests.Events_AsyncHelpers_On_Once` (`tests/Jroc.Tests/Node/Events/GeneratorTests.cs`)
+- `Jroc.Tests.Node.Events.ExecutionTests.Events_Callback_Identity_And_Function_Objects` (`tests/Jroc.Tests/Node/Events/ExecutionTests.cs`)

@@ -19,6 +19,10 @@ namespace Jroc.Tests.Node.ChildProcess
             => GenerateTest(nameof(Require_ChildProcess_Exec_Callback));
 
         [Fact]
+        public Task Require_ChildProcess_Exec_Callback_Function_Objects()
+            => GenerateTest(nameof(Require_ChildProcess_Exec_Callback_Function_Objects));
+
+        [Fact]
         public Task Require_ChildProcess_ExecFile_NonZero()
             => GenerateTest(nameof(Require_ChildProcess_ExecFile_NonZero));
 

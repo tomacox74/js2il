@@ -53,5 +53,8 @@ namespace Jroc.Tests.Node.Timers
 
         [Fact]
         public Task SetImmediate_Nested_ExecutesInNextIteration() => GenerateTest(nameof(SetImmediate_Nested_ExecutesInNextIteration));
+
+        [Fact]
+        public Task Timers_Callback_Function_Objects() => GenerateTest(nameof(Timers_Callback_Function_Objects));
     }
 }

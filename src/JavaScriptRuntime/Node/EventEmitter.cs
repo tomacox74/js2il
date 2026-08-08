@@ -7,6 +7,8 @@ namespace JavaScriptRuntime.Node
     public class EventEmitter
     {
         private readonly Dictionary<string, List<object?>> _listeners = new(StringComparer.Ordinal);
+        private readonly Dictionary<object, object?> _onceListenerOriginals =
+            new(ReferenceEqualityComparer.Instance);
         private double _maxListeners = 10;
 
         public EventEmitter on(object? eventName, object? listener)
@@ -38,25 +40,57 @@ namespace JavaScriptRuntime.Node
             }
 
             var emitter = this;
+            var fired = false;
             Func<object[], object?[], object?>? wrapper = null;
             wrapper = (scopes, args) =>
             {
+                if (fired)
+                {
+                    return null;
+                }
+
+                fired = true;
                 emitter.off(eventName, wrapper);
                 return InvokeListener(listener, args);
             };
 
+            ObjectRuntime.SetProperty(wrapper, "listener", listener);
+            _onceListenerOriginals[wrapper] = listener;
             return on(eventName, wrapper);
         }
 
         public EventEmitter off(object? eventName, object? listener)
         {
+            if (!CallableOperations.IsCallable(listener))
+            {
+                throw new TypeError("EventEmitter listener must be a function");
+            }
+
             var key = GetEventKey(eventName);
             if (!_listeners.TryGetValue(key, out var handlers) || handlers.Count == 0)
             {
                 return this;
             }
 
-            handlers.RemoveAll(h => ReferenceEquals(h, listener));
+            for (var index = handlers.Count - 1; index >= 0; index--)
+            {
+                var handler = handlers[index];
+                if (!ReferenceEquals(handler, listener)
+                    && (handler == null
+                        || !_onceListenerOriginals.TryGetValue(handler, out var original)
+                        || !ReferenceEquals(original, listener)))
+                {
+                    continue;
+                }
+
+                handlers.RemoveAt(index);
+                if (handler != null)
+                {
+                    _onceListenerOriginals.Remove(handler);
+                }
+                break;
+            }
+
             if (handlers.Count == 0)
             {
                 _listeners.Remove(key);
@@ -71,17 +105,27 @@ namespace JavaScriptRuntime.Node
         public EventEmitter removeAllListeners()
         {
             _listeners.Clear();
+            _onceListenerOriginals.Clear();
             return this;
         }
 
         public EventEmitter removeAllListeners(object? eventName)
         {
             var key = GetEventKey(eventName);
-            _listeners.Remove(key);
+            if (_listeners.Remove(key, out var handlers))
+            {
+                foreach (var handler in handlers)
+                {
+                    if (handler != null)
+                    {
+                        _onceListenerOriginals.Remove(handler);
+                    }
+                }
+            }
             return this;
         }
 
-        private bool EmitCore(object? eventName, object?[] args)
+        private bool EmitCore(object? eventName, in JsCallArguments args)
         {
             var key = GetEventKey(eventName);
 
@@ -105,7 +149,7 @@ namespace JavaScriptRuntime.Node
             {
                 if (string.Equals(key, "error", StringComparison.Ordinal))
                 {
-                    var reason = args.Length > 0 ? args[0] : new Error("Unhandled error event");
+                    var reason = args.Count > 0 ? args.GetArgument(0) : new Error("Unhandled error event");
                     if (reason is Exception ex)
                     {
                         throw ex;
@@ -127,19 +171,34 @@ namespace JavaScriptRuntime.Node
         }
 
         public bool emit(object? eventName)
-            => EmitCore(eventName, System.Array.Empty<object?>());
+        {
+            var args = JsCallArguments.Empty;
+            return EmitCore(eventName, args);
+        }
 
         public bool emit(object? eventName, object? arg0)
-            => EmitCore(eventName, new object?[] { arg0 });
+        {
+            var args = JsCallArguments.From(arg0);
+            return EmitCore(eventName, args);
+        }
 
         public bool emit(object? eventName, object? arg0, object? arg1)
-            => EmitCore(eventName, new object?[] { arg0, arg1 });
+        {
+            var args = JsCallArguments.From(arg0, arg1);
+            return EmitCore(eventName, args);
+        }
 
         public bool emit(object? eventName, object? arg0, object? arg1, object? arg2)
-            => EmitCore(eventName, new object?[] { arg0, arg1, arg2 });
+        {
+            var args = JsCallArguments.From(arg0, arg1, arg2);
+            return EmitCore(eventName, args);
+        }
 
         public bool emit(object? eventName, object? arg0, object? arg1, object? arg2, object? arg3)
-            => EmitCore(eventName, new object?[] { arg0, arg1, arg2, arg3 });
+        {
+            var args = JsCallArguments.From(arg0, arg1, arg2, arg3);
+            return EmitCore(eventName, args);
+        }
 
         public double listenerCount(object? eventName)
         {
@@ -167,16 +226,26 @@ namespace JavaScriptRuntime.Node
             var key = GetEventKey(eventName);
             if (_listeners.TryGetValue(key, out var handlers))
             {
-                return handlers.ToArray();
+                var listeners = new object?[handlers.Count];
+                for (var index = 0; index < handlers.Count; index++)
+                {
+                    var handler = handlers[index];
+                    listeners[index] = handler != null
+                        && _onceListenerOriginals.TryGetValue(handler, out var original)
+                            ? original
+                            : handler;
+                }
+                return listeners;
             }
             return System.Array.Empty<object?>();
         }
 
         public object?[] rawListeners(object? eventName)
         {
-            // For now, rawListeners is the same as listeners
-            // In full Node.js implementation, this would return wrapper functions for once listeners
-            return listeners(eventName);
+            var key = GetEventKey(eventName);
+            return _listeners.TryGetValue(key, out var handlers)
+                ? handlers.ToArray()
+                : System.Array.Empty<object?>();
         }
 
         public EventEmitter prependListener(object? eventName, object? listener)
@@ -205,13 +274,22 @@ namespace JavaScriptRuntime.Node
             }
 
             var emitter = this;
+            var fired = false;
             Func<object[], object?[], object?>? wrapper = null;
             wrapper = (scopes, args) =>
             {
+                if (fired)
+                {
+                    return null;
+                }
+
+                fired = true;
                 emitter.off(eventName, wrapper);
                 return InvokeListener(listener, args);
             };
 
+            ObjectRuntime.SetProperty(wrapper, "listener", listener);
+            _onceListenerOriginals[wrapper] = listener;
             return prependListener(eventName, wrapper);
         }
 
@@ -235,13 +313,12 @@ namespace JavaScriptRuntime.Node
 
         private object? InvokeListener(object? listener, object?[] args)
         {
-            if (!CallableOperations.IsCallable(listener))
-            {
-                return null;
-            }
-
-            return CallableOperations.Call(listener, this, args);
+            var callArguments = JsCallArguments.FromArray(args);
+            return InvokeListener(listener, callArguments);
         }
+
+        private object? InvokeListener(object? listener, in JsCallArguments args)
+            => CallableOperations.Call(listener, this, args);
 
         private static string GetEventKey(object? eventName)
         {
