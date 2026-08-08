@@ -137,7 +137,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 237 (0xed)
+		// Code size: 228 (0xe4)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.PerfHooks_DestructuredPerformanceOverride/Scope,
@@ -176,66 +176,63 @@
 		IL_0033: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.PerfHooks_DestructuredPerformanceOverride/FunctionExpression_L5C7/FunctionObject_FunctionExpression_60CA76E0_L5C8>(!!0, float64, string, bool, bool)
 		IL_0038: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.PerfHooks_DestructuredPerformanceOverride/FunctionExpression_L5C7/FunctionObject_FunctionExpression_60CA76E0_L5C8>(!!0)
 		IL_003d: stloc.s 5
-		IL_003f: ldloc.s 5
-		IL_0041: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.PerfHooks_DestructuredPerformanceOverride/FunctionExpression_L5C7/FunctionObject_FunctionExpression_60CA76E0_L5C8>(!!0)
-		IL_0046: stloc.s 5
-		IL_0048: ldloc.3
-		IL_0049: ldstr "now"
-		IL_004e: ldloc.s 5
-		IL_0050: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineObjectLiteralDataProperty(object, string, object)
-		IL_0055: pop
-		IL_0056: ldloc.3
-		IL_0057: call object [JavaScriptRuntime]JavaScriptRuntime.Object::create(object)
-		IL_005c: stloc.s 6
-		IL_005e: ldloc.1
-		IL_005f: ldstr "performance"
-		IL_0064: ldloc.s 6
-		IL_0066: ldc.i4.1
-		IL_0067: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
-		IL_006c: pop
-		IL_006d: ldarg.1
-		IL_006e: ldstr "perf_hooks"
-		IL_0073: call !!0 [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireRuntime::RequireObject<class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IPerfHooksModule>(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object)
-		IL_0078: stloc.s 7
-		IL_007a: ldloc.s 7
-		IL_007c: brfalse IL_008d
+		IL_003f: ldloc.3
+		IL_0040: ldstr "now"
+		IL_0045: ldloc.s 5
+		IL_0047: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineObjectLiteralDataProperty(object, string, object)
+		IL_004c: pop
+		IL_004d: ldloc.3
+		IL_004e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::create(object)
+		IL_0053: stloc.s 6
+		IL_0055: ldloc.1
+		IL_0056: ldstr "performance"
+		IL_005b: ldloc.s 6
+		IL_005d: ldc.i4.1
+		IL_005e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
+		IL_0063: pop
+		IL_0064: ldarg.1
+		IL_0065: ldstr "perf_hooks"
+		IL_006a: call !!0 [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireRuntime::RequireObject<class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IPerfHooksModule>(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object)
+		IL_006f: stloc.s 7
+		IL_0071: ldloc.s 7
+		IL_0073: brfalse IL_0084
 
-		IL_0081: ldloc.s 7
-		IL_0083: isinst [JavaScriptRuntime]JavaScriptRuntime.JsNull
-		IL_0088: brfalse IL_009e
+		IL_0078: ldloc.s 7
+		IL_007a: isinst [JavaScriptRuntime]JavaScriptRuntime.JsNull
+		IL_007f: brfalse IL_0095
 
-		IL_008d: ldloc.s 7
-		IL_008f: ldstr ""
-		IL_0094: ldstr "performance"
-		IL_0099: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::ThrowDestructuringNullOrUndefined(object, string, string)
+		IL_0084: ldloc.s 7
+		IL_0086: ldstr ""
+		IL_008b: ldstr "performance"
+		IL_0090: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::ThrowDestructuringNullOrUndefined(object, string, string)
 
-		IL_009e: ldloc.s 7
-		IL_00a0: ldstr "performance"
-		IL_00a5: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::HasOwnPropertyOverride(object, string)
-		IL_00aa: brtrue IL_00bc
+		IL_0095: ldloc.s 7
+		IL_0097: ldstr "performance"
+		IL_009c: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::HasOwnPropertyOverride(object, string)
+		IL_00a1: brtrue IL_00b3
 
-		IL_00af: ldloc.s 7
-		IL_00b1: callvirt instance class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IPerfHooksPerformance [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IPerfHooksModule::get_performance()
-		IL_00b6: stloc.2
-		IL_00b7: br IL_00c9
+		IL_00a6: ldloc.s 7
+		IL_00a8: callvirt instance class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IPerfHooksPerformance [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IPerfHooksModule::get_performance()
+		IL_00ad: stloc.2
+		IL_00ae: br IL_00c0
 
-		IL_00bc: ldloc.s 7
-		IL_00be: ldstr "performance"
-		IL_00c3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
-		IL_00c8: stloc.2
+		IL_00b3: ldloc.s 7
+		IL_00b5: ldstr "performance"
+		IL_00ba: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
+		IL_00bf: stloc.2
 
-		IL_00c9: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00ce: stloc.s 8
-		IL_00d0: ldloc.2
-		IL_00d1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00d6: ldstr "now"
-		IL_00db: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-		IL_00e0: stloc.s 6
-		IL_00e2: ldloc.s 8
-		IL_00e4: ldloc.s 6
-		IL_00e6: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00eb: pop
-		IL_00ec: ret
+		IL_00c0: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00c5: stloc.s 8
+		IL_00c7: ldloc.2
+		IL_00c8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00cd: ldstr "now"
+		IL_00d2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+		IL_00d7: stloc.s 6
+		IL_00d9: ldloc.s 8
+		IL_00db: ldloc.s 6
+		IL_00dd: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00e2: pop
+		IL_00e3: ret
 	} // end of method PerfHooks_DestructuredPerformanceOverride::__js_module_init__
 
 } // end of class Modules.PerfHooks_DestructuredPerformanceOverride
