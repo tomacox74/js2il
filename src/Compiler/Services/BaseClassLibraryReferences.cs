@@ -126,6 +126,8 @@ namespace Jroc.Services
         public TypeReferenceHandle JsAsyncFunctionObjectType =>
             _typeRefRegistry.GetOrAdd(
                 typeof(JavaScriptRuntime.JsAsyncFunctionObject));
+        public TypeReferenceHandle PromiseType =>
+            _typeRefRegistry.GetOrAdd(typeof(JavaScriptRuntime.Promise));
         public TypeReferenceHandle JsCallArgumentsType => _typeRefRegistry.GetOrAdd(typeof(JavaScriptRuntime.JsCallArguments));
         public TypeReferenceHandle InAttributeType => _typeRefRegistry.GetOrAdd(typeof(System.Runtime.InteropServices.InAttribute));
         public EntityHandle ObjectArrayType => _memberRefRegistry.GetOrAddTypeHandle(typeof(object[]));

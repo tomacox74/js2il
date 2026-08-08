@@ -295,7 +295,9 @@ internal sealed class GeneratedFunctionObjectEmitter
 
     private MethodDefinitionHandle EmitCallAdapter(GeneratedFunctionObjectMetadata metadata)
     {
-        var signature = CreateCallAdapterSignature();
+        var returnsPromise = metadata.Plan.ReturnKind
+            == GeneratedFunctionReturnKind.Promise;
+        var signature = CreateCallAdapterSignature(returnsPromise);
         var il = new BlobBuilder();
         var encoder = new InstructionEncoder(il);
 
@@ -306,6 +308,11 @@ internal sealed class GeneratedFunctionObjectEmitter
         else
         {
             EmitCanonicalCall(metadata, encoder);
+            if (returnsPromise)
+            {
+                encoder.OpCode(ILOpCode.Castclass);
+                encoder.Token(_bclReferences.PromiseType);
+            }
             if (metadata.Plan.ReturnKind
                     == GeneratedFunctionReturnKind.AsyncGenerator
                 || metadata.Plan.ReturnKind
@@ -905,14 +912,26 @@ internal sealed class GeneratedFunctionObjectEmitter
             : throw new InvalidOperationException(
                 $"State kind '{kind}' does not define an invocation accessor.");
 
-    private BlobHandle CreateCallAdapterSignature()
+    private BlobHandle CreateCallAdapterSignature(bool returnsPromise)
     {
         var blob = new BlobBuilder();
         new BlobEncoder(blob)
             .MethodSignature(isInstanceMethod: true)
             .Parameters(
                 2,
-                returnType => returnType.Type().Object(),
+                returnType =>
+                {
+                    if (returnsPromise)
+                    {
+                        returnType.Type().Type(
+                            _bclReferences.PromiseType,
+                            isValueType: false);
+                    }
+                    else
+                    {
+                        returnType.Type().Object();
+                    }
+                },
                 parameters =>
                 {
                     parameters.AddParameter().Type().Object();

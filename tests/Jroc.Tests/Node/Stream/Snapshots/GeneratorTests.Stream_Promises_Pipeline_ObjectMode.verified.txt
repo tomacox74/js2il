@@ -462,20 +462,21 @@
 			} // end of method FunctionObject_FunctionDeclaration_8763DEC6_main::get_RequiresInvocationContext
 
 			.method family hidebysig virtual 
-				instance object CallCoreAsync (
+				instance class [JavaScriptRuntime]JavaScriptRuntime.Promise CallCoreAsync (
 					object thisArgument,
 					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 				) cil managed 
 			{
 				// Header size: 1
-				// Code size: 17 (0x11)
+				// Code size: 22 (0x16)
 				.maxstack 8
 
 				IL_0000: ldarg.0
 				IL_0001: ldfld object[] Modules.Stream_Promises_Pipeline_ObjectMode/main/FunctionObject_FunctionDeclaration_8763DEC6_main::_transitionalScopes
 				IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
 				IL_000b: call object Modules.Stream_Promises_Pipeline_ObjectMode/main::__js_call__(object[], object)
-				IL_0010: ret
+				IL_0010: castclass [JavaScriptRuntime]JavaScriptRuntime.Promise
+				IL_0015: ret
 			} // end of method FunctionObject_FunctionDeclaration_8763DEC6_main::CallCoreAsync
 
 		} // end of class FunctionObject_FunctionDeclaration_8763DEC6_main

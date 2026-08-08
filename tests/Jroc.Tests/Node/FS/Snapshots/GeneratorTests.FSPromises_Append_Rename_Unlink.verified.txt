@@ -178,20 +178,21 @@
 			} // end of method FunctionObject::get_RequiresInvocationContext
 
 			.method family hidebysig virtual 
-				instance object CallCoreAsync (
+				instance class [JavaScriptRuntime]JavaScriptRuntime.Promise CallCoreAsync (
 					object thisArgument,
 					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 				) cil managed 
 			{
 				// Header size: 1
-				// Code size: 13 (0xd)
+				// Code size: 18 (0x12)
 				.maxstack 8
 
 				IL_0000: ldarg.0
 				IL_0001: ldfld object[] Modules.FSPromises_Append_Rename_Unlink/ArrowFunction_L7C2/FunctionObject::_transitionalScopes
 				IL_0006: ldnull
 				IL_0007: call object Modules.FSPromises_Append_Rename_Unlink/ArrowFunction_L7C2::__js_call__(object[], object)
-				IL_000c: ret
+				IL_000c: castclass [JavaScriptRuntime]JavaScriptRuntime.Promise
+				IL_0011: ret
 			} // end of method FunctionObject::CallCoreAsync
 
 		} // end of class FunctionObject

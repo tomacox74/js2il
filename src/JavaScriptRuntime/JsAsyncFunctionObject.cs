@@ -18,14 +18,14 @@ public abstract class JsAsyncFunctionObject : JsFunctionObject
             var reason = exception is JsThrownValueException thrown
                 ? thrown.Value
                 : exception;
-            return Promise.reject(reason);
+            return (Promise)Promise.reject(reason)!;
         }
     }
 
     /// <summary>
     /// Invokes the compiled async body and returns its JavaScript Promise.
     /// </summary>
-    protected abstract object? CallCoreAsync(
+    protected abstract Promise CallCoreAsync(
         object? thisArgument,
         in JsCallArguments arguments);
 }

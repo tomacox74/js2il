@@ -67,7 +67,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 - runtime/compiler: centralize generated async-function exception conversion in
   `JsAsyncFunctionObject`, whose sealed `CallCore` converts synchronous setup
   failures to rejected Promises while generated types provide only their
-  callable-specific `CallCoreAsync` implementation.
+  callable-specific, `Promise`-typed `CallCoreAsync` implementation.
 
 ## v0.12.4 - 2026-08-06
 
