@@ -16,9 +16,24 @@ exports.startFork = function () {
         });
 
         const events = [];
+        let readyReceived = false;
+        const initTimer = setInterval(() => {
+            if (readyReceived) {
+                clearInterval(initTimer);
+                return;
+            }
+
+            child.send({ stage: "init" });
+        }, 25);
 
         child.on("message", (message) => {
             if (message.stage === "ready") {
+                if (readyReceived) {
+                    return;
+                }
+
+                readyReceived = true;
+                clearInterval(initTimer);
                 events.push("ready:" + message.argv2 + ":" + message.env);
                 child.send({ stage: "parent", value: 41 });
                 return;
@@ -32,10 +47,12 @@ exports.startFork = function () {
         });
 
         child.on("error", (err) => {
+            clearInterval(initTimer);
             reject(err);
         });
 
         child.on("close", (code, signal) => {
+            clearInterval(initTimer);
             events.push("close:" + code + ":" + signal);
             resolve(events.join("|"));
         });

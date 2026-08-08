@@ -18,6 +18,10 @@ console.log("stdout piped:", child.stdout !== null);
 
 let stdout = "";
 let stderr = "";
+let readyReceived = false;
+let replyReceived = false;
+let replyValue = null;
+let disconnectObserved = false;
 child.stdout.setEncoding("utf8");
 child.stdout.on("data", (chunk) => {
     stdout += chunk;
@@ -29,21 +33,30 @@ child.stderr.on("data", (chunk) => {
 
 child.on("message", (message) => {
     if (message.stage === "ready") {
+        if (readyReceived) {
+            return;
+        }
+
+        readyReceived = true;
+        clearInterval(initTimer);
         console.log("ready argv:", message.argv2);
         console.log("ready env:", message.env);
         console.log("send result:", child.send({ stage: "parent", value: 41 }));
         return;
     }
 
-    console.log("reply stage:", message.stage);
-    console.log("reply value:", message.value);
+    if (message.stage === "child") {
+        replyReceived = true;
+        replyValue = message.value;
+    }
 });
 
 child.on("disconnect", () => {
-    console.log("disconnect event:", true);
+    disconnectObserved = true;
 });
 
 child.on("error", (err) => {
+    clearInterval(initTimer);
     console.log("error event:", err && err.message);
 });
 
@@ -54,9 +67,26 @@ child.on("exit", (code, signal) => {
 });
 
 child.on("close", (code, signal) => {
+    clearInterval(initTimer);
+    console.log("ready received:", readyReceived);
+    console.log("reply received:", replyReceived);
+    console.log("reply value:", replyValue);
+    console.log("disconnect event:", disconnectObserved);
     console.log("close code is null:", code === null);
     console.log("close code raw:", code);
     console.log("close signal:", signal);
     console.log("stdout:", stdout.trim());
     console.log("stderr:", stderr.trim());
 });
+
+const initTimer = setInterval(() => {
+    if (!readyReceived) {
+        child.send({ stage: "init" });
+    } else {
+        clearInterval(initTimer);
+    }
+}, 25);
+
+if (!readyReceived) {
+    child.send({ stage: "init" });
+}

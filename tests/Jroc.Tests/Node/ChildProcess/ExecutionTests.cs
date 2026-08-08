@@ -23,10 +23,11 @@ namespace Jroc.Tests.Node.ChildProcess
         public Task Require_ChildProcess_ExecFile_NonZero()
             => ExecutionTest(nameof(Require_ChildProcess_ExecFile_NonZero));
 
-        [Fact(Skip = "Temporarily skipped due to CI flakiness. Tracked by #1517.")]
+        [Fact]
         public Task Require_ChildProcess_Fork_MessagePassing()
             => ExecutionTest(
                 nameof(Require_ChildProcess_Fork_MessagePassing),
+                preferOutOfProc: true,
                 additionalScripts: new[] { "Require_ChildProcess_Fork_MessagePassing_Child" });
 
         [Fact]
@@ -36,10 +37,11 @@ namespace Jroc.Tests.Node.ChildProcess
                 preferOutOfProc: true,
                 additionalScripts: new[] { "Require_ChildProcess_Fork_Kill_And_Env_Child" });
 
-        [Fact(Skip = "Temporarily skipped due to CI flakiness. Tracked by #1344.")]
+        [Fact]
         public Task Require_ChildProcess_Fork_Silent()
             => ExecutionTest(
                 nameof(Require_ChildProcess_Fork_Silent),
+                preferOutOfProc: true,
                 additionalScripts: new[] { "Require_ChildProcess_Fork_Silent_Child" });
 
         [Fact]
