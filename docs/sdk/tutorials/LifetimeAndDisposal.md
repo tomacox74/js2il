@@ -11,6 +11,8 @@ Hosting introduces two distinct lifetimes:
   - For typed hosting, that’s the generated exports interface (it must implement `IDisposable`).
   - For dynamic hosting, that’s the dynamic exports proxy.
 - Dispose handle proxies (`IJsHandle`) when you’re done with them.
+- Do not dispose `JsCallable` values individually. They are identity-cached and
+  owned by the module runtime.
 
 ## Typed example
 
@@ -29,6 +31,13 @@ counter.Dispose();
 - If you dispose the **exports proxy**, the runtime instance is shut down.
 - Further calls on that exports proxy throw `ObjectDisposedException`.
 - Handles are also tied to that runtime; if the runtime is shut down, handle calls will fail.
+- Callable calls and property access also throw `ObjectDisposedException`
+  after the owning module is disposed.
+- Keep the module alive until Tasks returned by Promise bridges have settled
+  when their results are needed. Disposing first faults outstanding bridge
+  tasks promptly with `ObjectDisposedException`.
+- Invocations that were queued but not started are also faulted during
+  disposal; callers are not left blocked on abandoned queue entries.
 
 ## Common pitfalls
 

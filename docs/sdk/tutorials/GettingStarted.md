@@ -99,7 +99,7 @@ using Jroc.Runtime;
 using System.Reflection;
 
 var asm = Assembly.LoadFrom("..\\out\\math.dll");
-using dynamic exports = JsEngine.LoadModule(asm, moduleId: "math");
+using dynamic exports = JsEngine.LoadDynamicModule(asm, moduleId: "math");
 
 Console.WriteLine((string)exports.version);
 Console.WriteLine((double)exports.add(1, 2));

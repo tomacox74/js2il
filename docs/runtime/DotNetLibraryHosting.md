@@ -4,7 +4,7 @@
 >
 > This document is kept as an implementation-oriented design/reference.
 
-This document describes a proposed hosting mode where a compiled assembly can be consumed as a **.NET library**, and JavaScript `module.exports` is surfaced to C# as **strongly typed** APIs.
+This document describes the hosting mode where a compiled assembly can be consumed as a **.NET library**, and JavaScript `module.exports` is surfaced to C# through strongly typed and dynamic APIs.
 
 This is a design document and is intentionally implementation-oriented; it is not an ECMA-262 specification.
 
@@ -29,7 +29,7 @@ Calling `JsEngine.LoadModule(...)` creates a runtime instance that:
 - owns per-thread JavaScript runtime state,
 - returns a proxy to the module exports.
 
-Everything you interact with (exports, functions, constructors, object instances) is a proxy that marshals work to that script thread.
+Exports, callable wrappers, constructors, and object handles marshal work to that script thread. Generated function objects are exposed as `JsCallable`; callers never cast them to generated CLR types or CLR delegates.
 
 ### Hosted `child_process.fork()`
 
@@ -149,6 +149,83 @@ using var exports = JsEngine.LoadModule<IMyExports>("fetcher");
 await exports.RefreshAsync();
 ```
 
+### Exported function values
+
+Functions returned as values, including ordinary, async, generator, and nested
+functions, are projected as `JsCallable`:
+
+```csharp
+JsCallable callback = exports.GetCallback();
+
+var value = callback.Call(1, 2);
+var withReceiver = callback.CallWithReceiver(receiver, 1, 2);
+var asyncValue = await callback.CallAsync<double>(21);
+
+if (callback.IsConstructor)
+{
+      dynamic instance = callback.Construct("Ada");
+}
+```
+
+`Name`, `Length`, `IsConstructor`, `GetProperty(...)`, and `SetProperty(...)`
+expose the JavaScript function surface without exposing the generated CLR
+function-object type. `ConstructWithNewTarget(...)` is available when an
+explicit alternate `newTarget` is required. The alternate value must itself
+be constructable; otherwise the call fails with JavaScript `TypeError`.
+
+Repeated projection of the same JavaScript callable within one module runtime
+returns the same `JsCallable` reference. Passing that wrapper back to the same
+runtime unwraps it to the original callable, so strict JavaScript identity is
+preserved. Values from different runtime instances cannot be mixed.
+
+For a module whose complete `module.exports` value is callable, use the dynamic
+module boundary:
+
+```csharp
+using JsDynamicExports module = JsEngine.LoadDynamicModule(assembly, "plugin");
+var entry = (JsCallable)module.Value!;
+var result = entry.Call("input");
+```
+
+### CLR callbacks entering JavaScript
+
+Passing the same CLR delegate repeatedly through a hosting call creates one
+runtime-owned function adapter. The adapter has `Function.prototype`,
+`name`/`length` metadata, ordinary function properties, stable identity, and is
+non-constructable by default.
+
+Use `JsHostFunction` when the receiver, metadata, or constructability must be
+explicit:
+
+```csharp
+var callback = new JsHostFunction(
+      (receiver, args) => args[0],
+      name: "select",
+      length: 1);
+
+var constructor = new JsHostFunction(
+      (_, _) => null,
+      name: "HostBox",
+      length: 1,
+      constructor: (args, newTarget) => new Dictionary<string, object?>
+      {
+            ["value"] = args[0]
+      });
+```
+
+JavaScript invokes these adapters through `CallableOperations`, the same
+central call/construct boundary used by generated functions. An unannotated
+CLR delegate or method whose visible parameter is `object[]` receives all
+JavaScript arguments packed into that array; generated scope parameters are
+recognized only through generated delegate types or explicit internal ABI
+metadata.
+
+CLR delegates and `JsHostFunction` callbacks may return `Task` or `Task<T>`.
+Hosting exposes that result to JavaScript as a Promise without blocking a
+thread. Successful completion fulfills the Promise, faults reject it with the
+underlying exception, and cancellation rejects it with
+`TaskCanceledException`.
+
 ### Exported classes (constructors) and `new`
 
 If a module exports a class:
@@ -205,7 +282,9 @@ while (condition)
 
 Important safety property: the runtime should not shut down “too early” just because the exports proxy was garbage collected.
 
-This is achieved by ensuring that every proxy (exports, constructor, instance, etc.) keeps a reference to the underlying runtime instance and participates in reference counting.
+The module object returned by `LoadModule(...)` owns shutdown. Derived callable
+wrappers and handles keep the runtime reachable but do not independently
+dispose it.
 
 ---
 
@@ -250,8 +329,11 @@ public static class JsEngine
       public static TExports LoadModule<TExports>(string moduleId)
             where TExports : class;
 
-      // Dynamic / reflection-friendly form: caller specifies which compiled assembly contains modules.
-      public static object LoadModule(System.Reflection.Assembly compiledAssembly, string moduleId);
+      // Binary-compatible dynamic form retained from the original hosting API.
+      public static IDisposable LoadModule(System.Reflection.Assembly compiledAssembly, string moduleId);
+
+      // Strongly typed dynamic / reflection-friendly form.
+      public static JsDynamicExports LoadDynamicModule(System.Reflection.Assembly compiledAssembly, string moduleId);
 
       // Optional convenience for non-Assembly call sites:
       // public static object LoadModule(Type compiledAssemblyMarkerType, string moduleId);
@@ -262,7 +344,10 @@ Intended usage variations:
 
 1. **Strongly typed + no parameters**: `LoadModule<TExports>()` when `TExports` carries enough metadata (recommended).
 2. **Strongly typed + module id**: `LoadModule<TExports>(moduleId)` when module id is not embedded (still assembly-inferred).
-3. **Dynamic**: `LoadModule(compiledAssembly, moduleId)` when the host decides the target compiled assembly at runtime.
+3. **Dynamic**: `LoadDynamicModule(compiledAssembly, moduleId)` when the host
+   decides the target compiled assembly at runtime. The non-generic
+   `LoadModule(...)` overload remains available with its historical
+   `IDisposable` return type for binary compatibility.
 
 Notes:
 
@@ -310,7 +395,10 @@ information, for example via:
 - an attribute on `TExports` (e.g., module id and/or a stable module key), and/or
 - a compiled-assembly manifest that maps exports contract types → module ids.
 
-If required metadata is missing, `LoadModule<TExports>()` should throw a helpful exception telling the user to call `LoadModule<TExports>(moduleId)` or `LoadModule(compiledAssembly, moduleId)`.
+If required metadata is missing, `LoadModule<TExports>()` should throw a
+helpful exception telling the user to call
+`LoadModule<TExports>(moduleId)` or
+`LoadDynamicModule(compiledAssembly, moduleId)`.
 
 ### What if the module does not implement `TExports`?
 
@@ -443,6 +531,9 @@ Suggested conventions:
 - Generated exports interfaces should implement `IDisposable` (they are the runtime instance boundary).
 - Proxies representing JS object handles should implement `IJsHandle`.
 - Primitive results (`double`, `bool`, `string`) and `Task` are by-value and not disposable.
+- `JsCallable` is runtime-owned and is not independently disposable. Dispose
+  the owning module; subsequent calls or property access throw
+  `ObjectDisposedException`.
 
 ### CLR type mapping for exports
 
@@ -507,19 +598,35 @@ Because runtime state is thread-affine, all interactions from caller threads mus
 
 Exceptions thrown on the script thread are captured and rethrown on the calling thread.
 
-### Lifetime and reference counting
+### Lifetime and callable identity
 
-To prevent accidental premature shutdown (e.g., exports proxy is GC’d while a derived instance is still alive), the implementation should use reference counting:
+The exports proxy is the runtime owner. Disposing it faults queued invocations
+and pending Promise-to-Task bridges with `ObjectDisposedException`, stops the
+event loop, and terminates the script thread. Object handles only release their
+local proxy reference; `JsCallable` wrappers do not own or dispose the runtime.
 
-- The underlying runtime instance maintains a refcount.
-- Every proxy/handle increments the refcount when created.
-- Disposing a proxy decrements the refcount.
-- When the refcount reaches 0, the runtime shuts down and the script thread exits.
+Each runtime owns weak-key caches for:
 
-This model supports:
+- JavaScript callable → `JsCallable`
+- CLR delegate / `JsHostFunction` → JavaScript host function adapter
+- CLR method target + method → explicit method function adapter
 
-- deterministic shutdown via `Dispose()`
-- safe GC fallback (finalizers may call `Release()` as a safety net)
+The caches preserve identity without using process-global roots. Runtime state
+and exports are cleared during shutdown. A wrapper intentionally keeps its own
+target and disposed runtime reachable while the host still references that
+wrapper; using it after shutdown throws `ObjectDisposedException`.
+
+The owning module should normally remain alive until Promise-to-`Task` bridges
+settle. If it is disposed first, outstanding bridge tasks fault promptly with
+`ObjectDisposedException`; they are never left pending indefinitely.
+
+### Intentional delegate boundaries
+
+Generated JavaScript functions do not cross the public hosting boundary as CLR
+delegates. `LegacyDelegateFunctionAdapter` remains the explicit transitional
+runtime adapter for delegate-backed callable values. `ModuleMainDelegate` and
+`RequireDelegate` remain internal CommonJS bootstrap ABIs; they are not public
+hosting callable contracts and are not candidates for this migration.
 
 ### Module entry point
 

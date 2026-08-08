@@ -31,8 +31,22 @@ public static TExports LoadModule<TExports>(string moduleId) where TExports : cl
 public static IDisposable LoadModule(Assembly compiledAssembly, string moduleId)
 ```
 
-- Dynamic / reflection-friendly API.
-- Returns an **IDisposable dynamic exports proxy** (can be used via `dynamic`).
+- Binary-compatible dynamic API retained with its original
+  `IDisposable` return type.
+- The runtime object is still a dynamic exports proxy and can be assigned to
+  `dynamic`.
+
+## LoadDynamicModule(Assembly compiledAssembly, string moduleId)
+
+```csharp
+public static JsDynamicExports LoadDynamicModule(
+    Assembly compiledAssembly,
+    string moduleId)
+```
+
+- Preferred dynamic / reflection-friendly API for new source.
+- Exposes `JsDynamicExports.Value`, `Get(...)`, and `Invoke(...)` directly.
+- An overload accepts `JsModuleLoadOptions`.
 
 ## GetModuleIds(Assembly compiledAssembly)
 
@@ -46,5 +60,7 @@ public static IReadOnlyList<string> GetModuleIds(Assembly compiledAssembly)
 
 ## Threading model (high level)
 
-Each `LoadModule(...)` call creates a runtime instance with a dedicated script thread.
+Each load call creates a runtime instance with a dedicated script thread.
 All calls are marshalled onto that script thread; calls from within the script thread execute directly.
+Disposal faults queued calls and pending Promise bridge tasks rather than
+leaving callers blocked.

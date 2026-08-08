@@ -79,6 +79,24 @@ Legacy delegates remain supported through
 delegate ABI requires an array; this is an explicit migration path, not the
 generated function-object ABI.
 
+The public .NET hosting boundary projects callable values as runtime-owned
+`Jroc.Runtime.JsCallable` wrappers. Calls, receiver-aware calls, construction,
+and alternate `newTarget` construction marshal to the owning script thread and
+then enter `CallableOperations`. Promise results can be bridged with
+`CallAsync<T>`. Per-runtime weak-key caches preserve wrapper identity and unwrap
+round-tripped wrappers to the original JavaScript callable.
+
+CLR delegates entering JavaScript through hosting are first adapted to explicit
+`JsFunctionObject` instances. Raw delegates remain supported only behind the
+transitional runtime adapter boundary. Unannotated public CLR `object[]`
+parameters are visible packed-argument parameters, not generated scope
+payloads. Only explicit callable ABI metadata and known generated delegate
+types retain the hidden scope convention. Callback results of type `Task` or
+`Task<T>` are converted to JavaScript Promises and settled on the owning
+runtime thread. CommonJS `ModuleMainDelegate` and `RequireDelegate` are
+intentional internal bootstrap signatures, not public compiled-function
+representations.
+
 ## Arity evidence
 
 Run the checked-in analyzer:
