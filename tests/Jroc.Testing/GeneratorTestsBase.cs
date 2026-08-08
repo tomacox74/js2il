@@ -48,6 +48,7 @@ namespace Jroc.Tests
                 var il = Utilities.AssemblyToText.ConvertToText(
                     compiled.Artifact.PeBytes,
                     compiled.Artifact.AssemblyName);
+                il = RemoveVolatileMethodRvaComments(il);
 
                 if (verifyAssembly is not null)
                 {
@@ -69,6 +70,18 @@ namespace Jroc.Tests
             }
 
             return RunAsync();
+        }
+
+        internal static string RemoveVolatileMethodRvaComments(string il)
+        {
+            ArgumentNullException.ThrowIfNull(il);
+
+            return string.Join(
+                '\n',
+                il.Split('\n')
+                    .Where(line => !line.Contains(
+                        "// Method begins at RVA",
+                        StringComparison.Ordinal)));
         }
 
         private (string Script, string? SourcePath) GetJavaScriptAndSourcePath(string testName, string callerSourceFilePath)
