@@ -305,14 +305,14 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 221 (0xdd)
+		// Code size: 191 (0xbf)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Generator_SchedulerLocalsAcrossYield/Scope,
 			[1] class Modules.Generator_SchedulerLocalsAcrossYield/test/FunctionObject_FunctionDeclaration_19D04A4D_test,
 			[2] object,
 			[3] object[],
-			[4] object,
+			[4] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 			[5] object
 		)
 
@@ -346,45 +346,39 @@
 		IL_0043: box [System.Runtime]System.Double
 		IL_0048: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
 		IL_004d: stloc.2
-		IL_004e: ldstr "console"
-		IL_0053: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0058: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_005d: stloc.s 4
-		IL_005f: ldloc.2
-		IL_0060: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0065: ldstr "next"
-		IL_006a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-		IL_006f: stloc.s 5
-		IL_0071: ldloc.s 5
-		IL_0073: ldstr "value"
-		IL_0078: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_007d: stloc.s 5
-		IL_007f: ldloc.s 4
-		IL_0081: ldstr "log"
-		IL_0086: ldloc.s 5
-		IL_0088: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_008d: pop
-		IL_008e: ldstr "console"
-		IL_0093: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0098: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_009d: stloc.s 5
-		IL_009f: ldloc.2
-		IL_00a0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00a5: ldstr "next"
-		IL_00aa: ldc.r8 10
-		IL_00b3: box [System.Runtime]System.Double
-		IL_00b8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00bd: stloc.s 4
-		IL_00bf: ldloc.s 4
-		IL_00c1: ldstr "value"
-		IL_00c6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_00cb: stloc.s 4
-		IL_00cd: ldloc.s 5
-		IL_00cf: ldstr "log"
-		IL_00d4: ldloc.s 4
-		IL_00d6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00db: pop
-		IL_00dc: ret
+		IL_004e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0053: stloc.s 4
+		IL_0055: ldloc.2
+		IL_0056: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_005b: ldstr "next"
+		IL_0060: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+		IL_0065: stloc.s 5
+		IL_0067: ldloc.s 5
+		IL_0069: ldstr "value"
+		IL_006e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0073: stloc.s 5
+		IL_0075: ldloc.s 4
+		IL_0077: ldloc.s 5
+		IL_0079: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_007e: pop
+		IL_007f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0084: stloc.s 4
+		IL_0086: ldloc.2
+		IL_0087: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_008c: ldstr "next"
+		IL_0091: ldc.r8 10
+		IL_009a: box [System.Runtime]System.Double
+		IL_009f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_00a4: stloc.s 5
+		IL_00a6: ldloc.s 5
+		IL_00a8: ldstr "value"
+		IL_00ad: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00b2: stloc.s 5
+		IL_00b4: ldloc.s 4
+		IL_00b6: ldloc.s 5
+		IL_00b8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00bd: pop
+		IL_00be: ret
 	} // end of method Generator_SchedulerLocalsAcrossYield::__js_module_init__
 
 } // end of class Modules.Generator_SchedulerLocalsAcrossYield
