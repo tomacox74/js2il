@@ -7,7 +7,7 @@ namespace Jroc.IR;
 /// <summary>
 /// Normalizes generic LIR patterns into more explicit typed forms when provably safe.
 ///
-/// Goal: keep LIR->IL focused on IL mechanics (stackify/locals/metadata) by pushing
+/// Goal: keep LIR->IL focused on IL mechanics (scheduling/locals/metadata) by pushing
 /// type-directed rewrites earlier in the pipeline.
 ///
 /// This pass is intentionally conservative.
@@ -490,7 +490,7 @@ internal static class LIRTypeNormalization
                 continue;
             }
 
-            if (TempLocalAllocator.UsesTemp(methodBody.Instructions[i], temp))
+            if (LIRInstructionInfo.UsesTemp(methodBody.Instructions[i], temp))
             {
                 return true;
             }
@@ -717,7 +717,7 @@ internal static class LIRTypeNormalization
     {
         foreach (var instruction in methodBody.Instructions)
         {
-            if (TempLocalAllocator.TryGetDefinedTemp(instruction, out var defined)
+            if (LIRInstructionInfo.TryGetDefinedTemp(instruction, out var defined)
                 && defined.Index == temp.Index)
             {
                 return instruction is
@@ -767,7 +767,7 @@ internal static class LIRTypeNormalization
 
         for (int i = startInstructionIndex + 1; i < endInstructionIndex; i++)
         {
-            if (TempLocalAllocator.TryGetDefinedTemp(methodBody.Instructions[i], out var defined)
+            if (LIRInstructionInfo.TryGetDefinedTemp(methodBody.Instructions[i], out var defined)
                 && GetTempVariableSlot(methodBody, defined) == variableSlot)
             {
                 return true;

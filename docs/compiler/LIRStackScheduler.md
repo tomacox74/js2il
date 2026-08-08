@@ -2,10 +2,12 @@
 
 ## Status
 
-The scheduler is being introduced incrementally under the umbrella tracked by
-[GitHub issue #1617](https://github.com/tomacox74/js2il/issues/1617).
+The scheduler is the production IL-backend path. The final migration audit in
+[GitHub issue #1631](https://github.com/tomacox74/js2il/issues/1631) retired the
+remaining allocator compatibility representation and consolidated operand
+metadata into the canonical instruction inventory.
 
-The implementation currently provides **typed numeric, comparison, conversion,
+The implementation provides **typed numeric, comparison, conversion,
 stable typed-load, literal, and argument-bundle scheduling** on top of the
 validated identity foundation:
 
@@ -16,7 +18,7 @@ validated identity foundation:
 - `LIRRematerializationPolicy` separately owns the decision to reproduce cheap,
   stable definitions at their uses.
 - Branch fusion, explicit rematerialization, and local allocation remain
-  authoritative for unsupported shapes.
+  independent semantic owners for their documented shapes.
 - Existing constructor/field-store peepholes remain intact.
 - Every concrete LIR instruction type is inventoried by canonical
   scheduler-facing metadata.
@@ -24,7 +26,7 @@ validated identity foundation:
   boundaries; unsupported shapes retain source order.
 - Portable PDB source meaning and local identity remain stable.
 
-All unsupported shapes retain identity/legacy behavior.
+All unsupported shapes retain source-order, materialized behavior.
 
 ## Why a scheduler is needed
 
@@ -106,7 +108,7 @@ Current integration is in:
 
 | Mode | Current behavior |
 |---|---|
-| `Disabled` | Bypass schedule construction and use the legacy raw LIR index path. |
+| `Disabled` | Bypass schedule construction and emit in raw source LIR order. |
 | `Identity` | Emit through an explicit source-order schedule with no scheduler-owned residency. |
 | `TypedNumeric` | Identity plus typed numeric binary stack residency. |
 | `TypedComparisons` | TypedNumeric plus typed unary/comparison and direct branch/return consumption. |
@@ -115,8 +117,11 @@ Current integration is in:
 | `CallResults` | LiteralAndArguments plus source-position single-use intrinsic, typed-member, and direct user-class call-result residency. |
 | `GeneralRegions` | CallResults plus deterministic consumer-rooted topological scheduling across complete eligible producer DAGs inside one region. This is the default. |
 
-Later modes must include all behavior from preceding modes so adjacent levels
-remain useful for A/B diagnosis.
+Later modes include all behavior from preceding modes. The intermediate modes
+are retained as supported diagnostic/test bisect points for isolating the
+coverage level that accepted a region. `Disabled` remains the production kill
+switch and `Identity` isolates schedule construction/emission from residency
+optimization.
 
 ## Typed numeric binary coverage
 
@@ -174,9 +179,9 @@ a ** b + c
 
 Calls, dynamic operators, values crossing sequence points/branches,
 scope-field stores that push a receiver before their value, and unsupported
-operand orders remain materialized or legacy-owned. `LIRConvertToObject` is
-stack-resident only for the proven simple synchronous-return shape; other
-boxing consumers retain legacy behavior.
+operand orders remain materialized. `LIRConvertToObject` is stack-resident only
+for the proven simple synchronous-return shape; other boxing consumers retain
+materialized behavior.
 
 ## Conversion, concat, and stable typed-load coverage
 
@@ -211,7 +216,7 @@ receiver operation; it is never reproduced at the consumer. Calls,
 allocations, async/generator returns, and values crossing scheduling boundaries
 remain outside this mode.
 
-Cheap constants, parameter/`this` loads, and other legacy-approved stable loads
+Cheap constants, parameter/`this` loads, and other policy-approved stable loads
 may instead be `Rematerialized`. Multi-use values are never claimed as
 stack-resident by this stage; for example, a two-use numeric constant can be
 reproduced at both uses. `TempMaterializationPlan` records this distinction:
@@ -377,8 +382,8 @@ recognizes scheduler ownership and emits no duplicate inline comparison;
 
 Because scheduler ownership is established before
 `BranchConditionOptimizer`, a covered comparison belongs to the scheduler and
-cannot also belong to legacy branch fusion. Unsupported comparison shapes
-remain eligible for the legacy branch optimizer.
+cannot also belong to specialized branch fusion. Unsupported comparison shapes
+remain eligible for `BranchConditionOptimizer`.
 
 Numeric intermediates feeding a comparison are promoted only when the complete
 operand prefix passes the persistent-stack validator. Supported call results
@@ -414,7 +419,7 @@ validation and local allocation. Every temp has one `TempValueOwner`:
 | Owner | Responsibility |
 |---|---|
 | `MaterializedLocal` | Default unclaimed local candidate. |
-| `Scheduler` | Stack-resident or explicitly rematerialized by the new scheduler. |
+| `Scheduler` | Stack-resident or scheduled-inline value owned by the scheduler. |
 | `BranchConditionFusion` | Comparison emitted directly into its branch. |
 | `Rematerialization` | Allocator's cheap stable inline/rematerialization path. |
 | `VariableSlot` | Source/anonymous variable slot is authoritative. |
@@ -429,8 +434,8 @@ uses `TryClaim`, so it cannot also claim a scheduler-owned or already-owned
 temp. The allocator may claim rematerialization only while the temp still has
 the default owner.
 
-Multi-definition temps preserve legacy identity behavior: snapshot/resume
-ownership is based on the legacy selected definition rather than every
+Multi-definition temps preserve first-definition behavior: snapshot/resume
+ownership is based on the first canonical definition rather than every
 assignment to the temp. This matters for generator state-machine result temps.
 
 ### Instruction disposition
@@ -446,10 +451,10 @@ instruction-level choice:
 | `ElidePureUnused` | Omit a proven pure, non-throwing instruction whose result is unused. |
 | `FusedIntoEmissionUnit` | Emit an atomic group through one specialized operation. |
 
-Identity mode currently assigns `EmitNormally` except for the two existing
-constructor/field-store fusion candidates. Existing emitters still make their
-legacy unused-result decisions; later stages will move those decisions into
-canonical instruction metadata.
+Identity mode assigns `EmitNormally` except for the two constructor/field-store
+fusion candidates. Individual emitters retain execute-and-discard versus
+pure-unused elision decisions because those decisions depend on the concrete
+emission path and whether a result has allocated storage.
 
 ### Scheduled operations
 
@@ -574,7 +579,7 @@ except for the implicit catch exception. Generated IL remains unchanged.
 | `FallbackToIdentity` | Reject an invalid optimized plan, validate a fresh identity schedule, record the rejection reason/counter, and emit only the identity plan. This is the Release default. |
 
 Identity validation itself never silently falls back. Tests can require strict
-mode so semantic coverage cannot pass by accidentally exercising the legacy
+mode so semantic coverage cannot pass by accidentally exercising the
 identity plan.
 
 `IRPipelineMetrics` records scheduler validation fallbacks when metrics are
@@ -594,7 +599,7 @@ required peak =
 
 The emitted method maxstack is at least both:
 
-- the legacy baseline/estimator;
+- the conservative instruction-emitter baseline/estimator;
 - the validated schedule maximum.
 
 This deliberately overestimates rather than underestimates when a later
@@ -610,19 +615,10 @@ The schedule records the last scheduled position that uses each temp. The
 allocator now walks the validated schedule order rather than assuming raw LIR
 order.
 
-Identity mode deliberately recomputes last uses in scheduled order through the
-legacy def/use visitor. This preserves byte-identical local allocation during
-the migration. Optimized modes consume canonical
-`LIRStackSchedule.EffectiveLastUses`, including reordered uses.
-
-Canonical metadata supplements the legacy temp visitor for:
-
-- `LIRThrow.Value`
-- `LIRUnwrapCatchException.Exception`
-
-Those operands are consumed by the emitter but are missing from the legacy
-allocator visitor. They participate in optimized schedule liveness; identity
-mode retains legacy compatibility until an optimizing mode is enabled.
+Scheduled modes consume canonical `LIRStackSchedule.EffectiveLastUses`,
+including reordered uses. Disabled mode computes source-order liveness through
+the same canonical `LIRInstructionInfo` operand visitor. Throw and catch-unwrapping
+operands therefore have identical liveness semantics in every mode.
 
 `TempLocalAllocator` remains a compatible-storage linear-scan allocator. It:
 
@@ -670,8 +666,7 @@ For example, user-class fusion still depends on:
 - compatible constructed and declared field types.
 
 If any eligibility check declines fusion, the identity cursor emits the first
-instruction normally and then emits the field store normally. This preserves
-the exact legacy fallback.
+instruction normally and then emits the field store normally. This preserves the ordinary two-instruction fallback.
 
 ## Plan-driven emission cursor
 
@@ -695,9 +690,9 @@ operation:
 Labels, branches, sequence points, `leave`, and `endfinally` explicitly advance
 the active cursor before continuing.
 
-This dual path is temporary but intentional: disabled-versus-identity
-equivalence isolates any problem in plan-driven emission before optimization
-coverage is added.
+The dual path is retained intentionally: disabled-versus-identity equivalence
+isolates schedule construction and plan-driven emission from optimization
+coverage while preserving an operational kill switch.
 
 ## Current invariants
 
@@ -727,8 +722,8 @@ Identity mode must preserve all of the following:
 - carried stack depth is included in emitted maxstack accounting.
 - every non-materialized temp has one explicit owner;
 - scheduler, branch fusion, and rematerialization cannot overlap;
-- identity allocation remains byte-identical while optimized modes use
-  canonical schedule-effective liveness;
+- all modes use canonical def/use metadata and scheduled modes use
+  schedule-effective liveness;
 - async/generator spill and restore use the final allocated slot mapping.
 - every region owns one explicit sequence-point ordinal/source span and cannot
   contain an instruction from another source interval;
@@ -740,7 +735,7 @@ Identity mode must preserve all of the following:
   without rematerialization;
 - unsupported or invalid numeric candidates are pruned before strict schedule
   validation.
-- covered branch comparisons are scheduler-owned and excluded from legacy
+- covered branch comparisons are scheduler-owned and excluded from specialized
   branch fusion;
 - branch target stacks remain empty after the conditional branch consumes the
   carried Boolean.
@@ -755,7 +750,7 @@ Identity mode must preserve all of the following:
 - literal allocation and element/property evaluation preserve JavaScript
   left-to-right order while eliminating positional spills;
 - effectful, spread/iterator, and non-contiguous construction shapes retain
-  legacy ownership and source order.
+  materialized ownership and source order.
 - supported call results execute once at their source operation and can remain
   carried only through validated same-region consumers;
 - calls never become rematerialized, fallback calls remain materialized, and
@@ -861,14 +856,25 @@ The current cumulative scheduling mode does not:
 - schedule multi-use values as stack-resident.
 
 These limitations are deliberate. Unsupported regions retain the preceding
-validated schedule and legacy materialization behavior.
+validated schedule and materialized-local behavior.
 
-## Planned expansion
+## Final migration audit
 
-The ordered work is tracked under
-[issue #1617](https://github.com/tomacox74/js2il/issues/1617):
+The final audit classifies the remaining specialized paths as follows:
 
-1. Final obsolete-code audit and deletion.
+| Candidate | Outcome | Final responsibility |
+|---|---|---|
+| Stackify scheduling and threaded state | Deleted | `LIRStackScheduler` owns schedule construction and validation. |
+| Allocator materialization mask and raw allocation overload | Deleted | `TempMaterializationPlan` is passed directly to the allocator. |
+| Def/use/effect/stack inventories | Consolidated | `LIRInstructionInfo` owns ordered operands, definitions, effects, stack signatures, and boundaries, including catch/await/yield semantics. |
+| Compatible-slot allocator | Retained | Genuine materialized spills still require typed linear-scan slot reuse and async `_locals` persistence. |
+| `BranchConditionOptimizer` | Retained | It owns branch-only comparison fusion across a control-flow boundary; scheduler ownership is exclusive and branch stack shape remains explicit. |
+| Constructor/field-store fusion | Retained | Atomic scheduled operations identify adjacency, while the emitter preserves constructor override checks, field typing/casts, exactly-once allocation, and ordinary fallback. |
+| Definition lookup and inline stack emission | Retained | Explicit rematerialization, branch diagnostics, scope-array ABI selection, null/type handling, and instruction-specific stack emission require the defining instruction. They do not infer scheduler ownership. |
+| `IsMaterialized` emitter checks | Retained | They answer whether a used value has stable variable/temp storage so an emitter can store, load, pop, or elide its own result. Scheduler stack and scheduled-inline ownership are checked separately through `TempMaterializationPlan`. |
+| Disabled/identity/intermediate modes | Retained | `Disabled` is the kill switch, `Identity` isolates plan-driven emission, and cumulative intermediate modes are deterministic A/B and test-bisect points. |
+| Strict validation/fallback diagnostics | Retained | Release fallback prevents invalid IL; strict tests and metrics make fallback visible rather than silent. |
+| EH, snapshot, async/generator, and PDB paths | Retained | Catch/resume results, `LIRCopyTemp`, constructor overrides, cross-suspension values, source locals, and final emitted offsets require stable materialization. |
 
 At each optimizing stage:
 

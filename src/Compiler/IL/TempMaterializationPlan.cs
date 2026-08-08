@@ -76,17 +76,17 @@ internal sealed class TempMaterializationPlan
             }
         }
 
-        var firstLegacyDefinitionByTemp = new LIRInstruction?[methodBody.Temps.Count];
+        var firstDefinitionByTemp = new LIRInstruction?[methodBody.Temps.Count];
         foreach (var instruction in methodBody.Instructions)
         {
-            if (TempLocalAllocator.TryGetDefinedTemp(
+            if (LIRInstructionInfo.TryGetDefinedTemp(
                     instruction,
-                    out var legacyDefined)
-                && (uint)legacyDefined.Index
-                    < (uint)firstLegacyDefinitionByTemp.Length
-                && firstLegacyDefinitionByTemp[legacyDefined.Index] is null)
+                    out var defined)
+                && (uint)defined.Index
+                    < (uint)firstDefinitionByTemp.Length
+                && firstDefinitionByTemp[defined.Index] is null)
             {
-                firstLegacyDefinitionByTemp[legacyDefined.Index] = instruction;
+                firstDefinitionByTemp[defined.Index] = instruction;
             }
 
             switch (instruction)
@@ -106,10 +106,10 @@ internal sealed class TempMaterializationPlan
         }
 
         for (var tempIndex = 0;
-             tempIndex < firstLegacyDefinitionByTemp.Length;
+             tempIndex < firstDefinitionByTemp.Length;
              tempIndex++)
         {
-            switch (firstLegacyDefinitionByTemp[tempIndex])
+            switch (firstDefinitionByTemp[tempIndex])
             {
                 case LIRCopyTemp:
                     plan.ForceMaterialized(
@@ -190,16 +190,6 @@ internal sealed class TempMaterializationPlan
 
         _residencies[tempIndex] = TempResidency.MaterializedLocal;
         _owners[tempIndex] = owner;
-    }
-
-    internal bool[] CreateMaterializationMask()
-    {
-        var mask = new bool[_residencies.Length];
-        for (var index = 0; index < mask.Length; index++)
-        {
-            mask[index] = ShouldMaterialize(index);
-        }
-        return mask;
     }
 
     internal void ValidateAgainstSchedule(

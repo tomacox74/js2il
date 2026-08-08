@@ -168,6 +168,102 @@ public sealed class LIRInstructionInfoTests
     }
 
     [Fact]
+    public void VisitUsedTemps_VisitsFixedOperandsInOrder()
+    {
+        var instruction = new LIRSetItem(
+            Object: new TempVariable(1),
+            Index: new TempVariable(2),
+            Value: new TempVariable(3),
+            Result: new TempVariable(4));
+        var visitor = new CollectingVisitor();
+
+        LIRInstructionInfo.VisitUsedTemps(instruction, ref visitor);
+
+        Assert.Equal(new[] { 1, 2, 3 }, visitor.Indices);
+    }
+
+    [Fact]
+    public void VisitUsedTemps_VisitsVariableOperandsInOrder()
+    {
+        var instruction = new LIRNewJsArray(
+            new[] { new TempVariable(1), new TempVariable(2), new TempVariable(3) },
+            new TempVariable(4));
+        var visitor = new CollectingVisitor();
+
+        LIRInstructionInfo.VisitUsedTemps(instruction, ref visitor);
+
+        Assert.Equal(new[] { 1, 2, 3 }, visitor.Indices);
+    }
+
+    [Fact]
+    public void VisitUsedTemps_DoesNotAllocateForFixedOperandInstruction()
+    {
+        var instruction = new LIRSetItem(
+            Object: new TempVariable(1),
+            Index: new TempVariable(2),
+            Value: new TempVariable(3),
+            Result: new TempVariable(4));
+        var visitor = new CountingVisitor();
+
+        LIRInstructionInfo.VisitUsedTemps(instruction, ref visitor);
+        var before = GC.GetAllocatedBytesForCurrentThread();
+        for (int i = 0; i < 10_000; i++)
+        {
+            LIRInstructionInfo.VisitUsedTemps(instruction, ref visitor);
+        }
+        var allocated = GC.GetAllocatedBytesForCurrentThread() - before;
+
+        Assert.Equal(0, allocated);
+        Assert.Equal(30_003, visitor.Count);
+    }
+
+    [Theory]
+    [MemberData(nameof(ResultDefiningInstructions))]
+    public void TryGetDefinedTemp_RecognizesInstructionResult(
+        LIRInstruction instruction,
+        int expectedIndex)
+    {
+        Assert.True(LIRInstructionInfo.TryGetDefinedTemp(instruction, out var defined));
+        Assert.Equal(expectedIndex, defined.Index);
+    }
+
+    public static TheoryData<LIRInstruction, int> ResultDefiningInstructions =>
+        new()
+        {
+            {
+                new LIRSetItem(
+                    new TempVariable(0),
+                    new TempVariable(1),
+                    new TempVariable(2),
+                    new TempVariable(3)),
+                3
+            },
+            {
+                new LIRSetJsArrayElement(
+                    new TempVariable(0),
+                    new TempVariable(1),
+                    new TempVariable(2),
+                    new TempVariable(3)),
+                3
+            },
+            {
+                new LIRSetInt32ArrayElement(
+                    new TempVariable(0),
+                    new TempVariable(1),
+                    new TempVariable(2),
+                    new TempVariable(3)),
+                3
+            },
+            {
+                new LIRSetJsArrayLength(
+                    new TempVariable(0),
+                    new TempVariable(1),
+                    new TempVariable(2)),
+                2
+            }
+        };
+
+    [Fact]
     public void UnknownInstruction_FailsClosedAsUnsupportedBoundary()
     {
         var metadata = LIRInstructionInfo.GetMetadata(new UnknownInstruction());
@@ -224,6 +320,31 @@ public sealed class LIRInstructionInfoTests
         LIRInstructionMetadata metadata,
         LIRInstructionEffects expected)
         => Assert.Equal(expected, metadata.Effects);
+
+    private struct CollectingVisitor : ITempUseVisitor
+    {
+        public CollectingVisitor()
+        {
+            Indices = new List<int>();
+        }
+
+        public List<int> Indices { get; }
+
+        public void Visit(TempVariable temp)
+        {
+            Indices.Add(temp.Index);
+        }
+    }
+
+    private struct CountingVisitor : ITempUseVisitor
+    {
+        public int Count { get; private set; }
+
+        public void Visit(TempVariable temp)
+        {
+            Count++;
+        }
+    }
 
     private sealed record UnknownInstruction : LIRInstruction;
 }

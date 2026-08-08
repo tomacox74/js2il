@@ -13,7 +13,7 @@ namespace Jroc.Tests;
 public sealed class LIRStackSchedulerTests
 {
     [Fact]
-    public void Identity_EmptyBody_ReturnsEmptyLegacyDelegatingPlan()
+    public void Identity_EmptyBody_ReturnsEmptyNonOwningPlan()
     {
         var schedule = LIRStackScheduler.Identity(new MethodBodyIR());
 
