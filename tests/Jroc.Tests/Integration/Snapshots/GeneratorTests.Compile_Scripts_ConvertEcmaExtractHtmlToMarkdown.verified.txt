@@ -2123,7 +2123,7 @@
 				74 61 54 6f 6b 65 6e 0f 00 00 02
 			)
 			// Header size: 12
-			// Code size: 922 (0x39a)
+			// Code size: 907 (0x38b)
 			.maxstack 8
 			.locals init (
 				[0] object,
@@ -2140,8 +2140,9 @@
 				[11] object,
 				[12] class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule,
 				[13] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
-				[14] string,
-				[15] class [JavaScriptRuntime]JavaScriptRuntime.RegExp
+				[14] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+				[15] string,
+				[16] class [JavaScriptRuntime]JavaScriptRuntime.RegExp
 			)
 
 			IL_0000: ldarg.0
@@ -2429,64 +2430,61 @@
 			IL_02cb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallOwnPropertyMember(object, string, object[])
 			IL_02d0: pop
 
-			IL_02d1: ldstr "console"
-			IL_02d6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_02db: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_02e0: stloc.s 8
-			IL_02e2: ldloc.0
-			IL_02e3: ldstr "inFile"
-			IL_02e8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_02ed: stloc.s 11
-			IL_02ef: ldloc.s 11
-			IL_02f1: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-			IL_02f6: stloc.s 14
-			IL_02f8: ldstr "Converted "
-			IL_02fd: ldloc.s 14
+			IL_02d1: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_02d6: stloc.s 14
+			IL_02d8: ldloc.0
+			IL_02d9: ldstr "inFile"
+			IL_02de: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_02e3: stloc.s 8
+			IL_02e5: ldloc.s 8
+			IL_02e7: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+			IL_02ec: stloc.s 15
+			IL_02ee: ldstr "Converted "
+			IL_02f3: ldloc.s 15
+			IL_02f5: call string [System.Runtime]System.String::Concat(string, string)
+			IL_02fa: ldstr " -> "
 			IL_02ff: call string [System.Runtime]System.String::Concat(string, string)
-			IL_0304: ldstr " -> "
-			IL_0309: call string [System.Runtime]System.String::Concat(string, string)
-			IL_030e: ldloc.0
-			IL_030f: ldstr "outFile"
-			IL_0314: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0319: stloc.s 11
-			IL_031b: ldloc.s 11
-			IL_031d: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-			IL_0322: stloc.s 14
-			IL_0324: ldloc.s 14
+			IL_0304: ldloc.0
+			IL_0305: ldstr "outFile"
+			IL_030a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_030f: stloc.s 8
+			IL_0311: ldloc.s 8
+			IL_0313: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+			IL_0318: stloc.s 15
+			IL_031a: ldloc.s 15
+			IL_031c: call string [System.Runtime]System.String::Concat(string, string)
+			IL_0321: ldstr " ("
 			IL_0326: call string [System.Runtime]System.String::Concat(string, string)
-			IL_032b: ldstr " ("
-			IL_0330: call string [System.Runtime]System.String::Concat(string, string)
-			IL_0335: ldloc.s 6
-			IL_0337: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_033c: stloc.s 11
-			IL_033e: ldstr "\\n"
-			IL_0343: ldstr ""
-			IL_0348: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.RegExp::.ctor(object, object)
-			IL_034d: stloc.s 15
-			IL_034f: ldloc.s 11
-			IL_0351: ldstr "split"
-			IL_0356: ldloc.s 15
-			IL_0358: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_035d: stloc.s 11
-			IL_035f: ldloc.s 11
-			IL_0361: ldstr "length"
-			IL_0366: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_036b: stloc.s 11
-			IL_036d: ldloc.s 11
-			IL_036f: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-			IL_0374: stloc.s 14
-			IL_0376: ldloc.s 14
+			IL_032b: ldloc.s 6
+			IL_032d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0332: stloc.s 8
+			IL_0334: ldstr "\\n"
+			IL_0339: ldstr ""
+			IL_033e: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.RegExp::.ctor(object, object)
+			IL_0343: stloc.s 16
+			IL_0345: ldloc.s 8
+			IL_0347: ldstr "split"
+			IL_034c: ldloc.s 16
+			IL_034e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_0353: stloc.s 8
+			IL_0355: ldloc.s 8
+			IL_0357: ldstr "length"
+			IL_035c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0361: stloc.s 8
+			IL_0363: ldloc.s 8
+			IL_0365: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+			IL_036a: stloc.s 15
+			IL_036c: ldloc.s 15
+			IL_036e: call string [System.Runtime]System.String::Concat(string, string)
+			IL_0373: ldstr " lines)"
 			IL_0378: call string [System.Runtime]System.String::Concat(string, string)
-			IL_037d: ldstr " lines)"
-			IL_0382: call string [System.Runtime]System.String::Concat(string, string)
-			IL_0387: stloc.s 14
-			IL_0389: ldloc.s 8
-			IL_038b: ldstr "log"
-			IL_0390: ldloc.s 14
-			IL_0392: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_0397: pop
-			IL_0398: ldnull
-			IL_0399: ret
+			IL_037d: stloc.s 15
+			IL_037f: ldloc.s 14
+			IL_0381: ldloc.s 15
+			IL_0383: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0388: pop
+			IL_0389: ldnull
+			IL_038a: ret
 		} // end of method main::__js_call__
 
 	} // end of class main

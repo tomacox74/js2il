@@ -95,19 +95,21 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Header size: 1
-			// Code size: 33 (0x21)
+			// Header size: 12
+			// Code size: 20 (0x14)
 			.maxstack 8
+			.locals init (
+				[0] class [JavaScriptRuntime]JavaScriptRuntime.Console
+			)
 
-			IL_0000: ldstr "console"
-			IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_000a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_000f: ldstr "log"
-			IL_0014: ldstr "Hello, World!  One second has elapsed."
-			IL_0019: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_001e: pop
-			IL_001f: ldnull
-			IL_0020: ret
+			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0005: stloc.0
+			IL_0006: ldloc.0
+			IL_0007: ldstr "Hello, World!  One second has elapsed."
+			IL_000c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0011: pop
+			IL_0012: ldnull
+			IL_0013: ret
 		} // end of method ArrowFunction_L3C18::__js_call__
 
 	} // end of class ArrowFunction_L3C18
@@ -143,13 +145,14 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 114 (0x72)
+		// Code size: 103 (0x67)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.SetTimeout_OneSecondDelay/Scope,
 			[1] object,
 			[2] object[],
-			[3] class Modules.SetTimeout_OneSecondDelay/ArrowFunction_L3C18/FunctionObject
+			[3] class Modules.SetTimeout_OneSecondDelay/ArrowFunction_L3C18/FunctionObject,
+			[4] class [JavaScriptRuntime]JavaScriptRuntime.Console
 		)
 
 		IL_0000: newobj instance void Modules.SetTimeout_OneSecondDelay/Scope::.ctor()
@@ -182,14 +185,13 @@
 		IL_0047: newarr [System.Runtime]System.Object
 		IL_004c: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::setTimeout(object, object, object[])
 		IL_0051: pop
-		IL_0052: ldstr "console"
-		IL_0057: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_005c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0061: ldstr "log"
-		IL_0066: ldstr "setTimeout with 1 second delay scheduled."
-		IL_006b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0070: pop
-		IL_0071: ret
+		IL_0052: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0057: stloc.s 4
+		IL_0059: ldloc.s 4
+		IL_005b: ldstr "setTimeout with 1 second delay scheduled."
+		IL_0060: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0065: pop
+		IL_0066: ret
 	} // end of method SetTimeout_OneSecondDelay::__js_module_init__
 
 } // end of class Modules.SetTimeout_OneSecondDelay

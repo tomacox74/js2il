@@ -3315,7 +3315,7 @@
 				74 61 54 6f 6b 65 6e 12 00 00 02
 			)
 			// Header size: 12
-			// Code size: 2021 (0x7e5)
+			// Code size: 1921 (0x781)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.Compile_Scripts_BumpVersion/perform/Scope,
@@ -3357,7 +3357,8 @@
 				[36] object,
 				[37] object,
 				[38] object,
-				[39] object
+				[39] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+				[40] object
 			)
 
 			IL_0000: newobj instance void Modules.Compile_Scripts_BumpVersion/perform/Scope::.ctor()
@@ -3640,483 +3641,469 @@
 			IL_02f6: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
 			IL_02fb: stloc.s 32
 			IL_02fd: ldloc.s 32
-			IL_02ff: brfalse IL_047d
+			IL_02ff: brfalse IL_0472
 
-			IL_0304: ldstr "console"
-			IL_0309: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_030e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0313: ldstr "log"
-			IL_0318: ldstr "Unreleased is empty and --skip-empty specified; only bumping csproj versions and samples/Directory.Build.props."
-			IL_031d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_0322: pop
-			IL_0323: ldarg.0
-			IL_0324: ldfld object Modules.Compile_Scripts_BumpVersion/Scope::updateCsprojVersion
-			IL_0329: ldc.i4.1
-			IL_032a: newarr [System.Runtime]System.Object
-			IL_032f: dup
-			IL_0330: ldc.i4.0
-			IL_0331: ldarg.0
-			IL_0332: stelem.ref
-			IL_0333: ldloc.3
-			IL_0334: ldloc.s 10
-			IL_0336: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
-			IL_033b: stloc.s 15
-			IL_033d: ldarg.0
-			IL_033e: ldfld object Modules.Compile_Scripts_BumpVersion/Scope::updateCsprojVersion
-			IL_0343: ldc.i4.1
-			IL_0344: newarr [System.Runtime]System.Object
-			IL_0349: dup
-			IL_034a: ldc.i4.0
-			IL_034b: ldarg.0
-			IL_034c: stelem.ref
-			IL_034d: ldloc.s 4
-			IL_034f: ldloc.s 10
-			IL_0351: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
-			IL_0356: stloc.s 16
-			IL_0358: ldarg.0
-			IL_0359: ldfld object Modules.Compile_Scripts_BumpVersion/Scope::updateCsprojVersion
-			IL_035e: ldc.i4.1
-			IL_035f: newarr [System.Runtime]System.Object
-			IL_0364: dup
-			IL_0365: ldc.i4.0
-			IL_0366: ldarg.0
-			IL_0367: stelem.ref
-			IL_0368: ldloc.s 5
-			IL_036a: ldloc.s 10
-			IL_036c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
-			IL_0371: stloc.s 17
-			IL_0373: ldarg.0
-			IL_0374: ldfld object Modules.Compile_Scripts_BumpVersion/Scope::updateCsprojVersion
-			IL_0379: ldc.i4.1
-			IL_037a: newarr [System.Runtime]System.Object
-			IL_037f: dup
-			IL_0380: ldc.i4.0
-			IL_0381: ldarg.0
-			IL_0382: stelem.ref
-			IL_0383: ldloc.s 6
-			IL_0385: ldloc.s 10
-			IL_0387: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
-			IL_038c: stloc.s 18
-			IL_038e: ldarg.0
-			IL_038f: ldfld object Modules.Compile_Scripts_BumpVersion/Scope::updateSamplesPropsVersion
-			IL_0394: ldc.i4.1
-			IL_0395: newarr [System.Runtime]System.Object
-			IL_039a: dup
-			IL_039b: ldc.i4.0
-			IL_039c: ldarg.0
-			IL_039d: stelem.ref
-			IL_039e: ldloc.s 7
-			IL_03a0: ldloc.s 10
-			IL_03a2: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
-			IL_03a7: stloc.s 19
-			IL_03a9: ldarg.0
-			IL_03aa: ldfld object Modules.Compile_Scripts_BumpVersion/Scope::writeFile
-			IL_03af: stloc.s 30
-			IL_03b1: ldc.i4.1
-			IL_03b2: newarr [System.Runtime]System.Object
-			IL_03b7: dup
-			IL_03b8: ldc.i4.0
-			IL_03b9: ldarg.0
-			IL_03ba: stelem.ref
-			IL_03bb: stloc.s 31
-			IL_03bd: ldarg.0
-			IL_03be: ldfld object Modules.Compile_Scripts_BumpVersion/Scope::CSPROJ_PATH
-			IL_03c3: stloc.s 39
-			IL_03c5: ldloc.s 30
-			IL_03c7: ldloc.s 31
-			IL_03c9: ldloc.s 39
-			IL_03cb: ldloc.s 15
-			IL_03cd: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
-			IL_03d2: pop
-			IL_03d3: ldarg.0
-			IL_03d4: ldfld object Modules.Compile_Scripts_BumpVersion/Scope::writeFile
-			IL_03d9: stloc.s 39
-			IL_03db: ldc.i4.1
-			IL_03dc: newarr [System.Runtime]System.Object
-			IL_03e1: dup
-			IL_03e2: ldc.i4.0
-			IL_03e3: ldarg.0
-			IL_03e4: stelem.ref
-			IL_03e5: stloc.s 31
-			IL_03e7: ldarg.0
-			IL_03e8: ldfld object Modules.Compile_Scripts_BumpVersion/Scope::CORE_CSPROJ_PATH
-			IL_03ed: stloc.s 30
-			IL_03ef: ldloc.s 39
-			IL_03f1: ldloc.s 31
-			IL_03f3: ldloc.s 30
-			IL_03f5: ldloc.s 16
-			IL_03f7: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
-			IL_03fc: pop
-			IL_03fd: ldarg.0
-			IL_03fe: ldfld object Modules.Compile_Scripts_BumpVersion/Scope::writeFile
-			IL_0403: stloc.s 30
-			IL_0405: ldc.i4.1
-			IL_0406: newarr [System.Runtime]System.Object
-			IL_040b: dup
-			IL_040c: ldc.i4.0
-			IL_040d: ldarg.0
-			IL_040e: stelem.ref
-			IL_040f: stloc.s 31
-			IL_0411: ldarg.0
-			IL_0412: ldfld object Modules.Compile_Scripts_BumpVersion/Scope::SDK_CSPROJ_PATH
-			IL_0417: stloc.s 39
-			IL_0419: ldloc.s 30
-			IL_041b: ldloc.s 31
-			IL_041d: ldloc.s 39
-			IL_041f: ldloc.s 17
-			IL_0421: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
-			IL_0426: pop
-			IL_0427: ldarg.0
-			IL_0428: ldfld object Modules.Compile_Scripts_BumpVersion/Scope::writeFile
-			IL_042d: stloc.s 39
-			IL_042f: ldc.i4.1
-			IL_0430: newarr [System.Runtime]System.Object
-			IL_0435: dup
-			IL_0436: ldc.i4.0
-			IL_0437: ldarg.0
-			IL_0438: stelem.ref
-			IL_0439: stloc.s 31
-			IL_043b: ldarg.0
-			IL_043c: ldfld object Modules.Compile_Scripts_BumpVersion/Scope::RUNTIME_CSPROJ_PATH
-			IL_0441: stloc.s 30
-			IL_0443: ldloc.s 39
-			IL_0445: ldloc.s 31
-			IL_0447: ldloc.s 30
-			IL_0449: ldloc.s 18
-			IL_044b: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
-			IL_0450: pop
-			IL_0451: ldarg.0
-			IL_0452: ldfld object Modules.Compile_Scripts_BumpVersion/Scope::writeFile
-			IL_0457: stloc.s 30
-			IL_0459: ldc.i4.1
-			IL_045a: newarr [System.Runtime]System.Object
-			IL_045f: dup
-			IL_0460: ldc.i4.0
-			IL_0461: ldarg.0
-			IL_0462: stelem.ref
-			IL_0463: stloc.s 31
-			IL_0465: ldarg.0
-			IL_0466: ldfld object Modules.Compile_Scripts_BumpVersion/Scope::SAMPLES_PROPS_PATH
-			IL_046b: stloc.s 39
-			IL_046d: ldloc.s 30
-			IL_046f: ldloc.s 31
-			IL_0471: ldloc.s 39
-			IL_0473: ldloc.s 19
-			IL_0475: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
-			IL_047a: pop
-			IL_047b: ldnull
-			IL_047c: ret
+			IL_0304: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0309: stloc.s 39
+			IL_030b: ldloc.s 39
+			IL_030d: ldstr "Unreleased is empty and --skip-empty specified; only bumping csproj versions and samples/Directory.Build.props."
+			IL_0312: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0317: pop
+			IL_0318: ldarg.0
+			IL_0319: ldfld object Modules.Compile_Scripts_BumpVersion/Scope::updateCsprojVersion
+			IL_031e: ldc.i4.1
+			IL_031f: newarr [System.Runtime]System.Object
+			IL_0324: dup
+			IL_0325: ldc.i4.0
+			IL_0326: ldarg.0
+			IL_0327: stelem.ref
+			IL_0328: ldloc.3
+			IL_0329: ldloc.s 10
+			IL_032b: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
+			IL_0330: stloc.s 15
+			IL_0332: ldarg.0
+			IL_0333: ldfld object Modules.Compile_Scripts_BumpVersion/Scope::updateCsprojVersion
+			IL_0338: ldc.i4.1
+			IL_0339: newarr [System.Runtime]System.Object
+			IL_033e: dup
+			IL_033f: ldc.i4.0
+			IL_0340: ldarg.0
+			IL_0341: stelem.ref
+			IL_0342: ldloc.s 4
+			IL_0344: ldloc.s 10
+			IL_0346: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
+			IL_034b: stloc.s 16
+			IL_034d: ldarg.0
+			IL_034e: ldfld object Modules.Compile_Scripts_BumpVersion/Scope::updateCsprojVersion
+			IL_0353: ldc.i4.1
+			IL_0354: newarr [System.Runtime]System.Object
+			IL_0359: dup
+			IL_035a: ldc.i4.0
+			IL_035b: ldarg.0
+			IL_035c: stelem.ref
+			IL_035d: ldloc.s 5
+			IL_035f: ldloc.s 10
+			IL_0361: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
+			IL_0366: stloc.s 17
+			IL_0368: ldarg.0
+			IL_0369: ldfld object Modules.Compile_Scripts_BumpVersion/Scope::updateCsprojVersion
+			IL_036e: ldc.i4.1
+			IL_036f: newarr [System.Runtime]System.Object
+			IL_0374: dup
+			IL_0375: ldc.i4.0
+			IL_0376: ldarg.0
+			IL_0377: stelem.ref
+			IL_0378: ldloc.s 6
+			IL_037a: ldloc.s 10
+			IL_037c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
+			IL_0381: stloc.s 18
+			IL_0383: ldarg.0
+			IL_0384: ldfld object Modules.Compile_Scripts_BumpVersion/Scope::updateSamplesPropsVersion
+			IL_0389: ldc.i4.1
+			IL_038a: newarr [System.Runtime]System.Object
+			IL_038f: dup
+			IL_0390: ldc.i4.0
+			IL_0391: ldarg.0
+			IL_0392: stelem.ref
+			IL_0393: ldloc.s 7
+			IL_0395: ldloc.s 10
+			IL_0397: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
+			IL_039c: stloc.s 19
+			IL_039e: ldarg.0
+			IL_039f: ldfld object Modules.Compile_Scripts_BumpVersion/Scope::writeFile
+			IL_03a4: stloc.s 30
+			IL_03a6: ldc.i4.1
+			IL_03a7: newarr [System.Runtime]System.Object
+			IL_03ac: dup
+			IL_03ad: ldc.i4.0
+			IL_03ae: ldarg.0
+			IL_03af: stelem.ref
+			IL_03b0: stloc.s 31
+			IL_03b2: ldarg.0
+			IL_03b3: ldfld object Modules.Compile_Scripts_BumpVersion/Scope::CSPROJ_PATH
+			IL_03b8: stloc.s 40
+			IL_03ba: ldloc.s 30
+			IL_03bc: ldloc.s 31
+			IL_03be: ldloc.s 40
+			IL_03c0: ldloc.s 15
+			IL_03c2: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
+			IL_03c7: pop
+			IL_03c8: ldarg.0
+			IL_03c9: ldfld object Modules.Compile_Scripts_BumpVersion/Scope::writeFile
+			IL_03ce: stloc.s 40
+			IL_03d0: ldc.i4.1
+			IL_03d1: newarr [System.Runtime]System.Object
+			IL_03d6: dup
+			IL_03d7: ldc.i4.0
+			IL_03d8: ldarg.0
+			IL_03d9: stelem.ref
+			IL_03da: stloc.s 31
+			IL_03dc: ldarg.0
+			IL_03dd: ldfld object Modules.Compile_Scripts_BumpVersion/Scope::CORE_CSPROJ_PATH
+			IL_03e2: stloc.s 30
+			IL_03e4: ldloc.s 40
+			IL_03e6: ldloc.s 31
+			IL_03e8: ldloc.s 30
+			IL_03ea: ldloc.s 16
+			IL_03ec: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
+			IL_03f1: pop
+			IL_03f2: ldarg.0
+			IL_03f3: ldfld object Modules.Compile_Scripts_BumpVersion/Scope::writeFile
+			IL_03f8: stloc.s 30
+			IL_03fa: ldc.i4.1
+			IL_03fb: newarr [System.Runtime]System.Object
+			IL_0400: dup
+			IL_0401: ldc.i4.0
+			IL_0402: ldarg.0
+			IL_0403: stelem.ref
+			IL_0404: stloc.s 31
+			IL_0406: ldarg.0
+			IL_0407: ldfld object Modules.Compile_Scripts_BumpVersion/Scope::SDK_CSPROJ_PATH
+			IL_040c: stloc.s 40
+			IL_040e: ldloc.s 30
+			IL_0410: ldloc.s 31
+			IL_0412: ldloc.s 40
+			IL_0414: ldloc.s 17
+			IL_0416: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
+			IL_041b: pop
+			IL_041c: ldarg.0
+			IL_041d: ldfld object Modules.Compile_Scripts_BumpVersion/Scope::writeFile
+			IL_0422: stloc.s 40
+			IL_0424: ldc.i4.1
+			IL_0425: newarr [System.Runtime]System.Object
+			IL_042a: dup
+			IL_042b: ldc.i4.0
+			IL_042c: ldarg.0
+			IL_042d: stelem.ref
+			IL_042e: stloc.s 31
+			IL_0430: ldarg.0
+			IL_0431: ldfld object Modules.Compile_Scripts_BumpVersion/Scope::RUNTIME_CSPROJ_PATH
+			IL_0436: stloc.s 30
+			IL_0438: ldloc.s 40
+			IL_043a: ldloc.s 31
+			IL_043c: ldloc.s 30
+			IL_043e: ldloc.s 18
+			IL_0440: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
+			IL_0445: pop
+			IL_0446: ldarg.0
+			IL_0447: ldfld object Modules.Compile_Scripts_BumpVersion/Scope::writeFile
+			IL_044c: stloc.s 30
+			IL_044e: ldc.i4.1
+			IL_044f: newarr [System.Runtime]System.Object
+			IL_0454: dup
+			IL_0455: ldc.i4.0
+			IL_0456: ldarg.0
+			IL_0457: stelem.ref
+			IL_0458: stloc.s 31
+			IL_045a: ldarg.0
+			IL_045b: ldfld object Modules.Compile_Scripts_BumpVersion/Scope::SAMPLES_PROPS_PATH
+			IL_0460: stloc.s 40
+			IL_0462: ldloc.s 30
+			IL_0464: ldloc.s 31
+			IL_0466: ldloc.s 40
+			IL_0468: ldloc.s 19
+			IL_046a: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
+			IL_046f: pop
+			IL_0470: ldnull
+			IL_0471: ret
 
-			IL_047d: ldarg.0
-			IL_047e: ldfld object Modules.Compile_Scripts_BumpVersion/Scope::generateReleaseSection
-			IL_0483: ldc.i4.1
-			IL_0484: newarr [System.Runtime]System.Object
-			IL_0489: dup
-			IL_048a: ldc.i4.0
-			IL_048b: ldarg.0
-			IL_048c: stelem.ref
-			IL_048d: ldloc.s 10
-			IL_048f: ldloc.s 11
-			IL_0491: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
-			IL_0496: stloc.s 20
-			IL_0498: ldloc.s 8
-			IL_049a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_049f: ldstr "slice"
-			IL_04a4: ldc.r8 0.0
-			IL_04ad: box [System.Runtime]System.Double
-			IL_04b2: ldloc.s 12
-			IL_04b4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-			IL_04b9: stloc.s 21
-			IL_04bb: ldloc.s 8
-			IL_04bd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_04c2: ldstr "slice"
-			IL_04c7: ldloc.s 13
-			IL_04c9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_04ce: stloc.s 22
-			IL_04d0: ldstr "\n_Nothing yet._\n\n"
-			IL_04d5: stloc.s 23
-			IL_04d7: ldloc.s 21
-			IL_04d9: ldloc.s 23
+			IL_0472: ldarg.0
+			IL_0473: ldfld object Modules.Compile_Scripts_BumpVersion/Scope::generateReleaseSection
+			IL_0478: ldc.i4.1
+			IL_0479: newarr [System.Runtime]System.Object
+			IL_047e: dup
+			IL_047f: ldc.i4.0
+			IL_0480: ldarg.0
+			IL_0481: stelem.ref
+			IL_0482: ldloc.s 10
+			IL_0484: ldloc.s 11
+			IL_0486: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
+			IL_048b: stloc.s 20
+			IL_048d: ldloc.s 8
+			IL_048f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0494: ldstr "slice"
+			IL_0499: ldc.r8 0.0
+			IL_04a2: box [System.Runtime]System.Double
+			IL_04a7: ldloc.s 12
+			IL_04a9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+			IL_04ae: stloc.s 21
+			IL_04b0: ldloc.s 8
+			IL_04b2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_04b7: ldstr "slice"
+			IL_04bc: ldloc.s 13
+			IL_04be: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_04c3: stloc.s 22
+			IL_04c5: ldstr "\n_Nothing yet._\n\n"
+			IL_04ca: stloc.s 23
+			IL_04cc: ldloc.s 21
+			IL_04ce: ldloc.s 23
+			IL_04d0: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_04d5: stloc.s 38
+			IL_04d7: ldloc.s 38
+			IL_04d9: ldloc.s 20
 			IL_04db: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
 			IL_04e0: stloc.s 38
 			IL_04e2: ldloc.s 38
-			IL_04e4: ldloc.s 20
+			IL_04e4: ldloc.s 22
 			IL_04e6: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_04eb: stloc.s 38
-			IL_04ed: ldloc.s 38
-			IL_04ef: ldloc.s 22
-			IL_04f1: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_04f6: stloc.s 24
-			IL_04f8: ldarg.0
-			IL_04f9: ldfld object Modules.Compile_Scripts_BumpVersion/Scope::updateCsprojVersion
-			IL_04fe: ldc.i4.1
-			IL_04ff: newarr [System.Runtime]System.Object
-			IL_0504: dup
-			IL_0505: ldc.i4.0
-			IL_0506: ldarg.0
-			IL_0507: stelem.ref
-			IL_0508: ldloc.3
-			IL_0509: ldloc.s 10
-			IL_050b: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
-			IL_0510: stloc.s 25
-			IL_0512: ldarg.0
-			IL_0513: ldfld object Modules.Compile_Scripts_BumpVersion/Scope::updateCsprojVersion
-			IL_0518: ldc.i4.1
-			IL_0519: newarr [System.Runtime]System.Object
-			IL_051e: dup
-			IL_051f: ldc.i4.0
-			IL_0520: ldarg.0
-			IL_0521: stelem.ref
-			IL_0522: ldloc.s 4
-			IL_0524: ldloc.s 10
-			IL_0526: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
-			IL_052b: stloc.s 26
-			IL_052d: ldarg.0
-			IL_052e: ldfld object Modules.Compile_Scripts_BumpVersion/Scope::updateCsprojVersion
-			IL_0533: ldc.i4.1
-			IL_0534: newarr [System.Runtime]System.Object
-			IL_0539: dup
-			IL_053a: ldc.i4.0
-			IL_053b: ldarg.0
-			IL_053c: stelem.ref
-			IL_053d: ldloc.s 5
-			IL_053f: ldloc.s 10
-			IL_0541: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
-			IL_0546: stloc.s 27
-			IL_0548: ldarg.0
-			IL_0549: ldfld object Modules.Compile_Scripts_BumpVersion/Scope::updateCsprojVersion
-			IL_054e: ldc.i4.1
-			IL_054f: newarr [System.Runtime]System.Object
-			IL_0554: dup
-			IL_0555: ldc.i4.0
-			IL_0556: ldarg.0
-			IL_0557: stelem.ref
-			IL_0558: ldloc.s 6
-			IL_055a: ldloc.s 10
-			IL_055c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
-			IL_0561: stloc.s 28
-			IL_0563: ldarg.0
-			IL_0564: ldfld object Modules.Compile_Scripts_BumpVersion/Scope::updateSamplesPropsVersion
-			IL_0569: ldc.i4.1
-			IL_056a: newarr [System.Runtime]System.Object
-			IL_056f: dup
-			IL_0570: ldc.i4.0
-			IL_0571: ldarg.0
-			IL_0572: stelem.ref
-			IL_0573: ldloc.s 7
-			IL_0575: ldloc.s 10
-			IL_0577: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
-			IL_057c: stloc.s 29
-			IL_057e: ldarg.0
-			IL_057f: ldfld object Modules.Compile_Scripts_BumpVersion/Scope::writeFile
-			IL_0584: stloc.s 39
-			IL_0586: ldc.i4.1
-			IL_0587: newarr [System.Runtime]System.Object
-			IL_058c: dup
-			IL_058d: ldc.i4.0
-			IL_058e: ldarg.0
-			IL_058f: stelem.ref
-			IL_0590: stloc.s 31
-			IL_0592: ldarg.0
-			IL_0593: ldfld object Modules.Compile_Scripts_BumpVersion/Scope::CHANGELOG_PATH
-			IL_0598: stloc.s 30
-			IL_059a: ldloc.s 39
-			IL_059c: ldloc.s 31
-			IL_059e: ldloc.s 30
-			IL_05a0: ldloc.s 24
-			IL_05a2: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
-			IL_05a7: pop
-			IL_05a8: ldarg.0
-			IL_05a9: ldfld object Modules.Compile_Scripts_BumpVersion/Scope::writeFile
-			IL_05ae: stloc.s 30
-			IL_05b0: ldc.i4.1
-			IL_05b1: newarr [System.Runtime]System.Object
-			IL_05b6: dup
-			IL_05b7: ldc.i4.0
-			IL_05b8: ldarg.0
-			IL_05b9: stelem.ref
-			IL_05ba: stloc.s 31
-			IL_05bc: ldarg.0
-			IL_05bd: ldfld object Modules.Compile_Scripts_BumpVersion/Scope::CSPROJ_PATH
-			IL_05c2: stloc.s 39
-			IL_05c4: ldloc.s 30
-			IL_05c6: ldloc.s 31
-			IL_05c8: ldloc.s 39
-			IL_05ca: ldloc.s 25
-			IL_05cc: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
-			IL_05d1: pop
-			IL_05d2: ldarg.0
-			IL_05d3: ldfld object Modules.Compile_Scripts_BumpVersion/Scope::writeFile
-			IL_05d8: stloc.s 39
-			IL_05da: ldc.i4.1
-			IL_05db: newarr [System.Runtime]System.Object
-			IL_05e0: dup
-			IL_05e1: ldc.i4.0
-			IL_05e2: ldarg.0
-			IL_05e3: stelem.ref
-			IL_05e4: stloc.s 31
-			IL_05e6: ldarg.0
-			IL_05e7: ldfld object Modules.Compile_Scripts_BumpVersion/Scope::CORE_CSPROJ_PATH
-			IL_05ec: stloc.s 30
-			IL_05ee: ldloc.s 39
-			IL_05f0: ldloc.s 31
-			IL_05f2: ldloc.s 30
-			IL_05f4: ldloc.s 26
-			IL_05f6: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
-			IL_05fb: pop
-			IL_05fc: ldarg.0
-			IL_05fd: ldfld object Modules.Compile_Scripts_BumpVersion/Scope::writeFile
-			IL_0602: stloc.s 30
-			IL_0604: ldc.i4.1
-			IL_0605: newarr [System.Runtime]System.Object
-			IL_060a: dup
-			IL_060b: ldc.i4.0
-			IL_060c: ldarg.0
-			IL_060d: stelem.ref
-			IL_060e: stloc.s 31
-			IL_0610: ldarg.0
-			IL_0611: ldfld object Modules.Compile_Scripts_BumpVersion/Scope::SDK_CSPROJ_PATH
-			IL_0616: stloc.s 39
-			IL_0618: ldloc.s 30
-			IL_061a: ldloc.s 31
-			IL_061c: ldloc.s 39
-			IL_061e: ldloc.s 27
-			IL_0620: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
-			IL_0625: pop
-			IL_0626: ldarg.0
-			IL_0627: ldfld object Modules.Compile_Scripts_BumpVersion/Scope::writeFile
-			IL_062c: stloc.s 39
-			IL_062e: ldc.i4.1
-			IL_062f: newarr [System.Runtime]System.Object
-			IL_0634: dup
-			IL_0635: ldc.i4.0
-			IL_0636: ldarg.0
-			IL_0637: stelem.ref
-			IL_0638: stloc.s 31
-			IL_063a: ldarg.0
-			IL_063b: ldfld object Modules.Compile_Scripts_BumpVersion/Scope::RUNTIME_CSPROJ_PATH
-			IL_0640: stloc.s 30
-			IL_0642: ldloc.s 39
-			IL_0644: ldloc.s 31
-			IL_0646: ldloc.s 30
-			IL_0648: ldloc.s 28
-			IL_064a: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
-			IL_064f: pop
-			IL_0650: ldarg.0
-			IL_0651: ldfld object Modules.Compile_Scripts_BumpVersion/Scope::writeFile
-			IL_0656: stloc.s 30
-			IL_0658: ldc.i4.1
-			IL_0659: newarr [System.Runtime]System.Object
-			IL_065e: dup
-			IL_065f: ldc.i4.0
-			IL_0660: ldarg.0
-			IL_0661: stelem.ref
-			IL_0662: stloc.s 31
-			IL_0664: ldarg.0
-			IL_0665: ldfld object Modules.Compile_Scripts_BumpVersion/Scope::SAMPLES_PROPS_PATH
-			IL_066a: stloc.s 39
-			IL_066c: ldloc.s 30
-			IL_066e: ldloc.s 31
-			IL_0670: ldloc.s 39
-			IL_0672: ldloc.s 29
-			IL_0674: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
-			IL_0679: pop
-			IL_067a: ldstr "console"
-			IL_067f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_0684: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0689: stloc.s 39
-			IL_068b: ldloc.s 9
-			IL_068d: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-			IL_0692: stloc.s 33
-			IL_0694: ldstr "Bumped version: "
-			IL_0699: ldloc.s 33
-			IL_069b: call string [System.Runtime]System.String::Concat(string, string)
-			IL_06a0: ldstr " -> "
-			IL_06a5: call string [System.Runtime]System.String::Concat(string, string)
-			IL_06aa: ldloc.s 10
-			IL_06ac: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-			IL_06b1: stloc.s 33
-			IL_06b3: ldloc.s 33
-			IL_06b5: call string [System.Runtime]System.String::Concat(string, string)
-			IL_06ba: stloc.s 33
-			IL_06bc: ldloc.s 39
-			IL_06be: ldstr "log"
-			IL_06c3: ldloc.s 33
-			IL_06c5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_06ca: pop
-			IL_06cb: ldstr "console"
-			IL_06d0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_06d5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_06da: ldstr "log"
-			IL_06df: ldstr "Updated CHANGELOG.md, samples/Directory.Build.props, src/Cli/Jroc.csproj, src/Jroc.Core/Jroc.Core.csproj, src/Jroc.SDK/Jroc.SDK.csproj, and src/JavaScriptRuntime/JavaScriptRuntime.csproj"
-			IL_06e4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_06e9: pop
-			IL_06ea: ldstr "console"
-			IL_06ef: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_06f4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_06f9: ldstr "log"
-			IL_06fe: ldstr "\nNext steps:"
-			IL_0703: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_0708: pop
-			IL_0709: ldstr "console"
-			IL_070e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_0713: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0718: ldstr "log"
-			IL_071d: ldstr "  git add CHANGELOG.md samples/Directory.Build.props src/Cli/Jroc.csproj src/Jroc.Core/Jroc.Core.csproj src/Jroc.SDK/Jroc.SDK.csproj src/JavaScriptRuntime/JavaScriptRuntime.csproj"
-			IL_0722: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_0727: pop
-			IL_0728: ldstr "console"
-			IL_072d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_0732: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0737: stloc.s 39
-			IL_0739: ldloc.s 10
-			IL_073b: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-			IL_0740: stloc.s 33
-			IL_0742: ldstr "  git commit -m \"chore(release): cut "
-			IL_0747: ldloc.s 33
-			IL_0749: call string [System.Runtime]System.String::Concat(string, string)
-			IL_074e: ldstr "\""
-			IL_0753: call string [System.Runtime]System.String::Concat(string, string)
-			IL_0758: stloc.s 33
-			IL_075a: ldloc.s 39
-			IL_075c: ldstr "log"
-			IL_0761: ldloc.s 33
-			IL_0763: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_0768: pop
-			IL_0769: ldstr "console"
-			IL_076e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_0773: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0778: stloc.s 39
-			IL_077a: ldloc.s 10
-			IL_077c: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-			IL_0781: stloc.s 33
-			IL_0783: ldstr "  git tag -a v"
-			IL_0788: ldloc.s 33
-			IL_078a: call string [System.Runtime]System.String::Concat(string, string)
-			IL_078f: ldstr " -m \"Release "
-			IL_0794: call string [System.Runtime]System.String::Concat(string, string)
-			IL_0799: ldloc.s 10
-			IL_079b: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-			IL_07a0: stloc.s 33
-			IL_07a2: ldloc.s 33
-			IL_07a4: call string [System.Runtime]System.String::Concat(string, string)
-			IL_07a9: ldstr "\""
-			IL_07ae: call string [System.Runtime]System.String::Concat(string, string)
-			IL_07b3: stloc.s 33
-			IL_07b5: ldloc.s 39
-			IL_07b7: ldstr "log"
-			IL_07bc: ldloc.s 33
-			IL_07be: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_07c3: pop
-			IL_07c4: ldstr "console"
-			IL_07c9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_07ce: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_07d3: ldstr "log"
-			IL_07d8: ldstr "  git push && git push --tags"
-			IL_07dd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_07e2: pop
-			IL_07e3: ldnull
-			IL_07e4: ret
+			IL_04eb: stloc.s 24
+			IL_04ed: ldarg.0
+			IL_04ee: ldfld object Modules.Compile_Scripts_BumpVersion/Scope::updateCsprojVersion
+			IL_04f3: ldc.i4.1
+			IL_04f4: newarr [System.Runtime]System.Object
+			IL_04f9: dup
+			IL_04fa: ldc.i4.0
+			IL_04fb: ldarg.0
+			IL_04fc: stelem.ref
+			IL_04fd: ldloc.3
+			IL_04fe: ldloc.s 10
+			IL_0500: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
+			IL_0505: stloc.s 25
+			IL_0507: ldarg.0
+			IL_0508: ldfld object Modules.Compile_Scripts_BumpVersion/Scope::updateCsprojVersion
+			IL_050d: ldc.i4.1
+			IL_050e: newarr [System.Runtime]System.Object
+			IL_0513: dup
+			IL_0514: ldc.i4.0
+			IL_0515: ldarg.0
+			IL_0516: stelem.ref
+			IL_0517: ldloc.s 4
+			IL_0519: ldloc.s 10
+			IL_051b: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
+			IL_0520: stloc.s 26
+			IL_0522: ldarg.0
+			IL_0523: ldfld object Modules.Compile_Scripts_BumpVersion/Scope::updateCsprojVersion
+			IL_0528: ldc.i4.1
+			IL_0529: newarr [System.Runtime]System.Object
+			IL_052e: dup
+			IL_052f: ldc.i4.0
+			IL_0530: ldarg.0
+			IL_0531: stelem.ref
+			IL_0532: ldloc.s 5
+			IL_0534: ldloc.s 10
+			IL_0536: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
+			IL_053b: stloc.s 27
+			IL_053d: ldarg.0
+			IL_053e: ldfld object Modules.Compile_Scripts_BumpVersion/Scope::updateCsprojVersion
+			IL_0543: ldc.i4.1
+			IL_0544: newarr [System.Runtime]System.Object
+			IL_0549: dup
+			IL_054a: ldc.i4.0
+			IL_054b: ldarg.0
+			IL_054c: stelem.ref
+			IL_054d: ldloc.s 6
+			IL_054f: ldloc.s 10
+			IL_0551: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
+			IL_0556: stloc.s 28
+			IL_0558: ldarg.0
+			IL_0559: ldfld object Modules.Compile_Scripts_BumpVersion/Scope::updateSamplesPropsVersion
+			IL_055e: ldc.i4.1
+			IL_055f: newarr [System.Runtime]System.Object
+			IL_0564: dup
+			IL_0565: ldc.i4.0
+			IL_0566: ldarg.0
+			IL_0567: stelem.ref
+			IL_0568: ldloc.s 7
+			IL_056a: ldloc.s 10
+			IL_056c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
+			IL_0571: stloc.s 29
+			IL_0573: ldarg.0
+			IL_0574: ldfld object Modules.Compile_Scripts_BumpVersion/Scope::writeFile
+			IL_0579: stloc.s 40
+			IL_057b: ldc.i4.1
+			IL_057c: newarr [System.Runtime]System.Object
+			IL_0581: dup
+			IL_0582: ldc.i4.0
+			IL_0583: ldarg.0
+			IL_0584: stelem.ref
+			IL_0585: stloc.s 31
+			IL_0587: ldarg.0
+			IL_0588: ldfld object Modules.Compile_Scripts_BumpVersion/Scope::CHANGELOG_PATH
+			IL_058d: stloc.s 30
+			IL_058f: ldloc.s 40
+			IL_0591: ldloc.s 31
+			IL_0593: ldloc.s 30
+			IL_0595: ldloc.s 24
+			IL_0597: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
+			IL_059c: pop
+			IL_059d: ldarg.0
+			IL_059e: ldfld object Modules.Compile_Scripts_BumpVersion/Scope::writeFile
+			IL_05a3: stloc.s 30
+			IL_05a5: ldc.i4.1
+			IL_05a6: newarr [System.Runtime]System.Object
+			IL_05ab: dup
+			IL_05ac: ldc.i4.0
+			IL_05ad: ldarg.0
+			IL_05ae: stelem.ref
+			IL_05af: stloc.s 31
+			IL_05b1: ldarg.0
+			IL_05b2: ldfld object Modules.Compile_Scripts_BumpVersion/Scope::CSPROJ_PATH
+			IL_05b7: stloc.s 40
+			IL_05b9: ldloc.s 30
+			IL_05bb: ldloc.s 31
+			IL_05bd: ldloc.s 40
+			IL_05bf: ldloc.s 25
+			IL_05c1: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
+			IL_05c6: pop
+			IL_05c7: ldarg.0
+			IL_05c8: ldfld object Modules.Compile_Scripts_BumpVersion/Scope::writeFile
+			IL_05cd: stloc.s 40
+			IL_05cf: ldc.i4.1
+			IL_05d0: newarr [System.Runtime]System.Object
+			IL_05d5: dup
+			IL_05d6: ldc.i4.0
+			IL_05d7: ldarg.0
+			IL_05d8: stelem.ref
+			IL_05d9: stloc.s 31
+			IL_05db: ldarg.0
+			IL_05dc: ldfld object Modules.Compile_Scripts_BumpVersion/Scope::CORE_CSPROJ_PATH
+			IL_05e1: stloc.s 30
+			IL_05e3: ldloc.s 40
+			IL_05e5: ldloc.s 31
+			IL_05e7: ldloc.s 30
+			IL_05e9: ldloc.s 26
+			IL_05eb: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
+			IL_05f0: pop
+			IL_05f1: ldarg.0
+			IL_05f2: ldfld object Modules.Compile_Scripts_BumpVersion/Scope::writeFile
+			IL_05f7: stloc.s 30
+			IL_05f9: ldc.i4.1
+			IL_05fa: newarr [System.Runtime]System.Object
+			IL_05ff: dup
+			IL_0600: ldc.i4.0
+			IL_0601: ldarg.0
+			IL_0602: stelem.ref
+			IL_0603: stloc.s 31
+			IL_0605: ldarg.0
+			IL_0606: ldfld object Modules.Compile_Scripts_BumpVersion/Scope::SDK_CSPROJ_PATH
+			IL_060b: stloc.s 40
+			IL_060d: ldloc.s 30
+			IL_060f: ldloc.s 31
+			IL_0611: ldloc.s 40
+			IL_0613: ldloc.s 27
+			IL_0615: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
+			IL_061a: pop
+			IL_061b: ldarg.0
+			IL_061c: ldfld object Modules.Compile_Scripts_BumpVersion/Scope::writeFile
+			IL_0621: stloc.s 40
+			IL_0623: ldc.i4.1
+			IL_0624: newarr [System.Runtime]System.Object
+			IL_0629: dup
+			IL_062a: ldc.i4.0
+			IL_062b: ldarg.0
+			IL_062c: stelem.ref
+			IL_062d: stloc.s 31
+			IL_062f: ldarg.0
+			IL_0630: ldfld object Modules.Compile_Scripts_BumpVersion/Scope::RUNTIME_CSPROJ_PATH
+			IL_0635: stloc.s 30
+			IL_0637: ldloc.s 40
+			IL_0639: ldloc.s 31
+			IL_063b: ldloc.s 30
+			IL_063d: ldloc.s 28
+			IL_063f: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
+			IL_0644: pop
+			IL_0645: ldarg.0
+			IL_0646: ldfld object Modules.Compile_Scripts_BumpVersion/Scope::writeFile
+			IL_064b: stloc.s 30
+			IL_064d: ldc.i4.1
+			IL_064e: newarr [System.Runtime]System.Object
+			IL_0653: dup
+			IL_0654: ldc.i4.0
+			IL_0655: ldarg.0
+			IL_0656: stelem.ref
+			IL_0657: stloc.s 31
+			IL_0659: ldarg.0
+			IL_065a: ldfld object Modules.Compile_Scripts_BumpVersion/Scope::SAMPLES_PROPS_PATH
+			IL_065f: stloc.s 40
+			IL_0661: ldloc.s 30
+			IL_0663: ldloc.s 31
+			IL_0665: ldloc.s 40
+			IL_0667: ldloc.s 29
+			IL_0669: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
+			IL_066e: pop
+			IL_066f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0674: stloc.s 39
+			IL_0676: ldloc.s 9
+			IL_0678: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+			IL_067d: stloc.s 33
+			IL_067f: ldstr "Bumped version: "
+			IL_0684: ldloc.s 33
+			IL_0686: call string [System.Runtime]System.String::Concat(string, string)
+			IL_068b: ldstr " -> "
+			IL_0690: call string [System.Runtime]System.String::Concat(string, string)
+			IL_0695: ldloc.s 10
+			IL_0697: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+			IL_069c: stloc.s 33
+			IL_069e: ldloc.s 33
+			IL_06a0: call string [System.Runtime]System.String::Concat(string, string)
+			IL_06a5: stloc.s 33
+			IL_06a7: ldloc.s 39
+			IL_06a9: ldloc.s 33
+			IL_06ab: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_06b0: pop
+			IL_06b1: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_06b6: stloc.s 39
+			IL_06b8: ldloc.s 39
+			IL_06ba: ldstr "Updated CHANGELOG.md, samples/Directory.Build.props, src/Cli/Jroc.csproj, src/Jroc.Core/Jroc.Core.csproj, src/Jroc.SDK/Jroc.SDK.csproj, and src/JavaScriptRuntime/JavaScriptRuntime.csproj"
+			IL_06bf: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_06c4: pop
+			IL_06c5: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_06ca: stloc.s 39
+			IL_06cc: ldloc.s 39
+			IL_06ce: ldstr "\nNext steps:"
+			IL_06d3: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_06d8: pop
+			IL_06d9: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_06de: stloc.s 39
+			IL_06e0: ldloc.s 39
+			IL_06e2: ldstr "  git add CHANGELOG.md samples/Directory.Build.props src/Cli/Jroc.csproj src/Jroc.Core/Jroc.Core.csproj src/Jroc.SDK/Jroc.SDK.csproj src/JavaScriptRuntime/JavaScriptRuntime.csproj"
+			IL_06e7: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_06ec: pop
+			IL_06ed: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_06f2: stloc.s 39
+			IL_06f4: ldloc.s 10
+			IL_06f6: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+			IL_06fb: stloc.s 33
+			IL_06fd: ldstr "  git commit -m \"chore(release): cut "
+			IL_0702: ldloc.s 33
+			IL_0704: call string [System.Runtime]System.String::Concat(string, string)
+			IL_0709: ldstr "\""
+			IL_070e: call string [System.Runtime]System.String::Concat(string, string)
+			IL_0713: stloc.s 33
+			IL_0715: ldloc.s 39
+			IL_0717: ldloc.s 33
+			IL_0719: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_071e: pop
+			IL_071f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0724: stloc.s 39
+			IL_0726: ldloc.s 10
+			IL_0728: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+			IL_072d: stloc.s 33
+			IL_072f: ldstr "  git tag -a v"
+			IL_0734: ldloc.s 33
+			IL_0736: call string [System.Runtime]System.String::Concat(string, string)
+			IL_073b: ldstr " -m \"Release "
+			IL_0740: call string [System.Runtime]System.String::Concat(string, string)
+			IL_0745: ldloc.s 10
+			IL_0747: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+			IL_074c: stloc.s 33
+			IL_074e: ldloc.s 33
+			IL_0750: call string [System.Runtime]System.String::Concat(string, string)
+			IL_0755: ldstr "\""
+			IL_075a: call string [System.Runtime]System.String::Concat(string, string)
+			IL_075f: stloc.s 33
+			IL_0761: ldloc.s 39
+			IL_0763: ldloc.s 33
+			IL_0765: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_076a: pop
+			IL_076b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0770: stloc.s 39
+			IL_0772: ldloc.s 39
+			IL_0774: ldstr "  git push && git push --tags"
+			IL_0779: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_077e: pop
+			IL_077f: ldnull
+			IL_0780: ret
 		} // end of method perform::__js_call__
 
 	} // end of class perform

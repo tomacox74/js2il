@@ -38,12 +38,13 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 268 (0x10c)
+		// Code size: 203 (0xcb)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Array_IsArray_Basic/Scope,
 			[1] class [JavaScriptRuntime]JavaScriptRuntime.Array,
-			[2] object
+			[2] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+			[3] object
 		)
 
 		IL_0000: newobj instance void Modules.Array_IsArray_Basic/Scope::.ctor()
@@ -61,63 +62,58 @@
 		IL_002c: ldc.r8 3
 		IL_0035: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::AddNumber(float64)
 		IL_003a: stloc.1
-		IL_003b: ldstr "console"
-		IL_0040: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0045: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_004a: ldloc.1
-		IL_004b: call bool [JavaScriptRuntime]JavaScriptRuntime.Array::isArray(object)
-		IL_0050: box [System.Runtime]System.Boolean
-		IL_0055: stloc.2
-		IL_0056: ldstr "log"
-		IL_005b: ldloc.2
-		IL_005c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0061: pop
-		IL_0062: ldstr "console"
-		IL_0067: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_006c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0071: ldstr "x"
-		IL_0076: call bool [JavaScriptRuntime]JavaScriptRuntime.Array::isArray(object)
-		IL_007b: box [System.Runtime]System.Boolean
-		IL_0080: stloc.2
-		IL_0081: ldstr "log"
-		IL_0086: ldloc.2
-		IL_0087: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_008c: pop
-		IL_008d: ldstr "console"
-		IL_0092: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0097: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_009c: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_00a1: call bool [JavaScriptRuntime]JavaScriptRuntime.Array::isArray(object)
-		IL_00a6: box [System.Runtime]System.Boolean
-		IL_00ab: stloc.2
-		IL_00ac: ldstr "log"
-		IL_00b1: ldloc.2
-		IL_00b2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00b7: pop
-		IL_00b8: ldstr "console"
-		IL_00bd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_00c2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00c7: ldnull
-		IL_00c8: call bool [JavaScriptRuntime]JavaScriptRuntime.Array::isArray(object)
-		IL_00cd: box [System.Runtime]System.Boolean
-		IL_00d2: stloc.2
-		IL_00d3: ldstr "log"
-		IL_00d8: ldloc.2
-		IL_00d9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00de: pop
-		IL_00df: ldstr "console"
-		IL_00e4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_00e9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00ee: ldc.i4.0
-		IL_00ef: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
-		IL_00f4: call bool [JavaScriptRuntime]JavaScriptRuntime.Array::isArray(object)
-		IL_00f9: box [System.Runtime]System.Boolean
-		IL_00fe: stloc.2
-		IL_00ff: ldstr "log"
-		IL_0104: ldloc.2
-		IL_0105: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_010a: pop
-		IL_010b: ret
+		IL_003b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0040: stloc.2
+		IL_0041: ldloc.1
+		IL_0042: call bool [JavaScriptRuntime]JavaScriptRuntime.Array::isArray(object)
+		IL_0047: box [System.Runtime]System.Boolean
+		IL_004c: stloc.3
+		IL_004d: ldloc.2
+		IL_004e: ldloc.3
+		IL_004f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0054: pop
+		IL_0055: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_005a: stloc.2
+		IL_005b: ldstr "x"
+		IL_0060: call bool [JavaScriptRuntime]JavaScriptRuntime.Array::isArray(object)
+		IL_0065: box [System.Runtime]System.Boolean
+		IL_006a: stloc.3
+		IL_006b: ldloc.2
+		IL_006c: ldloc.3
+		IL_006d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0072: pop
+		IL_0073: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0078: stloc.2
+		IL_0079: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_007e: call bool [JavaScriptRuntime]JavaScriptRuntime.Array::isArray(object)
+		IL_0083: box [System.Runtime]System.Boolean
+		IL_0088: stloc.3
+		IL_0089: ldloc.2
+		IL_008a: ldloc.3
+		IL_008b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0090: pop
+		IL_0091: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0096: stloc.2
+		IL_0097: ldnull
+		IL_0098: call bool [JavaScriptRuntime]JavaScriptRuntime.Array::isArray(object)
+		IL_009d: box [System.Runtime]System.Boolean
+		IL_00a2: stloc.3
+		IL_00a3: ldloc.2
+		IL_00a4: ldloc.3
+		IL_00a5: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00aa: pop
+		IL_00ab: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00b0: stloc.2
+		IL_00b1: ldc.i4.0
+		IL_00b2: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
+		IL_00b7: call bool [JavaScriptRuntime]JavaScriptRuntime.Array::isArray(object)
+		IL_00bc: box [System.Runtime]System.Boolean
+		IL_00c1: stloc.3
+		IL_00c2: ldloc.2
+		IL_00c3: ldloc.3
+		IL_00c4: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00c9: pop
+		IL_00ca: ret
 	} // end of method Array_IsArray_Basic::__js_module_init__
 
 } // end of class Modules.Array_IsArray_Basic

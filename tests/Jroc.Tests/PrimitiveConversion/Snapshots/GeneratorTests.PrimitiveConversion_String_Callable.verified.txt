@@ -38,98 +38,85 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 276 (0x114)
+		// Code size: 203 (0xcb)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.PrimitiveConversion_String_Callable/Scope,
-			[1] string,
-			[2] object
+			[1] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+			[2] string
 		)
 
 		IL_0000: newobj instance void Modules.PrimitiveConversion_String_Callable/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: nop
-		IL_0007: ldstr "console"
-		IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0011: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0016: ldstr "String():<"
-		IL_001b: ldstr ""
-		IL_0020: call string [System.Runtime]System.String::Concat(string, string)
-		IL_0025: ldstr ">"
-		IL_002a: call string [System.Runtime]System.String::Concat(string, string)
-		IL_002f: stloc.1
-		IL_0030: ldstr "log"
-		IL_0035: ldloc.1
-		IL_0036: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_003b: pop
-		IL_003c: ldstr "console"
-		IL_0041: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0046: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_004b: stloc.2
-		IL_004c: ldc.r8 123
-		IL_0055: box [System.Runtime]System.Double
-		IL_005a: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-		IL_005f: stloc.1
-		IL_0060: ldstr "String(123):"
-		IL_0065: ldloc.1
-		IL_0066: call string [System.Runtime]System.String::Concat(string, string)
-		IL_006b: stloc.1
-		IL_006c: ldloc.2
-		IL_006d: ldstr "log"
-		IL_0072: ldloc.1
-		IL_0073: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0078: pop
-		IL_0079: ldstr "console"
-		IL_007e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0083: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0088: stloc.2
-		IL_0089: ldc.i4.1
-		IL_008a: box [System.Runtime]System.Boolean
+		IL_0007: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_000c: stloc.1
+		IL_000d: ldstr "String():<"
+		IL_0012: ldstr ""
+		IL_0017: call string [System.Runtime]System.String::Concat(string, string)
+		IL_001c: ldstr ">"
+		IL_0021: call string [System.Runtime]System.String::Concat(string, string)
+		IL_0026: stloc.2
+		IL_0027: ldloc.1
+		IL_0028: ldloc.2
+		IL_0029: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_002e: pop
+		IL_002f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0034: stloc.1
+		IL_0035: ldc.r8 123
+		IL_003e: box [System.Runtime]System.Double
+		IL_0043: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+		IL_0048: stloc.2
+		IL_0049: ldstr "String(123):"
+		IL_004e: ldloc.2
+		IL_004f: call string [System.Runtime]System.String::Concat(string, string)
+		IL_0054: stloc.2
+		IL_0055: ldloc.1
+		IL_0056: ldloc.2
+		IL_0057: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_005c: pop
+		IL_005d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0062: stloc.1
+		IL_0063: ldc.i4.1
+		IL_0064: box [System.Runtime]System.Boolean
+		IL_0069: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+		IL_006e: stloc.2
+		IL_006f: ldstr "String(true):"
+		IL_0074: ldloc.2
+		IL_0075: call string [System.Runtime]System.String::Concat(string, string)
+		IL_007a: stloc.2
+		IL_007b: ldloc.1
+		IL_007c: ldloc.2
+		IL_007d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0082: pop
+		IL_0083: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0088: stloc.1
+		IL_0089: ldc.i4.0
+		IL_008a: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
 		IL_008f: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-		IL_0094: stloc.1
-		IL_0095: ldstr "String(true):"
-		IL_009a: ldloc.1
+		IL_0094: stloc.2
+		IL_0095: ldstr "String(null):"
+		IL_009a: ldloc.2
 		IL_009b: call string [System.Runtime]System.String::Concat(string, string)
-		IL_00a0: stloc.1
-		IL_00a1: ldloc.2
-		IL_00a2: ldstr "log"
-		IL_00a7: ldloc.1
-		IL_00a8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00ad: pop
-		IL_00ae: ldstr "console"
-		IL_00b3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_00b8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00bd: stloc.2
-		IL_00be: ldc.i4.0
-		IL_00bf: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
-		IL_00c4: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-		IL_00c9: stloc.1
-		IL_00ca: ldstr "String(null):"
-		IL_00cf: ldloc.1
-		IL_00d0: call string [System.Runtime]System.String::Concat(string, string)
-		IL_00d5: stloc.1
-		IL_00d6: ldloc.2
-		IL_00d7: ldstr "log"
-		IL_00dc: ldloc.1
-		IL_00dd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00e2: pop
-		IL_00e3: ldstr "console"
-		IL_00e8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_00ed: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00f2: stloc.2
-		IL_00f3: ldnull
-		IL_00f4: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-		IL_00f9: stloc.1
-		IL_00fa: ldstr "String(undefined):"
-		IL_00ff: ldloc.1
-		IL_0100: call string [System.Runtime]System.String::Concat(string, string)
-		IL_0105: stloc.1
-		IL_0106: ldloc.2
-		IL_0107: ldstr "log"
-		IL_010c: ldloc.1
-		IL_010d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0112: pop
-		IL_0113: ret
+		IL_00a0: stloc.2
+		IL_00a1: ldloc.1
+		IL_00a2: ldloc.2
+		IL_00a3: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00a8: pop
+		IL_00a9: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00ae: stloc.1
+		IL_00af: ldnull
+		IL_00b0: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+		IL_00b5: stloc.2
+		IL_00b6: ldstr "String(undefined):"
+		IL_00bb: ldloc.2
+		IL_00bc: call string [System.Runtime]System.String::Concat(string, string)
+		IL_00c1: stloc.2
+		IL_00c2: ldloc.1
+		IL_00c3: ldloc.2
+		IL_00c4: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00c9: pop
+		IL_00ca: ret
 	} // end of method PrimitiveConversion_String_Callable::__js_module_init__
 
 } // end of class Modules.PrimitiveConversion_String_Callable

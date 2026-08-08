@@ -369,7 +369,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 474 (0x1da)
+		// Code size: 429 (0x1ad)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Classes_Constructor_ReturnObjectOverridesThis/Scope,
@@ -379,7 +379,7 @@
 			[4] object[],
 			[5] class [System.Runtime]System.Type,
 			[6] object,
-			[7] object
+			[7] class [JavaScriptRuntime]JavaScriptRuntime.Console
 		)
 
 		IL_0000: newobj instance void Modules.Classes_Constructor_ReturnObjectOverridesThis/Scope::.ctor()
@@ -460,79 +460,70 @@
 
 		IL_00e3: pop
 
-		IL_00e4: ldstr "console"
-		IL_00e9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_00ee: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00f3: stloc.s 6
-		IL_00f5: ldloc.3
-		IL_00f6: ldstr "a"
-		IL_00fb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0100: stloc.s 7
-		IL_0102: ldloc.s 6
-		IL_0104: ldstr "log"
-		IL_0109: ldloc.s 7
-		IL_010b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0110: pop
-		IL_0111: ldstr "console"
-		IL_0116: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_011b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0120: stloc.s 7
-		IL_0122: ldloc.3
-		IL_0123: ldstr "b"
-		IL_0128: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_012d: stloc.s 6
-		IL_012f: ldloc.s 7
-		IL_0131: ldstr "log"
-		IL_0136: ldloc.s 6
-		IL_0138: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_013d: pop
-		IL_013e: ldc.i4.0
-		IL_013f: newarr [System.Runtime]System.Object
-		IL_0144: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
-		IL_0149: newobj instance void Modules.Classes_Constructor_ReturnObjectOverridesThis/B::.ctor()
-		IL_014e: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
-		IL_0153: stloc.s 6
-		IL_0155: ldloc.s 6
-		IL_0157: ldtoken Modules.Classes_Constructor_ReturnObjectOverridesThis/B
-		IL_015c: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_0161: ldstr "prototype"
-		IL_0166: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
-		IL_016b: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
-		IL_0170: ldloc.s 6
-		IL_0172: castclass Modules.Classes_Constructor_ReturnObjectOverridesThis/B
-		IL_0177: ldfld object Modules.Classes_Constructor_ReturnObjectOverridesThis/B::__jroc_ctorReturn
-		IL_017c: dup
-		IL_017d: brfalse IL_0194
+		IL_00e4: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00e9: stloc.s 7
+		IL_00eb: ldloc.3
+		IL_00ec: ldstr "a"
+		IL_00f1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00f6: stloc.s 6
+		IL_00f8: ldloc.s 7
+		IL_00fa: ldloc.s 6
+		IL_00fc: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0101: pop
+		IL_0102: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0107: stloc.s 7
+		IL_0109: ldloc.3
+		IL_010a: ldstr "b"
+		IL_010f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0114: stloc.s 6
+		IL_0116: ldloc.s 7
+		IL_0118: ldloc.s 6
+		IL_011a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_011f: pop
+		IL_0120: ldc.i4.0
+		IL_0121: newarr [System.Runtime]System.Object
+		IL_0126: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
+		IL_012b: newobj instance void Modules.Classes_Constructor_ReturnObjectOverridesThis/B::.ctor()
+		IL_0130: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
+		IL_0135: stloc.s 6
+		IL_0137: ldloc.s 6
+		IL_0139: ldtoken Modules.Classes_Constructor_ReturnObjectOverridesThis/B
+		IL_013e: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_0143: ldstr "prototype"
+		IL_0148: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
+		IL_014d: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
+		IL_0152: ldloc.s 6
+		IL_0154: castclass Modules.Classes_Constructor_ReturnObjectOverridesThis/B
+		IL_0159: ldfld object Modules.Classes_Constructor_ReturnObjectOverridesThis/B::__jroc_ctorReturn
+		IL_015e: dup
+		IL_015f: brfalse IL_0176
 
-		IL_0182: dup
-		IL_0183: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::IsConstructorReturnOverride(object)
-		IL_0188: brfalse IL_0194
+		IL_0164: dup
+		IL_0165: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::IsConstructorReturnOverride(object)
+		IL_016a: brfalse IL_0176
 
-		IL_018d: stloc.s 6
-		IL_018f: br IL_0195
+		IL_016f: stloc.s 6
+		IL_0171: br IL_0177
 
-		IL_0194: pop
+		IL_0176: pop
 
-		IL_0195: ldloc.0
-		IL_0196: ldloc.s 6
-		IL_0198: stfld object Modules.Classes_Constructor_ReturnObjectOverridesThis/Scope::b
-		IL_019d: ldstr "console"
-		IL_01a2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_01a7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_01ac: stloc.s 6
-		IL_01ae: ldloc.0
-		IL_01af: ldfld object Modules.Classes_Constructor_ReturnObjectOverridesThis/Scope::b
-		IL_01b4: ldstr "Cannot access 'b' before initialization"
-		IL_01b9: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
-		IL_01be: ldstr "a"
-		IL_01c3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_01c8: stloc.s 7
-		IL_01ca: ldloc.s 6
-		IL_01cc: ldstr "log"
-		IL_01d1: ldloc.s 7
-		IL_01d3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_01d8: pop
-		IL_01d9: ret
+		IL_0177: ldloc.0
+		IL_0178: ldloc.s 6
+		IL_017a: stfld object Modules.Classes_Constructor_ReturnObjectOverridesThis/Scope::b
+		IL_017f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0184: stloc.s 7
+		IL_0186: ldloc.0
+		IL_0187: ldfld object Modules.Classes_Constructor_ReturnObjectOverridesThis/Scope::b
+		IL_018c: ldstr "Cannot access 'b' before initialization"
+		IL_0191: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+		IL_0196: ldstr "a"
+		IL_019b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_01a0: stloc.s 6
+		IL_01a2: ldloc.s 7
+		IL_01a4: ldloc.s 6
+		IL_01a6: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_01ab: pop
+		IL_01ac: ret
 	} // end of method Classes_Constructor_ReturnObjectOverridesThis::__js_module_init__
 
 } // end of class Modules.Classes_Constructor_ReturnObjectOverridesThis

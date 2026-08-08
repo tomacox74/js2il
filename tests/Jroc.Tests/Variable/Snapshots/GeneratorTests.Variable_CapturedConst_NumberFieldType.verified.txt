@@ -199,13 +199,13 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 106 (0x6a)
+		// Code size: 91 (0x5b)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Variable_CapturedConst_NumberFieldType/Scope,
 			[1] class Modules.Variable_CapturedConst_NumberFieldType/run/FunctionObject_FunctionDeclaration_0E8E929B_run,
 			[2] object[],
-			[3] object,
+			[3] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 			[4] object
 		)
 
@@ -235,20 +235,17 @@
 		IL_002f: ldc.r8 1000
 		IL_0038: stfld float64 Modules.Variable_CapturedConst_NumberFieldType/Scope::NOW_UNITS_PER_SECOND
 		IL_003d: nop
-		IL_003e: ldstr "console"
-		IL_0043: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0048: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_004d: stloc.3
-		IL_004e: ldloc.1
-		IL_004f: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0054: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
-		IL_0059: stloc.s 4
-		IL_005b: ldloc.3
-		IL_005c: ldstr "log"
-		IL_0061: ldloc.s 4
-		IL_0063: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0068: pop
-		IL_0069: ret
+		IL_003e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0043: stloc.3
+		IL_0044: ldloc.1
+		IL_0045: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_004a: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
+		IL_004f: stloc.s 4
+		IL_0051: ldloc.3
+		IL_0052: ldloc.s 4
+		IL_0054: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0059: pop
+		IL_005a: ret
 	} // end of method Variable_CapturedConst_NumberFieldType::__js_module_init__
 
 } // end of class Modules.Variable_CapturedConst_NumberFieldType

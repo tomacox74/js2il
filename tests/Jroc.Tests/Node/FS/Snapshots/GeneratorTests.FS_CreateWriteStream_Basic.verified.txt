@@ -109,54 +109,51 @@
 				74 61 54 6f 6b 65 6e 06 00 00 02
 			)
 			// Header size: 12
-			// Code size: 103 (0x67)
+			// Code size: 88 (0x58)
 			.maxstack 8
 			.locals init (
-				[0] object,
+				[0] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 				[1] class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule,
 				[2] object,
 				[3] class [JavaScriptRuntime]JavaScriptRuntime.JsObject
 			)
 
-			IL_0000: ldstr "console"
-			IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_000a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_000f: stloc.0
-			IL_0010: ldarg.0
-			IL_0011: ldfld class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule Modules.FS_CreateWriteStream_Basic/Scope::fs
-			IL_0016: stloc.1
-			IL_0017: ldarg.0
-			IL_0018: ldfld object Modules.FS_CreateWriteStream_Basic/Scope::file
-			IL_001d: stloc.2
-			IL_001e: ldloc.1
-			IL_001f: ldloc.2
-			IL_0020: ldstr "utf8"
-			IL_0025: callvirt instance object [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule::readFileSync(object, object)
-			IL_002a: stloc.2
-			IL_002b: ldloc.0
-			IL_002c: ldstr "log"
-			IL_0031: ldstr "FileText:"
-			IL_0036: ldloc.2
-			IL_0037: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-			IL_003c: pop
-			IL_003d: ldarg.0
-			IL_003e: ldfld class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule Modules.FS_CreateWriteStream_Basic/Scope::fs
-			IL_0043: stloc.1
-			IL_0044: ldarg.0
-			IL_0045: ldfld object Modules.FS_CreateWriteStream_Basic/Scope::file
-			IL_004a: stloc.2
-			IL_004b: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-			IL_0050: dup
-			IL_0051: ldstr "force"
-			IL_0056: ldc.i4.1
-			IL_0057: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-			IL_005c: stloc.3
-			IL_005d: ldloc.1
-			IL_005e: ldloc.2
-			IL_005f: ldloc.3
-			IL_0060: callvirt instance void [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule::rmSync(object, object)
-			IL_0065: ldnull
-			IL_0066: ret
+			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0005: stloc.0
+			IL_0006: ldarg.0
+			IL_0007: ldfld class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule Modules.FS_CreateWriteStream_Basic/Scope::fs
+			IL_000c: stloc.1
+			IL_000d: ldarg.0
+			IL_000e: ldfld object Modules.FS_CreateWriteStream_Basic/Scope::file
+			IL_0013: stloc.2
+			IL_0014: ldloc.1
+			IL_0015: ldloc.2
+			IL_0016: ldstr "utf8"
+			IL_001b: callvirt instance object [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule::readFileSync(object, object)
+			IL_0020: stloc.2
+			IL_0021: ldloc.0
+			IL_0022: ldstr "FileText:"
+			IL_0027: ldloc.2
+			IL_0028: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_002d: pop
+			IL_002e: ldarg.0
+			IL_002f: ldfld class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule Modules.FS_CreateWriteStream_Basic/Scope::fs
+			IL_0034: stloc.1
+			IL_0035: ldarg.0
+			IL_0036: ldfld object Modules.FS_CreateWriteStream_Basic/Scope::file
+			IL_003b: stloc.2
+			IL_003c: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+			IL_0041: dup
+			IL_0042: ldstr "force"
+			IL_0047: ldc.i4.1
+			IL_0048: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+			IL_004d: stloc.3
+			IL_004e: ldloc.1
+			IL_004f: ldloc.2
+			IL_0050: ldloc.3
+			IL_0051: callvirt instance void [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule::rmSync(object, object)
+			IL_0056: ldnull
+			IL_0057: ret
 		} // end of method ArrowFunction_L13C21::__js_call__
 
 	} // end of class ArrowFunction_L13C21
@@ -249,21 +246,23 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Header size: 1
-			// Code size: 39 (0x27)
+			// Header size: 12
+			// Code size: 26 (0x1a)
 			.maxstack 8
+			.locals init (
+				[0] class [JavaScriptRuntime]JavaScriptRuntime.Console
+			)
 
-			IL_0000: ldstr "console"
-			IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_000a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_000f: ldstr "log"
-			IL_0014: ldstr "Closed:"
-			IL_0019: ldc.i4.1
-			IL_001a: box [System.Runtime]System.Boolean
-			IL_001f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-			IL_0024: pop
-			IL_0025: ldnull
-			IL_0026: ret
+			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0005: stloc.0
+			IL_0006: ldloc.0
+			IL_0007: ldstr "Closed:"
+			IL_000c: ldc.i4.1
+			IL_000d: box [System.Runtime]System.Boolean
+			IL_0012: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_0017: pop
+			IL_0018: ldnull
+			IL_0019: ret
 		} // end of method ArrowFunction_L18C20::__js_call__
 
 	} // end of class ArrowFunction_L18C20
@@ -381,10 +380,10 @@
 				74 61 54 6f 6b 65 6e 06 00 00 02
 			)
 			// Header size: 12
-			// Code size: 117 (0x75)
+			// Code size: 102 (0x66)
 			.maxstack 8
 			.locals init (
-				[0] object,
+				[0] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 				[1] bool,
 				[2] object,
 				[3] object,
@@ -393,51 +392,48 @@
 				[6] class [JavaScriptRuntime]JavaScriptRuntime.JsObject
 			)
 
-			IL_0000: ldstr "console"
-			IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_000a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_000f: stloc.0
-			IL_0010: ldarg.2
-			IL_0011: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-			IL_0016: stloc.1
-			IL_0017: ldloc.1
-			IL_0018: brfalse IL_0031
+			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0005: stloc.0
+			IL_0006: ldarg.2
+			IL_0007: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+			IL_000c: stloc.1
+			IL_000d: ldloc.1
+			IL_000e: brfalse IL_0027
 
-			IL_001d: ldarg.2
-			IL_001e: ldstr "message"
-			IL_0023: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0028: stloc.2
-			IL_0029: ldloc.2
-			IL_002a: stloc.s 4
-			IL_002c: br IL_0034
+			IL_0013: ldarg.2
+			IL_0014: ldstr "message"
+			IL_0019: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_001e: stloc.2
+			IL_001f: ldloc.2
+			IL_0020: stloc.s 4
+			IL_0022: br IL_002a
 
-			IL_0031: ldarg.2
-			IL_0032: stloc.s 4
+			IL_0027: ldarg.2
+			IL_0028: stloc.s 4
 
-			IL_0034: ldloc.0
-			IL_0035: ldstr "log"
-			IL_003a: ldstr "Error:"
-			IL_003f: ldloc.s 4
-			IL_0041: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-			IL_0046: pop
-			IL_0047: ldarg.0
-			IL_0048: ldfld class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule Modules.FS_CreateWriteStream_Basic/Scope::fs
-			IL_004d: stloc.s 5
-			IL_004f: ldarg.0
-			IL_0050: ldfld object Modules.FS_CreateWriteStream_Basic/Scope::file
-			IL_0055: stloc.0
-			IL_0056: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-			IL_005b: dup
-			IL_005c: ldstr "force"
-			IL_0061: ldc.i4.1
-			IL_0062: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-			IL_0067: stloc.s 6
-			IL_0069: ldloc.s 5
-			IL_006b: ldloc.0
-			IL_006c: ldloc.s 6
-			IL_006e: callvirt instance void [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule::rmSync(object, object)
-			IL_0073: ldnull
-			IL_0074: ret
+			IL_002a: ldloc.0
+			IL_002b: ldstr "Error:"
+			IL_0030: ldloc.s 4
+			IL_0032: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_0037: pop
+			IL_0038: ldarg.0
+			IL_0039: ldfld class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule Modules.FS_CreateWriteStream_Basic/Scope::fs
+			IL_003e: stloc.s 5
+			IL_0040: ldarg.0
+			IL_0041: ldfld object Modules.FS_CreateWriteStream_Basic/Scope::file
+			IL_0046: stloc.2
+			IL_0047: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+			IL_004c: dup
+			IL_004d: ldstr "force"
+			IL_0052: ldc.i4.1
+			IL_0053: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+			IL_0058: stloc.s 6
+			IL_005a: ldloc.s 5
+			IL_005c: ldloc.2
+			IL_005d: ldloc.s 6
+			IL_005f: callvirt instance void [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule::rmSync(object, object)
+			IL_0064: ldnull
+			IL_0065: ret
 		} // end of method ArrowFunction_L22C20::__js_call__
 
 	} // end of class ArrowFunction_L22C20

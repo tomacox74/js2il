@@ -121,98 +121,137 @@ namespace Jroc.SymbolTables
             };
         }
 
-        private static bool IsKnownGlobalThisMathExpression(Node? node)
+        private static readonly string[] StabilityTrackedGlobalObjects = ["Math", "console"];
+
+        private static bool IsKnownGlobalThisObjectExpression(Node? node, string globalName)
         {
             return node is MemberExpression member
                 && IsIdentifierNamed(member.Object, "globalThis")
-                && ((!member.Computed && IsIdentifierNamed(member.Property, "Math"))
-                    || (member.Computed && IsStringLiteral(member.Property, "Math")));
+                && ((!member.Computed && IsIdentifierNamed(member.Property, globalName))
+                    || (member.Computed && IsStringLiteral(member.Property, globalName)));
         }
 
-        private static bool IsKnownGlobalMathObjectExpression(Node? node)
-            => IsIdentifierNamed(node, "Math") || IsKnownGlobalThisMathExpression(node);
+        private static bool IsKnownGlobalObjectExpression(Node? node, string globalName)
+            => IsIdentifierNamed(node, globalName) || IsKnownGlobalThisObjectExpression(node, globalName);
 
-        private static bool IsKnownGlobalMathMemberExpression(Node? node)
-            => node is MemberExpression member && IsKnownGlobalMathObjectExpression(member.Object);
+        private static bool IsKnownGlobalObjectMemberExpression(Node? node, string globalName)
+            => node is MemberExpression member && IsKnownGlobalObjectExpression(member.Object, globalName);
 
-        private static bool IsGlobalMathMutationTarget(Node? node)
-            => IsKnownGlobalMathObjectExpression(node) || IsKnownGlobalMathMemberExpression(node);
+        private static bool IsGlobalObjectMutationTarget(Node? node, string globalName)
+            => IsKnownGlobalObjectExpression(node, globalName) || IsKnownGlobalObjectMemberExpression(node, globalName);
 
-        private static bool ExpressionExposesGlobalMathObject(Node? node)
+        private static bool ExpressionExposesGlobalObject(Node? node, string globalName)
         {
             switch (node)
             {
                 case null:
                     return false;
                 case ParenthesizedExpression parenthesized:
-                    return ExpressionExposesGlobalMathObject(parenthesized.Expression);
+                    return ExpressionExposesGlobalObject(parenthesized.Expression, globalName);
                 case Identifier identifier:
-                    return string.Equals(identifier.Name, "Math", StringComparison.Ordinal);
+                    return string.Equals(identifier.Name, globalName, StringComparison.Ordinal);
                 case MemberExpression member:
-                    if (IsKnownGlobalThisMathExpression(member))
+                    if (IsKnownGlobalThisObjectExpression(member, globalName))
                     {
                         return true;
                     }
 
-                    if (IsKnownGlobalMathMemberExpression(member))
+                    if (IsKnownGlobalObjectMemberExpression(member, globalName))
                     {
-                        return member.Computed && ExpressionExposesGlobalMathObject(member.Property);
+                        return member.Computed && ExpressionExposesGlobalObject(member.Property, globalName);
                     }
 
-                    return ExpressionExposesGlobalMathObject(member.Object)
-                        || (member.Computed && ExpressionExposesGlobalMathObject(member.Property));
+                    return ExpressionExposesGlobalObject(member.Object, globalName)
+                        || (member.Computed && ExpressionExposesGlobalObject(member.Property, globalName));
                 case CallExpression call:
-                    return ExpressionExposesGlobalMathObject(call.Callee)
-                        || call.Arguments.Any(arg => ExpressionExposesGlobalMathObject(arg as Node));
+                    return ExpressionExposesGlobalObject(call.Callee, globalName)
+                        || call.Arguments.Any(arg => ExpressionExposesGlobalObject(arg as Node, globalName));
                 case NewExpression newExpression:
-                    return ExpressionExposesGlobalMathObject(newExpression.Callee)
-                        || newExpression.Arguments.Any(arg => ExpressionExposesGlobalMathObject(arg as Node));
+                    return ExpressionExposesGlobalObject(newExpression.Callee, globalName)
+                        || newExpression.Arguments.Any(arg => ExpressionExposesGlobalObject(arg as Node, globalName));
                 case AssignmentExpression assignment:
-                    return ExpressionExposesGlobalMathObject(assignment.Right);
+                    return ExpressionExposesGlobalObject(assignment.Right, globalName);
                 case BinaryExpression binary:
-                    return ExpressionExposesGlobalMathObject(binary.Left)
-                        || ExpressionExposesGlobalMathObject(binary.Right);
+                    return ExpressionExposesGlobalObject(binary.Left, globalName)
+                        || ExpressionExposesGlobalObject(binary.Right, globalName);
                 case ConditionalExpression conditional:
-                    return ExpressionExposesGlobalMathObject(conditional.Test)
-                        || ExpressionExposesGlobalMathObject(conditional.Consequent)
-                        || ExpressionExposesGlobalMathObject(conditional.Alternate);
+                    return ExpressionExposesGlobalObject(conditional.Test, globalName)
+                        || ExpressionExposesGlobalObject(conditional.Consequent, globalName)
+                        || ExpressionExposesGlobalObject(conditional.Alternate, globalName);
                 case UnaryExpression unary:
-                    return ExpressionExposesGlobalMathObject(unary.Argument);
+                    return ExpressionExposesGlobalObject(unary.Argument, globalName);
                 case AwaitExpression awaitExpression:
-                    return ExpressionExposesGlobalMathObject(awaitExpression.Argument);
+                    return ExpressionExposesGlobalObject(awaitExpression.Argument, globalName);
                 case YieldExpression yieldExpression:
-                    return ExpressionExposesGlobalMathObject(yieldExpression.Argument);
+                    return ExpressionExposesGlobalObject(yieldExpression.Argument, globalName);
                 case SequenceExpression sequence:
-                    return sequence.Expressions.Any(ExpressionExposesGlobalMathObject);
+                    return sequence.Expressions.Any(expression => ExpressionExposesGlobalObject(expression, globalName));
                 case SpreadElement spread:
-                    return ExpressionExposesGlobalMathObject(spread.Argument);
+                    return ExpressionExposesGlobalObject(spread.Argument, globalName);
                 case ArrayExpression array:
-                    return array.Elements.Any(element => ExpressionExposesGlobalMathObject(element as Node));
+                    return array.Elements.Any(element => ExpressionExposesGlobalObject(element as Node, globalName));
                 case ObjectExpression objectExpression:
-                    return objectExpression.Properties.Any(prop => ExpressionExposesGlobalMathObject(prop as Node));
+                    return objectExpression.Properties.Any(prop => ExpressionExposesGlobalObject(prop as Node, globalName));
                 case Property property:
-                    return (property.Computed && ExpressionExposesGlobalMathObject(property.Key as Node))
-                        || ExpressionExposesGlobalMathObject(property.Value as Node);
+                    return (property.Computed && ExpressionExposesGlobalObject(property.Key as Node, globalName))
+                        || ExpressionExposesGlobalObject(property.Value as Node, globalName);
                 default:
                     return false;
             }
         }
 
-        private static bool CallMayMutateOrExposeGlobalMath(CallExpression callExpr)
+        private static bool CallMayMutateOrExposeGlobalObject(CallExpression callExpr, string globalName)
         {
-            if (callExpr.Arguments.Any(arg => ExpressionExposesGlobalMathObject(arg as Node)))
+            if (callExpr.Arguments.Any(arg => ExpressionExposesGlobalObject(arg as Node, globalName)))
             {
                 return true;
             }
 
             if (callExpr.Arguments.Count >= 2
                 && IsIdentifierNamed(callExpr.Arguments[0] as Node, "globalThis")
-                && IsStringLiteral(callExpr.Arguments[1] as Node, "Math"))
+                && IsStringLiteral(callExpr.Arguments[1] as Node, globalName))
             {
                 return true;
             }
 
             return false;
+        }
+
+        private static void MarkExposedStabilityTrackedGlobalObjects(Scope scope, Node? expression)
+        {
+            foreach (var globalName in StabilityTrackedGlobalObjects)
+            {
+                if (ExpressionExposesGlobalObject(expression, globalName))
+                {
+                    MarkWritten(scope, globalName);
+                }
+            }
+        }
+
+        private static bool MarkStabilityTrackedGlobalObjectMutation(Scope scope, Node? target)
+        {
+            var marked = false;
+            foreach (var globalName in StabilityTrackedGlobalObjects)
+            {
+                if (IsGlobalObjectMutationTarget(target, globalName))
+                {
+                    MarkWritten(scope, globalName);
+                    marked = true;
+                }
+            }
+
+            return marked;
+        }
+
+        private static void MarkStabilityTrackedGlobalObjectsExposedByCall(Scope scope, CallExpression call)
+        {
+            foreach (var globalName in StabilityTrackedGlobalObjects)
+            {
+                if (CallMayMutateOrExposeGlobalObject(call, globalName))
+                {
+                    MarkWritten(scope, globalName);
+                }
+            }
         }
 
         private bool TryBuildDirectEvalLiteralScope(Scope globalScope, Scope currentScope, CallExpression callExpr)
@@ -1338,10 +1377,7 @@ namespace Jroc.SymbolTables
                             // Track assignment target for naming nested functions
                             if (decl.Init != null)
                             {
-                                if (ExpressionExposesGlobalMathObject(decl.Init))
-                                {
-                                    MarkWritten(currentScope, "Math");
-                                }
+                                MarkExposedStabilityTrackedGlobalObjects(currentScope, decl.Init);
 
                                 var previousTarget = _currentAssignmentTarget;
                                 _currentAssignmentTarget = id.Name;
@@ -1411,10 +1447,7 @@ namespace Jroc.SymbolTables
                             // Visit initializer expression to record any nested references
                             if (decl.Init != null)
                             {
-                                if (ExpressionExposesGlobalMathObject(decl.Init))
-                                {
-                                    MarkWritten(currentScope, "Math");
-                                }
+                                MarkExposedStabilityTrackedGlobalObjects(currentScope, decl.Init);
 
                                 var previousTarget = _currentAssignmentTarget;
                                 _currentAssignmentTarget = tempName;
@@ -1444,10 +1477,7 @@ namespace Jroc.SymbolTables
 
                             if (decl.Init != null)
                             {
-                                if (ExpressionExposesGlobalMathObject(decl.Init))
-                                {
-                                    MarkWritten(currentScope, "Math");
-                                }
+                                MarkExposedStabilityTrackedGlobalObjects(currentScope, decl.Init);
 
                                 BuildScopeRecursive(globalScope, decl.Init, currentScope);
                             }
@@ -1458,10 +1488,7 @@ namespace Jroc.SymbolTables
                         // Fallback: just visit the initializer if present
                         if (decl.Init != null)
                         {
-                            if (ExpressionExposesGlobalMathObject(decl.Init))
-                            {
-                                MarkWritten(currentScope, "Math");
-                            }
+                            MarkExposedStabilityTrackedGlobalObjects(currentScope, decl.Init);
 
                             BuildScopeRecursive(globalScope, decl.Init, currentScope);
                         }
@@ -1514,17 +1541,11 @@ namespace Jroc.SymbolTables
                     {
                         MarkWritten(currentScope, assignId.Name);
                     }
-                    else if (IsGlobalMathMutationTarget(assignExpr.Left))
+                    else
                     {
-                        // Math.* writes can replace built-in methods (e.g., Math.abs = fn).
-                        // Mark Math as written so intrinsic fast-paths can conservatively fall back
-                        // to normal dynamic property/call semantics.
-                        MarkWritten(currentScope, "Math");
+                        MarkStabilityTrackedGlobalObjectMutation(currentScope, assignExpr.Left);
                     }
-                    if (ExpressionExposesGlobalMathObject(assignExpr.Right))
-                    {
-                        MarkWritten(currentScope, "Math");
-                    }
+                    MarkExposedStabilityTrackedGlobalObjects(currentScope, assignExpr.Right);
                     BuildScopeRecursive(globalScope, assignExpr.Right, currentScope);
                     BuildScopeRecursive(globalScope, assignExpr.Left, currentScope);
                     break;
@@ -1533,17 +1554,16 @@ namespace Jroc.SymbolTables
                     {
                         MarkWritten(currentScope, updateId.Name);
                     }
-                    else if (IsGlobalMathMutationTarget(updateExpr.Argument))
+                    else
                     {
-                        MarkWritten(currentScope, "Math");
+                        MarkStabilityTrackedGlobalObjectMutation(currentScope, updateExpr.Argument);
                     }
                     BuildScopeRecursive(globalScope, updateExpr.Argument, currentScope);
                     break;
                 case UnaryExpression unaryExpr:
-                    if (unaryExpr.Operator == Acornima.Operator.Delete
-                        && IsGlobalMathMutationTarget(unaryExpr.Argument))
+                    if (unaryExpr.Operator == Acornima.Operator.Delete)
                     {
-                        MarkWritten(currentScope, "Math");
+                        MarkStabilityTrackedGlobalObjectMutation(currentScope, unaryExpr.Argument);
                     }
                     BuildScopeRecursive(globalScope, unaryExpr.Argument, currentScope);
                     break;
@@ -1672,10 +1692,7 @@ namespace Jroc.SymbolTables
                     else
                     {
                         // Arrow function with expression body
-                        if (ExpressionExposesGlobalMathObject(arrowFunc.Body))
-                        {
-                            MarkWritten(arrowScope, "Math");
-                        }
+                        MarkExposedStabilityTrackedGlobalObjects(arrowScope, arrowFunc.Body);
 
                         BuildScopeRecursive(globalScope, arrowFunc.Body, arrowScope);
                     }
@@ -1731,11 +1748,27 @@ namespace Jroc.SymbolTables
                     {
                         currentScope.UsesGlobalThisValue = true;
                     }
+
+                    if (string.Equals(id.Name, "globalThis", StringComparison.Ordinal))
+                    {
+                        // Any use of globalThis can escape a tracked object through an alias
+                        // (for example, `const g = globalThis; g.console.log = replacement`).
+                        // The source analysis deliberately deoptimizes rather than attempting
+                        // alias tracking across arbitrary runtime calls.
+                        foreach (var globalName in StabilityTrackedGlobalObjects)
+                        {
+                            MarkWritten(currentScope, globalName);
+                        }
+                    }
                     break;
                 case ThisExpression:
                     if (currentScope.Kind == ScopeKind.Global)
                     {
                         currentScope.UsesGlobalThisValue = true;
+                        foreach (var globalName in StabilityTrackedGlobalObjects)
+                        {
+                            MarkWritten(currentScope, globalName);
+                        }
                     }
                     break;
                 case CallExpression callExpr:
@@ -1744,10 +1777,7 @@ namespace Jroc.SymbolTables
                         break;
                     }
 
-                    if (CallMayMutateOrExposeGlobalMath(callExpr))
-                    {
-                        MarkWritten(currentScope, "Math");
-                    }
+                    MarkStabilityTrackedGlobalObjectsExposedByCall(currentScope, callExpr);
 
                     if (callExpr.Callee is Identifier callCalleeId)
                     {
@@ -1762,10 +1792,7 @@ namespace Jroc.SymbolTables
                     }
                     break;
                 case ReturnStatement returnStmt:
-                    if (ExpressionExposesGlobalMathObject(returnStmt.Argument))
-                    {
-                        MarkWritten(currentScope, "Math");
-                    }
+                    MarkExposedStabilityTrackedGlobalObjects(currentScope, returnStmt.Argument);
 
                     if (returnStmt.Argument != null)
                     {
@@ -1773,9 +1800,9 @@ namespace Jroc.SymbolTables
                     }
                     break;
                 case NewExpression newExpr:
-                    if (newExpr.Arguments.Any(arg => ExpressionExposesGlobalMathObject(arg as Node)))
+                    foreach (var argument in newExpr.Arguments)
                     {
-                        MarkWritten(currentScope, "Math");
+                        MarkExposedStabilityTrackedGlobalObjects(currentScope, argument as Node);
                     }
 
                     if (newExpr.Callee is Identifier newCalleeId)
@@ -1961,6 +1988,7 @@ namespace Jroc.SymbolTables
                     }
                     break;
                 case WithStatement withStmt:
+                    MarkExposedStabilityTrackedGlobalObjects(currentScope, withStmt.Object);
                     BuildScopeRecursive(globalScope, withStmt.Object, currentScope);
                     _activeWithDepth++;
                     try

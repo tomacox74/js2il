@@ -38,12 +38,12 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 79 (0x4f)
+		// Code size: 64 (0x40)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.String_Replace_Regex_Global/Scope,
 			[1] string,
-			[2] object,
+			[2] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 			[3] class [JavaScriptRuntime]JavaScriptRuntime.RegExp,
 			[4] object
 		)
@@ -53,26 +53,23 @@
 		IL_0006: nop
 		IL_0007: ldstr "abbabb"
 		IL_000c: stloc.1
-		IL_000d: ldstr "console"
-		IL_0012: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0017: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_001c: stloc.2
-		IL_001d: ldstr "b"
-		IL_0022: ldstr "g"
-		IL_0027: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.RegExp::.ctor(object, object)
-		IL_002c: stloc.3
-		IL_002d: ldloc.1
-		IL_002e: ldstr "replace"
-		IL_0033: ldloc.3
-		IL_0034: ldstr "x"
-		IL_0039: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_003e: stloc.s 4
-		IL_0040: ldloc.2
-		IL_0041: ldstr "log"
-		IL_0046: ldloc.s 4
-		IL_0048: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_004d: pop
-		IL_004e: ret
+		IL_000d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0012: stloc.2
+		IL_0013: ldstr "b"
+		IL_0018: ldstr "g"
+		IL_001d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.RegExp::.ctor(object, object)
+		IL_0022: stloc.3
+		IL_0023: ldloc.1
+		IL_0024: ldstr "replace"
+		IL_0029: ldloc.3
+		IL_002a: ldstr "x"
+		IL_002f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_0034: stloc.s 4
+		IL_0036: ldloc.2
+		IL_0037: ldloc.s 4
+		IL_0039: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_003e: pop
+		IL_003f: ret
 	} // end of method String_Replace_Regex_Global::__js_module_init__
 
 } // end of class Modules.String_Replace_Regex_Global

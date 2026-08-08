@@ -305,40 +305,39 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 116 (0x74)
+			// Code size: 90 (0x5a)
 			.maxstack 8
 			.locals init (
-				[0] object
+				[0] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+				[1] object
 			)
 
-			IL_0000: ldstr "console"
-			IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_000a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_000f: ldarg.0
-			IL_0010: ldc.r8 2
-			IL_0019: ldc.r8 3
-			IL_0022: callvirt instance float64 Modules.Classes_ClassMethod_ParameterTypeInference_DirectThis_Number/Accumulator::'add'(float64, float64)
-			IL_0027: box [System.Runtime]System.Double
-			IL_002c: stloc.0
-			IL_002d: ldstr "log"
-			IL_0032: ldloc.0
-			IL_0033: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_0038: pop
-			IL_0039: ldstr "console"
-			IL_003e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_0043: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0048: ldarg.0
-			IL_0049: ldc.r8 10
-			IL_0052: ldc.r8 20
-			IL_005b: callvirt instance float64 Modules.Classes_ClassMethod_ParameterTypeInference_DirectThis_Number/Accumulator::'add'(float64, float64)
-			IL_0060: box [System.Runtime]System.Double
-			IL_0065: stloc.0
-			IL_0066: ldstr "log"
-			IL_006b: ldloc.0
-			IL_006c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_0071: pop
-			IL_0072: ldnull
-			IL_0073: ret
+			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0005: stloc.0
+			IL_0006: ldarg.0
+			IL_0007: ldc.r8 2
+			IL_0010: ldc.r8 3
+			IL_0019: callvirt instance float64 Modules.Classes_ClassMethod_ParameterTypeInference_DirectThis_Number/Accumulator::'add'(float64, float64)
+			IL_001e: box [System.Runtime]System.Double
+			IL_0023: stloc.1
+			IL_0024: ldloc.0
+			IL_0025: ldloc.1
+			IL_0026: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_002b: pop
+			IL_002c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0031: stloc.0
+			IL_0032: ldarg.0
+			IL_0033: ldc.r8 10
+			IL_003c: ldc.r8 20
+			IL_0045: callvirt instance float64 Modules.Classes_ClassMethod_ParameterTypeInference_DirectThis_Number/Accumulator::'add'(float64, float64)
+			IL_004a: box [System.Runtime]System.Double
+			IL_004f: stloc.1
+			IL_0050: ldloc.0
+			IL_0051: ldloc.1
+			IL_0052: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0057: pop
+			IL_0058: ldnull
+			IL_0059: ret
 		} // end of method Accumulator::run
 
 		.method public hidebysig 

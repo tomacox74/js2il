@@ -326,13 +326,14 @@
 					01 00 02 00 00 00 00 00
 				)
 				// Header size: 12
-				// Code size: 127 (0x7f)
+				// Code size: 116 (0x74)
 				.maxstack 8
 				.locals init (
 					[0] object,
 					[1] object,
 					[2] object,
-					[3] class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+					[3] class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject,
+					[4] class [JavaScriptRuntime]JavaScriptRuntime.Console
 				)
 
 				IL_0000: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentCallee()
@@ -344,7 +345,7 @@
 				IL_0016: stloc.1
 				// loop start (head: IL_0017)
 					IL_0017: ldc.i4.1
-					IL_0018: brfalse IL_007d
+					IL_0018: brfalse IL_0072
 
 					IL_001d: ldarg.0
 					IL_001e: ldc.i4.1
@@ -377,20 +378,19 @@
 					IL_0055: stloc.2
 					IL_0056: ldloc.2
 					IL_0057: stloc.1
-					IL_0058: ldstr "console"
-					IL_005d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-					IL_0062: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-					IL_0067: ldstr "log"
-					IL_006c: ldloc.1
-					IL_006d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-					IL_0072: pop
-					IL_0073: br IL_007d
+					IL_0058: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+					IL_005d: stloc.s 4
+					IL_005f: ldloc.s 4
+					IL_0061: ldloc.1
+					IL_0062: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+					IL_0067: pop
+					IL_0068: br IL_0072
 
-					IL_0078: br IL_0017
+					IL_006d: br IL_0017
 				// end loop
 
-				IL_007d: ldnull
-				IL_007e: ret
+				IL_0072: ldnull
+				IL_0073: ret
 			} // end of method nextNode::__js_call__
 
 		} // end of class nextNode

@@ -344,7 +344,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 299 (0x12b)
+		// Code size: 262 (0x106)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.BinaryOperator_EqualObjectPropertyVsMethodReturn/Scope,
@@ -356,7 +356,7 @@
 			[6] class [System.Runtime]System.Type,
 			[7] class Modules.BinaryOperator_EqualObjectPropertyVsMethodReturn/Counter,
 			[8] float64,
-			[9] object,
+			[9] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 			[10] bool,
 			[11] object
 		)
@@ -420,37 +420,32 @@
 		IL_00b0: ldc.r8 10
 		IL_00b9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
 		IL_00be: stloc.s 4
-		IL_00c0: ldstr "console"
-		IL_00c5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_00ca: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00cf: ldstr "log"
-		IL_00d4: ldloc.3
-		IL_00d5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00da: pop
-		IL_00db: ldstr "console"
-		IL_00e0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_00e5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00ea: ldstr "log"
-		IL_00ef: ldloc.s 4
-		IL_00f1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00f6: pop
-		IL_00f7: ldstr "console"
-		IL_00fc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0101: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0106: stloc.s 9
-		IL_0108: ldloc.3
-		IL_0109: ldloc.s 4
-		IL_010b: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::Equal(object, object)
-		IL_0110: stloc.s 10
-		IL_0112: ldloc.s 10
-		IL_0114: box [System.Runtime]System.Boolean
-		IL_0119: stloc.s 11
-		IL_011b: ldloc.s 9
-		IL_011d: ldstr "log"
-		IL_0122: ldloc.s 11
-		IL_0124: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0129: pop
-		IL_012a: ret
+		IL_00c0: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00c5: stloc.s 9
+		IL_00c7: ldloc.s 9
+		IL_00c9: ldloc.3
+		IL_00ca: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00cf: pop
+		IL_00d0: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00d5: stloc.s 9
+		IL_00d7: ldloc.s 9
+		IL_00d9: ldloc.s 4
+		IL_00db: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00e0: pop
+		IL_00e1: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00e6: stloc.s 9
+		IL_00e8: ldloc.3
+		IL_00e9: ldloc.s 4
+		IL_00eb: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::Equal(object, object)
+		IL_00f0: stloc.s 10
+		IL_00f2: ldloc.s 10
+		IL_00f4: box [System.Runtime]System.Boolean
+		IL_00f9: stloc.s 11
+		IL_00fb: ldloc.s 9
+		IL_00fd: ldloc.s 11
+		IL_00ff: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0104: pop
+		IL_0105: ret
 	} // end of method BinaryOperator_EqualObjectPropertyVsMethodReturn::__js_module_init__
 
 } // end of class Modules.BinaryOperator_EqualObjectPropertyVsMethodReturn

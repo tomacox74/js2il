@@ -181,13 +181,13 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 180 (0xb4)
+		// Code size: 152 (0x98)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Function_Instance_Name_DynamicFunctionLineColumnPattern_NoFalseAnonymous/Scope,
 			[1] class Modules.Function_Instance_Name_DynamicFunctionLineColumnPattern_NoFalseAnonymous/DynamicFunction_L12C34/FunctionObject_FunctionDeclaration_B056D0AB_DynamicFunction_L12C34,
 			[2] object[],
-			[3] object,
+			[3] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 			[4] object,
 			[5] bool,
 			[6] object
@@ -212,49 +212,43 @@
 		IL_0024: stloc.1
 		IL_0025: nop
 		IL_0026: nop
-		IL_0027: ldstr "console"
-		IL_002c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0031: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0036: stloc.3
-		IL_0037: ldloc.1
-		IL_0038: ldstr "name"
-		IL_003d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0042: stloc.s 4
-		IL_0044: ldloc.3
-		IL_0045: ldstr "log"
-		IL_004a: ldloc.s 4
-		IL_004c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0051: pop
-		IL_0052: ldstr "console"
-		IL_0057: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_005c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0061: stloc.s 4
-		IL_0063: ldloc.1
-		IL_0064: ldstr "toString"
-		IL_0069: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-		IL_006e: stloc.3
-		IL_006f: ldloc.3
-		IL_0070: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0075: ldstr "indexOf"
-		IL_007a: ldstr "DynamicFunction_L12C34"
-		IL_007f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0084: stloc.3
-		IL_0085: ldloc.3
-		IL_0086: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_008b: ldc.r8 0.0
-		IL_0094: clt
-		IL_0096: ldc.i4.0
-		IL_0097: ceq
-		IL_0099: stloc.s 5
-		IL_009b: ldloc.s 5
-		IL_009d: box [System.Runtime]System.Boolean
-		IL_00a2: stloc.s 6
-		IL_00a4: ldloc.s 4
-		IL_00a6: ldstr "log"
-		IL_00ab: ldloc.s 6
-		IL_00ad: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00b2: pop
-		IL_00b3: ret
+		IL_0027: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_002c: stloc.3
+		IL_002d: ldloc.1
+		IL_002e: ldstr "name"
+		IL_0033: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0038: stloc.s 4
+		IL_003a: ldloc.3
+		IL_003b: ldloc.s 4
+		IL_003d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0042: pop
+		IL_0043: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0048: stloc.3
+		IL_0049: ldloc.1
+		IL_004a: ldstr "toString"
+		IL_004f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+		IL_0054: stloc.s 4
+		IL_0056: ldloc.s 4
+		IL_0058: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_005d: ldstr "indexOf"
+		IL_0062: ldstr "DynamicFunction_L12C34"
+		IL_0067: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_006c: stloc.s 4
+		IL_006e: ldloc.s 4
+		IL_0070: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_0075: ldc.r8 0.0
+		IL_007e: clt
+		IL_0080: ldc.i4.0
+		IL_0081: ceq
+		IL_0083: stloc.s 5
+		IL_0085: ldloc.s 5
+		IL_0087: box [System.Runtime]System.Boolean
+		IL_008c: stloc.s 6
+		IL_008e: ldloc.3
+		IL_008f: ldloc.s 6
+		IL_0091: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0096: pop
+		IL_0097: ret
 	} // end of method Function_Instance_Name_DynamicFunctionLineColumnPattern_NoFalseAnonymous::__js_module_init__
 
 } // end of class Modules.Function_Instance_Name_DynamicFunctionLineColumnPattern_NoFalseAnonymous

@@ -38,7 +38,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 427 (0x1ab)
+		// Code size: 307 (0x133)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.String_RegExp_Exec_LastIndex_Global/Scope,
@@ -46,7 +46,7 @@
 			[2] string,
 			[3] object,
 			[4] object,
-			[5] object,
+			[5] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 			[6] object
 		)
 
@@ -59,121 +59,97 @@
 		IL_0016: stloc.1
 		IL_0017: ldstr "baaa"
 		IL_001c: stloc.2
-		IL_001d: ldstr "console"
-		IL_0022: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0027: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_002c: stloc.s 5
-		IL_002e: ldloc.1
-		IL_002f: ldstr "lastIndex"
-		IL_0034: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0039: stloc.s 6
-		IL_003b: ldloc.s 5
-		IL_003d: ldstr "log"
-		IL_0042: ldloc.s 6
-		IL_0044: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0049: pop
-		IL_004a: ldloc.1
-		IL_004b: ldstr "exec"
-		IL_0050: ldloc.2
-		IL_0051: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0056: stloc.3
-		IL_0057: ldstr "console"
-		IL_005c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0061: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0066: stloc.s 6
-		IL_0068: ldloc.3
-		IL_0069: ldc.r8 0.0
-		IL_0072: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-		IL_0077: stloc.s 5
-		IL_0079: ldloc.s 6
-		IL_007b: ldstr "log"
-		IL_0080: ldloc.s 5
-		IL_0082: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_001d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0022: stloc.s 5
+		IL_0024: ldloc.1
+		IL_0025: ldstr "lastIndex"
+		IL_002a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_002f: stloc.s 6
+		IL_0031: ldloc.s 5
+		IL_0033: ldloc.s 6
+		IL_0035: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_003a: pop
+		IL_003b: ldloc.1
+		IL_003c: ldstr "exec"
+		IL_0041: ldloc.2
+		IL_0042: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0047: stloc.3
+		IL_0048: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_004d: stloc.s 5
+		IL_004f: ldloc.3
+		IL_0050: ldc.r8 0.0
+		IL_0059: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+		IL_005e: stloc.s 6
+		IL_0060: ldloc.s 5
+		IL_0062: ldloc.s 6
+		IL_0064: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0069: pop
+		IL_006a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_006f: stloc.s 5
+		IL_0071: ldloc.3
+		IL_0072: ldstr "index"
+		IL_0077: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_007c: stloc.s 6
+		IL_007e: ldloc.s 5
+		IL_0080: ldloc.s 6
+		IL_0082: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
 		IL_0087: pop
-		IL_0088: ldstr "console"
-		IL_008d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0092: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0097: stloc.s 5
-		IL_0099: ldloc.3
-		IL_009a: ldstr "index"
-		IL_009f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_00a4: stloc.s 6
-		IL_00a6: ldloc.s 5
-		IL_00a8: ldstr "log"
-		IL_00ad: ldloc.s 6
-		IL_00af: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00b4: pop
-		IL_00b5: ldstr "console"
-		IL_00ba: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_00bf: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00c4: stloc.s 6
-		IL_00c6: ldloc.3
-		IL_00c7: ldstr "input"
-		IL_00cc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_00d1: stloc.s 5
-		IL_00d3: ldloc.s 6
-		IL_00d5: ldstr "log"
-		IL_00da: ldloc.s 5
-		IL_00dc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00e1: pop
-		IL_00e2: ldstr "console"
-		IL_00e7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_00ec: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00f1: stloc.s 5
-		IL_00f3: ldloc.1
-		IL_00f4: ldstr "lastIndex"
-		IL_00f9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_00fe: stloc.s 6
-		IL_0100: ldloc.s 5
-		IL_0102: ldstr "log"
-		IL_0107: ldloc.s 6
-		IL_0109: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_010e: pop
-		IL_010f: ldloc.1
-		IL_0110: ldstr "exec"
-		IL_0115: ldloc.2
-		IL_0116: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_011b: stloc.s 4
-		IL_011d: ldstr "console"
-		IL_0122: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0127: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_012c: stloc.s 6
-		IL_012e: ldloc.s 4
-		IL_0130: ldc.r8 0.0
-		IL_0139: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-		IL_013e: stloc.s 5
-		IL_0140: ldloc.s 6
-		IL_0142: ldstr "log"
-		IL_0147: ldloc.s 5
-		IL_0149: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_014e: pop
-		IL_014f: ldstr "console"
-		IL_0154: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0159: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_015e: stloc.s 5
-		IL_0160: ldloc.s 4
-		IL_0162: ldstr "index"
-		IL_0167: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_016c: stloc.s 6
-		IL_016e: ldloc.s 5
-		IL_0170: ldstr "log"
-		IL_0175: ldloc.s 6
-		IL_0177: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_017c: pop
-		IL_017d: ldstr "console"
-		IL_0182: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0187: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_018c: stloc.s 6
-		IL_018e: ldloc.1
-		IL_018f: ldstr "lastIndex"
-		IL_0194: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0199: stloc.s 5
-		IL_019b: ldloc.s 6
-		IL_019d: ldstr "log"
-		IL_01a2: ldloc.s 5
-		IL_01a4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_01a9: pop
-		IL_01aa: ret
+		IL_0088: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_008d: stloc.s 5
+		IL_008f: ldloc.3
+		IL_0090: ldstr "input"
+		IL_0095: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_009a: stloc.s 6
+		IL_009c: ldloc.s 5
+		IL_009e: ldloc.s 6
+		IL_00a0: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00a5: pop
+		IL_00a6: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00ab: stloc.s 5
+		IL_00ad: ldloc.1
+		IL_00ae: ldstr "lastIndex"
+		IL_00b3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00b8: stloc.s 6
+		IL_00ba: ldloc.s 5
+		IL_00bc: ldloc.s 6
+		IL_00be: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00c3: pop
+		IL_00c4: ldloc.1
+		IL_00c5: ldstr "exec"
+		IL_00ca: ldloc.2
+		IL_00cb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_00d0: stloc.s 4
+		IL_00d2: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00d7: stloc.s 5
+		IL_00d9: ldloc.s 4
+		IL_00db: ldc.r8 0.0
+		IL_00e4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+		IL_00e9: stloc.s 6
+		IL_00eb: ldloc.s 5
+		IL_00ed: ldloc.s 6
+		IL_00ef: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00f4: pop
+		IL_00f5: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00fa: stloc.s 5
+		IL_00fc: ldloc.s 4
+		IL_00fe: ldstr "index"
+		IL_0103: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0108: stloc.s 6
+		IL_010a: ldloc.s 5
+		IL_010c: ldloc.s 6
+		IL_010e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0113: pop
+		IL_0114: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0119: stloc.s 5
+		IL_011b: ldloc.1
+		IL_011c: ldstr "lastIndex"
+		IL_0121: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0126: stloc.s 6
+		IL_0128: ldloc.s 5
+		IL_012a: ldloc.s 6
+		IL_012c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0131: pop
+		IL_0132: ret
 	} // end of method String_RegExp_Exec_LastIndex_Global::__js_module_init__
 
 } // end of class Modules.String_RegExp_Exec_LastIndex_Global

@@ -237,14 +237,14 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 335 (0x14f)
+		// Code size: 290 (0x122)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ArrowFunction_RestParameters_Basic/Scope,
 			[1] object,
 			[2] object[],
 			[3] class Modules.ArrowFunction_RestParameters_Basic/ArrowFunction_L3C13/FunctionObject,
-			[4] object,
+			[4] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 			[5] object
 		)
 
@@ -275,83 +275,74 @@
 		IL_0034: ldstr "sum"
 		IL_0039: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetFunctionInferredName(object, object)
 		IL_003e: stloc.1
-		IL_003f: ldstr "console"
-		IL_0044: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0049: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_004e: stloc.s 4
-		IL_0050: ldloc.0
-		IL_0051: castclass Modules.ArrowFunction_RestParameters_Basic/Scope
-		IL_0056: ldftn object Modules.ArrowFunction_RestParameters_Basic/ArrowFunction_L3C13::__js_call__(class Modules.ArrowFunction_RestParameters_Basic/Scope, object)
-		IL_005c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_0061: ldc.i4.3
-		IL_0062: newarr [System.Runtime]System.Object
-		IL_0067: dup
-		IL_0068: ldc.i4.0
-		IL_0069: ldc.r8 1
-		IL_0072: box [System.Runtime]System.Double
-		IL_0077: stelem.ref
-		IL_0078: dup
-		IL_0079: ldc.i4.1
-		IL_007a: ldc.r8 2
-		IL_0083: box [System.Runtime]System.Double
-		IL_0088: stelem.ref
-		IL_0089: dup
-		IL_008a: ldc.i4.2
-		IL_008b: ldc.r8 3
-		IL_0094: box [System.Runtime]System.Double
-		IL_0099: stelem.ref
-		IL_009a: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeDirectWithArgs(class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0, object[])
-		IL_009f: stloc.s 5
-		IL_00a1: ldloc.s 4
-		IL_00a3: ldstr "log"
-		IL_00a8: ldloc.s 5
-		IL_00aa: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00af: pop
-		IL_00b0: ldstr "console"
-		IL_00b5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_00ba: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00bf: stloc.s 5
-		IL_00c1: ldloc.0
-		IL_00c2: castclass Modules.ArrowFunction_RestParameters_Basic/Scope
-		IL_00c7: ldftn object Modules.ArrowFunction_RestParameters_Basic/ArrowFunction_L3C13::__js_call__(class Modules.ArrowFunction_RestParameters_Basic/Scope, object)
-		IL_00cd: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_00d2: ldc.i4.2
-		IL_00d3: newarr [System.Runtime]System.Object
-		IL_00d8: dup
-		IL_00d9: ldc.i4.0
-		IL_00da: ldc.r8 10
-		IL_00e3: box [System.Runtime]System.Double
-		IL_00e8: stelem.ref
-		IL_00e9: dup
-		IL_00ea: ldc.i4.1
-		IL_00eb: ldc.r8 20
-		IL_00f4: box [System.Runtime]System.Double
-		IL_00f9: stelem.ref
-		IL_00fa: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeDirectWithArgs(class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0, object[])
-		IL_00ff: stloc.s 4
-		IL_0101: ldloc.s 5
-		IL_0103: ldstr "log"
-		IL_0108: ldloc.s 4
-		IL_010a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_010f: pop
-		IL_0110: ldstr "console"
-		IL_0115: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_011a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_011f: stloc.s 4
-		IL_0121: ldloc.0
-		IL_0122: castclass Modules.ArrowFunction_RestParameters_Basic/Scope
-		IL_0127: ldftn object Modules.ArrowFunction_RestParameters_Basic/ArrowFunction_L3C13::__js_call__(class Modules.ArrowFunction_RestParameters_Basic/Scope, object)
-		IL_012d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_0132: ldc.i4.0
-		IL_0133: newarr [System.Runtime]System.Object
-		IL_0138: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeDirectWithArgs(class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0, object[])
-		IL_013d: stloc.s 5
-		IL_013f: ldloc.s 4
-		IL_0141: ldstr "log"
-		IL_0146: ldloc.s 5
-		IL_0148: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_014d: pop
-		IL_014e: ret
+		IL_003f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0044: stloc.s 4
+		IL_0046: ldloc.0
+		IL_0047: castclass Modules.ArrowFunction_RestParameters_Basic/Scope
+		IL_004c: ldftn object Modules.ArrowFunction_RestParameters_Basic/ArrowFunction_L3C13::__js_call__(class Modules.ArrowFunction_RestParameters_Basic/Scope, object)
+		IL_0052: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_0057: ldc.i4.3
+		IL_0058: newarr [System.Runtime]System.Object
+		IL_005d: dup
+		IL_005e: ldc.i4.0
+		IL_005f: ldc.r8 1
+		IL_0068: box [System.Runtime]System.Double
+		IL_006d: stelem.ref
+		IL_006e: dup
+		IL_006f: ldc.i4.1
+		IL_0070: ldc.r8 2
+		IL_0079: box [System.Runtime]System.Double
+		IL_007e: stelem.ref
+		IL_007f: dup
+		IL_0080: ldc.i4.2
+		IL_0081: ldc.r8 3
+		IL_008a: box [System.Runtime]System.Double
+		IL_008f: stelem.ref
+		IL_0090: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeDirectWithArgs(class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0, object[])
+		IL_0095: stloc.s 5
+		IL_0097: ldloc.s 4
+		IL_0099: ldloc.s 5
+		IL_009b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00a0: pop
+		IL_00a1: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00a6: stloc.s 4
+		IL_00a8: ldloc.0
+		IL_00a9: castclass Modules.ArrowFunction_RestParameters_Basic/Scope
+		IL_00ae: ldftn object Modules.ArrowFunction_RestParameters_Basic/ArrowFunction_L3C13::__js_call__(class Modules.ArrowFunction_RestParameters_Basic/Scope, object)
+		IL_00b4: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_00b9: ldc.i4.2
+		IL_00ba: newarr [System.Runtime]System.Object
+		IL_00bf: dup
+		IL_00c0: ldc.i4.0
+		IL_00c1: ldc.r8 10
+		IL_00ca: box [System.Runtime]System.Double
+		IL_00cf: stelem.ref
+		IL_00d0: dup
+		IL_00d1: ldc.i4.1
+		IL_00d2: ldc.r8 20
+		IL_00db: box [System.Runtime]System.Double
+		IL_00e0: stelem.ref
+		IL_00e1: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeDirectWithArgs(class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0, object[])
+		IL_00e6: stloc.s 5
+		IL_00e8: ldloc.s 4
+		IL_00ea: ldloc.s 5
+		IL_00ec: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00f1: pop
+		IL_00f2: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00f7: stloc.s 4
+		IL_00f9: ldloc.0
+		IL_00fa: castclass Modules.ArrowFunction_RestParameters_Basic/Scope
+		IL_00ff: ldftn object Modules.ArrowFunction_RestParameters_Basic/ArrowFunction_L3C13::__js_call__(class Modules.ArrowFunction_RestParameters_Basic/Scope, object)
+		IL_0105: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_010a: ldc.i4.0
+		IL_010b: newarr [System.Runtime]System.Object
+		IL_0110: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeDirectWithArgs(class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0, object[])
+		IL_0115: stloc.s 5
+		IL_0117: ldloc.s 4
+		IL_0119: ldloc.s 5
+		IL_011b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0120: pop
+		IL_0121: ret
 	} // end of method ArrowFunction_RestParameters_Basic::__js_module_init__
 
 } // end of class Modules.ArrowFunction_RestParameters_Basic

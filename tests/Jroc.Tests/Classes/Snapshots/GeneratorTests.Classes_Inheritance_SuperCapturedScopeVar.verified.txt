@@ -659,7 +659,7 @@
 				74 61 54 6f 6b 65 6e 06 00 00 02
 			)
 			// Header size: 12
-			// Code size: 466 (0x1d2)
+			// Code size: 451 (0x1c3)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.Classes_Inheritance_SuperCapturedScopeVar/outer/Scope,
@@ -668,7 +668,7 @@
 				[3] class [System.Runtime]System.Type,
 				[4] object,
 				[5] object[],
-				[6] object
+				[6] class [JavaScriptRuntime]JavaScriptRuntime.Console
 			)
 
 			IL_0000: newobj instance void Modules.Classes_Inheritance_SuperCapturedScopeVar/outer/Scope::.ctor()
@@ -775,67 +775,64 @@
 			IL_0116: stloc.s 4
 			IL_0118: ldloc.s 4
 			IL_011a: stloc.2
-			IL_011b: ldstr "console"
-			IL_0120: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_0125: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_012a: stloc.s 4
-			IL_012c: ldc.i4.2
-			IL_012d: newarr [System.Runtime]System.Object
-			IL_0132: dup
-			IL_0133: ldc.i4.0
-			IL_0134: ldarg.0
-			IL_0135: stelem.ref
-			IL_0136: dup
-			IL_0137: ldc.i4.1
-			IL_0138: ldloc.0
-			IL_0139: stelem.ref
-			IL_013a: stloc.s 5
-			IL_013c: ldloc.s 5
-			IL_013e: ldc.i4.0
-			IL_013f: newarr [System.Runtime]System.Object
-			IL_0144: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
-			IL_0149: ldloc.2
-			IL_014a: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentNewTarget(object)
-			IL_014f: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushDerivedConstructorThisBinding()
-			IL_0154: newobj instance void Modules.Classes_Inheritance_SuperCapturedScopeVar/outer/Derived::.ctor(object[])
-			IL_0159: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentNewTarget()
-			IL_015e: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
-			IL_0163: dup
-			IL_0164: ldtoken Modules.Classes_Inheritance_SuperCapturedScopeVar/outer/Derived
-			IL_0169: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-			IL_016e: ldstr "prototype"
-			IL_0173: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
-			IL_0178: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
-			IL_017d: stloc.s 6
-			IL_017f: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-			IL_0184: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
-			IL_0189: stloc.s 6
-			IL_018b: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopDerivedConstructorThisBinding()
-			IL_0190: ldloc.s 6
-			IL_0192: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0197: stloc.s 6
-			IL_0199: ldloc.s 6
-			IL_019b: isinst Modules.Classes_Inheritance_SuperCapturedScopeVar/outer/Derived
-			IL_01a0: dup
-			IL_01a1: brfalse IL_01b2
+			IL_011b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0120: stloc.s 6
+			IL_0122: ldc.i4.2
+			IL_0123: newarr [System.Runtime]System.Object
+			IL_0128: dup
+			IL_0129: ldc.i4.0
+			IL_012a: ldarg.0
+			IL_012b: stelem.ref
+			IL_012c: dup
+			IL_012d: ldc.i4.1
+			IL_012e: ldloc.0
+			IL_012f: stelem.ref
+			IL_0130: stloc.s 5
+			IL_0132: ldloc.s 5
+			IL_0134: ldc.i4.0
+			IL_0135: newarr [System.Runtime]System.Object
+			IL_013a: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
+			IL_013f: ldloc.2
+			IL_0140: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentNewTarget(object)
+			IL_0145: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushDerivedConstructorThisBinding()
+			IL_014a: newobj instance void Modules.Classes_Inheritance_SuperCapturedScopeVar/outer/Derived::.ctor(object[])
+			IL_014f: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentNewTarget()
+			IL_0154: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
+			IL_0159: dup
+			IL_015a: ldtoken Modules.Classes_Inheritance_SuperCapturedScopeVar/outer/Derived
+			IL_015f: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+			IL_0164: ldstr "prototype"
+			IL_0169: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
+			IL_016e: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
+			IL_0173: stloc.s 4
+			IL_0175: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+			IL_017a: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
+			IL_017f: stloc.s 4
+			IL_0181: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopDerivedConstructorThisBinding()
+			IL_0186: ldloc.s 4
+			IL_0188: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_018d: stloc.s 4
+			IL_018f: ldloc.s 4
+			IL_0191: isinst Modules.Classes_Inheritance_SuperCapturedScopeVar/outer/Derived
+			IL_0196: dup
+			IL_0197: brfalse IL_01a8
 
-			IL_01a6: callvirt instance object Modules.Classes_Inheritance_SuperCapturedScopeVar/outer/Derived::n()
-			IL_01ab: stloc.s 6
-			IL_01ad: br IL_01c1
+			IL_019c: callvirt instance object Modules.Classes_Inheritance_SuperCapturedScopeVar/outer/Derived::n()
+			IL_01a1: stloc.s 4
+			IL_01a3: br IL_01b7
 
-			IL_01b2: pop
-			IL_01b3: ldloc.s 6
-			IL_01b5: ldstr "n"
-			IL_01ba: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-			IL_01bf: stloc.s 6
+			IL_01a8: pop
+			IL_01a9: ldloc.s 4
+			IL_01ab: ldstr "n"
+			IL_01b0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+			IL_01b5: stloc.s 4
 
-			IL_01c1: ldloc.s 4
-			IL_01c3: ldstr "log"
-			IL_01c8: ldloc.s 6
-			IL_01ca: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_01cf: pop
-			IL_01d0: ldnull
-			IL_01d1: ret
+			IL_01b7: ldloc.s 6
+			IL_01b9: ldloc.s 4
+			IL_01bb: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_01c0: pop
+			IL_01c1: ldnull
+			IL_01c2: ret
 		} // end of method outer::__js_call__
 
 	} // end of class outer

@@ -177,7 +177,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 333 (0x14d)
+		// Code size: 300 (0x12c)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ControlFlow_ForLoop_VarClosureCapture/Scope,
@@ -186,7 +186,8 @@
 			[3] class Modules.ControlFlow_ForLoop_VarClosureCapture/ArrowFunction_L6C12/FunctionObject,
 			[4] float64,
 			[5] object,
-			[6] object
+			[6] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+			[7] object
 		)
 
 		IL_0000: newobj instance void Modules.ControlFlow_ForLoop_VarClosureCapture/Scope::.ctor()
@@ -246,55 +247,52 @@
 			IL_0099: br IL_0022
 		// end loop
 
-		IL_009e: ldstr "console"
-		IL_00a3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_00a8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00ad: ldc.i4.0
-		IL_00ae: newarr [System.Runtime]System.Object
-		IL_00b3: stloc.2
-		IL_00b4: ldloc.1
-		IL_00b5: ldc.r8 0.0
-		IL_00be: box [System.Runtime]System.Double
-		IL_00c3: ldloc.2
-		IL_00c4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallComputedMember(object, object, object[])
-		IL_00c9: stloc.s 6
-		IL_00cb: ldstr "log"
-		IL_00d0: ldloc.s 6
-		IL_00d2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00d7: pop
-		IL_00d8: ldstr "console"
-		IL_00dd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_00e2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00e7: ldc.i4.0
-		IL_00e8: newarr [System.Runtime]System.Object
-		IL_00ed: stloc.2
-		IL_00ee: ldloc.1
-		IL_00ef: ldc.r8 1
-		IL_00f8: box [System.Runtime]System.Double
-		IL_00fd: ldloc.2
-		IL_00fe: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallComputedMember(object, object, object[])
-		IL_0103: stloc.s 6
-		IL_0105: ldstr "log"
-		IL_010a: ldloc.s 6
-		IL_010c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0111: pop
-		IL_0112: ldstr "console"
-		IL_0117: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_011c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0121: ldc.i4.0
-		IL_0122: newarr [System.Runtime]System.Object
-		IL_0127: stloc.2
-		IL_0128: ldloc.1
-		IL_0129: ldc.r8 2
-		IL_0132: box [System.Runtime]System.Double
-		IL_0137: ldloc.2
-		IL_0138: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallComputedMember(object, object, object[])
-		IL_013d: stloc.s 6
-		IL_013f: ldstr "log"
-		IL_0144: ldloc.s 6
-		IL_0146: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_014b: pop
-		IL_014c: ret
+		IL_009e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00a3: stloc.s 6
+		IL_00a5: ldc.i4.0
+		IL_00a6: newarr [System.Runtime]System.Object
+		IL_00ab: stloc.2
+		IL_00ac: ldloc.1
+		IL_00ad: ldc.r8 0.0
+		IL_00b6: box [System.Runtime]System.Double
+		IL_00bb: ldloc.2
+		IL_00bc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallComputedMember(object, object, object[])
+		IL_00c1: stloc.s 7
+		IL_00c3: ldloc.s 6
+		IL_00c5: ldloc.s 7
+		IL_00c7: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00cc: pop
+		IL_00cd: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00d2: stloc.s 6
+		IL_00d4: ldc.i4.0
+		IL_00d5: newarr [System.Runtime]System.Object
+		IL_00da: stloc.2
+		IL_00db: ldloc.1
+		IL_00dc: ldc.r8 1
+		IL_00e5: box [System.Runtime]System.Double
+		IL_00ea: ldloc.2
+		IL_00eb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallComputedMember(object, object, object[])
+		IL_00f0: stloc.s 7
+		IL_00f2: ldloc.s 6
+		IL_00f4: ldloc.s 7
+		IL_00f6: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00fb: pop
+		IL_00fc: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0101: stloc.s 6
+		IL_0103: ldc.i4.0
+		IL_0104: newarr [System.Runtime]System.Object
+		IL_0109: stloc.2
+		IL_010a: ldloc.1
+		IL_010b: ldc.r8 2
+		IL_0114: box [System.Runtime]System.Double
+		IL_0119: ldloc.2
+		IL_011a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallComputedMember(object, object, object[])
+		IL_011f: stloc.s 7
+		IL_0121: ldloc.s 6
+		IL_0123: ldloc.s 7
+		IL_0125: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_012a: pop
+		IL_012b: ret
 	} // end of method ControlFlow_ForLoop_VarClosureCapture::__js_module_init__
 
 } // end of class Modules.ControlFlow_ForLoop_VarClosureCapture

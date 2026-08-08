@@ -78,7 +78,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 149 (0x95)
+		// Code size: 127 (0x7f)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Variable_ConstReassignmentError/Scope,
@@ -86,7 +86,8 @@
 			[2] class [System.Runtime]System.Exception,
 			[3] object,
 			[4] object,
-			[5] object
+			[5] object,
+			[6] class [JavaScriptRuntime]JavaScriptRuntime.Console
 		)
 
 		IL_0000: newobj instance void Modules.Variable_ConstReassignmentError/Scope::.ctor()
@@ -101,53 +102,51 @@
 			IL_0017: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
 			IL_001c: throw
 
-			IL_001d: ldstr "console"
-			IL_0022: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_0027: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_002c: ldstr "log"
-			IL_0031: ldstr "NO_ERROR"
-			IL_0036: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_003b: pop
-			IL_003c: leave IL_0091
+			IL_001d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0022: stloc.s 6
+			IL_0024: ldloc.s 6
+			IL_0026: ldstr "NO_ERROR"
+			IL_002b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0030: pop
+			IL_0031: leave IL_007b
 		} // end .try
 		catch [System.Runtime]System.Exception
 		{
-			IL_0041: stloc.2
-			IL_0042: ldloc.2
-			IL_0043: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-			IL_0048: dup
-			IL_0049: brtrue IL_005e
+			IL_0036: stloc.2
+			IL_0037: ldloc.2
+			IL_0038: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+			IL_003d: dup
+			IL_003e: brtrue IL_0053
 
-			IL_004e: pop
-			IL_004f: ldloc.2
-			IL_0050: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
-			IL_0055: dup
-			IL_0056: brtrue IL_0069
+			IL_0043: pop
+			IL_0044: ldloc.2
+			IL_0045: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+			IL_004a: dup
+			IL_004b: brtrue IL_005e
 
-			IL_005b: pop
-			IL_005c: rethrow
+			IL_0050: pop
+			IL_0051: rethrow
 
-			IL_005e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-			IL_0063: stloc.3
-			IL_0064: br IL_006a
+			IL_0053: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+			IL_0058: stloc.3
+			IL_0059: br IL_005f
 
-			IL_0069: stloc.3
+			IL_005e: stloc.3
 
-			IL_006a: ldloc.3
-			IL_006b: stloc.s 4
-			IL_006d: ldstr "console"
-			IL_0072: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_0077: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_007c: ldstr "log"
-			IL_0081: ldstr "CONST_REASSIGN_ERROR"
-			IL_0086: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_008b: pop
-			IL_008c: leave IL_0091
+			IL_005f: ldloc.3
+			IL_0060: stloc.s 4
+			IL_0062: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0067: stloc.s 6
+			IL_0069: ldloc.s 6
+			IL_006b: ldstr "CONST_REASSIGN_ERROR"
+			IL_0070: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0075: pop
+			IL_0076: leave IL_007b
 		} // end handler
 
-		IL_0091: ldnull
-		IL_0092: stloc.s 5
-		IL_0094: ret
+		IL_007b: ldnull
+		IL_007c: stloc.s 5
+		IL_007e: ret
 	} // end of method Variable_ConstReassignmentError::__js_module_init__
 
 } // end of class Modules.Variable_ConstReassignmentError

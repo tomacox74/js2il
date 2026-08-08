@@ -59,7 +59,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 435 (0x1b3)
+		// Code size: 390 (0x186)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Object_GetOwnPropertySymbols_Basic/Scope,
@@ -74,7 +74,7 @@
 			[9] float64,
 			[10] object,
 			[11] bool,
-			[12] object,
+			[12] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 			[13] object
 		)
 
@@ -177,50 +177,41 @@
 			IL_0115: br IL_00a2
 		// end loop
 
-		IL_011a: ldstr "console"
-		IL_011f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0124: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0129: stloc.s 10
-		IL_012b: ldloc.s 4
-		IL_012d: ldstr "length"
-		IL_0132: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0137: stloc.s 12
-		IL_0139: ldstr "len="
-		IL_013e: ldloc.s 12
-		IL_0140: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_0145: stloc.s 13
-		IL_0147: ldloc.s 10
-		IL_0149: ldstr "log"
-		IL_014e: ldloc.s 13
-		IL_0150: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0155: pop
-		IL_0156: ldstr "console"
-		IL_015b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0160: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0165: stloc.s 10
-		IL_0167: ldstr "has_s1="
-		IL_016c: ldloc.s 5
-		IL_016e: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_0173: stloc.s 13
-		IL_0175: ldloc.s 10
-		IL_0177: ldstr "log"
-		IL_017c: ldloc.s 13
-		IL_017e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0183: pop
-		IL_0184: ldstr "console"
-		IL_0189: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_018e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0193: stloc.s 10
-		IL_0195: ldstr "has_s2="
-		IL_019a: ldloc.s 6
-		IL_019c: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_01a1: stloc.s 13
-		IL_01a3: ldloc.s 10
-		IL_01a5: ldstr "log"
-		IL_01aa: ldloc.s 13
-		IL_01ac: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_01b1: pop
-		IL_01b2: ret
+		IL_011a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_011f: stloc.s 12
+		IL_0121: ldloc.s 4
+		IL_0123: ldstr "length"
+		IL_0128: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_012d: stloc.s 10
+		IL_012f: ldstr "len="
+		IL_0134: ldloc.s 10
+		IL_0136: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_013b: stloc.s 13
+		IL_013d: ldloc.s 12
+		IL_013f: ldloc.s 13
+		IL_0141: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0146: pop
+		IL_0147: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_014c: stloc.s 12
+		IL_014e: ldstr "has_s1="
+		IL_0153: ldloc.s 5
+		IL_0155: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_015a: stloc.s 13
+		IL_015c: ldloc.s 12
+		IL_015e: ldloc.s 13
+		IL_0160: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0165: pop
+		IL_0166: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_016b: stloc.s 12
+		IL_016d: ldstr "has_s2="
+		IL_0172: ldloc.s 6
+		IL_0174: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_0179: stloc.s 13
+		IL_017b: ldloc.s 12
+		IL_017d: ldloc.s 13
+		IL_017f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0184: pop
+		IL_0185: ret
 	} // end of method Object_GetOwnPropertySymbols_Basic::__js_module_init__
 
 } // end of class Modules.Object_GetOwnPropertySymbols_Basic

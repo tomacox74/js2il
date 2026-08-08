@@ -254,14 +254,14 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 166 (0xa6)
+		// Code size: 151 (0x97)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Classes_ClassMethod_ReturnsThis_IsSelf_Log/Scope,
 			[1] class Modules.Classes_ClassMethod_ReturnsThis_IsSelf_Log/Self,
 			[2] object[],
 			[3] class [System.Runtime]System.Type,
-			[4] object,
+			[4] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 			[5] class Modules.Classes_ClassMethod_ReturnsThis_IsSelf_Log/Self,
 			[6] bool,
 			[7] object
@@ -295,34 +295,31 @@
 		IL_0049: ldstr "prototype"
 		IL_004e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
 		IL_0053: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
-		IL_0058: ldstr "console"
-		IL_005d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0062: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0067: stloc.s 4
-		IL_0069: ldloc.1
-		IL_006a: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Classes_ClassMethod_ReturnsThis_IsSelf_Log/Self>(!!0)
-		IL_006f: stloc.s 5
-		IL_0071: ldloc.s 5
-		IL_0073: callvirt instance class Modules.Classes_ClassMethod_ReturnsThis_IsSelf_Log/Self Modules.Classes_ClassMethod_ReturnsThis_IsSelf_Log/Self::isSelf()
-		IL_0078: stloc.s 5
-		IL_007a: ldloc.s 5
-		IL_007c: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
-		IL_0081: ldc.i4.0
-		IL_0082: ceq
-		IL_0084: stloc.s 6
-		IL_0086: ldloc.s 6
-		IL_0088: ldc.i4.0
-		IL_0089: ceq
-		IL_008b: stloc.s 6
-		IL_008d: ldloc.s 6
-		IL_008f: box [System.Runtime]System.Boolean
-		IL_0094: stloc.s 7
-		IL_0096: ldloc.s 4
-		IL_0098: ldstr "log"
-		IL_009d: ldloc.s 7
-		IL_009f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00a4: pop
-		IL_00a5: ret
+		IL_0058: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_005d: stloc.s 4
+		IL_005f: ldloc.1
+		IL_0060: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Classes_ClassMethod_ReturnsThis_IsSelf_Log/Self>(!!0)
+		IL_0065: stloc.s 5
+		IL_0067: ldloc.s 5
+		IL_0069: callvirt instance class Modules.Classes_ClassMethod_ReturnsThis_IsSelf_Log/Self Modules.Classes_ClassMethod_ReturnsThis_IsSelf_Log/Self::isSelf()
+		IL_006e: stloc.s 5
+		IL_0070: ldloc.s 5
+		IL_0072: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
+		IL_0077: ldc.i4.0
+		IL_0078: ceq
+		IL_007a: stloc.s 6
+		IL_007c: ldloc.s 6
+		IL_007e: ldc.i4.0
+		IL_007f: ceq
+		IL_0081: stloc.s 6
+		IL_0083: ldloc.s 6
+		IL_0085: box [System.Runtime]System.Boolean
+		IL_008a: stloc.s 7
+		IL_008c: ldloc.s 4
+		IL_008e: ldloc.s 7
+		IL_0090: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0095: pop
+		IL_0096: ret
 	} // end of method Classes_ClassMethod_ReturnsThis_IsSelf_Log::__js_module_init__
 
 } // end of class Modules.Classes_ClassMethod_ReturnsThis_IsSelf_Log

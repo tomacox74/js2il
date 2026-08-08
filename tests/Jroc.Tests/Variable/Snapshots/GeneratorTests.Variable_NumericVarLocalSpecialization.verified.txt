@@ -416,11 +416,11 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 110 (0x6e)
+			// Code size: 80 (0x50)
 			.maxstack 8
 			.locals init (
 				[0] object,
-				[1] object,
+				[1] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 				[2] string,
 				[3] object,
 				[4] bool,
@@ -429,42 +429,36 @@
 
 			IL_0000: ldnull
 			IL_0001: stloc.0
-			IL_0002: ldstr "console"
-			IL_0007: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0011: stloc.1
-			IL_0012: ldloc.0
-			IL_0013: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
-			IL_0018: stloc.2
-			IL_0019: ldloc.1
-			IL_001a: ldstr "log"
-			IL_001f: ldloc.2
-			IL_0020: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_0025: pop
-			IL_0026: ldstr "console"
-			IL_002b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_0030: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0035: stloc.1
-			IL_0036: ldloc.0
-			IL_0037: stloc.3
-			IL_0038: ldloc.3
-			IL_0039: ldnull
-			IL_003a: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-			IL_003f: stloc.s 4
-			IL_0041: ldloc.s 4
-			IL_0043: box [System.Runtime]System.Boolean
-			IL_0048: stloc.s 5
-			IL_004a: ldloc.1
-			IL_004b: ldstr "log"
-			IL_0050: ldloc.s 5
-			IL_0052: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_0057: pop
-			IL_0058: ldc.r8 2
-			IL_0061: box [System.Runtime]System.Double
-			IL_0066: stloc.0
-			IL_0067: ldloc.0
-			IL_0068: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_006d: ret
+			IL_0002: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0007: stloc.1
+			IL_0008: ldloc.0
+			IL_0009: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
+			IL_000e: stloc.2
+			IL_000f: ldloc.1
+			IL_0010: ldloc.2
+			IL_0011: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0016: pop
+			IL_0017: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_001c: stloc.1
+			IL_001d: ldloc.0
+			IL_001e: stloc.3
+			IL_001f: ldloc.3
+			IL_0020: ldnull
+			IL_0021: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+			IL_0026: stloc.s 4
+			IL_0028: ldloc.s 4
+			IL_002a: box [System.Runtime]System.Boolean
+			IL_002f: stloc.s 5
+			IL_0031: ldloc.1
+			IL_0032: ldloc.s 5
+			IL_0034: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0039: pop
+			IL_003a: ldc.r8 2
+			IL_0043: box [System.Runtime]System.Double
+			IL_0048: stloc.0
+			IL_0049: ldloc.0
+			IL_004a: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_004f: ret
 		} // end of method readBeforeInitialization::__js_call__
 
 	} // end of class readBeforeInitialization
@@ -2297,7 +2291,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 937 (0x3a9)
+		// Code size: 742 (0x2e6)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Variable_NumericVarLocalSpecialization/Scope,
@@ -2313,7 +2307,7 @@
 			[10] class Modules.Variable_NumericVarLocalSpecialization/shadowedSource/FunctionObject_FunctionDeclaration_3B56324F_shadowedSource,
 			[11] object,
 			[12] object[],
-			[13] object,
+			[13] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 			[14] object,
 			[15] float64,
 			[16] object
@@ -2489,181 +2483,142 @@
 		IL_0166: nop
 		IL_0167: nop
 		IL_0168: nop
-		IL_0169: ldstr "console"
-		IL_016e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0173: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0178: stloc.s 13
-		IL_017a: ldnull
-		IL_017b: ldc.r8 5
-		IL_0184: call object Modules.Variable_NumericVarLocalSpecialization/calculate::__js_call__(object, float64)
-		IL_0189: stloc.s 14
-		IL_018b: ldloc.s 13
-		IL_018d: ldstr "log"
-		IL_0192: ldloc.s 14
-		IL_0194: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0199: pop
-		IL_019a: ldstr "console"
-		IL_019f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_01a4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_01a9: stloc.s 14
-		IL_01ab: ldnull
-		IL_01ac: call float64 Modules.Variable_NumericVarLocalSpecialization/readBeforeInitialization::__js_call__(object)
-		IL_01b1: stloc.s 15
-		IL_01b3: ldloc.s 15
-		IL_01b5: box [System.Runtime]System.Double
-		IL_01ba: stloc.s 16
-		IL_01bc: ldloc.s 14
-		IL_01be: ldstr "log"
-		IL_01c3: ldloc.s 16
-		IL_01c5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_01ca: pop
-		IL_01cb: ldstr "console"
-		IL_01d0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_01d5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_01da: stloc.s 14
-		IL_01dc: ldnull
-		IL_01dd: ldc.i4.0
-		IL_01de: call object Modules.Variable_NumericVarLocalSpecialization/conditionallyInitialized::__js_call__(object, bool)
-		IL_01e3: stloc.s 13
-		IL_01e5: ldloc.s 14
-		IL_01e7: ldstr "log"
-		IL_01ec: ldloc.s 13
-		IL_01ee: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_01f3: pop
-		IL_01f4: ldstr "console"
-		IL_01f9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_01fe: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0203: stloc.s 13
-		IL_0205: ldnull
-		IL_0206: ldc.i4.0
-		IL_0207: call object Modules.Variable_NumericVarLocalSpecialization/mixedType::__js_call__(object, bool)
-		IL_020c: stloc.s 14
-		IL_020e: ldloc.s 13
-		IL_0210: ldstr "log"
-		IL_0215: ldloc.s 14
-		IL_0217: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_021c: pop
-		IL_021d: ldstr "console"
-		IL_0222: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0227: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_022c: stloc.s 14
-		IL_022e: ldnull
-		IL_022f: ldc.i4.1
-		IL_0230: call object Modules.Variable_NumericVarLocalSpecialization/mixedType::__js_call__(object, bool)
-		IL_0235: stloc.s 13
-		IL_0237: ldloc.s 14
-		IL_0239: ldstr "log"
-		IL_023e: ldloc.s 13
-		IL_0240: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0245: pop
-		IL_0246: ldloc.0
-		IL_0247: castclass Modules.Variable_NumericVarLocalSpecialization/Scope
-		IL_024c: ldnull
-		IL_024d: call object Modules.Variable_NumericVarLocalSpecialization/captured::__js_call__(class Modules.Variable_NumericVarLocalSpecialization/Scope, object)
-		IL_0252: stloc.s 11
-		IL_0254: ldstr "console"
-		IL_0259: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_025e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0263: stloc.s 13
-		IL_0265: ldloc.s 11
-		IL_0267: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_026c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
-		IL_0271: stloc.s 14
-		IL_0273: ldloc.s 13
-		IL_0275: ldstr "log"
-		IL_027a: ldloc.s 14
-		IL_027c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0281: pop
-		IL_0282: ldstr "console"
-		IL_0287: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_028c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0291: stloc.s 14
-		IL_0293: ldloc.s 11
-		IL_0295: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_029a: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
-		IL_029f: stloc.s 13
-		IL_02a1: ldloc.s 14
-		IL_02a3: ldstr "log"
-		IL_02a8: ldloc.s 13
-		IL_02aa: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_02af: pop
-		IL_02b0: ldstr "console"
-		IL_02b5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_02ba: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_02bf: stloc.s 13
-		IL_02c1: ldnull
-		IL_02c2: call object Modules.Variable_NumericVarLocalSpecialization/hoistedDependency::__js_call__(object)
-		IL_02c7: stloc.s 14
-		IL_02c9: ldloc.s 13
-		IL_02cb: ldstr "log"
-		IL_02d0: ldloc.s 14
-		IL_02d2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_02d7: pop
-		IL_02d8: ldstr "console"
-		IL_02dd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_02e2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_02e7: stloc.s 14
-		IL_02e9: ldloc.0
-		IL_02ea: castclass Modules.Variable_NumericVarLocalSpecialization/Scope
-		IL_02ef: ldnull
-		IL_02f0: call object Modules.Variable_NumericVarLocalSpecialization/objectLiteralWrite::__js_call__(class Modules.Variable_NumericVarLocalSpecialization/Scope, object)
-		IL_02f5: stloc.s 13
-		IL_02f7: ldloc.s 14
-		IL_02f9: ldstr "log"
-		IL_02fe: ldloc.s 13
-		IL_0300: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0305: pop
-		IL_0306: ldstr "console"
-		IL_030b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0310: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0315: stloc.s 13
-		IL_0317: ldnull
-		IL_0318: ldc.i4.1
-		IL_0319: call object Modules.Variable_NumericVarLocalSpecialization/labeledBreak::__js_call__(object, bool)
-		IL_031e: stloc.s 14
-		IL_0320: ldloc.s 13
-		IL_0322: ldstr "log"
-		IL_0327: ldloc.s 14
-		IL_0329: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_032e: pop
-		IL_032f: ldstr "console"
-		IL_0334: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0339: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_033e: stloc.s 14
-		IL_0340: ldnull
-		IL_0341: ldc.i4.0
-		IL_0342: call object Modules.Variable_NumericVarLocalSpecialization/labeledBreak::__js_call__(object, bool)
-		IL_0347: stloc.s 13
-		IL_0349: ldloc.s 14
-		IL_034b: ldstr "log"
-		IL_0350: ldloc.s 13
-		IL_0352: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0357: pop
-		IL_0358: ldstr "console"
-		IL_035d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0362: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0367: stloc.s 13
-		IL_0369: ldnull
-		IL_036a: call object Modules.Variable_NumericVarLocalSpecialization/optionalWrite::__js_call__(object)
-		IL_036f: stloc.s 14
-		IL_0371: ldloc.s 13
-		IL_0373: ldstr "log"
-		IL_0378: ldloc.s 14
-		IL_037a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_037f: pop
-		IL_0380: ldstr "console"
-		IL_0385: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_038a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_038f: stloc.s 14
-		IL_0391: ldnull
-		IL_0392: call object Modules.Variable_NumericVarLocalSpecialization/shadowedSource::__js_call__(object)
-		IL_0397: stloc.s 13
-		IL_0399: ldloc.s 14
-		IL_039b: ldstr "log"
-		IL_03a0: ldloc.s 13
-		IL_03a2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_03a7: pop
-		IL_03a8: ret
+		IL_0169: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_016e: stloc.s 13
+		IL_0170: ldnull
+		IL_0171: ldc.r8 5
+		IL_017a: call object Modules.Variable_NumericVarLocalSpecialization/calculate::__js_call__(object, float64)
+		IL_017f: stloc.s 14
+		IL_0181: ldloc.s 13
+		IL_0183: ldloc.s 14
+		IL_0185: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_018a: pop
+		IL_018b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0190: stloc.s 13
+		IL_0192: ldnull
+		IL_0193: call float64 Modules.Variable_NumericVarLocalSpecialization/readBeforeInitialization::__js_call__(object)
+		IL_0198: stloc.s 15
+		IL_019a: ldloc.s 15
+		IL_019c: box [System.Runtime]System.Double
+		IL_01a1: stloc.s 16
+		IL_01a3: ldloc.s 13
+		IL_01a5: ldloc.s 16
+		IL_01a7: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_01ac: pop
+		IL_01ad: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_01b2: stloc.s 13
+		IL_01b4: ldnull
+		IL_01b5: ldc.i4.0
+		IL_01b6: call object Modules.Variable_NumericVarLocalSpecialization/conditionallyInitialized::__js_call__(object, bool)
+		IL_01bb: stloc.s 14
+		IL_01bd: ldloc.s 13
+		IL_01bf: ldloc.s 14
+		IL_01c1: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_01c6: pop
+		IL_01c7: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_01cc: stloc.s 13
+		IL_01ce: ldnull
+		IL_01cf: ldc.i4.0
+		IL_01d0: call object Modules.Variable_NumericVarLocalSpecialization/mixedType::__js_call__(object, bool)
+		IL_01d5: stloc.s 14
+		IL_01d7: ldloc.s 13
+		IL_01d9: ldloc.s 14
+		IL_01db: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_01e0: pop
+		IL_01e1: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_01e6: stloc.s 13
+		IL_01e8: ldnull
+		IL_01e9: ldc.i4.1
+		IL_01ea: call object Modules.Variable_NumericVarLocalSpecialization/mixedType::__js_call__(object, bool)
+		IL_01ef: stloc.s 14
+		IL_01f1: ldloc.s 13
+		IL_01f3: ldloc.s 14
+		IL_01f5: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_01fa: pop
+		IL_01fb: ldloc.0
+		IL_01fc: castclass Modules.Variable_NumericVarLocalSpecialization/Scope
+		IL_0201: ldnull
+		IL_0202: call object Modules.Variable_NumericVarLocalSpecialization/captured::__js_call__(class Modules.Variable_NumericVarLocalSpecialization/Scope, object)
+		IL_0207: stloc.s 11
+		IL_0209: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_020e: stloc.s 13
+		IL_0210: ldloc.s 11
+		IL_0212: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0217: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
+		IL_021c: stloc.s 14
+		IL_021e: ldloc.s 13
+		IL_0220: ldloc.s 14
+		IL_0222: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0227: pop
+		IL_0228: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_022d: stloc.s 13
+		IL_022f: ldloc.s 11
+		IL_0231: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0236: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
+		IL_023b: stloc.s 14
+		IL_023d: ldloc.s 13
+		IL_023f: ldloc.s 14
+		IL_0241: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0246: pop
+		IL_0247: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_024c: stloc.s 13
+		IL_024e: ldnull
+		IL_024f: call object Modules.Variable_NumericVarLocalSpecialization/hoistedDependency::__js_call__(object)
+		IL_0254: stloc.s 14
+		IL_0256: ldloc.s 13
+		IL_0258: ldloc.s 14
+		IL_025a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_025f: pop
+		IL_0260: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0265: stloc.s 13
+		IL_0267: ldloc.0
+		IL_0268: castclass Modules.Variable_NumericVarLocalSpecialization/Scope
+		IL_026d: ldnull
+		IL_026e: call object Modules.Variable_NumericVarLocalSpecialization/objectLiteralWrite::__js_call__(class Modules.Variable_NumericVarLocalSpecialization/Scope, object)
+		IL_0273: stloc.s 14
+		IL_0275: ldloc.s 13
+		IL_0277: ldloc.s 14
+		IL_0279: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_027e: pop
+		IL_027f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0284: stloc.s 13
+		IL_0286: ldnull
+		IL_0287: ldc.i4.1
+		IL_0288: call object Modules.Variable_NumericVarLocalSpecialization/labeledBreak::__js_call__(object, bool)
+		IL_028d: stloc.s 14
+		IL_028f: ldloc.s 13
+		IL_0291: ldloc.s 14
+		IL_0293: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0298: pop
+		IL_0299: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_029e: stloc.s 13
+		IL_02a0: ldnull
+		IL_02a1: ldc.i4.0
+		IL_02a2: call object Modules.Variable_NumericVarLocalSpecialization/labeledBreak::__js_call__(object, bool)
+		IL_02a7: stloc.s 14
+		IL_02a9: ldloc.s 13
+		IL_02ab: ldloc.s 14
+		IL_02ad: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_02b2: pop
+		IL_02b3: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_02b8: stloc.s 13
+		IL_02ba: ldnull
+		IL_02bb: call object Modules.Variable_NumericVarLocalSpecialization/optionalWrite::__js_call__(object)
+		IL_02c0: stloc.s 14
+		IL_02c2: ldloc.s 13
+		IL_02c4: ldloc.s 14
+		IL_02c6: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_02cb: pop
+		IL_02cc: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_02d1: stloc.s 13
+		IL_02d3: ldnull
+		IL_02d4: call object Modules.Variable_NumericVarLocalSpecialization/shadowedSource::__js_call__(object)
+		IL_02d9: stloc.s 14
+		IL_02db: ldloc.s 13
+		IL_02dd: ldloc.s 14
+		IL_02df: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_02e4: pop
+		IL_02e5: ret
 	} // end of method Variable_NumericVarLocalSpecialization::__js_module_init__
 
 } // end of class Modules.Variable_NumericVarLocalSpecialization

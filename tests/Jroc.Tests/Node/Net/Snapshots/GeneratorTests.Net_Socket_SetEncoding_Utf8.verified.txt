@@ -164,54 +164,52 @@
 					01 00 02 00 00 00 00 00
 				)
 				// Header size: 12
-				// Code size: 104 (0x68)
+				// Code size: 89 (0x59)
 				.maxstack 8
 				.locals init (
-					[0] object,
+					[0] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 					[1] string,
-					[2] object
+					[2] object,
+					[3] object
 				)
 
-				IL_0000: ldstr "console"
-				IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-				IL_000a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_000f: stloc.0
-				IL_0010: ldarg.2
-				IL_0011: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
-				IL_0016: stloc.1
-				IL_0017: ldstr "server chunk:"
-				IL_001c: ldloc.1
+				IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_0005: stloc.0
+				IL_0006: ldarg.2
+				IL_0007: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
+				IL_000c: stloc.1
+				IL_000d: ldstr "server chunk:"
+				IL_0012: ldloc.1
+				IL_0013: call string [System.Runtime]System.String::Concat(string, string)
+				IL_0018: ldstr ":"
 				IL_001d: call string [System.Runtime]System.String::Concat(string, string)
-				IL_0022: ldstr ":"
-				IL_0027: call string [System.Runtime]System.String::Concat(string, string)
-				IL_002c: stloc.1
-				IL_002d: ldloc.1
-				IL_002e: ldarg.2
-				IL_002f: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-				IL_0034: stloc.2
-				IL_0035: ldloc.0
-				IL_0036: ldstr "log"
-				IL_003b: ldloc.2
-				IL_003c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-				IL_0041: pop
-				IL_0042: ldarg.0
-				IL_0043: ldc.i4.1
-				IL_0044: ldelem.ref
-				IL_0045: castclass Modules.Net_Socket_SetEncoding_Utf8/FunctionExpression_server/Scope
-				IL_004a: ldfld object Modules.Net_Socket_SetEncoding_Utf8/FunctionExpression_server/Scope::received
-				IL_004f: stloc.0
-				IL_0050: ldloc.0
-				IL_0051: ldarg.2
-				IL_0052: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-				IL_0057: stloc.2
-				IL_0058: ldarg.0
-				IL_0059: ldc.i4.1
-				IL_005a: ldelem.ref
-				IL_005b: castclass Modules.Net_Socket_SetEncoding_Utf8/FunctionExpression_server/Scope
-				IL_0060: ldloc.2
-				IL_0061: stfld object Modules.Net_Socket_SetEncoding_Utf8/FunctionExpression_server/Scope::received
-				IL_0066: ldnull
-				IL_0067: ret
+				IL_0022: stloc.1
+				IL_0023: ldloc.1
+				IL_0024: ldarg.2
+				IL_0025: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+				IL_002a: stloc.2
+				IL_002b: ldloc.0
+				IL_002c: ldloc.2
+				IL_002d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+				IL_0032: pop
+				IL_0033: ldarg.0
+				IL_0034: ldc.i4.1
+				IL_0035: ldelem.ref
+				IL_0036: castclass Modules.Net_Socket_SetEncoding_Utf8/FunctionExpression_server/Scope
+				IL_003b: ldfld object Modules.Net_Socket_SetEncoding_Utf8/FunctionExpression_server/Scope::received
+				IL_0040: stloc.3
+				IL_0041: ldloc.3
+				IL_0042: ldarg.2
+				IL_0043: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+				IL_0048: stloc.2
+				IL_0049: ldarg.0
+				IL_004a: ldc.i4.1
+				IL_004b: ldelem.ref
+				IL_004c: castclass Modules.Net_Socket_SetEncoding_Utf8/FunctionExpression_server/Scope
+				IL_0051: ldloc.2
+				IL_0052: stfld object Modules.Net_Socket_SetEncoding_Utf8/FunctionExpression_server/Scope::received
+				IL_0057: ldnull
+				IL_0058: ret
 			} // end of method FunctionExpression_server::__js_call__
 
 		} // end of class FunctionExpression_server
@@ -362,57 +360,55 @@
 					01 00 02 00 00 00 00 00
 				)
 				// Header size: 12
-				// Code size: 115 (0x73)
+				// Code size: 100 (0x64)
 				.maxstack 8
 				.locals init (
-					[0] object,
+					[0] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 					[1] object,
-					[2] object
+					[2] object,
+					[3] object
 				)
 
-				IL_0000: ldstr "console"
-				IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-				IL_000a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_000f: stloc.0
-				IL_0010: ldarg.0
-				IL_0011: ldc.i4.1
-				IL_0012: ldelem.ref
-				IL_0013: castclass Modules.Net_Socket_SetEncoding_Utf8/FunctionExpression_server/Scope
-				IL_0018: ldfld object Modules.Net_Socket_SetEncoding_Utf8/FunctionExpression_server/Scope::received
-				IL_001d: stloc.1
-				IL_001e: ldstr "server recv:"
-				IL_0023: ldloc.1
-				IL_0024: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-				IL_0029: stloc.2
-				IL_002a: ldloc.0
-				IL_002b: ldstr "log"
-				IL_0030: ldloc.2
-				IL_0031: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-				IL_0036: pop
-				IL_0037: ldarg.0
-				IL_0038: ldc.i4.1
-				IL_0039: ldelem.ref
-				IL_003a: castclass Modules.Net_Socket_SetEncoding_Utf8/FunctionExpression_server/Scope
-				IL_003f: ldfld object Modules.Net_Socket_SetEncoding_Utf8/FunctionExpression_server/Scope::socket
-				IL_0044: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_0049: stloc.0
-				IL_004a: ldarg.0
-				IL_004b: ldc.i4.1
-				IL_004c: ldelem.ref
-				IL_004d: castclass Modules.Net_Socket_SetEncoding_Utf8/FunctionExpression_server/Scope
-				IL_0052: ldfld object Modules.Net_Socket_SetEncoding_Utf8/FunctionExpression_server/Scope::received
-				IL_0057: stloc.1
-				IL_0058: ldstr "done:"
-				IL_005d: ldloc.1
-				IL_005e: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-				IL_0063: stloc.2
-				IL_0064: ldloc.0
-				IL_0065: ldstr "end"
-				IL_006a: ldloc.2
-				IL_006b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-				IL_0070: pop
-				IL_0071: ldnull
-				IL_0072: ret
+				IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_0005: stloc.0
+				IL_0006: ldarg.0
+				IL_0007: ldc.i4.1
+				IL_0008: ldelem.ref
+				IL_0009: castclass Modules.Net_Socket_SetEncoding_Utf8/FunctionExpression_server/Scope
+				IL_000e: ldfld object Modules.Net_Socket_SetEncoding_Utf8/FunctionExpression_server/Scope::received
+				IL_0013: stloc.1
+				IL_0014: ldstr "server recv:"
+				IL_0019: ldloc.1
+				IL_001a: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+				IL_001f: stloc.2
+				IL_0020: ldloc.0
+				IL_0021: ldloc.2
+				IL_0022: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+				IL_0027: pop
+				IL_0028: ldarg.0
+				IL_0029: ldc.i4.1
+				IL_002a: ldelem.ref
+				IL_002b: castclass Modules.Net_Socket_SetEncoding_Utf8/FunctionExpression_server/Scope
+				IL_0030: ldfld object Modules.Net_Socket_SetEncoding_Utf8/FunctionExpression_server/Scope::socket
+				IL_0035: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_003a: stloc.1
+				IL_003b: ldarg.0
+				IL_003c: ldc.i4.1
+				IL_003d: ldelem.ref
+				IL_003e: castclass Modules.Net_Socket_SetEncoding_Utf8/FunctionExpression_server/Scope
+				IL_0043: ldfld object Modules.Net_Socket_SetEncoding_Utf8/FunctionExpression_server/Scope::received
+				IL_0048: stloc.3
+				IL_0049: ldstr "done:"
+				IL_004e: ldloc.3
+				IL_004f: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+				IL_0054: stloc.2
+				IL_0055: ldloc.1
+				IL_0056: ldstr "end"
+				IL_005b: ldloc.2
+				IL_005c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+				IL_0061: pop
+				IL_0062: ldnull
+				IL_0063: ret
 			} // end of method FunctionExpression_server_L14C19::__js_call__
 
 		} // end of class FunctionExpression_server_L14C19
@@ -1239,54 +1235,52 @@
 					01 00 02 00 00 00 00 00
 				)
 				// Header size: 12
-				// Code size: 104 (0x68)
+				// Code size: 89 (0x59)
 				.maxstack 8
 				.locals init (
-					[0] object,
+					[0] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 					[1] string,
-					[2] object
+					[2] object,
+					[3] object
 				)
 
-				IL_0000: ldstr "console"
-				IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-				IL_000a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_000f: stloc.0
-				IL_0010: ldarg.2
-				IL_0011: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
-				IL_0016: stloc.1
-				IL_0017: ldstr "client chunk:"
-				IL_001c: ldloc.1
+				IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_0005: stloc.0
+				IL_0006: ldarg.2
+				IL_0007: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
+				IL_000c: stloc.1
+				IL_000d: ldstr "client chunk:"
+				IL_0012: ldloc.1
+				IL_0013: call string [System.Runtime]System.String::Concat(string, string)
+				IL_0018: ldstr ":"
 				IL_001d: call string [System.Runtime]System.String::Concat(string, string)
-				IL_0022: ldstr ":"
-				IL_0027: call string [System.Runtime]System.String::Concat(string, string)
-				IL_002c: stloc.1
-				IL_002d: ldloc.1
-				IL_002e: ldarg.2
-				IL_002f: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-				IL_0034: stloc.2
-				IL_0035: ldloc.0
-				IL_0036: ldstr "log"
-				IL_003b: ldloc.2
-				IL_003c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-				IL_0041: pop
-				IL_0042: ldarg.0
-				IL_0043: ldc.i4.1
-				IL_0044: ldelem.ref
-				IL_0045: castclass Modules.Net_Socket_SetEncoding_Utf8/FunctionExpression_L20C30/Scope
-				IL_004a: ldfld object Modules.Net_Socket_SetEncoding_Utf8/FunctionExpression_L20C30/Scope::reply
-				IL_004f: stloc.0
-				IL_0050: ldloc.0
-				IL_0051: ldarg.2
-				IL_0052: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-				IL_0057: stloc.2
-				IL_0058: ldarg.0
-				IL_0059: ldc.i4.1
-				IL_005a: ldelem.ref
-				IL_005b: castclass Modules.Net_Socket_SetEncoding_Utf8/FunctionExpression_L20C30/Scope
-				IL_0060: ldloc.2
-				IL_0061: stfld object Modules.Net_Socket_SetEncoding_Utf8/FunctionExpression_L20C30/Scope::reply
-				IL_0066: ldnull
-				IL_0067: ret
+				IL_0022: stloc.1
+				IL_0023: ldloc.1
+				IL_0024: ldarg.2
+				IL_0025: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+				IL_002a: stloc.2
+				IL_002b: ldloc.0
+				IL_002c: ldloc.2
+				IL_002d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+				IL_0032: pop
+				IL_0033: ldarg.0
+				IL_0034: ldc.i4.1
+				IL_0035: ldelem.ref
+				IL_0036: castclass Modules.Net_Socket_SetEncoding_Utf8/FunctionExpression_L20C30/Scope
+				IL_003b: ldfld object Modules.Net_Socket_SetEncoding_Utf8/FunctionExpression_L20C30/Scope::reply
+				IL_0040: stloc.3
+				IL_0041: ldloc.3
+				IL_0042: ldarg.2
+				IL_0043: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+				IL_0048: stloc.2
+				IL_0049: ldarg.0
+				IL_004a: ldc.i4.1
+				IL_004b: ldelem.ref
+				IL_004c: castclass Modules.Net_Socket_SetEncoding_Utf8/FunctionExpression_L20C30/Scope
+				IL_0051: ldloc.2
+				IL_0052: stfld object Modules.Net_Socket_SetEncoding_Utf8/FunctionExpression_L20C30/Scope::reply
+				IL_0057: ldnull
+				IL_0058: ret
 			} // end of method FunctionExpression_L31C20::__js_call__
 
 		} // end of class FunctionExpression_L31C20
@@ -1417,19 +1411,21 @@
 					.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 						01 00 00 00 00 00 00 00
 					)
-					// Header size: 1
-					// Code size: 33 (0x21)
+					// Header size: 12
+					// Code size: 20 (0x14)
 					.maxstack 8
+					.locals init (
+						[0] class [JavaScriptRuntime]JavaScriptRuntime.Console
+					)
 
-					IL_0000: ldstr "console"
-					IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-					IL_000a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-					IL_000f: ldstr "log"
-					IL_0014: ldstr "server closed"
-					IL_0019: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-					IL_001e: pop
-					IL_001f: ldnull
-					IL_0020: ret
+					IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+					IL_0005: stloc.0
+					IL_0006: ldloc.0
+					IL_0007: ldstr "server closed"
+					IL_000c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+					IL_0011: pop
+					IL_0012: ldnull
+					IL_0013: ret
 				} // end of method FunctionExpression_L38C17::__js_call__
 
 			} // end of class FunctionExpression_L38C17
@@ -1576,11 +1572,11 @@
 					01 00 02 00 00 00 00 00
 				)
 				// Header size: 12
-				// Code size: 131 (0x83)
+				// Code size: 116 (0x74)
 				.maxstack 8
 				.locals init (
 					[0] class Modules.Net_Socket_SetEncoding_Utf8/FunctionExpression_L20C30/FunctionExpression_L36C19/Scope,
-					[1] object,
+					[1] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 					[2] object,
 					[3] object,
 					[4] object[],
@@ -1589,56 +1585,53 @@
 
 				IL_0000: newobj instance void Modules.Net_Socket_SetEncoding_Utf8/FunctionExpression_L20C30/FunctionExpression_L36C19/Scope::.ctor()
 				IL_0005: stloc.0
-				IL_0006: ldstr "console"
-				IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-				IL_0010: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_0015: stloc.1
-				IL_0016: ldarg.0
-				IL_0017: ldc.i4.1
-				IL_0018: ldelem.ref
-				IL_0019: castclass Modules.Net_Socket_SetEncoding_Utf8/FunctionExpression_L20C30/Scope
-				IL_001e: ldfld object Modules.Net_Socket_SetEncoding_Utf8/FunctionExpression_L20C30/Scope::reply
-				IL_0023: stloc.2
-				IL_0024: ldstr "client recv:"
-				IL_0029: ldloc.2
-				IL_002a: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-				IL_002f: stloc.3
-				IL_0030: ldloc.1
-				IL_0031: ldstr "log"
-				IL_0036: ldloc.3
-				IL_0037: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-				IL_003c: pop
-				IL_003d: ldarg.0
-				IL_003e: ldc.i4.0
-				IL_003f: ldelem.ref
-				IL_0040: castclass Modules.Net_Socket_SetEncoding_Utf8/Scope
-				IL_0045: ldfld object Modules.Net_Socket_SetEncoding_Utf8/Scope::server
-				IL_004a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_004f: stloc.1
-				IL_0050: ldc.i4.1
-				IL_0051: newarr [System.Runtime]System.Object
-				IL_0056: dup
-				IL_0057: ldc.i4.0
-				IL_0058: ldarg.0
-				IL_0059: ldc.i4.0
-				IL_005a: ldelem.ref
-				IL_005b: stelem.ref
-				IL_005c: stloc.s 4
-				IL_005e: newobj instance void Modules.Net_Socket_SetEncoding_Utf8/FunctionExpression_L20C30/FunctionExpression_L36C19/FunctionExpression_L38C17/FunctionObject_FunctionExpression_5C22CABE_L38C18::.ctor()
-				IL_0063: ldc.i4.0
-				IL_0064: conv.r8
-				IL_0065: ldstr ""
-				IL_006a: ldc.i4.0
-				IL_006b: ldc.i4.1
-				IL_006c: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Net_Socket_SetEncoding_Utf8/FunctionExpression_L20C30/FunctionExpression_L36C19/FunctionExpression_L38C17/FunctionObject_FunctionExpression_5C22CABE_L38C18>(!!0, float64, string, bool, bool)
-				IL_0071: stloc.s 5
-				IL_0073: ldloc.1
-				IL_0074: ldstr "close"
-				IL_0079: ldloc.s 5
-				IL_007b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-				IL_0080: pop
-				IL_0081: ldnull
-				IL_0082: ret
+				IL_0006: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_000b: stloc.1
+				IL_000c: ldarg.0
+				IL_000d: ldc.i4.1
+				IL_000e: ldelem.ref
+				IL_000f: castclass Modules.Net_Socket_SetEncoding_Utf8/FunctionExpression_L20C30/Scope
+				IL_0014: ldfld object Modules.Net_Socket_SetEncoding_Utf8/FunctionExpression_L20C30/Scope::reply
+				IL_0019: stloc.2
+				IL_001a: ldstr "client recv:"
+				IL_001f: ldloc.2
+				IL_0020: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+				IL_0025: stloc.3
+				IL_0026: ldloc.1
+				IL_0027: ldloc.3
+				IL_0028: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+				IL_002d: pop
+				IL_002e: ldarg.0
+				IL_002f: ldc.i4.0
+				IL_0030: ldelem.ref
+				IL_0031: castclass Modules.Net_Socket_SetEncoding_Utf8/Scope
+				IL_0036: ldfld object Modules.Net_Socket_SetEncoding_Utf8/Scope::server
+				IL_003b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_0040: stloc.2
+				IL_0041: ldc.i4.1
+				IL_0042: newarr [System.Runtime]System.Object
+				IL_0047: dup
+				IL_0048: ldc.i4.0
+				IL_0049: ldarg.0
+				IL_004a: ldc.i4.0
+				IL_004b: ldelem.ref
+				IL_004c: stelem.ref
+				IL_004d: stloc.s 4
+				IL_004f: newobj instance void Modules.Net_Socket_SetEncoding_Utf8/FunctionExpression_L20C30/FunctionExpression_L36C19/FunctionExpression_L38C17/FunctionObject_FunctionExpression_5C22CABE_L38C18::.ctor()
+				IL_0054: ldc.i4.0
+				IL_0055: conv.r8
+				IL_0056: ldstr ""
+				IL_005b: ldc.i4.0
+				IL_005c: ldc.i4.1
+				IL_005d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Net_Socket_SetEncoding_Utf8/FunctionExpression_L20C30/FunctionExpression_L36C19/FunctionExpression_L38C17/FunctionObject_FunctionExpression_5C22CABE_L38C18>(!!0, float64, string, bool, bool)
+				IL_0062: stloc.s 5
+				IL_0064: ldloc.2
+				IL_0065: ldstr "close"
+				IL_006a: ldloc.s 5
+				IL_006c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+				IL_0071: pop
+				IL_0072: ldnull
+				IL_0073: ret
 			} // end of method FunctionExpression_L36C19::__js_call__
 
 		} // end of class FunctionExpression_L36C19

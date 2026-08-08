@@ -38,12 +38,12 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 156 (0x9c)
+		// Code size: 126 (0x7e)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.CommonJS_Require_NodeProcess_Module/Scope,
 			[1] class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IProcessModule,
-			[2] object,
+			[2] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 			[3] object,
 			[4] bool,
 			[5] object,
@@ -56,53 +56,47 @@
 		IL_0007: ldstr "node:process"
 		IL_000c: call !!0 [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireRuntime::RequireObject<class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IProcessModule>(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object)
 		IL_0011: stloc.1
-		IL_0012: ldstr "console"
-		IL_0017: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0021: stloc.2
-		IL_0022: ldstr "process"
-		IL_0027: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_002c: stloc.3
-		IL_002d: ldloc.1
-		IL_002e: ldloc.3
-		IL_002f: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_0034: stloc.s 4
-		IL_0036: ldloc.s 4
-		IL_0038: box [System.Runtime]System.Boolean
-		IL_003d: stloc.s 5
-		IL_003f: ldloc.2
-		IL_0040: ldstr "log"
-		IL_0045: ldloc.s 5
-		IL_0047: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_004c: pop
-		IL_004d: ldstr "console"
-		IL_0052: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0057: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_005c: stloc.2
-		IL_005d: ldloc.1
-		IL_005e: ldstr "env"
-		IL_0063: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::HasOwnPropertyOverride(object, string)
-		IL_0068: brtrue IL_0079
+		IL_0012: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0017: stloc.2
+		IL_0018: ldstr "process"
+		IL_001d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0022: stloc.3
+		IL_0023: ldloc.1
+		IL_0024: ldloc.3
+		IL_0025: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_002a: stloc.s 4
+		IL_002c: ldloc.s 4
+		IL_002e: box [System.Runtime]System.Boolean
+		IL_0033: stloc.s 5
+		IL_0035: ldloc.2
+		IL_0036: ldloc.s 5
+		IL_0038: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_003d: pop
+		IL_003e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0043: stloc.2
+		IL_0044: ldloc.1
+		IL_0045: ldstr "env"
+		IL_004a: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::HasOwnPropertyOverride(object, string)
+		IL_004f: brtrue IL_0060
 
-		IL_006d: ldloc.1
-		IL_006e: callvirt instance object [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IProcessModule::get_env()
-		IL_0073: stloc.3
-		IL_0074: br IL_0085
+		IL_0054: ldloc.1
+		IL_0055: callvirt instance object [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IProcessModule::get_env()
+		IL_005a: stloc.3
+		IL_005b: br IL_006c
 
-		IL_0079: ldloc.1
-		IL_007a: ldstr "env"
-		IL_007f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
-		IL_0084: stloc.3
+		IL_0060: ldloc.1
+		IL_0061: ldstr "env"
+		IL_0066: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
+		IL_006b: stloc.3
 
-		IL_0085: ldloc.3
-		IL_0086: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
-		IL_008b: stloc.s 6
-		IL_008d: ldloc.2
-		IL_008e: ldstr "log"
-		IL_0093: ldloc.s 6
-		IL_0095: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_009a: pop
-		IL_009b: ret
+		IL_006c: ldloc.3
+		IL_006d: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
+		IL_0072: stloc.s 6
+		IL_0074: ldloc.2
+		IL_0075: ldloc.s 6
+		IL_0077: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_007c: pop
+		IL_007d: ret
 	} // end of method CommonJS_Require_NodeProcess_Module::__js_module_init__
 
 } // end of class Modules.CommonJS_Require_NodeProcess_Module

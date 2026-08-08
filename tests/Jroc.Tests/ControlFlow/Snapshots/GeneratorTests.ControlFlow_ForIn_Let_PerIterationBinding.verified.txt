@@ -279,7 +279,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 389 (0x185)
+		// Code size: 374 (0x176)
 		.maxstack 10
 		.locals init (
 			[0] class Modules.ControlFlow_ForIn_Let_PerIterationBinding/Scope,
@@ -296,7 +296,7 @@
 			[11] object[],
 			[12] class Modules.ControlFlow_ForIn_Let_PerIterationBinding/FunctionExpression_L8C13/FunctionObject_FunctionExpression_55CDB75E_L8C14,
 			[13] class Modules.ControlFlow_ForIn_Let_PerIterationBinding/Scope_ForIn_L7C5,
-			[14] object
+			[14] class [JavaScriptRuntime]JavaScriptRuntime.Console
 		)
 
 		IL_0000: newobj instance void Modules.ControlFlow_ForIn_Let_PerIterationBinding/Scope::.ctor()
@@ -401,53 +401,50 @@
 				IL_0109: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorResultDone(object)
 				IL_010e: stloc.s 10
 				IL_0110: ldloc.s 10
-				IL_0112: brtrue IL_0166
+				IL_0112: brtrue IL_0157
 
 				IL_0117: ldloc.s 9
 				IL_0119: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorResultValue(object)
 				IL_011e: stloc.s 9
 				IL_0120: ldloc.s 9
 				IL_0122: stloc.s 8
-				IL_0124: ldstr "console"
-				IL_0129: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-				IL_012e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_0133: stloc.s 9
-				IL_0135: ldloc.s 8
-				IL_0137: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-				IL_013c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
-				IL_0141: stloc.s 14
-				IL_0143: ldloc.s 9
-				IL_0145: ldstr "log"
-				IL_014a: ldloc.s 14
-				IL_014c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-				IL_0151: pop
-				IL_0152: br IL_00fe
+				IL_0124: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_0129: stloc.s 14
+				IL_012b: ldloc.s 8
+				IL_012d: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+				IL_0132: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
+				IL_0137: stloc.s 9
+				IL_0139: ldloc.s 14
+				IL_013b: ldloc.s 9
+				IL_013d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+				IL_0142: pop
+				IL_0143: br IL_00fe
 			// end loop
-			IL_0157: ldloc.s 5
-			IL_0159: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorClose(object)
-			IL_015e: ldc.i4.1
-			IL_015f: stloc.s 7
-			IL_0161: leave IL_0184
+			IL_0148: ldloc.s 5
+			IL_014a: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorClose(object)
+			IL_014f: ldc.i4.1
+			IL_0150: stloc.s 7
+			IL_0152: leave IL_0175
 
-			IL_0166: ldc.i4.1
-			IL_0167: stloc.s 6
-			IL_0169: leave IL_0184
+			IL_0157: ldc.i4.1
+			IL_0158: stloc.s 6
+			IL_015a: leave IL_0175
 		} // end .try
 		finally
 		{
-			IL_016e: ldloc.s 6
-			IL_0170: brtrue IL_0183
+			IL_015f: ldloc.s 6
+			IL_0161: brtrue IL_0174
 
-			IL_0175: ldloc.s 7
-			IL_0177: brtrue IL_0183
+			IL_0166: ldloc.s 7
+			IL_0168: brtrue IL_0174
 
-			IL_017c: ldloc.s 5
-			IL_017e: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorCloseForThrowCompletion(object)
+			IL_016d: ldloc.s 5
+			IL_016f: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorCloseForThrowCompletion(object)
 
-			IL_0183: endfinally
+			IL_0174: endfinally
 		} // end handler
 
-		IL_0184: ret
+		IL_0175: ret
 	} // end of method ControlFlow_ForIn_Let_PerIterationBinding::__js_module_init__
 
 } // end of class Modules.ControlFlow_ForIn_Let_PerIterationBinding

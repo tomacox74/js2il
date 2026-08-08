@@ -38,7 +38,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 326 (0x146)
+		// Code size: 281 (0x119)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Require_Util_Types_IsArray/Scope,
@@ -46,7 +46,7 @@
 			[2] class [JavaScriptRuntime]JavaScriptRuntime.Array,
 			[3] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
 			[4] string,
-			[5] object,
+			[5] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 			[6] object
 		)
 
@@ -85,61 +85,52 @@
 		IL_0088: stloc.3
 		IL_0089: ldstr "hello"
 		IL_008e: stloc.s 4
-		IL_0090: ldstr "console"
-		IL_0095: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_009a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_009f: stloc.s 5
-		IL_00a1: ldloc.1
-		IL_00a2: callvirt instance object [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IUtilModule::get_types()
-		IL_00a7: stloc.s 6
-		IL_00a9: ldloc.s 6
-		IL_00ab: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00b0: ldstr "isArray"
-		IL_00b5: ldloc.2
-		IL_00b6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00bb: stloc.s 6
-		IL_00bd: ldloc.s 5
-		IL_00bf: ldstr "log"
-		IL_00c4: ldloc.s 6
-		IL_00c6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00cb: pop
-		IL_00cc: ldstr "console"
-		IL_00d1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_00d6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00db: stloc.s 6
-		IL_00dd: ldloc.1
-		IL_00de: callvirt instance object [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IUtilModule::get_types()
-		IL_00e3: stloc.s 5
-		IL_00e5: ldloc.s 5
-		IL_00e7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00ec: ldstr "isArray"
-		IL_00f1: ldloc.3
-		IL_00f2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00f7: stloc.s 5
+		IL_0090: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0095: stloc.s 5
+		IL_0097: ldloc.1
+		IL_0098: callvirt instance object [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IUtilModule::get_types()
+		IL_009d: stloc.s 6
+		IL_009f: ldloc.s 6
+		IL_00a1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00a6: ldstr "isArray"
+		IL_00ab: ldloc.2
+		IL_00ac: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_00b1: stloc.s 6
+		IL_00b3: ldloc.s 5
+		IL_00b5: ldloc.s 6
+		IL_00b7: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00bc: pop
+		IL_00bd: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00c2: stloc.s 5
+		IL_00c4: ldloc.1
+		IL_00c5: callvirt instance object [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IUtilModule::get_types()
+		IL_00ca: stloc.s 6
+		IL_00cc: ldloc.s 6
+		IL_00ce: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00d3: ldstr "isArray"
+		IL_00d8: ldloc.3
+		IL_00d9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_00de: stloc.s 6
+		IL_00e0: ldloc.s 5
+		IL_00e2: ldloc.s 6
+		IL_00e4: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00e9: pop
+		IL_00ea: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00ef: stloc.s 5
+		IL_00f1: ldloc.1
+		IL_00f2: callvirt instance object [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IUtilModule::get_types()
+		IL_00f7: stloc.s 6
 		IL_00f9: ldloc.s 6
-		IL_00fb: ldstr "log"
-		IL_0100: ldloc.s 5
-		IL_0102: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0107: pop
-		IL_0108: ldstr "console"
-		IL_010d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0112: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0117: stloc.s 5
-		IL_0119: ldloc.1
-		IL_011a: callvirt instance object [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IUtilModule::get_types()
-		IL_011f: stloc.s 6
-		IL_0121: ldloc.s 6
-		IL_0123: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0128: ldstr "isArray"
-		IL_012d: ldloc.s 4
-		IL_012f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0134: stloc.s 6
-		IL_0136: ldloc.s 5
-		IL_0138: ldstr "log"
-		IL_013d: ldloc.s 6
-		IL_013f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0144: pop
-		IL_0145: ret
+		IL_00fb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0100: ldstr "isArray"
+		IL_0105: ldloc.s 4
+		IL_0107: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_010c: stloc.s 6
+		IL_010e: ldloc.s 5
+		IL_0110: ldloc.s 6
+		IL_0112: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0117: pop
+		IL_0118: ret
 	} // end of method Require_Util_Types_IsArray::__js_module_init__
 
 } // end of class Modules.Require_Util_Types_IsArray

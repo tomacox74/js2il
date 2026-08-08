@@ -914,7 +914,15 @@ public sealed partial class HIRToLIRLowerer
             return true;
         }
 
-        // Case 2b: Intrinsic static method call (e.g., Array.isArray, Math.abs, JSON.parse)
+        // Case 2b: Stable global member call (e.g., console.log). The allowlist is
+        // intentionally small; source analysis must prove that the global object has
+        // neither been changed nor escaped before directly binding its CLR member.
+        if (TryLowerStableGlobalMemberCall(callExpr, calleePropAccess, hasSpreadArgs, resultTempVar))
+        {
+            return true;
+        }
+
+        // Case 2c: Intrinsic static method call (e.g., Array.isArray, Math.abs, JSON.parse)
         // Check if the object is a global variable that maps to an intrinsic type
         if (calleePropAccess.Object is HIRVariableExpression calleeGlobalVar &&
             calleeGlobalVar.Name.Kind == BindingKind.Global)

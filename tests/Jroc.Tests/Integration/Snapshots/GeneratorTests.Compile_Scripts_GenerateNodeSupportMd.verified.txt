@@ -4123,7 +4123,7 @@
 				74 61 54 6f 6b 65 6e 10 00 00 02
 			)
 			// Header size: 12
-			// Code size: 496 (0x1f0)
+			// Code size: 481 (0x1e1)
 			.maxstack 8
 			.locals init (
 				[0] object,
@@ -4139,7 +4139,7 @@
 				[10] string,
 				[11] class [JavaScriptRuntime]JavaScriptRuntime.RegExp,
 				[12] class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule,
-				[13] object
+				[13] class [JavaScriptRuntime]JavaScriptRuntime.Console
 			)
 
 			IL_0000: ldarg.0
@@ -4320,31 +4320,28 @@
 			IL_0197: ldloc.s 6
 			IL_0199: ldstr "utf8"
 			IL_019e: callvirt instance void [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule::writeFileSync(object, object, object)
-			IL_01a3: ldstr "console"
-			IL_01a8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_01ad: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_01b2: stloc.s 8
-			IL_01b4: ldarg.0
-			IL_01b5: ldfld class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IPathModule Modules.Compile_Scripts_GenerateNodeSupportMd/Scope::path
-			IL_01ba: ldstr "relative"
-			IL_01bf: ldloc.0
-			IL_01c0: ldloc.2
-			IL_01c1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-			IL_01c6: stloc.s 13
-			IL_01c8: ldloc.s 13
-			IL_01ca: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-			IL_01cf: stloc.s 10
-			IL_01d1: ldstr "Wrote "
-			IL_01d6: ldloc.s 10
-			IL_01d8: call string [System.Runtime]System.String::Concat(string, string)
-			IL_01dd: stloc.s 10
-			IL_01df: ldloc.s 8
-			IL_01e1: ldstr "log"
-			IL_01e6: ldloc.s 10
-			IL_01e8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_01ed: pop
-			IL_01ee: ldnull
-			IL_01ef: ret
+			IL_01a3: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_01a8: stloc.s 13
+			IL_01aa: ldarg.0
+			IL_01ab: ldfld class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IPathModule Modules.Compile_Scripts_GenerateNodeSupportMd/Scope::path
+			IL_01b0: ldstr "relative"
+			IL_01b5: ldloc.0
+			IL_01b6: ldloc.2
+			IL_01b7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+			IL_01bc: stloc.s 8
+			IL_01be: ldloc.s 8
+			IL_01c0: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+			IL_01c5: stloc.s 10
+			IL_01c7: ldstr "Wrote "
+			IL_01cc: ldloc.s 10
+			IL_01ce: call string [System.Runtime]System.String::Concat(string, string)
+			IL_01d3: stloc.s 10
+			IL_01d5: ldloc.s 13
+			IL_01d7: ldloc.s 10
+			IL_01d9: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_01de: pop
+			IL_01df: ldnull
+			IL_01e0: ret
 		} // end of method main::__js_call__
 
 	} // end of class main

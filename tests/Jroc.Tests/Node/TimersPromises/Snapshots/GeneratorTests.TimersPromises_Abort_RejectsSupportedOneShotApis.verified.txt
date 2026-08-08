@@ -1014,54 +1014,45 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 125 (0x7d)
+			// Code size: 80 (0x50)
 			.maxstack 8
 			.locals init (
-				[0] object,
+				[0] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 				[1] object
 			)
 
-			IL_0000: ldstr "console"
-			IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_000a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_000f: stloc.0
-			IL_0010: ldarg.1
-			IL_0011: ldstr "name"
-			IL_0016: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_001b: stloc.1
-			IL_001c: ldloc.0
-			IL_001d: ldstr "log"
-			IL_0022: ldloc.1
-			IL_0023: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_0028: pop
-			IL_0029: ldstr "console"
-			IL_002e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_0033: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0038: stloc.1
-			IL_0039: ldarg.1
-			IL_003a: ldstr "code"
-			IL_003f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0044: stloc.0
-			IL_0045: ldloc.1
-			IL_0046: ldstr "log"
-			IL_004b: ldloc.0
-			IL_004c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_0051: pop
-			IL_0052: ldstr "console"
-			IL_0057: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_005c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0061: stloc.0
-			IL_0062: ldarg.1
-			IL_0063: ldstr "message"
-			IL_0068: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_006d: stloc.1
-			IL_006e: ldloc.0
-			IL_006f: ldstr "log"
-			IL_0074: ldloc.1
-			IL_0075: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_007a: pop
-			IL_007b: ldnull
-			IL_007c: ret
+			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0005: stloc.0
+			IL_0006: ldarg.1
+			IL_0007: ldstr "name"
+			IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0011: stloc.1
+			IL_0012: ldloc.0
+			IL_0013: ldloc.1
+			IL_0014: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0019: pop
+			IL_001a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_001f: stloc.0
+			IL_0020: ldarg.1
+			IL_0021: ldstr "code"
+			IL_0026: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_002b: stloc.1
+			IL_002c: ldloc.0
+			IL_002d: ldloc.1
+			IL_002e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0033: pop
+			IL_0034: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0039: stloc.0
+			IL_003a: ldarg.1
+			IL_003b: ldstr "message"
+			IL_0040: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0045: stloc.1
+			IL_0046: ldloc.0
+			IL_0047: ldloc.1
+			IL_0048: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_004d: pop
+			IL_004e: ldnull
+			IL_004f: ret
 		} // end of method logAbort::__js_call__
 
 	} // end of class logAbort
@@ -1188,19 +1179,21 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Header size: 1
-			// Code size: 33 (0x21)
+			// Header size: 12
+			// Code size: 20 (0x14)
 			.maxstack 8
+			.locals init (
+				[0] class [JavaScriptRuntime]JavaScriptRuntime.Console
+			)
 
-			IL_0000: ldstr "console"
-			IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_000a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_000f: ldstr "log"
-			IL_0014: ldstr "timeout-no-reject"
-			IL_0019: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_001e: pop
-			IL_001f: ldnull
-			IL_0020: ret
+			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0005: stloc.0
+			IL_0006: ldloc.0
+			IL_0007: ldstr "timeout-no-reject"
+			IL_000c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0011: pop
+			IL_0012: ldnull
+			IL_0013: ret
 		} // end of method FunctionExpression_L42C8::__js_call__
 
 	} // end of class FunctionExpression_L42C8
@@ -1504,19 +1497,21 @@
 				.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 					01 00 00 00 00 00 00 00
 				)
-				// Header size: 1
-				// Code size: 33 (0x21)
+				// Header size: 12
+				// Code size: 20 (0x14)
 				.maxstack 8
+				.locals init (
+					[0] class [JavaScriptRuntime]JavaScriptRuntime.Console
+				)
 
-				IL_0000: ldstr "console"
-				IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-				IL_000a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_000f: ldstr "log"
-				IL_0014: ldstr "immediate-no-reject"
-				IL_0019: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-				IL_001e: pop
-				IL_001f: ldnull
-				IL_0020: ret
+				IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_0005: stloc.0
+				IL_0006: ldloc.0
+				IL_0007: ldstr "immediate-no-reject"
+				IL_000c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+				IL_0011: pop
+				IL_0012: ldnull
+				IL_0013: ret
 			} // end of method FunctionExpression_L53C12::__js_call__
 
 		} // end of class FunctionExpression_L53C12

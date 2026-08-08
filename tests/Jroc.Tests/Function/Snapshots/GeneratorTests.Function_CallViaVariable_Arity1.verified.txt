@@ -191,14 +191,14 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 103 (0x67)
+		// Code size: 88 (0x58)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Function_CallViaVariable_Arity1/Scope,
 			[1] class Modules.Function_CallViaVariable_Arity1/addPrefix/FunctionObject_FunctionDeclaration_CC42596D_addPrefix,
 			[2] class Modules.Function_CallViaVariable_Arity1/addPrefix/FunctionObject_FunctionDeclaration_CC42596D_addPrefix,
 			[3] object[],
-			[4] object,
+			[4] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 			[5] object
 		)
 
@@ -223,24 +223,21 @@
 		IL_0026: nop
 		IL_0027: ldloc.1
 		IL_0028: stloc.2
-		IL_0029: ldstr "console"
-		IL_002e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0033: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0038: stloc.s 4
-		IL_003a: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_003f: stloc.3
-		IL_0040: ldloc.2
-		IL_0041: ldloc.3
-		IL_0042: ldc.r8 42
-		IL_004b: box [System.Runtime]System.Double
-		IL_0050: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
-		IL_0055: stloc.s 5
-		IL_0057: ldloc.s 4
-		IL_0059: ldstr "log"
-		IL_005e: ldloc.s 5
-		IL_0060: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0065: pop
-		IL_0066: ret
+		IL_0029: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_002e: stloc.s 4
+		IL_0030: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0035: stloc.3
+		IL_0036: ldloc.2
+		IL_0037: ldloc.3
+		IL_0038: ldc.r8 42
+		IL_0041: box [System.Runtime]System.Double
+		IL_0046: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
+		IL_004b: stloc.s 5
+		IL_004d: ldloc.s 4
+		IL_004f: ldloc.s 5
+		IL_0051: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0056: pop
+		IL_0057: ret
 	} // end of method Function_CallViaVariable_Arity1::__js_module_init__
 
 } // end of class Modules.Function_CallViaVariable_Arity1

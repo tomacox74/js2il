@@ -281,13 +281,13 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 86 (0x56)
+		// Code size: 71 (0x47)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.NumericInference_ExponentiationLoop_NoBoxing/Scope,
 			[1] class Modules.NumericInference_ExponentiationLoop_NoBoxing/arith/FunctionObject_FunctionDeclaration_B5D0B4A9_arith,
 			[2] object[],
-			[3] object,
+			[3] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 			[4] float64,
 			[5] object
 		)
@@ -310,22 +310,19 @@
 		IL_001f: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.NumericInference_ExponentiationLoop_NoBoxing/arith/FunctionObject_FunctionDeclaration_B5D0B4A9_arith>(!!0, float64, string, bool, bool)
 		IL_0024: stloc.1
 		IL_0025: nop
-		IL_0026: ldstr "console"
-		IL_002b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0030: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0035: stloc.3
-		IL_0036: ldnull
-		IL_0037: call float64 Modules.NumericInference_ExponentiationLoop_NoBoxing/arith::__js_call__(object)
-		IL_003c: stloc.s 4
-		IL_003e: ldloc.s 4
-		IL_0040: box [System.Runtime]System.Double
-		IL_0045: stloc.s 5
-		IL_0047: ldloc.3
-		IL_0048: ldstr "log"
-		IL_004d: ldloc.s 5
-		IL_004f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0054: pop
-		IL_0055: ret
+		IL_0026: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_002b: stloc.3
+		IL_002c: ldnull
+		IL_002d: call float64 Modules.NumericInference_ExponentiationLoop_NoBoxing/arith::__js_call__(object)
+		IL_0032: stloc.s 4
+		IL_0034: ldloc.s 4
+		IL_0036: box [System.Runtime]System.Double
+		IL_003b: stloc.s 5
+		IL_003d: ldloc.3
+		IL_003e: ldloc.s 5
+		IL_0040: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0045: pop
+		IL_0046: ret
 	} // end of method NumericInference_ExponentiationLoop_NoBoxing::__js_module_init__
 
 } // end of class Modules.NumericInference_ExponentiationLoop_NoBoxing

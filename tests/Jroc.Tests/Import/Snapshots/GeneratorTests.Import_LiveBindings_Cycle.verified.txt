@@ -2440,7 +2440,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 937 (0x3a9)
+		// Code size: 817 (0x331)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Import_LiveBindings_Cycle/Scope,
@@ -2453,7 +2453,7 @@
 			[7] object[],
 			[8] class Modules.Import_LiveBindings_Cycle/__jroc_esm_mark/FunctionObject_FunctionDeclaration_3566699D___jroc_esm_mark,
 			[9] object,
-			[10] object
+			[10] class [JavaScriptRuntime]JavaScriptRuntime.Console
 		)
 
 		IL_0000: newobj instance void Modules.Import_LiveBindings_Cycle/Scope::.ctor()
@@ -2567,215 +2567,191 @@
 		IL_00f6: ldstr "./Import_LiveBindings_Cycle_B.mjs"
 		IL_00fb: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
 		IL_0100: stloc.s 6
-		IL_0102: ldstr "console"
-		IL_0107: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_010c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0111: stloc.s 9
-		IL_0113: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0118: stloc.s 7
-		IL_011a: ldloc.2
-		IL_011b: ldloc.s 7
-		IL_011d: ldloc.s 5
-		IL_011f: ldstr "a"
-		IL_0124: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
-		IL_0129: stloc.s 10
-		IL_012b: ldloc.s 9
-		IL_012d: ldstr "log"
-		IL_0132: ldstr "a0:"
-		IL_0137: ldloc.s 10
-		IL_0139: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_013e: pop
-		IL_013f: ldstr "console"
-		IL_0144: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0149: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_014e: stloc.s 10
-		IL_0150: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0155: stloc.s 7
-		IL_0157: ldloc.2
-		IL_0158: ldloc.s 7
-		IL_015a: ldloc.s 6
-		IL_015c: ldstr "b"
-		IL_0161: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
-		IL_0166: stloc.s 9
-		IL_0168: ldloc.s 10
-		IL_016a: ldstr "log"
-		IL_016f: ldstr "b0:"
-		IL_0174: ldloc.s 9
-		IL_0176: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_017b: pop
-		IL_017c: ldstr "console"
-		IL_0181: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0186: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_018b: stloc.s 9
-		IL_018d: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0192: stloc.s 7
-		IL_0194: ldloc.2
-		IL_0195: ldloc.s 7
-		IL_0197: ldloc.s 5
-		IL_0199: ldstr "getBFromA"
-		IL_019e: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
-		IL_01a3: stloc.s 10
-		IL_01a5: ldc.i4.0
-		IL_01a6: newarr [System.Runtime]System.Object
-		IL_01ab: stloc.s 7
-		IL_01ad: ldloc.s 10
-		IL_01af: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_01b4: ldloc.s 7
-		IL_01b6: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs(object, object[], object[])
-		IL_01bb: stloc.s 10
-		IL_01bd: ldloc.s 9
-		IL_01bf: ldstr "log"
-		IL_01c4: ldstr "a->b:"
-		IL_01c9: ldloc.s 10
-		IL_01cb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_01d0: pop
-		IL_01d1: ldstr "console"
-		IL_01d6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_01db: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_01e0: stloc.s 10
-		IL_01e2: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_01e7: stloc.s 7
-		IL_01e9: ldloc.2
-		IL_01ea: ldloc.s 7
-		IL_01ec: ldloc.s 6
-		IL_01ee: ldstr "getAFromB"
-		IL_01f3: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
-		IL_01f8: stloc.s 9
-		IL_01fa: ldc.i4.0
-		IL_01fb: newarr [System.Runtime]System.Object
-		IL_0200: stloc.s 7
-		IL_0202: ldloc.s 9
-		IL_0204: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0209: ldloc.s 7
-		IL_020b: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs(object, object[], object[])
-		IL_0210: stloc.s 9
-		IL_0212: ldloc.s 10
-		IL_0214: ldstr "log"
-		IL_0219: ldstr "b->a:"
-		IL_021e: ldloc.s 9
-		IL_0220: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_0225: pop
-		IL_0226: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_022b: stloc.s 7
-		IL_022d: ldloc.2
-		IL_022e: ldloc.s 7
-		IL_0230: ldloc.s 5
-		IL_0232: ldstr "incA"
-		IL_0237: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
-		IL_023c: stloc.s 9
-		IL_023e: ldc.i4.0
-		IL_023f: newarr [System.Runtime]System.Object
-		IL_0244: stloc.s 7
-		IL_0246: ldloc.s 9
-		IL_0248: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_024d: ldloc.s 7
-		IL_024f: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs(object, object[], object[])
-		IL_0254: pop
-		IL_0255: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_025a: stloc.s 7
-		IL_025c: ldloc.2
-		IL_025d: ldloc.s 7
-		IL_025f: ldloc.s 6
-		IL_0261: ldstr "incB"
-		IL_0266: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
-		IL_026b: stloc.s 9
-		IL_026d: ldc.i4.0
-		IL_026e: newarr [System.Runtime]System.Object
-		IL_0273: stloc.s 7
-		IL_0275: ldloc.s 9
-		IL_0277: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_027c: ldloc.s 7
-		IL_027e: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs(object, object[], object[])
-		IL_0283: pop
-		IL_0284: ldstr "console"
-		IL_0289: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_028e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0102: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0107: stloc.s 10
+		IL_0109: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_010e: stloc.s 7
+		IL_0110: ldloc.2
+		IL_0111: ldloc.s 7
+		IL_0113: ldloc.s 5
+		IL_0115: ldstr "a"
+		IL_011a: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
+		IL_011f: stloc.s 9
+		IL_0121: ldloc.s 10
+		IL_0123: ldstr "a0:"
+		IL_0128: ldloc.s 9
+		IL_012a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_012f: pop
+		IL_0130: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0135: stloc.s 10
+		IL_0137: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_013c: stloc.s 7
+		IL_013e: ldloc.2
+		IL_013f: ldloc.s 7
+		IL_0141: ldloc.s 6
+		IL_0143: ldstr "b"
+		IL_0148: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
+		IL_014d: stloc.s 9
+		IL_014f: ldloc.s 10
+		IL_0151: ldstr "b0:"
+		IL_0156: ldloc.s 9
+		IL_0158: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_015d: pop
+		IL_015e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0163: stloc.s 10
+		IL_0165: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_016a: stloc.s 7
+		IL_016c: ldloc.2
+		IL_016d: ldloc.s 7
+		IL_016f: ldloc.s 5
+		IL_0171: ldstr "getBFromA"
+		IL_0176: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
+		IL_017b: stloc.s 9
+		IL_017d: ldc.i4.0
+		IL_017e: newarr [System.Runtime]System.Object
+		IL_0183: stloc.s 7
+		IL_0185: ldloc.s 9
+		IL_0187: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_018c: ldloc.s 7
+		IL_018e: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs(object, object[], object[])
+		IL_0193: stloc.s 9
+		IL_0195: ldloc.s 10
+		IL_0197: ldstr "a->b:"
+		IL_019c: ldloc.s 9
+		IL_019e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_01a3: pop
+		IL_01a4: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_01a9: stloc.s 10
+		IL_01ab: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_01b0: stloc.s 7
+		IL_01b2: ldloc.2
+		IL_01b3: ldloc.s 7
+		IL_01b5: ldloc.s 6
+		IL_01b7: ldstr "getAFromB"
+		IL_01bc: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
+		IL_01c1: stloc.s 9
+		IL_01c3: ldc.i4.0
+		IL_01c4: newarr [System.Runtime]System.Object
+		IL_01c9: stloc.s 7
+		IL_01cb: ldloc.s 9
+		IL_01cd: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_01d2: ldloc.s 7
+		IL_01d4: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs(object, object[], object[])
+		IL_01d9: stloc.s 9
+		IL_01db: ldloc.s 10
+		IL_01dd: ldstr "b->a:"
+		IL_01e2: ldloc.s 9
+		IL_01e4: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_01e9: pop
+		IL_01ea: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_01ef: stloc.s 7
+		IL_01f1: ldloc.2
+		IL_01f2: ldloc.s 7
+		IL_01f4: ldloc.s 5
+		IL_01f6: ldstr "incA"
+		IL_01fb: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
+		IL_0200: stloc.s 9
+		IL_0202: ldc.i4.0
+		IL_0203: newarr [System.Runtime]System.Object
+		IL_0208: stloc.s 7
+		IL_020a: ldloc.s 9
+		IL_020c: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0211: ldloc.s 7
+		IL_0213: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs(object, object[], object[])
+		IL_0218: pop
+		IL_0219: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_021e: stloc.s 7
+		IL_0220: ldloc.2
+		IL_0221: ldloc.s 7
+		IL_0223: ldloc.s 6
+		IL_0225: ldstr "incB"
+		IL_022a: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
+		IL_022f: stloc.s 9
+		IL_0231: ldc.i4.0
+		IL_0232: newarr [System.Runtime]System.Object
+		IL_0237: stloc.s 7
+		IL_0239: ldloc.s 9
+		IL_023b: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0240: ldloc.s 7
+		IL_0242: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs(object, object[], object[])
+		IL_0247: pop
+		IL_0248: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_024d: stloc.s 10
+		IL_024f: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0254: stloc.s 7
+		IL_0256: ldloc.2
+		IL_0257: ldloc.s 7
+		IL_0259: ldloc.s 5
+		IL_025b: ldstr "a"
+		IL_0260: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
+		IL_0265: stloc.s 9
+		IL_0267: ldloc.s 10
+		IL_0269: ldstr "a1:"
+		IL_026e: ldloc.s 9
+		IL_0270: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_0275: pop
+		IL_0276: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_027b: stloc.s 10
+		IL_027d: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0282: stloc.s 7
+		IL_0284: ldloc.2
+		IL_0285: ldloc.s 7
+		IL_0287: ldloc.s 6
+		IL_0289: ldstr "b"
+		IL_028e: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
 		IL_0293: stloc.s 9
-		IL_0295: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_029a: stloc.s 7
-		IL_029c: ldloc.2
-		IL_029d: ldloc.s 7
-		IL_029f: ldloc.s 5
-		IL_02a1: ldstr "a"
-		IL_02a6: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
-		IL_02ab: stloc.s 10
-		IL_02ad: ldloc.s 9
-		IL_02af: ldstr "log"
-		IL_02b4: ldstr "a1:"
-		IL_02b9: ldloc.s 10
-		IL_02bb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_02c0: pop
-		IL_02c1: ldstr "console"
-		IL_02c6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_02cb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_02d0: stloc.s 10
-		IL_02d2: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_02d7: stloc.s 7
-		IL_02d9: ldloc.2
-		IL_02da: ldloc.s 7
-		IL_02dc: ldloc.s 6
-		IL_02de: ldstr "b"
-		IL_02e3: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
-		IL_02e8: stloc.s 9
-		IL_02ea: ldloc.s 10
-		IL_02ec: ldstr "log"
-		IL_02f1: ldstr "b1:"
-		IL_02f6: ldloc.s 9
-		IL_02f8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_02fd: pop
-		IL_02fe: ldstr "console"
-		IL_0303: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0308: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_030d: stloc.s 9
-		IL_030f: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0314: stloc.s 7
-		IL_0316: ldloc.2
-		IL_0317: ldloc.s 7
-		IL_0319: ldloc.s 5
-		IL_031b: ldstr "getBFromA"
-		IL_0320: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
-		IL_0325: stloc.s 10
-		IL_0327: ldc.i4.0
-		IL_0328: newarr [System.Runtime]System.Object
-		IL_032d: stloc.s 7
-		IL_032f: ldloc.s 10
-		IL_0331: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0336: ldloc.s 7
-		IL_0338: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs(object, object[], object[])
-		IL_033d: stloc.s 10
-		IL_033f: ldloc.s 9
-		IL_0341: ldstr "log"
-		IL_0346: ldstr "a->b1:"
-		IL_034b: ldloc.s 10
-		IL_034d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_0352: pop
-		IL_0353: ldstr "console"
-		IL_0358: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_035d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0362: stloc.s 10
-		IL_0364: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0369: stloc.s 7
-		IL_036b: ldloc.2
-		IL_036c: ldloc.s 7
-		IL_036e: ldloc.s 6
-		IL_0370: ldstr "getAFromB"
-		IL_0375: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
-		IL_037a: stloc.s 9
-		IL_037c: ldc.i4.0
-		IL_037d: newarr [System.Runtime]System.Object
-		IL_0382: stloc.s 7
-		IL_0384: ldloc.s 9
-		IL_0386: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_038b: ldloc.s 7
-		IL_038d: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs(object, object[], object[])
-		IL_0392: stloc.s 9
-		IL_0394: ldloc.s 10
-		IL_0396: ldstr "log"
-		IL_039b: ldstr "b->a1:"
-		IL_03a0: ldloc.s 9
-		IL_03a2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_03a7: pop
-		IL_03a8: ret
+		IL_0295: ldloc.s 10
+		IL_0297: ldstr "b1:"
+		IL_029c: ldloc.s 9
+		IL_029e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_02a3: pop
+		IL_02a4: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_02a9: stloc.s 10
+		IL_02ab: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_02b0: stloc.s 7
+		IL_02b2: ldloc.2
+		IL_02b3: ldloc.s 7
+		IL_02b5: ldloc.s 5
+		IL_02b7: ldstr "getBFromA"
+		IL_02bc: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
+		IL_02c1: stloc.s 9
+		IL_02c3: ldc.i4.0
+		IL_02c4: newarr [System.Runtime]System.Object
+		IL_02c9: stloc.s 7
+		IL_02cb: ldloc.s 9
+		IL_02cd: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_02d2: ldloc.s 7
+		IL_02d4: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs(object, object[], object[])
+		IL_02d9: stloc.s 9
+		IL_02db: ldloc.s 10
+		IL_02dd: ldstr "a->b1:"
+		IL_02e2: ldloc.s 9
+		IL_02e4: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_02e9: pop
+		IL_02ea: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_02ef: stloc.s 10
+		IL_02f1: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_02f6: stloc.s 7
+		IL_02f8: ldloc.2
+		IL_02f9: ldloc.s 7
+		IL_02fb: ldloc.s 6
+		IL_02fd: ldstr "getAFromB"
+		IL_0302: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
+		IL_0307: stloc.s 9
+		IL_0309: ldc.i4.0
+		IL_030a: newarr [System.Runtime]System.Object
+		IL_030f: stloc.s 7
+		IL_0311: ldloc.s 9
+		IL_0313: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0318: ldloc.s 7
+		IL_031a: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs(object, object[], object[])
+		IL_031f: stloc.s 9
+		IL_0321: ldloc.s 10
+		IL_0323: ldstr "b->a1:"
+		IL_0328: ldloc.s 9
+		IL_032a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_032f: pop
+		IL_0330: ret
 	} // end of method Import_LiveBindings_Cycle::__js_module_init__
 
 } // end of class Modules.Import_LiveBindings_Cycle

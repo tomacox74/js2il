@@ -78,7 +78,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 343 (0x157)
+		// Code size: 317 (0x13d)
 		.maxstack 10
 		.locals init (
 			[0] class Modules.Intl_NumberFormat_And_Segmenter_Basic/Scope,
@@ -89,7 +89,7 @@
 			[5] bool,
 			[6] object,
 			[7] object,
-			[8] object,
+			[8] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 			[9] bool
 		)
 
@@ -105,112 +105,108 @@
 		IL_001f: newarr [System.Runtime]System.Object
 		IL_0024: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::ConstructValue(object, object[])
 		IL_0029: stloc.1
-		IL_002a: ldstr "console"
-		IL_002f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0034: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0039: stloc.s 7
-		IL_003b: ldloc.1
-		IL_003c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0041: ldstr "format"
-		IL_0046: ldc.r8 1234567
-		IL_004f: box [System.Runtime]System.Double
-		IL_0054: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0059: stloc.s 8
-		IL_005b: ldloc.s 7
-		IL_005d: ldstr "log"
-		IL_0062: ldloc.s 8
-		IL_0064: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0069: pop
-		IL_006a: ldstr "Intl"
-		IL_006f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0074: ldstr "Segmenter"
-		IL_0079: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_007e: stloc.s 8
-		IL_0080: ldloc.s 8
-		IL_0082: ldc.i4.0
-		IL_0083: newarr [System.Runtime]System.Object
-		IL_0088: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::ConstructValue(object, object[])
-		IL_008d: stloc.2
-		IL_008e: ldloc.2
-		IL_008f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0094: ldstr "segment"
-		IL_0099: ldstr "A\ud83d\ude00B"
-		IL_009e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00a3: stloc.s 8
-		IL_00a5: ldloc.s 8
-		IL_00a7: call class [JavaScriptRuntime]JavaScriptRuntime.IJavaScriptIterator [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetIterator(object)
-		IL_00ac: stloc.3
-		IL_00ad: ldc.i4.0
-		IL_00ae: stloc.s 4
-		IL_00b0: ldc.i4.0
-		IL_00b1: stloc.s 5
+		IL_002a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_002f: stloc.s 8
+		IL_0031: ldloc.1
+		IL_0032: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0037: ldstr "format"
+		IL_003c: ldc.r8 1234567
+		IL_0045: box [System.Runtime]System.Double
+		IL_004a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_004f: stloc.s 7
+		IL_0051: ldloc.s 8
+		IL_0053: ldloc.s 7
+		IL_0055: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_005a: pop
+		IL_005b: ldstr "Intl"
+		IL_0060: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0065: ldstr "Segmenter"
+		IL_006a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_006f: stloc.s 7
+		IL_0071: ldloc.s 7
+		IL_0073: ldc.i4.0
+		IL_0074: newarr [System.Runtime]System.Object
+		IL_0079: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::ConstructValue(object, object[])
+		IL_007e: stloc.2
+		IL_007f: ldloc.2
+		IL_0080: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0085: ldstr "segment"
+		IL_008a: ldstr "A\ud83d\ude00B"
+		IL_008f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0094: stloc.s 7
+		IL_0096: ldloc.s 7
+		IL_0098: call class [JavaScriptRuntime]JavaScriptRuntime.IJavaScriptIterator [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetIterator(object)
+		IL_009d: stloc.3
+		IL_009e: ldc.i4.0
+		IL_009f: stloc.s 4
+		IL_00a1: ldc.i4.0
+		IL_00a2: stloc.s 5
 		.try
 		{
-			// loop start (head: IL_00b3)
-				IL_00b3: ldloc.3
-				IL_00b4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorNext(object)
-				IL_00b9: stloc.s 8
-				IL_00bb: ldloc.s 8
-				IL_00bd: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorResultDone(object)
-				IL_00c2: stloc.s 9
-				IL_00c4: ldloc.s 9
-				IL_00c6: brtrue IL_0139
+			// loop start (head: IL_00a4)
+				IL_00a4: ldloc.3
+				IL_00a5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorNext(object)
+				IL_00aa: stloc.s 7
+				IL_00ac: ldloc.s 7
+				IL_00ae: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorResultDone(object)
+				IL_00b3: stloc.s 9
+				IL_00b5: ldloc.s 9
+				IL_00b7: brtrue IL_011f
 
-				IL_00cb: ldloc.s 8
-				IL_00cd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorResultValue(object)
-				IL_00d2: stloc.s 8
-				IL_00d4: ldloc.s 8
-				IL_00d6: brfalse IL_00e7
+				IL_00bc: ldloc.s 7
+				IL_00be: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorResultValue(object)
+				IL_00c3: stloc.s 7
+				IL_00c5: ldloc.s 7
+				IL_00c7: brfalse IL_00d8
 
-				IL_00db: ldloc.s 8
-				IL_00dd: isinst [JavaScriptRuntime]JavaScriptRuntime.JsNull
-				IL_00e2: brfalse IL_00f8
+				IL_00cc: ldloc.s 7
+				IL_00ce: isinst [JavaScriptRuntime]JavaScriptRuntime.JsNull
+				IL_00d3: brfalse IL_00e9
 
-				IL_00e7: ldloc.s 8
-				IL_00e9: ldstr ""
-				IL_00ee: ldstr "segment"
-				IL_00f3: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::ThrowDestructuringNullOrUndefined(object, string, string)
+				IL_00d8: ldloc.s 7
+				IL_00da: ldstr ""
+				IL_00df: ldstr "segment"
+				IL_00e4: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::ThrowDestructuringNullOrUndefined(object, string, string)
 
-				IL_00f8: ldloc.s 8
-				IL_00fa: ldstr "segment"
-				IL_00ff: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-				IL_0104: stloc.s 8
-				IL_0106: ldloc.s 8
-				IL_0108: stloc.s 6
-				IL_010a: ldstr "console"
-				IL_010f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-				IL_0114: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_0119: ldstr "log"
-				IL_011e: ldloc.s 6
-				IL_0120: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-				IL_0125: pop
-				IL_0126: br IL_00b3
+				IL_00e9: ldloc.s 7
+				IL_00eb: ldstr "segment"
+				IL_00f0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+				IL_00f5: stloc.s 7
+				IL_00f7: ldloc.s 7
+				IL_00f9: stloc.s 6
+				IL_00fb: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_0100: stloc.s 8
+				IL_0102: ldloc.s 8
+				IL_0104: ldloc.s 6
+				IL_0106: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+				IL_010b: pop
+				IL_010c: br IL_00a4
 			// end loop
-			IL_012b: ldloc.3
-			IL_012c: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorClose(object)
-			IL_0131: ldc.i4.1
-			IL_0132: stloc.s 5
-			IL_0134: leave IL_0156
+			IL_0111: ldloc.3
+			IL_0112: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorClose(object)
+			IL_0117: ldc.i4.1
+			IL_0118: stloc.s 5
+			IL_011a: leave IL_013c
 
-			IL_0139: ldc.i4.1
-			IL_013a: stloc.s 4
-			IL_013c: leave IL_0156
+			IL_011f: ldc.i4.1
+			IL_0120: stloc.s 4
+			IL_0122: leave IL_013c
 		} // end .try
 		finally
 		{
-			IL_0141: ldloc.s 4
-			IL_0143: brtrue IL_0155
+			IL_0127: ldloc.s 4
+			IL_0129: brtrue IL_013b
 
-			IL_0148: ldloc.s 5
-			IL_014a: brtrue IL_0155
+			IL_012e: ldloc.s 5
+			IL_0130: brtrue IL_013b
 
-			IL_014f: ldloc.3
-			IL_0150: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorCloseForThrowCompletion(object)
+			IL_0135: ldloc.3
+			IL_0136: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorCloseForThrowCompletion(object)
 
-			IL_0155: endfinally
+			IL_013b: endfinally
 		} // end handler
 
-		IL_0156: ret
+		IL_013c: ret
 	} // end of method Intl_NumberFormat_And_Segmenter_Basic::__js_module_init__
 
 } // end of class Modules.Intl_NumberFormat_And_Segmenter_Basic

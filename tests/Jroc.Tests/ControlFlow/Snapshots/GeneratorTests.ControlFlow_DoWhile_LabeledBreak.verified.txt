@@ -120,14 +120,15 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 192 (0xc0)
+		// Code size: 170 (0xaa)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ControlFlow_DoWhile_LabeledBreak/Scope,
 			[1] float64,
 			[2] float64,
 			[3] float64,
-			[4] object
+			[4] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+			[5] object
 		)
 
 		IL_0000: newobj instance void Modules.ControlFlow_DoWhile_LabeledBreak/Scope::.ctor()
@@ -149,52 +150,50 @@
 				IL_002a: ldloc.3
 				IL_002b: ldc.r8 1
 				IL_0034: clt
-				IL_0036: brfalse IL_0088
+				IL_0036: brfalse IL_007d
 
-				IL_003b: ldstr "console"
-				IL_0040: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-				IL_0045: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_004a: ldloc.1
-				IL_004b: box [System.Runtime]System.Double
-				IL_0050: stloc.s 4
-				IL_0052: ldstr "log"
-				IL_0057: ldloc.s 4
-				IL_0059: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-				IL_005e: pop
-				IL_005f: ldloc.1
-				IL_0060: stloc.3
-				IL_0061: ldloc.3
-				IL_0062: ldc.r8 2
-				IL_006b: ceq
-				IL_006d: brfalse IL_0077
+				IL_003b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_0040: stloc.s 4
+				IL_0042: ldloc.1
+				IL_0043: box [System.Runtime]System.Double
+				IL_0048: stloc.s 5
+				IL_004a: ldloc.s 4
+				IL_004c: ldloc.s 5
+				IL_004e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+				IL_0053: pop
+				IL_0054: ldloc.1
+				IL_0055: stloc.3
+				IL_0056: ldloc.3
+				IL_0057: ldc.r8 2
+				IL_0060: ceq
+				IL_0062: brfalse IL_006c
 
-				IL_0072: br IL_00a0
+				IL_0067: br IL_0095
 
-				IL_0077: ldloc.2
-				IL_0078: ldc.r8 1
-				IL_0081: add
-				IL_0082: stloc.2
-				IL_0083: br IL_0028
+				IL_006c: ldloc.2
+				IL_006d: ldc.r8 1
+				IL_0076: add
+				IL_0077: stloc.2
+				IL_0078: br IL_0028
 			// end loop
 
-			IL_0088: ldloc.1
-			IL_0089: stloc.3
-			IL_008a: ldloc.3
-			IL_008b: ldc.r8 5
-			IL_0094: clt
-			IL_0096: brfalse IL_00a0
+			IL_007d: ldloc.1
+			IL_007e: stloc.3
+			IL_007f: ldloc.3
+			IL_0080: ldc.r8 5
+			IL_0089: clt
+			IL_008b: brfalse IL_0095
 
-			IL_009b: br IL_0011
+			IL_0090: br IL_0011
 		// end loop
 
-		IL_00a0: ldstr "console"
-		IL_00a5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_00aa: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00af: ldstr "log"
-		IL_00b4: ldstr "done"
-		IL_00b9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00be: pop
-		IL_00bf: ret
+		IL_0095: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_009a: stloc.s 4
+		IL_009c: ldloc.s 4
+		IL_009e: ldstr "done"
+		IL_00a3: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00a8: pop
+		IL_00a9: ret
 	} // end of method ControlFlow_DoWhile_LabeledBreak::__js_module_init__
 
 } // end of class Modules.ControlFlow_DoWhile_LabeledBreak

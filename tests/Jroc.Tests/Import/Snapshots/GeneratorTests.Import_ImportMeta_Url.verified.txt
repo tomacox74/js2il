@@ -2440,7 +2440,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 1214 (0x4be)
+		// Code size: 1094 (0x446)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Import_ImportMeta_Url/Scope,
@@ -2458,8 +2458,9 @@
 			[12] class Modules.Import_ImportMeta_Url/__jroc_esm_mark/FunctionObject_FunctionDeclaration_71337532___jroc_esm_mark,
 			[13] object,
 			[14] object,
-			[15] bool,
-			[16] object
+			[15] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+			[16] bool,
+			[17] object
 		)
 
 		IL_0000: newobj instance void Modules.Import_ImportMeta_Url/Scope::.ctor()
@@ -2699,161 +2700,137 @@
 		IL_0288: ldstr "/"
 		IL_028d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
 		IL_0292: stloc.s 10
-		IL_0294: ldstr "console"
-		IL_0299: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_029e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_02a3: stloc.s 13
-		IL_02a5: ldarg.3
-		IL_02a6: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetImportMeta(object)
-		IL_02ab: stloc.s 14
-		IL_02ad: ldloc.s 14
-		IL_02af: ldstr "url"
-		IL_02b4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_02b9: stloc.s 14
-		IL_02bb: ldloc.s 14
-		IL_02bd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_02c2: ldstr "startsWith"
-		IL_02c7: ldstr "file://"
-		IL_02cc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_02d1: stloc.s 14
-		IL_02d3: ldloc.s 13
-		IL_02d5: ldstr "log"
-		IL_02da: ldstr "main has file url:"
-		IL_02df: ldloc.s 14
-		IL_02e1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_02e6: pop
-		IL_02e7: ldstr "console"
-		IL_02ec: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_02f1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_02f6: stloc.s 14
-		IL_02f8: ldarg.3
-		IL_02f9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_02fe: ldstr "split"
-		IL_0303: ldstr "\\"
-		IL_0308: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_030d: stloc.s 13
-		IL_030f: ldloc.s 13
-		IL_0311: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0316: ldstr "join"
-		IL_031b: ldstr "/"
-		IL_0320: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0325: stloc.s 13
-		IL_0327: ldloc.s 7
-		IL_0329: ldloc.s 13
-		IL_032b: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_0330: stloc.s 15
-		IL_0332: ldloc.s 15
-		IL_0334: box [System.Runtime]System.Boolean
-		IL_0339: stloc.s 16
-		IL_033b: ldloc.s 14
-		IL_033d: ldstr "log"
-		IL_0342: ldstr "main path matches filename:"
-		IL_0347: ldloc.s 16
-		IL_0349: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_034e: pop
-		IL_034f: ldstr "console"
-		IL_0354: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0359: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_035e: stloc.s 14
-		IL_0360: ldloc.s 8
-		IL_0362: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0367: ldstr "endsWith"
-		IL_036c: ldstr "/fixtures/main.txt"
-		IL_0371: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0376: stloc.s 13
-		IL_0378: ldloc.s 14
-		IL_037a: ldstr "log"
-		IL_037f: ldstr "main asset path:"
-		IL_0384: ldloc.s 13
-		IL_0386: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_038b: pop
-		IL_038c: ldstr "console"
-		IL_0391: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0294: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0299: stloc.s 15
+		IL_029b: ldarg.3
+		IL_029c: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetImportMeta(object)
+		IL_02a1: stloc.s 13
+		IL_02a3: ldloc.s 13
+		IL_02a5: ldstr "url"
+		IL_02aa: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_02af: stloc.s 13
+		IL_02b1: ldloc.s 13
+		IL_02b3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_02b8: ldstr "startsWith"
+		IL_02bd: ldstr "file://"
+		IL_02c2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_02c7: stloc.s 13
+		IL_02c9: ldloc.s 15
+		IL_02cb: ldstr "main has file url:"
+		IL_02d0: ldloc.s 13
+		IL_02d2: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_02d7: pop
+		IL_02d8: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_02dd: stloc.s 15
+		IL_02df: ldarg.3
+		IL_02e0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_02e5: ldstr "split"
+		IL_02ea: ldstr "\\"
+		IL_02ef: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_02f4: stloc.s 13
+		IL_02f6: ldloc.s 13
+		IL_02f8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_02fd: ldstr "join"
+		IL_0302: ldstr "/"
+		IL_0307: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_030c: stloc.s 13
+		IL_030e: ldloc.s 7
+		IL_0310: ldloc.s 13
+		IL_0312: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_0317: stloc.s 16
+		IL_0319: ldloc.s 16
+		IL_031b: box [System.Runtime]System.Boolean
+		IL_0320: stloc.s 17
+		IL_0322: ldloc.s 15
+		IL_0324: ldstr "main path matches filename:"
+		IL_0329: ldloc.s 17
+		IL_032b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_0330: pop
+		IL_0331: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0336: stloc.s 15
+		IL_0338: ldloc.s 8
+		IL_033a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_033f: ldstr "endsWith"
+		IL_0344: ldstr "/fixtures/main.txt"
+		IL_0349: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_034e: stloc.s 13
+		IL_0350: ldloc.s 15
+		IL_0352: ldstr "main asset path:"
+		IL_0357: ldloc.s 13
+		IL_0359: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_035e: pop
+		IL_035f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0364: stloc.s 15
+		IL_0366: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_036b: stloc.s 11
+		IL_036d: ldloc.2
+		IL_036e: ldloc.s 11
+		IL_0370: ldloc.s 5
+		IL_0372: ldstr "importedUrlHasFileScheme"
+		IL_0377: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
+		IL_037c: stloc.s 13
+		IL_037e: ldloc.s 15
+		IL_0380: ldstr "lib has file url:"
+		IL_0385: ldloc.s 13
+		IL_0387: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_038c: pop
+		IL_038d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0392: stloc.s 15
+		IL_0394: ldloc.s 9
 		IL_0396: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_039b: stloc.s 13
-		IL_039d: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_03a2: stloc.s 11
-		IL_03a4: ldloc.2
-		IL_03a5: ldloc.s 11
-		IL_03a7: ldloc.s 5
-		IL_03a9: ldstr "importedUrlHasFileScheme"
-		IL_03ae: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
-		IL_03b3: stloc.s 14
-		IL_03b5: ldloc.s 13
-		IL_03b7: ldstr "log"
-		IL_03bc: ldstr "lib has file url:"
-		IL_03c1: ldloc.s 14
-		IL_03c3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_03c8: pop
-		IL_03c9: ldstr "console"
-		IL_03ce: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_03d3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_03d8: stloc.s 14
-		IL_03da: ldloc.s 9
-		IL_03dc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_03e1: ldstr "endsWith"
-		IL_03e6: ldstr "/Import_ImportMeta_Url_Lib"
-		IL_03eb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_03f0: stloc.s 13
-		IL_03f2: ldloc.s 14
-		IL_03f4: ldstr "log"
-		IL_03f9: ldstr "lib path:"
-		IL_03fe: ldloc.s 13
-		IL_0400: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_0405: pop
-		IL_0406: ldstr "console"
-		IL_040b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0410: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0415: stloc.s 13
-		IL_0417: ldloc.s 10
-		IL_0419: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_041e: ldstr "endsWith"
-		IL_0423: ldstr "/fixtures/lib.txt"
-		IL_0428: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_042d: stloc.s 14
-		IL_042f: ldloc.s 13
-		IL_0431: ldstr "log"
-		IL_0436: ldstr "lib asset path:"
-		IL_043b: ldloc.s 14
-		IL_043d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_0442: pop
-		IL_0443: ldstr "console"
-		IL_0448: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_044d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0452: stloc.s 14
-		IL_0454: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0459: stloc.s 11
-		IL_045b: ldloc.2
-		IL_045c: ldloc.s 11
-		IL_045e: ldloc.s 5
-		IL_0460: ldstr "importedModuleFilenameMatches"
-		IL_0465: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
-		IL_046a: stloc.s 13
-		IL_046c: ldloc.s 14
-		IL_046e: ldstr "log"
-		IL_0473: ldstr "lib module.filename:"
-		IL_0478: ldloc.s 13
-		IL_047a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_047f: pop
-		IL_0480: ldstr "console"
-		IL_0485: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_048a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_048f: stloc.s 13
-		IL_0491: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0496: stloc.s 11
-		IL_0498: ldloc.2
-		IL_0499: ldloc.s 11
-		IL_049b: ldloc.s 5
-		IL_049d: ldstr "importedModulePathMatches"
-		IL_04a2: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
-		IL_04a7: stloc.s 14
-		IL_04a9: ldloc.s 13
-		IL_04ab: ldstr "log"
-		IL_04b0: ldstr "lib module.path:"
-		IL_04b5: ldloc.s 14
-		IL_04b7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_04bc: pop
-		IL_04bd: ret
+		IL_039b: ldstr "endsWith"
+		IL_03a0: ldstr "/Import_ImportMeta_Url_Lib"
+		IL_03a5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_03aa: stloc.s 13
+		IL_03ac: ldloc.s 15
+		IL_03ae: ldstr "lib path:"
+		IL_03b3: ldloc.s 13
+		IL_03b5: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_03ba: pop
+		IL_03bb: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_03c0: stloc.s 15
+		IL_03c2: ldloc.s 10
+		IL_03c4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_03c9: ldstr "endsWith"
+		IL_03ce: ldstr "/fixtures/lib.txt"
+		IL_03d3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_03d8: stloc.s 13
+		IL_03da: ldloc.s 15
+		IL_03dc: ldstr "lib asset path:"
+		IL_03e1: ldloc.s 13
+		IL_03e3: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_03e8: pop
+		IL_03e9: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_03ee: stloc.s 15
+		IL_03f0: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_03f5: stloc.s 11
+		IL_03f7: ldloc.2
+		IL_03f8: ldloc.s 11
+		IL_03fa: ldloc.s 5
+		IL_03fc: ldstr "importedModuleFilenameMatches"
+		IL_0401: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
+		IL_0406: stloc.s 13
+		IL_0408: ldloc.s 15
+		IL_040a: ldstr "lib module.filename:"
+		IL_040f: ldloc.s 13
+		IL_0411: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_0416: pop
+		IL_0417: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_041c: stloc.s 15
+		IL_041e: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0423: stloc.s 11
+		IL_0425: ldloc.2
+		IL_0426: ldloc.s 11
+		IL_0428: ldloc.s 5
+		IL_042a: ldstr "importedModulePathMatches"
+		IL_042f: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
+		IL_0434: stloc.s 13
+		IL_0436: ldloc.s 15
+		IL_0438: ldstr "lib module.path:"
+		IL_043d: ldloc.s 13
+		IL_043f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_0444: pop
+		IL_0445: ret
 	} // end of method Import_ImportMeta_Url::__js_module_init__
 
 } // end of class Modules.Import_ImportMeta_Url

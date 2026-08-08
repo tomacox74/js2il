@@ -59,13 +59,14 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 151 (0x97)
+		// Code size: 129 (0x81)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ControlFlow_Switch_MultiCaseSharedBody/Scope,
 			[1] float64,
 			[2] object,
-			[3] bool
+			[3] bool,
+			[4] class [JavaScriptRuntime]JavaScriptRuntime.Console
 		)
 
 		IL_0000: newobj instance void Modules.ControlFlow_Switch_MultiCaseSharedBody/Scope::.ctor()
@@ -92,26 +93,24 @@
 		IL_0048: ldloc.3
 		IL_0049: brtrue IL_0053
 
-		IL_004e: br IL_0077
+		IL_004e: br IL_006c
 
-		IL_0053: ldstr "console"
-		IL_0058: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_005d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0062: ldstr "log"
-		IL_0067: ldstr "hit"
-		IL_006c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0071: pop
-		IL_0072: br IL_0096
+		IL_0053: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0058: stloc.s 4
+		IL_005a: ldloc.s 4
+		IL_005c: ldstr "hit"
+		IL_0061: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0066: pop
+		IL_0067: br IL_0080
 
-		IL_0077: ldstr "console"
-		IL_007c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0081: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0086: ldstr "log"
-		IL_008b: ldstr "miss"
-		IL_0090: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0095: pop
+		IL_006c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0071: stloc.s 4
+		IL_0073: ldloc.s 4
+		IL_0075: ldstr "miss"
+		IL_007a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_007f: pop
 
-		IL_0096: ret
+		IL_0080: ret
 	} // end of method ControlFlow_Switch_MultiCaseSharedBody::__js_module_init__
 
 } // end of class Modules.ControlFlow_Switch_MultiCaseSharedBody

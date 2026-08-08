@@ -38,13 +38,13 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 326 (0x146)
+		// Code size: 281 (0x119)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.CompoundAssignment_PropertyNullishAssignment/Scope,
 			[1] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
 			[2] object,
-			[3] object
+			[3] class [JavaScriptRuntime]JavaScriptRuntime.Console
 		)
 
 		IL_0000: newobj instance void Modules.CompoundAssignment_PropertyNullishAssignment/Scope::.ctor()
@@ -121,46 +121,37 @@
 		IL_00c4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
 		IL_00c9: stloc.2
 
-		IL_00ca: ldstr "console"
-		IL_00cf: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_00d4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00d9: stloc.2
-		IL_00da: ldloc.1
-		IL_00db: ldstr "throw"
-		IL_00e0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_00e5: stloc.3
-		IL_00e6: ldloc.2
-		IL_00e7: ldstr "log"
-		IL_00ec: ldloc.3
-		IL_00ed: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00f2: pop
-		IL_00f3: ldstr "console"
-		IL_00f8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_00fd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0102: stloc.3
-		IL_0103: ldloc.1
-		IL_0104: ldstr "filter"
-		IL_0109: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_010e: stloc.2
-		IL_010f: ldloc.3
-		IL_0110: ldstr "log"
-		IL_0115: ldloc.2
-		IL_0116: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_011b: pop
-		IL_011c: ldstr "console"
-		IL_0121: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0126: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_012b: stloc.2
-		IL_012c: ldloc.1
-		IL_012d: ldstr "format"
-		IL_0132: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0137: stloc.3
-		IL_0138: ldloc.2
-		IL_0139: ldstr "log"
-		IL_013e: ldloc.3
-		IL_013f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0144: pop
-		IL_0145: ret
+		IL_00ca: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00cf: stloc.3
+		IL_00d0: ldloc.1
+		IL_00d1: ldstr "throw"
+		IL_00d6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00db: stloc.2
+		IL_00dc: ldloc.3
+		IL_00dd: ldloc.2
+		IL_00de: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00e3: pop
+		IL_00e4: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00e9: stloc.3
+		IL_00ea: ldloc.1
+		IL_00eb: ldstr "filter"
+		IL_00f0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00f5: stloc.2
+		IL_00f6: ldloc.3
+		IL_00f7: ldloc.2
+		IL_00f8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00fd: pop
+		IL_00fe: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0103: stloc.3
+		IL_0104: ldloc.1
+		IL_0105: ldstr "format"
+		IL_010a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_010f: stloc.2
+		IL_0110: ldloc.3
+		IL_0111: ldloc.2
+		IL_0112: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0117: pop
+		IL_0118: ret
 	} // end of method CompoundAssignment_PropertyNullishAssignment::__js_module_init__
 
 } // end of class Modules.CompoundAssignment_PropertyNullishAssignment

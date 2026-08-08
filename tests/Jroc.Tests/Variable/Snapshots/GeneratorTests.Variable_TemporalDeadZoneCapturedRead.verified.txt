@@ -145,29 +145,26 @@
 				74 61 54 6f 6b 65 6e 04 00 00 02
 			)
 			// Header size: 12
-			// Code size: 48 (0x30)
+			// Code size: 33 (0x21)
 			.maxstack 8
 			.locals init (
-				[0] object,
+				[0] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 				[1] object
 			)
 
-			IL_0000: ldstr "console"
-			IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_000a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_000f: stloc.0
-			IL_0010: ldarg.0
-			IL_0011: ldfld object Modules.Variable_TemporalDeadZoneCapturedRead/Scope::'value'
-			IL_0016: ldstr "Cannot access 'value' before initialization"
-			IL_001b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
-			IL_0020: stloc.1
-			IL_0021: ldloc.0
-			IL_0022: ldstr "log"
-			IL_0027: ldloc.1
-			IL_0028: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_002d: pop
-			IL_002e: ldnull
-			IL_002f: ret
+			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0005: stloc.0
+			IL_0006: ldarg.0
+			IL_0007: ldfld object Modules.Variable_TemporalDeadZoneCapturedRead/Scope::'value'
+			IL_000c: ldstr "Cannot access 'value' before initialization"
+			IL_0011: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_0016: stloc.1
+			IL_0017: ldloc.0
+			IL_0018: ldloc.1
+			IL_0019: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_001e: pop
+			IL_001f: ldnull
+			IL_0020: ret
 		} // end of method readValue::__js_call__
 
 	} // end of class readValue
@@ -255,7 +252,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 243 (0xf3)
+		// Code size: 206 (0xce)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Variable_TemporalDeadZoneCapturedRead/Scope,
@@ -265,7 +262,7 @@
 			[4] object,
 			[5] object,
 			[6] object[],
-			[7] object,
+			[7] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 			[8] object
 		)
 
@@ -299,70 +296,65 @@
 			IL_0033: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
 			IL_0038: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
 			IL_003d: pop
-			IL_003e: ldstr "console"
-			IL_0043: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_0048: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_004d: ldstr "log"
-			IL_0052: ldstr "NO_TDZ"
-			IL_0057: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_005c: pop
-			IL_005d: leave IL_00b2
+			IL_003e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0043: stloc.s 7
+			IL_0045: ldloc.s 7
+			IL_0047: ldstr "NO_TDZ"
+			IL_004c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0051: pop
+			IL_0052: leave IL_009c
 		} // end .try
 		catch [System.Runtime]System.Exception
 		{
-			IL_0062: stloc.2
-			IL_0063: ldloc.2
-			IL_0064: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-			IL_0069: dup
-			IL_006a: brtrue IL_007f
+			IL_0057: stloc.2
+			IL_0058: ldloc.2
+			IL_0059: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+			IL_005e: dup
+			IL_005f: brtrue IL_0074
 
-			IL_006f: pop
-			IL_0070: ldloc.2
-			IL_0071: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
-			IL_0076: dup
-			IL_0077: brtrue IL_008a
+			IL_0064: pop
+			IL_0065: ldloc.2
+			IL_0066: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+			IL_006b: dup
+			IL_006c: brtrue IL_007f
 
-			IL_007c: pop
-			IL_007d: rethrow
+			IL_0071: pop
+			IL_0072: rethrow
 
-			IL_007f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-			IL_0084: stloc.3
-			IL_0085: br IL_008b
+			IL_0074: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+			IL_0079: stloc.3
+			IL_007a: br IL_0080
 
-			IL_008a: stloc.3
+			IL_007f: stloc.3
 
-			IL_008b: ldloc.3
-			IL_008c: stloc.s 4
-			IL_008e: ldstr "console"
-			IL_0093: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_0098: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_009d: ldstr "log"
-			IL_00a2: ldstr "TDZ_CAPTURED"
-			IL_00a7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_00ac: pop
-			IL_00ad: leave IL_00b2
+			IL_0080: ldloc.3
+			IL_0081: stloc.s 4
+			IL_0083: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0088: stloc.s 7
+			IL_008a: ldloc.s 7
+			IL_008c: ldstr "TDZ_CAPTURED"
+			IL_0091: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0096: pop
+			IL_0097: leave IL_009c
 		} // end handler
 
-		IL_00b2: ldloc.0
-		IL_00b3: ldstr "ready"
-		IL_00b8: stfld object Modules.Variable_TemporalDeadZoneCapturedRead/Scope::'value'
-		IL_00bd: ldstr "console"
-		IL_00c2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_00c7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00cc: stloc.s 7
-		IL_00ce: ldloc.0
-		IL_00cf: ldfld object Modules.Variable_TemporalDeadZoneCapturedRead/Scope::'value'
-		IL_00d4: ldstr "Cannot access 'value' before initialization"
-		IL_00d9: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
-		IL_00de: stloc.s 8
-		IL_00e0: ldloc.s 7
-		IL_00e2: ldstr "log"
-		IL_00e7: ldloc.s 8
-		IL_00e9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00ee: pop
-		IL_00ef: ldnull
-		IL_00f0: stloc.s 5
-		IL_00f2: ret
+		IL_009c: ldloc.0
+		IL_009d: ldstr "ready"
+		IL_00a2: stfld object Modules.Variable_TemporalDeadZoneCapturedRead/Scope::'value'
+		IL_00a7: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00ac: stloc.s 7
+		IL_00ae: ldloc.0
+		IL_00af: ldfld object Modules.Variable_TemporalDeadZoneCapturedRead/Scope::'value'
+		IL_00b4: ldstr "Cannot access 'value' before initialization"
+		IL_00b9: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+		IL_00be: stloc.s 8
+		IL_00c0: ldloc.s 7
+		IL_00c2: ldloc.s 8
+		IL_00c4: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00c9: pop
+		IL_00ca: ldnull
+		IL_00cb: stloc.s 5
+		IL_00cd: ret
 	} // end of method Variable_TemporalDeadZoneCapturedRead::__js_module_init__
 
 } // end of class Modules.Variable_TemporalDeadZoneCapturedRead

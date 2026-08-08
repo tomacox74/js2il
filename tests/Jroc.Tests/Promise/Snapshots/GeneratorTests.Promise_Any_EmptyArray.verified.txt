@@ -106,19 +106,21 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Header size: 1
-			// Code size: 33 (0x21)
+			// Header size: 12
+			// Code size: 20 (0x14)
 			.maxstack 8
+			.locals init (
+				[0] class [JavaScriptRuntime]JavaScriptRuntime.Console
+			)
 
-			IL_0000: ldstr "console"
-			IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_000a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_000f: ldstr "log"
-			IL_0014: ldstr "Should not reach here"
-			IL_0019: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_001e: pop
-			IL_001f: ldnull
-			IL_0020: ret
+			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0005: stloc.0
+			IL_0006: ldloc.0
+			IL_0007: ldstr "Should not reach here"
+			IL_000c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0011: pop
+			IL_0012: ldnull
+			IL_0013: ret
 		} // end of method ArrowFunction_L4C11::__js_call__
 
 	} // end of class ArrowFunction_L4C11
@@ -223,29 +225,26 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 48 (0x30)
+			// Code size: 33 (0x21)
 			.maxstack 8
 			.locals init (
-				[0] object,
+				[0] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 				[1] object
 			)
 
-			IL_0000: ldstr "console"
-			IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_000a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_000f: stloc.0
-			IL_0010: ldarg.1
-			IL_0011: ldstr "name"
-			IL_0016: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_001b: stloc.1
-			IL_001c: ldloc.0
-			IL_001d: ldstr "log"
-			IL_0022: ldstr "Empty array rejected, error name:"
-			IL_0027: ldloc.1
-			IL_0028: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-			IL_002d: pop
-			IL_002e: ldnull
-			IL_002f: ret
+			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0005: stloc.0
+			IL_0006: ldarg.1
+			IL_0007: ldstr "name"
+			IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0011: stloc.1
+			IL_0012: ldloc.0
+			IL_0013: ldstr "Empty array rejected, error name:"
+			IL_0018: ldloc.1
+			IL_0019: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_001e: pop
+			IL_001f: ldnull
+			IL_0020: ret
 		} // end of method ArrowFunction_L7C12::__js_call__
 
 	} // end of class ArrowFunction_L7C12

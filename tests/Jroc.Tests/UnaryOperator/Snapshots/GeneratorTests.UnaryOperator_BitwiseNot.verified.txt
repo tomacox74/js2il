@@ -38,11 +38,11 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 211 (0xd3)
+		// Code size: 151 (0x97)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.UnaryOperator_BitwiseNot/Scope,
-			[1] object,
+			[1] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 			[2] object,
 			[3] float64,
 			[4] object
@@ -51,64 +51,52 @@
 		IL_0000: newobj instance void Modules.UnaryOperator_BitwiseNot/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: nop
-		IL_0007: ldstr "console"
-		IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0011: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0016: stloc.1
-		IL_0017: ldc.r8 5
-		IL_0020: box [System.Runtime]System.Double
-		IL_0025: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::BitwiseNot(object)
-		IL_002a: stloc.2
-		IL_002b: ldloc.1
-		IL_002c: ldstr "log"
-		IL_0031: ldloc.2
-		IL_0032: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0037: pop
-		IL_0038: ldstr "console"
-		IL_003d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0042: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0047: stloc.1
-		IL_0048: ldc.r8 0.0
-		IL_0051: box [System.Runtime]System.Double
-		IL_0056: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::BitwiseNot(object)
-		IL_005b: stloc.2
-		IL_005c: ldloc.1
-		IL_005d: ldstr "log"
-		IL_0062: ldloc.2
-		IL_0063: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0068: pop
-		IL_0069: ldstr "console"
-		IL_006e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0073: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0078: stloc.1
-		IL_0079: ldc.r8 1
-		IL_0082: neg
-		IL_0083: stloc.3
-		IL_0084: ldloc.3
-		IL_0085: box [System.Runtime]System.Double
-		IL_008a: stloc.s 4
-		IL_008c: ldloc.s 4
-		IL_008e: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::BitwiseNot(object)
-		IL_0093: stloc.2
-		IL_0094: ldloc.1
-		IL_0095: ldstr "log"
-		IL_009a: ldloc.2
-		IL_009b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00a0: pop
-		IL_00a1: ldstr "console"
-		IL_00a6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_00ab: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00b0: stloc.1
-		IL_00b1: ldc.r8 42
-		IL_00ba: box [System.Runtime]System.Double
-		IL_00bf: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::BitwiseNot(object)
-		IL_00c4: stloc.2
-		IL_00c5: ldloc.1
-		IL_00c6: ldstr "log"
-		IL_00cb: ldloc.2
-		IL_00cc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00d1: pop
-		IL_00d2: ret
+		IL_0007: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_000c: stloc.1
+		IL_000d: ldc.r8 5
+		IL_0016: box [System.Runtime]System.Double
+		IL_001b: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::BitwiseNot(object)
+		IL_0020: stloc.2
+		IL_0021: ldloc.1
+		IL_0022: ldloc.2
+		IL_0023: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0028: pop
+		IL_0029: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_002e: stloc.1
+		IL_002f: ldc.r8 0.0
+		IL_0038: box [System.Runtime]System.Double
+		IL_003d: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::BitwiseNot(object)
+		IL_0042: stloc.2
+		IL_0043: ldloc.1
+		IL_0044: ldloc.2
+		IL_0045: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_004a: pop
+		IL_004b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0050: stloc.1
+		IL_0051: ldc.r8 1
+		IL_005a: neg
+		IL_005b: stloc.3
+		IL_005c: ldloc.3
+		IL_005d: box [System.Runtime]System.Double
+		IL_0062: stloc.s 4
+		IL_0064: ldloc.s 4
+		IL_0066: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::BitwiseNot(object)
+		IL_006b: stloc.2
+		IL_006c: ldloc.1
+		IL_006d: ldloc.2
+		IL_006e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0073: pop
+		IL_0074: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0079: stloc.1
+		IL_007a: ldc.r8 42
+		IL_0083: box [System.Runtime]System.Double
+		IL_0088: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::BitwiseNot(object)
+		IL_008d: stloc.2
+		IL_008e: ldloc.1
+		IL_008f: ldloc.2
+		IL_0090: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0095: pop
+		IL_0096: ret
 	} // end of method UnaryOperator_BitwiseNot::__js_module_init__
 
 } // end of class Modules.UnaryOperator_BitwiseNot

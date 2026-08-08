@@ -38,10 +38,11 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 51 (0x33)
+		// Code size: 38 (0x26)
 		.maxstack 8
-		.locals (
-			[0] class Modules.a/Scope
+		.locals init (
+			[0] class Modules.a/Scope,
+			[1] class [JavaScriptRuntime]JavaScriptRuntime.Console
 		)
 
 		IL_0000: newobj instance void Modules.a/Scope::.ctor()
@@ -51,14 +52,13 @@
 		IL_0008: ldstr "./helpers/b"
 		IL_000d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
 		IL_0012: pop
-		IL_0013: ldstr "console"
-		IL_0018: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_001d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0022: ldstr "log"
-		IL_0027: ldstr "CommonJS_Require_RelativeFromModule a has been loaded"
-		IL_002c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0031: pop
-		IL_0032: ret
+		IL_0013: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0018: stloc.1
+		IL_0019: ldloc.1
+		IL_001a: ldstr "CommonJS_Require_RelativeFromModule a has been loaded"
+		IL_001f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0024: pop
+		IL_0025: ret
 	} // end of method a::__js_module_init__
 
 } // end of class Modules.a
@@ -98,12 +98,12 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 74 (0x4a)
+		// Code size: 59 (0x3b)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.helpers_b/Scope,
 			[1] string,
-			[2] object,
+			[2] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 			[3] string
 		)
 
@@ -116,23 +116,20 @@
 		IL_000e: ldstr "./c"
 		IL_0013: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
 		IL_0018: pop
-		IL_0019: ldstr "console"
-		IL_001e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0023: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0028: stloc.2
-		IL_0029: ldloc.1
-		IL_002a: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-		IL_002f: stloc.3
-		IL_0030: ldstr "CommonJS_Require_RelativeFromModule loaded: "
-		IL_0035: ldloc.3
-		IL_0036: call string [System.Runtime]System.String::Concat(string, string)
-		IL_003b: stloc.3
-		IL_003c: ldloc.2
-		IL_003d: ldstr "log"
-		IL_0042: ldloc.3
-		IL_0043: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0048: pop
-		IL_0049: ret
+		IL_0019: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_001e: stloc.2
+		IL_001f: ldloc.1
+		IL_0020: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+		IL_0025: stloc.3
+		IL_0026: ldstr "CommonJS_Require_RelativeFromModule loaded: "
+		IL_002b: ldloc.3
+		IL_002c: call string [System.Runtime]System.String::Concat(string, string)
+		IL_0031: stloc.3
+		IL_0032: ldloc.2
+		IL_0033: ldloc.3
+		IL_0034: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0039: pop
+		IL_003a: ret
 	} // end of method helpers_b::__js_module_init__
 
 } // end of class Modules.helpers_b
@@ -172,12 +169,12 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 62 (0x3e)
+		// Code size: 47 (0x2f)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.helpers_c/Scope,
 			[1] string,
-			[2] object,
+			[2] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 			[3] string
 		)
 
@@ -186,23 +183,20 @@
 		IL_0006: nop
 		IL_0007: ldstr "CommonJS_Require_RelativeFromModule/helpers/c"
 		IL_000c: stloc.1
-		IL_000d: ldstr "console"
-		IL_0012: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0017: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_001c: stloc.2
-		IL_001d: ldloc.1
-		IL_001e: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-		IL_0023: stloc.3
-		IL_0024: ldstr "CommonJS_Require_RelativeFromModule loaded: "
-		IL_0029: ldloc.3
-		IL_002a: call string [System.Runtime]System.String::Concat(string, string)
-		IL_002f: stloc.3
-		IL_0030: ldloc.2
-		IL_0031: ldstr "log"
-		IL_0036: ldloc.3
-		IL_0037: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_003c: pop
-		IL_003d: ret
+		IL_000d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0012: stloc.2
+		IL_0013: ldloc.1
+		IL_0014: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+		IL_0019: stloc.3
+		IL_001a: ldstr "CommonJS_Require_RelativeFromModule loaded: "
+		IL_001f: ldloc.3
+		IL_0020: call string [System.Runtime]System.String::Concat(string, string)
+		IL_0025: stloc.3
+		IL_0026: ldloc.2
+		IL_0027: ldloc.3
+		IL_0028: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_002d: pop
+		IL_002e: ret
 	} // end of method helpers_c::__js_module_init__
 
 } // end of class Modules.helpers_c

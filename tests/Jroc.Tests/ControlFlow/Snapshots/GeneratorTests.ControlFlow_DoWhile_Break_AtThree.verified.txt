@@ -80,13 +80,14 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 99 (0x63)
+		// Code size: 88 (0x58)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ControlFlow_DoWhile_Break_AtThree/Scope,
 			[1] float64,
-			[2] object,
-			[3] float64
+			[2] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+			[3] object,
+			[4] float64
 		)
 
 		IL_0000: newobj instance void Modules.ControlFlow_DoWhile_Break_AtThree/Scope::.ctor()
@@ -96,35 +97,34 @@
 		IL_0010: stloc.1
 		// loop start (head: IL_0011)
 			IL_0011: ldc.i4.1
-			IL_0012: brfalse IL_0062
+			IL_0012: brfalse IL_0057
 
-			IL_0017: ldstr "console"
-			IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_0021: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0026: ldloc.1
-			IL_0027: box [System.Runtime]System.Double
-			IL_002c: stloc.2
-			IL_002d: ldstr "log"
-			IL_0032: ldloc.2
-			IL_0033: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_0038: pop
-			IL_0039: ldloc.1
-			IL_003a: stloc.3
-			IL_003b: ldloc.3
-			IL_003c: ldc.r8 3
-			IL_0045: ceq
-			IL_0047: brfalse IL_0051
+			IL_0017: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_001c: stloc.2
+			IL_001d: ldloc.1
+			IL_001e: box [System.Runtime]System.Double
+			IL_0023: stloc.3
+			IL_0024: ldloc.2
+			IL_0025: ldloc.3
+			IL_0026: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_002b: pop
+			IL_002c: ldloc.1
+			IL_002d: stloc.s 4
+			IL_002f: ldloc.s 4
+			IL_0031: ldc.r8 3
+			IL_003a: ceq
+			IL_003c: brfalse IL_0046
 
-			IL_004c: br IL_0062
+			IL_0041: br IL_0057
 
-			IL_0051: ldloc.1
-			IL_0052: ldc.r8 1
-			IL_005b: add
-			IL_005c: stloc.1
-			IL_005d: br IL_0011
+			IL_0046: ldloc.1
+			IL_0047: ldc.r8 1
+			IL_0050: add
+			IL_0051: stloc.1
+			IL_0052: br IL_0011
 		// end loop
 
-		IL_0062: ret
+		IL_0057: ret
 	} // end of method ControlFlow_DoWhile_Break_AtThree::__js_module_init__
 
 } // end of class Modules.ControlFlow_DoWhile_Break_AtThree

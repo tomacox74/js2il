@@ -78,12 +78,13 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 104 (0x68)
+		// Code size: 78 (0x4e)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ControlFlow_If_LessThan/Scope,
 			[1] float64,
-			[2] float64
+			[2] float64,
+			[3] class [JavaScriptRuntime]JavaScriptRuntime.Console
 		)
 
 		IL_0000: newobj instance void Modules.ControlFlow_If_LessThan/Scope::.ctor()
@@ -96,26 +97,24 @@
 		IL_001b: ldloc.1
 		IL_001c: ldloc.2
 		IL_001d: clt
-		IL_001f: brfalse IL_0048
+		IL_001f: brfalse IL_003b
 
-		IL_0024: ldstr "console"
-		IL_0029: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_002e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0033: ldstr "log"
-		IL_0038: ldstr "lte"
-		IL_003d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0042: pop
-		IL_0043: br IL_0067
+		IL_0024: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0029: stloc.3
+		IL_002a: ldloc.3
+		IL_002b: ldstr "lte"
+		IL_0030: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0035: pop
+		IL_0036: br IL_004d
 
-		IL_0048: ldstr "console"
-		IL_004d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0052: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0057: ldstr "log"
-		IL_005c: ldstr "gt"
-		IL_0061: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0066: pop
+		IL_003b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0040: stloc.3
+		IL_0041: ldloc.3
+		IL_0042: ldstr "gt"
+		IL_0047: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_004c: pop
 
-		IL_0067: ret
+		IL_004d: ret
 	} // end of method ControlFlow_If_LessThan::__js_module_init__
 
 } // end of class Modules.ControlFlow_If_LessThan

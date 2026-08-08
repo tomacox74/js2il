@@ -139,7 +139,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 230 (0xe6)
+		// Code size: 219 (0xdb)
 		.maxstack 10
 		.locals init (
 			[0] class Modules.ControlFlow_ForIn_LabeledBreak/Scope,
@@ -149,7 +149,8 @@
 			[4] float64,
 			[5] object,
 			[6] bool,
-			[7] float64
+			[7] float64,
+			[8] class [JavaScriptRuntime]JavaScriptRuntime.Console
 		)
 
 		IL_0000: newobj instance void Modules.ControlFlow_ForIn_LabeledBreak/Scope::.ctor()
@@ -180,7 +181,7 @@
 			IL_005a: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorResultDone(object)
 			IL_005f: stloc.s 6
 			IL_0061: ldloc.s 6
-			IL_0063: brtrue IL_00e5
+			IL_0063: brtrue IL_00da
 
 			IL_0068: ldloc.s 5
 			IL_006a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorResultValue(object)
@@ -195,37 +196,36 @@
 				IL_0083: ldloc.s 7
 				IL_0085: ldc.r8 1
 				IL_008e: clt
-				IL_0090: brfalse IL_00e0
+				IL_0090: brfalse IL_00d5
 
-				IL_0095: ldstr "console"
-				IL_009a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-				IL_009f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_00a4: ldstr "log"
-				IL_00a9: ldloc.3
-				IL_00aa: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-				IL_00af: pop
-				IL_00b0: ldloc.3
-				IL_00b1: stloc.s 5
-				IL_00b3: ldloc.s 5
-				IL_00b5: ldstr "b"
-				IL_00ba: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-				IL_00bf: stloc.s 6
-				IL_00c1: ldloc.s 6
-				IL_00c3: brfalse IL_00cd
+				IL_0095: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_009a: stloc.s 8
+				IL_009c: ldloc.s 8
+				IL_009e: ldloc.3
+				IL_009f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+				IL_00a4: pop
+				IL_00a5: ldloc.3
+				IL_00a6: stloc.s 5
+				IL_00a8: ldloc.s 5
+				IL_00aa: ldstr "b"
+				IL_00af: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+				IL_00b4: stloc.s 6
+				IL_00b6: ldloc.s 6
+				IL_00b8: brfalse IL_00c2
 
-				IL_00c8: br IL_00e5
+				IL_00bd: br IL_00da
 
-				IL_00cd: ldloc.s 4
-				IL_00cf: ldc.r8 1
-				IL_00d8: add
-				IL_00d9: stloc.s 4
-				IL_00db: br IL_007f
+				IL_00c2: ldloc.s 4
+				IL_00c4: ldc.r8 1
+				IL_00cd: add
+				IL_00ce: stloc.s 4
+				IL_00d0: br IL_007f
 			// end loop
 
-			IL_00e0: br IL_0050
+			IL_00d5: br IL_0050
 		// end loop
 
-		IL_00e5: ret
+		IL_00da: ret
 	} // end of method ControlFlow_ForIn_LabeledBreak::__js_module_init__
 
 } // end of class Modules.ControlFlow_ForIn_LabeledBreak

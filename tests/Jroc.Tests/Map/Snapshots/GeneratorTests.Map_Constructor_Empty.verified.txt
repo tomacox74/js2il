@@ -38,12 +38,12 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 55 (0x37)
+		// Code size: 40 (0x28)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Map_Constructor_Empty/Scope,
 			[1] class [JavaScriptRuntime]JavaScriptRuntime.Map,
-			[2] object,
+			[2] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 			[3] object
 		)
 
@@ -52,20 +52,17 @@
 		IL_0006: nop
 		IL_0007: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Map::.ctor()
 		IL_000c: stloc.1
-		IL_000d: ldstr "console"
-		IL_0012: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0017: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_001c: stloc.2
-		IL_001d: ldloc.1
-		IL_001e: ldstr "size"
-		IL_0023: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0028: stloc.3
-		IL_0029: ldloc.2
-		IL_002a: ldstr "log"
-		IL_002f: ldloc.3
-		IL_0030: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0035: pop
-		IL_0036: ret
+		IL_000d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0012: stloc.2
+		IL_0013: ldloc.1
+		IL_0014: ldstr "size"
+		IL_0019: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_001e: stloc.3
+		IL_001f: ldloc.2
+		IL_0020: ldloc.3
+		IL_0021: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0026: pop
+		IL_0027: ret
 	} // end of method Map_Constructor_Empty::__js_module_init__
 
 } // end of class Modules.Map_Constructor_Empty

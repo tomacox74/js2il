@@ -108,26 +108,21 @@
 				01 00 02 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 42 (0x2a)
+			// Code size: 25 (0x19)
 			.maxstack 8
 			.locals init (
-				[0] object
+				[0] class [JavaScriptRuntime]JavaScriptRuntime.Console
 			)
 
-			IL_0000: ldstr "console"
-			IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_000a: stloc.0
-			IL_000b: ldloc.0
-			IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0011: stloc.0
-			IL_0012: ldloc.0
-			IL_0013: ldstr "log"
-			IL_0018: ldstr "Hello, World!"
-			IL_001d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_0022: pop
-			IL_0023: ldnull
-			IL_0024: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::resolve(object)
-			IL_0029: ret
+			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0005: stloc.0
+			IL_0006: ldloc.0
+			IL_0007: ldstr "Hello, World!"
+			IL_000c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0011: pop
+			IL_0012: ldnull
+			IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::resolve(object)
+			IL_0018: ret
 		} // end of method helloWorld::__js_call__
 
 	} // end of class helloWorld
@@ -171,12 +166,13 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 120 (0x78)
+		// Code size: 94 (0x5e)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Async_HelloWorld/Scope,
 			[1] class Modules.Async_HelloWorld/helloWorld/FunctionObject_FunctionDeclaration_08C655B7_helloWorld,
-			[2] object[]
+			[2] object[],
+			[3] class [JavaScriptRuntime]JavaScriptRuntime.Console
 		)
 
 		IL_0000: newobj instance void Modules.Async_HelloWorld/Scope::.ctor()
@@ -200,25 +196,23 @@
 		IL_002a: stloc.1
 		IL_002b: nop
 		IL_002c: nop
-		IL_002d: ldstr "console"
-		IL_0032: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0037: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_003c: ldstr "log"
-		IL_0041: ldstr "Before calling async function"
-		IL_0046: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_004b: pop
-		IL_004c: ldloc.1
-		IL_004d: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0052: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
-		IL_0057: pop
-		IL_0058: ldstr "console"
-		IL_005d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0062: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0067: ldstr "log"
-		IL_006c: ldstr "After calling async function"
-		IL_0071: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0076: pop
-		IL_0077: ret
+		IL_002d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0032: stloc.3
+		IL_0033: ldloc.3
+		IL_0034: ldstr "Before calling async function"
+		IL_0039: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_003e: pop
+		IL_003f: ldloc.1
+		IL_0040: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0045: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
+		IL_004a: pop
+		IL_004b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0050: stloc.3
+		IL_0051: ldloc.3
+		IL_0052: ldstr "After calling async function"
+		IL_0057: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_005c: pop
+		IL_005d: ret
 	} // end of method Async_HelloWorld::__js_module_init__
 
 } // end of class Modules.Async_HelloWorld

@@ -277,42 +277,39 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 85 (0x55)
+			// Code size: 70 (0x46)
 			.maxstack 8
 			.locals init (
-				[0] object,
+				[0] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 				[1] object
 			)
 
-			IL_0000: ldstr "console"
-			IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_000a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_000f: stloc.0
-			IL_0010: ldstr "Point: ("
-			IL_0015: ldarg.0
-			IL_0016: ldfld object Modules.Classes_ClassConstructor_ParameterDestructuring/Point::x
-			IL_001b: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_0020: stloc.1
-			IL_0021: ldloc.1
-			IL_0022: ldstr ", "
-			IL_0027: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_002c: stloc.1
-			IL_002d: ldloc.1
-			IL_002e: ldarg.0
-			IL_002f: ldfld object Modules.Classes_ClassConstructor_ParameterDestructuring/Point::y
-			IL_0034: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_0039: stloc.1
-			IL_003a: ldloc.1
-			IL_003b: ldstr ")"
-			IL_0040: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_0045: stloc.1
-			IL_0046: ldloc.0
-			IL_0047: ldstr "log"
-			IL_004c: ldloc.1
-			IL_004d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_0052: pop
-			IL_0053: ldnull
-			IL_0054: ret
+			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0005: stloc.0
+			IL_0006: ldstr "Point: ("
+			IL_000b: ldarg.0
+			IL_000c: ldfld object Modules.Classes_ClassConstructor_ParameterDestructuring/Point::x
+			IL_0011: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0016: stloc.1
+			IL_0017: ldloc.1
+			IL_0018: ldstr ", "
+			IL_001d: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0022: stloc.1
+			IL_0023: ldloc.1
+			IL_0024: ldarg.0
+			IL_0025: ldfld object Modules.Classes_ClassConstructor_ParameterDestructuring/Point::y
+			IL_002a: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_002f: stloc.1
+			IL_0030: ldloc.1
+			IL_0031: ldstr ")"
+			IL_0036: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_003b: stloc.1
+			IL_003c: ldloc.0
+			IL_003d: ldloc.1
+			IL_003e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0043: pop
+			IL_0044: ldnull
+			IL_0045: ret
 		} // end of method Point::display
 
 	} // end of class Point
@@ -599,43 +596,40 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 86 (0x56)
+			// Code size: 71 (0x47)
 			.maxstack 8
 			.locals init (
-				[0] object,
+				[0] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 				[1] object
 			)
 
-			IL_0000: ldstr "console"
-			IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_000a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_000f: stloc.0
-			IL_0010: ldarg.0
-			IL_0011: ldfld object Modules.Classes_ClassConstructor_ParameterDestructuring/Person::name
-			IL_0016: ldstr " from "
-			IL_001b: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_0020: stloc.1
-			IL_0021: ldloc.1
-			IL_0022: ldarg.0
-			IL_0023: ldfld object Modules.Classes_ClassConstructor_ParameterDestructuring/Person::city
-			IL_0028: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_002d: stloc.1
-			IL_002e: ldloc.1
-			IL_002f: ldstr " is "
-			IL_0034: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_0039: stloc.1
-			IL_003a: ldloc.1
-			IL_003b: ldarg.0
-			IL_003c: ldfld object Modules.Classes_ClassConstructor_ParameterDestructuring/Person::age
-			IL_0041: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_0046: stloc.1
-			IL_0047: ldloc.0
-			IL_0048: ldstr "log"
-			IL_004d: ldloc.1
-			IL_004e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_0053: pop
-			IL_0054: ldnull
-			IL_0055: ret
+			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0005: stloc.0
+			IL_0006: ldarg.0
+			IL_0007: ldfld object Modules.Classes_ClassConstructor_ParameterDestructuring/Person::name
+			IL_000c: ldstr " from "
+			IL_0011: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0016: stloc.1
+			IL_0017: ldloc.1
+			IL_0018: ldarg.0
+			IL_0019: ldfld object Modules.Classes_ClassConstructor_ParameterDestructuring/Person::city
+			IL_001e: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0023: stloc.1
+			IL_0024: ldloc.1
+			IL_0025: ldstr " is "
+			IL_002a: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_002f: stloc.1
+			IL_0030: ldloc.1
+			IL_0031: ldarg.0
+			IL_0032: ldfld object Modules.Classes_ClassConstructor_ParameterDestructuring/Person::age
+			IL_0037: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_003c: stloc.1
+			IL_003d: ldloc.0
+			IL_003e: ldloc.1
+			IL_003f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0044: pop
+			IL_0045: ldnull
+			IL_0046: ret
 		} // end of method Person::greet
 
 	} // end of class Person
@@ -976,56 +970,53 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 106 (0x6a)
+			// Code size: 91 (0x5b)
 			.maxstack 8
 			.locals init (
 				[0] object,
-				[1] object,
+				[1] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 				[2] bool,
 				[3] object
 			)
 
-			IL_0000: ldstr "console"
-			IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_000a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_000f: stloc.1
-			IL_0010: ldarg.0
-			IL_0011: ldfld object Modules.Classes_ClassConstructor_ParameterDestructuring/Config::secure
-			IL_0016: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-			IL_001b: stloc.2
-			IL_001c: ldloc.2
-			IL_001d: brfalse IL_002d
+			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0005: stloc.1
+			IL_0006: ldarg.0
+			IL_0007: ldfld object Modules.Classes_ClassConstructor_ParameterDestructuring/Config::secure
+			IL_000c: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+			IL_0011: stloc.2
+			IL_0012: ldloc.2
+			IL_0013: brfalse IL_0023
 
-			IL_0022: ldstr "https://"
-			IL_0027: stloc.0
-			IL_0028: br IL_0033
+			IL_0018: ldstr "https://"
+			IL_001d: stloc.0
+			IL_001e: br IL_0029
 
-			IL_002d: ldstr "http://"
-			IL_0032: stloc.0
+			IL_0023: ldstr "http://"
+			IL_0028: stloc.0
 
-			IL_0033: ldloc.0
-			IL_0034: stloc.3
-			IL_0035: ldloc.3
-			IL_0036: ldarg.0
-			IL_0037: ldfld object Modules.Classes_ClassConstructor_ParameterDestructuring/Config::host
-			IL_003c: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_0041: stloc.3
-			IL_0042: ldloc.3
-			IL_0043: ldstr ":"
-			IL_0048: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_004d: stloc.3
-			IL_004e: ldloc.3
-			IL_004f: ldarg.0
-			IL_0050: ldfld object Modules.Classes_ClassConstructor_ParameterDestructuring/Config::port
-			IL_0055: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_005a: stloc.3
-			IL_005b: ldloc.1
-			IL_005c: ldstr "log"
-			IL_0061: ldloc.3
-			IL_0062: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_0067: pop
-			IL_0068: ldnull
-			IL_0069: ret
+			IL_0029: ldloc.0
+			IL_002a: stloc.3
+			IL_002b: ldloc.3
+			IL_002c: ldarg.0
+			IL_002d: ldfld object Modules.Classes_ClassConstructor_ParameterDestructuring/Config::host
+			IL_0032: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0037: stloc.3
+			IL_0038: ldloc.3
+			IL_0039: ldstr ":"
+			IL_003e: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0043: stloc.3
+			IL_0044: ldloc.3
+			IL_0045: ldarg.0
+			IL_0046: ldfld object Modules.Classes_ClassConstructor_ParameterDestructuring/Config::port
+			IL_004b: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0050: stloc.3
+			IL_0051: ldloc.1
+			IL_0052: ldloc.3
+			IL_0053: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0058: pop
+			IL_0059: ldnull
+			IL_005a: ret
 		} // end of method Config::display
 
 	} // end of class Config

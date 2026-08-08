@@ -159,36 +159,38 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Header size: 1
-			// Code size: 51 (0x33)
+			// Header size: 12
+			// Code size: 38 (0x26)
 			.maxstack 8
+			.locals init (
+				[0] class [JavaScriptRuntime]JavaScriptRuntime.Console
+			)
 
-			IL_0000: ldstr "console"
-			IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_000a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_000f: ldstr "log"
-			IL_0014: ldc.i4.4
-			IL_0015: newarr [System.Runtime]System.Object
-			IL_001a: dup
-			IL_001b: ldc.i4.0
-			IL_001c: ldarg.1
+			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0005: stloc.0
+			IL_0006: ldloc.0
+			IL_0007: ldc.i4.4
+			IL_0008: newarr [System.Runtime]System.Object
+			IL_000d: dup
+			IL_000e: ldc.i4.0
+			IL_000f: ldarg.1
+			IL_0010: stelem.ref
+			IL_0011: dup
+			IL_0012: ldc.i4.1
+			IL_0013: ldarg.2
+			IL_0014: stelem.ref
+			IL_0015: dup
+			IL_0016: ldc.i4.2
+			IL_0017: ldarg.3
+			IL_0018: stelem.ref
+			IL_0019: dup
+			IL_001a: ldc.i4.3
+			IL_001b: ldarg.s after
 			IL_001d: stelem.ref
-			IL_001e: dup
-			IL_001f: ldc.i4.1
-			IL_0020: ldarg.2
-			IL_0021: stelem.ref
-			IL_0022: dup
-			IL_0023: ldc.i4.2
-			IL_0024: ldarg.3
-			IL_0025: stelem.ref
-			IL_0026: dup
-			IL_0027: ldc.i4.3
-			IL_0028: ldarg.s after
-			IL_002a: stelem.ref
-			IL_002b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember(object, string, object[])
-			IL_0030: pop
-			IL_0031: ldnull
-			IL_0032: ret
+			IL_001e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_0023: pop
+			IL_0024: ldnull
+			IL_0025: ret
 		} // end of method logCase::__js_call__
 
 	} // end of class logCase

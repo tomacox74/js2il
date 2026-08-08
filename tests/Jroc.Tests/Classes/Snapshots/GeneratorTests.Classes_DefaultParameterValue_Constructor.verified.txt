@@ -280,38 +280,35 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 73 (0x49)
+			// Code size: 58 (0x3a)
 			.maxstack 8
 			.locals init (
-				[0] object,
+				[0] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 				[1] object
 			)
 
-			IL_0000: ldstr "console"
-			IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_000a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_000f: stloc.0
-			IL_0010: ldarg.0
-			IL_0011: ldfld object Modules.Classes_DefaultParameterValue_Constructor/Person::name
-			IL_0016: ldstr " is "
-			IL_001b: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_0020: stloc.1
-			IL_0021: ldloc.1
-			IL_0022: ldarg.0
-			IL_0023: ldfld object Modules.Classes_DefaultParameterValue_Constructor/Person::age
-			IL_0028: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_002d: stloc.1
-			IL_002e: ldloc.1
-			IL_002f: ldstr " years old"
-			IL_0034: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_0039: stloc.1
-			IL_003a: ldloc.0
-			IL_003b: ldstr "log"
-			IL_0040: ldloc.1
-			IL_0041: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_0046: pop
-			IL_0047: ldnull
-			IL_0048: ret
+			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0005: stloc.0
+			IL_0006: ldarg.0
+			IL_0007: ldfld object Modules.Classes_DefaultParameterValue_Constructor/Person::name
+			IL_000c: ldstr " is "
+			IL_0011: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0016: stloc.1
+			IL_0017: ldloc.1
+			IL_0018: ldarg.0
+			IL_0019: ldfld object Modules.Classes_DefaultParameterValue_Constructor/Person::age
+			IL_001e: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0023: stloc.1
+			IL_0024: ldloc.1
+			IL_0025: ldstr " years old"
+			IL_002a: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_002f: stloc.1
+			IL_0030: ldloc.0
+			IL_0031: ldloc.1
+			IL_0032: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0037: pop
+			IL_0038: ldnull
+			IL_0039: ret
 		} // end of method Person::display
 
 	} // end of class Person
@@ -595,38 +592,38 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 69 (0x45)
+			// Code size: 56 (0x38)
 			.maxstack 8
 			.locals init (
-				[0] float64,
-				[1] object
+				[0] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+				[1] float64,
+				[2] object
 			)
 
-			IL_0000: ldstr "console"
-			IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_000a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_000f: ldarg.0
-			IL_0010: ldfld object Modules.Classes_DefaultParameterValue_Constructor/Box::height
-			IL_0015: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_001a: stloc.0
-			IL_001b: ldarg.0
-			IL_001c: ldfld float64 Modules.Classes_DefaultParameterValue_Constructor/Box::width
-			IL_0021: ldloc.0
-			IL_0022: mul
-			IL_0023: ldarg.0
-			IL_0024: ldfld object Modules.Classes_DefaultParameterValue_Constructor/Box::depth
-			IL_0029: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_002e: mul
-			IL_002f: stloc.0
-			IL_0030: ldloc.0
-			IL_0031: box [System.Runtime]System.Double
-			IL_0036: stloc.1
-			IL_0037: ldstr "log"
-			IL_003c: ldloc.1
-			IL_003d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_0042: pop
-			IL_0043: ldnull
-			IL_0044: ret
+			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0005: stloc.0
+			IL_0006: ldarg.0
+			IL_0007: ldfld object Modules.Classes_DefaultParameterValue_Constructor/Box::height
+			IL_000c: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0011: stloc.1
+			IL_0012: ldarg.0
+			IL_0013: ldfld float64 Modules.Classes_DefaultParameterValue_Constructor/Box::width
+			IL_0018: ldloc.1
+			IL_0019: mul
+			IL_001a: ldarg.0
+			IL_001b: ldfld object Modules.Classes_DefaultParameterValue_Constructor/Box::depth
+			IL_0020: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0025: mul
+			IL_0026: stloc.1
+			IL_0027: ldloc.1
+			IL_0028: box [System.Runtime]System.Double
+			IL_002d: stloc.2
+			IL_002e: ldloc.0
+			IL_002f: ldloc.2
+			IL_0030: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0035: pop
+			IL_0036: ldnull
+			IL_0037: ret
 		} // end of method Box::volume
 
 	} // end of class Box
@@ -898,34 +895,34 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 57 (0x39)
+			// Code size: 44 (0x2c)
 			.maxstack 8
 			.locals init (
-				[0] float64,
-				[1] object
+				[0] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+				[1] float64,
+				[2] object
 			)
 
-			IL_0000: ldstr "console"
-			IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_000a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_000f: ldarg.0
-			IL_0010: ldfld object Modules.Classes_DefaultParameterValue_Constructor/Rectangle::height
-			IL_0015: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_001a: stloc.0
-			IL_001b: ldarg.0
-			IL_001c: ldfld float64 Modules.Classes_DefaultParameterValue_Constructor/Rectangle::width
-			IL_0021: ldloc.0
-			IL_0022: mul
-			IL_0023: stloc.0
-			IL_0024: ldloc.0
-			IL_0025: box [System.Runtime]System.Double
-			IL_002a: stloc.1
-			IL_002b: ldstr "log"
-			IL_0030: ldloc.1
-			IL_0031: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_0036: pop
-			IL_0037: ldnull
-			IL_0038: ret
+			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0005: stloc.0
+			IL_0006: ldarg.0
+			IL_0007: ldfld object Modules.Classes_DefaultParameterValue_Constructor/Rectangle::height
+			IL_000c: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0011: stloc.1
+			IL_0012: ldarg.0
+			IL_0013: ldfld float64 Modules.Classes_DefaultParameterValue_Constructor/Rectangle::width
+			IL_0018: ldloc.1
+			IL_0019: mul
+			IL_001a: stloc.1
+			IL_001b: ldloc.1
+			IL_001c: box [System.Runtime]System.Double
+			IL_0021: stloc.2
+			IL_0022: ldloc.0
+			IL_0023: ldloc.2
+			IL_0024: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0029: pop
+			IL_002a: ldnull
+			IL_002b: ret
 		} // end of method Rectangle::area
 
 	} // end of class Rectangle
