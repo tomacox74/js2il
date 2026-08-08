@@ -6,6 +6,12 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- runtime/node: close issue #1719 by routing Promise, iterator, timer-promise,
+  events, stream, util, and Node callback boundaries through
+  `CallableOperations`; preserve generated callback identity for listener
+  removal, retain host-only scheduler/listener adapters, and support generated
+  ordinary, async, and generator function objects without common-arity
+  argument-array allocation.
 - compiler/IL: complete the final scheduler migration audit by consolidating
   canonical LIR def/use metadata, deleting the legacy allocator overload and
   materialization mask, and documenting the retained fusion, spill, fallback,

@@ -57,13 +57,14 @@ Formats a string using placeholders like %s, %d/%i, %f, %j, %o/%O, and %% and ap
 
 ### types
 
-Provides type-checking functions. Supported checks: isArray, isDate, isError, isFunction, isPromise, isRegExp, isString, isNumber, isBoolean, isUndefined, isNull, isObject, isBigInt, isSymbol, isAsyncFunction, isMap, isSet, isProxy, isTypedArray, isAnyArrayBuffer, isArrayBuffer, isDataView, isUint8Array, isInt32Array, and isFloat64Array. Compatibility shims for unsupported runtime types such as SharedArrayBuffer and non-implemented typed-array flavors are also exposed and currently return false.
+Provides type-checking functions. Supported checks: isArray, isDate, isError, isFunction, isPromise, isRegExp, isString, isNumber, isBoolean, isUndefined, isNull, isObject, isBigInt, isSymbol, isAsyncFunction (including generated async function objects), isMap, isSet, isProxy, isTypedArray, isAnyArrayBuffer, isArrayBuffer, isDataView, isUint8Array, isInt32Array, and isFloat64Array. Compatibility shims for unsupported runtime types such as SharedArrayBuffer and non-implemented typed-array flavors are also exposed and currently return false.
 
 **Tests:**
 - `Jroc.Tests.Node.Util.ExecutionTests.Require_Util_Types_IsPromise` (`tests/Jroc.Tests/Node/Util/ExecutionTests.cs`)
 - `Jroc.Tests.Node.Util.ExecutionTests.Require_Util_Types_IsArray` (`tests/Jroc.Tests/Node/Util/ExecutionTests.cs`)
 - `Jroc.Tests.Node.Util.ExecutionTests.Require_Util_Types_IsFunction` (`tests/Jroc.Tests/Node/Util/ExecutionTests.cs`)
 - `Jroc.Tests.Node.Util.ExecutionTests.Require_Util_Types_Expanded` (`tests/Jroc.Tests/Node/Util/ExecutionTests.cs`)
+- `Jroc.Tests.Node.Util.ExecutionTests.Require_Util_Types_Generated_Functions` (`tests/Jroc.Tests/Node/Util/ExecutionTests.cs`)
 - `Jroc.Tests.Node.Util.ExecutionTests.Require_Util_Types_TypedBinary` (`tests/Jroc.Tests/Node/Util/ExecutionTests.cs`)
 - `Jroc.Tests.Node.Util.GeneratorTests.Require_Util_Types_IsPromise` (`tests/Jroc.Tests/Node/Util/GeneratorTests.cs`)
 - `Jroc.Tests.Node.Util.GeneratorTests.Require_Util_Types_IsArray` (`tests/Jroc.Tests/Node/Util/GeneratorTests.cs`)
