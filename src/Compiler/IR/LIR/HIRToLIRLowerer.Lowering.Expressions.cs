@@ -1096,7 +1096,7 @@ public sealed partial class HIRToLIRLowerer
             DefineTempStorage(scopesTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
         }
 
-        if (!_classMethodOwnerTempsByRegistryName.Remove(registryClassName, out var typeTemp))
+        if (!_classInitializationOwnerTempsByRegistryName.Remove(registryClassName, out var typeTemp))
         {
             typeTemp = CreateTempVariable();
             _methodBodyIR.Instructions.Add(new LIRGetUserClassType(registryClassName, typeTemp));
