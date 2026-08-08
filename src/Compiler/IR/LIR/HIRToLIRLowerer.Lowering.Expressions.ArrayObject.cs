@@ -478,6 +478,10 @@ public sealed partial class HIRToLIRLowerer
             return true;
         }
 
+        var prefixTemp = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRConstString(prefix, prefixTemp));
+        DefineTempStorage(prefixTemp, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+
         if (!TryLowerObjectLiteralMemberValue(
                 accessorExpression,
                 targetTemp,
@@ -487,9 +491,6 @@ public sealed partial class HIRToLIRLowerer
         }
 
         accessorTemp = EmitMarkUndefinedPrototype(accessorTemp);
-        var prefixTemp = CreateTempVariable();
-        _methodBodyIR.Instructions.Add(new LIRConstString(prefix, prefixTemp));
-        DefineTempStorage(prefixTemp, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
         var namedAccessor = CreateTempVariable();
         _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
             IntrinsicName: nameof(JavaScriptRuntime.Function),
