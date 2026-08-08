@@ -178,13 +178,11 @@ public sealed partial class HIRToLIRLowerer
                     DefineTempStorage(thisTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
 
                     resultTempVar = CreateTempVariable();
-                    _methodBodyIR.Instructions.Add(new LIRCallInstanceMethod(
-                        thisTemp,
-                        typeof(object),
-                        nameof(object.GetType),
-                        Array.Empty<TempVariable>(),
-                        resultTempVar));
-                    DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(Type)));
+                    _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
+                        MethodName: nameof(JavaScriptRuntime.RuntimeServices.GetCurrentNewTargetOrReceiverType),
+                        Arguments: [EnsureObject(thisTemp)],
+                        Result: resultTempVar));
+                    DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
                     return true;
                 }
 

@@ -76,6 +76,45 @@ public readonly struct JsCallArguments
             ? Empty
             : new JsCallArguments(arguments);
 
+    public static JsCallArguments Prepend(
+        object?[] prefix,
+        in JsCallArguments suffix)
+    {
+        ArgumentNullException.ThrowIfNull(prefix);
+        if (prefix.Length == 0)
+        {
+            return suffix;
+        }
+
+        var count = prefix.Length + suffix.Count;
+        if (count <= 5)
+        {
+            var suffixCopy = suffix;
+            object? Get(int index)
+                => index < prefix.Length
+                    ? prefix[index]
+                    : suffixCopy.GetArgument(index - prefix.Length);
+
+            return count switch
+            {
+                1 => From(Get(0)),
+                2 => From(Get(0), Get(1)),
+                3 => From(Get(0), Get(1), Get(2)),
+                4 => From(Get(0), Get(1), Get(2), Get(3)),
+                5 => From(Get(0), Get(1), Get(2), Get(3), Get(4)),
+                _ => Empty
+            };
+        }
+
+        var arguments = new object?[count];
+        System.Array.Copy(prefix, arguments, prefix.Length);
+        for (var index = 0; index < suffix.Count; index++)
+        {
+            arguments[prefix.Length + index] = suffix.GetArgument(index);
+        }
+        return FromArray(arguments);
+    }
+
     public object? GetArgument(int index)
     {
         if ((uint)index >= (uint)Count)

@@ -47,26 +47,14 @@ namespace JavaScriptRuntime
             BindingFlags.NonPublic | BindingFlags.Static)
             ?? throw new InvalidOperationException("Failed to resolve Closure.InvokeWithArgsWithThis(...).");
 
-        private enum BoundDelegateKind
-        {
-            ScopeBinding,
-            FunctionPrototypeBind
-        }
-
         private sealed class BoundDelegateMetadata
         {
-            public BoundDelegateMetadata(Delegate target, BoundDelegateKind kind, object?[]? boundArgs = null)
+            public BoundDelegateMetadata(Delegate target)
             {
                 Target = target;
-                Kind = kind;
-                BoundArgs = boundArgs ?? System.Array.Empty<object?>();
             }
 
             public Delegate Target { get; }
-
-            public BoundDelegateKind Kind { get; }
-
-            public object?[] BoundArgs { get; }
         }
 
         private sealed class DelegateInvokeMetadata
@@ -104,7 +92,7 @@ namespace JavaScriptRuntime
             public int FixedJsParamCount { get; }
         }
 
-        private static readonly ConditionalWeakTable<Delegate, BoundDelegateMetadata> _boundDelegates = new();
+        private static readonly ConditionalWeakTable<Delegate, BoundDelegateMetadata> _scopeBoundDelegates = new();
         private static readonly ConditionalWeakTable<Delegate, DelegateInvokeMetadata> _delegateInvokeMetadata = new();
 
         private static T InvokeWithThis<T>(object? boundThis, Func<T> invoke)
@@ -477,7 +465,6 @@ namespace JavaScriptRuntime
             object? boundThis,
             bool captureLexicalNewTarget,
             object? lexicalNewTarget,
-            BoundDelegateKind kind,
             bool hasRestrictedProperties,
             bool preserveLexicalThisBinding = false,
             object? boundSuperReceiver = null,
@@ -564,7 +551,7 @@ namespace JavaScriptRuntime
             var boundDelegate = Expression.Lambda(delegateType, body, lambdaParameters).Compile();
             Function.ConfigureCallableObject(boundDelegate, hasRestrictedProperties);
             Function.CopyInvocationMetadata(target, boundDelegate);
-            _boundDelegates.Add(boundDelegate, new BoundDelegateMetadata(target, kind));
+            _scopeBoundDelegates.Add(boundDelegate, new BoundDelegateMetadata(target));
             return boundDelegate;
         }
 
@@ -595,7 +582,7 @@ namespace JavaScriptRuntime
                 throw new ArgumentException("Expected a delegate for closure binding", nameof(target));
             }
 
-            return CreateBoundDelegate(del, boundScopes, boundThis: null, captureLexicalNewTarget: false, lexicalNewTarget: null, BoundDelegateKind.ScopeBinding, hasRestrictedProperties: false);
+            return CreateBoundDelegate(del, boundScopes, boundThis: null, captureLexicalNewTarget: false, lexicalNewTarget: null, hasRestrictedProperties: false);
         }
 
         // Bind an arrow function delegate to a fixed scopes array AND a fixed lexical 'this'.
@@ -618,7 +605,6 @@ namespace JavaScriptRuntime
                 boundThis,
                 captureLexicalNewTarget: true,
                 lexicalNewTarget,
-                BoundDelegateKind.ScopeBinding,
                 hasRestrictedProperties: false);
         }
 
@@ -644,7 +630,6 @@ namespace JavaScriptRuntime
                 boundThis,
                 captureLexicalNewTarget: true,
                 lexicalNewTarget,
-                BoundDelegateKind.ScopeBinding,
                 hasRestrictedProperties: false,
                 preserveLexicalThisBinding: true,
                 boundSuperReceiver,
@@ -653,7 +638,7 @@ namespace JavaScriptRuntime
 
         internal static bool TryGetBoundTarget(Delegate boundDelegate, out Delegate target)
         {
-            if (_boundDelegates.TryGetValue(boundDelegate, out var metadata))
+            if (_scopeBoundDelegates.TryGetValue(boundDelegate, out var metadata))
             {
                 target = metadata.Target;
                 return true;
@@ -661,41 +646,11 @@ namespace JavaScriptRuntime
 
             target = null!;
             return false;
-        }
-
-        internal static bool IsFunctionPrototypeBoundDelegate(Delegate boundDelegate)
-        {
-            return _boundDelegates.TryGetValue(boundDelegate, out var metadata)
-                && metadata.Kind == BoundDelegateKind.FunctionPrototypeBind;
         }
 
         internal static bool UsesEcmaScriptThisBinding(Delegate target)
         {
             return GetDelegateInvokeMetadata(target).IsJsFuncDelegate;
-        }
-
-        internal static bool TryGetFunctionPrototypeBoundMetadata(Delegate boundDelegate, out Delegate target, out object?[] boundArgs)
-        {
-            if (_boundDelegates.TryGetValue(boundDelegate, out var metadata)
-                && metadata.Kind == BoundDelegateKind.FunctionPrototypeBind)
-            {
-                target = metadata.Target;
-                boundArgs = metadata.BoundArgs;
-                return true;
-            }
-
-            target = null!;
-            boundArgs = null!;
-            return false;
-        }
-
-        internal static void TrackFunctionPrototypeBoundDelegate(Delegate boundDelegate, Delegate target, object?[] boundArgs)
-        {
-            if (boundDelegate is null) throw new ArgumentNullException(nameof(boundDelegate));
-            if (target is null) throw new ArgumentNullException(nameof(target));
-            if (boundArgs is null) throw new ArgumentNullException(nameof(boundArgs));
-
-            _boundDelegates.Add(boundDelegate, new BoundDelegateMetadata(target, BoundDelegateKind.FunctionPrototypeBind, boundArgs));
         }
 
         private static object InvokeWithArgsCore(object target, object[] scopes, object? newTarget, object?[] args)
@@ -940,7 +895,6 @@ namespace JavaScriptRuntime
         {
             if (del is JsFunc0 f0) return f0(scopes, null)!;
             if (del is JsFuncNoScopes0 f0NoScopes) return f0NoScopes(null)!;
-            if (del is Action<object[]> a0) { a0(scopes); return null!; }
 
             return InvokeDelegateWithArgs(del, scopes, System.Array.Empty<object>(), newTarget: null);
         }
@@ -988,7 +942,6 @@ namespace JavaScriptRuntime
                     // Try fast-path typed invocation first
                     if (del is JsFunc0 f0) return f0(scopes, null)!;
                     if (del is JsFuncNoScopes0 f0NoScopes) return f0NoScopes(null)!;
-                    if (del is Action<object[]> a0) { a0(scopes); return null!; }
                     
                     // Fall back to reflection-based invocation
                     return InvokeDelegateWithArgs(del, scopes, System.Array.Empty<object>(), newTarget: null);
@@ -1025,7 +978,6 @@ namespace JavaScriptRuntime
             {
                 if (fastDelegate is JsFunc1 f1Fast) return f1Fast(scopes, null, a0!)!;
                 if (fastDelegate is JsFuncNoScopes1 f1NoScopesFast) return f1NoScopesFast(null, a0)!;
-                if (fastDelegate is Action<object[], object> a1Fast) { a1Fast(scopes, a0!); return null!; }
                 return InvokeDelegateWithArgs(fastDelegate, scopes, args, newTarget: null);
             }
 
@@ -1045,14 +997,12 @@ namespace JavaScriptRuntime
                     {
                         if (del is JsFunc1 f1Fast) return f1Fast(scopes, null, a0!)!;
                         if (del is JsFuncNoScopes1 f1NoScopesFast) return f1NoScopesFast(null, a0)!;
-                        if (del is Action<object[], object> a1Fast) { a1Fast(scopes, a0!); return null!; }
                         return InvokeDelegateWithArgs(del, scopes, args, newTarget: null);
                     }
 
                     // Try fast-path typed invocation first
                     if (del is JsFunc1 f1) return f1(scopes, null, a0!)!;
                     if (del is JsFuncNoScopes1 f1NoScopes) return f1NoScopes(null, a0)!;
-                    if (del is Action<object[], object> a1) { a1(scopes, a0!); return null!; }
 
                     // Fall back to reflection-based invocation
                     return InvokeDelegateWithArgs(del, scopes, args, newTarget: null);
@@ -1093,7 +1043,6 @@ namespace JavaScriptRuntime
             {
                 if (fastDelegate is JsFunc2 f2Fast) return f2Fast(scopes, null, a0!, a1!)!;
                 if (fastDelegate is JsFuncNoScopes2 f2NoScopesFast) return f2NoScopesFast(null, a0, a1)!;
-                if (fastDelegate is Action<object[], object, object> a2Fast) { a2Fast(scopes, a0!, a1!); return null!; }
                 return InvokeDelegateWithArgs(fastDelegate, scopes, args, newTarget: null);
             }
 
@@ -1113,14 +1062,12 @@ namespace JavaScriptRuntime
                     {
                         if (del is JsFunc2 f2Fast) return f2Fast(scopes, null, a0!, a1!)!;
                         if (del is JsFuncNoScopes2 f2NoScopesFast) return f2NoScopesFast(null, a0, a1)!;
-                        if (del is Action<object[], object, object> a2Fast) { a2Fast(scopes, a0!, a1!); return null!; }
                         return InvokeDelegateWithArgs(del, scopes, args, newTarget: null);
                     }
 
                     // Try fast-path typed invocation first
                     if (del is JsFunc2 f2) return f2(scopes, null, a0!, a1!)!;
                     if (del is JsFuncNoScopes2 f2NoScopes) return f2NoScopes(null, a0, a1)!;
-                    if (del is Action<object[], object, object> a2) { a2(scopes, a0!, a1!); return null!; }
 
                     // Fall back to reflection-based invocation
                     return InvokeDelegateWithArgs(del, scopes, args, newTarget: null);
@@ -1162,7 +1109,6 @@ namespace JavaScriptRuntime
             {
                 if (fastDelegate is JsFunc3 f3Fast) return f3Fast(scopes, null, a0!, a1!, a2!)!;
                 if (fastDelegate is JsFuncNoScopes3 f3NoScopesFast) return f3NoScopesFast(null, a0, a1, a2)!;
-                if (fastDelegate is Action<object[], object, object, object> a3Fast) { a3Fast(scopes, a0!, a1!, a2!); return null!; }
                 return InvokeDelegateWithArgs(fastDelegate, scopes, args, newTarget: null);
             }
 
@@ -1182,14 +1128,12 @@ namespace JavaScriptRuntime
                     {
                         if (del is JsFunc3 f3Fast) return f3Fast(scopes, null, a0!, a1!, a2!)!;
                         if (del is JsFuncNoScopes3 f3NoScopesFast) return f3NoScopesFast(null, a0, a1, a2)!;
-                        if (del is Action<object[], object, object, object> a3Fast) { a3Fast(scopes, a0!, a1!, a2!); return null!; }
                         return InvokeDelegateWithArgs(del, scopes, args, newTarget: null);
                     }
 
                     // Try fast-path typed invocation first
                     if (del is JsFunc3 f3) return f3(scopes, null, a0!, a1!, a2!)!;
                     if (del is JsFuncNoScopes3 f3NoScopes) return f3NoScopes(null, a0, a1, a2)!;
-                    if (del is Action<object[], object, object, object> a3) { a3(scopes, a0!, a1!, a2!); return null!; }
 
                     // Fall back to reflection-based invocation
                     return InvokeDelegateWithArgs(del, scopes, args, newTarget: null);
@@ -1232,7 +1176,6 @@ namespace JavaScriptRuntime
             {
                 if (fastDelegate is JsFunc4 f4Fast) return f4Fast(scopes, null, a0!, a1!, a2!, a3!)!;
                 if (fastDelegate is JsFuncNoScopes4 f4NoScopesFast) return f4NoScopesFast(null, a0, a1, a2, a3)!;
-                if (fastDelegate is Action<object[], object, object, object, object> a4Fast) { a4Fast(scopes, a0!, a1!, a2!, a3!); return null!; }
                 return InvokeDelegateWithArgs(fastDelegate, scopes, args, newTarget: null);
             }
 
@@ -1252,14 +1195,12 @@ namespace JavaScriptRuntime
                     {
                         if (del is JsFunc4 f4Fast) return f4Fast(scopes, null, a0!, a1!, a2!, a3!)!;
                         if (del is JsFuncNoScopes4 f4NoScopesFast) return f4NoScopesFast(null, a0, a1, a2, a3)!;
-                        if (del is Action<object[], object, object, object, object> a4Fast) { a4Fast(scopes, a0!, a1!, a2!, a3!); return null!; }
                         return InvokeDelegateWithArgs(del, scopes, args, newTarget: null);
                     }
 
                     // Try fast-path typed invocation first
                     if (del is JsFunc4 f4) return f4(scopes, null, a0!, a1!, a2!, a3!)!;
                     if (del is JsFuncNoScopes4 f4NoScopes) return f4NoScopes(null, a0, a1, a2, a3)!;
-                    if (del is Action<object[], object, object, object, object> a4) { a4(scopes, a0!, a1!, a2!, a3!); return null!; }
 
                     // Fall back to reflection-based invocation
                     return InvokeDelegateWithArgs(del, scopes, args, newTarget: null);
@@ -1303,7 +1244,6 @@ namespace JavaScriptRuntime
             {
                 if (fastDelegate is JsFunc5 f5Fast) return f5Fast(scopes, null, a0!, a1!, a2!, a3!, a4!)!;
                 if (fastDelegate is JsFuncNoScopes5 f5NoScopesFast) return f5NoScopesFast(null, a0, a1, a2, a3, a4)!;
-                if (fastDelegate is Action<object[], object, object, object, object, object> a5Fast) { a5Fast(scopes, a0!, a1!, a2!, a3!, a4!); return null!; }
                 return InvokeDelegateWithArgs(fastDelegate, scopes, args, newTarget: null);
             }
 
@@ -1323,14 +1263,12 @@ namespace JavaScriptRuntime
                     {
                         if (del is JsFunc5 f5Fast) return f5Fast(scopes, null, a0!, a1!, a2!, a3!, a4!)!;
                         if (del is JsFuncNoScopes5 f5NoScopesFast) return f5NoScopesFast(null, a0, a1, a2, a3, a4)!;
-                        if (del is Action<object[], object, object, object, object, object> a5Fast) { a5Fast(scopes, a0!, a1!, a2!, a3!, a4!); return null!; }
                         return InvokeDelegateWithArgs(del, scopes, args, newTarget: null);
                     }
 
                     // Try fast-path typed invocation first
                     if (del is JsFunc5 f5) return f5(scopes, null, a0!, a1!, a2!, a3!, a4!)!;
                     if (del is JsFuncNoScopes5 f5NoScopes) return f5NoScopes(null, a0, a1, a2, a3, a4)!;
-                    if (del is Action<object[], object, object, object, object, object> a5) { a5(scopes, a0!, a1!, a2!, a3!, a4!); return null!; }
 
                     // Fall back to reflection-based invocation
                     return InvokeDelegateWithArgs(del, scopes, args, newTarget: null);

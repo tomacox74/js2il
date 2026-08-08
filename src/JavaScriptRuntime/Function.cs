@@ -196,36 +196,7 @@ public static class Function
         private static object? PrototypeBind(object[] scopes, object?[]? args)
         {
             var target = RuntimeServices.GetCurrentThis();
-            if (target is ClassConstructorValue classConstructorValue)
-            {
-                var thisArgForClass = args != null && args.Length > 0 ? args[0] : null;
-                var boundClassArgs = args != null && args.Length > 1
-                    ? args.Skip(1).ToArray()
-                    : System.Array.Empty<object?>();
-
-                return BindClassConstructor(classConstructorValue, thisArgForClass, boundClassArgs);
-            }
-
-            if (target is Type classConstructor)
-            {
-                var thisArgForClass = args != null && args.Length > 0 ? args[0] : null;
-                var boundClassArgs = args != null && args.Length > 1
-                    ? args.Skip(1).ToArray()
-                    : System.Array.Empty<object?>();
-
-                return BindClassConstructor(new ClassConstructorValue(classConstructor, RuntimeServices.EmptyScopes), thisArgForClass, boundClassArgs);
-            }
-
-            if (target is JsFunctionObject functionObject)
-            {
-                var thisArgForFunction = args != null && args.Length > 0 ? args[0] : null;
-                var boundFunctionArgs = args != null && args.Length > 1
-                    ? args.Skip(1).ToArray()
-                    : System.Array.Empty<object?>();
-                return Bind(functionObject, thisArgForFunction, boundFunctionArgs);
-            }
-
-            if (target is not Delegate del)
+            if (!CallableOperations.IsCallable(target))
             {
                 throw new TypeError("Function.prototype.bind called on non-function");
             }
@@ -235,40 +206,19 @@ public static class Function
                 ? args.Skip(1).ToArray()
                 : System.Array.Empty<object?>();
 
-            return Bind(del, thisArg, boundArgs);
-        }
-
-        private static object BindClassConstructor(ClassConstructorValue target, object? thisArg, object?[] boundArgs)
-        {
-            var bound = new JsObject();
-            bound["Construct"] = (Func<object[], object?[]?, object?>)((_, args) =>
-            {
-                var callArgs = boundArgs
-                    .Concat(args ?? System.Array.Empty<object?>())
-                    .Select(arg => arg!)
-                    .ToArray();
-                return ObjectRuntime.ConstructValue(target, callArgs);
-            });
-            bound["prototype"] = JavaScriptRuntime.ObjectRuntime.GetProperty(target.Type, "prototype");
-            PrototypeChain.SetPrototype(bound, Prototype);
-            return bound;
+            return Bind(target!, thisArg, boundArgs);
         }
 
         private static object? PrototypeToString(object[] scopes, object?[]? args)
         {
             var target = RuntimeServices.GetCurrentThis();
-            if (target is JsFunctionObject functionObject)
+            if (CallableOperations.IsCallable(target))
             {
-                var name = ObjectRuntime.GetProperty(functionObject, "name") as string
+                var name = ObjectRuntime.GetProperty(target!, "name") as string
                     ?? string.Empty;
                 return $"function {name}() {{ [native code] }}";
             }
-            if (target is not Delegate del)
-            {
-                throw new TypeError("Function.prototype.toString called on non-function");
-            }
-
-            return ToSourceString(del);
+            throw new TypeError("Function.prototype.toString called on non-function");
         }
 
         private static object?[] NormalizeApplyArguments(object? argArray)
@@ -303,19 +253,8 @@ public static class Function
 
         public static object? Apply(Delegate target, object? thisArg, object? argArray)
         {
-            if (target is null) throw new ArgumentNullException(nameof(target));
-
-            var argsList = NormalizeApplyArguments(argArray);
-            var effectiveThis = GetEffectiveThisArg(target, thisArg);
-            var prevThis = RuntimeServices.SetCurrentThis(effectiveThis);
-            try
-            {
-                return Closure.InvokeWithArgs(target, System.Array.Empty<object>(), argsList);
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentThis(prevThis);
-            }
+            ArgumentNullException.ThrowIfNull(target);
+            return Apply((object)target, thisArg, argArray);
         }
 
         public static object? Apply(object target, object? thisArg, object? argArray)
@@ -331,19 +270,8 @@ public static class Function
 
         public static object? Call(Delegate target, object? thisArg, object?[] args)
         {
-            if (target is null) throw new ArgumentNullException(nameof(target));
-            args ??= System.Array.Empty<object?>();
-
-            var effectiveThis = GetEffectiveThisArg(target, thisArg);
-            var prevThis = RuntimeServices.SetCurrentThis(effectiveThis);
-            try
-            {
-                return Closure.InvokeWithArgs(target, System.Array.Empty<object>(), args);
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentThis(prevThis);
-            }
+            ArgumentNullException.ThrowIfNull(target);
+            return Call((object)target, thisArg, args);
         }
 
         public static object? Call(object target, object? thisArg, object?[] args)
@@ -357,47 +285,17 @@ public static class Function
             throw new TypeError("Function.prototype.call called on non-function");
         }
 
-        public static Func<object[], object?[], object?> Bind(Delegate target, object? thisArg, object?[] boundArgs)
-        {
-            if (target is null) throw new ArgumentNullException(nameof(target));
-            boundArgs = boundArgs is null || boundArgs.Length == 0
-                ? System.Array.Empty<object?>()
-                : boundArgs.ToArray();
-
-            // Return a callable delegate that supports arbitrary JS arg counts.
-            // Signature uses a trailing object[] parameter which Closure.InvokeWithArgs treats
-            // as a params-array.
-            Func<object[], object?[], object?> boundDelegate = (scopes, runtimeArgs) =>
-            {
-                runtimeArgs ??= System.Array.Empty<object?>();
-                var finalArgs = boundArgs.Length == 0
-                    ? runtimeArgs
-                    : boundArgs.Concat(runtimeArgs).ToArray();
-
-                var effectiveThis = GetEffectiveThisArg(target, thisArg);
-                var prevThis = RuntimeServices.SetCurrentThis(effectiveThis);
-                try
-                {
-                    return Closure.InvokeWithArgs(target, scopes ?? System.Array.Empty<object>(), finalArgs);
-                }
-                finally
-                {
-                    RuntimeServices.SetCurrentThis(prevThis);
-                }
-            };
-
-            ConfigureCallableObject(boundDelegate, hasRestrictedProperties: false);
-            CopyInvocationMetadata(target, boundDelegate);
-            Closure.TrackFunctionPrototypeBoundDelegate(boundDelegate, target, boundArgs);
-            return boundDelegate;
-        }
-
         public static JsFunctionObject Bind(
-            JsFunctionObject target,
+            object target,
             object? thisArg,
             object?[] boundArgs)
         {
             ArgumentNullException.ThrowIfNull(target);
+            if (!CallableOperations.IsCallable(target))
+            {
+                throw new TypeError("Function.prototype.bind called on non-function");
+            }
+
             var copiedArguments = boundArgs is null || boundArgs.Length == 0
                 ? System.Array.Empty<object?>()
                 : boundArgs.ToArray();
@@ -695,17 +593,6 @@ public static class Function
 
             var callArgs = args ?? System.Array.Empty<object?>();
 
-            if (Closure.TryGetFunctionPrototypeBoundMetadata(constructor, out var boundTarget, out var boundArgs))
-            {
-                var finalArgs = boundArgs.Length == 0
-                    ? callArgs
-                    : boundArgs.Concat(callArgs).ToArray();
-                var effectiveNewTarget = ReferenceEquals(newTarget, constructor)
-                    ? boundTarget
-                    : newTarget;
-                return Construct(boundTarget, finalArgs, effectiveNewTarget);
-            }
-
             if (GeneratorObject.IsGeneratorFunctionValue(constructor))
             {
                 throw new TypeError("Generator functions are not constructors");
@@ -756,17 +643,6 @@ public static class Function
 
             var callArgs = args ?? System.Array.Empty<object?>();
 
-            if (Closure.TryGetFunctionPrototypeBoundMetadata(constructor, out var boundTarget, out var boundArgs))
-            {
-                var finalArgs = boundArgs.Length == 0
-                    ? callArgs
-                    : boundArgs.Concat(callArgs).ToArray();
-                var effectiveNewTarget = ReferenceEquals(newTarget, constructor)
-                    ? boundTarget
-                    : newTarget;
-                return ConstructWithReceiver(boundTarget, receiver, finalArgs, effectiveNewTarget);
-            }
-
             var previousThis = RuntimeServices.SetCurrentThis(receiver);
             try
             {
@@ -782,8 +658,7 @@ public static class Function
         private static Delegate ResolveFunctionTarget(Delegate target)
         {
             var current = target;
-            while (Closure.TryGetBoundTarget(current, out var original)
-                && !Closure.IsFunctionPrototypeBoundDelegate(current))
+            while (Closure.TryGetBoundTarget(current, out var original))
             {
                 current = original;
             }
@@ -795,11 +670,6 @@ public static class Function
         {
             if (target is null) throw new ArgumentNullException(nameof(target));
             var resolvedTarget = ResolveFunctionTarget(target);
-
-            if (Closure.TryGetFunctionPrototypeBoundMetadata(resolvedTarget, out var boundTarget, out var boundArgs))
-            {
-                return global::System.Math.Max(0, GetLength(boundTarget) - boundArgs.Length);
-            }
 
             var invoke = resolvedTarget.GetType().GetMethod("Invoke")
                 ?? throw new ArgumentException($"Delegate type '{resolvedTarget.GetType()}' does not define Invoke().", nameof(target));
@@ -824,11 +694,6 @@ public static class Function
         {
             if (target is null) throw new ArgumentNullException(nameof(target));
             var resolvedTarget = ResolveFunctionTarget(target);
-
-            if (Closure.TryGetFunctionPrototypeBoundMetadata(resolvedTarget, out var boundTarget, out _))
-            {
-                return "bound " + GetName(boundTarget);
-            }
 
             var name = resolvedTarget.Method.Name;
 

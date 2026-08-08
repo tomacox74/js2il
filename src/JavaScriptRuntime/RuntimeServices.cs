@@ -1281,6 +1281,9 @@ public class RuntimeServices
         return _currentNewTarget.Value;
     }
 
+    public static object? GetCurrentNewTargetOrReceiverType(object? receiver)
+        => _currentNewTarget.Value ?? receiver?.GetType();
+
     public static object? SetCurrentNewTarget(object? value)
     {
         var previous = _currentNewTarget.Value;
