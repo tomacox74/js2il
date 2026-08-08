@@ -76,21 +76,25 @@ internal sealed class TempMaterializationPlan
             }
         }
 
-        var firstLegacyDefinitionByTemp = new LIRInstruction?[methodBody.Temps.Count];
         foreach (var instruction in methodBody.Instructions)
         {
-            if (TempLocalAllocator.TryGetDefinedTemp(
-                    instruction,
-                    out var legacyDefined)
-                && (uint)legacyDefined.Index
-                    < (uint)firstLegacyDefinitionByTemp.Length
-                && firstLegacyDefinitionByTemp[legacyDefined.Index] is null)
-            {
-                firstLegacyDefinitionByTemp[legacyDefined.Index] = instruction;
-            }
-
             switch (instruction)
             {
+                case LIRCopyTemp copy:
+                    plan.ForceMaterialized(
+                        copy.Destination.Index,
+                        TempValueOwner.SnapshotBarrier);
+                    break;
+                case LIRAwait awaitInstruction:
+                    plan.ForceMaterialized(
+                        awaitInstruction.Result.Index,
+                        TempValueOwner.ResumeResult);
+                    break;
+                case LIRYield yieldInstruction:
+                    plan.ForceMaterialized(
+                        yieldInstruction.Result.Index,
+                        TempValueOwner.ResumeResult);
+                    break;
                 case LIRStoreException storeException:
                     plan.ForceMaterialized(
                         storeException.Result.Index,
@@ -101,26 +105,6 @@ internal sealed class TempMaterializationPlan
                     plan.ForceMaterialized(
                         newUserClass.Result.Index,
                         TempValueOwner.ConstructorResultOverride);
-                    break;
-            }
-        }
-
-        for (var tempIndex = 0;
-             tempIndex < firstLegacyDefinitionByTemp.Length;
-             tempIndex++)
-        {
-            switch (firstLegacyDefinitionByTemp[tempIndex])
-            {
-                case LIRCopyTemp:
-                    plan.ForceMaterialized(
-                        tempIndex,
-                        TempValueOwner.SnapshotBarrier);
-                    break;
-                case LIRAwait:
-                case LIRYield:
-                    plan.ForceMaterialized(
-                        tempIndex,
-                        TempValueOwner.ResumeResult);
                     break;
             }
         }
@@ -190,16 +174,6 @@ internal sealed class TempMaterializationPlan
 
         _residencies[tempIndex] = TempResidency.MaterializedLocal;
         _owners[tempIndex] = owner;
-    }
-
-    internal bool[] CreateMaterializationMask()
-    {
-        var mask = new bool[_residencies.Length];
-        for (var index = 0; index < mask.Length; index++)
-        {
-            mask[index] = ShouldMaterialize(index);
-        }
-        return mask;
     }
 
     internal void ValidateAgainstSchedule(

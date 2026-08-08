@@ -119,16 +119,16 @@ internal sealed partial class LIRToILCompiler
         var scheduledOperations = stackSchedule?.Operations;
         var scheduledOperationIndex = 0;
         var scheduledOperationOffset = 0;
-        var legacyInstructionIndex = 0;
+        var rawInstructionIndex = 0;
 
         bool HasNextEmissionInstruction()
             => scheduledOperations is null
-                ? legacyInstructionIndex < MethodBody.Instructions.Count
+                ? rawInstructionIndex < MethodBody.Instructions.Count
                 : scheduledOperationIndex < scheduledOperations.Length;
 
         int GetCurrentEmissionInstructionIndex()
             => scheduledOperations is null
-                ? legacyInstructionIndex
+                ? rawInstructionIndex
                 : scheduledOperations[scheduledOperationIndex]
                     .GetLirInstructionIndex(scheduledOperationOffset);
 
@@ -149,7 +149,7 @@ internal sealed partial class LIRToILCompiler
         {
             if (scheduledOperations is null)
             {
-                legacyInstructionIndex++;
+                rawInstructionIndex++;
                 return;
             }
 
@@ -162,21 +162,21 @@ internal sealed partial class LIRToILCompiler
             }
         }
 
-        void AdvanceCurrentEmissionOperation(int legacyInstructionCount)
+        void AdvanceCurrentEmissionOperation(int fusedInstructionCount)
         {
             if (scheduledOperations is null)
             {
-                legacyInstructionIndex += legacyInstructionCount;
+                rawInstructionIndex += fusedInstructionCount;
                 return;
             }
 
             var operation = scheduledOperations[scheduledOperationIndex];
             if (scheduledOperationOffset != 0
-                || operation.InstructionCount != legacyInstructionCount
+                || operation.InstructionCount != fusedInstructionCount
                 || operation.Disposition != InstructionDisposition.FusedIntoEmissionUnit)
             {
                 throw new InvalidOperationException(
-                    $"Emitter attempted to consume a {legacyInstructionCount}-instruction fusion "
+                    $"Emitter attempted to consume a {fusedInstructionCount}-instruction fusion "
                     + $"from scheduled operation {scheduledOperationIndex} "
                     + $"(offset={scheduledOperationOffset}, count={operation.InstructionCount}, "
                     + $"disposition={operation.Disposition}).");
@@ -303,7 +303,7 @@ internal sealed partial class LIRToILCompiler
                     ilEncoder.Token(fieldHandle);
 
                     // Consume the following LIRStoreUserClassInstanceField (we just emitted it).
-                    AdvanceCurrentEmissionOperation(legacyInstructionCount: 2);
+                    AdvanceCurrentEmissionOperation(fusedInstructionCount: 2);
                     continue;
                 }
             }
@@ -348,7 +348,7 @@ internal sealed partial class LIRToILCompiler
                     ilEncoder.Token(fieldHandle);
 
                     // Consume the following LIRStoreUserClassInstanceField (we just emitted it).
-                    AdvanceCurrentEmissionOperation(legacyInstructionCount: 2);
+                    AdvanceCurrentEmissionOperation(fusedInstructionCount: 2);
                     continue;
                 }
             }
@@ -625,7 +625,7 @@ internal sealed partial class LIRToILCompiler
         for (int i = 0; i < MethodBody.Instructions.Count; i++)
         {
             var instr = MethodBody.Instructions[i];
-            if (TempLocalAllocator.TryGetDefinedTemp(instr, out var defined) && defined.Index >= 0)
+            if (LIRInstructionInfo.TryGetDefinedTemp(instr, out var defined) && defined.Index >= 0)
             {
                 defByTemp[defined.Index] = instr;
             }
@@ -954,7 +954,7 @@ internal sealed partial class LIRToILCompiler
                 _ => 0
             };
 
-            // The legacy estimator measures the instruction's peak as though
+            // The instruction estimator measures the operation's peak as though
             // it starts with an empty stack. A validated optimized schedule may
             // carry values into the instruction, so add that persistent depth.
             if (stackSchedule is not null)
@@ -965,7 +965,7 @@ internal sealed partial class LIRToILCompiler
 
             // Also account for deep stack usage inside the instruction that defines a temp
             // (e.g. nested object/array literals), regardless of whether the temp is materialized.
-            if (TempLocalAllocator.TryGetDefinedTemp(instr, out var definedTemp) && definedTemp.Index >= 0)
+            if (LIRInstructionInfo.TryGetDefinedTemp(instr, out var definedTemp) && definedTemp.Index >= 0)
             {
                 var constructionPeak = EstimateTempConstructionPeak(definedTemp);
                 if (stackSchedule is not null)

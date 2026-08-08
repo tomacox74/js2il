@@ -57,7 +57,7 @@ internal static class LIRVariableSlotCoalescing
         {
             var instruction = instructions[i];
 
-            if (TempLocalAllocator.TryGetDefinedTemp(instruction, out var defined)
+            if (LIRInstructionInfo.TryGetDefinedTemp(instruction, out var defined)
                 && defined.Index >= 0
                 && defined.Index < tempCount)
             {
@@ -66,7 +66,7 @@ internal static class LIRVariableSlotCoalescing
             }
 
             var visitor = new UseCountVisitor(useCount, tempCount);
-            TempLocalAllocator.VisitUsedTemps(instruction, ref visitor);
+            LIRInstructionInfo.VisitUsedTemps(instruction, ref visitor);
         }
 
         for (int i = 1; i < instructions.Count; i++)

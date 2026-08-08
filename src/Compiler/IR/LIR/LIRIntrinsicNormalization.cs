@@ -1406,7 +1406,7 @@ internal static class LIRIntrinsicNormalization
                 continue;
             }
 
-            if (TempLocalAllocator.UsesTemp(methodBody.Instructions[i], temp))
+            if (LIRInstructionInfo.UsesTemp(methodBody.Instructions[i], temp))
             {
                 return true;
             }

@@ -258,7 +258,7 @@ internal static class LIRMemberCallNormalization
         var definitionCounts = new Dictionary<int, int>();
         foreach (var instruction in methodBody.Instructions)
         {
-            if (!TempLocalAllocator.TryGetDefinedTemp(instruction, out var defined))
+            if (!LIRInstructionInfo.TryGetDefinedTemp(instruction, out var defined))
             {
                 continue;
             }
@@ -553,7 +553,7 @@ internal static class LIRMemberCallNormalization
     {
         foreach (var instruction in methodBody.Instructions)
         {
-            if (TempLocalAllocator.TryGetDefinedTemp(instruction, out var defined)
+            if (LIRInstructionInfo.TryGetDefinedTemp(instruction, out var defined)
                 && defined.Index == temp.Index)
             {
                 return instruction is
@@ -575,7 +575,7 @@ internal static class LIRMemberCallNormalization
 
         for (int i = startInstructionIndex + 1; i < endInstructionIndex; i++)
         {
-            if (TempLocalAllocator.TryGetDefinedTemp(methodBody.Instructions[i], out var defined)
+            if (LIRInstructionInfo.TryGetDefinedTemp(methodBody.Instructions[i], out var defined)
                 && GetTempVariableSlot(methodBody, defined) == variableSlot)
             {
                 return true;
@@ -641,7 +641,7 @@ internal static class LIRMemberCallNormalization
                 continue;
             }
 
-            if (TempLocalAllocator.UsesTemp(methodBody.Instructions[i], temp))
+            if (LIRInstructionInfo.UsesTemp(methodBody.Instructions[i], temp))
             {
                 return true;
             }

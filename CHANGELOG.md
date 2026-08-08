@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- compiler/IL: complete the final scheduler migration audit by consolidating
+  canonical LIR def/use metadata, deleting the legacy allocator overload and
+  materialization mask, and documenting the retained fusion, spill, fallback,
+  async/generator, and PDB owners.
 - compiler/IL: reuse the class type throughout straight-line class element
   initialization, eliminating redundant `RunClassConstructor` calls for
   private accessors and method metadata.

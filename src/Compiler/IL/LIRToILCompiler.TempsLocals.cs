@@ -212,7 +212,7 @@ internal sealed partial class LIRToILCompiler
             int firstUseIndex = -1;
             for (int i = 0; i < MethodBody.Instructions.Count; i++)
             {
-                if (TempLocalAllocator.UsesTemp(MethodBody.Instructions[i], temp))
+                if (LIRInstructionInfo.UsesTemp(MethodBody.Instructions[i], temp))
                 {
                     firstUseInstruction = MethodBody.Instructions[i];
                     firstUseIndex = i;
@@ -2454,7 +2454,7 @@ internal sealed partial class LIRToILCompiler
                 continue;
             }
 
-            if (TempLocalAllocator.UsesTemp(instruction, temp))
+            if (LIRInstructionInfo.UsesTemp(instruction, temp))
             {
                 return true;
             }
@@ -2853,7 +2853,7 @@ internal sealed partial class LIRToILCompiler
             cache = new Dictionary<int, LIRInstruction>(MethodBody.Instructions.Count);
             foreach (var instr in MethodBody.Instructions)
             {
-                if (TempLocalAllocator.TryGetDefinedTemp(instr, out var defined))
+                if (LIRInstructionInfo.TryGetDefinedTemp(instr, out var defined))
                 {
                     // Keep the first definition to preserve the previous first-match semantics.
                     cache.TryAdd(defined.Index, instr);
@@ -2876,7 +2876,7 @@ internal sealed partial class LIRToILCompiler
             foreach (var instr in MethodBody.Instructions)
             {
                 var visitor = new UsedTempIndexCollector(cache);
-                TempLocalAllocator.VisitUsedTemps(instr, ref visitor);
+                LIRInstructionInfo.VisitUsedTemps(instr, ref visitor);
             }
             _usedTempIndexCache = cache;
         }

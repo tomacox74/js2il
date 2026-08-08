@@ -53,7 +53,7 @@ internal readonly record struct LIRInstructionMetadata(
 /// Unknown or newly-added instructions fail closed until added to the explicit
 /// inventory and classified.
 /// </summary>
-internal static class LIRInstructionInfo
+internal static partial class LIRInstructionInfo
 {
     private const LIRInstructionEffects CallEffects =
         LIRInstructionEffects.Calls
@@ -343,49 +343,6 @@ internal static class LIRInstructionInfo
         return IsKnownInstructionType(instruction.GetType())
             ? GetEffects(instruction)
             : LIRInstructionEffects.UnsupportedBarrier;
-    }
-
-    internal static bool TryGetDefinedTemp(
-        LIRInstruction instruction,
-        out TempVariable defined)
-    {
-        switch (instruction)
-        {
-            case LIRStoreException storeException:
-                defined = storeException.Result;
-                return true;
-            case LIRUnwrapCatchException unwrapCatch:
-                defined = unwrapCatch.Result;
-                return true;
-            default:
-                return TempLocalAllocator.TryGetDefinedTemp(instruction, out defined);
-        }
-    }
-
-    internal static void VisitUsedTemps<TVisitor>(
-        LIRInstruction instruction,
-        ref TVisitor visitor)
-        where TVisitor : struct, ITempUseVisitor
-    {
-        switch (instruction)
-        {
-            case LIRThrow throwInstruction:
-                visitor.Visit(throwInstruction.Value);
-                return;
-            case LIRUnwrapCatchException unwrapCatch:
-                visitor.Visit(unwrapCatch.Exception);
-                return;
-            default:
-                TempLocalAllocator.VisitUsedTemps(instruction, ref visitor);
-                return;
-        }
-    }
-
-    internal static bool UsesTemp(LIRInstruction instruction, TempVariable target)
-    {
-        var visitor = new TempMatchVisitor(target.Index);
-        VisitUsedTemps(instruction, ref visitor);
-        return visitor.Found;
     }
 
     private static LIRStackSignature GetStackSignature(

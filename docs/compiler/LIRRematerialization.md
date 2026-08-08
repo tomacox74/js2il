@@ -6,7 +6,7 @@ once and carries it on the CLR evaluation stack, while rematerialization
 reproduces a value at the use site.
 
 `LIRRematerializationPolicy` is the only policy for this optimization.
-`TempLocalAllocator` claims an eligible temp with
+`TempLocalAllocator` consumes `TempMaterializationPlan` directly and claims an eligible temp with
 `TempValueOwner.Rematerialization`; all other temps remain materialized unless
 they have an explicit scheduler, branch-fusion, or mandatory-materialization
 owner.
