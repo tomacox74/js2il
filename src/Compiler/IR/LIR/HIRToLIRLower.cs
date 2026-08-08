@@ -46,7 +46,7 @@ public sealed partial class HIRToLIRLowerer
     {
         if (allowGeneratedFunctionObject
             && (callableId.Kind == TwoPhase.CallableKind.Arrow
-                || IsSynchronousGeneratedFunction(callableId))
+                || IsGeneratedFunctionObjectCandidate(callableId))
             && _generatedFunctionObjectRegistry?.TryGetMetadata(
                 callableId,
                 out var generatedMetadata) == true)
@@ -62,14 +62,15 @@ public sealed partial class HIRToLIRLowerer
         return new ValueStorage(ValueStorageKind.Reference, delegateType);
     }
 
-    private static bool IsSynchronousGeneratedFunction(TwoPhase.CallableId callableId)
+    private static bool IsGeneratedFunctionObjectCandidate(
+        TwoPhase.CallableId callableId)
     {
         return callableId.AstNode switch
         {
             FunctionDeclaration function =>
-                !function.Async && !function.Generator,
+                !function.Generator,
             FunctionExpression function =>
-                !function.Async && !function.Generator,
+                !function.Generator,
             MethodDefinition { Value: FunctionExpression method } =>
                 !method.Async && !method.Generator,
             _ => false

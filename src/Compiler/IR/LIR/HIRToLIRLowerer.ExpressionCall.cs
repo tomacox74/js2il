@@ -542,7 +542,11 @@ public sealed partial class HIRToLIRLowerer
             }
 
             if (!hasSpreadArgs
-                && TryCreateCallableIdForConstInitializedArrow(symbol, out var constArrowCallableId, out var constArrowScope))
+                && TryCreateCallableIdForConstInitializedArrow(
+                    symbol,
+                    out var constArrowCallableId,
+                    out var constArrowScope)
+                && !IsAsyncNonGeneratorCallable(constArrowCallableId))
             {
                 var constArrowArguments = new List<TempVariable>(callExpr.Arguments.Length);
                 foreach (var arg in callExpr.Arguments)
@@ -572,7 +576,8 @@ public sealed partial class HIRToLIRLowerer
             // dispatch path instead of the direct static-call fast path.
             // Non-function bindings also use runtime dispatch (e.g., locals/consts holding closures).
             if (symbol.Kind != BindingKind.Function
-                || callableId?.HasRestrictedFunctionProperties == true)
+                || callableId?.HasRestrictedFunctionProperties == true
+                || IsAsyncNonGeneratorCallable(callableId))
             {
                 // Lower callee value
                 if (!TryLowerExpression(funcVarExpr, out var calleeTemp))
@@ -1597,6 +1602,21 @@ public sealed partial class HIRToLIRLowerer
         {
             DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
         }
+    }
+
+    private static bool IsAsyncNonGeneratorCallable(
+        TwoPhase.CallableId? callableId)
+    {
+        return callableId?.AstNode switch
+        {
+            ArrowFunctionExpression arrow =>
+                arrow.Async,
+            FunctionDeclaration function =>
+                function.Async && !function.Generator,
+            FunctionExpression function =>
+                function.Async && !function.Generator,
+            _ => false
+        };
     }
 
     private static Type? GetStableDirectFunctionReturnClrType(BindingInfo? symbol, TwoPhase.CallableId? callableId)

@@ -31,7 +31,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2314
+					// Method begins at RVA 0x230c
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -51,7 +51,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x231d
+					// Method begins at RVA 0x2315
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -75,7 +75,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x230b
+				// Method begins at RVA 0x2303
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -100,7 +100,7 @@
 					object[] capture0
 				) cil managed 
 			{
-				// Method begins at RVA 0x232f
+				// Method begins at RVA 0x2327
 				// Header size: 1
 				// Code size: 14 (0xe)
 				.maxstack 8
@@ -116,7 +116,7 @@
 			.method public hidebysig specialname virtual 
 				instance bool get_IsConstructor () cil managed 
 			{
-				// Method begins at RVA 0x233e
+				// Method begins at RVA 0x2336
 				// Header size: 1
 				// Code size: 2 (0x2)
 				.maxstack 8
@@ -128,7 +128,7 @@
 			.method public hidebysig specialname virtual 
 				instance bool get_RequiresInvocationContext () cil managed 
 			{
-				// Method begins at RVA 0x2341
+				// Method begins at RVA 0x2339
 				// Header size: 1
 				// Code size: 2 (0x2)
 				.maxstack 8
@@ -143,36 +143,46 @@
 					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 				) cil managed 
 			{
-				// Method begins at RVA 0x2344
-				// Header size: 1
-				// Code size: 17 (0x11)
+				// Method begins at RVA 0x233c
+				// Header size: 12
+				// Code size: 61 (0x3d)
 				.maxstack 8
+				.locals init (
+					[0] object
+				)
 
-				IL_0000: ldarg.0
-				IL_0001: ldfld object[] Modules.Async_TryCatch_AwaitReject/testTryCatch/FunctionObject_FunctionDeclaration_ABE4FA51_testTryCatch::_transitionalScopes
-				IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
-				IL_000b: call object Modules.Async_TryCatch_AwaitReject/testTryCatch::__js_call__(object[], object)
-				IL_0010: ret
+				.try
+				{
+					IL_0000: ldarg.0
+					IL_0001: ldfld object[] Modules.Async_TryCatch_AwaitReject/testTryCatch/FunctionObject_FunctionDeclaration_ABE4FA51_testTryCatch::_transitionalScopes
+					IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
+					IL_000b: call object Modules.Async_TryCatch_AwaitReject/testTryCatch::__js_call__(object[], object)
+					IL_0010: stloc.0
+					IL_0011: leave IL_003b
+				} // end .try
+				catch [System.Runtime]System.Exception
+				{
+					IL_0016: dup
+					IL_0017: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+					IL_001c: dup
+					IL_001d: brtrue IL_0028
+
+					IL_0022: pop
+					IL_0023: br IL_0030
+
+					IL_0028: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+					IL_002d: stloc.0
+					IL_002e: pop
+					IL_002f: ldloc.0
+
+					IL_0030: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::reject(object)
+					IL_0035: stloc.0
+					IL_0036: leave IL_003b
+				} // end handler
+
+				IL_003b: ldloc.0
+				IL_003c: ret
 			} // end of method FunctionObject_FunctionDeclaration_ABE4FA51_testTryCatch::CallCore
-
-			.method family hidebysig virtual 
-				instance object ConstructBodyCore (
-					object receiver,
-					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
-					object newTarget
-				) cil managed 
-			{
-				// Method begins at RVA 0x2356
-				// Header size: 1
-				// Code size: 13 (0xd)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: ldfld object[] Modules.Async_TryCatch_AwaitReject/testTryCatch/FunctionObject_FunctionDeclaration_ABE4FA51_testTryCatch::_transitionalScopes
-				IL_0006: ldarg.3
-				IL_0007: call object Modules.Async_TryCatch_AwaitReject/testTryCatch::__js_call__(object[], object)
-				IL_000c: ret
-			} // end of method FunctionObject_FunctionDeclaration_ABE4FA51_testTryCatch::ConstructBodyCore
 
 		} // end of class FunctionObject_FunctionDeclaration_ABE4FA51_testTryCatch
 
@@ -187,7 +197,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 02 00 00 00 00 00
 			)
-			// Method begins at RVA 0x20f8
+			// Method begins at RVA 0x20f0
 			// Header size: 12
 			// Code size: 476 (0x1dc)
 			.maxstack 8
@@ -398,7 +408,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2326
+				// Method begins at RVA 0x231e
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -418,7 +428,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2364
+				// Method begins at RVA 0x2398
 				// Header size: 1
 				// Code size: 7 (0x7)
 				.maxstack 8
@@ -431,7 +441,7 @@
 			.method public hidebysig specialname virtual 
 				instance bool get_IsConstructor () cil managed 
 			{
-				// Method begins at RVA 0x236c
+				// Method begins at RVA 0x23a0
 				// Header size: 1
 				// Code size: 2 (0x2)
 				.maxstack 8
@@ -443,7 +453,7 @@
 			.method public hidebysig specialname virtual 
 				instance bool get_RequiresInvocationContext () cil managed 
 			{
-				// Method begins at RVA 0x236f
+				// Method begins at RVA 0x23a3
 				// Header size: 1
 				// Code size: 2 (0x2)
 				.maxstack 8
@@ -458,7 +468,7 @@
 					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 				) cil managed 
 			{
-				// Method begins at RVA 0x2372
+				// Method begins at RVA 0x23a6
 				// Header size: 1
 				// Code size: 7 (0x7)
 				.maxstack 8
@@ -480,7 +490,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x22e0
+			// Method begins at RVA 0x22d8
 			// Header size: 1
 			// Code size: 33 (0x21)
 			.maxstack 8
@@ -513,7 +523,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2302
+			// Method begins at RVA 0x22fa
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -539,11 +549,11 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 153 (0x99)
+		// Code size: 147 (0x93)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Async_TryCatch_AwaitReject/Scope,
-			[1] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0,
+			[1] class Modules.Async_TryCatch_AwaitReject/testTryCatch/FunctionObject_FunctionDeclaration_ABE4FA51_testTryCatch,
 			[2] object[],
 			[3] object,
 			[4] class Modules.Async_TryCatch_AwaitReject/ArrowFunction_L16C21/FunctionObject
@@ -559,54 +569,53 @@
 		IL_000f: stelem.ref
 		IL_0010: stloc.2
 		IL_0011: ldloc.2
-		IL_0012: ldftn object Modules.Async_TryCatch_AwaitReject/testTryCatch::__js_call__(object[], object)
-		IL_0018: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_001d: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
-		IL_0022: ldc.i4.0
-		IL_0023: conv.r8
-		IL_0024: ldstr "testTryCatch"
-		IL_0029: ldc.i4.0
-		IL_002a: ldc.i4.1
-		IL_002b: call !!0 [JavaScriptRuntime]JavaScriptRuntime.AsyncFunction::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
-		IL_0030: stloc.1
-		IL_0031: nop
-		IL_0032: nop
-		IL_0033: ldloc.1
-		IL_0034: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0039: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0, object[])
-		IL_003e: stloc.3
-		IL_003f: ldloc.3
-		IL_0040: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0045: stloc.3
-		IL_0046: ldc.i4.1
-		IL_0047: newarr [System.Runtime]System.Object
-		IL_004c: dup
-		IL_004d: ldc.i4.0
-		IL_004e: ldloc.0
-		IL_004f: stelem.ref
-		IL_0050: stloc.2
-		IL_0051: newobj instance void Modules.Async_TryCatch_AwaitReject/ArrowFunction_L16C21/FunctionObject::.ctor()
-		IL_0056: ldc.i4.0
-		IL_0057: conv.r8
-		IL_0058: ldstr ""
-		IL_005d: ldc.i4.0
-		IL_005e: ldc.i4.0
-		IL_005f: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Async_TryCatch_AwaitReject/ArrowFunction_L16C21/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_0064: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Async_TryCatch_AwaitReject/ArrowFunction_L16C21/FunctionObject>(!!0)
-		IL_0069: stloc.s 4
-		IL_006b: ldloc.3
-		IL_006c: ldstr "then"
-		IL_0071: ldloc.s 4
-		IL_0073: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0078: pop
-		IL_0079: ldstr "console"
-		IL_007e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0083: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0088: ldstr "log"
-		IL_008d: ldstr "After calling async function"
-		IL_0092: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0097: pop
-		IL_0098: ret
+		IL_0012: newobj instance void Modules.Async_TryCatch_AwaitReject/testTryCatch/FunctionObject_FunctionDeclaration_ABE4FA51_testTryCatch::.ctor(object[])
+		IL_0017: ldc.i4.0
+		IL_0018: conv.r8
+		IL_0019: ldstr "testTryCatch"
+		IL_001e: ldc.i4.0
+		IL_001f: ldc.i4.1
+		IL_0020: call !!0 [JavaScriptRuntime]JavaScriptRuntime.AsyncFunction::InitializeFunctionInstance<class Modules.Async_TryCatch_AwaitReject/testTryCatch/FunctionObject_FunctionDeclaration_ABE4FA51_testTryCatch>(!!0, float64, string, bool, bool)
+		IL_0025: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Async_TryCatch_AwaitReject/testTryCatch/FunctionObject_FunctionDeclaration_ABE4FA51_testTryCatch>(!!0)
+		IL_002a: stloc.1
+		IL_002b: nop
+		IL_002c: nop
+		IL_002d: ldloc.1
+		IL_002e: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0033: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
+		IL_0038: stloc.3
+		IL_0039: ldloc.3
+		IL_003a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_003f: stloc.3
+		IL_0040: ldc.i4.1
+		IL_0041: newarr [System.Runtime]System.Object
+		IL_0046: dup
+		IL_0047: ldc.i4.0
+		IL_0048: ldloc.0
+		IL_0049: stelem.ref
+		IL_004a: stloc.2
+		IL_004b: newobj instance void Modules.Async_TryCatch_AwaitReject/ArrowFunction_L16C21/FunctionObject::.ctor()
+		IL_0050: ldc.i4.0
+		IL_0051: conv.r8
+		IL_0052: ldstr ""
+		IL_0057: ldc.i4.0
+		IL_0058: ldc.i4.0
+		IL_0059: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Async_TryCatch_AwaitReject/ArrowFunction_L16C21/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_005e: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Async_TryCatch_AwaitReject/ArrowFunction_L16C21/FunctionObject>(!!0)
+		IL_0063: stloc.s 4
+		IL_0065: ldloc.3
+		IL_0066: ldstr "then"
+		IL_006b: ldloc.s 4
+		IL_006d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0072: pop
+		IL_0073: ldstr "console"
+		IL_0078: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_007d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0082: ldstr "log"
+		IL_0087: ldstr "After calling async function"
+		IL_008c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0091: pop
+		IL_0092: ret
 	} // end of method Async_TryCatch_AwaitReject::__js_module_init__
 
 } // end of class Modules.Async_TryCatch_AwaitReject
@@ -618,7 +627,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x237a
+		// Method begins at RVA 0x23ae
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

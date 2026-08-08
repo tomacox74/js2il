@@ -650,16 +650,45 @@
 					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 				) cil managed 
 			{
-				// Method begins at RVA 0x28de
-				// Header size: 1
-				// Code size: 13 (0xd)
+				// Method begins at RVA 0x28e0
+				// Header size: 12
+				// Code size: 57 (0x39)
 				.maxstack 8
+				.locals init (
+					[0] object
+				)
 
-				IL_0000: ldarg.0
-				IL_0001: ldfld object[] Modules.AsyncGenerator_Return/ArrowFunction_L14C2/FunctionObject::_transitionalScopes
-				IL_0006: ldnull
-				IL_0007: call object Modules.AsyncGenerator_Return/ArrowFunction_L14C2::__js_call__(object[], object)
-				IL_000c: ret
+				.try
+				{
+					IL_0000: ldarg.0
+					IL_0001: ldfld object[] Modules.AsyncGenerator_Return/ArrowFunction_L14C2/FunctionObject::_transitionalScopes
+					IL_0006: ldnull
+					IL_0007: call object Modules.AsyncGenerator_Return/ArrowFunction_L14C2::__js_call__(object[], object)
+					IL_000c: stloc.0
+					IL_000d: leave IL_0037
+				} // end .try
+				catch [System.Runtime]System.Exception
+				{
+					IL_0012: dup
+					IL_0013: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+					IL_0018: dup
+					IL_0019: brtrue IL_0024
+
+					IL_001e: pop
+					IL_001f: br IL_002c
+
+					IL_0024: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+					IL_0029: stloc.0
+					IL_002a: pop
+					IL_002b: ldloc.0
+
+					IL_002c: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::reject(object)
+					IL_0031: stloc.0
+					IL_0032: leave IL_0037
+				} // end handler
+
+				IL_0037: ldloc.0
+				IL_0038: ret
 			} // end of method FunctionObject::CallCore
 
 		} // end of class FunctionObject
@@ -1221,7 +1250,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x28ec
+		// Method begins at RVA 0x2938
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

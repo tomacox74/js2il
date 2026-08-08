@@ -49,7 +49,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x26a1
+				// Method begins at RVA 0x26a5
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -76,7 +76,7 @@
 					object[] capture1
 				) cil managed 
 			{
-				// Method begins at RVA 0x26aa
+				// Method begins at RVA 0x26ae
 				// Header size: 1
 				// Code size: 21 (0x15)
 				.maxstack 8
@@ -95,7 +95,7 @@
 			.method public hidebysig specialname virtual 
 				instance bool get_IsConstructor () cil managed 
 			{
-				// Method begins at RVA 0x26c0
+				// Method begins at RVA 0x26c4
 				// Header size: 1
 				// Code size: 2 (0x2)
 				.maxstack 8
@@ -107,7 +107,7 @@
 			.method public hidebysig specialname virtual 
 				instance bool get_RequiresInvocationContext () cil managed 
 			{
-				// Method begins at RVA 0x26c3
+				// Method begins at RVA 0x26c7
 				// Header size: 1
 				// Code size: 2 (0x2)
 				.maxstack 8
@@ -122,36 +122,46 @@
 					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 				) cil managed 
 			{
-				// Method begins at RVA 0x26c6
-				// Header size: 1
-				// Code size: 17 (0x11)
+				// Method begins at RVA 0x26cc
+				// Header size: 12
+				// Code size: 61 (0x3d)
 				.maxstack 8
+				.locals init (
+					[0] object
+				)
 
-				IL_0000: ldarg.0
-				IL_0001: ldfld object[] Modules.TimersPromises_SetInterval_Backpressure_And_Return/main/FunctionObject_FunctionDeclaration_8247CAD9_main::_transitionalScopes
-				IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
-				IL_000b: call object Modules.TimersPromises_SetInterval_Backpressure_And_Return/main::__js_call__(object[], object)
-				IL_0010: ret
+				.try
+				{
+					IL_0000: ldarg.0
+					IL_0001: ldfld object[] Modules.TimersPromises_SetInterval_Backpressure_And_Return/main/FunctionObject_FunctionDeclaration_8247CAD9_main::_transitionalScopes
+					IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
+					IL_000b: call object Modules.TimersPromises_SetInterval_Backpressure_And_Return/main::__js_call__(object[], object)
+					IL_0010: stloc.0
+					IL_0011: leave IL_003b
+				} // end .try
+				catch [System.Runtime]System.Exception
+				{
+					IL_0016: dup
+					IL_0017: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+					IL_001c: dup
+					IL_001d: brtrue IL_0028
+
+					IL_0022: pop
+					IL_0023: br IL_0030
+
+					IL_0028: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+					IL_002d: stloc.0
+					IL_002e: pop
+					IL_002f: ldloc.0
+
+					IL_0030: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::reject(object)
+					IL_0035: stloc.0
+					IL_0036: leave IL_003b
+				} // end handler
+
+				IL_003b: ldloc.0
+				IL_003c: ret
 			} // end of method FunctionObject_FunctionDeclaration_8247CAD9_main::CallCore
-
-			.method family hidebysig virtual 
-				instance object ConstructBodyCore (
-					object receiver,
-					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
-					object newTarget
-				) cil managed 
-			{
-				// Method begins at RVA 0x26d8
-				// Header size: 1
-				// Code size: 13 (0xd)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: ldfld object[] Modules.TimersPromises_SetInterval_Backpressure_And_Return/main/FunctionObject_FunctionDeclaration_8247CAD9_main::_transitionalScopes
-				IL_0006: ldarg.3
-				IL_0007: call object Modules.TimersPromises_SetInterval_Backpressure_And_Return/main::__js_call__(object[], object)
-				IL_000c: ret
-			} // end of method FunctionObject_FunctionDeclaration_8247CAD9_main::ConstructBodyCore
 
 		} // end of class FunctionObject_FunctionDeclaration_8247CAD9_main
 
@@ -166,7 +176,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 02 00 00 00 00 00
 			)
-			// Method begins at RVA 0x20b0
+			// Method begins at RVA 0x20b4
 			// Header size: 12
 			// Code size: 1500 (0x5dc)
 			.maxstack 8
@@ -891,7 +901,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2698
+			// Method begins at RVA 0x269c
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -917,11 +927,11 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 83 (0x53)
+		// Code size: 85 (0x55)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.TimersPromises_SetInterval_Backpressure_And_Return/Scope,
-			[1] class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0,
+			[1] class Modules.TimersPromises_SetInterval_Backpressure_And_Return/main/FunctionObject_FunctionDeclaration_8247CAD9_main,
 			[2] object[],
 			[3] class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.ITimersPromisesModule
 		)
@@ -936,30 +946,33 @@
 		IL_000f: stelem.ref
 		IL_0010: stloc.2
 		IL_0011: ldloc.2
-		IL_0012: ldftn object Modules.TimersPromises_SetInterval_Backpressure_And_Return/main::__js_call__(object[], object)
-		IL_0018: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_001d: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0
-		IL_0022: ldc.i4.0
-		IL_0023: conv.r8
-		IL_0024: ldstr "main"
-		IL_0029: ldc.i4.0
-		IL_002a: ldc.i4.1
-		IL_002b: call !!0 [JavaScriptRuntime]JavaScriptRuntime.AsyncFunction::InitializeFunctionInstance<class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0>(!!0, float64, string, bool, bool)
-		IL_0030: stloc.1
-		IL_0031: nop
-		IL_0032: ldarg.1
-		IL_0033: ldstr "node:timers/promises"
-		IL_0038: call !!0 [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireRuntime::RequireObject<class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.ITimersPromisesModule>(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object)
-		IL_003d: stloc.3
-		IL_003e: ldloc.0
-		IL_003f: ldloc.3
-		IL_0040: stfld class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.ITimersPromisesModule Modules.TimersPromises_SetInterval_Backpressure_And_Return/Scope::timersPromises
-		IL_0045: nop
-		IL_0046: ldloc.1
-		IL_0047: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_004c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0, object[])
-		IL_0051: pop
-		IL_0052: ret
+		IL_0012: ldc.i4.0
+		IL_0013: ldelem.ref
+		IL_0014: castclass Modules.TimersPromises_SetInterval_Backpressure_And_Return/Scope
+		IL_0019: ldloc.2
+		IL_001a: newobj instance void Modules.TimersPromises_SetInterval_Backpressure_And_Return/main/FunctionObject_FunctionDeclaration_8247CAD9_main::.ctor(class Modules.TimersPromises_SetInterval_Backpressure_And_Return/Scope, object[])
+		IL_001f: ldc.i4.0
+		IL_0020: conv.r8
+		IL_0021: ldstr "main"
+		IL_0026: ldc.i4.0
+		IL_0027: ldc.i4.1
+		IL_0028: call !!0 [JavaScriptRuntime]JavaScriptRuntime.AsyncFunction::InitializeFunctionInstance<class Modules.TimersPromises_SetInterval_Backpressure_And_Return/main/FunctionObject_FunctionDeclaration_8247CAD9_main>(!!0, float64, string, bool, bool)
+		IL_002d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.TimersPromises_SetInterval_Backpressure_And_Return/main/FunctionObject_FunctionDeclaration_8247CAD9_main>(!!0)
+		IL_0032: stloc.1
+		IL_0033: nop
+		IL_0034: ldarg.1
+		IL_0035: ldstr "node:timers/promises"
+		IL_003a: call !!0 [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireRuntime::RequireObject<class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.ITimersPromisesModule>(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object)
+		IL_003f: stloc.3
+		IL_0040: ldloc.0
+		IL_0041: ldloc.3
+		IL_0042: stfld class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.ITimersPromisesModule Modules.TimersPromises_SetInterval_Backpressure_And_Return/Scope::timersPromises
+		IL_0047: nop
+		IL_0048: ldloc.1
+		IL_0049: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_004e: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
+		IL_0053: pop
+		IL_0054: ret
 	} // end of method TimersPromises_SetInterval_Backpressure_And_Return::__js_module_init__
 
 } // end of class Modules.TimersPromises_SetInterval_Backpressure_And_Return
@@ -971,7 +984,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x26e6
+		// Method begins at RVA 0x2728
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
