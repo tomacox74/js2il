@@ -67,19 +67,19 @@
     {
       "clause": "27.3.4.1",
       "title": "length",
-      "status": "Supported with Limitations",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-generatorfunction-instances-length"
     },
     {
       "clause": "27.3.4.2",
       "title": "name",
-      "status": "Not Yet Supported",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-generatorfunction-instances-name"
     },
     {
       "clause": "27.3.4.3",
       "title": "prototype",
-      "status": "Not Yet Supported",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-generatorfunction-instances-prototype"
     }
   ],
@@ -99,6 +99,18 @@
         "notes": "JROC supports generator syntax (`function*`, `yield`, `yield*`) but does not currently expose a spec-shaped `GeneratorFunction` constructor/prototype as global intrinsics."
       },
       {
+        "clause": "27.3.4",
+        "feature": "Compiled generator callables are generated function objects",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-generatorfunction-instances",
+        "testScripts": [
+          "tests/Jroc.Tests/Generator/JavaScript/Generator_GeneratedFunctionObject_Semantics.js",
+          "tests/Jroc.Test262.Tests/built-ins/GeneratorFunction/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/expressions/generators/ExecutionTests.cs"
+        ],
+        "notes": "Generator declarations, expressions, object methods, and class methods use generated JsFunctionObject instances with stable identity, own name/length/prototype properties, GeneratorFunction.prototype inheritance, arbitrary properties, and no [[Construct]]. Each invocation creates a fresh iterator and execution scope."
+      },
+      {
         "clause": "27.3.4.1",
         "feature": "GeneratorFunction instance `length` metadata is exposed through `Object.getPrototypeOf(function*() {}).constructor.length`",
         "status": "Supported with Limitations",
@@ -106,7 +118,7 @@
         "testScripts": [
           "tests/Jroc.Test262.Tests/built-ins/GeneratorFunction/JavaScript/GeneratorFunction_length.js"
         ],
-        "notes": "Generator function values surface a stable constructor object with the expected `length` descriptor, but the broader `GeneratorFunction` intrinsic constructor/prototype surface remains incomplete."
+        "notes": "Generated generator function values expose their expected own length descriptor. The broader dynamic GeneratorFunction constructor remains limited."
       }
     ]
   }

@@ -4,7 +4,7 @@
 
 [Back to Section27](Section27.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-05-23T12:48:22Z
+> Last generated (UTC): 2026-08-08T11:28:52Z
 
 _Lists clause numbers/titles/links only (no spec text) in the index above. See appendix for extracted spec text._
 
@@ -25,9 +25,9 @@ _Lists clause numbers/titles/links only (no spec text) in the index above. See a
 | 27.3.3.2 | GeneratorFunction.prototype.prototype | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-generatorfunction.prototype.prototype) |
 | 27.3.3.3 | GeneratorFunction.prototype [ %Symbol.toStringTag% ] | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-generatorfunction.prototype-%symbol.tostringtag%) |
 | 27.3.4 | GeneratorFunction Instances | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-generatorfunction-instances) |
-| 27.3.4.1 | length | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-generatorfunction-instances-length) |
-| 27.3.4.2 | name | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-generatorfunction-instances-name) |
-| 27.3.4.3 | prototype | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-generatorfunction-instances-prototype) |
+| 27.3.4.1 | length | Supported | [tc39.es](https://tc39.es/ecma262/#sec-generatorfunction-instances-length) |
+| 27.3.4.2 | name | Supported | [tc39.es](https://tc39.es/ecma262/#sec-generatorfunction-instances-name) |
+| 27.3.4.3 | prototype | Supported | [tc39.es](https://tc39.es/ecma262/#sec-generatorfunction-instances-prototype) |
 
 ## Support
 
@@ -37,11 +37,12 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
+| Compiled generator callables are generated function objects | Supported | [`Generator_GeneratedFunctionObject_Semantics.js`](../../../tests/Jroc.Tests/Generator/JavaScript/Generator_GeneratedFunctionObject_Semantics.js)<br>`tests/Jroc.Test262.Tests/built-ins/GeneratorFunction/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/language/expressions/generators/ExecutionTests.cs` |  | Generator declarations, expressions, object methods, and class methods use generated JsFunctionObject instances with stable identity, own name/length/prototype properties, GeneratorFunction.prototype inheritance, arbitrary properties, and no [[Construct]]. Each invocation creates a fresh iterator and execution scope. |
 | Generator function declarations/expressions (`function*`) compile and return generator objects | Supported | [`Generator_BasicNext.js`](../../../tests/Jroc.Tests/Generator/JavaScript/Generator_BasicNext.js)<br>[`Generator_YieldStar_ArrayBasic.js`](../../../tests/Jroc.Tests/Generator/JavaScript/Generator_YieldStar_ArrayBasic.js)<br>[`Generator_YieldStar_NestedGenerator.js`](../../../tests/Jroc.Tests/Generator/JavaScript/Generator_YieldStar_NestedGenerator.js)<br>[`Generator_YieldStar_ReturnForwards.js`](../../../tests/Jroc.Tests/Generator/JavaScript/Generator_YieldStar_ReturnForwards.js) |  | JROC supports generator syntax (`function*`, `yield`, `yield*`) but does not currently expose a spec-shaped `GeneratorFunction` constructor/prototype as global intrinsics. |
 
 ### 27.3.4.1 ([tc39.es](https://tc39.es/ecma262/#sec-generatorfunction-instances-length))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| GeneratorFunction instance `length` metadata is exposed through `Object.getPrototypeOf(function*() {}).constructor.length` | Supported with Limitations | [`GeneratorFunction_length.js`](../../../tests/Jroc.Test262.Tests/built-ins/GeneratorFunction/JavaScript/GeneratorFunction_length.js) |  | Generator function values surface a stable constructor object with the expected `length` descriptor, but the broader `GeneratorFunction` intrinsic constructor/prototype surface remains incomplete. |
+| GeneratorFunction instance `length` metadata is exposed through `Object.getPrototypeOf(function*() {}).constructor.length` | Supported with Limitations | [`GeneratorFunction_length.js`](../../../tests/Jroc.Test262.Tests/built-ins/GeneratorFunction/JavaScript/GeneratorFunction_length.js) |  | Generated generator function values expose their expected own length descriptor. The broader dynamic GeneratorFunction constructor remains limited. |
 

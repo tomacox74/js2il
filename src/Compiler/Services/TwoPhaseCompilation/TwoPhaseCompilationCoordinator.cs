@@ -1742,9 +1742,6 @@ public sealed class TwoPhaseCompilationCoordinator
 
                 member.ClrType = callableId.Kind == CallableKind.Arrow
                     || callableId.AstNode is FunctionExpression
-                    {
-                        Generator: false
-                    }
                     ? typeof(JavaScriptRuntime.JsFunctionObject)
                     : CallableDelegateTypeResolver.GetMaterializedDelegateType(
                         callableId,
@@ -1914,6 +1911,15 @@ public sealed class TwoPhaseCompilationCoordinator
             return true;
         }
 
+        if (callable.AstNode is Acornima.Ast.MethodDefinition
+            {
+                Value: FunctionExpression method
+            }
+            && (method.Async || method.Generator))
+        {
+            return true;
+        }
+
         return false;
     }
 
@@ -1924,6 +1930,11 @@ public sealed class TwoPhaseCompilationCoordinator
         CallableId callable,
         SymbolTable symbolTable)
     {
+        if (IsResumableCallable(callable))
+        {
+            return (Jroc.Runtime.CallableScopeAbiKind.ScopeArray, null);
+        }
+
         if (callable.Kind is CallableKind.ClassStaticMethod
                 or CallableKind.ClassStaticGetter
                 or CallableKind.ClassStaticSetter
@@ -1954,11 +1965,6 @@ public sealed class TwoPhaseCompilationCoordinator
             or CallableKind.ClassStaticInitializer)
         {
             return (Jroc.Runtime.CallableScopeAbiKind.NoScopes, null);
-        }
-
-        if (IsResumableCallable(callable))
-        {
-            return (Jroc.Runtime.CallableScopeAbiKind.ScopeArray, null);
         }
 
         if (callable.AstNode == null)

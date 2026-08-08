@@ -546,7 +546,7 @@ public sealed partial class HIRToLIRLowerer
                     symbol,
                     out var constArrowCallableId,
                     out var constArrowScope)
-                && !IsAsyncNonGeneratorCallable(constArrowCallableId))
+                && !RequiresFunctionObjectInvocation(constArrowCallableId))
             {
                 var constArrowArguments = new List<TempVariable>(callExpr.Arguments.Length);
                 foreach (var arg in callExpr.Arguments)
@@ -577,7 +577,7 @@ public sealed partial class HIRToLIRLowerer
             // Non-function bindings also use runtime dispatch (e.g., locals/consts holding closures).
             if (symbol.Kind != BindingKind.Function
                 || callableId?.HasRestrictedFunctionProperties == true
-                || IsAsyncNonGeneratorCallable(callableId))
+                || RequiresFunctionObjectInvocation(callableId))
             {
                 // Lower callee value
                 if (!TryLowerExpression(funcVarExpr, out var calleeTemp))
@@ -777,7 +777,10 @@ public sealed partial class HIRToLIRLowerer
                 baseHasScopesParam,
                 baseMaxParamCount,
                 argTemps,
-                resultTempVar));
+                resultTempVar,
+                IsGenerator: _classRegistry.IsGeneratorMethod(
+                    baseClass,
+                    calleePropAccess.PropertyName)));
 
             if (!baseReturnTypeHandle.IsNil)
             {
@@ -1499,7 +1502,10 @@ public sealed partial class HIRToLIRLowerer
                     calleePropAccess.PropertyName.StartsWith("__jroc_priv_method_", StringComparison.Ordinal),
                     maxParamCount,
                     argTemps,
-                    resultTempVar));
+                    resultTempVar,
+                    IsGenerator: _classRegistry.IsGeneratorMethod(
+                        currentClass,
+                        calleePropAccess.PropertyName)));
 
                 // Propagate typed return storage when available.
                 if (!methodReturnTypeHandle.IsNil)
@@ -1604,7 +1610,7 @@ public sealed partial class HIRToLIRLowerer
         }
     }
 
-    private static bool IsAsyncNonGeneratorCallable(
+    private static bool RequiresFunctionObjectInvocation(
         TwoPhase.CallableId? callableId)
     {
         return callableId?.AstNode switch
@@ -1612,9 +1618,9 @@ public sealed partial class HIRToLIRLowerer
             ArrowFunctionExpression arrow =>
                 arrow.Async,
             FunctionDeclaration function =>
-                function.Async && !function.Generator,
+                function.Async || function.Generator,
             FunctionExpression function =>
-                function.Async && !function.Generator,
+                function.Async || function.Generator,
             _ => false
         };
     }

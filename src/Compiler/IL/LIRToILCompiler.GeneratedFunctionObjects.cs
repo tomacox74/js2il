@@ -48,8 +48,7 @@ internal sealed partial class LIRToILCompiler
         TempLocalAllocation allocation,
         MethodDescriptor methodDescriptor)
     {
-        if (IsGeneratorCallable(createFunction.CallableId)
-            || !_generatedFunctionObjectRegistry.TryGetMetadata(
+        if (!_generatedFunctionObjectRegistry.TryGetMetadata(
                 createFunction.CallableId,
                 out var metadata))
         {
@@ -72,11 +71,38 @@ internal sealed partial class LIRToILCompiler
             createFunction.CallableId,
             isAsync: createFunction.IsAsync,
             markUndefinedPrototype:
-                createFunction.IsAsync || createFunction.IsNonConstructible,
+                !IsGeneratorCallable(createFunction.CallableId)
+                && (createFunction.IsAsync
+                    || createFunction.IsNonConstructible),
             metadata,
             ilEncoder,
             createFunction.FunctionName);
+        EmitInitializeGeneratedGeneratorFunctionSurface(metadata, ilEncoder);
         return true;
+    }
+
+    private void EmitInitializeGeneratedGeneratorFunctionSurface(
+        GeneratedFunctionObjectMetadata metadata,
+        InstructionEncoder ilEncoder)
+    {
+        var initializer = metadata.Plan.ReturnKind switch
+        {
+            GeneratedFunctionReturnKind.Generator =>
+                _bclReferences
+                    .GeneratorObject_InitializeGeneratorFunctionSurface_Ref,
+            GeneratedFunctionReturnKind.AsyncGenerator =>
+                _bclReferences
+                    .AsyncGeneratorFunction_InitializeFunctionObject_Ref,
+            _ => default
+        };
+        if (initializer.IsNil)
+        {
+            return;
+        }
+
+        ilEncoder.Call(initializer);
+        ilEncoder.OpCode(ILOpCode.Castclass);
+        ilEncoder.Token(metadata.TypeHandle);
     }
 
     private void EmitGeneratedFunctionObjectConstructorArguments(

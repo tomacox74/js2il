@@ -41,6 +41,7 @@ public sealed class GeneratorObject : IJavaScriptIterator
     /// </summary>
     public object constructor => _generatorFunctionConstructor;
     internal static object GeneratorFunctionPrototypeObject => GeneratorFunctionPrototype;
+    internal static object GeneratorPrototypeObject => Prototype;
 
     static GeneratorObject()
     {
@@ -158,22 +159,75 @@ public sealed class GeneratorObject : IJavaScriptIterator
 
     public static object InitializeGeneratorFunctionSurface(object functionValue)
     {
-        if (functionValue is not Delegate del)
+        ArgumentNullException.ThrowIfNull(functionValue);
+
+        if (!ReferenceEquals(
+                PrototypeChain.GetPrototypeOrNull(functionValue),
+                GeneratorFunctionPrototype))
         {
-            return functionValue;
+            PrototypeChain.SetPrototype(
+                functionValue,
+                GeneratorFunctionPrototype);
         }
 
-        if (!ReferenceEquals(PrototypeChain.GetPrototypeOrNull(del), GeneratorFunctionPrototype))
+        EnsureGeneratorFunctionPrototypeProperty(
+            functionValue,
+            Prototype);
+        return functionValue;
+    }
+
+    public static object InitializeInstanceFromFunction(
+        object generator,
+        object functionValue)
+    {
+        ArgumentNullException.ThrowIfNull(generator);
+        ArgumentNullException.ThrowIfNull(functionValue);
+
+        var prototype = ObjectRuntime.GetItem(functionValue, "prototype");
+        if (TypeUtilities.IsConstructorReturnOverride(prototype))
         {
-            PrototypeChain.SetPrototype(del, GeneratorFunctionPrototype);
+            PrototypeChain.SetPrototype(generator, prototype);
         }
 
-        return del;
+        return generator;
     }
 
     internal static bool IsGeneratorFunctionValue(object? functionValue)
-        => functionValue is Delegate del
-           && ReferenceEquals(PrototypeChain.GetPrototypeOrNull(del), GeneratorFunctionPrototype);
+        => functionValue != null
+           && ReferenceEquals(
+               PrototypeChain.GetPrototypeOrNull(functionValue),
+               GeneratorFunctionPrototype);
+
+    internal static void EnsureGeneratorFunctionPrototypeProperty(
+        object functionValue,
+        object generatorPrototype)
+    {
+        if (PropertyDescriptorStore.TryGetOwn(
+                functionValue,
+                "prototype",
+                out var descriptor)
+            && TypeUtilities.IsConstructorReturnOverride(descriptor.Value))
+        {
+            PrototypeChain.SetPrototype(
+                descriptor.Value!,
+                generatorPrototype);
+            return;
+        }
+
+        var prototype = new JsObject();
+        PrototypeChain.SetPrototype(prototype, generatorPrototype);
+        PropertyDescriptorStore.DefineOrUpdate(
+            functionValue,
+            "prototype",
+            new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = false,
+                Writable = true,
+                Value = prototype
+            });
+    }
 
     private static void DefineDataProperty(object target, string key, object? value)
     {
@@ -255,6 +309,7 @@ public sealed class GeneratorObject : IJavaScriptIterator
 
         // On first next(arg), arg is ignored per JS semantics.
         scope.ResumeValue = scope.Started ? value : null;
+        scope.Started = true;
 
         try
         {

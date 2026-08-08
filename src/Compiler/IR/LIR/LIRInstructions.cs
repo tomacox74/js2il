@@ -281,7 +281,8 @@ public record LIRCallUserClassInstanceMethod(
     bool RequiresPrivateBrandCheck,
     int MaxParamCount,
     IReadOnlyList<TempVariable> Arguments,
-    TempVariable Result) : LIRInstruction;
+    TempVariable Result,
+    bool IsGenerator = false) : LIRInstruction;
 
 /// <summary>
 /// Calls the base class constructor from a derived class constructor (i.e., JavaScript <c>super(...)</c>).
@@ -308,7 +309,8 @@ public record LIRCallUserClassBaseInstanceMethod(
     bool HasScopesParameter,
     int MaxParamCount,
     IReadOnlyList<TempVariable> Arguments,
-    TempVariable Result) : LIRInstruction;
+    TempVariable Result,
+    bool IsGenerator = false) : LIRInstruction;
 
 /// <summary>
 /// Calls a declared callable directly via its MethodDefinitionHandle (resolved via CallableRegistry).

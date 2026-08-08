@@ -19,7 +19,7 @@
     {
       "clause": "27.6.1.1",
       "title": "%AsyncGeneratorPrototype%.constructor",
-      "status": "Not Yet Supported",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-asyncgenerator-prototype-constructor"
     },
     {
@@ -43,7 +43,7 @@
     {
       "clause": "27.6.1.5",
       "title": "%AsyncGeneratorPrototype% [ %Symbol.toStringTag% ]",
-      "status": "Not Yet Supported",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-asyncgenerator-prototype-%symbol.tostringtag%"
     },
     {
@@ -129,6 +129,7 @@
         "testScripts": [
           "tests/Jroc.Tests/AsyncGenerator/JavaScript/AsyncGenerator_BasicNext.js",
           "tests/Jroc.Tests/AsyncGenerator/JavaScript/AsyncGenerator_ForAwaitOf.js",
+          "tests/Jroc.Tests/AsyncGenerator/JavaScript/AsyncGenerator_GeneratedFunctionObject_Semantics.js",
          "tests/Jroc.Test262.Tests/language/expressions/async-generator/JavaScript/expression-await-as-yield-operand.js",
          "tests/Jroc.Test262.Tests/language/expressions/async-generator/JavaScript/expression-await-promise-as-yield-operand.js",
          "tests/Jroc.Test262.Tests/language/expressions/async-generator/JavaScript/expression-await-thenable-as-yield-operand.js",
@@ -142,7 +143,7 @@
          "tests/Jroc.Test262.Tests/language/statements/for-await-of/JavaScript/async-func-decl-dstr-obj-empty-obj.js",
          "tests/Jroc.Test262.Tests/language/statements/for-await-of/JavaScript/async-func-decl-dstr-obj-empty-string.js"
        ],
-       "notes": "Async generator objects are implemented as a runtime type implementing the async iterator protocol. Checked-in test262 ports now also exercise async-generator `yield`/`await` operand ordering plus `for await..of` consumption in async functions (including identifier heads, rest iteration exhaustion, and empty-object destructuring across primitive/object inputs), while prototype intrinsics such as %AsyncGeneratorPrototype% identity and toStringTag are still not fully modeled."
+       "notes": "Async generator objects use a dedicated %AsyncGeneratorPrototype% surface with next/return/throw, constructor, and AsyncGenerator toStringTag properties above %AsyncIteratorPrototype%. Generated async-generator function objects create a fresh iterator scope per invocation and apply their mutable own prototype property to each returned iterator."
       }
     ]
   }

@@ -11,13 +11,97 @@ namespace JavaScriptRuntime;
 /// </summary>
 public sealed class AsyncGeneratorObject : IJavaScriptAsyncIterator
 {
+    internal static readonly object PrototypeObject = CreatePrototype();
     private readonly object[] _scopes;
 
     public AsyncGeneratorObject(object[] scopes)
     {
         _scopes = scopes ?? throw new ArgumentNullException(nameof(scopes));
-        JavaScriptRuntime.AsyncIterator.InitializeAsyncIteratorSurface(this);
+        PrototypeChain.SetPrototype(this, PrototypeObject);
+        GetLeafScope().ThisValue = RuntimeServices.GetCurrentThis();
     }
+
+    private static object CreatePrototype()
+    {
+        var prototype = new JsObject();
+        PrototypeChain.SetPrototype(prototype, AsyncIterator.Prototype);
+        return prototype;
+    }
+
+    internal static void ConfigurePrototype(
+        object asyncGeneratorFunctionPrototype)
+    {
+        using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
+
+        DefineDataProperty(
+            PrototypeObject,
+            "constructor",
+            asyncGeneratorFunctionPrototype);
+        DefineDataProperty(
+            PrototypeObject,
+            "next",
+            (Func<object[], object?[]?, object?>)PrototypeNext);
+        DefineDataProperty(
+            PrototypeObject,
+            "return",
+            (Func<object[], object?[]?, object?>)PrototypeReturn);
+        DefineDataProperty(
+            PrototypeObject,
+            "throw",
+            (Func<object[], object?[]?, object?>)PrototypeThrow);
+        DefineDataProperty(
+            PrototypeObject,
+            Symbol.toStringTag.DebugId,
+            "AsyncGenerator");
+    }
+
+    private static void DefineDataProperty(
+        object target,
+        string key,
+        object? value)
+    {
+        PropertyDescriptorStore.DefineOrUpdate(
+            target,
+            key,
+            new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = value
+            });
+    }
+
+    private static AsyncGeneratorObject GetReceiver(string methodName)
+    {
+        if (RuntimeServices.GetCurrentThis()
+            is AsyncGeneratorObject generator)
+        {
+            return generator;
+        }
+
+        throw new TypeError(
+            $"AsyncGenerator.prototype.{methodName} called on incompatible receiver");
+    }
+
+    private static object? PrototypeNext(
+        object[] scopes,
+        object?[]? args)
+        => GetReceiver("next").next(
+            args is { Length: > 0 } ? args[0] : null);
+
+    private static object? PrototypeReturn(
+        object[] scopes,
+        object?[]? args)
+        => GetReceiver("return").@return(
+            args is { Length: > 0 } ? args[0] : null);
+
+    private static object? PrototypeThrow(
+        object[] scopes,
+        object?[]? args)
+        => GetReceiver("throw").@throw(
+            args is { Length: > 0 } ? args[0] : null);
 
     private AsyncGeneratorScope GetLeafScope()
     {
@@ -48,6 +132,20 @@ public sealed class AsyncGeneratorObject : IJavaScriptAsyncIterator
         Closure.InvokeWithArgs(reject!, System.Array.Empty<object>(), reason);
     }
 
+    private void InvokeMoveNext(AsyncGeneratorScope scope, object moveNext)
+    {
+        var previousThis = RuntimeServices.SetCurrentThis(
+            RuntimeServices.ResolveLexicalThis(scope.ThisValue));
+        try
+        {
+            Closure.InvokeWithArgs(moveNext, _scopes);
+        }
+        finally
+        {
+            RuntimeServices.SetCurrentThis(previousThis);
+        }
+    }
+
     public object next(object? value = null)
     {
         var scope = GetLeafScope();
@@ -65,6 +163,7 @@ public sealed class AsyncGeneratorObject : IJavaScriptAsyncIterator
 
         // On first next(arg), arg is ignored per JS semantics.
         scope.ResumeValue = scope.Started ? value : null;
+        scope.Started = true;
 
         var deferred = PrepareDeferred(scope);
 
@@ -77,7 +176,7 @@ public sealed class AsyncGeneratorObject : IJavaScriptAsyncIterator
         try
         {
             // MoveNext is a Func<object[], object> produced by Closure.BindMoveNext.
-            Closure.InvokeWithArgs(moveNext, _scopes);
+            InvokeMoveNext(scope, moveNext);
         }
         catch (Exception ex)
         {
@@ -117,7 +216,7 @@ public sealed class AsyncGeneratorObject : IJavaScriptAsyncIterator
 
         try
         {
-            Closure.InvokeWithArgs(moveNext, _scopes);
+            InvokeMoveNext(scope, moveNext);
         }
         catch (Exception ex)
         {
@@ -157,7 +256,7 @@ public sealed class AsyncGeneratorObject : IJavaScriptAsyncIterator
 
         try
         {
-            Closure.InvokeWithArgs(moveNext, _scopes);
+            InvokeMoveNext(scope, moveNext);
         }
         catch (Exception ex)
         {

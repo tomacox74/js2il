@@ -21,12 +21,16 @@ public static class AsyncGeneratorFunction
             Writable = false,
             Value = Prototype
         });
+        AsyncGeneratorObject.ConfigurePrototype(Prototype);
     }
 
     public static object InitializeFunctionObject(object functionObject)
     {
         ArgumentNullException.ThrowIfNull(functionObject);
         PrototypeChain.SetPrototype(functionObject, Prototype);
+        GeneratorObject.EnsureGeneratorFunctionPrototypeProperty(
+            functionObject,
+            AsyncGeneratorObject.PrototypeObject);
         return functionObject;
     }
 

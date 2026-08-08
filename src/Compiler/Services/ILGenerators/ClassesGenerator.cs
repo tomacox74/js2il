@@ -825,7 +825,8 @@ namespace Jroc.Services.ILGenerators
                     hasScopesParam,
                     minParams,
                     jsParamCount,
-                    parameterClrTypes);
+                    parameterClrTypes,
+                    isGeneratorMethod);
             }
 
             return typeHandle;

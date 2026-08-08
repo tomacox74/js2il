@@ -1210,6 +1210,10 @@ public class RuntimeServices
         return materializedArguments;
     }
 
+    public static object?[] GetCurrentArgumentsOrFallback(
+        object?[] fallback)
+        => GetCurrentArguments() ?? fallback;
+
     public static object?[]? SetCurrentArguments(object?[]? value)
     {
         var previous = _currentArguments.Value;

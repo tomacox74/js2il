@@ -133,7 +133,7 @@ public sealed partial class HIRToLIRLowerer
                 accessorOwnerClass.RegistryClassName] = scopesTemp;
         }
 
-        if (!expression.IsGenerator && !expression.IsAsync)
+        if (!expression.IsAsync || expression.IsGenerator)
         {
             var undefinedAccessor = CreateTempVariable();
             _methodBodyIR.Instructions.Add(new LIRConstUndefined(undefinedAccessor));
@@ -248,7 +248,7 @@ public sealed partial class HIRToLIRLowerer
         foreach (var methodDefinition in expression.MethodDefinitions)
         {
             var keyTemp = CreateStringConstant(methodDefinition.PropertyKey);
-            if (!methodDefinition.IsGenerator && !methodDefinition.IsAsync)
+            if (!methodDefinition.IsAsync || methodDefinition.IsGenerator)
             {
                 var targetTemp = methodDefinition.IsStatic
                     ? ownerTemp
@@ -349,7 +349,9 @@ public sealed partial class HIRToLIRLowerer
             GetMaterializedCallableStorage(
                 callableId,
                 allowGeneratedFunctionObject: true));
-        return EmitMarkUndefinedPrototype(result);
+        return IsGeneratorCallable(callableId)
+            ? result
+            : EmitMarkUndefinedPrototype(result);
     }
 
     private static Scope? ResolveClassMethodScope(

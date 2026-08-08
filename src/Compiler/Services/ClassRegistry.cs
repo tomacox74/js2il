@@ -32,6 +32,8 @@ namespace Jroc.Services
         // Track instance methods: className -> methodName -> (MethodDef, Signature, ReturnClrType, ReturnTypeHandle, HasScopesParam, MinParams, MaxParams, ParameterClrTypes)
         // NOTE: Min/MaxParamCount are JS parameter counts (do NOT include scopes), kept for call-site validation/padding.
         private readonly Dictionary<string, Dictionary<string, (MethodDefinitionHandle Method, BlobHandle Signature, Type ReturnClrType, EntityHandle ReturnTypeHandle, bool HasScopesParam, int MinParamCount, int MaxParamCount, IReadOnlyList<Type?> ParameterClrTypes)>> _methods = new(StringComparer.Ordinal);
+        private readonly Dictionary<string, HashSet<string>> _generatorMethods =
+            new(StringComparer.Ordinal);
 
         public void Register(string className, TypeDefinitionHandle typeHandle)
         {
@@ -311,7 +313,7 @@ namespace Jroc.Services
             return false;
         }
 
-        public void RegisterMethod(string className, string methodName, MethodDefinitionHandle methodHandle, BlobHandle signature, Type returnClrType, EntityHandle returnTypeHandle, bool hasScopesParam, int minParamCount, int maxParamCount, IReadOnlyList<Type?>? parameterClrTypes = null)
+        public void RegisterMethod(string className, string methodName, MethodDefinitionHandle methodHandle, BlobHandle signature, Type returnClrType, EntityHandle returnTypeHandle, bool hasScopesParam, int minParamCount, int maxParamCount, IReadOnlyList<Type?>? parameterClrTypes = null, bool isGenerator = false)
         {
             if (string.IsNullOrEmpty(className) || string.IsNullOrEmpty(methodName)) return;
             if (!_methods.TryGetValue(className, out var methods))
@@ -320,7 +322,27 @@ namespace Jroc.Services
                 _methods[className] = methods;
             }
             methods[methodName] = (methodHandle, signature, returnClrType ?? typeof(object), returnTypeHandle, hasScopesParam, minParamCount, maxParamCount, parameterClrTypes?.ToArray() ?? Array.Empty<Type?>());
+            if (isGenerator)
+            {
+                if (!_generatorMethods.TryGetValue(
+                        className,
+                        out var generatorMethods))
+                {
+                    generatorMethods = new HashSet<string>(
+                        StringComparer.Ordinal);
+                    _generatorMethods[className] = generatorMethods;
+                }
+                generatorMethods.Add(methodName);
+            }
         }
+
+        public bool IsGeneratorMethod(
+            string className,
+            string methodName)
+            => _generatorMethods.TryGetValue(
+                    className,
+                    out var generatorMethods)
+                && generatorMethods.Contains(methodName);
 
         public bool TryGetMethod(string className, string methodName, out MethodDefinitionHandle methodHandle, out BlobHandle signature, out Type returnClrType, out bool hasScopesParam, out int minParamCount, out int maxParamCount)
         {

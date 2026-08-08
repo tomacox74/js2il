@@ -262,17 +262,25 @@
 		.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassMethod_A33ABC2A_Processor_process
 			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
 		{
+			// Fields
+			.field private initonly object[] _transitionalScopes
+
 			// Methods
 			.method public hidebysig specialname rtspecialname 
-				instance void .ctor () cil managed 
+				instance void .ctor (
+					object[] capture0
+				) cil managed 
 			{
 				// Header size: 1
-				// Code size: 7 (0x7)
+				// Code size: 14 (0xe)
 				.maxstack 8
 
 				IL_0000: ldarg.0
 				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-				IL_0006: ret
+				IL_0006: ldarg.0
+				IL_0007: ldarg.1
+				IL_0008: stfld object[] Modules.Async_ClassMethod_MultipleAwaits/Processor/FunctionObject_ClassMethod_A33ABC2A_Processor_process::_transitionalScopes
+				IL_000d: ret
 			} // end of method FunctionObject_ClassMethod_A33ABC2A_Processor_process::.ctor
 
 			.method public hidebysig specialname virtual 
@@ -303,24 +311,56 @@
 					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
 				) cil managed 
 			{
-				// Header size: 1
-				// Code size: 42 (0x2a)
+				// Header size: 12
+				// Code size: 93 (0x5d)
 				.maxstack 8
+				.locals init (
+					[0] object
+				)
 
-				IL_0000: ldarg.1
-				IL_0001: ldtoken Modules.Async_ClassMethod_MultipleAwaits/Processor
-				IL_0006: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-				IL_000b: ldc.i4.1
-				IL_000c: newarr [System.Runtime]System.Object
-				IL_0011: ldnull
-				IL_0012: ldarg.0
-				IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodReceiver(object, class [System.Runtime]System.Type, object[], object, class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
-				IL_0018: castclass Modules.Async_ClassMethod_MultipleAwaits/Processor
-				IL_001d: ldarg.2
-				IL_001e: ldc.i4.0
-				IL_001f: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-				IL_0024: call instance object Modules.Async_ClassMethod_MultipleAwaits/Processor::process(object[], object, object)
-				IL_0029: ret
+				.try
+				{
+					IL_0000: ldarg.1
+					IL_0001: ldtoken Modules.Async_ClassMethod_MultipleAwaits/Processor
+					IL_0006: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+					IL_000b: ldarg.0
+					IL_000c: ldfld object[] Modules.Async_ClassMethod_MultipleAwaits/Processor/FunctionObject_ClassMethod_A33ABC2A_Processor_process::_transitionalScopes
+					IL_0011: ldnull
+					IL_0012: ldarg.0
+					IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodReceiver(object, class [System.Runtime]System.Type, object[], object, class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
+					IL_0018: castclass Modules.Async_ClassMethod_MultipleAwaits/Processor
+					IL_001d: ldarg.0
+					IL_001e: ldfld object[] Modules.Async_ClassMethod_MultipleAwaits/Processor/FunctionObject_ClassMethod_A33ABC2A_Processor_process::_transitionalScopes
+					IL_0023: ldnull
+					IL_0024: ldarg.2
+					IL_0025: ldc.i4.0
+					IL_0026: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+					IL_002b: call instance object Modules.Async_ClassMethod_MultipleAwaits/Processor::process(object[], object, object)
+					IL_0030: stloc.0
+					IL_0031: leave IL_005b
+				} // end .try
+				catch [System.Runtime]System.Exception
+				{
+					IL_0036: dup
+					IL_0037: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+					IL_003c: dup
+					IL_003d: brtrue IL_0048
+
+					IL_0042: pop
+					IL_0043: br IL_0050
+
+					IL_0048: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+					IL_004d: stloc.0
+					IL_004e: pop
+					IL_004f: ldloc.0
+
+					IL_0050: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::reject(object)
+					IL_0055: stloc.0
+					IL_0056: leave IL_005b
+				} // end handler
+
+				IL_005b: ldloc.0
+				IL_005c: ret
 			} // end of method FunctionObject_ClassMethod_A33ABC2A_Processor_process::CallCore
 
 		} // end of class FunctionObject_ClassMethod_A33ABC2A_Processor_process

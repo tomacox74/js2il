@@ -59,6 +59,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   properties, non-constructability, overlapping calls, and dynamic
   invocation; generated async adapters convert synchronous parameter/setup
   failures into rejected Promises.
+- compiler/runtime: close issue #1718 by materializing generator and
+  async-generator declarations, expressions, object methods, and class methods
+  as generated `JsFunctionObject` instances. Preserve generator-family
+  prototypes, metadata, identity, captures, receivers, non-constructability,
+  and isolated per-invocation iterator state.
 
 ## v0.12.4 - 2026-08-06
 
