@@ -241,9 +241,9 @@ public sealed class Promise : IJavaScriptPromise
 
         try
         {
-            var callbackResult = Closure.InvokeFunctionCallWithArgs(
-                callback!,
-                RuntimeServices.EmptyScopes,
+            var callbackResult = CallableOperations.Call(
+                callback,
+                null,
                 args ?? System.Array.Empty<object?>());
             CallableOperations.Call1(capabilityResolve, null, callbackResult);
         }

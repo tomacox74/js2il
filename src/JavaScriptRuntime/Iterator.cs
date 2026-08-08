@@ -404,8 +404,18 @@ public static class Iterator
         return System.Math.Truncate(value);
     }
 
-    private static object? InvokeCallback(object callback, params object?[] args)
-        => CallableOperations.Call(callback, null, args);
+    private static object? InvokeCallback(
+        object callback,
+        object? argument0,
+        object? argument1)
+        => CallableOperations.Call2(callback, null, argument0, argument1);
+
+    private static object? InvokeCallback(
+        object callback,
+        object? argument0,
+        object? argument1,
+        object? argument2)
+        => CallableOperations.Call3(callback, null, argument0, argument1, argument2);
 
     private static void CloseIterator(IJavaScriptIterator iterator)
     {

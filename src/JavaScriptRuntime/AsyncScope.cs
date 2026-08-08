@@ -478,8 +478,7 @@ public class AsyncScope : IAsyncScope
                 // Mark state as completed
                 scope.AsyncState = -1;
 
-                // Reject the outer promise - use empty scopes array since reject doesn't need scopes
-                Closure.InvokeWithArgs(deferred.reject, System.Array.Empty<object>(), reason);
+                CallableOperations.Call1(deferred.reject, null, reason);
             }
             finally
             {

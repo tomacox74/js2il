@@ -456,11 +456,11 @@ public sealed class NodeSchedulerState : IScheduler, IMicrotaskScheduler, IClean
             {
                 if (isError)
                 {
-                    Closure.InvokeWithArgs(promiseWithResolvers.reject, System.Array.Empty<object>(), result);
+                    CallableOperations.Call1(promiseWithResolvers.reject, null, result);
                 }
                 else
                 {
-                    Closure.InvokeWithArgs(promiseWithResolvers.resolve, System.Array.Empty<object>(), result);
+                    CallableOperations.Call1(promiseWithResolvers.resolve, null, result);
                 }
             }
             finally

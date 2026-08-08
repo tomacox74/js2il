@@ -304,18 +304,12 @@ namespace JavaScriptRuntime.Node
 
         private static void ResolveDeferred(PromiseWithResolvers deferred, object? value)
         {
-            if (deferred.resolve is Delegate resolve)
-            {
-                Closure.InvokeWithArgs(resolve, System.Array.Empty<object>(), value);
-            }
+            CallableOperations.Call1(deferred.resolve, null, value);
         }
 
         private static void RejectDeferred(PromiseWithResolvers deferred, object? reason)
         {
-            if (deferred.reject is Delegate reject)
-            {
-                Closure.InvokeWithArgs(reject, System.Array.Empty<object>(), reason);
-            }
+            CallableOperations.Call1(deferred.reject, null, reason);
         }
 
         private sealed class TimersPromisesIntervalIterator : IJavaScriptAsyncIterator

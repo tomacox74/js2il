@@ -128,6 +128,12 @@ public class ExecutionTests : ExecutionTestsBase
     }
 
     [Fact]
+    public Task Promise_Callback_Function_Objects()
+    {
+        return ExecutionTest(nameof(Promise_Callback_Function_Objects));
+    }
+
+    [Fact]
     public Task Promise_Executor_Rejected()
     {
         return ExecutionTest(nameof(Promise_Executor_Rejected));

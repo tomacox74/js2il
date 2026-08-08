@@ -74,13 +74,13 @@ namespace JavaScriptRuntime.Node
                     if (cbArgs.Length > 0 && cbArgs[0] != null && cbArgs[0] is not JsNull)
                     {
                         // Error-first: first arg is error, reject the promise
-                        Closure.InvokeWithArgs(resolvers.reject, new object[0], cbArgs[0]);
+                        CallableOperations.Call1(resolvers.reject, null, cbArgs[0]);
                     }
                     else
                     {
                         // Success: resolve with second argument (or undefined if not present)
                         var result = cbArgs.Length > 1 ? cbArgs[1] : null;
-                        Closure.InvokeWithArgs(resolvers.resolve, new object[0], result);
+                        CallableOperations.Call1(resolvers.resolve, null, result);
                     }
                     return null;
                 });

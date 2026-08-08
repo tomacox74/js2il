@@ -85,5 +85,9 @@ namespace Jroc.Tests.Node.Stream
         [Fact]
         public Task Stream_Helper_Signal_Requires_AbortSignal()
             => ExecutionTest(nameof(Stream_Helper_Signal_Requires_AbortSignal));
+
+        [Fact]
+        public Task Stream_Callback_Function_Objects()
+            => ExecutionTest(nameof(Stream_Callback_Function_Objects));
     }
 }

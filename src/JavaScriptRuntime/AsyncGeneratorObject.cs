@@ -128,8 +128,7 @@ public sealed class AsyncGeneratorObject : IJavaScriptAsyncIterator
 
     private static void RejectDeferred(PromiseWithResolvers deferred, object? reason)
     {
-        var reject = deferred.reject;
-        Closure.InvokeWithArgs(reject!, System.Array.Empty<object>(), reason);
+        CallableOperations.Call1(deferred.reject, null, reason);
     }
 
     private void InvokeMoveNext(AsyncGeneratorScope scope, object moveNext)

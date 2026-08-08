@@ -29,5 +29,21 @@ namespace Jroc.Tests.Node.Events
         [Fact]
         public Task Events_AsyncHelpers_On_Once()
             => ExecutionTest(nameof(Events_AsyncHelpers_On_Once));
+
+        [Fact]
+        public Task Events_Callback_Identity_And_Function_Objects()
+            => ExecutionTest(nameof(Events_Callback_Identity_And_Function_Objects));
+
+        [Fact]
+        public void EventEmitter_ListenerListClrApi_ReturnsObjectArrays()
+        {
+            var emitter = new JavaScriptRuntime.Node.EventEmitter();
+
+            object?[] listeners = emitter.listeners("event");
+            object?[] rawListeners = emitter.rawListeners("event");
+
+            Assert.Empty(listeners);
+            Assert.Empty(rawListeners);
+        }
     }
 }
