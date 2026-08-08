@@ -12,6 +12,9 @@ namespace Jroc.Tests.Generator
         public Task Generator_BasicNext() { var testName = nameof(Generator_BasicNext); return GenerateTest(testName); }
 
         [Fact]
+        public Task Generator_GeneratedFunctionObject_Semantics() { var testName = nameof(Generator_GeneratedFunctionObject_Semantics); return GenerateTest(testName); }
+
+        [Fact]
         public Task Generator_SchedulerLocalsAcrossYield() { var testName = nameof(Generator_SchedulerLocalsAcrossYield); return GenerateTest(testName); }
 
         [Fact]

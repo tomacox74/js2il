@@ -172,6 +172,21 @@ namespace Jroc.Services
                 typeof(JavaScriptRuntime.Promise),
                 nameof(JavaScriptRuntime.Promise.reject),
                 new[] { typeof(object) });
+        public MemberReferenceHandle GeneratorObject_InitializeGeneratorFunctionSurface_Ref =>
+            _memberRefRegistry.GetOrAddMethod(
+                typeof(JavaScriptRuntime.GeneratorObject),
+                nameof(JavaScriptRuntime.GeneratorObject.InitializeGeneratorFunctionSurface),
+                new[] { typeof(object) });
+        public MemberReferenceHandle AsyncGeneratorFunction_InitializeFunctionObject_Ref =>
+            _memberRefRegistry.GetOrAddMethod(
+                typeof(JavaScriptRuntime.AsyncGeneratorFunction),
+                nameof(JavaScriptRuntime.AsyncGeneratorFunction.InitializeFunctionObject),
+                new[] { typeof(object) });
+        public MemberReferenceHandle GeneratorObject_InitializeInstanceFromFunction_Ref =>
+            _memberRefRegistry.GetOrAddMethod(
+                typeof(JavaScriptRuntime.GeneratorObject),
+                nameof(JavaScriptRuntime.GeneratorObject.InitializeInstanceFromFunction),
+                new[] { typeof(object), typeof(object) });
         public MemberReferenceHandle JsThrownValueException_Value_Getter_Ref =>
             _memberRefRegistry.GetOrAddMethod(
                 typeof(JavaScriptRuntime.JsThrownValueException),

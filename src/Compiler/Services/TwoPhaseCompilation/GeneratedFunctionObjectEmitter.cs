@@ -103,16 +103,7 @@ internal sealed class GeneratedFunctionObjectEmitter
                     CallableKind.FunctionDeclaration
                     or CallableKind.FunctionExpression
                 && !plan.Callable.IsMethodDefinition
-                && plan.Callable.AstNode is not FunctionDeclaration
-                    {
-                        Async: true,
-                        Generator: false
-                    }
-                && plan.Callable.AstNode is not FunctionExpression
-                    {
-                        Async: true,
-                        Generator: false
-                    }
+                && plan.IsConstructable
                 ? MetadataTokens.MethodDefinitionHandle(nextMethodRow++)
                 : default;
             var constructAdapter = plan.IsConstructable
@@ -365,6 +356,18 @@ internal sealed class GeneratedFunctionObjectEmitter
         else
         {
             EmitCanonicalCall(metadata, encoder);
+            if (metadata.Plan.ReturnKind
+                    == GeneratedFunctionReturnKind.AsyncGenerator
+                || metadata.Plan.ReturnKind
+                    == GeneratedFunctionReturnKind.Generator
+                    && HasSimpleGeneratorParameters(
+                        metadata.Plan.Callable.AstNode))
+            {
+                encoder.OpCode(ILOpCode.Ldarg_0);
+                encoder.Call(
+                    _bclReferences
+                        .GeneratorObject_InitializeInstanceFromFunction_Ref);
+            }
             encoder.OpCode(ILOpCode.Ret);
         }
 
@@ -383,6 +386,23 @@ internal sealed class GeneratedFunctionObjectEmitter
                 localVariablesSignature: localSignature),
             ["thisArgument", "arguments"],
             inParameterIndex: 1);
+    }
+
+    private static bool HasSimpleGeneratorParameters(Node? callableNode)
+    {
+        var parameters = callableNode switch
+        {
+            FunctionDeclaration function => function.Params,
+            FunctionExpression function => function.Params,
+            Acornima.Ast.MethodDefinition
+            {
+                Value: FunctionExpression function
+            } => function.Params,
+            _ => default
+        };
+
+        return parameters.Count == 0
+            || parameters.All(parameter => parameter is Identifier);
     }
 
     private MethodDefinitionHandle EmitStateAccessor(
@@ -583,7 +603,10 @@ internal sealed class GeneratedFunctionObjectEmitter
                 encoder.OpCode(ILOpCode.Ldnull);
             }
         }
-        else if ((plan.Callable.Kind is CallableKind.ClassStaticMethod
+        else if ((plan.Callable.Kind is CallableKind.ClassMethod
+                or CallableKind.ClassGetter
+                or CallableKind.ClassSetter
+                or CallableKind.ClassStaticMethod
                 or CallableKind.ClassStaticGetter
                 or CallableKind.ClassStaticSetter)
             && plan.Signature.ScopeAbiKind

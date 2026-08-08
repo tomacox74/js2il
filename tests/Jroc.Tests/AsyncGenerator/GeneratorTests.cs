@@ -10,6 +10,9 @@ namespace Jroc.Tests.AsyncGenerator
         public Task AsyncGenerator_BasicNext() { var testName = nameof(AsyncGenerator_BasicNext); return GenerateTest(testName); }
 
         [Fact]
+        public Task AsyncGenerator_GeneratedFunctionObject_Semantics() { var testName = nameof(AsyncGenerator_GeneratedFunctionObject_Semantics); return GenerateTest(testName); }
+
+        [Fact]
         public Task AsyncGenerator_ForAwaitOf() { var testName = nameof(AsyncGenerator_ForAwaitOf); return GenerateTest(testName); }
 
         [Fact]

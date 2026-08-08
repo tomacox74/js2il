@@ -76,6 +76,47 @@ internal sealed partial class LIRToILCompiler
         ilEncoder.OpCode(ILOpCode.Stelem_ref);
     }
 
+    private void EmitCurrentArgumentsOrFallback(
+        InstructionEncoder ilEncoder,
+        MethodDescriptor methodDescriptor,
+        int jsParamCount)
+    {
+        EmitFallbackArguments(
+            ilEncoder,
+            methodDescriptor,
+            jsParamCount);
+        ilEncoder.Call(_memberRefRegistry.GetOrAddMethod(
+            typeof(JavaScriptRuntime.RuntimeServices),
+            nameof(JavaScriptRuntime.RuntimeServices
+                .GetCurrentArgumentsOrFallback),
+            new[] { typeof(object[]) }));
+    }
+
+    private void EmitFallbackArguments(
+        InstructionEncoder ilEncoder,
+        MethodDescriptor methodDescriptor,
+        int jsParamCount)
+    {
+        ilEncoder.LoadConstantI4(jsParamCount);
+        ilEncoder.OpCode(ILOpCode.Newarr);
+        ilEncoder.Token(_bclReferences.ObjectType);
+
+        var jsParamsStartInSignature = Math.Max(
+            0,
+            methodDescriptor.Parameters.Count - jsParamCount);
+        var ilJsArgBase = (methodDescriptor.IsStatic ? 0 : 1)
+            + jsParamsStartInSignature;
+        for (var index = 0; index < jsParamCount; index++)
+        {
+            EmitStoreBoundArgument(
+                ilEncoder,
+                index,
+                ilJsArgBase + index,
+                methodDescriptor.Parameters[
+                    jsParamsStartInSignature + index]);
+        }
+    }
+
     private void EmitInitArgumentsObjectIfNeeded(InstructionEncoder ilEncoder, string scopeName, MethodDescriptor methodDescriptor)
     {
         var callableId = MethodBody.CallableId;
@@ -241,22 +282,10 @@ internal sealed partial class LIRToILCompiler
                         // Load modified scopes array
                         ilEncoder.LoadArgument(scopesArgIndex);
 
-                        // Build boundArgs = new object[jsParamCount] filled from method arguments (excluding scopes).
-                        ilEncoder.LoadConstantI4(jsParamCount);
-                        ilEncoder.OpCode(ILOpCode.Newarr);
-                        ilEncoder.Token(_bclReferences.ObjectType);
-
-                        int jsParamsStartInSignature = Math.Max(0, methodDescriptor.Parameters.Count - jsParamCount);
-                        int ilJsArgBase = (methodDescriptor.IsStatic ? 0 : 1) + jsParamsStartInSignature;
-
-                        for (var i = 0; i < jsParamCount; i++)
-                        {
-                            EmitStoreBoundArgument(
-                                ilEncoder,
-                                i,
-                                ilJsArgBase + i,
-                                methodDescriptor.Parameters[jsParamsStartInSignature + i]);
-                        }
+                        EmitFallbackArguments(
+                            ilEncoder,
+                            methodDescriptor,
+                            jsParamCount);
 
                         var bindMoveNextRef = _memberRefRegistry.GetOrAddMethod(
                             typeof(JavaScriptRuntime.Closure),
@@ -558,6 +587,7 @@ internal sealed partial class LIRToILCompiler
                             createScope.Scope.Name,
                             "LIRCreateLeafScopeInstance instruction (generator)");
                         var ctorRef = GetScopeConstructorRef(scopeTypeHandle);
+                        var scopeName = createScope.Scope.Name;
 
                         // ldarg.0, ldc.i4.0, ldelem.ref, isinst ScopeType
                         ilEncoder.LoadArgument(scopesArgIndex);
@@ -578,8 +608,14 @@ internal sealed partial class LIRToILCompiler
                         ilEncoder.Token(ctorRef);
                         ilEncoder.StoreLocal(0);
 
-                        EmitInitModuleParameterFieldsIfNeeded(ilEncoder, methodDescriptor, scopeName: createScope.Scope.Name);
-                        EmitInitArgumentsObjectIfNeeded(ilEncoder, createScope.Scope.Name, methodDescriptor);
+                        EmitInitModuleParameterFieldsIfNeeded(
+                            ilEncoder,
+                            methodDescriptor,
+                            scopeName);
+                        EmitInitArgumentsObjectIfNeeded(
+                            ilEncoder,
+                            scopeName,
+                            methodDescriptor);
 
                         // Build modified scopes array with leaf at [0]
                         ilEncoder.LoadLocal(0); // leafScope
@@ -632,17 +668,11 @@ internal sealed partial class LIRToILCompiler
                         // Push scopes array (ctor arg 2)
                         ilEncoder.LoadArgument(scopesArgIndex);
 
-                        // Build args array (ctor arg 3)
-                        ilEncoder.LoadConstantI4(jsParamCount);
-                        ilEncoder.OpCode(ILOpCode.Newarr);
-                        ilEncoder.Token(_bclReferences.ObjectType);
-                        for (int i = 0; i < jsParamCount; i++)
-                        {
-                            ilEncoder.OpCode(ILOpCode.Dup);
-                            ilEncoder.LoadConstantI4(i);
-                            ilEncoder.LoadArgument(GetIlArgIndexForJsParameter(methodDescriptor, i));
-                            ilEncoder.OpCode(ILOpCode.Stelem_ref);
-                        }
+                        // Preserve the exact generator-call argument list.
+                        EmitCurrentArgumentsOrFallback(
+                            ilEncoder,
+                            methodDescriptor,
+                            jsParamCount);
 
                         // new GeneratorObject(step, scopes, args)
                         var genObjCtor = _memberRefRegistry.GetOrAddConstructor(
