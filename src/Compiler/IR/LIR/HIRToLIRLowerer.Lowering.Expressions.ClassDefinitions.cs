@@ -135,17 +135,17 @@ public sealed partial class HIRToLIRLowerer
 
         if (!expression.IsGenerator && !expression.IsAsync)
         {
+            var undefinedAccessor = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRConstUndefined(undefinedAccessor));
+            DefineTempStorage(
+                undefinedAccessor,
+                new ValueStorage(ValueStorageKind.Reference, typeof(object)));
             var functionObject = EmitGeneratedClassMethodObject(
                 expression.CallableId,
                 scopesTemp,
                 targetTemp,
                 ownerTemp,
                 expression.FunctionName);
-            var undefinedAccessor = CreateTempVariable();
-            _methodBodyIR.Instructions.Add(new LIRConstUndefined(undefinedAccessor));
-            DefineTempStorage(
-                undefinedAccessor,
-                new ValueStorage(ValueStorageKind.Reference, typeof(object)));
 
             resultTempVar = CreateTempVariable();
             _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(

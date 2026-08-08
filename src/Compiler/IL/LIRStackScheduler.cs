@@ -1098,23 +1098,40 @@ internal static class LIRStackScheduler
             var selectedDefinitions = new HashSet<int>();
             var emittedDefinitionOrder = new List<int>();
             var safe = true;
-            foreach (var operand in CollectUsedTemps(root))
+            if (IsGeneratedCallableInstallationRoot(root))
             {
-                if (!TrySelectGeneralProducerTree(
-                        methodBody,
-                        operand,
-                        rootIndex,
-                        rootRegion,
-                        definitionIndex,
-                        definitionCount,
-                        useCount,
-                        regionByLirIndex,
-                        selectedDefinitions,
-                        emittedDefinitionOrder,
-                        ref analysisBudget))
+                safe = TrySelectGeneratedCallableInstallationChain(
+                    methodBody,
+                    root,
+                    rootIndex,
+                    rootRegion,
+                    definitionIndex,
+                    definitionCount,
+                    useCount,
+                    regionByLirIndex,
+                    selectedDefinitions,
+                    emittedDefinitionOrder);
+            }
+            else
+            {
+                foreach (var operand in CollectUsedTemps(root))
                 {
-                    safe = false;
-                    break;
+                    if (!TrySelectGeneralProducerTree(
+                            methodBody,
+                            operand,
+                            rootIndex,
+                            rootRegion,
+                            definitionIndex,
+                            definitionCount,
+                            useCount,
+                            regionByLirIndex,
+                            selectedDefinitions,
+                            emittedDefinitionOrder,
+                            ref analysisBudget))
+                    {
+                        safe = false;
+                        break;
+                    }
                 }
             }
 
@@ -1233,7 +1250,149 @@ internal static class LIRStackScheduler
 
     private static bool IsGeneralSchedulingRoot(LIRInstruction instruction)
         => IsSupportedConstruction(instruction)
-            || IsSupportedArgumentBundle(instruction);
+            || IsSupportedArgumentBundle(instruction)
+            || IsGeneratedCallableInstallationRoot(instruction);
+
+    private static bool TrySelectGeneratedCallableInstallationChain(
+        MethodBodyIR methodBody,
+        LIRInstruction root,
+        int rootIndex,
+        int rootRegion,
+        int[] definitionIndex,
+        int[] definitionCount,
+        int[] useCount,
+        int[] regionByLirIndex,
+        HashSet<int> selectedDefinitions,
+        List<int> emittedDefinitionOrder)
+    {
+        var callableResult = CollectUsedTemps(root)
+            .FirstOrDefault(temp => IsGeneratedCallableChainResult(
+                methodBody,
+                temp,
+                definitionIndex));
+        if (!IsGeneratedCallableChainResult(
+                methodBody,
+                callableResult,
+                definitionIndex))
+        {
+            return false;
+        }
+
+        var expectedDefinitionIndex = rootIndex - 1;
+        var current = callableResult;
+        while (true)
+        {
+            if ((uint)current.Index >= (uint)definitionIndex.Length)
+            {
+                return false;
+            }
+
+            var producerIndex = definitionIndex[current.Index];
+            if (producerIndex != expectedDefinitionIndex
+                || definitionCount[current.Index] != 1
+                || useCount[current.Index] != 1
+                || regionByLirIndex[producerIndex] != rootRegion
+                || current.Index < methodBody.TempVariableSlots.Count
+                    && methodBody.TempVariableSlots[current.Index] >= 0)
+            {
+                return false;
+            }
+
+            var producer = methodBody.Instructions[producerIndex];
+            if (!selectedDefinitions.Add(producerIndex))
+            {
+                return false;
+            }
+
+            emittedDefinitionOrder.Insert(0, producerIndex);
+            if (IsGeneratedFunctionObjectCreation(producer))
+            {
+                return true;
+            }
+
+            if (!TryGetGeneratedCallableInput(producer, out current))
+            {
+                return false;
+            }
+
+            expectedDefinitionIndex--;
+        }
+    }
+
+    private static bool IsGeneratedCallableInstallationRoot(
+        LIRInstruction instruction)
+        => instruction is LIRCallIntrinsicStatic
+        {
+            IntrinsicName: nameof(JavaScriptRuntime.ObjectRuntime),
+            MethodName: nameof(
+                JavaScriptRuntime.ObjectRuntime.DefineClassElementDataProperty)
+                or nameof(
+                    JavaScriptRuntime.ObjectRuntime.DefineClassElementAccessorProperty)
+                or "DefineObjectLiteralDataProperty"
+                or "DefineObjectLiteralAccessorProperty"
+        };
+
+    private static bool IsGeneratedCallableChainResult(
+        MethodBodyIR methodBody,
+        TempVariable temp,
+        int[] definitionIndex)
+    {
+        while ((uint)temp.Index < (uint)definitionIndex.Length)
+        {
+            var definitionIndexForTemp = definitionIndex[temp.Index];
+            if (definitionIndexForTemp < 0)
+            {
+                return false;
+            }
+
+            var definition = methodBody.Instructions[definitionIndexForTemp];
+            if (definition is LIRCreateBoundArrowFunction
+                or LIRCreateBoundFunctionExpression)
+            {
+                return true;
+            }
+
+            if (!TryGetGeneratedCallableInput(definition, out temp))
+            {
+                return false;
+            }
+        }
+
+        return false;
+    }
+
+    private static bool TryGetGeneratedCallableInput(
+        LIRInstruction instruction,
+        out TempVariable callableInput)
+    {
+        switch (instruction)
+        {
+            case LIRCallIntrinsicStatic
+            {
+                IntrinsicName: nameof(JavaScriptRuntime.Function),
+                MethodName: nameof(
+                    JavaScriptRuntime.Function.MarkUndefinedPrototype),
+                GenericTypeArgument: not null,
+                Arguments: [var argument]
+            }:
+                callableInput = argument;
+                return true;
+
+            case LIRCallIntrinsicStatic
+            {
+                IntrinsicName: nameof(JavaScriptRuntime.Function),
+                MethodName: nameof(
+                    JavaScriptRuntime.Function.SetAccessorNameIfAnonymous),
+                Arguments: [var argument, ..]
+            }:
+                callableInput = argument;
+                return true;
+
+            default:
+                callableInput = default;
+                return false;
+        }
+    }
 
     private static void ClaimInlineCallArrays(
         MethodBodyIR methodBody,
@@ -1435,6 +1594,11 @@ internal static class LIRStackScheduler
     private static bool IsGeneralInlineProducer(LIRInstruction instruction)
         => IsSupportedScheduledInlineProducer(instruction)
             || IsSupportedCallResultDefinition(instruction);
+
+    private static bool IsGeneratedFunctionObjectCreation(
+        LIRInstruction instruction)
+        => instruction is LIRCreateBoundArrowFunction
+            or LIRCreateBoundFunctionExpression;
 
     private static bool PreservesSelectedEffectOrder(
         MethodBodyIR methodBody,
@@ -1643,7 +1807,15 @@ internal static class LIRStackScheduler
 
     internal static bool IsSupportedScheduledInlineCallProducer(
         LIRInstruction instruction)
-        => IsSupportedCallResultDefinition(instruction);
+        => IsSupportedCallResultDefinition(instruction)
+            || IsGeneratedFunctionObjectCreation(instruction)
+            || instruction is LIRCallIntrinsicStatic
+            {
+                IntrinsicName: nameof(JavaScriptRuntime.Function),
+                MethodName: nameof(
+                    JavaScriptRuntime.Function.MarkUndefinedPrototype),
+                GenericTypeArgument: not null
+            };
 
     private static bool IsSupportedCallResultConsumer(
         MethodBodyIR methodBody,
@@ -1763,6 +1935,7 @@ internal static class LIRStackScheduler
         LIRInstruction instruction)
         => IsSupportedConstruction(instruction)
             || IsSupportedArgumentBundle(instruction)
+            || IsGeneratedCallableInstallationRoot(instruction)
             || IsSupportedInlineCallArrayRoot(instruction);
 
     private static bool IsSupportedConstructionConsumer(
