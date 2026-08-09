@@ -14,7 +14,6 @@ function runSilentTrue() {
 
     let stdout = "";
     let stderr = "";
-    let shutdownSent = false;
     child.stdout.setEncoding("utf8");
     child.stdout.on("data", (chunk) => {
         stdout += chunk;
@@ -25,11 +24,6 @@ function runSilentTrue() {
     });
 
     child.on("message", (message) => {
-        if (shutdownSent) {
-            return;
-        }
-
-        shutdownSent = true;
         console.log("silent true message:", message.mode);
         console.log("silent true send:", child.send("shutdown"));
     });
@@ -40,6 +34,8 @@ function runSilentTrue() {
         console.log("silent true stderr marker:", stderr.indexOf("silent child stderr") >= 0);
         runSilentFalse();
     });
+
+    child.send("init");
 }
 
 function runSilentFalse() {
@@ -48,13 +44,7 @@ function runSilentFalse() {
     console.log("silent false stderr null:", child.stderr === null);
     console.log("silent false connected initially:", child.connected);
 
-    let shutdownSent = false;
     child.on("message", (message) => {
-        if (shutdownSent) {
-            return;
-        }
-
-        shutdownSent = true;
         console.log("silent false message:", message.mode);
         console.log("silent false send:", child.send("shutdown"));
     });
@@ -62,6 +52,8 @@ function runSilentFalse() {
     child.on("close", (code) => {
         console.log("silent false close:", code);
     });
+
+    child.send("init");
 }
 
 runSilentTrue();

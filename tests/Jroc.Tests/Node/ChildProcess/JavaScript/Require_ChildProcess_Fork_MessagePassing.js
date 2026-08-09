@@ -33,12 +33,7 @@ child.stderr.on("data", (chunk) => {
 
 child.on("message", (message) => {
     if (message.stage === "ready") {
-        if (readyReceived) {
-            return;
-        }
-
         readyReceived = true;
-        clearInterval(initTimer);
         console.log("ready argv:", message.argv2);
         console.log("ready env:", message.env);
         console.log("send result:", child.send({ stage: "parent", value: 41 }));
@@ -56,7 +51,6 @@ child.on("disconnect", () => {
 });
 
 child.on("error", (err) => {
-    clearInterval(initTimer);
     console.log("error event:", err && err.message);
 });
 
@@ -67,7 +61,6 @@ child.on("exit", (code, signal) => {
 });
 
 child.on("close", (code, signal) => {
-    clearInterval(initTimer);
     console.log("ready received:", readyReceived);
     console.log("reply received:", replyReceived);
     console.log("reply value:", replyValue);
@@ -79,14 +72,4 @@ child.on("close", (code, signal) => {
     console.log("stderr:", stderr.trim());
 });
 
-const initTimer = setInterval(() => {
-    if (!readyReceived) {
-        child.send({ stage: "init" });
-    } else {
-        clearInterval(initTimer);
-    }
-}, 25);
-
-if (!readyReceived) {
-    child.send({ stage: "init" });
-}
+child.send({ stage: "init" });
