@@ -14,8 +14,8 @@ using System.Reflection;
 
 var asm = Assembly.LoadFrom("path\\to\\compiled.dll");
 
-// The returned object is an IDisposable dynamic exports proxy.
-using dynamic exports = JsEngine.LoadModule(asm, moduleId: "math");
+// The returned object is the public dynamic exports proxy.
+using dynamic exports = JsEngine.LoadDynamicModule(asm, moduleId: "math");
 
 Console.WriteLine((string)exports.version);
 Console.WriteLine((double)exports.add(1, 2));
@@ -26,7 +26,7 @@ Console.WriteLine((double)exports.add(1, 2));
 Dynamic hosting wraps non-primitive return values so you can keep using dynamic member access and invocation:
 
 ```csharp
-using dynamic exports = JsEngine.LoadModule(asm, "nestedReturn");
+using dynamic exports = JsEngine.LoadDynamicModule(asm, "nestedReturn");
 
 dynamic win = exports.getWindow();
 Console.WriteLine((string)win.document.title);
@@ -63,3 +63,7 @@ obj.count = 123; // marshalled to the script thread
 
 Dynamic calls can throw the same hosting exceptions as typed calls.
 See [Diagnostics + exceptions](DiagnosticsAndExceptions.md).
+
+The older non-generic `JsEngine.LoadModule(Assembly, string)` overload remains
+available and returns `IDisposable` for binary compatibility. New source should
+use `LoadDynamicModule` when it needs the `JsDynamicExports` API directly.

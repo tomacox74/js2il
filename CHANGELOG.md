@@ -6,6 +6,19 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- runtime/hosting: close issue #1720 by projecting generated function exports
+  through the public runtime-owned `JsCallable` API, preserving per-module
+  identity and callback round trips across dynamic, typed, object-return, and
+  nested-value boundaries. Route host calls, construction, CLR delegate/method
+  adapters, receiver/argument normalization, and Promise-to-Task bridging
+  through centralized callable operations; add explicit `JsHostFunction`
+  metadata/constructability, Task-to-Promise callback results, packed
+  `object[]` host arguments, constructable `newTarget` validation, and
+  deterministic disposed-runtime behavior. Preserve the binary-compatible
+  `IDisposable` return type of non-generic `LoadModule(...)` and add
+  `LoadDynamicModule(...)` for the strongly typed dynamic surface, while
+  retaining `ModuleMainDelegate`/`RequireDelegate` only as internal CommonJS
+  bootstrap ABIs.
 - runtime/node: close issue #1719 by routing Promise, iterator, timer-promise,
   events, stream, util, and Node callback boundaries through
   `CallableOperations`; preserve generated callback identity for listener

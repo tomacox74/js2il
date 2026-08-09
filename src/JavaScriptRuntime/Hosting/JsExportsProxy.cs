@@ -72,7 +72,7 @@ internal class JsExportsProxy : DispatchProxy
                 var name = targetMethod.Name.Substring(4);
                 try
                 {
-                    runtime.Invoke(() => ExportMemberResolver.SetExportMember(runtime.Exports, name, args is { Length: > 0 } ? args[0] : null));
+                    runtime.Invoke(() => ExportMemberResolver.SetExportMember(runtime, runtime.Exports, name, args is { Length: > 0 } ? args[0] : null));
                     return null;
                 }
                 catch (Exception ex)
@@ -97,6 +97,7 @@ internal class JsExportsProxy : DispatchProxy
                 }
 
                 var result = ExportMemberResolver.InvokeJsCallable(
+                    runtime,
                     callable!,
                     args ?? Array.Empty<object?>());
                 return JsReturnConverter.ConvertReturn(runtime, result, targetMethod.ReturnType);

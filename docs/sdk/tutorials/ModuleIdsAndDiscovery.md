@@ -8,7 +8,8 @@ When hosting, you select a module using a **module id** (CommonJS module specifi
   - `JsEngine.LoadModule<TExports>()` uses `[JsModule("<moduleId>")]` on the contract interface.
   - `JsEngine.LoadModule<TExports>(moduleId)` lets you override/select a module id explicitly.
 - Dynamic hosting:
-  - `JsEngine.LoadModule(Assembly compiledAssembly, string moduleId)` loads that module from that assembly.
+  - `JsEngine.LoadDynamicModule(Assembly compiledAssembly, string moduleId)`
+    loads that module from that assembly.
 
 ## Discover module ids in a compiled assembly
 

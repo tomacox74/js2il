@@ -13,7 +13,8 @@ This page is the **canonical user documentation** for SDK consumers. The older d
 - Optional **debug symbols**: emit Portable PDB (`.pdb`) data for stepping and better stack traces against the original `.js` / `.mjs` source path, including rewritten `import` / `export` module code.
 - Two ways to call exports from hosted modules:
   - **Typed**: use compiler-generated C# contract interfaces and `JsEngine.LoadModule<TExports>()`.
-  - **Dynamic**: use `dynamic` with `JsEngine.LoadModule(Assembly, moduleId)`.
+  - **Dynamic**: use `dynamic` with
+    `JsEngine.LoadDynamicModule(Assembly, moduleId)`.
 - Stable SDK/runtime exception types (`JsModuleLoadException`, `JsInvocationException`, etc.).
 
 For build-integrated host projects, start with the `Jroc.SDK` NuGet package and declare one or more `JrocCompile` items in your `.csproj`. For source-text or artifact-only workflows, use the `Jroc.Core` in-memory APIs.
@@ -60,8 +61,8 @@ using System.Reflection;
 
 var asm = Assembly.LoadFrom("path\\to\\compiled.dll");
 
-// Returns an IDisposable dynamic exports proxy.
-using dynamic exports = JsEngine.LoadModule(asm, moduleId: "math");
+// Returns a JsDynamicExports dynamic exports proxy.
+using dynamic exports = JsEngine.LoadDynamicModule(asm, moduleId: "math");
 
 Console.WriteLine((string)exports.version);
 Console.WriteLine((double)exports.add(1, 2));

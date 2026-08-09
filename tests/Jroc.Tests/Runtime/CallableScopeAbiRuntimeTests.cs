@@ -57,22 +57,18 @@ public class CallableScopeAbiRuntimeTests
     }
 
     [Fact]
-    public void ExportMemberResolver_InvokeJsDelegate_UsesSingleScopeAttribute()
+    public void LegacyDelegateFunctionAdapter_UsesSingleScopeAttribute()
     {
         var host = new ScopedInstanceHost { BaseValue = 10 };
         InstanceSingleScopeDelegate del = host.Run;
+        var adapter = new LegacyDelegateFunctionAdapter(
+            del,
+            new object[] { host });
 
-        var result = ExportMemberResolver.InvokeJsDelegate(del, new object?[] { 5.0 });
-
-        Assert.Equal(15.0, Convert.ToDouble(result));
-    }
-
-    [Fact]
-    public void ExportMemberResolver_InvokeInstanceMethod_UsesSingleScopeAttribute()
-    {
-        var host = new ScopedInstanceHost { BaseValue = 10 };
-
-        var result = ExportMemberResolver.InvokeInstanceMethod(host, nameof(ScopedInstanceHost.Run), new object?[] { 5.0 });
+        var result = CallableOperations.Call(
+            adapter,
+            null,
+            new object?[] { 5.0 });
 
         Assert.Equal(15.0, Convert.ToDouble(result));
     }

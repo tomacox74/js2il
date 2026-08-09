@@ -112,10 +112,21 @@ Compiler-generated subclasses are tracked under
 
 ## Host boundary
 
-C# dynamic interoperability is a hosting concern. `JsObject` still carries
-transitional DLR support while [#1461](https://github.com/tomacox74/js2il/issues/1461)
-moves it to `JsDynamicValueProxy` and `JsDynamicExports`. Internal JavaScript
-execution does not dispatch through the DLR.
+C# dynamic interoperability is a hosting concern. `JsDynamicValueProxy` and
+`JsDynamicExports` marshal object access to the owning runtime thread, while
+callable values are projected as `JsCallable`. The callable projection exposes
+call/construct operations and function properties without exposing generated
+CLR types or requiring a CLR `Delegate`.
+
+Projection identity is scoped to one runtime instance. A per-runtime weak-key
+cache returns the same host wrapper for the same JavaScript callable, and a
+wrapper passed back into that runtime unwraps to the same `JsFunctionObject`.
+Cross-runtime wrapper use is rejected.
+
+CLR callbacks entering JavaScript are represented as explicit host
+`JsFunctionObject` adapters with `Function.prototype`, metadata, property
+storage, and explicit constructability. JavaScript dispatches them through
+`CallableOperations`; the DLR is never an internal JavaScript call path.
 
 External CLR dictionaries and POCOs remain host objects. They are supported
 through their normal host-object paths and are not treated as runtime-owned

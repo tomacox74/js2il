@@ -24,10 +24,15 @@ function timeoutReject(ms, reason) {
     });
 }
 
+function neverResolve() {
+    return new Promise(() => {});
+}
+
 module.exports = {
     immediateResolve,
     immediateReject,
     immediateRejectError,
     timeoutResolve,
-    timeoutReject
+    timeoutReject,
+    neverResolve
 };

@@ -30,6 +30,17 @@ internal class JsHandleProxy : DispatchProxy
         return _target ?? throw new ObjectDisposedException(nameof(JsHandleProxy));
     }
 
+    internal object UnwrapTarget(JsRuntimeInstance runtime)
+    {
+        if (!ReferenceEquals(_runtime, runtime))
+        {
+            throw new InvalidOperationException(
+                "JavaScript handles cannot cross module runtime instances.");
+        }
+
+        return UnwrapTarget();
+    }
+
     protected override object? Invoke(MethodInfo? targetMethod, object?[]? args)
     {
         if (targetMethod == null)
@@ -88,7 +99,11 @@ internal class JsHandleProxy : DispatchProxy
         {
             return runtime.Invoke(() =>
             {
-                var result = ExportMemberResolver.InvokeInstanceMethod(target, methodName, args ?? Array.Empty<object?>());
+                var result = ExportMemberResolver.InvokeInstanceMethod(
+                    runtime,
+                    target,
+                    methodName,
+                    args ?? Array.Empty<object?>());
                 return JsReturnConverter.ConvertReturn(runtime, result, targetMethod.ReturnType);
             });
         }
@@ -148,6 +163,17 @@ internal class JsConstructorProxy : DispatchProxy
         return _constructor ?? throw new ObjectDisposedException(nameof(JsConstructorProxy));
     }
 
+    internal object UnwrapConstructor(JsRuntimeInstance runtime)
+    {
+        if (!ReferenceEquals(_runtime, runtime))
+        {
+            throw new InvalidOperationException(
+                "JavaScript constructors cannot cross module runtime instances.");
+        }
+
+        return UnwrapConstructor();
+    }
+
     protected override object? Invoke(MethodInfo? targetMethod, object?[]? args)
     {
         if (targetMethod == null)
@@ -190,7 +216,10 @@ internal class JsConstructorProxy : DispatchProxy
                     ? a
                     : (args ?? Array.Empty<object?>());
 
-                var result = ExportMemberResolver.Construct(constructor, ctorArgs);
+                var result = ExportMemberResolver.Construct(
+                    runtime,
+                    constructor,
+                    ctorArgs);
                 return JsReturnConverter.ConvertReturn(runtime, result, targetMethod.ReturnType);
             });
         }

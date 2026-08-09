@@ -53,7 +53,7 @@ public static class JsEngine
         {
             throw new JsContractProjectionException(
                 $"{contractType.FullName} does not have {nameof(JsModuleAttribute)}. " +
-                $"Call {nameof(LoadModule)}<{contractType.Name}>(moduleId) or {nameof(LoadModule)}(compiledAssembly, moduleId) instead.",
+                $"Call {nameof(LoadModule)}<{contractType.Name}>(moduleId) or {nameof(LoadDynamicModule)}(compiledAssembly, moduleId) instead.",
                 contractType: contractType);
         }
 
@@ -71,15 +71,37 @@ public static class JsEngine
     }
 
     /// <summary>
-    /// Dynamic / reflection-friendly form: returns a dynamic exports proxy (also <see cref="IDisposable"/>).
+    /// Compatibility form: returns a dynamic exports proxy through its historical
+    /// <see cref="IDisposable"/> return type.
     /// </summary>
     public static IDisposable LoadModule(Assembly compiledAssembly, string moduleId)
         => LoadModule(compiledAssembly, moduleId, options: null);
 
     /// <summary>
-    /// Dynamic / reflection-friendly form: returns a dynamic exports proxy (also <see cref="IDisposable"/>).
+    /// Compatibility form: returns a dynamic exports proxy through its historical
+    /// <see cref="IDisposable"/> return type.
     /// </summary>
-    public static IDisposable LoadModule(Assembly compiledAssembly, string moduleId, JsModuleLoadOptions? options)
+    public static IDisposable LoadModule(
+        Assembly compiledAssembly,
+        string moduleId,
+        JsModuleLoadOptions? options)
+        => LoadDynamicModule(compiledAssembly, moduleId, options);
+
+    /// <summary>
+    /// Loads a module with a strongly typed dynamic/reflection-friendly exports surface.
+    /// </summary>
+    public static JsDynamicExports LoadDynamicModule(
+        Assembly compiledAssembly,
+        string moduleId)
+        => LoadDynamicModule(compiledAssembly, moduleId, options: null);
+
+    /// <summary>
+    /// Loads a module with a strongly typed dynamic/reflection-friendly exports surface.
+    /// </summary>
+    public static JsDynamicExports LoadDynamicModule(
+        Assembly compiledAssembly,
+        string moduleId,
+        JsModuleLoadOptions? options)
     {
         ArgumentNullException.ThrowIfNull(compiledAssembly);
         ArgumentException.ThrowIfNullOrWhiteSpace(moduleId);
