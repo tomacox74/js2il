@@ -1070,6 +1070,26 @@ partial class HIRMethodBuilder
         return new HIRFunctionExpression(callableId, functionScope, isNonConstructible);
     }
 
+    private static void ApplyCallableMaterializationDecision(
+        HIRExpression expression,
+        CallableMaterializationDecision? decision)
+    {
+        if (decision == null)
+        {
+            return;
+        }
+
+        switch (expression)
+        {
+            case HIRFunctionExpression function:
+                function.MaterializationDecision = decision;
+                break;
+            case HIRArrowFunctionExpression arrow:
+                arrow.MaterializationDecision = decision;
+                break;
+        }
+    }
+
     private static CallableId CreateFunctionExpressionCallableId(
         Scope functionScope,
         FunctionExpression funcExpr,
@@ -1444,8 +1464,12 @@ partial class HIRMethodBuilder
                     AstNode = fd
                 };
 
-                var funcValue = new HIRFunctionExpression(callableId, functionScope);
                 var symbol = _currentScope.FindSymbol(id.Name);
+                var funcValue = new HIRFunctionExpression(callableId, functionScope)
+                {
+                    MaterializationDecision = symbol.BindingInfo.CallableMaterialization
+                        ?? CallableMaterializationDecision.UnboundEvaluation
+                };
                 hirStatements.Add(new HIRVariableDeclaration(symbol, funcValue));
             }
         }
@@ -3138,6 +3162,9 @@ partial class HIRMethodBuilder
                     return false;
                 }
 
+                ApplyCallableMaterializationDecision(
+                    hirInitExpr!,
+                    symbol.BindingInfo.CallableMaterialization);
                 hirStatement = new HIRVariableDeclaration(symbol, hirInitExpr);
                 return true;
             }
@@ -3597,6 +3624,15 @@ partial class HIRMethodBuilder
                     callExpr,
                     calleeExpr!,
                     out var stableDirectCallableTarget);
+                if (calleeExpr is HIRVariableExpression directOnlyVariable
+                    && directOnlyVariable.Name.BindingInfo.CallableMaterialization?.Kind
+                        == CallableMaterializationKind.DirectOnly
+                    && stableDirectCallableTarget == null)
+                {
+                    Jroc.IR.IRPipelineMetrics.RecordFailureIfUnset(
+                        $"HIR stable-call invariant failed for direct-only binding '{directOnlyVariable.Name.Name}'");
+                    return false;
+                }
                 hirExpr = new HIRCallExpression(
                     calleeExpr!,
                     argExprs,

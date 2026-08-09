@@ -1,0 +1,2265 @@
+﻿// IL code: Function_CallableMaterialization_IdentityAndCaptures
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class private auto ansi beforefieldinit Modules.Function_CallableMaterialization_IdentityAndCaptures
+	extends [System.Runtime]System.Object
+{
+	// Nested Types
+	.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L3C16
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested public auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			.custom instance void [System.Runtime]System.Diagnostics.DebuggerDisplayAttribute::.ctor(string) = (
+				01 00 13 53 63 6f 70 65 20 76 61 6c 75 65 3d 7b
+				76 61 6c 75 65 7d 00 00
+			)
+			// Fields
+			.field public float64 'value'
+
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+		.class nested public auto ansi sealed beforefieldinit FunctionObject
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+		{
+			// Fields
+			.field private initonly class Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope _environment0_Function_CallableMaterialization_IdentityAndCaptures
+
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor (
+					class Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope capture0
+				) cil managed 
+			{
+				// Header size: 1
+				// Code size: 14 (0xe)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0006: ldarg.0
+				IL_0007: ldarg.1
+				IL_0008: stfld class Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope Modules.Function_CallableMaterialization_IdentityAndCaptures/ArrowFunction_L3C16/FunctionObject::_environment0_Function_CallableMaterialization_IdentityAndCaptures
+				IL_000d: ret
+			} // end of method FunctionObject::.ctor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_IsConstructor () cil managed 
+			{
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_IsConstructor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_RequiresInvocationContext () cil managed 
+			{
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_RequiresInvocationContext
+
+			.method family hidebysig virtual 
+				instance object CallCore (
+					object thisArgument,
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+				) cil managed 
+			{
+				// Header size: 1
+				// Code size: 25 (0x19)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: ldfld class Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope Modules.Function_CallableMaterialization_IdentityAndCaptures/ArrowFunction_L3C16/FunctionObject::_environment0_Function_CallableMaterialization_IdentityAndCaptures
+				IL_0006: ldnull
+				IL_0007: ldarg.2
+				IL_0008: ldc.i4.0
+				IL_0009: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+				IL_000e: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+				IL_0013: call object Modules.Function_CallableMaterialization_IdentityAndCaptures/ArrowFunction_L3C16::__js_call__(class Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope, object, float64)
+				IL_0018: ret
+			} // end of method FunctionObject::CallCore
+
+		} // end of class FunctionObject
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				class Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope scope,
+				object newTarget,
+				float64 'value'
+			) cil managed 
+		{
+			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
+				01 00 01 00 00 00 01 00 54 08 1c 53 69 6e 67 6c
+				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
+				74 61 54 6f 6b 65 6e 0e 00 00 02
+			)
+			// Header size: 12
+			// Code size: 29 (0x1d)
+			.maxstack 8
+			.locals init (
+				[0] object,
+				[1] object
+			)
+
+			IL_0000: ldarg.0
+			IL_0001: ldfld object Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope::shared
+			IL_0006: stloc.0
+			IL_0007: ldloc.0
+			IL_0008: ldarg.2
+			IL_0009: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
+			IL_000e: stloc.1
+			IL_000f: ldarg.0
+			IL_0010: ldloc.1
+			IL_0011: stfld object Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope::shared
+			IL_0016: ldarg.0
+			IL_0017: ldfld object Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope::shared
+			IL_001c: ret
+		} // end of method ArrowFunction_L3C16::__js_call__
+
+	} // end of class ArrowFunction_L3C16
+
+	.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L8C18
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested public auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			.custom instance void [System.Runtime]System.Diagnostics.DebuggerDisplayAttribute::.ctor(string) = (
+				01 00 13 53 63 6f 70 65 20 76 61 6c 75 65 3d 7b
+				76 61 6c 75 65 7d 00 00
+			)
+			// Fields
+			.field public object 'value'
+
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+		.class nested public auto ansi sealed beforefieldinit FunctionObject
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+		{
+			// Fields
+			.field private initonly class Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope _environment0_Function_CallableMaterialization_IdentityAndCaptures
+
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor (
+					class Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope capture0
+				) cil managed 
+			{
+				// Header size: 1
+				// Code size: 14 (0xe)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0006: ldarg.0
+				IL_0007: ldarg.1
+				IL_0008: stfld class Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope Modules.Function_CallableMaterialization_IdentityAndCaptures/ArrowFunction_L8C18/FunctionObject::_environment0_Function_CallableMaterialization_IdentityAndCaptures
+				IL_000d: ret
+			} // end of method FunctionObject::.ctor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_IsConstructor () cil managed 
+			{
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_IsConstructor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_RequiresInvocationContext () cil managed 
+			{
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_RequiresInvocationContext
+
+			.method family hidebysig virtual 
+				instance object CallCore (
+					object thisArgument,
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+				) cil managed 
+			{
+				// Header size: 1
+				// Code size: 20 (0x14)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: ldfld class Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope Modules.Function_CallableMaterialization_IdentityAndCaptures/ArrowFunction_L8C18/FunctionObject::_environment0_Function_CallableMaterialization_IdentityAndCaptures
+				IL_0006: ldnull
+				IL_0007: ldarg.2
+				IL_0008: ldc.i4.0
+				IL_0009: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+				IL_000e: call object Modules.Function_CallableMaterialization_IdentityAndCaptures/ArrowFunction_L8C18::__js_call__(class Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope, object, object)
+				IL_0013: ret
+			} // end of method FunctionObject::CallCore
+
+		} // end of class FunctionObject
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				class Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope scope,
+				object newTarget,
+				object 'value'
+			) cil managed 
+		{
+			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
+				01 00 01 00 00 00 01 00 54 08 1c 53 69 6e 67 6c
+				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
+				74 61 54 6f 6b 65 6e 0e 00 00 02
+			)
+			// Header size: 12
+			// Code size: 29 (0x1d)
+			.maxstack 8
+			.locals init (
+				[0] object,
+				[1] object
+			)
+
+			IL_0000: ldarg.0
+			IL_0001: ldfld object Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope::shared
+			IL_0006: stloc.0
+			IL_0007: ldloc.0
+			IL_0008: ldarg.2
+			IL_0009: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_000e: stloc.1
+			IL_000f: ldarg.0
+			IL_0010: ldloc.1
+			IL_0011: stfld object Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope::shared
+			IL_0016: ldarg.0
+			IL_0017: ldfld object Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope::shared
+			IL_001c: ret
+		} // end of method ArrowFunction_L8C18::__js_call__
+
+	} // end of class ArrowFunction_L8C18
+
+	.class nested public auto ansi abstract sealed beforefieldinit makeReturned
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L25C22
+			extends [System.Runtime]System.Object
+		{
+			// Nested Types
+			.class nested public auto ansi beforefieldinit Scope
+				extends [System.Runtime]System.Object
+			{
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 8 (0x8)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+					IL_0006: nop
+					IL_0007: ret
+				} // end of method Scope::.ctor
+
+			} // end of class Scope
+
+			.class nested public auto ansi sealed beforefieldinit FunctionObject
+				extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+			{
+				// Fields
+				.field private initonly class Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope _environment0_Function_CallableMaterialization_IdentityAndCaptures
+				.field private initonly object[] _transitionalScopes
+
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor (
+						class Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope capture0,
+						object[] capture1
+					) cil managed 
+				{
+					// Header size: 1
+					// Code size: 21 (0x15)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+					IL_0006: ldarg.0
+					IL_0007: ldarg.1
+					IL_0008: stfld class Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope Modules.Function_CallableMaterialization_IdentityAndCaptures/makeReturned/ArrowFunction_L25C22/FunctionObject::_environment0_Function_CallableMaterialization_IdentityAndCaptures
+					IL_000d: ldarg.0
+					IL_000e: ldarg.2
+					IL_000f: stfld object[] Modules.Function_CallableMaterialization_IdentityAndCaptures/makeReturned/ArrowFunction_L25C22/FunctionObject::_transitionalScopes
+					IL_0014: ret
+				} // end of method FunctionObject::.ctor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_IsConstructor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_IsConstructor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_RequiresInvocationContext () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_RequiresInvocationContext
+
+				.method family hidebysig virtual 
+					instance object CallCore (
+						object thisArgument,
+						[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+					) cil managed 
+				{
+					// Header size: 1
+					// Code size: 13 (0xd)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: ldfld object[] Modules.Function_CallableMaterialization_IdentityAndCaptures/makeReturned/ArrowFunction_L25C22/FunctionObject::_transitionalScopes
+					IL_0006: ldnull
+					IL_0007: call object Modules.Function_CallableMaterialization_IdentityAndCaptures/makeReturned/ArrowFunction_L25C22::__js_call__(object[], object)
+					IL_000c: ret
+				} // end of method FunctionObject::CallCore
+
+			} // end of class FunctionObject
+
+
+			// Methods
+			.method public hidebysig static 
+				object __js_call__ (
+					object[] scopes,
+					object newTarget
+				) cil managed 
+			{
+				.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
+					01 00 02 00 00 00 00 00
+				)
+				// Header size: 12
+				// Code size: 52 (0x34)
+				.maxstack 8
+				.locals init (
+					[0] float64,
+					[1] object
+				)
+
+				IL_0000: ldarg.0
+				IL_0001: ldc.i4.0
+				IL_0002: ldelem.ref
+				IL_0003: castclass Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope
+				IL_0008: ldfld object Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope::shared
+				IL_000d: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+				IL_0012: ldc.r8 1
+				IL_001b: add
+				IL_001c: stloc.0
+				IL_001d: ldloc.0
+				IL_001e: box [System.Runtime]System.Double
+				IL_0023: stloc.1
+				IL_0024: ldarg.0
+				IL_0025: ldc.i4.0
+				IL_0026: ldelem.ref
+				IL_0027: castclass Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope
+				IL_002c: ldloc.1
+				IL_002d: stfld object Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope::shared
+				IL_0032: ldloc.1
+				IL_0033: ret
+			} // end of method ArrowFunction_L25C22::__js_call__
+
+		} // end of class ArrowFunction_L25C22
+
+		.class nested public auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+		.class nested public auto ansi sealed beforefieldinit FunctionObject_FunctionDeclaration_F6D4B3FC_makeReturned
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+		{
+			// Fields
+			.field private initonly class Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope _environment0_Function_CallableMaterialization_IdentityAndCaptures
+
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor (
+					class Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope capture0
+				) cil managed 
+			{
+				// Header size: 1
+				// Code size: 14 (0xe)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0006: ldarg.0
+				IL_0007: ldarg.1
+				IL_0008: stfld class Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope Modules.Function_CallableMaterialization_IdentityAndCaptures/makeReturned/FunctionObject_FunctionDeclaration_F6D4B3FC_makeReturned::_environment0_Function_CallableMaterialization_IdentityAndCaptures
+				IL_000d: ret
+			} // end of method FunctionObject_FunctionDeclaration_F6D4B3FC_makeReturned::.ctor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_IsConstructor () cil managed 
+			{
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.1
+				IL_0001: ret
+			} // end of method FunctionObject_FunctionDeclaration_F6D4B3FC_makeReturned::get_IsConstructor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_RequiresInvocationContext () cil managed 
+			{
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject_FunctionDeclaration_F6D4B3FC_makeReturned::get_RequiresInvocationContext
+
+			.method family hidebysig virtual 
+				instance object ResolveThisArgumentCore (
+					object thisArgument
+				) cil managed 
+			{
+				// Header size: 1
+				// Code size: 7 (0x7)
+				.maxstack 8
+
+				IL_0000: ldarg.1
+				IL_0001: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ResolveOrdinaryThisArgument(object)
+				IL_0006: ret
+			} // end of method FunctionObject_FunctionDeclaration_F6D4B3FC_makeReturned::ResolveThisArgumentCore
+
+			.method family hidebysig virtual 
+				instance object CallCore (
+					object thisArgument,
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+				) cil managed 
+			{
+				// Header size: 1
+				// Code size: 17 (0x11)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: ldfld class Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope Modules.Function_CallableMaterialization_IdentityAndCaptures/makeReturned/FunctionObject_FunctionDeclaration_F6D4B3FC_makeReturned::_environment0_Function_CallableMaterialization_IdentityAndCaptures
+				IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
+				IL_000b: call object Modules.Function_CallableMaterialization_IdentityAndCaptures/makeReturned::__js_call__(class Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope, object)
+				IL_0010: ret
+			} // end of method FunctionObject_FunctionDeclaration_F6D4B3FC_makeReturned::CallCore
+
+			.method family hidebysig virtual 
+				instance object ConstructBodyCore (
+					object receiver,
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
+					object newTarget
+				) cil managed 
+			{
+				// Header size: 1
+				// Code size: 13 (0xd)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: ldfld class Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope Modules.Function_CallableMaterialization_IdentityAndCaptures/makeReturned/FunctionObject_FunctionDeclaration_F6D4B3FC_makeReturned::_environment0_Function_CallableMaterialization_IdentityAndCaptures
+				IL_0006: ldarg.3
+				IL_0007: call object Modules.Function_CallableMaterialization_IdentityAndCaptures/makeReturned::__js_call__(class Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope, object)
+				IL_000c: ret
+			} // end of method FunctionObject_FunctionDeclaration_F6D4B3FC_makeReturned::ConstructBodyCore
+
+			.method family hidebysig virtual 
+				instance object ConstructCore (
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
+					object newTarget
+				) cil managed 
+			{
+				// Header size: 1
+				// Code size: 14 (0xe)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: ldarg.1
+				IL_0002: ldobj [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments
+				IL_0007: ldarg.2
+				IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionObject(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments, object)
+				IL_000d: ret
+			} // end of method FunctionObject_FunctionDeclaration_F6D4B3FC_makeReturned::ConstructCore
+
+		} // end of class FunctionObject_FunctionDeclaration_F6D4B3FC_makeReturned
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				class Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope scope,
+				object newTarget
+			) cil managed 
+		{
+			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
+				01 00 01 00 00 00 01 00 54 08 1c 53 69 6e 67 6c
+				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
+				74 61 54 6f 6b 65 6e 0e 00 00 02
+			)
+			// Header size: 12
+			// Code size: 69 (0x45)
+			.maxstack 8
+			.locals init (
+				[0] class Modules.Function_CallableMaterialization_IdentityAndCaptures/makeReturned/Scope,
+				[1] object,
+				[2] object[],
+				[3] class Modules.Function_CallableMaterialization_IdentityAndCaptures/makeReturned/ArrowFunction_L25C22/FunctionObject
+			)
+
+			IL_0000: newobj instance void Modules.Function_CallableMaterialization_IdentityAndCaptures/makeReturned/Scope::.ctor()
+			IL_0005: stloc.0
+			IL_0006: ldc.i4.2
+			IL_0007: newarr [System.Runtime]System.Object
+			IL_000c: dup
+			IL_000d: ldc.i4.0
+			IL_000e: ldarg.0
+			IL_000f: stelem.ref
+			IL_0010: dup
+			IL_0011: ldc.i4.1
+			IL_0012: ldloc.0
+			IL_0013: stelem.ref
+			IL_0014: stloc.2
+			IL_0015: ldloc.2
+			IL_0016: ldc.i4.0
+			IL_0017: ldelem.ref
+			IL_0018: castclass Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope
+			IL_001d: ldloc.2
+			IL_001e: newobj instance void Modules.Function_CallableMaterialization_IdentityAndCaptures/makeReturned/ArrowFunction_L25C22/FunctionObject::.ctor(class Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope, object[])
+			IL_0023: ldc.i4.0
+			IL_0024: conv.r8
+			IL_0025: ldstr ""
+			IL_002a: ldc.i4.0
+			IL_002b: ldc.i4.0
+			IL_002c: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Function_CallableMaterialization_IdentityAndCaptures/makeReturned/ArrowFunction_L25C22/FunctionObject>(!!0, float64, string, bool, bool)
+			IL_0031: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Function_CallableMaterialization_IdentityAndCaptures/makeReturned/ArrowFunction_L25C22/FunctionObject>(!!0)
+			IL_0036: stloc.3
+			IL_0037: ldloc.3
+			IL_0038: ldstr "returned"
+			IL_003d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetFunctionInferredName(object, object)
+			IL_0042: stloc.1
+			IL_0043: ldloc.1
+			IL_0044: ret
+		} // end of method makeReturned::__js_call__
+
+	} // end of class makeReturned
+
+	.class nested public auto ansi abstract sealed beforefieldinit invokeUnknown
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested public auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+		.class nested public auto ansi sealed beforefieldinit FunctionObject_FunctionDeclaration_EAD58F19_invokeUnknown
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Header size: 1
+				// Code size: 7 (0x7)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0006: ret
+			} // end of method FunctionObject_FunctionDeclaration_EAD58F19_invokeUnknown::.ctor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_IsConstructor () cil managed 
+			{
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.1
+				IL_0001: ret
+			} // end of method FunctionObject_FunctionDeclaration_EAD58F19_invokeUnknown::get_IsConstructor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_RequiresInvocationContext () cil managed 
+			{
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject_FunctionDeclaration_EAD58F19_invokeUnknown::get_RequiresInvocationContext
+
+			.method family hidebysig virtual 
+				instance object ResolveThisArgumentCore (
+					object thisArgument
+				) cil managed 
+			{
+				// Header size: 1
+				// Code size: 7 (0x7)
+				.maxstack 8
+
+				IL_0000: ldarg.1
+				IL_0001: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ResolveOrdinaryThisArgument(object)
+				IL_0006: ret
+			} // end of method FunctionObject_FunctionDeclaration_EAD58F19_invokeUnknown::ResolveThisArgumentCore
+
+			.method family hidebysig virtual 
+				instance object CallCore (
+					object thisArgument,
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+				) cil managed 
+			{
+				// Header size: 1
+				// Code size: 18 (0x12)
+				.maxstack 8
+
+				IL_0000: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
+				IL_0005: ldarg.2
+				IL_0006: ldc.i4.0
+				IL_0007: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+				IL_000c: call object Modules.Function_CallableMaterialization_IdentityAndCaptures/invokeUnknown::__js_call__(object, object)
+				IL_0011: ret
+			} // end of method FunctionObject_FunctionDeclaration_EAD58F19_invokeUnknown::CallCore
+
+			.method family hidebysig virtual 
+				instance object ConstructBodyCore (
+					object receiver,
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
+					object newTarget
+				) cil managed 
+			{
+				// Header size: 1
+				// Code size: 14 (0xe)
+				.maxstack 8
+
+				IL_0000: ldarg.3
+				IL_0001: ldarg.2
+				IL_0002: ldc.i4.0
+				IL_0003: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+				IL_0008: call object Modules.Function_CallableMaterialization_IdentityAndCaptures/invokeUnknown::__js_call__(object, object)
+				IL_000d: ret
+			} // end of method FunctionObject_FunctionDeclaration_EAD58F19_invokeUnknown::ConstructBodyCore
+
+			.method family hidebysig virtual 
+				instance object ConstructCore (
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
+					object newTarget
+				) cil managed 
+			{
+				// Header size: 1
+				// Code size: 14 (0xe)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: ldarg.1
+				IL_0002: ldobj [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments
+				IL_0007: ldarg.2
+				IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionObject(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments, object)
+				IL_000d: ret
+			} // end of method FunctionObject_FunctionDeclaration_EAD58F19_invokeUnknown::ConstructCore
+
+		} // end of class FunctionObject_FunctionDeclaration_EAD58F19_invokeUnknown
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				object newTarget,
+				object callback
+			) cil managed 
+		{
+			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
+				01 00 00 00 00 00 00 00
+			)
+			// Header size: 12
+			// Code size: 14 (0xe)
+			.maxstack 8
+			.locals init (
+				[0] object
+			)
+
+			IL_0000: ldarg.1
+			IL_0001: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+			IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
+			IL_000b: stloc.0
+			IL_000c: ldloc.0
+			IL_000d: ret
+		} // end of method invokeUnknown::__js_call__
+
+	} // end of class invokeUnknown
+
+	.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L36C21
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested public auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+		.class nested public auto ansi sealed beforefieldinit FunctionObject
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Header size: 1
+				// Code size: 7 (0x7)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0006: ret
+			} // end of method FunctionObject::.ctor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_IsConstructor () cil managed 
+			{
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_IsConstructor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_RequiresInvocationContext () cil managed 
+			{
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_RequiresInvocationContext
+
+			.method family hidebysig virtual 
+				instance object CallCore (
+					object thisArgument,
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+				) cil managed 
+			{
+				// Header size: 1
+				// Code size: 12 (0xc)
+				.maxstack 8
+
+				IL_0000: ldnull
+				IL_0001: call float64 Modules.Function_CallableMaterialization_IdentityAndCaptures/ArrowFunction_L36C21::__js_call__(object)
+				IL_0006: box [System.Runtime]System.Double
+				IL_000b: ret
+			} // end of method FunctionObject::CallCore
+
+		} // end of class FunctionObject
+
+
+		// Methods
+		.method public hidebysig static 
+			float64 __js_call__ (
+				object newTarget
+			) cil managed 
+		{
+			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
+				01 00 00 00 00 00 00 00
+			)
+			// Header size: 1
+			// Code size: 10 (0xa)
+			.maxstack 8
+
+			IL_0000: ldc.r8 17
+			IL_0009: ret
+		} // end of method ArrowFunction_L36C21::__js_call__
+
+	} // end of class ArrowFunction_L36C21
+
+	.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L39C17
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested public auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			.custom instance void [System.Runtime]System.Diagnostics.DebuggerDisplayAttribute::.ctor(string) = (
+				01 00 13 53 63 6f 70 65 20 76 61 6c 75 65 3d 7b
+				76 61 6c 75 65 7d 00 00
+			)
+			// Fields
+			.field public object 'value'
+
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+		.class nested public auto ansi sealed beforefieldinit FunctionObject
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Header size: 1
+				// Code size: 7 (0x7)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0006: ret
+			} // end of method FunctionObject::.ctor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_IsConstructor () cil managed 
+			{
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_IsConstructor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_RequiresInvocationContext () cil managed 
+			{
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_RequiresInvocationContext
+
+			.method family hidebysig virtual 
+				instance object CallCore (
+					object thisArgument,
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+				) cil managed 
+			{
+				// Header size: 1
+				// Code size: 14 (0xe)
+				.maxstack 8
+
+				IL_0000: ldnull
+				IL_0001: ldarg.2
+				IL_0002: ldc.i4.0
+				IL_0003: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+				IL_0008: call object Modules.Function_CallableMaterialization_IdentityAndCaptures/ArrowFunction_L39C17::__js_call__(object, object)
+				IL_000d: ret
+			} // end of method FunctionObject::CallCore
+
+		} // end of class FunctionObject
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				object newTarget,
+				object 'value'
+			) cil managed 
+		{
+			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
+				01 00 00 00 00 00 00 00
+			)
+			// Header size: 1
+			// Code size: 2 (0x2)
+			.maxstack 8
+
+			IL_0000: ldarg.1
+			IL_0001: ret
+		} // end of method ArrowFunction_L39C17::__js_call__
+
+	} // end of class ArrowFunction_L39C17
+
+	.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L48C19
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested public auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			.custom instance void [System.Runtime]System.Diagnostics.DebuggerDisplayAttribute::.ctor(string) = (
+				01 00 13 53 63 6f 70 65 20 76 61 6c 75 65 3d 7b
+				76 61 6c 75 65 7d 00 00
+			)
+			// Fields
+			.field public object 'value'
+
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+		.class nested public auto ansi sealed beforefieldinit FunctionObject
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+		{
+			// Fields
+			.field private initonly class Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope _environment0_Function_CallableMaterialization_IdentityAndCaptures
+
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor (
+					class Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope capture0
+				) cil managed 
+			{
+				// Header size: 1
+				// Code size: 14 (0xe)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0006: ldarg.0
+				IL_0007: ldarg.1
+				IL_0008: stfld class Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope Modules.Function_CallableMaterialization_IdentityAndCaptures/ArrowFunction_L48C19/FunctionObject::_environment0_Function_CallableMaterialization_IdentityAndCaptures
+				IL_000d: ret
+			} // end of method FunctionObject::.ctor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_IsConstructor () cil managed 
+			{
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_IsConstructor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_RequiresInvocationContext () cil managed 
+			{
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_RequiresInvocationContext
+
+			.method family hidebysig virtual 
+				instance object CallCore (
+					object thisArgument,
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+				) cil managed 
+			{
+				// Header size: 1
+				// Code size: 20 (0x14)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: ldfld class Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope Modules.Function_CallableMaterialization_IdentityAndCaptures/ArrowFunction_L48C19/FunctionObject::_environment0_Function_CallableMaterialization_IdentityAndCaptures
+				IL_0006: ldnull
+				IL_0007: ldarg.2
+				IL_0008: ldc.i4.0
+				IL_0009: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+				IL_000e: call object Modules.Function_CallableMaterialization_IdentityAndCaptures/ArrowFunction_L48C19::__js_call__(class Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope, object, object)
+				IL_0013: ret
+			} // end of method FunctionObject::CallCore
+
+		} // end of class FunctionObject
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				class Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope scope,
+				object newTarget,
+				object 'value'
+			) cil managed 
+		{
+			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
+				01 00 01 00 00 00 01 00 54 08 1c 53 69 6e 67 6c
+				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
+				74 61 54 6f 6b 65 6e 0e 00 00 02
+			)
+			// Header size: 12
+			// Code size: 92 (0x5c)
+			.maxstack 8
+			.locals init (
+				[0] bool,
+				[1] float64,
+				[2] object,
+				[3] object,
+				[4] object
+			)
+
+			IL_0000: ldarg.2
+			IL_0001: ldc.r8 0.0
+			IL_000a: box [System.Runtime]System.Double
+			IL_000f: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+			IL_0014: stloc.0
+			IL_0015: ldloc.0
+			IL_0016: brfalse IL_002a
+
+			IL_001b: ldc.r8 0.0
+			IL_0024: box [System.Runtime]System.Double
+			IL_0029: ret
+
+			IL_002a: ldarg.2
+			IL_002b: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0030: ldc.r8 1
+			IL_0039: sub
+			IL_003a: stloc.1
+			IL_003b: ldloc.1
+			IL_003c: box [System.Runtime]System.Double
+			IL_0041: stloc.2
+			IL_0042: ldarg.0
+			IL_0043: castclass Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope
+			IL_0048: ldnull
+			IL_0049: ldloc.2
+			IL_004a: call object Modules.Function_CallableMaterialization_IdentityAndCaptures/ArrowFunction_L48C19::__js_call__(class Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope, object, object)
+			IL_004f: stloc.3
+			IL_0050: ldarg.2
+			IL_0051: ldloc.3
+			IL_0052: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0057: stloc.s 4
+			IL_0059: ldloc.s 4
+			IL_005b: ret
+		} // end of method ArrowFunction_L48C19::__js_call__
+
+	} // end of class ArrowFunction_L48C19
+
+	.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L51C14
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested public auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			.custom instance void [System.Runtime]System.Diagnostics.DebuggerDisplayAttribute::.ctor(string) = (
+				01 00 13 53 63 6f 70 65 20 76 61 6c 75 65 3d 7b
+				76 61 6c 75 65 7d 00 00
+			)
+			// Fields
+			.field public object 'value'
+
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+		.class nested public auto ansi sealed beforefieldinit FunctionObject
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+		{
+			// Fields
+			.field private initonly class Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope _environment0_Function_CallableMaterialization_IdentityAndCaptures
+
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor (
+					class Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope capture0
+				) cil managed 
+			{
+				// Header size: 1
+				// Code size: 14 (0xe)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0006: ldarg.0
+				IL_0007: ldarg.1
+				IL_0008: stfld class Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope Modules.Function_CallableMaterialization_IdentityAndCaptures/ArrowFunction_L51C14/FunctionObject::_environment0_Function_CallableMaterialization_IdentityAndCaptures
+				IL_000d: ret
+			} // end of method FunctionObject::.ctor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_IsConstructor () cil managed 
+			{
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_IsConstructor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_RequiresInvocationContext () cil managed 
+			{
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_RequiresInvocationContext
+
+			.method family hidebysig virtual 
+				instance object CallCore (
+					object thisArgument,
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+				) cil managed 
+			{
+				// Header size: 1
+				// Code size: 20 (0x14)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: ldfld class Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope Modules.Function_CallableMaterialization_IdentityAndCaptures/ArrowFunction_L51C14/FunctionObject::_environment0_Function_CallableMaterialization_IdentityAndCaptures
+				IL_0006: ldnull
+				IL_0007: ldarg.2
+				IL_0008: ldc.i4.0
+				IL_0009: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+				IL_000e: call object Modules.Function_CallableMaterialization_IdentityAndCaptures/ArrowFunction_L51C14::__js_call__(class Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope, object, object)
+				IL_0013: ret
+			} // end of method FunctionObject::CallCore
+
+		} // end of class FunctionObject
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				class Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope scope,
+				object newTarget,
+				object 'value'
+			) cil managed 
+		{
+			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
+				01 00 01 00 00 00 01 00 54 08 1c 53 69 6e 67 6c
+				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
+				74 61 54 6f 6b 65 6e 0e 00 00 02
+			)
+			// Header size: 12
+			// Code size: 97 (0x61)
+			.maxstack 8
+			.locals init (
+				[0] bool,
+				[1] object[],
+				[2] float64,
+				[3] object,
+				[4] object
+			)
+
+			IL_0000: ldarg.2
+			IL_0001: ldc.r8 0.0
+			IL_000a: box [System.Runtime]System.Double
+			IL_000f: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+			IL_0014: stloc.0
+			IL_0015: ldloc.0
+			IL_0016: brfalse IL_0022
+
+			IL_001b: ldc.i4.1
+			IL_001c: box [System.Runtime]System.Boolean
+			IL_0021: ret
+
+			IL_0022: ldarg.0
+			IL_0023: ldfld object Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope::odd
+			IL_0028: ldstr "Cannot access 'odd' before initialization"
+			IL_002d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_0032: ldc.i4.1
+			IL_0033: newarr [System.Runtime]System.Object
+			IL_0038: dup
+			IL_0039: ldc.i4.0
+			IL_003a: ldarg.0
+			IL_003b: stelem.ref
+			IL_003c: stloc.1
+			IL_003d: ldarg.2
+			IL_003e: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0043: ldc.r8 1
+			IL_004c: sub
+			IL_004d: stloc.2
+			IL_004e: ldloc.2
+			IL_004f: box [System.Runtime]System.Double
+			IL_0054: stloc.3
+			IL_0055: ldloc.1
+			IL_0056: ldloc.3
+			IL_0057: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
+			IL_005c: stloc.s 4
+			IL_005e: ldloc.s 4
+			IL_0060: ret
+		} // end of method ArrowFunction_L51C14::__js_call__
+
+	} // end of class ArrowFunction_L51C14
+
+	.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L52C13
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested public auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			.custom instance void [System.Runtime]System.Diagnostics.DebuggerDisplayAttribute::.ctor(string) = (
+				01 00 13 53 63 6f 70 65 20 76 61 6c 75 65 3d 7b
+				76 61 6c 75 65 7d 00 00
+			)
+			// Fields
+			.field public object 'value'
+
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+		.class nested public auto ansi sealed beforefieldinit FunctionObject
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+		{
+			// Fields
+			.field private initonly class Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope _environment0_Function_CallableMaterialization_IdentityAndCaptures
+
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor (
+					class Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope capture0
+				) cil managed 
+			{
+				// Header size: 1
+				// Code size: 14 (0xe)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0006: ldarg.0
+				IL_0007: ldarg.1
+				IL_0008: stfld class Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope Modules.Function_CallableMaterialization_IdentityAndCaptures/ArrowFunction_L52C13/FunctionObject::_environment0_Function_CallableMaterialization_IdentityAndCaptures
+				IL_000d: ret
+			} // end of method FunctionObject::.ctor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_IsConstructor () cil managed 
+			{
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_IsConstructor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_RequiresInvocationContext () cil managed 
+			{
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_RequiresInvocationContext
+
+			.method family hidebysig virtual 
+				instance object CallCore (
+					object thisArgument,
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+				) cil managed 
+			{
+				// Header size: 1
+				// Code size: 20 (0x14)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: ldfld class Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope Modules.Function_CallableMaterialization_IdentityAndCaptures/ArrowFunction_L52C13/FunctionObject::_environment0_Function_CallableMaterialization_IdentityAndCaptures
+				IL_0006: ldnull
+				IL_0007: ldarg.2
+				IL_0008: ldc.i4.0
+				IL_0009: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+				IL_000e: call object Modules.Function_CallableMaterialization_IdentityAndCaptures/ArrowFunction_L52C13::__js_call__(class Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope, object, object)
+				IL_0013: ret
+			} // end of method FunctionObject::CallCore
+
+		} // end of class FunctionObject
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				class Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope scope,
+				object newTarget,
+				object 'value'
+			) cil managed 
+		{
+			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
+				01 00 01 00 00 00 01 00 54 08 1c 53 69 6e 67 6c
+				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
+				74 61 54 6f 6b 65 6e 0e 00 00 02
+			)
+			// Header size: 12
+			// Code size: 74 (0x4a)
+			.maxstack 8
+			.locals init (
+				[0] bool,
+				[1] float64,
+				[2] object,
+				[3] object
+			)
+
+			IL_0000: ldarg.2
+			IL_0001: ldc.r8 0.0
+			IL_000a: box [System.Runtime]System.Double
+			IL_000f: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+			IL_0014: stloc.0
+			IL_0015: ldloc.0
+			IL_0016: brfalse IL_0022
+
+			IL_001b: ldc.i4.0
+			IL_001c: box [System.Runtime]System.Boolean
+			IL_0021: ret
+
+			IL_0022: ldarg.2
+			IL_0023: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0028: ldc.r8 1
+			IL_0031: sub
+			IL_0032: stloc.1
+			IL_0033: ldloc.1
+			IL_0034: box [System.Runtime]System.Double
+			IL_0039: stloc.2
+			IL_003a: ldarg.0
+			IL_003b: castclass Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope
+			IL_0040: ldnull
+			IL_0041: ldloc.2
+			IL_0042: call object Modules.Function_CallableMaterialization_IdentityAndCaptures/ArrowFunction_L51C14::__js_call__(class Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope, object, object)
+			IL_0047: stloc.3
+			IL_0048: ldloc.3
+			IL_0049: ret
+		} // end of method ArrowFunction_L52C13::__js_call__
+
+	} // end of class ArrowFunction_L52C13
+
+	.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L55C18
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested public auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+		.class nested public auto ansi sealed beforefieldinit FunctionObject
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Header size: 1
+				// Code size: 7 (0x7)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0006: ret
+			} // end of method FunctionObject::.ctor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_IsConstructor () cil managed 
+			{
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_IsConstructor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_RequiresInvocationContext () cil managed 
+			{
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_RequiresInvocationContext
+
+			.method family hidebysig virtual 
+				instance object CallCore (
+					object thisArgument,
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+				) cil managed 
+			{
+				// Header size: 1
+				// Code size: 12 (0xc)
+				.maxstack 8
+
+				IL_0000: ldnull
+				IL_0001: call float64 Modules.Function_CallableMaterialization_IdentityAndCaptures/ArrowFunction_L55C18::__js_call__(object)
+				IL_0006: box [System.Runtime]System.Double
+				IL_000b: ret
+			} // end of method FunctionObject::CallCore
+
+		} // end of class FunctionObject
+
+
+		// Methods
+		.method public hidebysig static 
+			float64 __js_call__ (
+				object newTarget
+			) cil managed 
+		{
+			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
+				01 00 00 00 00 00 00 00
+			)
+			// Header size: 1
+			// Code size: 10 (0xa)
+			.maxstack 8
+
+			IL_0000: ldc.r8 21
+			IL_0009: ret
+		} // end of method ArrowFunction_L55C18::__js_call__
+
+	} // end of class ArrowFunction_L55C18
+
+	.class nested public auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
+		.custom instance void [System.Runtime]System.Diagnostics.DebuggerDisplayAttribute::.ctor(string) = (
+			01 00 80 80 53 63 6f 70 65 20 73 68 61 72 65 64
+			3d 7b 73 68 61 72 65 64 7d 2c 20 6d 61 6b 65 52
+			65 74 75 72 6e 65 64 3d 7b 6d 61 6b 65 52 65 74
+			75 72 6e 65 64 7d 2c 20 69 6e 76 6f 6b 65 55 6e
+			6b 6e 6f 77 6e 3d 7b 69 6e 76 6f 6b 65 55 6e 6b
+			6e 6f 77 6e 7d 2c 20 72 65 63 75 72 73 69 76 65
+			3d 7b 72 65 63 75 72 73 69 76 65 7d 2c 20 65 76
+			65 6e 3d 7b 65 76 65 6e 7d 2c 20 6f 64 64 3d 7b
+			6f 64 64 7d 00 00
+		)
+		// Fields
+		.field public object shared
+		.field public object makeReturned
+		.field public object invokeUnknown
+		.field public object recursive
+		.field public object even
+		.field public object odd
+
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Header size: 1
+			// Code size: 30 (0x1e)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: ldarg.0
+			IL_0007: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+			IL_000c: stfld object Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope::recursive
+			IL_0011: ldarg.0
+			IL_0012: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+			IL_0017: stfld object Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope::odd
+			IL_001c: nop
+			IL_001d: ret
+		} // end of method Scope::.ctor
+
+	} // end of class Scope
+
+	.class nested public auto ansi beforefieldinit ObjectLiterals
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested public auto ansi beforefieldinit L13C16_holder
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsObject
+		{
+			// Fields
+			.field private object _escaping
+
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Header size: 1
+				// Code size: 7 (0x7)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::.ctor()
+				IL_0006: ret
+			} // end of method L13C16_holder::.ctor
+
+			.method public hidebysig 
+				instance object get_escaping () cil managed 
+			{
+				// Header size: 1
+				// Code size: 7 (0x7)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: ldfld object Modules.Function_CallableMaterialization_IdentityAndCaptures/ObjectLiterals/L13C16_holder::_escaping
+				IL_0006: ret
+			} // end of method L13C16_holder::get_escaping
+
+			.method public hidebysig 
+				instance void set_escaping (
+					object ''
+				) cil managed 
+			{
+				// Header size: 1
+				// Code size: 20 (0x14)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: ldarg.1
+				IL_0002: stfld object Modules.Function_CallableMaterialization_IdentityAndCaptures/ObjectLiterals/L13C16_holder::_escaping
+				IL_0007: ldarg.0
+				IL_0008: ldstr "escaping"
+				IL_000d: ldarg.1
+				IL_000e: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+				IL_0013: ret
+			} // end of method L13C16_holder::set_escaping
+
+		} // end of class L13C16_holder
+
+
+	} // end of class ObjectLiterals
+
+
+	// Methods
+	.method public hidebysig static 
+		void __js_module_init__ (
+			object exports,
+			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			object module,
+			string __filename,
+			string __dirname
+		) cil managed 
+	{
+		// Header size: 12
+		// Code size: 1417 (0x589)
+		.maxstack 8
+		.locals init (
+			[0] class Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope,
+			[1] class Modules.Function_CallableMaterialization_IdentityAndCaptures/makeReturned/FunctionObject_FunctionDeclaration_F6D4B3FC_makeReturned,
+			[2] class Modules.Function_CallableMaterialization_IdentityAndCaptures/invokeUnknown/FunctionObject_FunctionDeclaration_EAD58F19_invokeUnknown,
+			[3] object,
+			[4] object,
+			[5] class Modules.Function_CallableMaterialization_IdentityAndCaptures/ObjectLiterals/L13C16_holder,
+			[6] class [JavaScriptRuntime]JavaScriptRuntime.Array,
+			[7] object,
+			[8] object,
+			[9] object,
+			[10] object,
+			[11] object,
+			[12] object[],
+			[13] class Modules.Function_CallableMaterialization_IdentityAndCaptures/ArrowFunction_L8C18/FunctionObject,
+			[14] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+			[15] object,
+			[16] object,
+			[17] object,
+			[18] bool,
+			[19] object,
+			[20] object,
+			[21] object,
+			[22] class Modules.Function_CallableMaterialization_IdentityAndCaptures/ArrowFunction_L36C21/FunctionObject,
+			[23] class Modules.Function_CallableMaterialization_IdentityAndCaptures/ArrowFunction_L39C17/FunctionObject,
+			[24] class [JavaScriptRuntime]JavaScriptRuntime.Array,
+			[25] object,
+			[26] class Modules.Function_CallableMaterialization_IdentityAndCaptures/ArrowFunction_L48C19/FunctionObject,
+			[27] class Modules.Function_CallableMaterialization_IdentityAndCaptures/ArrowFunction_L51C14/FunctionObject,
+			[28] class Modules.Function_CallableMaterialization_IdentityAndCaptures/ArrowFunction_L52C13/FunctionObject,
+			[29] class Modules.Function_CallableMaterialization_IdentityAndCaptures/ArrowFunction_L55C18/FunctionObject,
+			[30] float64,
+			[31] object
+		)
+
+		IL_0000: newobj instance void Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldc.i4.1
+		IL_0007: newarr [System.Runtime]System.Object
+		IL_000c: dup
+		IL_000d: ldc.i4.0
+		IL_000e: ldloc.0
+		IL_000f: stelem.ref
+		IL_0010: stloc.s 12
+		IL_0012: ldloc.s 12
+		IL_0014: ldc.i4.0
+		IL_0015: ldelem.ref
+		IL_0016: castclass Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope
+		IL_001b: newobj instance void Modules.Function_CallableMaterialization_IdentityAndCaptures/makeReturned/FunctionObject_FunctionDeclaration_F6D4B3FC_makeReturned::.ctor(class Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope)
+		IL_0020: ldc.i4.0
+		IL_0021: conv.r8
+		IL_0022: ldstr "makeReturned"
+		IL_0027: ldc.i4.0
+		IL_0028: ldc.i4.0
+		IL_0029: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Function_CallableMaterialization_IdentityAndCaptures/makeReturned/FunctionObject_FunctionDeclaration_F6D4B3FC_makeReturned>(!!0, float64, string, bool, bool)
+		IL_002e: stloc.1
+		IL_002f: ldc.i4.1
+		IL_0030: newarr [System.Runtime]System.Object
+		IL_0035: dup
+		IL_0036: ldc.i4.0
+		IL_0037: ldloc.0
+		IL_0038: stelem.ref
+		IL_0039: stloc.s 12
+		IL_003b: newobj instance void Modules.Function_CallableMaterialization_IdentityAndCaptures/invokeUnknown/FunctionObject_FunctionDeclaration_EAD58F19_invokeUnknown::.ctor()
+		IL_0040: ldc.i4.1
+		IL_0041: conv.r8
+		IL_0042: ldstr "invokeUnknown"
+		IL_0047: ldc.i4.0
+		IL_0048: ldc.i4.0
+		IL_0049: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Function_CallableMaterialization_IdentityAndCaptures/invokeUnknown/FunctionObject_FunctionDeclaration_EAD58F19_invokeUnknown>(!!0, float64, string, bool, bool)
+		IL_004e: stloc.2
+		IL_004f: ldloc.0
+		IL_0050: ldc.r8 0.0
+		IL_0059: box [System.Runtime]System.Double
+		IL_005e: stfld object Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope::shared
+		IL_0063: nop
+		IL_0064: ldc.i4.1
+		IL_0065: newarr [System.Runtime]System.Object
+		IL_006a: dup
+		IL_006b: ldc.i4.0
+		IL_006c: ldloc.0
+		IL_006d: stelem.ref
+		IL_006e: stloc.s 12
+		IL_0070: ldloc.s 12
+		IL_0072: ldc.i4.0
+		IL_0073: ldelem.ref
+		IL_0074: castclass Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope
+		IL_0079: newobj instance void Modules.Function_CallableMaterialization_IdentityAndCaptures/ArrowFunction_L8C18/FunctionObject::.ctor(class Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope)
+		IL_007e: ldc.i4.1
+		IL_007f: conv.r8
+		IL_0080: ldstr ""
+		IL_0085: ldc.i4.0
+		IL_0086: ldc.i4.0
+		IL_0087: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Function_CallableMaterialization_IdentityAndCaptures/ArrowFunction_L8C18/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_008c: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Function_CallableMaterialization_IdentityAndCaptures/ArrowFunction_L8C18/FunctionObject>(!!0)
+		IL_0091: stloc.s 13
+		IL_0093: ldloc.s 13
+		IL_0095: ldstr "escaping"
+		IL_009a: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetFunctionInferredName(object, object)
+		IL_009f: stloc.3
+		IL_00a0: ldloc.3
+		IL_00a1: stloc.s 4
+		IL_00a3: newobj instance void Modules.Function_CallableMaterialization_IdentityAndCaptures/ObjectLiterals/L13C16_holder::.ctor()
+		IL_00a8: stloc.s 5
+		IL_00aa: ldloc.s 5
+		IL_00ac: ldloc.3
+		IL_00ad: callvirt instance void Modules.Function_CallableMaterialization_IdentityAndCaptures/ObjectLiterals/L13C16_holder::set_escaping(object)
+		IL_00b2: ldc.i4.1
+		IL_00b3: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_00b8: dup
+		IL_00b9: ldloc.3
+		IL_00ba: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+		IL_00bf: stloc.s 6
+		IL_00c1: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00c6: stloc.s 14
+		IL_00c8: ldloc.0
+		IL_00c9: castclass Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope
+		IL_00ce: ldnull
+		IL_00cf: ldc.r8 2
+		IL_00d8: call object Modules.Function_CallableMaterialization_IdentityAndCaptures/ArrowFunction_L3C16::__js_call__(class Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope, object, float64)
+		IL_00dd: stloc.s 15
+		IL_00df: ldloc.0
+		IL_00e0: castclass Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope
+		IL_00e5: ldnull
+		IL_00e6: ldc.r8 3
+		IL_00ef: call object Modules.Function_CallableMaterialization_IdentityAndCaptures/ArrowFunction_L3C16::__js_call__(class Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope, object, float64)
+		IL_00f4: stloc.s 16
+		IL_00f6: ldloc.0
+		IL_00f7: ldfld object Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope::shared
+		IL_00fc: stloc.s 17
+		IL_00fe: ldloc.s 14
+		IL_0100: ldc.i4.4
+		IL_0101: newarr [System.Runtime]System.Object
+		IL_0106: dup
+		IL_0107: ldc.i4.0
+		IL_0108: ldstr "direct"
+		IL_010d: stelem.ref
+		IL_010e: dup
+		IL_010f: ldc.i4.1
+		IL_0110: ldloc.s 15
+		IL_0112: stelem.ref
+		IL_0113: dup
+		IL_0114: ldc.i4.2
+		IL_0115: ldloc.s 16
+		IL_0117: stelem.ref
+		IL_0118: dup
+		IL_0119: ldc.i4.3
+		IL_011a: ldloc.s 17
+		IL_011c: stelem.ref
+		IL_011d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0122: pop
+		IL_0123: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0128: stloc.s 14
+		IL_012a: ldloc.s 4
+		IL_012c: ldloc.3
+		IL_012d: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_0132: stloc.s 18
+		IL_0134: ldloc.s 18
+		IL_0136: box [System.Runtime]System.Boolean
+		IL_013b: stloc.s 19
+		IL_013d: ldloc.s 5
+		IL_013f: castclass Modules.Function_CallableMaterialization_IdentityAndCaptures/ObjectLiterals/L13C16_holder
+		IL_0144: callvirt instance object Modules.Function_CallableMaterialization_IdentityAndCaptures/ObjectLiterals/L13C16_holder::get_escaping()
+		IL_0149: stloc.s 17
+		IL_014b: ldloc.s 17
+		IL_014d: ldloc.3
+		IL_014e: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_0153: stloc.s 18
+		IL_0155: ldloc.s 18
+		IL_0157: box [System.Runtime]System.Boolean
+		IL_015c: stloc.s 20
+		IL_015e: ldloc.s 6
+		IL_0160: ldc.r8 0.0
+		IL_0169: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
+		IL_016e: stloc.s 17
+		IL_0170: ldloc.s 17
+		IL_0172: ldloc.3
+		IL_0173: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_0178: stloc.s 18
+		IL_017a: ldloc.s 18
+		IL_017c: box [System.Runtime]System.Boolean
+		IL_0181: stloc.s 21
+		IL_0183: ldloc.s 14
+		IL_0185: ldc.i4.4
+		IL_0186: newarr [System.Runtime]System.Object
+		IL_018b: dup
+		IL_018c: ldc.i4.0
+		IL_018d: ldstr "identity"
+		IL_0192: stelem.ref
+		IL_0193: dup
+		IL_0194: ldc.i4.1
+		IL_0195: ldloc.s 19
+		IL_0197: stelem.ref
+		IL_0198: dup
+		IL_0199: ldc.i4.2
+		IL_019a: ldloc.s 20
+		IL_019c: stelem.ref
+		IL_019d: dup
+		IL_019e: ldc.i4.3
+		IL_019f: ldloc.s 21
+		IL_01a1: stelem.ref
+		IL_01a2: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_01a7: pop
+		IL_01a8: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_01ad: stloc.s 14
+		IL_01af: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_01b4: stloc.s 12
+		IL_01b6: ldloc.s 4
+		IL_01b8: ldloc.s 12
+		IL_01ba: ldc.r8 4
+		IL_01c3: box [System.Runtime]System.Double
+		IL_01c8: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
+		IL_01cd: stloc.s 17
+		IL_01cf: ldloc.0
+		IL_01d0: castclass Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope
+		IL_01d5: ldnull
+		IL_01d6: ldc.r8 5
+		IL_01df: box [System.Runtime]System.Double
+		IL_01e4: call object Modules.Function_CallableMaterialization_IdentityAndCaptures/ArrowFunction_L8C18::__js_call__(class Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope, object, object)
+		IL_01e9: stloc.s 16
+		IL_01eb: ldloc.0
+		IL_01ec: ldfld object Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope::shared
+		IL_01f1: stloc.s 15
+		IL_01f3: ldloc.s 14
+		IL_01f5: ldc.i4.4
+		IL_01f6: newarr [System.Runtime]System.Object
+		IL_01fb: dup
+		IL_01fc: ldc.i4.0
+		IL_01fd: ldstr "shared"
+		IL_0202: stelem.ref
+		IL_0203: dup
+		IL_0204: ldc.i4.1
+		IL_0205: ldloc.s 17
+		IL_0207: stelem.ref
+		IL_0208: dup
+		IL_0209: ldc.i4.2
+		IL_020a: ldloc.s 16
+		IL_020c: stelem.ref
+		IL_020d: dup
+		IL_020e: ldc.i4.3
+		IL_020f: ldloc.s 15
+		IL_0211: stelem.ref
+		IL_0212: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0217: pop
+		IL_0218: nop
+		IL_0219: ldloc.0
+		IL_021a: castclass Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope
+		IL_021f: ldnull
+		IL_0220: call object Modules.Function_CallableMaterialization_IdentityAndCaptures/makeReturned::__js_call__(class Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope, object)
+		IL_0225: stloc.s 7
+		IL_0227: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_022c: stloc.s 14
+		IL_022e: ldloc.s 7
+		IL_0230: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0235: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
+		IL_023a: stloc.s 15
+		IL_023c: ldloc.s 7
+		IL_023e: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0243: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
+		IL_0248: stloc.s 16
+		IL_024a: ldloc.0
+		IL_024b: ldfld object Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope::shared
+		IL_0250: stloc.s 17
+		IL_0252: ldloc.s 14
+		IL_0254: ldc.i4.4
+		IL_0255: newarr [System.Runtime]System.Object
+		IL_025a: dup
+		IL_025b: ldc.i4.0
+		IL_025c: ldstr "returned"
+		IL_0261: stelem.ref
+		IL_0262: dup
+		IL_0263: ldc.i4.1
+		IL_0264: ldloc.s 15
+		IL_0266: stelem.ref
+		IL_0267: dup
+		IL_0268: ldc.i4.2
+		IL_0269: ldloc.s 16
+		IL_026b: stelem.ref
+		IL_026c: dup
+		IL_026d: ldc.i4.3
+		IL_026e: ldloc.s 17
+		IL_0270: stelem.ref
+		IL_0271: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0276: pop
+		IL_0277: nop
+		IL_0278: ldc.i4.1
+		IL_0279: newarr [System.Runtime]System.Object
+		IL_027e: dup
+		IL_027f: ldc.i4.0
+		IL_0280: ldloc.0
+		IL_0281: stelem.ref
+		IL_0282: stloc.s 12
+		IL_0284: newobj instance void Modules.Function_CallableMaterialization_IdentityAndCaptures/ArrowFunction_L36C21/FunctionObject::.ctor()
+		IL_0289: ldc.i4.0
+		IL_028a: conv.r8
+		IL_028b: ldstr ""
+		IL_0290: ldc.i4.0
+		IL_0291: ldc.i4.0
+		IL_0292: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Function_CallableMaterialization_IdentityAndCaptures/ArrowFunction_L36C21/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_0297: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Function_CallableMaterialization_IdentityAndCaptures/ArrowFunction_L36C21/FunctionObject>(!!0)
+		IL_029c: stloc.s 22
+		IL_029e: ldloc.s 22
+		IL_02a0: ldstr "higherOrder"
+		IL_02a5: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetFunctionInferredName(object, object)
+		IL_02aa: stloc.s 8
+		IL_02ac: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_02b1: stloc.s 14
+		IL_02b3: ldnull
+		IL_02b4: ldloc.s 8
+		IL_02b6: call object Modules.Function_CallableMaterialization_IdentityAndCaptures/invokeUnknown::__js_call__(object, object)
+		IL_02bb: stloc.s 17
+		IL_02bd: ldloc.s 14
+		IL_02bf: ldstr "higher-order"
+		IL_02c4: ldloc.s 17
+		IL_02c6: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_02cb: pop
+		IL_02cc: ldc.i4.1
+		IL_02cd: newarr [System.Runtime]System.Object
+		IL_02d2: dup
+		IL_02d3: ldc.i4.0
+		IL_02d4: ldloc.0
+		IL_02d5: stelem.ref
+		IL_02d6: stloc.s 12
+		IL_02d8: newobj instance void Modules.Function_CallableMaterialization_IdentityAndCaptures/ArrowFunction_L39C17/FunctionObject::.ctor()
+		IL_02dd: ldc.i4.1
+		IL_02de: conv.r8
+		IL_02df: ldstr ""
+		IL_02e4: ldc.i4.0
+		IL_02e5: ldc.i4.0
+		IL_02e6: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Function_CallableMaterialization_IdentityAndCaptures/ArrowFunction_L39C17/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_02eb: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Function_CallableMaterialization_IdentityAndCaptures/ArrowFunction_L39C17/FunctionObject>(!!0)
+		IL_02f0: stloc.s 23
+		IL_02f2: ldloc.s 23
+		IL_02f4: ldstr "methods"
+		IL_02f9: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetFunctionInferredName(object, object)
+		IL_02fe: stloc.s 9
+		IL_0300: ldloc.s 9
+		IL_0302: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0307: ldstr "bind"
+		IL_030c: ldc.i4.0
+		IL_030d: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
+		IL_0312: ldc.r8 18
+		IL_031b: box [System.Runtime]System.Double
+		IL_0320: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_0325: stloc.s 10
+		IL_0327: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_032c: stloc.s 14
+		IL_032e: ldloc.s 9
+		IL_0330: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0335: ldstr "call"
+		IL_033a: ldc.i4.0
+		IL_033b: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
+		IL_0340: ldc.r8 19
+		IL_0349: box [System.Runtime]System.Double
+		IL_034e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_0353: stloc.s 17
+		IL_0355: ldloc.s 9
+		IL_0357: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_035c: ldc.i4.1
+		IL_035d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_0362: dup
+		IL_0363: ldc.r8 20
+		IL_036c: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::AddNumber(float64)
+		IL_0371: stloc.s 24
+		IL_0373: ldstr "apply"
+		IL_0378: ldc.i4.0
+		IL_0379: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
+		IL_037e: ldloc.s 24
+		IL_0380: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_0385: stloc.s 16
+		IL_0387: ldloc.s 10
+		IL_0389: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_038e: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
+		IL_0393: stloc.s 15
+		IL_0395: ldloc.s 9
+		IL_0397: ldstr "name"
+		IL_039c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_03a1: stloc.s 25
+		IL_03a3: ldloc.s 14
+		IL_03a5: ldc.i4.5
+		IL_03a6: newarr [System.Runtime]System.Object
+		IL_03ab: dup
+		IL_03ac: ldc.i4.0
+		IL_03ad: ldstr "methods"
+		IL_03b2: stelem.ref
+		IL_03b3: dup
+		IL_03b4: ldc.i4.1
+		IL_03b5: ldloc.s 17
+		IL_03b7: stelem.ref
+		IL_03b8: dup
+		IL_03b9: ldc.i4.2
+		IL_03ba: ldloc.s 16
+		IL_03bc: stelem.ref
+		IL_03bd: dup
+		IL_03be: ldc.i4.3
+		IL_03bf: ldloc.s 15
+		IL_03c1: stelem.ref
+		IL_03c2: dup
+		IL_03c3: ldc.i4.4
+		IL_03c4: ldloc.s 25
+		IL_03c6: stelem.ref
+		IL_03c7: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_03cc: pop
+		IL_03cd: ldc.i4.1
+		IL_03ce: newarr [System.Runtime]System.Object
+		IL_03d3: dup
+		IL_03d4: ldc.i4.0
+		IL_03d5: ldloc.0
+		IL_03d6: stelem.ref
+		IL_03d7: stloc.s 12
+		IL_03d9: ldloc.s 12
+		IL_03db: ldc.i4.0
+		IL_03dc: ldelem.ref
+		IL_03dd: castclass Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope
+		IL_03e2: newobj instance void Modules.Function_CallableMaterialization_IdentityAndCaptures/ArrowFunction_L48C19/FunctionObject::.ctor(class Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope)
+		IL_03e7: ldc.i4.1
+		IL_03e8: conv.r8
+		IL_03e9: ldstr ""
+		IL_03ee: ldc.i4.0
+		IL_03ef: ldc.i4.0
+		IL_03f0: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Function_CallableMaterialization_IdentityAndCaptures/ArrowFunction_L48C19/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_03f5: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Function_CallableMaterialization_IdentityAndCaptures/ArrowFunction_L48C19/FunctionObject>(!!0)
+		IL_03fa: stloc.s 26
+		IL_03fc: ldloc.s 26
+		IL_03fe: ldstr "recursive"
+		IL_0403: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetFunctionInferredName(object, object)
+		IL_0408: stloc.s 25
+		IL_040a: ldloc.0
+		IL_040b: ldloc.s 25
+		IL_040d: stfld object Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope::recursive
+		IL_0412: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0417: stloc.s 14
+		IL_0419: ldloc.0
+		IL_041a: castclass Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope
+		IL_041f: ldnull
+		IL_0420: ldc.r8 4
+		IL_0429: box [System.Runtime]System.Double
+		IL_042e: call object Modules.Function_CallableMaterialization_IdentityAndCaptures/ArrowFunction_L48C19::__js_call__(class Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope, object, object)
+		IL_0433: stloc.s 25
+		IL_0435: ldloc.s 14
+		IL_0437: ldstr "recursive"
+		IL_043c: ldloc.s 25
+		IL_043e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_0443: pop
+		IL_0444: ldc.i4.1
+		IL_0445: newarr [System.Runtime]System.Object
+		IL_044a: dup
+		IL_044b: ldc.i4.0
+		IL_044c: ldloc.0
+		IL_044d: stelem.ref
+		IL_044e: stloc.s 12
+		IL_0450: ldloc.s 12
+		IL_0452: ldc.i4.0
+		IL_0453: ldelem.ref
+		IL_0454: castclass Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope
+		IL_0459: newobj instance void Modules.Function_CallableMaterialization_IdentityAndCaptures/ArrowFunction_L51C14/FunctionObject::.ctor(class Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope)
+		IL_045e: ldc.i4.1
+		IL_045f: conv.r8
+		IL_0460: ldstr ""
+		IL_0465: ldc.i4.0
+		IL_0466: ldc.i4.0
+		IL_0467: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Function_CallableMaterialization_IdentityAndCaptures/ArrowFunction_L51C14/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_046c: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Function_CallableMaterialization_IdentityAndCaptures/ArrowFunction_L51C14/FunctionObject>(!!0)
+		IL_0471: stloc.s 27
+		IL_0473: ldloc.s 27
+		IL_0475: ldstr "even"
+		IL_047a: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetFunctionInferredName(object, object)
+		IL_047f: stloc.s 25
+		IL_0481: ldloc.0
+		IL_0482: ldloc.s 25
+		IL_0484: stfld object Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope::even
+		IL_0489: ldc.i4.1
+		IL_048a: newarr [System.Runtime]System.Object
+		IL_048f: dup
+		IL_0490: ldc.i4.0
+		IL_0491: ldloc.0
+		IL_0492: stelem.ref
+		IL_0493: stloc.s 12
+		IL_0495: ldloc.s 12
+		IL_0497: ldc.i4.0
+		IL_0498: ldelem.ref
+		IL_0499: castclass Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope
+		IL_049e: newobj instance void Modules.Function_CallableMaterialization_IdentityAndCaptures/ArrowFunction_L52C13/FunctionObject::.ctor(class Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope)
+		IL_04a3: ldc.i4.1
+		IL_04a4: conv.r8
+		IL_04a5: ldstr ""
+		IL_04aa: ldc.i4.0
+		IL_04ab: ldc.i4.0
+		IL_04ac: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Function_CallableMaterialization_IdentityAndCaptures/ArrowFunction_L52C13/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_04b1: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Function_CallableMaterialization_IdentityAndCaptures/ArrowFunction_L52C13/FunctionObject>(!!0)
+		IL_04b6: stloc.s 28
+		IL_04b8: ldloc.s 28
+		IL_04ba: ldstr "odd"
+		IL_04bf: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetFunctionInferredName(object, object)
+		IL_04c4: stloc.s 25
+		IL_04c6: ldloc.0
+		IL_04c7: ldloc.s 25
+		IL_04c9: stfld object Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope::odd
+		IL_04ce: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_04d3: stloc.s 14
+		IL_04d5: ldloc.0
+		IL_04d6: castclass Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope
+		IL_04db: ldnull
+		IL_04dc: ldc.r8 6
+		IL_04e5: box [System.Runtime]System.Double
+		IL_04ea: call object Modules.Function_CallableMaterialization_IdentityAndCaptures/ArrowFunction_L51C14::__js_call__(class Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope, object, object)
+		IL_04ef: stloc.s 25
+		IL_04f1: ldloc.0
+		IL_04f2: castclass Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope
+		IL_04f7: ldnull
+		IL_04f8: ldc.r8 6
+		IL_0501: box [System.Runtime]System.Double
+		IL_0506: call object Modules.Function_CallableMaterialization_IdentityAndCaptures/ArrowFunction_L52C13::__js_call__(class Modules.Function_CallableMaterialization_IdentityAndCaptures/Scope, object, object)
+		IL_050b: stloc.s 15
+		IL_050d: ldloc.s 14
+		IL_050f: ldstr "mutual"
+		IL_0514: ldloc.s 25
+		IL_0516: ldloc.s 15
+		IL_0518: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object, object)
+		IL_051d: pop
+		IL_051e: ldc.i4.1
+		IL_051f: newarr [System.Runtime]System.Object
+		IL_0524: dup
+		IL_0525: ldc.i4.0
+		IL_0526: ldloc.0
+		IL_0527: stelem.ref
+		IL_0528: stloc.s 12
+		IL_052a: newobj instance void Modules.Function_CallableMaterialization_IdentityAndCaptures/ArrowFunction_L55C18/FunctionObject::.ctor()
+		IL_052f: ldc.i4.0
+		IL_0530: conv.r8
+		IL_0531: ldstr ""
+		IL_0536: ldc.i4.0
+		IL_0537: ldc.i4.0
+		IL_0538: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Function_CallableMaterialization_IdentityAndCaptures/ArrowFunction_L55C18/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_053d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Function_CallableMaterialization_IdentityAndCaptures/ArrowFunction_L55C18/FunctionObject>(!!0)
+		IL_0542: stloc.s 29
+		IL_0544: ldloc.s 29
+		IL_0546: ldstr "exported"
+		IL_054b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetFunctionInferredName(object, object)
+		IL_0550: stloc.s 11
+		IL_0552: ldarg.0
+		IL_0553: ldstr "exported"
+		IL_0558: ldloc.s 11
+		IL_055a: ldc.i4.0
+		IL_055b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
+		IL_0560: pop
+		IL_0561: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0566: stloc.s 14
+		IL_0568: ldnull
+		IL_0569: call float64 Modules.Function_CallableMaterialization_IdentityAndCaptures/ArrowFunction_L55C18::__js_call__(object)
+		IL_056e: stloc.s 30
+		IL_0570: ldloc.s 30
+		IL_0572: box [System.Runtime]System.Double
+		IL_0577: stloc.s 31
+		IL_0579: ldloc.s 14
+		IL_057b: ldstr "export"
+		IL_0580: ldloc.s 31
+		IL_0582: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_0587: pop
+		IL_0588: ret
+	} // end of method Function_CallableMaterialization_IdentityAndCaptures::__js_module_init__
+
+} // end of class Modules.Function_CallableMaterialization_IdentityAndCaptures
+
+.class private auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Header size: 1
+		// Code size: 23 (0x17)
+		.maxstack 8
+		.entrypoint
+
+		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
+		IL_0005: ldnull
+		IL_0006: ldftn void Modules.Function_CallableMaterialization_IdentityAndCaptures::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
+		IL_0016: ret
+	} // end of method Program::Main
+
+} // end of class Program
+

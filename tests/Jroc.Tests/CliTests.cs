@@ -246,7 +246,16 @@ namespace Jroc.Tests
             var tempRoot = Path.Combine(Path.GetTempPath(), "jroc_cli_test_" + Guid.NewGuid().ToString("n"));
             Directory.CreateDirectory(tempRoot);
             var jsFile = Path.Combine(tempRoot, "inference.js");
-            File.WriteAllText(jsFile, "const numeric = 1;\nconst text = 'hello';\n");
+            File.WriteAllText(
+                jsFile,
+                """
+                const numeric = 1;
+                const text = 'hello';
+                const direct = value => value + 1;
+                direct(1);
+                const escaped = () => 1;
+                const alias = escaped;
+                """);
             var outDir = Path.Combine(tempRoot, "out");
 
             try
@@ -258,6 +267,14 @@ namespace Jroc.Tests
                 Assert.Contains("Type inference pass 1", stdout, StringComparison.Ordinal);
                 Assert.Contains("numeric => System.Double", stdout, StringComparison.Ordinal);
                 Assert.Contains("text => System.String", stdout, StringComparison.Ordinal);
+                Assert.Contains(
+                    "[CallableMaterialization] direct => DirectOnly; uses=1; direct-calls=1; reasons=None",
+                    stdout,
+                    StringComparison.Ordinal);
+                Assert.Contains(
+                    "[CallableMaterialization] escaped => IdentityObservable; uses=1; direct-calls=0; reasons=Alias",
+                    stdout,
+                    StringComparison.Ordinal);
             }
             finally
             {
