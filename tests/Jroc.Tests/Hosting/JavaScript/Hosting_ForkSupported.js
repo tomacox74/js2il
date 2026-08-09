@@ -39,5 +39,7 @@ exports.startFork = function () {
             events.push("close:" + code + ":" + signal);
             resolve(events.join("|"));
         });
+
+        child.send({ stage: "init" });
     });
 };

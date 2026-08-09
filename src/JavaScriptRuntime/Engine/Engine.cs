@@ -33,8 +33,9 @@ public class Engine
                 modulesAssembly: scriptEntryPoint.Method.Module.Assembly,
                 isHostedExecution: false);
 
-            var moduleExecutor = new ModuleExecutor(serviceProvider);
+            // Register fork IPC before module setup resolves the global process object.
             ConfigureChildProcessIpc(serviceProvider);
+            var moduleExecutor = new ModuleExecutor(serviceProvider);
 
             var forkEntryModule = System.Environment.GetEnvironmentVariable(ChildProcessRuntimeOptions.ForkEntryModuleEnvVar);
             if (!string.IsNullOrWhiteSpace(forkEntryModule))

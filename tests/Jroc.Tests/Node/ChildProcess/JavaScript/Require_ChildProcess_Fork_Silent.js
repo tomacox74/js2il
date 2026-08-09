@@ -34,6 +34,8 @@ function runSilentTrue() {
         console.log("silent true stderr marker:", stderr.indexOf("silent child stderr") >= 0);
         runSilentFalse();
     });
+
+    child.send("init");
 }
 
 function runSilentFalse() {
@@ -50,6 +52,8 @@ function runSilentFalse() {
     child.on("close", (code) => {
         console.log("silent false close:", code);
     });
+
+    child.send("init");
 }
 
 runSilentTrue();

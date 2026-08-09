@@ -2027,34 +2027,29 @@ namespace JavaScriptRuntime.Node
 
         private void DispatchToEventLoop(object? payload)
         {
-            var messageHandler = MessageReceived;
-            if (messageHandler == null)
-            {
-                return;
-            }
-
-            var errorHandler = Error;
+            // Resolve subscribers on the runtime turn; socket reads can finish during bootstrap.
             if (_ioScheduler != null)
             {
-                var dispatch = CreateDispatchPromise(messageHandler, errorHandler);
+                var dispatch = CreateDispatchPromise();
                 _ioScheduler.BeginIo();
                 _ioScheduler.EndIo(dispatch, payload, isError: false);
                 return;
             }
 
-            _queueImmediate(() => messageHandler(payload));
+            _queueImmediate(() => MessageReceived?.Invoke(payload));
         }
 
-        private PromiseWithResolvers CreateDispatchPromise(Action<object?> messageHandler, Action<Exception>? errorHandler)
+        private PromiseWithResolvers CreateDispatchPromise()
         {
             JsFunc1 resolve = (scopes, newTarget, value) =>
             {
-                messageHandler(value);
+                MessageReceived?.Invoke(value);
                 return null;
             };
 
             JsFunc1 reject = (scopes, newTarget, reason) =>
             {
+                var errorHandler = Error;
                 if (reason is Exception ex)
                 {
                     errorHandler?.Invoke(ex);
@@ -2077,24 +2072,12 @@ namespace JavaScriptRuntime.Node
                 return;
             }
 
-            var disconnectedHandler = Disconnected;
-            if (disconnectedHandler == null)
-            {
-                return;
-            }
-
-            _queueImmediate(() => disconnectedHandler());
+            _queueImmediate(() => Disconnected?.Invoke());
         }
 
         private void SignalError(Exception ex)
         {
-            var errorHandler = Error;
-            if (errorHandler == null)
-            {
-                return;
-            }
-
-            _queueImmediate(() => errorHandler(ex));
+            _queueImmediate(() => Error?.Invoke(ex));
         }
 
         private static bool IsExpectedDisconnectException(Exception ex)
