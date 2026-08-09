@@ -124,8 +124,8 @@ npm run check:node-contract-timers-promises
 npm run test:node-contract-timers-promises
 ```
 
-For `node:url`, `node:querystring`, `node:net`, `node:tls`, `node:http`,
-`node:https`, and `node:crypto`:
+For `node:url`, `node:querystring`, `node:assert`, `node:net`, `node:tls`,
+`node:http`, `node:https`, and `node:crypto`:
 
 ```sh
 npm run generate:node-contract-url
@@ -135,6 +135,10 @@ npm run test:node-contract-url
 npm run generate:node-contract-querystring
 npm run check:node-contract-querystring
 npm run test:node-contract-querystring
+
+npm run generate:node-contract-assert
+npm run check:node-contract-assert
+npm run test:node-contract-assert
 
 npm run generate:node-contract-net
 npm run check:node-contract-net

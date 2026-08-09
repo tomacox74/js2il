@@ -7,7 +7,7 @@
 
 namespace Jroc.Runtime.Node.Contracts;
 
-[global::System.CodeDom.Compiler.GeneratedCode("generateNodeModuleInterface.js", "sha256:13ea61f00a6a5629ba94c535a3f32f6ddcc06ed57c5bde2aa5bdbf56d257d242")]
+[global::System.CodeDom.Compiler.GeneratedCode("generateNodeModuleInterface.js", "sha256:93229019781b96b99bbb9db54e0ac5ddb7af9b085a482cbaa081b3cf230b4aea")]
 public static class FsNestedContractAdapters
 {
     public static IFsReadFileOptions AsFsReadFileOptions(object? value)

@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- runtime/node: add callable `assert` and `node:assert` support with core scalar,
+  regular-expression, synchronous exception, strict-mode, and Node-style
+  `AssertionError` behavior. Generate the complete public Node.js 24.18.1
+  module contract while preserving the independent test262 assertion harness.
 - compiler/perf: close issue #1721 with conservative callable-use analysis in
   symbol/HIR lowering. Direct-only `const` arrows and anonymous function
   expressions now retain their planned callable bodies and typed direct calls
