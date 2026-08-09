@@ -321,5 +321,11 @@ namespace Jroc.Tests.Function
 
         [Fact]
         public Task Function_StableConstCallable_TemporalDeadZone() { var testName = nameof(Function_StableConstCallable_TemporalDeadZone); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Function_CallableMaterialization_IdentityAndCaptures() { var testName = nameof(Function_CallableMaterialization_IdentityAndCaptures); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Function_CallableMaterialization_WithCallSite() { var testName = nameof(Function_CallableMaterialization_WithCallSite); return ExecutionTest(testName); }
     }
 }

@@ -423,11 +423,21 @@ public sealed partial class HIRToLIRLowerer
                 // Look up the binding using the Symbol's BindingInfo directly
                 // This correctly resolves shadowed variables to the right binding
                 var binding = varExpr.Name.BindingInfo;
-                EmitWithBindingProbe(binding.Name);
+                if (binding.CallableMaterialization?.Kind
+                    == CallableMaterializationKind.DirectOnly)
+                {
+                    throw new InvalidOperationException(
+                        $"Direct-only callable binding '{binding.Name}' reached value lowering. "
+                        + "Callable-use analysis must materialize every non-call read.");
+                }
+                var activeWithBindingProbe = EmitWithBindingProbe(binding.Name);
 
                 if (TryEmitCompileTimeConstant(binding, out resultTempVar))
                 {
                     resultTempVar = EmitResolveWithBindingOrDefault(binding, resultTempVar);
+                    resultTempVar = EmitResolveActiveWithBindingOrDefault(
+                        activeWithBindingProbe,
+                        resultTempVar);
                     return true;
                 }
 
@@ -441,11 +451,17 @@ public sealed partial class HIRToLIRLowerer
                     // scope-field load will still surface the TDZ sentinel as the correct runtime error.
                     if (_variableMap.TryGetValue(binding, out resultTempVar))
                     {
+                        resultTempVar = EmitResolveActiveWithBindingOrDefault(
+                            activeWithBindingProbe,
+                            resultTempVar);
                         return true;
                     }
 
                     if (TryLoadVariable(binding, out resultTempVar))
                     {
+                        resultTempVar = EmitResolveActiveWithBindingOrDefault(
+                            activeWithBindingProbe,
+                            resultTempVar);
                         return true;
                     }
 
@@ -465,6 +481,9 @@ public sealed partial class HIRToLIRLowerer
                         var classScope = FindScopeByDeclarationNode(classDecl, rootScope);
                         if (classScope != null && TryLowerClassConstructorValue(registryClassName, classScope, out resultTempVar))
                         {
+                            resultTempVar = EmitResolveActiveWithBindingOrDefault(
+                                activeWithBindingProbe,
+                                resultTempVar);
                             return true;
                         }
                         // Fall through: TryLowerClassConstructorValue failed (e.g. static method with no
@@ -474,6 +493,9 @@ public sealed partial class HIRToLIRLowerer
                     resultTempVar = CreateTempVariable();
                     _methodBodyIR.Instructions.Add(new LIRGetUserClassType(registryClassName, resultTempVar));
                     DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(Type)));
+                    resultTempVar = EmitResolveActiveWithBindingOrDefault(
+                        activeWithBindingProbe,
+                        resultTempVar);
                     return true;
                 }
 
@@ -566,6 +588,9 @@ public sealed partial class HIRToLIRLowerer
                     _methodBodyIR.Instructions.Add(new LIRLoadParameter(referencedParameterIndex, resultTempVar));
                     DefineTempStorage(resultTempVar, GetPreferredBindingReadStorage(binding));
                     _tempBindingOrigin[resultTempVar] = binding;
+                    resultTempVar = EmitResolveActiveWithBindingOrDefault(
+                        activeWithBindingProbe,
+                        resultTempVar);
                     return true;
                 }
 
@@ -578,6 +603,9 @@ public sealed partial class HIRToLIRLowerer
                     _methodBodyIR.Instructions.Add(new LIRLoadScopeField(activeScopeTemp, binding, activeFieldId, activeScopeId, resultTempVar));
                     DefineTempStorage(resultTempVar, GetPreferredBindingReadStorage(binding));
                     _tempBindingOrigin[resultTempVar] = binding;
+                    resultTempVar = EmitResolveActiveWithBindingOrDefault(
+                        activeWithBindingProbe,
+                        resultTempVar);
                     return true;
                 }
 
@@ -588,6 +616,9 @@ public sealed partial class HIRToLIRLowerer
                 if (CanTrackNumericRefinement(binding) && _numericRefinements.TryGetValue(binding, out var numericRefined))
                 {
                     resultTempVar = numericRefined;
+                    resultTempVar = EmitResolveActiveWithBindingOrDefault(
+                        activeWithBindingProbe,
+                        resultTempVar);
                     return true;
                 }
                 
@@ -652,6 +683,9 @@ public sealed partial class HIRToLIRLowerer
                                         DefineTempStorage(resultTempVar, GetPreferredBindingReadStorage(binding));
                                         _tempBindingOrigin[resultTempVar] = binding;
                                     }
+                                    resultTempVar = EmitResolveActiveWithBindingOrDefault(
+                                        activeWithBindingProbe,
+                                        resultTempVar);
                                     return true;
                                 }
                                 break;
@@ -665,6 +699,9 @@ public sealed partial class HIRToLIRLowerer
                                     DefineTempStorage(resultTempVar, GetPreferredBindingReadStorage(binding));
                                     resultTempVar = EmitResolveWithBindingOrDefault(binding, resultTempVar);
                                     _tempBindingOrigin[resultTempVar] = binding;
+                                    resultTempVar = EmitResolveActiveWithBindingOrDefault(
+                                        activeWithBindingProbe,
+                                        resultTempVar);
                                     return true;
                                 }
                                 break;
@@ -679,6 +716,9 @@ public sealed partial class HIRToLIRLowerer
                                     DefineTempStorage(resultTempVar, GetPreferredBindingReadStorage(binding));
                                     resultTempVar = EmitResolveWithBindingOrDefault(binding, resultTempVar);
                                     _tempBindingOrigin[resultTempVar] = binding;
+                                    resultTempVar = EmitResolveActiveWithBindingOrDefault(
+                                        activeWithBindingProbe,
+                                        resultTempVar);
                                     return true;
                                 }
                                 break;
@@ -704,11 +744,17 @@ public sealed partial class HIRToLIRLowerer
                         DefineTempStorage(resultTempVar, GetPreferredBindingReadStorage(binding));
                         _tempBindingOrigin[resultTempVar] = binding;
                     }
+                    resultTempVar = EmitResolveActiveWithBindingOrDefault(
+                        activeWithBindingProbe,
+                        resultTempVar);
                     return true;
                 }
                 
                 if (TryMaterializeStringBuilderAccumulator(binding, out resultTempVar))
                 {
+                    resultTempVar = EmitResolveActiveWithBindingOrDefault(
+                        activeWithBindingProbe,
+                        resultTempVar);
                     return true;
                 }
 
@@ -735,6 +781,9 @@ public sealed partial class HIRToLIRLowerer
                                 resultTempVar = EmitResolveWithBindingOrDefault(binding, resultTempVar);
                                 _tempBindingOrigin[resultTempVar] = binding;
                                 _variableMap[binding] = resultTempVar;
+                                resultTempVar = EmitResolveActiveWithBindingOrDefault(
+                                    activeWithBindingProbe,
+                                    resultTempVar);
                                 return true;
                             }
 
@@ -748,6 +797,9 @@ public sealed partial class HIRToLIRLowerer
                                 SetTempVariableSlot(resultTempVar, slot);
                                 _tempBindingOrigin[resultTempVar] = binding;
                                 _variableMap[binding] = resultTempVar;
+                                resultTempVar = EmitResolveActiveWithBindingOrDefault(
+                                    activeWithBindingProbe,
+                                    resultTempVar);
                                 return true;
                             }
                         }
@@ -770,6 +822,9 @@ public sealed partial class HIRToLIRLowerer
                             new[] { EnsureObject(keyTemp) },
                             resultTempVar));
                         DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                        resultTempVar = EmitResolveActiveWithBindingOrDefault(
+                            activeWithBindingProbe,
+                            resultTempVar);
                         return true;
                     }
 
@@ -811,6 +866,9 @@ public sealed partial class HIRToLIRLowerer
                         // Cache the function value so repeated reads of the identifier within the same
                         // method return the same object identity (required for `.prototype` mutations).
                         _variableMap[binding] = resultTempVar;
+                        resultTempVar = EmitResolveActiveWithBindingOrDefault(
+                            activeWithBindingProbe,
+                            resultTempVar);
                         return true;
                     }
 
@@ -820,6 +878,9 @@ public sealed partial class HIRToLIRLowerer
                 }
 
                 // Variable reads are SSA value lookups (no load instruction).
+                resultTempVar = EmitResolveActiveWithBindingOrDefault(
+                    activeWithBindingProbe,
+                    resultTempVar);
                 return true;
 
             case HIRArrowFunctionExpression arrowExpr:

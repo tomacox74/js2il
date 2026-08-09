@@ -14,22 +14,70 @@ public sealed partial class HIRToLIRLowerer
         => TryLowerDestructuringPattern(pattern, sourceValue, writeMode, sourceNameForError, preparedTarget: null);
 
     private sealed record PreparedDestructuringTarget(TempVariable Object, TempVariable Key);
+    private readonly record struct ActiveWithBindingProbe(
+        TempVariable WithObject,
+        TempVariable Name,
+        TempVariable HasBinding);
 
-    private void EmitWithBindingProbe(string name)
+    private ActiveWithBindingProbe? EmitWithBindingProbe(string name)
     {
         if (_activeWithObjects.Count == 0)
         {
-            return;
+            return null;
         }
 
+        var withObject = _activeWithObjects.Peek();
         var nameTemp = EmitConstString(name);
         var probeResult = CreateTempVariable();
         _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
             nameof(JavaScriptRuntime.ObjectRuntime),
             nameof(JavaScriptRuntime.ObjectRuntime.HasPropertyIn),
-            new[] { EnsureObject(nameTemp), _activeWithObjects.Peek() },
+            new[] { EnsureObject(nameTemp), withObject },
             probeResult));
         DefineTempStorage(probeResult, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+        return new ActiveWithBindingProbe(withObject, nameTemp, probeResult);
+    }
+
+    private TempVariable EmitResolveActiveWithBindingOrDefault(
+        ActiveWithBindingProbe? probe,
+        TempVariable lexicalValue)
+    {
+        if (probe is not { } activeProbe)
+        {
+            return lexicalValue;
+        }
+
+        var lexicalLabel = CreateLabel();
+        var endLabel = CreateLabel();
+        var result = CreateTempVariable();
+
+        _methodBodyIR.Instructions.Add(
+            new LIRBranchIfFalse(activeProbe.HasBinding, lexicalLabel));
+
+        var withValue = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
+            nameof(JavaScriptRuntime.ObjectRuntime),
+            nameof(JavaScriptRuntime.ObjectRuntime.GetProperty),
+            new[] { activeProbe.WithObject, activeProbe.Name },
+            withValue));
+        DefineTempStorage(
+            withValue,
+            new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        _methodBodyIR.Instructions.Add(
+            new LIRCopyTemp(EnsureObject(withValue), result));
+        _methodBodyIR.Instructions.Add(new LIRBranch(endLabel));
+
+        _methodBodyIR.Instructions.Add(new LIRLabel(lexicalLabel));
+        ClearNumericRefinementsAtLabel();
+        _methodBodyIR.Instructions.Add(
+            new LIRCopyTemp(EnsureObject(lexicalValue), result));
+        _methodBodyIR.Instructions.Add(new LIRLabel(endLabel));
+        ClearNumericRefinementsAtLabel();
+
+        DefineTempStorage(
+            result,
+            new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        return result;
     }
 
     private bool TryLowerDestructuringPattern(

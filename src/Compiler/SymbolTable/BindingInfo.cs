@@ -145,6 +145,12 @@ public class BindingInfo
     /// </summary>
     public ObjectLiteralShapeInfo? ObjectLiteralShape { get; set; }
 
+    /// <summary>
+    /// Whole-program policy for function-valued binding initialization. HIR carries this
+    /// semantic decision into lowering; LIR never inspects the source AST to derive it.
+    /// </summary>
+    public CallableMaterializationDecision? CallableMaterialization { get; set; }
+
     public BindingInfo(string name, BindingKind kind, Scope declaringScope, Node declarationNode)
     {
         Name = name;

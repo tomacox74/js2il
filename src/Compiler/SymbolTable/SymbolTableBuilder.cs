@@ -293,6 +293,7 @@ namespace Jroc.SymbolTables
             BuildScopeRecursive(globalScope,module.Ast, globalScope);
             AnalyzeFreeVariables(globalScope);
             MarkCapturedVariables(globalScope);
+            AnalyzeCallableMaterialization(globalScope);
             AnalyzeRuntimeTemporalDeadZoneChecks(globalScope);
             AnalyzeCompileTimeConstants(globalScope);
 

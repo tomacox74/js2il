@@ -187,6 +187,12 @@ public class Compiler
                 var capturedSuffix = binding.IsCaptured ? ", Captured" : string.Empty;
                 var stableSuffix = binding.IsStableType ? ", Stable" : string.Empty;
                 _diagnosticLogger.LogInformation("{ScopeLine}", $"{indent}    - {binding.Name} ({binding.Kind}{capturedSuffix}{stableSuffix})");
+                if (binding.CallableMaterialization is { } callableMaterialization)
+                {
+                    _diagnosticLogger.LogInformation(
+                        "{ScopeLine}",
+                        $"{indent}      [CallableMaterialization] {binding.Name} => {callableMaterialization.ToDiagnosticText()}");
+                }
             }
         }
 

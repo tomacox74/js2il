@@ -85,6 +85,23 @@ public sealed partial class HIRToLIRLowerer
         // Use BindingInfo as key for correct shadowing behavior.
         var binding = exprStmt.Name.BindingInfo;
 
+        var callableMaterialization = exprStmt.Initializer switch
+        {
+            HIRFunctionExpression function => function.MaterializationDecision,
+            HIRArrowFunctionExpression arrow => arrow.MaterializationDecision,
+            _ => null
+        };
+        if (callableMaterialization?.Kind == CallableMaterializationKind.DirectOnly)
+        {
+            if (binding.CallableMaterialization?.Kind != CallableMaterializationKind.DirectOnly)
+            {
+                throw new InvalidOperationException(
+                    $"HIR callable materialization mismatch for binding '{binding.Name}'.");
+            }
+
+            return true;
+        }
+
         // `var` declarations without an initializer are runtime no-ops on redeclaration.
         // Avoid clobbering an existing head-assigned loop value (e.g., for-of `var x` + body `var x;`).
         if (exprStmt.Initializer == null

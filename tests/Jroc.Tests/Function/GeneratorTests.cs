@@ -389,6 +389,9 @@ namespace Jroc.Tests.Function
         [Fact]
         public Task Function_StableConstCallable_TemporalDeadZone() { var testName = nameof(Function_StableConstCallable_TemporalDeadZone); return GenerateTest(testName); }
 
+        [Fact]
+        public Task Function_CallableMaterialization_IdentityAndCaptures() { var testName = nameof(Function_CallableMaterialization_IdentityAndCaptures); return GenerateTest(testName); }
+
         private static void AssertSignature(
             Type moduleType,
             string functionName,

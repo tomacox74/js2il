@@ -20,6 +20,18 @@ public class HIRStableDirectCallableTests
         var call = GetTopLevelCall(method);
         var target = Assert.IsType<HIRStableDirectCallableTarget>(
             call.StableDirectCallableTarget);
+        var declaration = Assert.Single(
+            method.Body.Statements.OfType<HIRVariableDeclaration>());
+        var callableValue = Assert.IsAssignableFrom<HIRExpression>(
+            declaration.Initializer);
+        var materialization = callableValue switch
+        {
+            HIRArrowFunctionExpression arrow => arrow.MaterializationDecision,
+            HIRFunctionExpression function => function.MaterializationDecision,
+            _ => throw new Xunit.Sdk.XunitException(
+                $"Unexpected callable HIR value {callableValue.GetType().Name}.")
+        };
+        Assert.Equal(CallableMaterializationKind.DirectOnly, materialization.Kind);
         var declarator = Assert.IsType<VariableDeclaration>(program.Body[0]).Declarations[0];
         var initializer = Assert.IsAssignableFrom<AstNode>(declarator.Init);
         var discoveredCallable = Assert.Single(
@@ -56,6 +68,26 @@ public class HIRStableDirectCallableTests
         var call = Assert.Single(EnumerateCalls(withStatement.Body));
 
         Assert.Null(call.StableDirectCallableTarget);
+    }
+
+    [Fact]
+    public void CallableResolvedThroughActiveWithEnvironment_DoesNotCarryDirectTarget()
+    {
+        var (_, _, method) = ParseProgram(
+            "const target = () => 1; with ({ target: () => 2 }) target();");
+        var withStatement = Assert.Single(method.Body.Statements.OfType<HIRWithStatement>());
+        var call = Assert.Single(EnumerateCalls(withStatement.Body));
+        var declaration = Assert.Single(
+            method.Body.Statements.OfType<HIRVariableDeclaration>());
+        var arrow = Assert.IsType<HIRArrowFunctionExpression>(declaration.Initializer);
+
+        Assert.Null(call.StableDirectCallableTarget);
+        Assert.Equal(
+            CallableMaterializationKind.UnknownMaterialize,
+            arrow.MaterializationDecision.Kind);
+        Assert.Equal(
+            CallableMaterializationReason.WithEnvironment,
+            arrow.MaterializationDecision.Reasons);
     }
 
     [Fact]
