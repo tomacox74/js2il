@@ -204,7 +204,7 @@ namespace JavaScriptRuntime.Node
                 return address;
             }
 
-            var resolved = Dns.GetHostAddresses(normalized)
+            var resolved = System.Net.Dns.GetHostAddresses(normalized)
                 .FirstOrDefault(candidate => candidate.AddressFamily == AddressFamily.InterNetwork);
             if (resolved != null)
             {

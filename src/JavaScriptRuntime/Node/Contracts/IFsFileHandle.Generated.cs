@@ -11,7 +11,7 @@ namespace Jroc.Runtime.Node.Contracts;
 /// Defines the documented <c>node:fs.FileHandle</c> contract.
 /// </summary>
 /// <remarks>Source: <c>https://nodejs.org/docs/v24.18.1/api/fs.html#class-filehandle</c>.</remarks>
-[global::System.CodeDom.Compiler.GeneratedCode("generateNodeModuleInterface.js", "sha256:9126c7db48fedfbf7645d8b0f91f5cd9ce18f98db5f0ed246b9e0b8eee2b872d")]
+[global::System.CodeDom.Compiler.GeneratedCode("generateNodeModuleInterface.js", "sha256:2e1877a88a0be5be6f1ce68d6801f81345518c2272d2b70984df61b7ca02aca0")]
 [NodeModuleType("fs", "FileHandle")]
 public interface IFsFileHandle : IJavaScriptValueHost
 {

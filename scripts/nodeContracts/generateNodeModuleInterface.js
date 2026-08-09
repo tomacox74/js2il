@@ -323,6 +323,20 @@ const contractDefinitions = [
         selectedMethodPrefix: '`async_hooks.'
     },
     {
+        flag: '--dns',
+        kind: 'normalized-api',
+        moduleSpecifier: 'dns',
+        documentationPrefix: 'dns.',
+        interfaceName: 'IDnsModule',
+        intrinsicClassName: 'Dns',
+        displayName: 'node:dns',
+        outputStem: 'Dns',
+        overrideStem: 'dns',
+        lockStem: 'dns',
+        contractAlias: 'DnsContract',
+        documentationModule: 'dns'
+    },
+    {
         flag: '--net',
         kind: 'normalized-api',
         moduleSpecifier: 'net',

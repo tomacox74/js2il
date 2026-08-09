@@ -6,6 +6,13 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- runtime/node: add `dns` and `node:dns` with a complete generated Node.js
+  24.18.1 contract. `lookup()` supports the callback forms required by Undici,
+  including asynchronous error-first completion, `family`, `all`, `order`, and
+  `verbatim` options; `getDefaultResultOrder()` and
+  `setDefaultResultOrder()` are also supported. Other DNS query APIs,
+  resolver instances, server configuration, constants, error codes, and the
+  `dns.promises` namespace remain explicit unavailable contract members.
 - runtime/node: add `async_hooks` and `node:async_hooks` with a complete
   Node.js 24.18.1 contract, constructable and subclassable `AsyncResource`,
   runtime-scoped async IDs and hooks, Promise lifecycle events, and

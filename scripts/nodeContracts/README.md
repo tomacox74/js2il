@@ -144,6 +144,10 @@ npm run generate:node-contract-async-hooks
 npm run check:node-contract-async-hooks
 npm run test:node-contract-async-hooks
 
+npm run generate:node-contract-dns
+npm run check:node-contract-dns
+npm run test:node-contract-dns
+
 npm run generate:node-contract-net
 npm run check:node-contract-net
 npm run test:node-contract-net
