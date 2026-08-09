@@ -117,7 +117,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 01 00 00 00 01 00 54 08 1c 53 69 6e 67 6c
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
-				74 61 54 6f 6b 65 6e 10 00 00 02
+				74 61 54 6f 6b 65 6e 0d 00 00 02
 			)
 			// Header size: 12
 			// Code size: 24 (0x18)
@@ -253,7 +253,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 01 00 00 00 01 00 54 08 1c 53 69 6e 67 6c
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
-				74 61 54 6f 6b 65 6e 10 00 00 02
+				74 61 54 6f 6b 65 6e 0d 00 00 02
 			)
 			// Header size: 12
 			// Code size: 24 (0x18)
@@ -294,27 +294,6 @@
 			.class nested public auto ansi beforefieldinit Block_L35C35
 				extends [System.Runtime]System.Object
 			{
-				// Nested Types
-				.class nested public auto ansi beforefieldinit Block_L36C27
-					extends [System.Runtime]System.Object
-				{
-					// Methods
-					.method public hidebysig specialname rtspecialname 
-						instance void .ctor () cil managed 
-					{
-						// Header size: 1
-						// Code size: 8 (0x8)
-						.maxstack 8
-
-						IL_0000: ldarg.0
-						IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-						IL_0006: nop
-						IL_0007: ret
-					} // end of method Block_L36C27::.ctor
-
-				} // end of class Block_L36C27
-
-
 				// Methods
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
@@ -331,7 +310,7 @@
 
 			} // end of class Block_L35C35
 
-			.class nested public auto ansi beforefieldinit Block_L48C35
+			.class nested public auto ansi beforefieldinit Block_L43C35
 				extends [System.Runtime]System.Object
 			{
 				// Methods
@@ -346,9 +325,9 @@
 					IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 					IL_0006: nop
 					IL_0007: ret
-				} // end of method Block_L48C35::.ctor
+				} // end of method Block_L43C35::.ctor
 
-			} // end of class Block_L48C35
+			} // end of class Block_L43C35
 
 
 			// Fields
@@ -450,10 +429,10 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 01 00 00 00 01 00 54 08 1c 53 69 6e 67 6c
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
-				74 61 54 6f 6b 65 6e 10 00 00 02
+				74 61 54 6f 6b 65 6e 0d 00 00 02
 			)
 			// Header size: 12
-			// Code size: 299 (0x12b)
+			// Code size: 253 (0xfd)
 			.maxstack 8
 			.locals init (
 				[0] object,
@@ -471,111 +450,91 @@
 			IL_0012: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
 			IL_0017: stloc.1
 			IL_0018: ldloc.1
-			IL_0019: brfalse IL_00ec
+			IL_0019: brfalse IL_00be
 
 			IL_001e: ldarg.0
-			IL_001f: ldfld object Modules.Require_ChildProcess_Fork_MessagePassing/Scope::readyReceived
-			IL_0024: stloc.0
-			IL_0025: ldloc.0
-			IL_0026: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-			IL_002b: stloc.1
-			IL_002c: ldloc.1
-			IL_002d: brfalse IL_0034
+			IL_001f: ldc.i4.1
+			IL_0020: box [System.Runtime]System.Boolean
+			IL_0025: stfld object Modules.Require_ChildProcess_Fork_MessagePassing/Scope::readyReceived
+			IL_002a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_002f: stloc.2
+			IL_0030: ldarg.2
+			IL_0031: ldstr "argv2"
+			IL_0036: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_003b: stloc.0
+			IL_003c: ldloc.2
+			IL_003d: ldstr "ready argv:"
+			IL_0042: ldloc.0
+			IL_0043: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_0048: pop
+			IL_0049: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_004e: stloc.2
+			IL_004f: ldarg.2
+			IL_0050: ldstr "env"
+			IL_0055: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_005a: stloc.0
+			IL_005b: ldloc.2
+			IL_005c: ldstr "ready env:"
+			IL_0061: ldloc.0
+			IL_0062: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_0067: pop
+			IL_0068: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_006d: stloc.2
+			IL_006e: ldarg.0
+			IL_006f: ldfld object Modules.Require_ChildProcess_Fork_MessagePassing/Scope::child
+			IL_0074: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0079: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+			IL_007e: dup
+			IL_007f: ldstr "stage"
+			IL_0084: ldstr "parent"
+			IL_0089: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+			IL_008e: dup
+			IL_008f: ldstr "value"
+			IL_0094: ldc.r8 41
+			IL_009d: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
+			IL_00a2: stloc.3
+			IL_00a3: ldstr "send"
+			IL_00a8: ldloc.3
+			IL_00a9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_00ae: stloc.0
+			IL_00af: ldloc.2
+			IL_00b0: ldstr "send result:"
+			IL_00b5: ldloc.0
+			IL_00b6: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_00bb: pop
+			IL_00bc: ldnull
+			IL_00bd: ret
 
-			IL_0032: ldnull
-			IL_0033: ret
+			IL_00be: ldarg.2
+			IL_00bf: ldstr "stage"
+			IL_00c4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_00c9: stloc.0
+			IL_00ca: ldloc.0
+			IL_00cb: ldstr "child"
+			IL_00d0: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+			IL_00d5: stloc.1
+			IL_00d6: ldloc.1
+			IL_00d7: brfalse IL_00fb
 
-			IL_0034: ldarg.0
-			IL_0035: ldc.i4.1
-			IL_0036: box [System.Runtime]System.Boolean
-			IL_003b: stfld object Modules.Require_ChildProcess_Fork_MessagePassing/Scope::readyReceived
-			IL_0040: ldarg.0
-			IL_0041: ldfld object Modules.Require_ChildProcess_Fork_MessagePassing/Scope::initTimer
-			IL_0046: ldstr "Cannot access 'initTimer' before initialization"
-			IL_004b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
-			IL_0050: stloc.0
-			IL_0051: ldloc.0
-			IL_0052: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::clearInterval(object)
-			IL_0057: pop
-			IL_0058: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_005d: stloc.2
-			IL_005e: ldarg.2
-			IL_005f: ldstr "argv2"
-			IL_0064: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0069: stloc.0
-			IL_006a: ldloc.2
-			IL_006b: ldstr "ready argv:"
-			IL_0070: ldloc.0
-			IL_0071: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_0076: pop
-			IL_0077: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_007c: stloc.2
-			IL_007d: ldarg.2
-			IL_007e: ldstr "env"
-			IL_0083: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0088: stloc.0
-			IL_0089: ldloc.2
-			IL_008a: ldstr "ready env:"
-			IL_008f: ldloc.0
-			IL_0090: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_0095: pop
-			IL_0096: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_009b: stloc.2
-			IL_009c: ldarg.0
-			IL_009d: ldfld object Modules.Require_ChildProcess_Fork_MessagePassing/Scope::child
-			IL_00a2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_00a7: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-			IL_00ac: dup
-			IL_00ad: ldstr "stage"
-			IL_00b2: ldstr "parent"
-			IL_00b7: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-			IL_00bc: dup
-			IL_00bd: ldstr "value"
-			IL_00c2: ldc.r8 41
-			IL_00cb: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
-			IL_00d0: stloc.3
-			IL_00d1: ldstr "send"
-			IL_00d6: ldloc.3
-			IL_00d7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_00dc: stloc.0
-			IL_00dd: ldloc.2
-			IL_00de: ldstr "send result:"
-			IL_00e3: ldloc.0
-			IL_00e4: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_00e9: pop
-			IL_00ea: ldnull
-			IL_00eb: ret
+			IL_00dc: ldarg.0
+			IL_00dd: ldc.i4.1
+			IL_00de: box [System.Runtime]System.Boolean
+			IL_00e3: stfld object Modules.Require_ChildProcess_Fork_MessagePassing/Scope::replyReceived
+			IL_00e8: ldarg.2
+			IL_00e9: ldstr "value"
+			IL_00ee: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_00f3: stloc.0
+			IL_00f4: ldarg.0
+			IL_00f5: ldloc.0
+			IL_00f6: stfld object Modules.Require_ChildProcess_Fork_MessagePassing/Scope::replyValue
 
-			IL_00ec: ldarg.2
-			IL_00ed: ldstr "stage"
-			IL_00f2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_00f7: stloc.0
-			IL_00f8: ldloc.0
-			IL_00f9: ldstr "child"
-			IL_00fe: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-			IL_0103: stloc.1
-			IL_0104: ldloc.1
-			IL_0105: brfalse IL_0129
-
-			IL_010a: ldarg.0
-			IL_010b: ldc.i4.1
-			IL_010c: box [System.Runtime]System.Boolean
-			IL_0111: stfld object Modules.Require_ChildProcess_Fork_MessagePassing/Scope::replyReceived
-			IL_0116: ldarg.2
-			IL_0117: ldstr "value"
-			IL_011c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0121: stloc.0
-			IL_0122: ldarg.0
-			IL_0123: ldloc.0
-			IL_0124: stfld object Modules.Require_ChildProcess_Fork_MessagePassing/Scope::replyValue
-
-			IL_0129: ldnull
-			IL_012a: ret
+			IL_00fb: ldnull
+			IL_00fc: ret
 		} // end of method ArrowFunction_L34C21::__js_call__
 
 	} // end of class ArrowFunction_L34C21
 
-	.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L54C24
+	.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L49C24
 		extends [System.Runtime]System.Object
 	{
 		// Nested Types
@@ -618,7 +577,7 @@
 				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
 				IL_0006: ldarg.0
 				IL_0007: ldarg.1
-				IL_0008: stfld class Modules.Require_ChildProcess_Fork_MessagePassing/Scope Modules.Require_ChildProcess_Fork_MessagePassing/ArrowFunction_L54C24/FunctionObject::_environment0_Require_ChildProcess_Fork_MessagePassing
+				IL_0008: stfld class Modules.Require_ChildProcess_Fork_MessagePassing/Scope Modules.Require_ChildProcess_Fork_MessagePassing/ArrowFunction_L49C24/FunctionObject::_environment0_Require_ChildProcess_Fork_MessagePassing
 				IL_000d: ret
 			} // end of method FunctionObject::.ctor
 
@@ -655,9 +614,9 @@
 				.maxstack 8
 
 				IL_0000: ldarg.0
-				IL_0001: ldfld class Modules.Require_ChildProcess_Fork_MessagePassing/Scope Modules.Require_ChildProcess_Fork_MessagePassing/ArrowFunction_L54C24/FunctionObject::_environment0_Require_ChildProcess_Fork_MessagePassing
+				IL_0001: ldfld class Modules.Require_ChildProcess_Fork_MessagePassing/Scope Modules.Require_ChildProcess_Fork_MessagePassing/ArrowFunction_L49C24/FunctionObject::_environment0_Require_ChildProcess_Fork_MessagePassing
 				IL_0006: ldnull
-				IL_0007: call object Modules.Require_ChildProcess_Fork_MessagePassing/ArrowFunction_L54C24::__js_call__(class Modules.Require_ChildProcess_Fork_MessagePassing/Scope, object)
+				IL_0007: call object Modules.Require_ChildProcess_Fork_MessagePassing/ArrowFunction_L49C24::__js_call__(class Modules.Require_ChildProcess_Fork_MessagePassing/Scope, object)
 				IL_000c: ret
 			} // end of method FunctionObject::CallCore
 
@@ -674,7 +633,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 01 00 00 00 01 00 54 08 1c 53 69 6e 67 6c
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
-				74 61 54 6f 6b 65 6e 10 00 00 02
+				74 61 54 6f 6b 65 6e 0d 00 00 02
 			)
 			// Header size: 1
 			// Code size: 14 (0xe)
@@ -686,11 +645,11 @@
 			IL_0007: stfld object Modules.Require_ChildProcess_Fork_MessagePassing/Scope::disconnectObserved
 			IL_000c: ldnull
 			IL_000d: ret
-		} // end of method ArrowFunction_L54C24::__js_call__
+		} // end of method ArrowFunction_L49C24::__js_call__
 
-	} // end of class ArrowFunction_L54C24
+	} // end of class ArrowFunction_L49C24
 
-	.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L58C19
+	.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L53C19
 		extends [System.Runtime]System.Object
 	{
 		// Nested Types
@@ -723,25 +682,17 @@
 		.class nested public auto ansi sealed beforefieldinit FunctionObject
 			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
 		{
-			// Fields
-			.field private initonly class Modules.Require_ChildProcess_Fork_MessagePassing/Scope _environment0_Require_ChildProcess_Fork_MessagePassing
-
 			// Methods
 			.method public hidebysig specialname rtspecialname 
-				instance void .ctor (
-					class Modules.Require_ChildProcess_Fork_MessagePassing/Scope capture0
-				) cil managed 
+				instance void .ctor () cil managed 
 			{
 				// Header size: 1
-				// Code size: 14 (0xe)
+				// Code size: 7 (0x7)
 				.maxstack 8
 
 				IL_0000: ldarg.0
 				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-				IL_0006: ldarg.0
-				IL_0007: ldarg.1
-				IL_0008: stfld class Modules.Require_ChildProcess_Fork_MessagePassing/Scope Modules.Require_ChildProcess_Fork_MessagePassing/ArrowFunction_L58C19/FunctionObject::_environment0_Require_ChildProcess_Fork_MessagePassing
-				IL_000d: ret
+				IL_0006: ret
 			} // end of method FunctionObject::.ctor
 
 			.method public hidebysig specialname virtual 
@@ -773,17 +724,15 @@
 				) cil managed 
 			{
 				// Header size: 1
-				// Code size: 20 (0x14)
+				// Code size: 14 (0xe)
 				.maxstack 8
 
-				IL_0000: ldarg.0
-				IL_0001: ldfld class Modules.Require_ChildProcess_Fork_MessagePassing/Scope Modules.Require_ChildProcess_Fork_MessagePassing/ArrowFunction_L58C19/FunctionObject::_environment0_Require_ChildProcess_Fork_MessagePassing
-				IL_0006: ldnull
-				IL_0007: ldarg.2
-				IL_0008: ldc.i4.0
-				IL_0009: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-				IL_000e: call object Modules.Require_ChildProcess_Fork_MessagePassing/ArrowFunction_L58C19::__js_call__(class Modules.Require_ChildProcess_Fork_MessagePassing/Scope, object, object)
-				IL_0013: ret
+				IL_0000: ldnull
+				IL_0001: ldarg.2
+				IL_0002: ldc.i4.0
+				IL_0003: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+				IL_0008: call object Modules.Require_ChildProcess_Fork_MessagePassing/ArrowFunction_L53C19::__js_call__(object, object)
+				IL_000d: ret
 			} // end of method FunctionObject::CallCore
 
 		} // end of class FunctionObject
@@ -792,66 +741,55 @@
 		// Methods
 		.method public hidebysig static 
 			object __js_call__ (
-				class Modules.Require_ChildProcess_Fork_MessagePassing/Scope scope,
 				object newTarget,
 				object err
 			) cil managed 
 		{
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
-				01 00 01 00 00 00 01 00 54 08 1c 53 69 6e 67 6c
-				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
-				74 61 54 6f 6b 65 6e 10 00 00 02
+				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 82 (0x52)
+			// Code size: 58 (0x3a)
 			.maxstack 8
 			.locals init (
-				[0] object,
-				[1] class [JavaScriptRuntime]JavaScriptRuntime.Console,
-				[2] bool,
+				[0] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+				[1] bool,
+				[2] object,
 				[3] object,
 				[4] object
 			)
 
-			IL_0000: ldarg.0
-			IL_0001: ldfld object Modules.Require_ChildProcess_Fork_MessagePassing/Scope::initTimer
-			IL_0006: ldstr "Cannot access 'initTimer' before initialization"
-			IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
-			IL_0010: stloc.0
-			IL_0011: ldloc.0
-			IL_0012: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::clearInterval(object)
-			IL_0017: pop
-			IL_0018: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_001d: stloc.1
-			IL_001e: ldarg.2
-			IL_001f: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-			IL_0024: stloc.2
-			IL_0025: ldloc.2
-			IL_0026: brfalse IL_003f
+			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0005: stloc.0
+			IL_0006: ldarg.1
+			IL_0007: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+			IL_000c: stloc.1
+			IL_000d: ldloc.1
+			IL_000e: brfalse IL_0027
 
-			IL_002b: ldarg.2
-			IL_002c: ldstr "message"
-			IL_0031: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0036: stloc.0
-			IL_0037: ldloc.0
-			IL_0038: stloc.s 4
-			IL_003a: br IL_0042
+			IL_0013: ldarg.1
+			IL_0014: ldstr "message"
+			IL_0019: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_001e: stloc.2
+			IL_001f: ldloc.2
+			IL_0020: stloc.s 4
+			IL_0022: br IL_002a
 
-			IL_003f: ldarg.2
-			IL_0040: stloc.s 4
+			IL_0027: ldarg.1
+			IL_0028: stloc.s 4
 
-			IL_0042: ldloc.1
-			IL_0043: ldstr "error event:"
-			IL_0048: ldloc.s 4
-			IL_004a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_004f: pop
-			IL_0050: ldnull
-			IL_0051: ret
-		} // end of method ArrowFunction_L58C19::__js_call__
+			IL_002a: ldloc.0
+			IL_002b: ldstr "error event:"
+			IL_0030: ldloc.s 4
+			IL_0032: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_0037: pop
+			IL_0038: ldnull
+			IL_0039: ret
+		} // end of method ArrowFunction_L53C19::__js_call__
 
-	} // end of class ArrowFunction_L58C19
+	} // end of class ArrowFunction_L53C19
 
-	.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L63C18
+	.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L57C18
 		extends [System.Runtime]System.Object
 	{
 		// Nested Types
@@ -938,7 +876,7 @@
 				IL_0008: ldarg.2
 				IL_0009: ldc.i4.1
 				IL_000a: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-				IL_000f: call object Modules.Require_ChildProcess_Fork_MessagePassing/ArrowFunction_L63C18::__js_call__(object, object, object)
+				IL_000f: call object Modules.Require_ChildProcess_Fork_MessagePassing/ArrowFunction_L57C18::__js_call__(object, object, object)
 				IL_0014: ret
 			} // end of method FunctionObject::CallCore
 
@@ -996,11 +934,11 @@
 			IL_004c: pop
 			IL_004d: ldnull
 			IL_004e: ret
-		} // end of method ArrowFunction_L63C18::__js_call__
+		} // end of method ArrowFunction_L57C18::__js_call__
 
-	} // end of class ArrowFunction_L63C18
+	} // end of class ArrowFunction_L57C18
 
-	.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L69C19
+	.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L63C19
 		extends [System.Runtime]System.Object
 	{
 		// Nested Types
@@ -1052,7 +990,7 @@
 				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
 				IL_0006: ldarg.0
 				IL_0007: ldarg.1
-				IL_0008: stfld class Modules.Require_ChildProcess_Fork_MessagePassing/Scope Modules.Require_ChildProcess_Fork_MessagePassing/ArrowFunction_L69C19/FunctionObject::_environment0_Require_ChildProcess_Fork_MessagePassing
+				IL_0008: stfld class Modules.Require_ChildProcess_Fork_MessagePassing/Scope Modules.Require_ChildProcess_Fork_MessagePassing/ArrowFunction_L63C19/FunctionObject::_environment0_Require_ChildProcess_Fork_MessagePassing
 				IL_000d: ret
 			} // end of method FunctionObject::.ctor
 
@@ -1089,7 +1027,7 @@
 				.maxstack 8
 
 				IL_0000: ldarg.0
-				IL_0001: ldfld class Modules.Require_ChildProcess_Fork_MessagePassing/Scope Modules.Require_ChildProcess_Fork_MessagePassing/ArrowFunction_L69C19/FunctionObject::_environment0_Require_ChildProcess_Fork_MessagePassing
+				IL_0001: ldfld class Modules.Require_ChildProcess_Fork_MessagePassing/Scope Modules.Require_ChildProcess_Fork_MessagePassing/ArrowFunction_L63C19/FunctionObject::_environment0_Require_ChildProcess_Fork_MessagePassing
 				IL_0006: ldnull
 				IL_0007: ldarg.2
 				IL_0008: ldc.i4.0
@@ -1097,7 +1035,7 @@
 				IL_000e: ldarg.2
 				IL_000f: ldc.i4.1
 				IL_0010: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-				IL_0015: call object Modules.Require_ChildProcess_Fork_MessagePassing/ArrowFunction_L69C19::__js_call__(class Modules.Require_ChildProcess_Fork_MessagePassing/Scope, object, object, object)
+				IL_0015: call object Modules.Require_ChildProcess_Fork_MessagePassing/ArrowFunction_L63C19::__js_call__(class Modules.Require_ChildProcess_Fork_MessagePassing/Scope, object, object, object)
 				IL_001a: ret
 			} // end of method FunctionObject::CallCore
 
@@ -1116,323 +1054,124 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 01 00 00 00 01 00 54 08 1c 53 69 6e 67 6c
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
-				74 61 54 6f 6b 65 6e 10 00 00 02
+				74 61 54 6f 6b 65 6e 0d 00 00 02
 			)
 			// Header size: 12
-			// Code size: 289 (0x121)
+			// Code size: 265 (0x109)
 			.maxstack 8
 			.locals init (
-				[0] object,
-				[1] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+				[0] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+				[1] object,
 				[2] bool,
 				[3] object
 			)
 
-			IL_0000: ldarg.0
-			IL_0001: ldfld object Modules.Require_ChildProcess_Fork_MessagePassing/Scope::initTimer
-			IL_0006: ldstr "Cannot access 'initTimer' before initialization"
-			IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
-			IL_0010: stloc.0
-			IL_0011: ldloc.0
-			IL_0012: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::clearInterval(object)
-			IL_0017: pop
-			IL_0018: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_001d: stloc.1
-			IL_001e: ldarg.0
-			IL_001f: ldfld object Modules.Require_ChildProcess_Fork_MessagePassing/Scope::readyReceived
-			IL_0024: stloc.0
-			IL_0025: ldloc.1
-			IL_0026: ldstr "ready received:"
-			IL_002b: ldloc.0
-			IL_002c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_0031: pop
-			IL_0032: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0037: stloc.1
-			IL_0038: ldarg.0
-			IL_0039: ldfld object Modules.Require_ChildProcess_Fork_MessagePassing/Scope::replyReceived
-			IL_003e: stloc.0
-			IL_003f: ldloc.1
-			IL_0040: ldstr "reply received:"
-			IL_0045: ldloc.0
-			IL_0046: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_004b: pop
-			IL_004c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0051: stloc.1
-			IL_0052: ldarg.0
-			IL_0053: ldfld object Modules.Require_ChildProcess_Fork_MessagePassing/Scope::replyValue
-			IL_0058: stloc.0
-			IL_0059: ldloc.1
-			IL_005a: ldstr "reply value:"
-			IL_005f: ldloc.0
-			IL_0060: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_0065: pop
-			IL_0066: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_006b: stloc.1
-			IL_006c: ldarg.0
-			IL_006d: ldfld object Modules.Require_ChildProcess_Fork_MessagePassing/Scope::disconnectObserved
-			IL_0072: stloc.0
-			IL_0073: ldloc.1
-			IL_0074: ldstr "disconnect event:"
-			IL_0079: ldloc.0
-			IL_007a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_007f: pop
-			IL_0080: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0085: stloc.1
-			IL_0086: ldarg.2
-			IL_0087: ldc.i4.0
-			IL_0088: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
-			IL_008d: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-			IL_0092: stloc.2
-			IL_0093: ldloc.2
-			IL_0094: box [System.Runtime]System.Boolean
-			IL_0099: stloc.3
-			IL_009a: ldloc.1
-			IL_009b: ldstr "close code is null:"
-			IL_00a0: ldloc.3
-			IL_00a1: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_00a6: pop
-			IL_00a7: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_00ac: stloc.1
-			IL_00ad: ldloc.1
-			IL_00ae: ldstr "close code raw:"
-			IL_00b3: ldarg.2
-			IL_00b4: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_00b9: pop
-			IL_00ba: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_00bf: stloc.1
-			IL_00c0: ldloc.1
-			IL_00c1: ldstr "close signal:"
-			IL_00c6: ldarg.3
-			IL_00c7: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_00cc: pop
-			IL_00cd: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_00d2: stloc.1
-			IL_00d3: ldarg.0
-			IL_00d4: ldfld object Modules.Require_ChildProcess_Fork_MessagePassing/Scope::stdout
-			IL_00d9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_00de: ldstr "trim"
-			IL_00e3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-			IL_00e8: stloc.0
-			IL_00e9: ldloc.1
-			IL_00ea: ldstr "stdout:"
-			IL_00ef: ldloc.0
-			IL_00f0: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_00f5: pop
-			IL_00f6: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_00fb: stloc.1
-			IL_00fc: ldarg.0
-			IL_00fd: ldfld object Modules.Require_ChildProcess_Fork_MessagePassing/Scope::stderr
-			IL_0102: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0107: ldstr "trim"
-			IL_010c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-			IL_0111: stloc.0
-			IL_0112: ldloc.1
-			IL_0113: ldstr "stderr:"
-			IL_0118: ldloc.0
-			IL_0119: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_011e: pop
-			IL_011f: ldnull
-			IL_0120: ret
-		} // end of method ArrowFunction_L69C19::__js_call__
+			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0005: stloc.0
+			IL_0006: ldarg.0
+			IL_0007: ldfld object Modules.Require_ChildProcess_Fork_MessagePassing/Scope::readyReceived
+			IL_000c: stloc.1
+			IL_000d: ldloc.0
+			IL_000e: ldstr "ready received:"
+			IL_0013: ldloc.1
+			IL_0014: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_0019: pop
+			IL_001a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_001f: stloc.0
+			IL_0020: ldarg.0
+			IL_0021: ldfld object Modules.Require_ChildProcess_Fork_MessagePassing/Scope::replyReceived
+			IL_0026: stloc.1
+			IL_0027: ldloc.0
+			IL_0028: ldstr "reply received:"
+			IL_002d: ldloc.1
+			IL_002e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_0033: pop
+			IL_0034: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0039: stloc.0
+			IL_003a: ldarg.0
+			IL_003b: ldfld object Modules.Require_ChildProcess_Fork_MessagePassing/Scope::replyValue
+			IL_0040: stloc.1
+			IL_0041: ldloc.0
+			IL_0042: ldstr "reply value:"
+			IL_0047: ldloc.1
+			IL_0048: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_004d: pop
+			IL_004e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0053: stloc.0
+			IL_0054: ldarg.0
+			IL_0055: ldfld object Modules.Require_ChildProcess_Fork_MessagePassing/Scope::disconnectObserved
+			IL_005a: stloc.1
+			IL_005b: ldloc.0
+			IL_005c: ldstr "disconnect event:"
+			IL_0061: ldloc.1
+			IL_0062: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_0067: pop
+			IL_0068: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_006d: stloc.0
+			IL_006e: ldarg.2
+			IL_006f: ldc.i4.0
+			IL_0070: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
+			IL_0075: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+			IL_007a: stloc.2
+			IL_007b: ldloc.2
+			IL_007c: box [System.Runtime]System.Boolean
+			IL_0081: stloc.3
+			IL_0082: ldloc.0
+			IL_0083: ldstr "close code is null:"
+			IL_0088: ldloc.3
+			IL_0089: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_008e: pop
+			IL_008f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0094: stloc.0
+			IL_0095: ldloc.0
+			IL_0096: ldstr "close code raw:"
+			IL_009b: ldarg.2
+			IL_009c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_00a1: pop
+			IL_00a2: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_00a7: stloc.0
+			IL_00a8: ldloc.0
+			IL_00a9: ldstr "close signal:"
+			IL_00ae: ldarg.3
+			IL_00af: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_00b4: pop
+			IL_00b5: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_00ba: stloc.0
+			IL_00bb: ldarg.0
+			IL_00bc: ldfld object Modules.Require_ChildProcess_Fork_MessagePassing/Scope::stdout
+			IL_00c1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_00c6: ldstr "trim"
+			IL_00cb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+			IL_00d0: stloc.1
+			IL_00d1: ldloc.0
+			IL_00d2: ldstr "stdout:"
+			IL_00d7: ldloc.1
+			IL_00d8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_00dd: pop
+			IL_00de: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_00e3: stloc.0
+			IL_00e4: ldarg.0
+			IL_00e5: ldfld object Modules.Require_ChildProcess_Fork_MessagePassing/Scope::stderr
+			IL_00ea: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_00ef: ldstr "trim"
+			IL_00f4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+			IL_00f9: stloc.1
+			IL_00fa: ldloc.0
+			IL_00fb: ldstr "stderr:"
+			IL_0100: ldloc.1
+			IL_0101: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_0106: pop
+			IL_0107: ldnull
+			IL_0108: ret
+		} // end of method ArrowFunction_L63C19::__js_call__
 
-	} // end of class ArrowFunction_L69C19
-
-	.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L82C31
-		extends [System.Runtime]System.Object
-	{
-		// Nested Types
-		.class nested public auto ansi beforefieldinit Scope
-			extends [System.Runtime]System.Object
-		{
-			// Nested Types
-			.class nested public auto ansi beforefieldinit Block_L83C24
-				extends [System.Runtime]System.Object
-			{
-				// Methods
-				.method public hidebysig specialname rtspecialname 
-					instance void .ctor () cil managed 
-				{
-					// Header size: 1
-					// Code size: 8 (0x8)
-					.maxstack 8
-
-					IL_0000: ldarg.0
-					IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-					IL_0006: nop
-					IL_0007: ret
-				} // end of method Block_L83C24::.ctor
-
-			} // end of class Block_L83C24
-
-			.class nested public auto ansi beforefieldinit Block_L85C11
-				extends [System.Runtime]System.Object
-			{
-				// Methods
-				.method public hidebysig specialname rtspecialname 
-					instance void .ctor () cil managed 
-				{
-					// Header size: 1
-					// Code size: 8 (0x8)
-					.maxstack 8
-
-					IL_0000: ldarg.0
-					IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-					IL_0006: nop
-					IL_0007: ret
-				} // end of method Block_L85C11::.ctor
-
-			} // end of class Block_L85C11
-
-
-			// Methods
-			.method public hidebysig specialname rtspecialname 
-				instance void .ctor () cil managed 
-			{
-				// Header size: 1
-				// Code size: 8 (0x8)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-				IL_0006: nop
-				IL_0007: ret
-			} // end of method Scope::.ctor
-
-		} // end of class Scope
-
-		.class nested public auto ansi sealed beforefieldinit FunctionObject
-			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-		{
-			// Fields
-			.field private initonly class Modules.Require_ChildProcess_Fork_MessagePassing/Scope _environment0_Require_ChildProcess_Fork_MessagePassing
-
-			// Methods
-			.method public hidebysig specialname rtspecialname 
-				instance void .ctor (
-					class Modules.Require_ChildProcess_Fork_MessagePassing/Scope capture0
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 14 (0xe)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-				IL_0006: ldarg.0
-				IL_0007: ldarg.1
-				IL_0008: stfld class Modules.Require_ChildProcess_Fork_MessagePassing/Scope Modules.Require_ChildProcess_Fork_MessagePassing/ArrowFunction_L82C31/FunctionObject::_environment0_Require_ChildProcess_Fork_MessagePassing
-				IL_000d: ret
-			} // end of method FunctionObject::.ctor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_IsConstructor () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.0
-				IL_0001: ret
-			} // end of method FunctionObject::get_IsConstructor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_RequiresInvocationContext () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.0
-				IL_0001: ret
-			} // end of method FunctionObject::get_RequiresInvocationContext
-
-			.method family hidebysig virtual 
-				instance object CallCore (
-					object thisArgument,
-					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 13 (0xd)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: ldfld class Modules.Require_ChildProcess_Fork_MessagePassing/Scope Modules.Require_ChildProcess_Fork_MessagePassing/ArrowFunction_L82C31/FunctionObject::_environment0_Require_ChildProcess_Fork_MessagePassing
-				IL_0006: ldnull
-				IL_0007: call object Modules.Require_ChildProcess_Fork_MessagePassing/ArrowFunction_L82C31::__js_call__(class Modules.Require_ChildProcess_Fork_MessagePassing/Scope, object)
-				IL_000c: ret
-			} // end of method FunctionObject::CallCore
-
-		} // end of class FunctionObject
-
-
-		// Methods
-		.method public hidebysig static 
-			object __js_call__ (
-				class Modules.Require_ChildProcess_Fork_MessagePassing/Scope scope,
-				object newTarget
-			) cil managed 
-		{
-			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
-				01 00 01 00 00 00 01 00 54 08 1c 53 69 6e 67 6c
-				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
-				74 61 54 6f 6b 65 6e 10 00 00 02
-			)
-			// Header size: 12
-			// Code size: 99 (0x63)
-			.maxstack 8
-			.locals init (
-				[0] object,
-				[1] bool,
-				[2] class [JavaScriptRuntime]JavaScriptRuntime.JsObject
-			)
-
-			IL_0000: ldarg.0
-			IL_0001: ldfld object Modules.Require_ChildProcess_Fork_MessagePassing/Scope::readyReceived
-			IL_0006: stloc.0
-			IL_0007: ldloc.0
-			IL_0008: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
-			IL_000d: ldc.i4.0
-			IL_000e: ceq
-			IL_0010: stloc.1
-			IL_0011: ldloc.1
-			IL_0012: brfalse IL_0049
-
-			IL_0017: ldarg.0
-			IL_0018: ldfld object Modules.Require_ChildProcess_Fork_MessagePassing/Scope::child
-			IL_001d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0022: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-			IL_0027: dup
-			IL_0028: ldstr "stage"
-			IL_002d: ldstr "init"
-			IL_0032: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-			IL_0037: stloc.2
-			IL_0038: ldstr "send"
-			IL_003d: ldloc.2
-			IL_003e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_0043: pop
-			IL_0044: br IL_0061
-
-			IL_0049: ldarg.0
-			IL_004a: ldfld object Modules.Require_ChildProcess_Fork_MessagePassing/Scope::initTimer
-			IL_004f: ldstr "Cannot access 'initTimer' before initialization"
-			IL_0054: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
-			IL_0059: stloc.0
-			IL_005a: ldloc.0
-			IL_005b: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::clearInterval(object)
-			IL_0060: pop
-
-			IL_0061: ldnull
-			IL_0062: ret
-		} // end of method ArrowFunction_L82C31::__js_call__
-
-	} // end of class ArrowFunction_L82C31
+	} // end of class ArrowFunction_L63C19
 
 	.class nested public auto ansi beforefieldinit Scope
 		extends [System.Runtime]System.Object
 	{
 		.custom instance void [System.Runtime]System.Diagnostics.DebuggerDisplayAttribute::.ctor(string) = (
-			01 00 80 cc 53 63 6f 70 65 20 63 68 69 6c 64 3d
+			01 00 80 b5 53 63 6f 70 65 20 63 68 69 6c 64 3d
 			7b 63 68 69 6c 64 7d 2c 20 73 74 64 6f 75 74 3d
 			7b 73 74 64 6f 75 74 7d 2c 20 73 74 64 65 72 72
 			3d 7b 73 74 64 65 72 72 7d 2c 20 72 65 61 64 79
@@ -1443,9 +1182,7 @@
 			6c 75 65 3d 7b 72 65 70 6c 79 56 61 6c 75 65 7d
 			2c 20 64 69 73 63 6f 6e 6e 65 63 74 4f 62 73 65
 			72 76 65 64 3d 7b 64 69 73 63 6f 6e 6e 65 63 74
-			4f 62 73 65 72 76 65 64 7d 2c 20 69 6e 69 74 54
-			69 6d 65 72 3d 7b 69 6e 69 74 54 69 6d 65 72 7d
-			00 00
+			4f 62 73 65 72 76 65 64 7d 00 00
 		)
 		// Nested Types
 		.class nested public auto ansi beforefieldinit Block_L5C11
@@ -1467,25 +1204,6 @@
 
 		} // end of class Block_L5C11
 
-		.class nested public auto ansi beforefieldinit Block_L90C20
-			extends [System.Runtime]System.Object
-		{
-			// Methods
-			.method public hidebysig specialname rtspecialname 
-				instance void .ctor () cil managed 
-			{
-				// Header size: 1
-				// Code size: 8 (0x8)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-				IL_0006: nop
-				IL_0007: ret
-			} // end of method Block_L90C20::.ctor
-
-		} // end of class Block_L90C20
-
 
 		// Fields
 		.field public object child
@@ -1495,23 +1213,19 @@
 		.field public object replyReceived
 		.field public object replyValue
 		.field public object disconnectObserved
-		.field public object initTimer
 
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
 			// Header size: 1
-			// Code size: 19 (0x13)
+			// Code size: 8 (0x8)
 			.maxstack 8
 
 			IL_0000: ldarg.0
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-			IL_0006: ldarg.0
-			IL_0007: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-			IL_000c: stfld object Modules.Require_ChildProcess_Fork_MessagePassing/Scope::initTimer
-			IL_0011: nop
-			IL_0012: ret
+			IL_0006: nop
+			IL_0007: ret
 		} // end of method Scope::.ctor
 
 	} // end of class Scope
@@ -1528,7 +1242,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 1169 (0x491)
+		// Code size: 1049 (0x419)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Require_ChildProcess_Fork_MessagePassing/Scope,
@@ -1543,11 +1257,10 @@
 			[9] class Modules.Require_ChildProcess_Fork_MessagePassing/ArrowFunction_L26C25/FunctionObject,
 			[10] class Modules.Require_ChildProcess_Fork_MessagePassing/ArrowFunction_L30C25/FunctionObject,
 			[11] class Modules.Require_ChildProcess_Fork_MessagePassing/ArrowFunction_L34C21/FunctionObject,
-			[12] class Modules.Require_ChildProcess_Fork_MessagePassing/ArrowFunction_L54C24/FunctionObject,
-			[13] class Modules.Require_ChildProcess_Fork_MessagePassing/ArrowFunction_L58C19/FunctionObject,
-			[14] class Modules.Require_ChildProcess_Fork_MessagePassing/ArrowFunction_L63C18/FunctionObject,
-			[15] class Modules.Require_ChildProcess_Fork_MessagePassing/ArrowFunction_L69C19/FunctionObject,
-			[16] class Modules.Require_ChildProcess_Fork_MessagePassing/ArrowFunction_L82C31/FunctionObject
+			[12] class Modules.Require_ChildProcess_Fork_MessagePassing/ArrowFunction_L49C24/FunctionObject,
+			[13] class Modules.Require_ChildProcess_Fork_MessagePassing/ArrowFunction_L53C19/FunctionObject,
+			[14] class Modules.Require_ChildProcess_Fork_MessagePassing/ArrowFunction_L57C18/FunctionObject,
+			[15] class Modules.Require_ChildProcess_Fork_MessagePassing/ArrowFunction_L63C19/FunctionObject
 		)
 
 		IL_0000: newobj instance void Modules.Require_ChildProcess_Fork_MessagePassing/Scope::.ctor()
@@ -1796,14 +1509,14 @@
 		IL_02d8: ldc.i4.0
 		IL_02d9: ldelem.ref
 		IL_02da: castclass Modules.Require_ChildProcess_Fork_MessagePassing/Scope
-		IL_02df: newobj instance void Modules.Require_ChildProcess_Fork_MessagePassing/ArrowFunction_L54C24/FunctionObject::.ctor(class Modules.Require_ChildProcess_Fork_MessagePassing/Scope)
+		IL_02df: newobj instance void Modules.Require_ChildProcess_Fork_MessagePassing/ArrowFunction_L49C24/FunctionObject::.ctor(class Modules.Require_ChildProcess_Fork_MessagePassing/Scope)
 		IL_02e4: ldc.i4.0
 		IL_02e5: conv.r8
 		IL_02e6: ldstr ""
 		IL_02eb: ldc.i4.0
 		IL_02ec: ldc.i4.0
-		IL_02ed: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_ChildProcess_Fork_MessagePassing/ArrowFunction_L54C24/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_02f2: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_ChildProcess_Fork_MessagePassing/ArrowFunction_L54C24/FunctionObject>(!!0)
+		IL_02ed: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_ChildProcess_Fork_MessagePassing/ArrowFunction_L49C24/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_02f2: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_ChildProcess_Fork_MessagePassing/ArrowFunction_L49C24/FunctionObject>(!!0)
 		IL_02f7: stloc.s 12
 		IL_02f9: ldloc.s 4
 		IL_02fb: ldstr "on"
@@ -1822,137 +1535,91 @@
 		IL_0322: ldloc.0
 		IL_0323: stelem.ref
 		IL_0324: stloc.s 8
-		IL_0326: ldloc.s 8
-		IL_0328: ldc.i4.0
-		IL_0329: ldelem.ref
-		IL_032a: castclass Modules.Require_ChildProcess_Fork_MessagePassing/Scope
-		IL_032f: newobj instance void Modules.Require_ChildProcess_Fork_MessagePassing/ArrowFunction_L58C19/FunctionObject::.ctor(class Modules.Require_ChildProcess_Fork_MessagePassing/Scope)
-		IL_0334: ldc.i4.1
-		IL_0335: conv.r8
-		IL_0336: ldstr ""
-		IL_033b: ldc.i4.0
-		IL_033c: ldc.i4.0
-		IL_033d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_ChildProcess_Fork_MessagePassing/ArrowFunction_L58C19/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_0342: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_ChildProcess_Fork_MessagePassing/ArrowFunction_L58C19/FunctionObject>(!!0)
-		IL_0347: stloc.s 13
-		IL_0349: ldloc.s 4
-		IL_034b: ldstr "on"
-		IL_0350: ldstr "error"
-		IL_0355: ldloc.s 13
-		IL_0357: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_035c: pop
-		IL_035d: ldloc.0
-		IL_035e: ldfld object Modules.Require_ChildProcess_Fork_MessagePassing/Scope::child
-		IL_0363: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0368: stloc.s 4
-		IL_036a: ldc.i4.1
-		IL_036b: newarr [System.Runtime]System.Object
-		IL_0370: dup
-		IL_0371: ldc.i4.0
-		IL_0372: ldloc.0
-		IL_0373: stelem.ref
-		IL_0374: stloc.s 8
-		IL_0376: newobj instance void Modules.Require_ChildProcess_Fork_MessagePassing/ArrowFunction_L63C18/FunctionObject::.ctor()
-		IL_037b: ldc.i4.2
-		IL_037c: conv.r8
-		IL_037d: ldstr ""
-		IL_0382: ldc.i4.0
-		IL_0383: ldc.i4.0
-		IL_0384: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_ChildProcess_Fork_MessagePassing/ArrowFunction_L63C18/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_0389: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_ChildProcess_Fork_MessagePassing/ArrowFunction_L63C18/FunctionObject>(!!0)
-		IL_038e: stloc.s 14
-		IL_0390: ldloc.s 4
-		IL_0392: ldstr "on"
-		IL_0397: ldstr "exit"
-		IL_039c: ldloc.s 14
-		IL_039e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_03a3: pop
-		IL_03a4: ldloc.0
-		IL_03a5: ldfld object Modules.Require_ChildProcess_Fork_MessagePassing/Scope::child
-		IL_03aa: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_03af: stloc.s 4
-		IL_03b1: ldc.i4.1
-		IL_03b2: newarr [System.Runtime]System.Object
-		IL_03b7: dup
-		IL_03b8: ldc.i4.0
-		IL_03b9: ldloc.0
-		IL_03ba: stelem.ref
-		IL_03bb: stloc.s 8
-		IL_03bd: ldloc.s 8
-		IL_03bf: ldc.i4.0
-		IL_03c0: ldelem.ref
-		IL_03c1: castclass Modules.Require_ChildProcess_Fork_MessagePassing/Scope
-		IL_03c6: newobj instance void Modules.Require_ChildProcess_Fork_MessagePassing/ArrowFunction_L69C19/FunctionObject::.ctor(class Modules.Require_ChildProcess_Fork_MessagePassing/Scope)
-		IL_03cb: ldc.i4.2
-		IL_03cc: conv.r8
-		IL_03cd: ldstr ""
-		IL_03d2: ldc.i4.0
-		IL_03d3: ldc.i4.0
-		IL_03d4: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_ChildProcess_Fork_MessagePassing/ArrowFunction_L69C19/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_03d9: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_ChildProcess_Fork_MessagePassing/ArrowFunction_L69C19/FunctionObject>(!!0)
-		IL_03de: stloc.s 15
-		IL_03e0: ldloc.s 4
-		IL_03e2: ldstr "on"
-		IL_03e7: ldstr "close"
-		IL_03ec: ldloc.s 15
-		IL_03ee: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_03f3: pop
-		IL_03f4: ldc.i4.1
-		IL_03f5: newarr [System.Runtime]System.Object
-		IL_03fa: dup
-		IL_03fb: ldc.i4.0
-		IL_03fc: ldloc.0
-		IL_03fd: stelem.ref
-		IL_03fe: stloc.s 8
-		IL_0400: ldloc.s 8
-		IL_0402: ldc.i4.0
-		IL_0403: ldelem.ref
-		IL_0404: castclass Modules.Require_ChildProcess_Fork_MessagePassing/Scope
-		IL_0409: newobj instance void Modules.Require_ChildProcess_Fork_MessagePassing/ArrowFunction_L82C31/FunctionObject::.ctor(class Modules.Require_ChildProcess_Fork_MessagePassing/Scope)
-		IL_040e: ldc.i4.0
-		IL_040f: conv.r8
-		IL_0410: ldstr ""
-		IL_0415: ldc.i4.0
-		IL_0416: ldc.i4.0
-		IL_0417: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_ChildProcess_Fork_MessagePassing/ArrowFunction_L82C31/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_041c: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_ChildProcess_Fork_MessagePassing/ArrowFunction_L82C31/FunctionObject>(!!0)
-		IL_0421: stloc.s 16
-		IL_0423: ldloc.s 16
-		IL_0425: ldc.r8 25
-		IL_042e: box [System.Runtime]System.Double
-		IL_0433: ldc.i4.0
-		IL_0434: newarr [System.Runtime]System.Object
-		IL_0439: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::setInterval(object, object, object[])
-		IL_043e: stloc.s 4
-		IL_0440: ldloc.0
-		IL_0441: ldloc.s 4
-		IL_0443: stfld object Modules.Require_ChildProcess_Fork_MessagePassing/Scope::initTimer
-		IL_0448: ldloc.0
-		IL_0449: ldfld object Modules.Require_ChildProcess_Fork_MessagePassing/Scope::readyReceived
-		IL_044e: stloc.s 4
-		IL_0450: ldloc.s 4
-		IL_0452: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
-		IL_0457: ldc.i4.0
-		IL_0458: ceq
-		IL_045a: stloc.s 6
-		IL_045c: ldloc.s 6
-		IL_045e: brfalse IL_0490
-
-		IL_0463: ldloc.0
-		IL_0464: ldfld object Modules.Require_ChildProcess_Fork_MessagePassing/Scope::child
-		IL_0469: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_046e: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_0473: dup
-		IL_0474: ldstr "stage"
-		IL_0479: ldstr "init"
-		IL_047e: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_0483: stloc.3
-		IL_0484: ldstr "send"
-		IL_0489: ldloc.3
-		IL_048a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_048f: pop
-
-		IL_0490: ret
+		IL_0326: newobj instance void Modules.Require_ChildProcess_Fork_MessagePassing/ArrowFunction_L53C19/FunctionObject::.ctor()
+		IL_032b: ldc.i4.1
+		IL_032c: conv.r8
+		IL_032d: ldstr ""
+		IL_0332: ldc.i4.0
+		IL_0333: ldc.i4.0
+		IL_0334: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_ChildProcess_Fork_MessagePassing/ArrowFunction_L53C19/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_0339: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_ChildProcess_Fork_MessagePassing/ArrowFunction_L53C19/FunctionObject>(!!0)
+		IL_033e: stloc.s 13
+		IL_0340: ldloc.s 4
+		IL_0342: ldstr "on"
+		IL_0347: ldstr "error"
+		IL_034c: ldloc.s 13
+		IL_034e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_0353: pop
+		IL_0354: ldloc.0
+		IL_0355: ldfld object Modules.Require_ChildProcess_Fork_MessagePassing/Scope::child
+		IL_035a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_035f: stloc.s 4
+		IL_0361: ldc.i4.1
+		IL_0362: newarr [System.Runtime]System.Object
+		IL_0367: dup
+		IL_0368: ldc.i4.0
+		IL_0369: ldloc.0
+		IL_036a: stelem.ref
+		IL_036b: stloc.s 8
+		IL_036d: newobj instance void Modules.Require_ChildProcess_Fork_MessagePassing/ArrowFunction_L57C18/FunctionObject::.ctor()
+		IL_0372: ldc.i4.2
+		IL_0373: conv.r8
+		IL_0374: ldstr ""
+		IL_0379: ldc.i4.0
+		IL_037a: ldc.i4.0
+		IL_037b: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_ChildProcess_Fork_MessagePassing/ArrowFunction_L57C18/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_0380: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_ChildProcess_Fork_MessagePassing/ArrowFunction_L57C18/FunctionObject>(!!0)
+		IL_0385: stloc.s 14
+		IL_0387: ldloc.s 4
+		IL_0389: ldstr "on"
+		IL_038e: ldstr "exit"
+		IL_0393: ldloc.s 14
+		IL_0395: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_039a: pop
+		IL_039b: ldloc.0
+		IL_039c: ldfld object Modules.Require_ChildProcess_Fork_MessagePassing/Scope::child
+		IL_03a1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_03a6: stloc.s 4
+		IL_03a8: ldc.i4.1
+		IL_03a9: newarr [System.Runtime]System.Object
+		IL_03ae: dup
+		IL_03af: ldc.i4.0
+		IL_03b0: ldloc.0
+		IL_03b1: stelem.ref
+		IL_03b2: stloc.s 8
+		IL_03b4: ldloc.s 8
+		IL_03b6: ldc.i4.0
+		IL_03b7: ldelem.ref
+		IL_03b8: castclass Modules.Require_ChildProcess_Fork_MessagePassing/Scope
+		IL_03bd: newobj instance void Modules.Require_ChildProcess_Fork_MessagePassing/ArrowFunction_L63C19/FunctionObject::.ctor(class Modules.Require_ChildProcess_Fork_MessagePassing/Scope)
+		IL_03c2: ldc.i4.2
+		IL_03c3: conv.r8
+		IL_03c4: ldstr ""
+		IL_03c9: ldc.i4.0
+		IL_03ca: ldc.i4.0
+		IL_03cb: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_ChildProcess_Fork_MessagePassing/ArrowFunction_L63C19/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_03d0: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_ChildProcess_Fork_MessagePassing/ArrowFunction_L63C19/FunctionObject>(!!0)
+		IL_03d5: stloc.s 15
+		IL_03d7: ldloc.s 4
+		IL_03d9: ldstr "on"
+		IL_03de: ldstr "close"
+		IL_03e3: ldloc.s 15
+		IL_03e5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_03ea: pop
+		IL_03eb: ldloc.0
+		IL_03ec: ldfld object Modules.Require_ChildProcess_Fork_MessagePassing/Scope::child
+		IL_03f1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_03f6: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_03fb: dup
+		IL_03fc: ldstr "stage"
+		IL_0401: ldstr "init"
+		IL_0406: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_040b: stloc.3
+		IL_040c: ldstr "send"
+		IL_0411: ldloc.3
+		IL_0412: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0417: pop
+		IL_0418: ret
 	} // end of method Require_ChildProcess_Fork_MessagePassing::__js_module_init__
 
 } // end of class Modules.Require_ChildProcess_Fork_MessagePassing
@@ -2067,244 +1734,7 @@
 
 	} // end of class ArrowFunction_L3C33
 
-	.class nested public auto ansi abstract sealed beforefieldinit safeSend
-		extends [System.Runtime]System.Object
-	{
-		// Nested Types
-		.class nested public auto ansi beforefieldinit Scope
-			extends [System.Runtime]System.Object
-		{
-			// Nested Types
-			.class nested public auto ansi beforefieldinit Block_L8C8
-				extends [System.Runtime]System.Object
-			{
-				// Methods
-				.method public hidebysig specialname rtspecialname 
-					instance void .ctor () cil managed 
-				{
-					// Header size: 1
-					// Code size: 8 (0x8)
-					.maxstack 8
-
-					IL_0000: ldarg.0
-					IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-					IL_0006: nop
-					IL_0007: ret
-				} // end of method Block_L8C8::.ctor
-
-			} // end of class Block_L8C8
-
-			.class nested public auto ansi beforefieldinit Block_L10C19
-				extends [System.Runtime]System.Object
-			{
-				// Methods
-				.method public hidebysig specialname rtspecialname 
-					instance void .ctor () cil managed 
-				{
-					// Header size: 1
-					// Code size: 8 (0x8)
-					.maxstack 8
-
-					IL_0000: ldarg.0
-					IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-					IL_0006: nop
-					IL_0007: ret
-				} // end of method Block_L10C19::.ctor
-
-			} // end of class Block_L10C19
-
-
-			// Methods
-			.method public hidebysig specialname rtspecialname 
-				instance void .ctor () cil managed 
-			{
-				// Header size: 1
-				// Code size: 8 (0x8)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-				IL_0006: nop
-				IL_0007: ret
-			} // end of method Scope::.ctor
-
-		} // end of class Scope
-
-		.class nested public auto ansi sealed beforefieldinit FunctionObject_FunctionDeclaration_09A0EE9D_safeSend
-			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-		{
-			// Methods
-			.method public hidebysig specialname rtspecialname 
-				instance void .ctor () cil managed 
-			{
-				// Header size: 1
-				// Code size: 7 (0x7)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-				IL_0006: ret
-			} // end of method FunctionObject_FunctionDeclaration_09A0EE9D_safeSend::.ctor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_IsConstructor () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.1
-				IL_0001: ret
-			} // end of method FunctionObject_FunctionDeclaration_09A0EE9D_safeSend::get_IsConstructor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_RequiresInvocationContext () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.0
-				IL_0001: ret
-			} // end of method FunctionObject_FunctionDeclaration_09A0EE9D_safeSend::get_RequiresInvocationContext
-
-			.method family hidebysig virtual 
-				instance object CallCore (
-					object thisArgument,
-					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 18 (0x12)
-				.maxstack 8
-
-				IL_0000: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTarget()
-				IL_0005: ldarg.2
-				IL_0006: ldc.i4.0
-				IL_0007: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-				IL_000c: call object Modules.Require_ChildProcess_Fork_MessagePassing_Child/safeSend::__js_call__(object, object)
-				IL_0011: ret
-			} // end of method FunctionObject_FunctionDeclaration_09A0EE9D_safeSend::CallCore
-
-			.method family hidebysig virtual 
-				instance object ConstructBodyCore (
-					object receiver,
-					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
-					object newTarget
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 14 (0xe)
-				.maxstack 8
-
-				IL_0000: ldarg.3
-				IL_0001: ldarg.2
-				IL_0002: ldc.i4.0
-				IL_0003: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-				IL_0008: call object Modules.Require_ChildProcess_Fork_MessagePassing_Child/safeSend::__js_call__(object, object)
-				IL_000d: ret
-			} // end of method FunctionObject_FunctionDeclaration_09A0EE9D_safeSend::ConstructBodyCore
-
-			.method family hidebysig virtual 
-				instance object ConstructCore (
-					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
-					object newTarget
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 14 (0xe)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: ldarg.1
-				IL_0002: ldobj [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments
-				IL_0007: ldarg.2
-				IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionObject(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments, object)
-				IL_000d: ret
-			} // end of method FunctionObject_FunctionDeclaration_09A0EE9D_safeSend::ConstructCore
-
-		} // end of class FunctionObject_FunctionDeclaration_09A0EE9D_safeSend
-
-
-		// Methods
-		.method public hidebysig static 
-			object __js_call__ (
-				object newTarget,
-				object payload
-			) cil managed 
-		{
-			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
-				01 00 00 00 00 00 00 00
-			)
-			// Header size: 12
-			// Code size: 106 (0x6a)
-			.maxstack 8
-			.locals init (
-				[0] object,
-				[1] class [System.Runtime]System.Exception,
-				[2] object,
-				[3] object,
-				[4] object
-			)
-
-			.try
-			{
-				IL_0000: nop
-				IL_0001: ldstr "process"
-				IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-				IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_0010: ldstr "send"
-				IL_0015: ldarg.1
-				IL_0016: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-				IL_001b: stloc.s 4
-				IL_001d: ldnull
-				IL_001e: stloc.0
-				IL_001f: ldloc.s 4
-				IL_0021: stloc.0
-				IL_0022: leave IL_0068
-
-				IL_0027: leave IL_0068
-			} // end .try
-			catch [System.Runtime]System.Exception
-			{
-				IL_002c: stloc.1
-				IL_002d: ldloc.1
-				IL_002e: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-				IL_0033: dup
-				IL_0034: brtrue IL_0049
-
-				IL_0039: pop
-				IL_003a: ldloc.1
-				IL_003b: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
-				IL_0040: dup
-				IL_0041: brtrue IL_0054
-
-				IL_0046: pop
-				IL_0047: rethrow
-
-				IL_0049: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-				IL_004e: stloc.2
-				IL_004f: br IL_0055
-
-				IL_0054: stloc.2
-
-				IL_0055: ldloc.2
-				IL_0056: stloc.3
-				IL_0057: ldc.i4.0
-				IL_0058: box [System.Runtime]System.Boolean
-				IL_005d: stloc.0
-				IL_005e: leave IL_0068
-
-				IL_0063: leave IL_0068
-			} // end handler
-
-			IL_0068: ldloc.0
-			IL_0069: ret
-		} // end of method safeSend::__js_call__
-
-	} // end of class safeSend
-
-	.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L18C23
+	.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L7C23
 		extends [System.Runtime]System.Object
 	{
 		// Nested Types
@@ -2316,47 +1746,7 @@
 				3d 7b 6d 65 73 73 61 67 65 7d 00 00
 			)
 			// Nested Types
-			.class nested public auto ansi beforefieldinit Block_L19C45
-				extends [System.Runtime]System.Object
-			{
-				// Nested Types
-				.class nested public auto ansi beforefieldinit Block_L20C23
-					extends [System.Runtime]System.Object
-				{
-					// Methods
-					.method public hidebysig specialname rtspecialname 
-						instance void .ctor () cil managed 
-					{
-						// Header size: 1
-						// Code size: 8 (0x8)
-						.maxstack 8
-
-						IL_0000: ldarg.0
-						IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-						IL_0006: nop
-						IL_0007: ret
-					} // end of method Block_L20C23::.ctor
-
-				} // end of class Block_L20C23
-
-
-				// Methods
-				.method public hidebysig specialname rtspecialname 
-					instance void .ctor () cil managed 
-				{
-					// Header size: 1
-					// Code size: 8 (0x8)
-					.maxstack 8
-
-					IL_0000: ldarg.0
-					IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-					IL_0006: nop
-					IL_0007: ret
-				} // end of method Block_L19C45::.ctor
-
-			} // end of class Block_L19C45
-
-			.class nested public auto ansi beforefieldinit Block_L35C48
+			.class nested public auto ansi beforefieldinit Block_L8C45
 				extends [System.Runtime]System.Object
 			{
 				// Methods
@@ -2371,11 +1761,11 @@
 					IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 					IL_0006: nop
 					IL_0007: ret
-				} // end of method Block_L35C48::.ctor
+				} // end of method Block_L8C45::.ctor
 
-			} // end of class Block_L35C48
+			} // end of class Block_L8C45
 
-			.class nested public auto ansi beforefieldinit Block_L39C17
+			.class nested public auto ansi beforefieldinit Block_L19C48
 				extends [System.Runtime]System.Object
 			{
 				// Methods
@@ -2390,9 +1780,9 @@
 					IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 					IL_0006: nop
 					IL_0007: ret
-				} // end of method Block_L39C17::.ctor
+				} // end of method Block_L19C48::.ctor
 
-			} // end of class Block_L39C17
+			} // end of class Block_L19C48
 
 
 			// Fields
@@ -2434,7 +1824,7 @@
 				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
 				IL_0006: ldarg.0
 				IL_0007: ldarg.1
-				IL_0008: stfld class Modules.Require_ChildProcess_Fork_MessagePassing_Child/Scope Modules.Require_ChildProcess_Fork_MessagePassing_Child/ArrowFunction_L18C23/FunctionObject::_environment0_Require_ChildProcess_Fork_MessagePassing_Child
+				IL_0008: stfld class Modules.Require_ChildProcess_Fork_MessagePassing_Child/Scope Modules.Require_ChildProcess_Fork_MessagePassing_Child/ArrowFunction_L7C23/FunctionObject::_environment0_Require_ChildProcess_Fork_MessagePassing_Child
 				IL_000d: ret
 			} // end of method FunctionObject::.ctor
 
@@ -2471,12 +1861,12 @@
 				.maxstack 8
 
 				IL_0000: ldarg.0
-				IL_0001: ldfld class Modules.Require_ChildProcess_Fork_MessagePassing_Child/Scope Modules.Require_ChildProcess_Fork_MessagePassing_Child/ArrowFunction_L18C23/FunctionObject::_environment0_Require_ChildProcess_Fork_MessagePassing_Child
+				IL_0001: ldfld class Modules.Require_ChildProcess_Fork_MessagePassing_Child/Scope Modules.Require_ChildProcess_Fork_MessagePassing_Child/ArrowFunction_L7C23/FunctionObject::_environment0_Require_ChildProcess_Fork_MessagePassing_Child
 				IL_0006: ldnull
 				IL_0007: ldarg.2
 				IL_0008: ldc.i4.0
 				IL_0009: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
-				IL_000e: call object Modules.Require_ChildProcess_Fork_MessagePassing_Child/ArrowFunction_L18C23::__js_call__(class Modules.Require_ChildProcess_Fork_MessagePassing_Child/Scope, object, object)
+				IL_000e: call object Modules.Require_ChildProcess_Fork_MessagePassing_Child/ArrowFunction_L7C23::__js_call__(class Modules.Require_ChildProcess_Fork_MessagePassing_Child/Scope, object, object)
 				IL_0013: ret
 			} // end of method FunctionObject::CallCore
 
@@ -2494,10 +1884,10 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 01 00 00 00 01 00 54 08 1c 53 69 6e 67 6c
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
-				74 61 54 6f 6b 65 6e 20 00 00 02
+				74 61 54 6f 6b 65 6e 18 00 00 02
 			)
 			// Header size: 12
-			// Code size: 704 (0x2c0)
+			// Code size: 632 (0x278)
 			.maxstack 8
 			.locals init (
 				[0] bool,
@@ -2506,7 +1896,7 @@
 				[3] object,
 				[4] object,
 				[5] class [JavaScriptRuntime]JavaScriptRuntime.Console,
-				[6] object[],
+				[6] object,
 				[7] object,
 				[8] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
 				[9] object,
@@ -2541,361 +1931,199 @@
 			IL_0039: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
 			IL_003e: stloc.0
 			IL_003f: ldloc.0
-			IL_0040: brfalse IL_0153
+			IL_0040: brfalse IL_0135
 
-			IL_0045: ldarg.0
-			IL_0046: ldfld object Modules.Require_ChildProcess_Fork_MessagePassing_Child/Scope::readySent
-			IL_004b: stloc.1
-			IL_004c: ldloc.1
-			IL_004d: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-			IL_0052: stloc.0
-			IL_0053: ldloc.0
-			IL_0054: brfalse IL_005b
+			IL_0045: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_004a: stloc.s 5
+			IL_004c: ldloc.s 5
+			IL_004e: ldstr "child stdout alive"
+			IL_0053: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0058: pop
+			IL_0059: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_005e: stloc.s 5
+			IL_0060: ldstr "process"
+			IL_0065: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_006a: ldstr "connected"
+			IL_006f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0074: stloc.1
+			IL_0075: ldloc.s 5
+			IL_0077: ldstr "connected in child:"
+			IL_007c: ldloc.1
+			IL_007d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_0082: pop
+			IL_0083: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0088: stloc.s 5
+			IL_008a: ldstr "process"
+			IL_008f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_0094: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0099: stloc.1
+			IL_009a: ldstr "process"
+			IL_009f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_00a4: ldstr "argv"
+			IL_00a9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_00ae: stloc.s 6
+			IL_00b0: ldloc.s 6
+			IL_00b2: ldc.r8 2
+			IL_00bb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+			IL_00c0: stloc.s 6
+			IL_00c2: ldstr "process"
+			IL_00c7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_00cc: ldstr "env"
+			IL_00d1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_00d6: stloc.s 7
+			IL_00d8: ldloc.s 7
+			IL_00da: ldstr "JROC_FORK_TEST_MARKER"
+			IL_00df: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_00e4: stloc.s 7
+			IL_00e6: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+			IL_00eb: dup
+			IL_00ec: ldstr "stage"
+			IL_00f1: ldstr "ready"
+			IL_00f6: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+			IL_00fb: dup
+			IL_00fc: ldstr "argv2"
+			IL_0101: ldloc.s 6
+			IL_0103: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+			IL_0108: dup
+			IL_0109: ldstr "env"
+			IL_010e: ldloc.s 7
+			IL_0110: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+			IL_0115: stloc.s 8
+			IL_0117: ldloc.1
+			IL_0118: ldstr "send"
+			IL_011d: ldloc.s 8
+			IL_011f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_0124: stloc.1
+			IL_0125: ldloc.s 5
+			IL_0127: ldstr "ready sent:"
+			IL_012c: ldloc.1
+			IL_012d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_0132: pop
+			IL_0133: ldnull
+			IL_0134: ret
 
-			IL_0059: ldnull
-			IL_005a: ret
-
-			IL_005b: ldarg.0
-			IL_005c: ldc.i4.1
-			IL_005d: box [System.Runtime]System.Boolean
-			IL_0062: stfld object Modules.Require_ChildProcess_Fork_MessagePassing_Child/Scope::readySent
-			IL_0067: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_006c: stloc.s 5
-			IL_006e: ldloc.s 5
-			IL_0070: ldstr "child stdout alive"
-			IL_0075: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_007a: pop
-			IL_007b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0080: stloc.s 5
-			IL_0082: ldstr "process"
-			IL_0087: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_008c: ldstr "connected"
-			IL_0091: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0096: stloc.1
-			IL_0097: ldloc.s 5
-			IL_0099: ldstr "connected in child:"
-			IL_009e: ldloc.1
-			IL_009f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_00a4: pop
-			IL_00a5: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_00aa: stloc.s 5
-			IL_00ac: ldarg.0
-			IL_00ad: ldfld object Modules.Require_ChildProcess_Fork_MessagePassing_Child/Scope::safeSend
-			IL_00b2: ldc.i4.1
-			IL_00b3: newarr [System.Runtime]System.Object
-			IL_00b8: dup
-			IL_00b9: ldc.i4.0
-			IL_00ba: ldarg.0
-			IL_00bb: stelem.ref
-			IL_00bc: stloc.s 6
-			IL_00be: ldstr "process"
-			IL_00c3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_00c8: ldstr "argv"
-			IL_00cd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_00d2: stloc.1
-			IL_00d3: ldloc.1
-			IL_00d4: ldc.r8 2
-			IL_00dd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-			IL_00e2: stloc.1
-			IL_00e3: ldstr "process"
-			IL_00e8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_00ed: ldstr "env"
-			IL_00f2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_00f7: stloc.s 7
-			IL_00f9: ldloc.s 7
-			IL_00fb: ldstr "JROC_FORK_TEST_MARKER"
-			IL_0100: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0105: stloc.s 7
-			IL_0107: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-			IL_010c: dup
-			IL_010d: ldstr "stage"
-			IL_0112: ldstr "ready"
-			IL_0117: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-			IL_011c: dup
-			IL_011d: ldstr "argv2"
-			IL_0122: ldloc.1
-			IL_0123: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-			IL_0128: dup
-			IL_0129: ldstr "env"
-			IL_012e: ldloc.s 7
-			IL_0130: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-			IL_0135: stloc.s 8
-			IL_0137: ldloc.s 6
-			IL_0139: ldloc.s 8
-			IL_013b: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
-			IL_0140: stloc.s 7
-			IL_0142: ldloc.s 5
-			IL_0144: ldstr "ready sent:"
-			IL_0149: ldloc.s 7
-			IL_014b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_0150: pop
-			IL_0151: ldnull
-			IL_0152: ret
+			IL_0135: ldarg.2
+			IL_0136: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
+			IL_013b: ldc.i4.0
+			IL_013c: ceq
+			IL_013e: stloc.0
+			IL_013f: ldloc.0
+			IL_0140: box [System.Runtime]System.Boolean
+			IL_0145: stloc.2
+			IL_0146: ldloc.2
+			IL_0147: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+			IL_014c: stloc.0
+			IL_014d: ldloc.0
+			IL_014e: brtrue IL_017c
 
 			IL_0153: ldarg.2
-			IL_0154: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
-			IL_0159: ldc.i4.0
-			IL_015a: ceq
-			IL_015c: stloc.0
-			IL_015d: ldloc.0
-			IL_015e: box [System.Runtime]System.Boolean
-			IL_0163: stloc.2
-			IL_0164: ldloc.2
-			IL_0165: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+			IL_0154: ldstr "stage"
+			IL_0159: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_015e: stloc.1
+			IL_015f: ldloc.1
+			IL_0160: ldstr "parent"
+			IL_0165: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictNotEqual(object, object)
 			IL_016a: stloc.0
 			IL_016b: ldloc.0
-			IL_016c: brtrue IL_019c
+			IL_016c: box [System.Runtime]System.Boolean
+			IL_0171: stloc.s 9
+			IL_0173: ldloc.s 9
+			IL_0175: stloc.s 10
+			IL_0177: br IL_017f
 
-			IL_0171: ldarg.2
-			IL_0172: ldstr "stage"
-			IL_0177: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_017c: stloc.s 7
-			IL_017e: ldloc.s 7
-			IL_0180: ldstr "parent"
-			IL_0185: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictNotEqual(object, object)
-			IL_018a: stloc.0
-			IL_018b: ldloc.0
-			IL_018c: box [System.Runtime]System.Boolean
-			IL_0191: stloc.s 9
-			IL_0193: ldloc.s 9
-			IL_0195: stloc.s 10
-			IL_0197: br IL_019f
+			IL_017c: ldloc.2
+			IL_017d: stloc.s 10
 
-			IL_019c: ldloc.2
-			IL_019d: stloc.s 10
+			IL_017f: ldloc.s 10
+			IL_0181: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+			IL_0186: stloc.0
+			IL_0187: ldloc.0
+			IL_0188: brfalse IL_018f
 
-			IL_019f: ldloc.s 10
-			IL_01a1: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-			IL_01a6: stloc.0
-			IL_01a7: ldloc.0
-			IL_01a8: brfalse IL_01af
+			IL_018d: ldnull
+			IL_018e: ret
 
-			IL_01ad: ldnull
-			IL_01ae: ret
+			IL_018f: ldarg.0
+			IL_0190: ldfld object Modules.Require_ChildProcess_Fork_MessagePassing_Child/Scope::fallbackExit
+			IL_0195: stloc.1
+			IL_0196: ldloc.1
+			IL_0197: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::clearTimeout(object)
+			IL_019c: pop
+			IL_019d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_01a2: stloc.s 5
+			IL_01a4: ldarg.2
+			IL_01a5: ldstr "value"
+			IL_01aa: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_01af: stloc.1
+			IL_01b0: ldloc.s 5
+			IL_01b2: ldstr "child received:"
+			IL_01b7: ldloc.1
+			IL_01b8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_01bd: pop
+			IL_01be: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_01c3: stloc.s 5
+			IL_01c5: ldstr "process"
+			IL_01ca: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_01cf: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_01d4: stloc.1
+			IL_01d5: ldarg.2
+			IL_01d6: ldstr "value"
+			IL_01db: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_01e0: stloc.s 7
+			IL_01e2: ldloc.s 7
+			IL_01e4: ldc.r8 1
+			IL_01ed: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
+			IL_01f2: stloc.s 10
+			IL_01f4: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+			IL_01f9: dup
+			IL_01fa: ldstr "stage"
+			IL_01ff: ldstr "child"
+			IL_0204: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+			IL_0209: dup
+			IL_020a: ldstr "value"
+			IL_020f: ldloc.s 10
+			IL_0211: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+			IL_0216: stloc.s 8
+			IL_0218: ldloc.1
+			IL_0219: ldstr "send"
+			IL_021e: ldloc.s 8
+			IL_0220: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_0225: stloc.1
+			IL_0226: ldloc.s 5
+			IL_0228: ldstr "reply sent:"
+			IL_022d: ldloc.1
+			IL_022e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_0233: pop
+			IL_0234: ldstr "process"
+			IL_0239: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_023e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0243: ldstr "disconnect"
+			IL_0248: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+			IL_024d: pop
+			IL_024e: ldstr "process"
+			IL_0253: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_0258: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_025d: ldstr "exit"
+			IL_0262: ldc.r8 0.0
+			IL_026b: box [System.Runtime]System.Double
+			IL_0270: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_0275: pop
+			IL_0276: ldnull
+			IL_0277: ret
+		} // end of method ArrowFunction_L7C23::__js_call__
 
-			IL_01af: ldarg.0
-			IL_01b0: ldfld object Modules.Require_ChildProcess_Fork_MessagePassing_Child/Scope::replied
-			IL_01b5: stloc.s 7
-			IL_01b7: ldloc.s 7
-			IL_01b9: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-			IL_01be: stloc.0
-			IL_01bf: ldloc.0
-			IL_01c0: brfalse IL_01c7
-
-			IL_01c5: ldnull
-			IL_01c6: ret
-
-			IL_01c7: ldarg.0
-			IL_01c8: ldc.i4.1
-			IL_01c9: box [System.Runtime]System.Boolean
-			IL_01ce: stfld object Modules.Require_ChildProcess_Fork_MessagePassing_Child/Scope::replied
-			IL_01d3: ldarg.0
-			IL_01d4: ldfld object Modules.Require_ChildProcess_Fork_MessagePassing_Child/Scope::fallbackExit
-			IL_01d9: stloc.s 7
-			IL_01db: ldloc.s 7
-			IL_01dd: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::clearTimeout(object)
-			IL_01e2: pop
-			IL_01e3: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_01e8: stloc.s 5
-			IL_01ea: ldarg.2
-			IL_01eb: ldstr "value"
-			IL_01f0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_01f5: stloc.s 7
-			IL_01f7: ldloc.s 5
-			IL_01f9: ldstr "child received:"
-			IL_01fe: ldloc.s 7
-			IL_0200: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_0205: pop
-			IL_0206: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_020b: stloc.s 5
-			IL_020d: ldarg.0
-			IL_020e: ldfld object Modules.Require_ChildProcess_Fork_MessagePassing_Child/Scope::safeSend
-			IL_0213: ldc.i4.1
-			IL_0214: newarr [System.Runtime]System.Object
-			IL_0219: dup
-			IL_021a: ldc.i4.0
-			IL_021b: ldarg.0
-			IL_021c: stelem.ref
-			IL_021d: stloc.s 6
-			IL_021f: ldarg.2
-			IL_0220: ldstr "value"
-			IL_0225: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_022a: stloc.s 7
-			IL_022c: ldloc.s 7
-			IL_022e: ldc.r8 1
-			IL_0237: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
-			IL_023c: stloc.s 10
-			IL_023e: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-			IL_0243: dup
-			IL_0244: ldstr "stage"
-			IL_0249: ldstr "child"
-			IL_024e: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-			IL_0253: dup
-			IL_0254: ldstr "value"
-			IL_0259: ldloc.s 10
-			IL_025b: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-			IL_0260: stloc.s 8
-			IL_0262: ldloc.s 6
-			IL_0264: ldloc.s 8
-			IL_0266: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
-			IL_026b: stloc.s 7
-			IL_026d: ldloc.s 5
-			IL_026f: ldstr "reply sent:"
-			IL_0274: ldloc.s 7
-			IL_0276: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_027b: pop
-			IL_027c: ldstr "process"
-			IL_0281: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_0286: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_028b: ldstr "disconnect"
-			IL_0290: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-			IL_0295: pop
-			IL_0296: ldstr "process"
-			IL_029b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_02a0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_02a5: ldstr "exit"
-			IL_02aa: ldc.r8 0.0
-			IL_02b3: box [System.Runtime]System.Double
-			IL_02b8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_02bd: pop
-			IL_02be: ldnull
-			IL_02bf: ret
-		} // end of method ArrowFunction_L18C23::__js_call__
-
-	} // end of class ArrowFunction_L18C23
-
-	.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L51C12
-		extends [System.Runtime]System.Object
-	{
-		// Nested Types
-		.class nested public auto ansi beforefieldinit Scope
-			extends [System.Runtime]System.Object
-		{
-			// Methods
-			.method public hidebysig specialname rtspecialname 
-				instance void .ctor () cil managed 
-			{
-				// Header size: 1
-				// Code size: 8 (0x8)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-				IL_0006: nop
-				IL_0007: ret
-			} // end of method Scope::.ctor
-
-		} // end of class Scope
-
-		.class nested public auto ansi sealed beforefieldinit FunctionObject
-			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
-		{
-			// Methods
-			.method public hidebysig specialname rtspecialname 
-				instance void .ctor () cil managed 
-			{
-				// Header size: 1
-				// Code size: 7 (0x7)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
-				IL_0006: ret
-			} // end of method FunctionObject::.ctor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_IsConstructor () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.0
-				IL_0001: ret
-			} // end of method FunctionObject::get_IsConstructor
-
-			.method public hidebysig specialname virtual 
-				instance bool get_RequiresInvocationContext () cil managed 
-			{
-				// Header size: 1
-				// Code size: 2 (0x2)
-				.maxstack 8
-
-				IL_0000: ldc.i4.0
-				IL_0001: ret
-			} // end of method FunctionObject::get_RequiresInvocationContext
-
-			.method family hidebysig virtual 
-				instance object CallCore (
-					object thisArgument,
-					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 7 (0x7)
-				.maxstack 8
-
-				IL_0000: ldnull
-				IL_0001: call object Modules.Require_ChildProcess_Fork_MessagePassing_Child/ArrowFunction_L51C12::__js_call__(object)
-				IL_0006: ret
-			} // end of method FunctionObject::CallCore
-
-		} // end of class FunctionObject
-
-
-		// Methods
-		.method public hidebysig static 
-			object __js_call__ (
-				object newTarget
-			) cil managed 
-		{
-			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
-				01 00 00 00 00 00 00 00
-			)
-			// Header size: 12
-			// Code size: 60 (0x3c)
-			.maxstack 8
-			.locals init (
-				[0] class [JavaScriptRuntime]JavaScriptRuntime.Console
-			)
-
-			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0005: stloc.0
-			IL_0006: ldloc.0
-			IL_0007: ldstr "child stdout alive"
-			IL_000c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0011: pop
-			IL_0012: ldstr "process"
-			IL_0017: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0021: ldstr "exit"
-			IL_0026: ldc.r8 0.0
-			IL_002f: box [System.Runtime]System.Double
-			IL_0034: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_0039: pop
-			IL_003a: ldnull
-			IL_003b: ret
-		} // end of method ArrowFunction_L51C12::__js_call__
-
-	} // end of class ArrowFunction_L51C12
+	} // end of class ArrowFunction_L7C23
 
 	.class nested public auto ansi beforefieldinit Scope
 		extends [System.Runtime]System.Object
 	{
 		.custom instance void [System.Runtime]System.Diagnostics.DebuggerDisplayAttribute::.ctor(string) = (
-			01 00 60 53 63 6f 70 65 20 66 61 6c 6c 62 61 63
+			01 00 21 53 63 6f 70 65 20 66 61 6c 6c 62 61 63
 			6b 45 78 69 74 3d 7b 66 61 6c 6c 62 61 63 6b 45
-			78 69 74 7d 2c 20 73 61 66 65 53 65 6e 64 3d 7b
-			73 61 66 65 53 65 6e 64 7d 2c 20 72 65 61 64 79
-			53 65 6e 74 3d 7b 72 65 61 64 79 53 65 6e 74 7d
-			2c 20 72 65 70 6c 69 65 64 3d 7b 72 65 70 6c 69
-			65 64 7d 00 00
+			78 69 74 7d 00 00
 		)
 		// Fields
 		.field public object fallbackExit
-		.field public object safeSend
-		.field public object readySent
-		.field public object replied
 
 		// Methods
 		.method public hidebysig specialname rtspecialname 
@@ -2925,128 +2153,76 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 290 (0x122)
+		// Code size: 158 (0x9e)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Require_ChildProcess_Fork_MessagePassing_Child/Scope,
 			[1] object[],
-			[2] class Modules.Require_ChildProcess_Fork_MessagePassing_Child/safeSend/FunctionObject_FunctionDeclaration_09A0EE9D_safeSend,
-			[3] class Modules.Require_ChildProcess_Fork_MessagePassing_Child/ArrowFunction_L3C33/FunctionObject,
-			[4] object,
-			[5] class Modules.Require_ChildProcess_Fork_MessagePassing_Child/ArrowFunction_L18C23/FunctionObject,
-			[6] class Modules.Require_ChildProcess_Fork_MessagePassing_Child/ArrowFunction_L51C12/FunctionObject
+			[2] class Modules.Require_ChildProcess_Fork_MessagePassing_Child/ArrowFunction_L3C33/FunctionObject,
+			[3] object,
+			[4] class Modules.Require_ChildProcess_Fork_MessagePassing_Child/ArrowFunction_L7C23/FunctionObject
 		)
 
 		IL_0000: newobj instance void Modules.Require_ChildProcess_Fork_MessagePassing_Child/Scope::.ctor()
 		IL_0005: stloc.0
-		IL_0006: ldc.i4.1
-		IL_0007: newarr [System.Runtime]System.Object
-		IL_000c: dup
-		IL_000d: ldc.i4.0
-		IL_000e: ldloc.0
-		IL_000f: stelem.ref
-		IL_0010: stloc.1
-		IL_0011: newobj instance void Modules.Require_ChildProcess_Fork_MessagePassing_Child/safeSend/FunctionObject_FunctionDeclaration_09A0EE9D_safeSend::.ctor()
-		IL_0016: ldc.i4.1
-		IL_0017: conv.r8
-		IL_0018: ldstr "safeSend"
-		IL_001d: ldc.i4.0
-		IL_001e: ldc.i4.1
-		IL_001f: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_ChildProcess_Fork_MessagePassing_Child/safeSend/FunctionObject_FunctionDeclaration_09A0EE9D_safeSend>(!!0, float64, string, bool, bool)
-		IL_0024: stloc.2
-		IL_0025: ldloc.0
-		IL_0026: ldloc.2
-		IL_0027: stfld object Modules.Require_ChildProcess_Fork_MessagePassing_Child/Scope::safeSend
-		IL_002c: nop
-		IL_002d: ldc.i4.1
-		IL_002e: newarr [System.Runtime]System.Object
-		IL_0033: dup
-		IL_0034: ldc.i4.0
-		IL_0035: ldloc.0
-		IL_0036: stelem.ref
-		IL_0037: stloc.1
-		IL_0038: newobj instance void Modules.Require_ChildProcess_Fork_MessagePassing_Child/ArrowFunction_L3C33/FunctionObject::.ctor()
-		IL_003d: ldc.i4.0
-		IL_003e: conv.r8
-		IL_003f: ldstr ""
-		IL_0044: ldc.i4.0
-		IL_0045: ldc.i4.0
-		IL_0046: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_ChildProcess_Fork_MessagePassing_Child/ArrowFunction_L3C33/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_004b: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_ChildProcess_Fork_MessagePassing_Child/ArrowFunction_L3C33/FunctionObject>(!!0)
-		IL_0050: stloc.3
-		IL_0051: ldloc.3
-		IL_0052: ldc.r8 15000
-		IL_005b: box [System.Runtime]System.Double
-		IL_0060: ldc.i4.0
-		IL_0061: newarr [System.Runtime]System.Object
-		IL_0066: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::setTimeout(object, object, object[])
-		IL_006b: stloc.s 4
-		IL_006d: ldloc.0
-		IL_006e: ldloc.s 4
-		IL_0070: stfld object Modules.Require_ChildProcess_Fork_MessagePassing_Child/Scope::fallbackExit
-		IL_0075: nop
-		IL_0076: ldloc.0
-		IL_0077: ldc.i4.0
-		IL_0078: box [System.Runtime]System.Boolean
-		IL_007d: stfld object Modules.Require_ChildProcess_Fork_MessagePassing_Child/Scope::readySent
-		IL_0082: ldloc.0
-		IL_0083: ldc.i4.0
-		IL_0084: box [System.Runtime]System.Boolean
-		IL_0089: stfld object Modules.Require_ChildProcess_Fork_MessagePassing_Child/Scope::replied
-		IL_008e: ldstr "process"
-		IL_0093: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0098: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_009d: stloc.s 4
-		IL_009f: ldc.i4.1
-		IL_00a0: newarr [System.Runtime]System.Object
-		IL_00a5: dup
-		IL_00a6: ldc.i4.0
-		IL_00a7: ldloc.0
-		IL_00a8: stelem.ref
-		IL_00a9: stloc.1
-		IL_00aa: ldloc.1
-		IL_00ab: ldc.i4.0
-		IL_00ac: ldelem.ref
-		IL_00ad: castclass Modules.Require_ChildProcess_Fork_MessagePassing_Child/Scope
-		IL_00b2: newobj instance void Modules.Require_ChildProcess_Fork_MessagePassing_Child/ArrowFunction_L18C23/FunctionObject::.ctor(class Modules.Require_ChildProcess_Fork_MessagePassing_Child/Scope)
-		IL_00b7: ldc.i4.1
-		IL_00b8: conv.r8
-		IL_00b9: ldstr ""
-		IL_00be: ldc.i4.0
-		IL_00bf: ldc.i4.0
-		IL_00c0: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_ChildProcess_Fork_MessagePassing_Child/ArrowFunction_L18C23/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_00c5: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_ChildProcess_Fork_MessagePassing_Child/ArrowFunction_L18C23/FunctionObject>(!!0)
-		IL_00ca: stloc.s 5
-		IL_00cc: ldloc.s 4
-		IL_00ce: ldstr "on"
-		IL_00d3: ldstr "message"
-		IL_00d8: ldloc.s 5
-		IL_00da: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_00df: pop
-		IL_00e0: ldc.i4.1
-		IL_00e1: newarr [System.Runtime]System.Object
-		IL_00e6: dup
-		IL_00e7: ldc.i4.0
-		IL_00e8: ldloc.0
-		IL_00e9: stelem.ref
-		IL_00ea: stloc.1
-		IL_00eb: newobj instance void Modules.Require_ChildProcess_Fork_MessagePassing_Child/ArrowFunction_L51C12/FunctionObject::.ctor()
-		IL_00f0: ldc.i4.0
-		IL_00f1: conv.r8
-		IL_00f2: ldstr ""
-		IL_00f7: ldc.i4.0
-		IL_00f8: ldc.i4.0
-		IL_00f9: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_ChildProcess_Fork_MessagePassing_Child/ArrowFunction_L51C12/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_00fe: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_ChildProcess_Fork_MessagePassing_Child/ArrowFunction_L51C12/FunctionObject>(!!0)
-		IL_0103: stloc.s 6
-		IL_0105: ldloc.s 6
-		IL_0107: ldc.r8 14000
-		IL_0110: box [System.Runtime]System.Double
-		IL_0115: ldc.i4.0
-		IL_0116: newarr [System.Runtime]System.Object
-		IL_011b: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::setTimeout(object, object, object[])
-		IL_0120: pop
-		IL_0121: ret
+		IL_0006: nop
+		IL_0007: ldc.i4.1
+		IL_0008: newarr [System.Runtime]System.Object
+		IL_000d: dup
+		IL_000e: ldc.i4.0
+		IL_000f: ldloc.0
+		IL_0010: stelem.ref
+		IL_0011: stloc.1
+		IL_0012: newobj instance void Modules.Require_ChildProcess_Fork_MessagePassing_Child/ArrowFunction_L3C33/FunctionObject::.ctor()
+		IL_0017: ldc.i4.0
+		IL_0018: conv.r8
+		IL_0019: ldstr ""
+		IL_001e: ldc.i4.0
+		IL_001f: ldc.i4.0
+		IL_0020: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_ChildProcess_Fork_MessagePassing_Child/ArrowFunction_L3C33/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_0025: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_ChildProcess_Fork_MessagePassing_Child/ArrowFunction_L3C33/FunctionObject>(!!0)
+		IL_002a: stloc.2
+		IL_002b: ldloc.2
+		IL_002c: ldc.r8 15000
+		IL_0035: box [System.Runtime]System.Double
+		IL_003a: ldc.i4.0
+		IL_003b: newarr [System.Runtime]System.Object
+		IL_0040: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::setTimeout(object, object, object[])
+		IL_0045: stloc.3
+		IL_0046: ldloc.0
+		IL_0047: ldloc.3
+		IL_0048: stfld object Modules.Require_ChildProcess_Fork_MessagePassing_Child/Scope::fallbackExit
+		IL_004d: ldstr "process"
+		IL_0052: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0057: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_005c: stloc.3
+		IL_005d: ldc.i4.1
+		IL_005e: newarr [System.Runtime]System.Object
+		IL_0063: dup
+		IL_0064: ldc.i4.0
+		IL_0065: ldloc.0
+		IL_0066: stelem.ref
+		IL_0067: stloc.1
+		IL_0068: ldloc.1
+		IL_0069: ldc.i4.0
+		IL_006a: ldelem.ref
+		IL_006b: castclass Modules.Require_ChildProcess_Fork_MessagePassing_Child/Scope
+		IL_0070: newobj instance void Modules.Require_ChildProcess_Fork_MessagePassing_Child/ArrowFunction_L7C23/FunctionObject::.ctor(class Modules.Require_ChildProcess_Fork_MessagePassing_Child/Scope)
+		IL_0075: ldc.i4.1
+		IL_0076: conv.r8
+		IL_0077: ldstr ""
+		IL_007c: ldc.i4.0
+		IL_007d: ldc.i4.0
+		IL_007e: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_ChildProcess_Fork_MessagePassing_Child/ArrowFunction_L7C23/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_0083: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_ChildProcess_Fork_MessagePassing_Child/ArrowFunction_L7C23/FunctionObject>(!!0)
+		IL_0088: stloc.s 4
+		IL_008a: ldloc.3
+		IL_008b: ldstr "on"
+		IL_0090: ldstr "message"
+		IL_0095: ldloc.s 4
+		IL_0097: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_009c: pop
+		IL_009d: ret
 	} // end of method Require_ChildProcess_Fork_MessagePassing_Child::__js_module_init__
 
 } // end of class Modules.Require_ChildProcess_Fork_MessagePassing_Child
