@@ -6,6 +6,20 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- compiler/perf: close issue #1721 with conservative callable-use analysis in
+  symbol/HIR lowering. Direct-only `const` arrows and anonymous function
+  expressions now retain their planned callable bodies and typed direct calls
+  without allocating, initializing, storing, or reserving a local for an
+  unobservable function object. Identity-observable and uncertain uses
+  (exports, aliases, returns, storage, unknown arguments, reflection,
+  `call`/`apply`/`bind`, recursion/SCCs, optional/spread calls, async/generator,
+  and captured value reads) continue to materialize. Add deterministic
+  classification diagnostics, identity/capture execution coverage, IL
+  allocation assertions, and an exact PrimeJavaScript guardrail that removes
+  the unused `main` arrow object while retaining
+  `ArrowFunction_L229C14::__js_call__`. A same-host Prime execute benchmark
+  reduced managed allocation from 410.78 KB to 408.86 KB per module execution;
+  measured execution time remained within noise.
 - compiler/perf: close issue #768 by generalizing stable `const` function-call
   lowering from arrows to safe arrow/function-expression initializers, using
   canonical Phase 1 callable IDs and direct `MethodDef` calls while retaining
