@@ -3555,7 +3555,7 @@ class HIRMethodBuilder
                     return true;
                 }
 
-                hirExpr = new HIRCallExpression(calleeExpr!, argExprs);
+                hirExpr = new HIRCallExpression(calleeExpr!, argExprs, callExpr);
                 return true;
 
             case ImportExpression importExpr:

@@ -542,31 +542,37 @@ public sealed partial class HIRToLIRLowerer
             }
 
             if (!hasSpreadArgs
-                && TryCreateCallableIdForConstInitializedArrow(
+                && TryCreateCallableIdForStableFunctionBinding(
                     symbol,
-                    out var constArrowCallableId,
-                    out var constArrowScope)
-                && !RequiresFunctionObjectInvocation(constArrowCallableId))
+                    callExpr.SourceCall,
+                    out var stableCallableId,
+                    out var stableCallableScope)
+                && !RequiresFunctionObjectInvocation(stableCallableId))
             {
-                var constArrowArguments = new List<TempVariable>(callExpr.Arguments.Length);
+                var stableCallableArguments = new List<TempVariable>(callExpr.Arguments.Length);
                 foreach (var arg in callExpr.Arguments)
                 {
                     if (!TryLowerExpression(arg, out var argTemp))
                     {
                         return false;
                     }
-                    constArrowArguments.Add(EnsureObject(argTemp));
+                    stableCallableArguments.Add(EnsureObject(argTemp));
                 }
 
-                var constArrowScopesTemp = CreateTempVariable();
-                if (!TryBuildScopesArrayForClosureBinding(constArrowScope, constArrowScopesTemp))
+                var stableCallableScopesTemp = CreateTempVariable();
+                if (!TryBuildScopesArrayForClosureBinding(stableCallableScope, stableCallableScopesTemp))
                 {
                     return false;
                 }
-                DefineTempStorage(constArrowScopesTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
+                DefineTempStorage(stableCallableScopesTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
 
-                _methodBodyIR.Instructions.Add(new LIRCallFunction(symbol, constArrowScopesTemp, constArrowArguments, resultTempVar, constArrowCallableId));
-                DefineDirectCallResultStorage(resultTempVar, constArrowCallableId, symbol.BindingInfo);
+                _methodBodyIR.Instructions.Add(new LIRCallFunction(
+                    symbol,
+                    stableCallableScopesTemp,
+                    stableCallableArguments,
+                    resultTempVar,
+                    stableCallableId));
+                DefineDirectCallResultStorage(resultTempVar, stableCallableId, symbol.BindingInfo);
                 return true;
             }
 

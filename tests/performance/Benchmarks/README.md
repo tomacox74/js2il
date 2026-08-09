@@ -174,6 +174,35 @@ The helper script is `scripts/runCubePhasedGuardrails.js`. It reports:
 
 For PRs that optimize cube performance, include the before/after benchmark output and the CI run id / Supabase run id used for comparison.
 
+#### Regexp stable-call guardrails
+
+Runs the exact classic/modern Dromaeo regexp pair:
+
+```powershell
+npm run perf:phased:regexp:dry
+```
+
+Run only the deterministic generated-IL checks:
+
+```powershell
+npm run perf:phased:regexp:il
+```
+
+Or combine the Dry benchmark and IL checks:
+
+```powershell
+npm run perf:phased:regexp:dry:il
+```
+
+`scripts/runRegexpStableCallGuardrails.js` uses exact `--scenario` selection.
+For the modern fixture it verifies that every source call to `randomChar` and
+`generateTestStrings` is a direct call to the canonical callable `MethodDef`,
+that the hot helper bodies contain no runtime callable dispatch, and that the
+remaining `fn()` dispatch in `prep`/`test` is present. The classic fixture is
+reported as a reference control. The check intentionally avoids
+whole-assembly closure/allocation counts because generated function-object
+adapters and benchmark callbacks make those counts misleading.
+
 #### Late-Bound Dispatch Comparison
 Runs a research-only microbenchmark that compares `JavaScriptRuntime.Object.CallMember*` against CLR-focused DLR call sites produced by C# `dynamic` and by a custom runtime-name `CallSiteBinder`:
 

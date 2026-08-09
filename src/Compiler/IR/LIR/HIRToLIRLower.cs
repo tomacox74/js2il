@@ -857,36 +857,8 @@ public sealed partial class HIRToLIRLowerer
     /// </summary>
     private static Scope? FindScopeByDeclarationNode(Acornima.Ast.Node declarationNode, Scope root)
     {
-        static bool NodesMatch(Acornima.Ast.Node a, Acornima.Ast.Node b)
-        {
-            if (ReferenceEquals(a, b))
-            {
-                return true;
-            }
-
-            if (a.GetType() != b.GetType())
-            {
-                return false;
-            }
-
-            // Acornima nodes can be re-parsed between phases, so reference equality can fail.
-            // Fall back to a stable match using source location.
-            var al = a.Location;
-            var bl = b.Location;
-
-            if (al.Start.Line <= 0 || bl.Start.Line <= 0)
-            {
-                return false;
-            }
-
-            return al.Start.Line == bl.Start.Line
-                && al.Start.Column == bl.Start.Column
-                && al.End.Line == bl.End.Line
-                && al.End.Column == bl.End.Column;
-        }
-
         // Check if this scope's AST node matches the declaration
-        if (NodesMatch(root.AstNode, declarationNode))
+        if (AstNodesMatch(root.AstNode, declarationNode))
         {
             return root;
         }
@@ -899,6 +871,34 @@ public sealed partial class HIRToLIRLowerer
         }
 
         return null;
+    }
+
+    private static bool AstNodesMatch(Acornima.Ast.Node a, Acornima.Ast.Node b)
+    {
+        if (ReferenceEquals(a, b))
+        {
+            return true;
+        }
+
+        if (a.GetType() != b.GetType())
+        {
+            return false;
+        }
+
+        // Acornima nodes can be re-parsed between phases, so reference equality can fail.
+        // Fall back to a stable match using source location.
+        var al = a.Location;
+        var bl = b.Location;
+
+        if (al.Start.Line <= 0 || bl.Start.Line <= 0)
+        {
+            return false;
+        }
+
+        return al.Start.Line == bl.Start.Line
+            && al.Start.Column == bl.Start.Column
+            && al.End.Line == bl.End.Line
+            && al.End.Column == bl.End.Column;
     }
 
     /// <summary>
