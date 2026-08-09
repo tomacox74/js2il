@@ -691,16 +691,17 @@
 				01 00 02 00 00 00 00 00
 			)
 			// Header size: 1
-			// Code size: 19 (0x13)
+			// Code size: 24 (0x18)
 			.maxstack 8
 
 			IL_0000: ldarg.0
 			IL_0001: ldc.i4.1
 			IL_0002: ldelem.ref
 			IL_0003: castclass Modules.Variable_ConstPrimitivePropagation/Scope/Switch_L118C0
-			IL_0008: ldfld float64 Modules.Variable_ConstPrimitivePropagation/Scope/Switch_L118C0::SKIPPED
-			IL_000d: box [System.Runtime]System.Double
-			IL_0012: ret
+			IL_0008: ldfld object Modules.Variable_ConstPrimitivePropagation/Scope/Switch_L118C0::SKIPPED
+			IL_000d: ldstr "Cannot access 'SKIPPED' before initialization"
+			IL_0012: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_0017: ret
 		} // end of method ArrowFunction_L122C21::__js_call__
 
 	} // end of class ArrowFunction_L122C21
@@ -2255,20 +2256,23 @@
 				44 7d 00 00
 			)
 			// Fields
-			.field public float64 SKIPPED
+			.field public object SKIPPED
 
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
 				// Header size: 1
-				// Code size: 8 (0x8)
+				// Code size: 19 (0x13)
 				.maxstack 8
 
 				IL_0000: ldarg.0
 				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-				IL_0006: nop
-				IL_0007: ret
+				IL_0006: ldarg.0
+				IL_0007: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+				IL_000c: stfld object Modules.Variable_ConstPrimitivePropagation/Scope/Switch_L118C0::SKIPPED
+				IL_0011: nop
+				IL_0012: ret
 			} // end of method Switch_L118C0::.ctor
 
 		} // end of class Switch_L118C0
@@ -2314,7 +2318,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 2043 (0x7fb)
+		// Code size: 2048 (0x800)
 		.maxstack 12
 		.locals init (
 			[0] class Modules.Variable_ConstPrimitivePropagation/Scope,
@@ -3091,51 +3095,52 @@
 		IL_0787: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
 		IL_078c: stloc.s 38
 		IL_078e: ldloc.s 38
-		IL_0790: brtrue IL_07af
+		IL_0790: brtrue IL_07b4
 
-		IL_0795: br IL_07f7
+		IL_0795: br IL_07fc
 
 		IL_079a: ldloc.s 27
 		IL_079c: castclass Modules.Variable_ConstPrimitivePropagation/Scope/Switch_L118C0
 		IL_07a1: ldc.r8 5
-		IL_07aa: stfld float64 Modules.Variable_ConstPrimitivePropagation/Scope/Switch_L118C0::SKIPPED
+		IL_07aa: box [System.Runtime]System.Double
+		IL_07af: stfld object Modules.Variable_ConstPrimitivePropagation/Scope/Switch_L118C0::SKIPPED
 
-		IL_07af: ldc.i4.2
-		IL_07b0: newarr [System.Runtime]System.Object
-		IL_07b5: dup
-		IL_07b6: ldc.i4.0
-		IL_07b7: ldloc.0
-		IL_07b8: stelem.ref
-		IL_07b9: dup
-		IL_07ba: ldc.i4.1
-		IL_07bb: ldloc.s 27
+		IL_07b4: ldc.i4.2
+		IL_07b5: newarr [System.Runtime]System.Object
+		IL_07ba: dup
+		IL_07bb: ldc.i4.0
+		IL_07bc: ldloc.0
 		IL_07bd: stelem.ref
-		IL_07be: stloc.s 29
-		IL_07c0: ldloc.s 29
-		IL_07c2: ldc.i4.0
-		IL_07c3: ldelem.ref
-		IL_07c4: castclass Modules.Variable_ConstPrimitivePropagation/Scope
-		IL_07c9: ldloc.s 29
-		IL_07cb: ldc.i4.1
-		IL_07cc: ldelem.ref
-		IL_07cd: castclass Modules.Variable_ConstPrimitivePropagation/Scope/Switch_L118C0
-		IL_07d2: ldloc.s 29
-		IL_07d4: newobj instance void Modules.Variable_ConstPrimitivePropagation/ArrowFunction_L122C21/FunctionObject::.ctor(class Modules.Variable_ConstPrimitivePropagation/Scope, class Modules.Variable_ConstPrimitivePropagation/Scope/Switch_L118C0, object[])
-		IL_07d9: ldc.i4.0
-		IL_07da: conv.r8
-		IL_07db: ldstr ""
-		IL_07e0: ldc.i4.0
-		IL_07e1: ldc.i4.0
-		IL_07e2: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Variable_ConstPrimitivePropagation/ArrowFunction_L122C21/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_07e7: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Variable_ConstPrimitivePropagation/ArrowFunction_L122C21/FunctionObject>(!!0)
-		IL_07ec: stloc.s 42
-		IL_07ee: ldloc.s 42
-		IL_07f0: stloc.s 26
-		IL_07f2: br IL_07f7
+		IL_07be: dup
+		IL_07bf: ldc.i4.1
+		IL_07c0: ldloc.s 27
+		IL_07c2: stelem.ref
+		IL_07c3: stloc.s 29
+		IL_07c5: ldloc.s 29
+		IL_07c7: ldc.i4.0
+		IL_07c8: ldelem.ref
+		IL_07c9: castclass Modules.Variable_ConstPrimitivePropagation/Scope
+		IL_07ce: ldloc.s 29
+		IL_07d0: ldc.i4.1
+		IL_07d1: ldelem.ref
+		IL_07d2: castclass Modules.Variable_ConstPrimitivePropagation/Scope/Switch_L118C0
+		IL_07d7: ldloc.s 29
+		IL_07d9: newobj instance void Modules.Variable_ConstPrimitivePropagation/ArrowFunction_L122C21/FunctionObject::.ctor(class Modules.Variable_ConstPrimitivePropagation/Scope, class Modules.Variable_ConstPrimitivePropagation/Scope/Switch_L118C0, object[])
+		IL_07de: ldc.i4.0
+		IL_07df: conv.r8
+		IL_07e0: ldstr ""
+		IL_07e5: ldc.i4.0
+		IL_07e6: ldc.i4.0
+		IL_07e7: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Variable_ConstPrimitivePropagation/ArrowFunction_L122C21/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_07ec: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Variable_ConstPrimitivePropagation/ArrowFunction_L122C21/FunctionObject>(!!0)
+		IL_07f1: stloc.s 42
+		IL_07f3: ldloc.s 42
+		IL_07f5: stloc.s 26
+		IL_07f7: br IL_07fc
 
-		IL_07f7: ldnull
-		IL_07f8: stloc.s 28
-		IL_07fa: ret
+		IL_07fc: ldnull
+		IL_07fd: stloc.s 28
+		IL_07ff: ret
 	} // end of method Variable_ConstPrimitivePropagation::__js_module_init__
 
 } // end of class Modules.Variable_ConstPrimitivePropagation

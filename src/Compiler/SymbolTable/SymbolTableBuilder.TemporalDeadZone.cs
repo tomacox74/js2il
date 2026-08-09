@@ -8,6 +8,16 @@ public partial class SymbolTableBuilder
     {
         foreach (var binding in scope.Bindings.Values)
         {
+            // Switch cases share one lexical environment, but control can enter a later case
+            // without evaluating an initializer in an earlier case. Materialize these lexical
+            // bindings so every cross-case read observes the TDZ sentinel.
+            if (binding.RequiresTemporalDeadZoneChecks && scope.AstNode is SwitchStatement)
+            {
+                binding.IsCaptured = true;
+                binding.RequiresRuntimeTemporalDeadZoneChecks = true;
+                continue;
+            }
+
             binding.RequiresRuntimeTemporalDeadZoneChecks =
                 binding.RequiresTemporalDeadZoneChecks
                 && binding.IsCaptured
@@ -90,6 +100,17 @@ public partial class SymbolTableBuilder
         if (!DoesScopeSubtreeReferenceBinding(candidateScope, scopeContext, targetBinding))
         {
             return false;
+        }
+
+        // Function declarations are instantiated when their containing scope/block is entered,
+        // so a declaration written after the lexical initializer can still be called before it.
+        if (candidateScope.AstNode is FunctionDeclaration
+            && targetBinding.DeclarationNode is VariableDeclarator
+            {
+                Init: ArrowFunctionExpression or FunctionExpression
+            })
+        {
+            return true;
         }
 
         return candidateScope.AstNode.Start < initializationBoundary;

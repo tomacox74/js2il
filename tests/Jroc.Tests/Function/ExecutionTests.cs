@@ -312,5 +312,14 @@ namespace Jroc.Tests.Function
 
         [Fact]
         public Task Arrow_Capture_HasScopesParameter() { var testName = nameof(Arrow_Capture_HasScopesParameter); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Function_StableConstCallable_Direct() { var testName = nameof(Function_StableConstCallable_Direct); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Function_StableConstCallable_Fallbacks() { var testName = nameof(Function_StableConstCallable_Fallbacks); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Function_StableConstCallable_TemporalDeadZone() { var testName = nameof(Function_StableConstCallable_TemporalDeadZone); return ExecutionTest(testName); }
     }
 }

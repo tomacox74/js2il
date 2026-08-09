@@ -45,6 +45,13 @@ Focused coverage includes:
 The legacy `Closure.BindArrow` API remains only as a compatibility/performance
 comparison surface; generated JavaScript no longer references it.
 
+Eligible bare calls through `const` arrow bindings can also bypass the
+materialized object and target the canonical callable `MethodDef`. This is a
+per-call optimization only; the object is still materialized for identity and
+all non-proven call forms. See
+[Stable function-valued binding calls](StableFunctionBindingCalls.md) for the
+initialization proof and semantic fallbacks.
+
 ## Performance
 
 Commands:
