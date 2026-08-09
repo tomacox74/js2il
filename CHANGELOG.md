@@ -6,6 +6,16 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- compiler/perf: close issue #768 by generalizing stable `const` function-call
+  lowering from arrows to safe arrow/function-expression initializers, using
+  canonical Phase 1 callable IDs and direct `MethodDef` calls while retaining
+  function-object identity. Add conservative post-initialization/TDZ proofs
+  and context-sensitive fallbacks for strict/ordinary receivers, lexical
+  `this`/`new.target`/`super`/`arguments`, named self identity, spread,
+  async/generator, and `with` cases. Add exact classic/modern
+  `dromaeo-object-regexp` IL guardrails; the modern hot calls were already
+  direct before this change and remain 5/5 (`randomChar`) and 34/34
+  (`generateTestStrings`), so no benchmark improvement is claimed.
 - runtime/hosting: close issue #1720 by projecting generated function exports
   through the public runtime-owned `JsCallable` API, preserving per-module
   identity and callback round trips across dynamic, typed, object-return, and
