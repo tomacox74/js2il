@@ -306,6 +306,23 @@ const contractDefinitions = [
         documentationModule: 'assert'
     },
     {
+        flag: '--async-hooks',
+        kind: 'normalized-api',
+        moduleSpecifier: 'async_hooks',
+        documentationPrefix: 'async_hooks.',
+        interfaceName: 'IAsyncHooksModule',
+        intrinsicClassName: 'AsyncHooks',
+        displayName: 'node:async_hooks',
+        outputStem: 'AsyncHooks',
+        overrideStem: 'asyncHooks',
+        lockStem: 'asyncHooks',
+        contractAlias: 'AsyncHooksContract',
+        documentationModule: 'async_hooks',
+        secondaryDocumentationModule: 'async_context',
+        methodClasses: ['AsyncHook'],
+        selectedMethodPrefix: '`async_hooks.'
+    },
+    {
         flag: '--net',
         kind: 'normalized-api',
         moduleSpecifier: 'net',
@@ -414,6 +431,12 @@ for (let index = 0; index < args.length; index++) {
         }
         continue;
     }
+    if (argument === '--secondary-input') {
+        if (++index >= args.length) {
+            throw new Error('--secondary-input requires a file path.');
+        }
+        continue;
+    }
 
     if (![
         '--check',
@@ -459,6 +482,8 @@ const generatorSha256 = crypto
 const checkOnly = args.includes('--check');
 const inputIndex = args.indexOf('--input');
 const inputPath = inputIndex >= 0 ? args[inputIndex + 1] : null;
+const secondaryInputIndex = args.indexOf('--secondary-input');
+const secondaryInputPath = secondaryInputIndex >= 0 ? args[secondaryInputIndex + 1] : null;
 
 if (inputIndex >= 0 && !inputPath) {
     throw new Error('--input requires a file path.');
@@ -472,6 +497,23 @@ async function loadDocumentation() {
     const response = await fetch(lock.sourceUrl);
     if (!response.ok) {
         throw new Error(`Failed to download ${lock.sourceUrl}: HTTP ${response.status}`);
+    }
+
+    return Buffer.from(await response.arrayBuffer());
+}
+
+async function loadSecondaryDocumentation() {
+    if (!contract.secondaryDocumentationModule) {
+        return null;
+    }
+    if (secondaryInputPath) {
+        return fs.readFileSync(path.resolve(secondaryInputPath));
+    }
+
+    const response = await fetch(lock.secondarySourceUrl);
+    if (!response.ok) {
+        throw new Error(
+            `Failed to download ${lock.secondarySourceUrl}: HTTP ${response.status}`);
     }
 
     return Buffer.from(await response.arrayBuffer());
@@ -1201,14 +1243,18 @@ function generateConfiguredNestedMethods(nestedContract) {
         }
 
         const metadata = getMemberContractMetadata(method.name, method.parameters, nestedContract);
-        const parameters = method.parameters.map(parameter => {
+        const parameters = method.parameters.map((parameter, index) => {
             if (!parameter.name || !parameter.type) {
                 throw new Error(
                     `Nested contract '${nestedContract.typeName}.${method.name}' has an incomplete parameter.`);
             }
+            if (parameter.rest && index !== method.parameters.length - 1) {
+                throw new Error(
+                    `Nested contract '${nestedContract.typeName}.${method.name}' has a non-final rest parameter.`);
+            }
 
             const attribute = metadata.parameterAttributes.get(parameter.name);
-            return `${attribute ? `${attribute} ` : ''}${parameter.optional ? 'object?' : mapType(parameter.type)} ${csharpIdentifier(parameter.name)}`;
+            return `${attribute ? `${attribute} ` : ''}${parameter.rest ? 'params object?[]' : parameter.optional ? 'object?' : mapType(parameter.type)} ${csharpIdentifier(parameter.name)}`;
         });
 
         return [
@@ -1224,15 +1270,22 @@ function generateConfiguredNestedMethods(nestedContract) {
     });
 }
 
-function resolveNestedDocumentationContainer(module, nestedContract) {
+function resolveNestedDocumentationContainer(module, nestedContract, secondaryModule) {
     const documentation = nestedContract.documentation;
     if (!documentation) {
         return null;
     }
 
-    const section = documentation.section
-        ? requireSection(module, documentation.section)
+    const documentationModule = documentation.document === 'secondary'
+        ? secondaryModule
         : module;
+    if (!documentationModule) {
+        throw new Error(
+            `Nested contract '${nestedContract.typeName}' requires unavailable secondary documentation.`);
+    }
+    const section = documentation.section
+        ? requireSection(documentationModule, documentation.section)
+        : documentationModule;
     if (!documentation.class) {
         return section;
     }
@@ -1247,13 +1300,16 @@ function resolveNestedDocumentationContainer(module, nestedContract) {
     return documentedClass;
 }
 
-function generateNestedContract(module, nestedContract) {
+function generateNestedContract(module, nestedContract, secondaryModule) {
     if (!nestedContract.typeName || !nestedContract.interfaceName || !nestedContract.source) {
         throw new Error(
             'Every nested contract must include typeName, interfaceName, and source.');
     }
 
-    const documentedContainer = resolveNestedDocumentationContainer(module, nestedContract);
+    const documentedContainer = resolveNestedDocumentationContainer(
+        module,
+        nestedContract,
+        secondaryModule);
     if (documentedContainer && nestedContract.methodCount !== undefined) {
         assertCount(
             documentedContainer.methods?.length ?? 0,
@@ -1266,16 +1322,28 @@ function generateNestedContract(module, nestedContract) {
             nestedContract.propertyCount,
             `nested ${nestedContract.typeName} property count`);
     }
+    if (documentedContainer && nestedContract.classMethodCount !== undefined) {
+        assertCount(
+            documentedContainer.classMethods?.length ?? 0,
+            nestedContract.classMethodCount,
+            `nested ${nestedContract.typeName} static method count`);
+    }
+    if (documentedContainer && nestedContract.constructorSignatureCount !== undefined) {
+        assertCount(
+            documentedContainer.signatures?.length ?? 0,
+            nestedContract.constructorSignatureCount,
+            `nested ${nestedContract.typeName} constructor signature count`);
+    }
     const documentationPrefix = nestedContract.documentationPrefix
         ?? `${nestedContract.typeName.toLowerCase()}.`;
-    const documentedMethods = documentedContainer
+    const documentedMethods = documentedContainer && !nestedContract.documentationOnly
         ? generateMethodOverloads(
             documentedContainer.methods ?? [],
             nestedContract,
             documentationPrefix)
         : [];
     const configuredMethods = generateConfiguredNestedMethods(nestedContract);
-    const documentedProperties = documentedContainer
+    const documentedProperties = documentedContainer && !nestedContract.documentationOnly
         ? generateProperties(documentedContainer.properties ?? [], nestedContract)
         : [];
     const configuredProperties = generateConfiguredNestedProperties(nestedContract);
@@ -1283,9 +1351,9 @@ function generateNestedContract(module, nestedContract) {
 
     return [
         '// <auto-generated />',
-        `// Generated from the official Node.js ${lock.nodeVersion} ${documentationModule} API documentation.`,
-        `// Source: ${lock.sourceUrl}`,
-        `// SHA-256: ${lock.sha256}`,
+        `// Generated from the official Node.js ${lock.nodeVersion} ${nestedContract.documentation?.document === 'secondary' ? contract.secondaryDocumentationModule : documentationModule} API documentation.`,
+        `// Source: ${nestedContract.documentation?.document === 'secondary' ? lock.secondarySourceUrl : lock.sourceUrl}`,
+        `// SHA-256: ${nestedContract.documentation?.document === 'secondary' ? lock.secondarySha256 : lock.sha256}`,
         '',
         '#nullable enable',
         '',
@@ -1398,8 +1466,19 @@ function generateInterface(documentation) {
         const methodSections = (contract.methodSections ?? [])
             .map(sectionName => requireSection(module, sectionName));
         const methodContainers = methodSections.length > 0 ? methodSections : [module];
-        const selectedMethods = methodContainers.flatMap(
-            container => container.methods ?? []);
+        const methodClasses = (contract.methodClasses ?? []).map(className => {
+            const documentedClass = module.classes?.find(candidate => candidate.name === className);
+            if (!documentedClass) {
+                throw new Error(
+                    `Official ${contract.moduleSpecifier} documentation is missing class '${className}'.`);
+            }
+            return documentedClass;
+        });
+        const selectedMethods = [
+            ...methodContainers.flatMap(container => container.methods ?? []),
+            ...methodClasses.flatMap(documentedClass => documentedClass.methods ?? [])
+        ].filter(method => !contract.selectedMethodPrefix
+            || method.textRaw.startsWith(contract.selectedMethodPrefix));
 
         assertCount(module.methods?.length ?? 0, lock.rootMethodCount, 'root method count');
         assertCount(module.properties?.length ?? 0, lock.rootPropertyCount, 'root property count');
@@ -2322,6 +2401,22 @@ async function main() {
     }
 
     const documentation = JSON.parse(source.toString('utf8'));
+    const secondarySource = await loadSecondaryDocumentation();
+    let secondaryModule = null;
+    if (secondarySource) {
+        const secondaryHash = crypto.createHash('sha256').update(secondarySource).digest('hex');
+        if (secondaryHash !== lock.secondarySha256) {
+            throw new Error(
+                `Official Node.js secondary documentation hash mismatch. Expected ${lock.secondarySha256}, received ${secondaryHash}.`);
+        }
+        const secondaryDocumentation = JSON.parse(secondarySource.toString('utf8'));
+        secondaryModule = secondaryDocumentation.modules?.find(
+            candidate => candidate.name === lock.secondaryModule);
+        if (!secondaryModule) {
+            throw new Error(
+                `Official secondary documentation does not contain module '${lock.secondaryModule}'.`);
+        }
+    }
     const generatedInterface = generateInterface(documentation);
     const generatedIntrinsicImplementation = generateIntrinsicImplementation(generatedInterface);
     const outputs = new Map([
@@ -2337,7 +2432,7 @@ async function main() {
 
     const nestedContracts = overrides.nestedContracts ?? [];
     for (const nestedContract of nestedContracts) {
-        const nestedInterface = generateNestedContract(module, nestedContract);
+        const nestedInterface = generateNestedContract(module, nestedContract, secondaryModule);
         outputs.set(generatedNestedContractOutputPath(nestedContract), nestedInterface);
 
         const nestedIntrinsicImplementation = generateNestedIntrinsicImplementation(

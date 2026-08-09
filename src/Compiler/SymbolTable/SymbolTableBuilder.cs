@@ -893,6 +893,17 @@ namespace Jroc.SymbolTables
                     && (scope.AstNode is ClassDeclaration || scope.AstNode is ClassExpression))
                 {
                     var localVariables = new HashSet<string>(scope.Bindings.Keys);
+                    var superClass = scope.AstNode switch
+                    {
+                        ClassDeclaration classDecl => classDecl.SuperClass,
+                        ClassExpression classExpr => classExpr.SuperClass,
+                        _ => null
+                    };
+                    if (ContainsFreeVariable(superClass, localVariables))
+                    {
+                        scope.ReferencesParentScopeVariables = true;
+                    }
+
                     var classBody = scope.AstNode switch
                     {
                         ClassDeclaration classDecl => classDecl.Body.Body,
@@ -980,6 +991,10 @@ namespace Jroc.SymbolTables
                     if (UnwrapExpression(classDecl.SuperClass) is FunctionExpression classSuperFunction)
                     {
                         BuildScopeRecursive(globalScope, classSuperFunction, classScope);
+                    }
+                    else if (classDecl.SuperClass != null)
+                    {
+                        BuildScopeRecursive(globalScope, classDecl.SuperClass, classScope);
                     }
                     // Process class body members for nested functions or fields later if needed
                     foreach (var element in classDecl.Body.Body)
@@ -2474,6 +2489,11 @@ namespace Jroc.SymbolTables
                     break;
 
                 case ClassDeclaration classDecl:
+                    CollectFreeVariables(
+                        classDecl.SuperClass,
+                        localVariables,
+                        targetVariables,
+                        result);
                     // Process class methods and field initializers
                     foreach (var element in classDecl.Body.Body)
                     {
@@ -2510,6 +2530,11 @@ namespace Jroc.SymbolTables
                     break;
 
                 case ClassExpression classExpr:
+                    CollectFreeVariables(
+                        classExpr.SuperClass,
+                        localVariables,
+                        targetVariables,
+                        result);
                     foreach (var element in classExpr.Body.Body)
                     {
                         if (element is MethodDefinition classExprMethod && classExprMethod.Value is FunctionExpression classExprFunc)
