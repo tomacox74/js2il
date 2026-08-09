@@ -541,13 +541,7 @@ public sealed partial class HIRToLIRLowerer
                 }
             }
 
-            if (!hasSpreadArgs
-                && TryCreateCallableIdForStableFunctionBinding(
-                    symbol,
-                    callExpr.SourceCall,
-                    out var stableCallableId,
-                    out var stableCallableScope)
-                && !RequiresFunctionObjectInvocation(stableCallableId))
+            if (callExpr.StableDirectCallableTarget is { } stableCallableTarget)
             {
                 var stableCallableArguments = new List<TempVariable>(callExpr.Arguments.Length);
                 foreach (var arg in callExpr.Arguments)
@@ -560,7 +554,9 @@ public sealed partial class HIRToLIRLowerer
                 }
 
                 var stableCallableScopesTemp = CreateTempVariable();
-                if (!TryBuildScopesArrayForClosureBinding(stableCallableScope, stableCallableScopesTemp))
+                if (!TryBuildScopesArrayForClosureBinding(
+                        stableCallableTarget.CallableScope,
+                        stableCallableScopesTemp))
                 {
                     return false;
                 }
@@ -571,8 +567,11 @@ public sealed partial class HIRToLIRLowerer
                     stableCallableScopesTemp,
                     stableCallableArguments,
                     resultTempVar,
-                    stableCallableId));
-                DefineDirectCallResultStorage(resultTempVar, stableCallableId, symbol.BindingInfo);
+                    stableCallableTarget.CallableId));
+                DefineDirectCallResultStorage(
+                    resultTempVar,
+                    stableCallableTarget.CallableId,
+                    symbol.BindingInfo);
                 return true;
             }
 

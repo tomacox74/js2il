@@ -999,7 +999,7 @@ public static class HIRBuilder
     }
 }
 
-class HIRMethodBuilder
+partial class HIRMethodBuilder
 {
     private static readonly JavaScriptRuntime.IRuntimeIntrinsicCatalog DefaultRuntimeIntrinsicCatalog =
         new JavaScriptRuntime.RuntimeIntrinsicCatalog();
@@ -1039,28 +1039,48 @@ class HIRMethodBuilder
     }
 
     private string GetCurrentDeclaringScopeName()
+        => GetDeclaringScopeName(_currentScope);
+
+    private static string GetDeclaringScopeName(Scope declaringScope)
     {
-        var root = _currentScope;
+        var root = declaringScope;
         while (root.Parent != null)
         {
             root = root.Parent;
         }
 
-        return _currentScope.Kind == ScopeKind.Global
+        return declaringScope.Kind == ScopeKind.Global
             ? root.Name
-            : $"{root.Name}/{_currentScope.GetQualifiedName()}";
+            : $"{root.Name}/{declaringScope.GetQualifiedName()}";
     }
 
     private HIRFunctionExpression CreateFunctionExpressionValue(Scope functionScope, FunctionExpression funcExpr)
     {
-        var functionName = (funcExpr.Id as Identifier)?.Name;
         var isStrictFunction = ArgumentsObjectSemantics.IsStrictScope(functionScope)
             || IsCurrentClassHeritageFunctionExpression(funcExpr);
-        var callableId = new CallableId
+        var callableId = CreateFunctionExpressionCallableId(
+            functionScope,
+            funcExpr,
+            GetCurrentDeclaringScopeName(),
+            isStrictFunction);
+
+        var isNonConstructible = functionScope.IsMethodDefinition
+            || functionScope.AstNode is MethodDefinition methodDefinition
+                && ReferenceEquals(methodDefinition.Value, funcExpr);
+        return new HIRFunctionExpression(callableId, functionScope, isNonConstructible);
+    }
+
+    private static CallableId CreateFunctionExpressionCallableId(
+        Scope functionScope,
+        FunctionExpression funcExpr,
+        string declaringScopeName,
+        bool isStrictFunction)
+    {
+        return new CallableId
         {
             Kind = CallableKind.FunctionExpression,
-            DeclaringScopeName = GetCurrentDeclaringScopeName(),
-            Name = functionName,
+            DeclaringScopeName = declaringScopeName,
+            Name = (funcExpr.Id as Identifier)?.Name,
             Location = SourceLocation.FromNode(funcExpr),
             JsParamCount = funcExpr.Params.Count(p => p is not Acornima.Ast.RestElement),
             NeedsArgumentsObject = functionScope.NeedsArgumentsObject,
@@ -1073,11 +1093,29 @@ class HIRMethodBuilder
             IsAccessorDefinition = functionScope.IsAccessorDefinition,
             AstNode = funcExpr
         };
+    }
 
-        var isNonConstructible = functionScope.IsMethodDefinition
-            || functionScope.AstNode is MethodDefinition methodDefinition
-                && ReferenceEquals(methodDefinition.Value, funcExpr);
-        return new HIRFunctionExpression(callableId, functionScope, isNonConstructible);
+    private static CallableId CreateArrowFunctionCallableId(
+        Scope arrowScope,
+        ArrowFunctionExpression arrowExpr)
+    {
+        var declaringScope = arrowScope.Parent
+            ?? throw new InvalidOperationException("Arrow callable scope must have a declaring scope.");
+        return new CallableId
+        {
+            Kind = CallableKind.Arrow,
+            DeclaringScopeName = GetDeclaringScopeName(declaringScope),
+            Name = null,
+            Location = SourceLocation.FromNode(arrowExpr),
+            JsParamCount = arrowExpr.Params.Count(p => p is not Acornima.Ast.RestElement),
+            NeedsArgumentsObject = false,
+            HasRestParameters = arrowScope.HasRestParameters,
+            UsesMappedArgumentsObject = false,
+            ArgumentsParameterNames = Array.Empty<string>(),
+            IncludeCalleeInArgumentsObject = false,
+            HasRestrictedFunctionProperties = false,
+            AstNode = arrowExpr
+        };
     }
 
     private bool IsCurrentClassHeritageFunctionExpression(FunctionExpression funcExpr)
@@ -3555,7 +3593,14 @@ class HIRMethodBuilder
                     return true;
                 }
 
-                hirExpr = new HIRCallExpression(calleeExpr!, argExprs, callExpr);
+                TryCreateStableDirectCallableTarget(
+                    callExpr,
+                    calleeExpr!,
+                    out var stableDirectCallableTarget);
+                hirExpr = new HIRCallExpression(
+                    calleeExpr!,
+                    argExprs,
+                    stableDirectCallableTarget);
                 return true;
 
             case ImportExpression importExpr:
@@ -4024,42 +4069,10 @@ class HIRMethodBuilder
                     return false;
                 }
 
-                // Match CallableDiscovery conventions so CallableRegistry lookups succeed.
-                string? assignmentTarget = null;
-                if (arrowScope.Name.StartsWith("ArrowFunction_") && !arrowScope.Name.StartsWith("ArrowFunction_L"))
-                {
-                    assignmentTarget = arrowScope.Name.Substring("ArrowFunction_".Length);
-                }
-
-                var declaringScope = arrowScope.Parent ?? _currentScope;
-                var root = declaringScope;
-                while (root.Parent != null)
-                {
-                    root = root.Parent;
-                }
-                var moduleName = root.Name;
-                var declaringScopeName = declaringScope.Kind == ScopeKind.Global
-                    ? moduleName
-                    : $"{moduleName}/{declaringScope.GetQualifiedName()}";
-
-                var arrowCallableId = new CallableId
-                {
-                    Kind = CallableKind.Arrow,
-                    DeclaringScopeName = declaringScopeName,
-                    Name = assignmentTarget,
-                    Location = SourceLocation.FromNode(arrowExpr),
-                    JsParamCount = arrowExpr.Params.Count(p => p is not Acornima.Ast.RestElement),
-                    NeedsArgumentsObject = arrowScope.NeedsArgumentsObject,
-                    HasRestParameters = arrowScope.HasRestParameters,
-                    IncludeCalleeInArgumentsObject = false,
-                    HasRestrictedFunctionProperties = false,
-                    AstNode = arrowExpr
-                };
-
                 var superConstructorUsage =
                     HIRBuilder.AnalyzeArrowSuperConstructorUsage(arrowExpr);
                 hirExpr = new HIRArrowFunctionExpression(
-                    arrowCallableId,
+                    CreateArrowFunctionCallableId(arrowScope, arrowExpr),
                     arrowScope,
                     superConstructorUsage.RequiresContext,
                     superConstructorUsage.ContainsCallInBody);

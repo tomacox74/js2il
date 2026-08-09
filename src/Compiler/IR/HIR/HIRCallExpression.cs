@@ -1,6 +1,5 @@
-
 using System.Collections.Immutable;
-using Acornima.Ast;
+
 namespace Jroc.HIR;
 
 public sealed class HIRCallExpression : HIRExpression
@@ -8,14 +7,14 @@ public sealed class HIRCallExpression : HIRExpression
     public HIRCallExpression(
         HIRExpression callee,
         IEnumerable<HIRExpression> arguments,
-        CallExpression? sourceCall = null)
+        HIRStableDirectCallableTarget? stableDirectCallableTarget = null)
     {
         Callee = callee;
         Arguments = arguments.ToImmutableArray();
-        SourceCall = sourceCall;
+        StableDirectCallableTarget = stableDirectCallableTarget;
     }
 
     public HIRExpression Callee { get; init; }
     public ImmutableArray<HIRExpression> Arguments { get; init; }
-    public CallExpression? SourceCall { get; init; }
+    public HIRStableDirectCallableTarget? StableDirectCallableTarget { get; init; }
 }

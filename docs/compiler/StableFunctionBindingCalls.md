@@ -34,6 +34,10 @@ case initializers still throw `ReferenceError`.
 The emitted `CallableId` matches Phase 1 discovery and retains the registry's
 inferred parameter/return types and capture ABI.
 
+Eligibility and callable semantics are derived during AST-to-HIR construction.
+Eligible `HIRCallExpression` nodes carry a canonical stable direct-call target;
+HIR-to-LIR lowering consumes that descriptor without inspecting the AST.
+
 ## Conservative fallbacks
 
 The function-object path remains authoritative when direct equivalence is not
@@ -58,6 +62,8 @@ callable merely because they use their own `this` or `new.target`.
 
 Focused execution and IL snapshots are under
 `tests/Jroc.Tests/Function/Function_StableConstCallable_*`.
+HIR descriptor eligibility coverage is in
+`tests/Jroc.Tests/HIRStableDirectCallableTests.cs`.
 
 The exact Dromaeo regexp pair can be checked with:
 
