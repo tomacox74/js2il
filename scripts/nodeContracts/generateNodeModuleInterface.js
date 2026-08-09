@@ -292,6 +292,20 @@ const contractDefinitions = [
         documentationModule: 'querystring'
     },
     {
+        flag: '--assert',
+        kind: 'normalized-api',
+        moduleSpecifier: 'assert',
+        documentationPrefix: 'assert.',
+        interfaceName: 'IAssertModule',
+        intrinsicClassName: 'AssertModule',
+        displayName: 'node:assert',
+        outputStem: 'Assert',
+        overrideStem: 'assert',
+        lockStem: 'assert',
+        contractAlias: 'AssertContract',
+        documentationModule: 'assert'
+    },
+    {
         flag: '--net',
         kind: 'normalized-api',
         moduleSpecifier: 'net',

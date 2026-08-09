@@ -4,19 +4,20 @@
 
 **Target Node.js Version:** `22.x LTS`
 
-**Generated:** `2026-07-16T07:16:26Z`
+**Generated:** `2026-08-09T19:52:08Z`
 
 ## Summary
 
-- **Modules:** 24
+- **Modules:** 25
 - **Globals:** 18
   - Supported: 15
-  - Partial: 24
+  - Partial: 25
 
 ## Modules
 
 | Module | Status | Documentation |
 | --- | --- | --- |
+| [assert](assert.md) | partial | [Node.js](https://nodejs.org/api/assert.html) |
 | [buffer](buffer_module.md) | partial | [Node.js](https://nodejs.org/api/buffer.html) |
 | [child_process](child_process.md) | partial | [Node.js](https://nodejs.org/api/child_process.html) |
 | [console](console.md) | partial | [Node.js](https://nodejs.org/api/console.html) |
