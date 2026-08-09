@@ -11,7 +11,7 @@ namespace Jroc.Runtime.Node.Contracts;
 /// Defines the documented <c>node:fs.ReadFileOptions</c> contract.
 /// </summary>
 /// <remarks>Source: <c>https://nodejs.org/docs/v24.18.1/api/fs.html#fsreadfilepath-options-callback</c>.</remarks>
-[global::System.CodeDom.Compiler.GeneratedCode("generateNodeModuleInterface.js", "sha256:93229019781b96b99bbb9db54e0ac5ddb7af9b085a482cbaa081b3cf230b4aea")]
+[global::System.CodeDom.Compiler.GeneratedCode("generateNodeModuleInterface.js", "sha256:9126c7db48fedfbf7645d8b0f91f5cd9ce18f98db5f0ed246b9e0b8eee2b872d")]
 [NodeModuleType("fs", "ReadFileOptions")]
 public interface IFsReadFileOptions : IJavaScriptValueHost
 {

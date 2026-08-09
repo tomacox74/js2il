@@ -6,6 +6,15 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- runtime/node: add `async_hooks` and `node:async_hooks` with a complete
+  Node.js 24.18.1 contract, constructable and subclassable `AsyncResource`,
+  runtime-scoped async IDs and hooks, Promise lifecycle events, and
+  `AsyncLocalStorage` propagation through Promise, next-tick, timer, immediate,
+  and filesystem callback boundaries. Keep context capture pay-for-play with a
+  zero-allocation inactive scheduler path and add separate enabled-context
+  benchmarks. A same-host short-run microbenchmark measured direct callbacks at
+  13.07 ns/24 B, explicit `AsyncResource` calls at 355.09 ns/256 B, and active
+  `AsyncLocalStorage` calls at 383.70 ns/296 B per operation.
 - runtime/node: add callable `assert` and `node:assert` support with core scalar,
   regular-expression, synchronous exception, strict-mode, and Node-style
   `AssertionError` behavior. Generate the complete public Node.js 24.18.1

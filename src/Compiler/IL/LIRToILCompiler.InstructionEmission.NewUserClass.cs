@@ -171,14 +171,26 @@ internal sealed partial class LIRToILCompiler
 
                     void EmitAttachClassPrototype()
                     {
-                        ilEncoder.OpCode(ILOpCode.Ldtoken);
-                        ilEncoder.Token(classTypeForPrototype);
-                        var getTypeFromHandleForPrototype = _memberRefRegistry.GetOrAddMethod(
-                            typeof(Type),
-                            nameof(Type.GetTypeFromHandle),
-                            parameterTypes: new[] { typeof(RuntimeTypeHandle) });
-                        ilEncoder.OpCode(ILOpCode.Call);
-                        ilEncoder.Token(getTypeFromHandleForPrototype);
+                        if (newUserClass.IsDerivedConstructor)
+                        {
+                            EmitLoadTempAsObject(
+                                newUserClass.NewTarget,
+                                ilEncoder,
+                                allocation,
+                                methodDescriptor);
+                        }
+                        else
+                        {
+                            ilEncoder.OpCode(ILOpCode.Ldtoken);
+                            ilEncoder.Token(classTypeForPrototype);
+                            var getTypeFromHandleForPrototype =
+                                _memberRefRegistry.GetOrAddMethod(
+                                    typeof(Type),
+                                    nameof(Type.GetTypeFromHandle),
+                                    parameterTypes: new[] { typeof(RuntimeTypeHandle) });
+                            ilEncoder.OpCode(ILOpCode.Call);
+                            ilEncoder.Token(getTypeFromHandleForPrototype);
+                        }
 
                         ilEncoder.LoadString(_metadataBuilder.GetOrAddUserString("prototype"));
                         var getProperty = _memberRefRegistry.GetOrAddMethod(

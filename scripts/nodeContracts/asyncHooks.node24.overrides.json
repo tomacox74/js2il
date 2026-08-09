@@ -1,0 +1,250 @@
+{
+  "properties": [
+    {
+      "name": "AsyncResource",
+      "type": "Object",
+      "source": "https://nodejs.org/docs/v24.18.1/api/async_context.html#class-asyncresource"
+    },
+    {
+      "name": "AsyncLocalStorage",
+      "type": "Object",
+      "source": "https://nodejs.org/docs/v24.18.1/api/async_context.html#class-asynclocalstorage"
+    },
+    {
+      "name": "asyncWrapProviders",
+      "type": "Object",
+      "source": "https://nodejs.org/docs/v24.18.1/api/async_hooks.html#async_hooksasyncwrapproviders"
+    }
+  ],
+  "normalizedMethods": [
+    {
+      "name": "executionAsyncId",
+      "signatures": ["async_hooks.executionAsyncId()"],
+      "parameters": [],
+      "returnType": "number",
+      "source": "https://nodejs.org/docs/v24.18.1/api/async_hooks.html#async_hooksexecutionasyncid"
+    },
+    {
+      "name": "triggerAsyncId",
+      "signatures": ["async_hooks.triggerAsyncId()"],
+      "parameters": [],
+      "returnType": "number",
+      "source": "https://nodejs.org/docs/v24.18.1/api/async_hooks.html#async_hookstriggerasyncid"
+    },
+    {
+      "name": "executionAsyncResource",
+      "signatures": ["async_hooks.executionAsyncResource()"],
+      "parameters": [],
+      "returnType": "Object",
+      "source": "https://nodejs.org/docs/v24.18.1/api/async_hooks.html#async_hooksexecutionasyncresource"
+    }
+  ],
+  "intrinsicImplementations": {
+    "AsyncResource": { "style": "direct" },
+    "AsyncLocalStorage": { "style": "direct" },
+    "asyncWrapProviders": { "style": "direct" },
+    "createHook": { "style": "direct", "target": "CreateHook" },
+    "executionAsyncId": { "style": "direct", "target": "ExecutionAsyncId" },
+    "triggerAsyncId": { "style": "direct", "target": "TriggerAsyncId" },
+    "executionAsyncResource": { "style": "direct", "target": "ExecutionAsyncResource" }
+  },
+  "nestedContracts": [
+    {
+      "typeName": "AsyncHook",
+      "interfaceName": "IAsyncHook",
+      "source": "https://nodejs.org/docs/v24.18.1/api/async_hooks.html#class-asynchook",
+      "documentation": {
+        "class": "AsyncHook"
+      },
+      "documentationOnly": true,
+      "methodCount": 5,
+      "propertyCount": 1,
+      "classMethodCount": 0,
+      "constructorSignatureCount": 0,
+      "documentationPrefix": "asyncHook.",
+      "intrinsicType": "AsyncHookObject",
+      "methods": [
+        {
+          "name": "enable",
+          "signatures": ["asyncHook.enable()"],
+          "parameters": [],
+          "returnType": "Object",
+          "source": "https://nodejs.org/docs/v24.18.1/api/async_hooks.html#asynchookenable"
+        },
+        {
+          "name": "disable",
+          "signatures": ["asyncHook.disable()"],
+          "parameters": [],
+          "returnType": "Object",
+          "source": "https://nodejs.org/docs/v24.18.1/api/async_hooks.html#asynchookdisable"
+        }
+      ],
+      "intrinsicImplementations": {
+        "enable": { "style": "direct" },
+        "disable": { "style": "direct" }
+      }
+    },
+    {
+      "typeName": "AsyncLocalStorage",
+      "interfaceName": "IAsyncLocalStorage",
+      "source": "https://nodejs.org/docs/v24.18.1/api/async_context.html#class-asynclocalstorage",
+      "documentation": {
+        "document": "secondary",
+        "class": "AsyncLocalStorage"
+      },
+      "documentationOnly": true,
+      "methodCount": 5,
+      "propertyCount": 1,
+      "classMethodCount": 2,
+      "constructorSignatureCount": 1,
+      "documentationPrefix": "asyncLocalStorage.",
+      "intrinsicType": "AsyncLocalStorageObject",
+      "properties": [
+        {
+          "name": "name",
+          "type": "string",
+          "source": "https://nodejs.org/docs/v24.18.1/api/async_context.html#asynclocalstoragename"
+        }
+      ],
+      "methods": [
+        {
+          "name": "disable",
+          "signatures": ["asyncLocalStorage.disable()"],
+          "parameters": [],
+          "returnType": "void",
+          "source": "https://nodejs.org/docs/v24.18.1/api/async_context.html#asynclocalstoragedisable"
+        },
+        {
+          "name": "getStore",
+          "signatures": ["asyncLocalStorage.getStore()"],
+          "parameters": [],
+          "returnType": "any",
+          "source": "https://nodejs.org/docs/v24.18.1/api/async_context.html#asynclocalstoragegetstore"
+        },
+        {
+          "name": "enterWith",
+          "signatures": ["asyncLocalStorage.enterWith(store)"],
+          "parameters": [
+            { "name": "store", "type": "any" }
+          ],
+          "returnType": "void",
+          "source": "https://nodejs.org/docs/v24.18.1/api/async_context.html#asynclocalstorageenterwithstore"
+        },
+        {
+          "name": "run",
+          "signatures": ["asyncLocalStorage.run(store, callback[, ...args])"],
+          "parameters": [
+            { "name": "store", "type": "any" },
+            { "name": "callback", "type": "Function" },
+            { "name": "args", "type": "any", "rest": true }
+          ],
+          "returnType": "any",
+          "source": "https://nodejs.org/docs/v24.18.1/api/async_context.html#asynclocalstoragerunstore-callback-args"
+        },
+        {
+          "name": "exit",
+          "signatures": ["asyncLocalStorage.exit(callback[, ...args])"],
+          "parameters": [
+            { "name": "callback", "type": "Function" },
+            { "name": "args", "type": "any", "rest": true }
+          ],
+          "returnType": "any",
+          "source": "https://nodejs.org/docs/v24.18.1/api/async_context.html#asynclocalstorageexitcallback-args"
+        }
+      ],
+      "intrinsicImplementations": {
+        "name": { "style": "direct" },
+        "disable": { "style": "direct" },
+        "getStore": { "style": "direct" },
+        "enterWith": { "style": "direct" },
+        "run": { "style": "direct" },
+        "exit": { "style": "direct" }
+      }
+    },
+    {
+      "typeName": "AsyncResource",
+      "interfaceName": "IAsyncResource",
+      "source": "https://nodejs.org/docs/v24.18.1/api/async_context.html#class-asyncresource",
+      "documentation": {
+        "document": "secondary",
+        "class": "AsyncResource"
+      },
+      "documentationOnly": true,
+      "methodCount": 5,
+      "propertyCount": 0,
+      "classMethodCount": 1,
+      "constructorSignatureCount": 1,
+      "documentationPrefix": "asyncResource.",
+      "intrinsicType": "AsyncResourceObject",
+      "methods": [
+        {
+          "name": "bind",
+          "signatures": ["asyncResource.bind(fn[, thisArg])"],
+          "parameters": [
+            { "name": "fn", "type": "Function" }
+          ],
+          "returnType": "Function",
+          "source": "https://nodejs.org/docs/v24.18.1/api/async_context.html#asyncresourcebindfn-thisarg"
+        },
+        {
+          "name": "bind",
+          "signatures": ["asyncResource.bind(fn[, thisArg])"],
+          "parameters": [
+            { "name": "fn", "type": "Function" },
+            { "name": "thisArg", "type": "any" }
+          ],
+          "returnType": "Function",
+          "source": "https://nodejs.org/docs/v24.18.1/api/async_context.html#asyncresourcebindfn-thisarg"
+        },
+        {
+          "name": "runInAsyncScope",
+          "signatures": ["asyncResource.runInAsyncScope(fn[, thisArg, ...args])"],
+          "parameters": [
+            { "name": "fn", "type": "Function" }
+          ],
+          "returnType": "any",
+          "source": "https://nodejs.org/docs/v24.18.1/api/async_context.html#asyncresourceruninasyncscopefn-thisarg-args"
+        },
+        {
+          "name": "runInAsyncScope",
+          "signatures": ["asyncResource.runInAsyncScope(fn[, thisArg, ...args])"],
+          "parameters": [
+            { "name": "fn", "type": "Function" },
+            { "name": "thisArg", "type": "any" },
+            { "name": "args", "type": "any", "rest": true }
+          ],
+          "returnType": "any",
+          "source": "https://nodejs.org/docs/v24.18.1/api/async_context.html#asyncresourceruninasyncscopefn-thisarg-args"
+        },
+        {
+          "name": "emitDestroy",
+          "signatures": ["asyncResource.emitDestroy()"],
+          "parameters": [],
+          "returnType": "Object",
+          "source": "https://nodejs.org/docs/v24.18.1/api/async_context.html#asyncresourceemitdestroy"
+        },
+        {
+          "name": "asyncId",
+          "signatures": ["asyncResource.asyncId()"],
+          "parameters": [],
+          "returnType": "number",
+          "source": "https://nodejs.org/docs/v24.18.1/api/async_context.html#asyncresourceasyncid"
+        },
+        {
+          "name": "triggerAsyncId",
+          "signatures": ["asyncResource.triggerAsyncId()"],
+          "parameters": [],
+          "returnType": "number",
+          "source": "https://nodejs.org/docs/v24.18.1/api/async_context.html#asyncresourcetriggerasyncid"
+        }
+      ],
+      "intrinsicImplementations": {
+        "bind": { "style": "direct" },
+        "runInAsyncScope": { "style": "direct" },
+        "emitDestroy": { "style": "direct" },
+        "asyncId": { "style": "direct" },
+        "triggerAsyncId": { "style": "direct" }
+      }
+    }
+  ]
+}
