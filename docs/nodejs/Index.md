@@ -4,14 +4,14 @@
 
 **Target Node.js Version:** `22.x LTS`
 
-**Generated:** `2026-08-09T23:11:37Z`
+**Generated:** `2026-08-10T00:36:16Z`
 
 ## Summary
 
-- **Modules:** 27
+- **Modules:** 28
 - **Globals:** 18
   - Supported: 15
-  - Partial: 27
+  - Partial: 28
 
 ## Modules
 
@@ -23,6 +23,7 @@
 | [child_process](child_process.md) | partial | [Node.js](https://nodejs.org/api/child_process.html) |
 | [console](console.md) | partial | [Node.js](https://nodejs.org/api/console.html) |
 | [crypto](crypto.md) | partial | [Node.js](https://nodejs.org/api/crypto.html) |
+| [diagnostics_channel](diagnostics_channel.md) | partial | [Node.js](https://nodejs.org/api/diagnostics_channel.html) |
 | [dns](dns.md) | partial | [Node.js](https://nodejs.org/api/dns.html) |
 | [events](events.md) | completed | [Node.js](https://nodejs.org/api/events.html) |
 | [fs](fs.md) | partial | [Node.js](https://nodejs.org/api/fs.html) |

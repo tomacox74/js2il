@@ -6,6 +6,12 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- runtime/node: add `diagnostics_channel` and `node:diagnostics_channel` with
+  a complete generated Node.js 24.18.1 contract. Named channels reuse
+  identity within a runtime, provide the low-overhead `hasSubscribers` guard
+  used by Undici, and synchronously deliver module-level or instance
+  subscriptions. Tracing and AsyncLocalStorage store APIs remain explicit
+  unavailable contract members.
 - runtime/node: add `dns` and `node:dns` with a complete generated Node.js
   24.18.1 contract. `lookup()` supports the callback forms required by Undici,
   including asynchronous error-first completion, `family`, `all`, `order`, and

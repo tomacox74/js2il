@@ -1564,6 +1564,7 @@ public class RuntimeServices
         container.Register<IEnvironment, DefaultEnvironment>();
         container.Register<Node.IChildProcessLauncher, Node.DefaultChildProcessLauncher>();
         container.Register<Node.AsyncContextRuntime>();
+        container.Register<Node.DiagnosticsChannelRuntime>();
         
         return container;
     }

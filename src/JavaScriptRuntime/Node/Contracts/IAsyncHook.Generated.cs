@@ -11,7 +11,7 @@ namespace Jroc.Runtime.Node.Contracts;
 /// Defines the documented <c>node:async_hooks.AsyncHook</c> contract.
 /// </summary>
 /// <remarks>Source: <c>https://nodejs.org/docs/v24.18.1/api/async_hooks.html#class-asynchook</c>.</remarks>
-[global::System.CodeDom.Compiler.GeneratedCode("generateNodeModuleInterface.js", "sha256:2e1877a88a0be5be6f1ce68d6801f81345518c2272d2b70984df61b7ca02aca0")]
+[global::System.CodeDom.Compiler.GeneratedCode("generateNodeModuleInterface.js", "sha256:de7d46c347d581581a76dc391aa1fcd75d184d772e05ee622c88f4c5b6aa96ad")]
 [NodeModuleType("async_hooks", "AsyncHook")]
 public interface IAsyncHook : IJavaScriptValueHost
 {

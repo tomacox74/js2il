@@ -10,7 +10,7 @@ namespace Jroc.Runtime.Node.Contracts;
 /// <summary>
 /// Defines the public top-level <c>node:url</c> module contract from Node.js 24.18.1.
 /// </summary>
-[global::System.CodeDom.Compiler.GeneratedCode("generateNodeModuleInterface.js", "sha256:2e1877a88a0be5be6f1ce68d6801f81345518c2272d2b70984df61b7ca02aca0")]
+[global::System.CodeDom.Compiler.GeneratedCode("generateNodeModuleInterface.js", "sha256:de7d46c347d581581a76dc391aa1fcd75d184d772e05ee622c88f4c5b6aa96ad")]
 [NodeModuleInterface("url")]
 public interface IUrlModule
 {

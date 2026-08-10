@@ -11,7 +11,7 @@ namespace Jroc.Runtime.Node.Contracts;
 /// Defines the documented <c>node:perf_hooks.Performance</c> contract.
 /// </summary>
 /// <remarks>Source: <c>https://nodejs.org/docs/v24.18.1/api/perf_hooks.html#perf_hooksperformance</c>.</remarks>
-[global::System.CodeDom.Compiler.GeneratedCode("generateNodeModuleInterface.js", "sha256:2e1877a88a0be5be6f1ce68d6801f81345518c2272d2b70984df61b7ca02aca0")]
+[global::System.CodeDom.Compiler.GeneratedCode("generateNodeModuleInterface.js", "sha256:de7d46c347d581581a76dc391aa1fcd75d184d772e05ee622c88f4c5b6aa96ad")]
 [NodeModuleType("perf_hooks", "Performance")]
 public interface IPerfHooksPerformance : IJavaScriptValueHost
 {

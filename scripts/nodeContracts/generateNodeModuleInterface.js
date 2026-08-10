@@ -337,6 +337,21 @@ const contractDefinitions = [
         documentationModule: 'dns'
     },
     {
+        flag: '--diagnostics-channel',
+        kind: 'normalized-api',
+        moduleSpecifier: 'diagnostics_channel',
+        documentationPrefix: 'diagnostics_channel.',
+        interfaceName: 'IDiagnosticsChannelModule',
+        intrinsicClassName: 'DiagnosticsChannel',
+        displayName: 'node:diagnostics_channel',
+        outputStem: 'DiagnosticsChannel',
+        overrideStem: 'diagnosticsChannel',
+        lockStem: 'diagnosticsChannel',
+        contractAlias: 'DiagnosticsChannelContract',
+        documentationModule: 'diagnostics_channel',
+        methodSections: ['public_api/overview']
+    },
+    {
         flag: '--net',
         kind: 'normalized-api',
         moduleSpecifier: 'net',
@@ -534,7 +549,9 @@ async function loadSecondaryDocumentation() {
 }
 
 function requireSection(module, sectionName) {
-    const section = module.modules?.find(candidate => candidate.name === sectionName);
+    const section = sectionName.split('/').reduce(
+        (container, name) => container?.modules?.find(candidate => candidate.name === name),
+        module);
     if (!section) {
         throw new Error(
             `Official ${contract.moduleSpecifier} documentation is missing the '${sectionName}' section.`);
