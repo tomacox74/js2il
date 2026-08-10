@@ -131,13 +131,15 @@ public sealed class AsyncGeneratorObject : IJavaScriptAsyncIterator
         CallableOperations.Call1(deferred.reject, null, reason);
     }
 
-    private void InvokeMoveNext(AsyncGeneratorScope scope, object moveNext)
+    private void InvokeMoveNext(
+        AsyncGeneratorScope scope,
+        CompiledContinuation moveNext)
     {
         var previousThis = RuntimeServices.SetCurrentThis(
             RuntimeServices.ResolveLexicalThis(scope.ThisValue));
         try
         {
-            Closure.InvokeWithArgs(moveNext, _scopes);
+            moveNext.Resume();
         }
         finally
         {
@@ -174,7 +176,6 @@ public sealed class AsyncGeneratorObject : IJavaScriptAsyncIterator
 
         try
         {
-            // MoveNext is a Func<object[], object> produced by Closure.BindMoveNext.
             InvokeMoveNext(scope, moveNext);
         }
         catch (Exception ex)

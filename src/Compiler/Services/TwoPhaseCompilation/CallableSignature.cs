@@ -4,8 +4,9 @@ using System.Reflection.Metadata;
 namespace Jroc.Services.TwoPhaseCompilation;
 
 /// <summary>
-/// Specifies the invoke shape (delegate type) for a callable.
-/// This determines which System.Func or System.Action type is used for delegate creation.
+/// Classifies the fixed JavaScript parameter arity of a canonical callable.
+/// The name is retained for metadata compatibility; materialized compiled
+/// functions use generated function objects rather than these delegate shapes.
 /// </summary>
 public enum CallableInvokeShape
 {
@@ -29,8 +30,8 @@ public enum CallableInvokeShape
 /// </summary>
 /// <remarks>
 /// CallableSignature contains enough information to:
-/// 1. Emit delegate creation IL (ldnull, ldftn, newobj)
-/// 2. Emit direct call IL
+/// 1. Declare the canonical typed MethodDef
+/// 2. Emit direct call and generated object-adapter IL
 /// 3. Determine if a scopes parameter is required
 /// </remarks>
 public sealed record CallableSignature

@@ -441,15 +441,17 @@ namespace JavaScriptRuntime
                 return false;
             }
 
-            var intrinsic = GlobalThis.RegExp;
+            var intrinsic =
+                BuiltinDelegateFunctionAdapter.FromDelegate(
+                    GlobalThis.RegExp);
             if (ReferenceEquals(value, intrinsic) || Equals(value, intrinsic))
             {
                 return true;
             }
 
-            return value is Delegate candidate
-                && intrinsic is Delegate intrinsicDelegate
-                && candidate.Method == intrinsicDelegate.Method;
+            return CallableOperations.HasSameBuiltinDelegateMethod(
+                value,
+                intrinsic);
         }
 
         internal bool TryInvokeIntrinsicWellKnownSymbol(Symbol symbol, string input, out object? result)

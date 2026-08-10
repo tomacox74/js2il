@@ -54,11 +54,22 @@ public class NodeUtilityObjectRepresentationTests
         var util = new NodeUtil();
         Action child = static () => { };
         Action parent = static () => { };
+        var childFunction =
+            new BuiltinDelegateFunctionAdapter(
+                child,
+                isConstructor: true);
+        var parentFunction =
+            new BuiltinDelegateFunctionAdapter(
+                parent,
+                isConstructor: true);
 
-        util.inherits(child, parent);
+        util.inherits(childFunction, parentFunction);
 
         Assert.IsAssignableFrom<JsObject>(util.types);
-        Assert.IsType<JsObject>(ObjectRuntime.GetProperty(child, "prototype"));
+        Assert.IsType<JsObject>(
+            ObjectRuntime.GetProperty(
+                childFunction,
+                "prototype"));
     }
 
     [Fact]

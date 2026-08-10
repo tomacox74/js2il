@@ -87,7 +87,13 @@ public record LIRStoreParameter(int ParameterIndex, TempVariable Value) : LIRIns
 /// Calls a user-defined function with parameters.
 /// The Symbol contains the BindingInfo used to look up the compiled method handle.
 /// </summary>
-public record LIRCallFunction(Symbol FunctionSymbol, TempVariable ScopesArray, IReadOnlyList<TempVariable> Arguments, TempVariable Result, CallableId? CallableId = null) : LIRInstruction;
+public record LIRCallFunction(
+    Symbol FunctionSymbol,
+    TempVariable ScopesArray,
+    IReadOnlyList<TempVariable> Arguments,
+    TempVariable Result,
+    CallableId? CallableId = null,
+    TempVariable? FunctionValue = null) : LIRInstruction;
 
 /// <summary>
 /// Tail-calls a user-defined function and immediately returns its result.
@@ -100,18 +106,19 @@ public record LIRTailCallFunctionReturn(Symbol FunctionSymbol, TempVariable Scop
 /// This is used when the call-site argument count is not statically known (e.g., spread arguments:
 /// <c>f(...args)</c>, <c>f(1, ...xs, 2)</c>), so the compiler must build an args array at runtime.
 ///
-/// IL emission routes through <see cref="JavaScriptRuntime.Closure.InvokeWithArgs"/> to apply JS
-/// missing/extra argument semantics.
+/// IL emission routes through the generated function object's static array adapter, which calls
+/// the canonical typed body while preserving the function object's invocation context.
 /// </summary>
 public record LIRCallFunctionWithArgsArray(
     Symbol FunctionSymbol,
+    TempVariable FunctionValue,
     TempVariable ScopesArray,
     TempVariable ArgumentsArray,
     TempVariable Result,
     CallableId? CallableId = null) : LIRInstruction;
 
 /// <summary>
-/// Calls a function stored in a JS value (delegate) via runtime dispatch.
+/// Calls a function stored in a JS value via runtime dispatch.
 /// This is used for indirect calls like `const f = makeFn(); f(...)` where the callee is not a direct function binding.
 /// Emits: call JavaScriptRuntime.Closure.InvokeWithArgs(object target, object[] scopes, object[] args)
 /// </summary>
@@ -320,8 +327,8 @@ public record LIRCallUserClassBaseInstanceMethod(
 public record LIRCallDeclaredCallable(CallableId CallableId, IReadOnlyList<TempVariable> Arguments, TempVariable Result) : LIRInstruction;
 
 /// <summary>
-/// Creates a JS callable value (delegate) for an ArrowFunctionExpression and binds it to a scopes array.
-/// Emits: ldnull, ldftn <method>, newobj Func&lt;...&gt;::.ctor, ldloc/ldarg scopesArray, call Closure.Bind(object, object[])
+/// Creates a generated JS function object for an ArrowFunctionExpression and
+/// captures its lexical environment.
 /// </summary>
 public record LIRCreateBoundArrowFunction(
     CallableId CallableId,

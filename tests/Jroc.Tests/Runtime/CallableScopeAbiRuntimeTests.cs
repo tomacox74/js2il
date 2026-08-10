@@ -31,12 +31,31 @@ public class CallableScopeAbiRuntimeTests
         return scope.BaseValue + Convert.ToDouble(addend);
     }
 
+    [JsCallableScopeAbi(CallableScopeAbiKind.SingleScope, SingleScopeType = typeof(TestScope))]
+    private static object? ConstructWithScope(
+        TestScope scope,
+        object? newTarget,
+        object? addend)
+    {
+        return new JsObject
+        {
+            ["value"] = scope.BaseValue + Convert.ToDouble(addend),
+            ["newTarget"] = newTarget
+        };
+    }
+
     [Fact]
     public void Closure_InvokeWithArgs_UsesSingleScopeAttribute()
     {
         SingleScopeDelegate del = AddWithScope;
+        var adapter = new BuiltinDelegateFunctionAdapter(
+            del,
+            new object[] { new TestScope { BaseValue = 10 } });
 
-        var result = Closure.InvokeWithArgs(del, new object[] { new TestScope { BaseValue = 10 } }, 5.0);
+        var result = Closure.InvokeWithArgs(
+            adapter,
+            RuntimeServices.EmptyScopes,
+            5.0);
 
         Assert.Equal(15.0, Convert.ToDouble(result));
     }
@@ -50,18 +69,22 @@ public class CallableScopeAbiRuntimeTests
             BindingFlags.Static | BindingFlags.NonPublic)
             ?? throw new InvalidOperationException("Expected AddWithScope method.");
         var closed = (JsFuncNoScopes1)Delegate.CreateDelegate(typeof(JsFuncNoScopes1), scope, method);
+        var adapter = new BuiltinDelegateFunctionAdapter(closed);
 
-        var result = Closure.InvokeWithArgs(closed, new object[] { new TestScope { BaseValue = 999 } }, 5.0);
+        var result = Closure.InvokeWithArgs(
+            adapter,
+            new object[] { new TestScope { BaseValue = 999 } },
+            5.0);
 
         Assert.Equal(15.0, Convert.ToDouble(result));
     }
 
     [Fact]
-    public void LegacyDelegateFunctionAdapter_UsesSingleScopeAttribute()
+    public void BuiltinDelegateFunctionAdapter_UsesSingleScopeAttribute()
     {
         var host = new ScopedInstanceHost { BaseValue = 10 };
         InstanceSingleScopeDelegate del = host.Run;
-        var adapter = new LegacyDelegateFunctionAdapter(
+        var adapter = new BuiltinDelegateFunctionAdapter(
             del,
             new object[] { host });
 
@@ -71,5 +94,25 @@ public class CallableScopeAbiRuntimeTests
             new object?[] { 5.0 });
 
         Assert.Equal(15.0, Convert.ToDouble(result));
+    }
+
+    [Fact]
+    public void BuiltinDelegateFunctionAdapter_ConstructPreservesCapturedScopesAndNewTarget()
+    {
+        SingleScopeDelegate del = ConstructWithScope;
+        var adapter = new BuiltinDelegateFunctionAdapter(
+            del,
+            new object[] { new TestScope { BaseValue = 10 } });
+        JavaScriptRuntime.Function.MarkConstructible(adapter);
+        var newTarget = new JsObject();
+
+        var result = Assert.IsType<JsObject>(
+            CallableOperations.Construct(
+                adapter,
+                new object?[] { 5.0 },
+                newTarget));
+
+        Assert.Equal(15.0, result["value"]);
+        Assert.Same(newTarget, result["newTarget"]);
     }
 }

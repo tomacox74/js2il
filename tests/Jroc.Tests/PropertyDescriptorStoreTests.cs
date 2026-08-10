@@ -67,8 +67,12 @@ public class PropertyDescriptorStoreTests
         Assert.False(data.Enumerable);
 
         Assert.True(PropertyDescriptorStore.TryGetOwn(target, "accessor", out var accessor));
-        Assert.Same(getter, accessor.Get);
-        Assert.Same(setter, accessor.Set);
+        Assert.Same(
+            BuiltinDelegateFunctionAdapter.FromDelegate(getter),
+            accessor.Get);
+        Assert.Same(
+            BuiltinDelegateFunctionAdapter.FromDelegate(setter),
+            accessor.Set);
         Assert.Equal("accessor", ObjectRuntime.GetProperty(target, "accessor"));
     }
 
@@ -489,14 +493,18 @@ public class PropertyDescriptorStoreTests
             });
 
             Assert.True(PropertyDescriptorStore.TryGetOwn(target, "value", out var firstRead));
-            Assert.Same(getter, firstRead.Get);
-            Assert.Same(setter, firstRead.Set);
+            var getterAdapter =
+                BuiltinDelegateFunctionAdapter.FromDelegate(getter);
+            var setterAdapter =
+                BuiltinDelegateFunctionAdapter.FromDelegate(setter);
+            Assert.Same(getterAdapter, firstRead.Get);
+            Assert.Same(setterAdapter, firstRead.Set);
             firstRead.Get = null;
             firstRead.Enumerable = false;
 
             Assert.True(PropertyDescriptorStore.TryGetOwn(target, "value", out var secondRead));
-            Assert.Same(getter, secondRead.Get);
-            Assert.Same(setter, secondRead.Set);
+            Assert.Same(getterAdapter, secondRead.Get);
+            Assert.Same(setterAdapter, secondRead.Set);
             Assert.True(secondRead.Enumerable);
         }
         finally

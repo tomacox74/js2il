@@ -5,12 +5,35 @@ namespace JavaScriptRuntime;
 /// </summary>
 public static class CallableOperations
 {
+    internal static bool TryGetBuiltinAdapter(
+        object? value,
+        out BuiltinDelegateFunctionAdapter adapter)
+    {
+        if (value is BuiltinDelegateFunctionAdapter candidate)
+        {
+            adapter = candidate;
+            return true;
+        }
+
+        adapter = null!;
+        return false;
+    }
+
+    internal static bool IsBuiltinAdapter(object? value)
+        => TryGetBuiltinAdapter(value, out _);
+
+    internal static bool HasSameBuiltinDelegateMethod(
+        object? left,
+        object? right)
+        => TryGetBuiltinAdapter(left, out var leftAdapter)
+            && TryGetBuiltinAdapter(right, out var rightAdapter)
+            && leftAdapter.Target.Method == rightAdapter.Target.Method;
+
     public static bool IsCallable(object? value)
     {
         return value switch
         {
             JsFunctionObject => true,
-            Delegate => true,
             ClassConstructorValue => true,
             Type type => ObjectRuntime.IsConstructibleValue(type),
             Proxy proxy => proxy.IsCallableTarget,
@@ -218,11 +241,6 @@ public static class CallableOperations
                 functionObject,
                 thisArgument,
                 arguments),
-            Delegate legacyDelegate => LegacyDelegateFunctionAdapter.Invoke(
-                legacyDelegate,
-                RuntimeServices.EmptyScopes,
-                thisArgument,
-                arguments.ToArray()),
             Proxy proxy when proxy.IsCallableTarget => CallProxy(
                 proxy,
                 thisArgument,

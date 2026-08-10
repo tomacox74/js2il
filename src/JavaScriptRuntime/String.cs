@@ -125,13 +125,19 @@ namespace JavaScriptRuntime
 
         private static void DefinePrototypeMethod(object target, string key, object? value, double length, string? functionNameOverride = null)
         {
-            if (value is Delegate)
+            value =
+                BuiltinDelegateFunctionAdapter.WrapJavaScriptVisibleValue(
+                    value);
+            if (value is BuiltinDelegateFunctionAdapter builtinFunction)
             {
                 var functionName = functionNameOverride ?? (key.StartsWith("Symbol.", StringComparison.Ordinal)
                     ? $"[{key}]"
                     : key);
-                JavaScriptRuntime.Function.InitializeFunctionInstance(value, length, functionName);
-                PropertyDescriptorStore.DefineOrUpdate(value, "prototype", new JsPropertyDescriptor
+                JavaScriptRuntime.Function.InitializeFunctionInstance(
+                    builtinFunction,
+                    length,
+                    functionName);
+                PropertyDescriptorStore.DefineOrUpdate(builtinFunction, "prototype", new JsPropertyDescriptor
                 {
                     Kind = JsPropertyDescriptorKind.Data,
                     Enumerable = false,
@@ -154,6 +160,8 @@ namespace JavaScriptRuntime
         public static void ConfigureIntrinsicSurface(object stringConstructorValue)
         {
             using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
+            JavaScriptRuntime.Function.MarkConstructible(
+                stringConstructorValue);
 
             PrototypeChain.SetPrototype(Prototype, GlobalThis.ObjectPrototypeValue);
             PrototypeChain.SetPrototype(StringIteratorPrototype, GlobalThis.ObjectPrototypeValue);
@@ -533,21 +541,15 @@ namespace JavaScriptRuntime
                     return true;
                 }
 
-                if (descriptor.Get is not Delegate getter)
+                if (!CallableOperations.IsCallable(descriptor.Get))
                 {
                     throw new TypeError("Property accessor is not a function");
                 }
 
-                var previousThis = RuntimeServices.SetCurrentThis(receiver);
-                try
-                {
-                    value = Closure.InvokeWithArgs(getter, System.Array.Empty<object>(), System.Array.Empty<object>());
-                    return true;
-                }
-                finally
-                {
-                    RuntimeServices.SetCurrentThis(previousThis);
-                }
+                value = CallableOperations.Call0(
+                    descriptor.Get,
+                    receiver);
+                return true;
             }
 
             value = descriptor.Value;

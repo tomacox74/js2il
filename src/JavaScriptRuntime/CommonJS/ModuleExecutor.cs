@@ -18,25 +18,6 @@ internal sealed class ModuleExecutor
         _serviceProvider = serviceProvider;
     }
 
-    private static bool ShouldPreserveRawEntryRequire(Require requireService, string requestedSpecifier)
-    {
-        var normalized = requestedSpecifier.Trim().Replace('\\', '/');
-        if (!normalized.StartsWith("./", StringComparison.Ordinal) && !normalized.StartsWith("../", StringComparison.Ordinal))
-        {
-            return false;
-        }
-
-        var hasParentTraversal = normalized
-            .Split('/', StringSplitOptions.RemoveEmptyEntries)
-            .Any(segment => string.Equals(segment, "..", StringComparison.Ordinal));
-        if (!hasParentTraversal)
-        {
-            return false;
-        }
-
-        return requireService.CanResolveLocalModule(requestedSpecifier);
-    }
-
     private static string ResolveMainModuleId(ModuleMainDelegate scriptEntryPoint, string fallbackModuleId)
     {
         var declaringTypeName = scriptEntryPoint.Method.DeclaringType?.FullName;
@@ -67,22 +48,11 @@ internal sealed class ModuleExecutor
         var fallbackMainModuleId = ".";
         var mainModuleId = ResolveMainModuleId(scriptEntryPoint, fallbackMainModuleId);
 
-        // Create a require delegate for the main module
-        RequireDelegate mainRequire = (moduleId) =>
-        {
-            if (moduleId is not string moduleName || moduleName == null)
-            {
-                throw new TypeError("The \"id\" argument must be of type string.");
-            }
-
-            // Entry wrappers can intentionally keep parent-traversal specifiers as the published
-            // local module ids (for example the packed canary shims under scripts/differential-test).
-            // Preserve those raw ids when they already resolve in the compiled local-module manifest;
-            // otherwise keep the canonical module-id-relative behavior needed for package roots.
-            return ShouldPreserveRawEntryRequire(requireService, moduleName)
-                ? requireService.RequireModule(moduleName)
-                : requireService.RequireModuleFrom(mainModuleId, moduleName);
-        };
+        var mainRequireTarget = new RequireFunctionTarget(
+            requireService,
+            mainModuleId,
+            preserveResolvableParentTraversal: true);
+        var mainRequire = mainRequireTarget.Require;
 
         // Create the main Module object
         // Main module has id of "." in Node.js, but we use the filename for consistency
@@ -95,7 +65,7 @@ internal sealed class ModuleExecutor
 
         // Node semantics: require.main is the entry module.
         requireService.SetMainModule(mainModule);
-        JavaScriptRuntime.ObjectRuntime.SetProperty(mainRequire, "main", mainModule);
+        mainRequireTarget.SetMainModule(mainModule);
         RuntimeServices.RegisterModuleRequire(mainModule.id, mainRequire);
         if (!string.Equals(mainModule.filename, mainModule.id, StringComparison.OrdinalIgnoreCase))
         {

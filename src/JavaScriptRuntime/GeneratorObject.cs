@@ -7,7 +7,7 @@ namespace JavaScriptRuntime;
 /// Runtime representation of a synchronous generator object.
 ///
 /// The generator object stores:
-/// - A bound step closure (the compiled generator method, bound to the generator's scopes array)
+/// - A private compiled continuation for the generated step method
 /// - The scopes array (with the generator leaf scope at index 0)
 /// - The original call arguments for the generator function
 ///
@@ -23,15 +23,13 @@ public sealed class GeneratorObject : IJavaScriptIterator
     private static readonly object Prototype = CreatePrototype();
     private static readonly object GeneratorFunctionPrototype = CreateGeneratorFunctionPrototype();
 
-    private readonly object _step;
+    private readonly CompiledContinuation _step;
     private readonly object[] _scopes;
-    private readonly object?[] _args;
 
-    public GeneratorObject(object step, object[] scopes, object?[] args)
+    public GeneratorObject(CompiledContinuation step)
     {
         _step = step ?? throw new ArgumentNullException(nameof(step));
-        _scopes = scopes ?? throw new ArgumentNullException(nameof(scopes));
-        _args = args ?? throw new ArgumentNullException(nameof(args));
+        _scopes = step.Scopes;
         GetLeafScope().ThisValue = RuntimeServices.GetCurrentThis();
         InitializeGeneratorSurface(this);
     }
@@ -48,6 +46,7 @@ public sealed class GeneratorObject : IJavaScriptIterator
         using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
 
         Function.InitializeFunctionInstance(_generatorFunctionConstructor, 1d, "GeneratorFunction", requiresInvocationContext: false);
+        Function.MarkConstructible(_generatorFunctionConstructor);
         PrototypeChain.SetPrototype(_generatorFunctionConstructor, GlobalThis.Function);
         PropertyDescriptorStore.DefineOrUpdate(_generatorFunctionConstructor, "prototype", new JsPropertyDescriptor
         {
@@ -94,7 +93,7 @@ public sealed class GeneratorObject : IJavaScriptIterator
 
         Function.InitializeFunctionInstance(functionValue, parameterNames.Length, "anonymous", requiresInvocationContext: false);
         InitializeGeneratorFunctionSurface(functionValue);
-        return functionValue;
+        return BuiltinDelegateFunctionAdapter.FromDelegate(functionValue);
     }
 
     private static object? EvaluateDynamicGeneratorBody(string body, string[] parameterNames, object?[] invocationArgs)
@@ -417,7 +416,7 @@ public sealed class GeneratorObject : IJavaScriptIterator
         var previousThis = RuntimeServices.SetCurrentThis(RuntimeServices.ResolveLexicalThis(scope.ThisValue));
         try
         {
-            return Closure.InvokeWithArgs(_step, _scopes, _args);
+            return _step.Resume()!;
         }
         finally
         {

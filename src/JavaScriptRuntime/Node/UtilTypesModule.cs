@@ -77,8 +77,10 @@ namespace JavaScriptRuntime.Node
 
         private bool ContractIsAsyncFunction(object? value)
             => value is JsAsyncFunctionObject
-                || value is Delegate callback
-                    && callback.Method.GetCustomAttributes(
+                || CallableOperations.TryGetBuiltinAdapter(
+                    value,
+                    out var callback)
+                    && callback.Target.Method.GetCustomAttributes(
                         typeof(System.Runtime.CompilerServices.AsyncStateMachineAttribute),
                         false).Length > 0;
 

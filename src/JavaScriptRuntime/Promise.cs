@@ -170,7 +170,7 @@ public sealed class Promise : IJavaScriptPromise
     {
         if (constructor is null
             || constructor is JsNull
-            || ReferenceEquals(constructor, GlobalThis.Promise))
+            || GlobalThis.IsPromiseConstructorValue(constructor))
         {
             return Promise.resolve(value);
         }
@@ -196,8 +196,12 @@ public sealed class Promise : IJavaScriptPromise
 
         Function.InitializeFunctionInstance(executor, 2d, string.Empty, requiresInvocationContext: false);
         Function.MarkUndefinedPrototype(executor);
+        var executorValue =
+            BuiltinDelegateFunctionAdapter.FromDelegate(executor);
 
-        var promise = ObjectRuntime.ConstructValue(constructor, new object[] { executor });
+        var promise = ObjectRuntime.ConstructValue(
+            constructor,
+            new object[] { executorValue });
         if (!CallableOperations.IsCallable(capabilityResolve)
             || !CallableOperations.IsCallable(capabilityReject))
         {
@@ -231,8 +235,12 @@ public sealed class Promise : IJavaScriptPromise
 
         Function.InitializeFunctionInstance(executor, 2d, string.Empty, requiresInvocationContext: false);
         Function.MarkUndefinedPrototype(executor);
+        var executorValue =
+            BuiltinDelegateFunctionAdapter.FromDelegate(executor);
 
-        var promise = ObjectRuntime.ConstructValue(constructor, new object[] { executor });
+        var promise = ObjectRuntime.ConstructValue(
+            constructor,
+            new object[] { executorValue });
         if (!CallableOperations.IsCallable(capabilityResolve)
             || !CallableOperations.IsCallable(capabilityReject))
         {
@@ -384,7 +392,11 @@ public sealed class Promise : IJavaScriptPromise
     public object? @then(object? onFulfilled, object? onRejected)
     {
         var nextPromise = new Promise();
-        var reaction = new Reaction(onFulfilled, onRejected, nextPromise, false);
+        var reaction = new Reaction(
+            BuiltinDelegateFunctionAdapter.WrapJavaScriptVisibleValue(onFulfilled),
+            BuiltinDelegateFunctionAdapter.WrapJavaScriptVisibleValue(onRejected),
+            nextPromise,
+            false);
 
         bool shouldEnqueue = false;
 
@@ -416,7 +428,13 @@ public sealed class Promise : IJavaScriptPromise
     public object? @finally(object? onFinally)
     {
         var nextPromise = new Promise();
-        var reaction = new Reaction(onFinally, onFinally, nextPromise, true);
+        var normalizedFinally =
+            BuiltinDelegateFunctionAdapter.WrapJavaScriptVisibleValue(onFinally);
+        var reaction = new Reaction(
+            normalizedFinally,
+            normalizedFinally,
+            nextPromise,
+            true);
 
         bool shouldDispatch = false;
 
@@ -640,10 +658,18 @@ public sealed class Promise : IJavaScriptPromise
             return Settle(State.Rejected, reason);
         });
 
+        var resolveValue =
+            BuiltinDelegateFunctionAdapter.FromDelegate(Resolve);
+        var rejectValue =
+            BuiltinDelegateFunctionAdapter.FromDelegate(Reject);
 
         try 
         {
-            CallableOperations.Call2(executor, null, Resolve, Reject);
+            CallableOperations.Call2(
+                executor,
+                null,
+                resolveValue,
+                rejectValue);
         }
         catch (Exception ex)
         {
@@ -874,6 +900,10 @@ public sealed class Promise : IJavaScriptPromise
             targetPromise.Settle(State.Rejected, err);
             return null;
         });
+        resolve =
+            BuiltinDelegateFunctionAdapter.WrapJavaScriptVisibleValue(resolve)!;
+        reject =
+            BuiltinDelegateFunctionAdapter.WrapJavaScriptVisibleValue(reject)!;
 
         try
         {
@@ -953,6 +983,10 @@ public sealed class Promise : IJavaScriptPromise
             nextPromise.Settle(State.Rejected, err);
             return null;
         });
+        resolve =
+            BuiltinDelegateFunctionAdapter.WrapJavaScriptVisibleValue(resolve)!;
+        reject =
+            BuiltinDelegateFunctionAdapter.WrapJavaScriptVisibleValue(reject)!;
 
         try
         {

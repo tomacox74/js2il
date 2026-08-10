@@ -15,6 +15,25 @@ namespace JavaScriptRuntime.CommonJS
 
     public static class RequireRuntime
     {
+        public static BuiltinDelegateFunctionAdapter GetFunctionValue(
+            RequireDelegate require)
+        {
+            ArgumentNullException.ThrowIfNull(require);
+            if (require.Target is RequireFunctionTarget target)
+            {
+                return target.GetFunctionValue();
+            }
+
+            var functionValue =
+                BuiltinDelegateFunctionAdapter.FromDelegate(require);
+            Function.InitializeFunctionInstance(
+                functionValue,
+                1d,
+                "require",
+                requiresInvocationContext: false);
+            return functionValue;
+        }
+
         public static T RequireObject<T>(RequireDelegate require, object? moduleId)
             where T : class
         {

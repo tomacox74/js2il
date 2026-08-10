@@ -162,15 +162,6 @@ internal sealed partial class LIRToILCompiler
     private static bool UsesSingleScopeAbi(CallableSignature? signature)
         => signature?.ScopeAbiKind == Jroc.Runtime.CallableScopeAbiKind.SingleScope;
 
-    private MemberReferenceHandle GetMaterializedCallableDelegateCtorRef(
-        int jsParamCount,
-        bool requiresScopes,
-        CallableSignature? signature)
-    {
-        var delegateType = CallableDelegateTypeResolver.GetDelegateType(jsParamCount, requiresScopes, signature);
-        return _memberRefRegistry.GetOrAddConstructor(delegateType, new[] { typeof(object), typeof(IntPtr) });
-    }
-
     private void EmitLoadSingleScopePayload(InstructionEncoder ilEncoder, MethodDescriptor methodDescriptor)
     {
         if (!UsesSingleScopeAbi(methodDescriptor))
@@ -239,7 +230,8 @@ internal sealed partial class LIRToILCompiler
         {
             nameof(JavaScriptRuntime.AsyncScope._asyncState) => typeof(int),
             nameof(JavaScriptRuntime.AsyncScope._deferred) => typeof(JavaScriptRuntime.PromiseWithResolvers),
-            nameof(JavaScriptRuntime.AsyncScope._moveNext) => typeof(object),
+            nameof(JavaScriptRuntime.AsyncScope._moveNext) =>
+                typeof(JavaScriptRuntime.CompiledContinuation),
             nameof(JavaScriptRuntime.AsyncScope._locals) => typeof(object[]),
             nameof(JavaScriptRuntime.AsyncScope._pendingException) => typeof(object),
             nameof(JavaScriptRuntime.AsyncScope._hasPendingException) => typeof(bool),
@@ -391,7 +383,26 @@ internal sealed partial class LIRToILCompiler
 
     private void EmitBoxIfNeededForTypedScopeFieldLoad(Type fieldClrType, ValueStorage targetStorage, InstructionEncoder ilEncoder)
     {
+        if (fieldClrType == typeof(JavaScriptRuntime.CommonJS.RequireDelegate)
+            && targetStorage.Kind == ValueStorageKind.Reference
+            && targetStorage.ClrType
+                == typeof(JavaScriptRuntime.BuiltinDelegateFunctionAdapter))
+        {
+            EmitMaterializeRequireFunctionValue(ilEncoder);
+            return;
+        }
+
         EmitCastOrBoxAfterTypedFieldLoad(fieldClrType, targetStorage, ilEncoder, allowReferenceNarrowingCast: true);
+    }
+
+    private void EmitMaterializeRequireFunctionValue(InstructionEncoder ilEncoder)
+    {
+        var wrapRef = _memberRefRegistry.GetOrAddMethod(
+            typeof(JavaScriptRuntime.CommonJS.RequireRuntime),
+            nameof(JavaScriptRuntime.CommonJS.RequireRuntime.GetFunctionValue),
+            new[] { typeof(JavaScriptRuntime.CommonJS.RequireDelegate) });
+        ilEncoder.OpCode(ILOpCode.Call);
+        ilEncoder.Token(wrapRef);
     }
 
     private bool ShouldEmitReferenceNarrowingCastForStore(Type fieldClrType, TempVariable sourceTemp)

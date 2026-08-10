@@ -26,7 +26,7 @@ public sealed class RuntimeGlobalBindingDescriptor
         ArgumentNullException.ThrowIfNull(propertyAttributes);
 
         Name = name;
-        Value = value;
+        Value = NormalizeJavaScriptVisibleValue(value);
         ValueFactory = valueFactory;
         PropertyAttributes = propertyAttributes;
         OverwritePolicy = overwritePolicy;
@@ -62,7 +62,13 @@ public sealed class RuntimeGlobalBindingDescriptor
     /// </summary>
     public bool UsesFactory => ValueFactory != null;
 
-    public object? CreateValue() => ValueFactory != null ? ValueFactory() : Value;
+    public object? CreateValue()
+        => ValueFactory != null
+            ? NormalizeJavaScriptVisibleValue(ValueFactory())
+            : Value;
+
+    private static object? NormalizeJavaScriptVisibleValue(object? value)
+        => BuiltinDelegateFunctionAdapter.WrapJavaScriptVisibleValue(value);
 
     public static RuntimeGlobalBindingDescriptor ForValue(
         string name,
@@ -143,7 +149,8 @@ public sealed class RuntimeModuleBindingDescriptor
             throw new InvalidOperationException("This module descriptor does not define a module factory.");
         }
 
-        return ModuleFactory();
+        return BuiltinDelegateFunctionAdapter.WrapJavaScriptVisibleValue(
+            ModuleFactory());
     }
 
     public static RuntimeModuleBindingDescriptor ForType(string specifier, Type moduleType)

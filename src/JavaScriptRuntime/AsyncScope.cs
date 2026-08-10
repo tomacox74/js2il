@@ -1,15 +1,10 @@
 namespace JavaScriptRuntime;
 
-using System.Collections.Concurrent;
-using System.Linq.Expressions;
 using System.Reflection;
 using System;
 
 public class AsyncScope : IAsyncScope
 {
-    private readonly record struct FieldSetterEntry(Action<object, object?>? Setter);
-    private static readonly ConcurrentDictionary<(Type ScopeType, string FieldName), FieldSetterEntry> FieldSetterCache = new();
-
     public AsyncScope()
     {
         _deferred = Promise.withResolvers();
@@ -18,7 +13,7 @@ public class AsyncScope : IAsyncScope
     // State machine fields
     public int _asyncState;
     public PromiseWithResolvers? _deferred;
-    public object? _moveNext;
+    public CompiledContinuation? _moveNext;
 
     // Persistent storage for compiler-generated IL locals that must survive across awaits.
     // Indexed by MethodBodyIR variable slot.
@@ -43,7 +38,7 @@ public class AsyncScope : IAsyncScope
         set => _deferred = value;
     }
 
-    public object? MoveNext
+    public CompiledContinuation? MoveNext
     {
         get => _moveNext;
         set => _moveNext = value;
@@ -56,12 +51,12 @@ public class AsyncScope : IAsyncScope
     /// <param name="awaited">The value being awaited</param>
     /// <param name="scopesArray">The scopes array to pass to MoveNext</param>
     /// <param name="resultFieldName">Name of the field on the derived scope to store the awaited result (e.g., "_awaited1")</param>
-    /// <param name="moveNext">The MoveNext method delegate. If null, uses <see cref="MoveNext"/>.</param>
+    /// <param name="moveNext">The compiled continuation. If null, uses <see cref="MoveNext"/>.</param>
     public void SetupAwaitContinuation(
         object? awaited,
         object[] scopesArray,
         string resultFieldName,
-        object? moveNext)
+        CompiledContinuation? moveNext)
     {
         if (string.Equals(Environment.GetEnvironmentVariable("JROC_DEBUG_ASYNC_REJECTIONS"), "1", StringComparison.Ordinal))
         {
@@ -102,23 +97,21 @@ public class AsyncScope : IAsyncScope
     }
 
     /// <summary>
-    /// Non-reflective await continuation setup. Uses cached typed field setters and typed MoveNext when available.
-    /// Falls back to <see cref="SetupAwaitContinuation"/> during rollout if typed dispatch cannot be used.
+    /// Await continuation setup using unload-safe reflected field assignment and typed MoveNext.
+    /// Falls back to <see cref="SetupAwaitContinuation"/> if the generated field cannot be found.
     /// </summary>
     public void SetupAwaitContinuationTyped(
         object? awaited,
         object[] scopesArray,
         int awaitId,
-        object? moveNext)
+        CompiledContinuation? moveNext)
     {
         var resultFieldName = $"_awaited{awaitId}";
         var scopeType = GetType();
         moveNext ??= MoveNext;
 
-        var resultSetter = TryGetFieldSetter(scopeType, resultFieldName);
-        var typedMoveNext = TryGetTypedMoveNext(moveNext);
-
-        if (resultSetter == null || typedMoveNext == null)
+        var resultField = scopeType.GetField(resultFieldName);
+        if (resultField == null)
         {
             SetupAwaitContinuation(awaited, scopesArray, resultFieldName, moveNext);
             return;
@@ -129,7 +122,14 @@ public class AsyncScope : IAsyncScope
             $"Scope type {scopeType.Name} has null _deferred");
 
         var currentThis = RuntimeServices.GetCurrentThis();
-        var onFulfilled = CreateFulfilledContinuationTyped(this, scopesArray, resultSetter, typedMoveNext, currentThis, resultFieldName);
+        var onFulfilled = CreateFulfilledContinuationTyped(
+            this,
+            resultField,
+            moveNext
+                ?? throw new InvalidOperationException(
+                    "Cannot resume async function without a compiled continuation."),
+            currentThis,
+            resultFieldName);
         var onRejected = CreateRejectedContinuation(this, deferred, currentThis);
         promise.@then(onFulfilled, onRejected);
     }
@@ -142,7 +142,7 @@ public class AsyncScope : IAsyncScope
         object? awaited,
         object[] scopesArray,
         string resultFieldName,
-        object? moveNext,
+        CompiledContinuation? moveNext,
         int rejectStateId,
         string pendingExceptionFieldName)
     {
@@ -187,14 +187,14 @@ public class AsyncScope : IAsyncScope
     }
 
     /// <summary>
-    /// Non-reflective await continuation setup for reject-resume paths.
-    /// Falls back to <see cref="SetupAwaitContinuationWithRejectResume"/> during rollout if typed dispatch cannot be used.
+    /// Reject-resume setup using unload-safe reflected field assignment and typed MoveNext.
+    /// Falls back to <see cref="SetupAwaitContinuationWithRejectResume"/> if a generated field cannot be found.
     /// </summary>
     public void SetupAwaitContinuationWithRejectResumeTyped(
         object? awaited,
         object[] scopesArray,
         int awaitId,
-        object? moveNext,
+        CompiledContinuation? moveNext,
         int rejectStateId,
         string pendingExceptionFieldName)
     {
@@ -202,11 +202,9 @@ public class AsyncScope : IAsyncScope
         var scopeType = GetType();
         moveNext ??= MoveNext;
 
-        var resultSetter = TryGetFieldSetter(scopeType, resultFieldName);
-        var pendingSetter = TryGetFieldSetter(scopeType, pendingExceptionFieldName);
-        var typedMoveNext = TryGetTypedMoveNext(moveNext);
-
-        if (resultSetter == null || pendingSetter == null || typedMoveNext == null)
+        var resultField = scopeType.GetField(resultFieldName);
+        var pendingField = scopeType.GetField(pendingExceptionFieldName);
+        if (resultField == null || pendingField == null)
         {
             SetupAwaitContinuationWithRejectResume(
                 awaited,
@@ -220,13 +218,20 @@ public class AsyncScope : IAsyncScope
 
         var promise = awaited is Promise p ? p : (Promise)Promise.resolve(awaited)!;
         var currentThis = RuntimeServices.GetCurrentThis();
-        var onFulfilled = CreateFulfilledContinuationTyped(this, scopesArray, resultSetter, typedMoveNext, currentThis, resultFieldName);
+        var continuation = moveNext
+            ?? throw new InvalidOperationException(
+                "Cannot resume async function without a compiled continuation.");
+        var onFulfilled = CreateFulfilledContinuationTyped(
+            this,
+            resultField,
+            continuation,
+            currentThis,
+            resultFieldName);
         var onRejected = CreateRejectedContinuationWithPendingExceptionTyped(
             this,
-            scopesArray,
-            pendingSetter,
+            pendingField,
             rejectStateId,
-            typedMoveNext,
+            continuation,
             currentThis);
         promise.@then(onFulfilled, onRejected);
     }
@@ -235,7 +240,7 @@ public class AsyncScope : IAsyncScope
         object scope,
         object[] scopesArray,
         FieldInfo? resultField,
-        object? moveNext,
+        CompiledContinuation? moveNext,
         object? capturedThis)
     {
         return new Func<object[]?, object?, object?>((_, value) =>
@@ -274,7 +279,7 @@ public class AsyncScope : IAsyncScope
         object[] scopesArray,
         FieldInfo pendingField,
         int rejectStateId,
-        object? moveNext,
+        CompiledContinuation? moveNext,
         object? capturedThis)
     {
         return new Func<object[]?, object?, object?>((_, reason) =>
@@ -309,9 +314,8 @@ public class AsyncScope : IAsyncScope
 
     private static Func<object[]?, object?, object?> CreateFulfilledContinuationTyped(
         object scope,
-        object[] scopesArray,
-        Action<object, object?> resultSetter,
-        Func<object[], object?> moveNext,
+        FieldInfo resultField,
+        CompiledContinuation moveNext,
         object? capturedThis,
         string resultFieldName)
     {
@@ -331,8 +335,8 @@ public class AsyncScope : IAsyncScope
                     }
                 }
 
-                resultSetter(scope, value);
-                moveNext(scopesArray);
+                resultField.SetValue(scope, value);
+                moveNext.Resume();
             }
             finally
             {
@@ -345,10 +349,9 @@ public class AsyncScope : IAsyncScope
 
     private static Func<object[]?, object?, object?> CreateRejectedContinuationWithPendingExceptionTyped(
         object scope,
-        object[] scopesArray,
-        Action<object, object?> pendingExceptionSetter,
+        FieldInfo pendingExceptionField,
         int rejectStateId,
-        Func<object[], object?> moveNext,
+        CompiledContinuation moveNext,
         object? capturedThis)
     {
         return new Func<object[]?, object?, object?>((_, reason) =>
@@ -368,9 +371,9 @@ public class AsyncScope : IAsyncScope
                     }
                 }
 
-                pendingExceptionSetter(scope, reason);
+                pendingExceptionField.SetValue(scope, reason);
                 ((IAsyncScope)scope).AsyncState = rejectStateId;
-                moveNext(scopesArray);
+                moveNext.Resume();
             }
             finally
             {
@@ -381,58 +384,9 @@ public class AsyncScope : IAsyncScope
         });
     }
 
-    private static Func<object[], object?>? TryGetTypedMoveNext(object? moveNext)
-    {
-        if (moveNext is Func<object[], object?> typed)
-        {
-            return typed;
-        }
-
-        if (moveNext is Func<object[], object> typedNonNullable)
-        {
-            return typedNonNullable;
-        }
-
-        if (moveNext is Action<object[]> action)
-        {
-            return scopes =>
-            {
-                action(scopes);
-                return null;
-            };
-        }
-
-        return null;
-    }
-
-    private static Action<object, object?>? TryGetFieldSetter(Type scopeType, string fieldName)
-    {
-        var cacheEntry = FieldSetterCache.GetOrAdd(
-            (scopeType, fieldName),
-            static key => new FieldSetterEntry(CreateFieldSetter(key.ScopeType, key.FieldName)));
-        return cacheEntry.Setter;
-    }
-
-    private static Action<object, object?>? CreateFieldSetter(Type scopeType, string fieldName)
-    {
-        var field = scopeType.GetField(fieldName);
-        if (field == null)
-        {
-            return null;
-        }
-
-        var scopeParam = Expression.Parameter(typeof(object), "scope");
-        var valueParam = Expression.Parameter(typeof(object), "value");
-        var castScope = Expression.Convert(scopeParam, scopeType);
-        var fieldAccess = Expression.Field(castScope, field);
-        Expression castValue = field.FieldType == typeof(object)
-            ? valueParam
-            : Expression.Convert(valueParam, field.FieldType);
-        var assignment = Expression.Assign(fieldAccess, castValue);
-        return Expression.Lambda<Action<object, object?>>(assignment, scopeParam, valueParam).Compile();
-    }
-
-    private static void InvokeMoveNext(object? moveNext, object[] scopesArray)
+    private static void InvokeMoveNext(
+        CompiledContinuation? moveNext,
+        object[] scopesArray)
     {
         if (moveNext == null)
         {
@@ -451,18 +405,7 @@ public class AsyncScope : IAsyncScope
             }
         }
 
-        if (moveNext is Func<object[], object> fn)
-        {
-            fn(scopesArray);
-        }
-        else if (moveNext is Action<object[]> action)
-        {
-            action(scopesArray);
-        }
-        else
-        {
-            Closure.InvokeWithArgs(moveNext, scopesArray);
-        }
+        moveNext.Resume();
     }
 
     private static Func<object[]?, object?, object?> CreateRejectedContinuation(

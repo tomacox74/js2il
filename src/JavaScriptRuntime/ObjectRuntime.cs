@@ -304,6 +304,13 @@ namespace JavaScriptRuntime
                 throw new TypeError("Cannot convert undefined or null to object");
             }
 
+            getter =
+                BuiltinDelegateFunctionAdapter.WrapJavaScriptVisibleValue(
+                    getter);
+            setter =
+                BuiltinDelegateFunctionAdapter.WrapJavaScriptVisibleValue(
+                    setter);
+
             if (getter is not null && getter is not JsNull && !CallableOperations.IsCallable(getter))
             {
                 throw new TypeError("Getter must be a function");
@@ -510,11 +517,6 @@ namespace JavaScriptRuntime
             }
 
             RuntimeServices.MarkLazyClassMethodPropertyDeleted(receiver, key);
-
-            if (receiver is Delegate del)
-            {
-                return Function.DeleteOwnProperty(del, key);
-            }
 
             if (receiver is JsObject jsObject)
             {

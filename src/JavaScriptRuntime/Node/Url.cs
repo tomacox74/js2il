@@ -20,9 +20,13 @@ namespace JavaScriptRuntime.Node
             ConfigureConstructorSurface(URLSearchParamsConstructorValue, global::JavaScriptRuntime.Node.URLSearchParams.Prototype);
         }
 
-        public Delegate URL => URLConstructorValue;
+        public object URL =>
+            BuiltinDelegateFunctionAdapter.FromDelegate(
+                URLConstructorValue);
 
-        public Delegate URLSearchParams => URLSearchParamsConstructorValue;
+        public object URLSearchParams =>
+            BuiltinDelegateFunctionAdapter.FromDelegate(
+                URLSearchParamsConstructorValue);
 
         public string fileURLToPath(object input)
         {
@@ -91,6 +95,8 @@ namespace JavaScriptRuntime.Node
         private static void ConfigureConstructorSurface(object constructorValue, object prototypeValue)
         {
             GlobalThis.ConfigureBuiltinFunctionObject(constructorValue);
+            global::JavaScriptRuntime.Function.MarkConstructible(
+                constructorValue);
             PrototypeChain.SetPrototype(prototypeValue, GlobalThis.ObjectPrototypeValue);
 
             PropertyDescriptorStore.DefineOrUpdate(constructorValue, "prototype", new JsPropertyDescriptor

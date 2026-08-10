@@ -123,6 +123,11 @@ internal sealed partial class LIRToILCompiler
 
                     int ilArgIndex = GetIlArgIndexForJsParameter(methodDescriptor, loadParam.ParameterIndex);
                     ilEncoder.LoadArgument(ilArgIndex);
+                    if (GetTempStorage(loadParam.Result).ClrType
+                        == typeof(JavaScriptRuntime.BuiltinDelegateFunctionAdapter))
+                    {
+                        EmitMaterializeRequireFunctionValue(ilEncoder);
+                    }
                     EmitStoreTemp(loadParam.Result, ilEncoder, allocation);
                     break;
                 }

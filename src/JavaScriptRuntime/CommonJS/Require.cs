@@ -265,23 +265,10 @@ namespace JavaScriptRuntime.CommonJS
 
             var parentModule = parentModuleOverride ?? _currentParentModule;
 
-            RequireDelegate moduleRequire = (moduleIdParam) =>
-            {
-                if (moduleIdParam is not string requestedSpecifier || requestedSpecifier == null)
-                {
-                    throw new TypeError("The \"id\" argument must be of type string.");
-                }
-
-                var resolved = ResolveLocalSpecifier(canonicalId, requestedSpecifier);
-                return RequireModule(resolved);
-            };
-
-            // Support common Node.js pattern: `if (require.main === module) { ... }`
-            // Many scripts and tools rely on this to detect the entry module.
-            if (!asMain && _mainModule != null)
-            {
-                JavaScriptRuntime.ObjectRuntime.SetProperty(moduleRequire, "main", _mainModule);
-            }
+            var moduleRequireTarget = new RequireFunctionTarget(
+                this,
+                canonicalId);
+            var moduleRequire = moduleRequireTarget.Require;
 
             var moduleFilename = GetCompiledModuleFilename(canonicalId);
             RuntimeServices.RegisterModuleRequire(canonicalId, moduleRequire);
@@ -295,7 +282,10 @@ namespace JavaScriptRuntime.CommonJS
             if (asMain)
             {
                 _mainModule = module;
-                JavaScriptRuntime.ObjectRuntime.SetProperty(moduleRequire, "main", module);
+            }
+            if (_mainModule != null)
+            {
+                moduleRequireTarget.SetMainModule(_mainModule);
             }
 
             _modules[cacheKey] = module;
