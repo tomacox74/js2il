@@ -3728,6 +3728,8 @@ partial class HIRMethodBuilder
                 bool isConstructibleGlobalThisProperty =
                     globalThisProperty != null
                     && (typeof(Delegate).IsAssignableFrom(globalThisProperty.PropertyType)
+                        || typeof(JavaScriptRuntime.JsFunctionObject).IsAssignableFrom(
+                            globalThisProperty.PropertyType)
                         || typeof(Type).IsAssignableFrom(globalThisProperty.PropertyType));
 
                 var newArgExprs = new List<HIRExpression>();

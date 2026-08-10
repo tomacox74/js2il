@@ -1,6 +1,6 @@
 using System;
+using System.Collections.Concurrent;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.ExceptionServices;
@@ -10,54 +10,7 @@ namespace JavaScriptRuntime
 {
     public static class Closure
     {
-        private static readonly MethodInfo InvokeWithArgsMethod = typeof(Closure).GetMethod(
-            nameof(InvokeWithArgs),
-            BindingFlags.Public | BindingFlags.Static,
-            binder: null,
-            types: new[] { typeof(object), typeof(object[]), typeof(object[]) },
-            modifiers: null)
-            ?? throw new InvalidOperationException("Failed to resolve Closure.InvokeWithArgs(object, object[], object[]).");
-
-        private static readonly MethodInfo InvokeDelegatePreservingArgsMethod = typeof(Closure).GetMethod(
-            nameof(InvokeDelegatePreservingArgs),
-            BindingFlags.NonPublic | BindingFlags.Static,
-            binder: null,
-            types: new[] { typeof(Delegate), typeof(object[]), typeof(object[]), typeof(object) },
-            modifiers: null)
-            ?? throw new InvalidOperationException("Failed to resolve Closure.InvokeDelegatePreservingArgs(Delegate, object[], object[], object).");
-
-        private static readonly MethodInfo InvokeDelegatePreservingArgsWithThisMethod = typeof(Closure).GetMethod(
-            nameof(InvokeDelegatePreservingArgsWithThis),
-            BindingFlags.NonPublic | BindingFlags.Static,
-            binder: null,
-            types: new[] { typeof(object), typeof(Delegate), typeof(object[]), typeof(object[]), typeof(object) },
-            modifiers: null)
-            ?? throw new InvalidOperationException("Failed to resolve Closure.InvokeDelegatePreservingArgsWithThis(object, Delegate, object[], object[], object).");
-
-        private static readonly MethodInfo InvokeDelegatePreservingArgsWithLexicalThisMethod = typeof(Closure).GetMethod(
-            nameof(InvokeDelegatePreservingArgsWithLexicalThis),
-            BindingFlags.NonPublic | BindingFlags.Static,
-            binder: null,
-            types: new[] { typeof(object), typeof(object), typeof(object[]), typeof(Delegate), typeof(object[]), typeof(object[]), typeof(object) },
-            modifiers: null)
-            ?? throw new InvalidOperationException("Failed to resolve Closure.InvokeDelegatePreservingArgsWithLexicalThis(object, object, object[], Delegate, object[], object[], object).");
-
-        private static readonly MethodInfo InvokeWithArgsWithThisMethod = typeof(Closure).GetMethod(
-            nameof(InvokeWithArgsWithThis),
-            BindingFlags.NonPublic | BindingFlags.Static)
-            ?? throw new InvalidOperationException("Failed to resolve Closure.InvokeWithArgsWithThis(...).");
-
-        private sealed class BoundDelegateMetadata
-        {
-            public BoundDelegateMetadata(Delegate target)
-            {
-                Target = target;
-            }
-
-            public Delegate Target { get; }
-        }
-
-        private sealed class DelegateInvokeMetadata
+        internal sealed class DelegateInvokeMetadata
         {
             public DelegateInvokeMetadata(
                 ParameterInfo[] parameters,
@@ -92,60 +45,25 @@ namespace JavaScriptRuntime
             public int FixedJsParamCount { get; }
         }
 
-        private static readonly ConditionalWeakTable<Delegate, BoundDelegateMetadata> _scopeBoundDelegates = new();
-        private static readonly ConditionalWeakTable<Delegate, DelegateInvokeMetadata> _delegateInvokeMetadata = new();
-
-        private static T InvokeWithThis<T>(object? boundThis, Func<T> invoke)
+        private sealed class DelegateMethodInvokeMetadataCache
         {
-            var previous = RuntimeServices.SetCurrentThis(RuntimeServices.ResolveLexicalThis(boundThis));
-            try
-            {
-                return invoke();
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentThis(previous);
-            }
+            private readonly ConcurrentDictionary<bool, DelegateInvokeMetadata> _metadataByBoundStaticState = new();
+
+            public DelegateInvokeMetadata GetOrAdd(
+                bool isBoundStatic,
+                Func<DelegateInvokeMetadata> valueFactory)
+                => _metadataByBoundStaticState.GetOrAdd(
+                    isBoundStatic,
+                    static (_, factory) => factory(),
+                    valueFactory);
         }
 
-        private static object InvokeWithArgsWithThis(object? boundThis, object target, object[] scopes, object?[] args)
+        private sealed class DelegateTypeInvokeMetadataCache
         {
-            return InvokeWithThis(boundThis, () => InvokeWithArgs(target, scopes, args));
+            public ConditionalWeakTable<MethodInfo, DelegateMethodInvokeMetadataCache> Methods { get; } = new();
         }
 
-        private static object InvokeDelegatePreservingArgs(Delegate target, object[] scopes, object?[] args, object? newTarget)
-        {
-            return InvokeDelegateWithArgs(target, scopes, args, newTarget);
-        }
-
-        private static object InvokeDelegatePreservingArgsWithThis(object? boundThis, Delegate target, object[] scopes, object?[] args, object? newTarget)
-        {
-            return InvokeWithThis(boundThis, () => InvokeDelegateWithArgs(target, scopes, args, newTarget));
-        }
-
-        private static object InvokeDelegatePreservingArgsWithLexicalThis(
-            object? boundThis,
-            object? boundSuperReceiver,
-            object[] boundSuperScopes,
-            Delegate target,
-            object[] scopes,
-            object?[] args,
-            object? newTarget)
-        {
-            var previousThis = RuntimeServices.SetCurrentThis(boundThis);
-            var previousSuperReceiver = RuntimeServices.SetCurrentLexicalSuperReceiver(boundSuperReceiver);
-            var previousSuperScopes = RuntimeServices.SetCurrentLexicalSuperScopes(boundSuperScopes);
-            try
-            {
-                return InvokeDelegateWithArgs(target, scopes, args, newTarget);
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentLexicalSuperScopes(previousSuperScopes);
-                RuntimeServices.SetCurrentLexicalSuperReceiver(previousSuperReceiver);
-                RuntimeServices.SetCurrentThis(previousThis);
-            }
-        }
+        private static readonly ConditionalWeakTable<Type, DelegateTypeInvokeMetadataCache> _delegateInvokeMetadata = new();
 
         private static bool TryInvokeTypedJsFuncDelegate(
             Delegate target,
@@ -211,17 +129,27 @@ namespace JavaScriptRuntime
             return false;
         }
 
-        private static DelegateInvokeMetadata GetDelegateInvokeMetadata(Delegate target)
+        internal static DelegateInvokeMetadata GetDelegateInvokeMetadata(Delegate target)
         {
-            return _delegateInvokeMetadata.GetValue(target, static del =>
+            var delegateType = target.GetType();
+            var methodCache = _delegateInvokeMetadata
+                .GetOrCreateValue(delegateType)
+                .Methods
+                .GetOrCreateValue(target.Method);
+            var invoke = delegateType.GetMethod("Invoke")
+                ?? throw new ArgumentException($"Delegate type '{delegateType}' does not define Invoke().", "target");
+            var parameters = invoke.GetParameters();
+            var isBoundStatic = target.Target != null
+                && target.Method.IsStatic
+                && parameters.Length == System.Math.Max(
+                    0,
+                    target.Method.GetParameters().Length - 1);
+
+            return methodCache.GetOrAdd(isBoundStatic, () =>
             {
-                var delegateType = del.GetType();
-                var invoke = delegateType.GetMethod("Invoke")
-                    ?? throw new ArgumentException($"Delegate type '{delegateType}' does not define Invoke().", "target");
-                var parameters = invoke.GetParameters();
-                var abi = JsCallableScopeAbiResolver.Resolve(del);
+                var abi = JsCallableScopeAbiResolver.Resolve(target);
                 bool hasScopes = abi.HasExplicitScopePayload;
-                bool hasNewTarget = JsCallableScopeAbiResolver.HasNewTargetParameter(del, parameters, abi.Kind);
+                bool hasNewTarget = JsCallableScopeAbiResolver.HasNewTargetParameter(target, parameters, abi.Kind);
                 int jsParamStart = hasScopes
                     ? (hasNewTarget ? 2 : 1)
                     : (hasNewTarget ? 1 : 0);
@@ -247,9 +175,13 @@ namespace JavaScriptRuntime
             });
         }
 
-        private static object InvokeDelegateWithArgs(Delegate target, object[] scopes, object?[] args, object? newTarget)
+        private static object InvokeDelegateWithArgs(
+            Delegate target,
+            DelegateInvokeMetadata metadata,
+            object[] scopes,
+            object?[] args,
+            object? newTarget)
         {
-            var metadata = GetDelegateInvokeMetadata(target);
             var parameters = metadata.Parameters;
             var abi = metadata.Abi;
             bool hasScopes = abi.HasExplicitScopePayload;
@@ -459,198 +391,142 @@ namespace JavaScriptRuntime
             }
         }
 
-        private static Delegate CreateBoundDelegate(
+        internal static object? InvokeContinuationTarget(
             Delegate target,
-            object[] boundScopes,
-            object? boundThis,
-            bool captureLexicalNewTarget,
-            object? lexicalNewTarget,
-            bool hasRestrictedProperties,
-            bool preserveLexicalThisBinding = false,
-            object? boundSuperReceiver = null,
-            object[]? boundSuperScopes = null)
+            DelegateInvokeMetadata metadata,
+            object[] scopes,
+            object?[] arguments)
+            => InvokeDelegateWithArgs(
+                target,
+                metadata,
+                scopes,
+                arguments,
+                newTarget: null);
+
+        internal static object? InvokeBuiltinDelegate(
+            Delegate target,
+            DelegateInvokeMetadata metadata,
+            object[] scopes,
+            in JsCallArguments arguments,
+            object? newTarget)
         {
-            var delegateType = target.GetType();
-            var invoke = delegateType.GetMethod("Invoke")
-                ?? throw new ArgumentException($"Delegate type '{delegateType}' does not define Invoke().", nameof(target));
+            ArgumentNullException.ThrowIfNull(target);
+            ArgumentNullException.ThrowIfNull(scopes);
 
-            var parameters = invoke.GetParameters();
-            var lambdaParameters = parameters
-                .Select((p, i) => Expression.Parameter(p.ParameterType, p.Name ?? $"p{i}"))
-                .ToArray();
-
-            var abi = JsCallableScopeAbiResolver.Resolve(target);
-            bool hasScopes = abi.HasExplicitScopePayload;
-            bool hasNewTarget = JsCallableScopeAbiResolver.HasNewTargetParameter(target, parameters, abi.Kind);
-            int jsParamStart = hasScopes
-                ? (hasNewTarget ? 2 : 1)
-                : (hasNewTarget ? 1 : 0);
-
-            var jsArgs = lambdaParameters
-                .Skip(jsParamStart)
-                .Select(p => (Expression)Expression.Convert(p, typeof(object)))
-                .ToArray();
-            var argsArray = Expression.NewArrayInit(typeof(object), jsArgs);
-            Expression forwardedNewTarget = Expression.Constant(null, typeof(object));
-            if (hasNewTarget)
+            if (!metadata.HasParamsArray
+                && metadata.FixedJsParamCount <= 5)
             {
-                int newTargetIndex = hasScopes ? 1 : 0;
-                forwardedNewTarget = captureLexicalNewTarget
-                    ? Expression.Constant(lexicalNewTarget, typeof(object))
-                    : Expression.Convert(lambdaParameters[newTargetIndex], typeof(object));
+                var hasScopes = metadata.Abi.HasExplicitScopePayload;
+
+                if (metadata.IsJsFuncDelegate
+                    && metadata.Abi.Kind != CallableScopeAbiKind.SingleScope)
+                {
+                    if (metadata.Abi.Kind == CallableScopeAbiKind.ScopeArray)
+                    {
+                        switch (metadata.FixedJsParamCount)
+                        {
+                            case 0 when target is JsFunc0 f0:
+                                return f0(scopes, newTarget);
+                            case 1 when target is JsFunc1 f1:
+                                return f1(scopes, newTarget, arguments.GetArgument(0)!);
+                            case 2 when target is JsFunc2 f2:
+                                return f2(scopes, newTarget, arguments.GetArgument(0)!, arguments.GetArgument(1)!);
+                            case 3 when target is JsFunc3 f3:
+                                return f3(scopes, newTarget, arguments.GetArgument(0)!, arguments.GetArgument(1)!, arguments.GetArgument(2)!);
+                            case 4 when target is JsFunc4 f4:
+                                return f4(scopes, newTarget, arguments.GetArgument(0)!, arguments.GetArgument(1)!, arguments.GetArgument(2)!, arguments.GetArgument(3)!);
+                            case 5 when target is JsFunc5 f5:
+                                return f5(scopes, newTarget, arguments.GetArgument(0)!, arguments.GetArgument(1)!, arguments.GetArgument(2)!, arguments.GetArgument(3)!, arguments.GetArgument(4)!);
+                        }
+                    }
+                    else
+                    {
+                        switch (metadata.FixedJsParamCount)
+                        {
+                            case 0 when target is JsFuncNoScopes0 f0:
+                                return f0(newTarget);
+                            case 1 when target is JsFuncNoScopes1 f1:
+                                return f1(newTarget, arguments.GetArgument(0));
+                            case 2 when target is JsFuncNoScopes2 f2:
+                                return f2(newTarget, arguments.GetArgument(0), arguments.GetArgument(1));
+                            case 3 when target is JsFuncNoScopes3 f3:
+                                return f3(newTarget, arguments.GetArgument(0), arguments.GetArgument(1), arguments.GetArgument(2));
+                            case 4 when target is JsFuncNoScopes4 f4:
+                                return f4(newTarget, arguments.GetArgument(0), arguments.GetArgument(1), arguments.GetArgument(2), arguments.GetArgument(3));
+                            case 5 when target is JsFuncNoScopes5 f5:
+                                return f5(newTarget, arguments.GetArgument(0), arguments.GetArgument(1), arguments.GetArgument(2), arguments.GetArgument(3), arguments.GetArgument(4));
+                        }
+                    }
+                }
+
+                if (metadata.Abi.Kind == CallableScopeAbiKind.ScopeArray)
+                {
+                    switch (metadata.FixedJsParamCount)
+                    {
+                        case 0:
+                            if (target is Func<object[], object?> f0) return f0(scopes);
+                            if (target is Action<object[]> a0) { a0(scopes); return null; }
+                            break;
+                        case 1:
+                            if (target is Func<object[], object, object?> f1) return f1(scopes, arguments.GetArgument(0)!);
+                            if (target is Action<object[], object> a1) { a1(scopes, arguments.GetArgument(0)!); return null; }
+                            break;
+                        case 2:
+                            if (target is Func<object[], object, object, object?> f2) return f2(scopes, arguments.GetArgument(0)!, arguments.GetArgument(1)!);
+                            if (target is Action<object[], object, object> a2) { a2(scopes, arguments.GetArgument(0)!, arguments.GetArgument(1)!); return null; }
+                            break;
+                        case 3:
+                            if (target is Func<object[], object, object, object, object?> f3) return f3(scopes, arguments.GetArgument(0)!, arguments.GetArgument(1)!, arguments.GetArgument(2)!);
+                            if (target is Action<object[], object, object, object> a3) { a3(scopes, arguments.GetArgument(0)!, arguments.GetArgument(1)!, arguments.GetArgument(2)!); return null; }
+                            break;
+                        case 4:
+                            if (target is Func<object[], object, object, object, object, object?> f4) return f4(scopes, arguments.GetArgument(0)!, arguments.GetArgument(1)!, arguments.GetArgument(2)!, arguments.GetArgument(3)!);
+                            if (target is Action<object[], object, object, object, object> a4) { a4(scopes, arguments.GetArgument(0)!, arguments.GetArgument(1)!, arguments.GetArgument(2)!, arguments.GetArgument(3)!); return null; }
+                            break;
+                        case 5:
+                            if (target is Func<object[], object, object, object, object, object, object?> f5) return f5(scopes, arguments.GetArgument(0)!, arguments.GetArgument(1)!, arguments.GetArgument(2)!, arguments.GetArgument(3)!, arguments.GetArgument(4)!);
+                            if (target is Action<object[], object, object, object, object, object> a5) { a5(scopes, arguments.GetArgument(0)!, arguments.GetArgument(1)!, arguments.GetArgument(2)!, arguments.GetArgument(3)!, arguments.GetArgument(4)!); return null; }
+                            break;
+                    }
+                }
+                else if (!hasScopes)
+                {
+                    switch (metadata.FixedJsParamCount)
+                    {
+                        case 0:
+                            if (target is Func<object?> f0) return f0();
+                            if (target is Action a0) { a0(); return null; }
+                            break;
+                        case 1:
+                            if (target is Func<object, object?> f1) return f1(arguments.GetArgument(0)!);
+                            if (target is Action<object> a1) { a1(arguments.GetArgument(0)!); return null; }
+                            break;
+                        case 2:
+                            if (target is Func<object, object, object?> f2) return f2(arguments.GetArgument(0)!, arguments.GetArgument(1)!);
+                            if (target is Action<object, object> a2) { a2(arguments.GetArgument(0)!, arguments.GetArgument(1)!); return null; }
+                            break;
+                        case 3:
+                            if (target is Func<object, object, object, object?> f3) return f3(arguments.GetArgument(0)!, arguments.GetArgument(1)!, arguments.GetArgument(2)!);
+                            if (target is Action<object, object, object> a3) { a3(arguments.GetArgument(0)!, arguments.GetArgument(1)!, arguments.GetArgument(2)!); return null; }
+                            break;
+                        case 4:
+                            if (target is Func<object, object, object, object, object?> f4) return f4(arguments.GetArgument(0)!, arguments.GetArgument(1)!, arguments.GetArgument(2)!, arguments.GetArgument(3)!);
+                            if (target is Action<object, object, object, object> a4) { a4(arguments.GetArgument(0)!, arguments.GetArgument(1)!, arguments.GetArgument(2)!, arguments.GetArgument(3)!); return null; }
+                            break;
+                        case 5:
+                            if (target is Func<object, object, object, object, object, object?> f5) return f5(arguments.GetArgument(0)!, arguments.GetArgument(1)!, arguments.GetArgument(2)!, arguments.GetArgument(3)!, arguments.GetArgument(4)!);
+                            if (target is Action<object, object, object, object, object> a5) { a5(arguments.GetArgument(0)!, arguments.GetArgument(1)!, arguments.GetArgument(2)!, arguments.GetArgument(3)!, arguments.GetArgument(4)!); return null; }
+                            break;
+                    }
+                }
             }
 
-            Expression invokeWithArgsCall;
-            // Important: this wrapper must NOT call InvokeWithArgs(...), because InvokeWithArgs sets RuntimeServices
-            // current arguments to ONLY the declared parameters passed into this wrapper.
-            // When the wrapper is invoked by the outer dispatcher, the *real* call arguments (including extras)
-            // have already been set as the current arguments. Rest parameters and `arguments` depend on preserving
-            // that full call-site argument list.
-            if (preserveLexicalThisBinding)
-            {
-                invokeWithArgsCall = Expression.Call(
-                    InvokeDelegatePreservingArgsWithLexicalThisMethod,
-                    Expression.Constant(boundThis, typeof(object)),
-                    Expression.Constant(boundSuperReceiver, typeof(object)),
-                    Expression.Constant(boundSuperScopes ?? boundScopes, typeof(object[])),
-                    Expression.Constant(target, typeof(Delegate)),
-                    Expression.Constant(boundScopes, typeof(object[])),
-                    argsArray,
-                    forwardedNewTarget);
-            }
-            else if (boundThis == null)
-            {
-                invokeWithArgsCall = Expression.Call(
-                    InvokeDelegatePreservingArgsMethod,
-                    Expression.Constant(target, typeof(Delegate)),
-                    Expression.Constant(boundScopes, typeof(object[])),
-                    argsArray,
-                    forwardedNewTarget);
-            }
-            else
-            {
-                invokeWithArgsCall = Expression.Call(
-                    InvokeDelegatePreservingArgsWithThisMethod,
-                    Expression.Constant(boundThis, typeof(object)),
-                    Expression.Constant(target, typeof(Delegate)),
-                    Expression.Constant(boundScopes, typeof(object[])),
-                    argsArray,
-                    forwardedNewTarget);
-            }
-
-            Expression body;
-            if (invoke.ReturnType == typeof(void))
-            {
-                body = Expression.Block(invokeWithArgsCall, Expression.Empty());
-            }
-            else
-            {
-                body = Expression.Convert(invokeWithArgsCall, invoke.ReturnType);
-            }
-
-            var boundDelegate = Expression.Lambda(delegateType, body, lambdaParameters).Compile();
-            Function.ConfigureCallableObject(boundDelegate, hasRestrictedProperties);
-            Function.CopyInvocationMetadata(target, boundDelegate);
-            _scopeBoundDelegates.Add(boundDelegate, new BoundDelegateMetadata(target));
-            return boundDelegate;
-        }
-
-        // Bind a function delegate (object-typed) to a fixed scopes array AND a fixed set of JS arguments.
-        // Returns a Func<object[], object> suitable for AsyncScope._moveNext (resume invokes with scopes only).
-        public static object BindMoveNext(object target, object[] boundScopes, object?[] boundArgs)
-        {
-            if (target == null) throw new ArgumentNullException(nameof(target));
-            if (boundScopes == null) throw new ArgumentNullException(nameof(boundScopes));
-            if (boundArgs == null) throw new ArgumentNullException(nameof(boundArgs));
-
-            // Always return a Func<object[], object?> regardless of underlying delegate arity.
-            // - Ignores the provided scopes at invocation time
-            // - Uses the captured scopes + captured args
-            return (Func<object[], object?>)(_ => InvokeWithArgs(target, boundScopes, boundArgs));
-        }
-
-        // Bind a function delegate (object-typed) to a fixed scopes array.
-        // Returns a delegate of the same type as the input, but ignores the scopes argument
-        // and uses the captured scopes array.
-        public static object Bind(object target, object[] boundScopes)
-        {
-            if (target == null) throw new ArgumentNullException(nameof(target));
-            if (boundScopes == null) throw new ArgumentNullException(nameof(boundScopes));
-
-            if (target is not Delegate del)
-            {
-                throw new ArgumentException("Expected a delegate for closure binding", nameof(target));
-            }
-
-            return CreateBoundDelegate(del, boundScopes, boundThis: null, captureLexicalNewTarget: false, lexicalNewTarget: null, hasRestrictedProperties: false);
-        }
-
-        // Bind an arrow function delegate to a fixed scopes array AND a fixed lexical 'this'.
-        // The runtime call sites may set a dynamic 'this' (receiver) before invocation; this binder
-        // overrides it for the duration of the arrow function body to match ECMA-262 lexical semantics.
-        public static object BindArrow(object target, object[] boundScopes, object? boundThis)
-        {
-            if (target == null) throw new ArgumentNullException(nameof(target));
-            if (boundScopes == null) throw new ArgumentNullException(nameof(boundScopes));
-
-            if (target is not Delegate del)
-            {
-                throw new ArgumentException("Expected a delegate for arrow closure binding", nameof(target));
-            }
-
-            var lexicalNewTarget = RuntimeServices.GetCurrentNewTarget();
-            return CreateBoundDelegate(
-                del,
-                boundScopes,
-                boundThis,
-                captureLexicalNewTarget: true,
-                lexicalNewTarget,
-                hasRestrictedProperties: false);
-        }
-
-        public static object BindArrow(
-            object target,
-            object[] boundScopes,
-            object? boundThis,
-            object? boundSuperReceiver,
-            object[] boundSuperScopes)
-        {
-            if (target == null) throw new ArgumentNullException(nameof(target));
-            if (boundScopes == null) throw new ArgumentNullException(nameof(boundScopes));
-
-            if (target is not Delegate del)
-            {
-                throw new ArgumentException("Expected a delegate for arrow closure binding", nameof(target));
-            }
-
-            var lexicalNewTarget = RuntimeServices.GetCurrentNewTarget();
-            return CreateBoundDelegate(
-                del,
-                boundScopes,
-                boundThis,
-                captureLexicalNewTarget: true,
-                lexicalNewTarget,
-                hasRestrictedProperties: false,
-                preserveLexicalThisBinding: true,
-                boundSuperReceiver,
-                boundSuperScopes);
-        }
-
-        internal static bool TryGetBoundTarget(Delegate boundDelegate, out Delegate target)
-        {
-            if (_scopeBoundDelegates.TryGetValue(boundDelegate, out var metadata))
-            {
-                target = metadata.Target;
-                return true;
-            }
-
-            target = null!;
-            return false;
-        }
-
-        internal static bool UsesEcmaScriptThisBinding(Delegate target)
-        {
-            return GetDelegateInvokeMetadata(target).IsJsFuncDelegate;
+            return InvokeDelegateWithArgs(
+                target,
+                metadata,
+                scopes,
+                arguments.ToArray(),
+                newTarget);
         }
 
         private static object InvokeWithArgsCore(object target, object[] scopes, object? newTarget, object?[] args)
@@ -658,80 +534,21 @@ namespace JavaScriptRuntime
             if (target == null) throw new ArgumentNullException(nameof(target));
             if (scopes == null) throw new ArgumentNullException(nameof(scopes));
 
-            if (target is JsFunctionObject functionObject)
+            if (target is JsFunctionObject or global::JavaScriptRuntime.Proxy)
             {
                 return CallableOperations.Call(
-                    functionObject,
+                    target,
                     RuntimeServices.GetCurrentThis(),
                     args)!;
             }
 
-            if (target is Delegate fastDelegate
-                && !Function.RequiresInvocationContext(fastDelegate)
-                && !Function.HasBoundWithObject(fastDelegate))
+            if (target is global::JavaScriptRuntime.CommonJS.RequireDelegate require)
             {
-                return InvokeDelegateWithArgs(fastDelegate, scopes, args, newTarget);
+                return require(args.Length > 0 ? args[0] : null)!;
             }
 
-            var previousArgs = RuntimeServices.SetCurrentArguments(args);
-            var previousCallee = RuntimeServices.SetCurrentCallee(target);
-            var previousNewTarget = RuntimeServices.SetCurrentNewTarget(newTarget);
-            try
-            {
-                if (target is global::JavaScriptRuntime.Proxy proxy)
-                {
-                    var proxyTarget = proxy.GetTarget("apply");
-                    if (!global::JavaScriptRuntime.Proxy.IsCallableValue(proxyTarget))
-                    {
-                        throw new TypeError($"Callee is not a function: it has type {TypeUtilities.Typeof(proxyTarget)}.");
-                    }
-
-                    var trapArgs = new global::JavaScriptRuntime.Array(args);
-                    if (proxy.TryInvokeTrap("apply", "apply", new object?[] { proxyTarget, RuntimeServices.GetCurrentThis(), trapArgs }, out var trapResult))
-                    {
-                        return trapResult!;
-                    }
-
-                    if (proxyTarget is Delegate proxyTargetDelegate)
-                    {
-                        var previousThis = RuntimeServices.SetCurrentThis(
-                            Function.GetEffectiveThisArg(proxyTargetDelegate, RuntimeServices.GetCurrentThis()));
-                        try
-                        {
-                            return InvokeWithArgsCore(proxyTarget, scopes, newTarget, args);
-                        }
-                        finally
-                        {
-                            RuntimeServices.SetCurrentThis(previousThis);
-                        }
-                    }
-
-                    return InvokeWithArgsCore(proxyTarget, scopes, newTarget, args);
-                }
-
-                // CommonJS require(...) is passed into scripts as a RequireDelegate, which does not include
-                // the standard jroc scopes array parameter. Support calling it via the generic dispatcher.
-                if (target is global::JavaScriptRuntime.CommonJS.RequireDelegate require)
-                {
-                    return require(args.Length > 0 ? args[0] : null)!;
-                }
-
-                if (target is Delegate del)
-                {
-                    // JavaScript semantics: missing args are 'undefined' (modeled as CLR null); extra args are ignored.
-                    return InvokeDelegateWithArgs(del, scopes, args, newTarget);
-                }
-
-                // JavaScript/Node semantics: calling a non-callable throws a TypeError.
-                // Use a stable, type-based message since we don't always have the identifier name available here.
-                throw new TypeError($"Callee is not a function: it has type {TypeUtilities.Typeof(target)}.");
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentNewTarget(previousNewTarget);
-                RuntimeServices.SetCurrentCallee(previousCallee);
-                RuntimeServices.SetCurrentArguments(previousArgs);
-            }
+            throw new TypeError(
+                $"Callee is not a function: it has type {TypeUtilities.Typeof(target)}.");
         }
 
         // Invoke a function delegate with runtime type inspection to determine the correct arity.
@@ -749,8 +566,8 @@ namespace JavaScriptRuntime
 
         private static object? ResolveFunctionCallThis(object target)
         {
-            return target is Delegate del
-                ? Function.GetEffectiveThisArg(del, null)
+            return target is JsFunctionObject functionObject
+                ? functionObject.ResolveThisArgument(null)
                 : null;
         }
 
@@ -780,42 +597,12 @@ namespace JavaScriptRuntime
             }
         }
 
-        public static object InvokeFunctionCallWithArgs0(JsFuncNoScopes0 target, object[] scopes)
-        {
-            var previousThis = RuntimeServices.SetCurrentThis(Function.GetEffectiveThisArg(target, null));
-            try
-            {
-                return !Function.RequiresInvocationContext(target)
-                    ? target(null)!
-                    : InvokeWithArgs0(target, scopes);
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentThis(previousThis);
-            }
-        }
-
         public static object InvokeFunctionCallWithArgs1(object target, object[] scopes, object? a0)
         {
             var previousThis = RuntimeServices.SetCurrentThis(ResolveFunctionCallThis(target));
             try
             {
                 return InvokeWithArgs1(target, scopes, a0);
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentThis(previousThis);
-            }
-        }
-
-        public static object InvokeFunctionCallWithArgs1(JsFuncNoScopes1 target, object[] scopes, object? a0)
-        {
-            var previousThis = RuntimeServices.SetCurrentThis(Function.GetEffectiveThisArg(target, null));
-            try
-            {
-                return !Function.RequiresInvocationContext(target)
-                    ? target(null, a0)!
-                    : InvokeWithArgs1(target, scopes, a0);
             }
             finally
             {
@@ -836,21 +623,6 @@ namespace JavaScriptRuntime
             }
         }
 
-        public static object InvokeFunctionCallWithArgs2(JsFuncNoScopes2 target, object[] scopes, object? a0, object? a1)
-        {
-            var previousThis = RuntimeServices.SetCurrentThis(Function.GetEffectiveThisArg(target, null));
-            try
-            {
-                return !Function.RequiresInvocationContext(target)
-                    ? target(null, a0, a1)!
-                    : InvokeWithArgs2(target, scopes, a0, a1);
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentThis(previousThis);
-            }
-        }
-
         public static object InvokeFunctionCallWithArgs3(object target, object[] scopes, object? a0, object? a1, object? a2)
         {
             var previousThis = RuntimeServices.SetCurrentThis(ResolveFunctionCallThis(target));
@@ -864,97 +636,26 @@ namespace JavaScriptRuntime
             }
         }
 
-        public static object InvokeFunctionCallWithArgs3(JsFuncNoScopes3 target, object[] scopes, object? a0, object? a1, object? a2)
-        {
-            var previousThis = RuntimeServices.SetCurrentThis(Function.GetEffectiveThisArg(target, null));
-            try
-            {
-                return !Function.RequiresInvocationContext(target)
-                    ? target(null, a0, a1, a2)!
-                    : InvokeWithArgs3(target, scopes, a0, a1, a2);
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentThis(previousThis);
-            }
-        }
-
-        private static bool TryInvokeProxyCallFastPath(object target, object[] scopes, object?[] args, out object result)
-        {
-            if (target is global::JavaScriptRuntime.Proxy)
-            {
-                result = InvokeWithArgsCore(target, scopes, newTarget: null, args);
-                return true;
-            }
-
-            result = null!;
-            return false;
-        }
-
-        private static object InvokeDelegate0WithoutInvocationContext(Delegate del, object[] scopes)
-        {
-            if (del is JsFunc0 f0) return f0(scopes, null)!;
-            if (del is JsFuncNoScopes0 f0NoScopes) return f0NoScopes(null)!;
-
-            return InvokeDelegateWithArgs(del, scopes, System.Array.Empty<object>(), newTarget: null);
-        }
-
         // Arity-specific overloads for common cases (0-5 args).
-        // These directly invoke the delegate while also setting RuntimeServices.CurrentArguments.
+        // Raw bootstrap delegates are handled explicitly; JavaScript callables are function objects.
 
         public static object InvokeWithArgs0(object target, object[] scopes)
         {
             if (target == null) throw new ArgumentNullException(nameof(target));
             if (scopes == null) throw new ArgumentNullException(nameof(scopes));
 
-            if (target is JsFunctionObject)
+            if (target is JsFunctionObject or global::JavaScriptRuntime.Proxy)
             {
                 return CallableOperations.Call0(target, RuntimeServices.GetCurrentThis())!;
             }
 
-            if (TryInvokeProxyCallFastPath(target, scopes, System.Array.Empty<object>(), out var proxyResult))
+            if (target is global::JavaScriptRuntime.CommonJS.RequireDelegate require)
             {
-                return proxyResult;
+                return require(null)!;
             }
 
-            if (target is Delegate fastDelegate && !Function.RequiresInvocationContext(fastDelegate))
-            {
-                return InvokeDelegate0WithoutInvocationContext(fastDelegate, scopes);
-            }
-
-            var previousArgs = RuntimeServices.SetCurrentArguments(System.Array.Empty<object>());
-            var previousCallee = RuntimeServices.SetCurrentCallee(target);
-            var previousNewTarget = RuntimeServices.SetCurrentNewTarget(null);
-            try
-            {
-                if (target is global::JavaScriptRuntime.CommonJS.RequireDelegate require)
-                {
-                    return require(null)!;
-                }
-
-                if (target is Delegate del)
-                {
-                    if (!Function.RequiresInvocationContext(del))
-                    {
-                        return InvokeDelegate0WithoutInvocationContext(del, scopes);
-                    }
-
-                    // Try fast-path typed invocation first
-                    if (del is JsFunc0 f0) return f0(scopes, null)!;
-                    if (del is JsFuncNoScopes0 f0NoScopes) return f0NoScopes(null)!;
-                    
-                    // Fall back to reflection-based invocation
-                    return InvokeDelegateWithArgs(del, scopes, System.Array.Empty<object>(), newTarget: null);
-                }
-
-                throw new TypeError($"Callee is not a function: it has type {TypeUtilities.Typeof(target)}.");
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentNewTarget(previousNewTarget);
-                RuntimeServices.SetCurrentCallee(previousCallee);
-                RuntimeServices.SetCurrentArguments(previousArgs);
-            }
+            throw new TypeError(
+                $"Callee is not a function: it has type {TypeUtilities.Typeof(target)}.");
         }
 
         public static object InvokeWithArgs1(object target, object[] scopes, object? a0)
@@ -962,60 +663,18 @@ namespace JavaScriptRuntime
             if (target == null) throw new ArgumentNullException(nameof(target));
             if (scopes == null) throw new ArgumentNullException(nameof(scopes));
 
-            if (target is JsFunctionObject)
+            if (target is JsFunctionObject or global::JavaScriptRuntime.Proxy)
             {
                 return CallableOperations.Call1(target, RuntimeServices.GetCurrentThis(), a0)!;
             }
 
-            var args = new object?[] { a0 };
-
-            if (TryInvokeProxyCallFastPath(target, scopes, args, out var proxyResult))
+            if (target is global::JavaScriptRuntime.CommonJS.RequireDelegate require)
             {
-                return proxyResult;
+                return require(a0)!;
             }
 
-            if (target is Delegate fastDelegate && !Function.RequiresInvocationContext(fastDelegate))
-            {
-                if (fastDelegate is JsFunc1 f1Fast) return f1Fast(scopes, null, a0!)!;
-                if (fastDelegate is JsFuncNoScopes1 f1NoScopesFast) return f1NoScopesFast(null, a0)!;
-                return InvokeDelegateWithArgs(fastDelegate, scopes, args, newTarget: null);
-            }
-
-            var previousArgs = RuntimeServices.SetCurrentArguments(args);
-            var previousCallee = RuntimeServices.SetCurrentCallee(target);
-            var previousNewTarget = RuntimeServices.SetCurrentNewTarget(null);
-            try
-            {
-                if (target is global::JavaScriptRuntime.CommonJS.RequireDelegate require)
-                {
-                    return require(a0)!;
-                }
-
-                if (target is Delegate del)
-                {
-                    if (!Function.RequiresInvocationContext(del))
-                    {
-                        if (del is JsFunc1 f1Fast) return f1Fast(scopes, null, a0!)!;
-                        if (del is JsFuncNoScopes1 f1NoScopesFast) return f1NoScopesFast(null, a0)!;
-                        return InvokeDelegateWithArgs(del, scopes, args, newTarget: null);
-                    }
-
-                    // Try fast-path typed invocation first
-                    if (del is JsFunc1 f1) return f1(scopes, null, a0!)!;
-                    if (del is JsFuncNoScopes1 f1NoScopes) return f1NoScopes(null, a0)!;
-
-                    // Fall back to reflection-based invocation
-                    return InvokeDelegateWithArgs(del, scopes, args, newTarget: null);
-                }
-
-                throw new TypeError($"Callee is not a function: it has type {TypeUtilities.Typeof(target)}.");
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentNewTarget(previousNewTarget);
-                RuntimeServices.SetCurrentCallee(previousCallee);
-                RuntimeServices.SetCurrentArguments(previousArgs);
-            }
+            throw new TypeError(
+                $"Callee is not a function: it has type {TypeUtilities.Typeof(target)}.");
         }
 
         public static object InvokeWithArgs2(object target, object[] scopes, object? a0, object? a1)
@@ -1023,7 +682,7 @@ namespace JavaScriptRuntime
             if (target == null) throw new ArgumentNullException(nameof(target));
             if (scopes == null) throw new ArgumentNullException(nameof(scopes));
 
-            if (target is JsFunctionObject)
+            if (target is JsFunctionObject or global::JavaScriptRuntime.Proxy)
             {
                 return CallableOperations.Call2(
                     target,
@@ -1032,55 +691,13 @@ namespace JavaScriptRuntime
                     a1)!;
             }
 
-            var args = new object?[] { a0, a1 };
-
-            if (TryInvokeProxyCallFastPath(target, scopes, args, out var proxyResult))
+            if (target is global::JavaScriptRuntime.CommonJS.RequireDelegate require)
             {
-                return proxyResult;
+                return require(a0)!;
             }
 
-            if (target is Delegate fastDelegate && !Function.RequiresInvocationContext(fastDelegate))
-            {
-                if (fastDelegate is JsFunc2 f2Fast) return f2Fast(scopes, null, a0!, a1!)!;
-                if (fastDelegate is JsFuncNoScopes2 f2NoScopesFast) return f2NoScopesFast(null, a0, a1)!;
-                return InvokeDelegateWithArgs(fastDelegate, scopes, args, newTarget: null);
-            }
-
-            var previousArgs = RuntimeServices.SetCurrentArguments(args);
-            var previousCallee = RuntimeServices.SetCurrentCallee(target);
-            var previousNewTarget = RuntimeServices.SetCurrentNewTarget(null);
-            try
-            {
-                if (target is global::JavaScriptRuntime.CommonJS.RequireDelegate require)
-                {
-                    return require(a0)!;
-                }
-
-                if (target is Delegate del)
-                {
-                    if (!Function.RequiresInvocationContext(del))
-                    {
-                        if (del is JsFunc2 f2Fast) return f2Fast(scopes, null, a0!, a1!)!;
-                        if (del is JsFuncNoScopes2 f2NoScopesFast) return f2NoScopesFast(null, a0, a1)!;
-                        return InvokeDelegateWithArgs(del, scopes, args, newTarget: null);
-                    }
-
-                    // Try fast-path typed invocation first
-                    if (del is JsFunc2 f2) return f2(scopes, null, a0!, a1!)!;
-                    if (del is JsFuncNoScopes2 f2NoScopes) return f2NoScopes(null, a0, a1)!;
-
-                    // Fall back to reflection-based invocation
-                    return InvokeDelegateWithArgs(del, scopes, args, newTarget: null);
-                }
-
-                throw new TypeError($"Callee is not a function: it has type {TypeUtilities.Typeof(target)}.");
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentNewTarget(previousNewTarget);
-                RuntimeServices.SetCurrentCallee(previousCallee);
-                RuntimeServices.SetCurrentArguments(previousArgs);
-            }
+            throw new TypeError(
+                $"Callee is not a function: it has type {TypeUtilities.Typeof(target)}.");
         }
 
         public static object InvokeWithArgs3(object target, object[] scopes, object? a0, object? a1, object? a2)
@@ -1088,7 +705,7 @@ namespace JavaScriptRuntime
             if (target == null) throw new ArgumentNullException(nameof(target));
             if (scopes == null) throw new ArgumentNullException(nameof(scopes));
 
-            if (target is JsFunctionObject)
+            if (target is JsFunctionObject or global::JavaScriptRuntime.Proxy)
             {
                 return CallableOperations.Call3(
                     target,
@@ -1098,55 +715,13 @@ namespace JavaScriptRuntime
                     a2)!;
             }
 
-            var args = new object?[] { a0, a1, a2 };
-
-            if (TryInvokeProxyCallFastPath(target, scopes, args, out var proxyResult))
+            if (target is global::JavaScriptRuntime.CommonJS.RequireDelegate require)
             {
-                return proxyResult;
+                return require(a0)!;
             }
 
-            if (target is Delegate fastDelegate && !Function.RequiresInvocationContext(fastDelegate))
-            {
-                if (fastDelegate is JsFunc3 f3Fast) return f3Fast(scopes, null, a0!, a1!, a2!)!;
-                if (fastDelegate is JsFuncNoScopes3 f3NoScopesFast) return f3NoScopesFast(null, a0, a1, a2)!;
-                return InvokeDelegateWithArgs(fastDelegate, scopes, args, newTarget: null);
-            }
-
-            var previousArgs = RuntimeServices.SetCurrentArguments(args);
-            var previousCallee = RuntimeServices.SetCurrentCallee(target);
-            var previousNewTarget = RuntimeServices.SetCurrentNewTarget(null);
-            try
-            {
-                if (target is global::JavaScriptRuntime.CommonJS.RequireDelegate require)
-                {
-                    return require(a0)!;
-                }
-
-                if (target is Delegate del)
-                {
-                    if (!Function.RequiresInvocationContext(del))
-                    {
-                        if (del is JsFunc3 f3Fast) return f3Fast(scopes, null, a0!, a1!, a2!)!;
-                        if (del is JsFuncNoScopes3 f3NoScopesFast) return f3NoScopesFast(null, a0, a1, a2)!;
-                        return InvokeDelegateWithArgs(del, scopes, args, newTarget: null);
-                    }
-
-                    // Try fast-path typed invocation first
-                    if (del is JsFunc3 f3) return f3(scopes, null, a0!, a1!, a2!)!;
-                    if (del is JsFuncNoScopes3 f3NoScopes) return f3NoScopes(null, a0, a1, a2)!;
-
-                    // Fall back to reflection-based invocation
-                    return InvokeDelegateWithArgs(del, scopes, args, newTarget: null);
-                }
-
-                throw new TypeError($"Callee is not a function: it has type {TypeUtilities.Typeof(target)}.");
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentNewTarget(previousNewTarget);
-                RuntimeServices.SetCurrentCallee(previousCallee);
-                RuntimeServices.SetCurrentArguments(previousArgs);
-            }
+            throw new TypeError(
+                $"Callee is not a function: it has type {TypeUtilities.Typeof(target)}.");
         }
 
         public static object InvokeWithArgs4(object target, object[] scopes, object? a0, object? a1, object? a2, object? a3)
@@ -1154,7 +729,7 @@ namespace JavaScriptRuntime
             if (target == null) throw new ArgumentNullException(nameof(target));
             if (scopes == null) throw new ArgumentNullException(nameof(scopes));
 
-            if (target is JsFunctionObject)
+            if (target is JsFunctionObject or global::JavaScriptRuntime.Proxy)
             {
                 return CallableOperations.Call4(
                     target,
@@ -1165,55 +740,13 @@ namespace JavaScriptRuntime
                     a3)!;
             }
 
-            var args = new object?[] { a0, a1, a2, a3 };
-
-            if (TryInvokeProxyCallFastPath(target, scopes, args, out var proxyResult))
+            if (target is global::JavaScriptRuntime.CommonJS.RequireDelegate require)
             {
-                return proxyResult;
+                return require(a0)!;
             }
 
-            if (target is Delegate fastDelegate && !Function.RequiresInvocationContext(fastDelegate))
-            {
-                if (fastDelegate is JsFunc4 f4Fast) return f4Fast(scopes, null, a0!, a1!, a2!, a3!)!;
-                if (fastDelegate is JsFuncNoScopes4 f4NoScopesFast) return f4NoScopesFast(null, a0, a1, a2, a3)!;
-                return InvokeDelegateWithArgs(fastDelegate, scopes, args, newTarget: null);
-            }
-
-            var previousArgs = RuntimeServices.SetCurrentArguments(args);
-            var previousCallee = RuntimeServices.SetCurrentCallee(target);
-            var previousNewTarget = RuntimeServices.SetCurrentNewTarget(null);
-            try
-            {
-                if (target is global::JavaScriptRuntime.CommonJS.RequireDelegate require)
-                {
-                    return require(a0)!;
-                }
-
-                if (target is Delegate del)
-                {
-                    if (!Function.RequiresInvocationContext(del))
-                    {
-                        if (del is JsFunc4 f4Fast) return f4Fast(scopes, null, a0!, a1!, a2!, a3!)!;
-                        if (del is JsFuncNoScopes4 f4NoScopesFast) return f4NoScopesFast(null, a0, a1, a2, a3)!;
-                        return InvokeDelegateWithArgs(del, scopes, args, newTarget: null);
-                    }
-
-                    // Try fast-path typed invocation first
-                    if (del is JsFunc4 f4) return f4(scopes, null, a0!, a1!, a2!, a3!)!;
-                    if (del is JsFuncNoScopes4 f4NoScopes) return f4NoScopes(null, a0, a1, a2, a3)!;
-
-                    // Fall back to reflection-based invocation
-                    return InvokeDelegateWithArgs(del, scopes, args, newTarget: null);
-                }
-
-                throw new TypeError($"Callee is not a function: it has type {TypeUtilities.Typeof(target)}.");
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentNewTarget(previousNewTarget);
-                RuntimeServices.SetCurrentCallee(previousCallee);
-                RuntimeServices.SetCurrentArguments(previousArgs);
-            }
+            throw new TypeError(
+                $"Callee is not a function: it has type {TypeUtilities.Typeof(target)}.");
         }
 
         public static object InvokeWithArgs5(object target, object[] scopes, object? a0, object? a1, object? a2, object? a3, object? a4)
@@ -1221,7 +754,7 @@ namespace JavaScriptRuntime
             if (target == null) throw new ArgumentNullException(nameof(target));
             if (scopes == null) throw new ArgumentNullException(nameof(scopes));
 
-            if (target is JsFunctionObject)
+            if (target is JsFunctionObject or global::JavaScriptRuntime.Proxy)
             {
                 return CallableOperations.Call5(
                     target,
@@ -1233,1141 +766,14 @@ namespace JavaScriptRuntime
                     a4)!;
             }
 
-            var args = new object?[] { a0, a1, a2, a3, a4 };
-
-            if (TryInvokeProxyCallFastPath(target, scopes, args, out var proxyResult))
-            {
-                return proxyResult;
-            }
-
-            if (target is Delegate fastDelegate && !Function.RequiresInvocationContext(fastDelegate))
-            {
-                if (fastDelegate is JsFunc5 f5Fast) return f5Fast(scopes, null, a0!, a1!, a2!, a3!, a4!)!;
-                if (fastDelegate is JsFuncNoScopes5 f5NoScopesFast) return f5NoScopesFast(null, a0, a1, a2, a3, a4)!;
-                return InvokeDelegateWithArgs(fastDelegate, scopes, args, newTarget: null);
-            }
-
-            var previousArgs = RuntimeServices.SetCurrentArguments(args);
-            var previousCallee = RuntimeServices.SetCurrentCallee(target);
-            var previousNewTarget = RuntimeServices.SetCurrentNewTarget(null);
-            try
-            {
-                if (target is global::JavaScriptRuntime.CommonJS.RequireDelegate require)
-                {
-                    return require(a0)!;
-                }
-
-                if (target is Delegate del)
-                {
-                    if (!Function.RequiresInvocationContext(del))
-                    {
-                        if (del is JsFunc5 f5Fast) return f5Fast(scopes, null, a0!, a1!, a2!, a3!, a4!)!;
-                        if (del is JsFuncNoScopes5 f5NoScopesFast) return f5NoScopesFast(null, a0, a1, a2, a3, a4)!;
-                        return InvokeDelegateWithArgs(del, scopes, args, newTarget: null);
-                    }
-
-                    // Try fast-path typed invocation first
-                    if (del is JsFunc5 f5) return f5(scopes, null, a0!, a1!, a2!, a3!, a4!)!;
-                    if (del is JsFuncNoScopes5 f5NoScopes) return f5NoScopes(null, a0, a1, a2, a3, a4)!;
-
-                    // Fall back to reflection-based invocation
-                    return InvokeDelegateWithArgs(del, scopes, args, newTarget: null);
-                }
-
-                throw new TypeError($"Callee is not a function: it has type {TypeUtilities.Typeof(target)}.");
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentNewTarget(previousNewTarget);
-                RuntimeServices.SetCurrentCallee(previousCallee);
-                RuntimeServices.SetCurrentArguments(previousArgs);
-            }
-        }
-
-        private static object? GetArg(object?[] args, int index)
-        {
-            return index < args.Length ? args[index] : null;
-        }
-
-        // Optimized direct-call path used by the compiler when the callee is known and needs
-        // an implicit `arguments` object. This avoids the reflective dispatcher in InvokeWithArgs.
-        public static object? InvokeDirectWithArgs(JsFunc0 target, object[] scopes, object?[] args)
-        {
-            var previousArgs = RuntimeServices.SetCurrentArguments(args);
-            var previousCallee = RuntimeServices.SetCurrentCallee(target);
-            try
-            {
-                return target(scopes, null);
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentCallee(previousCallee);
-                RuntimeServices.SetCurrentArguments(previousArgs);
-            }
-        }
-
-        public static object? InvokeDirectWithArgs(JsFunc1 target, object[] scopes, object?[] args)
-        {
-            var previousArgs = RuntimeServices.SetCurrentArguments(args);
-            var previousCallee = RuntimeServices.SetCurrentCallee(target);
-            try
-            {
-                return target(scopes, null, GetArg(args, 0));
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentCallee(previousCallee);
-                RuntimeServices.SetCurrentArguments(previousArgs);
-            }
-        }
-
-        public static object? InvokeDirectWithArgs(JsFunc2 target, object[] scopes, object?[] args)
-        {
-            var previousArgs = RuntimeServices.SetCurrentArguments(args);
-            var previousCallee = RuntimeServices.SetCurrentCallee(target);
-            try
-            {
-                return target(scopes, null, GetArg(args, 0), GetArg(args, 1));
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentCallee(previousCallee);
-                RuntimeServices.SetCurrentArguments(previousArgs);
-            }
-        }
-
-        public static object? InvokeDirectWithArgs(JsFunc3 target, object[] scopes, object?[] args)
-        {
-            var previousArgs = RuntimeServices.SetCurrentArguments(args);
-            var previousCallee = RuntimeServices.SetCurrentCallee(target);
-            try
-            {
-                return target(scopes, null, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2));
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentCallee(previousCallee);
-                RuntimeServices.SetCurrentArguments(previousArgs);
-            }
-        }
-
-        public static object? InvokeDirectWithArgs(JsFunc4 target, object[] scopes, object?[] args)
-        {
-            var previousArgs = RuntimeServices.SetCurrentArguments(args);
-            var previousCallee = RuntimeServices.SetCurrentCallee(target);
-            try
-            {
-                return target(scopes, null, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3));
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentCallee(previousCallee);
-                RuntimeServices.SetCurrentArguments(previousArgs);
-            }
-        }
-
-        public static object? InvokeDirectWithArgs(JsFunc5 target, object[] scopes, object?[] args)
-        {
-            var previousArgs = RuntimeServices.SetCurrentArguments(args);
-            var previousCallee = RuntimeServices.SetCurrentCallee(target);
-            try
-            {
-                return target(scopes, null, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4));
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentCallee(previousCallee);
-                RuntimeServices.SetCurrentArguments(previousArgs);
-            }
-        }
-
-        public static object? InvokeDirectWithArgs(JsFunc6 target, object[] scopes, object?[] args)
-        {
-            var previousArgs = RuntimeServices.SetCurrentArguments(args);
-            var previousCallee = RuntimeServices.SetCurrentCallee(target);
-            try
-            {
-                return target(scopes, null, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5));
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentCallee(previousCallee);
-                RuntimeServices.SetCurrentArguments(previousArgs);
-            }
-        }
-
-        public static object? InvokeDirectWithArgs(JsFunc7 target, object[] scopes, object?[] args)
-        {
-            var previousArgs = RuntimeServices.SetCurrentArguments(args);
-            var previousCallee = RuntimeServices.SetCurrentCallee(target);
-            try
-            {
-                return target(scopes, null, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5), GetArg(args, 6));
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentCallee(previousCallee);
-                RuntimeServices.SetCurrentArguments(previousArgs);
-            }
-        }
-
-        public static object? InvokeDirectWithArgs(JsFunc8 target, object[] scopes, object?[] args)
-        {
-            var previousArgs = RuntimeServices.SetCurrentArguments(args);
-            var previousCallee = RuntimeServices.SetCurrentCallee(target);
-            try
-            {
-                return target(scopes, null, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5), GetArg(args, 6), GetArg(args, 7));
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentCallee(previousCallee);
-                RuntimeServices.SetCurrentArguments(previousArgs);
-            }
-        }
-
-        public static object? InvokeDirectWithArgs(JsFunc9 target, object[] scopes, object?[] args)
-        {
-            var previousArgs = RuntimeServices.SetCurrentArguments(args);
-            var previousCallee = RuntimeServices.SetCurrentCallee(target);
-            try
-            {
-                return target(scopes, null, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8));
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentCallee(previousCallee);
-                RuntimeServices.SetCurrentArguments(previousArgs);
-            }
-        }
-
-        public static object? InvokeDirectWithArgs(JsFunc10 target, object[] scopes, object?[] args)
-        {
-            var previousArgs = RuntimeServices.SetCurrentArguments(args);
-            var previousCallee = RuntimeServices.SetCurrentCallee(target);
-            try
-            {
-                return target(scopes, null, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9));
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentCallee(previousCallee);
-                RuntimeServices.SetCurrentArguments(previousArgs);
-            }
-        }
-
-        public static object? InvokeDirectWithArgs(JsFunc11 target, object[] scopes, object?[] args)
-        {
-            var previousArgs = RuntimeServices.SetCurrentArguments(args);
-            var previousCallee = RuntimeServices.SetCurrentCallee(target);
-            try
-            {
-                return target(scopes, null, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9), GetArg(args, 10));
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentCallee(previousCallee);
-                RuntimeServices.SetCurrentArguments(previousArgs);
-            }
-        }
-
-        public static object? InvokeDirectWithArgs(JsFunc12 target, object[] scopes, object?[] args)
-        {
-            var previousArgs = RuntimeServices.SetCurrentArguments(args);
-            var previousCallee = RuntimeServices.SetCurrentCallee(target);
-            try
-            {
-                return target(scopes, null, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9), GetArg(args, 10), GetArg(args, 11));
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentCallee(previousCallee);
-                RuntimeServices.SetCurrentArguments(previousArgs);
-            }
-        }
-
-        public static object? InvokeDirectWithArgs(JsFunc13 target, object[] scopes, object?[] args)
-        {
-            var previousArgs = RuntimeServices.SetCurrentArguments(args);
-            var previousCallee = RuntimeServices.SetCurrentCallee(target);
-            try
-            {
-                return target(scopes, null, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9), GetArg(args, 10), GetArg(args, 11), GetArg(args, 12));
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentCallee(previousCallee);
-                RuntimeServices.SetCurrentArguments(previousArgs);
-            }
-        }
-
-        public static object? InvokeDirectWithArgs(JsFunc14 target, object[] scopes, object?[] args)
-        {
-            var previousArgs = RuntimeServices.SetCurrentArguments(args);
-            var previousCallee = RuntimeServices.SetCurrentCallee(target);
-            try
-            {
-                return target(scopes, null, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9), GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13));
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentCallee(previousCallee);
-                RuntimeServices.SetCurrentArguments(previousArgs);
-            }
-        }
-
-        public static object? InvokeDirectWithArgs(JsFunc15 target, object[] scopes, object?[] args)
-        {
-            var previousArgs = RuntimeServices.SetCurrentArguments(args);
-            var previousCallee = RuntimeServices.SetCurrentCallee(target);
-            try
-            {
-                return target(scopes, null, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9), GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13), GetArg(args, 14));
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentCallee(previousCallee);
-                RuntimeServices.SetCurrentArguments(previousArgs);
-            }
-        }
-
-        public static object? InvokeDirectWithArgs(JsFunc16 target, object[] scopes, object?[] args)
-        {
-            var previousArgs = RuntimeServices.SetCurrentArguments(args);
-            var previousCallee = RuntimeServices.SetCurrentCallee(target);
-            try
-            {
-                return target(scopes, null,
-                    GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4),
-                    GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9),
-                    GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13), GetArg(args, 14),
-                    GetArg(args, 15));
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentCallee(previousCallee);
-                RuntimeServices.SetCurrentArguments(previousArgs);
-            }
-        }
-
-        public static object? InvokeDirectWithArgs(JsFunc17 target, object[] scopes, object?[] args)
-        {
-            var previousArgs = RuntimeServices.SetCurrentArguments(args);
-            var previousCallee = RuntimeServices.SetCurrentCallee(target);
-            try
-            {
-                return target(scopes, null,
-                    GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4),
-                    GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9),
-                    GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13), GetArg(args, 14),
-                    GetArg(args, 15), GetArg(args, 16));
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentCallee(previousCallee);
-                RuntimeServices.SetCurrentArguments(previousArgs);
-            }
-        }
-
-        public static object? InvokeDirectWithArgs(JsFunc18 target, object[] scopes, object?[] args)
-        {
-            var previousArgs = RuntimeServices.SetCurrentArguments(args);
-            var previousCallee = RuntimeServices.SetCurrentCallee(target);
-            try
-            {
-                return target(scopes, null,
-                    GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4),
-                    GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9),
-                    GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13), GetArg(args, 14),
-                    GetArg(args, 15), GetArg(args, 16), GetArg(args, 17));
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentCallee(previousCallee);
-                RuntimeServices.SetCurrentArguments(previousArgs);
-            }
-        }
-
-        public static object? InvokeDirectWithArgs(JsFunc19 target, object[] scopes, object?[] args)
-        {
-            var previousArgs = RuntimeServices.SetCurrentArguments(args);
-            var previousCallee = RuntimeServices.SetCurrentCallee(target);
-            try
-            {
-                return target(scopes, null,
-                    GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4),
-                    GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9),
-                    GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13), GetArg(args, 14),
-                    GetArg(args, 15), GetArg(args, 16), GetArg(args, 17), GetArg(args, 18));
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentCallee(previousCallee);
-                RuntimeServices.SetCurrentArguments(previousArgs);
-            }
-        }
-
-        public static object? InvokeDirectWithArgs(JsFunc20 target, object[] scopes, object?[] args)
-        {
-            var previousArgs = RuntimeServices.SetCurrentArguments(args);
-            var previousCallee = RuntimeServices.SetCurrentCallee(target);
-            try
-            {
-                return target(scopes, null,
-                    GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4),
-                    GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9),
-                    GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13), GetArg(args, 14),
-                    GetArg(args, 15), GetArg(args, 16), GetArg(args, 17), GetArg(args, 18), GetArg(args, 19));
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentCallee(previousCallee);
-                RuntimeServices.SetCurrentArguments(previousArgs);
-            }
-        }
-
-        public static object? InvokeDirectWithArgs(JsFunc21 target, object[] scopes, object?[] args)
-        {
-            var previousArgs = RuntimeServices.SetCurrentArguments(args);
-            var previousCallee = RuntimeServices.SetCurrentCallee(target);
-            try
-            {
-                return target(scopes, null,
-                    GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4),
-                    GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9),
-                    GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13), GetArg(args, 14),
-                    GetArg(args, 15), GetArg(args, 16), GetArg(args, 17), GetArg(args, 18), GetArg(args, 19),
-                    GetArg(args, 20));
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentCallee(previousCallee);
-                RuntimeServices.SetCurrentArguments(previousArgs);
-            }
-        }
-
-        public static object? InvokeDirectWithArgs(JsFunc22 target, object[] scopes, object?[] args)
-        {
-            var previousArgs = RuntimeServices.SetCurrentArguments(args);
-            var previousCallee = RuntimeServices.SetCurrentCallee(target);
-            try
-            {
-                return target(scopes, null,
-                    GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4),
-                    GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9),
-                    GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13), GetArg(args, 14),
-                    GetArg(args, 15), GetArg(args, 16), GetArg(args, 17), GetArg(args, 18), GetArg(args, 19),
-                    GetArg(args, 20), GetArg(args, 21));
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentCallee(previousCallee);
-                RuntimeServices.SetCurrentArguments(previousArgs);
-            }
-        }
-
-        public static object? InvokeDirectWithArgs(JsFunc23 target, object[] scopes, object?[] args)
-        {
-            var previousArgs = RuntimeServices.SetCurrentArguments(args);
-            var previousCallee = RuntimeServices.SetCurrentCallee(target);
-            try
-            {
-                return target(scopes, null,
-                    GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4),
-                    GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9),
-                    GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13), GetArg(args, 14),
-                    GetArg(args, 15), GetArg(args, 16), GetArg(args, 17), GetArg(args, 18), GetArg(args, 19),
-                    GetArg(args, 20), GetArg(args, 21), GetArg(args, 22));
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentCallee(previousCallee);
-                RuntimeServices.SetCurrentArguments(previousArgs);
-            }
-        }
-
-        public static object? InvokeDirectWithArgs(JsFunc24 target, object[] scopes, object?[] args)
-        {
-            var previousArgs = RuntimeServices.SetCurrentArguments(args);
-            var previousCallee = RuntimeServices.SetCurrentCallee(target);
-            try
-            {
-                return target(scopes, null,
-                    GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4),
-                    GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9),
-                    GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13), GetArg(args, 14),
-                    GetArg(args, 15), GetArg(args, 16), GetArg(args, 17), GetArg(args, 18), GetArg(args, 19),
-                    GetArg(args, 20), GetArg(args, 21), GetArg(args, 22), GetArg(args, 23));
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentCallee(previousCallee);
-                RuntimeServices.SetCurrentArguments(previousArgs);
-            }
-        }
-
-        public static object? InvokeDirectWithArgs(JsFunc25 target, object[] scopes, object?[] args)
-        {
-            var previousArgs = RuntimeServices.SetCurrentArguments(args);
-            var previousCallee = RuntimeServices.SetCurrentCallee(target);
-            try
-            {
-                return target(scopes, null,
-                    GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4),
-                    GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9),
-                    GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13), GetArg(args, 14),
-                    GetArg(args, 15), GetArg(args, 16), GetArg(args, 17), GetArg(args, 18), GetArg(args, 19),
-                    GetArg(args, 20), GetArg(args, 21), GetArg(args, 22), GetArg(args, 23), GetArg(args, 24));
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentCallee(previousCallee);
-                RuntimeServices.SetCurrentArguments(previousArgs);
-            }
-        }
-
-        public static object? InvokeDirectWithArgs(JsFunc26 target, object[] scopes, object?[] args)
-        {
-            var previousArgs = RuntimeServices.SetCurrentArguments(args);
-            var previousCallee = RuntimeServices.SetCurrentCallee(target);
-            try
-            {
-                return target(scopes, null,
-                    GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4),
-                    GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9),
-                    GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13), GetArg(args, 14),
-                    GetArg(args, 15), GetArg(args, 16), GetArg(args, 17), GetArg(args, 18), GetArg(args, 19),
-                    GetArg(args, 20), GetArg(args, 21), GetArg(args, 22), GetArg(args, 23), GetArg(args, 24),
-                    GetArg(args, 25));
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentCallee(previousCallee);
-                RuntimeServices.SetCurrentArguments(previousArgs);
-            }
-        }
-
-        public static object? InvokeDirectWithArgs(JsFunc27 target, object[] scopes, object?[] args)
-        {
-            var previousArgs = RuntimeServices.SetCurrentArguments(args);
-            var previousCallee = RuntimeServices.SetCurrentCallee(target);
-            try
-            {
-                return target(scopes, null,
-                    GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4),
-                    GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9),
-                    GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13), GetArg(args, 14),
-                    GetArg(args, 15), GetArg(args, 16), GetArg(args, 17), GetArg(args, 18), GetArg(args, 19),
-                    GetArg(args, 20), GetArg(args, 21), GetArg(args, 22), GetArg(args, 23), GetArg(args, 24),
-                    GetArg(args, 25), GetArg(args, 26));
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentCallee(previousCallee);
-                RuntimeServices.SetCurrentArguments(previousArgs);
-            }
-        }
-
-        public static object? InvokeDirectWithArgs(JsFunc28 target, object[] scopes, object?[] args)
-        {
-            var previousArgs = RuntimeServices.SetCurrentArguments(args);
-            var previousCallee = RuntimeServices.SetCurrentCallee(target);
-            try
-            {
-                return target(scopes, null,
-                    GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4),
-                    GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9),
-                    GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13), GetArg(args, 14),
-                    GetArg(args, 15), GetArg(args, 16), GetArg(args, 17), GetArg(args, 18), GetArg(args, 19),
-                    GetArg(args, 20), GetArg(args, 21), GetArg(args, 22), GetArg(args, 23), GetArg(args, 24),
-                    GetArg(args, 25), GetArg(args, 26), GetArg(args, 27));
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentCallee(previousCallee);
-                RuntimeServices.SetCurrentArguments(previousArgs);
-            }
-        }
-
-        public static object? InvokeDirectWithArgs(JsFunc29 target, object[] scopes, object?[] args)
-        {
-            var previousArgs = RuntimeServices.SetCurrentArguments(args);
-            var previousCallee = RuntimeServices.SetCurrentCallee(target);
-            try
-            {
-                return target(scopes, null,
-                    GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4),
-                    GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9),
-                    GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13), GetArg(args, 14),
-                    GetArg(args, 15), GetArg(args, 16), GetArg(args, 17), GetArg(args, 18), GetArg(args, 19),
-                    GetArg(args, 20), GetArg(args, 21), GetArg(args, 22), GetArg(args, 23), GetArg(args, 24),
-                    GetArg(args, 25), GetArg(args, 26), GetArg(args, 27), GetArg(args, 28));
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentCallee(previousCallee);
-                RuntimeServices.SetCurrentArguments(previousArgs);
-            }
-        }
-
-        public static object? InvokeDirectWithArgs(JsFunc30 target, object[] scopes, object?[] args)
-        {
-            var previousArgs = RuntimeServices.SetCurrentArguments(args);
-            var previousCallee = RuntimeServices.SetCurrentCallee(target);
-            try
-            {
-                return target(scopes, null,
-                    GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4),
-                    GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9),
-                    GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13), GetArg(args, 14),
-                    GetArg(args, 15), GetArg(args, 16), GetArg(args, 17), GetArg(args, 18), GetArg(args, 19),
-                    GetArg(args, 20), GetArg(args, 21), GetArg(args, 22), GetArg(args, 23), GetArg(args, 24),
-                    GetArg(args, 25), GetArg(args, 26), GetArg(args, 27), GetArg(args, 28), GetArg(args, 29));
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentCallee(previousCallee);
-                RuntimeServices.SetCurrentArguments(previousArgs);
-            }
-        }
-
-        public static object? InvokeDirectWithArgs(JsFunc31 target, object[] scopes, object?[] args)
-        {
-            var previousArgs = RuntimeServices.SetCurrentArguments(args);
-            var previousCallee = RuntimeServices.SetCurrentCallee(target);
-            try
-            {
-                return target(scopes, null,
-                    GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4),
-                    GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9),
-                    GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13), GetArg(args, 14),
-                    GetArg(args, 15), GetArg(args, 16), GetArg(args, 17), GetArg(args, 18), GetArg(args, 19),
-                    GetArg(args, 20), GetArg(args, 21), GetArg(args, 22), GetArg(args, 23), GetArg(args, 24),
-                    GetArg(args, 25), GetArg(args, 26), GetArg(args, 27), GetArg(args, 28), GetArg(args, 29),
-                    GetArg(args, 30));
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentCallee(previousCallee);
-                RuntimeServices.SetCurrentArguments(previousArgs);
-            }
-        }
-
-        public static object? InvokeDirectWithArgs(JsFunc32 target, object[] scopes, object?[] args)
-        {
-            var previousArgs = RuntimeServices.SetCurrentArguments(args);
-            var previousCallee = RuntimeServices.SetCurrentCallee(target);
-            try
-            {
-                return target(scopes, null,
-                    GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4),
-                    GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9),
-                    GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13), GetArg(args, 14),
-                    GetArg(args, 15), GetArg(args, 16), GetArg(args, 17), GetArg(args, 18), GetArg(args, 19),
-                    GetArg(args, 20), GetArg(args, 21), GetArg(args, 22), GetArg(args, 23), GetArg(args, 24),
-                    GetArg(args, 25), GetArg(args, 26), GetArg(args, 27), GetArg(args, 28), GetArg(args, 29),
-                    GetArg(args, 30), GetArg(args, 31));
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentCallee(previousCallee);
-                RuntimeServices.SetCurrentArguments(previousArgs);
-            }
-        }
-
-        public static object? InvokeDirectWithArgs(JsFuncNoScopes0 target, object?[] args)
-        {
-            var previousArgs = RuntimeServices.SetCurrentArguments(args);
-            var previousCallee = RuntimeServices.SetCurrentCallee(target);
-            try
-            {
-                return target(null);
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentCallee(previousCallee);
-                RuntimeServices.SetCurrentArguments(previousArgs);
-            }
-        }
-
-        public static object? InvokeDirectWithArgs(JsFuncNoScopes1 target, object?[] args)
-        {
-            var previousArgs = RuntimeServices.SetCurrentArguments(args);
-            var previousCallee = RuntimeServices.SetCurrentCallee(target);
-            try
-            {
-                return target(null, GetArg(args, 0));
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentCallee(previousCallee);
-                RuntimeServices.SetCurrentArguments(previousArgs);
-            }
-        }
-
-        public static object? InvokeDirectWithArgs(JsFuncNoScopes2 target, object?[] args)
-        {
-            var previousArgs = RuntimeServices.SetCurrentArguments(args);
-            var previousCallee = RuntimeServices.SetCurrentCallee(target);
-            try
-            {
-                return target(null, GetArg(args, 0), GetArg(args, 1));
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentCallee(previousCallee);
-                RuntimeServices.SetCurrentArguments(previousArgs);
-            }
-        }
-
-        public static object? InvokeDirectWithArgs(JsFuncNoScopes3 target, object?[] args)
-        {
-            var previousArgs = RuntimeServices.SetCurrentArguments(args);
-            var previousCallee = RuntimeServices.SetCurrentCallee(target);
-            try
-            {
-                return target(null, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2));
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentCallee(previousCallee);
-                RuntimeServices.SetCurrentArguments(previousArgs);
-            }
-        }
-
-        public static object? InvokeDirectWithArgs(JsFuncNoScopes4 target, object?[] args)
-        {
-            var previousArgs = RuntimeServices.SetCurrentArguments(args);
-            var previousCallee = RuntimeServices.SetCurrentCallee(target);
-            try
-            {
-                return target(null, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3));
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentCallee(previousCallee);
-                RuntimeServices.SetCurrentArguments(previousArgs);
-            }
-        }
-
-        public static object? InvokeDirectWithArgs(JsFuncNoScopes5 target, object?[] args)
-        {
-            var previousArgs = RuntimeServices.SetCurrentArguments(args);
-            var previousCallee = RuntimeServices.SetCurrentCallee(target);
-            try
-            {
-                return target(null, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4));
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentCallee(previousCallee);
-                RuntimeServices.SetCurrentArguments(previousArgs);
-            }
-        }
-
-        public static object? InvokeDirectWithArgs(JsFuncNoScopes6 target, object?[] args)
-        {
-            var previousArgs = RuntimeServices.SetCurrentArguments(args);
-            var previousCallee = RuntimeServices.SetCurrentCallee(target);
-            try
-            {
-                return target(null, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5));
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentCallee(previousCallee);
-                RuntimeServices.SetCurrentArguments(previousArgs);
-            }
-        }
-
-        public static object? InvokeDirectWithArgs(JsFuncNoScopes7 target, object?[] args)
-        {
-            var previousArgs = RuntimeServices.SetCurrentArguments(args);
-            var previousCallee = RuntimeServices.SetCurrentCallee(target);
-            try
-            {
-                return target(null, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5), GetArg(args, 6));
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentCallee(previousCallee);
-                RuntimeServices.SetCurrentArguments(previousArgs);
-            }
-        }
-
-        public static object? InvokeDirectWithArgs(JsFuncNoScopes8 target, object?[] args)
-        {
-            var previousArgs = RuntimeServices.SetCurrentArguments(args);
-            var previousCallee = RuntimeServices.SetCurrentCallee(target);
-            try
-            {
-                return target(null, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5), GetArg(args, 6), GetArg(args, 7));
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentCallee(previousCallee);
-                RuntimeServices.SetCurrentArguments(previousArgs);
-            }
-        }
-
-        public static object? InvokeDirectWithArgs(JsFuncNoScopes9 target, object?[] args)
-        {
-            var previousArgs = RuntimeServices.SetCurrentArguments(args);
-            var previousCallee = RuntimeServices.SetCurrentCallee(target);
-            try
-            {
-                return target(null, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8));
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentCallee(previousCallee);
-                RuntimeServices.SetCurrentArguments(previousArgs);
-            }
-        }
-
-        public static object? InvokeDirectWithArgs(JsFuncNoScopes10 target, object?[] args)
-        {
-            var previousArgs = RuntimeServices.SetCurrentArguments(args);
-            var previousCallee = RuntimeServices.SetCurrentCallee(target);
-            try
-            {
-                return target(null, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9));
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentCallee(previousCallee);
-                RuntimeServices.SetCurrentArguments(previousArgs);
-            }
-        }
-
-        public static object? InvokeDirectWithArgs(JsFuncNoScopes11 target, object?[] args)
-        {
-            var previousArgs = RuntimeServices.SetCurrentArguments(args);
-            var previousCallee = RuntimeServices.SetCurrentCallee(target);
-            try
-            {
-                return target(null, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9), GetArg(args, 10));
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentCallee(previousCallee);
-                RuntimeServices.SetCurrentArguments(previousArgs);
-            }
-        }
-
-        public static object? InvokeDirectWithArgs(JsFuncNoScopes12 target, object?[] args)
-        {
-            var previousArgs = RuntimeServices.SetCurrentArguments(args);
-            var previousCallee = RuntimeServices.SetCurrentCallee(target);
-            try
-            {
-                return target(null, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9), GetArg(args, 10), GetArg(args, 11));
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentCallee(previousCallee);
-                RuntimeServices.SetCurrentArguments(previousArgs);
-            }
-        }
-
-        public static object? InvokeDirectWithArgs(JsFuncNoScopes13 target, object?[] args)
-        {
-            var previousArgs = RuntimeServices.SetCurrentArguments(args);
-            var previousCallee = RuntimeServices.SetCurrentCallee(target);
-            try
-            {
-                return target(null, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9), GetArg(args, 10), GetArg(args, 11), GetArg(args, 12));
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentCallee(previousCallee);
-                RuntimeServices.SetCurrentArguments(previousArgs);
-            }
-        }
-
-        public static object? InvokeDirectWithArgs(JsFuncNoScopes14 target, object?[] args)
-        {
-            var previousArgs = RuntimeServices.SetCurrentArguments(args);
-            var previousCallee = RuntimeServices.SetCurrentCallee(target);
-            try
-            {
-                return target(null, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9), GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13));
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentCallee(previousCallee);
-                RuntimeServices.SetCurrentArguments(previousArgs);
-            }
-        }
-
-        public static object? InvokeDirectWithArgs(JsFuncNoScopes15 target, object?[] args)
-        {
-            var previousArgs = RuntimeServices.SetCurrentArguments(args);
-            var previousCallee = RuntimeServices.SetCurrentCallee(target);
-            try
-            {
-                return target(null, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9), GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13), GetArg(args, 14));
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentCallee(previousCallee);
-                RuntimeServices.SetCurrentArguments(previousArgs);
-            }
-        }
-
-        public static object? InvokeDirectWithArgs(JsFuncNoScopes16 target, object?[] args)
-        {
-            var previousArgs = RuntimeServices.SetCurrentArguments(args);
-            var previousCallee = RuntimeServices.SetCurrentCallee(target);
-            try
-            {
-                return target(null, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9), GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13), GetArg(args, 14), GetArg(args, 15));
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentCallee(previousCallee);
-                RuntimeServices.SetCurrentArguments(previousArgs);
-            }
-        }
-
-        public static object? InvokeDirectWithArgs(JsFuncNoScopes17 target, object?[] args)
-        {
-            var previousArgs = RuntimeServices.SetCurrentArguments(args);
-            var previousCallee = RuntimeServices.SetCurrentCallee(target);
-            try
-            {
-                return target(null, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9), GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13), GetArg(args, 14), GetArg(args, 15), GetArg(args, 16));
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentCallee(previousCallee);
-                RuntimeServices.SetCurrentArguments(previousArgs);
-            }
-        }
-
-        public static object? InvokeDirectWithArgs(JsFuncNoScopes18 target, object?[] args)
-        {
-            var previousArgs = RuntimeServices.SetCurrentArguments(args);
-            var previousCallee = RuntimeServices.SetCurrentCallee(target);
-            try
-            {
-                return target(null, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9), GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13), GetArg(args, 14), GetArg(args, 15), GetArg(args, 16), GetArg(args, 17));
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentCallee(previousCallee);
-                RuntimeServices.SetCurrentArguments(previousArgs);
-            }
-        }
-
-        public static object? InvokeDirectWithArgs(JsFuncNoScopes19 target, object?[] args)
-        {
-            var previousArgs = RuntimeServices.SetCurrentArguments(args);
-            var previousCallee = RuntimeServices.SetCurrentCallee(target);
-            try
-            {
-                return target(null, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9), GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13), GetArg(args, 14), GetArg(args, 15), GetArg(args, 16), GetArg(args, 17), GetArg(args, 18));
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentCallee(previousCallee);
-                RuntimeServices.SetCurrentArguments(previousArgs);
-            }
-        }
-
-        public static object? InvokeDirectWithArgs(JsFuncNoScopes20 target, object?[] args)
-        {
-            var previousArgs = RuntimeServices.SetCurrentArguments(args);
-            var previousCallee = RuntimeServices.SetCurrentCallee(target);
-            try
-            {
-                return target(null, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9), GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13), GetArg(args, 14), GetArg(args, 15), GetArg(args, 16), GetArg(args, 17), GetArg(args, 18), GetArg(args, 19));
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentCallee(previousCallee);
-                RuntimeServices.SetCurrentArguments(previousArgs);
-            }
-        }
-
-        public static object? InvokeDirectWithArgs(JsFuncNoScopes21 target, object?[] args)
-        {
-            var previousArgs = RuntimeServices.SetCurrentArguments(args);
-            var previousCallee = RuntimeServices.SetCurrentCallee(target);
-            try
-            {
-                return target(null, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9), GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13), GetArg(args, 14), GetArg(args, 15), GetArg(args, 16), GetArg(args, 17), GetArg(args, 18), GetArg(args, 19), GetArg(args, 20));
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentCallee(previousCallee);
-                RuntimeServices.SetCurrentArguments(previousArgs);
-            }
-        }
-
-        public static object? InvokeDirectWithArgs(JsFuncNoScopes22 target, object?[] args)
-        {
-            var previousArgs = RuntimeServices.SetCurrentArguments(args);
-            var previousCallee = RuntimeServices.SetCurrentCallee(target);
-            try
-            {
-                return target(null, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9), GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13), GetArg(args, 14), GetArg(args, 15), GetArg(args, 16), GetArg(args, 17), GetArg(args, 18), GetArg(args, 19), GetArg(args, 20), GetArg(args, 21));
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentCallee(previousCallee);
-                RuntimeServices.SetCurrentArguments(previousArgs);
-            }
-        }
-
-        public static object? InvokeDirectWithArgs(JsFuncNoScopes23 target, object?[] args)
-        {
-            var previousArgs = RuntimeServices.SetCurrentArguments(args);
-            var previousCallee = RuntimeServices.SetCurrentCallee(target);
-            try
-            {
-                return target(null, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9), GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13), GetArg(args, 14), GetArg(args, 15), GetArg(args, 16), GetArg(args, 17), GetArg(args, 18), GetArg(args, 19), GetArg(args, 20), GetArg(args, 21), GetArg(args, 22));
-            }
-            finally
+            if (target is global::JavaScriptRuntime.CommonJS.RequireDelegate require)
             {
-                RuntimeServices.SetCurrentCallee(previousCallee);
-                RuntimeServices.SetCurrentArguments(previousArgs);
+                return require(a0)!;
             }
-        }
-
-        public static object? InvokeDirectWithArgs(JsFuncNoScopes24 target, object?[] args)
-        {
-            var previousArgs = RuntimeServices.SetCurrentArguments(args);
-            var previousCallee = RuntimeServices.SetCurrentCallee(target);
-            try
-            {
-                return target(null, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9), GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13), GetArg(args, 14), GetArg(args, 15), GetArg(args, 16), GetArg(args, 17), GetArg(args, 18), GetArg(args, 19), GetArg(args, 20), GetArg(args, 21), GetArg(args, 22), GetArg(args, 23));
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentCallee(previousCallee);
-                RuntimeServices.SetCurrentArguments(previousArgs);
-            }
-        }
-
-        public static object? InvokeDirectWithArgs(JsFuncNoScopes25 target, object?[] args)
-        {
-            var previousArgs = RuntimeServices.SetCurrentArguments(args);
-            var previousCallee = RuntimeServices.SetCurrentCallee(target);
-            try
-            {
-                return target(null, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9), GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13), GetArg(args, 14), GetArg(args, 15), GetArg(args, 16), GetArg(args, 17), GetArg(args, 18), GetArg(args, 19), GetArg(args, 20), GetArg(args, 21), GetArg(args, 22), GetArg(args, 23), GetArg(args, 24));
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentCallee(previousCallee);
-                RuntimeServices.SetCurrentArguments(previousArgs);
-            }
-        }
-
-        public static object? InvokeDirectWithArgs(JsFuncNoScopes26 target, object?[] args)
-        {
-            var previousArgs = RuntimeServices.SetCurrentArguments(args);
-            var previousCallee = RuntimeServices.SetCurrentCallee(target);
-            try
-            {
-                return target(null, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9), GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13), GetArg(args, 14), GetArg(args, 15), GetArg(args, 16), GetArg(args, 17), GetArg(args, 18), GetArg(args, 19), GetArg(args, 20), GetArg(args, 21), GetArg(args, 22), GetArg(args, 23), GetArg(args, 24), GetArg(args, 25));
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentCallee(previousCallee);
-                RuntimeServices.SetCurrentArguments(previousArgs);
-            }
-        }
-
-        public static object? InvokeDirectWithArgs(JsFuncNoScopes27 target, object?[] args)
-        {
-            var previousArgs = RuntimeServices.SetCurrentArguments(args);
-            var previousCallee = RuntimeServices.SetCurrentCallee(target);
-            try
-            {
-                return target(null, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9), GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13), GetArg(args, 14), GetArg(args, 15), GetArg(args, 16), GetArg(args, 17), GetArg(args, 18), GetArg(args, 19), GetArg(args, 20), GetArg(args, 21), GetArg(args, 22), GetArg(args, 23), GetArg(args, 24), GetArg(args, 25), GetArg(args, 26));
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentCallee(previousCallee);
-                RuntimeServices.SetCurrentArguments(previousArgs);
-            }
-        }
-
-        public static object? InvokeDirectWithArgs(JsFuncNoScopes28 target, object?[] args)
-        {
-            var previousArgs = RuntimeServices.SetCurrentArguments(args);
-            var previousCallee = RuntimeServices.SetCurrentCallee(target);
-            try
-            {
-                return target(null, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9), GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13), GetArg(args, 14), GetArg(args, 15), GetArg(args, 16), GetArg(args, 17), GetArg(args, 18), GetArg(args, 19), GetArg(args, 20), GetArg(args, 21), GetArg(args, 22), GetArg(args, 23), GetArg(args, 24), GetArg(args, 25), GetArg(args, 26), GetArg(args, 27));
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentCallee(previousCallee);
-                RuntimeServices.SetCurrentArguments(previousArgs);
-            }
-        }
-
-        public static object? InvokeDirectWithArgs(JsFuncNoScopes29 target, object?[] args)
-        {
-            var previousArgs = RuntimeServices.SetCurrentArguments(args);
-            var previousCallee = RuntimeServices.SetCurrentCallee(target);
-            try
-            {
-                return target(null, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9), GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13), GetArg(args, 14), GetArg(args, 15), GetArg(args, 16), GetArg(args, 17), GetArg(args, 18), GetArg(args, 19), GetArg(args, 20), GetArg(args, 21), GetArg(args, 22), GetArg(args, 23), GetArg(args, 24), GetArg(args, 25), GetArg(args, 26), GetArg(args, 27), GetArg(args, 28));
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentCallee(previousCallee);
-                RuntimeServices.SetCurrentArguments(previousArgs);
-            }
-        }
-
-        public static object? InvokeDirectWithArgs(JsFuncNoScopes30 target, object?[] args)
-        {
-            var previousArgs = RuntimeServices.SetCurrentArguments(args);
-            var previousCallee = RuntimeServices.SetCurrentCallee(target);
-            try
-            {
-                return target(null, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9), GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13), GetArg(args, 14), GetArg(args, 15), GetArg(args, 16), GetArg(args, 17), GetArg(args, 18), GetArg(args, 19), GetArg(args, 20), GetArg(args, 21), GetArg(args, 22), GetArg(args, 23), GetArg(args, 24), GetArg(args, 25), GetArg(args, 26), GetArg(args, 27), GetArg(args, 28), GetArg(args, 29));
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentCallee(previousCallee);
-                RuntimeServices.SetCurrentArguments(previousArgs);
-            }
-        }
 
-        public static object? InvokeDirectWithArgs(JsFuncNoScopes31 target, object?[] args)
-        {
-            var previousArgs = RuntimeServices.SetCurrentArguments(args);
-            var previousCallee = RuntimeServices.SetCurrentCallee(target);
-            try
-            {
-                return target(null, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9), GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13), GetArg(args, 14), GetArg(args, 15), GetArg(args, 16), GetArg(args, 17), GetArg(args, 18), GetArg(args, 19), GetArg(args, 20), GetArg(args, 21), GetArg(args, 22), GetArg(args, 23), GetArg(args, 24), GetArg(args, 25), GetArg(args, 26), GetArg(args, 27), GetArg(args, 28), GetArg(args, 29), GetArg(args, 30));
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentCallee(previousCallee);
-                RuntimeServices.SetCurrentArguments(previousArgs);
-            }
+            throw new TypeError(
+                $"Callee is not a function: it has type {TypeUtilities.Typeof(target)}.");
         }
 
-        public static object? InvokeDirectWithArgs(JsFuncNoScopes32 target, object?[] args)
-        {
-            var previousArgs = RuntimeServices.SetCurrentArguments(args);
-            var previousCallee = RuntimeServices.SetCurrentCallee(target);
-            try
-            {
-                return target(null, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9), GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13), GetArg(args, 14), GetArg(args, 15), GetArg(args, 16), GetArg(args, 17), GetArg(args, 18), GetArg(args, 19), GetArg(args, 20), GetArg(args, 21), GetArg(args, 22), GetArg(args, 23), GetArg(args, 24), GetArg(args, 25), GetArg(args, 26), GetArg(args, 27), GetArg(args, 28), GetArg(args, 29), GetArg(args, 30), GetArg(args, 31));
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentCallee(previousCallee);
-                RuntimeServices.SetCurrentArguments(previousArgs);
-            }
-        }
     }
 }

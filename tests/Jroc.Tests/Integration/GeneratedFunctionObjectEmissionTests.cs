@@ -54,6 +54,31 @@ public sealed class GeneratedFunctionObjectEmissionTests
         console.log(increment(5));
         """;
 
+    private const string CallableFamilySource = """
+        function ordinary(value) { return value; }
+        const arrow = value => value;
+        async function asyncValue(value) { return value; }
+        function* generatorValue(value) { yield value; }
+        async function* asyncGeneratorValue(value) { yield value; }
+
+        class Example {
+            method(value) { return value; }
+            get accessor() { return 1; }
+            set accessor(value) { this.value = value; }
+            async asyncMethod(value) { return value; }
+            *generatorMethod(value) { yield value; }
+        }
+
+        module.exports = {
+            ordinary,
+            arrow,
+            asyncValue,
+            generatorValue,
+            asyncGeneratorValue,
+            Example
+        };
+        """;
+
     [Fact]
     public void EmittedTypesAreDeterministicAndCalleeShaped()
     {
@@ -224,6 +249,112 @@ public sealed class GeneratedFunctionObjectEmissionTests
         var echoType = compiled.Assembly.GetTypes().Single(type => type.Name == "Echo");
         var echo = Activator.CreateInstance(echoType);
         Assert.Equal(5d, CallableOperations.Call1(methodFunction, echo, 5d));
+    }
+
+    [Fact]
+    public void MaterializedCallableFamiliesNeverUseRawDelegateStorage()
+    {
+        using var compiled = CompileAndLoad(CallableFamilySource);
+        var functionObjectTypes = GetFunctionObjectTypes(compiled.Assembly);
+
+        Assert.True(functionObjectTypes.Length >= 10);
+        Assert.Contains(
+            functionObjectTypes,
+            type => typeof(JsAsyncFunctionObject).IsAssignableFrom(type));
+        Assert.Contains(
+            functionObjectTypes,
+            type => type.Name.Contains("ClassMethod", StringComparison.Ordinal));
+        Assert.Contains(
+            functionObjectTypes,
+            type => type.Name.Contains("ClassGetter", StringComparison.Ordinal));
+        Assert.Contains(
+            functionObjectTypes,
+            type => type.Name.Contains("ClassSetter", StringComparison.Ordinal));
+
+        Assert.DoesNotContain(
+            compiled.Assembly.GetTypes()
+                .SelectMany(type => type.GetFields(
+                    BindingFlags.Instance
+                    | BindingFlags.Static
+                    | BindingFlags.Public
+                    | BindingFlags.NonPublic)),
+            field => typeof(Delegate).IsAssignableFrom(field.FieldType));
+
+        Assert.All(
+            functionObjectTypes,
+            type =>
+            {
+                Assert.True(typeof(JsFunctionObject).IsAssignableFrom(type));
+                Assert.DoesNotContain(
+                    type.GetFields(
+                        BindingFlags.Instance
+                        | BindingFlags.Static
+                        | BindingFlags.Public
+                        | BindingFlags.NonPublic),
+                    field => typeof(Delegate).IsAssignableFrom(field.FieldType));
+                Assert.DoesNotContain(
+                    type.GetMethods(
+                        BindingFlags.Instance
+                        | BindingFlags.Static
+                        | BindingFlags.Public
+                        | BindingFlags.NonPublic
+                        | BindingFlags.DeclaredOnly),
+                    method => typeof(Delegate).IsAssignableFrom(method.ReturnType)
+                        || method.GetParameters().Any(parameter =>
+                            typeof(Delegate).IsAssignableFrom(
+                                parameter.ParameterType)));
+            });
+    }
+
+    [Fact]
+    public void CommonArityAdaptersDoNotAllocateArgumentArrays()
+    {
+        using var compiled = CompileAndLoad(
+            "function identity(value) { return arguments[0]; } module.exports = identity;");
+        var functionObjectType = Assert.Single(
+            GetFunctionObjectTypes(compiled.Assembly));
+        var callAdapter = functionObjectType.GetMethod(
+            "CallCore",
+            BindingFlags.Instance | BindingFlags.NonPublic)!;
+        var arrayAdapter = functionObjectType.GetMethod(
+            "__js_call_with_arguments__",
+            BindingFlags.Static | BindingFlags.NonPublic)!;
+        var canonicalBody = functionObjectType.DeclaringType!.GetMethod(
+            "__js_call__",
+            BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)!;
+
+        Assert.Equal(
+            [typeof(object), typeof(JsCallArguments).MakeByRefType()],
+            callAdapter.GetParameters().Select(parameter => parameter.ParameterType));
+        Assert.DoesNotContain(
+            unchecked((byte)OpCodes.Newarr.Value),
+            callAdapter.GetMethodBody()!.GetILAsByteArray()!);
+        Assert.Equal(
+            [typeof(JsFunctionObject), typeof(object[]), typeof(object[])],
+            arrayAdapter.GetParameters().Select(parameter => parameter.ParameterType));
+        Assert.DoesNotContain(
+            typeof(object[]),
+            canonicalBody.GetParameters().Skip(1).Select(parameter => parameter.ParameterType));
+    }
+
+    [Fact]
+    public void StaticArrayAdaptersAreReservedForArrayBoundaries()
+    {
+        using var simple = CompileAndLoad(
+            "function identity(value) { return value; } module.exports = identity;");
+        var simpleFunctionType = Assert.Single(
+            GetFunctionObjectTypes(simple.Assembly));
+        Assert.Null(simpleFunctionType.GetMethod(
+            "__js_call_with_arguments__",
+            BindingFlags.Static | BindingFlags.NonPublic));
+
+        using var argumentSensitive = CompileAndLoad(
+            "function identity(value) { return arguments[0]; } module.exports = identity;");
+        var argumentSensitiveType = Assert.Single(
+            GetFunctionObjectTypes(argumentSensitive.Assembly));
+        Assert.NotNull(argumentSensitiveType.GetMethod(
+            "__js_call_with_arguments__",
+            BindingFlags.Static | BindingFlags.NonPublic));
     }
 
     private static string[] DescribeFunctionObjectTypes(Assembly assembly)

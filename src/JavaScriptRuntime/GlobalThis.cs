@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Text;
 using JavaScriptRuntime.DependencyInjection;
@@ -17,6 +18,8 @@ namespace JavaScriptRuntime
 
         // Per-"realm" (thread) global object. This backs the ECMAScript globalThis value.
         private static readonly ThreadLocal<GlobalThis?> _globalObject = new(() => null);
+        private static readonly ConcurrentDictionary<string, BuiltinDelegateFunctionAdapter>
+            _globalFunctionValues = new(StringComparer.Ordinal);
 
         private static readonly JavaScriptRuntime.Console _defaultConsole = new(new ConsoleOutputSinks());
         private static readonly JavaScriptRuntime.Node.Process _defaultProcess = new(new DefaultEnvironment());
@@ -311,6 +314,7 @@ namespace JavaScriptRuntime
         private static readonly object _symbolPrototypeValue = new JsObject();
         private static readonly object _promisePrototypeValue = new JsObject();
         private static readonly object _arrayBufferPrototypeValue = new JsObject();
+        private static readonly object _sharedArrayBufferPrototypeValue = new JsObject();
         private static readonly Func<object[], object?[]?, object?> _symbolFunctionValue = SymbolCall;
 
         // TypedArray intrinsic constructor and prototype
@@ -391,6 +395,8 @@ namespace JavaScriptRuntime
             // `Function.prototype.apply.bind(Array.prototype.push)` work even when code only
             // references GlobalThis static properties and never touches the globalThis object.
             ConfigureBuiltinFunctionObject(_functionConstructorValue);
+            JavaScriptRuntime.Function.MarkConstructible(
+                _functionConstructorValue);
             PropertyDescriptorStore.DefineOrUpdate(_functionConstructorValue, "prototype", new JsPropertyDescriptor
             {
                 Kind = JsPropertyDescriptorKind.Data,
@@ -423,6 +429,8 @@ namespace JavaScriptRuntime
                 Writable = true,
                 Value = _arrayConstructorValue
             });
+            JavaScriptRuntime.Function.MarkConstructible(
+                _arrayConstructorValue);
             ConfigureBuiltinFunctionObject(_arrayIsArrayValue);
             DefineUndefinedPrototypeProperty(_arrayIsArrayValue);
             PropertyDescriptorStore.DefineOrUpdate(_arrayConstructorValue, "isArray", new JsPropertyDescriptor
@@ -460,6 +468,10 @@ namespace JavaScriptRuntime
             });
             ConfigurePromiseIntrinsicSurface(_promiseConstructorValue, _promisePrototypeValue);
             JavaScriptRuntime.Function.InitializeFunctionInstance(_proxyConstructorValue, 2d, "Proxy");
+            JavaScriptRuntime.Function.MarkConstructible(
+                _proxyConstructorValue);
+            JavaScriptRuntime.Function.MarkUndefinedPrototype(
+                _proxyConstructorValue);
             JavaScriptRuntime.Function.InitializeFunctionInstance(_proxyRevocableValue, 2d, "revocable");
             DefineUndefinedPrototypeProperty(_proxyRevocableValue);
             DefineIntrinsicDataProperty(_proxyConstructorValue, "revocable", _proxyRevocableValue);
@@ -520,6 +532,8 @@ namespace JavaScriptRuntime
                 Writable = false,
                 Value = _booleanPrototypeValue
             });
+            JavaScriptRuntime.Function.MarkConstructible(
+                _booleanFunctionValue);
             ConfigureBuiltinFunctionObject(_symbolFunctionValue);
             PropertyDescriptorStore.DefineOrUpdate(_symbolFunctionValue, "prototype", new JsPropertyDescriptor
             {
@@ -535,6 +549,8 @@ namespace JavaScriptRuntime
 
             // Centralized Object constructor/prototype wiring lives on ObjectRuntime.
             ConfigureBuiltinFunctionObject(_objectConstructorValue);
+            JavaScriptRuntime.Function.MarkConstructible(
+                _objectConstructorValue);
             ObjectRuntime.ConfigureIntrinsicSurface(_objectConstructorValue, _objectPrototypeValue);
             PrototypeChain.SetPrototype(JavaScriptRuntime.Array.ImmutablePrototype, _objectPrototypeValue);
             PrototypeChain.SetPrototype(_jsonValue, _objectPrototypeValue);
@@ -584,6 +600,8 @@ namespace JavaScriptRuntime
             ConfigureConstructorPrototypeSurface(_regExpConstructorValue, JavaScriptRuntime.RegExp.Prototype);
             DefineBuiltinFunctionProperty(_regExpConstructorValue, "escape", _regExpEscapeValue, 1d);
             ConfigureBuiltinFunctionObject(_numberFunctionValue);
+            JavaScriptRuntime.Function.MarkConstructible(
+                _numberFunctionValue);
             PropertyDescriptorStore.DefineOrUpdate(_numberFunctionValue, "prototype", new JsPropertyDescriptor
             {
                 Kind = JsPropertyDescriptorKind.Data,
@@ -863,6 +881,9 @@ namespace JavaScriptRuntime
             ConfigureTypedArrayInstancePrototype(_uint16ArrayConstructorValue, _uint16ArrayPrototypeValue);
             JavaScriptRuntime.Uint8Array.ConfigureIntrinsicSurface(_uint8ArrayConstructorValue);
             ConfigureConstructorPrototypeSurface(_arrayBufferConstructorValue, _arrayBufferPrototypeValue);
+            ConfigureConstructorPrototypeSurface(
+                _sharedArrayBufferConstructorValue,
+                _sharedArrayBufferPrototypeValue);
 
             JavaScriptRuntime.String.ConfigureIntrinsicSurface(_stringFunctionValue);
         }
@@ -893,6 +914,7 @@ namespace JavaScriptRuntime
         private static void ConfigureTypedArrayConstructorValue(object constructorValue, double bytesPerElement)
         {
             ConfigureBuiltinFunctionObject(constructorValue);
+            JavaScriptRuntime.Function.MarkConstructible(constructorValue);
             PrototypeChain.SetPrototype(constructorValue, _typedArrayConstructorValue);
             DefineIntrinsicConstantDataProperty(constructorValue, "BYTES_PER_ELEMENT", bytesPerElement);
         }
@@ -1429,6 +1451,60 @@ namespace JavaScriptRuntime
             }
         }
 
+        public static JsFunctionObject GetFunctionValue(string name)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(name);
+            return _globalFunctionValues.GetOrAdd(
+                name,
+                static functionName =>
+                {
+                    var (target, length) = functionName switch
+                    {
+                        nameof(setTimeout) => ((Delegate)(Func<object, object, object[], object>)setTimeout, 2d),
+                        nameof(clearTimeout) => ((Delegate)(Func<object, object?>)clearTimeout, 1d),
+                        nameof(setImmediate) => ((Delegate)(Func<object, object[], object>)setImmediate, 1d),
+                        nameof(setInterval) => ((Delegate)(Func<object, object, object[], object>)setInterval, 2d),
+                        nameof(clearImmediate) => ((Delegate)(Func<object, object?>)clearImmediate, 1d),
+                        nameof(clearInterval) => ((Delegate)(Func<object, object?>)clearInterval, 1d),
+                        nameof(gc) => ((Delegate)(Func<object?>)gc, 0d),
+                        nameof(parseInt) => ((Delegate)(Func<object?, object?, double>)parseInt, 2d),
+                        nameof(parseFloat) => ((Delegate)(Func<object?, double>)parseFloat, 1d),
+                        nameof(isFinite) => ((Delegate)(Func<object?, bool>)isFinite, 1d),
+                        nameof(isNaN) => ((Delegate)(Func<object?, bool>)isNaN, 1d),
+                        nameof(decodeURI) => ((Delegate)(Func<object?, string>)decodeURI, 1d),
+                        nameof(encodeURI) => ((Delegate)(Func<object?, string>)encodeURI, 1d),
+                        _ => throw new ArgumentOutOfRangeException(
+                            nameof(name),
+                            functionName,
+                            "Unknown global function.")
+                    };
+                    var adapter =
+                        BuiltinDelegateFunctionAdapter.FromDelegate(target);
+                    JavaScriptRuntime.Function.InitializeFunctionInstance(
+                        adapter,
+                        length,
+                        functionName,
+                        requiresInvocationContext: false);
+                    JavaScriptRuntime.Function.MarkUndefinedPrototype(adapter);
+                    return adapter;
+                });
+        }
+
+        internal static bool IsNumberConstructorTarget(Delegate target)
+            => ReferenceEquals(target, _numberFunctionValue)
+                || target.Method == _numberFunctionValue.Method;
+
+        internal static bool IsStringConstructorTarget(Delegate target)
+            => ReferenceEquals(target, _stringFunctionValue)
+                || target.Method == _stringFunctionValue.Method;
+
+        internal static bool IsPromiseConstructorValue(object? value)
+            => ReferenceEquals(value, _promiseConstructorValue)
+                || value is BuiltinDelegateFunctionAdapter adapter
+                    && ReferenceEquals(
+                        adapter.Target,
+                        _promiseConstructorValue);
+
         /// <summary>
         /// Minimal process global with writable exitCode.
         /// </summary>
@@ -1502,7 +1578,9 @@ namespace JavaScriptRuntime
         public static Func<object[], object?[], object?> Array => _arrayConstructorValue;
 
         internal static bool IsArrayConstructorValue(object? value)
-            => ReferenceEquals(value, _arrayConstructorValue);
+            => ReferenceEquals(value, _arrayConstructorValue)
+                || value is BuiltinDelegateFunctionAdapter adapter
+                    && ReferenceEquals(adapter.Target, _arrayConstructorValue);
 
         public static Type Date => typeof(JavaScriptRuntime.Date);
 
@@ -2039,6 +2117,7 @@ namespace JavaScriptRuntime
         private static void ConfigurePromiseIntrinsicSurface(object constructorValue, object prototypeValue)
         {
             ConfigureBuiltinFunctionObject(constructorValue);
+            JavaScriptRuntime.Function.MarkConstructible(constructorValue);
             PrototypeChain.SetPrototype(prototypeValue, _objectPrototypeValue);
 
             PropertyDescriptorStore.DefineOrUpdate(constructorValue, "prototype", new JsPropertyDescriptor
@@ -2082,6 +2161,7 @@ namespace JavaScriptRuntime
         private static void ConfigureConstructorPrototypeSurface(object constructorValue, object prototypeValue)
         {
             ConfigureBuiltinFunctionObject(constructorValue);
+            JavaScriptRuntime.Function.MarkConstructible(constructorValue);
             PrototypeChain.SetPrototype(prototypeValue, _objectPrototypeValue);
 
             PropertyDescriptorStore.DefineOrUpdate(constructorValue, "prototype", new JsPropertyDescriptor
@@ -2125,6 +2205,7 @@ namespace JavaScriptRuntime
         private static void ConfigureErrorSubclassIntrinsicSurface(object constructorValue, object prototypeValue, string name)
         {
             ConfigureBuiltinFunctionObject(constructorValue);
+            JavaScriptRuntime.Function.MarkConstructible(constructorValue);
             PrototypeChain.SetPrototype(prototypeValue, _errorPrototypeValue);
 
             PropertyDescriptorStore.DefineOrUpdate(constructorValue, "prototype", new JsPropertyDescriptor
@@ -2207,20 +2288,6 @@ namespace JavaScriptRuntime
         internal static object SyntaxErrorPrototypeValue => _syntaxErrorPrototypeValue;
         internal static object TypeErrorPrototypeValue => _typeErrorPrototypeValue;
         internal static object URIErrorPrototypeValue => _uriErrorPrototypeValue;
-        internal static bool HasUndefinedPrototype(Delegate functionValue)
-        {
-            ArgumentNullException.ThrowIfNull(functionValue);
-
-            return functionValue.Method == _arrayIsArrayValue.Method
-                || functionValue.Method == _parseIntValue.Method
-                || functionValue.Method == _isFiniteValue.Method
-                || functionValue.Method == _isNaNValue.Method
-                || functionValue.Method == _decodeURIValue.Method
-                || functionValue.Method == _encodeURIValue.Method
-                || functionValue.Method == _numberIsIntegerValue.Method
-                || JavaScriptRuntime.Function.HasUndefinedPrototype(functionValue);
-        }
-
         private static Func<object[], object?[], object?> CreateErrorConstructorValue(Func<string?, object> factory)
         {
             return (_, args) =>
@@ -2238,6 +2305,7 @@ namespace JavaScriptRuntime
         private static void ConfigureErrorIntrinsicSurface(object constructorValue, object prototypeValue, string name, object parentPrototype)
         {
             ConfigureBuiltinFunctionObject(constructorValue);
+            JavaScriptRuntime.Function.MarkConstructible(constructorValue);
             PrototypeChain.SetPrototype(prototypeValue, parentPrototype);
 
             PropertyDescriptorStore.DefineOrUpdate(constructorValue, "prototype", new JsPropertyDescriptor

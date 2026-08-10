@@ -152,7 +152,7 @@ public class GlobalThisTests
             var globalObject = (GlobalThis)GlobalThis.globalThis;
 
             Assert.All(
-                new (string Name, object Constructor)[]
+                new (string Name, Delegate BootstrapConstructor)[]
                 {
                     (nameof(GlobalThis.Map), GlobalThis.Map),
                     (nameof(GlobalThis.Set), GlobalThis.Set),
@@ -162,19 +162,22 @@ public class GlobalThisTests
                 pair =>
                 {
                     Assert.True(globalObject.ContainsKey(pair.Name));
-                    Assert.Same(pair.Constructor, globalObject[pair.Name]);
+                    var constructor =
+                        Assert.IsType<BuiltinDelegateFunctionAdapter>(
+                            globalObject[pair.Name]);
+                    Assert.Same(pair.BootstrapConstructor, constructor.Target);
 
-                    var prototype = ObjectRuntime.GetItem(pair.Constructor, "prototype");
+                    var prototype = ObjectRuntime.GetItem(constructor, "prototype");
                     Assert.NotNull(prototype);
-                    Assert.Same(pair.Constructor, ObjectRuntime.GetItem(prototype!, "constructor"));
+                    Assert.Same(constructor, ObjectRuntime.GetItem(prototype!, "constructor"));
 
-                    var descriptor = JavaScriptRuntime.Object.getOwnPropertyDescriptor(pair.Constructor, "prototype");
+                    var descriptor = JavaScriptRuntime.Object.getOwnPropertyDescriptor(constructor, "prototype");
                     Assert.NotNull(descriptor);
                     Assert.False((bool)ObjectRuntime.GetItem(descriptor!, "writable")!);
                     Assert.False((bool)ObjectRuntime.GetItem(descriptor, "enumerable")!);
                     Assert.False((bool)ObjectRuntime.GetItem(descriptor, "configurable")!);
 
-                    var error = Assert.Throws<TypeError>(() => Closure.InvokeWithArgs(pair.Constructor, RuntimeServices.EmptyScopes));
+                    var error = Assert.Throws<TypeError>(() => Closure.InvokeWithArgs(constructor, RuntimeServices.EmptyScopes));
                     Assert.Equal($"Constructor {pair.Name} requires 'new'", error.Message);
                 });
         }
@@ -232,7 +235,10 @@ public class GlobalThisTests
             GlobalThis.ServiceProvider = serviceProvider;
 
             var globalObject = (GlobalThis)GlobalThis.globalThis;
-            Assert.Same(GlobalThis.Array, globalObject[nameof(GlobalThis.Array)]);
+            var arrayConstructor =
+                Assert.IsType<BuiltinDelegateFunctionAdapter>(
+                    globalObject[nameof(GlobalThis.Array)]);
+            Assert.Same(GlobalThis.Array, arrayConstructor.Target);
         }
         finally
         {
@@ -307,18 +313,25 @@ public class GlobalThisTests
             var globalObject = (GlobalThis)GlobalThis.globalThis;
 
             Assert.True(globalObject.ContainsKey(nameof(GlobalThis.TypeError)));
-            Assert.Same(GlobalThis.TypeError, globalObject[nameof(GlobalThis.TypeError)]);
+            var typeErrorConstructor =
+                Assert.IsType<BuiltinDelegateFunctionAdapter>(
+                    globalObject[nameof(GlobalThis.TypeError)]);
+            var errorConstructor =
+                Assert.IsType<BuiltinDelegateFunctionAdapter>(
+                    globalObject[nameof(GlobalThis.Error)]);
+            Assert.Same(GlobalThis.TypeError, typeErrorConstructor.Target);
+            Assert.Same(GlobalThis.Error, errorConstructor.Target);
 
-            var prototype = ObjectRuntime.GetItem(GlobalThis.TypeError, "prototype");
+            var prototype = ObjectRuntime.GetItem(typeErrorConstructor, "prototype");
             Assert.NotNull(prototype);
-            Assert.Same(GlobalThis.TypeError, ObjectRuntime.GetItem(prototype!, "constructor"));
+            Assert.Same(typeErrorConstructor, ObjectRuntime.GetItem(prototype!, "constructor"));
             Assert.Equal("TypeError", ObjectRuntime.GetItem(prototype, "name"));
-            Assert.Same(ObjectRuntime.GetItem(GlobalThis.Error, "prototype"), PrototypeChain.GetPrototypeOrNull(prototype));
+            Assert.Same(ObjectRuntime.GetItem(errorConstructor, "prototype"), PrototypeChain.GetPrototypeOrNull(prototype));
 
             var error = new TypeError("boom");
-            Assert.True(Operators.InstanceOf(error, GlobalThis.TypeError));
-            Assert.True(Operators.InstanceOf(error, GlobalThis.Error));
-            Assert.Same(GlobalThis.TypeError, ObjectRuntime.GetItem(error, "constructor"));
+            Assert.True(Operators.InstanceOf(error, typeErrorConstructor));
+            Assert.True(Operators.InstanceOf(error, errorConstructor));
+            Assert.Same(typeErrorConstructor, ObjectRuntime.GetItem(error, "constructor"));
         }
         finally
         {

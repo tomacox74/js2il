@@ -181,6 +181,24 @@ public class ModuleLoadTests
     }
 
     [Fact]
+    public void JsEngine_RepeatedModuleLoadsKeepCompiledFunctionObjectsIsolated()
+    {
+        using var module = CompileAndLoadModuleAssemblyFromResource("math", "math.js");
+        using var first = JsEngine.LoadDynamicModule(module.Assembly, "math");
+        using var second = JsEngine.LoadDynamicModule(module.Assembly, "math");
+        var firstExports = Assert.IsType<JsObject>(first.UnwrapExports());
+        var secondExports = Assert.IsType<JsObject>(second.UnwrapExports());
+        var firstAdd = Assert.IsAssignableFrom<JsFunctionObject>(
+            ExportMemberResolver.GetExportMember(firstExports, "add"));
+        var secondAdd = Assert.IsAssignableFrom<JsFunctionObject>(
+            ExportMemberResolver.GetExportMember(secondExports, "add"));
+
+        Assert.NotSame(firstAdd, secondAdd);
+        Assert.Equal(3d, CallableOperations.Call2(firstAdd, null, 1d, 2d));
+        Assert.Equal(7d, CallableOperations.Call2(secondAdd, null, 3d, 4d));
+    }
+
+    [Fact]
     public void JsEngine_LoadModule_Typed_AllowsCallingEsmExports()
     {
         using var module = CompileAndLoadModuleAssemblyFromResource("mathEsm", "mathEsm.js");
@@ -741,6 +759,47 @@ public class ModuleLoadTests
         Assert.True((bool)constructorInfo.constructable);
         var instance = exports.ConstructCallback(constructor, 9);
         Assert.Equal(9.0, exports.ReadValue(instance));
+    }
+
+    [Fact]
+    public void FixedArityHostedDelegateCallsDoNotAllocateArgumentArrays()
+    {
+        using var module = CompileAndLoadModuleAssemblyFromResource(
+            "fixedArityHostAllocation",
+            "Hosting_GeneratedFunctionInterop.js");
+        using var runtime = new JsRuntimeInstance(
+            module.Assembly,
+            "fixedArityHostAllocation");
+        Func<object, object?> callback = static value => value;
+        var adapter = Assert.IsAssignableFrom<JsFunctionObject>(
+            runtime.NormalizeHostValue(callback));
+        const string argument = "argument";
+
+        var allocated = runtime.Invoke(() =>
+        {
+            // Cross both tiered-compilation thresholds before measuring. Otherwise
+            // Tier 1 JIT bookkeeping can be charged to the runtime thread.
+            for (var index = 0; index < 100_000; index++)
+            {
+                _ = CallableOperations.Call1(adapter, null, argument);
+            }
+
+            var before = GC.GetAllocatedBytesForCurrentThread();
+            object? result = null;
+            for (var index = 0; index < 10_000; index++)
+            {
+                result = CallableOperations.Call1(
+                    adapter,
+                    null,
+                    argument);
+            }
+            var measured = GC.GetAllocatedBytesForCurrentThread() - before;
+
+            Assert.Same(argument, result);
+            return measured;
+        });
+
+        Assert.Equal(0, allocated);
     }
 
     [Fact]

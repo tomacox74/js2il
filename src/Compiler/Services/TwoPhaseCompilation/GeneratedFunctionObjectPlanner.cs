@@ -53,8 +53,36 @@ internal static class GeneratedFunctionObjectPlanner
                 callable.Kind is CallableKind.FunctionDeclaration
                     or CallableKind.FunctionExpression
                 && !callable.HasRestrictedFunctionProperties,
+            RequiresArrayCallAdapter =
+                callable.NeedsArgumentsObject
+                || callable.HasRestParameters
+                || HasDirectSpreadCall(callable, callableScope),
             ReturnKind = returnKind
         };
+    }
+
+    private static bool HasDirectSpreadCall(
+        CallableId callable,
+        Scope? callableScope)
+    {
+        for (var scope = callableScope?.Parent; scope is not null; scope = scope.Parent)
+        {
+            var binding = scope.Bindings.Values.FirstOrDefault(candidate =>
+                ReferenceEquals(candidate.DeclarationNode, callable.AstNode)
+                || candidate.DeclarationNode is VariableDeclarator
+                {
+                    Init: { } initializer
+                } && ReferenceEquals(initializer, callable.AstNode));
+            if (binding is null)
+            {
+                continue;
+            }
+
+            return binding.CallableMaterialization?.Reasons.HasFlag(
+                CallableMaterializationReason.SpreadCall) == true;
+        }
+
+        return false;
     }
 
     private static Scope? ResolveCallableScope(CallableId callable, SymbolTable symbolTable)

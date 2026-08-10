@@ -71,9 +71,7 @@ namespace JavaScriptRuntime
         {
             ArgumentNullException.ThrowIfNull(candidate);
 
-            var intrinsic = GlobalThis.Number;
-            return ReferenceEquals(candidate, intrinsic)
-                || (intrinsic is Delegate intrinsicDelegate && candidate.Method == intrinsicDelegate.Method);
+            return GlobalThis.IsNumberConstructorTarget(candidate);
         }
 
         internal static object Construct(object?[]? args, object? newTarget)

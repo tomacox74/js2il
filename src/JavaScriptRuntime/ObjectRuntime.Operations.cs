@@ -903,6 +903,7 @@ namespace JavaScriptRuntime
         public static void ConfigureIntrinsicSurface(object objectConstructorValue, object objectPrototypeValue)
         {
             using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
+            Function.MarkConstructible(objectConstructorValue);
 
             DefineBuiltinDataProperty(objectConstructorValue, "prototype", objectPrototypeValue, enumerable: false, configurable: true, writable: true);
 
@@ -1037,11 +1038,6 @@ namespace JavaScriptRuntime
 
             // Calling getPrototypeOf is itself an opt-in signal.
             PrototypeChain.Enable();
-
-            if (obj is Delegate del)
-            {
-                return JavaScriptRuntime.Function.GetPrototypeObject(del);
-            }
 
             if (!PrototypeChain.TryGetPrototype(obj, out var prototype))
             {
@@ -2324,23 +2320,6 @@ namespace JavaScriptRuntime
                 return !(classConstructor.Type.IsAbstract && classConstructor.Type.IsSealed);
             }
 
-            if (constructor is Delegate)
-            {
-                if (constructor is Delegate del && GlobalThis.HasUndefinedPrototype(del))
-                {
-                    return false;
-                }
-
-                if (PropertyDescriptorStore.TryGetOwn(constructor, "prototype", out var prototypeDescriptor)
-                    && prototypeDescriptor.Kind == JsPropertyDescriptorKind.Data
-                    && prototypeDescriptor.Value is null)
-                {
-                    return false;
-                }
-
-                return true;
-            }
-
             if (constructor is JsObject)
             {
                 return ObjectRuntime.TryGetOwnValue(constructor, "Construct", out var constructValue)
@@ -2499,11 +2478,6 @@ namespace JavaScriptRuntime
                 }
             }
 
-            if (constructor is Delegate del)
-            {
-                return JavaScriptRuntime.Function.Construct(del, callArgs, newTarget);
-            }
-
             if (constructor is JsObject
                 && ObjectRuntime.TryGetOwnValue(constructor, "Construct", out var constructValue)
                 && CallableOperations.IsCallable(constructValue))
@@ -2574,19 +2548,22 @@ namespace JavaScriptRuntime
 
             var callArgs = args ?? System.Array.Empty<object>();
 
-            if (receiver is Delegate del)
+            if (receiver is BuiltinDelegateFunctionAdapter builtinReceiver)
             {
                 if (string.Equals(methodName, "hasOwnProperty", StringComparison.Ordinal))
                 {
                     var prop = callArgs.Length > 0 ? callArgs[0] : null;
-                    return hasOwn(del, prop);
+                    return hasOwn(builtinReceiver, prop);
                 }
 
                 if (string.Equals(methodName, "propertyIsEnumerable", StringComparison.Ordinal))
                 {
                     var prop = callArgs.Length > 0 ? callArgs[0] : null;
                     var key = ToPropertyKeyString(prop);
-                    return PropertyDescriptorStore.TryGetOwn(del, key, out var descriptor) && descriptor.Enumerable;
+                    return PropertyDescriptorStore.TryGetOwn(
+                        builtinReceiver,
+                        key,
+                        out var descriptor) && descriptor.Enumerable;
                 }
             }
 
@@ -2778,11 +2755,7 @@ namespace JavaScriptRuntime
             object receiver,
             object member,
             object?[] callArgs)
-        {
-            return member is Delegate legacyDelegate
-                ? InvokeMemberDelegate(receiver, legacyDelegate, callArgs)
-                : CallableOperations.Call(member, receiver, callArgs);
-        }
+            => CallableOperations.Call(member, receiver, callArgs);
 
         private static bool TryGetCallableFunctionMember(
             object receiver,
@@ -2796,15 +2769,6 @@ namespace JavaScriptRuntime
             }
 
             var value = GetProperty(receiver, memberName);
-            if (!CallableOperations.IsCallable(value)
-                && receiver is Delegate
-                && !HasProperty(receiver, memberName)
-                && Function.TryGetPrototypeValue(
-                    memberName,
-                    out var prototypeValue))
-            {
-                value = prototypeValue;
-            }
             if (!CallableOperations.IsCallable(value))
             {
                 return false;
@@ -2812,86 +2776,6 @@ namespace JavaScriptRuntime
 
             member = value!;
             return true;
-        }
-
-        private static object InvokeMemberDelegate(object receiver, Delegate member, object?[] callArgs)
-        {
-            var previousThis = RuntimeServices.SetCurrentThis(receiver);
-            try
-            {
-                return Closure.InvokeWithArgs(member, System.Array.Empty<object>(), callArgs);
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentThis(previousThis);
-            }
-        }
-
-        private static object InvokeMemberDelegate0(object receiver, Delegate member)
-        {
-            var previousThis = RuntimeServices.SetCurrentThis(receiver);
-            try
-            {
-                return Closure.InvokeWithArgs0(member, System.Array.Empty<object>());
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentThis(previousThis);
-            }
-        }
-
-        private static object InvokeMemberDelegate0PreservingContext(object receiver, Delegate member)
-        {
-            var previousThis = RuntimeServices.SetCurrentThis(receiver);
-            try
-            {
-                return Function.HasBoundWithObject(member)
-                    ? Closure.InvokeWithArgs(member, System.Array.Empty<object>(), System.Array.Empty<object>())
-                    : Closure.InvokeWithArgs0(member, System.Array.Empty<object>());
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentThis(previousThis);
-            }
-        }
-
-        private static object InvokeMemberDelegate1(object receiver, Delegate member, object? a0)
-        {
-            var previousThis = RuntimeServices.SetCurrentThis(receiver);
-            try
-            {
-                return Closure.InvokeWithArgs1(member, System.Array.Empty<object>(), a0);
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentThis(previousThis);
-            }
-        }
-
-        private static object InvokeMemberDelegate2(object receiver, Delegate member, object? a0, object? a1)
-        {
-            var previousThis = RuntimeServices.SetCurrentThis(receiver);
-            try
-            {
-                return Closure.InvokeWithArgs2(member, System.Array.Empty<object>(), a0, a1);
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentThis(previousThis);
-            }
-        }
-
-        private static object InvokeMemberDelegate3(object receiver, Delegate member, object? a0, object? a1, object? a2)
-        {
-            var previousThis = RuntimeServices.SetCurrentThis(receiver);
-            try
-            {
-                return Closure.InvokeWithArgs3(member, System.Array.Empty<object>(), a0, a1, a2);
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentThis(previousThis);
-            }
         }
 
         // Arity-specific overloads to avoid object[] allocations for common cases (0-3 args).
@@ -2905,16 +2789,16 @@ namespace JavaScriptRuntime
                     methodName,
                     out var functionMember))
             {
-                return functionMember is Delegate legacyDelegate
-                    ? InvokeMemberDelegate0(receiver, legacyDelegate)
-                    : CallableOperations.Call0(functionMember, receiver);
+                return CallableOperations.Call0(functionMember, receiver);
             }
 
             if (TryGetFastDictionaryOwnValue(receiver, methodName, out var directMemberValue))
             {
-                if (directMemberValue is Delegate directMember)
+                if (CallableOperations.IsCallable(directMemberValue))
                 {
-                    return InvokeMemberDelegate0(receiver, directMember);
+                    return CallableOperations.Call0(
+                        directMemberValue,
+                        receiver);
                 }
 
                 throw new TypeError($"{methodName} is not a function");
@@ -2943,16 +2827,20 @@ namespace JavaScriptRuntime
                     methodName,
                     out var functionMember))
             {
-                return functionMember is Delegate legacyDelegate
-                    ? InvokeMemberDelegate1(receiver, legacyDelegate, a0)
-                    : CallableOperations.Call1(functionMember, receiver, a0);
+                return CallableOperations.Call1(
+                    functionMember,
+                    receiver,
+                    a0);
             }
 
             if (TryGetFastDictionaryOwnValue(receiver, methodName, out var directMemberValue))
             {
-                if (directMemberValue is Delegate directMember)
+                if (CallableOperations.IsCallable(directMemberValue))
                 {
-                    return InvokeMemberDelegate1(receiver, directMember, a0);
+                    return CallableOperations.Call1(
+                        directMemberValue,
+                        receiver,
+                        a0);
                 }
 
                 throw new TypeError($"{methodName} is not a function");
@@ -2981,20 +2869,22 @@ namespace JavaScriptRuntime
                     methodName,
                     out var functionMember))
             {
-                return functionMember is Delegate legacyDelegate
-                    ? InvokeMemberDelegate2(receiver, legacyDelegate, a0, a1)
-                    : CallableOperations.Call2(
-                        functionMember,
-                        receiver,
-                        a0,
-                        a1);
+                return CallableOperations.Call2(
+                    functionMember,
+                    receiver,
+                    a0,
+                    a1);
             }
 
             if (TryGetFastDictionaryOwnValue(receiver, methodName, out var directMemberValue))
             {
-                if (directMemberValue is Delegate directMember)
+                if (CallableOperations.IsCallable(directMemberValue))
                 {
-                    return InvokeMemberDelegate2(receiver, directMember, a0, a1);
+                    return CallableOperations.Call2(
+                        directMemberValue,
+                        receiver,
+                        a0,
+                        a1);
                 }
 
                 throw new TypeError($"{methodName} is not a function");
@@ -3023,26 +2913,24 @@ namespace JavaScriptRuntime
                     methodName,
                     out var functionMember))
             {
-                return functionMember is Delegate legacyDelegate
-                    ? InvokeMemberDelegate3(
-                        receiver,
-                        legacyDelegate,
-                        a0,
-                        a1,
-                        a2)
-                    : CallableOperations.Call3(
-                        functionMember,
-                        receiver,
-                        a0,
-                        a1,
-                        a2);
+                return CallableOperations.Call3(
+                    functionMember,
+                    receiver,
+                    a0,
+                    a1,
+                    a2);
             }
 
             if (TryGetFastDictionaryOwnValue(receiver, methodName, out var directMemberValue))
             {
-                if (directMemberValue is Delegate directMember)
+                if (CallableOperations.IsCallable(directMemberValue))
                 {
-                    return InvokeMemberDelegate3(receiver, directMember, a0, a1, a2);
+                    return CallableOperations.Call3(
+                        directMemberValue,
+                        receiver,
+                        a0,
+                        a1,
+                        a2);
                 }
 
                 throw new TypeError($"{methodName} is not a function");
@@ -3412,11 +3300,6 @@ namespace JavaScriptRuntime
                 return true;
             }
 
-            if (target is Delegate del && Function.TryEnsureOwnMetadataPropertyDescriptor(del, name, out _))
-            {
-                return true;
-            }
-
             if (TryGetStaticClassMethodOverloads(target, name, out _, out _))
             {
                 return true;
@@ -3513,21 +3396,29 @@ namespace JavaScriptRuntime
             var prop = FindClrProperty(type, name, bindingFlags);
             if (prop != null && prop.CanRead)
             {
-                result = prop.GetValue(instance);
+                result =
+                    BuiltinDelegateFunctionAdapter.WrapJavaScriptVisibleValue(
+                        prop.GetValue(instance));
                 return true;
             }
 
             var field = FindClrField(type, name, bindingFlags);
             if (field != null)
             {
-                result = field.GetValue(instance);
+                result =
+                    BuiltinDelegateFunctionAdapter.WrapJavaScriptVisibleValue(
+                        field.GetValue(instance));
                 return true;
             }
 
             var getter = FindAccessorMethod(type, "get", name, bindingFlags, parameterCount: 0);
             if (getter != null)
             {
-                result = getter.Invoke(instance, System.Array.Empty<object>());
+                result =
+                    BuiltinDelegateFunctionAdapter.WrapJavaScriptVisibleValue(
+                        getter.Invoke(
+                            instance,
+                            System.Array.Empty<object>()));
                 return true;
             }
 
@@ -3770,11 +3661,6 @@ namespace JavaScriptRuntime
                     Writable = true,
                     Value = calleeValue
                 };
-                return true;
-            }
-
-            if (target is Delegate del && Function.TryEnsureOwnMetadataPropertyDescriptor(del, propName, out descriptor))
-            {
                 return true;
             }
 
@@ -4030,32 +3916,17 @@ namespace JavaScriptRuntime
                 TryCallStaticClassMethod(target, propName, (object[]?)args ?? System.Array.Empty<object>(), out var result);
                 return result;
             };
-
-            GlobalThis.ConfigureBuiltinFunctionObject(functionValue);
-            PropertyDescriptorStore.DefineOrUpdate(functionValue, "name", new JsPropertyDescriptor
-            {
-                Kind = JsPropertyDescriptorKind.Data,
-                Enumerable = false,
-                Configurable = true,
-                Writable = false,
-                Value = propName
-            });
-            PropertyDescriptorStore.DefineOrUpdate(functionValue, "length", new JsPropertyDescriptor
-            {
-                Kind = JsPropertyDescriptorKind.Data,
-                Enumerable = false,
-                Configurable = true,
-                Writable = false,
-                Value = GetStaticClassMethodLength(staticClassType, propName, methods)
-            });
-            PropertyDescriptorStore.DefineOrUpdate(functionValue, "prototype", new JsPropertyDescriptor
-            {
-                Kind = JsPropertyDescriptorKind.Data,
-                Enumerable = false,
-                Configurable = false,
-                Writable = false,
-                Value = null
-            });
+            var functionObject =
+                BuiltinDelegateFunctionAdapter.FromDelegate(functionValue);
+            Function.InitializeFunctionInstance(
+                functionObject,
+                GetStaticClassMethodLength(
+                    staticClassType,
+                    propName,
+                    methods),
+                propName,
+                requiresInvocationContext: false);
+            Function.MarkUndefinedPrototype(functionObject);
 
             descriptor = new JsPropertyDescriptor
             {
@@ -4063,7 +3934,7 @@ namespace JavaScriptRuntime
                 Enumerable = false,
                 Configurable = true,
                 Writable = true,
-                Value = functionValue
+                Value = functionObject
             };
 
             PropertyDescriptorStore.DefineOrUpdate(target, propName, descriptor);
@@ -4195,12 +4066,6 @@ namespace JavaScriptRuntime
                 return true;
             }
 
-            if (target is Delegate del && Function.TryEnsureOwnMetadataPropertyDescriptor(del, propName, out var delegateMetadataDesc))
-            {
-                value = delegateMetadataDesc.Value;
-                return true;
-            }
-
             if (target is ClassConstructorValue classConstructorValue
                 && RuntimeServices.TryEnsureClassConstructorMetadataPropertyDescriptor(classConstructorValue, propName, out var classMetadataDesc))
             {
@@ -4260,38 +4125,6 @@ namespace JavaScriptRuntime
 
                 value = null;
                 return false;
-            }
-
-            if (target is Delegate delPrototype
-                && string.Equals(propName, "prototype", StringComparison.Ordinal))
-            {
-                if (GlobalThis.HasUndefinedPrototype(delPrototype))
-                {
-                    value = null;
-                    return true;
-                }
-
-                var protoObj = CreateOrdinaryObject();
-                PropertyDescriptorStore.DefineOrUpdate(delPrototype, "prototype", new JsPropertyDescriptor
-                {
-                    Kind = JsPropertyDescriptorKind.Data,
-                    Enumerable = false,
-                    Configurable = false,
-                    Writable = true,
-                    Value = protoObj
-                });
-
-                PropertyDescriptorStore.DefineOrUpdate(protoObj, "constructor", new JsPropertyDescriptor
-                {
-                    Kind = JsPropertyDescriptorKind.Data,
-                    Enumerable = false,
-                    Configurable = true,
-                    Writable = true,
-                    Value = delPrototype
-                });
-
-                value = protoObj;
-                return true;
             }
 
             if (target is JsFunctionObject functionObject
@@ -5552,6 +5385,12 @@ namespace JavaScriptRuntime
             // Null/undefined -> undefined (modeled as null)
             if (obj is null) return null;
 
+            if (obj is BuiltinDelegateFunctionAdapter arrayConstructor
+                && GlobalThis.IsArrayConstructorValue(arrayConstructor))
+            {
+                obj = arrayConstructor.Target;
+            }
+
             if (ReferenceEquals(obj, JavaScriptRuntime.Function.Prototype)
                 && (string.Equals(name, "caller", StringComparison.Ordinal) || string.Equals(name, "arguments", StringComparison.Ordinal)))
             {
@@ -5903,11 +5742,6 @@ namespace JavaScriptRuntime
         private static object? GetCurrentPrototypeValue(object target)
         {
             PrototypeChain.Enable();
-            if (target is Delegate del)
-            {
-                return JavaScriptRuntime.Function.GetPrototypeObject(del);
-            }
-
             return PrototypeChain.TryGetPrototype(target, out var prototype) ? prototype : null;
         }
 
@@ -6186,27 +6020,6 @@ namespace JavaScriptRuntime
                     Writable = true,
                     Enumerable = true,
                     Configurable = true
-                });
-
-                return value;
-            }
-
-            // Function values (delegates) behave like objects in JavaScript and can have ad-hoc
-            // properties (e.g., MyEvent.prototype = ...). Store these in the descriptor table.
-            if (obj is Delegate)
-            {
-                if (TrySetPropertyViaPrototypeOrThrow(obj, name, value, throwOnError))
-                {
-                    return value;
-                }
-
-                PropertyDescriptorStore.DefineOrUpdate(obj, name, new JsPropertyDescriptor
-                {
-                    Kind = JsPropertyDescriptorKind.Data,
-                    Enumerable = true,
-                    Configurable = true,
-                    Writable = true,
-                    Value = value
                 });
 
                 return value;

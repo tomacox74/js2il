@@ -148,21 +148,27 @@ public sealed partial class HIRToLIRLowerer
 
             if (!hasSpreadArgs
                 && IsSafeInjectedCommonJsRequireBinding(symbol.BindingInfo)
-                && callExpr.Arguments.Length > 0
-                && callExpr.Arguments[0] is HIRLiteralExpression
-                {
-                    Kind: JavascriptType.String,
-                    Value: string moduleSpecifier
-                }
-                && JavaScriptRuntime.Node.NodeModuleRegistry.TryGetModuleContractType(
-                    moduleSpecifier,
-                    out var contractType)
-                && contractType != null)
+                && callExpr.Arguments.Length > 0)
             {
-                if (!TryLowerExpression(funcVarExpr, out var requireValue)
+                if (!TryLowerRawInjectedCommonJsRequire(
+                        funcVarExpr,
+                        out var requireValue)
                     || !TryEvaluateCallArguments(callExpr.Arguments, 1, out var requireArguments))
                 {
                     return false;
+                }
+
+                Type? contractType = null;
+                if (callExpr.Arguments[0] is HIRLiteralExpression
+                    {
+                        Kind: JavascriptType.String,
+                        Value: string moduleSpecifier
+                    }
+                    && JavaScriptRuntime.Node.NodeModuleRegistry.TryGetModuleContractType(
+                        moduleSpecifier,
+                        out var resolvedContractType))
+                {
+                    contractType = resolvedContractType;
                 }
 
                 _methodBodyIR.Instructions.Add(new LIRCallRequire(
@@ -172,7 +178,9 @@ public sealed partial class HIRToLIRLowerer
                     contractType));
                 DefineTempStorage(
                     resultTempVar,
-                    new ValueStorage(ValueStorageKind.Reference, contractType));
+                    new ValueStorage(
+                        ValueStorageKind.Reference,
+                        contractType ?? typeof(object)));
                 return true;
             }
 
@@ -543,6 +551,19 @@ public sealed partial class HIRToLIRLowerer
 
             if (callExpr.StableDirectCallableTarget is { } stableCallableTarget)
             {
+                TempVariable? stableCallableValue = null;
+                if (stableCallableTarget.CallableId.NeedsArgumentsObject
+                    || (stableCallableTarget.CallableId.HasRestParameters
+                        && symbol.BindingInfo.CallableMaterialization?.Kind
+                            != CallableMaterializationKind.DirectOnly))
+                {
+                    if (!TryLowerExpression(funcVarExpr, out var loweredCallableValue))
+                    {
+                        return false;
+                    }
+                    stableCallableValue = EnsureObject(loweredCallableValue);
+                }
+
                 var stableCallableArguments = new List<TempVariable>(callExpr.Arguments.Length);
                 foreach (var arg in callExpr.Arguments)
                 {
@@ -567,7 +588,8 @@ public sealed partial class HIRToLIRLowerer
                     stableCallableScopesTemp,
                     stableCallableArguments,
                     resultTempVar,
-                    stableCallableTarget.CallableId));
+                    stableCallableTarget.CallableId,
+                    stableCallableValue));
                 DefineDirectCallResultStorage(
                     resultTempVar,
                     stableCallableTarget.CallableId,
@@ -643,6 +665,12 @@ public sealed partial class HIRToLIRLowerer
             // Spread in call arguments requires runtime args array construction.
             if (hasSpreadArgs)
             {
+                if (!TryLowerExpression(funcVarExpr, out var callableValueForSpread))
+                {
+                    return false;
+                }
+                callableValueForSpread = EnsureObject(callableValueForSpread);
+
                 if (!TryLowerCallArgumentsToArgsArray(callExpr.Arguments, out var argsArrayTemp))
                 {
                     return false;
@@ -655,7 +683,13 @@ public sealed partial class HIRToLIRLowerer
                 }
                 DefineTempStorage(scopesTempForSpread, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
 
-                _methodBodyIR.Instructions.Add(new LIRCallFunctionWithArgsArray(symbol, scopesTempForSpread, argsArrayTemp, resultTempVar, callableId));
+                _methodBodyIR.Instructions.Add(new LIRCallFunctionWithArgsArray(
+                    symbol,
+                    callableValueForSpread,
+                    scopesTempForSpread,
+                    argsArrayTemp,
+                    resultTempVar,
+                    callableId));
                 DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
                 return true;
             }
@@ -681,7 +715,24 @@ public sealed partial class HIRToLIRLowerer
             DefineTempStorage(scopesTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
 
             // Emit the function call with arguments
-            _methodBodyIR.Instructions.Add(new LIRCallFunction(symbol, scopesTempVar, arguments, resultTempVar, callableId));
+            TempVariable? callableValue = null;
+            if (callableId?.NeedsArgumentsObject == true
+                || callableId?.HasRestParameters == true)
+            {
+                if (!TryLowerExpression(funcVarExpr, out var loweredCallableValue))
+                {
+                    return false;
+                }
+                callableValue = EnsureObject(loweredCallableValue);
+            }
+
+            _methodBodyIR.Instructions.Add(new LIRCallFunction(
+                symbol,
+                scopesTempVar,
+                arguments,
+                resultTempVar,
+                callableId,
+                callableValue));
             DefineDirectCallResultStorage(resultTempVar, callableId, symbol.BindingInfo);
 
             return true;

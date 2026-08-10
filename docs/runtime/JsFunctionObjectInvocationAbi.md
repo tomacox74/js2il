@@ -47,6 +47,18 @@ and `newTarget` for the duration of the call and restores outer state in a
 inline arguments on first observation and returns the same array for the
 remainder of that invocation.
 
+Known spread/rest/`arguments` calls still end in the canonical typed MethodDef.
+Their generated static array adapter receives the actual `JsFunctionObject`
+alongside scopes and the existing argument array whenever the callable is
+materialized. A proven direct-only rest callable passes no function object and
+installs only argument state because no JavaScript-visible identity exists.
+`RuntimeServices.PushGeneratedFunctionDirectCall` establishes the same
+receiver, callee, arguments, `new.target`, and lexical-super state used by
+`CallableOperations`; the adapter restores that state with
+`PopGeneratedFunctionDirectCall` from a `finally` block. This preserves
+`arguments.callee` identity and nested-call isolation without creating a CLR
+delegate or widening the canonical body signature.
+
 ## Generated adapter contract
 
 A generated callee-shaped type keeps its inferred typed implementation as the
@@ -74,10 +86,10 @@ Constructor adapters apply ECMAScript constructor-return rules separately.
 Async and generator adapters return their JavaScript-visible Promise or
 iterator object rather than exposing an internal state-machine result.
 
-Legacy delegates remain supported through
-`LegacyDelegateFunctionAdapter`. They materialize arguments when their current
-delegate ABI requires an array; this is an explicit migration path, not the
-generated function-object ABI.
+Runtime-owned built-ins that still use CLR delegates are isolated behind
+`BuiltinDelegateFunctionAdapter` and `BuiltinDelegateMetadata`. They may
+materialize arguments when their explicit host ABI requires an array, but
+compiled JavaScript functions never enter this path.
 
 The public .NET hosting boundary projects callable values as runtime-owned
 `Jroc.Runtime.JsCallable` wrappers. Calls, receiver-aware calls, construction,
@@ -88,7 +100,7 @@ round-tripped wrappers to the original JavaScript callable.
 
 CLR delegates entering JavaScript through hosting are first adapted to explicit
 `JsFunctionObject` instances. Raw delegates remain supported only behind the
-transitional runtime adapter boundary. Unannotated public CLR `object[]`
+explicit built-in/host adapter boundary. Unannotated public CLR `object[]`
 parameters are visible packed-argument parameters, not generated scope
 payloads. Only explicit callable ABI metadata and known generated delegate
 types retain the hidden scope convention. Callback results of type `Task` or
@@ -96,6 +108,11 @@ types retain the hidden scope convention. Callback results of type `Task` or
 runtime thread. CommonJS `ModuleMainDelegate` and `RequireDelegate` are
 intentional internal bootstrap signatures, not public compiled-function
 representations.
+
+Async and generator step delegates are a separate private implementation
+boundary. The compiler immediately encloses each one in
+`CompiledContinuation`; that object is not callable, is never stored as a
+JavaScript function value, and is allowlisted only in resumable lowering.
 
 ## Arity evidence
 

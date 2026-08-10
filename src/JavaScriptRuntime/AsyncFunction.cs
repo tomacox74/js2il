@@ -13,6 +13,7 @@ public static class AsyncFunction
         using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
 
         Function.InitializeFunctionInstance(ConstructorValue);
+        Function.MarkConstructible(ConstructorValue);
         PrototypeChain.SetPrototype(ConstructorValue, GlobalThis.Function);
         PrototypeChain.SetPrototype(Prototype, Function.Prototype);
 
@@ -48,13 +49,34 @@ public static class AsyncFunction
         where T : class
     {
         ArgumentNullException.ThrowIfNull(functionValue);
+        var functionObject =
+            BuiltinDelegateFunctionAdapter.NormalizeJavaScriptObject(
+                functionValue);
 
-        if (!ReferenceEquals(PrototypeChain.GetPrototypeOrNull(functionValue), Prototype))
+        if (functionObject is BuiltinDelegateFunctionAdapter adapter)
         {
-            PrototypeChain.SetPrototype(functionValue, Prototype);
+            lock (adapter.InitializationLock)
+            {
+                using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
+                InitializeFunctionPrototype(functionObject);
+            }
+        }
+        else
+        {
+            InitializeFunctionPrototype(functionObject);
         }
 
         return functionValue;
+    }
+
+    private static void InitializeFunctionPrototype(object functionObject)
+    {
+        if (!ReferenceEquals(
+                PrototypeChain.GetPrototypeOrNull(functionObject),
+                Prototype))
+        {
+            PrototypeChain.SetPrototype(functionObject, Prototype);
+        }
     }
 
     public static object InitializeFunctionInstance(object functionValue)
@@ -79,21 +101,56 @@ public static class AsyncFunction
     public static T InitializeFunctionInstance<T>(T functionValue, double length, string? name, bool requiresInvocationContext, bool hasRestrictedProperties)
         where T : class
     {
-        InitializeFunctionInstance(functionValue);
-        if (hasRestrictedProperties)
-        {
-            Function.DefineRestrictedFunctionProperties(functionValue);
-        }
+        var functionObject =
+            BuiltinDelegateFunctionAdapter.NormalizeJavaScriptObject(
+                functionValue);
 
-        if (functionValue is Delegate del)
+        if (functionObject is BuiltinDelegateFunctionAdapter adapter)
         {
-            Function.SetRequiresInvocationContext(del, requiresInvocationContext);
-            Function.MarkUndefinedPrototype(del);
+            lock (adapter.InitializationLock)
+            {
+                using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
+                InitializeFunctionInstanceCore(
+                    functionObject,
+                    length,
+                    name,
+                    requiresInvocationContext,
+                    hasRestrictedProperties);
+            }
         }
-        Function.DefineMetadataProperty(functionValue, "length", length);
-        Function.DefineMetadataProperty(functionValue, "name", name ?? string.Empty);
+        else
+        {
+            InitializeFunctionInstanceCore(
+                functionObject,
+                length,
+                name,
+                requiresInvocationContext,
+                hasRestrictedProperties);
+        }
 
         return functionValue;
+    }
+
+    private static void InitializeFunctionInstanceCore(
+        object functionObject,
+        double length,
+        string? name,
+        bool requiresInvocationContext,
+        bool hasRestrictedProperties)
+    {
+        InitializeFunctionPrototype(functionObject);
+        if (hasRestrictedProperties)
+        {
+            Function.DefineRestrictedFunctionProperties(functionObject);
+        }
+
+        if (functionObject is BuiltinDelegateFunctionAdapter adapter)
+        {
+            adapter.Configure(requiresInvocationContext);
+            Function.MarkUndefinedPrototype(adapter);
+        }
+        Function.DefineMetadataProperty(functionObject, "length", length);
+        Function.DefineMetadataProperty(functionObject, "name", name ?? string.Empty);
     }
 
     public static object InitializeFunctionInstance(object functionValue, double length, string? name, bool requiresInvocationContext, bool hasRestrictedProperties)
@@ -113,7 +170,7 @@ public static class AsyncFunction
 
         Func<object[], object?[]?, object?> functionValue = static (_, __) => Promise.resolve(null);
         InitializeFunctionInstance(functionValue, length, "anonymous", requiresInvocationContext: false);
-        return functionValue;
+        return BuiltinDelegateFunctionAdapter.FromDelegate(functionValue);
     }
 
     private static void DefineDataProperty(object target, string key, object? value, bool writable = true, bool configurable = true)

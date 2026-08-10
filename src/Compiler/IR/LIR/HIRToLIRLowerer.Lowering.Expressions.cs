@@ -503,7 +503,11 @@ public sealed partial class HIRToLIRLowerer
                 {
                     if (IsSafeInjectedCommonJsRequireBinding(b))
                     {
-                        return new ValueStorage(ValueStorageKind.Reference, typeof(global::JavaScriptRuntime.CommonJS.RequireDelegate));
+                        return new ValueStorage(
+                            ValueStorageKind.Reference,
+                            _preserveRawInjectedCommonJsRequireRead
+                                ? typeof(global::JavaScriptRuntime.CommonJS.RequireDelegate)
+                                : typeof(global::JavaScriptRuntime.BuiltinDelegateFunctionAdapter));
                     }
 
                     // var bindings can be observed as `undefined` before their initializer runs.
@@ -674,13 +678,11 @@ public sealed partial class HIRToLIRLowerer
                                 {
                                     resultTempVar = CreateTempVariable();
                                     _methodBodyIR.Instructions.Add(new LIRLoadParameter(storage.JsParameterIndex, resultTempVar));
-                                    if (IsSafeInjectedCommonJsRequireBinding(binding))
+                                    DefineTempStorage(
+                                        resultTempVar,
+                                        GetPreferredBindingReadStorage(binding));
+                                    if (!IsSafeInjectedCommonJsRequireBinding(binding))
                                     {
-                                        DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(global::JavaScriptRuntime.CommonJS.RequireDelegate)));
-                                    }
-                                    else
-                                    {
-                                        DefineTempStorage(resultTempVar, GetPreferredBindingReadStorage(binding));
                                         _tempBindingOrigin[resultTempVar] = binding;
                                     }
                                     resultTempVar = EmitResolveActiveWithBindingOrDefault(
@@ -735,13 +737,11 @@ public sealed partial class HIRToLIRLowerer
                 {
                     resultTempVar = CreateTempVariable();
                     _methodBodyIR.Instructions.Add(new LIRLoadParameter(paramIndex, resultTempVar));
-                    if (IsSafeInjectedCommonJsRequireBinding(binding))
+                    DefineTempStorage(
+                        resultTempVar,
+                        GetPreferredBindingReadStorage(binding));
+                    if (!IsSafeInjectedCommonJsRequireBinding(binding))
                     {
-                        DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(global::JavaScriptRuntime.CommonJS.RequireDelegate)));
-                    }
-                    else
-                    {
-                        DefineTempStorage(resultTempVar, GetPreferredBindingReadStorage(binding));
                         _tempBindingOrigin[resultTempVar] = binding;
                     }
                     resultTempVar = EmitResolveActiveWithBindingOrDefault(
@@ -1317,16 +1317,9 @@ public sealed partial class HIRToLIRLowerer
             HomeObject: homeObject,
             PrivateBrand: privateBrand,
             FunctionName: functionName));
-        var supportsGeneratedMethodObject =
-            funcExpr.IsNonConstructible
-            && (!funcScope.IsAsync || funcScope.IsGenerator);
         DefineTempStorage(
             resultTempVar,
-            GetMaterializedCallableStorage(
-                funcExpr.CallableId,
-                allowGeneratedFunctionObject:
-                    !funcExpr.IsNonConstructible
-                    || supportsGeneratedMethodObject));
+            GetMaterializedCallableStorage(funcExpr.CallableId));
 
         resultTempVar = EmitBindWithObjectIfNeeded(resultTempVar);
 

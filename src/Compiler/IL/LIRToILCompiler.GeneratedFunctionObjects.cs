@@ -1,3 +1,4 @@
+using Acornima.Ast;
 using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
 using Jroc.IR;
@@ -8,6 +9,20 @@ namespace Jroc.IL;
 
 internal sealed partial class LIRToILCompiler
 {
+    private static bool HasLegacyCallerArguments(CallableId callableId)
+        => !callableId.HasRestrictedFunctionProperties
+            && callableId.AstNode is
+                FunctionDeclaration
+                {
+                    Async: false,
+                    Generator: false
+                }
+                or FunctionExpression
+                {
+                    Async: false,
+                    Generator: false
+                };
+
     private bool TryEmitGeneratedArrowFunctionObject(
         LIRCreateBoundArrowFunction createArrow,
         InstructionEncoder ilEncoder,
@@ -285,6 +300,15 @@ internal sealed partial class LIRToILCompiler
             nameof(JavaScriptRuntime.Function.InitializeFunctionInstance),
             metadata.TypeHandle,
             isValueType: false));
+        if (HasLegacyCallerArguments(callableId))
+        {
+            ilEncoder.OpCode(ILOpCode.Call);
+            ilEncoder.Token(_memberRefRegistry.GetOrAddGenericUnaryMethod(
+                typeof(JavaScriptRuntime.Function),
+                nameof(JavaScriptRuntime.Function.InitializeLegacyFunctionProperties),
+                metadata.TypeHandle,
+                isValueType: false));
+        }
         if (markUndefinedPrototype)
         {
             ilEncoder.OpCode(ILOpCode.Call);

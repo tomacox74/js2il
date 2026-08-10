@@ -346,9 +346,7 @@ public sealed partial class HIRToLIRLowerer
             FunctionName: functionName));
         DefineTempStorage(
             result,
-            GetMaterializedCallableStorage(
-                callableId,
-                allowGeneratedFunctionObject: true));
+            GetMaterializedCallableStorage(callableId));
         return result;
     }
 

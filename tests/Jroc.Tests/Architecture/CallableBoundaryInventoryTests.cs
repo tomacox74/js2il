@@ -7,21 +7,6 @@ namespace Jroc.Tests.Architecture;
 
 public sealed class CallableBoundaryInventoryTests
 {
-    private static readonly CallableSourceMarker[] CallableSourceMarkers =
-    [
-        new("CallableId", [ "consumer" ], [ "direct-call" ]),
-        new("CallableSignature", [ "consumer" ], [ "direct-call" ]),
-        new("InvokeWithArgs", [ "consumer" ], [ "dynamic-call" ]),
-        new("BindArrow", [ "producer" ], [ "materialization" ]),
-        new("CreateBoundDelegate", [ "producer" ], [ "materialization" ]),
-        new(" is Delegate", [ "consumer" ], [ "dynamic-call" ]),
-        new(" is not Delegate", [ "consumer" ], [ "dynamic-call" ]),
-        new("Delegate del", [ "consumer" ], [ "dynamic-call" ]),
-        new("Delegate d", [ "consumer" ], [ "dynamic-call" ]),
-        new("DynamicInvoke(", [ "consumer" ], [ "dynamic-call" ]),
-        new("InvokeJsDelegate", [ "consumer" ], [ "export-interop" ])
-    ];
-
     private static readonly string[] RequiredRoles = ["producer", "consumer"];
 
     private static readonly string[] RequiredClassifications =
@@ -32,7 +17,10 @@ public sealed class CallableBoundaryInventoryTests
         "construction",
         "callback",
         "export-interop",
-        "reflection"
+        "reflection",
+        "continuation",
+        "host-adapter",
+        "bootstrap"
     ];
 
     [Fact]
@@ -41,9 +29,10 @@ public sealed class CallableBoundaryInventoryTests
         var repositoryRoot = FindRepositoryRoot();
         var inventory = LoadInventory(repositoryRoot);
 
-        Assert.Equal(1, inventory.SchemaVersion);
+        Assert.Equal(2, inventory.SchemaVersion);
         Assert.Equal(1707, inventory.UmbrellaIssue);
         Assert.NotEmpty(inventory.Boundaries);
+        Assert.NotEmpty(inventory.IntentionalDelegateBoundaries);
         Assert.Equal(
             inventory.Boundaries.Count,
             inventory.Boundaries.Select(entry => entry.Id).Distinct(StringComparer.Ordinal).Count());
@@ -84,35 +73,247 @@ public sealed class CallableBoundaryInventoryTests
             }
         }
 
-        var detectedBoundaries = sourceFiles
-            .Where(file => CallableSourceMarkers.Any(marker => file.Content.Contains(marker.Text, StringComparison.Ordinal)))
+        foreach (var boundary in inventory.IntentionalDelegateBoundaries)
+        {
+            Assert.False(string.IsNullOrWhiteSpace(boundary.Id));
+            Assert.NotEmpty(boundary.SourceGlobs);
+            Assert.NotEmpty(boundary.Symbols);
+            Assert.False(string.IsNullOrWhiteSpace(boundary.Rationale));
+            Assert.All(
+                boundary.SourceGlobs,
+                sourceGlob => Assert.True(
+                    sourceFiles.Any(file => MatchesGlob(file.RelativePath, sourceGlob)),
+                    $"Intentional delegate boundary '{boundary.Id}' glob '{sourceGlob}' does not match a source file."));
+            Assert.All(
+                boundary.Symbols,
+                symbol => Assert.Contains(
+                    sourceFiles.Where(file => boundary.SourceGlobs.Any(
+                        sourceGlob => MatchesGlob(file.RelativePath, sourceGlob))),
+                    file => file.Content.Contains(symbol, StringComparison.Ordinal)));
+        }
+    }
+
+    [Fact]
+    public void RetiredCompiledFunctionDelegatePaths_DoNotReappear()
+    {
+        var repositoryRoot = FindRepositoryRoot();
+        var sourceFiles = EnumerateSourceFiles(repositoryRoot);
+        string[] retiredSymbols =
+        [
+            "CallableDelegateTypeResolver",
+            "GetMaterializedDelegateType",
+            "Closure.BindArrow",
+            "Closure.BindMoveNext",
+            "CreateBoundDelegate",
+            "InvokeDirectWithArgs"
+        ];
+
+        var violations = sourceFiles
+            .SelectMany(file => retiredSymbols
+                .Where(symbol => file.Content.Contains(symbol, StringComparison.Ordinal))
+                .Select(symbol => $"{file.RelativePath}: {symbol}"))
+            .ToArray();
+
+        Assert.True(
+            violations.Length == 0,
+            "Retired compiled-function delegate APIs reappeared:"
+            + Environment.NewLine
+            + string.Join(Environment.NewLine, violations));
+    }
+
+    [Fact]
+    public void CompilerDelegateCreationSites_AreExplicitlyAllowlisted()
+    {
+        var repositoryRoot = FindRepositoryRoot();
+        var compilerFiles = EnumerateSourceFiles(repositoryRoot)
+            .Where(file => file.RelativePath.StartsWith("src/Compiler/", StringComparison.Ordinal))
+            .ToArray();
+        var ldftnSites = compilerFiles
+            .SelectMany(file => file.Content
+                .Split('\n')
+                .Select((line, index) => new
+                {
+                    file.RelativePath,
+                    Line = index + 1,
+                    Content = line
+                })
+                .Where(site => site.Content.Contains(
+                    "ILOpCode.Ldftn",
+                    StringComparison.Ordinal)))
+            .ToArray();
+
+        Assert.Equal(4, ldftnSites.Length);
+        Assert.Equal(
+            3,
+            ldftnSites.Count(site => site.RelativePath ==
+                "src/Compiler/IL/LIRToILCompiler.InstructionEmission.LeafScopeInstance.cs"));
+        Assert.Single(
+            ldftnSites,
+            site => site.RelativePath ==
+                "src/Compiler/Services/AssemblyGenerator.cs");
+
+        var continuationEmitter = Assert.Single(
+            compilerFiles,
+            file => file.RelativePath ==
+                "src/Compiler/IL/LIRToILCompiler.InstructionEmission.LeafScopeInstance.cs");
+        Assert.Equal(
+            3,
+            CountOccurrences(
+                continuationEmitter.Content,
+                "GetContinuationDelegateCtorRef("));
+        Assert.Equal(
+            3,
+            CountOccurrences(
+                continuationEmitter.Content,
+                "nameof(JavaScriptRuntime.CompiledContinuation.Create)"));
+
+        var bootstrapEmitter = Assert.Single(
+            compilerFiles,
+            file => file.RelativePath ==
+                "src/Compiler/Services/AssemblyGenerator.cs");
+        Assert.Equal(
+            1,
+            CountOccurrences(
+                bootstrapEmitter.Content,
+                "_bclReferences.ModuleMainDelegate_Ctor_Ref"));
+        Assert.DoesNotContain(
+            compilerFiles,
+            file => Regex.IsMatch(
+                file.Content,
+                @"new\s+ValueStorage\([^\r\n]*typeof\(Delegate\)",
+                RegexOptions.CultureInvariant));
+    }
+
+    [Fact]
+    public void JavaScriptVisibleDelegateChecks_AreCentralized()
+    {
+        var repositoryRoot = FindRepositoryRoot();
+        var delegateCheck = new Regex(
+            @"\bis\s+(?:not\s+)?Delegate\b|\bas\s+Delegate\b",
+            RegexOptions.CultureInvariant);
+        var matches = EnumerateSourceFiles(repositoryRoot)
+            .Where(file => file.RelativePath.StartsWith(
+                "src/JavaScriptRuntime/",
+                StringComparison.Ordinal))
+            .SelectMany(file => delegateCheck
+                .Matches(file.Content)
+                .Select(match => $"{file.RelativePath}:{match.Value}"))
+            .Order(StringComparer.Ordinal)
+            .ToArray();
+
+        Assert.Equal(
+            new[]
+            {
+                "src/JavaScriptRuntime/BuiltinDelegateFunctionAdapter.cs:is Delegate",
+                "src/JavaScriptRuntime/BuiltinDelegateFunctionAdapter.cs:is Delegate",
+                "src/JavaScriptRuntime/CompiledContinuation.cs:is not Delegate"
+            },
+            matches);
+
+        var callableOperations = File.ReadAllText(
+            Path.Combine(
+                repositoryRoot,
+                "src",
+                "JavaScriptRuntime",
+                "CallableOperations.cs"));
+        Assert.DoesNotMatch(delegateCheck, callableOperations);
+    }
+
+    [Fact]
+    public void RuntimeDelegateFallbacks_AreExactInternalAdapterSites()
+    {
+        var repositoryRoot = FindRepositoryRoot();
+        var sourceFiles = EnumerateSourceFiles(repositoryRoot).ToArray();
+        var runtimeFiles = sourceFiles
+            .Where(file => file.RelativePath.StartsWith(
+                "src/JavaScriptRuntime/",
+                StringComparison.Ordinal))
+            .ToArray();
+
+        var dynamicInvokeSites = runtimeFiles
+            .Where(file => file.Content.Contains(
+                ".DynamicInvoke(",
+                StringComparison.Ordinal))
+            .ToDictionary(
+                file => file.RelativePath,
+                file => CountOccurrences(file.Content, ".DynamicInvoke("),
+                StringComparer.Ordinal);
+
+        Assert.Equal(2, dynamicInvokeSites.Count);
+        Assert.Equal(
+            2,
+            CountOccurrences(
+                Assert.Single(
+                    runtimeFiles,
+                    file => file.RelativePath ==
+                        "src/JavaScriptRuntime/Closure.cs").Content,
+                "target.DynamicInvoke("));
+        Assert.Equal(
+            1,
+            dynamicInvokeSites[
+                "src/JavaScriptRuntime/Hosting/HostedFunctionObjects.cs"]);
+
+        var delegateKeyedWeakTable = new Regex(
+            @"ConditionalWeakTable\s*<\s*(?:(?:global::)?System\.)?Delegate\s*,",
+            RegexOptions.CultureInvariant);
+        var weakDelegateTables = sourceFiles
+            .Where(file => delegateKeyedWeakTable.IsMatch(file.Content))
             .Select(file => file.RelativePath)
-            .OrderBy(path => path, StringComparer.Ordinal)
+            .Order(StringComparer.Ordinal)
+            .ToArray();
+        Assert.Empty(weakDelegateTables);
+
+        Assert.DoesNotContain(
+            runtimeFiles,
+            file => file.Content.Contains(
+                "BuiltinDelegateMetadata",
+                StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public void RuntimeDoesNotCompileDynamicAccessors()
+    {
+        var repositoryRoot = FindRepositoryRoot();
+        var forbidden = new Regex(
+            @"System\.Linq\.Expressions|Expression\.Lambda|Expression\.Compile|\bDynamicMethod\b",
+            RegexOptions.CultureInvariant);
+        var violations = EnumerateSourceFiles(repositoryRoot)
+            .Where(file => forbidden.IsMatch(file.Content))
+            .Select(file => file.RelativePath)
+            .Order(StringComparer.Ordinal)
             .ToArray();
 
-        Assert.NotEmpty(detectedBoundaries);
+        Assert.Empty(violations);
+    }
 
-        var unclassified = detectedBoundaries
-            .Where(path => !inventory.Boundaries.Any(entry =>
-                entry.SourceGlobs.Any(sourceGlob => MatchesGlob(path, sourceGlob))))
-            .ToArray();
+    [Fact]
+    public void CallableBenchmark_CoversMaterializationRepeatedLoadAndSteadyState()
+    {
+        var repositoryRoot = FindRepositoryRoot();
+        var benchmarkPath = Path.Combine(
+            repositoryRoot,
+            "tests",
+            "performance",
+            "Benchmarks",
+            "CallableArchitectureBenchmarks.cs");
+        var benchmark = File.ReadAllText(benchmarkPath);
 
-        Assert.True(
-            unclassified.Length == 0,
-            "Callable source boundaries missing from docs/compiler/CallableBoundaryInventory.json:"
-            + Environment.NewLine
-            + string.Join(Environment.NewLine, unclassified.Select(path => $"  - {path}")));
-
-        var mismatched = sourceFiles
-            .Select(file => ValidateDetectedBoundary(file, inventory.Boundaries))
-            .Where(message => message != null)
-            .ToArray();
-
-        Assert.True(
-            mismatched.Length == 0,
-            "Callable source boundaries have incomplete roles/classifications:"
-            + Environment.NewLine
-            + string.Join(Environment.NewLine, mismatched));
+        Assert.Contains(
+            "Generated arrow object materialization",
+            benchmark,
+            StringComparison.Ordinal);
+        Assert.Contains(
+            "Repeated compiled module load",
+            benchmark,
+            StringComparison.Ordinal);
+        Assert.Contains(
+            "Loaded module direct-call loop",
+            benchmark,
+            StringComparison.Ordinal);
+        Assert.DoesNotContain(
+            "BindArrow",
+            benchmark,
+            StringComparison.Ordinal);
     }
 
     private static CallableBoundaryInventory LoadInventory(string repositoryRoot)
@@ -124,6 +325,17 @@ public sealed class CallableBoundaryInventoryTests
 
         return inventory ?? throw new InvalidOperationException($"Could not deserialize callable boundary inventory '{path}'.");
     }
+
+    private static SourceFile[] EnumerateSourceFiles(string repositoryRoot)
+        => Directory
+            .EnumerateFiles(
+                Path.Combine(repositoryRoot, "src"),
+                "*.cs",
+                SearchOption.AllDirectories)
+            .Select(path => new SourceFile(
+                Path.GetRelativePath(repositoryRoot, path).Replace('\\', '/'),
+                File.ReadAllText(path)))
+            .ToArray();
 
     private static bool MatchesGlob(string relativePath, string glob)
     {
@@ -157,45 +369,20 @@ public sealed class CallableBoundaryInventoryTests
         return Regex.IsMatch(relativePath, regex.ToString(), RegexOptions.CultureInvariant);
     }
 
-    private static string? ValidateDetectedBoundary(
-        SourceFile file,
-        IReadOnlyList<CallableBoundary> boundaries)
+    private static int CountOccurrences(string content, string value)
     {
-        var detectedMarkers = CallableSourceMarkers
-            .Where(marker => file.Content.Contains(marker.Text, StringComparison.Ordinal))
-            .ToArray();
-        if (detectedMarkers.Length == 0)
+        var count = 0;
+        var startIndex = 0;
+        while ((startIndex = content.IndexOf(
+                   value,
+                   startIndex,
+                   StringComparison.Ordinal)) >= 0)
         {
-            return null;
+            count++;
+            startIndex += value.Length;
         }
 
-        var matchingEntries = boundaries
-            .Where(entry => entry.SourceGlobs.Any(sourceGlob => MatchesGlob(file.RelativePath, sourceGlob)))
-            .ToArray();
-        var classifiedRoles = matchingEntries
-            .SelectMany(entry => entry.Roles)
-            .ToHashSet(StringComparer.Ordinal);
-        var classifiedOperations = matchingEntries
-            .SelectMany(entry => entry.Classifications)
-            .ToHashSet(StringComparer.Ordinal);
-        var expectedRoles = detectedMarkers
-            .SelectMany(marker => marker.RequiredRoles)
-            .Distinct(StringComparer.Ordinal)
-            .Where(role => !classifiedRoles.Contains(role))
-            .ToArray();
-        var expectedOperations = detectedMarkers
-            .SelectMany(marker => marker.RequiredClassifications)
-            .Distinct(StringComparer.Ordinal)
-            .Where(classification => !classifiedOperations.Contains(classification))
-            .ToArray();
-
-        if (expectedRoles.Length == 0 && expectedOperations.Length == 0)
-        {
-            return null;
-        }
-
-        return $"  - {file.RelativePath}: missing roles [{string.Join(", ", expectedRoles)}], "
-            + $"classifications [{string.Join(", ", expectedOperations)}]";
+        return count;
     }
 
     private static string FindRepositoryRoot([CallerFilePath] string sourceFilePath = "")
@@ -216,15 +403,11 @@ public sealed class CallableBoundaryInventoryTests
 
     private sealed record SourceFile(string RelativePath, string Content);
 
-    private sealed record CallableSourceMarker(
-        string Text,
-        IReadOnlyList<string> RequiredRoles,
-        IReadOnlyList<string> RequiredClassifications);
-
     private sealed record CallableBoundaryInventory(
         int SchemaVersion,
         int UmbrellaIssue,
-        IReadOnlyList<CallableBoundary> Boundaries);
+        IReadOnlyList<CallableBoundary> Boundaries,
+        IReadOnlyList<IntentionalDelegateBoundary> IntentionalDelegateBoundaries);
 
     private sealed record CallableBoundary(
         string Id,
@@ -232,5 +415,11 @@ public sealed class CallableBoundaryInventoryTests
         IReadOnlyList<string> Classifications,
         IReadOnlyList<int> TrackingIssues,
         IReadOnlyList<string> SourceGlobs,
+        string Rationale);
+
+    private sealed record IntentionalDelegateBoundary(
+        string Id,
+        IReadOnlyList<string> SourceGlobs,
+        IReadOnlyList<string> Symbols,
         string Rationale);
 }

@@ -59,89 +59,39 @@ internal sealed partial class LIRToILCompiler
             _ => callableId.Name ?? string.Empty
         };
 
-    private static bool RequiresInvocationContext(CallableId callableId)
-    {
-        return callableId.NeedsArgumentsObject
-            || callableId.HasRestParameters
-            || callableId.AstNode is FunctionExpression { Id: not null }
-            || ContainsMetaProperty(callableId.AstNode);
-    }
-
     private Type GetFunctionCallTargetParameterType(TempVariable functionValue, Type specializedType)
         => GetTempStorage(functionValue).ClrType == specializedType
             ? specializedType
             : typeof(object);
 
-    private static bool ContainsMetaProperty(Node? node)
+    private MethodDefinitionHandle GetGeneratedArrayCallAdapterHandle(
+        CallableId callableId)
     {
-        if (node is null)
+        if (!_generatedFunctionObjectRegistry.TryGetMetadata(
+                callableId,
+                out var metadata)
+            || metadata.ArrayCallAdapterHandle.IsNil)
         {
-            return false;
+            throw new InvalidOperationException(
+                $"Compiled callable '{callableId.DisplayName}' does not have a generated array-call adapter.");
         }
 
-        var found = false;
-        var walker = new AstWalker();
-        walker.Visit(node, visited =>
-        {
-            if (visited is MetaProperty)
-            {
-                found = true;
-            }
-        });
-        return found;
+        return metadata.ArrayCallAdapterHandle;
     }
 
-    private void EmitInitializeFunctionInstance(CallableId callableId, bool isAsync, InstructionEncoder ilEncoder)
+    private void EmitLoadGeneratedFunctionObject(
+        TempVariable functionValue,
+        InstructionEncoder ilEncoder,
+        TempLocalAllocation allocation,
+        MethodDescriptor methodDescriptor)
     {
-        var reader = _serviceProvider.GetService<ICallableDeclarationReader>();
-        var signature = reader?.GetSignature(callableId);
-        var delegateType = CallableDelegateTypeResolver.GetMaterializedDelegateType(callableId, signature);
-
+        EmitLoadTemp(
+            functionValue,
+            ilEncoder,
+            allocation,
+            methodDescriptor);
         ilEncoder.OpCode(ILOpCode.Castclass);
-        ilEncoder.Token(_memberRefRegistry.GetOrAddTypeHandle(delegateType));
-        ilEncoder.LoadConstantI4(GetExpectedFunctionLength(callableId));
-        ilEncoder.OpCode(ILOpCode.Conv_r8);
-        ilEncoder.Ldstr(_metadataBuilder, GetFunctionName(callableId));
-        ilEncoder.LoadConstantI4(RequiresInvocationContext(callableId) ? 1 : 0);
-        ilEncoder.LoadConstantI4(callableId.HasRestrictedFunctionProperties ? 1 : 0);
-        ilEncoder.OpCode(ILOpCode.Call);
-        ilEncoder.Token(_memberRefRegistry.GetOrAddGenericFunctionInitializer(
-            isAsync ? typeof(JavaScriptRuntime.AsyncFunction) : typeof(JavaScriptRuntime.Function),
-            nameof(JavaScriptRuntime.Function.InitializeFunctionInstance),
-            delegateType));
-
-        if (callableId.Kind == CallableKind.Arrow)
-        {
-            ilEncoder.OpCode(ILOpCode.Call);
-            ilEncoder.Token(_memberRefRegistry.GetOrAddGenericUnaryMethod(
-                typeof(JavaScriptRuntime.Function),
-                nameof(JavaScriptRuntime.Function.MarkUndefinedPrototype),
-                delegateType));
-        }
-    }
-
-    private void EmitInitializeGeneratorFunctionSurfaceIfNeeded(CallableId callableId, InstructionEncoder ilEncoder)
-    {
-        if (!IsGeneratorCallable(callableId))
-        {
-            return;
-        }
-
-        var initRef = _memberRefRegistry.GetOrAddMethod(
-            typeof(JavaScriptRuntime.GeneratorObject),
-            nameof(JavaScriptRuntime.GeneratorObject.InitializeGeneratorFunctionSurface),
-            new[] { typeof(object) });
-        ilEncoder.OpCode(ILOpCode.Call);
-        ilEncoder.Token(initRef);
-        EmitCastToMaterializedCallableDelegate(callableId, ilEncoder);
-    }
-
-    private void EmitCastToMaterializedCallableDelegate(CallableId callableId, InstructionEncoder ilEncoder)
-    {
-        var signature = _serviceProvider.GetService<ICallableDeclarationReader>()?.GetSignature(callableId);
-        var delegateType = CallableDelegateTypeResolver.GetMaterializedDelegateType(callableId, signature);
-        ilEncoder.OpCode(ILOpCode.Castclass);
-        ilEncoder.Token(_memberRefRegistry.GetOrAddTypeHandle(delegateType));
+        ilEncoder.Token(_bclReferences.JsFunctionObjectType);
     }
 
     private bool? TryCompileInstructionToIL_Calls(
@@ -181,34 +131,29 @@ internal sealed partial class LIRToILCompiler
                     }
 
                     bool usesSingleScope = UsesSingleScopeAbi(callableSignature);
-                    bool delegateRequiresScopeArray = requiresScopes && !usesSingleScope;
 
                     // If the callee needs an `arguments` object or has rest parameters, preserve the full runtime args list.
-                    // We route through Closure.InvokeDirectWithArgs which sets the ambient arguments context.
+                    // The generated static adapter sets the ambient arguments context and then calls the
+                    // canonical typed MethodDef directly.
                     if (callableId.NeedsArgumentsObject || callableId.HasRestParameters)
                     {
-                        if (usesSingleScope)
+                        if (callFunc.FunctionValue is { } functionValue)
                         {
-                            EmitLoadSingleScopeFromScopesArray(
-                                callFunc.ScopesArray,
+                            EmitLoadGeneratedFunctionObject(
+                                functionValue,
                                 ilEncoder,
                                 allocation,
-                                methodDescriptor,
-                                callableSignature ?? throw new InvalidOperationException($"Missing SingleScope signature metadata for callable {callableId.DisplayName}."));
+                                methodDescriptor);
                         }
                         else
                         {
                             ilEncoder.OpCode(ILOpCode.Ldnull);
                         }
-                        ilEncoder.OpCode(ILOpCode.Ldftn);
-                        ilEncoder.Token(methodHandle);
-                        ilEncoder.OpCode(ILOpCode.Newobj);
-                        ilEncoder.Token(GetMaterializedCallableDelegateCtorRef(callableId.JsParamCount, delegateRequiresScopeArray, callableSignature));
-
-                        if (delegateRequiresScopeArray)
-                        {
-                            EmitLoadTemp(callFunc.ScopesArray, ilEncoder, allocation, methodDescriptor);
-                        }
+                        EmitLoadTemp(
+                            callFunc.ScopesArray,
+                            ilEncoder,
+                            allocation,
+                            methodDescriptor);
 
                         // Build args array from call-site arguments (no truncation)
                         ilEncoder.LoadConstantI4(callFunc.Arguments.Count);
@@ -224,11 +169,14 @@ internal sealed partial class LIRToILCompiler
                         }
 
                         ilEncoder.OpCode(ILOpCode.Call);
-                        ilEncoder.Token(_bclReferences.GetInvokeDirectWithArgsRef(callableId.JsParamCount, delegateRequiresScopeArray));
+                        ilEncoder.Token(
+                            GetGeneratedArrayCallAdapterHandle(callableId));
 
                         if (IsMaterialized(callFunc.Result, allocation))
                         {
-                            EmitBoxCallResultForObjectTarget(GetDirectFunctionReturnClrType(callableSignature, callFunc.FunctionSymbol.BindingInfo, callableId), callFunc.Result, ilEncoder);
+                            EmitAdaptObjectCallResult(
+                                callFunc.Result,
+                                ilEncoder);
                             EmitStoreTemp(callFunc.Result, ilEncoder, allocation);
                         }
                         else
@@ -374,53 +322,32 @@ internal sealed partial class LIRToILCompiler
                         return false; // Fall back to the ordinary emitter
                     }
 
-                    var methodHandle = (MethodDefinitionHandle)token;
-                    int jsParamCount = callableId.JsParamCount;
+                    EmitLoadTemp(
+                        callFuncArray.FunctionValue,
+                        ilEncoder,
+                        allocation,
+                        methodDescriptor);
+                    ilEncoder.OpCode(ILOpCode.Castclass);
+                    ilEncoder.Token(_bclReferences.JsFunctionObjectType);
 
-                    bool requiresScopes = true;
-                    var callableSignature = reader.GetSignature(callableId);
-                    if (callableSignature != null)
-                    {
-                        requiresScopes = callableSignature.RequiresScopesParameter;
-                    }
-
-                    bool usesSingleScope = UsesSingleScopeAbi(callableSignature);
-                    bool delegateRequiresScopeArray = requiresScopes && !usesSingleScope;
-
-                    if (usesSingleScope)
-                    {
-                        EmitLoadSingleScopeFromScopesArray(
-                            callFuncArray.ScopesArray,
-                            ilEncoder,
-                            allocation,
-                            methodDescriptor,
-                            callableSignature ?? throw new InvalidOperationException($"Missing SingleScope signature metadata for callable {callableId.DisplayName}."));
-                    }
-                    else
-                    {
-                        ilEncoder.OpCode(ILOpCode.Ldnull);
-                    }
-                    ilEncoder.OpCode(ILOpCode.Ldftn);
-                    ilEncoder.Token(methodHandle);
-                    ilEncoder.OpCode(ILOpCode.Newobj);
-                    ilEncoder.Token(GetMaterializedCallableDelegateCtorRef(jsParamCount, delegateRequiresScopeArray, callableSignature));
-
-                    // Load scopes array
-                    EmitLoadTemp(callFuncArray.ScopesArray, ilEncoder, allocation, methodDescriptor);
+                    EmitLoadTemp(
+                        callFuncArray.ScopesArray,
+                        ilEncoder,
+                        allocation,
+                        methodDescriptor);
 
                     // Load runtime argument array (already expanded for spread)
                     EmitLoadTemp(callFuncArray.ArgumentsArray, ilEncoder, allocation, methodDescriptor);
 
-                    // Dispatch through Closure.InvokeWithArgs(target, scopes, argsArray)
-                    var invokeWithArgsRef = _memberRefRegistry.GetOrAddMethod(
-                        typeof(JavaScriptRuntime.Closure),
-                        nameof(JavaScriptRuntime.Closure.InvokeWithArgs),
-                        new[] { typeof(object), typeof(object[]), typeof(object[]) });
                     ilEncoder.OpCode(ILOpCode.Call);
-                    ilEncoder.Token(invokeWithArgsRef);
+                    ilEncoder.Token(
+                        GetGeneratedArrayCallAdapterHandle(callableId));
 
                     if (IsMaterialized(callFuncArray.Result, allocation))
                     {
+                        EmitAdaptObjectCallResult(
+                            callFuncArray.Result,
+                            ilEncoder);
                         EmitStoreTemp(callFuncArray.Result, ilEncoder, allocation);
                     }
                     else
@@ -1182,116 +1109,15 @@ internal sealed partial class LIRToILCompiler
                         break;
                     }
 
-                    if (TryEmitGeneratedArrowFunctionObject(
+                    if (!TryEmitGeneratedArrowFunctionObject(
                             createArrow,
                             ilEncoder,
                             allocation,
                             methodDescriptor))
                     {
-                        EmitStoreTemp(createArrow.Result, ilEncoder, allocation);
-                        break;
+                        throw new InvalidOperationException(
+                            $"Compiled arrow '{createArrow.CallableId.DisplayName}' is missing generated function-object metadata.");
                     }
-
-                    var reader = _serviceProvider.GetService<Jroc.Services.TwoPhaseCompilation.ICallableDeclarationReader>();
-                    if (reader == null)
-                    {
-                        return false;
-                    }
-
-                    var callableId = createArrow.CallableId;
-                    if (!reader.TryGetDeclaredToken(callableId, out var token) || token.Kind != HandleKind.MethodDefinition)
-                    {
-                        return false;
-                    }
-
-                    var methodHandle = (MethodDefinitionHandle)token;
-                    var jsParamCount = createArrow.CallableId.JsParamCount;
-
-                    bool requiresScopes = true;
-                    var signature = reader.GetSignature(callableId);
-                    if (signature != null)
-                    {
-                        requiresScopes = signature.RequiresScopesParameter;
-                    }
-
-                    bool usesSingleScope = UsesSingleScopeAbi(signature);
-                    bool delegateRequiresScopeArray = requiresScopes && !usesSingleScope;
-
-                    if (usesSingleScope)
-                    {
-                        EmitLoadSingleScopeFromScopesArray(
-                            createArrow.ScopesArray,
-                            ilEncoder,
-                            allocation,
-                            methodDescriptor,
-                            signature ?? throw new InvalidOperationException($"Missing SingleScope signature metadata for callable {callableId.DisplayName}."));
-                    }
-                    else
-                    {
-                        ilEncoder.OpCode(ILOpCode.Ldnull);
-                    }
-                    ilEncoder.OpCode(ILOpCode.Ldftn);
-                    ilEncoder.Token(methodHandle);
-                    ilEncoder.OpCode(ILOpCode.Newobj);
-                    ilEncoder.Token(GetMaterializedCallableDelegateCtorRef(jsParamCount, delegateRequiresScopeArray, signature));
-
-                    // Bind delegate to scopes array AND lexical 'this': Closure.BindArrow(object, object[], object)
-                    EmitLoadTemp(createArrow.ScopesArray, ilEncoder, allocation, methodDescriptor);
-
-                    // Capture lexical 'this' at arrow creation time.
-                    // - In derived constructors: capture the mutable derived-this binding
-                    //   so arrows created before super() observe TDZ first and the receiver after super().
-                    // - In instance methods: ldarg.0
-                    // - In static methods: RuntimeServices.GetCurrentThis()
-                    if (methodDescriptor.IsDerivedConstructor || methodDescriptor.IsStatic)
-                    {
-                        var getThisRef = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.RuntimeServices), nameof(JavaScriptRuntime.RuntimeServices.GetCurrentThis));
-                        ilEncoder.OpCode(ILOpCode.Call);
-                        ilEncoder.Token(getThisRef);
-                    }
-                    else
-                    {
-                        ilEncoder.LoadArgument(0);
-                    }
-
-                    MemberReferenceHandle bindRef;
-                    if (createArrow.RequiresLexicalSuperConstructorContext)
-                    {
-                        if (methodDescriptor.IsDerivedConstructor)
-                        {
-                            ilEncoder.LoadArgument(0);
-                        }
-                        else if (methodDescriptor.IsStatic)
-                        {
-                            var getSuperReceiverRef = _memberRefRegistry.GetOrAddMethod(
-                                typeof(JavaScriptRuntime.RuntimeServices),
-                                nameof(JavaScriptRuntime.RuntimeServices.GetCurrentLexicalSuperReceiver));
-                            ilEncoder.OpCode(ILOpCode.Call);
-                            ilEncoder.Token(getSuperReceiverRef);
-                        }
-                        else
-                        {
-                            ilEncoder.LoadArgument(0);
-                        }
-
-                        EmitLoadScopesArrayOrEmpty(ilEncoder, methodDescriptor);
-                        bindRef = _memberRefRegistry.GetOrAddMethod(
-                            typeof(JavaScriptRuntime.Closure),
-                            nameof(JavaScriptRuntime.Closure.BindArrow),
-                            new[] { typeof(object), typeof(object[]), typeof(object), typeof(object), typeof(object[]) });
-                    }
-                    else
-                    {
-                        bindRef = _memberRefRegistry.GetOrAddMethod(
-                            typeof(JavaScriptRuntime.Closure),
-                            nameof(JavaScriptRuntime.Closure.BindArrow),
-                            new[] { typeof(object), typeof(object[]), typeof(object) });
-                    }
-
-                    ilEncoder.OpCode(ILOpCode.Call);
-                    ilEncoder.Token(bindRef);
-                    EmitInitializeFunctionInstance(createArrow.CallableId, createArrow.IsAsync, ilEncoder);
-
                     EmitStoreTemp(createArrow.Result, ilEncoder, allocation);
                     break;
                 }
@@ -1303,93 +1129,15 @@ internal sealed partial class LIRToILCompiler
                         break;
                     }
 
-                    if (TryEmitGeneratedOrdinaryFunctionObject(
+                    if (!TryEmitGeneratedOrdinaryFunctionObject(
                             createFunc,
                             ilEncoder,
                             allocation,
                             methodDescriptor))
                     {
-                        EmitStoreTemp(createFunc.Result, ilEncoder, allocation);
-                        break;
+                        throw new InvalidOperationException(
+                            $"Compiled function '{createFunc.CallableId.DisplayName}' is missing generated function-object metadata.");
                     }
-
-                    var reader = _serviceProvider.GetService<Jroc.Services.TwoPhaseCompilation.ICallableDeclarationReader>();
-                    if (reader == null)
-                    {
-                        return false;
-                    }
-
-                    var callableId = createFunc.CallableId;
-                    if (!reader.TryGetDeclaredToken(callableId, out var token) || token.Kind != HandleKind.MethodDefinition)
-                    {
-                        return false;
-                    }
-
-                    var methodHandle = (MethodDefinitionHandle)token;
-                    var jsParamCount = createFunc.CallableId.JsParamCount;
-
-                    bool requiresScopes = true;
-                    var signature = reader.GetSignature(callableId);
-                    if (signature != null)
-                    {
-                        requiresScopes = signature.RequiresScopesParameter;
-                    }
-
-                    bool usesSingleScope = UsesSingleScopeAbi(signature);
-
-                    // Create a JsFuncNoScopesN delegate.
-                    // - requiresScopes: close over scopes as delegate target (binds first static arg object[] scopes)
-                    // - no scopes: regular static delegate target = null
-                    if (usesSingleScope)
-                    {
-                        EmitLoadSingleScopeFromScopesArray(
-                            createFunc.ScopesArray,
-                            ilEncoder,
-                            allocation,
-                            methodDescriptor,
-                            signature ?? throw new InvalidOperationException($"Missing SingleScope signature metadata for callable {callableId.DisplayName}."));
-                    }
-                    else if (requiresScopes)
-                    {
-                        EmitLoadTemp(createFunc.ScopesArray, ilEncoder, allocation, methodDescriptor);
-                    }
-                    else
-                    {
-                        ilEncoder.OpCode(ILOpCode.Ldnull);
-                    }
-                    ilEncoder.OpCode(ILOpCode.Ldftn);
-                    ilEncoder.Token(methodHandle);
-                    ilEncoder.OpCode(ILOpCode.Newobj);
-                    ilEncoder.Token(GetMaterializedCallableDelegateCtorRef(jsParamCount, requiresScopes: false, signature));
-                    EmitInitializeFunctionInstance(createFunc.CallableId, createFunc.IsAsync, ilEncoder);
-                    EmitInitializeGeneratorFunctionSurfaceIfNeeded(callableId, ilEncoder);
-
-                    if (createFunc.IsNonConstructible
-                        && !IsGeneratorCallable(callableId))
-                    {
-                        // Generated function objects mark their prototype during initialization;
-                        // this branch handles only the delegate-backed fallback.
-                        var delegateType = CallableDelegateTypeResolver.GetMaterializedDelegateType(
-                            callableId,
-                            signature);
-                        ilEncoder.OpCode(ILOpCode.Call);
-                        ilEncoder.Token(_memberRefRegistry.GetOrAddGenericUnaryMethod(
-                            typeof(JavaScriptRuntime.Function),
-                            nameof(JavaScriptRuntime.Function.MarkUndefinedPrototype),
-                            delegateType));
-                    }
-
-                    if (createFunc.IsAsyncGeneratorFunction)
-                    {
-                        var initAsyncGeneratorFunctionRef = _memberRefRegistry.GetOrAddMethod(
-                            typeof(JavaScriptRuntime.AsyncGeneratorFunction),
-                            nameof(JavaScriptRuntime.AsyncGeneratorFunction.InitializeFunctionObject),
-                            new[] { typeof(object) });
-                        ilEncoder.OpCode(ILOpCode.Call);
-                        ilEncoder.Token(initAsyncGeneratorFunctionRef);
-                        EmitCastToMaterializedCallableDelegate(callableId, ilEncoder);
-                    }
-
                     EmitStoreTemp(createFunc.Result, ilEncoder, allocation);
                     break;
                 }
@@ -1473,6 +1221,39 @@ internal sealed partial class LIRToILCompiler
         {
             ilEncoder.OpCode(ILOpCode.Box);
             ilEncoder.Token(_bclReferences.BooleanType);
+        }
+    }
+
+    private void EmitAdaptObjectCallResult(
+        TempVariable result,
+        InstructionEncoder ilEncoder)
+    {
+        var storage = GetTempStorage(result);
+        if (storage.Kind == ValueStorageKind.UnboxedValue)
+        {
+            if (storage.ClrType == typeof(double))
+            {
+                ilEncoder.OpCode(ILOpCode.Call);
+                ilEncoder.Token(
+                    _bclReferences.TypeUtilities_ToNumber_Object_Ref);
+            }
+            else if (storage.ClrType == typeof(bool))
+            {
+                ilEncoder.OpCode(ILOpCode.Call);
+                ilEncoder.Token(
+                    _bclReferences.TypeUtilities_ToBoolean_Object_Ref);
+            }
+            return;
+        }
+
+        if (storage.ClrType is { } referenceType
+            && referenceType != typeof(object)
+            && !referenceType.IsValueType)
+        {
+            ilEncoder.OpCode(ILOpCode.Castclass);
+            ilEncoder.Token(
+                _memberRefRegistry.GetOrAddTypeHandle(
+                    referenceType));
         }
     }
 

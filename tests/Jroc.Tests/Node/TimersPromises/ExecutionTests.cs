@@ -23,6 +23,10 @@ namespace Jroc.Tests.Node.TimersPromises
             => ExecutionTest(nameof(TimersPromises_Abort_GetterErrors_SurfaceCorrectly));
 
         [Fact]
+        public Task TimersPromises_AbortListener_StableFunctionIdentity()
+            => ExecutionTest(nameof(TimersPromises_AbortListener_StableFunctionIdentity));
+
+        [Fact]
         public Task TimersPromises_Ordering_WithNextTick_AndPromiseMicrotasks()
             => ExecutionTest(nameof(TimersPromises_Ordering_WithNextTick_AndPromiseMicrotasks));
 

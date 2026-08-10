@@ -35,13 +35,20 @@ public sealed class FunctionRuntimeTests
                 return 7d;
             };
             JavaScriptRuntime.Function.InitializeFunctionInstance(constructor, 1d, "Receiver", requiresInvocationContext: true);
+            JavaScriptRuntime.Function.MarkConstructible(constructor);
+            var constructorValue =
+                BuiltinDelegateFunctionAdapter.FromDelegate(constructor);
 
-            var instance = Assert.IsType<JsObject>(JavaScriptRuntime.Function.Construct(constructor, new object?[] { 42d }));
+            var instance = Assert.IsType<JsObject>(
+                CallableOperations.Construct(
+                    constructorValue,
+                    new object?[] { 42d }));
             Assert.Equal(42d, instance["value"]);
             Assert.Equal(42d, ObjectRuntime.GetProperty(instance, "value"));
             Assert.False(instance.HasNonDataDescriptors);
 
-            var prototype = Assert.IsType<JsObject>(ObjectRuntime.GetProperty(constructor, "prototype"));
+            var prototype = Assert.IsType<JsObject>(
+                ObjectRuntime.GetProperty(constructorValue, "prototype"));
             Assert.Same(prototype, JavaScriptRuntime.Object.getPrototypeOf(instance));
         }
         finally

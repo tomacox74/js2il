@@ -32,13 +32,11 @@ public enum ScopesSource
 /// <param name="HasScopesParam">Whether object[] scopes is present as a method parameter.</param>
 /// <param name="ScopesSource">Where the callable reads its parent scopes from.</param>
 /// <param name="JsParameterCount">Number of JavaScript parameters (excluding scopes array).</param>
-/// <param name="MaxSupportedDelegateArity">Maximum supported delegate arity (currently 6).</param>
 public sealed record CallableAbi(
     bool IsInstanceMethod,
     bool HasScopesParam,
     ScopesSource ScopesSource,
-    int JsParameterCount,
-    int MaxSupportedDelegateArity = 6
+    int JsParameterCount
 )
 {
     /// <summary>

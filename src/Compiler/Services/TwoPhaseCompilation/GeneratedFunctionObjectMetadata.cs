@@ -64,6 +64,8 @@ public sealed record GeneratedFunctionObjectPlan
 
     public bool UsesNonStrictThisBinding { get; init; }
 
+    public bool RequiresArrayCallAdapter { get; init; }
+
     public GeneratedFunctionReturnKind ReturnKind { get; init; }
 }
 
@@ -78,6 +80,8 @@ public sealed record GeneratedFunctionObjectMetadata
     public required MethodDefinitionHandle ConstructorHandle { get; init; }
 
     public required MethodDefinitionHandle CallAdapterHandle { get; init; }
+
+    public MethodDefinitionHandle ArrayCallAdapterHandle { get; init; }
 
     public required MethodDefinitionHandle IsConstructorGetterHandle { get; init; }
 

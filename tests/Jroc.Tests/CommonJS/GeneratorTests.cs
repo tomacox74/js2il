@@ -88,6 +88,17 @@ namespace Jroc.Tests.CommonJS
         }
 
         [Fact]
+        public Task CommonJS_Require_FunctionValueIdentity()
+        {
+            return GenerateTest(
+                nameof(CommonJS_Require_FunctionValueIdentity),
+                new[]
+                {
+                    "CommonJS_Require_FunctionValueIdentity_Dependency"
+                });
+        }
+
+        [Fact]
         public Task CommonJS_Module_Exports_Object()
         {
             // Test that exports and module.exports are aliases to the same object

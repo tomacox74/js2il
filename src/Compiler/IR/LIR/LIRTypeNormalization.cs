@@ -281,12 +281,23 @@ internal static class LIRTypeNormalization
                 continue;
             }
 
-            var delegateInstanceTemp = CreateTemp(methodBody, new ValueStorage(ValueStorageKind.Reference, typeof(Delegate)));
-            methodBody.Instructions[i] = new LIRIsInstanceOf(typeof(Delegate), typeofSource, delegateInstanceTemp);
+            var callableResultTemp = CreateTemp(
+                methodBody,
+                new ValueStorage(
+                    ValueStorageKind.UnboxedValue,
+                    typeof(bool)));
+            methodBody.Instructions[i] = new LIRCallIntrinsicStatic(
+                nameof(JavaScriptRuntime.CallableOperations),
+                nameof(JavaScriptRuntime.CallableOperations.IsCallable),
+                [typeofSource],
+                callableResultTemp);
 
             foreach (var branchIndex in branchUseIndices)
             {
-                methodBody.Instructions[branchIndex] = RewriteBranchCondition(methodBody.Instructions[branchIndex], delegateInstanceTemp, invertBranches);
+                methodBody.Instructions[branchIndex] = RewriteBranchCondition(
+                    methodBody.Instructions[branchIndex],
+                    callableResultTemp,
+                    invertBranches);
             }
 
             RemoveDeadDefinitionChain(methodBody, typeofResultTemp);

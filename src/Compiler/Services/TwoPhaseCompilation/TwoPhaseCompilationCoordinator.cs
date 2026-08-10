@@ -1591,7 +1591,7 @@ public sealed class TwoPhaseCompilationCoordinator
         }
 
         // Two-phase: the IR compiler returns a body-only representation. We must finalize it into
-        // a MethodDef/TypeDef so existing call sites (ldftn / delegate creation) reference a real
+        // a MethodDef/TypeDef so direct calls and generated function-object adapters reference a real
         // method body at the preallocated token.
         var irTb = new TypeBuilder(metadataBuilder, string.Empty, funcTypeName);
         _ = MethodDefinitionFinalizer.EmitMethod(metadataBuilder, irTb, compiledBody, bclReferences);
@@ -1740,12 +1740,7 @@ public sealed class TwoPhaseCompilationCoordinator
                     continue;
                 }
 
-                member.ClrType = callableId.Kind == CallableKind.Arrow
-                    || callableId.AstNode is FunctionExpression
-                    ? typeof(JavaScriptRuntime.JsFunctionObject)
-                    : CallableDelegateTypeResolver.GetMaterializedDelegateType(
-                        callableId,
-                        _registry.GetSignature(callableId));
+                member.ClrType = typeof(JavaScriptRuntime.JsFunctionObject);
             }
         }
 

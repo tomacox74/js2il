@@ -115,6 +115,7 @@
         "specUrl": "https://tc39.es/ecma262/#sec-ecmascript-function-objects-call-thisargument-argumentslist",
         "testScripts": [
           "tests/Jroc.Tests/Function/JavaScript/Function_Arguments_Basics.js",
+          "tests/Jroc.Tests/Function/JavaScript/Function_Arguments_CalleeIdentity.js",
           "tests/Jroc.Tests/Function/JavaScript/Function_Arguments_MappedParameterAliasing.js",
           "tests/Jroc.Tests/Function/JavaScript/Function_Arguments_Unmapped_StrictAndComplex.js",
           "tests/Jroc.Tests/Function/JavaScript/Function_Call_Basic.js",
@@ -125,7 +126,7 @@
         "test262Paths": [
           "test/language/function-code/10.4.3-1-35-s.js"
         ],
-        "notes": "Delegate-backed user functions support ordinary calls, receiver-sensitive method calls, lexical this for arrow functions, strict bare-call `this` preserving undefined, and lazy materialization of a dedicated arguments object when the implicit binding is referenced. Non-arrow functions use mapped arguments objects for non-strict simple parameter lists and unmapped arguments objects for strict-mode or complex parameter lists; remaining gaps are the narrower 10.4.4 descriptor/invariant edge cases rather than wholesale lack of arguments-object support."
+        "notes": "Generated JsFunctionObject subclasses support ordinary calls, receiver-sensitive method calls, lexical this for arrow functions, strict bare-call `this` preserving undefined, and lazy materialization of a dedicated arguments object when the implicit binding is referenced. Typed direct array adapters receive the actual function object, preserving non-strict arguments.callee identity and nested invocation state without exposing a CLR delegate. Non-arrow functions use mapped arguments objects for non-strict simple parameter lists and unmapped arguments objects for strict-mode or complex parameter lists; remaining gaps are the narrower 10.4.4 descriptor/invariant edge cases rather than wholesale lack of arguments-object support."
       },
       {
         "clause": "10.2.2",
@@ -171,7 +172,7 @@
           "tests/Jroc.Tests/Function/JavaScript/Function_GeneratedConstruction_Semantics.js",
           "tests/Jroc.Tests/Function/JavaScript/Function_Prototype_ToString_Basic.js"
         ],
-        "notes": "Generated ordinary function objects receive writable, non-enumerable, non-configurable prototype properties whose prototype objects carry the expected writable, non-enumerable, configurable constructor link. Prototype replacement affects subsequent construction. Transitional delegate-backed callables still synthesize metadata lazily, and exact realm-sensitive MakeConstructor behavior remains limited."
+        "notes": "Generated ordinary function objects receive writable, non-enumerable, non-configurable prototype properties whose prototype objects carry the expected writable, non-enumerable, configurable constructor link. Prototype replacement affects subsequent construction. Runtime-owned built-in/host delegate adapters retain explicit lazy metadata, but compiled JavaScript function values do not use delegates. Exact realm-sensitive MakeConstructor behavior remains limited."
       },
       {
         "clause": "10.2.7",
@@ -182,7 +183,7 @@
           "tests/Jroc.Tests/Classes/JavaScript/Classes_GeneratedMethodFunctionObjects.js",
           "tests/Jroc.Tests/Object/JavaScript/ObjectLiteral_GeneratedMethodFunctionObjects.js"
         ],
-        "notes": "Synchronous class and object-literal methods/accessors materialize as generated JsFunctionObject instances. Generated objects capture home-object and lexical super state only when required, preserve dynamic receiver behavior and per-evaluation identity, and remain non-constructable without an ordinary-function prototype property. Async and generator method values remain on their dedicated transitional paths pending their callable-family migrations."
+        "notes": "Class and object-literal methods/accessors, including async and generator families, materialize as generated JsFunctionObject instances. Generated objects capture home-object and lexical super state only when required, preserve dynamic receiver behavior and per-evaluation identity, and remain non-constructable without an ordinary-function prototype property."
       },
       {
         "clause": "10.2.8",

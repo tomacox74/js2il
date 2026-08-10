@@ -290,13 +290,15 @@ namespace JavaScriptRuntime.Node
                 abortListener(null);
                 return null;
             };
+            var listenerFunction =
+                new BuiltinDelegateFunctionAdapter(listenerDelegate);
 
-            CallableOperations.Call2(addListener, signal, "abort", listenerDelegate);
+            CallableOperations.Call2(addListener, signal, "abort", listenerFunction);
 
             var removeListener = ObjectRuntime.GetProperty(signal, "removeEventListener");
             if (CallableOperations.IsCallable(removeListener))
             {
-                unregister = () => CallableOperations.Call2(removeListener, signal, "abort", listenerDelegate);
+                unregister = () => CallableOperations.Call2(removeListener, signal, "abort", listenerFunction);
             }
 
             return true;

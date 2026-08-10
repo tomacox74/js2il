@@ -78,13 +78,6 @@ namespace Jroc.Services
             _il.Call(mref);
         }
 
-        public void InvokeClosureBindObject()
-        {
-            // assumes [delegateAsObject] [scopesArray] are on the stack
-            var mref = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.Closure), nameof(JavaScriptRuntime.Closure.Bind), new[] { typeof(object), typeof(object[]) });
-            _il.Call(mref);
-        }
-
         public void InvokeClosureInvokeWithArgs()
         {
             // assumes [delegateAsObject] [scopesArray] [argsArray] are on the stack

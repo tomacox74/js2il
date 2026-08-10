@@ -294,7 +294,9 @@ Important details:
 - Each `await` site is assigned a stable resume state id (`1`, `2`, …).
 - The loop variables (`i`, `total`) live on the scope so they survive suspension.
 - Nested awaits become sequential suspension points.
-- In real emitted IL, the `onFulfilled` / `onRejected` lambdas are emitted as normal JROC callables (static methods + `Closure.Bind(scopes)`), not as C# closures.
+- Promise fulfillment/rejection callbacks are runtime-owned scheduler adapters.
+  The generated async step itself is immediately enclosed by
+  `CompiledContinuation`; it is not exposed as a JavaScript callable.
 - The rejection path should flow back into `MoveNext` with “throw into state machine” semantics; the pseudo-code uses `throw r` as shorthand.
 
 

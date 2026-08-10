@@ -13,10 +13,7 @@ namespace JavaScriptRuntime.Node
 
         public EventEmitter on(object? eventName, object? listener)
         {
-            if (!CallableOperations.IsCallable(listener))
-            {
-                throw new TypeError("EventEmitter listener must be a function");
-            }
+            listener = NormalizeListener(listener);
 
             var key = GetEventKey(eventName);
             if (!_listeners.TryGetValue(key, out var handlers))
@@ -34,14 +31,12 @@ namespace JavaScriptRuntime.Node
 
         public EventEmitter once(object? eventName, object? listener)
         {
-            if (!CallableOperations.IsCallable(listener))
-            {
-                throw new TypeError("EventEmitter listener must be a function");
-            }
+            listener = NormalizeListener(listener);
 
             var emitter = this;
             var fired = false;
             Func<object[], object?[], object?>? wrapper = null;
+            object? wrapperValue = null;
             wrapper = (scopes, args) =>
             {
                 if (fired)
@@ -50,21 +45,23 @@ namespace JavaScriptRuntime.Node
                 }
 
                 fired = true;
-                emitter.off(eventName, wrapper);
+                emitter.off(eventName, wrapperValue);
                 return InvokeListener(listener, args);
             };
 
-            ObjectRuntime.SetProperty(wrapper, "listener", listener);
-            _onceListenerOriginals[wrapper] = listener;
-            return on(eventName, wrapper);
+            wrapperValue =
+                BuiltinDelegateFunctionAdapter.FromDelegate(wrapper);
+            ObjectRuntime.SetProperty(
+                wrapperValue,
+                "listener",
+                listener);
+            _onceListenerOriginals[wrapperValue] = listener;
+            return on(eventName, wrapperValue);
         }
 
         public EventEmitter off(object? eventName, object? listener)
         {
-            if (!CallableOperations.IsCallable(listener))
-            {
-                throw new TypeError("EventEmitter listener must be a function");
-            }
+            listener = NormalizeListener(listener);
 
             var key = GetEventKey(eventName);
             if (!_listeners.TryGetValue(key, out var handlers) || handlers.Count == 0)
@@ -250,10 +247,7 @@ namespace JavaScriptRuntime.Node
 
         public EventEmitter prependListener(object? eventName, object? listener)
         {
-            if (!CallableOperations.IsCallable(listener))
-            {
-                throw new TypeError("EventEmitter listener must be a function");
-            }
+            listener = NormalizeListener(listener);
 
             var key = GetEventKey(eventName);
             if (!_listeners.TryGetValue(key, out var handlers))
@@ -268,14 +262,12 @@ namespace JavaScriptRuntime.Node
 
         public EventEmitter prependOnceListener(object? eventName, object? listener)
         {
-            if (!CallableOperations.IsCallable(listener))
-            {
-                throw new TypeError("EventEmitter listener must be a function");
-            }
+            listener = NormalizeListener(listener);
 
             var emitter = this;
             var fired = false;
             Func<object[], object?[], object?>? wrapper = null;
+            object? wrapperValue = null;
             wrapper = (scopes, args) =>
             {
                 if (fired)
@@ -284,13 +276,18 @@ namespace JavaScriptRuntime.Node
                 }
 
                 fired = true;
-                emitter.off(eventName, wrapper);
+                emitter.off(eventName, wrapperValue);
                 return InvokeListener(listener, args);
             };
 
-            ObjectRuntime.SetProperty(wrapper, "listener", listener);
-            _onceListenerOriginals[wrapper] = listener;
-            return prependListener(eventName, wrapper);
+            wrapperValue =
+                BuiltinDelegateFunctionAdapter.FromDelegate(wrapper);
+            ObjectRuntime.SetProperty(
+                wrapperValue,
+                "listener",
+                listener);
+            _onceListenerOriginals[wrapperValue] = listener;
+            return prependListener(eventName, wrapperValue);
         }
 
         public EventEmitter setMaxListeners(object? n)
@@ -319,6 +316,20 @@ namespace JavaScriptRuntime.Node
 
         private object? InvokeListener(object? listener, in JsCallArguments args)
             => CallableOperations.Call(listener, this, args);
+
+        private static object NormalizeListener(object? listener)
+        {
+            var normalized =
+                BuiltinDelegateFunctionAdapter.WrapJavaScriptVisibleValue(
+                    listener);
+            if (!CallableOperations.IsCallable(normalized))
+            {
+                throw new TypeError(
+                    "EventEmitter listener must be a function");
+            }
+
+            return normalized!;
+        }
 
         private static string GetEventKey(object? eventName)
         {

@@ -175,8 +175,8 @@
 		IL_0045: ldc.i4.4
 		IL_0046: ldarg.s __dirname
 		IL_0048: stelem.ref
-		IL_0049: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindMoveNext(object, object[], object[])
-		IL_004e: stfld object [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_moveNext
+		IL_0049: call class [JavaScriptRuntime]JavaScriptRuntime.CompiledContinuation [JavaScriptRuntime]JavaScriptRuntime.CompiledContinuation::Create(object, object[], object[])
+		IL_004e: stfld class [JavaScriptRuntime]JavaScriptRuntime.CompiledContinuation [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_moveNext
 		IL_0053: br IL_0059
 
 		IL_0058: stloc.0
@@ -231,10 +231,10 @@
 		IL_00cb: ldarg.0
 		IL_00cc: ldc.i4.1
 		IL_00cd: ldloc.0
-		IL_00ce: ldfld object [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_moveNext
+		IL_00ce: ldfld class [JavaScriptRuntime]JavaScriptRuntime.CompiledContinuation [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_moveNext
 		IL_00d3: ldc.i4.1
 		IL_00d4: ldstr "_pendingException"
-		IL_00d9: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::SetupAwaitContinuationWithRejectResumeTyped(object, object[], int32, object, int32, string)
+		IL_00d9: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::SetupAwaitContinuationWithRejectResumeTyped(object, object[], int32, class [JavaScriptRuntime]JavaScriptRuntime.CompiledContinuation, int32, string)
 		IL_00de: ldloc.0
 		IL_00df: ldfld object[] [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_locals
 		IL_00e4: dup
