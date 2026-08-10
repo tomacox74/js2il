@@ -2164,6 +2164,49 @@
 				IL_0006: ret
 			} // end of method FunctionObject_FunctionDeclaration_53EB1517_shift::ResolveThisArgumentCore
 
+			.method assembly hidebysig static 
+				object __js_call_with_arguments__ (
+					class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject functionObject,
+					object[] scopes,
+					object[] arguments
+				) cil managed 
+			{
+				// Header size: 12
+				// Code size: 48 (0x30)
+				.maxstack 8
+				.locals init (
+					[0] object
+				)
+
+				IL_0000: ldarg.0
+				IL_0001: ldarg.2
+				IL_0002: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushGeneratedFunctionDirectCall(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, object[])
+				.try
+				{
+					IL_0007: ldnull
+					IL_0008: ldarg.2
+					IL_0009: ldc.i4.0
+					IL_000a: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetArgumentOrUndefined(object[], int32)
+					IL_000f: ldarg.2
+					IL_0010: ldc.i4.1
+					IL_0011: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetArgumentOrUndefined(object[], int32)
+					IL_0016: ldarg.2
+					IL_0017: ldc.i4.2
+					IL_0018: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetArgumentOrUndefined(object[], int32)
+					IL_001d: call object Modules.ObjectLiteral_InterproceduralInference_Parity/shift::__js_call__(object, object, object, object)
+					IL_0022: stloc.0
+					IL_0023: leave IL_002e
+				} // end .try
+				finally
+				{
+					IL_0028: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopGeneratedFunctionDirectCall()
+					IL_002d: endfinally
+				} // end handler
+
+				IL_002e: ldloc.0
+				IL_002f: ret
+			} // end of method FunctionObject_FunctionDeclaration_53EB1517_shift::__js_call_with_arguments__
+
 			.method family hidebysig virtual 
 				instance object CallCore (
 					object thisArgument,
@@ -2744,7 +2787,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 999 (0x3e7)
+		// Code size: 1059 (0x423)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ObjectLiteral_InterproceduralInference_Parity/Scope,
@@ -2793,374 +2836,386 @@
 		IL_001e: ldc.i4.0
 		IL_001f: ldc.i4.0
 		IL_0020: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.ObjectLiteral_InterproceduralInference_Parity/c/FunctionObject_FunctionDeclaration_8C67F5E2_c>(!!0, float64, string, bool, bool)
-		IL_0025: stloc.1
-		IL_0026: ldc.i4.1
-		IL_0027: newarr [System.Runtime]System.Object
-		IL_002c: dup
-		IL_002d: ldc.i4.0
-		IL_002e: ldloc.0
-		IL_002f: stelem.ref
-		IL_0030: stloc.s 21
-		IL_0032: newobj instance void Modules.ObjectLiteral_InterproceduralInference_Parity/h6/FunctionObject_FunctionDeclaration_DDB94903_h6::.ctor()
-		IL_0037: ldc.i4.1
-		IL_0038: conv.r8
-		IL_0039: ldstr "h6"
-		IL_003e: ldc.i4.0
-		IL_003f: ldc.i4.0
-		IL_0040: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.ObjectLiteral_InterproceduralInference_Parity/h6/FunctionObject_FunctionDeclaration_DDB94903_h6>(!!0, float64, string, bool, bool)
-		IL_0045: stloc.s 22
-		IL_0047: ldloc.0
-		IL_0048: ldloc.s 22
-		IL_004a: stfld object Modules.ObjectLiteral_InterproceduralInference_Parity/Scope::h6
-		IL_004f: ldc.i4.1
-		IL_0050: newarr [System.Runtime]System.Object
-		IL_0055: dup
-		IL_0056: ldc.i4.0
-		IL_0057: ldloc.0
-		IL_0058: stelem.ref
-		IL_0059: stloc.s 21
-		IL_005b: ldloc.s 21
-		IL_005d: ldc.i4.0
-		IL_005e: ldelem.ref
-		IL_005f: castclass Modules.ObjectLiteral_InterproceduralInference_Parity/Scope
-		IL_0064: newobj instance void Modules.ObjectLiteral_InterproceduralInference_Parity/h5/FunctionObject_FunctionDeclaration_DEB94A96_h5::.ctor(class Modules.ObjectLiteral_InterproceduralInference_Parity/Scope)
-		IL_0069: ldc.i4.1
-		IL_006a: conv.r8
-		IL_006b: ldstr "h5"
-		IL_0070: ldc.i4.0
-		IL_0071: ldc.i4.0
-		IL_0072: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.ObjectLiteral_InterproceduralInference_Parity/h5/FunctionObject_FunctionDeclaration_DEB94A96_h5>(!!0, float64, string, bool, bool)
-		IL_0077: stloc.s 23
-		IL_0079: ldloc.0
-		IL_007a: ldloc.s 23
-		IL_007c: stfld object Modules.ObjectLiteral_InterproceduralInference_Parity/Scope::h5
-		IL_0081: ldc.i4.1
-		IL_0082: newarr [System.Runtime]System.Object
-		IL_0087: dup
-		IL_0088: ldc.i4.0
-		IL_0089: ldloc.0
-		IL_008a: stelem.ref
-		IL_008b: stloc.s 21
-		IL_008d: ldloc.s 21
-		IL_008f: ldc.i4.0
-		IL_0090: ldelem.ref
-		IL_0091: castclass Modules.ObjectLiteral_InterproceduralInference_Parity/Scope
-		IL_0096: newobj instance void Modules.ObjectLiteral_InterproceduralInference_Parity/h4/FunctionObject_FunctionDeclaration_DFB94C29_h4::.ctor(class Modules.ObjectLiteral_InterproceduralInference_Parity/Scope)
-		IL_009b: ldc.i4.1
-		IL_009c: conv.r8
-		IL_009d: ldstr "h4"
-		IL_00a2: ldc.i4.0
-		IL_00a3: ldc.i4.0
-		IL_00a4: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.ObjectLiteral_InterproceduralInference_Parity/h4/FunctionObject_FunctionDeclaration_DFB94C29_h4>(!!0, float64, string, bool, bool)
-		IL_00a9: stloc.s 24
-		IL_00ab: ldloc.0
-		IL_00ac: ldloc.s 24
-		IL_00ae: stfld object Modules.ObjectLiteral_InterproceduralInference_Parity/Scope::h4
-		IL_00b3: ldc.i4.1
-		IL_00b4: newarr [System.Runtime]System.Object
-		IL_00b9: dup
-		IL_00ba: ldc.i4.0
-		IL_00bb: ldloc.0
-		IL_00bc: stelem.ref
-		IL_00bd: stloc.s 21
-		IL_00bf: ldloc.s 21
-		IL_00c1: ldc.i4.0
-		IL_00c2: ldelem.ref
-		IL_00c3: castclass Modules.ObjectLiteral_InterproceduralInference_Parity/Scope
-		IL_00c8: newobj instance void Modules.ObjectLiteral_InterproceduralInference_Parity/h3/FunctionObject_FunctionDeclaration_E0B94DBC_h3::.ctor(class Modules.ObjectLiteral_InterproceduralInference_Parity/Scope)
-		IL_00cd: ldc.i4.1
-		IL_00ce: conv.r8
-		IL_00cf: ldstr "h3"
-		IL_00d4: ldc.i4.0
+		IL_0025: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeLegacyFunctionProperties<class Modules.ObjectLiteral_InterproceduralInference_Parity/c/FunctionObject_FunctionDeclaration_8C67F5E2_c>(!!0)
+		IL_002a: stloc.1
+		IL_002b: ldc.i4.1
+		IL_002c: newarr [System.Runtime]System.Object
+		IL_0031: dup
+		IL_0032: ldc.i4.0
+		IL_0033: ldloc.0
+		IL_0034: stelem.ref
+		IL_0035: stloc.s 21
+		IL_0037: newobj instance void Modules.ObjectLiteral_InterproceduralInference_Parity/h6/FunctionObject_FunctionDeclaration_DDB94903_h6::.ctor()
+		IL_003c: ldc.i4.1
+		IL_003d: conv.r8
+		IL_003e: ldstr "h6"
+		IL_0043: ldc.i4.0
+		IL_0044: ldc.i4.0
+		IL_0045: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.ObjectLiteral_InterproceduralInference_Parity/h6/FunctionObject_FunctionDeclaration_DDB94903_h6>(!!0, float64, string, bool, bool)
+		IL_004a: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeLegacyFunctionProperties<class Modules.ObjectLiteral_InterproceduralInference_Parity/h6/FunctionObject_FunctionDeclaration_DDB94903_h6>(!!0)
+		IL_004f: stloc.s 22
+		IL_0051: ldloc.0
+		IL_0052: ldloc.s 22
+		IL_0054: stfld object Modules.ObjectLiteral_InterproceduralInference_Parity/Scope::h6
+		IL_0059: ldc.i4.1
+		IL_005a: newarr [System.Runtime]System.Object
+		IL_005f: dup
+		IL_0060: ldc.i4.0
+		IL_0061: ldloc.0
+		IL_0062: stelem.ref
+		IL_0063: stloc.s 21
+		IL_0065: ldloc.s 21
+		IL_0067: ldc.i4.0
+		IL_0068: ldelem.ref
+		IL_0069: castclass Modules.ObjectLiteral_InterproceduralInference_Parity/Scope
+		IL_006e: newobj instance void Modules.ObjectLiteral_InterproceduralInference_Parity/h5/FunctionObject_FunctionDeclaration_DEB94A96_h5::.ctor(class Modules.ObjectLiteral_InterproceduralInference_Parity/Scope)
+		IL_0073: ldc.i4.1
+		IL_0074: conv.r8
+		IL_0075: ldstr "h5"
+		IL_007a: ldc.i4.0
+		IL_007b: ldc.i4.0
+		IL_007c: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.ObjectLiteral_InterproceduralInference_Parity/h5/FunctionObject_FunctionDeclaration_DEB94A96_h5>(!!0, float64, string, bool, bool)
+		IL_0081: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeLegacyFunctionProperties<class Modules.ObjectLiteral_InterproceduralInference_Parity/h5/FunctionObject_FunctionDeclaration_DEB94A96_h5>(!!0)
+		IL_0086: stloc.s 23
+		IL_0088: ldloc.0
+		IL_0089: ldloc.s 23
+		IL_008b: stfld object Modules.ObjectLiteral_InterproceduralInference_Parity/Scope::h5
+		IL_0090: ldc.i4.1
+		IL_0091: newarr [System.Runtime]System.Object
+		IL_0096: dup
+		IL_0097: ldc.i4.0
+		IL_0098: ldloc.0
+		IL_0099: stelem.ref
+		IL_009a: stloc.s 21
+		IL_009c: ldloc.s 21
+		IL_009e: ldc.i4.0
+		IL_009f: ldelem.ref
+		IL_00a0: castclass Modules.ObjectLiteral_InterproceduralInference_Parity/Scope
+		IL_00a5: newobj instance void Modules.ObjectLiteral_InterproceduralInference_Parity/h4/FunctionObject_FunctionDeclaration_DFB94C29_h4::.ctor(class Modules.ObjectLiteral_InterproceduralInference_Parity/Scope)
+		IL_00aa: ldc.i4.1
+		IL_00ab: conv.r8
+		IL_00ac: ldstr "h4"
+		IL_00b1: ldc.i4.0
+		IL_00b2: ldc.i4.0
+		IL_00b3: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.ObjectLiteral_InterproceduralInference_Parity/h4/FunctionObject_FunctionDeclaration_DFB94C29_h4>(!!0, float64, string, bool, bool)
+		IL_00b8: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeLegacyFunctionProperties<class Modules.ObjectLiteral_InterproceduralInference_Parity/h4/FunctionObject_FunctionDeclaration_DFB94C29_h4>(!!0)
+		IL_00bd: stloc.s 24
+		IL_00bf: ldloc.0
+		IL_00c0: ldloc.s 24
+		IL_00c2: stfld object Modules.ObjectLiteral_InterproceduralInference_Parity/Scope::h4
+		IL_00c7: ldc.i4.1
+		IL_00c8: newarr [System.Runtime]System.Object
+		IL_00cd: dup
+		IL_00ce: ldc.i4.0
+		IL_00cf: ldloc.0
+		IL_00d0: stelem.ref
+		IL_00d1: stloc.s 21
+		IL_00d3: ldloc.s 21
 		IL_00d5: ldc.i4.0
-		IL_00d6: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.ObjectLiteral_InterproceduralInference_Parity/h3/FunctionObject_FunctionDeclaration_E0B94DBC_h3>(!!0, float64, string, bool, bool)
-		IL_00db: stloc.s 25
-		IL_00dd: ldloc.0
-		IL_00de: ldloc.s 25
-		IL_00e0: stfld object Modules.ObjectLiteral_InterproceduralInference_Parity/Scope::h3
-		IL_00e5: ldc.i4.1
-		IL_00e6: newarr [System.Runtime]System.Object
-		IL_00eb: dup
-		IL_00ec: ldc.i4.0
-		IL_00ed: ldloc.0
-		IL_00ee: stelem.ref
-		IL_00ef: stloc.s 21
-		IL_00f1: ldloc.s 21
-		IL_00f3: ldc.i4.0
-		IL_00f4: ldelem.ref
-		IL_00f5: castclass Modules.ObjectLiteral_InterproceduralInference_Parity/Scope
-		IL_00fa: newobj instance void Modules.ObjectLiteral_InterproceduralInference_Parity/h2/FunctionObject_FunctionDeclaration_E1B94F4F_h2::.ctor(class Modules.ObjectLiteral_InterproceduralInference_Parity/Scope)
-		IL_00ff: ldc.i4.1
-		IL_0100: conv.r8
-		IL_0101: ldstr "h2"
-		IL_0106: ldc.i4.0
-		IL_0107: ldc.i4.0
-		IL_0108: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.ObjectLiteral_InterproceduralInference_Parity/h2/FunctionObject_FunctionDeclaration_E1B94F4F_h2>(!!0, float64, string, bool, bool)
-		IL_010d: stloc.s 26
-		IL_010f: ldloc.0
-		IL_0110: ldloc.s 26
-		IL_0112: stfld object Modules.ObjectLiteral_InterproceduralInference_Parity/Scope::h2
-		IL_0117: ldc.i4.1
-		IL_0118: newarr [System.Runtime]System.Object
-		IL_011d: dup
-		IL_011e: ldc.i4.0
-		IL_011f: ldloc.0
-		IL_0120: stelem.ref
-		IL_0121: stloc.s 21
-		IL_0123: ldloc.s 21
-		IL_0125: ldc.i4.0
-		IL_0126: ldelem.ref
-		IL_0127: castclass Modules.ObjectLiteral_InterproceduralInference_Parity/Scope
-		IL_012c: newobj instance void Modules.ObjectLiteral_InterproceduralInference_Parity/h1/FunctionObject_FunctionDeclaration_E2B950E2_h1::.ctor(class Modules.ObjectLiteral_InterproceduralInference_Parity/Scope)
-		IL_0131: ldc.i4.1
-		IL_0132: conv.r8
-		IL_0133: ldstr "h1"
-		IL_0138: ldc.i4.0
-		IL_0139: ldc.i4.0
-		IL_013a: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.ObjectLiteral_InterproceduralInference_Parity/h1/FunctionObject_FunctionDeclaration_E2B950E2_h1>(!!0, float64, string, bool, bool)
-		IL_013f: stloc.2
-		IL_0140: ldc.i4.1
-		IL_0141: newarr [System.Runtime]System.Object
-		IL_0146: dup
-		IL_0147: ldc.i4.0
-		IL_0148: ldloc.0
-		IL_0149: stelem.ref
-		IL_014a: stloc.s 21
-		IL_014c: newobj instance void Modules.ObjectLiteral_InterproceduralInference_Parity/readX/FunctionObject_FunctionDeclaration_4A6A76F7_readX::.ctor()
-		IL_0151: ldc.i4.1
-		IL_0152: conv.r8
-		IL_0153: ldstr "readX"
-		IL_0158: ldc.i4.0
-		IL_0159: ldc.i4.0
-		IL_015a: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.ObjectLiteral_InterproceduralInference_Parity/readX/FunctionObject_FunctionDeclaration_4A6A76F7_readX>(!!0, float64, string, bool, bool)
-		IL_015f: stloc.3
-		IL_0160: ldc.i4.1
-		IL_0161: newarr [System.Runtime]System.Object
-		IL_0166: dup
-		IL_0167: ldc.i4.0
-		IL_0168: ldloc.0
-		IL_0169: stelem.ref
-		IL_016a: stloc.s 21
-		IL_016c: newobj instance void Modules.ObjectLiteral_InterproceduralInference_Parity/readM/FunctionObject_FunctionDeclaration_556A8848_readM::.ctor()
-		IL_0171: ldc.i4.1
-		IL_0172: conv.r8
-		IL_0173: ldstr "readM"
-		IL_0178: ldc.i4.0
-		IL_0179: ldc.i4.0
-		IL_017a: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.ObjectLiteral_InterproceduralInference_Parity/readM/FunctionObject_FunctionDeclaration_556A8848_readM>(!!0, float64, string, bool, bool)
-		IL_017f: stloc.s 4
-		IL_0181: ldc.i4.1
-		IL_0182: newarr [System.Runtime]System.Object
-		IL_0187: dup
-		IL_0188: ldc.i4.0
-		IL_0189: ldloc.0
-		IL_018a: stelem.ref
-		IL_018b: stloc.s 21
-		IL_018d: newobj instance void Modules.ObjectLiteral_InterproceduralInference_Parity/keep/FunctionObject_FunctionDeclaration_AF71EA98_keep::.ctor()
-		IL_0192: ldc.i4.1
-		IL_0193: conv.r8
-		IL_0194: ldstr "keep"
-		IL_0199: ldc.i4.0
-		IL_019a: ldc.i4.0
-		IL_019b: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.ObjectLiteral_InterproceduralInference_Parity/keep/FunctionObject_FunctionDeclaration_AF71EA98_keep>(!!0, float64, string, bool, bool)
-		IL_01a0: stloc.s 5
-		IL_01a2: ldc.i4.1
-		IL_01a3: newarr [System.Runtime]System.Object
-		IL_01a8: dup
-		IL_01a9: ldc.i4.0
-		IL_01aa: ldloc.0
-		IL_01ab: stelem.ref
-		IL_01ac: stloc.s 21
-		IL_01ae: newobj instance void Modules.ObjectLiteral_InterproceduralInference_Parity/readXY/FunctionObject_FunctionDeclaration_D398D3EA_readXY::.ctor()
-		IL_01b3: ldc.i4.1
-		IL_01b4: conv.r8
-		IL_01b5: ldstr "readXY"
-		IL_01ba: ldc.i4.0
-		IL_01bb: ldc.i4.0
-		IL_01bc: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.ObjectLiteral_InterproceduralInference_Parity/readXY/FunctionObject_FunctionDeclaration_D398D3EA_readXY>(!!0, float64, string, bool, bool)
-		IL_01c1: stloc.s 6
-		IL_01c3: ldc.i4.1
-		IL_01c4: newarr [System.Runtime]System.Object
-		IL_01c9: dup
-		IL_01ca: ldc.i4.0
-		IL_01cb: ldloc.0
-		IL_01cc: stelem.ref
-		IL_01cd: stloc.s 21
-		IL_01cf: newobj instance void Modules.ObjectLiteral_InterproceduralInference_Parity/bump/FunctionObject_FunctionDeclaration_8838F9A5_bump::.ctor()
+		IL_00d6: ldelem.ref
+		IL_00d7: castclass Modules.ObjectLiteral_InterproceduralInference_Parity/Scope
+		IL_00dc: newobj instance void Modules.ObjectLiteral_InterproceduralInference_Parity/h3/FunctionObject_FunctionDeclaration_E0B94DBC_h3::.ctor(class Modules.ObjectLiteral_InterproceduralInference_Parity/Scope)
+		IL_00e1: ldc.i4.1
+		IL_00e2: conv.r8
+		IL_00e3: ldstr "h3"
+		IL_00e8: ldc.i4.0
+		IL_00e9: ldc.i4.0
+		IL_00ea: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.ObjectLiteral_InterproceduralInference_Parity/h3/FunctionObject_FunctionDeclaration_E0B94DBC_h3>(!!0, float64, string, bool, bool)
+		IL_00ef: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeLegacyFunctionProperties<class Modules.ObjectLiteral_InterproceduralInference_Parity/h3/FunctionObject_FunctionDeclaration_E0B94DBC_h3>(!!0)
+		IL_00f4: stloc.s 25
+		IL_00f6: ldloc.0
+		IL_00f7: ldloc.s 25
+		IL_00f9: stfld object Modules.ObjectLiteral_InterproceduralInference_Parity/Scope::h3
+		IL_00fe: ldc.i4.1
+		IL_00ff: newarr [System.Runtime]System.Object
+		IL_0104: dup
+		IL_0105: ldc.i4.0
+		IL_0106: ldloc.0
+		IL_0107: stelem.ref
+		IL_0108: stloc.s 21
+		IL_010a: ldloc.s 21
+		IL_010c: ldc.i4.0
+		IL_010d: ldelem.ref
+		IL_010e: castclass Modules.ObjectLiteral_InterproceduralInference_Parity/Scope
+		IL_0113: newobj instance void Modules.ObjectLiteral_InterproceduralInference_Parity/h2/FunctionObject_FunctionDeclaration_E1B94F4F_h2::.ctor(class Modules.ObjectLiteral_InterproceduralInference_Parity/Scope)
+		IL_0118: ldc.i4.1
+		IL_0119: conv.r8
+		IL_011a: ldstr "h2"
+		IL_011f: ldc.i4.0
+		IL_0120: ldc.i4.0
+		IL_0121: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.ObjectLiteral_InterproceduralInference_Parity/h2/FunctionObject_FunctionDeclaration_E1B94F4F_h2>(!!0, float64, string, bool, bool)
+		IL_0126: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeLegacyFunctionProperties<class Modules.ObjectLiteral_InterproceduralInference_Parity/h2/FunctionObject_FunctionDeclaration_E1B94F4F_h2>(!!0)
+		IL_012b: stloc.s 26
+		IL_012d: ldloc.0
+		IL_012e: ldloc.s 26
+		IL_0130: stfld object Modules.ObjectLiteral_InterproceduralInference_Parity/Scope::h2
+		IL_0135: ldc.i4.1
+		IL_0136: newarr [System.Runtime]System.Object
+		IL_013b: dup
+		IL_013c: ldc.i4.0
+		IL_013d: ldloc.0
+		IL_013e: stelem.ref
+		IL_013f: stloc.s 21
+		IL_0141: ldloc.s 21
+		IL_0143: ldc.i4.0
+		IL_0144: ldelem.ref
+		IL_0145: castclass Modules.ObjectLiteral_InterproceduralInference_Parity/Scope
+		IL_014a: newobj instance void Modules.ObjectLiteral_InterproceduralInference_Parity/h1/FunctionObject_FunctionDeclaration_E2B950E2_h1::.ctor(class Modules.ObjectLiteral_InterproceduralInference_Parity/Scope)
+		IL_014f: ldc.i4.1
+		IL_0150: conv.r8
+		IL_0151: ldstr "h1"
+		IL_0156: ldc.i4.0
+		IL_0157: ldc.i4.0
+		IL_0158: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.ObjectLiteral_InterproceduralInference_Parity/h1/FunctionObject_FunctionDeclaration_E2B950E2_h1>(!!0, float64, string, bool, bool)
+		IL_015d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeLegacyFunctionProperties<class Modules.ObjectLiteral_InterproceduralInference_Parity/h1/FunctionObject_FunctionDeclaration_E2B950E2_h1>(!!0)
+		IL_0162: stloc.2
+		IL_0163: ldc.i4.1
+		IL_0164: newarr [System.Runtime]System.Object
+		IL_0169: dup
+		IL_016a: ldc.i4.0
+		IL_016b: ldloc.0
+		IL_016c: stelem.ref
+		IL_016d: stloc.s 21
+		IL_016f: newobj instance void Modules.ObjectLiteral_InterproceduralInference_Parity/readX/FunctionObject_FunctionDeclaration_4A6A76F7_readX::.ctor()
+		IL_0174: ldc.i4.1
+		IL_0175: conv.r8
+		IL_0176: ldstr "readX"
+		IL_017b: ldc.i4.0
+		IL_017c: ldc.i4.0
+		IL_017d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.ObjectLiteral_InterproceduralInference_Parity/readX/FunctionObject_FunctionDeclaration_4A6A76F7_readX>(!!0, float64, string, bool, bool)
+		IL_0182: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeLegacyFunctionProperties<class Modules.ObjectLiteral_InterproceduralInference_Parity/readX/FunctionObject_FunctionDeclaration_4A6A76F7_readX>(!!0)
+		IL_0187: stloc.3
+		IL_0188: ldc.i4.1
+		IL_0189: newarr [System.Runtime]System.Object
+		IL_018e: dup
+		IL_018f: ldc.i4.0
+		IL_0190: ldloc.0
+		IL_0191: stelem.ref
+		IL_0192: stloc.s 21
+		IL_0194: newobj instance void Modules.ObjectLiteral_InterproceduralInference_Parity/readM/FunctionObject_FunctionDeclaration_556A8848_readM::.ctor()
+		IL_0199: ldc.i4.1
+		IL_019a: conv.r8
+		IL_019b: ldstr "readM"
+		IL_01a0: ldc.i4.0
+		IL_01a1: ldc.i4.0
+		IL_01a2: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.ObjectLiteral_InterproceduralInference_Parity/readM/FunctionObject_FunctionDeclaration_556A8848_readM>(!!0, float64, string, bool, bool)
+		IL_01a7: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeLegacyFunctionProperties<class Modules.ObjectLiteral_InterproceduralInference_Parity/readM/FunctionObject_FunctionDeclaration_556A8848_readM>(!!0)
+		IL_01ac: stloc.s 4
+		IL_01ae: ldc.i4.1
+		IL_01af: newarr [System.Runtime]System.Object
+		IL_01b4: dup
+		IL_01b5: ldc.i4.0
+		IL_01b6: ldloc.0
+		IL_01b7: stelem.ref
+		IL_01b8: stloc.s 21
+		IL_01ba: newobj instance void Modules.ObjectLiteral_InterproceduralInference_Parity/keep/FunctionObject_FunctionDeclaration_AF71EA98_keep::.ctor()
+		IL_01bf: ldc.i4.1
+		IL_01c0: conv.r8
+		IL_01c1: ldstr "keep"
+		IL_01c6: ldc.i4.0
+		IL_01c7: ldc.i4.0
+		IL_01c8: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.ObjectLiteral_InterproceduralInference_Parity/keep/FunctionObject_FunctionDeclaration_AF71EA98_keep>(!!0, float64, string, bool, bool)
+		IL_01cd: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeLegacyFunctionProperties<class Modules.ObjectLiteral_InterproceduralInference_Parity/keep/FunctionObject_FunctionDeclaration_AF71EA98_keep>(!!0)
+		IL_01d2: stloc.s 5
 		IL_01d4: ldc.i4.1
-		IL_01d5: conv.r8
-		IL_01d6: ldstr "bump"
+		IL_01d5: newarr [System.Runtime]System.Object
+		IL_01da: dup
 		IL_01db: ldc.i4.0
-		IL_01dc: ldc.i4.0
-		IL_01dd: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.ObjectLiteral_InterproceduralInference_Parity/bump/FunctionObject_FunctionDeclaration_8838F9A5_bump>(!!0, float64, string, bool, bool)
-		IL_01e2: stloc.s 7
-		IL_01e4: ldc.i4.1
-		IL_01e5: newarr [System.Runtime]System.Object
-		IL_01ea: dup
-		IL_01eb: ldc.i4.0
-		IL_01ec: ldloc.0
-		IL_01ed: stelem.ref
-		IL_01ee: stloc.s 21
-		IL_01f0: newobj instance void Modules.ObjectLiteral_InterproceduralInference_Parity/shift/FunctionObject_FunctionDeclaration_53EB1517_shift::.ctor()
-		IL_01f5: ldc.i4.3
-		IL_01f6: conv.r8
-		IL_01f7: ldstr "shift"
-		IL_01fc: ldc.i4.0
-		IL_01fd: ldc.i4.0
-		IL_01fe: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.ObjectLiteral_InterproceduralInference_Parity/shift/FunctionObject_FunctionDeclaration_53EB1517_shift>(!!0, float64, string, bool, bool)
-		IL_0203: stloc.s 8
-		IL_0205: newobj instance void Modules.ObjectLiteral_InterproceduralInference_Parity/ObjectLiterals/L2C11_a::.ctor()
-		IL_020a: stloc.s 9
-		IL_020c: ldloc.s 9
-		IL_020e: ldstr "hello"
-		IL_0213: callvirt instance void Modules.ObjectLiteral_InterproceduralInference_Parity/ObjectLiterals/L2C11_a::set_b(string)
-		IL_0218: nop
-		IL_0219: ldnull
-		IL_021a: ldloc.s 9
-		IL_021c: call object Modules.ObjectLiteral_InterproceduralInference_Parity/c::__js_call__(object, object)
-		IL_0221: pop
-		IL_0222: newobj instance void Modules.ObjectLiteral_InterproceduralInference_Parity/ObjectLiterals/L9C11_p::.ctor()
-		IL_0227: stloc.s 10
-		IL_0229: ldloc.s 10
-		IL_022b: ldc.r8 7
-		IL_0234: callvirt instance void Modules.ObjectLiteral_InterproceduralInference_Parity/ObjectLiterals/L9C11_p::set_v(float64)
-		IL_0239: nop
-		IL_023a: nop
-		IL_023b: nop
-		IL_023c: nop
-		IL_023d: nop
-		IL_023e: nop
-		IL_023f: ldloc.0
-		IL_0240: castclass Modules.ObjectLiteral_InterproceduralInference_Parity/Scope
-		IL_0245: ldnull
-		IL_0246: ldloc.s 10
-		IL_0248: call object Modules.ObjectLiteral_InterproceduralInference_Parity/h1::__js_call__(class Modules.ObjectLiteral_InterproceduralInference_Parity/Scope, object, object)
-		IL_024d: pop
-		IL_024e: newobj instance void Modules.ObjectLiteral_InterproceduralInference_Parity/ObjectLiterals/L19C12_s1::.ctor()
-		IL_0253: stloc.s 11
-		IL_0255: ldloc.s 11
-		IL_0257: ldc.r8 1
-		IL_0260: callvirt instance void Modules.ObjectLiteral_InterproceduralInference_Parity/ObjectLiterals/L19C12_s1::set_x(float64)
-		IL_0265: newobj instance void Modules.ObjectLiteral_InterproceduralInference_Parity/ObjectLiterals/L19C12_s1::.ctor()
-		IL_026a: stloc.s 12
-		IL_026c: ldloc.s 12
-		IL_026e: ldc.r8 2
-		IL_0277: callvirt instance void Modules.ObjectLiteral_InterproceduralInference_Parity/ObjectLiterals/L19C12_s1::set_x(float64)
+		IL_01dc: ldloc.0
+		IL_01dd: stelem.ref
+		IL_01de: stloc.s 21
+		IL_01e0: newobj instance void Modules.ObjectLiteral_InterproceduralInference_Parity/readXY/FunctionObject_FunctionDeclaration_D398D3EA_readXY::.ctor()
+		IL_01e5: ldc.i4.1
+		IL_01e6: conv.r8
+		IL_01e7: ldstr "readXY"
+		IL_01ec: ldc.i4.0
+		IL_01ed: ldc.i4.0
+		IL_01ee: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.ObjectLiteral_InterproceduralInference_Parity/readXY/FunctionObject_FunctionDeclaration_D398D3EA_readXY>(!!0, float64, string, bool, bool)
+		IL_01f3: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeLegacyFunctionProperties<class Modules.ObjectLiteral_InterproceduralInference_Parity/readXY/FunctionObject_FunctionDeclaration_D398D3EA_readXY>(!!0)
+		IL_01f8: stloc.s 6
+		IL_01fa: ldc.i4.1
+		IL_01fb: newarr [System.Runtime]System.Object
+		IL_0200: dup
+		IL_0201: ldc.i4.0
+		IL_0202: ldloc.0
+		IL_0203: stelem.ref
+		IL_0204: stloc.s 21
+		IL_0206: newobj instance void Modules.ObjectLiteral_InterproceduralInference_Parity/bump/FunctionObject_FunctionDeclaration_8838F9A5_bump::.ctor()
+		IL_020b: ldc.i4.1
+		IL_020c: conv.r8
+		IL_020d: ldstr "bump"
+		IL_0212: ldc.i4.0
+		IL_0213: ldc.i4.0
+		IL_0214: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.ObjectLiteral_InterproceduralInference_Parity/bump/FunctionObject_FunctionDeclaration_8838F9A5_bump>(!!0, float64, string, bool, bool)
+		IL_0219: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeLegacyFunctionProperties<class Modules.ObjectLiteral_InterproceduralInference_Parity/bump/FunctionObject_FunctionDeclaration_8838F9A5_bump>(!!0)
+		IL_021e: stloc.s 7
+		IL_0220: ldc.i4.1
+		IL_0221: newarr [System.Runtime]System.Object
+		IL_0226: dup
+		IL_0227: ldc.i4.0
+		IL_0228: ldloc.0
+		IL_0229: stelem.ref
+		IL_022a: stloc.s 21
+		IL_022c: newobj instance void Modules.ObjectLiteral_InterproceduralInference_Parity/shift/FunctionObject_FunctionDeclaration_53EB1517_shift::.ctor()
+		IL_0231: ldc.i4.3
+		IL_0232: conv.r8
+		IL_0233: ldstr "shift"
+		IL_0238: ldc.i4.0
+		IL_0239: ldc.i4.0
+		IL_023a: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.ObjectLiteral_InterproceduralInference_Parity/shift/FunctionObject_FunctionDeclaration_53EB1517_shift>(!!0, float64, string, bool, bool)
+		IL_023f: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeLegacyFunctionProperties<class Modules.ObjectLiteral_InterproceduralInference_Parity/shift/FunctionObject_FunctionDeclaration_53EB1517_shift>(!!0)
+		IL_0244: stloc.s 8
+		IL_0246: newobj instance void Modules.ObjectLiteral_InterproceduralInference_Parity/ObjectLiterals/L2C11_a::.ctor()
+		IL_024b: stloc.s 9
+		IL_024d: ldloc.s 9
+		IL_024f: ldstr "hello"
+		IL_0254: callvirt instance void Modules.ObjectLiteral_InterproceduralInference_Parity/ObjectLiterals/L2C11_a::set_b(string)
+		IL_0259: nop
+		IL_025a: ldnull
+		IL_025b: ldloc.s 9
+		IL_025d: call object Modules.ObjectLiteral_InterproceduralInference_Parity/c::__js_call__(object, object)
+		IL_0262: pop
+		IL_0263: newobj instance void Modules.ObjectLiteral_InterproceduralInference_Parity/ObjectLiterals/L9C11_p::.ctor()
+		IL_0268: stloc.s 10
+		IL_026a: ldloc.s 10
+		IL_026c: ldc.r8 7
+		IL_0275: callvirt instance void Modules.ObjectLiteral_InterproceduralInference_Parity/ObjectLiterals/L9C11_p::set_v(float64)
+		IL_027a: nop
+		IL_027b: nop
 		IL_027c: nop
-		IL_027d: ldnull
-		IL_027e: ldloc.s 11
-		IL_0280: call object Modules.ObjectLiteral_InterproceduralInference_Parity/readX::__js_call__(object, object)
-		IL_0285: pop
+		IL_027d: nop
+		IL_027e: nop
+		IL_027f: nop
+		IL_0280: ldloc.0
+		IL_0281: castclass Modules.ObjectLiteral_InterproceduralInference_Parity/Scope
 		IL_0286: ldnull
-		IL_0287: ldloc.s 12
-		IL_0289: call object Modules.ObjectLiteral_InterproceduralInference_Parity/readX::__js_call__(object, object)
+		IL_0287: ldloc.s 10
+		IL_0289: call object Modules.ObjectLiteral_InterproceduralInference_Parity/h1::__js_call__(class Modules.ObjectLiteral_InterproceduralInference_Parity/Scope, object, object)
 		IL_028e: pop
-		IL_028f: newobj instance void Modules.ObjectLiteral_InterproceduralInference_Parity/ObjectLiterals/L28C12_d1::.ctor()
-		IL_0294: stloc.s 13
-		IL_0296: ldloc.s 13
-		IL_0298: ldstr "A"
-		IL_029d: callvirt instance void Modules.ObjectLiteral_InterproceduralInference_Parity/ObjectLiterals/L28C12_d1::set_m(string)
-		IL_02a2: newobj instance void Modules.ObjectLiteral_InterproceduralInference_Parity/ObjectLiterals/L29C12_d2::.ctor()
-		IL_02a7: stloc.s 14
-		IL_02a9: ldloc.s 14
-		IL_02ab: ldstr "B"
-		IL_02b0: callvirt instance void Modules.ObjectLiteral_InterproceduralInference_Parity/ObjectLiterals/L29C12_d2::set_z(string)
-		IL_02b5: nop
-		IL_02b6: ldnull
-		IL_02b7: ldloc.s 13
-		IL_02b9: call object Modules.ObjectLiteral_InterproceduralInference_Parity/readM::__js_call__(object, object)
-		IL_02be: pop
-		IL_02bf: ldnull
-		IL_02c0: ldloc.s 14
-		IL_02c2: call object Modules.ObjectLiteral_InterproceduralInference_Parity/readM::__js_call__(object, object)
-		IL_02c7: pop
-		IL_02c8: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_02cd: dup
-		IL_02ce: ldstr "q"
-		IL_02d3: ldc.r8 9
-		IL_02dc: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
-		IL_02e1: stloc.s 15
-		IL_02e3: nop
-		IL_02e4: ldnull
-		IL_02e5: ldloc.s 15
-		IL_02e7: call object Modules.ObjectLiteral_InterproceduralInference_Parity/keep::__js_call__(object, object)
-		IL_02ec: pop
-		IL_02ed: newobj instance void Modules.ObjectLiteral_InterproceduralInference_Parity/ObjectLiterals/L44C12_r1::.ctor()
-		IL_02f2: stloc.s 16
-		IL_02f4: ldloc.s 16
-		IL_02f6: ldc.r8 1
-		IL_02ff: callvirt instance void Modules.ObjectLiteral_InterproceduralInference_Parity/ObjectLiterals/L44C12_r1::set_x(float64)
-		IL_0304: ldloc.s 16
-		IL_0306: ldstr "left"
-		IL_030b: callvirt instance void Modules.ObjectLiteral_InterproceduralInference_Parity/ObjectLiterals/L44C12_r1::set_y(string)
-		IL_0310: newobj instance void Modules.ObjectLiteral_InterproceduralInference_Parity/ObjectLiterals/L44C12_r1::.ctor()
-		IL_0315: stloc.s 17
-		IL_0317: ldloc.s 17
-		IL_0319: ldstr "right"
-		IL_031e: callvirt instance void Modules.ObjectLiteral_InterproceduralInference_Parity/ObjectLiterals/L44C12_r1::set_y(string)
-		IL_0323: ldloc.s 17
-		IL_0325: ldc.r8 2
-		IL_032e: callvirt instance void Modules.ObjectLiteral_InterproceduralInference_Parity/ObjectLiterals/L44C12_r1::set_x(float64)
-		IL_0333: nop
-		IL_0334: ldnull
+		IL_028f: newobj instance void Modules.ObjectLiteral_InterproceduralInference_Parity/ObjectLiterals/L19C12_s1::.ctor()
+		IL_0294: stloc.s 11
+		IL_0296: ldloc.s 11
+		IL_0298: ldc.r8 1
+		IL_02a1: callvirt instance void Modules.ObjectLiteral_InterproceduralInference_Parity/ObjectLiterals/L19C12_s1::set_x(float64)
+		IL_02a6: newobj instance void Modules.ObjectLiteral_InterproceduralInference_Parity/ObjectLiterals/L19C12_s1::.ctor()
+		IL_02ab: stloc.s 12
+		IL_02ad: ldloc.s 12
+		IL_02af: ldc.r8 2
+		IL_02b8: callvirt instance void Modules.ObjectLiteral_InterproceduralInference_Parity/ObjectLiterals/L19C12_s1::set_x(float64)
+		IL_02bd: nop
+		IL_02be: ldnull
+		IL_02bf: ldloc.s 11
+		IL_02c1: call object Modules.ObjectLiteral_InterproceduralInference_Parity/readX::__js_call__(object, object)
+		IL_02c6: pop
+		IL_02c7: ldnull
+		IL_02c8: ldloc.s 12
+		IL_02ca: call object Modules.ObjectLiteral_InterproceduralInference_Parity/readX::__js_call__(object, object)
+		IL_02cf: pop
+		IL_02d0: newobj instance void Modules.ObjectLiteral_InterproceduralInference_Parity/ObjectLiterals/L28C12_d1::.ctor()
+		IL_02d5: stloc.s 13
+		IL_02d7: ldloc.s 13
+		IL_02d9: ldstr "A"
+		IL_02de: callvirt instance void Modules.ObjectLiteral_InterproceduralInference_Parity/ObjectLiterals/L28C12_d1::set_m(string)
+		IL_02e3: newobj instance void Modules.ObjectLiteral_InterproceduralInference_Parity/ObjectLiterals/L29C12_d2::.ctor()
+		IL_02e8: stloc.s 14
+		IL_02ea: ldloc.s 14
+		IL_02ec: ldstr "B"
+		IL_02f1: callvirt instance void Modules.ObjectLiteral_InterproceduralInference_Parity/ObjectLiterals/L29C12_d2::set_z(string)
+		IL_02f6: nop
+		IL_02f7: ldnull
+		IL_02f8: ldloc.s 13
+		IL_02fa: call object Modules.ObjectLiteral_InterproceduralInference_Parity/readM::__js_call__(object, object)
+		IL_02ff: pop
+		IL_0300: ldnull
+		IL_0301: ldloc.s 14
+		IL_0303: call object Modules.ObjectLiteral_InterproceduralInference_Parity/readM::__js_call__(object, object)
+		IL_0308: pop
+		IL_0309: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_030e: dup
+		IL_030f: ldstr "q"
+		IL_0314: ldc.r8 9
+		IL_031d: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
+		IL_0322: stloc.s 15
+		IL_0324: nop
+		IL_0325: ldnull
+		IL_0326: ldloc.s 15
+		IL_0328: call object Modules.ObjectLiteral_InterproceduralInference_Parity/keep::__js_call__(object, object)
+		IL_032d: pop
+		IL_032e: newobj instance void Modules.ObjectLiteral_InterproceduralInference_Parity/ObjectLiterals/L44C12_r1::.ctor()
+		IL_0333: stloc.s 16
 		IL_0335: ldloc.s 16
-		IL_0337: call object Modules.ObjectLiteral_InterproceduralInference_Parity/readXY::__js_call__(object, object)
-		IL_033c: pop
-		IL_033d: ldnull
-		IL_033e: ldloc.s 17
-		IL_0340: call object Modules.ObjectLiteral_InterproceduralInference_Parity/readXY::__js_call__(object, object)
-		IL_0345: pop
-		IL_0346: newobj instance void Modules.ObjectLiteral_InterproceduralInference_Parity/ObjectLiterals/L53C11_w::.ctor()
-		IL_034b: stloc.s 18
-		IL_034d: ldloc.s 18
-		IL_034f: ldc.r8 1
-		IL_0358: callvirt instance void Modules.ObjectLiteral_InterproceduralInference_Parity/ObjectLiterals/L53C11_w::set_n(float64)
-		IL_035d: nop
-		IL_035e: ldnull
-		IL_035f: ldloc.s 18
-		IL_0361: call object Modules.ObjectLiteral_InterproceduralInference_Parity/bump::__js_call__(object, object)
-		IL_0366: pop
-		IL_0367: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_036c: dup
-		IL_036d: ldstr "b"
-		IL_0372: ldstr "shifted"
-		IL_0377: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_037c: stloc.s 19
-		IL_037e: ldc.i4.2
-		IL_037f: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_0384: dup
-		IL_0385: ldc.r8 10
-		IL_038e: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::AddNumber(float64)
-		IL_0393: dup
-		IL_0394: ldc.r8 20
-		IL_039d: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::AddNumber(float64)
-		IL_03a2: stloc.s 20
-		IL_03a4: nop
-		IL_03a5: ldc.i4.0
-		IL_03a6: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_03ab: stloc.s 27
-		IL_03ad: ldloc.s 27
-		IL_03af: ldloc.s 20
-		IL_03b1: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::PushRange(object)
-		IL_03b6: ldloc.s 27
-		IL_03b8: ldloc.s 19
-		IL_03ba: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-		IL_03bf: ldloc.s 27
-		IL_03c1: callvirt instance object[] [JavaScriptRuntime]JavaScriptRuntime.Array::ToArray()
-		IL_03c6: stloc.s 21
-		IL_03c8: ldnull
-		IL_03c9: ldftn object Modules.ObjectLiteral_InterproceduralInference_Parity/shift::__js_call__(object, object, object, object)
-		IL_03cf: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes3::.ctor(object, native int)
-		IL_03d4: ldc.i4.1
-		IL_03d5: newarr [System.Runtime]System.Object
-		IL_03da: dup
-		IL_03db: ldc.i4.0
-		IL_03dc: ldloc.0
-		IL_03dd: stelem.ref
-		IL_03de: ldloc.s 21
-		IL_03e0: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
-		IL_03e5: pop
-		IL_03e6: ret
+		IL_0337: ldc.r8 1
+		IL_0340: callvirt instance void Modules.ObjectLiteral_InterproceduralInference_Parity/ObjectLiterals/L44C12_r1::set_x(float64)
+		IL_0345: ldloc.s 16
+		IL_0347: ldstr "left"
+		IL_034c: callvirt instance void Modules.ObjectLiteral_InterproceduralInference_Parity/ObjectLiterals/L44C12_r1::set_y(string)
+		IL_0351: newobj instance void Modules.ObjectLiteral_InterproceduralInference_Parity/ObjectLiterals/L44C12_r1::.ctor()
+		IL_0356: stloc.s 17
+		IL_0358: ldloc.s 17
+		IL_035a: ldstr "right"
+		IL_035f: callvirt instance void Modules.ObjectLiteral_InterproceduralInference_Parity/ObjectLiterals/L44C12_r1::set_y(string)
+		IL_0364: ldloc.s 17
+		IL_0366: ldc.r8 2
+		IL_036f: callvirt instance void Modules.ObjectLiteral_InterproceduralInference_Parity/ObjectLiterals/L44C12_r1::set_x(float64)
+		IL_0374: nop
+		IL_0375: ldnull
+		IL_0376: ldloc.s 16
+		IL_0378: call object Modules.ObjectLiteral_InterproceduralInference_Parity/readXY::__js_call__(object, object)
+		IL_037d: pop
+		IL_037e: ldnull
+		IL_037f: ldloc.s 17
+		IL_0381: call object Modules.ObjectLiteral_InterproceduralInference_Parity/readXY::__js_call__(object, object)
+		IL_0386: pop
+		IL_0387: newobj instance void Modules.ObjectLiteral_InterproceduralInference_Parity/ObjectLiterals/L53C11_w::.ctor()
+		IL_038c: stloc.s 18
+		IL_038e: ldloc.s 18
+		IL_0390: ldc.r8 1
+		IL_0399: callvirt instance void Modules.ObjectLiteral_InterproceduralInference_Parity/ObjectLiterals/L53C11_w::set_n(float64)
+		IL_039e: nop
+		IL_039f: ldnull
+		IL_03a0: ldloc.s 18
+		IL_03a2: call object Modules.ObjectLiteral_InterproceduralInference_Parity/bump::__js_call__(object, object)
+		IL_03a7: pop
+		IL_03a8: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_03ad: dup
+		IL_03ae: ldstr "b"
+		IL_03b3: ldstr "shifted"
+		IL_03b8: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_03bd: stloc.s 19
+		IL_03bf: ldc.i4.2
+		IL_03c0: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_03c5: dup
+		IL_03c6: ldc.r8 10
+		IL_03cf: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::AddNumber(float64)
+		IL_03d4: dup
+		IL_03d5: ldc.r8 20
+		IL_03de: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::AddNumber(float64)
+		IL_03e3: stloc.s 20
+		IL_03e5: nop
+		IL_03e6: ldc.i4.0
+		IL_03e7: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_03ec: stloc.s 27
+		IL_03ee: ldloc.s 27
+		IL_03f0: ldloc.s 20
+		IL_03f2: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::PushRange(object)
+		IL_03f7: ldloc.s 27
+		IL_03f9: ldloc.s 19
+		IL_03fb: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+		IL_0400: ldloc.s 27
+		IL_0402: callvirt instance object[] [JavaScriptRuntime]JavaScriptRuntime.Array::ToArray()
+		IL_0407: stloc.s 21
+		IL_0409: ldloc.s 8
+		IL_040b: castclass [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+		IL_0410: ldc.i4.1
+		IL_0411: newarr [System.Runtime]System.Object
+		IL_0416: dup
+		IL_0417: ldc.i4.0
+		IL_0418: ldloc.0
+		IL_0419: stelem.ref
+		IL_041a: ldloc.s 21
+		IL_041c: call object Modules.ObjectLiteral_InterproceduralInference_Parity/shift/FunctionObject_FunctionDeclaration_53EB1517_shift::__js_call_with_arguments__(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, object[], object[])
+		IL_0421: pop
+		IL_0422: ret
 	} // end of method ObjectLiteral_InterproceduralInference_Parity::__js_module_init__
 
 } // end of class Modules.ObjectLiteral_InterproceduralInference_Parity

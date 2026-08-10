@@ -12,6 +12,7 @@ public static class AsyncGeneratorFunction
         using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
 
         JavaScriptRuntime.Function.InitializeFunctionInstance(_constructor, 1d, "AsyncGeneratorFunction", requiresInvocationContext: false);
+        JavaScriptRuntime.Function.MarkConstructible(_constructor);
         PrototypeChain.SetPrototype(_constructor, GlobalThis.Function);
         PropertyDescriptorStore.DefineOrUpdate(_constructor, "prototype", new JsPropertyDescriptor
         {
@@ -60,6 +61,6 @@ public static class AsyncGeneratorFunction
             throw new NotSupportedException("Dynamically constructed async generator functions are not invokable in jroc. Use statically declared async generator functions instead.");
         JavaScriptRuntime.AsyncFunction.InitializeFunctionInstance(functionValue, length, "anonymous", requiresInvocationContext: false);
         InitializeFunctionObject(functionValue);
-        return functionValue;
+        return BuiltinDelegateFunctionAdapter.FromDelegate(functionValue);
     }
 }

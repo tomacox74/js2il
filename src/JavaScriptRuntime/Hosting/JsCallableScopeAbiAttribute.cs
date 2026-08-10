@@ -173,15 +173,7 @@ internal static class JsCallableScopeAbiResolver
     }
 
     private static Delegate GetAbiSourceDelegate(Delegate del)
-    {
-        var current = del;
-        while (JavaScriptRuntime.Closure.TryGetBoundTarget(current, out var target))
-        {
-            current = target;
-        }
-
-        return current;
-    }
+        => del;
 
     private static bool TryResolveFromAttribute(MethodInfo method, out JsCallableScopeAbiDescriptor descriptor)
     {

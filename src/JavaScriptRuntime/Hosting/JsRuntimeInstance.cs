@@ -51,7 +51,8 @@ internal sealed class JsRuntimeInstance : IDisposable
     private int _disposeSignaled;
     private readonly JsModuleLoadOptions? _options;
     private readonly ConditionalWeakTable<object, JsCallable> _callableWrappers = new();
-    private readonly ConditionalWeakTable<Delegate, HostedDelegateFunctionObject> _hostDelegateAdapters = new();
+    private readonly ConditionalWeakTable<MethodInfo, ConcurrentDictionary<Type, HostedDelegateFunctionObject>> _hostStaticDelegateAdapters = new();
+    private readonly ConditionalWeakTable<object, ConcurrentDictionary<(MethodInfo Method, Type DelegateType), HostedDelegateFunctionObject>> _hostInstanceDelegateAdapters = new();
     private readonly ConditionalWeakTable<JsHostFunction, HostedCallbackFunctionObject> _hostFunctionAdapters = new();
     private readonly ConditionalWeakTable<object, ConcurrentDictionary<MethodInfo, HostedMethodFunctionObject>> _hostMethodAdapters = new();
 
@@ -331,6 +332,30 @@ internal sealed class JsRuntimeInstance : IDisposable
         IRuntimeDependentOperation operation)
         => _runtimeDependentOperations.TryRemove(operation, out _);
 
+    private HostedDelegateFunctionObject GetOrCreateHostedDelegateAdapter(
+        Delegate callback)
+    {
+        if (callback.GetInvocationList().Length != 1)
+        {
+            return new HostedDelegateFunctionObject(this, callback);
+        }
+
+        if (callback.Target == null)
+        {
+            return _hostStaticDelegateAdapters
+                .GetOrCreateValue(callback.Method)
+                .GetOrAdd(
+                    callback.GetType(),
+                    _ => new HostedDelegateFunctionObject(this, callback));
+        }
+
+        return _hostInstanceDelegateAdapters
+            .GetOrCreateValue(callback.Target)
+            .GetOrAdd(
+                (callback.Method, callback.GetType()),
+                _ => new HostedDelegateFunctionObject(this, callback));
+    }
+
     internal object? NormalizeHostValue(object? value)
     {
         if (value is null)
@@ -349,9 +374,7 @@ internal sealed class JsRuntimeInstance : IDisposable
             JsHostFunction hostFunction => _hostFunctionAdapters.GetValue(
                 hostFunction,
                 descriptor => new HostedCallbackFunctionObject(this, descriptor)),
-            Delegate callback => _hostDelegateAdapters.GetValue(
-                callback,
-                target => new HostedDelegateFunctionObject(this, target)),
+            Delegate callback => GetOrCreateHostedDelegateAdapter(callback),
             _ => value,
         };
 

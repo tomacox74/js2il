@@ -21,12 +21,8 @@ namespace JavaScriptRuntime.Node
             {
                 try
                 {
-                    CallableOperations.Call3(
-                        _transform,
-                        this,
-                        chunk,
-                        JsNull.Null,
-                        new Func<object[], object?[], object?>((_, args) =>
+                    Func<object[], object?[], object?> callback =
+                        (_, args) =>
                         {
                             var error = args.Length > 0 ? args[0] : null;
                             if (error != null && error is not JsNull)
@@ -41,7 +37,14 @@ namespace JavaScriptRuntime.Node
                             }
 
                             return null;
-                        }));
+                        };
+                    CallableOperations.Call3(
+                        _transform,
+                        this,
+                        chunk,
+                        JsNull.Null,
+                        BuiltinDelegateFunctionAdapter.FromDelegate(
+                            callback));
                 }
                 catch (Exception ex)
                 {

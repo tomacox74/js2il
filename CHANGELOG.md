@@ -12,6 +12,25 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   used by Undici, and synchronously deliver module-level or instance
   subscriptions. Tracing and AsyncLocalStorage store APIs remain explicit
   unavailable contract members.
+- compiler/runtime: close issue #1722 by retiring CLR delegates as the
+  representation of materialized compiled JavaScript functions. Ordinary,
+  arrow, method/accessor, async, generator, and async-generator values now
+  require generated `JsFunctionObject` subclasses; exact calls retain
+  canonical typed MethodDefs, while spread/rest/`arguments` boundaries use
+  generated static array adapters instead of temporary delegates. Those
+  adapters receive the actual generated function object and preserve
+  `arguments.callee`, receiver, `new.target`, lexical-super, and nested
+  invocation state around the typed call; proven direct-only rest callables
+  install arguments-only state without materializing an unobservable object.
+  Remove the
+  compiled binders, expression-tree/DynamicMethod materialization,
+  delegate-type resolver, and compiled-function delegate metadata paths;
+  centralize raw built-in/host delegate handling in explicit adapters. Keep
+  only documented CommonJS bootstrap delegates and private resumable step
+  delegates enclosed by non-callable `CompiledContinuation` objects. Add
+  source/IL architecture guardrails, callable-family/hosting/repeated-load
+  coverage, and focused deterministic benchmark phases. No performance
+  improvement is claimed without same-host compatible measurements.
 - runtime/node: add `dns` and `node:dns` with a complete generated Node.js
   24.18.1 contract. `lookup()` supports the callback forms required by Undici,
   including asynchronous error-first completion, `family`, `all`, `order`, and

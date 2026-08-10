@@ -9,19 +9,21 @@ namespace JavaScriptRuntime.Node
     {
         private readonly UtilTypesModule _types;
         private readonly Symbol _inspectCustomSymbol;
-        private readonly Delegate _inspectFunction;
+        private readonly BuiltinDelegateFunctionAdapter _inspectFunction;
 
         public Util()
         {
             _inspectCustomSymbol = (Symbol)Symbol.@for("nodejs.util.inspect.custom");
 
             // Expose util.inspect as a delegate-valued property so util.inspect.custom is observable.
-            _inspectFunction = new Func<object[], object?[], object?>((scopes, args) =>
-            {
-                var value = args.Length > 0 ? args[0] : null;
-                var options = args.Length > 1 ? args[1] : null;
-                return inspect(value, options);
-            });
+            _inspectFunction =
+                BuiltinDelegateFunctionAdapter.FromDelegate(
+                    new Func<object[], object?[], object?>((scopes, args) =>
+                    {
+                        var value = args.Length > 0 ? args[0] : null;
+                        var options = args.Length > 1 ? args[1] : null;
+                        return inspect(value, options);
+                    }));
 
             PropertyDescriptorStore.DefineOrUpdate(this, "inspect", new JsPropertyDescriptor
             {
@@ -63,13 +65,12 @@ namespace JavaScriptRuntime.Node
             }
 
             // Return a function that when called, returns a Promise
-            return new Func<object[], object?, object?>((scopes, args) =>
+            Func<object[], object?, object?> promisified = (scopes, args) =>
             {
-                // Use withResolvers to get promise and resolve/reject functions
                 var resolvers = Promise.withResolvers();
-                
-                // Create a wrapped callback that follows error-first convention
-                var wrappedCallback = new Func<object[], object[], object?>((cbScopes, cbArgs) =>
+
+                Func<object[], object[], object?> wrappedCallback =
+                    (cbScopes, cbArgs) =>
                 {
                     if (cbArgs.Length > 0 && cbArgs[0] != null && cbArgs[0] is not JsNull)
                     {
@@ -83,11 +84,17 @@ namespace JavaScriptRuntime.Node
                         CallableOperations.Call1(resolvers.resolve, null, result);
                     }
                     return null;
-                });
+                };
+                var wrappedCallbackValue =
+                    BuiltinDelegateFunctionAdapter.FromDelegate(
+                        wrappedCallback);
 
                 // Prepare arguments array with the wrapped callback appended
                 var argsArray = args != null ? (args as object[] ?? new object[] { args }) : new object[0];
-                var newArgs = new List<object>(argsArray) { wrappedCallback };
+                var newArgs = new List<object>(argsArray)
+                {
+                    wrappedCallbackValue
+                };
 
                 // Invoke the original callback-style function
                 try
@@ -100,7 +107,9 @@ namespace JavaScriptRuntime.Node
                 }
 
                 return resolvers.promise;
-            });
+            };
+
+            return BuiltinDelegateFunctionAdapter.FromDelegate(promisified);
         }
 
         public object? inherits(object constructor, object superConstructor)

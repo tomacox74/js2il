@@ -45,7 +45,10 @@ public readonly struct JsValue
         double d => FromNumber(d),
         bool b => FromBoolean(b),
         string s => new JsValue(TagString, 0.0, s),
-        _ => new JsValue(TagObject, 0.0, value)
+        _ => new JsValue(
+            TagObject,
+            0.0,
+            BuiltinDelegateFunctionAdapter.WrapJavaScriptVisibleValue(value))
     };
 
     public bool IsUndefined => _tag == TagUndefined;

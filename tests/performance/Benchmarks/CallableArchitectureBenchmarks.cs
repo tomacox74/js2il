@@ -21,7 +21,6 @@ namespace Benchmarks;
 public class CallableArchitectureBenchmarks : IDisposable
 {
     private const int DirectCallsPerOperation = 1_000;
-    private static readonly Func<object[], object?> ArrowTarget = static _ => 0d;
 
     private const string Source = """
         "use strict";
@@ -61,13 +60,16 @@ public class CallableArchitectureBenchmarks : IDisposable
     private IDisposable? _steadyStateExports;
     private dynamic _steadyState = null!;
     private string _moduleId = string.Empty;
-    private readonly object[] _boundScopes = [new object()];
+    private readonly object[] _capturedScopes = [new object()];
 
     [GlobalSetup]
     public void Setup()
     {
         var request = new JrocInMemoryCompileRequest(
-            Path.Combine(Path.GetTempPath(), "jroc-callable-architecture-baseline.js"))
+            Path.GetFullPath(
+                Path.Combine(
+                    "BenchmarkDotNet.Artifacts",
+                    "jroc-callable-architecture-baseline.js")))
         {
             SourceText = Source
         };
@@ -89,13 +91,18 @@ public class CallableArchitectureBenchmarks : IDisposable
         _assembly = null;
     }
 
-    [Benchmark(Description = "Legacy arrow delegate materialization")]
-    public object MaterializeLegacyArrowDelegate()
-        => JavaScriptRuntime.Closure.BindArrow(ArrowTarget, _boundScopes, boundThis: null);
-
     [Benchmark(Description = "Generated arrow object materialization")]
     public object MaterializeGeneratedArrowObject()
-        => new BenchmarkArrowFunctionObject(_boundScopes);
+        => new BenchmarkArrowFunctionObject(_capturedScopes);
+
+    [Benchmark(Description = "Repeated compiled module load")]
+    public void LoadCompiledModule()
+    {
+        using var exports = JsEngine.LoadModule(
+            _assembly!.Assembly,
+            _moduleId);
+        GC.KeepAlive(exports);
+    }
 
     [Benchmark(Description = "Loaded module direct-call loop", OperationsPerInvoke = DirectCallsPerOperation)]
     public double InvokeSteadyState()

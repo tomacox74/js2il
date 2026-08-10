@@ -450,11 +450,15 @@ internal static partial class LIRInstructionInfo
             case LIRBranchIfTrue value:
                 visitor.Visit(value.Condition); break;
             case LIRCallFunction value:
+                if (value.FunctionValue is { } functionValue)
+                {
+                    visitor.Visit(functionValue);
+                }
                 visitor.Visit(value.ScopesArray); VisitList(value.Arguments, ref visitor); break;
             case LIRTailCallFunctionReturn value:
                 visitor.Visit(value.ScopesArray); VisitList(value.Arguments, ref visitor); break;
             case LIRCallFunctionWithArgsArray value:
-                visitor.Visit(value.ScopesArray); visitor.Visit(value.ArgumentsArray); break;
+                visitor.Visit(value.FunctionValue); visitor.Visit(value.ScopesArray); visitor.Visit(value.ArgumentsArray); break;
             case LIRCallFunctionValue value:
                 visitor.Visit(value.FunctionValue); visitor.Visit(value.ScopesArray); visitor.Visit(value.ArgumentsArray); break;
             case LIRCallFunctionValue0 value:

@@ -5,6 +5,8 @@ namespace JavaScriptRuntime;
 /// </summary>
 public abstract class JsFunctionObject : JsObject
 {
+    private object? _boundWithObject;
+
     protected JsFunctionObject()
     {
         PrototypeChain.InitializePrototype(this, Function.Prototype);
@@ -43,6 +45,12 @@ public abstract class JsFunctionObject : JsObject
 
     internal object[]? GetLexicalSuperScopes()
         => GetLexicalSuperScopesCore();
+
+    internal object? BoundWithObject
+    {
+        get => _boundWithObject;
+        set => _boundWithObject = value;
+    }
 
     /// <summary>
     /// Implements ECMAScript [[Call]] for this function object.

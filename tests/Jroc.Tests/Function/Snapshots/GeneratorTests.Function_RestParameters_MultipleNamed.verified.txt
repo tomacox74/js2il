@@ -116,6 +116,50 @@
 				IL_0001: ret
 			} // end of method FunctionObject_FunctionDeclaration_5CDD99AA_format::get_RequiresInvocationContext
 
+			.method assembly hidebysig static 
+				object __js_call_with_arguments__ (
+					class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject functionObject,
+					object[] scopes,
+					object[] arguments
+				) cil managed 
+			{
+				// Header size: 12
+				// Code size: 49 (0x31)
+				.maxstack 8
+				.locals init (
+					[0] object
+				)
+
+				IL_0000: ldarg.0
+				IL_0001: ldarg.2
+				IL_0002: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushGeneratedFunctionDirectCall(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, object[])
+				.try
+				{
+					IL_0007: ldarg.1
+					IL_0008: ldc.i4.0
+					IL_0009: ldelem.ref
+					IL_000a: castclass Modules.Function_RestParameters_MultipleNamed/Scope
+					IL_000f: ldnull
+					IL_0010: ldarg.2
+					IL_0011: ldc.i4.0
+					IL_0012: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetArgumentOrUndefined(object[], int32)
+					IL_0017: ldarg.2
+					IL_0018: ldc.i4.1
+					IL_0019: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetArgumentOrUndefined(object[], int32)
+					IL_001e: call object Modules.Function_RestParameters_MultipleNamed/format::__js_call__(class Modules.Function_RestParameters_MultipleNamed/Scope, object, object, object)
+					IL_0023: stloc.0
+					IL_0024: leave IL_002f
+				} // end .try
+				finally
+				{
+					IL_0029: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopGeneratedFunctionDirectCall()
+					IL_002e: endfinally
+				} // end handler
+
+				IL_002f: ldloc.0
+				IL_0030: ret
+			} // end of method FunctionObject_FunctionDeclaration_5CDD99AA_format::__js_call_with_arguments__
+
 			.method family hidebysig virtual 
 				instance object CallCore (
 					object thisArgument,

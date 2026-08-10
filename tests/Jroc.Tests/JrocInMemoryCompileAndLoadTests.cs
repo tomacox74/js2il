@@ -99,6 +99,21 @@ public sealed class JrocInMemoryCompileAndLoadTests
         Assert.False(weakReference.IsAlive);
     }
 
+    [Fact]
+    public void AsyncAwaitContinuation_DoesNotPinCollectibleLoadContext()
+    {
+        var weakReference = LoadInvokeAsyncAndDisposeHostedModule();
+
+        for (int i = 0; weakReference.IsAlive && i < 10; i++)
+        {
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+            GC.Collect();
+        }
+
+        Assert.False(weakReference.IsAlive);
+    }
+
     [MethodImpl(MethodImplOptions.NoInlining)]
     private static WeakReference LoadAndDisposeHostedModule()
     {
@@ -120,9 +135,43 @@ public sealed class JrocInMemoryCompileAndLoadTests
         }
     }
 
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    private static WeakReference LoadInvokeAsyncAndDisposeHostedModule()
+    {
+        var entryPath = Path.Combine(
+            Path.GetTempPath(),
+            "typed-inmemory-async-unload.js");
+        var module = JrocInMemoryCompiler.CompileAndLoadModule<IAsyncUnloadExports>(
+            new JrocInMemoryCompileRequest(entryPath)
+            {
+                SourceText = """
+                    "use strict";
+                    exports.getValue = async () => await Promise.resolve(23);
+                    """
+            });
+
+        try
+        {
+            Assert.Equal(
+                23d,
+                module.Exports.getValue().GetAwaiter().GetResult());
+            return module.LoadContextWeakReference;
+        }
+        finally
+        {
+            module.Dispose();
+        }
+    }
+
     [JsModule("typed-inmemory-module")]
     public interface ICalculatorExports : IDisposable
     {
         double add(double left, double right);
+    }
+
+    [JsModule("typed-inmemory-async-unload")]
+    public interface IAsyncUnloadExports : IDisposable
+    {
+        Task<double> getValue();
     }
 }

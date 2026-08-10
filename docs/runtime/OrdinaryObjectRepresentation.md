@@ -103,12 +103,12 @@ and `newTarget` are passed per invocation and installed in the runtime's
 never stored as mutable fields on the function object, so recursion,
 reentrancy, and concurrent calls remain isolated.
 
-`LegacyDelegateFunctionAdapter` keeps existing delegate-backed compiled
-functions available during the staged migration. New object-backed callables
-derive from `JsFunctionObject` and use the
+All materialized compiled functions derive from `JsFunctionObject` and use the
 [fixed-arity/arbitrary invocation ABI](JsFunctionObjectInvocationAbi.md).
-Compiler-generated subclasses are tracked under
-[#1711](https://github.com/tomacox74/js2il/issues/1711).
+Runtime-owned built-ins and CLR host functions that genuinely begin as
+delegates are isolated behind `BuiltinDelegateFunctionAdapter`; they are not a
+compiled-function representation. Generator and async step delegates are
+enclosed by non-callable `CompiledContinuation` instances.
 
 ## Host boundary
 

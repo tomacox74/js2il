@@ -38,16 +38,29 @@ public sealed partial class HIRToLIRLowerer
     private readonly bool _isDerivedConstructor;
     private readonly bool _isLexicallyEnclosedByDerivedConstructor;
     private readonly JavaScriptRuntime.IRuntimeIntrinsicCatalog _runtimeIntrinsicCatalog;
+    private bool _preserveRawInjectedCommonJsRequireRead;
     private bool _superConstructorCalled;
 
-    private ValueStorage GetMaterializedCallableStorage(
-        TwoPhase.CallableId callableId,
-        bool allowGeneratedFunctionObject = true)
+    private bool TryLowerRawInjectedCommonJsRequire(
+        HIRVariableExpression expression,
+        out TempVariable result)
     {
-        if (allowGeneratedFunctionObject
-            && (callableId.Kind == TwoPhase.CallableKind.Arrow
-                || IsGeneratedFunctionObjectCandidate(callableId))
-            && _generatedFunctionObjectRegistry?.TryGetMetadata(
+        var previous = _preserveRawInjectedCommonJsRequireRead;
+        _preserveRawInjectedCommonJsRequireRead = true;
+        try
+        {
+            return TryLowerExpression(expression, out result);
+        }
+        finally
+        {
+            _preserveRawInjectedCommonJsRequireRead = previous;
+        }
+    }
+
+    private ValueStorage GetMaterializedCallableStorage(
+        TwoPhase.CallableId callableId)
+    {
+        if (_generatedFunctionObjectRegistry?.TryGetMetadata(
                 callableId,
                 out var generatedMetadata) == true)
         {
@@ -57,22 +70,8 @@ public sealed partial class HIRToLIRLowerer
                 generatedMetadata.TypeHandle);
         }
 
-        var signature = _callableRegistry?.GetSignature(callableId);
-        var delegateType = TwoPhase.CallableDelegateTypeResolver.GetMaterializedDelegateType(callableId, signature);
-        return new ValueStorage(ValueStorageKind.Reference, delegateType);
-    }
-
-    private static bool IsGeneratedFunctionObjectCandidate(
-        TwoPhase.CallableId callableId)
-    {
-        return callableId.AstNode switch
-        {
-            FunctionDeclaration => true,
-            FunctionExpression => true,
-            MethodDefinition { Value: FunctionExpression method } =>
-                !method.Async || method.Generator,
-            _ => false
-        };
+        throw new InvalidOperationException(
+            $"Compiled callable '{callableId.DisplayName}' does not have generated function-object metadata.");
     }
 
     private static bool IsGeneratorCallable(TwoPhase.CallableId callableId)

@@ -3,37 +3,17 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using Jroc.Runtime;
 
 namespace JavaScriptRuntime
 {
     /// <summary>
-    /// Minimal Function.prototype helpers for delegate-backed function values.
-    ///
-    /// JROC models JavaScript functions as CLR delegates; these helpers provide a small subset
-    /// of Function.prototype behavior (apply/bind) for those values.
+    /// ECMAScript Function helpers shared by generated function objects and explicit
+    /// runtime-owned built-in delegate adapters.
     /// </summary>
 [IntrinsicObject("Function")]
 public static class Function
 {
-    private sealed class InvocationMetadataSlot
-    {
-        public bool RequiresInvocationContext;
-    }
-
-    private sealed class UndefinedPrototypeSlot
-    {
-    }
-
-    private sealed class WithObjectSlot
-    {
-        public object? Value;
-    }
-
-    private static readonly ConditionalWeakTable<Delegate, InvocationMetadataSlot> _invocationMetadata = new();
-    private static readonly ConditionalWeakTable<Delegate, UndefinedPrototypeSlot> _undefinedPrototypeFunctions = new();
-    private static readonly ConditionalWeakTable<object, WithObjectSlot> _withObjectBindings = new();
     private static readonly Func<object[], object?[], object?> _restrictedPropertyThrower =
         static (_, _) => throw new TypeError("Cannot access restricted function property");
 
@@ -127,6 +107,27 @@ public static class Function
 
     internal static void ConfigureCallableObject(object functionValue, bool hasRestrictedProperties)
     {
+        functionValue =
+            BuiltinDelegateFunctionAdapter.NormalizeJavaScriptObject(
+                functionValue);
+
+        if (functionValue is BuiltinDelegateFunctionAdapter adapter)
+        {
+            lock (adapter.InitializationLock)
+            {
+                using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
+                ConfigureCallableObjectCore(functionValue, hasRestrictedProperties);
+            }
+            return;
+        }
+
+        ConfigureCallableObjectCore(functionValue, hasRestrictedProperties);
+    }
+
+    private static void ConfigureCallableObjectCore(
+        object functionValue,
+        bool hasRestrictedProperties)
+    {
         PrototypeChain.SetPrototype(functionValue, Prototype);
         if (hasRestrictedProperties)
         {
@@ -140,6 +141,32 @@ public static class Function
         DefineRestrictedProperty(functionValue, "arguments");
     }
 
+    public static T InitializeLegacyFunctionProperties<T>(T functionValue)
+        where T : class
+    {
+        ArgumentNullException.ThrowIfNull(functionValue);
+        DefineLegacyFunctionProperty(functionValue, "caller");
+        DefineLegacyFunctionProperty(functionValue, "arguments");
+        return functionValue;
+    }
+
+    private static void DefineLegacyFunctionProperty(
+        object functionValue,
+        string propertyName)
+    {
+        PropertyDescriptorStore.DefineOrUpdate(
+            functionValue,
+            propertyName,
+            new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = false,
+                Writable = false,
+                Value = null
+            });
+    }
+
     internal static bool HasRestrictedFunctionProperties(object? functionValue)
         => functionValue is not null
             && PropertyDescriptorStore.TryGetOwn(functionValue, "caller", out var caller)
@@ -147,11 +174,14 @@ public static class Function
             && PropertyDescriptorStore.TryGetOwn(functionValue, "arguments", out var arguments)
             && arguments.Kind == JsPropertyDescriptorKind.Accessor;
 
-    internal static object? GetEffectiveThisArg(Delegate target, object? thisArg)
+    internal static object? GetEffectiveThisArg(
+        object functionValue,
+        bool usesEcmaScriptThisBinding,
+        object? thisArg)
     {
         return (thisArg is null || thisArg is JsNull)
-            && Closure.UsesEcmaScriptThisBinding(target)
-            && !HasRestrictedFunctionProperties(target)
+            && usesEcmaScriptThisBinding
+            && !HasRestrictedFunctionProperties(functionValue)
             ? GlobalThis.globalThis
             : thisArg;
     }
@@ -316,13 +346,32 @@ public static class Function
             where T : class
         {
             ArgumentNullException.ThrowIfNull(functionValue);
+            var functionObject =
+                BuiltinDelegateFunctionAdapter.NormalizeJavaScriptObject(
+                    functionValue);
 
-            if (PrototypeChain.GetPrototypeOrNull(functionValue) == null)
+            if (functionObject is BuiltinDelegateFunctionAdapter adapter)
             {
-                PrototypeChain.SetPrototype(functionValue, Prototype);
+                lock (adapter.InitializationLock)
+                {
+                    using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
+                    InitializeFunctionPrototype(functionObject);
+                }
+            }
+            else
+            {
+                InitializeFunctionPrototype(functionObject);
             }
 
             return functionValue;
+        }
+
+        private static void InitializeFunctionPrototype(object functionObject)
+        {
+            if (PrototypeChain.GetPrototypeOrNull(functionObject) == null)
+            {
+                PrototypeChain.SetPrototype(functionObject, Prototype);
+            }
         }
 
         public static object InitializeFunctionInstance(object functionValue)
@@ -347,24 +396,59 @@ public static class Function
         public static T InitializeFunctionInstance<T>(T functionValue, double length, string? name, bool requiresInvocationContext, bool hasRestrictedProperties)
             where T : class
         {
-            InitializeFunctionInstance(functionValue);
-            if (hasRestrictedProperties)
-            {
-                DefineRestrictedFunctionProperties(functionValue);
-            }
+            var functionObject =
+                BuiltinDelegateFunctionAdapter.NormalizeJavaScriptObject(
+                    functionValue);
 
-            if (functionValue is Delegate del)
+            if (functionObject is BuiltinDelegateFunctionAdapter adapter)
             {
-                SetRequiresInvocationContext(del, requiresInvocationContext);
+                lock (adapter.InitializationLock)
+                {
+                    using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
+                    InitializeFunctionInstanceCore(
+                        functionObject,
+                        length,
+                        name,
+                        requiresInvocationContext,
+                        hasRestrictedProperties);
+                }
             }
-            DefineMetadataProperty(functionValue, "length", length);
-            DefineMetadataProperty(functionValue, "name", name ?? string.Empty);
-            if (functionValue is JsFunctionObject { IsConstructor: true } functionObject)
+            else
             {
-                EnsureOrdinaryFunctionPrototype(functionObject);
+                InitializeFunctionInstanceCore(
+                    functionObject,
+                    length,
+                    name,
+                    requiresInvocationContext,
+                    hasRestrictedProperties);
             }
 
             return functionValue;
+        }
+
+        private static void InitializeFunctionInstanceCore(
+            object functionObject,
+            double length,
+            string? name,
+            bool requiresInvocationContext,
+            bool hasRestrictedProperties)
+        {
+            InitializeFunctionPrototype(functionObject);
+            if (hasRestrictedProperties)
+            {
+                DefineRestrictedFunctionProperties(functionObject);
+            }
+
+            if (functionObject is BuiltinDelegateFunctionAdapter adapter)
+            {
+                adapter.Configure(requiresInvocationContext);
+            }
+            DefineMetadataProperty(functionObject, "length", length);
+            DefineMetadataProperty(functionObject, "name", name ?? string.Empty);
+            if (functionObject is JsFunctionObject { IsConstructor: true } constructor)
+            {
+                EnsureOrdinaryFunctionPrototype(constructor);
+            }
         }
 
         private static void EnsureOrdinaryFunctionPrototype(JsFunctionObject functionObject)
@@ -396,32 +480,41 @@ public static class Function
         public static object InitializeFunctionInstance(object functionValue, double length, string? name, bool requiresInvocationContext, bool hasRestrictedProperties)
             => InitializeFunctionInstance<object>(functionValue, length, name, requiresInvocationContext, hasRestrictedProperties);
 
-        internal static bool RequiresInvocationContext(Delegate functionValue)
-            => _invocationMetadata.TryGetValue(functionValue, out var slot)
-                ? slot.RequiresInvocationContext
-                : true;
-
-        internal static void CopyInvocationMetadata(Delegate source, Delegate target)
+        internal static void MarkConstructible(object functionValue)
         {
-            SetRequiresInvocationContext(target, RequiresInvocationContext(source));
-        }
-
-        internal static void SetRequiresInvocationContext(Delegate functionValue, bool requiresInvocationContext)
-        {
-            var slot = _invocationMetadata.GetOrCreateValue(functionValue);
-            slot.RequiresInvocationContext = requiresInvocationContext;
+            var functionObject =
+                BuiltinDelegateFunctionAdapter.NormalizeJavaScriptObject(
+                    functionValue);
+            if (functionObject is BuiltinDelegateFunctionAdapter adapter)
+            {
+                lock (adapter.InitializationLock)
+                {
+                    using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
+                    adapter.Configure(
+                        adapter.RequiresInvocationContext,
+                        isConstructor: true);
+                    EnsureOrdinaryFunctionPrototype(adapter);
+                }
+            }
         }
 
         public static T MarkUndefinedPrototype<T>(T functionValue)
             where T : class
         {
-            if (functionValue is Delegate del)
+            var functionObject =
+                BuiltinDelegateFunctionAdapter.NormalizeJavaScriptObject(
+                    functionValue);
+            if (functionObject is BuiltinDelegateFunctionAdapter adapter)
             {
-                MarkUndefinedPrototype(del);
+                lock (adapter.InitializationLock)
+                {
+                    using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
+                    PropertyDescriptorStore.Delete(adapter, "prototype");
+                }
             }
-            else if (functionValue is JsFunctionObject)
+            else if (functionObject is JsFunctionObject)
             {
-                PropertyDescriptorStore.Delete(functionValue, "prototype");
+                PropertyDescriptorStore.Delete(functionObject, "prototype");
             }
 
             return functionValue;
@@ -430,28 +523,32 @@ public static class Function
         public static object MarkUndefinedPrototype(object functionValue)
             => MarkUndefinedPrototype<object>(functionValue);
 
-        internal static void MarkUndefinedPrototype(Delegate functionValue)
-        {
-            _undefinedPrototypeFunctions.GetOrCreateValue(functionValue);
-            PropertyDescriptorStore.Delete(functionValue, "prototype");
-        }
-
-        internal static bool HasUndefinedPrototype(Delegate functionValue)
-            => _undefinedPrototypeFunctions.TryGetValue(functionValue, out _);
-
         public static object BindWithObject(object functionValue, object withObject)
         {
-            var slot = _withObjectBindings.GetOrCreateValue(functionValue);
-            slot.Value = withObject;
+            var normalized =
+                BuiltinDelegateFunctionAdapter.WrapJavaScriptVisibleValue(
+                    functionValue);
+            if (normalized is JsFunctionObject functionObject)
+            {
+                functionObject.BoundWithObject = withObject;
+            }
+            else
+            {
+                throw new TypeError(
+                    "Cannot bind a with-environment to a non-function value");
+            }
 
             return functionValue;
         }
 
         internal static bool TryGetBoundWithObject(object functionValue, out object? withObject)
         {
-            if (_withObjectBindings.TryGetValue(functionValue, out var slot))
+            var normalized =
+                BuiltinDelegateFunctionAdapter.WrapJavaScriptVisibleValue(
+                    functionValue);
+            if (normalized is JsFunctionObject functionObject)
             {
-                withObject = slot.Value;
+                withObject = functionObject.BoundWithObject;
                 return withObject is not null;
             }
 
@@ -460,7 +557,9 @@ public static class Function
         }
 
         internal static bool HasBoundWithObject(object functionValue)
-            => _withObjectBindings.TryGetValue(functionValue, out var slot) && slot.Value is not null;
+            => TryGetBoundWithObject(
+                functionValue,
+                out _);
 
         internal static string[] ParseDynamicFunctionParameterNames(object?[] args)
         {
@@ -480,9 +579,10 @@ public static class Function
                 return functionValue;
             }
 
-            var hasName = functionValue is Delegate del
-                ? TryEnsureOwnMetadataPropertyDescriptor(del, "name", out var nameDescriptor)
-                : PropertyDescriptorStore.TryGetOwn(functionValue!, "name", out nameDescriptor);
+            var hasName = PropertyDescriptorStore.TryGetOwn(
+                functionValue!,
+                "name",
+                out var nameDescriptor);
             if (hasName
                 && nameDescriptor.Value is string existingName
                 && !string.IsNullOrEmpty(existingName))
@@ -561,6 +661,9 @@ public static class Function
 
         internal static void DefineMetadataProperty(object target, string propName, object? value)
         {
+            target =
+                BuiltinDelegateFunctionAdapter.NormalizeJavaScriptObject(
+                    target);
             PropertyDescriptorStore.DefineOrUpdate(target, propName, new JsPropertyDescriptor
             {
                 Kind = JsPropertyDescriptorKind.Data,
@@ -569,49 +672,48 @@ public static class Function
                 Writable = false,
                 Value = value
             });
-
-            if (target is Delegate del)
-            {
-                ClearDeletedMetadataProperty(del, propName);
-            }
         }
 
         public static object? Construct(Delegate constructor, object?[]? args)
         {
             if (constructor is null) throw new ArgumentNullException(nameof(constructor));
-            return Construct(constructor, args, constructor);
+            var adapter =
+                BuiltinDelegateFunctionAdapter.FromDelegate(constructor);
+            return CallableOperations.Construct(
+                adapter,
+                args,
+                adapter);
         }
 
-        internal static object? Construct(Delegate constructor, object?[]? args, object? newTarget)
+        internal static object? Construct(
+            BuiltinDelegateFunctionAdapter constructor,
+            in JsCallArguments arguments,
+            object? newTarget)
         {
             if (constructor is null) throw new ArgumentNullException(nameof(constructor));
-            // JS `new` semantics for function constructors:
-            // 1) Create a new instance object
-            // 2) Set its [[Prototype]] to ctor.prototype when available
-            // 3) Invoke the constructor with `this` bound to the instance
-            // 4) If ctor returns an object, use that; otherwise return the instance
-
-            var callArgs = args ?? System.Array.Empty<object?>();
+            if (!constructor.IsConstructor)
+            {
+                throw new TypeError("Value is not a constructor");
+            }
 
             if (GeneratorObject.IsGeneratorFunctionValue(constructor))
             {
                 throw new TypeError("Generator functions are not constructors");
             }
 
-            if (JavaScriptRuntime.Number.IsNumberConstructor(constructor))
+            if (JavaScriptRuntime.Number.IsNumberConstructor(
+                    constructor.Target))
             {
-                return JavaScriptRuntime.Number.Construct(callArgs, newTarget);
+                return JavaScriptRuntime.Number.Construct(
+                    arguments.ToArray(),
+                    newTarget);
             }
 
-            if (ReferenceEquals(constructor, GlobalThis.String)
-                || (GlobalThis.String is Delegate stringConstructor && constructor.Method == stringConstructor.Method))
+            if (GlobalThis.IsStringConstructorTarget(constructor.Target))
             {
-                return JavaScriptRuntime.String.Construct(callArgs, newTarget);
-            }
-
-            if (!ObjectRuntime.IsConstructibleValue(constructor))
-            {
-                throw new TypeError("Value is not a constructor");
+                return JavaScriptRuntime.String.Construct(
+                    arguments.ToArray(),
+                    newTarget);
             }
 
             var instance = ObjectRuntime.CreateOrdinaryObject();
@@ -627,7 +729,15 @@ public static class Function
             var previousThis = RuntimeServices.SetCurrentThis(instance);
             try
             {
-                var result = Closure.InvokeWithArgsWithNewTarget(constructor, System.Array.Empty<object>(), newTarget, callArgs);
+                var result = Closure.InvokeBuiltinDelegate(
+                    constructor.Target,
+                    constructor.InvokeMetadata,
+                    constructor.Scopes,
+                    arguments,
+                    newTarget);
+                result =
+                    BuiltinDelegateFunctionAdapter.WrapJavaScriptVisibleValue(
+                        result);
                 return TypeUtilities.IsConstructorReturnOverride(result) ? result : instance;
             }
             finally
@@ -636,7 +746,11 @@ public static class Function
             }
         }
 
-        internal static object? ConstructWithReceiver(Delegate constructor, object receiver, object?[]? args, object? newTarget)
+        internal static object? ConstructWithReceiver(
+            BuiltinDelegateFunctionAdapter constructor,
+            object receiver,
+            object?[]? args,
+            object? newTarget)
         {
             if (constructor is null) throw new ArgumentNullException(nameof(constructor));
             if (receiver is null) throw new ArgumentNullException(nameof(receiver));
@@ -646,7 +760,15 @@ public static class Function
             var previousThis = RuntimeServices.SetCurrentThis(receiver);
             try
             {
-                var result = Closure.InvokeWithArgsWithNewTarget(constructor, System.Array.Empty<object>(), newTarget, callArgs);
+                var result = Closure.InvokeBuiltinDelegate(
+                    constructor.Target,
+                    constructor.InvokeMetadata,
+                    constructor.Scopes,
+                    JsCallArguments.FromArray(callArgs),
+                    newTarget);
+                result =
+                    BuiltinDelegateFunctionAdapter.WrapJavaScriptVisibleValue(
+                        result);
                 return TypeUtilities.IsConstructorReturnOverride(result) ? result : receiver;
             }
             finally
@@ -655,26 +777,14 @@ public static class Function
             }
         }
 
-        private static Delegate ResolveFunctionTarget(Delegate target)
-        {
-            var current = target;
-            while (Closure.TryGetBoundTarget(current, out var original))
-            {
-                current = original;
-            }
-
-            return current;
-        }
-
         public static double GetLength(Delegate target)
         {
             if (target is null) throw new ArgumentNullException(nameof(target));
-            var resolvedTarget = ResolveFunctionTarget(target);
 
-            var invoke = resolvedTarget.GetType().GetMethod("Invoke")
-                ?? throw new ArgumentException($"Delegate type '{resolvedTarget.GetType()}' does not define Invoke().", nameof(target));
+            var invoke = target.GetType().GetMethod("Invoke")
+                ?? throw new ArgumentException($"Delegate type '{target.GetType()}' does not define Invoke().", nameof(target));
             var parameters = invoke.GetParameters();
-            var abi = JsCallableScopeAbiResolver.Resolve(resolvedTarget);
+            var abi = JsCallableScopeAbiResolver.Resolve(target);
             bool hasScopes = abi.HasExplicitScopePayload;
             bool hasNewTarget = JsCallableScopeAbiResolver.HasNewTargetParameter(parameters, abi.Kind);
             int jsParamStart = hasScopes
@@ -693,13 +803,12 @@ public static class Function
         public static string GetName(Delegate target)
         {
             if (target is null) throw new ArgumentNullException(nameof(target));
-            var resolvedTarget = ResolveFunctionTarget(target);
 
-            var name = resolvedTarget.Method.Name;
+            var name = target.Method.Name;
 
             if (string.Equals(name, "__js_call__", StringComparison.Ordinal))
             {
-                var declaringTypeName = resolvedTarget.Method.DeclaringType?.Name;
+                var declaringTypeName = target.Method.DeclaringType?.Name;
                 if (IsSyntheticDynamicFunctionDeclaringTypeName(declaringTypeName))
                 {
                     return "anonymous";

@@ -34,6 +34,10 @@ declares each sealed subclass with:
 - a constructor receiving the shared environment objects;
 - `IsConstructor` and `RequiresInvocationContext` overrides;
 - the common `CallCore(object, in JsCallArguments)` adapter;
+- a static
+  `__js_call_with_arguments__(JsFunctionObject, object[], object[])` adapter
+  only for spread or argument-sensitive direct boundaries that already own an
+  array;
 - a reserved `ConstructCore(in JsCallArguments, object)` entry point only for
   constructable callables.
 
@@ -52,19 +56,36 @@ their typed environment fields inside the adapter. This is a compatibility
 bridge for the staged family migrations, not a return to a universal closure
 field: the object stores only required typed environments.
 
-## Staged activation
+## Retired delegate materialization
 
-This phase emits metadata and callable adapters but does not replace an
-existing callable family's materialization path. In particular:
+Every materialized compiled callable family now uses its generated object:
+ordinary functions, arrows, methods/accessors, async functions, generators,
+and async generators. Direct exact-arity calls still target the canonical
+typed MethodDef. Spread, `arguments`, and rest-sensitive direct calls use the
+generated array adapter rather than constructing a temporary CLR delegate.
+The call site supplies the actual generated function object so the adapter
+preserves `arguments.callee` identity and installs/restores `this`,
+`new.target`, lexical `super`, arguments, and callee state around the canonical
+typed MethodDef call. A proven direct-only rest-parameter callable has no
+observable function value; that path passes no object and installs only the
+argument state required to form the rest binding.
 
-- arrows materialize generated function objects directly; see
-  [Generated arrow function objects](GeneratedArrowFunctionObjects.md);
-- ordinary function declarations/expressions migrate under #1712;
-- ordinary and class construction semantics activate under #1713;
-- methods/accessors and their home-object behavior migrate under #1714.
+The only compiler-emitted delegates are allowlisted boundaries:
 
-The reserved construction adapter therefore throws until the corresponding
-family migration implements ECMAScript receiver/prototype/new-target return
-processing. Its presence and JavaScript-visible return classification let
-those later phases fill the predeclared boundary without changing object
-shape or identity.
+- `ModuleMainDelegate` and `RequireDelegate` for CommonJS bootstrap;
+- runtime-owned built-in/host adapters;
+- resumable step delegates immediately enclosed by
+  `CompiledContinuation`, which is not a JavaScript callable.
+
+## Contributor guardrails
+
+Do not add AST-dependent semantics to LIR. Callable identity,
+constructability, capture, `new.target`, default/rest/`arguments`, and
+materialization decisions must be established before LIR emission.
+
+`CallableBoundaryInventoryTests` rejects retired binders, new compiler
+`ldftn` sites outside the bootstrap/built-in/continuation allowlist,
+Delegate-typed generated storage, and scattered runtime Delegate checks.
+`GeneratedFunctionObjectEmissionTests` separately verifies typed canonical
+signatures, object-backed family materialization, and array-free common-arity
+adapters.

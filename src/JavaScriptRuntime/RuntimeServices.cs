@@ -19,6 +19,7 @@ public class RuntimeServices
     private static readonly System.Threading.AsyncLocal<object?> _currentNewTarget = new();
     private static readonly System.Threading.AsyncLocal<object?> _currentCallee = new();
     [ThreadStatic] private static Stack<object?[]?>? _constructorArgStack;
+    [ThreadStatic] private static Stack<GeneratedFunctionDirectCallState>? _generatedFunctionDirectCallStack;
     [ThreadStatic] private static Stack<object?>? _constructorNewTargetStack;
     [ThreadStatic] private static Stack<object?>? _derivedConstructorThisStack;
     private static readonly ConcurrentDictionary<string, JsObject> _importMetaByUrl = new(StringComparer.Ordinal);
@@ -197,15 +198,7 @@ public class RuntimeServices
     {
         var newTarget = GetCurrentNewTarget() ?? constructor;
         object? constructed;
-        if (constructor is Delegate del)
-        {
-            constructed = JavaScriptRuntime.Function.ConstructWithReceiver(
-                del,
-                receiver,
-                args,
-                newTarget);
-        }
-        else if (constructor is JsFunctionObject functionObject
+        if (constructor is JsFunctionObject functionObject
             && functionObject.IsConstructor)
         {
             constructed = CallableOperations.ConstructWithReceiver(
@@ -1237,6 +1230,23 @@ public class RuntimeServices
         object?[] fallback)
         => GetCurrentArguments() ?? fallback;
 
+    public static object?[] GetCurrentArgumentsForGeneratedCallableOrFallback(
+        Type generatedFunctionType,
+        object?[] fallback)
+    {
+        ArgumentNullException.ThrowIfNull(generatedFunctionType);
+        ArgumentNullException.ThrowIfNull(fallback);
+
+        return _currentCallee.Value?.GetType() == generatedFunctionType
+            ? GetCurrentArguments() ?? fallback
+            : fallback;
+    }
+
+    public static object? GetArgumentOrUndefined(object?[] arguments, int index)
+        => (uint)index < (uint)arguments.Length
+            ? arguments[index]
+            : null;
+
     public static object?[]? SetCurrentArguments(object?[]? value)
     {
         var previous = _currentArguments.Value;
@@ -1263,6 +1273,143 @@ public class RuntimeServices
     internal readonly record struct CurrentCallArgumentsState(
         object?[]? MaterializedArguments,
         JsCallArguments? PackedArguments);
+
+    /// <summary>
+    /// Establishes the JS invocation state for a generated function object's static direct-call
+    /// adapter. <see cref="PopGeneratedFunctionDirectCall"/> must be called from a finally block.
+    /// </summary>
+    public static void PushGeneratedFunctionDirectCall(
+        JsFunctionObject? functionObject,
+        object?[] arguments)
+    {
+        ArgumentNullException.ThrowIfNull(arguments);
+
+        if (functionObject is null)
+        {
+            var previousArgumentsOnly = SetCurrentCallArguments(
+                JsCallArguments.FromArray(arguments));
+            (_generatedFunctionDirectCallStack ??= new()).Push(
+                GeneratedFunctionDirectCallState.ForArgumentsOnly(
+                    previousArgumentsOnly));
+            return;
+        }
+
+        if (!functionObject.RequiresInvocationContext)
+        {
+            (_generatedFunctionDirectCallStack ??= new())
+                .Push(GeneratedFunctionDirectCallState.NoContext);
+            return;
+        }
+
+        var effectiveThisArgument = functionObject.ResolveThisArgument(null);
+        var previousThis = SetCurrentThis(effectiveThisArgument);
+        var previousArguments = SetCurrentCallArguments(
+            JsCallArguments.FromArray(arguments));
+        var previousCallee = SetCurrentCallee(functionObject);
+        var previousNewTarget = SetCurrentNewTarget(
+            functionObject.ResolveCallNewTarget());
+        var lexicalSuperScopes = functionObject.GetLexicalSuperScopes();
+        var previousSuperReceiver = lexicalSuperScopes is null
+            ? null
+            : SetCurrentLexicalSuperReceiver(
+                functionObject.GetLexicalSuperReceiver());
+        var previousSuperScopes = lexicalSuperScopes is null
+            ? null
+            : SetCurrentLexicalSuperScopes(lexicalSuperScopes);
+
+        (_generatedFunctionDirectCallStack ??= new()).Push(
+            new GeneratedFunctionDirectCallState(
+                previousThis,
+                previousArguments,
+                previousCallee,
+                previousNewTarget,
+                previousSuperReceiver,
+                previousSuperScopes,
+                lexicalSuperScopes is not null));
+    }
+
+    /// <summary>
+    /// Restores the most recent invocation state established by
+    /// <see cref="PushGeneratedFunctionDirectCall"/>.
+    /// </summary>
+    public static void PopGeneratedFunctionDirectCall()
+    {
+        if (_generatedFunctionDirectCallStack is not { Count: > 0 } stack)
+        {
+            throw new InvalidOperationException(
+                "No generated function direct-call state is available.");
+        }
+
+        var callState = stack.Pop();
+        if (!callState.HasInvocationContext)
+        {
+            return;
+        }
+
+        if (callState.HasFunctionContext)
+        {
+            if (callState.HasLexicalSuperState)
+            {
+                SetCurrentLexicalSuperScopes(callState.PreviousSuperScopes);
+                SetCurrentLexicalSuperReceiver(callState.PreviousSuperReceiver);
+            }
+            SetCurrentNewTarget(callState.PreviousNewTarget);
+            SetCurrentCallee(callState.PreviousCallee);
+        }
+        RestoreCurrentCallArguments(callState.PreviousArguments);
+        if (callState.HasFunctionContext)
+        {
+            SetCurrentThis(callState.PreviousThis);
+        }
+    }
+
+    private readonly record struct GeneratedFunctionDirectCallState(
+        object? PreviousThis,
+        CurrentCallArgumentsState PreviousArguments,
+        object? PreviousCallee,
+        object? PreviousNewTarget,
+        object? PreviousSuperReceiver,
+        object[]? PreviousSuperScopes,
+        bool HasLexicalSuperState,
+        bool HasFunctionContext,
+        bool HasInvocationContext)
+    {
+        public static GeneratedFunctionDirectCallState NoContext => default;
+
+        public GeneratedFunctionDirectCallState(
+            object? previousThis,
+            CurrentCallArgumentsState previousArguments,
+            object? previousCallee,
+            object? previousNewTarget,
+            object? previousSuperReceiver,
+            object[]? previousSuperScopes,
+            bool hasLexicalSuperState)
+            : this(
+                previousThis,
+                previousArguments,
+                previousCallee,
+                previousNewTarget,
+                previousSuperReceiver,
+                previousSuperScopes,
+                hasLexicalSuperState,
+                HasFunctionContext: true,
+                HasInvocationContext: true)
+        {
+        }
+
+        public static GeneratedFunctionDirectCallState ForArgumentsOnly(
+            CurrentCallArgumentsState previousArguments)
+            => new(
+                null,
+                previousArguments,
+                null,
+                null,
+                null,
+                null,
+                HasLexicalSuperState: false,
+                HasFunctionContext: false,
+                HasInvocationContext: true);
+    }
 
     /// <summary>
     /// Saves the current arguments onto a thread-local stack and sets new arguments.

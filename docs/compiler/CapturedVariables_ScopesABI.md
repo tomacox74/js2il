@@ -574,7 +574,9 @@ For each binding referenced in a callable:
 
 ### D) Call-site materialization of `object[] scopes`
 
-Whenever a call site invokes a generated function delegate or binds a closure value, the facade must decide which scope instances to capture.
+Whenever a call site invokes a generated function body or materializes its
+`JsFunctionObject`, the facade must decide which scope instances to pass or
+capture.
 
 **Contract**
 
@@ -834,10 +836,13 @@ The main correctness hazard in sharing/reusing scope arrays is **escape**:
 
 If a callee needs to create a closure that will run later, it must bind using a **stable environment**:
 
-- The callee must ensure the array passed to `Closure.Bind(..., boundScopes)` is a stable copy (or otherwise stable representation) of the required scope chain.
+- The generated function-object constructor must receive stable typed
+  environment references and, when its canonical ABI still needs one, a
+  stable transitional scope-array payload.
 - The caller-passed `scopes` argument must be treated as potentially ephemeral.
 
-This fits the existing runtime approach: `JavaScriptRuntime.Closure.Bind` captures the provided `boundScopes` inside the returned delegate. Under an ephemeral-caller model, `boundScopes` must be callee-owned/stable.
+Generated `JsFunctionObject` instances own these references directly. Compiled
+closure creation no longer binds or exposes a CLR delegate.
 
 ### Practical consequences
 

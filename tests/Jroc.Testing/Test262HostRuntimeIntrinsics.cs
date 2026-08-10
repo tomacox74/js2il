@@ -8,26 +8,65 @@ public static class Test262HostRuntimeIntrinsics
         => new HostRuntimeIntrinsicDescriptorsBuilder()
             .AddGlobalFactory("assert", CreateAssert)
             .AddGlobalFactory("Test262Error", CreateTest262ErrorConstructor)
-            .AddGlobalValue("$ERROR", (Action<object?>)(message => throw CreateTest262Error(message)))
-            .AddGlobalValue("$DONE", CreateDoneFunction())
+            .AddGlobalFactory("$ERROR", () => CreateFunction(
+                (Action<object?>)(message => throw CreateTest262Error(message)),
+                "$ERROR",
+                1))
+            .AddGlobalFactory("$DONE", CreateDoneFunction)
             .AddGlobalFactory("$262", Create262Object)
-            .AddGlobalValue("compareArray", (Func<object?, object?, bool>)CompareArray)
-            .AddGlobalValue("verifyProperty", (Action<object?, object?, object?>)VerifyProperty)
-            .AddGlobalValue("verifyWritable", (Action<object?, object?>)((target, name) => VerifyAttribute(target, name, "writable", true)))
-            .AddGlobalValue("verifyNotWritable", (Action<object?, object?>)((target, name) => VerifyAttribute(target, name, "writable", false)))
-            .AddGlobalValue("verifyEnumerable", (Action<object?, object?>)((target, name) => VerifyAttribute(target, name, "enumerable", true)))
-            .AddGlobalValue("verifyNotEnumerable", (Action<object?, object?>)((target, name) => VerifyAttribute(target, name, "enumerable", false)))
-            .AddGlobalValue("verifyConfigurable", (Action<object?, object?>)((target, name) => VerifyAttribute(target, name, "configurable", true)))
-            .AddGlobalValue("verifyNotConfigurable", (Action<object?, object?>)((target, name) => VerifyAttribute(target, name, "configurable", false)))
-            .AddGlobalValue("assertRelativeDateMs", (Action<object?, object?>)AssertRelativeDateMs)
-            .AddGlobalValue("getWellKnownIntrinsicObject", (Func<object?, object?>)GetWellKnownIntrinsicObject)
-            .AddGlobalValue("isConstructor", (Func<object?, bool>)JavaScriptRuntime.ObjectRuntime.IsConstructibleValue)
-            .AddGlobalValue("asyncTest", (Action<object?>)AsyncTest)
+            .AddGlobalFactory("compareArray", () => CreateFunction(
+                (Func<object?, object?, bool>)CompareArray,
+                "compareArray",
+                2))
+            .AddGlobalFactory("verifyProperty", () => CreateFunction(
+                (Action<object?, object?, object?>)VerifyProperty,
+                "verifyProperty",
+                3))
+            .AddGlobalFactory("verifyWritable", () => CreateFunction(
+                (Action<object?, object?>)((target, name) => VerifyAttribute(target, name, "writable", true)),
+                "verifyWritable",
+                2))
+            .AddGlobalFactory("verifyNotWritable", () => CreateFunction(
+                (Action<object?, object?>)((target, name) => VerifyAttribute(target, name, "writable", false)),
+                "verifyNotWritable",
+                2))
+            .AddGlobalFactory("verifyEnumerable", () => CreateFunction(
+                (Action<object?, object?>)((target, name) => VerifyAttribute(target, name, "enumerable", true)),
+                "verifyEnumerable",
+                2))
+            .AddGlobalFactory("verifyNotEnumerable", () => CreateFunction(
+                (Action<object?, object?>)((target, name) => VerifyAttribute(target, name, "enumerable", false)),
+                "verifyNotEnumerable",
+                2))
+            .AddGlobalFactory("verifyConfigurable", () => CreateFunction(
+                (Action<object?, object?>)((target, name) => VerifyAttribute(target, name, "configurable", true)),
+                "verifyConfigurable",
+                2))
+            .AddGlobalFactory("verifyNotConfigurable", () => CreateFunction(
+                (Action<object?, object?>)((target, name) => VerifyAttribute(target, name, "configurable", false)),
+                "verifyNotConfigurable",
+                2))
+            .AddGlobalFactory("assertRelativeDateMs", () => CreateFunction(
+                (Action<object?, object?>)AssertRelativeDateMs,
+                "assertRelativeDateMs",
+                2))
+            .AddGlobalFactory("getWellKnownIntrinsicObject", () => CreateFunction(
+                (Func<object?, object?>)GetWellKnownIntrinsicObject,
+                "getWellKnownIntrinsicObject",
+                1))
+            .AddGlobalFactory("isConstructor", () => CreateFunction(
+                (Func<object?, bool>)JavaScriptRuntime.ObjectRuntime.IsConstructibleValue,
+                "isConstructor",
+                1))
+            .AddGlobalFactory("asyncTest", () => CreateFunction(
+                (Action<object?>)AsyncTest,
+                "asyncTest",
+                1))
             .Build();
 
     private static object CreateAssert()
     {
-        var assert = (Action<object?, object?>)((condition, message) =>
+        var assert = CreateFunction((Action<object?, object?>)((condition, message) =>
         {
             var passed = TypeUtilities.ToBoolean(condition);
             Log(passed);
@@ -35,9 +74,9 @@ public static class Test262HostRuntimeIntrinsics
             {
                 ThrowAssertion(message, "Assertion failed");
             }
-        });
+        }), "assert", 2);
 
-        var sameValue = (Action<object?, object?, object?>)((actual, expected, message) =>
+        var sameValue = CreateFunction((Action<object?, object?, object?>)((actual, expected, message) =>
         {
             var passed = JavaScriptRuntime.Object.@is(actual, expected);
             Log(passed);
@@ -45,9 +84,9 @@ public static class Test262HostRuntimeIntrinsics
             {
                 ThrowAssertion(message, "Expected SameValue");
             }
-        });
+        }), "sameValue", 3);
 
-        var notSameValue = (Action<object?, object?, object?>)((actual, unexpected, message) =>
+        var notSameValue = CreateFunction((Action<object?, object?, object?>)((actual, unexpected, message) =>
         {
             var passed = !JavaScriptRuntime.Object.@is(actual, unexpected);
             Log(passed);
@@ -55,9 +94,9 @@ public static class Test262HostRuntimeIntrinsics
             {
                 ThrowAssertion(message, "Expected values to differ");
             }
-        });
+        }), "notSameValue", 3);
 
-        var throws = (Action<object?, object?, object?>)((expectedErrorConstructor, fn, message) =>
+        var throws = CreateFunction((Action<object?, object?, object?>)((expectedErrorConstructor, fn, message) =>
         {
             var passed = false;
             try
@@ -74,9 +113,9 @@ public static class Test262HostRuntimeIntrinsics
             {
                 ThrowAssertion(message, "Expected function to throw");
             }
-        });
+        }), "throws", 3);
 
-        var compareArray = (Action<object?, object?, object?>)((actual, expected, message) =>
+        var compareArray = CreateFunction((Action<object?, object?, object?>)((actual, expected, message) =>
         {
             var passed = CompareArray(actual, expected);
             Log(passed);
@@ -84,13 +123,7 @@ public static class Test262HostRuntimeIntrinsics
             {
                 ThrowAssertion(message, "Expected arrays to match");
             }
-        });
-
-        InitializeFunction(assert, "assert", 2);
-        InitializeFunction(sameValue, "sameValue", 3);
-        InitializeFunction(notSameValue, "notSameValue", 3);
-        InitializeFunction(throws, "throws", 3);
-        InitializeFunction(compareArray, "compareArray", 3);
+        }), "compareArray", 3);
 
         ObjectRuntime.SetItem(assert, "sameValue", sameValue);
         ObjectRuntime.SetItem(assert, "notSameValue", notSameValue);
@@ -104,8 +137,10 @@ public static class Test262HostRuntimeIntrinsics
 
     private static object CreateTest262ErrorConstructor()
     {
-        Func<object[], object?[], object?> constructor = (_, args) =>
+        var constructorIdentity = new object();
+        var constructor = CreateFunction((Func<object[], object?[], object?>)((_, args) =>
         {
+            GC.KeepAlive(constructorIdentity);
             var instance = RuntimeServices.GetCurrentThis();
             if (instance is null)
             {
@@ -115,9 +150,8 @@ public static class Test262HostRuntimeIntrinsics
             ObjectRuntime.SetItem(instance, "name", "Test262Error");
             ObjectRuntime.SetItem(instance, "message", ToMessage(args.Length > 0 ? args[0] : null));
             return null;
-        };
-
-        InitializeFunction(constructor, "Test262Error", 1);
+        }), "Test262Error", 1);
+        Function.MarkConstructible(constructor);
 
         var prototype = new JsObject();
         ObjectRuntime.SetItem(prototype, "constructor", constructor);
@@ -129,7 +163,10 @@ public static class Test262HostRuntimeIntrinsics
     private static object Create262Object()
     {
         var result = new JsObject();
-        ObjectRuntime.SetItem(result, "createRealm", (Func<object>)CreateRealm);
+        ObjectRuntime.SetItem(result, "createRealm", CreateFunction(
+            (Func<object>)CreateRealm,
+            "createRealm",
+            0));
         ObjectRuntime.SetItem(result, "detachArrayBuffer", Unsupported262("$262.detachArrayBuffer"));
         ObjectRuntime.SetItem(result, "evalScript", Unsupported262("$262.evalScript"));
         ObjectRuntime.SetItem(result, "gc", Unsupported262("$262.gc"));
@@ -143,10 +180,11 @@ public static class Test262HostRuntimeIntrinsics
         return realm;
     }
 
-    private static Action Unsupported262(string name)
-    {
-        return () => throw CreateTest262Error($"{name} is not supported by the JROC C# test262 harness.");
-    }
+    private static JsFunctionObject Unsupported262(string name)
+        => CreateFunction(
+            (Action)(() => throw CreateTest262Error($"{name} is not supported by the JROC C# test262 harness.")),
+            name,
+            0);
 
     private static void VerifyProperty(object? target, object? name, object? expectedDescriptor)
     {
@@ -277,14 +315,17 @@ public static class Test262HostRuntimeIntrinsics
         ObjectRuntime.CallMember(result!, "then", new object[] { done, done });
     }
 
-    private static Action<object?> CreateDoneFunction()
-        => error =>
-        {
+    private static JsFunctionObject CreateDoneFunction()
+        => CreateFunction(
+            (Action<object?>)(error =>
+            {
             if (error is not null)
             {
                 throw error as Exception ?? new Error(ToMessage(error));
             }
-        };
+            }),
+            "$DONE",
+            1);
 
     private static bool IsExpectedError(object? error, object? expectedErrorConstructor)
     {
@@ -355,8 +396,20 @@ public static class Test262HostRuntimeIntrinsics
     private static Test262Error CreateTest262Error(object? message)
         => new(ToMessage(message));
 
-    private static void InitializeFunction(Delegate function, string name, double length)
-        => Function.InitializeFunctionInstance(function, length, name, requiresInvocationContext: false);
+    private static BuiltinDelegateFunctionAdapter CreateFunction(
+        Delegate function,
+        string name,
+        double length)
+    {
+        var adapter = BuiltinDelegateFunctionAdapter.FromDelegate(function);
+        Function.InitializeFunctionInstance(
+            adapter,
+            length,
+            name,
+            requiresInvocationContext: false);
+        Function.MarkUndefinedPrototype(adapter);
+        return adapter;
+    }
 
     private static void Log(bool value)
         => GlobalThis.console.log(value);

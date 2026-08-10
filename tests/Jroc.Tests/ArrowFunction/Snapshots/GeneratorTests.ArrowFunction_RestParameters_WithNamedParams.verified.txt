@@ -144,6 +144,47 @@
 				IL_0001: ret
 			} // end of method FunctionObject::get_RequiresInvocationContext
 
+			.method assembly hidebysig static 
+				object __js_call_with_arguments__ (
+					class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject functionObject,
+					object[] scopes,
+					object[] arguments
+				) cil managed 
+			{
+				// Header size: 12
+				// Code size: 42 (0x2a)
+				.maxstack 8
+				.locals init (
+					[0] object
+				)
+
+				IL_0000: ldarg.0
+				IL_0001: ldarg.2
+				IL_0002: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushGeneratedFunctionDirectCall(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, object[])
+				.try
+				{
+					IL_0007: ldarg.1
+					IL_0008: ldc.i4.0
+					IL_0009: ldelem.ref
+					IL_000a: castclass Modules.ArrowFunction_RestParameters_WithNamedParams/Scope
+					IL_000f: ldnull
+					IL_0010: ldarg.2
+					IL_0011: ldc.i4.0
+					IL_0012: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetArgumentOrUndefined(object[], int32)
+					IL_0017: call object Modules.ArrowFunction_RestParameters_WithNamedParams/ArrowFunction_L3C17::__js_call__(class Modules.ArrowFunction_RestParameters_WithNamedParams/Scope, object, object)
+					IL_001c: stloc.0
+					IL_001d: leave IL_0028
+				} // end .try
+				finally
+				{
+					IL_0022: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopGeneratedFunctionDirectCall()
+					IL_0027: endfinally
+				} // end handler
+
+				IL_0028: ldloc.0
+				IL_0029: ret
+			} // end of method FunctionObject::__js_call_with_arguments__
+
 			.method family hidebysig virtual 
 				instance object CallCore (
 					object thisArgument,
@@ -284,7 +325,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 202 (0xca)
+		// Code size: 184 (0xb8)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ArrowFunction_RestParameters_WithNamedParams/Scope,
@@ -298,79 +339,88 @@
 		IL_0007: nop
 		IL_0008: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 		IL_000d: stloc.1
-		IL_000e: ldloc.0
-		IL_000f: castclass Modules.ArrowFunction_RestParameters_WithNamedParams/Scope
-		IL_0014: ldftn object Modules.ArrowFunction_RestParameters_WithNamedParams/ArrowFunction_L3C17::__js_call__(class Modules.ArrowFunction_RestParameters_WithNamedParams/Scope, object, object)
-		IL_001a: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-		IL_001f: ldc.i4.4
-		IL_0020: newarr [System.Runtime]System.Object
-		IL_0025: dup
-		IL_0026: ldc.i4.0
-		IL_0027: ldstr "-"
-		IL_002c: stelem.ref
-		IL_002d: dup
-		IL_002e: ldc.i4.1
-		IL_002f: ldstr "a"
-		IL_0034: stelem.ref
-		IL_0035: dup
-		IL_0036: ldc.i4.2
-		IL_0037: ldstr "b"
-		IL_003c: stelem.ref
-		IL_003d: dup
-		IL_003e: ldc.i4.3
-		IL_003f: ldstr "c"
-		IL_0044: stelem.ref
-		IL_0045: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeDirectWithArgs(class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1, object[])
-		IL_004a: stloc.2
-		IL_004b: ldloc.1
-		IL_004c: ldloc.2
-		IL_004d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0052: pop
-		IL_0053: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0058: stloc.1
-		IL_0059: ldloc.0
-		IL_005a: castclass Modules.ArrowFunction_RestParameters_WithNamedParams/Scope
-		IL_005f: ldftn object Modules.ArrowFunction_RestParameters_WithNamedParams/ArrowFunction_L3C17::__js_call__(class Modules.ArrowFunction_RestParameters_WithNamedParams/Scope, object, object)
-		IL_0065: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-		IL_006a: ldc.i4.3
-		IL_006b: newarr [System.Runtime]System.Object
-		IL_0070: dup
-		IL_0071: ldc.i4.0
-		IL_0072: ldstr " "
-		IL_0077: stelem.ref
-		IL_0078: dup
-		IL_0079: ldc.i4.1
-		IL_007a: ldstr "hello"
-		IL_007f: stelem.ref
-		IL_0080: dup
-		IL_0081: ldc.i4.2
-		IL_0082: ldstr "world"
-		IL_0087: stelem.ref
-		IL_0088: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeDirectWithArgs(class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1, object[])
-		IL_008d: stloc.2
-		IL_008e: ldloc.1
-		IL_008f: ldloc.2
-		IL_0090: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0095: pop
-		IL_0096: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_009b: stloc.1
-		IL_009c: ldloc.0
-		IL_009d: castclass Modules.ArrowFunction_RestParameters_WithNamedParams/Scope
-		IL_00a2: ldftn object Modules.ArrowFunction_RestParameters_WithNamedParams/ArrowFunction_L3C17::__js_call__(class Modules.ArrowFunction_RestParameters_WithNamedParams/Scope, object, object)
-		IL_00a8: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-		IL_00ad: ldc.i4.1
-		IL_00ae: newarr [System.Runtime]System.Object
-		IL_00b3: dup
-		IL_00b4: ldc.i4.0
-		IL_00b5: ldstr ","
-		IL_00ba: stelem.ref
-		IL_00bb: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeDirectWithArgs(class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1, object[])
-		IL_00c0: stloc.2
-		IL_00c1: ldloc.1
-		IL_00c2: ldloc.2
-		IL_00c3: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00c8: pop
-		IL_00c9: ret
+		IL_000e: ldnull
+		IL_000f: ldc.i4.1
+		IL_0010: newarr [System.Runtime]System.Object
+		IL_0015: dup
+		IL_0016: ldc.i4.0
+		IL_0017: ldloc.0
+		IL_0018: stelem.ref
+		IL_0019: ldc.i4.4
+		IL_001a: newarr [System.Runtime]System.Object
+		IL_001f: dup
+		IL_0020: ldc.i4.0
+		IL_0021: ldstr "-"
+		IL_0026: stelem.ref
+		IL_0027: dup
+		IL_0028: ldc.i4.1
+		IL_0029: ldstr "a"
+		IL_002e: stelem.ref
+		IL_002f: dup
+		IL_0030: ldc.i4.2
+		IL_0031: ldstr "b"
+		IL_0036: stelem.ref
+		IL_0037: dup
+		IL_0038: ldc.i4.3
+		IL_0039: ldstr "c"
+		IL_003e: stelem.ref
+		IL_003f: call object Modules.ArrowFunction_RestParameters_WithNamedParams/ArrowFunction_L3C17/FunctionObject::__js_call_with_arguments__(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, object[], object[])
+		IL_0044: stloc.2
+		IL_0045: ldloc.1
+		IL_0046: ldloc.2
+		IL_0047: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_004c: pop
+		IL_004d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0052: stloc.1
+		IL_0053: ldnull
+		IL_0054: ldc.i4.1
+		IL_0055: newarr [System.Runtime]System.Object
+		IL_005a: dup
+		IL_005b: ldc.i4.0
+		IL_005c: ldloc.0
+		IL_005d: stelem.ref
+		IL_005e: ldc.i4.3
+		IL_005f: newarr [System.Runtime]System.Object
+		IL_0064: dup
+		IL_0065: ldc.i4.0
+		IL_0066: ldstr " "
+		IL_006b: stelem.ref
+		IL_006c: dup
+		IL_006d: ldc.i4.1
+		IL_006e: ldstr "hello"
+		IL_0073: stelem.ref
+		IL_0074: dup
+		IL_0075: ldc.i4.2
+		IL_0076: ldstr "world"
+		IL_007b: stelem.ref
+		IL_007c: call object Modules.ArrowFunction_RestParameters_WithNamedParams/ArrowFunction_L3C17/FunctionObject::__js_call_with_arguments__(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, object[], object[])
+		IL_0081: stloc.2
+		IL_0082: ldloc.1
+		IL_0083: ldloc.2
+		IL_0084: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0089: pop
+		IL_008a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_008f: stloc.1
+		IL_0090: ldnull
+		IL_0091: ldc.i4.1
+		IL_0092: newarr [System.Runtime]System.Object
+		IL_0097: dup
+		IL_0098: ldc.i4.0
+		IL_0099: ldloc.0
+		IL_009a: stelem.ref
+		IL_009b: ldc.i4.1
+		IL_009c: newarr [System.Runtime]System.Object
+		IL_00a1: dup
+		IL_00a2: ldc.i4.0
+		IL_00a3: ldstr ","
+		IL_00a8: stelem.ref
+		IL_00a9: call object Modules.ArrowFunction_RestParameters_WithNamedParams/ArrowFunction_L3C17/FunctionObject::__js_call_with_arguments__(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, object[], object[])
+		IL_00ae: stloc.2
+		IL_00af: ldloc.1
+		IL_00b0: ldloc.2
+		IL_00b1: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00b6: pop
+		IL_00b7: ret
 	} // end of method ArrowFunction_RestParameters_WithNamedParams::__js_module_init__
 
 } // end of class Modules.ArrowFunction_RestParameters_WithNamedParams

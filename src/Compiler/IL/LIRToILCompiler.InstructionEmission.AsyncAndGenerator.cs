@@ -446,7 +446,7 @@ internal sealed partial class LIRToILCompiler
                             var setupAwaitRef = _memberRefRegistry.GetOrAddMethod(
                                 typeof(JavaScriptRuntime.AsyncScope),
                                 nameof(JavaScriptRuntime.AsyncScope.SetupAwaitContinuationWithRejectResumeTyped),
-                                parameterTypes: new[] { typeof(object), typeof(object[]), typeof(int), typeof(object), typeof(int), typeof(string) });
+                                parameterTypes: new[] { typeof(object), typeof(object[]), typeof(int), typeof(JavaScriptRuntime.CompiledContinuation), typeof(int), typeof(string) });
                             ilEncoder.OpCode(ILOpCode.Callvirt);
                             ilEncoder.Token(setupAwaitRef);
                         }
@@ -456,7 +456,7 @@ internal sealed partial class LIRToILCompiler
                             var setupAwaitRef = _memberRefRegistry.GetOrAddMethod(
                                 typeof(JavaScriptRuntime.AsyncScope),
                                 nameof(JavaScriptRuntime.AsyncScope.SetupAwaitContinuationTyped),
-                                parameterTypes: new[] { typeof(object), typeof(object[]), typeof(int), typeof(object) });
+                                parameterTypes: new[] { typeof(object), typeof(object[]), typeof(int), typeof(JavaScriptRuntime.CompiledContinuation) });
                             ilEncoder.OpCode(ILOpCode.Callvirt);
                             ilEncoder.Token(setupAwaitRef);
                         }

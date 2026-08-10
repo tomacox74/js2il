@@ -29,6 +29,57 @@ public class HostRuntimeIntrinsicDescriptorsTests
     }
 
     [Fact]
+    public void GlobalBindingValue_NormalizesDelegateOnce()
+    {
+        Func<object?, object?> callback = static value => value;
+        var descriptor =
+            RuntimeGlobalBindingDescriptor.ForValue("callback", callback);
+
+        var adapter =
+            Assert.IsType<BuiltinDelegateFunctionAdapter>(descriptor.Value);
+        Assert.Same(callback, adapter.Target);
+        Assert.Same(adapter, descriptor.CreateValue());
+        Assert.True(CallableOperations.IsCallable(adapter));
+        Assert.False(CallableOperations.IsCallable(callback));
+    }
+
+    [Fact]
+    public void GlobalBindingFactory_NormalizesDelegateWithStableIdentity()
+    {
+        var descriptor = RuntimeGlobalBindingDescriptor.ForFactory(
+            "callback",
+            static () => (Func<object?, object?>)Echo);
+
+        var first =
+            Assert.IsType<BuiltinDelegateFunctionAdapter>(
+                descriptor.CreateValue());
+        var second =
+            Assert.IsType<BuiltinDelegateFunctionAdapter>(
+                descriptor.CreateValue());
+
+        Assert.Same(first, second);
+        Assert.Equal(
+            "value",
+            CallableOperations.Call1(first, null, "value"));
+    }
+
+    [Fact]
+    public void ModuleFactory_NormalizesDelegateExports()
+    {
+        var descriptor = RuntimeModuleBindingDescriptor.ForFactory(
+            "host:callback",
+            static () => (Func<object?, object?>)Echo);
+
+        var callback =
+            Assert.IsType<BuiltinDelegateFunctionAdapter>(
+                descriptor.CreateModule());
+
+        Assert.Equal(
+            "value",
+            CallableOperations.Call1(callback, null, "value"));
+    }
+
+    [Fact]
     public void BuilderBuild_ReturnsFrozenSnapshot()
     {
         var builder = new HostRuntimeIntrinsicDescriptorsBuilder();
@@ -61,4 +112,6 @@ public class HostRuntimeIntrinsicDescriptorsTests
         Assert.Throws<ArgumentNullException>(() => RuntimeModuleBindingDescriptor.ForFactory("helper", null!));
         Assert.Throws<ArgumentException>(() => new RuntimeKnownGlobalDescriptor(""));
     }
+
+    private static object? Echo(object? value) => value;
 }

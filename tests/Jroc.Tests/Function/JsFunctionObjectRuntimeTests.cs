@@ -239,7 +239,7 @@ public sealed class JsFunctionObjectRuntimeTests
     }
 
     [Fact]
-    public void BindingLegacyDelegatesProducesExplicitBoundFunctionObjects()
+    public void BindingBuiltinDelegateAdaptersProducesExplicitBoundFunctionObjects()
     {
         Func<object[], object?[]?, object?> legacy = static (_, args) =>
             new BoundCallSnapshot(
@@ -251,10 +251,11 @@ public sealed class JsFunctionObjectRuntimeTests
             1d,
             "legacy",
             requiresInvocationContext: true);
+        var adapter = BuiltinDelegateFunctionAdapter.FromDelegate(legacy);
 
         var bound = Assert.IsType<BoundFunctionObject>(
             JavaScriptRuntime.Function.Bind(
-                legacy,
+                adapter,
                 "legacy-this",
                 new object?[] { "bound" }));
         var result = Assert.IsType<BoundCallSnapshot>(
@@ -266,7 +267,7 @@ public sealed class JsFunctionObjectRuntimeTests
     }
 
     [Fact]
-    public void FixedArityLegacyInvocationPadsMissingHostArguments()
+    public void FixedArityAdapterInvocationPadsMissingHostArguments()
     {
         object?[]? received = null;
         Action<object?, object?, object?> host = (first, second, third) =>
@@ -276,9 +277,10 @@ public sealed class JsFunctionObjectRuntimeTests
             3d,
             "host",
             requiresInvocationContext: false);
+        var adapter = BuiltinDelegateFunctionAdapter.FromDelegate(host);
 
         Closure.InvokeWithArgs2(
-            host,
+            adapter,
             RuntimeServices.EmptyScopes,
             "first",
             "second");
@@ -306,7 +308,7 @@ public sealed class JsFunctionObjectRuntimeTests
     }
 
     [Fact]
-    public void LegacyDelegateAdapterSupportsIncrementalMigration()
+    public void BuiltinDelegateAdapterIsTheOnlyJavaScriptVisibleDelegateBoundary()
     {
         var runtime = RuntimeServices.BuildServiceProvider();
         try
@@ -324,29 +326,161 @@ public sealed class JsFunctionObjectRuntimeTests
                 "legacyCall",
                 requiresInvocationContext: true);
 
-            var adapter = new LegacyDelegateFunctionAdapter(legacyCall);
+            var adapter = BuiltinDelegateFunctionAdapter.FromDelegate(legacyCall);
+            var holder = new JsObject
+            {
+                ["first"] = legacyCall,
+                ["second"] = legacyCall
+            };
 
-            Assert.True(CallableOperations.IsCallable(legacyCall));
+            Assert.False(CallableOperations.IsCallable(legacyCall));
             Assert.True(CallableOperations.IsCallable(adapter));
+            Assert.Equal("object", TypeUtilities.Typeof(legacyCall));
             Assert.Equal("function", TypeUtilities.Typeof(adapter));
+            Assert.Same(adapter, holder["first"]);
+            Assert.Same(adapter, holder["second"]);
+            Assert.Throws<TypeError>(
+                () => CallableOperations.Call(
+                    legacyCall,
+                    "raw-this",
+                    new object?[] { "raw" }));
 
-            var rawResult = Assert.IsType<CallSnapshot>(
-                CallableOperations.Call(legacyCall, "raw-this", new object?[] { "raw" }));
             var adapterResult = Assert.IsType<CallSnapshot>(
                 CallableOperations.Call(adapter, "adapter-this", new object?[] { "adapter" }));
 
-            Assert.Equal("raw-this", rawResult.ThisArgument);
-            Assert.Equal("raw", rawResult.Argument);
-            Assert.Same(legacyCall, rawResult.Callee);
-
             Assert.Equal("adapter-this", adapterResult.ThisArgument);
             Assert.Equal("adapter", adapterResult.Argument);
-            Assert.Same(legacyCall, adapterResult.Callee);
+            Assert.Same(adapter, adapterResult.Callee);
         }
         finally
         {
             GlobalThis.ServiceProvider = null;
         }
+    }
+
+    [Fact]
+    public void FixedArityBuiltinAdapterCallsDoNotAllocateArgumentArrays()
+    {
+        Func<object, object?> callback = static value => value;
+        JavaScriptRuntime.Function.InitializeFunctionInstance(
+            callback,
+            1d,
+            "callback",
+            requiresInvocationContext: false);
+        var adapter = BuiltinDelegateFunctionAdapter.FromDelegate(callback);
+        const string argument = "argument";
+
+        for (var index = 0; index < 1_000; index++)
+        {
+            _ = CallableOperations.Call1(adapter, null, argument);
+        }
+
+        var before = GC.GetAllocatedBytesForCurrentThread();
+        object? result = null;
+        for (var index = 0; index < 10_000; index++)
+        {
+            result = CallableOperations.Call1(adapter, null, argument);
+        }
+        var allocated = GC.GetAllocatedBytesForCurrentThread() - before;
+
+        Assert.Same(argument, result);
+        Assert.Equal(0, allocated);
+    }
+
+    [Fact]
+    public void FixedArityGeneratedAbiAdapterCallsDoNotAllocateArgumentArrays()
+    {
+        JsFuncNoScopes3 callback =
+            static (_, _, _, third) => third;
+        JavaScriptRuntime.Function.InitializeFunctionInstance(
+            callback,
+            3d,
+            "callback",
+            requiresInvocationContext: false);
+        var adapter = BuiltinDelegateFunctionAdapter.FromDelegate(callback);
+        const string argument = "argument";
+
+        for (var index = 0; index < 1_000; index++)
+        {
+            _ = Closure.InvokeWithArgs3(
+                adapter,
+                RuntimeServices.EmptyScopes,
+                null,
+                null,
+                argument);
+        }
+
+        var before = GC.GetAllocatedBytesForCurrentThread();
+        object? result = null;
+        for (var index = 0; index < 10_000; index++)
+        {
+            result = Closure.InvokeWithArgs3(
+                adapter,
+                RuntimeServices.EmptyScopes,
+                null,
+                null,
+                argument);
+        }
+        var allocated = GC.GetAllocatedBytesForCurrentThread() - before;
+
+        Assert.Same(argument, result);
+        Assert.Equal(0, allocated);
+    }
+
+    [Fact]
+    public void RepeatedInstanceMethodExposureReusesAdapterIdentity()
+    {
+        var host = new DelegateHost();
+        Func<object, object?> first = host.Echo;
+        Func<object, object?> second = host.Echo;
+
+        var firstAdapter =
+            BuiltinDelegateFunctionAdapter.FromDelegate(first);
+        var secondAdapter =
+            BuiltinDelegateFunctionAdapter.FromDelegate(second);
+
+        Assert.NotSame(first, second);
+        Assert.Same(firstAdapter, secondAdapter);
+    }
+
+    [Fact]
+    public void ConcurrentBuiltinInitializationKeepsStableMetadataAndStorage()
+    {
+        var host = new DelegateHost();
+        var adapters = new BuiltinDelegateFunctionAdapter[256];
+
+        Parallel.For(0, adapters.Length, index =>
+        {
+            Func<object, object?> callback = host.Echo;
+            var adapter =
+                BuiltinDelegateFunctionAdapter.FromDelegate(callback);
+            JavaScriptRuntime.Function.InitializeFunctionInstance(
+                adapter,
+                1d,
+                "echo",
+                requiresInvocationContext: false);
+            adapters[index] = adapter;
+        });
+
+        var expected = adapters[0];
+        Assert.All(adapters, adapter => Assert.Same(expected, adapter));
+        Assert.Equal("echo", ObjectRuntime.GetProperty(expected, "name"));
+        Assert.Equal(1d, ObjectRuntime.GetProperty(expected, "length"));
+    }
+
+    [Fact]
+    public void CompiledContinuationsAreNotJavaScriptCallableValues()
+    {
+        Func<object?> step = static () => 42d;
+        var continuation = CompiledContinuation.Create(
+            step,
+            RuntimeServices.EmptyScopes,
+            System.Array.Empty<object?>());
+
+        Assert.False(CallableOperations.IsCallable(continuation));
+        Assert.False(CallableOperations.IsConstructor(continuation));
+        Assert.Equal("object", TypeUtilities.Typeof(continuation));
+        Assert.Equal(42d, continuation.Resume());
     }
 
     [Fact]
@@ -505,6 +639,11 @@ public sealed class JsFunctionObjectRuntimeTests
                 RuntimeServices.GetCurrentThis(),
                 arguments.ToArray(),
                 arguments.UsesArrayStorage);
+    }
+
+    private sealed class DelegateHost
+    {
+        public object? Echo(object value) => value;
     }
 
     private static CallSnapshot Capture(in JsCallArguments arguments)

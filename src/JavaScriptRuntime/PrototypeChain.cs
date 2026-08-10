@@ -37,6 +37,7 @@ public static class PrototypeChain
         }
 
         if (obj == null) throw new ArgumentNullException(nameof(obj));
+        obj = BuiltinDelegateFunctionAdapter.NormalizeJavaScriptObject(obj);
 
         if (obj is JsObject jsObject)
         {
@@ -56,6 +57,7 @@ public static class PrototypeChain
     public static object? GetPrototypeOrNull(object obj)
     {
         if (obj == null) throw new ArgumentNullException(nameof(obj));
+        obj = BuiltinDelegateFunctionAdapter.NormalizeJavaScriptObject(obj);
 
         if (!_enabled)
         {
@@ -88,6 +90,10 @@ public static class PrototypeChain
     private static void SetPrototypeCore(object obj, object? prototype)
     {
         if (obj == null) throw new ArgumentNullException(nameof(obj));
+        obj = BuiltinDelegateFunctionAdapter.NormalizeJavaScriptObject(obj);
+        prototype =
+            BuiltinDelegateFunctionAdapter.WrapJavaScriptVisibleValue(
+                prototype);
 
         // If someone calls SetPrototype directly, treat it as explicit opt-in.
         Enable();

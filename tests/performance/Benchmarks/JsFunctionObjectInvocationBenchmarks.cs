@@ -7,7 +7,8 @@ using JavaScriptRuntime;
 namespace Benchmarks;
 
 /// <summary>
-/// Compares the function-object ABI with the transitional delegate dispatcher.
+/// Compares the compiled function-object ABI with the intentional built-in
+/// delegate adapter boundary.
 /// </summary>
 [MemoryDiagnoser]
 [ShortRunJob]
@@ -23,23 +24,26 @@ public class JsFunctionObjectInvocationBenchmarks
 
     private readonly BenchmarkFunction _functionObject = new();
     private readonly ContextualBenchmarkFunction _contextualFunctionObject = new();
-    private readonly JsFuncNoScopes3 _legacyDelegate =
+    private readonly JsFuncNoScopes3 _builtinDelegate =
         static (_, _, _, argument2) => argument2;
+    private BuiltinDelegateFunctionAdapter _builtinAdapter = null!;
 
     [GlobalSetup]
     public void Setup()
     {
         Function.InitializeFunctionInstance(
-            _legacyDelegate,
+            _builtinDelegate,
             3d,
-            "legacy",
+            "builtin",
             requiresInvocationContext: false);
+        _builtinAdapter =
+            BuiltinDelegateFunctionAdapter.FromDelegate(_builtinDelegate);
     }
 
-    [Benchmark(Baseline = true, Description = "Legacy Closure.InvokeWithArgs3")]
-    public object LegacyDelegateFixed3()
+    [Benchmark(Baseline = true, Description = "Built-in delegate adapter fixed arity 3")]
+    public object BuiltinDelegateAdapterFixed3()
         => Closure.InvokeWithArgs3(
-            _legacyDelegate,
+            _builtinAdapter,
             RuntimeServices.EmptyScopes,
             Argument0,
             Argument1,

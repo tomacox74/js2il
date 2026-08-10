@@ -623,10 +623,11 @@ settle. If it is disposed first, outstanding bridge tasks fault promptly with
 ### Intentional delegate boundaries
 
 Generated JavaScript functions do not cross the public hosting boundary as CLR
-delegates. `LegacyDelegateFunctionAdapter` remains the explicit transitional
-runtime adapter for delegate-backed callable values. `ModuleMainDelegate` and
-`RequireDelegate` remain internal CommonJS bootstrap ABIs; they are not public
-hosting callable contracts and are not candidates for this migration.
+delegates. Runtime-owned CLR built-ins and host delegates use the explicit
+`BuiltinDelegateFunctionAdapter`/`JsHostFunction` boundary. Private resumable
+steps are enclosed by non-callable `CompiledContinuation` objects.
+`ModuleMainDelegate` and `RequireDelegate` remain internal CommonJS bootstrap
+ABIs; they are not public hosting callable contracts.
 
 ### Module entry point
 

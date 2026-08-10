@@ -136,19 +136,19 @@ public sealed class RuntimeIntrinsicCatalog : IRuntimeIntrinsicCatalog
                 builtInGlobalAttributes);
         }
 
-        AddBuiltInGlobalFunction(globals, nameof(GlobalThis.setTimeout), () => (Func<object, object, object[], object>)GlobalThis.setTimeout, builtInGlobalAttributes);
-        AddBuiltInGlobalFunction(globals, nameof(GlobalThis.clearTimeout), () => (Func<object, object?>)GlobalThis.clearTimeout, builtInGlobalAttributes);
-        AddBuiltInGlobalFunction(globals, nameof(GlobalThis.setImmediate), () => (Func<object, object[], object>)GlobalThis.setImmediate, builtInGlobalAttributes);
-        AddBuiltInGlobalFunction(globals, nameof(GlobalThis.setInterval), () => (Func<object, object, object[], object>)GlobalThis.setInterval, builtInGlobalAttributes);
-        AddBuiltInGlobalFunction(globals, nameof(GlobalThis.clearImmediate), () => (Func<object, object?>)GlobalThis.clearImmediate, builtInGlobalAttributes);
-        AddBuiltInGlobalFunction(globals, nameof(GlobalThis.clearInterval), () => (Func<object, object?>)GlobalThis.clearInterval, builtInGlobalAttributes);
-        AddBuiltInGlobalFunction(globals, nameof(GlobalThis.gc), () => (Func<object?>)GlobalThis.gc, builtInGlobalAttributes);
-        AddBuiltInGlobalFunction(globals, nameof(GlobalThis.parseInt), () => (Func<object?, object?, double>)GlobalThis.parseInt, builtInGlobalAttributes);
-        AddBuiltInGlobalFunction(globals, nameof(GlobalThis.parseFloat), () => (Func<object?, double>)GlobalThis.parseFloat, builtInGlobalAttributes);
-        AddBuiltInGlobalFunction(globals, nameof(GlobalThis.isFinite), () => (Func<object?, bool>)GlobalThis.isFinite, builtInGlobalAttributes);
-        AddBuiltInGlobalFunction(globals, nameof(GlobalThis.isNaN), () => (Func<object?, bool>)GlobalThis.isNaN, builtInGlobalAttributes);
-        AddBuiltInGlobalFunction(globals, nameof(GlobalThis.decodeURI), () => (Func<object?, string>)GlobalThis.decodeURI, builtInGlobalAttributes);
-        AddBuiltInGlobalFunction(globals, nameof(GlobalThis.encodeURI), () => (Func<object?, string>)GlobalThis.encodeURI, builtInGlobalAttributes);
+        AddBuiltInGlobalFunction(globals, nameof(GlobalThis.setTimeout), () => GlobalThis.GetFunctionValue(nameof(GlobalThis.setTimeout)), builtInGlobalAttributes);
+        AddBuiltInGlobalFunction(globals, nameof(GlobalThis.clearTimeout), () => GlobalThis.GetFunctionValue(nameof(GlobalThis.clearTimeout)), builtInGlobalAttributes);
+        AddBuiltInGlobalFunction(globals, nameof(GlobalThis.setImmediate), () => GlobalThis.GetFunctionValue(nameof(GlobalThis.setImmediate)), builtInGlobalAttributes);
+        AddBuiltInGlobalFunction(globals, nameof(GlobalThis.setInterval), () => GlobalThis.GetFunctionValue(nameof(GlobalThis.setInterval)), builtInGlobalAttributes);
+        AddBuiltInGlobalFunction(globals, nameof(GlobalThis.clearImmediate), () => GlobalThis.GetFunctionValue(nameof(GlobalThis.clearImmediate)), builtInGlobalAttributes);
+        AddBuiltInGlobalFunction(globals, nameof(GlobalThis.clearInterval), () => GlobalThis.GetFunctionValue(nameof(GlobalThis.clearInterval)), builtInGlobalAttributes);
+        AddBuiltInGlobalFunction(globals, nameof(GlobalThis.gc), () => GlobalThis.GetFunctionValue(nameof(GlobalThis.gc)), builtInGlobalAttributes);
+        AddBuiltInGlobalFunction(globals, nameof(GlobalThis.parseInt), () => GlobalThis.GetFunctionValue(nameof(GlobalThis.parseInt)), builtInGlobalAttributes);
+        AddBuiltInGlobalFunction(globals, nameof(GlobalThis.parseFloat), () => GlobalThis.GetFunctionValue(nameof(GlobalThis.parseFloat)), builtInGlobalAttributes);
+        AddBuiltInGlobalFunction(globals, nameof(GlobalThis.isFinite), () => GlobalThis.GetFunctionValue(nameof(GlobalThis.isFinite)), builtInGlobalAttributes);
+        AddBuiltInGlobalFunction(globals, nameof(GlobalThis.isNaN), () => GlobalThis.GetFunctionValue(nameof(GlobalThis.isNaN)), builtInGlobalAttributes);
+        AddBuiltInGlobalFunction(globals, nameof(GlobalThis.decodeURI), () => GlobalThis.GetFunctionValue(nameof(GlobalThis.decodeURI)), builtInGlobalAttributes);
+        AddBuiltInGlobalFunction(globals, nameof(GlobalThis.encodeURI), () => GlobalThis.GetFunctionValue(nameof(GlobalThis.encodeURI)), builtInGlobalAttributes);
 
         return globals;
     }

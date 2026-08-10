@@ -98,6 +98,10 @@ internal sealed class GeneratedFunctionObjectEmitter
                         MetadataTokens.MethodDefinitionHandle(nextMethodRow++);
                 }
             }
+            var arrayCallAdapter = plan.RequiresArrayCallAdapter
+                && CanEmitArrayCallAdapter(plan)
+                ? MetadataTokens.MethodDefinitionHandle(nextMethodRow++)
+                : default;
             var callAdapter = MetadataTokens.MethodDefinitionHandle(nextMethodRow++);
             var constructBodyAdapter = plan.Callable.Kind is
                     CallableKind.FunctionDeclaration
@@ -141,6 +145,7 @@ internal sealed class GeneratedFunctionObjectEmitter
                 RequiresInvocationContextGetterHandle = requiresContextGetter,
                 OrdinaryThisResolverHandle = ordinaryThisResolver,
                 StateAccessorHandles = stateAccessorHandles,
+                ArrayCallAdapterHandle = arrayCallAdapter,
                 CallAdapterHandle = callAdapter,
                 ConstructBodyAdapterHandle = constructBodyAdapter,
                 ConstructAdapterHandle = constructAdapter,
@@ -201,6 +206,14 @@ internal sealed class GeneratedFunctionObjectEmitter
                     EmitStateAccessor(metadata, state),
                     metadata.Plan,
                     GetStateAccessorName(state.Kind));
+            }
+            if (!metadata.ArrayCallAdapterHandle.IsNil)
+            {
+                EmitAndValidate(
+                    metadata.ArrayCallAdapterHandle,
+                    EmitArrayCallAdapter(metadata),
+                    metadata.Plan,
+                    "__js_call_with_arguments__");
             }
             EmitAndValidate(
                 metadata.CallAdapterHandle,
@@ -346,6 +359,137 @@ internal sealed class GeneratedFunctionObjectEmitter
             ["thisArgument", "arguments"],
             inParameterIndex: 1);
     }
+
+    private MethodDefinitionHandle EmitArrayCallAdapter(
+        GeneratedFunctionObjectMetadata metadata)
+    {
+        return AddMethod(
+            metadata,
+            MethodAttributes.Assembly
+            | MethodAttributes.Static
+            | MethodAttributes.HideBySig,
+            "__js_call_with_arguments__",
+            CreateArrayCallAdapterSignature(),
+            EmitArrayCallAdapterWithInvocationContext(metadata),
+            ["functionObject", "scopes", "arguments"]);
+    }
+
+    private int EmitArrayCallAdapterWithInvocationContext(
+        GeneratedFunctionObjectMetadata metadata)
+    {
+        var il = new BlobBuilder();
+        var controlFlow = new ControlFlowBuilder();
+        var encoder = new InstructionEncoder(il, controlFlow);
+        var tryStart = encoder.DefineLabel();
+        var tryEnd = encoder.DefineLabel();
+        var finallyStart = encoder.DefineLabel();
+        var finallyEnd = encoder.DefineLabel();
+        var returnLabel = encoder.DefineLabel();
+
+        encoder.OpCode(ILOpCode.Ldarg_0);
+        encoder.OpCode(ILOpCode.Ldarg_2);
+        encoder.Call(
+            _bclReferences
+                .RuntimeServices_PushGeneratedFunctionDirectCall_Ref);
+
+        encoder.MarkLabel(tryStart);
+        EmitCanonicalArrayCall(metadata, encoder);
+        encoder.StoreLocal(0);
+        encoder.Branch(ILOpCode.Leave, returnLabel);
+        encoder.MarkLabel(tryEnd);
+
+        encoder.MarkLabel(finallyStart);
+        encoder.Call(
+            _bclReferences
+                .RuntimeServices_PopGeneratedFunctionDirectCall_Ref);
+        encoder.OpCode(ILOpCode.Endfinally);
+        encoder.MarkLabel(finallyEnd);
+
+        encoder.MarkLabel(returnLabel);
+        encoder.LoadLocal(0);
+        encoder.OpCode(ILOpCode.Ret);
+
+        controlFlow.AddFinallyRegion(
+            tryStart,
+            tryEnd,
+            finallyStart,
+            finallyEnd);
+
+        return AddMethodBody(
+            encoder,
+            maxStack: System.Math.Max(
+                8,
+                metadata.Plan.Signature.JsParamCount + 3),
+            localVariablesSignature: CreateArrayCallAdapterLocalSignature());
+    }
+
+    private void EmitCanonicalArrayCall(
+        GeneratedFunctionObjectMetadata metadata,
+        InstructionEncoder encoder)
+    {
+        var plan = metadata.Plan;
+        if (!CanEmitArrayCallAdapter(plan))
+        {
+            throw new InvalidOperationException(
+                $"Callable '{plan.Callable.DisplayName}' does not support the static array-call adapter.");
+        }
+
+        switch (plan.Signature.ScopeAbiKind)
+        {
+            case Jroc.Runtime.CallableScopeAbiKind.NoScopes:
+                break;
+
+            case Jroc.Runtime.CallableScopeAbiKind.SingleScope:
+                var capture = plan.Captures.Single();
+                encoder.OpCode(ILOpCode.Ldarg_1);
+                encoder.LoadConstantI4(capture.ScopeIndex);
+                encoder.OpCode(ILOpCode.Ldelem_ref);
+                encoder.OpCode(ILOpCode.Castclass);
+                encoder.Token(
+                    _scopeMetadata.GetScopeTypeHandle(
+                        capture.ScopeName));
+                break;
+
+            case Jroc.Runtime.CallableScopeAbiKind.ScopeArray:
+                encoder.OpCode(ILOpCode.Ldarg_1);
+                break;
+
+            default:
+                throw new InvalidOperationException(
+                    $"Unsupported callable scope ABI '{plan.Signature.ScopeAbiKind}'.");
+        }
+
+        // Direct function calls supply undefined new.target. Arrow lexical new.target is
+        // carried by the generated function object's ambient invocation context.
+        encoder.OpCode(ILOpCode.Ldnull);
+        for (var index = 0;
+             index < plan.Signature.JsParamCount;
+             index++)
+        {
+            encoder.OpCode(ILOpCode.Ldarg_2);
+            encoder.LoadConstantI4(index);
+            encoder.Call(
+                _bclReferences
+                    .RuntimeServices_GetArgumentOrUndefined_Ref);
+            EmitDynamicArgumentConversion(
+                encoder,
+                plan.Signature.ParameterClrTypes.ElementAtOrDefault(index));
+        }
+
+        encoder.OpCode(ILOpCode.Call);
+        encoder.Token(metadata.EntryPoints[0].MethodHandle);
+        EmitReturnAdaptation(
+            encoder,
+            plan.Signature.ReturnClrType);
+    }
+
+    private static bool CanEmitArrayCallAdapter(
+        GeneratedFunctionObjectPlan plan)
+        => !plan.Signature.IsInstanceMethod
+            && plan.Callable.Kind is
+                CallableKind.FunctionDeclaration
+                or CallableKind.FunctionExpression
+                or CallableKind.Arrow;
 
     private static bool HasSimpleGeneratorParameters(Node? callableNode)
     {
@@ -911,6 +1055,34 @@ internal sealed class GeneratedFunctionObjectEmitter
             ? name
             : throw new InvalidOperationException(
                 $"State kind '{kind}' does not define an invocation accessor.");
+
+    private BlobHandle CreateArrayCallAdapterSignature()
+    {
+        var blob = new BlobBuilder();
+        new BlobEncoder(blob)
+            .MethodSignature(isInstanceMethod: false)
+            .Parameters(
+                3,
+                returnType => returnType.Type().Object(),
+                parameters =>
+                {
+                    parameters.AddParameter().Type().Type(
+                        _bclReferences.JsFunctionObjectType,
+                        isValueType: false);
+                    parameters.AddParameter().Type().SZArray().Object();
+                    parameters.AddParameter().Type().SZArray().Object();
+                });
+        return _metadataBuilder.GetOrAddBlob(blob);
+    }
+
+    private StandaloneSignatureHandle CreateArrayCallAdapterLocalSignature()
+    {
+        var blob = new BlobBuilder();
+        var locals = new BlobEncoder(blob).LocalVariableSignature(1);
+        locals.AddVariable().Type().Object();
+        return _metadataBuilder.AddStandaloneSignature(
+            _metadataBuilder.GetOrAddBlob(blob));
+    }
 
     private BlobHandle CreateCallAdapterSignature(bool returnsPromise)
     {

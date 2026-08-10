@@ -10,7 +10,6 @@ namespace JavaScriptRuntime.CommonJS;
 public class Module : DynamicObject
 {
     private readonly RequireDelegate _requireDelegate;
-    private readonly Func<object[], object?, object?> _requireFunc;
     private Array? _cachedChildren;
     private bool _childrenDirty = true;
 
@@ -28,8 +27,6 @@ public class Module : DynamicObject
         this.path = GetDirectoryName(filename);
         this.parent = parent;
         this._requireDelegate = requireDelegate;
-        // Cache the Func instance to avoid creating a new one on every access
-        this._requireFunc = (scopes, moduleId) => _requireDelegate(moduleId);
         this._childrenList = new List<Module>();
         this.paths = ComputeModulePaths(this.path);
         
@@ -100,9 +97,9 @@ public class Module : DynamicObject
 
     /// <summary>
     /// The require function bound to this module's context.
-    /// This property exposes the require delegate for JavaScript access.
+    /// This property exposes an adapter-backed require function for JavaScript access.
     /// </summary>
-    public object require => _requireFunc;
+    public object require => RequireRuntime.GetFunctionValue(_requireDelegate);
 
     /// <summary>
     /// Use the internal require function to import a module.

@@ -249,7 +249,8 @@ public sealed class ObjectRuntimeOrdinaryObjectTests
         Assert.Same(importMeta, RuntimeServices.GetImportMeta(moduleId));
         Assert.IsType<string>(ObjectRuntime.GetProperty(importMeta, "url"));
         Assert.IsType<JavaScriptRuntime.Proxy>(ObjectRuntime.GetProperty(revocable, "proxy"));
-        Assert.IsAssignableFrom<Delegate>(ObjectRuntime.GetProperty(revocable, "revoke"));
+        Assert.IsType<BuiltinDelegateFunctionAdapter>(
+            ObjectRuntime.GetProperty(revocable, "revoke"));
     }
 
     [Fact]

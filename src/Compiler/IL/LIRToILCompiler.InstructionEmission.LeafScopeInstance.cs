@@ -79,8 +79,29 @@ internal sealed partial class LIRToILCompiler
     private void EmitCurrentArgumentsOrFallback(
         InstructionEncoder ilEncoder,
         MethodDescriptor methodDescriptor,
-        int jsParamCount)
+        int jsParamCount,
+        CallableId? callableId)
     {
+        if (callableId is null)
+        {
+            EmitFallbackArguments(
+                ilEncoder,
+                methodDescriptor,
+                jsParamCount);
+            return;
+        }
+
+        if (!_generatedFunctionObjectRegistry.TryGetMetadata(
+                callableId,
+                out var generatedFunctionMetadata))
+        {
+            throw new InvalidOperationException(
+                $"Missing generated function object metadata for resumable callable '{callableId.DisplayName}'.");
+        }
+
+        ilEncoder.OpCode(ILOpCode.Ldtoken);
+        ilEncoder.Token(generatedFunctionMetadata.TypeHandle);
+        ilEncoder.Call(_bclReferences.Type_GetTypeFromHandle_Ref);
         EmitFallbackArguments(
             ilEncoder,
             methodDescriptor,
@@ -88,8 +109,8 @@ internal sealed partial class LIRToILCompiler
         ilEncoder.Call(_memberRefRegistry.GetOrAddMethod(
             typeof(JavaScriptRuntime.RuntimeServices),
             nameof(JavaScriptRuntime.RuntimeServices
-                .GetCurrentArgumentsOrFallback),
-            new[] { typeof(object[]) }));
+                .GetCurrentArgumentsForGeneratedCallableOrFallback),
+            new[] { typeof(Type), typeof(object[]) }));
     }
 
     private void EmitFallbackArguments(
@@ -249,8 +270,9 @@ internal sealed partial class LIRToILCompiler
                         ilEncoder.Token(prependRef);
                         ilEncoder.StoreArgument(scopesArgIndex); // scopes = modified scopes array
 
-                        // Initialize _moveNext = Closure.BindMoveNext(delegate, scopesArray, boundArgs)
-                        // so await continuations can resume this step method.
+                        // Initialize the private resumable continuation. The delegate is
+                        // immediately enclosed by CompiledContinuation and is never exposed
+                        // as a JavaScript function value.
                         ilEncoder.LoadLocal(0);  // for stfld _moveNext later
 
                         var callableId = MethodBody.CallableId
@@ -277,22 +299,24 @@ internal sealed partial class LIRToILCompiler
                         ilEncoder.OpCode(ILOpCode.Ldftn);
                         ilEncoder.Token(methodHandle);
                         ilEncoder.OpCode(ILOpCode.Newobj);
-                        ilEncoder.Token(_bclReferences.GetFuncCtorRef(jsParamCount));
+                        ilEncoder.Token(
+                            _bclReferences
+                                .GetContinuationDelegateCtorRef(
+                                    jsParamCount));
 
-                        // Load modified scopes array
                         ilEncoder.LoadArgument(scopesArgIndex);
-
-                        EmitFallbackArguments(
+                        EmitCurrentArgumentsOrFallback(
                             ilEncoder,
                             methodDescriptor,
-                            jsParamCount);
-
-                        var bindMoveNextRef = _memberRefRegistry.GetOrAddMethod(
-                            typeof(JavaScriptRuntime.Closure),
-                            nameof(JavaScriptRuntime.Closure.BindMoveNext),
+                            jsParamCount,
+                            callableId);
+                        var createContinuationRef =
+                            _memberRefRegistry.GetOrAddMethod(
+                            typeof(JavaScriptRuntime.CompiledContinuation),
+                            nameof(JavaScriptRuntime.CompiledContinuation.Create),
                             parameterTypes: new[] { typeof(object), typeof(object[]), typeof(object[]) });
                         ilEncoder.OpCode(ILOpCode.Call);
-                        ilEncoder.Token(bindMoveNextRef);
+                        ilEncoder.Token(createContinuationRef);
 
                         EmitStoreFieldByName(ilEncoder, scopeName, "_moveNext");
 
@@ -305,16 +329,13 @@ internal sealed partial class LIRToILCompiler
 
                         ilEncoder.LoadLocal(0);
                         EmitLoadFieldByName(ilEncoder, scopeName, "_moveNext");
-                        ilEncoder.LoadArgument(scopesArgIndex);
-                        ilEncoder.LoadConstantI4(0);
-                        ilEncoder.OpCode(ILOpCode.Newarr);
-                        ilEncoder.Token(_bclReferences.ObjectType);
-                        var invokeForParametersRef = _memberRefRegistry.GetOrAddMethod(
-                            typeof(JavaScriptRuntime.Closure),
-                            nameof(JavaScriptRuntime.Closure.InvokeWithArgs),
-                            parameterTypes: new[] { typeof(object), typeof(object[]), typeof(object[]) });
-                        ilEncoder.OpCode(ILOpCode.Call);
-                        ilEncoder.Token(invokeForParametersRef);
+                        var resumeContinuationRef =
+                            _memberRefRegistry.GetOrAddMethod(
+                                typeof(JavaScriptRuntime.CompiledContinuation),
+                                nameof(JavaScriptRuntime.CompiledContinuation.Resume),
+                                Type.EmptyTypes);
+                        ilEncoder.OpCode(ILOpCode.Callvirt);
+                        ilEncoder.Token(resumeContinuationRef);
                         ilEncoder.OpCode(ILOpCode.Pop);
 
                         ilEncoder.LoadLocal(0);
@@ -455,8 +476,7 @@ internal sealed partial class LIRToILCompiler
                         ilEncoder.Token(prependRef);
                         ilEncoder.StoreArgument(GetIlArgIndexForScopesArray(methodDescriptor)); // scopes = modified scopes array
 
-                        // Initialize _moveNext = Closure.Bind(delegate, scopesArray)
-                        // Note: scopes now contains the modified scopes array with leaf scope at [0]
+                        // Initialize the private resumable continuation.
                         ilEncoder.LoadLocal(0);  // for stfld _moveNext later
 
                         var callableId = MethodBody.CallableId;
@@ -493,48 +513,25 @@ internal sealed partial class LIRToILCompiler
                             ilEncoder.OpCode(ILOpCode.Ldftn);
                             ilEncoder.Token(methodHandle);
                             ilEncoder.OpCode(ILOpCode.Newobj);
-                            ilEncoder.Token(_bclReferences.GetFuncCtorRef(jsParamCount));
+                            ilEncoder.Token(
+                                _bclReferences
+                                    .GetContinuationDelegateCtorRef(
+                                        jsParamCount));
 
-                            // Load modified scopes array
                             var scopesArgIndex = GetIlArgIndexForScopesArray(methodDescriptor);
                             ilEncoder.LoadArgument(scopesArgIndex);
-
-                            if (jsParamCount == 0)
-                            {
-                                // Call Closure.Bind(delegate, scopes)
-                                var bindRef = _memberRefRegistry.GetOrAddMethod(
-                                    typeof(JavaScriptRuntime.Closure),
-                                    nameof(JavaScriptRuntime.Closure.Bind),
-                                    parameterTypes: new[] { typeof(object), typeof(object[]) });
-                                ilEncoder.OpCode(ILOpCode.Call);
-                                ilEncoder.Token(bindRef);
-                            }
-                            else
-                            {
-                                // Call Closure.BindMoveNext(delegate, scopes, boundArgs)
-                                // Build boundArgs = new object[jsParamCount] filled from method arguments (excluding scopes).
-                                ilEncoder.LoadConstantI4(jsParamCount);
-                                ilEncoder.OpCode(ILOpCode.Newarr);
-                                ilEncoder.Token(_bclReferences.ObjectType);
-
-                                var jsParamsStartInSignature = Math.Max(0, methodDescriptor.Parameters.Count - jsParamCount);
-                                var firstJsArgIndex = (methodDescriptor.IsStatic ? 0 : 1) + jsParamsStartInSignature;
-                                for (var i = 0; i < jsParamCount; i++)
-                                {
-                                    EmitStoreBoundArgument(
-                                        ilEncoder,
-                                        i,
-                                        firstJsArgIndex + i,
-                                        methodDescriptor.Parameters[jsParamsStartInSignature + i]);
-                                }
-
-                                var bindMoveNextRef = _memberRefRegistry.GetOrAddMethod(
-                                    typeof(JavaScriptRuntime.Closure),
-                                    nameof(JavaScriptRuntime.Closure.BindMoveNext),
+                            EmitCurrentArgumentsOrFallback(
+                                ilEncoder,
+                                methodDescriptor,
+                                jsParamCount,
+                                callableId);
+                            var createContinuationRef =
+                                _memberRefRegistry.GetOrAddMethod(
+                                    typeof(JavaScriptRuntime.CompiledContinuation),
+                                    nameof(JavaScriptRuntime.CompiledContinuation.Create),
                                     parameterTypes: new[] { typeof(object), typeof(object[]), typeof(object[]) });
-                                ilEncoder.OpCode(ILOpCode.Call);
-                                ilEncoder.Token(bindMoveNextRef);
-                            }
+                            ilEncoder.OpCode(ILOpCode.Call);
+                            ilEncoder.Token(createContinuationRef);
                         }
                         else
                         {
@@ -628,7 +625,7 @@ internal sealed partial class LIRToILCompiler
                         ilEncoder.Token(prependRef);
                         ilEncoder.StoreArgument(scopesArgIndex); // scopes = modified scopes array
 
-                        // Build step delegate (to this method) and bind to the modified scopes array
+                        // Build the private step continuation for this invocation.
                         var callableId = MethodBody.CallableId
                             ?? throw new InvalidOperationException("Generator method is missing CallableId.");
                         var reader = _serviceProvider.GetService<ICallableDeclarationReader>()
@@ -654,30 +651,27 @@ internal sealed partial class LIRToILCompiler
                         ilEncoder.OpCode(ILOpCode.Ldftn);
                         ilEncoder.Token(methodHandle);
                         ilEncoder.OpCode(ILOpCode.Newobj);
-                        ilEncoder.Token(_bclReferences.GetFuncCtorRef(jsParamCount));
-
-                        // Closure.Bind(delegate, scopes)
+                        ilEncoder.Token(
+                            _bclReferences
+                                .GetContinuationDelegateCtorRef(
+                                    jsParamCount));
                         ilEncoder.LoadArgument(scopesArgIndex);
-                        var bindRef = _memberRefRegistry.GetOrAddMethod(
-                            typeof(JavaScriptRuntime.Closure),
-                            nameof(JavaScriptRuntime.Closure.Bind),
-                            parameterTypes: new[] { typeof(object), typeof(object[]) });
-                        ilEncoder.OpCode(ILOpCode.Call);
-                        ilEncoder.Token(bindRef);
-
-                        // Push scopes array (ctor arg 2)
-                        ilEncoder.LoadArgument(scopesArgIndex);
-
-                        // Preserve the exact generator-call argument list.
                         EmitCurrentArgumentsOrFallback(
                             ilEncoder,
                             methodDescriptor,
-                            jsParamCount);
+                            jsParamCount,
+                            callableId);
+                        var createContinuationRef =
+                            _memberRefRegistry.GetOrAddMethod(
+                            typeof(JavaScriptRuntime.CompiledContinuation),
+                            nameof(JavaScriptRuntime.CompiledContinuation.Create),
+                            parameterTypes: new[] { typeof(object), typeof(object[]), typeof(object[]) });
+                        ilEncoder.OpCode(ILOpCode.Call);
+                        ilEncoder.Token(createContinuationRef);
 
-                        // new GeneratorObject(step, scopes, args)
                         var genObjCtor = _memberRefRegistry.GetOrAddConstructor(
                             typeof(JavaScriptRuntime.GeneratorObject),
-                            parameterTypes: new[] { typeof(object), typeof(object[]), typeof(object[]) });
+                            parameterTypes: new[] { typeof(JavaScriptRuntime.CompiledContinuation) });
                         ilEncoder.OpCode(ILOpCode.Newobj);
                         ilEncoder.Token(genObjCtor);
                         ilEncoder.OpCode(ILOpCode.Ret);

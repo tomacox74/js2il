@@ -116,6 +116,44 @@
 				IL_0001: ret
 			} // end of method FunctionObject_FunctionDeclaration_9D72AA57_sum::get_RequiresInvocationContext
 
+			.method assembly hidebysig static 
+				object __js_call_with_arguments__ (
+					class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject functionObject,
+					object[] scopes,
+					object[] arguments
+				) cil managed 
+			{
+				// Header size: 12
+				// Code size: 35 (0x23)
+				.maxstack 8
+				.locals init (
+					[0] object
+				)
+
+				IL_0000: ldarg.0
+				IL_0001: ldarg.2
+				IL_0002: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushGeneratedFunctionDirectCall(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject, object[])
+				.try
+				{
+					IL_0007: ldarg.1
+					IL_0008: ldc.i4.0
+					IL_0009: ldelem.ref
+					IL_000a: castclass Modules.Function_RestParameters_Basic/Scope
+					IL_000f: ldnull
+					IL_0010: call object Modules.Function_RestParameters_Basic/sum::__js_call__(class Modules.Function_RestParameters_Basic/Scope, object)
+					IL_0015: stloc.0
+					IL_0016: leave IL_0021
+				} // end .try
+				finally
+				{
+					IL_001b: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopGeneratedFunctionDirectCall()
+					IL_0020: endfinally
+				} // end handler
+
+				IL_0021: ldloc.0
+				IL_0022: ret
+			} // end of method FunctionObject_FunctionDeclaration_9D72AA57_sum::__js_call_with_arguments__
+
 			.method family hidebysig virtual 
 				instance object CallCore (
 					object thisArgument,

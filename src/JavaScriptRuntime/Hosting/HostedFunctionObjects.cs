@@ -10,8 +10,10 @@ internal sealed class HostedDelegateFunctionObject : JsFunctionObject
     private readonly Delegate _target;
     private readonly ParameterInfo[] _parameters;
     private readonly JsCallableScopeAbiDescriptor _abi;
+    private readonly Closure.DelegateInvokeMetadata _invokeMetadata;
     private readonly int _jsArgumentStart;
     private readonly bool _usesGeneratedAbi;
+    private readonly object[] _scopes;
 
     internal HostedDelegateFunctionObject(
         JsRuntimeInstance runtime,
@@ -24,8 +26,10 @@ internal sealed class HostedDelegateFunctionObject : JsFunctionObject
                 $"Delegate type '{target.GetType()}' does not define Invoke().",
                 nameof(target));
         _abi = JsCallableScopeAbiResolver.ResolveHosted(target);
+        _invokeMetadata = Closure.GetDelegateInvokeMetadata(target);
         _usesGeneratedAbi = _abi.IsFromAttribute
             || JsFuncDelegates.IsJsFuncDelegateType(target.GetType());
+        _scopes = [target.Target!];
         _jsArgumentStart = HostedClrInvocation.GetJsArgumentStart(
             _parameters,
             _abi.Kind);
@@ -43,14 +47,32 @@ internal sealed class HostedDelegateFunctionObject : JsFunctionObject
         object? thisArgument,
         in JsCallArguments arguments)
     {
-        var hostArguments = _usesGeneratedAbi
-            ? arguments.ToArray()
-            : _runtime.ProjectHostArguments(arguments.ToArray());
+        if (_usesGeneratedAbi)
+        {
+            return _runtime.NormalizeHostValue(
+                Closure.InvokeBuiltinDelegate(
+                    _target,
+                    _invokeMetadata,
+                    _scopes,
+                    arguments,
+                    newTarget: null));
+        }
+
+        if (HostedClrInvocation.TryInvokeFixedObjectDelegate(
+                _target,
+                arguments,
+                _runtime,
+                out var fixedResult))
+        {
+            return _runtime.NormalizeHostValue(fixedResult);
+        }
+
         var invokeArguments = HostedClrInvocation.BuildArguments(
             _parameters,
             _abi,
-            new object[] { _target.Target! },
-            hostArguments);
+            _scopes,
+            arguments,
+            _runtime.ProjectHostValue);
 
         object? result;
         try
@@ -95,6 +117,7 @@ internal sealed class HostedCallbackFunctionObject : JsFunctionObject
         object? thisArgument,
         in JsCallArguments arguments)
     {
+        // JsHostFunction intentionally defines an array ABI.
         var result = _hostFunction.Invoke(
             _runtime.ProjectHostValue(thisArgument),
             _runtime.ProjectHostArguments(arguments.ToArray()));
@@ -105,6 +128,7 @@ internal sealed class HostedCallbackFunctionObject : JsFunctionObject
         in JsCallArguments arguments,
         object? newTarget)
     {
+        // JsHostFunction intentionally defines an array ABI.
         var result = _hostFunction.Construct(
             _runtime.ProjectHostArguments(arguments.ToArray()),
             _runtime.ProjectHostValue(newTarget));
@@ -126,6 +150,7 @@ internal sealed class HostedMethodFunctionObject : JsFunctionObject
     private readonly ParameterInfo[] _parameters;
     private readonly JsCallableScopeAbiDescriptor _abi;
     private readonly int _jsArgumentStart;
+    private readonly object[] _scopes;
 
     internal HostedMethodFunctionObject(
         JsRuntimeInstance runtime,
@@ -137,6 +162,7 @@ internal sealed class HostedMethodFunctionObject : JsFunctionObject
         _method = method;
         _parameters = method.GetParameters();
         _abi = JsCallableScopeAbiResolver.ResolveHosted(method);
+        _scopes = [target];
         _jsArgumentStart = HostedClrInvocation.GetJsArgumentStart(
             _parameters,
             _abi.Kind);
@@ -170,14 +196,14 @@ internal sealed class HostedMethodFunctionObject : JsFunctionObject
         object? thisArgument,
         in JsCallArguments arguments)
     {
-        var jsArguments = _abi.IsFromAttribute
-            ? arguments.ToArray()
-            : _runtime.ProjectHostArguments(arguments.ToArray());
         var invokeArguments = HostedClrInvocation.BuildArguments(
             _parameters,
             _abi,
-            new object[] { _target },
-            jsArguments);
+            _scopes,
+            arguments,
+            _abi.IsFromAttribute
+                ? static value => value
+                : _runtime.ProjectHostValue);
 
         try
         {
@@ -195,6 +221,96 @@ internal sealed class HostedMethodFunctionObject : JsFunctionObject
 
 internal static class HostedClrInvocation
 {
+    internal static bool TryInvokeFixedObjectDelegate(
+        Delegate target,
+        in JsCallArguments arguments,
+        JsRuntimeInstance runtime,
+        out object? result)
+    {
+        switch (target)
+        {
+            case Func<object?> function:
+                result = function();
+                return true;
+            case Action action:
+                action();
+                result = null;
+                return true;
+            case Func<object, object?> function:
+                result = function(Project(runtime, arguments, 0)!);
+                return true;
+            case Action<object> action:
+                action(Project(runtime, arguments, 0)!);
+                result = null;
+                return true;
+            case Func<object, object, object?> function:
+                result = function(
+                    Project(runtime, arguments, 0)!,
+                    Project(runtime, arguments, 1)!);
+                return true;
+            case Action<object, object> action:
+                action(
+                    Project(runtime, arguments, 0)!,
+                    Project(runtime, arguments, 1)!);
+                result = null;
+                return true;
+            case Func<object, object, object, object?> function:
+                result = function(
+                    Project(runtime, arguments, 0)!,
+                    Project(runtime, arguments, 1)!,
+                    Project(runtime, arguments, 2)!);
+                return true;
+            case Action<object, object, object> action:
+                action(
+                    Project(runtime, arguments, 0)!,
+                    Project(runtime, arguments, 1)!,
+                    Project(runtime, arguments, 2)!);
+                result = null;
+                return true;
+            case Func<object, object, object, object, object?> function:
+                result = function(
+                    Project(runtime, arguments, 0)!,
+                    Project(runtime, arguments, 1)!,
+                    Project(runtime, arguments, 2)!,
+                    Project(runtime, arguments, 3)!);
+                return true;
+            case Action<object, object, object, object> action:
+                action(
+                    Project(runtime, arguments, 0)!,
+                    Project(runtime, arguments, 1)!,
+                    Project(runtime, arguments, 2)!,
+                    Project(runtime, arguments, 3)!);
+                result = null;
+                return true;
+            case Func<object, object, object, object, object, object?> function:
+                result = function(
+                    Project(runtime, arguments, 0)!,
+                    Project(runtime, arguments, 1)!,
+                    Project(runtime, arguments, 2)!,
+                    Project(runtime, arguments, 3)!,
+                    Project(runtime, arguments, 4)!);
+                return true;
+            case Action<object, object, object, object, object> action:
+                action(
+                    Project(runtime, arguments, 0)!,
+                    Project(runtime, arguments, 1)!,
+                    Project(runtime, arguments, 2)!,
+                    Project(runtime, arguments, 3)!,
+                    Project(runtime, arguments, 4)!);
+                result = null;
+                return true;
+            default:
+                result = null;
+                return false;
+        }
+    }
+
+    private static object? Project(
+        JsRuntimeInstance runtime,
+        in JsCallArguments arguments,
+        int index)
+        => runtime.ProjectHostValue(arguments.GetArgument(index));
+
     internal static int GetJsArgumentStart(
         ParameterInfo[] parameters,
         CallableScopeAbiKind abiKind)
@@ -218,7 +334,8 @@ internal static class HostedClrInvocation
         ParameterInfo[] parameters,
         JsCallableScopeAbiDescriptor abi,
         object[] scopes,
-        object?[] jsArguments)
+        in JsCallArguments jsArguments,
+        Func<object?, object?> projectArgument)
     {
         var invokeArguments = new object?[parameters.Length];
         var invokeIndex = 0;
@@ -249,8 +366,8 @@ internal static class HostedClrInvocation
 
         for (var index = 0; index < fixedCount; index++)
         {
-            invokeArguments[invokeIndex++] = index < jsArguments.Length
-                ? jsArguments[index]
+            invokeArguments[invokeIndex++] = index < jsArguments.Count
+                ? projectArgument(jsArguments.GetArgument(index))
                 : parameters[jsArgumentStart + index].HasDefaultValue
                     ? Type.Missing
                     : null;
@@ -260,13 +377,16 @@ internal static class HostedClrInvocation
         {
             var restCount = System.Math.Max(
                 0,
-                jsArguments.Length - fixedCount);
+                jsArguments.Count - fixedCount);
             var elementType = parameters[^1].ParameterType.GetElementType()
                 ?? typeof(object);
             var rest = System.Array.CreateInstance(elementType, restCount);
             for (var index = 0; index < restCount; index++)
             {
-                rest.SetValue(jsArguments[fixedCount + index], index);
+                rest.SetValue(
+                    projectArgument(
+                        jsArguments.GetArgument(fixedCount + index)),
+                    index);
             }
 
             invokeArguments[invokeIndex] = rest;

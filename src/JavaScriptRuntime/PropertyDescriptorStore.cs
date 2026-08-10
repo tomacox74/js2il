@@ -213,11 +213,6 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
             // plain-object read fast path for JsObject targets.
             MarkJsObjectNonDataDescriptors(target);
 
-            if (target is Delegate del)
-            {
-                Function.ClearDeletedMetadataProperty(del, key);
-            }
-
             var slot = _slots.GetOrCreateValue(target);
             lock (slot.WriteLock)
             {
@@ -324,6 +319,31 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
     internal static JsPropertyDescriptor CloneDescriptor(JsPropertyDescriptor descriptor)
         => descriptor;
 
+    private static object NormalizeTarget(object target)
+        => BuiltinDelegateFunctionAdapter.NormalizeJavaScriptObject(target);
+
+    private static JsPropertyDescriptor NormalizeDescriptor(
+        JsPropertyDescriptor descriptor)
+    {
+        if (descriptor.Kind == JsPropertyDescriptorKind.Data)
+        {
+            descriptor.Value =
+                BuiltinDelegateFunctionAdapter.WrapJavaScriptVisibleValue(
+                    descriptor.Value);
+        }
+        else
+        {
+            descriptor.Get =
+                BuiltinDelegateFunctionAdapter.WrapJavaScriptVisibleValue(
+                    descriptor.Get);
+            descriptor.Set =
+                BuiltinDelegateFunctionAdapter.WrapJavaScriptVisibleValue(
+                    descriptor.Set);
+        }
+
+        return descriptor;
+    }
+
     public static bool TryGetOwn(object target, string key, out JsPropertyDescriptor descriptor)
         => GetOwnLookup(target, key, out descriptor) == PropertyDescriptorLookup.Found;
 
@@ -334,6 +354,7 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
     /// </summary>
     internal static PropertyDescriptorLookup GetOwnLookup(object target, string key, out JsPropertyDescriptor descriptor)
     {
+        target = NormalizeTarget(target);
         if (target is JsObject jsObject && jsObject is IExoticJsObject)
         {
             return jsObject.GetOwnPropertyDescriptor(key, out descriptor);
@@ -353,6 +374,7 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
         string key,
         out JsPropertyDescriptor descriptor)
     {
+        target = NormalizeTarget(target);
         ValidateTargetAndKey(target, key);
 
         if (GetLookupStore(target) is PropertyDescriptorStore runtimeStore)
@@ -391,6 +413,7 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
     public static bool HasAny(object target)
     {
         ArgumentNullException.ThrowIfNull(target);
+        target = NormalizeTarget(target);
 
         if (target is JsObject jsObject)
         {
@@ -407,12 +430,16 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
     }
 
     internal static bool HasIntrinsicProperties(object target)
-        => target is JsObject jsObject
+    {
+        target = NormalizeTarget(target);
+        return target is JsObject jsObject
             ? jsObject.HasSharedIntrinsicBaseline
             : _intrinsicStore.HasAny(target);
+    }
 
     internal static bool IsDeleted(object target, string key)
     {
+        target = NormalizeTarget(target);
         ValidateTargetAndKey(target, key);
         return GetLookupStore(target) is PropertyDescriptorStore runtimeStore
             && runtimeStore.HasDeletedOverride(target, key);
@@ -420,6 +447,8 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
 
     public static void DefineOrUpdate(object target, string key, JsPropertyDescriptor descriptor)
     {
+        target = NormalizeTarget(target);
+        descriptor = NormalizeDescriptor(descriptor);
         ValidateTargetAndKey(target, key);
 
         if (target is JsObject jsObject)
@@ -451,6 +480,8 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
     {
         ArgumentNullException.ThrowIfNull(source);
         ArgumentNullException.ThrowIfNull(target);
+        source = NormalizeTarget(source);
+        target = NormalizeTarget(target);
 
         foreach (var key in GetOwnKeys(source))
         {
@@ -464,6 +495,7 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
     public static IEnumerable<string> GetOwnKeys(object target)
     {
         ArgumentNullException.ThrowIfNull(target);
+        target = NormalizeTarget(target);
 
         if (target is JsObject jsObject)
         {
@@ -481,6 +513,7 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
 
     public static bool Delete(object target, string key)
     {
+        target = NormalizeTarget(target);
         ValidateTargetAndKey(target, key);
 
         if (target is JsObject jsObject)
@@ -513,6 +546,7 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
     internal static void Clear(object target)
     {
         ArgumentNullException.ThrowIfNull(target);
+        target = NormalizeTarget(target);
         if (target is JsObject jsObject)
         {
             if (jsObject.HasSharedIntrinsicBaseline)
@@ -535,6 +569,7 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
     internal static bool HasExternalDescriptorStateForTests(object target)
     {
         ArgumentNullException.ThrowIfNull(target);
+        target = NormalizeTarget(target);
         if (_intrinsicStore.HasSlot(target))
         {
             return true;
@@ -889,11 +924,6 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
         if (!IsMirroredDefaultDataDescriptor(descriptor))
         {
             MarkJsObjectNonDataDescriptors(target);
-        }
-
-        if (target is Delegate del)
-        {
-            Function.ClearDeletedMetadataProperty(del, key);
         }
 
         var hasIntrinsic = TryGetIntrinsicBaseline(target, key, out _);

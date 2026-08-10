@@ -94,6 +94,9 @@ namespace Jroc.Tests.Function
         public Task Function_Arguments_Basics() { var testName = nameof(Function_Arguments_Basics); return GenerateTest(testName); }
 
         [Fact]
+        public Task Function_Arguments_CalleeIdentity() { var testName = nameof(Function_Arguments_CalleeIdentity); return GenerateTest(testName); }
+
+        [Fact]
         public Task Function_Arguments_NoFalsePositive_ObjectLiteralKey() { var testName = nameof(Function_Arguments_NoFalsePositive_ObjectLiteralKey); return GenerateTest(testName); }
 
         [Fact]

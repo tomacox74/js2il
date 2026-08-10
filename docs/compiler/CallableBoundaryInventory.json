@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "umbrellaIssue": 1707,
   "boundaries": [
     {
@@ -15,56 +15,57 @@
     {
       "id": "compiler-invocation-lowering",
       "roles": [ "producer", "consumer" ],
-      "classifications": [ "direct-call", "materialization", "dynamic-call", "construction" ],
-      "trackingIssues": [ 768, 1710, 1713, 1721 ],
+      "classifications": [ "direct-call", "materialization", "dynamic-call", "construction", "continuation", "bootstrap" ],
+      "trackingIssues": [ 768, 1710, 1713, 1721, 1722 ],
       "sourceGlobs": [
         "src/Compiler/IR/*.cs",
         "src/Compiler/IR/**/*.cs",
         "src/Compiler/IL/*.cs"
       ],
-      "rationale": "Chooses direct, dynamic, member, spread, and construction call paths and emits their IL."
+      "rationale": "Chooses direct, dynamic, member, spread, and construction call paths, emits generated function-object calls, and creates only the allowlisted private resumable continuation delegates."
     },
     {
       "id": "compiler-callable-generators",
       "roles": [ "producer", "consumer" ],
-      "classifications": [ "direct-call", "materialization", "construction" ],
-      "trackingIssues": [ 1706, 1711, 1712, 1713, 1714, 1717, 1718 ],
+      "classifications": [ "direct-call", "materialization", "construction", "bootstrap" ],
+      "trackingIssues": [ 1706, 1711, 1712, 1713, 1714, 1717, 1718, 1722 ],
       "sourceGlobs": [
         "src/Compiler/JsMethodCompiler.cs",
         "src/Compiler/Services/ILGenerators/*.cs"
       ],
-      "rationale": "Emits function, arrow, class, async, and generator bodies plus the current delegate materialization sites."
+      "rationale": "Emits canonical typed function, arrow, class, async, and generator bodies. JavaScript-visible materialization uses generated JsFunctionObject subclasses; module bootstrap remains an explicit ABI."
     },
     {
       "id": "compiler-callable-support",
       "roles": [ "producer", "consumer" ],
-      "classifications": [ "direct-call", "materialization", "dynamic-call", "export-interop", "reflection" ],
+      "classifications": [ "direct-call", "materialization", "dynamic-call", "export-interop", "reflection", "continuation", "bootstrap", "host-adapter" ],
       "trackingIssues": [ 1709, 1711, 1720, 1722 ],
       "sourceGlobs": [
         "src/Compiler/Services/AssemblyGenerator.cs",
         "src/Compiler/Services/BaseClassLibraryReferences.cs",
+        "src/Compiler/CompilerServices.cs",
         "src/Compiler/Services/Runtime.cs",
         "src/Compiler/Services/TypeGenerator.cs",
         "src/Compiler/Services/Contracts/*.cs",
         "src/Compiler/Utilities/Ecma335/*.cs",
         "src/Compiler/Utilities/JavaScriptCallableNaming.cs"
       ],
-      "rationale": "Defines delegate/runtime references, emitted module contracts, and CLR metadata used to expose callable values."
+      "rationale": "Defines generated function-object/runtime references, canonical callable metadata, explicit host adapters, private continuation ABI references, and the intentional ModuleMainDelegate/RequireDelegate bootstrap contracts."
     },
     {
       "id": "runtime-core-callables",
       "roles": [ "producer", "consumer" ],
-      "classifications": [ "materialization", "dynamic-call", "construction", "callback", "reflection" ],
+      "classifications": [ "materialization", "dynamic-call", "construction", "callback", "reflection", "continuation", "host-adapter", "bootstrap" ],
       "trackingIssues": [ 1709, 1710, 1713, 1715, 1716, 1717, 1718, 1719, 1722 ],
       "sourceGlobs": [
         "src/JavaScriptRuntime/*.cs"
       ],
-      "rationale": "Contains Closure, Function, object/proxy operations, async/generator runtime support, built-in callables, and callback dispatch."
+      "rationale": "Contains centralized CallableOperations classification, JsFunctionObject implementations, explicit built-in delegate adapters, private async/generator continuations, and callback dispatch."
     },
     {
       "id": "runtime-engine-callbacks",
-      "roles": [ "consumer" ],
-      "classifications": [ "dynamic-call", "callback", "export-interop" ],
+      "roles": [ "producer", "consumer" ],
+      "classifications": [ "dynamic-call", "callback", "export-interop", "bootstrap" ],
       "trackingIssues": [ 1719, 1720 ],
       "sourceGlobs": [
         "src/JavaScriptRuntime/Engine/*.cs"
@@ -85,7 +86,7 @@
     {
       "id": "runtime-hosting-exports",
       "roles": [ "producer", "consumer" ],
-      "classifications": [ "dynamic-call", "export-interop", "reflection" ],
+      "classifications": [ "materialization", "dynamic-call", "export-interop", "reflection" ],
       "trackingIssues": [ 1709, 1710, 1720 ],
       "sourceGlobs": [
         "src/JavaScriptRuntime/Hosting/*.cs"
@@ -95,12 +96,52 @@
     {
       "id": "runtime-commonjs-boundaries",
       "roles": [ "producer", "consumer" ],
-      "classifications": [ "dynamic-call", "callback", "export-interop" ],
-      "trackingIssues": [ 1709, 1719, 1720 ],
+      "classifications": [ "dynamic-call", "callback", "export-interop", "bootstrap" ],
+      "trackingIssues": [ 1709, 1719, 1720, 1722 ],
       "sourceGlobs": [
         "src/JavaScriptRuntime/CommonJS/*.cs"
       ],
-      "rationale": "Creates module-main and require delegates and moves callable values through CommonJS exports."
+      "rationale": "Retains ModuleMainDelegate and RequireDelegate as intentional bootstrap ABI boundaries while moving compiled JavaScript exports as JsFunctionObject values."
+    }
+  ],
+  "intentionalDelegateBoundaries": [
+    {
+      "id": "module-main-bootstrap",
+      "sourceGlobs": [
+        "src/Compiler/Services/AssemblyGenerator.cs",
+        "src/JavaScriptRuntime/CommonJS/*.cs"
+      ],
+      "symbols": [ "ModuleMainDelegate" ],
+      "rationale": "The generated assembly entry point and Engine.Execute use a stable CLR bootstrap ABI before JavaScript callable semantics begin."
+    },
+    {
+      "id": "commonjs-require-bootstrap",
+      "sourceGlobs": [
+        "src/Compiler/Services/TypeGenerator.cs",
+        "src/JavaScriptRuntime/CommonJS/*.cs"
+      ],
+      "symbols": [ "RequireDelegate" ],
+      "rationale": "CommonJS require is injected by the host as a fixed module-loader ABI and is not a materialized compiled JavaScript function."
+    },
+    {
+      "id": "resumable-continuations",
+      "sourceGlobs": [
+        "src/Compiler/IL/LIRToILCompiler.InstructionEmission.LeafScopeInstance.cs",
+        "src/JavaScriptRuntime/CompiledContinuation.cs"
+      ],
+      "symbols": [ "CompiledContinuation" ],
+      "rationale": "Async, generator, and async-generator step delegates are immediately enclosed in a non-callable CompiledContinuation and cannot escape as JavaScript values."
+    },
+    {
+      "id": "builtin-host-adapters",
+      "sourceGlobs": [
+        "src/JavaScriptRuntime/BuiltinDelegateFunctionAdapter.cs",
+        "src/JavaScriptRuntime/Closure.cs",
+        "src/JavaScriptRuntime/Hosting/HostedFunctionObjects.cs",
+        "src/JavaScriptRuntime/Hosting/JsRuntimeInstance.cs"
+      ],
+      "symbols": [ "BuiltinDelegateFunctionAdapter", "HostedDelegateFunctionObject", "JsHostFunction" ],
+      "rationale": "Runtime-owned built-ins and CLR host functions cross into JavaScript only through explicit, identity-stable function-object adapters; raw delegates are not classified as JavaScript callables."
     }
   ]
 }

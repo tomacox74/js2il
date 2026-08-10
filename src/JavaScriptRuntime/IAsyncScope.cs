@@ -6,5 +6,5 @@ public interface IAsyncScope
 
     PromiseWithResolvers? Deferred { get; set; }
 
-    object? MoveNext { get; set; }
+    CompiledContinuation? MoveNext { get; set; }
 }
