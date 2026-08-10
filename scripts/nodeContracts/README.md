@@ -148,6 +148,10 @@ npm run generate:node-contract-dns
 npm run check:node-contract-dns
 npm run test:node-contract-dns
 
+npm run generate:node-contract-diagnostics-channel
+npm run check:node-contract-diagnostics-channel
+npm run test:node-contract-diagnostics-channel
+
 npm run generate:node-contract-net
 npm run check:node-contract-net
 npm run test:node-contract-net

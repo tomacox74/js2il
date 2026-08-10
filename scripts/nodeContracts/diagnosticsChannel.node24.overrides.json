@@ -1,0 +1,261 @@
+{
+  "properties": [
+    {
+      "name": "Channel",
+      "type": "Object",
+      "source": "https://github.com/nodejs/node/blob/v24.18.1/lib/diagnostics_channel.js#L421-L428"
+    }
+  ],
+  "normalizedMethods": [
+    {
+      "name": "hasSubscribers",
+      "signatures": ["diagnostics_channel.hasSubscribers(name)"],
+      "parameters": [
+        { "name": "name", "type": "string|symbol" }
+      ],
+      "returnType": "boolean",
+      "source": "https://nodejs.org/docs/v24.18.1/api/diagnostics_channel.html#diagnostics_channelhassubscribersname"
+    },
+    {
+      "name": "channel",
+      "signatures": ["diagnostics_channel.channel(name)"],
+      "parameters": [
+        { "name": "name", "type": "string|symbol" }
+      ],
+      "returnType": "Object",
+      "source": "https://nodejs.org/docs/v24.18.1/api/diagnostics_channel.html#diagnostics_channelchannelname"
+    },
+    {
+      "name": "subscribe",
+      "signatures": ["diagnostics_channel.subscribe(name, onMessage)"],
+      "parameters": [
+        { "name": "name", "type": "string|symbol" },
+        { "name": "onMessage", "type": "Function" }
+      ],
+      "returnType": "undefined",
+      "source": "https://nodejs.org/docs/v24.18.1/api/diagnostics_channel.html#diagnostics_channelsubscribename-onmessage"
+    },
+    {
+      "name": "unsubscribe",
+      "signatures": ["diagnostics_channel.unsubscribe(name, onMessage)"],
+      "parameters": [
+        { "name": "name", "type": "string|symbol" },
+        { "name": "onMessage", "type": "Function" }
+      ],
+      "returnType": "boolean",
+      "source": "https://nodejs.org/docs/v24.18.1/api/diagnostics_channel.html#diagnostics_channelunsubscribename-onmessage"
+    },
+    {
+      "name": "tracingChannel",
+      "signatures": ["diagnostics_channel.tracingChannel(nameOrChannels)"],
+      "parameters": [
+        { "name": "nameOrChannels", "type": "string|Object" }
+      ],
+      "returnType": "Object",
+      "source": "https://nodejs.org/docs/v24.18.1/api/diagnostics_channel.html#diagnostics_channeltracingchannelnameorchannels"
+    }
+  ],
+  "intrinsicImplementations": {
+    "Channel": { "style": "direct" },
+    "hasSubscribers": { "style": "direct" },
+    "channel": { "style": "direct" },
+    "subscribe": { "style": "direct" },
+    "unsubscribe": { "style": "direct" }
+  },
+  "nestedContracts": [
+    {
+      "typeName": "Channel",
+      "interfaceName": "IChannel",
+      "source": "https://nodejs.org/docs/v24.18.1/api/diagnostics_channel.html#class-channel",
+      "documentation": {
+        "section": "public_api",
+        "class": "Channel"
+      },
+      "documentationOnly": true,
+      "methodCount": 6,
+      "propertyCount": 1,
+      "classMethodCount": 0,
+      "constructorSignatureCount": 0,
+      "documentationPrefix": "channel.",
+      "intrinsicType": "ChannelObject",
+      "properties": [
+        {
+          "name": "hasSubscribers",
+          "type": "boolean",
+          "source": "https://nodejs.org/docs/v24.18.1/api/diagnostics_channel.html#channelhassubscribers"
+        }
+      ],
+      "methods": [
+        {
+          "name": "publish",
+          "signatures": ["channel.publish(message)"],
+          "parameters": [{ "name": "message", "type": "any" }],
+          "returnType": "undefined",
+          "source": "https://nodejs.org/docs/v24.18.1/api/diagnostics_channel.html#channelpublishmessage"
+        },
+        {
+          "name": "subscribe",
+          "signatures": ["channel.subscribe(onMessage)"],
+          "parameters": [{ "name": "onMessage", "type": "Function" }],
+          "returnType": "undefined",
+          "source": "https://nodejs.org/docs/v24.18.1/api/diagnostics_channel.html#channelsubscribeonmessage"
+        },
+        {
+          "name": "unsubscribe",
+          "signatures": ["channel.unsubscribe(onMessage)"],
+          "parameters": [{ "name": "onMessage", "type": "Function" }],
+          "returnType": "boolean",
+          "source": "https://nodejs.org/docs/v24.18.1/api/diagnostics_channel.html#channelunsubscribeonmessage"
+        },
+        {
+          "name": "bindStore",
+          "signatures": ["channel.bindStore(store)"],
+          "parameters": [{ "name": "store", "type": "Object" }],
+          "returnType": "undefined",
+          "source": "https://nodejs.org/docs/v24.18.1/api/diagnostics_channel.html#channelbindstorestore-transform"
+        },
+        {
+          "name": "bindStore",
+          "signatures": ["channel.bindStore(store[, transform])"],
+          "parameters": [
+            { "name": "store", "type": "Object" },
+            { "name": "transform", "type": "Function" }
+          ],
+          "returnType": "undefined",
+          "source": "https://nodejs.org/docs/v24.18.1/api/diagnostics_channel.html#channelbindstorestore-transform"
+        },
+        {
+          "name": "unbindStore",
+          "signatures": ["channel.unbindStore(store)"],
+          "parameters": [{ "name": "store", "type": "Object" }],
+          "returnType": "boolean",
+          "source": "https://nodejs.org/docs/v24.18.1/api/diagnostics_channel.html#channelunbindstorestore"
+        },
+        {
+          "name": "runStores",
+          "signatures": ["channel.runStores(context, fn)"],
+          "parameters": [
+            { "name": "context", "type": "any" },
+            { "name": "fn", "type": "Function" }
+          ],
+          "returnType": "any",
+          "source": "https://nodejs.org/docs/v24.18.1/api/diagnostics_channel.html#channelrunstorescontext-fn-thisarg-args"
+        },
+        {
+          "name": "runStores",
+          "signatures": ["channel.runStores(context, fn[, thisArg[, ...args]])"],
+          "parameters": [
+            { "name": "context", "type": "any" },
+            { "name": "fn", "type": "Function" },
+            { "name": "thisArg", "type": "any" },
+            { "name": "args", "type": "any", "rest": true }
+          ],
+          "returnType": "any",
+          "source": "https://nodejs.org/docs/v24.18.1/api/diagnostics_channel.html#channelrunstorescontext-fn-thisarg-args"
+        }
+      ],
+      "intrinsicImplementations": {
+        "hasSubscribers": { "style": "direct" },
+        "publish": { "style": "direct" },
+        "subscribe": { "style": "direct", "target": "Subscribe", "returnsVoid": true },
+        "unsubscribe": { "style": "direct", "target": "Unsubscribe" }
+      }
+    },
+    {
+      "typeName": "TracingChannel",
+      "interfaceName": "ITracingChannel",
+      "source": "https://nodejs.org/docs/v24.18.1/api/diagnostics_channel.html#class-tracingchannel",
+      "documentation": {
+        "section": "public_api",
+        "class": "TracingChannel"
+      },
+      "documentationOnly": true,
+      "methodCount": 5,
+      "propertyCount": 1,
+      "classMethodCount": 0,
+      "constructorSignatureCount": 0,
+      "documentationPrefix": "tracingChannel.",
+      "properties": [
+        {
+          "name": "hasSubscribers",
+          "type": "boolean",
+          "source": "https://nodejs.org/docs/v24.18.1/api/diagnostics_channel.html#tracingchannelhassubscribers"
+        }
+      ],
+      "methods": [
+        {
+          "name": "subscribe",
+          "signatures": ["tracingChannel.subscribe(subscribers)"],
+          "parameters": [{ "name": "subscribers", "type": "Object" }],
+          "returnType": "undefined",
+          "source": "https://nodejs.org/docs/v24.18.1/api/diagnostics_channel.html#tracingchannelsubscribesubscribers"
+        },
+        {
+          "name": "unsubscribe",
+          "signatures": ["tracingChannel.unsubscribe(subscribers)"],
+          "parameters": [{ "name": "subscribers", "type": "Object" }],
+          "returnType": "boolean",
+          "source": "https://nodejs.org/docs/v24.18.1/api/diagnostics_channel.html#tracingchannelunsubscribesubscribers"
+        },
+        {
+          "name": "traceSync",
+          "signatures": ["tracingChannel.traceSync(fn)"],
+          "parameters": [{ "name": "fn", "type": "Function" }],
+          "returnType": "any",
+          "source": "https://nodejs.org/docs/v24.18.1/api/diagnostics_channel.html#tracingchanneltracesyncfn-context-thisarg-args"
+        },
+        {
+          "name": "traceSync",
+          "signatures": ["tracingChannel.traceSync(fn[, context[, thisArg[, ...args]]])"],
+          "parameters": [
+            { "name": "fn", "type": "Function" },
+            { "name": "context", "type": "Object" },
+            { "name": "thisArg", "type": "any" },
+            { "name": "args", "type": "any", "rest": true }
+          ],
+          "returnType": "any",
+          "source": "https://nodejs.org/docs/v24.18.1/api/diagnostics_channel.html#tracingchanneltracesyncfn-context-thisarg-args"
+        },
+        {
+          "name": "tracePromise",
+          "signatures": ["tracingChannel.tracePromise(fn)"],
+          "parameters": [{ "name": "fn", "type": "Function" }],
+          "returnType": "Promise",
+          "source": "https://nodejs.org/docs/v24.18.1/api/diagnostics_channel.html#tracingchanneltracepromisefn-context-thisarg-args"
+        },
+        {
+          "name": "tracePromise",
+          "signatures": ["tracingChannel.tracePromise(fn[, context[, thisArg[, ...args]]])"],
+          "parameters": [
+            { "name": "fn", "type": "Function" },
+            { "name": "context", "type": "Object" },
+            { "name": "thisArg", "type": "any" },
+            { "name": "args", "type": "any", "rest": true }
+          ],
+          "returnType": "Promise",
+          "source": "https://nodejs.org/docs/v24.18.1/api/diagnostics_channel.html#tracingchanneltracepromisefn-context-thisarg-args"
+        },
+        {
+          "name": "traceCallback",
+          "signatures": ["tracingChannel.traceCallback(fn)"],
+          "parameters": [{ "name": "fn", "type": "Function" }],
+          "returnType": "any",
+          "source": "https://nodejs.org/docs/v24.18.1/api/diagnostics_channel.html#tracingchanneltracecallbackfn-position-context-thisarg-args"
+        },
+        {
+          "name": "traceCallback",
+          "signatures": ["tracingChannel.traceCallback(fn[, position[, context[, thisArg[, ...args]]]])"],
+          "parameters": [
+            { "name": "fn", "type": "Function" },
+            { "name": "position", "type": "number" },
+            { "name": "context", "type": "Object" },
+            { "name": "thisArg", "type": "any" },
+            { "name": "args", "type": "any", "rest": true }
+          ],
+          "returnType": "any",
+          "source": "https://nodejs.org/docs/v24.18.1/api/diagnostics_channel.html#tracingchanneltracecallbackfn-position-context-thisarg-args"
+        }
+      ]
+    }
+  ]
+}
