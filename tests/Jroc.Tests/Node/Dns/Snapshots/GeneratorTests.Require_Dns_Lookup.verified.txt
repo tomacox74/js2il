@@ -1,0 +1,667 @@
+﻿// IL code: Require_Dns_Lookup
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class private auto ansi beforefieldinit Modules.Require_Dns_Lookup
+	extends [System.Runtime]System.Object
+{
+	// Nested Types
+	.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L11C71
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested public auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			.custom instance void [System.Runtime]System.Diagnostics.DebuggerDisplayAttribute::.ctor(string) = (
+				01 00 2a 53 63 6f 70 65 20 65 72 72 6f 72 3d 7b
+				65 72 72 6f 72 7d 2c 20 61 64 64 72 65 73 73 65
+				73 3d 7b 61 64 64 72 65 73 73 65 73 7d 00 00
+			)
+			// Fields
+			.field public object 'error'
+			.field public object addresses
+
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+		.class nested public auto ansi sealed beforefieldinit FunctionObject
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+		{
+			// Fields
+			.field private initonly class Modules.Require_Dns_Lookup/Scope _environment0_Require_Dns_Lookup
+
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor (
+					class Modules.Require_Dns_Lookup/Scope capture0
+				) cil managed 
+			{
+				// Header size: 1
+				// Code size: 14 (0xe)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0006: ldarg.0
+				IL_0007: ldarg.1
+				IL_0008: stfld class Modules.Require_Dns_Lookup/Scope Modules.Require_Dns_Lookup/ArrowFunction_L11C71/FunctionObject::_environment0_Require_Dns_Lookup
+				IL_000d: ret
+			} // end of method FunctionObject::.ctor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_IsConstructor () cil managed 
+			{
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_IsConstructor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_RequiresInvocationContext () cil managed 
+			{
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_RequiresInvocationContext
+
+			.method family hidebysig virtual 
+				instance object CallCore (
+					object thisArgument,
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+				) cil managed 
+			{
+				// Header size: 1
+				// Code size: 27 (0x1b)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: ldfld class Modules.Require_Dns_Lookup/Scope Modules.Require_Dns_Lookup/ArrowFunction_L11C71/FunctionObject::_environment0_Require_Dns_Lookup
+				IL_0006: ldnull
+				IL_0007: ldarg.2
+				IL_0008: ldc.i4.0
+				IL_0009: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+				IL_000e: ldarg.2
+				IL_000f: ldc.i4.1
+				IL_0010: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+				IL_0015: call object Modules.Require_Dns_Lookup/ArrowFunction_L11C71::__js_call__(class Modules.Require_Dns_Lookup/Scope, object, object, object)
+				IL_001a: ret
+			} // end of method FunctionObject::CallCore
+
+		} // end of class FunctionObject
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				class Modules.Require_Dns_Lookup/Scope scope,
+				object newTarget,
+				object 'error',
+				object addresses
+			) cil managed 
+		{
+			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
+				01 00 01 00 00 00 01 00 54 08 1c 53 69 6e 67 6c
+				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
+				74 61 54 6f 6b 65 6e 05 00 00 02
+			)
+			// Header size: 12
+			// Code size: 202 (0xca)
+			.maxstack 8
+			.locals init (
+				[0] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+				[1] object,
+				[2] bool,
+				[3] object,
+				[4] object
+			)
+
+			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0005: stloc.0
+			IL_0006: ldarg.0
+			IL_0007: ldfld object Modules.Require_Dns_Lookup/Scope::synchronous
+			IL_000c: stloc.1
+			IL_000d: ldloc.1
+			IL_000e: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
+			IL_0013: ldc.i4.0
+			IL_0014: ceq
+			IL_0016: stloc.2
+			IL_0017: ldloc.2
+			IL_0018: box [System.Runtime]System.Boolean
+			IL_001d: stloc.3
+			IL_001e: ldloc.0
+			IL_001f: ldstr "async:"
+			IL_0024: ldloc.3
+			IL_0025: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_002a: pop
+			IL_002b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0030: stloc.0
+			IL_0031: ldarg.2
+			IL_0032: ldc.i4.0
+			IL_0033: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
+			IL_0038: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+			IL_003d: stloc.2
+			IL_003e: ldloc.2
+			IL_003f: box [System.Runtime]System.Boolean
+			IL_0044: stloc.3
+			IL_0045: ldloc.0
+			IL_0046: ldstr "error:"
+			IL_004b: ldloc.3
+			IL_004c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_0051: pop
+			IL_0052: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0057: stloc.0
+			IL_0058: ldarg.3
+			IL_0059: call bool [JavaScriptRuntime]JavaScriptRuntime.Array::isArray(object)
+			IL_005e: box [System.Runtime]System.Boolean
+			IL_0063: stloc.3
+			IL_0064: ldarg.3
+			IL_0065: ldstr "length"
+			IL_006a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_006f: stloc.1
+			IL_0070: ldloc.1
+			IL_0071: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0076: ldc.r8 0.0
+			IL_007f: cgt
+			IL_0081: stloc.2
+			IL_0082: ldloc.2
+			IL_0083: box [System.Runtime]System.Boolean
+			IL_0088: stloc.s 4
+			IL_008a: ldloc.0
+			IL_008b: ldstr "addresses:"
+			IL_0090: ldloc.3
+			IL_0091: ldloc.s 4
+			IL_0093: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object, object)
+			IL_0098: pop
+			IL_0099: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_009e: stloc.0
+			IL_009f: ldarg.3
+			IL_00a0: ldc.r8 0.0
+			IL_00a9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+			IL_00ae: stloc.1
+			IL_00af: ldloc.1
+			IL_00b0: ldstr "family"
+			IL_00b5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_00ba: stloc.1
+			IL_00bb: ldloc.0
+			IL_00bc: ldstr "family:"
+			IL_00c1: ldloc.1
+			IL_00c2: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_00c7: pop
+			IL_00c8: ldnull
+			IL_00c9: ret
+		} // end of method ArrowFunction_L11C71::__js_call__
+
+	} // end of class ArrowFunction_L11C71
+
+	.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L20C46
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested public auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+		.class nested public auto ansi sealed beforefieldinit FunctionObject
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Header size: 1
+				// Code size: 7 (0x7)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0006: ret
+			} // end of method FunctionObject::.ctor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_IsConstructor () cil managed 
+			{
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_IsConstructor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_RequiresInvocationContext () cil managed 
+			{
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_RequiresInvocationContext
+
+			.method family hidebysig virtual 
+				instance object CallCore (
+					object thisArgument,
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+				) cil managed 
+			{
+				// Header size: 1
+				// Code size: 7 (0x7)
+				.maxstack 8
+
+				IL_0000: ldnull
+				IL_0001: call object Modules.Require_Dns_Lookup/ArrowFunction_L20C46::__js_call__(object)
+				IL_0006: ret
+			} // end of method FunctionObject::CallCore
+
+		} // end of class FunctionObject
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				object newTarget
+			) cil managed 
+		{
+			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
+				01 00 00 00 00 00 00 00
+			)
+			// Header size: 1
+			// Code size: 2 (0x2)
+			.maxstack 8
+
+			IL_0000: ldnull
+			IL_0001: ret
+		} // end of method ArrowFunction_L20C46::__js_call__
+
+	} // end of class ArrowFunction_L20C46
+
+	.class nested public auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
+		.custom instance void [System.Runtime]System.Diagnostics.DebuggerDisplayAttribute::.ctor(string) = (
+			01 00 1f 53 63 6f 70 65 20 73 79 6e 63 68 72 6f
+			6e 6f 75 73 3d 7b 73 79 6e 63 68 72 6f 6e 6f 75
+			73 7d 00 00
+		)
+		// Nested Types
+		.class nested public auto ansi beforefieldinit Block_L19C4
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Block_L19C4::.ctor
+
+		} // end of class Block_L19C4
+
+		.class nested public auto ansi beforefieldinit Block_L21C16
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Block_L21C16::.ctor
+
+		} // end of class Block_L21C16
+
+
+		// Fields
+		.field public object synchronous
+
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method Scope::.ctor
+
+	} // end of class Scope
+
+
+	// Methods
+	.method public hidebysig static 
+		void __js_module_init__ (
+			object exports,
+			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			object module,
+			string __filename,
+			string __dirname
+		) cil managed 
+	{
+		// Header size: 12
+		// Code size: 617 (0x269)
+		.maxstack 8
+		.locals init (
+			[0] class Modules.Require_Dns_Lookup/Scope,
+			[1] class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IDnsModule,
+			[2] class [System.Runtime]System.Exception,
+			[3] object,
+			[4] object,
+			[5] object,
+			[6] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+			[7] class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IDnsModule,
+			[8] bool,
+			[9] object,
+			[10] object,
+			[11] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
+			[12] object[],
+			[13] class Modules.Require_Dns_Lookup/ArrowFunction_L11C71/FunctionObject,
+			[14] class Modules.Require_Dns_Lookup/ArrowFunction_L20C46/FunctionObject,
+			[15] object
+		)
+
+		IL_0000: newobj instance void Modules.Require_Dns_Lookup/Scope::.ctor()
+		IL_0005: stloc.0
+		IL_0006: nop
+		IL_0007: ldarg.1
+		IL_0008: ldstr "node:dns"
+		IL_000d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireRuntime::RequireObject<class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IDnsModule>(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object)
+		IL_0012: stloc.1
+		IL_0013: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0018: stloc.s 6
+		IL_001a: ldarg.1
+		IL_001b: ldstr "dns"
+		IL_0020: call !!0 [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireRuntime::RequireObject<class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IDnsModule>(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object)
+		IL_0025: stloc.s 7
+		IL_0027: ldloc.1
+		IL_0028: ldloc.s 7
+		IL_002a: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_002f: stloc.s 8
+		IL_0031: ldloc.s 8
+		IL_0033: box [System.Runtime]System.Boolean
+		IL_0038: stloc.s 9
+		IL_003a: ldloc.s 6
+		IL_003c: ldstr "same module:"
+		IL_0041: ldloc.s 9
+		IL_0043: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_0048: pop
+		IL_0049: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_004e: stloc.s 6
+		IL_0050: ldloc.1
+		IL_0051: ldstr "getDefaultResultOrder"
+		IL_0056: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::HasOwnPropertyOverride(object, string)
+		IL_005b: brtrue IL_006d
+
+		IL_0060: ldloc.1
+		IL_0061: callvirt instance string [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IDnsModule::getDefaultResultOrder()
+		IL_0066: stloc.s 10
+		IL_0068: br IL_0080
+
+		IL_006d: ldloc.1
+		IL_006e: ldstr "getDefaultResultOrder"
+		IL_0073: ldc.i4.0
+		IL_0074: newarr [System.Runtime]System.Object
+		IL_0079: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallOwnPropertyMember(object, string, object[])
+		IL_007e: stloc.s 10
+
+		IL_0080: ldloc.s 6
+		IL_0082: ldstr "default order:"
+		IL_0087: ldloc.s 10
+		IL_0089: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_008e: pop
+		IL_008f: ldloc.1
+		IL_0090: ldstr "setDefaultResultOrder"
+		IL_0095: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::HasOwnPropertyOverride(object, string)
+		IL_009a: brtrue IL_00af
+
+		IL_009f: ldloc.1
+		IL_00a0: ldstr "ipv4first"
+		IL_00a5: callvirt instance void [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IDnsModule::setDefaultResultOrder(string)
+		IL_00aa: br IL_00c9
+
+		IL_00af: ldloc.1
+		IL_00b0: ldstr "setDefaultResultOrder"
+		IL_00b5: ldc.i4.1
+		IL_00b6: newarr [System.Runtime]System.Object
+		IL_00bb: dup
+		IL_00bc: ldc.i4.0
+		IL_00bd: ldstr "ipv4first"
+		IL_00c2: stelem.ref
+		IL_00c3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallOwnPropertyMember(object, string, object[])
+		IL_00c8: pop
+
+		IL_00c9: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00ce: stloc.s 6
+		IL_00d0: ldloc.1
+		IL_00d1: ldstr "getDefaultResultOrder"
+		IL_00d6: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::HasOwnPropertyOverride(object, string)
+		IL_00db: brtrue IL_00ed
+
+		IL_00e0: ldloc.1
+		IL_00e1: callvirt instance string [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IDnsModule::getDefaultResultOrder()
+		IL_00e6: stloc.s 10
+		IL_00e8: br IL_0100
+
+		IL_00ed: ldloc.1
+		IL_00ee: ldstr "getDefaultResultOrder"
+		IL_00f3: ldc.i4.0
+		IL_00f4: newarr [System.Runtime]System.Object
+		IL_00f9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallOwnPropertyMember(object, string, object[])
+		IL_00fe: stloc.s 10
+
+		IL_0100: ldloc.s 6
+		IL_0102: ldstr "changed order:"
+		IL_0107: ldloc.s 10
+		IL_0109: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_010e: pop
+		IL_010f: ldloc.0
+		IL_0110: ldc.i4.1
+		IL_0111: box [System.Runtime]System.Boolean
+		IL_0116: stfld object Modules.Require_Dns_Lookup/Scope::synchronous
+		IL_011b: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0120: dup
+		IL_0121: ldstr "all"
+		IL_0126: ldc.i4.1
+		IL_0127: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+		IL_012c: dup
+		IL_012d: ldstr "family"
+		IL_0132: ldc.r8 4
+		IL_013b: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
+		IL_0140: dup
+		IL_0141: ldstr "order"
+		IL_0146: ldstr "ipv4first"
+		IL_014b: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_0150: stloc.s 11
+		IL_0152: ldc.i4.1
+		IL_0153: newarr [System.Runtime]System.Object
+		IL_0158: dup
+		IL_0159: ldc.i4.0
+		IL_015a: ldloc.0
+		IL_015b: stelem.ref
+		IL_015c: stloc.s 12
+		IL_015e: ldloc.s 12
+		IL_0160: ldc.i4.0
+		IL_0161: ldelem.ref
+		IL_0162: castclass Modules.Require_Dns_Lookup/Scope
+		IL_0167: newobj instance void Modules.Require_Dns_Lookup/ArrowFunction_L11C71/FunctionObject::.ctor(class Modules.Require_Dns_Lookup/Scope)
+		IL_016c: ldc.i4.2
+		IL_016d: conv.r8
+		IL_016e: ldstr ""
+		IL_0173: ldc.i4.0
+		IL_0174: ldc.i4.0
+		IL_0175: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_Dns_Lookup/ArrowFunction_L11C71/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_017a: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_Dns_Lookup/ArrowFunction_L11C71/FunctionObject>(!!0)
+		IL_017f: stloc.s 13
+		IL_0181: ldloc.1
+		IL_0182: ldstr "lookup"
+		IL_0187: ldstr "localhost"
+		IL_018c: ldloc.s 11
+		IL_018e: ldloc.s 13
+		IL_0190: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember3(object, string, object, object, object)
+		IL_0195: pop
+		IL_0196: ldloc.0
+		IL_0197: ldc.i4.0
+		IL_0198: box [System.Runtime]System.Boolean
+		IL_019d: stfld object Modules.Require_Dns_Lookup/Scope::synchronous
+		.try
+		{
+			IL_01a2: nop
+			IL_01a3: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+			IL_01a8: dup
+			IL_01a9: ldstr "all"
+			IL_01ae: ldstr "true"
+			IL_01b3: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+			IL_01b8: stloc.s 11
+			IL_01ba: ldc.i4.1
+			IL_01bb: newarr [System.Runtime]System.Object
+			IL_01c0: dup
+			IL_01c1: ldc.i4.0
+			IL_01c2: ldloc.0
+			IL_01c3: stelem.ref
+			IL_01c4: stloc.s 12
+			IL_01c6: newobj instance void Modules.Require_Dns_Lookup/ArrowFunction_L20C46/FunctionObject::.ctor()
+			IL_01cb: ldc.i4.0
+			IL_01cc: conv.r8
+			IL_01cd: ldstr ""
+			IL_01d2: ldc.i4.0
+			IL_01d3: ldc.i4.0
+			IL_01d4: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_Dns_Lookup/ArrowFunction_L20C46/FunctionObject>(!!0, float64, string, bool, bool)
+			IL_01d9: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_Dns_Lookup/ArrowFunction_L20C46/FunctionObject>(!!0)
+			IL_01de: stloc.s 14
+			IL_01e0: ldloc.1
+			IL_01e1: ldstr "lookup"
+			IL_01e6: ldstr "localhost"
+			IL_01eb: ldloc.s 11
+			IL_01ed: ldloc.s 14
+			IL_01ef: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember3(object, string, object, object, object)
+			IL_01f4: pop
+			IL_01f5: leave IL_0265
+		} // end .try
+		catch [System.Runtime]System.Exception
+		{
+			IL_01fa: stloc.2
+			IL_01fb: ldloc.2
+			IL_01fc: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+			IL_0201: dup
+			IL_0202: brtrue IL_0217
+
+			IL_0207: pop
+			IL_0208: ldloc.2
+			IL_0209: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+			IL_020e: dup
+			IL_020f: brtrue IL_0222
+
+			IL_0214: pop
+			IL_0215: rethrow
+
+			IL_0217: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+			IL_021c: stloc.3
+			IL_021d: br IL_0223
+
+			IL_0222: stloc.3
+
+			IL_0223: ldloc.3
+			IL_0224: stloc.s 4
+			IL_0226: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_022b: stloc.s 6
+			IL_022d: ldloc.s 4
+			IL_022f: stloc.s 10
+			IL_0231: ldstr "TypeError"
+			IL_0236: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_023b: stloc.s 15
+			IL_023d: ldloc.s 10
+			IL_023f: ldloc.s 15
+			IL_0241: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::InstanceOf(object, object)
+			IL_0246: stloc.s 8
+			IL_0248: ldloc.s 8
+			IL_024a: box [System.Runtime]System.Boolean
+			IL_024f: stloc.s 9
+			IL_0251: ldloc.s 6
+			IL_0253: ldstr "invalid all:"
+			IL_0258: ldloc.s 9
+			IL_025a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_025f: pop
+			IL_0260: leave IL_0265
+		} // end handler
+
+		IL_0265: ldnull
+		IL_0266: stloc.s 5
+		IL_0268: ret
+	} // end of method Require_Dns_Lookup::__js_module_init__
+
+} // end of class Modules.Require_Dns_Lookup
+
+.class private auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Header size: 1
+		// Code size: 23 (0x17)
+		.maxstack 8
+		.entrypoint
+
+		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
+		IL_0005: ldnull
+		IL_0006: ldftn void Modules.Require_Dns_Lookup::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
+		IL_0016: ret
+	} // end of method Program::Main
+
+} // end of class Program
+
