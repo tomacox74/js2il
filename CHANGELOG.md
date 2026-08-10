@@ -6,6 +6,25 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- compiler/runtime: close issue #1722 by retiring CLR delegates as the
+  representation of materialized compiled JavaScript functions. Ordinary,
+  arrow, method/accessor, async, generator, and async-generator values now
+  require generated `JsFunctionObject` subclasses; exact calls retain
+  canonical typed MethodDefs, while spread/rest/`arguments` boundaries use
+  generated static array adapters instead of temporary delegates. Those
+  adapters receive the actual generated function object and preserve
+  `arguments.callee`, receiver, `new.target`, lexical-super, and nested
+  invocation state around the typed call; proven direct-only rest callables
+  install arguments-only state without materializing an unobservable object.
+  Remove the
+  compiled binders, expression-tree/DynamicMethod materialization,
+  delegate-type resolver, and compiled-function delegate metadata paths;
+  centralize raw built-in/host delegate handling in explicit adapters. Keep
+  only documented CommonJS bootstrap delegates and private resumable step
+  delegates enclosed by non-callable `CompiledContinuation` objects. Add
+  source/IL architecture guardrails, callable-family/hosting/repeated-load
+  coverage, and focused deterministic benchmark phases. No performance
+  improvement is claimed without same-host compatible measurements.
 - compiler/perf: close issue #1721 with conservative callable-use analysis in
   symbol/HIR lowering. Direct-only `const` arrows and anonymous function
   expressions now retain their planned callable bodies and typed direct calls

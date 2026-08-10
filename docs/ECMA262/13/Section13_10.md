@@ -4,7 +4,7 @@
 
 [Back to Section13](Section13.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-05-24T13:09:52Z
+> Last generated (UTC): 2026-08-09T18:01:58Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -31,5 +31,5 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| instanceof | Supported with Limitations | [`BinaryOperator_InstanceOf_Basic.js`](../../../tests/Jroc.Tests/BinaryOperator/JavaScript/BinaryOperator_InstanceOf_Basic.js)<br>[`S11.8.6_A2.1_T1.js`](../../../tests/Jroc.Test262.Tests/language/expressions/instanceof/JavaScript/S11.8.6_A2.1_T1.js)<br>[`S11.8.6_A2.4_T1.js`](../../../tests/Jroc.Test262.Tests/language/expressions/instanceof/JavaScript/S11.8.6_A2.4_T1.js)<br>[`S11.8.6_A3.js`](../../../tests/Jroc.Test262.Tests/language/expressions/instanceof/JavaScript/S11.8.6_A3.js) |  | Implemented through the compiler's `LIRInstanceOfOperator` lowering and `JavaScriptRuntime.Operators.InstanceOf`, with coverage for prototype-chain matches, left-to-right evaluation order, and TypeError on primitive/non-callable right-hand sides. This remains limited because the runtime currently targets delegate-backed constructors plus prototype-chain lookup/built-in error special cases, not the full `@@hasInstance` / exotic callable surface. |
+| instanceof | Supported with Limitations | [`BinaryOperator_InstanceOf_Basic.js`](../../../tests/Jroc.Tests/BinaryOperator/JavaScript/BinaryOperator_InstanceOf_Basic.js)<br>[`S11.8.6_A2.1_T1.js`](../../../tests/Jroc.Test262.Tests/language/expressions/instanceof/JavaScript/S11.8.6_A2.1_T1.js)<br>[`S11.8.6_A2.4_T1.js`](../../../tests/Jroc.Test262.Tests/language/expressions/instanceof/JavaScript/S11.8.6_A2.4_T1.js)<br>[`S11.8.6_A3.js`](../../../tests/Jroc.Test262.Tests/language/expressions/instanceof/JavaScript/S11.8.6_A3.js) |  | Implemented through the compiler's `LIRInstanceOfOperator` lowering, centralized `CallableOperations` constructor classification, and `JavaScriptRuntime.Operators.InstanceOf`, with coverage for generated function objects, prototype-chain matches, left-to-right evaluation order, and TypeError on primitive/non-callable right-hand sides. Full `@@hasInstance` and exotic callable behavior remain limited. |
 

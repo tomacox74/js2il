@@ -4,7 +4,7 @@
 
 [Back to Section8](Section8.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-07-07T21:13:38Z
+> Last generated (UTC): 2026-08-09T18:01:58Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -35,7 +35,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Instantiation of function/arrow/class callable objects | Supported with Limitations | [`Function_HelloWorld.js`](../../../tests/Jroc.Tests/Function/JavaScript/Function_HelloWorld.js)<br>[`Function_IIFE_Recursive.js`](../../../tests/Jroc.Tests/Function/JavaScript/Function_IIFE_Recursive.js)<br>[`Classes_DeclareEmptyClass.js`](../../../tests/Jroc.Tests/Classes/JavaScript/Classes_DeclareEmptyClass.js) |  | Function-like AST forms are lowered to delegate-backed callables and class types, but full spec object-internal-slot behavior for every callable form is not complete. |
+| Instantiation of function/arrow/class callable objects | Supported with Limitations | [`Function_HelloWorld.js`](../../../tests/Jroc.Tests/Function/JavaScript/Function_HelloWorld.js)<br>[`Function_IIFE_Recursive.js`](../../../tests/Jroc.Tests/Function/JavaScript/Function_IIFE_Recursive.js)<br>[`Classes_DeclareEmptyClass.js`](../../../tests/Jroc.Tests/Classes/JavaScript/Classes_DeclareEmptyClass.js) |  | Materialized ordinary, arrow, method/accessor, async, generator, and async-generator callables are generated JsFunctionObject subclasses with centralized call/construct classification. Class declarations retain generated CLR class types. Full realm-sensitive and exotic object-internal-slot behavior remains incomplete. |
 
 ### 8.6.2 ([tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-bindinginitialization))
 

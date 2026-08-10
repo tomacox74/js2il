@@ -174,7 +174,7 @@
           "tests/Jroc.Tests/Function/JavaScript/Function_Apply_ThisArg.js",
           "tests/Jroc.Tests/Function/JavaScript/Function_Apply_NullArgArray_TreatedAsEmpty.js"
         ],
-        "notes": "Implemented through centralized callable operations for generated functions, bound functions, methods, arrows, classes, proxies, and transitional delegates. Supports null/undefined argArray as an empty argument list. Full CreateListFromArrayLike semantics for every array-like exotic value remain limited."
+        "notes": "Implemented through centralized callable operations for generated functions, bound functions, methods, arrows, classes, proxies, and explicit built-in/host delegate adapters. Supports null/undefined argArray as an empty argument list. Full CreateListFromArrayLike semantics for every array-like exotic value remain limited."
       },
       {
         "clause": "20.2.3.2",
@@ -208,7 +208,7 @@
           "test/built-ins/Function/prototype/bind/15.3.4.5-2-15.js",
           "test/built-ins/Function/prototype/bind/15.3.4.5-2-16.js"
         ],
-        "notes": "Implemented as an explicit BoundFunctionObject for every callable target. Supports chained binding, bound this and argument concatenation, constructability classification, spec-aligned newTarget rewriting, target-based instanceof behavior, bound length/name metadata, and no own prototype property. Transitional delegate targets are adapted through centralized callable operations rather than represented by new bound delegates."
+        "notes": "Implemented as an explicit BoundFunctionObject for every callable target. Supports chained binding, bound this and argument concatenation, constructability classification, spec-aligned newTarget rewriting, target-based instanceof behavior, bound length/name metadata, and no own prototype property. Explicit built-in/host delegate targets are adapted through centralized callable operations rather than represented by new bound delegates."
       },
       {
         "clause": "20.2.3.3",
@@ -235,7 +235,7 @@
           "test/built-ins/Function/prototype/call/S15.3.4.4_A15.js",
           "test/built-ins/Function/prototype/call/S15.3.4.4_A16.js"
         ],
-        "notes": "Implemented through centralized callable operations for all callable representations. Covered behavior includes direct argument forwarding, primitive/ordinary thisArg cases, null/undefined global-this substitution, generated and bound function objects, and transitional delegates."
+        "notes": "Implemented through centralized callable operations for all callable representations. Covered behavior includes direct argument forwarding, primitive/ordinary thisArg cases, null/undefined global-this substitution, generated and bound function objects, and explicit built-in/host delegate adapters."
       },
       {
         "clause": "20.2.4",
@@ -276,7 +276,7 @@
         "testScripts": [
           "tests/Jroc.Tests/Function/JavaScript/Function_Prototype_ToString_Basic.js"
         ],
-        "notes": "Implemented through the common callable path with a native-source style string for generated, bound, method, class, proxy-backed, and transitional delegate callables. Full source text reconstruction and HostHasSourceTextAvailable semantics are not implemented."
+        "notes": "Implemented through the common callable path with a native-source style string for generated, bound, method, class, proxy-backed, and explicit built-in/host delegate-adapted callables. Full source text reconstruction and HostHasSourceTextAvailable semantics are not implemented."
       },
       {
         "clause": "20.2.4.1",
@@ -290,7 +290,7 @@
           "tests/Jroc.Tests/Function/JavaScript/Function_Instance_Length_Name_DescriptorOwnProperties.js",
           "tests/Jroc.Tests/Function/JavaScript/Function_Constructor_Call_Length_Name.js"
         ],
-        "notes": "Delegate-backed functions expose a numeric length property derived from ABI-aware callable parameter counting, and lazily materialize it as a non-enumerable own data descriptor (`writable: false`, `configurable: true`) so direct reads, `Object.getOwnPropertyDescriptor(...)`, and `Object.hasOwn(...)` agree. Bound functions compute `.length` as `max(target.length - boundArgsCount, 0)`. Function-constructor-created callables use the parsed parameter list to set `.length`. Exact ECMA-262 length metadata rules are not fully implemented."
+        "notes": "Generated function objects expose a numeric length property derived from ABI-aware callable parameter counting, and lazily materialize it as a non-enumerable own data descriptor (`writable: false`, `configurable: true`) so direct reads, `Object.getOwnPropertyDescriptor(...)`, and `Object.hasOwn(...)` agree. Explicit built-in/host delegate adapters use the same descriptor contract without representing compiled JavaScript functions. Bound functions compute `.length` as `max(target.length - boundArgsCount, 0)`. Function-constructor-created callables use the parsed parameter list to set `.length`. Exact ECMA-262 length metadata rules are not fully implemented."
       },
       {
         "clause": "20.2.4.2",
@@ -304,7 +304,7 @@
           "tests/Jroc.Tests/Function/JavaScript/Function_Instance_Length_Name_DescriptorOwnProperties.js",
           "tests/Jroc.Tests/Function/JavaScript/Function_Constructor_New_ConstantString_Basic.js"
         ],
-        "notes": "Delegate-backed functions expose a string name property based on the underlying CLR method name, and lazily materialize it as a non-enumerable own data descriptor (`writable: false`, `configurable: true`) so direct reads, `Object.getOwnPropertyDescriptor(...)`, and `Object.hasOwn(...)` agree. Bound functions prefix that name with `bound ` for each bind layer. Function-constructor-created callables default to `anonymous`. Exact SetFunctionName behavior is not implemented."
+        "notes": "Generated function objects expose a string name property from compiler-supplied callable metadata, and lazily materialize it as a non-enumerable own data descriptor (`writable: false`, `configurable: true`) so direct reads, `Object.getOwnPropertyDescriptor(...)`, and `Object.hasOwn(...)` agree. Explicit built-in/host delegate adapters derive their name from host metadata. Bound functions prefix that name with `bound ` for each bind layer. Function-constructor-created callables default to `anonymous`. Exact SetFunctionName behavior is not implemented."
       }
     ]
   }

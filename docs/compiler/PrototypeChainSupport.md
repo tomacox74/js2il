@@ -98,7 +98,8 @@ Concrete types:
   - Numeric index reads/writes still go to the underlying list for speed.
 
 - `JsFunctionObject : IJsCallable`
-  - Wraps a compiled delegate + captured scopes (what we already have today).
+  - Implements a compiled callable through a generated subclass with typed
+    captured environments and a canonical MethodDef.
   - Has its own properties + prototype pointer.
 
 This keeps the “fast values” model intact while giving us a spec-shaped object graph for programs that need it.
@@ -114,7 +115,7 @@ Proposed types:
 
 - `JsPropertyDescriptor`
   - Data: `{ Value, Writable, Enumerable, Configurable }`
-  - Accessor: `{ Get, Set, Enumerable, Configurable }` where `Get/Set` are `IJsCallable` or delegate-backed wrappers.
+  - Accessor: `{ Get, Set, Enumerable, Configurable }` where `Get/Set` are callable values classified by `CallableOperations`.
 
 Initial simplification (Phase 0):
 
@@ -249,12 +250,13 @@ Proposed fields/properties:
 
 - `IJsObject Prototype` (this is the function object’s `[[Prototype]]`; usually `Function.prototype`).
 - `JsPropertyBag OwnProperties` (for `length`, `name`, user-assigned properties, etc.).
-- `object Target` (the compiled delegate we have today).
-- `object[] BoundScopes` (existing closure model).
+- typed generated environment fields and optional lexical/home-object state;
+- a canonical typed MethodDef plus generic `JsCallArguments` adapter.
 
 And the callable operations:
 
-- `Call(thisArg, args)` invokes the delegate while setting `RuntimeServices.SetCurrentThis(thisArg)`.
+- `Call(thisArg, args)` enters `CallableOperations`, which installs invocation
+  state only when the generated object requires it.
 - `Construct(args, newTarget)` creates an instance object and then calls the function as a constructor.
 
 ### 6.2 Constructor Semantics and `.prototype`
@@ -287,15 +289,13 @@ JROC can keep its current early-bound method calls for classes when prototype se
 - per-instance overrides `obj.m = ...`
 - `Object.setPrototypeOf(obj, ...)`
 
-### 6.4 Interop With Existing CLR Delegate Model
+### 6.4 CLR host and built-in interop
 
-We do **not** have to abandon delegates. Instead:
-
-- Wrap delegates in `JsFunctionObject` only in prototype-aware mode.
-- Keep using `JavaScriptRuntime.Closure.Bind/BindArrow` for scope/this mechanics.
-- Teach prototype-aware `Get` to return a `JsFunctionObject` (or delegate) and prototype-aware `Call` to invoke it with the right `this`.
-
-This provides a compatibility bridge between today’s execution model and the spec-shaped future model.
+Compiled JavaScript functions always use generated `JsFunctionObject`
+subclasses. Genuine CLR host functions and runtime-owned built-ins use explicit
+`JsHostFunction` or `BuiltinDelegateFunctionAdapter` objects. CommonJS
+bootstrap delegates and non-callable resumable continuations remain isolated
+from JavaScript function representation.
 
 ## 7. Scope of Prototype Semantics We Care About
 

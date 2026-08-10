@@ -42,8 +42,10 @@ Focused coverage includes:
 - Array/Iterator callbacks, timers, nextTick, EventEmitter, FS, networking,
   child processes, JSON callbacks, and FinalizationRegistry.
 
-The legacy `Closure.BindArrow` API remains only as a compatibility/performance
-comparison surface; generated JavaScript no longer references it.
+The compiled-function binder API has been removed. Runtime-owned built-ins and
+host functions use explicit adapters, while generated async/generator step
+delegates are private `CompiledContinuation` state and cannot become a
+JavaScript function value.
 
 Eligible bare calls through `const` arrow bindings can also bypass the
 materialized object and target the canonical callable `MethodDef`. When symbol
@@ -60,7 +62,7 @@ Commands:
 ```bash
 dotnet run -c Release \
   --project tests/performance/Benchmarks/Benchmarks.csproj -- \
-  --callable-baselines --filter "*Materialize*"
+  --callable-baselines --filter "*"
 
 node scripts/runPhasedBenchmarkScenario.js dromaeo-3d-cube-modern
 node scripts/runPhasedBenchmarkScenario.js dromaeo-3d-cube
@@ -70,14 +72,18 @@ node scripts/runCubePhasedGuardrails.js --dry --il-smells
 Local results from 2026-08-06 used Ubuntu 24.04.4, Intel Xeon Platinum 8488C,
 and .NET 10.0.10.
 
-### Focused materialization
+### Historical focused materialization
 
 | Representation | Mean | Allocated |
 | --- | ---: | ---: |
 | Generated arrow object | 15.50 ns | 64 B |
-| Legacy `Closure.BindArrow` delegate | 152.064 us | 5,821 B |
+| Pre-retirement compiled delegate binder | 152.064 us | 5,821 B |
 
-Both rows used BenchmarkDotNet ShortRun with three measured iterations.
+Both rows used BenchmarkDotNet ShortRun with three measured iterations before
+issue #1722 retired the binder. The current benchmark no longer invokes or
+retains that API; it measures generated object allocation, repeated compiled
+module loading, and a loaded direct-call loop instead. This historical table
+must not be treated as a new #1722 before/after speedup claim.
 
 ### Modern cube before/after
 
@@ -96,5 +102,5 @@ On the same host, the new path is 43.7% faster and allocates 335.20 KB
 (`N = 27`) and 3,121.01 KB, so the modern fixture now beats the legacy fixture
 while allocating less.
 
-Generated IL guardrails report zero `Closure.BindArrow` sites and fourteen
+Generated IL guardrails report no compiled-function binder sites and fourteen
 generated arrow-object constructions for `dromaeo-3d-cube-modern`.

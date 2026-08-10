@@ -4,7 +4,7 @@
 
 [Back to Section10](Section10.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-05-24T13:17:15Z
+> Last generated (UTC): 2026-08-09T18:01:58Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -94,5 +94,5 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Object.create and constructor-based ordinary object creation | Supported with Limitations | [`ObjectCreate_WithPropertyDescriptors.js`](../../../tests/Jroc.Tests/Object/JavaScript/ObjectCreate_WithPropertyDescriptors.js)<br>[`ObjectCreate_NullPrototype_And_GetOwnPropertyDescriptor.js`](../../../tests/Jroc.Tests/Object/JavaScript/ObjectCreate_NullPrototype_And_GetOwnPropertyDescriptor.js)<br>[`Function_Prototype_ObjectCreate_ObjectPrototype.js`](../../../tests/Jroc.Tests/Function/JavaScript/Function_Prototype_ObjectCreate_ObjectPrototype.js)<br>`tests/Jroc.Test262.Tests/built-ins/Object/create/ExecutionTests.cs` |  | Object.create handles null and explicit prototypes, and function construction consults constructor.prototype when instantiating delegate-backed functions. The bounded test262 create ports cover null-prototype creation, undefined rejection, explicit prototype wiring, and property-bag initialization. newTarget-based default prototype selection and other constructor-side abstract operations are still simplified. |
+| Object.create and constructor-based ordinary object creation | Supported with Limitations | [`ObjectCreate_WithPropertyDescriptors.js`](../../../tests/Jroc.Tests/Object/JavaScript/ObjectCreate_WithPropertyDescriptors.js)<br>[`ObjectCreate_NullPrototype_And_GetOwnPropertyDescriptor.js`](../../../tests/Jroc.Tests/Object/JavaScript/ObjectCreate_NullPrototype_And_GetOwnPropertyDescriptor.js)<br>[`Function_Prototype_ObjectCreate_ObjectPrototype.js`](../../../tests/Jroc.Tests/Function/JavaScript/Function_Prototype_ObjectCreate_ObjectPrototype.js)<br>`tests/Jroc.Test262.Tests/built-ins/Object/create/ExecutionTests.cs` |  | Object.create handles null and explicit prototypes, and generated ordinary function objects consult constructor.prototype during construction. The bounded test262 create ports cover null-prototype creation, undefined rejection, explicit prototype wiring, and property-bag initialization. newTarget-based default prototype selection and other constructor-side abstract operations are still simplified. |
 

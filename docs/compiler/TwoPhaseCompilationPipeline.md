@@ -36,7 +36,10 @@ JROC now has a real two-phase coordinator:
   - Function declarations are compiled in plan order and finalized as a deterministic contiguous block.
   - Anonymous callables are compiled in plan order after classes/functions are declared.
   - The main module method body is compiled via IR (`JsMethodCompiler.TryCompileMainMethod`) after `DeclareClassesAndFunctions(...)` has declared/preallocated callable tokens.
-  - The runtime entry point method (`Program.Main`) is emitted directly in `AssemblyGenerator.createEntryPoint` using `InstructionEncoder` + `Runtime` (no legacy generator dependency).
+  - The runtime entry point method (`Program.Main`) is emitted directly in `AssemblyGenerator.createEntryPoint` using `InstructionEncoder` + `Runtime`; its `ModuleMainDelegate` is an intentional bootstrap ABI.
+  - Every materialized compiled callable is a generated `JsFunctionObject`
+    subclass. Resumable `ldftn` sites are private step delegates immediately
+    wrapped by `CompiledContinuation`.
 
 What is *still incomplete* (post-Milestone 2c):
 
@@ -50,7 +53,8 @@ What is *still incomplete* (post-Milestone 2c):
 Today, compilation is effectively interleaved by generator call order (e.g., “declare classes, then functions, then arrows”). In practice, many of these “declare” steps **also compile bodies**, which creates ordering hazards:
 
 - A class method compiled early might reference a function/arrow that hasn’t been compiled yet.
-- IR lowering and/or IL emission can require a callable handle to exist (to emit `ldftn` + delegate construction).
+- IR lowering and/or IL emission can require a callable handle to exist for a
+  direct canonical MethodDef call or generated function-object adapter.
 - When callable tokens aren’t populated yet, the IR pipeline should fail fast (two-phase ordering + strict mode are intended to prevent on-demand compilation).
 
 A two-phase pipeline fixes this by separating:
@@ -110,7 +114,7 @@ This is the abstraction that replaces “function cache vs arrow cache vs class 
 **Core responsibilities** (what the backing store actually owns):
 
 - **Catalog:** which `CallableId`s exist for the module being compiled.
-- **Declarations:** the declared signature/descriptor needed to emit calls and delegate loads.
+- **Declarations:** the declared signature/descriptor needed to emit direct calls and generated function-object adapters.
 - **Diagnostics state:** whether a body has been compiled, plus any debug metadata (source location, display name).
 
 **Non-responsibilities** (things that should *not* live here):
