@@ -65,11 +65,21 @@ public sealed class NodeSchedulerState : IScheduler, IMicrotaskScheduler, IClean
 
     private readonly ITickSource _tickSource;
     private readonly IWaitHandle _wakeup;
+    private readonly global::JavaScriptRuntime.Node.AsyncContextRuntime? _asyncContext;
 
     public NodeSchedulerState(ITickSource tickSource, IWaitHandle waitHandle)
+        : this(tickSource, waitHandle, null)
+    {
+    }
+
+    public NodeSchedulerState(
+        ITickSource tickSource,
+        IWaitHandle waitHandle,
+        global::JavaScriptRuntime.Node.AsyncContextRuntime? asyncContext)
     {
         _tickSource = tickSource;
         _wakeup = waitHandle;
+        _asyncContext = asyncContext;
     }
 
     internal bool HasPendingWork()
@@ -312,6 +322,7 @@ public sealed class NodeSchedulerState : IScheduler, IMicrotaskScheduler, IClean
 
     object IScheduler.Schedule(Action action, TimeSpan delay)
     {
+        action = CaptureContext(action);
         var now = _tickSource.GetTicks();
         var id = System.Threading.Interlocked.Increment(ref _nextTimerId);
 
@@ -347,6 +358,7 @@ public sealed class NodeSchedulerState : IScheduler, IMicrotaskScheduler, IClean
 
     object IScheduler.ScheduleInterval(Action action, TimeSpan interval)
     {
+        action = CaptureContext(action);
         var now = _tickSource.GetTicks();
         var id = System.Threading.Interlocked.Increment(ref _nextTimerId);
 
@@ -385,6 +397,7 @@ public sealed class NodeSchedulerState : IScheduler, IMicrotaskScheduler, IClean
 
     object IScheduler.ScheduleImmediate(Action action)
     {
+        action = CaptureContext(action);
         var id = System.Threading.Interlocked.Increment(ref _nextImmediateId);
         var entry = new ImmediateEntry { id = id, Callback = action };
         lock (_immediateLock)
@@ -415,6 +428,7 @@ public sealed class NodeSchedulerState : IScheduler, IMicrotaskScheduler, IClean
 
     void IMicrotaskScheduler.QueueMicrotask(Action task)
     {
+        task = CaptureContext(task);
         lock (_micro)
         {
             _micro.Enqueue(task);
@@ -425,6 +439,7 @@ public sealed class NodeSchedulerState : IScheduler, IMicrotaskScheduler, IClean
 
     void ICleanupJobScheduler.QueueCleanupJob(Action task)
     {
+        task = CaptureContext(task);
         lock (_cleanup)
         {
             _cleanup.Enqueue(task);
@@ -435,6 +450,7 @@ public sealed class NodeSchedulerState : IScheduler, IMicrotaskScheduler, IClean
 
     internal void QueueNextTick(Action task)
     {
+        task = CaptureContext(task);
         lock (_nextTickLock)
         {
             _nextTick.Enqueue(task);
@@ -495,4 +511,7 @@ public sealed class NodeSchedulerState : IScheduler, IMicrotaskScheduler, IClean
             }
         }
     }
+
+    private Action CaptureContext(Action action)
+        => _asyncContext?.CaptureAction(action) ?? action;
 }

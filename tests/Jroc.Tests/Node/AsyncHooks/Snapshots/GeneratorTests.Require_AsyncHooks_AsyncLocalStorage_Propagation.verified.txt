@@ -1,0 +1,2460 @@
+﻿// IL code: Require_AsyncHooks_AsyncLocalStorage_Propagation
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class private auto ansi beforefieldinit Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation
+	extends [System.Runtime]System.Object
+{
+	// Nested Types
+	.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L7C22
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L8C22
+			extends [System.Runtime]System.Object
+		{
+			// Nested Types
+			.class nested public auto ansi beforefieldinit Scope
+				extends [System.Runtime]System.Object
+			{
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 8 (0x8)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+					IL_0006: nop
+					IL_0007: ret
+				} // end of method Scope::.ctor
+
+			} // end of class Scope
+
+			.class nested public auto ansi sealed beforefieldinit FunctionObject
+				extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+			{
+				// Fields
+				.field private initonly class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope _environment0_Require_AsyncHooks_AsyncLocalStorage_Propagation
+				.field private initonly object[] _transitionalScopes
+
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor (
+						class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope capture0,
+						object[] capture1
+					) cil managed 
+				{
+					// Header size: 1
+					// Code size: 21 (0x15)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+					IL_0006: ldarg.0
+					IL_0007: ldarg.1
+					IL_0008: stfld class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L7C22/ArrowFunction_L8C22/FunctionObject::_environment0_Require_AsyncHooks_AsyncLocalStorage_Propagation
+					IL_000d: ldarg.0
+					IL_000e: ldarg.2
+					IL_000f: stfld object[] Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L7C22/ArrowFunction_L8C22/FunctionObject::_transitionalScopes
+					IL_0014: ret
+				} // end of method FunctionObject::.ctor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_IsConstructor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_IsConstructor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_RequiresInvocationContext () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_RequiresInvocationContext
+
+				.method family hidebysig virtual 
+					instance object CallCore (
+						object thisArgument,
+						[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+					) cil managed 
+				{
+					// Header size: 1
+					// Code size: 13 (0xd)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: ldfld object[] Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L7C22/ArrowFunction_L8C22/FunctionObject::_transitionalScopes
+					IL_0006: ldnull
+					IL_0007: call object Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L7C22/ArrowFunction_L8C22::__js_call__(object[], object)
+					IL_000c: ret
+				} // end of method FunctionObject::CallCore
+
+			} // end of class FunctionObject
+
+
+			// Methods
+			.method public hidebysig static 
+				object __js_call__ (
+					object[] scopes,
+					object newTarget
+				) cil managed 
+			{
+				.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
+					01 00 02 00 00 00 00 00
+				)
+				// Header size: 12
+				// Code size: 50 (0x32)
+				.maxstack 8
+				.locals init (
+					[0] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+					[1] object
+				)
+
+				IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_0005: stloc.0
+				IL_0006: ldarg.0
+				IL_0007: ldc.i4.0
+				IL_0008: ldelem.ref
+				IL_0009: castclass Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope
+				IL_000e: ldfld object Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope::'storage'
+				IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_0018: ldstr "getStore"
+				IL_001d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+				IL_0022: stloc.1
+				IL_0023: ldloc.0
+				IL_0024: ldstr "nextTick:"
+				IL_0029: ldloc.1
+				IL_002a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+				IL_002f: stloc.1
+				IL_0030: ldloc.1
+				IL_0031: ret
+			} // end of method ArrowFunction_L8C22::__js_call__
+
+		} // end of class ArrowFunction_L8C22
+
+		.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L9C28
+			extends [System.Runtime]System.Object
+		{
+			// Nested Types
+			.class nested public auto ansi beforefieldinit Scope
+				extends [System.Runtime]System.Object
+			{
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 8 (0x8)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+					IL_0006: nop
+					IL_0007: ret
+				} // end of method Scope::.ctor
+
+			} // end of class Scope
+
+			.class nested public auto ansi sealed beforefieldinit FunctionObject
+				extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+			{
+				// Fields
+				.field private initonly class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope _environment0_Require_AsyncHooks_AsyncLocalStorage_Propagation
+				.field private initonly object[] _transitionalScopes
+
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor (
+						class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope capture0,
+						object[] capture1
+					) cil managed 
+				{
+					// Header size: 1
+					// Code size: 21 (0x15)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+					IL_0006: ldarg.0
+					IL_0007: ldarg.1
+					IL_0008: stfld class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L7C22/ArrowFunction_L9C28/FunctionObject::_environment0_Require_AsyncHooks_AsyncLocalStorage_Propagation
+					IL_000d: ldarg.0
+					IL_000e: ldarg.2
+					IL_000f: stfld object[] Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L7C22/ArrowFunction_L9C28/FunctionObject::_transitionalScopes
+					IL_0014: ret
+				} // end of method FunctionObject::.ctor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_IsConstructor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_IsConstructor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_RequiresInvocationContext () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_RequiresInvocationContext
+
+				.method family hidebysig virtual 
+					instance object CallCore (
+						object thisArgument,
+						[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+					) cil managed 
+				{
+					// Header size: 1
+					// Code size: 13 (0xd)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: ldfld object[] Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L7C22/ArrowFunction_L9C28/FunctionObject::_transitionalScopes
+					IL_0006: ldnull
+					IL_0007: call object Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L7C22/ArrowFunction_L9C28::__js_call__(object[], object)
+					IL_000c: ret
+				} // end of method FunctionObject::CallCore
+
+			} // end of class FunctionObject
+
+
+			// Methods
+			.method public hidebysig static 
+				object __js_call__ (
+					object[] scopes,
+					object newTarget
+				) cil managed 
+			{
+				.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
+					01 00 02 00 00 00 00 00
+				)
+				// Header size: 12
+				// Code size: 50 (0x32)
+				.maxstack 8
+				.locals init (
+					[0] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+					[1] object
+				)
+
+				IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_0005: stloc.0
+				IL_0006: ldarg.0
+				IL_0007: ldc.i4.0
+				IL_0008: ldelem.ref
+				IL_0009: castclass Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope
+				IL_000e: ldfld object Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope::'storage'
+				IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_0018: ldstr "getStore"
+				IL_001d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+				IL_0022: stloc.1
+				IL_0023: ldloc.0
+				IL_0024: ldstr "promise:"
+				IL_0029: ldloc.1
+				IL_002a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+				IL_002f: stloc.1
+				IL_0030: ldloc.1
+				IL_0031: ret
+			} // end of method ArrowFunction_L9C28::__js_call__
+
+		} // end of class ArrowFunction_L9C28
+
+		.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L10C16
+			extends [System.Runtime]System.Object
+		{
+			// Nested Types
+			.class nested public auto ansi beforefieldinit Scope
+				extends [System.Runtime]System.Object
+			{
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 8 (0x8)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+					IL_0006: nop
+					IL_0007: ret
+				} // end of method Scope::.ctor
+
+			} // end of class Scope
+
+			.class nested public auto ansi sealed beforefieldinit FunctionObject
+				extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+			{
+				// Fields
+				.field private initonly class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope _environment0_Require_AsyncHooks_AsyncLocalStorage_Propagation
+				.field private initonly object[] _transitionalScopes
+
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor (
+						class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope capture0,
+						object[] capture1
+					) cil managed 
+				{
+					// Header size: 1
+					// Code size: 21 (0x15)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+					IL_0006: ldarg.0
+					IL_0007: ldarg.1
+					IL_0008: stfld class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L7C22/ArrowFunction_L10C16/FunctionObject::_environment0_Require_AsyncHooks_AsyncLocalStorage_Propagation
+					IL_000d: ldarg.0
+					IL_000e: ldarg.2
+					IL_000f: stfld object[] Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L7C22/ArrowFunction_L10C16/FunctionObject::_transitionalScopes
+					IL_0014: ret
+				} // end of method FunctionObject::.ctor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_IsConstructor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_IsConstructor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_RequiresInvocationContext () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_RequiresInvocationContext
+
+				.method family hidebysig virtual 
+					instance object CallCore (
+						object thisArgument,
+						[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+					) cil managed 
+				{
+					// Header size: 1
+					// Code size: 13 (0xd)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: ldfld object[] Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L7C22/ArrowFunction_L10C16/FunctionObject::_transitionalScopes
+					IL_0006: ldnull
+					IL_0007: call object Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L7C22/ArrowFunction_L10C16::__js_call__(object[], object)
+					IL_000c: ret
+				} // end of method FunctionObject::CallCore
+
+			} // end of class FunctionObject
+
+
+			// Methods
+			.method public hidebysig static 
+				object __js_call__ (
+					object[] scopes,
+					object newTarget
+				) cil managed 
+			{
+				.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
+					01 00 02 00 00 00 00 00
+				)
+				// Header size: 12
+				// Code size: 50 (0x32)
+				.maxstack 8
+				.locals init (
+					[0] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+					[1] object
+				)
+
+				IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_0005: stloc.0
+				IL_0006: ldarg.0
+				IL_0007: ldc.i4.0
+				IL_0008: ldelem.ref
+				IL_0009: castclass Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope
+				IL_000e: ldfld object Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope::'storage'
+				IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_0018: ldstr "getStore"
+				IL_001d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+				IL_0022: stloc.1
+				IL_0023: ldloc.0
+				IL_0024: ldstr "timeout:"
+				IL_0029: ldloc.1
+				IL_002a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+				IL_002f: stloc.1
+				IL_0030: ldloc.1
+				IL_0031: ret
+			} // end of method ArrowFunction_L10C16::__js_call__
+
+		} // end of class ArrowFunction_L10C16
+
+		.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L11C18
+			extends [System.Runtime]System.Object
+		{
+			// Nested Types
+			.class nested public auto ansi beforefieldinit Scope
+				extends [System.Runtime]System.Object
+			{
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 8 (0x8)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+					IL_0006: nop
+					IL_0007: ret
+				} // end of method Scope::.ctor
+
+			} // end of class Scope
+
+			.class nested public auto ansi sealed beforefieldinit FunctionObject
+				extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+			{
+				// Fields
+				.field private initonly class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope _environment0_Require_AsyncHooks_AsyncLocalStorage_Propagation
+				.field private initonly object[] _transitionalScopes
+
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor (
+						class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope capture0,
+						object[] capture1
+					) cil managed 
+				{
+					// Header size: 1
+					// Code size: 21 (0x15)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+					IL_0006: ldarg.0
+					IL_0007: ldarg.1
+					IL_0008: stfld class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L7C22/ArrowFunction_L11C18/FunctionObject::_environment0_Require_AsyncHooks_AsyncLocalStorage_Propagation
+					IL_000d: ldarg.0
+					IL_000e: ldarg.2
+					IL_000f: stfld object[] Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L7C22/ArrowFunction_L11C18/FunctionObject::_transitionalScopes
+					IL_0014: ret
+				} // end of method FunctionObject::.ctor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_IsConstructor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_IsConstructor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_RequiresInvocationContext () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_RequiresInvocationContext
+
+				.method family hidebysig virtual 
+					instance object CallCore (
+						object thisArgument,
+						[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+					) cil managed 
+				{
+					// Header size: 1
+					// Code size: 13 (0xd)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: ldfld object[] Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L7C22/ArrowFunction_L11C18/FunctionObject::_transitionalScopes
+					IL_0006: ldnull
+					IL_0007: call object Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L7C22/ArrowFunction_L11C18::__js_call__(object[], object)
+					IL_000c: ret
+				} // end of method FunctionObject::CallCore
+
+			} // end of class FunctionObject
+
+
+			// Methods
+			.method public hidebysig static 
+				object __js_call__ (
+					object[] scopes,
+					object newTarget
+				) cil managed 
+			{
+				.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
+					01 00 02 00 00 00 00 00
+				)
+				// Header size: 12
+				// Code size: 50 (0x32)
+				.maxstack 8
+				.locals init (
+					[0] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+					[1] object
+				)
+
+				IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_0005: stloc.0
+				IL_0006: ldarg.0
+				IL_0007: ldc.i4.0
+				IL_0008: ldelem.ref
+				IL_0009: castclass Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope
+				IL_000e: ldfld object Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope::'storage'
+				IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_0018: ldstr "getStore"
+				IL_001d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+				IL_0022: stloc.1
+				IL_0023: ldloc.0
+				IL_0024: ldstr "immediate:"
+				IL_0029: ldloc.1
+				IL_002a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+				IL_002f: stloc.1
+				IL_0030: ldloc.1
+				IL_0031: ret
+			} // end of method ArrowFunction_L11C18::__js_call__
+
+		} // end of class ArrowFunction_L11C18
+
+		.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L12C37
+			extends [System.Runtime]System.Object
+		{
+			// Nested Types
+			.class nested public auto ansi beforefieldinit Scope
+				extends [System.Runtime]System.Object
+			{
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 8 (0x8)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+					IL_0006: nop
+					IL_0007: ret
+				} // end of method Scope::.ctor
+
+			} // end of class Scope
+
+			.class nested public auto ansi sealed beforefieldinit FunctionObject
+				extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+			{
+				// Fields
+				.field private initonly class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope _environment0_Require_AsyncHooks_AsyncLocalStorage_Propagation
+				.field private initonly object[] _transitionalScopes
+
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor (
+						class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope capture0,
+						object[] capture1
+					) cil managed 
+				{
+					// Header size: 1
+					// Code size: 21 (0x15)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+					IL_0006: ldarg.0
+					IL_0007: ldarg.1
+					IL_0008: stfld class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L7C22/ArrowFunction_L12C37/FunctionObject::_environment0_Require_AsyncHooks_AsyncLocalStorage_Propagation
+					IL_000d: ldarg.0
+					IL_000e: ldarg.2
+					IL_000f: stfld object[] Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L7C22/ArrowFunction_L12C37/FunctionObject::_transitionalScopes
+					IL_0014: ret
+				} // end of method FunctionObject::.ctor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_IsConstructor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_IsConstructor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_RequiresInvocationContext () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_RequiresInvocationContext
+
+				.method family hidebysig virtual 
+					instance object CallCore (
+						object thisArgument,
+						[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+					) cil managed 
+				{
+					// Header size: 1
+					// Code size: 13 (0xd)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: ldfld object[] Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L7C22/ArrowFunction_L12C37/FunctionObject::_transitionalScopes
+					IL_0006: ldnull
+					IL_0007: call object Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L7C22/ArrowFunction_L12C37::__js_call__(object[], object)
+					IL_000c: ret
+				} // end of method FunctionObject::CallCore
+
+			} // end of class FunctionObject
+
+
+			// Methods
+			.method public hidebysig static 
+				object __js_call__ (
+					object[] scopes,
+					object newTarget
+				) cil managed 
+			{
+				.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
+					01 00 02 00 00 00 00 00
+				)
+				// Header size: 12
+				// Code size: 50 (0x32)
+				.maxstack 8
+				.locals init (
+					[0] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+					[1] object
+				)
+
+				IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_0005: stloc.0
+				IL_0006: ldarg.0
+				IL_0007: ldc.i4.0
+				IL_0008: ldelem.ref
+				IL_0009: castclass Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope
+				IL_000e: ldfld object Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope::'storage'
+				IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_0018: ldstr "getStore"
+				IL_001d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+				IL_0022: stloc.1
+				IL_0023: ldloc.0
+				IL_0024: ldstr "io:"
+				IL_0029: ldloc.1
+				IL_002a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+				IL_002f: stloc.1
+				IL_0030: ldloc.1
+				IL_0031: ret
+			} // end of method ArrowFunction_L12C37::__js_call__
+
+		} // end of class ArrowFunction_L12C37
+
+		.class nested public auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+		.class nested public auto ansi sealed beforefieldinit FunctionObject
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+		{
+			// Fields
+			.field private initonly class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope _environment0_Require_AsyncHooks_AsyncLocalStorage_Propagation
+
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor (
+					class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope capture0
+				) cil managed 
+			{
+				// Header size: 1
+				// Code size: 14 (0xe)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0006: ldarg.0
+				IL_0007: ldarg.1
+				IL_0008: stfld class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L7C22/FunctionObject::_environment0_Require_AsyncHooks_AsyncLocalStorage_Propagation
+				IL_000d: ret
+			} // end of method FunctionObject::.ctor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_IsConstructor () cil managed 
+			{
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_IsConstructor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_RequiresInvocationContext () cil managed 
+			{
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_RequiresInvocationContext
+
+			.method family hidebysig virtual 
+				instance object CallCore (
+					object thisArgument,
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+				) cil managed 
+			{
+				// Header size: 1
+				// Code size: 13 (0xd)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: ldfld class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L7C22/FunctionObject::_environment0_Require_AsyncHooks_AsyncLocalStorage_Propagation
+				IL_0006: ldnull
+				IL_0007: call object Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L7C22::__js_call__(class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope, object)
+				IL_000c: ret
+			} // end of method FunctionObject::CallCore
+
+		} // end of class FunctionObject
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope scope,
+				object newTarget
+			) cil managed 
+		{
+			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
+				01 00 01 00 00 00 01 00 54 08 1c 53 69 6e 67 6c
+				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
+				74 61 54 6f 6b 65 6e 11 00 00 02
+			)
+			// Header size: 12
+			// Code size: 411 (0x19b)
+			.maxstack 8
+			.locals init (
+				[0] class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L7C22/Scope,
+				[1] object,
+				[2] object[],
+				[3] class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L7C22/ArrowFunction_L8C22/FunctionObject,
+				[4] class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L7C22/ArrowFunction_L9C28/FunctionObject,
+				[5] class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L7C22/ArrowFunction_L10C16/FunctionObject,
+				[6] class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L7C22/ArrowFunction_L11C18/FunctionObject,
+				[7] class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule,
+				[8] class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L7C22/ArrowFunction_L12C37/FunctionObject
+			)
+
+			IL_0000: newobj instance void Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L7C22/Scope::.ctor()
+			IL_0005: stloc.0
+			IL_0006: ldstr "process"
+			IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_0010: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0015: stloc.1
+			IL_0016: ldc.i4.2
+			IL_0017: newarr [System.Runtime]System.Object
+			IL_001c: dup
+			IL_001d: ldc.i4.0
+			IL_001e: ldarg.0
+			IL_001f: stelem.ref
+			IL_0020: dup
+			IL_0021: ldc.i4.1
+			IL_0022: ldloc.0
+			IL_0023: stelem.ref
+			IL_0024: stloc.2
+			IL_0025: ldloc.2
+			IL_0026: ldc.i4.0
+			IL_0027: ldelem.ref
+			IL_0028: castclass Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope
+			IL_002d: ldloc.2
+			IL_002e: newobj instance void Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L7C22/ArrowFunction_L8C22/FunctionObject::.ctor(class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope, object[])
+			IL_0033: ldc.i4.0
+			IL_0034: conv.r8
+			IL_0035: ldstr ""
+			IL_003a: ldc.i4.0
+			IL_003b: ldc.i4.0
+			IL_003c: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L7C22/ArrowFunction_L8C22/FunctionObject>(!!0, float64, string, bool, bool)
+			IL_0041: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L7C22/ArrowFunction_L8C22/FunctionObject>(!!0)
+			IL_0046: stloc.3
+			IL_0047: ldloc.1
+			IL_0048: ldstr "nextTick"
+			IL_004d: ldloc.3
+			IL_004e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_0053: pop
+			IL_0054: ldstr "Promise"
+			IL_0059: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_005e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0063: ldstr "resolve"
+			IL_0068: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+			IL_006d: stloc.1
+			IL_006e: ldloc.1
+			IL_006f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0074: stloc.1
+			IL_0075: ldc.i4.2
+			IL_0076: newarr [System.Runtime]System.Object
+			IL_007b: dup
+			IL_007c: ldc.i4.0
+			IL_007d: ldarg.0
+			IL_007e: stelem.ref
+			IL_007f: dup
+			IL_0080: ldc.i4.1
+			IL_0081: ldloc.0
+			IL_0082: stelem.ref
+			IL_0083: stloc.2
+			IL_0084: ldloc.2
+			IL_0085: ldc.i4.0
+			IL_0086: ldelem.ref
+			IL_0087: castclass Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope
+			IL_008c: ldloc.2
+			IL_008d: newobj instance void Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L7C22/ArrowFunction_L9C28/FunctionObject::.ctor(class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope, object[])
+			IL_0092: ldc.i4.0
+			IL_0093: conv.r8
+			IL_0094: ldstr ""
+			IL_0099: ldc.i4.0
+			IL_009a: ldc.i4.0
+			IL_009b: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L7C22/ArrowFunction_L9C28/FunctionObject>(!!0, float64, string, bool, bool)
+			IL_00a0: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L7C22/ArrowFunction_L9C28/FunctionObject>(!!0)
+			IL_00a5: stloc.s 4
+			IL_00a7: ldloc.1
+			IL_00a8: ldstr "then"
+			IL_00ad: ldloc.s 4
+			IL_00af: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_00b4: pop
+			IL_00b5: ldc.i4.2
+			IL_00b6: newarr [System.Runtime]System.Object
+			IL_00bb: dup
+			IL_00bc: ldc.i4.0
+			IL_00bd: ldarg.0
+			IL_00be: stelem.ref
+			IL_00bf: dup
+			IL_00c0: ldc.i4.1
+			IL_00c1: ldloc.0
+			IL_00c2: stelem.ref
+			IL_00c3: stloc.2
+			IL_00c4: ldloc.2
+			IL_00c5: ldc.i4.0
+			IL_00c6: ldelem.ref
+			IL_00c7: castclass Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope
+			IL_00cc: ldloc.2
+			IL_00cd: newobj instance void Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L7C22/ArrowFunction_L10C16/FunctionObject::.ctor(class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope, object[])
+			IL_00d2: ldc.i4.0
+			IL_00d3: conv.r8
+			IL_00d4: ldstr ""
+			IL_00d9: ldc.i4.0
+			IL_00da: ldc.i4.0
+			IL_00db: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L7C22/ArrowFunction_L10C16/FunctionObject>(!!0, float64, string, bool, bool)
+			IL_00e0: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L7C22/ArrowFunction_L10C16/FunctionObject>(!!0)
+			IL_00e5: stloc.s 5
+			IL_00e7: ldloc.s 5
+			IL_00e9: ldc.r8 0.0
+			IL_00f2: box [System.Runtime]System.Double
+			IL_00f7: ldc.i4.0
+			IL_00f8: newarr [System.Runtime]System.Object
+			IL_00fd: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::setTimeout(object, object, object[])
+			IL_0102: pop
+			IL_0103: ldc.i4.2
+			IL_0104: newarr [System.Runtime]System.Object
+			IL_0109: dup
+			IL_010a: ldc.i4.0
+			IL_010b: ldarg.0
+			IL_010c: stelem.ref
+			IL_010d: dup
+			IL_010e: ldc.i4.1
+			IL_010f: ldloc.0
+			IL_0110: stelem.ref
+			IL_0111: stloc.2
+			IL_0112: ldloc.2
+			IL_0113: ldc.i4.0
+			IL_0114: ldelem.ref
+			IL_0115: castclass Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope
+			IL_011a: ldloc.2
+			IL_011b: newobj instance void Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L7C22/ArrowFunction_L11C18/FunctionObject::.ctor(class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope, object[])
+			IL_0120: ldc.i4.0
+			IL_0121: conv.r8
+			IL_0122: ldstr ""
+			IL_0127: ldc.i4.0
+			IL_0128: ldc.i4.0
+			IL_0129: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L7C22/ArrowFunction_L11C18/FunctionObject>(!!0, float64, string, bool, bool)
+			IL_012e: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L7C22/ArrowFunction_L11C18/FunctionObject>(!!0)
+			IL_0133: stloc.s 6
+			IL_0135: ldloc.s 6
+			IL_0137: ldc.i4.0
+			IL_0138: newarr [System.Runtime]System.Object
+			IL_013d: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::setImmediate(object, object[])
+			IL_0142: pop
+			IL_0143: ldarg.0
+			IL_0144: ldfld class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope::fs
+			IL_0149: stloc.s 7
+			IL_014b: ldarg.0
+			IL_014c: ldfld object Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope::__filename
+			IL_0151: stloc.1
+			IL_0152: ldc.i4.2
+			IL_0153: newarr [System.Runtime]System.Object
+			IL_0158: dup
+			IL_0159: ldc.i4.0
+			IL_015a: ldarg.0
+			IL_015b: stelem.ref
+			IL_015c: dup
+			IL_015d: ldc.i4.1
+			IL_015e: ldloc.0
+			IL_015f: stelem.ref
+			IL_0160: stloc.2
+			IL_0161: ldloc.2
+			IL_0162: ldc.i4.0
+			IL_0163: ldelem.ref
+			IL_0164: castclass Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope
+			IL_0169: ldloc.2
+			IL_016a: newobj instance void Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L7C22/ArrowFunction_L12C37/FunctionObject::.ctor(class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope, object[])
+			IL_016f: ldc.i4.0
+			IL_0170: conv.r8
+			IL_0171: ldstr ""
+			IL_0176: ldc.i4.0
+			IL_0177: ldc.i4.0
+			IL_0178: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L7C22/ArrowFunction_L12C37/FunctionObject>(!!0, float64, string, bool, bool)
+			IL_017d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L7C22/ArrowFunction_L12C37/FunctionObject>(!!0)
+			IL_0182: stloc.s 8
+			IL_0184: ldloc.s 7
+			IL_0186: ldstr "readFile"
+			IL_018b: ldloc.1
+			IL_018c: ldstr "utf8"
+			IL_0191: ldloc.s 8
+			IL_0193: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember3(object, string, object, object, object)
+			IL_0198: pop
+			IL_0199: ldnull
+			IL_019a: ret
+		} // end of method ArrowFunction_L7C22::__js_call__
+
+	} // end of class ArrowFunction_L7C22
+
+	.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L15C24
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L16C28
+			extends [System.Runtime]System.Object
+		{
+			// Nested Types
+			.class nested public auto ansi beforefieldinit Scope
+				extends [System.Runtime]System.Object
+			{
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 8 (0x8)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+					IL_0006: nop
+					IL_0007: ret
+				} // end of method Scope::.ctor
+
+			} // end of class Scope
+
+			.class nested public auto ansi sealed beforefieldinit FunctionObject
+				extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+			{
+				// Fields
+				.field private initonly class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope _environment0_Require_AsyncHooks_AsyncLocalStorage_Propagation
+				.field private initonly object[] _transitionalScopes
+
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor (
+						class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope capture0,
+						object[] capture1
+					) cil managed 
+				{
+					// Header size: 1
+					// Code size: 21 (0x15)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+					IL_0006: ldarg.0
+					IL_0007: ldarg.1
+					IL_0008: stfld class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L15C24/ArrowFunction_L16C28/FunctionObject::_environment0_Require_AsyncHooks_AsyncLocalStorage_Propagation
+					IL_000d: ldarg.0
+					IL_000e: ldarg.2
+					IL_000f: stfld object[] Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L15C24/ArrowFunction_L16C28/FunctionObject::_transitionalScopes
+					IL_0014: ret
+				} // end of method FunctionObject::.ctor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_IsConstructor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_IsConstructor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_RequiresInvocationContext () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_RequiresInvocationContext
+
+				.method family hidebysig virtual 
+					instance object CallCore (
+						object thisArgument,
+						[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+					) cil managed 
+				{
+					// Header size: 1
+					// Code size: 13 (0xd)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: ldfld object[] Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L15C24/ArrowFunction_L16C28/FunctionObject::_transitionalScopes
+					IL_0006: ldnull
+					IL_0007: call object Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L15C24/ArrowFunction_L16C28::__js_call__(object[], object)
+					IL_000c: ret
+				} // end of method FunctionObject::CallCore
+
+			} // end of class FunctionObject
+
+
+			// Methods
+			.method public hidebysig static 
+				object __js_call__ (
+					object[] scopes,
+					object newTarget
+				) cil managed 
+			{
+				.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
+					01 00 02 00 00 00 00 00
+				)
+				// Header size: 12
+				// Code size: 50 (0x32)
+				.maxstack 8
+				.locals init (
+					[0] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+					[1] object
+				)
+
+				IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_0005: stloc.0
+				IL_0006: ldarg.0
+				IL_0007: ldc.i4.0
+				IL_0008: ldelem.ref
+				IL_0009: castclass Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope
+				IL_000e: ldfld object Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope::'storage'
+				IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_0018: ldstr "getStore"
+				IL_001d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+				IL_0022: stloc.1
+				IL_0023: ldloc.0
+				IL_0024: ldstr "sibling:"
+				IL_0029: ldloc.1
+				IL_002a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+				IL_002f: stloc.1
+				IL_0030: ldloc.1
+				IL_0031: ret
+			} // end of method ArrowFunction_L16C28::__js_call__
+
+		} // end of class ArrowFunction_L16C28
+
+		.class nested public auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+		.class nested public auto ansi sealed beforefieldinit FunctionObject
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+		{
+			// Fields
+			.field private initonly class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope _environment0_Require_AsyncHooks_AsyncLocalStorage_Propagation
+
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor (
+					class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope capture0
+				) cil managed 
+			{
+				// Header size: 1
+				// Code size: 14 (0xe)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0006: ldarg.0
+				IL_0007: ldarg.1
+				IL_0008: stfld class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L15C24/FunctionObject::_environment0_Require_AsyncHooks_AsyncLocalStorage_Propagation
+				IL_000d: ret
+			} // end of method FunctionObject::.ctor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_IsConstructor () cil managed 
+			{
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_IsConstructor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_RequiresInvocationContext () cil managed 
+			{
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_RequiresInvocationContext
+
+			.method family hidebysig virtual 
+				instance object CallCore (
+					object thisArgument,
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+				) cil managed 
+			{
+				// Header size: 1
+				// Code size: 13 (0xd)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: ldfld class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L15C24/FunctionObject::_environment0_Require_AsyncHooks_AsyncLocalStorage_Propagation
+				IL_0006: ldnull
+				IL_0007: call object Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L15C24::__js_call__(class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope, object)
+				IL_000c: ret
+			} // end of method FunctionObject::CallCore
+
+		} // end of class FunctionObject
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope scope,
+				object newTarget
+			) cil managed 
+		{
+			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
+				01 00 01 00 00 00 01 00 54 08 1c 53 69 6e 67 6c
+				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
+				74 61 54 6f 6b 65 6e 11 00 00 02
+			)
+			// Header size: 12
+			// Code size: 103 (0x67)
+			.maxstack 8
+			.locals init (
+				[0] class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L15C24/Scope,
+				[1] object,
+				[2] object[],
+				[3] class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L15C24/ArrowFunction_L16C28/FunctionObject
+			)
+
+			IL_0000: newobj instance void Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L15C24/Scope::.ctor()
+			IL_0005: stloc.0
+			IL_0006: ldstr "Promise"
+			IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_0010: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0015: ldstr "resolve"
+			IL_001a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+			IL_001f: stloc.1
+			IL_0020: ldloc.1
+			IL_0021: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0026: stloc.1
+			IL_0027: ldc.i4.2
+			IL_0028: newarr [System.Runtime]System.Object
+			IL_002d: dup
+			IL_002e: ldc.i4.0
+			IL_002f: ldarg.0
+			IL_0030: stelem.ref
+			IL_0031: dup
+			IL_0032: ldc.i4.1
+			IL_0033: ldloc.0
+			IL_0034: stelem.ref
+			IL_0035: stloc.2
+			IL_0036: ldloc.2
+			IL_0037: ldc.i4.0
+			IL_0038: ldelem.ref
+			IL_0039: castclass Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope
+			IL_003e: ldloc.2
+			IL_003f: newobj instance void Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L15C24/ArrowFunction_L16C28/FunctionObject::.ctor(class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope, object[])
+			IL_0044: ldc.i4.0
+			IL_0045: conv.r8
+			IL_0046: ldstr ""
+			IL_004b: ldc.i4.0
+			IL_004c: ldc.i4.0
+			IL_004d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L15C24/ArrowFunction_L16C28/FunctionObject>(!!0, float64, string, bool, bool)
+			IL_0052: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L15C24/ArrowFunction_L16C28/FunctionObject>(!!0)
+			IL_0057: stloc.3
+			IL_0058: ldloc.1
+			IL_0059: ldstr "then"
+			IL_005e: ldloc.3
+			IL_005f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_0064: pop
+			IL_0065: ldnull
+			IL_0066: ret
+		} // end of method ArrowFunction_L15C24::__js_call__
+
+	} // end of class ArrowFunction_L15C24
+
+	.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L20C29
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested public auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			.custom instance void [System.Runtime]System.Diagnostics.DebuggerDisplayAttribute::.ctor(string) = (
+				01 00 17 53 63 6f 70 65 20 72 65 73 6f 6c 76 65
+				3d 7b 72 65 73 6f 6c 76 65 7d 00 00
+			)
+			// Fields
+			.field public object resolve
+
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+		.class nested public auto ansi sealed beforefieldinit FunctionObject
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+		{
+			// Fields
+			.field private initonly class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope _environment0_Require_AsyncHooks_AsyncLocalStorage_Propagation
+
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor (
+					class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope capture0
+				) cil managed 
+			{
+				// Header size: 1
+				// Code size: 14 (0xe)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0006: ldarg.0
+				IL_0007: ldarg.1
+				IL_0008: stfld class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L20C29/FunctionObject::_environment0_Require_AsyncHooks_AsyncLocalStorage_Propagation
+				IL_000d: ret
+			} // end of method FunctionObject::.ctor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_IsConstructor () cil managed 
+			{
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_IsConstructor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_RequiresInvocationContext () cil managed 
+			{
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_RequiresInvocationContext
+
+			.method family hidebysig virtual 
+				instance object CallCore (
+					object thisArgument,
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+				) cil managed 
+			{
+				// Header size: 1
+				// Code size: 20 (0x14)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: ldfld class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L20C29/FunctionObject::_environment0_Require_AsyncHooks_AsyncLocalStorage_Propagation
+				IL_0006: ldnull
+				IL_0007: ldarg.2
+				IL_0008: ldc.i4.0
+				IL_0009: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+				IL_000e: call object Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L20C29::__js_call__(class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope, object, object)
+				IL_0013: ret
+			} // end of method FunctionObject::CallCore
+
+		} // end of class FunctionObject
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope scope,
+				object newTarget,
+				object resolve
+			) cil managed 
+		{
+			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
+				01 00 01 00 00 00 01 00 54 08 1c 53 69 6e 67 6c
+				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
+				74 61 54 6f 6b 65 6e 11 00 00 02
+			)
+			// Header size: 1
+			// Code size: 9 (0x9)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: ldarg.2
+			IL_0002: stfld object Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope::resolveOutside
+			IL_0007: ldnull
+			IL_0008: ret
+		} // end of method ArrowFunction_L20C29::__js_call__
+
+	} // end of class ArrowFunction_L20C29
+
+	.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L23C14
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested public auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+		.class nested public auto ansi sealed beforefieldinit FunctionObject
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+		{
+			// Fields
+			.field private initonly class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope _environment0_Require_AsyncHooks_AsyncLocalStorage_Propagation
+
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor (
+					class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope capture0
+				) cil managed 
+			{
+				// Header size: 1
+				// Code size: 14 (0xe)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0006: ldarg.0
+				IL_0007: ldarg.1
+				IL_0008: stfld class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L23C14/FunctionObject::_environment0_Require_AsyncHooks_AsyncLocalStorage_Propagation
+				IL_000d: ret
+			} // end of method FunctionObject::.ctor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_IsConstructor () cil managed 
+			{
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_IsConstructor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_RequiresInvocationContext () cil managed 
+			{
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_RequiresInvocationContext
+
+			.method family hidebysig virtual 
+				instance object CallCore (
+					object thisArgument,
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+				) cil managed 
+			{
+				// Header size: 1
+				// Code size: 13 (0xd)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: ldfld class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L23C14/FunctionObject::_environment0_Require_AsyncHooks_AsyncLocalStorage_Propagation
+				IL_0006: ldnull
+				IL_0007: call object Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L23C14::__js_call__(class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope, object)
+				IL_000c: ret
+			} // end of method FunctionObject::CallCore
+
+		} // end of class FunctionObject
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope scope,
+				object newTarget
+			) cil managed 
+		{
+			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
+				01 00 01 00 00 00 01 00 54 08 1c 53 69 6e 67 6c
+				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
+				74 61 54 6f 6b 65 6e 11 00 00 02
+			)
+			// Header size: 12
+			// Code size: 43 (0x2b)
+			.maxstack 8
+			.locals init (
+				[0] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+				[1] object
+			)
+
+			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0005: stloc.0
+			IL_0006: ldarg.0
+			IL_0007: ldfld object Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope::'storage'
+			IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0011: ldstr "getStore"
+			IL_0016: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+			IL_001b: stloc.1
+			IL_001c: ldloc.0
+			IL_001d: ldstr "outside registration:"
+			IL_0022: ldloc.1
+			IL_0023: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_0028: stloc.1
+			IL_0029: ldloc.1
+			IL_002a: ret
+		} // end of method ArrowFunction_L23C14::__js_call__
+
+	} // end of class ArrowFunction_L23C14
+
+	.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L24C25
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested public auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+		.class nested public auto ansi sealed beforefieldinit FunctionObject
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+		{
+			// Fields
+			.field private initonly class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope _environment0_Require_AsyncHooks_AsyncLocalStorage_Propagation
+
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor (
+					class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope capture0
+				) cil managed 
+			{
+				// Header size: 1
+				// Code size: 14 (0xe)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0006: ldarg.0
+				IL_0007: ldarg.1
+				IL_0008: stfld class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L24C25/FunctionObject::_environment0_Require_AsyncHooks_AsyncLocalStorage_Propagation
+				IL_000d: ret
+			} // end of method FunctionObject::.ctor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_IsConstructor () cil managed 
+			{
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_IsConstructor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_RequiresInvocationContext () cil managed 
+			{
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_RequiresInvocationContext
+
+			.method family hidebysig virtual 
+				instance object CallCore (
+					object thisArgument,
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+				) cil managed 
+			{
+				// Header size: 1
+				// Code size: 13 (0xd)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: ldfld class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L24C25/FunctionObject::_environment0_Require_AsyncHooks_AsyncLocalStorage_Propagation
+				IL_0006: ldnull
+				IL_0007: call object Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L24C25::__js_call__(class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope, object)
+				IL_000c: ret
+			} // end of method FunctionObject::CallCore
+
+		} // end of class FunctionObject
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope scope,
+				object newTarget
+			) cil managed 
+		{
+			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
+				01 00 01 00 00 00 01 00 54 08 1c 53 69 6e 67 6c
+				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
+				74 61 54 6f 6b 65 6e 11 00 00 02
+			)
+			// Header size: 12
+			// Code size: 24 (0x18)
+			.maxstack 8
+			.locals init (
+				[0] object
+			)
+
+			IL_0000: ldarg.0
+			IL_0001: ldfld object Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope::resolveOutside
+			IL_0006: ldc.i4.1
+			IL_0007: newarr [System.Runtime]System.Object
+			IL_000c: dup
+			IL_000d: ldc.i4.0
+			IL_000e: ldarg.0
+			IL_000f: stelem.ref
+			IL_0010: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
+			IL_0015: stloc.0
+			IL_0016: ldloc.0
+			IL_0017: ret
+		} // end of method ArrowFunction_L24C25::__js_call__
+
+	} // end of class ArrowFunction_L24C25
+
+	.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L27C28
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested public auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			.custom instance void [System.Runtime]System.Diagnostics.DebuggerDisplayAttribute::.ctor(string) = (
+				01 00 17 53 63 6f 70 65 20 72 65 73 6f 6c 76 65
+				3d 7b 72 65 73 6f 6c 76 65 7d 00 00
+			)
+			// Fields
+			.field public object resolve
+
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+		.class nested public auto ansi sealed beforefieldinit FunctionObject
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+		{
+			// Fields
+			.field private initonly class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope _environment0_Require_AsyncHooks_AsyncLocalStorage_Propagation
+
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor (
+					class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope capture0
+				) cil managed 
+			{
+				// Header size: 1
+				// Code size: 14 (0xe)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0006: ldarg.0
+				IL_0007: ldarg.1
+				IL_0008: stfld class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L27C28/FunctionObject::_environment0_Require_AsyncHooks_AsyncLocalStorage_Propagation
+				IL_000d: ret
+			} // end of method FunctionObject::.ctor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_IsConstructor () cil managed 
+			{
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_IsConstructor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_RequiresInvocationContext () cil managed 
+			{
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_RequiresInvocationContext
+
+			.method family hidebysig virtual 
+				instance object CallCore (
+					object thisArgument,
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+				) cil managed 
+			{
+				// Header size: 1
+				// Code size: 20 (0x14)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: ldfld class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L27C28/FunctionObject::_environment0_Require_AsyncHooks_AsyncLocalStorage_Propagation
+				IL_0006: ldnull
+				IL_0007: ldarg.2
+				IL_0008: ldc.i4.0
+				IL_0009: call instance object [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments::GetArgument(int32)
+				IL_000e: call object Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L27C28::__js_call__(class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope, object, object)
+				IL_0013: ret
+			} // end of method FunctionObject::CallCore
+
+		} // end of class FunctionObject
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope scope,
+				object newTarget,
+				object resolve
+			) cil managed 
+		{
+			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
+				01 00 01 00 00 00 01 00 54 08 1c 53 69 6e 67 6c
+				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
+				74 61 54 6f 6b 65 6e 11 00 00 02
+			)
+			// Header size: 1
+			// Code size: 9 (0x9)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: ldarg.2
+			IL_0002: stfld object Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope::resolveInside
+			IL_0007: ldnull
+			IL_0008: ret
+		} // end of method ArrowFunction_L27C28::__js_call__
+
+	} // end of class ArrowFunction_L27C28
+
+	.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L30C36
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L31C17
+			extends [System.Runtime]System.Object
+		{
+			// Nested Types
+			.class nested public auto ansi beforefieldinit Scope
+				extends [System.Runtime]System.Object
+			{
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 8 (0x8)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+					IL_0006: nop
+					IL_0007: ret
+				} // end of method Scope::.ctor
+
+			} // end of class Scope
+
+			.class nested public auto ansi sealed beforefieldinit FunctionObject
+				extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+			{
+				// Fields
+				.field private initonly class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope _environment0_Require_AsyncHooks_AsyncLocalStorage_Propagation
+				.field private initonly object[] _transitionalScopes
+
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor (
+						class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope capture0,
+						object[] capture1
+					) cil managed 
+				{
+					// Header size: 1
+					// Code size: 21 (0x15)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+					IL_0006: ldarg.0
+					IL_0007: ldarg.1
+					IL_0008: stfld class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L30C36/ArrowFunction_L31C17/FunctionObject::_environment0_Require_AsyncHooks_AsyncLocalStorage_Propagation
+					IL_000d: ldarg.0
+					IL_000e: ldarg.2
+					IL_000f: stfld object[] Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L30C36/ArrowFunction_L31C17/FunctionObject::_transitionalScopes
+					IL_0014: ret
+				} // end of method FunctionObject::.ctor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_IsConstructor () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_IsConstructor
+
+				.method public hidebysig specialname virtual 
+					instance bool get_RequiresInvocationContext () cil managed 
+				{
+					// Header size: 1
+					// Code size: 2 (0x2)
+					.maxstack 8
+
+					IL_0000: ldc.i4.0
+					IL_0001: ret
+				} // end of method FunctionObject::get_RequiresInvocationContext
+
+				.method family hidebysig virtual 
+					instance object CallCore (
+						object thisArgument,
+						[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+					) cil managed 
+				{
+					// Header size: 1
+					// Code size: 13 (0xd)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: ldfld object[] Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L30C36/ArrowFunction_L31C17/FunctionObject::_transitionalScopes
+					IL_0006: ldnull
+					IL_0007: call object Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L30C36/ArrowFunction_L31C17::__js_call__(object[], object)
+					IL_000c: ret
+				} // end of method FunctionObject::CallCore
+
+			} // end of class FunctionObject
+
+
+			// Methods
+			.method public hidebysig static 
+				object __js_call__ (
+					object[] scopes,
+					object newTarget
+				) cil managed 
+			{
+				.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
+					01 00 02 00 00 00 00 00
+				)
+				// Header size: 12
+				// Code size: 50 (0x32)
+				.maxstack 8
+				.locals init (
+					[0] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+					[1] object
+				)
+
+				IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_0005: stloc.0
+				IL_0006: ldarg.0
+				IL_0007: ldc.i4.0
+				IL_0008: ldelem.ref
+				IL_0009: castclass Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope
+				IL_000e: ldfld object Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope::'storage'
+				IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_0018: ldstr "getStore"
+				IL_001d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+				IL_0022: stloc.1
+				IL_0023: ldloc.0
+				IL_0024: ldstr "inside registration:"
+				IL_0029: ldloc.1
+				IL_002a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+				IL_002f: stloc.1
+				IL_0030: ldloc.1
+				IL_0031: ret
+			} // end of method ArrowFunction_L31C17::__js_call__
+
+		} // end of class ArrowFunction_L31C17
+
+		.class nested public auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+		.class nested public auto ansi sealed beforefieldinit FunctionObject
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+		{
+			// Fields
+			.field private initonly class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope _environment0_Require_AsyncHooks_AsyncLocalStorage_Propagation
+
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor (
+					class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope capture0
+				) cil managed 
+			{
+				// Header size: 1
+				// Code size: 14 (0xe)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0006: ldarg.0
+				IL_0007: ldarg.1
+				IL_0008: stfld class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L30C36/FunctionObject::_environment0_Require_AsyncHooks_AsyncLocalStorage_Propagation
+				IL_000d: ret
+			} // end of method FunctionObject::.ctor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_IsConstructor () cil managed 
+			{
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_IsConstructor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_RequiresInvocationContext () cil managed 
+			{
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject::get_RequiresInvocationContext
+
+			.method family hidebysig virtual 
+				instance object CallCore (
+					object thisArgument,
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+				) cil managed 
+			{
+				// Header size: 1
+				// Code size: 13 (0xd)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: ldfld class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L30C36/FunctionObject::_environment0_Require_AsyncHooks_AsyncLocalStorage_Propagation
+				IL_0006: ldnull
+				IL_0007: call object Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L30C36::__js_call__(class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope, object)
+				IL_000c: ret
+			} // end of method FunctionObject::CallCore
+
+		} // end of class FunctionObject
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope scope,
+				object newTarget
+			) cil managed 
+		{
+			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
+				01 00 01 00 00 00 01 00 54 08 1c 53 69 6e 67 6c
+				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
+				74 61 54 6f 6b 65 6e 11 00 00 02
+			)
+			// Header size: 12
+			// Code size: 127 (0x7f)
+			.maxstack 8
+			.locals init (
+				[0] class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L30C36/Scope,
+				[1] class [JavaScriptRuntime]JavaScriptRuntime.Promise,
+				[2] object[],
+				[3] class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L30C36/ArrowFunction_L31C17/FunctionObject
+			)
+
+			IL_0000: newobj instance void Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L30C36/Scope::.ctor()
+			IL_0005: stloc.0
+			IL_0006: ldarg.0
+			IL_0007: ldfld object Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope::inside
+			IL_000c: castclass [JavaScriptRuntime]JavaScriptRuntime.Promise
+			IL_0011: stloc.1
+			IL_0012: ldloc.1
+			IL_0013: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class [JavaScriptRuntime]JavaScriptRuntime.Promise>(!!0)
+			IL_0018: stloc.1
+			IL_0019: ldc.i4.2
+			IL_001a: newarr [System.Runtime]System.Object
+			IL_001f: dup
+			IL_0020: ldc.i4.0
+			IL_0021: ldarg.0
+			IL_0022: stelem.ref
+			IL_0023: dup
+			IL_0024: ldc.i4.1
+			IL_0025: ldloc.0
+			IL_0026: stelem.ref
+			IL_0027: stloc.2
+			IL_0028: ldloc.2
+			IL_0029: ldc.i4.0
+			IL_002a: ldelem.ref
+			IL_002b: castclass Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope
+			IL_0030: ldloc.2
+			IL_0031: newobj instance void Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L30C36/ArrowFunction_L31C17/FunctionObject::.ctor(class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope, object[])
+			IL_0036: ldc.i4.0
+			IL_0037: conv.r8
+			IL_0038: ldstr ""
+			IL_003d: ldc.i4.0
+			IL_003e: ldc.i4.0
+			IL_003f: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L30C36/ArrowFunction_L31C17/FunctionObject>(!!0, float64, string, bool, bool)
+			IL_0044: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L30C36/ArrowFunction_L31C17/FunctionObject>(!!0)
+			IL_0049: stloc.3
+			IL_004a: ldloc.1
+			IL_004b: ldstr "then"
+			IL_0050: call bool [JavaScriptRuntime]JavaScriptRuntime.Promise::HasMemberOverride(object, string)
+			IL_0055: brtrue IL_0067
+
+			IL_005a: ldloc.1
+			IL_005b: ldloc.3
+			IL_005c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Promise::then(object)
+			IL_0061: pop
+			IL_0062: br IL_007d
+
+			IL_0067: ldloc.1
+			IL_0068: ldstr "then"
+			IL_006d: ldc.i4.1
+			IL_006e: newarr [System.Runtime]System.Object
+			IL_0073: dup
+			IL_0074: ldc.i4.0
+			IL_0075: ldloc.3
+			IL_0076: stelem.ref
+			IL_0077: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallOwnPropertyMember(object, string, object[])
+			IL_007c: pop
+
+			IL_007d: ldnull
+			IL_007e: ret
+		} // end of method ArrowFunction_L30C36::__js_call__
+
+	} // end of class ArrowFunction_L30C36
+
+	.class nested public auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
+		.custom instance void [System.Runtime]System.Diagnostics.DebuggerDisplayAttribute::.ctor(string) = (
+			01 00 71 53 63 6f 70 65 20 66 73 3d 7b 66 73 7d
+			2c 20 73 74 6f 72 61 67 65 3d 7b 73 74 6f 72 61
+			67 65 7d 2c 20 72 65 73 6f 6c 76 65 4f 75 74 73
+			69 64 65 3d 7b 72 65 73 6f 6c 76 65 4f 75 74 73
+			69 64 65 7d 2c 20 72 65 73 6f 6c 76 65 49 6e 73
+			69 64 65 3d 7b 72 65 73 6f 6c 76 65 49 6e 73 69
+			64 65 7d 2c 20 69 6e 73 69 64 65 3d 7b 69 6e 73
+			69 64 65 7d 00 00
+		)
+		// Fields
+		.field public object __filename
+		.field public class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule fs
+		.field public object 'storage'
+		.field public object resolveOutside
+		.field public object resolveInside
+		.field public object inside
+
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method Scope::.ctor
+
+	} // end of class Scope
+
+
+	// Methods
+	.method public hidebysig static 
+		void __js_module_init__ (
+			object exports,
+			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			object module,
+			string __filename,
+			string __dirname
+		) cil managed 
+	{
+		// Header size: 12
+		// Code size: 758 (0x2f6)
+		.maxstack 8
+		.locals init (
+			[0] class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope,
+			[1] object,
+			[2] class [JavaScriptRuntime]JavaScriptRuntime.Promise,
+			[3] class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IAsyncHooksModule,
+			[4] class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule,
+			[5] object,
+			[6] object[],
+			[7] class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L7C22/FunctionObject,
+			[8] class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L15C24/FunctionObject,
+			[9] class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L20C29/FunctionObject,
+			[10] class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L23C14/FunctionObject,
+			[11] class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L24C25/FunctionObject,
+			[12] class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L27C28/FunctionObject,
+			[13] class [JavaScriptRuntime]JavaScriptRuntime.Promise,
+			[14] class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L30C36/FunctionObject,
+			[15] class [JavaScriptRuntime]JavaScriptRuntime.Console
+		)
+
+		IL_0000: newobj instance void Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldloc.0
+		IL_0007: ldarg.3
+		IL_0008: stfld object Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope::__filename
+		IL_000d: nop
+		IL_000e: ldarg.1
+		IL_000f: ldstr "node:async_hooks"
+		IL_0014: call !!0 [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireRuntime::RequireObject<class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IAsyncHooksModule>(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object)
+		IL_0019: stloc.3
+		IL_001a: ldloc.3
+		IL_001b: brfalse IL_002b
+
+		IL_0020: ldloc.3
+		IL_0021: isinst [JavaScriptRuntime]JavaScriptRuntime.JsNull
+		IL_0026: brfalse IL_003b
+
+		IL_002b: ldloc.3
+		IL_002c: ldstr ""
+		IL_0031: ldstr "AsyncLocalStorage"
+		IL_0036: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::ThrowDestructuringNullOrUndefined(object, string, string)
+
+		IL_003b: ldloc.3
+		IL_003c: ldstr "AsyncLocalStorage"
+		IL_0041: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0046: stloc.1
+		IL_0047: ldarg.1
+		IL_0048: ldstr "node:fs"
+		IL_004d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireRuntime::RequireObject<class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule>(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object)
+		IL_0052: stloc.s 4
+		IL_0054: ldloc.0
+		IL_0055: ldloc.s 4
+		IL_0057: stfld class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope::fs
+		IL_005c: ldloc.1
+		IL_005d: ldc.i4.1
+		IL_005e: newarr [System.Runtime]System.Object
+		IL_0063: dup
+		IL_0064: ldc.i4.0
+		IL_0065: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_006a: dup
+		IL_006b: ldstr "defaultValue"
+		IL_0070: ldstr "none"
+		IL_0075: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_007a: stelem.ref
+		IL_007b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::ConstructValue(object, object[])
+		IL_0080: stloc.s 5
+		IL_0082: ldloc.0
+		IL_0083: ldloc.s 5
+		IL_0085: stfld object Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope::'storage'
+		IL_008a: ldloc.0
+		IL_008b: ldfld object Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope::'storage'
+		IL_0090: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0095: stloc.s 5
+		IL_0097: ldc.i4.1
+		IL_0098: newarr [System.Runtime]System.Object
+		IL_009d: dup
+		IL_009e: ldc.i4.0
+		IL_009f: ldloc.0
+		IL_00a0: stelem.ref
+		IL_00a1: stloc.s 6
+		IL_00a3: ldloc.s 6
+		IL_00a5: ldc.i4.0
+		IL_00a6: ldelem.ref
+		IL_00a7: castclass Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope
+		IL_00ac: newobj instance void Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L7C22/FunctionObject::.ctor(class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope)
+		IL_00b1: ldc.i4.0
+		IL_00b2: conv.r8
+		IL_00b3: ldstr ""
+		IL_00b8: ldc.i4.0
+		IL_00b9: ldc.i4.0
+		IL_00ba: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L7C22/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_00bf: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L7C22/FunctionObject>(!!0)
+		IL_00c4: stloc.s 7
+		IL_00c6: ldloc.s 5
+		IL_00c8: ldstr "run"
+		IL_00cd: ldstr "outer"
+		IL_00d2: ldloc.s 7
+		IL_00d4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_00d9: pop
+		IL_00da: ldloc.0
+		IL_00db: ldfld object Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope::'storage'
+		IL_00e0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00e5: stloc.s 5
+		IL_00e7: ldc.i4.1
+		IL_00e8: newarr [System.Runtime]System.Object
+		IL_00ed: dup
+		IL_00ee: ldc.i4.0
+		IL_00ef: ldloc.0
+		IL_00f0: stelem.ref
+		IL_00f1: stloc.s 6
+		IL_00f3: ldloc.s 6
+		IL_00f5: ldc.i4.0
+		IL_00f6: ldelem.ref
+		IL_00f7: castclass Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope
+		IL_00fc: newobj instance void Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L15C24/FunctionObject::.ctor(class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope)
+		IL_0101: ldc.i4.0
+		IL_0102: conv.r8
+		IL_0103: ldstr ""
+		IL_0108: ldc.i4.0
+		IL_0109: ldc.i4.0
+		IL_010a: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L15C24/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_010f: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L15C24/FunctionObject>(!!0)
+		IL_0114: stloc.s 8
+		IL_0116: ldloc.s 5
+		IL_0118: ldstr "run"
+		IL_011d: ldstr "sibling"
+		IL_0122: ldloc.s 8
+		IL_0124: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_0129: pop
+		IL_012a: ldloc.0
+		IL_012b: ldnull
+		IL_012c: stfld object Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope::resolveOutside
+		IL_0131: ldc.i4.1
+		IL_0132: newarr [System.Runtime]System.Object
+		IL_0137: dup
+		IL_0138: ldc.i4.0
+		IL_0139: ldloc.0
+		IL_013a: stelem.ref
+		IL_013b: stloc.s 6
+		IL_013d: ldloc.s 6
+		IL_013f: ldc.i4.0
+		IL_0140: ldelem.ref
+		IL_0141: castclass Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope
+		IL_0146: newobj instance void Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L20C29/FunctionObject::.ctor(class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope)
+		IL_014b: ldc.i4.1
+		IL_014c: conv.r8
+		IL_014d: ldstr ""
+		IL_0152: ldc.i4.0
+		IL_0153: ldc.i4.0
+		IL_0154: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L20C29/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_0159: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L20C29/FunctionObject>(!!0)
+		IL_015e: stloc.s 9
+		IL_0160: ldloc.s 9
+		IL_0162: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Promise::.ctor(object)
+		IL_0167: stloc.2
+		IL_0168: ldc.i4.1
+		IL_0169: newarr [System.Runtime]System.Object
+		IL_016e: dup
+		IL_016f: ldc.i4.0
+		IL_0170: ldloc.0
+		IL_0171: stelem.ref
+		IL_0172: stloc.s 6
+		IL_0174: ldloc.s 6
+		IL_0176: ldc.i4.0
+		IL_0177: ldelem.ref
+		IL_0178: castclass Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope
+		IL_017d: newobj instance void Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L23C14/FunctionObject::.ctor(class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope)
+		IL_0182: ldc.i4.0
+		IL_0183: conv.r8
+		IL_0184: ldstr ""
+		IL_0189: ldc.i4.0
+		IL_018a: ldc.i4.0
+		IL_018b: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L23C14/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_0190: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L23C14/FunctionObject>(!!0)
+		IL_0195: stloc.s 10
+		IL_0197: ldloc.2
+		IL_0198: ldstr "then"
+		IL_019d: call bool [JavaScriptRuntime]JavaScriptRuntime.Promise::HasMemberOverride(object, string)
+		IL_01a2: brtrue IL_01b5
+
+		IL_01a7: ldloc.2
+		IL_01a8: ldloc.s 10
+		IL_01aa: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Promise::then(object)
+		IL_01af: pop
+		IL_01b0: br IL_01cc
+
+		IL_01b5: ldloc.2
+		IL_01b6: ldstr "then"
+		IL_01bb: ldc.i4.1
+		IL_01bc: newarr [System.Runtime]System.Object
+		IL_01c1: dup
+		IL_01c2: ldc.i4.0
+		IL_01c3: ldloc.s 10
+		IL_01c5: stelem.ref
+		IL_01c6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallOwnPropertyMember(object, string, object[])
+		IL_01cb: pop
+
+		IL_01cc: ldloc.0
+		IL_01cd: ldfld object Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope::'storage'
+		IL_01d2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_01d7: stloc.s 5
+		IL_01d9: ldc.i4.1
+		IL_01da: newarr [System.Runtime]System.Object
+		IL_01df: dup
+		IL_01e0: ldc.i4.0
+		IL_01e1: ldloc.0
+		IL_01e2: stelem.ref
+		IL_01e3: stloc.s 6
+		IL_01e5: ldloc.s 6
+		IL_01e7: ldc.i4.0
+		IL_01e8: ldelem.ref
+		IL_01e9: castclass Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope
+		IL_01ee: newobj instance void Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L24C25/FunctionObject::.ctor(class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope)
+		IL_01f3: ldc.i4.0
+		IL_01f4: conv.r8
+		IL_01f5: ldstr ""
+		IL_01fa: ldc.i4.0
+		IL_01fb: ldc.i4.0
+		IL_01fc: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L24C25/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_0201: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L24C25/FunctionObject>(!!0)
+		IL_0206: stloc.s 11
+		IL_0208: ldloc.s 5
+		IL_020a: ldstr "run"
+		IL_020f: ldstr "resolver"
+		IL_0214: ldloc.s 11
+		IL_0216: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_021b: pop
+		IL_021c: ldloc.0
+		IL_021d: ldnull
+		IL_021e: stfld object Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope::resolveInside
+		IL_0223: ldc.i4.1
+		IL_0224: newarr [System.Runtime]System.Object
+		IL_0229: dup
+		IL_022a: ldc.i4.0
+		IL_022b: ldloc.0
+		IL_022c: stelem.ref
+		IL_022d: stloc.s 6
+		IL_022f: ldloc.s 6
+		IL_0231: ldc.i4.0
+		IL_0232: ldelem.ref
+		IL_0233: castclass Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope
+		IL_0238: newobj instance void Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L27C28/FunctionObject::.ctor(class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope)
+		IL_023d: ldc.i4.1
+		IL_023e: conv.r8
+		IL_023f: ldstr ""
+		IL_0244: ldc.i4.0
+		IL_0245: ldc.i4.0
+		IL_0246: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L27C28/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_024b: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L27C28/FunctionObject>(!!0)
+		IL_0250: stloc.s 12
+		IL_0252: ldloc.s 12
+		IL_0254: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Promise::.ctor(object)
+		IL_0259: stloc.s 13
+		IL_025b: ldloc.0
+		IL_025c: ldloc.s 13
+		IL_025e: stfld object Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope::inside
+		IL_0263: ldloc.0
+		IL_0264: ldfld object Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope::'storage'
+		IL_0269: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_026e: stloc.s 5
+		IL_0270: ldc.i4.1
+		IL_0271: newarr [System.Runtime]System.Object
+		IL_0276: dup
+		IL_0277: ldc.i4.0
+		IL_0278: ldloc.0
+		IL_0279: stelem.ref
+		IL_027a: stloc.s 6
+		IL_027c: ldloc.s 6
+		IL_027e: ldc.i4.0
+		IL_027f: ldelem.ref
+		IL_0280: castclass Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope
+		IL_0285: newobj instance void Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L30C36/FunctionObject::.ctor(class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope)
+		IL_028a: ldc.i4.0
+		IL_028b: conv.r8
+		IL_028c: ldstr ""
+		IL_0291: ldc.i4.0
+		IL_0292: ldc.i4.0
+		IL_0293: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L30C36/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_0298: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/ArrowFunction_L30C36/FunctionObject>(!!0)
+		IL_029d: stloc.s 14
+		IL_029f: ldloc.s 5
+		IL_02a1: ldstr "run"
+		IL_02a6: ldstr "inside registration"
+		IL_02ab: ldloc.s 14
+		IL_02ad: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_02b2: pop
+		IL_02b3: ldloc.0
+		IL_02b4: ldfld object Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope::resolveInside
+		IL_02b9: stloc.s 5
+		IL_02bb: ldloc.s 5
+		IL_02bd: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_02c2: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
+		IL_02c7: pop
+		IL_02c8: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_02cd: stloc.s 15
+		IL_02cf: ldloc.0
+		IL_02d0: ldfld object Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation/Scope::'storage'
+		IL_02d5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_02da: ldstr "getStore"
+		IL_02df: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+		IL_02e4: stloc.s 5
+		IL_02e6: ldloc.s 15
+		IL_02e8: ldstr "sync:"
+		IL_02ed: ldloc.s 5
+		IL_02ef: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_02f4: pop
+		IL_02f5: ret
+	} // end of method Require_AsyncHooks_AsyncLocalStorage_Propagation::__js_module_init__
+
+} // end of class Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation
+
+.class private auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Header size: 1
+		// Code size: 23 (0x17)
+		.maxstack 8
+		.entrypoint
+
+		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
+		IL_0005: ldnull
+		IL_0006: ldftn void Modules.Require_AsyncHooks_AsyncLocalStorage_Propagation::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
+		IL_0016: ret
+	} // end of method Program::Main
+
+} // end of class Program
+

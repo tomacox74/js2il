@@ -5,12 +5,16 @@ public sealed class PromiseWithResolvers
     public PromiseWithResolvers(Promise promise, object resolve, object reject)
     {
         this.promise = promise;
-        this.resolve =
+        var resolveFunction =
             BuiltinDelegateFunctionAdapter.WrapJavaScriptVisibleValue(resolve)
             ?? throw new ArgumentNullException(nameof(resolve));
-        this.reject =
+        var rejectFunction =
             BuiltinDelegateFunctionAdapter.WrapJavaScriptVisibleValue(reject)
             ?? throw new ArgumentNullException(nameof(reject));
+        this.resolve = Node.AsyncContextRuntime.BindCurrentCallback(
+            resolveFunction);
+        this.reject = Node.AsyncContextRuntime.BindCurrentCallback(
+            rejectFunction);
     }
 
     // Note: These member names are intentionally lowercase to match JS property access

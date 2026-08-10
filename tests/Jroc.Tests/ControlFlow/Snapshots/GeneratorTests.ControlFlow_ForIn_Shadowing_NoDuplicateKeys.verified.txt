@@ -308,59 +308,70 @@
 
 
 		// Fields
+		.field private object[] _scopes
 		.field public float64 x
 		.field public float64 y
 
 		// Methods
 		.method public hidebysig specialname rtspecialname 
-			instance void .ctor () cil managed 
+			instance void .ctor (
+				object[] scopes
+			) cil managed 
 		{
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
-				01 00 00 00 00 00 00 00
+				01 00 02 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 145 (0x91)
+			// Code size: 154 (0x9a)
 			.maxstack 8
+			.locals init (
+				[0] object[]
+			)
 
 			IL_0000: ldarg.0
 			IL_0001: call instance void Modules.ControlFlow_ForIn_Shadowing_NoDuplicateKeys/Base::.ctor()
 			IL_0006: ldarg.0
 			IL_0007: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeDerivedConstructorThisBinding(object)
-			IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-			IL_0011: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
-			IL_0016: dup
-			IL_0017: ldarg.0
-			IL_0018: beq IL_003b
+			IL_000c: ldarg.1
+			IL_000d: stloc.0
+			IL_000e: ldarg.0
+			IL_000f: ldloc.0
+			IL_0010: stfld object[] Modules.ControlFlow_ForIn_Shadowing_NoDuplicateKeys/Derived::_scopes
+			IL_0015: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+			IL_001a: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
+			IL_001f: dup
+			IL_0020: ldarg.0
+			IL_0021: beq IL_0044
 
-			IL_001d: ldstr "x"
-			IL_0022: ldc.r8 2
-			IL_002b: box [System.Runtime]System.Double
-			IL_0030: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassFieldDataProperty(object, object, object)
-			IL_0035: pop
-			IL_0036: br IL_004e
+			IL_0026: ldstr "x"
+			IL_002b: ldc.r8 2
+			IL_0034: box [System.Runtime]System.Double
+			IL_0039: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassFieldDataProperty(object, object, object)
+			IL_003e: pop
+			IL_003f: br IL_0057
 
-			IL_003b: castclass Modules.ControlFlow_ForIn_Shadowing_NoDuplicateKeys/Derived
-			IL_0040: ldc.r8 2
-			IL_0049: stfld float64 Modules.ControlFlow_ForIn_Shadowing_NoDuplicateKeys/Derived::x
+			IL_0044: castclass Modules.ControlFlow_ForIn_Shadowing_NoDuplicateKeys/Derived
+			IL_0049: ldc.r8 2
+			IL_0052: stfld float64 Modules.ControlFlow_ForIn_Shadowing_NoDuplicateKeys/Derived::x
 
-			IL_004e: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-			IL_0053: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
-			IL_0058: dup
-			IL_0059: ldarg.0
-			IL_005a: beq IL_007d
+			IL_0057: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+			IL_005c: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
+			IL_0061: dup
+			IL_0062: ldarg.0
+			IL_0063: beq IL_0086
 
-			IL_005f: ldstr "y"
-			IL_0064: ldc.r8 3
-			IL_006d: box [System.Runtime]System.Double
-			IL_0072: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassFieldDataProperty(object, object, object)
-			IL_0077: pop
-			IL_0078: br IL_0090
+			IL_0068: ldstr "y"
+			IL_006d: ldc.r8 3
+			IL_0076: box [System.Runtime]System.Double
+			IL_007b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassFieldDataProperty(object, object, object)
+			IL_0080: pop
+			IL_0081: br IL_0099
 
-			IL_007d: castclass Modules.ControlFlow_ForIn_Shadowing_NoDuplicateKeys/Derived
-			IL_0082: ldc.r8 3
-			IL_008b: stfld float64 Modules.ControlFlow_ForIn_Shadowing_NoDuplicateKeys/Derived::y
+			IL_0086: castclass Modules.ControlFlow_ForIn_Shadowing_NoDuplicateKeys/Derived
+			IL_008b: ldc.r8 3
+			IL_0094: stfld float64 Modules.ControlFlow_ForIn_Shadowing_NoDuplicateKeys/Derived::y
 
-			IL_0090: ret
+			IL_0099: ret
 		} // end of method Derived::.ctor
 
 	} // end of class Derived
@@ -368,6 +379,13 @@
 	.class nested public auto ansi beforefieldinit Scope
 		extends [System.Runtime]System.Object
 	{
+		.custom instance void [System.Runtime]System.Diagnostics.DebuggerDisplayAttribute::.ctor(string) = (
+			01 00 11 53 63 6f 70 65 20 42 61 73 65 3d 7b 42
+			61 73 65 7d 00 00
+		)
+		// Fields
+		.field public object Base
+
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
@@ -436,18 +454,18 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 339 (0x153)
+		// Code size: 346 (0x15a)
 		.maxstack 10
 		.locals init (
 			[0] class Modules.ControlFlow_ForIn_Shadowing_NoDuplicateKeys/Scope,
 			[1] object,
 			[2] object,
-			[3] object,
-			[4] class [JavaScriptRuntime]JavaScriptRuntime.Array,
+			[3] class [JavaScriptRuntime]JavaScriptRuntime.Array,
+			[4] object,
 			[5] object,
-			[6] object,
-			[7] object[],
-			[8] class [System.Runtime]System.Type,
+			[6] object[],
+			[7] class [System.Runtime]System.Type,
+			[8] object,
 			[9] object,
 			[10] bool,
 			[11] class [JavaScriptRuntime]JavaScriptRuntime.Console,
@@ -463,111 +481,119 @@
 		IL_000e: ldc.i4.0
 		IL_000f: ldloc.0
 		IL_0010: stelem.ref
-		IL_0011: stloc.s 7
+		IL_0011: stloc.s 6
 		IL_0013: ldtoken Modules.ControlFlow_ForIn_Shadowing_NoDuplicateKeys/Base
 		IL_0018: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
 		IL_001d: ldtoken Modules.ControlFlow_ForIn_Shadowing_NoDuplicateKeys/Base
 		IL_0022: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_0027: stloc.s 8
-		IL_0029: ldloc.s 8
-		IL_002b: ldloc.s 7
+		IL_0027: stloc.s 7
+		IL_0029: ldloc.s 7
+		IL_002b: ldloc.s 6
 		IL_002d: ldc.r8 0.0
 		IL_0036: box [System.Runtime]System.Double
 		IL_003b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateClassConstructorValue(object, object, object)
-		IL_0040: stloc.s 9
-		IL_0042: ldloc.s 9
-		IL_0044: stloc.1
-		IL_0045: ldc.i4.1
-		IL_0046: newarr [System.Runtime]System.Object
-		IL_004b: dup
-		IL_004c: ldc.i4.0
-		IL_004d: ldloc.0
-		IL_004e: stelem.ref
-		IL_004f: stloc.s 7
-		IL_0051: ldtoken Modules.ControlFlow_ForIn_Shadowing_NoDuplicateKeys/Derived
-		IL_0056: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_005b: ldtoken Modules.ControlFlow_ForIn_Shadowing_NoDuplicateKeys/Derived
-		IL_0060: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_0065: stloc.s 8
-		IL_0067: ldloc.s 8
-		IL_0069: ldloc.s 7
-		IL_006b: ldc.r8 0.0
-		IL_0074: box [System.Runtime]System.Double
-		IL_0079: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateClassConstructorValue(object, object, object)
-		IL_007e: stloc.s 9
-		IL_0080: ldloc.s 9
-		IL_0082: ldloc.1
-		IL_0083: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetClassConstructorPrototype(object, object)
-		IL_0088: stloc.s 9
-		IL_008a: ldloc.s 9
-		IL_008c: stloc.2
-		IL_008d: ldc.i4.0
-		IL_008e: newarr [System.Runtime]System.Object
-		IL_0093: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
-		IL_0098: ldloc.2
-		IL_0099: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentNewTarget(object)
-		IL_009e: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushDerivedConstructorThisBinding()
-		IL_00a3: newobj instance void Modules.ControlFlow_ForIn_Shadowing_NoDuplicateKeys/Derived::.ctor()
-		IL_00a8: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentNewTarget()
-		IL_00ad: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
-		IL_00b2: dup
-		IL_00b3: ldtoken Modules.ControlFlow_ForIn_Shadowing_NoDuplicateKeys/Derived
-		IL_00b8: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_00bd: ldstr "prototype"
-		IL_00c2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
-		IL_00c7: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
-		IL_00cc: stloc.3
-		IL_00cd: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_00d2: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
-		IL_00d7: stloc.3
-		IL_00d8: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopDerivedConstructorThisBinding()
-		IL_00dd: ldc.i4.0
-		IL_00de: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_00e3: stloc.s 4
-		IL_00e5: ldloc.3
-		IL_00e6: call class [JavaScriptRuntime]JavaScriptRuntime.IJavaScriptIterator [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::EnumerateObjectProperties(object)
-		IL_00eb: stloc.s 5
-		// loop start (head: IL_00ed)
-			IL_00ed: ldloc.s 5
-			IL_00ef: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorNext(object)
-			IL_00f4: stloc.s 9
-			IL_00f6: ldloc.s 9
-			IL_00f8: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorResultDone(object)
-			IL_00fd: stloc.s 10
-			IL_00ff: ldloc.s 10
-			IL_0101: brtrue IL_0122
+		IL_0040: stloc.s 8
+		IL_0042: ldloc.0
+		IL_0043: ldloc.s 8
+		IL_0045: stfld object Modules.ControlFlow_ForIn_Shadowing_NoDuplicateKeys/Scope::Base
+		IL_004a: ldc.i4.1
+		IL_004b: newarr [System.Runtime]System.Object
+		IL_0050: dup
+		IL_0051: ldc.i4.0
+		IL_0052: ldloc.0
+		IL_0053: stelem.ref
+		IL_0054: stloc.s 6
+		IL_0056: ldtoken Modules.ControlFlow_ForIn_Shadowing_NoDuplicateKeys/Derived
+		IL_005b: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_0060: ldtoken Modules.ControlFlow_ForIn_Shadowing_NoDuplicateKeys/Derived
+		IL_0065: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_006a: stloc.s 7
+		IL_006c: ldloc.s 7
+		IL_006e: ldloc.s 6
+		IL_0070: ldc.r8 0.0
+		IL_0079: box [System.Runtime]System.Double
+		IL_007e: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateClassConstructorValue(object, object, object)
+		IL_0083: stloc.s 9
+		IL_0085: ldloc.s 9
+		IL_0087: ldloc.s 8
+		IL_0089: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetClassConstructorPrototype(object, object)
+		IL_008e: stloc.s 8
+		IL_0090: ldloc.s 8
+		IL_0092: stloc.1
+		IL_0093: ldc.i4.1
+		IL_0094: newarr [System.Runtime]System.Object
+		IL_0099: dup
+		IL_009a: ldc.i4.0
+		IL_009b: ldloc.0
+		IL_009c: stelem.ref
+		IL_009d: stloc.s 6
+		IL_009f: ldloc.s 6
+		IL_00a1: ldc.i4.0
+		IL_00a2: newarr [System.Runtime]System.Object
+		IL_00a7: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
+		IL_00ac: ldloc.1
+		IL_00ad: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentNewTarget(object)
+		IL_00b2: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushDerivedConstructorThisBinding()
+		IL_00b7: newobj instance void Modules.ControlFlow_ForIn_Shadowing_NoDuplicateKeys/Derived::.ctor(object[])
+		IL_00bc: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentNewTarget()
+		IL_00c1: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
+		IL_00c6: dup
+		IL_00c7: ldloc.1
+		IL_00c8: ldstr "prototype"
+		IL_00cd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
+		IL_00d2: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
+		IL_00d7: stloc.2
+		IL_00d8: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_00dd: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
+		IL_00e2: stloc.2
+		IL_00e3: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopDerivedConstructorThisBinding()
+		IL_00e8: ldc.i4.0
+		IL_00e9: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_00ee: stloc.3
+		IL_00ef: ldloc.2
+		IL_00f0: call class [JavaScriptRuntime]JavaScriptRuntime.IJavaScriptIterator [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::EnumerateObjectProperties(object)
+		IL_00f5: stloc.s 4
+		// loop start (head: IL_00f7)
+			IL_00f7: ldloc.s 4
+			IL_00f9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorNext(object)
+			IL_00fe: stloc.s 8
+			IL_0100: ldloc.s 8
+			IL_0102: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorResultDone(object)
+			IL_0107: stloc.s 10
+			IL_0109: ldloc.s 10
+			IL_010b: brtrue IL_012b
 
-			IL_0106: ldloc.s 9
-			IL_0108: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorResultValue(object)
-			IL_010d: stloc.s 9
-			IL_010f: ldloc.s 9
-			IL_0111: stloc.s 6
-			IL_0113: ldloc.s 4
-			IL_0115: ldloc.s 6
-			IL_0117: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object)
-			IL_011c: pop
-			IL_011d: br IL_00ed
+			IL_0110: ldloc.s 8
+			IL_0112: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorResultValue(object)
+			IL_0117: stloc.s 8
+			IL_0119: ldloc.s 8
+			IL_011b: stloc.s 5
+			IL_011d: ldloc.3
+			IL_011e: ldloc.s 5
+			IL_0120: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object)
+			IL_0125: pop
+			IL_0126: br IL_00f7
 		// end loop
 
-		IL_0122: ldloc.s 4
-		IL_0124: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Array [JavaScriptRuntime]JavaScriptRuntime.Array::sort()
-		IL_0129: pop
-		IL_012a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_012f: stloc.s 11
-		IL_0131: ldloc.s 4
-		IL_0133: ldc.i4.1
-		IL_0134: newarr [System.Runtime]System.Object
-		IL_0139: dup
-		IL_013a: ldc.i4.0
-		IL_013b: ldstr ","
-		IL_0140: stelem.ref
-		IL_0141: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
-		IL_0146: stloc.s 12
-		IL_0148: ldloc.s 11
-		IL_014a: ldloc.s 12
-		IL_014c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0151: pop
-		IL_0152: ret
+		IL_012b: ldloc.3
+		IL_012c: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Array [JavaScriptRuntime]JavaScriptRuntime.Array::sort()
+		IL_0131: pop
+		IL_0132: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0137: stloc.s 11
+		IL_0139: ldloc.3
+		IL_013a: ldc.i4.1
+		IL_013b: newarr [System.Runtime]System.Object
+		IL_0140: dup
+		IL_0141: ldc.i4.0
+		IL_0142: ldstr ","
+		IL_0147: stelem.ref
+		IL_0148: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
+		IL_014d: stloc.s 12
+		IL_014f: ldloc.s 11
+		IL_0151: ldloc.s 12
+		IL_0153: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0158: pop
+		IL_0159: ret
 	} // end of method ControlFlow_ForIn_Shadowing_NoDuplicateKeys::__js_module_init__
 
 } // end of class Modules.ControlFlow_ForIn_Shadowing_NoDuplicateKeys

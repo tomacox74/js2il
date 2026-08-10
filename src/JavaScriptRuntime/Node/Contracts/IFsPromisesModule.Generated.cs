@@ -10,7 +10,7 @@ namespace Jroc.Runtime.Node.Contracts;
 /// <summary>
 /// Defines the public top-level <c>node:fs/promises</c> module contract from Node.js 24.18.1.
 /// </summary>
-[global::System.CodeDom.Compiler.GeneratedCode("generateNodeModuleInterface.js", "sha256:13ea61f00a6a5629ba94c535a3f32f6ddcc06ed57c5bde2aa5bdbf56d257d242")]
+[global::System.CodeDom.Compiler.GeneratedCode("generateNodeModuleInterface.js", "sha256:2e1877a88a0be5be6f1ce68d6801f81345518c2272d2b70984df61b7ca02aca0")]
 [NodeModuleInterface("fs/promises")]
 public interface IFsPromisesModule
 {

@@ -22,6 +22,7 @@ public sealed class Promise : IJavaScriptPromise
         public readonly object? OnFulfilled;
         public readonly object? OnRejected;
         public readonly Promise NextPromise;
+        public readonly JavaScriptRuntime.Node.AsyncContextSnapshot? Context;
 
         /// <Summary>
         /// True if this reaction is for a finally handler,
@@ -40,6 +41,7 @@ public sealed class Promise : IJavaScriptPromise
             OnRejected = onRejected;
             NextPromise = nextPromise;
             IsFinally = isFinally;
+            Context = JavaScriptRuntime.Node.AsyncContextRuntime.CaptureCurrentSnapshot();
         }
     }
 
@@ -47,6 +49,7 @@ public sealed class Promise : IJavaScriptPromise
     private State _state = State.Pending;
 
     private object? _result;
+    private readonly JavaScriptRuntime.Node.AsyncResourceState? _asyncResourceState;
 
     private readonly List<Reaction> _reactions = new();
 
@@ -139,6 +142,8 @@ public sealed class Promise : IJavaScriptPromise
     public Promise(object? executor)
     {
         InitializeIntrinsicSurface();
+        _asyncResourceState =
+            JavaScriptRuntime.Node.AsyncContextRuntime.TryCreatePromiseResource(this);
         // as per the specification the delegate is called the executor
         // null is allowed
         // any value that is not a delegate will result in a TypeError being thrown
@@ -151,6 +156,8 @@ public sealed class Promise : IJavaScriptPromise
     internal Promise()
     {
         InitializeIntrinsicSurface();
+        _asyncResourceState =
+            JavaScriptRuntime.Node.AsyncContextRuntime.TryCreatePromiseResource(this);
     }
 
     // Public methods
@@ -688,6 +695,8 @@ public sealed class Promise : IJavaScriptPromise
 
         _state = state;
         _result = value;
+        JavaScriptRuntime.Node.AsyncContextRuntime.EmitPromiseResolve(
+            _asyncResourceState);
         toSchedule = new List<Reaction>(_reactions);
         _reactions.Clear();
 
@@ -711,7 +720,10 @@ public sealed class Promise : IJavaScriptPromise
 
         scheduler.QueueMicrotask(() =>
         {
-            JavaScriptRuntime.EngineCore.HostJobCallbacks.HostCallJobCallback(jobCallback, v: null, argumentsList: System.Array.Empty<object?>());
+            JavaScriptRuntime.Node.AsyncContextRuntime.RunJobSnapshot(
+                reaction.Context,
+                reaction.NextPromise._asyncResourceState,
+                jobCallback);
         });
     }
 

@@ -25,6 +25,26 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   source/IL architecture guardrails, callable-family/hosting/repeated-load
   coverage, and focused deterministic benchmark phases. No performance
   improvement is claimed without same-host compatible measurements.
+- runtime/node: add `dns` and `node:dns` with a complete generated Node.js
+  24.18.1 contract. `lookup()` supports the callback forms required by Undici,
+  including asynchronous error-first completion, `family`, `all`, `order`, and
+  `verbatim` options; `getDefaultResultOrder()` and
+  `setDefaultResultOrder()` are also supported. Other DNS query APIs,
+  resolver instances, server configuration, constants, error codes, and the
+  `dns.promises` namespace remain explicit unavailable contract members.
+- runtime/node: add `async_hooks` and `node:async_hooks` with a complete
+  Node.js 24.18.1 contract, constructable and subclassable `AsyncResource`,
+  runtime-scoped async IDs and hooks, Promise lifecycle events, and
+  `AsyncLocalStorage` propagation through Promise, next-tick, timer, immediate,
+  and filesystem callback boundaries. Keep context capture pay-for-play with a
+  zero-allocation inactive scheduler path and add separate enabled-context
+  benchmarks. A same-host short-run microbenchmark measured direct callbacks at
+  13.07 ns/24 B, explicit `AsyncResource` calls at 355.09 ns/256 B, and active
+  `AsyncLocalStorage` calls at 383.70 ns/296 B per operation.
+- runtime/node: add callable `assert` and `node:assert` support with core scalar,
+  regular-expression, synchronous exception, strict-mode, and Node-style
+  `AssertionError` behavior. Generate the complete public Node.js 24.18.1
+  module contract while preserving the independent test262 assertion harness.
 - compiler/perf: close issue #1721 with conservative callable-use analysis in
   symbol/HIR lowering. Direct-only `const` arrows and anonymous function
   expressions now retain their planned callable bodies and typed direct calls

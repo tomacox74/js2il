@@ -347,19 +347,42 @@ public class RuntimeServices
 
     public static object SetClassConstructorPrototype(object constructorValue, object? baseConstructorValue)
     {
-        var prototype = ValidateClassHeritage(baseConstructorValue);
+        var validatedBase = ValidateClassHeritage(baseConstructorValue);
         if (constructorValue is ClassConstructorValue classConstructor)
         {
             var derivedConstructor = new ClassConstructorValue(
                 classConstructor.Type,
                 classConstructor.Scopes,
                 classConstructor.FormalParameterCount);
-            PrototypeChain.SetPrototype(derivedConstructor, prototype);
+            PrototypeChain.SetPrototype(derivedConstructor, validatedBase);
+            LinkClassInstancePrototype(derivedConstructor, validatedBase);
             return derivedConstructor;
         }
 
-        PrototypeChain.SetPrototype(constructorValue, prototype);
+        PrototypeChain.SetPrototype(constructorValue, validatedBase);
         return constructorValue;
+    }
+
+    private static void LinkClassInstancePrototype(
+        ClassConstructorValue derivedConstructor,
+        object? baseConstructor)
+    {
+        if (baseConstructor is null || baseConstructor is JsNull)
+        {
+            return;
+        }
+
+        _ = TryEnsureClassConstructorMetadataPropertyDescriptor(
+            derivedConstructor,
+            "prototype",
+            out var derivedPrototypeDescriptor);
+        var basePrototype = ObjectRuntime.GetProperty(baseConstructor, "prototype");
+        if (derivedPrototypeDescriptor.Value is object derivedPrototype
+            && basePrototype is not null
+            && basePrototype is not JsNull)
+        {
+            PrototypeChain.SetPrototype(derivedPrototype, basePrototype);
+        }
     }
 
     public static object? ValidateClassHeritage(object? heritage)
@@ -1687,6 +1710,7 @@ public class RuntimeServices
         container.RegisterInstance<IPropertyDescriptorStore>(new PropertyDescriptorStore());
         container.Register<IEnvironment, DefaultEnvironment>();
         container.Register<Node.IChildProcessLauncher, Node.DefaultChildProcessLauncher>();
+        container.Register<Node.AsyncContextRuntime>();
         
         return container;
     }
