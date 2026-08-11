@@ -32,6 +32,18 @@ public class ExecutionTests
     public Task S11_8_7_A3()
         => ExecutionTestFromFile("S11.8.7_A3");
 
+    [Fact(DisplayName = "private-field-presence-field.js")]
+    public Task private_field_presence_field()
+        => ExecutionTestFromFile("private-field-presence-field");
+
+    [Fact(DisplayName = "private-field-presence-field-shadowed.js")]
+    public Task private_field_presence_field_shadowed()
+        => ExecutionTestFromFile("private-field-presence-field-shadowed");
+
+    [Fact(DisplayName = "private-field-rhs-non-object.js")]
+    public Task private_field_rhs_non_object()
+        => ExecutionTestFromFile("private-field-rhs-non-object");
+
     private async Task ExecutionTestFromFile(string testName, [CallerFilePath] string sourceFilePath = "")
     {
         var sourceDirectory = Path.GetDirectoryName(sourceFilePath)

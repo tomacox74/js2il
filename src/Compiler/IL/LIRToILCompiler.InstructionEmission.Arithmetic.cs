@@ -311,11 +311,6 @@ internal sealed partial class LIRToILCompiler
                 EmitStoreTemp(isInstanceOf.Result, ilEncoder, allocation);
                 break;
             case LIRPrivateBrandCheck privateBrandCheck:
-                if (!IsMaterialized(privateBrandCheck.Result, allocation))
-                {
-                    break;
-                }
-
                 var privateBrandClassRegistry =
                     _serviceProvider.GetService<Jroc.Services.ClassRegistry>();
                 if (privateBrandClassRegistry == null
@@ -335,7 +330,14 @@ internal sealed partial class LIRToILCompiler
                 ilEncoder.Token(privateBrandType);
                 ilEncoder.OpCode(ILOpCode.Ldnull);
                 ilEncoder.OpCode(ILOpCode.Cgt_un);
-                EmitStoreTemp(privateBrandCheck.Result, ilEncoder, allocation);
+                if (IsMaterialized(privateBrandCheck.Result, allocation))
+                {
+                    EmitStoreTemp(privateBrandCheck.Result, ilEncoder, allocation);
+                }
+                else
+                {
+                    ilEncoder.OpCode(ILOpCode.Pop);
+                }
                 break;
             case LIRCompareNumberLessThan cmpLt:
                 if (!IsMaterialized(cmpLt.Result, allocation))

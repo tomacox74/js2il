@@ -4,7 +4,7 @@
 
 [Back to Section13](Section13.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-08-09T18:01:58Z
+> Last generated (UTC): 2026-08-11T22:19:28Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -25,6 +25,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
+| Private field presence checks with `#name in value` | Supported with Limitations | [`private-field-presence-field.js`](../../../tests/Jroc.Test262.Tests/language/expressions/in/JavaScript/private-field-presence-field.js)<br>[`private-field-presence-field-shadowed.js`](../../../tests/Jroc.Test262.Tests/language/expressions/in/JavaScript/private-field-presence-field-shadowed.js)<br>[`private-field-rhs-non-object.js`](../../../tests/Jroc.Test262.Tests/language/expressions/in/JavaScript/private-field-rhs-non-object.js) |  | Instance private-field brands support positive and negative presence checks, lexically distinct same-named fields, and TypeError for non-object right-hand sides. Static private brands and partially initialized instance-element timing remain unsupported. |
 | Relational comparison evaluation order and coercion | Supported with Limitations | `tests/Jroc.Test262.Tests/language/expressions/greater-than/PortExpressionsBatchExecutionTests.cs` |  | The current relational operator slice exercises `>` evaluation order, abrupt-completion propagation, primitive/object coercion, and representative comparison cases from test262. The broader relational family remains marked limited because only the currently imported operator matrix is tracked here. |
 
 ### 13.10.2 ([tc39.es](https://tc39.es/ecma262/#sec-instanceofoperator))
