@@ -107,7 +107,7 @@
 		} // end of class Scope_log
 
 		.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassConstructor_B44AC0DC_Counter
-			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject
 		{
 			// Fields
 			.field private initonly object[] _transitionalScopes
@@ -125,7 +125,7 @@
 				.maxstack 8
 
 				IL_0000: ldarg.0
-				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject::.ctor()
 				IL_0006: ldarg.0
 				IL_0007: ldarg.1
 				IL_0008: stfld object[] Modules.Classes_ClassPrivateMethodAndAccessor_Log/Counter/FunctionObject_ClassConstructor_B44AC0DC_Counter::_transitionalScopes
@@ -156,36 +156,6 @@
 				IL_0000: ldc.i4.0
 				IL_0001: ret
 			} // end of method FunctionObject_ClassConstructor_B44AC0DC_Counter::get_RequiresInvocationContext
-
-			.method family hidebysig virtual 
-				instance object CallCore (
-					object thisArgument,
-					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 11 (0xb)
-				.maxstack 8
-
-				IL_0000: ldstr "Class constructor cannot be invoked without 'new'"
-				IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-				IL_000a: throw
-			} // end of method FunctionObject_ClassConstructor_B44AC0DC_Counter::CallCore
-
-			.method family hidebysig virtual 
-				instance object ConstructCore (
-					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
-					object newTarget
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 11 (0xb)
-				.maxstack 8
-
-				IL_0000: ldstr "Generated construction adapter is reserved for the callable-family construction migration"
-				IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-				IL_000a: throw
-			} // end of method FunctionObject_ClassConstructor_B44AC0DC_Counter::ConstructCore
 
 		} // end of class FunctionObject_ClassConstructor_B44AC0DC_Counter
 
@@ -662,7 +632,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 470 (0x1d6)
+		// Code size: 472 (0x1d8)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Classes_ClassPrivateMethodAndAccessor_Log/Scope,
@@ -671,8 +641,9 @@
 			[3] class [System.Runtime]System.Type,
 			[4] object,
 			[5] object[],
-			[6] class Modules.Classes_ClassPrivateMethodAndAccessor_Log/Counter,
-			[7] class [JavaScriptRuntime]JavaScriptRuntime.Console
+			[6] class Modules.Classes_ClassPrivateMethodAndAccessor_Log/Counter/FunctionObject_ClassConstructor_B44AC0DC_Counter,
+			[7] class Modules.Classes_ClassPrivateMethodAndAccessor_Log/Counter,
+			[8] class [JavaScriptRuntime]JavaScriptRuntime.Console
 		)
 
 		IL_0000: newobj instance void Modules.Classes_ClassPrivateMethodAndAccessor_Log/Scope::.ctor()
@@ -768,67 +739,72 @@
 		IL_010e: ldloc.0
 		IL_010f: stelem.ref
 		IL_0110: stloc.s 5
-		IL_0112: ldloc.3
-		IL_0113: ldloc.s 5
-		IL_0115: ldc.r8 0.0
-		IL_011e: box [System.Runtime]System.Double
-		IL_0123: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateClassConstructorValue(object, object, object)
-		IL_0128: stloc.s 4
-		IL_012a: ldloc.s 4
-		IL_012c: stloc.1
-		IL_012d: ldc.i4.1
-		IL_012e: newarr [System.Runtime]System.Object
-		IL_0133: dup
-		IL_0134: ldc.i4.0
-		IL_0135: ldloc.0
-		IL_0136: stelem.ref
-		IL_0137: stloc.s 5
-		IL_0139: ldloc.s 5
-		IL_013b: ldc.i4.0
-		IL_013c: newarr [System.Runtime]System.Object
-		IL_0141: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
-		IL_0146: newobj instance void Modules.Classes_ClassPrivateMethodAndAccessor_Log/Counter::.ctor(object[])
-		IL_014b: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
-		IL_0150: stloc.2
-		IL_0151: ldloc.2
-		IL_0152: ldtoken Modules.Classes_ClassPrivateMethodAndAccessor_Log/Counter
-		IL_0157: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_015c: ldstr "prototype"
-		IL_0161: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
-		IL_0166: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
-		IL_016b: ldloc.2
-		IL_016c: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Classes_ClassPrivateMethodAndAccessor_Log/Counter>(!!0)
-		IL_0171: stloc.s 6
-		IL_0173: ldloc.s 6
-		IL_0175: callvirt instance object Modules.Classes_ClassPrivateMethodAndAccessor_Log/Counter::log()
-		IL_017a: pop
-		IL_017b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0180: stloc.s 7
-		IL_0182: ldloc.2
-		IL_0183: call object [JavaScriptRuntime]JavaScriptRuntime.Object::getOwnPropertyNames(object)
-		IL_0188: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_018d: ldstr "includes"
-		IL_0192: ldstr "#double"
-		IL_0197: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_019c: stloc.s 4
-		IL_019e: ldloc.s 7
-		IL_01a0: ldloc.s 4
-		IL_01a2: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_01a7: pop
-		IL_01a8: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_01ad: stloc.s 7
-		IL_01af: ldloc.2
-		IL_01b0: call object [JavaScriptRuntime]JavaScriptRuntime.Object::getOwnPropertyNames(object)
-		IL_01b5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_01ba: ldstr "includes"
-		IL_01bf: ldstr "#secret"
-		IL_01c4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_01c9: stloc.s 4
-		IL_01cb: ldloc.s 7
-		IL_01cd: ldloc.s 4
-		IL_01cf: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_01d4: pop
-		IL_01d5: ret
+		IL_0112: ldloc.s 5
+		IL_0114: ldnull
+		IL_0115: newobj instance void Modules.Classes_ClassPrivateMethodAndAccessor_Log/Counter/FunctionObject_ClassConstructor_B44AC0DC_Counter::.ctor(object[], class [System.Runtime]System.Object)
+		IL_011a: ldloc.3
+		IL_011b: ldloc.s 5
+		IL_011d: ldc.i4.0
+		IL_011e: conv.r8
+		IL_011f: ldc.i4.0
+		IL_0120: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
+		IL_0125: castclass Modules.Classes_ClassPrivateMethodAndAccessor_Log/Counter/FunctionObject_ClassConstructor_B44AC0DC_Counter
+		IL_012a: stloc.s 6
+		IL_012c: ldloc.s 6
+		IL_012e: stloc.1
+		IL_012f: ldc.i4.1
+		IL_0130: newarr [System.Runtime]System.Object
+		IL_0135: dup
+		IL_0136: ldc.i4.0
+		IL_0137: ldloc.0
+		IL_0138: stelem.ref
+		IL_0139: stloc.s 5
+		IL_013b: ldloc.s 5
+		IL_013d: ldc.i4.0
+		IL_013e: newarr [System.Runtime]System.Object
+		IL_0143: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
+		IL_0148: newobj instance void Modules.Classes_ClassPrivateMethodAndAccessor_Log/Counter::.ctor(object[])
+		IL_014d: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
+		IL_0152: stloc.2
+		IL_0153: ldloc.2
+		IL_0154: ldtoken Modules.Classes_ClassPrivateMethodAndAccessor_Log/Counter
+		IL_0159: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_015e: ldstr "prototype"
+		IL_0163: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
+		IL_0168: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
+		IL_016d: ldloc.2
+		IL_016e: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Classes_ClassPrivateMethodAndAccessor_Log/Counter>(!!0)
+		IL_0173: stloc.s 7
+		IL_0175: ldloc.s 7
+		IL_0177: callvirt instance object Modules.Classes_ClassPrivateMethodAndAccessor_Log/Counter::log()
+		IL_017c: pop
+		IL_017d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0182: stloc.s 8
+		IL_0184: ldloc.2
+		IL_0185: call object [JavaScriptRuntime]JavaScriptRuntime.Object::getOwnPropertyNames(object)
+		IL_018a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_018f: ldstr "includes"
+		IL_0194: ldstr "#double"
+		IL_0199: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_019e: stloc.s 4
+		IL_01a0: ldloc.s 8
+		IL_01a2: ldloc.s 4
+		IL_01a4: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_01a9: pop
+		IL_01aa: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_01af: stloc.s 8
+		IL_01b1: ldloc.2
+		IL_01b2: call object [JavaScriptRuntime]JavaScriptRuntime.Object::getOwnPropertyNames(object)
+		IL_01b7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_01bc: ldstr "includes"
+		IL_01c1: ldstr "#secret"
+		IL_01c6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_01cb: stloc.s 4
+		IL_01cd: ldloc.s 8
+		IL_01cf: ldloc.s 4
+		IL_01d1: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_01d6: pop
+		IL_01d7: ret
 	} // end of method Classes_ClassPrivateMethodAndAccessor_Log::__js_module_init__
 
 } // end of class Modules.Classes_ClassPrivateMethodAndAccessor_Log

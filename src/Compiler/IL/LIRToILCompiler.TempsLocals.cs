@@ -1532,7 +1532,7 @@ internal sealed partial class LIRToILCompiler
                     // Inline instance-field load from runtime `this`.
                     // - In instance methods (class methods/ctors): receiver is IL arg0.
                     // - In static JS callables (functions/arrows): use runtime helpers because
-                    //   `this` may be a ClassConstructorValue (e.g. for static accessors), not a CLR instance.
+                    //   `this` may be a generated class constructor object, not a CLR instance.
                     if (methodDescriptor.IsStatic)
                     {
                         var getThisRef = _memberRefRegistry.GetOrAddMethod(

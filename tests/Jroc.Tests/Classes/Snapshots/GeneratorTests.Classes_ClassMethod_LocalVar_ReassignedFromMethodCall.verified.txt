@@ -69,7 +69,7 @@
 		} // end of class Scope_getNext
 
 		.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassConstructor_AB7DA7FA_Counter
-			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject
 		{
 			// Fields
 			.field private initonly object[] _transitionalScopes
@@ -85,7 +85,7 @@
 				.maxstack 8
 
 				IL_0000: ldarg.0
-				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject::.ctor()
 				IL_0006: ldarg.0
 				IL_0007: ldarg.1
 				IL_0008: stfld object[] Modules.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall/Counter/FunctionObject_ClassConstructor_AB7DA7FA_Counter::_transitionalScopes
@@ -113,36 +113,6 @@
 				IL_0000: ldc.i4.1
 				IL_0001: ret
 			} // end of method FunctionObject_ClassConstructor_AB7DA7FA_Counter::get_RequiresInvocationContext
-
-			.method family hidebysig virtual 
-				instance object CallCore (
-					object thisArgument,
-					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 11 (0xb)
-				.maxstack 8
-
-				IL_0000: ldstr "Class constructor cannot be invoked without 'new'"
-				IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-				IL_000a: throw
-			} // end of method FunctionObject_ClassConstructor_AB7DA7FA_Counter::CallCore
-
-			.method family hidebysig virtual 
-				instance object ConstructCore (
-					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
-					object newTarget
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 11 (0xb)
-				.maxstack 8
-
-				IL_0000: ldstr "Generated construction adapter is reserved for the callable-family construction migration"
-				IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-				IL_000a: throw
-			} // end of method FunctionObject_ClassConstructor_AB7DA7FA_Counter::ConstructCore
 
 		} // end of class FunctionObject_ClassConstructor_AB7DA7FA_Counter
 
@@ -323,7 +293,7 @@
 		} // end of class Scope_compute
 
 		.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassConstructor_2721F182_Calculator
-			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject
 		{
 			// Fields
 			.field private initonly class Modules.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall/Scope _environment0_Classes_ClassMethod_LocalVar_ReassignedFromMethodCall
@@ -341,7 +311,7 @@
 				.maxstack 8
 
 				IL_0000: ldarg.0
-				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject::.ctor()
 				IL_0006: ldarg.0
 				IL_0007: ldarg.1
 				IL_0008: stfld class Modules.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall/Scope Modules.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall/Calculator/FunctionObject_ClassConstructor_2721F182_Calculator::_environment0_Classes_ClassMethod_LocalVar_ReassignedFromMethodCall
@@ -372,36 +342,6 @@
 				IL_0000: ldc.i4.1
 				IL_0001: ret
 			} // end of method FunctionObject_ClassConstructor_2721F182_Calculator::get_RequiresInvocationContext
-
-			.method family hidebysig virtual 
-				instance object CallCore (
-					object thisArgument,
-					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 11 (0xb)
-				.maxstack 8
-
-				IL_0000: ldstr "Class constructor cannot be invoked without 'new'"
-				IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-				IL_000a: throw
-			} // end of method FunctionObject_ClassConstructor_2721F182_Calculator::CallCore
-
-			.method family hidebysig virtual 
-				instance object ConstructCore (
-					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
-					object newTarget
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 11 (0xb)
-				.maxstack 8
-
-				IL_0000: ldstr "Generated construction adapter is reserved for the callable-family construction migration"
-				IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-				IL_000a: throw
-			} // end of method FunctionObject_ClassConstructor_2721F182_Calculator::ConstructCore
 
 		} // end of class FunctionObject_ClassConstructor_2721F182_Calculator
 
@@ -603,7 +543,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 272 (0x110)
+		// Code size: 273 (0x111)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall/Scope,
@@ -612,9 +552,10 @@
 			[3] class [System.Runtime]System.Type,
 			[4] object,
 			[5] object[],
-			[6] class Modules.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall/Calculator,
-			[7] float64,
-			[8] class [JavaScriptRuntime]JavaScriptRuntime.Console
+			[6] class Modules.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall/Counter/FunctionObject_ClassConstructor_AB7DA7FA_Counter,
+			[7] class Modules.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall/Calculator,
+			[8] float64,
+			[9] class [JavaScriptRuntime]JavaScriptRuntime.Console
 		)
 
 		IL_0000: newobj instance void Modules.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall/Scope::.ctor()
@@ -650,65 +591,69 @@
 		IL_005d: ldloc.0
 		IL_005e: stelem.ref
 		IL_005f: stloc.s 5
-		IL_0061: ldloc.3
-		IL_0062: ldloc.s 5
-		IL_0064: ldc.r8 0.0
-		IL_006d: box [System.Runtime]System.Double
-		IL_0072: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateClassConstructorValue(object, object, object)
-		IL_0077: stloc.s 4
-		IL_0079: ldloc.0
-		IL_007a: ldloc.s 4
-		IL_007c: stfld object Modules.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall/Scope::Counter
-		IL_0081: nop
-		IL_0082: ldc.i4.1
-		IL_0083: newarr [System.Runtime]System.Object
-		IL_0088: dup
-		IL_0089: ldc.i4.0
-		IL_008a: ldloc.0
-		IL_008b: stelem.ref
-		IL_008c: stloc.s 5
-		IL_008e: ldtoken Modules.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall/Calculator
-		IL_0093: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_0098: ldtoken Modules.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall/Calculator
-		IL_009d: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_00a2: stloc.3
-		IL_00a3: ldc.i4.1
-		IL_00a4: newarr [System.Runtime]System.Object
-		IL_00a9: dup
-		IL_00aa: ldc.i4.0
-		IL_00ab: ldloc.0
-		IL_00ac: stelem.ref
-		IL_00ad: stloc.s 5
-		IL_00af: ldloc.s 5
-		IL_00b1: ldc.i4.0
-		IL_00b2: newarr [System.Runtime]System.Object
-		IL_00b7: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
-		IL_00bc: newobj instance void Modules.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall/Calculator::.ctor(object[])
-		IL_00c1: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
-		IL_00c6: stloc.1
-		IL_00c7: ldloc.1
-		IL_00c8: ldtoken Modules.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall/Calculator
-		IL_00cd: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_00d2: ldstr "prototype"
-		IL_00d7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
-		IL_00dc: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
-		IL_00e1: ldloc.1
-		IL_00e2: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall/Calculator>(!!0)
-		IL_00e7: stloc.s 6
-		IL_00e9: ldloc.s 6
-		IL_00eb: callvirt instance float64 Modules.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall/Calculator::compute()
-		IL_00f0: stloc.s 7
-		IL_00f2: ldloc.s 7
-		IL_00f4: box [System.Runtime]System.Double
-		IL_00f9: stloc.2
-		IL_00fa: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00ff: stloc.s 8
-		IL_0101: ldloc.s 8
-		IL_0103: ldstr "final output:"
-		IL_0108: ldloc.2
-		IL_0109: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_010e: pop
-		IL_010f: ret
+		IL_0061: ldloc.s 5
+		IL_0063: newobj instance void Modules.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall/Counter/FunctionObject_ClassConstructor_AB7DA7FA_Counter::.ctor(object[])
+		IL_0068: ldloc.3
+		IL_0069: ldloc.s 5
+		IL_006b: ldc.i4.0
+		IL_006c: conv.r8
+		IL_006d: ldc.i4.0
+		IL_006e: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
+		IL_0073: castclass Modules.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall/Counter/FunctionObject_ClassConstructor_AB7DA7FA_Counter
+		IL_0078: stloc.s 6
+		IL_007a: ldloc.0
+		IL_007b: ldloc.s 6
+		IL_007d: stfld object Modules.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall/Scope::Counter
+		IL_0082: nop
+		IL_0083: ldc.i4.1
+		IL_0084: newarr [System.Runtime]System.Object
+		IL_0089: dup
+		IL_008a: ldc.i4.0
+		IL_008b: ldloc.0
+		IL_008c: stelem.ref
+		IL_008d: stloc.s 5
+		IL_008f: ldtoken Modules.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall/Calculator
+		IL_0094: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_0099: ldtoken Modules.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall/Calculator
+		IL_009e: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_00a3: stloc.3
+		IL_00a4: ldc.i4.1
+		IL_00a5: newarr [System.Runtime]System.Object
+		IL_00aa: dup
+		IL_00ab: ldc.i4.0
+		IL_00ac: ldloc.0
+		IL_00ad: stelem.ref
+		IL_00ae: stloc.s 5
+		IL_00b0: ldloc.s 5
+		IL_00b2: ldc.i4.0
+		IL_00b3: newarr [System.Runtime]System.Object
+		IL_00b8: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
+		IL_00bd: newobj instance void Modules.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall/Calculator::.ctor(object[])
+		IL_00c2: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
+		IL_00c7: stloc.1
+		IL_00c8: ldloc.1
+		IL_00c9: ldtoken Modules.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall/Calculator
+		IL_00ce: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_00d3: ldstr "prototype"
+		IL_00d8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
+		IL_00dd: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
+		IL_00e2: ldloc.1
+		IL_00e3: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall/Calculator>(!!0)
+		IL_00e8: stloc.s 7
+		IL_00ea: ldloc.s 7
+		IL_00ec: callvirt instance float64 Modules.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall/Calculator::compute()
+		IL_00f1: stloc.s 8
+		IL_00f3: ldloc.s 8
+		IL_00f5: box [System.Runtime]System.Double
+		IL_00fa: stloc.2
+		IL_00fb: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0100: stloc.s 9
+		IL_0102: ldloc.s 9
+		IL_0104: ldstr "final output:"
+		IL_0109: ldloc.2
+		IL_010a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_010f: pop
+		IL_0110: ret
 	} // end of method Classes_ClassMethod_LocalVar_ReassignedFromMethodCall::__js_module_init__
 
 } // end of class Modules.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall

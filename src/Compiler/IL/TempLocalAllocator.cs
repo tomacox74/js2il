@@ -608,6 +608,10 @@ internal static partial class LIRInstructionInfo
                 {
                     visitor.Visit(value.PrivateBrand.Value);
                 }
+                if (value.ClassConstructorType.HasValue)
+                {
+                    visitor.Visit(value.ClassConstructorType.Value);
+                }
                 break;
             case LIRStoreUserClassInstanceField value:
                 visitor.Visit(value.Value); break;

@@ -155,7 +155,7 @@
 		} // end of class Scope_methodKey
 
 		.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassConstructor_901BD596_Example
-			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject
 		{
 			// Fields
 			.field private initonly object[] _transitionalScopes
@@ -171,7 +171,7 @@
 				.maxstack 8
 
 				IL_0000: ldarg.0
-				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject::.ctor()
 				IL_0006: ldarg.0
 				IL_0007: ldarg.1
 				IL_0008: stfld object[] Modules.Classes_ClassComputedFieldAndMethod_DynamicKey_Log/Example/FunctionObject_ClassConstructor_901BD596_Example::_transitionalScopes
@@ -199,36 +199,6 @@
 				IL_0000: ldc.i4.0
 				IL_0001: ret
 			} // end of method FunctionObject_ClassConstructor_901BD596_Example::get_RequiresInvocationContext
-
-			.method family hidebysig virtual 
-				instance object CallCore (
-					object thisArgument,
-					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 11 (0xb)
-				.maxstack 8
-
-				IL_0000: ldstr "Class constructor cannot be invoked without 'new'"
-				IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-				IL_000a: throw
-			} // end of method FunctionObject_ClassConstructor_901BD596_Example::CallCore
-
-			.method family hidebysig virtual 
-				instance object ConstructCore (
-					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
-					object newTarget
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 11 (0xb)
-				.maxstack 8
-
-				IL_0000: ldstr "Generated construction adapter is reserved for the callable-family construction migration"
-				IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-				IL_000a: throw
-			} // end of method FunctionObject_ClassConstructor_901BD596_Example::ConstructCore
 
 		} // end of class FunctionObject_ClassConstructor_901BD596_Example
 
@@ -301,7 +271,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 380 (0x17c)
+		// Code size: 381 (0x17d)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Classes_ClassComputedFieldAndMethod_DynamicKey_Log/Scope,
@@ -310,10 +280,11 @@
 			[3] class [System.Runtime]System.Type,
 			[4] object,
 			[5] object[],
-			[6] class [JavaScriptRuntime]JavaScriptRuntime.Console,
-			[7] class Modules.Classes_ClassComputedFieldAndMethod_DynamicKey_Log/Example,
-			[8] bool,
-			[9] object
+			[6] class Modules.Classes_ClassComputedFieldAndMethod_DynamicKey_Log/Example/FunctionObject_ClassConstructor_901BD596_Example,
+			[7] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+			[8] class Modules.Classes_ClassComputedFieldAndMethod_DynamicKey_Log/Example,
+			[9] bool,
+			[10] object
 		)
 
 		IL_0000: newobj instance void Modules.Classes_ClassComputedFieldAndMethod_DynamicKey_Log/Scope::.ctor()
@@ -363,89 +334,93 @@
 		IL_0079: ldtoken Modules.Classes_ClassComputedFieldAndMethod_DynamicKey_Log/Example
 		IL_007e: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
 		IL_0083: stloc.3
-		IL_0084: ldloc.3
-		IL_0085: ldloc.s 5
-		IL_0087: ldc.r8 0.0
-		IL_0090: box [System.Runtime]System.Double
-		IL_0095: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateClassConstructorValue(object, object, object)
-		IL_009a: stloc.s 4
-		IL_009c: ldloc.s 4
-		IL_009e: stloc.1
-		IL_009f: ldc.i4.1
-		IL_00a0: newarr [System.Runtime]System.Object
-		IL_00a5: dup
-		IL_00a6: ldc.i4.0
-		IL_00a7: ldloc.0
-		IL_00a8: stelem.ref
-		IL_00a9: stloc.s 5
-		IL_00ab: ldloc.s 5
-		IL_00ad: ldc.i4.0
-		IL_00ae: newarr [System.Runtime]System.Object
-		IL_00b3: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
-		IL_00b8: newobj instance void Modules.Classes_ClassComputedFieldAndMethod_DynamicKey_Log/Example::.ctor(object[])
-		IL_00bd: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
-		IL_00c2: stloc.2
-		IL_00c3: ldloc.2
-		IL_00c4: ldtoken Modules.Classes_ClassComputedFieldAndMethod_DynamicKey_Log/Example
-		IL_00c9: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_00ce: ldstr "prototype"
-		IL_00d3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
-		IL_00d8: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
-		IL_00dd: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00e2: stloc.s 6
-		IL_00e4: ldloc.2
-		IL_00e5: ldstr "value"
-		IL_00ea: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_00ef: stloc.s 4
-		IL_00f1: ldloc.s 6
-		IL_00f3: ldloc.s 4
-		IL_00f5: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00fa: pop
-		IL_00fb: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0100: stloc.s 6
-		IL_0102: ldloc.2
-		IL_0103: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Classes_ClassComputedFieldAndMethod_DynamicKey_Log/Example>(!!0)
-		IL_0108: stloc.s 7
-		IL_010a: ldc.i4.0
-		IL_010b: newarr [System.Runtime]System.Object
-		IL_0110: stloc.s 5
-		IL_0112: ldloc.s 7
-		IL_0114: ldstr "bump"
-		IL_0119: ldloc.s 5
-		IL_011b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallComputedMember(object, object, object[])
-		IL_0120: stloc.s 4
-		IL_0122: ldloc.s 6
-		IL_0124: ldloc.s 4
-		IL_0126: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_012b: pop
-		IL_012c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0131: stloc.s 6
-		IL_0133: ldloc.2
-		IL_0134: ldstr "value"
-		IL_0139: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_013e: stloc.s 4
-		IL_0140: ldloc.s 6
-		IL_0142: ldloc.s 4
-		IL_0144: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0149: pop
-		IL_014a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_014f: stloc.s 6
-		IL_0151: ldloc.2
-		IL_0152: ldstr "fieldKey"
-		IL_0157: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_015c: stloc.s 4
-		IL_015e: ldloc.s 4
-		IL_0160: ldnull
-		IL_0161: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_0166: stloc.s 8
-		IL_0168: ldloc.s 8
-		IL_016a: box [System.Runtime]System.Boolean
-		IL_016f: stloc.s 9
-		IL_0171: ldloc.s 6
-		IL_0173: ldloc.s 9
-		IL_0175: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_017a: pop
-		IL_017b: ret
+		IL_0084: ldloc.s 5
+		IL_0086: newobj instance void Modules.Classes_ClassComputedFieldAndMethod_DynamicKey_Log/Example/FunctionObject_ClassConstructor_901BD596_Example::.ctor(object[])
+		IL_008b: ldloc.3
+		IL_008c: ldloc.s 5
+		IL_008e: ldc.i4.0
+		IL_008f: conv.r8
+		IL_0090: ldc.i4.0
+		IL_0091: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
+		IL_0096: castclass Modules.Classes_ClassComputedFieldAndMethod_DynamicKey_Log/Example/FunctionObject_ClassConstructor_901BD596_Example
+		IL_009b: stloc.s 6
+		IL_009d: ldloc.s 6
+		IL_009f: stloc.1
+		IL_00a0: ldc.i4.1
+		IL_00a1: newarr [System.Runtime]System.Object
+		IL_00a6: dup
+		IL_00a7: ldc.i4.0
+		IL_00a8: ldloc.0
+		IL_00a9: stelem.ref
+		IL_00aa: stloc.s 5
+		IL_00ac: ldloc.s 5
+		IL_00ae: ldc.i4.0
+		IL_00af: newarr [System.Runtime]System.Object
+		IL_00b4: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
+		IL_00b9: newobj instance void Modules.Classes_ClassComputedFieldAndMethod_DynamicKey_Log/Example::.ctor(object[])
+		IL_00be: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
+		IL_00c3: stloc.2
+		IL_00c4: ldloc.2
+		IL_00c5: ldtoken Modules.Classes_ClassComputedFieldAndMethod_DynamicKey_Log/Example
+		IL_00ca: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_00cf: ldstr "prototype"
+		IL_00d4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
+		IL_00d9: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
+		IL_00de: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00e3: stloc.s 7
+		IL_00e5: ldloc.2
+		IL_00e6: ldstr "value"
+		IL_00eb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00f0: stloc.s 4
+		IL_00f2: ldloc.s 7
+		IL_00f4: ldloc.s 4
+		IL_00f6: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00fb: pop
+		IL_00fc: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0101: stloc.s 7
+		IL_0103: ldloc.2
+		IL_0104: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Classes_ClassComputedFieldAndMethod_DynamicKey_Log/Example>(!!0)
+		IL_0109: stloc.s 8
+		IL_010b: ldc.i4.0
+		IL_010c: newarr [System.Runtime]System.Object
+		IL_0111: stloc.s 5
+		IL_0113: ldloc.s 8
+		IL_0115: ldstr "bump"
+		IL_011a: ldloc.s 5
+		IL_011c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallComputedMember(object, object, object[])
+		IL_0121: stloc.s 4
+		IL_0123: ldloc.s 7
+		IL_0125: ldloc.s 4
+		IL_0127: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_012c: pop
+		IL_012d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0132: stloc.s 7
+		IL_0134: ldloc.2
+		IL_0135: ldstr "value"
+		IL_013a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_013f: stloc.s 4
+		IL_0141: ldloc.s 7
+		IL_0143: ldloc.s 4
+		IL_0145: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_014a: pop
+		IL_014b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0150: stloc.s 7
+		IL_0152: ldloc.2
+		IL_0153: ldstr "fieldKey"
+		IL_0158: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_015d: stloc.s 4
+		IL_015f: ldloc.s 4
+		IL_0161: ldnull
+		IL_0162: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_0167: stloc.s 9
+		IL_0169: ldloc.s 9
+		IL_016b: box [System.Runtime]System.Boolean
+		IL_0170: stloc.s 10
+		IL_0172: ldloc.s 7
+		IL_0174: ldloc.s 10
+		IL_0176: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_017b: pop
+		IL_017c: ret
 	} // end of method Classes_ClassComputedFieldAndMethod_DynamicKey_Log::__js_module_init__
 
 } // end of class Modules.Classes_ClassComputedFieldAndMethod_DynamicKey_Log

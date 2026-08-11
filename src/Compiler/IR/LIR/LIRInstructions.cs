@@ -349,7 +349,10 @@ public record LIRCreateBoundFunctionExpression(
     bool IsNonConstructible = false,
     TempVariable? HomeObject = null,
     TempVariable? PrivateBrand = null,
-    string? FunctionName = null) : LIRInstruction;
+    string? FunctionName = null,
+    TempVariable? ClassConstructorType = null,
+    int ClassConstructorLength = 0,
+    bool IsFreshClassConstructor = false) : LIRInstruction;
 
 /// <summary>
 /// Represents a scope slot in the scopes array along with the source of its value.

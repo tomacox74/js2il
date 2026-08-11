@@ -111,7 +111,7 @@
 		} // end of class Scope_item
 
 		.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassConstructor_A071EBE1_NodeList
-			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject
 		{
 			// Fields
 			.field private initonly object[] _transitionalScopes
@@ -131,7 +131,7 @@
 				.maxstack 8
 
 				IL_0000: ldarg.0
-				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject::.ctor()
 				IL_0006: ldarg.0
 				IL_0007: ldarg.1
 				IL_0008: stfld object[] Modules.CommonJS_Module_Exports_ClassExpression_ExtendsArray/NodeList/FunctionObject_ClassConstructor_A071EBE1_NodeList::_transitionalScopes
@@ -189,36 +189,6 @@
 				IL_0001: ldfld object[] Modules.CommonJS_Module_Exports_ClassExpression_ExtendsArray/NodeList/FunctionObject_ClassConstructor_A071EBE1_NodeList::_lexicalSuperScopes
 				IL_0006: ret
 			} // end of method FunctionObject_ClassConstructor_A071EBE1_NodeList::GetLexicalSuperScopesCore
-
-			.method family hidebysig virtual 
-				instance object CallCore (
-					object thisArgument,
-					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 11 (0xb)
-				.maxstack 8
-
-				IL_0000: ldstr "Class constructor cannot be invoked without 'new'"
-				IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-				IL_000a: throw
-			} // end of method FunctionObject_ClassConstructor_A071EBE1_NodeList::CallCore
-
-			.method family hidebysig virtual 
-				instance object ConstructCore (
-					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
-					object newTarget
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 11 (0xb)
-				.maxstack 8
-
-				IL_0000: ldstr "Generated construction adapter is reserved for the callable-family construction migration"
-				IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-				IL_000a: throw
-			} // end of method FunctionObject_ClassConstructor_A071EBE1_NodeList::ConstructCore
 
 		} // end of class FunctionObject_ClassConstructor_A071EBE1_NodeList
 
@@ -459,15 +429,16 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 194 (0xc2)
+		// Code size: 211 (0xd3)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.CommonJS_Module_Exports_ClassExpression_ExtendsArray/Scope,
 			[1] object[],
 			[2] class [System.Runtime]System.Type,
-			[3] object,
+			[3] class Modules.CommonJS_Module_Exports_ClassExpression_ExtendsArray/NodeList/FunctionObject_ClassConstructor_A071EBE1_NodeList,
 			[4] object,
-			[5] class [JavaScriptRuntime]JavaScriptRuntime.Console
+			[5] object,
+			[6] class [JavaScriptRuntime]JavaScriptRuntime.Console
 		)
 
 		IL_0000: newobj instance void Modules.CommonJS_Module_Exports_ClassExpression_ExtendsArray/Scope::.ctor()
@@ -485,55 +456,66 @@
 		IL_001c: ldtoken Modules.CommonJS_Module_Exports_ClassExpression_ExtendsArray/NodeList
 		IL_0021: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
 		IL_0026: stloc.2
-		IL_0027: ldloc.2
-		IL_0028: ldloc.1
-		IL_0029: ldc.r8 1
-		IL_0032: box [System.Runtime]System.Double
-		IL_0037: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateFreshClassConstructorValue(object, object, object)
-		IL_003c: stloc.3
-		IL_003d: ldstr "Array"
-		IL_0042: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0047: stloc.s 4
-		IL_0049: ldloc.3
-		IL_004a: ldloc.s 4
-		IL_004c: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetClassConstructorPrototype(object, object)
-		IL_0051: stloc.s 4
-		IL_0053: ldtoken Modules.CommonJS_Module_Exports_ClassExpression_ExtendsArray/NodeList
-		IL_0058: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_005d: ldtoken Modules.CommonJS_Module_Exports_ClassExpression_ExtendsArray/NodeList
-		IL_0062: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_0067: stloc.2
-		IL_0068: ldloc.2
-		IL_0069: ldstr "prototype"
-		IL_006e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0073: stloc.3
-		IL_0074: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0079: stloc.1
-		IL_007a: ldloc.3
-		IL_007b: ldstr "item"
-		IL_0080: newobj instance void Modules.CommonJS_Module_Exports_ClassExpression_ExtendsArray/NodeList/FunctionObject_ClassMethod_017B4079_NodeList_item::.ctor()
-		IL_0085: ldc.i4.1
-		IL_0086: conv.r8
-		IL_0087: ldstr "item"
-		IL_008c: ldc.i4.1
-		IL_008d: ldc.i4.1
-		IL_008e: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.CommonJS_Module_Exports_ClassExpression_ExtendsArray/NodeList/FunctionObject_ClassMethod_017B4079_NodeList_item>(!!0, float64, string, bool, bool)
-		IL_0093: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.CommonJS_Module_Exports_ClassExpression_ExtendsArray/NodeList/FunctionObject_ClassMethod_017B4079_NodeList_item>(!!0)
-		IL_0098: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)
-		IL_009d: pop
-		IL_009e: ldarg.2
-		IL_009f: ldstr "exports"
-		IL_00a4: ldloc.s 4
-		IL_00a6: ldc.i4.1
-		IL_00a7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
-		IL_00ac: pop
-		IL_00ad: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00b2: stloc.s 5
-		IL_00b4: ldloc.s 5
-		IL_00b6: ldstr "ok"
-		IL_00bb: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00c0: pop
-		IL_00c1: ret
+		IL_0027: ldloc.1
+		IL_0028: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentLexicalSuperReceiver()
+		IL_002d: ldc.i4.1
+		IL_002e: newarr [System.Runtime]System.Object
+		IL_0033: dup
+		IL_0034: ldc.i4.0
+		IL_0035: ldloc.0
+		IL_0036: stelem.ref
+		IL_0037: newobj instance void Modules.CommonJS_Module_Exports_ClassExpression_ExtendsArray/NodeList/FunctionObject_ClassConstructor_A071EBE1_NodeList::.ctor(object[], class [System.Runtime]System.Object, object[])
+		IL_003c: ldloc.2
+		IL_003d: ldloc.1
+		IL_003e: ldc.i4.1
+		IL_003f: conv.r8
+		IL_0040: ldc.i4.1
+		IL_0041: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
+		IL_0046: castclass Modules.CommonJS_Module_Exports_ClassExpression_ExtendsArray/NodeList/FunctionObject_ClassConstructor_A071EBE1_NodeList
+		IL_004b: stloc.3
+		IL_004c: ldstr "Array"
+		IL_0051: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0056: stloc.s 4
+		IL_0058: ldloc.3
+		IL_0059: ldloc.s 4
+		IL_005b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetClassConstructorPrototype(object, object)
+		IL_0060: stloc.s 4
+		IL_0062: ldtoken Modules.CommonJS_Module_Exports_ClassExpression_ExtendsArray/NodeList
+		IL_0067: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_006c: ldtoken Modules.CommonJS_Module_Exports_ClassExpression_ExtendsArray/NodeList
+		IL_0071: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_0076: stloc.2
+		IL_0077: ldloc.2
+		IL_0078: ldstr "prototype"
+		IL_007d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0082: stloc.s 5
+		IL_0084: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0089: stloc.1
+		IL_008a: ldloc.s 5
+		IL_008c: ldstr "item"
+		IL_0091: newobj instance void Modules.CommonJS_Module_Exports_ClassExpression_ExtendsArray/NodeList/FunctionObject_ClassMethod_017B4079_NodeList_item::.ctor()
+		IL_0096: ldc.i4.1
+		IL_0097: conv.r8
+		IL_0098: ldstr "item"
+		IL_009d: ldc.i4.1
+		IL_009e: ldc.i4.1
+		IL_009f: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.CommonJS_Module_Exports_ClassExpression_ExtendsArray/NodeList/FunctionObject_ClassMethod_017B4079_NodeList_item>(!!0, float64, string, bool, bool)
+		IL_00a4: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.CommonJS_Module_Exports_ClassExpression_ExtendsArray/NodeList/FunctionObject_ClassMethod_017B4079_NodeList_item>(!!0)
+		IL_00a9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)
+		IL_00ae: pop
+		IL_00af: ldarg.2
+		IL_00b0: ldstr "exports"
+		IL_00b5: ldloc.s 4
+		IL_00b7: ldc.i4.1
+		IL_00b8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
+		IL_00bd: pop
+		IL_00be: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00c3: stloc.s 6
+		IL_00c5: ldloc.s 6
+		IL_00c7: ldstr "ok"
+		IL_00cc: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00d1: pop
+		IL_00d2: ret
 	} // end of method CommonJS_Module_Exports_ClassExpression_ExtendsArray::__js_module_init__
 
 } // end of class Modules.CommonJS_Module_Exports_ClassExpression_ExtendsArray

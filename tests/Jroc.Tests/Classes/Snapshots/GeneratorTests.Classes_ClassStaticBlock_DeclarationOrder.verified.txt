@@ -31,7 +31,7 @@
 		} // end of class Scope
 
 		.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassConstructor_5DBD46D9_Example
-			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject
 		{
 			// Fields
 			.field private initonly object[] _transitionalScopes
@@ -47,7 +47,7 @@
 				.maxstack 8
 
 				IL_0000: ldarg.0
-				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject::.ctor()
 				IL_0006: ldarg.0
 				IL_0007: ldarg.1
 				IL_0008: stfld object[] Modules.Classes_ClassStaticBlock_DeclarationOrder/Example/FunctionObject_ClassConstructor_5DBD46D9_Example::_transitionalScopes
@@ -75,36 +75,6 @@
 				IL_0000: ldc.i4.0
 				IL_0001: ret
 			} // end of method FunctionObject_ClassConstructor_5DBD46D9_Example::get_RequiresInvocationContext
-
-			.method family hidebysig virtual 
-				instance object CallCore (
-					object thisArgument,
-					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 11 (0xb)
-				.maxstack 8
-
-				IL_0000: ldstr "Class constructor cannot be invoked without 'new'"
-				IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-				IL_000a: throw
-			} // end of method FunctionObject_ClassConstructor_5DBD46D9_Example::CallCore
-
-			.method family hidebysig virtual 
-				instance object ConstructCore (
-					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
-					object newTarget
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 11 (0xb)
-				.maxstack 8
-
-				IL_0000: ldstr "Generated construction adapter is reserved for the callable-family construction migration"
-				IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-				IL_000a: throw
-			} // end of method FunctionObject_ClassConstructor_5DBD46D9_Example::ConstructCore
 
 		} // end of class FunctionObject_ClassConstructor_5DBD46D9_Example
 
@@ -190,7 +160,7 @@
 			[1] object,
 			[2] object[],
 			[3] class [System.Runtime]System.Type,
-			[4] object,
+			[4] class Modules.Classes_ClassStaticBlock_DeclarationOrder/Example/FunctionObject_ClassConstructor_5DBD46D9_Example,
 			[5] object,
 			[6] object,
 			[7] class [JavaScriptRuntime]JavaScriptRuntime.Console
@@ -211,11 +181,15 @@
 		IL_001c: ldtoken Modules.Classes_ClassStaticBlock_DeclarationOrder/Example
 		IL_0021: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
 		IL_0026: stloc.3
-		IL_0027: ldloc.3
-		IL_0028: ldloc.2
-		IL_0029: ldc.r8 0.0
-		IL_0032: box [System.Runtime]System.Double
-		IL_0037: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateClassConstructorValue(object, object, object)
+		IL_0027: ldloc.2
+		IL_0028: newobj instance void Modules.Classes_ClassStaticBlock_DeclarationOrder/Example/FunctionObject_ClassConstructor_5DBD46D9_Example::.ctor(object[])
+		IL_002d: ldloc.3
+		IL_002e: ldloc.2
+		IL_002f: ldc.i4.0
+		IL_0030: conv.r8
+		IL_0031: ldc.i4.0
+		IL_0032: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
+		IL_0037: castclass Modules.Classes_ClassStaticBlock_DeclarationOrder/Example/FunctionObject_ClassConstructor_5DBD46D9_Example
 		IL_003c: stloc.s 4
 		IL_003e: ldloc.s 4
 		IL_0040: stloc.1
@@ -234,11 +208,15 @@
 		IL_0069: ldtoken Modules.Classes_ClassStaticBlock_DeclarationOrder/Example
 		IL_006e: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
 		IL_0073: stloc.3
-		IL_0074: ldloc.3
-		IL_0075: ldloc.2
-		IL_0076: ldc.r8 0.0
-		IL_007f: box [System.Runtime]System.Double
-		IL_0084: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateClassConstructorValue(object, object, object)
+		IL_0074: ldloc.2
+		IL_0075: newobj instance void Modules.Classes_ClassStaticBlock_DeclarationOrder/Example/FunctionObject_ClassConstructor_5DBD46D9_Example::.ctor(object[])
+		IL_007a: ldloc.3
+		IL_007b: ldloc.2
+		IL_007c: ldc.i4.0
+		IL_007d: conv.r8
+		IL_007e: ldc.i4.0
+		IL_007f: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
+		IL_0084: castclass Modules.Classes_ClassStaticBlock_DeclarationOrder/Example/FunctionObject_ClassConstructor_5DBD46D9_Example
 		IL_0089: stloc.s 4
 		IL_008b: ldsfld object Modules.Classes_ClassStaticBlock_DeclarationOrder/Example::'value'
 		IL_0090: stloc.s 5
@@ -255,9 +233,9 @@
 		IL_00b4: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 		IL_00b9: stloc.s 7
 		IL_00bb: ldsfld object Modules.Classes_ClassStaticBlock_DeclarationOrder/Example::'value'
-		IL_00c0: stloc.s 4
+		IL_00c0: stloc.s 5
 		IL_00c2: ldstr "block:"
-		IL_00c7: ldloc.s 4
+		IL_00c7: ldloc.s 5
 		IL_00c9: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
 		IL_00ce: stloc.s 6
 		IL_00d0: ldloc.s 7
@@ -265,8 +243,8 @@
 		IL_00d4: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
 		IL_00d9: pop
 		IL_00da: ldsfld object Modules.Classes_ClassStaticBlock_DeclarationOrder/Example::'value'
-		IL_00df: stloc.s 4
-		IL_00e1: ldloc.s 4
+		IL_00df: stloc.s 5
+		IL_00e1: ldloc.s 5
 		IL_00e3: ldc.r8 3
 		IL_00ec: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
 		IL_00f1: stloc.s 6
@@ -275,17 +253,17 @@
 		IL_00fa: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 		IL_00ff: stloc.s 7
 		IL_0101: ldsfld object Modules.Classes_ClassStaticBlock_DeclarationOrder/Example::'value'
-		IL_0106: stloc.s 4
+		IL_0106: stloc.s 5
 		IL_0108: ldloc.s 7
-		IL_010a: ldloc.s 4
+		IL_010a: ldloc.s 5
 		IL_010c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
 		IL_0111: pop
 		IL_0112: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 		IL_0117: stloc.s 7
 		IL_0119: ldsfld object Modules.Classes_ClassStaticBlock_DeclarationOrder/Example::after
-		IL_011e: stloc.s 4
+		IL_011e: stloc.s 5
 		IL_0120: ldloc.s 7
-		IL_0122: ldloc.s 4
+		IL_0122: ldloc.s 5
 		IL_0124: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
 		IL_0129: pop
 		IL_012a: ret

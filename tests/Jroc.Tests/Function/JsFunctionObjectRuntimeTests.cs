@@ -469,6 +469,50 @@ public sealed class JsFunctionObjectRuntimeTests
     }
 
     [Fact]
+    public void ConcurrentStaticBuiltinInitializationKeepsStablePrototypeIdentity()
+    {
+        var adapters = new BuiltinDelegateFunctionAdapter[256];
+
+        Parallel.For(0, adapters.Length, index =>
+        {
+            Func<object, object?> callback = StaticEcho;
+            var adapter =
+                BuiltinDelegateFunctionAdapter.FromDelegate(callback);
+            JavaScriptRuntime.Function.InitializeFunctionInstance(
+                adapter,
+                1d,
+                "staticEcho",
+                requiresInvocationContext: false);
+            adapters[index] = adapter;
+        });
+
+        var expected = adapters[0];
+        Assert.All(adapters, adapter => Assert.Same(expected, adapter));
+        Assert.Same(
+            JavaScriptRuntime.Function.Prototype,
+            JavaScriptRuntime.Object.getPrototypeOf(expected));
+        Assert.True(CallableOperations.IsCallable(
+            ObjectRuntime.GetProperty(expected, "call")));
+
+        var iterator = ObjectRuntime.GetProperty(
+            JavaScriptRuntime.Array.Prototype,
+            Symbol.iterator.DebugId);
+        var values = ObjectRuntime.GetProperty(
+            JavaScriptRuntime.Array.Prototype,
+            "values");
+        Assert.IsType<BuiltinDelegateFunctionAdapter>(iterator);
+        Assert.Same(values, iterator);
+        Assert.Same(
+            JavaScriptRuntime.Function.Prototype,
+            JavaScriptRuntime.Object.getPrototypeOf(iterator!));
+        Assert.True(CallableOperations.IsCallable(
+            ObjectRuntime.GetProperty(iterator!, "call")));
+    }
+
+    private static object? StaticEcho(object argument)
+        => argument;
+
+    [Fact]
     public void CompiledContinuationsAreNotJavaScriptCallableValues()
     {
         Func<object?> step = static () => 42d;

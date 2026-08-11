@@ -50,7 +50,7 @@
 		} // end of class Scope_ctor
 
 		.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassConstructor_53291FE3_Inner
-			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject
 		{
 			// Fields
 			.field private initonly class Modules.Classes_ClassConstructor_NewClassReferencingGlobal/Scope _environment0_Classes_ClassConstructor_NewClassReferencingGlobal
@@ -68,7 +68,7 @@
 				.maxstack 8
 
 				IL_0000: ldarg.0
-				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject::.ctor()
 				IL_0006: ldarg.0
 				IL_0007: ldarg.1
 				IL_0008: stfld class Modules.Classes_ClassConstructor_NewClassReferencingGlobal/Scope Modules.Classes_ClassConstructor_NewClassReferencingGlobal/Inner/FunctionObject_ClassConstructor_53291FE3_Inner::_environment0_Classes_ClassConstructor_NewClassReferencingGlobal
@@ -99,36 +99,6 @@
 				IL_0000: ldc.i4.1
 				IL_0001: ret
 			} // end of method FunctionObject_ClassConstructor_53291FE3_Inner::get_RequiresInvocationContext
-
-			.method family hidebysig virtual 
-				instance object CallCore (
-					object thisArgument,
-					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 11 (0xb)
-				.maxstack 8
-
-				IL_0000: ldstr "Class constructor cannot be invoked without 'new'"
-				IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-				IL_000a: throw
-			} // end of method FunctionObject_ClassConstructor_53291FE3_Inner::CallCore
-
-			.method family hidebysig virtual 
-				instance object ConstructCore (
-					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
-					object newTarget
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 11 (0xb)
-				.maxstack 8
-
-				IL_0000: ldstr "Generated construction adapter is reserved for the callable-family construction migration"
-				IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-				IL_000a: throw
-			} // end of method FunctionObject_ClassConstructor_53291FE3_Inner::ConstructCore
 
 		} // end of class FunctionObject_ClassConstructor_53291FE3_Inner
 
@@ -211,7 +181,7 @@
 		} // end of class Scope_ctor
 
 		.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassConstructor_4CBD5D48_Outer
-			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject
 		{
 			// Fields
 			.field private initonly class Modules.Classes_ClassConstructor_NewClassReferencingGlobal/Scope _environment0_Classes_ClassConstructor_NewClassReferencingGlobal
@@ -229,7 +199,7 @@
 				.maxstack 8
 
 				IL_0000: ldarg.0
-				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject::.ctor()
 				IL_0006: ldarg.0
 				IL_0007: ldarg.1
 				IL_0008: stfld class Modules.Classes_ClassConstructor_NewClassReferencingGlobal/Scope Modules.Classes_ClassConstructor_NewClassReferencingGlobal/Outer/FunctionObject_ClassConstructor_4CBD5D48_Outer::_environment0_Classes_ClassConstructor_NewClassReferencingGlobal
@@ -260,36 +230,6 @@
 				IL_0000: ldc.i4.1
 				IL_0001: ret
 			} // end of method FunctionObject_ClassConstructor_4CBD5D48_Outer::get_RequiresInvocationContext
-
-			.method family hidebysig virtual 
-				instance object CallCore (
-					object thisArgument,
-					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 11 (0xb)
-				.maxstack 8
-
-				IL_0000: ldstr "Class constructor cannot be invoked without 'new'"
-				IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-				IL_000a: throw
-			} // end of method FunctionObject_ClassConstructor_4CBD5D48_Outer::CallCore
-
-			.method family hidebysig virtual 
-				instance object ConstructCore (
-					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
-					object newTarget
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 11 (0xb)
-				.maxstack 8
-
-				IL_0000: ldstr "Generated construction adapter is reserved for the callable-family construction migration"
-				IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-				IL_000a: throw
-			} // end of method FunctionObject_ClassConstructor_4CBD5D48_Outer::ConstructCore
 
 		} // end of class FunctionObject_ClassConstructor_4CBD5D48_Outer
 
@@ -371,7 +311,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 237 (0xed)
+		// Code size: 253 (0xfd)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Classes_ClassConstructor_NewClassReferencingGlobal/Scope,
@@ -379,8 +319,10 @@
 			[2] class Modules.Classes_ClassConstructor_NewClassReferencingGlobal/Outer,
 			[3] object[],
 			[4] class [System.Runtime]System.Type,
-			[5] object,
-			[6] class [JavaScriptRuntime]JavaScriptRuntime.Console
+			[5] class Modules.Classes_ClassConstructor_NewClassReferencingGlobal/Inner/FunctionObject_ClassConstructor_53291FE3_Inner,
+			[6] class Modules.Classes_ClassConstructor_NewClassReferencingGlobal/Outer/FunctionObject_ClassConstructor_4CBD5D48_Outer,
+			[7] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+			[8] object
 		)
 
 		IL_0000: newobj instance void Modules.Classes_ClassConstructor_NewClassReferencingGlobal/Scope::.ctor()
@@ -398,70 +340,86 @@
 		IL_001c: ldtoken Modules.Classes_ClassConstructor_NewClassReferencingGlobal/Inner
 		IL_0021: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
 		IL_0026: stloc.s 4
-		IL_0028: ldloc.s 4
-		IL_002a: ldloc.3
-		IL_002b: ldc.r8 0.0
-		IL_0034: box [System.Runtime]System.Double
-		IL_0039: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateClassConstructorValue(object, object, object)
-		IL_003e: stloc.s 5
-		IL_0040: ldloc.0
-		IL_0041: ldloc.s 5
-		IL_0043: stfld object Modules.Classes_ClassConstructor_NewClassReferencingGlobal/Scope::Inner
-		IL_0048: ldc.i4.1
-		IL_0049: newarr [System.Runtime]System.Object
-		IL_004e: dup
-		IL_004f: ldc.i4.0
-		IL_0050: ldloc.0
-		IL_0051: stelem.ref
-		IL_0052: stloc.3
-		IL_0053: ldtoken Modules.Classes_ClassConstructor_NewClassReferencingGlobal/Outer
-		IL_0058: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_005d: ldtoken Modules.Classes_ClassConstructor_NewClassReferencingGlobal/Outer
-		IL_0062: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_0067: stloc.s 4
-		IL_0069: ldloc.s 4
-		IL_006b: ldloc.3
-		IL_006c: ldc.r8 0.0
-		IL_0075: box [System.Runtime]System.Double
-		IL_007a: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateClassConstructorValue(object, object, object)
-		IL_007f: stloc.s 5
-		IL_0081: ldloc.s 5
-		IL_0083: stloc.1
-		IL_0084: ldc.i4.1
-		IL_0085: newarr [System.Runtime]System.Object
-		IL_008a: dup
-		IL_008b: ldc.i4.0
-		IL_008c: ldloc.0
-		IL_008d: stelem.ref
-		IL_008e: stloc.3
-		IL_008f: ldloc.3
-		IL_0090: ldc.i4.0
-		IL_0091: newarr [System.Runtime]System.Object
-		IL_0096: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
-		IL_009b: newobj instance void Modules.Classes_ClassConstructor_NewClassReferencingGlobal/Outer::.ctor(object[])
-		IL_00a0: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
-		IL_00a5: stloc.2
-		IL_00a6: ldloc.2
-		IL_00a7: ldtoken Modules.Classes_ClassConstructor_NewClassReferencingGlobal/Outer
-		IL_00ac: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_00b1: ldstr "prototype"
-		IL_00b6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
-		IL_00bb: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
-		IL_00c0: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00c5: stloc.s 6
-		IL_00c7: ldloc.2
-		IL_00c8: ldstr "inner"
-		IL_00cd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_00d2: stloc.s 5
-		IL_00d4: ldloc.s 5
-		IL_00d6: ldstr "value"
-		IL_00db: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_00e0: stloc.s 5
-		IL_00e2: ldloc.s 6
-		IL_00e4: ldloc.s 5
-		IL_00e6: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00eb: pop
-		IL_00ec: ret
+		IL_0028: ldloc.3
+		IL_0029: ldc.i4.0
+		IL_002a: ldelem.ref
+		IL_002b: castclass Modules.Classes_ClassConstructor_NewClassReferencingGlobal/Scope
+		IL_0030: ldloc.3
+		IL_0031: newobj instance void Modules.Classes_ClassConstructor_NewClassReferencingGlobal/Inner/FunctionObject_ClassConstructor_53291FE3_Inner::.ctor(class Modules.Classes_ClassConstructor_NewClassReferencingGlobal/Scope, object[])
+		IL_0036: ldloc.s 4
+		IL_0038: ldloc.3
+		IL_0039: ldc.i4.0
+		IL_003a: conv.r8
+		IL_003b: ldc.i4.0
+		IL_003c: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
+		IL_0041: castclass Modules.Classes_ClassConstructor_NewClassReferencingGlobal/Inner/FunctionObject_ClassConstructor_53291FE3_Inner
+		IL_0046: stloc.s 5
+		IL_0048: ldloc.0
+		IL_0049: ldloc.s 5
+		IL_004b: stfld object Modules.Classes_ClassConstructor_NewClassReferencingGlobal/Scope::Inner
+		IL_0050: ldc.i4.1
+		IL_0051: newarr [System.Runtime]System.Object
+		IL_0056: dup
+		IL_0057: ldc.i4.0
+		IL_0058: ldloc.0
+		IL_0059: stelem.ref
+		IL_005a: stloc.3
+		IL_005b: ldtoken Modules.Classes_ClassConstructor_NewClassReferencingGlobal/Outer
+		IL_0060: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_0065: ldtoken Modules.Classes_ClassConstructor_NewClassReferencingGlobal/Outer
+		IL_006a: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_006f: stloc.s 4
+		IL_0071: ldloc.3
+		IL_0072: ldc.i4.0
+		IL_0073: ldelem.ref
+		IL_0074: castclass Modules.Classes_ClassConstructor_NewClassReferencingGlobal/Scope
+		IL_0079: ldloc.3
+		IL_007a: newobj instance void Modules.Classes_ClassConstructor_NewClassReferencingGlobal/Outer/FunctionObject_ClassConstructor_4CBD5D48_Outer::.ctor(class Modules.Classes_ClassConstructor_NewClassReferencingGlobal/Scope, object[])
+		IL_007f: ldloc.s 4
+		IL_0081: ldloc.3
+		IL_0082: ldc.i4.0
+		IL_0083: conv.r8
+		IL_0084: ldc.i4.0
+		IL_0085: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
+		IL_008a: castclass Modules.Classes_ClassConstructor_NewClassReferencingGlobal/Outer/FunctionObject_ClassConstructor_4CBD5D48_Outer
+		IL_008f: stloc.s 6
+		IL_0091: ldloc.s 6
+		IL_0093: stloc.1
+		IL_0094: ldc.i4.1
+		IL_0095: newarr [System.Runtime]System.Object
+		IL_009a: dup
+		IL_009b: ldc.i4.0
+		IL_009c: ldloc.0
+		IL_009d: stelem.ref
+		IL_009e: stloc.3
+		IL_009f: ldloc.3
+		IL_00a0: ldc.i4.0
+		IL_00a1: newarr [System.Runtime]System.Object
+		IL_00a6: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
+		IL_00ab: newobj instance void Modules.Classes_ClassConstructor_NewClassReferencingGlobal/Outer::.ctor(object[])
+		IL_00b0: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
+		IL_00b5: stloc.2
+		IL_00b6: ldloc.2
+		IL_00b7: ldtoken Modules.Classes_ClassConstructor_NewClassReferencingGlobal/Outer
+		IL_00bc: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_00c1: ldstr "prototype"
+		IL_00c6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
+		IL_00cb: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
+		IL_00d0: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00d5: stloc.s 7
+		IL_00d7: ldloc.2
+		IL_00d8: ldstr "inner"
+		IL_00dd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00e2: stloc.s 8
+		IL_00e4: ldloc.s 8
+		IL_00e6: ldstr "value"
+		IL_00eb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00f0: stloc.s 8
+		IL_00f2: ldloc.s 7
+		IL_00f4: ldloc.s 8
+		IL_00f6: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00fb: pop
+		IL_00fc: ret
 	} // end of method Classes_ClassConstructor_NewClassReferencingGlobal::__js_module_init__
 
 } // end of class Modules.Classes_ClassConstructor_NewClassReferencingGlobal

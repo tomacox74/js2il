@@ -34,7 +34,6 @@ public static class CallableOperations
         return value switch
         {
             JsFunctionObject => true,
-            ClassConstructorValue => true,
             Type type => ObjectRuntime.IsConstructibleValue(type),
             Proxy proxy => proxy.IsCallableTarget,
             _ => false
@@ -245,7 +244,6 @@ public static class CallableOperations
                 proxy,
                 thisArgument,
                 arguments),
-            ClassConstructorValue => throw new TypeError("Class constructor cannot be invoked without 'new'"),
             Type => throw new TypeError("Class constructor cannot be invoked without 'new'"),
             _ => throw new TypeError("Value is not callable")
         };
