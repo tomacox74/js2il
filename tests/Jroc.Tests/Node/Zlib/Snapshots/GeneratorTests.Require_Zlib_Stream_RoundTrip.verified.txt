@@ -890,7 +890,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 734 (0x2de)
+		// Code size: 724 (0x2d4)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Require_Zlib_Stream_RoundTrip/Scope,
@@ -928,257 +928,255 @@
 		IL_0020: callvirt instance object [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IStreamModule::get_Readable()
 		IL_0025: stloc.s 7
 		IL_0027: ldloc.s 7
-		IL_0029: ldc.i4.0
-		IL_002a: newarr [System.Runtime]System.Object
-		IL_002f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::ConstructValue(object, object[])
-		IL_0034: stloc.3
-		IL_0035: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_003a: dup
-		IL_003b: ldstr "level"
-		IL_0040: ldc.r8 1
-		IL_0049: neg
-		IL_004a: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
-		IL_004f: stloc.s 8
-		IL_0051: ldloc.2
-		IL_0052: ldloc.s 8
-		IL_0054: callvirt instance object [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IZlibModule::createGzip(object)
-		IL_0059: stloc.s 4
-		IL_005b: ldloc.2
-		IL_005c: callvirt instance object [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IZlibModule::createGunzip()
-		IL_0061: stloc.s 5
-		IL_0063: ldloc.1
-		IL_0064: callvirt instance object [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IStreamModule::get_Writable()
-		IL_0069: stloc.s 7
-		IL_006b: ldloc.s 7
-		IL_006d: ldc.i4.0
-		IL_006e: newarr [System.Runtime]System.Object
-		IL_0073: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::ConstructValue(object, object[])
-		IL_0078: stloc.s 6
-		IL_007a: ldc.i4.0
-		IL_007b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_0080: stloc.s 9
-		IL_0082: ldloc.0
-		IL_0083: ldloc.s 9
-		IL_0085: stfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Require_Zlib_Stream_RoundTrip/Scope::chunks
-		IL_008a: ldc.i4.0
-		IL_008b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_0090: stloc.s 9
-		IL_0092: ldloc.0
-		IL_0093: ldloc.s 9
-		IL_0095: stfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Require_Zlib_Stream_RoundTrip/Scope::events
-		IL_009a: ldloc.s 4
-		IL_009c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00a1: stloc.s 7
-		IL_00a3: ldc.i4.1
-		IL_00a4: newarr [System.Runtime]System.Object
-		IL_00a9: dup
-		IL_00aa: ldc.i4.0
-		IL_00ab: ldloc.0
-		IL_00ac: stelem.ref
-		IL_00ad: stloc.s 10
-		IL_00af: ldloc.s 10
-		IL_00b1: ldc.i4.0
-		IL_00b2: ldelem.ref
-		IL_00b3: castclass Modules.Require_Zlib_Stream_RoundTrip/Scope
-		IL_00b8: newobj instance void Modules.Require_Zlib_Stream_RoundTrip/ArrowFunction_L14C19/FunctionObject::.ctor(class Modules.Require_Zlib_Stream_RoundTrip/Scope)
-		IL_00bd: ldc.i4.0
-		IL_00be: conv.r8
-		IL_00bf: ldstr ""
-		IL_00c4: ldc.i4.0
-		IL_00c5: ldc.i4.0
-		IL_00c6: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_Zlib_Stream_RoundTrip/ArrowFunction_L14C19/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_00cb: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_Zlib_Stream_RoundTrip/ArrowFunction_L14C19/FunctionObject>(!!0)
-		IL_00d0: stloc.s 11
-		IL_00d2: ldloc.s 7
-		IL_00d4: ldstr "on"
-		IL_00d9: ldstr "finish"
-		IL_00de: ldloc.s 11
-		IL_00e0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_00e5: pop
-		IL_00e6: ldloc.s 4
-		IL_00e8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00ed: stloc.s 7
-		IL_00ef: ldc.i4.1
-		IL_00f0: newarr [System.Runtime]System.Object
-		IL_00f5: dup
-		IL_00f6: ldc.i4.0
-		IL_00f7: ldloc.0
-		IL_00f8: stelem.ref
-		IL_00f9: stloc.s 10
-		IL_00fb: ldloc.s 10
-		IL_00fd: ldc.i4.0
-		IL_00fe: ldelem.ref
-		IL_00ff: castclass Modules.Require_Zlib_Stream_RoundTrip/Scope
-		IL_0104: newobj instance void Modules.Require_Zlib_Stream_RoundTrip/ArrowFunction_L15C16/FunctionObject::.ctor(class Modules.Require_Zlib_Stream_RoundTrip/Scope)
-		IL_0109: ldc.i4.0
-		IL_010a: conv.r8
-		IL_010b: ldstr ""
-		IL_0110: ldc.i4.0
-		IL_0111: ldc.i4.0
-		IL_0112: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_Zlib_Stream_RoundTrip/ArrowFunction_L15C16/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_0117: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_Zlib_Stream_RoundTrip/ArrowFunction_L15C16/FunctionObject>(!!0)
-		IL_011c: stloc.s 12
-		IL_011e: ldloc.s 7
-		IL_0120: ldstr "on"
-		IL_0125: ldstr "end"
-		IL_012a: ldloc.s 12
-		IL_012c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_0131: pop
-		IL_0132: ldloc.s 5
-		IL_0134: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0139: stloc.s 7
-		IL_013b: ldc.i4.1
-		IL_013c: newarr [System.Runtime]System.Object
-		IL_0141: dup
-		IL_0142: ldc.i4.0
-		IL_0143: ldloc.0
-		IL_0144: stelem.ref
-		IL_0145: stloc.s 10
-		IL_0147: ldloc.s 10
-		IL_0149: ldc.i4.0
-		IL_014a: ldelem.ref
-		IL_014b: castclass Modules.Require_Zlib_Stream_RoundTrip/Scope
-		IL_0150: newobj instance void Modules.Require_Zlib_Stream_RoundTrip/ArrowFunction_L16C21/FunctionObject::.ctor(class Modules.Require_Zlib_Stream_RoundTrip/Scope)
-		IL_0155: ldc.i4.0
-		IL_0156: conv.r8
-		IL_0157: ldstr ""
-		IL_015c: ldc.i4.0
-		IL_015d: ldc.i4.0
-		IL_015e: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_Zlib_Stream_RoundTrip/ArrowFunction_L16C21/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_0163: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_Zlib_Stream_RoundTrip/ArrowFunction_L16C21/FunctionObject>(!!0)
-		IL_0168: stloc.s 13
-		IL_016a: ldloc.s 7
-		IL_016c: ldstr "on"
-		IL_0171: ldstr "finish"
-		IL_0176: ldloc.s 13
-		IL_0178: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_017d: pop
-		IL_017e: ldloc.s 5
-		IL_0180: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0185: stloc.s 7
-		IL_0187: ldc.i4.1
-		IL_0188: newarr [System.Runtime]System.Object
-		IL_018d: dup
-		IL_018e: ldc.i4.0
-		IL_018f: ldloc.0
-		IL_0190: stelem.ref
-		IL_0191: stloc.s 10
-		IL_0193: ldloc.s 10
-		IL_0195: ldc.i4.0
-		IL_0196: ldelem.ref
-		IL_0197: castclass Modules.Require_Zlib_Stream_RoundTrip/Scope
-		IL_019c: newobj instance void Modules.Require_Zlib_Stream_RoundTrip/ArrowFunction_L17C18/FunctionObject::.ctor(class Modules.Require_Zlib_Stream_RoundTrip/Scope)
-		IL_01a1: ldc.i4.0
-		IL_01a2: conv.r8
-		IL_01a3: ldstr ""
-		IL_01a8: ldc.i4.0
-		IL_01a9: ldc.i4.0
-		IL_01aa: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_Zlib_Stream_RoundTrip/ArrowFunction_L17C18/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_01af: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_Zlib_Stream_RoundTrip/ArrowFunction_L17C18/FunctionObject>(!!0)
-		IL_01b4: stloc.s 14
-		IL_01b6: ldloc.s 7
-		IL_01b8: ldstr "on"
-		IL_01bd: ldstr "end"
-		IL_01c2: ldloc.s 14
-		IL_01c4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_01c9: pop
-		IL_01ca: ldc.i4.1
-		IL_01cb: newarr [System.Runtime]System.Object
-		IL_01d0: dup
-		IL_01d1: ldc.i4.0
-		IL_01d2: ldloc.0
-		IL_01d3: stelem.ref
-		IL_01d4: stloc.s 10
-		IL_01d6: ldloc.s 10
-		IL_01d8: ldc.i4.0
-		IL_01d9: ldelem.ref
-		IL_01da: castclass Modules.Require_Zlib_Stream_RoundTrip/Scope
-		IL_01df: newobj instance void Modules.Require_Zlib_Stream_RoundTrip/FunctionExpression_L19C18/FunctionObject_FunctionExpression_721B6487_L19C19::.ctor(class Modules.Require_Zlib_Stream_RoundTrip/Scope)
-		IL_01e4: ldc.i4.1
-		IL_01e5: conv.r8
-		IL_01e6: ldstr ""
-		IL_01eb: ldc.i4.0
-		IL_01ec: ldc.i4.1
-		IL_01ed: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_Zlib_Stream_RoundTrip/FunctionExpression_L19C18/FunctionObject_FunctionExpression_721B6487_L19C19>(!!0, float64, string, bool, bool)
-		IL_01f2: stloc.s 15
-		IL_01f4: ldloc.s 6
-		IL_01f6: ldstr "_write"
-		IL_01fb: ldloc.s 15
-		IL_01fd: ldc.i4.1
-		IL_01fe: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
-		IL_0203: pop
-		IL_0204: ldloc.s 6
-		IL_0206: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_020b: stloc.s 7
-		IL_020d: ldc.i4.1
-		IL_020e: newarr [System.Runtime]System.Object
-		IL_0213: dup
-		IL_0214: ldc.i4.0
-		IL_0215: ldloc.0
-		IL_0216: stelem.ref
-		IL_0217: stloc.s 10
-		IL_0219: ldloc.s 10
-		IL_021b: ldc.i4.0
-		IL_021c: ldelem.ref
-		IL_021d: castclass Modules.Require_Zlib_Stream_RoundTrip/Scope
-		IL_0222: newobj instance void Modules.Require_Zlib_Stream_RoundTrip/FunctionExpression_L23C22/FunctionObject_FunctionExpression_3356B439_L23C23::.ctor(class Modules.Require_Zlib_Stream_RoundTrip/Scope)
-		IL_0227: ldc.i4.0
-		IL_0228: conv.r8
-		IL_0229: ldstr ""
-		IL_022e: ldc.i4.0
-		IL_022f: ldc.i4.1
-		IL_0230: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_Zlib_Stream_RoundTrip/FunctionExpression_L23C22/FunctionObject_FunctionExpression_3356B439_L23C23>(!!0, float64, string, bool, bool)
-		IL_0235: stloc.s 16
-		IL_0237: ldloc.s 7
-		IL_0239: ldstr "on"
-		IL_023e: ldstr "finish"
-		IL_0243: ldloc.s 16
-		IL_0245: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_024a: pop
-		IL_024b: ldloc.3
-		IL_024c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0251: ldstr "pipe"
-		IL_0256: ldloc.s 4
-		IL_0258: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_025d: stloc.s 7
-		IL_025f: ldloc.s 7
-		IL_0261: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0266: ldstr "pipe"
-		IL_026b: ldloc.s 5
-		IL_026d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0272: stloc.s 7
-		IL_0274: ldloc.s 7
-		IL_0276: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_027b: ldstr "pipe"
-		IL_0280: ldloc.s 6
-		IL_0282: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0287: pop
-		IL_0288: ldloc.3
-		IL_0289: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_028e: ldstr "stream "
-		IL_0293: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer::from(object)
-		IL_0298: stloc.s 17
-		IL_029a: ldstr "push"
-		IL_029f: ldloc.s 17
-		IL_02a1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_02a6: pop
-		IL_02a7: ldloc.3
-		IL_02a8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_02ad: ldstr "roundtrip"
-		IL_02b2: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer::from(object)
-		IL_02b7: stloc.s 17
-		IL_02b9: ldstr "push"
-		IL_02be: ldloc.s 17
-		IL_02c0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_02c5: pop
-		IL_02c6: ldloc.3
-		IL_02c7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_02cc: ldstr "push"
-		IL_02d1: ldc.i4.0
-		IL_02d2: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
-		IL_02d7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_02dc: pop
-		IL_02dd: ret
+		IL_0029: dup
+		IL_002a: call object [JavaScriptRuntime]JavaScriptRuntime.CallableOperations::Construct0(object, object)
+		IL_002f: stloc.3
+		IL_0030: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0035: dup
+		IL_0036: ldstr "level"
+		IL_003b: ldc.r8 1
+		IL_0044: neg
+		IL_0045: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
+		IL_004a: stloc.s 8
+		IL_004c: ldloc.2
+		IL_004d: ldloc.s 8
+		IL_004f: callvirt instance object [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IZlibModule::createGzip(object)
+		IL_0054: stloc.s 4
+		IL_0056: ldloc.2
+		IL_0057: callvirt instance object [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IZlibModule::createGunzip()
+		IL_005c: stloc.s 5
+		IL_005e: ldloc.1
+		IL_005f: callvirt instance object [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IStreamModule::get_Writable()
+		IL_0064: stloc.s 7
+		IL_0066: ldloc.s 7
+		IL_0068: dup
+		IL_0069: call object [JavaScriptRuntime]JavaScriptRuntime.CallableOperations::Construct0(object, object)
+		IL_006e: stloc.s 6
+		IL_0070: ldc.i4.0
+		IL_0071: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_0076: stloc.s 9
+		IL_0078: ldloc.0
+		IL_0079: ldloc.s 9
+		IL_007b: stfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Require_Zlib_Stream_RoundTrip/Scope::chunks
+		IL_0080: ldc.i4.0
+		IL_0081: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_0086: stloc.s 9
+		IL_0088: ldloc.0
+		IL_0089: ldloc.s 9
+		IL_008b: stfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Require_Zlib_Stream_RoundTrip/Scope::events
+		IL_0090: ldloc.s 4
+		IL_0092: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0097: stloc.s 7
+		IL_0099: ldc.i4.1
+		IL_009a: newarr [System.Runtime]System.Object
+		IL_009f: dup
+		IL_00a0: ldc.i4.0
+		IL_00a1: ldloc.0
+		IL_00a2: stelem.ref
+		IL_00a3: stloc.s 10
+		IL_00a5: ldloc.s 10
+		IL_00a7: ldc.i4.0
+		IL_00a8: ldelem.ref
+		IL_00a9: castclass Modules.Require_Zlib_Stream_RoundTrip/Scope
+		IL_00ae: newobj instance void Modules.Require_Zlib_Stream_RoundTrip/ArrowFunction_L14C19/FunctionObject::.ctor(class Modules.Require_Zlib_Stream_RoundTrip/Scope)
+		IL_00b3: ldc.i4.0
+		IL_00b4: conv.r8
+		IL_00b5: ldstr ""
+		IL_00ba: ldc.i4.0
+		IL_00bb: ldc.i4.0
+		IL_00bc: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_Zlib_Stream_RoundTrip/ArrowFunction_L14C19/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_00c1: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_Zlib_Stream_RoundTrip/ArrowFunction_L14C19/FunctionObject>(!!0)
+		IL_00c6: stloc.s 11
+		IL_00c8: ldloc.s 7
+		IL_00ca: ldstr "on"
+		IL_00cf: ldstr "finish"
+		IL_00d4: ldloc.s 11
+		IL_00d6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_00db: pop
+		IL_00dc: ldloc.s 4
+		IL_00de: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00e3: stloc.s 7
+		IL_00e5: ldc.i4.1
+		IL_00e6: newarr [System.Runtime]System.Object
+		IL_00eb: dup
+		IL_00ec: ldc.i4.0
+		IL_00ed: ldloc.0
+		IL_00ee: stelem.ref
+		IL_00ef: stloc.s 10
+		IL_00f1: ldloc.s 10
+		IL_00f3: ldc.i4.0
+		IL_00f4: ldelem.ref
+		IL_00f5: castclass Modules.Require_Zlib_Stream_RoundTrip/Scope
+		IL_00fa: newobj instance void Modules.Require_Zlib_Stream_RoundTrip/ArrowFunction_L15C16/FunctionObject::.ctor(class Modules.Require_Zlib_Stream_RoundTrip/Scope)
+		IL_00ff: ldc.i4.0
+		IL_0100: conv.r8
+		IL_0101: ldstr ""
+		IL_0106: ldc.i4.0
+		IL_0107: ldc.i4.0
+		IL_0108: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_Zlib_Stream_RoundTrip/ArrowFunction_L15C16/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_010d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_Zlib_Stream_RoundTrip/ArrowFunction_L15C16/FunctionObject>(!!0)
+		IL_0112: stloc.s 12
+		IL_0114: ldloc.s 7
+		IL_0116: ldstr "on"
+		IL_011b: ldstr "end"
+		IL_0120: ldloc.s 12
+		IL_0122: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_0127: pop
+		IL_0128: ldloc.s 5
+		IL_012a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_012f: stloc.s 7
+		IL_0131: ldc.i4.1
+		IL_0132: newarr [System.Runtime]System.Object
+		IL_0137: dup
+		IL_0138: ldc.i4.0
+		IL_0139: ldloc.0
+		IL_013a: stelem.ref
+		IL_013b: stloc.s 10
+		IL_013d: ldloc.s 10
+		IL_013f: ldc.i4.0
+		IL_0140: ldelem.ref
+		IL_0141: castclass Modules.Require_Zlib_Stream_RoundTrip/Scope
+		IL_0146: newobj instance void Modules.Require_Zlib_Stream_RoundTrip/ArrowFunction_L16C21/FunctionObject::.ctor(class Modules.Require_Zlib_Stream_RoundTrip/Scope)
+		IL_014b: ldc.i4.0
+		IL_014c: conv.r8
+		IL_014d: ldstr ""
+		IL_0152: ldc.i4.0
+		IL_0153: ldc.i4.0
+		IL_0154: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_Zlib_Stream_RoundTrip/ArrowFunction_L16C21/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_0159: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_Zlib_Stream_RoundTrip/ArrowFunction_L16C21/FunctionObject>(!!0)
+		IL_015e: stloc.s 13
+		IL_0160: ldloc.s 7
+		IL_0162: ldstr "on"
+		IL_0167: ldstr "finish"
+		IL_016c: ldloc.s 13
+		IL_016e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_0173: pop
+		IL_0174: ldloc.s 5
+		IL_0176: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_017b: stloc.s 7
+		IL_017d: ldc.i4.1
+		IL_017e: newarr [System.Runtime]System.Object
+		IL_0183: dup
+		IL_0184: ldc.i4.0
+		IL_0185: ldloc.0
+		IL_0186: stelem.ref
+		IL_0187: stloc.s 10
+		IL_0189: ldloc.s 10
+		IL_018b: ldc.i4.0
+		IL_018c: ldelem.ref
+		IL_018d: castclass Modules.Require_Zlib_Stream_RoundTrip/Scope
+		IL_0192: newobj instance void Modules.Require_Zlib_Stream_RoundTrip/ArrowFunction_L17C18/FunctionObject::.ctor(class Modules.Require_Zlib_Stream_RoundTrip/Scope)
+		IL_0197: ldc.i4.0
+		IL_0198: conv.r8
+		IL_0199: ldstr ""
+		IL_019e: ldc.i4.0
+		IL_019f: ldc.i4.0
+		IL_01a0: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_Zlib_Stream_RoundTrip/ArrowFunction_L17C18/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_01a5: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_Zlib_Stream_RoundTrip/ArrowFunction_L17C18/FunctionObject>(!!0)
+		IL_01aa: stloc.s 14
+		IL_01ac: ldloc.s 7
+		IL_01ae: ldstr "on"
+		IL_01b3: ldstr "end"
+		IL_01b8: ldloc.s 14
+		IL_01ba: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_01bf: pop
+		IL_01c0: ldc.i4.1
+		IL_01c1: newarr [System.Runtime]System.Object
+		IL_01c6: dup
+		IL_01c7: ldc.i4.0
+		IL_01c8: ldloc.0
+		IL_01c9: stelem.ref
+		IL_01ca: stloc.s 10
+		IL_01cc: ldloc.s 10
+		IL_01ce: ldc.i4.0
+		IL_01cf: ldelem.ref
+		IL_01d0: castclass Modules.Require_Zlib_Stream_RoundTrip/Scope
+		IL_01d5: newobj instance void Modules.Require_Zlib_Stream_RoundTrip/FunctionExpression_L19C18/FunctionObject_FunctionExpression_721B6487_L19C19::.ctor(class Modules.Require_Zlib_Stream_RoundTrip/Scope)
+		IL_01da: ldc.i4.1
+		IL_01db: conv.r8
+		IL_01dc: ldstr ""
+		IL_01e1: ldc.i4.0
+		IL_01e2: ldc.i4.1
+		IL_01e3: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_Zlib_Stream_RoundTrip/FunctionExpression_L19C18/FunctionObject_FunctionExpression_721B6487_L19C19>(!!0, float64, string, bool, bool)
+		IL_01e8: stloc.s 15
+		IL_01ea: ldloc.s 6
+		IL_01ec: ldstr "_write"
+		IL_01f1: ldloc.s 15
+		IL_01f3: ldc.i4.1
+		IL_01f4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
+		IL_01f9: pop
+		IL_01fa: ldloc.s 6
+		IL_01fc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0201: stloc.s 7
+		IL_0203: ldc.i4.1
+		IL_0204: newarr [System.Runtime]System.Object
+		IL_0209: dup
+		IL_020a: ldc.i4.0
+		IL_020b: ldloc.0
+		IL_020c: stelem.ref
+		IL_020d: stloc.s 10
+		IL_020f: ldloc.s 10
+		IL_0211: ldc.i4.0
+		IL_0212: ldelem.ref
+		IL_0213: castclass Modules.Require_Zlib_Stream_RoundTrip/Scope
+		IL_0218: newobj instance void Modules.Require_Zlib_Stream_RoundTrip/FunctionExpression_L23C22/FunctionObject_FunctionExpression_3356B439_L23C23::.ctor(class Modules.Require_Zlib_Stream_RoundTrip/Scope)
+		IL_021d: ldc.i4.0
+		IL_021e: conv.r8
+		IL_021f: ldstr ""
+		IL_0224: ldc.i4.0
+		IL_0225: ldc.i4.1
+		IL_0226: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_Zlib_Stream_RoundTrip/FunctionExpression_L23C22/FunctionObject_FunctionExpression_3356B439_L23C23>(!!0, float64, string, bool, bool)
+		IL_022b: stloc.s 16
+		IL_022d: ldloc.s 7
+		IL_022f: ldstr "on"
+		IL_0234: ldstr "finish"
+		IL_0239: ldloc.s 16
+		IL_023b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_0240: pop
+		IL_0241: ldloc.3
+		IL_0242: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0247: ldstr "pipe"
+		IL_024c: ldloc.s 4
+		IL_024e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0253: stloc.s 7
+		IL_0255: ldloc.s 7
+		IL_0257: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_025c: ldstr "pipe"
+		IL_0261: ldloc.s 5
+		IL_0263: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0268: stloc.s 7
+		IL_026a: ldloc.s 7
+		IL_026c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0271: ldstr "pipe"
+		IL_0276: ldloc.s 6
+		IL_0278: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_027d: pop
+		IL_027e: ldloc.3
+		IL_027f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0284: ldstr "stream "
+		IL_0289: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer::from(object)
+		IL_028e: stloc.s 17
+		IL_0290: ldstr "push"
+		IL_0295: ldloc.s 17
+		IL_0297: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_029c: pop
+		IL_029d: ldloc.3
+		IL_029e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_02a3: ldstr "roundtrip"
+		IL_02a8: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer::from(object)
+		IL_02ad: stloc.s 17
+		IL_02af: ldstr "push"
+		IL_02b4: ldloc.s 17
+		IL_02b6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_02bb: pop
+		IL_02bc: ldloc.3
+		IL_02bd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_02c2: ldstr "push"
+		IL_02c7: ldc.i4.0
+		IL_02c8: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
+		IL_02cd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_02d2: pop
+		IL_02d3: ret
 	} // end of method Require_Zlib_Stream_RoundTrip::__js_module_init__
 
 } // end of class Modules.Require_Zlib_Stream_RoundTrip

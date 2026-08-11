@@ -390,7 +390,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 760 (0x2f8)
+		// Code size: 755 (0x2f3)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ArrowFunction_GeneratedFunctionObjectSurface/Scope,
@@ -607,61 +607,60 @@
 		{
 			IL_0275: nop
 			IL_0276: ldloc.2
-			IL_0277: ldc.i4.0
-			IL_0278: newarr [System.Runtime]System.Object
-			IL_027d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::ConstructValue(object, object[])
-			IL_0282: pop
-			IL_0283: leave IL_02f4
+			IL_0277: dup
+			IL_0278: call object [JavaScriptRuntime]JavaScriptRuntime.CallableOperations::Construct0(object, object)
+			IL_027d: pop
+			IL_027e: leave IL_02ef
 		} // end .try
 		catch [System.Runtime]System.Exception
 		{
-			IL_0288: stloc.s 5
-			IL_028a: ldloc.s 5
-			IL_028c: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-			IL_0291: dup
-			IL_0292: brtrue IL_02a8
+			IL_0283: stloc.s 5
+			IL_0285: ldloc.s 5
+			IL_0287: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+			IL_028c: dup
+			IL_028d: brtrue IL_02a3
 
-			IL_0297: pop
-			IL_0298: ldloc.s 5
-			IL_029a: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
-			IL_029f: dup
-			IL_02a0: brtrue IL_02b4
+			IL_0292: pop
+			IL_0293: ldloc.s 5
+			IL_0295: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+			IL_029a: dup
+			IL_029b: brtrue IL_02af
 
-			IL_02a5: pop
-			IL_02a6: rethrow
+			IL_02a0: pop
+			IL_02a1: rethrow
 
-			IL_02a8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-			IL_02ad: stloc.s 6
-			IL_02af: br IL_02b6
+			IL_02a3: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+			IL_02a8: stloc.s 6
+			IL_02aa: br IL_02b1
 
-			IL_02b4: stloc.s 6
+			IL_02af: stloc.s 6
 
-			IL_02b6: ldloc.s 6
-			IL_02b8: stloc.s 7
-			IL_02ba: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_02bf: stloc.s 11
-			IL_02c1: ldloc.s 7
-			IL_02c3: stloc.s 15
-			IL_02c5: ldstr "TypeError"
-			IL_02ca: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_02cf: stloc.s 17
-			IL_02d1: ldloc.s 15
-			IL_02d3: ldloc.s 17
-			IL_02d5: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::InstanceOf(object, object)
-			IL_02da: stloc.s 13
-			IL_02dc: ldloc.s 13
-			IL_02de: box [System.Runtime]System.Boolean
-			IL_02e3: stloc.s 14
-			IL_02e5: ldloc.s 11
-			IL_02e7: ldloc.s 14
-			IL_02e9: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_02ee: pop
-			IL_02ef: leave IL_02f4
+			IL_02b1: ldloc.s 6
+			IL_02b3: stloc.s 7
+			IL_02b5: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_02ba: stloc.s 11
+			IL_02bc: ldloc.s 7
+			IL_02be: stloc.s 15
+			IL_02c0: ldstr "TypeError"
+			IL_02c5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_02ca: stloc.s 17
+			IL_02cc: ldloc.s 15
+			IL_02ce: ldloc.s 17
+			IL_02d0: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::InstanceOf(object, object)
+			IL_02d5: stloc.s 13
+			IL_02d7: ldloc.s 13
+			IL_02d9: box [System.Runtime]System.Boolean
+			IL_02de: stloc.s 14
+			IL_02e0: ldloc.s 11
+			IL_02e2: ldloc.s 14
+			IL_02e4: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_02e9: pop
+			IL_02ea: leave IL_02ef
 		} // end handler
 
-		IL_02f4: ldnull
-		IL_02f5: stloc.s 8
-		IL_02f7: ret
+		IL_02ef: ldnull
+		IL_02f0: stloc.s 8
+		IL_02f2: ret
 	} // end of method ArrowFunction_GeneratedFunctionObjectSurface::__js_module_init__
 
 } // end of class Modules.ArrowFunction_GeneratedFunctionObjectSurface

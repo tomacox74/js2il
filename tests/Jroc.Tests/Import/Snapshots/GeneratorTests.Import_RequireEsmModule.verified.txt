@@ -2328,7 +2328,7 @@
 				74 61 54 6f 6b 65 6e 12 00 00 02
 			)
 			// Header size: 12
-			// Code size: 1352 (0x548)
+			// Code size: 1339 (0x53b)
 			.maxstack 10
 			.locals init (
 				[0] class Modules.Import_RequireEsmModule_Lib/__jroc_esm_namespace/Scope,
@@ -2653,7 +2653,7 @@
 				IL_0309: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorResultDone(object)
 				IL_030e: stloc.s 8
 				IL_0310: ldloc.s 8
-				IL_0312: brtrue IL_04ab
+				IL_0312: brtrue IL_049e
 
 				IL_0317: ldloc.s 7
 				IL_0319: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorResultValue(object)
@@ -2689,7 +2689,7 @@
 				IL_0375: ldloc.s 8
 				IL_0377: brfalse IL_0381
 
-				IL_037c: br IL_04a6
+				IL_037c: br IL_0499
 
 				IL_0381: ldloc.2
 				IL_0382: stloc.s 17
@@ -2766,7 +2766,7 @@
 				IL_0441: ldloc.s 8
 				IL_0443: brfalse IL_044d
 
-				IL_0448: br IL_04a6
+				IL_0448: br IL_0499
 
 				IL_044d: ldc.i4.2
 				IL_044e: newarr [System.Runtime]System.Object
@@ -2796,95 +2796,88 @@
 				IL_047e: ldc.i4.1
 				IL_047f: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Import_RequireEsmModule_Lib/__jroc_esm_namespace/FunctionExpression_L53C9/FunctionObject_FunctionExpression_5F1A817A_L53C10>(!!0, float64, string, bool, bool)
 				IL_0484: stloc.s 25
-				IL_0486: ldc.i4.1
-				IL_0487: newarr [System.Runtime]System.Object
-				IL_048c: dup
-				IL_048d: ldc.i4.0
-				IL_048e: ldloc.2
-				IL_048f: stelem.ref
-				IL_0490: stloc.s 19
-				IL_0492: ldloc.s 25
-				IL_0494: ldc.i4.1
-				IL_0495: newarr [System.Runtime]System.Object
-				IL_049a: dup
-				IL_049b: ldc.i4.0
-				IL_049c: ldarg.0
-				IL_049d: stelem.ref
-				IL_049e: ldloc.s 19
-				IL_04a0: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs(object, object[], object[])
-				IL_04a5: pop
+				IL_0486: ldloc.s 25
+				IL_0488: ldc.i4.1
+				IL_0489: newarr [System.Runtime]System.Object
+				IL_048e: dup
+				IL_048f: ldc.i4.0
+				IL_0490: ldarg.0
+				IL_0491: stelem.ref
+				IL_0492: ldloc.2
+				IL_0493: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
+				IL_0498: pop
 
-				IL_04a6: br IL_02ff
+				IL_0499: br IL_02ff
 			// end loop
 			.try
 			{
-				IL_04ab: ldloc.0
-				IL_04ac: ldfld object Modules.Import_RequireEsmModule_Lib/__jroc_esm_namespace/Scope::mod
-				IL_04b1: stloc.s 17
-				IL_04b3: ldloc.0
-				IL_04b4: ldfld object Modules.Import_RequireEsmModule_Lib/__jroc_esm_namespace/Scope::ns
-				IL_04b9: stloc.s 7
-				IL_04bb: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+				IL_049e: ldloc.0
+				IL_049f: ldfld object Modules.Import_RequireEsmModule_Lib/__jroc_esm_namespace/Scope::mod
+				IL_04a4: stloc.s 17
+				IL_04a6: ldloc.0
+				IL_04a7: ldfld object Modules.Import_RequireEsmModule_Lib/__jroc_esm_namespace/Scope::ns
+				IL_04ac: stloc.s 7
+				IL_04ae: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+				IL_04b3: dup
+				IL_04b4: ldstr "value"
+				IL_04b9: ldloc.s 7
+				IL_04bb: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
 				IL_04c0: dup
-				IL_04c1: ldstr "value"
-				IL_04c6: ldloc.s 7
-				IL_04c8: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-				IL_04cd: dup
-				IL_04ce: ldstr "enumerable"
-				IL_04d3: ldc.i4.0
-				IL_04d4: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-				IL_04d9: dup
-				IL_04da: ldstr "configurable"
-				IL_04df: ldc.i4.0
-				IL_04e0: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-				IL_04e5: dup
-				IL_04e6: ldstr "writable"
-				IL_04eb: ldc.i4.0
-				IL_04ec: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-				IL_04f1: stloc.s 18
-				IL_04f3: ldloc.s 17
-				IL_04f5: ldstr "__jroc_esm_namespace"
-				IL_04fa: ldloc.s 18
-				IL_04fc: call object [JavaScriptRuntime]JavaScriptRuntime.Object::defineProperty(object, object, object)
-				IL_0501: pop
-				IL_0502: leave IL_053b
+				IL_04c1: ldstr "enumerable"
+				IL_04c6: ldc.i4.0
+				IL_04c7: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+				IL_04cc: dup
+				IL_04cd: ldstr "configurable"
+				IL_04d2: ldc.i4.0
+				IL_04d3: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+				IL_04d8: dup
+				IL_04d9: ldstr "writable"
+				IL_04de: ldc.i4.0
+				IL_04df: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+				IL_04e4: stloc.s 18
+				IL_04e6: ldloc.s 17
+				IL_04e8: ldstr "__jroc_esm_namespace"
+				IL_04ed: ldloc.s 18
+				IL_04ef: call object [JavaScriptRuntime]JavaScriptRuntime.Object::defineProperty(object, object, object)
+				IL_04f4: pop
+				IL_04f5: leave IL_052e
 			} // end .try
 			catch [System.Runtime]System.Exception
 			{
-				IL_0507: stloc.3
+				IL_04fa: stloc.3
+				IL_04fb: ldloc.3
+				IL_04fc: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+				IL_0501: dup
+				IL_0502: brtrue IL_0517
+
+				IL_0507: pop
 				IL_0508: ldloc.3
-				IL_0509: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+				IL_0509: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
 				IL_050e: dup
-				IL_050f: brtrue IL_0524
+				IL_050f: brtrue IL_0523
 
 				IL_0514: pop
-				IL_0515: ldloc.3
-				IL_0516: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
-				IL_051b: dup
-				IL_051c: brtrue IL_0530
+				IL_0515: rethrow
 
-				IL_0521: pop
-				IL_0522: rethrow
+				IL_0517: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+				IL_051c: stloc.s 4
+				IL_051e: br IL_0525
 
-				IL_0524: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-				IL_0529: stloc.s 4
-				IL_052b: br IL_0532
+				IL_0523: stloc.s 4
 
-				IL_0530: stloc.s 4
-
-				IL_0532: ldloc.s 4
-				IL_0534: stloc.s 5
-				IL_0536: leave IL_053b
+				IL_0525: ldloc.s 4
+				IL_0527: stloc.s 5
+				IL_0529: leave IL_052e
 			} // end handler
 
-			IL_053b: ldloc.0
-			IL_053c: ldfld object Modules.Import_RequireEsmModule_Lib/__jroc_esm_namespace/Scope::ns
-			IL_0541: ret
+			IL_052e: ldloc.0
+			IL_052f: ldfld object Modules.Import_RequireEsmModule_Lib/__jroc_esm_namespace/Scope::ns
+			IL_0534: ret
 
-			IL_0542: ldnull
-			IL_0543: stloc.s 6
-			IL_0545: ldloc.s 6
-			IL_0547: ret
+			IL_0535: ldnull
+			IL_0536: stloc.s 6
+			IL_0538: ldloc.s 6
+			IL_053a: ret
 		} // end of method __jroc_esm_namespace::__js_call__
 
 	} // end of class __jroc_esm_namespace

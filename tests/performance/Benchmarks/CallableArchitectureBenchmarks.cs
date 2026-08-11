@@ -53,7 +53,47 @@ public class CallableArchitectureBenchmarks : IDisposable
             return result + arrow0();
         }
 
-        module.exports = { run };
+        const dynamicArgument1 = { value: 1 };
+        const dynamicArgument2 = { value: 2 };
+        const dynamicArgument3 = { value: 3 };
+        const dynamicArgument4 = { value: 4 };
+        const dynamicArgument5 = { value: 5 };
+        const dynamicArgument6 = { value: 6 };
+
+        function selectFifth(a, b, c, d, e) {
+            return e.value;
+        }
+
+        function runDynamicFive(iterations) {
+            let target = selectFifth;
+            let result = 0;
+            for (let index = 0; index < iterations; index++) {
+                result = target(
+                    dynamicArgument1,
+                    dynamicArgument2,
+                    dynamicArgument3,
+                    dynamicArgument4,
+                    dynamicArgument5);
+            }
+            return result;
+        }
+
+        function runDynamicSix(iterations) {
+            let target = selectFifth;
+            let result = 0;
+            for (let index = 0; index < iterations; index++) {
+                result = target(
+                    dynamicArgument1,
+                    dynamicArgument2,
+                    dynamicArgument3,
+                    dynamicArgument4,
+                    dynamicArgument5,
+                    dynamicArgument6);
+            }
+            return result;
+        }
+
+        module.exports = { run, runDynamicFive, runDynamicSix };
         """;
 
     private JrocLoadedAssembly? _assembly;
@@ -107,6 +147,18 @@ public class CallableArchitectureBenchmarks : IDisposable
     [Benchmark(Description = "Loaded module direct-call loop", OperationsPerInvoke = DirectCallsPerOperation)]
     public double InvokeSteadyState()
         => (double)_steadyState.run(DirectCallsPerOperation);
+
+    [Benchmark(
+        Description = "Loaded module dynamic five-argument loop",
+        OperationsPerInvoke = DirectCallsPerOperation)]
+    public double InvokeDynamicFiveArguments()
+        => (double)_steadyState.runDynamicFive(DirectCallsPerOperation);
+
+    [Benchmark(
+        Description = "Loaded module dynamic six-argument loop",
+        OperationsPerInvoke = DirectCallsPerOperation)]
+    public double InvokeDynamicSixArguments()
+        => (double)_steadyState.runDynamicSix(DirectCallsPerOperation);
 
     private sealed class BenchmarkArrowFunctionObject(object[] scopes) : JavaScriptRuntime.JsFunctionObject
     {

@@ -54,6 +54,13 @@ only on return to generic JavaScript flow. Known direct calls continue to use
 the canonical typed MethodDef and bypass both object materialization and the
 generic adapter.
 
+Dynamic variable, expression-valued, named-member, computed-member, and
+construction sites share the `JsCallArguments` common-arity policy. Calls and
+`new` with zero through five non-spread arguments use fixed runtime entry
+points and do not materialize an argument array. Spread calls and arities above
+five use the array ABI so evaluation order and arbitrary argument counts remain
+unchanged.
+
 Scope-array callables currently reconstruct the existing scope-array ABI from
 their typed environment fields inside the adapter. This is a compatibility
 bridge for the staged family migrations, not a return to a universal closure

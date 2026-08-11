@@ -2679,17 +2679,91 @@ namespace JavaScriptRuntime
 
         public static object? CallComputedMember(object receiver, object? propertyKey, object[]? args)
         {
+            var arguments = JsCallArguments.FromArray(args);
+            return CallComputedMemberCore(receiver, propertyKey, arguments);
+        }
+
+        public static object? CallComputedMember0(
+            object receiver,
+            object? propertyKey)
+        {
+            var arguments = JsCallArguments.Empty;
+            return CallComputedMemberCore(receiver, propertyKey, arguments);
+        }
+
+        public static object? CallComputedMember1(
+            object receiver,
+            object? propertyKey,
+            object? a0)
+        {
+            var arguments = JsCallArguments.From(a0);
+            return CallComputedMemberCore(receiver, propertyKey, arguments);
+        }
+
+        public static object? CallComputedMember2(
+            object receiver,
+            object? propertyKey,
+            object? a0,
+            object? a1)
+        {
+            var arguments = JsCallArguments.From(a0, a1);
+            return CallComputedMemberCore(receiver, propertyKey, arguments);
+        }
+
+        public static object? CallComputedMember3(
+            object receiver,
+            object? propertyKey,
+            object? a0,
+            object? a1,
+            object? a2)
+        {
+            var arguments = JsCallArguments.From(a0, a1, a2);
+            return CallComputedMemberCore(receiver, propertyKey, arguments);
+        }
+
+        public static object? CallComputedMember4(
+            object receiver,
+            object? propertyKey,
+            object? a0,
+            object? a1,
+            object? a2,
+            object? a3)
+        {
+            var arguments = JsCallArguments.From(a0, a1, a2, a3);
+            return CallComputedMemberCore(receiver, propertyKey, arguments);
+        }
+
+        public static object? CallComputedMember5(
+            object receiver,
+            object? propertyKey,
+            object? a0,
+            object? a1,
+            object? a2,
+            object? a3,
+            object? a4)
+        {
+            var arguments = JsCallArguments.From(a0, a1, a2, a3, a4);
+            return CallComputedMemberCore(receiver, propertyKey, arguments);
+        }
+
+        private static object? CallComputedMemberCore(
+            object receiver,
+            object? propertyKey,
+            in JsCallArguments arguments)
+        {
             if (receiver is null || receiver is JsNull)
             {
                 throw new TypeError("Cannot read properties of null or undefined");
             }
 
-            var callArgs = args ?? System.Array.Empty<object>();
             var memberValue = ObjectRuntime.GetItem(receiver, propertyKey!);
 
             if (CallableOperations.IsCallable(memberValue))
             {
-                return InvokeCallableMember(receiver, memberValue!, callArgs);
+                return CallableOperations.Call(
+                    memberValue,
+                    receiver,
+                    arguments);
             }
 
             if (memberValue is not null && memberValue is not JsNull)
@@ -2698,7 +2772,46 @@ namespace JavaScriptRuntime
             }
 
             var methodName = ToPropertyKeyString(propertyKey);
-            return CallMember(receiver, methodName, callArgs);
+            return arguments.Count switch
+            {
+                0 => CallMember0(receiver, methodName),
+                1 => CallMember1(
+                    receiver,
+                    methodName,
+                    arguments.GetArgument(0)),
+                2 => CallMember2(
+                    receiver,
+                    methodName,
+                    arguments.GetArgument(0),
+                    arguments.GetArgument(1)),
+                3 => CallMember3(
+                    receiver,
+                    methodName,
+                    arguments.GetArgument(0),
+                    arguments.GetArgument(1),
+                    arguments.GetArgument(2)),
+                4 => CallMember4(
+                    receiver,
+                    methodName,
+                    arguments.GetArgument(0),
+                    arguments.GetArgument(1),
+                    arguments.GetArgument(2),
+                    arguments.GetArgument(3)),
+                5 => CallMember5(
+                    receiver,
+                    methodName,
+                    arguments.GetArgument(0),
+                    arguments.GetArgument(1),
+                    arguments.GetArgument(2),
+                    arguments.GetArgument(3),
+                    arguments.GetArgument(4)),
+                _ => CallMember(
+                    receiver,
+                    methodName,
+                    System.Array.ConvertAll(
+                        arguments.ToArray(),
+                        static argument => argument!))
+            };
         }
 
         public static object? CallOwnPropertyMember(object receiver, string methodName, object[]? args)
@@ -2784,7 +2897,24 @@ namespace JavaScriptRuntime
             return true;
         }
 
-        // Arity-specific overloads to avoid object[] allocations for common cases (0-3 args).
+        private static bool TryCallResolvedMember(
+            object receiver,
+            string memberName,
+            in JsCallArguments arguments,
+            out object? result)
+        {
+            var member = GetProperty(receiver, memberName);
+            if (!CallableOperations.IsCallable(member))
+            {
+                result = null;
+                return false;
+            }
+
+            result = CallableOperations.Call(member, receiver, arguments);
+            return true;
+        }
+
+        // Arity-specific overloads to avoid object[] allocations for common cases (0-5 args).
         // These inline the logic to avoid creating arrays when possible.
 
         public static object? CallMember0(object receiver, string methodName)
@@ -2808,6 +2938,16 @@ namespace JavaScriptRuntime
                 }
 
                 throw new TypeError($"{methodName} is not a function");
+            }
+
+            var arguments = JsCallArguments.Empty;
+            if (TryCallResolvedMember(
+                    receiver,
+                    methodName,
+                    arguments,
+                    out var resolvedResult))
+            {
+                return resolvedResult;
             }
 
             if (receiver is string || receiver is char[] || receiver is System.Text.StringBuilder)
@@ -2852,6 +2992,16 @@ namespace JavaScriptRuntime
                 throw new TypeError($"{methodName} is not a function");
             }
 
+            var arguments = JsCallArguments.From(a0);
+            if (TryCallResolvedMember(
+                    receiver,
+                    methodName,
+                    arguments,
+                    out var resolvedResult))
+            {
+                return resolvedResult;
+            }
+
             if (receiver is string || receiver is char[] || receiver is System.Text.StringBuilder)
             {
                 var input = DotNet2JSConversions.ToString(receiver);
@@ -2894,6 +3044,16 @@ namespace JavaScriptRuntime
                 }
 
                 throw new TypeError($"{methodName} is not a function");
+            }
+
+            var arguments = JsCallArguments.From(a0, a1);
+            if (TryCallResolvedMember(
+                    receiver,
+                    methodName,
+                    arguments,
+                    out var resolvedResult))
+            {
+                return resolvedResult;
             }
 
             if (receiver is string || receiver is char[] || receiver is System.Text.StringBuilder)
@@ -2942,6 +3102,16 @@ namespace JavaScriptRuntime
                 throw new TypeError($"{methodName} is not a function");
             }
 
+            var arguments = JsCallArguments.From(a0, a1, a2);
+            if (TryCallResolvedMember(
+                    receiver,
+                    methodName,
+                    arguments,
+                    out var resolvedResult))
+            {
+                return resolvedResult;
+            }
+
             if (receiver is string || receiver is char[] || receiver is System.Text.StringBuilder)
             {
                 var input = DotNet2JSConversions.ToString(receiver);
@@ -2955,6 +3125,119 @@ namespace JavaScriptRuntime
 
             // For other cases, fall back to the general method
             return CallMember(receiver, methodName, new object[] { a0!, a1!, a2! });
+        }
+
+        public static object? CallMember4(
+            object receiver,
+            string methodName,
+            object? a0,
+            object? a1,
+            object? a2,
+            object? a3)
+        {
+            if (methodName == null) throw new ArgumentNullException(nameof(methodName));
+            if (TryGetCallableFunctionMember(
+                    receiver,
+                    methodName,
+                    out var functionMember))
+            {
+                return CallableOperations.Call4(
+                    functionMember,
+                    receiver,
+                    a0,
+                    a1,
+                    a2,
+                    a3);
+            }
+
+            if (TryGetFastDictionaryOwnValue(receiver, methodName, out var directMemberValue))
+            {
+                if (CallableOperations.IsCallable(directMemberValue))
+                {
+                    return CallableOperations.Call4(
+                        directMemberValue,
+                        receiver,
+                        a0,
+                        a1,
+                        a2,
+                        a3);
+                }
+
+                throw new TypeError($"{methodName} is not a function");
+            }
+
+            var arguments = JsCallArguments.From(a0, a1, a2, a3);
+            if (TryCallResolvedMember(
+                    receiver,
+                    methodName,
+                    arguments,
+                    out var resolvedResult))
+            {
+                return resolvedResult;
+            }
+
+            return CallMember(
+                receiver,
+                methodName,
+                new object[] { a0!, a1!, a2!, a3! });
+        }
+
+        public static object? CallMember5(
+            object receiver,
+            string methodName,
+            object? a0,
+            object? a1,
+            object? a2,
+            object? a3,
+            object? a4)
+        {
+            if (methodName == null) throw new ArgumentNullException(nameof(methodName));
+            if (TryGetCallableFunctionMember(
+                    receiver,
+                    methodName,
+                    out var functionMember))
+            {
+                return CallableOperations.Call5(
+                    functionMember,
+                    receiver,
+                    a0,
+                    a1,
+                    a2,
+                    a3,
+                    a4);
+            }
+
+            if (TryGetFastDictionaryOwnValue(receiver, methodName, out var directMemberValue))
+            {
+                if (CallableOperations.IsCallable(directMemberValue))
+                {
+                    return CallableOperations.Call5(
+                        directMemberValue,
+                        receiver,
+                        a0,
+                        a1,
+                        a2,
+                        a3,
+                        a4);
+                }
+
+                throw new TypeError($"{methodName} is not a function");
+            }
+
+            var arguments = JsCallArguments.From(a0, a1, a2, a3, a4);
+            if (TryCallResolvedMember(
+                    receiver,
+                    methodName,
+                    arguments,
+                    out var resolvedResult))
+            {
+                return resolvedResult;
+            }
+
+            return CallMember(
+                receiver,
+                methodName,
+                new object[] { a0!, a1!, a2!, a3!, a4! });
         }
 
         private static bool TryCallStringMemberFastPath(string input, string methodName, object[] callArgs, out object? result)

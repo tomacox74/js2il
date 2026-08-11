@@ -347,6 +347,33 @@ internal static class LIRMemberCallNormalization
                 result = callMember3.Result;
                 return true;
 
+            case LIRCallMember4 callMember4:
+                receiver = callMember4.Receiver;
+                methodName = callMember4.MethodName;
+                arguments =
+                [
+                    callMember4.A0,
+                    callMember4.A1,
+                    callMember4.A2,
+                    callMember4.A3
+                ];
+                result = callMember4.Result;
+                return true;
+
+            case LIRCallMember5 callMember5:
+                receiver = callMember5.Receiver;
+                methodName = callMember5.MethodName;
+                arguments =
+                [
+                    callMember5.A0,
+                    callMember5.A1,
+                    callMember5.A2,
+                    callMember5.A3,
+                    callMember5.A4
+                ];
+                result = callMember5.Result;
+                return true;
+
             default:
                 return false;
         }

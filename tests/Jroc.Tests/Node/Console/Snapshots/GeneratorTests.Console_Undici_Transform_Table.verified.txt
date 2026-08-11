@@ -160,8 +160,8 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 448 (0x1c0)
-		.maxstack 11
+		// Code size: 436 (0x1b4)
+		.maxstack 8
 		.locals init (
 			[0] class Modules.Console_Undici_Transform_Table/Scope,
 			[1] object,
@@ -245,83 +245,77 @@
 		IL_00b9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineObjectLiteralDataProperty(object, string, object)
 		IL_00be: pop
 		IL_00bf: ldloc.1
-		IL_00c0: ldc.i4.1
-		IL_00c1: newarr [System.Runtime]System.Object
-		IL_00c6: dup
-		IL_00c7: ldc.i4.0
-		IL_00c8: ldloc.s 7
-		IL_00ca: stelem.ref
-		IL_00cb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::ConstructValue(object, object[])
-		IL_00d0: stloc.3
-		IL_00d1: ldloc.2
-		IL_00d2: ldc.i4.1
-		IL_00d3: newarr [System.Runtime]System.Object
-		IL_00d8: dup
-		IL_00d9: ldc.i4.0
-		IL_00da: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_00df: dup
-		IL_00e0: ldstr "stdout"
-		IL_00e5: ldloc.3
-		IL_00e6: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_00eb: dup
-		IL_00ec: ldstr "inspectOptions"
-		IL_00f1: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_00f6: dup
-		IL_00f7: ldstr "colors"
-		IL_00fc: ldc.i4.0
-		IL_00fd: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-		IL_0102: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_0107: stelem.ref
-		IL_0108: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::ConstructValue(object, object[])
-		IL_010d: stloc.s 4
-		IL_010f: ldloc.s 4
-		IL_0111: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0116: ldc.i4.2
-		IL_0117: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_011c: dup
-		IL_011d: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_0122: dup
-		IL_0123: ldstr "name"
-		IL_0128: ldstr "first"
-		IL_012d: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_0132: dup
-		IL_0133: ldstr "value"
-		IL_0138: ldc.r8 1
-		IL_0141: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
-		IL_0146: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-		IL_014b: dup
-		IL_014c: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_0151: dup
-		IL_0152: ldstr "name"
-		IL_0157: ldstr "second"
-		IL_015c: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_0161: dup
-		IL_0162: ldstr "value"
-		IL_0167: ldc.r8 2
-		IL_0170: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
-		IL_0175: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-		IL_017a: stloc.s 10
-		IL_017c: ldstr "table"
-		IL_0181: ldloc.s 10
-		IL_0183: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0188: pop
-		IL_0189: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_018e: stloc.s 11
-		IL_0190: ldloc.3
-		IL_0191: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0196: ldstr "read"
-		IL_019b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-		IL_01a0: stloc.s 12
-		IL_01a2: ldloc.s 12
-		IL_01a4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_01a9: ldstr "toString"
-		IL_01ae: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-		IL_01b3: stloc.s 12
-		IL_01b5: ldloc.s 11
-		IL_01b7: ldloc.s 12
-		IL_01b9: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_01be: pop
-		IL_01bf: ret
+		IL_00c0: dup
+		IL_00c1: ldloc.s 7
+		IL_00c3: call object [JavaScriptRuntime]JavaScriptRuntime.CallableOperations::Construct1(object, object, object)
+		IL_00c8: stloc.3
+		IL_00c9: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_00ce: dup
+		IL_00cf: ldstr "stdout"
+		IL_00d4: ldloc.3
+		IL_00d5: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_00da: dup
+		IL_00db: ldstr "inspectOptions"
+		IL_00e0: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_00e5: dup
+		IL_00e6: ldstr "colors"
+		IL_00eb: ldc.i4.0
+		IL_00ec: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+		IL_00f1: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_00f6: stloc.s 7
+		IL_00f8: ldloc.2
+		IL_00f9: dup
+		IL_00fa: ldloc.s 7
+		IL_00fc: call object [JavaScriptRuntime]JavaScriptRuntime.CallableOperations::Construct1(object, object, object)
+		IL_0101: stloc.s 4
+		IL_0103: ldloc.s 4
+		IL_0105: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_010a: ldc.i4.2
+		IL_010b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_0110: dup
+		IL_0111: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0116: dup
+		IL_0117: ldstr "name"
+		IL_011c: ldstr "first"
+		IL_0121: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_0126: dup
+		IL_0127: ldstr "value"
+		IL_012c: ldc.r8 1
+		IL_0135: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
+		IL_013a: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+		IL_013f: dup
+		IL_0140: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0145: dup
+		IL_0146: ldstr "name"
+		IL_014b: ldstr "second"
+		IL_0150: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_0155: dup
+		IL_0156: ldstr "value"
+		IL_015b: ldc.r8 2
+		IL_0164: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
+		IL_0169: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+		IL_016e: stloc.s 10
+		IL_0170: ldstr "table"
+		IL_0175: ldloc.s 10
+		IL_0177: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_017c: pop
+		IL_017d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0182: stloc.s 11
+		IL_0184: ldloc.3
+		IL_0185: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_018a: ldstr "read"
+		IL_018f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+		IL_0194: stloc.s 12
+		IL_0196: ldloc.s 12
+		IL_0198: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_019d: ldstr "toString"
+		IL_01a2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+		IL_01a7: stloc.s 12
+		IL_01a9: ldloc.s 11
+		IL_01ab: ldloc.s 12
+		IL_01ad: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_01b2: pop
+		IL_01b3: ret
 	} // end of method Console_Undici_Transform_Table::__js_module_init__
 
 } // end of class Modules.Console_Undici_Transform_Table

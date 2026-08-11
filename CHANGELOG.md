@@ -6,6 +6,13 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- compiler/runtime: close issue #1763 by aligning dynamic variable,
+  expression-valued, named-member, computed-member, and construction lowering
+  with the zero-through-five `JsCallArguments` inline ABI. Calls and `new`
+  within that common range no longer build argument arrays; spread and arity
+  six or greater retain the arbitrary-arity array fallback. Add execution and
+  generated-IL guardrails plus paired loaded-module allocation benchmarks. No
+  timing improvement is claimed without same-host benchmark evidence.
 - runtime: close issue #1764 by keying stable built-in adapters by CLR method
   identity instead of transient `MethodInfo` object identity and by completing
   deferred `Function.prototype` links after cyclic intrinsic startup. This

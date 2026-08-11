@@ -58,7 +58,22 @@ explicit.
 
 ## Performance baseline
 
-Run the focused BenchmarkDotNet pair:
+The stable dynamic-call ABI carries zero through five arguments in
+`JsCallArguments` inline storage. Compiler IL snapshots cover variable,
+expression-valued, named-member, computed-member, and dynamic construction
+sites and require `InvokeFunctionCallWithArgs0` through
+`InvokeFunctionCallWithArgs5`, `CallMember0` through `CallMember5`,
+`CallComputedMember0` through `CallComputedMember5`, or `Construct0` through
+`Construct5` as applicable. Arity six and spread remain explicit array
+fallbacks.
+
+`CallableArchitectureBenchmarks` includes loaded-module loops for dynamic
+five- and six-argument calls. The pair keeps module loading and host invocation
+outside the per-operation count, making the allocation difference between the
+inline and array paths visible without presenting the arbitrary-arity fallback
+as a semantic equivalent optimization target.
+
+Run the focused BenchmarkDotNet suite:
 
 ```bash
 dotnet run -c Release \
@@ -75,6 +90,25 @@ materialization without recompilation.
 invokes an exported loop containing 1,000 direct calls to a compiled function.
 The single host invocation is amortized across those calls and
 `OperationsPerInvoke` reports normalized per-call timing and allocation.
+
+## Issue #1763 validation
+
+The dynamic five/six benchmark pair was run on the issue #1763 working tree on
+2026-08-11 using .NET 10.0.10, BenchmarkDotNet 0.15.8, Ubuntu 24.04.4, and an
+Intel Xeon Platinum 8488C host. Both rows used ShortRun with one launch, three
+warmups, three measured iterations, and 1,000 JavaScript calls per benchmark
+operation.
+
+| Dynamic call path | Mean | Allocated |
+| --- | ---: | ---: |
+| Five arguments, inline ABI | 113.95 ns | 57 B/op |
+| Six arguments, array fallback | 130.60 ns | 129 B/op |
+
+The benchmark reuses preallocated object arguments, so the 72 B/op allocation
+difference isolates the six-element argument array used by the fallback.
+ShortRun timing had only three samples, so this result records allocation
+evidence and does not claim a stable timing improvement. The raw reports are produced under
+`tests/performance/Benchmarks/BenchmarkDotNet.Artifacts/results/`.
 
 ## Issue #1722 validation
 

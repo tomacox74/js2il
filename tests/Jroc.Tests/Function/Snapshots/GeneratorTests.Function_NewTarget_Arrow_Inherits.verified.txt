@@ -399,7 +399,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 94 (0x5e)
+		// Code size: 89 (0x59)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Function_NewTarget_Arrow_Inherits/Scope,
@@ -438,18 +438,17 @@
 		IL_0037: ldfld object Modules.Function_NewTarget_Arrow_Inherits/Scope::Outer
 		IL_003c: stloc.3
 		IL_003d: ldloc.3
-		IL_003e: ldc.i4.0
-		IL_003f: newarr [System.Runtime]System.Object
-		IL_0044: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::ConstructValue(object, object[])
-		IL_0049: pop
-		IL_004a: ldloc.0
-		IL_004b: ldfld object Modules.Function_NewTarget_Arrow_Inherits/Scope::Outer
-		IL_0050: stloc.3
-		IL_0051: ldloc.3
-		IL_0052: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0057: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
-		IL_005c: pop
-		IL_005d: ret
+		IL_003e: dup
+		IL_003f: call object [JavaScriptRuntime]JavaScriptRuntime.CallableOperations::Construct0(object, object)
+		IL_0044: pop
+		IL_0045: ldloc.0
+		IL_0046: ldfld object Modules.Function_NewTarget_Arrow_Inherits/Scope::Outer
+		IL_004b: stloc.3
+		IL_004c: ldloc.3
+		IL_004d: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0052: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
+		IL_0057: pop
+		IL_0058: ret
 	} // end of method Function_NewTarget_Arrow_Inherits::__js_module_init__
 
 } // end of class Modules.Function_NewTarget_Arrow_Inherits

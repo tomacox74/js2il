@@ -93,6 +93,8 @@ public sealed class LIRIntrinsicNormalizationTests
     [InlineData(1)]
     [InlineData(2)]
     [InlineData(3)]
+    [InlineData(4)]
+    [InlineData(5)]
     public void Normalize_Rewrites_AritySpecificRequireCalls_To_LIRCallRequire(int arity)
     {
         var body = new MethodBodyIR();
@@ -101,6 +103,8 @@ public sealed class LIRIntrinsicNormalizationTests
         var a0 = AddTemp(body, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
         var a1 = AddTemp(body, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
         var a2 = AddTemp(body, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        var a3 = AddTemp(body, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        var a4 = AddTemp(body, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
         var result = AddTemp(body, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
 
         body.Instructions.Add(new LIRBuildScopesArray(System.Array.Empty<ScopeSlotSource>(), scopes));
@@ -110,6 +114,8 @@ public sealed class LIRIntrinsicNormalizationTests
             1 => new LIRCallFunctionValue1(requireValue, scopes, a0, result),
             2 => new LIRCallFunctionValue2(requireValue, scopes, a0, a1, result),
             3 => new LIRCallFunctionValue3(requireValue, scopes, a0, a1, a2, result),
+            4 => new LIRCallFunctionValue4(requireValue, scopes, a0, a1, a2, a3, result),
+            5 => new LIRCallFunctionValue5(requireValue, scopes, a0, a1, a2, a3, a4, result),
             _ => throw new ArgumentOutOfRangeException(nameof(arity))
         });
 
