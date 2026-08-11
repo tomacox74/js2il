@@ -11,18 +11,15 @@ public abstract class InMemoryExecutionTestsBase
     internal const string CollectionName = "Built-ins in-memory execution";
 
     private readonly string _testCategory;
-    private readonly VerifySettings _verifySettings = new();
-
     protected InMemoryExecutionTestsBase(string testCategory)
     {
-        _verifySettings.DisableDiff();
         _testCategory = testCategory;
     }
 
     protected Task ExecutionTest(string testName, [CallerFilePath] string sourceFilePath = "")
         => ExecutionTestFromFile(testName, sourceFilePath);
 
-    protected async Task ExecutionTestFromFile(string testName, [CallerFilePath] string sourceFilePath = "")
+    protected Task ExecutionTestFromFile(string testName, [CallerFilePath] string sourceFilePath = "")
     {
         var result = Test262SharedAssertHarness.CompileAndExecute(
             testName,
@@ -31,10 +28,11 @@ public abstract class InMemoryExecutionTestsBase
             sourceFilePath,
             enableIRMetrics: true);
 
-        await VerifyWithSnapshot(result.Output, sourceFilePath);
+        Test262SharedAssertHarness.AssertNoOutput(testName, result.Output);
+        return Task.CompletedTask;
     }
 
-    protected async Task CompilationFailureTest(
+    protected Task CompilationFailureTest(
         string testName,
         string? expectedFailureText = null,
         [CallerFilePath] string sourceFilePath = "")
@@ -82,7 +80,7 @@ public abstract class InMemoryExecutionTestsBase
                 $"Compilation failed for test {testName}, but the failure did not contain '{expectedFailureText}'.\nActual failure:\n{failure}");
         }
 
-        await VerifyWithSnapshot("true" + Environment.NewLine, sourceFilePath);
+        return Task.CompletedTask;
     }
 
     private static (string Script, string? SourcePath) GetJavaScriptAndSourcePath(string testName, string callerSourceFilePath)
@@ -100,16 +98,6 @@ public abstract class InMemoryExecutionTestsBase
         return (File.ReadAllText(scriptPath), scriptPath);
     }
 
-    private Task VerifyWithSnapshot(string value, string sourceFilePath)
-    {
-        var settings = new VerifySettings(_verifySettings);
-        var directory = Path.GetDirectoryName(sourceFilePath)
-            ?? throw new InvalidOperationException("Could not resolve source directory.");
-        var snapshotsDirectory = Path.Combine(directory, "Snapshots");
-        Directory.CreateDirectory(snapshotsDirectory);
-        settings.UseDirectory(snapshotsDirectory);
-        return Verify(value, settings);
-    }
 }
 
 [CollectionDefinition(InMemoryExecutionTestsBase.CollectionName)]

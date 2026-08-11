@@ -10,7 +10,7 @@
     "src/JavaScriptRuntime/Node/AssertModule.cs",
     "src/JavaScriptRuntime/Node/Contracts/IAssertModule.Generated.cs"
   ],
-  "notes": "Supports the callable CommonJS export used by packages such as Undici, Node-style AssertionError metadata, strict and loose scalar equality assertions, regular-expression assertions, synchronous throw assertions, fail, and ifError. Deep structural comparisons, asynchronous assertions, Assert, and CallTracker are present in the generated Node 24 contract but currently fail explicitly. This production module is separate from and does not alter the private test262 assertion harness.",
+  "notes": "Supports the callable CommonJS export used by packages such as Undici, Node-style AssertionError metadata, strict and loose scalar equality assertions, regular-expression assertions, synchronous throw assertions, fail, and ifError. Deep structural comparisons, asynchronous assertions, Assert, and CallTracker are present in the generated Node 24 contract but currently fail explicitly. The test262 harness uses this module through a thin compatibility adapter.",
   "apis": [
     {
       "name": "assert(value[, message]) / ok(value[, message])",
@@ -52,7 +52,7 @@
       "name": "throws / doesNotThrow",
       "kind": "function",
       "status": "partial",
-      "notes": "Supports synchronous callables and regular-expression matching against thrown error messages.",
+      "notes": "Supports synchronous callables, regular-expression matching against thrown error messages, and expected error constructor validation.",
       "docs": "https://nodejs.org/api/assert.html#assertthrowsfn-error-message",
       "tests": [
         {

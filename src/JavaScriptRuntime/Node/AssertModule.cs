@@ -139,7 +139,8 @@ public sealed partial class AssertModule : JsFunctionObject
                 return null;
             }
 
-            throw;
+            ThrowAssertion(exception, error, message, "throws");
+            return null;
         }
 
         ThrowAssertion(null, error, message, "throws");
@@ -240,8 +241,41 @@ public sealed partial class AssertModule : JsFunctionObject
             return TypeUtilities.ToBoolean(regexp.test(exception.Message));
         }
 
-        return true;
+        var thrownValue = exception is JsThrownValueException thrown
+            ? thrown.Value
+            : exception;
+
+        try
+        {
+            if (Operators.InstanceOf(thrownValue, expected))
+            {
+                return true;
+            }
+        }
+        catch (TypeError)
+        {
+            return false;
+        }
+
+        if (thrownValue is not null
+            && thrownValue is not JsNull
+            && ReferenceEquals(ObjectRuntime.GetItem(thrownValue, "constructor"), expected))
+        {
+            return true;
+        }
+
+        var expectedName = ObjectRuntime.GetItem(expected, "name") as string;
+        return !string.IsNullOrEmpty(expectedName)
+            && string.Equals(GetErrorName(thrownValue), expectedName, StringComparison.Ordinal);
     }
+
+    private static string GetErrorName(object? error)
+        => error switch
+        {
+            Error jsError => jsError.name,
+            null or JsNull => string.Empty,
+            _ => ObjectRuntime.GetItem(error, "name") as string ?? error.GetType().Name
+        };
 }
 
 public sealed class AssertionError : Error

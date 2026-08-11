@@ -6,15 +6,12 @@ namespace Jroc.Test262.Tests.intl402;
 public abstract class DiskExecutionTestsBase
 {
     private readonly string _testCategory;
-    private readonly VerifySettings _verifySettings = new();
-
     protected DiskExecutionTestsBase(string testCategory)
     {
-        _verifySettings.DisableDiff();
         _testCategory = testCategory;
     }
 
-    protected async Task ExecutionTest(
+    protected Task ExecutionTest(
         string testName,
         [CallerFilePath] string sourceFilePath = "")
     {
@@ -25,7 +22,8 @@ public abstract class DiskExecutionTestsBase
             sourceFilePath,
             enableIRMetrics: true);
 
-        await VerifyWithSnapshot(result.Output, sourceFilePath);
+        Test262SharedAssertHarness.AssertNoOutput(testName, result.Output);
+        return Task.CompletedTask;
     }
 
     private static (string Script, string? SourcePath) GetJavaScriptAndSourcePath(string testName, string callerSourceFilePath)
@@ -43,14 +41,4 @@ public abstract class DiskExecutionTestsBase
         return (File.ReadAllText(scriptPath), scriptPath);
     }
 
-    private Task VerifyWithSnapshot(string value, string sourceFilePath)
-    {
-        var settings = new VerifySettings(_verifySettings);
-        var directory = Path.GetDirectoryName(sourceFilePath)
-            ?? throw new InvalidOperationException("Could not resolve source directory.");
-        var snapshotsDirectory = Path.Combine(directory, "Snapshots");
-        Directory.CreateDirectory(snapshotsDirectory);
-        settings.UseDirectory(snapshotsDirectory);
-        return Verify(value, settings);
-    }
 }

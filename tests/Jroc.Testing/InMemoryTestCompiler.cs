@@ -152,7 +152,7 @@ public static class InMemoryTestCompiler
         ArgumentException.ThrowIfNullOrWhiteSpace(testName);
 
         using var loadedAssembly = JrocInMemoryAssemblyLoader.Load(artifact);
-        var output = ExecuteLoadedAssembly(
+        var outcome = ExecuteLoadedAssembly(
             loadedAssembly.Assembly,
             entryPath,
             testName,
@@ -162,10 +162,13 @@ public static class InMemoryTestCompiler
             timeoutMs,
             postTestProcessingAction);
 
-        return new InMemoryTestExecutionResult(output, loadedAssembly.LoadContextWeakReference);
+        return new InMemoryTestExecutionResult(
+            outcome.Output,
+            loadedAssembly.LoadContextWeakReference,
+            outcome.UnhandledException);
     }
 
-    private static string ExecuteLoadedAssembly(
+    private static ExecutionOutcome ExecuteLoadedAssembly(
         Assembly assembly,
         string entryPath,
         string testName,
@@ -242,17 +245,24 @@ public static class InMemoryTestCompiler
         if (testName.StartsWith("Process_Exit_", StringComparison.Ordinal))
         {
             var environment = serviceProvider.Resolve<IEnvironment>() as CapturingEnvironment;
-            return $"exitCode {environment?.ExitCalledWithCode ?? 0}{Environment.NewLine}";
+            return new ExecutionOutcome(
+                $"exitCode {environment?.ExitCalledWithCode ?? 0}{Environment.NewLine}",
+                threadException?.SourceException);
         }
 
-        return output.GetOutput();
+        return new ExecutionOutcome(output.GetOutput(), threadException?.SourceException);
     }
 
     private static string NormalizeModuleId(string moduleId)
         => moduleId.Trim().Replace('\\', '/').TrimStart('.', '/');
+
+    private sealed record ExecutionOutcome(string Output, Exception? UnhandledException);
 }
 
-public sealed record InMemoryTestExecutionResult(string Output, WeakReference LoadContextWeakReference);
+public sealed record InMemoryTestExecutionResult(
+    string Output,
+    WeakReference LoadContextWeakReference,
+    Exception? UnhandledException = null);
 
 public sealed class InMemoryConsoleOutput : IConsoleOutput
 {

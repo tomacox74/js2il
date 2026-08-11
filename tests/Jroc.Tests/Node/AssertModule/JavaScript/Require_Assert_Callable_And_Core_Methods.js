@@ -13,6 +13,14 @@ assert.doesNotMatch("jroc", /node/);
 assert.throws(() => {
     throw new Error("expected");
 }, /expected/);
+assert.throws(() => {
+    throw new TypeError("expected type");
+}, TypeError);
+assert.throws(() => {
+    assert.throws(() => {
+        throw new Error("wrong type");
+    }, TypeError);
+}, assert.AssertionError);
 assert.doesNotThrow(() => 42);
 
 console.log("callable:", typeof assert);

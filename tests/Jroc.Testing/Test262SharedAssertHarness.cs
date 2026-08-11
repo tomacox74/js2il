@@ -1,4 +1,8 @@
 using JavaScriptRuntime.DependencyInjection;
+using JsError = JavaScriptRuntime.Error;
+using JsNull = JavaScriptRuntime.JsNull;
+using JsThrownValueException = JavaScriptRuntime.JsThrownValueException;
+using ObjectRuntime = JavaScriptRuntime.ObjectRuntime;
 using System.Text.RegularExpressions;
 
 namespace Jroc.Tests;
@@ -13,17 +17,18 @@ public static class Test262SharedAssertHarness
         bool enableIRMetrics = false,
         bool allowUnhandledException = false,
         Action<ServiceContainer>? addMocks = null,
-        bool useNativeHostHelpers = true,
         int timeoutMs = 30000)
     {
         var (entryScript, entrySourcePath) = getJavaScriptAndSourcePath(testName);
         var metadata = ParseFrontmatter(entryScript);
-        var preparedEntryScript = BuildPreparedEntryScript(entryScript, metadata, callerSourceFilePath, useNativeHostHelpers);
-        var hostRuntimeIntrinsics = useNativeHostHelpers
-            ? Test262HostRuntimeIntrinsics.Create()
-            : null;
+        var preparedEntryScript = BuildPreparedEntryScript(entryScript, metadata, callerSourceFilePath);
+        var hostRuntimeIntrinsics = Test262HostRuntimeIntrinsics.Create();
 
-        return InMemoryTestCompiler.CompileAndExecute(
+        var expectsRuntimeException = string.Equals(
+            metadata.NegativePhase,
+            "runtime",
+            StringComparison.OrdinalIgnoreCase);
+        var result = InMemoryTestCompiler.CompileAndExecute(
             testName,
             testCategory,
             name => ResolveJavaScriptAndSourcePath(
@@ -34,17 +39,32 @@ public static class Test262SharedAssertHarness
                 callerSourceFilePath,
                 getJavaScriptAndSourcePath),
             enableIRMetrics: enableIRMetrics,
-            allowUnhandledException: allowUnhandledException,
+            allowUnhandledException: allowUnhandledException || expectsRuntimeException,
             addMocks: addMocks,
             hostRuntimeIntrinsics: hostRuntimeIntrinsics,
             timeoutMs: timeoutMs);
+
+        if (expectsRuntimeException)
+        {
+            AssertExpectedRuntimeException(testName, metadata.NegativeType, result.UnhandledException);
+        }
+
+        return result;
+    }
+
+    public static void AssertNoOutput(string testName, string output)
+    {
+        if (!string.IsNullOrEmpty(output))
+        {
+            throw new InvalidOperationException(
+                $"Test262 test '{testName}' produced unexpected output:{Environment.NewLine}{output}");
+        }
     }
 
     private static string BuildPreparedEntryScript(
         string entryScript,
         FrontmatterMetadata metadata,
-        string callerSourceFilePath,
-        bool useNativeHostHelpers)
+        string callerSourceFilePath)
     {
         var (prefix, remainder, hasUseStrictDirective) = SplitDirectivePrologue(entryScript);
         var scriptBuilder = new System.Text.StringBuilder();
@@ -55,9 +75,7 @@ public static class Test262SharedAssertHarness
             scriptBuilder.AppendLine("\"use strict\";");
         }
 
-        var helperFiles = useNativeHostHelpers
-            ? new List<string>()
-            : new List<string> { "assert.js" };
+        var helperFiles = new List<string> { "assert.js" };
         helperFiles.AddRange(GetInlineHarnessFileNames(metadata.Includes));
 
         foreach (var helperFile in helperFiles.Distinct(StringComparer.Ordinal))
@@ -97,7 +115,17 @@ public static class Test262SharedAssertHarness
         var body = match.Groups["body"].Value;
         return new FrontmatterMetadata(
             ParseArrayValue(body, "flags").Contains("onlyStrict", StringComparer.Ordinal),
-            ParseArrayValue(body, "includes"));
+            ParseArrayValue(body, "includes"),
+            ParseScalarValue(body, "phase"),
+            ParseScalarValue(body, "type"));
+    }
+
+    private static string? ParseScalarValue(string frontmatterBody, string key)
+    {
+        var match = Regex.Match(
+            frontmatterBody,
+            @"(?m)^\s*" + Regex.Escape(key) + @"\s*:\s*(?<value>[^\s#]+)");
+        return match.Success ? match.Groups["value"].Value.Trim('\'', '"') : null;
     }
 
     private static IReadOnlyList<string> ParseArrayValue(string frontmatterBody, string key)
@@ -334,8 +362,42 @@ public static class Test262SharedAssertHarness
         throw new InvalidOperationException($"Unable to locate tests\\Jroc.Test262.Tests\\Harness\\{harnessFileName}.");
     }
 
-    private sealed record FrontmatterMetadata(bool OnlyStrict, IReadOnlyList<string> Includes)
+    private static void AssertExpectedRuntimeException(
+        string testName,
+        string? expectedType,
+        Exception? exception)
     {
-        public static FrontmatterMetadata Empty { get; } = new(false, Array.Empty<string>());
+        if (exception is null)
+        {
+            throw new InvalidOperationException(
+                $"Test262 test '{testName}' expected a runtime {expectedType ?? "exception"}, but completed successfully.");
+        }
+
+        var thrownValue = exception is JsThrownValueException thrown
+            ? thrown.Value
+            : exception;
+        var actualType = thrownValue switch
+        {
+            JsError error => error.name,
+            null or JsNull => string.Empty,
+            _ => ObjectRuntime.GetItem(thrownValue, "name") as string ?? thrownValue.GetType().Name
+        };
+
+        if (!string.IsNullOrWhiteSpace(expectedType)
+            && !string.Equals(actualType, expectedType, StringComparison.Ordinal))
+        {
+            throw new InvalidOperationException(
+                $"Test262 test '{testName}' expected runtime exception '{expectedType}', but got '{actualType}'.",
+                exception);
+        }
+    }
+
+    private sealed record FrontmatterMetadata(
+        bool OnlyStrict,
+        IReadOnlyList<string> Includes,
+        string? NegativePhase,
+        string? NegativeType)
+    {
+        public static FrontmatterMetadata Empty { get; } = new(false, Array.Empty<string>(), null, null);
     }
 }

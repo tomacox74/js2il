@@ -16,7 +16,7 @@
 
 ## Notes
 
-Supports the callable CommonJS export used by packages such as Undici, Node-style AssertionError metadata, strict and loose scalar equality assertions, regular-expression assertions, synchronous throw assertions, fail, and ifError. Deep structural comparisons, asynchronous assertions, Assert, and CallTracker are present in the generated Node 24 contract but currently fail explicitly. This production module is separate from and does not alter the private test262 assertion harness.
+Supports the callable CommonJS export used by packages such as Undici, Node-style AssertionError metadata, strict and loose scalar equality assertions, regular-expression assertions, synchronous throw assertions, fail, and ifError. Deep structural comparisons, asynchronous assertions, Assert, and CallTracker are present in the generated Node 24 contract but currently fail explicitly. The test262 harness uses this module through a thin compatibility adapter.
 
 ## APIs
 
@@ -48,7 +48,7 @@ Supports the callable CommonJS export used by packages such as Undici, Node-styl
 
 ### throws / doesNotThrow
 
-Supports synchronous callables and regular-expression matching against thrown error messages.
+Supports synchronous callables, regular-expression matching against thrown error messages, and expected error constructor validation.
 
 **Tests:**
 - `Jroc.Tests.Node.AssertModule.ExecutionTests.Require_Assert_Callable_And_Core_Methods` (`tests/Jroc.Tests/Node/AssertModule/ExecutionTests.cs`)
