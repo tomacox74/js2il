@@ -31,11 +31,6 @@ public sealed partial class HIRToLIRLowerer
                 return false;
             }
 
-            if (!usesLexicalReceiver && _superConstructorCalled)
-            {
-                return false;
-            }
-
             // First try: user-defined base class in the ClassRegistry.
             if (_classRegistry != null
                 && TryGetEnclosingBaseClassRegistryName(out var baseRegistryClassName)

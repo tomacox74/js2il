@@ -371,6 +371,57 @@ public sealed partial class HIRToLIRLowerer
                 DefineTempStorage(resultTempVar, GetPreferredFieldReadStorage(stableFieldType));
                 return true;
 
+            case HIRPrivateBrandCheckExpression privateBrandCheck:
+                if (!TryLowerExpression(privateBrandCheck.Value, out var privateBrandTarget))
+                {
+                    return false;
+                }
+
+                resultTempVar = CreateTempVariable();
+                _methodBodyIR.Instructions.Add(new LIRPrivateBrandCheck(
+                    privateBrandCheck.RegistryClassName,
+                    EnsureObject(privateBrandTarget),
+                    resultTempVar));
+                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+                return true;
+
+            case HIRLoadPrivateReceiverFieldExpression privateReceiverLoad:
+                if (!TryLowerExpression(privateReceiverLoad.Receiver, out var privateLoadReceiver))
+                {
+                    return false;
+                }
+
+                resultTempVar = CreateTempVariable();
+                _methodBodyIR.Instructions.Add(new LIRLoadPrivateReceiverField(
+                    privateReceiverLoad.RegistryClassName,
+                    privateReceiverLoad.FieldName,
+                    EnsureObject(privateLoadReceiver),
+                    resultTempVar));
+                DefineTempStorage(resultTempVar, GetPreferredFieldReadStorage(
+                    _classRegistry != null
+                    && _classRegistry.TryGetPrivateFieldClrType(
+                        privateReceiverLoad.RegistryClassName,
+                        privateReceiverLoad.FieldName,
+                        out var privateLoadFieldType)
+                        ? privateLoadFieldType
+                        : typeof(object)));
+                return true;
+
+            case HIRStorePrivateReceiverFieldExpression privateReceiverStore:
+                if (!TryLowerExpression(privateReceiverStore.Receiver, out var privateStoreReceiver)
+                    || !TryLowerExpression(privateReceiverStore.Value, out var privateStoreValue))
+                {
+                    return false;
+                }
+
+                _methodBodyIR.Instructions.Add(new LIRStorePrivateReceiverField(
+                    privateReceiverStore.RegistryClassName,
+                    privateReceiverStore.FieldName,
+                    EnsureObject(privateStoreReceiver),
+                    privateStoreValue));
+                resultTempVar = privateStoreValue;
+                return true;
+
             case HIRPrivateFieldAssignmentExpression privateFieldAssignExpr:
                 if (!TryLowerExpression(privateFieldAssignExpr.Value, out var privateFieldValueTemp))
                 {

@@ -1582,6 +1582,58 @@ internal sealed partial class LIRToILCompiler
                     ilEncoder.Token(targetType);
                     break;
                 }
+            case LIRLoadPrivateReceiverField loadPrivateReceiverField:
+                {
+                    var classRegistry = _serviceProvider.GetService<Jroc.Services.ClassRegistry>();
+                    if (classRegistry == null
+                        || !classRegistry.TryGet(
+                            loadPrivateReceiverField.RegistryClassName,
+                            out var privateOwnerType)
+                        || !classRegistry.TryGetPrivateField(
+                            loadPrivateReceiverField.RegistryClassName,
+                            loadPrivateReceiverField.FieldName,
+                            out var privateField))
+                    {
+                        throw new InvalidOperationException(
+                            $"Cannot emit private field load for '{loadPrivateReceiverField.RegistryClassName}.#{loadPrivateReceiverField.FieldName}'.");
+                    }
+
+                    var privateFieldType = GetDeclaredUserClassFieldClrType(
+                        classRegistry,
+                        loadPrivateReceiverField.RegistryClassName,
+                        loadPrivateReceiverField.FieldName,
+                        isPrivateField: true,
+                        isStaticField: false);
+                    EmitLoadTempAsObject(loadPrivateReceiverField.Receiver, ilEncoder, allocation, methodDescriptor);
+                    ilEncoder.OpCode(ILOpCode.Castclass);
+                    ilEncoder.Token(privateOwnerType);
+                    ilEncoder.OpCode(ILOpCode.Ldfld);
+                    ilEncoder.Token(privateField);
+                    EmitBoxIfNeededForTypedUserClassFieldLoad(
+                        privateFieldType,
+                        GetTempStorage(loadPrivateReceiverField.Result),
+                        ilEncoder);
+                    break;
+                }
+
+            case LIRPrivateBrandCheck privateBrandCheck:
+                {
+                    var privateBrandClassRegistry =
+                        _serviceProvider.GetService<Jroc.Services.ClassRegistry>();
+                    if (privateBrandClassRegistry == null
+                        || !privateBrandClassRegistry.TryGet(privateBrandCheck.RegistryClassName, out var privateBrandType))
+                    {
+                        throw new InvalidOperationException(
+                            $"Cannot emit private brand check for missing class '{privateBrandCheck.RegistryClassName}'.");
+                    }
+
+                    EmitLoadTempAsObject(privateBrandCheck.Value, ilEncoder, allocation, methodDescriptor);
+                    ilEncoder.OpCode(ILOpCode.Isinst);
+                    ilEncoder.Token(privateBrandType);
+                    ilEncoder.OpCode(ILOpCode.Ldnull);
+                    ilEncoder.OpCode(ILOpCode.Cgt_un);
+                    break;
+                }
 
             case LIRSetItem setItem:
                 {

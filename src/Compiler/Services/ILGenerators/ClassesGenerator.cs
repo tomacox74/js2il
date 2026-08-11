@@ -117,8 +117,16 @@ namespace Jroc.Services.ILGenerators
                     var functionTypes = _serviceProvider.GetRequiredService<FunctionTypeMetadataRegistry>();
                     var fd = (FunctionDeclaration)current.AstNode;
                     var functionName = (fd.Id as Identifier)?.Name ?? current.Name;
+                    var declaringScopeName = current.Parent != null
+                        ? ScopeNaming.GetRegistryScopeName(current.Parent)
+                        : _moduleName;
 
-                    if (!functionTypes.TryGet(_moduleName, functionName, out var ownerType) || ownerType.IsNil)
+                    if (!functionTypes.TryGet(
+                            _moduleName,
+                            declaringScopeName,
+                            functionName,
+                            out var ownerType)
+                        || ownerType.IsNil)
                     {
                         // Owner type not yet declared (planned pipeline may defer this). Declare it now so
                         // nested classes can be emitted under it.
@@ -154,7 +162,11 @@ namespace Jroc.Services.ILGenerators
                             firstFieldOverride: null,
                             firstMethodOverride: expected);
 
-                        functionTypes.Add(_moduleName, functionName, ownerType);
+                        functionTypes.Add(
+                            _moduleName,
+                            declaringScopeName,
+                            functionName,
+                            ownerType);
                     }
 
                     parentType = ownerType;

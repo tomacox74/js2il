@@ -385,6 +385,12 @@ internal static partial class LIRInstructionInfo
                 visitor.Visit(value.Value); break;
             case LIRIsInstanceOf value:
                 visitor.Visit(value.Value); break;
+            case LIRPrivateBrandCheck value:
+                visitor.Visit(value.Value); break;
+            case LIRLoadPrivateReceiverField value:
+                visitor.Visit(value.Receiver); break;
+            case LIRStorePrivateReceiverField value:
+                visitor.Visit(value.Receiver); visitor.Visit(value.Value); break;
             case LIRCompareNumberLessThan value:
                 visitor.Visit(value.Left); visitor.Visit(value.Right); break;
             case LIRCompareNumberGreaterThan value:
@@ -816,6 +822,12 @@ internal static partial class LIRInstructionInfo
                 return true;
             case LIRIsInstanceOf isInstanceOf:
                 defined = isInstanceOf.Result;
+                return true;
+            case LIRPrivateBrandCheck privateBrandCheck:
+                defined = privateBrandCheck.Result;
+                return true;
+            case LIRLoadPrivateReceiverField privateReceiverField:
+                defined = privateReceiverField.Result;
                 return true;
             case LIRTypeof t:
                 defined = t.Result;

@@ -68,6 +68,41 @@ internal sealed partial class LIRToILCompiler
     {
         switch (instruction)
         {
+            case LIRStorePrivateReceiverField storePrivateReceiverField:
+                {
+                    var classRegistry = _serviceProvider.GetService<Jroc.Services.ClassRegistry>();
+                    if (classRegistry == null
+                        || !classRegistry.TryGet(
+                            storePrivateReceiverField.RegistryClassName,
+                            out var privateOwnerType)
+                        || !classRegistry.TryGetPrivateField(
+                            storePrivateReceiverField.RegistryClassName,
+                            storePrivateReceiverField.FieldName,
+                            out var privateField))
+                    {
+                        return false;
+                    }
+
+                    var privateFieldType = GetDeclaredUserClassFieldClrType(
+                        classRegistry,
+                        storePrivateReceiverField.RegistryClassName,
+                        storePrivateReceiverField.FieldName,
+                        isPrivateField: true,
+                        isStaticField: false);
+                    EmitLoadTempAsObject(storePrivateReceiverField.Receiver, ilEncoder, allocation, methodDescriptor);
+                    ilEncoder.OpCode(ILOpCode.Castclass);
+                    ilEncoder.Token(privateOwnerType);
+                    EmitLoadTempAsClrType(
+                        storePrivateReceiverField.Value,
+                        privateFieldType,
+                        ilEncoder,
+                        allocation,
+                        methodDescriptor);
+                    ilEncoder.OpCode(ILOpCode.Stfld);
+                    ilEncoder.Token(privateField);
+                    break;
+                }
+
             case LIRStoreUserClassInstanceField storeInstanceField:
                 {
                     var classRegistry = _serviceProvider.GetService<Jroc.Services.ClassRegistry>();
@@ -241,6 +276,45 @@ internal sealed partial class LIRToILCompiler
                     }
                     ilEncoder.OpCode(ILOpCode.Stsfld);
                     ilEncoder.Token(fieldHandle);
+                    break;
+                }
+
+            case LIRLoadPrivateReceiverField loadPrivateReceiverField:
+                {
+                    if (!IsMaterialized(loadPrivateReceiverField.Result, allocation))
+                    {
+                        break;
+                    }
+
+                    var classRegistry = _serviceProvider.GetService<Jroc.Services.ClassRegistry>();
+                    if (classRegistry == null
+                        || !classRegistry.TryGet(
+                            loadPrivateReceiverField.RegistryClassName,
+                            out var privateOwnerType)
+                        || !classRegistry.TryGetPrivateField(
+                            loadPrivateReceiverField.RegistryClassName,
+                            loadPrivateReceiverField.FieldName,
+                            out var privateField))
+                    {
+                        return false;
+                    }
+
+                    var privateFieldType = GetDeclaredUserClassFieldClrType(
+                        classRegistry,
+                        loadPrivateReceiverField.RegistryClassName,
+                        loadPrivateReceiverField.FieldName,
+                        isPrivateField: true,
+                        isStaticField: false);
+                    EmitLoadTempAsObject(loadPrivateReceiverField.Receiver, ilEncoder, allocation, methodDescriptor);
+                    ilEncoder.OpCode(ILOpCode.Castclass);
+                    ilEncoder.Token(privateOwnerType);
+                    ilEncoder.OpCode(ILOpCode.Ldfld);
+                    ilEncoder.Token(privateField);
+                    EmitBoxIfNeededForTypedUserClassFieldLoad(
+                        privateFieldType,
+                        GetTempStorage(loadPrivateReceiverField.Result),
+                        ilEncoder);
+                    EmitStoreTemp(loadPrivateReceiverField.Result, ilEncoder, allocation);
                     break;
                 }
 

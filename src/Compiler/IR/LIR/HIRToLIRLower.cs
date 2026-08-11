@@ -70,8 +70,15 @@ public sealed partial class HIRToLIRLowerer
                 generatedMetadata.TypeHandle);
         }
 
+        var sameLocation = _generatedFunctionObjectRegistry?.GetPlansInStableOrder()
+            .Where(plan => plan.Callable.Location == callableId.Location)
+            .Select(plan => plan.Callable.UniqueKey)
+            .ToArray() ?? [];
         throw new InvalidOperationException(
-            $"Compiled callable '{callableId.DisplayName}' does not have generated function-object metadata.");
+            $"Compiled callable '{callableId.UniqueKey}' does not have generated function-object metadata."
+            + (sameLocation.Length == 0
+                ? " No callable was planned at the same source location."
+                : $" Planned at the same location: {string.Join(", ", sameLocation)}."));
     }
 
     private static bool IsGeneratorCallable(TwoPhase.CallableId callableId)

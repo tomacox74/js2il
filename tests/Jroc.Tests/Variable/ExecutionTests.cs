@@ -30,6 +30,7 @@ namespace Jroc.Tests.Variable
         [Fact] public Task Variable_ObjectDestructuring_Basic() { var testName = nameof(Variable_ObjectDestructuring_Basic); return ExecutionTest(testName); }
         [Fact] public Task Variable_ObjectDestructuring_WithDefaults() { var testName = nameof(Variable_ObjectDestructuring_WithDefaults); return ExecutionTest(testName); }
         [Fact] public Task Variable_ObjectDestructuring_Captured() { var testName = nameof(Variable_ObjectDestructuring_Captured); return ExecutionTest(testName); }
+        [Fact] public Task Variable_ObjectDestructuring_ComputedKeyCaptured() { var testName = nameof(Variable_ObjectDestructuring_ComputedKeyCaptured); return ExecutionTest(testName); }
 
         // Destructuring + assignment targets (PL4.*)
         [Fact] public Task Variable_ArrayDestructuring_Basic() { var testName = nameof(Variable_ArrayDestructuring_Basic); return ExecutionTest(testName); }

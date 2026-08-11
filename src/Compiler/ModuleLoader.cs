@@ -365,9 +365,16 @@ public class ModuleLoader
         var isPackageModule = IsUnderNodeModules(modulePath);
 
         // Internal unique key used by compilation registries (must be globally unique within an assembly).
-        // For package modules, prefer the reversible encoding to avoid collisions.
+        // Nested node_modules installations can contain multiple physical copies with the same
+        // canonical package id, so include their installation chain when necessary.
+        var packageInstallationDiscriminator = isPackageModule
+            ? TryGetNestedPackageInstallationDiscriminator(modulePath)
+            : null;
+        var compilationModuleId = string.IsNullOrWhiteSpace(packageInstallationDiscriminator)
+            ? canonicalModuleId
+            : $"{canonicalModuleId}@{packageInstallationDiscriminator}";
         var internalKey = isPackageModule
-            ? NodeModuleResolver.EncodeModuleIdToClrIdentifier(canonicalModuleId)
+            ? NodeModuleResolver.EncodeModuleIdToClrIdentifier(compilationModuleId)
             : JavaScriptRuntime.CommonJS.ModuleName.GetModuleIdFromPath(modulePath, rootModulePath);
 
         // Human-readable CLR names for the generated module root type.
@@ -378,6 +385,10 @@ public class ModuleLoader
         if (isPackageModule && TryGetPackageIdentity(modulePath, out var packageName, out var withinPackageNoExt))
         {
             clrNamespace = "Packages." + SanitizeClrIdentifier(packageName);
+            if (!string.IsNullOrWhiteSpace(packageInstallationDiscriminator))
+            {
+                clrNamespace += ".Nested_" + SanitizeClrIdentifier(packageInstallationDiscriminator);
+            }
             clrTypeName = SanitizeClrIdentifier(string.IsNullOrWhiteSpace(withinPackageNoExt) ? "index" : withinPackageNoExt);
         }
         else
@@ -2407,6 +2418,44 @@ function __jroc_esm_export(name, getter) {
 
         withinPackageNoExt = string.Join("/", withinSegments);
         return true;
+    }
+
+    private static string? TryGetNestedPackageInstallationDiscriminator(string modulePath)
+    {
+        var segments = Path.GetFullPath(modulePath)
+            .Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)
+            .Where(segment => !string.IsNullOrWhiteSpace(segment))
+            .ToArray();
+        var nodeModulesIndexes = segments
+            .Select((segment, index) => (segment, index))
+            .Where(item => string.Equals(
+                item.segment,
+                "node_modules",
+                StringComparison.OrdinalIgnoreCase))
+            .Select(item => item.index)
+            .ToArray();
+        if (nodeModulesIndexes.Length <= 1)
+        {
+            return null;
+        }
+
+        var firstPackageIndex = nodeModulesIndexes[0] + 1;
+        var nestedPackageIndex = nodeModulesIndexes[^1] + 1;
+        if (nestedPackageIndex >= segments.Length)
+        {
+            return null;
+        }
+
+        var nestedPackageEnd = nestedPackageIndex
+            + (segments[nestedPackageIndex].StartsWith("@", StringComparison.Ordinal) ? 2 : 1);
+        if (nestedPackageEnd > segments.Length)
+        {
+            return null;
+        }
+
+        return string.Join(
+            "/",
+            segments.Skip(firstPackageIndex).Take(nestedPackageEnd - firstPackageIndex));
     }
 
     private static string SanitizeClrIdentifier(string value)

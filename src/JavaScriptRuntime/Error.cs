@@ -61,6 +61,18 @@ namespace JavaScriptRuntime
             this.cause = cause;
         }
 
+        public static void InstallCause(object? errorValue, object? options)
+        {
+            if (errorValue is Error error
+                && options is not null
+                && options is not JsNull
+                && !TypeUtilities.IsPrimitive(options)
+                && ObjectRuntime.HasPropertyIn("cause", options))
+            {
+                error.cause = ObjectRuntime.GetProperty(options, "cause");
+            }
+        }
+
         protected virtual string CaptureStack()
         {
             // Capture current .NET stack trace as a placeholder for JS stack

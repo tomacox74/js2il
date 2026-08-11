@@ -181,6 +181,9 @@ internal static partial class LIRInstructionInfo
         typeof(LIRInOperator),
         typeof(LIRInstanceOfOperator),
         typeof(LIRIsInstanceOf),
+        typeof(LIRPrivateBrandCheck),
+        typeof(LIRLoadPrivateReceiverField),
+        typeof(LIRStorePrivateReceiverField),
         typeof(LIRLabel),
         typeof(LIRLeave),
         typeof(LIRLeftShift),
@@ -426,6 +429,7 @@ internal static partial class LIRInstructionInfo
                 or LIRNegateNumber
                 or LIRBitwiseNotNumber
                 or LIRIsInstanceOf
+                or LIRPrivateBrandCheck
                 or LIRTypeof
                 or LIRCopyTemp
                 => LIRInstructionEffects.None,
@@ -508,6 +512,7 @@ internal static partial class LIRInstructionInfo
                 or LIRGetStringLength
                 or LIRGetInferredMember
                 or LIRLoadUserClassInstanceField
+                or LIRLoadPrivateReceiverField
                 or LIRLoadUserClassStaticField
                 or LIRGetIntrinsicGlobal
                 or LIRGetIntrinsicGlobalFunction
@@ -522,6 +527,7 @@ internal static partial class LIRInstructionInfo
                 or LIRArrayPushRange
                 or LIRArrayAdd
                 or LIRStoreUserClassInstanceField
+                or LIRStorePrivateReceiverField
                 or LIRStoreUserClassStaticField
                 => HeapWriteEffects,
 

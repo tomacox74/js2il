@@ -43,4 +43,28 @@ public sealed class ClrMetadataConsistencyTests
         Assert.Contains("Missing JavaScriptRuntime.dll", message);
         Assert.Contains("Broken dependency image", message);
     }
+
+    [Fact]
+    public void Compile_ClassInsideNestedFunctionDeclaration_PreservesTypeDefinitionOrder()
+    {
+        var artifact = JrocInMemoryCompiler.Compile(
+            new JrocInMemoryCompileRequest("nested-function-class.js")
+            {
+                SourceText =
+                    """
+                    function outer() {
+                        function inner() {
+                            class Local {}
+                            return new Local();
+                        }
+
+                        return inner();
+                    }
+
+                    module.exports = outer;
+                    """
+            });
+
+        Assert.NotEmpty(artifact.PeBytes);
+    }
 }
