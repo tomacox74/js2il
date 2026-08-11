@@ -316,7 +316,7 @@
 		} // end of class Scope_read
 
 		.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassConstructor_BF595FDD_Box
-			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject
 		{
 			// Fields
 			.field private initonly object[] _transitionalScopes
@@ -332,7 +332,7 @@
 				.maxstack 8
 
 				IL_0000: ldarg.0
-				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject::.ctor()
 				IL_0006: ldarg.0
 				IL_0007: ldarg.1
 				IL_0008: stfld object[] Modules.Classes_ClassLocal_ReassignedClass_FallsBack/Box/FunctionObject_ClassConstructor_BF595FDD_Box::_transitionalScopes
@@ -360,36 +360,6 @@
 				IL_0000: ldc.i4.0
 				IL_0001: ret
 			} // end of method FunctionObject_ClassConstructor_BF595FDD_Box::get_RequiresInvocationContext
-
-			.method family hidebysig virtual 
-				instance object CallCore (
-					object thisArgument,
-					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 11 (0xb)
-				.maxstack 8
-
-				IL_0000: ldstr "Class constructor cannot be invoked without 'new'"
-				IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-				IL_000a: throw
-			} // end of method FunctionObject_ClassConstructor_BF595FDD_Box::CallCore
-
-			.method family hidebysig virtual 
-				instance object ConstructCore (
-					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
-					object newTarget
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 11 (0xb)
-				.maxstack 8
-
-				IL_0000: ldstr "Generated construction adapter is reserved for the callable-family construction migration"
-				IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-				IL_000a: throw
-			} // end of method FunctionObject_ClassConstructor_BF595FDD_Box::ConstructCore
 
 		} // end of class FunctionObject_ClassConstructor_BF595FDD_Box
 
@@ -536,7 +506,8 @@
 			[1] class Modules.Classes_ClassLocal_ReassignedClass_FallsBack/test/FunctionObject_FunctionDeclaration_B0C5CE34_test,
 			[2] object[],
 			[3] class [System.Runtime]System.Type,
-			[4] object
+			[4] object,
+			[5] class Modules.Classes_ClassLocal_ReassignedClass_FallsBack/Box/FunctionObject_ClassConstructor_BF595FDD_Box
 		)
 
 		IL_0000: newobj instance void Modules.Classes_ClassLocal_ReassignedClass_FallsBack/Scope::.ctor()
@@ -591,14 +562,18 @@
 		IL_0087: ldloc.0
 		IL_0088: stelem.ref
 		IL_0089: stloc.2
-		IL_008a: ldloc.3
-		IL_008b: ldloc.2
-		IL_008c: ldc.r8 0.0
-		IL_0095: box [System.Runtime]System.Double
-		IL_009a: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateClassConstructorValue(object, object, object)
-		IL_009f: stloc.s 4
+		IL_008a: ldloc.2
+		IL_008b: newobj instance void Modules.Classes_ClassLocal_ReassignedClass_FallsBack/Box/FunctionObject_ClassConstructor_BF595FDD_Box::.ctor(object[])
+		IL_0090: ldloc.3
+		IL_0091: ldloc.2
+		IL_0092: ldc.i4.0
+		IL_0093: conv.r8
+		IL_0094: ldc.i4.0
+		IL_0095: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
+		IL_009a: castclass Modules.Classes_ClassLocal_ReassignedClass_FallsBack/Box/FunctionObject_ClassConstructor_BF595FDD_Box
+		IL_009f: stloc.s 5
 		IL_00a1: ldloc.0
-		IL_00a2: ldloc.s 4
+		IL_00a2: ldloc.s 5
 		IL_00a4: stfld object Modules.Classes_ClassLocal_ReassignedClass_FallsBack/Scope::Box
 		IL_00a9: nop
 		IL_00aa: ldloc.0

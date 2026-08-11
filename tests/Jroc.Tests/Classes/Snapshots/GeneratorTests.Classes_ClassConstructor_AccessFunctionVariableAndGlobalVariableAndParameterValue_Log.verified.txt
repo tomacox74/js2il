@@ -54,7 +54,7 @@
 			} // end of class Scope_ctor
 
 			.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassConstructor_B79F2CB3_MyClass
-				extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+				extends [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject
 			{
 				// Fields
 				.field private initonly class Modules.Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariableAndParameterValue_Log/Scope _environment0_Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariableAndParameterValue_Log
@@ -72,7 +72,7 @@
 					.maxstack 8
 
 					IL_0000: ldarg.0
-					IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+					IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject::.ctor()
 					IL_0006: ldarg.0
 					IL_0007: ldarg.1
 					IL_0008: stfld class Modules.Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariableAndParameterValue_Log/Scope Modules.Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariableAndParameterValue_Log/testFunction/MyClass/FunctionObject_ClassConstructor_B79F2CB3_MyClass::_environment0_Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariableAndParameterValue_Log
@@ -103,36 +103,6 @@
 					IL_0000: ldc.i4.0
 					IL_0001: ret
 				} // end of method FunctionObject_ClassConstructor_B79F2CB3_MyClass::get_RequiresInvocationContext
-
-				.method family hidebysig virtual 
-					instance object CallCore (
-						object thisArgument,
-						[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-					) cil managed 
-				{
-					// Header size: 1
-					// Code size: 11 (0xb)
-					.maxstack 8
-
-					IL_0000: ldstr "Class constructor cannot be invoked without 'new'"
-					IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-					IL_000a: throw
-				} // end of method FunctionObject_ClassConstructor_B79F2CB3_MyClass::CallCore
-
-				.method family hidebysig virtual 
-					instance object ConstructCore (
-						[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
-						object newTarget
-					) cil managed 
-				{
-					// Header size: 1
-					// Code size: 11 (0xb)
-					.maxstack 8
-
-					IL_0000: ldstr "Generated construction adapter is reserved for the callable-family construction migration"
-					IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-					IL_000a: throw
-				} // end of method FunctionObject_ClassConstructor_B79F2CB3_MyClass::ConstructCore
 
 			} // end of class FunctionObject_ClassConstructor_B79F2CB3_MyClass
 

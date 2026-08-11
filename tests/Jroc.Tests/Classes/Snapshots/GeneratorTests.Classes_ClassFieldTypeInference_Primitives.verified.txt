@@ -69,7 +69,7 @@
 		} // end of class Scope_increment
 
 		.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassConstructor_E57E053D_Counter
-			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject
 		{
 			// Fields
 			.field private initonly object[] _transitionalScopes
@@ -85,7 +85,7 @@
 				.maxstack 8
 
 				IL_0000: ldarg.0
-				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject::.ctor()
 				IL_0006: ldarg.0
 				IL_0007: ldarg.1
 				IL_0008: stfld object[] Modules.Classes_ClassFieldTypeInference_Primitives/Counter/FunctionObject_ClassConstructor_E57E053D_Counter::_transitionalScopes
@@ -113,36 +113,6 @@
 				IL_0000: ldc.i4.1
 				IL_0001: ret
 			} // end of method FunctionObject_ClassConstructor_E57E053D_Counter::get_RequiresInvocationContext
-
-			.method family hidebysig virtual 
-				instance object CallCore (
-					object thisArgument,
-					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 11 (0xb)
-				.maxstack 8
-
-				IL_0000: ldstr "Class constructor cannot be invoked without 'new'"
-				IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-				IL_000a: throw
-			} // end of method FunctionObject_ClassConstructor_E57E053D_Counter::CallCore
-
-			.method family hidebysig virtual 
-				instance object ConstructCore (
-					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
-					object newTarget
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 11 (0xb)
-				.maxstack 8
-
-				IL_0000: ldstr "Generated construction adapter is reserved for the callable-family construction migration"
-				IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-				IL_000a: throw
-			} // end of method FunctionObject_ClassConstructor_E57E053D_Counter::ConstructCore
 
 		} // end of class FunctionObject_ClassConstructor_E57E053D_Counter
 
@@ -298,7 +268,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 295 (0x127)
+		// Code size: 296 (0x128)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Classes_ClassFieldTypeInference_Primitives/Scope,
@@ -307,8 +277,9 @@
 			[3] class [System.Runtime]System.Type,
 			[4] object,
 			[5] object[],
-			[6] class Modules.Classes_ClassFieldTypeInference_Primitives/Counter,
-			[7] class [JavaScriptRuntime]JavaScriptRuntime.Console
+			[6] class Modules.Classes_ClassFieldTypeInference_Primitives/Counter/FunctionObject_ClassConstructor_E57E053D_Counter,
+			[7] class Modules.Classes_ClassFieldTypeInference_Primitives/Counter,
+			[8] class [JavaScriptRuntime]JavaScriptRuntime.Console
 		)
 
 		IL_0000: newobj instance void Modules.Classes_ClassFieldTypeInference_Primitives/Scope::.ctor()
@@ -344,69 +315,73 @@
 		IL_005d: ldloc.0
 		IL_005e: stelem.ref
 		IL_005f: stloc.s 5
-		IL_0061: ldloc.3
-		IL_0062: ldloc.s 5
-		IL_0064: ldc.r8 0.0
-		IL_006d: box [System.Runtime]System.Double
-		IL_0072: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateClassConstructorValue(object, object, object)
-		IL_0077: stloc.s 4
-		IL_0079: ldloc.s 4
-		IL_007b: stloc.1
-		IL_007c: ldc.i4.0
-		IL_007d: newarr [System.Runtime]System.Object
-		IL_0082: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
-		IL_0087: newobj instance void Modules.Classes_ClassFieldTypeInference_Primitives/Counter::.ctor()
-		IL_008c: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
-		IL_0091: stloc.2
-		IL_0092: ldloc.2
-		IL_0093: ldtoken Modules.Classes_ClassFieldTypeInference_Primitives/Counter
-		IL_0098: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_009d: ldstr "prototype"
-		IL_00a2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
-		IL_00a7: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
-		IL_00ac: ldloc.2
-		IL_00ad: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Classes_ClassFieldTypeInference_Primitives/Counter>(!!0)
-		IL_00b2: stloc.s 6
-		IL_00b4: ldloc.s 6
-		IL_00b6: callvirt instance object Modules.Classes_ClassFieldTypeInference_Primitives/Counter::increment()
-		IL_00bb: pop
-		IL_00bc: ldloc.2
-		IL_00bd: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Classes_ClassFieldTypeInference_Primitives/Counter>(!!0)
-		IL_00c2: stloc.s 6
-		IL_00c4: ldloc.s 6
-		IL_00c6: callvirt instance object Modules.Classes_ClassFieldTypeInference_Primitives/Counter::increment()
-		IL_00cb: pop
-		IL_00cc: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00d1: stloc.s 7
-		IL_00d3: ldloc.2
-		IL_00d4: ldstr "value"
-		IL_00d9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_00de: stloc.s 4
-		IL_00e0: ldloc.s 7
-		IL_00e2: ldloc.s 4
-		IL_00e4: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00e9: pop
-		IL_00ea: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00ef: stloc.s 7
-		IL_00f1: ldloc.2
-		IL_00f2: ldstr "name"
-		IL_00f7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_00fc: stloc.s 4
-		IL_00fe: ldloc.s 7
-		IL_0100: ldloc.s 4
-		IL_0102: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0107: pop
-		IL_0108: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_010d: stloc.s 7
-		IL_010f: ldloc.2
-		IL_0110: ldstr "active"
-		IL_0115: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_011a: stloc.s 4
-		IL_011c: ldloc.s 7
-		IL_011e: ldloc.s 4
-		IL_0120: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0125: pop
-		IL_0126: ret
+		IL_0061: ldloc.s 5
+		IL_0063: newobj instance void Modules.Classes_ClassFieldTypeInference_Primitives/Counter/FunctionObject_ClassConstructor_E57E053D_Counter::.ctor(object[])
+		IL_0068: ldloc.3
+		IL_0069: ldloc.s 5
+		IL_006b: ldc.i4.0
+		IL_006c: conv.r8
+		IL_006d: ldc.i4.0
+		IL_006e: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
+		IL_0073: castclass Modules.Classes_ClassFieldTypeInference_Primitives/Counter/FunctionObject_ClassConstructor_E57E053D_Counter
+		IL_0078: stloc.s 6
+		IL_007a: ldloc.s 6
+		IL_007c: stloc.1
+		IL_007d: ldc.i4.0
+		IL_007e: newarr [System.Runtime]System.Object
+		IL_0083: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
+		IL_0088: newobj instance void Modules.Classes_ClassFieldTypeInference_Primitives/Counter::.ctor()
+		IL_008d: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
+		IL_0092: stloc.2
+		IL_0093: ldloc.2
+		IL_0094: ldtoken Modules.Classes_ClassFieldTypeInference_Primitives/Counter
+		IL_0099: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_009e: ldstr "prototype"
+		IL_00a3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
+		IL_00a8: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
+		IL_00ad: ldloc.2
+		IL_00ae: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Classes_ClassFieldTypeInference_Primitives/Counter>(!!0)
+		IL_00b3: stloc.s 7
+		IL_00b5: ldloc.s 7
+		IL_00b7: callvirt instance object Modules.Classes_ClassFieldTypeInference_Primitives/Counter::increment()
+		IL_00bc: pop
+		IL_00bd: ldloc.2
+		IL_00be: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Classes_ClassFieldTypeInference_Primitives/Counter>(!!0)
+		IL_00c3: stloc.s 7
+		IL_00c5: ldloc.s 7
+		IL_00c7: callvirt instance object Modules.Classes_ClassFieldTypeInference_Primitives/Counter::increment()
+		IL_00cc: pop
+		IL_00cd: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00d2: stloc.s 8
+		IL_00d4: ldloc.2
+		IL_00d5: ldstr "value"
+		IL_00da: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00df: stloc.s 4
+		IL_00e1: ldloc.s 8
+		IL_00e3: ldloc.s 4
+		IL_00e5: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00ea: pop
+		IL_00eb: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00f0: stloc.s 8
+		IL_00f2: ldloc.2
+		IL_00f3: ldstr "name"
+		IL_00f8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00fd: stloc.s 4
+		IL_00ff: ldloc.s 8
+		IL_0101: ldloc.s 4
+		IL_0103: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0108: pop
+		IL_0109: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_010e: stloc.s 8
+		IL_0110: ldloc.2
+		IL_0111: ldstr "active"
+		IL_0116: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_011b: stloc.s 4
+		IL_011d: ldloc.s 8
+		IL_011f: ldloc.s 4
+		IL_0121: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0126: pop
+		IL_0127: ret
 	} // end of method Classes_ClassFieldTypeInference_Primitives::__js_module_init__
 
 } // end of class Modules.Classes_ClassFieldTypeInference_Primitives

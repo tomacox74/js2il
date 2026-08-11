@@ -71,6 +71,9 @@ namespace Jroc.Services
         public TypeReferenceHandle SystemMathType => _typeRefRegistry.GetOrAdd(typeof(System.Math));
         public TypeReferenceHandle MethodBaseType => _typeRefRegistry.GetOrAdd(typeof(System.Reflection.MethodBase));
         public TypeReferenceHandle JsFunctionObjectType => _typeRefRegistry.GetOrAdd(typeof(JavaScriptRuntime.JsFunctionObject));
+        public TypeReferenceHandle JsClassConstructorObjectType =>
+            _typeRefRegistry.GetOrAdd(
+                typeof(JavaScriptRuntime.JsClassConstructorObject));
         public TypeReferenceHandle JsAsyncFunctionObjectType =>
             _typeRefRegistry.GetOrAdd(
                 typeof(JavaScriptRuntime.JsAsyncFunctionObject));
@@ -83,6 +86,10 @@ namespace Jroc.Services
         public MemberReferenceHandle Object_Ctor_Ref => _memberRefRegistry.GetOrAddConstructor(typeof(object), Type.EmptyTypes);
         public MemberReferenceHandle JsObject_Ctor_Ref => _memberRefRegistry.GetOrAddConstructor(typeof(JavaScriptRuntime.JsObject), Type.EmptyTypes);
         public MemberReferenceHandle JsFunctionObject_Ctor_Ref => _memberRefRegistry.GetOrAddConstructor(typeof(JavaScriptRuntime.JsFunctionObject), Type.EmptyTypes);
+        public MemberReferenceHandle JsClassConstructorObject_Ctor_Ref =>
+            _memberRefRegistry.GetOrAddConstructor(
+                typeof(JavaScriptRuntime.JsClassConstructorObject),
+                Type.EmptyTypes);
         public MemberReferenceHandle JsAsyncFunctionObject_Ctor_Ref =>
             _memberRefRegistry.GetOrAddConstructor(
                 typeof(JavaScriptRuntime.JsAsyncFunctionObject),

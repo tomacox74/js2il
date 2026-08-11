@@ -5092,7 +5092,7 @@
 		} // end of class Scope_twice
 
 		.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassConstructor_AAD039E1_AsyncGeneratorClass
-			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject
 		{
 			// Fields
 			.field private initonly object[] _transitionalScopes
@@ -5108,7 +5108,7 @@
 				.maxstack 8
 
 				IL_0000: ldarg.0
-				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject::.ctor()
 				IL_0006: ldarg.0
 				IL_0007: ldarg.1
 				IL_0008: stfld object[] Modules.AsyncGenerator_GeneratedFunctionObject_Semantics/AsyncGeneratorClass/FunctionObject_ClassConstructor_AAD039E1_AsyncGeneratorClass::_transitionalScopes
@@ -5136,36 +5136,6 @@
 				IL_0000: ldc.i4.1
 				IL_0001: ret
 			} // end of method FunctionObject_ClassConstructor_AAD039E1_AsyncGeneratorClass::get_RequiresInvocationContext
-
-			.method family hidebysig virtual 
-				instance object CallCore (
-					object thisArgument,
-					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 11 (0xb)
-				.maxstack 8
-
-				IL_0000: ldstr "Class constructor cannot be invoked without 'new'"
-				IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-				IL_000a: throw
-			} // end of method FunctionObject_ClassConstructor_AAD039E1_AsyncGeneratorClass::CallCore
-
-			.method family hidebysig virtual 
-				instance object ConstructCore (
-					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
-					object newTarget
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 11 (0xb)
-				.maxstack 8
-
-				IL_0000: ldstr "Generated construction adapter is reserved for the callable-family construction migration"
-				IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-				IL_000a: throw
-			} // end of method FunctionObject_ClassConstructor_AAD039E1_AsyncGeneratorClass::ConstructCore
 
 		} // end of class FunctionObject_ClassConstructor_AAD039E1_AsyncGeneratorClass
 
@@ -5869,7 +5839,7 @@
 		} // end of class Scope_callSuper
 
 		.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassConstructor_D1DFCE32_DerivedAsyncGeneratorClass
-			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject
 		{
 			// Fields
 			.field private initonly object[] _transitionalScopes
@@ -5885,7 +5855,7 @@
 				.maxstack 8
 
 				IL_0000: ldarg.0
-				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject::.ctor()
 				IL_0006: ldarg.0
 				IL_0007: ldarg.1
 				IL_0008: stfld object[] Modules.AsyncGenerator_GeneratedFunctionObject_Semantics/DerivedAsyncGeneratorClass/FunctionObject_ClassConstructor_D1DFCE32_DerivedAsyncGeneratorClass::_transitionalScopes
@@ -5913,36 +5883,6 @@
 				IL_0000: ldc.i4.0
 				IL_0001: ret
 			} // end of method FunctionObject_ClassConstructor_D1DFCE32_DerivedAsyncGeneratorClass::get_RequiresInvocationContext
-
-			.method family hidebysig virtual 
-				instance object CallCore (
-					object thisArgument,
-					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 11 (0xb)
-				.maxstack 8
-
-				IL_0000: ldstr "Class constructor cannot be invoked without 'new'"
-				IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-				IL_000a: throw
-			} // end of method FunctionObject_ClassConstructor_D1DFCE32_DerivedAsyncGeneratorClass::CallCore
-
-			.method family hidebysig virtual 
-				instance object ConstructCore (
-					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
-					object newTarget
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 11 (0xb)
-				.maxstack 8
-
-				IL_0000: ldstr "Generated construction adapter is reserved for the callable-family construction migration"
-				IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-				IL_000a: throw
-			} // end of method FunctionObject_ClassConstructor_D1DFCE32_DerivedAsyncGeneratorClass::ConstructCore
 
 		} // end of class FunctionObject_ClassConstructor_D1DFCE32_DerivedAsyncGeneratorClass
 
@@ -6199,7 +6139,8 @@
 			[7] class Modules.AsyncGenerator_GeneratedFunctionObject_Semantics/FunctionExpression_object/FunctionObject_FunctionExpression_A42D114D_L19C15,
 			[8] class [System.Runtime]System.Type,
 			[9] object,
-			[10] object
+			[10] class Modules.AsyncGenerator_GeneratedFunctionObject_Semantics/AsyncGeneratorClass/FunctionObject_ClassConstructor_AAD039E1_AsyncGeneratorClass,
+			[11] class Modules.AsyncGenerator_GeneratedFunctionObject_Semantics/DerivedAsyncGeneratorClass/FunctionObject_ClassConstructor_D1DFCE32_DerivedAsyncGeneratorClass
 		)
 
 		IL_0000: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::Enable()
@@ -6384,14 +6325,18 @@
 		IL_01e3: ldloc.0
 		IL_01e4: stelem.ref
 		IL_01e5: stloc.2
-		IL_01e6: ldloc.s 8
-		IL_01e8: ldloc.2
-		IL_01e9: ldc.r8 1
-		IL_01f2: box [System.Runtime]System.Double
-		IL_01f7: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateClassConstructorValue(object, object, object)
-		IL_01fc: stloc.s 9
+		IL_01e6: ldloc.2
+		IL_01e7: newobj instance void Modules.AsyncGenerator_GeneratedFunctionObject_Semantics/AsyncGeneratorClass/FunctionObject_ClassConstructor_AAD039E1_AsyncGeneratorClass::.ctor(object[])
+		IL_01ec: ldloc.s 8
+		IL_01ee: ldloc.2
+		IL_01ef: ldc.i4.1
+		IL_01f0: conv.r8
+		IL_01f1: ldc.i4.0
+		IL_01f2: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
+		IL_01f7: castclass Modules.AsyncGenerator_GeneratedFunctionObject_Semantics/AsyncGeneratorClass/FunctionObject_ClassConstructor_AAD039E1_AsyncGeneratorClass
+		IL_01fc: stloc.s 10
 		IL_01fe: ldloc.0
-		IL_01ff: ldloc.s 9
+		IL_01ff: ldloc.s 10
 		IL_0201: stfld object Modules.AsyncGenerator_GeneratedFunctionObject_Semantics/Scope::AsyncGeneratorClass
 		IL_0206: ldtoken Modules.AsyncGenerator_GeneratedFunctionObject_Semantics/DerivedAsyncGeneratorClass
 		IL_020b: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
@@ -6401,12 +6346,12 @@
 		IL_021c: ldloc.s 8
 		IL_021e: ldstr "prototype"
 		IL_0223: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0228: stloc.s 10
+		IL_0228: stloc.s 9
 		IL_022a: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
 		IL_022f: stloc.2
-		IL_0230: ldloc.s 10
+		IL_0230: ldloc.s 9
 		IL_0232: ldstr "callSuper"
-		IL_0237: ldloc.s 10
+		IL_0237: ldloc.s 9
 		IL_0239: ldloc.2
 		IL_023a: newobj instance void Modules.AsyncGenerator_GeneratedFunctionObject_Semantics/DerivedAsyncGeneratorClass/FunctionObject_ClassMethod_C7D41110_DerivedAsyncGeneratorClass_callSuper::.ctor(class [System.Runtime]System.Object, object[])
 		IL_023f: ldc.i4.1
@@ -6425,14 +6370,18 @@
 		IL_0260: ldloc.0
 		IL_0261: stelem.ref
 		IL_0262: stloc.2
-		IL_0263: ldloc.s 8
-		IL_0265: ldloc.2
-		IL_0266: ldc.r8 0.0
-		IL_026f: box [System.Runtime]System.Double
-		IL_0274: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateClassConstructorValue(object, object, object)
-		IL_0279: stloc.s 10
-		IL_027b: ldloc.s 10
-		IL_027d: ldloc.s 9
+		IL_0263: ldloc.2
+		IL_0264: newobj instance void Modules.AsyncGenerator_GeneratedFunctionObject_Semantics/DerivedAsyncGeneratorClass/FunctionObject_ClassConstructor_D1DFCE32_DerivedAsyncGeneratorClass::.ctor(object[])
+		IL_0269: ldloc.s 8
+		IL_026b: ldloc.2
+		IL_026c: ldc.i4.0
+		IL_026d: conv.r8
+		IL_026e: ldc.i4.0
+		IL_026f: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
+		IL_0274: castclass Modules.AsyncGenerator_GeneratedFunctionObject_Semantics/DerivedAsyncGeneratorClass/FunctionObject_ClassConstructor_D1DFCE32_DerivedAsyncGeneratorClass
+		IL_0279: stloc.s 11
+		IL_027b: ldloc.s 11
+		IL_027d: ldloc.s 10
 		IL_027f: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetClassConstructorPrototype(object, object)
 		IL_0284: stloc.s 9
 		IL_0286: ldloc.0

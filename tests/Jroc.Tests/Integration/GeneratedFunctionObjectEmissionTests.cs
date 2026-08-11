@@ -122,7 +122,10 @@ public sealed class GeneratedFunctionObjectEmissionTests
                 {
                     expectedMethods.Add("ResolveThisArgumentCore");
                 }
-                expectedMethods.Add("CallCore");
+                if (!typeof(JsClassConstructorObject).IsAssignableFrom(type))
+                {
+                    expectedMethods.Add("CallCore");
+                }
                 if (methodNames.Contains("ConstructBodyCore", StringComparer.Ordinal))
                 {
                     expectedMethods.Add("ConstructBodyCore");
@@ -270,6 +273,9 @@ public sealed class GeneratedFunctionObjectEmissionTests
         Assert.Contains(
             functionObjectTypes,
             type => type.Name.Contains("ClassSetter", StringComparison.Ordinal));
+        Assert.Contains(
+            functionObjectTypes,
+            type => typeof(JsClassConstructorObject).IsAssignableFrom(type));
 
         Assert.DoesNotContain(
             compiled.Assembly.GetTypes()
@@ -304,6 +310,68 @@ public sealed class GeneratedFunctionObjectEmissionTests
                             typeof(Delegate).IsAssignableFrom(
                                 parameter.ParameterType)));
             });
+    }
+
+    [Fact]
+    public void GeneratedClassConstructorObjectOwnsCallAndConstructionSemantics()
+    {
+        using var compiled = CompileAndLoad(Source);
+        var constructorObjectType = Assert.Single(
+            GetFunctionObjectTypes(compiled.Assembly),
+            type => type.Name.Contains(
+                "ClassConstructor",
+                StringComparison.Ordinal)
+                && type.DeclaringType?.Name == "Echo");
+        Assert.Equal(
+            typeof(JsClassConstructorObject),
+            constructorObjectType.BaseType);
+        Assert.Null(constructorObjectType.GetMethod(
+            "CallCore",
+            BindingFlags.Instance
+            | BindingFlags.NonPublic
+            | BindingFlags.DeclaredOnly));
+        Assert.Null(constructorObjectType.GetMethod(
+            "ConstructCore",
+            BindingFlags.Instance
+            | BindingFlags.NonPublic
+            | BindingFlags.DeclaredOnly));
+
+        var echoType = constructorObjectType.DeclaringType!;
+        var generatedConstructor = Assert.Single(
+            constructorObjectType.GetConstructors(
+                BindingFlags.Instance | BindingFlags.Public));
+        var generatedConstructorArguments = generatedConstructor
+            .GetParameters()
+            .Select(parameter => parameter.ParameterType == typeof(object[])
+                ? RuntimeServices.EmptyScopes
+                : Activator.CreateInstance(parameter.ParameterType))
+            .ToArray();
+        var candidate = Assert.IsAssignableFrom<JsClassConstructorObject>(
+            generatedConstructor.Invoke(generatedConstructorArguments));
+        var constructorObject = RuntimeServices.InitializeClassConstructorObject(
+            candidate,
+            echoType,
+            RuntimeServices.EmptyScopes,
+            formalParameterCount: 0,
+            freshIdentity: true);
+
+        Assert.Equal(constructorObjectType, constructorObject.GetType());
+        Assert.True(CallableOperations.IsCallable(constructorObject));
+        Assert.True(CallableOperations.IsConstructor(constructorObject));
+        Assert.Throws<TypeError>(
+            () => CallableOperations.Call0(constructorObject, null));
+
+        var instance = CallableOperations.Construct0(
+            constructorObject,
+            constructorObject);
+        Assert.NotNull(instance);
+        Assert.True(echoType.IsInstanceOfType(instance));
+        var prototype = ObjectRuntime.GetProperty(
+            constructorObject,
+            "prototype");
+        Assert.Same(
+            constructorObject,
+            ObjectRuntime.GetProperty(prototype!, "constructor"));
     }
 
     [Fact]

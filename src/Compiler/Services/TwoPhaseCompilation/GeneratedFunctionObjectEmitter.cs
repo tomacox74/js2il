@@ -102,7 +102,9 @@ internal sealed class GeneratedFunctionObjectEmitter
                 && CanEmitArrayCallAdapter(plan)
                 ? MetadataTokens.MethodDefinitionHandle(nextMethodRow++)
                 : default;
-            var callAdapter = MetadataTokens.MethodDefinitionHandle(nextMethodRow++);
+            var callAdapter = plan.Callable.Kind == CallableKind.ClassConstructor
+                ? default
+                : MetadataTokens.MethodDefinitionHandle(nextMethodRow++);
             var constructBodyAdapter = plan.Callable.Kind is
                     CallableKind.FunctionDeclaration
                     or CallableKind.FunctionExpression
@@ -111,6 +113,7 @@ internal sealed class GeneratedFunctionObjectEmitter
                 ? MetadataTokens.MethodDefinitionHandle(nextMethodRow++)
                 : default;
             var constructAdapter = plan.IsConstructable
+                && plan.Callable.Kind != CallableKind.ClassConstructor
                 ? MetadataTokens.MethodDefinitionHandle(nextMethodRow++)
                 : default;
 
@@ -119,9 +122,11 @@ internal sealed class GeneratedFunctionObjectEmitter
                 | TypeAttributes.Class
                 | TypeAttributes.Sealed
                 | TypeAttributes.BeforeFieldInit,
-                plan.ReturnKind == GeneratedFunctionReturnKind.Promise
-                    ? _bclReferences.JsAsyncFunctionObjectType
-                    : _bclReferences.JsFunctionObjectType,
+                plan.Callable.Kind == CallableKind.ClassConstructor
+                    ? _bclReferences.JsClassConstructorObjectType
+                    : plan.ReturnKind == GeneratedFunctionReturnKind.Promise
+                        ? _bclReferences.JsAsyncFunctionObjectType
+                        : _bclReferences.JsFunctionObjectType,
                 firstFieldOverride: null,
                 firstMethodOverride: constructor);
 
@@ -215,14 +220,17 @@ internal sealed class GeneratedFunctionObjectEmitter
                     metadata.Plan,
                     "__js_call_with_arguments__");
             }
-            EmitAndValidate(
-                metadata.CallAdapterHandle,
-                EmitCallAdapter(metadata),
-                metadata.Plan,
-                metadata.Plan.ReturnKind
-                    == GeneratedFunctionReturnKind.Promise
-                    ? "CallCoreAsync"
-                    : "CallCore");
+            if (!metadata.CallAdapterHandle.IsNil)
+            {
+                EmitAndValidate(
+                    metadata.CallAdapterHandle,
+                    EmitCallAdapter(metadata),
+                    metadata.Plan,
+                    metadata.Plan.ReturnKind
+                        == GeneratedFunctionReturnKind.Promise
+                        ? "CallCoreAsync"
+                        : "CallCore");
+            }
 
             if (!metadata.ConstructBodyAdapterHandle.IsNil)
             {
@@ -251,10 +259,12 @@ internal sealed class GeneratedFunctionObjectEmitter
         var il = new BlobBuilder();
         var encoder = new InstructionEncoder(il);
         encoder.OpCode(ILOpCode.Ldarg_0);
-        encoder.Call(metadata.Plan.ReturnKind
-                == GeneratedFunctionReturnKind.Promise
-            ? _bclReferences.JsAsyncFunctionObject_Ctor_Ref
-            : _bclReferences.JsFunctionObject_Ctor_Ref);
+        encoder.Call(
+            metadata.Plan.Callable.Kind == CallableKind.ClassConstructor
+                ? _bclReferences.JsClassConstructorObject_Ctor_Ref
+                : metadata.Plan.ReturnKind == GeneratedFunctionReturnKind.Promise
+                    ? _bclReferences.JsAsyncFunctionObject_Ctor_Ref
+                    : _bclReferences.JsFunctionObject_Ctor_Ref);
 
         for (var index = 0; index < parameterTypes.Length; index++)
         {

@@ -351,7 +351,7 @@
 		} // end of class Scope_For_L50C7
 
 		.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassConstructor_CF24C66C_BitArray
-			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject
 		{
 			// Fields
 			.field private initonly object[] _transitionalScopes
@@ -367,7 +367,7 @@
 				.maxstack 8
 
 				IL_0000: ldarg.0
-				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject::.ctor()
 				IL_0006: ldarg.0
 				IL_0007: ldarg.1
 				IL_0008: stfld object[] Modules.Prime_SetBitsTrue_LargeStep_OptimizedVsNaive/BitArray/FunctionObject_ClassConstructor_CF24C66C_BitArray::_transitionalScopes
@@ -395,36 +395,6 @@
 				IL_0000: ldc.i4.1
 				IL_0001: ret
 			} // end of method FunctionObject_ClassConstructor_CF24C66C_BitArray::get_RequiresInvocationContext
-
-			.method family hidebysig virtual 
-				instance object CallCore (
-					object thisArgument,
-					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 11 (0xb)
-				.maxstack 8
-
-				IL_0000: ldstr "Class constructor cannot be invoked without 'new'"
-				IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-				IL_000a: throw
-			} // end of method FunctionObject_ClassConstructor_CF24C66C_BitArray::CallCore
-
-			.method family hidebysig virtual 
-				instance object ConstructCore (
-					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
-					object newTarget
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 11 (0xb)
-				.maxstack 8
-
-				IL_0000: ldstr "Generated construction adapter is reserved for the callable-family construction migration"
-				IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-				IL_000a: throw
-			} // end of method FunctionObject_ClassConstructor_CF24C66C_BitArray::ConstructCore
 
 		} // end of class FunctionObject_ClassConstructor_CF24C66C_BitArray
 
@@ -1235,7 +1205,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 1542 (0x606)
+		// Code size: 1543 (0x607)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Prime_SetBitsTrue_LargeStep_OptimizedVsNaive/Scope,
@@ -1248,17 +1218,18 @@
 			[7] class [System.Runtime]System.Type,
 			[8] object,
 			[9] object[],
-			[10] class [JavaScriptRuntime]JavaScriptRuntime.Console,
-			[11] string,
+			[10] class Modules.Prime_SetBitsTrue_LargeStep_OptimizedVsNaive/BitArray/FunctionObject_ClassConstructor_CF24C66C_BitArray,
+			[11] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 			[12] string,
-			[13] object,
-			[14] class Modules.Prime_SetBitsTrue_LargeStep_OptimizedVsNaive/BitArray,
-			[15] object,
-			[16] float64,
+			[13] string,
+			[14] object,
+			[15] class Modules.Prime_SetBitsTrue_LargeStep_OptimizedVsNaive/BitArray,
+			[16] object,
 			[17] float64,
-			[18] bool,
-			[19] object,
-			[20] object
+			[18] float64,
+			[19] bool,
+			[20] object,
+			[21] object
 		)
 
 		IL_0000: newobj instance void Modules.Prime_SetBitsTrue_LargeStep_OptimizedVsNaive/Scope::.ctor()
@@ -1334,429 +1305,433 @@
 		IL_00c5: ldloc.0
 		IL_00c6: stelem.ref
 		IL_00c7: stloc.s 9
-		IL_00c9: ldloc.s 7
-		IL_00cb: ldloc.s 9
-		IL_00cd: ldc.r8 1
-		IL_00d6: box [System.Runtime]System.Double
-		IL_00db: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateClassConstructorValue(object, object, object)
-		IL_00e0: stloc.s 8
-		IL_00e2: ldloc.s 8
-		IL_00e4: stloc.1
-		IL_00e5: ldloc.0
-		IL_00e6: ldc.r8 2048
-		IL_00ef: box [System.Runtime]System.Double
-		IL_00f4: stfld object Modules.Prime_SetBitsTrue_LargeStep_OptimizedVsNaive/Scope::size
-		IL_00f9: ldloc.0
-		IL_00fa: ldc.r8 1
-		IL_0103: box [System.Runtime]System.Double
-		IL_0108: stfld object Modules.Prime_SetBitsTrue_LargeStep_OptimizedVsNaive/Scope::range_start
-		IL_010d: ldloc.0
-		IL_010e: ldc.r8 17
-		IL_0117: box [System.Runtime]System.Double
-		IL_011c: stfld object Modules.Prime_SetBitsTrue_LargeStep_OptimizedVsNaive/Scope::step
-		IL_0121: ldloc.0
-		IL_0122: ldc.r8 600
-		IL_012b: box [System.Runtime]System.Double
-		IL_0130: stfld object Modules.Prime_SetBitsTrue_LargeStep_OptimizedVsNaive/Scope::range_stop
-		IL_0135: ldc.i4.1
-		IL_0136: newarr [System.Runtime]System.Object
-		IL_013b: dup
-		IL_013c: ldc.i4.0
-		IL_013d: ldloc.0
-		IL_013e: stelem.ref
-		IL_013f: stloc.s 9
-		IL_0141: ldloc.0
-		IL_0142: ldfld object Modules.Prime_SetBitsTrue_LargeStep_OptimizedVsNaive/Scope::size
-		IL_0147: ldstr "Cannot access 'size' before initialization"
-		IL_014c: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
-		IL_0151: stloc.s 8
-		IL_0153: ldloc.s 9
-		IL_0155: ldc.i4.1
-		IL_0156: newarr [System.Runtime]System.Object
-		IL_015b: dup
-		IL_015c: ldc.i4.0
-		IL_015d: ldloc.s 8
-		IL_015f: stelem.ref
-		IL_0160: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
-		IL_0165: ldloc.s 8
-		IL_0167: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_016c: newobj instance void Modules.Prime_SetBitsTrue_LargeStep_OptimizedVsNaive/BitArray::.ctor(object[], float64)
-		IL_0171: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
-		IL_0176: stloc.2
-		IL_0177: ldloc.2
-		IL_0178: ldtoken Modules.Prime_SetBitsTrue_LargeStep_OptimizedVsNaive/BitArray
-		IL_017d: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_0182: ldstr "prototype"
-		IL_0187: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
-		IL_018c: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
-		IL_0191: ldc.i4.1
-		IL_0192: newarr [System.Runtime]System.Object
-		IL_0197: dup
-		IL_0198: ldc.i4.0
-		IL_0199: ldloc.0
-		IL_019a: stelem.ref
-		IL_019b: stloc.s 9
-		IL_019d: ldloc.0
-		IL_019e: ldfld object Modules.Prime_SetBitsTrue_LargeStep_OptimizedVsNaive/Scope::size
-		IL_01a3: ldstr "Cannot access 'size' before initialization"
-		IL_01a8: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
-		IL_01ad: stloc.s 8
-		IL_01af: ldloc.s 9
-		IL_01b1: ldc.i4.1
-		IL_01b2: newarr [System.Runtime]System.Object
-		IL_01b7: dup
-		IL_01b8: ldc.i4.0
-		IL_01b9: ldloc.s 8
-		IL_01bb: stelem.ref
-		IL_01bc: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
-		IL_01c1: ldloc.s 8
-		IL_01c3: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_01c8: newobj instance void Modules.Prime_SetBitsTrue_LargeStep_OptimizedVsNaive/BitArray::.ctor(object[], float64)
-		IL_01cd: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
-		IL_01d2: stloc.3
-		IL_01d3: ldloc.3
-		IL_01d4: ldtoken Modules.Prime_SetBitsTrue_LargeStep_OptimizedVsNaive/BitArray
-		IL_01d9: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_01de: ldstr "prototype"
-		IL_01e3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
-		IL_01e8: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
-		IL_01ed: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_01f2: stloc.s 10
-		IL_01f4: ldloc.2
-		IL_01f5: ldstr "wordArray"
-		IL_01fa: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_01ff: stloc.s 8
-		IL_0201: ldloc.s 8
-		IL_0203: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
-		IL_0208: stloc.s 11
-		IL_020a: ldloc.3
-		IL_020b: ldstr "wordArray"
-		IL_0210: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0215: stloc.s 8
-		IL_0217: ldloc.s 8
-		IL_0219: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
-		IL_021e: stloc.s 12
-		IL_0220: ldloc.s 10
-		IL_0222: ldstr "types"
-		IL_0227: ldloc.s 11
-		IL_0229: ldloc.s 12
-		IL_022b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object, object)
-		IL_0230: pop
-		IL_0231: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0236: stloc.s 10
-		IL_0238: ldloc.2
-		IL_0239: ldstr "wordArray"
-		IL_023e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0243: stloc.s 8
-		IL_0245: ldloc.s 8
-		IL_0247: ldstr "length"
-		IL_024c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0251: stloc.s 8
-		IL_0253: ldloc.3
-		IL_0254: ldstr "wordArray"
-		IL_0259: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_025e: stloc.s 13
-		IL_0260: ldloc.s 13
-		IL_0262: ldstr "length"
-		IL_0267: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_026c: stloc.s 13
-		IL_026e: ldloc.s 10
-		IL_0270: ldstr "lens"
-		IL_0275: ldloc.s 8
-		IL_0277: ldloc.s 13
-		IL_0279: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object, object)
-		IL_027e: pop
-		IL_027f: ldloc.2
-		IL_0280: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Prime_SetBitsTrue_LargeStep_OptimizedVsNaive/BitArray>(!!0)
-		IL_0285: stloc.s 14
-		IL_0287: ldloc.0
-		IL_0288: ldfld object Modules.Prime_SetBitsTrue_LargeStep_OptimizedVsNaive/Scope::range_start
-		IL_028d: ldstr "Cannot access 'range_start' before initialization"
-		IL_0292: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
-		IL_0297: stloc.s 13
-		IL_0299: ldloc.0
-		IL_029a: ldfld object Modules.Prime_SetBitsTrue_LargeStep_OptimizedVsNaive/Scope::step
-		IL_029f: ldstr "Cannot access 'step' before initialization"
-		IL_02a4: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
-		IL_02a9: stloc.s 8
-		IL_02ab: ldloc.0
-		IL_02ac: ldfld object Modules.Prime_SetBitsTrue_LargeStep_OptimizedVsNaive/Scope::range_stop
-		IL_02b1: ldstr "Cannot access 'range_stop' before initialization"
-		IL_02b6: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
-		IL_02bb: stloc.s 15
-		IL_02bd: ldloc.s 14
-		IL_02bf: ldloc.s 13
-		IL_02c1: ldloc.s 8
-		IL_02c3: ldloc.s 15
-		IL_02c5: callvirt instance object Modules.Prime_SetBitsTrue_LargeStep_OptimizedVsNaive/BitArray::setBitsTrue(object, object, object)
-		IL_02ca: pop
-		IL_02cb: ldloc.3
-		IL_02cc: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Prime_SetBitsTrue_LargeStep_OptimizedVsNaive/BitArray>(!!0)
-		IL_02d1: stloc.s 14
-		IL_02d3: ldloc.0
-		IL_02d4: ldfld object Modules.Prime_SetBitsTrue_LargeStep_OptimizedVsNaive/Scope::range_start
-		IL_02d9: ldstr "Cannot access 'range_start' before initialization"
-		IL_02de: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
-		IL_02e3: stloc.s 15
-		IL_02e5: ldloc.0
-		IL_02e6: ldfld object Modules.Prime_SetBitsTrue_LargeStep_OptimizedVsNaive/Scope::step
-		IL_02eb: ldstr "Cannot access 'step' before initialization"
-		IL_02f0: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
-		IL_02f5: stloc.s 8
-		IL_02f7: ldloc.0
-		IL_02f8: ldfld object Modules.Prime_SetBitsTrue_LargeStep_OptimizedVsNaive/Scope::range_stop
-		IL_02fd: ldstr "Cannot access 'range_stop' before initialization"
-		IL_0302: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
-		IL_0307: stloc.s 13
-		IL_0309: ldloc.s 14
-		IL_030b: ldloc.s 15
-		IL_030d: ldloc.s 8
-		IL_030f: ldloc.s 13
-		IL_0311: callvirt instance object Modules.Prime_SetBitsTrue_LargeStep_OptimizedVsNaive/BitArray::setBitsTrue_Naive(object, object, object)
-		IL_0316: pop
-		IL_0317: ldc.r8 0.0
-		IL_0320: stloc.s 4
-		IL_0322: ldc.r8 1
-		IL_032b: neg
-		IL_032c: stloc.s 16
-		IL_032e: ldloc.s 16
-		IL_0330: box [System.Runtime]System.Double
-		IL_0335: stloc.s 5
-		IL_0337: ldc.r8 0.0
-		IL_0340: stloc.s 6
-		// loop start (head: IL_0342)
-			IL_0342: ldloc.s 6
-			IL_0344: stloc.s 16
-			IL_0346: ldloc.2
-			IL_0347: ldstr "wordArray"
-			IL_034c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0351: stloc.s 13
-			IL_0353: ldloc.s 13
-			IL_0355: ldstr "length"
-			IL_035a: call float64 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItemAsNumber(object, object)
-			IL_035f: stloc.s 17
-			IL_0361: ldloc.s 16
-			IL_0363: ldloc.s 17
-			IL_0365: clt
-			IL_0367: brfalse IL_0407
+		IL_00c9: ldloc.s 9
+		IL_00cb: newobj instance void Modules.Prime_SetBitsTrue_LargeStep_OptimizedVsNaive/BitArray/FunctionObject_ClassConstructor_CF24C66C_BitArray::.ctor(object[])
+		IL_00d0: ldloc.s 7
+		IL_00d2: ldloc.s 9
+		IL_00d4: ldc.i4.1
+		IL_00d5: conv.r8
+		IL_00d6: ldc.i4.0
+		IL_00d7: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
+		IL_00dc: castclass Modules.Prime_SetBitsTrue_LargeStep_OptimizedVsNaive/BitArray/FunctionObject_ClassConstructor_CF24C66C_BitArray
+		IL_00e1: stloc.s 10
+		IL_00e3: ldloc.s 10
+		IL_00e5: stloc.1
+		IL_00e6: ldloc.0
+		IL_00e7: ldc.r8 2048
+		IL_00f0: box [System.Runtime]System.Double
+		IL_00f5: stfld object Modules.Prime_SetBitsTrue_LargeStep_OptimizedVsNaive/Scope::size
+		IL_00fa: ldloc.0
+		IL_00fb: ldc.r8 1
+		IL_0104: box [System.Runtime]System.Double
+		IL_0109: stfld object Modules.Prime_SetBitsTrue_LargeStep_OptimizedVsNaive/Scope::range_start
+		IL_010e: ldloc.0
+		IL_010f: ldc.r8 17
+		IL_0118: box [System.Runtime]System.Double
+		IL_011d: stfld object Modules.Prime_SetBitsTrue_LargeStep_OptimizedVsNaive/Scope::step
+		IL_0122: ldloc.0
+		IL_0123: ldc.r8 600
+		IL_012c: box [System.Runtime]System.Double
+		IL_0131: stfld object Modules.Prime_SetBitsTrue_LargeStep_OptimizedVsNaive/Scope::range_stop
+		IL_0136: ldc.i4.1
+		IL_0137: newarr [System.Runtime]System.Object
+		IL_013c: dup
+		IL_013d: ldc.i4.0
+		IL_013e: ldloc.0
+		IL_013f: stelem.ref
+		IL_0140: stloc.s 9
+		IL_0142: ldloc.0
+		IL_0143: ldfld object Modules.Prime_SetBitsTrue_LargeStep_OptimizedVsNaive/Scope::size
+		IL_0148: ldstr "Cannot access 'size' before initialization"
+		IL_014d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+		IL_0152: stloc.s 8
+		IL_0154: ldloc.s 9
+		IL_0156: ldc.i4.1
+		IL_0157: newarr [System.Runtime]System.Object
+		IL_015c: dup
+		IL_015d: ldc.i4.0
+		IL_015e: ldloc.s 8
+		IL_0160: stelem.ref
+		IL_0161: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
+		IL_0166: ldloc.s 8
+		IL_0168: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_016d: newobj instance void Modules.Prime_SetBitsTrue_LargeStep_OptimizedVsNaive/BitArray::.ctor(object[], float64)
+		IL_0172: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
+		IL_0177: stloc.2
+		IL_0178: ldloc.2
+		IL_0179: ldtoken Modules.Prime_SetBitsTrue_LargeStep_OptimizedVsNaive/BitArray
+		IL_017e: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_0183: ldstr "prototype"
+		IL_0188: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
+		IL_018d: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
+		IL_0192: ldc.i4.1
+		IL_0193: newarr [System.Runtime]System.Object
+		IL_0198: dup
+		IL_0199: ldc.i4.0
+		IL_019a: ldloc.0
+		IL_019b: stelem.ref
+		IL_019c: stloc.s 9
+		IL_019e: ldloc.0
+		IL_019f: ldfld object Modules.Prime_SetBitsTrue_LargeStep_OptimizedVsNaive/Scope::size
+		IL_01a4: ldstr "Cannot access 'size' before initialization"
+		IL_01a9: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+		IL_01ae: stloc.s 8
+		IL_01b0: ldloc.s 9
+		IL_01b2: ldc.i4.1
+		IL_01b3: newarr [System.Runtime]System.Object
+		IL_01b8: dup
+		IL_01b9: ldc.i4.0
+		IL_01ba: ldloc.s 8
+		IL_01bc: stelem.ref
+		IL_01bd: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
+		IL_01c2: ldloc.s 8
+		IL_01c4: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_01c9: newobj instance void Modules.Prime_SetBitsTrue_LargeStep_OptimizedVsNaive/BitArray::.ctor(object[], float64)
+		IL_01ce: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
+		IL_01d3: stloc.3
+		IL_01d4: ldloc.3
+		IL_01d5: ldtoken Modules.Prime_SetBitsTrue_LargeStep_OptimizedVsNaive/BitArray
+		IL_01da: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_01df: ldstr "prototype"
+		IL_01e4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
+		IL_01e9: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
+		IL_01ee: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_01f3: stloc.s 11
+		IL_01f5: ldloc.2
+		IL_01f6: ldstr "wordArray"
+		IL_01fb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0200: stloc.s 8
+		IL_0202: ldloc.s 8
+		IL_0204: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
+		IL_0209: stloc.s 12
+		IL_020b: ldloc.3
+		IL_020c: ldstr "wordArray"
+		IL_0211: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0216: stloc.s 8
+		IL_0218: ldloc.s 8
+		IL_021a: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
+		IL_021f: stloc.s 13
+		IL_0221: ldloc.s 11
+		IL_0223: ldstr "types"
+		IL_0228: ldloc.s 12
+		IL_022a: ldloc.s 13
+		IL_022c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object, object)
+		IL_0231: pop
+		IL_0232: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0237: stloc.s 11
+		IL_0239: ldloc.2
+		IL_023a: ldstr "wordArray"
+		IL_023f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0244: stloc.s 8
+		IL_0246: ldloc.s 8
+		IL_0248: ldstr "length"
+		IL_024d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0252: stloc.s 8
+		IL_0254: ldloc.3
+		IL_0255: ldstr "wordArray"
+		IL_025a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_025f: stloc.s 14
+		IL_0261: ldloc.s 14
+		IL_0263: ldstr "length"
+		IL_0268: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_026d: stloc.s 14
+		IL_026f: ldloc.s 11
+		IL_0271: ldstr "lens"
+		IL_0276: ldloc.s 8
+		IL_0278: ldloc.s 14
+		IL_027a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object, object)
+		IL_027f: pop
+		IL_0280: ldloc.2
+		IL_0281: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Prime_SetBitsTrue_LargeStep_OptimizedVsNaive/BitArray>(!!0)
+		IL_0286: stloc.s 15
+		IL_0288: ldloc.0
+		IL_0289: ldfld object Modules.Prime_SetBitsTrue_LargeStep_OptimizedVsNaive/Scope::range_start
+		IL_028e: ldstr "Cannot access 'range_start' before initialization"
+		IL_0293: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+		IL_0298: stloc.s 14
+		IL_029a: ldloc.0
+		IL_029b: ldfld object Modules.Prime_SetBitsTrue_LargeStep_OptimizedVsNaive/Scope::step
+		IL_02a0: ldstr "Cannot access 'step' before initialization"
+		IL_02a5: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+		IL_02aa: stloc.s 8
+		IL_02ac: ldloc.0
+		IL_02ad: ldfld object Modules.Prime_SetBitsTrue_LargeStep_OptimizedVsNaive/Scope::range_stop
+		IL_02b2: ldstr "Cannot access 'range_stop' before initialization"
+		IL_02b7: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+		IL_02bc: stloc.s 16
+		IL_02be: ldloc.s 15
+		IL_02c0: ldloc.s 14
+		IL_02c2: ldloc.s 8
+		IL_02c4: ldloc.s 16
+		IL_02c6: callvirt instance object Modules.Prime_SetBitsTrue_LargeStep_OptimizedVsNaive/BitArray::setBitsTrue(object, object, object)
+		IL_02cb: pop
+		IL_02cc: ldloc.3
+		IL_02cd: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Prime_SetBitsTrue_LargeStep_OptimizedVsNaive/BitArray>(!!0)
+		IL_02d2: stloc.s 15
+		IL_02d4: ldloc.0
+		IL_02d5: ldfld object Modules.Prime_SetBitsTrue_LargeStep_OptimizedVsNaive/Scope::range_start
+		IL_02da: ldstr "Cannot access 'range_start' before initialization"
+		IL_02df: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+		IL_02e4: stloc.s 16
+		IL_02e6: ldloc.0
+		IL_02e7: ldfld object Modules.Prime_SetBitsTrue_LargeStep_OptimizedVsNaive/Scope::step
+		IL_02ec: ldstr "Cannot access 'step' before initialization"
+		IL_02f1: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+		IL_02f6: stloc.s 8
+		IL_02f8: ldloc.0
+		IL_02f9: ldfld object Modules.Prime_SetBitsTrue_LargeStep_OptimizedVsNaive/Scope::range_stop
+		IL_02fe: ldstr "Cannot access 'range_stop' before initialization"
+		IL_0303: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+		IL_0308: stloc.s 14
+		IL_030a: ldloc.s 15
+		IL_030c: ldloc.s 16
+		IL_030e: ldloc.s 8
+		IL_0310: ldloc.s 14
+		IL_0312: callvirt instance object Modules.Prime_SetBitsTrue_LargeStep_OptimizedVsNaive/BitArray::setBitsTrue_Naive(object, object, object)
+		IL_0317: pop
+		IL_0318: ldc.r8 0.0
+		IL_0321: stloc.s 4
+		IL_0323: ldc.r8 1
+		IL_032c: neg
+		IL_032d: stloc.s 17
+		IL_032f: ldloc.s 17
+		IL_0331: box [System.Runtime]System.Double
+		IL_0336: stloc.s 5
+		IL_0338: ldc.r8 0.0
+		IL_0341: stloc.s 6
+		// loop start (head: IL_0343)
+			IL_0343: ldloc.s 6
+			IL_0345: stloc.s 17
+			IL_0347: ldloc.2
+			IL_0348: ldstr "wordArray"
+			IL_034d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0352: stloc.s 14
+			IL_0354: ldloc.s 14
+			IL_0356: ldstr "length"
+			IL_035b: call float64 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItemAsNumber(object, object)
+			IL_0360: stloc.s 18
+			IL_0362: ldloc.s 17
+			IL_0364: ldloc.s 18
+			IL_0366: clt
+			IL_0368: brfalse IL_0408
 
-			IL_036c: ldloc.2
-			IL_036d: ldstr "wordArray"
-			IL_0372: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0377: stloc.s 13
-			IL_0379: ldloc.s 13
-			IL_037b: ldloc.s 6
-			IL_037d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-			IL_0382: stloc.s 13
-			IL_0384: ldloc.3
-			IL_0385: ldstr "wordArray"
-			IL_038a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_038f: stloc.s 8
-			IL_0391: ldloc.s 8
-			IL_0393: ldloc.s 6
-			IL_0395: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-			IL_039a: stloc.s 8
-			IL_039c: ldloc.s 13
-			IL_039e: ldloc.s 8
-			IL_03a0: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictNotEqual(object, object)
-			IL_03a5: stloc.s 18
-			IL_03a7: ldloc.s 18
-			IL_03a9: brfalse IL_03f4
+			IL_036d: ldloc.2
+			IL_036e: ldstr "wordArray"
+			IL_0373: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0378: stloc.s 14
+			IL_037a: ldloc.s 14
+			IL_037c: ldloc.s 6
+			IL_037e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+			IL_0383: stloc.s 14
+			IL_0385: ldloc.3
+			IL_0386: ldstr "wordArray"
+			IL_038b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0390: stloc.s 8
+			IL_0392: ldloc.s 8
+			IL_0394: ldloc.s 6
+			IL_0396: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+			IL_039b: stloc.s 8
+			IL_039d: ldloc.s 14
+			IL_039f: ldloc.s 8
+			IL_03a1: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictNotEqual(object, object)
+			IL_03a6: stloc.s 19
+			IL_03a8: ldloc.s 19
+			IL_03aa: brfalse IL_03f5
 
-			IL_03ae: ldloc.s 4
-			IL_03b0: ldc.r8 1
-			IL_03b9: add
-			IL_03ba: stloc.s 4
-			IL_03bc: ldloc.s 5
-			IL_03be: stloc.s 19
-			IL_03c0: ldc.r8 1
-			IL_03c9: neg
-			IL_03ca: stloc.s 17
-			IL_03cc: ldloc.s 17
-			IL_03ce: box [System.Runtime]System.Double
-			IL_03d3: stloc.s 20
-			IL_03d5: ldloc.s 19
-			IL_03d7: ldloc.s 20
-			IL_03d9: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-			IL_03de: stloc.s 18
-			IL_03e0: ldloc.s 18
-			IL_03e2: brfalse IL_03f4
+			IL_03af: ldloc.s 4
+			IL_03b1: ldc.r8 1
+			IL_03ba: add
+			IL_03bb: stloc.s 4
+			IL_03bd: ldloc.s 5
+			IL_03bf: stloc.s 20
+			IL_03c1: ldc.r8 1
+			IL_03ca: neg
+			IL_03cb: stloc.s 18
+			IL_03cd: ldloc.s 18
+			IL_03cf: box [System.Runtime]System.Double
+			IL_03d4: stloc.s 21
+			IL_03d6: ldloc.s 20
+			IL_03d8: ldloc.s 21
+			IL_03da: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+			IL_03df: stloc.s 19
+			IL_03e1: ldloc.s 19
+			IL_03e3: brfalse IL_03f5
 
-			IL_03e7: ldloc.s 6
-			IL_03e9: box [System.Runtime]System.Double
-			IL_03ee: stloc.s 20
-			IL_03f0: ldloc.s 20
-			IL_03f2: stloc.s 5
+			IL_03e8: ldloc.s 6
+			IL_03ea: box [System.Runtime]System.Double
+			IL_03ef: stloc.s 21
+			IL_03f1: ldloc.s 21
+			IL_03f3: stloc.s 5
 
-			IL_03f4: ldloc.s 6
-			IL_03f6: ldc.r8 1
-			IL_03ff: add
-			IL_0400: stloc.s 6
-			IL_0402: br IL_0342
+			IL_03f5: ldloc.s 6
+			IL_03f7: ldc.r8 1
+			IL_0400: add
+			IL_0401: stloc.s 6
+			IL_0403: br IL_0343
 		// end loop
 
-		IL_0407: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_040c: stloc.s 10
-		IL_040e: ldloc.s 4
-		IL_0410: box [System.Runtime]System.Double
-		IL_0415: stloc.s 20
-		IL_0417: ldloc.s 10
-		IL_0419: ldstr "diffs"
-		IL_041e: ldloc.s 20
-		IL_0420: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_0425: pop
-		IL_0426: ldloc.s 5
-		IL_0428: stloc.s 20
-		IL_042a: ldc.r8 1
-		IL_0433: neg
-		IL_0434: stloc.s 17
-		IL_0436: ldloc.s 17
-		IL_0438: box [System.Runtime]System.Double
-		IL_043d: stloc.s 19
-		IL_043f: ldloc.s 20
-		IL_0441: ldloc.s 19
-		IL_0443: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictNotEqual(object, object)
-		IL_0448: stloc.s 18
-		IL_044a: ldloc.s 18
-		IL_044c: brfalse IL_04ad
+		IL_0408: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_040d: stloc.s 11
+		IL_040f: ldloc.s 4
+		IL_0411: box [System.Runtime]System.Double
+		IL_0416: stloc.s 21
+		IL_0418: ldloc.s 11
+		IL_041a: ldstr "diffs"
+		IL_041f: ldloc.s 21
+		IL_0421: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_0426: pop
+		IL_0427: ldloc.s 5
+		IL_0429: stloc.s 21
+		IL_042b: ldc.r8 1
+		IL_0434: neg
+		IL_0435: stloc.s 18
+		IL_0437: ldloc.s 18
+		IL_0439: box [System.Runtime]System.Double
+		IL_043e: stloc.s 20
+		IL_0440: ldloc.s 21
+		IL_0442: ldloc.s 20
+		IL_0444: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictNotEqual(object, object)
+		IL_0449: stloc.s 19
+		IL_044b: ldloc.s 19
+		IL_044d: brfalse IL_04ae
 
-		IL_0451: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0456: stloc.s 10
-		IL_0458: ldloc.2
-		IL_0459: ldstr "wordArray"
-		IL_045e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0463: stloc.s 8
-		IL_0465: ldloc.s 8
-		IL_0467: ldloc.s 5
-		IL_0469: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, object)
-		IL_046e: stloc.s 8
-		IL_0470: ldloc.3
-		IL_0471: ldstr "wordArray"
-		IL_0476: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_047b: stloc.s 13
-		IL_047d: ldloc.s 13
-		IL_047f: ldloc.s 5
-		IL_0481: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, object)
-		IL_0486: stloc.s 13
-		IL_0488: ldloc.s 10
-		IL_048a: ldc.i4.4
-		IL_048b: newarr [System.Runtime]System.Object
-		IL_0490: dup
-		IL_0491: ldc.i4.0
-		IL_0492: ldstr "first"
-		IL_0497: stelem.ref
-		IL_0498: dup
-		IL_0499: ldc.i4.1
-		IL_049a: ldloc.s 5
-		IL_049c: stelem.ref
-		IL_049d: dup
-		IL_049e: ldc.i4.2
-		IL_049f: ldloc.s 8
-		IL_04a1: stelem.ref
-		IL_04a2: dup
-		IL_04a3: ldc.i4.3
-		IL_04a4: ldloc.s 13
-		IL_04a6: stelem.ref
-		IL_04a7: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_04ac: pop
+		IL_0452: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0457: stloc.s 11
+		IL_0459: ldloc.2
+		IL_045a: ldstr "wordArray"
+		IL_045f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0464: stloc.s 8
+		IL_0466: ldloc.s 8
+		IL_0468: ldloc.s 5
+		IL_046a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, object)
+		IL_046f: stloc.s 8
+		IL_0471: ldloc.3
+		IL_0472: ldstr "wordArray"
+		IL_0477: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_047c: stloc.s 14
+		IL_047e: ldloc.s 14
+		IL_0480: ldloc.s 5
+		IL_0482: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, object)
+		IL_0487: stloc.s 14
+		IL_0489: ldloc.s 11
+		IL_048b: ldc.i4.4
+		IL_048c: newarr [System.Runtime]System.Object
+		IL_0491: dup
+		IL_0492: ldc.i4.0
+		IL_0493: ldstr "first"
+		IL_0498: stelem.ref
+		IL_0499: dup
+		IL_049a: ldc.i4.1
+		IL_049b: ldloc.s 5
+		IL_049d: stelem.ref
+		IL_049e: dup
+		IL_049f: ldc.i4.2
+		IL_04a0: ldloc.s 8
+		IL_04a2: stelem.ref
+		IL_04a3: dup
+		IL_04a4: ldc.i4.3
+		IL_04a5: ldloc.s 14
+		IL_04a7: stelem.ref
+		IL_04a8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_04ad: pop
 
-		IL_04ad: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_04b2: stloc.s 10
-		IL_04b4: ldloc.2
-		IL_04b5: ldstr "wordArray"
-		IL_04ba: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_04bf: stloc.s 13
-		IL_04c1: ldloc.s 13
-		IL_04c3: ldc.r8 0.0
-		IL_04cc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-		IL_04d1: stloc.s 13
-		IL_04d3: ldloc.3
-		IL_04d4: ldstr "wordArray"
-		IL_04d9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_04de: stloc.s 8
-		IL_04e0: ldloc.s 8
-		IL_04e2: ldc.r8 0.0
-		IL_04eb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-		IL_04f0: stloc.s 8
-		IL_04f2: ldloc.s 10
-		IL_04f4: ldstr "w0"
-		IL_04f9: ldloc.s 13
-		IL_04fb: ldloc.s 8
-		IL_04fd: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object, object)
-		IL_0502: pop
-		IL_0503: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0508: stloc.s 10
-		IL_050a: ldloc.2
-		IL_050b: ldstr "wordArray"
-		IL_0510: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0515: stloc.s 8
-		IL_0517: ldloc.s 8
-		IL_0519: ldc.r8 1
-		IL_0522: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-		IL_0527: stloc.s 8
-		IL_0529: ldloc.3
-		IL_052a: ldstr "wordArray"
-		IL_052f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0534: stloc.s 13
-		IL_0536: ldloc.s 13
-		IL_0538: ldc.r8 1
-		IL_0541: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-		IL_0546: stloc.s 13
-		IL_0548: ldloc.s 10
-		IL_054a: ldstr "w1"
-		IL_054f: ldloc.s 8
-		IL_0551: ldloc.s 13
-		IL_0553: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object, object)
-		IL_0558: pop
-		IL_0559: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_055e: stloc.s 10
-		IL_0560: ldloc.2
-		IL_0561: ldstr "wordArray"
-		IL_0566: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_056b: stloc.s 13
-		IL_056d: ldloc.s 13
-		IL_056f: ldc.r8 2
-		IL_0578: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-		IL_057d: stloc.s 13
-		IL_057f: ldloc.3
-		IL_0580: ldstr "wordArray"
-		IL_0585: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_058a: stloc.s 8
-		IL_058c: ldloc.s 8
-		IL_058e: ldc.r8 2
-		IL_0597: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-		IL_059c: stloc.s 8
-		IL_059e: ldloc.s 10
-		IL_05a0: ldstr "w2"
-		IL_05a5: ldloc.s 13
-		IL_05a7: ldloc.s 8
-		IL_05a9: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object, object)
-		IL_05ae: pop
-		IL_05af: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_05b4: stloc.s 10
-		IL_05b6: ldloc.2
-		IL_05b7: ldstr "wordArray"
-		IL_05bc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_05c1: stloc.s 8
-		IL_05c3: ldloc.s 8
-		IL_05c5: ldc.r8 3
-		IL_05ce: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-		IL_05d3: stloc.s 8
-		IL_05d5: ldloc.3
-		IL_05d6: ldstr "wordArray"
-		IL_05db: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_05e0: stloc.s 13
-		IL_05e2: ldloc.s 13
-		IL_05e4: ldc.r8 3
-		IL_05ed: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-		IL_05f2: stloc.s 13
-		IL_05f4: ldloc.s 10
-		IL_05f6: ldstr "w3"
-		IL_05fb: ldloc.s 8
-		IL_05fd: ldloc.s 13
-		IL_05ff: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object, object)
-		IL_0604: pop
-		IL_0605: ret
+		IL_04ae: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_04b3: stloc.s 11
+		IL_04b5: ldloc.2
+		IL_04b6: ldstr "wordArray"
+		IL_04bb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_04c0: stloc.s 14
+		IL_04c2: ldloc.s 14
+		IL_04c4: ldc.r8 0.0
+		IL_04cd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+		IL_04d2: stloc.s 14
+		IL_04d4: ldloc.3
+		IL_04d5: ldstr "wordArray"
+		IL_04da: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_04df: stloc.s 8
+		IL_04e1: ldloc.s 8
+		IL_04e3: ldc.r8 0.0
+		IL_04ec: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+		IL_04f1: stloc.s 8
+		IL_04f3: ldloc.s 11
+		IL_04f5: ldstr "w0"
+		IL_04fa: ldloc.s 14
+		IL_04fc: ldloc.s 8
+		IL_04fe: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object, object)
+		IL_0503: pop
+		IL_0504: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0509: stloc.s 11
+		IL_050b: ldloc.2
+		IL_050c: ldstr "wordArray"
+		IL_0511: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0516: stloc.s 8
+		IL_0518: ldloc.s 8
+		IL_051a: ldc.r8 1
+		IL_0523: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+		IL_0528: stloc.s 8
+		IL_052a: ldloc.3
+		IL_052b: ldstr "wordArray"
+		IL_0530: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0535: stloc.s 14
+		IL_0537: ldloc.s 14
+		IL_0539: ldc.r8 1
+		IL_0542: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+		IL_0547: stloc.s 14
+		IL_0549: ldloc.s 11
+		IL_054b: ldstr "w1"
+		IL_0550: ldloc.s 8
+		IL_0552: ldloc.s 14
+		IL_0554: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object, object)
+		IL_0559: pop
+		IL_055a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_055f: stloc.s 11
+		IL_0561: ldloc.2
+		IL_0562: ldstr "wordArray"
+		IL_0567: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_056c: stloc.s 14
+		IL_056e: ldloc.s 14
+		IL_0570: ldc.r8 2
+		IL_0579: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+		IL_057e: stloc.s 14
+		IL_0580: ldloc.3
+		IL_0581: ldstr "wordArray"
+		IL_0586: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_058b: stloc.s 8
+		IL_058d: ldloc.s 8
+		IL_058f: ldc.r8 2
+		IL_0598: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+		IL_059d: stloc.s 8
+		IL_059f: ldloc.s 11
+		IL_05a1: ldstr "w2"
+		IL_05a6: ldloc.s 14
+		IL_05a8: ldloc.s 8
+		IL_05aa: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object, object)
+		IL_05af: pop
+		IL_05b0: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_05b5: stloc.s 11
+		IL_05b7: ldloc.2
+		IL_05b8: ldstr "wordArray"
+		IL_05bd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_05c2: stloc.s 8
+		IL_05c4: ldloc.s 8
+		IL_05c6: ldc.r8 3
+		IL_05cf: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+		IL_05d4: stloc.s 8
+		IL_05d6: ldloc.3
+		IL_05d7: ldstr "wordArray"
+		IL_05dc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_05e1: stloc.s 14
+		IL_05e3: ldloc.s 14
+		IL_05e5: ldc.r8 3
+		IL_05ee: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+		IL_05f3: stloc.s 14
+		IL_05f5: ldloc.s 11
+		IL_05f7: ldstr "w3"
+		IL_05fc: ldloc.s 8
+		IL_05fe: ldloc.s 14
+		IL_0600: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object, object)
+		IL_0605: pop
+		IL_0606: ret
 	} // end of method Prime_SetBitsTrue_LargeStep_OptimizedVsNaive::__js_module_init__
 
 } // end of class Modules.Prime_SetBitsTrue_LargeStep_OptimizedVsNaive

@@ -179,7 +179,7 @@
 		} // end of class Scope_inc
 
 		.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassConstructor_398688B9_Base
-			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject
 		{
 			// Fields
 			.field private initonly object[] _transitionalScopes
@@ -195,7 +195,7 @@
 				.maxstack 8
 
 				IL_0000: ldarg.0
-				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject::.ctor()
 				IL_0006: ldarg.0
 				IL_0007: ldarg.1
 				IL_0008: stfld object[] Modules.Async_Inheritance_SuperAsyncMethod/Base/FunctionObject_ClassConstructor_398688B9_Base::_transitionalScopes
@@ -223,36 +223,6 @@
 				IL_0000: ldc.i4.0
 				IL_0001: ret
 			} // end of method FunctionObject_ClassConstructor_398688B9_Base::get_RequiresInvocationContext
-
-			.method family hidebysig virtual 
-				instance object CallCore (
-					object thisArgument,
-					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 11 (0xb)
-				.maxstack 8
-
-				IL_0000: ldstr "Class constructor cannot be invoked without 'new'"
-				IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-				IL_000a: throw
-			} // end of method FunctionObject_ClassConstructor_398688B9_Base::CallCore
-
-			.method family hidebysig virtual 
-				instance object ConstructCore (
-					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
-					object newTarget
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 11 (0xb)
-				.maxstack 8
-
-				IL_0000: ldstr "Generated construction adapter is reserved for the callable-family construction migration"
-				IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-				IL_000a: throw
-			} // end of method FunctionObject_ClassConstructor_398688B9_Base::ConstructCore
 
 		} // end of class FunctionObject_ClassConstructor_398688B9_Base
 
@@ -546,7 +516,7 @@
 		} // end of class Scope_run
 
 		.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassConstructor_468B227D_Derived
-			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject
 		{
 			// Fields
 			.field private initonly object[] _transitionalScopes
@@ -562,7 +532,7 @@
 				.maxstack 8
 
 				IL_0000: ldarg.0
-				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject::.ctor()
 				IL_0006: ldarg.0
 				IL_0007: ldarg.1
 				IL_0008: stfld object[] Modules.Async_Inheritance_SuperAsyncMethod/Derived/FunctionObject_ClassConstructor_468B227D_Derived::_transitionalScopes
@@ -590,36 +560,6 @@
 				IL_0000: ldc.i4.0
 				IL_0001: ret
 			} // end of method FunctionObject_ClassConstructor_468B227D_Derived::get_RequiresInvocationContext
-
-			.method family hidebysig virtual 
-				instance object CallCore (
-					object thisArgument,
-					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 11 (0xb)
-				.maxstack 8
-
-				IL_0000: ldstr "Class constructor cannot be invoked without 'new'"
-				IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-				IL_000a: throw
-			} // end of method FunctionObject_ClassConstructor_468B227D_Derived::CallCore
-
-			.method family hidebysig virtual 
-				instance object ConstructCore (
-					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
-					object newTarget
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 11 (0xb)
-				.maxstack 8
-
-				IL_0000: ldstr "Generated construction adapter is reserved for the callable-family construction migration"
-				IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-				IL_000a: throw
-			} // end of method FunctionObject_ClassConstructor_468B227D_Derived::ConstructCore
 
 		} // end of class FunctionObject_ClassConstructor_468B227D_Derived
 
@@ -937,9 +877,10 @@
 			[1] object,
 			[2] class [System.Runtime]System.Type,
 			[3] object[],
-			[4] object,
-			[5] object,
-			[6] class Modules.Async_Inheritance_SuperAsyncMethod/ArrowFunction_L15C26/FunctionObject
+			[4] class Modules.Async_Inheritance_SuperAsyncMethod/Base/FunctionObject_ClassConstructor_398688B9_Base,
+			[5] class Modules.Async_Inheritance_SuperAsyncMethod/Derived/FunctionObject_ClassConstructor_468B227D_Derived,
+			[6] object,
+			[7] class Modules.Async_Inheritance_SuperAsyncMethod/ArrowFunction_L15C26/FunctionObject
 		)
 
 		IL_0000: newobj instance void Modules.Async_Inheritance_SuperAsyncMethod/Scope::.ctor()
@@ -1017,11 +958,15 @@
 		IL_009e: ldloc.0
 		IL_009f: stelem.ref
 		IL_00a0: stloc.3
-		IL_00a1: ldloc.2
-		IL_00a2: ldloc.3
-		IL_00a3: ldc.r8 0.0
-		IL_00ac: box [System.Runtime]System.Double
-		IL_00b1: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateClassConstructorValue(object, object, object)
+		IL_00a1: ldloc.3
+		IL_00a2: newobj instance void Modules.Async_Inheritance_SuperAsyncMethod/Base/FunctionObject_ClassConstructor_398688B9_Base::.ctor(object[])
+		IL_00a7: ldloc.2
+		IL_00a8: ldloc.3
+		IL_00a9: ldc.i4.0
+		IL_00aa: conv.r8
+		IL_00ab: ldc.i4.0
+		IL_00ac: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
+		IL_00b1: castclass Modules.Async_Inheritance_SuperAsyncMethod/Base/FunctionObject_ClassConstructor_398688B9_Base
 		IL_00b6: stloc.s 4
 		IL_00b8: ldloc.0
 		IL_00b9: ldloc.s 4
@@ -1098,17 +1043,21 @@
 		IL_0157: ldloc.0
 		IL_0158: stelem.ref
 		IL_0159: stloc.3
-		IL_015a: ldloc.2
-		IL_015b: ldloc.3
-		IL_015c: ldc.r8 0.0
-		IL_0165: box [System.Runtime]System.Double
-		IL_016a: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateClassConstructorValue(object, object, object)
+		IL_015a: ldloc.3
+		IL_015b: newobj instance void Modules.Async_Inheritance_SuperAsyncMethod/Derived/FunctionObject_ClassConstructor_468B227D_Derived::.ctor(object[])
+		IL_0160: ldloc.2
+		IL_0161: ldloc.3
+		IL_0162: ldc.i4.0
+		IL_0163: conv.r8
+		IL_0164: ldc.i4.0
+		IL_0165: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
+		IL_016a: castclass Modules.Async_Inheritance_SuperAsyncMethod/Derived/FunctionObject_ClassConstructor_468B227D_Derived
 		IL_016f: stloc.s 5
 		IL_0171: ldloc.s 5
 		IL_0173: ldloc.s 4
 		IL_0175: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetClassConstructorPrototype(object, object)
-		IL_017a: stloc.s 4
-		IL_017c: ldloc.s 4
+		IL_017a: stloc.s 6
+		IL_017c: ldloc.s 6
 		IL_017e: stloc.1
 		IL_017f: ldc.i4.1
 		IL_0180: newarr [System.Runtime]System.Object
@@ -1132,15 +1081,15 @@
 		IL_01b2: ldstr "prototype"
 		IL_01b7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
 		IL_01bc: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
-		IL_01c1: stloc.s 4
+		IL_01c1: stloc.s 6
 		IL_01c3: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
 		IL_01c8: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
-		IL_01cd: stloc.s 4
+		IL_01cd: stloc.s 6
 		IL_01cf: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopDerivedConstructorThisBinding()
-		IL_01d4: ldloc.s 4
+		IL_01d4: ldloc.s 6
 		IL_01d6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_01db: stloc.s 4
-		IL_01dd: ldloc.s 4
+		IL_01db: stloc.s 6
+		IL_01dd: ldloc.s 6
 		IL_01df: isinst Modules.Async_Inheritance_SuperAsyncMethod/Derived
 		IL_01e4: dup
 		IL_01e5: brfalse IL_0201
@@ -1153,18 +1102,18 @@
 		IL_01f3: stelem.ref
 		IL_01f4: ldnull
 		IL_01f5: callvirt instance object Modules.Async_Inheritance_SuperAsyncMethod/Derived::run(object[], object)
-		IL_01fa: stloc.s 4
+		IL_01fa: stloc.s 6
 		IL_01fc: br IL_0210
 
 		IL_0201: pop
-		IL_0202: ldloc.s 4
+		IL_0202: ldloc.s 6
 		IL_0204: ldstr "run"
 		IL_0209: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-		IL_020e: stloc.s 4
+		IL_020e: stloc.s 6
 
-		IL_0210: ldloc.s 4
+		IL_0210: ldloc.s 6
 		IL_0212: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0217: stloc.s 4
+		IL_0217: stloc.s 6
 		IL_0219: ldc.i4.1
 		IL_021a: newarr [System.Runtime]System.Object
 		IL_021f: dup
@@ -1180,10 +1129,10 @@
 		IL_0231: ldc.i4.0
 		IL_0232: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Async_Inheritance_SuperAsyncMethod/ArrowFunction_L15C26/FunctionObject>(!!0, float64, string, bool, bool)
 		IL_0237: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Async_Inheritance_SuperAsyncMethod/ArrowFunction_L15C26/FunctionObject>(!!0)
-		IL_023c: stloc.s 6
-		IL_023e: ldloc.s 4
+		IL_023c: stloc.s 7
+		IL_023e: ldloc.s 6
 		IL_0240: ldstr "then"
-		IL_0245: ldloc.s 6
+		IL_0245: ldloc.s 7
 		IL_0247: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
 		IL_024c: pop
 		IL_024d: ret

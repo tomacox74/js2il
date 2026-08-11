@@ -6,6 +6,15 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- compiler/runtime: close issue #1762 by materializing class declarations and
+  class expressions as their canonical generated `JsFunctionObject`
+  subclasses. Add `JsClassConstructorObject` for shared class-only call and
+  construction semantics, retain declaration identity while keeping class
+  expression evaluation fresh, and remove the separate
+  `ClassConstructorValue` representation. Preserve inheritance, `new.target`,
+  static initialization, reflection, proxies, bound construction, class
+  metadata, and constructor return behavior with execution, IL, and
+  architecture guardrails.
 - runtime/node: add `diagnostics_channel` and `node:diagnostics_channel` with
   a complete generated Node.js 24.18.1 contract. Named channels reuse
   identity within a runtime, provide the low-overhead `hasSubscribers` guard

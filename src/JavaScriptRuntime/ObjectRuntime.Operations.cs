@@ -2315,11 +2315,6 @@ namespace JavaScriptRuntime
                 return !(type.IsAbstract && type.IsSealed);
             }
 
-            if (constructor is ClassConstructorValue classConstructor)
-            {
-                return !(classConstructor.Type.IsAbstract && classConstructor.Type.IsSealed);
-            }
-
             if (constructor is JsObject)
             {
                 return ObjectRuntime.TryGetOwnValue(constructor, "Construct", out var constructValue)
@@ -2350,7 +2345,7 @@ namespace JavaScriptRuntime
                 return ConstructTypeValue(type, callArgs, RuntimeServices.EmptyScopes);
             }
 
-            if (constructor is ClassConstructorValue classConstructor)
+            if (constructor is JsClassConstructorObject classConstructor)
             {
                 return ConstructTypeValue(classConstructor.Type, callArgs, classConstructor.Scopes, classConstructor);
             }
@@ -2367,7 +2362,7 @@ namespace JavaScriptRuntime
                     throw new TypeError("Value is not a constructor");
                 }
 
-                var isDerivedClassType = prototypeOwner is ClassConstructorValue
+                var isDerivedClassType = prototypeOwner is JsClassConstructorObject
                     && type.BaseType is { } baseType
                     && baseType != typeof(object);
                 var previousNewTarget = RuntimeServices.SetCurrentNewTarget(
@@ -2381,7 +2376,18 @@ namespace JavaScriptRuntime
                 {
                     if (instance is not null && instance is not JsNull)
                     {
-                        PrototypeChain.SetPrototype(instance, GetProperty(prototypeOwner ?? type, "prototype"));
+                        var defaultPrototype = GetProperty(
+                            prototypeOwner ?? type,
+                            "prototype");
+                        var newTargetPrototype = GetProperty(
+                            newTarget ?? prototypeOwner ?? type,
+                            "prototype");
+                        PrototypeChain.SetPrototype(
+                            instance,
+                            TypeUtilities.IsConstructorReturnOverride(
+                                newTargetPrototype)
+                                ? newTargetPrototype
+                                : defaultPrototype);
                     }
 
                     return instance;
@@ -3285,6 +3291,7 @@ namespace JavaScriptRuntime
             }
 
             if (target is JsObject defaultDataObject
+                && target is not JsClassConstructorObject
                 && !defaultDataObject.HasNonDataDescriptors)
             {
                 return defaultDataObject.HasOwnPropertyValue(name);
@@ -3629,7 +3636,8 @@ namespace JavaScriptRuntime
                 return false;
             }
 
-            if (target is JsObject jsObject)
+            if (target is JsObject jsObject
+                && target is not JsClassConstructorObject)
             {
                 return jsObject.GetOwnPropertyDescriptor(propName, out descriptor)
                     == PropertyDescriptorLookup.Found;
@@ -3664,13 +3672,13 @@ namespace JavaScriptRuntime
                 return true;
             }
 
-            if (target is ClassConstructorValue classConstructorValue
+            if (target is JsClassConstructorObject classConstructorValue
                 && RuntimeServices.TryEnsureClassConstructorMetadataPropertyDescriptor(classConstructorValue, propName, out descriptor))
             {
                 return true;
             }
 
-            if (target is ClassConstructorValue staticClassConstructor
+            if (target is JsClassConstructorObject staticClassConstructor
                 && PropertyDescriptorStore.TryGetOwn(
                     staticClassConstructor.Type,
                     propName,
@@ -3726,7 +3734,7 @@ namespace JavaScriptRuntime
             {
                 var instanceClassType = ctorDesc.Value switch
                 {
-                    ClassConstructorValue constructorValue => constructorValue.Type,
+                    JsClassConstructorObject constructorValue => constructorValue.Type,
                     Type type => type,
                     _ => null
                 };
@@ -3781,12 +3789,12 @@ namespace JavaScriptRuntime
                 }
             }
 
-            // Check if target is a ClassConstructorValue or Type (class constructor) and the property
+            // Check if target is a generated class constructor or Type and the property
             // corresponds to a static CLR get_/set_ accessor method.
             {
                 Type? staticClassType = target switch
                 {
-                    ClassConstructorValue ccv => ccv.Type,
+                    JsClassConstructorObject constructor => constructor.Type,
                     Type t => t,
                     _ => null
                 };
@@ -3832,7 +3840,7 @@ namespace JavaScriptRuntime
                             Get = getDelegate,
                             Set = setDelegate
                         };
-                        // Cache on the target (ClassConstructorValue or Type) for future lookups.
+                        // Cache on the generated constructor or Type for future lookups.
                         PropertyDescriptorStore.DefineOrUpdate(target, propName, descriptor);
                         return true;
                     }
@@ -3949,7 +3957,7 @@ namespace JavaScriptRuntime
         {
             staticClassType = target switch
             {
-                ClassConstructorValue classConstructorValue => classConstructorValue.Type,
+                JsClassConstructorObject classConstructorValue => classConstructorValue.Type,
                 Type type => type,
                 _ => null
             };
@@ -4038,7 +4046,8 @@ namespace JavaScriptRuntime
                 return true;
             }
 
-            if (target is JsObject jsObject)
+            if (target is JsObject jsObject
+                && target is not JsClassConstructorObject)
             {
                 return jsObject.TryGetBoxedValue(propName, receiverForAccessors, out value);
             }
@@ -4066,14 +4075,14 @@ namespace JavaScriptRuntime
                 return true;
             }
 
-            if (target is ClassConstructorValue classConstructorValue
+            if (target is JsClassConstructorObject classConstructorValue
                 && RuntimeServices.TryEnsureClassConstructorMetadataPropertyDescriptor(classConstructorValue, propName, out var classMetadataDesc))
             {
                 value = classMetadataDesc.Value;
                 return true;
             }
 
-            if (target is ClassConstructorValue staticClassConstructor
+            if (target is JsClassConstructorObject staticClassConstructor
                 && PropertyDescriptorStore.TryGetOwn(
                     staticClassConstructor.Type,
                     propName,
@@ -4204,7 +4213,7 @@ namespace JavaScriptRuntime
                     return TryGetClrMemberValue(staticType, instance: null, propName, BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.IgnoreCase, out value);
                 }
 
-                if (target is ClassConstructorValue constructorValue)
+                if (target is JsClassConstructorObject constructorValue)
                 {
                     if (string.Equals(propName, "prototype", StringComparison.Ordinal)
                         && RuntimeServices.TryEnsureClassConstructorMetadataPropertyDescriptor(constructorValue, propName, out var prototypeDesc))
@@ -5403,6 +5412,16 @@ namespace JavaScriptRuntime
                 return jsObjectValue;
             }
 
+            if (obj is JsClassConstructorObject classConstructor
+                && TryGetOwnPropertyValue(
+                    classConstructor,
+                    name,
+                    classConstructor,
+                    out var classConstructorValue))
+            {
+                return classConstructorValue;
+            }
+
             // Proxy get trap
             if (obj is JavaScriptRuntime.Proxy proxy)
             {
@@ -5946,6 +5965,15 @@ namespace JavaScriptRuntime
                 return value;
             }
 
+            if (obj is JsClassConstructorObject classConstructorValue)
+            {
+                return SetProperty(
+                    classConstructorValue.Type,
+                    name,
+                    value,
+                    throwOnError);
+            }
+
             // JsObject subclasses own property definition through the shared
             // internal-operation hook.
             if (obj is JsObject jsObject)
@@ -6023,11 +6051,6 @@ namespace JavaScriptRuntime
                 });
 
                 return value;
-            }
-
-            if (obj is ClassConstructorValue classConstructorValue)
-            {
-                return SetProperty(classConstructorValue.Type, name, value, throwOnError);
             }
 
             if (obj is Type staticTypeForPrototype
@@ -6365,7 +6388,7 @@ namespace JavaScriptRuntime
 
             var staticType = receiver switch
             {
-                ClassConstructorValue classConstructorValue => classConstructorValue.Type,
+                JsClassConstructorObject classConstructorValue => classConstructorValue.Type,
                 Type type => type,
                 _ => null
             };

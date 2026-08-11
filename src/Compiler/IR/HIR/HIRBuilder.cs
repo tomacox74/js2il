@@ -2457,7 +2457,7 @@ partial class HIRMethodBuilder
                         return false;
                     }
 
-                    // Store the ClassConstructorValue to the class name binding before static field initializers
+                    // Store the generated class constructor object before static field initializers
                     // or static blocks run. Computed class element names are evaluated earlier, while the outer
                     // binding is still in TDZ, so only expose the binding once the spec-visible initialization
                     // phase that can reference the class name begins.
