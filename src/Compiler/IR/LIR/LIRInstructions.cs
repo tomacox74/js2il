@@ -557,6 +557,23 @@ public record LIRLoadUserClassInstanceField(
     bool IsPrivateField,
     TempVariable Result) : LIRInstruction;
 
+public record LIRPrivateBrandCheck(
+    string RegistryClassName,
+    TempVariable Value,
+    TempVariable Result) : LIRInstruction;
+
+public record LIRLoadPrivateReceiverField(
+    string RegistryClassName,
+    string FieldName,
+    TempVariable Receiver,
+    TempVariable Result) : LIRInstruction;
+
+public record LIRStorePrivateReceiverField(
+    string RegistryClassName,
+    string FieldName,
+    TempVariable Receiver,
+    TempVariable Value) : LIRInstruction;
+
 /// <summary>
 /// Loads a static field from a user-defined JavaScript class (compiled as a .NET type).
 /// The field handle is resolved via <see cref="Jroc.Services.ClassRegistry"/> using <see cref="RegistryClassName"/>.

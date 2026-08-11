@@ -35,6 +35,9 @@ namespace Jroc.Tests.TryCatch
         public Task TryCatch_NewExpression_BuiltInErrors() { var testName = nameof(TryCatch_NewExpression_BuiltInErrors); return ExecutionTest(testName); }
 
         [Fact]
+        public Task TryCatch_NewExpression_ErrorOptionsCause() { var testName = nameof(TryCatch_NewExpression_ErrorOptionsCause); return ExecutionTest(testName); }
+
+        [Fact]
         public Task TryCatch_CallMember_MissingMethod_IsTypeError() { var testName = nameof(TryCatch_CallMember_MissingMethod_IsTypeError); return ExecutionTest(testName); }
 
         [Fact]

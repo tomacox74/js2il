@@ -249,6 +249,7 @@ public static class HIRBuilder
             {
                 HIRExpressionStatement expressionStatement => ExpressionContainsDirectSuperCall(expressionStatement.Expression),
                 HIRBlock block => block.Statements.Any(StatementContainsDirectSuperCall),
+                HIRTryStatement tryStatement => StatementContainsDirectSuperCall(tryStatement.TryBlock),
                 _ => false
             };
 
@@ -410,7 +411,7 @@ public static class HIRBuilder
                         {
                             case PropertyDefinition propertyDefinition when !propertyDefinition.Static:
                             {
-                                var initBuilder = new HIRMethodBuilder(scope);
+                                var initBuilder = new HIRMethodBuilder(enclosingClassScope);
                                 var propertyValueExpr = propertyDefinition.Value is Expression propertyInit
                                     ? propertyInit
                                     : null;
@@ -576,7 +577,7 @@ public static class HIRBuilder
                         {
                             case PropertyDefinition propertyDefinition when !propertyDefinition.Static:
                             {
-                                var initBuilder = new HIRMethodBuilder(scope);
+                                var initBuilder = new HIRMethodBuilder(enclosingClassScope);
                                 var propertyValueExpr = propertyDefinition.Value is Expression propertyInit
                                     ? propertyInit
                                     : null;
@@ -3182,11 +3183,15 @@ partial class HIRMethodBuilder
 
             if (!TryParseExpression(decl.Init, out var hirInitExpr))
             {
+                IR.IRPipelineMetrics.RecordFailureIfUnset(
+                    $"HIR parse failed for destructuring initializer {decl.Init.Type}");
                 return false;
             }
 
             if (!TryParsePattern(decl.Id, out var hirPattern))
             {
+                IR.IRPipelineMetrics.RecordFailureIfUnset(
+                    $"HIR parse failed for destructuring pattern {decl.Id.Type}");
                 return false;
             }
 
@@ -3267,6 +3272,8 @@ partial class HIRMethodBuilder
                             {
                                 if (!TryParseExpression(p.Key, out computedKey))
                                 {
+                                    IR.IRPipelineMetrics.RecordFailureIfUnset(
+                                        $"HIR parse failed for computed destructuring key {p.Key.Type}");
                                     return false;
                                 }
                             }
@@ -3291,6 +3298,8 @@ partial class HIRMethodBuilder
 
                             if (!TryParsePattern(p.Value, out var valuePattern))
                             {
+                                IR.IRPipelineMetrics.RecordFailureIfUnset(
+                                    $"HIR parse failed for destructuring value pattern {p.Value.Type}");
                                 return false;
                             }
 
@@ -3551,6 +3560,31 @@ partial class HIRMethodBuilder
                 return true;
 
             case BinaryExpression binaryExpr:
+                if (binaryExpr.Operator == Acornima.Operator.In
+                    && binaryExpr.Left is PrivateIdentifier brandIdentifier
+                    && TryGetEnclosingClassDefinition(out var brandClassScope, out var brandClassBody)
+                    && !brandClassBody.Body.Any(element => element switch
+                    {
+                        PropertyDefinition property =>
+                            property.Key is PrivateIdentifier privateKey
+                            && string.Equals(privateKey.Name, brandIdentifier.Name, StringComparison.Ordinal)
+                            && property.Static,
+                        MethodDefinition method =>
+                            method.Key is PrivateIdentifier privateKey
+                            && string.Equals(privateKey.Name, brandIdentifier.Name, StringComparison.Ordinal)
+                            && method.Static,
+                        _ => false
+                    })
+                    && TryParseExpression(binaryExpr.Right, out var brandTarget))
+                {
+                    hirExpr = new HIRPrivateBrandCheckExpression
+                    {
+                        RegistryClassName = GetRegistryClassName(brandClassScope),
+                        Value = brandTarget!
+                    };
+                    return true;
+                }
+
                 // Handle binary expressions
                 HIRExpression? leftExpr;
                 HIRExpression? rightExpr;
@@ -3757,9 +3791,8 @@ partial class HIRMethodBuilder
                     return true;
                 }
 
-                if (isBuiltInError && newArgExprs.Count > 1)
+                if (isBuiltInError && newArgExprs.Count > 2)
                 {
-                    // Match legacy behavior for built-in Error types.
                     return false;
                 }
 
@@ -3874,7 +3907,7 @@ partial class HIRMethodBuilder
                         return true;
                     }
 
-                    if (memberTarget.Object is ThisExpression && !memberTarget.Computed && memberTarget.Property is PrivateIdentifier privateMemberId)
+                    if (!memberTarget.Computed && memberTarget.Property is PrivateIdentifier privateMemberId)
                     {
                         if (!TryGetEnclosingClassDefinition(out var privateClassScope, out _))
                         {
@@ -3900,12 +3933,25 @@ partial class HIRMethodBuilder
                             }
                         }
 
-                        hirExpr = new HIRPrivateFieldAssignmentExpression
+                        if (memberTarget.Object is ThisExpression)
                         {
-                            RegistryClassName = $"{(privateClassScope.DotNetNamespace ?? "Classes")}.{(privateClassScope.DotNetTypeName ?? privateClassScope.Name)}",
-                            FieldName = privateMemberId.Name,
-                            Value = assignValueExpr!
-                        };
+                            hirExpr = new HIRPrivateFieldAssignmentExpression
+                            {
+                                RegistryClassName = GetRegistryClassName(privateClassScope),
+                                FieldName = privateMemberId.Name,
+                                Value = assignValueExpr!
+                            };
+                        }
+                        else
+                        {
+                            hirExpr = new HIRStorePrivateReceiverFieldExpression
+                            {
+                                RegistryClassName = GetRegistryClassName(privateClassScope),
+                                FieldName = privateMemberId.Name,
+                                Receiver = memberObjectExpr!,
+                                Value = assignValueExpr!
+                            };
+                        }
                         return true;
                     }
 
@@ -3984,6 +4030,22 @@ partial class HIRMethodBuilder
                 if (!TryParseExpression(memberExpr.Object, out objectExpr))
                 {
                     return false;
+                }
+
+                if (!memberExpr.Computed && memberExpr.Property is PrivateIdentifier privateReceiverField)
+                {
+                    if (!TryGetEnclosingClassScope(_currentScope, out var privateReceiverClassScope))
+                    {
+                        return false;
+                    }
+
+                    hirExpr = new HIRLoadPrivateReceiverFieldExpression
+                    {
+                        RegistryClassName = GetRegistryClassName(privateReceiverClassScope),
+                        FieldName = privateReceiverField.Name,
+                        Receiver = objectExpr!
+                    };
+                    return true;
                 }
 
                 // Optional chaining: obj?.prop / obj?.[expr]

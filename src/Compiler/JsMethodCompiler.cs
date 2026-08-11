@@ -531,7 +531,14 @@ internal sealed class JsMethodCompiler
             }
         }
 
-        return CreateILCompiler().TryCompileCallableBody(callable, expectedMethodDef, methodDescriptor, lirMethod!, methodBodyStreamEncoder);
+        var compiledBody = CreateILCompiler().TryCompileCallableBody(
+            callable, expectedMethodDef, methodDescriptor, lirMethod!, methodBodyStreamEncoder);
+        if (compiledBody == null)
+        {
+            IR.IRPipelineMetrics.RecordFailureIfUnset(
+                $"LIR->IL emission failed for callable '{callable.DisplayName}'");
+        }
+        return compiledBody;
     }
 
     public MethodDefinitionHandle TryCompileMethod(TypeBuilder typeBuilder, string methodName, Node node, Scope scope, MethodBodyStreamEncoder methodBodyStreamEncoder)
@@ -881,8 +888,64 @@ internal sealed class JsMethodCompiler
 
         foreach (var (nested, enclosing) in nestingPlanner.PlanModuleNesting(moduleName, moduleTypeHandle, scope))
         {
-            _nestedTypeRelationshipRegistry.Add(nested, enclosing);
+            try
+            {
+                _nestedTypeRelationshipRegistry.Add(nested, enclosing);
+            }
+            catch (InvalidOperationException ex)
+            {
+                throw new InvalidOperationException(
+                    $"Failed to register nesting for module '{moduleName}': " +
+                    $"nested {DescribeRegisteredType(moduleName, nested)}, " +
+                    $"enclosing {DescribeRegisteredType(moduleName, enclosing)}.",
+                    ex);
+            }
         }
+    }
+
+    private string DescribeRegisteredType(string moduleName, TypeDefinitionHandle handle)
+    {
+        if (_moduleTypeRegistry.TryGet(moduleName, out var moduleType)
+            && moduleType == handle)
+        {
+            return $"module '{moduleName}'";
+        }
+
+        foreach (var scopeName in _scopeMetadataRegistry.GetAllScopeNames())
+        {
+            if (_scopeMetadataRegistry.TryGetScopeTypeHandle(scopeName, out var scopeType)
+                && scopeType == handle)
+            {
+                return $"scope '{scopeName}'";
+            }
+        }
+
+        foreach (var declaringScope in _functionTypeMetadataRegistry.GetAllForModule(moduleName))
+        {
+            foreach (var function in declaringScope.Value)
+            {
+                if (function.Value == handle)
+                {
+                    return $"function owner '{declaringScope.Key}/{function.Key}'";
+                }
+            }
+        }
+
+        foreach (var anonymous in _anonymousCallableTypeMetadataRegistry.GetAllForModule(moduleName))
+        {
+            if (anonymous.OwnerTypeHandle == handle)
+            {
+                return $"anonymous owner '{anonymous.DeclaringScopeName}/{anonymous.OwnerTypeName}'";
+            }
+        }
+
+        var classRegistry = _serviceProvider.GetService<ClassRegistry>();
+        if (classRegistry != null && classRegistry.TryGetName(handle, out var className))
+        {
+            return $"class '{className}'";
+        }
+
+        return $"TypeDef 0x{MetadataTokens.GetToken(handle):X8}";
     }
 
     #endregion

@@ -104,6 +104,29 @@ namespace Jroc.Tests
         }
 
         [Fact]
+        public void Build_AwaitExpressions_CountsEachAstChildOnce()
+        {
+            var ast = _parser.ParseJavaScript(
+                """
+                const topLevel = await Promise.resolve(1);
+                async function nested() {
+                    await Promise.resolve(2);
+                }
+                """,
+                "test.js");
+
+            var scopeTree = BuildSymbolTable(ast, "test.js");
+
+            Assert.True(scopeTree.Root.IsAsync);
+            Assert.Equal(1, scopeTree.Root.AwaitPointCount);
+            var nestedScope = Assert.Single(
+                scopeTree.Root.Children,
+                scope => scope.Name == "nested");
+            Assert.True(nestedScope.IsAsync);
+            Assert.Equal(1, nestedScope.AwaitPointCount);
+        }
+
+        [Fact]
         public void Build_NestedFunctions_CreatesCorrectHierarchy()
         {
             // Arrange

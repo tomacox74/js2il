@@ -67,13 +67,13 @@ public sealed partial class HIRToLIRLowerer
         // PL3.3a: built-in Error types
         if (BuiltInErrorTypes.IsBuiltInErrorTypeName(ctorName))
         {
-            if (newExpr.Arguments.Count > 1)
+            if (newExpr.Arguments.Count > 2)
             {
                 return false;
             }
 
             TempVariable? messageTemp = null;
-            if (newExpr.Arguments.Count == 1)
+            if (newExpr.Arguments.Count >= 1)
             {
                 if (!TryLowerExpression(newExpr.Arguments[0], out var loweredMessage))
                 {
@@ -85,6 +85,24 @@ public sealed partial class HIRToLIRLowerer
             resultTempVar = CreateTempVariable();
             _methodBodyIR.Instructions.Add(new LIRNewBuiltInError(ctorName, messageTemp, resultTempVar));
             DefineTempStorage(resultTempVar, GetBuiltInErrorStorage(ctorName));
+
+            if (newExpr.Arguments.Count == 2)
+            {
+                if (!TryLowerExpression(newExpr.Arguments[1], out var optionsTemp))
+                {
+                    return false;
+                }
+
+                _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStaticVoid(
+                    nameof(JavaScriptRuntime.Error),
+                    nameof(JavaScriptRuntime.Error.InstallCause),
+                    new[]
+                    {
+                        EnsureObject(resultTempVar),
+                        EnsureObject(optionsTemp)
+                    }));
+            }
+
             return true;
         }
 

@@ -106,6 +106,12 @@ namespace Jroc.Tests.CommonJS
         }
 
         [Fact]
+        public Task CommonJS_Require_UnknownNodeBuiltin_DefersToRuntime()
+        {
+            return ExecutionTest(nameof(CommonJS_Require_UnknownNodeBuiltin_DefersToRuntime));
+        }
+
+        [Fact]
         public Task CommonJS_Require_Shadowed_Parameter()
         {
             // If a nested scope shadows `require`, calls must dispatch through normal JS call semantics.

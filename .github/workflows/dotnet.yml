@@ -30,7 +30,7 @@ jobs:
     - name: Build
       run: dotnet build --no-restore
     - name: Test
-      run: dotnet test --no-build --verbosity normal
+      run: dotnet test --no-build --verbosity normal --filter "Category!=ReleaseOnly"
     - name: Upload received snapshots
       if: failure()
       uses: actions/upload-artifact@v7

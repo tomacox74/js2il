@@ -1101,6 +1101,17 @@ namespace Jroc.SymbolTables
 
                             AddImplicitArgumentsBinding(methodScope);
                         }
+                        else if (element is PropertyDefinition propertyDefinition)
+                        {
+                            if (propertyDefinition.Computed)
+                            {
+                                BuildScopeRecursive(globalScope, propertyDefinition.Key, classScope);
+                            }
+                            if (propertyDefinition.Value != null)
+                            {
+                                BuildScopeRecursive(globalScope, propertyDefinition.Value, classScope);
+                            }
+                        }
                     }
                     break;
 
@@ -1229,6 +1240,17 @@ namespace Jroc.SymbolTables
                             }
 
                             AddImplicitArgumentsBinding(methodScope);
+                        }
+                        else if (element is PropertyDefinition propertyDefinition)
+                        {
+                            if (propertyDefinition.Computed)
+                            {
+                                BuildScopeRecursive(globalScope, propertyDefinition.Key, classExprScope);
+                            }
+                            if (propertyDefinition.Value != null)
+                            {
+                                BuildScopeRecursive(globalScope, propertyDefinition.Value, classExprScope);
+                            }
                         }
                     }
                     break;
@@ -1459,6 +1481,9 @@ namespace Jroc.SymbolTables
                                     }
                                 }
                             }
+
+                            BindPatternBindings(objPattern, kind, targetScope, decl);
+                            BuildPatternInitializerScopes(globalScope, objPattern, currentScope);
 
                             // Visit initializer expression to record any nested references
                             if (decl.Init != null)
@@ -2194,6 +2219,7 @@ namespace Jroc.SymbolTables
                     // Check initializers with updated local set
                     foreach (var decl in vd.Declarations)
                     {
+                        CollectFreeVariables(decl.Id, newLocals, targetVariables, result);
                         CollectFreeVariables(decl.Init, newLocals, targetVariables, result);
                     }
                     break;
@@ -2442,7 +2468,10 @@ namespace Jroc.SymbolTables
                     break;
 
                 case Property prop:
-                    CollectFreeVariables(prop.Key as Node, localVariables, targetVariables, result);
+                    if (prop.Computed)
+                    {
+                        CollectFreeVariables(prop.Key as Node, localVariables, targetVariables, result);
+                    }
                     CollectFreeVariables(prop.Value as Node, localVariables, targetVariables, result);
                     break;
 
@@ -2958,6 +2987,10 @@ namespace Jroc.SymbolTables
                     {
                         if (pnode is Property prop)
                         {
+                            if (prop.Computed)
+                            {
+                                BuildScopeRecursive(globalScope, prop.Key as Node, currentScope);
+                            }
                             BuildPatternInitializerScopes(globalScope, prop.Value, currentScope);
                         }
                         else if (pnode is RestElement rest)
@@ -3006,37 +3039,9 @@ namespace Jroc.SymbolTables
                 return count;
             }
 
-            // Recursively count in child nodes using reflection
-            foreach (var prop in node.GetType().GetProperties())
+            foreach (var child in node.ChildNodes)
             {
-                if (!prop.CanRead) continue;
-                var propType = prop.PropertyType;
-
-                // Check for single Node child
-                if (typeof(Node).IsAssignableFrom(propType))
-                {
-                    var childNode = prop.GetValue(node) as Node;
-                    if (childNode != null)
-                    {
-                        count += CountAwaitExpressions(childNode);
-                    }
-                }
-                // Check for IEnumerable<Node> children (NodeList, etc.)
-                else if (typeof(System.Collections.IEnumerable).IsAssignableFrom(propType) 
-                    && propType != typeof(string))
-                {
-                    var enumerable = prop.GetValue(node) as System.Collections.IEnumerable;
-                    if (enumerable != null)
-                    {
-                        foreach (var item in enumerable)
-                        {
-                            if (item is Node childItem)
-                            {
-                                count += CountAwaitExpressions(childItem);
-                            }
-                        }
-                    }
-                }
+                count += CountAwaitExpressions(child);
             }
 
             return count;

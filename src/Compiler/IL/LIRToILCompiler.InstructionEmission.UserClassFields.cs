@@ -68,6 +68,43 @@ internal sealed partial class LIRToILCompiler
     {
         switch (instruction)
         {
+            case LIRStorePrivateReceiverField storePrivateReceiverField:
+                {
+                    var classRegistry = _serviceProvider.GetService<Jroc.Services.ClassRegistry>();
+                    if (classRegistry == null
+                        || !classRegistry.TryGet(
+                            storePrivateReceiverField.RegistryClassName,
+                            out var privateOwnerType)
+                        || !classRegistry.TryGetPrivateField(
+                            storePrivateReceiverField.RegistryClassName,
+                            storePrivateReceiverField.FieldName,
+                            out var privateField))
+                    {
+                        return false;
+                    }
+
+                    var privateFieldType = GetDeclaredUserClassFieldClrType(
+                        classRegistry,
+                        storePrivateReceiverField.RegistryClassName,
+                        storePrivateReceiverField.FieldName,
+                        isPrivateField: true,
+                        isStaticField: false);
+                    EmitLoadTempAsObject(storePrivateReceiverField.Receiver, ilEncoder, allocation, methodDescriptor);
+                    EmitPrivateReceiverBrandCheck(
+                        privateOwnerType,
+                        storePrivateReceiverField.FieldName,
+                        ilEncoder);
+                    EmitLoadTempAsClrType(
+                        storePrivateReceiverField.Value,
+                        privateFieldType,
+                        ilEncoder,
+                        allocation,
+                        methodDescriptor);
+                    ilEncoder.OpCode(ILOpCode.Stfld);
+                    ilEncoder.Token(privateField);
+                    break;
+                }
+
             case LIRStoreUserClassInstanceField storeInstanceField:
                 {
                     var classRegistry = _serviceProvider.GetService<Jroc.Services.ClassRegistry>();
@@ -244,6 +281,47 @@ internal sealed partial class LIRToILCompiler
                     break;
                 }
 
+            case LIRLoadPrivateReceiverField loadPrivateReceiverField:
+                {
+                    if (!IsMaterialized(loadPrivateReceiverField.Result, allocation))
+                    {
+                        break;
+                    }
+
+                    var classRegistry = _serviceProvider.GetService<Jroc.Services.ClassRegistry>();
+                    if (classRegistry == null
+                        || !classRegistry.TryGet(
+                            loadPrivateReceiverField.RegistryClassName,
+                            out var privateOwnerType)
+                        || !classRegistry.TryGetPrivateField(
+                            loadPrivateReceiverField.RegistryClassName,
+                            loadPrivateReceiverField.FieldName,
+                            out var privateField))
+                    {
+                        return false;
+                    }
+
+                    var privateFieldType = GetDeclaredUserClassFieldClrType(
+                        classRegistry,
+                        loadPrivateReceiverField.RegistryClassName,
+                        loadPrivateReceiverField.FieldName,
+                        isPrivateField: true,
+                        isStaticField: false);
+                    EmitLoadTempAsObject(loadPrivateReceiverField.Receiver, ilEncoder, allocation, methodDescriptor);
+                    EmitPrivateReceiverBrandCheck(
+                        privateOwnerType,
+                        loadPrivateReceiverField.FieldName,
+                        ilEncoder);
+                    ilEncoder.OpCode(ILOpCode.Ldfld);
+                    ilEncoder.Token(privateField);
+                    EmitBoxIfNeededForTypedUserClassFieldLoad(
+                        privateFieldType,
+                        GetTempStorage(loadPrivateReceiverField.Result),
+                        ilEncoder);
+                    EmitStoreTemp(loadPrivateReceiverField.Result, ilEncoder, allocation);
+                    break;
+                }
+
             case LIRLoadUserClassStaticField loadStaticField:
                 {
                     var classRegistry = _serviceProvider.GetService<Jroc.Services.ClassRegistry>();
@@ -293,6 +371,7 @@ internal sealed partial class LIRToILCompiler
                         {
                             return false;
                         }
+
                     }
                     else
                     {
@@ -361,5 +440,31 @@ internal sealed partial class LIRToILCompiler
         }
 
         return true;
+    }
+
+    private void EmitPrivateReceiverBrandCheck(
+        TypeDefinitionHandle ownerType,
+        string fieldName,
+        InstructionEncoder ilEncoder)
+    {
+        var validReceiver = ilEncoder.DefineLabel();
+        ilEncoder.OpCode(ILOpCode.Dup);
+        ilEncoder.OpCode(ILOpCode.Isinst);
+        ilEncoder.Token(ownerType);
+        ilEncoder.Branch(ILOpCode.Brtrue, validReceiver);
+        ilEncoder.OpCode(ILOpCode.Pop);
+
+        var typeErrorConstructor = _memberRefRegistry.GetOrAddConstructor(
+            typeof(JavaScriptRuntime.TypeError),
+            parameterTypes: new[] { typeof(string) });
+        ilEncoder.LoadString(_metadataBuilder.GetOrAddUserString(
+            $"Receiver must declare private member '#{fieldName}'"));
+        ilEncoder.OpCode(ILOpCode.Newobj);
+        ilEncoder.Token(typeErrorConstructor);
+        ilEncoder.OpCode(ILOpCode.Throw);
+
+        ilEncoder.MarkLabel(validReceiver);
+        ilEncoder.OpCode(ILOpCode.Castclass);
+        ilEncoder.Token(ownerType);
     }
 }

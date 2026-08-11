@@ -61,6 +61,17 @@ public sealed class LIRInstructionInfoTests
     }
 
     [Fact]
+    public void PrivateBrandCheck_IsClassifiedAsMayThrow()
+    {
+        var metadata = LIRInstructionInfo.GetMetadata(new LIRPrivateBrandCheck(
+            "Classes.Example",
+            new TempVariable(0),
+            new TempVariable(1)));
+
+        AssertEffects(metadata, LIRInstructionEffects.MayThrow);
+    }
+
+    [Fact]
     public void MutableAndHeapStores_AreClassifiedAsWrites()
     {
         var parameterStore = LIRInstructionInfo.GetMetadata(

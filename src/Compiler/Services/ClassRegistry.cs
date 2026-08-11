@@ -46,6 +46,21 @@ namespace Jroc.Services
             return _classes.TryGetValue(className, out handle);
         }
 
+        public bool TryGetName(TypeDefinitionHandle handle, out string className)
+        {
+            foreach (var entry in _classes)
+            {
+                if (entry.Value == handle)
+                {
+                    className = entry.Key;
+                    return true;
+                }
+            }
+
+            className = string.Empty;
+            return false;
+        }
+
         public bool TryGetBySimpleTypeName(string typeName, out TypeDefinitionHandle handle)
         {
             var matches = _classes

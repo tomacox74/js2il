@@ -94,12 +94,12 @@ namespace JavaScriptRuntime.CommonJS
         }
 
         // require("module") returns a Node core module instance; modules are singletons.
-        // Unknown specifiers throw a ReferenceError.
         public object? RequireModule(string specifier)
         {
             if (string.IsNullOrWhiteSpace(specifier))
                 throw new ReferenceError("require specifier must be a non-empty string"); 
 
+            var isNodeBuiltinSpecifier = IsNodeBuiltinSpecifier(specifier);
             var key = Normalize(specifier);
 
             // Fast path: already-instantiated Node core module singleton.
@@ -119,6 +119,13 @@ namespace JavaScriptRuntime.CommonJS
                 return RequireNodeModule(key, specifier);
             }
 
+            if (isNodeBuiltinSpecifier)
+            {
+                throw new ModuleNotFoundError(
+                    "ERR_UNKNOWN_BUILTIN_MODULE",
+                    $"No such built-in module: {specifier}");
+            }
+
             // Everything else (relative paths + bare specifiers resolved at compile-time) is treated
             // as a compiled module inside the provided local modules assembly.
             return RequireLocalModule(key);
@@ -131,8 +138,9 @@ namespace JavaScriptRuntime.CommonJS
                 throw new ReferenceError("require specifier must be a non-empty string");
             }
 
-            var resolved = ResolveLocalSpecifier(parentModuleIdOrFilename, specifier);
-            return RequireModule(resolved);
+            return IsNodeBuiltinSpecifier(specifier)
+                ? RequireModule(specifier)
+                : RequireModule(ResolveLocalSpecifier(parentModuleIdOrFilename, specifier));
         }
 
         internal object? ExecuteModuleAsMain(string parentModuleIdOrFilename, string requestedSpecifier)
@@ -454,6 +462,9 @@ namespace JavaScriptRuntime.CommonJS
                 trimmed = trimmed.Substring("node:".Length);
             return trimmed;
         }
+
+        private static bool IsNodeBuiltinSpecifier(string specifier)
+            => specifier.Trim().StartsWith("node:", StringComparison.OrdinalIgnoreCase);
 
         private static string ResolveLocalSpecifier(string parentModuleFilename, string requestedSpecifier)
         {

@@ -31,11 +31,6 @@ public sealed partial class HIRToLIRLowerer
                 return false;
             }
 
-            if (!usesLexicalReceiver && _superConstructorCalled)
-            {
-                return false;
-            }
-
             // First try: user-defined base class in the ClassRegistry.
             if (_classRegistry != null
                 && TryGetEnclosingBaseClassRegistryName(out var baseRegistryClassName)
@@ -1151,15 +1146,12 @@ public sealed partial class HIRToLIRLowerer
                         return false;
                     }
 
-                    TempVariable? scopesArgTemp = null;
-                    bool needsScopesArg = memberFunc.Async
-                        || memberFunc.Generator
-                        || (memberFunc.Body != null && ContainsYieldExpression(memberFunc.Body, memberFunc));
-                    if (needsScopesArg)
+                    if (!TryBuildClassStaticMethodScopesArgument(
+                            callableId,
+                            memberFunc,
+                            out var scopesArgTemp))
                     {
-                        scopesArgTemp = CreateTempVariable();
-                        _methodBodyIR.Instructions.Add(new LIRBuildScopesArray(Array.Empty<ScopeSlotSource>(), scopesArgTemp.Value));
-                        DefineTempStorage(scopesArgTemp.Value, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
+                        return false;
                     }
 
                     var callArgTemps = new List<TempVariable>(memberFunc.Params.Count + (scopesArgTemp.HasValue ? 2 : 0));
@@ -1248,18 +1240,12 @@ public sealed partial class HIRToLIRLowerer
                     return false;
                 }
 
-                // Resumable static class methods (async/generator) follow the jroc calling convention and
-                // require a leading scopes array.
-                // Use an ABI-compatible empty scopes array (1-element array with null) for now.
-                TempVariable? scopesArgTemp = null;
-                bool needsScopesArg = memberFunc.Async
-                    || memberFunc.Generator
-                    || (memberFunc.Body != null && ContainsYieldExpression(memberFunc.Body, memberFunc));
-                if (needsScopesArg)
+                if (!TryBuildClassStaticMethodScopesArgument(
+                        callableId,
+                        memberFunc,
+                        out var scopesArgTemp))
                 {
-                    scopesArgTemp = CreateTempVariable();
-                    _methodBodyIR.Instructions.Add(new LIRBuildScopesArray(Array.Empty<ScopeSlotSource>(), scopesArgTemp.Value));
-                    DefineTempStorage(scopesArgTemp.Value, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
+                    return false;
                 }
 
                 // Lower all arguments (evaluate extras for side effects, but only pass up to declared param count).
@@ -1672,6 +1658,58 @@ public sealed partial class HIRToLIRLowerer
         {
             DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
         }
+    }
+
+    private bool TryBuildClassStaticMethodScopesArgument(
+        TwoPhase.CallableId callableId,
+        FunctionExpression methodFunction,
+        out TempVariable? scopesArgument)
+    {
+        scopesArgument = null;
+        if (_callableRegistry == null
+            || !_callableRegistry.TryGet(callableId, out var callableInfo)
+            || callableInfo == null)
+        {
+            return false;
+        }
+
+        if (!callableInfo.Signature.RequiresScopesParameter)
+        {
+            return true;
+        }
+
+        if (callableInfo.Signature.ScopeAbiKind == Jroc.Runtime.CallableScopeAbiKind.SingleScope
+            || _scope == null)
+        {
+            return false;
+        }
+
+        var rootScope = _scope;
+        while (rootScope.Parent != null)
+        {
+            rootScope = rootScope.Parent;
+        }
+
+        var methodScope = FindScopeByAstNode(methodFunction, rootScope);
+        if (methodScope == null)
+        {
+            return false;
+        }
+
+        var scopesTemp = CreateTempVariable();
+        if (!TryBuildScopesArrayFromLayout(
+                methodScope,
+                CallableKind.ClassStaticMethod,
+                scopesTemp))
+        {
+            return false;
+        }
+
+        DefineTempStorage(
+            scopesTemp,
+            new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
+        scopesArgument = scopesTemp;
+        return true;
     }
 
     private static bool RequiresFunctionObjectInvocation(
