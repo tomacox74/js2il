@@ -1,7 +1,6 @@
 namespace JavaScriptRuntime;
 
 using System.Collections.Concurrent;
-using System.Reflection;
 using System.Runtime.CompilerServices;
 
 /// <summary>
@@ -10,18 +9,24 @@ using System.Runtime.CompilerServices;
 /// </summary>
 public sealed class BuiltinDelegateFunctionAdapter : JsFunctionObject
 {
-    private sealed class AdapterTypeCache
+    private sealed class StaticAdapterCache
     {
-        public ConcurrentDictionary<Type, BuiltinDelegateFunctionAdapter> Adapters { get; } = new();
+        public ConcurrentDictionary<
+            (RuntimeMethodHandle Method, Type DelegateType),
+            BuiltinDelegateFunctionAdapter> Adapters { get; } = new();
     }
 
     private sealed class AdapterMethodCache
     {
-        public ConcurrentDictionary<(MethodInfo Method, Type DelegateType), BuiltinDelegateFunctionAdapter> Adapters { get; } = new();
+        public ConcurrentDictionary<
+            (RuntimeMethodHandle Method, Type DelegateType),
+            BuiltinDelegateFunctionAdapter> Adapters { get; } = new();
     }
 
-    private static readonly ConditionalWeakTable<MethodInfo, AdapterTypeCache> StaticAdapters = new();
+    private static readonly ConditionalWeakTable<Type, StaticAdapterCache> StaticAdapters = new();
     private static readonly ConditionalWeakTable<object, AdapterMethodCache> InstanceAdapters = new();
+    private static readonly ConcurrentQueue<
+        WeakReference<BuiltinDelegateFunctionAdapter>> DeferredFunctionPrototypes = new();
 
     private readonly object[] _scopes;
     private readonly Closure.DelegateInvokeMetadata _invokeMetadata;
@@ -64,6 +69,26 @@ public sealed class BuiltinDelegateFunctionAdapter : JsFunctionObject
 
     public override bool RequiresInvocationContext => _requiresInvocationContext;
 
+    internal static void DeferFunctionPrototypeInitialization(
+        BuiltinDelegateFunctionAdapter adapter)
+    {
+        DeferredFunctionPrototypes.Enqueue(new WeakReference<BuiltinDelegateFunctionAdapter>(
+            adapter));
+    }
+
+    internal static void CompleteDeferredFunctionPrototypeInitialization(
+        JsObject functionPrototype)
+    {
+        while (DeferredFunctionPrototypes.TryDequeue(out var reference))
+        {
+            if (reference.TryGetTarget(out var adapter)
+                && PrototypeChain.GetPrototypeOrNull(adapter) == null)
+            {
+                PrototypeChain.InitializePrototype(adapter, functionPrototype);
+            }
+        }
+    }
+
     public static BuiltinDelegateFunctionAdapter FromDelegate(Delegate target)
     {
         ArgumentNullException.ThrowIfNull(target);
@@ -80,15 +105,18 @@ public sealed class BuiltinDelegateFunctionAdapter : JsFunctionObject
 
         if (target.Target == null)
         {
-            var cache = StaticAdapters.GetOrCreateValue(target.Method);
+            var declaringType = target.Method.DeclaringType
+                ?? throw new InvalidOperationException(
+                    "Runtime-owned static delegates require a declaring type.");
+            var cache = StaticAdapters.GetOrCreateValue(declaringType);
             return cache.Adapters.GetOrAdd(
-                target.GetType(),
+                (target.Method.MethodHandle, target.GetType()),
                 _ => new BuiltinDelegateFunctionAdapter(target));
         }
 
         var instanceCache = InstanceAdapters.GetOrCreateValue(target.Target);
         return instanceCache.Adapters.GetOrAdd(
-            (target.Method, target.GetType()),
+            (target.Method.MethodHandle, target.GetType()),
             _ => new BuiltinDelegateFunctionAdapter(target));
     }
 
@@ -102,12 +130,15 @@ public sealed class BuiltinDelegateFunctionAdapter : JsFunctionObject
 
         if (target.Target == null)
         {
-            return StaticAdapters.TryGetValue(target.Method, out var staticCache)
-                && staticCache.Adapters.ContainsKey(target.GetType());
+            return target.Method.DeclaringType is { } declaringType
+                && StaticAdapters.TryGetValue(declaringType, out var staticCache)
+                && staticCache.Adapters.ContainsKey(
+                    (target.Method.MethodHandle, target.GetType()));
         }
 
         return InstanceAdapters.TryGetValue(target.Target, out var instanceCache)
-            && instanceCache.Adapters.ContainsKey((target.Method, target.GetType()));
+            && instanceCache.Adapters.ContainsKey(
+                (target.Method.MethodHandle, target.GetType()));
     }
 
     internal static object? WrapJavaScriptVisibleValue(object? value)

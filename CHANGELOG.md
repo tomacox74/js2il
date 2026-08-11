@@ -6,6 +6,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- runtime: close issue #1764 by keying stable built-in adapters by CLR method
+  identity instead of transient `MethodInfo` object identity and by completing
+  deferred `Function.prototype` links after cyclic intrinsic startup. This
+  keeps built-in `.call` available across concurrent/full-suite runtime
+  initialization and adds a deterministic Array iterator/prototype regression.
 - compiler/runtime: close issue #1762 by materializing class declarations and
   class expressions as their canonical generated `JsFunctionObject`
   subclasses. Add `JsClassConstructorObject` for shared class-only call and

@@ -17,8 +17,16 @@ public static class Function
     private static readonly Func<object[], object?[], object?> _restrictedPropertyThrower =
         static (_, _) => throw new TypeError("Cannot access restricted function property");
 
-    internal static readonly JsObject Prototype = CreatePrototype();
-    internal static readonly JsObject RestrictedPropertiesPrototype = CreateRestrictedPropertiesPrototype();
+    internal static readonly JsObject Prototype;
+    internal static readonly JsObject RestrictedPropertiesPrototype;
+
+    static Function()
+    {
+        Prototype = CreatePrototype();
+        RestrictedPropertiesPrototype = CreateRestrictedPropertiesPrototype();
+        BuiltinDelegateFunctionAdapter
+            .CompleteDeferredFunctionPrototypeInitialization(Prototype);
+    }
 
     private static JsObject CreatePrototype()
     {
@@ -368,6 +376,16 @@ public static class Function
 
         private static void InitializeFunctionPrototype(object functionObject)
         {
+            if (Prototype is null)
+            {
+                if (functionObject is BuiltinDelegateFunctionAdapter adapter)
+                {
+                    BuiltinDelegateFunctionAdapter
+                        .DeferFunctionPrototypeInitialization(adapter);
+                }
+                return;
+            }
+
             if (PrototypeChain.GetPrototypeOrNull(functionObject) == null)
             {
                 PrototypeChain.SetPrototype(functionObject, Prototype);
