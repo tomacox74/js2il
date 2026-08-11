@@ -429,10 +429,11 @@ internal static partial class LIRInstructionInfo
                 or LIRNegateNumber
                 or LIRBitwiseNotNumber
                 or LIRIsInstanceOf
-                or LIRPrivateBrandCheck
                 or LIRTypeof
                 or LIRCopyTemp
                 => LIRInstructionEffects.None,
+
+            LIRPrivateBrandCheck => LIRInstructionEffects.MayThrow,
 
             LIRLoadParameter
                 or LIRLoadThis
