@@ -158,7 +158,8 @@ public class ExecutionTests
                 nameof(Compile_Scripts_Test262RuntimeNegativeRejectsWrongErrorType),
                 "Integration",
                 _ => (script, null),
-                sourceFilePath);
+                sourceFilePath,
+                allowUnhandledException: true);
         });
         Assert.Contains("expected runtime exception 'TypeError', but got 'Error'", exception.Message);
     }

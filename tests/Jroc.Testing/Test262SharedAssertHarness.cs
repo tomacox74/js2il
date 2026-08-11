@@ -24,10 +24,8 @@ public static class Test262SharedAssertHarness
         var preparedEntryScript = BuildPreparedEntryScript(entryScript, metadata, callerSourceFilePath);
         var hostRuntimeIntrinsics = Test262HostRuntimeIntrinsics.Create();
 
-        var expectsRuntimeException = string.Equals(
-            metadata.NegativePhase,
-            "runtime",
-            StringComparison.OrdinalIgnoreCase);
+        var expectsRuntimeException = allowUnhandledException
+            && string.Equals(metadata.NegativePhase, "runtime", StringComparison.OrdinalIgnoreCase);
         var result = InMemoryTestCompiler.CompileAndExecute(
             testName,
             testCategory,
@@ -39,7 +37,7 @@ public static class Test262SharedAssertHarness
                 callerSourceFilePath,
                 getJavaScriptAndSourcePath),
             enableIRMetrics: enableIRMetrics,
-            allowUnhandledException: allowUnhandledException || expectsRuntimeException,
+            allowUnhandledException: allowUnhandledException,
             addMocks: addMocks,
             hostRuntimeIntrinsics: hostRuntimeIntrinsics,
             timeoutMs: timeoutMs);
@@ -75,7 +73,7 @@ public static class Test262SharedAssertHarness
             scriptBuilder.AppendLine("\"use strict\";");
         }
 
-        var helperFiles = new List<string> { "assert.js" };
+        var helperFiles = new List<string>();
         helperFiles.AddRange(GetInlineHarnessFileNames(metadata.Includes));
 
         foreach (var helperFile in helperFiles.Distinct(StringComparer.Ordinal))

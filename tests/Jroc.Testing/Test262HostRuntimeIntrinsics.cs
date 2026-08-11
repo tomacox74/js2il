@@ -1,4 +1,5 @@
 using JavaScriptRuntime;
+using JavaScriptRuntime.Node;
 
 namespace Jroc.Tests;
 
@@ -6,6 +7,7 @@ public static class Test262HostRuntimeIntrinsics
 {
     public static HostRuntimeIntrinsicDescriptors Create()
         => new HostRuntimeIntrinsicDescriptorsBuilder()
+            .AddGlobalFactory("assert", CreateNodeAssertAdapter)
             .AddGlobalFactory("Test262Error", CreateTest262ErrorConstructor)
             .AddGlobalFactory("$ERROR", () => CreateFunction(
                 (Action<object?>)(message => throw CreateTest262Error(message)),
@@ -62,6 +64,35 @@ public static class Test262HostRuntimeIntrinsics
                 "asyncTest",
                 1))
             .Build();
+
+    private static object CreateNodeAssertAdapter()
+    {
+        var assert = new AssertModule();
+        ObjectRuntime.SetItem(assert, "sameValue", CreateFunction(
+            (Action<object?, object?, object?>)((actual, expected, message) =>
+                assert.strictEqual(actual, expected, message)),
+            "sameValue",
+            3));
+        ObjectRuntime.SetItem(assert, "notSameValue", CreateFunction(
+            (Action<object?, object?, object?>)((actual, unexpected, message) =>
+                assert.notStrictEqual(actual, unexpected, message)),
+            "notSameValue",
+            3));
+        ObjectRuntime.SetItem(assert, "throws", CreateFunction(
+            (Action<object?, object?, object?>)((expectedErrorConstructor, fn, message) =>
+                assert.throws(
+                    fn,
+                    expectedErrorConstructor,
+                    message is null or JsNull ? null : ToMessage(message))),
+            "throws",
+            3));
+        ObjectRuntime.SetItem(assert, "compareArray", CreateFunction(
+            (Action<object?, object?, object?>)((actual, expected, message) =>
+                assert.ok(CompareArray(actual, expected), message)),
+            "compareArray",
+            3));
+        return assert;
+    }
 
     private static object CreateTest262ErrorConstructor()
     {
