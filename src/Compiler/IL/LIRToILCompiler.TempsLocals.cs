@@ -1605,8 +1605,10 @@ internal sealed partial class LIRToILCompiler
                         isPrivateField: true,
                         isStaticField: false);
                     EmitLoadTempAsObject(loadPrivateReceiverField.Receiver, ilEncoder, allocation, methodDescriptor);
-                    ilEncoder.OpCode(ILOpCode.Castclass);
-                    ilEncoder.Token(privateOwnerType);
+                    EmitPrivateReceiverBrandCheck(
+                        privateOwnerType,
+                        loadPrivateReceiverField.FieldName,
+                        ilEncoder);
                     ilEncoder.OpCode(ILOpCode.Ldfld);
                     ilEncoder.Token(privateField);
                     EmitBoxIfNeededForTypedUserClassFieldLoad(
@@ -1628,6 +1630,12 @@ internal sealed partial class LIRToILCompiler
                     }
 
                     EmitLoadTempAsObject(privateBrandCheck.Value, ilEncoder, allocation, methodDescriptor);
+                    var requirePrivateBrandTarget = _memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.ObjectRuntime),
+                        nameof(JavaScriptRuntime.ObjectRuntime.RequirePrivateBrandTarget),
+                        parameterTypes: new[] { typeof(object) });
+                    ilEncoder.OpCode(ILOpCode.Call);
+                    ilEncoder.Token(requirePrivateBrandTarget);
                     ilEncoder.OpCode(ILOpCode.Isinst);
                     ilEncoder.Token(privateBrandType);
                     ilEncoder.OpCode(ILOpCode.Ldnull);

@@ -247,7 +247,8 @@ internal sealed partial class LIRToILCompiler
                         EmitLoadTemp(scopesTemp, ilEncoder, allocation, methodDescriptor);
                     }
 
-                    for (var argumentIndex = 0; argumentIndex < newUserClass.Arguments.Count; argumentIndex++)
+                    var argsToPass = Math.Min(argc, newUserClass.MaxArgCount);
+                    for (var argumentIndex = 0; argumentIndex < argsToPass; argumentIndex++)
                     {
                         var parameterClrType = argumentIndex < newUserClass.ParameterClrTypes.Count
                             ? newUserClass.ParameterClrTypes[argumentIndex]

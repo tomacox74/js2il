@@ -90,8 +90,10 @@ internal sealed partial class LIRToILCompiler
                         isPrivateField: true,
                         isStaticField: false);
                     EmitLoadTempAsObject(storePrivateReceiverField.Receiver, ilEncoder, allocation, methodDescriptor);
-                    ilEncoder.OpCode(ILOpCode.Castclass);
-                    ilEncoder.Token(privateOwnerType);
+                    EmitPrivateReceiverBrandCheck(
+                        privateOwnerType,
+                        storePrivateReceiverField.FieldName,
+                        ilEncoder);
                     EmitLoadTempAsClrType(
                         storePrivateReceiverField.Value,
                         privateFieldType,
@@ -306,8 +308,10 @@ internal sealed partial class LIRToILCompiler
                         isPrivateField: true,
                         isStaticField: false);
                     EmitLoadTempAsObject(loadPrivateReceiverField.Receiver, ilEncoder, allocation, methodDescriptor);
-                    ilEncoder.OpCode(ILOpCode.Castclass);
-                    ilEncoder.Token(privateOwnerType);
+                    EmitPrivateReceiverBrandCheck(
+                        privateOwnerType,
+                        loadPrivateReceiverField.FieldName,
+                        ilEncoder);
                     ilEncoder.OpCode(ILOpCode.Ldfld);
                     ilEncoder.Token(privateField);
                     EmitBoxIfNeededForTypedUserClassFieldLoad(
@@ -367,6 +371,7 @@ internal sealed partial class LIRToILCompiler
                         {
                             return false;
                         }
+
                     }
                     else
                     {
@@ -435,5 +440,31 @@ internal sealed partial class LIRToILCompiler
         }
 
         return true;
+    }
+
+    private void EmitPrivateReceiverBrandCheck(
+        TypeDefinitionHandle ownerType,
+        string fieldName,
+        InstructionEncoder ilEncoder)
+    {
+        var validReceiver = ilEncoder.DefineLabel();
+        ilEncoder.OpCode(ILOpCode.Dup);
+        ilEncoder.OpCode(ILOpCode.Isinst);
+        ilEncoder.Token(ownerType);
+        ilEncoder.Branch(ILOpCode.Brtrue, validReceiver);
+        ilEncoder.OpCode(ILOpCode.Pop);
+
+        var typeErrorConstructor = _memberRefRegistry.GetOrAddConstructor(
+            typeof(JavaScriptRuntime.TypeError),
+            parameterTypes: new[] { typeof(string) });
+        ilEncoder.LoadString(_metadataBuilder.GetOrAddUserString(
+            $"Receiver must declare private member '#{fieldName}'"));
+        ilEncoder.OpCode(ILOpCode.Newobj);
+        ilEncoder.Token(typeErrorConstructor);
+        ilEncoder.OpCode(ILOpCode.Throw);
+
+        ilEncoder.MarkLabel(validReceiver);
+        ilEncoder.OpCode(ILOpCode.Castclass);
+        ilEncoder.Token(ownerType);
     }
 }

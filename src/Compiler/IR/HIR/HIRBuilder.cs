@@ -3561,8 +3561,20 @@ partial class HIRMethodBuilder
 
             case BinaryExpression binaryExpr:
                 if (binaryExpr.Operator == Acornima.Operator.In
-                    && binaryExpr.Left is PrivateIdentifier
-                    && TryGetEnclosingClassScope(_currentScope, out var brandClassScope)
+                    && binaryExpr.Left is PrivateIdentifier brandIdentifier
+                    && TryGetEnclosingClassDefinition(out var brandClassScope, out var brandClassBody)
+                    && !brandClassBody.Body.Any(element => element switch
+                    {
+                        PropertyDefinition property =>
+                            property.Key is PrivateIdentifier privateKey
+                            && string.Equals(privateKey.Name, brandIdentifier.Name, StringComparison.Ordinal)
+                            && property.Static,
+                        MethodDefinition method =>
+                            method.Key is PrivateIdentifier privateKey
+                            && string.Equals(privateKey.Name, brandIdentifier.Name, StringComparison.Ordinal)
+                            && method.Static,
+                        _ => false
+                    })
                     && TryParseExpression(binaryExpr.Right, out var brandTarget))
                 {
                     hirExpr = new HIRPrivateBrandCheckExpression

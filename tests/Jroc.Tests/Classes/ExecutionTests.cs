@@ -174,6 +174,13 @@ namespace Jroc.Tests.Classes
         }
 
         [Fact]
+        public Task Classes_Constructor_ExtraArguments_FusedFieldStore()
+        {
+            var testName = nameof(Classes_Constructor_ExtraArguments_FusedFieldStore);
+            return ExecutionTest(testName);
+        }
+
+        [Fact]
         public Task Classes_PrivateBrandCheck()
         {
             var testName = nameof(Classes_PrivateBrandCheck);

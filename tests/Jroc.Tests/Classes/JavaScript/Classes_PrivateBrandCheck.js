@@ -29,3 +29,21 @@ const example = new Example(1);
 console.log(Example.read(example));
 Example.write(example, 2);
 console.log(Example.read(example));
+
+try {
+    Example.hasBrand(1);
+} catch (error) {
+    console.log(error instanceof TypeError);
+}
+
+try {
+    Example.read({});
+} catch (error) {
+    console.log(error instanceof TypeError);
+}
+
+try {
+    Example.write({}, 3);
+} catch (error) {
+    console.log(error instanceof TypeError);
+}
