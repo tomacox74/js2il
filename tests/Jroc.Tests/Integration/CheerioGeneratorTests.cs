@@ -6,6 +6,7 @@ namespace Jroc.Tests.Integration;
 public class CheerioGeneratorTests
 {
     [Fact]
+    [Trait("Category", "ReleaseOnly")]
     public void Compile_Cheerio_1_2_0()
     {
         var fixtureDirectory = Path.Combine(

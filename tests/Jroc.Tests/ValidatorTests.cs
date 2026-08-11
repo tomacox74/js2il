@@ -170,13 +170,14 @@ public class ValidatorTests
     }
 
     [Fact]
-    public void Validate_Require_UnsupportedModule_ReportsError()
+    public void Validate_Require_UnsupportedModule_ReportsRuntimeWarning()
     {
         var js = "const t = require('node:dgram');";
         var ast = ParseStrict(js);
         var result = _validator.Validate(ast);
-        Assert.False(result.IsValid);
-        Assert.Contains(result.Errors, e => e.Contains("Module 'node:dgram' is not yet supported"));
+        Assert.True(result.IsValid);
+        Assert.Empty(result.Errors);
+        Assert.Contains(result.Warnings, e => e.Contains("Module 'node:dgram' is not yet supported"));
     }
 
     [Fact]

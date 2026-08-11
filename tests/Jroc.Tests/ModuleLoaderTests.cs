@@ -73,7 +73,7 @@ public class ModuleLoaderTests
     }
 
     [Fact]
-    public void LoadModules_RequestResolutionFailures_ReportAllErrors_AndStillWalkResolvedDependencies()
+    public void LoadModules_UnresolvedRequiresWarn_AndStillWalkResolvedDependencies()
     {
         var fileSystem = new MockFileSystem();
         var logger = new TestLogger();
@@ -96,9 +96,33 @@ public class ModuleLoaderTests
         var modules = loader.LoadModules(rootPath);
 
         Assert.Null(modules);
-        Assert.Contains("require('./missingA')", logger.Errors);
-        Assert.Contains("require('./missingB')", logger.Errors);
+        Assert.Contains("require('./missingA')", logger.Warnings);
+        Assert.Contains("require('./missingB')", logger.Warnings);
         Assert.Contains(Path.GetFileName(okPath), logger.Errors, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public void LoadModules_UnresolvedRequire_LoadsSuccessfullyWithWarning()
+    {
+        var fileSystem = new MockFileSystem();
+        var logger = new TestLogger();
+        var options = new CompilerOptions { Verbose = false };
+        var resolver = new NodeModuleResolver(fileSystem);
+        var loader = new ModuleLoader(options, fileSystem, resolver, logger);
+
+        var rootPath = Path.GetFullPath(Path.Combine(
+            Path.GetTempPath(),
+            "jroc-tests",
+            Guid.NewGuid().ToString("N"),
+            "root.js"));
+        fileSystem.AddFile(rootPath, "if (false) require('./missing');\nmodule.exports = 1;\n");
+
+        var modules = loader.LoadModules(rootPath);
+
+        Assert.NotNull(modules);
+        Assert.True(string.IsNullOrWhiteSpace(logger.Errors));
+        Assert.Contains("require('./missing')", logger.Warnings);
+        Assert.Contains("will throw at runtime if executed", logger.Warnings);
     }
 
     [Fact]

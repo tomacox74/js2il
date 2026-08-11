@@ -279,7 +279,15 @@ public class ModuleLoader
             return false;
         }
 
-        var requestResolutionOk = TryResolveAndRewriteModuleRequests(jsSource, ast, modulePath, rootModulePath, out var moduleDependencies, out var requestRewrittenSource, out var requestRewriteErrors);
+        var requestResolutionOk = TryResolveAndRewriteModuleRequests(
+            jsSource,
+            ast,
+            modulePath,
+            rootModulePath,
+            out var moduleDependencies,
+            out var requestRewrittenSource,
+            out var requestRewriteErrors,
+            out var requestRewriteWarnings);
         if (!requestResolutionOk)
         {
             foreach (var requestRewriteError in requestRewriteErrors)
@@ -457,6 +465,11 @@ public class ModuleLoader
             diagnostics.AddWarnings(module.ModuleId, modulePath, validationResult.Warnings);
         }
 
+        if (requestRewriteWarnings.Any())
+        {
+            diagnostics.AddWarnings(module.ModuleId, modulePath, requestRewriteWarnings);
+        }
+
         return requestResolutionOk;
     }
 
@@ -584,11 +597,13 @@ function __jroc_esm_export(name, getter) {
         string rootModulePath,
         out List<ModuleDependency> dependencies,
         out string rewrittenSource,
-        out List<string> errors)
+        out List<string> errors,
+        out List<string> warnings)
     {
         var resolvedDependencies = new List<ModuleDependency>();
         rewrittenSource = source;
         var localErrors = new List<string>();
+        var localWarnings = new List<string>();
 
         var baseDirectory = Path.GetDirectoryName(modulePath) ?? ".";
         var edits = new List<TextEdit>();
@@ -603,7 +618,16 @@ function __jroc_esm_export(name, getter) {
 
             if (!_moduleResolver.TryResolve(specifier, baseDirectory, resolutionMode, out var resolvedPath, out var resolveError))
             {
-                localErrors.Add($"Failed to resolve {operationDescription} from '{modulePath}': {resolveError}");
+                var message = $"Failed to resolve {operationDescription} from '{modulePath}': {resolveError}";
+                if (resolutionMode == ModuleResolutionMode.Require)
+                {
+                    localWarnings.Add(
+                        $"{message}. The require call remains unresolved and will throw at runtime if executed.");
+                }
+                else
+                {
+                    localErrors.Add(message);
+                }
                 return;
             }
 
@@ -663,6 +687,7 @@ function __jroc_esm_export(name, getter) {
         dependencies = resolvedDependencies;
         rewrittenSource = ApplyTextEdits(source, edits);
         errors = localErrors;
+        warnings = localWarnings;
         return localErrors.Count == 0;
     }
 

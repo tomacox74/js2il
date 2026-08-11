@@ -1565,12 +1565,14 @@ public class JavaScriptAstValidator : IAstValidator
                     }
 
                     // Explicit node: prefix indicates a Node built-in module.
-                    // If it is not supported by the runtime, report an error.
+                    // Unsupported requires can be present in an unexecuted runtime path.
                     if (modName.TrimStart().StartsWith("node:", StringComparison.OrdinalIgnoreCase)
                         && !_runtimeIntrinsicCatalog.TryGetModuleBinding(normalizedName, out _))
                     {
-                        result.Errors.Add($"Module '{modName}' is not yet supported (line {node.Location.Start.Line})");
-                        result.IsValid = false;
+                        AddWarning(
+                            result,
+                            $"Module '{modName}' is not yet supported. The require call will throw at runtime if executed",
+                            call);
                     }
 
                     // Bare specifiers without node: are permitted to support npm packages.

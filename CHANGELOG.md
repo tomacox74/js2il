@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- compiler/runtime: defer unresolved literal CommonJS `require()` targets to
+  runtime with compiler warnings, allowing unexecuted optional code paths to
+  compile. Unknown `node:` built-ins now throw Node-compatible
+  `ERR_UNKNOWN_BUILTIN_MODULE` errors when executed.
 - runtime/node: add `diagnostics_channel` and `node:diagnostics_channel` with
   a complete generated Node.js 24.18.1 contract. Named channels reuse
   identity within a runtime, provide the low-overhead `hasSubscribers` guard
