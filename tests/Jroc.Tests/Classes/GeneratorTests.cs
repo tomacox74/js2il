@@ -209,6 +209,13 @@ namespace Jroc.Tests.Classes
             return GenerateTest(testName);
         }
 
+        [Fact]
+        public Task Classes_PrivateBrandCheck()
+        {
+            var testName = nameof(Classes_PrivateBrandCheck);
+            return GenerateTest(testName);
+        }
+
         // PL5.5: Test that methods without explicit return return 'undefined', not 'this'
         // BUG: Currently methods without explicit return incorrectly return 'this' instead of 'undefined'
         [Fact]
