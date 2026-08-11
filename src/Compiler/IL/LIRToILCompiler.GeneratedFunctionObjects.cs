@@ -82,6 +82,44 @@ internal sealed partial class LIRToILCompiler
 
         ilEncoder.OpCode(ILOpCode.Newobj);
         ilEncoder.Token(metadata.ConstructorHandle);
+        if (createFunction.CallableId.Kind == CallableKind.ClassConstructor)
+        {
+            if (!createFunction.ClassConstructorType.HasValue)
+            {
+                throw new InvalidOperationException(
+                    $"Generated class constructor '{createFunction.CallableId.DisplayName}' is missing its CLR class type.");
+            }
+
+            EmitLoadTemp(
+                createFunction.ClassConstructorType.Value,
+                ilEncoder,
+                allocation,
+                methodDescriptor);
+            EmitLoadTemp(
+                createFunction.ScopesArray,
+                ilEncoder,
+                allocation,
+                methodDescriptor);
+            ilEncoder.LoadConstantI4(createFunction.ClassConstructorLength);
+            ilEncoder.OpCode(ILOpCode.Conv_r8);
+            ilEncoder.LoadConstantI4(
+                createFunction.IsFreshClassConstructor ? 1 : 0);
+            ilEncoder.Call(_memberRefRegistry.GetOrAddMethod(
+                typeof(JavaScriptRuntime.RuntimeServices),
+                nameof(JavaScriptRuntime.RuntimeServices.InitializeClassConstructorObject),
+                new[]
+                {
+                    typeof(JavaScriptRuntime.JsClassConstructorObject),
+                    typeof(Type),
+                    typeof(object[]),
+                    typeof(double),
+                    typeof(bool)
+                }));
+            ilEncoder.OpCode(ILOpCode.Castclass);
+            ilEncoder.Token(metadata.TypeHandle);
+            return true;
+        }
+
         EmitInitializeGeneratedFunctionInstance(
             createFunction.CallableId,
             isAsync: createFunction.IsAsync,

@@ -10,6 +10,20 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   runtime with compiler warnings, allowing unexecuted optional code paths to
   compile. Unknown `node:` built-ins now throw Node-compatible
   `ERR_UNKNOWN_BUILTIN_MODULE` errors when executed.
+- runtime: close issue #1764 by keying stable built-in adapters by CLR method
+  identity instead of transient `MethodInfo` object identity and by completing
+  deferred `Function.prototype` links after cyclic intrinsic startup. This
+  keeps built-in `.call` available across concurrent/full-suite runtime
+  initialization and adds a deterministic Array iterator/prototype regression.
+- compiler/runtime: close issue #1762 by materializing class declarations and
+  class expressions as their canonical generated `JsFunctionObject`
+  subclasses. Add `JsClassConstructorObject` for shared class-only call and
+  construction semantics, retain declaration identity while keeping class
+  expression evaluation fresh, and remove the separate
+  `ClassConstructorValue` representation. Preserve inheritance, `new.target`,
+  static initialization, reflection, proxies, bound construction, class
+  metadata, and constructor return behavior with execution, IL, and
+  architecture guardrails.
 - runtime/node: add `diagnostics_channel` and `node:diagnostics_channel` with
   a complete generated Node.js 24.18.1 contract. Named channels reuse
   identity within a runtime, provide the low-overhead `hasSubscribers` guard

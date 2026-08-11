@@ -151,7 +151,7 @@ internal sealed partial class LIRToILCompiler
                     // Instance fields are stored on the runtime `this`.
                     // - In instance methods (class methods/ctors): receiver is IL arg0.
                     // - In static JS callables (functions/arrows): use ObjectRuntime.SetItem because
-                    //   `this` may be a ClassConstructorValue (the class itself, e.g. for static accessors),
+                    //   `this` may be a generated class constructor object (e.g. for static accessors),
                     //   not a CLR instance, so castclass+stfld would fail.
                     if (methodDescriptor.IsStatic)
                     {
@@ -312,7 +312,7 @@ internal sealed partial class LIRToILCompiler
                     // Instance fields are loaded from the runtime `this`.
                     // - In instance methods (class methods/ctors): receiver is IL arg0.
                     // - In static JS callables (functions/arrows): use runtime helpers because
-                    //   `this` may be a ClassConstructorValue (the class itself, e.g. for static accessors),
+                    //   `this` may be a generated class constructor object (e.g. for static accessors),
                     //   not a CLR instance, so castclass+ldfld would fail.
                     if (methodDescriptor.IsStatic)
                     {

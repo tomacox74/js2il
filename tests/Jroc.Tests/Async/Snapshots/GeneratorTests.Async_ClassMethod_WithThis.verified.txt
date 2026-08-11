@@ -198,7 +198,7 @@
 		} // end of class Scope_getCount
 
 		.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassConstructor_9194BF49_Counter
-			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject
 		{
 			// Fields
 			.field private initonly object[] _transitionalScopes
@@ -214,7 +214,7 @@
 				.maxstack 8
 
 				IL_0000: ldarg.0
-				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject::.ctor()
 				IL_0006: ldarg.0
 				IL_0007: ldarg.1
 				IL_0008: stfld object[] Modules.Async_ClassMethod_WithThis/Counter/FunctionObject_ClassConstructor_9194BF49_Counter::_transitionalScopes
@@ -242,36 +242,6 @@
 				IL_0000: ldc.i4.1
 				IL_0001: ret
 			} // end of method FunctionObject_ClassConstructor_9194BF49_Counter::get_RequiresInvocationContext
-
-			.method family hidebysig virtual 
-				instance object CallCore (
-					object thisArgument,
-					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 11 (0xb)
-				.maxstack 8
-
-				IL_0000: ldstr "Class constructor cannot be invoked without 'new'"
-				IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-				IL_000a: throw
-			} // end of method FunctionObject_ClassConstructor_9194BF49_Counter::CallCore
-
-			.method family hidebysig virtual 
-				instance object ConstructCore (
-					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
-					object newTarget
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 11 (0xb)
-				.maxstack 8
-
-				IL_0000: ldstr "Generated construction adapter is reserved for the callable-family construction migration"
-				IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-				IL_000a: throw
-			} // end of method FunctionObject_ClassConstructor_9194BF49_Counter::ConstructCore
 
 		} // end of class FunctionObject_ClassConstructor_9194BF49_Counter
 
@@ -531,7 +501,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 330 (0x14a)
+		// Code size: 331 (0x14b)
 		.maxstack 13
 		.locals init (
 			[0] class Modules.Async_ClassMethod_WithThis/Scope,
@@ -539,9 +509,10 @@
 			[2] class Modules.Async_ClassMethod_WithThis/Counter,
 			[3] class [System.Runtime]System.Type,
 			[4] object[],
-			[5] object,
+			[5] class Modules.Async_ClassMethod_WithThis/Counter/FunctionObject_ClassConstructor_9194BF49_Counter,
 			[6] class Modules.Async_ClassMethod_WithThis/Counter,
-			[7] class Modules.Async_ClassMethod_WithThis/ArrowFunction_L16C25/FunctionObject
+			[7] object,
+			[8] class Modules.Async_ClassMethod_WithThis/ArrowFunction_L16C25/FunctionObject
 		)
 
 		IL_0000: newobj instance void Modules.Async_ClassMethod_WithThis/Scope::.ctor()
@@ -619,64 +590,68 @@
 		IL_00a0: ldloc.0
 		IL_00a1: stelem.ref
 		IL_00a2: stloc.s 4
-		IL_00a4: ldloc.3
-		IL_00a5: ldloc.s 4
-		IL_00a7: ldc.r8 0.0
-		IL_00b0: box [System.Runtime]System.Double
-		IL_00b5: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateClassConstructorValue(object, object, object)
-		IL_00ba: stloc.s 5
-		IL_00bc: ldloc.s 5
-		IL_00be: stloc.1
-		IL_00bf: ldc.i4.0
-		IL_00c0: newarr [System.Runtime]System.Object
-		IL_00c5: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
-		IL_00ca: newobj instance void Modules.Async_ClassMethod_WithThis/Counter::.ctor()
-		IL_00cf: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
-		IL_00d4: stloc.2
-		IL_00d5: ldloc.2
-		IL_00d6: ldtoken Modules.Async_ClassMethod_WithThis/Counter
-		IL_00db: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_00e0: ldstr "prototype"
-		IL_00e5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
-		IL_00ea: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
-		IL_00ef: ldloc.2
-		IL_00f0: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Async_ClassMethod_WithThis/Counter>(!!0)
-		IL_00f5: stloc.s 6
-		IL_00f7: ldloc.s 6
-		IL_00f9: ldc.i4.1
-		IL_00fa: newarr [System.Runtime]System.Object
-		IL_00ff: dup
-		IL_0100: ldc.i4.0
-		IL_0101: ldloc.0
-		IL_0102: stelem.ref
-		IL_0103: ldnull
-		IL_0104: callvirt instance object Modules.Async_ClassMethod_WithThis/Counter::getCount(object[], object)
-		IL_0109: stloc.s 5
-		IL_010b: ldloc.s 5
-		IL_010d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0112: stloc.s 5
-		IL_0114: ldc.i4.1
-		IL_0115: newarr [System.Runtime]System.Object
-		IL_011a: dup
-		IL_011b: ldc.i4.0
-		IL_011c: ldloc.0
-		IL_011d: stelem.ref
-		IL_011e: stloc.s 4
-		IL_0120: newobj instance void Modules.Async_ClassMethod_WithThis/ArrowFunction_L16C25/FunctionObject::.ctor()
-		IL_0125: ldc.i4.1
-		IL_0126: conv.r8
-		IL_0127: ldstr ""
-		IL_012c: ldc.i4.0
+		IL_00a4: ldloc.s 4
+		IL_00a6: newobj instance void Modules.Async_ClassMethod_WithThis/Counter/FunctionObject_ClassConstructor_9194BF49_Counter::.ctor(object[])
+		IL_00ab: ldloc.3
+		IL_00ac: ldloc.s 4
+		IL_00ae: ldc.i4.0
+		IL_00af: conv.r8
+		IL_00b0: ldc.i4.0
+		IL_00b1: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
+		IL_00b6: castclass Modules.Async_ClassMethod_WithThis/Counter/FunctionObject_ClassConstructor_9194BF49_Counter
+		IL_00bb: stloc.s 5
+		IL_00bd: ldloc.s 5
+		IL_00bf: stloc.1
+		IL_00c0: ldc.i4.0
+		IL_00c1: newarr [System.Runtime]System.Object
+		IL_00c6: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
+		IL_00cb: newobj instance void Modules.Async_ClassMethod_WithThis/Counter::.ctor()
+		IL_00d0: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
+		IL_00d5: stloc.2
+		IL_00d6: ldloc.2
+		IL_00d7: ldtoken Modules.Async_ClassMethod_WithThis/Counter
+		IL_00dc: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_00e1: ldstr "prototype"
+		IL_00e6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
+		IL_00eb: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
+		IL_00f0: ldloc.2
+		IL_00f1: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Async_ClassMethod_WithThis/Counter>(!!0)
+		IL_00f6: stloc.s 6
+		IL_00f8: ldloc.s 6
+		IL_00fa: ldc.i4.1
+		IL_00fb: newarr [System.Runtime]System.Object
+		IL_0100: dup
+		IL_0101: ldc.i4.0
+		IL_0102: ldloc.0
+		IL_0103: stelem.ref
+		IL_0104: ldnull
+		IL_0105: callvirt instance object Modules.Async_ClassMethod_WithThis/Counter::getCount(object[], object)
+		IL_010a: stloc.s 7
+		IL_010c: ldloc.s 7
+		IL_010e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0113: stloc.s 7
+		IL_0115: ldc.i4.1
+		IL_0116: newarr [System.Runtime]System.Object
+		IL_011b: dup
+		IL_011c: ldc.i4.0
+		IL_011d: ldloc.0
+		IL_011e: stelem.ref
+		IL_011f: stloc.s 4
+		IL_0121: newobj instance void Modules.Async_ClassMethod_WithThis/ArrowFunction_L16C25/FunctionObject::.ctor()
+		IL_0126: ldc.i4.1
+		IL_0127: conv.r8
+		IL_0128: ldstr ""
 		IL_012d: ldc.i4.0
-		IL_012e: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Async_ClassMethod_WithThis/ArrowFunction_L16C25/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_0133: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Async_ClassMethod_WithThis/ArrowFunction_L16C25/FunctionObject>(!!0)
-		IL_0138: stloc.s 7
-		IL_013a: ldloc.s 5
-		IL_013c: ldstr "then"
-		IL_0141: ldloc.s 7
-		IL_0143: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0148: pop
-		IL_0149: ret
+		IL_012e: ldc.i4.0
+		IL_012f: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Async_ClassMethod_WithThis/ArrowFunction_L16C25/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_0134: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Async_ClassMethod_WithThis/ArrowFunction_L16C25/FunctionObject>(!!0)
+		IL_0139: stloc.s 8
+		IL_013b: ldloc.s 7
+		IL_013d: ldstr "then"
+		IL_0142: ldloc.s 8
+		IL_0144: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0149: pop
+		IL_014a: ret
 	} // end of method Async_ClassMethod_WithThis::__js_module_init__
 
 } // end of class Modules.Async_ClassMethod_WithThis

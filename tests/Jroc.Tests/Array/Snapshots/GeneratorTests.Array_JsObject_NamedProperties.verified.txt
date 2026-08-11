@@ -50,7 +50,7 @@
 		} // end of class Scope_ctor
 
 		.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassConstructor_B384E33B_DerivedArray
-			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject
 		{
 			// Fields
 			.field private initonly object[] _transitionalScopes
@@ -70,7 +70,7 @@
 				.maxstack 8
 
 				IL_0000: ldarg.0
-				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject::.ctor()
 				IL_0006: ldarg.0
 				IL_0007: ldarg.1
 				IL_0008: stfld object[] Modules.Array_JsObject_NamedProperties/DerivedArray/FunctionObject_ClassConstructor_B384E33B_DerivedArray::_transitionalScopes
@@ -128,36 +128,6 @@
 				IL_0001: ldfld object[] Modules.Array_JsObject_NamedProperties/DerivedArray/FunctionObject_ClassConstructor_B384E33B_DerivedArray::_lexicalSuperScopes
 				IL_0006: ret
 			} // end of method FunctionObject_ClassConstructor_B384E33B_DerivedArray::GetLexicalSuperScopesCore
-
-			.method family hidebysig virtual 
-				instance object CallCore (
-					object thisArgument,
-					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 11 (0xb)
-				.maxstack 8
-
-				IL_0000: ldstr "Class constructor cannot be invoked without 'new'"
-				IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-				IL_000a: throw
-			} // end of method FunctionObject_ClassConstructor_B384E33B_DerivedArray::CallCore
-
-			.method family hidebysig virtual 
-				instance object ConstructCore (
-					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
-					object newTarget
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 11 (0xb)
-				.maxstack 8
-
-				IL_0000: ldstr "Generated construction adapter is reserved for the callable-family construction migration"
-				IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-				IL_000a: throw
-			} // end of method FunctionObject_ClassConstructor_B384E33B_DerivedArray::ConstructCore
 
 		} // end of class FunctionObject_ClassConstructor_B384E33B_DerivedArray
 
@@ -262,7 +232,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 1577 (0x629)
+		// Code size: 1593 (0x639)
 		.maxstack 10
 		.locals init (
 			[0] class Modules.Array_JsObject_NamedProperties/Scope,
@@ -288,7 +258,8 @@
 			[20] string,
 			[21] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
 			[22] object[],
-			[23] class [System.Runtime]System.Type
+			[23] class [System.Runtime]System.Type,
+			[24] class Modules.Array_JsObject_NamedProperties/DerivedArray/FunctionObject_ClassConstructor_B384E33B_DerivedArray
 		)
 
 		IL_0000: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::Enable()
@@ -699,89 +670,100 @@
 		IL_0502: ldtoken Modules.Array_JsObject_NamedProperties/DerivedArray
 		IL_0507: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
 		IL_050c: stloc.s 23
-		IL_050e: ldloc.s 23
-		IL_0510: ldloc.s 22
-		IL_0512: ldc.r8 0.0
-		IL_051b: box [System.Runtime]System.Double
-		IL_0520: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateClassConstructorValue(object, object, object)
-		IL_0525: stloc.s 19
-		IL_0527: ldstr "Array"
-		IL_052c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0531: stloc.s 13
-		IL_0533: ldloc.s 19
-		IL_0535: ldloc.s 13
-		IL_0537: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetClassConstructorPrototype(object, object)
-		IL_053c: stloc.s 13
-		IL_053e: ldloc.s 13
-		IL_0540: stloc.s 9
-		IL_0542: ldc.i4.0
-		IL_0543: newarr [System.Runtime]System.Object
-		IL_0548: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
-		IL_054d: ldloc.s 9
-		IL_054f: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentNewTarget(object)
-		IL_0554: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushDerivedConstructorThisBinding()
-		IL_0559: newobj instance void Modules.Array_JsObject_NamedProperties/DerivedArray::.ctor()
-		IL_055e: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentNewTarget()
-		IL_0563: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
-		IL_0568: dup
-		IL_0569: ldloc.s 9
-		IL_056b: ldstr "prototype"
-		IL_0570: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
-		IL_0575: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
-		IL_057a: stloc.s 10
-		IL_057c: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_0581: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
-		IL_0586: stloc.s 10
-		IL_0588: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopDerivedConstructorThisBinding()
-		IL_058d: ldloc.s 10
-		IL_058f: ldc.r8 1
-		IL_0598: ldc.r8 42
-		IL_05a1: ldc.i4.0
-		IL_05a2: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItemNumber(object, float64, float64, bool)
-		IL_05a7: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_05ac: stloc.s 12
-		IL_05ae: ldloc.s 10
-		IL_05b0: ldstr "length"
-		IL_05b5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_05ba: stloc.s 13
-		IL_05bc: ldloc.s 10
-		IL_05be: ldc.r8 1
-		IL_05c7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-		IL_05cc: stloc.s 19
-		IL_05ce: ldloc.s 12
-		IL_05d0: ldloc.s 13
-		IL_05d2: ldloc.s 19
-		IL_05d4: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_05d9: pop
-		IL_05da: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_05df: stloc.s 12
-		IL_05e1: ldloc.1
-		IL_05e2: call object [JavaScriptRuntime]JavaScriptRuntime.JSON::Stringify(object)
-		IL_05e7: stloc.s 19
-		IL_05e9: ldloc.s 12
-		IL_05eb: ldloc.s 19
-		IL_05ed: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_05f2: pop
-		IL_05f3: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_05f8: stloc.s 12
-		IL_05fa: ldloc.s 12
-		IL_05fc: ldloc.1
+		IL_050e: ldloc.s 22
+		IL_0510: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentLexicalSuperReceiver()
+		IL_0515: ldc.i4.1
+		IL_0516: newarr [System.Runtime]System.Object
+		IL_051b: dup
+		IL_051c: ldc.i4.0
+		IL_051d: ldloc.0
+		IL_051e: stelem.ref
+		IL_051f: newobj instance void Modules.Array_JsObject_NamedProperties/DerivedArray/FunctionObject_ClassConstructor_B384E33B_DerivedArray::.ctor(object[], class [System.Runtime]System.Object, object[])
+		IL_0524: ldloc.s 23
+		IL_0526: ldloc.s 22
+		IL_0528: ldc.i4.0
+		IL_0529: conv.r8
+		IL_052a: ldc.i4.0
+		IL_052b: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
+		IL_0530: castclass Modules.Array_JsObject_NamedProperties/DerivedArray/FunctionObject_ClassConstructor_B384E33B_DerivedArray
+		IL_0535: stloc.s 24
+		IL_0537: ldstr "Array"
+		IL_053c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0541: stloc.s 19
+		IL_0543: ldloc.s 24
+		IL_0545: ldloc.s 19
+		IL_0547: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetClassConstructorPrototype(object, object)
+		IL_054c: stloc.s 19
+		IL_054e: ldloc.s 19
+		IL_0550: stloc.s 9
+		IL_0552: ldc.i4.0
+		IL_0553: newarr [System.Runtime]System.Object
+		IL_0558: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
+		IL_055d: ldloc.s 9
+		IL_055f: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentNewTarget(object)
+		IL_0564: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushDerivedConstructorThisBinding()
+		IL_0569: newobj instance void Modules.Array_JsObject_NamedProperties/DerivedArray::.ctor()
+		IL_056e: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentNewTarget()
+		IL_0573: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
+		IL_0578: dup
+		IL_0579: ldloc.s 9
+		IL_057b: ldstr "prototype"
+		IL_0580: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
+		IL_0585: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
+		IL_058a: stloc.s 10
+		IL_058c: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_0591: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
+		IL_0596: stloc.s 10
+		IL_0598: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopDerivedConstructorThisBinding()
+		IL_059d: ldloc.s 10
+		IL_059f: ldc.r8 1
+		IL_05a8: ldc.r8 42
+		IL_05b1: ldc.i4.0
+		IL_05b2: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItemNumber(object, float64, float64, bool)
+		IL_05b7: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_05bc: stloc.s 12
+		IL_05be: ldloc.s 10
+		IL_05c0: ldstr "length"
+		IL_05c5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_05ca: stloc.s 19
+		IL_05cc: ldloc.s 10
+		IL_05ce: ldc.r8 1
+		IL_05d7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+		IL_05dc: stloc.s 13
+		IL_05de: ldloc.s 12
+		IL_05e0: ldloc.s 19
+		IL_05e2: ldloc.s 13
+		IL_05e4: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_05e9: pop
+		IL_05ea: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_05ef: stloc.s 12
+		IL_05f1: ldloc.1
+		IL_05f2: call object [JavaScriptRuntime]JavaScriptRuntime.JSON::Stringify(object)
+		IL_05f7: stloc.s 13
+		IL_05f9: ldloc.s 12
+		IL_05fb: ldloc.s 13
 		IL_05fd: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
 		IL_0602: pop
-		IL_0603: ldloc.1
-		IL_0604: call object [JavaScriptRuntime]JavaScriptRuntime.Object::preventExtensions(object)
-		IL_0609: pop
-		IL_060a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_060f: stloc.s 12
-		IL_0611: ldloc.1
-		IL_0612: call bool [JavaScriptRuntime]JavaScriptRuntime.Object::isExtensible(object)
-		IL_0617: box [System.Runtime]System.Boolean
-		IL_061c: stloc.s 17
-		IL_061e: ldloc.s 12
-		IL_0620: ldloc.s 17
-		IL_0622: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0627: pop
-		IL_0628: ret
+		IL_0603: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0608: stloc.s 12
+		IL_060a: ldloc.s 12
+		IL_060c: ldloc.1
+		IL_060d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0612: pop
+		IL_0613: ldloc.1
+		IL_0614: call object [JavaScriptRuntime]JavaScriptRuntime.Object::preventExtensions(object)
+		IL_0619: pop
+		IL_061a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_061f: stloc.s 12
+		IL_0621: ldloc.1
+		IL_0622: call bool [JavaScriptRuntime]JavaScriptRuntime.Object::isExtensible(object)
+		IL_0627: box [System.Runtime]System.Boolean
+		IL_062c: stloc.s 17
+		IL_062e: ldloc.s 12
+		IL_0630: ldloc.s 17
+		IL_0632: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0637: pop
+		IL_0638: ret
 	} // end of method Array_JsObject_NamedProperties::__js_module_init__
 
 } // end of class Modules.Array_JsObject_NamedProperties

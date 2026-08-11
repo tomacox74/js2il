@@ -479,14 +479,14 @@ public sealed partial class HIRToLIRLowerer
                         }
 
                         var classScope = FindScopeByDeclarationNode(classDecl, rootScope);
-                        if (classScope != null && TryLowerClassConstructorValue(registryClassName, classScope, out resultTempVar))
+                        if (classScope != null && TryLowerClassConstructorObject(registryClassName, classScope, out resultTempVar))
                         {
                             resultTempVar = EmitResolveActiveWithBindingOrDefault(
                                 activeWithBindingProbe,
                                 resultTempVar);
                             return true;
                         }
-                        // Fall through: TryLowerClassConstructorValue failed (e.g. static method with no
+                        // Fall through when constructor-object lowering fails (e.g. static method with no
                         // scopes access), emit a simple type token instead.
                     }
 
@@ -921,7 +921,7 @@ public sealed partial class HIRToLIRLowerer
                 // their initialization has completed.
                 if (initializedUserClassType.SuperClass != null)
                 {
-                    if (!TryLowerClassConstructorValue(
+                    if (!TryLowerClassConstructorObject(
                             initializedUserClassType.RegistryClassName,
                             initializedUserClassType.ClassScope,
                             out resultTempVar)
@@ -952,7 +952,7 @@ public sealed partial class HIRToLIRLowerer
                 }
 
                 if (initializedUserClassType.SuperClass == null
-                    && !TryLowerClassConstructorValue(
+                    && !TryLowerClassConstructorObject(
                         initializedUserClassType.RegistryClassName,
                         initializedUserClassType.ClassScope,
                         out resultTempVar)
@@ -1066,7 +1066,7 @@ public sealed partial class HIRToLIRLowerer
                     CreateAnonymousVariableSlot("$anon_class_type_with_inferred_name", new ValueStorage(ValueStorageKind.Reference, typeof(object))));
             }
 
-            if (!TryLowerClassConstructorValue(initializedUserClassType.RegistryClassName, initializedUserClassType.ClassScope, out var classConstructorValue))
+            if (!TryLowerClassConstructorObject(initializedUserClassType.RegistryClassName, initializedUserClassType.ClassScope, out var classConstructorValue))
             {
                 return false;
             }
@@ -1133,7 +1133,7 @@ public sealed partial class HIRToLIRLowerer
         }
     }
 
-    private bool TryLowerClassConstructorValue(string registryClassName, Scope classScope, out TempVariable resultTempVar)
+    private bool TryLowerClassConstructorObject(string registryClassName, Scope classScope, out TempVariable resultTempVar)
     {
         // Build scopes array first — if this fails, nothing has been emitted yet so the caller
         // can fall back to a simple LIRGetUserClassType without leaving orphaned IR instructions.
@@ -1162,25 +1162,36 @@ public sealed partial class HIRToLIRLowerer
             DefineTempStorage(typeTemp, new ValueStorage(ValueStorageKind.Reference, typeof(Type)));
         }
 
-        // Look up the formal parameter count for Function.length semantics (params before defaults/rest).
-        int minParamCount = 0;
-        if (_classRegistry != null && _classRegistry.TryGetConstructor(registryClassName, out _, out _, out var minP, out _))
+        if (!TryGetClassConstructorCallableId(classScope, out var callableId))
+        {
+            resultTempVar = default;
+            return false;
+        }
+
+        // Look up the formal parameter count for Function.length semantics.
+        var minParamCount = 0;
+        if (_classRegistry != null
+            && _classRegistry.TryGetConstructor(
+                registryClassName,
+                out _,
+                out _,
+                out var minP,
+                out _))
         {
             minParamCount = minP;
         }
 
-        var paramCountTemp = CreateTempVariable();
-        _methodBodyIR.Instructions.Add(new LIRConstNumber((double)minParamCount, paramCountTemp));
-        DefineTempStorage(paramCountTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
-
         resultTempVar = CreateTempVariable();
-        _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
-            MethodName: classScope.AstNode is ClassExpression
-                ? nameof(JavaScriptRuntime.RuntimeServices.CreateFreshClassConstructorValue)
-                : nameof(JavaScriptRuntime.RuntimeServices.CreateClassConstructorValue),
-            Arguments: new[] { EnsureObject(typeTemp), EnsureObject(scopesTemp), EnsureObject(paramCountTemp) },
-            Result: resultTempVar));
-        DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        _methodBodyIR.Instructions.Add(new LIRCreateBoundFunctionExpression(
+            CallableId: callableId,
+            ScopesArray: scopesTemp,
+            Result: resultTempVar,
+            ClassConstructorType: typeTemp,
+            ClassConstructorLength: minParamCount,
+            IsFreshClassConstructor: classScope.AstNode is ClassExpression));
+        DefineTempStorage(
+            resultTempVar,
+            GetMaterializedCallableStorage(callableId));
 
         return true;
     }
@@ -1225,28 +1236,54 @@ public sealed partial class HIRToLIRLowerer
             parameterCount = minimumParameterCount;
         }
 
-        var parameterCountTemp = CreateTempVariable();
-        _methodBodyIR.Instructions.Add(
-            new LIRConstNumber(parameterCount, parameterCountTemp));
-        DefineTempStorage(
-            parameterCountTemp,
-            new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+        if (!TryGetClassConstructorCallableId(classScope, out var callableId))
+        {
+            return false;
+        }
 
         resultTempVar = CreateTempVariable();
-        _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
-            MethodName:
-                nameof(JavaScriptRuntime.RuntimeServices.CreateFreshClassConstructorValue),
-            Arguments:
-            [
-                EnsureObject(typeTemp),
-                EnsureObject(scopesTemp),
-                EnsureObject(parameterCountTemp)
-            ],
-            Result: resultTempVar));
+        _methodBodyIR.Instructions.Add(new LIRCreateBoundFunctionExpression(
+            CallableId: callableId,
+            ScopesArray: scopesTemp,
+            Result: resultTempVar,
+            ClassConstructorType: typeTemp,
+            ClassConstructorLength: parameterCount,
+            IsFreshClassConstructor: true));
         DefineTempStorage(
             resultTempVar,
-            new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            GetMaterializedCallableStorage(callableId));
         return true;
+    }
+
+    private bool TryGetClassConstructorCallableId(
+        Scope classScope,
+        out TwoPhase.CallableId callableId)
+    {
+        callableId = null!;
+        if (_callableRegistry == null)
+        {
+            return false;
+        }
+
+        var classBody = classScope.AstNode switch
+        {
+            ClassDeclaration declaration => declaration.Body,
+            ClassExpression expression => expression.Body,
+            _ => null
+        };
+        if (classBody == null)
+        {
+            return false;
+        }
+
+        var constructorNode = classBody.Body
+            .OfType<MethodDefinition>()
+            .FirstOrDefault(ClassElementNames.IsConstructor)
+            ?? (Node)classBody;
+        return _callableRegistry.TryGetCallableIdForAstNode(
+            constructorNode,
+            out callableId)
+            && callableId.Kind == TwoPhase.CallableKind.ClassConstructor;
     }
 
     private bool TryLinkClassConstructorToSuperClass(

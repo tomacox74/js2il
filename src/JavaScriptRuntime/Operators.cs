@@ -1238,7 +1238,7 @@ namespace JavaScriptRuntime
             }
 
             object? rawTypePrototype = null;
-            if (ctor is ClassConstructorValue classConstructorValue)
+            if (ctor is JsClassConstructorObject classConstructorValue)
             {
                 rawTypePrototype = JavaScriptRuntime.ObjectRuntime.GetItem(classConstructorValue.Type, "prototype");
                 if (rawTypePrototype is string || rawTypePrototype?.GetType().IsValueType == true)

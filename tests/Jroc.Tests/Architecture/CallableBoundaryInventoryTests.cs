@@ -105,7 +105,8 @@ public sealed class CallableBoundaryInventoryTests
             "Closure.BindArrow",
             "Closure.BindMoveNext",
             "CreateBoundDelegate",
-            "InvokeDirectWithArgs"
+            "InvokeDirectWithArgs",
+            "ClassConstructorValue"
         ];
 
         var violations = sourceFiles

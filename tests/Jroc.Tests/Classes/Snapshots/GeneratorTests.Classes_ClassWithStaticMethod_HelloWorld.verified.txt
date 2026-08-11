@@ -50,7 +50,7 @@
 		} // end of class Scope_helloWorld
 
 		.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassConstructor_CA02D6DD_Greeter
-			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject
 		{
 			// Fields
 			.field private initonly object[] _transitionalScopes
@@ -66,7 +66,7 @@
 				.maxstack 8
 
 				IL_0000: ldarg.0
-				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject::.ctor()
 				IL_0006: ldarg.0
 				IL_0007: ldarg.1
 				IL_0008: stfld object[] Modules.Classes_ClassWithStaticMethod_HelloWorld/Greeter/FunctionObject_ClassConstructor_CA02D6DD_Greeter::_transitionalScopes
@@ -94,36 +94,6 @@
 				IL_0000: ldc.i4.0
 				IL_0001: ret
 			} // end of method FunctionObject_ClassConstructor_CA02D6DD_Greeter::get_RequiresInvocationContext
-
-			.method family hidebysig virtual 
-				instance object CallCore (
-					object thisArgument,
-					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 11 (0xb)
-				.maxstack 8
-
-				IL_0000: ldstr "Class constructor cannot be invoked without 'new'"
-				IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-				IL_000a: throw
-			} // end of method FunctionObject_ClassConstructor_CA02D6DD_Greeter::CallCore
-
-			.method family hidebysig virtual 
-				instance object ConstructCore (
-					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
-					object newTarget
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 11 (0xb)
-				.maxstack 8
-
-				IL_0000: ldstr "Generated construction adapter is reserved for the callable-family construction migration"
-				IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-				IL_000a: throw
-			} // end of method FunctionObject_ClassConstructor_CA02D6DD_Greeter::ConstructCore
 
 		} // end of class FunctionObject_ClassConstructor_CA02D6DD_Greeter
 
@@ -261,7 +231,8 @@
 			[1] object,
 			[2] class [System.Runtime]System.Type,
 			[3] object[],
-			[4] object
+			[4] class Modules.Classes_ClassWithStaticMethod_HelloWorld/Greeter/FunctionObject_ClassConstructor_CA02D6DD_Greeter,
+			[5] object
 		)
 
 		IL_0000: newobj instance void Modules.Classes_ClassWithStaticMethod_HelloWorld/Scope::.ctor()
@@ -297,17 +268,21 @@
 		IL_005a: ldloc.0
 		IL_005b: stelem.ref
 		IL_005c: stloc.3
-		IL_005d: ldloc.2
-		IL_005e: ldloc.3
-		IL_005f: ldc.r8 0.0
-		IL_0068: box [System.Runtime]System.Double
-		IL_006d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateClassConstructorValue(object, object, object)
+		IL_005d: ldloc.3
+		IL_005e: newobj instance void Modules.Classes_ClassWithStaticMethod_HelloWorld/Greeter/FunctionObject_ClassConstructor_CA02D6DD_Greeter::.ctor(object[])
+		IL_0063: ldloc.2
+		IL_0064: ldloc.3
+		IL_0065: ldc.i4.0
+		IL_0066: conv.r8
+		IL_0067: ldc.i4.0
+		IL_0068: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
+		IL_006d: castclass Modules.Classes_ClassWithStaticMethod_HelloWorld/Greeter/FunctionObject_ClassConstructor_CA02D6DD_Greeter
 		IL_0072: stloc.s 4
 		IL_0074: ldloc.s 4
 		IL_0076: stloc.1
 		IL_0077: ldloc.1
 		IL_0078: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetCurrentThis(object)
-		IL_007d: stloc.s 4
+		IL_007d: stloc.s 5
 		IL_007f: call object Modules.Classes_ClassWithStaticMethod_HelloWorld/Greeter::helloWorld()
 		IL_0084: pop
 		IL_0085: ret

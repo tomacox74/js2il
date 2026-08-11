@@ -25,7 +25,7 @@ public class RuntimeServices
     private static readonly ConcurrentDictionary<string, JsObject> _importMetaByUrl = new(StringComparer.Ordinal);
     private static readonly ConcurrentDictionary<string, JavaScriptRuntime.CommonJS.RequireDelegate> _requireByModuleId = new(StringComparer.OrdinalIgnoreCase);
     private static readonly ConditionalWeakTable<Type, LazyClassMetadataSlot> _lazyClassMetadata = new();
-    private static readonly ConcurrentDictionary<ClassConstructorCacheKey, ClassConstructorValue> _classConstructorValues = new();
+    private static readonly ConcurrentDictionary<ClassConstructorCacheKey, JsClassConstructorObject> _classConstructorValues = new();
 
     // ABI compatibility: when a callee doesn't need scopes, we still pass a 1-element scopes array.
     // NOTE: Consumers must treat scopes arrays as immutable.
@@ -244,49 +244,34 @@ public class RuntimeServices
         return value;
     }
 
-    public static object CreateClassConstructorValue(object typeValue, object scopesValue, object formalParamCountValue)
+    public static JsClassConstructorObject InitializeClassConstructorObject(
+        JsClassConstructorObject constructor,
+        Type type,
+        object[] scopes,
+        double formalParameterCount,
+        bool freshIdentity)
     {
-        if (typeValue is not Type type)
-        {
-            throw new TypeError("Class constructor value requires a CLR Type");
-        }
+        ArgumentNullException.ThrowIfNull(constructor);
+        ArgumentNullException.ThrowIfNull(type);
+        ArgumentNullException.ThrowIfNull(scopes);
 
-        int length = 0;
-        if (formalParamCountValue is double d) length = (int)d;
-
-        var scopes = scopesValue as object[] ?? EmptyScopes;
+        var length = (int)formalParameterCount;
+        constructor.Initialize(type, scopes, length);
         var cacheKey = new ClassConstructorCacheKey(type, scopes, length);
-        var constructor = _classConstructorValues.GetOrAdd(
-            cacheKey,
-            _ => new ClassConstructorValue(type, scopes, length));
-        CopyStaticClassDescriptors(type, constructor);
-        return constructor;
-    }
-
-    public static object CreateFreshClassConstructorValue(
-        object typeValue,
-        object scopesValue,
-        object formalParamCountValue)
-    {
-        if (typeValue is not Type type)
-        {
-            throw new TypeError("Class constructor value requires a CLR Type");
-        }
-
-        var length = formalParamCountValue is double value ? (int)value : 0;
-        var scopes = scopesValue as object[] ?? EmptyScopes;
-        var constructor = new ClassConstructorValue(type, scopes, length);
-        CopyStaticClassDescriptors(type, constructor);
+        var materialized = freshIdentity
+            ? constructor
+            : _classConstructorValues.GetOrAdd(cacheKey, constructor);
+        CopyStaticClassDescriptors(type, materialized);
         _ = TryEnsureClassConstructorMetadataPropertyDescriptor(
-            constructor,
+            materialized,
             "prototype",
             out _);
-        return constructor;
+        return materialized;
     }
 
     private static void CopyStaticClassDescriptors(
         Type type,
-        ClassConstructorValue constructor)
+        JsClassConstructorObject constructor)
     {
         foreach (var key in PropertyDescriptorStore.GetOwnKeys(type))
         {
@@ -298,6 +283,13 @@ public class RuntimeServices
 
             if (PropertyDescriptorStore.TryGetOwn(type, key, out var descriptor))
             {
+                if (string.Equals(key, "name", StringComparison.Ordinal)
+                    && descriptor.Kind == JsPropertyDescriptorKind.Data
+                    && descriptor.Value is null)
+                {
+                    continue;
+                }
+
                 PropertyDescriptorStore.DefineOrUpdate(
                     constructor,
                     key,
@@ -309,7 +301,7 @@ public class RuntimeServices
     public static object RefreshClassConstructorDescriptors(
         object constructorValue)
     {
-        if (constructorValue is not ClassConstructorValue constructor)
+        if (constructorValue is not JsClassConstructorObject constructor)
         {
             return constructorValue;
         }
@@ -348,15 +340,11 @@ public class RuntimeServices
     public static object SetClassConstructorPrototype(object constructorValue, object? baseConstructorValue)
     {
         var validatedBase = ValidateClassHeritage(baseConstructorValue);
-        if (constructorValue is ClassConstructorValue classConstructor)
+        if (constructorValue is JsClassConstructorObject classConstructor)
         {
-            var derivedConstructor = new ClassConstructorValue(
-                classConstructor.Type,
-                classConstructor.Scopes,
-                classConstructor.FormalParameterCount);
-            PrototypeChain.SetPrototype(derivedConstructor, validatedBase);
-            LinkClassInstancePrototype(derivedConstructor, validatedBase);
-            return derivedConstructor;
+            PrototypeChain.SetPrototype(classConstructor, validatedBase);
+            LinkClassInstancePrototype(classConstructor, validatedBase);
+            return classConstructor;
         }
 
         PrototypeChain.SetPrototype(constructorValue, validatedBase);
@@ -364,7 +352,7 @@ public class RuntimeServices
     }
 
     private static void LinkClassInstancePrototype(
-        ClassConstructorValue derivedConstructor,
+        JsClassConstructorObject derivedConstructor,
         object? baseConstructor)
     {
         if (baseConstructor is null || baseConstructor is JsNull)
@@ -420,7 +408,7 @@ public class RuntimeServices
     {
         var ownerType = ResolveClassOwnerType(ownerValue);
         var scopes = scopesValue as object[]
-            ?? (ownerValue is ClassConstructorValue classConstructorValue
+            ?? (ownerValue is JsClassConstructorObject classConstructorValue
                 ? classConstructorValue.Scopes
                 : EmptyScopes);
         var propertyKey = ObjectRuntime.ToPropertyKeyString(keyValue);
@@ -474,7 +462,7 @@ public class RuntimeServices
 
         var ownerType = ResolveClassOwnerType(ownerValue);
         var scopes = scopesValue as object[]
-            ?? (ownerValue is ClassConstructorValue classConstructorValue
+            ?? (ownerValue is JsClassConstructorObject classConstructorValue
                 ? classConstructorValue.Scopes
                 : EmptyScopes);
         var clrMethodName = clrMethodNameValue as string
@@ -541,7 +529,7 @@ public class RuntimeServices
 
         var ownerType = ResolveClassOwnerType(ownerValue);
         var scopes = scopesValue as object[]
-            ?? (ownerValue is ClassConstructorValue classConstructorValue
+            ?? (ownerValue is JsClassConstructorObject classConstructorValue
                 ? classConstructorValue.Scopes
                 : EmptyScopes);
         var clrMethodName = clrMethodNameValue as string
@@ -604,12 +592,12 @@ public class RuntimeServices
         => ownerValue switch
         {
             Type type => type,
-            ClassConstructorValue classConstructorValue => classConstructorValue.Type,
+            JsClassConstructorObject classConstructorValue => classConstructorValue.Type,
             _ => throw new TypeError("Class method definition requires a class constructor value")
         };
 
     internal static bool TryEnsureClassConstructorMetadataPropertyDescriptor(
-        ClassConstructorValue classConstructorValue,
+        JsClassConstructorObject classConstructorValue,
         string propName,
         out JsPropertyDescriptor descriptor)
     {
@@ -629,6 +617,36 @@ public class RuntimeServices
                 Configurable = true
             };
             PropertyDescriptorStore.DefineOrUpdate(classConstructorValue, propName, descriptor);
+            return true;
+        }
+
+        if (string.Equals(propName, "name", StringComparison.Ordinal))
+        {
+            if (PropertyDescriptorStore.TryGetOwn(
+                    classConstructorValue.Type,
+                    propName,
+                    out var typeNameDescriptor)
+                && (typeNameDescriptor.Kind == JsPropertyDescriptorKind.Accessor
+                    || typeNameDescriptor.Value is not null))
+            {
+                descriptor = CloneDescriptor(typeNameDescriptor);
+            }
+            else
+            {
+                descriptor = new JsPropertyDescriptor
+                {
+                    Kind = JsPropertyDescriptorKind.Data,
+                    Value = classConstructorValue.Type.Name,
+                    Writable = false,
+                    Enumerable = false,
+                    Configurable = true
+                };
+            }
+
+            PropertyDescriptorStore.DefineOrUpdate(
+                classConstructorValue,
+                propName,
+                descriptor);
             return true;
         }
 
@@ -685,12 +703,13 @@ public class RuntimeServices
 
     internal static void EnsureClassConstructorCoreMetadataProperties(object target)
     {
-        if (target is not ClassConstructorValue classConstructorValue)
+        if (target is not JsClassConstructorObject classConstructorValue)
         {
             return;
         }
 
         _ = TryEnsureClassConstructorMetadataPropertyDescriptor(classConstructorValue, "length", out _);
+        _ = TryEnsureClassConstructorMetadataPropertyDescriptor(classConstructorValue, "name", out _);
         _ = TryEnsureClassConstructorMetadataPropertyDescriptor(classConstructorValue, "prototype", out _);
     }
 
@@ -798,7 +817,7 @@ public class RuntimeServices
                 ownerValue = type;
                 isStatic = true;
                 return true;
-            case ClassConstructorValue classConstructorValue:
+            case JsClassConstructorObject classConstructorValue:
                 ownerType = classConstructorValue.Type;
                 ownerValue = classConstructorValue;
                 isStatic = true;
@@ -814,7 +833,7 @@ public class RuntimeServices
         {
             switch (constructorDescriptor.Value)
             {
-                case ClassConstructorValue classConstructorValue:
+                case JsClassConstructorObject classConstructorValue:
                     ownerType = classConstructorValue.Type;
                     ownerValue = classConstructorValue;
                     isStatic = false;
@@ -927,7 +946,7 @@ public class RuntimeServices
         var hasOwnerType = receiver switch
         {
             Type type => type == ownerType,
-            ClassConstructorValue constructor => constructor.Type == ownerType,
+            JsClassConstructorObject constructor => constructor.Type == ownerType,
             _ => false
         };
         if (!hasOwnerType)
@@ -977,7 +996,7 @@ public class RuntimeServices
             return false;
         }
 
-        if (privateBrand is not ClassConstructorValue classConstructor)
+        if (privateBrand is not JsClassConstructorObject classConstructor)
         {
             return PrototypeChainContainsFunction(receiver, functionObject);
         }
@@ -1045,7 +1064,7 @@ public class RuntimeServices
         var hasBrand = receiver switch
         {
             Type type => type == ownerType,
-            ClassConstructorValue classConstructorValue => classConstructorValue.Type == ownerType,
+            JsClassConstructorObject classConstructorValue => classConstructorValue.Type == ownerType,
             _ => receiver != null && ownerType.IsInstanceOfType(receiver)
         };
 
@@ -1069,7 +1088,7 @@ public class RuntimeServices
 
         return PropertyDescriptorStore.TryGetOwn(receiver, "constructor", out var constructorDescriptor)
             && constructorDescriptor.Kind == JsPropertyDescriptorKind.Data
-            && constructorDescriptor.Value is ClassConstructorValue classConstructorValue
+            && constructorDescriptor.Value is JsClassConstructorObject classConstructorValue
             && classConstructorValue.Type == ownerType;
     }
 
@@ -1085,7 +1104,7 @@ public class RuntimeServices
             return receiver switch
             {
                 Type type => type == ownerType,
-                ClassConstructorValue classConstructorValue => classConstructorValue.Type == ownerType,
+                JsClassConstructorObject classConstructorValue => classConstructorValue.Type == ownerType,
                 _ => false
             };
         }
@@ -1142,11 +1161,24 @@ public class RuntimeServices
             Configurable = true
         };
 
-        if (constructorValue is ClassConstructorValue classConstructorValue)
+        if (constructorValue is JsClassConstructorObject classConstructorValue)
         {
-            if (HasOwnOrLazyClassNameProperty(classConstructorValue)
-                || HasOwnOrLazyClassNameProperty(classConstructorValue.Type))
+            if (HasOwnOrLazyClassNameProperty(classConstructorValue))
             {
+                return classConstructorValue;
+            }
+
+            if (PropertyDescriptorStore.TryGetOwn(
+                    classConstructorValue.Type,
+                    "name",
+                    out var typeNameDescriptor)
+                && (typeNameDescriptor.Kind == JsPropertyDescriptorKind.Accessor
+                    || typeNameDescriptor.Value is not null))
+            {
+                PropertyDescriptorStore.DefineOrUpdate(
+                    classConstructorValue,
+                    "name",
+                    CloneDescriptor(typeNameDescriptor));
                 return classConstructorValue;
             }
 

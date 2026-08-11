@@ -3112,7 +3112,7 @@
 		} // end of class Scope_maxSumWithFloor
 
 		.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassConstructor_AD25A3C2_Counter
-			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject
 		{
 			// Fields
 			.field private initonly object[] _transitionalScopes
@@ -3128,7 +3128,7 @@
 				.maxstack 8
 
 				IL_0000: ldarg.0
-				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject::.ctor()
 				IL_0006: ldarg.0
 				IL_0007: ldarg.1
 				IL_0008: stfld object[] Modules.Function_SchedulerCallResults/Counter/FunctionObject_ClassConstructor_AD25A3C2_Counter::_transitionalScopes
@@ -3156,36 +3156,6 @@
 				IL_0000: ldc.i4.1
 				IL_0001: ret
 			} // end of method FunctionObject_ClassConstructor_AD25A3C2_Counter::get_RequiresInvocationContext
-
-			.method family hidebysig virtual 
-				instance object CallCore (
-					object thisArgument,
-					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 11 (0xb)
-				.maxstack 8
-
-				IL_0000: ldstr "Class constructor cannot be invoked without 'new'"
-				IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-				IL_000a: throw
-			} // end of method FunctionObject_ClassConstructor_AD25A3C2_Counter::CallCore
-
-			.method family hidebysig virtual 
-				instance object ConstructCore (
-					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
-					object newTarget
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 11 (0xb)
-				.maxstack 8
-
-				IL_0000: ldstr "Generated construction adapter is reserved for the callable-family construction migration"
-				IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-				IL_000a: throw
-			} // end of method FunctionObject_ClassConstructor_AD25A3C2_Counter::ConstructCore
 
 		} // end of class FunctionObject_ClassConstructor_AD25A3C2_Counter
 
@@ -4186,7 +4156,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 1651 (0x673)
+		// Code size: 1652 (0x674)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Function_SchedulerCallResults/Scope,
@@ -4208,9 +4178,10 @@
 			[16] class Modules.Function_SchedulerCallResults/h/FunctionObject_FunctionDeclaration_3ABAD97E_h,
 			[17] class [System.Runtime]System.Type,
 			[18] object,
-			[19] class [JavaScriptRuntime]JavaScriptRuntime.Console,
-			[20] float64,
-			[21] object
+			[19] class Modules.Function_SchedulerCallResults/Counter/FunctionObject_ClassConstructor_AD25A3C2_Counter,
+			[20] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+			[21] float64,
+			[22] object
 		)
 
 		IL_0000: newobj instance void Modules.Function_SchedulerCallResults/Scope::.ctor()
@@ -4642,182 +4613,186 @@
 		IL_042b: ldloc.0
 		IL_042c: stelem.ref
 		IL_042d: stloc.s 14
-		IL_042f: ldloc.s 17
-		IL_0431: ldloc.s 14
-		IL_0433: ldc.r8 1
-		IL_043c: box [System.Runtime]System.Double
-		IL_0441: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateClassConstructorValue(object, object, object)
-		IL_0446: stloc.s 18
-		IL_0448: ldloc.0
-		IL_0449: ldloc.s 18
-		IL_044b: stfld object Modules.Function_SchedulerCallResults/Scope::Counter
-		IL_0450: nop
+		IL_042f: ldloc.s 14
+		IL_0431: newobj instance void Modules.Function_SchedulerCallResults/Counter/FunctionObject_ClassConstructor_AD25A3C2_Counter::.ctor(object[])
+		IL_0436: ldloc.s 17
+		IL_0438: ldloc.s 14
+		IL_043a: ldc.i4.1
+		IL_043b: conv.r8
+		IL_043c: ldc.i4.0
+		IL_043d: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
+		IL_0442: castclass Modules.Function_SchedulerCallResults/Counter/FunctionObject_ClassConstructor_AD25A3C2_Counter
+		IL_0447: stloc.s 19
+		IL_0449: ldloc.0
+		IL_044a: ldloc.s 19
+		IL_044c: stfld object Modules.Function_SchedulerCallResults/Scope::Counter
 		IL_0451: nop
 		IL_0452: nop
 		IL_0453: nop
 		IL_0454: nop
-		IL_0455: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_045a: stloc.s 19
-		IL_045c: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0461: stloc.s 14
-		IL_0463: ldloc.1
-		IL_0464: ldloc.s 14
-		IL_0466: ldc.r8 9
-		IL_046f: box [System.Runtime]System.Double
-		IL_0474: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
-		IL_0479: stloc.s 18
-		IL_047b: ldloc.s 19
-		IL_047d: ldloc.s 18
-		IL_047f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0484: pop
-		IL_0485: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_048a: stloc.s 19
-		IL_048c: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0491: stloc.s 14
-		IL_0493: ldc.r8 2.7
-		IL_049c: neg
-		IL_049d: stloc.s 20
-		IL_049f: ldloc.s 20
-		IL_04a1: box [System.Runtime]System.Double
-		IL_04a6: stloc.s 21
-		IL_04a8: ldloc.2
-		IL_04a9: ldloc.s 14
-		IL_04ab: ldloc.s 21
-		IL_04ad: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
-		IL_04b2: stloc.s 18
-		IL_04b4: ldloc.s 19
-		IL_04b6: ldloc.s 18
-		IL_04b8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_04bd: pop
-		IL_04be: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_04c3: stloc.s 19
-		IL_04c5: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_04ca: stloc.s 14
-		IL_04cc: ldloc.3
-		IL_04cd: ldloc.s 14
-		IL_04cf: ldc.r8 1.2
-		IL_04d8: box [System.Runtime]System.Double
-		IL_04dd: ldc.r8 1.1
-		IL_04e6: box [System.Runtime]System.Double
-		IL_04eb: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
-		IL_04f0: stloc.s 18
-		IL_04f2: ldloc.s 19
-		IL_04f4: ldloc.s 18
-		IL_04f6: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_04fb: pop
-		IL_04fc: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0501: stloc.s 19
-		IL_0503: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0508: stloc.s 14
-		IL_050a: ldloc.s 4
-		IL_050c: ldloc.s 14
-		IL_050e: ldc.r8 9
-		IL_0517: box [System.Runtime]System.Double
-		IL_051c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
-		IL_0521: stloc.s 18
-		IL_0523: ldloc.s 19
-		IL_0525: ldloc.s 18
-		IL_0527: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_052c: pop
-		IL_052d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0532: stloc.s 19
-		IL_0534: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0539: stloc.s 14
-		IL_053b: ldloc.s 5
-		IL_053d: ldloc.s 14
-		IL_053f: ldc.r8 2
-		IL_0548: box [System.Runtime]System.Double
-		IL_054d: ldc.r8 3
-		IL_0556: box [System.Runtime]System.Double
-		IL_055b: ldc.r8 2
-		IL_0564: box [System.Runtime]System.Double
-		IL_0569: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs3(object, object[], object, object, object)
-		IL_056e: stloc.s 18
-		IL_0570: ldloc.s 19
-		IL_0572: ldloc.s 18
-		IL_0574: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0579: pop
-		IL_057a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_057f: stloc.s 19
-		IL_0581: ldloc.s 6
-		IL_0583: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0588: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
-		IL_058d: stloc.s 18
-		IL_058f: ldloc.s 19
-		IL_0591: ldloc.s 18
-		IL_0593: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0598: pop
-		IL_0599: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_059e: stloc.s 19
-		IL_05a0: ldloc.s 7
-		IL_05a2: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_05a7: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
-		IL_05ac: stloc.s 18
-		IL_05ae: ldloc.s 19
-		IL_05b0: ldloc.s 18
-		IL_05b2: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_05b7: pop
-		IL_05b8: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_05bd: stloc.s 19
-		IL_05bf: ldloc.s 8
-		IL_05c1: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_05c6: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
-		IL_05cb: stloc.s 18
-		IL_05cd: ldloc.s 19
-		IL_05cf: ldloc.s 18
-		IL_05d1: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_05d6: pop
-		IL_05d7: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_05dc: stloc.s 19
-		IL_05de: ldloc.s 9
-		IL_05e0: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_05e5: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
-		IL_05ea: stloc.s 18
-		IL_05ec: ldloc.s 19
-		IL_05ee: ldloc.s 18
-		IL_05f0: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_05f5: pop
-		IL_05f6: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_05fb: stloc.s 19
-		IL_05fd: ldloc.s 10
-		IL_05ff: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0604: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
-		IL_0609: stloc.s 18
-		IL_060b: ldloc.s 19
-		IL_060d: ldloc.s 18
-		IL_060f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0614: pop
-		IL_0615: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_061a: stloc.s 19
-		IL_061c: ldloc.s 11
-		IL_061e: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0623: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
-		IL_0628: stloc.s 18
-		IL_062a: ldloc.s 19
-		IL_062c: ldloc.s 18
-		IL_062e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0633: pop
-		IL_0634: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0639: stloc.s 19
-		IL_063b: ldloc.s 12
-		IL_063d: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0642: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
-		IL_0647: stloc.s 18
-		IL_0649: ldloc.s 19
-		IL_064b: ldloc.s 18
-		IL_064d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0652: pop
-		IL_0653: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0658: stloc.s 19
-		IL_065a: ldloc.s 13
-		IL_065c: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0661: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
-		IL_0666: stloc.s 18
-		IL_0668: ldloc.s 19
-		IL_066a: ldloc.s 18
-		IL_066c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0671: pop
-		IL_0672: ret
+		IL_0455: nop
+		IL_0456: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_045b: stloc.s 20
+		IL_045d: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0462: stloc.s 14
+		IL_0464: ldloc.1
+		IL_0465: ldloc.s 14
+		IL_0467: ldc.r8 9
+		IL_0470: box [System.Runtime]System.Double
+		IL_0475: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
+		IL_047a: stloc.s 18
+		IL_047c: ldloc.s 20
+		IL_047e: ldloc.s 18
+		IL_0480: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0485: pop
+		IL_0486: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_048b: stloc.s 20
+		IL_048d: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0492: stloc.s 14
+		IL_0494: ldc.r8 2.7
+		IL_049d: neg
+		IL_049e: stloc.s 21
+		IL_04a0: ldloc.s 21
+		IL_04a2: box [System.Runtime]System.Double
+		IL_04a7: stloc.s 22
+		IL_04a9: ldloc.2
+		IL_04aa: ldloc.s 14
+		IL_04ac: ldloc.s 22
+		IL_04ae: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
+		IL_04b3: stloc.s 18
+		IL_04b5: ldloc.s 20
+		IL_04b7: ldloc.s 18
+		IL_04b9: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_04be: pop
+		IL_04bf: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_04c4: stloc.s 20
+		IL_04c6: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_04cb: stloc.s 14
+		IL_04cd: ldloc.3
+		IL_04ce: ldloc.s 14
+		IL_04d0: ldc.r8 1.2
+		IL_04d9: box [System.Runtime]System.Double
+		IL_04de: ldc.r8 1.1
+		IL_04e7: box [System.Runtime]System.Double
+		IL_04ec: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
+		IL_04f1: stloc.s 18
+		IL_04f3: ldloc.s 20
+		IL_04f5: ldloc.s 18
+		IL_04f7: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_04fc: pop
+		IL_04fd: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0502: stloc.s 20
+		IL_0504: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0509: stloc.s 14
+		IL_050b: ldloc.s 4
+		IL_050d: ldloc.s 14
+		IL_050f: ldc.r8 9
+		IL_0518: box [System.Runtime]System.Double
+		IL_051d: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
+		IL_0522: stloc.s 18
+		IL_0524: ldloc.s 20
+		IL_0526: ldloc.s 18
+		IL_0528: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_052d: pop
+		IL_052e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0533: stloc.s 20
+		IL_0535: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_053a: stloc.s 14
+		IL_053c: ldloc.s 5
+		IL_053e: ldloc.s 14
+		IL_0540: ldc.r8 2
+		IL_0549: box [System.Runtime]System.Double
+		IL_054e: ldc.r8 3
+		IL_0557: box [System.Runtime]System.Double
+		IL_055c: ldc.r8 2
+		IL_0565: box [System.Runtime]System.Double
+		IL_056a: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs3(object, object[], object, object, object)
+		IL_056f: stloc.s 18
+		IL_0571: ldloc.s 20
+		IL_0573: ldloc.s 18
+		IL_0575: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_057a: pop
+		IL_057b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0580: stloc.s 20
+		IL_0582: ldloc.s 6
+		IL_0584: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0589: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
+		IL_058e: stloc.s 18
+		IL_0590: ldloc.s 20
+		IL_0592: ldloc.s 18
+		IL_0594: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0599: pop
+		IL_059a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_059f: stloc.s 20
+		IL_05a1: ldloc.s 7
+		IL_05a3: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_05a8: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
+		IL_05ad: stloc.s 18
+		IL_05af: ldloc.s 20
+		IL_05b1: ldloc.s 18
+		IL_05b3: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_05b8: pop
+		IL_05b9: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_05be: stloc.s 20
+		IL_05c0: ldloc.s 8
+		IL_05c2: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_05c7: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
+		IL_05cc: stloc.s 18
+		IL_05ce: ldloc.s 20
+		IL_05d0: ldloc.s 18
+		IL_05d2: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_05d7: pop
+		IL_05d8: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_05dd: stloc.s 20
+		IL_05df: ldloc.s 9
+		IL_05e1: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_05e6: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
+		IL_05eb: stloc.s 18
+		IL_05ed: ldloc.s 20
+		IL_05ef: ldloc.s 18
+		IL_05f1: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_05f6: pop
+		IL_05f7: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_05fc: stloc.s 20
+		IL_05fe: ldloc.s 10
+		IL_0600: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0605: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
+		IL_060a: stloc.s 18
+		IL_060c: ldloc.s 20
+		IL_060e: ldloc.s 18
+		IL_0610: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0615: pop
+		IL_0616: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_061b: stloc.s 20
+		IL_061d: ldloc.s 11
+		IL_061f: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0624: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
+		IL_0629: stloc.s 18
+		IL_062b: ldloc.s 20
+		IL_062d: ldloc.s 18
+		IL_062f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0634: pop
+		IL_0635: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_063a: stloc.s 20
+		IL_063c: ldloc.s 12
+		IL_063e: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0643: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
+		IL_0648: stloc.s 18
+		IL_064a: ldloc.s 20
+		IL_064c: ldloc.s 18
+		IL_064e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0653: pop
+		IL_0654: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0659: stloc.s 20
+		IL_065b: ldloc.s 13
+		IL_065d: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0662: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
+		IL_0667: stloc.s 18
+		IL_0669: ldloc.s 20
+		IL_066b: ldloc.s 18
+		IL_066d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0672: pop
+		IL_0673: ret
 	} // end of method Function_SchedulerCallResults::__js_module_init__
 
 } // end of class Modules.Function_SchedulerCallResults

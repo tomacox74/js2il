@@ -69,7 +69,7 @@
 		} // end of class Scope_getGreet
 
 		.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassConstructor_6B77E7C6_Greeter
-			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject
 		{
 			// Fields
 			.field private initonly object[] _transitionalScopes
@@ -85,7 +85,7 @@
 				.maxstack 8
 
 				IL_0000: ldarg.0
-				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject::.ctor()
 				IL_0006: ldarg.0
 				IL_0007: ldarg.1
 				IL_0008: stfld object[] Modules.Classes_ClassMethod_MethodValueRequiresMetadata/Greeter/FunctionObject_ClassConstructor_6B77E7C6_Greeter::_transitionalScopes
@@ -113,36 +113,6 @@
 				IL_0000: ldc.i4.0
 				IL_0001: ret
 			} // end of method FunctionObject_ClassConstructor_6B77E7C6_Greeter::get_RequiresInvocationContext
-
-			.method family hidebysig virtual 
-				instance object CallCore (
-					object thisArgument,
-					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 11 (0xb)
-				.maxstack 8
-
-				IL_0000: ldstr "Class constructor cannot be invoked without 'new'"
-				IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-				IL_000a: throw
-			} // end of method FunctionObject_ClassConstructor_6B77E7C6_Greeter::CallCore
-
-			.method family hidebysig virtual 
-				instance object ConstructCore (
-					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments,
-					object newTarget
-				) cil managed 
-			{
-				// Header size: 1
-				// Code size: 11 (0xb)
-				.maxstack 8
-
-				IL_0000: ldstr "Generated construction adapter is reserved for the callable-family construction migration"
-				IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-				IL_000a: throw
-			} // end of method FunctionObject_ClassConstructor_6B77E7C6_Greeter::ConstructCore
 
 		} // end of class FunctionObject_ClassConstructor_6B77E7C6_Greeter
 
@@ -357,7 +327,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 259 (0x103)
+		// Code size: 260 (0x104)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Classes_ClassMethod_MethodValueRequiresMetadata/Scope,
@@ -366,9 +336,10 @@
 			[3] class [System.Runtime]System.Type,
 			[4] object,
 			[5] object[],
-			[6] class [JavaScriptRuntime]JavaScriptRuntime.Console,
-			[7] class Modules.Classes_ClassMethod_MethodValueRequiresMetadata/Greeter,
-			[8] string
+			[6] class Modules.Classes_ClassMethod_MethodValueRequiresMetadata/Greeter/FunctionObject_ClassConstructor_6B77E7C6_Greeter,
+			[7] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+			[8] class Modules.Classes_ClassMethod_MethodValueRequiresMetadata/Greeter,
+			[9] string
 		)
 
 		IL_0000: newobj instance void Modules.Classes_ClassMethod_MethodValueRequiresMetadata/Scope::.ctor()
@@ -417,42 +388,46 @@
 		IL_0088: ldloc.0
 		IL_0089: stelem.ref
 		IL_008a: stloc.s 5
-		IL_008c: ldloc.3
-		IL_008d: ldloc.s 5
-		IL_008f: ldc.r8 0.0
-		IL_0098: box [System.Runtime]System.Double
-		IL_009d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateClassConstructorValue(object, object, object)
-		IL_00a2: stloc.s 4
-		IL_00a4: ldloc.s 4
-		IL_00a6: stloc.1
-		IL_00a7: ldc.i4.0
-		IL_00a8: newarr [System.Runtime]System.Object
-		IL_00ad: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
-		IL_00b2: newobj instance void Modules.Classes_ClassMethod_MethodValueRequiresMetadata/Greeter::.ctor()
-		IL_00b7: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
-		IL_00bc: stloc.2
-		IL_00bd: ldloc.2
-		IL_00be: ldtoken Modules.Classes_ClassMethod_MethodValueRequiresMetadata/Greeter
-		IL_00c3: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_00c8: ldstr "prototype"
-		IL_00cd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
-		IL_00d2: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
-		IL_00d7: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00dc: stloc.s 6
-		IL_00de: ldloc.2
-		IL_00df: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Classes_ClassMethod_MethodValueRequiresMetadata/Greeter>(!!0)
-		IL_00e4: stloc.s 7
-		IL_00e6: ldloc.s 7
-		IL_00e8: callvirt instance object Modules.Classes_ClassMethod_MethodValueRequiresMetadata/Greeter::getGreet()
-		IL_00ed: stloc.s 4
-		IL_00ef: ldloc.s 4
-		IL_00f1: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
-		IL_00f6: stloc.s 8
-		IL_00f8: ldloc.s 6
-		IL_00fa: ldloc.s 8
-		IL_00fc: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0101: pop
-		IL_0102: ret
+		IL_008c: ldloc.s 5
+		IL_008e: newobj instance void Modules.Classes_ClassMethod_MethodValueRequiresMetadata/Greeter/FunctionObject_ClassConstructor_6B77E7C6_Greeter::.ctor(object[])
+		IL_0093: ldloc.3
+		IL_0094: ldloc.s 5
+		IL_0096: ldc.i4.0
+		IL_0097: conv.r8
+		IL_0098: ldc.i4.0
+		IL_0099: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
+		IL_009e: castclass Modules.Classes_ClassMethod_MethodValueRequiresMetadata/Greeter/FunctionObject_ClassConstructor_6B77E7C6_Greeter
+		IL_00a3: stloc.s 6
+		IL_00a5: ldloc.s 6
+		IL_00a7: stloc.1
+		IL_00a8: ldc.i4.0
+		IL_00a9: newarr [System.Runtime]System.Object
+		IL_00ae: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
+		IL_00b3: newobj instance void Modules.Classes_ClassMethod_MethodValueRequiresMetadata/Greeter::.ctor()
+		IL_00b8: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
+		IL_00bd: stloc.2
+		IL_00be: ldloc.2
+		IL_00bf: ldtoken Modules.Classes_ClassMethod_MethodValueRequiresMetadata/Greeter
+		IL_00c4: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_00c9: ldstr "prototype"
+		IL_00ce: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
+		IL_00d3: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
+		IL_00d8: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00dd: stloc.s 7
+		IL_00df: ldloc.2
+		IL_00e0: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class Modules.Classes_ClassMethod_MethodValueRequiresMetadata/Greeter>(!!0)
+		IL_00e5: stloc.s 8
+		IL_00e7: ldloc.s 8
+		IL_00e9: callvirt instance object Modules.Classes_ClassMethod_MethodValueRequiresMetadata/Greeter::getGreet()
+		IL_00ee: stloc.s 4
+		IL_00f0: ldloc.s 4
+		IL_00f2: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
+		IL_00f7: stloc.s 9
+		IL_00f9: ldloc.s 7
+		IL_00fb: ldloc.s 9
+		IL_00fd: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0102: pop
+		IL_0103: ret
 	} // end of method Classes_ClassMethod_MethodValueRequiresMetadata::__js_module_init__
 
 } // end of class Modules.Classes_ClassMethod_MethodValueRequiresMetadata
