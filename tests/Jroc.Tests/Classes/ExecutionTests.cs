@@ -166,6 +166,48 @@ namespace Jroc.Tests.Classes
             return ExecutionTest(testName);
         }
 
+        [Fact]
+        public Task Classes_Constructor_MissingArguments_AreUndefined()
+        {
+            var testName = nameof(Classes_Constructor_MissingArguments_AreUndefined);
+            return ExecutionTest(testName);
+        }
+
+        [Fact]
+        public Task Classes_Constructor_ExtraArguments_FusedFieldStore()
+        {
+            var testName = nameof(Classes_Constructor_ExtraArguments_FusedFieldStore);
+            return ExecutionTest(testName);
+        }
+
+        [Fact]
+        public Task Classes_PrivateBrandCheck()
+        {
+            var testName = nameof(Classes_PrivateBrandCheck);
+            return ExecutionTest(testName);
+        }
+
+        [Fact]
+        public Task Classes_ClassFieldArrowInitializer()
+        {
+            var testName = nameof(Classes_ClassFieldArrowInitializer);
+            return ExecutionTest(testName);
+        }
+
+        [Fact]
+        public Task Classes_DerivedConstructor_SuperInTry()
+        {
+            var testName = nameof(Classes_DerivedConstructor_SuperInTry);
+            return ExecutionTest(testName);
+        }
+
+        [Fact]
+        public Task Classes_DerivedConstructor_ConditionalIntrinsicSuper()
+        {
+            var testName = nameof(Classes_DerivedConstructor_ConditionalIntrinsicSuper);
+            return ExecutionTest(testName);
+        }
+
         // PL5.5: Test that methods without explicit return return 'undefined', not 'this'
         // BUG: Currently methods without explicit return incorrectly return 'this' instead of 'undefined'
         // The verified output reflects current (incorrect) behavior - first line shows 'not undefined'

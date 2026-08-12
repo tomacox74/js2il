@@ -3,6 +3,7 @@ using Jroc.Services.ILGenerators;
 using Jroc.Services.TwoPhaseCompilation;
 using Jroc.Services.VariableBindings;
 using Jroc.Utilities.Ecma335;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
@@ -308,6 +309,35 @@ internal sealed partial class LIRToILCompiler
                     ilEncoder.Token(targetType);
                 }
                 EmitStoreTemp(isInstanceOf.Result, ilEncoder, allocation);
+                break;
+            case LIRPrivateBrandCheck privateBrandCheck:
+                var privateBrandClassRegistry =
+                    _serviceProvider.GetService<Jroc.Services.ClassRegistry>();
+                if (privateBrandClassRegistry == null
+                    || !privateBrandClassRegistry.TryGet(privateBrandCheck.RegistryClassName, out var privateBrandType))
+                {
+                    return false;
+                }
+
+                EmitLoadTempAsObject(privateBrandCheck.Value, ilEncoder, allocation, methodDescriptor);
+                var requirePrivateBrandTarget = _memberRefRegistry.GetOrAddMethod(
+                    typeof(JavaScriptRuntime.ObjectRuntime),
+                    nameof(JavaScriptRuntime.ObjectRuntime.RequirePrivateBrandTarget),
+                    parameterTypes: new[] { typeof(object) });
+                ilEncoder.OpCode(ILOpCode.Call);
+                ilEncoder.Token(requirePrivateBrandTarget);
+                ilEncoder.OpCode(ILOpCode.Isinst);
+                ilEncoder.Token(privateBrandType);
+                ilEncoder.OpCode(ILOpCode.Ldnull);
+                ilEncoder.OpCode(ILOpCode.Cgt_un);
+                if (IsMaterialized(privateBrandCheck.Result, allocation))
+                {
+                    EmitStoreTemp(privateBrandCheck.Result, ilEncoder, allocation);
+                }
+                else
+                {
+                    ilEncoder.OpCode(ILOpCode.Pop);
+                }
                 break;
             case LIRCompareNumberLessThan cmpLt:
                 if (!IsMaterialized(cmpLt.Result, allocation))

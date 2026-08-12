@@ -6798,5 +6798,16 @@ namespace JavaScriptRuntime
 
             return HasProperty(obj, propName);
         }
+
+        public static object RequirePrivateBrandTarget(object? value)
+        {
+            if (value is null || value is JsNull || TypeUtilities.IsPrimitive(value))
+            {
+                throw new JavaScriptRuntime.TypeError(
+                    "Cannot use 'in' operator to search for a private field in a non-object");
+            }
+
+            return value;
+        }
     }
 }

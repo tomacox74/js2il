@@ -43,20 +43,6 @@ internal sealed partial class LIRToILCompiler
                     }
 
                     int argc = newUserClass.Arguments.Count;
-                    if (argc < newUserClass.MinArgCount)
-                    {
-                        var expectedMinArgs = newUserClass.MinArgCount;
-                        var expectedMaxArgs = newUserClass.MaxArgCount;
-
-                        if (expectedMinArgs == expectedMaxArgs)
-                        {
-                            ILEmitHelpers.ThrowNotSupported(
-                                $"Constructor for class '{newUserClass.ClassName}' expects {expectedMinArgs} argument(s) but call site has {argc}.");
-                        }
-
-                        ILEmitHelpers.ThrowNotSupported(
-                            $"Constructor for class '{newUserClass.ClassName}' expects {expectedMinArgs}-{expectedMaxArgs} argument(s) but call site has {argc}.");
-                    }
 
                     if (newUserClass.NeedsScopes)
                     {

@@ -1549,6 +1549,47 @@ public sealed partial class HIRToLIRLowerer
             return TryLowerExpression(assignExpr.Value, out resultTempVar);
         }
 
+        if (assignExpr.Operator == Acornima.Operator.NullishCoalescingAssignment)
+        {
+            if (!TryLoadVariable(binding, out var currentValue))
+            {
+                return false;
+            }
+
+            var currentBoxed = EnsureObject(currentValue);
+            resultTempVar = CreateTempVariable();
+            var assignLabel = CreateLabel();
+            var endLabel = CreateLabel();
+
+            lirInstructions.Add(new LIRBranchIfFalse(currentBoxed, assignLabel));
+            var isNull = CreateTempVariable();
+            lirInstructions.Add(new LIRIsInstanceOf(
+                typeof(JavaScriptRuntime.JsNull),
+                currentBoxed,
+                isNull));
+            DefineTempStorage(isNull, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            lirInstructions.Add(new LIRBranchIfTrue(isNull, assignLabel));
+            lirInstructions.Add(new LIRCopyTemp(currentBoxed, resultTempVar));
+            lirInstructions.Add(new LIRBranch(endLabel));
+
+            lirInstructions.Add(new LIRLabel(assignLabel));
+            ClearNumericRefinementsAtLabel();
+            var simpleAssignment = new HIRAssignmentExpression(
+                assignExpr.Target,
+                Acornima.Operator.Assignment,
+                assignExpr.Value);
+            if (!TryLowerAssignmentExpression(simpleAssignment, out var assignedValue, resultUsed))
+            {
+                return false;
+            }
+            lirInstructions.Add(new LIRCopyTemp(EnsureObject(assignedValue), resultTempVar));
+
+            lirInstructions.Add(new LIRLabel(endLabel));
+            ClearNumericRefinementsAtLabel();
+            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            return true;
+        }
+
         if (assignExpr.Operator == Acornima.Operator.AdditionAssignment
             && _stringBuilderAccumulators.ContainsKey(binding)
             && ExpressionMayAssignBinding(assignExpr.Value, binding))

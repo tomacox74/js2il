@@ -55,6 +55,9 @@ namespace Jroc.Tests.CompoundAssignment
         public Task CompoundAssignment_PropertyNullishAssignment() { var testName = nameof(CompoundAssignment_PropertyNullishAssignment); return ExecutionTest(testName); }
 
         [Fact]
+        public Task CompoundAssignment_IdentifierNullishAssignment() { var testName = nameof(CompoundAssignment_IdentifierNullishAssignment); return ExecutionTest(testName); }
+
+        [Fact]
         public Task CompoundAssignment_NumericLoopCounter_PlusEquals() { var testName = nameof(CompoundAssignment_NumericLoopCounter_PlusEquals); return ExecutionTest(testName); }
     }
 }

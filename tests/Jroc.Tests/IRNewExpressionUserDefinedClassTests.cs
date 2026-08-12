@@ -46,7 +46,7 @@ new Foo();
     }
 
       [Fact]
-      public void IR_NewExpression_UserDefinedClass_ConstructorArgCountMismatch_ThrowsNotSupported()
+      public void IR_NewExpression_UserDefinedClass_MissingArguments_CompileAsUndefined()
       {
         var js = @"
       ""use strict"";
@@ -69,7 +69,6 @@ new Foo();
         var serviceProvider = CompilerServices.BuildServiceProvider(options, mockFs, new TestLogger());
         var compiler = serviceProvider.GetRequiredService<Compiler>();
 
-        var ex = Assert.Throws<NotSupportedException>(() => compiler.Compile(testFilePath));
-        Assert.Contains("Constructor for class 'Foo' expects 1-2 argument(s) but call site has 0.", ex.Message);
+        Assert.True(compiler.Compile(testFilePath));
       }
 }

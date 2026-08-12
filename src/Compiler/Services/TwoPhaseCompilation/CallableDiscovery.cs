@@ -428,9 +428,11 @@ public sealed class CallableDiscovery
 
         foreach (var child in classScope.Children)
         {
-            if (child.Kind == ScopeKind.Function && child.AstNode is FunctionExpression)
+            if (child.Kind == ScopeKind.Function
+                && child.AstNode is FunctionExpression or ArrowFunctionExpression)
             {
-                if (!methodFunctionNodes.Contains((FunctionExpression)child.AstNode))
+                if (child.AstNode is not FunctionExpression childFunction
+                    || !methodFunctionNodes.Contains(childFunction))
                 {
                     DiscoverFunction(child, classScopeName);
                     continue;

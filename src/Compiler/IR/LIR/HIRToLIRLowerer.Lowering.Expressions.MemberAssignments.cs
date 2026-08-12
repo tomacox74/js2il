@@ -249,9 +249,13 @@ public sealed partial class HIRToLIRLowerer
             {
                 return false;
             }
-        }
 
-        return TryLowerPropertyAssignmentTarget(assignExpr.Object, assignExpr.PropertyName, valueToStore, out resultTempVar);
+            return TryLowerPropertyAssignmentTarget(
+                objTemp,
+                assignExpr.PropertyName,
+                valueToStore,
+                out resultTempVar);
+        }
     }
 
     /// <summary>

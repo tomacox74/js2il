@@ -13,6 +13,16 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   six or greater retain the arbitrary-arity array fallback. Add execution and
   generated-IL guardrails plus paired loaded-module allocation benchmarks. No
   timing improvement is claimed without same-host benchmark evidence.
+- compiler: compile Cheerio 1.2.0 and its nested Undici dependency without
+  blocking on unresolved optional CommonJS modules. Improve large-AST
+  traversal, nested package metadata identity, class-field callable discovery,
+  computed destructuring captures, constructor argument compatibility,
+  conditional `super()` lowering, private brand/receiver fields, identifier
+  `??=`, and `Error` cause options.
+- compiler/runtime: defer unresolved literal CommonJS `require()` targets to
+  runtime with compiler warnings, allowing unexecuted optional code paths to
+  compile. Unknown `node:` built-ins now throw Node-compatible
+  `ERR_UNKNOWN_BUILTIN_MODULE` errors when executed.
 - runtime: close issue #1764 by keying stable built-in adapters by CLR method
   identity instead of transient `MethodInfo` object identity and by completing
   deferred `Function.prototype` links after cyclic intrinsic startup. This
