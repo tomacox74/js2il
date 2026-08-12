@@ -56,14 +56,6 @@ public sealed partial class HIRToLIRLowerer
             return true;
         }
 
-        if (!string.IsNullOrWhiteSpace(root?.AstNode.Location.SourceFile))
-        {
-            currentModuleIdTemp = CreateTempVariable();
-            _methodBodyIR.Instructions.Add(new LIRConstString(root.AstNode.Location.SourceFile, currentModuleIdTemp));
-            DefineTempStorage(currentModuleIdTemp, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
-            return true;
-        }
-
         currentModuleIdTemp = CreateTempVariable();
         _methodBodyIR.Instructions.Add(new LIRConstString(string.Empty, currentModuleIdTemp));
         DefineTempStorage(currentModuleIdTemp, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
@@ -81,14 +73,6 @@ public sealed partial class HIRToLIRLowerer
         }
 
         var root = GetRootScope(_scope);
-        if (!string.IsNullOrWhiteSpace(root?.AstNode.Location.SourceFile))
-        {
-            currentModulePathTemp = CreateTempVariable();
-            _methodBodyIR.Instructions.Add(new LIRConstString(root.AstNode.Location.SourceFile, currentModulePathTemp));
-            DefineTempStorage(currentModulePathTemp, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
-            return true;
-        }
-
         currentModulePathTemp = CreateTempVariable();
         _methodBodyIR.Instructions.Add(new LIRConstUndefined(currentModulePathTemp));
         DefineTempStorage(currentModulePathTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));

@@ -1,4 +1,3 @@
-using Acornima.Ast;
 using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
 using Jroc.IR;
@@ -10,18 +9,7 @@ namespace Jroc.IL;
 internal sealed partial class LIRToILCompiler
 {
     private static bool HasLegacyCallerArguments(CallableId callableId)
-        => !callableId.HasRestrictedFunctionProperties
-            && callableId.AstNode is
-                FunctionDeclaration
-                {
-                    Async: false,
-                    Generator: false
-                }
-                or FunctionExpression
-                {
-                    Async: false,
-                    Generator: false
-                };
+        => callableId.Semantics.HasLegacyCallerArguments;
 
     private bool TryEmitGeneratedArrowFunctionObject(
         LIRCreateBoundArrowFunction createArrow,

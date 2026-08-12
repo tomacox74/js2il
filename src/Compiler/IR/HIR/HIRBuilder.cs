@@ -1112,6 +1112,11 @@ partial class HIRMethodBuilder
             HasRestrictedFunctionProperties = isStrictFunction,
             IsMethodDefinition = functionScope.IsMethodDefinition,
             IsAccessorDefinition = functionScope.IsAccessorDefinition,
+            Semantics = CallableSemantics.FromNode(
+                funcExpr,
+                CallableKind.FunctionExpression,
+                isStrictFunction,
+                functionScope.IsMethodDefinition),
             AstNode = funcExpr
         };
     }
@@ -1135,6 +1140,9 @@ partial class HIRMethodBuilder
             ArgumentsParameterNames = Array.Empty<string>(),
             IncludeCalleeInArgumentsObject = false,
             HasRestrictedFunctionProperties = false,
+            Semantics = CallableSemantics.FromNode(
+                arrowExpr,
+                CallableKind.Arrow),
             AstNode = arrowExpr
         };
     }
@@ -1462,6 +1470,10 @@ partial class HIRMethodBuilder
                     ArgumentsParameterNames = ArgumentsObjectSemantics.GetMappedParameterNames(functionScope),
                     IncludeCalleeInArgumentsObject = functionScope.NeedsArgumentsObject && !ArgumentsObjectSemantics.IsStrictScope(functionScope),
                     HasRestrictedFunctionProperties = ArgumentsObjectSemantics.IsStrictScope(functionScope),
+                    Semantics = CallableSemantics.FromNode(
+                        fd,
+                        CallableKind.FunctionDeclaration,
+                        ArgumentsObjectSemantics.IsStrictScope(functionScope)),
                     AstNode = fd
                 };
 
@@ -2271,6 +2283,11 @@ partial class HIRMethodBuilder
             IsMethodDefinition = true,
             IsAccessorDefinition =
                 methodDefinition.Kind is PropertyKind.Get or PropertyKind.Set,
+            Semantics = CallableSemantics.FromNode(
+                methodDefinition,
+                kind,
+                hasRestrictedFunctionProperties: true,
+                isMethodDefinition: true),
             AstNode = methodDefinition
         };
     }
@@ -3670,7 +3687,8 @@ partial class HIRMethodBuilder
                 hirExpr = new HIRCallExpression(
                     calleeExpr!,
                     argExprs,
-                    stableDirectCallableTarget);
+                    stableDirectCallableTarget,
+                    ResolveStaticClassMethodTarget(calleeExpr!));
                 return true;
 
             case ImportExpression importExpr:
@@ -4128,6 +4146,7 @@ partial class HIRMethodBuilder
                         }
                     }
 
+                    var explicitClassName = (classExpr.Id as Identifier)?.Name;
                     if (classExpr.Id is Identifier className
                         && classExprScope.Bindings.TryGetValue(className.Name, out var classNameBinding)
                         && classNameBinding.IsCaptured)
@@ -4136,7 +4155,9 @@ partial class HIRMethodBuilder
                             registryClassName,
                             classExprScope,
                             [],
-                            classExprSuperClass);
+                            classExprSuperClass,
+                            isClassExpression: true,
+                            explicitName: explicitClassName);
                         var classSymbol = new Symbol(classNameBinding);
                         var bindingInsertionIndex = classNameBindingInsertIndex >= 0
                             ? classNameBindingInsertIndex
@@ -4148,7 +4169,9 @@ partial class HIRMethodBuilder
                         registryClassName,
                         classExprScope,
                         staticInitStatements,
-                        classExprSuperClass);
+                        classExprSuperClass,
+                        isClassExpression: true,
+                        explicitName: explicitClassName);
                     return true;
                 }
 

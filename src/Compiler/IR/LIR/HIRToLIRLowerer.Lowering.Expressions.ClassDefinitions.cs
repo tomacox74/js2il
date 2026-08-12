@@ -2,7 +2,6 @@ using Jroc.HIR;
 using Jroc.Services;
 using Jroc.Services.TwoPhaseCompilation;
 using Jroc.SymbolTables;
-using Acornima.Ast;
 
 namespace Jroc.IR;
 
@@ -353,15 +352,7 @@ public sealed partial class HIRToLIRLowerer
     private static Scope? ResolveClassMethodScope(
         Scope classScope,
         CallableId callableId)
-    {
-        if (callableId.AstNode is not MethodDefinition methodDefinition)
-        {
-            return null;
-        }
-
-        return classScope.Children.FirstOrDefault(scope =>
-            ReferenceEquals(scope.AstNode, methodDefinition.Value));
-    }
+        => classScope.Children.FirstOrDefault(scope => scope.Callable == callableId);
 
     private bool TryLowerClassInitializationOwner(
         HIRExpression owner,

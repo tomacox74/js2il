@@ -1,5 +1,6 @@
 using Acornima.Ast;
 using Jroc.Services;
+using Jroc.Services.TwoPhaseCompilation;
 
 namespace Jroc.SymbolTables;
 
@@ -150,6 +151,18 @@ public class BindingInfo
     /// semantic decision into lowering; LIR never inspects the source AST to derive it.
     /// </summary>
     public CallableMaterializationDecision? CallableMaterialization { get; set; }
+
+    /// <summary>
+    /// Canonical callable identity assigned during phase-one discovery for a binding
+    /// that denotes a callable value.
+    /// </summary>
+    public CallableId? Callable { get; set; }
+
+    /// <summary>
+    /// Generated class scope assigned during phase-one discovery when this binding
+    /// denotes a class declaration or expression.
+    /// </summary>
+    public Scope? ClassScope { get; set; }
 
     public BindingInfo(string name, BindingKind kind, Scope declaringScope, Node declarationNode)
     {

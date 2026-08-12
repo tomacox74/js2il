@@ -1,4 +1,3 @@
-using Acornima.Ast;
 using Jroc.HIR;
 using Jroc.Services;
 using Jroc.Services.ScopesAbi;
@@ -37,38 +36,4 @@ public sealed partial class HIRToLIRLowerer
         _methodBodyIR.Instructions.Add(new LIRLabel(startLabel));
     }
 
-    private static bool ContainsYieldExpression(Acornima.Ast.Node node, Acornima.Ast.Node functionBoundaryNode)
-    {
-        bool found = false;
-
-        void Walk(Acornima.Ast.Node? n)
-        {
-            if (n == null || found)
-            {
-                return;
-            }
-
-            if (n is Acornima.Ast.YieldExpression)
-            {
-                found = true;
-                return;
-            }
-
-            // Do not traverse into nested function boundaries.
-            if (n is Acornima.Ast.FunctionDeclaration or Acornima.Ast.FunctionExpression or Acornima.Ast.ArrowFunctionExpression
-                && !ReferenceEquals(n, functionBoundaryNode))
-            {
-                return;
-            }
-
-            foreach (var child in n.ChildNodes)
-            {
-                Walk(child);
-                if (found) return;
-            }
-        }
-
-        Walk(node);
-        return found;
-    }
 }

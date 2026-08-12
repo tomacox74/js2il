@@ -147,6 +147,72 @@ public class HIRStableDirectCallableTests
         Assert.NotNull(call.StableDirectCallableTarget);
     }
 
+    [Fact]
+    public void CallableSemantics_AreEstablishedDuringAstToHirConstruction()
+    {
+        var (_, module, method) = ParseProgram(
+            "const work = async function named(first, second = 2) { return this; };");
+        var declaration = Assert.Single(
+            method.Body.Statements.OfType<HIRVariableDeclaration>());
+        var function = Assert.IsType<HIRFunctionExpression>(declaration.Initializer);
+
+        Assert.True(function.CallableId.Semantics.IsAsync);
+        Assert.True(function.CallableId.Semantics.IsNamedFunctionExpression);
+        Assert.False(function.CallableId.Semantics.IsConstructable);
+        Assert.Equal(1, function.CallableId.Semantics.FunctionLength);
+        Assert.True(function.CallableId.Semantics.UsesThis);
+
+        var discovered = Assert.Single(
+            new CallableDiscovery(module.SymbolTable!).DiscoverAll(),
+            callable => callable.Location == function.CallableId.Location);
+        Assert.Equal(function.CallableId.Semantics, discovered.Semantics);
+    }
+
+    [Theory]
+    [InlineData("const Local = class Named {};", "Named")]
+    [InlineData("const Local = class {};", null)]
+    public void ClassExpression_CarriesNameSemanticsBeforeLowering(
+        string source,
+        string? explicitName)
+    {
+        var (_, _, method) = ParseProgram(source);
+        var declaration = Assert.Single(
+            method.Body.Statements.OfType<HIRVariableDeclaration>());
+        var classExpression = Assert.IsType<HIRInitializedUserClassTypeExpression>(
+            declaration.Initializer);
+
+        Assert.True(classExpression.IsClassExpression);
+        Assert.Equal(explicitName, classExpression.ExplicitName);
+    }
+
+    [Fact]
+    public void PublicStaticClassMethodCall_DoesNotCarryDirectTarget()
+    {
+        const string source = """
+            class Greeter {
+                static greet(value) { return value; }
+            }
+            Greeter.greet("hello");
+            """;
+        var parser = new JavaScriptParser();
+        var program = parser.ParseJavaScript(source, "hir-static-class-call.js");
+        var module = CreateModule(program);
+        new SymbolTableBuilder().Build(module);
+        new CallableDiscovery(module.SymbolTable!).DiscoverAll();
+
+        Assert.True(HIRBuilder.TryParseMethod(
+            program,
+            module.SymbolTable!.Root,
+            ScopesCallableKind.ModuleMain,
+            hasScopesParameter: false,
+            out var method));
+
+        var call = Assert.IsType<HIRCallExpression>(
+            Assert.Single(method!.Body.Statements.OfType<HIRExpressionStatement>()).Expression);
+
+        Assert.Null(call.StaticClassMethodTarget);
+    }
+
     private static (Program Program, ModuleDefinition Module, HIRMethod Method) ParseProgram(
         string source)
     {

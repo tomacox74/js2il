@@ -1,4 +1,3 @@
-using Acornima.Ast;
 using Jroc.HIR;
 using Jroc.Services;
 using Jroc.Services.ScopesAbi;
@@ -47,11 +46,12 @@ public sealed partial class HIRToLIRLowerer
         string? runtimeMethodName = declaration.Initializer switch
         {
             HIRInitializedUserClassTypeExpression initializedClassExpr
-                when initializedClassExpr.ClassScope.AstNode is ClassExpression { Id: null }
+                when initializedClassExpr.IsClassExpression
+                    && string.IsNullOrWhiteSpace(initializedClassExpr.ExplicitName)
                 => nameof(JavaScriptRuntime.RuntimeServices.SetClassConstructorInferredName),
 
             HIRFunctionExpression funcExpr
-                when funcExpr.CallableId.AstNode is FunctionExpression { Id: null }
+                when funcExpr.CallableId.Semantics.IsAnonymousFunctionExpression
                     && funcExpr.FunctionScope.SyntheticOriginatingNode == null
                 => nameof(JavaScriptRuntime.RuntimeServices.SetFunctionInferredName),
 
@@ -145,7 +145,8 @@ public sealed partial class HIRToLIRLowerer
         {
             var shouldSetPendingAnonymousClassName =
                 exprStmt.Initializer is HIRInitializedUserClassTypeExpression initializedClassExpr
-                && initializedClassExpr.ClassScope.Name.StartsWith("ClassExpression_", StringComparison.Ordinal);
+                && initializedClassExpr.IsClassExpression
+                && string.IsNullOrWhiteSpace(initializedClassExpr.ExplicitName);
 
             var previousPendingAnonymousClassName = _pendingAnonymousClassExpressionInferredName;
             if (shouldSetPendingAnonymousClassName)

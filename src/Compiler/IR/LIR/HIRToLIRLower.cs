@@ -1,4 +1,3 @@
-using Acornima.Ast;
 using Jroc.HIR;
 using Jroc.Services;
 using Jroc.Services.ScopesAbi;
@@ -21,7 +20,6 @@ public sealed partial class HIRToLIRLowerer
         => string.Equals(binding.Name, "require", StringComparison.Ordinal)
            && binding.DeclaringScope.Kind == ScopeKind.Global
            && binding.DeclaringScope.Parameters.Contains("require")
-           && ReferenceEquals(binding.DeclarationNode, binding.DeclaringScope.AstNode)
            && !binding.HasWrite;
 
     private readonly MethodBodyIR _methodBodyIR = new MethodBodyIR();
@@ -82,16 +80,7 @@ public sealed partial class HIRToLIRLowerer
     }
 
     private static bool IsGeneratorCallable(TwoPhase.CallableId callableId)
-        => callableId.AstNode switch
-        {
-            FunctionDeclaration { Generator: true } => true,
-            FunctionExpression { Generator: true } => true,
-            MethodDefinition
-            {
-                Value: FunctionExpression { Generator: true }
-            } => true,
-            _ => false
-        };
+        => callableId.Semantics.IsGenerator;
 
     // Source-level variables map to the current SSA value (TempVariable) at the current program point.
     // Keyed by BindingInfo reference to correctly handle shadowed variables with the same name.
@@ -357,165 +346,28 @@ public sealed partial class HIRToLIRLowerer
 
     private bool TryGetEnclosingBaseClassRegistryName(out string? baseRegistryClassName)
     {
-        baseRegistryClassName = null;
-
-        if (_scope == null)
-        {
-            return false;
-        }
-
-        var current = _scope;
-        while (current != null && current.Kind != ScopeKind.Class)
-        {
-            current = current.Parent;
-        }
-
-        if (current == null)
-        {
-            return false;
-        }
-
-        var superExpr = current.AstNode switch
-        {
-            ClassDeclaration cd => cd.SuperClass,
-            ClassExpression ce => ce.SuperClass,
-            _ => null
-        };
-        superExpr = UnwrapExpression(superExpr);
-
-        if (superExpr is not Identifier superId)
-        {
-            return false;
-        }
-
-        var superSymbol = current.FindSymbol(superId.Name);
-
-        Acornima.Ast.Node? baseClassNode = null;
-        string? expectedScopeName = null;
-
-        switch (superSymbol.BindingInfo.DeclarationNode)
-        {
-            case ClassDeclaration baseDecl when baseDecl.Id != null:
-                baseClassNode = baseDecl;
-                expectedScopeName = baseDecl.Id.Name;
-                break;
-            case ClassExpression baseExpr:
-                baseClassNode = baseExpr;
-                expectedScopeName = baseExpr.Id?.Name ?? superId.Name;
-                break;
-            case VariableDeclarator variableDeclarator when variableDeclarator.Init is ClassExpression initClassExpr:
-                baseClassNode = initClassExpr;
-                expectedScopeName = initClassExpr.Id?.Name ?? superId.Name;
-                break;
-        }
-
-        if (baseClassNode == null)
-        {
-            return false;
-        }
-
-        var declaringScope = FindDeclaringScope(superSymbol.BindingInfo);
-        if (declaringScope == null)
-        {
-            return false;
-        }
-
-        var rootScope = declaringScope;
-        while (rootScope.Parent != null)
-        {
-            rootScope = rootScope.Parent;
-        }
-
-        var baseClassScope = FindScopeByDeclarationNode(baseClassNode, rootScope);
-        if (baseClassScope?.Kind != ScopeKind.Class && expectedScopeName != null)
-        {
-            baseClassScope = declaringScope.Children.FirstOrDefault(s =>
-                s.Kind == ScopeKind.Class && string.Equals(s.Name, expectedScopeName, StringComparison.Ordinal));
-        }
-
-        if (baseClassScope == null)
-        {
-            return false;
-        }
-
-        var ns = baseClassScope.DotNetNamespace ?? "Classes";
-        var name = baseClassScope.DotNetTypeName ?? baseClassScope.Name;
-        baseRegistryClassName = $"{ns}.{name}";
-        return true;
+        baseRegistryClassName = GetEnclosingClassSemantics()?.BaseClassRegistryName;
+        return baseRegistryClassName != null;
     }
 
     private string? GetEnclosingSuperClassIntrinsicName()
-    {
-        if (_scope == null)
-        {
-            return null;
-        }
+        => GetEnclosingClassSemantics()?.BaseIntrinsicName;
 
+    private TwoPhase.ClassSemantics? GetEnclosingClassSemantics()
+    {
         var current = _scope;
         while (current != null && current.Kind != ScopeKind.Class)
         {
             current = current.Parent;
         }
 
-        if (current == null)
-        {
-            return null;
-        }
-
-        var superExpr = current.AstNode switch
-        {
-            ClassDeclaration cd => cd.SuperClass,
-            ClassExpression ce => ce.SuperClass,
-            _ => null
-        };
-        superExpr = UnwrapExpression(superExpr);
-
-        if (superExpr is not Identifier superId)
-        {
-            return null;
-        }
-
-        // Only support intrinsic bases that map cleanly to CLR base types.
-        // Today the primary blocker is `extends Array` (issue #505).
-        if (!string.Equals(superId.Name, "Array", StringComparison.Ordinal))
-        {
-            return null;
-        }
-
-        try
-        {
-            return _runtimeIntrinsicCatalog.TryGetIntrinsicObject(superId.Name, out _)
-                ? superId.Name
-                : null;
-        }
-        catch
-        {
-            return null;
-        }
+        return current?.ClassSemantics;
     }
 
     private bool TryGetEnclosingSuperClassExpression(out HIRExpression? superClassExpression)
     {
         superClassExpression = _superClassExpression;
         return superClassExpression != null;
-    }
-
-    private static Expression? UnwrapExpression(Expression? expression)
-    {
-        while (true)
-        {
-            expression = expression switch
-            {
-                ParenthesizedExpression parenthesized => parenthesized.Expression,
-                ChainExpression chain => chain.Expression,
-                _ => expression
-            };
-
-            if (expression is not ParenthesizedExpression and not ChainExpression)
-            {
-                return expression;
-            }
-        }
     }
 
     /// <summary>
@@ -605,14 +457,16 @@ public sealed partial class HIRToLIRLowerer
 
     private bool EmitNamedFunctionExpressionBindingInitialization()
     {
-        if (_scope?.AstNode is not FunctionExpression { Id: Identifier identifier })
+        var callable = _scope?.Callable;
+        if (callable?.Semantics.IsNamedFunctionExpression != true
+            || string.IsNullOrWhiteSpace(callable.Name))
         {
             return true;
         }
 
-        if (!_scope.Bindings.TryGetValue(identifier.Name, out var binding)
+        if (!_scope!.Bindings.TryGetValue(callable.Name, out var binding)
             || binding.Kind != BindingKind.Function
-            || !ReferenceEquals(binding.DeclarationNode, _scope.AstNode))
+            || binding.Callable != callable)
         {
             return true;
         }
@@ -852,47 +706,15 @@ public sealed partial class HIRToLIRLowerer
             rootScope = rootScope.Parent;
         }
 
-        // The function's scope is a child scope of the scope where it's declared
-        // We need to find it by looking at child scopes whose AST node matches
-        return FindScopeByDeclarationNode(symbol.BindingInfo.DeclarationNode, rootScope);
+        return FindScopeByCallable(symbol.BindingInfo.Callable, rootScope);
     }
 
     /// <summary>
-    /// Recursively searches for a scope whose AST node matches the given declaration node.
-    /// For function declarations, the scope's AstNode is the FunctionDeclaration itself.
+    /// Recursively searches for the scope assigned the canonical callable descriptor.
     /// </summary>
-    private static Scope? FindScopeByDeclarationNode(Acornima.Ast.Node declarationNode, Scope root)
+    private static Scope? FindScopeByCallable(TwoPhase.CallableId? callable, Scope root)
     {
-        static bool NodesMatch(Acornima.Ast.Node a, Acornima.Ast.Node b)
-        {
-            if (ReferenceEquals(a, b))
-            {
-                return true;
-            }
-
-            if (a.GetType() != b.GetType())
-            {
-                return false;
-            }
-
-            // Acornima nodes can be re-parsed between phases, so reference equality can fail.
-            // Fall back to a stable match using source location.
-            var al = a.Location;
-            var bl = b.Location;
-
-            if (al.Start.Line <= 0 || bl.Start.Line <= 0)
-            {
-                return false;
-            }
-
-            return al.Start.Line == bl.Start.Line
-                && al.Start.Column == bl.Start.Column
-                && al.End.Line == bl.End.Line
-                && al.End.Column == bl.End.Column;
-        }
-
-        // Check if this scope's AST node matches the declaration
-        if (NodesMatch(root.AstNode, declarationNode))
+        if (callable != null && root.Callable == callable)
         {
             return root;
         }
@@ -900,7 +722,7 @@ public sealed partial class HIRToLIRLowerer
         // Search child scopes
         foreach (var child in root.Children)
         {
-            var found = FindScopeByDeclarationNode(declarationNode, child);
+            var found = FindScopeByCallable(callable, child);
             if (found != null) return found;
         }
 

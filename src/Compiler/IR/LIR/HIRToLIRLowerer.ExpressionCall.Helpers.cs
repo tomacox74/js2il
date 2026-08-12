@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Acornima.Ast;
 using Jroc.HIR;
 using Jroc.Services;
 using Jroc.Services.ScopesAbi;
@@ -257,95 +256,6 @@ public sealed partial class HIRToLIRLowerer
         }
 
         return true;
-    }
-
-    private Jroc.Services.TwoPhaseCompilation.CallableId? TryCreateCallableIdForClassStaticMethod(
-        Symbol classSymbol,
-        MethodDefinition methodDef,
-        string methodName,
-        int declaredParamCount)
-    {
-        if (_scope == null)
-        {
-            return null;
-        }
-
-        var declaringScope = FindDeclaringScope(classSymbol.BindingInfo);
-        if (declaringScope == null)
-        {
-            return null;
-        }
-
-        var root = declaringScope;
-        while (root.Parent != null)
-        {
-            root = root.Parent;
-        }
-
-        var moduleName = root.Name;
-        var declaringScopeName = declaringScope.Kind == ScopeKind.Global
-            ? moduleName
-            : $"{moduleName}/{declaringScope.GetQualifiedName()}";
-
-        var callableName = JavaScriptCallableNaming.MakeClassMethodCallableName(classSymbol.Name, methodName);
-        var location = Jroc.Services.TwoPhaseCompilation.SourceLocation.FromNode(methodDef);
-
-        return new Jroc.Services.TwoPhaseCompilation.CallableId
-        {
-            Kind = Jroc.Services.TwoPhaseCompilation.CallableKind.ClassStaticMethod,
-            DeclaringScopeName = declaringScopeName,
-            Name = callableName,
-            Location = location,
-            JsParamCount = declaredParamCount,
-            AstNode = methodDef
-        };
-    }
-
-    private Jroc.Services.TwoPhaseCompilation.CallableId? TryCreateCallableIdForCurrentClassStaticMethod(
-        MethodDefinition methodDef,
-        string methodName,
-        int declaredParamCount)
-    {
-        if (_scope == null)
-        {
-            return null;
-        }
-
-        var classScope = _scope;
-        while (classScope != null && classScope.Kind != ScopeKind.Class)
-        {
-            classScope = classScope.Parent;
-        }
-
-        if (classScope == null)
-        {
-            return null;
-        }
-
-        var declaringScope = classScope.Parent ?? classScope;
-        var root = declaringScope;
-        while (root.Parent != null)
-        {
-            root = root.Parent;
-        }
-
-        var moduleName = root.Name;
-        var declaringScopeName = declaringScope.Kind == ScopeKind.Global
-            ? moduleName
-            : $"{moduleName}/{declaringScope.GetQualifiedName()}";
-
-        var callableName = JavaScriptCallableNaming.MakeClassMethodCallableName(classScope.Name, methodName);
-        var location = Jroc.Services.TwoPhaseCompilation.SourceLocation.FromNode(methodDef);
-
-        return new Jroc.Services.TwoPhaseCompilation.CallableId
-        {
-            Kind = Jroc.Services.TwoPhaseCompilation.CallableKind.ClassStaticMethod,
-            DeclaringScopeName = declaringScopeName,
-            Name = callableName,
-            Location = location,
-            JsParamCount = declaredParamCount,
-            AstNode = methodDef
-        };
     }
 
     /// <summary>

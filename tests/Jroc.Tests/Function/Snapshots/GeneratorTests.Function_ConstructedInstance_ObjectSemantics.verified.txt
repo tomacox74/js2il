@@ -1659,7 +1659,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 1806 (0x70e)
+		// Code size: 1804 (0x70c)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Function_ConstructedInstance_ObjectSemantics/Scope,
@@ -2297,16 +2297,15 @@
 		IL_06ea: call object [JavaScriptRuntime]JavaScriptRuntime.CallableOperations::Construct2(object, object, object, object)
 		IL_06ef: stloc.s 23
 		IL_06f1: ldloc.s 15
-		IL_06f3: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetCurrentThis(object)
-		IL_06f8: stloc.s 24
-		IL_06fa: ldloc.s 23
-		IL_06fc: call object Modules.Function_ConstructedInstance_ObjectSemantics/PointReader::read(object)
-		IL_0701: stloc.s 23
-		IL_0703: ldloc.s 19
-		IL_0705: ldloc.s 23
-		IL_0707: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_070c: pop
-		IL_070d: ret
+		IL_06f3: ldstr "read"
+		IL_06f8: ldloc.s 23
+		IL_06fa: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_06ff: stloc.s 23
+		IL_0701: ldloc.s 19
+		IL_0703: ldloc.s 23
+		IL_0705: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_070a: pop
+		IL_070b: ret
 	} // end of method Function_ConstructedInstance_ObjectSemantics::__js_module_init__
 
 } // end of class Modules.Function_ConstructedInstance_ObjectSemantics

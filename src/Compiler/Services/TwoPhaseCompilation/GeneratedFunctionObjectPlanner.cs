@@ -14,7 +14,6 @@ internal static class GeneratedFunctionObjectPlanner
         var callableScope = ResolveCallableScope(callable, symbolTable);
         var classScope = ResolveClassScope(callable, symbolTable, callableScope);
         var captures = BuildCapturePlan(callableScope, signature, out var slotCount);
-        var requirements = InspectOwnCallableBody(callable.AstNode);
         var returnKind = GetReturnKind(callable);
 
         return new GeneratedFunctionObjectPlan
@@ -34,19 +33,18 @@ internal static class GeneratedFunctionObjectPlanner
             StateFields = BuildStatePlan(
                 callable,
                 callableScope,
-                signature,
-                requirements),
+                signature),
             ScopeChainSlotCount = slotCount,
             IsConstructable = IsConstructable(callable),
             RequiresInvocationContext =
                 callable.NeedsArgumentsObject
                 || callable.HasRestParameters
-                || callable.AstNode is FunctionExpression { Id: not null }
+                || callable.Semantics.IsNamedFunctionExpression
                 || callableScope?.MayUseBoundWithObject == true
-                || HasNestedArrowLexicalContext(callable.AstNode)
-                || requirements.UsesThis
-                || requirements.UsesNewTarget
-                || requirements.UsesSuper
+                || callable.Semantics.HasNestedArrowLexicalContext
+                || callable.Semantics.UsesThis
+                || callable.Semantics.UsesNewTarget
+                || callable.Semantics.UsesSuper
                 || returnKind is GeneratedFunctionReturnKind.Generator
                     or GeneratedFunctionReturnKind.AsyncGenerator,
             UsesNonStrictThisBinding =
@@ -217,8 +215,7 @@ internal static class GeneratedFunctionObjectPlanner
     private static IReadOnlyList<GeneratedFunctionStatePlan> BuildStatePlan(
         CallableId callable,
         Scope? callableScope,
-        CallableSignature signature,
-        CallableRequirements requirements)
+        CallableSignature signature)
     {
         var state = new List<GeneratedFunctionStatePlan>();
         if (signature.ScopeAbiKind == Jroc.Runtime.CallableScopeAbiKind.ScopeArray)
@@ -242,21 +239,21 @@ internal static class GeneratedFunctionObjectPlanner
         }
 
         if (callable.Kind == CallableKind.Arrow
-            && (requirements.UsesThis || requirements.UsesSuper))
+            && (callable.Semantics.UsesThis || callable.Semantics.UsesSuper))
         {
             state.Add(new GeneratedFunctionStatePlan(
                 "_lexicalThis",
                 GeneratedFunctionStateKind.LexicalThis));
         }
 
-        if (callable.Kind == CallableKind.Arrow && requirements.UsesNewTarget)
+        if (callable.Kind == CallableKind.Arrow && callable.Semantics.UsesNewTarget)
         {
             state.Add(new GeneratedFunctionStatePlan(
                 "_lexicalNewTarget",
                 GeneratedFunctionStateKind.LexicalNewTarget));
         }
 
-        if (requirements.UsesSuper)
+        if (callable.Semantics.UsesSuper)
         {
             state.Add(new GeneratedFunctionStatePlan(
                 "_homeObject",
@@ -266,7 +263,7 @@ internal static class GeneratedFunctionObjectPlanner
                 GeneratedFunctionStateKind.LexicalSuperScopes));
         }
 
-        if (requirements.UsesPrivateNames)
+        if (callable.Semantics.UsesPrivateNames)
         {
             state.Add(new GeneratedFunctionStatePlan(
                 "_privateBrand",
@@ -277,29 +274,7 @@ internal static class GeneratedFunctionObjectPlanner
     }
 
     private static bool IsConstructable(CallableId callable)
-    {
-        if (callable.Kind == CallableKind.ClassConstructor)
-        {
-            return true;
-        }
-
-        if (callable.Kind is not (CallableKind.FunctionDeclaration or CallableKind.FunctionExpression))
-        {
-            return false;
-        }
-
-        if (callable.IsMethodDefinition)
-        {
-            return false;
-        }
-
-        return callable.AstNode switch
-        {
-            FunctionDeclaration function => !function.Async && !function.Generator,
-            FunctionExpression function => !function.Async && !function.Generator,
-            _ => false
-        };
-    }
+        => callable.Semantics.IsConstructable;
 
     private static GeneratedFunctionReturnKind GetReturnKind(CallableId callable)
     {
@@ -308,131 +283,13 @@ internal static class GeneratedFunctionObjectPlanner
             return GeneratedFunctionReturnKind.Constructor;
         }
 
-        return callable.AstNode switch
-        {
-            FunctionDeclaration { Async: true, Generator: true }
-                or FunctionExpression { Async: true, Generator: true }
-                or MethodDefinition
-                {
-                    Value: FunctionExpression
-                    {
-                        Async: true,
-                        Generator: true
-                    }
-                }
-                => GeneratedFunctionReturnKind.AsyncGenerator,
-            FunctionDeclaration { Async: true }
-                or FunctionExpression { Async: true }
-                or ArrowFunctionExpression { Async: true }
-                or MethodDefinition
-                {
-                    Value: FunctionExpression { Async: true }
-                }
-                => GeneratedFunctionReturnKind.Promise,
-            FunctionDeclaration { Generator: true }
-                or FunctionExpression { Generator: true }
-                or MethodDefinition
-                {
-                    Value: FunctionExpression { Generator: true }
-                }
-                => GeneratedFunctionReturnKind.Generator,
-            _ => GeneratedFunctionReturnKind.Value
-        };
-    }
-
-    private static CallableRequirements InspectOwnCallableBody(Node? root)
-    {
-        var requirements = new CallableRequirements();
-        if (root == null)
-        {
-            return requirements;
-        }
-
-        var callableRoot = root is MethodDefinition methodDefinition
-            ? methodDefinition.Value
-            : root;
-        Visit(callableRoot, isRoot: true);
-        return requirements;
-
-        void Visit(Node node, bool isRoot)
-        {
-            if (!isRoot && node is FunctionDeclaration
-                or FunctionExpression
-                or ArrowFunctionExpression
-                or ClassDeclaration
-                or ClassExpression)
-            {
-                return;
-            }
-
-            requirements = node switch
-            {
-                ThisExpression => requirements with { UsesThis = true },
-                MetaProperty => requirements with { UsesNewTarget = true },
-                Super => requirements with { UsesSuper = true },
-                PrivateIdentifier => requirements with { UsesPrivateNames = true },
-                CallExpression { Callee: Identifier { Name: "eval" } } =>
-                    requirements with
-                    {
-                        UsesThis = true,
-                        UsesNewTarget = true
-                    },
-                _ => requirements
-            };
-
-            foreach (var child in node.ChildNodes)
-            {
-                Visit(child, isRoot: false);
-            }
-        }
-
-    }
-
-    private static bool HasNestedArrowLexicalContext(Node? root)
-    {
-        if (root is null)
-        {
-            return false;
-        }
-
-        return Visit(root, isRoot: true);
-
-        static bool Visit(Node node, bool isRoot)
-        {
-            if (!isRoot && node is FunctionDeclaration or FunctionExpression)
-            {
-                return false;
-            }
-
-            if (!isRoot
-                && node is ArrowFunctionExpression arrow
-                && ArrowUsesLexicalContext(arrow))
-            {
-                return true;
-            }
-
-            return node.ChildNodes.Any(child => Visit(child, isRoot: false));
-        }
-
-        static bool ArrowUsesLexicalContext(ArrowFunctionExpression arrow)
-        {
-            return VisitArrowBody(arrow.Body);
-
-            static bool VisitArrowBody(Node node)
-            {
-                if (node is FunctionDeclaration or FunctionExpression)
-                {
-                    return false;
-                }
-
-                if (node is ThisExpression or MetaProperty or Super)
-                {
-                    return true;
-                }
-
-                return node.ChildNodes.Any(VisitArrowBody);
-            }
-        }
+        return callable.Semantics.IsAsync && callable.Semantics.IsGenerator
+            ? GeneratedFunctionReturnKind.AsyncGenerator
+            : callable.Semantics.IsAsync
+                ? GeneratedFunctionReturnKind.Promise
+                : callable.Semantics.IsGenerator
+                    ? GeneratedFunctionReturnKind.Generator
+                    : GeneratedFunctionReturnKind.Value;
     }
 
     private static string BuildTypeName(CallableId callable)
@@ -500,10 +357,4 @@ internal static class GeneratedFunctionObjectPlanner
 
         return hash.ToString("X8", System.Globalization.CultureInfo.InvariantCulture);
     }
-
-    private readonly record struct CallableRequirements(
-        bool UsesThis = false,
-        bool UsesNewTarget = false,
-        bool UsesSuper = false,
-        bool UsesPrivateNames = false);
 }

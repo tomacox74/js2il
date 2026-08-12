@@ -1,7 +1,6 @@
 using System.Reflection;
 using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
-using Acornima.Ast;
 using Jroc.Services.ILGenerators;
 using Jroc.Services.VariableBindings;
 using Jroc.Utilities.Ecma335;
@@ -338,10 +337,9 @@ internal sealed class GeneratedFunctionObjectEmitter
             }
             if (metadata.Plan.ReturnKind
                     == GeneratedFunctionReturnKind.AsyncGenerator
-                || metadata.Plan.ReturnKind
-                    == GeneratedFunctionReturnKind.Generator
-                    && HasSimpleGeneratorParameters(
-                        metadata.Plan.Callable.AstNode))
+                    || metadata.Plan.ReturnKind
+                        == GeneratedFunctionReturnKind.Generator
+                    && metadata.Plan.Callable.Semantics.HasSimpleParameters)
             {
                 encoder.OpCode(ILOpCode.Ldarg_0);
                 encoder.Call(
@@ -500,23 +498,6 @@ internal sealed class GeneratedFunctionObjectEmitter
                 CallableKind.FunctionDeclaration
                 or CallableKind.FunctionExpression
                 or CallableKind.Arrow;
-
-    private static bool HasSimpleGeneratorParameters(Node? callableNode)
-    {
-        var parameters = callableNode switch
-        {
-            FunctionDeclaration function => function.Params,
-            FunctionExpression function => function.Params,
-            Acornima.Ast.MethodDefinition
-            {
-                Value: FunctionExpression function
-            } => function.Params,
-            _ => default
-        };
-
-        return parameters.Count == 0
-            || parameters.All(parameter => parameter is Identifier);
-    }
 
     private MethodDefinitionHandle EmitStateAccessor(
         GeneratedFunctionObjectMetadata metadata,
