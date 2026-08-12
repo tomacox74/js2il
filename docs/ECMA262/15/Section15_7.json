@@ -306,14 +306,16 @@
         "testScripts": [
           "tests/Jroc.Tests/Classes/JavaScript/Classes_ClassWithStaticMethod_HelloWorld.js",
           "tests/Jroc.Tests/Classes/JavaScript/Classes_GeneratedMethodFunctionObjects.js",
+          "tests/Jroc.Test262.Tests/language/statements/class/definition/JavaScript/methods.js",
           "tests/Jroc.Test262.Tests/language/expressions/class/elements/JavaScript/fields-multiple-definitions-static-private-methods-proxy.js",
           "tests/Jroc.Test262.Tests/language/statements/class/elements/JavaScript/new-sc-line-method-rs-static-method-privatename-identifier-alt.js"
         ],
         "test262Paths": [
+          "test/language/statements/class/definition/methods.js",
           "test/language/expressions/class/elements/fields-multiple-definitions-static-private-methods-proxy.js",
           "test/language/statements/class/elements/new-sc-line-method-rs-static-method-privatename-identifier-alt.js"
         ],
-        "notes": "Synchronous static methods retain direct typed dispatch and materialize as generated non-constructable JsFunctionObject properties on the class constructor value. Static private calls continue to enforce the declaring-class receiver brand, including proxy mismatch rejection."
+        "notes": "Synchronous static methods materialize as generated non-constructable JsFunctionObject properties on the class constructor value. Public static calls perform ordinary runtime member lookup so descriptor mutation, accessors, proxies, inheritance, and deletion remain observable; only static private calls retain direct typed dispatch, with declaring-class receiver-brand checks including proxy mismatch rejection. The covered test262 case verifies public static method descriptors and invocation."
       },
       {
         "clause": "15.7.1",
