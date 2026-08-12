@@ -1,4 +1,5 @@
 using JavaScriptRuntime;
+using JavaScriptRuntime.Node;
 
 namespace Jroc.Tests;
 
@@ -6,7 +7,7 @@ public static class Test262HostRuntimeIntrinsics
 {
     public static HostRuntimeIntrinsicDescriptors Create()
         => new HostRuntimeIntrinsicDescriptorsBuilder()
-            .AddGlobalFactory("assert", CreateAssert)
+            .AddGlobalFactory("assert", CreateNodeAssertAdapter)
             .AddGlobalFactory("Test262Error", CreateTest262ErrorConstructor)
             .AddGlobalFactory("$ERROR", () => CreateFunction(
                 (Action<object?>)(message => throw CreateTest262Error(message)),
@@ -64,74 +65,32 @@ public static class Test262HostRuntimeIntrinsics
                 1))
             .Build();
 
-    private static object CreateAssert()
+    private static object CreateNodeAssertAdapter()
     {
-        var assert = CreateFunction((Action<object?, object?>)((condition, message) =>
-        {
-            var passed = TypeUtilities.ToBoolean(condition);
-            Log(passed);
-            if (!passed)
-            {
-                ThrowAssertion(message, "Assertion failed");
-            }
-        }), "assert", 2);
-
-        var sameValue = CreateFunction((Action<object?, object?, object?>)((actual, expected, message) =>
-        {
-            var passed = JavaScriptRuntime.Object.@is(actual, expected);
-            Log(passed);
-            if (!passed)
-            {
-                ThrowAssertion(message, "Expected SameValue");
-            }
-        }), "sameValue", 3);
-
-        var notSameValue = CreateFunction((Action<object?, object?, object?>)((actual, unexpected, message) =>
-        {
-            var passed = !JavaScriptRuntime.Object.@is(actual, unexpected);
-            Log(passed);
-            if (!passed)
-            {
-                ThrowAssertion(message, "Expected values to differ");
-            }
-        }), "notSameValue", 3);
-
-        var throws = CreateFunction((Action<object?, object?, object?>)((expectedErrorConstructor, fn, message) =>
-        {
-            var passed = false;
-            try
-            {
-                Closure.InvokeWithArgs(fn!, RuntimeServices.EmptyScopes);
-            }
-            catch (Exception error)
-            {
-                passed = IsExpectedError(error is JsThrownValueException thrown ? thrown.Value : error, expectedErrorConstructor);
-            }
-
-            Log(passed);
-            if (!passed)
-            {
-                ThrowAssertion(message, "Expected function to throw");
-            }
-        }), "throws", 3);
-
-        var compareArray = CreateFunction((Action<object?, object?, object?>)((actual, expected, message) =>
-        {
-            var passed = CompareArray(actual, expected);
-            Log(passed);
-            if (!passed)
-            {
-                ThrowAssertion(message, "Expected arrays to match");
-            }
-        }), "compareArray", 3);
-
-        ObjectRuntime.SetItem(assert, "sameValue", sameValue);
-        ObjectRuntime.SetItem(assert, "notSameValue", notSameValue);
-        ObjectRuntime.SetItem(assert, "strictEqual", sameValue);
-        ObjectRuntime.SetItem(assert, "notStrictEqual", notSameValue);
-        ObjectRuntime.SetItem(assert, "throws", throws);
-        ObjectRuntime.SetItem(assert, "compareArray", compareArray);
-
+        var assert = new AssertModule();
+        ObjectRuntime.SetItem(assert, "sameValue", CreateFunction(
+            (Action<object?, object?, object?>)((actual, expected, message) =>
+                assert.strictEqual(actual, expected, message)),
+            "sameValue",
+            3));
+        ObjectRuntime.SetItem(assert, "notSameValue", CreateFunction(
+            (Action<object?, object?, object?>)((actual, unexpected, message) =>
+                assert.notStrictEqual(actual, unexpected, message)),
+            "notSameValue",
+            3));
+        ObjectRuntime.SetItem(assert, "throws", CreateFunction(
+            (Action<object?, object?, object?>)((expectedErrorConstructor, fn, message) =>
+                assert.throws(
+                    fn,
+                    expectedErrorConstructor,
+                    message is null or JsNull ? null : ToMessage(message))),
+            "throws",
+            3));
+        ObjectRuntime.SetItem(assert, "compareArray", CreateFunction(
+            (Action<object?, object?, object?>)((actual, expected, message) =>
+                assert.ok(CompareArray(actual, expected), message)),
+            "compareArray",
+            3));
         return assert;
     }
 
@@ -232,7 +191,6 @@ public static class Test262HostRuntimeIntrinsics
                 ObjectRuntime.GetItem(expectedDescriptor!, "set"));
         }
 
-        Log(passed);
         if (!passed)
         {
             ThrowAssertion($"verifyProperty failed for {ToMessage(name)}");
@@ -245,7 +203,6 @@ public static class Test262HostRuntimeIntrinsics
         var passed = actualDescriptor is not null
             && JavaScriptRuntime.Object.@is(ObjectRuntime.GetItem(actualDescriptor!, attributeName), expectedValue);
 
-        Log(passed);
         if (!passed)
         {
             ThrowAssertion($"verify{(expectedValue ? string.Empty : "Not")}{Capitalize(attributeName)} failed for {ToMessage(name)}");
@@ -283,7 +240,6 @@ public static class Test262HostRuntimeIntrinsics
         var timezoneOffsetMinutes = ObjectRuntime.CallMember(date!, "getTimezoneOffset", global::System.Array.Empty<object>());
         var normalizedActualMs = TypeUtilities.ToNumber(actualMs) - TypeUtilities.ToNumber(timezoneOffsetMinutes) * 60_000d;
         var passed = JavaScriptRuntime.Object.@is(normalizedActualMs, TypeUtilities.ToNumber(expectedMs));
-        Log(passed);
         if (!passed)
         {
             ThrowAssertion($"Expected date value {ToMessage(expectedMs)}");
@@ -327,50 +283,6 @@ public static class Test262HostRuntimeIntrinsics
             "$DONE",
             1);
 
-    private static bool IsExpectedError(object? error, object? expectedErrorConstructor)
-    {
-        if (expectedErrorConstructor is null)
-        {
-            return false;
-        }
-
-        try
-        {
-            if (Operators.InstanceOf(error, expectedErrorConstructor))
-            {
-                return true;
-            }
-        }
-        catch (TypeError)
-        {
-        }
-
-        if (error is not null
-            && error is not JsNull
-            && ReferenceEquals(ObjectRuntime.GetItem(error, "constructor"), expectedErrorConstructor))
-        {
-            return true;
-        }
-
-        var expectedName = ObjectRuntime.GetItem(expectedErrorConstructor, "name") as string;
-        if (!string.IsNullOrEmpty(expectedName)
-            && string.Equals(GetErrorName(error), expectedName, StringComparison.Ordinal))
-        {
-            return true;
-        }
-
-        return false;
-    }
-
-    private static string GetErrorName(object? error)
-        => error switch
-        {
-            Error jsError => jsError.name,
-            null => string.Empty,
-            JsNull => string.Empty,
-            _ => ObjectRuntime.GetItem(error, "name") as string ?? error.GetType().Name
-        };
-
     private static bool HasOwn(object? target, string name)
         => target is not null && target is not JsNull && JavaScriptRuntime.Object.hasOwn(target, name);
 
@@ -410,9 +322,6 @@ public static class Test262HostRuntimeIntrinsics
         Function.MarkUndefinedPrototype(adapter);
         return adapter;
     }
-
-    private static void Log(bool value)
-        => GlobalThis.console.log(value);
 
     private static string ToMessage(object? value)
         => value switch

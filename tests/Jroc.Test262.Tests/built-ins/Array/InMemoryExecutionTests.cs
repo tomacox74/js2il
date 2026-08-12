@@ -32,6 +32,7 @@ public sealed class InMemoryExecutionTests
                 "built_ins.Array",
                 name => GetJavaScriptAndSourcePath(name),
                 sourceFilePath);
+            Test262SharedAssertHarness.AssertNoOutput(testName, result.Output);
             weakReferences.Add(result.LoadContextWeakReference);
         }
 

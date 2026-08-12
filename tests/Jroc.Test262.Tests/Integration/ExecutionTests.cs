@@ -1,5 +1,6 @@
 using JavaScriptRuntime;
 using JavaScriptRuntime.DependencyInjection;
+using AssertionError = JavaScriptRuntime.Node.AssertionError;
 using Jroc.Tests;
 using Jroc.Tests.Integration;
 
@@ -91,7 +92,7 @@ public class ExecutionTests
     }
 
     [Fact]
-    public async Task Compile_Scripts_Test262NativeHostHelpers()
+    public Task Compile_Scripts_Test262NativeHostHelpers()
     {
         var sourceFilePath = Path.Combine(
             FindRepositoryRoot(),
@@ -107,13 +108,60 @@ public class ExecutionTests
             sourceFilePath,
             enableIRMetrics: true);
 
-        var settings = new VerifySettings(_verifySettings);
-        var directory = Path.GetDirectoryName(sourceFilePath)
-            ?? throw new InvalidOperationException("Could not resolve source directory.");
-        var snapshotsDirectory = Path.Combine(directory, "Snapshots");
-        Directory.CreateDirectory(snapshotsDirectory);
-        settings.UseDirectory(snapshotsDirectory);
-        await Verify(result.Output, settings);
+        Test262SharedAssertHarness.AssertNoOutput(
+            nameof(Compile_Scripts_Test262NativeHostHelpers),
+            result.Output);
+        return Task.CompletedTask;
+    }
+
+    [Fact]
+    public void Compile_Scripts_Test262AssertionFailureThrows()
+    {
+        var sourceFilePath = Path.Combine(
+            FindRepositoryRoot(),
+            "tests",
+            "Jroc.Test262.Tests",
+            "Integration",
+            "ExecutionTests.cs");
+
+        Assert.Throws<AssertionError>(() =>
+        {
+            Test262SharedAssertHarness.CompileAndExecute(
+                nameof(Compile_Scripts_Test262AssertionFailureThrows),
+                "Integration",
+                _ => ("assert.sameValue(1, 2, 'intentional failure');", null),
+                sourceFilePath);
+        });
+    }
+
+    [Fact]
+    public void Compile_Scripts_Test262RuntimeNegativeRejectsWrongErrorType()
+    {
+        var sourceFilePath = Path.Combine(
+            FindRepositoryRoot(),
+            "tests",
+            "Jroc.Test262.Tests",
+            "Integration",
+            "ExecutionTests.cs");
+        const string script = """
+            /*---
+            negative:
+              phase: runtime
+              type: TypeError
+            ---*/
+            throw new Error('wrong type');
+            """;
+
+        var exception = Assert.Throws<InvalidOperationException>(() =>
+        {
+            Test262SharedAssertHarness.CompileAndExecute(
+                nameof(Compile_Scripts_Test262RuntimeNegativeRejectsWrongErrorType),
+                "Integration",
+                _ => (script, null),
+                sourceFilePath,
+                allowUnhandledException: true);
+        });
+        Assert.Contains("expected runtime exception 'TypeError', but got 'Error'", exception.Message);
     }
 
     private async Task ExecutionTest(

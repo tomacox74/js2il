@@ -34,17 +34,7 @@ namespace Jroc.Tests
                     allowUnhandledException: allowUnhandledException,
                     addMocks: addMocks);
 
-                var inMemorySettings = new VerifySettings(_verifySettings);
-                var inMemoryDirectory = Path.GetDirectoryName(sourceFilePath);
-                if (!string.IsNullOrEmpty(inMemoryDirectory))
-                {
-                    var snapshotsDirectory = Path.Combine(inMemoryDirectory, "Snapshots");
-                    Directory.CreateDirectory(snapshotsDirectory);
-                    inMemorySettings.UseDirectory(snapshotsDirectory);
-                }
-
-                configureSettings?.Invoke(inMemorySettings);
-                await Verify(result.Output, inMemorySettings);
+                Test262SharedAssertHarness.AssertNoOutput(testName, result.Output);
                 return;
             }
 

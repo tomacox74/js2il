@@ -9,16 +9,13 @@ public abstract class FileSystemExecutionTestsBase
 {
     private readonly string _relativeCategoryPath;
     private readonly string _testCategory;
-    private readonly VerifySettings _verifySettings = new();
-
     protected FileSystemExecutionTestsBase(string relativeCategoryPath, string testCategory)
     {
         _relativeCategoryPath = relativeCategoryPath;
         _testCategory = testCategory;
-        _verifySettings.DisableDiff();
     }
 
-    protected async Task ExecutionTest(string testName, bool allowUnhandledException = false, [CallerFilePath] string sourceFilePath = "")
+    protected Task ExecutionTest(string testName, bool allowUnhandledException = false, [CallerFilePath] string sourceFilePath = "")
     {
         string projectRoot = FindProjectRoot(sourceFilePath);
         var result = Test262SharedAssertHarness.CompileAndExecute(
@@ -29,10 +26,11 @@ public abstract class FileSystemExecutionTestsBase
             enableIRMetrics: true,
             allowUnhandledException: allowUnhandledException);
 
-        await VerifyWithSnapshot(result.Output, sourceFilePath);
+        Test262SharedAssertHarness.AssertNoOutput(testName, result.Output);
+        return Task.CompletedTask;
     }
 
-    protected async Task CompilationFailureTest(
+    protected Task CompilationFailureTest(
         string testName,
         string? expectedFailureText = null,
         [CallerFilePath] string sourceFilePath = "")
@@ -76,7 +74,7 @@ public abstract class FileSystemExecutionTestsBase
                 $"Compilation failed for test {testName}, but the failure did not contain '{expectedFailureText}'.\nActual failure:\n{failure}");
         }
 
-        await VerifyWithSnapshot("true" + Environment.NewLine, sourceFilePath);
+        return Task.CompletedTask;
     }
 
     private (string Script, string SourcePath) GetJavaScriptAndSourcePath(string projectRoot, string testName)
@@ -94,15 +92,6 @@ public abstract class FileSystemExecutionTestsBase
         }
 
         return (File.ReadAllText(sourcePath), sourcePath);
-    }
-
-    private Task VerifyWithSnapshot(string value, string sourceFilePath)
-    {
-        var settings = new VerifySettings(_verifySettings);
-        string snapshotsDirectory = Path.Combine(Path.GetDirectoryName(sourceFilePath)!, "Snapshots");
-        Directory.CreateDirectory(snapshotsDirectory);
-        settings.UseDirectory(snapshotsDirectory);
-        return Verify(value, settings);
     }
 
     private static string FindProjectRoot(string sourceFilePath)
