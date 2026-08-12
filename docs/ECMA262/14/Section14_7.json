@@ -13,7 +13,7 @@
     {
       "clause": "14.7.1",
       "title": "Semantics",
-      "status": "Supported with Limitations",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-iteration-statements-semantics"
     },
     {
@@ -151,13 +151,13 @@
     {
       "clause": "14.7.5.9",
       "title": "EnumerateObjectProperties ( O )",
-      "status": "Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-enumerate-object-properties"
     },
     {
       "clause": "14.7.5.10",
       "title": "For-In Iterator Objects",
-      "status": "Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-for-in-iterator-objects"
     },
     {
@@ -454,7 +454,7 @@
       {
         "clause": "14.7.5.7",
         "feature": "for-in over objects (enumerate enumerable keys)",
-        "status": "Supported",
+        "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-runtime-semantics-forinofbodyevaluation",
         "testScripts": [
           "tests/Jroc.Tests/ControlFlow/JavaScript/ControlFlow_ForIn_Object_Basic.js",
@@ -499,14 +499,14 @@
       {
         "clause": "14.7.5",
         "feature": "for await..of",
-        "status": "Supported",
+        "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-for-in-and-for-of-statements",
         "testScripts": [
           "tests/Jroc.Tests/Async/JavaScript/Async_ForAwaitOf_Array.js",
           "tests/Jroc.Tests/Async/JavaScript/Async_ForAwaitOf_AsyncIterator_BreakCloses.js",
           "tests/Jroc.Tests/Async/JavaScript/Async_ForAwaitOf_SyncIteratorFallback_BreakCloses.js"
         ],
-        "notes": "Lowered using the async iterator protocol (GetAsyncIterator/AsyncIteratorNext/AsyncIteratorClose), including awaiting AsyncIteratorClose on abrupt completion (break/throw/return)."
+        "notes": "Lowered using the async iterator protocol (GetAsyncIterator/AsyncIteratorNext/AsyncIteratorClose), including awaiting AsyncIteratorClose on abrupt completion (break/throw/return). Async iterator acquisition currently treats an abrupt Symbol.asyncIterator property read as an absent method, and AsyncIteratorClose does not validate a custom return() result after awaiting it."
       },
       {
         "clause": "14.7.5",
