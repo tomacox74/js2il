@@ -39,10 +39,7 @@ public static class Test262HostRuntimeIntrinsics
                 "asyncTest",
                 1));
 
-        if (included.Contains("propertyHelper.js"))
-        {
-            Test262PropertyHelpers.Register(builder);
-        }
+        Test262PropertyHelpers.Register(builder);
 
         if (included.Contains("testTypedArray.js"))
         {

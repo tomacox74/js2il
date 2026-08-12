@@ -64,8 +64,7 @@ internal static class Test262PropertyHelpers
         {
             var expectedValue = TypeUtilities.ToBoolean(ObjectRuntime.GetItem(expected, "enumerable"));
             var actualValue = TypeUtilities.ToBoolean(ObjectRuntime.GetItem(actual!, "enumerable"));
-            var observableValue = TypeUtilities.ToBoolean(
-                ObjectRuntime.CallMember(target, "propertyIsEnumerable", new object[] { name! }));
+            var observableValue = IsEnumerable(target, name);
             if (expectedValue != actualValue || expectedValue != observableValue)
             {
                 failures.Add($"obj['{nameText}'] descriptor should {(expectedValue ? string.Empty : "not ")}be enumerable");
@@ -211,8 +210,7 @@ internal static class Test262PropertyHelpers
         var target = Argument(args, 0)!;
         var name = Argument(args, 1);
         VerifyDescriptorAttribute(target, name, "enumerable", expected);
-        var actual = TypeUtilities.ToBoolean(
-            ObjectRuntime.CallMember(target, "propertyIsEnumerable", new object[] { name! }));
+        var actual = IsEnumerable(target, name);
         if (actual != expected)
         {
             Fail($"Expected obj[{Test262HostRuntimeIntrinsics.ToMessage(name)}] {(expected ? string.Empty : "NOT ")}to be enumerable.");
@@ -318,6 +316,14 @@ internal static class Test262PropertyHelpers
     {
         ObjectRuntime.DeletePropertyNonStrict(target, name);
         return !Test262HostRuntimeIntrinsics.HasOwn(target, name!);
+    }
+
+    private static bool IsEnumerable(object target, object? name)
+    {
+        var descriptor = JavaScriptRuntime.Object.getOwnPropertyDescriptor(target, name);
+        return descriptor is not null
+            && Test262HostRuntimeIntrinsics.HasOwn(target, name!)
+            && TypeUtilities.ToBoolean(ObjectRuntime.GetItem(descriptor, "enumerable"));
     }
 
     private static void VerifyDescriptorAttribute(object target, object? name, string attribute, bool expected)
