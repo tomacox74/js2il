@@ -39,7 +39,6 @@ public class ExecutionTests
             testName,
             "language.expressions.delete",
             _ => (File.ReadAllText(jsPath), jsPath),
-            sourceFilePath,
             enableIRMetrics: true);
         Test262SharedAssertHarness.AssertNoOutput(testName, result.Output);
         return Task.CompletedTask;

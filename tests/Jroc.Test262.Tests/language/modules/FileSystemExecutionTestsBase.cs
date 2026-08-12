@@ -22,7 +22,6 @@ public abstract class FileSystemExecutionTestsBase
             testName,
             _testCategory,
             name => GetJavaScriptAndSourcePath(projectRoot, name),
-            sourceFilePath,
             enableIRMetrics: true,
             allowUnhandledException: allowUnhandledException);
 

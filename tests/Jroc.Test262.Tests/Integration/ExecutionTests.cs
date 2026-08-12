@@ -94,18 +94,10 @@ public class ExecutionTests
     [Fact]
     public Task Compile_Scripts_Test262NativeHostHelpers()
     {
-        var sourceFilePath = Path.Combine(
-            FindRepositoryRoot(),
-            "tests",
-            "Jroc.Test262.Tests",
-            "Integration",
-            "ExecutionTests.cs");
-
         var result = Test262SharedAssertHarness.CompileAndExecute(
             nameof(Compile_Scripts_Test262NativeHostHelpers),
             "Integration",
             GetJavaScriptAndSourcePath,
-            sourceFilePath,
             enableIRMetrics: true);
 
         Test262SharedAssertHarness.AssertNoOutput(
@@ -117,32 +109,18 @@ public class ExecutionTests
     [Fact]
     public void Compile_Scripts_Test262AssertionFailureThrows()
     {
-        var sourceFilePath = Path.Combine(
-            FindRepositoryRoot(),
-            "tests",
-            "Jroc.Test262.Tests",
-            "Integration",
-            "ExecutionTests.cs");
-
         Assert.Throws<AssertionError>(() =>
         {
             Test262SharedAssertHarness.CompileAndExecute(
                 nameof(Compile_Scripts_Test262AssertionFailureThrows),
                 "Integration",
-                _ => ("assert.sameValue(1, 2, 'intentional failure');", null),
-                sourceFilePath);
+                _ => ("assert.sameValue(1, 2, 'intentional failure');", null));
         });
     }
 
     [Fact]
     public void Compile_Scripts_Test262RuntimeNegativeRejectsWrongErrorType()
     {
-        var sourceFilePath = Path.Combine(
-            FindRepositoryRoot(),
-            "tests",
-            "Jroc.Test262.Tests",
-            "Integration",
-            "ExecutionTests.cs");
         const string script = """
             /*---
             negative:
@@ -158,7 +136,6 @@ public class ExecutionTests
                 nameof(Compile_Scripts_Test262RuntimeNegativeRejectsWrongErrorType),
                 "Integration",
                 _ => (script, null),
-                sourceFilePath,
                 allowUnhandledException: true);
         });
         Assert.Contains("expected runtime exception 'TypeError', but got 'Error'", exception.Message);
