@@ -9,6 +9,15 @@ namespace Jroc.Tests;
 
 public static class Test262SharedAssertHarness
 {
+    private static readonly HashSet<string> NativeHostHarnessFiles =
+    [
+        "assert.js",
+        "compareArray.js",
+        "isConstructor.js",
+        "sta.js",
+        "wellKnownIntrinsicObjects.js"
+    ];
+
     public static InMemoryTestExecutionResult CompileAndExecute(
         string testName,
         string testCategory,
@@ -34,7 +43,6 @@ public static class Test262SharedAssertHarness
                 testName,
                 preparedEntryScript,
                 entrySourcePath,
-                callerSourceFilePath,
                 getJavaScriptAndSourcePath),
             enableIRMetrics: enableIRMetrics,
             allowUnhandledException: allowUnhandledException,
@@ -73,10 +81,9 @@ public static class Test262SharedAssertHarness
             scriptBuilder.AppendLine("\"use strict\";");
         }
 
-        var helperFiles = new List<string>();
-        helperFiles.AddRange(GetInlineHarnessFileNames(metadata.Includes));
-
-        foreach (var helperFile in helperFiles.Distinct(StringComparer.Ordinal))
+        foreach (var helperFile in metadata.Includes
+                     .Where(name => !NativeHostHarnessFiles.Contains(name))
+                     .Distinct(StringComparer.Ordinal))
         {
             var helperScript = File.ReadAllText(GetHarnessSourcePath(callerSourceFilePath, helperFile));
             scriptBuilder.AppendLine(BuildInlineHarnessBlock(helperFile, helperScript));
@@ -91,7 +98,6 @@ public static class Test262SharedAssertHarness
         string entryTestName,
         string preparedEntryScript,
         string? entrySourcePath,
-        string callerSourceFilePath,
         Func<string, (string Script, string? SourcePath)> getJavaScriptAndSourcePath)
     {
         if (string.Equals(requestedScriptName, entryTestName, StringComparison.Ordinal))
@@ -320,25 +326,6 @@ public static class Test262SharedAssertHarness
         }
 
         return false;
-    }
-
-    private static IEnumerable<string> GetInlineHarnessFileNames(IReadOnlyList<string> includeFileNames)
-    {
-        foreach (var includeFileName in includeFileNames)
-        {
-            // Native C# host intrinsics replace these helper groups. Other include files
-            // continue to use the JavaScript fallback until their full helper surfaces are ported.
-            if (string.Equals(includeFileName, "assert.js", StringComparison.Ordinal)
-                || string.Equals(includeFileName, "compareArray.js", StringComparison.Ordinal)
-                || string.Equals(includeFileName, "isConstructor.js", StringComparison.Ordinal)
-                || string.Equals(includeFileName, "wellKnownIntrinsicObjects.js", StringComparison.Ordinal)
-                || string.Equals(includeFileName, "sta.js", StringComparison.Ordinal))
-            {
-                continue;
-            }
-
-            yield return includeFileName;
-        }
     }
 
     private static string GetHarnessSourcePath(string callerSourceFilePath, string harnessFileName)
