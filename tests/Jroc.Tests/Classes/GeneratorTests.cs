@@ -138,6 +138,7 @@ namespace Jroc.Tests.Classes
         [Fact] public Task Classes_ClassStaticBlock_DeclarationOrder() { var testName = nameof(Classes_ClassStaticBlock_DeclarationOrder); return GenerateTest(testName); }
         [Fact] public Task Classes_ClassWithMethod_HelloWorld() { var testName = nameof(Classes_ClassWithMethod_HelloWorld); return GenerateTest(testName); }
         [Fact] public Task Classes_ClassWithMethod_NoInstantiation() { var testName = nameof(Classes_ClassWithMethod_NoInstantiation); return GenerateTest(testName); }
+        [Fact] public Task Classes_StaticMethod_Reassignment() { var testName = nameof(Classes_StaticMethod_Reassignment); return GenerateTest(testName); }
         [Fact] public Task Classes_ClassWithStaticMethod_HelloWorld() { var testName = nameof(Classes_ClassWithStaticMethod_HelloWorld); return GenerateTest(testName); }
         [Fact] public Task Classes_ClassWithStaticProperty_DefaultAndLog() { var testName = nameof(Classes_ClassWithStaticProperty_DefaultAndLog); return GenerateTest(testName); }
         [Fact] public Task Classes_DeclareEmptyClass() { var testName = nameof(Classes_DeclareEmptyClass); return GenerateTest(testName); }

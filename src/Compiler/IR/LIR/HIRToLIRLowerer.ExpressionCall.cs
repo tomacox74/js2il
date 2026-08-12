@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Acornima.Ast;
 using Jroc.HIR;
 using Jroc.IL;
 using Jroc.Services;
@@ -592,7 +591,7 @@ public sealed partial class HIRToLIRLowerer
                 return true;
             }
 
-            var callableId = TryCreateCallableIdForFunctionDeclaration(symbol);
+            var callableId = symbol.BindingInfo.Callable;
 
             // Strict bare calls must preserve undefined `this`; route them through the function-value
             // dispatch path instead of the direct static-call fast path.
@@ -1165,208 +1164,12 @@ public sealed partial class HIRToLIRLowerer
             }
         }
 
-        // Case 2b.2: User-defined class static method call (e.g., Greeter.helloWorld()).
-        // If the receiver is a class identifier (ClassDeclaration binding) and the member is a static method,
-        // emit a direct call to the declared method token via CallableRegistry.
-        if ((calleePropAccess.Object is HIRThisExpression { StaticClassRegistryName: not null }
-                || (_callableKind == CallableKind.ClassStaticMethod && calleePropAccess.Object is HIRThisExpression))
-            && _scope != null)
+        if (TryLowerUserClassStaticMethodCall(
+                callExpr,
+                out var staticMethodResult))
         {
-            var classScope = _scope;
-            while (classScope != null && classScope.Kind != ScopeKind.Class)
-            {
-                classScope = classScope.Parent;
-            }
-
-            var classBody = classScope?.AstNode switch
-            {
-                ClassDeclaration enclosingClassDecl => enclosingClassDecl.Body,
-                ClassExpression enclosingClassExpr => enclosingClassExpr.Body,
-                _ => null
-            };
-
-            if (classBody != null)
-            {
-                var memberName = calleePropAccess.PropertyName;
-                var member = classBody.Body
-                    .OfType<MethodDefinition>()
-                    .FirstOrDefault(m =>
-                        m.Static
-                        && string.Equals(ClassElementNames.GetMethodRegistryName(m), memberName, StringComparison.Ordinal));
-
-                if (member?.Value is FunctionExpression memberFunc)
-                {
-                    var callableId = TryCreateCallableIdForCurrentClassStaticMethod(member, memberName, memberFunc.Params.Count);
-                    if (callableId == null)
-                    {
-                        return false;
-                    }
-
-                    if (!TryBuildClassStaticMethodScopesArgument(
-                            callableId,
-                            memberFunc,
-                            out var scopesArgTemp))
-                    {
-                        return false;
-                    }
-
-                    var callArgTemps = new List<TempVariable>(memberFunc.Params.Count + (scopesArgTemp.HasValue ? 2 : 0));
-
-                    if (scopesArgTemp.HasValue)
-                    {
-                        callArgTemps.Add(scopesArgTemp.Value);
-
-                        var newTargetUndefTemp = CreateTempVariable();
-                        _methodBodyIR.Instructions.Add(new LIRConstUndefined(newTargetUndefTemp));
-                        DefineTempStorage(newTargetUndefTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
-                        callArgTemps.Add(newTargetUndefTemp);
-                    }
-
-                    for (int i = 0; i < callExpr.Arguments.Length; i++)
-                    {
-                        if (!TryLowerExpression(callExpr.Arguments[i], out var argTemp))
-                        {
-                            return false;
-                        }
-
-                        argTemp = EnsureObject(argTemp);
-
-                        if (i < memberFunc.Params.Count)
-                        {
-                            callArgTemps.Add(argTemp);
-                        }
-                    }
-
-                    var expectedArgs = memberFunc.Params.Count + (scopesArgTemp.HasValue ? 2 : 0);
-                    while (callArgTemps.Count < expectedArgs)
-                    {
-                        var undefTemp = CreateTempVariable();
-                        _methodBodyIR.Instructions.Add(new LIRConstUndefined(undefTemp));
-                        DefineTempStorage(undefTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
-                        callArgTemps.Add(undefTemp);
-                    }
-
-                    if (_callableKind == CallableKind.ClassStaticMethod
-                        && calleePropAccess.Object is HIRThisExpression { StaticClassRegistryName: null }
-                        && member.Key is PrivateIdentifier)
-                    {
-                        var receiverTemp = CreateTempVariable();
-                        _methodBodyIR.Instructions.Add(new LIRLoadThis(receiverTemp));
-                        DefineTempStorage(receiverTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
-
-                        var ownerTypeTemp = CreateTempVariable();
-                        var registryClassName = $"{(classScope!.DotNetNamespace ?? "Classes")}.{(classScope.DotNetTypeName ?? classScope.Name)}";
-                        _methodBodyIR.Instructions.Add(new LIRGetUserClassType(registryClassName, ownerTypeTemp));
-                        DefineTempStorage(ownerTypeTemp, new ValueStorage(ValueStorageKind.Reference, typeof(Type)));
-
-                        var validationTemp = CreateTempVariable();
-                        _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
-                            IntrinsicName: nameof(JavaScriptRuntime.ObjectRuntime),
-                            MethodName: nameof(JavaScriptRuntime.ObjectRuntime.ValidateDirectClassPrivateMethodReceiver),
-                            Arguments: new[] { EnsureObject(receiverTemp), EnsureObject(ownerTypeTemp) },
-                            Result: validationTemp));
-                        DefineTempStorage(validationTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
-                    }
-
-                    _methodBodyIR.Instructions.Add(new LIRCallDeclaredCallable(callableId, callArgTemps, resultTempVar));
-                    DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
-                    return true;
-                }
-            }
-        }
-
-        if (calleePropAccess.Object is HIRVariableExpression classVarExpr &&
-            classVarExpr.Name.BindingInfo.DeclarationNode is ClassDeclaration classDecl)
-        {
-            var memberName = calleePropAccess.PropertyName;
-
-            var member = classDecl.Body.Body
-                .OfType<MethodDefinition>()
-                .FirstOrDefault(m =>
-                    m.Static &&
-                    m.Key is Identifier kid &&
-                    string.Equals(kid.Name, memberName, StringComparison.Ordinal));
-
-            if (member?.Value is FunctionExpression memberFunc)
-            {
-                // Create a CallableId that matches CallableDiscovery conventions.
-                var callableId = TryCreateCallableIdForClassStaticMethod(classVarExpr.Name, member, memberName, memberFunc.Params.Count);
-                if (callableId == null)
-                {
-                    return false;
-                }
-
-                if (!TryBuildClassStaticMethodScopesArgument(
-                        callableId,
-                        memberFunc,
-                        out var scopesArgTemp))
-                {
-                    return false;
-                }
-
-                // Lower all arguments (evaluate extras for side effects, but only pass up to declared param count).
-                var declaredParamCount = memberFunc.Params.Count;
-                var callArgTemps = new List<TempVariable>(declaredParamCount + (scopesArgTemp.HasValue ? 2 : 0));
-
-                if (scopesArgTemp.HasValue)
-                {
-                    callArgTemps.Add(scopesArgTemp.Value);
-
-                    var newTargetUndefTemp = CreateTempVariable();
-                    _methodBodyIR.Instructions.Add(new LIRConstUndefined(newTargetUndefTemp));
-                    DefineTempStorage(newTargetUndefTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
-                    callArgTemps.Add(newTargetUndefTemp);
-                }
-
-                for (int i = 0; i < callExpr.Arguments.Length; i++)
-                {
-                    if (!TryLowerExpression(callExpr.Arguments[i], out var argTemp))
-                    {
-                        return false;
-                    }
-
-                    argTemp = EnsureObject(argTemp);
-
-                    if (i < declaredParamCount)
-                    {
-                        callArgTemps.Add(argTemp);
-                    }
-                    // else: evaluated for side effects, result intentionally ignored
-                }
-
-                // Pad missing args with undefined (null) to match the declared signature.
-                var expectedArgs = declaredParamCount + (scopesArgTemp.HasValue ? 2 : 0);
-                while (callArgTemps.Count < expectedArgs)
-                {
-                    var undefTemp = CreateTempVariable();
-                    _methodBodyIR.Instructions.Add(new LIRConstUndefined(undefTemp));
-                    DefineTempStorage(undefTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
-                    callArgTemps.Add(undefTemp);
-                }
-
-                if (!TryLowerExpression(calleePropAccess.Object, out var staticReceiverTemp))
-                {
-                    return false;
-                }
-
-                var previousThisTemp = CreateTempVariable();
-                _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
-                    nameof(JavaScriptRuntime.RuntimeServices.SetCurrentThis),
-                    new[] { EnsureObject(staticReceiverTemp) },
-                    previousThisTemp));
-                DefineTempStorage(previousThisTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
-
-                _methodBodyIR.Instructions.Add(new LIRCallDeclaredCallable(callableId, callArgTemps, resultTempVar));
-                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
-
-                var restoreThisTemp = CreateTempVariable();
-                _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
-                    nameof(JavaScriptRuntime.RuntimeServices.SetCurrentThis),
-                    new[] { EnsureObject(previousThisTemp) },
-                    restoreThisTemp));
-                DefineTempStorage(restoreThisTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
-                return true;
-            }
+            resultTempVar = staticMethodResult;
+            return true;
         }
 
         // Lower receiver once for instance/member call cases below.
@@ -1720,72 +1523,174 @@ public sealed partial class HIRToLIRLowerer
         }
     }
 
-    private bool TryBuildClassStaticMethodScopesArgument(
-        TwoPhase.CallableId callableId,
-        FunctionExpression methodFunction,
-        out TempVariable? scopesArgument)
+    private bool TryLowerUserClassStaticMethodCall(
+        HIRCallExpression callExpression,
+        out TempVariable result)
     {
-        scopesArgument = null;
-        if (_callableRegistry == null
-            || !_callableRegistry.TryGet(callableId, out var callableInfo)
-            || callableInfo == null)
+        result = default;
+        if (callExpression.StaticClassMethodTarget is not { } target)
         {
             return false;
         }
 
-        if (!callableInfo.Signature.RequiresScopesParameter)
+        var classScope = target.ClassScope;
+        var method = target.Method;
+        if (!TryBuildClassStaticMethodScopesArgument(
+                method.Callable,
+                classScope,
+                out var scopesArgument))
+        {
+            return false;
+        }
+
+        var arguments = new List<TempVariable>(
+            method.Callable.JsParamCount + (scopesArgument.HasValue ? 2 : 0));
+        if (scopesArgument.HasValue)
+        {
+            arguments.Add(scopesArgument.Value);
+            var newTarget = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRConstUndefined(newTarget));
+            DefineTempStorage(
+                newTarget,
+                new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            arguments.Add(newTarget);
+        }
+
+        foreach (var argument in callExpression.Arguments)
+        {
+            if (!TryLowerExpression(argument, out var value))
+            {
+                return false;
+            }
+
+            if (arguments.Count
+                < method.Callable.JsParamCount + (scopesArgument.HasValue ? 2 : 0))
+            {
+                arguments.Add(EnsureObject(value));
+            }
+        }
+
+        var expectedArgumentCount = method.Callable.JsParamCount
+            + (scopesArgument.HasValue ? 2 : 0);
+        while (arguments.Count < expectedArgumentCount)
+        {
+            var undefined = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRConstUndefined(undefined));
+            DefineTempStorage(
+                undefined,
+                new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            arguments.Add(undefined);
+        }
+
+        if (target.ValidatesPrivateReceiver)
+        {
+            var receiver = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRLoadThis(receiver));
+            DefineTempStorage(
+                receiver,
+                new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            var ownerType = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRGetUserClassType(
+                classScope.ClassSemantics!.RegistryClassName,
+                ownerType));
+            DefineTempStorage(
+                ownerType,
+                new ValueStorage(ValueStorageKind.Reference, typeof(Type)));
+            var validation = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
+                nameof(JavaScriptRuntime.ObjectRuntime),
+                nameof(JavaScriptRuntime.ObjectRuntime.ValidateDirectClassPrivateMethodReceiver),
+                [EnsureObject(receiver), EnsureObject(ownerType)],
+                validation));
+            DefineTempStorage(
+                validation,
+                new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        }
+
+        TempVariable? previousThis = null;
+        if (target.SetsCurrentThis)
+        {
+            if (!TryLowerExpression(target.Receiver, out var staticReceiver))
+            {
+                return false;
+            }
+
+            previousThis = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
+                nameof(JavaScriptRuntime.RuntimeServices.SetCurrentThis),
+                [EnsureObject(staticReceiver)],
+                previousThis.Value));
+            DefineTempStorage(
+                previousThis.Value,
+                new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        }
+
+        result = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(
+            new LIRCallDeclaredCallable(method.Callable, arguments, result));
+        DefineTempStorage(
+            result,
+            new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+
+        if (previousThis.HasValue)
+        {
+            var restored = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
+                nameof(JavaScriptRuntime.RuntimeServices.SetCurrentThis),
+                [EnsureObject(previousThis.Value)],
+                restored));
+            DefineTempStorage(
+                restored,
+                new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        }
+
+        return true;
+    }
+
+    private bool TryBuildClassStaticMethodScopesArgument(
+        TwoPhase.CallableId callableId,
+        Scope classScope,
+        out TempVariable? scopesArgument)
+    {
+        scopesArgument = null;
+        if (_callableRegistry?.GetSignature(callableId) is not { } signature
+            || !signature.RequiresScopesParameter)
         {
             return true;
         }
 
-        if (callableInfo.Signature.ScopeAbiKind == Jroc.Runtime.CallableScopeAbiKind.SingleScope
-            || _scope == null)
+        if (signature.ScopeAbiKind == Jroc.Runtime.CallableScopeAbiKind.SingleScope)
         {
             return false;
         }
 
-        var rootScope = _scope;
-        while (rootScope.Parent != null)
-        {
-            rootScope = rootScope.Parent;
-        }
-
-        var methodScope = FindScopeByAstNode(methodFunction, rootScope);
+        var methodScope = classScope.Children.FirstOrDefault(
+            scope => scope.Callable == callableId);
         if (methodScope == null)
         {
             return false;
         }
 
-        var scopesTemp = CreateTempVariable();
+        var scopes = CreateTempVariable();
         if (!TryBuildScopesArrayFromLayout(
                 methodScope,
                 CallableKind.ClassStaticMethod,
-                scopesTemp))
+                scopes))
         {
             return false;
         }
 
         DefineTempStorage(
-            scopesTemp,
+            scopes,
             new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
-        scopesArgument = scopesTemp;
+        scopesArgument = scopes;
         return true;
     }
 
     private static bool RequiresFunctionObjectInvocation(
         TwoPhase.CallableId? callableId)
-    {
-        return callableId?.AstNode switch
-        {
-            ArrowFunctionExpression arrow =>
-                arrow.Async,
-            FunctionDeclaration function =>
-                function.Async || function.Generator,
-            FunctionExpression function =>
-                function.Async || function.Generator,
-            _ => false
-        };
-    }
+        => callableId?.Semantics.IsAsync == true
+           || callableId?.Semantics.IsGenerator == true;
 
     private static Type? GetStableDirectFunctionReturnClrType(BindingInfo? symbol, TwoPhase.CallableId? callableId)
     {
@@ -1795,7 +1700,7 @@ public sealed partial class HIRToLIRLowerer
             return null;
         }
 
-        var functionScope = FindFunctionScope(symbol.DeclaringScope, symbol);
+        var functionScope = FindFunctionScope(symbol.DeclaringScope, callableId);
 
         if (functionScope == null
             || functionScope.ReferencesParentScopeVariables)
@@ -1808,20 +1713,19 @@ public sealed partial class HIRToLIRLowerer
             : null;
     }
 
-    private static Scope? FindFunctionScope(Scope root, BindingInfo symbol)
+    private static Scope? FindFunctionScope(
+        Scope root,
+        TwoPhase.CallableId? callableId)
     {
         foreach (var child in root.Children)
         {
             if (child.Kind == ScopeKind.Function
-                && (ReferenceEquals(child.AstNode, symbol.DeclarationNode)
-                    || string.Equals(child.Name, symbol.Name, StringComparison.Ordinal)
-                    || (child.AstNode is FunctionDeclaration functionDeclaration
-                        && functionDeclaration.Id?.Name == symbol.Name)))
+                && child.Callable == callableId)
             {
                 return child;
             }
 
-            var descendant = FindFunctionScope(child, symbol);
+            var descendant = FindFunctionScope(child, callableId);
             if (descendant != null)
             {
                 return descendant;

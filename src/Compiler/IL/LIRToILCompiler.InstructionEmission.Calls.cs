@@ -1,4 +1,3 @@
-using Acornima.Ast;
 using Jroc.IR;
 using Jroc.Services;
 using Jroc.Services.ILGenerators;
@@ -17,47 +16,13 @@ namespace Jroc.IL;
 internal sealed partial class LIRToILCompiler
 {
     private static bool IsGeneratorCallable(CallableId callableId)
-        => callableId.AstNode switch
-        {
-            FunctionDeclaration { Generator: true } => true,
-            FunctionExpression { Generator: true } => true,
-            Acornima.Ast.MethodDefinition { Value: FunctionExpression { Generator: true } } => true,
-            _ => false
-        };
+        => callableId.Semantics.IsGenerator;
 
     private static int GetExpectedFunctionLength(CallableId callableId)
-        => callableId.AstNode switch
-        {
-            FunctionDeclaration functionDeclaration => CountExpectedFunctionLength(functionDeclaration.Params),
-            FunctionExpression functionExpression => CountExpectedFunctionLength(functionExpression.Params),
-            ArrowFunctionExpression arrowFunctionExpression => CountExpectedFunctionLength(arrowFunctionExpression.Params),
-            Acornima.Ast.MethodDefinition { Value: FunctionExpression methodFunction } => CountExpectedFunctionLength(methodFunction.Params),
-            _ => callableId.JsParamCount
-        };
-
-    private static int CountExpectedFunctionLength(NodeList<Node> parameters)
-    {
-        var count = 0;
-        foreach (var parameter in parameters)
-        {
-            if (parameter is RestElement or AssignmentPattern)
-            {
-                break;
-            }
-
-            count++;
-        }
-
-        return count;
-    }
+        => callableId.Semantics.FunctionLength;
 
     private static string GetFunctionName(CallableId callableId)
-        => callableId.AstNode switch
-        {
-            FunctionDeclaration { Id: Identifier id } => id.Name,
-            FunctionExpression { Id: Identifier id } => id.Name,
-            _ => callableId.Name ?? string.Empty
-        };
+        => callableId.Name ?? string.Empty;
 
     private Type GetFunctionCallTargetParameterType(TempVariable functionValue, Type specializedType)
         => GetTempStorage(functionValue).ClrType == specializedType
@@ -1578,7 +1543,9 @@ internal sealed partial class LIRToILCompiler
             return null;
         }
 
-        var functionScope = FindFunctionScope(symbol.DeclaringScope, symbol);
+        var functionScope = FindFunctionScope(
+            symbol.DeclaringScope,
+            callableId);
         if (functionScope == null || functionScope.ReferencesParentScopeVariables)
         {
             return null;
@@ -1589,20 +1556,19 @@ internal sealed partial class LIRToILCompiler
             : null;
     }
 
-    private static Scope? FindFunctionScope(Scope root, BindingInfo symbol)
+    private static Scope? FindFunctionScope(
+        Scope root,
+        CallableId callableId)
     {
         foreach (var child in root.Children)
         {
             if (child.Kind == ScopeKind.Function
-                && (ReferenceEquals(child.AstNode, symbol.DeclarationNode)
-                    || string.Equals(child.Name, symbol.Name, StringComparison.Ordinal)
-                    || (child.AstNode is FunctionDeclaration functionDeclaration
-                        && functionDeclaration.Id?.Name == symbol.Name)))
+                && child.Callable == callableId)
             {
                 return child;
             }
 
-            var descendant = FindFunctionScope(child, symbol);
+            var descendant = FindFunctionScope(child, callableId);
             if (descendant != null)
             {
                 return descendant;

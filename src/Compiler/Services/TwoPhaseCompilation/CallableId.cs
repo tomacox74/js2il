@@ -151,6 +151,12 @@ public sealed record CallableId
     /// True when this method-definition callable is a getter or setter.
     /// </summary>
     public bool IsAccessorDefinition { get; init; }
+
+    /// <summary>
+    /// Typed callable behavior derived during discovery/HIR construction. Downstream
+    /// lowering and IL emission must consume this descriptor, never <see cref="AstNode"/>.
+    /// </summary>
+    public CallableSemantics Semantics { get; init; } = CallableSemantics.Default;
     
     /// <summary>
     /// Optional reference to the original AST node for diagnostics.

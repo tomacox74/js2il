@@ -1,4 +1,3 @@
-using Acornima.Ast;
 using Jroc.HIR;
 using Jroc.Services;
 using Jroc.Services.ScopesAbi;
@@ -361,7 +360,7 @@ public sealed partial class HIRToLIRLowerer
             return false;
         }
 
-        var callableId = TryCreateCallableIdForFunctionDeclaration(symbol);
+        var callableId = symbol.BindingInfo.Callable;
         if (callableId == null
             || callableId.NeedsArgumentsObject
             || callableId.HasRestParameters

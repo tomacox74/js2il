@@ -37,6 +37,7 @@ public sealed class CallableDiscovery
         
         // Discover callables from the symbol table scope tree
         DiscoverFromScope(_symbolTable.Root, _moduleName);
+        AssociateCallableDescriptors(_symbolTable.Root);
         
         return _discovered.AsReadOnly();
     }
@@ -86,10 +87,15 @@ public sealed class CallableDiscovery
                 ArgumentsParameterNames = ArgumentsObjectSemantics.GetMappedParameterNames(functionScope),
                 IncludeCalleeInArgumentsObject = HasImplicitArgumentsBinding(functionScope) && !ArgumentsObjectSemantics.IsStrictScope(functionScope),
                 HasRestrictedFunctionProperties = ArgumentsObjectSemantics.IsStrictScope(functionScope),
+                Semantics = CallableSemantics.FromNode(
+                    funcDecl,
+                    CallableKind.FunctionDeclaration,
+                    ArgumentsObjectSemantics.IsStrictScope(functionScope)),
                 AstNode = funcDecl
             };
             
             _discovered.Add(callableId);
+            functionScope.Callable = callableId;
             
             // Recurse into nested functions
             var functionScopeName = $"{parentScopeName}/{funcName}";
@@ -118,10 +124,16 @@ public sealed class CallableDiscovery
                     ArgumentsObjectSemantics.IsStrictScope(functionScope),
                 IsMethodDefinition = functionScope.IsMethodDefinition,
                 IsAccessorDefinition = functionScope.IsAccessorDefinition,
+                Semantics = CallableSemantics.FromNode(
+                    funcExpr,
+                    CallableKind.FunctionExpression,
+                    ArgumentsObjectSemantics.IsStrictScope(functionScope),
+                    functionScope.IsMethodDefinition),
                 AstNode = funcExpr
             };
             
             _discovered.Add(callableId);
+            functionScope.Callable = callableId;
             
             // Recurse into nested functions
             // IMPORTANT: scope name must match SymbolTableBuilder naming so nested DeclaringScopeName
@@ -150,10 +162,14 @@ public sealed class CallableDiscovery
                 UsesMappedArgumentsObject = false,
                 IncludeCalleeInArgumentsObject = false,
                 HasRestrictedFunctionProperties = false,
+                Semantics = CallableSemantics.FromNode(
+                    arrowExpr,
+                    CallableKind.Arrow),
                 AstNode = arrowExpr
             };
             
             _discovered.Add(callableId);
+            functionScope.Callable = callableId;
             
             // Recurse into nested functions (arrows can contain nested arrows/functions)
             // IMPORTANT: scope name must match SymbolTableBuilder naming (1-based column).
@@ -176,6 +192,7 @@ public sealed class CallableDiscovery
     private void DiscoverClass(Scope classScope, string parentScopeName)
     {
         var astNode = classScope.AstNode;
+        var discoveredClassMethods = new List<ClassMethodSemantics>();
 
         ClassBody? classBody = null;
         Node? classNodeForCctor = null;
@@ -222,6 +239,10 @@ public sealed class CallableDiscovery
                 ArgumentsParameterNames = ArgumentsObjectSemantics.GetMappedParameterNames(superFuncScope),
                 IncludeCalleeInArgumentsObject = false,
                 HasRestrictedFunctionProperties = ArgumentsObjectSemantics.IsStrictScope(superFuncScope),
+                Semantics = CallableSemantics.FromNode(
+                    superFunc,
+                    CallableKind.FunctionExpression,
+                    ArgumentsObjectSemantics.IsStrictScope(superFuncScope)),
                 AstNode = superFunc
             });
         }
@@ -251,10 +272,17 @@ public sealed class CallableDiscovery
                 ArgumentsParameterNames = ctorScope != null ? ArgumentsObjectSemantics.GetMappedParameterNames(ctorScope) : Array.Empty<string>(),
                 IncludeCalleeInArgumentsObject = ctorNeedsArgumentsObject && ctorScope != null && !ArgumentsObjectSemantics.IsStrictScope(ctorScope),
                 HasRestrictedFunctionProperties = false,
+                Semantics = CallableSemantics.FromNode(
+                    ctor,
+                    CallableKind.ClassConstructor),
                 AstNode = ctor
             };
             
             _discovered.Add(ctorId);
+            if (ctorScope != null)
+            {
+                ctorScope.Callable = ctorId;
+            }
         }
         else
         {
@@ -270,6 +298,9 @@ public sealed class CallableDiscovery
                 UsesMappedArgumentsObject = false,
                 IncludeCalleeInArgumentsObject = false,
                 HasRestrictedFunctionProperties = false,
+                Semantics = CallableSemantics.FromNode(
+                    classBody,
+                    CallableKind.ClassConstructor),
                 // For synthetic callables we still want a stable AST node for indexing,
                 // but it must be unique per callable (CallableRegistry indexes Node -> CallableId).
                 // Use ClassBody for the default ctor; use ClassDeclaration for .cctor.
@@ -297,6 +328,9 @@ public sealed class CallableDiscovery
                 UsesMappedArgumentsObject = false,
                 IncludeCalleeInArgumentsObject = false,
                 HasRestrictedFunctionProperties = false,
+                Semantics = CallableSemantics.FromNode(
+                    classNodeForCctor,
+                    CallableKind.ClassStaticInitializer),
                 AstNode = classNodeForCctor!
             };
             _discovered.Add(cctorId);
@@ -340,6 +374,12 @@ public sealed class CallableDiscovery
                             && ArgumentsObjectSemantics.IsStrictScope(dynamicMethodScope),
                         IsMethodDefinition = true,
                         IsAccessorDefinition = member.Kind is PropertyKind.Get or PropertyKind.Set,
+                        Semantics = CallableSemantics.FromNode(
+                            computedFunc,
+                            CallableKind.FunctionExpression,
+                            dynamicMethodScope != null
+                            && ArgumentsObjectSemantics.IsStrictScope(dynamicMethodScope),
+                            isMethodDefinition: true),
                         AstNode = computedFunc
                     });
                 }
@@ -411,11 +451,42 @@ public sealed class CallableDiscovery
                 ArgumentsParameterNames = methodScope != null ? ArgumentsObjectSemantics.GetMappedParameterNames(methodScope) : Array.Empty<string>(),
                 IncludeCalleeInArgumentsObject = methodNeedsArgumentsObject && methodScope != null && !ArgumentsObjectSemantics.IsStrictScope(methodScope),
                 HasRestrictedFunctionProperties = true,
+                Semantics = CallableSemantics.FromNode(
+                    member,
+                    kind,
+                    hasRestrictedFunctionProperties: true,
+                    isMethodDefinition: true),
                 AstNode = member
             };
             
             _discovered.Add(methodId);
+            if (methodScope != null)
+            {
+                methodScope.Callable = methodId;
+            }
+            discoveredClassMethods.Add(new ClassMethodSemantics(
+                effectiveMethodName,
+                methodId,
+                member.Static,
+                member.Key is PrivateIdentifier));
         }
+
+        var constructor = _discovered.Last(callable =>
+            callable.Kind == CallableKind.ClassConstructor
+            && string.Equals(callable.DeclaringScopeName, parentScopeName, StringComparison.Ordinal)
+            && string.Equals(callable.Name, className, StringComparison.Ordinal));
+        var (baseClassRegistryName, baseIntrinsicName) =
+            ResolveBaseClassSemantics(classScope, superClassExpression);
+        classScope.ClassSemantics = new ClassSemantics(
+            className,
+            $"{classScope.DotNetNamespace ?? "Classes"}.{classScope.DotNetTypeName ?? classScope.Name}",
+            astNode is ClassExpression,
+            superClassExpression != null,
+            constructor,
+            discoveredClassMethods,
+            baseClassRegistryName,
+            baseIntrinsicName,
+            ClassRequiresParentScopes(classScope, classBody));
         
         // Recurse into class scope for any nested callables in method bodies
         // (e.g., arrows defined inside methods)
@@ -542,6 +613,85 @@ public sealed class CallableDiscovery
             }
         }
         return count;
+    }
+
+    private (string? RegistryClassName, string? IntrinsicName) ResolveBaseClassSemantics(
+        Scope classScope,
+        Expression? superClassExpression)
+    {
+        if (UnwrapExpression(superClassExpression) is not Identifier identifier)
+        {
+            return (null, null);
+        }
+
+        if (string.Equals(identifier.Name, "Array", StringComparison.Ordinal))
+        {
+            return (null, "Array");
+        }
+
+        var binding = classScope.FindSymbol(identifier.Name).BindingInfo;
+        var baseScope = FindScopeForClassBinding(_symbolTable.Root, binding);
+        return baseScope == null
+            ? (null, null)
+            : ($"{baseScope.DotNetNamespace ?? "Classes"}.{baseScope.DotNetTypeName ?? baseScope.Name}", null);
+    }
+
+    private static bool ClassRequiresParentScopes(
+        Scope classScope,
+        ClassBody classBody)
+        => classScope.ReferencesParentScopeVariables
+           || classBody.Body.Any(element =>
+               element is PropertyDefinition
+               || element is StaticBlock
+               || element is MethodDefinition { Computed: true })
+           || classScope.HasDescendantCallableReferencingParentScopeVariables;
+
+    private static Scope? FindScopeForClassBinding(
+        Scope scope,
+        BindingInfo binding)
+    {
+        if (scope.Kind == ScopeKind.Class
+            && (ReferenceEquals(scope.AstNode, binding.DeclarationNode)
+                || binding.DeclarationNode is VariableDeclarator
+                {
+                    Init: { } initializer
+                }
+                && ReferenceEquals(scope.AstNode, initializer)))
+        {
+            return scope;
+        }
+
+        foreach (var child in scope.Children)
+        {
+            if (FindScopeForClassBinding(child, binding) is { } found)
+            {
+                return found;
+            }
+        }
+
+        return null;
+    }
+
+    private void AssociateCallableDescriptors(Scope scope)
+    {
+        foreach (var binding in scope.Bindings.Values)
+        {
+            binding.Callable ??= _discovered.FirstOrDefault(callable =>
+                ReferenceEquals(callable.AstNode, binding.DeclarationNode)
+                || binding.DeclarationNode is VariableDeclarator
+                {
+                    Init: { } initializer
+                }
+                && ReferenceEquals(callable.AstNode, initializer));
+            binding.ClassScope ??= FindScopeForClassBinding(
+                _symbolTable.Root,
+                binding);
+        }
+
+        foreach (var child in scope.Children)
+        {
+            AssociateCallableDescriptors(child);
+        }
     }
 }
 

@@ -559,7 +559,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 281 (0x119)
+		// Code size: 294 (0x126)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.CommonJS_Require_Basic/Scope,
@@ -568,7 +568,8 @@
 			[3] class [JavaScriptRuntime]JavaScriptRuntime.Array,
 			[4] class Modules.CommonJS_Require_Basic/ArrowFunction_L3C9/FunctionObject,
 			[5] class [JavaScriptRuntime]JavaScriptRuntime.Console,
-			[6] class Modules.CommonJS_Require_Basic/CommonClassName
+			[6] class [System.Runtime]System.Type,
+			[7] class Modules.CommonJS_Require_Basic/CommonClassName
 		)
 
 		IL_0000: newobj instance void Modules.CommonJS_Require_Basic/Scope::.ctor()
@@ -639,40 +640,48 @@
 		IL_00a1: stfld string Modules.CommonJS_Require_Basic/Scope::moduleName
 		IL_00a6: nop
 		IL_00a7: nop
-		IL_00a8: ldtoken Modules.CommonJS_Require_Basic/CommonClassName
-		IL_00ad: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_00b2: ldtoken Modules.CommonJS_Require_Basic/CommonClassName
-		IL_00b7: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_00bc: ldc.i4.1
-		IL_00bd: newarr [System.Runtime]System.Object
-		IL_00c2: dup
-		IL_00c3: ldc.i4.0
-		IL_00c4: ldloc.0
-		IL_00c5: stelem.ref
-		IL_00c6: stloc.2
-		IL_00c7: ldloc.2
-		IL_00c8: ldc.i4.0
-		IL_00c9: newarr [System.Runtime]System.Object
-		IL_00ce: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
-		IL_00d3: newobj instance void Modules.CommonJS_Require_Basic/CommonClassName::.ctor(object[])
-		IL_00d8: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
-		IL_00dd: stloc.s 6
-		IL_00df: ldloc.s 6
-		IL_00e1: ldtoken Modules.CommonJS_Require_Basic/CommonClassName
-		IL_00e6: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_00eb: ldstr "prototype"
-		IL_00f0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
-		IL_00f5: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
-		IL_00fa: ldloc.s 6
-		IL_00fc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0101: ldstr "Log"
-		IL_0106: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-		IL_010b: pop
-		IL_010c: ldloc.1
-		IL_010d: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0112: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
-		IL_0117: pop
-		IL_0118: ret
+		IL_00a8: ldc.i4.1
+		IL_00a9: newarr [System.Runtime]System.Object
+		IL_00ae: dup
+		IL_00af: ldc.i4.0
+		IL_00b0: ldloc.0
+		IL_00b1: stelem.ref
+		IL_00b2: stloc.2
+		IL_00b3: ldtoken Modules.CommonJS_Require_Basic/CommonClassName
+		IL_00b8: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_00bd: ldtoken Modules.CommonJS_Require_Basic/CommonClassName
+		IL_00c2: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_00c7: stloc.s 6
+		IL_00c9: ldc.i4.1
+		IL_00ca: newarr [System.Runtime]System.Object
+		IL_00cf: dup
+		IL_00d0: ldc.i4.0
+		IL_00d1: ldloc.0
+		IL_00d2: stelem.ref
+		IL_00d3: stloc.2
+		IL_00d4: ldloc.2
+		IL_00d5: ldc.i4.0
+		IL_00d6: newarr [System.Runtime]System.Object
+		IL_00db: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
+		IL_00e0: newobj instance void Modules.CommonJS_Require_Basic/CommonClassName::.ctor(object[])
+		IL_00e5: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
+		IL_00ea: stloc.s 7
+		IL_00ec: ldloc.s 7
+		IL_00ee: ldtoken Modules.CommonJS_Require_Basic/CommonClassName
+		IL_00f3: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_00f8: ldstr "prototype"
+		IL_00fd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
+		IL_0102: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
+		IL_0107: ldloc.s 7
+		IL_0109: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_010e: ldstr "Log"
+		IL_0113: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+		IL_0118: pop
+		IL_0119: ldloc.1
+		IL_011a: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_011f: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
+		IL_0124: pop
+		IL_0125: ret
 	} // end of method CommonJS_Require_Basic::__js_module_init__
 
 } // end of class Modules.CommonJS_Require_Basic

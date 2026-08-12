@@ -1,4 +1,3 @@
-using Acornima.Ast;
 using Jroc.HIR;
 using Jroc.Services;
 using Jroc.Services.ScopesAbi;
@@ -109,14 +108,11 @@ public sealed partial class HIRToLIRLowerer
         // User-defined class static field access (e.g., Greeter.message).
         // Classes are compiled as .NET types, and static class fields are emitted as CLR static fields.
         // When the receiver is the class identifier, lower directly to a static field load.
-        if (propAccessExpr.Object is HIRVariableExpression classVarExpr &&
-            classVarExpr.Name.BindingInfo.DeclarationNode is ClassDeclaration)
+        if (propAccessExpr.Object is HIRVariableExpression classVarExpr
+            && TryGetRegistryClassNameForClassSymbol(
+                classVarExpr.Name,
+                out var registryClassName))
         {
-            if (!TryGetRegistryClassNameForClassSymbol(classVarExpr.Name, out var registryClassName))
-            {
-                return false;
-            }
-
             if (_classRegistry == null
                 || !_classRegistry.TryGetStaticField(registryClassName, propAccessExpr.PropertyName, out _))
             {

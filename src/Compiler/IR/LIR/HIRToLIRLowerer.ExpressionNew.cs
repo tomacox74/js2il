@@ -1,4 +1,3 @@
-using Acornima.Ast;
 using Jroc.HIR;
 using Jroc.Services;
 using Jroc.Services.ScopesAbi;
@@ -20,6 +19,12 @@ public sealed partial class HIRToLIRLowerer
 
         if (newExpr.Callee is HIRInitializedUserClassTypeExpression initializedClassExpr)
         {
+            var classSemantics = initializedClassExpr.ClassScope.ClassSemantics;
+            if (classSemantics == null)
+            {
+                return false;
+            }
+
             if (!TryLowerExpression(initializedClassExpr, out var initializedClassValue))
             {
                 return false;
@@ -28,6 +33,7 @@ public sealed partial class HIRToLIRLowerer
             return TryLowerNewUserDefinedClass(
                 initializedClassExpr.RegistryClassName,
                 initializedClassExpr.ClassScope,
+                classSemantics,
                 newExpr.Arguments,
                 EnsureObject(initializedClassValue),
                 out resultTempVar);
@@ -35,15 +41,26 @@ public sealed partial class HIRToLIRLowerer
 
         // User-defined class: `new ClassName(...)`
         // Note: top-level classes live in the global scope but still have a declaration node.
-        if (calleeVar != null && calleeVar.Name.BindingInfo.DeclarationNode is ClassDeclaration declaredClass)
+        if (calleeVar != null
+            && TryGetClassSemantics(
+                calleeVar.Name.BindingInfo,
+                out var classScope,
+                out var declaredClassSemantics))
         {
+            if (declaredClassSemantics.IsExpression)
+            {
+                return TryLowerDynamicNewExpression(newExpr, out resultTempVar);
+            }
+
             if (!TryLowerExpression(calleeVar, out var classValue))
             {
                 return false;
             }
 
             return TryLowerNewUserDefinedClass(
-                declaredClass,
+                declaredClassSemantics.RegistryClassName,
+                classScope,
+                declaredClassSemantics,
                 newExpr.Arguments,
                 EnsureObject(classValue),
                 out resultTempVar);
@@ -277,67 +294,38 @@ public sealed partial class HIRToLIRLowerer
         return true;
     }
 
-    private bool TryGetRegistryClassNameForClassDeclaration(ClassDeclaration classDecl, out string registryClassName)
+    private bool TryGetClassSemantics(
+        BindingInfo binding,
+        out Scope classScope,
+        out TwoPhase.ClassSemantics classSemantics)
     {
-        registryClassName = string.Empty;
+        classScope = null!;
+        classSemantics = null!;
 
-        if (_scope == null)
+        if (binding.ClassScope?.ClassSemantics is { } discoveredClassSemantics)
+        {
+            classScope = binding.ClassScope;
+            classSemantics = discoveredClassSemantics;
+            return true;
+        }
+
+        var declaringScope = FindDeclaringScope(binding);
+        if (declaringScope == null)
         {
             return false;
         }
 
-        var rootScope = _scope;
-        while (rootScope.Parent != null)
-        {
-            rootScope = rootScope.Parent;
-        }
-
-        var classScope = FindScopeByDeclarationNode(classDecl, rootScope);
-        if (classScope == null)
-        {
-            return false;
-        }
-
-        registryClassName = $"{(classScope.DotNetNamespace ?? "Classes")}.{(classScope.DotNetTypeName ?? classScope.Name)}";
-        return true;
-    }
-
-    private bool TryLowerNewUserDefinedClass(
-        ClassDeclaration classDecl,
-        IReadOnlyList<HIRExpression> args,
-        TempVariable newTarget,
-        out TempVariable resultTempVar)
-    {
-        resultTempVar = default;
-
-        if (_scope == null)
-        {
-            return false;
-        }
-
-        // Resolve the class scope to determine whether it needs parent scopes.
-        var rootScope = _scope;
-        while (rootScope.Parent != null)
-        {
-            rootScope = rootScope.Parent;
-        }
-
-        var classScope = FindScopeByDeclarationNode(classDecl, rootScope);
-        if (classScope == null)
-        {
-            return false;
-        }
-
-        // Match ClassesGenerator registry key convention: "{ns}.{typeName}".
-        // This allows IL emission to look up type/field handles for the class.
-        var registryClassName = $"{(classScope.DotNetNamespace ?? "Classes")}.{(classScope.DotNetTypeName ?? classScope.Name)}";
-
-        return TryLowerNewUserDefinedClass(registryClassName, classScope, args, newTarget, out resultTempVar);
+        classScope = declaringScope.Children.FirstOrDefault(scope =>
+            scope.Kind == ScopeKind.Class
+            && string.Equals(scope.Name, binding.Name, StringComparison.Ordinal))!;
+        classSemantics = classScope?.ClassSemantics!;
+        return classSemantics != null;
     }
 
     private bool TryLowerNewUserDefinedClass(
         string registryClassName,
         Scope classScope,
+        TwoPhase.ClassSemantics classSemantics,
         IReadOnlyList<HIRExpression> args,
         TempVariable newTarget,
         out TempVariable resultTempVar)
@@ -347,17 +335,6 @@ public sealed partial class HIRToLIRLowerer
         if (_scope == null)
         {
             return false;
-        }
-
-        if (classScope.AstNode is not (ClassDeclaration or ClassExpression))
-        {
-            return false;
-        }
-
-        var rootScope = _scope;
-        while (rootScope.Parent != null)
-        {
-            rootScope = rootScope.Parent;
         }
 
         bool needsScopes = DoesClassNeedParentScopes(classScope);
@@ -391,45 +368,10 @@ public sealed partial class HIRToLIRLowerer
             argTemps.Add(EnsureObject(argTemp));
         }
 
-        // Compute ctor arg range from AST (min required vs max including defaults)
-        var classBody = classScope.AstNode switch
-        {
-            ClassDeclaration classDeclaration => classDeclaration.Body,
-            ClassExpression classExpression => classExpression.Body,
-            _ => null
-        };
-        if (classBody == null)
-        {
-            return false;
-        }
-
-        var ctorMember = classBody.Body
-            .OfType<MethodDefinition>()
-            .FirstOrDefault(m => (m.Key as Identifier)?.Name == "constructor");
-
         int minArgs = 0;
         int maxArgs = 0;
-        int jsParamCount = 0;
-        if (ctorMember?.Value is FunctionExpression ctorFunc)
-        {
-            jsParamCount = ctorFunc.Params.Count;
-            foreach (var p in ctorFunc.Params)
-            {
-                switch (p)
-                {
-                    case RestElement:
-                        return false;
-                    case AssignmentPattern:
-                        maxArgs++;
-                        break;
-                    default:
-                        minArgs++;
-                        maxArgs++;
-                        break;
-                }
-            }
-        }
-        else if (_classRegistry != null
+        var jsParamCount = classSemantics.Constructor.JsParamCount;
+        if (_classRegistry != null
             && _classRegistry.TryGetConstructor(registryClassName, out _, out _, out var ctorMinArgs, out var ctorMaxArgs))
         {
             // For synthetic/implicit constructors there is no AST parameter list.
@@ -439,33 +381,9 @@ public sealed partial class HIRToLIRLowerer
             jsParamCount = ctorMaxArgs;
         }
 
-        // Build a stable CallableId for the constructor so LIR remains AST-free.
-        // This mirrors CallableDiscovery.DiscoverClass.
-        var moduleName = rootScope.Name;
-        string declaringScopeName = (classScope.Parent == null || classScope.Parent.Kind == ScopeKind.Global)
-            ? moduleName
-            : $"{moduleName}/{classScope.Parent.GetQualifiedName()}";
-
-        var className = classScope.AstNode switch
-        {
-            ClassDeclaration { Id: Identifier cid } => cid.Name,
-            ClassExpression { Id: Identifier cid } => cid.Name,
-            _ => classScope.Name
-        };
-        var ctorCallableId = new TwoPhase.CallableId
-        {
-            Kind = TwoPhase.CallableKind.ClassConstructor,
-            DeclaringScopeName = declaringScopeName,
-            Name = className,
-            JsParamCount = jsParamCount,
-            AstNode = null
-        };
-        var isDerivedConstructor = classScope.AstNode switch
-        {
-            ClassDeclaration classDeclaration => classDeclaration.SuperClass != null,
-            ClassExpression classExpression => classExpression.SuperClass != null,
-            _ => false
-        };
+        var className = classSemantics.Name;
+        var ctorCallableId = classSemantics.Constructor;
+        var isDerivedConstructor = classSemantics.IsDerived;
         var constructorScope = classScope.Children.FirstOrDefault(scope =>
             scope.Kind == ScopeKind.Function
             && string.Equals(scope.Name, "constructor", StringComparison.Ordinal));

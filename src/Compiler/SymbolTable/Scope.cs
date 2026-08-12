@@ -1,5 +1,6 @@
 using Acornima.Ast;
 using Jroc.DebugSymbols;
+using Jroc.Services.TwoPhaseCompilation;
 using System;
 using System.Collections.Generic;
 
@@ -117,6 +118,18 @@ public class Scope
     public HashSet<string> DestructuredParameters { get; } = new();
     public ScopeKind Kind { get; }
     public Node AstNode { get; }
+
+    /// <summary>
+    /// Callable identity assigned by phase-one discovery for function scopes.
+    /// Consumers after syntax analysis use this descriptor rather than matching AST identity.
+    /// </summary>
+    public CallableId? Callable { get; set; }
+
+    /// <summary>
+    /// Class behavior assigned by phase-one discovery. This is the AST-independent
+    /// class/callable bridge used by HIR lowering.
+    /// </summary>
+    public ClassSemantics? ClassSemantics { get; set; }
 
     /// <summary>
     /// For synthetic dynamic functions created from <c>Function(...)</c> / <c>new Function(...)</c>,

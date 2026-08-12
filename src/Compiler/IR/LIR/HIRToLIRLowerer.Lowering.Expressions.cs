@@ -1,4 +1,3 @@
-using Acornima.Ast;
 using Jroc.HIR;
 using Jroc.Services;
 using Jroc.Services.ScopesAbi;
@@ -495,7 +494,10 @@ public sealed partial class HIRToLIRLowerer
                 // Class declarations are compiled separately (as CLR types) and are not SSA-assigned.
                 // Always lower a class identifier to a runtime System.Type so it can cross module boundaries
                 // (e.g., `module.exports = { Counter }`).
-                if (binding.DeclarationNode is ClassDeclaration classDecl)
+                if (TryGetClassSemantics(
+                        binding,
+                        out var classScope,
+                        out var classSemantics))
                 {
                     // Prefer the already-initialized binding value so class identity is stable across
                     // constructor/method/accessor reads. During evaluation-before-initialization, the
@@ -516,20 +518,10 @@ public sealed partial class HIRToLIRLowerer
                         return true;
                     }
 
-                    if (!TryGetRegistryClassNameForClassDeclaration(classDecl, out var registryClassName))
-                    {
-                        return false;
-                    }
+                    var registryClassName = classSemantics.RegistryClassName;
 
                     if (_scope != null)
                     {
-                        var rootScope = _scope;
-                        while (rootScope.Parent != null)
-                        {
-                            rootScope = rootScope.Parent;
-                        }
-
-                        var classScope = FindScopeByDeclarationNode(classDecl, rootScope);
                         if (classScope != null && TryLowerClassConstructorObject(registryClassName, classScope, out resultTempVar))
                         {
                             resultTempVar = EmitResolveActiveWithBindingOrDefault(
@@ -884,7 +876,7 @@ public sealed partial class HIRToLIRLowerer
                     // create a delegate and bind it to the appropriate scopes array.
                     if (varExpr.Name.BindingInfo.Kind == BindingKind.Function)
                     {
-                        var callableId = TryCreateCallableIdForFunctionDeclaration(varExpr.Name);
+                        var callableId = varExpr.Name.BindingInfo.Callable;
                         if (callableId == null)
                         {
                             return false;
@@ -898,13 +890,10 @@ public sealed partial class HIRToLIRLowerer
                         DefineTempStorage(scopesTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
 
                         resultTempVar = CreateTempVariable();
-                        var isAsync =
-                            varExpr.Name.BindingInfo.DeclarationNode is FunctionDeclaration asyncFunctionDeclarationBinding
-                            && asyncFunctionDeclarationBinding.Async;
+                        var isAsync = callableId.Semantics.IsAsync;
                         var isAsyncGeneratorFunction =
-                            varExpr.Name.BindingInfo.DeclarationNode is FunctionDeclaration functionDeclarationBinding
-                            && functionDeclarationBinding.Async
-                            && functionDeclarationBinding.Generator;
+                            callableId.Semantics.IsAsync
+                            && callableId.Semantics.IsGenerator;
 
                         _methodBodyIR.Instructions.Add(new LIRCreateBoundFunctionExpression(
                             callableId,
@@ -1060,9 +1049,11 @@ public sealed partial class HIRToLIRLowerer
     {
         resultTempVar = default;
 
-        if (initializedUserClassType.ClassScope.AstNode is not ClassExpression classExpression
-            || classExpression.Id is not Identifier className
-            || !initializedUserClassType.ClassScope.Bindings.TryGetValue(className.Name, out var classNameBinding))
+        if (!initializedUserClassType.IsClassExpression
+            || string.IsNullOrWhiteSpace(initializedUserClassType.ExplicitName)
+            || !initializedUserClassType.ClassScope.Bindings.TryGetValue(
+                initializedUserClassType.ExplicitName,
+                out var classNameBinding))
         {
             return false;
         }
@@ -1239,7 +1230,7 @@ public sealed partial class HIRToLIRLowerer
             Result: resultTempVar,
             ClassConstructorType: typeTemp,
             ClassConstructorLength: minParamCount,
-            IsFreshClassConstructor: classScope.AstNode is ClassExpression));
+            IsFreshClassConstructor: classScope.ClassSemantics?.IsExpression == true));
         DefineTempStorage(
             resultTempVar,
             GetMaterializedCallableStorage(callableId));
@@ -1253,7 +1244,7 @@ public sealed partial class HIRToLIRLowerer
         out TempVariable resultTempVar)
     {
         resultTempVar = default;
-        if (classScope.AstNode is not ClassExpression
+        if (classScope.ClassSemantics?.IsExpression != true
             || DoesClassNeedParentScopes(classScope))
         {
             return false;
@@ -1316,25 +1307,8 @@ public sealed partial class HIRToLIRLowerer
             return false;
         }
 
-        var classBody = classScope.AstNode switch
-        {
-            ClassDeclaration declaration => declaration.Body,
-            ClassExpression expression => expression.Body,
-            _ => null
-        };
-        if (classBody == null)
-        {
-            return false;
-        }
-
-        var constructorNode = classBody.Body
-            .OfType<MethodDefinition>()
-            .FirstOrDefault(ClassElementNames.IsConstructor)
-            ?? (Node)classBody;
-        return _callableRegistry.TryGetCallableIdForAstNode(
-            constructorNode,
-            out callableId)
-            && callableId.Kind == TwoPhase.CallableKind.ClassConstructor;
+        callableId = classScope.ClassSemantics?.Constructor!;
+        return callableId != null;
     }
 
     private bool TryLinkClassConstructorToSuperClass(
@@ -1481,24 +1455,6 @@ public sealed partial class HIRToLIRLowerer
         }
 
         return TryBuildScopesArrayFromLayout(calleeScope, CallableKind.Function, resultTemp);
-    }
-
-    private static Scope? FindScopeByAstNode(Node astNode, Scope current)
-    {
-        if (ReferenceEquals(current.AstNode, astNode))
-        {
-            return current;
-        }
-
-        foreach (var child in current.Children)
-        {
-            if (FindScopeByAstNode(astNode, child) is { } found)
-            {
-                return found;
-            }
-        }
-
-        return null;
     }
 
     private bool TryLowerTemplateLiteralExpression(HIRTemplateLiteralExpression templateLiteral, out TempVariable resultTempVar)
@@ -1661,113 +1617,6 @@ public sealed partial class HIRToLIRLowerer
         return true;
     }
 
-    private Jroc.Services.TwoPhaseCompilation.CallableId? TryCreateCallableIdForFunctionDeclaration(Symbol symbol)
-    {
-        if (_scope == null)
-        {
-            return null;
-        }
-
-        // IR lowering currently only supports direct calls where the callee is a function binding.
-        if (symbol.BindingInfo.Kind != BindingKind.Function)
-        {
-            return null;
-        }
-
-        var declNode = symbol.BindingInfo.DeclarationNode;
-        var declaringScope = FindDeclaringScope(symbol.BindingInfo);
-        if (declaringScope == null)
-        {
-            return null;
-        }
-
-        static Scope? FindCallableBodyScope(Scope scope, Node decl)
-        {
-            if (scope.Kind == ScopeKind.Function && scope.AstNode != null && ReferenceEquals(scope.AstNode, decl))
-            {
-                return scope;
-            }
-
-            foreach (var child in scope.Children)
-            {
-                var match = FindCallableBodyScope(child, decl);
-                if (match != null)
-                {
-                    return match;
-                }
-            }
-
-            return null;
-        }
-
-        // For named function expressions, the function name is bound inside the function scope,
-        // but the callable itself is declared in the parent scope (Phase 1 discovery uses the parent).
-        // If we detect that pattern, shift the DeclaringScopeName to the parent scope.
-        var callableDeclaringScope = declaringScope;
-        if (declNode is FunctionExpression funcExprDecl &&
-            declaringScope.AstNode is FunctionExpression scopeFuncExpr &&
-            ReferenceEquals(funcExprDecl, scopeFuncExpr) &&
-            declaringScope.Parent != null)
-        {
-            callableDeclaringScope = declaringScope.Parent;
-        }
-
-        var root = callableDeclaringScope;
-        while (root.Parent != null)
-        {
-            root = root.Parent;
-        }
-
-        var moduleName = root.Name;
-        var declaringScopeName = callableDeclaringScope.Kind == ScopeKind.Global
-            ? moduleName
-            : $"{moduleName}/{callableDeclaringScope.GetQualifiedName()}";
-
-        var bodyScope = FindCallableBodyScope(declaringScope, declNode);
-        var needsArgumentsObject = bodyScope?.NeedsArgumentsObject ?? false;
-        var hasRestParameters = bodyScope?.HasRestParameters ?? false;
-        var isStrictScope = bodyScope != null && Jroc.Utilities.ArgumentsObjectSemantics.IsStrictScope(bodyScope);
-
-        switch (declNode)
-        {
-            case FunctionDeclaration funcDecl:
-                return new Jroc.Services.TwoPhaseCompilation.CallableId
-                {
-                    Kind = Jroc.Services.TwoPhaseCompilation.CallableKind.FunctionDeclaration,
-                    DeclaringScopeName = declaringScopeName,
-                    Name = symbol.Name,
-                    JsParamCount = CountNonRestParameters(funcDecl.Params),
-                    NeedsArgumentsObject = needsArgumentsObject,
-                    HasRestParameters = hasRestParameters,
-                    UsesMappedArgumentsObject = bodyScope != null && Jroc.Utilities.ArgumentsObjectSemantics.UsesMappedArgumentsObject(bodyScope),
-                    ArgumentsParameterNames = bodyScope != null ? Jroc.Utilities.ArgumentsObjectSemantics.GetMappedParameterNames(bodyScope) : Array.Empty<string>(),
-                    IncludeCalleeInArgumentsObject = needsArgumentsObject && !isStrictScope,
-                    HasRestrictedFunctionProperties = isStrictScope,
-                    AstNode = funcDecl
-                };
-
-            case FunctionExpression funcExpr:
-                return new Jroc.Services.TwoPhaseCompilation.CallableId
-                {
-                    Kind = Jroc.Services.TwoPhaseCompilation.CallableKind.FunctionExpression,
-                    DeclaringScopeName = declaringScopeName,
-                    Name = (funcExpr.Id as Identifier)?.Name,
-                    Location = Jroc.Services.TwoPhaseCompilation.SourceLocation.FromNode(funcExpr),
-                    JsParamCount = CountNonRestParameters(funcExpr.Params),
-                    NeedsArgumentsObject = needsArgumentsObject,
-                    HasRestParameters = hasRestParameters,
-                    UsesMappedArgumentsObject = bodyScope != null && Jroc.Utilities.ArgumentsObjectSemantics.UsesMappedArgumentsObject(bodyScope),
-                    ArgumentsParameterNames = bodyScope != null ? Jroc.Utilities.ArgumentsObjectSemantics.GetMappedParameterNames(bodyScope) : Array.Empty<string>(),
-                    IncludeCalleeInArgumentsObject = needsArgumentsObject && !isStrictScope,
-                    HasRestrictedFunctionProperties = isStrictScope,
-                    AstNode = funcExpr
-                };
-
-            default:
-                return null;
-        }
-    }
-
     private Scope? FindDeclaringScope(BindingInfo binding)
     {
         if (binding.DeclaringScope != null)
@@ -1787,20 +1636,4 @@ public sealed partial class HIRToLIRLowerer
         return null;
     }
 
-    /// <summary>
-    /// Counts parameters excluding rest parameters.
-    /// Rest parameters don't become IL method parameters.
-    /// </summary>
-    private static int CountNonRestParameters(Acornima.Ast.NodeList<Acornima.Ast.Node> parameters)
-    {
-        int count = 0;
-        foreach (var param in parameters)
-        {
-            if (param is not Acornima.Ast.RestElement)
-            {
-                count++;
-            }
-        }
-        return count;
-    }
 }

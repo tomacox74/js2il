@@ -100,11 +100,18 @@ The only compiler-emitted delegates are allowlisted boundaries:
 
 ## Contributor guardrails
 
-Do not add AST-dependent semantics to LIR. Callable identity,
-constructability, capture, `new.target`, default/rest/`arguments`, and
-materialization decisions must be established before LIR emission.
+Do not add AST-dependent semantics to LIR or callable IL emission.
+`CallableSemantics` is established during callable discovery/AST-to-HIR
+construction and carries function length, async/generator family,
+constructability, legacy function properties, named-expression status, and
+lexical `this`/`new.target`/`super`/private-name requirements. Class method and
+constructor lookup uses the phase-one `ClassSemantics` descriptor. Callable
+identity, capture, `new.target`, default/rest/`arguments`, and materialization
+decisions must be established before LIR emission. Preserve diagnostics with
+`SourceLocation` values, not AST references.
 
-`CallableBoundaryInventoryTests` rejects retired binders, new compiler
+`CallableBoundaryInventoryTests` rejects AST dependencies in LIR/IL emission,
+retired binders, new compiler
 `ldftn` sites outside the bootstrap/built-in/continuation allowlist,
 Delegate-typed generated storage, and scattered runtime Delegate checks.
 `GeneratedFunctionObjectEmissionTests` separately verifies typed canonical

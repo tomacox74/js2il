@@ -288,6 +288,37 @@ public sealed class CallableBoundaryInventoryTests
     }
 
     [Fact]
+    public void LoweringAndIlEmission_DoNotDependOnAstCallableSemantics()
+    {
+        var repositoryRoot = FindRepositoryRoot();
+        var forbiddenAstDependency = new Regex(
+            @"using\s+Acornima\.Ast\s*;|Acornima\.Ast|\.AstNode\b",
+            RegexOptions.CultureInvariant);
+        var lirFiles = Directory.EnumerateFiles(
+                Path.Combine(repositoryRoot, "src", "Compiler", "IR", "LIR"),
+                "*.cs",
+                SearchOption.AllDirectories)
+            .Select(path => new SourceFile(
+                Path.GetRelativePath(repositoryRoot, path).Replace('\\', '/'),
+                File.ReadAllText(path)));
+        var ilFiles = Directory.EnumerateFiles(
+                Path.Combine(repositoryRoot, "src", "Compiler", "IL"),
+                "*.cs",
+                SearchOption.AllDirectories)
+            .Select(path => new SourceFile(
+                Path.GetRelativePath(repositoryRoot, path).Replace('\\', '/'),
+                File.ReadAllText(path)));
+
+        var violations = lirFiles.Concat(ilFiles)
+            .Where(file => forbiddenAstDependency.IsMatch(file.Content))
+            .Select(file => file.RelativePath)
+            .Order(StringComparer.Ordinal)
+            .ToArray();
+
+        Assert.Empty(violations);
+    }
+
+    [Fact]
     public void CallableBenchmark_CoversMaterializationRepeatedLoadAndSteadyState()
     {
         var repositoryRoot = FindRepositoryRoot();

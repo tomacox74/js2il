@@ -1,4 +1,3 @@
-using Acornima.Ast;
 using Jroc.HIR;
 using Jroc.Services;
 using Jroc.Services.ScopesAbi;
@@ -284,40 +283,5 @@ public sealed partial class HIRToLIRLowerer
     /// (no defaults, destructuring, or rest patterns).
     /// </summary>
     private static bool FunctionHasSimpleParams(Symbol functionSymbol)
-    {
-        // Get the declaration node for the function binding
-        var declarationNode = functionSymbol.BindingInfo.DeclarationNode;
-        
-        Acornima.Ast.NodeList<Acornima.Ast.Node>? parameters = null;
-        
-        if (declarationNode is Acornima.Ast.FunctionDeclaration funcDecl)
-        {
-            parameters = funcDecl.Params;
-        }
-        else if (declarationNode is Acornima.Ast.FunctionExpression funcExpr)
-        {
-            parameters = funcExpr.Params;
-        }
-        else if (declarationNode is Acornima.Ast.ArrowFunctionExpression arrowFunc)
-        {
-            parameters = arrowFunc.Params;
-        }
-        
-        // If we couldn't find parameters, bail out conservatively
-        if (parameters == null)
-        {
-            return false;
-        }
-        
-        // Allow identifier params, simple defaults, destructuring patterns, and rest parameters.
-        return parameters.Value.All(param => param switch
-        {
-            Acornima.Ast.Identifier => true,
-            Acornima.Ast.AssignmentPattern ap => ap.Left is Acornima.Ast.Identifier,
-            Acornima.Ast.ObjectPattern => true,
-            Acornima.Ast.ArrayPattern => true,
-            Acornima.Ast.RestElement => true,
-            _ => false
-        });
-    }
+        => functionSymbol.BindingInfo.Callable?.Semantics.HasSimpleParameters == true;
 }
