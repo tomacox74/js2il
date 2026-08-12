@@ -102,6 +102,7 @@ internal static partial class LIRInstructionInfo
         typeof(LIRBuildArray),
         typeof(LIRBuildScopesArray),
         typeof(LIRCallDeclaredCallable),
+        typeof(LIRCallComputedMemberFixed),
         typeof(LIRCallFunction),
         typeof(LIRCallFunctionBaseConstructor),
         typeof(LIRCallFunctionValue),
@@ -109,6 +110,8 @@ internal static partial class LIRInstructionInfo
         typeof(LIRCallFunctionValue1),
         typeof(LIRCallFunctionValue2),
         typeof(LIRCallFunctionValue3),
+        typeof(LIRCallFunctionValue4),
+        typeof(LIRCallFunctionValue5),
         typeof(LIRCallFunctionWithArgsArray),
         typeof(LIRCallImport),
         typeof(LIRCallInstanceMethod),
@@ -127,6 +130,8 @@ internal static partial class LIRInstructionInfo
         typeof(LIRCallMember1),
         typeof(LIRCallMember2),
         typeof(LIRCallMember3),
+        typeof(LIRCallMember4),
+        typeof(LIRCallMember5),
         typeof(LIRCallNodeModuleContractMember),
         typeof(LIRCallRequire),
         typeof(LIRCallRuntimeServicesStatic),
@@ -148,6 +153,7 @@ internal static partial class LIRInstructionInfo
         typeof(LIRConstNull),
         typeof(LIRConstNumber),
         typeof(LIRConstructValue),
+        typeof(LIRConstructValueFixed),
         typeof(LIRConstString),
         typeof(LIRConstUndefined),
         typeof(LIRConvertToBoolean),
@@ -544,6 +550,7 @@ internal static partial class LIRInstructionInfo
                 or LIRNewIntrinsicObject
                 or LIRNewUserClass
                 or LIRConstructValue
+                or LIRConstructValueFixed
                 or LIRCreateBoundArrowFunction
                 or LIRCreateBoundFunctionExpression
                 => CallEffects
@@ -557,6 +564,7 @@ internal static partial class LIRInstructionInfo
                 or LIRCallIntrinsicStaticVoidWithArgsArray
                 or LIRCallIntrinsicBaseConstructor
                 or LIRCallInstanceMethod
+                or LIRCallComputedMemberFixed
                 or LIRCallFunction
                 or LIRTailCallFunctionReturn
                 or LIRCallFunctionWithArgsArray
@@ -565,6 +573,8 @@ internal static partial class LIRInstructionInfo
                 or LIRCallFunctionValue1
                 or LIRCallFunctionValue2
                 or LIRCallFunctionValue3
+                or LIRCallFunctionValue4
+                or LIRCallFunctionValue5
                 or LIRCallRequire
                 or LIRCallImport
                 or LIRCallMember
@@ -572,6 +582,8 @@ internal static partial class LIRInstructionInfo
                 or LIRCallMember1
                 or LIRCallMember2
                 or LIRCallMember3
+                or LIRCallMember4
+                or LIRCallMember5
                 or LIRCallNodeModuleContractMember
                 or LIRCallTypedMember
                 or LIRCallTypedMemberWithFallback

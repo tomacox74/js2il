@@ -38,7 +38,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 281 (0x119)
+		// Code size: 276 (0x114)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.CommonJS_Export_Class/Scope,
@@ -56,77 +56,76 @@
 		IL_000d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
 		IL_0012: stloc.1
 		IL_0013: ldloc.1
-		IL_0014: ldc.i4.0
-		IL_0015: newarr [System.Runtime]System.Object
-		IL_001a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::ConstructValue(object, object[])
-		IL_001f: stloc.2
-		IL_0020: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0025: stloc.3
-		IL_0026: ldloc.2
-		IL_0027: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_002c: stloc.s 4
-		IL_002e: ldloc.s 4
-		IL_0030: isinst Modules.CommonJS_Export_Class_Lib/Calculator
-		IL_0035: dup
-		IL_0036: brfalse IL_0063
+		IL_0014: dup
+		IL_0015: call object [JavaScriptRuntime]JavaScriptRuntime.CallableOperations::Construct0(object, object)
+		IL_001a: stloc.2
+		IL_001b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0020: stloc.3
+		IL_0021: ldloc.2
+		IL_0022: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0027: stloc.s 4
+		IL_0029: ldloc.s 4
+		IL_002b: isinst Modules.CommonJS_Export_Class_Lib/Calculator
+		IL_0030: dup
+		IL_0031: brfalse IL_005e
 
-		IL_003b: ldc.r8 2
-		IL_0044: box [System.Runtime]System.Double
-		IL_0049: ldc.r8 3
-		IL_0052: box [System.Runtime]System.Double
-		IL_0057: callvirt instance object Modules.CommonJS_Export_Class_Lib/Calculator::'add'(object, object)
-		IL_005c: stloc.s 4
-		IL_005e: br IL_008e
+		IL_0036: ldc.r8 2
+		IL_003f: box [System.Runtime]System.Double
+		IL_0044: ldc.r8 3
+		IL_004d: box [System.Runtime]System.Double
+		IL_0052: callvirt instance object Modules.CommonJS_Export_Class_Lib/Calculator::'add'(object, object)
+		IL_0057: stloc.s 4
+		IL_0059: br IL_0089
 
-		IL_0063: pop
-		IL_0064: ldloc.s 4
-		IL_0066: ldstr "add"
-		IL_006b: ldc.r8 2
-		IL_0074: box [System.Runtime]System.Double
-		IL_0079: ldc.r8 3
-		IL_0082: box [System.Runtime]System.Double
-		IL_0087: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_008c: stloc.s 4
+		IL_005e: pop
+		IL_005f: ldloc.s 4
+		IL_0061: ldstr "add"
+		IL_0066: ldc.r8 2
+		IL_006f: box [System.Runtime]System.Double
+		IL_0074: ldc.r8 3
+		IL_007d: box [System.Runtime]System.Double
+		IL_0082: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_0087: stloc.s 4
 
-		IL_008e: ldloc.3
-		IL_008f: ldstr "add:"
-		IL_0094: ldloc.s 4
-		IL_0096: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_009b: pop
-		IL_009c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00a1: stloc.3
-		IL_00a2: ldloc.2
-		IL_00a3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00a8: stloc.s 4
-		IL_00aa: ldloc.s 4
-		IL_00ac: isinst Modules.CommonJS_Export_Class_Lib/Calculator
-		IL_00b1: dup
-		IL_00b2: brfalse IL_00df
+		IL_0089: ldloc.3
+		IL_008a: ldstr "add:"
+		IL_008f: ldloc.s 4
+		IL_0091: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_0096: pop
+		IL_0097: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_009c: stloc.3
+		IL_009d: ldloc.2
+		IL_009e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00a3: stloc.s 4
+		IL_00a5: ldloc.s 4
+		IL_00a7: isinst Modules.CommonJS_Export_Class_Lib/Calculator
+		IL_00ac: dup
+		IL_00ad: brfalse IL_00da
 
-		IL_00b7: ldc.r8 4
-		IL_00c0: box [System.Runtime]System.Double
-		IL_00c5: ldc.r8 5
-		IL_00ce: box [System.Runtime]System.Double
-		IL_00d3: callvirt instance object Modules.CommonJS_Export_Class_Lib/Calculator::multiply(object, object)
-		IL_00d8: stloc.s 4
-		IL_00da: br IL_010a
+		IL_00b2: ldc.r8 4
+		IL_00bb: box [System.Runtime]System.Double
+		IL_00c0: ldc.r8 5
+		IL_00c9: box [System.Runtime]System.Double
+		IL_00ce: callvirt instance object Modules.CommonJS_Export_Class_Lib/Calculator::multiply(object, object)
+		IL_00d3: stloc.s 4
+		IL_00d5: br IL_0105
 
-		IL_00df: pop
-		IL_00e0: ldloc.s 4
-		IL_00e2: ldstr "multiply"
-		IL_00e7: ldc.r8 4
-		IL_00f0: box [System.Runtime]System.Double
-		IL_00f5: ldc.r8 5
-		IL_00fe: box [System.Runtime]System.Double
-		IL_0103: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_0108: stloc.s 4
+		IL_00da: pop
+		IL_00db: ldloc.s 4
+		IL_00dd: ldstr "multiply"
+		IL_00e2: ldc.r8 4
+		IL_00eb: box [System.Runtime]System.Double
+		IL_00f0: ldc.r8 5
+		IL_00f9: box [System.Runtime]System.Double
+		IL_00fe: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_0103: stloc.s 4
 
-		IL_010a: ldloc.3
-		IL_010b: ldstr "multiply:"
-		IL_0110: ldloc.s 4
-		IL_0112: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_0117: pop
-		IL_0118: ret
+		IL_0105: ldloc.3
+		IL_0106: ldstr "multiply:"
+		IL_010b: ldloc.s 4
+		IL_010d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_0112: pop
+		IL_0113: ret
 	} // end of method CommonJS_Export_Class::__js_module_init__
 
 } // end of class Modules.CommonJS_Export_Class

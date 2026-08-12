@@ -848,6 +848,8 @@ internal sealed partial class LIRToILCompiler
                 LIRCallMember callMember => Math.Max(
                     EstimateTempLoadPeak(callMember.Receiver),
                     2 + EstimateTempLoadPeak(callMember.ArgumentsArray)),
+                LIRCallComputedMemberFixed callComputedMember =>
+                    2 + callComputedMember.Arguments.Count,
 
                 LIRConstructValue constructValue => new[]
                 {
@@ -855,6 +857,8 @@ internal sealed partial class LIRToILCompiler
                     1 + EstimateTempLoadPeak(constructValue.ArgumentsArray),
                     2
                 }.Max(),
+                LIRConstructValueFixed constructValueFixed =>
+                    2 + constructValueFixed.Arguments.Count,
 
                 LIRCallFunctionBaseConstructor callBase => new[]
                 {
@@ -888,6 +892,25 @@ internal sealed partial class LIRToILCompiler
                     3 + EstimateTempLoadPeak(callMember3.A1),
                     4 + EstimateTempLoadPeak(callMember3.A2),
                     5
+                }.Max(),
+                LIRCallMember4 callMember4 => new[]
+                {
+                    EstimateTempLoadPeak(callMember4.Receiver),
+                    2 + EstimateTempLoadPeak(callMember4.A0),
+                    3 + EstimateTempLoadPeak(callMember4.A1),
+                    4 + EstimateTempLoadPeak(callMember4.A2),
+                    5 + EstimateTempLoadPeak(callMember4.A3),
+                    6
+                }.Max(),
+                LIRCallMember5 callMember5 => new[]
+                {
+                    EstimateTempLoadPeak(callMember5.Receiver),
+                    2 + EstimateTempLoadPeak(callMember5.A0),
+                    3 + EstimateTempLoadPeak(callMember5.A1),
+                    4 + EstimateTempLoadPeak(callMember5.A2),
+                    5 + EstimateTempLoadPeak(callMember5.A3),
+                    6 + EstimateTempLoadPeak(callMember5.A4),
+                    7
                 }.Max(),
 
                 // Known CLR instance method calls: receiver + args (no padding)

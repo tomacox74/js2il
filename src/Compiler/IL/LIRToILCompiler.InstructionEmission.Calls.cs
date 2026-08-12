@@ -497,6 +497,67 @@ internal sealed partial class LIRToILCompiler
                     break;
                 }
 
+            case LIRCallFunctionValue4 callValue4:
+                {
+                    EmitLoadTemp(callValue4.FunctionValue, ilEncoder, allocation, methodDescriptor);
+                    EmitLoadTemp(callValue4.ScopesArray, ilEncoder, allocation, methodDescriptor);
+                    EmitLoadTempAsObject(callValue4.A0, ilEncoder, allocation, methodDescriptor);
+                    EmitLoadTempAsObject(callValue4.A1, ilEncoder, allocation, methodDescriptor);
+                    EmitLoadTempAsObject(callValue4.A2, ilEncoder, allocation, methodDescriptor);
+                    EmitLoadTempAsObject(callValue4.A3, ilEncoder, allocation, methodDescriptor);
+
+                    var targetParameterType = GetFunctionCallTargetParameterType(
+                        callValue4.FunctionValue,
+                        typeof(JavaScriptRuntime.JsFuncNoScopes4));
+                    var invokeRef = _memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.Closure),
+                        nameof(JavaScriptRuntime.Closure.InvokeFunctionCallWithArgs4),
+                        new[] { targetParameterType, typeof(object[]), typeof(object), typeof(object), typeof(object), typeof(object) });
+                    ilEncoder.OpCode(ILOpCode.Call);
+                    ilEncoder.Token(invokeRef);
+
+                    if (IsMaterialized(callValue4.Result, allocation))
+                    {
+                        EmitStoreTemp(callValue4.Result, ilEncoder, allocation);
+                    }
+                    else
+                    {
+                        ilEncoder.OpCode(ILOpCode.Pop);
+                    }
+                    break;
+                }
+
+            case LIRCallFunctionValue5 callValue5:
+                {
+                    EmitLoadTemp(callValue5.FunctionValue, ilEncoder, allocation, methodDescriptor);
+                    EmitLoadTemp(callValue5.ScopesArray, ilEncoder, allocation, methodDescriptor);
+                    EmitLoadTempAsObject(callValue5.A0, ilEncoder, allocation, methodDescriptor);
+                    EmitLoadTempAsObject(callValue5.A1, ilEncoder, allocation, methodDescriptor);
+                    EmitLoadTempAsObject(callValue5.A2, ilEncoder, allocation, methodDescriptor);
+                    EmitLoadTempAsObject(callValue5.A3, ilEncoder, allocation, methodDescriptor);
+                    EmitLoadTempAsObject(callValue5.A4, ilEncoder, allocation, methodDescriptor);
+
+                    var targetParameterType = GetFunctionCallTargetParameterType(
+                        callValue5.FunctionValue,
+                        typeof(JavaScriptRuntime.JsFuncNoScopes5));
+                    var invokeRef = _memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.Closure),
+                        nameof(JavaScriptRuntime.Closure.InvokeFunctionCallWithArgs5),
+                        new[] { targetParameterType, typeof(object[]), typeof(object), typeof(object), typeof(object), typeof(object), typeof(object) });
+                    ilEncoder.OpCode(ILOpCode.Call);
+                    ilEncoder.Token(invokeRef);
+
+                    if (IsMaterialized(callValue5.Result, allocation))
+                    {
+                        EmitStoreTemp(callValue5.Result, ilEncoder, allocation);
+                    }
+                    else
+                    {
+                        ilEncoder.OpCode(ILOpCode.Pop);
+                    }
+                    break;
+                }
+
             case LIRCallRequire callRequire:
                 {
                     var requireStorage = GetTempStorage(callRequire.RequireValue);
@@ -585,6 +646,49 @@ internal sealed partial class LIRToILCompiler
                     if (IsMaterialized(constructValue.Result, allocation))
                     {
                         EmitStoreTemp(constructValue.Result, ilEncoder, allocation);
+                    }
+                    else
+                    {
+                        ilEncoder.OpCode(ILOpCode.Pop);
+                    }
+                    break;
+                }
+
+            case LIRConstructValueFixed constructValueFixed:
+                {
+                    EmitLoadTempAsObject(
+                        constructValueFixed.ConstructorValue,
+                        ilEncoder,
+                        allocation,
+                        methodDescriptor);
+                    ilEncoder.OpCode(ILOpCode.Dup);
+                    foreach (var argument in constructValueFixed.Arguments)
+                    {
+                        EmitLoadTempAsObject(
+                            argument,
+                            ilEncoder,
+                            allocation,
+                            methodDescriptor);
+                    }
+
+                    var parameterTypes = Enumerable
+                        .Repeat(
+                            typeof(object),
+                            constructValueFixed.Arguments.Count + 2)
+                        .ToArray();
+                    var construct = _memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.CallableOperations),
+                        $"Construct{constructValueFixed.Arguments.Count}",
+                        parameterTypes);
+                    ilEncoder.OpCode(ILOpCode.Call);
+                    ilEncoder.Token(construct);
+
+                    if (IsMaterialized(constructValueFixed.Result, allocation))
+                    {
+                        EmitStoreTemp(
+                            constructValueFixed.Result,
+                            ilEncoder,
+                            allocation);
                     }
                     else
                     {
@@ -1041,6 +1145,108 @@ internal sealed partial class LIRToILCompiler
                     if (IsMaterialized(callMember3.Result, allocation))
                     {
                         EmitStoreTemp(callMember3.Result, ilEncoder, allocation);
+                    }
+                    else
+                    {
+                        ilEncoder.OpCode(ILOpCode.Pop);
+                    }
+                    break;
+                }
+
+            case LIRCallMember4 callMember4:
+                {
+                    EmitLoadTempAsObject(callMember4.Receiver, ilEncoder, allocation, methodDescriptor);
+                    ilEncoder.Ldstr(_metadataBuilder, callMember4.MethodName);
+                    EmitLoadTempAsObject(callMember4.A0, ilEncoder, allocation, methodDescriptor);
+                    EmitLoadTempAsObject(callMember4.A1, ilEncoder, allocation, methodDescriptor);
+                    EmitLoadTempAsObject(callMember4.A2, ilEncoder, allocation, methodDescriptor);
+                    EmitLoadTempAsObject(callMember4.A3, ilEncoder, allocation, methodDescriptor);
+
+                    var callMemberRef = _memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.ObjectRuntime),
+                        nameof(JavaScriptRuntime.ObjectRuntime.CallMember4),
+                        new[] { typeof(object), typeof(string), typeof(object), typeof(object), typeof(object), typeof(object) });
+                    ilEncoder.OpCode(ILOpCode.Call);
+                    ilEncoder.Token(callMemberRef);
+
+                    if (IsMaterialized(callMember4.Result, allocation))
+                    {
+                        EmitStoreTemp(callMember4.Result, ilEncoder, allocation);
+                    }
+                    else
+                    {
+                        ilEncoder.OpCode(ILOpCode.Pop);
+                    }
+                    break;
+                }
+
+            case LIRCallMember5 callMember5:
+                {
+                    EmitLoadTempAsObject(callMember5.Receiver, ilEncoder, allocation, methodDescriptor);
+                    ilEncoder.Ldstr(_metadataBuilder, callMember5.MethodName);
+                    EmitLoadTempAsObject(callMember5.A0, ilEncoder, allocation, methodDescriptor);
+                    EmitLoadTempAsObject(callMember5.A1, ilEncoder, allocation, methodDescriptor);
+                    EmitLoadTempAsObject(callMember5.A2, ilEncoder, allocation, methodDescriptor);
+                    EmitLoadTempAsObject(callMember5.A3, ilEncoder, allocation, methodDescriptor);
+                    EmitLoadTempAsObject(callMember5.A4, ilEncoder, allocation, methodDescriptor);
+
+                    var callMemberRef = _memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.ObjectRuntime),
+                        nameof(JavaScriptRuntime.ObjectRuntime.CallMember5),
+                        new[] { typeof(object), typeof(string), typeof(object), typeof(object), typeof(object), typeof(object), typeof(object) });
+                    ilEncoder.OpCode(ILOpCode.Call);
+                    ilEncoder.Token(callMemberRef);
+
+                    if (IsMaterialized(callMember5.Result, allocation))
+                    {
+                        EmitStoreTemp(callMember5.Result, ilEncoder, allocation);
+                    }
+                    else
+                    {
+                        ilEncoder.OpCode(ILOpCode.Pop);
+                    }
+                    break;
+                }
+
+            case LIRCallComputedMemberFixed callComputedMember:
+                {
+                    EmitLoadTempAsObject(
+                        callComputedMember.Receiver,
+                        ilEncoder,
+                        allocation,
+                        methodDescriptor);
+                    EmitLoadTempAsObject(
+                        callComputedMember.PropertyKey,
+                        ilEncoder,
+                        allocation,
+                        methodDescriptor);
+                    foreach (var argument in callComputedMember.Arguments)
+                    {
+                        EmitLoadTempAsObject(
+                            argument,
+                            ilEncoder,
+                            allocation,
+                            methodDescriptor);
+                    }
+
+                    var parameterTypes = Enumerable
+                        .Repeat(
+                            typeof(object),
+                            callComputedMember.Arguments.Count + 2)
+                        .ToArray();
+                    var callMember = _memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.ObjectRuntime),
+                        $"CallComputedMember{callComputedMember.Arguments.Count}",
+                        parameterTypes);
+                    ilEncoder.OpCode(ILOpCode.Call);
+                    ilEncoder.Token(callMember);
+
+                    if (IsMaterialized(callComputedMember.Result, allocation))
+                    {
+                        EmitStoreTemp(
+                            callComputedMember.Result,
+                            ilEncoder,
+                            allocation);
                     }
                     else
                     {

@@ -312,12 +312,13 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 249 (0xf9)
-		.maxstack 18
+		// Code size: 239 (0xef)
+		.maxstack 15
 		.locals init (
 			[0] class Modules.Function_IIFE_Recursive/Scope,
 			[1] object[],
-			[2] class Modules.Function_IIFE_Recursive/walk/FunctionObject_FunctionExpression_F39F0734_walk
+			[2] class Modules.Function_IIFE_Recursive/walk/FunctionObject_FunctionExpression_F39F0734_walk,
+			[3] class [JavaScriptRuntime]JavaScriptRuntime.JsObject
 		)
 
 		IL_0000: newobj instance void Modules.Function_IIFE_Recursive/Scope::.ctor()
@@ -338,69 +339,63 @@
 		IL_001f: ldc.i4.1
 		IL_0020: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Function_IIFE_Recursive/walk/FunctionObject_FunctionExpression_F39F0734_walk>(!!0, float64, string, bool, bool)
 		IL_0025: stloc.2
-		IL_0026: ldc.i4.2
-		IL_0027: newarr [System.Runtime]System.Object
-		IL_002c: dup
-		IL_002d: ldc.i4.0
-		IL_002e: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_0033: dup
-		IL_0034: ldstr "name"
-		IL_0039: ldstr "root"
-		IL_003e: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_0043: dup
-		IL_0044: ldstr "children"
-		IL_0049: ldc.i4.2
-		IL_004a: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_004f: dup
-		IL_0050: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_0055: dup
-		IL_0056: ldstr "name"
-		IL_005b: ldstr "a"
-		IL_0060: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_0065: dup
-		IL_0066: ldstr "children"
-		IL_006b: ldc.i4.0
-		IL_006c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_0071: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_0076: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-		IL_007b: dup
-		IL_007c: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_0081: dup
-		IL_0082: ldstr "name"
-		IL_0087: ldstr "b"
-		IL_008c: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_0091: dup
-		IL_0092: ldstr "children"
-		IL_0097: ldc.i4.1
-		IL_0098: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_009d: dup
-		IL_009e: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_00a3: dup
-		IL_00a4: ldstr "name"
-		IL_00a9: ldstr "b1"
-		IL_00ae: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_00b3: dup
-		IL_00b4: ldstr "children"
-		IL_00b9: ldc.i4.0
-		IL_00ba: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_00bf: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_00c4: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-		IL_00c9: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_00ce: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-		IL_00d3: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_00d8: stelem.ref
-		IL_00d9: dup
-		IL_00da: ldc.i4.1
-		IL_00db: ldc.r8 0.0
-		IL_00e4: box [System.Runtime]System.Double
-		IL_00e9: stelem.ref
-		IL_00ea: stloc.1
-		IL_00eb: ldloc.2
-		IL_00ec: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_00f1: ldloc.1
-		IL_00f2: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs(object, object[], object[])
-		IL_00f7: pop
-		IL_00f8: ret
+		IL_0026: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_002b: stloc.1
+		IL_002c: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0031: dup
+		IL_0032: ldstr "name"
+		IL_0037: ldstr "root"
+		IL_003c: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_0041: dup
+		IL_0042: ldstr "children"
+		IL_0047: ldc.i4.2
+		IL_0048: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_004d: dup
+		IL_004e: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0053: dup
+		IL_0054: ldstr "name"
+		IL_0059: ldstr "a"
+		IL_005e: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_0063: dup
+		IL_0064: ldstr "children"
+		IL_0069: ldc.i4.0
+		IL_006a: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_006f: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_0074: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+		IL_0079: dup
+		IL_007a: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_007f: dup
+		IL_0080: ldstr "name"
+		IL_0085: ldstr "b"
+		IL_008a: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_008f: dup
+		IL_0090: ldstr "children"
+		IL_0095: ldc.i4.1
+		IL_0096: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_009b: dup
+		IL_009c: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_00a1: dup
+		IL_00a2: ldstr "name"
+		IL_00a7: ldstr "b1"
+		IL_00ac: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_00b1: dup
+		IL_00b2: ldstr "children"
+		IL_00b7: ldc.i4.0
+		IL_00b8: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_00bd: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_00c2: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+		IL_00c7: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_00cc: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+		IL_00d1: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_00d6: stloc.3
+		IL_00d7: ldloc.2
+		IL_00d8: ldloc.1
+		IL_00d9: ldloc.3
+		IL_00da: ldc.r8 0.0
+		IL_00e3: box [System.Runtime]System.Double
+		IL_00e8: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
+		IL_00ed: pop
+		IL_00ee: ret
 	} // end of method Function_IIFE_Recursive::__js_module_init__
 
 } // end of class Modules.Function_IIFE_Recursive

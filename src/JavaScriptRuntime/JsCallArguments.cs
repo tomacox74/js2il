@@ -5,6 +5,8 @@ namespace JavaScriptRuntime;
 /// </summary>
 public readonly struct JsCallArguments
 {
+    public const int InlineCapacity = 5;
+
     private readonly object?[]? _array;
     private readonly object? _argument0;
     private readonly object? _argument1;

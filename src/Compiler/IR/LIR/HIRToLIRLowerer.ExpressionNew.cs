@@ -232,6 +232,31 @@ public sealed partial class HIRToLIRLowerer
         }
         ctorTemp = EnsureObject(ctorTemp);
 
+        if (newExpr.Arguments.Any(argument => argument is HIRSpreadElement)
+            || newExpr.Arguments.Count
+                > JavaScriptRuntime.JsCallArguments.InlineCapacity)
+        {
+            if (!TryLowerCallArgumentsToArgsArray(
+                    newExpr.Arguments,
+                    out var argsArrayTemp))
+            {
+                return false;
+            }
+
+            resultTempVar = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(
+                new LIRConstructValue(
+                    ctorTemp,
+                    argsArrayTemp,
+                    resultTempVar));
+            DefineTempStorage(
+                resultTempVar,
+                new ValueStorage(
+                    ValueStorageKind.Reference,
+                    typeof(object)));
+            return true;
+        }
+
         var argTemps = new List<TempVariable>(newExpr.Arguments.Count);
         foreach (var arg in newExpr.Arguments)
         {
@@ -242,12 +267,12 @@ public sealed partial class HIRToLIRLowerer
             argTemps.Add(EnsureObject(argTemp));
         }
 
-        var argsArrayTemp = CreateTempVariable();
-        _methodBodyIR.Instructions.Add(new LIRBuildArray(argTemps, argsArrayTemp));
-        DefineTempStorage(argsArrayTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
-
         resultTempVar = CreateTempVariable();
-        _methodBodyIR.Instructions.Add(new LIRConstructValue(ctorTemp, argsArrayTemp, resultTempVar));
+        _methodBodyIR.Instructions.Add(
+            new LIRConstructValueFixed(
+                ctorTemp,
+                argTemps,
+                resultTempVar));
         DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
         return true;
     }

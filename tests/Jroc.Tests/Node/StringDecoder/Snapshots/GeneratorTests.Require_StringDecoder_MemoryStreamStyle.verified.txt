@@ -299,7 +299,7 @@
 				74 61 54 6f 6b 65 6e 05 00 00 02
 			)
 			// Header size: 12
-			// Code size: 163 (0xa3)
+			// Code size: 155 (0x9b)
 			.maxstack 8
 			.locals init (
 				[0] object,
@@ -333,56 +333,52 @@
 			IL_002f: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
 			IL_0034: stloc.3
 			IL_0035: ldloc.3
-			IL_0036: brfalse IL_005a
+			IL_0036: brfalse IL_0052
 
 			IL_003b: ldarg.0
 			IL_003c: ldfld object Modules.Require_StringDecoder_MemoryStreamStyle/Scope::StringDecoder
 			IL_0041: stloc.2
 			IL_0042: ldloc.2
-			IL_0043: ldc.i4.1
-			IL_0044: newarr [System.Runtime]System.Object
-			IL_0049: dup
-			IL_004a: ldc.i4.0
-			IL_004b: ldarg.3
-			IL_004c: stelem.ref
-			IL_004d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::ConstructValue(object, object[])
-			IL_0052: stloc.2
-			IL_0053: ldloc.2
-			IL_0054: stloc.0
-			IL_0055: br IL_0061
+			IL_0043: dup
+			IL_0044: ldarg.3
+			IL_0045: call object [JavaScriptRuntime]JavaScriptRuntime.CallableOperations::Construct1(object, object, object)
+			IL_004a: stloc.2
+			IL_004b: ldloc.2
+			IL_004c: stloc.0
+			IL_004d: br IL_0059
 
-			IL_005a: ldc.i4.0
-			IL_005b: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
-			IL_0060: stloc.0
+			IL_0052: ldc.i4.0
+			IL_0053: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
+			IL_0058: stloc.0
 
-			IL_0061: ldloc.0
-			IL_0062: stloc.1
-			IL_0063: ldloc.1
-			IL_0064: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-			IL_0069: stloc.3
-			IL_006a: ldloc.3
-			IL_006b: brfalse IL_00a1
+			IL_0059: ldloc.0
+			IL_005a: stloc.1
+			IL_005b: ldloc.1
+			IL_005c: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+			IL_0061: stloc.3
+			IL_0062: ldloc.3
+			IL_0063: brfalse IL_0099
 
-			IL_0070: ldloc.1
-			IL_0071: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0076: ldstr "write"
-			IL_007b: ldarg.2
-			IL_007c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_0081: stloc.2
-			IL_0082: ldloc.1
-			IL_0083: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0088: ldstr "end"
-			IL_008d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-			IL_0092: stloc.s 6
-			IL_0094: ldloc.2
-			IL_0095: ldloc.s 6
-			IL_0097: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_009c: stloc.s 5
-			IL_009e: ldloc.s 5
-			IL_00a0: ret
+			IL_0068: ldloc.1
+			IL_0069: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_006e: ldstr "write"
+			IL_0073: ldarg.2
+			IL_0074: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_0079: stloc.2
+			IL_007a: ldloc.1
+			IL_007b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0080: ldstr "end"
+			IL_0085: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+			IL_008a: stloc.s 6
+			IL_008c: ldloc.2
+			IL_008d: ldloc.s 6
+			IL_008f: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0094: stloc.s 5
+			IL_0096: ldloc.s 5
+			IL_0098: ret
 
-			IL_00a1: ldarg.2
-			IL_00a2: ret
+			IL_0099: ldarg.2
+			IL_009a: ret
 		} // end of method FunctionExpression_L9C40::__js_call__
 
 	} // end of class FunctionExpression_L9C40
@@ -430,7 +426,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 323 (0x143)
+		// Code size: 318 (0x13e)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Require_StringDecoder_MemoryStreamStyle/Scope,
@@ -517,50 +513,49 @@
 		IL_00a8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
 		IL_00ad: pop
 		IL_00ae: ldloc.1
-		IL_00af: ldc.i4.0
-		IL_00b0: newarr [System.Runtime]System.Object
-		IL_00b5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::ConstructValue(object, object[])
-		IL_00ba: stloc.2
-		IL_00bb: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00c0: stloc.s 7
-		IL_00c2: ldloc.2
-		IL_00c3: ldloc.1
-		IL_00c4: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::InstanceOf(object, object)
-		IL_00c9: stloc.s 8
-		IL_00cb: ldloc.s 8
-		IL_00cd: box [System.Runtime]System.Boolean
-		IL_00d2: stloc.s 9
-		IL_00d4: ldloc.s 7
-		IL_00d6: ldloc.s 9
-		IL_00d8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00dd: pop
-		IL_00de: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00e3: stloc.s 7
-		IL_00e5: ldloc.2
-		IL_00e6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00eb: ldc.i4.3
-		IL_00ec: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_00f1: dup
-		IL_00f2: ldc.r8 226
-		IL_00fb: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::AddNumber(float64)
-		IL_0100: dup
-		IL_0101: ldc.r8 130
-		IL_010a: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::AddNumber(float64)
-		IL_010f: dup
-		IL_0110: ldc.r8 172
-		IL_0119: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::AddNumber(float64)
-		IL_011e: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer::from(object)
-		IL_0123: stloc.s 10
-		IL_0125: ldstr "decode"
-		IL_012a: ldloc.s 10
-		IL_012c: ldstr "utf8"
-		IL_0131: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_0136: stloc.s 5
-		IL_0138: ldloc.s 7
-		IL_013a: ldloc.s 5
-		IL_013c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0141: pop
-		IL_0142: ret
+		IL_00af: dup
+		IL_00b0: call object [JavaScriptRuntime]JavaScriptRuntime.CallableOperations::Construct0(object, object)
+		IL_00b5: stloc.2
+		IL_00b6: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00bb: stloc.s 7
+		IL_00bd: ldloc.2
+		IL_00be: ldloc.1
+		IL_00bf: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::InstanceOf(object, object)
+		IL_00c4: stloc.s 8
+		IL_00c6: ldloc.s 8
+		IL_00c8: box [System.Runtime]System.Boolean
+		IL_00cd: stloc.s 9
+		IL_00cf: ldloc.s 7
+		IL_00d1: ldloc.s 9
+		IL_00d3: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00d8: pop
+		IL_00d9: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00de: stloc.s 7
+		IL_00e0: ldloc.2
+		IL_00e1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00e6: ldc.i4.3
+		IL_00e7: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_00ec: dup
+		IL_00ed: ldc.r8 226
+		IL_00f6: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::AddNumber(float64)
+		IL_00fb: dup
+		IL_00fc: ldc.r8 130
+		IL_0105: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::AddNumber(float64)
+		IL_010a: dup
+		IL_010b: ldc.r8 172
+		IL_0114: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::AddNumber(float64)
+		IL_0119: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer::from(object)
+		IL_011e: stloc.s 10
+		IL_0120: ldstr "decode"
+		IL_0125: ldloc.s 10
+		IL_0127: ldstr "utf8"
+		IL_012c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_0131: stloc.s 5
+		IL_0133: ldloc.s 7
+		IL_0135: ldloc.s 5
+		IL_0137: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_013c: pop
+		IL_013d: ret
 	} // end of method Require_StringDecoder_MemoryStreamStyle::__js_module_init__
 
 } // end of class Modules.Require_StringDecoder_MemoryStreamStyle

@@ -475,12 +475,18 @@ internal static partial class LIRInstructionInfo
                 visitor.Visit(value.FunctionValue); visitor.Visit(value.ScopesArray); visitor.Visit(value.A0); visitor.Visit(value.A1); break;
             case LIRCallFunctionValue3 value:
                 visitor.Visit(value.FunctionValue); visitor.Visit(value.ScopesArray); visitor.Visit(value.A0); visitor.Visit(value.A1); visitor.Visit(value.A2); break;
+            case LIRCallFunctionValue4 value:
+                visitor.Visit(value.FunctionValue); visitor.Visit(value.ScopesArray); visitor.Visit(value.A0); visitor.Visit(value.A1); visitor.Visit(value.A2); visitor.Visit(value.A3); break;
+            case LIRCallFunctionValue5 value:
+                visitor.Visit(value.FunctionValue); visitor.Visit(value.ScopesArray); visitor.Visit(value.A0); visitor.Visit(value.A1); visitor.Visit(value.A2); visitor.Visit(value.A3); visitor.Visit(value.A4); break;
             case LIRCallRequire value:
                 visitor.Visit(value.RequireValue); visitor.Visit(value.ModuleId); break;
             case LIRCallImport value:
                 visitor.Visit(value.ModuleSpecifier); visitor.Visit(value.CurrentModuleId); break;
             case LIRConstructValue value:
                 visitor.Visit(value.ConstructorValue); visitor.Visit(value.ArgumentsArray); break;
+            case LIRConstructValueFixed value:
+                visitor.Visit(value.ConstructorValue); VisitList(value.Arguments, ref visitor); break;
             case LIRCallFunctionBaseConstructor value:
                 visitor.Visit(value.ConstructorValue); visitor.Visit(value.ArgumentsArray); break;
             case LIRCallMember value:
@@ -493,6 +499,12 @@ internal static partial class LIRInstructionInfo
                 visitor.Visit(value.Receiver); visitor.Visit(value.A0); visitor.Visit(value.A1); break;
             case LIRCallMember3 value:
                 visitor.Visit(value.Receiver); visitor.Visit(value.A0); visitor.Visit(value.A1); visitor.Visit(value.A2); break;
+            case LIRCallMember4 value:
+                visitor.Visit(value.Receiver); visitor.Visit(value.A0); visitor.Visit(value.A1); visitor.Visit(value.A2); visitor.Visit(value.A3); break;
+            case LIRCallMember5 value:
+                visitor.Visit(value.Receiver); visitor.Visit(value.A0); visitor.Visit(value.A1); visitor.Visit(value.A2); visitor.Visit(value.A3); visitor.Visit(value.A4); break;
+            case LIRCallComputedMemberFixed value:
+                visitor.Visit(value.Receiver); visitor.Visit(value.PropertyKey); VisitList(value.Arguments, ref visitor); break;
             case LIRCallNodeModuleContractMember value:
                 visitor.Visit(value.Receiver); VisitList(value.Arguments, ref visitor); break;
             case LIRCallTypedMember value:
@@ -757,6 +769,9 @@ internal static partial class LIRInstructionInfo
             case LIRConstructValue constructValue:
                 defined = constructValue.Result;
                 return true;
+            case LIRConstructValueFixed constructValueFixed:
+                defined = constructValueFixed.Result;
+                return true;
 
             case LIRCallIntrinsicStaticVoid:
                 defined = default;
@@ -954,6 +969,12 @@ internal static partial class LIRInstructionInfo
             case LIRCallFunctionValue3 callValue3:
                 defined = callValue3.Result;
                 return true;
+            case LIRCallFunctionValue4 callValue4:
+                defined = callValue4.Result;
+                return true;
+            case LIRCallFunctionValue5 callValue5:
+                defined = callValue5.Result;
+                return true;
 
             case LIRCallRequire callRequire:
                 defined = callRequire.Result;
@@ -977,6 +998,15 @@ internal static partial class LIRInstructionInfo
                 return true;
             case LIRCallMember3 callMember3:
                 defined = callMember3.Result;
+                return true;
+            case LIRCallMember4 callMember4:
+                defined = callMember4.Result;
+                return true;
+            case LIRCallMember5 callMember5:
+                defined = callMember5.Result;
+                return true;
+            case LIRCallComputedMemberFixed callComputedMember:
+                defined = callComputedMember.Result;
                 return true;
             case LIRCallNodeModuleContractMember callNodeContract:
                 defined = callNodeContract.Result;

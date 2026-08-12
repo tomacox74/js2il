@@ -1675,7 +1675,8 @@
 			.maxstack 8
 			.locals init (
 				[0] object,
-				[1] object
+				[1] object,
+				[2] class [JavaScriptRuntime]JavaScriptRuntime.Array
 			)
 
 			IL_0000: ldarg.0
@@ -1693,11 +1694,15 @@
 			IL_0020: dup
 			IL_0021: ldc.r8 1
 			IL_002a: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::AddNumber(float64)
-			IL_002f: ldstr "iterator"
-			IL_0034: call object [JavaScriptRuntime]JavaScriptRuntime.Symbol::GetWellKnown(string)
-			IL_0039: ldc.i4.0
-			IL_003a: newarr [System.Runtime]System.Object
-			IL_003f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallComputedMember(object, object, object[])
+			IL_002f: stloc.2
+			IL_0030: ldstr "iterator"
+			IL_0035: call object [JavaScriptRuntime]JavaScriptRuntime.Symbol::GetWellKnown(string)
+			IL_003a: stloc.0
+			IL_003b: ldloc.2
+			IL_003c: ldloc.0
+			IL_003d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallComputedMember0(object, object)
+			IL_0042: stloc.0
+			IL_0043: ldloc.0
 			IL_0044: ret
 		} // end of method FunctionExpression_spread::__js_call__
 

@@ -6059,7 +6059,7 @@
 				74 61 54 6f 6b 65 6e 2a 00 00 02
 			)
 			// Header size: 12
-			// Code size: 873 (0x369)
+			// Code size: 855 (0x357)
 			.maxstack 8
 			.locals init (
 				[0] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
@@ -6102,7 +6102,7 @@
 				IL_0027: ldloc.s 11
 				IL_0029: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
 				IL_002e: clt
-				IL_0030: brfalse IL_0367
+				IL_0030: brfalse IL_0355
 
 				IL_0035: ldarg.3
 				IL_0036: ldstr "index"
@@ -6159,7 +6159,7 @@
 				IL_00c4: clt
 				IL_00c6: brfalse IL_00d0
 
-				IL_00cb: br IL_0367
+				IL_00cb: br IL_0355
 
 				IL_00d0: ldloc.2
 				IL_00d1: ldarg.s baseIndent
@@ -6321,7 +6321,7 @@
 				IL_02a8: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
 				IL_02ad: stloc.s 12
 				IL_02af: ldloc.s 12
-				IL_02b1: brfalse IL_02f7
+				IL_02b1: brfalse IL_02e5
 
 				IL_02b6: ldarg.0
 				IL_02b7: ldfld object Modules.test262_metadataParser/Scope::parseBlockScalar
@@ -6333,83 +6333,69 @@
 				IL_02c5: stelem.ref
 				IL_02c6: stloc.s 21
 				IL_02c8: ldloc.s 21
-				IL_02ca: ldc.i4.4
-				IL_02cb: newarr [System.Runtime]System.Object
-				IL_02d0: dup
-				IL_02d1: ldc.i4.0
-				IL_02d2: ldarg.2
-				IL_02d3: stelem.ref
-				IL_02d4: dup
-				IL_02d5: ldc.i4.1
-				IL_02d6: ldarg.3
-				IL_02d7: stelem.ref
-				IL_02d8: dup
-				IL_02d9: ldc.i4.2
-				IL_02da: ldarg.s baseIndent
-				IL_02dc: box [System.Runtime]System.Double
-				IL_02e1: stelem.ref
-				IL_02e2: dup
-				IL_02e3: ldc.i4.3
-				IL_02e4: ldloc.s 8
-				IL_02e6: stelem.ref
-				IL_02e7: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs(object, object[], object[])
-				IL_02ec: stloc.s 11
-				IL_02ee: ldloc.s 11
-				IL_02f0: stloc.s 9
-				IL_02f2: br IL_0356
+				IL_02ca: ldarg.2
+				IL_02cb: ldarg.3
+				IL_02cc: ldarg.s baseIndent
+				IL_02ce: box [System.Runtime]System.Double
+				IL_02d3: ldloc.s 8
+				IL_02d5: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs4(object, object[], object, object, object, object)
+				IL_02da: stloc.s 11
+				IL_02dc: ldloc.s 11
+				IL_02de: stloc.s 9
+				IL_02e0: br IL_0344
 
-				IL_02f7: ldloc.s 8
-				IL_02f9: ldstr ""
-				IL_02fe: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-				IL_0303: stloc.s 12
-				IL_0305: ldloc.s 12
-				IL_0307: brfalse IL_0339
+				IL_02e5: ldloc.s 8
+				IL_02e7: ldstr ""
+				IL_02ec: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+				IL_02f1: stloc.s 12
+				IL_02f3: ldloc.s 12
+				IL_02f5: brfalse IL_0327
 
-				IL_030c: ldarg.0
-				IL_030d: ldfld object Modules.test262_metadataParser/Scope::parseIndentedValue
-				IL_0312: ldc.i4.1
-				IL_0313: newarr [System.Runtime]System.Object
-				IL_0318: dup
-				IL_0319: ldc.i4.0
-				IL_031a: ldarg.0
-				IL_031b: stelem.ref
-				IL_031c: stloc.s 21
-				IL_031e: ldloc.s 21
-				IL_0320: ldarg.2
-				IL_0321: ldarg.3
-				IL_0322: ldarg.s baseIndent
-				IL_0324: box [System.Runtime]System.Double
-				IL_0329: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs3(object, object[], object, object, object)
-				IL_032e: stloc.s 11
-				IL_0330: ldloc.s 11
-				IL_0332: stloc.s 9
-				IL_0334: br IL_0356
+				IL_02fa: ldarg.0
+				IL_02fb: ldfld object Modules.test262_metadataParser/Scope::parseIndentedValue
+				IL_0300: ldc.i4.1
+				IL_0301: newarr [System.Runtime]System.Object
+				IL_0306: dup
+				IL_0307: ldc.i4.0
+				IL_0308: ldarg.0
+				IL_0309: stelem.ref
+				IL_030a: stloc.s 21
+				IL_030c: ldloc.s 21
+				IL_030e: ldarg.2
+				IL_030f: ldarg.3
+				IL_0310: ldarg.s baseIndent
+				IL_0312: box [System.Runtime]System.Double
+				IL_0317: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs3(object, object[], object, object, object)
+				IL_031c: stloc.s 11
+				IL_031e: ldloc.s 11
+				IL_0320: stloc.s 9
+				IL_0322: br IL_0344
 
-				IL_0339: ldarg.0
-				IL_033a: ldfld object Modules.test262_metadataParser/Scope::parseInlineValue
-				IL_033f: ldc.i4.1
-				IL_0340: newarr [System.Runtime]System.Object
-				IL_0345: dup
-				IL_0346: ldc.i4.0
-				IL_0347: ldarg.0
-				IL_0348: stelem.ref
-				IL_0349: ldloc.s 8
-				IL_034b: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
-				IL_0350: stloc.s 11
-				IL_0352: ldloc.s 11
-				IL_0354: stloc.s 9
+				IL_0327: ldarg.0
+				IL_0328: ldfld object Modules.test262_metadataParser/Scope::parseInlineValue
+				IL_032d: ldc.i4.1
+				IL_032e: newarr [System.Runtime]System.Object
+				IL_0333: dup
+				IL_0334: ldc.i4.0
+				IL_0335: ldarg.0
+				IL_0336: stelem.ref
+				IL_0337: ldloc.s 8
+				IL_0339: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
+				IL_033e: stloc.s 11
+				IL_0340: ldloc.s 11
+				IL_0342: stloc.s 9
 
-				IL_0356: ldloc.0
-				IL_0357: ldloc.s 7
-				IL_0359: ldloc.s 9
-				IL_035b: ldc.i4.1
-				IL_035c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, object, object, bool)
-				IL_0361: pop
-				IL_0362: br IL_0006
+				IL_0344: ldloc.0
+				IL_0345: ldloc.s 7
+				IL_0347: ldloc.s 9
+				IL_0349: ldc.i4.1
+				IL_034a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, object, object, bool)
+				IL_034f: pop
+				IL_0350: br IL_0006
 			// end loop
 
-			IL_0367: ldloc.0
-			IL_0368: ret
+			IL_0355: ldloc.0
+			IL_0356: ret
 		} // end of method parseYamlSubsetLines::__js_call__
 
 	} // end of class parseYamlSubsetLines
@@ -7928,7 +7914,7 @@
 				74 61 54 6f 6b 65 6e 2a 00 00 02
 			)
 			// Header size: 12
-			// Code size: 452 (0x1c4)
+			// Code size: 416 (0x1a0)
 			.maxstack 8
 			.locals init (
 				[0] class [JavaScriptRuntime]JavaScriptRuntime.Array,
@@ -8013,7 +7999,7 @@
 			IL_008d: ceq
 			IL_008f: stloc.3
 			IL_0090: ldloc.3
-			IL_0091: brfalse IL_00fb
+			IL_0091: brfalse IL_00e9
 
 			IL_0096: ldarg.0
 			IL_0097: ldfld object Modules.test262_metadataParser/Scope::pushIssue
@@ -8036,120 +8022,92 @@
 			IL_00c8: stloc.s 12
 			IL_00ca: ldloc.s 10
 			IL_00cc: ldloc.s 11
-			IL_00ce: ldc.i4.4
-			IL_00cf: newarr [System.Runtime]System.Object
-			IL_00d4: dup
-			IL_00d5: ldc.i4.0
-			IL_00d6: ldarg.s issues
-			IL_00d8: stelem.ref
-			IL_00d9: dup
-			IL_00da: ldc.i4.1
-			IL_00db: ldstr "invalid-array"
-			IL_00e0: stelem.ref
-			IL_00e1: dup
-			IL_00e2: ldc.i4.2
-			IL_00e3: ldarg.3
-			IL_00e4: stelem.ref
-			IL_00e5: dup
-			IL_00e6: ldc.i4.3
-			IL_00e7: ldloc.s 12
-			IL_00e9: stelem.ref
-			IL_00ea: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs(object, object[], object[])
-			IL_00ef: pop
-			IL_00f0: ldc.i4.0
-			IL_00f1: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-			IL_00f6: stloc.s 9
-			IL_00f8: ldloc.s 9
-			IL_00fa: ret
+			IL_00ce: ldarg.s issues
+			IL_00d0: ldstr "invalid-array"
+			IL_00d5: ldarg.3
+			IL_00d6: ldloc.s 12
+			IL_00d8: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs4(object, object[], object, object, object, object)
+			IL_00dd: pop
+			IL_00de: ldc.i4.0
+			IL_00df: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+			IL_00e4: stloc.s 9
+			IL_00e6: ldloc.s 9
+			IL_00e8: ret
 
-			IL_00fb: ldc.i4.0
-			IL_00fc: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-			IL_0101: stloc.0
-			IL_0102: ldc.r8 0.0
-			IL_010b: stloc.1
-			// loop start (head: IL_010c)
-				IL_010c: ldloc.1
-				IL_010d: stloc.s 13
-				IL_010f: ldarg.2
-				IL_0110: ldstr "length"
-				IL_0115: call float64 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItemAsNumber(object, object)
-				IL_011a: stloc.s 14
-				IL_011c: ldloc.s 13
-				IL_011e: ldloc.s 14
-				IL_0120: clt
-				IL_0122: brfalse IL_01c2
+			IL_00e9: ldc.i4.0
+			IL_00ea: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+			IL_00ef: stloc.0
+			IL_00f0: ldc.r8 0.0
+			IL_00f9: stloc.1
+			// loop start (head: IL_00fa)
+				IL_00fa: ldloc.1
+				IL_00fb: stloc.s 13
+				IL_00fd: ldarg.2
+				IL_00fe: ldstr "length"
+				IL_0103: call float64 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItemAsNumber(object, object)
+				IL_0108: stloc.s 14
+				IL_010a: ldloc.s 13
+				IL_010c: ldloc.s 14
+				IL_010e: clt
+				IL_0110: brfalse IL_019e
 
-				IL_0127: ldarg.2
-				IL_0128: ldloc.1
-				IL_0129: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-				IL_012e: stloc.2
-				IL_012f: ldloc.2
-				IL_0130: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
-				IL_0135: stloc.s 12
-				IL_0137: ldloc.s 12
-				IL_0139: ldstr "string"
-				IL_013e: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictNotEqual(object, object)
-				IL_0143: stloc.3
-				IL_0144: ldloc.3
-				IL_0145: brfalse IL_01a9
+				IL_0115: ldarg.2
+				IL_0116: ldloc.1
+				IL_0117: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+				IL_011c: stloc.2
+				IL_011d: ldloc.2
+				IL_011e: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
+				IL_0123: stloc.s 12
+				IL_0125: ldloc.s 12
+				IL_0127: ldstr "string"
+				IL_012c: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictNotEqual(object, object)
+				IL_0131: stloc.3
+				IL_0132: ldloc.3
+				IL_0133: brfalse IL_0185
 
-				IL_014a: ldarg.0
-				IL_014b: ldfld object Modules.test262_metadataParser/Scope::pushIssue
-				IL_0150: stloc.s 10
-				IL_0152: ldc.i4.1
-				IL_0153: newarr [System.Runtime]System.Object
-				IL_0158: dup
-				IL_0159: ldc.i4.0
-				IL_015a: ldarg.0
-				IL_015b: stelem.ref
-				IL_015c: stloc.s 11
-				IL_015e: ldarg.3
-				IL_015f: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-				IL_0164: stloc.s 12
-				IL_0166: ldstr "Expected string entries for '"
-				IL_016b: ldloc.s 12
-				IL_016d: call string [System.Runtime]System.String::Concat(string, string)
-				IL_0172: ldstr "'."
-				IL_0177: call string [System.Runtime]System.String::Concat(string, string)
-				IL_017c: stloc.s 12
-				IL_017e: ldloc.s 10
-				IL_0180: ldloc.s 11
-				IL_0182: ldc.i4.4
-				IL_0183: newarr [System.Runtime]System.Object
-				IL_0188: dup
-				IL_0189: ldc.i4.0
-				IL_018a: ldarg.s issues
-				IL_018c: stelem.ref
-				IL_018d: dup
-				IL_018e: ldc.i4.1
-				IL_018f: ldstr "invalid-array-entry"
-				IL_0194: stelem.ref
-				IL_0195: dup
-				IL_0196: ldc.i4.2
-				IL_0197: ldarg.3
-				IL_0198: stelem.ref
-				IL_0199: dup
-				IL_019a: ldc.i4.3
-				IL_019b: ldloc.s 12
-				IL_019d: stelem.ref
-				IL_019e: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs(object, object[], object[])
-				IL_01a3: pop
-				IL_01a4: br IL_01b1
+				IL_0138: ldarg.0
+				IL_0139: ldfld object Modules.test262_metadataParser/Scope::pushIssue
+				IL_013e: stloc.s 10
+				IL_0140: ldc.i4.1
+				IL_0141: newarr [System.Runtime]System.Object
+				IL_0146: dup
+				IL_0147: ldc.i4.0
+				IL_0148: ldarg.0
+				IL_0149: stelem.ref
+				IL_014a: stloc.s 11
+				IL_014c: ldarg.3
+				IL_014d: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+				IL_0152: stloc.s 12
+				IL_0154: ldstr "Expected string entries for '"
+				IL_0159: ldloc.s 12
+				IL_015b: call string [System.Runtime]System.String::Concat(string, string)
+				IL_0160: ldstr "'."
+				IL_0165: call string [System.Runtime]System.String::Concat(string, string)
+				IL_016a: stloc.s 12
+				IL_016c: ldloc.s 10
+				IL_016e: ldloc.s 11
+				IL_0170: ldarg.s issues
+				IL_0172: ldstr "invalid-array-entry"
+				IL_0177: ldarg.3
+				IL_0178: ldloc.s 12
+				IL_017a: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs4(object, object[], object, object, object, object)
+				IL_017f: pop
+				IL_0180: br IL_018d
 
-				IL_01a9: ldloc.0
-				IL_01aa: ldloc.2
-				IL_01ab: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object)
-				IL_01b0: pop
+				IL_0185: ldloc.0
+				IL_0186: ldloc.2
+				IL_0187: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object)
+				IL_018c: pop
 
-				IL_01b1: ldloc.1
-				IL_01b2: ldc.r8 1
-				IL_01bb: add
-				IL_01bc: stloc.1
-				IL_01bd: br IL_010c
+				IL_018d: ldloc.1
+				IL_018e: ldc.r8 1
+				IL_0197: add
+				IL_0198: stloc.1
+				IL_0199: br IL_00fa
 			// end loop
 
-			IL_01c2: ldloc.0
-			IL_01c3: ret
+			IL_019e: ldloc.0
+			IL_019f: ret
 		} // end of method toStringArray::__js_call__
 
 	} // end of class toStringArray
@@ -8357,7 +8315,7 @@
 				74 61 54 6f 6b 65 6e 2a 00 00 02
 			)
 			// Header size: 12
-			// Code size: 247 (0xf7)
+			// Code size: 229 (0xe5)
 			.maxstack 8
 			.locals init (
 				[0] bool,
@@ -8434,7 +8392,7 @@
 			IL_0088: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictNotEqual(object, object)
 			IL_008d: stloc.0
 			IL_008e: ldloc.0
-			IL_008f: brfalse IL_00f5
+			IL_008f: brfalse IL_00e3
 
 			IL_0094: ldarg.0
 			IL_0095: ldfld object Modules.test262_metadataParser/Scope::pushIssue
@@ -8457,32 +8415,18 @@
 			IL_00c6: stloc.s 6
 			IL_00c8: ldloc.s 7
 			IL_00ca: ldloc.s 8
-			IL_00cc: ldc.i4.4
-			IL_00cd: newarr [System.Runtime]System.Object
-			IL_00d2: dup
-			IL_00d3: ldc.i4.0
-			IL_00d4: ldarg.s issues
-			IL_00d6: stelem.ref
-			IL_00d7: dup
-			IL_00d8: ldc.i4.1
-			IL_00d9: ldstr "invalid-string"
-			IL_00de: stelem.ref
-			IL_00df: dup
-			IL_00e0: ldc.i4.2
-			IL_00e1: ldarg.3
-			IL_00e2: stelem.ref
-			IL_00e3: dup
-			IL_00e4: ldc.i4.3
-			IL_00e5: ldloc.s 6
-			IL_00e7: stelem.ref
-			IL_00e8: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs(object, object[], object[])
-			IL_00ed: pop
-			IL_00ee: ldc.i4.0
-			IL_00ef: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
-			IL_00f4: ret
+			IL_00cc: ldarg.s issues
+			IL_00ce: ldstr "invalid-string"
+			IL_00d3: ldarg.3
+			IL_00d4: ldloc.s 6
+			IL_00d6: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs4(object, object[], object, object, object, object)
+			IL_00db: pop
+			IL_00dc: ldc.i4.0
+			IL_00dd: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
+			IL_00e2: ret
 
-			IL_00f5: ldarg.2
-			IL_00f6: ret
+			IL_00e3: ldarg.2
+			IL_00e4: ret
 		} // end of method toNullableString::__js_call__
 
 	} // end of class toNullableString
@@ -8780,7 +8724,7 @@
 				74 61 54 6f 6b 65 6e 2a 00 00 02
 			)
 			// Header size: 12
-			// Code size: 1063 (0x427)
+			// Code size: 1009 (0x3f1)
 			.maxstack 8
 			.locals init (
 				[0] object,
@@ -8913,7 +8857,7 @@
 			IL_0104: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
 			IL_0109: stloc.s 6
 			IL_010b: ldloc.s 6
-			IL_010d: brfalse IL_0159
+			IL_010d: brfalse IL_0147
 
 			IL_0112: ldarg.0
 			IL_0113: ldfld object Modules.test262_metadataParser/Scope::pushIssue
@@ -8927,318 +8871,276 @@
 			IL_0124: stloc.s 16
 			IL_0126: ldloc.s 15
 			IL_0128: ldloc.s 16
-			IL_012a: ldc.i4.4
-			IL_012b: newarr [System.Runtime]System.Object
-			IL_0130: dup
-			IL_0131: ldc.i4.0
-			IL_0132: ldarg.3
-			IL_0133: stelem.ref
-			IL_0134: dup
-			IL_0135: ldc.i4.1
-			IL_0136: ldstr "invalid-negative"
-			IL_013b: stelem.ref
-			IL_013c: dup
-			IL_013d: ldc.i4.2
-			IL_013e: ldstr "negative"
-			IL_0143: stelem.ref
-			IL_0144: dup
-			IL_0145: ldc.i4.3
-			IL_0146: ldstr "Expected an object for the negative frontmatter value."
-			IL_014b: stelem.ref
-			IL_014c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs(object, object[], object[])
-			IL_0151: pop
-			IL_0152: ldc.i4.0
-			IL_0153: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
-			IL_0158: ret
+			IL_012a: ldarg.3
+			IL_012b: ldstr "invalid-negative"
+			IL_0130: ldstr "negative"
+			IL_0135: ldstr "Expected an object for the negative frontmatter value."
+			IL_013a: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs4(object, object[], object, object, object, object)
+			IL_013f: pop
+			IL_0140: ldc.i4.0
+			IL_0141: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
+			IL_0146: ret
 
-			IL_0159: ldarg.0
-			IL_015a: ldfld object Modules.test262_metadataParser/Scope::toNullableString
-			IL_015f: ldc.i4.1
-			IL_0160: newarr [System.Runtime]System.Object
-			IL_0165: dup
-			IL_0166: ldc.i4.0
-			IL_0167: ldarg.0
-			IL_0168: stelem.ref
-			IL_0169: stloc.s 16
-			IL_016b: ldarg.2
-			IL_016c: ldstr "phase"
-			IL_0171: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0176: stloc.s 15
-			IL_0178: ldloc.s 16
-			IL_017a: ldloc.s 15
-			IL_017c: ldstr "negative.phase"
-			IL_0181: ldarg.3
-			IL_0182: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs3(object, object[], object, object, object)
-			IL_0187: stloc.0
-			IL_0188: ldarg.0
-			IL_0189: ldfld object Modules.test262_metadataParser/Scope::toNullableString
-			IL_018e: ldc.i4.1
-			IL_018f: newarr [System.Runtime]System.Object
-			IL_0194: dup
-			IL_0195: ldc.i4.0
-			IL_0196: ldarg.0
-			IL_0197: stelem.ref
-			IL_0198: stloc.s 16
-			IL_019a: ldarg.2
-			IL_019b: ldstr "type"
-			IL_01a0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_01a5: stloc.s 15
-			IL_01a7: ldloc.s 16
-			IL_01a9: ldloc.s 15
-			IL_01ab: ldstr "negative.type"
-			IL_01b0: ldarg.3
-			IL_01b1: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs3(object, object[], object, object, object)
-			IL_01b6: stloc.1
-			IL_01b7: ldc.i4.3
-			IL_01b8: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-			IL_01bd: dup
-			IL_01be: ldstr "parse"
-			IL_01c3: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-			IL_01c8: dup
-			IL_01c9: ldstr "resolution"
-			IL_01ce: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-			IL_01d3: dup
-			IL_01d4: ldstr "runtime"
-			IL_01d9: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-			IL_01de: stloc.2
-			IL_01df: ldloc.0
-			IL_01e0: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-			IL_01e5: stloc.s 6
-			IL_01e7: ldloc.s 6
-			IL_01e9: brfalse IL_0221
+			IL_0147: ldarg.0
+			IL_0148: ldfld object Modules.test262_metadataParser/Scope::toNullableString
+			IL_014d: ldc.i4.1
+			IL_014e: newarr [System.Runtime]System.Object
+			IL_0153: dup
+			IL_0154: ldc.i4.0
+			IL_0155: ldarg.0
+			IL_0156: stelem.ref
+			IL_0157: stloc.s 16
+			IL_0159: ldarg.2
+			IL_015a: ldstr "phase"
+			IL_015f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0164: stloc.s 15
+			IL_0166: ldloc.s 16
+			IL_0168: ldloc.s 15
+			IL_016a: ldstr "negative.phase"
+			IL_016f: ldarg.3
+			IL_0170: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs3(object, object[], object, object, object)
+			IL_0175: stloc.0
+			IL_0176: ldarg.0
+			IL_0177: ldfld object Modules.test262_metadataParser/Scope::toNullableString
+			IL_017c: ldc.i4.1
+			IL_017d: newarr [System.Runtime]System.Object
+			IL_0182: dup
+			IL_0183: ldc.i4.0
+			IL_0184: ldarg.0
+			IL_0185: stelem.ref
+			IL_0186: stloc.s 16
+			IL_0188: ldarg.2
+			IL_0189: ldstr "type"
+			IL_018e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0193: stloc.s 15
+			IL_0195: ldloc.s 16
+			IL_0197: ldloc.s 15
+			IL_0199: ldstr "negative.type"
+			IL_019e: ldarg.3
+			IL_019f: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs3(object, object[], object, object, object)
+			IL_01a4: stloc.1
+			IL_01a5: ldc.i4.3
+			IL_01a6: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+			IL_01ab: dup
+			IL_01ac: ldstr "parse"
+			IL_01b1: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+			IL_01b6: dup
+			IL_01b7: ldstr "resolution"
+			IL_01bc: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+			IL_01c1: dup
+			IL_01c2: ldstr "runtime"
+			IL_01c7: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+			IL_01cc: stloc.2
+			IL_01cd: ldloc.0
+			IL_01ce: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+			IL_01d3: stloc.s 6
+			IL_01d5: ldloc.s 6
+			IL_01d7: brfalse IL_020f
 
-			IL_01ee: ldloc.2
-			IL_01ef: ldc.i4.1
-			IL_01f0: newarr [System.Runtime]System.Object
-			IL_01f5: dup
-			IL_01f6: ldc.i4.0
-			IL_01f7: ldloc.0
-			IL_01f8: stelem.ref
-			IL_01f9: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::indexOf(object[])
-			IL_01fe: stloc.s 17
-			IL_0200: ldloc.s 17
-			IL_0202: ldc.r8 0.0
-			IL_020b: clt
-			IL_020d: stloc.s 6
-			IL_020f: ldloc.s 6
-			IL_0211: box [System.Runtime]System.Boolean
-			IL_0216: stloc.s 7
-			IL_0218: ldloc.s 7
-			IL_021a: stloc.s 18
-			IL_021c: br IL_0224
+			IL_01dc: ldloc.2
+			IL_01dd: ldc.i4.1
+			IL_01de: newarr [System.Runtime]System.Object
+			IL_01e3: dup
+			IL_01e4: ldc.i4.0
+			IL_01e5: ldloc.0
+			IL_01e6: stelem.ref
+			IL_01e7: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::indexOf(object[])
+			IL_01ec: stloc.s 17
+			IL_01ee: ldloc.s 17
+			IL_01f0: ldc.r8 0.0
+			IL_01f9: clt
+			IL_01fb: stloc.s 6
+			IL_01fd: ldloc.s 6
+			IL_01ff: box [System.Runtime]System.Boolean
+			IL_0204: stloc.s 7
+			IL_0206: ldloc.s 7
+			IL_0208: stloc.s 18
+			IL_020a: br IL_0212
 
-			IL_0221: ldloc.0
-			IL_0222: stloc.s 18
+			IL_020f: ldloc.0
+			IL_0210: stloc.s 18
 
-			IL_0224: ldloc.s 18
-			IL_0226: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-			IL_022b: stloc.s 6
-			IL_022d: ldloc.s 6
-			IL_022f: brfalse IL_0291
+			IL_0212: ldloc.s 18
+			IL_0214: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+			IL_0219: stloc.s 6
+			IL_021b: ldloc.s 6
+			IL_021d: brfalse IL_026d
 
-			IL_0234: ldarg.0
-			IL_0235: ldfld object Modules.test262_metadataParser/Scope::pushIssue
-			IL_023a: stloc.s 15
-			IL_023c: ldc.i4.1
-			IL_023d: newarr [System.Runtime]System.Object
-			IL_0242: dup
-			IL_0243: ldc.i4.0
-			IL_0244: ldarg.0
-			IL_0245: stelem.ref
-			IL_0246: stloc.s 16
-			IL_0248: ldloc.0
-			IL_0249: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-			IL_024e: stloc.s 12
-			IL_0250: ldstr "Unsupported negative phase '"
-			IL_0255: ldloc.s 12
-			IL_0257: call string [System.Runtime]System.String::Concat(string, string)
-			IL_025c: ldstr "'."
-			IL_0261: call string [System.Runtime]System.String::Concat(string, string)
-			IL_0266: stloc.s 12
-			IL_0268: ldloc.s 15
-			IL_026a: ldloc.s 16
-			IL_026c: ldc.i4.4
-			IL_026d: newarr [System.Runtime]System.Object
-			IL_0272: dup
-			IL_0273: ldc.i4.0
-			IL_0274: ldarg.3
-			IL_0275: stelem.ref
-			IL_0276: dup
-			IL_0277: ldc.i4.1
-			IL_0278: ldstr "unknown-negative-phase"
-			IL_027d: stelem.ref
-			IL_027e: dup
-			IL_027f: ldc.i4.2
-			IL_0280: ldstr "negative.phase"
-			IL_0285: stelem.ref
-			IL_0286: dup
-			IL_0287: ldc.i4.3
-			IL_0288: ldloc.s 12
-			IL_028a: stelem.ref
-			IL_028b: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs(object, object[], object[])
-			IL_0290: pop
+			IL_0222: ldarg.0
+			IL_0223: ldfld object Modules.test262_metadataParser/Scope::pushIssue
+			IL_0228: stloc.s 15
+			IL_022a: ldc.i4.1
+			IL_022b: newarr [System.Runtime]System.Object
+			IL_0230: dup
+			IL_0231: ldc.i4.0
+			IL_0232: ldarg.0
+			IL_0233: stelem.ref
+			IL_0234: stloc.s 16
+			IL_0236: ldloc.0
+			IL_0237: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+			IL_023c: stloc.s 12
+			IL_023e: ldstr "Unsupported negative phase '"
+			IL_0243: ldloc.s 12
+			IL_0245: call string [System.Runtime]System.String::Concat(string, string)
+			IL_024a: ldstr "'."
+			IL_024f: call string [System.Runtime]System.String::Concat(string, string)
+			IL_0254: stloc.s 12
+			IL_0256: ldloc.s 15
+			IL_0258: ldloc.s 16
+			IL_025a: ldarg.3
+			IL_025b: ldstr "unknown-negative-phase"
+			IL_0260: ldstr "negative.phase"
+			IL_0265: ldloc.s 12
+			IL_0267: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs4(object, object[], object, object, object, object)
+			IL_026c: pop
 
-			IL_0291: ldarg.2
-			IL_0292: call object [JavaScriptRuntime]JavaScriptRuntime.Object::keys(object)
-			IL_0297: stloc.3
-			IL_0298: ldc.r8 0.0
-			IL_02a1: stloc.s 4
-			// loop start (head: IL_02a3)
-				IL_02a3: ldloc.s 4
-				IL_02a5: stloc.s 17
-				IL_02a7: ldloc.3
-				IL_02a8: ldstr "length"
-				IL_02ad: call float64 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItemAsNumber(object, object)
-				IL_02b2: stloc.s 19
-				IL_02b4: ldloc.s 17
-				IL_02b6: ldloc.s 19
-				IL_02b8: clt
-				IL_02ba: brfalse IL_03a9
+			IL_026d: ldarg.2
+			IL_026e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::keys(object)
+			IL_0273: stloc.3
+			IL_0274: ldc.r8 0.0
+			IL_027d: stloc.s 4
+			// loop start (head: IL_027f)
+				IL_027f: ldloc.s 4
+				IL_0281: stloc.s 17
+				IL_0283: ldloc.3
+				IL_0284: ldstr "length"
+				IL_0289: call float64 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItemAsNumber(object, object)
+				IL_028e: stloc.s 19
+				IL_0290: ldloc.s 17
+				IL_0292: ldloc.s 19
+				IL_0294: clt
+				IL_0296: brfalse IL_0373
 
-				IL_02bf: ldloc.3
-				IL_02c0: ldloc.s 4
-				IL_02c2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-				IL_02c7: stloc.s 5
-				IL_02c9: ldloc.s 5
-				IL_02cb: ldstr "phase"
-				IL_02d0: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictNotEqual(object, object)
-				IL_02d5: stloc.s 6
-				IL_02d7: ldloc.s 6
-				IL_02d9: box [System.Runtime]System.Boolean
-				IL_02de: stloc.s 7
-				IL_02e0: ldloc.s 7
-				IL_02e2: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-				IL_02e7: stloc.s 6
-				IL_02e9: ldloc.s 6
-				IL_02eb: brfalse IL_0310
+				IL_029b: ldloc.3
+				IL_029c: ldloc.s 4
+				IL_029e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+				IL_02a3: stloc.s 5
+				IL_02a5: ldloc.s 5
+				IL_02a7: ldstr "phase"
+				IL_02ac: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictNotEqual(object, object)
+				IL_02b1: stloc.s 6
+				IL_02b3: ldloc.s 6
+				IL_02b5: box [System.Runtime]System.Boolean
+				IL_02ba: stloc.s 7
+				IL_02bc: ldloc.s 7
+				IL_02be: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+				IL_02c3: stloc.s 6
+				IL_02c5: ldloc.s 6
+				IL_02c7: brfalse IL_02ec
 
-				IL_02f0: ldloc.s 5
-				IL_02f2: ldstr "type"
-				IL_02f7: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictNotEqual(object, object)
-				IL_02fc: stloc.s 6
-				IL_02fe: ldloc.s 6
-				IL_0300: box [System.Runtime]System.Boolean
-				IL_0305: stloc.s 8
-				IL_0307: ldloc.s 8
-				IL_0309: stloc.s 20
-				IL_030b: br IL_0314
+				IL_02cc: ldloc.s 5
+				IL_02ce: ldstr "type"
+				IL_02d3: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictNotEqual(object, object)
+				IL_02d8: stloc.s 6
+				IL_02da: ldloc.s 6
+				IL_02dc: box [System.Runtime]System.Boolean
+				IL_02e1: stloc.s 8
+				IL_02e3: ldloc.s 8
+				IL_02e5: stloc.s 20
+				IL_02e7: br IL_02f0
 
-				IL_0310: ldloc.s 7
-				IL_0312: stloc.s 20
+				IL_02ec: ldloc.s 7
+				IL_02ee: stloc.s 20
 
-				IL_0314: ldloc.s 20
-				IL_0316: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-				IL_031b: stloc.s 6
-				IL_031d: ldloc.s 6
-				IL_031f: brfalse IL_0396
+				IL_02f0: ldloc.s 20
+				IL_02f2: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+				IL_02f7: stloc.s 6
+				IL_02f9: ldloc.s 6
+				IL_02fb: brfalse IL_0360
 
-				IL_0324: ldarg.0
-				IL_0325: ldfld object Modules.test262_metadataParser/Scope::pushIssue
-				IL_032a: stloc.s 15
-				IL_032c: ldc.i4.1
-				IL_032d: newarr [System.Runtime]System.Object
-				IL_0332: dup
-				IL_0333: ldc.i4.0
-				IL_0334: ldarg.0
-				IL_0335: stelem.ref
-				IL_0336: stloc.s 16
-				IL_0338: ldloc.s 5
-				IL_033a: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-				IL_033f: stloc.s 12
-				IL_0341: ldstr "negative."
-				IL_0346: ldloc.s 12
-				IL_0348: call string [System.Runtime]System.String::Concat(string, string)
-				IL_034d: stloc.s 12
-				IL_034f: ldloc.s 5
-				IL_0351: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-				IL_0356: stloc.s 21
-				IL_0358: ldstr "Unsupported negative metadata key '"
-				IL_035d: ldloc.s 21
-				IL_035f: call string [System.Runtime]System.String::Concat(string, string)
-				IL_0364: ldstr "'."
-				IL_0369: call string [System.Runtime]System.String::Concat(string, string)
-				IL_036e: stloc.s 21
-				IL_0370: ldloc.s 15
-				IL_0372: ldloc.s 16
-				IL_0374: ldc.i4.4
-				IL_0375: newarr [System.Runtime]System.Object
-				IL_037a: dup
-				IL_037b: ldc.i4.0
-				IL_037c: ldarg.3
-				IL_037d: stelem.ref
-				IL_037e: dup
-				IL_037f: ldc.i4.1
-				IL_0380: ldstr "unknown-negative-key"
-				IL_0385: stelem.ref
-				IL_0386: dup
-				IL_0387: ldc.i4.2
-				IL_0388: ldloc.s 12
-				IL_038a: stelem.ref
-				IL_038b: dup
-				IL_038c: ldc.i4.3
-				IL_038d: ldloc.s 21
-				IL_038f: stelem.ref
-				IL_0390: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs(object, object[], object[])
-				IL_0395: pop
+				IL_0300: ldarg.0
+				IL_0301: ldfld object Modules.test262_metadataParser/Scope::pushIssue
+				IL_0306: stloc.s 15
+				IL_0308: ldc.i4.1
+				IL_0309: newarr [System.Runtime]System.Object
+				IL_030e: dup
+				IL_030f: ldc.i4.0
+				IL_0310: ldarg.0
+				IL_0311: stelem.ref
+				IL_0312: stloc.s 16
+				IL_0314: ldloc.s 5
+				IL_0316: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+				IL_031b: stloc.s 12
+				IL_031d: ldstr "negative."
+				IL_0322: ldloc.s 12
+				IL_0324: call string [System.Runtime]System.String::Concat(string, string)
+				IL_0329: stloc.s 12
+				IL_032b: ldloc.s 5
+				IL_032d: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+				IL_0332: stloc.s 21
+				IL_0334: ldstr "Unsupported negative metadata key '"
+				IL_0339: ldloc.s 21
+				IL_033b: call string [System.Runtime]System.String::Concat(string, string)
+				IL_0340: ldstr "'."
+				IL_0345: call string [System.Runtime]System.String::Concat(string, string)
+				IL_034a: stloc.s 21
+				IL_034c: ldloc.s 15
+				IL_034e: ldloc.s 16
+				IL_0350: ldarg.3
+				IL_0351: ldstr "unknown-negative-key"
+				IL_0356: ldloc.s 12
+				IL_0358: ldloc.s 21
+				IL_035a: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs4(object, object[], object, object, object, object)
+				IL_035f: pop
 
-				IL_0396: ldloc.s 4
-				IL_0398: ldc.r8 1
-				IL_03a1: add
-				IL_03a2: stloc.s 4
-				IL_03a4: br IL_02a3
+				IL_0360: ldloc.s 4
+				IL_0362: ldc.r8 1
+				IL_036b: add
+				IL_036c: stloc.s 4
+				IL_036e: br IL_027f
 			// end loop
 
-			IL_03a9: ldloc.0
-			IL_03aa: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
-			IL_03af: ldc.i4.0
-			IL_03b0: ceq
-			IL_03b2: stloc.s 6
-			IL_03b4: ldloc.s 6
-			IL_03b6: box [System.Runtime]System.Boolean
-			IL_03bb: stloc.s 7
-			IL_03bd: ldloc.s 7
-			IL_03bf: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-			IL_03c4: stloc.s 6
-			IL_03c6: ldloc.s 6
-			IL_03c8: brtrue IL_03ea
+			IL_0373: ldloc.0
+			IL_0374: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
+			IL_0379: ldc.i4.0
+			IL_037a: ceq
+			IL_037c: stloc.s 6
+			IL_037e: ldloc.s 6
+			IL_0380: box [System.Runtime]System.Boolean
+			IL_0385: stloc.s 7
+			IL_0387: ldloc.s 7
+			IL_0389: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+			IL_038e: stloc.s 6
+			IL_0390: ldloc.s 6
+			IL_0392: brtrue IL_03b4
 
-			IL_03cd: ldloc.1
-			IL_03ce: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
-			IL_03d3: ldc.i4.0
-			IL_03d4: ceq
-			IL_03d6: stloc.s 6
-			IL_03d8: ldloc.s 6
-			IL_03da: box [System.Runtime]System.Boolean
-			IL_03df: stloc.s 8
-			IL_03e1: ldloc.s 8
-			IL_03e3: stloc.s 22
-			IL_03e5: br IL_03ee
+			IL_0397: ldloc.1
+			IL_0398: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
+			IL_039d: ldc.i4.0
+			IL_039e: ceq
+			IL_03a0: stloc.s 6
+			IL_03a2: ldloc.s 6
+			IL_03a4: box [System.Runtime]System.Boolean
+			IL_03a9: stloc.s 8
+			IL_03ab: ldloc.s 8
+			IL_03ad: stloc.s 22
+			IL_03af: br IL_03b8
 
-			IL_03ea: ldloc.s 7
-			IL_03ec: stloc.s 22
+			IL_03b4: ldloc.s 7
+			IL_03b6: stloc.s 22
 
-			IL_03ee: ldloc.s 22
-			IL_03f0: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-			IL_03f5: stloc.s 6
-			IL_03f7: ldloc.s 6
-			IL_03f9: brfalse IL_0405
+			IL_03b8: ldloc.s 22
+			IL_03ba: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+			IL_03bf: stloc.s 6
+			IL_03c1: ldloc.s 6
+			IL_03c3: brfalse IL_03cf
 
-			IL_03fe: ldc.i4.0
-			IL_03ff: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
-			IL_0404: ret
+			IL_03c8: ldc.i4.0
+			IL_03c9: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
+			IL_03ce: ret
 
-			IL_0405: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-			IL_040a: dup
-			IL_040b: ldstr "phase"
-			IL_0410: ldloc.0
-			IL_0411: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-			IL_0416: dup
-			IL_0417: ldstr "type"
-			IL_041c: ldloc.1
-			IL_041d: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-			IL_0422: stloc.s 23
-			IL_0424: ldloc.s 23
-			IL_0426: ret
+			IL_03cf: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+			IL_03d4: dup
+			IL_03d5: ldstr "phase"
+			IL_03da: ldloc.0
+			IL_03db: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+			IL_03e0: dup
+			IL_03e1: ldstr "type"
+			IL_03e6: ldloc.1
+			IL_03e7: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+			IL_03ec: stloc.s 23
+			IL_03ee: ldloc.s 23
+			IL_03f0: ret
 		} // end of method normalizeNegative::__js_call__
 
 	} // end of class normalizeNegative
@@ -10582,7 +10484,7 @@
 				74 61 54 6f 6b 65 6e 2a 00 00 02
 			)
 			// Header size: 12
-			// Code size: 769 (0x301)
+			// Code size: 643 (0x283)
 			.maxstack 8
 			.locals init (
 				[0] class [JavaScriptRuntime]JavaScriptRuntime.Array,
@@ -10609,7 +10511,7 @@
 			IL_0015: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
 			IL_001a: stloc.3
 			IL_001b: ldloc.3
-			IL_001c: brfalse IL_0078
+			IL_001c: brfalse IL_0066
 
 			IL_0021: ldarg.0
 			IL_0022: ldfld object Modules.test262_metadataParser/Scope::pushIssue
@@ -10636,333 +10538,235 @@
 
 			IL_0050: ldloc.2
 			IL_0051: ldloc.s 4
-			IL_0053: ldc.i4.4
-			IL_0054: newarr [System.Runtime]System.Object
-			IL_0059: dup
-			IL_005a: ldc.i4.0
-			IL_005b: ldloc.0
-			IL_005c: stelem.ref
-			IL_005d: dup
-			IL_005e: ldc.i4.1
-			IL_005f: ldstr "fixture-file"
-			IL_0064: stelem.ref
-			IL_0065: dup
-			IL_0066: ldc.i4.2
-			IL_0067: ldloc.s 6
-			IL_0069: stelem.ref
-			IL_006a: dup
-			IL_006b: ldc.i4.3
-			IL_006c: ldstr "Files whose names include `_FIXTURE` are support files, not standalone MVP tests."
-			IL_0071: stelem.ref
-			IL_0072: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs(object, object[], object[])
-			IL_0077: pop
+			IL_0053: ldloc.0
+			IL_0054: ldstr "fixture-file"
+			IL_0059: ldloc.s 6
+			IL_005b: ldstr "Files whose names include `_FIXTURE` are support files, not standalone MVP tests."
+			IL_0060: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs4(object, object[], object, object, object, object)
+			IL_0065: pop
 
-			IL_0078: ldarg.s execution
-			IL_007a: ldstr "isModule"
-			IL_007f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0084: stloc.2
-			IL_0085: ldloc.2
-			IL_0086: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-			IL_008b: stloc.3
-			IL_008c: ldloc.3
-			IL_008d: brfalse IL_00d0
+			IL_0066: ldarg.s execution
+			IL_0068: ldstr "isModule"
+			IL_006d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0072: stloc.2
+			IL_0073: ldloc.2
+			IL_0074: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+			IL_0079: stloc.3
+			IL_007a: ldloc.3
+			IL_007b: brfalse IL_00ac
 
-			IL_0092: ldarg.0
-			IL_0093: ldfld object Modules.test262_metadataParser/Scope::pushIssue
-			IL_0098: stloc.2
-			IL_0099: ldc.i4.1
-			IL_009a: newarr [System.Runtime]System.Object
-			IL_009f: dup
-			IL_00a0: ldc.i4.0
-			IL_00a1: ldarg.0
-			IL_00a2: stelem.ref
-			IL_00a3: stloc.s 4
-			IL_00a5: ldloc.2
-			IL_00a6: ldloc.s 4
-			IL_00a8: ldc.i4.4
-			IL_00a9: newarr [System.Runtime]System.Object
-			IL_00ae: dup
-			IL_00af: ldc.i4.0
-			IL_00b0: ldloc.0
-			IL_00b1: stelem.ref
-			IL_00b2: dup
-			IL_00b3: ldc.i4.1
-			IL_00b4: ldstr "module-flag"
-			IL_00b9: stelem.ref
-			IL_00ba: dup
-			IL_00bb: ldc.i4.2
-			IL_00bc: ldstr "flags:module"
-			IL_00c1: stelem.ref
-			IL_00c2: dup
-			IL_00c3: ldc.i4.3
-			IL_00c4: ldstr "Module tests are outside the plain synchronous script MVP."
-			IL_00c9: stelem.ref
-			IL_00ca: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs(object, object[], object[])
-			IL_00cf: pop
+			IL_0080: ldarg.0
+			IL_0081: ldfld object Modules.test262_metadataParser/Scope::pushIssue
+			IL_0086: stloc.2
+			IL_0087: ldc.i4.1
+			IL_0088: newarr [System.Runtime]System.Object
+			IL_008d: dup
+			IL_008e: ldc.i4.0
+			IL_008f: ldarg.0
+			IL_0090: stelem.ref
+			IL_0091: stloc.s 4
+			IL_0093: ldloc.2
+			IL_0094: ldloc.s 4
+			IL_0096: ldloc.0
+			IL_0097: ldstr "module-flag"
+			IL_009c: ldstr "flags:module"
+			IL_00a1: ldstr "Module tests are outside the plain synchronous script MVP."
+			IL_00a6: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs4(object, object[], object, object, object, object)
+			IL_00ab: pop
 
-			IL_00d0: ldarg.s execution
-			IL_00d2: ldstr "isRaw"
-			IL_00d7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_00dc: stloc.2
-			IL_00dd: ldloc.2
-			IL_00de: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-			IL_00e3: stloc.3
-			IL_00e4: ldloc.3
-			IL_00e5: brfalse IL_0128
+			IL_00ac: ldarg.s execution
+			IL_00ae: ldstr "isRaw"
+			IL_00b3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_00b8: stloc.2
+			IL_00b9: ldloc.2
+			IL_00ba: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+			IL_00bf: stloc.3
+			IL_00c0: ldloc.3
+			IL_00c1: brfalse IL_00f2
 
-			IL_00ea: ldarg.0
-			IL_00eb: ldfld object Modules.test262_metadataParser/Scope::pushIssue
-			IL_00f0: stloc.2
-			IL_00f1: ldc.i4.1
-			IL_00f2: newarr [System.Runtime]System.Object
-			IL_00f7: dup
-			IL_00f8: ldc.i4.0
-			IL_00f9: ldarg.0
-			IL_00fa: stelem.ref
-			IL_00fb: stloc.s 4
-			IL_00fd: ldloc.2
-			IL_00fe: ldloc.s 4
-			IL_0100: ldc.i4.4
-			IL_0101: newarr [System.Runtime]System.Object
-			IL_0106: dup
-			IL_0107: ldc.i4.0
-			IL_0108: ldloc.0
-			IL_0109: stelem.ref
-			IL_010a: dup
-			IL_010b: ldc.i4.1
-			IL_010c: ldstr "raw-flag"
-			IL_0111: stelem.ref
-			IL_0112: dup
-			IL_0113: ldc.i4.2
-			IL_0114: ldstr "flags:raw"
-			IL_0119: stelem.ref
-			IL_011a: dup
-			IL_011b: ldc.i4.3
-			IL_011c: ldstr "Raw tests bypass default harness injection and are outside the initial MVP."
-			IL_0121: stelem.ref
-			IL_0122: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs(object, object[], object[])
-			IL_0127: pop
+			IL_00c6: ldarg.0
+			IL_00c7: ldfld object Modules.test262_metadataParser/Scope::pushIssue
+			IL_00cc: stloc.2
+			IL_00cd: ldc.i4.1
+			IL_00ce: newarr [System.Runtime]System.Object
+			IL_00d3: dup
+			IL_00d4: ldc.i4.0
+			IL_00d5: ldarg.0
+			IL_00d6: stelem.ref
+			IL_00d7: stloc.s 4
+			IL_00d9: ldloc.2
+			IL_00da: ldloc.s 4
+			IL_00dc: ldloc.0
+			IL_00dd: ldstr "raw-flag"
+			IL_00e2: ldstr "flags:raw"
+			IL_00e7: ldstr "Raw tests bypass default harness injection and are outside the initial MVP."
+			IL_00ec: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs4(object, object[], object, object, object, object)
+			IL_00f1: pop
 
-			IL_0128: ldarg.s execution
-			IL_012a: ldstr "requiresAsyncHarness"
-			IL_012f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0134: stloc.2
-			IL_0135: ldloc.2
-			IL_0136: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-			IL_013b: stloc.3
-			IL_013c: ldloc.3
-			IL_013d: brfalse IL_0180
+			IL_00f2: ldarg.s execution
+			IL_00f4: ldstr "requiresAsyncHarness"
+			IL_00f9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_00fe: stloc.2
+			IL_00ff: ldloc.2
+			IL_0100: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+			IL_0105: stloc.3
+			IL_0106: ldloc.3
+			IL_0107: brfalse IL_0138
 
-			IL_0142: ldarg.0
-			IL_0143: ldfld object Modules.test262_metadataParser/Scope::pushIssue
-			IL_0148: stloc.2
-			IL_0149: ldc.i4.1
-			IL_014a: newarr [System.Runtime]System.Object
-			IL_014f: dup
-			IL_0150: ldc.i4.0
-			IL_0151: ldarg.0
-			IL_0152: stelem.ref
-			IL_0153: stloc.s 4
-			IL_0155: ldloc.2
-			IL_0156: ldloc.s 4
-			IL_0158: ldc.i4.4
-			IL_0159: newarr [System.Runtime]System.Object
-			IL_015e: dup
-			IL_015f: ldc.i4.0
-			IL_0160: ldloc.0
-			IL_0161: stelem.ref
-			IL_0162: dup
-			IL_0163: ldc.i4.1
-			IL_0164: ldstr "async-requirement"
-			IL_0169: stelem.ref
-			IL_016a: dup
-			IL_016b: ldc.i4.2
-			IL_016c: ldstr "flags/includes"
-			IL_0171: stelem.ref
-			IL_0172: dup
-			IL_0173: ldc.i4.3
-			IL_0174: ldstr "Async tests and async harness requirements are outside the initial MVP."
-			IL_0179: stelem.ref
-			IL_017a: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs(object, object[], object[])
-			IL_017f: pop
+			IL_010c: ldarg.0
+			IL_010d: ldfld object Modules.test262_metadataParser/Scope::pushIssue
+			IL_0112: stloc.2
+			IL_0113: ldc.i4.1
+			IL_0114: newarr [System.Runtime]System.Object
+			IL_0119: dup
+			IL_011a: ldc.i4.0
+			IL_011b: ldarg.0
+			IL_011c: stelem.ref
+			IL_011d: stloc.s 4
+			IL_011f: ldloc.2
+			IL_0120: ldloc.s 4
+			IL_0122: ldloc.0
+			IL_0123: ldstr "async-requirement"
+			IL_0128: ldstr "flags/includes"
+			IL_012d: ldstr "Async tests and async harness requirements are outside the initial MVP."
+			IL_0132: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs4(object, object[], object, object, object, object)
+			IL_0137: pop
 
-			IL_0180: ldarg.s execution
-			IL_0182: ldstr "requiresAgent"
-			IL_0187: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_018c: stloc.2
-			IL_018d: ldloc.2
-			IL_018e: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-			IL_0193: stloc.3
-			IL_0194: ldloc.3
-			IL_0195: brfalse IL_01d8
+			IL_0138: ldarg.s execution
+			IL_013a: ldstr "requiresAgent"
+			IL_013f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0144: stloc.2
+			IL_0145: ldloc.2
+			IL_0146: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+			IL_014b: stloc.3
+			IL_014c: ldloc.3
+			IL_014d: brfalse IL_017e
 
-			IL_019a: ldarg.0
-			IL_019b: ldfld object Modules.test262_metadataParser/Scope::pushIssue
-			IL_01a0: stloc.2
-			IL_01a1: ldc.i4.1
-			IL_01a2: newarr [System.Runtime]System.Object
-			IL_01a7: dup
-			IL_01a8: ldc.i4.0
-			IL_01a9: ldarg.0
-			IL_01aa: stelem.ref
-			IL_01ab: stloc.s 4
-			IL_01ad: ldloc.2
-			IL_01ae: ldloc.s 4
-			IL_01b0: ldc.i4.4
-			IL_01b1: newarr [System.Runtime]System.Object
-			IL_01b6: dup
-			IL_01b7: ldc.i4.0
-			IL_01b8: ldloc.0
-			IL_01b9: stelem.ref
-			IL_01ba: dup
-			IL_01bb: ldc.i4.1
-			IL_01bc: ldstr "agent-requirement"
-			IL_01c1: stelem.ref
-			IL_01c2: dup
-			IL_01c3: ldc.i4.2
-			IL_01c4: ldstr "flags/includes"
-			IL_01c9: stelem.ref
-			IL_01ca: dup
-			IL_01cb: ldc.i4.3
-			IL_01cc: ldstr "Agent-sensitive tests are outside the initial MVP."
-			IL_01d1: stelem.ref
-			IL_01d2: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs(object, object[], object[])
-			IL_01d7: pop
+			IL_0152: ldarg.0
+			IL_0153: ldfld object Modules.test262_metadataParser/Scope::pushIssue
+			IL_0158: stloc.2
+			IL_0159: ldc.i4.1
+			IL_015a: newarr [System.Runtime]System.Object
+			IL_015f: dup
+			IL_0160: ldc.i4.0
+			IL_0161: ldarg.0
+			IL_0162: stelem.ref
+			IL_0163: stloc.s 4
+			IL_0165: ldloc.2
+			IL_0166: ldloc.s 4
+			IL_0168: ldloc.0
+			IL_0169: ldstr "agent-requirement"
+			IL_016e: ldstr "flags/includes"
+			IL_0173: ldstr "Agent-sensitive tests are outside the initial MVP."
+			IL_0178: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs4(object, object[], object, object, object, object)
+			IL_017d: pop
 
-			IL_01d8: ldarg.s execution
-			IL_01da: ldstr "canBlock"
-			IL_01df: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_01e4: stloc.2
-			IL_01e5: ldloc.2
-			IL_01e6: ldstr "unspecified"
-			IL_01eb: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictNotEqual(object, object)
-			IL_01f0: stloc.3
-			IL_01f1: ldloc.3
-			IL_01f2: brfalse IL_027a
+			IL_017e: ldarg.s execution
+			IL_0180: ldstr "canBlock"
+			IL_0185: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_018a: stloc.2
+			IL_018b: ldloc.2
+			IL_018c: ldstr "unspecified"
+			IL_0191: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictNotEqual(object, object)
+			IL_0196: stloc.3
+			IL_0197: ldloc.3
+			IL_0198: brfalse IL_020e
 
-			IL_01f7: ldarg.0
-			IL_01f8: ldfld object Modules.test262_metadataParser/Scope::pushIssue
-			IL_01fd: stloc.2
-			IL_01fe: ldc.i4.1
-			IL_01ff: newarr [System.Runtime]System.Object
-			IL_0204: dup
-			IL_0205: ldc.i4.0
-			IL_0206: ldarg.0
-			IL_0207: stelem.ref
-			IL_0208: stloc.s 4
-			IL_020a: ldarg.s execution
-			IL_020c: ldstr "canBlock"
-			IL_0211: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0216: stloc.s 7
-			IL_0218: ldloc.s 7
-			IL_021a: ldstr "true"
-			IL_021f: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-			IL_0224: stloc.3
-			IL_0225: ldloc.3
-			IL_0226: brfalse IL_0236
+			IL_019d: ldarg.0
+			IL_019e: ldfld object Modules.test262_metadataParser/Scope::pushIssue
+			IL_01a3: stloc.2
+			IL_01a4: ldc.i4.1
+			IL_01a5: newarr [System.Runtime]System.Object
+			IL_01aa: dup
+			IL_01ab: ldc.i4.0
+			IL_01ac: ldarg.0
+			IL_01ad: stelem.ref
+			IL_01ae: stloc.s 4
+			IL_01b0: ldarg.s execution
+			IL_01b2: ldstr "canBlock"
+			IL_01b7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_01bc: stloc.s 7
+			IL_01be: ldloc.s 7
+			IL_01c0: ldstr "true"
+			IL_01c5: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+			IL_01ca: stloc.3
+			IL_01cb: ldloc.3
+			IL_01cc: brfalse IL_01dc
 
-			IL_022b: ldstr "True"
-			IL_0230: stloc.1
-			IL_0231: br IL_023c
+			IL_01d1: ldstr "True"
+			IL_01d6: stloc.1
+			IL_01d7: br IL_01e2
 
-			IL_0236: ldstr "False"
-			IL_023b: stloc.1
+			IL_01dc: ldstr "False"
+			IL_01e1: stloc.1
 
-			IL_023c: ldloc.1
-			IL_023d: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-			IL_0242: stloc.s 8
-			IL_0244: ldstr "flags:CanBlockIs"
-			IL_0249: ldloc.s 8
-			IL_024b: call string [System.Runtime]System.String::Concat(string, string)
-			IL_0250: stloc.s 8
-			IL_0252: ldloc.2
-			IL_0253: ldloc.s 4
-			IL_0255: ldc.i4.4
-			IL_0256: newarr [System.Runtime]System.Object
-			IL_025b: dup
-			IL_025c: ldc.i4.0
-			IL_025d: ldloc.0
-			IL_025e: stelem.ref
-			IL_025f: dup
-			IL_0260: ldc.i4.1
-			IL_0261: ldstr "can-block-requirement"
-			IL_0266: stelem.ref
-			IL_0267: dup
-			IL_0268: ldc.i4.2
-			IL_0269: ldloc.s 8
-			IL_026b: stelem.ref
-			IL_026c: dup
-			IL_026d: ldc.i4.3
-			IL_026e: ldstr "Tests requiring a specific [[CanBlock]] mode are outside the initial MVP."
-			IL_0273: stelem.ref
-			IL_0274: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs(object, object[], object[])
-			IL_0279: pop
+			IL_01e2: ldloc.1
+			IL_01e3: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+			IL_01e8: stloc.s 8
+			IL_01ea: ldstr "flags:CanBlockIs"
+			IL_01ef: ldloc.s 8
+			IL_01f1: call string [System.Runtime]System.String::Concat(string, string)
+			IL_01f6: stloc.s 8
+			IL_01f8: ldloc.2
+			IL_01f9: ldloc.s 4
+			IL_01fb: ldloc.0
+			IL_01fc: ldstr "can-block-requirement"
+			IL_0201: ldloc.s 8
+			IL_0203: ldstr "Tests requiring a specific [[CanBlock]] mode are outside the initial MVP."
+			IL_0208: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs4(object, object[], object, object, object, object)
+			IL_020d: pop
 
-			IL_027a: ldarg.3
-			IL_027b: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-			IL_0280: stloc.3
-			IL_0281: ldloc.3
-			IL_0282: brfalse IL_02b0
+			IL_020e: ldarg.3
+			IL_020f: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+			IL_0214: stloc.3
+			IL_0215: ldloc.3
+			IL_0216: brfalse IL_0244
 
-			IL_0287: ldarg.3
-			IL_0288: ldstr "phase"
-			IL_028d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0292: stloc.2
-			IL_0293: ldloc.2
-			IL_0294: ldstr "resolution"
-			IL_0299: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-			IL_029e: stloc.3
-			IL_029f: ldloc.3
-			IL_02a0: box [System.Runtime]System.Boolean
-			IL_02a5: stloc.s 9
-			IL_02a7: ldloc.s 9
-			IL_02a9: stloc.s 10
-			IL_02ab: br IL_02b3
+			IL_021b: ldarg.3
+			IL_021c: ldstr "phase"
+			IL_0221: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0226: stloc.2
+			IL_0227: ldloc.2
+			IL_0228: ldstr "resolution"
+			IL_022d: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+			IL_0232: stloc.3
+			IL_0233: ldloc.3
+			IL_0234: box [System.Runtime]System.Boolean
+			IL_0239: stloc.s 9
+			IL_023b: ldloc.s 9
+			IL_023d: stloc.s 10
+			IL_023f: br IL_0247
 
-			IL_02b0: ldarg.3
-			IL_02b1: stloc.s 10
+			IL_0244: ldarg.3
+			IL_0245: stloc.s 10
 
-			IL_02b3: ldloc.s 10
-			IL_02b5: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-			IL_02ba: stloc.3
-			IL_02bb: ldloc.3
-			IL_02bc: brfalse IL_02ff
+			IL_0247: ldloc.s 10
+			IL_0249: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+			IL_024e: stloc.3
+			IL_024f: ldloc.3
+			IL_0250: brfalse IL_0281
 
-			IL_02c1: ldarg.0
-			IL_02c2: ldfld object Modules.test262_metadataParser/Scope::pushIssue
-			IL_02c7: stloc.2
-			IL_02c8: ldc.i4.1
-			IL_02c9: newarr [System.Runtime]System.Object
-			IL_02ce: dup
-			IL_02cf: ldc.i4.0
-			IL_02d0: ldarg.0
-			IL_02d1: stelem.ref
-			IL_02d2: stloc.s 4
-			IL_02d4: ldloc.2
-			IL_02d5: ldloc.s 4
-			IL_02d7: ldc.i4.4
-			IL_02d8: newarr [System.Runtime]System.Object
-			IL_02dd: dup
-			IL_02de: ldc.i4.0
-			IL_02df: ldloc.0
-			IL_02e0: stelem.ref
-			IL_02e1: dup
-			IL_02e2: ldc.i4.1
-			IL_02e3: ldstr "resolution-negative"
-			IL_02e8: stelem.ref
-			IL_02e9: dup
-			IL_02ea: ldc.i4.2
-			IL_02eb: ldstr "negative.phase"
-			IL_02f0: stelem.ref
-			IL_02f1: dup
-			IL_02f2: ldc.i4.3
-			IL_02f3: ldstr "Module resolution failures are outside the plain script MVP."
-			IL_02f8: stelem.ref
-			IL_02f9: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs(object, object[], object[])
-			IL_02fe: pop
+			IL_0255: ldarg.0
+			IL_0256: ldfld object Modules.test262_metadataParser/Scope::pushIssue
+			IL_025b: stloc.2
+			IL_025c: ldc.i4.1
+			IL_025d: newarr [System.Runtime]System.Object
+			IL_0262: dup
+			IL_0263: ldc.i4.0
+			IL_0264: ldarg.0
+			IL_0265: stelem.ref
+			IL_0266: stloc.s 4
+			IL_0268: ldloc.2
+			IL_0269: ldloc.s 4
+			IL_026b: ldloc.0
+			IL_026c: ldstr "resolution-negative"
+			IL_0271: ldstr "negative.phase"
+			IL_0276: ldstr "Module resolution failures are outside the plain script MVP."
+			IL_027b: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs4(object, object[], object, object, object, object)
+			IL_0280: pop
 
-			IL_02ff: ldloc.0
-			IL_0300: ret
+			IL_0281: ldloc.0
+			IL_0282: ret
 		} // end of method buildMvpBlockers::__js_call__
 
 	} // end of class buildMvpBlockers
@@ -11262,7 +11066,7 @@
 				74 61 54 6f 6b 65 6e 2a 00 00 02
 			)
 			// Header size: 12
-			// Code size: 1799 (0x707)
+			// Code size: 1745 (0x6d1)
 			.maxstack 8
 			.locals init (
 				[0] object,
@@ -11431,7 +11235,7 @@
 				IL_011f: ldloc.s 28
 				IL_0121: ldloc.s 29
 				IL_0123: clt
-				IL_0125: brfalse IL_01d8
+				IL_0125: brfalse IL_01c6
 
 				IL_012a: ldloc.s 8
 				IL_012c: ldloc.s 10
@@ -11450,7 +11254,7 @@
 				IL_014d: ldloc.s 29
 				IL_014f: ldc.r8 0.0
 				IL_0158: clt
-				IL_015a: brfalse IL_01c5
+				IL_015a: brfalse IL_01b3
 
 				IL_015f: ldloc.s 9
 				IL_0161: ldloc.s 11
@@ -11477,539 +11281,497 @@
 				IL_019c: stloc.s 30
 				IL_019e: ldloc.s 24
 				IL_01a0: ldloc.s 25
-				IL_01a2: ldc.i4.4
-				IL_01a3: newarr [System.Runtime]System.Object
-				IL_01a8: dup
-				IL_01a9: ldc.i4.0
-				IL_01aa: ldloc.s 4
-				IL_01ac: stelem.ref
-				IL_01ad: dup
-				IL_01ae: ldc.i4.1
-				IL_01af: ldstr "unknown-frontmatter-key"
-				IL_01b4: stelem.ref
-				IL_01b5: dup
-				IL_01b6: ldc.i4.2
-				IL_01b7: ldloc.s 11
-				IL_01b9: stelem.ref
-				IL_01ba: dup
-				IL_01bb: ldc.i4.3
-				IL_01bc: ldloc.s 30
-				IL_01be: stelem.ref
-				IL_01bf: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs(object, object[], object[])
-				IL_01c4: pop
+				IL_01a2: ldloc.s 4
+				IL_01a4: ldstr "unknown-frontmatter-key"
+				IL_01a9: ldloc.s 11
+				IL_01ab: ldloc.s 30
+				IL_01ad: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs4(object, object[], object, object, object, object)
+				IL_01b2: pop
 
-				IL_01c5: ldloc.s 10
-				IL_01c7: ldc.r8 1
-				IL_01d0: add
-				IL_01d1: stloc.s 10
-				IL_01d3: br IL_010d
+				IL_01b3: ldloc.s 10
+				IL_01b5: ldc.r8 1
+				IL_01be: add
+				IL_01bf: stloc.s 10
+				IL_01c1: br IL_010d
 			// end loop
 
-			IL_01d8: ldarg.0
-			IL_01d9: ldfld object Modules.test262_metadataParser/Scope::toStringArray
-			IL_01de: ldc.i4.1
-			IL_01df: newarr [System.Runtime]System.Object
-			IL_01e4: dup
-			IL_01e5: ldc.i4.0
-			IL_01e6: ldarg.0
-			IL_01e7: stelem.ref
-			IL_01e8: stloc.s 25
-			IL_01ea: ldloc.s 7
-			IL_01ec: ldstr "includes"
-			IL_01f1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_01f6: stloc.s 24
-			IL_01f8: ldloc.s 25
-			IL_01fa: ldloc.s 24
-			IL_01fc: ldstr "includes"
-			IL_0201: ldloc.s 4
-			IL_0203: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs3(object, object[], object, object, object)
-			IL_0208: stloc.s 12
-			IL_020a: ldarg.0
-			IL_020b: ldfld object Modules.test262_metadataParser/Scope::toStringArray
-			IL_0210: ldc.i4.1
-			IL_0211: newarr [System.Runtime]System.Object
-			IL_0216: dup
-			IL_0217: ldc.i4.0
-			IL_0218: ldarg.0
-			IL_0219: stelem.ref
-			IL_021a: stloc.s 25
-			IL_021c: ldloc.s 7
-			IL_021e: ldstr "flags"
-			IL_0223: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0228: stloc.s 24
-			IL_022a: ldloc.s 25
-			IL_022c: ldloc.s 24
-			IL_022e: ldstr "flags"
-			IL_0233: ldloc.s 4
-			IL_0235: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs3(object, object[], object, object, object)
-			IL_023a: stloc.s 13
-			IL_023c: ldarg.0
-			IL_023d: ldfld object Modules.test262_metadataParser/Scope::toStringArray
-			IL_0242: ldc.i4.1
-			IL_0243: newarr [System.Runtime]System.Object
-			IL_0248: dup
-			IL_0249: ldc.i4.0
-			IL_024a: ldarg.0
-			IL_024b: stelem.ref
-			IL_024c: stloc.s 25
-			IL_024e: ldloc.s 7
-			IL_0250: ldstr "features"
-			IL_0255: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_025a: stloc.s 24
-			IL_025c: ldloc.s 25
-			IL_025e: ldloc.s 24
-			IL_0260: ldstr "features"
-			IL_0265: ldloc.s 4
-			IL_0267: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs3(object, object[], object, object, object)
-			IL_026c: stloc.s 14
-			IL_026e: ldarg.0
-			IL_026f: ldfld object Modules.test262_metadataParser/Scope::toStringArray
-			IL_0274: ldc.i4.1
-			IL_0275: newarr [System.Runtime]System.Object
-			IL_027a: dup
-			IL_027b: ldc.i4.0
-			IL_027c: ldarg.0
-			IL_027d: stelem.ref
-			IL_027e: stloc.s 25
-			IL_0280: ldloc.s 7
-			IL_0282: ldstr "locale"
-			IL_0287: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_028c: stloc.s 24
-			IL_028e: ldloc.s 25
-			IL_0290: ldloc.s 24
-			IL_0292: ldstr "locale"
-			IL_0297: ldloc.s 4
-			IL_0299: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs3(object, object[], object, object, object)
-			IL_029e: stloc.s 15
-			IL_02a0: ldarg.0
-			IL_02a1: ldfld object Modules.test262_metadataParser/Scope::toStringArray
-			IL_02a6: ldc.i4.1
-			IL_02a7: newarr [System.Runtime]System.Object
-			IL_02ac: dup
-			IL_02ad: ldc.i4.0
-			IL_02ae: ldarg.0
-			IL_02af: stelem.ref
-			IL_02b0: stloc.s 25
-			IL_02b2: ldloc.s 7
-			IL_02b4: ldstr "defines"
-			IL_02b9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_02be: stloc.s 24
-			IL_02c0: ldloc.s 25
-			IL_02c2: ldloc.s 24
-			IL_02c4: ldstr "defines"
-			IL_02c9: ldloc.s 4
-			IL_02cb: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs3(object, object[], object, object, object)
-			IL_02d0: stloc.s 16
-			IL_02d2: ldarg.0
-			IL_02d3: ldfld object Modules.test262_metadataParser/Scope::normalizeNegative
-			IL_02d8: ldc.i4.1
-			IL_02d9: newarr [System.Runtime]System.Object
-			IL_02de: dup
-			IL_02df: ldc.i4.0
-			IL_02e0: ldarg.0
-			IL_02e1: stelem.ref
-			IL_02e2: stloc.s 25
-			IL_02e4: ldloc.s 7
-			IL_02e6: ldstr "negative"
-			IL_02eb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_02f0: stloc.s 24
-			IL_02f2: ldloc.s 25
-			IL_02f4: ldloc.s 24
-			IL_02f6: ldloc.s 4
-			IL_02f8: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
-			IL_02fd: stloc.s 17
-			IL_02ff: ldc.r8 0.0
-			IL_0308: stloc.s 18
-			// loop start (head: IL_030a)
-				IL_030a: ldloc.s 18
-				IL_030c: stloc.s 29
-				IL_030e: ldloc.s 13
-				IL_0310: call float64 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetLength(object)
-				IL_0315: stloc.s 28
-				IL_0317: ldloc.s 29
-				IL_0319: ldloc.s 28
-				IL_031b: clt
-				IL_031d: brfalse IL_03f3
+			IL_01c6: ldarg.0
+			IL_01c7: ldfld object Modules.test262_metadataParser/Scope::toStringArray
+			IL_01cc: ldc.i4.1
+			IL_01cd: newarr [System.Runtime]System.Object
+			IL_01d2: dup
+			IL_01d3: ldc.i4.0
+			IL_01d4: ldarg.0
+			IL_01d5: stelem.ref
+			IL_01d6: stloc.s 25
+			IL_01d8: ldloc.s 7
+			IL_01da: ldstr "includes"
+			IL_01df: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_01e4: stloc.s 24
+			IL_01e6: ldloc.s 25
+			IL_01e8: ldloc.s 24
+			IL_01ea: ldstr "includes"
+			IL_01ef: ldloc.s 4
+			IL_01f1: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs3(object, object[], object, object, object)
+			IL_01f6: stloc.s 12
+			IL_01f8: ldarg.0
+			IL_01f9: ldfld object Modules.test262_metadataParser/Scope::toStringArray
+			IL_01fe: ldc.i4.1
+			IL_01ff: newarr [System.Runtime]System.Object
+			IL_0204: dup
+			IL_0205: ldc.i4.0
+			IL_0206: ldarg.0
+			IL_0207: stelem.ref
+			IL_0208: stloc.s 25
+			IL_020a: ldloc.s 7
+			IL_020c: ldstr "flags"
+			IL_0211: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0216: stloc.s 24
+			IL_0218: ldloc.s 25
+			IL_021a: ldloc.s 24
+			IL_021c: ldstr "flags"
+			IL_0221: ldloc.s 4
+			IL_0223: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs3(object, object[], object, object, object)
+			IL_0228: stloc.s 13
+			IL_022a: ldarg.0
+			IL_022b: ldfld object Modules.test262_metadataParser/Scope::toStringArray
+			IL_0230: ldc.i4.1
+			IL_0231: newarr [System.Runtime]System.Object
+			IL_0236: dup
+			IL_0237: ldc.i4.0
+			IL_0238: ldarg.0
+			IL_0239: stelem.ref
+			IL_023a: stloc.s 25
+			IL_023c: ldloc.s 7
+			IL_023e: ldstr "features"
+			IL_0243: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0248: stloc.s 24
+			IL_024a: ldloc.s 25
+			IL_024c: ldloc.s 24
+			IL_024e: ldstr "features"
+			IL_0253: ldloc.s 4
+			IL_0255: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs3(object, object[], object, object, object)
+			IL_025a: stloc.s 14
+			IL_025c: ldarg.0
+			IL_025d: ldfld object Modules.test262_metadataParser/Scope::toStringArray
+			IL_0262: ldc.i4.1
+			IL_0263: newarr [System.Runtime]System.Object
+			IL_0268: dup
+			IL_0269: ldc.i4.0
+			IL_026a: ldarg.0
+			IL_026b: stelem.ref
+			IL_026c: stloc.s 25
+			IL_026e: ldloc.s 7
+			IL_0270: ldstr "locale"
+			IL_0275: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_027a: stloc.s 24
+			IL_027c: ldloc.s 25
+			IL_027e: ldloc.s 24
+			IL_0280: ldstr "locale"
+			IL_0285: ldloc.s 4
+			IL_0287: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs3(object, object[], object, object, object)
+			IL_028c: stloc.s 15
+			IL_028e: ldarg.0
+			IL_028f: ldfld object Modules.test262_metadataParser/Scope::toStringArray
+			IL_0294: ldc.i4.1
+			IL_0295: newarr [System.Runtime]System.Object
+			IL_029a: dup
+			IL_029b: ldc.i4.0
+			IL_029c: ldarg.0
+			IL_029d: stelem.ref
+			IL_029e: stloc.s 25
+			IL_02a0: ldloc.s 7
+			IL_02a2: ldstr "defines"
+			IL_02a7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_02ac: stloc.s 24
+			IL_02ae: ldloc.s 25
+			IL_02b0: ldloc.s 24
+			IL_02b2: ldstr "defines"
+			IL_02b7: ldloc.s 4
+			IL_02b9: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs3(object, object[], object, object, object)
+			IL_02be: stloc.s 16
+			IL_02c0: ldarg.0
+			IL_02c1: ldfld object Modules.test262_metadataParser/Scope::normalizeNegative
+			IL_02c6: ldc.i4.1
+			IL_02c7: newarr [System.Runtime]System.Object
+			IL_02cc: dup
+			IL_02cd: ldc.i4.0
+			IL_02ce: ldarg.0
+			IL_02cf: stelem.ref
+			IL_02d0: stloc.s 25
+			IL_02d2: ldloc.s 7
+			IL_02d4: ldstr "negative"
+			IL_02d9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_02de: stloc.s 24
+			IL_02e0: ldloc.s 25
+			IL_02e2: ldloc.s 24
+			IL_02e4: ldloc.s 4
+			IL_02e6: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
+			IL_02eb: stloc.s 17
+			IL_02ed: ldc.r8 0.0
+			IL_02f6: stloc.s 18
+			// loop start (head: IL_02f8)
+				IL_02f8: ldloc.s 18
+				IL_02fa: stloc.s 29
+				IL_02fc: ldloc.s 13
+				IL_02fe: call float64 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetLength(object)
+				IL_0303: stloc.s 28
+				IL_0305: ldloc.s 29
+				IL_0307: ldloc.s 28
+				IL_0309: clt
+				IL_030b: brfalse IL_03cf
 
-				IL_0322: ldarg.0
-				IL_0323: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.test262_metadataParser/Scope::KNOWN_FLAG_VALUES
-				IL_0328: ldloc.s 13
-				IL_032a: ldloc.s 18
-				IL_032c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-				IL_0331: stloc.s 24
-				IL_0333: ldc.i4.1
-				IL_0334: newarr [System.Runtime]System.Object
-				IL_0339: dup
-				IL_033a: ldc.i4.0
-				IL_033b: ldloc.s 24
-				IL_033d: stelem.ref
-				IL_033e: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::indexOf(object[])
-				IL_0343: stloc.s 28
-				IL_0345: ldloc.s 28
-				IL_0347: ldc.r8 0.0
-				IL_0350: clt
-				IL_0352: brfalse IL_03e0
+				IL_0310: ldarg.0
+				IL_0311: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.test262_metadataParser/Scope::KNOWN_FLAG_VALUES
+				IL_0316: ldloc.s 13
+				IL_0318: ldloc.s 18
+				IL_031a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+				IL_031f: stloc.s 24
+				IL_0321: ldc.i4.1
+				IL_0322: newarr [System.Runtime]System.Object
+				IL_0327: dup
+				IL_0328: ldc.i4.0
+				IL_0329: ldloc.s 24
+				IL_032b: stelem.ref
+				IL_032c: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::indexOf(object[])
+				IL_0331: stloc.s 28
+				IL_0333: ldloc.s 28
+				IL_0335: ldc.r8 0.0
+				IL_033e: clt
+				IL_0340: brfalse IL_03bc
 
-				IL_0357: ldarg.0
-				IL_0358: ldfld object Modules.test262_metadataParser/Scope::pushIssue
-				IL_035d: stloc.s 24
-				IL_035f: ldc.i4.1
-				IL_0360: newarr [System.Runtime]System.Object
-				IL_0365: dup
-				IL_0366: ldc.i4.0
-				IL_0367: ldarg.0
-				IL_0368: stelem.ref
-				IL_0369: stloc.s 25
-				IL_036b: ldloc.s 13
-				IL_036d: ldloc.s 18
-				IL_036f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-				IL_0374: stloc.s 26
-				IL_0376: ldloc.s 26
-				IL_0378: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-				IL_037d: stloc.s 30
-				IL_037f: ldstr "flags:"
-				IL_0384: ldloc.s 30
-				IL_0386: call string [System.Runtime]System.String::Concat(string, string)
-				IL_038b: stloc.s 30
-				IL_038d: ldloc.s 13
-				IL_038f: ldloc.s 18
-				IL_0391: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-				IL_0396: stloc.s 26
-				IL_0398: ldloc.s 26
-				IL_039a: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-				IL_039f: stloc.s 31
-				IL_03a1: ldstr "Unsupported flag '"
-				IL_03a6: ldloc.s 31
-				IL_03a8: call string [System.Runtime]System.String::Concat(string, string)
-				IL_03ad: ldstr "'."
-				IL_03b2: call string [System.Runtime]System.String::Concat(string, string)
-				IL_03b7: stloc.s 31
-				IL_03b9: ldloc.s 24
-				IL_03bb: ldloc.s 25
-				IL_03bd: ldc.i4.4
-				IL_03be: newarr [System.Runtime]System.Object
-				IL_03c3: dup
-				IL_03c4: ldc.i4.0
-				IL_03c5: ldloc.s 4
-				IL_03c7: stelem.ref
-				IL_03c8: dup
-				IL_03c9: ldc.i4.1
-				IL_03ca: ldstr "unknown-flag"
-				IL_03cf: stelem.ref
-				IL_03d0: dup
-				IL_03d1: ldc.i4.2
-				IL_03d2: ldloc.s 30
-				IL_03d4: stelem.ref
-				IL_03d5: dup
-				IL_03d6: ldc.i4.3
-				IL_03d7: ldloc.s 31
-				IL_03d9: stelem.ref
-				IL_03da: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs(object, object[], object[])
-				IL_03df: pop
+				IL_0345: ldarg.0
+				IL_0346: ldfld object Modules.test262_metadataParser/Scope::pushIssue
+				IL_034b: stloc.s 24
+				IL_034d: ldc.i4.1
+				IL_034e: newarr [System.Runtime]System.Object
+				IL_0353: dup
+				IL_0354: ldc.i4.0
+				IL_0355: ldarg.0
+				IL_0356: stelem.ref
+				IL_0357: stloc.s 25
+				IL_0359: ldloc.s 13
+				IL_035b: ldloc.s 18
+				IL_035d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+				IL_0362: stloc.s 26
+				IL_0364: ldloc.s 26
+				IL_0366: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+				IL_036b: stloc.s 30
+				IL_036d: ldstr "flags:"
+				IL_0372: ldloc.s 30
+				IL_0374: call string [System.Runtime]System.String::Concat(string, string)
+				IL_0379: stloc.s 30
+				IL_037b: ldloc.s 13
+				IL_037d: ldloc.s 18
+				IL_037f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+				IL_0384: stloc.s 26
+				IL_0386: ldloc.s 26
+				IL_0388: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+				IL_038d: stloc.s 31
+				IL_038f: ldstr "Unsupported flag '"
+				IL_0394: ldloc.s 31
+				IL_0396: call string [System.Runtime]System.String::Concat(string, string)
+				IL_039b: ldstr "'."
+				IL_03a0: call string [System.Runtime]System.String::Concat(string, string)
+				IL_03a5: stloc.s 31
+				IL_03a7: ldloc.s 24
+				IL_03a9: ldloc.s 25
+				IL_03ab: ldloc.s 4
+				IL_03ad: ldstr "unknown-flag"
+				IL_03b2: ldloc.s 30
+				IL_03b4: ldloc.s 31
+				IL_03b6: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs4(object, object[], object, object, object, object)
+				IL_03bb: pop
 
-				IL_03e0: ldloc.s 18
-				IL_03e2: ldc.r8 1
-				IL_03eb: add
-				IL_03ec: stloc.s 18
-				IL_03ee: br IL_030a
+				IL_03bc: ldloc.s 18
+				IL_03be: ldc.r8 1
+				IL_03c7: add
+				IL_03c8: stloc.s 18
+				IL_03ca: br IL_02f8
 			// end loop
 
-			IL_03f3: ldarg.0
-			IL_03f4: ldfld object Modules.test262_metadataParser/Scope::buildExecutionMetadata
-			IL_03f9: ldc.i4.1
-			IL_03fa: newarr [System.Runtime]System.Object
-			IL_03ff: dup
-			IL_0400: ldc.i4.0
-			IL_0401: ldarg.0
-			IL_0402: stelem.ref
-			IL_0403: ldloc.s 13
-			IL_0405: ldloc.s 12
-			IL_0407: ldloc.2
-			IL_0408: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs3(object, object[], object, object, object)
-			IL_040d: stloc.s 19
-			IL_040f: ldloc.s 19
-			IL_0411: ldstr "strictMode"
-			IL_0416: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_041b: stloc.s 24
-			IL_041d: ldloc.s 24
-			IL_041f: ldstr "conflicting-flags"
-			IL_0424: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-			IL_0429: stloc.s 20
-			IL_042b: ldloc.s 20
-			IL_042d: brfalse IL_0473
+			IL_03cf: ldarg.0
+			IL_03d0: ldfld object Modules.test262_metadataParser/Scope::buildExecutionMetadata
+			IL_03d5: ldc.i4.1
+			IL_03d6: newarr [System.Runtime]System.Object
+			IL_03db: dup
+			IL_03dc: ldc.i4.0
+			IL_03dd: ldarg.0
+			IL_03de: stelem.ref
+			IL_03df: ldloc.s 13
+			IL_03e1: ldloc.s 12
+			IL_03e3: ldloc.2
+			IL_03e4: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs3(object, object[], object, object, object)
+			IL_03e9: stloc.s 19
+			IL_03eb: ldloc.s 19
+			IL_03ed: ldstr "strictMode"
+			IL_03f2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_03f7: stloc.s 24
+			IL_03f9: ldloc.s 24
+			IL_03fb: ldstr "conflicting-flags"
+			IL_0400: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+			IL_0405: stloc.s 20
+			IL_0407: ldloc.s 20
+			IL_0409: brfalse IL_043d
 
-			IL_0432: ldarg.0
-			IL_0433: ldfld object Modules.test262_metadataParser/Scope::pushIssue
-			IL_0438: stloc.s 24
-			IL_043a: ldc.i4.1
-			IL_043b: newarr [System.Runtime]System.Object
-			IL_0440: dup
-			IL_0441: ldc.i4.0
-			IL_0442: ldarg.0
-			IL_0443: stelem.ref
-			IL_0444: stloc.s 25
-			IL_0446: ldloc.s 24
-			IL_0448: ldloc.s 25
-			IL_044a: ldc.i4.4
-			IL_044b: newarr [System.Runtime]System.Object
-			IL_0450: dup
-			IL_0451: ldc.i4.0
-			IL_0452: ldloc.s 4
-			IL_0454: stelem.ref
-			IL_0455: dup
-			IL_0456: ldc.i4.1
-			IL_0457: ldstr "conflicting-strictness-flags"
-			IL_045c: stelem.ref
-			IL_045d: dup
-			IL_045e: ldc.i4.2
-			IL_045f: ldstr "flags"
-			IL_0464: stelem.ref
-			IL_0465: dup
-			IL_0466: ldc.i4.3
-			IL_0467: ldstr "Multiple strictness/source-type flags were declared together."
-			IL_046c: stelem.ref
-			IL_046d: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs(object, object[], object[])
-			IL_0472: pop
+			IL_040e: ldarg.0
+			IL_040f: ldfld object Modules.test262_metadataParser/Scope::pushIssue
+			IL_0414: stloc.s 24
+			IL_0416: ldc.i4.1
+			IL_0417: newarr [System.Runtime]System.Object
+			IL_041c: dup
+			IL_041d: ldc.i4.0
+			IL_041e: ldarg.0
+			IL_041f: stelem.ref
+			IL_0420: stloc.s 25
+			IL_0422: ldloc.s 24
+			IL_0424: ldloc.s 25
+			IL_0426: ldloc.s 4
+			IL_0428: ldstr "conflicting-strictness-flags"
+			IL_042d: ldstr "flags"
+			IL_0432: ldstr "Multiple strictness/source-type flags were declared together."
+			IL_0437: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs4(object, object[], object, object, object, object)
+			IL_043c: pop
 
-			IL_0473: ldloc.1
-			IL_0474: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-			IL_0479: stloc.s 20
-			IL_047b: ldloc.s 20
-			IL_047d: brtrue IL_048f
+			IL_043d: ldloc.1
+			IL_043e: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+			IL_0443: stloc.s 20
+			IL_0445: ldloc.s 20
+			IL_0447: brtrue IL_0459
 
-			IL_0482: ldc.i4.0
-			IL_0483: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
-			IL_0488: stloc.s 32
-			IL_048a: br IL_0492
+			IL_044c: ldc.i4.0
+			IL_044d: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
+			IL_0452: stloc.s 32
+			IL_0454: br IL_045c
 
-			IL_048f: ldloc.1
-			IL_0490: stloc.s 32
+			IL_0459: ldloc.1
+			IL_045a: stloc.s 32
 
-			IL_0492: ldloc.2
-			IL_0493: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-			IL_0498: stloc.s 20
-			IL_049a: ldloc.s 20
-			IL_049c: brtrue IL_04ae
+			IL_045c: ldloc.2
+			IL_045d: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+			IL_0462: stloc.s 20
+			IL_0464: ldloc.s 20
+			IL_0466: brtrue IL_0478
 
-			IL_04a1: ldc.i4.0
-			IL_04a2: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
-			IL_04a7: stloc.s 34
-			IL_04a9: br IL_04b1
+			IL_046b: ldc.i4.0
+			IL_046c: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
+			IL_0471: stloc.s 34
+			IL_0473: br IL_047b
 
-			IL_04ae: ldloc.2
-			IL_04af: stloc.s 34
+			IL_0478: ldloc.2
+			IL_0479: stloc.s 34
 
-			IL_04b1: ldarg.0
-			IL_04b2: ldfld object Modules.test262_metadataParser/Scope::toNullableString
-			IL_04b7: ldc.i4.1
-			IL_04b8: newarr [System.Runtime]System.Object
-			IL_04bd: dup
-			IL_04be: ldc.i4.0
-			IL_04bf: ldarg.0
-			IL_04c0: stelem.ref
-			IL_04c1: stloc.s 25
-			IL_04c3: ldloc.s 7
-			IL_04c5: ldstr "description"
-			IL_04ca: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_04cf: stloc.s 24
-			IL_04d1: ldloc.s 25
-			IL_04d3: ldloc.s 24
-			IL_04d5: ldstr "description"
-			IL_04da: ldloc.s 4
-			IL_04dc: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs3(object, object[], object, object, object)
-			IL_04e1: stloc.s 24
-			IL_04e3: ldarg.0
-			IL_04e4: ldfld object Modules.test262_metadataParser/Scope::toNullableString
-			IL_04e9: ldc.i4.1
-			IL_04ea: newarr [System.Runtime]System.Object
-			IL_04ef: dup
-			IL_04f0: ldc.i4.0
-			IL_04f1: ldarg.0
-			IL_04f2: stelem.ref
-			IL_04f3: stloc.s 25
-			IL_04f5: ldloc.s 7
-			IL_04f7: ldstr "info"
-			IL_04fc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0501: stloc.s 26
-			IL_0503: ldloc.s 25
-			IL_0505: ldloc.s 26
-			IL_0507: ldstr "info"
-			IL_050c: ldloc.s 4
-			IL_050e: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs3(object, object[], object, object, object)
-			IL_0513: stloc.s 26
-			IL_0515: ldarg.0
-			IL_0516: ldfld object Modules.test262_metadataParser/Scope::toNullableString
-			IL_051b: ldc.i4.1
-			IL_051c: newarr [System.Runtime]System.Object
-			IL_0521: dup
-			IL_0522: ldc.i4.0
-			IL_0523: ldarg.0
-			IL_0524: stelem.ref
-			IL_0525: stloc.s 25
-			IL_0527: ldloc.s 7
-			IL_0529: ldstr "esid"
-			IL_052e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0533: stloc.s 35
-			IL_0535: ldloc.s 25
-			IL_0537: ldloc.s 35
-			IL_0539: ldstr "esid"
-			IL_053e: ldloc.s 4
-			IL_0540: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs3(object, object[], object, object, object)
-			IL_0545: stloc.s 35
-			IL_0547: ldarg.0
-			IL_0548: ldfld object Modules.test262_metadataParser/Scope::toNullableString
-			IL_054d: ldc.i4.1
-			IL_054e: newarr [System.Runtime]System.Object
-			IL_0553: dup
-			IL_0554: ldc.i4.0
-			IL_0555: ldarg.0
-			IL_0556: stelem.ref
-			IL_0557: stloc.s 25
-			IL_0559: ldloc.s 7
-			IL_055b: ldstr "es5id"
-			IL_0560: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0565: stloc.s 36
-			IL_0567: ldloc.s 25
-			IL_0569: ldloc.s 36
-			IL_056b: ldstr "es5id"
-			IL_0570: ldloc.s 4
-			IL_0572: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs3(object, object[], object, object, object)
-			IL_0577: stloc.s 36
-			IL_0579: ldarg.0
-			IL_057a: ldfld object Modules.test262_metadataParser/Scope::toNullableString
-			IL_057f: ldc.i4.1
-			IL_0580: newarr [System.Runtime]System.Object
-			IL_0585: dup
-			IL_0586: ldc.i4.0
-			IL_0587: ldarg.0
-			IL_0588: stelem.ref
-			IL_0589: stloc.s 25
-			IL_058b: ldloc.s 7
-			IL_058d: ldstr "es6id"
-			IL_0592: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0597: stloc.s 37
-			IL_0599: ldloc.s 25
-			IL_059b: ldloc.s 37
-			IL_059d: ldstr "es6id"
-			IL_05a2: ldloc.s 4
-			IL_05a4: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs3(object, object[], object, object, object)
-			IL_05a9: stloc.s 37
-			IL_05ab: ldarg.0
-			IL_05ac: ldfld object Modules.test262_metadataParser/Scope::toNullableString
-			IL_05b1: ldc.i4.1
-			IL_05b2: newarr [System.Runtime]System.Object
-			IL_05b7: dup
-			IL_05b8: ldc.i4.0
-			IL_05b9: ldarg.0
-			IL_05ba: stelem.ref
-			IL_05bb: stloc.s 25
-			IL_05bd: ldloc.s 7
-			IL_05bf: ldstr "author"
-			IL_05c4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_05c9: stloc.s 38
-			IL_05cb: ldloc.s 25
-			IL_05cd: ldloc.s 38
-			IL_05cf: ldstr "author"
-			IL_05d4: ldloc.s 4
-			IL_05d6: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs3(object, object[], object, object, object)
-			IL_05db: stloc.s 38
-			IL_05dd: ldarg.0
-			IL_05de: ldfld object Modules.test262_metadataParser/Scope::buildMvpBlockers
-			IL_05e3: ldc.i4.1
-			IL_05e4: newarr [System.Runtime]System.Object
-			IL_05e9: dup
-			IL_05ea: ldc.i4.0
-			IL_05eb: ldarg.0
-			IL_05ec: stelem.ref
-			IL_05ed: ldloc.1
-			IL_05ee: ldloc.s 17
-			IL_05f0: ldloc.s 19
-			IL_05f2: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs3(object, object[], object, object, object)
-			IL_05f7: stloc.s 39
-			IL_05f9: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-			IL_05fe: dup
-			IL_05ff: ldstr "filePath"
-			IL_0604: ldloc.s 32
-			IL_0606: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-			IL_060b: dup
-			IL_060c: ldstr "fileName"
-			IL_0611: ldloc.s 34
-			IL_0613: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-			IL_0618: dup
-			IL_0619: ldstr "hasFrontmatter"
-			IL_061e: ldloc.s 5
-			IL_0620: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-			IL_0625: dup
-			IL_0626: ldstr "frontmatter"
-			IL_062b: ldloc.s 7
-			IL_062d: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-			IL_0632: dup
-			IL_0633: ldstr "unknownKeys"
-			IL_0638: ldloc.s 9
-			IL_063a: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-			IL_063f: dup
-			IL_0640: ldstr "description"
-			IL_0645: ldloc.s 24
-			IL_0647: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-			IL_064c: dup
-			IL_064d: ldstr "info"
-			IL_0652: ldloc.s 26
-			IL_0654: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-			IL_0659: dup
-			IL_065a: ldstr "esid"
-			IL_065f: ldloc.s 35
-			IL_0661: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-			IL_0666: dup
-			IL_0667: ldstr "es5id"
-			IL_066c: ldloc.s 36
-			IL_066e: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-			IL_0673: dup
-			IL_0674: ldstr "es6id"
-			IL_0679: ldloc.s 37
-			IL_067b: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-			IL_0680: dup
-			IL_0681: ldstr "author"
-			IL_0686: ldloc.s 38
-			IL_0688: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-			IL_068d: dup
-			IL_068e: ldstr "includes"
-			IL_0693: ldloc.s 12
-			IL_0695: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-			IL_069a: dup
-			IL_069b: ldstr "flags"
-			IL_06a0: ldloc.s 13
-			IL_06a2: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-			IL_06a7: dup
-			IL_06a8: ldstr "features"
-			IL_06ad: ldloc.s 14
-			IL_06af: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-			IL_06b4: dup
-			IL_06b5: ldstr "locale"
-			IL_06ba: ldloc.s 15
-			IL_06bc: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-			IL_06c1: dup
-			IL_06c2: ldstr "defines"
-			IL_06c7: ldloc.s 16
-			IL_06c9: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-			IL_06ce: dup
-			IL_06cf: ldstr "negative"
-			IL_06d4: ldloc.s 17
-			IL_06d6: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-			IL_06db: dup
-			IL_06dc: ldstr "execution"
-			IL_06e1: ldloc.s 19
-			IL_06e3: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-			IL_06e8: dup
-			IL_06e9: ldstr "mvpBlockers"
-			IL_06ee: ldloc.s 39
-			IL_06f0: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-			IL_06f5: dup
-			IL_06f6: ldstr "unsupported"
-			IL_06fb: ldloc.s 4
-			IL_06fd: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-			IL_0702: stloc.s 21
-			IL_0704: ldloc.s 21
-			IL_0706: ret
+			IL_047b: ldarg.0
+			IL_047c: ldfld object Modules.test262_metadataParser/Scope::toNullableString
+			IL_0481: ldc.i4.1
+			IL_0482: newarr [System.Runtime]System.Object
+			IL_0487: dup
+			IL_0488: ldc.i4.0
+			IL_0489: ldarg.0
+			IL_048a: stelem.ref
+			IL_048b: stloc.s 25
+			IL_048d: ldloc.s 7
+			IL_048f: ldstr "description"
+			IL_0494: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0499: stloc.s 24
+			IL_049b: ldloc.s 25
+			IL_049d: ldloc.s 24
+			IL_049f: ldstr "description"
+			IL_04a4: ldloc.s 4
+			IL_04a6: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs3(object, object[], object, object, object)
+			IL_04ab: stloc.s 24
+			IL_04ad: ldarg.0
+			IL_04ae: ldfld object Modules.test262_metadataParser/Scope::toNullableString
+			IL_04b3: ldc.i4.1
+			IL_04b4: newarr [System.Runtime]System.Object
+			IL_04b9: dup
+			IL_04ba: ldc.i4.0
+			IL_04bb: ldarg.0
+			IL_04bc: stelem.ref
+			IL_04bd: stloc.s 25
+			IL_04bf: ldloc.s 7
+			IL_04c1: ldstr "info"
+			IL_04c6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_04cb: stloc.s 26
+			IL_04cd: ldloc.s 25
+			IL_04cf: ldloc.s 26
+			IL_04d1: ldstr "info"
+			IL_04d6: ldloc.s 4
+			IL_04d8: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs3(object, object[], object, object, object)
+			IL_04dd: stloc.s 26
+			IL_04df: ldarg.0
+			IL_04e0: ldfld object Modules.test262_metadataParser/Scope::toNullableString
+			IL_04e5: ldc.i4.1
+			IL_04e6: newarr [System.Runtime]System.Object
+			IL_04eb: dup
+			IL_04ec: ldc.i4.0
+			IL_04ed: ldarg.0
+			IL_04ee: stelem.ref
+			IL_04ef: stloc.s 25
+			IL_04f1: ldloc.s 7
+			IL_04f3: ldstr "esid"
+			IL_04f8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_04fd: stloc.s 35
+			IL_04ff: ldloc.s 25
+			IL_0501: ldloc.s 35
+			IL_0503: ldstr "esid"
+			IL_0508: ldloc.s 4
+			IL_050a: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs3(object, object[], object, object, object)
+			IL_050f: stloc.s 35
+			IL_0511: ldarg.0
+			IL_0512: ldfld object Modules.test262_metadataParser/Scope::toNullableString
+			IL_0517: ldc.i4.1
+			IL_0518: newarr [System.Runtime]System.Object
+			IL_051d: dup
+			IL_051e: ldc.i4.0
+			IL_051f: ldarg.0
+			IL_0520: stelem.ref
+			IL_0521: stloc.s 25
+			IL_0523: ldloc.s 7
+			IL_0525: ldstr "es5id"
+			IL_052a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_052f: stloc.s 36
+			IL_0531: ldloc.s 25
+			IL_0533: ldloc.s 36
+			IL_0535: ldstr "es5id"
+			IL_053a: ldloc.s 4
+			IL_053c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs3(object, object[], object, object, object)
+			IL_0541: stloc.s 36
+			IL_0543: ldarg.0
+			IL_0544: ldfld object Modules.test262_metadataParser/Scope::toNullableString
+			IL_0549: ldc.i4.1
+			IL_054a: newarr [System.Runtime]System.Object
+			IL_054f: dup
+			IL_0550: ldc.i4.0
+			IL_0551: ldarg.0
+			IL_0552: stelem.ref
+			IL_0553: stloc.s 25
+			IL_0555: ldloc.s 7
+			IL_0557: ldstr "es6id"
+			IL_055c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0561: stloc.s 37
+			IL_0563: ldloc.s 25
+			IL_0565: ldloc.s 37
+			IL_0567: ldstr "es6id"
+			IL_056c: ldloc.s 4
+			IL_056e: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs3(object, object[], object, object, object)
+			IL_0573: stloc.s 37
+			IL_0575: ldarg.0
+			IL_0576: ldfld object Modules.test262_metadataParser/Scope::toNullableString
+			IL_057b: ldc.i4.1
+			IL_057c: newarr [System.Runtime]System.Object
+			IL_0581: dup
+			IL_0582: ldc.i4.0
+			IL_0583: ldarg.0
+			IL_0584: stelem.ref
+			IL_0585: stloc.s 25
+			IL_0587: ldloc.s 7
+			IL_0589: ldstr "author"
+			IL_058e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0593: stloc.s 38
+			IL_0595: ldloc.s 25
+			IL_0597: ldloc.s 38
+			IL_0599: ldstr "author"
+			IL_059e: ldloc.s 4
+			IL_05a0: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs3(object, object[], object, object, object)
+			IL_05a5: stloc.s 38
+			IL_05a7: ldarg.0
+			IL_05a8: ldfld object Modules.test262_metadataParser/Scope::buildMvpBlockers
+			IL_05ad: ldc.i4.1
+			IL_05ae: newarr [System.Runtime]System.Object
+			IL_05b3: dup
+			IL_05b4: ldc.i4.0
+			IL_05b5: ldarg.0
+			IL_05b6: stelem.ref
+			IL_05b7: ldloc.1
+			IL_05b8: ldloc.s 17
+			IL_05ba: ldloc.s 19
+			IL_05bc: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs3(object, object[], object, object, object)
+			IL_05c1: stloc.s 39
+			IL_05c3: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+			IL_05c8: dup
+			IL_05c9: ldstr "filePath"
+			IL_05ce: ldloc.s 32
+			IL_05d0: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+			IL_05d5: dup
+			IL_05d6: ldstr "fileName"
+			IL_05db: ldloc.s 34
+			IL_05dd: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+			IL_05e2: dup
+			IL_05e3: ldstr "hasFrontmatter"
+			IL_05e8: ldloc.s 5
+			IL_05ea: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+			IL_05ef: dup
+			IL_05f0: ldstr "frontmatter"
+			IL_05f5: ldloc.s 7
+			IL_05f7: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+			IL_05fc: dup
+			IL_05fd: ldstr "unknownKeys"
+			IL_0602: ldloc.s 9
+			IL_0604: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+			IL_0609: dup
+			IL_060a: ldstr "description"
+			IL_060f: ldloc.s 24
+			IL_0611: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+			IL_0616: dup
+			IL_0617: ldstr "info"
+			IL_061c: ldloc.s 26
+			IL_061e: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+			IL_0623: dup
+			IL_0624: ldstr "esid"
+			IL_0629: ldloc.s 35
+			IL_062b: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+			IL_0630: dup
+			IL_0631: ldstr "es5id"
+			IL_0636: ldloc.s 36
+			IL_0638: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+			IL_063d: dup
+			IL_063e: ldstr "es6id"
+			IL_0643: ldloc.s 37
+			IL_0645: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+			IL_064a: dup
+			IL_064b: ldstr "author"
+			IL_0650: ldloc.s 38
+			IL_0652: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+			IL_0657: dup
+			IL_0658: ldstr "includes"
+			IL_065d: ldloc.s 12
+			IL_065f: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+			IL_0664: dup
+			IL_0665: ldstr "flags"
+			IL_066a: ldloc.s 13
+			IL_066c: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+			IL_0671: dup
+			IL_0672: ldstr "features"
+			IL_0677: ldloc.s 14
+			IL_0679: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+			IL_067e: dup
+			IL_067f: ldstr "locale"
+			IL_0684: ldloc.s 15
+			IL_0686: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+			IL_068b: dup
+			IL_068c: ldstr "defines"
+			IL_0691: ldloc.s 16
+			IL_0693: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+			IL_0698: dup
+			IL_0699: ldstr "negative"
+			IL_069e: ldloc.s 17
+			IL_06a0: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+			IL_06a5: dup
+			IL_06a6: ldstr "execution"
+			IL_06ab: ldloc.s 19
+			IL_06ad: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+			IL_06b2: dup
+			IL_06b3: ldstr "mvpBlockers"
+			IL_06b8: ldloc.s 39
+			IL_06ba: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+			IL_06bf: dup
+			IL_06c0: ldstr "unsupported"
+			IL_06c5: ldloc.s 4
+			IL_06c7: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+			IL_06cc: stloc.s 21
+			IL_06ce: ldloc.s 21
+			IL_06d0: ret
 		} // end of method parseTest262Metadata::__js_call__
 
 	} // end of class parseTest262Metadata

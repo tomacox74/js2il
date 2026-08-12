@@ -149,6 +149,31 @@ public record LIRCallFunctionValue2(TempVariable FunctionValue, TempVariable Sco
 public record LIRCallFunctionValue3(TempVariable FunctionValue, TempVariable ScopesArray, TempVariable A0, TempVariable A1, TempVariable A2, TempVariable Result) : LIRInstruction;
 
 /// <summary>
+/// Calls a function value with 4 arguments without materializing an argument array.
+/// </summary>
+public record LIRCallFunctionValue4(
+    TempVariable FunctionValue,
+    TempVariable ScopesArray,
+    TempVariable A0,
+    TempVariable A1,
+    TempVariable A2,
+    TempVariable A3,
+    TempVariable Result) : LIRInstruction;
+
+/// <summary>
+/// Calls a function value with 5 arguments without materializing an argument array.
+/// </summary>
+public record LIRCallFunctionValue5(
+    TempVariable FunctionValue,
+    TempVariable ScopesArray,
+    TempVariable A0,
+    TempVariable A1,
+    TempVariable A2,
+    TempVariable A3,
+    TempVariable A4,
+    TempVariable Result) : LIRInstruction;
+
+/// <summary>
 /// Calls the CommonJS module-scoped <c>require</c> function.
 ///
 /// In jroc-hosted CommonJS modules, <c>require</c> is provided as a <see cref="JavaScriptRuntime.CommonJS.RequireDelegate"/>
@@ -202,6 +227,40 @@ public record LIRCallMember2(TempVariable Receiver, string MethodName, TempVaria
 /// Emits: call JavaScriptRuntime.ObjectRuntime.CallMember3(object receiver, string methodName, object a0, object a1, object a2)
 /// </summary>
 public record LIRCallMember3(TempVariable Receiver, string MethodName, TempVariable A0, TempVariable A1, TempVariable A2, TempVariable Result) : LIRInstruction;
+
+/// <summary>
+/// Calls a member method with 4 arguments without materializing an argument array.
+/// </summary>
+public record LIRCallMember4(
+    TempVariable Receiver,
+    string MethodName,
+    TempVariable A0,
+    TempVariable A1,
+    TempVariable A2,
+    TempVariable A3,
+    TempVariable Result) : LIRInstruction;
+
+/// <summary>
+/// Calls a member method with 5 arguments without materializing an argument array.
+/// </summary>
+public record LIRCallMember5(
+    TempVariable Receiver,
+    string MethodName,
+    TempVariable A0,
+    TempVariable A1,
+    TempVariable A2,
+    TempVariable A3,
+    TempVariable A4,
+    TempVariable Result) : LIRInstruction;
+
+/// <summary>
+/// Calls a computed member with inline common-arity arguments.
+/// </summary>
+public record LIRCallComputedMemberFixed(
+    TempVariable Receiver,
+    TempVariable PropertyKey,
+    IReadOnlyList<TempVariable> Arguments,
+    TempVariable Result) : LIRInstruction;
 
 /// <summary>
 /// Calls a generated Node module contract member directly. When
@@ -265,6 +324,14 @@ public record LIRCallTypedMemberWithFallback(
 /// Emits: call JavaScriptRuntime.ObjectRuntime.ConstructValue(object constructor, object[]? args)
 /// </summary>
 public record LIRConstructValue(TempVariable ConstructorValue, TempVariable ArgumentsArray, TempVariable Result) : LIRInstruction;
+
+/// <summary>
+/// Dynamically constructs a value with inline common-arity arguments.
+/// </summary>
+public record LIRConstructValueFixed(
+    TempVariable ConstructorValue,
+    IReadOnlyList<TempVariable> Arguments,
+    TempVariable Result) : LIRInstruction;
 
 /// <summary>
 /// Invokes a regular function-valued base constructor from a derived class constructor.

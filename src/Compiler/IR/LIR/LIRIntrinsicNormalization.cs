@@ -496,6 +496,43 @@ internal static class LIRIntrinsicNormalization
                     callMember3.Result,
                     knownSpecializedReceiverClrTypes);
             }
+
+            if (instruction is LIRCallMember4 callMember4)
+            {
+                TryNormalizeArrayMemberCall(
+                    methodBody,
+                    i,
+                    callMember4.Receiver,
+                    callMember4.MethodName,
+                    new[]
+                    {
+                        callMember4.A0,
+                        callMember4.A1,
+                        callMember4.A2,
+                        callMember4.A3
+                    },
+                    callMember4.Result,
+                    knownSpecializedReceiverClrTypes);
+            }
+
+            if (instruction is LIRCallMember5 callMember5)
+            {
+                TryNormalizeArrayMemberCall(
+                    methodBody,
+                    i,
+                    callMember5.Receiver,
+                    callMember5.MethodName,
+                    new[]
+                    {
+                        callMember5.A0,
+                        callMember5.A1,
+                        callMember5.A2,
+                        callMember5.A3,
+                        callMember5.A4
+                    },
+                    callMember5.Result,
+                    knownSpecializedReceiverClrTypes);
+            }
         }
 
         FuseCharCodeAtWithConvertToNumber(methodBody);
@@ -1347,6 +1384,30 @@ internal static class LIRIntrinsicNormalization
                     scopesArrayTemp = call3.ScopesArray;
                     moduleIdTemp = call3.A0;
                     callResultTemp = call3.Result;
+                    break;
+
+                case LIRCallFunctionValue4 call4:
+                    if (!IsRequireDelegateTemp(methodBody, call4.FunctionValue))
+                    {
+                        continue;
+                    }
+
+                    requireValueTemp = call4.FunctionValue;
+                    scopesArrayTemp = call4.ScopesArray;
+                    moduleIdTemp = call4.A0;
+                    callResultTemp = call4.Result;
+                    break;
+
+                case LIRCallFunctionValue5 call5:
+                    if (!IsRequireDelegateTemp(methodBody, call5.FunctionValue))
+                    {
+                        continue;
+                    }
+
+                    requireValueTemp = call5.FunctionValue;
+                    scopesArrayTemp = call5.ScopesArray;
+                    moduleIdTemp = call5.A0;
+                    callResultTemp = call5.Result;
                     break;
 
                 default:

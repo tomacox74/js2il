@@ -154,13 +154,52 @@ public sealed class JsCallArgumentsRuntimeTests
         var constructor = new InspectConstructorFunction();
         var newTarget = new JsObject();
 
-        var result = Assert.IsType<ConstructArgumentsSnapshot>(
-            CallableOperations.Construct2(constructor, newTarget, "first", "second"));
+        for (var arity = 0; arity <= JsCallArguments.InlineCapacity; arity++)
+        {
+            var result = Assert.IsType<ConstructArgumentsSnapshot>(
+                arity switch
+                {
+                    0 => CallableOperations.Construct0(
+                        constructor,
+                        newTarget),
+                    1 => CallableOperations.Construct1(
+                        constructor,
+                        newTarget,
+                        "a0"),
+                    2 => CallableOperations.Construct2(
+                        constructor,
+                        newTarget,
+                        "a0",
+                        "a1"),
+                    3 => CallableOperations.Construct3(
+                        constructor,
+                        newTarget,
+                        "a0",
+                        "a1",
+                        "a2"),
+                    4 => CallableOperations.Construct4(
+                        constructor,
+                        newTarget,
+                        "a0",
+                        "a1",
+                        "a2",
+                        "a3"),
+                    5 => CallableOperations.Construct5(
+                        constructor,
+                        newTarget,
+                        "a0",
+                        "a1",
+                        "a2",
+                        "a3",
+                        "a4"),
+                    _ => throw new InvalidOperationException()
+                });
 
-        Assert.Equal(2, result.Count);
-        Assert.False(result.UsesArrayStorage);
-        Assert.Same(newTarget, result.NewTarget);
-        Assert.Same(constructor, result.Callee);
+            Assert.Equal(arity, result.Count);
+            Assert.False(result.UsesArrayStorage);
+            Assert.Same(newTarget, result.NewTarget);
+            Assert.Same(constructor, result.Callee);
+        }
     }
 
     [Fact]

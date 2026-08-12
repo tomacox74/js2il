@@ -144,6 +144,9 @@ namespace Jroc.Tests.Function
         public Task Function_CallViaVariable_Arity4() { var testName = nameof(Function_CallViaVariable_Arity4); return ExecutionTest(testName); }
 
         [Fact]
+        public Task Function_CommonArityDynamicDispatch() { var testName = nameof(Function_CommonArityDynamicDispatch); return ExecutionTest(testName); }
+
+        [Fact]
         public Task Function_ObjectLiteralMethod_ThisBinding() { var testName = nameof(Function_ObjectLiteralMethod_ThisBinding); return ExecutionTest(testName); }
 
         [Fact]

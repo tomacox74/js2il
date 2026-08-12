@@ -636,6 +636,45 @@ namespace JavaScriptRuntime
             }
         }
 
+        public static object InvokeFunctionCallWithArgs4(
+            object target,
+            object[] scopes,
+            object? a0,
+            object? a1,
+            object? a2,
+            object? a3)
+        {
+            var previousThis = RuntimeServices.SetCurrentThis(ResolveFunctionCallThis(target));
+            try
+            {
+                return InvokeWithArgs4(target, scopes, a0, a1, a2, a3);
+            }
+            finally
+            {
+                RuntimeServices.SetCurrentThis(previousThis);
+            }
+        }
+
+        public static object InvokeFunctionCallWithArgs5(
+            object target,
+            object[] scopes,
+            object? a0,
+            object? a1,
+            object? a2,
+            object? a3,
+            object? a4)
+        {
+            var previousThis = RuntimeServices.SetCurrentThis(ResolveFunctionCallThis(target));
+            try
+            {
+                return InvokeWithArgs5(target, scopes, a0, a1, a2, a3, a4);
+            }
+            finally
+            {
+                RuntimeServices.SetCurrentThis(previousThis);
+            }
+        }
+
         // Arity-specific overloads for common cases (0-5 args).
         // Raw bootstrap delegates are handled explicitly; JavaScript callables are function objects.
 

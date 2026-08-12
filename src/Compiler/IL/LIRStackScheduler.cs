@@ -1491,6 +1491,10 @@ internal static class LIRStackScheduler
                 call.ScopesArray.Equals(result),
             LIRCallFunctionValue3 call =>
                 call.ScopesArray.Equals(result),
+            LIRCallFunctionValue4 call =>
+                call.ScopesArray.Equals(result),
+            LIRCallFunctionValue5 call =>
+                call.ScopesArray.Equals(result),
             LIRCreateBoundArrowFunction create =>
                 create.ScopesArray.Equals(result),
             LIRCreateBoundFunctionExpression create =>
@@ -1509,6 +1513,8 @@ internal static class LIRStackScheduler
             or LIRCallFunctionValue1
             or LIRCallFunctionValue2
             or LIRCallFunctionValue3
+            or LIRCallFunctionValue4
+            or LIRCallFunctionValue5
             or LIRCallMember
             or LIRConstructValue
             or LIRCallFunctionBaseConstructor
@@ -1858,6 +1864,10 @@ internal static class LIRStackScheduler
             LIRCallMember1 call => call.Receiver.Equals(result),
             LIRCallMember2 call => call.Receiver.Equals(result),
             LIRCallMember3 call => call.Receiver.Equals(result),
+            LIRCallMember4 call => call.Receiver.Equals(result),
+            LIRCallMember5 call => call.Receiver.Equals(result),
+            LIRCallComputedMemberFixed call =>
+                call.Receiver.Equals(result),
             LIRCallFunctionValue call =>
                 call.FunctionValue.Equals(result),
             LIRCallFunctionValue0 call =>
@@ -1867,6 +1877,10 @@ internal static class LIRStackScheduler
             LIRCallFunctionValue2 call =>
                 call.FunctionValue.Equals(result),
             LIRCallFunctionValue3 call =>
+                call.FunctionValue.Equals(result),
+            LIRCallFunctionValue4 call =>
+                call.FunctionValue.Equals(result),
+            LIRCallFunctionValue5 call =>
                 call.FunctionValue.Equals(result),
             _ => false
         };

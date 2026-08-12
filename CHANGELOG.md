@@ -6,6 +6,13 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- compiler/runtime: close issue #1763 by aligning dynamic variable,
+  expression-valued, named-member, computed-member, and construction lowering
+  with the zero-through-five `JsCallArguments` inline ABI. Calls and `new`
+  within that common range no longer build argument arrays; spread and arity
+  six or greater retain the arbitrary-arity array fallback. Add execution and
+  generated-IL guardrails plus paired loaded-module allocation benchmarks. No
+  timing improvement is claimed without same-host benchmark evidence.
 - compiler: compile Cheerio 1.2.0 and its nested Undici dependency without
   blocking on unresolved optional CommonJS modules. Improve large-AST
   traversal, nested package metadata identity, class-field callable discovery,

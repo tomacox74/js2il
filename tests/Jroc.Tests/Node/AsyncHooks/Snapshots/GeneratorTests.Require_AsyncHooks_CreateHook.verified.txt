@@ -1027,7 +1027,7 @@
 				74 61 54 6f 6b 65 6e 0b 00 00 02
 			)
 			// Header size: 12
-			// Code size: 137 (0x89)
+			// Code size: 129 (0x81)
 			.maxstack 8
 			.locals init (
 				[0] class [JavaScriptRuntime]JavaScriptRuntime.Console,
@@ -1065,32 +1065,28 @@
 			IL_0042: ldfld object Modules.Require_AsyncHooks_CreateHook/Scope::AsyncResource
 			IL_0047: stloc.2
 			IL_0048: ldloc.2
-			IL_0049: ldc.i4.1
-			IL_004a: newarr [System.Runtime]System.Object
-			IL_004f: dup
-			IL_0050: ldc.i4.0
-			IL_0051: ldstr "DISABLED"
-			IL_0056: stelem.ref
-			IL_0057: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::ConstructValue(object, object[])
-			IL_005c: pop
-			IL_005d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0062: stloc.0
-			IL_0063: ldarg.0
-			IL_0064: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Require_AsyncHooks_CreateHook/Scope::events
-			IL_0069: ldc.i4.1
-			IL_006a: newarr [System.Runtime]System.Object
-			IL_006f: dup
-			IL_0070: ldc.i4.0
-			IL_0071: ldstr ","
-			IL_0076: stelem.ref
-			IL_0077: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
-			IL_007c: stloc.s 5
-			IL_007e: ldloc.0
-			IL_007f: ldloc.s 5
-			IL_0081: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0086: pop
-			IL_0087: ldnull
-			IL_0088: ret
+			IL_0049: dup
+			IL_004a: ldstr "DISABLED"
+			IL_004f: call object [JavaScriptRuntime]JavaScriptRuntime.CallableOperations::Construct1(object, object, object)
+			IL_0054: pop
+			IL_0055: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_005a: stloc.0
+			IL_005b: ldarg.0
+			IL_005c: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Require_AsyncHooks_CreateHook/Scope::events
+			IL_0061: ldc.i4.1
+			IL_0062: newarr [System.Runtime]System.Object
+			IL_0067: dup
+			IL_0068: ldc.i4.0
+			IL_0069: ldstr ","
+			IL_006e: stelem.ref
+			IL_006f: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
+			IL_0074: stloc.s 5
+			IL_0076: ldloc.0
+			IL_0077: ldloc.s 5
+			IL_0079: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_007e: pop
+			IL_007f: ldnull
+			IL_0080: ret
 		} // end of method ArrowFunction_L37C14::__js_call__
 
 	} // end of class ArrowFunction_L37C14
@@ -1144,7 +1140,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 828 (0x33c)
+		// Code size: 821 (0x335)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Require_AsyncHooks_CreateHook/Scope,
@@ -1375,116 +1371,111 @@
 		IL_0213: ldloc.0
 		IL_0214: ldfld object Modules.Require_AsyncHooks_CreateHook/Scope::AsyncResource
 		IL_0219: stloc.s 14
-		IL_021b: ldloc.s 14
-		IL_021d: ldc.i4.2
-		IL_021e: newarr [System.Runtime]System.Object
-		IL_0223: dup
-		IL_0224: ldc.i4.0
-		IL_0225: ldstr "HOOKED"
-		IL_022a: stelem.ref
-		IL_022b: dup
-		IL_022c: ldc.i4.1
-		IL_022d: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_0232: dup
-		IL_0233: ldstr "requireManualDestroy"
-		IL_0238: ldc.i4.1
-		IL_0239: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-		IL_023e: stelem.ref
-		IL_023f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::ConstructValue(object, object[])
-		IL_0244: stloc.s 14
-		IL_0246: ldloc.0
-		IL_0247: ldloc.s 14
-		IL_0249: stfld object Modules.Require_AsyncHooks_CreateHook/Scope::resource
-		IL_024e: ldloc.0
-		IL_024f: ldfld object Modules.Require_AsyncHooks_CreateHook/Scope::resource
-		IL_0254: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0259: stloc.s 14
-		IL_025b: ldc.i4.1
-		IL_025c: newarr [System.Runtime]System.Object
-		IL_0261: dup
+		IL_021b: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0220: dup
+		IL_0221: ldstr "requireManualDestroy"
+		IL_0226: ldc.i4.1
+		IL_0227: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+		IL_022c: stloc.s 6
+		IL_022e: ldloc.s 14
+		IL_0230: dup
+		IL_0231: ldstr "HOOKED"
+		IL_0236: ldloc.s 6
+		IL_0238: call object [JavaScriptRuntime]JavaScriptRuntime.CallableOperations::Construct2(object, object, object, object)
+		IL_023d: stloc.s 14
+		IL_023f: ldloc.0
+		IL_0240: ldloc.s 14
+		IL_0242: stfld object Modules.Require_AsyncHooks_CreateHook/Scope::resource
+		IL_0247: ldloc.0
+		IL_0248: ldfld object Modules.Require_AsyncHooks_CreateHook/Scope::resource
+		IL_024d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0252: stloc.s 14
+		IL_0254: ldc.i4.1
+		IL_0255: newarr [System.Runtime]System.Object
+		IL_025a: dup
+		IL_025b: ldc.i4.0
+		IL_025c: ldloc.0
+		IL_025d: stelem.ref
+		IL_025e: stloc.s 5
+		IL_0260: ldloc.s 5
 		IL_0262: ldc.i4.0
-		IL_0263: ldloc.0
-		IL_0264: stelem.ref
-		IL_0265: stloc.s 5
-		IL_0267: ldloc.s 5
-		IL_0269: ldc.i4.0
-		IL_026a: ldelem.ref
-		IL_026b: castclass Modules.Require_AsyncHooks_CreateHook/Scope
-		IL_0270: newobj instance void Modules.Require_AsyncHooks_CreateHook/ArrowFunction_L30C26/FunctionObject::.ctor(class Modules.Require_AsyncHooks_CreateHook/Scope)
+		IL_0263: ldelem.ref
+		IL_0264: castclass Modules.Require_AsyncHooks_CreateHook/Scope
+		IL_0269: newobj instance void Modules.Require_AsyncHooks_CreateHook/ArrowFunction_L30C26/FunctionObject::.ctor(class Modules.Require_AsyncHooks_CreateHook/Scope)
+		IL_026e: ldc.i4.0
+		IL_026f: conv.r8
+		IL_0270: ldstr ""
 		IL_0275: ldc.i4.0
-		IL_0276: conv.r8
-		IL_0277: ldstr ""
-		IL_027c: ldc.i4.0
-		IL_027d: ldc.i4.0
-		IL_027e: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_AsyncHooks_CreateHook/ArrowFunction_L30C26/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_0283: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_AsyncHooks_CreateHook/ArrowFunction_L30C26/FunctionObject>(!!0)
-		IL_0288: stloc.s 17
-		IL_028a: ldloc.s 14
-		IL_028c: ldstr "runInAsyncScope"
-		IL_0291: ldloc.s 17
-		IL_0293: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0298: pop
-		IL_0299: ldloc.0
-		IL_029a: ldfld object Modules.Require_AsyncHooks_CreateHook/Scope::resource
-		IL_029f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_02a4: ldstr "emitDestroy"
-		IL_02a9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-		IL_02ae: pop
-		IL_02af: ldstr "done"
-		IL_02b4: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::resolve(object)
-		IL_02b9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_02be: stloc.s 14
-		IL_02c0: ldc.i4.1
-		IL_02c1: newarr [System.Runtime]System.Object
-		IL_02c6: dup
+		IL_0276: ldc.i4.0
+		IL_0277: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_AsyncHooks_CreateHook/ArrowFunction_L30C26/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_027c: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_AsyncHooks_CreateHook/ArrowFunction_L30C26/FunctionObject>(!!0)
+		IL_0281: stloc.s 17
+		IL_0283: ldloc.s 14
+		IL_0285: ldstr "runInAsyncScope"
+		IL_028a: ldloc.s 17
+		IL_028c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0291: pop
+		IL_0292: ldloc.0
+		IL_0293: ldfld object Modules.Require_AsyncHooks_CreateHook/Scope::resource
+		IL_0298: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_029d: ldstr "emitDestroy"
+		IL_02a2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+		IL_02a7: pop
+		IL_02a8: ldstr "done"
+		IL_02ad: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::resolve(object)
+		IL_02b2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_02b7: stloc.s 14
+		IL_02b9: ldc.i4.1
+		IL_02ba: newarr [System.Runtime]System.Object
+		IL_02bf: dup
+		IL_02c0: ldc.i4.0
+		IL_02c1: ldloc.0
+		IL_02c2: stelem.ref
+		IL_02c3: stloc.s 5
+		IL_02c5: ldloc.s 5
 		IL_02c7: ldc.i4.0
-		IL_02c8: ldloc.0
-		IL_02c9: stelem.ref
-		IL_02ca: stloc.s 5
-		IL_02cc: ldloc.s 5
-		IL_02ce: ldc.i4.0
-		IL_02cf: ldelem.ref
-		IL_02d0: castclass Modules.Require_AsyncHooks_CreateHook/Scope
-		IL_02d5: newobj instance void Modules.Require_AsyncHooks_CreateHook/ArrowFunction_L34C30/FunctionObject::.ctor(class Modules.Require_AsyncHooks_CreateHook/Scope)
+		IL_02c8: ldelem.ref
+		IL_02c9: castclass Modules.Require_AsyncHooks_CreateHook/Scope
+		IL_02ce: newobj instance void Modules.Require_AsyncHooks_CreateHook/ArrowFunction_L34C30/FunctionObject::.ctor(class Modules.Require_AsyncHooks_CreateHook/Scope)
+		IL_02d3: ldc.i4.0
+		IL_02d4: conv.r8
+		IL_02d5: ldstr ""
 		IL_02da: ldc.i4.0
-		IL_02db: conv.r8
-		IL_02dc: ldstr ""
-		IL_02e1: ldc.i4.0
-		IL_02e2: ldc.i4.0
-		IL_02e3: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_AsyncHooks_CreateHook/ArrowFunction_L34C30/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_02e8: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_AsyncHooks_CreateHook/ArrowFunction_L34C30/FunctionObject>(!!0)
-		IL_02ed: stloc.s 18
-		IL_02ef: ldloc.s 14
-		IL_02f1: ldstr "then"
-		IL_02f6: ldloc.s 18
-		IL_02f8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_02fd: pop
-		IL_02fe: ldc.i4.1
-		IL_02ff: newarr [System.Runtime]System.Object
-		IL_0304: dup
+		IL_02db: ldc.i4.0
+		IL_02dc: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_AsyncHooks_CreateHook/ArrowFunction_L34C30/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_02e1: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_AsyncHooks_CreateHook/ArrowFunction_L34C30/FunctionObject>(!!0)
+		IL_02e6: stloc.s 18
+		IL_02e8: ldloc.s 14
+		IL_02ea: ldstr "then"
+		IL_02ef: ldloc.s 18
+		IL_02f1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_02f6: pop
+		IL_02f7: ldc.i4.1
+		IL_02f8: newarr [System.Runtime]System.Object
+		IL_02fd: dup
+		IL_02fe: ldc.i4.0
+		IL_02ff: ldloc.0
+		IL_0300: stelem.ref
+		IL_0301: stloc.s 5
+		IL_0303: ldloc.s 5
 		IL_0305: ldc.i4.0
-		IL_0306: ldloc.0
-		IL_0307: stelem.ref
-		IL_0308: stloc.s 5
-		IL_030a: ldloc.s 5
-		IL_030c: ldc.i4.0
-		IL_030d: ldelem.ref
-		IL_030e: castclass Modules.Require_AsyncHooks_CreateHook/Scope
-		IL_0313: newobj instance void Modules.Require_AsyncHooks_CreateHook/ArrowFunction_L37C14/FunctionObject::.ctor(class Modules.Require_AsyncHooks_CreateHook/Scope)
+		IL_0306: ldelem.ref
+		IL_0307: castclass Modules.Require_AsyncHooks_CreateHook/Scope
+		IL_030c: newobj instance void Modules.Require_AsyncHooks_CreateHook/ArrowFunction_L37C14/FunctionObject::.ctor(class Modules.Require_AsyncHooks_CreateHook/Scope)
+		IL_0311: ldc.i4.0
+		IL_0312: conv.r8
+		IL_0313: ldstr ""
 		IL_0318: ldc.i4.0
-		IL_0319: conv.r8
-		IL_031a: ldstr ""
-		IL_031f: ldc.i4.0
-		IL_0320: ldc.i4.0
-		IL_0321: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_AsyncHooks_CreateHook/ArrowFunction_L37C14/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_0326: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_AsyncHooks_CreateHook/ArrowFunction_L37C14/FunctionObject>(!!0)
-		IL_032b: stloc.s 19
-		IL_032d: ldloc.s 19
-		IL_032f: ldc.i4.0
-		IL_0330: newarr [System.Runtime]System.Object
-		IL_0335: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::setImmediate(object, object[])
-		IL_033a: pop
-		IL_033b: ret
+		IL_0319: ldc.i4.0
+		IL_031a: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_AsyncHooks_CreateHook/ArrowFunction_L37C14/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_031f: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_AsyncHooks_CreateHook/ArrowFunction_L37C14/FunctionObject>(!!0)
+		IL_0324: stloc.s 19
+		IL_0326: ldloc.s 19
+		IL_0328: ldc.i4.0
+		IL_0329: newarr [System.Runtime]System.Object
+		IL_032e: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::setImmediate(object, object[])
+		IL_0333: pop
+		IL_0334: ret
 	} // end of method Require_AsyncHooks_CreateHook::__js_module_init__
 
 } // end of class Modules.Require_AsyncHooks_CreateHook
