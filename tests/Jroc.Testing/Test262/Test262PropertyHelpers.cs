@@ -314,8 +314,14 @@ internal static class Test262PropertyHelpers
 
     private static bool IsConfigurable(object target, object? name)
     {
-        ObjectRuntime.DeletePropertyNonStrict(target, name);
-        return !Test262HostRuntimeIntrinsics.HasOwn(target, name!);
+        try
+        {
+            return ObjectRuntime.DeleteProperty(target, name);
+        }
+        catch (TypeError)
+        {
+            return false;
+        }
     }
 
     private static bool IsEnumerable(object target, object? name)
