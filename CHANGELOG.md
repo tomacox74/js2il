@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- compiler/runtime/test262: fix #1794 by preserving an uninitialized default
+  export's live binding across a self import. Enumerating that namespace with
+  `for-in` now throws the required `ReferenceError` before the default export
+  initializes.
 - tests/docs/test262: port the remaining pinned ECMA-262 14.7.5
   `for-in`, `for-of`, and `for-await-of` corpus. Keep 1,600 newly passing cases
   active and record 397 unsupported cases as focused skips, with documentation

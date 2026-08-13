@@ -65,6 +65,7 @@ internal sealed class ModuleExecutor
 
         // Node semantics: require.main is the entry module.
         requireService.SetMainModule(mainModule);
+        requireService.RegisterCompiledMainModule(mainModule);
         mainRequireTarget.SetMainModule(mainModule);
         RuntimeServices.RegisterModuleRequire(mainModule.id, mainRequire);
         if (!string.Equals(mainModule.filename, mainModule.id, StringComparison.OrdinalIgnoreCase))

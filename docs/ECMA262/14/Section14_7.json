@@ -516,9 +516,13 @@
         "testScripts": [
           "tests/Jroc.Test262.Tests/language/statements/for-in/Section14_7_5ExecutionTests01.cs",
           "tests/Jroc.Test262.Tests/language/statements/for-of/Section14_7_5ExecutionTests01.cs",
-          "tests/Jroc.Test262.Tests/language/statements/for-await-of/Section14_7_5ExecutionTests01.cs"
+          "tests/Jroc.Test262.Tests/language/statements/for-await-of/Section14_7_5ExecutionTests01.cs",
+          "tests/Jroc.Test262.Tests/language/module-code/namespace/internals/Section14_7_5ModuleExecutionTests01.cs"
         ],
-        "notes": "The remaining pinned section corpus is checked in verbatim: 1,600 of the 1,997 newly ported cases pass and 397 are explicitly skipped with the unsupported behavior named at each test. Reaching Supported requires completing strict/yield early-error validation, destructuring binding and assignment lowering (including initializer function naming and abrupt completion), iterator next/return/close error precedence, async object-accessor analysis, loop lexical-environment lowering, module-namespace enumeration, resizable ArrayBuffer and explicit resource management dependencies, and eval support."
+        "test262Paths": [
+          "test/language/module-code/namespace/internals/enumerate-binding-uninit.js"
+        ],
+        "notes": "The remaining pinned section corpus is checked in verbatim: 1,601 of the 1,997 newly ported cases pass and 396 are explicitly skipped with the unsupported behavior named at each test. The module-namespace for-in TDZ case now passes through static-module live binding state. Reaching Supported still requires strict/yield early-error validation, destructuring binding and assignment lowering (including initializer function naming and abrupt completion), iterator next/return/close error precedence, async object-accessor analysis, loop lexical-environment lowering, full module namespace exotic-object semantics, resizable ArrayBuffer and explicit resource management dependencies, and eval support."
       },
       {
         "clause": "14.7.2.2",
