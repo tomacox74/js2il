@@ -33,6 +33,7 @@ public abstract class FileSystemExecutionTestsBase
     {
         string projectRoot = FindProjectRoot(sourceFilePath);
         var (script, sourcePath) = GetJavaScriptAndSourcePath(projectRoot, testName);
+        var preparedScript = Test262SharedAssertHarness.PrepareEntryScript(script);
         Exception? failure = null;
 
         var previousMetricsEnabled = IRPipelineMetrics.Enabled;
@@ -41,10 +42,10 @@ public abstract class FileSystemExecutionTestsBase
         try
         {
             var fileSystem = new MockFileSystem();
-            fileSystem.AddFile(sourcePath, script, sourcePath);
+            fileSystem.AddFile(sourcePath, preparedScript, sourcePath);
             JrocInMemoryCompiler.Compile(new JrocInMemoryCompileRequest(sourcePath)
             {
-                SourceText = script,
+                SourceText = preparedScript,
                 FileSystem = fileSystem,
                 EmitPdb = true
             });

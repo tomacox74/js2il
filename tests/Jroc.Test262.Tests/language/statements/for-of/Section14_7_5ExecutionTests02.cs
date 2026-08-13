@@ -604,7 +604,7 @@ public class Section14_7_5ExecutionTests02 : Jroc.Test262.Tests.language.stateme
     public Task dstr_obj_id_init_simple_no_strict_400()
         => ExecutionTest("dstr/obj-id-init-simple-no-strict");
 
-    [Fact(DisplayName = "dstr/obj-id-init-simple-strict.js", Skip = "Pending complete for-in/of early-error validation.")]
+    [Fact(DisplayName = "dstr/obj-id-init-simple-strict.js")]
     public Task dstr_obj_id_init_simple_strict_401()
         => CompilationFailureTest("dstr/obj-id-init-simple-strict", string.Empty);
 
@@ -640,7 +640,7 @@ public class Section14_7_5ExecutionTests02 : Jroc.Test262.Tests.language.stateme
     public Task dstr_obj_id_simple_no_strict_409()
         => ExecutionTest("dstr/obj-id-simple-no-strict");
 
-    [Fact(DisplayName = "dstr/obj-id-simple-strict.js", Skip = "Pending complete for-in/of early-error validation.")]
+    [Fact(DisplayName = "dstr/obj-id-simple-strict.js")]
     public Task dstr_obj_id_simple_strict_410()
         => CompilationFailureTest("dstr/obj-id-simple-strict", string.Empty);
 
