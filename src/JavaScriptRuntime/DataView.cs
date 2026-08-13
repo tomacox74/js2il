@@ -8,6 +8,7 @@ namespace JavaScriptRuntime
         private readonly ArrayBuffer _buffer;
         private readonly int _byteOffset;
         private readonly int _byteLength;
+        private readonly bool _isLengthTracking;
 
         public DataView(object? buffer)
             : this(buffer, null, null)
@@ -36,6 +37,7 @@ namespace JavaScriptRuntime
             }
 
             var remaining = (int)remainingLong;
+            _isLengthTracking = (byteLength is null || byteLength is JsNull) && arrayBuffer.IsResizable;
             _byteLength = byteLength is null || byteLength is JsNull
                 ? remaining
                 : CoerceIndex(byteLength, 0, "Invalid DataView byteLength");
@@ -48,9 +50,9 @@ namespace JavaScriptRuntime
 
         public ArrayBuffer buffer => _buffer;
 
-        public double byteOffset => _byteOffset;
+        public double byteOffset => IsOutOfBounds ? 0 : _byteOffset;
 
-        public double byteLength => _byteLength;
+        public double byteLength => IsOutOfBounds ? 0 : CurrentByteLength;
 
         public double getInt8(object? byteOffset)
             => (sbyte)ReadByte(byteOffset);
@@ -284,10 +286,15 @@ namespace JavaScriptRuntime
 
         private int GetAbsoluteIndex(object? requestedOffset, int elementSize)
         {
+            if (IsOutOfBounds)
+            {
+                throw new TypeError("DataView is out of bounds");
+            }
+
             var relativeIndex = CoerceIndex(requestedOffset, 0, "Offset is outside the bounds of the DataView");
             long relativeIndexLong = relativeIndex;
             long elementSizeLong = elementSize;
-            long byteLengthLong = _byteLength;
+            long byteLengthLong = CurrentByteLength;
             if (relativeIndexLong < 0 || relativeIndexLong + elementSizeLong > byteLengthLong)
             {
                 throw new RangeError("Offset is outside the bounds of the DataView");
@@ -301,6 +308,16 @@ namespace JavaScriptRuntime
 
             return (int)absoluteIndexLong;
         }
+
+        private bool IsOutOfBounds
+            => _isLengthTracking
+                ? _byteOffset > _buffer.ByteLengthInt
+                : (long)_byteOffset + _byteLength > _buffer.ByteLengthInt;
+
+        private int CurrentByteLength
+            => _isLengthTracking
+                ? _buffer.ByteLengthInt - _byteOffset
+                : _byteLength;
 
         private static bool UseLittleEndian(object? value)
             => value is not null && value is not JsNull && TypeUtilities.ToBoolean(value);

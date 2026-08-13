@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- runtime/test262: close #1792 by adding resizable `ArrayBuffer` support for
+  length-tracking and fixed-length typed-array views. Typed-array iteration and
+  indexed enumeration now observe growth and shrinkage, including
+  shrink-to-zero and out-of-bounds fixed views.
 - compiler/test262: upgrade Acornima to 1.7.0 and support `using` and
   `await using` declarations in `for-of` heads as lexical bindings, including
   TDZ checks and fresh captured bindings per iteration.
