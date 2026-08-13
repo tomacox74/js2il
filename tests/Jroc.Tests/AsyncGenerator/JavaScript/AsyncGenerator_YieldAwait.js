@@ -4,7 +4,7 @@ async function* g() {
   yield 1;
   const x = await Promise.resolve(2);
   yield x + 1;
-  yield await Promise.resolve(4);
+  yield x + 2;
 }
 
 (async () => {

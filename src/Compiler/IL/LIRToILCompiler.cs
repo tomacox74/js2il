@@ -329,6 +329,14 @@ internal sealed partial class LIRToILCompiler
             return false;
         }
 
+        // Async generators inherit their resumable-local storage from AsyncScope.
+        // Resolve it against that declaring type rather than AsyncGeneratorScope.
+        if (MethodBody.IsAsync && fieldName == nameof(JavaScriptRuntime.AsyncScope._locals))
+        {
+            token = default;
+            return false;
+        }
+
         if (!TryGetGeneratorScopeBaseFieldClrType(fieldName, out _))
         {
             token = default;

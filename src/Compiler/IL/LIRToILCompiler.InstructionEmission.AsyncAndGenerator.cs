@@ -146,6 +146,10 @@ internal sealed partial class LIRToILCompiler
                         ilEncoder.LoadConstantI4(-1);
                         EmitStoreFieldByName(ilEncoder, scopeName, "_asyncState");
 
+                        // Async generator yields re-enter this method on the next
+                        // iterator request, so persist all IL locals before returning.
+                        EmitSpillVariableSlotsToResumableLocalsArray(ilEncoder, allocation);
+
                         var iterCreateAsync = _memberRefRegistry.GetOrAddMethod(
                             typeof(JavaScriptRuntime.IteratorResult),
                             nameof(JavaScriptRuntime.IteratorResult.Create),

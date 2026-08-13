@@ -358,20 +358,29 @@ internal sealed partial class LIRToILCompiler
                         ilEncoder.MarkLabel(stepLabel);
                         ilEncoder.StoreLocal(0);
 
-                        // Restore async locals across awaits (only meaningful when there are awaits).
+                        // Restore locals after either an await or a yield. Async generators
+                        // re-enter this method for both kinds of suspension.
                         var asyncInfoForAsyncGen = MethodBody.AsyncInfo;
+                        EmitEnsureResumableLocalsArray(ilEncoder, allocation);
+
+                        var restoreLocalsLabel = ilEncoder.DefineLabel();
+                        var skipRestoreLabel = ilEncoder.DefineLabel();
+                        ilEncoder.LoadLocal(0);
+                        EmitLoadFieldByName(ilEncoder, scopeName, "_asyncState");
+                        ilEncoder.LoadConstantI4(0);
+                        ilEncoder.Branch(ILOpCode.Bgt, restoreLocalsLabel);
+
+                        ilEncoder.LoadLocal(0);
+                        EmitLoadFieldByName(ilEncoder, scopeName, "_genState");
+                        ilEncoder.LoadConstantI4(0);
+                        ilEncoder.Branch(ILOpCode.Ble, skipRestoreLabel);
+
+                        ilEncoder.MarkLabel(restoreLocalsLabel);
+                        EmitRestoreVariableSlotsFromResumableLocalsArray(ilEncoder, allocation);
+                        ilEncoder.MarkLabel(skipRestoreLabel);
+
                         if (asyncInfoForAsyncGen != null && asyncInfoForAsyncGen.HasAwaits)
                         {
-                            EmitEnsureResumableLocalsArray(ilEncoder, allocation);
-
-                            var skipRestoreLabel = ilEncoder.DefineLabel();
-                            ilEncoder.LoadLocal(0);
-                            EmitLoadFieldByName(ilEncoder, scopeName, "_asyncState");
-                            ilEncoder.LoadConstantI4(0);
-                            ilEncoder.Branch(ILOpCode.Ble, skipRestoreLabel);
-                            EmitRestoreVariableSlotsFromResumableLocalsArray(ilEncoder, allocation);
-                            ilEncoder.MarkLabel(skipRestoreLabel);
-
                             if (asyncInfoForAsyncGen.MaxResumeStateId > 0)
                             {
                                 EmitAsyncStateSwitch(ilEncoder, labelMap, asyncInfoForAsyncGen);
