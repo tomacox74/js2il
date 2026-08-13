@@ -6,6 +6,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- compiler/runtime/test262: fix #1787 so generator-local iterator state
+  survives suspension in `for-of` loops. `yield` and `yield*` now resume
+  iteration correctly, including through try/catch/finally and nested
+  destructuring assignment/binding expressions. Activates twenty corresponding
+  pinned test262 fixtures.
 - compiler/runtime/test262: close #1789 by completing supported `for-of`
   destructuring assignment heads. Object-literal member targets now plan their
   accessor scopes before lowering, assignment to an uninitialized captured

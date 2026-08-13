@@ -458,6 +458,57 @@
       },
       {
         "clause": "14.7.5.7",
+        "feature": "generator suspension in for-of iteration and destructuring heads",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-runtime-semantics-forinofbodyevaluation",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/language/statements/for-of/JavaScript/dstr/array-elem-init-yield-expr.js",
+          "tests/Jroc.Test262.Tests/language/statements/for-of/JavaScript/dstr/array-elem-nested-array-yield-expr.js",
+          "tests/Jroc.Test262.Tests/language/statements/for-of/JavaScript/dstr/array-elem-nested-obj-yield-expr.js",
+          "tests/Jroc.Test262.Tests/language/statements/for-of/JavaScript/dstr/array-elem-target-yield-expr.js",
+          "tests/Jroc.Test262.Tests/language/statements/for-of/JavaScript/dstr/array-rest-nested-array-yield-expr.js",
+          "tests/Jroc.Test262.Tests/language/statements/for-of/JavaScript/dstr/array-rest-nested-obj-yield-expr.js",
+          "tests/Jroc.Test262.Tests/language/statements/for-of/JavaScript/dstr/array-rest-yield-expr.js",
+          "tests/Jroc.Test262.Tests/language/statements/for-of/JavaScript/dstr/obj-id-init-yield-expr.js",
+          "tests/Jroc.Test262.Tests/language/statements/for-of/JavaScript/dstr/obj-prop-elem-init-yield-expr.js",
+          "tests/Jroc.Test262.Tests/language/statements/for-of/JavaScript/dstr/obj-prop-elem-target-yield-expr.js",
+          "tests/Jroc.Test262.Tests/language/statements/for-of/JavaScript/dstr/obj-prop-nested-array-yield-expr.js",
+          "tests/Jroc.Test262.Tests/language/statements/for-of/JavaScript/dstr/obj-prop-nested-obj-yield-expr.js",
+          "tests/Jroc.Test262.Tests/language/statements/for-of/JavaScript/yield-from-catch.js",
+          "tests/Jroc.Test262.Tests/language/statements/for-of/JavaScript/yield-from-finally.js",
+          "tests/Jroc.Test262.Tests/language/statements/for-of/JavaScript/yield-from-try.js",
+          "tests/Jroc.Test262.Tests/language/statements/for-of/JavaScript/yield-star-from-catch.js",
+          "tests/Jroc.Test262.Tests/language/statements/for-of/JavaScript/yield-star-from-finally.js",
+          "tests/Jroc.Test262.Tests/language/statements/for-of/JavaScript/yield-star-from-try.js",
+          "tests/Jroc.Test262.Tests/language/statements/for-of/JavaScript/yield-star.js",
+          "tests/Jroc.Test262.Tests/language/statements/for-of/JavaScript/yield.js"
+        ],
+        "test262Paths": [
+          "test/language/statements/for-of/dstr/array-elem-init-yield-expr.js",
+          "test/language/statements/for-of/dstr/array-elem-nested-array-yield-expr.js",
+          "test/language/statements/for-of/dstr/array-elem-nested-obj-yield-expr.js",
+          "test/language/statements/for-of/dstr/array-elem-target-yield-expr.js",
+          "test/language/statements/for-of/dstr/array-rest-nested-array-yield-expr.js",
+          "test/language/statements/for-of/dstr/array-rest-nested-obj-yield-expr.js",
+          "test/language/statements/for-of/dstr/array-rest-yield-expr.js",
+          "test/language/statements/for-of/dstr/obj-id-init-yield-expr.js",
+          "test/language/statements/for-of/dstr/obj-prop-elem-init-yield-expr.js",
+          "test/language/statements/for-of/dstr/obj-prop-elem-target-yield-expr.js",
+          "test/language/statements/for-of/dstr/obj-prop-nested-array-yield-expr.js",
+          "test/language/statements/for-of/dstr/obj-prop-nested-obj-yield-expr.js",
+          "test/language/statements/for-of/yield-from-catch.js",
+          "test/language/statements/for-of/yield-from-finally.js",
+          "test/language/statements/for-of/yield-from-try.js",
+          "test/language/statements/for-of/yield-star-from-catch.js",
+          "test/language/statements/for-of/yield-star-from-finally.js",
+          "test/language/statements/for-of/yield-star-from-try.js",
+          "test/language/statements/for-of/yield-star.js",
+          "test/language/statements/for-of/yield.js"
+        ],
+        "notes": "Synchronous generator scopes spill materialized compiler locals before each yield and restore them before dispatching to the yield resume label. This preserves the original for-of iterator, close-completion state, and nested destructuring state while yielding directly or delegating with yield* through try, catch, and finally."
+      },
+      {
+        "clause": "14.7.5.7",
         "feature": "for-in over objects (enumerate enumerable keys)",
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-runtime-semantics-forinofbodyevaluation",
@@ -619,7 +670,7 @@
           "test/language/statements/for-of/head-using-bound-names-fordecl-tdz.js",
           "test/language/statements/for-of/head-using-fresh-binding-per-iteration.js"
         ],
-        "notes": "The remaining pinned section corpus is checked in verbatim: 1,633 of the 1,997 newly ported cases pass and 364 are explicitly skipped with the unsupported behavior named at each test. Static-module live bindings surface the module-namespace for-in TDZ error, resizable ArrayBuffer-backed typed arrays cover growth and shrinkage during for-in/of iteration, object-rest loop heads invoke accessors while copying ordered enumerable own properties, and using/await using for-of heads parse with lexical TDZ and fresh per-iteration bindings. Reaching Supported still requires strict/yield early-error validation, destructuring binding and assignment lowering (including initializer function naming and abrupt completion), iterator next/return/close error precedence, full disposable-resource lifetime semantics, full module namespace exotic-object semantics, and eval support."
+        "notes": "The remaining pinned section corpus is checked in verbatim: 1,653 of the 1,997 newly ported cases pass and 344 are explicitly skipped with the unsupported behavior named at each test. Static-module live bindings surface the module-namespace for-in TDZ error, resizable ArrayBuffer-backed typed arrays cover growth and shrinkage during for-in/of iteration, object-rest loop heads invoke accessors while copying ordered enumerable own properties, and using/await using for-of heads parse with lexical TDZ and fresh per-iteration bindings. Reaching Supported still requires strict/yield early-error validation, destructuring binding and assignment lowering (including initializer function naming and abrupt completion), iterator next/return/close error precedence, full disposable-resource lifetime semantics, full module namespace exotic-object semantics, and eval support."
       },
       {
         "clause": "14.7.2.2",

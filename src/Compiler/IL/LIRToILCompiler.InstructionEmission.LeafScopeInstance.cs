@@ -362,14 +362,14 @@ internal sealed partial class LIRToILCompiler
                         var asyncInfoForAsyncGen = MethodBody.AsyncInfo;
                         if (asyncInfoForAsyncGen != null && asyncInfoForAsyncGen.HasAwaits)
                         {
-                            EmitEnsureAsyncLocalsArray(ilEncoder, allocation);
+                            EmitEnsureResumableLocalsArray(ilEncoder, allocation);
 
                             var skipRestoreLabel = ilEncoder.DefineLabel();
                             ilEncoder.LoadLocal(0);
                             EmitLoadFieldByName(ilEncoder, scopeName, "_asyncState");
                             ilEncoder.LoadConstantI4(0);
                             ilEncoder.Branch(ILOpCode.Ble, skipRestoreLabel);
-                            EmitRestoreVariableSlotsFromAsyncLocalsArray(ilEncoder, allocation);
+                            EmitRestoreVariableSlotsFromResumableLocalsArray(ilEncoder, allocation);
                             ilEncoder.MarkLabel(skipRestoreLabel);
 
                             if (asyncInfoForAsyncGen.MaxResumeStateId > 0)
@@ -550,14 +550,14 @@ internal sealed partial class LIRToILCompiler
 
                         // Ensure we have persistent storage for variable locals and restore them on resumption.
                         // This is required because async MoveNext re-enters the method, so IL locals are re-initialized.
-                        EmitEnsureAsyncLocalsArray(ilEncoder, allocation);
+                        EmitEnsureResumableLocalsArray(ilEncoder, allocation);
 
                         var skipRestoreLabel = ilEncoder.DefineLabel();
                         ilEncoder.LoadLocal(0);
                         EmitLoadFieldByName(ilEncoder, scopeName, "_asyncState");
                         ilEncoder.LoadConstantI4(0);
                         ilEncoder.Branch(ILOpCode.Ble, skipRestoreLabel);
-                        EmitRestoreVariableSlotsFromAsyncLocalsArray(ilEncoder, allocation);
+                        EmitRestoreVariableSlotsFromResumableLocalsArray(ilEncoder, allocation);
                         ilEncoder.MarkLabel(skipRestoreLabel);
 
                         // Now emit the state switch to dispatch to resume points
@@ -679,6 +679,16 @@ internal sealed partial class LIRToILCompiler
                         // --- Step path ---
                         ilEncoder.MarkLabel(stepLabel);
                         ilEncoder.StoreLocal(0);
+
+                        EmitEnsureResumableLocalsArray(ilEncoder, allocation);
+
+                        var skipGeneratorLocalsRestoreLabel = ilEncoder.DefineLabel();
+                        ilEncoder.LoadLocal(0);
+                        EmitLoadFieldByName(ilEncoder, scopeName, "_genState");
+                        ilEncoder.LoadConstantI4(0);
+                        ilEncoder.Branch(ILOpCode.Ble, skipGeneratorLocalsRestoreLabel);
+                        EmitRestoreVariableSlotsFromResumableLocalsArray(ilEncoder, allocation);
+                        ilEncoder.MarkLabel(skipGeneratorLocalsRestoreLabel);
                     }
                     else
                     {

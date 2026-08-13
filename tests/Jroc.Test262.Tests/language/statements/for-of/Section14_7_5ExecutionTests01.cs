@@ -136,7 +136,7 @@ public class Section14_7_5ExecutionTests01 : Jroc.Test262.Tests.language.stateme
     public Task dstr_array_elem_init_simple_no_strict_33()
         => ExecutionTest("dstr/array-elem-init-simple-no-strict");
 
-    [Fact(DisplayName = "dstr/array-elem-init-yield-expr.js", Skip = "Pending complete iterator protocol and abrupt-completion semantics.")]
+    [Fact(DisplayName = "dstr/array-elem-init-yield-expr.js")]
     public Task dstr_array_elem_init_yield_expr_34()
         => ExecutionTest("dstr/array-elem-init-yield-expr");
 
@@ -196,7 +196,7 @@ public class Section14_7_5ExecutionTests01 : Jroc.Test262.Tests.language.stateme
     public Task dstr_array_elem_nested_array_undefined_48()
         => ExecutionTest("dstr/array-elem-nested-array-undefined");
 
-    [Fact(DisplayName = "dstr/array-elem-nested-array-yield-expr.js", Skip = "Pending complete iterator protocol and abrupt-completion semantics.")]
+    [Fact(DisplayName = "dstr/array-elem-nested-array-yield-expr.js")]
     public Task dstr_array_elem_nested_array_yield_expr_49()
         => ExecutionTest("dstr/array-elem-nested-array-yield-expr");
 
@@ -236,7 +236,7 @@ public class Section14_7_5ExecutionTests01 : Jroc.Test262.Tests.language.stateme
     public Task dstr_array_elem_nested_obj_undefined_58()
         => ExecutionTest("dstr/array-elem-nested-obj-undefined");
 
-    [Fact(DisplayName = "dstr/array-elem-nested-obj-yield-expr.js", Skip = "Pending complete iterator protocol and abrupt-completion semantics.")]
+    [Fact(DisplayName = "dstr/array-elem-nested-obj-yield-expr.js")]
     public Task dstr_array_elem_nested_obj_yield_expr_59()
         => ExecutionTest("dstr/array-elem-nested-obj-yield-expr");
 
@@ -308,7 +308,7 @@ public class Section14_7_5ExecutionTests01 : Jroc.Test262.Tests.language.stateme
     public Task dstr_array_elem_target_simple_strict_76()
         => CompilationFailureTest("dstr/array-elem-target-simple-strict", string.Empty);
 
-    [Fact(DisplayName = "dstr/array-elem-target-yield-expr.js", Skip = "Pending complete iterator protocol and abrupt-completion semantics.")]
+    [Fact(DisplayName = "dstr/array-elem-target-yield-expr.js")]
     public Task dstr_array_elem_target_yield_expr_77()
         => ExecutionTest("dstr/array-elem-target-yield-expr");
 
@@ -616,7 +616,7 @@ public class Section14_7_5ExecutionTests01 : Jroc.Test262.Tests.language.stateme
     public Task dstr_array_rest_nested_array_undefined_153()
         => ExecutionTest("dstr/array-rest-nested-array-undefined");
 
-    [Fact(DisplayName = "dstr/array-rest-nested-array-yield-expr.js", Skip = "Pending complete iterator protocol and abrupt-completion semantics.")]
+    [Fact(DisplayName = "dstr/array-rest-nested-array-yield-expr.js")]
     public Task dstr_array_rest_nested_array_yield_expr_154()
         => ExecutionTest("dstr/array-rest-nested-array-yield-expr");
 
@@ -652,7 +652,7 @@ public class Section14_7_5ExecutionTests01 : Jroc.Test262.Tests.language.stateme
     public Task dstr_array_rest_nested_obj_undefined_162()
         => ExecutionTest("dstr/array-rest-nested-obj-undefined");
 
-    [Fact(DisplayName = "dstr/array-rest-nested-obj-yield-expr.js", Skip = "Pending complete iterator protocol and abrupt-completion semantics.")]
+    [Fact(DisplayName = "dstr/array-rest-nested-obj-yield-expr.js")]
     public Task dstr_array_rest_nested_obj_yield_expr_163()
         => ExecutionTest("dstr/array-rest-nested-obj-yield-expr");
 
@@ -700,7 +700,7 @@ public class Section14_7_5ExecutionTests01 : Jroc.Test262.Tests.language.stateme
     public Task dstr_array_rest_put_unresolvable_strict_174()
         => ExecutionTest("dstr/array-rest-put-unresolvable-strict");
 
-    [Fact(DisplayName = "dstr/array-rest-yield-expr.js", Skip = "Pending complete iterator protocol and abrupt-completion semantics.")]
+    [Fact(DisplayName = "dstr/array-rest-yield-expr.js")]
     public Task dstr_array_rest_yield_expr_175()
         => ExecutionTest("dstr/array-rest-yield-expr");
 
