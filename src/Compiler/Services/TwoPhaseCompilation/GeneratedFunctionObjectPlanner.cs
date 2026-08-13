@@ -22,7 +22,9 @@ internal static class GeneratedFunctionObjectPlanner
             Signature = signature,
             Namespace = string.Empty,
             ModuleName = symbolTable.Root.Name,
-            TypeName = callable.Kind == CallableKind.Arrow
+            TypeName = callable.Kind is CallableKind.Arrow
+                or CallableKind.FunctionDeclaration
+                or CallableKind.FunctionExpression
                 ? GeneratedFunctionObjectNaming.WrapperTypeName
                 : BuildTypeName(callable),
             CanonicalOwnerTypeName = ResolveCanonicalOwnerTypeName(

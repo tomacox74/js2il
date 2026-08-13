@@ -24,6 +24,20 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   preserved. Adds focused execution and generated-IL coverage asserting no
   `__jroc_esm` function/type overhead remains for every supported static ESM
   form.
+
+## v0.12.5 - 2026-08-13
+
+- runtime/test262: close #1792 by adding resizable `ArrayBuffer` support for
+  length-tracking and fixed-length typed-array views. Typed-array iteration and
+  indexed enumeration now observe growth and shrinkage, including
+  shrink-to-zero and out-of-bounds fixed views.
+- compiler/test262: upgrade Acornima to 1.7.0 and support `using` and
+  `await using` declarations in `for-of` heads as lexical bindings, including
+  TDZ checks and fresh captured bindings per iteration.
+- compiler/runtime/test262: fix #1794 by preserving an uninitialized default
+  export's live binding across a self import. Enumerating that namespace with
+  `for-in` now throws the required `ReferenceError` before the default export
+  initializes.
 - tests/docs/test262: port the remaining pinned ECMA-262 14.7.5
   `for-in`, `for-of`, and `for-await-of` corpus. Keep 1,600 newly passing cases
   active and record 397 unsupported cases as focused skips, with documentation

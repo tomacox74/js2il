@@ -402,7 +402,12 @@
           "tests/Jroc.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_LabeledContinue.js",
           "tests/Jroc.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_LabeledBreak.js",
           "tests/Jroc.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_CustomIterable_IteratorProtocol.js",
-          "tests/Jroc.Test262.Tests/language/statements/for-of/JavaScript/arguments-mapped.js"
+          "tests/Jroc.Test262.Tests/language/statements/for-of/JavaScript/arguments-mapped.js",
+          "tests/Jroc.Test262.Tests/language/statements/for-of/JavaScript/typedarray-backed-by-resizable-buffer.js",
+          "tests/Jroc.Test262.Tests/language/statements/for-of/JavaScript/typedarray-backed-by-resizable-buffer-grow-before-end.js",
+          "tests/Jroc.Test262.Tests/language/statements/for-of/JavaScript/typedarray-backed-by-resizable-buffer-grow-mid-iteration.js",
+          "tests/Jroc.Test262.Tests/language/statements/for-of/JavaScript/typedarray-backed-by-resizable-buffer-shrink-mid-iteration.js",
+          "tests/Jroc.Test262.Tests/language/statements/for-of/JavaScript/typedarray-backed-by-resizable-buffer-shrink-to-zero-mid-iteration.js"
         ],
         "test262Suites": [
           "pr",
@@ -449,7 +454,7 @@
           "test/language/statements/for-of/generator-close-via-return.js",
           "test/language/statements/for-of/generator-close-via-throw.js"
         ],
-        "notes": "Lowered using the iterator protocol via JavaScriptRuntime.Object.GetIterator + iterator.next() + result.value/result.done, and invokes JavaScriptRuntime.Object.IteratorClose on normal destructuring completion and abrupt completion (break/continue/throw/return and iterator throws), including generator-safe synthetic close paths. Supports built-ins (Array/string/Int8Array/Int16Array/Int32Array/Float32Array/Float64Array), user-defined iterables via [Symbol.iterator], mapped and unmapped arguments objects, generator objects, and a best-effort fallback for .NET IEnumerable. Sparse array literals flow through the IR path as arrays whose elisions iterate as undefined values, so explicit array[Symbol.iterator](), destructuring, typed-array, generator, generator close-on-abrupt-completion, and arguments-object for-of cases in the bounded test262 coverage compile successfully."
+        "notes": "Lowered using the iterator protocol via JavaScriptRuntime.Object.GetIterator + iterator.next() + result.value/result.done, and invokes JavaScriptRuntime.Object.IteratorClose on normal destructuring completion and abrupt completion (break/continue/throw/return and iterator throws), including generator-safe synthetic close paths. Supports built-ins (Array/string/Int8Array/Int16Array/Int32Array/Float32Array/Float64Array), resizable ArrayBuffer-backed fixed-length and length-tracking typed arrays, user-defined iterables via [Symbol.iterator], mapped and unmapped arguments objects, generator objects, and a best-effort fallback for .NET IEnumerable. Sparse array literals flow through the IR path as arrays whose elisions iterate as undefined values, so explicit array[Symbol.iterator](), destructuring, typed-array, generator, generator close-on-abrupt-completion, and arguments-object for-of cases in the bounded test262 coverage compile successfully."
       },
       {
         "clause": "14.7.5.7",
@@ -467,7 +472,8 @@
           "tests/Jroc.Tests/ControlFlow/JavaScript/ControlFlow_ForIn_Shadowing_NoDuplicateKeys.js",
           "tests/Jroc.Test262.Tests/language/statements/for-in/JavaScript/cptn-decl-itr.js",
           "tests/Jroc.Test262.Tests/language/statements/for-in/JavaScript/cptn-decl-skip-itr.js",
-          "tests/Jroc.Test262.Tests/language/statements/for-in/JavaScript/cptn-decl-abrupt-empty.js"
+          "tests/Jroc.Test262.Tests/language/statements/for-in/JavaScript/cptn-decl-abrupt-empty.js",
+          "tests/Jroc.Test262.Tests/language/statements/for-in/JavaScript/resizable-buffer.js"
         ],
         "test262Paths": [
           "test/language/statements/for-in/cptn-decl-itr.js",
@@ -494,7 +500,7 @@
           "test/language/statements/for-in/S12.6.4_A7_T2.js",
           "test/language/block-scope/syntax/for-in/acquire-properties-from-array.js"
         ],
-        "notes": "Lowered via a native For-In Iterator (EnumerateObjectProperties/CreateForInIterator) and consumed through JavaScriptRuntime.Object.IteratorNext + IteratorResultDone/Value. Each next() step re-checks key presence so deletions during enumeration are respected, loop-head RHS evaluation observes let/const TDZ bindings in the loop lexical scope, and current bounded test262 coverage also exercises fresh per-iteration lexical bindings, destructuring heads, inherited array-index setters, and block-scoped array property acquisition. Prototype chain semantics are approximated for CLR objects by walking the CLR type hierarchy (declared public instance members per type); ExpandoObject/IDictionary do not currently expose a JS-observable [[Prototype]] chain."
+        "notes": "Lowered via a native For-In Iterator (EnumerateObjectProperties/CreateForInIterator) and consumed through JavaScriptRuntime.Object.IteratorNext + IteratorResultDone/Value. Each next() step re-checks key presence so deletions during enumeration are respected, including indexed properties on resizable ArrayBuffer-backed typed arrays. Loop-head RHS evaluation observes let/const TDZ bindings in the loop lexical scope, and current bounded test262 coverage also exercises fresh per-iteration lexical bindings, destructuring heads, inherited array-index setters, and block-scoped array property acquisition. Prototype chain semantics are approximated for CLR objects by walking the CLR type hierarchy (declared public instance members per type); ExpandoObject/IDictionary do not currently expose a JS-observable [[Prototype]] chain."
       },
       {
         "clause": "14.7.5",
@@ -516,9 +522,21 @@
         "testScripts": [
           "tests/Jroc.Test262.Tests/language/statements/for-in/Section14_7_5ExecutionTests01.cs",
           "tests/Jroc.Test262.Tests/language/statements/for-of/Section14_7_5ExecutionTests01.cs",
-          "tests/Jroc.Test262.Tests/language/statements/for-await-of/Section14_7_5ExecutionTests01.cs"
+          "tests/Jroc.Test262.Tests/language/statements/for-of/Section14_7_5ExecutionTests03.cs",
+          "tests/Jroc.Test262.Tests/language/statements/for-of/Section14_7_5ModuleExecutionTests01.cs",
+          "tests/Jroc.Test262.Tests/language/statements/for-await-of/Section14_7_5ExecutionTests01.cs",
+          "tests/Jroc.Test262.Tests/language/statements/await-using/syntax/Section14_7_5ExecutionTests01.cs",
+          "tests/Jroc.Test262.Tests/language/module-code/namespace/internals/Section14_7_5ModuleExecutionTests01.cs"
         ],
-        "notes": "The remaining pinned section corpus is checked in verbatim: 1,600 of the 1,997 newly ported cases pass and 397 are explicitly skipped with the unsupported behavior named at each test. Reaching Supported requires completing strict/yield early-error validation, destructuring binding and assignment lowering (including initializer function naming and abrupt completion), iterator next/return/close error precedence, async object-accessor analysis, loop lexical-environment lowering, module-namespace enumeration, resizable ArrayBuffer and explicit resource management dependencies, and eval support."
+        "test262Paths": [
+          "test/language/module-code/namespace/internals/enumerate-binding-uninit.js",
+          "test/language/statements/await-using/syntax/await-using-valid-for-await-using-of-of.js",
+          "test/language/statements/for-of/head-await-using-bound-names-fordecl-tdz.js",
+          "test/language/statements/for-of/head-await-using-fresh-binding-per-iteration.js",
+          "test/language/statements/for-of/head-using-bound-names-fordecl-tdz.js",
+          "test/language/statements/for-of/head-using-fresh-binding-per-iteration.js"
+        ],
+        "notes": "The remaining pinned section corpus is checked in verbatim: 1,612 of the 1,997 newly ported cases pass and 385 are explicitly skipped with the unsupported behavior named at each test. Static-module live bindings surface the module-namespace for-in TDZ error, resizable ArrayBuffer-backed typed arrays cover growth and shrinkage during for-in/of iteration, and using/await using for-of heads parse with lexical TDZ and fresh per-iteration bindings. Reaching Supported still requires strict/yield early-error validation, destructuring binding and assignment lowering (including initializer function naming and abrupt completion), iterator next/return/close error precedence, async object-accessor analysis, full disposable-resource lifetime semantics, full module namespace exotic-object semantics, and eval support."
       },
       {
         "clause": "14.7.2.2",

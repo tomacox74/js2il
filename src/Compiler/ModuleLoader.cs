@@ -581,6 +581,17 @@ function __jroc_esm_export(name, getter) {
     Object.defineProperty(exports, name, { enumerable: true, configurable: true, get: getter });
 }";
 
+    private static readonly string EsModuleBindingReadPrelude =
+@"function __jroc_esm_read_binding(value, name) {
+    if (value === __jroc_esm_uninitialized) {
+        throw new ReferenceError(""Cannot access '"" + name + ""' before initialization"");
+    }
+    return value;
+}";
+
+    private const string EsModuleTdzBindingsMarker =
+        "Object.defineProperty(exports, \"__jroc_esm_tdz_bindings\", { value: true, enumerable: false, configurable: false });";
+
     private readonly struct TextEdit
     {
         public int Start { get; }
@@ -1458,6 +1469,7 @@ function __jroc_esm_export(name, getter) {
         var exportPrelude = new List<(string Text, SourceSpan Span)>();
         var importPrelude = new List<(string Text, SourceSpan Span)>();
         var importedBindings = new Dictionary<string, string>(StringComparer.Ordinal);
+        var defaultExportBindings = new Dictionary<ExportDefaultDeclaration, string>(ReferenceEqualityComparer.Instance);
         var edits = new List<TextEdit>();
         var tempCounter = 0;
         var rewrittenAny = false;
@@ -1541,6 +1553,20 @@ function __jroc_esm_export(name, getter) {
                     case ExportDefaultDeclaration exportDefaultDeclaration:
                         rewrittenAny = true;
                         var exportDefaultSpan = SourceSpan.FromNode(statement, debugDocumentId);
+                        string? defaultExportBinding = null;
+                        if (exportDefaultDeclaration.Declaration is not FunctionDeclaration { Id: not null }
+                            and not ClassDeclaration { Id: not null })
+                        {
+                            defaultExportBinding = $"__jroc_esm_default_{tempCounter++}";
+                            defaultExportBindings.Add(exportDefaultDeclaration, defaultExportBinding);
+                            exportPreludeDeclarations.Add($"var {defaultExportBinding} = __jroc_esm_uninitialized;");
+                            exportPrelude.Add((
+                                CreateExportGetterLine(
+                                    "default",
+                                    $"__jroc_esm_read_binding({defaultExportBinding}, \"default\")"),
+                                exportDefaultSpan));
+                        }
+
                         switch (exportDefaultDeclaration.Declaration)
                         {
                             case FunctionDeclaration functionDeclaration when functionDeclaration.Id != null:
@@ -1554,7 +1580,14 @@ function __jroc_esm_export(name, getter) {
                                 break;
 
                             default:
-                                edits.Add(new TextEdit(statement.Start, statement.End, RewriteExportDefaultDeclaration(exportDefaultDeclaration, source, ref tempCounter)));
+                                edits.Add(new TextEdit(
+                                    statement.Start,
+                                    statement.End,
+                                    RewriteExportDefaultDeclaration(
+                                        exportDefaultDeclaration,
+                                        source,
+                                        ref tempCounter,
+                                        defaultExportBinding)));
                                 break;
                         }
                         break;
@@ -1585,6 +1618,28 @@ function __jroc_esm_export(name, getter) {
             }
 
             topLevelDebugSpanOverrides.Add(new TopLevelDebugSpanOverride(SourceSpan.FromNode(statement, debugDocumentId), false, statement));
+        }
+
+        if (defaultExportBindings.Count > 0
+            && !AppendHiddenSnippetDebugSpans(
+                topLevelDebugSpanOverrides,
+                "var __jroc_esm_uninitialized = {};",
+                debugDocumentId,
+                true,
+                out error))
+        {
+            return false;
+        }
+
+        if (defaultExportBindings.Count > 0
+            && !AppendHiddenSnippetDebugSpans(
+                topLevelDebugSpanOverrides,
+                EsModuleTdzBindingsMarker,
+                debugDocumentId,
+                true,
+                out error))
+        {
+            return false;
         }
 
         foreach (var exportPreludeDeclaration in exportPreludeDeclarations)
@@ -1681,9 +1736,14 @@ function __jroc_esm_export(name, getter) {
                     break;
 
                 case ExportDefaultDeclaration exportDefaultDeclaration:
+                    defaultExportBindings.TryGetValue(exportDefaultDeclaration, out var defaultExportBinding);
                     if (!AppendRepeatedSnippetDebugSpans(
                         topLevelDebugSpanOverrides,
-                        RewriteExportDefaultDeclaration(exportDefaultDeclaration, source, ref tempCounter),
+                        RewriteExportDefaultDeclaration(
+                            exportDefaultDeclaration,
+                            source,
+                            ref tempCounter,
+                            defaultExportBinding),
                         index => new TopLevelDebugSpanOverride(
                             originalSpan,
                             index != 0,
@@ -1713,6 +1773,11 @@ function __jroc_esm_export(name, getter) {
 
         var preludeBuilder = new StringBuilder();
         preludeBuilder.AppendLine();
+        if (defaultExportBindings.Count > 0)
+        {
+            preludeBuilder.AppendLine("var __jroc_esm_uninitialized = {};");
+            preludeBuilder.AppendLine(EsModuleTdzBindingsMarker);
+        }
         foreach (var line in exportPreludeDeclarations)
         {
             preludeBuilder.AppendLine(line);
@@ -1752,9 +1817,19 @@ function __jroc_esm_export(name, getter) {
         builder.Append(rewrittenPhase2);
         builder.AppendLine();
         builder.AppendLine(EsModuleInteropPrelude);
+        if (defaultExportBindings.Count > 0)
+        {
+            builder.AppendLine(EsModuleBindingReadPrelude);
+        }
         rewrittenSource = builder.ToString();
 
         if (!AppendHiddenSnippetDebugSpans(topLevelDebugSpanOverrides, EsModuleInteropPrelude, debugDocumentId, true, out error))
+        {
+            return false;
+        }
+
+        if (defaultExportBindings.Count > 0
+            && !AppendHiddenSnippetDebugSpans(topLevelDebugSpanOverrides, EsModuleBindingReadPrelude, debugDocumentId, true, out error))
         {
             return false;
         }
@@ -2108,7 +2183,11 @@ function __jroc_esm_export(name, getter) {
         return builder.ToString();
     }
 
-    private static string RewriteExportDefaultDeclaration(ExportDefaultDeclaration exportDefaultDeclaration, string source, ref int tempCounter)
+    private static string RewriteExportDefaultDeclaration(
+        ExportDefaultDeclaration exportDefaultDeclaration,
+        string source,
+        ref int tempCounter,
+        string? predeclaredBinding = null)
     {
         var builder = new StringBuilder();
 
@@ -2130,9 +2209,19 @@ function __jroc_esm_export(name, getter) {
             throw new NotSupportedException("Unsupported export default declaration node");
         }
 
-        var defaultTemp = $"__jroc_esm_default_{tempCounter++}";
-        builder.Append("var ").Append(defaultTemp).Append(" = ").Append(GetNodeSource(source, declarationNode)).AppendLine(";");
-        AppendExportGetter(builder, "default", defaultTemp);
+        var defaultTemp = predeclaredBinding ?? $"__jroc_esm_default_{tempCounter++}";
+        if (predeclaredBinding == null)
+        {
+            builder.Append("var ");
+        }
+        builder.Append(defaultTemp)
+            .Append(" = ")
+            .Append(GetNodeSource(source, declarationNode))
+            .AppendLine(";");
+        if (predeclaredBinding == null)
+        {
+            AppendExportGetter(builder, "default", defaultTemp);
+        }
         return builder.ToString();
     }
 

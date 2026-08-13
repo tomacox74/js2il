@@ -4,7 +4,7 @@
 
 [Back to Section28](Section28.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-06-24T17:00:14Z
+> Last generated (UTC): 2026-08-13T01:31:23Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -24,5 +24,5 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Module namespace exotic objects | Not Yet Supported |  |  | JROC supports CommonJS-style runtime module loading work, but ECMAScript module namespace exotic objects are not currently implemented or covered. |
+| Module namespace exotic objects | Not Yet Supported | [`enumerate-binding-uninit.js`](../../../tests/Jroc.Test262.Tests/language/module-code/namespace/internals/JavaScript/enumerate-binding-uninit.js) | `test/language/module-code/namespace/internals/enumerate-binding-uninit.js` | Full ECMAScript module namespace exotic objects are not implemented. Static-module interop does preserve the uninitialized live-binding ReferenceError when for-in enumerates a self namespace, but it is not a complete 28.3 implementation. |
 

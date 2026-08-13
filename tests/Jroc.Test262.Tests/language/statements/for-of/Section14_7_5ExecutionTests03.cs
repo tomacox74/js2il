@@ -360,7 +360,7 @@ public class Section14_7_5ExecutionTests03 : Jroc.Test262.Tests.language.stateme
     public Task generator_next_error_589()
         => ExecutionTest("generator-next-error");
 
-    [Fact(DisplayName = "head-await-using-bound-names-fordecl-tdz.js", Skip = "Explicit resource management is not supported by JROC.")]
+    [Fact(DisplayName = "head-await-using-bound-names-fordecl-tdz.js")]
     public Task head_await_using_bound_names_fordecl_tdz_590()
         => ExecutionTest("head-await-using-bound-names-fordecl-tdz");
 
@@ -460,7 +460,7 @@ public class Section14_7_5ExecutionTests03 : Jroc.Test262.Tests.language.stateme
     public Task head_lhs_non_asnmt_trgt_614()
         => CompilationFailureTest("head-lhs-non-asnmt-trgt", string.Empty);
 
-    [Fact(DisplayName = "head-using-bound-names-fordecl-tdz.js", Skip = "Explicit resource management is not supported by JROC.")]
+    [Fact(DisplayName = "head-using-bound-names-fordecl-tdz.js")]
     public Task head_using_bound_names_fordecl_tdz_615()
         => ExecutionTest("head-using-bound-names-fordecl-tdz");
 
@@ -472,7 +472,7 @@ public class Section14_7_5ExecutionTests03 : Jroc.Test262.Tests.language.stateme
     public Task head_using_bound_names_let_617()
         => CompilationFailureTest("head-using-bound-names-let", string.Empty);
 
-    [Fact(DisplayName = "head-using-fresh-binding-per-iteration.js", Skip = "Explicit resource management is not supported by JROC.")]
+    [Fact(DisplayName = "head-using-fresh-binding-per-iteration.js")]
     public Task head_using_fresh_binding_per_iteration_618()
         => ExecutionTest("head-using-fresh-binding-per-iteration");
 
@@ -648,23 +648,23 @@ public class Section14_7_5ExecutionTests03 : Jroc.Test262.Tests.language.stateme
     public Task throw_661()
         => ExecutionTest("throw");
 
-    [Fact(DisplayName = "typedarray-backed-by-resizable-buffer-grow-before-end.js", Skip = "Resizable ArrayBuffer is not supported by JROC.")]
+    [Fact(DisplayName = "typedarray-backed-by-resizable-buffer-grow-before-end.js")]
     public Task typedarray_backed_by_resizable_buffer_grow_before_end_662()
         => ExecutionTest("typedarray-backed-by-resizable-buffer-grow-before-end");
 
-    [Fact(DisplayName = "typedarray-backed-by-resizable-buffer-grow-mid-iteration.js", Skip = "Resizable ArrayBuffer is not supported by JROC.")]
+    [Fact(DisplayName = "typedarray-backed-by-resizable-buffer-grow-mid-iteration.js")]
     public Task typedarray_backed_by_resizable_buffer_grow_mid_iteration_663()
         => ExecutionTest("typedarray-backed-by-resizable-buffer-grow-mid-iteration");
 
-    [Fact(DisplayName = "typedarray-backed-by-resizable-buffer-shrink-mid-iteration.js", Skip = "Resizable ArrayBuffer is not supported by JROC.")]
+    [Fact(DisplayName = "typedarray-backed-by-resizable-buffer-shrink-mid-iteration.js")]
     public Task typedarray_backed_by_resizable_buffer_shrink_mid_iteration_664()
         => ExecutionTest("typedarray-backed-by-resizable-buffer-shrink-mid-iteration");
 
-    [Fact(DisplayName = "typedarray-backed-by-resizable-buffer-shrink-to-zero-mid-iteration.js", Skip = "Resizable ArrayBuffer is not supported by JROC.")]
+    [Fact(DisplayName = "typedarray-backed-by-resizable-buffer-shrink-to-zero-mid-iteration.js")]
     public Task typedarray_backed_by_resizable_buffer_shrink_to_zero_mid_iteration_665()
         => ExecutionTest("typedarray-backed-by-resizable-buffer-shrink-to-zero-mid-iteration");
 
-    [Fact(DisplayName = "typedarray-backed-by-resizable-buffer.js", Skip = "Resizable ArrayBuffer is not supported by JROC.")]
+    [Fact(DisplayName = "typedarray-backed-by-resizable-buffer.js")]
     public Task typedarray_backed_by_resizable_buffer_666()
         => ExecutionTest("typedarray-backed-by-resizable-buffer");
 

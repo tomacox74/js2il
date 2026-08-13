@@ -1669,6 +1669,7 @@ namespace Jroc.SymbolTables
                                 VariableDeclarationKind.Var => BindingKind.Var,
                                 VariableDeclarationKind.Let => BindingKind.Let,
                                 VariableDeclarationKind.Const => BindingKind.Const,
+                                VariableDeclarationKind.Using or VariableDeclarationKind.AwaitUsing => BindingKind.Let,
                                 _ => BindingKind.Var
                             };
 
@@ -1724,6 +1725,7 @@ namespace Jroc.SymbolTables
                                 VariableDeclarationKind.Var => BindingKind.Var,
                                 VariableDeclarationKind.Let => BindingKind.Let,
                                 VariableDeclarationKind.Const => BindingKind.Const,
+                                VariableDeclarationKind.Using or VariableDeclarationKind.AwaitUsing => BindingKind.Let,
                                 _ => BindingKind.Var
                             };
 
@@ -1797,6 +1799,7 @@ namespace Jroc.SymbolTables
                                 VariableDeclarationKind.Var => BindingKind.Var,
                                 VariableDeclarationKind.Let => BindingKind.Let,
                                 VariableDeclarationKind.Const => BindingKind.Const,
+                                VariableDeclarationKind.Using or VariableDeclarationKind.AwaitUsing => BindingKind.Let,
                                 _ => BindingKind.Var
                             };
 
@@ -2196,7 +2199,10 @@ namespace Jroc.SymbolTables
                     // loop-head bindings can be materialized per iteration.
                     var forOfScope = currentScope;
                     if (forOf.Left is VariableDeclaration forOfInitDecl &&
-                        (forOfInitDecl.Kind == VariableDeclarationKind.Let || forOfInitDecl.Kind == VariableDeclarationKind.Const))
+                        (forOfInitDecl.Kind is VariableDeclarationKind.Let
+                            or VariableDeclarationKind.Const
+                            or VariableDeclarationKind.Using
+                            or VariableDeclarationKind.AwaitUsing))
                     {
                         var loc = forOfInitDecl.Location.Start;
                         var forScopeName = $"ForOf_L{loc.Line}C{loc.Column}";
@@ -2212,6 +2218,7 @@ namespace Jroc.SymbolTables
                             VariableDeclarationKind.Var => BindingKind.Var,
                             VariableDeclarationKind.Let => BindingKind.Let,
                             VariableDeclarationKind.Const => BindingKind.Const,
+                            VariableDeclarationKind.Using or VariableDeclarationKind.AwaitUsing => BindingKind.Let,
                             _ => BindingKind.Var
                         };
 

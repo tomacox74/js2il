@@ -13,6 +13,9 @@ namespace Jroc.Tests.TypedArray
         public Task ArrayBuffer_Construct_ByteLength() { var testName = nameof(ArrayBuffer_Construct_ByteLength); return ExecutionTest(testName); }
 
         [Fact]
+        public Task ArrayBuffer_Resizable_TypedArray_View() { var testName = nameof(ArrayBuffer_Resizable_TypedArray_View); return ExecutionTest(testName); }
+
+        [Fact]
         public Task ArrayBuffer_IsView_DataView() { var testName = nameof(ArrayBuffer_IsView_DataView); return ExecutionTest(testName); }
 
         [Fact]

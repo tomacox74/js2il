@@ -49,6 +49,8 @@ public class JavaScriptAstValidator : IAstValidator
         // In particular, break/continue target rules are specified under iteration statements.
         ValidateIterationStatementEarlyErrors(ast, result);
 
+        ValidateUsingLoopHeadDeclarations(ast, result);
+
         // Validate async/await usage - await is only valid inside async functions.
         ValidateAsyncAwait(ast, result);
 
@@ -348,6 +350,42 @@ public class JavaScriptAstValidator : IAstValidator
         });
 
         return result;
+    }
+
+    private static void ValidateUsingLoopHeadDeclarations(
+        Acornima.Ast.Program ast,
+        ValidationResult result)
+    {
+        var parser = new JavaScriptParser();
+        var supportedLoopHeads = new HashSet<Node>(ReferenceEqualityComparer.Instance);
+
+        parser.VisitAst(ast, node =>
+        {
+            if (node is ForOfStatement
+                {
+                    Left: VariableDeclaration declaration
+                }
+                && declaration.Kind is VariableDeclarationKind.Using
+                    or VariableDeclarationKind.AwaitUsing)
+            {
+                supportedLoopHeads.Add(declaration);
+            }
+        });
+
+        parser.VisitAst(ast, node =>
+        {
+            if (node is not VariableDeclaration declaration
+                || declaration.Kind is not (VariableDeclarationKind.Using
+                    or VariableDeclarationKind.AwaitUsing)
+                || supportedLoopHeads.Contains(declaration))
+            {
+                return;
+            }
+
+            result.Errors.Add(
+                $"using declarations are currently supported only in for-of and for-await-of loop heads (line {declaration.Location.Start.Line})");
+            result.IsValid = false;
+        });
     }
 
     private sealed class ScopeFrame

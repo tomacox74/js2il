@@ -8,7 +8,7 @@ public class Section14_7_5ExecutionTests01 : Jroc.Test262.Tests.language.stateme
     public Task await_using_invalid_for_in_1()
         => CompilationFailureTest("await-using-invalid-for-in", string.Empty);
 
-    [Fact(DisplayName = "await-using-valid-for-await-using-of-of.js", Skip = "Explicit resource management is not supported by JROC.")]
+    [Fact(DisplayName = "await-using-valid-for-await-using-of-of.js")]
     public Task await_using_valid_for_await_using_of_of_2()
         => ExecutionTest("await-using-valid-for-await-using-of-of");
 }

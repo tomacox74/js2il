@@ -65,6 +65,7 @@ internal sealed class ModuleExecutor
 
         // Node semantics: require.main is the entry module.
         requireService.SetMainModule(mainModule);
+        requireService.RegisterCompiledMainModule(mainModule);
         mainRequireTarget.SetMainModule(mainModule);
         RuntimeServices.RegisterModuleRequire(mainModule.id, mainRequire);
         if (!string.Equals(mainModule.filename, mainModule.id, StringComparison.OrdinalIgnoreCase))
@@ -74,10 +75,6 @@ internal sealed class ModuleExecutor
 
         // Set the main module as the current parent for require() calls
         requireService.SetCurrentParent(mainModule);
-
-        // Register the entry module in the require cache before running its body so a self- or cyclic
-        // require of the entry module returns the in-progress exports rather than re-executing it.
-        requireService.RegisterMainCompiledModuleInstance(mainModule, mainModuleId);
 
         // Invoke script with module parameters
         // exports is initially the same object as module.exports

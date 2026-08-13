@@ -2692,6 +2692,7 @@ partial class HIRMethodBuilder
                         VariableDeclarationKind.Var => BindingKind.Var,
                         VariableDeclarationKind.Let => BindingKind.Let,
                         VariableDeclarationKind.Const => BindingKind.Const,
+                        VariableDeclarationKind.Using or VariableDeclarationKind.AwaitUsing => BindingKind.Let,
                         _ => BindingKind.Var
                     };
 
@@ -2748,7 +2749,10 @@ partial class HIRMethodBuilder
                         declarationKind = MapDeclarationKind(forOfDecl.Kind);
                         declIdNode = forOfDecl.Declarations[0].Id;
 
-                        if (forOfDecl.Kind == VariableDeclarationKind.Let || forOfDecl.Kind == VariableDeclarationKind.Const)
+                        if (forOfDecl.Kind is VariableDeclarationKind.Let
+                            or VariableDeclarationKind.Const
+                            or VariableDeclarationKind.Using
+                            or VariableDeclarationKind.AwaitUsing)
                         {
                             forScope = FindChildScopeForAstNode(forOfDecl);
                         }

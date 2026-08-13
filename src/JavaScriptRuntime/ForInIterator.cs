@@ -348,11 +348,20 @@ public sealed class ForInIterator : IJavaScriptIterator<string>
         // and enumerable according to descriptor semantics.
         if (target is JsObject)
         {
-            bool presentInDescriptor = PropertyDescriptorStore.TryGetOwn(target, key, out _);
+            bool presentInDescriptor = PropertyDescriptorStore.TryGetOwn(target, key, out var descriptor);
             bool presentInBacking = !PropertyDescriptorStore.IsDeleted(target, key)
                 && ObjectRuntime.HasOwnValue(target, key);
             if (!presentInDescriptor && !presentInBacking)
                 return false;
+
+            if (descriptor.Kind == JsPropertyDescriptorKind.Accessor
+                && ObjectRuntime.GetProperty(target, "__jroc_esm_tdz_bindings") is true)
+            {
+                // Compiler-marked module bindings read their live value while
+                // materializing the descriptor, including a TDZ ReferenceError.
+                _ = ObjectRuntime.GetProperty(target, key);
+            }
+
             return PropertyDescriptorStore.IsEnumerableOrDefaultTrue(target, key);
         }
 

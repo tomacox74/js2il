@@ -38,19 +38,11 @@ namespace JavaScriptRuntime.CommonJS
             _mainModule = mainModule;
         }
 
-        /// <summary>
-        /// Registers the entry (main) compiled module in the require cache before its body executes so
-        /// that a self- or cyclic <c>require</c> of the entry module observes the in-progress exports
-        /// object (CommonJS live-binding semantics) instead of re-executing the module body.
-        /// </summary>
-        internal void RegisterMainCompiledModuleInstance(Module mainModule, string canonicalId)
+        internal void RegisterCompiledMainModule(Module mainModule)
         {
-            if (string.IsNullOrWhiteSpace(canonicalId))
-            {
-                return;
-            }
+            ArgumentNullException.ThrowIfNull(mainModule);
 
-            var cacheKey = "compiled:" + canonicalId;
+            var cacheKey = "compiled:" + NormalizeModuleIdKey(mainModule.id);
             _modules[cacheKey] = mainModule;
             _instances[cacheKey] = mainModule.exports ?? new object();
         }
@@ -271,7 +263,9 @@ namespace JavaScriptRuntime.CommonJS
                 if (_modules.TryGetValue(cacheKey, out var existingModule))
                 {
                     var parentModuleForCache = parentModuleOverride ?? _currentParentModule;
-                    if (parentModuleForCache != null && !asMain)
+                    if (parentModuleForCache != null
+                        && !asMain
+                        && !ReferenceEquals(parentModuleForCache, existingModule))
                     {
                         parentModuleForCache.AddChild(existingModule);
                     }
