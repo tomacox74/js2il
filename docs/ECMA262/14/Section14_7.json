@@ -515,6 +515,37 @@
         "notes": "Lowered using the async iterator protocol (GetAsyncIterator/AsyncIteratorNext/AsyncIteratorClose), including awaiting AsyncIteratorClose on abrupt completion (break/throw/return). Async iterator acquisition currently treats an abrupt Symbol.asyncIterator property read as an absent method, and AsyncIteratorClose does not validate a custom return() result after awaiting it."
       },
       {
+        "clause": "14.7.5.6",
+        "feature": "for-in/of lexical loop-head and body environment boundaries",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-runtime-semantics-forinofheadevaluation",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/language/statements/for-in/JavaScript/scope-body-lex-close.js",
+          "tests/Jroc.Test262.Tests/language/statements/for-in/JavaScript/scope-body-lex-open.js",
+          "tests/Jroc.Test262.Tests/language/statements/for-in/JavaScript/scope-body-var-none.js",
+          "tests/Jroc.Test262.Tests/language/statements/for-in/JavaScript/scope-head-lex-close.js",
+          "tests/Jroc.Test262.Tests/language/statements/for-in/JavaScript/scope-head-lex-open.js",
+          "tests/Jroc.Test262.Tests/language/statements/for-of/JavaScript/scope-body-lex-close.js",
+          "tests/Jroc.Test262.Tests/language/statements/for-of/JavaScript/scope-body-lex-open.js",
+          "tests/Jroc.Test262.Tests/language/statements/for-of/JavaScript/scope-body-var-none.js",
+          "tests/Jroc.Test262.Tests/language/statements/for-of/JavaScript/scope-head-lex-close.js",
+          "tests/Jroc.Test262.Tests/language/statements/for-of/JavaScript/scope-head-lex-open.js"
+        ],
+        "test262Paths": [
+          "test/language/statements/for-in/scope-body-lex-close.js",
+          "test/language/statements/for-in/scope-body-lex-open.js",
+          "test/language/statements/for-in/scope-body-var-none.js",
+          "test/language/statements/for-in/scope-head-lex-close.js",
+          "test/language/statements/for-in/scope-head-lex-open.js",
+          "test/language/statements/for-of/scope-body-lex-close.js",
+          "test/language/statements/for-of/scope-body-lex-open.js",
+          "test/language/statements/for-of/scope-body-var-none.js",
+          "test/language/statements/for-of/scope-head-lex-close.js",
+          "test/language/statements/for-of/scope-head-lex-open.js"
+        ],
+        "notes": "The compiler materializes a TDZ-initialized head environment while evaluating the RHS, then switches to a distinct iteration environment before binding each value. Closures from the RHS retain the uninitialized head binding when the loop is empty, defaults and body closures retain the initialized iteration binding, and var declarations resolve through the surrounding variable environment."
+      },
+      {
         "clause": "14.7.5.7",
         "feature": "object-rest destructuring getters in for-of and for-await-of heads",
         "status": "Supported",

@@ -52,6 +52,7 @@ public sealed partial class HIRToLIRLowerer
             var perIterationBindings = loopHeadLexicalBindings.Where(b => b.IsCaptured).ToList();
 
             bool useTempPerIterationScope = false;
+            TempVariable loopHeadScopeTemp = default;
             TempVariable loopScopeTemp = default;
             ScopeId loopScopeId = default;
             string? loopScopeName = null;
@@ -71,11 +72,11 @@ public sealed partial class HIRToLIRLowerer
                     loopScopeName = ScopeNaming.GetRegistryScopeName(declaringScope);
                     loopScopeId = new ScopeId(loopScopeName);
 
-                    loopScopeTemp = CreateTempVariable();
-                    DefineTempStorage(loopScopeTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object), ScopeName: loopScopeName));
-                    SetTempVariableSlot(loopScopeTemp, CreateAnonymousVariableSlot("$forAwaitOf_lexenv", new ValueStorage(ValueStorageKind.Reference, typeof(object), ScopeName: loopScopeName)));
-                    _methodBodyIR.Instructions.Add(new LIRCreateScopeInstance(loopScopeId, loopScopeTemp));
-                    _activeScopeTempsByScopeName[loopScopeName] = loopScopeTemp;
+                    loopHeadScopeTemp = CreateLoopScopeInstance(
+                        loopScopeId,
+                        loopScopeName,
+                        "$forAwaitOf_head_lexenv");
+                    _activeScopeTempsByScopeName[loopScopeName] = loopHeadScopeTemp;
                 }
             }
 
@@ -93,6 +94,15 @@ public sealed partial class HIRToLIRLowerer
                 lirInstructions.Add(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.ObjectRuntime), nameof(JavaScriptRuntime.ObjectRuntime.GetAsyncIterator), new[] { rhsBoxed }, iterTemp));
                 DefineTempStorage(iterTemp, new ValueStorage(ValueStorageKind.Reference, typeof(JavaScriptRuntime.IJavaScriptAsyncIterator)));
                 SetTempVariableSlot(iterTemp, CreateAnonymousVariableSlot("$forAwaitOf_iter", new ValueStorage(ValueStorageKind.Reference, typeof(JavaScriptRuntime.IJavaScriptAsyncIterator))));
+
+                if (useTempPerIterationScope)
+                {
+                    loopScopeTemp = CreateLoopScopeInstance(
+                        loopScopeId,
+                        loopScopeName!,
+                        "$forAwaitOf_lexenv");
+                    _activeScopeTempsByScopeName[loopScopeName!] = loopScopeTemp;
+                }
 
                 var completedTemp = CreateTempVariable();
                 DefineTempStorage(completedTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
@@ -428,6 +438,7 @@ public sealed partial class HIRToLIRLowerer
             var perIterationBindings = loopHeadLexicalBindings.Where(b => b.IsCaptured).ToList();
 
             bool useTempPerIterationScope = false;
+            TempVariable loopHeadScopeTemp = default;
             TempVariable loopScopeTemp = default;
             ScopeId loopScopeId = default;
             string? loopScopeName = null;
@@ -445,11 +456,11 @@ public sealed partial class HIRToLIRLowerer
                     loopScopeName = ScopeNaming.GetRegistryScopeName(declaringScope);
                     loopScopeId = new ScopeId(loopScopeName);
 
-                    loopScopeTemp = CreateTempVariable();
-                    DefineTempStorage(loopScopeTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object), ScopeName: loopScopeName));
-                    SetTempVariableSlot(loopScopeTemp, CreateAnonymousVariableSlot("$forOf_lexenv", new ValueStorage(ValueStorageKind.Reference, typeof(object), ScopeName: loopScopeName)));
-                    _methodBodyIR.Instructions.Add(new LIRCreateScopeInstance(loopScopeId, loopScopeTemp));
-                    _activeScopeTempsByScopeName[loopScopeName] = loopScopeTemp;
+                    loopHeadScopeTemp = CreateLoopScopeInstance(
+                        loopScopeId,
+                        loopScopeName,
+                        "$forOf_head_lexenv");
+                    _activeScopeTempsByScopeName[loopScopeName] = loopHeadScopeTemp;
                 }
             }
 
@@ -478,6 +489,15 @@ public sealed partial class HIRToLIRLowerer
                     lirInstructions.Add(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.ObjectRuntime), nameof(JavaScriptRuntime.ObjectRuntime.GetIterator), new[] { rhsBoxed }, iterTemp));
                     DefineTempStorage(iterTemp, new ValueStorage(ValueStorageKind.Reference, typeof(JavaScriptRuntime.IJavaScriptIterator)));
                     SetTempVariableSlot(iterTemp, CreateAnonymousVariableSlot("$forOf_iter", new ValueStorage(ValueStorageKind.Reference, typeof(JavaScriptRuntime.IJavaScriptIterator))));
+
+                    if (useTempPerIterationScope)
+                    {
+                        loopScopeTemp = CreateLoopScopeInstance(
+                            loopScopeId,
+                            loopScopeName!,
+                            "$forOf_lexenv");
+                        _activeScopeTempsByScopeName[loopScopeName!] = loopScopeTemp;
+                    }
 
                     var completedTemp = CreateTempVariable();
                     DefineTempStorage(completedTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
@@ -839,6 +859,15 @@ public sealed partial class HIRToLIRLowerer
                 // NOTE: temp-local allocation is linear and does not account for loop back-edges.
                 // Pin loop-carry temps to stable variable slots so values remain correct across iterations.
                 SetTempVariableSlot(iterTemp, CreateAnonymousVariableSlot("$forOf_iter", new ValueStorage(ValueStorageKind.Reference, typeof(JavaScriptRuntime.IJavaScriptIterator))));
+
+                if (useTempPerIterationScope)
+                {
+                    loopScopeTemp = CreateLoopScopeInstance(
+                        loopScopeId,
+                        loopScopeName!,
+                        "$forOf_lexenv");
+                    _activeScopeTempsByScopeName[loopScopeName!] = loopScopeTemp;
+                }
 
                 var completedTemp = CreateTempVariable();
                 DefineTempStorage(completedTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));

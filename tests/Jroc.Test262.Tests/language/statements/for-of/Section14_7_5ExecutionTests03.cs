@@ -600,23 +600,23 @@ public class Section14_7_5ExecutionTests03 : Jroc.Test262.Tests.language.stateme
     public Task return_649()
         => ExecutionTest("return");
 
-    [Fact(DisplayName = "scope-body-lex-close.js", Skip = "Pending complete for-in/of destructuring lowering.")]
+    [Fact(DisplayName = "scope-body-lex-close.js")]
     public Task scope_body_lex_close_650()
         => ExecutionTest("scope-body-lex-close");
 
-    [Fact(DisplayName = "scope-body-lex-open.js", Skip = "Pending complete loop lexical-environment lowering.")]
+    [Fact(DisplayName = "scope-body-lex-open.js")]
     public Task scope_body_lex_open_651()
         => ExecutionTest("scope-body-lex-open");
 
-    [Fact(DisplayName = "scope-body-var-none.js", Skip = "Pending complete loop lexical-environment lowering.")]
+    [Fact(DisplayName = "scope-body-var-none.js")]
     public Task scope_body_var_none_652()
         => ExecutionTest("scope-body-var-none");
 
-    [Fact(DisplayName = "scope-head-lex-close.js", Skip = "Pending complete loop lexical-environment lowering.")]
+    [Fact(DisplayName = "scope-head-lex-close.js")]
     public Task scope_head_lex_close_653()
         => ExecutionTest("scope-head-lex-close");
 
-    [Fact(DisplayName = "scope-head-lex-open.js", Skip = "Pending complete loop lexical-environment lowering.")]
+    [Fact(DisplayName = "scope-head-lex-open.js")]
     public Task scope_head_lex_open_654()
         => ExecutionTest("scope-head-lex-open");
 

@@ -292,23 +292,23 @@ public class Section14_7_5ExecutionTests01 : Jroc.Test262.Tests.language.stateme
     public Task resizable_buffer_72()
         => ExecutionTest("resizable-buffer");
 
-    [Fact(DisplayName = "scope-body-lex-close.js", Skip = "Pending complete loop lexical-environment lowering.")]
+    [Fact(DisplayName = "scope-body-lex-close.js")]
     public Task scope_body_lex_close_73()
         => ExecutionTest("scope-body-lex-close");
 
-    [Fact(DisplayName = "scope-body-lex-open.js", Skip = "Pending complete loop lexical-environment lowering.")]
+    [Fact(DisplayName = "scope-body-lex-open.js")]
     public Task scope_body_lex_open_74()
         => ExecutionTest("scope-body-lex-open");
 
-    [Fact(DisplayName = "scope-body-var-none.js", Skip = "Pending complete loop lexical-environment lowering.")]
+    [Fact(DisplayName = "scope-body-var-none.js")]
     public Task scope_body_var_none_75()
         => ExecutionTest("scope-body-var-none");
 
-    [Fact(DisplayName = "scope-head-lex-close.js", Skip = "Pending complete loop lexical-environment lowering.")]
+    [Fact(DisplayName = "scope-head-lex-close.js")]
     public Task scope_head_lex_close_76()
         => ExecutionTest("scope-head-lex-close");
 
-    [Fact(DisplayName = "scope-head-lex-open.js", Skip = "Pending complete loop lexical-environment lowering.")]
+    [Fact(DisplayName = "scope-head-lex-open.js")]
     public Task scope_head_lex_open_77()
         => ExecutionTest("scope-head-lex-open");
 

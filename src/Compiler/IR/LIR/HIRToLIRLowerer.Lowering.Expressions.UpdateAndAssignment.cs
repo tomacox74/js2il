@@ -1533,6 +1533,19 @@ public sealed partial class HIRToLIRLowerer
         _methodBodyIR.Instructions.Add(new LIRCopyTemp(newScopeTemp, scopeInstanceTemp));
     }
 
+    private TempVariable CreateLoopScopeInstance(ScopeId scopeId, string scopeName, string slotName)
+    {
+        var scopeTemp = CreateTempVariable();
+        DefineTempStorage(scopeTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object), ScopeName: scopeName));
+        SetTempVariableSlot(
+            scopeTemp,
+            CreateAnonymousVariableSlot(
+                slotName,
+                new ValueStorage(ValueStorageKind.Reference, typeof(object), ScopeName: scopeName)));
+        _methodBodyIR.Instructions.Add(new LIRCreateScopeInstance(scopeId, scopeTemp));
+        return scopeTemp;
+    }
+
     private bool TryLowerAssignmentExpression(HIRAssignmentExpression assignExpr, out TempVariable resultTempVar, bool resultUsed = true)
     {
         resultTempVar = default;
