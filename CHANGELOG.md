@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.12.5 - 2026-08-13
+
 - runtime/test262: close #1792 by adding resizable `ArrayBuffer` support for
   length-tracking and fixed-length typed-array views. Typed-array iteration and
   indexed enumeration now observe growth and shrinkage, including
