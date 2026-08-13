@@ -6,6 +6,9 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- compiler/test262: upgrade Acornima to 1.7.0 and support `using` and
+  `await using` declarations in `for-of` heads as lexical bindings, including
+  TDZ checks and fresh captured bindings per iteration.
 - compiler/runtime/test262: fix #1794 by preserving an uninitialized default
   export's live binding across a self import. Enumerating that namespace with
   `for-in` now throws the required `ReferenceError` before the default export

@@ -8,7 +8,7 @@ public class Section14_7_5ModuleExecutionTests01 : Jroc.Test262.Tests.language.m
     public Task head_await_using_bound_names_in_stmt_1()
         => CompilationFailureTest("head-await-using-bound-names-in-stmt", string.Empty);
 
-    [Fact(DisplayName = "head-await-using-fresh-binding-per-iteration.js", Skip = "Explicit resource management is not supported by JROC.")]
+    [Fact(DisplayName = "head-await-using-fresh-binding-per-iteration.js")]
     public Task head_await_using_fresh_binding_per_iteration_2()
         => ExecutionTest("head-await-using-fresh-binding-per-iteration");
 }
