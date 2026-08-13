@@ -267,7 +267,7 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 194 (0xc2)
+			// Code size: 198 (0xc6)
 			.maxstack 10
 			.locals init (
 				[0] class [JavaScriptRuntime]JavaScriptRuntime.IJavaScriptIterator,
@@ -310,59 +310,63 @@
 			.try
 			{
 				// loop start (head: IL_004a)
-					IL_004a: ldloc.0
-					IL_004b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorNext(object)
-					IL_0050: stloc.s 4
-					IL_0052: ldloc.s 4
-					IL_0054: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorResultDone(object)
-					IL_0059: stloc.s 7
-					IL_005b: ldloc.s 7
-					IL_005d: brtrue IL_0089
+					IL_004a: ldc.i4.1
+					IL_004b: stloc.1
+					IL_004c: ldloc.0
+					IL_004d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorNext(object)
+					IL_0052: stloc.s 4
+					IL_0054: ldloc.s 4
+					IL_0056: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorResultDone(object)
+					IL_005b: stloc.s 7
+					IL_005d: ldloc.s 7
+					IL_005f: brtrue IL_008d
 
-					IL_0062: ldloc.s 4
-					IL_0064: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorResultValue(object)
-					IL_0069: stloc.s 4
-					IL_006b: ldloc.s 4
-					IL_006d: stloc.3
-					IL_006e: ldarg.1
-					IL_006f: ldloc.3
-					IL_0070: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DeleteItemNonStrict(object, object)
-					IL_0075: stloc.s 7
-					IL_0077: br IL_004a
+					IL_0064: ldloc.s 4
+					IL_0066: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorResultValue(object)
+					IL_006b: stloc.s 4
+					IL_006d: ldc.i4.0
+					IL_006e: stloc.1
+					IL_006f: ldloc.s 4
+					IL_0071: stloc.3
+					IL_0072: ldarg.1
+					IL_0073: ldloc.3
+					IL_0074: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DeleteItemNonStrict(object, object)
+					IL_0079: stloc.s 7
+					IL_007b: br IL_004a
 				// end loop
-				IL_007c: ldloc.0
-				IL_007d: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorClose(object)
-				IL_0082: ldc.i4.1
-				IL_0083: stloc.2
-				IL_0084: leave IL_00a3
+				IL_0080: ldloc.0
+				IL_0081: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorClose(object)
+				IL_0086: ldc.i4.1
+				IL_0087: stloc.2
+				IL_0088: leave IL_00a7
 
-				IL_0089: ldc.i4.1
-				IL_008a: stloc.1
-				IL_008b: leave IL_00a3
+				IL_008d: ldc.i4.1
+				IL_008e: stloc.1
+				IL_008f: leave IL_00a7
 			} // end .try
 			finally
 			{
-				IL_0090: ldloc.1
-				IL_0091: brtrue IL_00a2
+				IL_0094: ldloc.1
+				IL_0095: brtrue IL_00a6
 
-				IL_0096: ldloc.2
-				IL_0097: brtrue IL_00a2
+				IL_009a: ldloc.2
+				IL_009b: brtrue IL_00a6
 
-				IL_009c: ldloc.0
-				IL_009d: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorCloseForThrowCompletion(object)
+				IL_00a0: ldloc.0
+				IL_00a1: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorCloseForThrowCompletion(object)
 
-				IL_00a2: endfinally
+				IL_00a6: endfinally
 			} // end handler
 
-			IL_00a3: ldarg.1
-			IL_00a4: call object [JavaScriptRuntime]JavaScriptRuntime.Object::keys(object)
-			IL_00a9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_00ae: ldstr "join"
-			IL_00b3: ldstr ","
-			IL_00b8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_00bd: stloc.s 4
-			IL_00bf: ldloc.s 4
-			IL_00c1: ret
+			IL_00a7: ldarg.1
+			IL_00a8: call object [JavaScriptRuntime]JavaScriptRuntime.Object::keys(object)
+			IL_00ad: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_00b2: ldstr "join"
+			IL_00b7: ldstr ","
+			IL_00bc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_00c1: stloc.s 4
+			IL_00c3: ldloc.s 4
+			IL_00c5: ret
 		} // end of method ArrowFunction_L1C26::__js_call__
 
 	} // end of class ArrowFunction_L1C26

@@ -2168,7 +2168,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 2038 (0x7f6)
+		// Code size: 2056 (0x808)
 		.maxstack 12
 		.locals init (
 			[0] class Modules.Variable_ConstPrimitivePropagation/Scope,
@@ -2515,478 +2515,490 @@
 			.try
 			{
 				IL_031f: ldloc.s 13
-				IL_0321: brtrue IL_0347
+				IL_0321: brtrue IL_034d
 
-				IL_0326: ldloc.s 11
-				IL_0328: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorDestructuringStep(object)
-				IL_032d: stloc.s 34
-				IL_032f: ldloc.s 34
-				IL_0331: brfalse IL_0344
+				IL_0326: ldc.i4.1
+				IL_0327: stloc.s 13
+				IL_0329: ldloc.s 11
+				IL_032b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorDestructuringStep(object)
+				IL_0330: stloc.s 34
+				IL_0332: ldloc.s 34
+				IL_0334: brfalse IL_034a
 
-				IL_0336: ldloc.s 34
-				IL_0338: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorDestructuringStepValue(object)
-				IL_033d: stloc.s 34
-				IL_033f: br IL_0347
+				IL_0339: ldc.i4.0
+				IL_033a: stloc.s 13
+				IL_033c: ldloc.s 34
+				IL_033e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorDestructuringStepValue(object)
+				IL_0343: stloc.s 34
+				IL_0345: br IL_034d
 
-				IL_0344: ldc.i4.1
-				IL_0345: stloc.s 13
+				IL_034a: ldc.i4.1
+				IL_034b: stloc.s 13
 
-				IL_0347: ldstr "Assignment to constant variable."
-				IL_034c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-				IL_0351: throw
+				IL_034d: ldstr "Assignment to constant variable."
+				IL_0352: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
+				IL_0357: throw
 
-				IL_0352: ldloc.s 13
-				IL_0354: brtrue IL_0363
+				IL_0358: ldloc.s 13
+				IL_035a: brtrue IL_0369
 
-				IL_0359: ldc.i4.1
-				IL_035a: stloc.s 12
-				IL_035c: ldloc.s 11
-				IL_035e: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorClose(object)
+				IL_035f: ldc.i4.1
+				IL_0360: stloc.s 12
+				IL_0362: ldloc.s 11
+				IL_0364: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorClose(object)
 
-				IL_0363: ldc.i4.1
-				IL_0364: stloc.s 12
-				IL_0366: leave IL_0381
+				IL_0369: ldc.i4.1
+				IL_036a: stloc.s 12
+				IL_036c: leave IL_0387
 			} // end .try
 			finally
 			{
-				IL_036b: ldloc.s 12
-				IL_036d: brtrue IL_0380
+				IL_0371: ldloc.s 12
+				IL_0373: brtrue IL_0386
 
-				IL_0372: ldloc.s 13
-				IL_0374: brtrue IL_0380
+				IL_0378: ldloc.s 13
+				IL_037a: brtrue IL_0386
 
-				IL_0379: ldloc.s 11
-				IL_037b: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorCloseForThrowCompletion(object)
+				IL_037f: ldloc.s 11
+				IL_0381: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorCloseForThrowCompletion(object)
 
-				IL_0380: endfinally
+				IL_0386: endfinally
 			} // end handler
 
-			IL_0381: leave IL_03dc
+			IL_0387: leave IL_03e2
 		} // end .try
 		catch [System.Runtime]System.Exception
 		{
-			IL_0386: stloc.s 14
-			IL_0388: ldloc.s 14
-			IL_038a: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-			IL_038f: dup
-			IL_0390: brtrue IL_03a6
+			IL_038c: stloc.s 14
+			IL_038e: ldloc.s 14
+			IL_0390: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+			IL_0395: dup
+			IL_0396: brtrue IL_03ac
 
-			IL_0395: pop
-			IL_0396: ldloc.s 14
-			IL_0398: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
-			IL_039d: dup
-			IL_039e: brtrue IL_03b2
+			IL_039b: pop
+			IL_039c: ldloc.s 14
+			IL_039e: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+			IL_03a3: dup
+			IL_03a4: brtrue IL_03b8
 
-			IL_03a3: pop
-			IL_03a4: rethrow
+			IL_03a9: pop
+			IL_03aa: rethrow
 
-			IL_03a6: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-			IL_03ab: stloc.s 15
-			IL_03ad: br IL_03b4
+			IL_03ac: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+			IL_03b1: stloc.s 15
+			IL_03b3: br IL_03ba
 
-			IL_03b2: stloc.s 15
+			IL_03b8: stloc.s 15
 
-			IL_03b4: ldloc.s 15
-			IL_03b6: stloc.s 16
-			IL_03b8: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_03bd: stloc.s 32
-			IL_03bf: ldloc.s 16
-			IL_03c1: ldstr "name"
-			IL_03c6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_03cb: stloc.s 34
-			IL_03cd: ldloc.s 32
-			IL_03cf: ldloc.s 34
-			IL_03d1: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_03d6: pop
-			IL_03d7: leave IL_03dc
+			IL_03ba: ldloc.s 15
+			IL_03bc: stloc.s 16
+			IL_03be: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_03c3: stloc.s 32
+			IL_03c5: ldloc.s 16
+			IL_03c7: ldstr "name"
+			IL_03cc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_03d1: stloc.s 34
+			IL_03d3: ldloc.s 32
+			IL_03d5: ldloc.s 34
+			IL_03d7: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_03dc: pop
+			IL_03dd: leave IL_03e2
 		} // end handler
 
-		IL_03dc: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_03e1: stloc.s 32
-		IL_03e3: ldc.i4.1
-		IL_03e4: newarr [System.Runtime]System.Object
-		IL_03e9: dup
-		IL_03ea: ldc.i4.0
-		IL_03eb: ldloc.0
-		IL_03ec: stelem.ref
-		IL_03ed: stloc.s 29
-		IL_03ef: ldtoken Modules.Variable_ConstPrimitivePropagation/PatternReader
-		IL_03f4: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_03f9: ldtoken Modules.Variable_ConstPrimitivePropagation/PatternReader
-		IL_03fe: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_0403: stloc.s 30
-		IL_0405: ldc.i4.1
-		IL_0406: newarr [System.Runtime]System.Object
-		IL_040b: dup
-		IL_040c: ldc.i4.0
-		IL_040d: ldloc.0
-		IL_040e: stelem.ref
-		IL_040f: stloc.s 29
-		IL_0411: ldloc.s 29
-		IL_0413: ldc.i4.0
-		IL_0414: newarr [System.Runtime]System.Object
-		IL_0419: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
-		IL_041e: newobj instance void Modules.Variable_ConstPrimitivePropagation/PatternReader::.ctor(object[])
-		IL_0423: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
-		IL_0428: stloc.s 37
-		IL_042a: ldloc.s 37
-		IL_042c: ldtoken Modules.Variable_ConstPrimitivePropagation/PatternReader
-		IL_0431: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_0436: ldstr "prototype"
-		IL_043b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
-		IL_0440: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
-		IL_0445: ldloc.s 37
-		IL_0447: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_044c: ldstr "read"
-		IL_0451: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-		IL_0456: stloc.s 34
-		IL_0458: ldloc.s 32
-		IL_045a: ldloc.s 34
-		IL_045c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0461: pop
-		IL_0462: ldloc.0
-		IL_0463: ldc.r8 8
-		IL_046c: stfld float64 Modules.Variable_ConstPrimitivePropagation/Scope::WRITTEN_LOOP
-		IL_0471: nop
+		IL_03e2: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_03e7: stloc.s 32
+		IL_03e9: ldc.i4.1
+		IL_03ea: newarr [System.Runtime]System.Object
+		IL_03ef: dup
+		IL_03f0: ldc.i4.0
+		IL_03f1: ldloc.0
+		IL_03f2: stelem.ref
+		IL_03f3: stloc.s 29
+		IL_03f5: ldtoken Modules.Variable_ConstPrimitivePropagation/PatternReader
+		IL_03fa: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_03ff: ldtoken Modules.Variable_ConstPrimitivePropagation/PatternReader
+		IL_0404: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_0409: stloc.s 30
+		IL_040b: ldc.i4.1
+		IL_040c: newarr [System.Runtime]System.Object
+		IL_0411: dup
+		IL_0412: ldc.i4.0
+		IL_0413: ldloc.0
+		IL_0414: stelem.ref
+		IL_0415: stloc.s 29
+		IL_0417: ldloc.s 29
+		IL_0419: ldc.i4.0
+		IL_041a: newarr [System.Runtime]System.Object
+		IL_041f: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
+		IL_0424: newobj instance void Modules.Variable_ConstPrimitivePropagation/PatternReader::.ctor(object[])
+		IL_0429: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
+		IL_042e: stloc.s 37
+		IL_0430: ldloc.s 37
+		IL_0432: ldtoken Modules.Variable_ConstPrimitivePropagation/PatternReader
+		IL_0437: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_043c: ldstr "prototype"
+		IL_0441: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
+		IL_0446: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
+		IL_044b: ldloc.s 37
+		IL_044d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0452: ldstr "read"
+		IL_0457: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+		IL_045c: stloc.s 34
+		IL_045e: ldloc.s 32
+		IL_0460: ldloc.s 34
+		IL_0462: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0467: pop
+		IL_0468: ldloc.0
+		IL_0469: ldc.r8 8
+		IL_0472: stfld float64 Modules.Variable_ConstPrimitivePropagation/Scope::WRITTEN_LOOP
+		IL_0477: nop
 		.try
 		{
-			IL_0472: nop
-			IL_0473: ldc.i4.1
-			IL_0474: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-			IL_0479: dup
-			IL_047a: ldc.r8 9
-			IL_0483: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::AddNumber(float64)
-			IL_0488: call class [JavaScriptRuntime]JavaScriptRuntime.IJavaScriptIterator [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetIterator(object)
-			IL_048d: stloc.s 17
-			IL_048f: ldc.i4.0
-			IL_0490: stloc.s 18
-			IL_0492: ldc.i4.0
-			IL_0493: stloc.s 19
+			IL_0478: nop
+			IL_0479: ldc.i4.1
+			IL_047a: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+			IL_047f: dup
+			IL_0480: ldc.r8 9
+			IL_0489: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::AddNumber(float64)
+			IL_048e: call class [JavaScriptRuntime]JavaScriptRuntime.IJavaScriptIterator [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetIterator(object)
+			IL_0493: stloc.s 17
+			IL_0495: ldc.i4.0
+			IL_0496: stloc.s 18
+			IL_0498: ldc.i4.0
+			IL_0499: stloc.s 19
 			.try
 			{
-				// loop start (head: IL_0495)
-					IL_0495: ldloc.s 17
-					IL_0497: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorNext(object)
-					IL_049c: stloc.s 34
-					IL_049e: ldloc.s 34
-					IL_04a0: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorResultDone(object)
-					IL_04a5: stloc.s 38
-					IL_04a7: ldloc.s 38
-					IL_04a9: brtrue IL_04d5
+				// loop start (head: IL_049b)
+					IL_049b: ldc.i4.1
+					IL_049c: stloc.s 18
+					IL_049e: ldloc.s 17
+					IL_04a0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorNext(object)
+					IL_04a5: stloc.s 34
+					IL_04a7: ldloc.s 34
+					IL_04a9: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorResultDone(object)
+					IL_04ae: stloc.s 38
+					IL_04b0: ldloc.s 38
+					IL_04b2: brtrue IL_04e1
 
-					IL_04ae: ldloc.s 34
-					IL_04b0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorResultValue(object)
-					IL_04b5: pop
-					IL_04b6: ldstr "Assignment to constant variable."
-					IL_04bb: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-					IL_04c0: throw
+					IL_04b7: ldloc.s 34
+					IL_04b9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorResultValue(object)
+					IL_04be: pop
+					IL_04bf: ldc.i4.0
+					IL_04c0: stloc.s 18
+					IL_04c2: ldstr "Assignment to constant variable."
+					IL_04c7: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
+					IL_04cc: throw
 
-					IL_04c1: br IL_0495
+					IL_04cd: br IL_049b
 				// end loop
-				IL_04c6: ldloc.s 17
-				IL_04c8: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorClose(object)
-				IL_04cd: ldc.i4.1
-				IL_04ce: stloc.s 19
-				IL_04d0: leave IL_04f3
+				IL_04d2: ldloc.s 17
+				IL_04d4: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorClose(object)
+				IL_04d9: ldc.i4.1
+				IL_04da: stloc.s 19
+				IL_04dc: leave IL_04ff
 
-				IL_04d5: ldc.i4.1
-				IL_04d6: stloc.s 18
-				IL_04d8: leave IL_04f3
+				IL_04e1: ldc.i4.1
+				IL_04e2: stloc.s 18
+				IL_04e4: leave IL_04ff
 			} // end .try
 			finally
 			{
-				IL_04dd: ldloc.s 18
-				IL_04df: brtrue IL_04f2
+				IL_04e9: ldloc.s 18
+				IL_04eb: brtrue IL_04fe
 
-				IL_04e4: ldloc.s 19
-				IL_04e6: brtrue IL_04f2
+				IL_04f0: ldloc.s 19
+				IL_04f2: brtrue IL_04fe
 
-				IL_04eb: ldloc.s 17
-				IL_04ed: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorCloseForThrowCompletion(object)
+				IL_04f7: ldloc.s 17
+				IL_04f9: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorCloseForThrowCompletion(object)
 
-				IL_04f2: endfinally
+				IL_04fe: endfinally
 			} // end handler
 
-			IL_04f3: leave IL_054e
+			IL_04ff: leave IL_055a
 		} // end .try
 		catch [System.Runtime]System.Exception
 		{
-			IL_04f8: stloc.s 20
-			IL_04fa: ldloc.s 20
-			IL_04fc: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-			IL_0501: dup
-			IL_0502: brtrue IL_0518
+			IL_0504: stloc.s 20
+			IL_0506: ldloc.s 20
+			IL_0508: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+			IL_050d: dup
+			IL_050e: brtrue IL_0524
 
-			IL_0507: pop
-			IL_0508: ldloc.s 20
-			IL_050a: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
-			IL_050f: dup
-			IL_0510: brtrue IL_0524
+			IL_0513: pop
+			IL_0514: ldloc.s 20
+			IL_0516: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+			IL_051b: dup
+			IL_051c: brtrue IL_0530
 
-			IL_0515: pop
-			IL_0516: rethrow
+			IL_0521: pop
+			IL_0522: rethrow
 
-			IL_0518: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-			IL_051d: stloc.s 21
-			IL_051f: br IL_0526
+			IL_0524: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+			IL_0529: stloc.s 21
+			IL_052b: br IL_0532
 
-			IL_0524: stloc.s 21
+			IL_0530: stloc.s 21
 
-			IL_0526: ldloc.s 21
-			IL_0528: stloc.s 22
-			IL_052a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_052f: stloc.s 32
-			IL_0531: ldloc.s 22
-			IL_0533: ldstr "name"
-			IL_0538: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_053d: stloc.s 34
-			IL_053f: ldloc.s 32
-			IL_0541: ldloc.s 34
-			IL_0543: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0548: pop
-			IL_0549: leave IL_054e
+			IL_0532: ldloc.s 21
+			IL_0534: stloc.s 22
+			IL_0536: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_053b: stloc.s 32
+			IL_053d: ldloc.s 22
+			IL_053f: ldstr "name"
+			IL_0544: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0549: stloc.s 34
+			IL_054b: ldloc.s 32
+			IL_054d: ldloc.s 34
+			IL_054f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0554: pop
+			IL_0555: leave IL_055a
 		} // end handler
 
-		IL_054e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0553: stloc.s 32
-		IL_0555: ldc.i4.1
-		IL_0556: newarr [System.Runtime]System.Object
-		IL_055b: dup
-		IL_055c: ldc.i4.0
-		IL_055d: ldloc.0
-		IL_055e: stelem.ref
-		IL_055f: stloc.s 29
-		IL_0561: ldtoken Modules.Variable_ConstPrimitivePropagation/LoopReader
-		IL_0566: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_056b: ldtoken Modules.Variable_ConstPrimitivePropagation/LoopReader
-		IL_0570: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_0575: stloc.s 30
-		IL_0577: ldc.i4.1
-		IL_0578: newarr [System.Runtime]System.Object
-		IL_057d: dup
-		IL_057e: ldc.i4.0
-		IL_057f: ldloc.0
-		IL_0580: stelem.ref
-		IL_0581: stloc.s 29
-		IL_0583: ldloc.s 29
-		IL_0585: ldc.i4.0
-		IL_0586: newarr [System.Runtime]System.Object
-		IL_058b: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
-		IL_0590: newobj instance void Modules.Variable_ConstPrimitivePropagation/LoopReader::.ctor(object[])
-		IL_0595: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
-		IL_059a: stloc.s 39
-		IL_059c: ldloc.s 39
-		IL_059e: ldtoken Modules.Variable_ConstPrimitivePropagation/LoopReader
-		IL_05a3: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_05a8: ldstr "prototype"
-		IL_05ad: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
-		IL_05b2: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
-		IL_05b7: ldloc.s 39
-		IL_05b9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_05be: ldstr "read"
-		IL_05c3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-		IL_05c8: stloc.s 34
-		IL_05ca: ldloc.s 32
-		IL_05cc: ldloc.s 34
-		IL_05ce: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_05d3: pop
-		IL_05d4: ldstr "ab"
-		IL_05d9: brfalse IL_05ed
+		IL_055a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_055f: stloc.s 32
+		IL_0561: ldc.i4.1
+		IL_0562: newarr [System.Runtime]System.Object
+		IL_0567: dup
+		IL_0568: ldc.i4.0
+		IL_0569: ldloc.0
+		IL_056a: stelem.ref
+		IL_056b: stloc.s 29
+		IL_056d: ldtoken Modules.Variable_ConstPrimitivePropagation/LoopReader
+		IL_0572: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_0577: ldtoken Modules.Variable_ConstPrimitivePropagation/LoopReader
+		IL_057c: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_0581: stloc.s 30
+		IL_0583: ldc.i4.1
+		IL_0584: newarr [System.Runtime]System.Object
+		IL_0589: dup
+		IL_058a: ldc.i4.0
+		IL_058b: ldloc.0
+		IL_058c: stelem.ref
+		IL_058d: stloc.s 29
+		IL_058f: ldloc.s 29
+		IL_0591: ldc.i4.0
+		IL_0592: newarr [System.Runtime]System.Object
+		IL_0597: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
+		IL_059c: newobj instance void Modules.Variable_ConstPrimitivePropagation/LoopReader::.ctor(object[])
+		IL_05a1: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
+		IL_05a6: stloc.s 39
+		IL_05a8: ldloc.s 39
+		IL_05aa: ldtoken Modules.Variable_ConstPrimitivePropagation/LoopReader
+		IL_05af: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_05b4: ldstr "prototype"
+		IL_05b9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
+		IL_05be: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
+		IL_05c3: ldloc.s 39
+		IL_05c5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_05ca: ldstr "read"
+		IL_05cf: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+		IL_05d4: stloc.s 34
+		IL_05d6: ldloc.s 32
+		IL_05d8: ldloc.s 34
+		IL_05da: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_05df: pop
+		IL_05e0: ldstr "ab"
+		IL_05e5: brfalse IL_05f9
 
-		IL_05de: ldstr "ab"
-		IL_05e3: isinst [JavaScriptRuntime]JavaScriptRuntime.JsNull
-		IL_05e8: brfalse IL_0601
+		IL_05ea: ldstr "ab"
+		IL_05ef: isinst [JavaScriptRuntime]JavaScriptRuntime.JsNull
+		IL_05f4: brfalse IL_060d
 
-		IL_05ed: ldstr "ab"
-		IL_05f2: ldstr ""
-		IL_05f7: ldstr "0"
-		IL_05fc: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::ThrowDestructuringNullOrUndefined(object, string, string)
+		IL_05f9: ldstr "ab"
+		IL_05fe: ldstr ""
+		IL_0603: ldstr "0"
+		IL_0608: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::ThrowDestructuringNullOrUndefined(object, string, string)
 
-		IL_0601: ldstr "ab"
-		IL_0606: call class [JavaScriptRuntime]JavaScriptRuntime.IJavaScriptIterator [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetIterator(object)
-		IL_060b: stloc.s 23
-		IL_060d: ldc.i4.0
-		IL_060e: stloc.s 24
-		IL_0610: ldc.i4.0
-		IL_0611: stloc.s 25
+		IL_060d: ldstr "ab"
+		IL_0612: call class [JavaScriptRuntime]JavaScriptRuntime.IJavaScriptIterator [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetIterator(object)
+		IL_0617: stloc.s 23
+		IL_0619: ldc.i4.0
+		IL_061a: stloc.s 24
+		IL_061c: ldc.i4.0
+		IL_061d: stloc.s 25
 		.try
 		{
-			IL_0613: ldloc.s 25
-			IL_0615: brtrue IL_063f
+			IL_061f: ldloc.s 25
+			IL_0621: brtrue IL_0651
 
-			IL_061a: ldloc.s 23
-			IL_061c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorDestructuringStep(object)
-			IL_0621: stloc.s 34
-			IL_0623: ldloc.s 34
-			IL_0625: brfalse IL_063c
+			IL_0626: ldc.i4.1
+			IL_0627: stloc.s 25
+			IL_0629: ldloc.s 23
+			IL_062b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorDestructuringStep(object)
+			IL_0630: stloc.s 34
+			IL_0632: ldloc.s 34
+			IL_0634: brfalse IL_064e
 
-			IL_062a: ldloc.s 34
-			IL_062c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorDestructuringStepValue(object)
-			IL_0631: stloc.s 34
-			IL_0633: ldloc.s 34
-			IL_0635: stloc.s 40
-			IL_0637: br IL_0642
+			IL_0639: ldc.i4.0
+			IL_063a: stloc.s 25
+			IL_063c: ldloc.s 34
+			IL_063e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorDestructuringStepValue(object)
+			IL_0643: stloc.s 34
+			IL_0645: ldloc.s 34
+			IL_0647: stloc.s 40
+			IL_0649: br IL_0654
 
-			IL_063c: ldc.i4.1
-			IL_063d: stloc.s 25
+			IL_064e: ldc.i4.1
+			IL_064f: stloc.s 25
 
-			IL_063f: ldnull
-			IL_0640: stloc.s 40
+			IL_0651: ldnull
+			IL_0652: stloc.s 40
 
-			IL_0642: ldloc.0
-			IL_0643: ldloc.s 40
-			IL_0645: stfld object Modules.Variable_ConstPrimitivePropagation/Scope::DESTRUCTURED
-			IL_064a: ldloc.s 25
-			IL_064c: brtrue IL_065b
+			IL_0654: ldloc.0
+			IL_0655: ldloc.s 40
+			IL_0657: stfld object Modules.Variable_ConstPrimitivePropagation/Scope::DESTRUCTURED
+			IL_065c: ldloc.s 25
+			IL_065e: brtrue IL_066d
 
-			IL_0651: ldc.i4.1
-			IL_0652: stloc.s 24
-			IL_0654: ldloc.s 23
-			IL_0656: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorClose(object)
+			IL_0663: ldc.i4.1
+			IL_0664: stloc.s 24
+			IL_0666: ldloc.s 23
+			IL_0668: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorClose(object)
 
-			IL_065b: ldc.i4.1
-			IL_065c: stloc.s 24
-			IL_065e: leave IL_0679
+			IL_066d: ldc.i4.1
+			IL_066e: stloc.s 24
+			IL_0670: leave IL_068b
 		} // end .try
 		finally
 		{
-			IL_0663: ldloc.s 24
-			IL_0665: brtrue IL_0678
+			IL_0675: ldloc.s 24
+			IL_0677: brtrue IL_068a
 
-			IL_066a: ldloc.s 25
-			IL_066c: brtrue IL_0678
+			IL_067c: ldloc.s 25
+			IL_067e: brtrue IL_068a
 
-			IL_0671: ldloc.s 23
-			IL_0673: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorCloseForThrowCompletion(object)
+			IL_0683: ldloc.s 23
+			IL_0685: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorCloseForThrowCompletion(object)
 
-			IL_0678: endfinally
+			IL_068a: endfinally
 		} // end handler
 
-		IL_0679: nop
-		IL_067a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_067f: stloc.s 32
-		IL_0681: ldc.i4.1
-		IL_0682: newarr [System.Runtime]System.Object
-		IL_0687: dup
-		IL_0688: ldc.i4.0
-		IL_0689: ldloc.0
-		IL_068a: stelem.ref
-		IL_068b: stloc.s 29
-		IL_068d: ldtoken Modules.Variable_ConstPrimitivePropagation/DestructuredReader
-		IL_0692: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_0697: ldtoken Modules.Variable_ConstPrimitivePropagation/DestructuredReader
-		IL_069c: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_06a1: stloc.s 30
-		IL_06a3: ldc.i4.1
-		IL_06a4: newarr [System.Runtime]System.Object
-		IL_06a9: dup
-		IL_06aa: ldc.i4.0
-		IL_06ab: ldloc.0
-		IL_06ac: stelem.ref
-		IL_06ad: stloc.s 29
-		IL_06af: ldloc.s 29
-		IL_06b1: ldc.i4.0
-		IL_06b2: newarr [System.Runtime]System.Object
-		IL_06b7: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
-		IL_06bc: newobj instance void Modules.Variable_ConstPrimitivePropagation/DestructuredReader::.ctor(object[])
-		IL_06c1: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
-		IL_06c6: stloc.s 41
-		IL_06c8: ldloc.s 41
-		IL_06ca: ldtoken Modules.Variable_ConstPrimitivePropagation/DestructuredReader
-		IL_06cf: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_06d4: ldstr "prototype"
-		IL_06d9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
-		IL_06de: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
-		IL_06e3: ldloc.s 41
-		IL_06e5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_06ea: ldstr "read"
-		IL_06ef: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-		IL_06f4: stloc.s 40
-		IL_06f6: ldloc.s 32
-		IL_06f8: ldloc.s 40
-		IL_06fa: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_06ff: pop
-		IL_0700: nop
-		IL_0701: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0706: stloc.s 32
-		IL_0708: ldloc.2
-		IL_0709: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_070e: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
-		IL_0713: stloc.s 40
-		IL_0715: ldloc.s 40
-		IL_0717: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_071c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
-		IL_0721: stloc.s 40
-		IL_0723: ldloc.s 32
-		IL_0725: ldloc.s 40
-		IL_0727: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_072c: pop
-		IL_072d: ldnull
-		IL_072e: stloc.s 26
-		IL_0730: newobj instance void Modules.Variable_ConstPrimitivePropagation/Scope/Switch_L118C0::.ctor()
-		IL_0735: stloc.s 27
-		IL_0737: ldc.r8 1
-		IL_0740: box [System.Runtime]System.Double
-		IL_0745: ldc.r8 0.0
-		IL_074e: box [System.Runtime]System.Double
-		IL_0753: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_0758: stloc.s 38
-		IL_075a: ldloc.s 38
-		IL_075c: brtrue IL_0790
+		IL_068b: nop
+		IL_068c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0691: stloc.s 32
+		IL_0693: ldc.i4.1
+		IL_0694: newarr [System.Runtime]System.Object
+		IL_0699: dup
+		IL_069a: ldc.i4.0
+		IL_069b: ldloc.0
+		IL_069c: stelem.ref
+		IL_069d: stloc.s 29
+		IL_069f: ldtoken Modules.Variable_ConstPrimitivePropagation/DestructuredReader
+		IL_06a4: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_06a9: ldtoken Modules.Variable_ConstPrimitivePropagation/DestructuredReader
+		IL_06ae: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_06b3: stloc.s 30
+		IL_06b5: ldc.i4.1
+		IL_06b6: newarr [System.Runtime]System.Object
+		IL_06bb: dup
+		IL_06bc: ldc.i4.0
+		IL_06bd: ldloc.0
+		IL_06be: stelem.ref
+		IL_06bf: stloc.s 29
+		IL_06c1: ldloc.s 29
+		IL_06c3: ldc.i4.0
+		IL_06c4: newarr [System.Runtime]System.Object
+		IL_06c9: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
+		IL_06ce: newobj instance void Modules.Variable_ConstPrimitivePropagation/DestructuredReader::.ctor(object[])
+		IL_06d3: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
+		IL_06d8: stloc.s 41
+		IL_06da: ldloc.s 41
+		IL_06dc: ldtoken Modules.Variable_ConstPrimitivePropagation/DestructuredReader
+		IL_06e1: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_06e6: ldstr "prototype"
+		IL_06eb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
+		IL_06f0: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
+		IL_06f5: ldloc.s 41
+		IL_06f7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_06fc: ldstr "read"
+		IL_0701: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+		IL_0706: stloc.s 40
+		IL_0708: ldloc.s 32
+		IL_070a: ldloc.s 40
+		IL_070c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0711: pop
+		IL_0712: nop
+		IL_0713: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0718: stloc.s 32
+		IL_071a: ldloc.2
+		IL_071b: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0720: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
+		IL_0725: stloc.s 40
+		IL_0727: ldloc.s 40
+		IL_0729: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_072e: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
+		IL_0733: stloc.s 40
+		IL_0735: ldloc.s 32
+		IL_0737: ldloc.s 40
+		IL_0739: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_073e: pop
+		IL_073f: ldnull
+		IL_0740: stloc.s 26
+		IL_0742: newobj instance void Modules.Variable_ConstPrimitivePropagation/Scope/Switch_L118C0::.ctor()
+		IL_0747: stloc.s 27
+		IL_0749: ldc.r8 1
+		IL_0752: box [System.Runtime]System.Double
+		IL_0757: ldc.r8 0.0
+		IL_0760: box [System.Runtime]System.Double
+		IL_0765: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_076a: stloc.s 38
+		IL_076c: ldloc.s 38
+		IL_076e: brtrue IL_07a2
 
-		IL_0761: ldc.r8 1
-		IL_076a: box [System.Runtime]System.Double
-		IL_076f: ldc.r8 1
-		IL_0778: box [System.Runtime]System.Double
-		IL_077d: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_0782: stloc.s 38
-		IL_0784: ldloc.s 38
-		IL_0786: brtrue IL_07aa
+		IL_0773: ldc.r8 1
+		IL_077c: box [System.Runtime]System.Double
+		IL_0781: ldc.r8 1
+		IL_078a: box [System.Runtime]System.Double
+		IL_078f: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_0794: stloc.s 38
+		IL_0796: ldloc.s 38
+		IL_0798: brtrue IL_07bc
 
-		IL_078b: br IL_07f2
+		IL_079d: br IL_0804
 
-		IL_0790: ldloc.s 27
-		IL_0792: castclass Modules.Variable_ConstPrimitivePropagation/Scope/Switch_L118C0
-		IL_0797: ldc.r8 5
-		IL_07a0: box [System.Runtime]System.Double
-		IL_07a5: stfld object Modules.Variable_ConstPrimitivePropagation/Scope/Switch_L118C0::SKIPPED
+		IL_07a2: ldloc.s 27
+		IL_07a4: castclass Modules.Variable_ConstPrimitivePropagation/Scope/Switch_L118C0
+		IL_07a9: ldc.r8 5
+		IL_07b2: box [System.Runtime]System.Double
+		IL_07b7: stfld object Modules.Variable_ConstPrimitivePropagation/Scope/Switch_L118C0::SKIPPED
 
-		IL_07aa: ldc.i4.2
-		IL_07ab: newarr [System.Runtime]System.Object
-		IL_07b0: dup
-		IL_07b1: ldc.i4.0
-		IL_07b2: ldloc.0
-		IL_07b3: stelem.ref
-		IL_07b4: dup
-		IL_07b5: ldc.i4.1
-		IL_07b6: ldloc.s 27
-		IL_07b8: stelem.ref
-		IL_07b9: stloc.s 29
-		IL_07bb: ldloc.s 29
-		IL_07bd: ldc.i4.0
-		IL_07be: ldelem.ref
-		IL_07bf: castclass Modules.Variable_ConstPrimitivePropagation/Scope
-		IL_07c4: ldloc.s 29
-		IL_07c6: ldc.i4.1
-		IL_07c7: ldelem.ref
-		IL_07c8: castclass Modules.Variable_ConstPrimitivePropagation/Scope/Switch_L118C0
+		IL_07bc: ldc.i4.2
+		IL_07bd: newarr [System.Runtime]System.Object
+		IL_07c2: dup
+		IL_07c3: ldc.i4.0
+		IL_07c4: ldloc.0
+		IL_07c5: stelem.ref
+		IL_07c6: dup
+		IL_07c7: ldc.i4.1
+		IL_07c8: ldloc.s 27
+		IL_07ca: stelem.ref
+		IL_07cb: stloc.s 29
 		IL_07cd: ldloc.s 29
-		IL_07cf: newobj instance void Modules.Variable_ConstPrimitivePropagation/ArrowFunction_L122C21/FunctionObject::.ctor(class Modules.Variable_ConstPrimitivePropagation/Scope, class Modules.Variable_ConstPrimitivePropagation/Scope/Switch_L118C0, object[])
-		IL_07d4: ldc.i4.0
-		IL_07d5: conv.r8
-		IL_07d6: ldstr ""
-		IL_07db: ldc.i4.0
-		IL_07dc: ldc.i4.0
-		IL_07dd: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Variable_ConstPrimitivePropagation/ArrowFunction_L122C21/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_07e2: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Variable_ConstPrimitivePropagation/ArrowFunction_L122C21/FunctionObject>(!!0)
-		IL_07e7: stloc.s 42
-		IL_07e9: ldloc.s 42
-		IL_07eb: stloc.s 26
-		IL_07ed: br IL_07f2
+		IL_07cf: ldc.i4.0
+		IL_07d0: ldelem.ref
+		IL_07d1: castclass Modules.Variable_ConstPrimitivePropagation/Scope
+		IL_07d6: ldloc.s 29
+		IL_07d8: ldc.i4.1
+		IL_07d9: ldelem.ref
+		IL_07da: castclass Modules.Variable_ConstPrimitivePropagation/Scope/Switch_L118C0
+		IL_07df: ldloc.s 29
+		IL_07e1: newobj instance void Modules.Variable_ConstPrimitivePropagation/ArrowFunction_L122C21/FunctionObject::.ctor(class Modules.Variable_ConstPrimitivePropagation/Scope, class Modules.Variable_ConstPrimitivePropagation/Scope/Switch_L118C0, object[])
+		IL_07e6: ldc.i4.0
+		IL_07e7: conv.r8
+		IL_07e8: ldstr ""
+		IL_07ed: ldc.i4.0
+		IL_07ee: ldc.i4.0
+		IL_07ef: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Variable_ConstPrimitivePropagation/ArrowFunction_L122C21/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_07f4: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Variable_ConstPrimitivePropagation/ArrowFunction_L122C21/FunctionObject>(!!0)
+		IL_07f9: stloc.s 42
+		IL_07fb: ldloc.s 42
+		IL_07fd: stloc.s 26
+		IL_07ff: br IL_0804
 
-		IL_07f2: ldnull
-		IL_07f3: stloc.s 28
-		IL_07f5: ret
+		IL_0804: ldnull
+		IL_0805: stloc.s 28
+		IL_0807: ret
 	} // end of method Variable_ConstPrimitivePropagation::__js_module_init__
 
 } // end of class Modules.Variable_ConstPrimitivePropagation

@@ -487,7 +487,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 1482 (0x5ca)
+		// Code size: 1488 (0x5d0)
 		.maxstack 10
 		.locals init (
 			[0] class Modules.Array_Iterator_Methods/Scope,
@@ -922,66 +922,70 @@
 		.try
 		{
 			// loop start (head: IL_053f)
-				IL_053f: ldloc.s 12
-				IL_0541: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorNext(object)
-				IL_0546: stloc.s 19
-				IL_0548: ldloc.s 19
-				IL_054a: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorResultDone(object)
-				IL_054f: stloc.s 20
-				IL_0551: ldloc.s 20
-				IL_0553: brtrue IL_0583
+				IL_053f: ldc.i4.1
+				IL_0540: stloc.s 13
+				IL_0542: ldloc.s 12
+				IL_0544: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorNext(object)
+				IL_0549: stloc.s 19
+				IL_054b: ldloc.s 19
+				IL_054d: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorResultDone(object)
+				IL_0552: stloc.s 20
+				IL_0554: ldloc.s 20
+				IL_0556: brtrue IL_0589
 
-				IL_0558: ldloc.s 19
-				IL_055a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorResultValue(object)
-				IL_055f: stloc.s 19
-				IL_0561: ldloc.s 19
-				IL_0563: stloc.s 15
-				IL_0565: ldloc.s 11
-				IL_0567: ldloc.s 15
-				IL_0569: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object)
-				IL_056e: pop
-				IL_056f: br IL_053f
+				IL_055b: ldloc.s 19
+				IL_055d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorResultValue(object)
+				IL_0562: stloc.s 19
+				IL_0564: ldc.i4.0
+				IL_0565: stloc.s 13
+				IL_0567: ldloc.s 19
+				IL_0569: stloc.s 15
+				IL_056b: ldloc.s 11
+				IL_056d: ldloc.s 15
+				IL_056f: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object)
+				IL_0574: pop
+				IL_0575: br IL_053f
 			// end loop
-			IL_0574: ldloc.s 12
-			IL_0576: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorClose(object)
-			IL_057b: ldc.i4.1
-			IL_057c: stloc.s 14
-			IL_057e: leave IL_05a1
+			IL_057a: ldloc.s 12
+			IL_057c: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorClose(object)
+			IL_0581: ldc.i4.1
+			IL_0582: stloc.s 14
+			IL_0584: leave IL_05a7
 
-			IL_0583: ldc.i4.1
-			IL_0584: stloc.s 13
-			IL_0586: leave IL_05a1
+			IL_0589: ldc.i4.1
+			IL_058a: stloc.s 13
+			IL_058c: leave IL_05a7
 		} // end .try
 		finally
 		{
-			IL_058b: ldloc.s 13
-			IL_058d: brtrue IL_05a0
+			IL_0591: ldloc.s 13
+			IL_0593: brtrue IL_05a6
 
-			IL_0592: ldloc.s 14
-			IL_0594: brtrue IL_05a0
+			IL_0598: ldloc.s 14
+			IL_059a: brtrue IL_05a6
 
-			IL_0599: ldloc.s 12
-			IL_059b: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorCloseForThrowCompletion(object)
+			IL_059f: ldloc.s 12
+			IL_05a1: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorCloseForThrowCompletion(object)
 
-			IL_05a0: endfinally
+			IL_05a6: endfinally
 		} // end handler
 
-		IL_05a1: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_05a6: stloc.s 17
-		IL_05a8: ldloc.s 11
-		IL_05aa: ldc.i4.1
-		IL_05ab: newarr [System.Runtime]System.Object
-		IL_05b0: dup
-		IL_05b1: ldc.i4.0
-		IL_05b2: ldstr ","
-		IL_05b7: stelem.ref
-		IL_05b8: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
-		IL_05bd: stloc.s 25
-		IL_05bf: ldloc.s 17
-		IL_05c1: ldloc.s 25
-		IL_05c3: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_05c8: pop
-		IL_05c9: ret
+		IL_05a7: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_05ac: stloc.s 17
+		IL_05ae: ldloc.s 11
+		IL_05b0: ldc.i4.1
+		IL_05b1: newarr [System.Runtime]System.Object
+		IL_05b6: dup
+		IL_05b7: ldc.i4.0
+		IL_05b8: ldstr ","
+		IL_05bd: stelem.ref
+		IL_05be: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
+		IL_05c3: stloc.s 25
+		IL_05c5: ldloc.s 17
+		IL_05c7: ldloc.s 25
+		IL_05c9: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_05ce: pop
+		IL_05cf: ret
 	} // end of method Array_Iterator_Methods::__js_module_init__
 
 } // end of class Modules.Array_Iterator_Methods

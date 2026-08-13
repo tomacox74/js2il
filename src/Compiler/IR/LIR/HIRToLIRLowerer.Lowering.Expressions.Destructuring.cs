@@ -719,6 +719,7 @@ public sealed partial class HIRToLIRLowerer
         var endLabel = CreateLabel();
 
         _methodBodyIR.Instructions.Add(new LIRBranchIfTrue(iteratorDone, alreadyDoneLabel));
+        _methodBodyIR.Instructions.Add(new LIRCopyTemp(trueTemp, iteratorDone));
 
         var step = CreateTempVariable();
         _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
@@ -728,6 +729,10 @@ public sealed partial class HIRToLIRLowerer
             step));
         DefineTempStorage(step, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
         _methodBodyIR.Instructions.Add(new LIRBranchIfFalse(step, stepDoneLabel));
+        var falseTemp = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRConstBoolean(false, falseTemp));
+        DefineTempStorage(falseTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+        _methodBodyIR.Instructions.Add(new LIRCopyTemp(falseTemp, iteratorDone));
 
         if (needValue)
         {

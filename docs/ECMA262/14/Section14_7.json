@@ -418,6 +418,16 @@
           "test/language/statements/for-of/array-contract.js",
           "test/language/statements/for-of/array-contract-expand.js",
           "test/language/statements/for-of/array-expand-contract.js",
+          "test/language/statements/for-of/dstr/array-elem-iter-rtrn-close-err.js",
+          "test/language/statements/for-of/dstr/array-elem-iter-thrw-close-skip.js",
+          "test/language/statements/for-of/dstr/array-elem-trlg-iter-elision-iter-abpt.js",
+          "test/language/statements/for-of/dstr/array-elem-trlg-iter-list-thrw-close-skip.js",
+          "test/language/statements/for-of/dstr/array-elem-trlg-iter-rest-thrw-close-skip.js",
+          "test/language/statements/for-of/dstr/array-elision-iter-abpt.js",
+          "test/language/statements/for-of/dstr/array-rest-elision-iter-abpt.js",
+          "test/language/statements/for-of/dstr/array-rest-iter-rtrn-close-err.js",
+          "test/language/statements/for-of/dstr/array-rest-iter-rtrn-close-null.js",
+          "test/language/statements/for-of/dstr/array-rest-iter-thrw-close-skip.js",
           "test/language/statements/for-of/arguments-unmapped-aliasing.js",
           "test/language/statements/for-of/Array.prototype.entries.js",
           "test/language/statements/for-of/Array.prototype.keys.js",
@@ -452,9 +462,13 @@
           "test/language/statements/for-of/generator-close-via-break.js",
           "test/language/statements/for-of/generator-close-via-continue.js",
           "test/language/statements/for-of/generator-close-via-return.js",
-          "test/language/statements/for-of/generator-close-via-throw.js"
+          "test/language/statements/for-of/generator-close-via-throw.js",
+          "test/language/statements/for-of/head-expr-obj-iterator-method.js",
+          "test/language/statements/for-of/iterator-close-non-throw-get-method-is-null.js",
+          "test/language/statements/for-of/iterator-next-error.js",
+          "test/language/statements/for-of/iterator-next-result-value-attr-error.js"
         ],
-        "notes": "Lowered using the iterator protocol via JavaScriptRuntime.Object.GetIterator + iterator.next() + result.value/result.done, and invokes JavaScriptRuntime.Object.IteratorClose on normal destructuring completion and abrupt completion (break/continue/throw/return and iterator throws), including generator-safe synthetic close paths. Supports built-ins (Array/string/Int8Array/Int16Array/Int32Array/Float32Array/Float64Array), resizable ArrayBuffer-backed fixed-length and length-tracking typed arrays, user-defined iterables via [Symbol.iterator], mapped and unmapped arguments objects, generator objects, and a best-effort fallback for .NET IEnumerable. Sparse array literals flow through the IR path as arrays whose elisions iterate as undefined values, so explicit array[Symbol.iterator](), destructuring, typed-array, generator, generator close-on-abrupt-completion, and arguments-object for-of cases in the bounded test262 coverage compile successfully."
+        "notes": "Lowered using the iterator protocol via JavaScriptRuntime.Object.GetIterator + iterator.next() + result.value/result.done, and invokes JavaScriptRuntime.Object.IteratorClose on normal destructuring completion and abrupt completion (break/continue/throw/return), including generator-safe synthetic close paths. Iterator next/value failures leave the iterator unclosed; IteratorClose preserves a prior throw completion, validates return results, and treats null return as absent. Supports built-ins (Array/string/Int8Array/Int16Array/Int32Array/Float32Array/Float64Array), resizable ArrayBuffer-backed fixed-length and length-tracking typed arrays, user-defined iterables via [Symbol.iterator], mapped and unmapped arguments objects, generator objects, and a best-effort fallback for .NET IEnumerable. Sparse array literals flow through the IR path as arrays whose elisions iterate as undefined values, so explicit array[Symbol.iterator](), destructuring, typed-array, generator, generator close-on-abrupt-completion, and arguments-object for-of cases in the bounded test262 coverage compile successfully."
       },
       {
         "clause": "14.7.5.7",
@@ -619,7 +633,7 @@
           "test/language/statements/for-of/head-using-bound-names-fordecl-tdz.js",
           "test/language/statements/for-of/head-using-fresh-binding-per-iteration.js"
         ],
-        "notes": "The remaining pinned section corpus is checked in verbatim: 1,633 of the 1,997 newly ported cases pass and 364 are explicitly skipped with the unsupported behavior named at each test. Static-module live bindings surface the module-namespace for-in TDZ error, resizable ArrayBuffer-backed typed arrays cover growth and shrinkage during for-in/of iteration, object-rest loop heads invoke accessors while copying ordered enumerable own properties, and using/await using for-of heads parse with lexical TDZ and fresh per-iteration bindings. Reaching Supported still requires strict/yield early-error validation, destructuring binding and assignment lowering (including initializer function naming and abrupt completion), iterator next/return/close error precedence, full disposable-resource lifetime semantics, full module namespace exotic-object semantics, and eval support."
+        "notes": "The remaining pinned section corpus is checked in verbatim: 1,647 of the 1,997 newly ported cases pass and 350 are explicitly skipped with the unsupported behavior named at each test. Static-module live bindings surface the module-namespace for-in TDZ error, resizable ArrayBuffer-backed typed arrays cover growth and shrinkage during for-in/of iteration, object-rest loop heads invoke accessors while copying ordered enumerable own properties, and using/await using for-of heads parse with lexical TDZ and fresh per-iteration bindings. Reaching Supported still requires strict/yield early-error validation, destructuring binding and assignment lowering (including initializer function naming and abrupt completion), full disposable-resource lifetime semantics, full module namespace exotic-object semantics, and eval support."
       },
       {
         "clause": "14.7.2.2",

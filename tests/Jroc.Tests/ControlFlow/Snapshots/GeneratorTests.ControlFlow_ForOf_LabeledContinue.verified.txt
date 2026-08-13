@@ -139,7 +139,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 238 (0xee)
+		// Code size: 242 (0xf2)
 		.maxstack 10
 		.locals init (
 			[0] class Modules.ControlFlow_ForOf_LabeledContinue/Scope,
@@ -180,79 +180,83 @@
 		.try
 		{
 			// loop start (head: IL_003b)
-				IL_003b: ldloc.2
-				IL_003c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorNext(object)
-				IL_0041: stloc.s 7
-				IL_0043: ldloc.s 7
-				IL_0045: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorResultDone(object)
-				IL_004a: stloc.s 8
-				IL_004c: ldloc.s 8
-				IL_004e: brtrue IL_00d2
+				IL_003b: ldc.i4.1
+				IL_003c: stloc.3
+				IL_003d: ldloc.2
+				IL_003e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorNext(object)
+				IL_0043: stloc.s 7
+				IL_0045: ldloc.s 7
+				IL_0047: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorResultDone(object)
+				IL_004c: stloc.s 8
+				IL_004e: ldloc.s 8
+				IL_0050: brtrue IL_00d6
 
-				IL_0053: ldloc.s 7
-				IL_0055: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorResultValue(object)
-				IL_005a: stloc.s 7
-				IL_005c: ldloc.s 7
-				IL_005e: stloc.s 5
-				IL_0060: ldc.r8 0.0
-				IL_0069: stloc.s 6
-				// loop start (head: IL_006b)
-					IL_006b: ldloc.s 6
-					IL_006d: stloc.s 9
-					IL_006f: ldloc.s 9
-					IL_0071: ldc.r8 1
-					IL_007a: clt
-					IL_007c: brfalse IL_00bf
+				IL_0055: ldloc.s 7
+				IL_0057: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorResultValue(object)
+				IL_005c: stloc.s 7
+				IL_005e: ldc.i4.0
+				IL_005f: stloc.3
+				IL_0060: ldloc.s 7
+				IL_0062: stloc.s 5
+				IL_0064: ldc.r8 0.0
+				IL_006d: stloc.s 6
+				// loop start (head: IL_006f)
+					IL_006f: ldloc.s 6
+					IL_0071: stloc.s 9
+					IL_0073: ldloc.s 9
+					IL_0075: ldc.r8 1
+					IL_007e: clt
+					IL_0080: brfalse IL_00c3
 
-					IL_0081: ldloc.s 5
-					IL_0083: ldstr "b"
-					IL_0088: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-					IL_008d: stloc.s 8
-					IL_008f: ldloc.s 8
-					IL_0091: brfalse IL_009b
+					IL_0085: ldloc.s 5
+					IL_0087: ldstr "b"
+					IL_008c: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+					IL_0091: stloc.s 8
+					IL_0093: ldloc.s 8
+					IL_0095: brfalse IL_009f
 
-					IL_0096: br IL_00bf
+					IL_009a: br IL_00c3
 
-					IL_009b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-					IL_00a0: stloc.s 10
-					IL_00a2: ldloc.s 10
-					IL_00a4: ldloc.s 5
-					IL_00a6: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-					IL_00ab: pop
-					IL_00ac: ldloc.s 6
-					IL_00ae: ldc.r8 1
-					IL_00b7: add
-					IL_00b8: stloc.s 6
-					IL_00ba: br IL_006b
+					IL_009f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+					IL_00a4: stloc.s 10
+					IL_00a6: ldloc.s 10
+					IL_00a8: ldloc.s 5
+					IL_00aa: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+					IL_00af: pop
+					IL_00b0: ldloc.s 6
+					IL_00b2: ldc.r8 1
+					IL_00bb: add
+					IL_00bc: stloc.s 6
+					IL_00be: br IL_006f
 				// end loop
 
-				IL_00bf: br IL_003b
+				IL_00c3: br IL_003b
 			// end loop
-			IL_00c4: ldloc.2
-			IL_00c5: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorClose(object)
-			IL_00ca: ldc.i4.1
-			IL_00cb: stloc.s 4
-			IL_00cd: leave IL_00ed
+			IL_00c8: ldloc.2
+			IL_00c9: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorClose(object)
+			IL_00ce: ldc.i4.1
+			IL_00cf: stloc.s 4
+			IL_00d1: leave IL_00f1
 
-			IL_00d2: ldc.i4.1
-			IL_00d3: stloc.3
-			IL_00d4: leave IL_00ed
+			IL_00d6: ldc.i4.1
+			IL_00d7: stloc.3
+			IL_00d8: leave IL_00f1
 		} // end .try
 		finally
 		{
-			IL_00d9: ldloc.3
-			IL_00da: brtrue IL_00ec
+			IL_00dd: ldloc.3
+			IL_00de: brtrue IL_00f0
 
-			IL_00df: ldloc.s 4
-			IL_00e1: brtrue IL_00ec
+			IL_00e3: ldloc.s 4
+			IL_00e5: brtrue IL_00f0
 
-			IL_00e6: ldloc.2
-			IL_00e7: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorCloseForThrowCompletion(object)
+			IL_00ea: ldloc.2
+			IL_00eb: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorCloseForThrowCompletion(object)
 
-			IL_00ec: endfinally
+			IL_00f0: endfinally
 		} // end handler
 
-		IL_00ed: ret
+		IL_00f1: ret
 	} // end of method ControlFlow_ForOf_LabeledContinue::__js_module_init__
 
 } // end of class Modules.ControlFlow_ForOf_LabeledContinue

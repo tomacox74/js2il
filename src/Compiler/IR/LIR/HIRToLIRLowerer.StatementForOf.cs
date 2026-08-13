@@ -561,7 +561,9 @@ public sealed partial class HIRToLIRLowerer
                     {
                         lirInstructions.Add(new LIRLabel(loopStartLabel));
 
-                    var iterResult = CreateTempVariable();
+                        lirInstructions.Add(new LIRCopyTemp(trueTemp, completedTemp));
+
+                        var iterResult = CreateTempVariable();
                     lirInstructions.Add(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.ObjectRuntime), nameof(JavaScriptRuntime.ObjectRuntime.IteratorNext), new[] { EnsureObject(iterTemp) }, iterResult));
                     DefineTempStorage(iterResult, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
 
@@ -573,6 +575,7 @@ public sealed partial class HIRToLIRLowerer
                     var itemTemp = CreateTempVariable();
                     lirInstructions.Add(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.ObjectRuntime), nameof(JavaScriptRuntime.ObjectRuntime.IteratorResultValue), new[] { EnsureObject(iterResult) }, itemTemp));
                     DefineTempStorage(itemTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                    lirInstructions.Add(new LIRCopyTemp(falseTemp, completedTemp));
 
                     var writeMode = (forOfStmt.IsDeclaration && (forOfStmt.DeclarationKind is BindingKind.Let or BindingKind.Const))
                         ? DestructuringWriteMode.ForDeclarationBindingInitialization
@@ -759,6 +762,8 @@ public sealed partial class HIRToLIRLowerer
                 {
                     lirInstructions.Add(new LIRLabel(loopStartLabel));
 
+                    lirInstructions.Add(new LIRCopyTemp(trueTemp, completedTemp));
+
                     var iterResult = CreateTempVariable();
                     lirInstructions.Add(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.ObjectRuntime), nameof(JavaScriptRuntime.ObjectRuntime.IteratorNext), new[] { EnsureObject(iterTemp) }, iterResult));
                     DefineTempStorage(iterResult, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
@@ -771,6 +776,7 @@ public sealed partial class HIRToLIRLowerer
                     var itemTemp = CreateTempVariable();
                     lirInstructions.Add(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.ObjectRuntime), nameof(JavaScriptRuntime.ObjectRuntime.IteratorResultValue), new[] { EnsureObject(iterResult) }, itemTemp));
                     DefineTempStorage(itemTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                    lirInstructions.Add(new LIRCopyTemp(falseTemp, completedTemp));
 
                     var writeMode = (forOfStmt.IsDeclaration && (forOfStmt.DeclarationKind is BindingKind.Let or BindingKind.Const))
                         ? DestructuringWriteMode.ForDeclarationBindingInitialization
@@ -915,6 +921,8 @@ public sealed partial class HIRToLIRLowerer
                     // Loop start
                     lirInstructions.Add(new LIRLabel(loopStartLabel));
 
+                    lirInstructions.Add(new LIRCopyTemp(trueTemp, completedTemp));
+
                     // result = ObjectRuntime.IteratorNext(iterator)
                     var iterResult = CreateTempVariable();
                     lirInstructions.Add(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.ObjectRuntime), nameof(JavaScriptRuntime.ObjectRuntime.IteratorNext), new[] { EnsureObject(iterTemp) }, iterResult));
@@ -930,6 +938,7 @@ public sealed partial class HIRToLIRLowerer
                     var itemTemp = CreateTempVariable();
                     lirInstructions.Add(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.ObjectRuntime), nameof(JavaScriptRuntime.ObjectRuntime.IteratorResultValue), new[] { EnsureObject(iterResult) }, itemTemp));
                     DefineTempStorage(itemTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                    lirInstructions.Add(new LIRCopyTemp(falseTemp, completedTemp));
 
                     var writeMode = (forOfStmt.IsDeclaration && (forOfStmt.DeclarationKind is BindingKind.Let or BindingKind.Const))
                         ? DestructuringWriteMode.ForDeclarationBindingInitialization
