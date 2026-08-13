@@ -1,6 +1,6 @@
 using System.Runtime.CompilerServices;
 
-namespace JavaScriptRuntime.CommonJS
+namespace JavaScriptRuntime.Modules.Shared
 {
     internal static class EsModuleInterop
     {

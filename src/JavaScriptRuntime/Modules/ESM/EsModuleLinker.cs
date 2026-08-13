@@ -1,7 +1,8 @@
 using System.Collections.Concurrent;
 using System.Runtime.CompilerServices;
+using JavaScriptRuntime.Modules.Shared;
 
-namespace JavaScriptRuntime.CommonJS
+namespace JavaScriptRuntime.Modules.ESM
 {
     internal sealed class EsModuleLinkerState
     {

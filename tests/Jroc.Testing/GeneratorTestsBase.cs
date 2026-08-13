@@ -3,7 +3,7 @@ using System.IO;
 using System.Reflection;
 using System.Reflection.Metadata;
 using System.Reflection.PortableExecutable;
-using JavaScriptRuntime.CommonJS;
+using JavaScriptRuntime.Modules.Shared;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 

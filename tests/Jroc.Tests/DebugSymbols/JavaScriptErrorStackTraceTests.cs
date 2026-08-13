@@ -217,7 +217,7 @@ public class JavaScriptErrorStackTraceTests
         var captured = new CapturingConsoleOutput();
         var capturedEnvironment = new JavaScriptRuntime.CapturingEnvironment();
 
-        JavaScriptRuntime.CommonJS.ModuleContext.SetModuleContext(modDir, file);
+        JavaScriptRuntime.Modules.CommonJS.ModuleContext.SetModuleContext(modDir, file);
         JavaScriptRuntime.EnvironmentProvider.SuppressExit = true;
         var runtimeServices = JavaScriptRuntime.RuntimeServices.BuildServiceProvider();
         runtimeServices.RegisterInstance(new ConsoleOutputSinks

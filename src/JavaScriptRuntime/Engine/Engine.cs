@@ -1,6 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
-using JavaScriptRuntime.CommonJS;
+using JavaScriptRuntime.Modules.CommonJS;
+using JavaScriptRuntime.Modules.Shared;
 using JavaScriptRuntime.DependencyInjection;
 using JavaScriptRuntime.EngineCore;
 using JavaScriptRuntime.Node;

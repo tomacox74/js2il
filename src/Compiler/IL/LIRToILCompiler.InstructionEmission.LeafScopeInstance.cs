@@ -30,7 +30,7 @@ internal sealed partial class LIRToILCompiler
         }
 
         int jsParamIndex = 0;
-        foreach (var name in JavaScriptRuntime.CommonJS.ModuleParameters.ParameterNames)
+        foreach (var name in JavaScriptRuntime.Modules.CommonJS.ModuleParameters.ParameterNames)
         {
             if (_scopeMetadataRegistry.TryGetFieldHandle(scopeName, name, out var fieldHandle))
             {

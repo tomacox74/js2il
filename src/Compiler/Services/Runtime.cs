@@ -161,7 +161,7 @@ namespace Jroc.Services
 
         public void InvokeRequire()
         {
-            var mref = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.CommonJS.RequireDelegate), nameof(JavaScriptRuntime.CommonJS.RequireDelegate.Invoke));
+            var mref = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.Modules.CommonJS.RequireDelegate), nameof(JavaScriptRuntime.Modules.CommonJS.RequireDelegate.Invoke));
             _il.OpCode(ILOpCode.Callvirt);
             _il.Token(mref);
         }

@@ -435,7 +435,7 @@ public class JavaScriptAstValidator : IAstValidator
     {
         try
         {
-            return JavaScriptRuntime.CommonJS.ModuleParameters.Parameters
+            return JavaScriptRuntime.Modules.CommonJS.ModuleParameters.Parameters
                 .Select(p => p.Name)
                 .Where(n => !string.IsNullOrWhiteSpace(n))
                 .ToHashSet(StringComparer.Ordinal);

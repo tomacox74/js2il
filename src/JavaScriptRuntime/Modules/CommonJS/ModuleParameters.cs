@@ -1,4 +1,4 @@
-namespace JavaScriptRuntime.CommonJS
+namespace JavaScriptRuntime.Modules.CommonJS
 {
     /// <summary>
     /// Delegate type for compiled module main methods.

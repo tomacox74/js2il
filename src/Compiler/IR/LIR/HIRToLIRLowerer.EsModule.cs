@@ -55,7 +55,7 @@ public sealed partial class HIRToLIRLowerer
         {
             _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStaticVoid(
                 EsModuleIntrinsic,
-                nameof(JavaScriptRuntime.CommonJS.EsModuleLinker.RegisterLocalExport),
+                nameof(JavaScriptRuntime.Modules.ESM.EsModuleLinker.RegisterLocalExport),
                 new[]
                 {
                     exportsTemp,
@@ -67,7 +67,7 @@ public sealed partial class HIRToLIRLowerer
         // 2. Mark the exports object as an ES module (__esModule) for namespace/interop consumers.
         _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStaticVoid(
             EsModuleIntrinsic,
-            nameof(JavaScriptRuntime.CommonJS.EsModuleLinker.MarkEsModule),
+            nameof(JavaScriptRuntime.Modules.ESM.EsModuleLinker.MarkEsModule),
             new[] { exportsTemp }));
 
         // 3. Require each source module (source order) and store into its hidden module-scope binding.
@@ -99,8 +99,8 @@ public sealed partial class HIRToLIRLowerer
 
             var resultTemp = CreateTempVariable();
             var methodName = importInit.Kind == EsModuleImportKind.Default
-                ? nameof(JavaScriptRuntime.CommonJS.EsModuleLinker.GetDefault)
-                : nameof(JavaScriptRuntime.CommonJS.EsModuleLinker.GetNamespace);
+                ? nameof(JavaScriptRuntime.Modules.ESM.EsModuleLinker.GetDefault)
+                : nameof(JavaScriptRuntime.Modules.ESM.EsModuleLinker.GetNamespace);
             _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
                 EsModuleIntrinsic,
                 methodName,
@@ -127,7 +127,7 @@ public sealed partial class HIRToLIRLowerer
 
             _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStaticVoid(
                 EsModuleIntrinsic,
-                nameof(JavaScriptRuntime.CommonJS.EsModuleLinker.RegisterReexport),
+                nameof(JavaScriptRuntime.Modules.ESM.EsModuleLinker.RegisterReexport),
                 new[]
                 {
                     exportsTemp,
@@ -149,7 +149,7 @@ public sealed partial class HIRToLIRLowerer
 
             _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStaticVoid(
                 EsModuleIntrinsic,
-                nameof(JavaScriptRuntime.CommonJS.EsModuleLinker.RegisterNamespaceReexport),
+                nameof(JavaScriptRuntime.Modules.ESM.EsModuleLinker.RegisterNamespaceReexport),
                 new[]
                 {
                     exportsTemp,
@@ -170,7 +170,7 @@ public sealed partial class HIRToLIRLowerer
 
             _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStaticVoid(
                 EsModuleIntrinsic,
-                nameof(JavaScriptRuntime.CommonJS.EsModuleLinker.RegisterStarReexports),
+                nameof(JavaScriptRuntime.Modules.ESM.EsModuleLinker.RegisterStarReexports),
                 new[]
                 {
                     exportsTemp,
@@ -195,7 +195,7 @@ public sealed partial class HIRToLIRLowerer
         {
             _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStaticVoid(
                 EsModuleIntrinsic,
-                nameof(JavaScriptRuntime.CommonJS.EsModuleLinker.SetLocalExport),
+                nameof(JavaScriptRuntime.Modules.ESM.EsModuleLinker.SetLocalExport),
                 new[]
                 {
                     CreateEsModuleStringTemp(export.ModuleId),
@@ -228,7 +228,7 @@ public sealed partial class HIRToLIRLowerer
         resultTempVar = CreateTempVariable();
         _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
             EsModuleIntrinsic,
-            nameof(JavaScriptRuntime.CommonJS.EsModuleLinker.GetImport),
+            nameof(JavaScriptRuntime.Modules.ESM.EsModuleLinker.GetImport),
             new[]
             {
                 EnsureObject(sourceTemp),

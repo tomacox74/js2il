@@ -2,7 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using JavaScriptRuntime.DependencyInjection;
 
-namespace JavaScriptRuntime.CommonJS;
+namespace JavaScriptRuntime.Modules.CommonJS;
 public class ModuleContext
 {
     /// <summary>

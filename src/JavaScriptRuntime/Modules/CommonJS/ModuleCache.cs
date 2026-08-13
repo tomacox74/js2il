@@ -1,3 +1,5 @@
+namespace JavaScriptRuntime.Modules.CommonJS;
+
 public class ModuleCacheEntry
 {
     public required string Id { get; set; }

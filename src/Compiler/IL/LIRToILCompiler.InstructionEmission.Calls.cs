@@ -527,7 +527,7 @@ internal sealed partial class LIRToILCompiler
                 {
                     var requireStorage = GetTempStorage(callRequire.RequireValue);
                     if (requireStorage.Kind == ValueStorageKind.Reference
-                        && requireStorage.ClrType == typeof(JavaScriptRuntime.CommonJS.RequireDelegate))
+                        && requireStorage.ClrType == typeof(JavaScriptRuntime.Modules.CommonJS.RequireDelegate))
                     {
                         // Already typed (e.g., a typed local). No castclass needed.
                         EmitLoadTemp(callRequire.RequireValue, ilEncoder, allocation, methodDescriptor);
@@ -537,25 +537,25 @@ internal sealed partial class LIRToILCompiler
                         // Object-typed temp: cast to the delegate type before callvirt.
                         EmitLoadTempAsObject(callRequire.RequireValue, ilEncoder, allocation, methodDescriptor);
                         ilEncoder.OpCode(ILOpCode.Castclass);
-                        ilEncoder.Token(_typeReferenceRegistry.GetOrAdd(typeof(JavaScriptRuntime.CommonJS.RequireDelegate)));
+                        ilEncoder.Token(_typeReferenceRegistry.GetOrAdd(typeof(JavaScriptRuntime.Modules.CommonJS.RequireDelegate)));
                     }
 
                     EmitLoadTemp(callRequire.ModuleId, ilEncoder, allocation, methodDescriptor);
                     if (callRequire.ContractType != null)
                     {
                         var requireObject = _memberRefRegistry.GetOrAddGenericRequireObjectMethod(
-                            typeof(JavaScriptRuntime.CommonJS.RequireRuntime),
-                            nameof(JavaScriptRuntime.CommonJS.RequireRuntime.RequireObject),
+                            typeof(JavaScriptRuntime.Modules.CommonJS.RequireRuntime),
+                            nameof(JavaScriptRuntime.Modules.CommonJS.RequireRuntime.RequireObject),
                             callRequire.ContractType,
-                            typeof(JavaScriptRuntime.CommonJS.RequireDelegate));
+                            typeof(JavaScriptRuntime.Modules.CommonJS.RequireDelegate));
                         ilEncoder.OpCode(ILOpCode.Call);
                         ilEncoder.Token(requireObject);
                     }
                     else
                     {
                         var invokeRef = _memberRefRegistry.GetOrAddMethod(
-                            typeof(JavaScriptRuntime.CommonJS.RequireDelegate),
-                            nameof(JavaScriptRuntime.CommonJS.RequireDelegate.Invoke),
+                            typeof(JavaScriptRuntime.Modules.CommonJS.RequireDelegate),
+                            nameof(JavaScriptRuntime.Modules.CommonJS.RequireDelegate.Invoke),
                             new[] { typeof(object) });
                         ilEncoder.OpCode(ILOpCode.Callvirt);
                         ilEncoder.Token(invokeRef);
@@ -574,13 +574,13 @@ internal sealed partial class LIRToILCompiler
 
             case LIRCallImport callImport:
                 {
-                    // Emit: JavaScriptRuntime.CommonJS.DynamicImport(specifier, currentModuleId)
+                    // Emit: JavaScriptRuntime.Modules.ESM.DynamicImport(specifier, currentModuleId)
                     EmitLoadTemp(callImport.ModuleSpecifier, ilEncoder, allocation, methodDescriptor);
                     EmitLoadTemp(callImport.CurrentModuleId, ilEncoder, allocation, methodDescriptor);
                     
                     var importRef = _memberRefRegistry.GetOrAddMethod(
-                        typeof(JavaScriptRuntime.CommonJS.DynamicImport),
-                        nameof(JavaScriptRuntime.CommonJS.DynamicImport.Import),
+                        typeof(JavaScriptRuntime.Modules.ESM.DynamicImport),
+                        nameof(JavaScriptRuntime.Modules.ESM.DynamicImport.Import),
                         new[] { typeof(object), typeof(object) });
                     ilEncoder.OpCode(ILOpCode.Call);
                     ilEncoder.Token(importRef);

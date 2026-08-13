@@ -36,8 +36,8 @@ The **core requirement** is to resolve module IDs to physical JavaScript files a
 ## Current State (relevant code)
 - Compile-time module graph loading: `src/Compiler/ModuleLoader.cs`
   - Today it only follows `require()` dependencies for specifiers starting with `.` or `/`.
-- Module id conventions and sanitization: `src/JavaScriptRuntime/CommonJS/ModuleName.cs`
-- Runtime require: `src/JavaScriptRuntime/CommonJS/Require.cs`
+- Module id conventions and sanitization: `src/JavaScriptRuntime/Modules/Shared/ModuleName.cs`
+- Runtime require: `src/JavaScriptRuntime/Modules/CommonJS/Require.cs`
   - Bare specifiers are treated as **Node core modules** only.
 - Host module loading: `src/JavaScriptRuntime/Hosting/JsEngine.cs`, `src/JavaScriptRuntime/Hosting/JsRuntimeInstance.cs`
 - Assembly module-id manifest: `Jroc.Runtime.JsCompiledModuleAttribute`

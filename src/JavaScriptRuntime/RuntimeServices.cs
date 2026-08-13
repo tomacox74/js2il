@@ -23,7 +23,7 @@ public class RuntimeServices
     [ThreadStatic] private static Stack<object?>? _constructorNewTargetStack;
     [ThreadStatic] private static Stack<object?>? _derivedConstructorThisStack;
     private static readonly ConcurrentDictionary<string, JsObject> _importMetaByUrl = new(StringComparer.Ordinal);
-    private static readonly ConcurrentDictionary<string, JavaScriptRuntime.CommonJS.RequireDelegate> _requireByModuleId = new(StringComparer.OrdinalIgnoreCase);
+    private static readonly ConcurrentDictionary<string, JavaScriptRuntime.Modules.CommonJS.RequireDelegate> _requireByModuleId = new(StringComparer.OrdinalIgnoreCase);
     private static readonly ConditionalWeakTable<Type, LazyClassMetadataSlot> _lazyClassMetadata = new();
     private static readonly ConcurrentDictionary<ClassConstructorCacheKey, JsClassConstructorObject> _classConstructorValues = new();
 
@@ -1625,7 +1625,7 @@ public class RuntimeServices
     /// Registers a module-scoped require delegate by module id/filename.
     /// Used by dynamic import() to resolve the module loading context.
     /// </summary>
-    public static void RegisterModuleRequire(string moduleId, CommonJS.RequireDelegate require)
+    public static void RegisterModuleRequire(string moduleId, Modules.CommonJS.RequireDelegate require)
     {
         if (string.IsNullOrWhiteSpace(moduleId) || require == null)
         {
@@ -1640,18 +1640,18 @@ public class RuntimeServices
         }
     }
 
-    internal static void UnregisterModuleRequires(IEnumerable<KeyValuePair<string, CommonJS.RequireDelegate>> moduleRequires)
+    internal static void UnregisterModuleRequires(IEnumerable<KeyValuePair<string, Modules.CommonJS.RequireDelegate>> moduleRequires)
     {
         foreach (var moduleRequire in moduleRequires)
         {
-            ((ICollection<KeyValuePair<string, CommonJS.RequireDelegate>>)_requireByModuleId).Remove(moduleRequire);
+            ((ICollection<KeyValuePair<string, Modules.CommonJS.RequireDelegate>>)_requireByModuleId).Remove(moduleRequire);
         }
     }
 
     /// <summary>
     /// Resolves a previously-registered module-scoped require delegate.
     /// </summary>
-    public static CommonJS.RequireDelegate? GetRequireForModule(string? moduleId)
+    public static Modules.CommonJS.RequireDelegate? GetRequireForModule(string? moduleId)
     {
         if (string.IsNullOrWhiteSpace(moduleId))
         {
@@ -1737,9 +1737,9 @@ public class RuntimeServices
         container.Register<EngineCore.IScheduler, EngineCore.NodeSchedulerState>();
         container.Register<EngineCore.IIOScheduler, EngineCore.NodeSchedulerState>();
         container.Register<EngineCore.IFinalizationRegistryHost, EngineCore.FinalizationRegistryHost>();
-        container.Register<CommonJS.Require>();
-        container.Register<CommonJS.EsModuleLinkerState>();
-        container.Register<LocalModulesAssembly>();
+        container.Register<Modules.CommonJS.Require>();
+        container.Register<Modules.ESM.EsModuleLinkerState>();
+        container.Register<Modules.Shared.LocalModulesAssembly>();
         container.RegisterInstance<IPropertyDescriptorStore>(new PropertyDescriptorStore());
         container.Register<IEnvironment, DefaultEnvironment>();
         container.Register<Node.IChildProcessLauncher, Node.DefaultChildProcessLauncher>();

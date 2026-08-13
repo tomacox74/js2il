@@ -13,7 +13,7 @@
 
 - `src/JavaScriptRuntime/Node/Util.cs`
 - `src/JavaScriptRuntime/Node/UtilTypesModule.cs`
-- `src/JavaScriptRuntime/CommonJS/Require.cs`
+- `src/JavaScriptRuntime/Modules/CommonJS/Require.cs`
 
 ## Notes
 

@@ -188,7 +188,7 @@ public class BindingInfo
 
 /// <summary>
 /// Associates an exported local binding with the exporting module's canonical id and the exported name,
-/// which together key the runtime <see cref="JavaScriptRuntime.CommonJS.EsModuleBinding"/> cell.
+/// which together key the runtime <see cref="JavaScriptRuntime.Modules.ESM.EsModuleBinding"/> cell.
 /// </summary>
 public sealed class EsModuleExportBinding
 {

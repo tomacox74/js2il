@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using JavaScriptRuntime;
-using JavaScriptRuntime.CommonJS;
+using JavaScriptRuntime.Modules.CommonJS;
 using JavaScriptRuntime.DependencyInjection;
 using JavaScriptRuntime.EngineCore;
 using JavaScriptRuntime.Node;

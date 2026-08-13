@@ -48,7 +48,7 @@ public sealed class ForInIterator : IJavaScriptIterator<string>
         _root = root ?? throw new ArgumentNullException(nameof(root));
 
         _currentTarget = _root;
-        _isEsModuleNamespace = CommonJS.EsModuleLinker.IsModuleNamespace(root);
+        _isEsModuleNamespace = Modules.ESM.EsModuleLinker.IsModuleNamespace(root);
         _usePrototypeChain = PrototypeChain.Enabled
             && PrototypeChain.GetPrototypeOrNull(_root) is not null
             && PrototypeChain.GetPrototypeOrNull(_root) is not JsNull;

@@ -4,7 +4,7 @@ using System.Reflection;
 using Jroc.Runtime;
 using JavaScriptRuntime.DependencyInjection;
 
-namespace JavaScriptRuntime.CommonJS;
+namespace JavaScriptRuntime.Modules.CommonJS;
 
 /// <summary>
 /// Executes JavaScript code using the CommonJS module system.

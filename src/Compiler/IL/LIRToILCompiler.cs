@@ -383,7 +383,7 @@ internal sealed partial class LIRToILCompiler
 
     private void EmitBoxIfNeededForTypedScopeFieldLoad(Type fieldClrType, ValueStorage targetStorage, InstructionEncoder ilEncoder)
     {
-        if (fieldClrType == typeof(JavaScriptRuntime.CommonJS.RequireDelegate)
+        if (fieldClrType == typeof(JavaScriptRuntime.Modules.CommonJS.RequireDelegate)
             && targetStorage.Kind == ValueStorageKind.Reference
             && targetStorage.ClrType
                 == typeof(JavaScriptRuntime.BuiltinDelegateFunctionAdapter))
@@ -398,9 +398,9 @@ internal sealed partial class LIRToILCompiler
     private void EmitMaterializeRequireFunctionValue(InstructionEncoder ilEncoder)
     {
         var wrapRef = _memberRefRegistry.GetOrAddMethod(
-            typeof(JavaScriptRuntime.CommonJS.RequireRuntime),
-            nameof(JavaScriptRuntime.CommonJS.RequireRuntime.GetFunctionValue),
-            new[] { typeof(JavaScriptRuntime.CommonJS.RequireDelegate) });
+            typeof(JavaScriptRuntime.Modules.CommonJS.RequireRuntime),
+            nameof(JavaScriptRuntime.Modules.CommonJS.RequireRuntime.GetFunctionValue),
+            new[] { typeof(JavaScriptRuntime.Modules.CommonJS.RequireDelegate) });
         ilEncoder.OpCode(ILOpCode.Call);
         ilEncoder.Token(wrapRef);
     }
@@ -666,7 +666,7 @@ internal sealed partial class LIRToILCompiler
         // into direct runtime calls (not a JavaScript-visible global).
         if (string.Equals(intrinsicName, EsModuleIntrinsicName, StringComparison.Ordinal))
         {
-            return typeof(JavaScriptRuntime.CommonJS.EsModuleLinker);
+            return typeof(JavaScriptRuntime.Modules.ESM.EsModuleLinker);
         }
 
         return _runtimeIntrinsicCatalog.TryGetIntrinsicObject(intrinsicName, out var intrinsic) && intrinsic != null

@@ -305,7 +305,7 @@ public class EnvironmentLayoutBuilder
             // IMPORTANT: module parameters have a required ordering that must match the wrapper
             // delegate signature: (exports, require, module, __filename, __dirname).
             // Using HashSet iteration here can scramble indices and break require/module.exports.
-            foreach (var p in JavaScriptRuntime.CommonJS.ModuleParameters.ParameterNames)
+            foreach (var p in JavaScriptRuntime.Modules.CommonJS.ModuleParameters.ParameterNames)
             {
                 if (scope.Parameters.Contains(p) && !scope.DestructuredParameters.Contains(p))
                 {

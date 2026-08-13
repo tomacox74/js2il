@@ -171,7 +171,7 @@ namespace Jroc.Services
         {
             if (IsSafeInjectedCommonJsRequireBinding(scope, binding))
             {
-                return typeof(JavaScriptRuntime.CommonJS.RequireDelegate);
+                return typeof(JavaScriptRuntime.Modules.CommonJS.RequireDelegate);
             }
 
             if (binding.RequiresRuntimeTemporalDeadZoneChecks)

@@ -1,5 +1,6 @@
 using JavaScriptRuntime;
-using JavaScriptRuntime.CommonJS;
+using JavaScriptRuntime.Modules.CommonJS;
+using JavaScriptRuntime.Modules.Shared;
 using Xunit;
 
 namespace Jroc.Tests.CommonJS;

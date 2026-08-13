@@ -176,7 +176,7 @@ public record LIRCallFunctionValue5(
 /// <summary>
 /// Calls the CommonJS module-scoped <c>require</c> function.
 ///
-/// In jroc-hosted CommonJS modules, <c>require</c> is provided as a <see cref="JavaScriptRuntime.CommonJS.RequireDelegate"/>
+/// In jroc-hosted CommonJS modules, <c>require</c> is provided as a <see cref="JavaScriptRuntime.Modules.CommonJS.RequireDelegate"/>
 /// which does not take the standard jroc <c>scopes</c> array. For performance, this call is emitted as a direct
 /// delegate invocation instead of going through <see cref="JavaScriptRuntime.Closure.InvokeWithArgs"/>.
 ///
@@ -192,7 +192,7 @@ public record LIRCallRequire(
 /// <summary>
 /// Calls the runtime dynamic import function to load a module and return a Promise.
 /// The module specifier must be a string (validated during AST validation).
-/// Emits: call JavaScriptRuntime.CommonJS.DynamicImport(object moduleIdOrPath, object currentModuleId)
+/// Emits: call JavaScriptRuntime.Modules.ESM.DynamicImport(object moduleIdOrPath, object currentModuleId)
 /// </summary>
 public record LIRCallImport(TempVariable ModuleSpecifier, TempVariable CurrentModuleId, TempVariable Result) : LIRInstruction;
 

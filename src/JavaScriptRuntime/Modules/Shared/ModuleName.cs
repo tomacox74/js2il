@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace JavaScriptRuntime.CommonJS
+namespace JavaScriptRuntime.Modules.Shared
 {
     public static class ModuleName
     {

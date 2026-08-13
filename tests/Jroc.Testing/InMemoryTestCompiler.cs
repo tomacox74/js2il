@@ -200,7 +200,7 @@ public static class InMemoryTestCompiler
             {
                 JavaScriptRuntime.Array.ResetPrototypeForTests();
                 EnvironmentProvider.SuppressExit = true;
-                JavaScriptRuntime.CommonJS.ModuleContext.SetModuleContext(
+                JavaScriptRuntime.Modules.CommonJS.ModuleContext.SetModuleContext(
                     Path.GetDirectoryName(entryPath) ?? string.Empty,
                     entryPath);
                 Engine._serviceProviderOverride.Value = serviceProvider;

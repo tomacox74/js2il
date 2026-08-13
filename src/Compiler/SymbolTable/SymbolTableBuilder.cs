@@ -313,7 +313,7 @@ namespace Jroc.SymbolTables
         private void AddModuleBuiltInParameters(Scope globalScope, Node astNode)
         {
             // Add built-in parameters for module system using shared ModuleParameters definition
-            foreach (var param in JavaScriptRuntime.CommonJS.ModuleParameters.Parameters)
+            foreach (var param in JavaScriptRuntime.Modules.CommonJS.ModuleParameters.Parameters)
             {
                 var bindingKind = param.IsConst ? BindingKind.Const : BindingKind.Var;
                 globalScope.Bindings[param.Name] = new BindingInfo(param.Name, bindingKind, globalScope, astNode);

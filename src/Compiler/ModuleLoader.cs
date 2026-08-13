@@ -376,7 +376,7 @@ public class ModuleLoader
 
         // Compute canonical logical module id (runtime-facing) and CLR type name.
         var canonicalModuleId = ComputeCanonicalModuleId(modulePath, rootModulePath);
-        var manifestDefaultId = JavaScriptRuntime.CommonJS.ModuleName.GetModuleIdForManifestFromPath(modulePath, rootModulePath);
+        var manifestDefaultId = JavaScriptRuntime.Modules.Shared.ModuleName.GetModuleIdForManifestFromPath(modulePath, rootModulePath);
 
         // Root module id override (used by CLI --moduleid) should become the alias id
         // that points at the root module's canonical id.
@@ -393,7 +393,7 @@ public class ModuleLoader
             : $"{canonicalModuleId}@{packageInstallationDiscriminator}";
         var internalKey = isPackageModule
             ? NodeModuleResolver.EncodeModuleIdToClrIdentifier(compilationModuleId)
-            : JavaScriptRuntime.CommonJS.ModuleName.GetModuleIdFromPath(modulePath, rootModulePath);
+            : JavaScriptRuntime.Modules.Shared.ModuleName.GetModuleIdFromPath(modulePath, rootModulePath);
 
         // Human-readable CLR names for the generated module root type.
         // For packages we group types by package name and use within-package path segments for type names.
@@ -2471,7 +2471,7 @@ function __jroc_esm_export(name, getter) {
         }
 
         // Local modules: use the existing manifest id (path-like relative to root directory, no .js).
-        return JavaScriptRuntime.CommonJS.ModuleName.GetModuleIdForManifestFromPath(modulePath, rootModulePath);
+        return JavaScriptRuntime.Modules.Shared.ModuleName.GetModuleIdForManifestFromPath(modulePath, rootModulePath);
     }
 
     private static bool IsUnderNodeModules(string modulePath)
@@ -3399,7 +3399,7 @@ function __jroc_esm_export(name, getter) {
 
         public void AddParseError(string modulePath, string message)
         {
-            var moduleName = JavaScriptRuntime.CommonJS.ModuleName.GetModuleIdFromPath(modulePath, _rootModulePath);
+            var moduleName = JavaScriptRuntime.Modules.Shared.ModuleName.GetModuleIdFromPath(modulePath, _rootModulePath);
             _parseErrors.Add((moduleName, modulePath, message));
         }
 

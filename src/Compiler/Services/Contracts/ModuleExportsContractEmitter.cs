@@ -40,7 +40,7 @@ internal sealed class ModuleExportsContractEmitter
 
         foreach (var module in modules._modules.Values)
         {
-            var moduleId = JavaScriptRuntime.CommonJS.ModuleName.GetModuleIdForManifestFromPath(module.Path, rootModulePath);
+            var moduleId = JavaScriptRuntime.Modules.Shared.ModuleName.GetModuleIdForManifestFromPath(module.Path, rootModulePath);
             var isRoot = ReferenceEquals(module, modules.rootModule);
 
             if (!TryGetModuleExportsObject(module.Ast, out var exportsObject))

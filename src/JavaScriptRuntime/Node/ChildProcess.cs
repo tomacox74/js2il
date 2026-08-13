@@ -752,7 +752,7 @@ namespace JavaScriptRuntime.Node
                 return null;
             }
 
-            return CommonJS.ModuleContext.CreateModuleContext(serviceProvider).__filename;
+            return Modules.CommonJS.ModuleContext.CreateModuleContext(serviceProvider).__filename;
         }
 
         private static string CreateIpcAuthenticationToken()

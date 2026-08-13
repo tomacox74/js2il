@@ -1,6 +1,7 @@
 using System;
+using JavaScriptRuntime.Modules.Shared;
 
-namespace JavaScriptRuntime.CommonJS
+namespace JavaScriptRuntime.Modules.ESM
 {
     /// <summary>
     /// Runtime support for dynamic import() expressions per ECMA-262 §13.3.10.
