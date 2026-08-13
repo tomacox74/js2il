@@ -75,6 +75,32 @@ public class ValidatorTests
     }
 
     [Fact]
+    public void Validate_UsingDeclarationOutsideForOf_ReportsUnsupported()
+    {
+        var ast = ParseStrict("function f() { using resource = {}; }");
+
+        var result = _validator.Validate(ast);
+
+        Assert.False(result.IsValid);
+        Assert.Contains(
+            result.Errors,
+            error => error.Contains(
+                "using declarations are currently supported only in for-of and for-await-of loop heads",
+                StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public void Validate_UsingDeclarationInForOf_ReturnsValid()
+    {
+        var ast = ParseStrict("for (using resource of []) { }");
+
+        var result = _validator.Validate(ast);
+
+        Assert.True(result.IsValid);
+        Assert.Empty(result.Errors);
+    }
+
+    [Fact]
     public void Validate_ObjectLiteral_AccessorDefinitions_ReturnsValid()
     {
         var js = @"

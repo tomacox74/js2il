@@ -360,7 +360,7 @@ public class Section14_7_5ExecutionTests03 : Jroc.Test262.Tests.language.stateme
     public Task generator_next_error_589()
         => ExecutionTest("generator-next-error");
 
-    [Fact(DisplayName = "head-await-using-bound-names-fordecl-tdz.js", Skip = "Explicit resource management is not supported by JROC.")]
+    [Fact(DisplayName = "head-await-using-bound-names-fordecl-tdz.js")]
     public Task head_await_using_bound_names_fordecl_tdz_590()
         => ExecutionTest("head-await-using-bound-names-fordecl-tdz");
 
@@ -460,7 +460,7 @@ public class Section14_7_5ExecutionTests03 : Jroc.Test262.Tests.language.stateme
     public Task head_lhs_non_asnmt_trgt_614()
         => CompilationFailureTest("head-lhs-non-asnmt-trgt", string.Empty);
 
-    [Fact(DisplayName = "head-using-bound-names-fordecl-tdz.js", Skip = "Explicit resource management is not supported by JROC.")]
+    [Fact(DisplayName = "head-using-bound-names-fordecl-tdz.js")]
     public Task head_using_bound_names_fordecl_tdz_615()
         => ExecutionTest("head-using-bound-names-fordecl-tdz");
 
@@ -472,7 +472,7 @@ public class Section14_7_5ExecutionTests03 : Jroc.Test262.Tests.language.stateme
     public Task head_using_bound_names_let_617()
         => CompilationFailureTest("head-using-bound-names-let", string.Empty);
 
-    [Fact(DisplayName = "head-using-fresh-binding-per-iteration.js", Skip = "Explicit resource management is not supported by JROC.")]
+    [Fact(DisplayName = "head-using-fresh-binding-per-iteration.js")]
     public Task head_using_fresh_binding_per_iteration_618()
         => ExecutionTest("head-using-fresh-binding-per-iteration");
 
