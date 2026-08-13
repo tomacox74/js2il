@@ -37,7 +37,7 @@
 	.method public hidebysig static 
 		void __js_module_init__ (
 			object exports,
-			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireDelegate require,
 			object module,
 			string __filename,
 			string __dirname
@@ -57,11 +57,11 @@
 		IL_0000: newobj instance void Modules.Import_StaticImport_FromCjs/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldarg.0
-		IL_0007: call void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.EsModuleLinker::MarkEsModule(object)
+		IL_0007: call void [JavaScriptRuntime]JavaScriptRuntime.Modules.ESM.EsModuleLinker::MarkEsModule(object)
 		IL_000c: ldarg.1
-		IL_000d: castclass [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate
+		IL_000d: castclass [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireDelegate
 		IL_0012: ldstr "./Import_StaticImport_FromCjs_Lib.cjs"
-		IL_0017: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
+		IL_0017: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireDelegate::Invoke(object)
 		IL_001c: stloc.3
 		IL_001d: ldloc.0
 		IL_001e: ldloc.3
@@ -70,7 +70,7 @@
 		IL_0025: ldfld object Modules.Import_StaticImport_FromCjs/Scope::'*esm-src:./Import_StaticImport_FromCjs_Lib.cjs'
 		IL_002a: stloc.3
 		IL_002b: ldloc.3
-		IL_002c: call object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.EsModuleLinker::GetDefault(object)
+		IL_002c: call object [JavaScriptRuntime]JavaScriptRuntime.Modules.ESM.EsModuleLinker::GetDefault(object)
 		IL_0031: stloc.3
 		IL_0032: ldloc.3
 		IL_0033: stloc.1
@@ -78,7 +78,7 @@
 		IL_0035: ldfld object Modules.Import_StaticImport_FromCjs/Scope::'*esm-src:./Import_StaticImport_FromCjs_Lib.cjs'
 		IL_003a: stloc.3
 		IL_003b: ldloc.3
-		IL_003c: call object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.EsModuleLinker::GetNamespace(object)
+		IL_003c: call object [JavaScriptRuntime]JavaScriptRuntime.Modules.ESM.EsModuleLinker::GetNamespace(object)
 		IL_0041: stloc.3
 		IL_0042: ldloc.3
 		IL_0043: stloc.2
@@ -103,7 +103,7 @@
 		IL_0075: stloc.3
 		IL_0076: ldloc.3
 		IL_0077: ldstr "value"
-		IL_007c: call object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.EsModuleLinker::GetImport(object, string)
+		IL_007c: call object [JavaScriptRuntime]JavaScriptRuntime.Modules.ESM.EsModuleLinker::GetImport(object, string)
 		IL_0081: stloc.3
 		IL_0082: ldloc.s 4
 		IL_0084: ldstr "named:"
@@ -169,7 +169,7 @@
 	.method public hidebysig static 
 		void __js_module_init__ (
 			object exports,
-			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireDelegate require,
 			object module,
 			string __filename,
 			string __dirname
@@ -217,9 +217,9 @@
 
 		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
 		IL_0005: ldnull
-		IL_0006: ldftn void Modules.Import_StaticImport_FromCjs::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
-		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
-		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
+		IL_0006: ldftn void Modules.Import_StaticImport_FromCjs::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireDelegate, object, string, string)
+		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate)
 		IL_0016: ret
 	} // end of method Program::Main
 

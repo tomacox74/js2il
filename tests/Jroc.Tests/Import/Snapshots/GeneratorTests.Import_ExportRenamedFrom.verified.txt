@@ -37,7 +37,7 @@
 	.method public hidebysig static 
 		void __js_module_init__ (
 			object exports,
-			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireDelegate require,
 			object module,
 			string __filename,
 			string __dirname
@@ -55,11 +55,11 @@
 		IL_0000: newobj instance void Modules.Import_ExportRenamedFrom/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldarg.0
-		IL_0007: call void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.EsModuleLinker::MarkEsModule(object)
+		IL_0007: call void [JavaScriptRuntime]JavaScriptRuntime.Modules.ESM.EsModuleLinker::MarkEsModule(object)
 		IL_000c: ldarg.1
-		IL_000d: castclass [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate
+		IL_000d: castclass [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireDelegate
 		IL_0012: ldstr "./Import_ExportRenamedFrom_Reexport.mjs"
-		IL_0017: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
+		IL_0017: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireDelegate::Invoke(object)
 		IL_001c: stloc.1
 		IL_001d: ldloc.0
 		IL_001e: ldloc.1
@@ -73,7 +73,7 @@
 		IL_0032: stloc.1
 		IL_0033: ldloc.1
 		IL_0034: ldstr "renamed"
-		IL_0039: call object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.EsModuleLinker::GetImport(object, string)
+		IL_0039: call object [JavaScriptRuntime]JavaScriptRuntime.Modules.ESM.EsModuleLinker::GetImport(object, string)
 		IL_003e: stloc.1
 		IL_003f: ldloc.2
 		IL_0040: ldstr "renamed:"
@@ -87,7 +87,7 @@
 		IL_0058: stloc.1
 		IL_0059: ldloc.1
 		IL_005a: ldstr "liveCounter"
-		IL_005f: call object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.EsModuleLinker::GetImport(object, string)
+		IL_005f: call object [JavaScriptRuntime]JavaScriptRuntime.Modules.ESM.EsModuleLinker::GetImport(object, string)
 		IL_0064: stloc.1
 		IL_0065: ldloc.2
 		IL_0066: ldstr "liveCounter0:"
@@ -99,7 +99,7 @@
 		IL_0078: stloc.1
 		IL_0079: ldloc.1
 		IL_007a: ldstr "bump"
-		IL_007f: call object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.EsModuleLinker::GetImport(object, string)
+		IL_007f: call object [JavaScriptRuntime]JavaScriptRuntime.Modules.ESM.EsModuleLinker::GetImport(object, string)
 		IL_0084: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
 		IL_0089: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
 		IL_008e: pop
@@ -110,7 +110,7 @@
 		IL_009b: stloc.1
 		IL_009c: ldloc.1
 		IL_009d: ldstr "liveCounter"
-		IL_00a2: call object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.EsModuleLinker::GetImport(object, string)
+		IL_00a2: call object [JavaScriptRuntime]JavaScriptRuntime.Modules.ESM.EsModuleLinker::GetImport(object, string)
 		IL_00a7: stloc.1
 		IL_00a8: ldloc.2
 		IL_00a9: ldstr "liveCounter1:"
@@ -156,7 +156,7 @@
 	.method public hidebysig static 
 		void __js_module_init__ (
 			object exports,
-			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireDelegate require,
 			object module,
 			string __filename,
 			string __dirname
@@ -173,11 +173,11 @@
 		IL_0000: newobj instance void Modules.Import_ExportRenamedFrom_Reexport/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldarg.0
-		IL_0007: call void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.EsModuleLinker::MarkEsModule(object)
+		IL_0007: call void [JavaScriptRuntime]JavaScriptRuntime.Modules.ESM.EsModuleLinker::MarkEsModule(object)
 		IL_000c: ldarg.1
-		IL_000d: castclass [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate
+		IL_000d: castclass [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireDelegate
 		IL_0012: ldstr "./Import_ExportRenamedFrom_Lib.mjs"
-		IL_0017: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
+		IL_0017: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireDelegate::Invoke(object)
 		IL_001c: stloc.1
 		IL_001d: ldloc.0
 		IL_001e: ldloc.1
@@ -189,7 +189,7 @@
 		IL_002c: ldstr "renamed"
 		IL_0031: ldloc.1
 		IL_0032: ldstr "original"
-		IL_0037: call void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.EsModuleLinker::RegisterReexport(object, string, object, string)
+		IL_0037: call void [JavaScriptRuntime]JavaScriptRuntime.Modules.ESM.EsModuleLinker::RegisterReexport(object, string, object, string)
 		IL_003c: ldloc.0
 		IL_003d: ldfld object Modules.Import_ExportRenamedFrom_Reexport/Scope::'*esm-src:./Import_ExportRenamedFrom_Lib.mjs'
 		IL_0042: stloc.1
@@ -197,7 +197,7 @@
 		IL_0044: ldstr "liveCounter"
 		IL_0049: ldloc.1
 		IL_004a: ldstr "counter"
-		IL_004f: call void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.EsModuleLinker::RegisterReexport(object, string, object, string)
+		IL_004f: call void [JavaScriptRuntime]JavaScriptRuntime.Modules.ESM.EsModuleLinker::RegisterReexport(object, string, object, string)
 		IL_0054: ldloc.0
 		IL_0055: ldfld object Modules.Import_ExportRenamedFrom_Reexport/Scope::'*esm-src:./Import_ExportRenamedFrom_Lib.mjs'
 		IL_005a: stloc.1
@@ -205,7 +205,7 @@
 		IL_005c: ldstr "bump"
 		IL_0061: ldloc.1
 		IL_0062: ldstr "bump"
-		IL_0067: call void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.EsModuleLinker::RegisterReexport(object, string, object, string)
+		IL_0067: call void [JavaScriptRuntime]JavaScriptRuntime.Modules.ESM.EsModuleLinker::RegisterReexport(object, string, object, string)
 		IL_006c: nop
 		IL_006d: ret
 	} // end of method Import_ExportRenamedFrom_Reexport::__js_module_init__
@@ -374,7 +374,7 @@
 			IL_001e: ldstr "Import_ExportRenamedFrom_Lib"
 			IL_0023: ldstr "counter"
 			IL_0028: ldloc.1
-			IL_0029: call object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.EsModuleLinker::SetLocalExport(string, string, object)
+			IL_0029: call object [JavaScriptRuntime]JavaScriptRuntime.Modules.ESM.EsModuleLinker::SetLocalExport(string, string, object)
 			IL_002e: pop
 			IL_002f: ldnull
 			IL_0030: ret
@@ -415,7 +415,7 @@
 	.method public hidebysig static 
 		void __js_module_init__ (
 			object exports,
-			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireDelegate require,
 			object module,
 			string __filename,
 			string __dirname
@@ -437,17 +437,17 @@
 		IL_0006: ldarg.0
 		IL_0007: ldstr "Import_ExportRenamedFrom_Lib"
 		IL_000c: ldstr "original"
-		IL_0011: call void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.EsModuleLinker::RegisterLocalExport(object, string, string)
+		IL_0011: call void [JavaScriptRuntime]JavaScriptRuntime.Modules.ESM.EsModuleLinker::RegisterLocalExport(object, string, string)
 		IL_0016: ldarg.0
 		IL_0017: ldstr "Import_ExportRenamedFrom_Lib"
 		IL_001c: ldstr "counter"
-		IL_0021: call void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.EsModuleLinker::RegisterLocalExport(object, string, string)
+		IL_0021: call void [JavaScriptRuntime]JavaScriptRuntime.Modules.ESM.EsModuleLinker::RegisterLocalExport(object, string, string)
 		IL_0026: ldarg.0
 		IL_0027: ldstr "Import_ExportRenamedFrom_Lib"
 		IL_002c: ldstr "bump"
-		IL_0031: call void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.EsModuleLinker::RegisterLocalExport(object, string, string)
+		IL_0031: call void [JavaScriptRuntime]JavaScriptRuntime.Modules.ESM.EsModuleLinker::RegisterLocalExport(object, string, string)
 		IL_0036: ldarg.0
-		IL_0037: call void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.EsModuleLinker::MarkEsModule(object)
+		IL_0037: call void [JavaScriptRuntime]JavaScriptRuntime.Modules.ESM.EsModuleLinker::MarkEsModule(object)
 		IL_003c: ldc.i4.1
 		IL_003d: newarr [System.Runtime]System.Object
 		IL_0042: dup
@@ -470,7 +470,7 @@
 		IL_0063: ldstr "Import_ExportRenamedFrom_Lib"
 		IL_0068: ldstr "bump"
 		IL_006d: ldloc.1
-		IL_006e: call object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.EsModuleLinker::SetLocalExport(string, string, object)
+		IL_006e: call object [JavaScriptRuntime]JavaScriptRuntime.Modules.ESM.EsModuleLinker::SetLocalExport(string, string, object)
 		IL_0073: pop
 		IL_0074: nop
 		IL_0075: ldc.r8 42
@@ -481,7 +481,7 @@
 		IL_0087: ldstr "Import_ExportRenamedFrom_Lib"
 		IL_008c: ldstr "original"
 		IL_0091: ldloc.s 4
-		IL_0093: call object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.EsModuleLinker::SetLocalExport(string, string, object)
+		IL_0093: call object [JavaScriptRuntime]JavaScriptRuntime.Modules.ESM.EsModuleLinker::SetLocalExport(string, string, object)
 		IL_0098: pop
 		IL_0099: ldloc.0
 		IL_009a: ldc.r8 0.0
@@ -491,7 +491,7 @@
 		IL_00b2: ldstr "counter"
 		IL_00b7: ldc.r8 0.0
 		IL_00c0: box [System.Runtime]System.Double
-		IL_00c5: call object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.EsModuleLinker::SetLocalExport(string, string, object)
+		IL_00c5: call object [JavaScriptRuntime]JavaScriptRuntime.Modules.ESM.EsModuleLinker::SetLocalExport(string, string, object)
 		IL_00ca: pop
 		IL_00cb: ret
 	} // end of method Import_ExportRenamedFrom_Lib::__js_module_init__
@@ -512,9 +512,9 @@
 
 		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
 		IL_0005: ldnull
-		IL_0006: ldftn void Modules.Import_ExportRenamedFrom::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
-		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
-		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
+		IL_0006: ldftn void Modules.Import_ExportRenamedFrom::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireDelegate, object, string, string)
+		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate)
 		IL_0016: ret
 	} // end of method Program::Main
 

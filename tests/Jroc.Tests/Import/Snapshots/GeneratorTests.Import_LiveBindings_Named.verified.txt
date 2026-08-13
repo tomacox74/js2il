@@ -37,7 +37,7 @@
 	.method public hidebysig static 
 		void __js_module_init__ (
 			object exports,
-			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireDelegate require,
 			object module,
 			string __filename,
 			string __dirname
@@ -55,11 +55,11 @@
 		IL_0000: newobj instance void Modules.Import_LiveBindings_Named/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldarg.0
-		IL_0007: call void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.EsModuleLinker::MarkEsModule(object)
+		IL_0007: call void [JavaScriptRuntime]JavaScriptRuntime.Modules.ESM.EsModuleLinker::MarkEsModule(object)
 		IL_000c: ldarg.1
-		IL_000d: castclass [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate
+		IL_000d: castclass [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireDelegate
 		IL_0012: ldstr "./Import_LiveBindings_Named_Lib.mjs"
-		IL_0017: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
+		IL_0017: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireDelegate::Invoke(object)
 		IL_001c: stloc.1
 		IL_001d: ldloc.0
 		IL_001e: ldloc.1
@@ -73,7 +73,7 @@
 		IL_0032: stloc.1
 		IL_0033: ldloc.1
 		IL_0034: ldstr "x"
-		IL_0039: call object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.EsModuleLinker::GetImport(object, string)
+		IL_0039: call object [JavaScriptRuntime]JavaScriptRuntime.Modules.ESM.EsModuleLinker::GetImport(object, string)
 		IL_003e: stloc.1
 		IL_003f: ldloc.2
 		IL_0040: ldstr "x0:"
@@ -85,7 +85,7 @@
 		IL_0052: stloc.1
 		IL_0053: ldloc.1
 		IL_0054: ldstr "inc"
-		IL_0059: call object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.EsModuleLinker::GetImport(object, string)
+		IL_0059: call object [JavaScriptRuntime]JavaScriptRuntime.Modules.ESM.EsModuleLinker::GetImport(object, string)
 		IL_005e: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
 		IL_0063: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
 		IL_0068: pop
@@ -96,7 +96,7 @@
 		IL_0075: stloc.1
 		IL_0076: ldloc.1
 		IL_0077: ldstr "x"
-		IL_007c: call object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.EsModuleLinker::GetImport(object, string)
+		IL_007c: call object [JavaScriptRuntime]JavaScriptRuntime.Modules.ESM.EsModuleLinker::GetImport(object, string)
 		IL_0081: stloc.1
 		IL_0082: ldloc.2
 		IL_0083: ldstr "x1:"
@@ -270,7 +270,7 @@
 			IL_001e: ldstr "Import_LiveBindings_Named_Lib"
 			IL_0023: ldstr "x"
 			IL_0028: ldloc.1
-			IL_0029: call object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.EsModuleLinker::SetLocalExport(string, string, object)
+			IL_0029: call object [JavaScriptRuntime]JavaScriptRuntime.Modules.ESM.EsModuleLinker::SetLocalExport(string, string, object)
 			IL_002e: pop
 			IL_002f: ldnull
 			IL_0030: ret
@@ -310,7 +310,7 @@
 	.method public hidebysig static 
 		void __js_module_init__ (
 			object exports,
-			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireDelegate require,
 			object module,
 			string __filename,
 			string __dirname
@@ -330,13 +330,13 @@
 		IL_0006: ldarg.0
 		IL_0007: ldstr "Import_LiveBindings_Named_Lib"
 		IL_000c: ldstr "x"
-		IL_0011: call void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.EsModuleLinker::RegisterLocalExport(object, string, string)
+		IL_0011: call void [JavaScriptRuntime]JavaScriptRuntime.Modules.ESM.EsModuleLinker::RegisterLocalExport(object, string, string)
 		IL_0016: ldarg.0
 		IL_0017: ldstr "Import_LiveBindings_Named_Lib"
 		IL_001c: ldstr "inc"
-		IL_0021: call void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.EsModuleLinker::RegisterLocalExport(object, string, string)
+		IL_0021: call void [JavaScriptRuntime]JavaScriptRuntime.Modules.ESM.EsModuleLinker::RegisterLocalExport(object, string, string)
 		IL_0026: ldarg.0
-		IL_0027: call void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.EsModuleLinker::MarkEsModule(object)
+		IL_0027: call void [JavaScriptRuntime]JavaScriptRuntime.Modules.ESM.EsModuleLinker::MarkEsModule(object)
 		IL_002c: ldc.i4.1
 		IL_002d: newarr [System.Runtime]System.Object
 		IL_0032: dup
@@ -359,7 +359,7 @@
 		IL_0053: ldstr "Import_LiveBindings_Named_Lib"
 		IL_0058: ldstr "inc"
 		IL_005d: ldloc.1
-		IL_005e: call object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.EsModuleLinker::SetLocalExport(string, string, object)
+		IL_005e: call object [JavaScriptRuntime]JavaScriptRuntime.Modules.ESM.EsModuleLinker::SetLocalExport(string, string, object)
 		IL_0063: pop
 		IL_0064: nop
 		IL_0065: ldloc.0
@@ -370,7 +370,7 @@
 		IL_007e: ldstr "x"
 		IL_0083: ldc.r8 1
 		IL_008c: box [System.Runtime]System.Double
-		IL_0091: call object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.EsModuleLinker::SetLocalExport(string, string, object)
+		IL_0091: call object [JavaScriptRuntime]JavaScriptRuntime.Modules.ESM.EsModuleLinker::SetLocalExport(string, string, object)
 		IL_0096: pop
 		IL_0097: ret
 	} // end of method Import_LiveBindings_Named_Lib::__js_module_init__
@@ -391,9 +391,9 @@
 
 		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
 		IL_0005: ldnull
-		IL_0006: ldftn void Modules.Import_LiveBindings_Named::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
-		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
-		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
+		IL_0006: ldftn void Modules.Import_LiveBindings_Named::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireDelegate, object, string, string)
+		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate)
 		IL_0016: ret
 	} // end of method Program::Main
 

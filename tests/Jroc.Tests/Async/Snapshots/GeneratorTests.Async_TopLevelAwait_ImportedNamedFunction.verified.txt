@@ -38,7 +38,7 @@
 	.method public static 
 		void __js_module_init__ (
 			object '',
-			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate '',
+			class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireDelegate '',
 			object '',
 			string '',
 			string ''
@@ -170,11 +170,11 @@
 		IL_009f: switch (IL_00ac, IL_0127)
 
 		IL_00ac: ldarg.2
-		IL_00ad: call void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.EsModuleLinker::MarkEsModule(object)
+		IL_00ad: call void [JavaScriptRuntime]JavaScriptRuntime.Modules.ESM.EsModuleLinker::MarkEsModule(object)
 		IL_00b2: ldarg.3
-		IL_00b3: castclass [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate
+		IL_00b3: castclass [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireDelegate
 		IL_00b8: ldstr "./Async_TopLevelAwait_ImportedNamedFunction_Dependency.js"
-		IL_00bd: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
+		IL_00bd: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireDelegate::Invoke(object)
 		IL_00c2: stloc.1
 		IL_00c3: ldloc.0
 		IL_00c4: ldloc.1
@@ -187,7 +187,7 @@
 		IL_00d7: stloc.1
 		IL_00d8: ldloc.1
 		IL_00d9: ldstr "run"
-		IL_00de: call object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.EsModuleLinker::GetImport(object, string)
+		IL_00de: call object [JavaScriptRuntime]JavaScriptRuntime.Modules.ESM.EsModuleLinker::GetImport(object, string)
 		IL_00e3: stloc.1
 		IL_00e4: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
 		IL_00e9: stloc.3
@@ -411,7 +411,7 @@
 	.method public hidebysig static 
 		void __js_module_init__ (
 			object exports,
-			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireDelegate require,
 			object module,
 			string __filename,
 			string __dirname
@@ -431,9 +431,9 @@
 		IL_0006: ldarg.0
 		IL_0007: ldstr "Async_TopLevelAwait_ImportedNamedFunction_Dependency"
 		IL_000c: ldstr "run"
-		IL_0011: call void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.EsModuleLinker::RegisterLocalExport(object, string, string)
+		IL_0011: call void [JavaScriptRuntime]JavaScriptRuntime.Modules.ESM.EsModuleLinker::RegisterLocalExport(object, string, string)
 		IL_0016: ldarg.0
-		IL_0017: call void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.EsModuleLinker::MarkEsModule(object)
+		IL_0017: call void [JavaScriptRuntime]JavaScriptRuntime.Modules.ESM.EsModuleLinker::MarkEsModule(object)
 		IL_001c: ldc.i4.1
 		IL_001d: newarr [System.Runtime]System.Object
 		IL_0022: dup
@@ -454,7 +454,7 @@
 		IL_0041: ldstr "Async_TopLevelAwait_ImportedNamedFunction_Dependency"
 		IL_0046: ldstr "run"
 		IL_004b: ldloc.1
-		IL_004c: call object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.EsModuleLinker::SetLocalExport(string, string, object)
+		IL_004c: call object [JavaScriptRuntime]JavaScriptRuntime.Modules.ESM.EsModuleLinker::SetLocalExport(string, string, object)
 		IL_0051: pop
 		IL_0052: ret
 	} // end of method Async_TopLevelAwait_ImportedNamedFunction_Dependency::__js_module_init__
@@ -475,9 +475,9 @@
 
 		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
 		IL_0005: ldnull
-		IL_0006: ldftn void Modules.Async_TopLevelAwait_ImportedNamedFunction::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
-		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
-		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
+		IL_0006: ldftn void Modules.Async_TopLevelAwait_ImportedNamedFunction::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireDelegate, object, string, string)
+		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate)
 		IL_0016: ret
 	} // end of method Program::Main
 

@@ -37,7 +37,7 @@
 	.method public hidebysig static 
 		void __js_module_init__ (
 			object exports,
-			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireDelegate require,
 			object module,
 			string __filename,
 			string __dirname
@@ -63,11 +63,11 @@
 		IL_0000: newobj instance void Modules.Import_ImportMeta_Url/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldarg.0
-		IL_0007: call void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.EsModuleLinker::MarkEsModule(object)
+		IL_0007: call void [JavaScriptRuntime]JavaScriptRuntime.Modules.ESM.EsModuleLinker::MarkEsModule(object)
 		IL_000c: ldarg.1
-		IL_000d: castclass [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate
+		IL_000d: castclass [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireDelegate
 		IL_0012: ldstr "./Import_ImportMeta_Url_Lib.mjs"
-		IL_0017: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
+		IL_0017: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireDelegate::Invoke(object)
 		IL_001c: stloc.s 6
 		IL_001e: ldloc.0
 		IL_001f: ldloc.s 6
@@ -76,7 +76,7 @@
 		IL_0027: nop
 		IL_0028: ldarg.1
 		IL_0029: ldstr "node:url"
-		IL_002e: call !!0 [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireRuntime::RequireObject<class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IUrlModule>(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object)
+		IL_002e: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireRuntime::RequireObject<class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IUrlModule>(class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireDelegate, object)
 		IL_0033: stloc.1
 		IL_0034: ldarg.3
 		IL_0035: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetImportMeta(object)
@@ -138,7 +138,7 @@
 		IL_00f1: stloc.s 7
 		IL_00f3: ldloc.s 7
 		IL_00f5: ldstr "importedUrl"
-		IL_00fa: call object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.EsModuleLinker::GetImport(object, string)
+		IL_00fa: call object [JavaScriptRuntime]JavaScriptRuntime.Modules.ESM.EsModuleLinker::GetImport(object, string)
 		IL_00ff: stloc.s 7
 		IL_0101: ldloc.1
 		IL_0102: ldloc.s 7
@@ -164,7 +164,7 @@
 		IL_0149: stloc.s 6
 		IL_014b: ldloc.s 6
 		IL_014d: ldstr "importedUrl"
-		IL_0152: call object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.EsModuleLinker::GetImport(object, string)
+		IL_0152: call object [JavaScriptRuntime]JavaScriptRuntime.Modules.ESM.EsModuleLinker::GetImport(object, string)
 		IL_0157: stloc.s 6
 		IL_0159: ldloc.s 7
 		IL_015b: dup
@@ -254,7 +254,7 @@
 		IL_027a: stloc.s 6
 		IL_027c: ldloc.s 6
 		IL_027e: ldstr "importedUrlHasFileScheme"
-		IL_0283: call object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.EsModuleLinker::GetImport(object, string)
+		IL_0283: call object [JavaScriptRuntime]JavaScriptRuntime.Modules.ESM.EsModuleLinker::GetImport(object, string)
 		IL_0288: stloc.s 6
 		IL_028a: ldloc.s 8
 		IL_028c: ldstr "lib has file url:"
@@ -294,7 +294,7 @@
 		IL_0302: stloc.s 6
 		IL_0304: ldloc.s 6
 		IL_0306: ldstr "importedModuleFilenameMatches"
-		IL_030b: call object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.EsModuleLinker::GetImport(object, string)
+		IL_030b: call object [JavaScriptRuntime]JavaScriptRuntime.Modules.ESM.EsModuleLinker::GetImport(object, string)
 		IL_0310: stloc.s 6
 		IL_0312: ldloc.s 8
 		IL_0314: ldstr "lib module.filename:"
@@ -308,7 +308,7 @@
 		IL_032e: stloc.s 6
 		IL_0330: ldloc.s 6
 		IL_0332: ldstr "importedModulePathMatches"
-		IL_0337: call object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.EsModuleLinker::GetImport(object, string)
+		IL_0337: call object [JavaScriptRuntime]JavaScriptRuntime.Modules.ESM.EsModuleLinker::GetImport(object, string)
 		IL_033c: stloc.s 6
 		IL_033e: ldloc.s 8
 		IL_0340: ldstr "lib module.path:"
@@ -348,7 +348,7 @@
 	.method public hidebysig static 
 		void __js_module_init__ (
 			object exports,
-			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireDelegate require,
 			object module,
 			string __filename,
 			string __dirname
@@ -373,21 +373,21 @@
 		IL_0006: ldarg.0
 		IL_0007: ldstr "Import_ImportMeta_Url_Lib"
 		IL_000c: ldstr "importedUrl"
-		IL_0011: call void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.EsModuleLinker::RegisterLocalExport(object, string, string)
+		IL_0011: call void [JavaScriptRuntime]JavaScriptRuntime.Modules.ESM.EsModuleLinker::RegisterLocalExport(object, string, string)
 		IL_0016: ldarg.0
 		IL_0017: ldstr "Import_ImportMeta_Url_Lib"
 		IL_001c: ldstr "importedUrlHasFileScheme"
-		IL_0021: call void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.EsModuleLinker::RegisterLocalExport(object, string, string)
+		IL_0021: call void [JavaScriptRuntime]JavaScriptRuntime.Modules.ESM.EsModuleLinker::RegisterLocalExport(object, string, string)
 		IL_0026: ldarg.0
 		IL_0027: ldstr "Import_ImportMeta_Url_Lib"
 		IL_002c: ldstr "importedModuleFilenameMatches"
-		IL_0031: call void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.EsModuleLinker::RegisterLocalExport(object, string, string)
+		IL_0031: call void [JavaScriptRuntime]JavaScriptRuntime.Modules.ESM.EsModuleLinker::RegisterLocalExport(object, string, string)
 		IL_0036: ldarg.0
 		IL_0037: ldstr "Import_ImportMeta_Url_Lib"
 		IL_003c: ldstr "importedModulePathMatches"
-		IL_0041: call void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.EsModuleLinker::RegisterLocalExport(object, string, string)
+		IL_0041: call void [JavaScriptRuntime]JavaScriptRuntime.Modules.ESM.EsModuleLinker::RegisterLocalExport(object, string, string)
 		IL_0046: ldarg.0
-		IL_0047: call void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.EsModuleLinker::MarkEsModule(object)
+		IL_0047: call void [JavaScriptRuntime]JavaScriptRuntime.Modules.ESM.EsModuleLinker::MarkEsModule(object)
 		IL_004c: nop
 		IL_004d: ldarg.3
 		IL_004e: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetImportMeta(object)
@@ -399,7 +399,7 @@
 		IL_0062: ldstr "Import_ImportMeta_Url_Lib"
 		IL_0067: ldstr "importedUrl"
 		IL_006c: ldloc.1
-		IL_006d: call object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.EsModuleLinker::SetLocalExport(string, string, object)
+		IL_006d: call object [JavaScriptRuntime]JavaScriptRuntime.Modules.ESM.EsModuleLinker::SetLocalExport(string, string, object)
 		IL_0072: pop
 		IL_0073: ldloc.1
 		IL_0074: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
@@ -410,7 +410,7 @@
 		IL_0089: ldstr "Import_ImportMeta_Url_Lib"
 		IL_008e: ldstr "importedUrlHasFileScheme"
 		IL_0093: ldloc.2
-		IL_0094: call object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.EsModuleLinker::SetLocalExport(string, string, object)
+		IL_0094: call object [JavaScriptRuntime]JavaScriptRuntime.Modules.ESM.EsModuleLinker::SetLocalExport(string, string, object)
 		IL_0099: pop
 		IL_009a: ldarg.2
 		IL_009b: ldstr "filename"
@@ -426,7 +426,7 @@
 		IL_00b8: ldstr "Import_ImportMeta_Url_Lib"
 		IL_00bd: ldstr "importedModuleFilenameMatches"
 		IL_00c2: ldloc.s 6
-		IL_00c4: call object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.EsModuleLinker::SetLocalExport(string, string, object)
+		IL_00c4: call object [JavaScriptRuntime]JavaScriptRuntime.Modules.ESM.EsModuleLinker::SetLocalExport(string, string, object)
 		IL_00c9: pop
 		IL_00ca: ldarg.2
 		IL_00cb: ldstr "path"
@@ -466,7 +466,7 @@
 		IL_014b: ldstr "Import_ImportMeta_Url_Lib"
 		IL_0150: ldstr "importedModulePathMatches"
 		IL_0155: ldloc.s 6
-		IL_0157: call object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.EsModuleLinker::SetLocalExport(string, string, object)
+		IL_0157: call object [JavaScriptRuntime]JavaScriptRuntime.Modules.ESM.EsModuleLinker::SetLocalExport(string, string, object)
 		IL_015c: pop
 		IL_015d: ret
 	} // end of method Import_ImportMeta_Url_Lib::__js_module_init__
@@ -487,9 +487,9 @@
 
 		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
 		IL_0005: ldnull
-		IL_0006: ldftn void Modules.Import_ImportMeta_Url::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
-		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
-		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
+		IL_0006: ldftn void Modules.Import_ImportMeta_Url::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireDelegate, object, string, string)
+		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate)
 		IL_0016: ret
 	} // end of method Program::Main
 
