@@ -13,6 +13,10 @@ public class GeneratorScope
     public bool _parameterInitializationOnly;
     public bool _done;
 
+    // Persistent storage for compiler-generated IL locals that must survive
+    // across calls to next(), throw(), and return().
+    public object?[]? _locals;
+
     // yield* delegation state
     // _yieldStarMode: 0 = not delegating, 1 = indexable (NormalizeForOfIterable), 2 = iterator (GeneratorObject)
     // Stored as double to match the compiler's numeric constant model.

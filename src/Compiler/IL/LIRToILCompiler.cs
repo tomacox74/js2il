@@ -259,6 +259,7 @@ internal sealed partial class LIRToILCompiler
             nameof(JavaScriptRuntime.GeneratorScope._parametersInitialized) => typeof(bool),
             nameof(JavaScriptRuntime.GeneratorScope._parameterInitializationOnly) => typeof(bool),
             nameof(JavaScriptRuntime.GeneratorScope._done) => typeof(bool),
+            nameof(JavaScriptRuntime.GeneratorScope._locals) => typeof(object[]),
             nameof(JavaScriptRuntime.GeneratorScope._resumeValue) => typeof(object),
             nameof(JavaScriptRuntime.GeneratorScope._resumeException) => typeof(object),
             nameof(JavaScriptRuntime.GeneratorScope._hasResumeException) => typeof(bool),
@@ -283,6 +284,7 @@ internal sealed partial class LIRToILCompiler
             or nameof(JavaScriptRuntime.GeneratorScope._parametersInitialized)
             or nameof(JavaScriptRuntime.GeneratorScope._parameterInitializationOnly)
             or nameof(JavaScriptRuntime.GeneratorScope._done)
+            or nameof(JavaScriptRuntime.GeneratorScope._locals)
             or nameof(JavaScriptRuntime.GeneratorScope._resumeValue)
             or nameof(JavaScriptRuntime.GeneratorScope._resumeException)
             or nameof(JavaScriptRuntime.GeneratorScope._hasResumeException)
