@@ -139,10 +139,12 @@ public sealed class GeneratedFunctionObjectEmissionTests
 
         var answerType = Assert.Single(
             GetFunctionObjectTypes(first.Assembly),
-            type => type.Name.EndsWith("_answer", StringComparison.Ordinal));
+            type => type.Name == GeneratedFunctionObjectNaming.WrapperTypeName
+                && type.DeclaringType?.Name == "answer");
         var innerType = Assert.Single(
             GetFunctionObjectTypes(first.Assembly),
-            type => type.Name.EndsWith("_inner", StringComparison.Ordinal));
+            type => type.Name == GeneratedFunctionObjectNaming.WrapperTypeName
+                && type.DeclaringType?.Name == "inner");
         var arrowTypes = GetFunctionObjectTypes(first.Assembly)
             .Where(type => type.DeclaringType?.Name.StartsWith(
                     "ArrowFunction_",
@@ -205,12 +207,37 @@ public sealed class GeneratedFunctionObjectEmissionTests
     }
 
     [Fact]
+    public void FunctionObjectTypesUseTheirDistinctOwnersForIdentity()
+    {
+        using var compiled = CompileAndLoad(
+            """
+            function first() { return 1; }
+            function second() { return 2; }
+            const third = function() { return 3; };
+            const fourth = function() { return 4; };
+            """);
+
+        var ordinaryFunctionObjects = GetFunctionObjectTypes(compiled.Assembly)
+            .Where(type => type.Name == GeneratedFunctionObjectNaming.WrapperTypeName)
+            .ToArray();
+
+        Assert.Equal(4, ordinaryFunctionObjects.Length);
+        Assert.Equal(
+            ordinaryFunctionObjects.Length,
+            ordinaryFunctionObjects
+                .Select(type => type.DeclaringType)
+                .Distinct()
+                .Count());
+    }
+
+    [Fact]
     public void TypedBodyAndDynamicAdapterKeepSeparateSignatures()
     {
         using var compiled = CompileAndLoad(Source);
         var answerType = Assert.Single(
             GetFunctionObjectTypes(compiled.Assembly),
-            type => type.Name.EndsWith("_answer", StringComparison.Ordinal));
+            type => type.Name == GeneratedFunctionObjectNaming.WrapperTypeName
+                && type.DeclaringType?.Name == "answer");
 
         var functionObject = Assert.IsAssignableFrom<JsFunctionObject>(
             Activator.CreateInstance(answerType));
