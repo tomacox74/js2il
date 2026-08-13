@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.12.6 - 2026-08-13
+
 - runtime: reorganize the module runtime library by module standard. Types now
   live under `src/JavaScriptRuntime/Modules/` in three namespaces:
   `JavaScriptRuntime.Modules.CommonJS` (CommonJS `Module`, `Require`,
