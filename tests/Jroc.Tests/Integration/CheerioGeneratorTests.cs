@@ -72,9 +72,10 @@ public class CheerioGeneratorTests
 
     private static void InstallFixture(string root)
     {
+        var npmFileName = OperatingSystem.IsWindows() ? "npm.cmd" : "npm";
         var startInfo = new ProcessStartInfo
         {
-            FileName = "npm",
+            FileName = npmFileName,
             Arguments = "ci --ignore-scripts --no-audit --no-fund",
             WorkingDirectory = root,
             RedirectStandardOutput = true,

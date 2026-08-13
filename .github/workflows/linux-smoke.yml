@@ -87,7 +87,7 @@ jobs:
               }
 
               const latestCompleted = matchingRuns[0];
-              core.info(`No successful ${workflowId} run yet for ${targetTag}. Latest completed run ${latestCompleted.id} concluded ${latestCompleted.conclusion ?? 'n/a'}. Retrying...`);
+              core.info(`No successful ${workflowId} run yet for ${targetTag}. Latest completed run ${latestCompleted.id} concluded ${latestCompleted.conclusion ?? 'n/a'}. Retrying in ${pollMs / 1000}s... (Tip: manually re-trigger ${workflowId} for ${targetTag} to unblock retries of this job)`);
               await new Promise(resolve => setTimeout(resolve, pollMs));
             }
 
