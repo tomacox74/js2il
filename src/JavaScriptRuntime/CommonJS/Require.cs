@@ -38,6 +38,15 @@ namespace JavaScriptRuntime.CommonJS
             _mainModule = mainModule;
         }
 
+        internal void RegisterCompiledMainModule(Module mainModule)
+        {
+            ArgumentNullException.ThrowIfNull(mainModule);
+
+            var cacheKey = "compiled:" + NormalizeModuleIdKey(mainModule.id);
+            _modules[cacheKey] = mainModule;
+            _instances[cacheKey] = mainModule.exports ?? new object();
+        }
+
         private Dictionary<string, (string CanonicalId, string TypeName)> GetCompiledModuleTypeMap()
         {
             if (_compiledModuleTypeMap != null)
@@ -254,7 +263,9 @@ namespace JavaScriptRuntime.CommonJS
                 if (_modules.TryGetValue(cacheKey, out var existingModule))
                 {
                     var parentModuleForCache = parentModuleOverride ?? _currentParentModule;
-                    if (parentModuleForCache != null && !asMain)
+                    if (parentModuleForCache != null
+                        && !asMain
+                        && !ReferenceEquals(parentModuleForCache, existingModule))
                     {
                         parentModuleForCache.AddChild(existingModule);
                     }

@@ -23,7 +23,13 @@
         "feature": "Module namespace exotic objects",
         "status": "Not Yet Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-module-namespace-objects",
-        "notes": "JROC supports CommonJS-style runtime module loading work, but ECMAScript module namespace exotic objects are not currently implemented or covered."
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/language/module-code/namespace/internals/JavaScript/enumerate-binding-uninit.js"
+        ],
+        "test262Paths": [
+          "test/language/module-code/namespace/internals/enumerate-binding-uninit.js"
+        ],
+        "notes": "Full ECMAScript module namespace exotic objects are not implemented. Static-module interop does preserve the uninitialized live-binding ReferenceError when for-in enumerates a self namespace, but it is not a complete 28.3 implementation."
       }
     ]
   }
