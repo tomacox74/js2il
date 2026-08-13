@@ -103,6 +103,12 @@ public sealed partial class HIRToLIRLowerer
                             _methodBodyIR.Instructions.Add(new LIRThrowNewTypeError("Assignment to constant variable."));
                             return true;
                         }
+
+                        if (!TryEnsureLexicalBindingInitializedForDestructuringAssignment(id.Symbol.BindingInfo))
+                        {
+                            return false;
+                        }
+
                         return TryStoreToBinding(id.Symbol.BindingInfo, sourceValue, out _);
 
                     case DestructuringWriteMode.ForDeclarationBindingInitialization:
@@ -385,6 +391,44 @@ public sealed partial class HIRToLIRLowerer
         var setResult = CreateTempVariable();
         _methodBodyIR.Instructions.Add(new LIRSetItem(target.Object, target.Key, valueToStore, setResult, UsesStrictAssignmentSemantics()));
         DefineTempStorage(setResult, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        return true;
+    }
+
+    private bool TryEnsureLexicalBindingInitializedForDestructuringAssignment(BindingInfo binding)
+    {
+        if (binding.Kind != BindingKind.Let)
+        {
+            return true;
+        }
+
+        if (binding.RequiresRuntimeTemporalDeadZoneChecks)
+        {
+            if (!TryLoadVariable(binding, out var currentValue))
+            {
+                return false;
+            }
+
+            var bindingName = EmitConstString(binding.Name);
+            var checkedValue = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
+                nameof(JavaScriptRuntime.RuntimeServices.EnsureTemporalDeadZoneInitialized),
+                new[] { EnsureObject(currentValue), EnsureObject(bindingName) },
+                checkedValue,
+                new[] { typeof(object), typeof(string) }));
+            DefineTempStorage(checkedValue, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            return true;
+        }
+
+        if (!binding.RequiresTemporalDeadZoneChecks || _variableMap.ContainsKey(binding))
+        {
+            return true;
+        }
+
+        var messageTemp = EmitConstString($"Cannot access '{binding.Name}' before initialization");
+        var errorTemp = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRNewBuiltInError("ReferenceError", messageTemp, errorTemp));
+        DefineTempStorage(errorTemp, GetBuiltInErrorStorage("ReferenceError"));
+        _methodBodyIR.Instructions.Add(new LIRThrow(errorTemp));
         return true;
     }
 

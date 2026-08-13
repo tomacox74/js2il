@@ -3940,6 +3940,37 @@ namespace JavaScriptRuntime
                 return true;
             }
 
+            if (target is string text)
+            {
+                if (string.Equals(propName, "length", StringComparison.Ordinal))
+                {
+                    descriptor = new JsPropertyDescriptor
+                    {
+                        Kind = JsPropertyDescriptorKind.Data,
+                        Enumerable = false,
+                        Configurable = false,
+                        Writable = false,
+                        Value = (double)text.Length
+                    };
+                    return true;
+                }
+
+                if (TryParseCanonicalIndexString(propName, out var index)
+                    && index >= 0
+                    && index < text.Length)
+                {
+                    descriptor = new JsPropertyDescriptor
+                    {
+                        Kind = JsPropertyDescriptorKind.Data,
+                        Enumerable = true,
+                        Configurable = false,
+                        Writable = false,
+                        Value = text[index].ToString()
+                    };
+                    return true;
+                }
+            }
+
             if (target is ArgumentsObject
                 && string.Equals(propName, "callee", StringComparison.Ordinal)
                 && TryGetOwnPropertyValue(target, propName, target, out var calleeValue))

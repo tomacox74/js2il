@@ -2236,6 +2236,10 @@ namespace Jroc.SymbolTables
                             }
                         }
                     }
+                    else
+                    {
+                        BuildAssignmentPatternTargetScopes(globalScope, forOf.Left, forOfScope);
+                    }
 
                     // The loop-head lexical environment is active while the iterable expression
                     // is evaluated. This keeps closures created by the expression bound to the
@@ -2283,6 +2287,10 @@ namespace Jroc.SymbolTables
                                 BuildPatternInitializerScopes(globalScope, decl.Id, forInScope);
                             }
                         }
+                    }
+                    else
+                    {
+                        BuildAssignmentPatternTargetScopes(globalScope, forIn.Left, forInScope);
                     }
 
                     // The loop-head lexical environment is active while the object expression
@@ -3334,6 +3342,64 @@ namespace Jroc.SymbolTables
                     foreach (var el in arr.Elements.Where(el => el != null))
                     {
                         BuildPatternInitializerScopes(globalScope, el!, currentScope);
+                    }
+                    return;
+            }
+        }
+
+        private void BuildAssignmentPatternTargetScopes(Scope globalScope, Node target, Scope currentScope)
+        {
+            switch (target)
+            {
+                case MemberExpression member:
+                    BuildScopeRecursive(globalScope, member.Object, currentScope);
+                    if (member.Computed)
+                    {
+                        BuildScopeRecursive(globalScope, member.Property, currentScope);
+                    }
+                    return;
+
+                case AssignmentPattern assignment:
+                    BuildAssignmentPatternTargetScopes(globalScope, assignment.Left, currentScope);
+                    BuildScopeRecursive(globalScope, assignment.Right, currentScope);
+                    return;
+
+                case RestElement rest:
+                    BuildAssignmentPatternTargetScopes(globalScope, rest.Argument, currentScope);
+                    return;
+
+                case ObjectPattern obj:
+                    foreach (var property in obj.Properties)
+                    {
+                        if (property is Property patternProperty)
+                        {
+                            if (patternProperty.Computed)
+                            {
+                                BuildScopeRecursive(globalScope, patternProperty.Key as Node, currentScope);
+                            }
+
+                            BuildAssignmentPatternTargetScopes(
+                                globalScope,
+                                patternProperty.Value,
+                                currentScope);
+                        }
+                        else if (property is RestElement restProperty)
+                        {
+                            BuildAssignmentPatternTargetScopes(
+                                globalScope,
+                                restProperty.Argument,
+                                currentScope);
+                        }
+                    }
+                    return;
+
+                case ArrayPattern array:
+                    foreach (var element in array.Elements)
+                    {
+                        if (element != null)
+                        {
+                            BuildAssignmentPatternTargetScopes(globalScope, element, currentScope);
+                        }
                     }
                     return;
             }
