@@ -1738,6 +1738,7 @@ public class RuntimeServices
         container.Register<EngineCore.IIOScheduler, EngineCore.NodeSchedulerState>();
         container.Register<EngineCore.IFinalizationRegistryHost, EngineCore.FinalizationRegistryHost>();
         container.Register<CommonJS.Require>();
+        container.Register<CommonJS.EsModuleLinkerState>();
         container.Register<LocalModulesAssembly>();
         container.RegisterInstance<IPropertyDescriptorStore>(new PropertyDescriptorStore());
         container.Register<IEnvironment, DefaultEnvironment>();

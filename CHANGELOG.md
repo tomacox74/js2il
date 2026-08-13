@@ -19,11 +19,13 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   resolve as live reads, exported writes mirror into their binding cell, and
   module namespace/`for-in` enumeration enforces temporal dead-zone
   `ReferenceError`s for uninitialized live bindings (activating the
-  `enumerate-binding-uninit.js` test262 case). CommonJS interop, module
-  resolution, evaluation order, live re-exports, and debug source locations are
-  preserved. Adds focused execution and generated-IL coverage asserting no
-  `__jroc_esm` function/type overhead remains for every supported static ESM
-  form.
+  `enumerate-binding-uninit.js` test262 case). Binding cells and namespace
+  markers are scoped to each runtime instance, preventing scripts with matching
+  module ids from sharing live state or retaining one another after disposal.
+  CommonJS interop, module resolution, evaluation order, live re-exports, and
+  debug source locations are preserved. Adds focused execution and generated-IL
+  coverage asserting no `__jroc_esm` function/type overhead remains for every
+  supported static ESM form.
 
 ## v0.12.5 - 2026-08-13
 

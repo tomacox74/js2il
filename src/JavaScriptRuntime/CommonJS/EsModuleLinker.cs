@@ -3,6 +3,17 @@ using System.Runtime.CompilerServices;
 
 namespace JavaScriptRuntime.CommonJS
 {
+    internal sealed class EsModuleLinkerState
+    {
+        internal ConcurrentDictionary<string, ConcurrentDictionary<string, EsModuleBinding>> BindingsByModule { get; } = new();
+
+        internal ConditionalWeakTable<object, ModuleNamespaceMarker> ModuleNamespaces { get; } = new();
+    }
+
+    internal sealed class ModuleNamespaceMarker
+    {
+    }
+
     /// <summary>
     /// A single ECMAScript module binding cell.
     /// Models a module Environment Record binding: it holds the current value and tracks
@@ -64,15 +75,15 @@ namespace JavaScriptRuntime.CommonJS
     /// </summary>
     public static class EsModuleLinker
     {
-        private static readonly ConcurrentDictionary<string, ConcurrentDictionary<string, EsModuleBinding>> BindingsByModule = new();
-        private static readonly ConditionalWeakTable<object, ModuleNamespaceMarker> ModuleNamespaces = new();
-
-        private sealed class ModuleNamespaceMarker
-        {
-        }
+        private static EsModuleLinkerState State
+            => GlobalThis.ServiceProvider?.Resolve<EsModuleLinkerState>()
+               ?? throw new InvalidOperationException(
+                   "ES module linking requires an active JavaScript runtime.");
 
         private static ConcurrentDictionary<string, EsModuleBinding> GetModuleBindings(string moduleId)
-            => BindingsByModule.GetOrAdd(moduleId, static _ => new ConcurrentDictionary<string, EsModuleBinding>(StringComparer.Ordinal));
+            => State.BindingsByModule.GetOrAdd(
+                moduleId,
+                static _ => new ConcurrentDictionary<string, EsModuleBinding>(StringComparer.Ordinal));
 
         private static EsModuleBinding GetOrCreateBinding(string moduleId, string name)
             => GetModuleBindings(moduleId).GetOrAdd(name, static n => new EsModuleBinding(n));
@@ -97,7 +108,7 @@ namespace JavaScriptRuntime.CommonJS
                 ObjectRuntime.defineProperty(exports, "__esModule", descriptor);
             }
 
-            ModuleNamespaces.GetValue(exports, static _ => new ModuleNamespaceMarker());
+            State.ModuleNamespaces.GetValue(exports, static _ => new ModuleNamespaceMarker());
         }
 
         /// <summary>
@@ -106,7 +117,13 @@ namespace JavaScriptRuntime.CommonJS
         /// transpiled CommonJS modules.
         /// </summary>
         internal static bool IsModuleNamespace(object value)
-            => ModuleNamespaces.TryGetValue(value, out _);
+        {
+            var services = GlobalThis.ServiceProvider;
+            return services != null
+                && services.TryResolve<EsModuleLinkerState>(out var state)
+                && state != null
+                && state.ModuleNamespaces.TryGetValue(value, out _);
+        }
 
         /// <summary>
         /// Declares a local export: creates (or reuses) the backing binding cell for <paramref name="name"/>

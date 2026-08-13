@@ -221,6 +221,29 @@ public class ModuleLoadTests
     }
 
     [Fact]
+    public void JsEngine_RepeatedEsmModuleLoadsKeepLiveBindingsIsolated()
+    {
+        using var module = CompileAndLoadModuleAssemblyFromResource(
+            "esmRealmIsolation",
+            "esmRealmIsolation.js");
+        using var first = JsEngine.LoadDynamicModule(module.Assembly, "esmRealmIsolation");
+        using var second = JsEngine.LoadDynamicModule(module.Assembly, "esmRealmIsolation");
+        dynamic firstExports = first;
+        dynamic secondExports = second;
+
+        Assert.Equal(0d, (double)firstExports.read());
+        Assert.Equal(0d, (double)secondExports.read());
+
+        Assert.Equal(1d, (double)firstExports.increment());
+        Assert.Equal(1d, (double)firstExports.read());
+        Assert.Equal(0d, (double)secondExports.read());
+
+        Assert.Equal(1d, (double)secondExports.increment());
+        Assert.Equal(1d, (double)firstExports.read());
+        Assert.Equal(1d, (double)secondExports.read());
+    }
+
+    [Fact]
     public void JsEngine_LoadModule_Dynamic_AllowsMutatingExportsObject()
     {
         using var module = CompileAndLoadModuleAssemblyFromResource("hostingMutable", "Hosting_TypedExports.js");
