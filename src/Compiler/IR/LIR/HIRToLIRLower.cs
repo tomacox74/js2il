@@ -272,6 +272,10 @@ public sealed partial class HIRToLIRLowerer
             return false;
         }
 
+        // Native static ES module linking prologue: register live exports, mark __esModule, require
+        // source modules, and initialize default/namespace imports before the module body executes.
+        lowerer.EmitNativeEsModulePrologueIfNeeded();
+
         // For generators, emit one-time parameter initialization guarded by GeneratorScope._started,
         // then emit a state switch based on GeneratorScope._genState.
         if (isGenerator)

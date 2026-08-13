@@ -6,6 +6,24 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- compiler/runtime: close issue #1796 by lowering **all** supported static ES
+  module syntax natively instead of injecting JavaScript. Every static
+  `import`/`export` module — including indirect exports (`export { x as y }
+  from`), star exports (`export * from`), namespace re-exports (`export * as ns
+  from`), and named/anonymous `export default` function, class, and expression
+  forms — now keeps its original source and is linked through runtime binding
+  cells and direct `EsModuleLinker` calls. This removes the five injected
+  `__jroc_esm_*` helper functions, the interop prelude, and every per-export
+  getter closure from generated assemblies; no implementation-generated
+  JavaScript is appended before a static ESM module's final compilation. Imports
+  resolve as live reads, exported writes mirror into their binding cell, and
+  module namespace/`for-in` enumeration enforces temporal dead-zone
+  `ReferenceError`s for uninitialized live bindings (activating the
+  `enumerate-binding-uninit.js` test262 case). CommonJS interop, module
+  resolution, evaluation order, live re-exports, and debug source locations are
+  preserved. Adds focused execution and generated-IL coverage asserting no
+  `__jroc_esm` function/type overhead remains for every supported static ESM
+  form.
 - tests/docs/test262: port the remaining pinned ECMA-262 14.7.5
   `for-in`, `for-of`, and `for-await-of` corpus. Keep 1,600 newly passing cases
   active and record 397 unsupported cases as focused skips, with documentation

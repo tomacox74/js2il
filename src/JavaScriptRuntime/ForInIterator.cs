@@ -22,6 +22,11 @@ public sealed class ForInIterator : IJavaScriptIterator<string>
     private readonly object _root;
     private readonly HashSet<string> _visited = new(StringComparer.Ordinal);
 
+    // True when the root is an ES module namespace/exports object. Module namespace exotic objects
+    // resolve [[GetOwnProperty]] via [[Get]] (spec 10.4.6.4), so enumeration must observe
+    // temporal-dead-zone ReferenceErrors for not-yet-initialized live bindings.
+    private readonly bool _isEsModuleNamespace;
+
     // When an explicit [[Prototype]] chain is enabled/assigned for the root object,
     // we enumerate own enumerable keys for each level in that chain.
     private readonly bool _usePrototypeChain;
@@ -43,6 +48,7 @@ public sealed class ForInIterator : IJavaScriptIterator<string>
         _root = root ?? throw new ArgumentNullException(nameof(root));
 
         _currentTarget = _root;
+        _isEsModuleNamespace = CommonJS.EsModuleLinker.IsModuleNamespace(root);
         _usePrototypeChain = PrototypeChain.Enabled
             && PrototypeChain.GetPrototypeOrNull(_root) is not null
             && PrototypeChain.GetPrototypeOrNull(_root) is not JsNull;
@@ -93,6 +99,7 @@ public sealed class ForInIterator : IJavaScriptIterator<string>
                         continue;
                     }
 
+                    EnforceEsModuleBindingInitialized(key);
                     _visited.Add(key);
                     return IteratorResult.Create(key, done: false);
                 }
@@ -173,6 +180,7 @@ public sealed class ForInIterator : IJavaScriptIterator<string>
                     continue;
                 }
 
+                EnforceEsModuleBindingInitialized(key);
                 _visited.Add(key);
                 return IteratorResult.Create(key, done: false);
             }
@@ -194,6 +202,18 @@ public sealed class ForInIterator : IJavaScriptIterator<string>
     {
         // For-in iterators do not currently expose an observable IteratorClose path in this runtime.
         // Consumers will stop calling Next(); nothing to release.
+    }
+
+    /// <summary>
+    /// Enforces module namespace exotic [[GetOwnProperty]] semantics: reading a live binding that is
+    /// still uninitialized throws a <see cref="ReferenceError"/> during enumeration.
+    /// </summary>
+    private void EnforceEsModuleBindingInitialized(string key)
+    {
+        if (_isEsModuleNamespace)
+        {
+            _ = ObjectRuntime.GetProperty(_root, key);
+        }
     }
 
     private static List<string> GetOwnEnumerableKeysSingleTarget(object target)

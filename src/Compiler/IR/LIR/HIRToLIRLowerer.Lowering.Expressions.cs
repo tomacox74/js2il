@@ -473,6 +473,13 @@ public sealed partial class HIRToLIRLowerer
                 // Look up the binding using the Symbol's BindingInfo directly
                 // This correctly resolves shadowed variables to the right binding
                 var binding = varExpr.Name.BindingInfo;
+
+                // Live named imports re-read the source module property on every access.
+                if (TryLowerNamedEsModuleImportRead(binding, out resultTempVar))
+                {
+                    return true;
+                }
+
                 if (binding.CallableMaterialization?.Kind
                     == CallableMaterializationKind.DirectOnly)
                 {

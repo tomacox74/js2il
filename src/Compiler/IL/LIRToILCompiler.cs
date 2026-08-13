@@ -662,10 +662,19 @@ internal sealed partial class LIRToILCompiler
 
     private Type GetIntrinsicRuntimeType(string intrinsicName)
     {
+        // Reserved compiler-internal intrinsic used to lower static ES module import/export semantics
+        // into direct runtime calls (not a JavaScript-visible global).
+        if (string.Equals(intrinsicName, EsModuleIntrinsicName, StringComparison.Ordinal))
+        {
+            return typeof(JavaScriptRuntime.CommonJS.EsModuleLinker);
+        }
+
         return _runtimeIntrinsicCatalog.TryGetIntrinsicObject(intrinsicName, out var intrinsic) && intrinsic != null
             ? intrinsic.Type
             : throw new InvalidOperationException($"Unknown intrinsic type: {intrinsicName}");
     }
+
+    internal const string EsModuleIntrinsicName = "__EsModuleLinker";
 
     // Public API moved to LIRToILCompiler.PublicApi.cs
 

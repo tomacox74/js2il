@@ -384,7 +384,7 @@
           "tests/Jroc.Tests/Import/JavaScript/Import_Namespace_Esm_Basic.js",
           "tests/Jroc.Tests/Import/JavaScript/Import_Namespace_FromCjs_Stable.js"
         ],
-        "notes": "Supported forms include side-effect imports, default imports, named imports, and namespace imports. Imports are lowered to CommonJS `require(...)` calls, and imported identifier reads are rewritten to live reads to better match ESM semantics. Namespace imports from ESM return the module export object; namespace imports from CommonJS return a cached synthetic namespace object whose properties forward through to the underlying exports (live values for keys present at namespace creation time). Imported bindings are treated as immutable; assignment/update/destructuring writes and `delete` of an imported binding are rejected at compile time. The compiler now validates ESM named/default imports against the linked module graph and reports missing or ambiguous re-export chains during linking. Static import/export declarations must still appear at top level and before non-directive top-level statements, and `with` clauses / import attributes are rejected."
+        "notes": "Supported forms include side-effect imports, default imports, named imports, and namespace imports. Static `import`/`export` modules are lowered natively: no implementation-generated JavaScript is injected before compilation. Source module dependencies resolve through the CommonJS loader (`require(...)`), while imported identifier reads compile to live reads directly against the resolved source module. Namespace imports from ESM return the module export object; namespace imports from CommonJS return a cached synthetic namespace object whose properties forward through to the underlying exports (live values for keys present at namespace creation time). Imported bindings are treated as immutable; assignment/update/destructuring writes and `delete` of an imported binding are rejected at compile time. The compiler validates ESM named/default imports against the linked module graph and reports missing or ambiguous re-export chains during linking. Static import/export declarations must still appear at top level and before non-directive top-level statements, and `with` clauses / import attributes are rejected."
       },
       {
         "clause": "16.2.2",
@@ -406,11 +406,17 @@
           "tests/Jroc.Tests/Import/JavaScript/Import_LiveBindings_Cycle_A.mjs",
           "tests/Jroc.Tests/Import/JavaScript/Import_LiveBindings_Cycle_B.mjs",
           "tests/Jroc.Tests/Import/JavaScript/Import_ExportNamedFrom.js",
+          "tests/Jroc.Tests/Import/JavaScript/Import_ExportRenamedFrom.js",
           "tests/Jroc.Tests/Import/JavaScript/Import_ExportStarFrom.js",
+          "tests/Jroc.Tests/Import/JavaScript/Import_ExportStarFromMultiHop.js",
+          "tests/Jroc.Tests/Import/JavaScript/Import_ExportStarAsNamespace.js",
+          "tests/Jroc.Tests/Import/JavaScript/Import_DefaultAnonFunction_Lib.mjs",
+          "tests/Jroc.Tests/Import/JavaScript/Import_DefaultAnonClass_Lib.mjs",
+          "tests/Jroc.Tests/Import/JavaScript/Import_DefaultNamedClass_Lib.mjs",
           "tests/Jroc.Tests/Import/JavaScript/Import_Namespace_Esm_Basic_Lib.mjs",
           "tests/Jroc.Tests/Import/JavaScript/Import_Namespace_FromCjs_Stable_Lib.cjs"
         ],
-        "notes": "Supported forms include named/default exports, `export ... from`, and `export *` re-exports. Exports are projected through CommonJS `exports` with getter-based wiring, and the compiler now tracks explicit module export records so that named re-exports, multi-hop `export *` chains, and ambiguity failures are driven by the module graph instead of only by rewrite order. Export getters are still emitted into the existing CommonJS-oriented runtime, so host hooks, async module execution, and full SourceTextModuleRecord environment semantics remain out of scope."
+        "notes": "Supported forms include named/default exports (named, anonymous, and expression `export default`), `export { x as y } from`, `export *`, and `export * as ns from` re-exports. Static `import`/`export` modules are lowered natively with no injected JavaScript helper source: each local export is backed by a runtime binding cell exposed as a live, enumerable accessor on the module's `exports` object, exported writes mirror into that cell, indirect/star/namespace re-exports install live forwarding accessors, and anonymous default function/class declarations synthesize their default binding in compiler metadata. Live values, temporal-dead-zone `ReferenceError`s, and CommonJS interop are preserved. The runtime still executes through the CommonJS-oriented host model, so host hooks, async module execution, and full SourceTextModuleRecord environment semantics remain out of scope."
       },
       {
         "clause": "16.2.1",

@@ -1417,6 +1417,34 @@ partial class HIRMethodBuilder
         _statements.Add(statement);
     }
 
+    /// <summary>
+    /// Yields hoistable function declarations, unwrapping native ES module export wrappers
+    /// (<c>export function f(){}</c> / <c>export default function f(){}</c>) so their bindings are
+    /// hoisted and materialized like ordinary top-level function declarations.
+    /// </summary>
+    private IEnumerable<FunctionDeclaration> EnumerateHoistableFunctionDeclarations(IEnumerable<Acornima.Ast.Statement> statements)
+    {
+        var isNativeEsm = _currentScope.Kind == ScopeKind.Global && _currentScope.EsModuleLink != null;
+        foreach (var statement in statements)
+        {
+            switch (statement)
+            {
+                case FunctionDeclaration functionDeclaration:
+                    yield return functionDeclaration;
+                    break;
+                case ExportNamedDeclaration { Declaration: FunctionDeclaration exportedFunction } when isNativeEsm:
+                    yield return exportedFunction;
+                    break;
+                case ExportDefaultDeclaration { Declaration: FunctionDeclaration defaultFunction } when isNativeEsm:
+                    // Named and anonymous `export default function` declarations (including async and
+                    // generator forms) are hoistable declarations, hoisted like ordinary top-level
+                    // function declarations.
+                    yield return defaultFunction;
+                    break;
+            }
+        }
+    }
+
     public bool TryParseStatementsToList([In, NotNull] IEnumerable<Acornima.Ast.Statement> statements, out List<HIRStatement> hirStatements)
     {
         hirStatements = new List<HIRStatement>(_statements.Count + 16);
@@ -1428,15 +1456,8 @@ partial class HIRMethodBuilder
         // must emit runtime initialization in the executable body.
         if (_currentScope.Kind is ScopeKind.Global or ScopeKind.Function)
         {
-            foreach (var fd in statements.OfType<FunctionDeclaration>())
+            foreach (var fd in EnumerateHoistableFunctionDeclarations(statements))
             {
-                if (fd.Id is not Identifier id || string.IsNullOrWhiteSpace(id.Name))
-                {
-                    // Named function declarations are the supported/expected shape here.
-                    // Anonymous function declarations are not valid in standard JavaScript syntax.
-                    continue;
-                }
-
                 if (!HIRBuilder.ParamsSupportedForIR(fd.Params))
                 {
                     return false;
@@ -1448,36 +1469,56 @@ partial class HIRMethodBuilder
                     return false;
                 }
 
-                var root = _currentScope;
-                while (root.Parent != null)
+                string bindingName;
+                CallableId callableId;
+                if (fd.Id is Identifier id && !string.IsNullOrWhiteSpace(id.Name))
                 {
-                    root = root.Parent;
+                    bindingName = id.Name;
+
+                    var root = _currentScope;
+                    while (root.Parent != null)
+                    {
+                        root = root.Parent;
+                    }
+                    var moduleName = root.Name;
+                    var declaringScopeName = _currentScope.Kind == ScopeKind.Global
+                        ? moduleName
+                        : $"{moduleName}/{_currentScope.GetQualifiedName()}";
+
+                    callableId = new CallableId
+                    {
+                        Kind = CallableKind.FunctionDeclaration,
+                        DeclaringScopeName = declaringScopeName,
+                        Name = id.Name,
+                        JsParamCount = fd.Params.Count(p => p is not Acornima.Ast.RestElement),
+                        NeedsArgumentsObject = functionScope.NeedsArgumentsObject,
+                        HasRestParameters = functionScope.HasRestParameters,
+                        UsesMappedArgumentsObject = ArgumentsObjectSemantics.UsesMappedArgumentsObject(functionScope),
+                        ArgumentsParameterNames = ArgumentsObjectSemantics.GetMappedParameterNames(functionScope),
+                        IncludeCalleeInArgumentsObject = functionScope.NeedsArgumentsObject && !ArgumentsObjectSemantics.IsStrictScope(functionScope),
+                        HasRestrictedFunctionProperties = ArgumentsObjectSemantics.IsStrictScope(functionScope),
+                        Semantics = CallableSemantics.FromNode(
+                            fd,
+                            CallableKind.FunctionDeclaration,
+                            ArgumentsObjectSemantics.IsStrictScope(functionScope)),
+                        AstNode = fd
+                    };
                 }
-                var moduleName = root.Name;
-                var declaringScopeName = _currentScope.Kind == ScopeKind.Global
-                    ? moduleName
-                    : $"{moduleName}/{_currentScope.GetQualifiedName()}";
-
-                var callableId = new CallableId
+                else if (functionScope.Callable != null)
                 {
-                    Kind = CallableKind.FunctionDeclaration,
-                    DeclaringScopeName = declaringScopeName,
-                    Name = id.Name,
-                    JsParamCount = fd.Params.Count(p => p is not Acornima.Ast.RestElement),
-                    NeedsArgumentsObject = functionScope.NeedsArgumentsObject,
-                    HasRestParameters = functionScope.HasRestParameters,
-                    UsesMappedArgumentsObject = ArgumentsObjectSemantics.UsesMappedArgumentsObject(functionScope),
-                    ArgumentsParameterNames = ArgumentsObjectSemantics.GetMappedParameterNames(functionScope),
-                    IncludeCalleeInArgumentsObject = functionScope.NeedsArgumentsObject && !ArgumentsObjectSemantics.IsStrictScope(functionScope),
-                    HasRestrictedFunctionProperties = ArgumentsObjectSemantics.IsStrictScope(functionScope),
-                    Semantics = CallableSemantics.FromNode(
-                        fd,
-                        CallableKind.FunctionDeclaration,
-                        ArgumentsObjectSemantics.IsStrictScope(functionScope)),
-                    AstNode = fd
-                };
+                    // Anonymous `export default function` (native ESM only): the scope builder bound it
+                    // under a synthetic Closure{N} name and callable discovery already produced its
+                    // CallableId. Reuse both so the hoisted value matches the declared callable.
+                    bindingName = functionScope.Name;
+                    callableId = functionScope.Callable;
+                }
+                else
+                {
+                    // Anonymous function declarations are otherwise not valid standard JavaScript syntax.
+                    continue;
+                }
 
-                var symbol = _currentScope.FindSymbol(id.Name);
+                var symbol = _currentScope.FindSymbol(bindingName);
                 var funcValue = new HIRFunctionExpression(callableId, functionScope)
                 {
                     MaterializationDecision = symbol.BindingInfo.CallableMaterialization
@@ -2479,7 +2520,10 @@ partial class HIRMethodBuilder
                     // or static blocks run. Computed class element names are evaluated earlier, while the outer
                     // binding is still in TDZ, so only expose the binding once the spec-visible initialization
                     // phase that can reference the class name begins.
+                    // Anonymous default classes (`export default class {}`) have no user name; the scope
+                    // builder bound them under a synthetic Class{N} name (== classScope.Name).
                     var cdClassName = (classDecl.Id as Identifier)?.Name;
+                    var cdBindingName = cdClassName ?? classScope.Name;
                     HIRExpression? cdSuperClass = null;
                     if (classDecl.SuperClass != null)
                     {
@@ -2502,9 +2546,12 @@ partial class HIRMethodBuilder
                         }
                     }
 
-                    if (cdClassName != null
-                        && _currentScope?.Bindings.TryGetValue(cdClassName, out var cdClassBinding) == true
-                        && (!CanOmitEagerClassMetadata(classDecl) || classDecl.SuperClass != null))
+                    // Exported class bindings must be materialized eagerly so their export cell is written
+                    // (the lazy-metadata optimization would otherwise never assign the binding).
+                    if (_currentScope?.Bindings.TryGetValue(cdBindingName, out var cdClassBinding) == true
+                        && (!CanOmitEagerClassMetadata(classDecl)
+                            || classDecl.SuperClass != null
+                            || cdClassBinding.EsModuleExports != null))
                     {
                         var cdRegistryClassName = GetRegistryClassName(classScope);
                         var classConstructorValueExpr = new HIRInitializedUserClassTypeExpression(
@@ -3105,10 +3152,80 @@ partial class HIRMethodBuilder
                     return true;
                 }
 
+            case ImportDeclaration:
+                // Native ESM imports are linked in the module main prologue (source require + default/
+                // namespace binding init); named import reads are intercepted at use sites. No inline
+                // statement is emitted here.
+                hirStatement = new HIRBlock([]);
+                return true;
+
+            case ExportNamedDeclaration exportNamedDeclaration:
+                if (exportNamedDeclaration.Declaration is Acornima.Ast.Statement exportedDeclaration)
+                {
+                    // Emit the wrapped declaration (let/const/var/function/class) normally; the write to
+                    // the exported binding is mirrored into the runtime export cell during lowering.
+                    return TryParseStatement(exportedDeclaration, out hirStatement);
+                }
+
+                // `export { a, b as c }` specifier lists carry no runtime statement: the local bindings are
+                // flagged as exports and registered in the prologue.
+                hirStatement = new HIRBlock([]);
+                return true;
+
+            case ExportDefaultDeclaration exportDefaultDeclaration:
+                return TryParseNativeExportDefault(exportDefaultDeclaration, out hirStatement);
+
+            case ExportAllDeclaration:
+                // Native modules are gated to exclude `export *`; treat defensively as a no-op.
+                hirStatement = new HIRBlock([]);
+                return true;
+
             default:
                 // Unsupported statement type
                 return false;
         }
+    }
+
+    /// <summary>
+    /// Builds the runtime statement for a native <c>export default</c> declaration. Named
+    /// function/class defaults are hoisted/materialized like ordinary declarations (and flagged as the
+    /// default export in the symbol table); an expression default is stored into the synthetic
+    /// <c>*default*</c> binding at this source position so its export cell initializes here.
+    /// </summary>
+    private bool TryParseNativeExportDefault(ExportDefaultDeclaration exportDefaultDeclaration, out HIRStatement? hirStatement)
+    {
+        hirStatement = null;
+
+        switch (exportDefaultDeclaration.Declaration)
+        {
+            case FunctionDeclaration defaultFunction:
+                // Named and anonymous default functions are hoisted (see
+                // EnumerateHoistableFunctionDeclarations); the declaration itself lowers to a no-op.
+                return TryParseStatement(defaultFunction, out hirStatement);
+            case ClassDeclaration defaultClass:
+                // Named and anonymous default classes are evaluated in place; the ClassDeclaration
+                // lowering assigns the class value to its (possibly synthetic) binding, mirroring the cell.
+                return TryParseStatement(defaultClass, out hirStatement);
+        }
+
+        if (exportDefaultDeclaration.Declaration is not Acornima.Ast.Expression defaultExpression)
+        {
+            return false;
+        }
+
+        if (!_currentScope.Bindings.ContainsKey(EsModuleNames.SyntheticDefault))
+        {
+            return false;
+        }
+
+        var symbol = _currentScope.FindSymbol(EsModuleNames.SyntheticDefault);
+        if (!TryParseExpression(defaultExpression, out var initExpr))
+        {
+            return false;
+        }
+
+        hirStatement = new HIRVariableDeclaration(symbol, initExpr!);
+        return true;
     }
 
     private static bool TryGetEnclosingClassScope(Scope startingScope, [NotNullWhen(true)] out Scope? classScope)
