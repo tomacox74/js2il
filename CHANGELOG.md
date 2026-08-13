@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- tests: replace the remaining inlined test262 JavaScript harness helpers with
+  native C# host intrinsics, preserving property-descriptor, typed-array,
+  Atomics, encoding, NaN, promise, and tail-call helper coverage while reducing
+  per-fixture compiler input and test execution overhead.
 - compiler/runtime: close issue #1763 by aligning dynamic variable,
   expression-valued, named-member, computed-member, and construction lowering
   with the zero-through-five `JsCallArguments` inline ABI. Calls and `new`

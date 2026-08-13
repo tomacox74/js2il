@@ -19,7 +19,6 @@ public abstract class DiskExecutionTestsBase
             testName,
             _testCategory,
             name => GetJavaScriptAndSourcePath(name, sourceFilePath),
-            sourceFilePath,
             enableIRMetrics: true);
 
         Test262SharedAssertHarness.AssertNoOutput(testName, result.Output);

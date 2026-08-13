@@ -22,7 +22,7 @@ public sealed class InMemoryExecutionTests
     }
 
     [MethodImpl(MethodImplOptions.NoInlining)]
-    private static IReadOnlyList<WeakReference> RunRepresentativeArrayFixtures([CallerFilePath] string sourceFilePath = "")
+    private static IReadOnlyList<WeakReference> RunRepresentativeArrayFixtures()
     {
         var weakReferences = new List<WeakReference>();
         foreach (var testName in new[] { "constructor", "S15.4.5.2_A1_T2", "S15.4.5.2_A2_T1" })
@@ -30,8 +30,7 @@ public sealed class InMemoryExecutionTests
             var result = Test262SharedAssertHarness.CompileAndExecute(
                 testName,
                 "built_ins.Array",
-                name => GetJavaScriptAndSourcePath(name),
-                sourceFilePath);
+                name => GetJavaScriptAndSourcePath(name));
             Test262SharedAssertHarness.AssertNoOutput(testName, result.Output);
             weakReferences.Add(result.LoadContextWeakReference);
         }

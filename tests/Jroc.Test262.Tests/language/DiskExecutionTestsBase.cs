@@ -20,7 +20,6 @@ public abstract class DiskExecutionTestsBase
             testName,
             _testCategory,
             name => GetJavaScriptAndSourcePath(name, sourceFilePath),
-            sourceFilePath,
             enableIRMetrics: true,
             allowUnhandledException: allowUnhandledException);
 

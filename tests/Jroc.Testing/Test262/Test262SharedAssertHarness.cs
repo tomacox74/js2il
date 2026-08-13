@@ -9,20 +9,10 @@ namespace Jroc.Tests;
 
 public static class Test262SharedAssertHarness
 {
-    private static readonly HashSet<string> NativeHostHarnessFiles =
-    [
-        "assert.js",
-        "compareArray.js",
-        "isConstructor.js",
-        "sta.js",
-        "wellKnownIntrinsicObjects.js"
-    ];
-
     public static InMemoryTestExecutionResult CompileAndExecute(
         string testName,
         string testCategory,
         Func<string, (string Script, string? SourcePath)> getJavaScriptAndSourcePath,
-        string callerSourceFilePath,
         bool enableIRMetrics = false,
         bool allowUnhandledException = false,
         Action<ServiceContainer>? addMocks = null,
@@ -30,8 +20,8 @@ public static class Test262SharedAssertHarness
     {
         var (entryScript, entrySourcePath) = getJavaScriptAndSourcePath(testName);
         var metadata = ParseFrontmatter(entryScript);
-        var preparedEntryScript = BuildPreparedEntryScript(entryScript, metadata, callerSourceFilePath);
-        var hostRuntimeIntrinsics = Test262HostRuntimeIntrinsics.Create();
+        var preparedEntryScript = BuildPreparedEntryScript(entryScript, metadata);
+        var hostRuntimeIntrinsics = Test262HostRuntimeIntrinsics.Create(metadata.Includes);
 
         var expectsRuntimeException = allowUnhandledException
             && string.Equals(metadata.NegativePhase, "runtime", StringComparison.OrdinalIgnoreCase);
@@ -69,8 +59,7 @@ public static class Test262SharedAssertHarness
 
     private static string BuildPreparedEntryScript(
         string entryScript,
-        FrontmatterMetadata metadata,
-        string callerSourceFilePath)
+        FrontmatterMetadata metadata)
     {
         var (prefix, remainder, hasUseStrictDirective) = SplitDirectivePrologue(entryScript);
         var scriptBuilder = new System.Text.StringBuilder();
@@ -79,14 +68,6 @@ public static class Test262SharedAssertHarness
         if (metadata.OnlyStrict && !hasUseStrictDirective)
         {
             scriptBuilder.AppendLine("\"use strict\";");
-        }
-
-        foreach (var helperFile in metadata.Includes
-                     .Where(name => !NativeHostHarnessFiles.Contains(name))
-                     .Distinct(StringComparer.Ordinal))
-        {
-            var helperScript = File.ReadAllText(GetHarnessSourcePath(callerSourceFilePath, helperFile));
-            scriptBuilder.AppendLine(BuildInlineHarnessBlock(helperFile, helperScript));
         }
 
         scriptBuilder.Append(remainder);
@@ -147,69 +128,6 @@ public static class Test262SharedAssertHarness
             .Select(entry => entry.Trim().Trim('\'', '"'))
             .Where(entry => !string.IsNullOrWhiteSpace(entry))
             .ToArray();
-    }
-
-    private static string BuildInlineHarnessBlock(string harnessFileName, string script)
-    {
-        var scriptWithoutExports = StripModuleExports(script);
-        var defines = ParseDefines(script);
-        var assignmentLines = defines.Count == 0
-            ? string.Empty
-            : string.Join(
-                "\n",
-                defines.Select(name => $"if (typeof {name} !== 'undefined') globalThis.{name} = {name};"));
-
-        var block = new System.Text.StringBuilder();
-        block.AppendLine($"// Inlined test262 harness helper: {harnessFileName}");
-        block.AppendLine(";(() => {");
-        block.AppendLine(scriptWithoutExports);
-        if (!string.IsNullOrWhiteSpace(assignmentLines))
-        {
-            block.AppendLine(assignmentLines);
-        }
-
-        block.AppendLine("})();");
-        return block.ToString();
-    }
-
-    private static IReadOnlyList<string> ParseDefines(string script)
-    {
-        var match = Regex.Match(script, @"/\*---(?<body>.*?)---\*/", RegexOptions.Singleline);
-        if (!match.Success)
-        {
-            return Array.Empty<string>();
-        }
-
-        var body = match.Groups["body"].Value;
-        var inline = ParseArrayValue(body, "defines");
-        if (inline.Count > 0)
-        {
-            return inline;
-        }
-
-        var blockMatch = Regex.Match(
-            body,
-            @"(?ms)^\s*defines\s*:\s*\r?\n(?<value>(?:\s*-\s*[^\r\n]+\r?\n?)*)");
-        if (!blockMatch.Success)
-        {
-            return Array.Empty<string>();
-        }
-
-        return blockMatch.Groups["value"].Value
-            .Split(['\r', '\n'], StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
-            .Select(line => line.Trim())
-            .Where(line => line.StartsWith("- ", StringComparison.Ordinal))
-            .Select(line => line.Substring(2).Split('#')[0].Trim())
-            .Where(line => !string.IsNullOrWhiteSpace(line))
-            .ToArray();
-    }
-
-    private static string StripModuleExports(string script)
-    {
-        return Regex.Replace(
-            script,
-            @"(?ms)^\s*module\.exports\s*=\s*\{.*?\};\s*$",
-            string.Empty);
     }
 
     private static (string Prefix, string Remainder, bool HasUseStrictDirective) SplitDirectivePrologue(string script)
@@ -326,25 +244,6 @@ public static class Test262SharedAssertHarness
         }
 
         return false;
-    }
-
-    private static string GetHarnessSourcePath(string callerSourceFilePath, string harnessFileName)
-    {
-        var directory = Path.GetDirectoryName(callerSourceFilePath)
-            ?? throw new InvalidOperationException("Unable to determine caller directory.");
-
-        while (!string.IsNullOrWhiteSpace(directory))
-        {
-            var candidate = Path.Combine(directory, "tests", "Jroc.Test262.Tests", "Harness", harnessFileName);
-            if (File.Exists(candidate))
-            {
-                return candidate;
-            }
-
-            directory = Directory.GetParent(directory)?.FullName;
-        }
-
-        throw new InvalidOperationException($"Unable to locate tests\\Jroc.Test262.Tests\\Harness\\{harnessFileName}.");
     }
 
     private static void AssertExpectedRuntimeException(

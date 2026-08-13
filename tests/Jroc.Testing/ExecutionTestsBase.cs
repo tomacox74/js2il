@@ -29,7 +29,6 @@ namespace Jroc.Tests
                     testName,
                     _testCategory,
                     name => GetJavaScriptAndSourcePath(name, sourceFilePath),
-                    sourceFilePath,
                     enableIRMetrics: true,
                     allowUnhandledException: allowUnhandledException,
                     addMocks: addMocks);

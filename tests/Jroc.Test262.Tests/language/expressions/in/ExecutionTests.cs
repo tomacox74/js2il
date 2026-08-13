@@ -51,7 +51,6 @@ public class ExecutionTests
             testName,
             "language.expressions.in",
             _ => (File.ReadAllText(jsPath), jsPath),
-            sourceFilePath,
             enableIRMetrics: true);
         Test262SharedAssertHarness.AssertNoOutput(testName, result.Output);
         return Task.CompletedTask;

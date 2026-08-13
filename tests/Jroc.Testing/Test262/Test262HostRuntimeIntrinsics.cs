@@ -5,8 +5,11 @@ namespace Jroc.Tests;
 
 public static class Test262HostRuntimeIntrinsics
 {
-    public static HostRuntimeIntrinsicDescriptors Create()
-        => new HostRuntimeIntrinsicDescriptorsBuilder()
+    public static HostRuntimeIntrinsicDescriptors Create(IEnumerable<string>? harnessFiles = null)
+    {
+        var included = harnessFiles?.ToHashSet(StringComparer.Ordinal)
+            ?? [];
+        var builder = new HostRuntimeIntrinsicDescriptorsBuilder()
             .AddGlobalFactory("assert", CreateNodeAssertAdapter)
             .AddGlobalFactory("Test262Error", CreateTest262ErrorConstructor)
             .AddGlobalFactory("$ERROR", () => CreateFunction(
@@ -18,34 +21,6 @@ public static class Test262HostRuntimeIntrinsics
             .AddGlobalFactory("compareArray", () => CreateFunction(
                 (Func<object?, object?, bool>)CompareArray,
                 "compareArray",
-                2))
-            .AddGlobalFactory("verifyProperty", () => CreateFunction(
-                (Action<object?, object?, object?>)VerifyProperty,
-                "verifyProperty",
-                3))
-            .AddGlobalFactory("verifyWritable", () => CreateFunction(
-                (Action<object?, object?>)((target, name) => VerifyAttribute(target, name, "writable", true)),
-                "verifyWritable",
-                2))
-            .AddGlobalFactory("verifyNotWritable", () => CreateFunction(
-                (Action<object?, object?>)((target, name) => VerifyAttribute(target, name, "writable", false)),
-                "verifyNotWritable",
-                2))
-            .AddGlobalFactory("verifyEnumerable", () => CreateFunction(
-                (Action<object?, object?>)((target, name) => VerifyAttribute(target, name, "enumerable", true)),
-                "verifyEnumerable",
-                2))
-            .AddGlobalFactory("verifyNotEnumerable", () => CreateFunction(
-                (Action<object?, object?>)((target, name) => VerifyAttribute(target, name, "enumerable", false)),
-                "verifyNotEnumerable",
-                2))
-            .AddGlobalFactory("verifyConfigurable", () => CreateFunction(
-                (Action<object?, object?>)((target, name) => VerifyAttribute(target, name, "configurable", true)),
-                "verifyConfigurable",
-                2))
-            .AddGlobalFactory("verifyNotConfigurable", () => CreateFunction(
-                (Action<object?, object?>)((target, name) => VerifyAttribute(target, name, "configurable", false)),
-                "verifyNotConfigurable",
                 2))
             .AddGlobalFactory("assertRelativeDateMs", () => CreateFunction(
                 (Action<object?, object?>)AssertRelativeDateMs,
@@ -62,8 +37,43 @@ public static class Test262HostRuntimeIntrinsics
             .AddGlobalFactory("asyncTest", () => CreateFunction(
                 (Action<object?>)AsyncTest,
                 "asyncTest",
-                1))
-            .Build();
+                1));
+
+        // Older hand-ported fixtures call these helpers without preserved includes metadata.
+        Test262PropertyHelpers.Register(builder);
+
+        if (included.Contains("testTypedArray.js"))
+        {
+            Test262TypedArrayHelpers.Register(builder);
+        }
+
+        if (included.Contains("testAtomics.js"))
+        {
+            Test262AtomicsHelpers.Register(builder);
+        }
+
+        if (included.Contains("decimalToHexString.js"))
+        {
+            Test262EncodingHelpers.Register(builder);
+        }
+
+        if (included.Contains("promiseHelper.js"))
+        {
+            Test262PromiseHelpers.Register(builder);
+        }
+
+        if (included.Contains("tcoHelper.js"))
+        {
+            builder.AddGlobalValue("$MAX_ITERATIONS", 100000d);
+        }
+
+        if (included.Contains("nans.js"))
+        {
+            builder.AddGlobalFactory("NaNs", CreateNaNs);
+        }
+
+        return builder.Build();
+    }
 
     private static object CreateNodeAssertAdapter()
     {
@@ -145,70 +155,6 @@ public static class Test262HostRuntimeIntrinsics
             name,
             0);
 
-    private static void VerifyProperty(object? target, object? name, object? expectedDescriptor)
-    {
-        var actualDescriptor = JavaScriptRuntime.Object.getOwnPropertyDescriptor(target!, name);
-        var passed = actualDescriptor is not null;
-        if (passed && HasOwn(expectedDescriptor, "value"))
-        {
-            passed = JavaScriptRuntime.Object.@is(
-                ObjectRuntime.GetItem(actualDescriptor!, "value"),
-                ObjectRuntime.GetItem(expectedDescriptor!, "value"));
-        }
-
-        if (passed && HasOwn(expectedDescriptor, "writable"))
-        {
-            passed = JavaScriptRuntime.Object.@is(
-                ObjectRuntime.GetItem(actualDescriptor!, "writable"),
-                ObjectRuntime.GetItem(expectedDescriptor!, "writable"));
-        }
-
-        if (passed && HasOwn(expectedDescriptor, "enumerable"))
-        {
-            passed = JavaScriptRuntime.Object.@is(
-                ObjectRuntime.GetItem(actualDescriptor!, "enumerable"),
-                ObjectRuntime.GetItem(expectedDescriptor!, "enumerable"));
-        }
-
-        if (passed && HasOwn(expectedDescriptor, "configurable"))
-        {
-            passed = JavaScriptRuntime.Object.@is(
-                ObjectRuntime.GetItem(actualDescriptor!, "configurable"),
-                ObjectRuntime.GetItem(expectedDescriptor!, "configurable"));
-        }
-
-        if (passed && HasOwn(expectedDescriptor, "get"))
-        {
-            passed = JavaScriptRuntime.Object.@is(
-                ObjectRuntime.GetItem(actualDescriptor!, "get"),
-                ObjectRuntime.GetItem(expectedDescriptor!, "get"));
-        }
-
-        if (passed && HasOwn(expectedDescriptor, "set"))
-        {
-            passed = JavaScriptRuntime.Object.@is(
-                ObjectRuntime.GetItem(actualDescriptor!, "set"),
-                ObjectRuntime.GetItem(expectedDescriptor!, "set"));
-        }
-
-        if (!passed)
-        {
-            ThrowAssertion($"verifyProperty failed for {ToMessage(name)}");
-        }
-    }
-
-    private static void VerifyAttribute(object? target, object? name, string attributeName, bool expectedValue)
-    {
-        var actualDescriptor = JavaScriptRuntime.Object.getOwnPropertyDescriptor(target!, name);
-        var passed = actualDescriptor is not null
-            && JavaScriptRuntime.Object.@is(ObjectRuntime.GetItem(actualDescriptor!, attributeName), expectedValue);
-
-        if (!passed)
-        {
-            ThrowAssertion($"verify{(expectedValue ? string.Empty : "Not")}{Capitalize(attributeName)} failed for {ToMessage(name)}");
-        }
-    }
-
     private static bool CompareArray(object? actual, object? expected)
     {
         if (actual is null || expected is null)
@@ -283,7 +229,7 @@ public static class Test262HostRuntimeIntrinsics
             "$DONE",
             1);
 
-    private static bool HasOwn(object? target, string name)
+    internal static bool HasOwn(object? target, object name)
         => target is not null && target is not JsNull && JavaScriptRuntime.Object.hasOwn(target, name);
 
     private static long ToLength(object? value)
@@ -302,13 +248,13 @@ public static class Test262HostRuntimeIntrinsics
         return (long)global::System.Math.Min(global::System.Math.Floor(number), long.MaxValue);
     }
 
-    private static void ThrowAssertion(object? message, string fallback = "Assertion failed")
+    internal static void ThrowAssertion(object? message, string fallback = "Assertion failed")
         => throw CreateTest262Error(string.IsNullOrEmpty(ToMessage(message)) ? fallback : ToMessage(message));
 
-    private static Test262Error CreateTest262Error(object? message)
+    internal static Test262Error CreateTest262Error(object? message)
         => new(ToMessage(message));
 
-    private static BuiltinDelegateFunctionAdapter CreateFunction(
+    internal static BuiltinDelegateFunctionAdapter CreateFunction(
         Delegate function,
         string name,
         double length)
@@ -323,17 +269,37 @@ public static class Test262HostRuntimeIntrinsics
         return adapter;
     }
 
-    private static string ToMessage(object? value)
+    internal static string ToMessage(object? value)
         => value switch
         {
             null or JsNull => string.Empty,
             _ => DotNet2JSConversions.ToString(value)
         };
 
-    private static string Capitalize(string value)
-        => string.IsNullOrEmpty(value) ? value : char.ToUpperInvariant(value[0]) + value[1..];
+    internal static object? Invoke(object? callback, params object?[] args)
+        => Closure.InvokeWithArgs(callback!, RuntimeServices.EmptyScopes, args);
 
-    private sealed class Test262Error : Error
+    private static object CreateNaNs()
+    {
+        var zero = 0d;
+        var invalidDivision = zero / zero;
+        var invalidPower = global::System.Math.Pow(-1d, 0.5d);
+        return new JavaScriptRuntime.Array(
+        new object?[]
+        {
+            double.NaN,
+            double.NaN,
+            double.NaN * zero,
+            invalidDivision,
+            double.PositiveInfinity / double.PositiveInfinity,
+            -invalidDivision,
+            invalidPower,
+            -invalidPower,
+            double.NaN
+        });
+    }
+
+    internal sealed class Test262Error : Error
     {
         public Test262Error(string message)
             : base(message)
