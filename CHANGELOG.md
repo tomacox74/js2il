@@ -6,6 +6,12 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- tests/docs/test262: port the remaining pinned ECMA-262 14.7.5
+  `for-in`, `for-of`, and `for-await-of` corpus. Keep 1,600 newly passing cases
+  active and record 397 unsupported cases as focused skips, with documentation
+  of the early-error, destructuring, iterator-closing, async, module, resource
+  management, resizable ArrayBuffer, and eval gaps that still block full
+  section support.
 - tests: replace the remaining inlined test262 JavaScript harness helpers with
   native C# host intrinsics, preserving property-descriptor, typed-array,
   Atomics, encoding, NaN, promise, and tail-call helper coverage while reducing

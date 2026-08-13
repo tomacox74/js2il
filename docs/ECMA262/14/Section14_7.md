@@ -4,7 +4,7 @@
 
 [Back to Section14](Section14.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-08-12T23:29:34Z
+> Last generated (UTC): 2026-08-13T00:43:05Z
 
 do/while/for loops are supported including break/continue (with labels). for..of uses the iterator protocol; for..in uses a dedicated For-In Iterator (mutation-aware key enumeration) but does not yet provide full spec fidelity for all exotic objects. for await..of is supported in async functions.
 
@@ -31,10 +31,10 @@ do/while/for loops are supported including break/continue (with labels). for..of
 | 14.7.4.3 | ForBodyEvaluation ( test , increment , stmt , perIterationBindings , labelSet ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-forbodyevaluation) |
 | 14.7.4.4 | CreatePerIterationEnvironment ( perIterationBindings ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-createperiterationenvironment) |
 | 14.7.5 | The for - in , for - of , and for - await - of Statements | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-for-in-and-for-of-statements) |
-| 14.7.5.1 | Static Semantics: Early Errors | Supported | [tc39.es](https://tc39.es/ecma262/#sec-for-in-and-for-of-statements-static-semantics-early-errors) |
+| 14.7.5.1 | Static Semantics: Early Errors | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-for-in-and-for-of-statements-static-semantics-early-errors) |
 | 14.7.5.2 | Static Semantics: IsDestructuring | Supported | [tc39.es](https://tc39.es/ecma262/#sec-static-semantics-isdestructuring) |
-| 14.7.5.3 | Runtime Semantics: ForDeclarationBindingInitialization | Supported | [tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-fordeclarationbindinginitialization) |
-| 14.7.5.4 | Runtime Semantics: ForDeclarationBindingInstantiation | Supported | [tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-fordeclarationbindinginstantiation) |
+| 14.7.5.3 | Runtime Semantics: ForDeclarationBindingInitialization | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-fordeclarationbindinginitialization) |
+| 14.7.5.4 | Runtime Semantics: ForDeclarationBindingInstantiation | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-fordeclarationbindinginstantiation) |
 | 14.7.5.5 | Runtime Semantics: ForInOfLoopEvaluation | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-forinofloopevaluation) |
 | 14.7.5.6 | ForIn/OfHeadEvaluation ( uninitializedBoundNames , expr , iterationKind ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-forinofheadevaluation) |
 | 14.7.5.7 | ForIn/OfBodyEvaluation ( lhs , stmt , iteratorRecord , iterationKind , lhsKind , labelSet [ , iteratorKind ] ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-forin-div-ofbodyevaluation-lhs-stmt-iterator-lhskind-labelset) |
@@ -108,8 +108,8 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| additional for-in / for-of ordering and string iteration test262 coverage | Supported with Limitations | `tests/Jroc.Test262.Tests/language/statements/for-in/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/language/statements/for-of/ExecutionTests.cs` | `test/language/statements/for-in/order-property-added.js`<br>`test/language/statements/for-in/order-property-on-prototype.js`<br>`test/language/statements/for-in/order-simple-object.js`<br>`test/language/statements/for-of/nested.js`<br>`test/language/statements/for-of/string-astral.js`<br>`test/language/statements/for-of/string-bmp.js` | The checked-in collection/iteration slice now includes for-in property-order coverage for own, inherited, and added properties plus for-of coverage for nested loops and BMP/astral string iteration. Eval-dependent for-in cases remain skipped until eval support is implemented. |
 | for await..of | Supported with Limitations | [`Async_ForAwaitOf_Array.js`](../../../tests/Jroc.Tests/Async/JavaScript/Async_ForAwaitOf_Array.js)<br>[`Async_ForAwaitOf_AsyncIterator_BreakCloses.js`](../../../tests/Jroc.Tests/Async/JavaScript/Async_ForAwaitOf_AsyncIterator_BreakCloses.js)<br>[`Async_ForAwaitOf_SyncIteratorFallback_BreakCloses.js`](../../../tests/Jroc.Tests/Async/JavaScript/Async_ForAwaitOf_SyncIteratorFallback_BreakCloses.js) |  | Lowered using the async iterator protocol (GetAsyncIterator/AsyncIteratorNext/AsyncIteratorClose), including awaiting AsyncIteratorClose on abrupt completion (break/throw/return). Async iterator acquisition currently treats an abrupt Symbol.asyncIterator property read as an absent method, and AsyncIteratorClose does not validate a custom return() result after awaiting it. |
+| pinned test262 for-in / for-of / for-await-of corpus | Supported with Limitations | `tests/Jroc.Test262.Tests/language/statements/for-in/Section14_7_5ExecutionTests01.cs`<br>`tests/Jroc.Test262.Tests/language/statements/for-of/Section14_7_5ExecutionTests01.cs`<br>`tests/Jroc.Test262.Tests/language/statements/for-await-of/Section14_7_5ExecutionTests01.cs` |  | The remaining pinned section corpus is checked in verbatim: 1,600 of the 1,997 newly ported cases pass and 397 are explicitly skipped with the unsupported behavior named at each test. Reaching Supported requires completing strict/yield early-error validation, destructuring binding and assignment lowering (including initializer function naming and abrupt completion), iterator next/return/close error precedence, async object-accessor analysis, loop lexical-environment lowering, module-namespace enumeration, resizable ArrayBuffer and explicit resource management dependencies, and eval support. |
 
 ### 14.7.5.7 ([tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-forin-div-ofbodyevaluation-lhs-stmt-iterator-lhskind-labelset))
 
