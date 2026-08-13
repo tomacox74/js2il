@@ -288,7 +288,7 @@ public class Section14_7_5ExecutionTests01 : Jroc.Test262.Tests.language.stateme
     public Task order_enumerable_shadowed_71()
         => ExecutionTest("order-enumerable-shadowed");
 
-    [Fact(DisplayName = "resizable-buffer.js", Skip = "Resizable ArrayBuffer is not supported by JROC.")]
+    [Fact(DisplayName = "resizable-buffer.js")]
     public Task resizable_buffer_72()
         => ExecutionTest("resizable-buffer");
 

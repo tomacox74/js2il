@@ -47,6 +47,11 @@ public static class Test262HostRuntimeIntrinsics
             Test262TypedArrayHelpers.Register(builder);
         }
 
+        if (included.Contains("resizableArrayBufferUtils.js"))
+        {
+            Test262ResizableArrayBufferHelpers.Register(builder);
+        }
+
         if (included.Contains("testAtomics.js"))
         {
             Test262AtomicsHelpers.Register(builder);

@@ -13,7 +13,7 @@ namespace JavaScriptRuntime
         }
 
         public SharedArrayBuffer(object? length, object? options)
-            : base(length, options)
+            : base(length, options, supportsResizing: false)
         {
         }
     }

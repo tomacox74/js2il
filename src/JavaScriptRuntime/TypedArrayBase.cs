@@ -10,6 +10,7 @@ namespace JavaScriptRuntime
         private ArrayBuffer _buffer = new ArrayBuffer();
         private int _byteOffset;
         private int _length;
+        private bool _isLengthTracking;
 
         protected abstract int BytesPerElement { get; }
         protected abstract string TypedArrayName { get; }
@@ -19,13 +20,13 @@ namespace JavaScriptRuntime
 
         protected ArrayBuffer BufferObject => _buffer;
         protected int ByteOffsetBytes => _byteOffset;
-        protected int LengthElements => _length;
+        protected int LengthElements => GetCurrentLengthOrZero();
 
         public double BYTES_PER_ELEMENT => BytesPerElement;
         public ArrayBuffer buffer => _buffer;
-        public double byteOffset => _byteOffset;
-        public double byteLength => (double)_length * BytesPerElement;
-        public double length => _length;
+        public double byteOffset => IsOutOfBounds ? 0 : _byteOffset;
+        public double byteLength => (double)GetCurrentLengthOrZero() * BytesPerElement;
+        public double length => GetCurrentLengthOrZero();
 
         public double this[double index]
         {
@@ -35,7 +36,7 @@ namespace JavaScriptRuntime
 
         internal void SetFromDouble(int index, double value)
         {
-            if ((uint)index >= (uint)_length)
+            if ((uint)index >= (uint)GetCurrentLengthOrZero())
             {
                 return;
             }
@@ -45,7 +46,7 @@ namespace JavaScriptRuntime
 
         internal bool TrySetElementValue(int index, object? value)
         {
-            if ((uint)index >= (uint)_length)
+            if ((uint)index >= (uint)GetCurrentLengthOrZero())
             {
                 return false;
             }
@@ -56,7 +57,7 @@ namespace JavaScriptRuntime
 
         internal byte[] CopyRawBytes()
         {
-            var byteLength = checked(_length * BytesPerElement);
+            var byteLength = checked(GetCurrentLengthOrZero() * BytesPerElement);
             if (byteLength == 0)
             {
                 return System.Array.Empty<byte>();
@@ -495,6 +496,7 @@ namespace JavaScriptRuntime
             _buffer = new ArrayBuffer();
             _byteOffset = 0;
             _length = 0;
+            _isLengthTracking = false;
             InitializeIntrinsicSurface();
         }
 
@@ -516,6 +518,7 @@ namespace JavaScriptRuntime
                 : new ArrayBuffer(new byte[(int)byteLengthLong], cloneBuffer: false);
             _byteOffset = 0;
             _length = length;
+            _isLengthTracking = false;
             InitializeIntrinsicSurface();
         }
 
@@ -524,6 +527,7 @@ namespace JavaScriptRuntime
             _buffer = buffer;
             _byteOffset = byteOffset;
             _length = length;
+            _isLengthTracking = false;
             InitializeIntrinsicSurface();
         }
 
@@ -563,6 +567,7 @@ namespace JavaScriptRuntime
             _buffer = buffer;
             _byteOffset = offset;
             _length = elementLength;
+            _isLengthTracking = (length is null || length is JsNull) && buffer.IsResizable;
             InitializeIntrinsicSurface();
         }
 
@@ -992,7 +997,7 @@ namespace JavaScriptRuntime
                 && index <= int.MaxValue)
             {
                 var candidate = (int)index;
-                if (candidate == index && (uint)candidate < (uint)_length)
+                if (candidate == index && (uint)candidate < (uint)GetCurrentLengthOrZero())
                 {
                     elementIndex = candidate;
                     return true;
@@ -1001,6 +1006,49 @@ namespace JavaScriptRuntime
 
             elementIndex = 0;
             return false;
+        }
+
+        internal int GetCurrentLengthForIteration()
+        {
+            if (IsOutOfBounds)
+            {
+                throw new TypeError("TypedArray is out of bounds");
+            }
+
+            return GetCurrentLengthOrZero();
+        }
+
+        private bool IsOutOfBounds
+        {
+            get
+            {
+                if (!_buffer.IsResizable)
+                {
+                    return false;
+                }
+
+                if (_isLengthTracking)
+                {
+                    return _byteOffset > _buffer.ByteLengthInt;
+                }
+
+                return (long)_byteOffset + ((long)_length * BytesPerElement) > _buffer.ByteLengthInt;
+            }
+        }
+
+        private int GetCurrentLengthOrZero()
+        {
+            if (IsOutOfBounds)
+            {
+                return 0;
+            }
+
+            if (!_isLengthTracking)
+            {
+                return _length;
+            }
+
+            return (_buffer.ByteLengthInt - _byteOffset) / BytesPerElement;
         }
 
         private double AtCore(object? index)
@@ -1348,7 +1396,7 @@ namespace JavaScriptRuntime
 
         public IteratorResultObject Next()
         {
-            if (_index >= _typedArray.length)
+            if (_index >= _typedArray.GetCurrentLengthForIteration())
             {
                 return IteratorResult.Create(null, true);
             }
