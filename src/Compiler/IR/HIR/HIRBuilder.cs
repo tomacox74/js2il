@@ -1039,9 +1039,6 @@ partial class HIRMethodBuilder
         return this;
     }
 
-    private string GetCurrentDeclaringScopeName()
-        => GetDeclaringScopeName(_currentScope);
-
     private static string GetDeclaringScopeName(Scope declaringScope)
     {
         var root = declaringScope;
@@ -1059,10 +1056,12 @@ partial class HIRMethodBuilder
     {
         var isStrictFunction = ArgumentsObjectSemantics.IsStrictScope(functionScope)
             || IsCurrentClassHeritageFunctionExpression(funcExpr);
+        var declaringScope = functionScope.Parent
+            ?? throw new InvalidOperationException("Function-expression scope must have a declaring scope.");
         var callableId = CreateFunctionExpressionCallableId(
             functionScope,
             funcExpr,
-            GetCurrentDeclaringScopeName(),
+            GetDeclaringScopeName(declaringScope),
             isStrictFunction);
 
         var isNonConstructible = functionScope.IsMethodDefinition
@@ -1322,6 +1321,36 @@ partial class HIRMethodBuilder
                 || child.AstNode is MethodDefinition methodDefinition && ReferenceEquals(methodDefinition.Value, funcExpr))
             {
                 return child;
+            }
+        }
+
+        var root = _currentScope;
+        while (root.Parent != null)
+        {
+            root = root.Parent;
+        }
+
+        return FindDescendantFunctionScopeForFunctionExpression(root, funcExpr);
+    }
+
+    private static Scope? FindDescendantFunctionScopeForFunctionExpression(
+        Scope scope,
+        FunctionExpression funcExpr)
+    {
+        foreach (var child in scope.Children)
+        {
+            if (child.Kind == ScopeKind.Function
+                && (ReferenceEquals(child.AstNode, funcExpr)
+                    || child.AstNode is MethodDefinition methodDefinition
+                    && ReferenceEquals(methodDefinition.Value, funcExpr)))
+            {
+                return child;
+            }
+
+            var nested = FindDescendantFunctionScopeForFunctionExpression(child, funcExpr);
+            if (nested != null)
+            {
+                return nested;
             }
         }
 

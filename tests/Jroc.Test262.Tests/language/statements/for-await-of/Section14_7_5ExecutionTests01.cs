@@ -464,7 +464,7 @@ public class Section14_7_5ExecutionTests01 : Jroc.Test262.Tests.language.stateme
     public Task async_func_decl_dstr_obj_rest_empty_obj_115()
         => ExecutionTest("async-func-decl-dstr-obj-rest-empty-obj");
 
-    [Fact(DisplayName = "async-func-decl-dstr-obj-rest-getter.js", Skip = "Pending async object-accessor analysis.")]
+    [Fact(DisplayName = "async-func-decl-dstr-obj-rest-getter.js")]
     public Task async_func_decl_dstr_obj_rest_getter_116()
         => ExecutionTest("async-func-decl-dstr-obj-rest-getter");
 
