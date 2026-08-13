@@ -103,7 +103,7 @@
     {
       "clause": "14.7.5.1",
       "title": "Static Semantics: Early Errors",
-      "status": "Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-for-in-and-for-of-statements-static-semantics-early-errors"
     },
     {
@@ -115,13 +115,13 @@
     {
       "clause": "14.7.5.3",
       "title": "Runtime Semantics: ForDeclarationBindingInitialization",
-      "status": "Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-runtime-semantics-fordeclarationbindinginitialization"
     },
     {
       "clause": "14.7.5.4",
       "title": "Runtime Semantics: ForDeclarationBindingInstantiation",
-      "status": "Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-runtime-semantics-fordeclarationbindinginstantiation"
     },
     {
@@ -510,22 +510,15 @@
       },
       {
         "clause": "14.7.5",
-        "feature": "additional for-in / for-of ordering and string iteration test262 coverage",
+        "feature": "pinned test262 for-in / for-of / for-await-of corpus",
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-for-in-and-for-of-statements",
         "testScripts": [
-          "tests/Jroc.Test262.Tests/language/statements/for-in/ExecutionTests.cs",
-          "tests/Jroc.Test262.Tests/language/statements/for-of/ExecutionTests.cs"
+          "tests/Jroc.Test262.Tests/language/statements/for-in/Section14_7_5ExecutionTests01.cs",
+          "tests/Jroc.Test262.Tests/language/statements/for-of/Section14_7_5ExecutionTests01.cs",
+          "tests/Jroc.Test262.Tests/language/statements/for-await-of/Section14_7_5ExecutionTests01.cs"
         ],
-        "test262Paths": [
-          "test/language/statements/for-in/order-property-added.js",
-          "test/language/statements/for-in/order-property-on-prototype.js",
-          "test/language/statements/for-in/order-simple-object.js",
-          "test/language/statements/for-of/nested.js",
-          "test/language/statements/for-of/string-astral.js",
-          "test/language/statements/for-of/string-bmp.js"
-        ],
-        "notes": "The checked-in collection/iteration slice now includes for-in property-order coverage for own, inherited, and added properties plus for-of coverage for nested loops and BMP/astral string iteration. Eval-dependent for-in cases remain skipped until eval support is implemented."
+        "notes": "The remaining pinned section corpus is checked in verbatim: 1,600 of the 1,997 newly ported cases pass and 397 are explicitly skipped with the unsupported behavior named at each test. Reaching Supported requires completing strict/yield early-error validation, destructuring binding and assignment lowering (including initializer function naming and abrupt completion), iterator next/return/close error precedence, async object-accessor analysis, loop lexical-environment lowering, module-namespace enumeration, resizable ArrayBuffer and explicit resource management dependencies, and eval support."
       },
       {
         "clause": "14.7.2.2",
