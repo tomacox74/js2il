@@ -104,6 +104,33 @@ public sealed class GeneratedFunctionObjectPlanningTests
     }
 
     [Fact]
+    public void PlannerUsesSimpleFunctionObjectNamesForNestedOrdinaryCallables()
+    {
+        const string source = """
+            function declaration(value) { return value; }
+            const expression = function(value) { return value; };
+            const first = function() { return 1; };
+            const second = function() { return 2; };
+            """;
+
+        var (symbolTable, coordinator, registry) = Build(source);
+        coordinator.RunPhase1Discovery(symbolTable);
+
+        var ordinaryCallables = registry.GetPlansInStableOrder()
+            .Where(plan => plan.Callable.Kind is CallableKind.FunctionDeclaration
+                or CallableKind.FunctionExpression)
+            .ToArray();
+
+        Assert.Equal(4, ordinaryCallables.Length);
+        Assert.All(
+            ordinaryCallables,
+            plan => Assert.Equal(GeneratedFunctionObjectNaming.WrapperTypeName, plan.TypeName));
+        Assert.Equal(
+            ordinaryCallables.Length,
+            ordinaryCallables.Select(plan => plan.CanonicalOwnerTypeName).Distinct().Count());
+    }
+
+    [Fact]
     public void SpecializedEntryPointsRemainOnCanonicalGeneratedType()
     {
         var (symbolTable, coordinator, registry) = Build(
