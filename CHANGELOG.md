@@ -6,6 +6,12 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- compiler/runtime/test262: close #1789 by completing supported `for-of`
+  destructuring assignment heads. Object-literal member targets now plan their
+  accessor scopes before lowering, assignment to an uninitialized captured
+  `let` binding preserves its temporal-dead-zone `ReferenceError`, and
+  object-rest from strings copies their enumerable indexed own properties.
+  Activates the eleven corresponding pinned test262 fixtures.
 - runtime: reorganize the module runtime library by module standard. Types now
   live under `src/JavaScriptRuntime/Modules/` in three namespaces:
   `JavaScriptRuntime.Modules.CommonJS` (CommonJS `Module`, `Require`,

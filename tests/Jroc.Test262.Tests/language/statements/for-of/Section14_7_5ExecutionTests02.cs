@@ -624,7 +624,7 @@ public class Section14_7_5ExecutionTests02 : Jroc.Test262.Tests.language.stateme
     public Task dstr_obj_id_put_const_405()
         => ExecutionTest("dstr/obj-id-put-const");
 
-    [Fact(DisplayName = "dstr/obj-id-put-let.js", Skip = "Pending complete iterator protocol and abrupt-completion semantics.")]
+    [Fact(DisplayName = "dstr/obj-id-put-let.js")]
     public Task dstr_obj_id_put_let_406()
         => ExecutionTest("dstr/obj-id-put-let");
 
@@ -712,15 +712,15 @@ public class Section14_7_5ExecutionTests02 : Jroc.Test262.Tests.language.stateme
     public Task dstr_obj_prop_elem_target_obj_literal_optchain_prop_ref_init_427()
         => CompilationFailureTest("dstr/obj-prop-elem-target-obj-literal-optchain-prop-ref-init", string.Empty);
 
-    [Fact(DisplayName = "dstr/obj-prop-elem-target-obj-literal-prop-ref-init-active.js", Skip = "Pending complete for-in/of destructuring lowering.")]
+    [Fact(DisplayName = "dstr/obj-prop-elem-target-obj-literal-prop-ref-init-active.js")]
     public Task dstr_obj_prop_elem_target_obj_literal_prop_ref_init_active_428()
         => ExecutionTest("dstr/obj-prop-elem-target-obj-literal-prop-ref-init-active");
 
-    [Fact(DisplayName = "dstr/obj-prop-elem-target-obj-literal-prop-ref-init.js", Skip = "Pending complete for-in/of destructuring lowering.")]
+    [Fact(DisplayName = "dstr/obj-prop-elem-target-obj-literal-prop-ref-init.js")]
     public Task dstr_obj_prop_elem_target_obj_literal_prop_ref_init_429()
         => ExecutionTest("dstr/obj-prop-elem-target-obj-literal-prop-ref-init");
 
-    [Fact(DisplayName = "dstr/obj-prop-elem-target-obj-literal-prop-ref.js", Skip = "Pending complete loop lexical-environment lowering.")]
+    [Fact(DisplayName = "dstr/obj-prop-elem-target-obj-literal-prop-ref.js")]
     public Task dstr_obj_prop_elem_target_obj_literal_prop_ref_430()
         => ExecutionTest("dstr/obj-prop-elem-target-obj-literal-prop-ref");
 
@@ -832,7 +832,7 @@ public class Section14_7_5ExecutionTests02 : Jroc.Test262.Tests.language.stateme
     public Task dstr_obj_prop_put_const_457()
         => ExecutionTest("dstr/obj-prop-put-const");
 
-    [Fact(DisplayName = "dstr/obj-prop-put-let.js", Skip = "Pending complete iterator protocol and abrupt-completion semantics.")]
+    [Fact(DisplayName = "dstr/obj-prop-put-let.js")]
     public Task dstr_obj_prop_put_let_458()
         => ExecutionTest("dstr/obj-prop-put-let");
 
@@ -936,7 +936,7 @@ public class Section14_7_5ExecutionTests02 : Jroc.Test262.Tests.language.stateme
     public Task dstr_obj_rest_skip_non_enumerable_483()
         => ExecutionTest("dstr/obj-rest-skip-non-enumerable");
 
-    [Fact(DisplayName = "dstr/obj-rest-str-val.js", Skip = "Pending complete iterator protocol and abrupt-completion semantics.")]
+    [Fact(DisplayName = "dstr/obj-rest-str-val.js")]
     public Task dstr_obj_rest_str_val_484()
         => ExecutionTest("dstr/obj-rest-str-val");
 

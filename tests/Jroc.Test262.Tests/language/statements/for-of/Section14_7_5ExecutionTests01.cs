@@ -256,7 +256,7 @@ public class Section14_7_5ExecutionTests01 : Jroc.Test262.Tests.language.stateme
     public Task dstr_array_elem_put_const_63()
         => ExecutionTest("dstr/array-elem-put-const");
 
-    [Fact(DisplayName = "dstr/array-elem-put-let.js", Skip = "Pending complete iterator protocol and abrupt-completion semantics.")]
+    [Fact(DisplayName = "dstr/array-elem-put-let.js")]
     public Task dstr_array_elem_put_let_64()
         => ExecutionTest("dstr/array-elem-put-let");
 
@@ -264,15 +264,15 @@ public class Section14_7_5ExecutionTests01 : Jroc.Test262.Tests.language.stateme
     public Task dstr_array_elem_put_obj_literal_optchain_prop_ref_init_65()
         => CompilationFailureTest("dstr/array-elem-put-obj-literal-optchain-prop-ref-init", string.Empty);
 
-    [Fact(DisplayName = "dstr/array-elem-put-obj-literal-prop-ref-init-active.js", Skip = "Pending complete for-in/of destructuring lowering.")]
+    [Fact(DisplayName = "dstr/array-elem-put-obj-literal-prop-ref-init-active.js")]
     public Task dstr_array_elem_put_obj_literal_prop_ref_init_active_66()
         => ExecutionTest("dstr/array-elem-put-obj-literal-prop-ref-init-active");
 
-    [Fact(DisplayName = "dstr/array-elem-put-obj-literal-prop-ref-init.js", Skip = "Pending complete for-in/of destructuring lowering.")]
+    [Fact(DisplayName = "dstr/array-elem-put-obj-literal-prop-ref-init.js")]
     public Task dstr_array_elem_put_obj_literal_prop_ref_init_67()
         => ExecutionTest("dstr/array-elem-put-obj-literal-prop-ref-init");
 
-    [Fact(DisplayName = "dstr/array-elem-put-obj-literal-prop-ref.js", Skip = "Pending complete for-in/of destructuring lowering.")]
+    [Fact(DisplayName = "dstr/array-elem-put-obj-literal-prop-ref.js")]
     public Task dstr_array_elem_put_obj_literal_prop_ref_68()
         => ExecutionTest("dstr/array-elem-put-obj-literal-prop-ref");
 
@@ -672,7 +672,7 @@ public class Section14_7_5ExecutionTests01 : Jroc.Test262.Tests.language.stateme
     public Task dstr_array_rest_put_const_167()
         => ExecutionTest("dstr/array-rest-put-const");
 
-    [Fact(DisplayName = "dstr/array-rest-put-let.js", Skip = "Pending complete iterator protocol and abrupt-completion semantics.")]
+    [Fact(DisplayName = "dstr/array-rest-put-let.js")]
     public Task dstr_array_rest_put_let_168()
         => ExecutionTest("dstr/array-rest-put-let");
 
