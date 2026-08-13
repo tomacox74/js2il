@@ -86,6 +86,9 @@ namespace Jroc.Tests.ControlFlow
         public Task ControlFlow_ForOf_Let_Destructuring_PerIterationBinding() { var testName = nameof(ControlFlow_ForOf_Let_Destructuring_PerIterationBinding); return ExecutionTest(testName); }
 
         [Fact]
+        public Task ControlFlow_ForOf_LexicalHeadScopeInFunction() { var testName = nameof(ControlFlow_ForOf_LexicalHeadScopeInFunction); return ExecutionTest(testName); }
+
+        [Fact]
         public Task ControlFlow_ForOf_CustomIterable_IteratorProtocol() { var testName = nameof(ControlFlow_ForOf_CustomIterable_IteratorProtocol); return ExecutionTest(testName); }
 
         [Fact]

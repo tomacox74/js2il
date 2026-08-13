@@ -18,6 +18,18 @@ public partial class SymbolTableBuilder
                 continue;
             }
 
+            // A for-in/of declaration has no initializer. Its lexical binding stays in
+            // the TDZ while the RHS is evaluated, including when the loop has no
+            // iterations. The generic source-order analysis cannot infer that boundary
+            // from a VariableDeclarator without an initializer.
+            if (binding.RequiresTemporalDeadZoneChecks
+                && binding.IsCaptured
+                && IsForInOrOfHeadScope(scope))
+            {
+                binding.RequiresRuntimeTemporalDeadZoneChecks = true;
+                continue;
+            }
+
             binding.RequiresRuntimeTemporalDeadZoneChecks =
                 binding.RequiresTemporalDeadZoneChecks
                 && binding.IsCaptured
@@ -29,6 +41,12 @@ public partial class SymbolTableBuilder
             AnalyzeRuntimeTemporalDeadZoneChecks(child);
         }
     }
+
+    private static bool IsForInOrOfHeadScope(Scope scope)
+        => scope.Kind == ScopeKind.Block
+           && scope.AstNode is VariableDeclaration
+           && (scope.Name.StartsWith("ForIn_", StringComparison.Ordinal)
+               || scope.Name.StartsWith("ForOf_", StringComparison.Ordinal));
 
     private bool MayCapturedBindingBeObservedBeforeInitialization(Scope declaringScope, BindingInfo binding)
     {

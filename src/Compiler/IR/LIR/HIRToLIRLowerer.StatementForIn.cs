@@ -32,6 +32,7 @@ public sealed partial class HIRToLIRLowerer
         var perIterationBindings = loopHeadLexicalBindings.Where(b => b.IsCaptured).ToList();
 
         bool useTempPerIterationScope = false;
+        TempVariable loopHeadScopeTemp = default;
         TempVariable loopScopeTemp = default;
         ScopeId loopScopeId = default;
         string? loopScopeName = null;
@@ -49,11 +50,14 @@ public sealed partial class HIRToLIRLowerer
                 loopScopeName = ScopeNaming.GetRegistryScopeName(declaringScope);
                 loopScopeId = new ScopeId(loopScopeName);
 
-                loopScopeTemp = CreateTempVariable();
-                DefineTempStorage(loopScopeTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object), ScopeName: loopScopeName));
-                SetTempVariableSlot(loopScopeTemp, CreateAnonymousVariableSlot($"$forIn_lexenv", new ValueStorage(ValueStorageKind.Reference, typeof(object), ScopeName: loopScopeName)));
-                _methodBodyIR.Instructions.Add(new LIRCreateScopeInstance(loopScopeId, loopScopeTemp));
-                _activeScopeTempsByScopeName[loopScopeName] = loopScopeTemp;
+                // ForIn/OfHeadEvaluation evaluates the RHS with the loop binding
+                // uninitialized. Keep that head environment distinct from the
+                // first iteration environment so closures from the RHS retain TDZ.
+                loopHeadScopeTemp = CreateLoopScopeInstance(
+                    loopScopeId,
+                    loopScopeName,
+                    "$forIn_head_lexenv");
+                _activeScopeTempsByScopeName[loopScopeName] = loopHeadScopeTemp;
             }
         }
 
@@ -73,6 +77,15 @@ public sealed partial class HIRToLIRLowerer
             DefineTempStorage(iterTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
             // Pin loop-carry temps to stable variable slots (see note in for..of lowering).
             SetTempVariableSlot(iterTemp, CreateAnonymousVariableSlot("$forIn_iter", new ValueStorage(ValueStorageKind.Reference, typeof(object))));
+
+            if (useTempPerIterationScope)
+            {
+                loopScopeTemp = CreateLoopScopeInstance(
+                    loopScopeId,
+                    loopScopeName!,
+                    "$forIn_lexenv");
+                _activeScopeTempsByScopeName[loopScopeName!] = loopScopeTemp;
+            }
 
             int loopStartLabel = CreateLabel();
             int loopUpdateLabel = CreateLabel();

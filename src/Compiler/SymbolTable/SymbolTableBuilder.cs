@@ -2230,11 +2230,17 @@ namespace Jroc.SymbolTables
                         foreach (var decl in forOfDecl.Declarations)
                         {
                             BindPatternBindings(decl.Id, kind, targetScope, decl);
+                            if (kind is BindingKind.Let or BindingKind.Const)
+                            {
+                                BuildPatternInitializerScopes(globalScope, decl.Id, forOfScope);
+                            }
                         }
                     }
 
-                    // Visit the iterable expression in the outer scope (matches current runtime semantics).
-                    BuildScopeRecursive(globalScope, forOf.Right, currentScope);
+                    // The loop-head lexical environment is active while the iterable expression
+                    // is evaluated. This keeps closures created by the expression bound to the
+                    // uninitialized loop binding until an iteration initializes it.
+                    BuildScopeRecursive(globalScope, forOf.Right, forOfScope);
 
                     // Visit loop body within the loop-head scope when present.
                     if (forOf.Body != null)
@@ -2272,11 +2278,17 @@ namespace Jroc.SymbolTables
                         foreach (var decl in forInDecl.Declarations)
                         {
                             BindPatternBindings(decl.Id, kind, targetScope, decl);
+                            if (kind is BindingKind.Let or BindingKind.Const)
+                            {
+                                BuildPatternInitializerScopes(globalScope, decl.Id, forInScope);
+                            }
                         }
                     }
 
-                    // Visit the object expression in the outer scope (matches current runtime semantics).
-                    BuildScopeRecursive(globalScope, forIn.Right, currentScope);
+                    // The loop-head lexical environment is active while the object expression
+                    // is evaluated. This keeps closures created by the expression bound to the
+                    // uninitialized loop binding until an iteration initializes it.
+                    BuildScopeRecursive(globalScope, forIn.Right, forInScope);
 
                     // Visit loop body within the loop-head scope when present.
                     if (forIn.Body != null)

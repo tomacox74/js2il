@@ -38,6 +38,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   debug source locations are preserved. Adds focused execution and generated-IL
   coverage asserting no `__jroc_esm` function/type overhead remains for every
   supported static ESM form.
+- compiler/test262: close #1790 by separating the lexical environment used for
+  `for-in`/`for-of` head evaluation from each iteration environment. Closures
+  created by the RHS retain the loop binding's TDZ, body/default closures see
+  the initialized iteration binding, and `var` declarations remain in their
+  surrounding variable environment.
 - compiler/test262: close #1791 by traversing object-literal accessor callables
   during async/generator analysis and resolving their declaring scope during
   lowering. Object-rest patterns in `for-of` and `for-await-of` now preserve
