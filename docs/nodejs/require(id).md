@@ -11,7 +11,7 @@
 
 ## Implementation
 
-- `src/JavaScriptRuntime/CommonJS/Require.cs, src/JavaScriptRuntime/CommonJS/ModuleContext.cs, src/JavaScriptRuntime/CommonJS/ModuleName.cs, src/JavaScriptRuntime/CommonJS/Module.cs`
+- `src/JavaScriptRuntime/Modules/CommonJS/Require.cs, src/JavaScriptRuntime/Modules/CommonJS/ModuleContext.cs, src/JavaScriptRuntime/Modules/Shared/ModuleName.cs, src/JavaScriptRuntime/Modules/CommonJS/Module.cs`
 
 ## Notes
 

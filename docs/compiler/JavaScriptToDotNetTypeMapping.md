@@ -386,7 +386,7 @@ Implementation details (current behavior):
 - Local module resolution loads another generated module type (e.g., `Modules.<ModuleId>`) from the compiled local-modules assembly.
 - The runtime currently accepts either `__js_module_init__` (current) or `Main` (legacy) as the module entrypoint.
 - Node module support is implemented by classes in `JavaScriptRuntime.Node` annotated with `[JavaScriptRuntime.Node.NodeModule("<name>")]`.
-- `JavaScriptRuntime.Node.NodeModuleRegistry` discovers these types and `JavaScriptRuntime.CommonJS.Require` instantiates and caches singleton module instances.
+- `JavaScriptRuntime.Node.NodeModuleRegistry` discovers these types and `JavaScriptRuntime.Modules.CommonJS.Require` instantiates and caches singleton module instances.
 
 <a id="specifier-normalization-and-local-resolution"></a>
 ### Specifier normalization and local resolution

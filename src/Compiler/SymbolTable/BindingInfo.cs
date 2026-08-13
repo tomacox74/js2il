@@ -171,4 +171,48 @@ public class BindingInfo
         DeclaringScope = declaringScope;
         DeclarationNode = declarationNode;
     }
+
+    /// <summary>
+    /// When set, this module-scope binding is exported under one or more names. Every write to the
+    /// binding is mirrored into the runtime live-binding cell(s) so importers observe live values.
+    /// Populated by <c>SymbolTableBuilder</c> for modules lowered with native static ESM.
+    /// </summary>
+    public List<EsModuleExportBinding>? EsModuleExports { get; set; }
+
+    /// <summary>
+    /// When set, this binding is a static ESM import whose reads are lowered to a live read from the
+    /// resolved source module object instead of ordinary variable storage.
+    /// </summary>
+    public EsModuleImportBinding? EsModuleImport { get; set; }
+}
+
+/// <summary>
+/// Associates an exported local binding with the exporting module's canonical id and the exported name,
+/// which together key the runtime <see cref="JavaScriptRuntime.Modules.ESM.EsModuleBinding"/> cell.
+/// </summary>
+public sealed class EsModuleExportBinding
+{
+    public required string ModuleId { get; init; }
+    public required string ExportName { get; init; }
+}
+
+public enum EsModuleImportKind
+{
+    Named,
+    Default,
+    Namespace
+}
+
+/// <summary>
+/// Describes how a static ESM import binding resolves its value at read sites.
+/// </summary>
+public sealed class EsModuleImportBinding
+{
+    /// <summary>The hidden module-scope binding holding the required source module object.</summary>
+    public required BindingInfo SourceModuleBinding { get; init; }
+
+    public required EsModuleImportKind Kind { get; init; }
+
+    /// <summary>For <see cref="EsModuleImportKind.Named"/> imports, the exported name to read.</summary>
+    public string? ImportName { get; init; }
 }

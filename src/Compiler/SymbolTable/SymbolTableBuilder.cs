@@ -291,9 +291,17 @@ namespace Jroc.SymbolTables
             }
 
             BuildScopeRecursive(globalScope,module.Ast, globalScope);
+            if (module.UsesNativeStaticEsm)
+            {
+                ApplyNativeEsmBindings(globalScope, module);
+            }
             AnalyzeFreeVariables(globalScope);
             MarkCapturedVariables(globalScope);
             AnalyzeCallableMaterialization(globalScope);
+            if (module.UsesNativeStaticEsm)
+            {
+                FixupNativeEsmExportedCallables(globalScope);
+            }
             AnalyzeRuntimeTemporalDeadZoneChecks(globalScope);
             AnalyzeCompileTimeConstants(globalScope);
 
@@ -305,13 +313,296 @@ namespace Jroc.SymbolTables
         private void AddModuleBuiltInParameters(Scope globalScope, Node astNode)
         {
             // Add built-in parameters for module system using shared ModuleParameters definition
-            foreach (var param in JavaScriptRuntime.CommonJS.ModuleParameters.Parameters)
+            foreach (var param in JavaScriptRuntime.Modules.CommonJS.ModuleParameters.Parameters)
             {
                 var bindingKind = param.IsConst ? BindingKind.Const : BindingKind.Var;
                 globalScope.Bindings[param.Name] = new BindingInfo(param.Name, bindingKind, globalScope, astNode);
                 globalScope.Parameters.Add(param.Name);
             }
         }
+
+        /// <summary>
+        /// Second pass for native static ES modules. Runs after the normal scope build (so declared
+        /// exports already have bindings) and before free-variable/capture analysis. It:
+        /// <list type="bullet">
+        /// <item>flags exported local bindings with their runtime export cell identity,</item>
+        /// <item>creates hidden module-scope bindings that hold required source module objects,</item>
+        /// <item>creates local import bindings (named reads are intercepted; default/namespace bindings
+        /// are initialized once), and</item>
+        /// <item>records an ordered <see cref="EsModuleLinkPlan"/> consumed by the lowerer prologue.</item>
+        /// </list>
+        /// </summary>
+        private void ApplyNativeEsmBindings(Scope globalScope, ModuleDefinition module)
+        {
+            var record = module.ModuleRecord;
+            if (record == null)
+            {
+                return;
+            }
+
+            var plan = new EsModuleLinkPlan { ModuleId = module.ModuleId };
+            globalScope.EsModuleLink = plan;
+
+            // 1. Imports: one hidden source binding per distinct specifier, plus per-specifier local bindings.
+            var sourceBindingBySpecifier = new Dictionary<string, BindingInfo>(StringComparer.Ordinal);
+
+            BindingInfo GetOrCreateSourceBinding(string specifier, Node declarationNode)
+            {
+                if (sourceBindingBySpecifier.TryGetValue(specifier, out var existing))
+                {
+                    return existing;
+                }
+
+                var sourceBinding = new BindingInfo(
+                    EsModuleNames.SourceBindingName(specifier),
+                    BindingKind.Const,
+                    globalScope,
+                    declarationNode)
+                {
+                    // Written once in the prologue and read from nested functions (live named imports),
+                    // so it must live on the module scope instance.
+                    IsCaptured = true,
+                    HasWrite = true
+                };
+                globalScope.Bindings[sourceBinding.Name] = sourceBinding;
+                sourceBindingBySpecifier[specifier] = sourceBinding;
+                plan.Requires.Add(new EsModuleSourceRequire { Specifier = specifier, SourceBinding = sourceBinding });
+                return sourceBinding;
+            }
+
+            void CreateImportLocal(string localName, Node declarationNode, BindingInfo sourceBinding, EsModuleImportKind kind, string? importName)
+            {
+                var localBinding = new BindingInfo(localName, BindingKind.Const, globalScope, declarationNode)
+                {
+                    EsModuleImport = new EsModuleImportBinding
+                    {
+                        SourceModuleBinding = sourceBinding,
+                        Kind = kind,
+                        ImportName = importName
+                    }
+                };
+                globalScope.Bindings[localName] = localBinding;
+
+                if (kind != EsModuleImportKind.Named)
+                {
+                    // Default/namespace imports hold their value in normal storage, assigned once at init.
+                    localBinding.HasWrite = true;
+                    plan.ImportInits.Add(new EsModuleImportInit
+                    {
+                        LocalBinding = localBinding,
+                        SourceBinding = sourceBinding,
+                        Kind = kind
+                    });
+                }
+            }
+
+            // Establish source module require order following source order of all module-request-bearing
+            // declarations (imports, `export ... from`, `export *`, `export * as`). ECMA-262 evaluates
+            // dependencies in `[[RequestedModules]]` (source) order, so seed the shared source bindings
+            // here before the per-declaration passes below reuse them.
+            foreach (var statement in module.Ast.Body)
+            {
+                switch (statement)
+                {
+                    case ImportDeclaration { Source: StringLiteral importSource } importDeclaration:
+                        GetOrCreateSourceBinding(importSource.Value, importDeclaration);
+                        break;
+                    case ExportNamedDeclaration { Source: StringLiteral exportSource } exportFrom:
+                        GetOrCreateSourceBinding(exportSource.Value, exportFrom);
+                        break;
+                    case ExportAllDeclaration { Source: StringLiteral exportAllSource } exportAll:
+                        GetOrCreateSourceBinding(exportAllSource.Value, exportAll);
+                        break;
+                }
+            }
+
+            foreach (var statement in module.Ast.Body)
+            {
+                if (statement is not ImportDeclaration { Source: StringLiteral sourceLiteral } importDeclaration)
+                {
+                    continue;
+                }
+
+                var specifier = sourceLiteral.Value;
+                var sourceBinding = GetOrCreateSourceBinding(specifier, importDeclaration);
+
+                foreach (var specifierNode in importDeclaration.Specifiers)
+                {
+                    switch (specifierNode)
+                    {
+                        case ImportDefaultSpecifier { Local: Identifier defaultLocal }:
+                            CreateImportLocal(defaultLocal.Name, specifierNode, sourceBinding, EsModuleImportKind.Default, importName: null);
+                            break;
+                        case ImportNamespaceSpecifier { Local: Identifier namespaceLocal }:
+                            CreateImportLocal(namespaceLocal.Name, specifierNode, sourceBinding, EsModuleImportKind.Namespace, importName: null);
+                            break;
+                        case ImportSpecifier { Local: Identifier importLocal } importSpecifier:
+                            CreateImportLocal(importLocal.Name, specifierNode, sourceBinding, EsModuleImportKind.Named, GetExportName(importSpecifier.Imported));
+                            break;
+                    }
+                }
+            }
+
+            // 2. Exports: flag the backing local binding (creating a synthetic *default* for expression defaults).
+            // Anonymous `export default function/class` declarations were already bound by the scope builder
+            // under a synthetic Closure{N}/Class{N} name; resolve that binding by its declaration node.
+            var anonymousDefaultBinding = TryResolveAnonymousDefaultBinding(globalScope, module.Ast);
+            var seenExportNames = new HashSet<string>(StringComparer.Ordinal);
+            foreach (var exportEntry in record.LocalExportEntries)
+            {
+                var exportName = exportEntry.ExportName;
+                var localName = exportEntry.LocalName ?? exportName;
+
+                // Re-export of a named import (`export { imported as exported }`): a named import never
+                // writes its own binding cell, so forward the export live to the source module instead of
+                // installing a cell-backed local export.
+                if (globalScope.Bindings.TryGetValue(localName, out var reexportCandidate)
+                    && reexportCandidate.EsModuleImport is { Kind: EsModuleImportKind.Named } reexportImport)
+                {
+                    plan.Reexports.Add(new EsModuleReexport
+                    {
+                        ExportName = exportName,
+                        SourceBinding = reexportImport.SourceModuleBinding,
+                        ImportName = reexportImport.ImportName ?? localName
+                    });
+                    continue;
+                }
+
+                if (seenExportNames.Add(exportName))
+                {
+                    plan.LocalExportNames.Add(exportName);
+                }
+
+                if (!globalScope.Bindings.TryGetValue(localName, out var localBinding))
+                {
+                    if (exportEntry.Kind == ModuleExportKind.Default && anonymousDefaultBinding != null)
+                    {
+                        // `export default function () {}` / `export default class {}`: the anonymous
+                        // declaration's own synthetic binding backs the default export cell.
+                        localBinding = anonymousDefaultBinding;
+                    }
+                    else if (exportEntry.Kind == ModuleExportKind.Default)
+                    {
+                        // `export default <expression>`: create the synthetic binding that receives the value.
+                        localBinding = new BindingInfo(EsModuleNames.SyntheticDefault, BindingKind.Const, globalScope, module.Ast);
+                        globalScope.Bindings[EsModuleNames.SyntheticDefault] = localBinding;
+                    }
+                    else
+                    {
+                        continue;
+                    }
+                }
+
+                localBinding.EsModuleExports ??= new List<EsModuleExportBinding>();
+                if (!localBinding.EsModuleExports.Any(existing => string.Equals(existing.ExportName, exportName, StringComparison.Ordinal)))
+                {
+                    localBinding.EsModuleExports.Add(new EsModuleExportBinding
+                    {
+                        ModuleId = module.ModuleId,
+                        ExportName = exportName
+                    });
+                }
+            }
+
+            // 3. Indirect exports (`export { x as y } from "mod"`) and namespace re-exports
+            // (`export * as ns from "mod"`). Both require the source module and install a live accessor
+            // on the exports object; neither writes a local binding cell.
+            foreach (var indirectExport in record.IndirectExportEntries)
+            {
+                if (string.IsNullOrEmpty(indirectExport.ModuleRequest))
+                {
+                    continue;
+                }
+
+                var sourceBinding = GetOrCreateSourceBinding(indirectExport.ModuleRequest!, module.Ast);
+                if (indirectExport.Kind == ModuleExportKind.Namespace)
+                {
+                    plan.NamespaceReexports.Add(new EsModuleNamespaceReexport
+                    {
+                        ExportName = indirectExport.ExportName,
+                        SourceBinding = sourceBinding
+                    });
+                }
+                else
+                {
+                    plan.Reexports.Add(new EsModuleReexport
+                    {
+                        ExportName = indirectExport.ExportName,
+                        SourceBinding = sourceBinding,
+                        ImportName = indirectExport.LocalName ?? indirectExport.ExportName
+                    });
+                }
+            }
+
+            // 4. Star re-exports (`export * from "mod"`): require the source module and, at initialization,
+            // forward its own enumerable keys (except `default` and names already exported locally).
+            foreach (var starExport in record.StarExportEntries)
+            {
+                if (string.IsNullOrEmpty(starExport.ModuleRequest))
+                {
+                    continue;
+                }
+
+                var sourceBinding = GetOrCreateSourceBinding(starExport.ModuleRequest!, module.Ast);
+                plan.StarReexports.Add(new EsModuleStarReexport { SourceBinding = sourceBinding });
+            }
+        }
+
+        /// <summary>
+        /// Resolves the synthetic binding created for an anonymous <c>export default function () {}</c> or
+        /// <c>export default class {}</c> declaration (bound by the scope builder under a
+        /// <c>Closure{N}</c>/<c>Class{N}</c> name). Returns null when the module has no anonymous default.
+        /// </summary>
+        private static BindingInfo? TryResolveAnonymousDefaultBinding(Scope globalScope, Acornima.Ast.Program ast)
+        {
+            foreach (var statement in ast.Body)
+            {
+                if (statement is not ExportDefaultDeclaration exportDefault
+                    || exportDefault.Declaration is not (FunctionDeclaration { Id: null } or ClassDeclaration { Id: null }))
+                {
+                    continue;
+                }
+
+                var declarationNode = (Node)exportDefault.Declaration;
+                foreach (var binding in globalScope.Bindings.Values)
+                {
+                    if (ReferenceEquals(binding.DeclarationNode, declarationNode))
+                    {
+                        return binding;
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Exported bindings escape via the runtime export cell, so any callable export that
+        /// callable-materialization analysis proved direct-only must still be materialized as a value.
+        /// </summary>
+        private void FixupNativeEsmExportedCallables(Scope globalScope)
+        {
+            foreach (var binding in globalScope.Bindings.Values)
+            {
+                if (binding.EsModuleExports == null)
+                {
+                    continue;
+                }
+
+                if (binding.CallableMaterialization?.Kind == CallableMaterializationKind.DirectOnly)
+                {
+                    binding.CallableMaterialization = CallableMaterializationDecision.UnboundEvaluation;
+                }
+            }
+        }
+
+        private static string GetExportName(Expression expression)
+            => expression switch
+            {
+                Identifier identifier => identifier.Name,
+                StringLiteral stringLiteral => stringLiteral.Value,
+                _ => expression.ToString() ?? string.Empty
+            };
 
         private static bool IsDirectGlobalFunctionConstructor(Scope currentScope, Identifier calleeId)
         {
@@ -2047,6 +2338,26 @@ namespace Jroc.SymbolTables
                     {
                         _activeWithDepth--;
                     }
+                    break;
+                case ImportDeclaration:
+                    // Native ESM: import bindings are created in ApplyNativeEsmBindings. There are no
+                    // inner scopes to build. Handling this explicitly avoids the reflective child walk,
+                    // which would otherwise visit specifier identifiers redundantly.
+                    break;
+                case ExportNamedDeclaration exportNamedDeclaration:
+                    // Recurse into the wrapped declaration exactly once. The reflective default walk would
+                    // visit the declaration twice (via both the Declaration property and ChildNodes),
+                    // creating duplicate function/class scopes.
+                    if (exportNamedDeclaration.Declaration != null)
+                    {
+                        BuildScopeRecursive(globalScope, exportNamedDeclaration.Declaration, currentScope);
+                    }
+                    break;
+                case ExportDefaultDeclaration exportDefaultDeclaration:
+                    BuildScopeRecursive(globalScope, exportDefaultDeclaration.Declaration, currentScope);
+                    break;
+                case ExportAllDeclaration:
+                    // Gated out of native modules; no scopes to build.
                     break;
                 default:
                     // For other node types, recursively process their children

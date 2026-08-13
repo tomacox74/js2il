@@ -60,6 +60,14 @@ public sealed class ModuleDefinition
     /// </summary>
     public ModuleRecord? ModuleRecord { get; set; }
 
+    /// <summary>
+    /// True when this module is compiled with native static ES module linking (direct compiler/runtime
+    /// lowering of <c>import</c>/<c>export</c>) rather than the legacy source-rewrite path. Native
+    /// eligibility requires static module syntax with no indirect (<c>export ... from</c>) or star
+    /// (<c>export *</c>) export entries.
+    /// </summary>
+    public bool UsesNativeStaticEsm { get; set; }
+
     public SymbolTable? SymbolTable { get; set; }
 
     public Dictionary<Node, SourceSpan> DebugSequencePointOverrides { get; } = new(ReferenceEqualityComparer.Instance);

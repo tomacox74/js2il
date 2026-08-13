@@ -99,7 +99,7 @@
       "classifications": [ "dynamic-call", "callback", "export-interop", "bootstrap" ],
       "trackingIssues": [ 1709, 1719, 1720, 1722 ],
       "sourceGlobs": [
-        "src/JavaScriptRuntime/CommonJS/*.cs"
+        "src/JavaScriptRuntime/Modules/**/*.cs"
       ],
       "rationale": "Retains ModuleMainDelegate and RequireDelegate as intentional bootstrap ABI boundaries while moving compiled JavaScript exports as JsFunctionObject values."
     }
@@ -109,7 +109,7 @@
       "id": "module-main-bootstrap",
       "sourceGlobs": [
         "src/Compiler/Services/AssemblyGenerator.cs",
-        "src/JavaScriptRuntime/CommonJS/*.cs"
+        "src/JavaScriptRuntime/Modules/**/*.cs"
       ],
       "symbols": [ "ModuleMainDelegate" ],
       "rationale": "The generated assembly entry point and Engine.Execute use a stable CLR bootstrap ABI before JavaScript callable semantics begin."
@@ -118,7 +118,7 @@
       "id": "commonjs-require-bootstrap",
       "sourceGlobs": [
         "src/Compiler/Services/TypeGenerator.cs",
-        "src/JavaScriptRuntime/CommonJS/*.cs"
+        "src/JavaScriptRuntime/Modules/**/*.cs"
       ],
       "symbols": [ "RequireDelegate" ],
       "rationale": "CommonJS require is injected by the host as a fixed module-loader ABI and is not a materialized compiled JavaScript function."

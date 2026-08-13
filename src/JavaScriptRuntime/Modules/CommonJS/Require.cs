@@ -5,8 +5,10 @@ using System.Reflection;
 using System.Linq;
 using Jroc.Runtime;
 
-namespace JavaScriptRuntime.CommonJS
+namespace JavaScriptRuntime.Modules.CommonJS
 {
+    using JavaScriptRuntime.Modules.Shared;
+
     internal sealed class Require
     {
         // Registry and instance cache; resolved lazily via [Node.NodeModule] attributes

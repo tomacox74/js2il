@@ -473,6 +473,13 @@ public sealed partial class HIRToLIRLowerer
                 // Look up the binding using the Symbol's BindingInfo directly
                 // This correctly resolves shadowed variables to the right binding
                 var binding = varExpr.Name.BindingInfo;
+
+                // Live named imports re-read the source module property on every access.
+                if (TryLowerNamedEsModuleImportRead(binding, out resultTempVar))
+                {
+                    return true;
+                }
+
                 if (binding.CallableMaterialization?.Kind
                     == CallableMaterializationKind.DirectOnly)
                 {
@@ -549,7 +556,7 @@ public sealed partial class HIRToLIRLowerer
                         return new ValueStorage(
                             ValueStorageKind.Reference,
                             _preserveRawInjectedCommonJsRequireRead
-                                ? typeof(global::JavaScriptRuntime.CommonJS.RequireDelegate)
+                                ? typeof(global::JavaScriptRuntime.Modules.CommonJS.RequireDelegate)
                                 : typeof(global::JavaScriptRuntime.BuiltinDelegateFunctionAdapter));
                     }
 

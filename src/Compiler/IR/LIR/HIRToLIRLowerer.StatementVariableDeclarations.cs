@@ -244,6 +244,7 @@ public sealed partial class HIRToLIRLowerer
             _methodBodyIR.Instructions.Add(new LIRStoreScopeField(activeScopeTemp, binding, activeFieldId, activeScopeId, fieldValue));
             _variableMap[binding] = fieldValue;
             TryMirrorGlobalVarBinding(binding, fieldValue);
+            MirrorEsModuleExport(binding, fieldValue);
             return true;
         }
 
@@ -274,6 +275,7 @@ public sealed partial class HIRToLIRLowerer
                 // Also map in SSA for subsequent reads (though they'll use field load)
                 _variableMap[binding] = value;
                 TryMirrorGlobalVarBinding(binding, fieldValue);
+                MirrorEsModuleExport(binding, fieldValue);
                 return true;
             }
         }
@@ -281,6 +283,7 @@ public sealed partial class HIRToLIRLowerer
         if (TryInitializeStringBuilderAccumulator(binding, exprStmt.Name.Name, exprStmt.Initializer, value))
         {
             TryMirrorGlobalVarBinding(binding, value);
+            MirrorEsModuleExport(binding, value);
             return true;
         }
 
@@ -315,6 +318,7 @@ public sealed partial class HIRToLIRLowerer
         // let/var variables are single-assignment if never reassigned after initialization.
         _methodBodyIR.SingleAssignmentSlots.Add(slot);
         TryMirrorGlobalVarBinding(binding, slotValue);
+        MirrorEsModuleExport(binding, slotValue);
         return true;
     }
 

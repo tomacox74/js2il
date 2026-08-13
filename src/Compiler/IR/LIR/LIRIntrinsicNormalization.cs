@@ -1506,7 +1506,7 @@ internal static class LIRIntrinsicNormalization
 
         var calleeStorage = methodBody.TempStorages[callee.Index];
         return calleeStorage.Kind == ValueStorageKind.Reference
-            && calleeStorage.ClrType == typeof(global::JavaScriptRuntime.CommonJS.RequireDelegate);
+            && calleeStorage.ClrType == typeof(global::JavaScriptRuntime.Modules.CommonJS.RequireDelegate);
     }
 
     private static void ShiftIndicesAfterInsert(HashSet<int> indices, int insertAt)

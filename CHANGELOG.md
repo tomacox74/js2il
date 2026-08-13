@@ -6,6 +6,38 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- runtime: reorganize the module runtime library by module standard. Types now
+  live under `src/JavaScriptRuntime/Modules/` in three namespaces:
+  `JavaScriptRuntime.Modules.CommonJS` (CommonJS `Module`, `Require`,
+  `ModuleExecutor`, `ModuleParameters`, `RequireFunctionTarget`,
+  `ModuleNotFoundError`, `ModuleCache`, `ModuleContext`),
+  `JavaScriptRuntime.Modules.ESM` (`EsModuleLinker`, `EsModuleBinding`,
+  `DynamicImport`), and `JavaScriptRuntime.Modules.Shared` (neutral
+  infrastructure `ModuleName` and `LocalModulesAssembly`, plus the cross-standard
+  `EsModuleInterop` bridge). Cross-standard translation lives in
+  `Shared`; standard-specific code stays in its own directory. Behavior is
+  unchanged, but embedders referencing the previous `JavaScriptRuntime.CommonJS`
+  namespace must update to the new namespaces.
+- compiler/runtime: close issue #1796 by lowering **all** supported static ES
+  module syntax natively instead of injecting JavaScript. Every static
+  `import`/`export` module — including indirect exports (`export { x as y }
+  from`), star exports (`export * from`), namespace re-exports (`export * as ns
+  from`), and named/anonymous `export default` function, class, and expression
+  forms — now keeps its original source and is linked through runtime binding
+  cells and direct `EsModuleLinker` calls. This removes the five injected
+  `__jroc_esm_*` helper functions, the interop prelude, and every per-export
+  getter closure from generated assemblies; no implementation-generated
+  JavaScript is appended before a static ESM module's final compilation. Imports
+  resolve as live reads, exported writes mirror into their binding cell, and
+  module namespace/`for-in` enumeration enforces temporal dead-zone
+  `ReferenceError`s for uninitialized live bindings (activating the
+  `enumerate-binding-uninit.js` test262 case). Binding cells and namespace
+  markers are scoped to each runtime instance, preventing scripts with matching
+  module ids from sharing live state or retaining one another after disposal.
+  CommonJS interop, module resolution, evaluation order, live re-exports, and
+  debug source locations are preserved. Adds focused execution and generated-IL
+  coverage asserting no `__jroc_esm` function/type overhead remains for every
+  supported static ESM form.
 - compiler/test262: close #1791 by traversing object-literal accessor callables
   during async/generator analysis and resolving their declaring scope during
   lowering. Object-rest patterns in `for-of` and `for-await-of` now preserve

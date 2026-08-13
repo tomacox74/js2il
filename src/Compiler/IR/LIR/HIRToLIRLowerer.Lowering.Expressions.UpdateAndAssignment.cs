@@ -1223,6 +1223,18 @@ public sealed partial class HIRToLIRLowerer
 
     private bool TryStoreToBinding(BindingInfo binding, TempVariable valueToStore, out TempVariable storedValue)
     {
+        if (!TryStoreToBindingCore(binding, valueToStore, out storedValue))
+        {
+            return false;
+        }
+
+        // Reassignments/updates to an exported local binding mirror the new value into its export cell.
+        MirrorEsModuleExport(binding, storedValue);
+        return true;
+    }
+
+    private bool TryStoreToBindingCore(BindingInfo binding, TempVariable valueToStore, out TempVariable storedValue)
+    {
         storedValue = default;
 
         var lirInstructions = _methodBodyIR.Instructions;
@@ -1651,6 +1663,7 @@ public sealed partial class HIRToLIRLowerer
             lirInstructions.Add(new LIRStoreScopeField(activeScopeTemp, binding, activeFieldId, activeScopeId, boxedValue));
             _variableMap[binding] = boxedValue;
             InvalidateNumericRefinement(binding, valueToStore);
+            MirrorEsModuleExport(binding, boxedValue);
             resultTempVar = boxedValue;
             return true;
         }
@@ -1672,6 +1685,7 @@ public sealed partial class HIRToLIRLowerer
                             // Also update SSA map for subsequent reads
                             _variableMap[binding] = boxedValue;
                             InvalidateNumericRefinement(binding, valueToStore);
+                            MirrorEsModuleExport(binding, boxedValue);
                             resultTempVar = boxedValue;
                             return true;
                         }
@@ -1689,6 +1703,7 @@ public sealed partial class HIRToLIRLowerer
                             // Also update SSA map for subsequent reads, mirroring leaf-scope behavior
                             _variableMap[binding] = boxedValue;
                             InvalidateNumericRefinement(binding, valueToStore);
+                            MirrorEsModuleExport(binding, boxedValue);
                             resultTempVar = boxedValue;
                             return true;
                         }
@@ -1771,6 +1786,7 @@ public sealed partial class HIRToLIRLowerer
 
         _variableMap[binding] = storeTemp;
         InvalidateNumericRefinement(binding, storeTemp);
+        MirrorEsModuleExport(binding, storeTemp);
         resultTempVar = storeTemp;
 
         // This is a reassignment (not initial declaration), so the variable is not single-assignment.

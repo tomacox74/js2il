@@ -99,7 +99,7 @@ namespace JavaScriptRuntime.Node
                 try
                 {
                     var args = JavaScriptRuntime.EnvironmentProvider.GetProcessArgs();
-                    var scriptFile = JavaScriptRuntime.CommonJS.ModuleContext.CreateModuleContext().__filename;
+                    var scriptFile = JavaScriptRuntime.Modules.CommonJS.ModuleContext.CreateModuleContext().__filename;
 
                     // Node semantics:
                     //   argv[0] = execPath (node)
@@ -157,7 +157,7 @@ namespace JavaScriptRuntime.Node
                 catch { }
 
                 // Fallback to Node-like argv with just execPath + script
-                return new JavaScriptRuntime.Array(new object[] { "dotnet", JavaScriptRuntime.CommonJS.ModuleContext.CreateModuleContext().__filename });
+                return new JavaScriptRuntime.Array(new object[] { "dotnet", JavaScriptRuntime.Modules.CommonJS.ModuleContext.CreateModuleContext().__filename });
             }
         }
 

@@ -400,7 +400,7 @@
 			IL_0008: stfld object Modules.Import_DynamicImport_Cjs_Namespace/ArrowFunction_L3C61/Scope::nsA
 			IL_000d: ldstr "./Import_DynamicImport_Cjs_Namespace_Lib.cjs"
 			IL_0012: ldstr "Import_DynamicImport_Cjs_Namespace"
-			IL_0017: call class [JavaScriptRuntime]JavaScriptRuntime.Promise [JavaScriptRuntime]JavaScriptRuntime.CommonJS.DynamicImport::Import(object, object)
+			IL_0017: call class [JavaScriptRuntime]JavaScriptRuntime.Promise [JavaScriptRuntime]JavaScriptRuntime.Modules.ESM.DynamicImport::Import(object, object)
 			IL_001c: stloc.1
 			IL_001d: ldloc.1
 			IL_001e: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class [JavaScriptRuntime]JavaScriptRuntime.Promise>(!!0)
@@ -647,7 +647,7 @@
 	.method public hidebysig static 
 		void __js_module_init__ (
 			object exports,
-			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireDelegate require,
 			object module,
 			string __filename,
 			string __dirname
@@ -670,7 +670,7 @@
 		IL_0006: nop
 		IL_0007: ldstr "./Import_DynamicImport_Cjs_Namespace_Lib.cjs"
 		IL_000c: ldstr "Import_DynamicImport_Cjs_Namespace"
-		IL_0011: call class [JavaScriptRuntime]JavaScriptRuntime.Promise [JavaScriptRuntime]JavaScriptRuntime.CommonJS.DynamicImport::Import(object, object)
+		IL_0011: call class [JavaScriptRuntime]JavaScriptRuntime.Promise [JavaScriptRuntime]JavaScriptRuntime.Modules.ESM.DynamicImport::Import(object, object)
 		IL_0016: stloc.1
 		IL_0017: ldloc.1
 		IL_0018: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class [JavaScriptRuntime]JavaScriptRuntime.Promise>(!!0)
@@ -1018,7 +1018,7 @@
 	.method public hidebysig static 
 		void __js_module_init__ (
 			object exports,
-			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireDelegate require,
 			object module,
 			string __filename,
 			string __dirname
@@ -1126,9 +1126,9 @@
 
 		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
 		IL_0005: ldnull
-		IL_0006: ldftn void Modules.Import_DynamicImport_Cjs_Namespace::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
-		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
-		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
+		IL_0006: ldftn void Modules.Import_DynamicImport_Cjs_Namespace::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireDelegate, object, string, string)
+		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate)
 		IL_0016: ret
 	} // end of method Program::Main
 

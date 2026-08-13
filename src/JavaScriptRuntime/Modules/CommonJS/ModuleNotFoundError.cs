@@ -1,4 +1,4 @@
-namespace JavaScriptRuntime.CommonJS;
+namespace JavaScriptRuntime.Modules.CommonJS;
 
 internal sealed class ModuleNotFoundError : Error
 {

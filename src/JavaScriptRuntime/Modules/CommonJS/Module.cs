@@ -1,6 +1,6 @@
 using System.Dynamic;
 
-namespace JavaScriptRuntime.CommonJS;
+namespace JavaScriptRuntime.Modules.CommonJS;
 
 /// <summary>
 /// Represents a CommonJS module object per Node.js specification.

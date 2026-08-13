@@ -542,7 +542,7 @@ namespace JavaScriptRuntime
                     args)!;
             }
 
-            if (target is global::JavaScriptRuntime.CommonJS.RequireDelegate require)
+            if (target is global::JavaScriptRuntime.Modules.CommonJS.RequireDelegate require)
             {
                 return require(args.Length > 0 ? args[0] : null)!;
             }
@@ -688,7 +688,7 @@ namespace JavaScriptRuntime
                 return CallableOperations.Call0(target, RuntimeServices.GetCurrentThis())!;
             }
 
-            if (target is global::JavaScriptRuntime.CommonJS.RequireDelegate require)
+            if (target is global::JavaScriptRuntime.Modules.CommonJS.RequireDelegate require)
             {
                 return require(null)!;
             }
@@ -707,7 +707,7 @@ namespace JavaScriptRuntime
                 return CallableOperations.Call1(target, RuntimeServices.GetCurrentThis(), a0)!;
             }
 
-            if (target is global::JavaScriptRuntime.CommonJS.RequireDelegate require)
+            if (target is global::JavaScriptRuntime.Modules.CommonJS.RequireDelegate require)
             {
                 return require(a0)!;
             }
@@ -730,7 +730,7 @@ namespace JavaScriptRuntime
                     a1)!;
             }
 
-            if (target is global::JavaScriptRuntime.CommonJS.RequireDelegate require)
+            if (target is global::JavaScriptRuntime.Modules.CommonJS.RequireDelegate require)
             {
                 return require(a0)!;
             }
@@ -754,7 +754,7 @@ namespace JavaScriptRuntime
                     a2)!;
             }
 
-            if (target is global::JavaScriptRuntime.CommonJS.RequireDelegate require)
+            if (target is global::JavaScriptRuntime.Modules.CommonJS.RequireDelegate require)
             {
                 return require(a0)!;
             }
@@ -779,7 +779,7 @@ namespace JavaScriptRuntime
                     a3)!;
             }
 
-            if (target is global::JavaScriptRuntime.CommonJS.RequireDelegate require)
+            if (target is global::JavaScriptRuntime.Modules.CommonJS.RequireDelegate require)
             {
                 return require(a0)!;
             }
@@ -805,7 +805,7 @@ namespace JavaScriptRuntime
                     a4)!;
             }
 
-            if (target is global::JavaScriptRuntime.CommonJS.RequireDelegate require)
+            if (target is global::JavaScriptRuntime.Modules.CommonJS.RequireDelegate require)
             {
                 return require(a0)!;
             }

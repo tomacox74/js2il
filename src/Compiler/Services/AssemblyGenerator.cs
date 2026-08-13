@@ -439,7 +439,7 @@ namespace Jroc.Services
                 {
                     parameters.AddParameter().Type().Object();
                     parameters.AddParameter().Type().Type(
-                        _typeReferenceRegistry.GetOrAdd(typeof(JavaScriptRuntime.CommonJS.RequireDelegate)),
+                        _typeReferenceRegistry.GetOrAdd(typeof(JavaScriptRuntime.Modules.CommonJS.RequireDelegate)),
                         isValueType: false);
                     parameters.AddParameter().Type().Object();
                     parameters.AddParameter().Type().String();
@@ -518,7 +518,7 @@ namespace Jroc.Services
                 typeof(JavaScriptRuntime.Engine),
                 "Execute",
                 0,
-                typeof(JavaScriptRuntime.CommonJS.ModuleMainDelegate));
+                typeof(JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate));
             ilEncoder.Token(engineExecuteRef);
 
             ilEncoder.OpCode(ILOpCode.Ret);

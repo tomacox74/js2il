@@ -98,7 +98,7 @@ public sealed class LIRIntrinsicNormalizationTests
     public void Normalize_Rewrites_AritySpecificRequireCalls_To_LIRCallRequire(int arity)
     {
         var body = new MethodBodyIR();
-        var requireValue = AddTemp(body, new ValueStorage(ValueStorageKind.Reference, typeof(JavaScriptRuntime.CommonJS.RequireDelegate)));
+        var requireValue = AddTemp(body, new ValueStorage(ValueStorageKind.Reference, typeof(JavaScriptRuntime.Modules.CommonJS.RequireDelegate)));
         var scopes = AddTemp(body, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
         var a0 = AddTemp(body, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
         var a1 = AddTemp(body, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
@@ -143,7 +143,7 @@ public sealed class LIRIntrinsicNormalizationTests
     public void Normalize_Rewrites_ArrayBasedRequireCalls_To_LIRCallRequire()
     {
         var body = new MethodBodyIR();
-        var requireValue = AddTemp(body, new ValueStorage(ValueStorageKind.Reference, typeof(JavaScriptRuntime.CommonJS.RequireDelegate)));
+        var requireValue = AddTemp(body, new ValueStorage(ValueStorageKind.Reference, typeof(JavaScriptRuntime.Modules.CommonJS.RequireDelegate)));
         var scopes = AddTemp(body, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
         var a0 = AddTemp(body, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
         var a1 = AddTemp(body, new ValueStorage(ValueStorageKind.Reference, typeof(object)));

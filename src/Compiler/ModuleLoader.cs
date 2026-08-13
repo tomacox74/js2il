@@ -313,16 +313,34 @@ public class ModuleLoader
 
         var moduleRecord = BuildModuleRecord(ast, moduleDependencies);
 
-        if (!TryRewriteStaticModuleSyntax(
-            jsSource,
-            ast,
-            sourceFileForDebugging,
-            out var rewrittenSource,
-            out var topLevelDebugSpanOverrides,
-            out var rewriteError))
+        // Native static ESM: every module with static import/export syntax is lowered natively (direct
+        // compiler/runtime linking, no source rewrite or injected JavaScript helpers). Modules without
+        // static module syntax fall through to the (now no-op for those) legacy path.
+        var usesNativeStaticEsm = IsNativeStaticEsmEligible(moduleRecord);
+
+        var rewrittenSource = jsSource;
+        var topLevelDebugSpanOverrides = new List<TopLevelDebugSpanOverride>();
+        if (!usesNativeStaticEsm)
         {
+            if (!TryRewriteStaticModuleSyntax(
+                jsSource,
+                ast,
+                sourceFileForDebugging,
+                out rewrittenSource,
+                out topLevelDebugSpanOverrides,
+                out var rewriteError))
+            {
+                module = null;
+                diagnostics.AddParseError(modulePath, rewriteError ?? "Failed to rewrite ES module syntax.");
+                return false;
+            }
+        }
+        else if (!TryValidateNativeStaticEsmBindings(jsSource, ast, moduleRecord, out var nativeEsmError))
+        {
+            // Native modules skip the source rewrite but must preserve its early errors
+            // (e.g. assigning to or deleting an import binding).
             module = null;
-            diagnostics.AddParseError(modulePath, rewriteError ?? "Failed to rewrite ES module syntax.");
+            diagnostics.AddParseError(modulePath, nativeEsmError ?? "Invalid ES module syntax.");
             return false;
         }
 
@@ -358,7 +376,7 @@ public class ModuleLoader
 
         // Compute canonical logical module id (runtime-facing) and CLR type name.
         var canonicalModuleId = ComputeCanonicalModuleId(modulePath, rootModulePath);
-        var manifestDefaultId = JavaScriptRuntime.CommonJS.ModuleName.GetModuleIdForManifestFromPath(modulePath, rootModulePath);
+        var manifestDefaultId = JavaScriptRuntime.Modules.Shared.ModuleName.GetModuleIdForManifestFromPath(modulePath, rootModulePath);
 
         // Root module id override (used by CLI --moduleid) should become the alias id
         // that points at the root module's canonical id.
@@ -375,7 +393,7 @@ public class ModuleLoader
             : $"{canonicalModuleId}@{packageInstallationDiscriminator}";
         var internalKey = isPackageModule
             ? NodeModuleResolver.EncodeModuleIdToClrIdentifier(compilationModuleId)
-            : JavaScriptRuntime.CommonJS.ModuleName.GetModuleIdFromPath(modulePath, rootModulePath);
+            : JavaScriptRuntime.Modules.Shared.ModuleName.GetModuleIdFromPath(modulePath, rootModulePath);
 
         // Human-readable CLR names for the generated module root type.
         // For packages we group types by package name and use within-package path segments for type names.
@@ -409,7 +427,8 @@ public class ModuleLoader
             ClrTypeName = clrTypeName,
             IsPackageModule = isPackageModule,
             Ast = ast,
-            ModuleRecord = moduleRecord
+            ModuleRecord = moduleRecord,
+            UsesNativeStaticEsm = usesNativeStaticEsm
         };
 
         if (debugSequencePointOverrides != null)
@@ -2452,7 +2471,7 @@ function __jroc_esm_export(name, getter) {
         }
 
         // Local modules: use the existing manifest id (path-like relative to root directory, no .js).
-        return JavaScriptRuntime.CommonJS.ModuleName.GetModuleIdForManifestFromPath(modulePath, rootModulePath);
+        return JavaScriptRuntime.Modules.Shared.ModuleName.GetModuleIdForManifestFromPath(modulePath, rootModulePath);
     }
 
     private static bool IsUnderNodeModules(string modulePath)
@@ -3095,6 +3114,82 @@ function __jroc_esm_export(name, getter) {
         return false;
     }
 
+    // Feature switch for native static ESM lowering. When true, eligible modules are lowered natively
+    // (no source rewrite, no injected JavaScript helper functions or export getter closures).
+    private const bool NativeStaticEsmEnabled = true;
+
+    /// <summary>
+    /// True when a module uses static import/export syntax and can therefore be lowered natively. All
+    /// supported static ESM forms — including indirect exports (<c>export ... from</c>), star exports
+    /// (<c>export *</c> / <c>export * as</c>), and anonymous <c>export default function</c>/<c>class</c> —
+    /// are lowered directly by the compiler/runtime; no supported static ESM module takes the legacy
+    /// source-rewrite path.
+    /// </summary>
+    private static bool IsNativeStaticEsmEligible(ModuleRecord? record)
+    {
+        if (!NativeStaticEsmEnabled || record == null)
+        {
+            return false;
+        }
+
+        return record.HasStaticModuleSyntax;
+    }
+
+    /// <summary>
+    /// Validates native static ESM early errors that the legacy source-rewrite path would otherwise
+    /// enforce, in particular assignments/updates/deletes targeting an imported binding. Reuses the
+    /// scope-aware import-reference walker in check-only mode (mapping each import name to itself so no
+    /// rewrite is applied).
+    /// </summary>
+    private static bool TryValidateNativeStaticEsmBindings(
+        string source,
+        Acornima.Ast.Program ast,
+        ModuleRecord moduleRecord,
+        out string? error)
+    {
+        error = null;
+
+        // Import/export attributes (`with { type: "json" }`) are not yet supported. The legacy
+        // source-rewrite path rejected them with a clear compile-time error; preserve that behavior on
+        // the native path instead of silently dropping the attribute.
+        foreach (var statement in ast.Body)
+        {
+            switch (statement)
+            {
+                case ImportDeclaration { Attributes.Count: > 0 } importWithAttributes:
+                    error = $"Import attributes are not yet supported (line {importWithAttributes.Location.Start.Line}).";
+                    return false;
+                case ExportNamedDeclaration { Attributes.Count: > 0 } exportWithAttributes:
+                    error = $"Export attributes are not yet supported (line {exportWithAttributes.Location.Start.Line}).";
+                    return false;
+                case ExportAllDeclaration { Attributes.Count: > 0 } exportAllWithAttributes:
+                    error = $"Export attributes are not yet supported (line {exportAllWithAttributes.Location.Start.Line}).";
+                    return false;
+            }
+        }
+
+        var importedBindings = new Dictionary<string, string>(StringComparer.Ordinal);
+        foreach (var importEntry in moduleRecord.ImportEntries)
+        {
+            if (importEntry.Kind == ModuleImportKind.SideEffect
+                || string.IsNullOrEmpty(importEntry.LocalName))
+            {
+                continue;
+            }
+
+            // Map the imported local name to itself: the walker still enforces write/delete early
+            // errors, and any rename edit is a no-op that we discard.
+            importedBindings[importEntry.LocalName!] = importEntry.LocalName!;
+        }
+
+        if (importedBindings.Count == 0)
+        {
+            return true;
+        }
+
+        return TryRewriteImportedBindingReferences(source, ast, importedBindings, out _, out error);
+    }
+
     private static bool IsDynamicExportSurface(ModuleDefinition module)
     {
         if (string.Equals(Path.GetExtension(module.Path), ".cjs", StringComparison.OrdinalIgnoreCase))
@@ -3304,7 +3399,7 @@ function __jroc_esm_export(name, getter) {
 
         public void AddParseError(string modulePath, string message)
         {
-            var moduleName = JavaScriptRuntime.CommonJS.ModuleName.GetModuleIdFromPath(modulePath, _rootModulePath);
+            var moduleName = JavaScriptRuntime.Modules.Shared.ModuleName.GetModuleIdFromPath(modulePath, _rootModulePath);
             _parseErrors.Add((moduleName, modulePath, message));
         }
 

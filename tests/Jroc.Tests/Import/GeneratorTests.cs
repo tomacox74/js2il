@@ -51,6 +51,41 @@ namespace Jroc.Tests.Import
         }
 
         [Fact]
+        public Task Import_ExportRenamedFrom()
+        {
+            var testName = nameof(Import_ExportRenamedFrom);
+            return GenerateTest(testName);
+        }
+
+        [Fact]
+        public Task Import_ExportStarAsNamespace()
+        {
+            var testName = nameof(Import_ExportStarAsNamespace);
+            return GenerateTest(testName);
+        }
+
+        [Fact]
+        public Task Import_DefaultAnonFunction()
+        {
+            var testName = nameof(Import_DefaultAnonFunction);
+            return GenerateTest(testName);
+        }
+
+        [Fact]
+        public Task Import_DefaultAnonClass()
+        {
+            var testName = nameof(Import_DefaultAnonClass);
+            return GenerateTest(testName);
+        }
+
+        [Fact]
+        public Task Import_DefaultNamedClass()
+        {
+            var testName = nameof(Import_DefaultNamedClass);
+            return GenerateTest(testName);
+        }
+
+        [Fact]
         public Task Import_LiveBindings_Named()
         {
             var testName = nameof(Import_LiveBindings_Named);

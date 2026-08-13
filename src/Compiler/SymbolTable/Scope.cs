@@ -24,6 +24,15 @@ public class Scope
     /// </summary>
     public string Name { get; }
     public string? ModuleId { get; set; }
+
+    /// <summary>
+    /// When set, this global (module) scope is compiled with native static ES module linking.
+    /// The plan drives the module main prologue (export registration, source requires, and
+    /// default/namespace import initialization). Null for non-module scopes and for modules that
+    /// use the legacy source-rewrite path.
+    /// </summary>
+    public EsModuleLinkPlan? EsModuleLink { get; set; }
+
     public Scope? Parent { get; }
     public List<Scope> Children { get; } = new();
     public Dictionary<string, BindingInfo> Bindings { get; } = new();

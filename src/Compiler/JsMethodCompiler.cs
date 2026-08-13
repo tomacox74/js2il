@@ -803,7 +803,7 @@ internal sealed class JsMethodCompiler
 
         MethodParameterDescriptor[] parameters = [
             new MethodParameterDescriptor("exports", typeof(object)),
-            new MethodParameterDescriptor("require", typeof(JavaScriptRuntime.CommonJS.RequireDelegate)),
+            new MethodParameterDescriptor("require", typeof(JavaScriptRuntime.Modules.CommonJS.RequireDelegate)),
             new MethodParameterDescriptor("module", typeof(object)),
             new MethodParameterDescriptor("__filename", typeof(string)),
             new MethodParameterDescriptor("__dirname", typeof(string))
@@ -839,7 +839,7 @@ internal sealed class JsMethodCompiler
         }
 
         lirMethod!.SelfMethodDefinitionHandle = expectedMethodDef;
-        lirMethod.SelfJsParameterCount = JavaScriptRuntime.CommonJS.ModuleParameters.Count;
+        lirMethod.SelfJsParameterCount = JavaScriptRuntime.Modules.CommonJS.ModuleParameters.Count;
 
         // create the tools we need to generate the module type and method
         var programTypeBuilder = new TypeBuilder(_metadataBuilder, "Modules", moduleName);
@@ -849,7 +849,7 @@ internal sealed class JsMethodCompiler
             new("scopes", typeof(object[])),
             new("newTarget", typeof(object))
         };
-        parameters.AddRange(JavaScriptRuntime.CommonJS.ModuleParameters.Parameters
+        parameters.AddRange(JavaScriptRuntime.Modules.CommonJS.ModuleParameters.Parameters
             .Select(p => new MethodParameterDescriptor(p.Name, p.Type)));
 
         var methodDescriptor = new MethodDescriptor(

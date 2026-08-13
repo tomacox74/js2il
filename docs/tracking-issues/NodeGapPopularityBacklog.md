@@ -10,7 +10,7 @@
 - Current support inventory: `docs/nodejs/Index.md`
 - Stated runtime limitations: `docs/nodejs/NodeLimitations.json`
 - Module-level coverage: `docs/nodejs/*.json`
-- Runtime module footprint: `src/JavaScriptRuntime/Node/*` and `src/JavaScriptRuntime/CommonJS/*`
+- Runtime module footprint: `src/JavaScriptRuntime/Node/*` and `src/JavaScriptRuntime/Modules/*`
 - Repo-local demand signals: `tests/Jroc.Tests/Node/**/*`, `tests/Jroc.Tests/CommonJS/**/*`, and `tests/Jroc.Tests/Import/**/*`
 - Current open Node/runtime follow-up issues: [#949](https://github.com/tomacox74/jroc/issues/949), [#956](https://github.com/tomacox74/jroc/issues/956)
 - Recently closed Node/runtime issues that changed the backlog shape: [#946](https://github.com/tomacox74/jroc/issues/946), [#947](https://github.com/tomacox74/jroc/issues/947), [#950](https://github.com/tomacox74/jroc/issues/950)-[#955](https://github.com/tomacox74/jroc/issues/955), and the architecture investigation [#841](https://github.com/tomacox74/jroc/issues/841)

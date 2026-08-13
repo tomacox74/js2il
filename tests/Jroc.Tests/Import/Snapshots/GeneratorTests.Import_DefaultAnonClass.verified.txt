@@ -1,0 +1,477 @@
+﻿// IL code: Import_DefaultAnonClass
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class private auto ansi beforefieldinit Modules.Import_DefaultAnonClass
+	extends [System.Runtime]System.Object
+{
+	// Nested Types
+	.class nested public auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
+		.custom instance void [System.Runtime]System.Diagnostics.DebuggerDisplayAttribute::.ctor(string) = (
+			01 00 05 53 63 6f 70 65 00 00
+		)
+		// Fields
+		.field public object '*esm-src:./Import_DefaultAnonClass_Lib.mjs'
+
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method Scope::.ctor
+
+	} // end of class Scope
+
+
+	// Methods
+	.method public hidebysig static 
+		void __js_module_init__ (
+			object exports,
+			class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireDelegate require,
+			object module,
+			string __filename,
+			string __dirname
+		) cil managed 
+	{
+		// Header size: 12
+		// Code size: 190 (0xbe)
+		.maxstack 8
+		.locals init (
+			[0] class Modules.Import_DefaultAnonClass/Scope,
+			[1] object,
+			[2] object,
+			[3] object,
+			[4] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+			[5] string
+		)
+
+		IL_0000: newobj instance void Modules.Import_DefaultAnonClass/Scope::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldarg.0
+		IL_0007: call void [JavaScriptRuntime]JavaScriptRuntime.Modules.ESM.EsModuleLinker::MarkEsModule(object)
+		IL_000c: ldarg.1
+		IL_000d: castclass [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireDelegate
+		IL_0012: ldstr "./Import_DefaultAnonClass_Lib.mjs"
+		IL_0017: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireDelegate::Invoke(object)
+		IL_001c: stloc.3
+		IL_001d: ldloc.0
+		IL_001e: ldloc.3
+		IL_001f: stfld object Modules.Import_DefaultAnonClass/Scope::'*esm-src:./Import_DefaultAnonClass_Lib.mjs'
+		IL_0024: ldloc.0
+		IL_0025: ldfld object Modules.Import_DefaultAnonClass/Scope::'*esm-src:./Import_DefaultAnonClass_Lib.mjs'
+		IL_002a: stloc.3
+		IL_002b: ldloc.3
+		IL_002c: call object [JavaScriptRuntime]JavaScriptRuntime.Modules.ESM.EsModuleLinker::GetDefault(object)
+		IL_0031: stloc.3
+		IL_0032: ldloc.3
+		IL_0033: stloc.1
+		IL_0034: nop
+		IL_0035: nop
+		IL_0036: ldloc.1
+		IL_0037: dup
+		IL_0038: call object [JavaScriptRuntime]JavaScriptRuntime.CallableOperations::Construct0(object, object)
+		IL_003d: stloc.2
+		IL_003e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0043: stloc.s 4
+		IL_0045: ldloc.2
+		IL_0046: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_004b: stloc.3
+		IL_004c: ldloc.3
+		IL_004d: isinst Modules.Import_DefaultAnonClass_Lib/Class1
+		IL_0052: dup
+		IL_0053: brfalse IL_0063
+
+		IL_0058: callvirt instance object Modules.Import_DefaultAnonClass_Lib/Class1::greet()
+		IL_005d: stloc.3
+		IL_005e: br IL_0070
+
+		IL_0063: pop
+		IL_0064: ldloc.3
+		IL_0065: ldstr "greet"
+		IL_006a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+		IL_006f: stloc.3
+
+		IL_0070: ldloc.s 4
+		IL_0072: ldstr "greet:"
+		IL_0077: ldloc.3
+		IL_0078: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_007d: pop
+		IL_007e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0083: stloc.s 4
+		IL_0085: ldloc.2
+		IL_0086: ldstr "kind"
+		IL_008b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0090: stloc.3
+		IL_0091: ldloc.s 4
+		IL_0093: ldstr "kind:"
+		IL_0098: ldloc.3
+		IL_0099: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_009e: pop
+		IL_009f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00a4: stloc.s 4
+		IL_00a6: ldloc.1
+		IL_00a7: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
+		IL_00ac: stloc.s 5
+		IL_00ae: ldloc.s 4
+		IL_00b0: ldstr "type:"
+		IL_00b5: ldloc.s 5
+		IL_00b7: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_00bc: pop
+		IL_00bd: ret
+	} // end of method Import_DefaultAnonClass::__js_module_init__
+
+} // end of class Modules.Import_DefaultAnonClass
+
+.class private auto ansi beforefieldinit Modules.Import_DefaultAnonClass_Lib
+	extends [System.Runtime]System.Object
+{
+	// Nested Types
+	.class nested public auto ansi beforefieldinit Class1
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested public auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+		.class nested public auto ansi beforefieldinit Scope_ctor
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope_ctor::.ctor
+
+		} // end of class Scope_ctor
+
+		.class nested public auto ansi beforefieldinit Scope_greet
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope_greet::.ctor
+
+		} // end of class Scope_greet
+
+		.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassConstructor_1C37C2FE_Class1
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject
+		{
+			// Fields
+			.field private initonly object[] _transitionalScopes
+
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor (
+					object[] capture0
+				) cil managed 
+			{
+				// Header size: 1
+				// Code size: 14 (0xe)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject::.ctor()
+				IL_0006: ldarg.0
+				IL_0007: ldarg.1
+				IL_0008: stfld object[] Modules.Import_DefaultAnonClass_Lib/Class1/FunctionObject_ClassConstructor_1C37C2FE_Class1::_transitionalScopes
+				IL_000d: ret
+			} // end of method FunctionObject_ClassConstructor_1C37C2FE_Class1::.ctor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_IsConstructor () cil managed 
+			{
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.1
+				IL_0001: ret
+			} // end of method FunctionObject_ClassConstructor_1C37C2FE_Class1::get_IsConstructor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_RequiresInvocationContext () cil managed 
+			{
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.1
+				IL_0001: ret
+			} // end of method FunctionObject_ClassConstructor_1C37C2FE_Class1::get_RequiresInvocationContext
+
+		} // end of class FunctionObject_ClassConstructor_1C37C2FE_Class1
+
+		.class nested public auto ansi sealed beforefieldinit FunctionObject_ClassMethod_BD5B1290_Class1_greet
+			extends [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Header size: 1
+				// Code size: 7 (0x7)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject::.ctor()
+				IL_0006: ret
+			} // end of method FunctionObject_ClassMethod_BD5B1290_Class1_greet::.ctor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_IsConstructor () cil managed 
+			{
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.0
+				IL_0001: ret
+			} // end of method FunctionObject_ClassMethod_BD5B1290_Class1_greet::get_IsConstructor
+
+			.method public hidebysig specialname virtual 
+				instance bool get_RequiresInvocationContext () cil managed 
+			{
+				// Header size: 1
+				// Code size: 2 (0x2)
+				.maxstack 8
+
+				IL_0000: ldc.i4.1
+				IL_0001: ret
+			} // end of method FunctionObject_ClassMethod_BD5B1290_Class1_greet::get_RequiresInvocationContext
+
+			.method family hidebysig virtual 
+				instance object CallCore (
+					object thisArgument,
+					[in] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsCallArguments& modreq([System.Runtime]System.Runtime.InteropServices.InAttribute) arguments
+				) cil managed 
+			{
+				// Header size: 1
+				// Code size: 35 (0x23)
+				.maxstack 8
+
+				IL_0000: ldarg.1
+				IL_0001: ldtoken Modules.Import_DefaultAnonClass_Lib/Class1
+				IL_0006: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+				IL_000b: ldc.i4.1
+				IL_000c: newarr [System.Runtime]System.Object
+				IL_0011: ldnull
+				IL_0012: ldarg.0
+				IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodReceiver(object, class [System.Runtime]System.Type, object[], object, class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
+				IL_0018: castclass Modules.Import_DefaultAnonClass_Lib/Class1
+				IL_001d: call instance object Modules.Import_DefaultAnonClass_Lib/Class1::greet()
+				IL_0022: ret
+			} // end of method FunctionObject_ClassMethod_BD5B1290_Class1_greet::CallCore
+
+		} // end of class FunctionObject_ClassMethod_BD5B1290_Class1_greet
+
+
+		// Fields
+		.field public string kind
+
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
+				01 00 00 00 00 00 00 00
+			)
+			// Header size: 1
+			// Code size: 18 (0x12)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: ldarg.0
+			IL_0007: ldstr "anon-class"
+			IL_000c: stfld string Modules.Import_DefaultAnonClass_Lib/Class1::kind
+			IL_0011: ret
+		} // end of method Class1::.ctor
+
+		.method public hidebysig 
+			instance object greet () cil managed 
+		{
+			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
+				01 00 00 00 00 00 00 00
+			)
+			// Header size: 1
+			// Code size: 17 (0x11)
+			.maxstack 8
+
+			IL_0000: ldstr "hello from "
+			IL_0005: ldarg.0
+			IL_0006: ldfld string Modules.Import_DefaultAnonClass_Lib/Class1::kind
+			IL_000b: call string [System.Runtime]System.String::Concat(string, string)
+			IL_0010: ret
+		} // end of method Class1::greet
+
+	} // end of class Class1
+
+	.class nested public auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method Scope::.ctor
+
+	} // end of class Scope
+
+
+	// Methods
+	.method public hidebysig static 
+		void __js_module_init__ (
+			object exports,
+			class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireDelegate require,
+			object module,
+			string __filename,
+			string __dirname
+		) cil managed 
+	{
+		// Header size: 12
+		// Code size: 163 (0xa3)
+		.maxstack 8
+		.locals init (
+			[0] class Modules.Import_DefaultAnonClass_Lib/Scope,
+			[1] object,
+			[2] class [System.Runtime]System.Type,
+			[3] object,
+			[4] object[],
+			[5] class Modules.Import_DefaultAnonClass_Lib/Class1/FunctionObject_ClassConstructor_1C37C2FE_Class1
+		)
+
+		IL_0000: newobj instance void Modules.Import_DefaultAnonClass_Lib/Scope::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldarg.0
+		IL_0007: ldstr "Import_DefaultAnonClass_Lib"
+		IL_000c: ldstr "default"
+		IL_0011: call void [JavaScriptRuntime]JavaScriptRuntime.Modules.ESM.EsModuleLinker::RegisterLocalExport(object, string, string)
+		IL_0016: ldarg.0
+		IL_0017: call void [JavaScriptRuntime]JavaScriptRuntime.Modules.ESM.EsModuleLinker::MarkEsModule(object)
+		IL_001c: nop
+		IL_001d: ldtoken Modules.Import_DefaultAnonClass_Lib/Class1
+		IL_0022: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_0027: ldtoken Modules.Import_DefaultAnonClass_Lib/Class1
+		IL_002c: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_0031: stloc.2
+		IL_0032: ldloc.2
+		IL_0033: ldstr "prototype"
+		IL_0038: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_003d: stloc.3
+		IL_003e: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0043: stloc.s 4
+		IL_0045: ldloc.3
+		IL_0046: ldstr "greet"
+		IL_004b: newobj instance void Modules.Import_DefaultAnonClass_Lib/Class1/FunctionObject_ClassMethod_BD5B1290_Class1_greet::.ctor()
+		IL_0050: ldc.i4.0
+		IL_0051: conv.r8
+		IL_0052: ldstr "greet"
+		IL_0057: ldc.i4.1
+		IL_0058: ldc.i4.1
+		IL_0059: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Import_DefaultAnonClass_Lib/Class1/FunctionObject_ClassMethod_BD5B1290_Class1_greet>(!!0, float64, string, bool, bool)
+		IL_005e: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Import_DefaultAnonClass_Lib/Class1/FunctionObject_ClassMethod_BD5B1290_Class1_greet>(!!0)
+		IL_0063: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)
+		IL_0068: pop
+		IL_0069: ldc.i4.1
+		IL_006a: newarr [System.Runtime]System.Object
+		IL_006f: dup
+		IL_0070: ldc.i4.0
+		IL_0071: ldloc.0
+		IL_0072: stelem.ref
+		IL_0073: stloc.s 4
+		IL_0075: ldloc.s 4
+		IL_0077: newobj instance void Modules.Import_DefaultAnonClass_Lib/Class1/FunctionObject_ClassConstructor_1C37C2FE_Class1::.ctor(object[])
+		IL_007c: ldloc.2
+		IL_007d: ldloc.s 4
+		IL_007f: ldc.i4.0
+		IL_0080: conv.r8
+		IL_0081: ldc.i4.0
+		IL_0082: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
+		IL_0087: castclass Modules.Import_DefaultAnonClass_Lib/Class1/FunctionObject_ClassConstructor_1C37C2FE_Class1
+		IL_008c: stloc.s 5
+		IL_008e: ldloc.s 5
+		IL_0090: stloc.1
+		IL_0091: ldstr "Import_DefaultAnonClass_Lib"
+		IL_0096: ldstr "default"
+		IL_009b: ldloc.1
+		IL_009c: call object [JavaScriptRuntime]JavaScriptRuntime.Modules.ESM.EsModuleLinker::SetLocalExport(string, string, object)
+		IL_00a1: pop
+		IL_00a2: ret
+	} // end of method Import_DefaultAnonClass_Lib::__js_module_init__
+
+} // end of class Modules.Import_DefaultAnonClass_Lib
+
+.class private auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Header size: 1
+		// Code size: 23 (0x17)
+		.maxstack 8
+		.entrypoint
+
+		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
+		IL_0005: ldnull
+		IL_0006: ldftn void Modules.Import_DefaultAnonClass::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireDelegate, object, string, string)
+		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.ModuleMainDelegate)
+		IL_0016: ret
+	} // end of method Program::Main
+
+} // end of class Program
+

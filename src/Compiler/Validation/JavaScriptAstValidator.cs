@@ -41,6 +41,10 @@ public class JavaScriptAstValidator : IAstValidator
     {
         var result = new ValidationResult { IsValid = true };
 
+        // Top-level import/export declarations are allowed for native static ES modules; the same
+        // declarations remain rejected when nested (not a direct child of Program.Body).
+        var topLevelModuleNodes = new HashSet<Node>(ast.Body, ReferenceEqualityComparer.Instance);
+
         // Validate spec-level early errors that Acornima may parse but considers static errors.
         // In particular, break/continue target rules are specified under iteration statements.
         ValidateIterationStatementEarlyErrors(ast, result);
@@ -200,8 +204,14 @@ public class JavaScriptAstValidator : IAstValidator
                 case NodeType.ImportDeclaration:
                 case NodeType.ExportNamedDeclaration:
                 case NodeType.ExportDefaultDeclaration:
-                    result.Errors.Add($"ES6 modules are not yet supported (line {node.Location.Start.Line})");
-                    result.IsValid = false;
+                case NodeType.ExportAllDeclaration:
+                    // Native static ESM: allow these only at Program top level. Nested occurrences
+                    // (e.g. inside a block or function) remain unsupported.
+                    if (!topLevelModuleNodes.Contains(node))
+                    {
+                        result.Errors.Add($"ES6 modules are not yet supported (line {node.Location.Start.Line})");
+                        result.IsValid = false;
+                    }
                     break;
 
                 case NodeType.YieldExpression:
@@ -425,7 +435,7 @@ public class JavaScriptAstValidator : IAstValidator
     {
         try
         {
-            return JavaScriptRuntime.CommonJS.ModuleParameters.Parameters
+            return JavaScriptRuntime.Modules.CommonJS.ModuleParameters.Parameters
                 .Select(p => p.Name)
                 .Where(n => !string.IsNullOrWhiteSpace(n))
                 .ToHashSet(StringComparer.Ordinal);

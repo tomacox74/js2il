@@ -1,6 +1,6 @@
 namespace JavaScriptRuntime;
 
-using JavaScriptRuntime.CommonJS;
+using JavaScriptRuntime.Modules.CommonJS;
 
 internal sealed class RuntimeExecutionContext
 {
