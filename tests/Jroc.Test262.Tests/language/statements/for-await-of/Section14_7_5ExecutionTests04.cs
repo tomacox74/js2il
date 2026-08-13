@@ -560,7 +560,7 @@ public class Section14_7_5ExecutionTests04 : Jroc.Test262.Tests.language.stateme
     public Task async_gen_dstr_const_obj_ptrn_prop_obj_889()
         => ExecutionTest("async-gen-dstr-const-obj-ptrn-prop-obj");
 
-    [Fact(DisplayName = "async-gen-dstr-const-obj-ptrn-rest-getter.js", Skip = "Pending async object-accessor analysis.")]
+    [Fact(DisplayName = "async-gen-dstr-const-obj-ptrn-rest-getter.js")]
     public Task async_gen_dstr_const_obj_ptrn_rest_getter_890()
         => ExecutionTest("async-gen-dstr-const-obj-ptrn-rest-getter");
 

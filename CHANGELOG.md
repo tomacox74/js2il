@@ -6,7 +6,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-_Nothing yet._
+- compiler/test262: close #1791 by traversing object-literal accessor callables
+  during async/generator analysis and resolving their declaring scope during
+  lowering. Object-rest patterns in `for-of` and `for-await-of` now preserve
+  getter evaluation and own-property copy order for assignment, `var`, `let`,
+  and `const` heads in sync, async, generator, and async-generator functions.
 
 ## v0.12.5 - 2026-08-13
 

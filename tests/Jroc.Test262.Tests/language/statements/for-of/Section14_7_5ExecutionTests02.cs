@@ -88,7 +88,7 @@ public class Section14_7_5ExecutionTests02 : Jroc.Test262.Tests.language.stateme
     public Task dstr_const_obj_ptrn_prop_obj_271()
         => ExecutionTest("dstr/const-obj-ptrn-prop-obj");
 
-    [Fact(DisplayName = "dstr/const-obj-ptrn-rest-getter.js", Skip = "Pending async object-accessor analysis.")]
+    [Fact(DisplayName = "dstr/const-obj-ptrn-rest-getter.js")]
     public Task dstr_const_obj_ptrn_rest_getter_272()
         => ExecutionTest("dstr/const-obj-ptrn-rest-getter");
 
@@ -476,7 +476,7 @@ public class Section14_7_5ExecutionTests02 : Jroc.Test262.Tests.language.stateme
     public Task dstr_let_obj_ptrn_prop_obj_368()
         => ExecutionTest("dstr/let-obj-ptrn-prop-obj");
 
-    [Fact(DisplayName = "dstr/let-obj-ptrn-rest-getter.js", Skip = "Pending async object-accessor analysis.")]
+    [Fact(DisplayName = "dstr/let-obj-ptrn-rest-getter.js")]
     public Task dstr_let_obj_ptrn_rest_getter_369()
         => ExecutionTest("dstr/let-obj-ptrn-rest-getter");
 

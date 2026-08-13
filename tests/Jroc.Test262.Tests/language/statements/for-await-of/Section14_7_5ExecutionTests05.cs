@@ -196,7 +196,7 @@ public class Section14_7_5ExecutionTests05 : Jroc.Test262.Tests.language.stateme
     public Task async_gen_dstr_let_obj_ptrn_prop_obj_1048()
         => ExecutionTest("async-gen-dstr-let-obj-ptrn-prop-obj");
 
-    [Fact(DisplayName = "async-gen-dstr-let-obj-ptrn-rest-getter.js", Skip = "Pending async object-accessor analysis.")]
+    [Fact(DisplayName = "async-gen-dstr-let-obj-ptrn-rest-getter.js")]
     public Task async_gen_dstr_let_obj_ptrn_rest_getter_1049()
         => ExecutionTest("async-gen-dstr-let-obj-ptrn-rest-getter");
 
@@ -832,7 +832,7 @@ public class Section14_7_5ExecutionTests05 : Jroc.Test262.Tests.language.stateme
     public Task async_gen_dstr_var_obj_ptrn_prop_obj_1207()
         => ExecutionTest("async-gen-dstr-var-obj-ptrn-prop-obj");
 
-    [Fact(DisplayName = "async-gen-dstr-var-obj-ptrn-rest-getter.js", Skip = "Pending async object-accessor analysis.")]
+    [Fact(DisplayName = "async-gen-dstr-var-obj-ptrn-rest-getter.js")]
     public Task async_gen_dstr_var_obj_ptrn_rest_getter_1208()
         => ExecutionTest("async-gen-dstr-var-obj-ptrn-rest-getter");
 

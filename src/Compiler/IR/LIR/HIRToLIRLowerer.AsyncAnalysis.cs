@@ -154,6 +154,27 @@ public sealed partial class HIRToLIRLowerer
                             count += CountAwaitExpressionsInExpression(computed.KeyExpression);
                             count += CountAwaitExpressionsInExpression(computed.Value);
                             break;
+                        case HIRObjectAccessorProperty accessor:
+                            if (accessor.Getter != null)
+                            {
+                                count += CountAwaitExpressionsInExpression(accessor.Getter);
+                            }
+                            if (accessor.Setter != null)
+                            {
+                                count += CountAwaitExpressionsInExpression(accessor.Setter);
+                            }
+                            break;
+                        case HIRObjectComputedAccessorProperty computedAccessor:
+                            count += CountAwaitExpressionsInExpression(computedAccessor.KeyExpression);
+                            if (computedAccessor.Getter != null)
+                            {
+                                count += CountAwaitExpressionsInExpression(computedAccessor.Getter);
+                            }
+                            if (computedAccessor.Setter != null)
+                            {
+                                count += CountAwaitExpressionsInExpression(computedAccessor.Setter);
+                            }
+                            break;
                         case HIRObjectSpreadProperty spread:
                             count += CountAwaitExpressionsInExpression(spread.Argument);
                             break;
