@@ -39,6 +39,7 @@ public static class Test262HostRuntimeIntrinsics
                 "asyncTest",
                 1));
 
+        // Older hand-ported fixtures call these helpers without preserved includes metadata.
         Test262PropertyHelpers.Register(builder);
 
         if (included.Contains("testTypedArray.js"))
