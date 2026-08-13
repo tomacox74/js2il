@@ -694,7 +694,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 1826 (0x722)
+		// Code size: 1832 (0x728)
 		.maxstack 12
 		.locals init (
 			[0] class Modules.ObjectLiteral_EarlyBoundAccess_Parity/Scope,
@@ -1223,114 +1223,118 @@
 		.try
 		{
 			IL_05fd: ldloc.s 12
-			IL_05ff: brtrue IL_0629
+			IL_05ff: brtrue IL_062f
 
-			IL_0604: ldloc.s 10
-			IL_0606: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorDestructuringStep(object)
-			IL_060b: stloc.s 20
-			IL_060d: ldloc.s 20
-			IL_060f: brfalse IL_0626
+			IL_0604: ldc.i4.1
+			IL_0605: stloc.s 12
+			IL_0607: ldloc.s 10
+			IL_0609: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorDestructuringStep(object)
+			IL_060e: stloc.s 20
+			IL_0610: ldloc.s 20
+			IL_0612: brfalse IL_062c
 
-			IL_0614: ldloc.s 20
-			IL_0616: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorDestructuringStepValue(object)
-			IL_061b: stloc.s 20
-			IL_061d: ldloc.s 20
-			IL_061f: stloc.s 21
-			IL_0621: br IL_062c
+			IL_0617: ldc.i4.0
+			IL_0618: stloc.s 12
+			IL_061a: ldloc.s 20
+			IL_061c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorDestructuringStepValue(object)
+			IL_0621: stloc.s 20
+			IL_0623: ldloc.s 20
+			IL_0625: stloc.s 21
+			IL_0627: br IL_0632
 
-			IL_0626: ldc.i4.1
-			IL_0627: stloc.s 12
+			IL_062c: ldc.i4.1
+			IL_062d: stloc.s 12
 
-			IL_0629: ldnull
-			IL_062a: stloc.s 21
+			IL_062f: ldnull
+			IL_0630: stloc.s 21
 
-			IL_062c: ldloc.s 9
-			IL_062e: ldstr "val"
-			IL_0633: ldloc.s 21
-			IL_0635: ldc.i4.0
-			IL_0636: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
-			IL_063b: pop
-			IL_063c: ldloc.s 12
-			IL_063e: brtrue IL_064d
+			IL_0632: ldloc.s 9
+			IL_0634: ldstr "val"
+			IL_0639: ldloc.s 21
+			IL_063b: ldc.i4.0
+			IL_063c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
+			IL_0641: pop
+			IL_0642: ldloc.s 12
+			IL_0644: brtrue IL_0653
 
-			IL_0643: ldc.i4.1
-			IL_0644: stloc.s 11
-			IL_0646: ldloc.s 10
-			IL_0648: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorClose(object)
+			IL_0649: ldc.i4.1
+			IL_064a: stloc.s 11
+			IL_064c: ldloc.s 10
+			IL_064e: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorClose(object)
 
-			IL_064d: ldc.i4.1
-			IL_064e: stloc.s 11
-			IL_0650: leave IL_066b
+			IL_0653: ldc.i4.1
+			IL_0654: stloc.s 11
+			IL_0656: leave IL_0671
 		} // end .try
 		finally
 		{
-			IL_0655: ldloc.s 11
-			IL_0657: brtrue IL_066a
+			IL_065b: ldloc.s 11
+			IL_065d: brtrue IL_0670
 
-			IL_065c: ldloc.s 12
-			IL_065e: brtrue IL_066a
+			IL_0662: ldloc.s 12
+			IL_0664: brtrue IL_0670
 
-			IL_0663: ldloc.s 10
-			IL_0665: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorCloseForThrowCompletion(object)
+			IL_0669: ldloc.s 10
+			IL_066b: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorCloseForThrowCompletion(object)
 
-			IL_066a: endfinally
+			IL_0670: endfinally
 		} // end handler
 
-		IL_066b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0670: stloc.s 16
-		IL_0672: ldloc.s 9
-		IL_0674: ldstr "val"
-		IL_0679: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_067e: stloc.s 21
-		IL_0680: ldloc.s 16
-		IL_0682: ldloc.s 21
-		IL_0684: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0689: pop
-		IL_068a: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_068f: dup
-		IL_0690: ldstr "val"
-		IL_0695: ldc.r8 1
-		IL_069e: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
-		IL_06a3: stloc.s 13
-		IL_06a5: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_06aa: dup
-		IL_06ab: ldstr "v"
-		IL_06b0: ldc.r8 43
-		IL_06b9: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
-		IL_06be: stloc.s 26
-		IL_06c0: ldloc.s 26
-		IL_06c2: brfalse IL_06d3
+		IL_0671: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0676: stloc.s 16
+		IL_0678: ldloc.s 9
+		IL_067a: ldstr "val"
+		IL_067f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0684: stloc.s 21
+		IL_0686: ldloc.s 16
+		IL_0688: ldloc.s 21
+		IL_068a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_068f: pop
+		IL_0690: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0695: dup
+		IL_0696: ldstr "val"
+		IL_069b: ldc.r8 1
+		IL_06a4: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
+		IL_06a9: stloc.s 13
+		IL_06ab: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_06b0: dup
+		IL_06b1: ldstr "v"
+		IL_06b6: ldc.r8 43
+		IL_06bf: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
+		IL_06c4: stloc.s 26
+		IL_06c6: ldloc.s 26
+		IL_06c8: brfalse IL_06d9
 
-		IL_06c7: ldloc.s 26
-		IL_06c9: isinst [JavaScriptRuntime]JavaScriptRuntime.JsNull
-		IL_06ce: brfalse IL_06e4
+		IL_06cd: ldloc.s 26
+		IL_06cf: isinst [JavaScriptRuntime]JavaScriptRuntime.JsNull
+		IL_06d4: brfalse IL_06ea
 
-		IL_06d3: ldloc.s 26
-		IL_06d5: ldstr ""
-		IL_06da: ldstr "v"
-		IL_06df: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::ThrowDestructuringNullOrUndefined(object, string, string)
+		IL_06d9: ldloc.s 26
+		IL_06db: ldstr ""
+		IL_06e0: ldstr "v"
+		IL_06e5: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::ThrowDestructuringNullOrUndefined(object, string, string)
 
-		IL_06e4: ldloc.s 26
-		IL_06e6: ldstr "v"
-		IL_06eb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_06f0: stloc.s 21
-		IL_06f2: ldloc.s 13
-		IL_06f4: ldstr "val"
-		IL_06f9: ldloc.s 21
-		IL_06fb: ldc.i4.0
-		IL_06fc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
-		IL_0701: pop
-		IL_0702: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0707: stloc.s 16
-		IL_0709: ldloc.s 13
-		IL_070b: ldstr "val"
-		IL_0710: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0715: stloc.s 21
-		IL_0717: ldloc.s 16
-		IL_0719: ldloc.s 21
-		IL_071b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0720: pop
-		IL_0721: ret
+		IL_06ea: ldloc.s 26
+		IL_06ec: ldstr "v"
+		IL_06f1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_06f6: stloc.s 21
+		IL_06f8: ldloc.s 13
+		IL_06fa: ldstr "val"
+		IL_06ff: ldloc.s 21
+		IL_0701: ldc.i4.0
+		IL_0702: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
+		IL_0707: pop
+		IL_0708: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_070d: stloc.s 16
+		IL_070f: ldloc.s 13
+		IL_0711: ldstr "val"
+		IL_0716: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_071b: stloc.s 21
+		IL_071d: ldloc.s 16
+		IL_071f: ldloc.s 21
+		IL_0721: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0726: pop
+		IL_0727: ret
 	} // end of method ObjectLiteral_EarlyBoundAccess_Parity::__js_module_init__
 
 } // end of class Modules.ObjectLiteral_EarlyBoundAccess_Parity

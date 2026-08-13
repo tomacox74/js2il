@@ -1682,7 +1682,7 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 195 (0xc3)
+			// Code size: 199 (0xc7)
 			.maxstack 12
 			.locals init (
 				[0] class [JavaScriptRuntime]JavaScriptRuntime.IJavaScriptIterator,
@@ -1734,60 +1734,64 @@
 			.try
 			{
 				IL_0060: ldloc.2
-				IL_0061: brtrue IL_0089
+				IL_0061: brtrue IL_008d
 
-				IL_0066: ldloc.0
-				IL_0067: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorDestructuringStep(object)
-				IL_006c: stloc.s 6
-				IL_006e: ldloc.s 6
-				IL_0070: brfalse IL_0087
+				IL_0066: ldc.i4.1
+				IL_0067: stloc.2
+				IL_0068: ldloc.0
+				IL_0069: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorDestructuringStep(object)
+				IL_006e: stloc.s 6
+				IL_0070: ldloc.s 6
+				IL_0072: brfalse IL_008b
 
-				IL_0075: ldloc.s 6
-				IL_0077: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorDestructuringStepValue(object)
-				IL_007c: stloc.s 6
-				IL_007e: ldloc.s 6
-				IL_0080: stloc.s 7
-				IL_0082: br IL_008c
+				IL_0077: ldc.i4.0
+				IL_0078: stloc.2
+				IL_0079: ldloc.s 6
+				IL_007b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorDestructuringStepValue(object)
+				IL_0080: stloc.s 6
+				IL_0082: ldloc.s 6
+				IL_0084: stloc.s 7
+				IL_0086: br IL_0090
 
-				IL_0087: ldc.i4.1
-				IL_0088: stloc.2
+				IL_008b: ldc.i4.1
+				IL_008c: stloc.2
 
-				IL_0089: ldnull
-				IL_008a: stloc.s 7
+				IL_008d: ldnull
+				IL_008e: stloc.s 7
 
-				IL_008c: ldloc.s 7
-				IL_008e: starg.s 'value'
-				IL_0090: ldloc.2
-				IL_0091: brtrue IL_009e
+				IL_0090: ldloc.s 7
+				IL_0092: starg.s 'value'
+				IL_0094: ldloc.2
+				IL_0095: brtrue IL_00a2
 
-				IL_0096: ldc.i4.1
-				IL_0097: stloc.1
-				IL_0098: ldloc.0
-				IL_0099: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorClose(object)
+				IL_009a: ldc.i4.1
+				IL_009b: stloc.1
+				IL_009c: ldloc.0
+				IL_009d: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorClose(object)
 
-				IL_009e: ldc.i4.1
-				IL_009f: stloc.1
-				IL_00a0: leave IL_00b8
+				IL_00a2: ldc.i4.1
+				IL_00a3: stloc.1
+				IL_00a4: leave IL_00bc
 			} // end .try
 			finally
 			{
-				IL_00a5: ldloc.1
-				IL_00a6: brtrue IL_00b7
+				IL_00a9: ldloc.1
+				IL_00aa: brtrue IL_00bb
 
-				IL_00ab: ldloc.2
-				IL_00ac: brtrue IL_00b7
+				IL_00af: ldloc.2
+				IL_00b0: brtrue IL_00bb
 
-				IL_00b1: ldloc.0
-				IL_00b2: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorCloseForThrowCompletion(object)
+				IL_00b5: ldloc.0
+				IL_00b6: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorCloseForThrowCompletion(object)
 
-				IL_00b7: endfinally
+				IL_00bb: endfinally
 			} // end handler
 
-			IL_00b8: ldarg.1
-			IL_00b9: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
-			IL_00be: stloc.s 8
-			IL_00c0: ldloc.s 8
-			IL_00c2: ret
+			IL_00bc: ldarg.1
+			IL_00bd: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
+			IL_00c2: stloc.s 8
+			IL_00c4: ldloc.s 8
+			IL_00c6: ret
 		} // end of method BinaryReceiver::destructure
 
 		.method public hidebysig 
@@ -1799,7 +1803,7 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 148 (0x94)
+			// Code size: 152 (0x98)
 			.maxstack 12
 			.locals init (
 				[0] class [JavaScriptRuntime]JavaScriptRuntime.IJavaScriptIterator,
@@ -1836,51 +1840,55 @@
 			.try
 			{
 				// loop start (head: IL_0038)
-					IL_0038: ldloc.0
-					IL_0039: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorNext(object)
-					IL_003e: stloc.s 5
-					IL_0040: ldloc.s 5
-					IL_0042: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorResultDone(object)
-					IL_0047: stloc.s 6
-					IL_0049: ldloc.s 6
-					IL_004b: brtrue IL_006f
+					IL_0038: ldc.i4.1
+					IL_0039: stloc.1
+					IL_003a: ldloc.0
+					IL_003b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorNext(object)
+					IL_0040: stloc.s 5
+					IL_0042: ldloc.s 5
+					IL_0044: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorResultDone(object)
+					IL_0049: stloc.s 6
+					IL_004b: ldloc.s 6
+					IL_004d: brtrue IL_0073
 
-					IL_0050: ldloc.s 5
-					IL_0052: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorResultValue(object)
-					IL_0057: stloc.s 5
-					IL_0059: ldloc.s 5
-					IL_005b: starg.s 'value'
-					IL_005d: br IL_0038
+					IL_0052: ldloc.s 5
+					IL_0054: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorResultValue(object)
+					IL_0059: stloc.s 5
+					IL_005b: ldc.i4.0
+					IL_005c: stloc.1
+					IL_005d: ldloc.s 5
+					IL_005f: starg.s 'value'
+					IL_0061: br IL_0038
 				// end loop
-				IL_0062: ldloc.0
-				IL_0063: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorClose(object)
-				IL_0068: ldc.i4.1
-				IL_0069: stloc.2
-				IL_006a: leave IL_0089
+				IL_0066: ldloc.0
+				IL_0067: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorClose(object)
+				IL_006c: ldc.i4.1
+				IL_006d: stloc.2
+				IL_006e: leave IL_008d
 
-				IL_006f: ldc.i4.1
-				IL_0070: stloc.1
-				IL_0071: leave IL_0089
+				IL_0073: ldc.i4.1
+				IL_0074: stloc.1
+				IL_0075: leave IL_008d
 			} // end .try
 			finally
 			{
-				IL_0076: ldloc.1
-				IL_0077: brtrue IL_0088
+				IL_007a: ldloc.1
+				IL_007b: brtrue IL_008c
 
-				IL_007c: ldloc.2
-				IL_007d: brtrue IL_0088
+				IL_0080: ldloc.2
+				IL_0081: brtrue IL_008c
 
-				IL_0082: ldloc.0
-				IL_0083: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorCloseForThrowCompletion(object)
+				IL_0086: ldloc.0
+				IL_0087: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorCloseForThrowCompletion(object)
 
-				IL_0088: endfinally
+				IL_008c: endfinally
 			} // end handler
 
-			IL_0089: ldarg.1
-			IL_008a: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
-			IL_008f: stloc.s 7
-			IL_0091: ldloc.s 7
-			IL_0093: ret
+			IL_008d: ldarg.1
+			IL_008e: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
+			IL_0093: stloc.s 7
+			IL_0095: ldloc.s 7
+			IL_0097: ret
 		} // end of method BinaryReceiver::iterate
 
 		.method public hidebysig 
@@ -1892,7 +1900,7 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 148 (0x94)
+			// Code size: 152 (0x98)
 			.maxstack 12
 			.locals init (
 				[0] class [JavaScriptRuntime]JavaScriptRuntime.IJavaScriptIterator,
@@ -1929,51 +1937,55 @@
 			.try
 			{
 				// loop start (head: IL_0038)
-					IL_0038: ldloc.0
-					IL_0039: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorNext(object)
-					IL_003e: stloc.s 5
-					IL_0040: ldloc.s 5
-					IL_0042: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorResultDone(object)
-					IL_0047: stloc.s 6
-					IL_0049: ldloc.s 6
-					IL_004b: brtrue IL_006f
+					IL_0038: ldc.i4.1
+					IL_0039: stloc.1
+					IL_003a: ldloc.0
+					IL_003b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorNext(object)
+					IL_0040: stloc.s 5
+					IL_0042: ldloc.s 5
+					IL_0044: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorResultDone(object)
+					IL_0049: stloc.s 6
+					IL_004b: ldloc.s 6
+					IL_004d: brtrue IL_0073
 
-					IL_0050: ldloc.s 5
-					IL_0052: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorResultValue(object)
-					IL_0057: stloc.s 5
-					IL_0059: ldloc.s 5
-					IL_005b: starg.s 'value'
-					IL_005d: br IL_0038
+					IL_0052: ldloc.s 5
+					IL_0054: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorResultValue(object)
+					IL_0059: stloc.s 5
+					IL_005b: ldc.i4.0
+					IL_005c: stloc.1
+					IL_005d: ldloc.s 5
+					IL_005f: starg.s 'value'
+					IL_0061: br IL_0038
 				// end loop
-				IL_0062: ldloc.0
-				IL_0063: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorClose(object)
-				IL_0068: ldc.i4.1
-				IL_0069: stloc.2
-				IL_006a: leave IL_0089
+				IL_0066: ldloc.0
+				IL_0067: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorClose(object)
+				IL_006c: ldc.i4.1
+				IL_006d: stloc.2
+				IL_006e: leave IL_008d
 
-				IL_006f: ldc.i4.1
-				IL_0070: stloc.1
-				IL_0071: leave IL_0089
+				IL_0073: ldc.i4.1
+				IL_0074: stloc.1
+				IL_0075: leave IL_008d
 			} // end .try
 			finally
 			{
-				IL_0076: ldloc.1
-				IL_0077: brtrue IL_0088
+				IL_007a: ldloc.1
+				IL_007b: brtrue IL_008c
 
-				IL_007c: ldloc.2
-				IL_007d: brtrue IL_0088
+				IL_0080: ldloc.2
+				IL_0081: brtrue IL_008c
 
-				IL_0082: ldloc.0
-				IL_0083: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorCloseForThrowCompletion(object)
+				IL_0086: ldloc.0
+				IL_0087: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorCloseForThrowCompletion(object)
 
-				IL_0088: endfinally
+				IL_008c: endfinally
 			} // end handler
 
-			IL_0089: ldarg.1
-			IL_008a: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
-			IL_008f: stloc.s 7
-			IL_0091: ldloc.s 7
-			IL_0093: ret
+			IL_008d: ldarg.1
+			IL_008e: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
+			IL_0093: stloc.s 7
+			IL_0095: ldloc.s 7
+			IL_0097: ret
 		} // end of method BinaryReceiver::iterateVar
 
 		.method public hidebysig 

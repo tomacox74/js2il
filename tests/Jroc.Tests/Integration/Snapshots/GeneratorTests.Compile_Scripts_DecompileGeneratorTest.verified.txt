@@ -1475,7 +1475,7 @@
 				74 61 54 6f 6b 65 6e 0f 00 00 02
 			)
 			// Header size: 12
-			// Code size: 555 (0x22b)
+			// Code size: 561 (0x231)
 			.maxstack 10
 			.locals init (
 				[0] class Modules.Compile_Scripts_DecompileGeneratorTest/tryFindLatestGeneratedAssemblyInRoot/Scope,
@@ -1625,112 +1625,116 @@
 			.try
 			{
 				// loop start (head: IL_0135)
-					IL_0135: ldloc.s 4
-					IL_0137: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorNext(object)
-					IL_013c: stloc.s 11
-					IL_013e: ldloc.s 11
-					IL_0140: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorResultDone(object)
-					IL_0145: stloc.s 12
-					IL_0147: ldloc.s 12
-					IL_0149: brtrue IL_020b
+					IL_0135: ldc.i4.1
+					IL_0136: stloc.s 5
+					IL_0138: ldloc.s 4
+					IL_013a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorNext(object)
+					IL_013f: stloc.s 11
+					IL_0141: ldloc.s 11
+					IL_0143: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorResultDone(object)
+					IL_0148: stloc.s 12
+					IL_014a: ldloc.s 12
+					IL_014c: brtrue IL_0211
 
-					IL_014e: ldloc.s 11
-					IL_0150: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorResultValue(object)
-					IL_0155: stloc.s 11
-					IL_0157: ldloc.s 11
-					IL_0159: stloc.s 7
-					IL_015b: ldarg.0
-					IL_015c: ldfld class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IPathModule Modules.Compile_Scripts_DecompileGeneratorTest/Scope::path
-					IL_0161: stloc.s 18
-					IL_0163: ldloc.s 18
-					IL_0165: ldc.i4.2
-					IL_0166: newarr [System.Runtime]System.Object
-					IL_016b: dup
-					IL_016c: ldc.i4.0
-					IL_016d: ldloc.s 7
-					IL_016f: stelem.ref
-					IL_0170: dup
-					IL_0171: ldc.i4.1
-					IL_0172: ldarg.3
-					IL_0173: stelem.ref
-					IL_0174: callvirt instance string [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IPathModule::join(object[])
-					IL_0179: stloc.s 8
-					IL_017b: ldarg.0
-					IL_017c: ldfld class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule Modules.Compile_Scripts_DecompileGeneratorTest/Scope::fs
-					IL_0181: stloc.s 10
-					IL_0183: ldloc.s 10
-					IL_0185: ldloc.s 8
-					IL_0187: callvirt instance bool [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule::existsSync(object)
-					IL_018c: box [System.Runtime]System.Boolean
-					IL_0191: stloc.s 11
-					IL_0193: ldloc.s 11
-					IL_0195: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
-					IL_019a: ldc.i4.0
-					IL_019b: ceq
-					IL_019d: stloc.s 12
-					IL_019f: ldloc.s 12
-					IL_01a1: brfalse IL_01ab
+					IL_0151: ldloc.s 11
+					IL_0153: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorResultValue(object)
+					IL_0158: stloc.s 11
+					IL_015a: ldc.i4.0
+					IL_015b: stloc.s 5
+					IL_015d: ldloc.s 11
+					IL_015f: stloc.s 7
+					IL_0161: ldarg.0
+					IL_0162: ldfld class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IPathModule Modules.Compile_Scripts_DecompileGeneratorTest/Scope::path
+					IL_0167: stloc.s 18
+					IL_0169: ldloc.s 18
+					IL_016b: ldc.i4.2
+					IL_016c: newarr [System.Runtime]System.Object
+					IL_0171: dup
+					IL_0172: ldc.i4.0
+					IL_0173: ldloc.s 7
+					IL_0175: stelem.ref
+					IL_0176: dup
+					IL_0177: ldc.i4.1
+					IL_0178: ldarg.3
+					IL_0179: stelem.ref
+					IL_017a: callvirt instance string [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IPathModule::join(object[])
+					IL_017f: stloc.s 8
+					IL_0181: ldarg.0
+					IL_0182: ldfld class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule Modules.Compile_Scripts_DecompileGeneratorTest/Scope::fs
+					IL_0187: stloc.s 10
+					IL_0189: ldloc.s 10
+					IL_018b: ldloc.s 8
+					IL_018d: callvirt instance bool [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule::existsSync(object)
+					IL_0192: box [System.Runtime]System.Boolean
+					IL_0197: stloc.s 11
+					IL_0199: ldloc.s 11
+					IL_019b: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
+					IL_01a0: ldc.i4.0
+					IL_01a1: ceq
+					IL_01a3: stloc.s 12
+					IL_01a5: ldloc.s 12
+					IL_01a7: brfalse IL_01b1
 
-					IL_01a6: br IL_01f7
+					IL_01ac: br IL_01fd
 
-					IL_01ab: ldarg.0
-					IL_01ac: ldfld class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule Modules.Compile_Scripts_DecompileGeneratorTest/Scope::fs
-					IL_01b1: stloc.s 10
-					IL_01b3: ldloc.s 10
-					IL_01b5: ldloc.s 8
-					IL_01b7: callvirt instance object [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule::statSync(object)
-					IL_01bc: stloc.s 9
-					IL_01be: ldloc.s 9
-					IL_01c0: ldstr "mtimeMs"
-					IL_01c5: call float64 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItemAsNumber(object, object)
-					IL_01ca: stloc.s 17
-					IL_01cc: ldloc.3
-					IL_01cd: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-					IL_01d2: stloc.s 19
-					IL_01d4: ldloc.s 17
-					IL_01d6: ldloc.s 19
-					IL_01d8: cgt
-					IL_01da: brfalse IL_01f7
+					IL_01b1: ldarg.0
+					IL_01b2: ldfld class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule Modules.Compile_Scripts_DecompileGeneratorTest/Scope::fs
+					IL_01b7: stloc.s 10
+					IL_01b9: ldloc.s 10
+					IL_01bb: ldloc.s 8
+					IL_01bd: callvirt instance object [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule::statSync(object)
+					IL_01c2: stloc.s 9
+					IL_01c4: ldloc.s 9
+					IL_01c6: ldstr "mtimeMs"
+					IL_01cb: call float64 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItemAsNumber(object, object)
+					IL_01d0: stloc.s 17
+					IL_01d2: ldloc.3
+					IL_01d3: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+					IL_01d8: stloc.s 19
+					IL_01da: ldloc.s 17
+					IL_01dc: ldloc.s 19
+					IL_01de: cgt
+					IL_01e0: brfalse IL_01fd
 
-					IL_01df: ldloc.s 9
-					IL_01e1: ldstr "mtimeMs"
-					IL_01e6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-					IL_01eb: stloc.s 11
-					IL_01ed: ldloc.s 11
-					IL_01ef: stloc.3
-					IL_01f0: ldloc.s 8
-					IL_01f2: stloc.s 11
-					IL_01f4: ldloc.s 11
-					IL_01f6: stloc.2
+					IL_01e5: ldloc.s 9
+					IL_01e7: ldstr "mtimeMs"
+					IL_01ec: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+					IL_01f1: stloc.s 11
+					IL_01f3: ldloc.s 11
+					IL_01f5: stloc.3
+					IL_01f6: ldloc.s 8
+					IL_01f8: stloc.s 11
+					IL_01fa: ldloc.s 11
+					IL_01fc: stloc.2
 
-					IL_01f7: br IL_0135
+					IL_01fd: br IL_0135
 				// end loop
-				IL_01fc: ldloc.s 4
-				IL_01fe: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorClose(object)
-				IL_0203: ldc.i4.1
-				IL_0204: stloc.s 6
-				IL_0206: leave IL_0229
+				IL_0202: ldloc.s 4
+				IL_0204: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorClose(object)
+				IL_0209: ldc.i4.1
+				IL_020a: stloc.s 6
+				IL_020c: leave IL_022f
 
-				IL_020b: ldc.i4.1
-				IL_020c: stloc.s 5
-				IL_020e: leave IL_0229
+				IL_0211: ldc.i4.1
+				IL_0212: stloc.s 5
+				IL_0214: leave IL_022f
 			} // end .try
 			finally
 			{
-				IL_0213: ldloc.s 5
-				IL_0215: brtrue IL_0228
+				IL_0219: ldloc.s 5
+				IL_021b: brtrue IL_022e
 
-				IL_021a: ldloc.s 6
-				IL_021c: brtrue IL_0228
+				IL_0220: ldloc.s 6
+				IL_0222: brtrue IL_022e
 
-				IL_0221: ldloc.s 4
-				IL_0223: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorCloseForThrowCompletion(object)
+				IL_0227: ldloc.s 4
+				IL_0229: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorCloseForThrowCompletion(object)
 
-				IL_0228: endfinally
+				IL_022e: endfinally
 			} // end handler
 
-			IL_0229: ldloc.2
-			IL_022a: ret
+			IL_022f: ldloc.2
+			IL_0230: ret
 		} // end of method tryFindLatestGeneratedAssemblyInRoot::__js_call__
 
 	} // end of class tryFindLatestGeneratedAssemblyInRoot
@@ -1948,7 +1952,7 @@
 				74 61 54 6f 6b 65 6e 0f 00 00 02
 			)
 			// Header size: 12
-			// Code size: 216 (0xd8)
+			// Code size: 220 (0xdc)
 			.maxstack 10
 			.locals init (
 				[0] string,
@@ -1996,76 +2000,80 @@
 			.try
 			{
 				// loop start (head: IL_0047)
-					IL_0047: ldloc.1
-					IL_0048: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorNext(object)
-					IL_004d: stloc.s 9
-					IL_004f: ldloc.s 9
-					IL_0051: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorResultDone(object)
-					IL_0056: stloc.s 10
-					IL_0058: ldloc.s 10
-					IL_005a: brtrue IL_00b4
+					IL_0047: ldc.i4.1
+					IL_0048: stloc.2
+					IL_0049: ldloc.1
+					IL_004a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorNext(object)
+					IL_004f: stloc.s 9
+					IL_0051: ldloc.s 9
+					IL_0053: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorResultDone(object)
+					IL_0058: stloc.s 10
+					IL_005a: ldloc.s 10
+					IL_005c: brtrue IL_00b8
 
-					IL_005f: ldloc.s 9
-					IL_0061: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorResultValue(object)
-					IL_0066: stloc.s 9
-					IL_0068: ldloc.s 9
-					IL_006a: stloc.s 4
-					IL_006c: ldarg.0
-					IL_006d: ldfld object Modules.Compile_Scripts_DecompileGeneratorTest/Scope::tryFindLatestGeneratedAssemblyInRoot
-					IL_0072: ldc.i4.1
-					IL_0073: newarr [System.Runtime]System.Object
-					IL_0078: dup
-					IL_0079: ldc.i4.0
-					IL_007a: ldarg.0
-					IL_007b: stelem.ref
-					IL_007c: ldloc.s 4
-					IL_007e: ldloc.0
-					IL_007f: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
-					IL_0084: stloc.s 5
-					IL_0086: ldloc.s 5
-					IL_0088: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-					IL_008d: stloc.s 10
-					IL_008f: ldloc.s 10
-					IL_0091: brfalse IL_00a2
+					IL_0061: ldloc.s 9
+					IL_0063: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorResultValue(object)
+					IL_0068: stloc.s 9
+					IL_006a: ldc.i4.0
+					IL_006b: stloc.2
+					IL_006c: ldloc.s 9
+					IL_006e: stloc.s 4
+					IL_0070: ldarg.0
+					IL_0071: ldfld object Modules.Compile_Scripts_DecompileGeneratorTest/Scope::tryFindLatestGeneratedAssemblyInRoot
+					IL_0076: ldc.i4.1
+					IL_0077: newarr [System.Runtime]System.Object
+					IL_007c: dup
+					IL_007d: ldc.i4.0
+					IL_007e: ldarg.0
+					IL_007f: stelem.ref
+					IL_0080: ldloc.s 4
+					IL_0082: ldloc.0
+					IL_0083: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
+					IL_0088: stloc.s 5
+					IL_008a: ldloc.s 5
+					IL_008c: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+					IL_0091: stloc.s 10
+					IL_0093: ldloc.s 10
+					IL_0095: brfalse IL_00a6
 
-					IL_0096: ldnull
-					IL_0097: stloc.s 6
-					IL_0099: ldloc.s 5
+					IL_009a: ldnull
 					IL_009b: stloc.s 6
-					IL_009d: leave IL_00d5
+					IL_009d: ldloc.s 5
+					IL_009f: stloc.s 6
+					IL_00a1: leave IL_00d9
 
-					IL_00a2: br IL_0047
+					IL_00a6: br IL_0047
 				// end loop
-				IL_00a7: ldloc.1
-				IL_00a8: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorClose(object)
-				IL_00ad: ldc.i4.1
-				IL_00ae: stloc.3
-				IL_00af: leave IL_00ce
+				IL_00ab: ldloc.1
+				IL_00ac: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorClose(object)
+				IL_00b1: ldc.i4.1
+				IL_00b2: stloc.3
+				IL_00b3: leave IL_00d2
 
-				IL_00b4: ldc.i4.1
-				IL_00b5: stloc.2
-				IL_00b6: leave IL_00ce
+				IL_00b8: ldc.i4.1
+				IL_00b9: stloc.2
+				IL_00ba: leave IL_00d2
 			} // end .try
 			finally
 			{
-				IL_00bb: ldloc.2
-				IL_00bc: brtrue IL_00cd
+				IL_00bf: ldloc.2
+				IL_00c0: brtrue IL_00d1
 
-				IL_00c1: ldloc.3
-				IL_00c2: brtrue IL_00cd
+				IL_00c5: ldloc.3
+				IL_00c6: brtrue IL_00d1
 
-				IL_00c7: ldloc.1
-				IL_00c8: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorCloseForThrowCompletion(object)
+				IL_00cb: ldloc.1
+				IL_00cc: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorCloseForThrowCompletion(object)
 
-				IL_00cd: endfinally
+				IL_00d1: endfinally
 			} // end handler
 
-			IL_00ce: ldc.i4.0
-			IL_00cf: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
-			IL_00d4: ret
+			IL_00d2: ldc.i4.0
+			IL_00d3: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
+			IL_00d8: ret
 
-			IL_00d5: ldloc.s 6
-			IL_00d7: ret
+			IL_00d9: ldloc.s 6
+			IL_00db: ret
 		} // end of method tryFindLatestGeneratedAssembly::__js_call__
 
 	} // end of class tryFindLatestGeneratedAssembly
