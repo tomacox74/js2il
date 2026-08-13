@@ -12,6 +12,12 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   `let` binding preserves its temporal-dead-zone `ReferenceError`, and
   object-rest from strings copies their enumerable indexed own properties.
   Activates the eleven corresponding pinned test262 fixtures.
+- compiler/runtime/test262: close #1788 by completing `for-of` iterator
+  abrupt-completion precedence. Iterator `next` validation is deferred until
+  its first use, plain JavaScript objects no longer enter the .NET enumerable
+  fallback, and a `null` iterator `return` is correctly absent. Lowering now
+  avoids closing iterators after `next`/`value` failures while destructuring
+  tracks completed iterator steps before applying `IteratorClose`.
 - runtime: reorganize the module runtime library by module standard. Types now
   live under `src/JavaScriptRuntime/Modules/` in three namespaces:
   `JavaScriptRuntime.Modules.CommonJS` (CommonJS `Module`, `Require`,

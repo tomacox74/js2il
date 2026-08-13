@@ -156,7 +156,7 @@ public class Section14_7_5ExecutionTests01 : Jroc.Test262.Tests.language.stateme
     public Task dstr_array_elem_iter_nrml_close_err_38()
         => ExecutionTest("dstr/array-elem-iter-nrml-close-err");
 
-    [Fact(DisplayName = "dstr/array-elem-iter-rtrn-close-err.js", Skip = "Pending complete iterator protocol and abrupt-completion semantics.")]
+    [Fact(DisplayName = "dstr/array-elem-iter-rtrn-close-err.js")]
     public Task dstr_array_elem_iter_rtrn_close_err_39()
         => ExecutionTest("dstr/array-elem-iter-rtrn-close-err");
 
@@ -168,7 +168,7 @@ public class Section14_7_5ExecutionTests01 : Jroc.Test262.Tests.language.stateme
     public Task dstr_array_elem_iter_thrw_close_err_41()
         => ExecutionTest("dstr/array-elem-iter-thrw-close-err");
 
-    [Fact(DisplayName = "dstr/array-elem-iter-thrw-close-skip.js", Skip = "Pending complete iterator protocol and abrupt-completion semantics.")]
+    [Fact(DisplayName = "dstr/array-elem-iter-thrw-close-skip.js")]
     public Task dstr_array_elem_iter_thrw_close_skip_42()
         => ExecutionTest("dstr/array-elem-iter-thrw-close-skip");
 
@@ -320,7 +320,7 @@ public class Section14_7_5ExecutionTests01 : Jroc.Test262.Tests.language.stateme
     public Task dstr_array_elem_target_yield_valid_79()
         => ExecutionTest("dstr/array-elem-target-yield-valid");
 
-    [Fact(DisplayName = "dstr/array-elem-trlg-iter-elision-iter-abpt.js", Skip = "Pending complete iterator protocol and abrupt-completion semantics.")]
+    [Fact(DisplayName = "dstr/array-elem-trlg-iter-elision-iter-abpt.js")]
     public Task dstr_array_elem_trlg_iter_elision_iter_abpt_80()
         => ExecutionTest("dstr/array-elem-trlg-iter-elision-iter-abpt");
 
@@ -376,7 +376,7 @@ public class Section14_7_5ExecutionTests01 : Jroc.Test262.Tests.language.stateme
     public Task dstr_array_elem_trlg_iter_list_thrw_close_err_93()
         => ExecutionTest("dstr/array-elem-trlg-iter-list-thrw-close-err");
 
-    [Fact(DisplayName = "dstr/array-elem-trlg-iter-list-thrw-close-skip.js", Skip = "Pending complete iterator protocol and abrupt-completion semantics.")]
+    [Fact(DisplayName = "dstr/array-elem-trlg-iter-list-thrw-close-skip.js")]
     public Task dstr_array_elem_trlg_iter_list_thrw_close_skip_94()
         => ExecutionTest("dstr/array-elem-trlg-iter-list-thrw-close-skip");
 
@@ -404,7 +404,7 @@ public class Section14_7_5ExecutionTests01 : Jroc.Test262.Tests.language.stateme
     public Task dstr_array_elem_trlg_iter_rest_thrw_close_err_100()
         => ExecutionTest("dstr/array-elem-trlg-iter-rest-thrw-close-err");
 
-    [Fact(DisplayName = "dstr/array-elem-trlg-iter-rest-thrw-close-skip.js", Skip = "Pending complete iterator protocol and abrupt-completion semantics.")]
+    [Fact(DisplayName = "dstr/array-elem-trlg-iter-rest-thrw-close-skip.js")]
     public Task dstr_array_elem_trlg_iter_rest_thrw_close_skip_101()
         => ExecutionTest("dstr/array-elem-trlg-iter-rest-thrw-close-skip");
 
@@ -412,7 +412,7 @@ public class Section14_7_5ExecutionTests01 : Jroc.Test262.Tests.language.stateme
     public Task dstr_array_elem_trlg_iter_rest_thrw_close_102()
         => ExecutionTest("dstr/array-elem-trlg-iter-rest-thrw-close");
 
-    [Fact(DisplayName = "dstr/array-elision-iter-abpt.js", Skip = "Pending complete iterator protocol and abrupt-completion semantics.")]
+    [Fact(DisplayName = "dstr/array-elision-iter-abpt.js")]
     public Task dstr_array_elision_iter_abpt_103()
         => ExecutionTest("dstr/array-elision-iter-abpt");
 
@@ -536,7 +536,7 @@ public class Section14_7_5ExecutionTests01 : Jroc.Test262.Tests.language.stateme
     public Task dstr_array_rest_elision_invalid_133()
         => CompilationFailureTest("dstr/array-rest-elision-invalid", string.Empty);
 
-    [Fact(DisplayName = "dstr/array-rest-elision-iter-abpt.js", Skip = "Pending complete iterator protocol and abrupt-completion semantics.")]
+    [Fact(DisplayName = "dstr/array-rest-elision-iter-abpt.js")]
     public Task dstr_array_rest_elision_iter_abpt_134()
         => ExecutionTest("dstr/array-rest-elision-iter-abpt");
 
@@ -556,11 +556,11 @@ public class Section14_7_5ExecutionTests01 : Jroc.Test262.Tests.language.stateme
     public Task dstr_array_rest_iter_nrml_close_skip_138()
         => ExecutionTest("dstr/array-rest-iter-nrml-close-skip");
 
-    [Fact(DisplayName = "dstr/array-rest-iter-rtrn-close-err.js", Skip = "Pending complete iterator protocol and abrupt-completion semantics.")]
+    [Fact(DisplayName = "dstr/array-rest-iter-rtrn-close-err.js")]
     public Task dstr_array_rest_iter_rtrn_close_err_139()
         => ExecutionTest("dstr/array-rest-iter-rtrn-close-err");
 
-    [Fact(DisplayName = "dstr/array-rest-iter-rtrn-close-null.js", Skip = "Pending complete iterator protocol and abrupt-completion semantics.")]
+    [Fact(DisplayName = "dstr/array-rest-iter-rtrn-close-null.js")]
     public Task dstr_array_rest_iter_rtrn_close_null_140()
         => ExecutionTest("dstr/array-rest-iter-rtrn-close-null");
 
@@ -572,7 +572,7 @@ public class Section14_7_5ExecutionTests01 : Jroc.Test262.Tests.language.stateme
     public Task dstr_array_rest_iter_thrw_close_err_142()
         => ExecutionTest("dstr/array-rest-iter-thrw-close-err");
 
-    [Fact(DisplayName = "dstr/array-rest-iter-thrw-close-skip.js", Skip = "Pending complete iterator protocol and abrupt-completion semantics.")]
+    [Fact(DisplayName = "dstr/array-rest-iter-thrw-close-skip.js")]
     public Task dstr_array_rest_iter_thrw_close_skip_143()
         => ExecutionTest("dstr/array-rest-iter-thrw-close-skip");
 

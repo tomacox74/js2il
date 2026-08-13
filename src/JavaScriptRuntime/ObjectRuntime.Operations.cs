@@ -4768,6 +4768,13 @@ namespace JavaScriptRuntime
                 return typedArray.values();
             }
 
+            // JsObject implements IDictionary for host interop, which also makes it
+            // IEnumerable. That must not make ordinary JavaScript objects iterable.
+            if (iterable is JsObject)
+            {
+                throw new JavaScriptRuntime.TypeError("Object is not iterable");
+            }
+
             // Best-effort fallback: treat .NET IEnumerable as iterable.
             if (iterable is System.Collections.IEnumerable en)
             {
@@ -4977,26 +4984,16 @@ namespace JavaScriptRuntime
             return ObjectRuntime.GetItem(iteratorResult, "value");
         }
 
-        private sealed class IteratorStepValueBox
-        {
-            public IteratorStepValueBox(object? value)
-            {
-                Value = value;
-            }
-
-            public object? Value { get; }
-        }
-
         public static object? IteratorDestructuringStep(object iterator)
         {
             var result = IteratorNext(iterator);
             return IteratorResultDone(result)
                 ? null
-                : new IteratorStepValueBox(IteratorResultValue(result));
+                : result;
         }
 
         public static object? IteratorDestructuringStepValue(object step)
-            => ((IteratorStepValueBox)step).Value;
+            => IteratorResultValue(step);
 
         /// <summary>
         /// Closes an iterator on abrupt completion (IteratorClose).
@@ -5023,7 +5020,8 @@ namespace JavaScriptRuntime
             // Ordinary object: common for user-defined iterators in this runtime.
             if (iterator is JsObject)
             {
-                if (!ObjectRuntime.TryGetOwnValue(iterator, "return", out var ret) || ret is null)
+                var ret = GetProperty(iterator, "return");
+                if (ret is null or JsNull)
                 {
                     return;
                 }
@@ -5039,7 +5037,7 @@ namespace JavaScriptRuntime
 
             // Host object: look for a delegate-valued property.
             var memberValue = GetProperty(iterator, "return");
-            if (memberValue is null)
+            if (memberValue is null or JsNull)
             {
                 return;
             }
@@ -5175,25 +5173,34 @@ namespace JavaScriptRuntime
         private sealed class DynamicIterator : IJavaScriptIterator
         {
             private readonly object _iterator;
-            private readonly object _next;
+            private object? _next;
+            private bool _nextResolved;
             private bool _returnResolved;
             private object? _return;
 
             public DynamicIterator(object iterator)
             {
                 _iterator = iterator;
-
-                var nextMember = GetProperty(_iterator, "next");
-                if (!CallableOperations.IsCallable(nextMember))
-                {
-                    throw new JavaScriptRuntime.TypeError("Iterator.next is not a function");
-                }
-                _next = nextMember!;
-
                 JavaScriptRuntime.Iterator.InitializeIteratorSurface(this);
             }
 
-            public bool HasReturn => GetReturnMember() != null;
+            public bool HasReturn => GetReturnMember() is not null and not JsNull;
+
+            private object GetNextMember()
+            {
+                if (!_nextResolved)
+                {
+                    _next = GetProperty(_iterator, "next");
+                    _nextResolved = true;
+                }
+
+                if (!CallableOperations.IsCallable(_next))
+                {
+                    throw new JavaScriptRuntime.TypeError("Iterator.next is not a function");
+                }
+
+                return _next!;
+            }
 
             private object? GetReturnMember()
             {
@@ -5229,7 +5236,7 @@ namespace JavaScriptRuntime
             {
                 var result = InvokeCallableMember(
                     _iterator,
-                    _next,
+                    GetNextMember(),
                     System.Array.Empty<object?>());
                 if (result is null || result is JsNull || !IsObjectLikeForPrototype(result))
                 {
@@ -5242,7 +5249,7 @@ namespace JavaScriptRuntime
             public void Return()
             {
                 var returnMember = GetReturnMember();
-                if (returnMember is null)
+                if (returnMember is null or JsNull)
                 {
                     return;
                 }

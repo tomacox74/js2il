@@ -396,7 +396,7 @@ public class Section14_7_5ExecutionTests03 : Jroc.Test262.Tests.language.stateme
     public Task head_expr_no_expr_598()
         => CompilationFailureTest("head-expr-no-expr", string.Empty);
 
-    [Fact(DisplayName = "head-expr-obj-iterator-method.js", Skip = "Pending complete iterator protocol and abrupt-completion semantics.")]
+    [Fact(DisplayName = "head-expr-obj-iterator-method.js")]
     public Task head_expr_obj_iterator_method_599()
         => ExecutionTest("head-expr-obj-iterator-method");
 
@@ -496,7 +496,7 @@ public class Section14_7_5ExecutionTests03 : Jroc.Test262.Tests.language.stateme
     public Task iterator_close_non_throw_get_method_abrupt_623()
         => ExecutionTest("iterator-close-non-throw-get-method-abrupt");
 
-    [Fact(DisplayName = "iterator-close-non-throw-get-method-is-null.js", Skip = "Pending complete iterator protocol and abrupt-completion semantics.")]
+    [Fact(DisplayName = "iterator-close-non-throw-get-method-is-null.js")]
     public Task iterator_close_non_throw_get_method_is_null_624()
         => ExecutionTest("iterator-close-non-throw-get-method-is-null");
 
@@ -528,7 +528,7 @@ public class Section14_7_5ExecutionTests03 : Jroc.Test262.Tests.language.stateme
     public Task iterator_close_via_throw_631()
         => ExecutionTest("iterator-close-via-throw");
 
-    [Fact(DisplayName = "iterator-next-error.js", Skip = "Pending complete iterator protocol and abrupt-completion semantics.")]
+    [Fact(DisplayName = "iterator-next-error.js")]
     public Task iterator_next_error_632()
         => ExecutionTest("iterator-next-error");
 
@@ -540,7 +540,7 @@ public class Section14_7_5ExecutionTests03 : Jroc.Test262.Tests.language.stateme
     public Task iterator_next_result_type_634()
         => ExecutionTest("iterator-next-result-type");
 
-    [Fact(DisplayName = "iterator-next-result-value-attr-error.js", Skip = "Pending complete iterator protocol and abrupt-completion semantics.")]
+    [Fact(DisplayName = "iterator-next-result-value-attr-error.js")]
     public Task iterator_next_result_value_attr_error_635()
         => ExecutionTest("iterator-next-result-value-attr-error");
 
