@@ -1722,11 +1722,11 @@ public class RuntimeServices
 
     public static ServiceContainer BuildServiceProvider()
     {
-        var container = new ServiceContainer();
+        var container = RuntimeOwnershipFactory.CreateIsolatedRealm().Services;
         container.RegisterInstance(new GlobalThisOptions());
         container.RegisterInstance(HostRuntimeIntrinsicDescriptors.Empty);
         container.RegisterInstance(new ConsoleOutputSinks());
-        
+
         // Register default engine dependencies
         container.Register<EngineCore.ITickSource, EngineCore.TickSource>();
         container.Register<EngineCore.IWaitHandle, EngineCore.WaitHandle>();
@@ -1745,7 +1745,7 @@ public class RuntimeServices
         container.Register<Node.IChildProcessLauncher, Node.DefaultChildProcessLauncher>();
         container.Register<Node.AsyncContextRuntime>();
         container.Register<Node.DiagnosticsChannelRuntime>();
-        
+
         return container;
     }
 }
