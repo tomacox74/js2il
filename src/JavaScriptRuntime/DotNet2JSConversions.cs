@@ -151,6 +151,11 @@ namespace JavaScriptRuntime
                     return NormalizeExponent(value.ToString("0.#################e+0", System.Globalization.CultureInfo.InvariantCulture));
                 }
 
+                if (abs >= 1e15)
+                {
+                    return ExpandExponent(value.ToString("R", System.Globalization.CultureInfo.InvariantCulture));
+                }
+
                 if (abs >= 1e-6)
                 {
                     return value.ToString("0", System.Globalization.CultureInfo.InvariantCulture);

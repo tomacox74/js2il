@@ -6,6 +6,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- compiler/runtime/test262: complete String well-known-symbol dispatch for
+  primitive match/search/replaceAll inputs, invoke observable @@search hooks
+  on internally created RegExps, preserve JavaScript number-string precision
+  for large integral values, and coerce boxed Number receivers for borrowed
+  String methods. Activates twenty corresponding pinned test262 fixtures.
 - compiler/test262: close #1782 by inferring names for anonymous function,
   generator, arrow, and class defaults in `for-of` and `for-await-of`
   destructuring bindings. This also builds default-initializer scopes for

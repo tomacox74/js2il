@@ -37,4 +37,20 @@ public class ExecutionTests : DiskExecutionTestsBase
     [Fact(DisplayName = "getSubstitution-0x0024NN.js")]
     public Task getSubstitution_0x0024NN()
         => ExecutionTestFromFile("getSubstitution-0x0024NN");
+
+    [Fact(DisplayName = "cstm-replaceall-on-bigint-primitive.js")]
+    public Task cstm_replaceall_on_bigint_primitive()
+        => ExecutionTestFromFile("cstm-replaceall-on-bigint-primitive");
+
+    [Fact(DisplayName = "cstm-replaceall-on-boolean-primitive.js")]
+    public Task cstm_replaceall_on_boolean_primitive()
+        => ExecutionTestFromFile("cstm-replaceall-on-boolean-primitive");
+
+    [Fact(DisplayName = "cstm-replaceall-on-number-primitive.js")]
+    public Task cstm_replaceall_on_number_primitive()
+        => ExecutionTestFromFile("cstm-replaceall-on-number-primitive");
+
+    [Fact(DisplayName = "cstm-replaceall-on-string-primitive.js")]
+    public Task cstm_replaceall_on_string_primitive()
+        => ExecutionTestFromFile("cstm-replaceall-on-string-primitive");
 }
