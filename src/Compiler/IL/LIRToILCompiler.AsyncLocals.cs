@@ -26,7 +26,7 @@ internal sealed partial class LIRToILCompiler
         return _memberRefRegistry.GetOrAddTypeHandle(clrType);
     }
 
-    private void EmitEnsureAsyncLocalsArray(InstructionEncoder ilEncoder, TempLocalAllocation allocation)
+    private void EmitEnsureResumableLocalsArray(InstructionEncoder ilEncoder, TempLocalAllocation allocation)
     {
         int variableCount = MethodBody.VariableNames.Count;
         int tempCount = allocation.SlotStorages.Count;
@@ -55,7 +55,7 @@ internal sealed partial class LIRToILCompiler
         ilEncoder.MarkLabel(hasLocalsLabel);
     }
 
-    private void EmitSpillVariableSlotsToAsyncLocalsArray(InstructionEncoder ilEncoder, TempLocalAllocation allocation)
+    private void EmitSpillVariableSlotsToResumableLocalsArray(InstructionEncoder ilEncoder, TempLocalAllocation allocation)
     {
         int variableCount = MethodBody.VariableNames.Count;
         int tempCount = allocation.SlotStorages.Count;
@@ -112,7 +112,7 @@ internal sealed partial class LIRToILCompiler
         ilEncoder.OpCode(ILOpCode.Pop); // pop locals array
     }
 
-    private void EmitRestoreVariableSlotsFromAsyncLocalsArray(InstructionEncoder ilEncoder, TempLocalAllocation allocation)
+    private void EmitRestoreVariableSlotsFromResumableLocalsArray(InstructionEncoder ilEncoder, TempLocalAllocation allocation)
     {
         int variableCount = MethodBody.VariableNames.Count;
         int tempCount = allocation.SlotStorages.Count;

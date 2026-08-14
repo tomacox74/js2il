@@ -11,6 +11,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   `arguments` bindings or assignment targets, plus invalid strict `yield`
   targets, now fail before lowering. Statement parse-negative test262 fixtures
   now also receive their `onlyStrict` directive before compilation.
+- compiler/runtime/test262: fix #1787 so generator-local iterator state
+  survives suspension in `for-of` loops. `yield` and `yield*` now resume
+  iteration correctly, including through try/catch/finally and nested
+  destructuring assignment/binding expressions. Activates twenty corresponding
+  pinned test262 fixtures.
 
 ## v0.12.6 - 2026-08-14
 

@@ -146,6 +146,10 @@ internal sealed partial class LIRToILCompiler
                         ilEncoder.LoadConstantI4(-1);
                         EmitStoreFieldByName(ilEncoder, scopeName, "_asyncState");
 
+                        // Async generator yields re-enter this method on the next
+                        // iterator request, so persist all IL locals before returning.
+                        EmitSpillVariableSlotsToResumableLocalsArray(ilEncoder, allocation);
+
                         var iterCreateAsync = _memberRefRegistry.GetOrAddMethod(
                             typeof(JavaScriptRuntime.IteratorResult),
                             nameof(JavaScriptRuntime.IteratorResult.Create),
@@ -289,6 +293,8 @@ internal sealed partial class LIRToILCompiler
                     ilEncoder.LoadLocal(0);
                     ilEncoder.LoadConstantI4(yieldInstr.ResumeStateId);
                     EmitStoreFieldByName(ilEncoder, scopeName, "_genState");
+
+                    EmitSpillVariableSlotsToResumableLocalsArray(ilEncoder, allocation);
 
                     // Return { value: yielded, done: false } unless yield* is forwarding
                     // the delegate iterator's result object directly.
@@ -463,7 +469,7 @@ internal sealed partial class LIRToILCompiler
 
                         // Persist variable locals across the suspension.
                         // The async continuation re-enters the method, so IL locals must be restored from scope storage.
-                        EmitSpillVariableSlotsToAsyncLocalsArray(ilEncoder, allocation);
+                        EmitSpillVariableSlotsToResumableLocalsArray(ilEncoder, allocation);
 
                         // --- Step 3: Return _deferred.promise ---
                         // ldloc.0, ldfld _deferred, callvirt get_promise, ret
