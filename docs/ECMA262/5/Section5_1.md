@@ -4,7 +4,7 @@
 
 [Back to Section5](Section5.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-03-07T01:50:59Z
+> Last generated (UTC): 2026-08-14T06:00:09Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -22,11 +22,11 @@
 | 5.1.5.1 | Terminal Symbols | N/A (informational) | [tc39.es](https://tc39.es/ecma262/#sec-terminal-symbols) |
 | 5.1.5.2 | Nonterminal Symbols and Productions | N/A (informational) | [tc39.es](https://tc39.es/ecma262/#sec-nonterminal-symbols-and-productions) |
 | 5.1.5.3 | Optional Symbols | N/A (informational) | [tc39.es](https://tc39.es/ecma262/#sec-optional-symbols) |
-| 5.1.5.4 | Grammatical Parameters | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-grammatical-parameters) |
-| 5.1.5.5 | one of | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-one-of) |
-| 5.1.5.6 | [empty] | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-empty) |
-| 5.1.5.7 | Lookahead Restrictions | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-lookahead-restrictions) |
-| 5.1.5.8 | [no LineTerminator here] | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-no-lineterminator-here) |
-| 5.1.5.9 | but not | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-but-not) |
-| 5.1.5.10 | Descriptive Phrases | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-descriptive-phrases) |
+| 5.1.5.4 | Grammatical Parameters | N/A (informational) | [tc39.es](https://tc39.es/ecma262/#sec-grammatical-parameters) |
+| 5.1.5.5 | one of | N/A (informational) | [tc39.es](https://tc39.es/ecma262/#sec-one-of) |
+| 5.1.5.6 | [empty] | N/A (informational) | [tc39.es](https://tc39.es/ecma262/#sec-empty) |
+| 5.1.5.7 | Lookahead Restrictions | N/A (informational) | [tc39.es](https://tc39.es/ecma262/#sec-lookahead-restrictions) |
+| 5.1.5.8 | [no LineTerminator here] | N/A (informational) | [tc39.es](https://tc39.es/ecma262/#sec-no-lineterminator-here) |
+| 5.1.5.9 | but not | N/A (informational) | [tc39.es](https://tc39.es/ecma262/#sec-but-not) |
+| 5.1.5.10 | Descriptive Phrases | N/A (informational) | [tc39.es](https://tc39.es/ecma262/#sec-descriptive-phrases) |
 
