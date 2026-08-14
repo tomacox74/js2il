@@ -4,7 +4,7 @@
 
 [Back to Section20](Section20.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-03-07T01:50:59Z
+> Last generated (UTC): 2026-08-14T23:17:53Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -45,72 +45,84 @@
 | 20.5.7 | AggregateError Objects | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-aggregate-error-objects) |
 | 20.5.7.1 | The AggregateError Constructor | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-aggregate-error-constructor) |
 | 20.5.7.1.1 | AggregateError ( errors , message [ , options ] ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-aggregate-error) |
-| 20.5.7.2 | Properties of the AggregateError Constructor | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-aggregate-error-constructors) |
-| 20.5.7.2.1 | AggregateError.prototype | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-aggregate-error.prototype) |
-| 20.5.7.3 | Properties of the AggregateError Prototype Object | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-aggregate-error-prototype-objects) |
-| 20.5.7.3.1 | AggregateError.prototype.constructor | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-aggregate-error.prototype.constructor) |
-| 20.5.7.3.2 | AggregateError.prototype.message | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-aggregate-error.prototype.message) |
-| 20.5.7.3.3 | AggregateError.prototype.name | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-aggregate-error.prototype.name) |
+| 20.5.7.2 | Properties of the AggregateError Constructor | Supported | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-aggregate-error-constructors) |
+| 20.5.7.2.1 | AggregateError.prototype | Supported | [tc39.es](https://tc39.es/ecma262/#sec-aggregate-error.prototype) |
+| 20.5.7.3 | Properties of the AggregateError Prototype Object | Supported | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-aggregate-error-prototype-objects) |
+| 20.5.7.3.1 | AggregateError.prototype.constructor | Supported | [tc39.es](https://tc39.es/ecma262/#sec-aggregate-error.prototype.constructor) |
+| 20.5.7.3.2 | AggregateError.prototype.message | Supported | [tc39.es](https://tc39.es/ecma262/#sec-aggregate-error.prototype.message) |
+| 20.5.7.3.3 | AggregateError.prototype.name | Supported | [tc39.es](https://tc39.es/ecma262/#sec-aggregate-error.prototype.name) |
 | 20.5.7.4 | Properties of AggregateError Instances | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-aggregate-error-instances) |
 | 20.5.8 | Abstract Operations for Error Objects | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-abstract-operations-for-error-objects) |
 | 20.5.8.1 | InstallErrorCause ( O , options ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-installerrorcause) |
 
 ## Support
 
-Feature-level support tracking with test script references.
+Feature-level support tracking with repo test references and optional test262 evidence.
 
 ### 20.5.1.1 ([tc39.es](https://tc39.es/ecma262/#sec-error-message))
 
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| Error(message) (callable creates instance) | Supported with Limitations | [`IntrinsicCallables_Error_Callable_CreatesInstances.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_Error_Callable_CreatesInstances.js) | Compiler lowers built-in error callables (Error/TypeError/...) to construction of JavaScriptRuntime error types. Currently supports 0 or 1 argument; the optional 'options' parameter is not supported. |
-| new Error(message) and new NativeError(message) | Supported with Limitations | [`TryCatch_NewExpression_BuiltInErrors.js`](../../../tests/Jroc.Tests/TryCatch/JavaScript/TryCatch_NewExpression_BuiltInErrors.js) | Constructs JavaScriptRuntime.Error (and derived types) with message stringification via DotNet2JSConversions.ToString. The runtime does not currently model spec prototype objects; behavior is closer to .NET exceptions with JS-like surface properties. |
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Error(message) (callable creates instance) | Supported with Limitations | [`IntrinsicCallables_Error_Callable_CreatesInstances.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_Error_Callable_CreatesInstances.js) |  | Compiler lowers built-in error callables (Error/TypeError/...) to construction of JavaScriptRuntime error types. Currently supports 0 or 1 argument; the optional 'options' parameter is not supported. |
+| new Error(message) and new NativeError(message) | Supported with Limitations | [`TryCatch_NewExpression_BuiltInErrors.js`](../../../tests/Jroc.Tests/TryCatch/JavaScript/TryCatch_NewExpression_BuiltInErrors.js) |  | Constructs JavaScriptRuntime.Error (and derived types) with message stringification via DotNet2JSConversions.ToString. The runtime does not currently model spec prototype objects; behavior is closer to .NET exceptions with JS-like surface properties. |
 
 ### 20.5.2.1 ([tc39.es](https://tc39.es/ecma262/#sec-error.iserror))
 
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| Error.isError(arg) basic predicate | Supported with Limitations | [`IntrinsicCallables_Error_ConstructorSurface.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_Error_ConstructorSurface.js) | Returns true for JavaScriptRuntime.Error instances (including built-in NativeError subclasses) and false for non-error objects. The full spec [[ErrorData]] internal-slot semantics are not implemented. |
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Error.isError(arg) basic predicate | Supported with Limitations | [`IntrinsicCallables_Error_ConstructorSurface.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_Error_ConstructorSurface.js) |  | Returns true for JavaScriptRuntime.Error instances (including built-in NativeError subclasses) and false for non-error objects. The full spec [[ErrorData]] internal-slot semantics are not implemented. |
 
 ### 20.5.2.2 ([tc39.es](https://tc39.es/ecma262/#sec-error.prototype))
 
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| Error.prototype data property exists (minimal) | Supported with Limitations | [`CommonJS_Global_ErrorPrototype_Read.js`](../../../tests/Jroc.Tests/CommonJS/JavaScript/CommonJS_Global_ErrorPrototype_Read.js)<br>[`CommonJS_Global_ErrorPrototype_Read_Lib.js`](../../../tests/Jroc.Tests/CommonJS/JavaScript/CommonJS_Global_ErrorPrototype_Read_Lib.js) | Exposes the global Error value as a first-class intrinsic and provides a writable Error.prototype object for libraries that read/attach prototype members (e.g., CommonJS polyfills). Constructor/prototype behavior remains partial relative to full spec object-model semantics. |
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Error.prototype data property exists (minimal) | Supported with Limitations | [`CommonJS_Global_ErrorPrototype_Read.js`](../../../tests/Jroc.Tests/CommonJS/JavaScript/CommonJS_Global_ErrorPrototype_Read.js)<br>[`CommonJS_Global_ErrorPrototype_Read_Lib.js`](../../../tests/Jroc.Tests/CommonJS/JavaScript/CommonJS_Global_ErrorPrototype_Read_Lib.js) |  | Exposes the global Error value as a first-class intrinsic and provides a writable Error.prototype object for libraries that read/attach prototype members (e.g., CommonJS polyfills). Constructor/prototype behavior remains partial relative to full spec object-model semantics. |
 
 ### 20.5.3.1 ([tc39.es](https://tc39.es/ecma262/#sec-error.prototype.constructor))
 
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| Error.prototype.constructor | Supported with Limitations | [`IntrinsicCallables_Error_ConstructorSurface.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_Error_ConstructorSurface.js) | Error.prototype.constructor points to the global Error callable value. |
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Error.prototype.constructor | Supported with Limitations | [`IntrinsicCallables_Error_ConstructorSurface.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_Error_ConstructorSurface.js) |  | Error.prototype.constructor points to the global Error callable value. |
 
 ### 20.5.3.2 ([tc39.es](https://tc39.es/ecma262/#sec-error.prototype.message))
 
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| Error.prototype.message default value | Supported with Limitations | [`IntrinsicCallables_Error_ConstructorSurface.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_Error_ConstructorSurface.js) | Provides an empty-string default value on Error.prototype. |
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Error.prototype.message default value | Supported with Limitations | [`IntrinsicCallables_Error_ConstructorSurface.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_Error_ConstructorSurface.js) |  | Provides an empty-string default value on Error.prototype. |
 
 ### 20.5.3.3 ([tc39.es](https://tc39.es/ecma262/#sec-error.prototype.name))
 
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| Error.prototype.name default value | Supported with Limitations | [`IntrinsicCallables_Error_ConstructorSurface.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_Error_ConstructorSurface.js) | Provides the default "Error" value on Error.prototype.name. |
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Error.prototype.name default value | Supported with Limitations | [`IntrinsicCallables_Error_ConstructorSurface.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_Error_ConstructorSurface.js) |  | Provides the default "Error" value on Error.prototype.name. |
 
 ### 20.5.3.4 ([tc39.es](https://tc39.es/ecma262/#sec-error.prototype.tostring))
 
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| Error.prototype.toString() basic formatting | Supported with Limitations | [`IntrinsicCallables_Error_ConstructorSurface.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_Error_ConstructorSurface.js) | Formats values as name/message combinations and supports .call(receiver) usage for object receivers. Throws TypeError for null/undefined receivers. |
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Error.prototype.toString() basic formatting | Supported with Limitations | [`IntrinsicCallables_Error_ConstructorSurface.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_Error_ConstructorSurface.js) |  | Formats values as name/message combinations and supports .call(receiver) usage for object receivers. Throws TypeError for null/undefined receivers. |
 
 ### 20.5.4 ([tc39.es](https://tc39.es/ecma262/#sec-properties-of-error-instances))
 
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| Error instance properties: name, message, stack | Supported with Limitations | [`TryCatch_CallMember_MissingMethod_IsTypeError.js`](../../../tests/Jroc.Tests/TryCatch/JavaScript/TryCatch_CallMember_MissingMethod_IsTypeError.js)<br>[`Variable_Destructuring_NullOrUndefined_ThrowsNodeMessage.js`](../../../tests/Jroc.Tests/Variable/JavaScript/Variable_Destructuring_NullOrUndefined_ThrowsNodeMessage.js) | name/message are exposed as instance properties on JavaScriptRuntime.Error. stack is backed by the .NET stack trace (or a captured construction-time stack if not thrown yet). |
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Error instance properties: name, message, stack | Supported with Limitations | [`TryCatch_CallMember_MissingMethod_IsTypeError.js`](../../../tests/Jroc.Tests/TryCatch/JavaScript/TryCatch_CallMember_MissingMethod_IsTypeError.js)<br>[`Variable_Destructuring_NullOrUndefined_ThrowsNodeMessage.js`](../../../tests/Jroc.Tests/Variable/JavaScript/Variable_Destructuring_NullOrUndefined_ThrowsNodeMessage.js) |  | name/message are exposed as instance properties on JavaScriptRuntime.Error. stack is backed by the .NET stack trace (or a captured construction-time stack if not thrown yet). |
 
 ### 20.5.7.1.1 ([tc39.es](https://tc39.es/ecma262/#sec-aggregate-error))
 
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| AggregateError constructors and .errors | Supported with Limitations | [`TryCatch_NewExpression_BuiltInErrors.js`](../../../tests/Jroc.Tests/TryCatch/JavaScript/TryCatch_NewExpression_BuiltInErrors.js)<br>[`Promise_Any_AllRejected.js`](../../../tests/Jroc.Tests/Promise/JavaScript/Promise_Any_AllRejected.js) | JavaScriptRuntime.AggregateError stores errors in a JavaScriptRuntime.Array. Signature differs from spec in some cases (e.g., the test uses new AggregateError("agg") which maps to a message-only overload). 'options' / 'cause' are not supported. |
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| AggregateError constructor and iterable error list | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/AggregateError/ExecutionTests.cs` | `test/built-ins/AggregateError/errors-iterabletolist-failures.js`<br>`test/built-ins/AggregateError/errors-iterabletolist.js`<br>`test/built-ins/AggregateError/message-method-prop-cast.js`<br>`test/built-ins/AggregateError/message-method-prop.js`<br>`test/built-ins/AggregateError/message-tostring-abrupt-symbol.js`<br>`test/built-ins/AggregateError/message-tostring-abrupt.js`<br>`test/built-ins/AggregateError/message-undefined-no-prop.js`<br>`test/built-ins/AggregateError/newtarget-is-undefined.js`<br>`test/built-ins/AggregateError/order-of-args-evaluation.js` | AggregateError accepts iterable error lists, preserves iterable and message coercion order, exposes a writable non-enumerable errors array, and creates an own message property only for defined messages. Error cause options, custom newTarget prototypes, and cross-realm construction remain limited. |
+
+### 20.5.7.2 ([tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-aggregate-error-constructors))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| AggregateError constructor function surface | Supported | `tests/Jroc.Test262.Tests/built-ins/AggregateError/ExecutionTests.cs` | `test/built-ins/AggregateError/is-a-constructor.js`<br>`test/built-ins/AggregateError/length.js`<br>`test/built-ins/AggregateError/name.js`<br>`test/built-ins/AggregateError/prop-desc.js`<br>`test/built-ins/AggregateError/proto.js` | The global is a constructible function with the standard global property, name, length, prototype descriptor, and Error constructor prototype. |
+
+### 20.5.7.3 ([tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-aggregate-error-prototype-objects))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| AggregateError.prototype surface | Supported | `tests/Jroc.Test262.Tests/built-ins/AggregateError/prototype/ExecutionTests.cs` | `test/built-ins/AggregateError/prototype/constructor.js`<br>`test/built-ins/AggregateError/prototype/errors-absent-on-prototype.js`<br>`test/built-ins/AggregateError/prototype/message.js`<br>`test/built-ins/AggregateError/prototype/name.js`<br>`test/built-ins/AggregateError/prototype/prop-desc.js`<br>`test/built-ins/AggregateError/prototype/proto.js` | AggregateError.prototype inherits Error.prototype and provides the standard constructor, message, and name properties without an own errors property. |
 
