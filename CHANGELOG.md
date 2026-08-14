@@ -22,7 +22,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   destructuring bindings. This also builds default-initializer scopes for
   `var` loop heads. Activates 195 corresponding pinned test262 fixtures.
 - compiler/test262: close #1783 by lowering parenthesized function-expression
-  callees in nested   destructuring defaults. This preserves nested iterator
+  callees in nested destructuring defaults. This preserves nested iterator
   acquisition, elision, rest, and abrupt initializer completion in sync,
   async, generator, and async-generator loops. Activates 54 corresponding
   pinned test262 fixtures.
