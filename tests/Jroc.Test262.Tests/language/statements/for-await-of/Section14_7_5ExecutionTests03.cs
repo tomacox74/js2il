@@ -16,11 +16,11 @@ public class Section14_7_5ExecutionTests03 : Jroc.Test262.Tests.language.stateme
     public Task async_func_dstr_var_async_ary_ptrn_elem_ary_elision_iter_503()
         => ExecutionTest("async-func-dstr-var-async-ary-ptrn-elem-ary-elision-iter");
 
-    [Fact(DisplayName = "async-func-dstr-var-async-ary-ptrn-elem-ary-empty-init.js", Skip = "Pending complete for-in/of destructuring lowering.")]
+    [Fact(DisplayName = "async-func-dstr-var-async-ary-ptrn-elem-ary-empty-init.js")]
     public Task async_func_dstr_var_async_ary_ptrn_elem_ary_empty_init_504()
         => ExecutionTest("async-func-dstr-var-async-ary-ptrn-elem-ary-empty-init");
 
-    [Fact(DisplayName = "async-func-dstr-var-async-ary-ptrn-elem-ary-empty-iter.js", Skip = "Pending complete for-in/of destructuring lowering.")]
+    [Fact(DisplayName = "async-func-dstr-var-async-ary-ptrn-elem-ary-empty-iter.js")]
     public Task async_func_dstr_var_async_ary_ptrn_elem_ary_empty_iter_505()
         => ExecutionTest("async-func-dstr-var-async-ary-ptrn-elem-ary-empty-iter");
 
@@ -28,7 +28,7 @@ public class Section14_7_5ExecutionTests03 : Jroc.Test262.Tests.language.stateme
     public Task async_func_dstr_var_async_ary_ptrn_elem_ary_rest_init_506()
         => ExecutionTest("async-func-dstr-var-async-ary-ptrn-elem-ary-rest-init");
 
-    [Fact(DisplayName = "async-func-dstr-var-async-ary-ptrn-elem-ary-rest-iter.js", Skip = "Pending complete for-in/of destructuring lowering.")]
+    [Fact(DisplayName = "async-func-dstr-var-async-ary-ptrn-elem-ary-rest-iter.js")]
     public Task async_func_dstr_var_async_ary_ptrn_elem_ary_rest_iter_507()
         => ExecutionTest("async-func-dstr-var-async-ary-ptrn-elem-ary-rest-iter");
 
@@ -36,23 +36,23 @@ public class Section14_7_5ExecutionTests03 : Jroc.Test262.Tests.language.stateme
     public Task async_func_dstr_var_async_ary_ptrn_elem_id_init_exhausted_508()
         => ExecutionTest("async-func-dstr-var-async-ary-ptrn-elem-id-init-exhausted");
 
-    [Fact(DisplayName = "async-func-dstr-var-async-ary-ptrn-elem-id-init-fn-name-arrow.js", Skip = "Pending complete for-in/of destructuring lowering.")]
+    [Fact(DisplayName = "async-func-dstr-var-async-ary-ptrn-elem-id-init-fn-name-arrow.js")]
     public Task async_func_dstr_var_async_ary_ptrn_elem_id_init_fn_name_arrow_509()
         => ExecutionTest("async-func-dstr-var-async-ary-ptrn-elem-id-init-fn-name-arrow");
 
-    [Fact(DisplayName = "async-func-dstr-var-async-ary-ptrn-elem-id-init-fn-name-class.js", Skip = "Pending complete for-in/of destructuring lowering.")]
+    [Fact(DisplayName = "async-func-dstr-var-async-ary-ptrn-elem-id-init-fn-name-class.js")]
     public Task async_func_dstr_var_async_ary_ptrn_elem_id_init_fn_name_class_510()
         => ExecutionTest("async-func-dstr-var-async-ary-ptrn-elem-id-init-fn-name-class");
 
-    [Fact(DisplayName = "async-func-dstr-var-async-ary-ptrn-elem-id-init-fn-name-cover.js", Skip = "Pending complete for-in/of destructuring lowering.")]
+    [Fact(DisplayName = "async-func-dstr-var-async-ary-ptrn-elem-id-init-fn-name-cover.js")]
     public Task async_func_dstr_var_async_ary_ptrn_elem_id_init_fn_name_cover_511()
         => ExecutionTest("async-func-dstr-var-async-ary-ptrn-elem-id-init-fn-name-cover");
 
-    [Fact(DisplayName = "async-func-dstr-var-async-ary-ptrn-elem-id-init-fn-name-fn.js", Skip = "Pending complete for-in/of destructuring lowering.")]
+    [Fact(DisplayName = "async-func-dstr-var-async-ary-ptrn-elem-id-init-fn-name-fn.js")]
     public Task async_func_dstr_var_async_ary_ptrn_elem_id_init_fn_name_fn_512()
         => ExecutionTest("async-func-dstr-var-async-ary-ptrn-elem-id-init-fn-name-fn");
 
-    [Fact(DisplayName = "async-func-dstr-var-async-ary-ptrn-elem-id-init-fn-name-gen.js", Skip = "Pending complete for-in/of destructuring lowering.")]
+    [Fact(DisplayName = "async-func-dstr-var-async-ary-ptrn-elem-id-init-fn-name-gen.js")]
     public Task async_func_dstr_var_async_ary_ptrn_elem_id_init_fn_name_gen_513()
         => ExecutionTest("async-func-dstr-var-async-ary-ptrn-elem-id-init-fn-name-gen");
 
@@ -172,23 +172,23 @@ public class Section14_7_5ExecutionTests03 : Jroc.Test262.Tests.language.stateme
     public Task async_func_dstr_var_async_obj_ptrn_empty_542()
         => ExecutionTest("async-func-dstr-var-async-obj-ptrn-empty");
 
-    [Fact(DisplayName = "async-func-dstr-var-async-obj-ptrn-id-init-fn-name-arrow.js", Skip = "Pending complete for-in/of destructuring lowering.")]
+    [Fact(DisplayName = "async-func-dstr-var-async-obj-ptrn-id-init-fn-name-arrow.js")]
     public Task async_func_dstr_var_async_obj_ptrn_id_init_fn_name_arrow_543()
         => ExecutionTest("async-func-dstr-var-async-obj-ptrn-id-init-fn-name-arrow");
 
-    [Fact(DisplayName = "async-func-dstr-var-async-obj-ptrn-id-init-fn-name-class.js", Skip = "Pending complete for-in/of destructuring lowering.")]
+    [Fact(DisplayName = "async-func-dstr-var-async-obj-ptrn-id-init-fn-name-class.js")]
     public Task async_func_dstr_var_async_obj_ptrn_id_init_fn_name_class_544()
         => ExecutionTest("async-func-dstr-var-async-obj-ptrn-id-init-fn-name-class");
 
-    [Fact(DisplayName = "async-func-dstr-var-async-obj-ptrn-id-init-fn-name-cover.js", Skip = "Pending complete for-in/of destructuring lowering.")]
+    [Fact(DisplayName = "async-func-dstr-var-async-obj-ptrn-id-init-fn-name-cover.js")]
     public Task async_func_dstr_var_async_obj_ptrn_id_init_fn_name_cover_545()
         => ExecutionTest("async-func-dstr-var-async-obj-ptrn-id-init-fn-name-cover");
 
-    [Fact(DisplayName = "async-func-dstr-var-async-obj-ptrn-id-init-fn-name-fn.js", Skip = "Pending complete for-in/of destructuring lowering.")]
+    [Fact(DisplayName = "async-func-dstr-var-async-obj-ptrn-id-init-fn-name-fn.js")]
     public Task async_func_dstr_var_async_obj_ptrn_id_init_fn_name_fn_546()
         => ExecutionTest("async-func-dstr-var-async-obj-ptrn-id-init-fn-name-fn");
 
-    [Fact(DisplayName = "async-func-dstr-var-async-obj-ptrn-id-init-fn-name-gen.js", Skip = "Pending complete for-in/of destructuring lowering.")]
+    [Fact(DisplayName = "async-func-dstr-var-async-obj-ptrn-id-init-fn-name-gen.js")]
     public Task async_func_dstr_var_async_obj_ptrn_id_init_fn_name_gen_547()
         => ExecutionTest("async-func-dstr-var-async-obj-ptrn-id-init-fn-name-gen");
 
@@ -264,23 +264,23 @@ public class Section14_7_5ExecutionTests03 : Jroc.Test262.Tests.language.stateme
     public Task async_func_dstr_var_obj_ptrn_id_get_value_err_565()
         => ExecutionTest("async-func-dstr-var-obj-ptrn-id-get-value-err");
 
-    [Fact(DisplayName = "async-func-dstr-var-obj-ptrn-id-init-fn-name-arrow.js", Skip = "Pending complete for-in/of destructuring lowering.")]
+    [Fact(DisplayName = "async-func-dstr-var-obj-ptrn-id-init-fn-name-arrow.js")]
     public Task async_func_dstr_var_obj_ptrn_id_init_fn_name_arrow_566()
         => ExecutionTest("async-func-dstr-var-obj-ptrn-id-init-fn-name-arrow");
 
-    [Fact(DisplayName = "async-func-dstr-var-obj-ptrn-id-init-fn-name-class.js", Skip = "Pending complete for-in/of destructuring lowering.")]
+    [Fact(DisplayName = "async-func-dstr-var-obj-ptrn-id-init-fn-name-class.js")]
     public Task async_func_dstr_var_obj_ptrn_id_init_fn_name_class_567()
         => ExecutionTest("async-func-dstr-var-obj-ptrn-id-init-fn-name-class");
 
-    [Fact(DisplayName = "async-func-dstr-var-obj-ptrn-id-init-fn-name-cover.js", Skip = "Pending complete for-in/of destructuring lowering.")]
+    [Fact(DisplayName = "async-func-dstr-var-obj-ptrn-id-init-fn-name-cover.js")]
     public Task async_func_dstr_var_obj_ptrn_id_init_fn_name_cover_568()
         => ExecutionTest("async-func-dstr-var-obj-ptrn-id-init-fn-name-cover");
 
-    [Fact(DisplayName = "async-func-dstr-var-obj-ptrn-id-init-fn-name-fn.js", Skip = "Pending complete for-in/of destructuring lowering.")]
+    [Fact(DisplayName = "async-func-dstr-var-obj-ptrn-id-init-fn-name-fn.js")]
     public Task async_func_dstr_var_obj_ptrn_id_init_fn_name_fn_569()
         => ExecutionTest("async-func-dstr-var-obj-ptrn-id-init-fn-name-fn");
 
-    [Fact(DisplayName = "async-func-dstr-var-obj-ptrn-id-init-fn-name-gen.js", Skip = "Pending complete for-in/of destructuring lowering.")]
+    [Fact(DisplayName = "async-func-dstr-var-obj-ptrn-id-init-fn-name-gen.js")]
     public Task async_func_dstr_var_obj_ptrn_id_init_fn_name_gen_570()
         => ExecutionTest("async-func-dstr-var-obj-ptrn-id-init-fn-name-gen");
 
@@ -388,23 +388,23 @@ public class Section14_7_5ExecutionTests03 : Jroc.Test262.Tests.language.stateme
     public Task async_gen_decl_dstr_array_elem_init_evaluation_596()
         => ExecutionTest("async-gen-decl-dstr-array-elem-init-evaluation");
 
-    [Fact(DisplayName = "async-gen-decl-dstr-array-elem-init-fn-name-arrow.js", Skip = "Pending complete for-in/of destructuring lowering.")]
+    [Fact(DisplayName = "async-gen-decl-dstr-array-elem-init-fn-name-arrow.js")]
     public Task async_gen_decl_dstr_array_elem_init_fn_name_arrow_597()
         => ExecutionTest("async-gen-decl-dstr-array-elem-init-fn-name-arrow");
 
-    [Fact(DisplayName = "async-gen-decl-dstr-array-elem-init-fn-name-class.js", Skip = "Pending complete for-in/of destructuring lowering.")]
+    [Fact(DisplayName = "async-gen-decl-dstr-array-elem-init-fn-name-class.js")]
     public Task async_gen_decl_dstr_array_elem_init_fn_name_class_598()
         => ExecutionTest("async-gen-decl-dstr-array-elem-init-fn-name-class");
 
-    [Fact(DisplayName = "async-gen-decl-dstr-array-elem-init-fn-name-cover.js", Skip = "Pending complete for-in/of destructuring lowering.")]
+    [Fact(DisplayName = "async-gen-decl-dstr-array-elem-init-fn-name-cover.js")]
     public Task async_gen_decl_dstr_array_elem_init_fn_name_cover_599()
         => ExecutionTest("async-gen-decl-dstr-array-elem-init-fn-name-cover");
 
-    [Fact(DisplayName = "async-gen-decl-dstr-array-elem-init-fn-name-fn.js", Skip = "Pending complete for-in/of destructuring lowering.")]
+    [Fact(DisplayName = "async-gen-decl-dstr-array-elem-init-fn-name-fn.js")]
     public Task async_gen_decl_dstr_array_elem_init_fn_name_fn_600()
         => ExecutionTest("async-gen-decl-dstr-array-elem-init-fn-name-fn");
 
-    [Fact(DisplayName = "async-gen-decl-dstr-array-elem-init-fn-name-gen.js", Skip = "Pending complete for-in/of destructuring lowering.")]
+    [Fact(DisplayName = "async-gen-decl-dstr-array-elem-init-fn-name-gen.js")]
     public Task async_gen_decl_dstr_array_elem_init_fn_name_gen_601()
         => ExecutionTest("async-gen-decl-dstr-array-elem-init-fn-name-gen");
 
@@ -740,23 +740,23 @@ public class Section14_7_5ExecutionTests03 : Jroc.Test262.Tests.language.stateme
     public Task async_gen_decl_dstr_obj_id_init_evaluation_684()
         => ExecutionTest("async-gen-decl-dstr-obj-id-init-evaluation");
 
-    [Fact(DisplayName = "async-gen-decl-dstr-obj-id-init-fn-name-arrow.js", Skip = "Pending complete for-in/of destructuring lowering.")]
+    [Fact(DisplayName = "async-gen-decl-dstr-obj-id-init-fn-name-arrow.js")]
     public Task async_gen_decl_dstr_obj_id_init_fn_name_arrow_685()
         => ExecutionTest("async-gen-decl-dstr-obj-id-init-fn-name-arrow");
 
-    [Fact(DisplayName = "async-gen-decl-dstr-obj-id-init-fn-name-class.js", Skip = "Pending complete for-in/of destructuring lowering.")]
+    [Fact(DisplayName = "async-gen-decl-dstr-obj-id-init-fn-name-class.js")]
     public Task async_gen_decl_dstr_obj_id_init_fn_name_class_686()
         => ExecutionTest("async-gen-decl-dstr-obj-id-init-fn-name-class");
 
-    [Fact(DisplayName = "async-gen-decl-dstr-obj-id-init-fn-name-cover.js", Skip = "Pending complete for-in/of destructuring lowering.")]
+    [Fact(DisplayName = "async-gen-decl-dstr-obj-id-init-fn-name-cover.js")]
     public Task async_gen_decl_dstr_obj_id_init_fn_name_cover_687()
         => ExecutionTest("async-gen-decl-dstr-obj-id-init-fn-name-cover");
 
-    [Fact(DisplayName = "async-gen-decl-dstr-obj-id-init-fn-name-fn.js", Skip = "Pending complete for-in/of destructuring lowering.")]
+    [Fact(DisplayName = "async-gen-decl-dstr-obj-id-init-fn-name-fn.js")]
     public Task async_gen_decl_dstr_obj_id_init_fn_name_fn_688()
         => ExecutionTest("async-gen-decl-dstr-obj-id-init-fn-name-fn");
 
-    [Fact(DisplayName = "async-gen-decl-dstr-obj-id-init-fn-name-gen.js", Skip = "Pending complete for-in/of destructuring lowering.")]
+    [Fact(DisplayName = "async-gen-decl-dstr-obj-id-init-fn-name-gen.js")]
     public Task async_gen_decl_dstr_obj_id_init_fn_name_gen_689()
         => ExecutionTest("async-gen-decl-dstr-obj-id-init-fn-name-gen");
 
@@ -804,23 +804,23 @@ public class Section14_7_5ExecutionTests03 : Jroc.Test262.Tests.language.stateme
     public Task async_gen_decl_dstr_obj_prop_elem_init_evaluation_700()
         => ExecutionTest("async-gen-decl-dstr-obj-prop-elem-init-evaluation");
 
-    [Fact(DisplayName = "async-gen-decl-dstr-obj-prop-elem-init-fn-name-arrow.js", Skip = "Pending complete for-in/of destructuring lowering.")]
+    [Fact(DisplayName = "async-gen-decl-dstr-obj-prop-elem-init-fn-name-arrow.js")]
     public Task async_gen_decl_dstr_obj_prop_elem_init_fn_name_arrow_701()
         => ExecutionTest("async-gen-decl-dstr-obj-prop-elem-init-fn-name-arrow");
 
-    [Fact(DisplayName = "async-gen-decl-dstr-obj-prop-elem-init-fn-name-class.js", Skip = "Pending complete for-in/of destructuring lowering.")]
+    [Fact(DisplayName = "async-gen-decl-dstr-obj-prop-elem-init-fn-name-class.js")]
     public Task async_gen_decl_dstr_obj_prop_elem_init_fn_name_class_702()
         => ExecutionTest("async-gen-decl-dstr-obj-prop-elem-init-fn-name-class");
 
-    [Fact(DisplayName = "async-gen-decl-dstr-obj-prop-elem-init-fn-name-cover.js", Skip = "Pending complete for-in/of destructuring lowering.")]
+    [Fact(DisplayName = "async-gen-decl-dstr-obj-prop-elem-init-fn-name-cover.js")]
     public Task async_gen_decl_dstr_obj_prop_elem_init_fn_name_cover_703()
         => ExecutionTest("async-gen-decl-dstr-obj-prop-elem-init-fn-name-cover");
 
-    [Fact(DisplayName = "async-gen-decl-dstr-obj-prop-elem-init-fn-name-fn.js", Skip = "Pending complete for-in/of destructuring lowering.")]
+    [Fact(DisplayName = "async-gen-decl-dstr-obj-prop-elem-init-fn-name-fn.js")]
     public Task async_gen_decl_dstr_obj_prop_elem_init_fn_name_fn_704()
         => ExecutionTest("async-gen-decl-dstr-obj-prop-elem-init-fn-name-fn");
 
-    [Fact(DisplayName = "async-gen-decl-dstr-obj-prop-elem-init-fn-name-gen.js", Skip = "Pending complete for-in/of destructuring lowering.")]
+    [Fact(DisplayName = "async-gen-decl-dstr-obj-prop-elem-init-fn-name-gen.js")]
     public Task async_gen_decl_dstr_obj_prop_elem_init_fn_name_gen_705()
         => ExecutionTest("async-gen-decl-dstr-obj-prop-elem-init-fn-name-gen");
 
@@ -968,11 +968,11 @@ public class Section14_7_5ExecutionTests03 : Jroc.Test262.Tests.language.stateme
     public Task async_gen_dstr_const_ary_ptrn_elem_ary_elision_iter_741()
         => ExecutionTest("async-gen-dstr-const-ary-ptrn-elem-ary-elision-iter");
 
-    [Fact(DisplayName = "async-gen-dstr-const-ary-ptrn-elem-ary-empty-init.js", Skip = "Pending complete for-in/of destructuring lowering.")]
+    [Fact(DisplayName = "async-gen-dstr-const-ary-ptrn-elem-ary-empty-init.js")]
     public Task async_gen_dstr_const_ary_ptrn_elem_ary_empty_init_742()
         => ExecutionTest("async-gen-dstr-const-ary-ptrn-elem-ary-empty-init");
 
-    [Fact(DisplayName = "async-gen-dstr-const-ary-ptrn-elem-ary-empty-iter.js", Skip = "Pending complete for-in/of destructuring lowering.")]
+    [Fact(DisplayName = "async-gen-dstr-const-ary-ptrn-elem-ary-empty-iter.js")]
     public Task async_gen_dstr_const_ary_ptrn_elem_ary_empty_iter_743()
         => ExecutionTest("async-gen-dstr-const-ary-ptrn-elem-ary-empty-iter");
 
@@ -980,7 +980,7 @@ public class Section14_7_5ExecutionTests03 : Jroc.Test262.Tests.language.stateme
     public Task async_gen_dstr_const_ary_ptrn_elem_ary_rest_init_744()
         => ExecutionTest("async-gen-dstr-const-ary-ptrn-elem-ary-rest-init");
 
-    [Fact(DisplayName = "async-gen-dstr-const-ary-ptrn-elem-ary-rest-iter.js", Skip = "Pending complete for-in/of destructuring lowering.")]
+    [Fact(DisplayName = "async-gen-dstr-const-ary-ptrn-elem-ary-rest-iter.js")]
     public Task async_gen_dstr_const_ary_ptrn_elem_ary_rest_iter_745()
         => ExecutionTest("async-gen-dstr-const-ary-ptrn-elem-ary-rest-iter");
 
@@ -992,15 +992,15 @@ public class Section14_7_5ExecutionTests03 : Jroc.Test262.Tests.language.stateme
     public Task async_gen_dstr_const_ary_ptrn_elem_id_init_exhausted_747()
         => ExecutionTest("async-gen-dstr-const-ary-ptrn-elem-id-init-exhausted");
 
-    [Fact(DisplayName = "async-gen-dstr-const-ary-ptrn-elem-id-init-fn-name-arrow.js", Skip = "Pending complete for-in/of destructuring lowering.")]
+    [Fact(DisplayName = "async-gen-dstr-const-ary-ptrn-elem-id-init-fn-name-arrow.js")]
     public Task async_gen_dstr_const_ary_ptrn_elem_id_init_fn_name_arrow_748()
         => ExecutionTest("async-gen-dstr-const-ary-ptrn-elem-id-init-fn-name-arrow");
 
-    [Fact(DisplayName = "async-gen-dstr-const-ary-ptrn-elem-id-init-fn-name-class.js", Skip = "Pending complete for-in/of destructuring lowering.")]
+    [Fact(DisplayName = "async-gen-dstr-const-ary-ptrn-elem-id-init-fn-name-class.js")]
     public Task async_gen_dstr_const_ary_ptrn_elem_id_init_fn_name_class_749()
         => ExecutionTest("async-gen-dstr-const-ary-ptrn-elem-id-init-fn-name-class");
 
-    [Fact(DisplayName = "async-gen-dstr-const-ary-ptrn-elem-id-init-fn-name-cover.js", Skip = "Pending complete for-in/of destructuring lowering.")]
+    [Fact(DisplayName = "async-gen-dstr-const-ary-ptrn-elem-id-init-fn-name-cover.js")]
     public Task async_gen_dstr_const_ary_ptrn_elem_id_init_fn_name_cover_750()
         => ExecutionTest("async-gen-dstr-const-ary-ptrn-elem-id-init-fn-name-cover");
 }

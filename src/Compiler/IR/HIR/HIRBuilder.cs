@@ -3783,11 +3783,12 @@ partial class HIRMethodBuilder
                 // Handle call expressions
                 HIRExpression? calleeExpr;
                 var argExprs = new List<HIRExpression>();
+                var normalizedCallee = UnwrapExpression(callExpr.Callee) ?? callExpr.Callee;
 
-                if (!TryParseExpression(callExpr.Callee, out calleeExpr))
+                if (!TryParseExpression(normalizedCallee, out calleeExpr))
                 {
                     Jroc.IR.IRPipelineMetrics.RecordFailureIfUnset(
-                        $"HIR parse failed for call callee expression {callExpr.Callee.Type}");
+                        $"HIR parse failed for call callee expression {normalizedCallee.Type}");
                     return false;
                 }
 

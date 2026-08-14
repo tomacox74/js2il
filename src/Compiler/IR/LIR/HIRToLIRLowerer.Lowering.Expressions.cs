@@ -940,8 +940,7 @@ public sealed partial class HIRToLIRLowerer
                     return true;
                 }
 
-                if (!string.IsNullOrWhiteSpace(_pendingAnonymousClassExpressionInferredName)
-                    && initializedUserClassType.InitializationStatements.Count > 0)
+                if (!string.IsNullOrWhiteSpace(_pendingAnonymousClassExpressionInferredName))
                 {
                     var classTypeTemp = CreateTempVariable();
                     _methodBodyIR.Instructions.Add(new LIRGetUserClassType(initializedUserClassType.RegistryClassName, classTypeTemp));
@@ -1013,8 +1012,7 @@ public sealed partial class HIRToLIRLowerer
                     DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(Type)));
                 }
 
-                if (!string.IsNullOrWhiteSpace(_pendingAnonymousClassExpressionInferredName)
-                    && initializedUserClassType.InitializationStatements.Count > 0)
+                if (!string.IsNullOrWhiteSpace(_pendingAnonymousClassExpressionInferredName))
                 {
                     var inferredNameTemp = CreateTempVariable();
                     _methodBodyIR.Instructions.Add(new LIRConstString(_pendingAnonymousClassExpressionInferredName, inferredNameTemp));

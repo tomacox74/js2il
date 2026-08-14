@@ -112,23 +112,23 @@ public class Section14_7_5ExecutionTests01 : Jroc.Test262.Tests.language.stateme
     public Task dstr_array_elem_init_evaluation_27()
         => ExecutionTest("dstr/array-elem-init-evaluation");
 
-    [Fact(DisplayName = "dstr/array-elem-init-fn-name-arrow.js", Skip = "Pending complete for-in/of destructuring lowering.")]
+    [Fact(DisplayName = "dstr/array-elem-init-fn-name-arrow.js")]
     public Task dstr_array_elem_init_fn_name_arrow_28()
         => ExecutionTest("dstr/array-elem-init-fn-name-arrow");
 
-    [Fact(DisplayName = "dstr/array-elem-init-fn-name-class.js", Skip = "Pending complete for-in/of destructuring lowering.")]
+    [Fact(DisplayName = "dstr/array-elem-init-fn-name-class.js")]
     public Task dstr_array_elem_init_fn_name_class_29()
         => ExecutionTest("dstr/array-elem-init-fn-name-class");
 
-    [Fact(DisplayName = "dstr/array-elem-init-fn-name-cover.js", Skip = "Pending complete for-in/of destructuring lowering.")]
+    [Fact(DisplayName = "dstr/array-elem-init-fn-name-cover.js")]
     public Task dstr_array_elem_init_fn_name_cover_30()
         => ExecutionTest("dstr/array-elem-init-fn-name-cover");
 
-    [Fact(DisplayName = "dstr/array-elem-init-fn-name-fn.js", Skip = "Pending complete for-in/of destructuring lowering.")]
+    [Fact(DisplayName = "dstr/array-elem-init-fn-name-fn.js")]
     public Task dstr_array_elem_init_fn_name_fn_31()
         => ExecutionTest("dstr/array-elem-init-fn-name-fn");
 
-    [Fact(DisplayName = "dstr/array-elem-init-fn-name-gen.js", Skip = "Pending complete for-in/of destructuring lowering.")]
+    [Fact(DisplayName = "dstr/array-elem-init-fn-name-gen.js")]
     public Task dstr_array_elem_init_fn_name_gen_32()
         => ExecutionTest("dstr/array-elem-init-fn-name-gen");
 
@@ -748,11 +748,11 @@ public class Section14_7_5ExecutionTests01 : Jroc.Test262.Tests.language.stateme
     public Task dstr_const_ary_ptrn_elem_ary_elision_iter_186()
         => ExecutionTest("dstr/const-ary-ptrn-elem-ary-elision-iter");
 
-    [Fact(DisplayName = "dstr/const-ary-ptrn-elem-ary-empty-init.js", Skip = "Pending complete for-in/of destructuring lowering.")]
+    [Fact(DisplayName = "dstr/const-ary-ptrn-elem-ary-empty-init.js")]
     public Task dstr_const_ary_ptrn_elem_ary_empty_init_187()
         => ExecutionTest("dstr/const-ary-ptrn-elem-ary-empty-init");
 
-    [Fact(DisplayName = "dstr/const-ary-ptrn-elem-ary-empty-iter.js", Skip = "Pending complete for-in/of destructuring lowering.")]
+    [Fact(DisplayName = "dstr/const-ary-ptrn-elem-ary-empty-iter.js")]
     public Task dstr_const_ary_ptrn_elem_ary_empty_iter_188()
         => ExecutionTest("dstr/const-ary-ptrn-elem-ary-empty-iter");
 
@@ -760,7 +760,7 @@ public class Section14_7_5ExecutionTests01 : Jroc.Test262.Tests.language.stateme
     public Task dstr_const_ary_ptrn_elem_ary_rest_init_189()
         => ExecutionTest("dstr/const-ary-ptrn-elem-ary-rest-init");
 
-    [Fact(DisplayName = "dstr/const-ary-ptrn-elem-ary-rest-iter.js", Skip = "Pending complete for-in/of destructuring lowering.")]
+    [Fact(DisplayName = "dstr/const-ary-ptrn-elem-ary-rest-iter.js")]
     public Task dstr_const_ary_ptrn_elem_ary_rest_iter_190()
         => ExecutionTest("dstr/const-ary-ptrn-elem-ary-rest-iter");
 
@@ -772,23 +772,23 @@ public class Section14_7_5ExecutionTests01 : Jroc.Test262.Tests.language.stateme
     public Task dstr_const_ary_ptrn_elem_id_init_exhausted_192()
         => ExecutionTest("dstr/const-ary-ptrn-elem-id-init-exhausted");
 
-    [Fact(DisplayName = "dstr/const-ary-ptrn-elem-id-init-fn-name-arrow.js", Skip = "Pending complete for-in/of destructuring lowering.")]
+    [Fact(DisplayName = "dstr/const-ary-ptrn-elem-id-init-fn-name-arrow.js")]
     public Task dstr_const_ary_ptrn_elem_id_init_fn_name_arrow_193()
         => ExecutionTest("dstr/const-ary-ptrn-elem-id-init-fn-name-arrow");
 
-    [Fact(DisplayName = "dstr/const-ary-ptrn-elem-id-init-fn-name-class.js", Skip = "Pending complete for-in/of destructuring lowering.")]
+    [Fact(DisplayName = "dstr/const-ary-ptrn-elem-id-init-fn-name-class.js")]
     public Task dstr_const_ary_ptrn_elem_id_init_fn_name_class_194()
         => ExecutionTest("dstr/const-ary-ptrn-elem-id-init-fn-name-class");
 
-    [Fact(DisplayName = "dstr/const-ary-ptrn-elem-id-init-fn-name-cover.js", Skip = "Pending complete for-in/of destructuring lowering.")]
+    [Fact(DisplayName = "dstr/const-ary-ptrn-elem-id-init-fn-name-cover.js")]
     public Task dstr_const_ary_ptrn_elem_id_init_fn_name_cover_195()
         => ExecutionTest("dstr/const-ary-ptrn-elem-id-init-fn-name-cover");
 
-    [Fact(DisplayName = "dstr/const-ary-ptrn-elem-id-init-fn-name-fn.js", Skip = "Pending complete for-in/of destructuring lowering.")]
+    [Fact(DisplayName = "dstr/const-ary-ptrn-elem-id-init-fn-name-fn.js")]
     public Task dstr_const_ary_ptrn_elem_id_init_fn_name_fn_196()
         => ExecutionTest("dstr/const-ary-ptrn-elem-id-init-fn-name-fn");
 
-    [Fact(DisplayName = "dstr/const-ary-ptrn-elem-id-init-fn-name-gen.js", Skip = "Pending complete for-in/of destructuring lowering.")]
+    [Fact(DisplayName = "dstr/const-ary-ptrn-elem-id-init-fn-name-gen.js")]
     public Task dstr_const_ary_ptrn_elem_id_init_fn_name_gen_197()
         => ExecutionTest("dstr/const-ary-ptrn-elem-id-init-fn-name-gen");
 
@@ -800,7 +800,7 @@ public class Section14_7_5ExecutionTests01 : Jroc.Test262.Tests.language.stateme
     public Task dstr_const_ary_ptrn_elem_id_init_skipped_199()
         => ExecutionTest("dstr/const-ary-ptrn-elem-id-init-skipped");
 
-    [Fact(DisplayName = "dstr/const-ary-ptrn-elem-id-init-throws.js", Skip = "Pending complete for-in/of destructuring lowering.")]
+    [Fact(DisplayName = "dstr/const-ary-ptrn-elem-id-init-throws.js")]
     public Task dstr_const_ary_ptrn_elem_id_init_throws_200()
         => ExecutionTest("dstr/const-ary-ptrn-elem-id-init-throws");
 
@@ -980,23 +980,23 @@ public class Section14_7_5ExecutionTests01 : Jroc.Test262.Tests.language.stateme
     public Task dstr_const_obj_ptrn_id_get_value_err_244()
         => ExecutionTest("dstr/const-obj-ptrn-id-get-value-err");
 
-    [Fact(DisplayName = "dstr/const-obj-ptrn-id-init-fn-name-arrow.js", Skip = "Pending complete for-in/of destructuring lowering.")]
+    [Fact(DisplayName = "dstr/const-obj-ptrn-id-init-fn-name-arrow.js")]
     public Task dstr_const_obj_ptrn_id_init_fn_name_arrow_245()
         => ExecutionTest("dstr/const-obj-ptrn-id-init-fn-name-arrow");
 
-    [Fact(DisplayName = "dstr/const-obj-ptrn-id-init-fn-name-class.js", Skip = "Pending complete for-in/of destructuring lowering.")]
+    [Fact(DisplayName = "dstr/const-obj-ptrn-id-init-fn-name-class.js")]
     public Task dstr_const_obj_ptrn_id_init_fn_name_class_246()
         => ExecutionTest("dstr/const-obj-ptrn-id-init-fn-name-class");
 
-    [Fact(DisplayName = "dstr/const-obj-ptrn-id-init-fn-name-cover.js", Skip = "Pending complete for-in/of destructuring lowering.")]
+    [Fact(DisplayName = "dstr/const-obj-ptrn-id-init-fn-name-cover.js")]
     public Task dstr_const_obj_ptrn_id_init_fn_name_cover_247()
         => ExecutionTest("dstr/const-obj-ptrn-id-init-fn-name-cover");
 
-    [Fact(DisplayName = "dstr/const-obj-ptrn-id-init-fn-name-fn.js", Skip = "Pending complete for-in/of destructuring lowering.")]
+    [Fact(DisplayName = "dstr/const-obj-ptrn-id-init-fn-name-fn.js")]
     public Task dstr_const_obj_ptrn_id_init_fn_name_fn_248()
         => ExecutionTest("dstr/const-obj-ptrn-id-init-fn-name-fn");
 
-    [Fact(DisplayName = "dstr/const-obj-ptrn-id-init-fn-name-gen.js", Skip = "Pending complete for-in/of destructuring lowering.")]
+    [Fact(DisplayName = "dstr/const-obj-ptrn-id-init-fn-name-gen.js")]
     public Task dstr_const_obj_ptrn_id_init_fn_name_gen_249()
         => ExecutionTest("dstr/const-obj-ptrn-id-init-fn-name-gen");
 
