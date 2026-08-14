@@ -4,7 +4,7 @@
 
 [Back to Section4](Section4.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-03-07T01:50:59Z
+> Last generated (UTC): 2026-08-14T05:48:56Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -14,6 +14,6 @@
 
 | Clause | Title | Status | Spec |
 |---:|---|---|---|
-| 4.3.1 | Objects | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-objects) |
-| 4.3.2 | The Strict Variant of ECMAScript | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-strict-variant-of-ecmascript) |
+| 4.3.1 | Objects | N/A (informational) | [tc39.es](https://tc39.es/ecma262/#sec-objects) |
+| 4.3.2 | The Strict Variant of ECMAScript | N/A (informational) | [tc39.es](https://tc39.es/ecma262/#sec-strict-variant-of-ecmascript) |
 
