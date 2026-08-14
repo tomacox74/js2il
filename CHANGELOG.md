@@ -6,6 +6,12 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- runtime: introduce explicit `RuntimeAgentCluster`, `RuntimeAgent`, and
+  `RuntimeRealm` lifetime owners. Every runtime service container now belongs
+  to exactly one realm and exposes the ownership graph through constructor
+  injection, with deterministic child-first disposal and disposed-state
+  guards. Existing observable runtime state remains in place for the follow-up
+  migration stages tracked by #1805.
 - compiler/runtime/test262: complete String well-known-symbol dispatch for
   primitive match/search/replaceAll inputs, invoke observable @@search hooks
   on internally created RegExps, preserve JavaScript number-string precision
@@ -16,7 +22,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   destructuring bindings. This also builds default-initializer scopes for
   `var` loop heads. Activates 195 corresponding pinned test262 fixtures.
 - compiler/test262: close #1783 by lowering parenthesized function-expression
-  callees in nested destructuring defaults. This preserves nested iterator
+  callees in nested   destructuring defaults. This preserves nested iterator
   acquisition, elision, rest, and abrupt initializer completion in sync,
   async, generator, and async-generator loops. Activates 54 corresponding
   pinned test262 fixtures.

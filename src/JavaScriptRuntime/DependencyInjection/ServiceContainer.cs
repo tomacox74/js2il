@@ -11,6 +11,37 @@ public class ServiceContainer
     private readonly Dictionary<Type, object> _singletons = new();
     private readonly Dictionary<Type, Type> _typeRegistrations = new();
     private readonly object _lock = new();
+    private RuntimeRealm? _owningRealm;
+
+    internal RuntimeRealm? OwningRealm
+    {
+        get
+        {
+            lock (_lock)
+            {
+                return _owningRealm;
+            }
+        }
+    }
+
+    internal void AttachOwningRealm(RuntimeRealm realm)
+    {
+        ArgumentNullException.ThrowIfNull(realm);
+
+        lock (_lock)
+        {
+            if (_owningRealm != null && !ReferenceEquals(_owningRealm, realm))
+            {
+                throw new InvalidOperationException(
+                    "A service container cannot be attached to more than one runtime realm.");
+            }
+
+            _owningRealm = realm;
+            _singletons[typeof(RuntimeAgentCluster)] = realm.Agent.Cluster;
+            _singletons[typeof(RuntimeAgent)] = realm.Agent;
+            _singletons[typeof(RuntimeRealm)] = realm;
+        }
+    }
 
     /// <summary>
     /// Registers a singleton instance for a specific type.
@@ -21,9 +52,11 @@ public class ServiceContainer
     public ServiceContainer RegisterInstance<T>(T instance) where T : class
     {
         ArgumentNullException.ThrowIfNull(instance);
-        
+
         lock (_lock)
         {
+            ThrowIfOwningRealmDisposed();
+            ThrowIfReservedOwnershipType(typeof(T));
             _singletons[typeof(T)] = instance;
         }
         return this;
@@ -39,14 +72,16 @@ public class ServiceContainer
     {
         ArgumentNullException.ThrowIfNull(serviceType);
         ArgumentNullException.ThrowIfNull(instance);
-        
+
         if (!serviceType.IsAssignableFrom(instance.GetType()))
         {
             throw new ArgumentException($"Instance of type {instance.GetType().Name} is not assignable to {serviceType.Name}");
         }
-        
+
         lock (_lock)
         {
+            ThrowIfOwningRealmDisposed();
+            ThrowIfReservedOwnershipType(serviceType);
             _singletons[serviceType] = instance;
         }
         return this;
@@ -59,12 +94,14 @@ public class ServiceContainer
     /// <typeparam name="TService">The service type (typically an interface).</typeparam>
     /// <typeparam name="TImplementation">The implementation type.</typeparam>
     /// <returns>The container for fluent configuration.</returns>
-    public ServiceContainer Register<TService, TImplementation>() 
-        where TService : class 
+    public ServiceContainer Register<TService, TImplementation>()
+        where TService : class
         where TImplementation : class, TService
     {
         lock (_lock)
         {
+            ThrowIfOwningRealmDisposed();
+            ThrowIfReservedOwnershipType(typeof(TService));
             _typeRegistrations[typeof(TService)] = typeof(TImplementation);
         }
         return this;
@@ -79,6 +116,8 @@ public class ServiceContainer
     {
         lock (_lock)
         {
+            ThrowIfOwningRealmDisposed();
+            ThrowIfReservedOwnershipType(typeof(T));
             _typeRegistrations[typeof(T)] = typeof(T);
         }
         return this;
@@ -104,9 +143,11 @@ public class ServiceContainer
     public object Resolve(Type serviceType)
     {
         ArgumentNullException.ThrowIfNull(serviceType);
-        
+
         lock (_lock)
         {
+            ThrowIfOwningRealmDisposed();
+
             // Check if we already have an instance
             if (_singletons.TryGetValue(serviceType, out var existing))
             {
@@ -123,10 +164,10 @@ public class ServiceContainer
                 _singletons[serviceType] = existingImplementation;
                 return existingImplementation;
             }
-            
+
             // Create the instance with constructor injection
             var instance = CreateInstance(implementationType);
-            
+
             // Store as singleton (under both service and implementation types) so resolving by
             // interface or concrete type returns the same instance.
             _singletons[serviceType] = instance;
@@ -135,7 +176,7 @@ public class ServiceContainer
             {
                 _singletons[implementationType] = instance;
             }
-            
+
             return instance;
         }
     }
@@ -150,6 +191,8 @@ public class ServiceContainer
     {
         lock (_lock)
         {
+            ThrowIfOwningRealmDisposed();
+
             if (_singletons.TryGetValue(typeof(T), out var obj))
             {
                 instance = (T)obj;
@@ -169,6 +212,7 @@ public class ServiceContainer
     {
         lock (_lock)
         {
+            ThrowIfOwningRealmDisposed();
             return _singletons.ContainsKey(typeof(T)) || _typeRegistrations.ContainsKey(typeof(T));
         }
     }
@@ -183,9 +227,11 @@ public class ServiceContainer
     public ServiceContainer Replace<T>(T instance) where T : class
     {
         ArgumentNullException.ThrowIfNull(instance);
-        
+
         lock (_lock)
         {
+            ThrowIfOwningRealmDisposed();
+            ThrowIfReservedOwnershipType(typeof(T));
             _singletons[typeof(T)] = instance;
         }
         return this;
@@ -200,6 +246,8 @@ public class ServiceContainer
     {
         lock (_lock)
         {
+            ThrowIfOwningRealmDisposed();
+            ThrowIfReservedOwnershipType(typeof(T));
             return _singletons.Remove(typeof(T));
         }
     }
@@ -211,8 +259,10 @@ public class ServiceContainer
     {
         lock (_lock)
         {
+            ThrowIfOwningRealmDisposed();
             _singletons.Clear();
             _typeRegistrations.Clear();
+            RestoreOwnershipRegistrations();
         }
     }
 
@@ -226,6 +276,9 @@ public class ServiceContainer
         var child = new ServiceContainer();
         lock (_lock)
         {
+            ThrowIfOwningRealmDisposed();
+            child._owningRealm = _owningRealm;
+
             foreach (var kvp in _singletons)
             {
                 child._singletons[kvp.Key] = kvp.Value;
@@ -236,6 +289,38 @@ public class ServiceContainer
             }
         }
         return child;
+    }
+
+    private void RestoreOwnershipRegistrations()
+    {
+        if (_owningRealm == null)
+        {
+            return;
+        }
+
+        _singletons[typeof(RuntimeAgentCluster)] = _owningRealm.Agent.Cluster;
+        _singletons[typeof(RuntimeAgent)] = _owningRealm.Agent;
+        _singletons[typeof(RuntimeRealm)] = _owningRealm;
+    }
+
+    private void ThrowIfOwningRealmDisposed()
+    {
+        if (_owningRealm?.IsDisposed == true)
+        {
+            throw new ObjectDisposedException(nameof(RuntimeRealm));
+        }
+    }
+
+    private void ThrowIfReservedOwnershipType(Type serviceType)
+    {
+        if (_owningRealm != null
+            && (serviceType == typeof(RuntimeAgentCluster)
+                || serviceType == typeof(RuntimeAgent)
+                || serviceType == typeof(RuntimeRealm)))
+        {
+            throw new InvalidOperationException(
+                $"Runtime ownership service '{serviceType.Name}' cannot be replaced or removed.");
+        }
     }
 
     private Type ResolveImplementationType(Type serviceType)
@@ -260,7 +345,7 @@ public class ServiceContainer
     {
         // Get the constructor with the most parameters (greedy resolution)
         var constructors = type.GetConstructors(BindingFlags.Public | BindingFlags.Instance);
-        
+
         if (constructors.Length == 0)
         {
             throw new InvalidOperationException(
@@ -278,7 +363,7 @@ public class ServiceContainer
         for (int i = 0; i < parameters.Length; i++)
         {
             var paramType = parameters[i].ParameterType;
-            
+
             try
             {
                 // Recursively resolve dependencies
