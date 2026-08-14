@@ -12,6 +12,14 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   injection, with deterministic child-first disposal and disposed-state
   guards. Existing observable runtime state remains in place for the follow-up
   migration stages tracked by #1805.
+
+- runtime/test262: add ES2025 JSON.rawJSON and JSON.isRawJSON support with
+  validated frozen marker objects, raw primitive serialization, root reviver
+  source context, and standard builtin metadata. JSON.stringify now creates
+  its wrapper as an own data property, preserves its key list while getters
+  mutate objects, and applies observable coercion to boxed space values.
+  Activates twenty corresponding pinned test262 fixtures.
+
 - compiler/runtime/test262: complete String well-known-symbol dispatch for
   primitive match/search/replaceAll inputs, invoke observable @@search hooks
   on internally created RegExps, preserve JavaScript number-string precision

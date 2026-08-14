@@ -4,7 +4,7 @@
 
 [Back to Section25](Section25.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-08-14T08:29:24Z
+> Last generated (UTC): 2026-08-14T22:40:15Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -25,6 +25,8 @@
 | 25.5.2.5 | SerializeJSONObject ( state , value ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-serializejsonobject) |
 | 25.5.2.6 | SerializeJSONArray ( state , value ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-serializejsonarray) |
 | 25.5.3 | JSON [ %Symbol.toStringTag% ] | Supported | [tc39.es](https://tc39.es/ecma262/#sec-json-%symbol.tostringtag%) |
+| 25.5.4 | JSON.rawJSON ( text ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-json.rawjson) |
+| 25.5.5 | JSON.isRawJSON ( O ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-json.israwjson) |
 
 ## Support
 
@@ -40,11 +42,23 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| JSON.stringify | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/JSON/stringify/ExecutionTests.cs` | `test/built-ins/JSON/stringify/builtin.js`<br>`test/built-ins/JSON/stringify/length.js`<br>`test/built-ins/JSON/stringify/name.js`<br>`test/built-ins/JSON/stringify/property-order.js`<br>`test/built-ins/JSON/stringify/prop-desc.js`<br>`test/built-ins/JSON/stringify/replacer-array-abrupt.js`<br>`test/built-ins/JSON/stringify/replacer-array-duplicates.js`<br>`test/built-ins/JSON/stringify/replacer-array-empty.js`<br>`test/built-ins/JSON/stringify/replacer-array-number.js`<br>`test/built-ins/JSON/stringify/replacer-array-number-object.js`<br>`test/built-ins/JSON/stringify/replacer-array-order.js`<br>`test/built-ins/JSON/stringify/replacer-array-proxy.js`<br>`test/built-ins/JSON/stringify/replacer-array-proxy-revoked.js`<br>`test/built-ins/JSON/stringify/replacer-array-proxy-revoked-realm.js`<br>`test/built-ins/JSON/stringify/replacer-array-string-object.js`<br>`test/built-ins/JSON/stringify/replacer-array-undefined.js`<br>`test/built-ins/JSON/stringify/replacer-function-result.js`<br>`test/built-ins/JSON/stringify/space-string.js`<br>`test/built-ins/JSON/stringify/value-tojson-result.js` | JSON.stringify is implemented for ordinary objects and arrays. Current bounded test262 coverage exercises the builtin function object surface (`JSON.stringify`, `.length`, `.name`, and property descriptor metadata), ordinary property-order serialization, array-replacer ordering/filtering/deduplication, boxed string/number replacer entries, ignored undefined/sparse replacer entries, proxy/revoked-proxy abrupt completion, replacer function return-value serialization, selected toJSON return-value serialization, and string space/gap formatting. Broader cyclic, exotic, BigInt, and cross-realm behavior remains limited. |
+| JSON.stringify | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/JSON/stringify/ExecutionTests.cs` | `test/built-ins/JSON/stringify/builtin.js`<br>`test/built-ins/JSON/stringify/length.js`<br>`test/built-ins/JSON/stringify/name.js`<br>`test/built-ins/JSON/stringify/property-order.js`<br>`test/built-ins/JSON/stringify/prop-desc.js`<br>`test/built-ins/JSON/stringify/replacer-array-abrupt.js`<br>`test/built-ins/JSON/stringify/replacer-array-duplicates.js`<br>`test/built-ins/JSON/stringify/replacer-array-empty.js`<br>`test/built-ins/JSON/stringify/replacer-array-number.js`<br>`test/built-ins/JSON/stringify/replacer-array-number-object.js`<br>`test/built-ins/JSON/stringify/replacer-array-order.js`<br>`test/built-ins/JSON/stringify/replacer-array-proxy.js`<br>`test/built-ins/JSON/stringify/replacer-array-proxy-revoked.js`<br>`test/built-ins/JSON/stringify/replacer-array-proxy-revoked-realm.js`<br>`test/built-ins/JSON/stringify/replacer-array-string-object.js`<br>`test/built-ins/JSON/stringify/replacer-array-undefined.js`<br>`test/built-ins/JSON/stringify/replacer-function-object-deleted-property.js`<br>`test/built-ins/JSON/stringify/replacer-function-result.js`<br>`test/built-ins/JSON/stringify/replacer-function-wrapper.js`<br>`test/built-ins/JSON/stringify/space-number-object.js`<br>`test/built-ins/JSON/stringify/space-string.js`<br>`test/built-ins/JSON/stringify/space-string-object.js`<br>`test/built-ins/JSON/stringify/value-tojson-result.js` | JSON.stringify is implemented for ordinary objects and arrays. Current bounded test262 coverage exercises the builtin function object surface (`JSON.stringify`, `.length`, `.name`, and property descriptor metadata), ordinary property-order serialization, stable key-list behavior when getters delete later properties, an own data-property wrapper that bypasses inherited setters, array-replacer ordering/filtering/deduplication, boxed string/number replacer entries, boxed space values with observable ToPrimitive coercion, ignored undefined/sparse replacer entries, proxy/revoked-proxy abrupt completion, replacer function return-value serialization, selected toJSON return-value serialization, and string space/gap formatting. RawJSON marker values serialize as unquoted validated JSON primitives. Broader cyclic, exotic, BigInt, and cross-realm behavior remains limited. |
 
 ### 25.5.3 ([tc39.es](https://tc39.es/ecma262/#sec-json-%symbol.tostringtag%))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
 | JSON[@@toStringTag] descriptor | Supported | `tests/Jroc.Test262.Tests/built-ins/JSON/ExecutionTests.cs` | `test/built-ins/JSON/Symbol.toStringTag.js` | Checked-in coverage now includes JSON @@toStringTag value and descriptor attributes (`value: "JSON"`, `writable: false`, `enumerable: false`, `configurable: true`). |
+
+### 25.5.4 ([tc39.es](https://tc39.es/ecma262/#sec-json.rawjson))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| JSON.rawJSON | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/JSON/rawJSON/ExecutionTests.cs` | `test/built-ins/JSON/rawJSON/basic.js`<br>`test/built-ins/JSON/rawJSON/bigint-raw-json-can-be-stringified.js`<br>`test/built-ins/JSON/rawJSON/builtin.js`<br>`test/built-ins/JSON/rawJSON/illegal-empty-and-start-end-chars.js`<br>`test/built-ins/JSON/rawJSON/invalid-JSON-text.js`<br>`test/built-ins/JSON/rawJSON/length.js`<br>`test/built-ins/JSON/rawJSON/name.js`<br>`test/built-ins/JSON/rawJSON/not-a-constructor.js`<br>`test/built-ins/JSON/rawJSON/prop-desc.js`<br>`test/built-ins/JSON/rawJSON/returns-expected-object.js` | JSON.rawJSON creates frozen null-prototype marker objects for validated primitive JSON text. JSON.stringify emits those markers without quoting, including replacer-produced values that preserve large integer source text. Current parse source-context support covers the root reviver value; nested source contexts remain limited. |
+
+### 25.5.5 ([tc39.es](https://tc39.es/ecma262/#sec-json.israwjson))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| JSON.isRawJSON | Supported | `tests/Jroc.Test262.Tests/built-ins/JSON/isRawJSON/ExecutionTests.cs` | `test/built-ins/JSON/isRawJSON/basic.js`<br>`test/built-ins/JSON/isRawJSON/builtin.js`<br>`test/built-ins/JSON/isRawJSON/length.js`<br>`test/built-ins/JSON/isRawJSON/name.js`<br>`test/built-ins/JSON/isRawJSON/not-a-constructor.js`<br>`test/built-ins/JSON/isRawJSON/prop-desc.js` | JSON.isRawJSON recognizes only marker objects returned by JSON.rawJSON and exposes the standard non-constructor builtin metadata. |
 

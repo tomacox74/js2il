@@ -261,6 +261,10 @@ namespace JavaScriptRuntime
             var reviver = args != null && args.Length > 1 ? args[1] : null;
             return JavaScriptRuntime.JSON.Parse(text, reviver);
         };
+        private static readonly Func<object[], object?[], object?> _jsonRawJsonValue = static (_, args) =>
+            JavaScriptRuntime.JSON.RawJSON(args != null && args.Length > 0 ? args[0] : null);
+        private static readonly Func<object[], object?[], object?> _jsonIsRawJsonValue = static (_, args) =>
+            JavaScriptRuntime.JSON.IsRawJSON(args != null && args.Length > 0 ? args[0] : null);
 
         private static readonly Func<object[], object?[], object?> _errorConstructorValue =
             CreateErrorConstructorValue(static message => new JavaScriptRuntime.Error(message));
@@ -576,6 +580,10 @@ namespace JavaScriptRuntime
                 Value = global::System.Numerics.BigInteger.Zero
             });
             DefineBuiltinFunctionProperty(_jsonValue, "parse", _jsonParseValue, 2d);
+            DefineBuiltinFunctionProperty(_jsonValue, "rawJSON", _jsonRawJsonValue, 1d);
+            DefineBuiltinFunctionProperty(_jsonValue, "isRawJSON", _jsonIsRawJsonValue, 1d);
+            PropertyDescriptorStore.Delete(_jsonRawJsonValue, "prototype");
+            PropertyDescriptorStore.Delete(_jsonIsRawJsonValue, "prototype");
             DefineIntrinsicToStringTagProperty(_atomicsValue, "Atomics");
             DefineBuiltinFunctionProperty(_atomicsValue, "wait", (Func<object?, object?, object?, object?, string>)JavaScriptRuntime.Atomics.wait, 4d);
             ConfigureBuiltinFunctionObject(_jsonStringifyValue);
