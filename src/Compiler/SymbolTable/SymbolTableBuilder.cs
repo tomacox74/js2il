@@ -708,6 +708,44 @@ namespace Jroc.SymbolTables
         /// Recursively checks if an AST node contains any identifier that isn't in the local variables set.
         /// Stops at nested function boundaries.
         /// </summary>
+        private static void CollectBindingNames(Node pattern, HashSet<string> names)
+        {
+            switch (pattern)
+            {
+                case Identifier id:
+                    names.Add(id.Name);
+                    return;
+                case AssignmentPattern assignment:
+                    CollectBindingNames(assignment.Left, names);
+                    return;
+                case RestElement rest:
+                    CollectBindingNames(rest.Argument, names);
+                    return;
+                case ObjectPattern obj:
+                    foreach (var property in obj.Properties)
+                    {
+                        if (property is Property prop)
+                        {
+                            CollectBindingNames(prop.Value, names);
+                        }
+                        else if (property is RestElement restProperty)
+                        {
+                            CollectBindingNames(restProperty.Argument, names);
+                        }
+                    }
+                    return;
+                case ArrayPattern array:
+                    foreach (var element in array.Elements)
+                    {
+                        if (element != null)
+                        {
+                            CollectBindingNames(element, names);
+                        }
+                    }
+                    return;
+            }
+        }
+
         private bool ContainsFreeVariable(Node? node, HashSet<string> localVariables)
         {
             if (node == null) return false;
@@ -781,13 +819,10 @@ namespace Jroc.SymbolTables
                     {
                         foreach (var decl in forOfDecl.Declarations)
                         {
-                            if (decl.Id is Identifier vid)
-                            {
-                                loopLocals.Add(vid.Name);
-                            }
+                            CollectBindingNames(decl.Id, loopLocals);
                         }
-                        // For-of decl doesn't have initializer; still scan the iterable (in the outer locals).
-                        return ContainsFreeVariable(forOf.Right, localVariables) ||
+                        return forOfDecl.Declarations.Any(decl => ContainsFreeVariable(decl.Id, loopLocals)) ||
+                               ContainsFreeVariable(forOf.Right, localVariables) ||
                                ContainsFreeVariable(forOf.Body, loopLocals);
                     }
 
@@ -804,12 +839,10 @@ namespace Jroc.SymbolTables
                     {
                         foreach (var decl in forInDecl.Declarations)
                         {
-                            if (decl.Id is Identifier vid)
-                            {
-                                loopLocals.Add(vid.Name);
-                            }
+                            CollectBindingNames(decl.Id, loopLocals);
                         }
-                        return ContainsFreeVariable(forIn.Right, localVariables) ||
+                        return forInDecl.Declarations.Any(decl => ContainsFreeVariable(decl.Id, loopLocals)) ||
+                               ContainsFreeVariable(forIn.Right, localVariables) ||
                                ContainsFreeVariable(forIn.Body, loopLocals);
                     }
 
@@ -2627,12 +2660,14 @@ namespace Jroc.SymbolTables
                         var forOfLocals = new HashSet<string>(localVariables);
                         foreach (var decl in forOfDecl.Declarations)
                         {
-                            if (decl.Id is Identifier vid)
-                            {
-                                forOfLocals.Add(vid.Name);
-                            }
+                            CollectBindingNames(decl.Id, forOfLocals);
                         }
                         loopLocals = forOfLocals;
+
+                        foreach (var decl in forOfDecl.Declarations)
+                        {
+                            CollectFreeVariables(decl.Id, loopLocals, targetVariables, result);
+                        }
                     }
                     else
                     {
@@ -2652,12 +2687,13 @@ namespace Jroc.SymbolTables
                         var forInLocals = new HashSet<string>(localVariables);
                         foreach (var decl in forInDecl.Declarations)
                         {
-                            if (decl.Id is Identifier vid)
-                            {
-                                forInLocals.Add(vid.Name);
-                            }
+                            CollectBindingNames(decl.Id, forInLocals);
                         }
                         loopLocals = forInLocals;
+                        foreach (var decl in forInDecl.Declarations)
+                        {
+                            CollectFreeVariables(decl.Id, loopLocals, targetVariables, result);
+                        }
                     }
                     else
                     {

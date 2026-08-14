@@ -11,6 +11,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   assignment patterns. Strict `yield` identifier references now fail before
   lowering without rejecting static `yield` property names. Activates twenty-
   seven corresponding pinned parse-negative test262 fixtures.
+- compiler/test262: close #1784 by preserving captured default-initializer
+  evaluation in object-pattern `for-of` and `for-await-of` bindings. The
+  symbol-table free-variable pass now traverses destructuring loop heads, so
+  property getter and default-expression throws reach the existing iterator
+  close paths for var, let, const, async functions, and async generators.
 - compiler/test262: close #1786 by enforcing strict-mode early errors for
   `for-in`, `for-of`, and `for-await-of` loop heads. Strict `eval` and
   `arguments` bindings or assignment targets, plus invalid strict `yield`

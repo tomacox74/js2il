@@ -20,7 +20,7 @@ public class Section14_7_5ExecutionTests02 : Jroc.Test262.Tests.language.stateme
     public Task dstr_const_obj_ptrn_init_err_254()
         => CompilationFailureTest("dstr/const-obj-ptrn-init-err", string.Empty);
 
-    [Fact(DisplayName = "dstr/const-obj-ptrn-list-err.js", Skip = "Pending complete for-in/of destructuring lowering.")]
+    [Fact(DisplayName = "dstr/const-obj-ptrn-list-err.js")]
     public Task dstr_const_obj_ptrn_list_err_255()
         => ExecutionTest("dstr/const-obj-ptrn-list-err");
 
@@ -44,7 +44,7 @@ public class Section14_7_5ExecutionTests02 : Jroc.Test262.Tests.language.stateme
     public Task dstr_const_obj_ptrn_prop_eval_err_260()
         => ExecutionTest("dstr/const-obj-ptrn-prop-eval-err");
 
-    [Fact(DisplayName = "dstr/const-obj-ptrn-prop-id-get-value-err.js", Skip = "Pending complete for-in/of destructuring lowering.")]
+    [Fact(DisplayName = "dstr/const-obj-ptrn-prop-id-get-value-err.js")]
     public Task dstr_const_obj_ptrn_prop_id_get_value_err_261()
         => ExecutionTest("dstr/const-obj-ptrn-prop-id-get-value-err");
 
@@ -408,7 +408,7 @@ public class Section14_7_5ExecutionTests02 : Jroc.Test262.Tests.language.stateme
     public Task dstr_let_obj_ptrn_init_err_351()
         => CompilationFailureTest("dstr/let-obj-ptrn-init-err", string.Empty);
 
-    [Fact(DisplayName = "dstr/let-obj-ptrn-list-err.js", Skip = "Pending complete for-in/of destructuring lowering.")]
+    [Fact(DisplayName = "dstr/let-obj-ptrn-list-err.js")]
     public Task dstr_let_obj_ptrn_list_err_352()
         => ExecutionTest("dstr/let-obj-ptrn-list-err");
 
@@ -432,7 +432,7 @@ public class Section14_7_5ExecutionTests02 : Jroc.Test262.Tests.language.stateme
     public Task dstr_let_obj_ptrn_prop_eval_err_357()
         => ExecutionTest("dstr/let-obj-ptrn-prop-eval-err");
 
-    [Fact(DisplayName = "dstr/let-obj-ptrn-prop-id-get-value-err.js", Skip = "Pending complete for-in/of destructuring lowering.")]
+    [Fact(DisplayName = "dstr/let-obj-ptrn-prop-id-get-value-err.js")]
     public Task dstr_let_obj_ptrn_prop_id_get_value_err_358()
         => ExecutionTest("dstr/let-obj-ptrn-prop-id-get-value-err");
 

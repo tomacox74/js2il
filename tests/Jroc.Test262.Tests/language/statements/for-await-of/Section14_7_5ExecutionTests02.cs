@@ -48,7 +48,7 @@ public class Section14_7_5ExecutionTests02 : Jroc.Test262.Tests.language.stateme
     public Task async_func_dstr_const_obj_ptrn_id_trailing_comma_261()
         => ExecutionTest("async-func-dstr-const-obj-ptrn-id-trailing-comma");
 
-    [Fact(DisplayName = "async-func-dstr-const-obj-ptrn-list-err.js", Skip = "Pending complete for-in/of destructuring lowering.")]
+    [Fact(DisplayName = "async-func-dstr-const-obj-ptrn-list-err.js")]
     public Task async_func_dstr_const_obj_ptrn_list_err_262()
         => ExecutionTest("async-func-dstr-const-obj-ptrn-list-err");
 
@@ -72,7 +72,7 @@ public class Section14_7_5ExecutionTests02 : Jroc.Test262.Tests.language.stateme
     public Task async_func_dstr_const_obj_ptrn_prop_eval_err_267()
         => ExecutionTest("async-func-dstr-const-obj-ptrn-prop-eval-err");
 
-    [Fact(DisplayName = "async-func-dstr-const-obj-ptrn-prop-id-get-value-err.js", Skip = "Pending complete for-in/of destructuring lowering.")]
+    [Fact(DisplayName = "async-func-dstr-const-obj-ptrn-prop-id-get-value-err.js")]
     public Task async_func_dstr_const_obj_ptrn_prop_id_get_value_err_268()
         => ExecutionTest("async-func-dstr-const-obj-ptrn-prop-id-get-value-err");
 
@@ -672,7 +672,7 @@ public class Section14_7_5ExecutionTests02 : Jroc.Test262.Tests.language.stateme
     public Task async_func_dstr_let_obj_ptrn_id_trailing_comma_417()
         => ExecutionTest("async-func-dstr-let-obj-ptrn-id-trailing-comma");
 
-    [Fact(DisplayName = "async-func-dstr-let-obj-ptrn-list-err.js", Skip = "Pending complete for-in/of destructuring lowering.")]
+    [Fact(DisplayName = "async-func-dstr-let-obj-ptrn-list-err.js")]
     public Task async_func_dstr_let_obj_ptrn_list_err_418()
         => ExecutionTest("async-func-dstr-let-obj-ptrn-list-err");
 
@@ -696,7 +696,7 @@ public class Section14_7_5ExecutionTests02 : Jroc.Test262.Tests.language.stateme
     public Task async_func_dstr_let_obj_ptrn_prop_eval_err_423()
         => ExecutionTest("async-func-dstr-let-obj-ptrn-prop-eval-err");
 
-    [Fact(DisplayName = "async-func-dstr-let-obj-ptrn-prop-id-get-value-err.js", Skip = "Pending complete for-in/of destructuring lowering.")]
+    [Fact(DisplayName = "async-func-dstr-let-obj-ptrn-prop-id-get-value-err.js")]
     public Task async_func_dstr_let_obj_ptrn_prop_id_get_value_err_424()
         => ExecutionTest("async-func-dstr-let-obj-ptrn-prop-id-get-value-err");
 

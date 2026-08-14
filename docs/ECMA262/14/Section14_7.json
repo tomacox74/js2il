@@ -684,7 +684,42 @@
           "test/language/statements/for-of/head-using-bound-names-fordecl-tdz.js",
           "test/language/statements/for-of/head-using-fresh-binding-per-iteration.js"
         ],
-        "notes": "The remaining pinned section corpus is checked in verbatim: 1,690 of the 1,997 newly ported cases pass and 307 are explicitly skipped with the unsupported behavior named at each test. Static-module live bindings surface the module-namespace for-in TDZ error, resizable ArrayBuffer-backed typed arrays cover growth and shrinkage during for-in/of iteration, object-rest loop heads invoke accessors while copying ordered enumerable own properties, generator loop state survives yield and yield* suspension, and using/await using for-of heads parse with lexical TDZ and fresh per-iteration bindings. Reaching Supported still requires destructuring binding and assignment lowering (including initializer function naming and abrupt completion), full disposable-resource lifetime semantics, full module namespace exotic-object semantics, and eval support."
+        "notes": "The remaining pinned section corpus is checked in verbatim: 1,708 of the 1,997 newly ported cases pass and 289 are explicitly skipped with the unsupported behavior named at each test. Static-module live bindings surface the module-namespace for-in TDZ error, resizable ArrayBuffer-backed typed arrays cover growth and shrinkage during for-in/of iteration, object-rest loop heads invoke accessors while copying ordered enumerable own properties, generator loop state survives yield and yield* suspension, and using/await using for-of heads parse with lexical TDZ and fresh per-iteration bindings. Reaching Supported still requires destructuring binding and assignment lowering (including initializer function naming), full disposable-resource lifetime semantics, full module namespace exotic-object semantics, and eval support."
+      },
+      {
+        "clause": "14.7.5.3",
+        "feature": "object-pattern binding abrupt completion",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-runtime-semantics-fordeclarationbindinginitialization",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/language/statements/for-of/Section14_7_5ExecutionTests02.cs",
+          "tests/Jroc.Test262.Tests/language/statements/for-of/Section14_7_5ExecutionTests03.cs",
+          "tests/Jroc.Test262.Tests/language/statements/for-await-of/Section14_7_5ExecutionTests02.cs",
+          "tests/Jroc.Test262.Tests/language/statements/for-await-of/Section14_7_5ExecutionTests03.cs",
+          "tests/Jroc.Test262.Tests/language/statements/for-await-of/Section14_7_5ExecutionTests04.cs",
+          "tests/Jroc.Test262.Tests/language/statements/for-await-of/Section14_7_5ExecutionTests05.cs"
+        ],
+        "test262Paths": [
+          "test/language/statements/for-of/dstr/const-obj-ptrn-list-err.js",
+          "test/language/statements/for-of/dstr/const-obj-ptrn-prop-id-get-value-err.js",
+          "test/language/statements/for-of/dstr/let-obj-ptrn-list-err.js",
+          "test/language/statements/for-of/dstr/let-obj-ptrn-prop-id-get-value-err.js",
+          "test/language/statements/for-of/dstr/var-obj-ptrn-list-err.js",
+          "test/language/statements/for-of/dstr/var-obj-ptrn-prop-id-get-value-err.js",
+          "test/language/statements/for-await-of/async-func-dstr-const-obj-ptrn-list-err.js",
+          "test/language/statements/for-await-of/async-func-dstr-const-obj-ptrn-prop-id-get-value-err.js",
+          "test/language/statements/for-await-of/async-func-dstr-let-obj-ptrn-list-err.js",
+          "test/language/statements/for-await-of/async-func-dstr-let-obj-ptrn-prop-id-get-value-err.js",
+          "test/language/statements/for-await-of/async-func-dstr-var-obj-ptrn-list-err.js",
+          "test/language/statements/for-await-of/async-func-dstr-var-obj-ptrn-prop-id-get-value-err.js",
+          "test/language/statements/for-await-of/async-gen-dstr-const-obj-ptrn-list-err.js",
+          "test/language/statements/for-await-of/async-gen-dstr-const-obj-ptrn-prop-id-get-value-err.js",
+          "test/language/statements/for-await-of/async-gen-dstr-let-obj-ptrn-list-err.js",
+          "test/language/statements/for-await-of/async-gen-dstr-let-obj-ptrn-prop-id-get-value-err.js",
+          "test/language/statements/for-await-of/async-gen-dstr-var-obj-ptrn-list-err.js",
+          "test/language/statements/for-await-of/async-gen-dstr-var-obj-ptrn-prop-id-get-value-err.js"
+        ],
+        "notes": "Object-pattern getters and default initializers preserve their abrupt completion and close the active sync or async iterator as required."
       },
       {
         "clause": "14.7.5.1",
