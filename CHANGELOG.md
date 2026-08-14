@@ -6,7 +6,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-_Nothing yet._
+- compiler/test262: close #1786 by enforcing strict-mode early errors for
+  `for-in`, `for-of`, and `for-await-of` loop heads. Strict `eval` and
+  `arguments` bindings or assignment targets, plus invalid strict `yield`
+  targets, now fail before lowering. Statement parse-negative test262 fixtures
+  now also receive their `onlyStrict` directive before compilation.
 
 ## v0.12.6 - 2026-08-14
 

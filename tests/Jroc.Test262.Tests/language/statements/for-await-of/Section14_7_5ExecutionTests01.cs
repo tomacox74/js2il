@@ -152,11 +152,11 @@ public class Section14_7_5ExecutionTests01 : Jroc.Test262.Tests.language.stateme
     public Task async_func_decl_dstr_array_elem_target_identifier_37()
         => ExecutionTest("async-func-decl-dstr-array-elem-target-identifier");
 
-    [Fact(DisplayName = "async-func-decl-dstr-array-elem-target-simple-strict.js", Skip = "Pending complete for-in/of early-error validation.")]
+    [Fact(DisplayName = "async-func-decl-dstr-array-elem-target-simple-strict.js")]
     public Task async_func_decl_dstr_array_elem_target_simple_strict_38()
         => CompilationFailureTest("async-func-decl-dstr-array-elem-target-simple-strict", string.Empty);
 
-    [Fact(DisplayName = "async-func-decl-dstr-array-elem-target-yield-invalid.js", Skip = "Pending complete for-in/of early-error validation.")]
+    [Fact(DisplayName = "async-func-decl-dstr-array-elem-target-yield-invalid.js")]
     public Task async_func_decl_dstr_array_elem_target_yield_invalid_39()
         => CompilationFailureTest("async-func-decl-dstr-array-elem-target-yield-invalid", string.Empty);
 

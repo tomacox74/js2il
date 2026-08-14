@@ -84,11 +84,11 @@ public class Section14_7_5ExecutionTests01 : Jroc.Test262.Tests.language.stateme
     public Task dstr_array_elem_put_obj_literal_optchain_prop_ref_init_20()
         => CompilationFailureTest("dstr/array-elem-put-obj-literal-optchain-prop-ref-init", string.Empty);
 
-    [Fact(DisplayName = "dstr/array-elem-target-simple-strict.js", Skip = "Pending complete for-in/of early-error validation.")]
+    [Fact(DisplayName = "dstr/array-elem-target-simple-strict.js")]
     public Task dstr_array_elem_target_simple_strict_21()
         => CompilationFailureTest("dstr/array-elem-target-simple-strict", string.Empty);
 
-    [Fact(DisplayName = "dstr/array-elem-target-yield-invalid.js", Skip = "Pending complete for-in/of early-error validation.")]
+    [Fact(DisplayName = "dstr/array-elem-target-yield-invalid.js")]
     public Task dstr_array_elem_target_yield_invalid_22()
         => CompilationFailureTest("dstr/array-elem-target-yield-invalid", string.Empty);
 
@@ -140,7 +140,7 @@ public class Section14_7_5ExecutionTests01 : Jroc.Test262.Tests.language.stateme
     public Task dstr_obj_id_identifier_yield_ident_invalid_34()
         => CompilationFailureTest("dstr/obj-id-identifier-yield-ident-invalid", string.Empty);
 
-    [Fact(DisplayName = "dstr/obj-id-init-simple-strict.js", Skip = "Pending complete for-in/of early-error validation.")]
+    [Fact(DisplayName = "dstr/obj-id-init-simple-strict.js")]
     public Task dstr_obj_id_init_simple_strict_35()
         => CompilationFailureTest("dstr/obj-id-init-simple-strict", string.Empty);
 
@@ -148,7 +148,7 @@ public class Section14_7_5ExecutionTests01 : Jroc.Test262.Tests.language.stateme
     public Task dstr_obj_id_init_yield_ident_invalid_36()
         => CompilationFailureTest("dstr/obj-id-init-yield-ident-invalid", string.Empty);
 
-    [Fact(DisplayName = "dstr/obj-id-simple-strict.js", Skip = "Pending complete for-in/of early-error validation.")]
+    [Fact(DisplayName = "dstr/obj-id-simple-strict.js")]
     public Task dstr_obj_id_simple_strict_37()
         => CompilationFailureTest("dstr/obj-id-simple-strict", string.Empty);
 
@@ -320,7 +320,7 @@ public class Section14_7_5ExecutionTests01 : Jroc.Test262.Tests.language.stateme
     public Task var_arguments_fn_strict_init_79()
         => CompilationFailureTest("var-arguments-fn-strict-init", string.Empty);
 
-    [Fact(DisplayName = "var-arguments-fn-strict.js", Skip = "Pending complete for-in/of early-error validation.")]
+    [Fact(DisplayName = "var-arguments-fn-strict.js")]
     public Task var_arguments_fn_strict_80()
         => CompilationFailureTest("var-arguments-fn-strict", string.Empty);
 
@@ -328,7 +328,7 @@ public class Section14_7_5ExecutionTests01 : Jroc.Test262.Tests.language.stateme
     public Task var_arguments_strict_init_81()
         => CompilationFailureTest("var-arguments-strict-init", string.Empty);
 
-    [Fact(DisplayName = "var-arguments-strict.js", Skip = "Pending complete for-in/of early-error validation.")]
+    [Fact(DisplayName = "var-arguments-strict.js")]
     public Task var_arguments_strict_82()
         => CompilationFailureTest("var-arguments-strict", string.Empty);
 
@@ -336,7 +336,7 @@ public class Section14_7_5ExecutionTests01 : Jroc.Test262.Tests.language.stateme
     public Task var_eval_strict_init_83()
         => CompilationFailureTest("var-eval-strict-init", string.Empty);
 
-    [Fact(DisplayName = "var-eval-strict.js", Skip = "Pending complete for-in/of early-error validation.")]
+    [Fact(DisplayName = "var-eval-strict.js")]
     public Task var_eval_strict_84()
         => CompilationFailureTest("var-eval-strict", string.Empty);
 }

@@ -1063,14 +1063,25 @@ public class JavaScriptAstValidator : IAstValidator
     {
         var walker = new AstWalker();
         var functionContexts = new Stack<EarlyErrorContext>();
-        functionContexts.Push(new EarlyErrorContext());
+        functionContexts.Push(new EarlyErrorContext(HasUseStrictDirective(ast), isGeneratorFunction: false));
+        var classDepth = 0;
 
         walker.VisitWithContext(ast, node =>
         {
+            if (node is ClassDeclaration or ClassExpression)
+            {
+                classDepth++;
+            }
+
             // Function boundaries reset label/loop/switch target sets.
             if (node is FunctionDeclaration or FunctionExpression or ArrowFunctionExpression)
             {
-                functionContexts.Push(new EarlyErrorContext());
+                var parentContext = functionContexts.Peek();
+                var isGeneratorFunction = node is FunctionDeclaration { Generator: true }
+                    or FunctionExpression { Generator: true };
+                functionContexts.Push(new EarlyErrorContext(
+                    parentContext.IsStrict || classDepth > 0 || HasUseStrictDirective(node),
+                    isGeneratorFunction));
                 return;
             }
 
@@ -1113,11 +1124,21 @@ public class JavaScriptAstValidator : IAstValidator
 
                     if (node is ForInStatement forIn)
                     {
-                        ValidateForInOfLeft(forIn.Left, isForOf: false, result);
+                        ValidateForInOfLeft(
+                            forIn.Left,
+                            isForOf: false,
+                            isStrict: ctx.IsStrict || classDepth > 0,
+                            isGeneratorFunction: ctx.IsGeneratorFunction,
+                            result: result);
                     }
                     else if (node is ForOfStatement forOf)
                     {
-                        ValidateForInOfLeft(forOf.Left, isForOf: true, result);
+                        ValidateForInOfLeft(
+                            forOf.Left,
+                            isForOf: true,
+                            isStrict: ctx.IsStrict || classDepth > 0,
+                            isGeneratorFunction: ctx.IsGeneratorFunction,
+                            result: result);
                     }
                     break;
 
@@ -1174,6 +1195,11 @@ public class JavaScriptAstValidator : IAstValidator
                         ctx.IterationDepth--;
                     }
                     break;
+            }
+
+            if (exitNode is ClassDeclaration or ClassExpression)
+            {
+                classDepth--;
             }
         });
     }
@@ -1244,7 +1270,12 @@ public class JavaScriptAstValidator : IAstValidator
             or ForOfStatement;
     }
 
-    private static void ValidateForInOfLeft(Node left, bool isForOf, ValidationResult result)
+    private static void ValidateForInOfLeft(
+        Node left,
+        bool isForOf,
+        bool isStrict,
+        bool isGeneratorFunction,
+        ValidationResult result)
     {
         // Spec-level early error: for-in/of variable declarations must not have initializers
         // and must declare exactly one binding.
@@ -1266,6 +1297,7 @@ public class JavaScriptAstValidator : IAstValidator
                     decl.Init);
             }
 
+            ValidateForInOfBindingTarget(decl.Id, isForOf, isStrict, result);
             return;
         }
 
@@ -1276,6 +1308,121 @@ public class JavaScriptAstValidator : IAstValidator
                 $"Invalid {(isForOf ? "for...of" : "for...in")} head: assignment is not allowed in the loop target",
                 left);
         }
+
+        ValidateForInOfAssignmentTarget(left, isForOf, isStrict, isGeneratorFunction, result);
+    }
+
+    private static void ValidateForInOfBindingTarget(
+        Node target,
+        bool isForOf,
+        bool isStrict,
+        ValidationResult result)
+    {
+        switch (target)
+        {
+            case Identifier identifier:
+                ValidateRestrictedForInOfIdentifier(identifier, isForOf, isStrict, result);
+                return;
+            case ArrayPattern array:
+                foreach (var element in array.Elements)
+                {
+                    if (element != null)
+                    {
+                        ValidateForInOfBindingTarget(element, isForOf, isStrict, result);
+                    }
+                }
+                return;
+            case ObjectPattern obj:
+                foreach (var property in obj.Properties)
+                {
+                    switch (property)
+                    {
+                        case Property { Value: { } value }:
+                            ValidateForInOfBindingTarget(value, isForOf, isStrict, result);
+                            break;
+                        case RestElement { Argument: { } argument }:
+                            ValidateForInOfBindingTarget(argument, isForOf, isStrict, result);
+                            break;
+                    }
+                }
+                return;
+            case AssignmentPattern assignment:
+                ValidateForInOfBindingTarget(assignment.Left, isForOf, isStrict, result);
+                return;
+            case RestElement { Argument: { } argument }:
+                ValidateForInOfBindingTarget(argument, isForOf, isStrict, result);
+                return;
+        }
+    }
+
+    private static void ValidateForInOfAssignmentTarget(
+        Node target,
+        bool isForOf,
+        bool isStrict,
+        bool isGeneratorFunction,
+        ValidationResult result)
+    {
+        ValidateForInOfBindingTarget(target, isForOf, isStrict, result);
+
+        if (isStrict && !isGeneratorFunction)
+        {
+            WalkAllNodes(target, new HashSet<Node>(ReferenceEqualityComparer<Node>.Default), node =>
+            {
+                if (node is Identifier { Name: "yield" } identifier)
+                {
+                    AddError(result,
+                        $"Invalid {(isForOf ? "for...of" : "for...in")} head: 'yield' is not a valid strict-mode assignment target",
+                        identifier);
+                }
+            });
+        }
+    }
+
+    private static void ValidateRestrictedForInOfIdentifier(
+        Identifier identifier,
+        bool isForOf,
+        bool isStrict,
+        ValidationResult result)
+    {
+        if (!isStrict
+            || (identifier.Name != "eval" && identifier.Name != "arguments"))
+        {
+            return;
+        }
+
+        AddError(result,
+            $"Invalid {(isForOf ? "for...of" : "for...in")} head: '{identifier.Name}' is not a valid strict-mode binding or assignment target",
+            identifier);
+    }
+
+    private static bool HasUseStrictDirective(Node node)
+    {
+        IEnumerable<Statement> statements = node switch
+        {
+            Program program => program.Body,
+            FunctionDeclaration declaration when declaration.Body is BlockStatement block => block.Body,
+            FunctionExpression expression when expression.Body is BlockStatement block => block.Body,
+            ArrowFunctionExpression arrow when arrow.Body is BlockStatement block => block.Body,
+            _ => []
+        };
+
+        foreach (var statement in statements)
+        {
+            if (statement is Directive { Value: "use strict" })
+            {
+                return true;
+            }
+
+            if (statement is not ExpressionStatement { Expression: Literal { Value: string directive } }
+                || directive != "use strict")
+            {
+                break;
+            }
+
+            return true;
+        }
+
+        return false;
     }
 
     private static void AddError(ValidationResult result, string message, Node node)
@@ -1301,6 +1448,14 @@ public class JavaScriptAstValidator : IAstValidator
 
     private sealed class EarlyErrorContext
     {
+        public EarlyErrorContext(bool isStrict, bool isGeneratorFunction)
+        {
+            IsStrict = isStrict;
+            IsGeneratorFunction = isGeneratorFunction;
+        }
+
+        public bool IsStrict { get; }
+        public bool IsGeneratorFunction { get; }
         public int IterationDepth;
         public Stack<BreakableKind> BreakableStack { get; } = new();
         public Stack<LabelEntry> LabelStack { get; } = new();

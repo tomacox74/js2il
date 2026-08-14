@@ -20,7 +20,7 @@ public static class Test262SharedAssertHarness
     {
         var (entryScript, entrySourcePath) = getJavaScriptAndSourcePath(testName);
         var metadata = ParseFrontmatter(entryScript);
-        var preparedEntryScript = BuildPreparedEntryScript(entryScript, metadata);
+        var preparedEntryScript = PrepareEntryScript(entryScript, metadata);
         var hostRuntimeIntrinsics = Test262HostRuntimeIntrinsics.Create(metadata.Includes);
 
         var expectsRuntimeException = allowUnhandledException
@@ -48,6 +48,12 @@ public static class Test262SharedAssertHarness
         return result;
     }
 
+    public static string PrepareEntryScript(string entryScript)
+    {
+        ArgumentNullException.ThrowIfNull(entryScript);
+        return PrepareEntryScript(entryScript, ParseFrontmatter(entryScript));
+    }
+
     public static void AssertNoOutput(string testName, string output)
     {
         if (!string.IsNullOrEmpty(output))
@@ -57,7 +63,7 @@ public static class Test262SharedAssertHarness
         }
     }
 
-    private static string BuildPreparedEntryScript(
+    private static string PrepareEntryScript(
         string entryScript,
         FrontmatterMetadata metadata)
     {

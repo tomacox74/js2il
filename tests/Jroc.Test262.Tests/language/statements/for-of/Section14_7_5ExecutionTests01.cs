@@ -304,7 +304,7 @@ public class Section14_7_5ExecutionTests01 : Jroc.Test262.Tests.language.stateme
     public Task dstr_array_elem_target_simple_no_strict_75()
         => ExecutionTest("dstr/array-elem-target-simple-no-strict");
 
-    [Fact(DisplayName = "dstr/array-elem-target-simple-strict.js", Skip = "Pending complete for-in/of early-error validation.")]
+    [Fact(DisplayName = "dstr/array-elem-target-simple-strict.js")]
     public Task dstr_array_elem_target_simple_strict_76()
         => CompilationFailureTest("dstr/array-elem-target-simple-strict", string.Empty);
 
@@ -312,7 +312,7 @@ public class Section14_7_5ExecutionTests01 : Jroc.Test262.Tests.language.stateme
     public Task dstr_array_elem_target_yield_expr_77()
         => ExecutionTest("dstr/array-elem-target-yield-expr");
 
-    [Fact(DisplayName = "dstr/array-elem-target-yield-invalid.js", Skip = "Pending complete for-in/of early-error validation.")]
+    [Fact(DisplayName = "dstr/array-elem-target-yield-invalid.js")]
     public Task dstr_array_elem_target_yield_invalid_78()
         => CompilationFailureTest("dstr/array-elem-target-yield-invalid", string.Empty);
 
