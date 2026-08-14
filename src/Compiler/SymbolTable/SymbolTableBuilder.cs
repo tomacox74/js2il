@@ -2263,10 +2263,7 @@ namespace Jroc.SymbolTables
                         foreach (var decl in forOfDecl.Declarations)
                         {
                             BindPatternBindings(decl.Id, kind, targetScope, decl);
-                            if (kind is BindingKind.Let or BindingKind.Const)
-                            {
-                                BuildPatternInitializerScopes(globalScope, decl.Id, forOfScope);
-                            }
+                            BuildPatternInitializerScopes(globalScope, decl.Id, forOfScope);
                         }
                     }
                     else
@@ -2315,10 +2312,7 @@ namespace Jroc.SymbolTables
                         foreach (var decl in forInDecl.Declarations)
                         {
                             BindPatternBindings(decl.Id, kind, targetScope, decl);
-                            if (kind is BindingKind.Let or BindingKind.Const)
-                            {
-                                BuildPatternInitializerScopes(globalScope, decl.Id, forInScope);
-                            }
+                            BuildPatternInitializerScopes(globalScope, decl.Id, forInScope);
                         }
                     }
                     else

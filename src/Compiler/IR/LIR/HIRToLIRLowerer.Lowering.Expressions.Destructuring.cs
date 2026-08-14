@@ -157,10 +157,33 @@ public sealed partial class HIRToLIRLowerer
 
                     _methodBodyIR.Instructions.Add(new LIRBranchIfTrue(sourceValue, notNullLabel));
 
-                    if (!TryLowerExpression(def.Default, out var defaultTemp))
+                    var pendingAnonymousClassName =
+                        def.Target is HIRIdentifierPattern defaultIdentifierForClassName
+                        && def.Default is HIRInitializedUserClassTypeExpression initializedClassExpr
+                        && initializedClassExpr.IsClassExpression
+                        && string.IsNullOrWhiteSpace(initializedClassExpr.ExplicitName)
+                            ? defaultIdentifierForClassName.Symbol.Name
+                            : null;
+
+                    var previousPendingAnonymousClassName = _pendingAnonymousClassExpressionInferredName;
+                    if (!string.IsNullOrWhiteSpace(pendingAnonymousClassName))
                     {
-                        return false;
+                        _pendingAnonymousClassExpressionInferredName = pendingAnonymousClassName;
                     }
+
+                    TempVariable defaultTemp;
+                    try
+                    {
+                        if (!TryLowerExpression(def.Default, out defaultTemp))
+                        {
+                            return false;
+                        }
+                    }
+                    finally
+                    {
+                        _pendingAnonymousClassExpressionInferredName = previousPendingAnonymousClassName;
+                    }
+
                     defaultTemp = EnsureObject(defaultTemp);
                     if (def.Target is HIRIdentifierPattern defaultIdentifier
                         && def.Default is HIRFunctionExpression or HIRArrowFunctionExpression)
