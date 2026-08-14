@@ -6,6 +6,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- compiler/test262: close #1785 by enforcing the `Yield` grammar parameter
+  throughout nested `for-in`, `for-of`, and `for-await-of` destructuring
+  assignment patterns. Strict `yield` identifier references now fail before
+  lowering without rejecting static `yield` property names. Activates twenty-
+  seven corresponding pinned parse-negative test262 fixtures.
 - compiler/test262: close #1786 by enforcing strict-mode early errors for
   `for-in`, `for-of`, and `for-await-of` loop heads. Strict `eval` and
   `arguments` bindings or assignment targets, plus invalid strict `yield`
