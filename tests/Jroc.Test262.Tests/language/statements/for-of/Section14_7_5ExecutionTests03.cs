@@ -272,7 +272,7 @@ public class Section14_7_5ExecutionTests03 : Jroc.Test262.Tests.language.stateme
     public Task dstr_var_obj_ptrn_init_err_567()
         => CompilationFailureTest("dstr/var-obj-ptrn-init-err", string.Empty);
 
-    [Fact(DisplayName = "dstr/var-obj-ptrn-list-err.js", Skip = "Pending complete for-in/of destructuring lowering.")]
+    [Fact(DisplayName = "dstr/var-obj-ptrn-list-err.js")]
     public Task dstr_var_obj_ptrn_list_err_568()
         => ExecutionTest("dstr/var-obj-ptrn-list-err");
 
@@ -296,7 +296,7 @@ public class Section14_7_5ExecutionTests03 : Jroc.Test262.Tests.language.stateme
     public Task dstr_var_obj_ptrn_prop_eval_err_573()
         => ExecutionTest("dstr/var-obj-ptrn-prop-eval-err");
 
-    [Fact(DisplayName = "dstr/var-obj-ptrn-prop-id-get-value-err.js", Skip = "Pending complete for-in/of destructuring lowering.")]
+    [Fact(DisplayName = "dstr/var-obj-ptrn-prop-id-get-value-err.js")]
     public Task dstr_var_obj_ptrn_prop_id_get_value_err_574()
         => ExecutionTest("dstr/var-obj-ptrn-prop-id-get-value-err");
 
