@@ -48,7 +48,7 @@ public class Section14_7_5ExecutionTests01 : Jroc.Test262.Tests.language.stateme
     public Task async_func_decl_dstr_array_elem_init_simple_no_strict_11()
         => ExecutionTest("async-func-decl-dstr-array-elem-init-simple-no-strict");
 
-    [Fact(DisplayName = "async-func-decl-dstr-array-elem-init-yield-ident-invalid.js", Skip = "Pending complete for-in/of early-error validation.")]
+    [Fact(DisplayName = "async-func-decl-dstr-array-elem-init-yield-ident-invalid.js")]
     public Task async_func_decl_dstr_array_elem_init_yield_ident_invalid_12()
         => CompilationFailureTest("async-func-decl-dstr-array-elem-init-yield-ident-invalid", string.Empty);
 
@@ -80,7 +80,7 @@ public class Section14_7_5ExecutionTests01 : Jroc.Test262.Tests.language.stateme
     public Task async_func_decl_dstr_array_elem_nested_array_undefined_19()
         => ExecutionTest("async-func-decl-dstr-array-elem-nested-array-undefined");
 
-    [Fact(DisplayName = "async-func-decl-dstr-array-elem-nested-array-yield-ident-invalid.js", Skip = "Pending complete for-in/of early-error validation.")]
+    [Fact(DisplayName = "async-func-decl-dstr-array-elem-nested-array-yield-ident-invalid.js")]
     public Task async_func_decl_dstr_array_elem_nested_array_yield_ident_invalid_20()
         => CompilationFailureTest("async-func-decl-dstr-array-elem-nested-array-yield-ident-invalid", string.Empty);
 
@@ -112,7 +112,7 @@ public class Section14_7_5ExecutionTests01 : Jroc.Test262.Tests.language.stateme
     public Task async_func_decl_dstr_array_elem_nested_obj_undefined_27()
         => ExecutionTest("async-func-decl-dstr-array-elem-nested-obj-undefined");
 
-    [Fact(DisplayName = "async-func-decl-dstr-array-elem-nested-obj-yield-ident-invalid.js", Skip = "Pending complete for-in/of early-error validation.")]
+    [Fact(DisplayName = "async-func-decl-dstr-array-elem-nested-obj-yield-ident-invalid.js")]
     public Task async_func_decl_dstr_array_elem_nested_obj_yield_ident_invalid_28()
         => CompilationFailureTest("async-func-decl-dstr-array-elem-nested-obj-yield-ident-invalid", string.Empty);
 

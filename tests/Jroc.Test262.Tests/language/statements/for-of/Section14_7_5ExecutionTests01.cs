@@ -140,7 +140,7 @@ public class Section14_7_5ExecutionTests01 : Jroc.Test262.Tests.language.stateme
     public Task dstr_array_elem_init_yield_expr_34()
         => ExecutionTest("dstr/array-elem-init-yield-expr");
 
-    [Fact(DisplayName = "dstr/array-elem-init-yield-ident-invalid.js", Skip = "Pending complete for-in/of early-error validation.")]
+    [Fact(DisplayName = "dstr/array-elem-init-yield-ident-invalid.js")]
     public Task dstr_array_elem_init_yield_ident_invalid_35()
         => CompilationFailureTest("dstr/array-elem-init-yield-ident-invalid", string.Empty);
 
@@ -200,7 +200,7 @@ public class Section14_7_5ExecutionTests01 : Jroc.Test262.Tests.language.stateme
     public Task dstr_array_elem_nested_array_yield_expr_49()
         => ExecutionTest("dstr/array-elem-nested-array-yield-expr");
 
-    [Fact(DisplayName = "dstr/array-elem-nested-array-yield-ident-invalid.js", Skip = "Pending complete for-in/of early-error validation.")]
+    [Fact(DisplayName = "dstr/array-elem-nested-array-yield-ident-invalid.js")]
     public Task dstr_array_elem_nested_array_yield_ident_invalid_50()
         => CompilationFailureTest("dstr/array-elem-nested-array-yield-ident-invalid", string.Empty);
 
@@ -240,7 +240,7 @@ public class Section14_7_5ExecutionTests01 : Jroc.Test262.Tests.language.stateme
     public Task dstr_array_elem_nested_obj_yield_expr_59()
         => ExecutionTest("dstr/array-elem-nested-obj-yield-expr");
 
-    [Fact(DisplayName = "dstr/array-elem-nested-obj-yield-ident-invalid.js", Skip = "Pending complete for-in/of early-error validation.")]
+    [Fact(DisplayName = "dstr/array-elem-nested-obj-yield-ident-invalid.js")]
     public Task dstr_array_elem_nested_obj_yield_ident_invalid_60()
         => CompilationFailureTest("dstr/array-elem-nested-obj-yield-ident-invalid", string.Empty);
 
@@ -620,7 +620,7 @@ public class Section14_7_5ExecutionTests01 : Jroc.Test262.Tests.language.stateme
     public Task dstr_array_rest_nested_array_yield_expr_154()
         => ExecutionTest("dstr/array-rest-nested-array-yield-expr");
 
-    [Fact(DisplayName = "dstr/array-rest-nested-array-yield-ident-invalid.js", Skip = "Pending complete for-in/of early-error validation.")]
+    [Fact(DisplayName = "dstr/array-rest-nested-array-yield-ident-invalid.js")]
     public Task dstr_array_rest_nested_array_yield_ident_invalid_155()
         => CompilationFailureTest("dstr/array-rest-nested-array-yield-ident-invalid", string.Empty);
 
@@ -656,7 +656,7 @@ public class Section14_7_5ExecutionTests01 : Jroc.Test262.Tests.language.stateme
     public Task dstr_array_rest_nested_obj_yield_expr_163()
         => ExecutionTest("dstr/array-rest-nested-obj-yield-expr");
 
-    [Fact(DisplayName = "dstr/array-rest-nested-obj-yield-ident-invalid.js", Skip = "Pending complete for-in/of early-error validation.")]
+    [Fact(DisplayName = "dstr/array-rest-nested-obj-yield-ident-invalid.js")]
     public Task dstr_array_rest_nested_obj_yield_ident_invalid_164()
         => CompilationFailureTest("dstr/array-rest-nested-obj-yield-ident-invalid", string.Empty);
 
@@ -704,7 +704,7 @@ public class Section14_7_5ExecutionTests01 : Jroc.Test262.Tests.language.stateme
     public Task dstr_array_rest_yield_expr_175()
         => ExecutionTest("dstr/array-rest-yield-expr");
 
-    [Fact(DisplayName = "dstr/array-rest-yield-ident-invalid.js", Skip = "Pending complete for-in/of early-error validation.")]
+    [Fact(DisplayName = "dstr/array-rest-yield-ident-invalid.js")]
     public Task dstr_array_rest_yield_ident_invalid_176()
         => CompilationFailureTest("dstr/array-rest-yield-ident-invalid", string.Empty);
 

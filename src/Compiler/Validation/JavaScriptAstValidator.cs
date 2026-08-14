@@ -1366,9 +1366,13 @@ public class JavaScriptAstValidator : IAstValidator
 
         if (isStrict && !isGeneratorFunction)
         {
-            WalkAllNodes(target, new HashSet<Node>(ReferenceEqualityComparer<Node>.Default), node =>
+            // In a non-generator context, the Yield grammar parameter permits `yield`
+            // as an IdentifierReference. Strict mode still forbids that reference, but
+            // must not reject IdentifierName positions such as `{ yield: target }`.
+            WalkAllNodes(target, new HashSet<Node>(ReferenceEqualityComparer<Node>.Default), (node, parent) =>
             {
-                if (node is Identifier { Name: "yield" } identifier)
+                if (node is Identifier { Name: "yield" } identifier
+                    && !IsIdentifierName(identifier, parent))
                 {
                     AddError(result,
                         $"Invalid {(isForOf ? "for...of" : "for...in")} head: 'yield' is not a valid strict-mode assignment target",
@@ -1376,6 +1380,23 @@ public class JavaScriptAstValidator : IAstValidator
                 }
             });
         }
+    }
+
+    private static bool IsIdentifierName(Identifier identifier, Node? parent)
+    {
+        return parent switch
+        {
+            MemberExpression member when !member.Computed
+                && ReferenceEquals(member.Property, identifier) => true,
+            Property property when !property.Computed
+                && !property.Shorthand
+                && ReferenceEquals(property.Key, identifier) => true,
+            MethodDefinition method when !method.Computed
+                && ReferenceEquals(method.Key, identifier) => true,
+            PropertyDefinition propertyDefinition when !propertyDefinition.Computed
+                && ReferenceEquals(propertyDefinition.Key, identifier) => true,
+            _ => false
+        };
     }
 
     private static void ValidateRestrictedForInOfIdentifier(
@@ -1649,12 +1670,16 @@ public class JavaScriptAstValidator : IAstValidator
         WalkForGenerators(ast);
     }
 
-    private static void WalkAllNodes(Node? root, HashSet<Node> visited, Action<Node> visit)
+    private static void WalkAllNodes(
+        Node? root,
+        HashSet<Node> visited,
+        Action<Node, Node?> visit,
+        Node? parent = null)
     {
         if (root is null) return;
         if (!visited.Add(root)) return;
 
-        visit(root);
+        visit(root, parent);
 
         var type = root.GetType();
         foreach (var prop in type.GetProperties(BindingFlags.Instance | BindingFlags.Public))
@@ -1675,7 +1700,7 @@ public class JavaScriptAstValidator : IAstValidator
             if (value is null) continue;
             if (value is Node childNode)
             {
-                WalkAllNodes(childNode, visited, visit);
+                WalkAllNodes(childNode, visited, visit, root);
                 continue;
             }
 
@@ -1687,7 +1712,7 @@ public class JavaScriptAstValidator : IAstValidator
                 {
                     if (item is Node itemNode)
                     {
-                        WalkAllNodes(itemNode, visited, visit);
+                        WalkAllNodes(itemNode, visited, visit, root);
                     }
                 }
             }

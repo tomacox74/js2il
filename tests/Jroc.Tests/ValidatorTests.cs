@@ -555,6 +555,17 @@ public class ValidatorTests
     }
 
     [Fact]
+    public void Validate_StrictForOfStaticYieldPropertyName_IsValid()
+    {
+        var ast = ParseStrict("var target; for ({ yield: target } of [{}]) { }");
+
+        var result = _validator.Validate(ast);
+
+        Assert.True(result.IsValid);
+        Assert.Empty(result.Errors);
+    }
+
+    [Fact]
     public void Validate_SwitchStatement_IsValid()
     {
         var js = "const x = 1; switch(x) { case 1: break; default: break; }";
