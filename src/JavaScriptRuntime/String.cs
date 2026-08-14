@@ -383,6 +383,7 @@ namespace JavaScriptRuntime
                 char[] chars => new string(chars),
                 StringBuilder builder => builder.ToString(),
                 _ when value is not null && value.GetType().IsValueType => DotNet2JSConversions.ToString(value),
+                _ when Number.TryGetWrappedNumberValue(value, out var wrappedNumber) => DotNet2JSConversions.ToString(wrappedNumber),
                 _ when value is not null
                     && PropertyDescriptorStore.TryGetOwn(value, StringDataPropertyName, out var descriptor)
                     && descriptor.Kind == JsPropertyDescriptorKind.Data
@@ -1165,6 +1166,12 @@ namespace JavaScriptRuntime
 
             var re = regexp as JavaScriptRuntime.RegExp
                 ?? new JavaScriptRuntime.RegExp(DotNet2JSConversions.ToString(regexp));
+
+            if (TryInvokeWellKnownSymbol(re, Symbol.search, input, out symbolResult))
+            {
+                return symbolResult!;
+            }
+
             return SearchWithRegExp(input, re);
         }
 
@@ -2649,6 +2656,11 @@ namespace JavaScriptRuntime
         {
             callable = null!;
             if (target is null || target is JsNull)
+            {
+                return false;
+            }
+
+            if (TypeUtilities.IsPrimitive(target))
             {
                 return false;
             }

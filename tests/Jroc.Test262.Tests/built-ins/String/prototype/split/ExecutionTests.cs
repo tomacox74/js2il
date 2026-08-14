@@ -152,4 +152,15 @@ public class ExecutionTests : DiskExecutionTestsBase
     public Task arguments_are_new_reg_exp_and_hi_and_instance_is_string_hello()
         => ExecutionTestFromFile("arguments-are-new-reg-exp-and-hi-and-instance-is-string-hello");
 
+    [Fact(DisplayName = "call-split-1-instance-is-number.js")]
+    public Task call_split_1_instance_is_number()
+        => ExecutionTestFromFile("call-split-1-instance-is-number");
+
+    [Fact(DisplayName = "call-split-1-void-0-instance-is-number.js")]
+    public Task call_split_1_void_0_instance_is_number()
+        => ExecutionTestFromFile("call-split-1-void-0-instance-is-number");
+
+    [Fact(DisplayName = "call-split-1-100-instance-is-number.js")]
+    public Task call_split_1_100_instance_is_number()
+        => ExecutionTestFromFile("call-split-1-100-instance-is-number");
 }
