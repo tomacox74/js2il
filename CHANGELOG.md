@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.12.6 - 2026-08-14
+
 - compiler/runtime/test262: close #1789 by completing supported `for-of`
   destructuring assignment heads. Object-literal member targets now plan their
   accessor scopes before lowering, assignment to an uninitialized captured
