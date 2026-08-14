@@ -4,7 +4,7 @@
 
 [Back to Section13](Section13.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-03-07T01:50:59Z
+> Last generated (UTC): 2026-08-14T06:16:39Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -14,5 +14,5 @@
 
 | Clause | Title | Status | Spec |
 |---:|---|---|---|
-| 13.7.1 | Runtime Semantics: Evaluation | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-multiplicative-operators-runtime-semantics-evaluation) |
+| 13.7.1 | Runtime Semantics: Evaluation | Supported | [tc39.es](https://tc39.es/ecma262/#sec-multiplicative-operators-runtime-semantics-evaluation) |
 

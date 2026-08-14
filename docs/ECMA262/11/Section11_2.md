@@ -4,7 +4,7 @@
 
 [Back to Section11](Section11.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-05-06T09:50:24Z
+> Last generated (UTC): 2026-08-14T06:16:15Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -16,8 +16,8 @@
 |---:|---|---|---|
 | 11.2.1 | Directive Prologues and the Use Strict Directive | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-directive-prologues-and-the-use-strict-directive) |
 | 11.2.2 | Strict Mode Code | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-strict-mode-code) |
-| 11.2.2.1 | Static Semantics: IsStrict ( node ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-isstrict) |
-| 11.2.3 | Non-ECMAScript Functions | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-non-ecmascript-functions) |
+| 11.2.2.1 | Static Semantics: IsStrict ( node ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-isstrict) |
+| 11.2.3 | Non-ECMAScript Functions | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-non-ecmascript-functions) |
 
 ## Support
 
