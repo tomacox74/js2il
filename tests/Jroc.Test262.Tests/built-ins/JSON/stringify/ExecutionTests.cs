@@ -156,6 +156,22 @@ public class ExecutionTests : DiskExecutionTestsBase
 
     [Fact(DisplayName = "value-tojson-result")]
     public Task value_tojson_result()
+
         => ExecutionTestFromFile("value-tojson-result");
 
+    [Fact(DisplayName = "replacer-function-object-deleted-property.js")]
+    public Task replacer_function_object_deleted_property()
+        => ExecutionTestFromFile("replacer-function-object-deleted-property");
+
+    [Fact(DisplayName = "replacer-function-wrapper.js")]
+    public Task replacer_function_wrapper()
+        => ExecutionTestFromFile("replacer-function-wrapper");
+
+    [Fact(DisplayName = "space-number-object.js")]
+    public Task space_number_object()
+        => ExecutionTestFromFile("space-number-object");
+
+    [Fact(DisplayName = "space-string-object.js")]
+    public Task space_string_object()
+        => ExecutionTestFromFile("space-string-object");
 }

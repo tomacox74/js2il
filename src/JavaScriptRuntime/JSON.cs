@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.Json;
 
@@ -9,6 +10,18 @@ namespace JavaScriptRuntime
     [IntrinsicObject("JSON")]
     public static class JSON
     {
+        private sealed class RawJsonData
+        {
+            public RawJsonData(string text)
+            {
+                Text = text;
+            }
+
+            public string Text { get; }
+        }
+
+        private static readonly ConditionalWeakTable<JsObject, RawJsonData> RawJsonObjects = new();
+
         // JSON.parse(text[, reviver])
         public static object? Parse(object? text)
             => Parse(text, null);
@@ -28,7 +41,7 @@ namespace JavaScriptRuntime
 
                 var root = ObjectRuntime.CreateOrdinaryObject();
                 root.SetBoxedValue(string.Empty, parsed);
-                return InternalizeJsonProperty(root, string.Empty, reviver!);
+                return InternalizeJsonProperty(root, string.Empty, reviver!, doc.RootElement.GetRawText());
             }
             catch (JsonException ex)
             {
@@ -37,7 +50,11 @@ namespace JavaScriptRuntime
             }
         }
 
-        private static object? InternalizeJsonProperty(object holder, string name, object reviver)
+        private static object? InternalizeJsonProperty(
+            object holder,
+            string name,
+            object reviver,
+            string? source = null)
         {
             var value = ObjectRuntime.GetItem(holder, name);
             if (value is Array array)
@@ -80,8 +97,61 @@ namespace JavaScriptRuntime
                 }
             }
 
-            return CallableOperations.Call2(reviver, holder, name, value);
+            if (source is null)
+            {
+                return CallableOperations.Call2(reviver, holder, name, value);
+            }
+
+            var context = ObjectRuntime.CreateOrdinaryObject();
+            context.SetBoxedValue("source", source);
+            return CallableOperations.Call3(reviver, holder, name, value, context);
         }
+
+        public static object RawJSON(object? text)
+        {
+            if (text is Symbol)
+            {
+                throw new TypeError("Cannot convert a Symbol value to a string");
+            }
+
+            var jsonText = DotNet2JSConversions.ToString(text);
+            if (string.IsNullOrEmpty(jsonText)
+                || IsJsonWhitespace(jsonText[0])
+                || IsJsonWhitespace(jsonText[^1]))
+            {
+                throw new SyntaxError("Invalid JSON text");
+            }
+
+            try
+            {
+                using var document = JsonDocument.Parse(jsonText);
+                if (document.RootElement.ValueKind is JsonValueKind.Array or JsonValueKind.Object)
+                {
+                    throw new SyntaxError("JSON.rawJSON only accepts primitive JSON values");
+                }
+            }
+            catch (JsonException ex)
+            {
+                throw new SyntaxError(ex.Message);
+            }
+
+            var result = new JsObject();
+            PrototypeChain.SetPrototype(result, JsNull.Null);
+            PropertyDescriptorStore.DefineOrUpdate(result, "rawJSON", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = true,
+                Configurable = true,
+                Writable = true,
+                Value = jsonText
+            });
+            ObjectRuntime.freeze(result);
+            RawJsonObjects.Add(result, new RawJsonData(jsonText));
+            return result;
+        }
+
+        public static bool IsRawJSON(object? value)
+            => value is JsObject rawJson && RawJsonObjects.TryGetValue(rawJson, out _);
 
         public static object? Stringify(object? value)
             => Stringify(value, null, null);
@@ -97,7 +167,14 @@ namespace JavaScriptRuntime
                 : null;
             var gap = CreateGap(space);
             var holder = ObjectRuntime.CreateOrdinaryObject();
-            ObjectRuntime.SetItem(holder, string.Empty, value);
+            PropertyDescriptorStore.DefineOrUpdate(holder, string.Empty, new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = true,
+                Configurable = true,
+                Writable = true,
+                Value = value
+            });
             return SerializeProperty(holder, string.Empty, propertyList, replacerFunction, new HashSet<object>(ReferenceEqualityComparer.Instance), gap, string.Empty);
         }
 
@@ -111,7 +188,12 @@ namespace JavaScriptRuntime
             double numericSpace;
             if (Number.TryGetWrappedNumberValue(space, out var wrappedNumber))
             {
-                numericSpace = wrappedNumber;
+                if (!TypeUtilities.TryCoerceObjectToPrimitive(space, "number", out var primitive))
+                {
+                    throw new TypeError("Cannot convert object to primitive value");
+                }
+
+                numericSpace = TypeUtilities.ToNumber(primitive);
             }
             else if (space is double or float or int or long or short or byte or sbyte or uint or ulong or ushort)
             {
@@ -127,7 +209,12 @@ namespace JavaScriptRuntime
                 else if (PropertyDescriptorStore.TryGetOwn(space, String.StringDataPropertyName, out var stringData)
                     && stringData.Kind == JsPropertyDescriptorKind.Data)
                 {
-                    stringSpace = DotNet2JSConversions.ToString(stringData.Value);
+                    if (!TypeUtilities.TryCoerceObjectToPrimitive(space, "string", out var primitive))
+                    {
+                        throw new TypeError("Cannot convert object to primitive value");
+                    }
+
+                    stringSpace = DotNet2JSConversions.ToString(primitive);
                 }
 
                 return stringSpace is null
@@ -296,6 +383,11 @@ namespace JavaScriptRuntime
             string gap,
             string indent)
         {
+            if (value is JsObject rawJson && RawJsonObjects.TryGetValue(rawJson, out var rawJsonData))
+            {
+                return rawJsonData.Text;
+            }
+
             if (CallableOperations.IsCallable(value))
             {
                 return null;
@@ -431,11 +523,6 @@ namespace JavaScriptRuntime
             {
                 foreach (var key in keys)
                 {
-                    if (!ObjectRuntime.hasOwn(value, key))
-                    {
-                        continue;
-                    }
-
                     var serialized = SerializeProperty(value, key, propertyList, replacerFunction, stack, gap, indent);
                     if (serialized is null)
                     {
@@ -487,6 +574,9 @@ namespace JavaScriptRuntime
             builder.Append('"');
             return builder.ToString();
         }
+
+        private static bool IsJsonWhitespace(char value)
+            => value is '\t' or '\n' or '\r' or ' ';
 
         private static object? FromElement(JsonElement el)
         {
