@@ -4,7 +4,7 @@
 
 [Back to Section13](Section13.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-05-24T13:09:52Z
+> Last generated (UTC): 2026-08-14T06:16:39Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -16,8 +16,8 @@
 |---:|---|---|---|
 | 13.8.1 | The Addition Operator ( + ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-addition-operator-plus) |
 | 13.8.1.1 | Runtime Semantics: Evaluation | Supported | [tc39.es](https://tc39.es/ecma262/#sec-addition-operator-plus-runtime-semantics-evaluation) |
-| 13.8.2 | The Subtraction Operator ( - ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-subtraction-operator-minus) |
-| 13.8.2.1 | Runtime Semantics: Evaluation | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-subtraction-operator-minus-runtime-semantics-evaluation) |
+| 13.8.2 | The Subtraction Operator ( - ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-subtraction-operator-minus) |
+| 13.8.2.1 | Runtime Semantics: Evaluation | Supported | [tc39.es](https://tc39.es/ecma262/#sec-subtraction-operator-minus-runtime-semantics-evaluation) |
 
 ## Support
 

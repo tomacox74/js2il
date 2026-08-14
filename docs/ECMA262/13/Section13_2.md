@@ -4,7 +4,7 @@
 
 [Back to Section13](Section13.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-08-07T18:30:40Z
+> Last generated (UTC): 2026-08-14T06:16:39Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -16,33 +16,33 @@
 |---:|---|---|---|
 | 13.2.1 | The this Keyword | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-this-keyword) |
 | 13.2.1.1 | Runtime Semantics: Evaluation | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-this-keyword-runtime-semantics-evaluation) |
-| 13.2.2 | Identifier Reference | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-identifier-reference) |
-| 13.2.3 | Literals | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-primary-expression-literals) |
-| 13.2.3.1 | Runtime Semantics: Evaluation | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-literals-runtime-semantics-evaluation) |
-| 13.2.4 | Array Initializer | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-array-initializer) |
-| 13.2.4.1 | Runtime Semantics: ArrayAccumulation | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-arrayaccumulation) |
-| 13.2.4.2 | Runtime Semantics: Evaluation | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-array-initializer-runtime-semantics-evaluation) |
+| 13.2.2 | Identifier Reference | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-identifier-reference) |
+| 13.2.3 | Literals | Supported | [tc39.es](https://tc39.es/ecma262/#sec-primary-expression-literals) |
+| 13.2.3.1 | Runtime Semantics: Evaluation | Supported | [tc39.es](https://tc39.es/ecma262/#sec-literals-runtime-semantics-evaluation) |
+| 13.2.4 | Array Initializer | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-array-initializer) |
+| 13.2.4.1 | Runtime Semantics: ArrayAccumulation | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-arrayaccumulation) |
+| 13.2.4.2 | Runtime Semantics: Evaluation | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-array-initializer-runtime-semantics-evaluation) |
 | 13.2.5 | Object Initializer | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-object-initializer) |
-| 13.2.5.1 | Static Semantics: Early Errors | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-object-initializer-static-semantics-early-errors) |
-| 13.2.5.2 | Static Semantics: IsComputedPropertyKey | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-static-semantics-iscomputedpropertykey) |
+| 13.2.5.1 | Static Semantics: Early Errors | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-object-initializer-static-semantics-early-errors) |
+| 13.2.5.2 | Static Semantics: IsComputedPropertyKey | Supported | [tc39.es](https://tc39.es/ecma262/#sec-static-semantics-iscomputedpropertykey) |
 | 13.2.5.3 | Static Semantics: PropertyNameList | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-static-semantics-propertynamelist) |
 | 13.2.5.4 | Runtime Semantics: Evaluation | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-object-initializer-runtime-semantics-evaluation) |
 | 13.2.5.5 | Runtime Semantics: PropertyDefinitionEvaluation | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-propertydefinitionevaluation) |
-| 13.2.6 | Function Defining Expressions | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-function-defining-expressions) |
-| 13.2.7 | Regular Expression Literals | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-primary-expression-regular-expression-literals) |
-| 13.2.7.1 | Static Semantics: Early Errors | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-primary-expression-regular-expression-literals-static-semantics-early-errors) |
-| 13.2.7.2 | Static Semantics: IsValidRegularExpressionLiteral ( literal ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-isvalidregularexpressionliteral) |
-| 13.2.7.3 | Runtime Semantics: Evaluation | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-regular-expression-literals-runtime-semantics-evaluation) |
-| 13.2.8 | Template Literals | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-template-literals) |
-| 13.2.8.1 | Static Semantics: Early Errors | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-static-semantics-template-early-errors) |
-| 13.2.8.2 | Static Semantics: TemplateStrings | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-static-semantics-templatestrings) |
-| 13.2.8.3 | Static Semantics: TemplateString ( templateToken , raw ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-templatestring) |
-| 13.2.8.4 | GetTemplateObject ( templateLiteral ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-gettemplateobject) |
-| 13.2.8.5 | Runtime Semantics: SubstitutionEvaluation | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-substitutionevaluation) |
-| 13.2.8.6 | Runtime Semantics: Evaluation | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-template-literals-runtime-semantics-evaluation) |
-| 13.2.9 | The Grouping Operator | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-grouping-operator) |
-| 13.2.9.1 | Static Semantics: Early Errors | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-grouping-operator-static-semantics-early-errors) |
-| 13.2.9.2 | Runtime Semantics: Evaluation | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-grouping-operator-runtime-semantics-evaluation) |
+| 13.2.6 | Function Defining Expressions | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-function-defining-expressions) |
+| 13.2.7 | Regular Expression Literals | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-primary-expression-regular-expression-literals) |
+| 13.2.7.1 | Static Semantics: Early Errors | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-primary-expression-regular-expression-literals-static-semantics-early-errors) |
+| 13.2.7.2 | Static Semantics: IsValidRegularExpressionLiteral ( literal ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-isvalidregularexpressionliteral) |
+| 13.2.7.3 | Runtime Semantics: Evaluation | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-regular-expression-literals-runtime-semantics-evaluation) |
+| 13.2.8 | Template Literals | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-template-literals) |
+| 13.2.8.1 | Static Semantics: Early Errors | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-static-semantics-template-early-errors) |
+| 13.2.8.2 | Static Semantics: TemplateStrings | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-static-semantics-templatestrings) |
+| 13.2.8.3 | Static Semantics: TemplateString ( templateToken , raw ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-templatestring) |
+| 13.2.8.4 | GetTemplateObject ( templateLiteral ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-gettemplateobject) |
+| 13.2.8.5 | Runtime Semantics: SubstitutionEvaluation | Supported | [tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-substitutionevaluation) |
+| 13.2.8.6 | Runtime Semantics: Evaluation | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-template-literals-runtime-semantics-evaluation) |
+| 13.2.9 | The Grouping Operator | Supported | [tc39.es](https://tc39.es/ecma262/#sec-grouping-operator) |
+| 13.2.9.1 | Static Semantics: Early Errors | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-grouping-operator-static-semantics-early-errors) |
+| 13.2.9.2 | Runtime Semantics: Evaluation | Supported | [tc39.es](https://tc39.es/ecma262/#sec-grouping-operator-runtime-semantics-evaluation) |
 
 ## Support
 

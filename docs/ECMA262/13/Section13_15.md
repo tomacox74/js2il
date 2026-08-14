@@ -4,7 +4,7 @@
 
 [Back to Section13](Section13.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-07-02T21:37:32Z
+> Last generated (UTC): 2026-08-14T06:16:39Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -14,12 +14,12 @@
 
 | Clause | Title | Status | Spec |
 |---:|---|---|---|
-| 13.15.1 | Static Semantics: Early Errors | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-assignment-operators-static-semantics-early-errors) |
-| 13.15.2 | Runtime Semantics: Evaluation | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-assignment-operators-runtime-semantics-evaluation) |
-| 13.15.3 | ApplyStringOrNumericBinaryOperator ( lVal , opText , rVal ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-applystringornumericbinaryoperator) |
-| 13.15.4 | EvaluateStringOrNumericBinaryExpression ( leftOperand , opText , rightOperand ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-evaluatestringornumericbinaryexpression) |
+| 13.15.1 | Static Semantics: Early Errors | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-assignment-operators-static-semantics-early-errors) |
+| 13.15.2 | Runtime Semantics: Evaluation | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-assignment-operators-runtime-semantics-evaluation) |
+| 13.15.3 | ApplyStringOrNumericBinaryOperator ( lVal , opText , rVal ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-applystringornumericbinaryoperator) |
+| 13.15.4 | EvaluateStringOrNumericBinaryExpression ( leftOperand , opText , rightOperand ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-evaluatestringornumericbinaryexpression) |
 | 13.15.5 | Destructuring Assignment | Supported | [tc39.es](https://tc39.es/ecma262/#sec-destructuring-assignment) |
-| 13.15.5.1 | Static Semantics: Early Errors | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-destructuring-assignment-static-semantics-early-errors) |
+| 13.15.5.1 | Static Semantics: Early Errors | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-destructuring-assignment-static-semantics-early-errors) |
 | 13.15.5.2 | Runtime Semantics: DestructuringAssignmentEvaluation | Supported | [tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-destructuringassignmentevaluation) |
 | 13.15.5.3 | Runtime Semantics: PropertyDestructuringAssignmentEvaluation | Supported | [tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-propertydestructuringassignmentevaluation) |
 | 13.15.5.4 | Runtime Semantics: RestDestructuringAssignmentEvaluation | Supported | [tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-restdestructuringassignmentevaluation) |
