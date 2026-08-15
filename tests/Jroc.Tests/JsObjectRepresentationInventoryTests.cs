@@ -91,9 +91,7 @@ public sealed class JsObjectRepresentationInventoryTests
             ["JavaScriptRuntime.Uint8Array"] = TypedArrayReason,
             ["JavaScriptRuntime.Uint8ClampedArray"] = TypedArrayReason,
             ["JavaScriptRuntime.URIError"] = ErrorReason,
-            ["JavaScriptRuntime.WeakMap"] = "Requires the WeakMap and WeakSet migration.",
             ["JavaScriptRuntime.WeakRef"] = "Requires a dedicated internal-slot wrapper migration.",
-            ["JavaScriptRuntime.WeakSet"] = "Requires the WeakMap and WeakSet migration."
         };
 
     [Fact]

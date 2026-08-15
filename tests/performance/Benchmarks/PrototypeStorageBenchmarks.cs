@@ -40,6 +40,14 @@ public class PrototypeStorageBenchmarks
     public JavaScriptRuntime.Set ConstructSet()
         => new();
 
+    [Benchmark(Description = "WeakMap with initialized prototype")]
+    public JavaScriptRuntime.WeakMap ConstructWeakMap()
+        => new();
+
+    [Benchmark(Description = "WeakSet with initialized prototype")]
+    public JavaScriptRuntime.WeakSet ConstructWeakSet()
+        => new();
+
     [Benchmark(Description = "Ordinary object with initialized prototype")]
     public JavaScriptRuntime.JsObject ConstructOrdinaryObject()
     {
