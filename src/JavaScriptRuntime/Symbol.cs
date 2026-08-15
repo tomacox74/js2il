@@ -177,6 +177,14 @@ public sealed class Symbol
     public static bool IsWellKnown(string name)
         => GetWellKnown(name) != null;
 
+    internal static bool IsRegistered(Symbol symbol)
+    {
+        lock (_registryLock)
+        {
+            return _globalRegistryReverse.ContainsKey(symbol);
+        }
+    }
+
     // Useful for debugging, but keep ToString() JS-like.
     public string DebugId => _debugId;
 }

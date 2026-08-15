@@ -27,11 +27,15 @@ namespace JavaScriptRuntime
         }
 
         /// <summary>
-        /// Best-effort runtime approximation of ECMA-262 CanBeHeldWeakly.
-        /// JROC currently treats non-null reference types (including symbols/functions) as weakly holdable.
+        /// ECMA-262 CanBeHeldWeakly accepts objects plus non-registered symbols.
         /// </summary>
         public static bool CanBeHeldWeakly(object? value)
         {
+            if (value is JavaScriptRuntime.Symbol symbol)
+            {
+                return !JavaScriptRuntime.Symbol.IsRegistered(symbol);
+            }
+
             return IsConstructorReturnOverride(value);
         }
 
