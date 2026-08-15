@@ -6,6 +6,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- compiler/runtime/test262: add the ES2024 SuppressedError global with standard
+  constructor/prototype metadata and ordered own `message`, `error`, and
+  `suppressed` properties. Activates twenty corresponding pinned test262
+  fixtures.
+
 - runtime/test262: add the ES2021 AggregateError global, iterable error-list
   construction, standard constructor/prototype metadata, and message-property
   behavior. Activates twenty corresponding pinned test262 fixtures.

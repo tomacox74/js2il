@@ -295,17 +295,18 @@ public sealed partial class HIRToLIRLowerer
                     {
                         case JavaScriptRuntime.IntrinsicCallKind.BuiltInError:
                             {
-                                if (string.Equals(intrinsicInfo.Name, "AggregateError", StringComparison.Ordinal))
+                                if (string.Equals(intrinsicInfo.Name, "AggregateError", StringComparison.Ordinal)
+                                    || string.Equals(intrinsicInfo.Name, "SuppressedError", StringComparison.Ordinal))
                                 {
-                                    if (!TryEvaluateCallArguments(callExpr.Arguments, callExpr.Arguments.Length, out var aggregateErrorArgs))
+                                    if (!TryLowerCallArgumentsToArgsArray(callExpr.Arguments, out var specialErrorArgs))
                                     {
                                         return false;
                                     }
 
-                                    _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
-                                        "AggregateError",
+                                    _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStaticWithArgsArray(
+                                        intrinsicInfo.Name,
                                         nameof(JavaScriptRuntime.AggregateError.Construct),
-                                        aggregateErrorArgs,
+                                        specialErrorArgs,
                                         resultTempVar));
                                     DefineTempStorage(resultTempVar, GetBuiltInErrorStorage(intrinsicInfo.Name));
                                     return true;

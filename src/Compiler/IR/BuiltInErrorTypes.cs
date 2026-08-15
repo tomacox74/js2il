@@ -15,6 +15,7 @@ internal static class BuiltInErrorTypes
         ["TypeError"] = typeof(global::JavaScriptRuntime.TypeError),
         ["URIError"] = typeof(global::JavaScriptRuntime.URIError),
         ["AggregateError"] = typeof(global::JavaScriptRuntime.AggregateError),
+        ["SuppressedError"] = typeof(global::JavaScriptRuntime.SuppressedError),
     };
 
     public static bool IsBuiltInErrorTypeName(string name) => NameToClrType.ContainsKey(name);

@@ -3960,7 +3960,10 @@ partial class HIRMethodBuilder
                     return true;
                 }
 
-                if (isBuiltInError && newArgExprs.Count > 2)
+                var maximumBuiltInErrorArguments = string.Equals(calleeName, "SuppressedError", StringComparison.Ordinal)
+                    ? 3
+                    : 2;
+                if (isBuiltInError && newArgExprs.Count > maximumBuiltInErrorArguments)
                 {
                     return false;
                 }

@@ -235,4 +235,54 @@ namespace JavaScriptRuntime
             });
         }
     }
+
+    [IntrinsicObject("SuppressedError", IntrinsicCallKind.BuiltInError)]
+    public class SuppressedError : Error
+    {
+        public object? ErrorValue { get; }
+        public object? SuppressedValue { get; }
+
+        public SuppressedError(object? error, object? suppressed, string? message)
+            : base(message)
+        {
+            Name = "SuppressedError";
+            ErrorValue = error;
+            SuppressedValue = suppressed;
+            InitializeIntrinsicSurface(GlobalThis.SuppressedErrorPrototypeValue);
+        }
+
+        public static SuppressedError Construct(object?[] args)
+        {
+            var errorValue = args.Length > 0 ? args[0] : null;
+            var suppressedValue = args.Length > 1 ? args[1] : null;
+            var hasMessage = args.Length > 2 && args[2] is not null;
+            var message = hasMessage ? CoerceMessage(args[2]) : null;
+            var error = new SuppressedError(errorValue, suppressedValue, message);
+
+            if (hasMessage)
+            {
+                error.InstallDataProperty("message", message);
+            }
+            else
+            {
+                PropertyDescriptorStore.Delete(error, "message");
+            }
+
+            error.InstallDataProperty("error", errorValue);
+            error.InstallDataProperty("suppressed", suppressedValue);
+            return error;
+        }
+
+        private void InstallDataProperty(string name, object? value)
+        {
+            PropertyDescriptorStore.DefineOrUpdate(this, name, new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = value
+            });
+        }
+    }
 }
