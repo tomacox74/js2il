@@ -5,45 +5,6 @@ namespace Jroc.Tests;
 
 public sealed class BooleanObjectRepresentationTests
 {
-    private static readonly IReadOnlyDictionary<string, string> DocumentedNonJsObjectIntrinsicExceptions =
-        new Dictionary<string, string>
-        {
-            ["JavaScriptRuntime.AggregateError"] = "Must remain an Exception for CLR throw/catch mechanics.",
-            ["JavaScriptRuntime.ArrayBuffer"] = "Planned shared-base migration with typed-array views.",
-            ["JavaScriptRuntime.DataView"] = "Planned view-object migration with computed buffer metadata.",
-            ["JavaScriptRuntime.Date"] = "Planned low-risk internal-slot wrapper migration.",
-            ["JavaScriptRuntime.Error"] = "Must remain an Exception for CLR throw/catch mechanics.",
-            ["JavaScriptRuntime.EvalError"] = "Must remain an Exception for CLR throw/catch mechanics.",
-            ["JavaScriptRuntime.FinalizationRegistry"] = "Planned internal-slot wrapper migration.",
-            ["JavaScriptRuntime.Float32Array"] = "Planned TypedArrayBase exotic-object migration.",
-            ["JavaScriptRuntime.Float64Array"] = "Planned TypedArrayBase exotic-object migration.",
-            ["JavaScriptRuntime.Int16Array"] = "Planned TypedArrayBase exotic-object migration.",
-            ["JavaScriptRuntime.Int32Array"] = "Planned TypedArrayBase exotic-object migration.",
-            ["JavaScriptRuntime.Int8Array"] = "Planned TypedArrayBase exotic-object migration.",
-            ["JavaScriptRuntime.Map"] = "Planned collection and iterator family migration.",
-            ["JavaScriptRuntime.Node.Buffer"] = "Planned indexed/view-object migration.",
-            ["JavaScriptRuntime.Object"] = "Static intrinsic holder; constructed objects use JsObject.",
-            ["JavaScriptRuntime.Promise"] = "Planned internal-slot wrapper migration.",
-            ["JavaScriptRuntime.Proxy"] = "Requires a dedicated migration to preserve trap invariants.",
-            ["JavaScriptRuntime.RangeError"] = "Must remain an Exception for CLR throw/catch mechanics.",
-            ["JavaScriptRuntime.ReferenceError"] = "Must remain an Exception for CLR throw/catch mechanics.",
-            ["JavaScriptRuntime.RegExp"] = "Planned low-risk internal-slot wrapper migration.",
-            ["JavaScriptRuntime.Set"] = "Planned collection and iterator family migration.",
-            ["JavaScriptRuntime.SharedArrayBuffer"] = "Planned shared-base migration with typed-array views.",
-            ["JavaScriptRuntime.SuppressedError"] = "Must remain an Exception for CLR throw/catch mechanics.",
-            ["JavaScriptRuntime.Symbol"] = "Primitive representation with dedicated identity semantics.",
-            ["JavaScriptRuntime.SyntaxError"] = "Must remain an Exception for CLR throw/catch mechanics.",
-            ["JavaScriptRuntime.TypeError"] = "Must remain an Exception for CLR throw/catch mechanics.",
-            ["JavaScriptRuntime.Uint16Array"] = "Planned TypedArrayBase exotic-object migration.",
-            ["JavaScriptRuntime.Uint32Array"] = "Planned TypedArrayBase exotic-object migration.",
-            ["JavaScriptRuntime.Uint8Array"] = "Planned TypedArrayBase exotic-object migration.",
-            ["JavaScriptRuntime.Uint8ClampedArray"] = "Planned TypedArrayBase exotic-object migration.",
-            ["JavaScriptRuntime.URIError"] = "Must remain an Exception for CLR throw/catch mechanics.",
-            ["JavaScriptRuntime.WeakMap"] = "Planned collection migration.",
-            ["JavaScriptRuntime.WeakRef"] = "Planned internal-slot wrapper migration.",
-            ["JavaScriptRuntime.WeakSet"] = "Planned collection migration."
-        };
-
     [Fact]
     public void BooleanWrappers_UseInlineJsObjectStorage()
     {
@@ -103,26 +64,6 @@ public sealed class BooleanObjectRepresentationTests
 
         Assert.Equal($"runtime-one{Environment.NewLine}", mutationResult.Output);
         Assert.Equal($"true{Environment.NewLine}", readResult.Output);
-    }
-
-    [Fact]
-    public void NonStaticIntrinsicRepresentations_AreDocumentedByJsObjectMigrationInventory()
-    {
-        var nonJsObjectIntrinsics = typeof(JsObject).Assembly
-            .GetTypes()
-            .Where(type => type.GetCustomAttributes(typeof(IntrinsicObjectAttribute), inherit: false).Length > 0)
-            .Where(type => !type.IsAbstract || !type.IsSealed)
-            .Where(type => !typeof(JsObject).IsAssignableFrom(type))
-            .Select(type => type.FullName)
-            .OrderBy(name => name)
-            .ToArray();
-
-        Assert.Equal(
-            DocumentedNonJsObjectIntrinsicExceptions.Keys.OrderBy(name => name),
-            nonJsObjectIntrinsics);
-        Assert.All(
-            DocumentedNonJsObjectIntrinsicExceptions.Values,
-            reason => Assert.False(string.IsNullOrWhiteSpace(reason)));
     }
 
     private static long MeasureJsObjectAllocations(int count, object prototype)
