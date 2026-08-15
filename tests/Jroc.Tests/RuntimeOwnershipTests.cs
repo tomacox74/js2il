@@ -1,5 +1,6 @@
 using JavaScriptRuntime;
 using JavaScriptRuntime.DependencyInjection;
+using JavaScriptRuntime.Modules;
 
 namespace Jroc.Tests;
 
@@ -16,6 +17,7 @@ public sealed class RuntimeOwnershipTests
         Assert.Same(realm, realm.Services.Resolve<RuntimeRealm>());
         Assert.Same(agent, realm.Services.Resolve<RuntimeAgent>());
         Assert.Same(cluster, realm.Services.Resolve<RuntimeAgentCluster>());
+        Assert.Same(realm.ModuleState, realm.Services.Resolve<RuntimeModuleState>());
         Assert.Equal(1, agent.RealmCount);
         Assert.Equal(1, cluster.AgentCount);
 
@@ -150,12 +152,15 @@ public sealed class RuntimeOwnershipTests
             () => services.Replace(new RuntimeAgentCluster()));
         Assert.Throws<InvalidOperationException>(
             () => services.Remove<RuntimeRealm>());
+        Assert.Throws<InvalidOperationException>(
+            () => services.Replace(new RuntimeModuleState()));
 
         services.Clear();
 
         Assert.Same(realm, services.Resolve<RuntimeRealm>());
         Assert.Same(realm.Agent, services.Resolve<RuntimeAgent>());
         Assert.Same(realm.Agent.Cluster, services.Resolve<RuntimeAgentCluster>());
+        Assert.Same(realm.ModuleState, services.Resolve<RuntimeModuleState>());
 
         realm.Agent.Cluster.Dispose();
     }

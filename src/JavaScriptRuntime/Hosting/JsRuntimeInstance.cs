@@ -511,11 +511,6 @@ internal sealed class JsRuntimeInstance : IDisposable
         {
             FailPendingOperations();
 
-            if (_serviceProvider?.TryResolve<RuntimeExecutionContext>(out var runtimeContext) == true && runtimeContext != null)
-            {
-                RuntimeServices.UnregisterModuleRequires(runtimeContext.RegisteredModuleRequires);
-            }
-
             executionScope?.Dispose();
             _exports = null;
             _eventLoop = null;

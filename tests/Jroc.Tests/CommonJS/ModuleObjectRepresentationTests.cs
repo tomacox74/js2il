@@ -26,6 +26,7 @@ public class ModuleObjectRepresentationTests
     [Fact]
     public void DynamicImport_CjsNamespace_IsJsObject_AndPreservesLiveAccessors()
     {
+        using var scope = EnterRealm();
         var exports = new JsObject();
         ObjectRuntime.SetProperty(exports, "value", 1d);
 
@@ -43,11 +44,11 @@ public class ModuleObjectRepresentationTests
         Assert.Equal(2d, ObjectRuntime.GetProperty(jsNamespace, "value"));
         Assert.True(PropertyDescriptorStore.TryGetOwn(jsNamespace, "value", out var valueDescriptor));
         Assert.Equal(JsPropertyDescriptorKind.Accessor, valueDescriptor.Kind);
-        Assert.True(PropertyDescriptorStore.TryGetOwn(exports, "__jroc_esm_namespace", out var cacheDescriptor));
-        Assert.Same(jsNamespace, Assert.IsType<JsObject>(cacheDescriptor.Value));
-        Assert.False(cacheDescriptor.Enumerable);
-        Assert.False(cacheDescriptor.Configurable);
-        Assert.False(cacheDescriptor.Writable);
+        Assert.False(
+            PropertyDescriptorStore.TryGetOwn(
+                exports,
+                "__jroc_esm_namespace",
+                out _));
     }
 
     [Fact]
@@ -58,5 +59,11 @@ public class ModuleObjectRepresentationTests
         var jsNamespace = Assert.IsType<JsObject>(namespaceObject);
         Assert.Equal(42d, ObjectRuntime.GetProperty(jsNamespace, "default"));
         Assert.Equal(42d, ObjectRuntime.GetProperty(jsNamespace, "module.exports"));
+    }
+
+    private static IDisposable EnterRealm()
+    {
+        var services = RuntimeServices.BuildServiceProvider();
+        return RuntimeExecutionContext.GetOrCreate(services).Enter();
     }
 }

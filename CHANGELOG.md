@@ -15,6 +15,12 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   register() and unregister() methods. Activates twenty corresponding pinned
   test262 fixtures.
 
+- runtime: move CommonJS and ESM graph state into `RuntimeRealm`, including
+  module instances, live bindings, namespace caches, `import.meta`,
+  module-scoped require delegates, and compiled assembly ownership. Active
+  module paths and require parent state now follow nested execution frames,
+  while realm disposal releases the complete module graph.
+
 - runtime/test262: expose WeakRef as a first-class global constructor with
   standard constructor/prototype metadata and `deref()` behavior. Weak-target
   eligibility now correctly rejects registered symbols. Activates twenty

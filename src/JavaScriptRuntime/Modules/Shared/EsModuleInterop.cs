@@ -1,12 +1,13 @@
-using System.Runtime.CompilerServices;
-
 namespace JavaScriptRuntime.Modules.Shared
 {
     internal static class EsModuleInterop
     {
         private const string EsModuleProperty = "__esModule";
-        private const string NamespaceCacheProperty = "__jroc_esm_namespace";
-        private static readonly ConditionalWeakTable<object, object> NamespaceSideCache = new();
+
+        private static RuntimeModuleState State
+            => RuntimeExecutionContext.Current?.Realm.ModuleState
+                ?? throw new InvalidOperationException(
+                    "ES module interop requires an active JavaScript runtime.");
 
         public static object ToDynamicImportResult(object? exports)
         {
@@ -73,37 +74,12 @@ namespace JavaScriptRuntime.Modules.Shared
 
         private static bool TryGetCachedNamespace(object exports, out object? namespaceObject)
         {
-            namespaceObject = null;
-            if (ObjectRuntime.hasOwn(exports, NamespaceCacheProperty))
-            {
-                namespaceObject = JavaScriptRuntime.ObjectRuntime.GetProperty(exports, NamespaceCacheProperty);
-                if (namespaceObject is not null && namespaceObject is not JsNull)
-                {
-                    return true;
-                }
-            }
-
-            return NamespaceSideCache.TryGetValue(exports, out namespaceObject);
+            return State.CommonJsNamespaceCache.TryGetValue(exports, out namespaceObject);
         }
 
         private static object CacheNamespace(object exports, object namespaceObject)
         {
-            if (ObjectRuntime.hasOwn(exports, NamespaceCacheProperty))
-            {
-                return JavaScriptRuntime.ObjectRuntime.GetProperty(exports, NamespaceCacheProperty) ?? namespaceObject;
-            }
-
-            if (ObjectRuntime.isExtensible(exports))
-            {
-                ObjectRuntime.defineProperty(
-                    exports,
-                    NamespaceCacheProperty,
-                    CreateDataDescriptor(namespaceObject, enumerable: false, configurable: false, writable: false));
-
-                return namespaceObject;
-            }
-
-            return NamespaceSideCache.GetValue(exports, _ => namespaceObject);
+            return State.CommonJsNamespaceCache.GetValue(exports, _ => namespaceObject);
         }
 
         private static object CreatePrimitiveNamespace(object? exports)
@@ -123,18 +99,7 @@ namespace JavaScriptRuntime.Modules.Shared
         {
             return key == "default"
                 || key == "module.exports"
-                || key == EsModuleProperty
-                || key == NamespaceCacheProperty;
-        }
-
-        private static object CreateDataDescriptor(object? value, bool enumerable, bool configurable, bool writable)
-        {
-            var descriptor = new JsObject();
-            descriptor.SetValue("value", value);
-            descriptor.SetBoolean("enumerable", enumerable);
-            descriptor.SetBoolean("configurable", configurable);
-            descriptor.SetBoolean("writable", writable);
-            return descriptor;
+                || key == EsModuleProperty;
         }
     }
 }

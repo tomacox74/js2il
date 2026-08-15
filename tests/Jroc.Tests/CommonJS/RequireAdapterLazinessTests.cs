@@ -1,6 +1,6 @@
 using JavaScriptRuntime;
+using JavaScriptRuntime.Modules;
 using JavaScriptRuntime.Modules.CommonJS;
-using JavaScriptRuntime.Modules.Shared;
 
 namespace Jroc.Tests.CommonJS;
 
@@ -9,7 +9,7 @@ public sealed class RequireAdapterLazinessTests
     [Fact]
     public void ModuleConstruction_DoesNotMaterializeRequireAdapter()
     {
-        var requireService = new Require(new LocalModulesAssembly());
+        var requireService = new Require(new RuntimeModuleState());
         var requireTarget = new RequireFunctionTarget(requireService, "entry");
 
         _ = new Module(
@@ -27,7 +27,7 @@ public sealed class RequireAdapterLazinessTests
     [Fact]
     public void FirstRequireValueRead_CreatesOneStableAdapterWithMainMetadata()
     {
-        var requireService = new Require(new LocalModulesAssembly());
+        var requireService = new Require(new RuntimeModuleState());
         var requireTarget = new RequireFunctionTarget(requireService, "entry");
         var module = new Module(
             "entry",

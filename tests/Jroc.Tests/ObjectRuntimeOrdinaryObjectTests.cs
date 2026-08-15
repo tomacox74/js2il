@@ -241,6 +241,8 @@ public sealed class ObjectRuntimeOrdinaryObjectTests
     [Fact]
     public void RuntimeCreatedOrdinaryRecords_AreJsObjects()
     {
+        var services = RuntimeServices.BuildServiceProvider();
+        using var scope = RuntimeExecutionContext.GetOrCreate(services).Enter();
         var moduleId = $"module-{Guid.NewGuid():N}.js";
         var importMeta = Assert.IsType<JsObject>(RuntimeServices.GetImportMeta(moduleId));
         var revocable = Assert.IsType<JsObject>(

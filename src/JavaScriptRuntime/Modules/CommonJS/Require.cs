@@ -4,35 +4,51 @@ using System.Dynamic;
 using System.Reflection;
 using System.Linq;
 using Jroc.Runtime;
+using JavaScriptRuntime.Modules.Shared;
 
 namespace JavaScriptRuntime.Modules.CommonJS
 {
-    using JavaScriptRuntime.Modules.Shared;
-
     internal sealed class Require
     {
-        // Registry and instance cache; resolved lazily via [Node.NodeModule] attributes
-        private readonly Dictionary<string, Type> _registry = new(StringComparer.OrdinalIgnoreCase);
-        private readonly Dictionary<string, object> _instances = new(StringComparer.OrdinalIgnoreCase);
-        private readonly Dictionary<string, Module> _modules = new(StringComparer.OrdinalIgnoreCase);
-        private readonly HashSet<string> _notFound = new(StringComparer.OrdinalIgnoreCase);
+        private readonly RuntimeModuleState _state;
 
-        private readonly Assembly? _localModulesAssembly;
+        private Dictionary<string, Type> _registry => _state.NodeModuleRegistry;
 
-        // Mapping emitted by the compiler: logical module id -> CLR type name.
-        // Populated lazily from assembly attributes.
-        private Dictionary<string, (string CanonicalId, string TypeName)>? _compiledModuleTypeMap;
-        
-        // Track the current parent module for establishing parent-child relationships
-        private Module? _currentParentModule;
+        private Dictionary<string, object> _instances => _state.Instances;
 
-        // Node semantics: require.main should refer to the main module.
-        private Module? _mainModule;
+        private Dictionary<string, Module> _modules => _state.CommonJsModules;
 
-        public Require(LocalModulesAssembly localModulesAssembly)
+        private HashSet<string> _notFound => _state.MissingNodeModules;
+
+        private Assembly? _localModulesAssembly => _state.ModulesAssembly;
+
+        private Dictionary<string, (string CanonicalId, string TypeName)>? _compiledModuleTypeMap
         {
-            // Preload local modules from the provided assembly
-            _localModulesAssembly = localModulesAssembly.ModulesAssembly;
+            get => _state.CompiledModuleTypeMap;
+            set => _state.CompiledModuleTypeMap = value;
+        }
+
+        private Module? _currentParentModule
+        {
+            get => RuntimeExecutionContext.Current?.GetCurrentParentModule();
+            set
+            {
+                var context = RuntimeExecutionContext.Current
+                    ?? throw new InvalidOperationException(
+                        "Active require state requires a runtime execution frame.");
+                context.SetCurrentParentModule(value);
+            }
+        }
+
+        private Module? _mainModule
+        {
+            get => _state.MainModule;
+            set => _state.MainModule = value;
+        }
+
+        public Require(RuntimeModuleState state)
+        {
+            _state = state;
         }
 
         internal void SetMainModule(Module mainModule)
@@ -108,7 +124,9 @@ namespace JavaScriptRuntime.Modules.CommonJS
         public object? RequireModule(string specifier)
         {
             if (string.IsNullOrWhiteSpace(specifier))
-                throw new ReferenceError("require specifier must be a non-empty string"); 
+            {
+                throw new ReferenceError("require specifier must be a non-empty string");
+            }
 
             var isNodeBuiltinSpecifier = IsNodeBuiltinSpecifier(specifier);
             var key = Normalize(specifier);

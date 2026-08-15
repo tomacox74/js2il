@@ -22,8 +22,6 @@ public class RuntimeServices
     [ThreadStatic] private static Stack<GeneratedFunctionDirectCallState>? _generatedFunctionDirectCallStack;
     [ThreadStatic] private static Stack<object?>? _constructorNewTargetStack;
     [ThreadStatic] private static Stack<object?>? _derivedConstructorThisStack;
-    private static readonly ConcurrentDictionary<string, JsObject> _importMetaByUrl = new(StringComparer.Ordinal);
-    private static readonly ConcurrentDictionary<string, JavaScriptRuntime.Modules.CommonJS.RequireDelegate> _requireByModuleId = new(StringComparer.OrdinalIgnoreCase);
     private static readonly ConditionalWeakTable<Type, LazyClassMetadataSlot> _lazyClassMetadata = new();
     private static readonly ConcurrentDictionary<ClassConstructorCacheKey, JsClassConstructorObject> _classConstructorValues = new();
 
@@ -1603,7 +1601,7 @@ public class RuntimeServices
     public static object GetImportMeta(object? moduleIdOrPath)
     {
         var url = GetImportMetaUrl(moduleIdOrPath);
-        var meta = _importMetaByUrl.GetOrAdd(url, static key =>
+        var meta = GetCurrentModuleState().ImportMetaByUrl.GetOrAdd(url, static key =>
         {
             var meta = new JsObject();
             if (!string.IsNullOrEmpty(key))
@@ -1696,20 +1694,7 @@ public class RuntimeServices
             return;
         }
 
-        _requireByModuleId[moduleId] = require;
-        if (GlobalThis.ServiceProvider?.TryResolve<RuntimeExecutionContext>(out var runtimeContext) == true
-            && runtimeContext != null)
-        {
-            runtimeContext.TrackModuleRequire(moduleId, require);
-        }
-    }
-
-    internal static void UnregisterModuleRequires(IEnumerable<KeyValuePair<string, Modules.CommonJS.RequireDelegate>> moduleRequires)
-    {
-        foreach (var moduleRequire in moduleRequires)
-        {
-            ((ICollection<KeyValuePair<string, Modules.CommonJS.RequireDelegate>>)_requireByModuleId).Remove(moduleRequire);
-        }
+        GetCurrentModuleState().RequireByModuleId[moduleId] = require;
     }
 
     /// <summary>
@@ -1722,8 +1707,15 @@ public class RuntimeServices
             return null;
         }
 
-        return _requireByModuleId.TryGetValue(moduleId, out var require) ? require : null;
+        return GetCurrentModuleState().RequireByModuleId.TryGetValue(moduleId, out var require)
+            ? require
+            : null;
     }
+
+    private static Modules.RuntimeModuleState GetCurrentModuleState()
+        => RuntimeExecutionContext.Current?.Realm.ModuleState
+            ?? throw new InvalidOperationException(
+                "Module state requires an active JavaScript runtime.");
 
     /// <summary>
     /// Creates the backing object for a JavaScript object literal.
@@ -1802,8 +1794,6 @@ public class RuntimeServices
         container.Register<EngineCore.IIOScheduler, EngineCore.NodeSchedulerState>();
         container.Register<EngineCore.IFinalizationRegistryHost, EngineCore.FinalizationRegistryHost>();
         container.Register<Modules.CommonJS.Require>();
-        container.Register<Modules.ESM.EsModuleLinkerState>();
-        container.Register<Modules.Shared.LocalModulesAssembly>();
         container.RegisterInstance<IPropertyDescriptorStore>(new PropertyDescriptorStore());
         container.Register<IEnvironment, DefaultEnvironment>();
         container.Register<Node.IChildProcessLauncher, Node.DefaultChildProcessLauncher>();

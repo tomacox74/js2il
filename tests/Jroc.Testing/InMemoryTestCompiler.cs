@@ -215,12 +215,6 @@ public static class InMemoryTestCompiler
             }
             finally
             {
-                if (serviceProvider.TryResolve<RuntimeExecutionContext>(out var runtimeContext)
-                    && runtimeContext != null)
-                {
-                    RuntimeServices.UnregisterModuleRequires(runtimeContext.RegisteredModuleRequires);
-                }
-
                 Engine._serviceProviderOverride.Value = null;
                 RuntimeServices.SetCurrentThis(null);
                 EnvironmentProvider.SuppressExit = false;

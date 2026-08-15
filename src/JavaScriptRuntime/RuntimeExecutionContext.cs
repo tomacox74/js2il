@@ -8,8 +8,9 @@ internal sealed class RuntimeExecutionContext
     private static readonly AsyncLocal<AmbientState?> Ambient = new();
 
     private readonly object _stateGate = new();
-    private readonly List<KeyValuePair<string, RequireDelegate>> _registeredModuleRequires = [];
     private GlobalThis? _globalObject;
+    private string _moduleDirectory = string.Empty;
+    private string _moduleFilename = string.Empty;
 
     private RuntimeExecutionContext(
         RuntimeRealm realm,
@@ -48,13 +49,6 @@ internal sealed class RuntimeExecutionContext
     internal bool IsHosted { get; private set; }
 
     internal string? CompiledAssemblyPath { get; private set; }
-
-    internal string ModuleDirectory { get; private set; } = string.Empty;
-
-    internal string ModuleFilename { get; private set; } = string.Empty;
-
-    internal IReadOnlyList<KeyValuePair<string, RequireDelegate>> RegisteredModuleRequires
-        => _registeredModuleRequires;
 
     internal static RuntimeExecutionContext GetOrCreate(
         ServiceContainer services,
@@ -118,9 +112,10 @@ internal sealed class RuntimeExecutionContext
 
         var frame = services == null
             ? null
-            : new ExecutionFrame(
+            : CreateFrame(
                 GetOrCreate(services),
-                IsLegacy: true);
+                isLegacy: true,
+                inheritActiveModuleState: true);
         SetAmbient(new AmbientState(
             frame,
             current?.ServiceProviderOverride));
@@ -131,19 +126,53 @@ internal sealed class RuntimeExecutionContext
         ArgumentNullException.ThrowIfNull(directory);
         ArgumentNullException.ThrowIfNull(filename);
 
+        if (Ambient.Value?.Frame is { } frame
+            && ReferenceEquals(frame.Context, this))
+        {
+            frame.ModuleDirectory = directory;
+            frame.ModuleFilename = filename;
+            return;
+        }
+
         lock (_stateGate)
         {
-            ModuleDirectory = directory;
-            ModuleFilename = filename;
+            _moduleDirectory = directory;
+            _moduleFilename = filename;
         }
     }
 
     internal (string Directory, string Filename) GetModuleLocation()
     {
+        if (Ambient.Value?.Frame is { } frame
+            && ReferenceEquals(frame.Context, this))
+        {
+            return (frame.ModuleDirectory, frame.ModuleFilename);
+        }
+
         lock (_stateGate)
         {
-            return (ModuleDirectory, ModuleFilename);
+            return (_moduleDirectory, _moduleFilename);
         }
+    }
+
+    internal Module? GetCurrentParentModule()
+    {
+        var frame = Ambient.Value?.Frame;
+        return frame != null && ReferenceEquals(frame.Context, this)
+            ? frame.CurrentParentModule
+            : null;
+    }
+
+    internal void SetCurrentParentModule(Module? module)
+    {
+        var frame = Ambient.Value?.Frame;
+        if (frame == null || !ReferenceEquals(frame.Context, this))
+        {
+            throw new InvalidOperationException(
+                "Active require state requires a runtime execution frame.");
+        }
+
+        frame.CurrentParentModule = module;
     }
 
     internal GlobalThis GetOrCreateGlobalObject()
@@ -152,12 +181,6 @@ internal sealed class RuntimeExecutionContext
         {
             return _globalObject ??= new GlobalThis();
         }
-    }
-
-    internal void TrackModuleRequire(string moduleId, RequireDelegate require)
-    {
-        _registeredModuleRequires.Add(
-            new KeyValuePair<string, RequireDelegate>(moduleId, require));
     }
 
     private IDisposable EnterCore(bool asRoot)
@@ -174,7 +197,10 @@ internal sealed class RuntimeExecutionContext
             invocationState = RuntimeServices.CaptureAndClearAmbientInvocationState();
         }
 
-        var frame = new ExecutionFrame(this, IsLegacy: false);
+        var frame = CreateFrame(
+            this,
+            isLegacy: false,
+            inheritActiveModuleState: !asRoot);
         try
         {
             SetAmbient(new AmbientState(
@@ -214,13 +240,55 @@ internal sealed class RuntimeExecutionContext
             next?.Frame?.Context.DescriptorStore);
     }
 
+    private static ExecutionFrame CreateFrame(
+        RuntimeExecutionContext context,
+        bool isLegacy,
+        bool inheritActiveModuleState)
+    {
+        var (directory, filename) = context.GetModuleLocation();
+        var frame = new ExecutionFrame(
+            context,
+            isLegacy,
+            directory,
+            filename);
+        if (inheritActiveModuleState
+            && Ambient.Value?.Frame is { } current
+            && ReferenceEquals(current.Context, context))
+        {
+            frame.CurrentParentModule = current.CurrentParentModule;
+        }
+
+        return frame;
+    }
+
     private sealed record AmbientState(
         ExecutionFrame? Frame,
         ServiceContainer? ServiceProviderOverride);
 
-    private sealed record ExecutionFrame(
-        RuntimeExecutionContext Context,
-        bool IsLegacy);
+    private sealed class ExecutionFrame
+    {
+        internal ExecutionFrame(
+            RuntimeExecutionContext context,
+            bool isLegacy,
+            string moduleDirectory,
+            string moduleFilename)
+        {
+            Context = context;
+            IsLegacy = isLegacy;
+            ModuleDirectory = moduleDirectory;
+            ModuleFilename = moduleFilename;
+        }
+
+        internal RuntimeExecutionContext Context { get; }
+
+        internal bool IsLegacy { get; }
+
+        internal string ModuleDirectory { get; set; }
+
+        internal string ModuleFilename { get; set; }
+
+        internal Module? CurrentParentModule { get; set; }
+    }
 
     private sealed class ExecutionScope : IDisposable
     {

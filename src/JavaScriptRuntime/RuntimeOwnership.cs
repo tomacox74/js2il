@@ -194,11 +194,14 @@ internal sealed class RuntimeRealm : IDisposable
     internal RuntimeRealm(RuntimeAgent agent)
     {
         Agent = agent;
+        ModuleState = new Modules.RuntimeModuleState();
         Services = new ServiceContainer();
         Services.AttachOwningRealm(this);
     }
 
     internal RuntimeAgent Agent { get; }
+
+    internal Modules.RuntimeModuleState ModuleState { get; }
 
     internal ServiceContainer Services { get; }
 
@@ -225,6 +228,7 @@ internal sealed class RuntimeRealm : IDisposable
             }
 
             _state = RuntimeOwnershipState.Disposing;
+            ModuleState.Dispose();
             DisposalOrder = Agent.Cluster.NextDisposalOrder();
             _state = RuntimeOwnershipState.Disposed;
         }

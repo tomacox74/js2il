@@ -51,8 +51,6 @@ public class Engine
                 }
                 finally
                 {
-                    RuntimeServices.UnregisterModuleRequires(
-                        runtimeContext.RegisteredModuleRequires);
                     if (serviceProvider.TryResolve<AsyncContextRuntime>(
                             out var asyncContext)
                         && asyncContext != null)
@@ -103,7 +101,7 @@ public class Engine
         _ = serviceProvider.Resolve<NodeEventLoopPump>();
 
         // Provide the compiled modules assembly for runtime dependency/module resolution.
-        serviceProvider.Resolve<LocalModulesAssembly>().ModulesAssembly = modulesAssembly;
+        serviceProvider.Resolve<RuntimeRealm>().ModuleState.ModulesAssembly = modulesAssembly;
 
         return serviceProvider;
     }
