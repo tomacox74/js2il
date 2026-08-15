@@ -6,6 +6,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- runtime/test262: expose WeakRef as a first-class global constructor with
+  standard constructor/prototype metadata and `deref()` behavior. Weak-target
+  eligibility now correctly rejects registered symbols. Activates twenty
+  corresponding pinned test262 fixtures.
+
 - compiler/runtime/test262: add the ES2024 SuppressedError global with standard
   constructor/prototype metadata and ordered own `message`, `error`, and
   `suppressed` properties. Activates twenty corresponding pinned test262

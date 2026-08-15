@@ -178,6 +178,16 @@ namespace JavaScriptRuntime
             return new JavaScriptRuntime.WeakSet(iterable);
         };
 
+        private static readonly JsFuncNoScopes1 _weakRefConstructorValue = static (newTarget, target) =>
+        {
+            if (newTarget is null)
+            {
+                throw new TypeError("Constructor WeakRef requires 'new'");
+            }
+
+            return new JavaScriptRuntime.WeakRef(target);
+        };
+
         private static readonly JsFuncNoScopes1 _promiseConstructorValue = static (newTarget, executor) =>
         {
             if (newTarget is null)
@@ -491,6 +501,7 @@ namespace JavaScriptRuntime
             ConfigureCollectionIntrinsicSurface(_setConstructorValue, JavaScriptRuntime.Set.Prototype);
             ConfigureCollectionIntrinsicSurface(_weakMapConstructorValue, JavaScriptRuntime.WeakMap.Prototype);
             ConfigureCollectionIntrinsicSurface(_weakSetConstructorValue, JavaScriptRuntime.WeakSet.Prototype);
+            ConfigureWeakRefIntrinsicSurface();
             ConfigureCollectionConstructorMetadata(_mapConstructorValue, "Map");
             ConfigureCollectionConstructorMetadata(_setConstructorValue, "Set");
             ConfigureCollectionConstructorMetadata(_weakMapConstructorValue, "WeakMap");
@@ -1339,6 +1350,9 @@ namespace JavaScriptRuntime
             dict.TryAdd(nameof(GlobalThis.WeakSet), WeakSet);
             DefineNonEnumerableDataProperty(nameof(GlobalThis.WeakSet), dict[nameof(GlobalThis.WeakSet)]);
 
+            dict.TryAdd(nameof(GlobalThis.WeakRef), WeakRef);
+            DefineNonEnumerableDataProperty(nameof(GlobalThis.WeakRef), dict[nameof(GlobalThis.WeakRef)]);
+
             dict.TryAdd(nameof(GlobalThis.Object), Object);
             DefineNonEnumerableDataProperty(nameof(GlobalThis.Object), dict[nameof(GlobalThis.Object)]);
 
@@ -1641,6 +1655,8 @@ namespace JavaScriptRuntime
         public static Delegate WeakMap => _weakMapConstructorValue;
 
         public static Delegate WeakSet => _weakSetConstructorValue;
+
+        public static Delegate WeakRef => _weakRefConstructorValue;
 
         public static Func<object[], object?, object> Object => _objectConstructorValue;
 
@@ -2171,6 +2187,27 @@ namespace JavaScriptRuntime
         {
             ConfigureConstructorPrototypeSurface(constructorValue, prototypeValue);
             DefineSpeciesAccessorProperty(constructorValue);
+        }
+
+        private static void ConfigureWeakRefIntrinsicSurface()
+        {
+            ConfigureConstructorPrototypeSurface(_weakRefConstructorValue, JavaScriptRuntime.WeakRef.Prototype);
+            PropertyDescriptorStore.DefineOrUpdate(_weakRefConstructorValue, "length", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = false,
+                Value = 1d
+            });
+            PropertyDescriptorStore.DefineOrUpdate(_weakRefConstructorValue, "name", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = false,
+                Value = "WeakRef"
+            });
         }
 
         private static void DefineSpeciesAccessorProperty(object constructorValue)

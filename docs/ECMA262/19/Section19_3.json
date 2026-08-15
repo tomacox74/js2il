@@ -370,13 +370,14 @@
       },
       {
         "clause": "19.3.41",
-        "feature": "WeakRef constructible global baseline",
+        "feature": "WeakRef first-class global constructor",
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-weakref",
         "testScripts": [
-          "tests/Jroc.Tests/WeakRef/JavaScript/WeakRef_Deref_KeptObjects.js"
+          "tests/Jroc.Test262.Tests/built-ins/WeakRef/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/WeakRef/prototype/ExecutionTests.cs"
         ],
-        "notes": "Supports `new WeakRef(target)` in construct positions plus `deref()` and kept-object behavior. jroc does not yet expose a full first-class `globalThis.WeakRef` constructor/prototype object, and deterministic collection in tests uses a host-opt-in non-standard global `gc()` helper."
+        "notes": "Exposes globalThis.WeakRef as a constructible function with the standard constructor/prototype metadata and deref() surface. Deterministic collection in tests still uses a host-opt-in non-standard global gc() helper, while custom newTarget prototypes and cross-realm construction remain limited."
       },
       {
         "clause": "19.3.42",
