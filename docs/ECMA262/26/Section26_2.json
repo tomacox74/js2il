@@ -24,43 +24,43 @@
     {
       "clause": "26.2.2",
       "title": "Properties of the FinalizationRegistry Constructor",
-      "status": "Supported with Limitations",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-properties-of-the-finalization-registry-constructor"
     },
     {
       "clause": "26.2.2.1",
       "title": "FinalizationRegistry.prototype",
-      "status": "Supported with Limitations",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-finalization-registry.prototype"
     },
     {
       "clause": "26.2.3",
       "title": "Properties of the FinalizationRegistry Prototype Object",
-      "status": "Supported with Limitations",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-properties-of-the-finalization-registry-prototype-object"
     },
     {
       "clause": "26.2.3.1",
       "title": "FinalizationRegistry.prototype.constructor",
-      "status": "Supported with Limitations",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-finalization-registry.prototype.constructor"
     },
     {
       "clause": "26.2.3.2",
       "title": "FinalizationRegistry.prototype.register ( target , heldValue [ , unregisterToken ] )",
-      "status": "Supported with Limitations",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-finalization-registry.prototype.register"
     },
     {
       "clause": "26.2.3.3",
       "title": "FinalizationRegistry.prototype.unregister ( unregisterToken )",
-      "status": "Supported with Limitations",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-finalization-registry.prototype.unregister"
     },
     {
       "clause": "26.2.3.4",
       "title": "FinalizationRegistry.prototype [ %Symbol.toStringTag% ]",
-      "status": "Supported with Limitations",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-finalization-registry.prototype-%symbol.tostringtag%"
     },
     {
@@ -74,14 +74,63 @@
     "entries": [
       {
         "clause": "26.2",
-        "feature": "FinalizationRegistry constructor, register/unregister, and cleanup callback baseline",
+        "feature": "FinalizationRegistry construction and cleanup callback",
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-finalization-registry-objects",
         "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/FinalizationRegistry/ExecutionTests.cs",
           "tests/Jroc.Tests/FinalizationRegistry/JavaScript/FinalizationRegistry_Cleanup_Order.js",
           "tests/Jroc.Tests/FinalizationRegistry/JavaScript/FinalizationRegistry_Unregister_Basic.js"
         ],
-        "notes": "Supports `new FinalizationRegistry(cleanupCallback)` in construct positions plus `register(target, heldValue, [unregisterToken])`, `unregister(token)`, and `%Symbol.toStringTag%`. Cleanup callbacks are queued through a host-managed finalization queue and become deterministic in tests when a host-opt-in non-standard global `gc()` helper forces collection. jroc does not yet expose a full first-class `FinalizationRegistry` constructor/prototype object on `globalThis`, and cleanup timing otherwise depends on .NET GC plus event-loop checkpoints."
+        "test262Paths": [
+          "test/built-ins/FinalizationRegistry/newtarget-prototype-is-not-object.js",
+          "test/built-ins/FinalizationRegistry/returns-new-object-from-constructor.js",
+          "test/built-ins/FinalizationRegistry/undefined-newtarget-throws.js"
+        ],
+        "notes": "Supports construction only with new and uses the intrinsic FinalizationRegistry prototype when a newTarget prototype is not an object. Cleanup callbacks are queued through a host-managed finalization queue and become deterministic when a host-opt-in non-standard gc() helper forces collection. Custom newTarget prototypes, cross-realm construction, and cleanup timing outside that helper remain limited."
+      },
+      {
+        "clause": "26.2.2",
+        "feature": "FinalizationRegistry constructor function surface",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-properties-of-the-finalization-registry-constructor",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/FinalizationRegistry/ExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/built-ins/FinalizationRegistry/constructor.js",
+          "test/built-ins/FinalizationRegistry/is-a-constructor.js",
+          "test/built-ins/FinalizationRegistry/length.js",
+          "test/built-ins/FinalizationRegistry/name.js",
+          "test/built-ins/FinalizationRegistry/prop-desc.js",
+          "test/built-ins/FinalizationRegistry/proto.js"
+        ],
+        "notes": "globalThis.FinalizationRegistry is a constructible function with standard name, length, global-property, and prototype descriptors."
+      },
+      {
+        "clause": "26.2.3",
+        "feature": "FinalizationRegistry.prototype register/unregister surface",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-properties-of-the-finalization-registry-prototype-object",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/FinalizationRegistry/prototype/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/FinalizationRegistry/prototype/register/ExecutionTests.cs",
+          "tests/Jroc.Tests/FinalizationRegistry/JavaScript/FinalizationRegistry_Unregister_Basic.js"
+        ],
+        "test262Paths": [
+          "test/built-ins/FinalizationRegistry/prototype/constructor.js",
+          "test/built-ins/FinalizationRegistry/prototype/prop-desc.js",
+          "test/built-ins/FinalizationRegistry/prototype/proto.js",
+          "test/built-ins/FinalizationRegistry/prototype/Symbol.toStringTag.js",
+          "test/built-ins/FinalizationRegistry/prototype/register/custom-this.js",
+          "test/built-ins/FinalizationRegistry/prototype/register/length.js",
+          "test/built-ins/FinalizationRegistry/prototype/register/name.js",
+          "test/built-ins/FinalizationRegistry/prototype/register/not-a-constructor.js",
+          "test/built-ins/FinalizationRegistry/prototype/register/prop-desc.js",
+          "test/built-ins/FinalizationRegistry/prototype/register/this-does-not-have-internal-target-throws.js",
+          "test/built-ins/FinalizationRegistry/prototype/register/this-not-object-throws.js"
+        ],
+        "notes": "FinalizationRegistry.prototype inherits Object.prototype and owns constructor, register, unregister, and @@toStringTag properties. register and unregister are non-constructible, support explicit receivers, and reject incompatible receivers."
       }
     ]
   }

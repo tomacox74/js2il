@@ -6,6 +6,7 @@ namespace JavaScriptRuntime
     [IntrinsicObject("FinalizationRegistry")]
     public sealed class FinalizationRegistry
     {
+        internal static readonly object Prototype = CreatePrototype();
         private sealed class Registration
         {
             public Registration(object target, object? heldValue, object? unregisterToken)
@@ -31,6 +32,10 @@ namespace JavaScriptRuntime
         private readonly object _cleanupCallback;
         private readonly List<Registration> _registrations = new();
         private bool _trackedWithHost;
+
+        public FinalizationRegistry() : this(null)
+        {
+        }
 
         public FinalizationRegistry(object? cleanupCallback)
         {
@@ -150,7 +155,51 @@ namespace JavaScriptRuntime
 
         private void InitializeIntrinsicSurface()
         {
-            PropertyDescriptorStore.DefineOrUpdate(this, Symbol.toStringTag.DebugId, new JsPropertyDescriptor
+            PrototypeChain.SetPrototype(this, Prototype);
+        }
+
+        private static object CreatePrototype()
+        {
+            using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
+
+            var prototype = new JsObject();
+            Func<object[], object?[]?, object?> register = PrototypeRegister;
+            Func<object[], object?[]?, object?> unregister = PrototypeUnregister;
+            Function.InitializeFunctionInstance(register, 2d, "register");
+            Function.InitializeFunctionInstance(unregister, 1d, "unregister");
+            PropertyDescriptorStore.DefineOrUpdate(register, "prototype", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = false,
+                Writable = false,
+                Value = null
+            });
+            PropertyDescriptorStore.DefineOrUpdate(unregister, "prototype", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = false,
+                Writable = false,
+                Value = null
+            });
+            PropertyDescriptorStore.DefineOrUpdate(prototype, "register", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = register
+            });
+            PropertyDescriptorStore.DefineOrUpdate(prototype, "unregister", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = unregister
+            });
+            PropertyDescriptorStore.DefineOrUpdate(prototype, Symbol.toStringTag.DebugId, new JsPropertyDescriptor
             {
                 Kind = JsPropertyDescriptorKind.Data,
                 Enumerable = false,
@@ -158,6 +207,32 @@ namespace JavaScriptRuntime
                 Writable = false,
                 Value = "FinalizationRegistry"
             });
+            return prototype;
+        }
+
+        private static object? PrototypeRegister(object[] _, object?[]? args)
+        {
+            if (RuntimeServices.GetCurrentThis() is not FinalizationRegistry finalizationRegistry)
+            {
+                throw new TypeError("FinalizationRegistry.prototype.register called on incompatible receiver");
+            }
+
+            args ??= [];
+            return finalizationRegistry.register(
+                args.Length > 0 ? args[0] : null,
+                args.Length > 1 ? args[1] : null,
+                args.Length > 2 ? args[2] : null);
+        }
+
+        private static object? PrototypeUnregister(object[] _, object?[]? args)
+        {
+            if (RuntimeServices.GetCurrentThis() is not FinalizationRegistry finalizationRegistry)
+            {
+                throw new TypeError("FinalizationRegistry.prototype.unregister called on incompatible receiver");
+            }
+
+            args ??= [];
+            return finalizationRegistry.unregister(args.Length > 0 ? args[0] : null);
         }
     }
 }

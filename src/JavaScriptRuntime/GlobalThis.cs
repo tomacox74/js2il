@@ -188,6 +188,16 @@ namespace JavaScriptRuntime
             return new JavaScriptRuntime.WeakRef(target);
         };
 
+        private static readonly JsFuncNoScopes1 _finalizationRegistryConstructorValue = static (newTarget, cleanupCallback) =>
+        {
+            if (newTarget is null)
+            {
+                throw new TypeError("Constructor FinalizationRegistry requires 'new'");
+            }
+
+            return new JavaScriptRuntime.FinalizationRegistry(cleanupCallback);
+        };
+
         private static readonly JsFuncNoScopes1 _promiseConstructorValue = static (newTarget, executor) =>
         {
             if (newTarget is null)
@@ -502,6 +512,7 @@ namespace JavaScriptRuntime
             ConfigureCollectionIntrinsicSurface(_weakMapConstructorValue, JavaScriptRuntime.WeakMap.Prototype);
             ConfigureCollectionIntrinsicSurface(_weakSetConstructorValue, JavaScriptRuntime.WeakSet.Prototype);
             ConfigureWeakRefIntrinsicSurface();
+            ConfigureFinalizationRegistryIntrinsicSurface();
             ConfigureCollectionConstructorMetadata(_mapConstructorValue, "Map");
             ConfigureCollectionConstructorMetadata(_setConstructorValue, "Set");
             ConfigureCollectionConstructorMetadata(_weakMapConstructorValue, "WeakMap");
@@ -1353,6 +1364,9 @@ namespace JavaScriptRuntime
             dict.TryAdd(nameof(GlobalThis.WeakRef), WeakRef);
             DefineNonEnumerableDataProperty(nameof(GlobalThis.WeakRef), dict[nameof(GlobalThis.WeakRef)]);
 
+            dict.TryAdd(nameof(GlobalThis.FinalizationRegistry), FinalizationRegistry);
+            DefineNonEnumerableDataProperty(nameof(GlobalThis.FinalizationRegistry), dict[nameof(GlobalThis.FinalizationRegistry)]);
+
             dict.TryAdd(nameof(GlobalThis.Object), Object);
             DefineNonEnumerableDataProperty(nameof(GlobalThis.Object), dict[nameof(GlobalThis.Object)]);
 
@@ -1657,6 +1671,8 @@ namespace JavaScriptRuntime
         public static Delegate WeakSet => _weakSetConstructorValue;
 
         public static Delegate WeakRef => _weakRefConstructorValue;
+
+        public static Delegate FinalizationRegistry => _finalizationRegistryConstructorValue;
 
         public static Func<object[], object?, object> Object => _objectConstructorValue;
 
@@ -2207,6 +2223,29 @@ namespace JavaScriptRuntime
                 Configurable = true,
                 Writable = false,
                 Value = "WeakRef"
+            });
+        }
+
+        private static void ConfigureFinalizationRegistryIntrinsicSurface()
+        {
+            ConfigureConstructorPrototypeSurface(
+                _finalizationRegistryConstructorValue,
+                JavaScriptRuntime.FinalizationRegistry.Prototype);
+            PropertyDescriptorStore.DefineOrUpdate(_finalizationRegistryConstructorValue, "length", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = false,
+                Value = 1d
+            });
+            PropertyDescriptorStore.DefineOrUpdate(_finalizationRegistryConstructorValue, "name", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = false,
+                Value = "FinalizationRegistry"
             });
         }
 
