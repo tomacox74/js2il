@@ -1,20 +1,20 @@
 namespace JavaScriptRuntime
 {
     [IntrinsicObject("Boolean", IntrinsicCallKind.ConstructorLike)]
-    public sealed class Boolean
+    public sealed class Boolean : JsObject
     {
         private readonly bool _value;
 
         public Boolean()
         {
             _value = false;
-            PrototypeChain.SetPrototype(this, GlobalThis.BooleanPrototypeValue);
+            PrototypeChain.InitializePrototype(this, GlobalThis.BooleanPrototypeValue);
         }
 
         public Boolean(object? value)
         {
             _value = TypeUtilities.ToBoolean(value);
-            PrototypeChain.SetPrototype(this, GlobalThis.BooleanPrototypeValue);
+            PrototypeChain.InitializePrototype(this, GlobalThis.BooleanPrototypeValue);
         }
 
         public string toString()
