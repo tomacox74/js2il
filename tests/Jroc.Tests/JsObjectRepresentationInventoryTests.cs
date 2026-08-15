@@ -78,8 +78,6 @@ public sealed class JsObjectRepresentationInventoryTests
             ["JavaScriptRuntime.Proxy"] = "Requires the dedicated Proxy design to preserve traps and invariants.",
             ["JavaScriptRuntime.RangeError"] = ErrorReason,
             ["JavaScriptRuntime.ReferenceError"] = ErrorReason,
-            ["JavaScriptRuntime.Set"] = "Requires the Set and SetIterator migration.",
-            ["JavaScriptRuntime.Set+SetIterator"] = "Must migrate with Set to preserve collection mutation behavior.",
             ["JavaScriptRuntime.SharedArrayBuffer"] = BufferViewReason,
             ["JavaScriptRuntime.String+PublicStringIterator"] = IteratorReason,
             ["JavaScriptRuntime.SuppressedError"] = ErrorReason,

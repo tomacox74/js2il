@@ -36,6 +36,10 @@ public class PrototypeStorageBenchmarks
     public JavaScriptRuntime.Map ConstructMap()
         => new();
 
+    [Benchmark(Description = "Set with initialized prototype")]
+    public JavaScriptRuntime.Set ConstructSet()
+        => new();
+
     [Benchmark(Description = "Ordinary object with initialized prototype")]
     public JavaScriptRuntime.JsObject ConstructOrdinaryObject()
     {
