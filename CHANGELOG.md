@@ -6,6 +6,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- runtime: begin #1580's incremental built-in representation migration by
+  moving Boolean wrappers to `JsObject` inline property/prototype storage.
+  Add an intrinsic representation inventory guard, Boolean allocation coverage,
+  and a prototype-storage benchmark.
+
 - runtime/test262: expose SharedArrayBuffer as a first-class global constructor
   with standard constructor/prototype metadata and receiver-checked
   `byteLength`, `maxByteLength`, and `growable` accessors. Activates twenty
