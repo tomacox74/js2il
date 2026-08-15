@@ -7,6 +7,7 @@ RuntimeAgentCluster
   -> RuntimeAgent
       -> RuntimeRealm
           -> ServiceContainer
+          -> RuntimeExecutionContext (while entered)
 ```
 
 - `RuntimeAgentCluster` owns agents and, in later migration stages, only
@@ -40,6 +41,8 @@ issues move that state under these owners.
 - A cluster may reference its active agents.
 - An agent may reference its cluster and active realms.
 - A realm may reference its agent and service container.
+- An entered execution context is the only ambient pointer to a realm and
+  agent; thread identity is not an ownership boundary.
 - Realm services may receive any of the three owners through constructor
   injection, but must not discover them through a second service locator.
 - Realm-created JavaScript objects must not be stored on an agent or cluster.

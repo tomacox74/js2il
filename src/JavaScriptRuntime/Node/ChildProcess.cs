@@ -1755,6 +1755,10 @@ namespace JavaScriptRuntime.Node
                 {
                     return;
                 }
+                catch (InvalidOperationException) when (_disposed || _connected.Task.IsCompleted)
+                {
+                    return;
+                }
                 catch (Exception ex)
                 {
                     if (!_disposed)

@@ -217,7 +217,6 @@ public class JavaScriptErrorStackTraceTests
         var captured = new CapturingConsoleOutput();
         var capturedEnvironment = new JavaScriptRuntime.CapturingEnvironment();
 
-        JavaScriptRuntime.Modules.CommonJS.ModuleContext.SetModuleContext(modDir, file);
         JavaScriptRuntime.EnvironmentProvider.SuppressExit = true;
         var runtimeServices = JavaScriptRuntime.RuntimeServices.BuildServiceProvider();
         runtimeServices.RegisterInstance(new ConsoleOutputSinks
@@ -227,6 +226,7 @@ public class JavaScriptErrorStackTraceTests
         });
         runtimeServices.RegisterInstance<IEnvironment>(capturedEnvironment);
         JavaScriptRuntime.Engine._serviceProviderOverride.Value = runtimeServices;
+        JavaScriptRuntime.Modules.CommonJS.ModuleContext.SetModuleContext(modDir, file);
 
         try
         {

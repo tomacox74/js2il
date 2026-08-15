@@ -427,6 +427,7 @@ internal sealed class JsRuntimeInstance : IDisposable
 
     private void ThreadMain(Assembly compiledAssembly, string moduleSpecifier)
     {
+        IDisposable? executionScope = null;
         try
         {
             // Extremely defensive: under normal usage, Dispose cannot be called until after the ctor returns
@@ -439,11 +440,14 @@ internal sealed class JsRuntimeInstance : IDisposable
             }
 
             // Configure engine services *for this thread*; the sync context/event loop are thread-affine.
-            var serviceProvider = Engine.ConfigureServiceProviderForCurrentThread(
+            var serviceProvider = Engine.ConfigureRuntime(
                 compiledAssembly,
                 isHostedExecution: true,
                 compiledAssemblyPath: _options?.CompiledAssemblyPath);
             _serviceProvider = serviceProvider;
+            executionScope = serviceProvider
+                .Resolve<RuntimeExecutionContext>()
+                .EnterAsRoot();
 
             if (_options?.HostRuntimeIntrinsics != null)
             {
@@ -512,8 +516,7 @@ internal sealed class JsRuntimeInstance : IDisposable
                 RuntimeServices.UnregisterModuleRequires(runtimeContext.RegisteredModuleRequires);
             }
 
-            // Clear ambient global provider to avoid leaking thread-local state after thread exits.
-            GlobalThis.ServiceProvider = null;
+            executionScope?.Dispose();
             _exports = null;
             _eventLoop = null;
             _serviceProvider = null;

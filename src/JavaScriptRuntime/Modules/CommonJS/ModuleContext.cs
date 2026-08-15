@@ -3,14 +3,12 @@ using System.Reflection;
 using JavaScriptRuntime.DependencyInjection;
 
 namespace JavaScriptRuntime.Modules.CommonJS;
+
 public class ModuleContext
 {
-    /// <summary>
-    /// temporary statics
-    /// </summary>
-
-    private readonly static ThreadLocal<string> dirname = new ThreadLocal<string>();
-    private readonly static ThreadLocal<string> filename = new ThreadLocal<string>();
+    private static readonly string DefaultFilename = GetDefaultFilename();
+    private static readonly string DefaultDirectory =
+        Path.GetDirectoryName(DefaultFilename) ?? string.Empty;
 
     private static RequireDelegate CreateRequireDelegate(Require requireService)
     {
@@ -25,55 +23,57 @@ public class ModuleContext
         };
     }
 
-    static ModuleContext()
-    {
-            // Provide sensible defaults when running out-of-proc: resolve to the entry assembly path.
-            try
-            {
-                var entry = Assembly.GetEntryAssembly();
-                var file = entry?.Location;
-                if (!string.IsNullOrEmpty(file))
-                {
-                    filename.Value = file!;
-                    dirname.Value = System.IO.Path.GetDirectoryName(file!) ?? string.Empty;
-                    // argv is resolved on-demand by Process.argv from the environment provider.
-                }
-            }
-            catch
-            {
-                // Best-effort; leave defaults if anything goes wrong.
-            }    
-    }
-
     public static void SetModuleContext(string dir, string file)
     {
-        dirname.Value = dir;
-        filename.Value = file;
+        var context = RuntimeExecutionContext.CurrentOrOverride
+            ?? throw new InvalidOperationException(
+                "A runtime execution context is required to set module location.");
+        context.SetModuleLocation(dir, file);
     }
 
     public static void ClearModuleContext()
     {
-        dirname.Value = string.Empty;
-        filename.Value = string.Empty;
+        RuntimeExecutionContext.CurrentOrOverride?.SetModuleLocation(
+            string.Empty,
+            string.Empty);
     }
 
     public static ModuleContext CreateModuleContext([NotNull] ServiceContainer serviceProvider)
     {
         ArgumentNullException.ThrowIfNull(serviceProvider);
         var requireService = serviceProvider.Resolve<Require>();
+        var executionContext = RuntimeExecutionContext.GetOrCreate(serviceProvider);
+        var (directory, filename) = executionContext.GetModuleLocation();
         var context = new ModuleContext
         {
             require = CreateRequireDelegate(requireService),
-            __dirname = dirname.Value!,
-            __filename = filename.Value!
+            __dirname = string.IsNullOrEmpty(directory)
+                ? DefaultDirectory
+                : directory,
+            __filename = string.IsNullOrEmpty(filename)
+                ? DefaultFilename
+                : filename
         };
         return context;
     }
 
     public static ModuleContext CreateModuleContext()
     {
-        // Fallback for legacy call sites (e.g. Node.Process.argv). Prefer passing a container.
-        return CreateModuleContext(JavaScriptRuntime.RuntimeServices.BuildServiceProvider());
+        var services = RuntimeExecutionContext.CurrentOrOverride?.Services
+            ?? JavaScriptRuntime.RuntimeServices.BuildServiceProvider();
+        return CreateModuleContext(services);
+    }
+
+    private static string GetDefaultFilename()
+    {
+        try
+        {
+            return Assembly.GetEntryAssembly()?.Location ?? string.Empty;
+        }
+        catch
+        {
+            return string.Empty;
+        }
     }
 
     public object? Exports { get; set; }

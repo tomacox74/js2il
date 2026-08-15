@@ -14,10 +14,7 @@ namespace JavaScriptRuntime
     [IntrinsicObject("GlobalThis")]
     public class GlobalThis : JsObject, IDictionary<string, object?>
     {
-        private static readonly ThreadLocal<ServiceContainer?> _serviceProvider = new(() => null);
-
-        // Per-"realm" (thread) global object. This backs the ECMAScript globalThis value.
-        private static readonly ThreadLocal<GlobalThis?> _globalObject = new(() => null);
+        private static readonly ThreadLocal<GlobalThis?> _fallbackGlobalObject = new(() => null);
         private static readonly ConcurrentDictionary<string, BuiltinDelegateFunctionAdapter>
             _globalFunctionValues = new(StringComparer.Ordinal);
 
@@ -1095,23 +1092,11 @@ namespace JavaScriptRuntime
 
         internal static ServiceContainer? ServiceProvider
         {
-            get => _serviceProvider.Value;
+            get => RuntimeExecutionContext.Current?.Services;
             set
             {
-                _serviceProvider.Value = value;
-                if (value?.TryResolve<IPropertyDescriptorStore>(out var propertyDescriptorStore) == true
-                    && propertyDescriptorStore != null)
-                {
-                    PropertyDescriptorStore.SetCurrentRuntimeStore(propertyDescriptorStore);
-                }
-                else
-                {
-                    PropertyDescriptorStore.SetCurrentRuntimeStore(null);
-                }
-
-                // Each configured runtime corresponds to a new execution context/realm.
-                // Ensure we don't leak a prior global object across Engine.Execute calls on the same thread.
-                _globalObject.Value = null;
+                RuntimeExecutionContext.SetLegacyServiceProvider(value);
+                _fallbackGlobalObject.Value = null;
             }
         }
 
@@ -1135,11 +1120,16 @@ namespace JavaScriptRuntime
 
         private static GlobalThis GetOrCreateGlobalObject()
         {
-            var obj = _globalObject.Value;
+            if (RuntimeExecutionContext.Current is { } executionContext)
+            {
+                return executionContext.GetOrCreateGlobalObject();
+            }
+
+            var obj = _fallbackGlobalObject.Value;
             if (obj == null)
             {
                 obj = new GlobalThis();
-                _globalObject.Value = obj;
+                _fallbackGlobalObject.Value = obj;
             }
             return obj;
         }
@@ -1551,7 +1541,7 @@ namespace JavaScriptRuntime
         {
             get
             {
-                var serviceProvider = _serviceProvider.Value;
+                var serviceProvider = ServiceProvider;
                 return serviceProvider != null
                     ? serviceProvider.Resolve<JavaScriptRuntime.Node.Process>()
                     : _defaultProcess;
@@ -1566,7 +1556,7 @@ namespace JavaScriptRuntime
         {
             get
             {
-                var serviceProvider = _serviceProvider.Value;
+                var serviceProvider = ServiceProvider;
                 return serviceProvider != null
                     ? serviceProvider.Resolve<JavaScriptRuntime.Console>()
                     : _defaultConsole;
@@ -1755,7 +1745,7 @@ namespace JavaScriptRuntime
         /// </summary>
         public static object? gc()
         {
-            var serviceProvider = _serviceProvider.Value;
+            var serviceProvider = ServiceProvider;
             if (serviceProvider == null
                 || !serviceProvider.IsRegistered<JavaScriptRuntime.EngineCore.IFinalizationRegistryHost>())
             {
@@ -2124,7 +2114,7 @@ namespace JavaScriptRuntime
 
         private static Timers GetTimers()
         {
-            return _serviceProvider.Value!.Resolve<Timers>();
+            return ServiceProvider!.Resolve<Timers>();
         }
 
         /// <summary>
