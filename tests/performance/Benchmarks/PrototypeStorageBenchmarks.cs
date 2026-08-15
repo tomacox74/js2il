@@ -48,6 +48,10 @@ public class PrototypeStorageBenchmarks
     public JavaScriptRuntime.WeakSet ConstructWeakSet()
         => new();
 
+    [Benchmark(Description = "Promise with initialized prototype")]
+    public JavaScriptRuntime.Promise ConstructPromise()
+        => (JavaScriptRuntime.Promise)JavaScriptRuntime.Promise.resolve(null)!;
+
     [Benchmark(Description = "Ordinary object with initialized prototype")]
     public JavaScriptRuntime.JsObject ConstructOrdinaryObject()
     {

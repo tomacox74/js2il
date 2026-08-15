@@ -9,7 +9,7 @@ namespace JavaScriptRuntime;
 /// creates a fresh promise (via <see cref="Promise.withResolvers"/>) and invokes the compiled step
 /// method. Yield/return sites resolve the promise with an <see cref="IteratorResult"/>.
 /// </summary>
-public sealed class AsyncGeneratorObject : IJavaScriptAsyncIterator
+public sealed class AsyncGeneratorObject : JsObject, IJavaScriptAsyncIterator
 {
     /// <summary>Realm-owned <c>%AsyncGeneratorPrototype%</c> (issue #1824).</summary>
     internal static object PrototypeObject
@@ -29,7 +29,7 @@ public sealed class AsyncGeneratorObject : IJavaScriptAsyncIterator
     public AsyncGeneratorObject(object[] scopes)
     {
         _scopes = scopes ?? throw new ArgumentNullException(nameof(scopes));
-        PrototypeChain.SetPrototype(this, PrototypeObject);
+        PrototypeChain.InitializePrototype(this, PrototypeObject);
         GetLeafScope().ThisValue = RuntimeServices.GetCurrentThis();
     }
 

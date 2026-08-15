@@ -14,7 +14,7 @@ namespace JavaScriptRuntime;
 /// Each call to next/throw/return sets resume protocol fields on the leaf scope
 /// (which inherits <see cref="GeneratorScope"/>) and then invokes the step closure.
 /// </summary>
-public sealed class GeneratorObject : IJavaScriptIterator
+public sealed class GeneratorObject : JsObject, IJavaScriptIterator
 {
     // Stable singleton used as %GeneratorPrototype%.constructor.
     // Per ECMA-262, gen.constructor is the same function object for all generator instances.
@@ -42,7 +42,7 @@ public sealed class GeneratorObject : IJavaScriptIterator
         _step = step ?? throw new ArgumentNullException(nameof(step));
         _scopes = step.Scopes;
         GetLeafScope().ThisValue = RuntimeServices.GetCurrentThis();
-        InitializeGeneratorSurface(this);
+        PrototypeChain.InitializePrototype(this, Prototype);
     }
 
     /// <summary>
@@ -153,14 +153,6 @@ public sealed class GeneratorObject : IJavaScriptIterator
         }
 
         return null;
-    }
-
-    private static void InitializeGeneratorSurface(object generator)
-    {
-        if (PrototypeChain.GetPrototypeOrNull(generator) == null)
-        {
-            PrototypeChain.SetPrototype(generator, Prototype);
-        }
     }
 
     public static object InitializeGeneratorFunctionSurface(object functionValue)
@@ -431,7 +423,7 @@ public sealed class GeneratorObject : IJavaScriptIterator
         }
     }
 
-    private sealed class DynamicGeneratorIterator
+    private sealed class DynamicGeneratorIterator : JsObject
     {
         internal static readonly object NoYield = new();
 
@@ -441,6 +433,7 @@ public sealed class GeneratorObject : IJavaScriptIterator
         public DynamicGeneratorIterator(object? yieldValue)
         {
             _yieldValue = yieldValue;
+            PrototypeChain.InitializePrototype(this, Prototype);
         }
 
         public object next(object? value = null)
