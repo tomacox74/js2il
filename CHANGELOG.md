@@ -15,6 +15,13 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   construction, standard constructor/prototype metadata, and message-property
   behavior. Activates twenty corresponding pinned test262 fixtures.
 
+- runtime: replace thread-local runtime discovery with balanced,
+  async-flow-safe execution frames. Engine and hosted entry points now enter
+  explicit realm/agent scopes; service-provider, descriptor-store, module-path,
+  global-object, and bootstrap-override lookup follow the active frame. Root
+  entry suppresses inherited JavaScript invocation state for worker-safe
+  bootstrap.
+
 - runtime: introduce explicit `RuntimeAgentCluster`, `RuntimeAgent`, and
   `RuntimeRealm` lifetime owners. Every runtime service container now belongs
   to exactly one realm and exposes the ownership graph through constructor

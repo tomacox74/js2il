@@ -260,7 +260,6 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
     }
 
     private static readonly IntrinsicPropertyDescriptorStore _intrinsicStore = new();
-    private static readonly ThreadLocal<IPropertyDescriptorStore?> _currentRuntimeStore = new(() => null);
     private static readonly ThreadLocal<PropertyDescriptorStore?> _defaultRuntimeStore = new(() => null);
     private static readonly ThreadLocal<int> _intrinsicInitializationDepth = new(() => 0);
 
@@ -296,11 +295,10 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
     {
     }
 
-    internal static void SetCurrentRuntimeStore(IPropertyDescriptorStore? store)
+    internal static void OnExecutionContextChanged(
+        IPropertyDescriptorStore? previous,
+        IPropertyDescriptorStore? current)
     {
-        var previous = _currentRuntimeStore.Value ?? _defaultRuntimeStore.Value;
-        _currentRuntimeStore.Value = store;
-        var current = store ?? _defaultRuntimeStore.Value;
         if (HasCanonicalIndexOverrides(previous) || HasCanonicalIndexOverrides(current))
         {
             Array.NotifyPrototypeMutation();
@@ -575,7 +573,7 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
             return true;
         }
 
-        if (_currentRuntimeStore.Value is PropertyDescriptorStore runtimeStore
+        if (CurrentRuntimeStore is PropertyDescriptorStore runtimeStore
             && runtimeStore._overrideSlots.TryGetValue(target, out _))
         {
             return true;
@@ -842,16 +840,19 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
     private static IPropertyDescriptorStore CurrentStore
         => _intrinsicInitializationDepth.Value > 0
             ? _intrinsicStore
-            : _currentRuntimeStore.Value ?? _intrinsicStore;
+            : CurrentRuntimeStore ?? _intrinsicStore;
 
     private static PropertyDescriptorStore SharedIntrinsicRuntimeStore
-        => _currentRuntimeStore.Value as PropertyDescriptorStore
+        => CurrentRuntimeStore as PropertyDescriptorStore
             ?? (_defaultRuntimeStore.Value ??= new PropertyDescriptorStore());
+
+    private static IPropertyDescriptorStore? CurrentRuntimeStore
+        => RuntimeExecutionContext.Current?.DescriptorStore;
 
     private static IPropertyDescriptorStore GetLookupStore(object target)
         => !IsIntrinsicInitialization
             && target is JsObject { HasSharedIntrinsicBaseline: true }
-                ? (IPropertyDescriptorStore?)_currentRuntimeStore.Value
+                ? CurrentRuntimeStore
                     ?? (IPropertyDescriptorStore?)_defaultRuntimeStore.Value
                     ?? _intrinsicStore
                 : CurrentStore;

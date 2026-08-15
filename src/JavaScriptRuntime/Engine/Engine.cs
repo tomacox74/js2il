@@ -13,68 +13,64 @@ namespace JavaScriptRuntime;
 /// </summary>
 public class Engine
 {
-    /// <summary>
-    /// Per-thread override for the runtime service provider (primarily used by tests).
-    /// If set, <see cref="ConfigureServiceProviderForCurrentThread"/> will use it instead of building a new container.
-    /// </summary>
-    internal readonly static ThreadLocal<ServiceContainer?> _serviceProviderOverride = new(() => null);
+    internal static readonly RuntimeServiceProviderOverride _serviceProviderOverride = new();
 
     public void Execute([NotNull] ModuleMainDelegate scriptEntryPoint)
     {
+        ArgumentNullException.ThrowIfNull(scriptEntryPoint);
+
         try
         {
-            // Validate caller provided a valid entry point delegate.
-            // Note: the delegate's Method/Module/Assembly is used to discover the compiled module assembly.
-            ArgumentNullException.ThrowIfNull(scriptEntryPoint);
-            RuntimeServices.SetCurrentThis(null);
-
-            // Configure per-thread services and install the Node-like synchronization context.
-            // This enables timers/microtasks and other async behavior to run deterministically on this thread.
-            var serviceProvider = ConfigureServiceProviderForCurrentThread(
+            var serviceProvider = ConfigureRuntime(
                 modulesAssembly: scriptEntryPoint.Method.Module.Assembly,
                 isHostedExecution: false);
+            var runtimeContext = serviceProvider.Resolve<RuntimeExecutionContext>();
 
-            // Register fork IPC before module setup resolves the global process object.
-            ConfigureChildProcessIpc(serviceProvider);
-            var moduleExecutor = new ModuleExecutor(serviceProvider);
-
-            var forkEntryModule = System.Environment.GetEnvironmentVariable(ChildProcessRuntimeOptions.ForkEntryModuleEnvVar);
-            if (!string.IsNullOrWhiteSpace(forkEntryModule))
+            using (runtimeContext.EnterAsRoot())
             {
-                moduleExecutor.Execute(scriptEntryPoint, forkEntryModule);
-            }
-            else
-            {
-                // Execute the script using the CommonJS module system.
-                // Future: Add ESM support with a different executor.
-                moduleExecutor.Execute(scriptEntryPoint);
-            }
+                try
+                {
+                    RuntimeServices.SetCurrentThis(null);
+                    ConfigureChildProcessIpc(serviceProvider);
+                    var moduleExecutor = new ModuleExecutor(serviceProvider);
 
-            // Drain microtasks and timers until no more work remains.
-            RunEventLoopUntilIdle(serviceProvider.Resolve<NodeEventLoopPump>(), waitForTimers: true);
+                    var forkEntryModule = System.Environment.GetEnvironmentVariable(
+                        ChildProcessRuntimeOptions.ForkEntryModuleEnvVar);
+                    if (!string.IsNullOrWhiteSpace(forkEntryModule))
+                    {
+                        moduleExecutor.Execute(scriptEntryPoint, forkEntryModule);
+                    }
+                    else
+                    {
+                        moduleExecutor.Execute(scriptEntryPoint);
+                    }
+
+                    RunEventLoopUntilIdle(
+                        serviceProvider.Resolve<NodeEventLoopPump>(),
+                        waitForTimers: true);
+                }
+                finally
+                {
+                    RuntimeServices.UnregisterModuleRequires(
+                        runtimeContext.RegisteredModuleRequires);
+                    if (serviceProvider.TryResolve<AsyncContextRuntime>(
+                            out var asyncContext)
+                        && asyncContext != null)
+                    {
+                        asyncContext.Reset();
+                    }
+
+                    RuntimeServices.SetCurrentThis(null);
+                }
+            }
         }
         finally
         {
-            if (GlobalThis.ServiceProvider?.TryResolve<RuntimeExecutionContext>(out var runtimeContext) == true
-                && runtimeContext != null)
-            {
-                RuntimeServices.UnregisterModuleRequires(runtimeContext.RegisteredModuleRequires);
-            }
-            if (GlobalThis.ServiceProvider?.TryResolve<AsyncContextRuntime>(out var asyncContext) == true
-                && asyncContext != null)
-            {
-                asyncContext.Reset();
-            }
-
-            // Cleanup global/thread-local state so repeated Engine.Execute calls (and tests) do not leak state.
-            // TODO: change globalthis to be a instance
-            GlobalThis.ServiceProvider = null;
             _serviceProviderOverride.Value = null;
-            RuntimeServices.SetCurrentThis(null);
         }
     }
 
-    internal static ServiceContainer ConfigureServiceProviderForCurrentThread(
+    internal static ServiceContainer ConfigureRuntime(
         Assembly modulesAssembly,
         bool isHostedExecution = false,
         string? compiledAssemblyPath = null)
@@ -83,35 +79,42 @@ public class Engine
 
         // Prevent accidentally hosting multiple runtimes on the same thread.
         // This catches common integration bugs where a host thread is reused and global state leaks.
-        if (GlobalThis.ServiceProvider != null)
+        if (RuntimeExecutionContext.Current != null)
         {
             throw new InvalidOperationException(
-                "A JROC runtime is already configured for the current thread. " +
-                "Create a dedicated thread per loaded module/runtime, or ensure the previous engine cleaned up correctly.");
+                "A JROC runtime execution frame is already active. " +
+                "Exit the current frame before starting another engine.");
         }
 
         // Use the test override if present; otherwise construct the default runtime container.
         var serviceProvider = _serviceProviderOverride.Value ?? RuntimeServices.BuildServiceProvider();
 
-        serviceProvider.RegisterInstance(new RuntimeExecutionContext(
+        _ = RuntimeExecutionContext.GetOrCreate(
+            serviceProvider,
             isHostedExecution,
             CompiledAssemblyPathResolver.Resolve(
                 modulesAssembly,
                 compiledAssemblyPath,
-                allowAssemblyLocationFallback: !isHostedExecution)));
+                allowAssemblyLocationFallback: !isHostedExecution));
 
         // Resolve scheduler/event-loop singletons via DI so other services can depend on them.
         // Note: ServiceContainer manages singleton instances per-container.
         _ = serviceProvider.Resolve<NodeSchedulerState>();
         _ = serviceProvider.Resolve<NodeEventLoopPump>();
 
-        // Expose the service provider via GlobalThis (current design uses global state).
-        GlobalThis.ServiceProvider = serviceProvider;
-
         // Provide the compiled modules assembly for runtime dependency/module resolution.
         serviceProvider.Resolve<LocalModulesAssembly>().ModulesAssembly = modulesAssembly;
 
         return serviceProvider;
+    }
+
+    internal sealed class RuntimeServiceProviderOverride
+    {
+        internal ServiceContainer? Value
+        {
+            get => RuntimeExecutionContext.ServiceProviderOverride;
+            set => RuntimeExecutionContext.ServiceProviderOverride = value;
+        }
     }
 
     internal static void RunEventLoopUntilIdle(NodeEventLoopPump ctx, bool waitForTimers)

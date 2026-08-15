@@ -200,10 +200,10 @@ public static class InMemoryTestCompiler
             {
                 JavaScriptRuntime.Array.ResetPrototypeForTests();
                 EnvironmentProvider.SuppressExit = true;
+                Engine._serviceProviderOverride.Value = serviceProvider;
                 JavaScriptRuntime.Modules.CommonJS.ModuleContext.SetModuleContext(
                     Path.GetDirectoryName(entryPath) ?? string.Empty,
                     entryPath);
-                Engine._serviceProviderOverride.Value = serviceProvider;
 
                 var entryPoint = assembly.EntryPoint
                     ?? throw new InvalidOperationException("No entry point found in the generated assembly.");
@@ -221,7 +221,6 @@ public static class InMemoryTestCompiler
                     RuntimeServices.UnregisterModuleRequires(runtimeContext.RegisteredModuleRequires);
                 }
 
-                GlobalThis.ServiceProvider = null;
                 Engine._serviceProviderOverride.Value = null;
                 RuntimeServices.SetCurrentThis(null);
                 EnvironmentProvider.SuppressExit = false;

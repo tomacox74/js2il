@@ -34,6 +34,19 @@ public class RuntimeServices
 
     public static object[] GetEmptyScopes() => EmptyScopes;
 
+    private readonly record struct AmbientInvocationState(
+        object? CurrentThis,
+        object? CurrentLexicalSuperReceiver,
+        object[]? CurrentLexicalSuperScopes,
+        object?[]? CurrentArguments,
+        JsCallArguments? CurrentCallArguments,
+        object? CurrentNewTarget,
+        object? CurrentCallee,
+        Stack<object?[]?>? ConstructorArgStack,
+        Stack<GeneratedFunctionDirectCallState>? GeneratedFunctionDirectCallStack,
+        Stack<object?>? ConstructorNewTargetStack,
+        Stack<object?>? DerivedConstructorThisStack);
+
     private sealed class DerivedConstructorThisBinding
     {
         public object? Value = TemporalDeadZoneSentinel;
@@ -140,6 +153,57 @@ public class RuntimeServices
         var previous = _currentThis.Value;
         _currentThis.Value = value;
         return previous;
+    }
+
+    internal static object CaptureAndClearAmbientInvocationState()
+    {
+        var state = new AmbientInvocationState(
+            _currentThis.Value,
+            _currentLexicalSuperReceiver.Value,
+            _currentLexicalSuperScopes.Value,
+            _currentArguments.Value,
+            _currentCallArguments.Value,
+            _currentNewTarget.Value,
+            _currentCallee.Value,
+            _constructorArgStack,
+            _generatedFunctionDirectCallStack,
+            _constructorNewTargetStack,
+            _derivedConstructorThisStack);
+
+        _currentThis.Value = null;
+        _currentLexicalSuperReceiver.Value = null;
+        _currentLexicalSuperScopes.Value = null;
+        _currentArguments.Value = null;
+        _currentCallArguments.Value = null;
+        _currentNewTarget.Value = null;
+        _currentCallee.Value = null;
+        _constructorArgStack = null;
+        _generatedFunctionDirectCallStack = null;
+        _constructorNewTargetStack = null;
+        _derivedConstructorThisStack = null;
+        return state;
+    }
+
+    internal static void RestoreAmbientInvocationState(object state)
+    {
+        if (state is not AmbientInvocationState invocationState)
+        {
+            throw new ArgumentException(
+                "The invocation state was not created by this runtime.",
+                nameof(state));
+        }
+
+        _currentThis.Value = invocationState.CurrentThis;
+        _currentLexicalSuperReceiver.Value = invocationState.CurrentLexicalSuperReceiver;
+        _currentLexicalSuperScopes.Value = invocationState.CurrentLexicalSuperScopes;
+        _currentArguments.Value = invocationState.CurrentArguments;
+        _currentCallArguments.Value = invocationState.CurrentCallArguments;
+        _currentNewTarget.Value = invocationState.CurrentNewTarget;
+        _currentCallee.Value = invocationState.CurrentCallee;
+        _constructorArgStack = invocationState.ConstructorArgStack;
+        _generatedFunctionDirectCallStack = invocationState.GeneratedFunctionDirectCallStack;
+        _constructorNewTargetStack = invocationState.ConstructorNewTargetStack;
+        _derivedConstructorThisStack = invocationState.DerivedConstructorThisStack;
     }
 
     public static object? GetCurrentLexicalSuperReceiver()
