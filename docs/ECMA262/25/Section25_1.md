@@ -4,7 +4,7 @@
 
 [Back to Section25](Section25.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-08-14T08:29:24Z
+> Last generated (UTC): 2026-08-15T08:03:05Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -52,13 +52,19 @@
 | 25.1.6.7 | ArrayBuffer.prototype.slice ( start , end ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-arraybuffer.prototype.slice) |
 | 25.1.6.8 | ArrayBuffer.prototype.transfer ( [ newLength ] ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-arraybuffer.prototype.transfer) |
 | 25.1.6.9 | ArrayBuffer.prototype.transferToFixedLength ( [ newLength ] ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-arraybuffer.prototype.transfertofixedlength) |
-| 25.1.6.10 | ArrayBuffer.prototype [ %Symbol.toStringTag% ] | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-arraybuffer.prototype-%symbol.tostringtag%) |
+| 25.1.6.10 | ArrayBuffer.prototype [ %Symbol.toStringTag% ] | Supported | [tc39.es](https://tc39.es/ecma262/#sec-arraybuffer.prototype-%symbol.tostringtag%) |
 | 25.1.7 | Properties of ArrayBuffer Instances | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-arraybuffer-instances) |
 | 25.1.8 | Resizable ArrayBuffer Guidelines | N/A (informational) | [tc39.es](https://tc39.es/ecma262/#sec-resizable-arraybuffer-guidelines) |
 
 ## Support
 
 Feature-level support tracking with repo test references and optional test262 evidence.
+
+### 25.1.4 ([tc39.es](https://tc39.es/ecma262/#sec-arraybuffer-constructor))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| ArrayBuffer first-class constructor and prototype metadata | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/ArrayBuffer/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/ArrayBuffer/prototype/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/ArrayBuffer/prototype/byteLength/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/ArrayBuffer/prototype/maxByteLength/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/ArrayBuffer/prototype/resizable/ExecutionTests.cs` | `test/built-ins/ArrayBuffer/length.js`<br>`test/built-ins/ArrayBuffer/name.js`<br>`test/built-ins/ArrayBuffer/prop-desc.js`<br>`test/built-ins/ArrayBuffer/newtarget-prototype-is-not-object.js`<br>`test/built-ins/ArrayBuffer/prototype/constructor.js`<br>`test/built-ins/ArrayBuffer/prototype/Symbol.toStringTag.js` | Exposes globalThis.ArrayBuffer as a constructible function with standard name, length, global-property, and prototype descriptors. ArrayBuffer.prototype has receiver-checked byteLength, maxByteLength, resizable, and @@toStringTag properties. Species, custom newTarget prototypes, detachment, transfer, and resizable-buffer operations remain limited. |
 
 ### 25.1.4.1 ([tc39.es](https://tc39.es/ecma262/#sec-arraybuffer-length))
 

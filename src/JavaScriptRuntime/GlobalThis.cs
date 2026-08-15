@@ -356,7 +356,6 @@ namespace JavaScriptRuntime
         private static readonly object _bigIntPrototypeValue = new JsObject();
         private static readonly object _symbolPrototypeValue = new JsObject();
         private static readonly object _promisePrototypeValue = new JsObject();
-        private static readonly object _arrayBufferPrototypeValue = new JsObject();
         private static readonly object _sharedArrayBufferPrototypeValue = new JsObject();
         private static readonly Func<object[], object?[]?, object?> _symbolFunctionValue = SymbolCall;
 
@@ -394,6 +393,8 @@ namespace JavaScriptRuntime
             static (_, args) => args != null && args.Length > 1
                 ? new ArrayBuffer(args[0], args[1])
                 : new ArrayBuffer(args != null && args.Length > 0 ? args[0] : null);
+        private static readonly Func<object[], object?, bool> _arrayBufferIsViewValue =
+            static (_, value) => JavaScriptRuntime.ArrayBuffer.isView(value);
         private static readonly Func<object[], object?[], object?> _sharedArrayBufferConstructorValue =
             static (_, args) => new SharedArrayBuffer(args != null && args.Length > 0 ? args[0] : null);
         private static readonly Func<object[], object?[], object?> _int16ArrayConstructorValue =
@@ -931,7 +932,7 @@ namespace JavaScriptRuntime
             ConfigureTypedArrayInstancePrototype(_uint32ArrayConstructorValue, _uint32ArrayPrototypeValue);
             ConfigureTypedArrayInstancePrototype(_uint16ArrayConstructorValue, _uint16ArrayPrototypeValue);
             JavaScriptRuntime.Uint8Array.ConfigureIntrinsicSurface(_uint8ArrayConstructorValue);
-            ConfigureConstructorPrototypeSurface(_arrayBufferConstructorValue, _arrayBufferPrototypeValue);
+            ConfigureArrayBufferIntrinsicSurface();
             ConfigureConstructorPrototypeSurface(
                 _sharedArrayBufferConstructorValue,
                 _sharedArrayBufferPrototypeValue);
@@ -2282,6 +2283,41 @@ namespace JavaScriptRuntime
             DefineDataViewAccessor("byteLength", DataViewByteLengthGetter);
             DefineDataViewAccessor("byteOffset", DataViewByteOffsetGetter);
             DefineIntrinsicToStringTagProperty(JavaScriptRuntime.DataView.Prototype, "DataView");
+        }
+
+        private static void ConfigureArrayBufferIntrinsicSurface()
+        {
+            ConfigureConstructorPrototypeSurface(_arrayBufferConstructorValue, JavaScriptRuntime.ArrayBuffer.Prototype);
+            PropertyDescriptorStore.DefineOrUpdate(_arrayBufferConstructorValue, "length", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data, Enumerable = false, Configurable = true, Writable = false, Value = 1d
+            });
+            PropertyDescriptorStore.DefineOrUpdate(_arrayBufferConstructorValue, "name", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data, Enumerable = false, Configurable = true, Writable = false, Value = "ArrayBuffer"
+            });
+            DefineBuiltinFunctionProperty(_arrayBufferConstructorValue, "isView", _arrayBufferIsViewValue, 1d);
+            DefineArrayBufferAccessor("byteLength", static buffer => buffer.byteLength);
+            DefineArrayBufferAccessor("maxByteLength", static buffer => buffer.maxByteLength);
+            DefineArrayBufferAccessor("resizable", static buffer => buffer.resizable);
+            DefineIntrinsicToStringTagProperty(JavaScriptRuntime.ArrayBuffer.Prototype, "ArrayBuffer");
+        }
+
+        private static void DefineArrayBufferAccessor(string propertyName, Func<JavaScriptRuntime.ArrayBuffer, object?> read)
+        {
+            Func<object[], object?[]?, object?> getter = (_, __) =>
+            {
+                if (RuntimeServices.GetCurrentThis() is not JavaScriptRuntime.ArrayBuffer buffer)
+                {
+                    throw new TypeError($"get ArrayBuffer.prototype.{propertyName} called on incompatible receiver");
+                }
+                return read(buffer);
+            };
+            JavaScriptRuntime.Function.InitializeFunctionInstance(getter, 0d, $"get {propertyName}");
+            PropertyDescriptorStore.DefineOrUpdate(JavaScriptRuntime.ArrayBuffer.Prototype, propertyName, new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Accessor, Enumerable = false, Configurable = true, Get = getter
+            });
         }
 
         private static void DefineDataViewAccessor(
