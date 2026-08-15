@@ -290,6 +290,9 @@ namespace JavaScriptRuntime
         private static readonly Func<object[], object?[], object?> _aggregateErrorConstructorValue = static (_, args) =>
             JavaScriptRuntime.AggregateError.Construct(args ?? System.Array.Empty<object?>());
 
+        private static readonly Func<object[], object?[], object?> _suppressedErrorConstructorValue = static (_, args) =>
+            JavaScriptRuntime.SuppressedError.Construct(args ?? System.Array.Empty<object?>());
+
         private static readonly Func<object[], object?[], object?> _iteratorConstructorValue = static (_, __) =>
             throw new TypeError("Iterator is not directly constructible in jroc.");
 
@@ -308,6 +311,7 @@ namespace JavaScriptRuntime
         private static readonly object _typeErrorPrototypeValue = new JsObject();
         private static readonly object _uriErrorPrototypeValue = new JsObject();
         private static readonly object _aggregateErrorPrototypeValue = new JsObject();
+        private static readonly object _suppressedErrorPrototypeValue = new JsObject();
 
         // Minimal Object.prototype object used for descriptor/prototype-heavy libraries.
         // NOTE: We intentionally do not enable PrototypeChain here; Object.create/setPrototypeOf
@@ -689,6 +693,7 @@ namespace JavaScriptRuntime
             ConfigureErrorIntrinsicSurface(_typeErrorConstructorValue, _typeErrorPrototypeValue, "TypeError", parentPrototype: _errorPrototypeValue);
             ConfigureErrorIntrinsicSurface(_uriErrorConstructorValue, _uriErrorPrototypeValue, "URIError", parentPrototype: _errorPrototypeValue);
             ConfigureAggregateErrorIntrinsicSurface();
+            ConfigureSuppressedErrorIntrinsicSurface();
 
             PropertyDescriptorStore.DefineOrUpdate(_booleanPrototypeValue, "constructor", new JsPropertyDescriptor
             {
@@ -1379,6 +1384,9 @@ namespace JavaScriptRuntime
             dict.TryAdd(nameof(GlobalThis.AggregateError), AggregateError);
             DefineNonEnumerableDataProperty(nameof(GlobalThis.AggregateError), dict[nameof(GlobalThis.AggregateError)]);
 
+            dict.TryAdd(nameof(GlobalThis.SuppressedError), SuppressedError);
+            DefineNonEnumerableDataProperty(nameof(GlobalThis.SuppressedError), dict[nameof(GlobalThis.SuppressedError)]);
+
             dict.TryAdd(nameof(GlobalThis.Iterator), Iterator);
             DefineNonEnumerableDataProperty(nameof(GlobalThis.Iterator), dict[nameof(GlobalThis.Iterator)]);
 
@@ -1668,6 +1676,8 @@ namespace JavaScriptRuntime
         public static Func<object[], object?[], object?> URIError => _uriErrorConstructorValue;
 
         public static Func<object[], object?[], object?> AggregateError => _aggregateErrorConstructorValue;
+
+        public static Func<object[], object?[], object?> SuppressedError => _suppressedErrorConstructorValue;
 
         public static Func<object[], object?[], object?> Iterator => _iteratorConstructorValue;
 
@@ -2307,6 +2317,7 @@ namespace JavaScriptRuntime
         internal static object TypeErrorPrototypeValue => _typeErrorPrototypeValue;
         internal static object URIErrorPrototypeValue => _uriErrorPrototypeValue;
         internal static object AggregateErrorPrototypeValue => _aggregateErrorPrototypeValue;
+        internal static object SuppressedErrorPrototypeValue => _suppressedErrorPrototypeValue;
         private static Func<object[], object?[], object?> CreateErrorConstructorValue(Func<string?, object> factory)
         {
             return (_, args) =>
@@ -2396,6 +2407,33 @@ namespace JavaScriptRuntime
             });
         }
 
+        private static void ConfigureSuppressedErrorIntrinsicSurface()
+        {
+            ConfigureErrorIntrinsicSurface(
+                _suppressedErrorConstructorValue,
+                _suppressedErrorPrototypeValue,
+                "SuppressedError",
+                _errorPrototypeValue);
+            PrototypeChain.SetPrototype(_suppressedErrorConstructorValue, _errorConstructorValue);
+
+            PropertyDescriptorStore.DefineOrUpdate(_suppressedErrorConstructorValue, "length", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = false,
+                Value = 3d
+            });
+            PropertyDescriptorStore.DefineOrUpdate(_suppressedErrorConstructorValue, "prototype", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = false,
+                Writable = false,
+                Value = _suppressedErrorPrototypeValue
+            });
+        }
+
         internal static void AssignBuiltInErrorPrototype(JavaScriptRuntime.Error error)
         {
             ArgumentNullException.ThrowIfNull(error);
@@ -2410,6 +2448,7 @@ namespace JavaScriptRuntime
                 JavaScriptRuntime.TypeError => _typeErrorPrototypeValue,
                 JavaScriptRuntime.URIError => _uriErrorPrototypeValue,
                 JavaScriptRuntime.AggregateError => _aggregateErrorPrototypeValue,
+                JavaScriptRuntime.SuppressedError => _suppressedErrorPrototypeValue,
                 _ => _errorPrototypeValue
             };
 

@@ -4,7 +4,7 @@
 
 [Back to Section20](Section20.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-08-14T23:17:53Z
+> Last generated (UTC): 2026-08-15T04:49:21Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -52,8 +52,18 @@
 | 20.5.7.3.2 | AggregateError.prototype.message | Supported | [tc39.es](https://tc39.es/ecma262/#sec-aggregate-error.prototype.message) |
 | 20.5.7.3.3 | AggregateError.prototype.name | Supported | [tc39.es](https://tc39.es/ecma262/#sec-aggregate-error.prototype.name) |
 | 20.5.7.4 | Properties of AggregateError Instances | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-aggregate-error-instances) |
-| 20.5.8 | Abstract Operations for Error Objects | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-abstract-operations-for-error-objects) |
-| 20.5.8.1 | InstallErrorCause ( O , options ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-installerrorcause) |
+| 20.5.8 | SuppressedError Objects | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-suppressed-error-objects) |
+| 20.5.8.1 | The SuppressedError Constructor | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-suppressederror-constructor) |
+| 20.5.8.1.1 | SuppressedError ( error , suppressed , message [ , options ] ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-suppressederror-constructor) |
+| 20.5.8.2 | Properties of the SuppressedError Constructor | Supported | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-suppressederror-constructors) |
+| 20.5.8.2.1 | SuppressedError.prototype | Supported | [tc39.es](https://tc39.es/ecma262/#sec-suppressederror.prototype) |
+| 20.5.8.3 | Properties of the SuppressedError Prototype Object | Supported | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-suppressederror-prototype-objects) |
+| 20.5.8.3.1 | SuppressedError.prototype.constructor | Supported | [tc39.es](https://tc39.es/ecma262/#sec-suppressederror.prototype.constructor) |
+| 20.5.8.3.2 | SuppressedError.prototype.message | Supported | [tc39.es](https://tc39.es/ecma262/#sec-suppressederror.prototype.message) |
+| 20.5.8.3.3 | SuppressedError.prototype.name | Supported | [tc39.es](https://tc39.es/ecma262/#sec-suppressederror.prototype.name) |
+| 20.5.8.4 | Properties of SuppressedError Instances | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-suppressederror-instances) |
+| 20.5.9 | Abstract Operations for Error Objects | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-abstract-operations-for-error-objects) |
+| 20.5.9.1 | InstallErrorCause ( O , options ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-installerrorcause) |
 
 ## Support
 
@@ -125,4 +135,22 @@ Feature-level support tracking with repo test references and optional test262 ev
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
 | AggregateError.prototype surface | Supported | `tests/Jroc.Test262.Tests/built-ins/AggregateError/prototype/ExecutionTests.cs` | `test/built-ins/AggregateError/prototype/constructor.js`<br>`test/built-ins/AggregateError/prototype/errors-absent-on-prototype.js`<br>`test/built-ins/AggregateError/prototype/message.js`<br>`test/built-ins/AggregateError/prototype/name.js`<br>`test/built-ins/AggregateError/prototype/prop-desc.js`<br>`test/built-ins/AggregateError/prototype/proto.js` | AggregateError.prototype inherits Error.prototype and provides the standard constructor, message, and name properties without an own errors property. |
+
+### 20.5.8.1.1 ([tc39.es](https://tc39.es/ecma262/#sec-suppressederror-constructor))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| SuppressedError constructor and own error properties | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/SuppressedError/ExecutionTests.cs` | `test/built-ins/SuppressedError/message-method-prop-cast.js`<br>`test/built-ins/SuppressedError/message-method-prop.js`<br>`test/built-ins/SuppressedError/message-tostring-abrupt-symbol.js`<br>`test/built-ins/SuppressedError/message-tostring-abrupt.js`<br>`test/built-ins/SuppressedError/message-undefined-no-prop.js`<br>`test/built-ins/SuppressedError/newtarget-is-undefined.js`<br>`test/built-ins/SuppressedError/newtarget-proto-fallback.js`<br>`test/built-ins/SuppressedError/newtarget-proto.js`<br>`test/built-ins/SuppressedError/order-of-args-evaluation.js` | SuppressedError preserves message coercion order and creates writable, non-enumerable own error and suppressed properties after an own message property when supplied. Error cause options and custom newTarget prototypes remain limited. |
+
+### 20.5.8.2 ([tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-suppressederror-constructors))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| SuppressedError constructor function surface | Supported | `tests/Jroc.Test262.Tests/built-ins/SuppressedError/ExecutionTests.cs` | `test/built-ins/SuppressedError/is-a-constructor.js`<br>`test/built-ins/SuppressedError/length.js`<br>`test/built-ins/SuppressedError/name.js`<br>`test/built-ins/SuppressedError/prop-desc.js`<br>`test/built-ins/SuppressedError/proto.js` | The global is a constructible function with the standard global property, name, length, prototype descriptor, and Error constructor prototype. |
+
+### 20.5.8.3 ([tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-suppressederror-prototype-objects))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| SuppressedError.prototype surface | Supported | `tests/Jroc.Test262.Tests/built-ins/SuppressedError/prototype/ExecutionTests.cs` | `test/built-ins/SuppressedError/prototype/constructor.js`<br>`test/built-ins/SuppressedError/prototype/errors-absent-on-prototype.js`<br>`test/built-ins/SuppressedError/prototype/message.js`<br>`test/built-ins/SuppressedError/prototype/name.js`<br>`test/built-ins/SuppressedError/prototype/prop-desc.js`<br>`test/built-ins/SuppressedError/prototype/proto.js` | SuppressedError.prototype inherits Error.prototype and provides the standard constructor, message, and name properties without own error or suppressed properties. |
 

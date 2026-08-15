@@ -239,12 +239,72 @@
     },
     {
       "clause": "20.5.8",
+      "title": "SuppressedError Objects",
+      "status": "Supported with Limitations",
+      "specUrl": "https://tc39.es/ecma262/#sec-suppressed-error-objects"
+    },
+    {
+      "clause": "20.5.8.1",
+      "title": "The SuppressedError Constructor",
+      "status": "Supported with Limitations",
+      "specUrl": "https://tc39.es/ecma262/#sec-suppressederror-constructor"
+    },
+    {
+      "clause": "20.5.8.1.1",
+      "title": "SuppressedError ( error , suppressed , message [ , options ] )",
+      "status": "Supported with Limitations",
+      "specUrl": "https://tc39.es/ecma262/#sec-suppressederror-constructor"
+    },
+    {
+      "clause": "20.5.8.2",
+      "title": "Properties of the SuppressedError Constructor",
+      "status": "Supported",
+      "specUrl": "https://tc39.es/ecma262/#sec-properties-of-the-suppressederror-constructors"
+    },
+    {
+      "clause": "20.5.8.2.1",
+      "title": "SuppressedError.prototype",
+      "status": "Supported",
+      "specUrl": "https://tc39.es/ecma262/#sec-suppressederror.prototype"
+    },
+    {
+      "clause": "20.5.8.3",
+      "title": "Properties of the SuppressedError Prototype Object",
+      "status": "Supported",
+      "specUrl": "https://tc39.es/ecma262/#sec-properties-of-the-suppressederror-prototype-objects"
+    },
+    {
+      "clause": "20.5.8.3.1",
+      "title": "SuppressedError.prototype.constructor",
+      "status": "Supported",
+      "specUrl": "https://tc39.es/ecma262/#sec-suppressederror.prototype.constructor"
+    },
+    {
+      "clause": "20.5.8.3.2",
+      "title": "SuppressedError.prototype.message",
+      "status": "Supported",
+      "specUrl": "https://tc39.es/ecma262/#sec-suppressederror.prototype.message"
+    },
+    {
+      "clause": "20.5.8.3.3",
+      "title": "SuppressedError.prototype.name",
+      "status": "Supported",
+      "specUrl": "https://tc39.es/ecma262/#sec-suppressederror.prototype.name"
+    },
+    {
+      "clause": "20.5.8.4",
+      "title": "Properties of SuppressedError Instances",
+      "status": "Supported with Limitations",
+      "specUrl": "https://tc39.es/ecma262/#sec-properties-of-suppressederror-instances"
+    },
+    {
+      "clause": "20.5.9",
       "title": "Abstract Operations for Error Objects",
       "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-abstract-operations-for-error-objects"
     },
     {
-      "clause": "20.5.8.1",
+      "clause": "20.5.9.1",
       "title": "InstallErrorCause ( O , options )",
       "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-installerrorcause"
@@ -399,6 +459,62 @@
           "test/built-ins/AggregateError/prototype/proto.js"
         ],
         "notes": "AggregateError.prototype inherits Error.prototype and provides the standard constructor, message, and name properties without an own errors property."
+      },
+      {
+        "clause": "20.5.8.1.1",
+        "feature": "SuppressedError constructor and own error properties",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-suppressederror-constructor",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/SuppressedError/ExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/built-ins/SuppressedError/message-method-prop-cast.js",
+          "test/built-ins/SuppressedError/message-method-prop.js",
+          "test/built-ins/SuppressedError/message-tostring-abrupt-symbol.js",
+          "test/built-ins/SuppressedError/message-tostring-abrupt.js",
+          "test/built-ins/SuppressedError/message-undefined-no-prop.js",
+          "test/built-ins/SuppressedError/newtarget-is-undefined.js",
+          "test/built-ins/SuppressedError/newtarget-proto-fallback.js",
+          "test/built-ins/SuppressedError/newtarget-proto.js",
+          "test/built-ins/SuppressedError/order-of-args-evaluation.js"
+        ],
+        "notes": "SuppressedError preserves message coercion order and creates writable, non-enumerable own error and suppressed properties after an own message property when supplied. Error cause options and custom newTarget prototypes remain limited."
+      },
+      {
+        "clause": "20.5.8.2",
+        "feature": "SuppressedError constructor function surface",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-properties-of-the-suppressederror-constructors",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/SuppressedError/ExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/built-ins/SuppressedError/is-a-constructor.js",
+          "test/built-ins/SuppressedError/length.js",
+          "test/built-ins/SuppressedError/name.js",
+          "test/built-ins/SuppressedError/prop-desc.js",
+          "test/built-ins/SuppressedError/proto.js"
+        ],
+        "notes": "The global is a constructible function with the standard global property, name, length, prototype descriptor, and Error constructor prototype."
+      },
+      {
+        "clause": "20.5.8.3",
+        "feature": "SuppressedError.prototype surface",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-properties-of-the-suppressederror-prototype-objects",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/SuppressedError/prototype/ExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/built-ins/SuppressedError/prototype/constructor.js",
+          "test/built-ins/SuppressedError/prototype/errors-absent-on-prototype.js",
+          "test/built-ins/SuppressedError/prototype/message.js",
+          "test/built-ins/SuppressedError/prototype/name.js",
+          "test/built-ins/SuppressedError/prototype/prop-desc.js",
+          "test/built-ins/SuppressedError/prototype/proto.js"
+        ],
+        "notes": "SuppressedError.prototype inherits Error.prototype and provides the standard constructor, message, and name properties without own error or suppressed properties."
       }
     ]
   }
