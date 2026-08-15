@@ -346,14 +346,23 @@
       },
       {
         "clause": "19.3.12",
-        "feature": "FinalizationRegistry constructible global baseline",
+        "feature": "FinalizationRegistry first-class global constructor",
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-finalization-registry",
         "testScripts": [
-          "tests/Jroc.Tests/FinalizationRegistry/JavaScript/FinalizationRegistry_Cleanup_Order.js",
-          "tests/Jroc.Tests/FinalizationRegistry/JavaScript/FinalizationRegistry_Unregister_Basic.js"
+          "tests/Jroc.Test262.Tests/built-ins/FinalizationRegistry/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/FinalizationRegistry/prototype/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/FinalizationRegistry/prototype/register/ExecutionTests.cs"
         ],
-        "notes": "Supports `new FinalizationRegistry(cleanupCallback)` in construct positions plus register/unregister/toStringTag baseline behavior. jroc does not yet expose a full first-class `globalThis.FinalizationRegistry` constructor/prototype object, and deterministic cleanup in tests uses a host-opt-in non-standard global `gc()` helper."
+        "test262Paths": [
+          "test/built-ins/FinalizationRegistry/constructor.js",
+          "test/built-ins/FinalizationRegistry/is-a-constructor.js",
+          "test/built-ins/FinalizationRegistry/length.js",
+          "test/built-ins/FinalizationRegistry/name.js",
+          "test/built-ins/FinalizationRegistry/prop-desc.js",
+          "test/built-ins/FinalizationRegistry/proto.js"
+        ],
+        "notes": "Exposes globalThis.FinalizationRegistry as a constructible function with the standard constructor/prototype metadata plus register(), unregister(), and @@toStringTag. Deterministic cleanup in tests still uses a host-opt-in non-standard gc() helper, while cleanup timing otherwise depends on .NET GC and event-loop checkpoints."
       },
       {
         "clause": "19.3.40",

@@ -4,7 +4,7 @@
 
 [Back to Section19](Section19.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-08-15T05:05:31Z
+> Last generated (UTC): 2026-08-15T06:08:55Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -71,7 +71,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| FinalizationRegistry constructible global baseline | Supported with Limitations | [`FinalizationRegistry_Cleanup_Order.js`](../../../tests/Jroc.Tests/FinalizationRegistry/JavaScript/FinalizationRegistry_Cleanup_Order.js)<br>[`FinalizationRegistry_Unregister_Basic.js`](../../../tests/Jroc.Tests/FinalizationRegistry/JavaScript/FinalizationRegistry_Unregister_Basic.js) |  | Supports `new FinalizationRegistry(cleanupCallback)` in construct positions plus register/unregister/toStringTag baseline behavior. jroc does not yet expose a full first-class `globalThis.FinalizationRegistry` constructor/prototype object, and deterministic cleanup in tests uses a host-opt-in non-standard global `gc()` helper. |
+| FinalizationRegistry first-class global constructor | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/FinalizationRegistry/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/FinalizationRegistry/prototype/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/FinalizationRegistry/prototype/register/ExecutionTests.cs` | `test/built-ins/FinalizationRegistry/constructor.js`<br>`test/built-ins/FinalizationRegistry/is-a-constructor.js`<br>`test/built-ins/FinalizationRegistry/length.js`<br>`test/built-ins/FinalizationRegistry/name.js`<br>`test/built-ins/FinalizationRegistry/prop-desc.js`<br>`test/built-ins/FinalizationRegistry/proto.js` | Exposes globalThis.FinalizationRegistry as a constructible function with the standard constructor/prototype metadata plus register(), unregister(), and @@toStringTag. Deterministic cleanup in tests still uses a host-opt-in non-standard gc() helper, while cleanup timing otherwise depends on .NET GC and event-loop checkpoints. |
 
 ### 19.3.16 ([tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-function))
 
