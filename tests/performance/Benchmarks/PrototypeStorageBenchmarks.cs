@@ -28,6 +28,10 @@ public class PrototypeStorageBenchmarks
     public JavaScriptRuntime.Date ConstructDateWrapper()
         => new(0d);
 
+    [Benchmark(Description = "RegExp wrapper with initialized prototype")]
+    public JavaScriptRuntime.RegExp ConstructRegExpWrapper()
+        => new("a", "g");
+
     [Benchmark(Description = "Ordinary object with initialized prototype")]
     public JavaScriptRuntime.JsObject ConstructOrdinaryObject()
     {
