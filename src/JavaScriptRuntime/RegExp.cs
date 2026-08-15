@@ -7,7 +7,7 @@ using System.Text.RegularExpressions;
 namespace JavaScriptRuntime
 {
     [IntrinsicObject("RegExp", IntrinsicCallKind.ConstructorLike)]
-    public sealed class RegExp
+    public sealed class RegExp : JsObject, IExoticJsObject
     {
         [Flags]
         private enum WellKnownSymbolFastPathFlags
@@ -388,7 +388,19 @@ namespace JavaScriptRuntime
             DefineSymbolMethod(prototype, ReplaceSymbolPropertyKey, ReplaceSymbolDelegate);
             DefineSymbolMethod(prototype, SearchSymbolPropertyKey, SearchSymbolDelegate);
             DefineSymbolMethod(prototype, SplitSymbolPropertyKey, SplitSymbolDelegate);
+            DefinePrototypeMethod(prototype, "exec", (Func<object[], object?[]?, object?>)PrototypeExec);
+            DefinePrototypeMethod(prototype, "test", (Func<object[], object?[]?, object?>)PrototypeTest);
             DefinePrototypeMethod(prototype, "toString", (Func<object[], object?[]?, object?>)PrototypeToString);
+            DefinePrototypeGetter(prototype, "dotAll", static regExp => regExp.dotAll);
+            DefinePrototypeGetter(prototype, "flags", static regExp => regExp.flags);
+            DefinePrototypeGetter(prototype, "global", static regExp => regExp.global);
+            DefinePrototypeGetter(prototype, "hasIndices", static regExp => regExp.hasIndices);
+            DefinePrototypeGetter(prototype, "ignoreCase", static regExp => regExp.ignoreCase);
+            DefinePrototypeGetter(prototype, "multiline", static regExp => regExp.multiline);
+            DefinePrototypeGetter(prototype, "source", static regExp => regExp.source);
+            DefinePrototypeGetter(prototype, "sticky", static regExp => regExp.sticky);
+            DefinePrototypeGetter(prototype, "unicode", static regExp => regExp.unicode);
+            DefinePrototypeGetter(prototype, "unicodeSets", static regExp => regExp.unicodeSets);
         }
 
         private static void DefinePrototypeMethod(object target, string key, object? value)
@@ -403,15 +415,149 @@ namespace JavaScriptRuntime
             });
         }
 
-        private static object? PrototypeToString(object[] scopes, object?[]? args)
+        private static void DefinePrototypeGetter(
+            JsObject prototype,
+            string key,
+            Func<RegExp, object?> getter)
+        {
+            PropertyDescriptorStore.DefineOrUpdate(prototype, key, new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Accessor,
+                Enumerable = false,
+                Configurable = true,
+                Get = (Func<object[], object?[]?, object?>)((_, _) => getter(GetRegExpReceiver(key)))
+            });
+        }
+
+        private static RegExp GetRegExpReceiver(string propertyName)
         {
             if (RuntimeServices.GetCurrentThis() is not RegExp regExp)
             {
-                throw new TypeError("RegExp.prototype.toString called on incompatible receiver");
+                throw new TypeError($"RegExp.prototype.{propertyName} called on incompatible receiver");
             }
 
-            return regExp.toString();
+            return regExp;
         }
+
+        private static object? PrototypeExec(object[] scopes, object?[]? args)
+            => GetRegExpReceiver("exec").exec(args != null && args.Length > 0 ? args[0] : null);
+
+        private static object? PrototypeTest(object[] scopes, object?[]? args)
+            => GetRegExpReceiver("test").test(args != null && args.Length > 0 ? args[0] : null);
+
+        private static object? PrototypeToString(object[] scopes, object?[]? args)
+        {
+            return GetRegExpReceiver("toString").toString();
+        }
+
+        internal override PropertyDescriptorLookup GetOwnPropertyDescriptor(
+            string key,
+            out JsPropertyDescriptor descriptor)
+        {
+            if (string.Equals(key, nameof(lastIndex), StringComparison.Ordinal))
+            {
+                var lookup = PropertyDescriptorStore.GetOwnLookupCore(this, key, out descriptor);
+                if (lookup == PropertyDescriptorLookup.Deleted)
+                {
+                    return lookup;
+                }
+
+                if (lookup == PropertyDescriptorLookup.Found)
+                {
+                    descriptor = PropertyDescriptorStore.CloneDescriptor(descriptor);
+                    descriptor.Value = lastIndex;
+                    return lookup;
+                }
+
+                descriptor = new JsPropertyDescriptor
+                {
+                    Kind = JsPropertyDescriptorKind.Data,
+                    Value = lastIndex,
+                    Writable = true,
+                    Enumerable = false,
+                    Configurable = false
+                };
+                return PropertyDescriptorLookup.Found;
+            }
+
+            return base.GetOwnPropertyDescriptor(key, out descriptor);
+        }
+
+        internal override bool TryGetOwnPropertyValue(string key, out object? value)
+        {
+            if (string.Equals(key, nameof(lastIndex), StringComparison.Ordinal))
+            {
+                value = lastIndex;
+                return true;
+            }
+
+            return base.TryGetOwnPropertyValue(key, out value);
+        }
+
+        internal override bool TryGetInvariantOwnPropertyValue(string key, out object? value)
+        {
+            if (string.Equals(key, nameof(lastIndex), StringComparison.Ordinal))
+            {
+                value = lastIndex;
+                return true;
+            }
+
+            value = null;
+            return false;
+        }
+
+        internal override bool HasOwnPropertyValue(string key)
+            => string.Equals(key, nameof(lastIndex), StringComparison.Ordinal)
+                || base.HasOwnPropertyValue(key);
+
+        internal override bool SetOwnPropertyValue(string key, object? value)
+        {
+            if (string.Equals(key, nameof(lastIndex), StringComparison.Ordinal))
+            {
+                if (PropertyDescriptorStore.GetOwnLookupCore(this, key, out var descriptor) == PropertyDescriptorLookup.Found
+                    && !descriptor.Writable)
+                {
+                    return false;
+                }
+
+                lastIndex = TypeUtilities.ToNumber(value);
+                return true;
+            }
+
+            return base.SetOwnPropertyValue(key, value);
+        }
+
+        internal override bool DefineOwnProperty(string key, JsPropertyDescriptor descriptor)
+        {
+            if (string.Equals(key, nameof(lastIndex), StringComparison.Ordinal))
+            {
+                if (descriptor.Kind != JsPropertyDescriptorKind.Data)
+                {
+                    return false;
+                }
+
+                lastIndex = TypeUtilities.ToNumber(descriptor.Value);
+            }
+
+            return base.DefineOwnProperty(key, descriptor);
+        }
+
+        internal override IEnumerable<string> GetOwnPropertyKeys()
+        {
+            yield return nameof(lastIndex);
+
+            foreach (var key in base.GetOwnPropertyKeys())
+            {
+                if (!string.Equals(key, nameof(lastIndex), StringComparison.Ordinal))
+                {
+                    yield return key;
+                }
+            }
+        }
+
+        internal override bool DeleteOwnProperty(string key)
+            => !string.Equals(key, nameof(lastIndex), StringComparison.Ordinal)
+                && base.DeleteOwnProperty(key);
 
         private bool HasIntrinsicWellKnownSymbolFastPath(WellKnownSymbolFastPathFlags flag)
         {
@@ -807,7 +953,7 @@ namespace JavaScriptRuntime
 
         private void InitializeIntrinsicSurface()
         {
-            PrototypeChain.SetPrototype(this, Prototype);
+            PrototypeChain.InitializePrototype(this, Prototype);
         }
 
         private static void DefineSymbolMethod(object target, string symbolPropertyKey, Delegate method)
