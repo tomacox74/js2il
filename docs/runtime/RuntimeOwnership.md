@@ -6,6 +6,7 @@ JROC runtime state has three explicit lifetime owners:
 RuntimeAgentCluster
   -> RuntimeAgent
       -> RuntimeRealm
+          -> RuntimeModuleState
           -> ServiceContainer
           -> RuntimeExecutionContext (while entered)
 ```
@@ -16,6 +17,9 @@ RuntimeAgentCluster
   more realms.
 - `RuntimeRealm` owns one JavaScript object graph and exactly one runtime
   `ServiceContainer`.
+- `RuntimeModuleState` owns the realm's CommonJS and ESM graph, including
+  module instances, live binding cells, namespace identities, `import.meta`,
+  module-scoped require delegates, and the compiled module assembly.
 
 The child keeps a reference to its parent so services can receive the correct
 owner through constructor injection. Parents keep their children only while
@@ -41,6 +45,8 @@ issues move that state under these owners.
 - A cluster may reference its active agents.
 - An agent may reference its cluster and active realms.
 - A realm may reference its agent and service container.
+- A realm owns one module state object; no mutable module graph is
+  process-wide.
 - An entered execution context is the only ambient pointer to a realm and
   agent; thread identity is not an ownership boundary.
 - Realm services may receive any of the three owners through constructor

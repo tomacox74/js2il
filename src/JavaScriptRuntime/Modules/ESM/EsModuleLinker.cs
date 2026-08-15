@@ -4,13 +4,6 @@ using JavaScriptRuntime.Modules.Shared;
 
 namespace JavaScriptRuntime.Modules.ESM
 {
-    internal sealed class EsModuleLinkerState
-    {
-        internal ConcurrentDictionary<string, ConcurrentDictionary<string, EsModuleBinding>> BindingsByModule { get; } = new();
-
-        internal ConditionalWeakTable<object, ModuleNamespaceMarker> ModuleNamespaces { get; } = new();
-    }
-
     internal sealed class ModuleNamespaceMarker
     {
     }
@@ -76,13 +69,13 @@ namespace JavaScriptRuntime.Modules.ESM
     /// </summary>
     public static class EsModuleLinker
     {
-        private static EsModuleLinkerState State
-            => GlobalThis.ServiceProvider?.Resolve<EsModuleLinkerState>()
+        private static RuntimeModuleState State
+            => RuntimeExecutionContext.Current?.Realm.ModuleState
                ?? throw new InvalidOperationException(
                    "ES module linking requires an active JavaScript runtime.");
 
         private static ConcurrentDictionary<string, EsModuleBinding> GetModuleBindings(string moduleId)
-            => State.BindingsByModule.GetOrAdd(
+            => State.EsModuleBindings.GetOrAdd(
                 moduleId,
                 static _ => new ConcurrentDictionary<string, EsModuleBinding>(StringComparer.Ordinal));
 
@@ -109,7 +102,7 @@ namespace JavaScriptRuntime.Modules.ESM
                 ObjectRuntime.defineProperty(exports, "__esModule", descriptor);
             }
 
-            State.ModuleNamespaces.GetValue(exports, static _ => new ModuleNamespaceMarker());
+            State.EsModuleNamespaces.GetValue(exports, static _ => new ModuleNamespaceMarker());
         }
 
         /// <summary>
@@ -119,11 +112,8 @@ namespace JavaScriptRuntime.Modules.ESM
         /// </summary>
         internal static bool IsModuleNamespace(object value)
         {
-            var services = GlobalThis.ServiceProvider;
-            return services != null
-                && services.TryResolve<EsModuleLinkerState>(out var state)
-                && state != null
-                && state.ModuleNamespaces.TryGetValue(value, out _);
+            return RuntimeExecutionContext.Current?.Realm.ModuleState
+                .EsModuleNamespaces.TryGetValue(value, out _) == true;
         }
 
         /// <summary>
