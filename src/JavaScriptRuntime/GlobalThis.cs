@@ -2412,7 +2412,7 @@ namespace JavaScriptRuntime
             DefineIntrinsicToStringTagProperty(JavaScriptRuntime.DataView.Prototype, "DataView");
         }
 
-        private static void ConfigureArrayBufferIntrinsicSurface()
+        private void ConfigureArrayBufferIntrinsicSurface()
         {
             ConfigureConstructorPrototypeSurface(_arrayBufferConstructorValue, JavaScriptRuntime.ArrayBuffer.Prototype);
             PropertyDescriptorStore.DefineOrUpdate(_arrayBufferConstructorValue, "length", new JsPropertyDescriptor
@@ -2430,7 +2430,7 @@ namespace JavaScriptRuntime
             DefineIntrinsicToStringTagProperty(JavaScriptRuntime.ArrayBuffer.Prototype, "ArrayBuffer");
         }
 
-        private static void ConfigureSharedArrayBufferIntrinsicSurface()
+        private void ConfigureSharedArrayBufferIntrinsicSurface()
         {
             ConfigureConstructorPrototypeSurface(
                 _sharedArrayBufferConstructorValue,
