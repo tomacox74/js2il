@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace JavaScriptRuntime
 {
     [IntrinsicObject("Map")]
-    public sealed class Map : IEnumerable<object[]>
+    public sealed class Map : JsObject, IEnumerable<object[]>
     {
         private static readonly Func<object[], object?[]?, object?> _prototypeEntriesValue = PrototypeEntries;
         /// <summary>Realm-owned <c>Map Iterator prototype</c> intrinsic (issue #1824).</summary>
@@ -195,7 +195,7 @@ namespace JavaScriptRuntime
 
         private void InitializeIntrinsicSurface()
         {
-            PrototypeChain.SetPrototype(this, Prototype);
+            PrototypeChain.InitializePrototype(this, Prototype);
         }
 
         public Map()
@@ -463,7 +463,7 @@ namespace JavaScriptRuntime
         }
 
         // Iterator support - returns entries as [key, value] arrays
-        public IEnumerator<object[]> GetEnumerator() => _entries.GetEnumerator();
+        public new IEnumerator<object[]> GetEnumerator() => _entries.GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => _entries.GetEnumerator();
 
         // JavaScript Map.prototype.keys()
@@ -507,7 +507,7 @@ namespace JavaScriptRuntime
             Entries
         }
 
-        private sealed class MapIterator : IJavaScriptIterator
+        private sealed class MapIterator : JsObject, IJavaScriptIterator
         {
             private readonly Map _map;
             private readonly MapIteratorKind _kind;
@@ -518,7 +518,7 @@ namespace JavaScriptRuntime
             {
                 _map = map;
                 _kind = kind;
-                PrototypeChain.SetPrototype(this, IteratorPrototype);
+                PrototypeChain.InitializePrototype(this, IteratorPrototype);
             }
 
             public bool HasReturn => true;

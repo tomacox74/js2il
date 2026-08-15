@@ -60,8 +60,6 @@ public sealed class JsObjectRepresentationInventoryTests
             ["JavaScriptRuntime.Iterator+TakeIteratorHelper"] = IteratorReason,
             ["JavaScriptRuntime.IteratorResultObject"] = "Requires the dedicated iterator result and helper migration.",
             ["JavaScriptRuntime.IteratorResultObject`1"] = "Requires the dedicated iterator result and helper migration.",
-            ["JavaScriptRuntime.Map"] = "Requires the Map and MapIterator migration.",
-            ["JavaScriptRuntime.Map+MapIterator"] = "Must migrate with Map to preserve collection mutation behavior.",
             ["JavaScriptRuntime.Node.Buffer"] = BufferViewReason,
             ["JavaScriptRuntime.Node.Events+EventEmitterAsyncOnIterator"] = HostIteratorReason,
             ["JavaScriptRuntime.Node.TimersPromises+TimersPromisesIntervalIterator"] = HostIteratorReason,

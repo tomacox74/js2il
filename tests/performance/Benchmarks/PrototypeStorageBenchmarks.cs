@@ -32,6 +32,10 @@ public class PrototypeStorageBenchmarks
     public JavaScriptRuntime.RegExp ConstructRegExpWrapper()
         => new("a", "g");
 
+    [Benchmark(Description = "Map with initialized prototype")]
+    public JavaScriptRuntime.Map ConstructMap()
+        => new();
+
     [Benchmark(Description = "Ordinary object with initialized prototype")]
     public JavaScriptRuntime.JsObject ConstructOrdinaryObject()
     {
