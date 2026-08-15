@@ -5,6 +5,7 @@ namespace JavaScriptRuntime
     [IntrinsicObject("ArrayBuffer")]
     public class ArrayBuffer
     {
+        internal static readonly object Prototype = new JsObject();
         private byte[] _bytes;
         private readonly int _maxByteLength;
         private readonly bool _isResizable;
@@ -13,6 +14,7 @@ namespace JavaScriptRuntime
         {
             _bytes = System.Array.Empty<byte>();
             _maxByteLength = 0;
+            InitializeIntrinsicSurface();
         }
 
         public ArrayBuffer(object? length)
@@ -22,6 +24,7 @@ namespace JavaScriptRuntime
                 ? System.Array.Empty<byte>()
                 : new byte[byteLength];
             _maxByteLength = byteLength;
+            InitializeIntrinsicSurface();
         }
 
         public ArrayBuffer(object? length, object? options)
@@ -45,16 +48,19 @@ namespace JavaScriptRuntime
 
                 _maxByteLength = maxByteLength;
                 _isResizable = true;
+                InitializeIntrinsicSurface();
                 return;
             }
 
             _maxByteLength = byteLength;
+            InitializeIntrinsicSurface();
         }
 
         internal ArrayBuffer(byte[] bytes, bool cloneBuffer)
         {
             _bytes = cloneBuffer ? (byte[])bytes.Clone() : bytes;
             _maxByteLength = _bytes.Length;
+            InitializeIntrinsicSurface();
         }
 
         public double byteLength => _bytes.Length;
@@ -120,6 +126,14 @@ namespace JavaScriptRuntime
 
         internal byte[] RawBytes => _bytes;
         internal bool IsResizable => _isResizable;
+
+        private void InitializeIntrinsicSurface()
+        {
+            if (GetType() == typeof(ArrayBuffer))
+            {
+                PrototypeChain.SetPrototype(this, Prototype);
+            }
+        }
 
         private static int CoerceByteLength(object? value)
         {

@@ -4,7 +4,7 @@
 
 [Back to Section19](Section19.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-08-15T07:23:45Z
+> Last generated (UTC): 2026-08-15T08:03:05Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -60,6 +60,12 @@
 ## Support
 
 Feature-level support tracking with repo test references and optional test262 evidence.
+
+### 19.3.3 ([tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-arraybuffer))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| ArrayBuffer first-class global constructor | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/ArrayBuffer/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/ArrayBuffer/prototype/ExecutionTests.cs` | `test/built-ins/ArrayBuffer/length.js`<br>`test/built-ins/ArrayBuffer/name.js`<br>`test/built-ins/ArrayBuffer/prop-desc.js`<br>`test/built-ins/ArrayBuffer/newtarget-prototype-is-not-object.js`<br>`test/built-ins/ArrayBuffer/prototype/constructor.js`<br>`test/built-ins/ArrayBuffer/prototype/Symbol.toStringTag.js` | Exposes globalThis.ArrayBuffer as a constructible function with standard constructor/prototype metadata and isView(). Custom newTarget prototypes, species, detachment, transfer, and complete resizable-buffer semantics remain limited. |
 
 ### 19.3.7 ([tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-boolean))
 

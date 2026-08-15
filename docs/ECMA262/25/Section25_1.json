@@ -240,7 +240,7 @@
     {
       "clause": "25.1.6.10",
       "title": "ArrayBuffer.prototype [ %Symbol.toStringTag% ]",
-      "status": "Not Yet Supported",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-arraybuffer.prototype-%symbol.tostringtag%"
     },
     {
@@ -277,6 +277,28 @@
           "tests/Jroc.Tests/TypedArray/JavaScript/ArrayBuffer_IsView_DataView.js"
         ],
         "notes": "Recognizes DataView and the current Int32Array typed-array surface as ArrayBuffer views. Broader TypedArray families and shared ArrayBuffer-backed view infrastructure remain follow-up work for issue #774."
+      },
+      {
+        "clause": "25.1.4",
+        "feature": "ArrayBuffer first-class constructor and prototype metadata",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-arraybuffer-constructor",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/ArrayBuffer/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/ArrayBuffer/prototype/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/ArrayBuffer/prototype/byteLength/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/ArrayBuffer/prototype/maxByteLength/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/ArrayBuffer/prototype/resizable/ExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/built-ins/ArrayBuffer/length.js",
+          "test/built-ins/ArrayBuffer/name.js",
+          "test/built-ins/ArrayBuffer/prop-desc.js",
+          "test/built-ins/ArrayBuffer/newtarget-prototype-is-not-object.js",
+          "test/built-ins/ArrayBuffer/prototype/constructor.js",
+          "test/built-ins/ArrayBuffer/prototype/Symbol.toStringTag.js"
+        ],
+        "notes": "Exposes globalThis.ArrayBuffer as a constructible function with standard name, length, global-property, and prototype descriptors. ArrayBuffer.prototype has receiver-checked byteLength, maxByteLength, resizable, and @@toStringTag properties. Species, custom newTarget prototypes, detachment, transfer, and resizable-buffer operations remain limited."
       },
       {
         "clause": "25.1.6",
