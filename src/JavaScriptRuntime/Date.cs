@@ -16,7 +16,7 @@ namespace JavaScriptRuntime
     /// Note: This is intentionally small and not spec-complete.
     /// </summary>
     [IntrinsicObject("Date", IntrinsicCallKind.DateToString)]
-    public class Date
+    public class Date : JsObject
     {
         /// <summary>Realm-owned <c>Date.prototype</c> (issue #1824).</summary>
         internal static object Prototype
@@ -92,19 +92,19 @@ namespace JavaScriptRuntime
         public Date()
         {
             _msSinceEpoch = NowMs();
-            PrototypeChain.SetPrototype(this, GlobalThis.DatePrototypeValue);
+            PrototypeChain.InitializePrototype(this, GlobalThis.DatePrototypeValue);
         }
 
         public Date(object? arg)
         {
             _msSinceEpoch = CoerceToMs(arg);
-            PrototypeChain.SetPrototype(this, GlobalThis.DatePrototypeValue);
+            PrototypeChain.InitializePrototype(this, GlobalThis.DatePrototypeValue);
         }
 
         private Date(double msSinceEpoch, bool _)
         {
             _msSinceEpoch = msSinceEpoch;
-            PrototypeChain.SetPrototype(this, GlobalThis.DatePrototypeValue);
+            PrototypeChain.InitializePrototype(this, GlobalThis.DatePrototypeValue);
         }
 
         public static object Construct()

@@ -24,6 +24,10 @@ public class PrototypeStorageBenchmarks
     public JavaScriptRuntime.Boolean ConstructBooleanWrapper()
         => new(true);
 
+    [Benchmark(Description = "Date wrapper with initialized prototype")]
+    public JavaScriptRuntime.Date ConstructDateWrapper()
+        => new(0d);
+
     [Benchmark(Description = "Ordinary object with initialized prototype")]
     public JavaScriptRuntime.JsObject ConstructOrdinaryObject()
     {

@@ -11,6 +11,9 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   Add a JavaScript-visible representation inventory guard, Boolean allocation
   coverage, and a prototype-storage benchmark.
 
+- runtime: continue #1580's incremental built-in representation migration by
+  moving Date wrappers to `JsObject` inline property/prototype storage.
+
 - runtime/test262: expose SharedArrayBuffer as a first-class global constructor
   with standard constructor/prototype metadata and receiver-checked
   `byteLength`, `maxByteLength`, and `growable` accessors. Activates twenty
