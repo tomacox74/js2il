@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace JavaScriptRuntime
 {
     [IntrinsicObject("Set")]
-    public sealed class Set : IEnumerable<object>
+    public sealed class Set : JsObject, IEnumerable<object>
     {
         private static readonly Func<object[], object?[]?, object?> _prototypeValuesValue = PrototypeValues;
         /// <summary>Realm-owned <c>Set Iterator prototype</c> intrinsic (issue #1824).</summary>
@@ -207,7 +207,7 @@ namespace JavaScriptRuntime
 
         private void InitializeIntrinsicSurface()
         {
-            PrototypeChain.SetPrototype(this, Prototype);
+            PrototypeChain.InitializePrototype(this, Prototype);
         }
 
         public Set()
@@ -651,7 +651,7 @@ namespace JavaScriptRuntime
             return result;
         }
 
-        public IEnumerator<object> GetEnumerator() => _items.GetEnumerator();
+        public new IEnumerator<object> GetEnumerator() => _items.GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => _items.GetEnumerator();
         private enum SetIteratorKind
         {
@@ -659,7 +659,7 @@ namespace JavaScriptRuntime
             Entries
         }
 
-        private sealed class SetIterator : IJavaScriptIterator
+        private sealed class SetIterator : JsObject, IJavaScriptIterator
         {
             private readonly Set _set;
             private readonly SetIteratorKind _kind;
@@ -670,7 +670,7 @@ namespace JavaScriptRuntime
             {
                 _set = set;
                 _kind = kind;
-                PrototypeChain.SetPrototype(this, IteratorPrototype);
+                PrototypeChain.InitializePrototype(this, IteratorPrototype);
             }
 
             public bool HasReturn => true;
