@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 namespace JavaScriptRuntime
 {
     [IntrinsicObject("WeakMap")]
-    public sealed class WeakMap
+    public sealed class WeakMap : JsObject
     {
         /// <summary>Realm-owned <c>WeakMap.prototype</c> intrinsic (issue #1824).</summary>
         internal static object Prototype
@@ -17,7 +17,7 @@ namespace JavaScriptRuntime
 
         public WeakMap()
         {
-            PrototypeChain.SetPrototype(this, Prototype);
+            PrototypeChain.InitializePrototype(this, Prototype);
         }
 
         public WeakMap(object? iterable)

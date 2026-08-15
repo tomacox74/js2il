@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 namespace JavaScriptRuntime
 {
     [IntrinsicObject("WeakSet")]
-    public sealed class WeakSet
+    public sealed class WeakSet : JsObject
     {
         /// <summary>Realm-owned <c>WeakSet.prototype</c> intrinsic (issue #1824).</summary>
         internal static object Prototype
@@ -19,7 +19,7 @@ namespace JavaScriptRuntime
 
         public WeakSet()
         {
-            PrototypeChain.SetPrototype(this, Prototype);
+            PrototypeChain.InitializePrototype(this, Prototype);
         }
 
         public WeakSet(object? iterable)
