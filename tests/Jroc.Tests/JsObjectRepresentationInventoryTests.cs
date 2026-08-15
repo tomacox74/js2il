@@ -38,7 +38,6 @@ public sealed class JsObjectRepresentationInventoryTests
             ["JavaScriptRuntime.ArrayBuffer"] = BufferViewReason,
             ["JavaScriptRuntime.AsyncGeneratorObject"] = "Requires the dedicated AsyncGeneratorObject migration.",
             ["JavaScriptRuntime.DataView"] = BufferViewReason,
-            ["JavaScriptRuntime.Date"] = "Requires the Date wrapper migration.",
             ["JavaScriptRuntime.Error"] = ErrorReason,
             ["JavaScriptRuntime.EvalError"] = ErrorReason,
             ["JavaScriptRuntime.FinalizationRegistry"] = "Requires a dedicated internal-slot wrapper migration.",
