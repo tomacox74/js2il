@@ -356,7 +356,6 @@ namespace JavaScriptRuntime
         private static readonly object _bigIntPrototypeValue = new JsObject();
         private static readonly object _symbolPrototypeValue = new JsObject();
         private static readonly object _promisePrototypeValue = new JsObject();
-        private static readonly object _sharedArrayBufferPrototypeValue = new JsObject();
         private static readonly Func<object[], object?[]?, object?> _symbolFunctionValue = SymbolCall;
 
         // TypedArray intrinsic constructor and prototype
@@ -933,9 +932,7 @@ namespace JavaScriptRuntime
             ConfigureTypedArrayInstancePrototype(_uint16ArrayConstructorValue, _uint16ArrayPrototypeValue);
             JavaScriptRuntime.Uint8Array.ConfigureIntrinsicSurface(_uint8ArrayConstructorValue);
             ConfigureArrayBufferIntrinsicSurface();
-            ConfigureConstructorPrototypeSurface(
-                _sharedArrayBufferConstructorValue,
-                _sharedArrayBufferPrototypeValue);
+            ConfigureSharedArrayBufferIntrinsicSurface();
             ConfigureDataViewIntrinsicSurface();
 
             JavaScriptRuntime.String.ConfigureIntrinsicSurface(_stringFunctionValue);
@@ -2301,6 +2298,44 @@ namespace JavaScriptRuntime
             DefineArrayBufferAccessor("maxByteLength", static buffer => buffer.maxByteLength);
             DefineArrayBufferAccessor("resizable", static buffer => buffer.resizable);
             DefineIntrinsicToStringTagProperty(JavaScriptRuntime.ArrayBuffer.Prototype, "ArrayBuffer");
+        }
+
+        private static void ConfigureSharedArrayBufferIntrinsicSurface()
+        {
+            ConfigureConstructorPrototypeSurface(
+                _sharedArrayBufferConstructorValue,
+                JavaScriptRuntime.SharedArrayBuffer.SharedPrototype);
+            PropertyDescriptorStore.DefineOrUpdate(_sharedArrayBufferConstructorValue, "length", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data, Enumerable = false, Configurable = true, Writable = false, Value = 1d
+            });
+            PropertyDescriptorStore.DefineOrUpdate(_sharedArrayBufferConstructorValue, "name", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data, Enumerable = false, Configurable = true, Writable = false, Value = "SharedArrayBuffer"
+            });
+            DefineSharedArrayBufferAccessor("byteLength", static buffer => buffer.byteLength);
+            DefineSharedArrayBufferAccessor("maxByteLength", static buffer => buffer.maxByteLength);
+            DefineSharedArrayBufferAccessor("growable", static _ => false);
+            DefineIntrinsicToStringTagProperty(JavaScriptRuntime.SharedArrayBuffer.SharedPrototype, "SharedArrayBuffer");
+        }
+
+        private static void DefineSharedArrayBufferAccessor(
+            string propertyName,
+            Func<JavaScriptRuntime.SharedArrayBuffer, object?> read)
+        {
+            Func<object[], object?[]?, object?> getter = (_, __) =>
+            {
+                if (RuntimeServices.GetCurrentThis() is not JavaScriptRuntime.SharedArrayBuffer buffer)
+                {
+                    throw new TypeError($"get SharedArrayBuffer.prototype.{propertyName} called on incompatible receiver");
+                }
+                return read(buffer);
+            };
+            JavaScriptRuntime.Function.InitializeFunctionInstance(getter, 0d, $"get {propertyName}");
+            PropertyDescriptorStore.DefineOrUpdate(JavaScriptRuntime.SharedArrayBuffer.SharedPrototype, propertyName, new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Accessor, Enumerable = false, Configurable = true, Get = getter
+            });
         }
 
         private static void DefineArrayBufferAccessor(string propertyName, Func<JavaScriptRuntime.ArrayBuffer, object?> read)

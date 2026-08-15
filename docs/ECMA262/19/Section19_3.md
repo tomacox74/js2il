@@ -4,7 +4,7 @@
 
 [Back to Section19](Section19.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-08-15T08:03:05Z
+> Last generated (UTC): 2026-08-15T17:39:50Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -43,7 +43,7 @@
 | 19.3.27 | ReferenceError ( . . . ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-referenceerror) |
 | 19.3.28 | RegExp ( . . . ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-regexp) |
 | 19.3.29 | Set ( . . . ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-set) |
-| 19.3.30 | SharedArrayBuffer ( . . . ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-sharedarraybuffer) |
+| 19.3.30 | SharedArrayBuffer ( . . . ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-sharedarraybuffer) |
 | 19.3.31 | String ( . . . ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-string) |
 | 19.3.32 | Symbol ( . . . ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-symbol) |
 | 19.3.33 | SyntaxError ( . . . ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-syntaxerror) |
@@ -114,6 +114,12 @@ Feature-level support tracking with repo test references and optional test262 ev
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
 | Proxy (global constructor property) | Supported with Limitations | [`Proxy_GetTrap_OverridesProperty.js`](../../../tests/Jroc.Tests/Proxy/JavaScript/Proxy_GetTrap_OverridesProperty.js)<br>[`Proxy_SetTrap_InterceptsWrites.js`](../../../tests/Jroc.Tests/Proxy/JavaScript/Proxy_SetTrap_InterceptsWrites.js)<br>[`Proxy_HasTrap_AffectsInOperator.js`](../../../tests/Jroc.Tests/Proxy/JavaScript/Proxy_HasTrap_AffectsInOperator.js) |  | Supports new Proxy(target, handler) and routes get/set/has behavior through handler traps for core property access and the in operator. Does not implement full Proxy constructor/function object semantics or Proxy.revocable. |
+
+### 19.3.30 ([tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-sharedarraybuffer))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| SharedArrayBuffer first-class global constructor | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/SharedArrayBuffer/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/SharedArrayBuffer/prototype/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/SharedArrayBuffer/prototype/byteLength/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/SharedArrayBuffer/prototype/maxByteLength/ExecutionTests.cs` | `test/built-ins/SharedArrayBuffer/length.js`<br>`test/built-ins/SharedArrayBuffer/newtarget-prototype-is-not-object.js`<br>`test/built-ins/SharedArrayBuffer/prototype/prop-desc.js`<br>`test/built-ins/SharedArrayBuffer/prototype/Symbol.toStringTag.js` | Exposes globalThis.SharedArrayBuffer as a constructible function with standard constructor/prototype metadata and fixed-length prototype accessors. Storage is not shared between agents; growable buffers, grow(), and cross-realm construction remain limited. |
 
 ### 19.3.31 ([tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-string))
 

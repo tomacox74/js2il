@@ -186,7 +186,7 @@
     {
       "clause": "19.3.30",
       "title": "SharedArrayBuffer ( . . . )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-sharedarraybuffer"
     },
     {
@@ -381,6 +381,25 @@
           "test/built-ins/DataView/proto.js"
         ],
         "notes": "Exposes globalThis.DataView as a constructible function with standard name, length, global-property, and prototype descriptors. BigInt/Float16 accessors, full prototype method exposure, custom newTarget prototypes, and detached-buffer behavior remain limited."
+      },
+      {
+        "clause": "19.3.30",
+        "feature": "SharedArrayBuffer first-class global constructor",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-sharedarraybuffer",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/SharedArrayBuffer/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/SharedArrayBuffer/prototype/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/SharedArrayBuffer/prototype/byteLength/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/SharedArrayBuffer/prototype/maxByteLength/ExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/built-ins/SharedArrayBuffer/length.js",
+          "test/built-ins/SharedArrayBuffer/newtarget-prototype-is-not-object.js",
+          "test/built-ins/SharedArrayBuffer/prototype/prop-desc.js",
+          "test/built-ins/SharedArrayBuffer/prototype/Symbol.toStringTag.js"
+        ],
+        "notes": "Exposes globalThis.SharedArrayBuffer as a constructible function with standard constructor/prototype metadata and fixed-length prototype accessors. Storage is not shared between agents; growable buffers, grow(), and cross-realm construction remain limited."
       },
       {
         "clause": "19.3.3",

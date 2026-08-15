@@ -10,4 +10,11 @@ public sealed class ExecutionTests : ExecutionTestsBase
     public Task constructor()
         => ExecutionTest("constructor");
 
+    [Fact(DisplayName = "prop-desc.js")]
+    public Task prop_desc()
+        => ExecutionTest("prop-desc");
+
+    [Fact(DisplayName = "Symbol.toStringTag.js")]
+    public Task symbol_to_string_tag()
+        => ExecutionTest("Symbol.toStringTag");
 }

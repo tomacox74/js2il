@@ -38,4 +38,11 @@ public sealed class ExecutionTests : ExecutionTestsBase
     public Task zero_length()
         => ExecutionTest("zero-length");
 
+    [Fact(DisplayName = "length.js")]
+    public Task length()
+        => ExecutionTest("length");
+
+    [Fact(DisplayName = "newtarget-prototype-is-not-object.js")]
+    public Task newtarget_prototype_is_not_object()
+        => ExecutionTest("newtarget-prototype-is-not-object");
 }
