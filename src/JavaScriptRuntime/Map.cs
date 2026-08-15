@@ -8,17 +8,26 @@ namespace JavaScriptRuntime
     public sealed class Map : IEnumerable<object[]>
     {
         private static readonly Func<object[], object?[]?, object?> _prototypeEntriesValue = PrototypeEntries;
-        internal static readonly JsObject IteratorPrototype = CreateIteratorPrototype();
-        internal static readonly JsObject Prototype = CreatePrototype();
+        /// <summary>Realm-owned <c>Map Iterator prototype</c> intrinsic (issue #1824).</summary>
+        internal static JsObject IteratorPrototype
+            => RuntimeIntrinsics.Current.GetOrCreate(
+                RuntimeIntrinsicSlot.MapIteratorPrototype,
+                static () => new JsObject(),
+                static prototype => InitializeIteratorPrototype(prototype));
+        /// <summary>Realm-owned <c>Map.prototype</c> intrinsic (issue #1824).</summary>
+        internal static JsObject Prototype
+            => RuntimeIntrinsics.Current.GetOrCreate(
+                RuntimeIntrinsicSlot.MapPrototype,
+                static () => new JsObject(),
+                static exp => InitializePrototype(exp));
         private static readonly object NullKeySentinel = new object();
         private readonly List<object[]> _entries = new List<object[]>(); // [key, value] pairs
         private readonly Dictionary<object, int> _keyIndex = new Dictionary<object, int>(new SameValueZeroKeyComparer());
 
-        private static JsObject CreatePrototype()
+        private static void InitializePrototype(JsObject exp)
         {
             using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
 
-            var exp = new JsObject();
             DefinePrototypeMethod(exp, "set", PrototypeSet);
             DefinePrototypeMethod(exp, "get", PrototypeGet);
             DefinePrototypeMethod(exp, "has", PrototypeHas);
@@ -53,14 +62,12 @@ namespace JavaScriptRuntime
                 Writable = false,
                 Value = "Map"
             });
-            return exp;
         }
 
-        private static JsObject CreateIteratorPrototype()
+        private static void InitializeIteratorPrototype(JsObject prototype)
         {
             using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
 
-            var prototype = new JsObject();
             PrototypeChain.SetPrototype(prototype, Iterator.Prototype);
             PropertyDescriptorStore.DefineOrUpdate(prototype, Symbol.toStringTag.DebugId, new JsPropertyDescriptor
             {
@@ -70,7 +77,6 @@ namespace JavaScriptRuntime
                 Writable = false,
                 Value = "Map Iterator"
             });
-            return prototype;
         }
 
         private static void DefinePrototypeMethod(JsObject prototype, string name, Func<object[], object?[]?, object?> method)

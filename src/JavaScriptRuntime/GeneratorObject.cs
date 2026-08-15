@@ -20,8 +20,19 @@ public sealed class GeneratorObject : IJavaScriptIterator
     // Per ECMA-262, gen.constructor is the same function object for all generator instances.
     private static readonly Func<object[], object?[]?, object?> _generatorFunctionConstructor =
         static (_, args) => CreateDynamicGeneratorFunction(args);
-    private static readonly object Prototype = CreatePrototype();
-    private static readonly object GeneratorFunctionPrototype = CreateGeneratorFunctionPrototype();
+    /// <summary>Realm-owned <c>%GeneratorPrototype%</c> (issue #1824).</summary>
+    private static object Prototype
+        => RuntimeIntrinsics.Current.GetOrCreate(
+            RuntimeIntrinsicSlot.GeneratorPrototype,
+            static () => new JsObject(),
+            static prototype => InitializePrototype(prototype));
+
+    /// <summary>Realm-owned <c>%GeneratorFunction.prototype%</c> (issue #1824).</summary>
+    private static object GeneratorFunctionPrototype
+        => RuntimeIntrinsics.Current.GetOrCreate(
+            RuntimeIntrinsicSlot.GeneratorFunctionPrototype,
+            static () => new JsObject(),
+            static prototype => InitializeGeneratorFunctionPrototype(prototype));
 
     private readonly CompiledContinuation _step;
     private readonly object[] _scopes;
@@ -41,9 +52,29 @@ public sealed class GeneratorObject : IJavaScriptIterator
     internal static object GeneratorFunctionPrototypeObject => GeneratorFunctionPrototype;
     internal static object GeneratorPrototypeObject => Prototype;
 
-    static GeneratorObject()
+    private static void InitializePrototype(JsObject prototype)
     {
         using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
+
+        PrototypeChain.SetPrototype(prototype, Iterator.Prototype);
+        DefineDataProperty(prototype, "constructor", _generatorFunctionConstructor);
+        DefineDataProperty(prototype, "next", (Func<object[], object?[]?, object?>)PrototypeNext);
+        DefineDataProperty(prototype, "return", (Func<object[], object?[]?, object?>)PrototypeReturn);
+        DefineDataProperty(prototype, "throw", (Func<object[], object?[]?, object?>)PrototypeThrow);
+        DefineDataProperty(prototype, Symbol.toStringTag.DebugId, "Generator");
+    }
+
+    /// <summary>
+    /// Wires this realm's <c>%GeneratorFunction%</c> constructor surface. Runs once per
+    /// realm from the intrinsic slot initializer (issue #1824) rather than once per
+    /// process from a static constructor.
+    /// </summary>
+    private static void InitializeGeneratorFunctionPrototype(JsObject prototype)
+    {
+        using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
+
+        PrototypeChain.SetPrototype(prototype, Function.Prototype);
+        DefineDataProperty(prototype, "constructor", _generatorFunctionConstructor);
 
         Function.InitializeFunctionInstance(_generatorFunctionConstructor, 1d, "GeneratorFunction", requiresInvocationContext: false);
         Function.MarkConstructible(_generatorFunctionConstructor);
@@ -54,32 +85,8 @@ public sealed class GeneratorObject : IJavaScriptIterator
             Enumerable = false,
             Configurable = false,
             Writable = false,
-            Value = GeneratorFunctionPrototype
+            Value = prototype
         });
-    }
-
-    private static object CreatePrototype()
-    {
-        using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
-
-        var prototype = new JsObject();
-        PrototypeChain.SetPrototype(prototype, Iterator.Prototype);
-        DefineDataProperty(prototype, "constructor", _generatorFunctionConstructor);
-        DefineDataProperty(prototype, "next", (Func<object[], object?[]?, object?>)PrototypeNext);
-        DefineDataProperty(prototype, "return", (Func<object[], object?[]?, object?>)PrototypeReturn);
-        DefineDataProperty(prototype, "throw", (Func<object[], object?[]?, object?>)PrototypeThrow);
-        DefineDataProperty(prototype, Symbol.toStringTag.DebugId, "Generator");
-        return prototype;
-    }
-
-    private static object CreateGeneratorFunctionPrototype()
-    {
-        using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
-
-        var prototype = new JsObject();
-        PrototypeChain.SetPrototype(prototype, Function.Prototype);
-        DefineDataProperty(prototype, "constructor", _generatorFunctionConstructor);
-        return prototype;
     }
 
     private static object CreateDynamicGeneratorFunction(object?[]? args)

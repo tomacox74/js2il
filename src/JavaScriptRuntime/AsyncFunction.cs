@@ -4,18 +4,29 @@ namespace JavaScriptRuntime;
 
 public static class AsyncFunction
 {
-    internal static readonly object Prototype = CreatePrototype();
     private static readonly Func<object[], object?[], object?> ConstructorValue = static (_, args) =>
         CreateDynamicAsyncFunction(args);
 
-    static AsyncFunction()
+    /// <summary>Realm-owned <c>%AsyncFunction.prototype%</c> (issue #1824).</summary>
+    internal static object Prototype
+        => RuntimeIntrinsics.Current.GetOrCreate(
+            RuntimeIntrinsicSlot.AsyncFunctionPrototype,
+            static () => new JsObject(),
+            static prototype => InitializePrototype(prototype));
+
+    /// <summary>
+    /// Wires this realm's <c>%AsyncFunction%</c> surface. Runs once per realm from the
+    /// intrinsic slot initializer (issue #1824) rather than once per process from a
+    /// static constructor.
+    /// </summary>
+    private static void InitializePrototype(JsObject prototype)
     {
         using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
 
         Function.InitializeFunctionInstance(ConstructorValue);
         Function.MarkConstructible(ConstructorValue);
         PrototypeChain.SetPrototype(ConstructorValue, GlobalThis.Function);
-        PrototypeChain.SetPrototype(Prototype, Function.Prototype);
+        PrototypeChain.SetPrototype(prototype, Function.Prototype);
 
         DefineDataProperty(
             ConstructorValue,
@@ -32,13 +43,13 @@ public static class AsyncFunction
         DefineDataProperty(
             ConstructorValue,
             "prototype",
-            Prototype,
+            prototype,
             writable: false,
             configurable: false);
 
-        DefineDataProperty(Prototype, "constructor", ConstructorValue);
+        DefineDataProperty(prototype, "constructor", ConstructorValue);
         DefineDataProperty(
-            Prototype,
+            prototype,
             Symbol.toStringTag.DebugId,
             "AsyncFunction",
             writable: false,
@@ -155,13 +166,6 @@ public static class AsyncFunction
 
     public static object InitializeFunctionInstance(object functionValue, double length, string? name, bool requiresInvocationContext, bool hasRestrictedProperties)
         => InitializeFunctionInstance<object>(functionValue, length, name, requiresInvocationContext, hasRestrictedProperties);
-
-    private static object CreatePrototype()
-    {
-        using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
-
-        return new JsObject();
-    }
 
     private static object CreateDynamicAsyncFunction(object?[]? args)
     {

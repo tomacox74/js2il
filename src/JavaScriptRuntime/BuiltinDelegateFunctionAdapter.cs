@@ -1,33 +1,18 @@
 namespace JavaScriptRuntime;
 
-using System.Collections.Concurrent;
-using System.Runtime.CompilerServices;
-
 /// <summary>
 /// Explicit adapter for runtime-owned built-in CLR delegates.
 /// Compiled JavaScript functions never use this representation.
 /// </summary>
+/// <remarks>
+/// The adapter is the JavaScript-visible identity of a built-in function, so it is
+/// realm-owned (issue #1824): <see cref="FromDelegate"/> resolves the stable adapter
+/// from <see cref="RuntimeIntrinsics.BuiltinAdapters"/> of the ambient realm. Only the
+/// immutable CLR metadata behind it (the static delegate, its method handle and its
+/// <see cref="Closure.DelegateInvokeMetadata"/>) stays process-wide.
+/// </remarks>
 public sealed class BuiltinDelegateFunctionAdapter : JsFunctionObject
 {
-    private sealed class StaticAdapterCache
-    {
-        public ConcurrentDictionary<
-            (RuntimeMethodHandle Method, Type DelegateType),
-            BuiltinDelegateFunctionAdapter> Adapters { get; } = new();
-    }
-
-    private sealed class AdapterMethodCache
-    {
-        public ConcurrentDictionary<
-            (RuntimeMethodHandle Method, Type DelegateType),
-            BuiltinDelegateFunctionAdapter> Adapters { get; } = new();
-    }
-
-    private static readonly ConditionalWeakTable<Type, StaticAdapterCache> StaticAdapters = new();
-    private static readonly ConditionalWeakTable<object, AdapterMethodCache> InstanceAdapters = new();
-    private static readonly ConcurrentQueue<
-        WeakReference<BuiltinDelegateFunctionAdapter>> DeferredFunctionPrototypes = new();
-
     private readonly object[] _scopes;
     private readonly Closure.DelegateInvokeMetadata _invokeMetadata;
     private readonly object _initializationLock = new();
@@ -69,26 +54,6 @@ public sealed class BuiltinDelegateFunctionAdapter : JsFunctionObject
 
     public override bool RequiresInvocationContext => _requiresInvocationContext;
 
-    internal static void DeferFunctionPrototypeInitialization(
-        BuiltinDelegateFunctionAdapter adapter)
-    {
-        DeferredFunctionPrototypes.Enqueue(new WeakReference<BuiltinDelegateFunctionAdapter>(
-            adapter));
-    }
-
-    internal static void CompleteDeferredFunctionPrototypeInitialization(
-        JsObject functionPrototype)
-    {
-        while (DeferredFunctionPrototypes.TryDequeue(out var reference))
-        {
-            if (reference.TryGetTarget(out var adapter)
-                && PrototypeChain.GetPrototypeOrNull(adapter) == null)
-            {
-                PrototypeChain.InitializePrototype(adapter, functionPrototype);
-            }
-        }
-    }
-
     public static BuiltinDelegateFunctionAdapter FromDelegate(Delegate target)
     {
         ArgumentNullException.ThrowIfNull(target);
@@ -103,42 +68,16 @@ public sealed class BuiltinDelegateFunctionAdapter : JsFunctionObject
             return new BuiltinDelegateFunctionAdapter(target);
         }
 
-        if (target.Target == null)
-        {
-            var declaringType = target.Method.DeclaringType
-                ?? throw new InvalidOperationException(
-                    "Runtime-owned static delegates require a declaring type.");
-            var cache = StaticAdapters.GetOrCreateValue(declaringType);
-            return cache.Adapters.GetOrAdd(
-                (target.Method.MethodHandle, target.GetType()),
-                _ => new BuiltinDelegateFunctionAdapter(target));
-        }
-
-        var instanceCache = InstanceAdapters.GetOrCreateValue(target.Target);
-        return instanceCache.Adapters.GetOrAdd(
-            (target.Method.MethodHandle, target.GetType()),
-            _ => new BuiltinDelegateFunctionAdapter(target));
+        return RuntimeIntrinsics.Current.BuiltinAdapters.GetOrAdd(
+            target,
+            static resolved => new BuiltinDelegateFunctionAdapter(resolved));
     }
 
     internal static bool HasStableAdapterForTests(Delegate target)
     {
         ArgumentNullException.ThrowIfNull(target);
-        if (target.GetInvocationList().Length != 1)
-        {
-            return false;
-        }
-
-        if (target.Target == null)
-        {
-            return target.Method.DeclaringType is { } declaringType
-                && StaticAdapters.TryGetValue(declaringType, out var staticCache)
-                && staticCache.Adapters.ContainsKey(
-                    (target.Method.MethodHandle, target.GetType()));
-        }
-
-        return InstanceAdapters.TryGetValue(target.Target, out var instanceCache)
-            && instanceCache.Adapters.ContainsKey(
-                (target.Method.MethodHandle, target.GetType()));
+        return target.GetInvocationList().Length == 1
+            && RuntimeIntrinsics.Current.BuiltinAdapters.Contains(target);
     }
 
     internal static object? WrapJavaScriptVisibleValue(object? value)

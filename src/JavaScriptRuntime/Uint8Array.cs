@@ -6,13 +6,19 @@ namespace JavaScriptRuntime
     public sealed class Uint8Array : TypedArrayBase
     {
         private const int ElementSize = 1;
-        internal static readonly JsObject Prototype = CreatePrototype();
+        /// <summary>Realm-owned <c>Uint8Array.prototype</c> (issue #1824). The constructor surface is
+        /// wired per realm from this slot instead of from a process-wide static ctor.</summary>
+        internal static JsObject Prototype
+            => RuntimeIntrinsics.Current.GetOrCreate(
+                RuntimeIntrinsicSlot.Uint8ArrayPrototype,
+                static () => new JsObject(),
+                static prototype => InitializePrototype(prototype));
 
-        static Uint8Array()
+        private static void InitializePrototype(JsObject prototype)
         {
             using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
 
-            PrototypeChain.SetPrototype(Prototype, GlobalThis.ObjectPrototypeValue);
+            PrototypeChain.SetPrototype(prototype, GlobalThis.ObjectPrototypeValue);
 
             PropertyDescriptorStore.DefineOrUpdate(typeof(Uint8Array), "prototype", new JsPropertyDescriptor
             {
@@ -20,10 +26,10 @@ namespace JavaScriptRuntime
                 Enumerable = false,
                 Configurable = false,
                 Writable = false,
-                Value = Prototype
+                Value = prototype
             });
 
-            PropertyDescriptorStore.DefineOrUpdate(Prototype, "constructor", new JsPropertyDescriptor
+            PropertyDescriptorStore.DefineOrUpdate(prototype, "constructor", new JsPropertyDescriptor
             {
                 Kind = JsPropertyDescriptorKind.Data,
                 Enumerable = false,
@@ -285,13 +291,6 @@ namespace JavaScriptRuntime
 
         protected override TypedArrayBase CreateSameType(ArrayBuffer buffer, int byteOffset, int length)
             => new Uint8Array(buffer, byteOffset, length);
-
-        private static JsObject CreatePrototype()
-        {
-            using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
-
-            return new JsObject();
-        }
 
         private static object? ConstructorFromHex(object[] _, object?[]? args)
             => fromHex(GetArgument(args, 0));

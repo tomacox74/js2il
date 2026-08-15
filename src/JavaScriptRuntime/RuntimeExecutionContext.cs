@@ -177,10 +177,30 @@ internal sealed class RuntimeExecutionContext
 
     internal GlobalThis GetOrCreateGlobalObject()
     {
-        lock (_stateGate)
+        var instance = Volatile.Read(ref _globalObject);
+        if (instance == null)
         {
-            return _globalObject ??= new GlobalThis();
+            lock (_stateGate)
+            {
+                instance = _globalObject;
+                if (instance == null)
+                {
+                    // Publish before bootstrapping (see GlobalThis.Bootstrap remarks): a
+                    // reentrant globalThis/GetOrCreateGlobalObject() lookup that happens
+                    // during this realm's own intrinsic bootstrap must observe this
+                    // instance instead of recursively constructing another one.
+                    instance = new GlobalThis(Realm.Intrinsics);
+                    Volatile.Write(ref _globalObject, instance);
+                }
+            }
         }
+
+        // Deliberately outside _stateGate: bootstrap materializes intrinsics and must not
+        // pull this context lock into the intrinsic lock order. Bootstrap is idempotent,
+        // blocks concurrent callers until the realm graph is wired, and returns
+        // immediately for the thread that is running the bootstrap.
+        instance.Bootstrap();
+        return instance;
     }
 
     private IDisposable EnterCore(bool asRoot)

@@ -8,16 +8,25 @@ namespace JavaScriptRuntime
     public sealed class Set : IEnumerable<object>
     {
         private static readonly Func<object[], object?[]?, object?> _prototypeValuesValue = PrototypeValues;
-        internal static readonly JsObject IteratorPrototype = CreateIteratorPrototype();
-        internal static readonly JsObject Prototype = CreatePrototype();
+        /// <summary>Realm-owned <c>Set Iterator prototype</c> intrinsic (issue #1824).</summary>
+        internal static JsObject IteratorPrototype
+            => RuntimeIntrinsics.Current.GetOrCreate(
+                RuntimeIntrinsicSlot.SetIteratorPrototype,
+                static () => new JsObject(),
+                static prototype => InitializeIteratorPrototype(prototype));
+        /// <summary>Realm-owned <c>Set.prototype</c> intrinsic (issue #1824).</summary>
+        internal static JsObject Prototype
+            => RuntimeIntrinsics.Current.GetOrCreate(
+                RuntimeIntrinsicSlot.SetPrototype,
+                static () => new JsObject(),
+                static exp => InitializePrototype(exp));
         private readonly List<object> _items = new List<object>();
         private readonly HashSet<object> _set = new HashSet<object>();
 
-        private static JsObject CreatePrototype()
+        private static void InitializePrototype(JsObject exp)
         {
             using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
 
-            var exp = new JsObject();
             DefinePrototypeMethod(exp, "add", PrototypeAdd);
             DefinePrototypeMethod(exp, "has", PrototypeHas);
             DefinePrototypeMethod(exp, "delete", PrototypeDelete);
@@ -56,14 +65,12 @@ namespace JavaScriptRuntime
                 Writable = false,
                 Value = "Set"
             });
-            return exp;
         }
 
-        private static JsObject CreateIteratorPrototype()
+        private static void InitializeIteratorPrototype(JsObject prototype)
         {
             using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
 
-            var prototype = new JsObject();
             PrototypeChain.SetPrototype(prototype, Iterator.Prototype);
             PropertyDescriptorStore.DefineOrUpdate(prototype, Symbol.toStringTag.DebugId, new JsPropertyDescriptor
             {
@@ -73,7 +80,6 @@ namespace JavaScriptRuntime
                 Writable = false,
                 Value = "Set Iterator"
             });
-            return prototype;
         }
 
         private static void DefinePrototypeMethod(JsObject prototype, string name, Func<object[], object?[]?, object?> method)

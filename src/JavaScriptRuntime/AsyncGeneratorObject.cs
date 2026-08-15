@@ -11,7 +11,19 @@ namespace JavaScriptRuntime;
 /// </summary>
 public sealed class AsyncGeneratorObject : IJavaScriptAsyncIterator
 {
-    internal static readonly object PrototypeObject = CreatePrototype();
+    /// <summary>Realm-owned <c>%AsyncGeneratorPrototype%</c> (issue #1824).</summary>
+    internal static object PrototypeObject
+        => RuntimeIntrinsics.Current.GetOrCreate(
+            RuntimeIntrinsicSlot.AsyncGeneratorPrototype,
+            static () => new JsObject(),
+            static prototype =>
+            {
+                PrototypeChain.SetPrototype(prototype, AsyncIterator.Prototype);
+
+                // Touching the realm's %AsyncGeneratorFunction.prototype% installs this
+                // object's own methods through ConfigurePrototype below.
+                _ = AsyncGeneratorFunction.Prototype;
+            });
     private readonly object[] _scopes;
 
     public AsyncGeneratorObject(object[] scopes)
@@ -19,13 +31,6 @@ public sealed class AsyncGeneratorObject : IJavaScriptAsyncIterator
         _scopes = scopes ?? throw new ArgumentNullException(nameof(scopes));
         PrototypeChain.SetPrototype(this, PrototypeObject);
         GetLeafScope().ThisValue = RuntimeServices.GetCurrentThis();
-    }
-
-    private static object CreatePrototype()
-    {
-        var prototype = new JsObject();
-        PrototypeChain.SetPrototype(prototype, AsyncIterator.Prototype);
-        return prototype;
     }
 
     internal static void ConfigurePrototype(

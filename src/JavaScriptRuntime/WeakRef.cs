@@ -5,7 +5,12 @@ namespace JavaScriptRuntime
     [IntrinsicObject("WeakRef")]
     public sealed class WeakRef
     {
-        internal static readonly object Prototype = CreatePrototype();
+        /// <summary>Realm-owned <c>WeakRef.prototype</c> intrinsic (issue #1824).</summary>
+        internal static object Prototype
+            => RuntimeIntrinsics.Current.GetOrCreate(
+                RuntimeIntrinsicSlot.WeakRefPrototype,
+                static () => new JsObject(),
+                static prototype => InitializePrototype(prototype));
         private readonly WeakReference<object> _target;
 
         public WeakRef() : this(null)
@@ -44,11 +49,10 @@ namespace JavaScriptRuntime
             PrototypeChain.SetPrototype(this, Prototype);
         }
 
-        private static object CreatePrototype()
+        private static void InitializePrototype(JsObject prototype)
         {
             using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
 
-            var prototype = new JsObject();
             Func<object[], object?[]?, object?> deref = PrototypeDeref;
             Function.InitializeFunctionInstance(deref, 0d, "deref");
             PropertyDescriptorStore.DefineOrUpdate(deref, "prototype", new JsPropertyDescriptor
@@ -75,7 +79,6 @@ namespace JavaScriptRuntime
                 Writable = false,
                 Value = "WeakRef"
             });
-            return prototype;
         }
 
         private static object? PrototypeDeref(object[] scopes, object?[]? args)

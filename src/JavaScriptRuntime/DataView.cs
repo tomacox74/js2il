@@ -5,7 +5,11 @@ namespace JavaScriptRuntime
     [IntrinsicObject("DataView")]
     public sealed class DataView
     {
-        internal static readonly object Prototype = new JsObject();
+        /// <summary>Realm-owned <c>DataView.prototype</c> (issue #1824).</summary>
+        internal static object Prototype
+            => RuntimeIntrinsics.Current.GetOrCreate(
+                RuntimeIntrinsicSlot.DataViewPrototype,
+                static () => new JsObject());
         private readonly ArrayBuffer _buffer;
         private readonly int _byteOffset;
         private readonly int _byteLength;

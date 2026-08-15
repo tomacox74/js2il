@@ -4,7 +4,11 @@ namespace JavaScriptRuntime;
 
 public static class AsyncIterator
 {
-    internal static readonly object Prototype = CreatePrototype();
+    /// <summary>Realm-owned <c>%AsyncIteratorPrototype%</c> (issue #1824).</summary>
+    internal static object Prototype
+        => RuntimeIntrinsics.Current.GetOrCreate(
+            RuntimeIntrinsicSlot.AsyncIteratorPrototype,
+            static () => new JsObject());
 
     internal static void ConfigureIntrinsicSurface(object asyncIteratorConstructorValue)
     {
@@ -24,13 +28,6 @@ public static class AsyncIterator
         {
             PrototypeChain.SetPrototype(iterator, Prototype);
         }
-    }
-
-    private static object CreatePrototype()
-    {
-        using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
-
-        return new JsObject();
     }
 
     private static void DefineDataProperty(object target, string key, object? value)

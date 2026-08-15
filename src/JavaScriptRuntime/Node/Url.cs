@@ -12,21 +12,43 @@ namespace JavaScriptRuntime.Node
 
         internal static readonly JsFuncNoScopes1 URLSearchParamsConstructorValue = CreateUrlSearchParamsConstructorValue();
 
-        static Url()
+        // Constructor surfaces are wired once per realm from the matching realm-owned
+        // prototype slot (issue #1824) instead of once per process from a static ctor.
+        internal static void ConfigureUrlConstructorSurface(object prototypeValue)
         {
             using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
 
-            ConfigureConstructorSurface(URLConstructorValue, global::JavaScriptRuntime.Node.URL.Prototype);
-            ConfigureConstructorSurface(URLSearchParamsConstructorValue, global::JavaScriptRuntime.Node.URLSearchParams.Prototype);
+            ConfigureConstructorSurface(URLConstructorValue, prototypeValue);
         }
 
-        public object URL =>
-            BuiltinDelegateFunctionAdapter.FromDelegate(
-                URLConstructorValue);
+        internal static void ConfigureUrlSearchParamsConstructorSurface(object prototypeValue)
+        {
+            using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
 
-        public object URLSearchParams =>
-            BuiltinDelegateFunctionAdapter.FromDelegate(
-                URLSearchParamsConstructorValue);
+            ConfigureConstructorSurface(URLSearchParamsConstructorValue, prototypeValue);
+        }
+
+        public object URL
+        {
+            get
+            {
+                // Materializes this realm's URL.prototype, which also wires the
+                // constructor surface for this realm (issue #1824).
+                _ = global::JavaScriptRuntime.Node.URL.Prototype;
+                return BuiltinDelegateFunctionAdapter.FromDelegate(
+                    URLConstructorValue);
+            }
+        }
+
+        public object URLSearchParams
+        {
+            get
+            {
+                _ = global::JavaScriptRuntime.Node.URLSearchParams.Prototype;
+                return BuiltinDelegateFunctionAdapter.FromDelegate(
+                    URLSearchParamsConstructorValue);
+            }
+        }
 
         public string fileURLToPath(object input)
         {
@@ -121,7 +143,16 @@ namespace JavaScriptRuntime.Node
 
     public sealed class URL
     {
-        internal static readonly object Prototype = CreatePrototype();
+        /// <summary>Realm-owned <c>URL.prototype</c> (issue #1824).</summary>
+        internal static object Prototype
+            => RuntimeIntrinsics.Current.GetOrCreate(
+                RuntimeIntrinsicSlot.UrlPrototype,
+                static () => new JsObject(),
+                static prototype =>
+                {
+                    InitializePrototype(prototype);
+                    Url.ConfigureUrlConstructorSurface(prototype);
+                });
 
         private readonly URLSearchParams _searchParams;
 
@@ -299,11 +330,10 @@ namespace JavaScriptRuntime.Node
             return text.StartsWith("#", StringComparison.Ordinal) ? text : "#" + text;
         }
 
-        private static object CreatePrototype()
+        private static void InitializePrototype(JsObject prototype)
         {
             using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
 
-            var prototype = new JsObject();
             DefinePrototypeMethod(prototype, "toJSON", PrototypeToJson);
             DefinePrototypeMethod(prototype, "toString", PrototypeToString);
             PropertyDescriptorStore.DefineOrUpdate(prototype, global::JavaScriptRuntime.Symbol.toStringTag.DebugId, new JsPropertyDescriptor
@@ -314,7 +344,6 @@ namespace JavaScriptRuntime.Node
                 Writable = false,
                 Value = "URL"
             });
-            return prototype;
         }
 
         private static void DefinePrototypeMethod(object prototype, string name, Func<object[], object?[]?, object?> method)
@@ -350,7 +379,17 @@ namespace JavaScriptRuntime.Node
     public sealed class URLSearchParams
     {
         private static readonly Func<object[], object?[]?, object?> PrototypeEntriesValue = PrototypeEntries;
-        internal static readonly object Prototype = CreatePrototype();
+
+        /// <summary>Realm-owned <c>URLSearchParams.prototype</c> (issue #1824).</summary>
+        internal static object Prototype
+            => RuntimeIntrinsics.Current.GetOrCreate(
+                RuntimeIntrinsicSlot.UrlSearchParamsPrototype,
+                static () => new JsObject(),
+                static prototype =>
+                {
+                    InitializePrototype(prototype);
+                    Url.ConfigureUrlSearchParamsConstructorSurface(prototype);
+                });
 
         private readonly List<KeyValuePair<string, string>> _entries;
 
@@ -650,11 +689,10 @@ namespace JavaScriptRuntime.Node
             }
         }
 
-        private static object CreatePrototype()
+        private static void InitializePrototype(JsObject prototype)
         {
             using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
 
-            var prototype = new JsObject();
             DefinePrototypeMethod(prototype, "append", PrototypeAppend);
             DefinePrototypeMethod(prototype, "delete", PrototypeDelete);
             DefinePrototypeMethod(prototype, "entries", PrototypeEntriesValue);
@@ -690,7 +728,6 @@ namespace JavaScriptRuntime.Node
                 Writable = false,
                 Value = "URLSearchParams"
             });
-            return prototype;
         }
 
         private static void DefinePrototypeMethod(object prototype, string name, Func<object[], object?[]?, object?> method)

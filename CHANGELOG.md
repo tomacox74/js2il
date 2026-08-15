@@ -21,6 +21,44 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   `byteLength`, `maxByteLength`, and `resizable` accessors. Activates twenty
   corresponding pinned test262 fixtures.
 
+- runtime: make globals, intrinsics, descriptors, and prototypes realm-owned
+  (issue #1824). Every `RuntimeRealm` now owns a `RuntimeIntrinsics` graph that
+  holds the whole ECMA-262 Realm Record `[[Intrinsics]]` surface:
+  `Object.prototype` and every other built-in prototype (`Function`, `Array`,
+  `String`, `Number`, `Boolean`, `BigInt`, `Symbol`, the `Error` family, `Map`,
+  `Set`, `WeakMap`, `WeakSet`, `WeakRef`, `FinalizationRegistry`, `Promise`,
+  `RegExp`, `Date`, `DataView`, `ArrayBuffer`/`SharedArrayBuffer`, the typed
+  arrays, the iterator/generator/async-function prototypes and the Node `URL`
+  prototypes), the `JSON`/`Intl`/`Atomics` namespace objects, the
+  `BuiltinDelegateFunctionAdapter` identities behind every built-in constructor
+  and method, the global built-in function values exposed by
+  `GlobalThis.GetFunctionValue`, the intrinsic descriptor baseline for
+  non-`JsObject` targets, and the `[[Prototype]]` fallback slots for values that
+  are not `JsObject` instances. Two realms therefore observe distinct global,
+  constructor, prototype, and built-in function identities, and descriptor or
+  prototype mutation in one realm is invisible to the other. Only immutable CLR
+  metadata (the static delegates, method handles, and the `Type` handles used as
+  markers for `Math`, `Reflect`, `Date`, `AbortController`, `AbortSignal`, and
+  the `Intl` constructors) stays process-wide.
+- runtime: remove the process-wide `PrototypeChain._enabled` behavior switch.
+  Prototype-chain semantics are now always active (`Enabled`/`Enable()` remain
+  as no-op/always-true compatibility shims); the switch previously let one
+  realm's intrinsic bootstrap permanently change `__proto__` and
+  prototype-lookup behavior observed by every other realm/program sharing the
+  process.
+- runtime: intrinsic bootstrap (`GlobalThis.InitializeIntrinsics`) and every
+  lazily created intrinsic now run exactly once per realm under per-slot
+  initialization coordination, so concurrent realm creation is deterministic and
+  realms cannot corrupt each other's intrinsic surface. A second thread blocks
+  until an intrinsic is fully wired instead of observing a half-built prototype,
+  a failed initializer leaves the slot retryable, and the built-in adapter
+  initialization lock is a leaf lock (required intrinsics are materialized before
+  it is taken), so intrinsic creation and built-in function initialization can no
+  longer deadlock on inverted lock order. `RuntimeIntrinsics.Current` always
+  answers with the ambient realm, and context-less callers get one deterministic
+  process-default graph. Realm disposal releases the realm's intrinsic object
+  graph, adapter identities, and global function values.
+
 - runtime/test262: expose DataView as a first-class global constructor with
   standard constructor/prototype metadata and buffer, byteLength, and
   byteOffset accessors. Activates twenty corresponding pinned test262 fixtures.

@@ -15,15 +15,101 @@ namespace JavaScriptRuntime
     public class GlobalThis : JsObject, IDictionary<string, object?>
     {
         private static readonly ThreadLocal<GlobalThis?> _fallbackGlobalObject = new(() => null);
-        private static readonly ConcurrentDictionary<string, BuiltinDelegateFunctionAdapter>
-            _globalFunctionValues = new(StringComparer.Ordinal);
 
         private static readonly JavaScriptRuntime.Console _defaultConsole = new(new ConsoleOutputSinks());
         private static readonly JavaScriptRuntime.Node.Process _defaultProcess = new(new DefaultEnvironment());
 
-        public GlobalThis()
+        private readonly RuntimeIntrinsics _intrinsics;
+        private readonly object _seedGate = new();
+        private volatile bool _seeded;
+        private int _seedingThreadId;
+
+        /// <summary>
+        /// Cached bootstrap delegate: <see cref="Bootstrap"/> runs on every
+        /// <c>globalThis</c> resolution, so the instance method group must not be
+        /// converted to a new delegate each time.
+        /// </summary>
+        private Action? _initializeIntrinsics;
+
+        /// <summary>
+        /// The realm-owned intrinsic object graph backing this global object's
+        /// well-known prototypes/namespace objects (ECMA-262 [[Intrinsics]]).
+        /// </summary>
+        internal RuntimeIntrinsics Intrinsics => _intrinsics;
+
+        public GlobalThis() : this(RuntimeIntrinsics.Current)
         {
-            SeedGlobalObjectIfMissing();
+            Bootstrap();
+        }
+
+        internal GlobalThis(RuntimeIntrinsics intrinsics)
+        {
+            _intrinsics = intrinsics ?? throw new ArgumentNullException(nameof(intrinsics));
+        }
+
+        /// <summary>
+        /// Wires this realm's intrinsic object graph and seeds the global object's
+        /// well-known bindings. Idempotent and safe to call from any thread: the realm
+        /// wiring runs exactly once per realm inside
+        /// <see cref="RuntimeIntrinsics.EnsureBootstrapped"/> (concurrent callers block
+        /// until it is complete), and the binding seed runs exactly once per instance.
+        /// </summary>
+        /// <remarks>
+        /// Split out from the constructor so callers that publish the instance ambiently
+        /// (<see cref="RuntimeExecutionContext"/>) can record the reference *before*
+        /// running the wiring pass: bootstrap reenters
+        /// <c>GlobalThis.globalThis</c>/<c>GetOrCreateGlobalObject()</c> (for example via
+        /// <see cref="Function.MarkConstructible"/> creating an ordinary function
+        /// prototype), and without publishing first that reentrant lookup would
+        /// recursively construct another instance. Reentrant calls made while this thread
+        /// is building the intrinsic graph return immediately with the graph under
+        /// construction, which is also what keeps the bootstrap out of the runtime's lock
+        /// order (no intrinsic initializer ever waits on a bootstrap gate).
+        /// </remarks>
+        internal void Bootstrap()
+        {
+            if (!_intrinsics.IsBootstrapped)
+            {
+                _intrinsics.EnsureBootstrapped(_initializeIntrinsics ??= InitializeIntrinsics);
+            }
+
+            SeedOnce();
+        }
+
+        private void SeedOnce()
+        {
+            if (_seeded)
+            {
+                return;
+            }
+
+            if (Volatile.Read(ref _seedingThreadId) == Environment.CurrentManagedThreadId
+                || RuntimeIntrinsics.IsInitializingOnCurrentThread)
+            {
+                // Reentrant lookup from this instance's own seed pass, or from an
+                // intrinsic initializer: the caller is part of the bootstrap and must
+                // observe the object under construction instead of waiting for itself.
+                return;
+            }
+
+            lock (_seedGate)
+            {
+                if (_seeded)
+                {
+                    return;
+                }
+
+                Volatile.Write(ref _seedingThreadId, Environment.CurrentManagedThreadId);
+                try
+                {
+                    SeedGlobalObjectIfMissing();
+                    _seeded = true;
+                }
+                finally
+                {
+                    Volatile.Write(ref _seedingThreadId, 0);
+                }
+            }
         }
 
         // Some ECMAScript globals are callable (e.g., Boolean(x)). When used in expression position
@@ -334,41 +420,42 @@ namespace JavaScriptRuntime
             arg is JavaScriptRuntime.Error;
 
         // Minimal Error.prototype object. Libraries may attach properties here.
-        private static readonly object _errorPrototypeValue = new JsObject();
-        private static readonly object _evalErrorPrototypeValue = new JsObject();
-        private static readonly object _rangeErrorPrototypeValue = new JsObject();
-        private static readonly object _referenceErrorPrototypeValue = new JsObject();
-        private static readonly object _syntaxErrorPrototypeValue = new JsObject();
-        private static readonly object _typeErrorPrototypeValue = new JsObject();
-        private static readonly object _uriErrorPrototypeValue = new JsObject();
-        private static readonly object _aggregateErrorPrototypeValue = new JsObject();
-        private static readonly object _suppressedErrorPrototypeValue = new JsObject();
+        // Realm-owned: see RuntimeIntrinsics.
+        private object _errorPrototypeValue => _intrinsics.ErrorPrototype;
+        private object _evalErrorPrototypeValue => _intrinsics.EvalErrorPrototype;
+        private object _rangeErrorPrototypeValue => _intrinsics.RangeErrorPrototype;
+        private object _referenceErrorPrototypeValue => _intrinsics.ReferenceErrorPrototype;
+        private object _syntaxErrorPrototypeValue => _intrinsics.SyntaxErrorPrototype;
+        private object _typeErrorPrototypeValue => _intrinsics.TypeErrorPrototype;
+        private object _uriErrorPrototypeValue => _intrinsics.URIErrorPrototype;
+        private object _aggregateErrorPrototypeValue => _intrinsics.AggregateErrorPrototype;
+        private object _suppressedErrorPrototypeValue => _intrinsics.SuppressedErrorPrototype;
 
-        // Minimal Object.prototype object used for descriptor/prototype-heavy libraries.
-        // NOTE: We intentionally do not enable PrototypeChain here; Object.create/setPrototypeOf
-        // opt into prototype semantics as needed.
-        private static readonly object _objectPrototypeValue = new JsObject();
-        private static readonly object _jsonValue = new JsObject();
-        private static readonly object _intlValue = new JsObject();
-        private static readonly object _atomicsValue = new JsObject();
-        private static readonly object _numberPrototypeValue = new JsObject();
-        private static readonly object _booleanPrototypeValue = new JsObject();
-        private static readonly object _bigIntPrototypeValue = new JsObject();
-        private static readonly object _symbolPrototypeValue = new JsObject();
-        private static readonly object _promisePrototypeValue = new JsObject();
+        // Realm-owned Object.prototype (issue #1824). Every other intrinsic prototype
+        // chains up to it, so it must be created per realm together with them.
+        private object _objectPrototypeValue => _intrinsics.ObjectPrototype;
+        private object _jsonValue => _intrinsics.Json;
+        private object _intlValue => _intrinsics.Intl;
+        private object _atomicsValue => _intrinsics.Atomics;
+        private object _numberPrototypeValue => _intrinsics.NumberPrototype;
+        private object _booleanPrototypeValue => _intrinsics.BooleanPrototype;
+        private object _bigIntPrototypeValue => _intrinsics.BigIntPrototype;
+        private object _symbolPrototypeValue => _intrinsics.SymbolPrototype;
+        private object _promisePrototypeValue => _intrinsics.GlobalPromisePrototype;
         private static readonly Func<object[], object?[]?, object?> _symbolFunctionValue = SymbolCall;
 
         // TypedArray intrinsic constructor and prototype
         private static readonly Func<object[], object?[], object?> _typedArrayConstructorValue = static (_, __) =>
             throw new TypeError("%TypedArray% is not directly constructible in jroc.");
-        private static readonly object _typedArrayPrototypeValue = new JsObject();
-        private static readonly object _float64ArrayPrototypeValue = new JsObject();
-        private static readonly object _float32ArrayPrototypeValue = new JsObject();
-        private static readonly object _int32ArrayPrototypeValue = new JsObject();
-        private static readonly object _int16ArrayPrototypeValue = new JsObject();
-        private static readonly object _int8ArrayPrototypeValue = new JsObject();
-        private static readonly object _uint32ArrayPrototypeValue = new JsObject();
-        private static readonly object _uint16ArrayPrototypeValue = new JsObject();
+        // Realm-owned: see RuntimeIntrinsics.
+        private object _typedArrayPrototypeValue => _intrinsics.TypedArrayPrototype;
+        private object _float64ArrayPrototypeValue => _intrinsics.Float64ArrayPrototype;
+        private object _float32ArrayPrototypeValue => _intrinsics.Float32ArrayPrototype;
+        private object _int32ArrayPrototypeValue => _intrinsics.Int32ArrayPrototype;
+        private object _int16ArrayPrototypeValue => _intrinsics.Int16ArrayPrototype;
+        private object _int8ArrayPrototypeValue => _intrinsics.Int8ArrayPrototype;
+        private object _uint32ArrayPrototypeValue => _intrinsics.Uint32ArrayPrototype;
+        private object _uint16ArrayPrototypeValue => _intrinsics.Uint16ArrayPrototype;
         private static readonly Func<object[], object?[]?, object?> _typedArraySortValue = TypedArrayPrototypeSort;
         private static readonly Func<object[], object?[]?, object?> _typedArrayToSortedValue = TypedArrayPrototypeToSorted;
         private static readonly Func<object[], object?[]?, object?> _typedArrayWithValue = TypedArrayPrototypeWith;
@@ -413,10 +500,26 @@ namespace JavaScriptRuntime
         private static readonly Func<object[], object?[], object?> _bigUint64ArrayConstructorValue = 
             static (_, __) => throw new NotSupportedException("The BigUint64Array constructor is not yet supported in jroc.");
 
-        static GlobalThis()
+        private void InitializeIntrinsics()
         {
-            using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
+            // Runs once per realm inside the realm-bootstrap slot (issue #1824): every
+            // intrinsic object is realm-owned, and the slot protocol both serializes
+            // concurrent bootstraps of the same realm and keeps this pass and the lazy
+            // slot creation it triggers inside a single lock order. Bootstrap runs once
+            // per realm and never on a script's hot path.
 
+            // Every realm establishes the intrinsic descriptor baseline for its own
+            // intrinsic graph: the objects being written are this realm's objects and
+            // the descriptor baseline for non-JsObject targets is realm-owned too
+            // (PropertyDescriptorStore._intrinsicStore).
+            using var intrinsicBaselineScope =
+                PropertyDescriptorStore.BeginIntrinsicInitialization();
+
+            InitializeIntrinsicsCore();
+        }
+
+        private void InitializeIntrinsicsCore()
+        {
             PrototypeChain.SetPrototype(JavaScriptRuntime.Function.Prototype, _objectPrototypeValue);
             PrototypeChain.SetPrototype(JavaScriptRuntime.Function.RestrictedPropertiesPrototype, JavaScriptRuntime.Function.Prototype);
             DefineIntrinsicToStringTagProperty(Math, "Math");
@@ -428,7 +531,7 @@ namespace JavaScriptRuntime
             DefineIntrinsicConstantDataProperty(Math, "PI", JavaScriptRuntime.Math.PI);
             DefineIntrinsicConstantDataProperty(Math, "SQRT1_2", JavaScriptRuntime.Math.SQRT1_2);
             DefineIntrinsicConstantDataProperty(Math, "SQRT2", JavaScriptRuntime.Math.SQRT2);
-            DefineIntrinsicToStringTagProperty(JSON, "JSON");
+            DefineIntrinsicToStringTagProperty(_jsonValue, "JSON");
             DefineIntrinsicToStringTagProperty(Reflect, "Reflect");
             DefineIntrinsicToStringTagProperty(_intlValue, "Intl");
             DefineIntrinsicDataProperty(_intlValue, "NumberFormat", typeof(JavaScriptRuntime.IntlNumberFormat));
@@ -969,7 +1072,7 @@ namespace JavaScriptRuntime
             DefineIntrinsicConstantDataProperty(constructorValue, "BYTES_PER_ELEMENT", bytesPerElement);
         }
 
-        private static void ConfigureTypedArrayInstancePrototype(object constructorValue, object prototypeValue)
+        private void ConfigureTypedArrayInstancePrototype(object constructorValue, object prototypeValue)
         {
             PrototypeChain.SetPrototype(prototypeValue, _typedArrayPrototypeValue);
             PropertyDescriptorStore.DefineOrUpdate(constructorValue, "prototype", new JsPropertyDescriptor
@@ -1152,8 +1255,13 @@ namespace JavaScriptRuntime
             var obj = _fallbackGlobalObject.Value;
             if (obj == null)
             {
-                obj = new GlobalThis();
+                // Publish before bootstrapping (see GlobalThis.Bootstrap remarks): a
+                // reentrant globalThis/GetOrCreateGlobalObject() lookup that happens
+                // during this realm's own bootstrap must observe this instance
+                // instead of recursively constructing another one.
+                obj = new GlobalThis(RuntimeIntrinsics.Current);
                 _fallbackGlobalObject.Value = obj;
+                obj.Bootstrap();
             }
             return obj;
         }
@@ -1307,7 +1415,7 @@ namespace JavaScriptRuntime
             dict.TryAdd(nameof(GlobalThis.DataView), DataView);
             DefineNonEnumerableDataProperty(nameof(GlobalThis.DataView), dict[nameof(GlobalThis.DataView)]);
 
-            dict.TryAdd(nameof(GlobalThis.Atomics), Atomics);
+            dict.TryAdd(nameof(GlobalThis.Atomics), _atomicsValue);
             DefineNonEnumerableDataProperty(nameof(GlobalThis.Atomics), dict[nameof(GlobalThis.Atomics)]);
 
             dict.TryAdd(nameof(GlobalThis.Array), Array);
@@ -1376,10 +1484,10 @@ namespace JavaScriptRuntime
             dict.TryAdd(nameof(GlobalThis.Object), Object);
             DefineNonEnumerableDataProperty(nameof(GlobalThis.Object), dict[nameof(GlobalThis.Object)]);
 
-            dict.TryAdd(nameof(GlobalThis.JSON), JSON);
+            dict.TryAdd(nameof(GlobalThis.JSON), _jsonValue);
             DefineNonEnumerableDataProperty(nameof(GlobalThis.JSON), dict[nameof(GlobalThis.JSON)]);
 
-            dict.TryAdd(nameof(GlobalThis.Intl), Intl);
+            dict.TryAdd(nameof(GlobalThis.Intl), _intlValue);
             DefineNonEnumerableDataProperty(nameof(GlobalThis.Intl), dict[nameof(GlobalThis.Intl)]);
 
             dict.TryAdd(nameof(GlobalThis.RegExp), RegExp);
@@ -1509,10 +1617,16 @@ namespace JavaScriptRuntime
             }
         }
 
+        /// <summary>
+        /// Returns this realm's built-in function object for a global function such as
+        /// <c>setTimeout</c> or <c>parseInt</c>. Realm-owned (issue #1824): the delegate
+        /// behind it is immutable CLR metadata, but the JavaScript-visible function
+        /// object identity belongs to the realm.
+        /// </summary>
         public static JsFunctionObject GetFunctionValue(string name)
         {
             ArgumentException.ThrowIfNullOrWhiteSpace(name);
-            return _globalFunctionValues.GetOrAdd(
+            return RuntimeIntrinsics.Current.GlobalFunctionValues.GetOrAdd(
                 name,
                 static functionName =>
                 {
@@ -1628,7 +1742,7 @@ namespace JavaScriptRuntime
 
         public static Delegate DataView => _dataViewConstructorValue;
 
-        public static object Atomics => _atomicsValue;
+        public static object Atomics => BootstrappedIntrinsics().Atomics;
 
         /// <summary>
         /// ECMAScript global Array constructor value (placeholder).
@@ -1684,9 +1798,9 @@ namespace JavaScriptRuntime
 
         public static Func<object[], object?, object> Object => _objectConstructorValue;
 
-        public static object JSON => _jsonValue;
+        public static object JSON => BootstrappedIntrinsics().Json;
 
-        public static object Intl => _intlValue;
+        public static object Intl => BootstrappedIntrinsics().Intl;
 
         public static Delegate Symbol => _symbolFunctionValue;
 
@@ -1727,9 +1841,25 @@ namespace JavaScriptRuntime
 
         public static Type AbortSignal => typeof(JavaScriptRuntime.AbortSignal);
 
-        public static Delegate URL => JavaScriptRuntime.Node.Url.URLConstructorValue;
+        public static Delegate URL
+        {
+            get
+            {
+                // Materializes this realm's URL.prototype, which wires the constructor
+                // surface for this realm (issue #1824).
+                _ = JavaScriptRuntime.Node.URL.Prototype;
+                return JavaScriptRuntime.Node.Url.URLConstructorValue;
+            }
+        }
 
-        public static Delegate URLSearchParams => JavaScriptRuntime.Node.Url.URLSearchParamsConstructorValue;
+        public static Delegate URLSearchParams
+        {
+            get
+            {
+                _ = JavaScriptRuntime.Node.URLSearchParams.Prototype;
+                return JavaScriptRuntime.Node.Url.URLSearchParamsConstructorValue;
+            }
+        }
 
         /// <summary>
         /// ECMAScript global Infinity value (+∞).
@@ -2182,7 +2312,7 @@ namespace JavaScriptRuntime
             };
         }
 
-        private static void ConfigurePromiseIntrinsicSurface(object constructorValue, object prototypeValue)
+        private void ConfigurePromiseIntrinsicSurface(object constructorValue, object prototypeValue)
         {
             ConfigureBuiltinFunctionObject(constructorValue);
             JavaScriptRuntime.Function.MarkConstructible(constructorValue);
@@ -2207,13 +2337,13 @@ namespace JavaScriptRuntime
             });
         }
 
-        private static void ConfigureCollectionIntrinsicSurface(object constructorValue, object prototypeValue)
+        private void ConfigureCollectionIntrinsicSurface(object constructorValue, object prototypeValue)
         {
             ConfigureConstructorPrototypeSurface(constructorValue, prototypeValue);
             DefineSpeciesAccessorProperty(constructorValue);
         }
 
-        private static void ConfigureWeakRefIntrinsicSurface()
+        private void ConfigureWeakRefIntrinsicSurface()
         {
             ConfigureConstructorPrototypeSurface(_weakRefConstructorValue, JavaScriptRuntime.WeakRef.Prototype);
             PropertyDescriptorStore.DefineOrUpdate(_weakRefConstructorValue, "length", new JsPropertyDescriptor
@@ -2234,7 +2364,7 @@ namespace JavaScriptRuntime
             });
         }
 
-        private static void ConfigureFinalizationRegistryIntrinsicSurface()
+        private void ConfigureFinalizationRegistryIntrinsicSurface()
         {
             ConfigureConstructorPrototypeSurface(
                 _finalizationRegistryConstructorValue,
@@ -2257,7 +2387,7 @@ namespace JavaScriptRuntime
             });
         }
 
-        private static void ConfigureDataViewIntrinsicSurface()
+        private void ConfigureDataViewIntrinsicSurface()
         {
             ConfigureConstructorPrototypeSurface(_dataViewConstructorValue, JavaScriptRuntime.DataView.Prototype);
             PropertyDescriptorStore.DefineOrUpdate(_dataViewConstructorValue, "length", new JsPropertyDescriptor
@@ -2401,7 +2531,7 @@ namespace JavaScriptRuntime
             });
         }
 
-        private static void ConfigureConstructorPrototypeSurface(object constructorValue, object prototypeValue)
+        private void ConfigureConstructorPrototypeSurface(object constructorValue, object prototypeValue)
         {
             ConfigureBuiltinFunctionObject(constructorValue);
             JavaScriptRuntime.Function.MarkConstructible(constructorValue);
@@ -2445,7 +2575,7 @@ namespace JavaScriptRuntime
             });
         }
 
-        private static void ConfigureErrorSubclassIntrinsicSurface(object constructorValue, object prototypeValue, string name)
+        private void ConfigureErrorSubclassIntrinsicSurface(object constructorValue, object prototypeValue, string name)
         {
             ConfigureBuiltinFunctionObject(constructorValue);
             JavaScriptRuntime.Function.MarkConstructible(constructorValue);
@@ -2503,36 +2633,67 @@ namespace JavaScriptRuntime
             return false;
         }
 
-        internal static object ObjectPrototypeValue => _objectPrototypeValue;
+        internal static object ObjectPrototypeValue => RuntimeIntrinsics.Current.ObjectPrototype;
+
+        /// <summary>
+        /// Resolves the ambient realm's intrinsic graph for callers that need it fully
+        /// wired (primitive/error prototypes get their properties from the realm
+        /// bootstrap, not from a per-slot initializer).
+        /// </summary>
+        /// <remarks>
+        /// The common case is a volatile read of the realm's bootstrap state followed by
+        /// the intrinsic slot's lock-free fast path: no global-object lock, and no
+        /// per-access execution-context lock, is taken on these hot accessors.
+        /// </remarks>
+        private static RuntimeIntrinsics BootstrappedIntrinsics()
+        {
+            var intrinsics = RuntimeIntrinsics.Current;
+            return intrinsics.IsBootstrapped
+                ? intrinsics
+                : EnsureRealmBootstrapped(intrinsics);
+        }
+
+        [System.Runtime.CompilerServices.MethodImpl(
+            System.Runtime.CompilerServices.MethodImplOptions.NoInlining)]
+        private static RuntimeIntrinsics EnsureRealmBootstrapped(RuntimeIntrinsics intrinsics)
+        {
+            // Materializing the global object performs (or waits for) this realm's
+            // one-time bootstrap; the graph itself is then read through the intrinsics.
+            _ = GetOrCreateGlobalObject();
+            return intrinsics;
+        }
 
         internal static object GetTypedArrayInstancePrototype(TypedArrayBase typedArray)
-            => typedArray switch
+        {
+            var current = BootstrappedIntrinsics();
+            return typedArray switch
             {
-                JavaScriptRuntime.Float64Array => _float64ArrayPrototypeValue,
-                JavaScriptRuntime.Float32Array => _float32ArrayPrototypeValue,
-                JavaScriptRuntime.Int32Array => _int32ArrayPrototypeValue,
-                JavaScriptRuntime.Int16Array => _int16ArrayPrototypeValue,
-                JavaScriptRuntime.Int8Array => _int8ArrayPrototypeValue,
-                JavaScriptRuntime.Uint32Array => _uint32ArrayPrototypeValue,
-                JavaScriptRuntime.Uint16Array => _uint16ArrayPrototypeValue,
+                JavaScriptRuntime.Float64Array => current.Float64ArrayPrototype,
+                JavaScriptRuntime.Float32Array => current.Float32ArrayPrototype,
+                JavaScriptRuntime.Int32Array => current.Int32ArrayPrototype,
+                JavaScriptRuntime.Int16Array => current.Int16ArrayPrototype,
+                JavaScriptRuntime.Int8Array => current.Int8ArrayPrototype,
+                JavaScriptRuntime.Uint32Array => current.Uint32ArrayPrototype,
+                JavaScriptRuntime.Uint16Array => current.Uint16ArrayPrototype,
                 JavaScriptRuntime.Uint8Array => JavaScriptRuntime.Uint8Array.Prototype,
                 JavaScriptRuntime.Uint8ClampedArray => JavaScriptRuntime.Uint8ClampedArray.Prototype,
-                _ => _typedArrayPrototypeValue
+                _ => current.TypedArrayPrototype
             };
-        internal static object NumberPrototypeValue => _numberPrototypeValue;
-        internal static object BooleanPrototypeValue => _booleanPrototypeValue;
-        internal static object BigIntPrototypeValue => _bigIntPrototypeValue;
-        internal static object SymbolPrototypeValue => _symbolPrototypeValue;
+        }
+        internal static object NumberPrototypeValue => BootstrappedIntrinsics().NumberPrototype;
+        internal static object BooleanPrototypeValue => BootstrappedIntrinsics().BooleanPrototype;
+        internal static object BigIntPrototypeValue => BootstrappedIntrinsics().BigIntPrototype;
+        internal static object SymbolPrototypeValue => BootstrappedIntrinsics().SymbolPrototype;
         internal static object DatePrototypeValue => JavaScriptRuntime.Date.Prototype;
-        internal static object ErrorPrototypeValue => _errorPrototypeValue;
-        internal static object EvalErrorPrototypeValue => _evalErrorPrototypeValue;
-        internal static object RangeErrorPrototypeValue => _rangeErrorPrototypeValue;
-        internal static object ReferenceErrorPrototypeValue => _referenceErrorPrototypeValue;
-        internal static object SyntaxErrorPrototypeValue => _syntaxErrorPrototypeValue;
-        internal static object TypeErrorPrototypeValue => _typeErrorPrototypeValue;
-        internal static object URIErrorPrototypeValue => _uriErrorPrototypeValue;
-        internal static object AggregateErrorPrototypeValue => _aggregateErrorPrototypeValue;
-        internal static object SuppressedErrorPrototypeValue => _suppressedErrorPrototypeValue;
+        internal static object ErrorPrototypeValue => BootstrappedIntrinsics().ErrorPrototype;
+        internal static object EvalErrorPrototypeValue => BootstrappedIntrinsics().EvalErrorPrototype;
+        internal static object RangeErrorPrototypeValue => BootstrappedIntrinsics().RangeErrorPrototype;
+        internal static object ReferenceErrorPrototypeValue => BootstrappedIntrinsics().ReferenceErrorPrototype;
+        internal static object SyntaxErrorPrototypeValue => BootstrappedIntrinsics().SyntaxErrorPrototype;
+        internal static object TypeErrorPrototypeValue => BootstrappedIntrinsics().TypeErrorPrototype;
+        internal static object URIErrorPrototypeValue => BootstrappedIntrinsics().URIErrorPrototype;
+        internal static object AggregateErrorPrototypeValue => BootstrappedIntrinsics().AggregateErrorPrototype;
+        internal static object SuppressedErrorPrototypeValue => BootstrappedIntrinsics().SuppressedErrorPrototype;
         private static Func<object[], object?[], object?> CreateErrorConstructorValue(Func<string?, object> factory)
         {
             return (_, args) =>
@@ -2595,7 +2756,7 @@ namespace JavaScriptRuntime
             });
         }
 
-        private static void ConfigureAggregateErrorIntrinsicSurface()
+        private void ConfigureAggregateErrorIntrinsicSurface()
         {
             ConfigureErrorIntrinsicSurface(
                 _aggregateErrorConstructorValue,
@@ -2622,7 +2783,7 @@ namespace JavaScriptRuntime
             });
         }
 
-        private static void ConfigureSuppressedErrorIntrinsicSurface()
+        private void ConfigureSuppressedErrorIntrinsicSurface()
         {
             ConfigureErrorIntrinsicSurface(
                 _suppressedErrorConstructorValue,
@@ -2653,18 +2814,20 @@ namespace JavaScriptRuntime
         {
             ArgumentNullException.ThrowIfNull(error);
 
+            var current = BootstrappedIntrinsics();
+
             // Keep this aligned with the explicitly exposed built-in error constructor values above.
             var prototype = error switch
             {
-                JavaScriptRuntime.EvalError => _evalErrorPrototypeValue,
-                JavaScriptRuntime.RangeError => _rangeErrorPrototypeValue,
-                JavaScriptRuntime.ReferenceError => _referenceErrorPrototypeValue,
-                JavaScriptRuntime.SyntaxError => _syntaxErrorPrototypeValue,
-                JavaScriptRuntime.TypeError => _typeErrorPrototypeValue,
-                JavaScriptRuntime.URIError => _uriErrorPrototypeValue,
-                JavaScriptRuntime.AggregateError => _aggregateErrorPrototypeValue,
-                JavaScriptRuntime.SuppressedError => _suppressedErrorPrototypeValue,
-                _ => _errorPrototypeValue
+                JavaScriptRuntime.EvalError => current.EvalErrorPrototype,
+                JavaScriptRuntime.RangeError => current.RangeErrorPrototype,
+                JavaScriptRuntime.ReferenceError => current.ReferenceErrorPrototype,
+                JavaScriptRuntime.SyntaxError => current.SyntaxErrorPrototype,
+                JavaScriptRuntime.TypeError => current.TypeErrorPrototype,
+                JavaScriptRuntime.URIError => current.URIErrorPrototype,
+                JavaScriptRuntime.AggregateError => current.AggregateErrorPrototype,
+                JavaScriptRuntime.SuppressedError => current.SuppressedErrorPrototype,
+                _ => current.ErrorPrototype
             };
 
             PrototypeChain.SetPrototype(error, prototype);
@@ -2680,7 +2843,7 @@ namespace JavaScriptRuntime
             var symbol = args != null && args.Length > 0
                 ? (global::JavaScriptRuntime.Symbol)global::JavaScriptRuntime.Symbol.Call(args[0])
                 : (global::JavaScriptRuntime.Symbol)global::JavaScriptRuntime.Symbol.Call();
-            PrototypeChain.SetPrototype(symbol, _symbolPrototypeValue);
+            PrototypeChain.SetPrototype(symbol, SymbolPrototypeValue);
             return symbol;
         }
     }
