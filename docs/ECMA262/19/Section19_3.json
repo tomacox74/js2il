@@ -54,7 +54,7 @@
     {
       "clause": "19.3.8",
       "title": "DataView ( . . . )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-dataview"
     },
     {
@@ -363,6 +363,24 @@
           "test/built-ins/FinalizationRegistry/proto.js"
         ],
         "notes": "Exposes globalThis.FinalizationRegistry as a constructible function with the standard constructor/prototype metadata plus register(), unregister(), and @@toStringTag. Deterministic cleanup in tests still uses a host-opt-in non-standard gc() helper, while cleanup timing otherwise depends on .NET GC and event-loop checkpoints."
+      },
+      {
+        "clause": "19.3.8",
+        "feature": "DataView first-class global constructor",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-dataview",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/DataView/ExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/built-ins/DataView/constructor.js",
+          "test/built-ins/DataView/is-a-constructor.js",
+          "test/built-ins/DataView/length.js",
+          "test/built-ins/DataView/name.js",
+          "test/built-ins/DataView/newtarget-undefined-throws.js",
+          "test/built-ins/DataView/proto.js"
+        ],
+        "notes": "Exposes globalThis.DataView as a constructible function with standard name, length, global-property, and prototype descriptors. BigInt/Float16 accessors, full prototype method exposure, custom newTarget prototypes, and detached-buffer behavior remain limited."
       },
       {
         "clause": "19.3.40",

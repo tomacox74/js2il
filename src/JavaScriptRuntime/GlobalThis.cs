@@ -195,6 +195,20 @@ namespace JavaScriptRuntime
             return new JavaScriptRuntime.FinalizationRegistry(cleanupCallback);
         };
 
+        private static readonly JsFuncNoScopes3 _dataViewConstructorValue = static (
+            newTarget,
+            buffer,
+            byteOffset,
+            byteLength) =>
+        {
+            if (newTarget is null)
+            {
+                throw new TypeError("Constructor DataView requires 'new'");
+            }
+
+            return new JavaScriptRuntime.DataView(buffer, byteOffset, byteLength);
+        };
+
         private static readonly JsFuncNoScopes1 _promiseConstructorValue = static (newTarget, executor) =>
         {
             if (newTarget is null)
@@ -921,6 +935,7 @@ namespace JavaScriptRuntime
             ConfigureConstructorPrototypeSurface(
                 _sharedArrayBufferConstructorValue,
                 _sharedArrayBufferPrototypeValue);
+            ConfigureDataViewIntrinsicSurface();
 
             JavaScriptRuntime.String.ConfigureIntrinsicSurface(_stringFunctionValue);
         }
@@ -1291,6 +1306,9 @@ namespace JavaScriptRuntime
             dict.TryAdd(nameof(GlobalThis.ArrayBuffer), ArrayBuffer);
             DefineNonEnumerableDataProperty(nameof(GlobalThis.ArrayBuffer), dict[nameof(GlobalThis.ArrayBuffer)]);
 
+            dict.TryAdd(nameof(GlobalThis.DataView), DataView);
+            DefineNonEnumerableDataProperty(nameof(GlobalThis.DataView), dict[nameof(GlobalThis.DataView)]);
+
             dict.TryAdd(nameof(GlobalThis.Atomics), Atomics);
             DefineNonEnumerableDataProperty(nameof(GlobalThis.Atomics), dict[nameof(GlobalThis.Atomics)]);
 
@@ -1609,6 +1627,8 @@ namespace JavaScriptRuntime
 
         public static Delegate SharedArrayBuffer => _sharedArrayBufferConstructorValue;
         public static Delegate ArrayBuffer => _arrayBufferConstructorValue;
+
+        public static Delegate DataView => _dataViewConstructorValue;
 
         public static object Atomics => _atomicsValue;
 
@@ -2237,6 +2257,64 @@ namespace JavaScriptRuntime
                 Writable = false,
                 Value = "FinalizationRegistry"
             });
+        }
+
+        private static void ConfigureDataViewIntrinsicSurface()
+        {
+            ConfigureConstructorPrototypeSurface(_dataViewConstructorValue, JavaScriptRuntime.DataView.Prototype);
+            PropertyDescriptorStore.DefineOrUpdate(_dataViewConstructorValue, "length", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = false,
+                Value = 1d
+            });
+            PropertyDescriptorStore.DefineOrUpdate(_dataViewConstructorValue, "name", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = false,
+                Value = "DataView"
+            });
+            DefineDataViewAccessor("buffer", DataViewBufferGetter);
+            DefineDataViewAccessor("byteLength", DataViewByteLengthGetter);
+            DefineDataViewAccessor("byteOffset", DataViewByteOffsetGetter);
+            DefineIntrinsicToStringTagProperty(JavaScriptRuntime.DataView.Prototype, "DataView");
+        }
+
+        private static void DefineDataViewAccessor(
+            string propertyName,
+            Func<object[], object?[]?, object?> getter)
+        {
+            JavaScriptRuntime.Function.InitializeFunctionInstance(getter, 0d, $"get {propertyName}");
+            PropertyDescriptorStore.DefineOrUpdate(JavaScriptRuntime.DataView.Prototype, propertyName, new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Accessor,
+                Enumerable = false,
+                Configurable = true,
+                Get = getter
+            });
+        }
+
+        private static object? DataViewBufferGetter(object[] _, object?[]? __)
+            => GetDataViewThis("buffer").buffer;
+
+        private static object? DataViewByteLengthGetter(object[] _, object?[]? __)
+            => GetDataViewThis("byteLength").byteLength;
+
+        private static object? DataViewByteOffsetGetter(object[] _, object?[]? __)
+            => GetDataViewThis("byteOffset").byteOffset;
+
+        private static JavaScriptRuntime.DataView GetDataViewThis(string propertyName)
+        {
+            if (RuntimeServices.GetCurrentThis() is not JavaScriptRuntime.DataView dataView)
+            {
+                throw new TypeError($"get DataView.prototype.{propertyName} called on incompatible receiver");
+            }
+
+            return dataView;
         }
 
         private static void DefineSpeciesAccessorProperty(object constructorValue)
