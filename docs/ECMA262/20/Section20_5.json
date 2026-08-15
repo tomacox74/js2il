@@ -198,37 +198,37 @@
     {
       "clause": "20.5.7.2",
       "title": "Properties of the AggregateError Constructor",
-      "status": "Not Yet Supported",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-properties-of-the-aggregate-error-constructors"
     },
     {
       "clause": "20.5.7.2.1",
       "title": "AggregateError.prototype",
-      "status": "Not Yet Supported",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-aggregate-error.prototype"
     },
     {
       "clause": "20.5.7.3",
       "title": "Properties of the AggregateError Prototype Object",
-      "status": "Not Yet Supported",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-properties-of-the-aggregate-error-prototype-objects"
     },
     {
       "clause": "20.5.7.3.1",
       "title": "AggregateError.prototype.constructor",
-      "status": "Not Yet Supported",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-aggregate-error.prototype.constructor"
     },
     {
       "clause": "20.5.7.3.2",
       "title": "AggregateError.prototype.message",
-      "status": "Not Yet Supported",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-aggregate-error.prototype.message"
     },
     {
       "clause": "20.5.7.3.3",
       "title": "AggregateError.prototype.name",
-      "status": "Not Yet Supported",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-aggregate-error.prototype.name"
     },
     {
@@ -346,14 +346,59 @@
       },
       {
         "clause": "20.5.7.1.1",
-        "feature": "AggregateError constructors and .errors",
+        "feature": "AggregateError constructor and iterable error list",
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-aggregate-error",
         "testScripts": [
-          "tests/Jroc.Tests/TryCatch/JavaScript/TryCatch_NewExpression_BuiltInErrors.js",
-          "tests/Jroc.Tests/Promise/JavaScript/Promise_Any_AllRejected.js"
+          "tests/Jroc.Test262.Tests/built-ins/AggregateError/ExecutionTests.cs"
         ],
-        "notes": "JavaScriptRuntime.AggregateError stores errors in a JavaScriptRuntime.Array. Signature differs from spec in some cases (e.g., the test uses new AggregateError(\"agg\") which maps to a message-only overload). 'options' / 'cause' are not supported."
+        "test262Paths": [
+          "test/built-ins/AggregateError/errors-iterabletolist-failures.js",
+          "test/built-ins/AggregateError/errors-iterabletolist.js",
+          "test/built-ins/AggregateError/message-method-prop-cast.js",
+          "test/built-ins/AggregateError/message-method-prop.js",
+          "test/built-ins/AggregateError/message-tostring-abrupt-symbol.js",
+          "test/built-ins/AggregateError/message-tostring-abrupt.js",
+          "test/built-ins/AggregateError/message-undefined-no-prop.js",
+          "test/built-ins/AggregateError/newtarget-is-undefined.js",
+          "test/built-ins/AggregateError/order-of-args-evaluation.js"
+        ],
+        "notes": "AggregateError accepts iterable error lists, preserves iterable and message coercion order, exposes a writable non-enumerable errors array, and creates an own message property only for defined messages. Error cause options, custom newTarget prototypes, and cross-realm construction remain limited."
+      },
+      {
+        "clause": "20.5.7.2",
+        "feature": "AggregateError constructor function surface",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-properties-of-the-aggregate-error-constructors",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/AggregateError/ExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/built-ins/AggregateError/is-a-constructor.js",
+          "test/built-ins/AggregateError/length.js",
+          "test/built-ins/AggregateError/name.js",
+          "test/built-ins/AggregateError/prop-desc.js",
+          "test/built-ins/AggregateError/proto.js"
+        ],
+        "notes": "The global is a constructible function with the standard global property, name, length, prototype descriptor, and Error constructor prototype."
+      },
+      {
+        "clause": "20.5.7.3",
+        "feature": "AggregateError.prototype surface",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-properties-of-the-aggregate-error-prototype-objects",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/AggregateError/prototype/ExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/built-ins/AggregateError/prototype/constructor.js",
+          "test/built-ins/AggregateError/prototype/errors-absent-on-prototype.js",
+          "test/built-ins/AggregateError/prototype/message.js",
+          "test/built-ins/AggregateError/prototype/name.js",
+          "test/built-ins/AggregateError/prototype/prop-desc.js",
+          "test/built-ins/AggregateError/prototype/proto.js"
+        ],
+        "notes": "AggregateError.prototype inherits Error.prototype and provides the standard constructor, message, and name properties without an own errors property."
       }
     ]
   }

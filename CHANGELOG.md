@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- runtime/test262: add the ES2021 AggregateError global, iterable error-list
+  construction, standard constructor/prototype metadata, and message-property
+  behavior. Activates twenty corresponding pinned test262 fixtures.
+
 - runtime: introduce explicit `RuntimeAgentCluster`, `RuntimeAgent`, and
   `RuntimeRealm` lifetime owners. Every runtime service container now belongs
   to exactly one realm and exposes the ownership graph through constructor

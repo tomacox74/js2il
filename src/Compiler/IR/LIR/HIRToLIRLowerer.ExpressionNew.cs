@@ -84,6 +84,23 @@ public sealed partial class HIRToLIRLowerer
         // PL3.3a: built-in Error types
         if (BuiltInErrorTypes.IsBuiltInErrorTypeName(ctorName))
         {
+            if (string.Equals(ctorName, "AggregateError", StringComparison.Ordinal))
+            {
+                if (!TryEvaluateCallArguments(newExpr.Arguments, newExpr.Arguments.Count, out var aggregateErrorArgs))
+                {
+                    return false;
+                }
+
+                resultTempVar = CreateTempVariable();
+                _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
+                    "AggregateError",
+                    nameof(JavaScriptRuntime.AggregateError.Construct),
+                    aggregateErrorArgs,
+                    resultTempVar));
+                DefineTempStorage(resultTempVar, GetBuiltInErrorStorage(ctorName));
+                return true;
+            }
+
             if (newExpr.Arguments.Count > 2)
             {
                 return false;

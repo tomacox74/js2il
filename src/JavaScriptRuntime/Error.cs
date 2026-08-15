@@ -149,7 +149,6 @@ namespace JavaScriptRuntime
     [IntrinsicObject("AggregateError", IntrinsicCallKind.BuiltInError)]
     public class AggregateError : Error
     {
-        // In JS AggregateError has an iterable of errors. Represent as object[] here.
         public JavaScriptRuntime.Array Errors { get; }
         public JavaScriptRuntime.Array errors => Errors; // JS-style alias
 
@@ -161,12 +160,48 @@ namespace JavaScriptRuntime
         {
             Name = "AggregateError";
             Errors = new Array(errors);
+            InitializeIntrinsicSurface(GlobalThis.AggregateErrorPrototypeValue);
+            InstallErrorsProperty();
         }
 
         public AggregateError(System.Collections.IEnumerable errors, string? message, Exception? inner) : base(message, inner)
         {
             Name = "AggregateError";
             Errors = new Array(errors);
+            InitializeIntrinsicSurface(GlobalThis.AggregateErrorPrototypeValue);
+            InstallErrorsProperty();
+        }
+
+        public static AggregateError Construct(object?[] args)
+        {
+            var hasMessage = args.Length > 1 && args[1] is not null;
+            var message = hasMessage ? CoerceMessage(args[1]) : null;
+            var iterable = args.Length > 0 ? args[0] : null;
+            var iterator = ObjectRuntime.GetIterator(iterable);
+            var values = new List<object?>();
+
+            while (true)
+            {
+                var next = iterator.Next();
+                if (next.done)
+                {
+                    break;
+                }
+
+                values.Add(next.value);
+            }
+
+            var error = new AggregateError(values, message);
+            if (hasMessage)
+            {
+                error.InstallMessageProperty(message!);
+            }
+            else
+            {
+                PropertyDescriptorStore.Delete(error, "message");
+            }
+
+            return error;
         }
 
         public override string ToString()
@@ -174,6 +209,30 @@ namespace JavaScriptRuntime
             var baseStr = base.ToString();
             if (Errors.length == 0) return baseStr;
             return baseStr + $" (errors: {Errors.length})";
+        }
+
+        private void InstallErrorsProperty()
+        {
+            PropertyDescriptorStore.DefineOrUpdate(this, "errors", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = Errors
+            });
+        }
+
+        private void InstallMessageProperty(string message)
+        {
+            PropertyDescriptorStore.DefineOrUpdate(this, "message", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = message
+            });
         }
     }
 }

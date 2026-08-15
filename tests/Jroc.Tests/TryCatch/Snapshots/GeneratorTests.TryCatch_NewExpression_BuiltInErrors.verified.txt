@@ -78,7 +78,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 327 (0x147)
+		// Code size: 336 (0x150)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.TryCatch_NewExpression_BuiltInErrors/Scope,
@@ -211,16 +211,21 @@
 		IL_0125: pop
 		IL_0126: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 		IL_012b: stloc.s 6
-		IL_012d: ldstr "agg"
-		IL_0132: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.AggregateError::.ctor(string)
-		IL_0137: stloc.s 13
-		IL_0139: ldloc.s 6
-		IL_013b: ldloc.s 13
-		IL_013d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0142: pop
-		IL_0143: ldnull
-		IL_0144: stloc.s 5
-		IL_0146: ret
+		IL_012d: ldc.i4.1
+		IL_012e: newarr [System.Runtime]System.Object
+		IL_0133: dup
+		IL_0134: ldc.i4.0
+		IL_0135: ldstr "agg"
+		IL_013a: stelem.ref
+		IL_013b: call class [JavaScriptRuntime]JavaScriptRuntime.AggregateError [JavaScriptRuntime]JavaScriptRuntime.AggregateError::Construct(object[])
+		IL_0140: stloc.s 13
+		IL_0142: ldloc.s 6
+		IL_0144: ldloc.s 13
+		IL_0146: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_014b: pop
+		IL_014c: ldnull
+		IL_014d: stloc.s 5
+		IL_014f: ret
 	} // end of method TryCatch_NewExpression_BuiltInErrors::__js_module_init__
 
 } // end of class Modules.TryCatch_NewExpression_BuiltInErrors
