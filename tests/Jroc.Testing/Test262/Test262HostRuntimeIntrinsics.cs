@@ -201,10 +201,25 @@ public static class Test262HostRuntimeIntrinsics
     {
         return ToMessage(name) switch
         {
-            "%AsyncFunction%" => GetStaticFieldValue(typeof(AsyncFunction), "ConstructorValue"),
-            "%GeneratorFunction%" => GetStaticFieldValue(typeof(GeneratorObject), "_generatorFunctionConstructor"),
+            // Touch the realm-owned intrinsic prototype first: it is the slot whose
+            // initializer wires this realm's %AsyncFunction%/%GeneratorFunction%
+            // constructor surface (issue #1824). Ordinary JavaScript reaches these
+            // constructors through Object.getPrototypeOf(fn).constructor, which
+            // materializes the same slot; only this reflection shortcut needs the hint.
+            "%AsyncFunction%" => EnsureRealmIntrinsic(
+                AsyncFunction.Prototype,
+                GetStaticFieldValue(typeof(AsyncFunction), "ConstructorValue")),
+            "%GeneratorFunction%" => EnsureRealmIntrinsic(
+                GeneratorObject.GeneratorFunctionPrototypeObject,
+                GetStaticFieldValue(typeof(GeneratorObject), "_generatorFunctionConstructor")),
             var unsupported => throw CreateTest262Error($"Unsupported intrinsic {unsupported}")
         };
+    }
+
+    private static object EnsureRealmIntrinsic(object realmPrototype, object constructorValue)
+    {
+        _ = realmPrototype;
+        return constructorValue;
     }
 
     private static object GetStaticFieldValue(Type type, string fieldName)

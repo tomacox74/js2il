@@ -420,6 +420,19 @@ We have a few choices for how broadly to apply prototype-aware lowering.
 - Pros: easiest to implement, safest.
 - Cons: pessimizes unrelated hot paths.
 
+> **Implementation note (2026):** `PrototypeChain` originally implemented this
+> option with a process-wide `_enabled` switch flipped on by the compiler's
+> `Enable()` prologue call. Because intrinsic bootstrap itself always wires
+> prototype relationships (for example `Function.prototype -> Object.prototype`),
+> the switch was effectively always on shortly after the first realm in a
+> process started, and a second realm sharing the process could observe
+> prototype-aware behavior (e.g. `__proto__` semantics) it never opted into.
+> As part of making intrinsics realm-owned (GitHub issue #1824), the switch was
+> removed: `PrototypeChain` now always implements prototype-chain semantics.
+> `PrototypeChain.Enable()`/`Enabled` remain as no-op/always-true compatibility
+> shims for existing call sites and the compiler's prologue call; no runtime
+> behavior depends on them anymore.
+
 ### 10.2 Option 2: Per-scope / per-function switch (better)
 
 - Track a flag on the symbol table scope: `PrototypeSensitive`.

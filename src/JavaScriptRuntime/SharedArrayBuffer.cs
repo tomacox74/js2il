@@ -3,7 +3,8 @@ namespace JavaScriptRuntime
     [IntrinsicObject("SharedArrayBuffer")]
     public sealed class SharedArrayBuffer : ArrayBuffer
     {
-        internal static readonly object SharedPrototype = new JsObject();
+        internal static object SharedPrototype
+            => RuntimeIntrinsics.Current.SharedArrayBufferPrototype;
 
         public SharedArrayBuffer()
         {

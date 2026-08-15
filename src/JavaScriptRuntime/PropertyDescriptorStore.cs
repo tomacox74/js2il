@@ -126,7 +126,12 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
         public JsPropertyDescriptor Descriptor { get; init; }
     }
 
-    private sealed class IntrinsicPropertyDescriptorStore : IPropertyDescriptorStore
+    /// <summary>
+    /// Intrinsic descriptor baseline for targets that are not <see cref="JsObject"/>
+    /// instances (<see cref="JsObject"/> keeps its baseline inline). Realm-owned:
+    /// see <see cref="RuntimeIntrinsics.IntrinsicDescriptors"/>.
+    /// </summary>
+    internal sealed class IntrinsicPropertyDescriptorStore : IPropertyDescriptorStore
     {
         private readonly ConditionalWeakTable<object, DescriptorSlot> _slots = new();
 
@@ -259,7 +264,12 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
         }
     }
 
-    private static readonly IntrinsicPropertyDescriptorStore _intrinsicStore = new();
+    // The intrinsic baseline is realm-owned (issue #1824): it stores descriptors
+    // whose values are realm-created JavaScript objects (for example
+    // `typeof(Date).prototype`), so a process-wide table would let the realm that
+    // bootstrapped last overwrite every earlier realm's constructor surface.
+    private static IntrinsicPropertyDescriptorStore _intrinsicStore
+        => RuntimeIntrinsics.Current.IntrinsicDescriptors;
     private static readonly ThreadLocal<PropertyDescriptorStore?> _defaultRuntimeStore = new(() => null);
     private static readonly ThreadLocal<int> _intrinsicInitializationDepth = new(() => 0);
 

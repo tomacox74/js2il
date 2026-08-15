@@ -12,7 +12,12 @@ public sealed class Promise : IJavaScriptPromise
     private static readonly Func<object[], object?[]?, object?> PrototypeThenValue = PrototypeThen;
     private static readonly Func<object[], object?[]?, object?> PrototypeCatchValue = PrototypeCatch;
     private static readonly Func<object[], object?[]?, object?> PrototypeFinallyValue = PrototypeFinally;
-    internal static readonly object Prototype = CreatePrototype();
+    /// <summary>Realm-owned <c>Promise.prototype</c> intrinsic (issue #1824).</summary>
+    internal static object Prototype
+        => RuntimeIntrinsics.Current.GetOrCreate(
+            RuntimeIntrinsicSlot.PromisePrototype,
+            static () => new JsObject(),
+            static prototype => InitializePrototype(prototype));
 
     // Nested types
     private enum State { Pending, Fulfilled, Rejected }
@@ -53,11 +58,10 @@ public sealed class Promise : IJavaScriptPromise
 
     private readonly List<Reaction> _reactions = new();
 
-    private static object CreatePrototype()
+    private static void InitializePrototype(JsObject prototype)
     {
         using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
 
-        var prototype = new JsObject();
         Function.InitializeFunctionInstance(PrototypeThenValue, 2d, "then");
         Function.MarkUndefinedPrototype(PrototypeThenValue);
         Function.InitializeFunctionInstance(PrototypeCatchValue, 1d, "catch");
@@ -76,7 +80,6 @@ public sealed class Promise : IJavaScriptPromise
             Writable = false,
             Value = "Promise"
         });
-        return prototype;
     }
 
     private static void DefineDataProperty(object target, string key, object? value)

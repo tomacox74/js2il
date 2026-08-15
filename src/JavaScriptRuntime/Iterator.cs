@@ -6,8 +6,18 @@ namespace JavaScriptRuntime;
 
 public static class Iterator
 {
-    internal static readonly object Prototype = CreatePrototype();
-    internal static readonly object HelperPrototype = CreateHelperPrototype();
+    /// <summary>Realm-owned <c>%IteratorPrototype%</c> (issue #1824).</summary>
+    internal static object Prototype
+        => RuntimeIntrinsics.Current.GetOrCreate(
+            RuntimeIntrinsicSlot.IteratorPrototype,
+            static () => new JsObject());
+
+    /// <summary>Realm-owned <c>%IteratorHelperPrototype%</c> (issue #1824).</summary>
+    internal static object HelperPrototype
+        => RuntimeIntrinsics.Current.GetOrCreate(
+            RuntimeIntrinsicSlot.IteratorHelperPrototype,
+            static () => new JsObject(),
+            static prototype => PrototypeChain.SetPrototype(prototype, Prototype));
 
     internal static void ConfigureIntrinsicSurface(object iteratorConstructorValue)
     {
@@ -68,22 +78,6 @@ public static class Iterator
         var wrapped = ObjectRuntime.GetIterator(value);
         InitializeIteratorSurface(wrapped);
         return wrapped;
-    }
-
-    private static object CreatePrototype()
-    {
-        using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
-
-        return new JsObject();
-    }
-
-    private static object CreateHelperPrototype()
-    {
-        using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
-
-        var prototype = new JsObject();
-        PrototypeChain.SetPrototype(prototype, Prototype);
-        return prototype;
     }
 
     private static void DefineDataProperty(object target, string key, object? value)

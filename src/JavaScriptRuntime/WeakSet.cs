@@ -6,7 +6,12 @@ namespace JavaScriptRuntime
     [IntrinsicObject("WeakSet")]
     public sealed class WeakSet
     {
-        internal static readonly object Prototype = CreatePrototype();
+        /// <summary>Realm-owned <c>WeakSet.prototype</c> intrinsic (issue #1824).</summary>
+        internal static object Prototype
+            => RuntimeIntrinsics.Current.GetOrCreate(
+                RuntimeIntrinsicSlot.WeakSetPrototype,
+                static () => new JsObject(),
+                static prototype => InitializePrototype(prototype));
         // Use ConditionalWeakTable with a dummy value to track membership
         // The presence of a key in the table indicates it's in the set
         private readonly ConditionalWeakTable<object, object> _table = new ConditionalWeakTable<object, object>();
@@ -102,11 +107,10 @@ namespace JavaScriptRuntime
             return _table.Remove(value!);
         }
 
-        private static object CreatePrototype()
+        private static void InitializePrototype(JsObject prototype)
         {
             using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
 
-            var prototype = new JsObject();
             DefinePrototypeMethod(prototype, "add", PrototypeAdd);
             DefinePrototypeMethod(prototype, "delete", PrototypeDelete);
             DefinePrototypeMethod(prototype, "has", PrototypeHas);
@@ -118,7 +122,6 @@ namespace JavaScriptRuntime
                 Writable = false,
                 Value = "WeakSet"
             });
-            return prototype;
         }
 
         private static void DefinePrototypeMethod(object prototype, string name, Func<object[], object?[]?, object?> method)

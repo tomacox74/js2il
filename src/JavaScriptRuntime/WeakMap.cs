@@ -6,7 +6,12 @@ namespace JavaScriptRuntime
     [IntrinsicObject("WeakMap")]
     public sealed class WeakMap
     {
-        internal static readonly object Prototype = CreatePrototype();
+        /// <summary>Realm-owned <c>WeakMap.prototype</c> intrinsic (issue #1824).</summary>
+        internal static object Prototype
+            => RuntimeIntrinsics.Current.GetOrCreate(
+                RuntimeIntrinsicSlot.WeakMapPrototype,
+                static () => new JsObject(),
+                static prototype => InitializePrototype(prototype));
         // ConditionalWeakTable allows keys to be garbage collected when no other references exist
         private readonly ConditionalWeakTable<object, object> _table = new ConditionalWeakTable<object, object>();
 
@@ -147,11 +152,10 @@ namespace JavaScriptRuntime
             return _table.Remove(key!);
         }
 
-        private static object CreatePrototype()
+        private static void InitializePrototype(JsObject prototype)
         {
             using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
 
-            var prototype = new JsObject();
             DefinePrototypeMethod(prototype, "delete", PrototypeDelete);
             DefinePrototypeMethod(prototype, "get", PrototypeGet);
             DefinePrototypeMethod(prototype, "has", PrototypeHas);
@@ -164,7 +168,6 @@ namespace JavaScriptRuntime
                 Writable = false,
                 Value = "WeakMap"
             });
-            return prototype;
         }
 
         private static void DefinePrototypeMethod(object prototype, string name, Func<object[], object?[]?, object?> method)

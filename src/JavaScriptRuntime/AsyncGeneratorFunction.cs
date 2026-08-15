@@ -5,25 +5,12 @@ namespace JavaScriptRuntime;
 public static class AsyncGeneratorFunction
 {
     private static readonly Func<object[], object?[]?, object?> _constructor = AsyncGeneratorFunctionConstructor;
-    private static readonly JsObject Prototype = CreatePrototype();
-
-    static AsyncGeneratorFunction()
-    {
-        using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
-
-        JavaScriptRuntime.Function.InitializeFunctionInstance(_constructor, 1d, "AsyncGeneratorFunction", requiresInvocationContext: false);
-        JavaScriptRuntime.Function.MarkConstructible(_constructor);
-        PrototypeChain.SetPrototype(_constructor, GlobalThis.Function);
-        PropertyDescriptorStore.DefineOrUpdate(_constructor, "prototype", new JsPropertyDescriptor
-        {
-            Kind = JsPropertyDescriptorKind.Data,
-            Enumerable = false,
-            Configurable = false,
-            Writable = false,
-            Value = Prototype
-        });
-        AsyncGeneratorObject.ConfigurePrototype(Prototype);
-    }
+    /// <summary>Realm-owned <c>%AsyncGeneratorFunction.prototype%</c> (issue #1824).</summary>
+    internal static JsObject Prototype
+        => RuntimeIntrinsics.Current.GetOrCreate(
+            RuntimeIntrinsicSlot.AsyncGeneratorFunctionPrototype,
+            static () => new JsObject(),
+            static prototype => InitializePrototype(prototype));
 
     public static object InitializeFunctionObject(object functionObject)
     {
@@ -35,11 +22,15 @@ public static class AsyncGeneratorFunction
         return functionObject;
     }
 
-    private static JsObject CreatePrototype()
+    /// <summary>
+    /// Wires this realm's <c>%AsyncGeneratorFunction%</c> surface. Runs once per realm
+    /// from the intrinsic slot initializer (issue #1824) rather than once per process
+    /// from a static constructor.
+    /// </summary>
+    private static void InitializePrototype(JsObject prototype)
     {
         using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
 
-        var prototype = new JsObject();
         PrototypeChain.SetPrototype(prototype, JavaScriptRuntime.Function.Prototype);
         PropertyDescriptorStore.DefineOrUpdate(prototype, "constructor", new JsPropertyDescriptor
         {
@@ -49,7 +40,19 @@ public static class AsyncGeneratorFunction
             Writable = true,
             Value = _constructor
         });
-        return prototype;
+
+        JavaScriptRuntime.Function.InitializeFunctionInstance(_constructor, 1d, "AsyncGeneratorFunction", requiresInvocationContext: false);
+        JavaScriptRuntime.Function.MarkConstructible(_constructor);
+        PrototypeChain.SetPrototype(_constructor, GlobalThis.Function);
+        PropertyDescriptorStore.DefineOrUpdate(_constructor, "prototype", new JsPropertyDescriptor
+        {
+            Kind = JsPropertyDescriptorKind.Data,
+            Enumerable = false,
+            Configurable = false,
+            Writable = false,
+            Value = prototype
+        });
+        AsyncGeneratorObject.ConfigurePrototype(prototype);
     }
 
     private static object? AsyncGeneratorFunctionConstructor(object[] scopes, object?[]? args)

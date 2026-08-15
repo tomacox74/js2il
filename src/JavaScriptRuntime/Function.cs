@@ -17,29 +17,35 @@ public static class Function
     private static readonly Func<object[], object?[], object?> _restrictedPropertyThrower =
         static (_, _) => throw new TypeError("Cannot access restricted function property");
 
-    internal static readonly JsObject Prototype;
-    internal static readonly JsObject RestrictedPropertiesPrototype;
+    /// <summary>
+    /// This realm's <c>%Function.prototype%</c>. Realm-owned (issue #1824): the object
+    /// is published into the realm's intrinsic slot before its own methods are wired,
+    /// because <c>Function.prototype.apply</c> and friends are themselves function
+    /// objects whose [[Prototype]] is <c>%Function.prototype%</c>.
+    /// </summary>
+    internal static JsObject Prototype
+        => RuntimeIntrinsics.Current.GetOrCreate(
+            RuntimeIntrinsicSlot.FunctionPrototype,
+            static () => new JsObject(),
+            static prototype => InitializePrototypeSurface(prototype));
 
-    static Function()
-    {
-        Prototype = CreatePrototype();
-        RestrictedPropertiesPrototype = CreateRestrictedPropertiesPrototype();
-        BuiltinDelegateFunctionAdapter
-            .CompleteDeferredFunctionPrototypeInitialization(Prototype);
-    }
+    internal static JsObject RestrictedPropertiesPrototype
+        => RuntimeIntrinsics.Current.GetOrCreate(
+            RuntimeIntrinsicSlot.FunctionRestrictedPropertiesPrototype,
+            static () => new JsObject(),
+            static prototype => InitializeRestrictedPropertiesPrototype(prototype));
 
-    private static JsObject CreatePrototype()
+    private static void InitializePrototypeSurface(JsObject prototype)
     {
         using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
 
-        var prototype = new JsObject();
+        PrototypeChain.SetPrototype(prototype, GlobalThis.ObjectPrototypeValue);
         DefinePrototypeMethod(prototype, "apply", (Func<object[], object?[]?, object?>)PrototypeApply, 2);
         DefinePrototypeMethod(prototype, "call", (Func<object[], object?[]?, object?>)PrototypeCall, 1);
         DefinePrototypeMethod(prototype, "bind", (Func<object[], object?[]?, object?>)PrototypeBind, 1);
         DefinePrototypeMethod(prototype, "toString", (Func<object[], object?[]?, object?>)PrototypeToString, 0);
         DefineRestrictedProperty(prototype, "caller");
         DefineRestrictedProperty(prototype, "arguments");
-        return prototype;
     }
 
     private static void DefinePrototypeMethod(JsObject prototype, string name, Func<object[], object?[]?, object?> method, double length)
@@ -91,14 +97,13 @@ public static class Function
         return method;
     }
 
-    private static JsObject CreateRestrictedPropertiesPrototype()
+    private static void InitializeRestrictedPropertiesPrototype(JsObject prototype)
     {
         using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
 
-        var prototype = new JsObject();
+        PrototypeChain.SetPrototype(prototype, Prototype);
         DefineRestrictedProperty(prototype, "caller");
         DefineRestrictedProperty(prototype, "arguments");
-        return prototype;
     }
 
     private static void DefineRestrictedProperty(object target, string propertyName)
@@ -119,28 +124,55 @@ public static class Function
             BuiltinDelegateFunctionAdapter.NormalizeJavaScriptObject(
                 functionValue);
 
+        // Resolved before the adapter lock: see MaterializeFunctionIntrinsics.
+        var prototype = MaterializeFunctionIntrinsics(ordinaryPrototypeRequired: false);
+
         if (functionValue is BuiltinDelegateFunctionAdapter adapter)
         {
             lock (adapter.InitializationLock)
             {
                 using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
-                ConfigureCallableObjectCore(functionValue, hasRestrictedProperties);
+                ConfigureCallableObjectCore(functionValue, prototype, hasRestrictedProperties);
             }
             return;
         }
 
-        ConfigureCallableObjectCore(functionValue, hasRestrictedProperties);
+        ConfigureCallableObjectCore(functionValue, prototype, hasRestrictedProperties);
     }
 
     private static void ConfigureCallableObjectCore(
         object functionValue,
+        JsObject prototype,
         bool hasRestrictedProperties)
     {
-        PrototypeChain.SetPrototype(functionValue, Prototype);
+        PrototypeChain.SetPrototype(functionValue, prototype);
         if (hasRestrictedProperties)
         {
             DefineRestrictedFunctionProperties(functionValue);
         }
+    }
+
+    /// <summary>
+    /// Materializes every intrinsic a <see cref="BuiltinDelegateFunctionAdapter.InitializationLock"/>
+    /// scope needs, before that lock is taken.
+    /// </summary>
+    /// <remarks>
+    /// The adapter lock is a leaf in the runtime's lock order (intrinsic slot gate →
+    /// adapter lock). Resolving <c>%Function.prototype%</c> or <c>%Object.prototype%</c>
+    /// while holding an adapter lock would invert that order against an intrinsic
+    /// initializer that configures built-in function objects, which is a deadlock.
+    /// </remarks>
+    private static JsObject MaterializeFunctionIntrinsics(bool ordinaryPrototypeRequired)
+    {
+        var prototype = Prototype;
+        if (ordinaryPrototypeRequired)
+        {
+            // EnsureOrdinaryFunctionPrototype allocates through
+            // ObjectRuntime.CreateOrdinaryObject, which needs %Object.prototype%.
+            _ = GlobalThis.ObjectPrototypeValue;
+        }
+
+        return prototype;
     }
 
     internal static void DefineRestrictedFunctionProperties(object functionValue)
@@ -358,37 +390,30 @@ public static class Function
                 BuiltinDelegateFunctionAdapter.NormalizeJavaScriptObject(
                     functionValue);
 
+            // Resolved before the adapter lock: see MaterializeFunctionIntrinsics.
+            var prototype = MaterializeFunctionIntrinsics(ordinaryPrototypeRequired: false);
+
             if (functionObject is BuiltinDelegateFunctionAdapter adapter)
             {
                 lock (adapter.InitializationLock)
                 {
                     using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
-                    InitializeFunctionPrototype(functionObject);
+                    InitializeFunctionPrototype(functionObject, prototype);
                 }
             }
             else
             {
-                InitializeFunctionPrototype(functionObject);
+                InitializeFunctionPrototype(functionObject, prototype);
             }
 
             return functionValue;
         }
 
-        private static void InitializeFunctionPrototype(object functionObject)
+        private static void InitializeFunctionPrototype(object functionObject, JsObject prototype)
         {
-            if (Prototype is null)
-            {
-                if (functionObject is BuiltinDelegateFunctionAdapter adapter)
-                {
-                    BuiltinDelegateFunctionAdapter
-                        .DeferFunctionPrototypeInitialization(adapter);
-                }
-                return;
-            }
-
             if (PrototypeChain.GetPrototypeOrNull(functionObject) == null)
             {
-                PrototypeChain.SetPrototype(functionObject, Prototype);
+                PrototypeChain.SetPrototype(functionObject, prototype);
             }
         }
 
@@ -418,6 +443,9 @@ public static class Function
                 BuiltinDelegateFunctionAdapter.NormalizeJavaScriptObject(
                     functionValue);
 
+            // Resolved before the adapter lock: see MaterializeFunctionIntrinsics.
+            var prototype = MaterializeFunctionIntrinsics(ordinaryPrototypeRequired: true);
+
             if (functionObject is BuiltinDelegateFunctionAdapter adapter)
             {
                 lock (adapter.InitializationLock)
@@ -425,6 +453,7 @@ public static class Function
                     using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
                     InitializeFunctionInstanceCore(
                         functionObject,
+                        prototype,
                         length,
                         name,
                         requiresInvocationContext,
@@ -435,6 +464,7 @@ public static class Function
             {
                 InitializeFunctionInstanceCore(
                     functionObject,
+                    prototype,
                     length,
                     name,
                     requiresInvocationContext,
@@ -446,12 +476,13 @@ public static class Function
 
         private static void InitializeFunctionInstanceCore(
             object functionObject,
+            JsObject prototype,
             double length,
             string? name,
             bool requiresInvocationContext,
             bool hasRestrictedProperties)
         {
-            InitializeFunctionPrototype(functionObject);
+            InitializeFunctionPrototype(functionObject, prototype);
             if (hasRestrictedProperties)
             {
                 DefineRestrictedFunctionProperties(functionObject);
@@ -505,6 +536,9 @@ public static class Function
                     functionValue);
             if (functionObject is BuiltinDelegateFunctionAdapter adapter)
             {
+                // Resolved before the adapter lock: see MaterializeFunctionIntrinsics.
+                _ = MaterializeFunctionIntrinsics(ordinaryPrototypeRequired: true);
+
                 lock (adapter.InitializationLock)
                 {
                     using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();

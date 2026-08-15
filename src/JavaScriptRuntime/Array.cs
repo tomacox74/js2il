@@ -12,13 +12,43 @@ namespace JavaScriptRuntime
     [IntrinsicObject("Array", IntrinsicCallKind.ArrayConstruct)]
     public class Array : JsObject, IExoticJsObject, IJavaScriptArray, IDictionary<string, object?>
     {
-        private static readonly ThreadLocal<JsObject?> _threadPrototypeOverrides = new(() => null);
         [ThreadStatic]
         private static bool _defaultPrototypeChainHasIndexedProperties;
         [ThreadStatic]
         private static long _observedPrototypeMutationVersion;
+        [ThreadStatic]
+        private static long _observedPrototypeIntrinsicsId;
         private static long _prototypeMutationVersion;
-        internal static readonly JsObject ImmutablePrototype = CreatePrototype();
+
+        /// <summary>
+        /// This realm's immutable <c>%Array.prototype%</c> template. Realm-owned
+        /// (issue #1824); <see cref="Prototype"/> is the mutable copy handed to
+        /// running code.
+        /// </summary>
+        internal static JsObject ImmutablePrototype
+            => RuntimeIntrinsics.Current.GetOrCreate(
+                RuntimeIntrinsicSlot.ArrayImmutablePrototype,
+                static () => new JsObject(),
+                static prototype =>
+                {
+                    using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
+
+                    // Wired here rather than only from GlobalThis's bootstrap so the
+                    // template is complete no matter which realm-owned intrinsic is
+                    // materialized first: Prototype copies this object, and a copy taken
+                    // before the [[Prototype]] link and "constructor" existed would lose
+                    // Object.prototype's methods and Array.prototype.constructor.
+                    PrototypeChain.SetPrototype(prototype, GlobalThis.ObjectPrototypeValue);
+                    ConfigurePrototype(prototype);
+                    PropertyDescriptorStore.DefineOrUpdate(prototype, "constructor", new JsPropertyDescriptor
+                    {
+                        Kind = JsPropertyDescriptorKind.Data,
+                        Enumerable = false,
+                        Configurable = true,
+                        Writable = true,
+                        Value = GlobalThis.Array
+                    });
+                });
         private static readonly object Hole = new();
         private const int MaxDenseGap = 1024;
         private const int MinNumericStorageCapacity = 32;
@@ -48,52 +78,38 @@ namespace JavaScriptRuntime
         private void ClearCapacityHint()
             => _holeCount &= int.MinValue;
 
+        /// <summary>
+        /// This realm's live <c>Array.prototype</c>. Realm-owned (issue #1824): it used
+        /// to be a per-thread copy, which meant two realms sharing a thread also shared
+        /// every <c>Array.prototype</c> mutation.
+        /// </summary>
         internal static JsObject Prototype
-        {
-            get
-            {
-                var prototype = _threadPrototypeOverrides.Value;
-                if (prototype != null)
+            => RuntimeIntrinsics.Current.GetOrCreate(
+                RuntimeIntrinsicSlot.ArrayPrototype,
+                static () => new JsObject(),
+                static prototype =>
                 {
-                    return prototype;
-                }
-
-                prototype = CreateThreadPrototypeOverride();
-                _threadPrototypeOverrides.Value = prototype;
-                RefreshDefaultPrototypeChainState();
-                return prototype;
-            }
-        }
-
-        private static JsObject CreatePrototype()
-        {
-            using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
-
-            var prototype = new JsObject();
-            ConfigurePrototype(prototype);
-            return prototype;
-        }
+                    CopyImmutablePrototypeSurface(prototype);
+                    RefreshDefaultPrototypeChainState();
+                });
 
         internal static void ResetPrototypeForTests()
         {
-            _threadPrototypeOverrides.Value = null;
             _defaultPrototypeChainHasIndexedProperties = false;
+            _observedPrototypeIntrinsicsId = 0;
             _observedPrototypeMutationVersion = Volatile.Read(ref _prototypeMutationVersion);
         }
 
-        private static JsObject CreateThreadPrototypeOverride()
+        private static void CopyImmutablePrototypeSurface(JsObject prototype)
         {
             using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
 
-            var prototype = new JsObject();
             PropertyDescriptorStore.CopyOwnProperties(ImmutablePrototype, prototype);
 
             if (PrototypeChain.TryGetPrototype(ImmutablePrototype, out var parentPrototype))
             {
                 PrototypeChain.InitializePrototype(prototype, parentPrototype);
             }
-
-            return prototype;
         }
 
         private static void ConfigurePrototype(JsObject prototype)
@@ -2091,7 +2107,8 @@ namespace JavaScriptRuntime
         private static bool DefaultPrototypeChainAllowsDenseWrites()
         {
             var mutationVersion = Volatile.Read(ref _prototypeMutationVersion);
-            if (_observedPrototypeMutationVersion != mutationVersion)
+            if (_observedPrototypeMutationVersion != mutationVersion
+                || _observedPrototypeIntrinsicsId != RuntimeIntrinsics.Current.Id)
             {
                 RefreshDefaultPrototypeChainState();
             }
@@ -2113,6 +2130,7 @@ namespace JavaScriptRuntime
                 {
                     _defaultPrototypeChainHasIndexedProperties = hasIndexedProperties;
                     _observedPrototypeMutationVersion = afterScan;
+                    _observedPrototypeIntrinsicsId = RuntimeIntrinsics.Current.Id;
                     return;
                 }
             }

@@ -6,7 +6,12 @@ namespace JavaScriptRuntime
     [IntrinsicObject("FinalizationRegistry")]
     public sealed class FinalizationRegistry
     {
-        internal static readonly object Prototype = CreatePrototype();
+        /// <summary>Realm-owned <c>FinalizationRegistry.prototype</c> intrinsic (issue #1824).</summary>
+        internal static object Prototype
+            => RuntimeIntrinsics.Current.GetOrCreate(
+                RuntimeIntrinsicSlot.FinalizationRegistryPrototype,
+                static () => new JsObject(),
+                static prototype => InitializePrototype(prototype));
         private sealed class Registration
         {
             public Registration(object target, object? heldValue, object? unregisterToken)
@@ -158,11 +163,10 @@ namespace JavaScriptRuntime
             PrototypeChain.SetPrototype(this, Prototype);
         }
 
-        private static object CreatePrototype()
+        private static void InitializePrototype(JsObject prototype)
         {
             using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
 
-            var prototype = new JsObject();
             Func<object[], object?[]?, object?> register = PrototypeRegister;
             Func<object[], object?[]?, object?> unregister = PrototypeUnregister;
             Function.InitializeFunctionInstance(register, 2d, "register");
@@ -207,7 +211,6 @@ namespace JavaScriptRuntime
                 Writable = false,
                 Value = "FinalizationRegistry"
             });
-            return prototype;
         }
 
         private static object? PrototypeRegister(object[] _, object?[]? args)

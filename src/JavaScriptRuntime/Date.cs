@@ -18,7 +18,11 @@ namespace JavaScriptRuntime
     [IntrinsicObject("Date", IntrinsicCallKind.DateToString)]
     public class Date
     {
-        internal static readonly object Prototype = new JsObject();
+        /// <summary>Realm-owned <c>Date.prototype</c> (issue #1824).</summary>
+        internal static object Prototype
+            => RuntimeIntrinsics.Current.GetOrCreate(
+                RuntimeIntrinsicSlot.DatePrototype,
+                static () => new JsObject());
 
         private static readonly Regex DateOnlyRegex = new(
             @"^(?<year>[+-]?\d{4,6})(?:-(?<month>\d{2})(?:-(?<day>\d{2}))?)?$",

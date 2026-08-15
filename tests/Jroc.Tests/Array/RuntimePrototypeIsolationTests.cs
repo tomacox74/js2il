@@ -117,8 +117,13 @@ public class RuntimePrototypeIsolationTests
             });
     }
 
+    /// <summary>
+    /// Each realm owns its own fully populated <c>Array.prototype</c> (issue #1824);
+    /// serially switching realms must never hand a realm another realm's prototype and
+    /// must never lose the intrinsic method surface.
+    /// </summary>
     [Fact]
-    public void ArrayPrototypeThreadOverride_RetainsIntrinsicDescriptorsAcrossSerialRuntimeStores()
+    public void ArrayPrototype_IsRealmOwnedAndFullyPopulatedAcrossSerialRuntimeStores()
     {
         JavaScriptRuntime.Array.ResetPrototypeForTests();
 
@@ -131,13 +136,14 @@ public class RuntimePrototypeIsolationTests
             var firstPrototype = ObjectRuntime.GetItem(GlobalThis.Array, "prototype")
                 ?? throw new InvalidOperationException("Array.prototype was not configured.");
             Assert.NotNull(ObjectRuntime.GetItem(firstPrototype, "push"));
+            Assert.NotNull(ObjectRuntime.GetItem(new JavaScriptRuntime.Array(), "push"));
 
             GlobalThis.ServiceProvider = null;
             GlobalThis.ServiceProvider = secondRuntime;
 
             var secondPrototype = ObjectRuntime.GetItem(GlobalThis.Array, "prototype")
                 ?? throw new InvalidOperationException("Array.prototype was not configured.");
-            Assert.Same(firstPrototype, secondPrototype);
+            Assert.NotSame(firstPrototype, secondPrototype);
             Assert.NotNull(ObjectRuntime.GetItem(secondPrototype, "push"));
             Assert.NotNull(ObjectRuntime.GetItem(new JavaScriptRuntime.Array(), "push"));
         }
@@ -177,7 +183,7 @@ public class RuntimePrototypeIsolationTests
 
             var secondPrototype = ObjectRuntime.GetItem(GlobalThis.Array, "prototype")
                 ?? throw new InvalidOperationException("Array.prototype was not configured.");
-            Assert.Same(arrayPrototype, secondPrototype);
+            Assert.NotSame(arrayPrototype, secondPrototype);
             Assert.Null(JavaScriptRuntime.Object.getOwnPropertyDescriptor(secondPrototype, "assignSourceLeak"));
             Assert.Null(JavaScriptRuntime.Object.getOwnPropertyDescriptor(secondPrototype, "assignTargetLeak"));
         }

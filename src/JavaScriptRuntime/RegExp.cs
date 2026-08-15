@@ -31,7 +31,12 @@ namespace JavaScriptRuntime
         private static readonly Func<object?, object?, object> ReplaceSymbolDelegate = ReplaceSymbolMethod;
         private static readonly Func<object?, object> SearchSymbolDelegate = SearchSymbolMethod;
         private static readonly Func<object?, object?, object> SplitSymbolDelegate = SplitSymbolMethod;
-        internal static readonly JsObject Prototype = CreatePrototype();
+        /// <summary>Realm-owned <c>RegExp.prototype</c> intrinsic (issue #1824).</summary>
+        internal static JsObject Prototype
+            => RuntimeIntrinsics.Current.GetOrCreate(
+                RuntimeIntrinsicSlot.RegExpPrototype,
+                static () => new JsObject(),
+                static prototype => InitializePrototype(prototype));
         private static WellKnownSymbolFastPathFlags _prototypeWellKnownSymbolFastPathFlags = WellKnownSymbolFastPathFlags.All;
         private readonly Regex _regex;
         private readonly bool _global;
@@ -375,17 +380,15 @@ namespace JavaScriptRuntime
             return JavaScriptRuntime.String.SplitWithRegExp(DotNet2JSConversions.ToString(input) ?? string.Empty, regExp, limit);
         }
 
-        private static JsObject CreatePrototype()
+        private static void InitializePrototype(JsObject prototype)
         {
             using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
 
-            var prototype = new JsObject();
             DefineSymbolMethod(prototype, MatchSymbolPropertyKey, MatchSymbolDelegate);
             DefineSymbolMethod(prototype, ReplaceSymbolPropertyKey, ReplaceSymbolDelegate);
             DefineSymbolMethod(prototype, SearchSymbolPropertyKey, SearchSymbolDelegate);
             DefineSymbolMethod(prototype, SplitSymbolPropertyKey, SplitSymbolDelegate);
             DefinePrototypeMethod(prototype, "toString", (Func<object[], object?[]?, object?>)PrototypeToString);
-            return prototype;
         }
 
         private static void DefinePrototypeMethod(object target, string key, object? value)

@@ -5,7 +5,8 @@ namespace JavaScriptRuntime
     [IntrinsicObject("ArrayBuffer")]
     public class ArrayBuffer
     {
-        internal static readonly object Prototype = new JsObject();
+        internal static object Prototype
+            => RuntimeIntrinsics.Current.ArrayBufferPrototype;
         private byte[] _bytes;
         private readonly int _maxByteLength;
         private readonly bool _isResizable;

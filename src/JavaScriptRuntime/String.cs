@@ -23,8 +23,18 @@ namespace JavaScriptRuntime
         private static SubstringCacheEntry[]? substringCache;
         [ThreadStatic]
         private static int substringCacheNextIndex;
-        internal static readonly JsObject Prototype = CreatePrototype();
-        internal static readonly JsObject StringIteratorPrototype = CreateStringIteratorPrototype();
+        /// <summary>Realm-owned <c>String.prototype</c> intrinsic (issue #1824).</summary>
+        internal static JsObject Prototype
+            => RuntimeIntrinsics.Current.GetOrCreate(
+                RuntimeIntrinsicSlot.StringPrototype,
+                static () => new JsObject(),
+                static prototype => InitializePrototype(prototype));
+        /// <summary>Realm-owned <c>String Iterator prototype</c> intrinsic (issue #1824).</summary>
+        internal static JsObject StringIteratorPrototype
+            => RuntimeIntrinsics.Current.GetOrCreate(
+                RuntimeIntrinsicSlot.StringIteratorPrototype,
+                static () => new JsObject(),
+                static prototype => InitializeStringIteratorPrototype(prototype));
 
         private readonly struct SubstringCacheEntry
         {
@@ -42,11 +52,10 @@ namespace JavaScriptRuntime
             public string? Result { get; }
         }
 
-        private static JsObject CreatePrototype()
+        private static void InitializePrototype(JsObject prototype)
         {
             using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
 
-            var prototype = new JsObject();
 
             DefinePrototypeMethod(prototype, "at", (Func<object[], object?[]?, object?>)PrototypeAt, 1);
             DefinePrototypeMethod(prototype, "charAt", (Func<object[], object?[]?, object?>)PrototypeCharAt, 1);
@@ -102,14 +111,12 @@ namespace JavaScriptRuntime
                 Value = "String"
             });
 
-            return prototype;
         }
 
-        private static JsObject CreateStringIteratorPrototype()
+        private static void InitializeStringIteratorPrototype(JsObject prototype)
         {
             using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
 
-            var prototype = new JsObject();
             DefinePrototypeMethod(prototype, "next", (Func<object[], object?[]?, object?>)StringIteratorPrototypeNext, 0);
             DefinePrototypeMethod(prototype, IteratorSymbolPropertyKey, (Func<object[], object?[]?, object?>)StringIteratorPrototypeIterator, 0, "[Symbol.iterator]");
             PropertyDescriptorStore.DefineOrUpdate(prototype, ToStringTagSymbolPropertyKey, new JsPropertyDescriptor
@@ -120,7 +127,6 @@ namespace JavaScriptRuntime
                 Writable = false,
                 Value = "String Iterator"
             });
-            return prototype;
         }
 
         private static void DefinePrototypeMethod(object target, string key, object? value, double length, string? functionNameOverride = null)
