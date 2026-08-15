@@ -5,6 +5,7 @@ namespace JavaScriptRuntime
     [IntrinsicObject("DataView")]
     public sealed class DataView
     {
+        internal static readonly object Prototype = new JsObject();
         private readonly ArrayBuffer _buffer;
         private readonly int _byteOffset;
         private readonly int _byteLength;
@@ -46,6 +47,8 @@ namespace JavaScriptRuntime
             {
                 throw new RangeError("Invalid DataView byteLength");
             }
+
+            PrototypeChain.SetPrototype(this, Prototype);
         }
 
         public ArrayBuffer buffer => _buffer;

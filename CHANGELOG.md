@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- runtime/test262: expose DataView as a first-class global constructor with
+  standard constructor/prototype metadata and buffer, byteLength, and
+  byteOffset accessors. Activates twenty corresponding pinned test262 fixtures.
+
 - runtime/test262: expose FinalizationRegistry as a first-class global
   constructor with standard constructor/prototype metadata plus prototype-owned
   register() and unregister() methods. Activates twenty corresponding pinned

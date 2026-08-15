@@ -4,7 +4,7 @@
 
 [Back to Section19](Section19.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-08-15T06:08:55Z
+> Last generated (UTC): 2026-08-15T07:23:45Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -21,7 +21,7 @@
 | 19.3.5 | BigInt64Array ( . . . ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-bigint64array) |
 | 19.3.6 | BigUint64Array ( . . . ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-biguint64array) |
 | 19.3.7 | Boolean ( . . . ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-boolean) |
-| 19.3.8 | DataView ( . . . ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-dataview) |
+| 19.3.8 | DataView ( . . . ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-dataview) |
 | 19.3.9 | Date ( . . . ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-date) |
 | 19.3.10 | Error ( . . . ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-error) |
 | 19.3.11 | EvalError ( . . . ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-evalerror) |
@@ -66,6 +66,12 @@ Feature-level support tracking with repo test references and optional test262 ev
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
 | Global Boolean constructor is exposed as a callable function value (e.g., array.filter(Boolean)) | Supported with Limitations | [`PrimitiveConversion_Boolean_Callable.js`](../../../tests/Jroc.Tests/PrimitiveConversion/JavaScript/PrimitiveConversion_Boolean_Callable.js) |  | jroc supports calling Boolean(x) via primitive conversion lowering, and also supports using Boolean as a first-class function value by exposing it as JavaScriptRuntime.GlobalThis.Boolean (delegate). This is sufficient for common patterns like array.filter(Boolean), but does not implement full Boolean constructor/prototype semantics. |
+
+### 19.3.8 ([tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-dataview))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| DataView first-class global constructor | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/DataView/ExecutionTests.cs` | `test/built-ins/DataView/constructor.js`<br>`test/built-ins/DataView/is-a-constructor.js`<br>`test/built-ins/DataView/length.js`<br>`test/built-ins/DataView/name.js`<br>`test/built-ins/DataView/newtarget-undefined-throws.js`<br>`test/built-ins/DataView/proto.js` | Exposes globalThis.DataView as a constructible function with standard name, length, global-property, and prototype descriptors. BigInt/Float16 accessors, full prototype method exposure, custom newTarget prototypes, and detached-buffer behavior remain limited. |
 
 ### 19.3.12 ([tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-finalization-registry))
 

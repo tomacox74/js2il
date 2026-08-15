@@ -66,13 +66,13 @@
     {
       "clause": "25.3.3",
       "title": "Properties of the DataView Constructor",
-      "status": "Not Yet Supported",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-properties-of-the-dataview-constructor"
     },
     {
       "clause": "25.3.3.1",
       "title": "DataView.prototype",
-      "status": "Not Yet Supported",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-dataview.prototype"
     },
     {
@@ -102,7 +102,7 @@
     {
       "clause": "25.3.4.4",
       "title": "DataView.prototype.constructor",
-      "status": "Not Yet Supported",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-dataview.prototype.constructor"
     },
     {
@@ -240,7 +240,7 @@
     {
       "clause": "25.3.4.27",
       "title": "DataView.prototype [ %Symbol.toStringTag% ]",
-      "status": "Not Yet Supported",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-dataview.prototype-%symbol.tostringtag%"
     },
     {
@@ -258,21 +258,62 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-dataview-buffer-byteoffset-bytelength",
         "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/DataView/ExecutionTests.cs",
           "tests/Jroc.Tests/TypedArray/JavaScript/DataView_ByteOffset_ByteLength.js",
           "tests/Jroc.Tests/TypedArray/JavaScript/DataView_BoundsChecks_RangeError.js",
           "tests/Jroc.Tests/TypedArray/JavaScript/DataView_InvalidByteOffset_ByteLength_Messages.js"
         ],
-        "notes": "Supports fixed-length ArrayBuffer-backed views with byteOffset/byteLength validation, distinct RangeError diagnostics for invalid byteOffset versus byteLength, and bounds checks. SharedArrayBuffer, resizable buffers, and detached buffer semantics are not implemented."
+        "test262Paths": [
+          "test/built-ins/DataView/newtarget-undefined-throws.js"
+        ],
+        "notes": "Supports a first-class DataView constructor plus fixed-length ArrayBuffer-backed views with byteOffset/byteLength validation, distinct RangeError diagnostics for invalid byteOffset versus byteLength, and bounds checks. SharedArrayBuffer, resizable buffers, custom newTarget prototypes, and detached buffer semantics are not implemented."
+      },
+      {
+        "clause": "25.3.3",
+        "feature": "DataView constructor function surface",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-properties-of-the-dataview-constructor",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/DataView/ExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/built-ins/DataView/constructor.js",
+          "test/built-ins/DataView/is-a-constructor.js",
+          "test/built-ins/DataView/length.js",
+          "test/built-ins/DataView/name.js",
+          "test/built-ins/DataView/proto.js"
+        ],
+        "notes": "globalThis.DataView is a constructible function with standard name, length, and prototype metadata."
       },
       {
         "clause": "25.3.4",
-        "feature": "DataView prototype accessors",
+        "feature": "DataView prototype buffer accessors",
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-properties-of-the-dataview-prototype-object",
         "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/DataView/prototype/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/DataView/prototype/buffer/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/DataView/prototype/byteLength/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/DataView/prototype/byteOffset/ExecutionTests.cs",
           "tests/Jroc.Tests/TypedArray/JavaScript/DataView_ByteOffset_ByteLength.js"
         ],
-        "notes": "buffer, byteOffset, and byteLength are exposed as runtime properties on JavaScriptRuntime.DataView."
+        "test262Paths": [
+          "test/built-ins/DataView/prototype/Symbol.toStringTag.js",
+          "test/built-ins/DataView/prototype/buffer/invoked-as-accessor.js",
+          "test/built-ins/DataView/prototype/buffer/length.js",
+          "test/built-ins/DataView/prototype/buffer/name.js",
+          "test/built-ins/DataView/prototype/buffer/prop-desc.js",
+          "test/built-ins/DataView/prototype/buffer/return-buffer.js",
+          "test/built-ins/DataView/prototype/byteLength/invoked-as-accessor.js",
+          "test/built-ins/DataView/prototype/byteLength/length.js",
+          "test/built-ins/DataView/prototype/byteLength/name.js",
+          "test/built-ins/DataView/prototype/byteLength/prop-desc.js",
+          "test/built-ins/DataView/prototype/byteOffset/invoked-as-accessor.js",
+          "test/built-ins/DataView/prototype/byteOffset/length.js",
+          "test/built-ins/DataView/prototype/byteOffset/name.js",
+          "test/built-ins/DataView/prototype/byteOffset/prop-desc.js"
+        ],
+        "notes": "DataView.prototype inherits Object.prototype and owns constructor, buffer, byteOffset, byteLength, and @@toStringTag properties. The accessors enforce DataView receivers and expose standard getter metadata."
       },
       {
         "clause": "25.3.4",

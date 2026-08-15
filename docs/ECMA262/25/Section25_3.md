@@ -4,7 +4,7 @@
 
 [Back to Section25](Section25.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-08-14T08:29:24Z
+> Last generated (UTC): 2026-08-15T07:23:46Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -23,13 +23,13 @@
 | 25.3.1.6 | SetViewValue ( view , requestIndex , isLittleEndian , type , value ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-setviewvalue) |
 | 25.3.2 | The DataView Constructor | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-dataview-constructor) |
 | 25.3.2.1 | DataView ( buffer [ , byteOffset [ , byteLength ] ] ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-dataview-buffer-byteoffset-bytelength) |
-| 25.3.3 | Properties of the DataView Constructor | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-dataview-constructor) |
-| 25.3.3.1 | DataView.prototype | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-dataview.prototype) |
+| 25.3.3 | Properties of the DataView Constructor | Supported | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-dataview-constructor) |
+| 25.3.3.1 | DataView.prototype | Supported | [tc39.es](https://tc39.es/ecma262/#sec-dataview.prototype) |
 | 25.3.4 | Properties of the DataView Prototype Object | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-dataview-prototype-object) |
 | 25.3.4.1 | get DataView.prototype.buffer | Supported | [tc39.es](https://tc39.es/ecma262/#sec-get-dataview.prototype.buffer) |
 | 25.3.4.2 | get DataView.prototype.byteLength | Supported | [tc39.es](https://tc39.es/ecma262/#sec-get-dataview.prototype.bytelength) |
 | 25.3.4.3 | get DataView.prototype.byteOffset | Supported | [tc39.es](https://tc39.es/ecma262/#sec-get-dataview.prototype.byteoffset) |
-| 25.3.4.4 | DataView.prototype.constructor | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-dataview.prototype.constructor) |
+| 25.3.4.4 | DataView.prototype.constructor | Supported | [tc39.es](https://tc39.es/ecma262/#sec-dataview.prototype.constructor) |
 | 25.3.4.5 | DataView.prototype.getBigInt64 ( byteOffset [ , littleEndian ] ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-dataview.prototype.getbigint64) |
 | 25.3.4.6 | DataView.prototype.getBigUint64 ( byteOffset [ , littleEndian ] ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-dataview.prototype.getbiguint64) |
 | 25.3.4.7 | DataView.prototype.getFloat16 ( byteOffset [ , littleEndian ] ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-dataview.prototype.getfloat16) |
@@ -52,7 +52,7 @@
 | 25.3.4.24 | DataView.prototype.setUint8 ( byteOffset , value ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-dataview.prototype.setuint8) |
 | 25.3.4.25 | DataView.prototype.setUint16 ( byteOffset , value [ , littleEndian ] ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-dataview.prototype.setuint16) |
 | 25.3.4.26 | DataView.prototype.setUint32 ( byteOffset , value [ , littleEndian ] ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-dataview.prototype.setuint32) |
-| 25.3.4.27 | DataView.prototype [ %Symbol.toStringTag% ] | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-dataview.prototype-%symbol.tostringtag%) |
+| 25.3.4.27 | DataView.prototype [ %Symbol.toStringTag% ] | Supported | [tc39.es](https://tc39.es/ecma262/#sec-dataview.prototype-%symbol.tostringtag%) |
 | 25.3.5 | Properties of DataView Instances | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-dataview-instances) |
 
 ## Support
@@ -63,12 +63,18 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| DataView(buffer, byteOffset, byteLength) | Supported with Limitations | [`DataView_ByteOffset_ByteLength.js`](../../../tests/Jroc.Tests/TypedArray/JavaScript/DataView_ByteOffset_ByteLength.js)<br>[`DataView_BoundsChecks_RangeError.js`](../../../tests/Jroc.Tests/TypedArray/JavaScript/DataView_BoundsChecks_RangeError.js)<br>[`DataView_InvalidByteOffset_ByteLength_Messages.js`](../../../tests/Jroc.Tests/TypedArray/JavaScript/DataView_InvalidByteOffset_ByteLength_Messages.js) |  | Supports fixed-length ArrayBuffer-backed views with byteOffset/byteLength validation, distinct RangeError diagnostics for invalid byteOffset versus byteLength, and bounds checks. SharedArrayBuffer, resizable buffers, and detached buffer semantics are not implemented. |
+| DataView(buffer, byteOffset, byteLength) | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/DataView/ExecutionTests.cs`<br>[`DataView_ByteOffset_ByteLength.js`](../../../tests/Jroc.Tests/TypedArray/JavaScript/DataView_ByteOffset_ByteLength.js)<br>[`DataView_BoundsChecks_RangeError.js`](../../../tests/Jroc.Tests/TypedArray/JavaScript/DataView_BoundsChecks_RangeError.js)<br>[`DataView_InvalidByteOffset_ByteLength_Messages.js`](../../../tests/Jroc.Tests/TypedArray/JavaScript/DataView_InvalidByteOffset_ByteLength_Messages.js) | `test/built-ins/DataView/newtarget-undefined-throws.js` | Supports a first-class DataView constructor plus fixed-length ArrayBuffer-backed views with byteOffset/byteLength validation, distinct RangeError diagnostics for invalid byteOffset versus byteLength, and bounds checks. SharedArrayBuffer, resizable buffers, custom newTarget prototypes, and detached buffer semantics are not implemented. |
+
+### 25.3.3 ([tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-dataview-constructor))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| DataView constructor function surface | Supported | `tests/Jroc.Test262.Tests/built-ins/DataView/ExecutionTests.cs` | `test/built-ins/DataView/constructor.js`<br>`test/built-ins/DataView/is-a-constructor.js`<br>`test/built-ins/DataView/length.js`<br>`test/built-ins/DataView/name.js`<br>`test/built-ins/DataView/proto.js` | globalThis.DataView is a constructible function with standard name, length, and prototype metadata. |
 
 ### 25.3.4 ([tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-dataview-prototype-object))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
 | DataView integer and floating-point getters/setters | Supported with Limitations | [`DataView_SetGet_UintAndEndian.js`](../../../tests/Jroc.Tests/TypedArray/JavaScript/DataView_SetGet_UintAndEndian.js)<br>[`DataView_Float32_Float64_RoundTrip.js`](../../../tests/Jroc.Tests/TypedArray/JavaScript/DataView_Float32_Float64_RoundTrip.js) |  | Implements get/set for Int8, Uint8, Int16, Uint16, Int32, Uint32, Float32, and Float64 with optional littleEndian support (default big-endian). BigInt64, BigUint64, and Float16 remain unimplemented. |
-| DataView prototype accessors | Supported | [`DataView_ByteOffset_ByteLength.js`](../../../tests/Jroc.Tests/TypedArray/JavaScript/DataView_ByteOffset_ByteLength.js) |  | buffer, byteOffset, and byteLength are exposed as runtime properties on JavaScriptRuntime.DataView. |
+| DataView prototype buffer accessors | Supported | `tests/Jroc.Test262.Tests/built-ins/DataView/prototype/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/DataView/prototype/buffer/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/DataView/prototype/byteLength/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/DataView/prototype/byteOffset/ExecutionTests.cs`<br>[`DataView_ByteOffset_ByteLength.js`](../../../tests/Jroc.Tests/TypedArray/JavaScript/DataView_ByteOffset_ByteLength.js) | `test/built-ins/DataView/prototype/Symbol.toStringTag.js`<br>`test/built-ins/DataView/prototype/buffer/invoked-as-accessor.js`<br>`test/built-ins/DataView/prototype/buffer/length.js`<br>`test/built-ins/DataView/prototype/buffer/name.js`<br>`test/built-ins/DataView/prototype/buffer/prop-desc.js`<br>`test/built-ins/DataView/prototype/buffer/return-buffer.js`<br>`test/built-ins/DataView/prototype/byteLength/invoked-as-accessor.js`<br>`test/built-ins/DataView/prototype/byteLength/length.js`<br>`test/built-ins/DataView/prototype/byteLength/name.js`<br>`test/built-ins/DataView/prototype/byteLength/prop-desc.js`<br>`test/built-ins/DataView/prototype/byteOffset/invoked-as-accessor.js`<br>`test/built-ins/DataView/prototype/byteOffset/length.js`<br>`test/built-ins/DataView/prototype/byteOffset/name.js`<br>`test/built-ins/DataView/prototype/byteOffset/prop-desc.js` | DataView.prototype inherits Object.prototype and owns constructor, buffer, byteOffset, byteLength, and @@toStringTag properties. The accessors enforce DataView receivers and expose standard getter metadata. |
 
