@@ -1001,6 +1001,24 @@ public class ModuleLoadTests
         Assert.Contains("boom", jsError.JsMessage ?? jsError.Message, StringComparison.OrdinalIgnoreCase);
     }
 
+    [Fact]
+    public void JsRuntimeInstance_WhenStartupFails_UnregistersItsAgentBeforeThrowing()
+    {
+        using var module = CompileAndLoadModuleAssemblyFromResource("boom", "boom.js");
+        var cluster = new RuntimeAgentCluster();
+        var options = new JsModuleLoadOptions
+        {
+            AgentCluster = cluster
+        };
+
+        _ = Assert.ThrowsAny<Exception>(
+            () => new JsRuntimeInstance(module.Assembly, "boom", options));
+
+        Assert.Equal(0, cluster.AgentCount);
+        Assert.False(cluster.IsDisposed);
+        cluster.Dispose();
+    }
+
     public interface IMissingMemberExports : IDisposable
     {
         string DoesNotExist { get; }

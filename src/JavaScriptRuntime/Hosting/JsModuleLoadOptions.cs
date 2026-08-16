@@ -5,6 +5,8 @@ namespace Jroc.Runtime;
 
 public sealed class JsModuleLoadOptions
 {
+    internal RuntimeAgentCluster? AgentCluster { get; init; }
+
     /// <summary>
     /// Launchable compiled assembly path used by hosted <c>child_process.fork()</c>.
     /// Hosted runtimes do not infer this automatically; set it explicitly when hosted code may call <c>fork()</c>.

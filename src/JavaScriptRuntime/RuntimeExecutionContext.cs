@@ -101,6 +101,22 @@ internal sealed class RuntimeExecutionContext
     internal IDisposable EnterAsRoot()
         => EnterCore(asRoot: true);
 
+    internal static IDisposable SuppressInheritedState()
+    {
+        var previous = Ambient.Value;
+        var invocationState = RuntimeServices.CaptureAndClearAmbientInvocationState();
+        try
+        {
+            SetAmbient(null);
+            return new AmbientSuppressionScope(previous, invocationState);
+        }
+        catch
+        {
+            RuntimeServices.RestoreAmbientInvocationState(invocationState);
+            throw;
+        }
+    }
+
     internal static void SetLegacyServiceProvider(ServiceContainer? services)
     {
         var current = Ambient.Value;
@@ -346,6 +362,39 @@ internal sealed class RuntimeExecutionContext
                 RuntimeServices.RestoreAmbientInvocationState(_invocationState);
             }
 
+            _disposed = true;
+        }
+    }
+
+    private sealed class AmbientSuppressionScope : IDisposable
+    {
+        private readonly AmbientState? _previous;
+        private readonly object _invocationState;
+        private bool _disposed;
+
+        internal AmbientSuppressionScope(
+            AmbientState? previous,
+            object invocationState)
+        {
+            _previous = previous;
+            _invocationState = invocationState;
+        }
+
+        public void Dispose()
+        {
+            if (_disposed)
+            {
+                return;
+            }
+
+            if (Ambient.Value?.Frame != null)
+            {
+                throw new InvalidOperationException(
+                    "The runtime execution frame must exit before inherited state is restored.");
+            }
+
+            SetAmbient(_previous);
+            RuntimeServices.RestoreAmbientInvocationState(_invocationState);
             _disposed = true;
         }
     }
