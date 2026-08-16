@@ -5,10 +5,15 @@ using System.Linq;
 namespace JavaScriptRuntime
 {
     /// <summary>
-    /// Minimal JavaScript-like Error object for the runtime.
-    /// Inherits from System.Exception so it can be thrown/caught with .NET mechanics
-    /// while exposing JS-style properties (name, message, stack).
+    /// JavaScript-like Error object for the runtime.
     /// </summary>
+    /// <remarks>
+    /// This type intentionally remains a <see cref="System.Exception"/> rather than
+    /// inheriting <see cref="JsObject"/>. CLR throw/catch mechanics and host exception
+    /// translation require a real exception identity; JavaScript properties and the
+    /// realm-owned <c>[[Prototype]]</c> are supplied through the runtime's non-
+    /// <see cref="JsObject"/> object paths.
+    /// </remarks>
     [IntrinsicObject("Error", IntrinsicCallKind.BuiltInError)]
     public class Error : Exception
     {

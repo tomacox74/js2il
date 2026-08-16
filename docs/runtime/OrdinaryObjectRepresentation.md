@@ -89,6 +89,20 @@ Array intrinsic prototypes, per-thread prototype overlays, and
 matches all other runtime-owned intrinsic prototypes and leaves no
 `ExpandoObject` representation in the runtime.
 
+## Intentional non-`JsObject` representations
+
+`Error` and its subclasses deliberately remain `System.Exception` instances,
+not `JsObject` subclasses. This preserves CLR throw/catch behavior and host
+exception translation. Their JavaScript properties use the non-`JsObject`
+object paths, and each instance's `[[Prototype]]` is held in the realm-owned
+fallback prototype table.
+
+`Proxy` deliberately remains a non-`JsObject` exotic representation. Its own
+property operations must dispatch through `getOwnPropertyDescriptor` traps or
+target forwarding, and its other internal operations must preserve trap and
+invariant handling. Letting `JsObject` shape/slot fast paths read proxy-local
+storage would bypass those required operations.
+
 ## Function object foundation
 
 `JsFunctionObject : JsObject` is the common base for object-backed JavaScript

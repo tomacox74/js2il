@@ -5,9 +5,10 @@ namespace Jroc.Tests;
 public sealed class JsObjectRepresentationInventoryTests
 {
     private const string BufferViewReason = "Requires a dedicated buffer/view migration that preserves indexed and backing-store semantics.";
-    private const string ErrorReason = "Must remain an Exception for CLR throw/catch mechanics pending the dedicated Error design.";
+    private const string ErrorReason = "Intentionally remains an Exception to preserve CLR throw/catch and host exception translation; its realm-owned prototype uses fallback storage.";
     private const string HostIteratorReason = "Preserves host iterator adaptation and needs a focused iterator migration.";
     private const string IteratorReason = "Must migrate with its owning iterator family to preserve exhaustion and mutation behavior.";
+    private const string ProxyReason = "Intentionally remains non-JsObject so own-property operations dispatch through Proxy traps or its target instead of shape/slot fast paths.";
     private static readonly string[] ExplicitJavaScriptVisibleTypeNames =
     [
         "JavaScriptRuntime.ArgumentsObject",
@@ -42,7 +43,7 @@ public sealed class JsObjectRepresentationInventoryTests
             ["JavaScriptRuntime.ObjectRuntime+DynamicIterator"] = HostIteratorReason,
             ["JavaScriptRuntime.ObjectRuntime+EnumerableIterator"] = HostIteratorReason,
             ["JavaScriptRuntime.ObjectRuntime+StringIterator"] = HostIteratorReason,
-            ["JavaScriptRuntime.Proxy"] = "Requires the dedicated Proxy design to preserve traps and invariants.",
+            ["JavaScriptRuntime.Proxy"] = ProxyReason,
             ["JavaScriptRuntime.RangeError"] = ErrorReason,
             ["JavaScriptRuntime.ReferenceError"] = ErrorReason,
             ["JavaScriptRuntime.SharedArrayBuffer"] = BufferViewReason,

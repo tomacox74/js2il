@@ -2,7 +2,15 @@ using System;
 
 namespace JavaScriptRuntime
 {
-    // Minimal Proxy implementation supporting the currently implemented trap surface.
+    /// <summary>
+    /// ECMAScript Proxy exotic object supporting the currently implemented trap surface.
+    /// </summary>
+    /// <remarks>
+    /// This type intentionally does not inherit <see cref="JsObject"/>. Generic
+    /// <see cref="JsObject"/> shape/slot fast paths would observe local storage instead
+    /// of dispatching Proxy internal operations through its handler, target, and
+    /// invariant checks.
+    /// </remarks>
     [IntrinsicObject("Proxy")]
     public sealed class Proxy
     {

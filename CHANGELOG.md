@@ -26,6 +26,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   Add a JavaScript-visible representation inventory guard, Boolean allocation
   coverage, and a prototype-storage benchmark.
 
+- runtime/tests/docs: resolve #1862 and #1863 by deliberately retaining Error
+  as `System.Exception` rather than `JsObject` for CLR throw/catch and host
+  exception translation, and Proxy as a non-`JsObject` exotic so target/trap
+  dispatch and invariant checks cannot be bypassed by shape/slot fast paths.
+
 - runtime: continue #1580's incremental built-in representation migration by
   moving Date wrappers to `JsObject` inline property/prototype storage.
 

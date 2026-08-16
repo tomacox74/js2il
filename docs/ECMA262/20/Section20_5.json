@@ -330,7 +330,7 @@
         "testScripts": [
           "tests/Jroc.Tests/TryCatch/JavaScript/TryCatch_NewExpression_BuiltInErrors.js"
         ],
-        "notes": "Constructs JavaScriptRuntime.Error (and derived types) with message stringification via DotNet2JSConversions.ToString. The runtime does not currently model spec prototype objects; behavior is closer to .NET exceptions with JS-like surface properties."
+        "notes": "Constructs JavaScriptRuntime.Error (and derived types) with message stringification via DotNet2JSConversions.ToString. Error instances intentionally remain CLR Exception instances for throw/catch and host exception translation, while their JavaScript prototype is realm-owned through the non-JsObject fallback path."
       },
       {
         "clause": "20.5.2.2",
@@ -403,6 +403,16 @@
           "tests/Jroc.Tests/Variable/JavaScript/Variable_Destructuring_NullOrUndefined_ThrowsNodeMessage.js"
         ],
         "notes": "name/message are exposed as instance properties on JavaScriptRuntime.Error. stack is backed by the .NET stack trace (or a captured construction-time stack if not thrown yet)."
+      },
+      {
+        "clause": "20.5.4",
+        "feature": "Error Exception representation and realm-owned prototype",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-properties-of-error-instances",
+        "testScripts": [
+          "tests/Jroc.Tests/ErrorProxyObjectRepresentationTests.cs"
+        ],
+        "notes": "Error intentionally remains System.Exception rather than JsObject so CLR throw/catch mechanics and host exception translation retain exception identity. Each Error instance still receives its current realm's Error.prototype through the non-JsObject fallback prototype storage."
       },
       {
         "clause": "20.5.7.1.1",
