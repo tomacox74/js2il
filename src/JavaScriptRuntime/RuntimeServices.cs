@@ -22,8 +22,10 @@ public class RuntimeServices
     [ThreadStatic] private static Stack<GeneratedFunctionDirectCallState>? _generatedFunctionDirectCallStack;
     [ThreadStatic] private static Stack<object?>? _constructorNewTargetStack;
     [ThreadStatic] private static Stack<object?>? _derivedConstructorThisStack;
-    private static readonly ConditionalWeakTable<Type, LazyClassMetadataSlot> _lazyClassMetadata = new();
-    private static readonly ConcurrentDictionary<ClassConstructorCacheKey, JsClassConstructorObject> _classConstructorValues = new();
+    private static ConditionalWeakTable<Type, LazyClassMetadataSlot> _lazyClassMetadata
+        => GetCurrentRealmValueCaches().LazyClassMetadata;
+    private static ConcurrentDictionary<ClassConstructorCacheKey, JsClassConstructorObject> _classConstructorValues
+        => GetCurrentRealmValueCaches().MaterializedClassConstructors;
 
     // ABI compatibility: when a callee doesn't need scopes, we still pass a 1-element scopes array.
     // NOTE: Consumers must treat scopes arrays as immutable.
@@ -50,12 +52,12 @@ public class RuntimeServices
         public object? Value = TemporalDeadZoneSentinel;
     }
 
-    private sealed class LazyClassMetadataSlot
+    internal sealed class LazyClassMetadataSlot
     {
         public readonly List<LazyClassMethodDataProperty> Methods = new();
     }
 
-    private sealed class ClassConstructorCacheKey : IEquatable<ClassConstructorCacheKey>
+    internal sealed class ClassConstructorCacheKey : IEquatable<ClassConstructorCacheKey>
     {
         private readonly Type _type;
         private readonly int _formalParameterCount;
@@ -106,7 +108,7 @@ public class RuntimeServices
         public override int GetHashCode() => _hashCode;
     }
 
-    private sealed record LazyClassMethodDataProperty(
+    internal sealed record LazyClassMethodDataProperty(
         string PropertyKey,
         string ClrMethodName,
         double Length,
@@ -784,7 +786,8 @@ public class RuntimeServices
         if ((target is JsObject jsObject && jsObject.IsInlineLazyClassMethodDeleted(propName))
             || PropertyDescriptorStore.IsDeleted(target, propName)
             || !TryResolveLazyClassMethodTarget(target, out var ownerType, out var ownerValue, out var isStatic)
-            || !_lazyClassMetadata.TryGetValue(ownerType, out var slot))
+            || !TryGetCurrentRealmValueCaches(out var valueCaches)
+            || !valueCaches.LazyClassMetadata.TryGetValue(ownerType, out var slot))
         {
             return false;
         }
@@ -821,7 +824,8 @@ public class RuntimeServices
     internal static IEnumerable<string> GetLazyClassMethodOwnKeys(object target)
     {
         if (!TryResolveLazyClassMethodTarget(target, out var ownerType, out _, out var isStatic)
-            || !_lazyClassMetadata.TryGetValue(ownerType, out var slot))
+            || !TryGetCurrentRealmValueCaches(out var valueCaches)
+            || !valueCaches.LazyClassMetadata.TryGetValue(ownerType, out var slot))
         {
             return System.Array.Empty<string>();
         }
@@ -842,7 +846,8 @@ public class RuntimeServices
     internal static void MarkLazyClassMethodPropertyDeleted(object target, string propName)
     {
         if (!TryResolveLazyClassMethodTarget(target, out var ownerType, out _, out var isStatic)
-            || !_lazyClassMetadata.TryGetValue(ownerType, out var slot))
+            || !TryGetCurrentRealmValueCaches(out var valueCaches)
+            || !valueCaches.LazyClassMetadata.TryGetValue(ownerType, out var slot))
         {
             return;
         }
@@ -1269,7 +1274,8 @@ public class RuntimeServices
         }
 
         if (!TryResolveLazyClassMethodTarget(target, out var ownerType, out _, out var isStatic)
-            || !_lazyClassMetadata.TryGetValue(ownerType, out var slot))
+            || !TryGetCurrentRealmValueCaches(out var valueCaches)
+            || !valueCaches.LazyClassMetadata.TryGetValue(ownerType, out var slot))
         {
             return false;
         }
@@ -1730,8 +1736,21 @@ public class RuntimeServices
     /// Cache for template objects indexed by call site ID.
     /// Per ECMA-262 spec, each unique call site should return the same template object identity.
     /// </summary>
-    private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, Array> _templateObjectCache = new();
+    private static ConcurrentDictionary<string, Array> _templateObjectCache
+        => GetCurrentRealmValueCaches().TemplateObjects;
     private const int MaxTemplateObjectCacheEntries = 4096;
+
+    private static RuntimeRealmValueCacheState GetCurrentRealmValueCaches()
+        => RuntimeExecutionContext.CurrentOrOverride?.Realm.ValueCaches
+            ?? throw new InvalidOperationException(
+                "Realm-created value caches require an active JavaScript runtime.");
+
+    private static bool TryGetCurrentRealmValueCaches(
+        out RuntimeRealmValueCacheState valueCaches)
+    {
+        valueCaches = RuntimeExecutionContext.CurrentOrOverride?.Realm.ValueCaches!;
+        return valueCaches != null;
+    }
 
     /// <summary>
     /// Creates a template object for tagged template expressions.

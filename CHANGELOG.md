@@ -6,6 +6,14 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- runtime: move tagged-template objects, materialized class constructor values,
+  and lazy class-method metadata containing captured scopes into a disposable
+  `RuntimeRealmValueCacheState` (issue #1825). Repeated execution preserves
+  required identity within one realm, while identical call sites and generated
+  types in another realm receive distinct JavaScript values. Realm disposal
+  clears the caches so captured scopes and collectible generated assemblies are
+  not retained.
+
 - runtime: begin #1580's incremental built-in representation migration by
   moving Boolean wrappers to `JsObject` inline property/prototype storage.
   Add a JavaScript-visible representation inventory guard, Boolean allocation

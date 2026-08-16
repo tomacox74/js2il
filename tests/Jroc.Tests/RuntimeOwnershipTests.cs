@@ -18,6 +18,9 @@ public sealed class RuntimeOwnershipTests
         Assert.Same(agent, realm.Services.Resolve<RuntimeAgent>());
         Assert.Same(cluster, realm.Services.Resolve<RuntimeAgentCluster>());
         Assert.Same(realm.ModuleState, realm.Services.Resolve<RuntimeModuleState>());
+        Assert.Same(
+            realm.ValueCaches,
+            realm.Services.Resolve<RuntimeRealmValueCacheState>());
         Assert.Equal(1, agent.RealmCount);
         Assert.Equal(1, cluster.AgentCount);
 
@@ -154,6 +157,8 @@ public sealed class RuntimeOwnershipTests
             () => services.Remove<RuntimeRealm>());
         Assert.Throws<InvalidOperationException>(
             () => services.Replace(new RuntimeModuleState()));
+        Assert.Throws<InvalidOperationException>(
+            () => services.Replace(new RuntimeRealmValueCacheState()));
 
         services.Clear();
 
@@ -161,6 +166,9 @@ public sealed class RuntimeOwnershipTests
         Assert.Same(realm.Agent, services.Resolve<RuntimeAgent>());
         Assert.Same(realm.Agent.Cluster, services.Resolve<RuntimeAgentCluster>());
         Assert.Same(realm.ModuleState, services.Resolve<RuntimeModuleState>());
+        Assert.Same(
+            realm.ValueCaches,
+            services.Resolve<RuntimeRealmValueCacheState>());
 
         realm.Agent.Cluster.Dispose();
     }
