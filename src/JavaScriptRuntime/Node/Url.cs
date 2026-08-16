@@ -141,7 +141,7 @@ namespace JavaScriptRuntime.Node
         }
     }
 
-    public sealed class URL
+    public sealed class URL : JsObject
     {
         /// <summary>Realm-owned <c>URL.prototype</c> (issue #1824).</summary>
         internal static object Prototype
@@ -171,7 +171,7 @@ namespace JavaScriptRuntime.Node
 
         public URL(object input, object? baseValue)
         {
-            PrototypeChain.SetPrototype(this, Prototype);
+            PrototypeChain.InitializePrototype(this, Prototype);
             var uri = ResolveUri(input, baseValue);
 
             _protocol = uri.Scheme + ":";
@@ -334,6 +334,18 @@ namespace JavaScriptRuntime.Node
         {
             using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
 
+            DefinePrototypeAccessor(prototype, "hash", PrototypeHashGetter, PrototypeHashSetter);
+            DefinePrototypeAccessor(prototype, "host", PrototypeHostGetter);
+            DefinePrototypeAccessor(prototype, "hostname", PrototypeHostnameGetter);
+            DefinePrototypeAccessor(prototype, "href", PrototypeHrefGetter);
+            DefinePrototypeAccessor(prototype, "origin", PrototypeOriginGetter);
+            DefinePrototypeAccessor(prototype, "password", PrototypePasswordGetter);
+            DefinePrototypeAccessor(prototype, "pathname", PrototypePathnameGetter);
+            DefinePrototypeAccessor(prototype, "port", PrototypePortGetter);
+            DefinePrototypeAccessor(prototype, "protocol", PrototypeProtocolGetter);
+            DefinePrototypeAccessor(prototype, "search", PrototypeSearchGetter, PrototypeSearchSetter);
+            DefinePrototypeAccessor(prototype, "searchParams", PrototypeSearchParamsGetter);
+            DefinePrototypeAccessor(prototype, "username", PrototypeUsernameGetter);
             DefinePrototypeMethod(prototype, "toJSON", PrototypeToJson);
             DefinePrototypeMethod(prototype, "toString", PrototypeToString);
             PropertyDescriptorStore.DefineOrUpdate(prototype, global::JavaScriptRuntime.Symbol.toStringTag.DebugId, new JsPropertyDescriptor
@@ -358,6 +370,22 @@ namespace JavaScriptRuntime.Node
             });
         }
 
+        private static void DefinePrototypeAccessor(
+            object prototype,
+            string name,
+            Func<object[], object?[]?, object?> getter,
+            Func<object[], object?[]?, object?>? setter = null)
+        {
+            PropertyDescriptorStore.DefineOrUpdate(prototype, name, new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Accessor,
+                Enumerable = false,
+                Configurable = true,
+                Get = getter,
+                Set = setter
+            });
+        }
+
         private static URL GetUrlReceiver(string memberName)
         {
             var thisValue = RuntimeServices.GetCurrentThis();
@@ -369,14 +397,64 @@ namespace JavaScriptRuntime.Node
             return url;
         }
 
+        private static object? PrototypeHashGetter(object[] scopes, object?[]? args)
+            => GetUrlReceiver("hash").hash;
+
+        private static object? PrototypeHashSetter(object[] scopes, object?[]? args)
+        {
+            GetUrlReceiver("hash").hash = UrlQueryHelpers.CoerceString(
+                args != null && args.Length > 0 ? args[0] : null);
+            return null;
+        }
+
+        private static object? PrototypeHostGetter(object[] scopes, object?[]? args)
+            => GetUrlReceiver("host").host;
+
+        private static object? PrototypeHostnameGetter(object[] scopes, object?[]? args)
+            => GetUrlReceiver("hostname").hostname;
+
+        private static object? PrototypeHrefGetter(object[] scopes, object?[]? args)
+            => GetUrlReceiver("href").href;
+
+        private static object? PrototypeOriginGetter(object[] scopes, object?[]? args)
+            => GetUrlReceiver("origin").origin;
+
+        private static object? PrototypePasswordGetter(object[] scopes, object?[]? args)
+            => GetUrlReceiver("password").password;
+
+        private static object? PrototypePathnameGetter(object[] scopes, object?[]? args)
+            => GetUrlReceiver("pathname").pathname;
+
+        private static object? PrototypePortGetter(object[] scopes, object?[]? args)
+            => GetUrlReceiver("port").port;
+
+        private static object? PrototypeProtocolGetter(object[] scopes, object?[]? args)
+            => GetUrlReceiver("protocol").protocol;
+
+        private static object? PrototypeSearchGetter(object[] scopes, object?[]? args)
+            => GetUrlReceiver("search").search;
+
+        private static object? PrototypeSearchSetter(object[] scopes, object?[]? args)
+        {
+            GetUrlReceiver("search").search = UrlQueryHelpers.CoerceString(
+                args != null && args.Length > 0 ? args[0] : null);
+            return null;
+        }
+
+        private static object? PrototypeSearchParamsGetter(object[] scopes, object?[]? args)
+            => GetUrlReceiver("searchParams").searchParams;
+
         private static object? PrototypeToJson(object[] scopes, object?[]? args)
             => GetUrlReceiver("toJSON").toJSON();
 
         private static object? PrototypeToString(object[] scopes, object?[]? args)
             => GetUrlReceiver("toString").toString();
+
+        private static object? PrototypeUsernameGetter(object[] scopes, object?[]? args)
+            => GetUrlReceiver("username").username;
     }
 
-    public sealed class URLSearchParams
+    public sealed class URLSearchParams : JsObject
     {
         private static readonly Func<object[], object?[]?, object?> PrototypeEntriesValue = PrototypeEntries;
 
@@ -395,13 +473,13 @@ namespace JavaScriptRuntime.Node
 
         public URLSearchParams()
         {
-            PrototypeChain.SetPrototype(this, Prototype);
+            PrototypeChain.InitializePrototype(this, Prototype);
             _entries = new List<KeyValuePair<string, string>>();
         }
 
         public URLSearchParams(object? init)
         {
-            PrototypeChain.SetPrototype(this, Prototype);
+            PrototypeChain.InitializePrototype(this, Prototype);
             _entries = InitializeEntries(init);
         }
 
@@ -645,7 +723,7 @@ namespace JavaScriptRuntime.Node
             Entries,
         }
 
-        private sealed class SearchParamsIterator : IJavaScriptIterator
+        private sealed class SearchParamsIterator : JsObject, IJavaScriptIterator
         {
             private readonly IReadOnlyList<KeyValuePair<string, string>> _entries;
             private readonly SearchParamsIteratorKind _kind;
@@ -656,7 +734,7 @@ namespace JavaScriptRuntime.Node
             {
                 _entries = entries;
                 _kind = kind;
-                JavaScriptRuntime.Iterator.InitializeIteratorSurface(this);
+                PrototypeChain.InitializePrototype(this, JavaScriptRuntime.Iterator.Prototype);
             }
 
             public bool HasReturn => true;

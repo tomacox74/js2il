@@ -66,7 +66,14 @@ public static class Iterator
 
     internal static void InitializeHelperSurface(object iterator)
     {
-        PrototypeChain.SetPrototype(iterator, HelperPrototype);
+        if (iterator is JsObject jsObject)
+        {
+            PrototypeChain.InitializePrototype(jsObject, HelperPrototype);
+        }
+        else
+        {
+            PrototypeChain.SetPrototype(iterator, HelperPrototype);
+        }
     }
 
     public static IJavaScriptIterator From(object? value)
@@ -426,7 +433,7 @@ public static class Iterator
         }
     }
 
-    private abstract class IteratorHelperBase : IJavaScriptIterator
+    private abstract class IteratorHelperBase : JsObject, IJavaScriptIterator
     {
         private bool _closed;
 

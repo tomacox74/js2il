@@ -808,6 +808,8 @@ namespace JavaScriptRuntime
             DefineBuiltinFunctionProperty(_bigIntPrototypeValue, "valueOf", _bigIntPrototypeValueOfValue, 0d);
             DefineIntrinsicToStringTagProperty(_bigIntPrototypeValue, "BigInt");
             JavaScriptRuntime.Date.InitializeIntrinsicSurface(_objectPrototypeValue);
+            JavaScriptRuntime.AbortController.InitializeIntrinsicSurface(_objectPrototypeValue);
+            JavaScriptRuntime.AbortSignal.InitializeIntrinsicSurface(_objectPrototypeValue);
             ConfigureBuiltinFunctionObject(_stringFunctionValue);
             ConfigureBuiltinFunctionObject(_booleanFunctionValue);
             ConfigureBuiltinFunctionObject(_parseIntValue);

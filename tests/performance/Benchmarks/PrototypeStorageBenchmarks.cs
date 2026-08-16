@@ -15,6 +15,8 @@ namespace Benchmarks;
 public class PrototypeStorageBenchmarks
 {
     private readonly JavaScriptRuntime.JsObject _prototype = new();
+    private static readonly Func<object[], object?[]?, object?> _identityMapper =
+        static (_, args) => args![0];
 
     [Benchmark(Description = "Array with initialized prototype")]
     public JavaScriptRuntime.Array ConstructArray()
@@ -63,6 +65,43 @@ public class PrototypeStorageBenchmarks
     [Benchmark(Description = "Buffer with inline ordinary properties")]
     public JavaScriptRuntime.Node.Buffer ConstructBuffer()
         => new(System.Array.Empty<byte>());
+
+    [Benchmark(Description = "AbortController with initialized prototype")]
+    public JavaScriptRuntime.AbortController ConstructAbortController()
+        => new();
+
+    [Benchmark(Description = "AbortSignal with initialized prototype")]
+    public JavaScriptRuntime.AbortSignal ConstructAbortSignal()
+        => new();
+
+    [Benchmark(Description = "URL with initialized prototype")]
+    public JavaScriptRuntime.Node.URL ConstructUrl()
+        => new("https://example.test/path?key=value");
+
+    [Benchmark(Description = "URLSearchParams with initialized prototype")]
+    public JavaScriptRuntime.Node.URLSearchParams ConstructUrlSearchParams()
+        => new("key=value");
+
+    [Benchmark(Description = "URLSearchParams iterator with initialized prototype")]
+    public JavaScriptRuntime.IJavaScriptIterator ConstructUrlSearchParamsIterator()
+        => new JavaScriptRuntime.Node.URLSearchParams("key=value").entries();
+
+    [Benchmark(Description = "Iterator helper with initialized prototype")]
+    public JavaScriptRuntime.IJavaScriptIterator ConstructIteratorHelper()
+    {
+        _ = JavaScriptRuntime.GlobalThis.globalThis;
+        var source = JavaScriptRuntime.Iterator.From(
+            new JavaScriptRuntime.Array(new object?[] { 1d }));
+        var map = JavaScriptRuntime.ObjectRuntime.GetProperty(source, "map");
+        return (JavaScriptRuntime.IJavaScriptIterator)JavaScriptRuntime.CallableOperations.Call1(
+            map,
+            source,
+            JavaScriptRuntime.BuiltinDelegateFunctionAdapter.FromDelegate(_identityMapper))!;
+    }
+
+    [Benchmark(Description = "Iterator result with initialized prototype and own values")]
+    public JavaScriptRuntime.IteratorResultObject ConstructIteratorResult()
+        => JavaScriptRuntime.IteratorResult.Create(null, done: false);
 
     [Benchmark(Description = "Ordinary object with initialized prototype")]
     public JavaScriptRuntime.JsObject ConstructOrdinaryObject()

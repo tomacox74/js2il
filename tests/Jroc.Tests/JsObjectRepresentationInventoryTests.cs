@@ -11,24 +11,16 @@ public sealed class JsObjectRepresentationInventoryTests
     private static readonly string[] ExplicitJavaScriptVisibleTypeNames =
     [
         "JavaScriptRuntime.ArgumentsObject",
-        "JavaScriptRuntime.IteratorResultObject`1",
-        "JavaScriptRuntime.IteratorResultObject",
         "JavaScriptRuntime.PromiseWithResolvers",
         "JavaScriptRuntime.IntlNumberFormat",
         "JavaScriptRuntime.IntlSegmenter",
         "JavaScriptRuntime.TypedArrayBase",
-        "JavaScriptRuntime.Node.Buffer",
-        "JavaScriptRuntime.Node.URL",
-        "JavaScriptRuntime.Node.URLSearchParams",
-        "JavaScriptRuntime.AbortController",
-        "JavaScriptRuntime.AbortSignal"
+        "JavaScriptRuntime.Node.Buffer"
     ];
 
     private static readonly IReadOnlyDictionary<string, string> DocumentedNonJsObjectRepresentations =
         new Dictionary<string, string>
         {
-            ["JavaScriptRuntime.AbortController"] = "Requires the AbortController and AbortSignal migration.",
-            ["JavaScriptRuntime.AbortSignal"] = "Requires the AbortController and AbortSignal migration.",
             ["JavaScriptRuntime.AggregateError"] = ErrorReason,
             ["JavaScriptRuntime.Array+ArrayIterator"] = IteratorReason,
             ["JavaScriptRuntime.ArrayBuffer"] = BufferViewReason,
@@ -39,21 +31,10 @@ public sealed class JsObjectRepresentationInventoryTests
             ["JavaScriptRuntime.ForInIterator"] = IteratorReason,
             ["JavaScriptRuntime.IntlNumberFormat"] = "Needs a dedicated Intl wrapper migration once its constructor surface expands.",
             ["JavaScriptRuntime.IntlSegmenter"] = "Needs a dedicated Intl wrapper migration once its constructor surface expands.",
-            ["JavaScriptRuntime.Iterator+DropIteratorHelper"] = IteratorReason,
-            ["JavaScriptRuntime.Iterator+FilterIteratorHelper"] = IteratorReason,
-            ["JavaScriptRuntime.Iterator+FlatMapIteratorHelper"] = IteratorReason,
             ["JavaScriptRuntime.Iterator+GeneratorIteratorAdapter"] = HostIteratorReason,
-            ["JavaScriptRuntime.Iterator+IteratorHelperBase"] = IteratorReason,
             ["JavaScriptRuntime.Iterator+IteratorLikeWrapper"] = HostIteratorReason,
-            ["JavaScriptRuntime.Iterator+MapIteratorHelper"] = IteratorReason,
-            ["JavaScriptRuntime.Iterator+TakeIteratorHelper"] = IteratorReason,
-            ["JavaScriptRuntime.IteratorResultObject"] = "Requires the dedicated iterator result and helper migration.",
-            ["JavaScriptRuntime.IteratorResultObject`1"] = "Requires the dedicated iterator result and helper migration.",
             ["JavaScriptRuntime.Node.Events+EventEmitterAsyncOnIterator"] = HostIteratorReason,
             ["JavaScriptRuntime.Node.TimersPromises+TimersPromisesIntervalIterator"] = HostIteratorReason,
-            ["JavaScriptRuntime.Node.URL"] = "Requires the URL and URLSearchParams migration.",
-            ["JavaScriptRuntime.Node.URLSearchParams"] = "Requires the URL and URLSearchParams migration.",
-            ["JavaScriptRuntime.Node.URLSearchParams+SearchParamsIterator"] = "Must migrate with URLSearchParams.",
             ["JavaScriptRuntime.Object"] = "Static intrinsic holder; constructed ordinary objects use JsObject.",
             ["JavaScriptRuntime.ObjectRuntime+ArrayIterator"] = HostIteratorReason,
             ["JavaScriptRuntime.ObjectRuntime+AsyncDynamicIterator"] = HostIteratorReason,

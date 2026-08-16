@@ -76,6 +76,8 @@ internal enum RuntimeIntrinsicSlot
     AsyncFunctionPrototype,
     UrlPrototype,
     UrlSearchParamsPrototype,
+    AbortControllerPrototype,
+    AbortSignalPrototype,
 
     Count
 }
