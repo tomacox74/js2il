@@ -733,8 +733,13 @@ namespace JavaScriptRuntime
                 }
                 return array[intIndex]!;
             }
+            else if (obj is ArgumentsObject argumentsObject
+                && argumentsObject.TryGetValue(propName, out var argumentsValue))
+            {
+                return argumentsValue!;
+            }
             // Ordinary object: numeric index coerces to a property-name string per JS ToPropertyKey.
-            else if (obj is JsObject)
+            else if (obj is JsObject && obj is not JavaScriptRuntime.Node.Buffer)
             {
                 return GetProperty(obj, propName)!;
             }
@@ -833,8 +838,18 @@ namespace JavaScriptRuntime
                 }
                 return array[intIndex]!;
             }
+            else if (obj is ArgumentsObject argumentsObject)
+            {
+                var propName = ToPropertyKeyString(index);
+                if (argumentsObject.TryGetValue(propName, out var argumentsValue))
+                {
+                    return argumentsValue!;
+                }
+
+                return GetProperty(obj, propName)!;
+            }
             // Ordinary object: numeric index coerces to a property-name string per JS ToPropertyKey.
-            else if (obj is JsObject)
+            else if (obj is JsObject && obj is not JavaScriptRuntime.Node.Buffer)
             {
                 var propName = ToPropertyKeyString(index);
                 return GetProperty(obj, propName)!;
@@ -925,8 +940,13 @@ namespace JavaScriptRuntime
                 }
                 return array[intIndex]!;
             }
+            else if (obj is ArgumentsObject argumentsObject
+                && argumentsObject.TryGetValue(key, out var argumentsValue))
+            {
+                return argumentsValue!;
+            }
             // Ordinary object: key is already a string property.
-            else if (obj is JsObject)
+            else if (obj is JsObject && obj is not JavaScriptRuntime.Node.Buffer)
             {
                 return GetProperty(obj, key)!;
             }
@@ -1052,7 +1072,7 @@ namespace JavaScriptRuntime
                 return value;
             }
 
-            if (obj is JsObject)
+            if (obj is JsObject && obj is not JavaScriptRuntime.Node.Buffer)
             {
                 return SetProperty(obj, propName, value, throwOnError);
             }
@@ -1135,7 +1155,7 @@ namespace JavaScriptRuntime
                 return value;
             }
 
-            if (obj is JsObject)
+            if (obj is JsObject && obj is not JavaScriptRuntime.Node.Buffer)
             {
                 return SetProperty(
                     obj,
@@ -1228,7 +1248,7 @@ namespace JavaScriptRuntime
                 return value;
             }
 
-            if (obj is JsObject)
+            if (obj is JsObject && obj is not JavaScriptRuntime.Node.Buffer)
             {
                 return SetProperty(obj, key, value, throwOnError);
             }
@@ -1307,7 +1327,7 @@ namespace JavaScriptRuntime
                 return value;
             }
 
-            if (obj is JsObject)
+            if (obj is JsObject && obj is not JavaScriptRuntime.Node.Buffer)
             {
                 return SetProperty(obj, key, value, throwOnError);
             }

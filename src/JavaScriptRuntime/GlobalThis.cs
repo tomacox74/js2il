@@ -460,6 +460,9 @@ namespace JavaScriptRuntime
         private static readonly Func<object[], object?[]?, object?> _typedArrayToSortedValue = TypedArrayPrototypeToSorted;
         private static readonly Func<object[], object?[]?, object?> _typedArrayWithValue = TypedArrayPrototypeWith;
         private static readonly Func<object[], object?[]?, object?> _typedArrayLengthGetterValue = TypedArrayPrototypeLength;
+        private static readonly Func<object[], object?[]?, object?> _typedArrayBufferGetterValue = TypedArrayPrototypeBuffer;
+        private static readonly Func<object[], object?[]?, object?> _typedArrayByteOffsetGetterValue = TypedArrayPrototypeByteOffset;
+        private static readonly Func<object[], object?[]?, object?> _typedArrayByteLengthGetterValue = TypedArrayPrototypeByteLength;
         private static readonly Func<object[], object?[]?, object?> _typedArrayToStringValue = TypedArrayPrototypeToString;
         private static readonly Func<object[], object?[]?, object?> _typedArrayToLocaleStringValue = TypedArrayPrototypeToLocaleString;
         private static readonly Func<object[], object?[]?, object?> _typedArrayFindLastValue = TypedArrayPrototypeFindLast;
@@ -1003,6 +1006,9 @@ namespace JavaScriptRuntime
                 Configurable = true,
                 Get = _typedArrayLengthGetterValue
             });
+            DefineTypedArrayAccessor("buffer", _typedArrayBufferGetterValue);
+            DefineTypedArrayAccessor("byteOffset", _typedArrayByteOffsetGetterValue);
+            DefineTypedArrayAccessor("byteLength", _typedArrayByteLengthGetterValue);
             DefineBuiltinFunctionProperty(_typedArrayPrototypeValue, "sort", _typedArraySortValue, 1d);
             DefineBuiltinFunctionProperty(_typedArrayPrototypeValue, "toSorted", _typedArrayToSortedValue, 1d);
             DefineBuiltinFunctionProperty(_typedArrayPrototypeValue, "with", _typedArrayWithValue, 2d);
@@ -1091,6 +1097,31 @@ namespace JavaScriptRuntime
                 Writable = true,
                 Value = constructorValue
             });
+            if (PropertyDescriptorStore.TryGetOwn(constructorValue, "BYTES_PER_ELEMENT", out var bytesPerElement))
+            {
+                PropertyDescriptorStore.DefineOrUpdate(prototypeValue, "BYTES_PER_ELEMENT", new JsPropertyDescriptor
+                {
+                    Kind = JsPropertyDescriptorKind.Data,
+                    Enumerable = false,
+                    Configurable = false,
+                    Writable = false,
+                    Value = bytesPerElement.Value
+                });
+            }
+        }
+
+        private void DefineTypedArrayAccessor(
+            string name,
+            Func<object[], object?[]?, object?> getter)
+        {
+            JavaScriptRuntime.Function.InitializeFunctionInstance(getter, 0d, $"get {name}");
+            PropertyDescriptorStore.DefineOrUpdate(_typedArrayPrototypeValue, name, new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Accessor,
+                Enumerable = false,
+                Configurable = true,
+                Get = getter
+            });
         }
 
         private static object? TypedArrayPrototypeFindLast(object[] _, object?[]? args)
@@ -1141,6 +1172,25 @@ namespace JavaScriptRuntime
             }
 
             return typedArray.length;
+        }
+
+        private static object? TypedArrayPrototypeBuffer(object[] _, object?[]? __)
+            => GetTypedArrayReceiver("buffer").buffer;
+
+        private static object? TypedArrayPrototypeByteOffset(object[] _, object?[]? __)
+            => GetTypedArrayReceiver("byteOffset").byteOffset;
+
+        private static object? TypedArrayPrototypeByteLength(object[] _, object?[]? __)
+            => GetTypedArrayReceiver("byteLength").byteLength;
+
+        private static TypedArrayBase GetTypedArrayReceiver(string propertyName)
+        {
+            if (RuntimeServices.GetCurrentThis() is not TypedArrayBase typedArray)
+            {
+                throw new TypeError($"TypedArray.prototype.{propertyName} called on incompatible receiver");
+            }
+
+            return typedArray;
         }
 
         private static object? TypedArrayPrototypeToString(object[] _, object?[]? args)

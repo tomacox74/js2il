@@ -53,7 +53,14 @@ public static class Iterator
     {
         if (PrototypeChain.GetPrototypeOrNull(iterator) == null)
         {
-            PrototypeChain.SetPrototype(iterator, Prototype);
+            if (iterator is JsObject jsObject)
+            {
+                PrototypeChain.InitializePrototype(jsObject, Prototype);
+            }
+            else
+            {
+                PrototypeChain.SetPrototype(iterator, Prototype);
+            }
         }
     }
 
