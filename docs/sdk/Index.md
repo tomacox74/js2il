@@ -83,7 +83,7 @@ dynamic exports = module.Exports;
 Console.WriteLine((double)exports.add(1, 2));
 ```
 
-## Tutorials
+## [Tutorials](tutorials/Index.md)
 
 - [Getting started](tutorials/GettingStarted.md)
 - [MSBuild build task](tutorials/MSBuildBuildTask.md)
@@ -95,7 +95,7 @@ Console.WriteLine((double)exports.add(1, 2));
 - [Diagnostics + exceptions](tutorials/DiagnosticsAndExceptions.md)
 - [Module ids + discovery](tutorials/ModuleIdsAndDiscovery.md)
 
-## API reference
+## [API reference](api/Index.md)
 
 - [`JrocCompile` MSBuild task](api/JrocCompile.md)
 - [In-memory compiler APIs](api/InMemoryCompiler.md)
