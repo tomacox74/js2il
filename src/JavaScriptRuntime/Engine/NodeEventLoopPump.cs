@@ -5,7 +5,7 @@ namespace JavaScriptRuntime.EngineCore;
 ///
 /// This is intended to be owned by the single JS/runtime thread.
 /// </summary>
-public sealed class NodeEventLoopPump
+public sealed class NodeEventLoopPump : IDisposable
 {
     private sealed class NoOpFinalizationRegistryHost : IFinalizationRegistryHost
     {
@@ -23,8 +23,11 @@ public sealed class NodeEventLoopPump
     private readonly IFinalizationRegistryHost _finalizationHost;
 
     private readonly Queue<Action> _macro = new();
+    private readonly object _macroLock = new();
+    private readonly object _lifecycleLock = new();
 
     private readonly int _ownerThreadId;
+    private int _disposed;
 
     public NodeEventLoopPump(NodeSchedulerState state, ITickSource tickSource, IWaitHandle waitHandle, IFinalizationRegistryHost? finalizationHost = null)
     {
@@ -37,6 +40,10 @@ public sealed class NodeEventLoopPump
 
     private void ThrowIfNotOwnerThread()
     {
+        ObjectDisposedException.ThrowIf(
+            Volatile.Read(ref _disposed) != 0,
+            this);
+
         if (Environment.CurrentManagedThreadId != _ownerThreadId)
         {
             throw new InvalidOperationException(
@@ -47,31 +54,52 @@ public sealed class NodeEventLoopPump
     public bool HasPendingWork()
     {
         ThrowIfNotOwnerThread();
-        return _macro.Count > 0 || _state.HasPendingWork();
+        lock (_lifecycleLock)
+        {
+            ThrowIfNotOwnerThread();
+            lock (_macroLock)
+            {
+                return _macro.Count > 0 || _state.HasPendingWork();
+            }
+        }
     }
 
     public bool HasPendingWorkNow()
     {
         ThrowIfNotOwnerThread();
-        if (_macro.Count > 0)
+        lock (_lifecycleLock)
         {
-            return true;
-        }
+            ThrowIfNotOwnerThread();
+            lock (_macroLock)
+            {
+                if (_macro.Count > 0)
+                {
+                    return true;
+                }
+            }
 
-        var now = _tickSource.GetTicks();
-        return _state.HasPendingWorkNow(now);
+            var now = _tickSource.GetTicks();
+            return _state.HasPendingWorkNow(now);
+        }
     }
 
     public int GetWaitForWorkOrNextTimerMilliseconds(int maxWaitMs = 50)
     {
         ThrowIfNotOwnerThread();
-        if (_macro.Count > 0)
+        lock (_lifecycleLock)
         {
-            return 0;
-        }
+            ThrowIfNotOwnerThread();
+            lock (_macroLock)
+            {
+                if (_macro.Count > 0)
+                {
+                    return 0;
+                }
+            }
 
-        var now = _tickSource.GetTicks();
-        return _state.GetWaitForWorkOrNextTimerMilliseconds(now, maxWaitMs);
+            var now = _tickSource.GetTicks();
+            return _state.GetWaitForWorkOrNextTimerMilliseconds(now, maxWaitMs);
+        }
     }
 
     /// <summary>
@@ -93,44 +121,64 @@ public sealed class NodeEventLoopPump
     public void RunOneIteration()
     {
         ThrowIfNotOwnerThread();
-
-        _finalizationHost.ClearKeptObjects();
-        _finalizationHost.CollectAndQueueCleanupJobs(forceCollection: false);
-        DrainNextTicks();
-        DrainMicrotasks();
-        _finalizationHost.CollectAndQueueCleanupJobs(forceCollection: false);
-        DrainCleanupJobs();
-        DrainNextTicks();
-        DrainImmediatesOneTick();
-        PromoteOneDueTimerToMacro();
-
-        if (_macro.Count > 0)
+        lock (_lifecycleLock)
         {
-            _macro.Dequeue().Invoke();
+            ThrowIfNotOwnerThread();
+
+            _finalizationHost.ClearKeptObjects();
+            _finalizationHost.CollectAndQueueCleanupJobs(forceCollection: false);
             DrainNextTicks();
             DrainMicrotasks();
             _finalizationHost.CollectAndQueueCleanupJobs(forceCollection: false);
             DrainCleanupJobs();
-        }
+            DrainNextTicks();
+            DrainImmediatesOneTick();
+            PromoteOneDueTimerToMacro();
 
-        DrainNextTicks();
-        DrainMicrotasks();
-        _finalizationHost.CollectAndQueueCleanupJobs(forceCollection: false);
-        DrainCleanupJobs();
-        _finalizationHost.ClearKeptObjects();
+            Action? macro = null;
+            if (Volatile.Read(ref _disposed) == 0)
+            {
+                lock (_macroLock)
+                {
+                    if (_macro.Count > 0)
+                    {
+                        macro = _macro.Dequeue();
+                    }
+                }
+            }
+
+            if (macro != null)
+            {
+                macro.Invoke();
+                DrainNextTicks();
+                DrainMicrotasks();
+                _finalizationHost.CollectAndQueueCleanupJobs(forceCollection: false);
+                DrainCleanupJobs();
+            }
+
+            DrainNextTicks();
+            DrainMicrotasks();
+            _finalizationHost.CollectAndQueueCleanupJobs(forceCollection: false);
+            DrainCleanupJobs();
+            _finalizationHost.ClearKeptObjects();
+        }
     }
 
     public void WaitForWorkOrNextTimer(int maxWaitMs = 50)
     {
         ThrowIfNotOwnerThread();
-
-        int waitMs = GetWaitForWorkOrNextTimerMilliseconds(maxWaitMs);
-        if (waitMs == 0)
+        lock (_lifecycleLock)
         {
-            return;
-        }
+            ThrowIfNotOwnerThread();
 
-        _wakeup.WaitOne(waitMs);
+            int waitMs = GetWaitForWorkOrNextTimerMilliseconds(maxWaitMs);
+            if (waitMs == 0)
+            {
+                return;
+            }
+
+            _wakeup.WaitOne(waitMs);
+        }
     }
 
     private void DrainImmediatesOneTick(int max = 1024)
@@ -138,6 +186,11 @@ public sealed class NodeEventLoopPump
         int count = _state.GetImmediateCountSnapshot(max);
         for (int i = 0; i < count; i++)
         {
+            if (Volatile.Read(ref _disposed) != 0)
+            {
+                return;
+            }
+
             if (!_state.TryDequeueImmediate(out var callback) || callback == null)
             {
                 return;
@@ -160,6 +213,11 @@ public sealed class NodeEventLoopPump
         int count = _state.GetNextTickCountSnapshot(max);
         for (int i = 0; i < count; i++)
         {
+            if (Volatile.Read(ref _disposed) != 0)
+            {
+                return;
+            }
+
             if (!_state.TryDequeueNextTick(out var callback) || callback == null)
             {
                 return;
@@ -171,11 +229,19 @@ public sealed class NodeEventLoopPump
 
     private void PromoteOneDueTimerToMacro()
     {
+        if (Volatile.Read(ref _disposed) != 0)
+        {
+            return;
+        }
+
         var now = _tickSource.GetTicks();
 
         if (_state.TryDequeueDueTimer(now, out var entry))
         {
-            _macro.Enqueue(entry.Callback);
+            lock (_macroLock)
+            {
+                _macro.Enqueue(entry.Callback);
+            }
             _state.RescheduleIntervalFromNow(entry, now);
         }
     }
@@ -187,6 +253,11 @@ public sealed class NodeEventLoopPump
         int ticks = 0;
         while (ticks++ < max)
         {
+            if (Volatile.Read(ref _disposed) != 0)
+            {
+                return;
+            }
+
             // Maintain Node-like priority for process.nextTick, including those queued from microtasks.
             DrainNextTicks();
 
@@ -206,6 +277,11 @@ public sealed class NodeEventLoopPump
         int ticks = 0;
         while (ticks++ < max)
         {
+            if (Volatile.Read(ref _disposed) != 0)
+            {
+                return;
+            }
+
             if (!_state.TryDequeueCleanupJob(out var action) || action == null)
             {
                 break;
@@ -214,6 +290,22 @@ public sealed class NodeEventLoopPump
             action.Invoke();
             DrainNextTicks();
             DrainMicrotasks();
+        }
+    }
+
+    public void Dispose()
+    {
+        if (Interlocked.Exchange(ref _disposed, 1) != 0)
+        {
+            return;
+        }
+
+        lock (_lifecycleLock)
+        {
+            lock (_macroLock)
+            {
+                _macro.Clear();
+            }
         }
     }
 }

@@ -104,9 +104,14 @@ internal sealed class RuntimeAgent : IDisposable
     internal RuntimeAgent(RuntimeAgentCluster cluster)
     {
         Cluster = cluster;
+        Scheduling = new RuntimeAgentSchedulingState();
     }
 
     internal RuntimeAgentCluster Cluster { get; }
+
+    internal RuntimeAgentSchedulingState Scheduling { get; }
+
+    internal CancellationToken ShutdownToken => Scheduling.ShutdownToken;
 
     internal bool IsDisposed
     {
@@ -144,6 +149,24 @@ internal sealed class RuntimeAgent : IDisposable
         }
     }
 
+    internal void EnqueueFromExternalThread(Action callback)
+        => Scheduling.EnqueueFromExternalThread(callback);
+
+    internal void RequestShutdown()
+    {
+        lock (_gate)
+        {
+            if (_state == RuntimeOwnershipState.Disposed)
+            {
+                return;
+            }
+
+            _state = RuntimeOwnershipState.Disposing;
+        }
+
+        Scheduling.RequestShutdown();
+    }
+
     public void Dispose()
     {
         lock (_gate)
@@ -154,6 +177,7 @@ internal sealed class RuntimeAgent : IDisposable
             }
 
             _state = RuntimeOwnershipState.Disposing;
+            Scheduling.RequestShutdown();
             var realms = _realms.ToArray();
             _realms.Clear();
 
@@ -162,6 +186,7 @@ internal sealed class RuntimeAgent : IDisposable
                 realms[index].Dispose();
             }
 
+            Scheduling.Dispose();
             DisposalOrder = Cluster.NextDisposalOrder();
             _state = RuntimeOwnershipState.Disposed;
         }
@@ -199,6 +224,10 @@ internal sealed class RuntimeRealm : IDisposable
         Intrinsics = new RuntimeIntrinsics();
         Services = new ServiceContainer();
         Services.AttachOwningRealm(this);
+        Services.Register<EngineCore.ITickSource, EngineCore.TickSource>();
+        Services.Register<
+            EngineCore.IWaitHandle,
+            EngineCore.WaitHandle>();
     }
 
     internal RuntimeAgent Agent { get; }

@@ -1,4 +1,6 @@
 using System.Reflection;
+using JavaScriptRuntime.EngineCore;
+using JavaScriptRuntime.Node;
 
 namespace JavaScriptRuntime.DependencyInjection;
 
@@ -39,6 +41,8 @@ public class ServiceContainer
             _owningRealm = realm;
             _singletons[typeof(RuntimeAgentCluster)] = realm.Agent.Cluster;
             _singletons[typeof(RuntimeAgent)] = realm.Agent;
+            _singletons[typeof(RuntimeAgentSchedulingState)] = realm.Agent.Scheduling;
+            _singletons[typeof(AsyncContextRuntime)] = realm.Agent.Scheduling.AsyncContext;
             _singletons[typeof(RuntimeRealm)] = realm;
             _singletons[typeof(Modules.RuntimeModuleState)] = realm.ModuleState;
             _singletons[typeof(RuntimeRealmValueCacheState)] = realm.ValueCaches;
@@ -156,6 +160,12 @@ public class ServiceContainer
                 return existing;
             }
 
+            if (TryResolveAgentSchedulingService(serviceType, out var agentService))
+            {
+                _singletons[serviceType] = agentService;
+                return agentService;
+            }
+
             // Determine the actual type to instantiate
             var implementationType = ResolveImplementationType(serviceType);
 
@@ -215,7 +225,9 @@ public class ServiceContainer
         lock (_lock)
         {
             ThrowIfOwningRealmDisposed();
-            return _singletons.ContainsKey(typeof(T)) || _typeRegistrations.ContainsKey(typeof(T));
+            return _singletons.ContainsKey(typeof(T))
+                || _typeRegistrations.ContainsKey(typeof(T))
+                || IsAgentSchedulingServiceType(typeof(T));
         }
     }
 
@@ -302,9 +314,13 @@ public class ServiceContainer
 
         _singletons[typeof(RuntimeAgentCluster)] = _owningRealm.Agent.Cluster;
         _singletons[typeof(RuntimeAgent)] = _owningRealm.Agent;
+        _singletons[typeof(RuntimeAgentSchedulingState)] = _owningRealm.Agent.Scheduling;
+        _singletons[typeof(AsyncContextRuntime)] = _owningRealm.Agent.Scheduling.AsyncContext;
         _singletons[typeof(RuntimeRealm)] = _owningRealm;
         _singletons[typeof(Modules.RuntimeModuleState)] = _owningRealm.ModuleState;
         _singletons[typeof(RuntimeRealmValueCacheState)] = _owningRealm.ValueCaches;
+        _typeRegistrations[typeof(ITickSource)] = typeof(TickSource);
+        _typeRegistrations[typeof(IWaitHandle)] = typeof(EngineCore.WaitHandle);
     }
 
     private void ThrowIfOwningRealmDisposed()
@@ -320,13 +336,74 @@ public class ServiceContainer
         if (_owningRealm != null
             && (serviceType == typeof(RuntimeAgentCluster)
                 || serviceType == typeof(RuntimeAgent)
+                || serviceType == typeof(RuntimeAgentSchedulingState)
                 || serviceType == typeof(RuntimeRealm)
                 || serviceType == typeof(Modules.RuntimeModuleState)
-                || serviceType == typeof(RuntimeRealmValueCacheState)))
+                || serviceType == typeof(RuntimeRealmValueCacheState)
+                || IsAgentSchedulingServiceType(serviceType)))
         {
             throw new InvalidOperationException(
                 $"Runtime ownership service '{serviceType.Name}' cannot be replaced or removed.");
         }
+    }
+
+    private bool IsAgentSchedulingServiceType(Type serviceType)
+        => _owningRealm != null
+            && (serviceType == typeof(AsyncContextRuntime)
+                || serviceType == typeof(NodeSchedulerState)
+                || serviceType == typeof(NodeEventLoopPump)
+                || serviceType == typeof(IFinalizationRegistryHost)
+                || serviceType == typeof(ICleanupJobScheduler)
+                || serviceType == typeof(IMicrotaskScheduler)
+                || serviceType == typeof(IScheduler)
+                || serviceType == typeof(IIOScheduler));
+
+    private bool TryResolveAgentSchedulingService(
+        Type serviceType,
+        out object service)
+    {
+        if (_owningRealm == null)
+        {
+            service = null!;
+            return false;
+        }
+
+        var scheduling = _owningRealm.Agent.Scheduling;
+        if (serviceType == typeof(AsyncContextRuntime))
+        {
+            service = scheduling.AsyncContext;
+            return true;
+        }
+
+        if (serviceType == typeof(NodeSchedulerState)
+            || serviceType == typeof(ICleanupJobScheduler)
+            || serviceType == typeof(IMicrotaskScheduler)
+            || serviceType == typeof(IScheduler)
+            || serviceType == typeof(IIOScheduler))
+        {
+            service = scheduling.GetOrCreateScheduler(
+                Resolve<ITickSource>(),
+                Resolve<IWaitHandle>());
+            return true;
+        }
+
+        if (serviceType == typeof(IFinalizationRegistryHost))
+        {
+            service = scheduling.GetOrCreateFinalizationHost(
+                () => Resolve<NodeSchedulerState>());
+            return true;
+        }
+
+        if (serviceType == typeof(NodeEventLoopPump))
+        {
+            _ = Resolve<IFinalizationRegistryHost>();
+            service = scheduling.GetOrCreateEventLoop(
+                () => Resolve<NodeSchedulerState>());
+            return true;
+        }
+
+        service = null!;
+        return false;
     }
 
     private Type ResolveImplementationType(Type serviceType)

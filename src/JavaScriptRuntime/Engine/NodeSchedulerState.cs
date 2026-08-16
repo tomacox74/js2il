@@ -42,7 +42,12 @@ internal struct ImmediateEntry : IEquatable<ImmediateEntry>
 ///
 /// The event loop/message pump is responsible for draining and executing work.
 /// </summary>
-public sealed class NodeSchedulerState : IScheduler, IMicrotaskScheduler, ICleanupJobScheduler, IIOScheduler
+public sealed class NodeSchedulerState :
+    IScheduler,
+    IMicrotaskScheduler,
+    ICleanupJobScheduler,
+    IIOScheduler,
+    IDisposable
 {
     private long _nextTimerId = 0;
     private long _nextImmediateId = 0;
@@ -66,6 +71,7 @@ public sealed class NodeSchedulerState : IScheduler, IMicrotaskScheduler, IClean
     private readonly ITickSource _tickSource;
     private readonly IWaitHandle _wakeup;
     private readonly global::JavaScriptRuntime.Node.AsyncContextRuntime? _asyncContext;
+    private int _disposed;
 
     public NodeSchedulerState(ITickSource tickSource, IWaitHandle waitHandle)
         : this(tickSource, waitHandle, null)
@@ -84,6 +90,11 @@ public sealed class NodeSchedulerState : IScheduler, IMicrotaskScheduler, IClean
 
     internal bool HasPendingWork()
     {
+        if (Volatile.Read(ref _disposed) != 0)
+        {
+            return false;
+        }
+
         lock (_micro)
         {
             if (_micro.Count > 0) return true;
@@ -117,6 +128,11 @@ public sealed class NodeSchedulerState : IScheduler, IMicrotaskScheduler, IClean
 
     internal bool HasPendingWorkNow(long nowTicks)
     {
+        if (Volatile.Read(ref _disposed) != 0)
+        {
+            return false;
+        }
+
         lock (_micro)
         {
             if (_micro.Count > 0) return true;
@@ -287,6 +303,11 @@ public sealed class NodeSchedulerState : IScheduler, IMicrotaskScheduler, IClean
 
     internal void RescheduleIntervalFromNow(TimerEntry previous, long nowTicks)
     {
+        if (Volatile.Read(ref _disposed) != 0)
+        {
+            return;
+        }
+
         if (!previous.IsRepeating || previous.IntervalTicks <= 0)
         {
             return;
@@ -303,6 +324,11 @@ public sealed class NodeSchedulerState : IScheduler, IMicrotaskScheduler, IClean
 
         lock (_timerLock)
         {
+            if (Volatile.Read(ref _disposed) != 0)
+            {
+                return;
+            }
+
             _timers.Enqueue(nextEntry, nextEntry.DueTicks);
         }
 
@@ -322,6 +348,7 @@ public sealed class NodeSchedulerState : IScheduler, IMicrotaskScheduler, IClean
 
     object IScheduler.Schedule(Action action, TimeSpan delay)
     {
+        ThrowIfDisposed();
         action = CaptureContext(action);
         var now = _tickSource.GetTicks();
         var id = System.Threading.Interlocked.Increment(ref _nextTimerId);
@@ -337,6 +364,7 @@ public sealed class NodeSchedulerState : IScheduler, IMicrotaskScheduler, IClean
 
         lock (_timerLock)
         {
+            ThrowIfDisposed();
             _timers.Enqueue(entry, entry.DueTicks);
         }
 
@@ -346,6 +374,7 @@ public sealed class NodeSchedulerState : IScheduler, IMicrotaskScheduler, IClean
 
     void IScheduler.Cancel(object handle)
     {
+        ThrowIfDisposed();
         if (handle is TimerEntry entry)
         {
             lock (_timerLock)
@@ -358,6 +387,7 @@ public sealed class NodeSchedulerState : IScheduler, IMicrotaskScheduler, IClean
 
     object IScheduler.ScheduleInterval(Action action, TimeSpan interval)
     {
+        ThrowIfDisposed();
         action = CaptureContext(action);
         var now = _tickSource.GetTicks();
         var id = System.Threading.Interlocked.Increment(ref _nextTimerId);
@@ -376,6 +406,7 @@ public sealed class NodeSchedulerState : IScheduler, IMicrotaskScheduler, IClean
 
         lock (_timerLock)
         {
+            ThrowIfDisposed();
             _timers.Enqueue(entry, entry.DueTicks);
         }
 
@@ -385,6 +416,7 @@ public sealed class NodeSchedulerState : IScheduler, IMicrotaskScheduler, IClean
 
     void IScheduler.CancelInterval(object handle)
     {
+        ThrowIfDisposed();
         if (handle is TimerEntry entry)
         {
             lock (_timerLock)
@@ -397,21 +429,16 @@ public sealed class NodeSchedulerState : IScheduler, IMicrotaskScheduler, IClean
 
     object IScheduler.ScheduleImmediate(Action action)
     {
+        ThrowIfDisposed();
         action = CaptureContext(action);
-        var id = System.Threading.Interlocked.Increment(ref _nextImmediateId);
-        var entry = new ImmediateEntry { id = id, Callback = action };
-        lock (_immediateLock)
-        {
-            _immediate.Enqueue(entry);
-            _immediateIds.Add(entry.id);
-        }
-
+        var entry = EnqueueImmediate(action);
         _wakeup.Set();
         return entry;
     }
 
     void IScheduler.CancelImmediate(object handle)
     {
+        ThrowIfDisposed();
         if (handle is ImmediateEntry entry)
         {
             lock (_immediateLock)
@@ -428,9 +455,11 @@ public sealed class NodeSchedulerState : IScheduler, IMicrotaskScheduler, IClean
 
     void IMicrotaskScheduler.QueueMicrotask(Action task)
     {
+        ThrowIfDisposed();
         task = CaptureContext(task);
         lock (_micro)
         {
+            ThrowIfDisposed();
             _micro.Enqueue(task);
         }
 
@@ -439,9 +468,11 @@ public sealed class NodeSchedulerState : IScheduler, IMicrotaskScheduler, IClean
 
     void ICleanupJobScheduler.QueueCleanupJob(Action task)
     {
+        ThrowIfDisposed();
         task = CaptureContext(task);
         lock (_cleanup)
         {
+            ThrowIfDisposed();
             _cleanup.Enqueue(task);
         }
 
@@ -450,9 +481,11 @@ public sealed class NodeSchedulerState : IScheduler, IMicrotaskScheduler, IClean
 
     internal void QueueNextTick(Action task)
     {
+        ThrowIfDisposed();
         task = CaptureContext(task);
         lock (_nextTickLock)
         {
+            ThrowIfDisposed();
             _nextTick.Enqueue(task);
         }
 
@@ -461,7 +494,13 @@ public sealed class NodeSchedulerState : IScheduler, IMicrotaskScheduler, IClean
 
     public void BeginIo()
     {
-        System.Threading.Interlocked.Increment(ref _pendingIoCount);
+        ThrowIfDisposed();
+        Interlocked.Increment(ref _pendingIoCount);
+        if (Volatile.Read(ref _disposed) != 0)
+        {
+            CancelPendingIo();
+            ThrowIfDisposed();
+        }
     }
 
     public void EndIo(global::JavaScriptRuntime.PromiseWithResolvers promiseWithResolvers, object? result, bool isError = false)
@@ -491,24 +530,156 @@ public sealed class NodeSchedulerState : IScheduler, IMicrotaskScheduler, IClean
             }
         }
 
+        if (!TryQueueExternalImmediate(CompleteNow))
+        {
+            CancelPendingIo();
+        }
+    }
+
+    internal bool TryQueueExternalImmediate(Action action)
+    {
+        ArgumentNullException.ThrowIfNull(action);
+        if (Volatile.Read(ref _disposed) != 0)
+        {
+            return false;
+        }
+
+        _ = EnqueueImmediate(action);
         try
         {
-            ((IScheduler)this).ScheduleImmediate(CompleteNow);
+            _wakeup.Set();
         }
-        catch
+        catch (ObjectDisposedException) when (Volatile.Read(ref _disposed) != 0)
         {
-            try
+            return false;
+        }
+        catch (InvalidOperationException)
+        {
+            // The callback is already queued and hosted loops also poll for work.
+        }
+
+        return true;
+    }
+
+    internal bool TryQueueExternalNextTick(Action action)
+    {
+        ArgumentNullException.ThrowIfNull(action);
+        if (Volatile.Read(ref _disposed) != 0)
+        {
+            return false;
+        }
+
+        lock (_nextTickLock)
+        {
+            if (Volatile.Read(ref _disposed) != 0)
             {
-                // Fallback path: if enqueueing completion via ScheduleImmediate fails,
-                // queue it as a next-tick task so completion still runs on the event-loop
-                // thread and pending I/O does not remain elevated indefinitely.
-                QueueNextTick(CompleteNow);
+                return false;
             }
-            catch
-            {
-                // Last-resort fallback if queue signaling itself fails.
-                CompleteNow();
-            }
+
+            _nextTick.Enqueue(action);
+        }
+
+        try
+        {
+            _wakeup.Set();
+        }
+        catch (ObjectDisposedException) when (Volatile.Read(ref _disposed) != 0)
+        {
+            return false;
+        }
+        catch (InvalidOperationException)
+        {
+            // The owning event loop also polls for work.
+        }
+
+        return true;
+    }
+
+    internal long PendingIoCount => Interlocked.Read(ref _pendingIoCount);
+
+    internal void CancelPendingIo()
+    {
+        var value = Interlocked.Decrement(ref _pendingIoCount);
+        if (value < 0)
+        {
+            Interlocked.Exchange(ref _pendingIoCount, 0);
+        }
+    }
+
+    internal void SignalWakeup()
+    {
+        try
+        {
+            _wakeup.Set();
+        }
+        catch (ObjectDisposedException)
+        {
+        }
+    }
+
+    public void Dispose()
+    {
+        if (Interlocked.Exchange(ref _disposed, 1) != 0)
+        {
+            return;
+        }
+
+        SignalWakeup();
+
+        lock (_nextTickLock)
+        {
+            _nextTick.Clear();
+        }
+
+        lock (_immediateLock)
+        {
+            _immediate.Clear();
+            _immediateIds.Clear();
+            _canceledImmediates.Clear();
+        }
+
+        lock (_timerLock)
+        {
+            _timers.Clear();
+            _canceledIntervals.Clear();
+        }
+
+        lock (_micro)
+        {
+            _micro.Clear();
+        }
+
+        lock (_cleanup)
+        {
+            _cleanup.Clear();
+        }
+
+        Interlocked.Exchange(ref _pendingIoCount, 0);
+        if (_wakeup is IDisposable disposableWakeup)
+        {
+            disposableWakeup.Dispose();
+        }
+    }
+
+    private ImmediateEntry EnqueueImmediate(Action action)
+    {
+        var id = Interlocked.Increment(ref _nextImmediateId);
+        var entry = new ImmediateEntry { id = id, Callback = action };
+        lock (_immediateLock)
+        {
+            ThrowIfDisposed();
+            _immediate.Enqueue(entry);
+            _immediateIds.Add(entry.id);
+        }
+
+        return entry;
+    }
+
+    private void ThrowIfDisposed()
+    {
+        if (Volatile.Read(ref _disposed) != 0)
+        {
+            throw new ObjectDisposedException(nameof(NodeSchedulerState));
         }
     }
 

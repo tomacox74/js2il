@@ -43,6 +43,7 @@ internal sealed class JsRuntimeInstance : IDisposable
     // Service provider/sync context are thread-affine and created inside ThreadMain.
     private ServiceContainer? _serviceProvider;
     private NodeEventLoopPump? _eventLoop;
+    private RuntimeAgent? _agent;
 
     // Exports returned by CommonJS module evaluation (require(...) result).
     private object? _exports;
@@ -195,6 +196,8 @@ internal sealed class JsRuntimeInstance : IDisposable
         }
 
         FailPendingOperations();
+
+        _agent?.RequestShutdown();
 
         // Stop accepting work and wake the consuming enumerable.
         try
@@ -445,6 +448,7 @@ internal sealed class JsRuntimeInstance : IDisposable
                 isHostedExecution: true,
                 compiledAssemblyPath: _options?.CompiledAssemblyPath);
             _serviceProvider = serviceProvider;
+            _agent = serviceProvider.Resolve<RuntimeAgent>();
             executionScope = serviceProvider
                 .Resolve<RuntimeExecutionContext>()
                 .EnterAsRoot();
@@ -475,7 +479,8 @@ internal sealed class JsRuntimeInstance : IDisposable
             // Process cross-thread invocations serially, while also pumping the JS event loop
             // (including timers) even when the host is idle. This avoids deadlocks where a
             // Promise resolves via setTimeout/setInterval but no new host invocations arrive.
-            while (!_shutdown.IsCancellationRequested)
+            while (!_shutdown.IsCancellationRequested
+                && !_agent.ShutdownToken.IsCancellationRequested)
             {
                 int waitMs = _eventLoop.GetWaitForWorkOrNextTimerMilliseconds(maxWaitMs: 50);
 
@@ -511,10 +516,13 @@ internal sealed class JsRuntimeInstance : IDisposable
         {
             FailPendingOperations();
 
+            var agent = _agent;
             executionScope?.Dispose();
+            agent?.Dispose();
             _exports = null;
             _eventLoop = null;
             _serviceProvider = null;
+            _agent = null;
 
             // Mark thread termination before disposing shared resources.
             _terminated.TrySetResult();

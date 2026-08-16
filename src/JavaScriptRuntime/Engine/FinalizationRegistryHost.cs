@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace JavaScriptRuntime.EngineCore;
 
-internal sealed class FinalizationRegistryHost : IFinalizationRegistryHost
+internal sealed class FinalizationRegistryHost : IFinalizationRegistryHost, IDisposable
 {
     private readonly object _sync = new();
     private readonly ICleanupJobScheduler _cleanupScheduler;
@@ -92,6 +92,15 @@ internal sealed class FinalizationRegistryHost : IFinalizationRegistryHost
             {
                 HostJobCallbacks.HostCallJobCallback(jobCallback, v: null, argumentsList: System.Array.Empty<object?>());
             });
+        }
+    }
+
+    public void Dispose()
+    {
+        lock (_sync)
+        {
+            _registries.Clear();
+            _keptObjects.Clear();
         }
     }
 }

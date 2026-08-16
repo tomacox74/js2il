@@ -219,17 +219,13 @@ namespace JavaScriptRuntime.Node
 
         internal static void ScheduleOnEventLoop(NodeSchedulerState? scheduler, Action action)
         {
-            try
+            var targetScheduler =
+                scheduler
+                ?? GlobalThis.ServiceProvider?.Resolve<NodeSchedulerState>();
+            if (targetScheduler != null)
             {
-                var targetScheduler = scheduler ?? GlobalThis.ServiceProvider?.Resolve<NodeSchedulerState>();
-                if (targetScheduler != null)
-                {
-                    targetScheduler.QueueNextTick(action);
-                    return;
-                }
-            }
-            catch
-            {
+                _ = targetScheduler.TryQueueExternalNextTick(action);
+                return;
             }
 
             action();
@@ -237,20 +233,16 @@ namespace JavaScriptRuntime.Node
 
         internal static void ScheduleImmediateOnEventLoop(NodeSchedulerState? scheduler, Action action)
         {
-            try
+            var targetScheduler =
+                scheduler
+                ?? GlobalThis.ServiceProvider?.Resolve<NodeSchedulerState>();
+            if (targetScheduler != null)
             {
-                var targetScheduler = scheduler ?? GlobalThis.ServiceProvider?.Resolve<NodeSchedulerState>();
-                if (targetScheduler != null)
-                {
-                    ((IScheduler)targetScheduler).ScheduleImmediate(action);
-                    return;
-                }
-            }
-            catch
-            {
+                _ = targetScheduler.TryQueueExternalImmediate(action);
+                return;
             }
 
-            ScheduleOnEventLoop(scheduler, action);
+            action();
         }
 
         internal static PromiseWithResolvers CreateIoPromise(Action<object?>? onSuccess = null, Action<object?>? onError = null)
