@@ -6,6 +6,13 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- runtime: move timers, queues, pending I/O, event-loop pumping, async-hooks
+  context, finalization jobs, wake-up signaling, and cooperative cancellation
+  into `RuntimeAgentSchedulingState` (issue #1826). Realms in one agent share
+  one scheduling graph, separate agents run independently, external producers
+  only enqueue work for the receiver executor, and agent disposal clears all
+  referenced handles and queued work without affecting another agent.
+
 - runtime: move tagged-template objects, materialized class constructor values,
   and lazy class-method metadata containing captured scopes into a disposable
   `RuntimeRealmValueCacheState` (issue #1825). Repeated execution preserves

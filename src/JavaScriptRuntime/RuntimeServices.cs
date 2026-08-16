@@ -1802,21 +1802,10 @@ public class RuntimeServices
         container.RegisterInstance(HostRuntimeIntrinsicDescriptors.Empty);
         container.RegisterInstance(new ConsoleOutputSinks());
 
-        // Register default engine dependencies
-        container.Register<EngineCore.ITickSource, EngineCore.TickSource>();
-        container.Register<EngineCore.IWaitHandle, EngineCore.WaitHandle>();
-        container.Register<EngineCore.NodeSchedulerState>();
-        container.Register<EngineCore.NodeEventLoopPump>();
-        container.Register<EngineCore.ICleanupJobScheduler, EngineCore.NodeSchedulerState>();
-        container.Register<EngineCore.IMicrotaskScheduler, EngineCore.NodeSchedulerState>();
-        container.Register<EngineCore.IScheduler, EngineCore.NodeSchedulerState>();
-        container.Register<EngineCore.IIOScheduler, EngineCore.NodeSchedulerState>();
-        container.Register<EngineCore.IFinalizationRegistryHost, EngineCore.FinalizationRegistryHost>();
         container.Register<Modules.CommonJS.Require>();
         container.RegisterInstance<IPropertyDescriptorStore>(new PropertyDescriptorStore());
         container.Register<IEnvironment, DefaultEnvironment>();
         container.Register<Node.IChildProcessLauncher, Node.DefaultChildProcessLauncher>();
-        container.Register<Node.AsyncContextRuntime>();
         container.Register<Node.DiagnosticsChannelRuntime>();
 
         return container;

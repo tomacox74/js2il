@@ -61,7 +61,7 @@ public sealed partial class Dns
         {
             var addresses = await Task.Run(
                 () => ResolveAddresses(hostname, options)).ConfigureAwait(false);
-            ((IScheduler)scheduler).ScheduleImmediate(() =>
+            if (!scheduler.TryQueueExternalImmediate(() =>
             {
                 try
                 {
@@ -88,12 +88,15 @@ public sealed partial class Dns
                 {
                     scheduler.EndIo(lifetime, null);
                 }
-            });
+            }))
+            {
+                scheduler.CancelPendingIo();
+            }
         }
         catch (Exception ex)
         {
             var error = new DnsLookupError(hostname, ex);
-            ((IScheduler)scheduler).ScheduleImmediate(() =>
+            if (!scheduler.TryQueueExternalImmediate(() =>
             {
                 try
                 {
@@ -103,7 +106,10 @@ public sealed partial class Dns
                 {
                     scheduler.EndIo(lifetime, null);
                 }
-            });
+            }))
+            {
+                scheduler.CancelPendingIo();
+            }
         }
     }
 

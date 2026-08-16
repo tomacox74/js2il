@@ -5,6 +5,11 @@ JROC runtime state has three explicit lifetime owners:
 ```text
 RuntimeAgentCluster
   -> RuntimeAgent
+      -> RuntimeAgentSchedulingState
+          -> NodeSchedulerState
+          -> NodeEventLoopPump
+          -> AsyncContextRuntime
+          -> FinalizationRegistryHost
       -> RuntimeRealm
           -> RuntimeIntrinsics
           -> RuntimeModuleState
@@ -17,6 +22,10 @@ RuntimeAgentCluster
   resources intentionally shared across agents.
 - `RuntimeAgent` owns execution and scheduling lifecycle and can own one or
   more realms.
+- `RuntimeAgentSchedulingState` owns timers, queues, pending I/O, the event-loop
+  pump, async-hooks context, finalization jobs, wake-up signaling, and
+  cooperative cancellation. See
+  [Runtime agent scheduling](RuntimeAgentScheduling.md).
 - `RuntimeRealm` owns one JavaScript object graph and exactly one runtime
   `ServiceContainer`.
 - `RuntimeIntrinsics` owns the realm's well-known intrinsic object graph
@@ -44,14 +53,17 @@ the children are active. Disposing a child detaches it from its parent.
 Disposing a parent disposes children in reverse creation order, then marks the
 parent disposed. Disposal is idempotent.
 
-Runtime service containers register their realm, agent, and cluster as reserved
-services. Those registrations cannot be replaced or removed. Child DI scopes
-retain the same realm owner. After realm disposal, its service container and
-any child scopes reject further use.
+Runtime service containers register their realm, agent, cluster, and
+agent-scheduling services as reserved services. Those registrations cannot be
+replaced or removed. Realms in one agent resolve the same scheduler, event
+loop, async context, and finalization host. Child DI scopes retain the same
+owners. After realm disposal, its service container and any child scopes reject
+further use.
 
 The factory currently creates an isolated cluster, agent, realm, and service
 container for each `RuntimeServices.BuildServiceProvider()` call. Each realm
-owns its intrinsic graph, module state, and realm-created value caches.
+owns its intrinsic graph, module state, and realm-created value caches; its
+agent owns one scheduling graph.
 
 ## Intrinsic ownership
 
@@ -119,6 +131,9 @@ change observable semantics.
   agent, or cluster.
 - A cluster may reference its active agents.
 - An agent may reference its cluster and active realms.
+- An agent owns one scheduling graph and cancellation source. Its external
+  wake API queues work for the agent executor and never runs JavaScript on the
+  producer thread.
 - A realm may reference its agent, intrinsics graph, and service container.
 - A realm owns one module state object; no mutable module graph is
   process-wide.

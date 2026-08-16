@@ -1,6 +1,6 @@
 namespace JavaScriptRuntime.EngineCore;
 
-public class WaitHandle : IWaitHandle
+public class WaitHandle : IWaitHandle, IDisposable
 {
     private readonly AutoResetEvent _event = new(false);
 
@@ -12,5 +12,10 @@ public class WaitHandle : IWaitHandle
     public void WaitOne(int millisecondsTimeout)
     {
         _event.WaitOne(millisecondsTimeout);
+    }
+
+    public void Dispose()
+    {
+        _event.Dispose();
     }
 }

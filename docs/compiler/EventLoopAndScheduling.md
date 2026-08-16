@@ -63,6 +63,11 @@ The engine uses two distinct components:
 - `NodeSchedulerState` (thread-safe): owns the queues/timers state and implements `IScheduler` + `IMicrotaskScheduler`.
 - `NodeEventLoopPump` (JS thread only): drains `NodeSchedulerState` and executes callbacks.
 
+Both components, their wake handle, `AsyncContextRuntime`, finalization jobs,
+and cooperative cancellation are owned by one `RuntimeAgentSchedulingState`.
+All realms in an agent resolve that same graph; another agent has an independent
+graph. See [Runtime agent scheduling](../runtime/RuntimeAgentScheduling.md).
+
 ### Why Split Them?
 
 - The scheduler must be safe to call from multiple threads (e.g., hosting thread scheduling timers while the JS thread is running).
@@ -78,6 +83,10 @@ The engine uses two distinct components:
 - `clearInterval` marks the interval id as canceled; the pump will discard pending interval entries.
 
 When any work is scheduled or canceled, the scheduler signals a wake-up handle so the event loop can resume.
+
+Background producers use the agent's external wake path. It queues raw work
+without reading receiver async-context state on the producer thread; only the
+agent executor invokes the callback.
 
 ### Immediates
 
