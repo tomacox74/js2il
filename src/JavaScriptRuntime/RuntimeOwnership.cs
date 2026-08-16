@@ -16,6 +16,13 @@ internal sealed class RuntimeAgentCluster : IDisposable
     private RuntimeOwnershipState _state;
     private long _disposalSequence;
 
+    internal RuntimeAgentCluster()
+    {
+        SharedServices = new RuntimeAgentClusterSharedServices(this);
+    }
+
+    internal RuntimeAgentClusterSharedServices SharedServices { get; }
+
     internal bool IsDisposed
     {
         get
@@ -63,13 +70,13 @@ internal sealed class RuntimeAgentCluster : IDisposable
 
             _state = RuntimeOwnershipState.Disposing;
             var agents = _agents.ToArray();
-            _agents.Clear();
 
             for (var index = agents.Length - 1; index >= 0; index--)
             {
                 agents[index].Dispose();
             }
 
+            SharedServices.Dispose();
             DisposalOrder = NextDisposalOrder();
             _state = RuntimeOwnershipState.Disposed;
         }
@@ -78,11 +85,39 @@ internal sealed class RuntimeAgentCluster : IDisposable
     internal long NextDisposalOrder()
         => Interlocked.Increment(ref _disposalSequence);
 
+    internal T WhileAgentsActive<T>(
+        RuntimeAgent first,
+        RuntimeAgent? second,
+        Func<T> action)
+    {
+        lock (_gate)
+        {
+            ThrowIfDisposed();
+            if (!ReferenceEquals(first.Cluster, this)
+                || (second != null && !ReferenceEquals(second.Cluster, this)))
+            {
+                throw new InvalidOperationException(
+                    "Agent-cluster services cannot be used by an agent from another cluster.");
+            }
+
+            if (!_agents.Contains(first)
+                || (second != null && !_agents.Contains(second)))
+            {
+                throw new ObjectDisposedException(nameof(RuntimeAgent));
+            }
+
+            return action();
+        }
+    }
+
     internal void Detach(RuntimeAgent agent)
     {
         lock (_gate)
         {
-            _agents.Remove(agent);
+            if (_agents.Remove(agent))
+            {
+                SharedServices.RemoveAgent(agent, _agents.Count == 0);
+            }
         }
     }
 
@@ -105,11 +140,14 @@ internal sealed class RuntimeAgent : IDisposable
     {
         Cluster = cluster;
         Scheduling = new RuntimeAgentSchedulingState();
+        SymbolRegistry = new RuntimeAgentSymbolRegistry();
     }
 
     internal RuntimeAgentCluster Cluster { get; }
 
     internal RuntimeAgentSchedulingState Scheduling { get; }
+
+    internal RuntimeAgentSymbolRegistry SymbolRegistry { get; }
 
     internal CancellationToken ShutdownToken => Scheduling.ShutdownToken;
 
@@ -187,6 +225,7 @@ internal sealed class RuntimeAgent : IDisposable
             }
 
             Scheduling.Dispose();
+            SymbolRegistry.Dispose();
             DisposalOrder = Cluster.NextDisposalOrder();
             _state = RuntimeOwnershipState.Disposed;
         }

@@ -35,13 +35,33 @@ namespace JavaScriptRuntime
 
             var elementIndex = (int)elementIndexInteger;
             var expectedValue = TypeUtilities.ToInt32(value);
+            var timeoutMs = NormalizeTimeout(timeout);
+            var context = RuntimeExecutionContext.CurrentOrOverride;
+            var backingStore = ((SharedArrayBuffer)int32Array.buffer).BackingStore;
+            if (context != null
+                && ReferenceEquals(
+                    backingStore.Owner,
+                    context.Agent.Cluster.SharedServices))
+            {
+                return context.Agent.Cluster.SharedServices.Atomics.Wait(
+                    context.Agent,
+                    backingStore,
+                    checked((int)int32Array.byteOffset + (elementIndex * sizeof(int))),
+                    expectedValue,
+                    timeoutMs) switch
+                {
+                    RuntimeAtomicsWaitResult.NotEqual => "not-equal",
+                    RuntimeAtomicsWaitResult.Notified => "ok",
+                    _ => "timed-out"
+                };
+            }
+
             var actualValue = TypeUtilities.ToInt32(int32Array[(double)elementIndex]);
             if (actualValue != expectedValue)
             {
                 return "not-equal";
             }
 
-            var timeoutMs = NormalizeTimeout(timeout);
             if (timeoutMs > 0)
             {
                 global::System.Threading.Thread.Sleep(timeoutMs);

@@ -4,7 +4,13 @@ JROC runtime state has three explicit lifetime owners:
 
 ```text
 RuntimeAgentCluster
+  -> RuntimeAgentClusterSharedServices
+      -> RuntimeMessageTransportService
+      -> RuntimeBroadcastChannelRegistry
+      -> RuntimeSharedMemoryService
+      -> RuntimeAtomicsSynchronizationDomain
   -> RuntimeAgent
+      -> RuntimeAgentSymbolRegistry
       -> RuntimeAgentSchedulingState
           -> NodeSchedulerState
           -> NodeEventLoopPump
@@ -18,10 +24,10 @@ RuntimeAgentCluster
           -> RuntimeExecutionContext (while entered)
 ```
 
-- `RuntimeAgentCluster` owns agents and, in later migration stages, only
-  resources intentionally shared across agents.
-- `RuntimeAgent` owns execution and scheduling lifecycle and can own one or
-  more realms.
+- `RuntimeAgentCluster` owns agents and the deliberately cross-agent transport,
+  broadcast, shared-memory, and Atomics coordination services.
+- `RuntimeAgent` owns execution, scheduling, and global-symbol-registry
+  lifecycle and can own one or more realms.
 - `RuntimeAgentSchedulingState` owns timers, queues, pending I/O, the event-loop
   pump, async-hooks context, finalization jobs, wake-up signaling, and
   cooperative cancellation. See
@@ -47,6 +53,42 @@ RuntimeAgentCluster
   constructor objects, and lazy class-method metadata that captures scopes.
   See [Realm-created value caches](RuntimeRealmValueCaches.md).
 
+## Agent and agent-cluster services
+
+`RuntimeAgentSymbolRegistry` owns the mutable `Symbol.for`/`Symbol.keyFor`
+registry. Realms in one agent therefore share registered-symbol identity, while
+agents in the same process or cluster do not. Agent disposal clears both
+registry directions. Well-known symbol objects and the monotonic symbol debug
+identifier remain static: they are immutable identities/metadata, contain no
+realm object or callback, and cannot be mutated through JavaScript.
+
+`RuntimeAgentClusterSharedServices` is the only cluster-shared service graph:
+
+- `RuntimeMessageTransportService` owns entangled, ordered byte-message queues.
+  Its `RuntimeMessagePortCore` objects are transport endpoints, not
+  JavaScript-visible `MessagePort` wrappers. A producer copies the opaque
+  payload before enqueueing and never invokes JavaScript.
+- `RuntimeBroadcastChannelRegistry` owns named, ordered byte-message queues and
+  excludes the sending endpoint. Its endpoints are transport cores, not
+  JavaScript-visible `BroadcastChannel` wrappers or callbacks.
+- `RuntimeSharedMemoryService` creates cluster-associated
+  `RuntimeSharedArrayBufferBackingStore` instances. Each realm can create a
+  distinct `SharedArrayBuffer` wrapper over one backing store; attempts to wrap
+  a store in another cluster fail.
+- `RuntimeAtomicsSynchronizationDomain` coordinates waiters by backing-store
+  identity and byte offset. Waiters belong to agents and are cancelled when
+  their agent leaves the cluster.
+
+The transport and broadcast services retain an agent only while that agent has
+registered endpoints. Removing an agent closes and unregisters those endpoints
+and cancels its waiters. When the last agent leaves, live shared backing stores
+are released and all remaining wait state is cleared. Explicit cluster disposal
+also clears every service. These core services intentionally contain no global
+objects, module caches, prototypes, realm wrappers, JavaScript objects,
+delegates, or callbacks. Future `worker_threads` wrappers and structured-clone
+logic must remain realm-owned and use these narrow queue/backing-store
+boundaries.
+
 The child keeps a reference to its parent so services can receive the correct
 owner through constructor injection. Parents keep their children only while
 the children are active. Disposing a child detaches it from its parent.
@@ -54,11 +96,12 @@ Disposing a parent disposes children in reverse creation order, then marks the
 parent disposed. Disposal is idempotent.
 
 Runtime service containers register their realm, agent, cluster, and
-agent-scheduling services as reserved services. Those registrations cannot be
-replaced or removed. Realms in one agent resolve the same scheduler, event
-loop, async context, and finalization host. Child DI scopes retain the same
-owners. After realm disposal, its service container and any child scopes reject
-further use.
+agent/cluster services as reserved services. Those registrations cannot be
+replaced or removed. Realms in one agent resolve the same symbol registry,
+scheduler, event loop, async context, and finalization host. Agents in one
+cluster resolve the same transport, broadcast, shared-memory, and Atomics
+services. Child DI scopes retain the same owners. After realm disposal, its
+service container and any child scopes reject further use.
 
 The factory currently creates an isolated cluster, agent, realm, and service
 container for each `RuntimeServices.BuildServiceProvider()` call. Each realm
@@ -130,7 +173,12 @@ change observable semantics.
 - Process-wide code may retain immutable metadata, but not an active realm,
   agent, or cluster.
 - A cluster may reference its active agents.
+- A cluster owns transport and broadcast cores, shared backing-store
+  coordination, and the Atomics waiter domain, but never realm wrappers,
+  JavaScript callbacks, globals, prototypes, or module state.
 - An agent may reference its cluster and active realms.
+- An agent owns its mutable global symbol registry. Registered-symbol identity
+  is shared across that agent's realms and isolated from every other agent.
 - An agent owns one scheduling graph and cancellation source. Its external
   wake API queues work for the agent executor and never runs JavaScript on the
   producer thread.
@@ -145,3 +193,6 @@ change observable semantics.
   injection, but must not discover them through a second service locator.
 - Realm-created JavaScript objects must not be stored on an agent or cluster.
 - Cross-agent resources must not retain realm-created wrappers or callbacks.
+- Removing an agent unregisters every cluster endpoint/waiter that identifies
+  it. Removing the final agent releases the cluster's live shared-memory and
+  synchronization resources.
