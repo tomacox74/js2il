@@ -6,6 +6,39 @@ namespace Jroc.Tests.Integration;
 public class CheerioGeneratorTests
 {
     [Fact]
+    public void ResolveExecutableFromPath_ReturnsAbsoluteCommandPath()
+    {
+        var root = Path.Combine(
+            Path.GetTempPath(),
+            "Jroc.Tests",
+            nameof(ResolveExecutableFromPath_ReturnsAbsoluteCommandPath),
+            Guid.NewGuid().ToString("N"));
+        var commandPath = Path.Combine(root, "npm.cmd");
+
+        try
+        {
+            Directory.CreateDirectory(root);
+            File.WriteAllText(commandPath, string.Empty);
+
+            Assert.Equal(
+                Path.GetFullPath(commandPath),
+                ResolveExecutableFromPath(
+                    "npm.cmd",
+                    string.Join(
+                        Path.PathSeparator,
+                        Path.Combine(root, "missing"),
+                        root)));
+        }
+        finally
+        {
+            if (Directory.Exists(root))
+            {
+                Directory.Delete(root, recursive: true);
+            }
+        }
+    }
+
+    [Fact]
     [Trait("Category", "ReleaseOnly")]
     public void Compile_Cheerio_1_2_0()
     {
@@ -72,7 +105,9 @@ public class CheerioGeneratorTests
 
     private static void InstallFixture(string root)
     {
-        var npmFileName = OperatingSystem.IsWindows() ? "npm.cmd" : "npm";
+        var npmFileName = OperatingSystem.IsWindows()
+            ? ResolveExecutableFromPath("npm.cmd", Environment.GetEnvironmentVariable("PATH"))
+            : "npm";
         var startInfo = new ProcessStartInfo
         {
             FileName = npmFileName,
@@ -98,6 +133,24 @@ public class CheerioGeneratorTests
             $"npm ci failed with exit code {process.ExitCode}.{Environment.NewLine}" +
             $"STDOUT:{Environment.NewLine}{standardOutput}{Environment.NewLine}" +
             $"STDERR:{Environment.NewLine}{standardError}");
+    }
+
+    private static string ResolveExecutableFromPath(string fileName, string? pathValue)
+    {
+        foreach (var pathEntry in (pathValue ?? string.Empty).Split(
+                     Path.PathSeparator,
+                     StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+        {
+            var candidate = Path.Combine(pathEntry.Trim('"'), fileName);
+            if (File.Exists(candidate))
+            {
+                return Path.GetFullPath(candidate);
+            }
+        }
+
+        throw new FileNotFoundException(
+            $"Could not locate '{fileName}' on PATH.",
+            fileName);
     }
 
     private static string FindRepositoryRoot()
