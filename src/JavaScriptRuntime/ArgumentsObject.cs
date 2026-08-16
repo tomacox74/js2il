@@ -8,7 +8,7 @@ using System.Reflection;
 
 namespace JavaScriptRuntime;
 
-public sealed class ArgumentsObject : IDictionary<string, object?>
+public sealed class ArgumentsObject : JsObject, IExoticJsObject, IDictionary<string, object?>
 {
     private static readonly ConcurrentDictionary<(Type ScopeType, string Name), FieldInfo?> _fieldCache = new();
     private static readonly Func<object[], object?[], object?> _restrictedCalleeAccessor = static (_, __) =>
@@ -41,7 +41,7 @@ public sealed class ArgumentsObject : IDictionary<string, object?>
         PrototypeChain.InitializePrototype(this, GlobalThis.ObjectPrototypeValue);
     }
 
-    public object? this[string key]
+    public override object? this[string key]
     {
         get
         {
@@ -52,20 +52,20 @@ public sealed class ArgumentsObject : IDictionary<string, object?>
 
             throw new KeyNotFoundException($"Key '{key}' not found.");
         }
-        set => SetValue(key, value);
+        set => SetArgumentValue(key, value);
     }
 
-    public ICollection<string> Keys => EnumerateOwnKeys().ToArray();
+    public new ICollection<string> Keys => EnumerateOwnKeys().ToArray();
 
-    public ICollection<object?> Values => EnumerateOwnKeys().Select(key => this[key]).ToArray();
+    public new ICollection<object?> Values => EnumerateOwnKeys().Select(key => this[key]).ToArray();
 
-    public int Count => EnumerateOwnKeys().Count();
+    public new int Count => EnumerateOwnKeys().Count();
 
-    public bool IsReadOnly => false;
+    public new bool IsReadOnly => false;
 
-    public void Add(string key, object? value) => SetValue(key, value);
+    public override void Add(string key, object? value) => SetArgumentValue(key, value);
 
-    public bool ContainsKey(string key)
+    public override bool ContainsKey(string key)
     {
         if (string.Equals(key, "length", StringComparison.Ordinal))
         {
@@ -90,7 +90,7 @@ public sealed class ArgumentsObject : IDictionary<string, object?>
         return _extraProperties?.ContainsKey(key) ?? false;
     }
 
-    public bool Remove(string key)
+    public override bool Remove(string key)
     {
         if (string.Equals(key, "length", StringComparison.Ordinal))
         {
@@ -143,7 +143,7 @@ public sealed class ArgumentsObject : IDictionary<string, object?>
         return _extraProperties?.Remove(key) ?? false;
     }
 
-    public bool TryGetValue(string key, out object? value)
+    public override bool TryGetValue(string key, out object? value)
     {
         if (string.Equals(key, "length", StringComparison.Ordinal))
         {
@@ -197,9 +197,9 @@ public sealed class ArgumentsObject : IDictionary<string, object?>
         return false;
     }
 
-    public void Add(KeyValuePair<string, object?> item) => SetValue(item.Key, item.Value);
+    public new void Add(KeyValuePair<string, object?> item) => SetArgumentValue(item.Key, item.Value);
 
-    public void Clear()
+    public override void Clear()
     {
         for (var i = 0; i < _indexedPresent.Length; i++)
         {
@@ -216,10 +216,10 @@ public sealed class ArgumentsObject : IDictionary<string, object?>
         PropertyDescriptorStore.Delete(this, "callee");
     }
 
-    public bool Contains(KeyValuePair<string, object?> item)
+    public override bool Contains(KeyValuePair<string, object?> item)
         => TryGetValue(item.Key, out var value) && Equals(value, item.Value);
 
-    public void CopyTo(KeyValuePair<string, object?>[] array, int arrayIndex)
+    public new void CopyTo(KeyValuePair<string, object?>[] array, int arrayIndex)
     {
         foreach (var item in this)
         {
@@ -227,10 +227,10 @@ public sealed class ArgumentsObject : IDictionary<string, object?>
         }
     }
 
-    public bool Remove(KeyValuePair<string, object?> item)
+    public new bool Remove(KeyValuePair<string, object?> item)
         => Contains(item) && Remove(item.Key);
 
-    public IEnumerator<KeyValuePair<string, object?>> GetEnumerator()
+    public new IEnumerator<KeyValuePair<string, object?>> GetEnumerator()
     {
         foreach (var key in EnumerateOwnKeys())
         {
@@ -373,7 +373,63 @@ descriptorKeys:
         field?.SetValue(_scopeInstance, value);
     }
 
-    private void SetValue(string key, object? value)
+    internal override bool TryGetOwnPropertyValue(string key, out object? value)
+    {
+        return TryGetValue(key, out value);
+    }
+
+    internal override bool HasOwnPropertyValue(string key)
+        => ContainsKey(key);
+
+    internal override bool SetOwnPropertyValue(string key, object? value)
+    {
+        SetArgumentValue(key, value);
+        return true;
+    }
+
+    internal override bool DefineOwnProperty(string key, JsPropertyDescriptor descriptor)
+    {
+        if (descriptor.Kind == JsPropertyDescriptorKind.Data)
+        {
+            SetArgumentValue(key, descriptor.Value);
+        }
+
+        PropertyDescriptorStore.DefineOrUpdate(this, key, descriptor);
+        return true;
+    }
+
+    internal override bool DeleteOwnProperty(string key)
+    {
+        if (!ContainsKey(key))
+        {
+            return true;
+        }
+
+        if (!Remove(key))
+        {
+            return false;
+        }
+
+        PropertyDescriptorStore.Delete(this, key);
+        return true;
+    }
+
+    internal override IEnumerable<string> GetOwnPropertyKeys()
+    {
+        var keys = new List<string>();
+        var seen = new HashSet<string>(StringComparer.Ordinal);
+        foreach (var key in base.GetOwnPropertyKeys().Concat(EnumerateOwnKeys()))
+        {
+            if (!PropertyDescriptorStore.IsDeleted(this, key) && seen.Add(key))
+            {
+                keys.Add(key);
+            }
+        }
+
+        return keys;
+    }
+
+    private void SetArgumentValue(string key, object? value)
     {
         if (string.Equals(key, "length", StringComparison.Ordinal))
         {
@@ -455,7 +511,7 @@ descriptorKeys:
         });
     }
 
-    private sealed class ValueIterator : IJavaScriptIterator
+    private sealed class ValueIterator : JsObject, IJavaScriptIterator
     {
         private readonly ArgumentsObject _argumentsObject;
         private int _index;

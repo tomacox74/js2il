@@ -404,7 +404,7 @@ namespace JavaScriptRuntime
             => args != null && args.Length > index ? args[index] : null;
 
         private void InitializeIntrinsicSurface()
-            => PrototypeChain.SetPrototype(this, Prototype);
+            => PrototypeChain.InitializePrototype(this, Prototype);
 
         private static int GetHexDigitValue(char value)
             => value switch

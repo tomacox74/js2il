@@ -8,8 +8,6 @@ public sealed class JsObjectRepresentationInventoryTests
     private const string ErrorReason = "Must remain an Exception for CLR throw/catch mechanics pending the dedicated Error design.";
     private const string HostIteratorReason = "Preserves host iterator adaptation and needs a focused iterator migration.";
     private const string IteratorReason = "Must migrate with its owning iterator family to preserve exhaustion and mutation behavior.";
-    private const string TypedArrayReason = "Requires the dedicated TypedArrayBase exotic-object migration.";
-
     private static readonly string[] ExplicitJavaScriptVisibleTypeNames =
     [
         "JavaScriptRuntime.ArgumentsObject",
@@ -32,20 +30,13 @@ public sealed class JsObjectRepresentationInventoryTests
             ["JavaScriptRuntime.AbortController"] = "Requires the AbortController and AbortSignal migration.",
             ["JavaScriptRuntime.AbortSignal"] = "Requires the AbortController and AbortSignal migration.",
             ["JavaScriptRuntime.AggregateError"] = ErrorReason,
-            ["JavaScriptRuntime.ArgumentsObject"] = "Requires the dedicated ArgumentsObject exotic-object migration.",
-            ["JavaScriptRuntime.ArgumentsObject+ValueIterator"] = "Must migrate with ArgumentsObject to preserve mapped-parameter behavior.",
             ["JavaScriptRuntime.Array+ArrayIterator"] = IteratorReason,
             ["JavaScriptRuntime.ArrayBuffer"] = BufferViewReason,
             ["JavaScriptRuntime.DataView"] = BufferViewReason,
             ["JavaScriptRuntime.Error"] = ErrorReason,
             ["JavaScriptRuntime.EvalError"] = ErrorReason,
             ["JavaScriptRuntime.FinalizationRegistry"] = "Requires a dedicated internal-slot wrapper migration.",
-            ["JavaScriptRuntime.Float32Array"] = TypedArrayReason,
-            ["JavaScriptRuntime.Float64Array"] = TypedArrayReason,
             ["JavaScriptRuntime.ForInIterator"] = IteratorReason,
-            ["JavaScriptRuntime.Int16Array"] = TypedArrayReason,
-            ["JavaScriptRuntime.Int32Array"] = TypedArrayReason,
-            ["JavaScriptRuntime.Int8Array"] = TypedArrayReason,
             ["JavaScriptRuntime.IntlNumberFormat"] = "Needs a dedicated Intl wrapper migration once its constructor surface expands.",
             ["JavaScriptRuntime.IntlSegmenter"] = "Needs a dedicated Intl wrapper migration once its constructor surface expands.",
             ["JavaScriptRuntime.Iterator+DropIteratorHelper"] = IteratorReason,
@@ -58,7 +49,6 @@ public sealed class JsObjectRepresentationInventoryTests
             ["JavaScriptRuntime.Iterator+TakeIteratorHelper"] = IteratorReason,
             ["JavaScriptRuntime.IteratorResultObject"] = "Requires the dedicated iterator result and helper migration.",
             ["JavaScriptRuntime.IteratorResultObject`1"] = "Requires the dedicated iterator result and helper migration.",
-            ["JavaScriptRuntime.Node.Buffer"] = BufferViewReason,
             ["JavaScriptRuntime.Node.Events+EventEmitterAsyncOnIterator"] = HostIteratorReason,
             ["JavaScriptRuntime.Node.TimersPromises+TimersPromisesIntervalIterator"] = HostIteratorReason,
             ["JavaScriptRuntime.Node.URL"] = "Requires the URL and URLSearchParams migration.",
@@ -79,13 +69,7 @@ public sealed class JsObjectRepresentationInventoryTests
             ["JavaScriptRuntime.SuppressedError"] = ErrorReason,
             ["JavaScriptRuntime.Symbol"] = "Primitive representation with dedicated identity semantics.",
             ["JavaScriptRuntime.SyntaxError"] = ErrorReason,
-            ["JavaScriptRuntime.TypedArrayBase"] = TypedArrayReason,
-            ["JavaScriptRuntime.TypedArrayIterator"] = TypedArrayReason,
             ["JavaScriptRuntime.TypeError"] = ErrorReason,
-            ["JavaScriptRuntime.Uint16Array"] = TypedArrayReason,
-            ["JavaScriptRuntime.Uint32Array"] = TypedArrayReason,
-            ["JavaScriptRuntime.Uint8Array"] = TypedArrayReason,
-            ["JavaScriptRuntime.Uint8ClampedArray"] = TypedArrayReason,
             ["JavaScriptRuntime.URIError"] = ErrorReason,
             ["JavaScriptRuntime.WeakRef"] = "Requires a dedicated internal-slot wrapper migration.",
         };

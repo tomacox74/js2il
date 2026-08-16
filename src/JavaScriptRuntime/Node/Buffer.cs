@@ -8,7 +8,7 @@ using System.Text;
 namespace JavaScriptRuntime.Node
 {
     [IntrinsicObject("Buffer")]
-    public sealed class Buffer
+    public sealed class Buffer : JsObject
     {
         private readonly byte[] _bytes;
         private readonly int _offset;

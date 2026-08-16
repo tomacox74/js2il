@@ -52,6 +52,18 @@ public class PrototypeStorageBenchmarks
     public JavaScriptRuntime.Promise ConstructPromise()
         => (JavaScriptRuntime.Promise)JavaScriptRuntime.Promise.resolve(null)!;
 
+    [Benchmark(Description = "Typed array with initialized prototype")]
+    public JavaScriptRuntime.Uint8Array ConstructTypedArray()
+        => new(0d);
+
+    [Benchmark(Description = "Arguments object with initialized prototype")]
+    public JavaScriptRuntime.ArgumentsObject ConstructArgumentsObject()
+        => new(null, null, null, null);
+
+    [Benchmark(Description = "Buffer with inline ordinary properties")]
+    public JavaScriptRuntime.Node.Buffer ConstructBuffer()
+        => new(System.Array.Empty<byte>());
+
     [Benchmark(Description = "Ordinary object with initialized prototype")]
     public JavaScriptRuntime.JsObject ConstructOrdinaryObject()
     {

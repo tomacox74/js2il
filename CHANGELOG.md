@@ -38,6 +38,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   moving Promise, generator, and async-generator wrappers to `JsObject` inline
   property/prototype storage.
 
+- runtime: continue #1580's incremental built-in representation migration by
+  moving typed-array views, Arguments objects, and Buffer wrappers to
+  `JsObject` inline property/prototype storage while retaining their exotic
+  indexed and mapped-parameter slots.
+
 - runtime/test262: expose SharedArrayBuffer as a first-class global constructor
   with standard constructor/prototype metadata and receiver-checked
   `byteLength`, `maxByteLength`, and `growable` accessors. Activates twenty

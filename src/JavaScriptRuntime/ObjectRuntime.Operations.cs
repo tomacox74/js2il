@@ -3920,6 +3920,7 @@ namespace JavaScriptRuntime
             }
 
             if (target is JsObject jsObject
+                && target is not JavaScriptRuntime.Node.Buffer
                 && target is not JsClassConstructorObject)
             {
                 return jsObject.GetOwnPropertyDescriptor(propName, out descriptor)
@@ -4361,6 +4362,7 @@ namespace JavaScriptRuntime
             }
 
             if (target is JsObject jsObject
+                && target is not JavaScriptRuntime.Node.Buffer
                 && target is not JsClassConstructorObject)
             {
                 return jsObject.TryGetBoxedValue(propName, receiverForAccessors, out value);
@@ -5727,6 +5729,23 @@ namespace JavaScriptRuntime
                 throw new TypeError($"Cannot access restricted function property '{name}'");
             }
 
+            if (obj is JavaScriptRuntime.Node.Buffer nodeBuffer
+                && TryGetOwnPropertyValue(nodeBuffer, name, out var bufferValue))
+            {
+                return bufferValue;
+            }
+
+            if (obj is JavaScriptRuntime.Node.Buffer
+                && TryGetClrMemberValue(
+                    obj.GetType(),
+                    obj,
+                    name,
+                    BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase,
+                    out bufferValue))
+            {
+                return bufferValue;
+            }
+
             if (obj is JsObject jsObject
                 && jsObject.TryGetBoxedValue(name, obj, out var jsObjectValue))
             {
@@ -6163,6 +6182,14 @@ namespace JavaScriptRuntime
             }
 
             InvalidateRegExpWellKnownSymbolFastPath(obj, name);
+
+            if (obj is TypedArrayBase typedArray
+                && TryParseCanonicalIndexString(name, out var typedArrayIndex))
+            {
+                typedArray.SetFromDouble(typedArrayIndex, TypeUtilities.ToNumber(value));
+                return value;
+            }
+
             var hasOwn = HasOwnProperty(obj, name);
             // Proxy set trap
             if (obj is JavaScriptRuntime.Proxy proxy)
@@ -6225,6 +6252,15 @@ namespace JavaScriptRuntime
                 }
 
                 throw new TypeError($"Cannot assign to property '{name}' of object");
+            }
+
+            if (hasOwn
+                && obj is JsObject exoticObject
+                && exoticObject is IExoticJsObject
+                && !PropertyDescriptorStore.TryGetOwn(obj, name, out _)
+                && exoticObject.SetOwnPropertyValue(name, value))
+            {
+                return value;
             }
 
             // Descriptor-defined own property handling (accessors + writable enforcement)

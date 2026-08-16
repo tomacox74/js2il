@@ -5,7 +5,7 @@ using System.Runtime.CompilerServices;
 
 namespace JavaScriptRuntime
 {
-    public abstract class TypedArrayBase
+    public abstract class TypedArrayBase : JsObject, IExoticJsObject
     {
         private ArrayBuffer _buffer = new ArrayBuffer();
         private int _byteOffset;
@@ -947,7 +947,7 @@ namespace JavaScriptRuntime
 
         private void InitializeIntrinsicSurface()
         {
-            PrototypeChain.SetPrototype(this, GlobalThis.GetTypedArrayInstancePrototype(this));
+            PrototypeChain.InitializePrototype(this, GlobalThis.GetTypedArrayInstancePrototype(this));
             PropertyDescriptorStore.DefineOrUpdate(this, Symbol.iterator.DebugId, new JsPropertyDescriptor
             {
                 Kind = JsPropertyDescriptorKind.Data,
@@ -964,6 +964,106 @@ namespace JavaScriptRuntime
                 Writable = false,
                 Value = TypedArrayName
             });
+        }
+
+        internal override bool TryGetInvariantOwnPropertyValue(string key, out object? value)
+        {
+            if (ObjectRuntime.TryParseCanonicalIndexString(key, out var index)
+                && (uint)index < (uint)GetCurrentLengthOrZero())
+            {
+                value = ReadElementValue(index);
+                return true;
+            }
+
+            value = null;
+            return false;
+        }
+
+        internal override bool TryGetOwnPropertyValue(string key, out object? value)
+        {
+            if (TryGetInvariantOwnPropertyValue(key, out value))
+            {
+                return true;
+            }
+
+            if (PropertyDescriptorStore.GetOwnLookupCore(this, key, out _) == PropertyDescriptorLookup.None)
+            {
+                if (string.Equals(key, "BYTES_PER_ELEMENT", StringComparison.Ordinal))
+                {
+                    value = BYTES_PER_ELEMENT;
+                    return true;
+                }
+
+                if (string.Equals(key, Symbol.toStringTag.DebugId, StringComparison.Ordinal))
+                {
+                    value = TypedArrayName;
+                    return true;
+                }
+            }
+
+            return base.TryGetOwnPropertyValue(key, out value);
+        }
+
+        internal override bool HasOwnPropertyValue(string key)
+            => (ObjectRuntime.TryParseCanonicalIndexString(key, out var index)
+                && (uint)index < (uint)GetCurrentLengthOrZero())
+                || base.HasOwnPropertyValue(key);
+
+        internal override bool SetOwnPropertyValue(string key, object? value)
+        {
+            if (ObjectRuntime.TryParseCanonicalIndexString(key, out var index))
+            {
+                return TrySetElementValue(index, value);
+            }
+
+            return base.SetOwnPropertyValue(key, value);
+        }
+
+        internal override bool DefineOwnProperty(string key, JsPropertyDescriptor descriptor)
+        {
+            if (!ObjectRuntime.TryParseCanonicalIndexString(key, out var index)
+                || (uint)index >= (uint)GetCurrentLengthOrZero())
+            {
+                return base.DefineOwnProperty(key, descriptor);
+            }
+
+            if (descriptor.Kind != JsPropertyDescriptorKind.Data
+                || descriptor.Configurable
+                || !descriptor.Enumerable
+                || !descriptor.Writable)
+            {
+                return false;
+            }
+
+            WriteElementValue(index, TypeUtilities.ToNumber(descriptor.Value));
+            return true;
+        }
+
+        internal override bool DeleteOwnProperty(string key)
+        {
+            if (ObjectRuntime.TryParseCanonicalIndexString(key, out var index)
+                && (uint)index < (uint)GetCurrentLengthOrZero())
+            {
+                return false;
+            }
+
+            return base.DeleteOwnProperty(key);
+        }
+
+        internal override IEnumerable<string> GetOwnPropertyKeys()
+        {
+            var keys = new List<string>();
+            for (var index = 0; index < GetCurrentLengthOrZero(); index++)
+            {
+                var key = index.ToString(System.Globalization.CultureInfo.InvariantCulture);
+                if (!PropertyDescriptorStore.IsDeleted(this, key))
+                {
+                    keys.Add(key);
+                }
+            }
+
+            keys.AddRange(base.GetOwnPropertyKeys().Where(key => !keys.Contains(key, StringComparer.Ordinal)));
+            return keys;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -1381,7 +1481,7 @@ namespace JavaScriptRuntime
         Entries
     }
 
-    internal sealed class TypedArrayIterator : IJavaScriptIterator
+    internal sealed class TypedArrayIterator : JsObject, IJavaScriptIterator
     {
         private readonly TypedArrayBase _typedArray;
         private readonly TypedArrayIteratorKind _kind;

@@ -127,6 +127,6 @@ namespace JavaScriptRuntime
             => new Uint8ClampedArray(buffer, byteOffset, length);
 
         private void InitializeIntrinsicSurface()
-            => PrototypeChain.SetPrototype(this, Prototype);
+            => PrototypeChain.InitializePrototype(this, Prototype);
     }
 }
