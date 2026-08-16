@@ -9,17 +9,15 @@ namespace JavaScriptRuntime
     [IntrinsicObject("Math")]
     public static class Math
     {
-        private static readonly System.Random _random = new System.Random();
-
-    // 20.2.1 Value Properties of the Math Object
-    public static double E => global::System.Math.E;
-    public static double LN10 => global::System.Math.Log(10.0);
-    public static double LN2 => global::System.Math.Log(2.0);
-    public static double LOG10E => global::System.Math.Log10(global::System.Math.E);
-    public static double LOG2E => global::System.Math.Log(global::System.Math.E, 2.0);
-    public static double PI => global::System.Math.PI;
-    public static double SQRT1_2 => global::System.Math.Sqrt(0.5);
-    public static double SQRT2 => global::System.Math.Sqrt(2.0);
+        // 20.2.1 Value Properties of the Math Object
+        public static double E => global::System.Math.E;
+        public static double LN10 => global::System.Math.Log(10.0);
+        public static double LN2 => global::System.Math.Log(2.0);
+        public static double LOG10E => global::System.Math.Log10(global::System.Math.E);
+        public static double LOG2E => global::System.Math.Log(global::System.Math.E, 2.0);
+        public static double PI => global::System.Math.PI;
+        public static double SQRT1_2 => global::System.Math.Sqrt(0.5);
+        public static double SQRT2 => global::System.Math.Sqrt(2.0);
 
         /// <summary>
         /// Math.ceil(x): returns the smallest integer greater than or equal to x.
@@ -67,13 +65,13 @@ namespace JavaScriptRuntime
             if (d == 0) return d; // preserve +0/-0 when the argument already equals zero
 
             double r = System.Math.Floor(d + 0.5);
-            
+
             // ECMAScript spec: if result is 0 and input was negative, return -0
             if (r == 0.0 && d < 0.0)
             {
                 return -0.0;
             }
-            
+
             return r;
         }
 
@@ -199,7 +197,7 @@ namespace JavaScriptRuntime
         public static double random()
         {
             // 0 <= x < 1
-            return _random.NextDouble();
+            return System.Random.Shared.NextDouble();
         }
 
         public static double cbrt(object? x)

@@ -178,6 +178,8 @@ change observable semantics.
 
 ## Reference rules
 
+- The complete mutable-static ownership matrix and its executable guard are
+  documented in [Runtime static-state ownership](RuntimeStaticState.md).
 - Process-wide code may retain immutable metadata, but not an active realm,
   agent, or cluster.
 - A cluster may reference its active agents.

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Frozen;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -8,7 +9,7 @@ namespace JavaScriptRuntime.Node
 {
     public static class NodeModuleRegistry
     {
-        private static readonly Lazy<Dictionary<string, Type>> ModulesByName = new(() =>
+        private static readonly Lazy<FrozenDictionary<string, Type>> ModulesByName = new(() =>
         {
             var asm = typeof(NodeModuleAttribute).Assembly;
             var modules = new Dictionary<string, Type>(StringComparer.OrdinalIgnoreCase);
@@ -30,10 +31,10 @@ namespace JavaScriptRuntime.Node
                 }
             }
 
-            return modules;
+            return modules.ToFrozenDictionary(StringComparer.OrdinalIgnoreCase);
         });
 
-        private static readonly Lazy<Dictionary<string, Type>> ContractsByName = new(() =>
+        private static readonly Lazy<FrozenDictionary<string, Type>> ContractsByName = new(() =>
         {
             var contracts = new Dictionary<string, Type>(StringComparer.OrdinalIgnoreCase);
             var contractTypes = typeof(NodeModuleInterfaceAttribute).Assembly
@@ -62,7 +63,7 @@ namespace JavaScriptRuntime.Node
                 }
             }
 
-            return contracts;
+            return contracts.ToFrozenDictionary(StringComparer.OrdinalIgnoreCase);
         });
 
         public static string NormalizeModuleName(string specifier)

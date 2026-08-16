@@ -5,12 +5,13 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 
 namespace JavaScriptRuntime;
 
 public sealed class ArgumentsObject : JsObject, IExoticJsObject, IDictionary<string, object?>
 {
-    private static readonly ConcurrentDictionary<(Type ScopeType, string Name), FieldInfo?> _fieldCache = new();
+    private static readonly ConditionalWeakTable<Type, ConcurrentDictionary<string, FieldInfo?>> FieldCaches = new();
     private static readonly Func<object[], object?[], object?> _restrictedCalleeAccessor = static (_, __) =>
         throw new TypeError("Cannot access restricted arguments property 'callee'");
 
@@ -327,7 +328,7 @@ public sealed class ArgumentsObject : JsObject, IExoticJsObject, IDictionary<str
             yield return key;
         }
 
-descriptorKeys:
+    descriptorKeys:
         if (_hasLengthProperty)
         {
             yield return "length";
@@ -356,8 +357,7 @@ descriptorKeys:
             return null;
         }
 
-        var field = _fieldCache.GetOrAdd((_scopeInstance.GetType(), parameterName), static key =>
-            key.ScopeType.GetField(key.Name, BindingFlags.Instance | BindingFlags.Public));
+        var field = GetScopeField(_scopeInstance.GetType(), parameterName);
         return field?.GetValue(_scopeInstance);
     }
 
@@ -368,10 +368,21 @@ descriptorKeys:
             return;
         }
 
-        var field = _fieldCache.GetOrAdd((_scopeInstance.GetType(), parameterName), static key =>
-            key.ScopeType.GetField(key.Name, BindingFlags.Instance | BindingFlags.Public));
+        var field = GetScopeField(_scopeInstance.GetType(), parameterName);
         field?.SetValue(_scopeInstance, value);
     }
+
+    private static FieldInfo? GetScopeField(Type scopeType, string name)
+        => FieldCaches
+            .GetValue(
+                scopeType,
+                static _ => new ConcurrentDictionary<string, FieldInfo?>(
+                    StringComparer.Ordinal))
+            .GetOrAdd(
+                name,
+                fieldName => scopeType.GetField(
+                    fieldName,
+                    BindingFlags.Instance | BindingFlags.Public));
 
     internal override bool TryGetOwnPropertyValue(string key, out object? value)
     {

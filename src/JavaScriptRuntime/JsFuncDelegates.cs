@@ -1,12 +1,19 @@
+using System.Collections.Frozen;
+
 namespace JavaScriptRuntime;
 
 internal static class JsFuncDelegates
 {
-    private static HashSet<Type> _registeredDelegateTypes = new();
+    private static readonly FrozenSet<Type> RegisteredDelegateTypes =
+        CreateRegisteredDelegateTypes();
 
-    static JsFuncDelegates()
+    internal static bool IsJsFuncDelegateType(Type type)
+        => RegisteredDelegateTypes.Contains(type);
+
+    private static FrozenSet<Type> CreateRegisteredDelegateTypes()
     {
         var runtimeAssembly = typeof(JsFuncDelegates).Assembly;
+        var registeredDelegateTypes = new HashSet<Type>();
 
         // Register all JsFuncN delegate types
         for (int i = 0; i <= 32; i++)
@@ -14,23 +21,19 @@ internal static class JsFuncDelegates
             var delegateType = runtimeAssembly.GetType($"JavaScriptRuntime.JsFunc{i}");
             if (delegateType != null)
             {
-                _registeredDelegateTypes.Add(delegateType);
+                registeredDelegateTypes.Add(delegateType);
             }
 
             var noScopesDelegateType = runtimeAssembly.GetType($"JavaScriptRuntime.JsFuncNoScopes{i}");
             if (noScopesDelegateType != null)
             {
-                _registeredDelegateTypes.Add(noScopesDelegateType);
+                registeredDelegateTypes.Add(noScopesDelegateType);
             }
         }
 
-        _registeredDelegateTypes.Add(typeof(JsDoubleFunc0));
-        _registeredDelegateTypes.Add(typeof(JsDoubleFuncNoScopes0));
-    }
-
-    internal static bool IsJsFuncDelegateType(Type type)
-    {
-        return _registeredDelegateTypes.Contains(type);
+        registeredDelegateTypes.Add(typeof(JsDoubleFunc0));
+        registeredDelegateTypes.Add(typeof(JsDoubleFuncNoScopes0));
+        return registeredDelegateTypes.ToFrozenSet();
     }
 }
 

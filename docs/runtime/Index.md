@@ -19,6 +19,7 @@ These documents describe the JavaScriptRuntime hosting model and its internal ex
 - [Runtime agent scheduling](RuntimeAgentScheduling.md)
 - [Runtime lifecycle](RuntimeLifecycle.md)
 - [Runtime ownership](RuntimeOwnership.md)
+- [Runtime static-state ownership](RuntimeStaticState.md)
 
 ## Performance
 

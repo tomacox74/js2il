@@ -6,6 +6,12 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- runtime: complete the realm migration with an executable mutable-static
+  ownership audit and repeated parallel isolation/unload gates (issue #1829).
+  Generated-type metadata and symbol-key caches are now weak-keyed, while
+  `dns` default order, `fs.constants`, and `path.posix`/`path.win32` are owned
+  by realm-local Node module instances.
+
 - runtime: unify standalone `Engine`, hosted `JsRuntimeInstance`, and future
   worker bootstrap under an exception-safe `RuntimeLifecycle` (issue #1828).
   The lifecycle explicitly creates or joins a cluster, creates the agent and

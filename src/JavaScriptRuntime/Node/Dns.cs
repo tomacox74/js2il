@@ -7,7 +7,7 @@ namespace JavaScriptRuntime.Node;
 [NodeModule("dns")]
 public sealed partial class Dns
 {
-    private static string _defaultResultOrder = "verbatim";
+    private string _defaultResultOrder = "verbatim";
 
     public object? lookup(object[] args)
     {
@@ -30,7 +30,9 @@ public sealed partial class Dns
                 "The \"callback\" argument must be of type function.");
         }
 
-        var options = args.Length == 3 ? ParseLookupOptions(args[1]) : new LookupOptions();
+        var options = args.Length == 3
+            ? ParseLookupOptions(args[1])
+            : new LookupOptions { Order = GetDefaultResultOrder() };
         var scheduler = GlobalThis.ServiceProvider?.Resolve<NodeSchedulerState>()
             ?? throw new InvalidOperationException(
                 "NodeSchedulerState is not available for dns.lookup.");
@@ -156,18 +158,19 @@ public sealed partial class Dns
         return records;
     }
 
-    private static LookupOptions ParseLookupOptions(object? options)
+    private LookupOptions ParseLookupOptions(object? options)
     {
         if (options is null or JsNull)
         {
-            return new LookupOptions();
+            return new LookupOptions { Order = GetDefaultResultOrder() };
         }
 
         if (options is double or int or long or short)
         {
             return new LookupOptions
             {
-                Family = ParseFamily(options, "family")
+                Family = ParseFamily(options, "family"),
+                Order = GetDefaultResultOrder()
             };
         }
 
@@ -262,7 +265,7 @@ public sealed partial class Dns
     private static int GetFamily(IPAddress address)
         => address.AddressFamily == AddressFamily.InterNetwork ? 4 : 6;
 
-    private static string GetDefaultResultOrder()
+    private string GetDefaultResultOrder()
         => Volatile.Read(ref _defaultResultOrder);
 
     private sealed class LookupOptions
@@ -271,7 +274,7 @@ public sealed partial class Dns
 
         public int Family { get; init; }
 
-        public string Order { get; init; } = GetDefaultResultOrder();
+        public string Order { get; init; } = "verbatim";
     }
 
     private sealed class DnsLookupError(string hostname, Exception innerException)

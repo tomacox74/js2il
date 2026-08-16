@@ -1,6 +1,6 @@
 using JavaScriptRuntime;
-using System.Collections.Concurrent;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
 namespace Jroc.Runtime;
@@ -21,8 +21,7 @@ internal static class JsReturnConverter
                      && m.IsGenericMethodDefinition
                      && m.GetParameters().Length == 1);
 
-    private static readonly ConcurrentDictionary<Type, MethodInfo> PromiseToTaskByResultType = new();
-    private static readonly ConcurrentDictionary<Type, MethodInfo> TaskFromResultByResultType = new();
+    private static readonly ConditionalWeakTable<Type, ResultConversionMethods> ResultConversions = new();
 
     internal static object? ConvertReturn(JsRuntimeInstance runtime, object? value, Type returnType)
     {
@@ -44,23 +43,24 @@ internal static class JsReturnConverter
         if (returnType.IsGenericType && returnType.GetGenericTypeDefinition() == typeof(Task<>))
         {
             var resultType = returnType.GetGenericArguments()[0];
+            var conversionMethods = ResultConversions.GetValue(
+                resultType,
+                static type => new ResultConversionMethods(
+                    PromiseToTaskOpenGeneric.MakeGenericMethod(type),
+                    TaskFromResultOpenGeneric.MakeGenericMethod(type)));
 
             if (value is Promise p)
             {
-                var method = PromiseToTaskByResultType.GetOrAdd(
-                    resultType,
-                    t => PromiseToTaskOpenGeneric.MakeGenericMethod(t));
-
-                return method.Invoke(null, new object?[] { runtime, p });
+                return conversionMethods.PromiseToTask.Invoke(
+                    null,
+                    new object?[] { runtime, p });
             }
 
             var converted = ConvertReturn(runtime, value, resultType);
 
-            var fromResult = TaskFromResultByResultType.GetOrAdd(
-                resultType,
-                t => TaskFromResultOpenGeneric.MakeGenericMethod(t));
-
-            return fromResult.Invoke(null, new[] { converted });
+            return conversionMethods.TaskFromResult.Invoke(
+                null,
+                new[] { converted });
         }
 
         if (returnType == typeof(void))
@@ -145,4 +145,8 @@ internal static class JsReturnConverter
 
         return returnType.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IJsConstructor<>));
     }
+
+    private sealed record ResultConversionMethods(
+        MethodInfo PromiseToTask,
+        MethodInfo TaskFromResult);
 }

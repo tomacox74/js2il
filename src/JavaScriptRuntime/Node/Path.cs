@@ -8,8 +8,8 @@ namespace JavaScriptRuntime.Node
     [NodeModule("path")]
     public sealed partial class Path
     {
-        private static readonly VariantPath _posix = VariantPath.Posix;
-        private static readonly VariantPath _win32 = VariantPath.Win32;
+        private readonly VariantPath _posix = new(isWin32: false);
+        private readonly VariantPath _win32 = new(isWin32: true);
 
         // Node: path.posix and path.win32 are always present (even on Windows).
         public object posix => _posix;
@@ -300,15 +300,12 @@ namespace JavaScriptRuntime.Node
         // TODO: Consider delegating the host Path implementation to VariantPath to avoid duplication.
         private sealed class VariantPath
         {
-            public static readonly VariantPath Posix = new VariantPath(isWin32: false);
-            public static readonly VariantPath Win32 = new VariantPath(isWin32: true);
-
             private readonly bool _isWin32;
             private readonly char _sep;
             private readonly char _altSep;
             private readonly string _delimiter;
 
-            private VariantPath(bool isWin32)
+            internal VariantPath(bool isWin32)
             {
                 _isWin32 = isWin32;
                 _sep = isWin32 ? '\\' : '/';
