@@ -10,9 +10,6 @@ namespace JavaScriptRuntime;
 public sealed class Symbol
 {
     private static long _nextId;
-    private static readonly Dictionary<string, Symbol> _globalRegistry = new(StringComparer.Ordinal);
-    private static readonly Dictionary<Symbol, string> _globalRegistryReverse = new();
-    private static readonly object _registryLock = new();
 
     // Well-known symbols used by core language features.
     // These are singletons so identity comparisons work as expected.
@@ -123,18 +120,7 @@ public sealed class Symbol
     public static object @for(object? key)
     {
         var registryKey = DotNet2JSConversions.ToString(key);
-        lock (_registryLock)
-        {
-            if (_globalRegistry.TryGetValue(registryKey, out var existing))
-            {
-                return existing;
-            }
-
-            var created = new Symbol(registryKey);
-            _globalRegistry[registryKey] = created;
-            _globalRegistryReverse[created] = registryKey;
-            return created;
-        }
+        return GetCurrentRegistry().GetOrCreate(registryKey);
     }
 
     // Symbol.keyFor(sym)
@@ -145,10 +131,7 @@ public sealed class Symbol
             throw new TypeError("Symbol.keyFor requires a symbol");
         }
 
-        lock (_registryLock)
-        {
-            return _globalRegistryReverse.TryGetValue(symbol, out var key) ? key : null;
-        }
+        return GetCurrentRegistry().GetKey(symbol);
     }
 
     // Access well-known symbols via property-read lowering (e.g., Symbol.iterator).
@@ -178,12 +161,13 @@ public sealed class Symbol
         => GetWellKnown(name) != null;
 
     internal static bool IsRegistered(Symbol symbol)
-    {
-        lock (_registryLock)
-        {
-            return _globalRegistryReverse.ContainsKey(symbol);
-        }
-    }
+        => RuntimeExecutionContext.CurrentOrOverride?.Agent.SymbolRegistry.Contains(symbol)
+            ?? false;
+
+    private static RuntimeAgentSymbolRegistry GetCurrentRegistry()
+        => RuntimeExecutionContext.CurrentOrOverride?.Agent.SymbolRegistry
+            ?? throw new InvalidOperationException(
+                "The global symbol registry requires an active JavaScript runtime.");
 
     // Useful for debugging, but keep ToString() JS-like.
     public string DebugId => _debugId;

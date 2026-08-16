@@ -12,8 +12,16 @@ namespace JavaScriptRuntime.Node
         private readonly BuiltinDelegateFunctionAdapter _inspectFunction;
 
         public Util()
+            : this(
+                RuntimeExecutionContext.CurrentOrOverride?.Agent.SymbolRegistry
+                    ?? new RuntimeAgentSymbolRegistry())
         {
-            _inspectCustomSymbol = (Symbol)Symbol.@for("nodejs.util.inspect.custom");
+        }
+
+        public Util(RuntimeAgentSymbolRegistry symbolRegistry)
+        {
+            ArgumentNullException.ThrowIfNull(symbolRegistry);
+            _inspectCustomSymbol = symbolRegistry.GetOrCreate("nodejs.util.inspect.custom");
 
             // Expose util.inspect as a delegate-valued property so util.inspect.custom is observable.
             _inspectFunction =

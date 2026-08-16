@@ -6,6 +6,14 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- runtime: make agent and agent-cluster shared services explicit (issue #1827).
+  `Symbol.for`/`Symbol.keyFor` identity is now owned by `RuntimeAgent`, while
+  opaque MessagePort transport queues, BroadcastChannel routing, shared buffer
+  backing stores, and the Atomics waiter domain are owned by
+  `RuntimeAgentCluster`. Realm wrappers remain distinct, cross-cluster sharing
+  is rejected, and agent/last-agent disposal unregisters endpoints and waiters
+  and releases cluster resources.
+
 - runtime: move timers, queues, pending I/O, event-loop pumping, async-hooks
   context, finalization jobs, wake-up signaling, and cooperative cancellation
   into `RuntimeAgentSchedulingState` (issue #1826). Realms in one agent share

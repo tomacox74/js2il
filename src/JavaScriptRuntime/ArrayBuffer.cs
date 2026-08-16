@@ -7,13 +7,13 @@ namespace JavaScriptRuntime
     {
         internal static object Prototype
             => RuntimeIntrinsics.Current.ArrayBufferPrototype;
-        private byte[] _bytes;
+        private readonly RuntimeArrayBufferStorage _storage;
         private readonly int _maxByteLength;
         private readonly bool _isResizable;
 
         public ArrayBuffer()
         {
-            _bytes = System.Array.Empty<byte>();
+            _storage = new RuntimeArrayBufferStorage(System.Array.Empty<byte>());
             _maxByteLength = 0;
             InitializeIntrinsicSurface();
         }
@@ -21,9 +21,10 @@ namespace JavaScriptRuntime
         public ArrayBuffer(object? length)
         {
             var byteLength = CoerceByteLength(length);
-            _bytes = byteLength == 0
-                ? System.Array.Empty<byte>()
-                : new byte[byteLength];
+            _storage = new RuntimeArrayBufferStorage(
+                byteLength == 0
+                    ? System.Array.Empty<byte>()
+                    : new byte[byteLength]);
             _maxByteLength = byteLength;
             InitializeIntrinsicSurface();
         }
@@ -36,9 +37,10 @@ namespace JavaScriptRuntime
         protected ArrayBuffer(object? length, object? options, bool supportsResizing)
         {
             var byteLength = CoerceByteLength(length);
-            _bytes = byteLength == 0
-                ? System.Array.Empty<byte>()
-                : new byte[byteLength];
+            _storage = new RuntimeArrayBufferStorage(
+                byteLength == 0
+                    ? System.Array.Empty<byte>()
+                    : new byte[byteLength]);
 
             if (supportsResizing && TryGetMaxByteLength(options, out var maxByteLength))
             {
@@ -59,12 +61,20 @@ namespace JavaScriptRuntime
 
         internal ArrayBuffer(byte[] bytes, bool cloneBuffer)
         {
-            _bytes = cloneBuffer ? (byte[])bytes.Clone() : bytes;
-            _maxByteLength = _bytes.Length;
+            _storage = new RuntimeArrayBufferStorage(
+                cloneBuffer ? (byte[])bytes.Clone() : bytes);
+            _maxByteLength = _storage.Bytes.Length;
             InitializeIntrinsicSurface();
         }
 
-        public double byteLength => _bytes.Length;
+        internal ArrayBuffer(RuntimeArrayBufferStorage storage)
+        {
+            _storage = storage;
+            _maxByteLength = storage.Bytes.Length;
+            InitializeIntrinsicSurface();
+        }
+
+        public double byteLength => _storage.Bytes.Length;
         public double maxByteLength => _maxByteLength;
         public bool resizable => _isResizable;
 
@@ -73,8 +83,9 @@ namespace JavaScriptRuntime
 
         public ArrayBuffer slice(object? start, object? end)
         {
-            var startIndex = CoerceRelativeIndex(start, 0, _bytes.Length);
-            var endIndex = CoerceRelativeIndex(end, _bytes.Length, _bytes.Length);
+            var bytes = _storage.Bytes;
+            var startIndex = CoerceRelativeIndex(start, 0, bytes.Length);
+            var endIndex = CoerceRelativeIndex(end, bytes.Length, bytes.Length);
             if (endIndex < startIndex)
             {
                 endIndex = startIndex;
@@ -87,7 +98,7 @@ namespace JavaScriptRuntime
             }
 
             var copy = new byte[length];
-            System.Buffer.BlockCopy(_bytes, startIndex, copy, 0, length);
+            System.Buffer.BlockCopy(bytes, startIndex, copy, 0, length);
             return new ArrayBuffer(copy, cloneBuffer: false);
         }
 
@@ -107,7 +118,8 @@ namespace JavaScriptRuntime
                 throw new RangeError("Invalid ArrayBuffer length");
             }
 
-            if (byteLength == _bytes.Length)
+            var bytes = _storage.Bytes;
+            if (byteLength == bytes.Length)
             {
                 return null;
             }
@@ -115,17 +127,17 @@ namespace JavaScriptRuntime
             var resized = byteLength == 0
                 ? System.Array.Empty<byte>()
                 : new byte[byteLength];
-            System.Buffer.BlockCopy(_bytes, 0, resized, 0, System.Math.Min(_bytes.Length, byteLength));
-            _bytes = resized;
+            System.Buffer.BlockCopy(bytes, 0, resized, 0, System.Math.Min(bytes.Length, byteLength));
+            _storage.Bytes = resized;
             return null;
         }
 
         public static bool isView(object? arg)
             => arg is DataView or TypedArrayBase;
 
-        internal int ByteLengthInt => _bytes.Length;
+        internal int ByteLengthInt => _storage.Bytes.Length;
 
-        internal byte[] RawBytes => _bytes;
+        internal byte[] RawBytes => _storage.Bytes;
         internal bool IsResizable => _isResizable;
 
         private void InitializeIntrinsicSurface()
@@ -136,7 +148,7 @@ namespace JavaScriptRuntime
             }
         }
 
-        private static int CoerceByteLength(object? value)
+        internal static int CoerceByteLength(object? value)
         {
             if (value is null || value is JsNull)
             {

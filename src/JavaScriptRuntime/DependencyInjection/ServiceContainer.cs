@@ -40,8 +40,14 @@ public class ServiceContainer
 
             _owningRealm = realm;
             _singletons[typeof(RuntimeAgentCluster)] = realm.Agent.Cluster;
+            _singletons[typeof(RuntimeAgentClusterSharedServices)] = realm.Agent.Cluster.SharedServices;
+            _singletons[typeof(RuntimeMessageTransportService)] = realm.Agent.Cluster.SharedServices.Transport;
+            _singletons[typeof(RuntimeBroadcastChannelRegistry)] = realm.Agent.Cluster.SharedServices.Broadcasts;
+            _singletons[typeof(RuntimeSharedMemoryService)] = realm.Agent.Cluster.SharedServices.SharedMemory;
+            _singletons[typeof(RuntimeAtomicsSynchronizationDomain)] = realm.Agent.Cluster.SharedServices.Atomics;
             _singletons[typeof(RuntimeAgent)] = realm.Agent;
             _singletons[typeof(RuntimeAgentSchedulingState)] = realm.Agent.Scheduling;
+            _singletons[typeof(RuntimeAgentSymbolRegistry)] = realm.Agent.SymbolRegistry;
             _singletons[typeof(AsyncContextRuntime)] = realm.Agent.Scheduling.AsyncContext;
             _singletons[typeof(RuntimeRealm)] = realm;
             _singletons[typeof(Modules.RuntimeModuleState)] = realm.ModuleState;
@@ -313,8 +319,14 @@ public class ServiceContainer
         }
 
         _singletons[typeof(RuntimeAgentCluster)] = _owningRealm.Agent.Cluster;
+        _singletons[typeof(RuntimeAgentClusterSharedServices)] = _owningRealm.Agent.Cluster.SharedServices;
+        _singletons[typeof(RuntimeMessageTransportService)] = _owningRealm.Agent.Cluster.SharedServices.Transport;
+        _singletons[typeof(RuntimeBroadcastChannelRegistry)] = _owningRealm.Agent.Cluster.SharedServices.Broadcasts;
+        _singletons[typeof(RuntimeSharedMemoryService)] = _owningRealm.Agent.Cluster.SharedServices.SharedMemory;
+        _singletons[typeof(RuntimeAtomicsSynchronizationDomain)] = _owningRealm.Agent.Cluster.SharedServices.Atomics;
         _singletons[typeof(RuntimeAgent)] = _owningRealm.Agent;
         _singletons[typeof(RuntimeAgentSchedulingState)] = _owningRealm.Agent.Scheduling;
+        _singletons[typeof(RuntimeAgentSymbolRegistry)] = _owningRealm.Agent.SymbolRegistry;
         _singletons[typeof(AsyncContextRuntime)] = _owningRealm.Agent.Scheduling.AsyncContext;
         _singletons[typeof(RuntimeRealm)] = _owningRealm;
         _singletons[typeof(Modules.RuntimeModuleState)] = _owningRealm.ModuleState;
@@ -337,6 +349,12 @@ public class ServiceContainer
             && (serviceType == typeof(RuntimeAgentCluster)
                 || serviceType == typeof(RuntimeAgent)
                 || serviceType == typeof(RuntimeAgentSchedulingState)
+                || serviceType == typeof(RuntimeAgentSymbolRegistry)
+                || serviceType == typeof(RuntimeAgentClusterSharedServices)
+                || serviceType == typeof(RuntimeMessageTransportService)
+                || serviceType == typeof(RuntimeBroadcastChannelRegistry)
+                || serviceType == typeof(RuntimeSharedMemoryService)
+                || serviceType == typeof(RuntimeAtomicsSynchronizationDomain)
                 || serviceType == typeof(RuntimeRealm)
                 || serviceType == typeof(Modules.RuntimeModuleState)
                 || serviceType == typeof(RuntimeRealmValueCacheState)
