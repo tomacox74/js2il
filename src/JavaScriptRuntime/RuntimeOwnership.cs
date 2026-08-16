@@ -195,6 +195,7 @@ internal sealed class RuntimeRealm : IDisposable
     {
         Agent = agent;
         ModuleState = new Modules.RuntimeModuleState();
+        ValueCaches = new RuntimeRealmValueCacheState();
         Intrinsics = new RuntimeIntrinsics();
         Services = new ServiceContainer();
         Services.AttachOwningRealm(this);
@@ -203,6 +204,8 @@ internal sealed class RuntimeRealm : IDisposable
     internal RuntimeAgent Agent { get; }
 
     internal Modules.RuntimeModuleState ModuleState { get; }
+
+    internal RuntimeRealmValueCacheState ValueCaches { get; }
 
     /// <summary>
     /// The realm's well-known intrinsic object graph (ECMA-262 Realm Record
@@ -236,6 +239,7 @@ internal sealed class RuntimeRealm : IDisposable
 
             _state = RuntimeOwnershipState.Disposing;
             ModuleState.Dispose();
+            ValueCaches.Dispose();
             Intrinsics.Dispose();
             DisposalOrder = Agent.Cluster.NextDisposalOrder();
             _state = RuntimeOwnershipState.Disposed;

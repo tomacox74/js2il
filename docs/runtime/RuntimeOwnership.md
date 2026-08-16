@@ -8,6 +8,7 @@ RuntimeAgentCluster
       -> RuntimeRealm
           -> RuntimeIntrinsics
           -> RuntimeModuleState
+          -> RuntimeRealmValueCacheState
           -> ServiceContainer
           -> RuntimeExecutionContext (while entered)
 ```
@@ -33,6 +34,9 @@ RuntimeAgentCluster
 - `RuntimeModuleState` owns the realm's CommonJS and ESM graph, including
   module instances, live binding cells, namespace identities, `import.meta`,
   module-scoped require delegates, and the compiled module assembly.
+- `RuntimeRealmValueCacheState` owns tagged-template objects, materialized class
+  constructor objects, and lazy class-method metadata that captures scopes.
+  See [Realm-created value caches](RuntimeRealmValueCaches.md).
 
 The child keeps a reference to its parent so services can receive the correct
 owner through constructor injection. Parents keep their children only while
@@ -46,10 +50,8 @@ retain the same realm owner. After realm disposal, its service container and
 any child scopes reject further use.
 
 The factory currently creates an isolated cluster, agent, realm, and service
-container for each `RuntimeServices.BuildServiceProvider()` call. Template
-objects, materialized class constructors, and captured-scope constructor caches
-still use their prior implementations; subsequent migration issues (tracked by
-#1805, in particular #1825) move that state under these owners.
+container for each `RuntimeServices.BuildServiceProvider()` call. Each realm
+owns its intrinsic graph, module state, and realm-created value caches.
 
 ## Intrinsic ownership
 
@@ -120,6 +122,8 @@ change observable semantics.
 - A realm may reference its agent, intrinsics graph, and service container.
 - A realm owns one module state object; no mutable module graph is
   process-wide.
+- A realm owns its template, materialized class constructor, and captured-scope
+  metadata caches; process-wide caches contain immutable CLR metadata only.
 - An entered execution context is the only ambient pointer to a realm and
   agent; thread identity is not an ownership boundary.
 - Realm services may receive any of the three owners through constructor

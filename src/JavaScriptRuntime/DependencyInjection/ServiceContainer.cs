@@ -41,6 +41,7 @@ public class ServiceContainer
             _singletons[typeof(RuntimeAgent)] = realm.Agent;
             _singletons[typeof(RuntimeRealm)] = realm;
             _singletons[typeof(Modules.RuntimeModuleState)] = realm.ModuleState;
+            _singletons[typeof(RuntimeRealmValueCacheState)] = realm.ValueCaches;
         }
     }
 
@@ -303,6 +304,7 @@ public class ServiceContainer
         _singletons[typeof(RuntimeAgent)] = _owningRealm.Agent;
         _singletons[typeof(RuntimeRealm)] = _owningRealm;
         _singletons[typeof(Modules.RuntimeModuleState)] = _owningRealm.ModuleState;
+        _singletons[typeof(RuntimeRealmValueCacheState)] = _owningRealm.ValueCaches;
     }
 
     private void ThrowIfOwningRealmDisposed()
@@ -319,7 +321,8 @@ public class ServiceContainer
             && (serviceType == typeof(RuntimeAgentCluster)
                 || serviceType == typeof(RuntimeAgent)
                 || serviceType == typeof(RuntimeRealm)
-                || serviceType == typeof(Modules.RuntimeModuleState)))
+                || serviceType == typeof(Modules.RuntimeModuleState)
+                || serviceType == typeof(RuntimeRealmValueCacheState)))
         {
             throw new InvalidOperationException(
                 $"Runtime ownership service '{serviceType.Name}' cannot be replaced or removed.");
