@@ -50,10 +50,11 @@
           "tests/Jroc.Tests/Proxy/JavaScript/Proxy_ApplyAndConstructTraps_WithFallback.js",
           "tests/Jroc.Tests/Proxy/JavaScript/Proxy_Revocable_ThrowsAfterRevoke.js",
           "tests/Jroc.Tests/Proxy/JavaScript/Proxy_Validation_EdgeCases.js",
+          "tests/Jroc.Tests/ErrorProxyObjectRepresentationTests.cs",
           "tests/Jroc.Test262.Tests/built-ins/Proxy/ExecutionTests.cs",
           "tests/Jroc.Test262.Tests/built-ins/Proxy/apply/ExecutionTests.cs"
         ],
-        "notes": "Supports creating Proxy instances via new Proxy(target, handler) with object target/handler validation. Currently implemented traps are get, set, has, deleteProperty, ownKeys, getPrototypeOf, setPrototypeOf, apply, and construct, each with fallback-to-target behavior when the trap is absent, and the covered test262 cases now exercise callable proxy apply dispatch in addition to constructor validation. JROC also enforces basic validations for the implemented trap surface (callable/constructible target gating, ownKeys object/entry validation, getPrototypeOf object-or-null results, setPrototypeOf truthy return, and construct object results), but full ECMAScript proxy invariants and descriptor-oriented traps such as getOwnPropertyDescriptor, defineProperty, isExtensible, and preventExtensions are still missing."
+        "notes": "Supports creating Proxy instances via new Proxy(target, handler) with object target/handler validation. Currently implemented traps are get, set, has, getOwnPropertyDescriptor, defineProperty, deleteProperty, ownKeys, getPrototypeOf, setPrototypeOf, isExtensible, preventExtensions, apply, and construct, each with fallback-to-target behavior when the trap is absent. Proxy intentionally remains a non-JsObject exotic representation: its own-property operations dispatch through descriptor traps or target forwarding rather than JsObject shape/slot fast paths, preserving the currently implemented trap validation and invariants. Full ECMAScript Proxy coverage remains limited to the documented and tested behavior."
       },
       {
         "clause": "28.2.2.1",
@@ -64,7 +65,7 @@
           "tests/Jroc.Tests/Proxy/JavaScript/Proxy_Revocable_ThrowsAfterRevoke.js",
           "tests/Jroc.Tests/Proxy/JavaScript/Proxy_Validation_EdgeCases.js"
         ],
-        "notes": "Proxy.revocable(target, handler) validates object target/handler values, returns { proxy, revoke }, and makes the currently implemented proxy operations (get, set, has, deleteProperty, ownKeys, getPrototypeOf, setPrototypeOf, apply, and construct) throw TypeError once revoked."
+        "notes": "Proxy.revocable(target, handler) validates object target/handler values, returns { proxy, revoke }, and makes the currently implemented proxy operations (get, set, has, getOwnPropertyDescriptor, defineProperty, deleteProperty, ownKeys, getPrototypeOf, setPrototypeOf, isExtensible, preventExtensions, apply, and construct) throw TypeError once revoked."
       }
     ]
   }
