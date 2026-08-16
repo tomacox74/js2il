@@ -7,7 +7,7 @@ using JavaScriptRuntime.EngineCore;
 namespace JavaScriptRuntime;
 
 [IntrinsicObject("Promise")]
-public sealed class Promise : IJavaScriptPromise
+public sealed class Promise : JsObject, IJavaScriptPromise
 {
     private static readonly Func<object[], object?[]?, object?> PrototypeThenValue = PrototypeThen;
     private static readonly Func<object[], object?[]?, object?> PrototypeCatchValue = PrototypeCatch;
@@ -138,7 +138,7 @@ public sealed class Promise : IJavaScriptPromise
 
     private void InitializeIntrinsicSurface()
     {
-        PrototypeChain.SetPrototype(this, Prototype);
+        PrototypeChain.InitializePrototype(this, Prototype);
     }
 
     // Constructors

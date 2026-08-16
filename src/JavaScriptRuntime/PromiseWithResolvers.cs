@@ -1,9 +1,10 @@
 namespace JavaScriptRuntime;
 
-public sealed class PromiseWithResolvers
+public sealed class PromiseWithResolvers : JsObject
 {
     public PromiseWithResolvers(Promise promise, object resolve, object reject)
     {
+        PrototypeChain.InitializePrototype(this, GlobalThis.ObjectPrototypeValue);
         this.promise = promise;
         var resolveFunction =
             BuiltinDelegateFunctionAdapter.WrapJavaScriptVisibleValue(resolve)
@@ -15,6 +16,9 @@ public sealed class PromiseWithResolvers
             resolveFunction);
         this.reject = Node.AsyncContextRuntime.BindCurrentCallback(
             rejectFunction);
+        SetValue(nameof(this.promise), this.promise);
+        SetValue(nameof(this.resolve), this.resolve);
+        SetValue(nameof(this.reject), this.reject);
     }
 
     // Note: These member names are intentionally lowercase to match JS property access

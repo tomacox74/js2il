@@ -34,6 +34,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 - runtime: continue #1580's incremental built-in representation migration by
   moving WeakMap and WeakSet wrappers to `JsObject` inline property/prototype storage.
 
+- runtime: continue #1580's incremental built-in representation migration by
+  moving Promise, generator, and async-generator wrappers to `JsObject` inline
+  property/prototype storage.
+
 - runtime/test262: expose SharedArrayBuffer as a first-class global constructor
   with standard constructor/prototype metadata and receiver-checked
   `byteLength`, `maxByteLength`, and `growable` accessors. Activates twenty
