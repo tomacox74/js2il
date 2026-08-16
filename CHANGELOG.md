@@ -6,6 +6,14 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- runtime: unify standalone `Engine`, hosted `JsRuntimeInstance`, and future
+  worker bootstrap under an exception-safe `RuntimeLifecycle` (issue #1828).
+  The lifecycle explicitly creates or joins a cluster, creates the agent and
+  realm, enters a root execution frame, pumps work, and tears down in reverse
+  order. Hosted runtimes suppress inherited ambient frames, use agent shutdown
+  as their single cancellation source, and publish startup failures only after
+  partial agent/realm state has been released.
+
 - runtime: make agent and agent-cluster shared services explicit (issue #1827).
   `Symbol.for`/`Symbol.keyFor` identity is now owned by `RuntimeAgent`, while
   opaque MessagePort transport queues, BroadcastChannel routing, shared buffer

@@ -4,8 +4,6 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using JavaScriptRuntime;
 using JavaScriptRuntime.Modules.CommonJS;
-using JavaScriptRuntime.DependencyInjection;
-using JavaScriptRuntime.EngineCore;
 using JavaScriptRuntime.Node;
 
 namespace Jroc.Runtime;
@@ -33,16 +31,11 @@ internal sealed class JsRuntimeInstance : IDisposable
     // Dedicated thread that owns the engine, synchronization context, and event loop.
     private readonly Thread _thread;
 
-    // Cancellation used to stop consuming the queue and unblock waiting operations during disposal.
-    private readonly CancellationTokenSource _shutdown = new();
-
     // Completed once initial module load has either succeeded or failed (exception is propagated).
     // This is awaited synchronously in the ctor to surface module-load errors immediately.
     private readonly TaskCompletionSource _initialized = new(TaskCreationOptions.RunContinuationsAsynchronously);
 
-    // Service provider/sync context are thread-affine and created inside ThreadMain.
-    private ServiceContainer? _serviceProvider;
-    private NodeEventLoopPump? _eventLoop;
+    // The runtime agent is created on the script thread before initialization completes.
     private RuntimeAgent? _agent;
 
     // Exports returned by CommonJS module evaluation (require(...) result).
@@ -120,7 +113,7 @@ internal sealed class JsRuntimeInstance : IDisposable
         RegisterWorkItem(item);
         try
         {
-            _queue.Add(item, _shutdown.Token);
+            _queue.Add(item, GetShutdownToken());
         }
         catch (OperationCanceledException)
         {
@@ -165,7 +158,7 @@ internal sealed class JsRuntimeInstance : IDisposable
         RegisterWorkItem(item);
         try
         {
-            _queue.Add(item, _shutdown.Token);
+            _queue.Add(item, GetShutdownToken());
         }
         catch (OperationCanceledException)
         {
@@ -199,16 +192,7 @@ internal sealed class JsRuntimeInstance : IDisposable
 
         _agent?.RequestShutdown();
 
-        // Stop accepting work and wake the consuming enumerable.
-        try
-        {
-            _shutdown.Cancel();
-        }
-        catch (ObjectDisposedException)
-        {
-            // If the runtime thread already terminated, it may have disposed the CTS.
-        }
-
+        // Stop accepting work. Agent shutdown cancellation wakes the consumer.
         try
         {
             _queue.CompleteAdding();
@@ -225,7 +209,13 @@ internal sealed class JsRuntimeInstance : IDisposable
         // Avoid self-join if Dispose is called from within the script thread.
         if (Thread.CurrentThread.ManagedThreadId != _thread.ManagedThreadId)
         {
-            _ = _thread.Join(DisposeJoinTimeout);
+            if (!_thread.Join(DisposeJoinTimeout))
+            {
+                throw new TimeoutException(
+                    "Timed out waiting for the JavaScript runtime thread to stop.");
+            }
+
+            _terminated.Task.GetAwaiter().GetResult();
         }
 
         // This type intentionally has no finalizer (it would be unsafe to block/join on the finalizer thread).
@@ -289,7 +279,7 @@ internal sealed class JsRuntimeInstance : IDisposable
 
         try
         {
-            _queue.Add(item, _shutdown.Token);
+            _queue.Add(item, GetShutdownToken());
             return true;
         }
         catch (Exception exception)
@@ -430,48 +420,51 @@ internal sealed class JsRuntimeInstance : IDisposable
 
     private void ThreadMain(Assembly compiledAssembly, string moduleSpecifier)
     {
+        RuntimeLifecycle? lifecycle = null;
         IDisposable? executionScope = null;
+        Exception? initializationFailure = null;
+        var initializationCancelled = false;
         try
         {
             // Extremely defensive: under normal usage, Dispose cannot be called until after the ctor returns
             // (which waits for initialization). This guard prevents configuring thread-affine runtime state
             // if cancellation/disposal is somehow signaled early.
-            if (Volatile.Read(ref _disposeSignaled) != 0 || _shutdown.IsCancellationRequested)
+            if (Volatile.Read(ref _disposeSignaled) != 0)
             {
                 _initialized.TrySetResult();
                 return;
             }
 
-            // Configure engine services *for this thread*; the sync context/event loop are thread-affine.
-            var serviceProvider = Engine.ConfigureRuntime(
+            lifecycle = RuntimeLifecycle.Create(
                 compiledAssembly,
                 isHostedExecution: true,
-                compiledAssemblyPath: _options?.CompiledAssemblyPath);
-            _serviceProvider = serviceProvider;
-            _agent = serviceProvider.Resolve<RuntimeAgent>();
-            executionScope = serviceProvider
-                .Resolve<RuntimeExecutionContext>()
-                .EnterAsRoot();
+                compiledAssemblyPath: _options?.CompiledAssemblyPath,
+                cluster: _options?.AgentCluster,
+                configureServices: serviceProvider =>
+                {
+                    if (_options?.HostRuntimeIntrinsics != null)
+                    {
+                        serviceProvider.Replace(_options.HostRuntimeIntrinsics);
+                    }
 
-            if (_options?.HostRuntimeIntrinsics != null)
-            {
-                serviceProvider.Replace(_options.HostRuntimeIntrinsics);
-            }
-
-            if (_options?.ChildProcessLauncher != null)
-            {
-                serviceProvider.RegisterInstance<IChildProcessLauncher>(_options.ChildProcessLauncher);
-            }
-
-            _eventLoop = serviceProvider.Resolve<NodeEventLoopPump>();
+                    if (_options?.ChildProcessLauncher != null)
+                    {
+                        serviceProvider.RegisterInstance<IChildProcessLauncher>(
+                            _options.ChildProcessLauncher);
+                    }
+                },
+                suppressInheritedExecutionContext: true);
+            _agent = lifecycle.Agent;
+            executionScope = lifecycle.EnterAsRoot();
+            var eventLoop = lifecycle.EventLoop;
 
             // Load/evaluate the entry module (CommonJS require) and capture its exports.
-            var require = _serviceProvider.Resolve<Require>();
+            var require = lifecycle.Services.Resolve<Require>();
             _exports = require.RequireModule(moduleSpecifier);
 
             // Drain microtasks/queued work produced during module evaluation.
             // Timers are intentionally not awaited during initialization.
-            Engine.RunEventLoopUntilIdle(_eventLoop, waitForTimers: false);
+            Engine.RunEventLoopUntilIdle(eventLoop, waitForTimers: false);
 
             // Signal successful initialization after module evaluation completes.
             _initialized.TrySetResult();
@@ -479,12 +472,12 @@ internal sealed class JsRuntimeInstance : IDisposable
             // Process cross-thread invocations serially, while also pumping the JS event loop
             // (including timers) even when the host is idle. This avoids deadlocks where a
             // Promise resolves via setTimeout/setInterval but no new host invocations arrive.
-            while (!_shutdown.IsCancellationRequested
-                && !_agent.ShutdownToken.IsCancellationRequested)
+            var shutdownToken = lifecycle.Agent.ShutdownToken;
+            while (!shutdownToken.IsCancellationRequested)
             {
-                int waitMs = _eventLoop.GetWaitForWorkOrNextTimerMilliseconds(maxWaitMs: 50);
+                int waitMs = eventLoop.GetWaitForWorkOrNextTimerMilliseconds(maxWaitMs: 50);
 
-                if (_queue.TryTake(out var item, waitMs, _shutdown.Token))
+                if (_queue.TryTake(out var item, waitMs, shutdownToken))
                 {
                     try
                     {
@@ -494,44 +487,94 @@ internal sealed class JsRuntimeInstance : IDisposable
                     {
                         _pendingWorkItems.TryRemove(item, out _);
                     }
-                    Engine.RunEventLoopUntilIdle(_eventLoop, waitForTimers: false);
+                    Engine.RunEventLoopUntilIdle(eventLoop, waitForTimers: false);
                     continue;
                 }
 
                 // Timeout: give the event loop a chance to run due timers/microtasks.
-                Engine.RunEventLoopUntilIdle(_eventLoop, waitForTimers: false);
+                Engine.RunEventLoopUntilIdle(eventLoop, waitForTimers: false);
             }
         }
         catch (OperationCanceledException)
         {
-            // Shutdown path: ensure ctor unblocks even if cancellation occurs during initialization.
-            _initialized.TrySetResult();
+            initializationCancelled = !_initialized.Task.IsCompleted;
         }
         catch (Exception ex)
         {
-            // Propagate initialization or runtime failures to constructor/Invoke callers.
-            _initialized.TrySetException(ex);
+            if (!_initialized.Task.IsCompleted)
+            {
+                initializationFailure = ex;
+            }
         }
         finally
         {
-            FailPendingOperations();
+            Exception? cleanupFailure = null;
 
-            var agent = _agent;
-            executionScope?.Dispose();
-            agent?.Dispose();
+            try
+            {
+                FailPendingOperations();
+            }
+            catch (Exception exception)
+            {
+                cleanupFailure = exception;
+            }
+
+            try
+            {
+                executionScope?.Dispose();
+            }
+            catch (Exception exception)
+            {
+                cleanupFailure ??= exception;
+            }
+
+            try
+            {
+                lifecycle?.Dispose();
+            }
+            catch (Exception exception)
+            {
+                cleanupFailure ??= exception;
+            }
+
             _exports = null;
-            _eventLoop = null;
-            _serviceProvider = null;
             _agent = null;
 
-            // Mark thread termination before disposing shared resources.
-            _terminated.TrySetResult();
+            try
+            {
+                _queue.Dispose();
+            }
+            catch (Exception exception)
+            {
+                cleanupFailure ??= exception;
+            }
+            finally
+            {
+                if (cleanupFailure != null)
+                {
+                    _terminated.TrySetException(cleanupFailure);
+                }
+                else
+                {
+                    _terminated.TrySetResult();
+                }
 
-            // Release managed resources once the owning script thread is done using them.
-            _queue.Dispose();
-            _shutdown.Dispose();
+                var startupFailure = initializationFailure ?? cleanupFailure;
+                if (startupFailure != null && !_initialized.Task.IsCompleted)
+                {
+                    _initialized.TrySetException(startupFailure);
+                }
+                else if (initializationCancelled)
+                {
+                    _initialized.TrySetResult();
+                }
+            }
         }
     }
+
+    private CancellationToken GetShutdownToken()
+        => Volatile.Read(ref _agent)?.ShutdownToken
+            ?? new CancellationToken(canceled: true);
 
     private void EnsureNotDisposed()
     {

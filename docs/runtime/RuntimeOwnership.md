@@ -24,6 +24,11 @@ RuntimeAgentCluster
           -> RuntimeExecutionContext (while entered)
 ```
 
+`RuntimeLifecycle` is the bootstrap scope that creates or joins this graph,
+enters its root execution frame, pumps the event loop, and disposes owned
+children in reverse order. It coordinates ownership without becoming a fourth
+state owner. See [Runtime lifecycle](RuntimeLifecycle.md).
+
 - `RuntimeAgentCluster` owns agents and the deliberately cross-agent transport,
   broadcast, shared-memory, and Atomics coordination services.
 - `RuntimeAgent` owns execution, scheduling, and global-symbol-registry
@@ -103,10 +108,13 @@ cluster resolve the same transport, broadcast, shared-memory, and Atomics
 services. Child DI scopes retain the same owners. After realm disposal, its
 service container and any child scopes reject further use.
 
-The factory currently creates an isolated cluster, agent, realm, and service
-container for each `RuntimeServices.BuildServiceProvider()` call. Each realm
-owns its intrinsic graph, module state, and realm-created value caches; its
-agent owns one scheduling graph.
+Production `Engine` and `JsRuntimeInstance` paths use `RuntimeLifecycle`.
+Standalone execution creates an isolated cluster; hosted and future worker
+paths may supply a cluster explicitly. `RuntimeServices.BuildServiceProvider()`
+remains a low-level test/embedding helper that creates an isolated cluster,
+agent, realm, and service container. Each realm owns its intrinsic graph,
+module state, and realm-created value caches; its agent owns one scheduling
+graph.
 
 ## Intrinsic ownership
 

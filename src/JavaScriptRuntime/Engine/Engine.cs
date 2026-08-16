@@ -1,5 +1,4 @@
 using System.Diagnostics.CodeAnalysis;
-using System.Reflection;
 using JavaScriptRuntime.Modules.CommonJS;
 using JavaScriptRuntime.Modules.Shared;
 using JavaScriptRuntime.DependencyInjection;
@@ -19,91 +18,28 @@ public class Engine
     {
         ArgumentNullException.ThrowIfNull(scriptEntryPoint);
 
-        try
-        {
-            var serviceProvider = ConfigureRuntime(
-                modulesAssembly: scriptEntryPoint.Method.Module.Assembly,
-                isHostedExecution: false);
-            var runtimeContext = serviceProvider.Resolve<RuntimeExecutionContext>();
-
-            using (runtimeContext.EnterAsRoot())
+        using var lifecycle = RuntimeLifecycle.Create(
+            scriptEntryPoint.Method.Module.Assembly,
+            isHostedExecution: false,
+            existingServices: _serviceProviderOverride.Value);
+        lifecycle.Execute(
+            serviceProvider =>
             {
-                try
+                ConfigureChildProcessIpc(serviceProvider);
+                var moduleExecutor = new ModuleExecutor(serviceProvider);
+
+                var forkEntryModule = System.Environment.GetEnvironmentVariable(
+                    ChildProcessRuntimeOptions.ForkEntryModuleEnvVar);
+                if (!string.IsNullOrWhiteSpace(forkEntryModule))
                 {
-                    RuntimeServices.SetCurrentThis(null);
-                    ConfigureChildProcessIpc(serviceProvider);
-                    var moduleExecutor = new ModuleExecutor(serviceProvider);
-
-                    var forkEntryModule = System.Environment.GetEnvironmentVariable(
-                        ChildProcessRuntimeOptions.ForkEntryModuleEnvVar);
-                    if (!string.IsNullOrWhiteSpace(forkEntryModule))
-                    {
-                        moduleExecutor.Execute(scriptEntryPoint, forkEntryModule);
-                    }
-                    else
-                    {
-                        moduleExecutor.Execute(scriptEntryPoint);
-                    }
-
-                    RunEventLoopUntilIdle(
-                        serviceProvider.Resolve<NodeEventLoopPump>(),
-                        waitForTimers: true);
+                    moduleExecutor.Execute(scriptEntryPoint, forkEntryModule);
                 }
-                finally
+                else
                 {
-                    if (serviceProvider.TryResolve<AsyncContextRuntime>(
-                            out var asyncContext)
-                        && asyncContext != null)
-                    {
-                        asyncContext.Reset();
-                    }
-
-                    RuntimeServices.SetCurrentThis(null);
+                    moduleExecutor.Execute(scriptEntryPoint);
                 }
-            }
-        }
-        finally
-        {
-            _serviceProviderOverride.Value = null;
-        }
-    }
-
-    internal static ServiceContainer ConfigureRuntime(
-        Assembly modulesAssembly,
-        bool isHostedExecution = false,
-        string? compiledAssemblyPath = null)
-    {
-        ArgumentNullException.ThrowIfNull(modulesAssembly);
-
-        // Prevent accidentally hosting multiple runtimes on the same thread.
-        // This catches common integration bugs where a host thread is reused and global state leaks.
-        if (RuntimeExecutionContext.Current != null)
-        {
-            throw new InvalidOperationException(
-                "A JROC runtime execution frame is already active. " +
-                "Exit the current frame before starting another engine.");
-        }
-
-        // Use the test override if present; otherwise construct the default runtime container.
-        var serviceProvider = _serviceProviderOverride.Value ?? RuntimeServices.BuildServiceProvider();
-
-        _ = RuntimeExecutionContext.GetOrCreate(
-            serviceProvider,
-            isHostedExecution,
-            CompiledAssemblyPathResolver.Resolve(
-                modulesAssembly,
-                compiledAssemblyPath,
-                allowAssemblyLocationFallback: !isHostedExecution));
-
-        // Resolve scheduler/event-loop singletons via DI so other services can depend on them.
-        // Note: ServiceContainer manages singleton instances per-container.
-        _ = serviceProvider.Resolve<NodeSchedulerState>();
-        _ = serviceProvider.Resolve<NodeEventLoopPump>();
-
-        // Provide the compiled modules assembly for runtime dependency/module resolution.
-        serviceProvider.Resolve<RuntimeRealm>().ModuleState.ModulesAssembly = modulesAssembly;
-
-        return serviceProvider;
+            },
+            waitForTimers: true);
     }
 
     internal sealed class RuntimeServiceProviderOverride

@@ -48,7 +48,7 @@ Disposing one agent does not cancel, reset, drain, or dispose another agent.
 Concurrent disposal waits for the callback already executing on the owner
 thread, then prevents the next queued callback from starting.
 
-`JsRuntimeInstance` observes the agent shutdown token after runtime
-initialization. Its pre-initialization host queue still has a bootstrap
-cancellation source; issue #1828 will unify that startup path with the common
-agent/realm lifecycle factory.
+`JsRuntimeInstance` is created and torn down through `RuntimeLifecycle` and
+uses the agent shutdown token as its only cancellation source. Startup failure,
+normal disposal, and concurrent host disposal therefore all unregister the
+agent and clear its scheduler through the same reverse-order teardown.
