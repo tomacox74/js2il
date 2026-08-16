@@ -4965,6 +4965,12 @@ namespace JavaScriptRuntime
 
         public static bool IteratorResultDone(object iteratorResult)
         {
+            if (iteratorResult is JsObject && iteratorResult is IIteratorResult)
+            {
+                return JavaScriptRuntime.TypeUtilities.ToBoolean(
+                    ObjectRuntime.GetItem(iteratorResult, "done"));
+            }
+
             if (iteratorResult is IIteratorResult res)
             {
                 return res.done;
@@ -4977,6 +4983,11 @@ namespace JavaScriptRuntime
 
         public static object? IteratorResultValue(object iteratorResult)
         {
+            if (iteratorResult is JsObject && iteratorResult is IIteratorResult)
+            {
+                return ObjectRuntime.GetItem(iteratorResult, "value");
+            }
+
             if (iteratorResult is IIteratorResult res)
             {
                 return res.value;

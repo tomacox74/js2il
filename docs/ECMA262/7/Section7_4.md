@@ -4,7 +4,7 @@
 
 [Back to Section7](Section7.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-07-07T20:40:52Z
+> Last generated (UTC): 2026-08-16T07:26:37Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -137,7 +137,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| CreateIteratorResultObject | Supported with Limitations | [`Generator_BasicNext.js`](../../../tests/Jroc.Tests/Generator/JavaScript/Generator_BasicNext.js)<br>[`AsyncGenerator_BasicNext.js`](../../../tests/Jroc.Tests/AsyncGenerator/JavaScript/AsyncGenerator_BasicNext.js) |  | Iterator result objects are produced via IteratorResult helpers for sync and async iterator implementations. |
+| CreateIteratorResultObject | Supported with Limitations | [`Generator_BasicNext.js`](../../../tests/Jroc.Tests/Generator/JavaScript/Generator_BasicNext.js)<br>[`AsyncGenerator_BasicNext.js`](../../../tests/Jroc.Tests/AsyncGenerator/JavaScript/AsyncGenerator_BasicNext.js)<br>`tests/Jroc.Tests/IteratorObjectRepresentationTests.cs` |  | Iterator result objects are produced via IteratorResult helpers for sync and async iterator implementations. They are ordinary JsObject-backed values with own observable value and done data properties while retaining the runtime's typed iterator-result API. |
 
 ### 7.4.17 ([tc39.es](https://tc39.es/ecma262/#sec-createlistiteratorRecord))
 

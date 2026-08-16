@@ -9,10 +9,10 @@ public interface IIteratorResult
 /// <summary>
 /// Strongly-typed iterator result object of the form: { value: any, done: boolean }.
 ///
-/// NOTE: Field names are intentionally lower-case to match JS property lookups
-/// in this runtime's reflection-based `ObjectRuntime.GetProperty`.
+/// The lower-case field names retain the typed iterator-result API, while the
+/// constructor creates matching observable JavaScript own properties.
 /// </summary>
-public class IteratorResultObject<T> : IIteratorResult
+public class IteratorResultObject<T> : JsObject, IIteratorResult
 {
     public T? value;
     public bool done;
@@ -21,6 +21,9 @@ public class IteratorResultObject<T> : IIteratorResult
     {
         this.value = value;
         this.done = done;
+        SetObject(nameof(value), value);
+        SetBoolean(nameof(done), done);
+        PrototypeChain.InitializePrototype(this, GlobalThis.ObjectPrototypeValue);
     }
 
     object? IIteratorResult.value => value;

@@ -43,6 +43,21 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   `JsObject` inline property/prototype storage while retaining their exotic
   indexed and mapped-parameter slots.
 
+- runtime: continue #1580's incremental built-in representation migration by
+  moving URL, URLSearchParams, and URLSearchParams iterators to `JsObject`
+  inline property/prototype storage while retaining their CLR state and live
+  search parameter behavior (issue #1859).
+
+- runtime: continue #1580's incremental built-in representation migration by
+  moving AbortController and AbortSignal to `JsObject` inline
+  property/prototype storage while retaining private CLR abort state and
+  listeners (issue #1860).
+
+- runtime: continue #1580's incremental built-in representation migration by
+  moving iterator helpers and iterator result objects to `JsObject` inline
+  property/prototype storage while retaining iterator cleanup, exhaustion, and
+  result `value`/`done` behavior (issue #1861).
+
 - runtime/test262: expose SharedArrayBuffer as a first-class global constructor
   with standard constructor/prototype metadata and receiver-checked
   `byteLength`, `maxByteLength`, and `growable` accessors. Activates twenty
