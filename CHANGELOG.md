@@ -6,12 +6,15 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.12.7 - 2026-08-16
+
 - runtime: complete the realm migration with an executable mutable-static
   ownership audit and repeated parallel isolation/unload gates (issue #1829).
   Generated-type metadata and symbol-key caches are now weak-keyed, while
   `dns` default order, `fs.constants`, and `path.posix`/`path.win32` are owned
   by realm-local Node module instances.
-
 - runtime: unify standalone `Engine`, hosted `JsRuntimeInstance`, and future
   worker bootstrap under an exception-safe `RuntimeLifecycle` (issue #1828).
   The lifecycle explicitly creates or joins a cluster, creates the agent and
@@ -19,7 +22,6 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   order. Hosted runtimes suppress inherited ambient frames, use agent shutdown
   as their single cancellation source, and publish startup failures only after
   partial agent/realm state has been released.
-
 - runtime: make agent and agent-cluster shared services explicit (issue #1827).
   `Symbol.for`/`Symbol.keyFor` identity is now owned by `RuntimeAgent`, while
   opaque MessagePort transport queues, BroadcastChannel routing, shared buffer
@@ -27,14 +29,12 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   `RuntimeAgentCluster`. Realm wrappers remain distinct, cross-cluster sharing
   is rejected, and agent/last-agent disposal unregisters endpoints and waiters
   and releases cluster resources.
-
 - runtime: move timers, queues, pending I/O, event-loop pumping, async-hooks
   context, finalization jobs, wake-up signaling, and cooperative cancellation
   into `RuntimeAgentSchedulingState` (issue #1826). Realms in one agent share
   one scheduling graph, separate agents run independently, external producers
   only enqueue work for the receiver executor, and agent disposal clears all
   referenced handles and queued work without affecting another agent.
-
 - runtime: move tagged-template objects, materialized class constructor values,
   and lazy class-method metadata containing captured scopes into a disposable
   `RuntimeRealmValueCacheState` (issue #1825). Repeated execution preserves
@@ -42,66 +42,51 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   types in another realm receive distinct JavaScript values. Realm disposal
   clears the caches so captured scopes and collectible generated assemblies are
   not retained.
-
 - runtime: begin #1580's incremental built-in representation migration by
   moving Boolean wrappers to `JsObject` inline property/prototype storage.
   Add a JavaScript-visible representation inventory guard, Boolean allocation
   coverage, and a prototype-storage benchmark.
-
 - runtime/tests/docs: resolve #1862 and #1863 by deliberately retaining Error
   as `System.Exception` rather than `JsObject` for CLR throw/catch and host
   exception translation, and Proxy as a non-`JsObject` exotic so target/trap
   dispatch and invariant checks cannot be bypassed by shape/slot fast paths.
-
 - runtime: continue #1580's incremental built-in representation migration by
   moving Date wrappers to `JsObject` inline property/prototype storage.
-
 - runtime: continue #1580's incremental built-in representation migration by
   moving RegExp wrappers to `JsObject` inline property/prototype storage.
-
 - runtime: continue #1580's incremental built-in representation migration by
   moving Map and MapIterator wrappers to `JsObject` inline property/prototype storage.
-
 - runtime: continue #1580's incremental built-in representation migration by
   moving Set and SetIterator wrappers to `JsObject` inline property/prototype storage.
-
 - runtime: continue #1580's incremental built-in representation migration by
   moving WeakMap and WeakSet wrappers to `JsObject` inline property/prototype storage.
-
 - runtime: continue #1580's incremental built-in representation migration by
   moving Promise, generator, and async-generator wrappers to `JsObject` inline
   property/prototype storage.
-
 - runtime: continue #1580's incremental built-in representation migration by
   moving typed-array views, Arguments objects, and Buffer wrappers to
   `JsObject` inline property/prototype storage while retaining their exotic
   indexed and mapped-parameter slots.
-
 - runtime: continue #1580's incremental built-in representation migration by
   moving URL, URLSearchParams, and URLSearchParams iterators to `JsObject`
   inline property/prototype storage while retaining their CLR state and live
   search parameter behavior (issue #1859).
-
 - runtime: continue #1580's incremental built-in representation migration by
   moving AbortController and AbortSignal to `JsObject` inline
   property/prototype storage while retaining private CLR abort state and
   listeners (issue #1860).
-
 - runtime: continue #1580's incremental built-in representation migration by
   moving iterator helpers and iterator result objects to `JsObject` inline
   property/prototype storage while retaining iterator cleanup, exhaustion, and
   result `value`/`done` behavior (issue #1861).
-
 - runtime/test262: expose SharedArrayBuffer as a first-class global constructor
   with standard constructor/prototype metadata and receiver-checked
   `byteLength`, `maxByteLength`, and `growable` accessors. Activates twenty
   corresponding pinned test262 fixtures.
-
 - runtime/test262: expose ArrayBuffer as a first-class global constructor with
   standard constructor/prototype metadata, `isView`, and receiver-checked
   `byteLength`, `maxByteLength`, and `resizable` accessors. Activates twenty
   corresponding pinned test262 fixtures.
-
 - runtime: make globals, intrinsics, descriptors, and prototypes realm-owned
   (issue #1824). Every `RuntimeRealm` now owns a `RuntimeIntrinsics` graph that
   holds the whole ECMA-262 Realm Record `[[Intrinsics]]` surface:
@@ -139,57 +124,47 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   answers with the ambient realm, and context-less callers get one deterministic
   process-default graph. Realm disposal releases the realm's intrinsic object
   graph, adapter identities, and global function values.
-
 - runtime/test262: expose DataView as a first-class global constructor with
   standard constructor/prototype metadata and buffer, byteLength, and
   byteOffset accessors. Activates twenty corresponding pinned test262 fixtures.
-
 - runtime/test262: expose FinalizationRegistry as a first-class global
   constructor with standard constructor/prototype metadata plus prototype-owned
   register() and unregister() methods. Activates twenty corresponding pinned
   test262 fixtures.
-
 - runtime: move CommonJS and ESM graph state into `RuntimeRealm`, including
   module instances, live bindings, namespace caches, `import.meta`,
   module-scoped require delegates, and compiled assembly ownership. Active
   module paths and require parent state now follow nested execution frames,
   while realm disposal releases the complete module graph.
-
 - runtime/test262: expose WeakRef as a first-class global constructor with
   standard constructor/prototype metadata and `deref()` behavior. Weak-target
   eligibility now correctly rejects registered symbols. Activates twenty
   corresponding pinned test262 fixtures.
-
 - compiler/runtime/test262: add the ES2024 SuppressedError global with standard
   constructor/prototype metadata and ordered own `message`, `error`, and
   `suppressed` properties. Activates twenty corresponding pinned test262
   fixtures.
-
 - runtime/test262: add the ES2021 AggregateError global, iterable error-list
   construction, standard constructor/prototype metadata, and message-property
   behavior. Activates twenty corresponding pinned test262 fixtures.
-
 - runtime: replace thread-local runtime discovery with balanced,
   async-flow-safe execution frames. Engine and hosted entry points now enter
   explicit realm/agent scopes; service-provider, descriptor-store, module-path,
   global-object, and bootstrap-override lookup follow the active frame. Root
   entry suppresses inherited JavaScript invocation state for worker-safe
   bootstrap.
-
 - runtime: introduce explicit `RuntimeAgentCluster`, `RuntimeAgent`, and
   `RuntimeRealm` lifetime owners. Every runtime service container now belongs
   to exactly one realm and exposes the ownership graph through constructor
   injection, with deterministic child-first disposal and disposed-state
   guards. Existing observable runtime state remains in place for the follow-up
   migration stages tracked by #1805.
-
 - runtime/test262: add ES2025 JSON.rawJSON and JSON.isRawJSON support with
   validated frozen marker objects, raw primitive serialization, root reviver
   source context, and standard builtin metadata. JSON.stringify now creates
   its wrapper as an own data property, preserves its key list while getters
   mutate objects, and applies observable coercion to boxed space values.
   Activates twenty corresponding pinned test262 fixtures.
-
 - compiler/runtime/test262: complete String well-known-symbol dispatch for
   primitive match/search/replaceAll inputs, invoke observable @@search hooks
   on internally created RegExps, preserve JavaScript number-string precision
