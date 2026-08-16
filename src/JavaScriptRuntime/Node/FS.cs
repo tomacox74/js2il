@@ -9,7 +9,7 @@ namespace JavaScriptRuntime.Node
     [NodeModule("fs")]
     public sealed partial class FS
     {
-        private static readonly object _constants = CreateConstants();
+        private readonly object _constants = CreateConstants();
 
         private IIOScheduler? _ioScheduler;
         private object? _promises;

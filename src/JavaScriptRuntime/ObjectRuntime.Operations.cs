@@ -219,7 +219,7 @@ namespace JavaScriptRuntime
         }
 
         private static readonly ConditionalWeakTable<object, ObjectIntegrityState> _integrityStates = new();
-        private static readonly ConcurrentDictionary<string, Symbol> _encodedSymbolKeys = new(StringComparer.Ordinal);
+        private static readonly ConditionalWeakTable<string, Symbol> _encodedSymbolKeys = new();
 
         private static ObjectIntegrityState GetIntegrityState(object target) => _integrityStates.GetOrCreateValue(target);
 
@@ -230,7 +230,8 @@ namespace JavaScriptRuntime
 
         internal static bool IsEncodedSymbolKey(string? key)
         {
-            return !string.IsNullOrEmpty(key) && _encodedSymbolKeys.ContainsKey(key);
+            return !string.IsNullOrEmpty(key)
+                && _encodedSymbolKeys.TryGetValue(key, out _);
         }
 
         private static bool TryDecodeEncodedSymbolKey(string? key, [NotNullWhen(true)] out Symbol? symbol)
@@ -3544,7 +3545,7 @@ namespace JavaScriptRuntime
                 // We encode Symbol keys to a stable internal string so computed
                 // properties like obj[Symbol.iterator] can round-trip.
                 var encoded = sym.DebugId;
-                _encodedSymbolKeys.TryAdd(encoded, sym);
+                _ = _encodedSymbolKeys.GetValue(encoded, _ => sym);
                 return encoded;
             }
 
@@ -6833,7 +6834,7 @@ namespace JavaScriptRuntime
         public static int CoerceToInt32(object? value)
         {
             if (value is null) return 0;
-            
+
             switch (value)
             {
                 case double d: return (int)d;
