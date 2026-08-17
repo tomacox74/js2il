@@ -16,6 +16,9 @@ namespace Jroc.Tests.TypedArray
         public Task ArrayBuffer_Resizable_TypedArray_View() { var testName = nameof(ArrayBuffer_Resizable_TypedArray_View); return ExecutionTest(testName); }
 
         [Fact]
+        public Task ArrayBuffer_Resizable_View_ShrinkRegrow() { var testName = nameof(ArrayBuffer_Resizable_View_ShrinkRegrow); return ExecutionTest(testName); }
+
+        [Fact]
         public Task ArrayBuffer_IsView_DataView() { var testName = nameof(ArrayBuffer_IsView_DataView); return ExecutionTest(testName); }
 
         [Fact]

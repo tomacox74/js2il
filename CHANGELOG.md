@@ -6,7 +6,15 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-_Nothing yet._
+- perf(runtime): restore fixed-buffer typed-array element access performance
+  (issue #1882). Views over non-resizable `ArrayBuffer`s now use a cached
+  element length, so indexed reads and writes no longer recompute resizable
+  buffer state per access, and `RuntimeArrayBufferStorage.Bytes` no longer pays
+  a never-overridden virtual call and a volatile read on every element access.
+  Views over resizable buffers keep the full dynamic path, so shrink,
+  out-of-bounds, and regrow behavior is unchanged. This recovers the
+  PrimeJavaScript throughput regression introduced in v0.12.5 by issue #1800
+  and improves on the prior baseline.
 
 ## v0.12.7 - 2026-08-16
 

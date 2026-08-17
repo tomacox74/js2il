@@ -9,9 +9,16 @@ internal class RuntimeArrayBufferStorage
         _bytes = bytes;
     }
 
-    internal virtual byte[] Bytes
+    /// <summary>
+    /// Reads use a plain field read because this sits on the typed-array element access
+    /// hot path. Resizable ArrayBuffer storage is agent-confined, while shared storage
+    /// keeps the same byte array until agent-cluster teardown. The release write remains
+    /// volatile for teardown publication; ordinary readers do not rely on it for
+    /// synchronization.
+    /// </summary>
+    internal byte[] Bytes
     {
-        get => Volatile.Read(ref _bytes);
+        get => _bytes;
         set => Volatile.Write(ref _bytes, value);
     }
 }
