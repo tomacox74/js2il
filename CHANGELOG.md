@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.12.8 - 2026-08-17
+
 - perf(runtime): restore fixed-buffer typed-array element access performance
   (issue #1882). Views over non-resizable `ArrayBuffer`s now use a cached
   element length, so indexed reads and writes no longer recompute resizable
