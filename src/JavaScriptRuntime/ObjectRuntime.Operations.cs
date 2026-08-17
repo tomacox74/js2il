@@ -599,6 +599,8 @@ namespace JavaScriptRuntime
                 {
                     AddKey(keys, seen, i.ToString(global::System.Globalization.CultureInfo.InvariantCulture));
                 }
+
+                AddKey(keys, seen, "length");
             }
             else if (obj is JavaScriptRuntime.TypedArrayBase typedArray)
             {
@@ -629,6 +631,14 @@ namespace JavaScriptRuntime
                 foreach (var key in dictionaryKeys.OrderBy(static key => key, StringComparer.Ordinal))
                 {
                     AddKey(keys, seen, key);
+                }
+            }
+
+            if (TryGetStringObjectValue(obj, out var stringObjectValue))
+            {
+                for (int i = 0; i < stringObjectValue.Length; i++)
+                {
+                    AddKey(keys, seen, i.ToString(global::System.Globalization.CultureInfo.InvariantCulture));
                 }
             }
 
@@ -768,6 +778,11 @@ namespace JavaScriptRuntime
             {
                 return TryGetOwnPropertyDescriptor(obj, key, out var descriptor)
                     && descriptor.Enumerable;
+            }
+
+            if (TryGetOwnPropertyDescriptor(obj, key, out var ownDescriptor))
+            {
+                return ownDescriptor.Enumerable;
             }
 
             return RuntimeServices.TryEnsureLazyClassMethodDataProperty(obj, key, out var lazyClassMethodDescriptor)
@@ -911,21 +926,32 @@ namespace JavaScriptRuntime
             DefineBuiltinDataProperty(objectConstructorValue, "assign", _objectAssignValue);
             InitializeBuiltinStaticFunction(_objectAssignValue, "assign", 2);
             DefineBuiltinDataProperty(objectConstructorValue, "create", _objectCreateValue);
+            InitializeBuiltinStaticFunction(_objectCreateValue, "create", 2);
             DefineBuiltinDataProperty(objectConstructorValue, "defineProperties", _objectDefinePropertiesValue);
+            InitializeBuiltinStaticFunction(_objectDefinePropertiesValue, "defineProperties", 2);
             DefineBuiltinDataProperty(objectConstructorValue, "defineProperty", _objectDefinePropertyValue);
+            InitializeBuiltinStaticFunction(_objectDefinePropertyValue, "defineProperty", 3);
             DefineBuiltinDataProperty(objectConstructorValue, "entries", _objectEntriesValue);
             InitializeBuiltinStaticFunction(_objectEntriesValue, "entries", 1);
             DefineBuiltinDataProperty(objectConstructorValue, "freeze", _objectFreezeValue);
+            InitializeBuiltinStaticFunction(_objectFreezeValue, "freeze", 1);
             DefineBuiltinDataProperty(objectConstructorValue, "fromEntries", _objectFromEntriesValue);
+            InitializeBuiltinStaticFunction(_objectFromEntriesValue, "fromEntries", 1);
             DefineBuiltinDataProperty(objectConstructorValue, "getOwnPropertyDescriptor", _objectGetOwnPropertyDescriptorValue);
+            InitializeBuiltinStaticFunction(_objectGetOwnPropertyDescriptorValue, "getOwnPropertyDescriptor", 2);
             DefineBuiltinDataProperty(objectConstructorValue, "getOwnPropertyDescriptors", _objectGetOwnPropertyDescriptorsValue);
+            InitializeBuiltinStaticFunction(_objectGetOwnPropertyDescriptorsValue, "getOwnPropertyDescriptors", 1);
             DefineBuiltinDataProperty(objectConstructorValue, "getOwnPropertyNames", _objectGetOwnPropertyNamesValue);
+            InitializeBuiltinStaticFunction(_objectGetOwnPropertyNamesValue, "getOwnPropertyNames", 1);
             DefineBuiltinDataProperty(objectConstructorValue, "getOwnPropertySymbols", _objectGetOwnPropertySymbolsValue);
+            InitializeBuiltinStaticFunction(_objectGetOwnPropertySymbolsValue, "getOwnPropertySymbols", 1);
             DefineBuiltinDataProperty(objectConstructorValue, "getPrototypeOf", _objectGetPrototypeOfValue);
+            InitializeBuiltinStaticFunction(_objectGetPrototypeOfValue, "getPrototypeOf", 1);
             DefineBuiltinDataProperty(objectConstructorValue, "groupBy", _objectGroupByValue);
             InitializeBuiltinStaticFunction(_objectGroupByValue, "groupBy", 2);
             DefineBuiltinDataProperty(objectConstructorValue, "hasOwn", _objectHasOwnValue);
             DefineBuiltinDataProperty(objectConstructorValue, "is", _objectIsValue);
+            InitializeBuiltinStaticFunction(_objectIsValue, "is", 2);
             DefineBuiltinDataProperty(objectConstructorValue, "isExtensible", _objectIsExtensibleValue);
             DefineBuiltinDataProperty(objectConstructorValue, "isFrozen", _objectIsFrozenValue);
             DefineBuiltinDataProperty(objectConstructorValue, "isSealed", _objectIsSealedValue);
@@ -933,7 +959,9 @@ namespace JavaScriptRuntime
             InitializeBuiltinStaticFunction(_objectKeysValue, "keys", 1);
             DefineBuiltinDataProperty(objectConstructorValue, "preventExtensions", _objectPreventExtensionsValue);
             DefineBuiltinDataProperty(objectConstructorValue, "seal", _objectSealValue);
+            InitializeBuiltinStaticFunction(_objectSealValue, "seal", 1);
             DefineBuiltinDataProperty(objectConstructorValue, "setPrototypeOf", _objectSetPrototypeOfValue);
+            InitializeBuiltinStaticFunction(_objectSetPrototypeOfValue, "setPrototypeOf", 2);
             DefineBuiltinDataProperty(objectConstructorValue, "values", _objectValuesValue);
             InitializeBuiltinStaticFunction(_objectValuesValue, "values", 1);
 
@@ -1032,6 +1060,26 @@ namespace JavaScriptRuntime
                 return GlobalThis.SymbolPrototypeValue;
             }
 
+            if (obj is string)
+            {
+                return JavaScriptRuntime.String.Prototype;
+            }
+
+            if (obj is bool)
+            {
+                return GlobalThis.BooleanPrototypeValue;
+            }
+
+            if (obj is global::System.Numerics.BigInteger)
+            {
+                return GlobalThis.BigIntPrototypeValue;
+            }
+
+            if (obj.GetType().IsValueType)
+            {
+                return GlobalThis.NumberPrototypeValue;
+            }
+
             if (!IsObjectLikeForPrototype(obj))
             {
                 throw new TypeError("Object.getPrototypeOf called on non-object");
@@ -1073,13 +1121,17 @@ namespace JavaScriptRuntime
 
                 obj = proxy.GetTarget("setPrototypeOf");
             }
-            if (!IsObjectLikeForPrototype(obj))
-            {
-                throw new TypeError("Object.setPrototypeOf called on non-object");
-            }
             if (!IsValidPrototypeValue(prototype))
             {
                 throw new TypeError("Object prototype may only be an Object or null");
+            }
+            if (!IsObjectLikeForPrototype(obj))
+            {
+                return obj;
+            }
+            if (WouldCreatePrototypeCycle(obj, prototype))
+            {
+                throw new TypeError("Cyclic __proto__ value");
             }
 
             // OrdinarySetPrototypeOf returns false for a non-extensible target whose prototype
@@ -1434,6 +1486,11 @@ namespace JavaScriptRuntime
                 throw new TypeError("Cannot convert undefined or null to object");
             }
 
+            if (!IsObjectLikeForPrototype(obj))
+            {
+                throw new TypeError("Object.defineProperty called on non-object");
+            }
+
             if (!IsPropertyDescriptorObject(attributes))
             {
                 throw new TypeError("Property description must be an object");
@@ -1626,15 +1683,33 @@ namespace JavaScriptRuntime
             return obj is string || obj is Symbol || obj.GetType().IsValueType;
         }
 
+        private static bool TryGetStringObjectValue(object obj, [NotNullWhen(true)] out string? value)
+        {
+            if (obj is IExoticJsObject)
+            {
+                value = null;
+                return false;
+            }
+
+            if (PropertyDescriptorStore.TryGetOwn(obj, JavaScriptRuntime.String.StringDataPropertyName, out var descriptor)
+                && descriptor.Kind == JsPropertyDescriptorKind.Data
+                && descriptor.Value is string stringValue)
+            {
+                value = stringValue;
+                return true;
+            }
+
+            value = null;
+            return false;
+        }
+
         private static bool IsReadOnlyStringObjectIndex(object obj, string name)
         {
-            if (!PropertyDescriptorStore.TryGetOwn(obj, JavaScriptRuntime.String.StringDataPropertyName, out var descriptor)
-                || descriptor.Kind != JsPropertyDescriptorKind.Data)
+            if (!TryGetStringObjectValue(obj, out var stringValue))
             {
                 return false;
             }
 
-            var stringValue = DotNet2JSConversions.ToString(descriptor.Value);
             return TryGetCanonicalArrayIndexKey(name, out var index) && index < stringValue.Length;
         }
 
@@ -1652,15 +1727,10 @@ namespace JavaScriptRuntime
                     continue;
                 }
 
-                _ = TryGetOwnPropertyValue(obj, key, out var value);
-                PropertyDescriptorStore.DefineOrUpdate(obj, key, new JsPropertyDescriptor
+                if (TryGetOwnPropertyDescriptor(obj, key, out var descriptor))
                 {
-                    Kind = JsPropertyDescriptorKind.Data,
-                    Enumerable = true,
-                    Configurable = true,
-                    Writable = true,
-                    Value = value
-                });
+                    PropertyDescriptorStore.DefineOrUpdate(obj, key, descriptor);
+                }
             }
         }
 
@@ -1757,7 +1827,7 @@ namespace JavaScriptRuntime
         {
             if (obj is null || obj is JsNull)
             {
-                throw new TypeError("Cannot convert undefined or null to object");
+                return obj!;
             }
 
             if (IsPrimitiveObjectOperationTarget(obj))
@@ -3224,6 +3294,14 @@ namespace JavaScriptRuntime
                 return TryGetOwnPropertyDescriptor(target, name, out _);
             }
 
+            if (TryGetStringObjectValue(target, out var stringObjectValue)
+                && TryParseCanonicalIndexString(name, out var stringObjectIndex)
+                && stringObjectIndex >= 0
+                && stringObjectIndex < stringObjectValue.Length)
+            {
+                return true;
+            }
+
             if (target is JsObject defaultDataObject
                 && target is not JsClassConstructorObject
                 && !defaultDataObject.HasNonDataDescriptors)
@@ -3568,6 +3646,22 @@ namespace JavaScriptRuntime
             {
                 descriptor = default;
                 return false;
+            }
+
+            if (TryGetStringObjectValue(target, out var stringObjectValue)
+                && TryParseCanonicalIndexString(propName, out var stringObjectIndex)
+                && stringObjectIndex >= 0
+                && stringObjectIndex < stringObjectValue.Length)
+            {
+                descriptor = new JsPropertyDescriptor
+                {
+                    Kind = JsPropertyDescriptorKind.Data,
+                    Enumerable = true,
+                    Configurable = false,
+                    Writable = false,
+                    Value = stringObjectValue[stringObjectIndex].ToString()
+                };
+                return true;
             }
 
             if (target is JsObject jsObject
@@ -5342,7 +5436,10 @@ namespace JavaScriptRuntime
                 return keys;
             }
 
-            return JavaScriptRuntime.Array.Empty;
+            return new JavaScriptRuntime.Array(
+                GetOrderedOwnKeys(obj, includeEncodedSymbolKeys: false)
+                    .Where(key => TryGetOwnPropertyDescriptor(obj, key, out var descriptor) && descriptor.Enumerable)
+                    .Cast<object?>());
         }
 
         public static double GetLength(object obj)
@@ -5406,6 +5503,14 @@ namespace JavaScriptRuntime
                     out bufferValue))
             {
                 return bufferValue;
+            }
+
+            if (TryGetStringObjectValue(obj, out var stringObjectValue)
+                && TryParseCanonicalIndexString(name, out var stringObjectIndex)
+                && stringObjectIndex >= 0
+                && stringObjectIndex < stringObjectValue.Length)
+            {
+                return stringObjectValue[stringObjectIndex].ToString();
             }
 
             if (obj is JsObject jsObject
@@ -5881,7 +5986,7 @@ namespace JavaScriptRuntime
                 }
                 return value;
             }
-            if (!hasOwn && IsReadOnlyStringObjectIndex(obj, name))
+            if (IsReadOnlyStringObjectIndex(obj, name))
             {
                 if (!throwOnError)
                 {

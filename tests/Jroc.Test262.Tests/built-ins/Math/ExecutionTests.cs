@@ -141,6 +141,14 @@ public class ExecutionTests : DiskExecutionTestsBase
     public Task clz32_int32bit()
         => ExecutionTestFromFile("clz32/int32bit");
 
+    [Fact(DisplayName = "clz32/Math.clz32")]
+    public Task clz32_Math_clz32()
+        => ExecutionTestFromFile("clz32/Math.clz32");
+
+    [Fact(DisplayName = "clz32/Math.clz32_1")]
+    public Task clz32_Math_clz32_1()
+        => ExecutionTestFromFile("clz32/Math.clz32_1");
+
     [Fact(DisplayName = "clz32/not-a-constructor")]
     public Task clz32_not_a_constructor()
         => ExecutionTestFromFile("clz32/not-a-constructor");
@@ -172,6 +180,10 @@ public class ExecutionTests : DiskExecutionTestsBase
     [Fact(DisplayName = "f16round/length")]
     public Task f16round_length()
         => ExecutionTestFromFile("f16round/length");
+
+    [Fact(DisplayName = "f16round/name")]
+    public Task f16round_name()
+        => ExecutionTestFromFile("f16round/name");
 
     [Fact(DisplayName = "f16round/not-a-constructor")]
     public Task f16round_not_a_constructor()
@@ -229,6 +241,14 @@ public class ExecutionTests : DiskExecutionTestsBase
     public Task pow_applying_the_exp_operator_A1()
         => ExecutionTestFromFile("pow/applying-the-exp-operator_A1");
 
+    [Fact(DisplayName = "pow/applying-the-exp-operator_A7")]
+    public Task pow_applying_the_exp_operator_A7()
+        => ExecutionTestFromFile("pow/applying-the-exp-operator_A7");
+
+    [Fact(DisplayName = "pow/applying-the-exp-operator_A8")]
+    public Task pow_applying_the_exp_operator_A8()
+        => ExecutionTestFromFile("pow/applying-the-exp-operator_A8");
+
     [Fact(DisplayName = "pow/not-a-constructor")]
     public Task pow_not_a_constructor()
         => ExecutionTestFromFile("pow/not-a-constructor");
@@ -236,6 +256,10 @@ public class ExecutionTests : DiskExecutionTestsBase
     [Fact(DisplayName = "random/S15.8.2.14_A1")]
     public Task random_S15_8_2_14_A1()
         => ExecutionTestFromFile("random/S15.8.2.14_A1");
+
+    [Fact(DisplayName = "random/length")]
+    public Task random_length()
+        => ExecutionTestFromFile("random/length");
 
     [Fact(DisplayName = "random/not-a-constructor")]
     public Task random_not_a_constructor()

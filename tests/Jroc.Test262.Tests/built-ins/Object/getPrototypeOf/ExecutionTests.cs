@@ -45,4 +45,28 @@ public class ExecutionTests : DiskExecutionTestsBase
     [Fact(DisplayName = "15.2.3.2-2-11")]
     public Task _15_2_3_2_2_11()
         => ExecutionTestFromFile("15.2.3.2-2-11");
+    [Fact(DisplayName = "15.2.3.2-1.js")]
+    public Task _15_2_3_2_1_js()
+        => ExecutionTestFromFile("15.2.3.2-1");
+    [Fact(DisplayName = "15.2.3.2-1-3.js")]
+    public Task _15_2_3_2_1_3_js()
+        => ExecutionTestFromFile("15.2.3.2-1-3");
+    [Fact(DisplayName = "15.2.3.2-1-4.js")]
+    public Task _15_2_3_2_1_4_js()
+        => ExecutionTestFromFile("15.2.3.2-1-4");
+    [Fact(DisplayName = "15.2.3.2-2-12.js")]
+    public Task _15_2_3_2_2_12_js()
+        => ExecutionTestFromFile("15.2.3.2-2-12");
+    [Fact(DisplayName = "15.2.3.2-2-13.js")]
+    public Task _15_2_3_2_2_13_js()
+        => ExecutionTestFromFile("15.2.3.2-2-13");
+    [Fact(DisplayName = "15.2.3.2-2-14.js")]
+    public Task _15_2_3_2_2_14_js()
+        => ExecutionTestFromFile("15.2.3.2-2-14");
+    [Fact(DisplayName = "15.2.3.2-2-15.js")]
+    public Task _15_2_3_2_2_15_js()
+        => ExecutionTestFromFile("15.2.3.2-2-15");
+    [Fact(DisplayName = "15.2.3.2-2-16.js")]
+    public Task _15_2_3_2_2_16_js()
+        => ExecutionTestFromFile("15.2.3.2-2-16");
 }

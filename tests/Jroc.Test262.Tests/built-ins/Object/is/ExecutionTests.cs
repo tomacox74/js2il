@@ -74,4 +74,7 @@ public class ExecutionTests : DiskExecutionTestsBase
     public Task symbol_object_is_same_value()
         => ExecutionTestFromFile("symbol-object-is-same-value");
 
+    [Fact(DisplayName = "length.js")]
+    public Task length_js()
+        => ExecutionTestFromFile("length");
 }

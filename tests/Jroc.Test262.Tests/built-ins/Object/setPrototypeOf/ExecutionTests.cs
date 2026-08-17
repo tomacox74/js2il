@@ -18,4 +18,19 @@ public class ExecutionTests : DiskExecutionTestsBase
     [Fact(DisplayName = "success")]
     public Task success()
         => ExecutionTestFromFile("success");
+    [Fact(DisplayName = "bigint.js")]
+    public Task bigint_js()
+        => ExecutionTestFromFile("bigint");
+    [Fact(DisplayName = "length.js")]
+    public Task length_js()
+        => ExecutionTestFromFile("length");
+    [Fact(DisplayName = "name.js")]
+    public Task name_js()
+        => ExecutionTestFromFile("name");
+    [Fact(DisplayName = "o-not-obj.js")]
+    public Task o_not_obj_js()
+        => ExecutionTestFromFile("o-not-obj");
+    [Fact(DisplayName = "set-failure-cycle.js")]
+    public Task set_failure_cycle_js()
+        => ExecutionTestFromFile("set-failure-cycle");
 }

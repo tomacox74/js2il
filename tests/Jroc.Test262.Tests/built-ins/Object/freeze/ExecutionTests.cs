@@ -15,4 +15,13 @@ public class ExecutionTests : DiskExecutionTestsBase
     [Fact(DisplayName = "15.2.3.9-2-c-1")]
     public Task _15_2_3_9_2_c_1()
         => ExecutionTestFromFile("15.2.3.9-2-c-1");
+    [Fact(DisplayName = "15.2.3.9-1-1.js")]
+    public Task _15_2_3_9_1_1_js()
+        => ExecutionTestFromFile("15.2.3.9-1-1");
+    [Fact(DisplayName = "15.2.3.9-1-2.js")]
+    public Task _15_2_3_9_1_2_js()
+        => ExecutionTestFromFile("15.2.3.9-1-2");
+    [Fact(DisplayName = "15.2.3.9-2-a-12.js")]
+    public Task _15_2_3_9_2_a_12_js()
+        => ExecutionTestFromFile("15.2.3.9-2-a-12");
 }

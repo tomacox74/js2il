@@ -20,7 +20,7 @@ public sealed class RuntimeStaticStateAuditTests
 
     private static readonly ApprovedStatic[] ApprovedWritableStatics =
     [
-        new("JavaScriptRuntime.Array._defaultPrototypeChainHasIndexedProperties", "thread-local deoptimization state"),
+        new("JavaScriptRuntime.Array._defaultPrototypeChainHasBlockingIndexedProperties", "thread-local deoptimization state"),
         new("JavaScriptRuntime.Array._observedPrototypeIntrinsicsId", "thread-local deoptimization state"),
         new("JavaScriptRuntime.Array._observedPrototypeMutationVersion", "thread-local deoptimization state"),
         new("JavaScriptRuntime.Array._prototypeMutationVersion", "process-wide monotonic deoptimization version"),
