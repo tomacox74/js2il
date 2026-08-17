@@ -12,6 +12,14 @@ namespace JavaScriptRuntime
         private int _length;
         private bool _isLengthTracking;
 
+        /// <summary>
+        /// Element length used by the indexed fast path. It is only non-zero when the
+        /// backing buffer is not resizable, in which case the view's length can never
+        /// change and needs no invalidation. Views over resizable buffers keep this at
+        /// zero so every access falls through to the dynamic slow path.
+        /// </summary>
+        private int _fastLength;
+
         protected abstract int BytesPerElement { get; }
         protected abstract string TypedArrayName { get; }
         protected abstract double ReadElementValue(int index);
@@ -497,6 +505,7 @@ namespace JavaScriptRuntime
             _byteOffset = 0;
             _length = 0;
             _isLengthTracking = false;
+            UpdateFastLength();
             InitializeIntrinsicSurface();
         }
 
@@ -519,6 +528,7 @@ namespace JavaScriptRuntime
             _byteOffset = 0;
             _length = length;
             _isLengthTracking = false;
+            UpdateFastLength();
             InitializeIntrinsicSurface();
         }
 
@@ -528,6 +538,7 @@ namespace JavaScriptRuntime
             _byteOffset = byteOffset;
             _length = length;
             _isLengthTracking = false;
+            UpdateFastLength();
             InitializeIntrinsicSurface();
         }
 
@@ -568,6 +579,7 @@ namespace JavaScriptRuntime
             _byteOffset = offset;
             _length = elementLength;
             _isLengthTracking = (length is null || length is JsNull) && buffer.IsResizable;
+            UpdateFastLength();
             InitializeIntrinsicSurface();
         }
 
@@ -1091,6 +1103,22 @@ namespace JavaScriptRuntime
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private bool TryGetElementIndex(double index, out int elementIndex)
         {
+            // Fast path for views over non-resizable buffers: a single field compare with
+            // no buffer dereference. The equality check rejects NaN, infinities, negative
+            // values, and non-integers, so they fall through to the slow path.
+            var candidate = (int)index;
+            if (candidate == index && (uint)candidate < (uint)_fastLength)
+            {
+                elementIndex = candidate;
+                return true;
+            }
+
+            return TryGetElementIndexSlow(index, out elementIndex);
+        }
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        private bool TryGetElementIndexSlow(double index, out int elementIndex)
+        {
             if (!double.IsNaN(index)
                 && !double.IsInfinity(index)
                 && index >= 0
@@ -1107,6 +1135,16 @@ namespace JavaScriptRuntime
             elementIndex = 0;
             return false;
         }
+
+        /// <summary>
+        /// Recomputes <see cref="_fastLength"/>. This is safe to compute once per
+        /// initialization because <c>ArrayBuffer.resizable</c> is fixed at construction and
+        /// the runtime has no <c>transfer</c>/detach support, so the byte length of a
+        /// non-resizable buffer is immutable. If detach, transfer, or growable
+        /// SharedArrayBuffer support is added, this cache must be invalidated there.
+        /// </summary>
+        private void UpdateFastLength()
+            => _fastLength = _buffer.IsResizable ? 0 : _length;
 
         internal int GetCurrentLengthForIteration()
         {

@@ -9,9 +9,15 @@ internal class RuntimeArrayBufferStorage
         _bytes = bytes;
     }
 
-    internal virtual byte[] Bytes
+    /// <summary>
+    /// Reads use a plain field read because this sits on the typed-array element access
+    /// hot path. Writes publish with <see cref="Volatile.Write"/> so a replaced buffer is
+    /// visible to other agents; JavaScript requires <c>Atomics</c> for synchronized
+    /// access to shared memory, so non-atomic reads need no acquire barrier here.
+    /// </summary>
+    internal byte[] Bytes
     {
-        get => Volatile.Read(ref _bytes);
+        get => _bytes;
         set => Volatile.Write(ref _bytes, value);
     }
 }
