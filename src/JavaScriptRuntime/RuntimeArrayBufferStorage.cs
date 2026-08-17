@@ -11,9 +11,10 @@ internal class RuntimeArrayBufferStorage
 
     /// <summary>
     /// Reads use a plain field read because this sits on the typed-array element access
-    /// hot path. Writes publish with <see cref="Volatile.Write"/> so a replaced buffer is
-    /// visible to other agents; JavaScript requires <c>Atomics</c> for synchronized
-    /// access to shared memory, so non-atomic reads need no acquire barrier here.
+    /// hot path. Resizable ArrayBuffer storage is agent-confined, while shared storage
+    /// keeps the same byte array until agent-cluster teardown. The release write remains
+    /// volatile for teardown publication; ordinary readers do not rely on it for
+    /// synchronization.
     /// </summary>
     internal byte[] Bytes
     {

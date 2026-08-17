@@ -1176,6 +1176,11 @@ namespace JavaScriptRuntime
 
         private int GetCurrentLengthOrZero()
         {
+            if (_fastLength != 0)
+            {
+                return _fastLength;
+            }
+
             if (IsOutOfBounds)
             {
                 return 0;
