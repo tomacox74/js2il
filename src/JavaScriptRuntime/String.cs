@@ -530,7 +530,13 @@ namespace JavaScriptRuntime
         private static bool TryGetDescriptorValue(object target, string propertyKey, object receiver, out object? value)
         {
             value = null;
-            if (!PropertyDescriptorStore.TryGetOwn(target, propertyKey, out var descriptor))
+            var lookup = PropertyDescriptorStore.GetOwnLookup(target, propertyKey, out var descriptor);
+            if (lookup == PropertyDescriptorLookup.Deleted)
+            {
+                return false;
+            }
+
+            if (lookup != PropertyDescriptorLookup.Found)
             {
                 if (target is IDictionary<string, object?> dict && dict.TryGetValue(propertyKey, out value))
                 {

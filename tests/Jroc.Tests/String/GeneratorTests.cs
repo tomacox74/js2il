@@ -237,6 +237,13 @@ namespace Jroc.Tests.String
         }
 
         [Fact]
+        public Task String_PrototypeMethodOverrides()
+        {
+            var testName = nameof(String_PrototypeMethodOverrides);
+            return GenerateTest(testName);
+        }
+
+        [Fact]
         public Task String_Repeat_Basic()
         {
             var testName = nameof(String_Repeat_Basic);

@@ -90,8 +90,9 @@
 			[6] class [JavaScriptRuntime]JavaScriptRuntime.SyntaxError,
 			[7] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 			[8] string,
-			[9] bool,
-			[10] object
+			[9] object,
+			[10] bool,
+			[11] object
 		)
 
 		IL_0000: newobj instance void Modules.Function_Constructor_SyntaxError/Scope::.ctor()
@@ -157,12 +158,12 @@
 			IL_0080: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class [System.Runtime]System.String>(!!0)
 			IL_0085: stloc.s 8
 			IL_0087: ldloc.s 8
-			IL_0089: ldstr "SyntaxError"
-			IL_008e: call bool [JavaScriptRuntime]JavaScriptRuntime.String::Includes(string, string)
-			IL_0093: stloc.s 9
-			IL_0095: ldloc.s 7
-			IL_0097: ldloc.s 9
-			IL_0099: box [System.Runtime]System.Boolean
+			IL_0089: ldstr "includes"
+			IL_008e: ldstr "SyntaxError"
+			IL_0093: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_0098: stloc.s 9
+			IL_009a: ldloc.s 7
+			IL_009c: ldloc.s 9
 			IL_009e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
 			IL_00a3: pop
 			IL_00a4: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
@@ -172,12 +173,12 @@
 			IL_00b2: conv.r8
 			IL_00b3: ldc.r8 0.0
 			IL_00bc: cgt
-			IL_00be: stloc.s 9
-			IL_00c0: ldloc.s 9
+			IL_00be: stloc.s 10
+			IL_00c0: ldloc.s 10
 			IL_00c2: box [System.Runtime]System.Boolean
-			IL_00c7: stloc.s 10
+			IL_00c7: stloc.s 11
 			IL_00c9: ldloc.s 7
-			IL_00cb: ldloc.s 10
+			IL_00cb: ldloc.s 11
 			IL_00cd: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
 			IL_00d2: pop
 			IL_00d3: leave IL_00d8
