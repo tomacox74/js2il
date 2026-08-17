@@ -1685,6 +1685,12 @@ namespace JavaScriptRuntime
 
         private static bool TryGetStringObjectValue(object obj, [NotNullWhen(true)] out string? value)
         {
+            if (obj is IExoticJsObject)
+            {
+                value = null;
+                return false;
+            }
+
             if (PropertyDescriptorStore.TryGetOwn(obj, JavaScriptRuntime.String.StringDataPropertyName, out var descriptor)
                 && descriptor.Kind == JsPropertyDescriptorKind.Data
                 && descriptor.Value is string stringValue)
