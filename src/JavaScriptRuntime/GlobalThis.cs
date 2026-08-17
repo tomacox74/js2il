@@ -226,6 +226,8 @@ namespace JavaScriptRuntime
         private static readonly Func<object?, bool> _isNaNValue = isNaN;
         private static readonly Func<object?, string> _decodeURIValue = decodeURI;
         private static readonly Func<object?, string> _encodeURIValue = encodeURI;
+        private static readonly Func<object?, string> _decodeURIComponentValue = decodeURIComponent;
+        private static readonly Func<object?, string> _encodeURIComponentValue = encodeURIComponent;
         private static readonly UTF8Encoding _strictUtf8 = new(false, true);
         private static readonly Func<object?, bool> _numberIsFiniteValue = JavaScriptRuntime.Number.isFinite;
         private static readonly Func<object?, bool> _numberIsIntegerValue = JavaScriptRuntime.Number.isInteger;
@@ -818,12 +820,16 @@ namespace JavaScriptRuntime
             ConfigureBuiltinFunctionObject(_isNaNValue);
             ConfigureBuiltinFunctionObject(_decodeURIValue);
             ConfigureBuiltinFunctionObject(_encodeURIValue);
+            ConfigureBuiltinFunctionObject(_decodeURIComponentValue);
+            ConfigureBuiltinFunctionObject(_encodeURIComponentValue);
             DefineUndefinedPrototypeProperty(_parseIntValue);
             DefineUndefinedPrototypeProperty(_parseFloatValue);
             DefineUndefinedPrototypeProperty(_isFiniteValue);
             DefineUndefinedPrototypeProperty(_isNaNValue);
             DefineUndefinedPrototypeProperty(_decodeURIValue);
             DefineUndefinedPrototypeProperty(_encodeURIValue);
+            DefineUndefinedPrototypeProperty(_decodeURIComponentValue);
+            DefineUndefinedPrototypeProperty(_encodeURIComponentValue);
 
             // Provide Error.prototype for patterns like `Error.prototype` and error-subclassing libraries.
             ConfigureErrorIntrinsicSurface(_errorConstructorValue, _errorPrototypeValue, "Error", parentPrototype: _objectPrototypeValue);
@@ -833,6 +839,12 @@ namespace JavaScriptRuntime
             ConfigureErrorIntrinsicSurface(_syntaxErrorConstructorValue, _syntaxErrorPrototypeValue, "SyntaxError", parentPrototype: _errorPrototypeValue);
             ConfigureErrorIntrinsicSurface(_typeErrorConstructorValue, _typeErrorPrototypeValue, "TypeError", parentPrototype: _errorPrototypeValue);
             ConfigureErrorIntrinsicSurface(_uriErrorConstructorValue, _uriErrorPrototypeValue, "URIError", parentPrototype: _errorPrototypeValue);
+            PrototypeChain.SetPrototype(_evalErrorConstructorValue, _errorConstructorValue);
+            PrototypeChain.SetPrototype(_rangeErrorConstructorValue, _errorConstructorValue);
+            PrototypeChain.SetPrototype(_referenceErrorConstructorValue, _errorConstructorValue);
+            PrototypeChain.SetPrototype(_syntaxErrorConstructorValue, _errorConstructorValue);
+            PrototypeChain.SetPrototype(_typeErrorConstructorValue, _errorConstructorValue);
+            PrototypeChain.SetPrototype(_uriErrorConstructorValue, _errorConstructorValue);
             ConfigureAggregateErrorIntrinsicSurface();
             ConfigureSuppressedErrorIntrinsicSurface();
 
@@ -980,6 +992,7 @@ namespace JavaScriptRuntime
                 Writable = true,
                 Value = "TypeError"
             });
+            PrototypeChain.SetPrototype(_typeErrorConstructorValue, _errorConstructorValue);
 
             ConfigureBuiltinFunctionObject(_typedArrayConstructorValue);
             PrototypeChain.SetPrototype(_typedArrayPrototypeValue, _objectPrototypeValue);
@@ -1642,6 +1655,12 @@ namespace JavaScriptRuntime
             dict.TryAdd(nameof(GlobalThis.encodeURI), _encodeURIValue);
             DefineNonEnumerableDataProperty(nameof(GlobalThis.encodeURI), dict[nameof(GlobalThis.encodeURI)]);
 
+            dict.TryAdd("decodeURIComponent", _decodeURIComponentValue);
+            DefineNonEnumerableDataProperty("decodeURIComponent", dict["decodeURIComponent"]);
+
+            dict.TryAdd("encodeURIComponent", _encodeURIComponentValue);
+            DefineNonEnumerableDataProperty("encodeURIComponent", dict["encodeURIComponent"]);
+
             ApplyHostGlobalBindings(dict);
         }
 
@@ -2162,6 +2181,12 @@ namespace JavaScriptRuntime
         /// <c>decodeURI</c> function.
         /// </summary>
         public static string decodeURI(object? encodedURI)
+            => DecodeUri(encodedURI, preserveReserved: true);
+
+        private static string decodeURIComponent(object? encodedURI)
+            => DecodeUri(encodedURI, preserveReserved: false);
+
+        private static string DecodeUri(object? encodedURI, bool preserveReserved)
         {
             var input = DotNet2JSConversions.ToString(encodedURI);
             var result = new StringBuilder(input.Length);
@@ -2181,7 +2206,7 @@ namespace JavaScriptRuntime
                 if (firstByte <= 0x7F)
                 {
                     var decodedCharacter = (char)firstByte;
-                    if (IsUriReserved(decodedCharacter))
+                    if (preserveReserved && IsUriReserved(decodedCharacter))
                     {
                         result.Append(input, escapeStart, index - escapeStart);
                     }
@@ -2272,6 +2297,12 @@ namespace JavaScriptRuntime
         /// <c>encodeURI</c> function.
         /// </summary>
         public static string encodeURI(object? uri)
+            => EncodeUri(uri, preserveReserved: true);
+
+        private static string encodeURIComponent(object? uri)
+            => EncodeUri(uri, preserveReserved: false);
+
+        private static string EncodeUri(object? uri, bool preserveReserved)
         {
             var input = DotNet2JSConversions.ToString(uri);
             var result = new StringBuilder(input.Length);
@@ -2295,7 +2326,7 @@ namespace JavaScriptRuntime
                     throw new URIError("URI malformed");
                 }
 
-                if (IsEncodeUriUnescaped(codeUnit))
+                if (IsEncodeUriUnescaped(codeUnit, preserveReserved))
                 {
                     result.Append(codeUnit);
                 }
@@ -2308,13 +2339,13 @@ namespace JavaScriptRuntime
             return result.ToString();
         }
 
-        private static bool IsEncodeUriUnescaped(char value)
+        private static bool IsEncodeUriUnescaped(char value, bool preserveReserved)
         {
-            return value is >= 'A' and <= 'Z'
+            var unescaped = value is >= 'A' and <= 'Z'
                 or >= 'a' and <= 'z'
                 or >= '0' and <= '9'
-                or '-' or '_' or '.' or '!' or '~' or '*' or '\'' or '(' or ')'
-                or ';' or '/' or '?' or ':' or '@' or '&' or '=' or '+' or '$' or ',' or '#';
+                or '-' or '_' or '.' or '!' or '~' or '*' or '\'' or '(' or ')';
+            return unescaped || (preserveReserved && IsUriReserved(value));
         }
 
         private static void AppendUriEncodedCodePoint(StringBuilder result, int codePoint)

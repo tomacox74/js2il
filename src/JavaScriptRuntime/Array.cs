@@ -131,6 +131,8 @@ namespace JavaScriptRuntime
             DefinePrototypeMethod(prototype, "findLastIndex", (Func<object[], object?[]?, object?>)PrototypeFindLastIndex, 1);
             DefinePrototypeMethod(prototype, "flat", (Func<object[], object?[]?, object?>)PrototypeFlat, 0);
             DefinePrototypeMethod(prototype, "at", (Func<object[], object?[]?, object?>)PrototypeAt, 1);
+            DefinePrototypeMethod(prototype, "toSorted", (Func<object[], object?[]?, object?>)PrototypeToSorted, 1);
+            DefinePrototypeMethod(prototype, "with", (Func<object[], object?[]?, object?>)PrototypeWith, 2);
             DefinePrototypeMethod(prototype, "entries", prototypeEntries, 0);
             DefinePrototypeMethod(prototype, "keys", prototypeKeys, 0);
             DefinePrototypeMethod(prototype, "values", prototypeValues, 0);
@@ -878,6 +880,12 @@ namespace JavaScriptRuntime
 
             return JavaScriptRuntime.ObjectRuntime.GetItem(receiver, (double)index);
         }
+
+        private static object? PrototypeToSorted(object[] scopes, object?[]? args)
+            => ToSorted(RuntimeServices.GetCurrentThis(), args);
+
+        private static object? PrototypeWith(object[] scopes, object?[]? args)
+            => With(RuntimeServices.GetCurrentThis(), args);
 
         private static object? PrototypeFlat(object[] scopes, object?[]? args)
         {
@@ -2944,7 +2952,16 @@ namespace JavaScriptRuntime
                     return d < 0d ? -1 : 1;
                 }
 
-                this.Sort((a, b) => CompareUsingCallback(a!, b!));
+                try
+                {
+                    this.Sort((a, b) => CompareUsingCallback(a!, b!));
+                }
+                catch (InvalidOperationException exception)
+                    when (exception.InnerException is SortComparisonException comparisonException)
+                {
+                    throw comparisonException.InnerException!;
+                }
+
                 return this;
             }
 
@@ -2953,11 +2970,29 @@ namespace JavaScriptRuntime
 
         private delegate object? ArrayCallbackInvoker(object? a0, object? a1, object? a2, object? a3);
 
+        private sealed class SortComparisonException : Exception
+        {
+            public SortComparisonException(Exception innerException)
+                : base("JavaScript sort comparator threw an exception.", innerException)
+            {
+            }
+        }
+
         private static Func<object, object, object?>? CreateSortComparatorInvoker(object? cb, Array array)
         {
             if (CallableOperations.IsCallable(cb))
             {
-                return (a, b) => CallableOperations.Call2(cb, null, a, b);
+                return (a, b) =>
+                {
+                    try
+                    {
+                        return CallableOperations.Call2(cb, null, a, b);
+                    }
+                    catch (Exception exception)
+                    {
+                        throw new SortComparisonException(exception);
+                    }
+                };
             }
 
             return null;
@@ -4337,18 +4372,7 @@ namespace JavaScriptRuntime
         /// JavaScript Array.toSorted([compareFn]): returns a sorted copy.
         /// </summary>
         public Array toSorted(object[]? args)
-        {
-            var copy = new Array(this);
-            if (args != null && args.Length > 0)
-            {
-                copy.sort(args!);
-            }
-            else
-            {
-                copy.sort();
-            }
-            return copy;
-        }
+            => ToSorted(this, args);
 
         public Array toSorted()
         {
@@ -4368,24 +4392,89 @@ namespace JavaScriptRuntime
         /// <summary>
         /// JavaScript Array.with(index, value): returns a copy with element at index replaced.
         /// </summary>
-        public Array with(object[] args)
+        public Array with(object[]? args)
+            => With(this, args);
+
+        private static Array ToSorted(object? receiver, object?[]? args)
         {
-            if (args == null || args.Length < 2)
+            var compareFn = args is { Length: > 0 } ? args[0] : null;
+            if (compareFn is not null && !CallableOperations.IsCallable(compareFn))
             {
-                throw new TypeError("Array.with requires index and value");
+                throw new TypeError("Array.prototype.toSorted comparator must be a function");
             }
 
-            int len = this.Count;
-            int index = ToInt(args[0]!, 0);
-            if (index < 0) index = len + index;
-            if (index < 0 || index >= len)
+            var length = GetCopyByChangeLength(receiver, "toSorted");
+            var copy = new Array(length);
+            for (var index = 0; index < length; index++)
+            {
+                copy.Add(ObjectRuntime.GetItem(receiver!, (double)index));
+            }
+
+            if (compareFn is null)
+            {
+                copy.sort();
+            }
+            else
+            {
+                copy.sort(new[] { compareFn });
+            }
+
+            return copy;
+        }
+
+        private static Array With(object? receiver, object?[]? args)
+        {
+            var length = GetCopyByChangeLength(receiver, "with");
+            var index = args is { Length: > 0 } ? args[0] : null;
+            var value = args is { Length: > 1 } ? args[1] : null;
+            var relativeIndex = ToIntegerOrInfinityForAt(index);
+            var actualIndex = relativeIndex >= 0d
+                ? relativeIndex
+                : length + relativeIndex;
+
+            if (actualIndex < 0d || actualIndex >= length)
             {
                 throw new RangeError("Invalid index");
             }
 
-            var copy = new Array(this);
-            copy[index] = args[1];
+            var copy = new Array(length);
+            for (var k = 0; k < length; k++)
+            {
+                copy.Add(k == (int)actualIndex
+                    ? value
+                    : ObjectRuntime.GetItem(receiver!, (double)k));
+            }
+
             return copy;
+        }
+
+        private static int GetCopyByChangeLength(object? receiver, string methodName)
+        {
+            if (receiver is null || receiver is JsNull)
+            {
+                throw new TypeError($"Array.prototype.{methodName} called on null or undefined");
+            }
+
+            var length = TypeUtilities.ToNumber(ObjectRuntime.GetProperty(receiver, "length"));
+            if (double.IsNaN(length) || length <= 0d)
+            {
+                return 0;
+            }
+
+            length = double.IsPositiveInfinity(length)
+                ? 9007199254740991d
+                : global::System.Math.Min(global::System.Math.Truncate(length), 9007199254740991d);
+            if (length > 4294967295d)
+            {
+                throw new RangeError("Invalid array length");
+            }
+
+            if (length > int.MaxValue)
+            {
+                throw new RangeError("Array length exceeds runtime limits");
+            }
+
+            return (int)length;
         }
     }
 }

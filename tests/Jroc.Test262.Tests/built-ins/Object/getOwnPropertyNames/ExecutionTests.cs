@@ -33,4 +33,10 @@ public class ExecutionTests : DiskExecutionTestsBase
     [Fact(DisplayName = "15.2.3.4-3-1")]
     public Task _15_2_3_4_3_1()
         => ExecutionTestFromFile("15.2.3.4-3-1");
+    [Fact(DisplayName = "non-object-argument-valid.js")]
+    public Task non_object_argument_valid_js()
+        => ExecutionTestFromFile("non-object-argument-valid");
+    [Fact(DisplayName = "15.2.3.4-4-47.js")]
+    public Task _15_2_3_4_4_47_js()
+        => ExecutionTestFromFile("15.2.3.4-4-47");
 }

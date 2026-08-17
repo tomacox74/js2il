@@ -156,6 +156,12 @@ namespace JavaScriptRuntime
             {
                 return double.NaN;
             }
+
+            if (double.IsInfinity(dy) && global::System.Math.Abs(dx) == 1.0)
+            {
+                return double.NaN;
+            }
+
             return System.Math.Pow(dx, dy);
         }
 
