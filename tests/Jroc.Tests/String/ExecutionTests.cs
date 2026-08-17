@@ -216,6 +216,12 @@ namespace Jroc.Tests.String
         }
 
         [Fact]
+        public Task String_PrototypeMethodOverrides()
+        {
+            return ExecutionTest(nameof(String_PrototypeMethodOverrides));
+        }
+
+        [Fact]
         public Task String_Repeat_Basic()
         {
             return ExecutionTest(nameof(String_Repeat_Basic));

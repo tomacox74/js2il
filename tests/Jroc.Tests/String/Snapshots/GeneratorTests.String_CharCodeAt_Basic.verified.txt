@@ -38,12 +38,12 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 86 (0x56)
+		// Code size: 96 (0x60)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.String_CharCodeAt_Basic/Scope,
 			[1] class [JavaScriptRuntime]JavaScriptRuntime.Console,
-			[2] float64
+			[2] object
 		)
 
 		IL_0000: newobj instance void Modules.String_CharCodeAt_Basic/Scope::.ctor()
@@ -52,26 +52,28 @@
 		IL_0007: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 		IL_000c: stloc.1
 		IL_000d: ldstr "A"
-		IL_0012: ldc.r8 0.0
-		IL_001b: call float64 [JavaScriptRuntime]JavaScriptRuntime.String::CharCodeAt(string, float64)
-		IL_0020: stloc.2
-		IL_0021: ldloc.1
-		IL_0022: ldloc.2
-		IL_0023: box [System.Runtime]System.Double
-		IL_0028: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_002d: pop
-		IL_002e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0033: stloc.1
-		IL_0034: ldstr "ABC"
-		IL_0039: ldc.r8 2
-		IL_0042: call float64 [JavaScriptRuntime]JavaScriptRuntime.String::CharCodeAt(string, float64)
-		IL_0047: stloc.2
-		IL_0048: ldloc.1
-		IL_0049: ldloc.2
-		IL_004a: box [System.Runtime]System.Double
-		IL_004f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0054: pop
-		IL_0055: ret
+		IL_0012: ldstr "charCodeAt"
+		IL_0017: ldc.r8 0.0
+		IL_0020: box [System.Runtime]System.Double
+		IL_0025: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_002a: stloc.2
+		IL_002b: ldloc.1
+		IL_002c: ldloc.2
+		IL_002d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0032: pop
+		IL_0033: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0038: stloc.1
+		IL_0039: ldstr "ABC"
+		IL_003e: ldstr "charCodeAt"
+		IL_0043: ldc.r8 2
+		IL_004c: box [System.Runtime]System.Double
+		IL_0051: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0056: stloc.2
+		IL_0057: ldloc.1
+		IL_0058: ldloc.2
+		IL_0059: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_005e: pop
+		IL_005f: ret
 	} // end of method String_CharCodeAt_Basic::__js_module_init__
 
 } // end of class Modules.String_CharCodeAt_Basic

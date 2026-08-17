@@ -6,7 +6,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-_Nothing yet._
+- compiler/runtime: preserve observable `String.prototype` lookup for
+  primitive-string method calls (issue #1894). The compiler and runtime no
+  longer early-bind String helpers that bypass replacement, deletion,
+  accessors, or inherited overrides; guarded specialization remains tracked
+  separately.
 
 ## v0.12.8 - 2026-08-17
 
