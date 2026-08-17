@@ -564,9 +564,12 @@ namespace JavaScriptRuntime
                 }
             }
 
-            foreach (var key in PropertyDescriptorStore.GetOwnKeys(obj))
+            if (obj is not JsObject)
             {
-                AddKey(keys, seen, key);
+                foreach (var key in PropertyDescriptorStore.GetOwnKeys(obj))
+                {
+                    AddKey(keys, seen, key);
+                }
             }
 
             RuntimeServices.EnsureClassConstructorCoreMetadataProperties(obj);
