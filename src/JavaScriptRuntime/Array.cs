@@ -13,7 +13,7 @@ namespace JavaScriptRuntime
     public class Array : JsObject, IExoticJsObject, IJavaScriptArray, IDictionary<string, object?>
     {
         [ThreadStatic]
-        private static bool _defaultPrototypeChainHasIndexedProperties;
+        private static bool _defaultPrototypeChainHasBlockingIndexedProperties;
         [ThreadStatic]
         private static long _observedPrototypeMutationVersion;
         [ThreadStatic]
@@ -95,7 +95,7 @@ namespace JavaScriptRuntime
 
         internal static void ResetPrototypeForTests()
         {
-            _defaultPrototypeChainHasIndexedProperties = false;
+            _defaultPrototypeChainHasBlockingIndexedProperties = false;
             _observedPrototypeIntrinsicsId = 0;
             _observedPrototypeMutationVersion = Volatile.Read(ref _prototypeMutationVersion);
         }
@@ -2121,7 +2121,7 @@ namespace JavaScriptRuntime
                 RefreshDefaultPrototypeChainState();
             }
 
-            return !_defaultPrototypeChainHasIndexedProperties;
+            return !_defaultPrototypeChainHasBlockingIndexedProperties;
         }
 
         internal static void NotifyPrototypeMutation()
@@ -2132,11 +2132,11 @@ namespace JavaScriptRuntime
             while (true)
             {
                 var beforeScan = Volatile.Read(ref _prototypeMutationVersion);
-                var hasIndexedProperties = DefaultPrototypeChainHasIndexedProperties();
+                var hasBlockingIndexedProperties = DefaultPrototypeChainHasBlockingIndexedProperties();
                 var afterScan = Volatile.Read(ref _prototypeMutationVersion);
                 if (beforeScan == afterScan)
                 {
-                    _defaultPrototypeChainHasIndexedProperties = hasIndexedProperties;
+                    _defaultPrototypeChainHasBlockingIndexedProperties = hasBlockingIndexedProperties;
                     _observedPrototypeMutationVersion = afterScan;
                     _observedPrototypeIntrinsicsId = RuntimeIntrinsics.Current.Id;
                     return;
@@ -2144,7 +2144,7 @@ namespace JavaScriptRuntime
             }
         }
 
-        private static bool DefaultPrototypeChainHasIndexedProperties()
+        private static bool DefaultPrototypeChainHasBlockingIndexedProperties()
         {
             object current = Prototype;
             var visited = new HashSet<object>(ReferenceEqualityComparer.Instance);
@@ -2152,7 +2152,9 @@ namespace JavaScriptRuntime
             {
                 foreach (var key in PropertyDescriptorStore.GetOwnKeys(current))
                 {
-                    if (ObjectRuntime.TryParseCanonicalArrayIndexUInt(key, out _))
+                    if (ObjectRuntime.TryParseCanonicalArrayIndexUInt(key, out _)
+                        && PropertyDescriptorStore.TryGetOwn(current, key, out var descriptor)
+                        && (descriptor.Kind == JsPropertyDescriptorKind.Accessor || !descriptor.Writable))
                     {
                         return true;
                     }
