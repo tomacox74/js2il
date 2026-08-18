@@ -1353,16 +1353,10 @@ namespace JavaScriptRuntime
             PrototypeChain.SetPrototype(wrapper, prototype);
             PropertyDescriptorStore.DefineOrUpdate(wrapper, PrimitiveValuePropertyName, CreatePrimitiveValueDescriptor(primitiveValue));
 
-            PropertyDescriptorStore.DefineOrUpdate(wrapper, "valueOf", new JsPropertyDescriptor
-            {
-                Kind = JsPropertyDescriptorKind.Data,
-                Enumerable = false,
-                Configurable = true,
-                Writable = true,
-                Value = (Func<object[], object?[]?, object?>)((_, __) => primitiveValue)
-            });
-
-            if (includeOwnStringMethods || primitiveValue is JavaScriptRuntime.Symbol)
+            // Symbol wrappers must inherit these methods. Defining them on each
+            // wrapper would prevent Symbol.prototype mutations from participating
+            // in OrdinaryToPrimitive.
+            if (includeOwnStringMethods && primitiveValue is not JavaScriptRuntime.Symbol)
             {
                 PropertyDescriptorStore.DefineOrUpdate(wrapper, "toString", new JsPropertyDescriptor
                 {
@@ -1371,6 +1365,18 @@ namespace JavaScriptRuntime
                     Configurable = true,
                     Writable = true,
                     Value = (Func<object[], object?[]?, object?>)((_, __) => DotNet2JSConversions.ToString(primitiveValue))
+                });
+            }
+
+            if (primitiveValue is not JavaScriptRuntime.Symbol)
+            {
+                PropertyDescriptorStore.DefineOrUpdate(wrapper, "valueOf", new JsPropertyDescriptor
+                {
+                    Kind = JsPropertyDescriptorKind.Data,
+                    Enumerable = false,
+                    Configurable = true,
+                    Writable = true,
+                    Value = (Func<object[], object?[]?, object?>)((_, __) => primitiveValue)
                 });
             }
 
@@ -5951,6 +5957,11 @@ namespace JavaScriptRuntime
             if (obj == null) throw new ArgumentNullException(nameof(obj));
             if (obj is JavaScriptRuntime.Symbol)
             {
+                if (throwOnError)
+                {
+                    throw new TypeError("Cannot create property on a Symbol value");
+                }
+
                 return value;
             }
 

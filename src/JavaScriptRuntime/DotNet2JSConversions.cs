@@ -20,6 +20,29 @@ namespace JavaScriptRuntime
         public static string ToErrorMessageString(object? value)
             => ToStringCore(value, rejectSymbols: true);
 
+        /// <summary>
+        /// Applies the Symbol constructor's description conversion. Its ToString step
+        /// rejects Symbols and must throw when neither object conversion method returns
+        /// a primitive.
+        /// </summary>
+        public static string ToStringRejectingSymbols(object? value)
+        {
+            if (value is not null
+                && value is not JsNull
+                && value is not string
+                && !value.GetType().IsValueType)
+            {
+                if (!TypeUtilities.TryCoerceObjectToPrimitive(value, "string", out var primitive))
+                {
+                    throw new TypeError("Cannot convert object to primitive value");
+                }
+
+                return ToStringCore(primitive, rejectSymbols: true);
+            }
+
+            return ToStringCore(value, rejectSymbols: true);
+        }
+
         private static string ToStringCore(object? value, bool rejectSymbols)
         {
             // In our runtime: CLR null represents JavaScript 'undefined'
@@ -35,6 +58,10 @@ namespace JavaScriptRuntime
             if (rejectSymbols && value is Symbol)
             {
                 throw new TypeError("Cannot convert a Symbol value to a string");
+            }
+            if (value is Symbol symbol)
+            {
+                return symbol.ToString();
             }
             if (value is string strValue)
             {
@@ -68,6 +95,11 @@ namespace JavaScriptRuntime
                 && TypeUtilities.TryCoerceObjectToPrimitive(value, "string", out var primitive))
             {
                 return ToStringCore(primitive, rejectSymbols);
+            }
+
+            if (value is JsObject)
+            {
+                throw new TypeError("Cannot convert object to primitive value");
             }
 
             if (value is IDictionary<string, object?> dictObject)

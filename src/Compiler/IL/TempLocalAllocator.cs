@@ -367,6 +367,8 @@ internal static partial class LIRInstructionInfo
                 visitor.Visit(value.Source); break;
             case LIRConvertToNumberDiscard value:
                 visitor.Visit(value.Source); break;
+            case LIRConvertToStringDiscard value:
+                visitor.Visit(value.Source); break;
             case LIRConvertToBoolean value:
                 visitor.Visit(value.Source); break;
             case LIRConvertToString value:
@@ -821,6 +823,7 @@ internal static partial class LIRInstructionInfo
             case LIRAsyncStateSwitch:
             case LIRAsyncStoreAwaitedResult:
             case LIRConvertToNumberDiscard:
+            case LIRConvertToStringDiscard:
                 defined = default;
                 return false;
             case LIRConvertToObject conv:

@@ -444,7 +444,8 @@ namespace JavaScriptRuntime
         private object _bigIntPrototypeValue => _intrinsics.BigIntPrototype;
         private object _symbolPrototypeValue => _intrinsics.SymbolPrototype;
         private object _promisePrototypeValue => _intrinsics.GlobalPromisePrototype;
-        private static readonly Func<object[], object?[]?, object?> _symbolFunctionValue = SymbolCall;
+        private readonly Func<object[], object?[]?, object?> _symbolFunctionValue = SymbolCall;
+        private readonly Func<object[], object?[]?, object?> _symbolPrototypeToPrimitiveValue = SymbolPrototypeToPrimitive;
 
         // TypedArray intrinsic constructor and prototype
         private static readonly Func<object[], object?[], object?> _typedArrayConstructorValue = static (_, __) =>
@@ -908,22 +909,40 @@ namespace JavaScriptRuntime
                         : throw new TypeError("Symbol.prototype.valueOf called on incompatible receiver");
                 })
             });
+            JavaScriptRuntime.Function.InitializeFunctionInstance(
+                _symbolPrototypeToPrimitiveValue,
+                1d,
+                "[Symbol.toPrimitive]");
+            DefineUndefinedPrototypeProperty(_symbolPrototypeToPrimitiveValue);
+            PropertyDescriptorStore.DefineOrUpdate(
+                _symbolPrototypeValue,
+                global::JavaScriptRuntime.Symbol.toPrimitive.DebugId,
+                new JsPropertyDescriptor
+                {
+                        Kind = JsPropertyDescriptorKind.Data,
+                        Enumerable = false,
+                        Configurable = true,
+                        Writable = false,
+                        Value = _symbolPrototypeToPrimitiveValue
+                });
             DefineIntrinsicDataProperty(_symbolPrototypeValue, global::JavaScriptRuntime.Symbol.toStringTag.DebugId, "Symbol");
             DefineIntrinsicDataProperty(_symbolFunctionValue, "for", (Func<object?, object>)global::JavaScriptRuntime.Symbol.@for);
             DefineIntrinsicDataProperty(_symbolFunctionValue, "keyFor", (Func<object?, object?>)global::JavaScriptRuntime.Symbol.keyFor);
-            DefineIntrinsicDataProperty(_symbolFunctionValue, "iterator", global::JavaScriptRuntime.Symbol.iterator);
-            DefineIntrinsicDataProperty(_symbolFunctionValue, "asyncIterator", global::JavaScriptRuntime.Symbol.asyncIterator);
-            DefineIntrinsicDataProperty(_symbolFunctionValue, "hasInstance", global::JavaScriptRuntime.Symbol.hasInstance);
-            DefineIntrinsicDataProperty(_symbolFunctionValue, "isConcatSpreadable", global::JavaScriptRuntime.Symbol.isConcatSpreadable);
-            DefineIntrinsicDataProperty(_symbolFunctionValue, "match", global::JavaScriptRuntime.Symbol.match);
-            DefineIntrinsicDataProperty(_symbolFunctionValue, "matchAll", global::JavaScriptRuntime.Symbol.matchAll);
-            DefineIntrinsicDataProperty(_symbolFunctionValue, "replace", global::JavaScriptRuntime.Symbol.replace);
-            DefineIntrinsicDataProperty(_symbolFunctionValue, "search", global::JavaScriptRuntime.Symbol.search);
-            DefineIntrinsicDataProperty(_symbolFunctionValue, "species", global::JavaScriptRuntime.Symbol.species);
-            DefineIntrinsicDataProperty(_symbolFunctionValue, "split", global::JavaScriptRuntime.Symbol.split);
-            DefineIntrinsicDataProperty(_symbolFunctionValue, "toPrimitive", global::JavaScriptRuntime.Symbol.toPrimitive);
-            DefineIntrinsicDataProperty(_symbolFunctionValue, "toStringTag", global::JavaScriptRuntime.Symbol.toStringTag);
-            DefineIntrinsicDataProperty(_symbolFunctionValue, "unscopables", global::JavaScriptRuntime.Symbol.unscopables);
+            DefineWellKnownSymbolProperty("iterator", global::JavaScriptRuntime.Symbol.iterator);
+            DefineWellKnownSymbolProperty("asyncIterator", global::JavaScriptRuntime.Symbol.asyncIterator);
+            DefineWellKnownSymbolProperty("hasInstance", global::JavaScriptRuntime.Symbol.hasInstance);
+            DefineWellKnownSymbolProperty("isConcatSpreadable", global::JavaScriptRuntime.Symbol.isConcatSpreadable);
+            DefineWellKnownSymbolProperty("match", global::JavaScriptRuntime.Symbol.match);
+            DefineWellKnownSymbolProperty("matchAll", global::JavaScriptRuntime.Symbol.matchAll);
+            DefineWellKnownSymbolProperty("replace", global::JavaScriptRuntime.Symbol.replace);
+            DefineWellKnownSymbolProperty("search", global::JavaScriptRuntime.Symbol.search);
+            DefineWellKnownSymbolProperty("species", global::JavaScriptRuntime.Symbol.species);
+            DefineWellKnownSymbolProperty("split", global::JavaScriptRuntime.Symbol.split);
+            DefineWellKnownSymbolProperty("toPrimitive", global::JavaScriptRuntime.Symbol.toPrimitive);
+            DefineWellKnownSymbolProperty("toStringTag", global::JavaScriptRuntime.Symbol.toStringTag);
+            DefineWellKnownSymbolProperty("unscopables", global::JavaScriptRuntime.Symbol.unscopables);
+            DefineWellKnownSymbolProperty("dispose", global::JavaScriptRuntime.Symbol.dispose);
+            DefineWellKnownSymbolProperty("asyncDispose", global::JavaScriptRuntime.Symbol.asyncDispose);
 
             PropertyDescriptorStore.DefineOrUpdate(_errorConstructorValue, "isError", new JsPropertyDescriptor
             {
@@ -1376,6 +1395,18 @@ namespace JavaScriptRuntime
                 Enumerable = false,
                 Configurable = true,
                 Writable = true,
+                Value = value
+            });
+        }
+
+        private void DefineWellKnownSymbolProperty(string key, global::JavaScriptRuntime.Symbol value)
+        {
+            PropertyDescriptorStore.DefineOrUpdate(_symbolFunctionValue, key, new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = false,
+                Writable = false,
                 Value = value
             });
         }
@@ -1873,7 +1904,7 @@ namespace JavaScriptRuntime
 
         public static object Intl => BootstrappedIntrinsics().Intl;
 
-        public static Delegate Symbol => _symbolFunctionValue;
+        public Delegate Symbol => _symbolFunctionValue;
 
         public static Type Math => typeof(JavaScriptRuntime.Math);
 
@@ -2928,6 +2959,13 @@ namespace JavaScriptRuntime
                 : (global::JavaScriptRuntime.Symbol)global::JavaScriptRuntime.Symbol.Call();
             PrototypeChain.SetPrototype(symbol, SymbolPrototypeValue);
             return symbol;
+        }
+
+        private static object? SymbolPrototypeToPrimitive(object[] scopes, object?[]? args)
+        {
+            return TryGetThisSymbolValue(out var symbol)
+                ? symbol
+                : throw new TypeError("Symbol.prototype[Symbol.toPrimitive] called on incompatible receiver");
         }
     }
 }

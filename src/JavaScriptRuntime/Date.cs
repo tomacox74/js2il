@@ -32,13 +32,29 @@ namespace JavaScriptRuntime
             @"^(?<year>[+-]?\d{4,6})-(?<month>\d{2})-(?<day>\d{2})T(?<hour>\d{2}):(?<minute>\d{2})(?::(?<second>\d{2})(?:\.(?<fraction>\d{1,3}))?)?$",
             RegexOptions.CultureInvariant | RegexOptions.Compiled);
 
+        private static readonly Regex IsoDateTimeRegex = new(
+            @"^(?<year>[+-]\d{6}|\d{4})-(?<month>\d{2})-(?<day>\d{2})T(?<hour>\d{2}):(?<minute>\d{2})(?::(?<second>\d{2})(?:\.(?<fraction>\d{1,3}))?)?(?<zone>Z|[+-]\d{2}:\d{2})?$",
+            RegexOptions.CultureInvariant | RegexOptions.Compiled);
+
+        private static readonly Regex DateStringRegex = new(
+            @"^(?:Sun|Mon|Tue|Wed|Thu|Fri|Sat) (?<month>Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) (?<day>\d{2}) (?<year>[+-]?\d{4,6}) (?<hour>\d{2}):(?<minute>\d{2}):(?<second>\d{2}) GMT(?<zone>[+-]\d{4})$",
+            RegexOptions.CultureInvariant | RegexOptions.Compiled);
+
+        private const double MillisecondsPerSecond = 1_000d;
+        private const double MillisecondsPerMinute = 60d * MillisecondsPerSecond;
+        private const double MillisecondsPerHour = 60d * MillisecondsPerMinute;
+        private const double MillisecondsPerDay = 24d * MillisecondsPerHour;
+        private const double TimeClipLimit = 8_640_000_000_000_000d;
+
+        private readonly record struct DateParts(long Year, int Month, int Day, int Hour, int Minute, int Second, int Millisecond, int DayOfWeek);
+
         private double _msSinceEpoch; // milliseconds since Unix epoch (UTC), or NaN for invalid dates
 
         private static double NowMs() => System.DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
 
         private static double TimeClipLike(double time)
         {
-            if (double.IsNaN(time) || double.IsInfinity(time) || System.Math.Abs(time) > 8_640_000_000_000_000d)
+            if (!double.IsFinite(time) || System.Math.Abs(time) > TimeClipLimit)
             {
                 return double.NaN;
             }
@@ -49,7 +65,6 @@ namespace JavaScriptRuntime
 
         private static double CoerceToMs(object? value)
         {
-            if (value == null) return NowMs(); // undefined -> now (best-effort minimal behavior)
             switch (value)
             {
                 case double d:
@@ -76,15 +91,7 @@ namespace JavaScriptRuntime
                     }
                     return double.NaN;
                 default:
-                    try
-                    {
-                        var s = DotNet2JSConversions.ToString(value);
-                        var p = ParseInternal(s);
-                        if (!double.IsNaN(p)) return p;
-                        if (double.TryParse(s, NumberStyles.Float, CultureInfo.InvariantCulture, out var nd2)) return TimeClipLike(nd2);
-                    }
-                    catch { }
-                    return double.NaN;
+                    return TimeClipLike(TypeUtilities.ToNumber(value));
             }
         }
 
@@ -234,7 +241,7 @@ namespace JavaScriptRuntime
 
             DefinePrototypeMethod("toDateString", static (date, _) => date.toDateString(), 0d);
             DefinePrototypeMethod("toISOString", static (date, _) => date.toISOString(), 0d);
-            DefinePrototypeMethod("toJSON", static (date, _) => date.toJSON(), 1d);
+            DefineGenericPrototypeMethod("toJSON", static (value, _) => ToJson(value), 1d);
             DefinePrototypeMethod("toLocaleDateString", static (date, _) => date.toLocaleDateString(), 0d);
             DefinePrototypeMethod("toLocaleString", static (date, _) => date.toLocaleString(), 0d);
             DefinePrototypeMethod("toLocaleTimeString", static (date, _) => date.toLocaleTimeString(), 0d);
@@ -277,6 +284,11 @@ namespace JavaScriptRuntime
                 return double.NaN;
             }
 
+            if (TryParseIsoDateTime(input, out var isoDateTimeMs))
+            {
+                return isoDateTimeMs;
+            }
+
             if (TryParseIsoDateOnly(input, out var dateOnlyMs))
             {
                 return dateOnlyMs;
@@ -285,6 +297,11 @@ namespace JavaScriptRuntime
             if (TryParseIsoLocalDateTime(input, out var localDateTimeMs))
             {
                 return localDateTimeMs;
+            }
+
+            if (TryParseDateString(input, out var dateStringMs))
+            {
+                return dateStringMs;
             }
 
             if (System.DateTimeOffset.TryParse(
@@ -297,6 +314,134 @@ namespace JavaScriptRuntime
             }
 
             return double.NaN;
+        }
+
+        private static bool TryParseDateString(string input, out double msSinceEpoch)
+        {
+            var match = DateStringRegex.Match(input);
+            if (!match.Success)
+            {
+                msSinceEpoch = double.NaN;
+                return false;
+            }
+
+            var month = global::System.Array.IndexOf(MonthNames, match.Groups["month"].Value) + 1;
+            if (!long.TryParse(match.Groups["year"].Value, NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture, out var year)
+                || !int.TryParse(match.Groups["day"].Value, NumberStyles.None, CultureInfo.InvariantCulture, out var day)
+                || !int.TryParse(match.Groups["hour"].Value, NumberStyles.None, CultureInfo.InvariantCulture, out var hour)
+                || !int.TryParse(match.Groups["minute"].Value, NumberStyles.None, CultureInfo.InvariantCulture, out var minute)
+                || !int.TryParse(match.Groups["second"].Value, NumberStyles.None, CultureInfo.InvariantCulture, out var second)
+                || month == 0
+                || day is < 1 or > 31
+                || day > DaysInMonth(year, month)
+                || hour > 23
+                || minute > 59
+                || second > 59)
+            {
+                msSinceEpoch = double.NaN;
+                return true;
+            }
+
+            var zone = match.Groups["zone"].Value;
+            var offsetHour = int.Parse(zone.AsSpan(1, 2), CultureInfo.InvariantCulture);
+            var offsetMinute = int.Parse(zone.AsSpan(3, 2), CultureInfo.InvariantCulture);
+            if (offsetHour > 23 || offsetMinute > 59)
+            {
+                msSinceEpoch = double.NaN;
+                return true;
+            }
+
+            var offset = offsetHour * MillisecondsPerHour + offsetMinute * MillisecondsPerMinute;
+            if (zone[0] == '-')
+            {
+                offset = -offset;
+            }
+
+            msSinceEpoch = TimeClipLike(
+                DaysFromCivil(year, month, day) * MillisecondsPerDay
+                + hour * MillisecondsPerHour
+                + minute * MillisecondsPerMinute
+                + second * MillisecondsPerSecond
+                - offset);
+            return true;
+        }
+
+        private static bool TryParseIsoDateTime(string input, out double msSinceEpoch)
+        {
+            var match = IsoDateTimeRegex.Match(input);
+            if (!match.Success)
+            {
+                msSinceEpoch = double.NaN;
+                return false;
+            }
+
+            if (!long.TryParse(match.Groups["year"].Value, NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture, out var year)
+                || !int.TryParse(match.Groups["month"].Value, NumberStyles.None, CultureInfo.InvariantCulture, out var month)
+                || !int.TryParse(match.Groups["day"].Value, NumberStyles.None, CultureInfo.InvariantCulture, out var day)
+                || !int.TryParse(match.Groups["hour"].Value, NumberStyles.None, CultureInfo.InvariantCulture, out var hour)
+                || !int.TryParse(match.Groups["minute"].Value, NumberStyles.None, CultureInfo.InvariantCulture, out var minute)
+                || !TryParseBoundedInt(match.Groups["second"].Value, 0, 59, 0, out var second)
+                || !TryParseMillisecond(match.Groups["fraction"].Value, out var millisecond)
+                || month is < 1 or > 12
+                || day is < 1 or > 31
+                || hour is < 0 or > 24
+                || minute is < 0 or > 59
+                || (hour == 24 && (minute != 0 || second != 0 || millisecond != 0))
+                || day > DaysInMonth(year, month))
+            {
+                msSinceEpoch = double.NaN;
+                return true;
+            }
+
+            var days = DaysFromCivil(year, month, day) + (hour == 24 ? 1d : 0d);
+            var time = (hour == 24 ? 0d : hour * MillisecondsPerHour)
+                + minute * MillisecondsPerMinute
+                + second * MillisecondsPerSecond
+                + millisecond;
+            var offset = ParseTimeZoneOffset(match.Groups["zone"].Value, out var hasTimeZone);
+            if (double.IsNaN(offset))
+            {
+                msSinceEpoch = double.NaN;
+                return true;
+            }
+
+            var result = days * MillisecondsPerDay + time;
+            if (hasTimeZone)
+            {
+                result -= offset;
+            }
+            else
+            {
+                // The date-time form without an offset is local time.
+                if (result >= -62_135_596_800_000d && result <= 253_402_300_799_999d)
+                {
+                    var local = DateTimeOffset.FromUnixTimeMilliseconds((long)result).DateTime;
+                    result -= TimeZoneInfo.Local.GetUtcOffset(local).TotalMilliseconds;
+                }
+            }
+
+            msSinceEpoch = TimeClipLike(result);
+            return true;
+        }
+
+        private static double ParseTimeZoneOffset(string value, out bool hasTimeZone)
+        {
+            hasTimeZone = !string.IsNullOrEmpty(value);
+            if (!hasTimeZone || value == "Z")
+            {
+                return 0d;
+            }
+
+            if (!int.TryParse(value.AsSpan(1, 2), NumberStyles.None, CultureInfo.InvariantCulture, out var hour)
+                || !int.TryParse(value.AsSpan(4, 2), NumberStyles.None, CultureInfo.InvariantCulture, out var minute)
+                || hour > 23
+                || minute > 59)
+            {
+                return double.NaN;
+            }
+
+            var offset = hour * MillisecondsPerHour + minute * MillisecondsPerMinute;
+            return value[0] == '-' ? -offset : offset;
         }
 
         private static bool TryParseIsoDateOnly(string input, out double msSinceEpoch)
@@ -469,58 +614,52 @@ namespace JavaScriptRuntime
         private static double CoerceComponentsToMs(object[] args, bool useLocalTime)
         {
             double year = args.Length > 0 ? TypeUtilities.ToNumber(args[0]) : double.NaN;
-            double month = args.Length > 1 ? TypeUtilities.ToNumber(args[1]) : double.NaN;
+            double month = args.Length > 1 ? TypeUtilities.ToNumber(args[1]) : 0d;
             double date = args.Length > 2 ? TypeUtilities.ToNumber(args[2]) : 1d;
             double hours = args.Length > 3 ? TypeUtilities.ToNumber(args[3]) : 0d;
             double minutes = args.Length > 4 ? TypeUtilities.ToNumber(args[4]) : 0d;
             double seconds = args.Length > 5 ? TypeUtilities.ToNumber(args[5]) : 0d;
             double milliseconds = args.Length > 6 ? TypeUtilities.ToNumber(args[6]) : 0d;
 
-            if (double.IsNaN(year)
-                || double.IsNaN(month)
-                || double.IsNaN(date)
-                || double.IsNaN(hours)
-                || double.IsNaN(minutes)
-                || double.IsNaN(seconds)
-                || double.IsNaN(milliseconds))
+            if (!double.IsFinite(year)
+                || !double.IsFinite(month)
+                || !double.IsFinite(date)
+                || !double.IsFinite(hours)
+                || !double.IsFinite(minutes)
+                || !double.IsFinite(seconds)
+                || !double.IsFinite(milliseconds))
             {
                 return double.NaN;
             }
 
-            var yearInteger = (int)System.Math.Truncate(year);
-            if (yearInteger is >= 0 and <= 99)
+            year = System.Math.Truncate(year);
+            month = System.Math.Truncate(month);
+            date = System.Math.Truncate(date);
+            hours = System.Math.Truncate(hours);
+            minutes = System.Math.Truncate(minutes);
+            seconds = System.Math.Truncate(seconds);
+            milliseconds = System.Math.Truncate(milliseconds);
+
+            if (year >= 0d && year <= 99d)
             {
-                yearInteger += 1900;
+                year += 1900d;
             }
 
-            try
+            var day = MakeDay(year, month, date);
+            var time = MakeTime(hours, minutes, seconds, milliseconds);
+            var result = MakeDate(day, time);
+            if (!useLocalTime || !double.IsFinite(result))
             {
-                if (useLocalTime)
-                {
-                    var localDateTime = new DateTime(yearInteger, 1, 1, 0, 0, 0, DateTimeKind.Unspecified)
-                        .AddMonths((int)System.Math.Truncate(month))
-                        .AddDays((int)System.Math.Truncate(date) - 1)
-                        .AddHours((int)System.Math.Truncate(hours))
-                        .AddMinutes((int)System.Math.Truncate(minutes))
-                        .AddSeconds((int)System.Math.Truncate(seconds))
-                        .AddMilliseconds(System.Math.Truncate(milliseconds));
-                    var localOffset = TimeZoneInfo.Local.GetUtcOffset(localDateTime);
-                    return TimeClipLike(new DateTimeOffset(localDateTime, localOffset).ToUniversalTime().ToUnixTimeMilliseconds());
-                }
-
-                var utcDateTime = new DateTimeOffset(yearInteger, 1, 1, 0, 0, 0, TimeSpan.Zero)
-                    .AddMonths((int)System.Math.Truncate(month))
-                    .AddDays((int)System.Math.Truncate(date) - 1)
-                    .AddHours((int)System.Math.Truncate(hours))
-                    .AddMinutes((int)System.Math.Truncate(minutes))
-                    .AddSeconds((int)System.Math.Truncate(seconds))
-                    .AddMilliseconds(System.Math.Truncate(milliseconds));
-                return TimeClipLike(utcDateTime.ToUnixTimeMilliseconds());
+                return TimeClipLike(result);
             }
-            catch
+
+            if (result < -62_135_596_800_000d || result > 253_402_300_799_999d)
             {
                 return double.NaN;
             }
+
+            var local = DateTimeOffset.FromUnixTimeMilliseconds((long)result).DateTime;
+            return TimeClipLike(result - TimeZoneInfo.Local.GetUtcOffset(local).TotalMilliseconds);
         }
 
         // Instance methods
@@ -558,13 +697,18 @@ namespace JavaScriptRuntime
                 return double.NaN;
             }
 
+            if (_msSinceEpoch < -62_135_596_800_000d || _msSinceEpoch > 253_402_300_799_999d)
+            {
+                return 0d;
+            }
+
             var offsetMinutes = -GetLocalDateTime().Offset.TotalMinutes;
             return offsetMinutes == 0d ? 0d : offsetMinutes;
         }
 
         public object getUTCDate() => GetUtcPart(static date => date.Day);
 
-        public object getUTCDay() => GetUtcPart(static date => (double)date.DayOfWeek);
+        public object getUTCDay() => GetUtcPart(static date => date.DayOfWeek);
 
         public object getUTCFullYear() => GetUtcPart(static date => date.Year);
 
@@ -632,17 +776,13 @@ namespace JavaScriptRuntime
                 return "Invalid Date";
             }
 
-            return GetLocalDateTime().ToString("ddd MMM dd yyyy", CultureInfo.InvariantCulture);
+            var parts = GetLocalParts(out _);
+            return $"{DayNames[parts.DayOfWeek]} {MonthNames[parts.Month - 1]} {parts.Day:D2} {FormatYear(parts.Year)}";
         }
 
         public object toJSON()
         {
-            if (double.IsNaN(_msSinceEpoch))
-            {
-                return JsNull.Null;
-            }
-
-            return toISOString();
+            return ToJson(this)!;
         }
 
         public string toLocaleDateString() => toDateString();
@@ -668,7 +808,8 @@ namespace JavaScriptRuntime
                 throw new RangeError("Invalid time value");
             }
 
-            return GetUtcDateTime().UtcDateTime.ToString("yyyy-MM-dd'T'HH:mm:ss.fff'Z'", CultureInfo.InvariantCulture);
+            var parts = GetDateParts(_msSinceEpoch);
+            return $"{FormatIsoYear(parts.Year)}-{parts.Month:D2}-{parts.Day:D2}T{parts.Hour:D2}:{parts.Minute:D2}:{parts.Second:D2}.{parts.Millisecond:D3}Z";
         }
 
         public string toString()
@@ -678,8 +819,8 @@ namespace JavaScriptRuntime
                 return "Invalid Date";
             }
 
-            var local = GetLocalDateTime();
-            return $"{local:ddd MMM dd yyyy} {toTimeString()}";
+            var local = GetLocalParts(out var offsetMinutes);
+            return $"{DayNames[local.DayOfWeek]} {MonthNames[local.Month - 1]} {local.Day:D2} {FormatYear(local.Year)} {FormatTime(local)} {FormatTimeZone(offsetMinutes)}";
         }
 
         public string toTimeString()
@@ -689,8 +830,8 @@ namespace JavaScriptRuntime
                 return "Invalid Date";
             }
 
-            var local = GetLocalDateTime();
-            return local.ToString("HH:mm:ss 'GMT'zzz", CultureInfo.InvariantCulture);
+            var local = GetLocalParts(out var offsetMinutes);
+            return $"{FormatTime(local)} {FormatTimeZone(offsetMinutes)}";
         }
 
         public string toUTCString()
@@ -700,7 +841,8 @@ namespace JavaScriptRuntime
                 return "Invalid Date";
             }
 
-            return GetUtcDateTime().UtcDateTime.ToString("ddd, dd MMM yyyy HH:mm:ss 'GMT'", CultureInfo.InvariantCulture);
+            var parts = GetDateParts(_msSinceEpoch);
+            return $"{DayNames[parts.DayOfWeek]}, {parts.Day:D2} {MonthNames[parts.Month - 1]} {FormatYear(parts.Year)} {FormatTime(parts)} GMT";
         }
 
         public object toPrimitive(string? hint)
@@ -712,6 +854,168 @@ namespace JavaScriptRuntime
                 "default" or null => toString(),
                 _ => throw new TypeError("Invalid hint")
             };
+        }
+
+        private static object? ToJson(object? value)
+        {
+            if (value is null || value is JsNull)
+            {
+                throw new TypeError("Cannot convert undefined or null to object");
+            }
+
+            object? primitive = value;
+            if (!TypeUtilities.IsPrimitive(value))
+            {
+                if (!TypeUtilities.TryCoerceObjectToPrimitive(value, "number", out primitive))
+                {
+                    throw new TypeError("Cannot convert object to primitive value");
+                }
+            }
+
+            if (primitive is double or float or int or long or short or byte
+                && !double.IsFinite(TypeUtilities.ToNumber(primitive)))
+            {
+                return JsNull.Null;
+            }
+
+            var toIsoString = ObjectRuntime.GetProperty(value, "toISOString");
+            if (!CallableOperations.IsCallable(toIsoString))
+            {
+                throw new TypeError("toISOString is not callable");
+            }
+
+            return CallableOperations.Call0(toIsoString, value)!;
+        }
+
+        private static readonly string[] DayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+        private static readonly string[] MonthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+        private DateParts GetLocalParts(out int offsetMinutes)
+        {
+            offsetMinutes = 0;
+            if (_msSinceEpoch >= -62_135_596_800_000d && _msSinceEpoch <= 253_402_300_799_999d)
+            {
+                offsetMinutes = (int)GetLocalDateTime().Offset.TotalMinutes;
+            }
+
+            return GetDateParts(_msSinceEpoch + offsetMinutes * MillisecondsPerMinute);
+        }
+
+        private static DateParts GetDateParts(double milliseconds)
+        {
+            var days = (long)System.Math.Floor(milliseconds / MillisecondsPerDay);
+            var timeWithinDay = (long)(milliseconds - days * MillisecondsPerDay);
+            if (timeWithinDay < 0)
+            {
+                timeWithinDay += (long)MillisecondsPerDay;
+                days--;
+            }
+
+            var (year, month, day) = CivilFromDays(days);
+            var hour = (int)(timeWithinDay / MillisecondsPerHour);
+            timeWithinDay %= (long)MillisecondsPerHour;
+            var minute = (int)(timeWithinDay / MillisecondsPerMinute);
+            timeWithinDay %= (long)MillisecondsPerMinute;
+            var second = (int)(timeWithinDay / MillisecondsPerSecond);
+            var millisecond = (int)(timeWithinDay % MillisecondsPerSecond);
+            var dayOfWeek = (int)PositiveModulo(days + 4, 7);
+            return new DateParts(year, month, day, hour, minute, second, millisecond, dayOfWeek);
+        }
+
+        private static string FormatYear(long year)
+            => year < 0 ? $"-{(-year):D4}" : year.ToString("D4", CultureInfo.InvariantCulture);
+
+        private static string FormatIsoYear(long year)
+            => year is >= 0 and <= 9999
+                ? year.ToString("D4", CultureInfo.InvariantCulture)
+                : $"{(year < 0 ? '-' : '+')}{System.Math.Abs(year):D6}";
+
+        private static string FormatTime(DateParts parts)
+            => $"{parts.Hour:D2}:{parts.Minute:D2}:{parts.Second:D2}";
+
+        private static string FormatTimeZone(int offsetMinutes)
+        {
+            var sign = offsetMinutes < 0 ? '-' : '+';
+            var absolute = System.Math.Abs(offsetMinutes);
+            return $"GMT{sign}{absolute / 60:D2}{absolute % 60:D2}";
+        }
+
+        private static double MakeDay(double year, double month, double date)
+        {
+            if (!double.IsFinite(year) || !double.IsFinite(month) || !double.IsFinite(date)
+                || System.Math.Abs(year) > long.MaxValue
+                || System.Math.Abs(month) > long.MaxValue
+                || System.Math.Abs(date) > long.MaxValue)
+            {
+                return double.NaN;
+            }
+
+            try
+            {
+                var normalizedYear = (long)year + FloorDivide((long)month, 12);
+                var normalizedMonth = (int)PositiveModulo((long)month, 12) + 1;
+                return DaysFromCivil(normalizedYear, normalizedMonth, 1) + (long)date - 1;
+            }
+            catch (OverflowException)
+            {
+                return double.NaN;
+            }
+        }
+
+        private static double MakeTime(double hour, double minute, double second, double millisecond)
+            => ((hour * MillisecondsPerHour + minute * MillisecondsPerMinute)
+                + second * MillisecondsPerSecond)
+                + millisecond;
+
+        private static double MakeDate(double day, double time)
+            => day * MillisecondsPerDay + time;
+
+        private static long DaysFromCivil(long year, int month, int day)
+        {
+            var adjustedYear = year - (month <= 2 ? 1 : 0);
+            var era = FloorDivide(adjustedYear, 400);
+            var yearOfEra = adjustedYear - era * 400;
+            var monthPrime = month + (month > 2 ? -3 : 9);
+            var dayOfYear = (153 * monthPrime + 2) / 5 + day - 1;
+            var dayOfEra = yearOfEra * 365 + yearOfEra / 4 - yearOfEra / 100 + dayOfYear;
+            return era * 146_097 + dayOfEra - 719_468;
+        }
+
+        private static (long Year, int Month, int Day) CivilFromDays(long days)
+        {
+            var z = days + 719_468;
+            var era = FloorDivide(z, 146_097);
+            var dayOfEra = z - era * 146_097;
+            var yearOfEra = (dayOfEra - dayOfEra / 1460 + dayOfEra / 36_524 - dayOfEra / 146_096) / 365;
+            var year = yearOfEra + era * 400;
+            var dayOfYear = dayOfEra - (365 * yearOfEra + yearOfEra / 4 - yearOfEra / 100);
+            var monthPrime = (5 * dayOfYear + 2) / 153;
+            var day = (int)(dayOfYear - (153 * monthPrime + 2) / 5 + 1);
+            var month = (int)(monthPrime + (monthPrime < 10 ? 3 : -9));
+            year += month <= 2 ? 1 : 0;
+            return (year, month, day);
+        }
+
+        private static int DaysInMonth(long year, int month)
+            => month switch
+            {
+                2 when year % 4 == 0 && (year % 100 != 0 || year % 400 == 0) => 29,
+                2 => 28,
+                4 or 6 or 9 or 11 => 30,
+                _ => 31
+            };
+
+        private static long FloorDivide(long value, long divisor)
+        {
+            var quotient = value / divisor;
+            var remainder = value % divisor;
+            return remainder < 0 ? quotient - 1 : quotient;
+        }
+
+        private static long PositiveModulo(long value, long divisor)
+        {
+            var remainder = value % divisor;
+            return remainder < 0 ? remainder + divisor : remainder;
         }
 
         private DateTimeOffset GetUtcDateTime()
@@ -734,14 +1038,14 @@ namespace JavaScriptRuntime
             return selector(GetLocalDateTime());
         }
 
-        private object GetUtcPart(Func<DateTimeOffset, double> selector)
+        private object GetUtcPart(Func<DateParts, double> selector)
         {
             if (double.IsNaN(_msSinceEpoch))
             {
                 return double.NaN;
             }
 
-            return selector(GetUtcDateTime());
+            return selector(GetDateParts(_msSinceEpoch));
         }
 
         private object SetLocalDateParts(
@@ -753,7 +1057,7 @@ namespace JavaScriptRuntime
             object? second = null,
             object? millisecond = null)
         {
-            return SetDateParts(year, month, day, hour, minute, second, millisecond, useLocalTime: true);
+            return SetDateParts(year, month, day, hour, minute, second, millisecond);
         }
 
         private object SetUtcDateParts(
@@ -765,7 +1069,31 @@ namespace JavaScriptRuntime
             object? second = null,
             object? millisecond = null)
         {
-            return SetDateParts(year, month, day, hour, minute, second, millisecond, useLocalTime: false);
+            if (double.IsNaN(_msSinceEpoch))
+            {
+                _msSinceEpoch = double.NaN;
+                return _msSinceEpoch;
+            }
+
+            var current = GetDateParts(_msSinceEpoch);
+            var valid = TryResolveUtcDatePart(year, current.Year, out var resolvedYear);
+            valid = TryResolveUtcDatePart(month, current.Month - 1, out var resolvedMonth) & valid;
+            valid = TryResolveUtcDatePart(day, current.Day, out var resolvedDay) & valid;
+            valid = TryResolveUtcDatePart(hour, current.Hour, out var resolvedHour) & valid;
+            valid = TryResolveUtcDatePart(minute, current.Minute, out var resolvedMinute) & valid;
+            valid = TryResolveUtcDatePart(second, current.Second, out var resolvedSecond) & valid;
+            valid = TryResolveUtcDatePart(millisecond, current.Millisecond, out var resolvedMillisecond) & valid;
+            if (!valid)
+            {
+                _msSinceEpoch = double.NaN;
+                return _msSinceEpoch;
+            }
+
+            var date = MakeDate(
+                MakeDay(resolvedYear, resolvedMonth, resolvedDay),
+                MakeTime(resolvedHour, resolvedMinute, resolvedSecond, resolvedMillisecond));
+            _msSinceEpoch = TimeClipLike(date);
+            return _msSinceEpoch;
         }
 
         private object SetDateParts(
@@ -775,8 +1103,7 @@ namespace JavaScriptRuntime
             object? hour,
             object? minute,
             object? second,
-            object? millisecond,
-            bool useLocalTime)
+            object? millisecond)
         {
             if (double.IsNaN(_msSinceEpoch))
             {
@@ -784,7 +1111,7 @@ namespace JavaScriptRuntime
                 return _msSinceEpoch;
             }
 
-            var current = useLocalTime ? GetLocalDateTime() : GetUtcDateTime();
+            var current = GetLocalDateTime();
             if (!TryResolveDatePart(year, current.Year, out var resolvedYear)
                 || !TryResolveDatePart(month, current.Month - 1, out var resolvedMonth)
                 || !TryResolveDatePart(day, current.Day, out var resolvedDay)
@@ -799,29 +1126,15 @@ namespace JavaScriptRuntime
 
             try
             {
-                if (useLocalTime)
-                {
-                    var localDateTime = new DateTime(resolvedYear, 1, 1, 0, 0, 0, DateTimeKind.Unspecified)
-                        .AddMonths(resolvedMonth)
-                        .AddDays(resolvedDay - 1)
-                        .AddHours(resolvedHour)
-                        .AddMinutes(resolvedMinute)
-                        .AddSeconds(resolvedSecond)
-                        .AddMilliseconds(resolvedMillisecond);
-                    var localOffset = TimeZoneInfo.Local.GetUtcOffset(localDateTime);
-                    _msSinceEpoch = TimeClipLike(new DateTimeOffset(localDateTime, localOffset).ToUniversalTime().ToUnixTimeMilliseconds());
-                }
-                else
-                {
-                    var updated = new DateTimeOffset(resolvedYear, 1, 1, 0, 0, 0, TimeSpan.Zero)
-                        .AddMonths(resolvedMonth)
-                        .AddDays(resolvedDay - 1)
-                        .AddHours(resolvedHour)
-                        .AddMinutes(resolvedMinute)
-                        .AddSeconds(resolvedSecond)
-                        .AddMilliseconds(resolvedMillisecond);
-                    _msSinceEpoch = TimeClipLike(updated.ToUniversalTime().ToUnixTimeMilliseconds());
-                }
+                var localDateTime = new DateTime(resolvedYear, 1, 1, 0, 0, 0, DateTimeKind.Unspecified)
+                    .AddMonths(resolvedMonth)
+                    .AddDays(resolvedDay - 1)
+                    .AddHours(resolvedHour)
+                    .AddMinutes(resolvedMinute)
+                    .AddSeconds(resolvedSecond)
+                    .AddMilliseconds(resolvedMillisecond);
+                var localOffset = TimeZoneInfo.Local.GetUtcOffset(localDateTime);
+                _msSinceEpoch = TimeClipLike(new DateTimeOffset(localDateTime, localOffset).ToUniversalTime().ToUnixTimeMilliseconds());
             }
             catch (ArgumentOutOfRangeException)
             {
@@ -850,6 +1163,25 @@ namespace JavaScriptRuntime
             return true;
         }
 
+        private static bool TryResolveUtcDatePart(object? value, double currentValue, out double resolvedValue)
+        {
+            if (value == null)
+            {
+                resolvedValue = currentValue;
+                return true;
+            }
+
+            var number = TypeUtilities.ToNumber(value);
+            if (!double.IsFinite(number))
+            {
+                resolvedValue = 0d;
+                return false;
+            }
+
+            resolvedValue = System.Math.Truncate(number);
+            return true;
+        }
+
         private static void DefineConstructorMethod(string key, Func<object[], object?[]?, object?> implementation, double length)
         {
             Function.InitializeFunctionInstance(implementation, length, key);
@@ -875,15 +1207,34 @@ namespace JavaScriptRuntime
         {
             Func<object[], object?[]?, object?> functionValue = (_, args) =>
                 implementation(ThisDateValue(RuntimeServices.GetCurrentThis()), args);
+            DefinePrototypeFunction(key, functionValue, length);
+        }
+
+        private static void DefineGenericPrototypeMethod(string key, Func<object?, object?[]?, object?> implementation, double length)
+        {
+            Func<object[], object?[]?, object?> functionValue = (_, args) =>
+                implementation(RuntimeServices.GetCurrentThis(), args);
+            DefinePrototypeFunction(key, functionValue, length, hasPrototypeProperty: false);
+        }
+
+        private static void DefinePrototypeFunction(
+            string key,
+            Func<object[], object?[]?, object?> functionValue,
+            double length,
+            bool hasPrototypeProperty = true)
+        {
             Function.InitializeFunctionInstance(functionValue, length, key);
-            PropertyDescriptorStore.DefineOrUpdate(functionValue, "prototype", new JsPropertyDescriptor
+            if (hasPrototypeProperty)
             {
-                Kind = JsPropertyDescriptorKind.Data,
-                Enumerable = false,
-                Configurable = false,
-                Writable = false,
-                Value = null
-            });
+                PropertyDescriptorStore.DefineOrUpdate(functionValue, "prototype", new JsPropertyDescriptor
+                {
+                    Kind = JsPropertyDescriptorKind.Data,
+                    Enumerable = false,
+                    Configurable = false,
+                    Writable = false,
+                    Value = null
+                });
+            }
             PropertyDescriptorStore.DefineOrUpdate(Prototype, key, new JsPropertyDescriptor
             {
                 Kind = JsPropertyDescriptorKind.Data,

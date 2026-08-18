@@ -56,6 +56,29 @@ public sealed class RegExpObjectRepresentationTests
         Assert.Equal($"true{Environment.NewLine}", readResult.Output);
     }
 
+    [Fact]
+    public void MatchAll_CustomExecReturningPrimitive_ThrowsTypeError()
+    {
+        var result = InMemoryTestCompiler.CompileAndExecute(
+            "regexp-match-all-primitive-exec",
+            "RegExp.MatchAll",
+            static _ => ("""
+                var iterator = /./g[Symbol.matchAll]('a');
+                RegExp.prototype.exec = function() {
+                  return 1;
+                };
+
+                try {
+                  iterator.next();
+                  console.log(false);
+                } catch (error) {
+                  console.log(error instanceof TypeError);
+                }
+                """, null));
+
+        Assert.Equal($"true{Environment.NewLine}", result.Output);
+    }
+
     private static (string Script, string? SourcePath) GetDescriptorIsolationScript(string testName)
         => testName switch
         {

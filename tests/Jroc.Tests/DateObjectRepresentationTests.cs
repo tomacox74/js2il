@@ -60,6 +60,21 @@ public sealed class DateObjectRepresentationTests
         Assert.Equal($"true{Environment.NewLine}", readResult.Output);
     }
 
+    [Fact]
+    public void GetUTCFullYear_SupportsTheMaximumEcmaScriptDate()
+    {
+        var result = InMemoryTestCompiler.CompileAndExecute(
+            "date-maximum-utc-year",
+            "Date.ExtendedRange",
+            static _ => ("""
+                console.log(
+                  new Date(Date.parse('+275760-09-13T00:00:00.000Z')).getUTCFullYear() === 275760
+                );
+                """, null));
+
+        Assert.Equal($"true{Environment.NewLine}", result.Output);
+    }
+
     private static long MeasureJsObjectAllocations(int count, object prototype)
     {
         var objects = new JsObject[count];

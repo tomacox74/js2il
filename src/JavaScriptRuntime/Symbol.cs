@@ -26,6 +26,8 @@ public sealed class Symbol
     private static readonly Symbol _toPrimitive = new Symbol("Symbol.toPrimitive");
     private static readonly Symbol _toStringTag = new Symbol("Symbol.toStringTag");
     private static readonly Symbol _unscopables = new Symbol("Symbol.unscopables");
+    private static readonly Symbol _dispose = new Symbol("Symbol.dispose");
+    private static readonly Symbol _asyncDispose = new Symbol("Symbol.asyncDispose");
 
     private readonly long _id;
     private readonly string _debugId;
@@ -53,7 +55,7 @@ public sealed class Symbol
         }
         else
         {
-            Description = DotNet2JSConversions.ToString(description);
+            Description = DotNet2JSConversions.ToStringRejectingSymbols(description);
         }
     }
 
@@ -116,6 +118,12 @@ public sealed class Symbol
     // Well-known symbol: Symbol.unscopables
     public static Symbol unscopables => _unscopables;
 
+    // Well-known symbol: Symbol.dispose
+    public static Symbol dispose => _dispose;
+
+    // Well-known symbol: Symbol.asyncDispose
+    public static Symbol asyncDispose => _asyncDispose;
+
     // Symbol.for(key)
     public static object @for(object? key)
     {
@@ -153,6 +161,8 @@ public sealed class Symbol
             "toPrimitive" => toPrimitive,
             "toStringTag" => toStringTag,
             "unscopables" => unscopables,
+            "dispose" => dispose,
+            "asyncDispose" => asyncDispose,
             _ => null
         };
     }

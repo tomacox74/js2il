@@ -633,9 +633,11 @@
           "test/built-ins/Date/parse/prop-desc.js",
           "test/built-ins/Date/parse/not-a-constructor.js",
           "test/built-ins/Date/parse/name.js",
-          "test/built-ins/Date/parse/length.js"
+          "test/built-ins/Date/parse/length.js",
+          "test/built-ins/Date/parse/time-value-maximum-range.js",
+          "test/built-ins/Date/parse/zero.js"
         ],
-        "notes": "Parses ISO-like strings to milliseconds since Unix epoch, including year-only forms and the split between offsetless date-only (UTC) and offsetless date-time (local time); returns NaN on failure."
+        "notes": "Parses ISO-like strings to milliseconds since Unix epoch, including extended years and the complete ECMA time-value range. It also preserves the split between offsetless date-only (UTC) and offsetless date-time (local time), and returns NaN on failure."
       },
       {
         "clause": "21.4.4.10",
@@ -683,9 +685,10 @@
           "test/built-ins/Date/S15.9.3.1_A1_T4.js",
           "test/built-ins/Date/S15.9.3.1_A1_T5.js",
           "test/built-ins/Date/S15.9.3.1_A1_T6.js",
-          "test/built-ins/Date/TimeClip_negative_zero.js"
+          "test/built-ins/Date/TimeClip_negative_zero.js",
+          "test/built-ins/Date/S15.9.3.1_A4_T0.js"
         ],
-        "notes": "Checked-in coverage now includes representative 2-7 argument Date construction, copying an existing Date instance without observable user coercion, and TimeClip normalization of -0 to +0. Broader Date parsing, time-zone, and prototype method semantics remain limited."
+        "notes": "Checked-in coverage now includes representative 2-7 argument Date construction, one-argument coercion abrupt completion, copying an existing Date instance without observable user coercion, and TimeClip normalization of -0 to +0. Broader Date parsing, time-zone, and prototype method semantics remain limited."
       },
       {
         "clause": "21.4.4.4",
@@ -733,15 +736,69 @@
           "status": "Supported with Limitations",
           "specUrl": "https://tc39.es/ecma262/#sec-date.utc",
           "testScripts": [
-            "tests/Jroc.Test262.Tests/built-ins/Date/Section21_4/Clause_21_4_3_4/ExecutionTests.cs"
+              "tests/Jroc.Test262.Tests/built-ins/Date/Section21_4/Clause_21_4_3_4/ExecutionTests.cs",
+              "tests/Jroc.Test262.Tests/built-ins/Date/UTC/ExecutionTests.cs"
           ],
           "test262Paths": [
             "test/built-ins/Date/UTC/prop-desc.js",
-            "test/built-ins/Date/UTC/length.js"
+            "test/built-ins/Date/UTC/length.js",
+            "test/built-ins/Date/UTC/fp-evaluation-order.js",
+            "test/built-ins/Date/UTC/infinity-make-time.js",
+            "test/built-ins/Date/UTC/non-integer-values.js",
+            "test/built-ins/Date/UTC/return-value.js",
+            "test/built-ins/Date/UTC/time-clip.js",
+            "test/built-ins/Date/UTC/year-offset.js"
           ],
-          "notes": "Date.UTC is exposed with checked-in descriptor and length coverage through the Section21_4 representative bucket. Broader argument-edge-case coverage is still limited."
-        },
-        {
+          "notes": "Date.UTC implements ordered numeric coercion, IEEE-754 MakeTime/MakeDate arithmetic, truncation, the 0–99 year offset, and TimeClip range handling. Descriptor and length coverage remains in the Section21_4 representative bucket."
+          },
+          {
+            "clause": "21.4.4.11",
+            "feature": "Date.prototype.getTimezoneOffset",
+            "status": "Supported with Limitations",
+            "specUrl": "https://tc39.es/ecma262/#sec-date.prototype.gettimezoneoffset",
+            "testScripts": [
+              "tests/Jroc.Test262.Tests/built-ins/Date/prototype/getTimezoneOffset/ExecutionTests.cs"
+            ],
+            "test262Paths": [
+              "test/built-ins/Date/prototype/getTimezoneOffset/this-value-valid-date.js"
+            ],
+            "notes": "Returns a numeric offset for valid Dates across the ECMAScript time-value range. Historical local-time-zone details outside the host calendar range remain limited."
+          },
+          {
+            "clause": "21.4.4.37",
+            "feature": "Date.prototype.toJSON",
+            "status": "Supported",
+            "specUrl": "https://tc39.es/ecma262/#sec-date.prototype.tojson",
+            "testScripts": [
+              "tests/Jroc.Test262.Tests/built-ins/Date/prototype/toJSON/ExecutionTests.cs"
+            ],
+            "test262Paths": [
+              "test/built-ins/Date/prototype/toJSON/builtin.js",
+              "test/built-ins/Date/prototype/toJSON/invoke-abrupt.js",
+              "test/built-ins/Date/prototype/toJSON/invoke-arguments.js",
+              "test/built-ins/Date/prototype/toJSON/invoke-result.js",
+              "test/built-ins/Date/prototype/toJSON/non-finite.js",
+              "test/built-ins/Date/prototype/toJSON/to-object.js",
+              "test/built-ins/Date/prototype/toJSON/to-primitive-abrupt.js",
+              "test/built-ins/Date/prototype/toJSON/to-primitive-symbol.js"
+            ],
+            "notes": "Implements generic ToObject/ToPrimitive behavior, returns null for non-finite numeric primitives, and invokes a receiver's toISOString with no arguments."
+          },
+          {
+            "clause": "21.4.4.41",
+            "feature": "Date.prototype.toString",
+            "status": "Supported",
+            "specUrl": "https://tc39.es/ecma262/#sec-date.prototype.tostring",
+            "testScripts": [
+              "tests/Jroc.Test262.Tests/built-ins/Date/prototype/toString/ExecutionTests.cs"
+            ],
+            "test262Paths": [
+              "test/built-ins/Date/prototype/toString/format.js",
+              "test/built-ins/Date/prototype/toString/negative-year.js"
+            ],
+            "notes": "Formats local Date strings with a GMT offset and correctly pads extended negative years."
+          },
+          {
           "clause": "21.4.4",
           "feature": "Broader Date.prototype surface tracked by Section21_4 buckets",
           "status": "Supported with Limitations",

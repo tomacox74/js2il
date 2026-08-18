@@ -17,17 +17,20 @@ namespace JavaScriptRuntime
             Replace = 2,
             Search = 4,
             Split = 8,
-            All = Match | Replace | Search | Split
+            MatchAll = 16,
+            All = Match | Replace | Search | Split | MatchAll
         }
 
         private const string DotPattern = "(?:[^\n\r\u2028\u2029])";
         private const string UnicodeDotPattern = "(?:[\uD800-\uDBFF][\uDC00-\uDFFF]|[^\n\r\u2028\u2029])";
         private const string UnicodeDotAllPattern = "(?:[\uD800-\uDBFF][\uDC00-\uDFFF]|[\\s\\S])";
         private static readonly string MatchSymbolPropertyKey = Symbol.match.DebugId;
+        private static readonly string MatchAllSymbolPropertyKey = Symbol.matchAll.DebugId;
         private static readonly string ReplaceSymbolPropertyKey = Symbol.replace.DebugId;
         private static readonly string SearchSymbolPropertyKey = Symbol.search.DebugId;
         private static readonly string SplitSymbolPropertyKey = Symbol.split.DebugId;
         private static readonly Func<object?, object> MatchSymbolDelegate = MatchSymbolMethod;
+        private static readonly Func<object?, object> MatchAllSymbolDelegate = MatchAllSymbolMethod;
         private static readonly Func<object?, object?, object> ReplaceSymbolDelegate = ReplaceSymbolMethod;
         private static readonly Func<object?, object> SearchSymbolDelegate = SearchSymbolMethod;
         private static readonly Func<object?, object?, object> SplitSymbolDelegate = SplitSymbolMethod;
@@ -37,6 +40,11 @@ namespace JavaScriptRuntime
                 RuntimeIntrinsicSlot.RegExpPrototype,
                 static () => new JsObject(),
                 static prototype => InitializePrototype(prototype));
+        internal static JsObject RegExpStringIteratorPrototype
+            => RuntimeIntrinsics.Current.GetOrCreate(
+                RuntimeIntrinsicSlot.RegExpStringIteratorPrototype,
+                static () => new JsObject(),
+                static prototype => InitializeRegExpStringIteratorPrototype(prototype));
         private static WellKnownSymbolFastPathFlags _prototypeWellKnownSymbolFastPathFlags = WellKnownSymbolFastPathFlags.All;
         private readonly Regex _regex;
         private readonly bool _global;
@@ -331,6 +339,11 @@ namespace JavaScriptRuntime
             return JavaScriptRuntime.String.MatchWithRegExp(DotNet2JSConversions.ToString(input) ?? string.Empty, this);
         }
 
+        public object matchAllSymbol(object? input)
+        {
+            return CreateMatchAllIterator(DotNet2JSConversions.ToString(input) ?? string.Empty, this);
+        }
+
         public object replaceSymbol(object? input, object? replacement)
         {
             return JavaScriptRuntime.String.ReplaceWithRegExp(DotNet2JSConversions.ToString(input) ?? string.Empty, this, replacement);
@@ -362,6 +375,12 @@ namespace JavaScriptRuntime
             return JavaScriptRuntime.String.MatchWithRegExp(DotNet2JSConversions.ToString(input) ?? string.Empty, regExp);
         }
 
+        private static object MatchAllSymbolMethod(object? input)
+        {
+            var regExp = GetCurrentThisRegExp("matchAll");
+            return CreateMatchAllIterator(DotNet2JSConversions.ToString(input) ?? string.Empty, regExp);
+        }
+
         private static object ReplaceSymbolMethod(object? input, object? replacement)
         {
             var regExp = GetCurrentThisRegExp("replace");
@@ -385,6 +404,7 @@ namespace JavaScriptRuntime
             using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
 
             DefineSymbolMethod(prototype, MatchSymbolPropertyKey, MatchSymbolDelegate);
+            DefineSymbolMethod(prototype, MatchAllSymbolPropertyKey, MatchAllSymbolDelegate);
             DefineSymbolMethod(prototype, ReplaceSymbolPropertyKey, ReplaceSymbolDelegate);
             DefineSymbolMethod(prototype, SearchSymbolPropertyKey, SearchSymbolDelegate);
             DefineSymbolMethod(prototype, SplitSymbolPropertyKey, SplitSymbolDelegate);
@@ -401,6 +421,14 @@ namespace JavaScriptRuntime
             DefinePrototypeGetter(prototype, "sticky", static regExp => regExp.sticky);
             DefinePrototypeGetter(prototype, "unicode", static regExp => regExp.unicode);
             DefinePrototypeGetter(prototype, "unicodeSets", static regExp => regExp.unicodeSets);
+        }
+
+        private static void InitializeRegExpStringIteratorPrototype(JsObject prototype)
+        {
+            using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
+
+            DefinePrototypeMethod(prototype, "next", (Func<object[], object?[]?, object?>)RegExpStringIteratorPrototypeNext);
+            DefineSymbolMethod(prototype, Symbol.iterator.DebugId, (Func<object[], object?[]?, object?>)RegExpStringIteratorPrototypeIterator);
         }
 
         private static void DefinePrototypeMethod(object target, string key, object? value)
@@ -448,6 +476,26 @@ namespace JavaScriptRuntime
         private static object? PrototypeToString(object[] scopes, object?[]? args)
         {
             return GetRegExpReceiver("toString").toString();
+        }
+
+        private static object? RegExpStringIteratorPrototypeNext(object[] scopes, object?[]? args)
+        {
+            if (RuntimeServices.GetCurrentThis() is not RegExpStringIterator iterator)
+            {
+                throw new TypeError("RegExp String Iterator.prototype.next called on incompatible receiver");
+            }
+
+            return iterator.Next();
+        }
+
+        private static object? RegExpStringIteratorPrototypeIterator(object[] scopes, object?[]? args)
+        {
+            if (RuntimeServices.GetCurrentThis() is not RegExpStringIterator iterator)
+            {
+                throw new TypeError("RegExp String Iterator.prototype[Symbol.iterator] called on incompatible receiver");
+            }
+
+            return iterator;
         }
 
         internal override PropertyDescriptorLookup GetOwnPropertyDescriptor(
@@ -611,6 +659,12 @@ namespace JavaScriptRuntime
                 return true;
             }
 
+            if (ReferenceEquals(symbol, Symbol.matchAll) && HasIntrinsicWellKnownSymbolFastPath(WellKnownSymbolFastPathFlags.MatchAll))
+            {
+                result = CreateMatchAllIterator(input, this);
+                return true;
+            }
+
             if (ReferenceEquals(symbol, Symbol.search) && HasIntrinsicWellKnownSymbolFastPath(WellKnownSymbolFastPathFlags.Search))
             {
                 result = JavaScriptRuntime.String.SearchWithRegExp(input, this);
@@ -645,6 +699,10 @@ namespace JavaScriptRuntime
             {
                 _wellKnownSymbolFastPathFlags &= ~WellKnownSymbolFastPathFlags.Match;
             }
+            else if (string.Equals(propertyKey, MatchAllSymbolPropertyKey, StringComparison.Ordinal))
+            {
+                _wellKnownSymbolFastPathFlags &= ~WellKnownSymbolFastPathFlags.MatchAll;
+            }
             else if (string.Equals(propertyKey, ReplaceSymbolPropertyKey, StringComparison.Ordinal))
             {
                 _wellKnownSymbolFastPathFlags &= ~WellKnownSymbolFastPathFlags.Replace;
@@ -675,6 +733,10 @@ namespace JavaScriptRuntime
             {
                 _prototypeWellKnownSymbolFastPathFlags &= ~WellKnownSymbolFastPathFlags.Match;
             }
+            else if (string.Equals(propertyKey, MatchAllSymbolPropertyKey, StringComparison.Ordinal))
+            {
+                _prototypeWellKnownSymbolFastPathFlags &= ~WellKnownSymbolFastPathFlags.MatchAll;
+            }
             else if (string.Equals(propertyKey, ReplaceSymbolPropertyKey, StringComparison.Ordinal))
             {
                 _prototypeWellKnownSymbolFastPathFlags &= ~WellKnownSymbolFastPathFlags.Replace;
@@ -692,6 +754,142 @@ namespace JavaScriptRuntime
         internal static void InvalidateAllPrototypeWellKnownSymbolFastPaths()
         {
             _prototypeWellKnownSymbolFastPathFlags = WellKnownSymbolFastPathFlags.None;
+        }
+
+        private static RegExpStringIterator CreateMatchAllIterator(string input, RegExp regExp)
+        {
+            var constructor = ObjectRuntime.GetItem(regExp, "constructor");
+            object? species = null;
+            if (constructor is not null and not JsNull)
+            {
+                if (TypeUtilities.IsPrimitive(constructor))
+                {
+                    throw new TypeError("RegExp constructor is not an object");
+                }
+
+                species = ObjectRuntime.GetItem(constructor, Symbol.species);
+            }
+
+            var flags = DotNet2JSConversions.ToString(ObjectRuntime.GetItem(regExp, "flags"));
+            var matcher = species is null or JsNull
+                ? CallableOperations.Construct(
+                    BuiltinDelegateFunctionAdapter.FromDelegate(GlobalThis.RegExp),
+                    new object?[] { regExp, flags })
+                : CallableOperations.Construct(species, new object?[] { regExp, flags });
+
+            if (matcher is null || TypeUtilities.IsPrimitive(matcher))
+            {
+                throw new TypeError("RegExp species constructor must return an object");
+            }
+
+            var lastIndex = ToLength(ObjectRuntime.GetItem(regExp, nameof(RegExp.lastIndex)));
+            ObjectRuntime.SetItem(matcher, nameof(RegExp.lastIndex), lastIndex);
+
+            return new RegExpStringIterator(matcher, input, flags.IndexOf('g') >= 0, flags.IndexOf('u') >= 0);
+        }
+
+        private static double ToLength(object? value)
+        {
+            var number = TypeUtilities.ToNumber(value);
+            if (double.IsNaN(number) || number <= 0)
+            {
+                return 0;
+            }
+
+            if (double.IsPositiveInfinity(number))
+            {
+                return 9007199254740991d;
+            }
+
+            return global::System.Math.Min(global::System.Math.Floor(number), 9007199254740991d);
+        }
+
+        private sealed class RegExpStringIterator : IJavaScriptIterator
+        {
+            private readonly object _matcher;
+            private readonly string _input;
+            private readonly bool _global;
+            private readonly bool _unicode;
+            private bool _done;
+
+            public RegExpStringIterator(object matcher, string input, bool global, bool unicode)
+            {
+                _matcher = matcher;
+                _input = input;
+                _global = global;
+                _unicode = unicode;
+                PrototypeChain.SetPrototype(this, RegExpStringIteratorPrototype);
+            }
+
+            public bool HasReturn => false;
+
+            public IteratorResultObject Next()
+            {
+                if (_done)
+                {
+                    return new IteratorResultObject(null, done: true);
+                }
+
+                var exec = ObjectRuntime.GetItem(_matcher, "exec");
+                object? match;
+                if (CallableOperations.IsCallable(exec))
+                {
+                    match = CallableOperations.Call1(exec, _matcher, _input);
+                }
+                else if (_matcher is RegExp regExp)
+                {
+                    match = regExp.exec(_input);
+                }
+                else
+                {
+                    throw new TypeError("RegExp exec method is not callable");
+                }
+
+                if (match is null or JsNull)
+                {
+                    _done = true;
+                    return new IteratorResultObject(null, done: true);
+                }
+
+                if (TypeUtilities.IsPrimitive(match))
+                {
+                    throw new TypeError("RegExp exec method must return an object or null");
+                }
+
+                if (!_global)
+                {
+                    _done = true;
+                    return new IteratorResultObject(match, done: false);
+                }
+
+                var matched = DotNet2JSConversions.ToStringRejectingSymbols(ObjectRuntime.GetItem(match, 0d));
+                if (matched.Length == 0)
+                {
+                    var lastIndex = ToLength(ObjectRuntime.GetItem(_matcher, nameof(RegExp.lastIndex)));
+                    ObjectRuntime.SetItem(_matcher, nameof(RegExp.lastIndex), AdvanceStringIndex(_input, lastIndex, _unicode));
+                }
+
+                return new IteratorResultObject(match, done: false);
+            }
+
+            public void Return()
+            {
+                _done = true;
+            }
+
+            private static double AdvanceStringIndex(string input, double index, bool unicode)
+            {
+                if (!unicode || index + 1 >= input.Length)
+                {
+                    return index + 1;
+                }
+
+                var intIndex = (int)index;
+                return char.IsHighSurrogate(input[intIndex])
+                    && char.IsLowSurrogate(input[intIndex + 1])
+                    ? index + 2
+                    : index + 1;
+            }
         }
 
         public string toString()

@@ -161,6 +161,7 @@ internal static partial class LIRInstructionInfo
         typeof(LIRConvertToNumberDiscard),
         typeof(LIRConvertToObject),
         typeof(LIRConvertToString),
+        typeof(LIRConvertToStringDiscard),
         typeof(LIRCopyTemp),
         typeof(LIRCreateBoundArrowFunction),
         typeof(LIRCreateBoundFunctionExpression),
@@ -616,6 +617,7 @@ internal static partial class LIRInstructionInfo
                 or LIRConvertToNumberDiscard
                 or LIRConvertToBoolean
                 or LIRConvertToString
+                or LIRConvertToStringDiscard
                 or LIRNegateNumberDynamic
                 or LIRBitwiseNotDynamic
                 or LIRLogicalNot

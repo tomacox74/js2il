@@ -4,7 +4,7 @@
 
 [Back to Section22](Section22.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-08-17T18:27:42Z
+> Last generated (UTC): 2026-08-17T23:42:44Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -193,7 +193,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| String.prototype.matchAll | Supported with Limitations | [`String_MatchAll_Basic.js`](../../../tests/Jroc.Tests/String/JavaScript/String_MatchAll_Basic.js)<br>[`String_RegExp_NamedGroups_Indices.js`](../../../tests/Jroc.Tests/String/JavaScript/String_RegExp_NamedGroups_Indices.js)<br>`tests/Jroc.Test262.Tests/built-ins/String/prototype/matchAll/ExecutionTests.cs` | `test/built-ins/String/prototype/matchAll/cstm-matchall-on-bigint-primitive.js`<br>`test/built-ins/String/prototype/matchAll/cstm-matchall-on-number-primitive.js`<br>`test/built-ins/String/prototype/matchAll/cstm-matchall-on-string-primitive.js` | Implemented in JavaScriptRuntime.String.MatchAll for string patterns and global RegExp inputs. Exec-like match arrays include named .groups and optional .indices.groups metadata. The current runtime eagerly materializes matches as a JavaScriptRuntime.Array instead of the spec's lazy RegExp String Iterator. |
+| String.prototype.matchAll | Supported with Limitations | [`String_MatchAll_Basic.js`](../../../tests/Jroc.Tests/String/JavaScript/String_MatchAll_Basic.js)<br>[`String_RegExp_NamedGroups_Indices.js`](../../../tests/Jroc.Tests/String/JavaScript/String_RegExp_NamedGroups_Indices.js)<br>`tests/Jroc.Test262.Tests/built-ins/String/prototype/matchAll/ExecutionTests.cs` | `test/built-ins/String/prototype/matchAll/cstm-matchall-on-bigint-primitive.js`<br>`test/built-ins/String/prototype/matchAll/cstm-matchall-on-number-primitive.js`<br>`test/built-ins/String/prototype/matchAll/cstm-matchall-on-string-primitive.js`<br>`test/built-ins/String/prototype/matchAll/regexp-prototype-has-no-matchAll.js`<br>`test/built-ins/String/prototype/matchAll/regexp-prototype-matchAll-invocation.js`<br>`test/built-ins/String/prototype/matchAll/regexp-prototype-matchAll-throws.js`<br>`test/built-ins/String/prototype/matchAll/regexp-matchAll-throws.js`<br>`test/built-ins/String/prototype/matchAll/regexp-get-matchAll-throws.js` | Implemented in JavaScriptRuntime.String.MatchAll through Symbol.matchAll delegation. Global RegExp inputs return a lazy RegExp String Iterator; custom Symbol.matchAll methods and abrupt property access are forwarded. Broader RegExp exotic behavior remains limited. |
 
 ### 22.1.3.15 ([tc39.es](https://tc39.es/ecma262/#sec-string.prototype.normalize))
 

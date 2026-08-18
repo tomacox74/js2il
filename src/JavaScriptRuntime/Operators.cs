@@ -352,7 +352,7 @@ namespace JavaScriptRuntime
                 return primitive;
             }
 
-            return value;
+            throw new TypeError("Cannot convert object to primitive value");
         }
 
         private static bool TryInvokeToPrimitiveMethod(object receiver, string hint, out object? result)

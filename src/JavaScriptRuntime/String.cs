@@ -1191,39 +1191,23 @@ namespace JavaScriptRuntime
         {
             input ??= string.Empty;
 
+            if (regexp is RegExp regExp && !regExp.global)
+            {
+                throw new TypeError("String.prototype.matchAll requires a global RegExp");
+            }
+
             if (TryInvokeWellKnownSymbol(regexp, Symbol.matchAll, input, out var symbolResult))
             {
                 return symbolResult!;
             }
 
-            RegExp matcher;
-            if (regexp is RegExp regExp)
+            var matcher = new RegExp(regexp, "g");
+            if (TryInvokeWellKnownSymbol(matcher, Symbol.matchAll, input, out symbolResult))
             {
-                if (!regExp.global)
-                {
-                    throw new TypeError("String.prototype.matchAll requires a global RegExp");
-                }
-
-                matcher = new RegExp(regExp, regExp.flags);
-            }
-            else
-            {
-                matcher = new RegExp(regexp, "g");
+                return symbolResult!;
             }
 
-            var matches = new JavaScriptRuntime.Array();
-            while (true)
-            {
-                var step = matcher.exec(input);
-                if (step is JsNull)
-                {
-                    break;
-                }
-
-                matches.Add(step);
-            }
-
-            return matches;
+            throw new TypeError("Symbol.matchAll is not a function");
         }
 
         /// <summary>

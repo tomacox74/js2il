@@ -1,6 +1,6 @@
 /*---
 description: Native C# test262 harness helpers are available as host globals
-includes: [propertyHelper.js, testTypedArray.js, testAtomics.js, tcoHelper.js, decimalToHexString.js, nans.js, promiseHelper.js]
+includes: [propertyHelper.js, testTypedArray.js, testAtomics.js, tcoHelper.js, decimalToHexString.js, nans.js, promiseHelper.js, compareIterator.js, regExpUtils.js]
 ---*/
 
 assert(true, 'assert should be callable');
@@ -9,6 +9,20 @@ assert.notSameValue(1, 2, 'notSameValue should use SameValue semantics');
 assert.strictEqual('abc', 'abc', 'strictEqual should alias sameValue');
 assert.notStrictEqual('abc', 'def', 'notStrictEqual should alias notSameValue');
 assert.compareArray([1, 2, 3], [1, 2, 3], 'compareArray should compare indexed elements');
+
+var expectedMatch = ['a'];
+expectedMatch.index = 0;
+expectedMatch.input = 'a';
+var iteratorDone = false;
+assert.compareIterator({
+    next: function() {
+        if (iteratorDone) {
+            return { value: undefined, done: true };
+        }
+        iteratorDone = true;
+        return { value: expectedMatch, done: false };
+    }
+}, [matchValidator(['a'], 0, 'a')], 'RegExp helper validators should be available');
 
 var value = {};
 Object.defineProperty(value, 'answer', {

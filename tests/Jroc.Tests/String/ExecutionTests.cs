@@ -246,6 +246,12 @@ namespace Jroc.Tests.String
         }
 
         [Fact]
+        public Task String_MatchAll_CustomExecSymbol_Throws()
+        {
+            return ExecutionTest(nameof(String_MatchAll_CustomExecSymbol_Throws));
+        }
+
+        [Fact]
         public Task String_RegExp_NamedGroups_Indices()
         {
             return ExecutionTest(nameof(String_RegExp_NamedGroups_Indices));

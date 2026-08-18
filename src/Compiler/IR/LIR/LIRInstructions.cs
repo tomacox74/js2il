@@ -494,6 +494,11 @@ public record LIRConvertToBoolean(TempVariable Source, TempVariable Result) : LI
 /// </summary>
 public record LIRConvertToString(TempVariable Source, TempVariable Result) : LIRInstruction;
 
+/// <summary>
+/// Performs ToString for its observable coercion effects when the converted value is discarded.
+/// </summary>
+public record LIRConvertToStringDiscard(TempVariable Source) : LIRInstruction;
+
 public record LIRTypeof(TempVariable Value, TempVariable Result) : LIRInstruction;
 
 public record LIRNegateNumber(TempVariable Value, TempVariable Result) : LIRInstruction;

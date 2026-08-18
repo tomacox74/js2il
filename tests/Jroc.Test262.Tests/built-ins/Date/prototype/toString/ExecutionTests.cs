@@ -9,4 +9,12 @@ public class ExecutionTests : DiskExecutionTestsBase
     [Fact(DisplayName = "length")]
     public Task length()
         => ExecutionTestFromFile("length");
+
+    [Fact(DisplayName = "format")]
+    public Task format()
+        => ExecutionTestFromFile("format");
+
+    [Fact(DisplayName = "negative-year")]
+    public Task negative_year()
+        => ExecutionTestFromFile("negative-year");
 }

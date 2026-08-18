@@ -4,7 +4,7 @@
 
 [Back to Section21](Section21.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-07-05T14:54:51Z
+> Last generated (UTC): 2026-08-18T00:00:44Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -124,7 +124,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Date constructor basics (2-7 numeric arguments, Date copy, and TimeClip -0 normalization) | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/Date/ExecutionTests.cs` | `test/built-ins/Date/construct_with_date.js`<br>`test/built-ins/Date/S15.9.3.1_A1_T1.js`<br>`test/built-ins/Date/S15.9.3.1_A1_T2.js`<br>`test/built-ins/Date/S15.9.3.1_A1_T3.js`<br>`test/built-ins/Date/S15.9.3.1_A1_T4.js`<br>`test/built-ins/Date/S15.9.3.1_A1_T5.js`<br>`test/built-ins/Date/S15.9.3.1_A1_T6.js`<br>`test/built-ins/Date/TimeClip_negative_zero.js` | Checked-in coverage now includes representative 2-7 argument Date construction, copying an existing Date instance without observable user coercion, and TimeClip normalization of -0 to +0. Broader Date parsing, time-zone, and prototype method semantics remain limited. |
+| Date constructor basics (2-7 numeric arguments, Date copy, and TimeClip -0 normalization) | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/Date/ExecutionTests.cs` | `test/built-ins/Date/construct_with_date.js`<br>`test/built-ins/Date/S15.9.3.1_A1_T1.js`<br>`test/built-ins/Date/S15.9.3.1_A1_T2.js`<br>`test/built-ins/Date/S15.9.3.1_A1_T3.js`<br>`test/built-ins/Date/S15.9.3.1_A1_T4.js`<br>`test/built-ins/Date/S15.9.3.1_A1_T5.js`<br>`test/built-ins/Date/S15.9.3.1_A1_T6.js`<br>`test/built-ins/Date/TimeClip_negative_zero.js`<br>`test/built-ins/Date/S15.9.3.1_A4_T0.js` | Checked-in coverage now includes representative 2-7 argument Date construction, one-argument coercion abrupt completion, copying an existing Date instance without observable user coercion, and TimeClip normalization of -0 to +0. Broader Date parsing, time-zone, and prototype method semantics remain limited. |
 | new Date() (current time) | Supported | `tests/Jroc.Tests/Date/ExecutionTests.cs` |  | Constructs a Date representing now (UTC). Stores milliseconds since Unix epoch internally. |
 | new Date(milliseconds) | Supported | [`Date_Construct_FromMs_GetTime_ToISOString.js`](../../../tests/Jroc.Tests/Date/JavaScript/Date_Construct_FromMs_GetTime_ToISOString.js) | `test/built-ins/Date/prototype/valueOf/S9.4_A3_T1.js`<br>`test/built-ins/Date/prototype/getTime/this-value-valid-date.js` | Constructs from milliseconds since Unix epoch; numeric input is TimeClipped, invalid time values propagate as NaN, and Date instances satisfy instanceof Date. |
 
@@ -138,13 +138,13 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Date.parse(string) | Supported | `tests/Jroc.Test262.Tests/built-ins/Date/parse/ExecutionTests.cs` | `test/built-ins/Date/parse/year-zero.js`<br>`test/built-ins/Date/parse/prop-desc.js`<br>`test/built-ins/Date/parse/not-a-constructor.js`<br>`test/built-ins/Date/parse/name.js`<br>`test/built-ins/Date/parse/length.js` | Parses ISO-like strings to milliseconds since Unix epoch, including year-only forms and the split between offsetless date-only (UTC) and offsetless date-time (local time); returns NaN on failure. |
+| Date.parse(string) | Supported | `tests/Jroc.Test262.Tests/built-ins/Date/parse/ExecutionTests.cs` | `test/built-ins/Date/parse/year-zero.js`<br>`test/built-ins/Date/parse/prop-desc.js`<br>`test/built-ins/Date/parse/not-a-constructor.js`<br>`test/built-ins/Date/parse/name.js`<br>`test/built-ins/Date/parse/length.js`<br>`test/built-ins/Date/parse/time-value-maximum-range.js`<br>`test/built-ins/Date/parse/zero.js` | Parses ISO-like strings to milliseconds since Unix epoch, including extended years and the complete ECMA time-value range. It also preserves the split between offsetless date-only (UTC) and offsetless date-time (local time), and returns NaN on failure. |
 
 ### 21.4.3.4 ([tc39.es](https://tc39.es/ecma262/#sec-date.utc))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Date.UTC | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/Date/Section21_4/Clause_21_4_3_4/ExecutionTests.cs` | `test/built-ins/Date/UTC/prop-desc.js`<br>`test/built-ins/Date/UTC/length.js` | Date.UTC is exposed with checked-in descriptor and length coverage through the Section21_4 representative bucket. Broader argument-edge-case coverage is still limited. |
+| Date.UTC | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/Date/Section21_4/Clause_21_4_3_4/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Date/UTC/ExecutionTests.cs` | `test/built-ins/Date/UTC/prop-desc.js`<br>`test/built-ins/Date/UTC/length.js`<br>`test/built-ins/Date/UTC/fp-evaluation-order.js`<br>`test/built-ins/Date/UTC/infinity-make-time.js`<br>`test/built-ins/Date/UTC/non-integer-values.js`<br>`test/built-ins/Date/UTC/return-value.js`<br>`test/built-ins/Date/UTC/time-clip.js`<br>`test/built-ins/Date/UTC/year-offset.js` | Date.UTC implements ordered numeric coercion, IEEE-754 MakeTime/MakeDate arithmetic, truncation, the 0–99 year offset, and TimeClip range handling. Descriptor and length coverage remains in the Section21_4 representative bucket. |
 
 ### 21.4.4 ([tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-date-prototype-object))
 
@@ -170,9 +170,27 @@ Feature-level support tracking with repo test references and optional test262 ev
 |---|---|---|---|---|
 | Date.prototype.getTime | Supported | `tests/Jroc.Test262.Tests/built-ins/Date/prototype/getTime/ExecutionTests.cs` | `test/built-ins/Date/prototype/getTime/this-value-valid-date.js`<br>`test/built-ins/Date/prototype/getTime/length.js` | Returns milliseconds since Unix epoch as a number (boxed double). |
 
+### 21.4.4.11 ([tc39.es](https://tc39.es/ecma262/#sec-date.prototype.gettimezoneoffset))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Date.prototype.getTimezoneOffset | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/Date/prototype/getTimezoneOffset/ExecutionTests.cs` | `test/built-ins/Date/prototype/getTimezoneOffset/this-value-valid-date.js` | Returns a numeric offset for valid Dates across the ECMAScript time-value range. Historical local-time-zone details outside the host calendar range remain limited. |
+
 ### 21.4.4.36 ([tc39.es](https://tc39.es/ecma262/#sec-date.prototype.toisostring))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
 | Date.prototype.toISOString | Supported | `tests/Jroc.Test262.Tests/built-ins/Date/prototype/toISOString/ExecutionTests.cs` | `test/built-ins/Date/prototype/toISOString/15.9.5.43-0-16.js`<br>`test/built-ins/Date/prototype/toISOString/15.9.5.43-0-5.js`<br>`test/built-ins/Date/prototype/toISOString/15.9.5.43-0-6.js`<br>`test/built-ins/Date/prototype/toISOString/15.9.5.43-0-7.js` | Returns a UTC ISO 8601 string with millisecond precision and trailing 'Z'. |
+
+### 21.4.4.37 ([tc39.es](https://tc39.es/ecma262/#sec-date.prototype.tojson))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Date.prototype.toJSON | Supported | `tests/Jroc.Test262.Tests/built-ins/Date/prototype/toJSON/ExecutionTests.cs` | `test/built-ins/Date/prototype/toJSON/builtin.js`<br>`test/built-ins/Date/prototype/toJSON/invoke-abrupt.js`<br>`test/built-ins/Date/prototype/toJSON/invoke-arguments.js`<br>`test/built-ins/Date/prototype/toJSON/invoke-result.js`<br>`test/built-ins/Date/prototype/toJSON/non-finite.js`<br>`test/built-ins/Date/prototype/toJSON/to-object.js`<br>`test/built-ins/Date/prototype/toJSON/to-primitive-abrupt.js`<br>`test/built-ins/Date/prototype/toJSON/to-primitive-symbol.js` | Implements generic ToObject/ToPrimitive behavior, returns null for non-finite numeric primitives, and invokes a receiver's toISOString with no arguments. |
+
+### 21.4.4.41 ([tc39.es](https://tc39.es/ecma262/#sec-date.prototype.tostring))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Date.prototype.toString | Supported | `tests/Jroc.Test262.Tests/built-ins/Date/prototype/toString/ExecutionTests.cs` | `test/built-ins/Date/prototype/toString/format.js`<br>`test/built-ins/Date/prototype/toString/negative-year.js` | Formats local Date strings with a GMT offset and correctly pads extended negative years. |
 
