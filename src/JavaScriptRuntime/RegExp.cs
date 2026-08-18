@@ -1377,13 +1377,7 @@ namespace JavaScriptRuntime
                 return;
             }
 
-            int nextIndex = matchIndex + matchLength;
-            if (matchLength == 0)
-            {
-                nextIndex = AdvanceStringIndex(input, matchIndex);
-            }
-
-            lastIndex = nextIndex;
+            lastIndex = matchIndex + matchLength;
         }
 
         private int AdvanceStringIndex(string input, int index)
