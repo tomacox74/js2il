@@ -203,4 +203,28 @@ public class ExecutionTests : InMemoryExecutionTestsBase
     public Task _15_4_4_19_2_19()
         => ExecutionTestFromFile("15.4.4.19-2-19");
 
+    [Fact(DisplayName = "15.4.4.19-3-22")]
+    public Task _15_4_4_19_3_22()
+        => ExecutionTestFromFile("15.4.4.19-3-22");
+
+    [Fact(DisplayName = "15.4.4.19-4-8")]
+    public Task _15_4_4_19_4_8()
+        => ExecutionTestFromFile("15.4.4.19-4-8");
+
+    [Fact(DisplayName = "15.4.4.19-4-9")]
+    public Task _15_4_4_19_4_9()
+        => ExecutionTestFromFile("15.4.4.19-4-9");
+
+    [Fact(DisplayName = "15.4.4.19-4-10")]
+    public Task _15_4_4_19_4_10()
+        => ExecutionTestFromFile("15.4.4.19-4-10");
+
+    [Fact(DisplayName = "15.4.4.19-4-11")]
+    public Task _15_4_4_19_4_11()
+        => ExecutionTestFromFile("15.4.4.19-4-11");
+
+    [Fact(DisplayName = "15.4.4.19-4-15")]
+    public Task _15_4_4_19_4_15()
+        => ExecutionTestFromFile("15.4.4.19-4-15");
+
 }

@@ -45,4 +45,8 @@ public class ExecutionTests : InMemoryExecutionTestsBase
     [Fact(DisplayName = "15.4.4.17-1-6")]
     public Task _15_4_4_17_1_6()
         => ExecutionTestFromFile("15.4.4.17-1-6");
+
+    [Fact(DisplayName = "15.4.4.17-3-22")]
+    public Task _15_4_4_17_3_22()
+        => ExecutionTestFromFile("15.4.4.17-3-22");
 }

@@ -503,7 +503,33 @@
           "tests/Jroc.Tests/Object/JavaScript/PrototypeChain_Basic.js",
           "tests/Jroc.Test262.Tests/built-ins/Object/getPrototypeOf/ExecutionTests.cs"
         ],
-        "notes": "Implemented in JavaScriptRuntime.Object.getPrototypeOf using an opt-in side-table prototype store (JavaScriptRuntime.PrototypeChain). Current bounded test262 coverage exercises the function surface, null/undefined guard behavior, primitive boxing, Error-subclass constructor relationships, and explicit custom prototype chains. This does not currently model default Object.prototype; if no prototype has been explicitly assigned, this returns undefined (null)."
+        "test262Paths": [
+          "test/built-ins/Object/getPrototypeOf/15.2.3.2-0-1.js",
+          "test/built-ins/Object/getPrototypeOf/15.2.3.2-0-2.js",
+          "test/built-ins/Object/getPrototypeOf/15.2.3.2-0-3.js",
+          "test/built-ins/Object/getPrototypeOf/15.2.3.2-1-2.js",
+          "test/built-ins/Object/getPrototypeOf/15.2.3.2-2-1.js",
+          "test/built-ins/Object/getPrototypeOf/15.2.3.2-2-2.js",
+          "test/built-ins/Object/getPrototypeOf/15.2.3.2-2-3.js",
+          "test/built-ins/Object/getPrototypeOf/15.2.3.2-2-4.js",
+          "test/built-ins/Object/getPrototypeOf/15.2.3.2-2-5.js",
+          "test/built-ins/Object/getPrototypeOf/15.2.3.2-2-6.js",
+          "test/built-ins/Object/getPrototypeOf/15.2.3.2-2-7.js",
+          "test/built-ins/Object/getPrototypeOf/15.2.3.2-2-8.js",
+          "test/built-ins/Object/getPrototypeOf/15.2.3.2-2-10.js",
+          "test/built-ins/Object/getPrototypeOf/15.2.3.2-2-11.js",
+          "test/built-ins/Object/getPrototypeOf/15.2.3.2-2-12.js",
+          "test/built-ins/Object/getPrototypeOf/15.2.3.2-2-13.js",
+          "test/built-ins/Object/getPrototypeOf/15.2.3.2-2-14.js",
+          "test/built-ins/Object/getPrototypeOf/15.2.3.2-2-15.js",
+          "test/built-ins/Object/getPrototypeOf/15.2.3.2-2-16.js",
+          "test/built-ins/Object/getPrototypeOf/15.2.3.2-2-17.js",
+          "test/built-ins/Object/getPrototypeOf/15.2.3.2-2-30.js",
+          "test/built-ins/Object/getPrototypeOf/15.2.3.2-2-31.js",
+          "test/built-ins/Object/getPrototypeOf/name.js",
+          "test/built-ins/Object/getPrototypeOf/not-a-constructor.js"
+        ],
+        "notes": "Implemented in JavaScriptRuntime.Object.getPrototypeOf using the runtime PrototypeChain store. Current bounded test262 coverage exercises the function surface, null/undefined guard behavior, primitive boxing, builtin constructor relationships (including Error subclasses), Math/global-object/Object.prototype default prototype cases, builtin metadata, and explicit custom prototype chains. Broader default-prototype coverage for arbitrary host and exotic objects remains limited."
       },
       {
         "clause": "20.1.2.13",
@@ -531,9 +557,40 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-object.hasown",
         "testScripts": [
-          "tests/Jroc.Tests/Object/JavaScript/Object_HasOwn_Basic.js"
+          "tests/Jroc.Tests/Object/JavaScript/Object_HasOwn_Basic.js",
+          "tests/Jroc.Test262.Tests/built-ins/Object/hasOwn/ExecutionTests.cs"
         ],
-        "notes": "Checks own properties via descriptor store and dynamic object dictionaries; host-object edge cases are best-effort."
+        "test262Paths": [
+          "test/built-ins/Object/hasOwn/hasown.js",
+          "test/built-ins/Object/hasOwn/hasown_nonexistent.js",
+          "test/built-ins/Object/hasOwn/hasown_inherited_exists.js",
+          "test/built-ins/Object/hasOwn/hasown_inherited_getter.js",
+          "test/built-ins/Object/hasOwn/hasown_inherited_getter_and_setter.js",
+          "test/built-ins/Object/hasOwn/hasown_inherited_nonwritable_configurable_enumerable.js",
+          "test/built-ins/Object/hasOwn/hasown_inherited_nonwritable_configurable_nonenumerable.js",
+          "test/built-ins/Object/hasOwn/hasown_inherited_writable_configurable_enumerable.js",
+          "test/built-ins/Object/hasOwn/hasown_inherited_writable_configurable_nonenumerable.js",
+          "test/built-ins/Object/hasOwn/hasown_inherited_setter.js",
+          "test/built-ins/Object/hasOwn/hasown_inherited_getter_configurable_enumerable.js",
+          "test/built-ins/Object/hasOwn/hasown_own_property_exists.js",
+          "test/built-ins/Object/hasOwn/hasown_own_getter.js",
+          "test/built-ins/Object/hasOwn/hasown_own_getter_and_setter.js",
+          "test/built-ins/Object/hasOwn/hasown_own_nonwritable_configurable_enumerable.js",
+          "test/built-ins/Object/hasOwn/hasown_own_nonwriteable_configurable_nonenumerable.js",
+          "test/built-ins/Object/hasOwn/hasown_own_writable_configurable_enumerable.js",
+          "test/built-ins/Object/hasOwn/hasown_own_writable_configurable_nonenumerable.js",
+          "test/built-ins/Object/hasOwn/hasown_own_setter.js",
+          "test/built-ins/Object/hasOwn/hasown_own_getter_configurable_enumerable.js",
+          "test/built-ins/Object/hasOwn/hasown_own_getter_configurable_nonenumerable.js",
+          "test/built-ins/Object/hasOwn/hasown_own_setter_configurable_enumerable.js",
+          "test/built-ins/Object/hasOwn/hasown_own_setter_configurable_nonenumerable.js",
+          "test/built-ins/Object/hasOwn/length.js",
+          "test/built-ins/Object/hasOwn/name.js",
+          "test/built-ins/Object/hasOwn/symbol_property_toPrimitive.js",
+          "test/built-ins/Object/hasOwn/symbol_property_toString.js",
+          "test/built-ins/Object/hasOwn/symbol_property_valueOf.js"
+        ],
+        "notes": "Checks own properties via descriptor store and dynamic object dictionaries. Covered test262 cases include inherited/own data and accessor properties, builtin metadata (`length`/`name`), and Symbol-valued property-key coercions through ToPropertyKey. Host-object edge cases remain best-effort."
       },
       {
         "clause": "20.1.2.15",
@@ -656,9 +713,39 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-object.prototype.hasownproperty",
         "testScripts": [
-          "tests/Jroc.Tests/Object/JavaScript/Object_Prototype_HasOwnProperty_Basic.js"
+          "tests/Jroc.Tests/Object/JavaScript/Object_Prototype_HasOwnProperty_Basic.js",
+          "tests/Jroc.Test262.Tests/built-ins/Object/prototype/hasOwnProperty/ExecutionTests.cs"
         ],
-        "notes": "Seeded onto Object.prototype via JavaScriptRuntime.GlobalThis. Works when invoked via Object.prototype.hasOwnProperty (e.g., using apply/call). Default Object.prototype wiring for all object literals is incomplete."
+        "test262Paths": [
+          "test/built-ins/Object/prototype/hasOwnProperty/8.12.1-1_1.js",
+          "test/built-ins/Object/prototype/hasOwnProperty/8.12.1-1_2.js",
+          "test/built-ins/Object/prototype/hasOwnProperty/8.12.1-1_3.js",
+          "test/built-ins/Object/prototype/hasOwnProperty/8.12.1-1_4.js",
+          "test/built-ins/Object/prototype/hasOwnProperty/8.12.1-1_5.js",
+          "test/built-ins/Object/prototype/hasOwnProperty/8.12.1-1_6.js",
+          "test/built-ins/Object/prototype/hasOwnProperty/8.12.1-1_7.js",
+          "test/built-ins/Object/prototype/hasOwnProperty/8.12.1-1_8.js",
+          "test/built-ins/Object/prototype/hasOwnProperty/8.12.1-1_9.js",
+          "test/built-ins/Object/prototype/hasOwnProperty/8.12.1-1_10.js",
+          "test/built-ins/Object/prototype/hasOwnProperty/8.12.1-1_11.js",
+          "test/built-ins/Object/prototype/hasOwnProperty/8.12.1-1_12.js",
+          "test/built-ins/Object/prototype/hasOwnProperty/8.12.1-1_13.js",
+          "test/built-ins/Object/prototype/hasOwnProperty/8.12.1-1_14.js",
+          "test/built-ins/Object/prototype/hasOwnProperty/8.12.1-1_15.js",
+          "test/built-ins/Object/prototype/hasOwnProperty/S15.2.4.5_A12.js",
+          "test/built-ins/Object/prototype/hasOwnProperty/S15.2.4.5_A13.js",
+          "test/built-ins/Object/prototype/hasOwnProperty/S15.2.4.5_A1_T1.js",
+          "test/built-ins/Object/prototype/hasOwnProperty/S15.2.4.5_A1_T2.js",
+          "test/built-ins/Object/prototype/hasOwnProperty/S15.2.4.5_A1_T3.js",
+          "test/built-ins/Object/prototype/hasOwnProperty/symbol_own_property.js",
+          "test/built-ins/Object/prototype/hasOwnProperty/length.js",
+          "test/built-ins/Object/prototype/hasOwnProperty/name.js",
+          "test/built-ins/Object/prototype/hasOwnProperty/symbol_property_toPrimitive.js",
+          "test/built-ins/Object/prototype/hasOwnProperty/symbol_property_toString.js",
+          "test/built-ins/Object/prototype/hasOwnProperty/symbol_property_valueOf.js",
+          "test/built-ins/Object/prototype/hasOwnProperty/topropertykey_before_toobject.js"
+        ],
+        "notes": "Seeded onto Object.prototype via JavaScriptRuntime.GlobalThis. Covered test262 cases include inherited/own data and accessor receivers, Symbol own-property lookup, builtin metadata (`length`/`name`), Symbol-valued property-key coercions, and the required ToPropertyKey-before-ToObject ordering. Default Object.prototype wiring for all object literals is still incomplete."
       },
       {
         "clause": "20.1.3.3",
@@ -680,9 +767,17 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-object.prototype.propertyisenumerable",
         "testScripts": [
-          "tests/Jroc.Tests/Object/JavaScript/Object_Prototype_PropertyIsEnumerable_ToLocaleString_ValueOf.js"
+          "tests/Jroc.Tests/Object/JavaScript/Object_Prototype_PropertyIsEnumerable_ToLocaleString_ValueOf.js",
+          "tests/Jroc.Test262.Tests/built-ins/Object/prototype/propertyIsEnumerable/ExecutionTests.cs"
         ],
-        "notes": "Reads enumerability from descriptor store and dynamic dictionary fallbacks. Full host-object fidelity is partial."
+        "test262Paths": [
+          "test/built-ins/Object/prototype/propertyIsEnumerable/S15.2.4.7_A11.js",
+          "test/built-ins/Object/prototype/propertyIsEnumerable/name.js",
+          "test/built-ins/Object/prototype/propertyIsEnumerable/symbol_property_toPrimitive.js",
+          "test/built-ins/Object/prototype/propertyIsEnumerable/symbol_property_toString.js",
+          "test/built-ins/Object/prototype/propertyIsEnumerable/symbol_property_valueOf.js"
+        ],
+        "notes": "Reads enumerability from descriptor store and dynamic dictionary fallbacks. Covered test262 cases now include the builtin `name` metadata, the builtin function object's own `length` property, and Symbol-valued property-key coercions through ToPropertyKey. Full host-object fidelity is partial."
       },
       {
         "clause": "20.1.3.5",

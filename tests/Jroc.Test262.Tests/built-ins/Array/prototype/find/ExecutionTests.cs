@@ -15,4 +15,16 @@ public class ExecutionTests : InMemoryExecutionTestsBase
     [Fact(DisplayName = "return-found-value-predicate-result-is-true")]
     public Task return_found_value_predicate_result_is_true()
         => ExecutionTestFromFile("return-found-value-predicate-result-is-true");
+
+    [Fact(DisplayName = "call-with-boolean")]
+    public Task call_with_boolean()
+        => ExecutionTestFromFile("call-with-boolean");
+
+    [Fact(DisplayName = "array-altered-during-loop")]
+    public Task array_altered_during_loop()
+        => ExecutionTestFromFile("array-altered-during-loop");
+
+    [Fact(DisplayName = "return-abrupt-from-property")]
+    public Task return_abrupt_from_property()
+        => ExecutionTestFromFile("return-abrupt-from-property");
 }

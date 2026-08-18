@@ -6,7 +6,18 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-_Nothing yet._
+- runtime/test262/docs: port 22 Object/Number `test262` fixtures for
+  `Object.getPrototypeOf`, `Object.hasOwn`, `Object.prototype.hasOwnProperty`,
+  `Object.prototype.propertyIsEnumerable`, and `Number.prototype.toFixed`.
+  The runtime now exposes correct `hasOwn`/prototype-method builtin metadata,
+  preserves Symbol-valued `ToPropertyKey` coercions plus the
+  `ToPropertyKey`-before-`ToObject` ordering for `hasOwnProperty`, and wires
+  default prototype coverage for `Math`, `globalThis`, and `Object.prototype`
+  through `Object.getPrototypeOf`.
+- runtime/tests/docs: port 28 Array.prototype `test262` cases across
+  `every`/`filter`/`map`/`some`/`reduce`/`reduceRight`/`find`/`findIndex`/`includes`,
+  fix generic receiver boxing plus `length`/`fromIndex` coercion and callback
+  ordering semantics, and refresh the Section 23.1 ECMA-262 support evidence.
 
 ## v0.12.9 - 2026-08-18
 
