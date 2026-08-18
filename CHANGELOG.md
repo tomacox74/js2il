@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.12.9 - 2026-08-18
+
 - runtime/tests/docs: add 20 test262 String regressions for `replaceAll` and
   `matchAll`. `replaceAll` now validates RegExp flags before coercion,
   preserves custom `@@replace` dispatch ordering, and invokes functional
